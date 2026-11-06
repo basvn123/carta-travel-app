@@ -48,7 +48,7 @@
   -webkit-appearance: none;
   appearance: none;
   color: var(--ink);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 500;
   cursor: pointer;
 }
@@ -77,7 +77,7 @@
    itself; the --paper band the track draws on a paper page would read as a
    grey box around the 44px hit area here. */
 .frr-bar .costbar-track { background: transparent; }
-.frr-bar .costbar-read { margin-top: var(--space-1); font-size: 12px; }
+.frr-bar .costbar-read { margin-top: var(--space-1); font-size: var(--text-caption); }
 
 /* The first-run strip without its Stay cell (FirstRunReceipt hideStay,
    T387-c): three cells across, and in a narrow column the party across the

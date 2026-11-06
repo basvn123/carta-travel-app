@@ -384,4 +384,4 @@ a.ox-stage:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px;
 .oxp .ox-kv > div { border-top-color: color-mix(in srgb, var(--text) 8%, transparent); }
 /* The why-it-rates fold reads as the place page's folds: a row under a rule. */
 .oxp .pt-fold { background: none; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; padding: 0; }
-.oxp .pt-fold summary { min-height: 52px; font-size: 16px; }
+.oxp .pt-fold summary { min-height: 52px; font-size: var(--text-lead); }

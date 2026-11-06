@@ -106,7 +106,7 @@
 .brand .sub {
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   margin-top: 4px;
 }

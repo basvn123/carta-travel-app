@@ -16,8 +16,8 @@
   display: inline-block;
   max-width: 88%;
   padding: 11px 15px;
-  border-radius: 16px;
-  font-size: 14px;
+  border-radius: var(--radius-card);
+  font-size: var(--text-body);
   line-height: 1.5;
 }
 /* Still the right shape for the town picker's short "ask Carta" wait, which
@@ -79,11 +79,11 @@
   border-radius: 12px;
   background: var(--paper);
   color: var(--ink);
-  font-size: 14px;
+  font-size: var(--text-body);
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
-.chat-opt-text b { font-size: 14px; font-weight: 600; }
+.chat-opt-text b { font-size: var(--text-body); font-weight: 600; }
 .chat-opt-text small { font-size: 11.5px; color: var(--ink-mute); }
 .chat-send {
   margin-top: 12px;
@@ -91,7 +91,7 @@
   padding: 12px 22px;
   border: none; border-radius: 12px;
   background: var(--accent); color: var(--on-fill);
-  font-size: 14px; font-weight: 700;
+  font-size: var(--text-body); font-weight: 700;
   cursor: pointer;
 }
 /* The final free-text step stacks: the input, then a full-width "Build my
@@ -107,7 +107,7 @@
   border-radius: 12px;
   background: var(--paper);
   color: var(--ink);
-  font: inherit; font-size: 14px;
+  font: inherit; font-size: var(--text-body);
   padding: 12px 14px;
 }
 
@@ -218,7 +218,7 @@
 }
 
 .account-section-hint {
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.55;
   color: var(--ink-soft);
   margin-bottom: 14px;
@@ -292,10 +292,10 @@
   margin-top: 10px;
   padding: 6px 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   cursor: pointer;
   transition: border-color .15s, color .15s, background .15s;
@@ -315,7 +315,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   font-size: 19px;
   line-height: 1;
@@ -325,7 +325,7 @@
 .account-avatar-opt.on { border-color: var(--accent); background: var(--accent-bg); }
 
 .auth-hint {
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.5;
   color: var(--ink-soft);
   margin-top: 2px;
@@ -345,7 +345,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--ink-soft);
   transition: color .15s, background .15s;
 }
@@ -365,7 +365,7 @@
 .pw-strength.strong .pw-strength-seg.on { background: var(--green); }
 .pw-strength-label {
   flex: none;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   white-space: nowrap;
 }
@@ -374,7 +374,7 @@
   font-family: var(--mono);
   font-weight: 400;
   font-variant-numeric: tabular-nums;
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   margin-left: 6px;
 }
@@ -406,7 +406,7 @@
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.45;
   color: var(--danger);
 }
@@ -417,7 +417,7 @@
 /* Only ever the mismatch: a match is reported by the tick in the field. */
 .pw-match {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.45;
   color: var(--danger);
 }
@@ -430,7 +430,7 @@
   gap: 9px;
   min-height: 44px;
   padding: 4px 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.45;
   color: var(--ink-soft);
   cursor: pointer;
@@ -469,7 +469,7 @@
   justify-content: center;
   margin: -3px 0;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--green);
   cursor: pointer;
@@ -501,7 +501,7 @@
 
 .account-pass-card {
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   padding: 14px 16px;
 }
@@ -517,7 +517,7 @@
    spending it on running prose is what stops it meaning anything when it
    lands on the price below. Tabular figures because the balance ticks down. */
 .account-pass-status {
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;
   color: var(--ink-soft);
   text-align: right;
@@ -532,14 +532,14 @@
 .account-danger-title svg { color: var(--danger); }
 .account-danger {
   border: 1px solid color-mix(in srgb, var(--danger) 38%, var(--paper));
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: color-mix(in srgb, var(--danger) 5%, var(--paper));
   padding: 14px 16px;
 }
 /* Was mono at 11px in --ink-mute, which read as a caption nobody had to take
    seriously. This is the most consequential sentence in the panel. */
 .account-danger-text {
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.55;
   color: var(--ink-soft);
   margin-bottom: 12px;

@@ -29,7 +29,7 @@
 .guide-steps { display: flex; gap: 6px; flex-wrap: wrap; padding-right: 32px; }
 .guide-step-dot {
   display: flex; align-items: center; gap: 5px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-family: var(--ui);
   font-weight: 600;
   color: var(--ink-soft);
@@ -45,7 +45,7 @@
 .guide-step-dot.active { color: var(--ink); }
 .guide-step-dot.active span { background: var(--accent); color: var(--on-fill); }
 .guide-step-dot.done span { background: var(--green); color: var(--on-fill); }
-.guide-title { font-family: var(--display); font-size: 20px; color: var(--ink); font-weight: 600; }
+.guide-title { font-family: var(--display); font-size: var(--text-title); color: var(--ink); font-weight: 600; }
 
 /* Step 1 - countries */
 .guide-country-grid {
@@ -109,7 +109,7 @@
   width: 26px; height: 26px;
   border-radius: 50%;
   border: 1px solid var(--rule);
-  font-size: 16px; line-height: 1;
+  font-size: var(--text-lead); line-height: 1;
   color: var(--ink);
   display: flex; align-items: center; justify-content: center;
 }
@@ -125,7 +125,7 @@
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   padding: 9px 10px;
   border-radius: 9px;
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--ink-soft);
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
@@ -162,7 +162,7 @@
 }
 .guide-origin-label {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; color: var(--ink-mute); flex: none;
+  font-size: var(--text-caption); color: var(--ink-mute); flex: none;
 }
 .guide-origin-label > svg { color: var(--ink-soft); }
 .guide-origin-row .origin-picker { position: relative; }
@@ -178,7 +178,7 @@
 .guide-ownflight-lead { display: flex; align-items: baseline; gap: 6px; }
 
 /* Stay step: Carta-designs-it CTA, map/list switch, tier chips + legend. */
-.guide-design-btn small { font-weight: 400; font-size: 11px; opacity: 0.85; }
+.guide-design-btn small { font-weight: 400; font-size: var(--text-micro); opacity: 0.85; }
 /* Neutral chip, coloured glyph - the icon reads the tier, not a colour block. */
 .guide-tier-top svg { color: var(--accent); }
 .guide-tier-great svg { color: var(--good-mid); }
@@ -192,7 +192,7 @@
   padding: 3px 7px 3px 6px;
   background: var(--bg-card);
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   box-shadow: 0 1px 5px rgba(26, 26, 26, 0.18);
   cursor: pointer;
   transition: border-color .12s, background .12s, transform .12s, box-shadow .12s;
@@ -214,9 +214,9 @@
   padding: 2px 8px;
   background: var(--ink);
   color: var(--on-fill);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   white-space: nowrap;
   box-shadow: var(--shadow-1);
@@ -232,8 +232,8 @@
   margin-top: 8px;
   padding: 7px 14px;
   border: 1px dashed var(--rule);
-  border-radius: 999px;
-  font-size: 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   width: 100%;
 }
@@ -244,13 +244,13 @@
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-size: 12.5px;
   color: var(--ink);
   transition: border-color .15s, background .15s;
 }
-.guide-chip-kind { font-family: var(--ui); font-size: 11px; color: var(--ink-mute); font-weight: 600; }
+.guide-chip-kind { font-family: var(--ui); font-size: var(--text-micro); color: var(--ink-mute); font-weight: 600; }
 /* An empty state is the content of its box, so it is not metadata grey and
    not italic (docs/ONBOARDING_AND_EMPTY_STATES.md, the rules). */
 
@@ -271,7 +271,7 @@
   background: var(--paper-dim);
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 12px; font-weight: 600;
+  font-size: var(--text-caption); font-weight: 600;
   flex-shrink: 0;
   cursor: grab;
 }
@@ -280,7 +280,7 @@
 .guide-arrange-city { font-family: var(--display); font-size: 15px; color: var(--ink); }
 .guide-arrange-sub { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); margin-top: 1px; }
 .guide-arrange-tools { display: flex; flex-direction: column; gap: 2px; }
-.guide-arrange-tools button { width: 22px; height: 18px; color: var(--ink-mute); font-size: 12px; }
+.guide-arrange-tools button { width: 22px; height: 18px; color: var(--ink-mute); font-size: var(--text-caption); }
 @media (hover: hover) {
   .guide-arrange-tools button:hover:not(:disabled) { color: var(--ink); }
 }
@@ -293,20 +293,20 @@
 .guide-people {
   display: flex; align-items: center; gap: 10px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 4px 6px;
   background: var(--paper);
 }
-.guide-people span { font-family: var(--mono); font-size: 13px; min-width: 12px; text-align: center; }
+.guide-people span { font-family: var(--mono); font-size: var(--text-label); min-width: 12px; text-align: center; }
 .guide-people button {
   width: 24px; height: 24px;
   border-radius: 50%;
-  font-size: 16px; line-height: 1;
+  font-size: var(--text-lead); line-height: 1;
   color: var(--ink);
   display: flex; align-items: center; justify-content: center;
 }
 .guide-people button:disabled { opacity: 0.3; cursor: default; }
-.guide-start-summary { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); padding-bottom: 8px; margin-left: auto; }
+.guide-start-summary { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-soft); padding-bottom: 8px; margin-left: auto; }
 
 /* Wizard footer */
 .guide-foot {
@@ -344,7 +344,7 @@
   flex-direction: column;
   gap: 1px;
   flex: none;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
 }
@@ -371,7 +371,7 @@
    ink when it went up, green (good news in data) when it went down. */
 .guide-estimate-delta {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
@@ -392,19 +392,19 @@
   align-items: baseline;
   gap: 6px;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--rule);
   background: var(--paper);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-soft);
   white-space: nowrap;
 }
-.guide-estimate-chip b { font-family: var(--mono); font-size: 11px; color: var(--ink); }
+.guide-estimate-chip b { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink); }
 .guide-estimate-toggle {
   flex: none;
   margin-left: auto;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   border-bottom: 1px solid var(--rule);
 }
@@ -428,12 +428,12 @@
   justify-content: space-between;
   gap: 10px;
   padding: 4px 0;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink);
 }
-.guide-estimate-line b { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+.guide-estimate-line b { font-family: var(--mono); font-size: var(--text-caption); white-space: nowrap; }
 .guide-estimate-label { display: flex; flex-direction: column; gap: 1px; }
-.guide-estimate-label small { font-size: 12px; color: var(--ink-soft); font-family: var(--ui); }
+.guide-estimate-label small { font-size: var(--text-caption); color: var(--ink-soft); font-family: var(--ui); }
 .guide-estimate-total { border-top: 1px solid var(--rule); margin-top: 4px; padding-top: 8px; }
 .guide-estimate-total b { color: var(--ink); }
 /* The wizard footer's Back and Next are the shared Button (T193) and take
@@ -441,7 +441,7 @@
    .guide-next controls inside the steps. */
 .guide-next:not(.btn) {
   padding: 10px 22px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   border: 1px solid var(--accent);
   background: var(--accent);
   color: var(--on-fill);
@@ -491,19 +491,19 @@
   font-size: 22px;
 }
 .trip-plan-prompt h3 { font-family: var(--display); font-size: 19px; color: var(--ink); font-weight: 600; }
-.trip-plan-prompt p { font-size: 13px; color: var(--ink-soft); line-height: 1.55; margin: 8px 0 20px; }
+.trip-plan-prompt p { font-size: var(--text-label); color: var(--ink-soft); line-height: 1.55; margin: 8px 0 20px; }
 .trip-plan-prompt-actions { display: flex; flex-direction: column; gap: 9px; }
 .trip-plan-prompt-yes {
-  padding: 12px; border-radius: 10px;
+  padding: 12px; border-radius: var(--radius-control);
   background: var(--accent); color: var(--on-fill);
-  font-size: 14px; font-weight: 600;
+  font-size: var(--text-body); font-weight: 600;
   border: 1px solid var(--accent);
 }
 @media (hover: hover) {
   .trip-plan-prompt-yes:hover { opacity: 0.9; }
 }
 .trip-plan-prompt-no {
-  padding: 12px; border-radius: 10px;
+  padding: 12px; border-radius: var(--radius-control);
   border: 1px solid var(--rule);
   color: var(--ink-soft); font-size: 13.5px;
 }
@@ -521,7 +521,7 @@
   display: flex; align-items: center; justify-content: center;
 }
 .day-saved-card h3 { font-family: var(--display); font-size: 19px; color: var(--ink); font-weight: 600; }
-.day-saved-card p { font-size: 13px; color: var(--ink-soft); line-height: 1.55; margin: 8px 0 20px; }
+.day-saved-card p { font-size: var(--text-label); color: var(--ink-soft); line-height: 1.55; margin: 8px 0 20px; }
 
 /* ───────── Guided trip: itinerary day view ───────── */
 .itin { padding-top: 4px; }
@@ -533,9 +533,9 @@
   min-height: var(--tap);
   padding: 0 14px;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--ink-soft);
   white-space: nowrap;
@@ -571,9 +571,9 @@
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
   margin-top: 8px; padding-top: 14px;
   border-top: 1px solid var(--rule);
-  font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--ink);
+  font-family: var(--ui); font-size: var(--text-body); font-weight: 600; color: var(--ink);
 }
-.itin-overview-total small { display: block; font-family: var(--mono); font-size: 11px; font-weight: 400; color: var(--ink-soft); }
+.itin-overview-total small { display: block; font-family: var(--mono); font-size: var(--text-micro); font-weight: 400; color: var(--ink-soft); }
 
 
 /* ── Overview: stay-to-stay leg connectors in the route view ──
@@ -597,10 +597,10 @@
 }
 .itin-leg-text small { display: block; font-family: var(--mono); font-size: 10px; color: var(--ink-mute); margin-top: 1px; }
 .itin-leg-change {
-  font-family: var(--ui); font-size: 12px;
+  font-family: var(--ui); font-size: var(--text-caption);
   color: var(--ink-soft);
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 3px 9px;
   transition: color .15s, border-color .15s;
 }
@@ -617,7 +617,7 @@
   gap: 10px;
   padding: 9px 12px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: none;
   text-align: left;
   cursor: pointer;
@@ -632,16 +632,16 @@
   min-height: var(--tap);
   padding: 0 14px;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   color: var(--ink);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   cursor: pointer;
 }
 /* A secondary (T398): the planned view's one primary is Plan your days in
    the footer. */
-.itin-day-of { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+.itin-day-of { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-soft); }
 
 /* ───────── Guided wizard: imagery + interests ───────── */
 
@@ -690,10 +690,10 @@
 .trip-plan-prompt-strip { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
 .trip-plan-prompt-thumb {
   width: 52px; height: 52px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper-dim) center/cover no-repeat;
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--display); font-size: 20px; color: var(--ink-mute);
+  font-family: var(--display); font-size: var(--text-title); color: var(--ink-mute);
 }
 
 /* Planned itinerary imagery */

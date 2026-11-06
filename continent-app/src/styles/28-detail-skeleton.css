@@ -77,7 +77,7 @@
 .dsk-head .tpage-title { margin-top: 0; }
 .dsk-crumb {
   margin: var(--space-1) 0 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-mute);
 }
 .dsk-ref {
@@ -85,9 +85,9 @@
   margin-left: var(--space-2);
   padding: 1px var(--space-2);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 500;
   color: var(--ink-soft);
   vertical-align: middle;
@@ -98,7 +98,7 @@
    DIRECTION part 5): at 19 px it outranked the heads under it. */
 .dsk-hook {
   margin: var(--space-3) 0 0;
-  font-size: 16px;
+  font-size: var(--text-lead);
   line-height: 1.45;
   color: var(--ink-soft);
 }
@@ -146,7 +146,7 @@
   color: var(--ink);
 }
 .dsk-head .cycle-title h1 { font-family: var(--display); }
-.dsk-note { margin: 0; font-size: 14px; color: var(--ink-soft); }
+.dsk-note { margin: 0; font-size: var(--text-body); color: var(--ink-soft); }
 .dsk-acts {
   display: flex;
   flex-wrap: wrap;

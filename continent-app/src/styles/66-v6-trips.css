@@ -28,7 +28,7 @@
 .jsec-coverage {
   grid-column: 1 / -1;
   margin: 0 2px;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.45;
   color: var(--ink-soft);
 }
@@ -41,7 +41,7 @@
   padding: 0;
   overflow: hidden;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   color: var(--ink);
   font: inherit;
@@ -63,7 +63,7 @@
   display: flex;
   gap: var(--space-2);
   padding: var(--space-3);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 .jcap-band {
@@ -74,7 +74,7 @@
 }
 .jcap-name {
   font-family: var(--display);
-  font-size: 16px;
+  font-size: var(--text-lead);
   font-weight: 600;
   line-height: 1.2;
   color: var(--ink);
@@ -84,7 +84,7 @@
    brief V4.4; JourneysSection FigLine). */
 .jcap-fig {
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink);
 }
 .jcap-fig .mono {
@@ -97,7 +97,7 @@
   align-items: center;
   gap: var(--space-1);
   min-width: 0;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.35;
   color: var(--ink-soft);
 }
@@ -110,7 +110,7 @@
 @media (max-width: 768px) {
   .jcap-photo { aspect-ratio: 16 / 10; }
   .jcap-band { padding: var(--space-2); }
-  .jstyle-card .jcap-name { font-size: 16px; }
+  .jstyle-card .jcap-name { font-size: var(--text-lead); }
 }
 @media (prefers-reduced-motion: reduce) {
   .jcap-card { transition: none; }
@@ -125,7 +125,7 @@
   min-height: var(--tap);
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   color: var(--ink);
   font: inherit;
@@ -141,13 +141,13 @@
 .jcomposed-title {
   display: block;
   font-family: var(--display);
-  font-size: 16px;
+  font-size: var(--text-lead);
   font-weight: 600;
 }
 .jcomposed-sub {
   display: block;
   margin-top: 2px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 @media (prefers-reduced-motion: reduce) {
@@ -165,7 +165,7 @@
   display: grid;
   gap: var(--space-2);
   padding-bottom: var(--space-3);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   border: 1px solid var(--rule-soft);
   overflow: hidden;
@@ -179,7 +179,7 @@
   display: block;
   height: 12px;
   margin: 0 var(--space-3);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper-dim);
 }
 .jskel-line.is-short { width: 45%; }
@@ -200,7 +200,7 @@
   background: transparent;
   color: var(--ink);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   cursor: pointer;
 }
@@ -226,10 +226,10 @@
 /* Count chip (rule "Count chip"). */
 .jsec-n {
   padding: 1px var(--space-2);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper-dim);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 500;
   color: var(--ink);
 }
@@ -289,7 +289,7 @@
   margin-left: auto;
 }
 .jpage-copied {
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .jpage .bpage-head { margin-bottom: var(--space-3); }
@@ -301,11 +301,11 @@
   align-items: center;
   gap: var(--space-1) var(--space-2);
   margin: var(--space-3) 0 var(--space-4);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 .jpage-loc-pin { color: var(--ink-soft); flex: none; }
-.jpage-loc-coord { font-size: 12px; color: var(--ink-soft); }
+.jpage-loc-coord { font-size: var(--text-caption); color: var(--ink-soft); }
 .jpage-loc-link {
   display: inline-flex;
   align-items: center;
@@ -324,7 +324,7 @@
 .tl-seg {
   display: inline-flex;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   background: var(--bg-card);
 }
@@ -333,13 +333,13 @@
   padding: 0 var(--space-3);
   border: 0;
   border-radius: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-family: var(--ui);
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .tl-seg .tl-btn + .tl-btn { border-left: 1px solid var(--rule); }
 .jpage .tl-pick { margin: 0 0 var(--space-3); }
-.jpage .tl-note { margin-top: var(--space-2); font-size: 12px; }
+.jpage .tl-note { margin-top: var(--space-2); font-size: var(--text-caption); }
 @media (pointer: fine) {
   .tl-seg .tl-btn { min-height: 32px; }
 }
@@ -356,7 +356,7 @@
 .jblock-h {
   margin: 0 0 var(--space-2);
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--ink);
 }
@@ -367,7 +367,7 @@
    second border (no card inside a fold). */
 .jrcpt { padding: 0; }
 .jpage-budget-party .jpage-budget-label { color: var(--ink-soft); }
-.jpage-budget-party .jpage-budget-eur { font-size: 13px; }
+.jpage-budget-party .jpage-budget-eur { font-size: var(--text-label); }
 .jpage-town {
   margin-top: var(--space-4);
   padding-top: var(--space-3);
@@ -380,11 +380,11 @@
   min-height: var(--tap);
   padding: 0 var(--space-3);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--text-body);
   text-align: left;
   cursor: pointer;
 }
@@ -403,7 +403,7 @@
 .jpage-book-due {
   display: block;
   margin-top: 2px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink);
 }
@@ -451,14 +451,14 @@
 .itin-capband-title {
   margin: 0;
   font-family: var(--display);
-  font-size: 28px;
+  font-size: var(--text-headline);
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.015em;
   color: var(--ink);
 }
 @media (min-width: 769px) {
-  .itin-capband-title { font-size: 40px; }
+  .itin-capband-title { font-size: var(--text-display); }
 }
 .itin-capband-sub {
   display: flex;
@@ -467,20 +467,20 @@
   gap: var(--space-1);
   margin: var(--space-2) 0 0;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 /* The score is a rating, so it is ochre and mono, beside the countries. */
 .itin-capband-themes {
   margin: var(--space-1) 0 0;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 .itin-capband-credit {
   margin: var(--space-1) 0 0;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-mute);
   overflow-wrap: anywhere;
 }
@@ -515,13 +515,13 @@
 .dtrack .tday:first-child {
   padding: var(--space-3) var(--space-4) var(--space-2);
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
 }
 .dtrack .tday-title {
   margin: 0;
   font-family: var(--display);
-  font-size: 16px;
+  font-size: var(--text-lead);
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.01em;
@@ -548,7 +548,7 @@
   margin-top: var(--space-1);
   padding: 0;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 @media (hover: hover) {
@@ -572,7 +572,7 @@
   background: var(--paper-dim);
   border-bottom: 1px solid var(--rule-soft);
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--ink);
 }
@@ -580,7 +580,7 @@
 .itin-receipt-days {
   flex: none;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 500;
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
@@ -652,11 +652,11 @@
   min-height: var(--tap);
   padding: 0;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink-soft);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
@@ -730,7 +730,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
-    font-size: 13px;
+    font-size: var(--text-label);
     line-height: 1.2;
     overflow-wrap: anywhere;
     text-align: left;
@@ -740,7 +740,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     white-space: normal;
-    font-size: 13px;
+    font-size: var(--text-label);
     line-height: 1.2;
     text-align: left;
   }

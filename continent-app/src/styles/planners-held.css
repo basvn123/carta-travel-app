@@ -20,7 +20,7 @@
   align-items: center;
   gap: 10px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 4px 6px;
   background: var(--paper);
 }
@@ -34,10 +34,10 @@
 .trip-save-btn:disabled { opacity: 0.6; cursor: default; }
 .trip-newtrip-btn {
   padding: 11px 16px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   border: 1px solid var(--rule);
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: var(--text-label);
 }
 @media (hover: hover) {
   .trip-newtrip-btn:hover { border-color: var(--ink-soft); }
@@ -57,16 +57,16 @@
   /* One border and the card ground, no stripe or tint (T411; the day
      planner already drew it so from 68-v6-dayplanner.css). */
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
 }
 .daytrip-more {
   align-self: center;
   padding: 5px 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 600;
   color: var(--ink-soft);
   cursor: pointer;
@@ -125,7 +125,7 @@
   border-radius: 12px;
   background: var(--accent);
   color: var(--on-fill);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   cursor: pointer;
   text-align: left;
@@ -134,13 +134,13 @@
 .guide-tier {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 1.5px 8px 1.5px 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--rule);
   background: var(--paper);
   color: var(--ink-soft);
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 11px;
+  font-size: var(--text-micro);
   white-space: nowrap;
 }
 .citypick-map { height: 340px; }
@@ -149,7 +149,7 @@
   padding: 10px 14px;
   margin-bottom: 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-size: 13.5px;
   color: var(--ink);
@@ -167,7 +167,7 @@
      "Start over" onto two, under a control only 12px tall. */
   white-space: nowrap;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -177,7 +177,7 @@
   .guide-chip:hover { border-color: var(--ink-soft); }
 }
 .guide-chip.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
-.guide-back:not(.btn) { padding: 10px 18px; border-radius: 10px; border: 1px solid var(--rule); color: var(--ink-soft); font-size: 13px; }
+.guide-back:not(.btn) { padding: 10px 18px; border-radius: var(--radius-control); border: 1px solid var(--rule); color: var(--ink-soft); font-size: var(--text-label); }
 @media (hover: hover) {
   .guide-back:not(.btn):hover { border-color: var(--ink-soft); }
 }
@@ -193,7 +193,7 @@
   cursor: pointer;
 }
 .day-saved-done {
-  padding: 12px; border-radius: 10px; width: 100%;
+  padding: 12px; border-radius: var(--radius-control); width: 100%;
   border: 1px solid var(--rule);
   color: var(--ink-soft); font-size: 13.5px;
 }
@@ -222,10 +222,10 @@
   display: inline-flex; align-items: center; gap: 5px;
   padding: 0 14px;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   color: var(--ink);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -244,7 +244,7 @@
 .guide-city-thumb {
   flex-shrink: 0;
   width: 56px; height: 56px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper-dim) center/cover no-repeat;
   display: flex; align-items: center; justify-content: center;
 }
@@ -252,7 +252,7 @@
   margin-bottom: 16px;
   padding: var(--space-2) var(--space-3);
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
 }
 .trip-extras .trip-block-title { display: flex; align-items: baseline; gap: 8px; }
@@ -260,7 +260,7 @@
   display: flex; align-items: center; gap: 9px;
   padding: 9px 10px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   margin-bottom: 6px;
 }
@@ -268,7 +268,7 @@
   display: inline-flex; align-items: center; gap: 5px;
   padding: 3px 5px 3px 9px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-size: 11.5px;
   color: var(--ink-soft);
@@ -283,12 +283,12 @@
 }
 .extras-check-row {
   display: flex; align-items: center; gap: 8px; padding: 5px 0;
-  border-bottom: 1px solid var(--rule-soft); font-size: 13px; cursor: pointer;
+  border-bottom: 1px solid var(--rule-soft); font-size: var(--text-label); cursor: pointer;
 }
 .exp-sharer-chip {
-  padding: 3px 9px; border-radius: 999px;
+  padding: 3px 9px; border-radius: var(--radius-pill);
   border: 1px solid var(--rule);
-  font-size: 11px; color: var(--ink-mute);
+  font-size: var(--text-micro); color: var(--ink-mute);
   background: transparent;
 }
 .exp-sharer-chip.on {
@@ -303,7 +303,7 @@
   gap: 9px;
   padding: 7px 10px;
   border: 1px dashed var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   font-size: 11.5px;
   color: var(--ink-soft);
   background: var(--paper-dim);
@@ -331,7 +331,7 @@
   font-family: var(--mono);
   font-size: 10px;
   padding: 2px 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper-dim);
   color: var(--ink-soft);
   white-space: nowrap;
@@ -352,7 +352,7 @@
   background: none;
   border: 0;
   color: var(--accent);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   cursor: pointer;
   padding: 2px 0;
@@ -364,7 +364,7 @@
   border: 0;
   padding: 6px 8px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   text-align: left;
   cursor: pointer;
@@ -375,7 +375,7 @@
 .guide-car-advice {
   /* One border, no side stripe (T411: the detector's side-tab finding). */
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   padding: 10px 12px;
   margin-bottom: 14px;
@@ -414,7 +414,7 @@
 .day-stay-result {
   text-align: left;
   padding: 9px 12px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.4;
   color: var(--ink-soft);
   background: var(--paper);
@@ -432,7 +432,7 @@
 }
 .day-walk-len-btn {
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   color: var(--ink-soft);
   font-size: 10.5px;
@@ -448,7 +448,7 @@
 .guide-city-side-photo {
   width: 100%;
   height: 110px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background-size: cover;
   background-position: center;
   background-color: var(--paper-dim);
@@ -497,7 +497,7 @@
   align-items: center;
   gap: 14px;
   padding: 16px 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   box-shadow: 0 2px 8px rgba(26, 26, 26, 0.04);
   transition: border-color .14s, box-shadow .14s, transform .1s;
 }
@@ -587,10 +587,10 @@
   min-height: var(--tap);
   padding: 0 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   color: var(--ink);
-  font-size: 13px;
+  font-size: var(--text-label);
   cursor: pointer;
 }
 .guide-shortrow-chip.on { border-color: var(--accent); background: var(--accent); color: var(--on-fill); }
@@ -600,11 +600,11 @@
   align-items: center;
   gap: 6px;
   padding: 5px 11px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--rule);
   background: var(--paper);
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-soft);
 }
 .guide-nights-budget.done { border-color: var(--green); color: var(--good-ink-soft); }
@@ -615,15 +615,15 @@
   gap: 9px;
   padding: 7px 9px 7px 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
 }
 .guide-answered-edit {
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: none;
   padding: 3px 9px;
   cursor: pointer;
@@ -646,41 +646,41 @@
   .carta-plan-chip:hover { border-color: var(--ink); color: var(--ink); }
 }
 .carta-plan-chip.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
-.carta-plan-moods .day-guide-mood { font-size: 12px; }
+.carta-plan-moods .day-guide-mood { font-size: var(--text-caption); }
 .trip-carfrom-btn {
   font-family: var(--ui);
-  font-weight: 600; font-size: 12px;
+  font-weight: 600; font-size: var(--text-caption);
   color: var(--ink-soft);
   border: 1px solid var(--rule); border-radius: 8px;
   background: none; padding: 6px 10px; cursor: pointer;
 }
 .trip-carfrom-result {
-  text-align: left; font-size: 12px; color: var(--ink-soft);
+  text-align: left; font-size: var(--text-caption); color: var(--ink-soft);
   border: 1px solid var(--rule); border-radius: 8px;
   background: none; padding: 6px 9px; cursor: pointer;
 }
 .trip-carfrom-change {
   font-family: var(--ui);
-  font-weight: 600; font-size: 12px;
+  font-weight: 600; font-size: var(--text-caption);
   color: var(--ink-soft);
-  border: 1px solid var(--rule); border-radius: 999px;
+  border: 1px solid var(--rule); border-radius: var(--radius-pill);
   background: none; padding: 2px 8px; cursor: pointer;
 }
 .guide-stay-filter-clear {
   font-family: var(--ui);
-  font-weight: 600; font-size: 12px;
+  font-weight: 600; font-size: var(--text-caption);
   color: var(--ink-soft);
-  border: 1px solid var(--rule); border-radius: 999px;
+  border: 1px solid var(--rule); border-radius: var(--radius-pill);
   background: none; padding: 3px 9px; cursor: pointer;
 }
 .ai-plan-note-warn { color: var(--amber-ink); background: var(--amber-bg); border-radius: 8px; padding: 8px 10px; }
 .ai-plan-free {
   width: 100%;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   color: var(--ink);
-  font: inherit; font-size: 13px;
+  font: inherit; font-size: var(--text-label);
   padding: 9px 11px;
   resize: vertical;
 }
@@ -707,7 +707,7 @@
   border-radius: 9px;
   background: var(--paper);
   color: var(--ink);
-  font: inherit; font-size: 13px;
+  font: inherit; font-size: var(--text-label);
   padding: 7px 10px;
 }
 .dtsignin {
@@ -723,7 +723,7 @@
   display: flex;
   padding: 6px;
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, .92);
   color: var(--ink-soft);
   cursor: pointer;
@@ -737,7 +737,7 @@
   border: none;
   border-radius: 7px;
   background: none;
-  font-size: 13px;
+  font-size: var(--text-label);
   text-align: left;
   cursor: pointer;
 }
@@ -748,7 +748,7 @@
   min-height: 44px;
   padding: 7px 12px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   text-align: left;
   cursor: pointer;
@@ -761,24 +761,24 @@
   /* T389: the 3px accent stripe went (carta-design accent marks: no stripe on
      an inert control). */
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
 }
 .day-ideas-input {
   width: 100%;
   padding: 12px 36px 12px 34px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   color: var(--ink);
   font-family: inherit;
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .day-ideas-clear {
   position: absolute; right: 8px;
   display: inline-flex; align-items: center; justify-content: center;
   width: 24px; height: 24px;
-  border: none; border-radius: 6px;
+  border: none; border-radius: var(--radius-sm);
   background: transparent; color: var(--ink-mute);
   cursor: pointer;
 }
@@ -789,7 +789,7 @@
 .chat-typing { display: inline-flex; gap: 5px; align-items: center; }
 .rbs {
   border: 1px solid var(--rule);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   background: var(--paper);
   overflow: hidden;
 }
@@ -801,7 +801,7 @@
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   color: var(--ink-soft);
   font-size: 12.5px; font-weight: 600;
@@ -820,7 +820,7 @@
   border: 1px solid var(--rule);
   position: relative;
 }
-.day-flow-search .trip-add-btn { padding-left: 22px; padding-right: 22px; font-size: 14px; }
+.day-flow-search .trip-add-btn { padding-left: 22px; padding-right: 22px; font-size: var(--text-body); }
 @media (max-width: 700px) {
   .day-flow-search .trip-add-btn { min-height: 48px; }
 }
@@ -832,7 +832,7 @@
   padding: 5px 8px 5px 6px;
   /* A picked country is a selection: ink fill (T411, selected state). */
   border: 1px solid var(--ink-fill);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--select-bg);
   color: var(--select-ink);
   font-size: 12.5px;
@@ -864,7 +864,7 @@
   gap: 4px;
   padding: 4px 9px;
   border: 1px solid var(--rule-soft);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper-dim);
   font-size: 11.5px;
   color: var(--ink-soft);
@@ -879,7 +879,7 @@
   border-radius: 11px;
   background: var(--accent);
   color: var(--on-fill);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
 }
 @media (hover: hover) {
@@ -941,7 +941,7 @@
   min-height: var(--tap);
   padding: 5px 12px 5px 10px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-size: 12.5px;
   font-weight: 600;
@@ -978,7 +978,7 @@
   gap: 5px;
   padding: 4px 8px;
   border: 1px solid var(--rule-soft);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-size: 12.5px;
   font-weight: 600;
@@ -989,7 +989,7 @@
   border: 1px solid var(--accent);
   border-radius: 9px;
   color: var(--accent);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
 }
 .tlegs-sec .guide-section-title { font-size: 15px; display: flex; align-items: center; gap: 7px; }
@@ -1019,8 +1019,8 @@
   gap: 5px;
   padding: 2px 8px;
   border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  font-size: 11px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-micro);
   color: var(--ink-soft);
   white-space: nowrap;
 }
@@ -1030,7 +1030,7 @@
   gap: 6px;
   padding: 3px 9px;
   border: 1px solid var(--rule-soft);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 @media (hover: hover) {
   .tleg-mode:hover { border-color: var(--accent); }
@@ -1042,7 +1042,7 @@
   border: 1px solid var(--rule);
   border-radius: 9px;
   background: var(--paper);
-  font-size: 13px;
+  font-size: var(--text-label);
   outline: none;
 }
 @media (max-width: 719px) {
@@ -1092,8 +1092,8 @@
   gap: 5px;
   min-height: var(--tap);
   padding: 0 14px;
-  border-radius: 999px;
-  font-size: 13px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-label);
   font-weight: 600;
   cursor: pointer;
 }
@@ -1108,9 +1108,9 @@
   padding: 0 18px;
   background: none;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   color: var(--ink-soft);
-  font-size: 13px;
+  font-size: var(--text-label);
   cursor: pointer;
 }
 .cpm { height: min(58vh, 520px); min-height: 380px; margin-bottom: 0; }
@@ -1133,7 +1133,7 @@
 .cpm-card-add {
   min-height: 36px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
@@ -1141,7 +1141,7 @@
 .cpm-card-info {
   min-height: 36px;
   padding: 0 12px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
@@ -1169,7 +1169,7 @@
 .wiz-cost-line {
   margin: 0;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.35;
   color: var(--ink-soft);
 }
@@ -1515,7 +1515,7 @@
   align-items: flex-start;
   gap: 10px;
   padding: 9px 10px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   text-align: left;
   color: var(--ink);
   text-decoration: none;
@@ -1530,7 +1530,7 @@
   height: 34px;
   padding: 0 14px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: transparent;
   color: var(--ink);
   font-size: 12.5px;
@@ -1729,11 +1729,11 @@
   border-radius: 50%;
   background: var(--paper-dim);
   color: var(--ink-soft);
-  font-family: var(--mono); font-size: 11px; font-weight: 700;
+  font-family: var(--mono); font-size: var(--text-micro); font-weight: 700;
 }
 .itin-day-overflow {
   margin-top: 10px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-mute);
   font-style: italic;
   line-height: 1.5;
@@ -1784,7 +1784,7 @@
   align-items: start;
 }
 @media (min-width: 900px) and (min-height: 860px) {
-  .wiz-inline .guide-when-card .cal-inline .cal-day { height: 40px; font-size: 15px; border-radius: 10px; }
+  .wiz-inline .guide-when-card .cal-inline .cal-day { height: 40px; font-size: 15px; border-radius: var(--radius-control); }
   .wiz-inline .guide-when-card .guide-range-end { min-width: 168px; padding: 8px 16px; }
 }
 .trip-ownflight-date { display: flex; flex-direction: column; gap: 3px; flex: 1; }
@@ -1802,11 +1802,11 @@
   min-height: var(--tap);
   padding: 0 var(--space-3);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   color: var(--ink);
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   transition: border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
@@ -2036,10 +2036,10 @@
   color: var(--ink-soft);
 }
 .itin-day { padding-top: 14px; }
-.itin-day-date { font-family: var(--mono); font-size: 11px; color: var(--ink-mute);}
-.itin-day-empty { font-size: 13px; color: var(--ink-soft); line-height: 1.55; font-style: italic; }
-.itin-visit-name { display: block; font-size: 14px; color: var(--ink); }
-.itin-visit-kind { font-family: var(--ui); font-size: 11px; color: var(--ink-mute); font-weight: 600; }
+.itin-day-date { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-mute);}
+.itin-day-empty { font-size: var(--text-label); color: var(--ink-soft); line-height: 1.55; font-style: italic; }
+.itin-visit-name { display: block; font-size: var(--text-body); color: var(--ink); }
+.itin-visit-kind { font-family: var(--ui); font-size: var(--text-micro); color: var(--ink-mute); font-weight: 600; }
 .itin-day-hero {
   aspect-ratio: 3 / 1;
   border-radius: 10px 10px 0 0;
@@ -2063,14 +2063,14 @@
 }
 .itin-dayswitch-pos {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
 .itin-dayswitch-date {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   white-space: nowrap;
 }
@@ -2169,7 +2169,7 @@
 .trip-topcard-name::placeholder { color: var(--ink-mute); }
 .trip-topcard-sub {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-soft);
   margin-top: 3px;
   letter-spacing: 0.02em;
@@ -2185,7 +2185,7 @@
   top: 12px; right: 12px;
   width: 30px; height: 30px;
   border-radius: 50%;
-  font-size: 20px; line-height: 1;
+  font-size: var(--text-title); line-height: 1;
   color: var(--ink-mute);
 }
 @media (hover: hover) {
@@ -2235,7 +2235,7 @@
   overflow-wrap: anywhere;
 }
 @media (max-width: 719px) {
-  .guide-ccard-name { font-size: 14px; }
+  .guide-ccard-name { font-size: var(--text-body); }
 }
 @media (hover: hover) {
   .guide-stay-filter-clear:hover { color: var(--ink); border-color: var(--ink); }
@@ -2263,7 +2263,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
 }
@@ -2286,13 +2286,13 @@
   gap: 7px;
   margin-bottom: var(--space-3);
   padding: var(--space-2) var(--space-3);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--accent-bg);
   font-size: 12.5px;
   line-height: 1.5;
   color: var(--ink-soft);
 }
-.tlegs-shift-label { font-size: 12px; font-weight: 600; }
+.tlegs-shift-label { font-size: var(--text-caption); font-weight: 600; }
 .tlegs-shift-ctl { display: inline-flex; align-items: center; gap: 4px; }
 .tlegs-list { display: grid; gap: 10px; }
 .tleg.answered { border-color: var(--rule); }
@@ -2326,7 +2326,7 @@
   color: var(--ink-soft);
 }
 .tleg-airports-label { font-size: 11.5px; color: var(--ink-mute); }
-.tleg-route { display: inline-flex; align-items: baseline; gap: 7px; flex-wrap: wrap; font-size: 14px; }
+.tleg-route { display: inline-flex; align-items: baseline; gap: 7px; flex-wrap: wrap; font-size: var(--text-body); }
 .tleg-arrow { color: var(--ink-mute); }
 .tleg-date {
   display: inline-flex;
@@ -2338,7 +2338,7 @@
   font-variant-numeric: tabular-nums;
 }
 .tleg-field { display: block; }
-.tleg-field-label { display: block; font-size: 11px; color: var(--ink-mute); margin-bottom: 3px; }
+.tleg-field-label { display: block; font-size: var(--text-micro); color: var(--ink-mute); margin-bottom: 3px; }
 .tleg-text:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 @media (hover: hover) {
   .guide-when-reopen:hover { border-color: var(--accent); color: var(--accent); }
@@ -2382,7 +2382,7 @@
   min-width: 92px;
   text-align: center;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-variant-numeric: tabular-nums;
 }
 .tleg-measured {
@@ -2408,7 +2408,7 @@
 .wq-group-label {
   display: block;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   margin-bottom: var(--space-2);
 }
@@ -2419,7 +2419,7 @@
 .guide-ccard-fav {
   align-self: flex-start;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
 }
@@ -2459,7 +2459,7 @@
 .guide-ccard-name {
   align-items: center;
   color: var(--ink);
-  font-size: 16px;
+  font-size: var(--text-lead);
 }
 .guide-ccard-info {
   top: var(--space-2);
@@ -2475,7 +2475,7 @@
   .guide-ccard-info:hover { background: var(--paper-dim); color: var(--ink); }
 }
 @media (max-width: 768px) {
-  .guide-ccard-name { font-size: 14px; }
+  .guide-ccard-name { font-size: var(--text-body); }
 }
 .wpicked { border-color: var(--rule); }
 .trip-topcard-name:focus-visible {
@@ -2724,11 +2724,11 @@
   min-height: var(--tap);
   padding: 0 var(--space-3);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   color: var(--ink);
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
 }
 @media (pointer: fine) {
   .wq-summary-edit { min-height: 32px; }
@@ -2745,7 +2745,7 @@
   height: 20px;
   margin-left: auto;
   padding: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--ink-fill);
   color: var(--on-fill);
 }
@@ -2973,8 +2973,8 @@
 }
 .nights-ring-track { stroke: var(--rule); }
 .nights-ring-arc.over { stroke: var(--accent); }
-.trip-nights-text { font-size: 13px; color: var(--ink-soft); }
-.trip-nights-warn { color: var(--accent); font-size: 12px; }
+.trip-nights-text { font-size: var(--text-label); color: var(--ink-soft); }
+.trip-nights-warn { color: var(--accent); font-size: var(--text-caption); }
 .trip-stop-idx {
   display: flex; align-items: center; justify-content: center;
   width: 24px; height: 24px;
@@ -2982,7 +2982,7 @@
   background: var(--paper-dim);
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   flex-shrink: 0;
   cursor: grab;
@@ -2990,7 +2990,7 @@
 .trip-stop-idx:active { cursor: grabbing; }
 .trip-stop-city {
   font-family: var(--display);
-  font-size: 16px;
+  font-size: var(--text-lead);
   color: var(--ink);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
@@ -3108,9 +3108,9 @@
 .guide-tier-legend {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   margin: -8px 0 14px;
-  font-size: 11px;
+  font-size: var(--text-micro);
 }
-.guide-foot-summary { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.guide-foot-summary { font-family: var(--ui); font-size: var(--text-caption); color: var(--ink-soft); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .day-saved-overlay {
   position: fixed;
   inset: 0;
@@ -3130,7 +3130,7 @@
   border-radius: 50%;
   background: var(--paper-dim);
   color: var(--ink);
-  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  font-family: var(--mono); font-size: var(--text-caption); font-weight: 600;
 }
 .itin-day-row { display: flex; align-items: stretch; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
 .itin-stop-thumb {
@@ -3158,7 +3158,7 @@
   text-align: center;
 }
 .itin-stop-main { flex: 1; min-width: 0; }
-.itin-leg-text { flex: 1; min-width: 0; font-size: 12px; color: var(--ink); }
+.itin-leg-text { flex: 1; min-width: 0; font-size: var(--text-caption); color: var(--ink); }
 .day-thumb {
   /* Blockified for free when it is a flex item (every list row), but the AI
      proposal nests it inside a badge wrapper, and an inline span ignores both
@@ -3194,12 +3194,12 @@
   flex: none;
   display: inline-flex; align-items: center; gap: 3px;
   padding: 2px 7px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--accent-bg);
   color: var(--accent);
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 11px;
+  font-size: var(--text-micro);
   white-space: nowrap;
 }
 .extras-inbox-glyph { flex: none; color: var(--ink-mute); display: inline-flex; }
@@ -3229,7 +3229,7 @@
   flex: none;
   width: 82px;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
   padding-top: 3px;
@@ -3242,7 +3242,7 @@
   width: 84px;
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   padding-top: 2px;
 }
@@ -3257,8 +3257,8 @@
 @media (max-width: 700px) {
   .day-guide-moods { grid-template-columns: 1fr; }
 }
-.day-thumb { width: 46px; height: 46px; border-radius: 10px; }
-.guide-template-route { display: flex; flex-wrap: wrap; gap: 3px 6px; font-size: 12px; }
+.day-thumb { width: 46px; height: 46px; border-radius: var(--radius-control); }
+.guide-template-route { display: flex; flex-wrap: wrap; gap: 3px 6px; font-size: var(--text-caption); }
 .guide-side-idle { display: flex; flex-direction: column; height: 100%; }
 .guide-side-idle-head {
   display: flex;
@@ -3288,7 +3288,7 @@
   justify-content: center;
   width: 19px;
   height: 19px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--cat);
   color: var(--on-fill);
 }
@@ -3325,8 +3325,8 @@
   display: flex; align-items: center; gap: 10px;
   margin-bottom: 6px; padding-right: 26px;
 }
-.ai-plan-lead { font-size: 13px; color: var(--ink-soft); line-height: 1.5; margin: 4px 0 12px; }
-.ai-plan-hills { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink); cursor: pointer; }
+.ai-plan-lead { font-size: var(--text-label); color: var(--ink-soft); line-height: 1.5; margin: 4px 0 12px; }
+.ai-plan-hills { display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-label); color: var(--ink); cursor: pointer; }
 .ai-plan-free:focus { outline: none; border-color: var(--accent); }
 .ai-plan-generate { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
 .ai-plan-secondary { text-align: center; }
@@ -3339,7 +3339,7 @@
   display: inline-flex; align-items: center; gap: 3px;
   margin-left: 6px;
   padding: 1px 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--ai-violet-bg);
   color: var(--ai-violet);
   font-size: var(--text-micro); font-weight: 700;
@@ -3357,7 +3357,7 @@
 .ai-plan-proposal-tag {
   display: inline-block;
   padding: 3px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper-dim);
   color: var(--ink);
   font-size: 10.5px; font-weight: 600;
@@ -3409,7 +3409,7 @@ margin-bottom: 8px;
 }
 .ai-sched-time {
   flex: 0 0 74px;
-  font-family: var(--ui); font-size: 12px; font-weight: 700;
+  font-family: var(--ui); font-size: var(--text-caption); font-weight: 700;
 color: var(--ink-soft);
   padding-top: 1px;
 }
@@ -3421,7 +3421,7 @@ color: var(--ink-soft);
   min-width: 18px; height: 18px;
   display: flex; align-items: center; justify-content: center;
   padding: 0 4px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--ink-fill);
   color: var(--on-fill);
   font-family: var(--mono); font-size: 10px; font-weight: 700;
@@ -3431,7 +3431,7 @@ color: var(--ink-soft);
 .ai-sched-stop.ext .ai-sched-no { background: var(--ai-violet); }
 .ai-route-hint {
   margin-top: 8px;
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
 }
 @media (max-width: 640px) {
@@ -3542,7 +3542,7 @@ color: var(--ink-soft);
   gap: 7px;
   flex-wrap: wrap;
   margin-top: 14px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-mute);
 }
 .wready-empty-actions { display: flex; justify-content: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
@@ -3655,7 +3655,7 @@ color: var(--ink-soft);
   padding: var(--space-1) 0;
   background: var(--bg-card);
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   box-shadow: var(--shadow-2);
   animation: wiz-more-in var(--dur-2) var(--ease-out);
 }
@@ -3672,7 +3672,7 @@ color: var(--ink-soft);
   height: 20px;
   margin-left: auto;
   padding: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--ink-fill);
   color: var(--on-fill);
 }
@@ -3686,7 +3686,7 @@ color: var(--ink-soft);
   height: 20px;
   margin-left: auto;
   padding: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--ink-fill);
   color: var(--on-fill);
 }
@@ -3894,7 +3894,7 @@ color: var(--ink-soft);
   align-items: center;
   justify-content: center;
   width: 40px; height: 40px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper-dim);
   color: var(--ink-mute);
   overflow: hidden;
@@ -3930,7 +3930,7 @@ color: var(--ink-soft);
   gap: 6px;
   margin-top: var(--space-1);
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   white-space: nowrap;
 }
@@ -3942,7 +3942,7 @@ color: var(--ink-soft);
   width: var(--tap);
   height: var(--tap);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
   color: var(--ink-soft);
   cursor: pointer;
@@ -3970,7 +3970,7 @@ color: var(--ink-soft);
   min-height: 36px;
   padding: 0 var(--space-4);
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   color: var(--on-fill);
   font: inherit;
@@ -4265,9 +4265,9 @@ color: var(--ink-soft);
   padding: 6px 0;
   border-bottom: 1px dashed var(--rule);
 }
-.exp-row-amt { font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+.exp-row-amt { font-family: var(--mono); font-size: var(--text-caption); white-space: nowrap; }
 .exp-sharers-lbl { font-size: 10.5px; color: var(--ink-mute); }
-.exp-total { font-size: 12px; font-weight: 700; color: var(--ink); }
+.exp-total { font-size: var(--text-caption); font-weight: 700; color: var(--ink); }
 .exp-ledger { margin-top: 4px; }
 .exp-rate-note { margin-top: 6px; font-size: 10px; color: var(--ink-mute); }
 .carta-route.rec { border-color: var(--accent); }
@@ -4279,17 +4279,17 @@ color: var(--ink-soft);
 .trip-total-bar.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .dayp { padding-top: 12px; }
 .dayp-summary {
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.5;
   color: var(--ink-soft);
   padding: 10px 12px;
   background: var(--paper-dim);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   margin-bottom: 14px;
 }
 .daya-shot .day-thumb {
   width: 92px; height: 92px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   object-fit: cover;
 }
 .daya-shot .day-thumb-empty {
@@ -4326,7 +4326,7 @@ color: var(--ink-soft);
   padding: 0 var(--space-1) 0 var(--space-4);
   background: var(--ink-fill);
   color: var(--on-fill);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   box-shadow: var(--shadow-2);
   font: 600 13px/1.3 var(--ui);
   animation: day-undo-in var(--dur-2) var(--ease-out);

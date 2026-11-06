@@ -43,7 +43,7 @@
      as Explore's does instead of twice that. */
   padding: 12px 14px;
   border: 1px solid var(--rule-soft);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   background: var(--bg-card);
   box-shadow: var(--shadow-1);
 }
@@ -132,9 +132,9 @@
   flex: 0 0 auto;
   padding: 5px 12px 5px 5px;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--bg-card);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
   transition: color .15s, border-color .15s, background .15s;
@@ -152,7 +152,7 @@
 }
 .places-class-n {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 400;
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
@@ -207,7 +207,7 @@
   display: inline-flex;
   gap: 2px;
   padding: 3px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper-dim);
 }
 .places-sort {
@@ -216,7 +216,7 @@
   gap: 5px;
   padding: 7px 14px;
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: none;
   font-size: 12.5px;
   font-weight: 600;
@@ -232,7 +232,7 @@
   color: var(--select-ink);
 }
 .places-sort.on .places-sort-dir { color: var(--select-ink); }
-.places-sort-dir { font-family: var(--mono); font-size: 11px; color: var(--accent); }
+.places-sort-dir { font-family: var(--mono); font-size: var(--text-micro); color: var(--accent); }
 
 .places-controls {
   display: flex;
@@ -281,7 +281,7 @@
   height: 38px;
   padding: 0 14px;
   border: 1px solid var(--accent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--accent);
   font-size: 12.5px;
   font-weight: 600;
@@ -332,7 +332,7 @@
   height: 40px;
   padding: 0 42px 0 34px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   font-size: 13.5px;
   color: var(--ink);
@@ -367,7 +367,7 @@
   max-width: 190px;
   padding: 0 10px;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper-dim);
   font-size: 12.5px;
   font-weight: 600;
@@ -422,7 +422,7 @@
   height: 38px;
   max-width: none;
   padding: 0 12px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
 }
 @media (hover: hover) {
@@ -435,7 +435,7 @@
 
 /* The lifestyle door lives in .lifestyle-btn (one rule set for every tab);
    this only gives it the 38px shell the rest of this bar uses. */
-.places-controls .lifestyle-btn { height: 38px; border-radius: 10px; }
+.places-controls .lifestyle-btn { height: 38px; border-radius: var(--radius-control); }
 
 /* Near-search suggestions, anchored under the input. */
 .places-sugg {
@@ -663,7 +663,7 @@
   gap: 4px 10px;
   margin-top: 3px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink);
   font-variant-numeric: tabular-nums;
   overflow: hidden;
@@ -673,7 +673,7 @@
   display: inline-block;
   margin-top: 6px;
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.18);
   font-size: 10.5px;
   font-weight: 600;
@@ -683,7 +683,7 @@
 .places-card-kind.city { background: rgba(11, 116, 128, 0.55); }
 .places-card-price {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--on-fill);
   white-space: nowrap;
@@ -697,7 +697,7 @@
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 1px 7px;
   white-space: nowrap;
 }
@@ -711,7 +711,7 @@
 
 .places-empty {
   padding: 20px 2px;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.5;
   color: var(--ink-soft);
 }
@@ -724,9 +724,9 @@
   margin-top: 12px;
   padding: 9px 14px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--accent);
   cursor: pointer;
@@ -767,7 +767,7 @@
 .places-nearclear {
   flex-shrink: 0;
   margin-left: auto;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--accent);
   padding: 2px 4px;
@@ -776,7 +776,7 @@
   .places-nearclear:hover { text-decoration: underline; }
 }
 
-.places-credit { margin: 14px 0 0; font-size: 11px; color: var(--ink-mute); }
+.places-credit { margin: 14px 0 0; font-size: var(--text-micro); color: var(--ink-mute); }
 
 @media (max-width: 768px) {
   .places-wrap { padding: 8px 16px calc(32px + env(safe-area-inset-bottom, 0px)); }
@@ -869,7 +869,7 @@
   gap: 8px;
   padding: 9px 12px;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   font-size: 12.5px;
   color: var(--ink-soft);
@@ -891,7 +891,7 @@
 .bpage-where-coord {
   flex: none;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
@@ -906,17 +906,17 @@
   gap: 9px;
   font-family: var(--display);
   /* The page title of the type scale (T411; it was 27 px). */
-  font-size: 28px;
+  font-size: var(--text-headline);
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.15;
   color: var(--ink);
 }
-@media (min-width: 769px) { .bpage-name { font-size: 40px; } }
+@media (min-width: 769px) { .bpage-name { font-size: var(--text-display); } }
 .bpage-flag { flex: none; border-radius: 2px; }
 .bpage-local {
   margin-top: 3px;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-mute);
 }
 .bpage-scorerow {
@@ -925,7 +925,7 @@
   gap: 9px;
   margin-top: 10px;
 }
-.bpage-band { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+.bpage-band { font-size: var(--text-label); font-weight: 600; color: var(--ink-soft); }
 
 /* ── Photographs. One large, the rest as a strip under it. ── */
 .bpage-gallery { margin: 0 0 18px; }
@@ -970,7 +970,7 @@
   align-items: center;
   gap: 6px;
   margin-top: 7px;
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
 }
 .bpage-credit svg { flex: none; }
@@ -993,7 +993,7 @@
   border: 1px solid var(--rule-soft);
   border-radius: 7px;
   background: var(--bg-card);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
 }
@@ -1002,7 +1002,7 @@
 .bpage-wrap section h2 {
   margin-bottom: 8px;
   font-family: var(--display);
-  font-size: 16px;
+  font-size: var(--text-lead);
   font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--ink);
@@ -1019,7 +1019,7 @@
   line-height: 1.62;
   color: var(--ink-soft);
 }
-.bpage-for { margin-top: 10px; font-size: 13px; color: var(--ink-soft); }
+.bpage-for { margin-top: 10px; font-size: var(--text-label); color: var(--ink-soft); }
 .bpage-for b { color: var(--ink); }
 
 /* Who this is not for. Plain on purpose: dim paper, a hairline above and
@@ -1034,7 +1034,7 @@
 }
 .notfor-line {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.5;
   color: var(--ink-soft);
 }
@@ -1103,7 +1103,7 @@
   height: 28px;
   border-radius: 4px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1;
   color: var(--ink-soft);
 }
@@ -1121,7 +1121,7 @@
    line up. Cheap is the green tint (good news in data), dear is a rule under
    the cell; the glyph carries the meaning too, so colour is never alone. */
 .mstrip.has-price { display: block; }
-.mstrip-cap { display: block; margin: 0 0 4px; font-size: 12px; color: var(--ink-mute); }
+.mstrip-cap { display: block; margin: 0 0 4px; font-size: var(--text-caption); color: var(--ink-mute); }
 .mstrip-cap:not(:first-child) { margin-top: 10px; }
 .mstrip-cell.is-price-cheap {
   background: color-mix(in srgb, var(--green) 16%, var(--bg-card));
@@ -1135,7 +1135,7 @@
   box-sizing: border-box;
   border-bottom: 2px solid var(--ink-soft);
 }
-.mstrip-note { margin: 6px 0 0; font-size: 12px; line-height: 1.45; color: var(--ink-soft); max-width: 400px; }
+.mstrip-note { margin: 6px 0 0; font-size: var(--text-caption); line-height: 1.45; color: var(--ink-soft); max-width: 400px; }
 .mstrip-info {
   flex: none;
   display: inline-flex;
@@ -1145,7 +1145,7 @@
   height: 28px;
   padding: 0;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink-mute);
   cursor: pointer;
@@ -1164,7 +1164,7 @@
 .mstrip-panel p { margin: 0 0 6px; }
 .mstrip-panel p:last-child { margin-bottom: 0; }
 @media (max-width: 420px) {
-  .mstrip-cell { height: 26px; font-size: 11px; }
+  .mstrip-cell { height: 26px; font-size: var(--text-micro); }
 }
 
 /* ── Difficulty as five segments, and the gateway as airport rows. Carta-design
@@ -1179,7 +1179,7 @@
   background: var(--rule-soft);
 }
 .fmeter-seg.is-on { background: var(--select-bg); }
-.fmeter-text { font-size: 13px; color: var(--ink); }
+.fmeter-text { font-size: var(--text-label); color: var(--ink); }
 .fmeter-panel { flex-basis: 100%; }
 .fgate { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px 8px; }
 .fgate-rows { flex: 1; min-width: 0; margin: 0; padding: 0; list-style: none; }
@@ -1203,7 +1203,7 @@
       reader's ability to check it. ── */
 .bpage-note {
   margin-bottom: 12px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.55;
   color: var(--ink-mute);
 }
@@ -1247,9 +1247,9 @@
   margin-bottom: 24px;
   padding: 12px 14px;
   border: 1px solid var(--accent);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--accent);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--on-fill);
   text-align: left;
@@ -1272,7 +1272,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--accent);
   text-decoration: none;
 }
@@ -1281,7 +1281,7 @@
 }
 .bpage-attrib {
   margin-top: 10px;
-  font-size: 11px;
+  font-size: var(--text-micro);
   line-height: 1.6;
   color: var(--ink-mute);
 }
@@ -1362,7 +1362,7 @@
 .places-listedrow-ele {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .places-listedrow-chip {
@@ -1398,7 +1398,7 @@
 }
 .mpage-way-ways span {
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--line);
   font-size: 11.5px;
   color: var(--ink-soft);
@@ -1419,7 +1419,7 @@
   gap: 4px 10px;
   margin: 0 0 16px;
   padding: 11px 13px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   border: 1px solid color-mix(in srgb, var(--sw-ink) 42%, transparent);
   background: color-mix(in srgb, var(--sw-ink) 9%, transparent);
 }
@@ -1451,7 +1451,7 @@
 
 .lpage-gem {
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--rate-bg);
   font-size: 11.5px;
   font-weight: 600;
@@ -1471,7 +1471,7 @@
   padding: 0;
   list-style: none;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   overflow: hidden;
   background: var(--rule-soft);
 }
@@ -1490,7 +1490,7 @@
    was not given. */
 .lpage-hazards {
   padding: 14px 15px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   border: 1px solid color-mix(in srgb, var(--amber) 38%, transparent);
   background: color-mix(in srgb, var(--amber) 8%, transparent);
 }
@@ -1505,7 +1505,7 @@
 .lpage-hazards ul { margin: 0; padding: 0; list-style: none; }
 .lpage-hazards li {
   padding: 6px 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.6;
   color: var(--ink-soft);
 }
@@ -1596,7 +1596,7 @@
   gap: 4px 10px;
   margin: 0 0 16px;
   padding: 11px 13px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   border: 1px solid color-mix(in srgb, var(--way-ink) 42%, transparent);
   background: color-mix(in srgb, var(--way-ink) 9%, transparent);
 }
@@ -1616,7 +1616,7 @@
 .mpage-height {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 
@@ -1636,7 +1636,7 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-mute);
 }
 .places-mcard-ele {
@@ -1781,7 +1781,7 @@
   width: 34px;
   height: 34px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   color: var(--ink);
 }
@@ -1797,7 +1797,7 @@
   height: 34px;
   padding: 0 14px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-size: 12.5px;
   font-weight: 600;
@@ -1822,7 +1822,7 @@
 }
 .tpage-hud-err, .tpage-hud-wait {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.5;
   color: var(--ink-soft);
 }
@@ -1989,7 +1989,7 @@
   gap: 12px;
   margin-top: 1px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
@@ -2002,7 +2002,7 @@
   height: 42px;
   padding: 0 14px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   font-size: 13.5px;
   font-weight: 600;
@@ -2036,7 +2036,7 @@
   border-radius: 12px;
   background: var(--accent);
   color: var(--on-fill);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   text-align: left;
 }
@@ -2085,9 +2085,9 @@
   align-items: center;
   gap: 4px;
   padding: 1px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--accent-bg);
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 600;
   color: var(--accent);
 }
@@ -2131,7 +2131,7 @@
   left: 8px;
   bottom: 8px;
   padding: 2px 7px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: rgba(15, 18, 26, 0.66);
   font-family: var(--mono);
   font-size: 10.5px;
@@ -2166,7 +2166,7 @@
   gap: 4px 12px;
   margin-top: 1px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
@@ -2229,7 +2229,7 @@
    right-hand rhythm whether or not a row is scored. */
 .places-card-unrated {
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid rgba(255, 255, 255, 0.35);
   font-size: 10px;
   font-weight: 600;
@@ -2260,8 +2260,8 @@
 }
 .tpage-chip {
   padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
   font-weight: 600;
 }
 .tpage-chip-suit {
@@ -2277,12 +2277,12 @@
   margin-top: 12px;
   padding: 10px 12px;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper-dim);
 }
 .tpage-provenance p {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.5;
   color: var(--ink-soft);
 }
@@ -2294,7 +2294,7 @@
 .tpage-family .tpage-sec-title { margin-bottom: 2px; }
 .tpage-family-n {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 
@@ -2359,7 +2359,7 @@
   flex: 1;
   min-width: 0;
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink);
 }
 .panel-acc-meta {
@@ -2504,14 +2504,14 @@
   background: var(--bg-card);
 }
 .modnote-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--ink-soft); }
-.modnote-title { margin: 0; font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--ink); }
-.modnote-date { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
-.modnote-line { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+.modnote-title { margin: 0; font-family: var(--ui); font-size: var(--text-body); font-weight: 600; color: var(--ink); }
+.modnote-date { font-family: var(--mono); font-size: var(--text-caption); color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.modnote-line { margin: 0; font-size: var(--text-label); line-height: 1.5; color: var(--ink-soft); }
 /* .modnote-toggle is the kit small secondary (T474): 32 px on a fine pointer, --tap on touch. */
 .modnote-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
 .modnote-facts { margin: 0; width: 100%; }
 .modnote-facts > div { padding: 9px 0; border-top: 1px solid var(--rule-soft); }
-.modnote-facts dt { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+.modnote-facts dt { font-size: var(--text-caption); font-weight: 600; color: var(--ink-soft); }
 .modnote-facts dd { margin: 2px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
 .modnote-quote { white-space: pre-line; }
 .modnote-form { display: flex; flex-direction: column; gap: 12px; width: 100%; }
@@ -2551,7 +2551,7 @@
 .tshare-row-meta b { font-size: 12.5px; color: var(--ink); }
 .tshare-row-date {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
 }
 
@@ -2582,7 +2582,7 @@
   color: var(--ink);
 }
 .stview-kicker {
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 600;
   color: var(--ink-mute);
 }
@@ -2605,7 +2605,7 @@
 }
 .stview-sub {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.5;
   color: var(--ink-soft);
 }
@@ -2633,7 +2633,7 @@
   border-bottom: 1px solid var(--rule-soft);
 }
 .stview-stop-mark { display: inline-flex; color: var(--ink-mute); }
-.stview-stop-city { flex: 1; font-size: 14px; color: var(--ink); }
+.stview-stop-city { flex: 1; font-size: var(--text-body); color: var(--ink); }
 .stview-stop-dates {
   font-family: var(--mono);
   font-size: 11.5px;
@@ -2649,7 +2649,7 @@
   padding-top: 18px;
   border-top: 1px solid var(--rule-soft);
 }
-.stview-from { font-size: 12px; color: var(--ink-mute); }
+.stview-from { font-size: var(--text-caption); color: var(--ink-mute); }
 /* The memory view is built to sit under a card; standing alone it needs its
    own top edge back. */
 .stview .memo {
@@ -2668,7 +2668,7 @@
   display: flex;
   align-items: center;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper);
   overflow: hidden;
   transition: border-color .15s, background .15s;
@@ -2680,7 +2680,7 @@
 .acct-handle-at {
   padding: 0 2px 0 11px;
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink-mute);
 }
 .acct-handle-row input {
@@ -2690,7 +2690,7 @@
   border: 0;
   background: transparent;
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
 }
 .acct-handle-row input:focus { outline: none; }
@@ -2709,7 +2709,7 @@
 }
 .ftrip-note {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-mute);
 }
 .ftrip .stview-stops { margin-top: 0; }
@@ -2734,10 +2734,10 @@
   min-height: 30px;
   padding: 5px 11px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   cursor: pointer;
 }

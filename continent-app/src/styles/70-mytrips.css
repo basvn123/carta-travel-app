@@ -801,7 +801,7 @@
   gap: 6px;
   padding: 6px var(--space-3);
   background: var(--surface);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   box-shadow: var(--shadow-1);
   font-size: var(--text-label);
   color: var(--text);
@@ -814,7 +814,7 @@
   margin-left: var(--space-1);
   padding: 0 var(--space-3);
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--select-bg);
   font: inherit;
   font-weight: 600;
