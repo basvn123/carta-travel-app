@@ -66,7 +66,7 @@ export function trackChannelVisit(search = typeof window !== 'undefined' ? windo
     // Loaded on demand so the pure helpers above import cleanly under node.
     import('./supabaseClient.js')
       .then(({ authConfigured, getSupabase }) => (authConfigured ? getSupabase() : null))
-      .then((supabase) => supabase && sendChannelVisit((fn, args) => supabase.rpc(fn, args), search))
+      .then((supabase) => supabase && sendChannelVisit((_fn, args) => supabase.rpc('channel_visit', args), search))
       .then(() => {}, () => {});
   } catch { /* the page carries on */ }
 }

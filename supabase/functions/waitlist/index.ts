@@ -78,7 +78,9 @@ Deno.serve(withCors(async (req) => {
     // the accepted trade for a one-tap flow, and a click is idempotent.
     const { data: row } = await db.from('waitlist_signups').select('locale').eq('email', e).maybeSingle();
     const lang = langOf(row?.locale);
-    const { data, error } = await db.rpc(a === 'confirm' ? 'waitlist_confirm' : 'waitlist_unsubscribe', { p_email: e });
+    const { data, error } = a === 'confirm'
+      ? await db.rpc('waitlist_confirm', { p_email: e })
+      : await db.rpc('waitlist_unsubscribe', { p_email: e });
     if (error) return html(500, resultPage(lang, 'bad', appUrl));
     if (!data) return html(400, resultPage(lang, 'bad', appUrl));
     return html(200, resultPage(lang, a === 'confirm' ? 'confirm' : 'unsub', appUrl));
