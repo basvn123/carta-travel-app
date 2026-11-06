@@ -149,15 +149,6 @@ a.cov-near-row { text-decoration: none; }
 
 /* Explore's empty grid: the sentence is the content, so it leaves the count
    badge's pill and sits in ink beside its one button. */
-.explore-count .explore-count-badge.is-empty {
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  font-size: var(--text-body);
-  font-weight: 400;
-  color: var(--ink);
-}
-.explore-count .explore-empty-clear { margin-top: 0; }
 
 /* The filter sheet's zero line, above the sticky bar. */
 .fsheet-none {
@@ -179,11 +170,6 @@ a.cov-near-row { text-decoration: none; }
   font-size: var(--text-body);
   font-weight: 600;
   color: var(--ink);
-}
-.stub-list .stub-list-note {
-  margin-top: var(--space-1);
-  font-size: var(--text-label);
-  color: var(--ink-soft);
 }
 .stub-list ul {
   margin: var(--space-3) 0 0;

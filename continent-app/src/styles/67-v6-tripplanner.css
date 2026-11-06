@@ -68,20 +68,6 @@
 .wiz-party-stepper { flex: none; }
 /* "Add children" is a secondary button in words (--ui), not a mono accent
    link: mono is for measured facts, the accent for the step's one primary. */
-.wiz-party .guide-kids-add {
-  align-self: flex-start;
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  color: var(--ink);
-  font-family: var(--ui);
-  font-size: var(--text-body);
-}
-@media (pointer: fine) {
-  .wiz-party .guide-kids-add { min-height: 32px; }
-}
 
 /* The answered quiz as one line (brief item 8). */
 .wq-summary-text small { font-size: var(--text-caption); color: var(--ink-soft); }
@@ -108,14 +94,6 @@
 .trip-fold-h { margin: 0; font: inherit; }
 .trip-fold-h .day-collapse-head { width: 100%; }
 .day-collapse-caret.open svg { transform: rotate(180deg); }
-.cheap-tip-sub { margin-top: var(--space-4); }
-.cheap-tip-sub-title {
-  margin: 0 0 var(--space-2);
-  font-family: var(--ui);
-  font-size: var(--text-body);
-  font-weight: 600;
-  color: var(--ink);
-}
 
 /* The wizard on a phone (rule "More" menu: a multi-step flow's fixed chrome
    takes at most a quarter of the screen and the footer is one row). Start
@@ -145,7 +123,6 @@
   .trip-wizard-modal .wiz-recap-inbody .guide-recap-inner::-webkit-scrollbar { display: none; }
 }
 /* The review's Change links start on the label's edge (T502). */
-.wrev-change.btn { margin-inline-start: calc(-1 * var(--space-3)); }
 /* Every day of the wizard's calendar is a full tap on touch (T502: 26 px). */
 @media (pointer: coarse) {
   .trip-wizard-modal .cal-inline .cal-day { min-height: var(--tap); }
@@ -162,21 +139,8 @@
    route. These selectors live in 24-destination-workspace.css, which this
    surface does not own, so they are overridden here (OWNERSHIP rule 5, row
    T388-c). */
-@media (hover: hover) {
-  .guide-booked-bit:hover { border-color: var(--rule); }
-}
-.guide-booked-bit.on {
-  border-color: var(--select-border);
-  outline: 1px solid var(--select-border);
-  outline-offset: -2px;
-  background: var(--bg-card);
-}
-.guide-booked-bit.on .guide-booked-icon { color: var(--ink); }
 /* The picked country on Trips is a filter chip (rule "Filter chips"): paper
    dim, ink text, a rule border; no accent fill on hover. */
-@media (hover: hover) {
-  .guide-booked-bit:hover:not(.on) { border-color: var(--ink-soft); }
-}
 /* The desktop step rail: done and current steps in ink (progress is data,
    not an action; T388 did the phone bar). Scoped to the trip wizard because
    the day planner's flow shares the classes. */
@@ -189,13 +153,6 @@
 
 /* The country grid card: the photograph keeps its ratio inside the pick
    button and the caption band follows it in the flow. */
-.guide-ccard-pick .guide-ccard-img {
-  position: relative;
-  inset: auto;
-  height: auto;
-  flex: none;
-  aspect-ratio: 4 / 3;
-}
 .wiz-ccard-cost { border-top: none; padding-top: 0; }
 /* The second action stays a round icon button on the photograph's corner
    (an icon, not text), in card ink instead of a translucent disc. */
@@ -217,40 +174,12 @@
 /* Press and selection answer at once (DIRECTION 2.3, "Press and
    selection"): a choice card or chip scales to 0.97 on press and its fill
    changes in --dur-1. */
-.guide-booked-bit {
-  transition-property: border-color, background-color, color, transform;
-  transition-duration: var(--dur-1);
-  transition-timing-function: var(--ease-out);
-}
-.guide-booked-bit:active { transform: scale(0.97); }
-
-@media (prefers-reduced-motion: reduce) {
-  .guide-booked-bit { transition: none; }
-  .guide-booked-bit:active { transform: none; }
-}
 
 /* The planned receipt as carta-design's receipt (brief V4-3, row T388-j):
    one bordered object with a --paper-dim head carrying the total, the cost
    bar over hairline lines with the figure right aligned in --mono 15 px, a
    2 px ink rule over the sum, and an --accent-bg footer with what one
    changed input would do. Every figure to the cent. */
-.itin-total-lbl { display: inline-flex; align-items: baseline; gap: var(--space-2); }
-.itin-total-figs {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 1px;
-  margin-left: auto;
-  text-align: right;
-}
-.itin-total-figs strong {
-  font-family: var(--mono);
-  font-size: 17px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.itin-total-figs small { font-variant-numeric: tabular-nums; }
 
 /* The day switcher (brief V4-7 as amended, rule "Day list"): one control,
    "Day 3 of 8" and the date in --mono, flanked by Previous and Next at --tap;
@@ -265,27 +194,9 @@
 /* Getting there: the picked trip's card and the section glyphs in ink, not
    accent (rule "Accent marks"; the rules live in 24, row T388-c). */
 /* What a leg's figure buys, in words under its mono facts (brief V4-6). */
-.itin-leg-text small.itin-leg-incl {
-  font-family: var(--ui);
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-}
 
 /* The running estimate to the cent on a phone: the figure a person wraps
    under the party's figure instead of pushing Details off the band. */
-@media (max-width: 768px) {
-  .guide-estimate-main { gap: var(--space-2); }
-  .guide-estimate-figure {
-    flex: 1 1 0;
-    min-width: 0;
-    flex-wrap: wrap;
-    column-gap: var(--space-2);
-    row-gap: 0;
-  }
-  .guide-estimate-figure b { font-size: 19px; }
-  .guide-estimate-figure .wiz-est-pp { flex-basis: 100%; }
-  .guide-estimate-toggle { flex: none; }
-}
 
 /* ------------------------------------------------------------------ V5 --
    Harden and polish (T408). */
@@ -295,10 +206,7 @@
 
 /* Steppers, crosses and move buttons reach --tap on a coarse pointer. */
 @media (pointer: coarse) {
-  .guide-people button,
-  .guide-kids-add,
-  .trip-more-btn,
-  .tleg-addpaid {
+  .trip-more-btn {
     min-width: var(--tap);
     min-height: var(--tap);
   }
@@ -309,17 +217,13 @@
   overflow-wrap: anywhere;
   hyphens: auto;
 }
-@media (max-width: 400px) {
+@media (max-width: 420px) {
   .guide-recap { flex-wrap: wrap; max-width: 100%; }
 }
 
 /* A selected card's 1 px inside outline (the ink selected state) overrode the
    focus ring, so a keyboard user on the chosen card saw no focus (the
    verify_keyboard "Nothing yet" finding, T402). The ring wins when focused. */
-.guide-booked-bit.on:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
 
 /* ════════════════════════════════════════════════════════════════════════
    T432, the trip planner redesign (2026-10-16). Loads last of the planner
@@ -344,7 +248,6 @@
 }
 
 /* ── Booked: three large tiles across the column ──────────────────────── */
-.wbook-sub { color: var(--text-2); }
 .ui-tile.wbook-tile {
   min-height: 200px;
   gap: var(--space-4);
@@ -401,51 +304,15 @@
 .plan-total-toggle.btn .btn-label { color: var(--text); }
 .plan-total-btn.btn { height: auto; min-height: var(--tap); padding: 0 var(--space-1); }
 .plan-total-btn.btn .btn-label { display: flex; flex-direction: column; align-items: flex-start; }
-.tlegs-shift-btn.btn { min-width: var(--tap); padding-inline: var(--space-3); }
 
 /* ── Getting there: every row carries its money ─────────────────────────── */
-.tlegs-sec-h svg { color: var(--text-2); }
-.tlegs-shift-btn {
-  min-width: var(--tap);
-  min-height: var(--tap);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  font: inherit;
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
-}
 
 /* The read-only legs on the review. */
 
 /* ── Review: the trip as one card ───────────────────────────────────────── */
-.wrev-hero-img,
-.wrev-hero .hero-blank {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  max-height: 60vh;
-  object-fit: cover;
-  object-position: center 40%;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
-.wrev-cap { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
-.wrev-cap b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.wrev-cap small { font-size: var(--text-caption); color: var(--text-3); }
-.wrev-stop-main b { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
-.wrev-stop-main small { font-size: var(--text-caption); color: var(--text-2); }
 
 /* The booked-beds rows: the nights steppers at a finger's size. */
-@media (pointer: coarse) {
-  .booked-stop .guide-nights button { min-width: var(--tap); min-height: var(--tap); }
-}
 /* The booked-beds rows take the same price field. */
-@media (max-width: 640px) {
-  .booked-stop { flex-wrap: wrap; }
-}
 
 /* ── The planned trip ───────────────────────────────────────────────────── */
 /* Desktop: a wider column for the data, the map beside it. */
@@ -496,7 +363,6 @@
    sheet, after the day row above (T567): css-routes cannot prove the two
    never meet on one element, and in a route sheet this rule's place
    against it would depend on load order. */
-.itin-bed-cost .costrow { padding: 0; }
 .itin-days-list .itin-day-row-meta small { font-size: var(--text-caption); color: var(--text-2); }
 .itin-days-list .itin-day-plan-btn { flex: none; }
 .itin-export-grid > .btn { justify-content: flex-start; min-width: 0; }
@@ -513,7 +379,6 @@
 .trip-pin-tag small { font-size: var(--text-caption); }
 .plan-total .money-est,
 .plan-total-btn .money-est,
-.wrev .money-est,
 .itin .money-est { font-size: var(--text-caption); }
 
 /* The phone footer's figure is never clipped. */
@@ -533,12 +398,9 @@
 /* The phone's price sheet: the card on the sheet's own ground. */
 
 /* Price fields: Carta's figure as help, a folded offer, the review row. */
-@media (max-width: 640px) {
-  .wrev-stop .plan-paid-add { grid-column: 1 / -1; justify-self: start; }
-}
 
 /* Before you go: each card its own height; nothing scrolls inside a card. */
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .itin-end > .plan-paid-add { grid-column: 2; justify-self: start; }
 }
 
@@ -546,7 +408,6 @@
 /* One column for every step: the rail and the content stop jumping. */
 /* The leg line on the overview at the figure floor. */
 .itin-hop .itin-leg-text small { font-size: var(--text-caption); }
-.trip-wizard-modal .guide-airport-chip small { font-size: var(--text-caption); }
 /* Export labels wrap rather than cut. */
 .itin-export-grid > .btn { height: auto; min-height: var(--tap); white-space: normal; text-align: left; }
 .itin-export-grid > .btn .btn-label { overflow: visible; text-overflow: clip; white-space: normal; }
@@ -571,9 +432,6 @@
 
 /* Review on a wide screen: the photo beside the trip's facts, never a whole
    first screen of picture (critique P3), still framed whole at 16:9. */
-@media (min-width: 1100px) {
-  .wrev-main > .guide-car-advice { grid-column: 1 / -1; }
-}
 
 /* ════════════════════════════════════════════════════════════════════════
    T458, the planner after the owner's walk (2026-10-16): the price card in
@@ -600,7 +458,6 @@
 /* Tickets for a leg, in view. */
 
 /* Review: the gallery, each stay's actions, the transfers in the journey. */
-.wrev-hero .wrev-gallery { border-radius: var(--radius-card); overflow: hidden; }
 
 /* The trip kit: four tiles, one tap each. */
 .itin-tool.btn {

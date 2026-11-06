@@ -26,7 +26,7 @@
   overflow: hidden;
   background: var(--paper-dim);
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .dsk-hero-media { height: 56dvh; }
 }
 .dsk-hero-media picture { display: block; height: 100%; }
@@ -46,7 +46,6 @@
   background: var(--paper);
   border-bottom: 1px solid var(--rule);
 }
-.dsk-hero.no-media .dsk-strip-band { border-top: 1px solid var(--rule); }
 .dsk-strip-band .jstrip {
   max-width: var(--w-detail);  /* T1041 */
   margin: 0 auto;
@@ -61,7 +60,6 @@
   margin: 0 auto;
   padding: var(--space-1) var(--space-4) 0;
 }
-.dsk-hero-credit .bpage-credit,
 .dsk-hero-credit .tpage-credit { margin: 0; }
 
 /* ── The two columns ── */
@@ -73,8 +71,6 @@
 .dsk-grid > * { min-width: 0; }
 
 /* ── 1 cont.: title, ref chip, breadcrumb ── */
-.dsk-head .bpage-name,
-.dsk-head .tpage-title { margin-top: 0; }
 .dsk-crumb {
   margin: var(--space-1) 0 0;
   font-size: var(--text-label);
@@ -153,7 +149,6 @@
   align-items: center;
   gap: var(--space-2);
 }
-.dsk-acts .tpage-primary { margin-top: 0; }
 .dsk-exits { margin: var(--space-5) 0; }
 .dsk-sources { margin: var(--space-5) 0 0; }
 .dsk-sources .credit-fold { font-size: 12.5px; }
@@ -163,12 +158,11 @@
   color: var(--ink-soft);
 }
 .dsk-sources .credit-fold > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.dsk-sources .bpage-sources { margin: 0 0 var(--space-3); }
 .dsk-sources .places-credit,
 .dsk-sources .tpage-credit { margin: var(--space-2) 0 0; }
 
 /* ── Desktop: 60/40, the map sticky in the right column ── */
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .dsk-grid {
     display: grid;
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);

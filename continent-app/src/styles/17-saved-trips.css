@@ -6,58 +6,10 @@
 .country-flag { border-radius: 3px; box-shadow: 0 0 0 1px rgba(31, 42, 51, 0.12); display: block; }
 .country-flag-stack { display: flex; align-items: center; justify-content: center; }
 /* Two or three countries: overlap the flags like a fanned hand */
-.country-flag-stack.n2 .country-flag + .country-flag,
-.country-flag-stack.n3 .country-flag + .country-flag { margin-left: -8px; }
-.country-flag-stack.n2 .country-flag,
-.country-flag-stack.n3 .country-flag { box-shadow: 0 0 0 2px var(--bg-card); }
 
 /* Share / download actions under the trip overview: one toggle, collapsed by
    default, opening into a clean vertical list instead of up to six equal-width
    buttons squeezed into a row (each wrapping its label across 2-3 lines). */
-.itin-export-toggle {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 10px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--ink);
-  cursor: pointer;
-}
-.itin-export-toggle > span:first-child { display: inline-flex; align-items: center; gap: 8px; }
-.itin-export-toggle svg:first-child { color: var(--accent); }
-.itin-export-menu {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--rule);
-  border-top: none;
-  border-radius: 0 0 12px 12px;
-  overflow: hidden;
-}
-.itin-export-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 14px;
-  font-size: var(--text-label);
-  font-weight: 500;
-  color: var(--ink-soft);
-  background: var(--paper);
-  text-decoration: none; /* the Google Maps action is an <a>, keep it button-like */
-  border-top: 1px dashed var(--rule);
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.itin-export-item:first-child { border-top: none; }
-.itin-export-item svg { color: var(--accent); flex: none; }
-@media (hover: hover) {
-  .itin-export-item:hover { background: var(--paper-dim); color: var(--ink); }
-}
 
 /* Bookings / notes / packing list on the planned itinerary. One rhythm:
    28px between sections, carried by the section wrapper rather than by each
@@ -155,19 +107,6 @@
 .extras-check-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
 
 /* ── Group expense ledger ── */
-.exp-person { flex: 1 1 110px; min-width: 0; }
-.exp-row-main b { font-size: 12.5px; }
-.exp-row-main small { font-size: 10.5px; color: var(--ink-mute); }
-.exp-desc { flex: 2 1 150px; min-width: 0; }
-.exp-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
-.exp-balances {
-  margin-top: 10px;
-  padding: 10px 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
-}
-.exp-settle { margin-top: 4px; font-size: var(--text-caption); color: var(--ink-soft); }
 
 /* Even vertical rhythm. The band between the "Saved trips" rule and the first
    shelf ran wider than the gaps between the shelves themselves, so the panel
@@ -270,8 +209,7 @@
   font-variant-numeric: tabular-nums;
   color: var(--ink-mute);
 }
-.pasttrip-place-x,
-.pasttrip-chip-x {
+.pasttrip-place-x {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -823,8 +761,6 @@
 .pasttrip-cancel { transition: none; }
 }
 
-.uptrip-when { font-size: var(--text-label); font-weight: 600; color: inherit; }
-
 .savedmap-full {
   position: fixed;
   inset: 0;
@@ -870,8 +806,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .itin-export-item,
-.extras-dropzone { transition: none; }
+  .extras-dropzone { transition: none; }
 }
 
 /* Day planner: save state, top-right of the plan header card. */
@@ -949,11 +884,6 @@
    taller = pricier, green = cheapest month, ink dot = the user's month.
    Same visual language as the weekday and climate strips below. */
 
-.mo-col.is-cheap .mo-val { color: var(--leaf-ink); }
-.mo-col.is-cheap .mo-bar { background: var(--leaf-ink); }
-.mo-col.is-cheap .mo-name,
-.mo-col.is-you .mo-name { color: var(--ink); font-weight: 700; }
-
 .bt-legend {
   display: flex;
   gap: 14px;
@@ -970,11 +900,6 @@
   color: var(--ink-soft);
 }
 .bt-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
-.bt-dot-accent { background: var(--accent); }
-.dow-bar.min { background: var(--leaf-ink); }
-.dow-bar.max { background: var(--accent); }
-.dow-val.min { color: var(--leaf-ink); }
-.nearby-sub .gem { color: var(--accent); }
 
 /* Climate strip (BestTimePanel ClimateStrip) - 12-month comfort normals */
 .climate-best {

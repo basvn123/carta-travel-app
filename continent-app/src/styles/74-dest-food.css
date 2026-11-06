@@ -153,5 +153,5 @@
    cramped across; stacked under the dishes on a phone the verdict keeps a
    section's distance from the chips. */
 .pt-eat .pfeel-prices { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
-@media (max-width: 699px) { .pt-eat .pfeel { margin-top: var(--space-4); } }
+@media (max-width: 700px) { .pt-eat .pfeel { margin-top: var(--space-4); } }
 .pfeel-prices[hidden] { display: none; }

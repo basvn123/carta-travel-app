@@ -69,7 +69,7 @@
 }
 .ccard-n { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--ccard-ink); font-variant-numeric: tabular-nums; }
 .ccard-unit { font-size: var(--text-caption); font-weight: 500; color: var(--ccard-ink-2); }
-@media (max-width: 359px) { .ccard-n { font-size: var(--text-headline); } }
+@media (max-width: 360px) { .ccard-n { font-size: var(--text-headline); } }
 
 /* The budget, under the arc: one line and Edit budget, centred. */
 .ccard-budget { display: grid; justify-items: center; }

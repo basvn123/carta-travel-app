@@ -8,20 +8,6 @@
 
 /* T896: Plan your days. How first: three ways as cards (a row of three from
    769 px), then, for Carta plans, one screen of chips and two switches. */
-.pdh-ways { display: grid; gap: var(--space-2); }
-.pdh-way-ic { display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--radius-control); background: var(--surface-sunken); color: var(--text); }
-.pdh-way.is-on .pdh-way-ic { background: var(--surface); color: var(--select-ink); }
-.pdh-way-name { padding-right: var(--space-5); font-size: var(--text-body); font-weight: 700; line-height: var(--leading-tight); }
-@media (min-width: 769px) {
-  .pdh-ways { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .pdh-way-tick { position: absolute; top: var(--space-3); right: var(--space-3); }
-}
-.pdh-prefs { display: grid; gap: var(--space-5); }
-.pdh-q { margin: 0; font-size: var(--text-label); font-weight: 700; color: var(--text); }
-@media (min-width: 769px) {
-  .pdh-prefs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-6); }
-}
-.pdh-foot { display: flex; justify-content: flex-end; gap: var(--space-2); }
 
 /* T899: the Carta bot, a chat beside the day. A column left of the day from
    1280 px; over the map from 1024 px; a full-screen sheet on a phone (Ask

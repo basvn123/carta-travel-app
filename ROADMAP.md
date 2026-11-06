@@ -831,7 +831,7 @@ docs/
 | G4 | Core flow fixes from research | The top problems from G-R3 fixed in Explore, place page, plan flow and trip page | M | P2 | in progress (T1123: four plan flow and trip page fixes from the audit and the T1103 note; G-R3 interviews not run yet, row T1123-b) |
 | G5 | Motion system | Shared springs for sheets, tabs, figures, card-to-place photo move; reduced motion shows the end state | M | P2 | todo |
 | G6 | Type and radius debt | Literal font sizes and radii on the scale, legacy aliases removed | M | P2 | partial (T1125: exact matches done) |
-| G7 | Breakpoints and CSS consolidation | 4 width tokens, v6 override layer folded in, big files split, dead-selector check, `!important` halved | M | P2 | todo |
+| G7 | Breakpoints and CSS consolidation | 4 width tokens, v6 override layer folded in, big files split, dead-selector check, `!important` halved | M | P2 | partial (T1126: widths 43 to 19, 2,983 dead rules removed, css-routes proof green) |
 | G8 | Imagery gaps | Photo share on walks above 60%, styled map thumbnails instead of grey tiles | M | P2 | partly done (T1127: licensed feature photos for walks, placeholder count per screen measured; harvest and map thumbnails open) |
 | G9 | Trust made visible | "Why this place" chips (F1), "checked on" dates (D3), confidence in words | M | P4 | todo |
 | G10 | Accessibility audit | WCAG 2.2 AA audit with screen readers, every failure fixed | M | P2 (surface), P4 | todo |

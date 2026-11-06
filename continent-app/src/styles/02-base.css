@@ -73,18 +73,8 @@ input, select {
 }
 /* Slider thumbs grow under the finger. The dual range input ignores pointer
    events except on its thumbs, so :active still fires from a thumb press. */
-.dual-range-input:active::-webkit-slider-thumb,
-.single-range:active::-webkit-slider-thumb { scale: 1.3; background: var(--action-tint); }
-.dual-range-input:active::-moz-range-thumb,
-.single-range:active::-moz-range-thumb { scale: 1.3; background: var(--action-tint); }
 .trip-slider-input:active { opacity: 0.8; }
 .trip-slider:has(.trip-slider-input:active) .trip-slider-label b { color: var(--action); }
-@media (prefers-reduced-motion: reduce) {
-  .dual-range-input:active::-webkit-slider-thumb,
-  .single-range:active::-webkit-slider-thumb,
-  .dual-range-input:active::-moz-range-thumb,
-  .single-range:active::-moz-range-thumb { scale: none; }
-}
 
 /* The focus floor (T190). Every control that takes keyboard focus shows the
    house ring, even where no component rule names it: the browser's own ring

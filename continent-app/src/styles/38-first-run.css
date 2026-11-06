@@ -14,63 +14,18 @@
    both surfaces.
    ========================================================================== */
 
-.frr {
-  max-width: 520px;
-  margin: 0 0 var(--space-5);
-  font-family: var(--ui);
-  color: var(--ink);
-}
-
-.frr .mono,
 .frr-card .mono {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
 }
 
 /* The only part of the screen that exists because the viewer is new. Prose. */
-.frr-orient {
-  margin: 0 0 var(--space-3);
-  font-size: var(--text-body);
-  line-height: 1.45;
-  color: var(--ink);
-}
 
 /* ── The input strip: one bordered row, hairlines between the fields ── */
-.frr-strip {
-  display: grid;
-  grid-template-columns: 0.9fr 1.2fr 1fr 1fr;
-  margin: 0 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-}
-.frr-cell {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 2px;
-  min-width: 0;
-  border-left: 1px solid var(--rule-soft);
-}
-.frr-cell:first-child { border-left: 0; }
 /* A label is not a measured fact, so it is --ui, as on the landing strip
    (T382; the mono rule). */
-.frr-cell-label {
-  font-family: var(--ui);
-  font-size: var(--text-caption);
-  line-height: 1.3;
-  color: var(--ink-soft);
-}
-.frr-cell select { font-family: var(--ui); }
-.frr-cell input { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 /* The cell's box, its select or date input (which fill it, so the whole cell
    is the touch target) and its ring are in 61-v6-landing.css (T402). */
-.frr-cell:focus-within {
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
-}
-.frr-cell select:focus-visible,
-.frr-cell input:focus-visible { outline: none; border-color: var(--accent); }
 
 /* ── The card ── */
 .frr-card {
@@ -124,27 +79,6 @@
 }
 
 /* ── After the card ── */
-.frr-cta {
-  width: 100%;
-  margin: var(--space-3) 0 0;
-}
-.frr-flight {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2) var(--space-3);
-  margin: var(--space-3) 0 0;
-  font-size: var(--text-label);
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-.frr-flight > span { flex: 1 1 220px; }
-.frr-notin {
-  margin: var(--space-2) 0 0;
-  font-size: var(--text-label);
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
 
 /* ── "Your flight": the one sheet that asks the airport ── */
 .frr-scrim {
@@ -168,7 +102,7 @@
   font-family: var(--ui);
   color: var(--ink);
 }
-@media (min-width: 720px) {
+@media (min-width: 700px) {
   .frr-scrim { align-items: center; }
   .frr-sheet { border-radius: 12px; }
 }
@@ -215,23 +149,7 @@
 }
 .frr-sheet-actions .btn { flex: 1 1 180px; }
 
-.bpage-base.is-quiet {
-  color: var(--ink);
-  border-color: var(--rule);
-  background: var(--bg-card);
-}
-@media (hover: hover) {
-  .bpage-base.is-quiet:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
-}
-.bpage-base.is-quiet svg { color: var(--ink-soft); }
-
 /* A narrow column (a phone, or the destination page's 380px side column)
    takes the strip as two rows: the stay across, the two dates under it, so a
    date field is never cut. */
-.frr { container-type: inline-size; }
-@container (max-width: 460px) {
-  .frr-strip { grid-template-columns: 1fr 1fr; }
-  .frr-strip .frr-cell:nth-child(-n+2) { border-bottom: 1px solid var(--rule-soft); }
-  .frr-strip .frr-cell:nth-child(3) { border-left: 0; }
-}
 

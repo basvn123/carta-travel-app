@@ -392,7 +392,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-step-gap { display: inline-flex; align-items: center; gap: 2px; font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
 
 /* Around */
-.pt-count-n { margin-left: var(--space-1); font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* When to go */
 .pt-cells { display: grid; gap: var(--space-2); }
@@ -603,8 +602,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-split li { display: grid; grid-template-columns: 18px 1fr auto; gap: 2px var(--space-2); align-items: center; }
 .pt-split-icon { color: var(--text-3); }
 .pt-split b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
-.pt-split-bar { grid-column: 2 / -1; height: 4px; border-radius: var(--radius-pill); background: var(--surface-sunken); overflow: hidden; }
-.pt-split-bar i { display: block; height: 100%; background: var(--umber-200); border-radius: var(--radius-pill); }
 .pt-tot { margin: 0; display: grid; gap: var(--space-2); padding-top: var(--space-3); border-top: 1px solid var(--border-soft); font-size: var(--text-body); color: var(--text-2); }
 .pt-tot > div { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
 .pt-tot dt { min-width: 0; }
@@ -614,7 +611,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-card .destp-plan-btn { width: 100%; }
 .pt-alts { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 var(--space-2); margin-top: calc(-1 * var(--space-2)); }
 .pt-card .dprice-dates { display: grid; gap: var(--space-3); }
-.pt-ranges-total { display: flex; justify-content: space-between; gap: var(--space-3); }
 .pt-card-row { display: flex; gap: var(--space-2); }
 .pt-card-row > .btn { flex: 1; }
 
@@ -775,7 +771,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 /* Below 1024 px the foot bar holds the page's one primary, so the card's
    own primary hides (one primary at a time, carta-design). */
 @media (max-width: 1023px) {
-  .pt-inlinecost .destp-plan-btn, .pt-inlinecost .jpage-plan { display: none; }
+  .pt-inlinecost .destp-plan-btn { display: none; }
 }
 
 /* ── The foot bar below 1024 px: the price, the inputs, the primary. ── */
@@ -870,11 +866,11 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .pt-day-chev { transition: none; } }
 .pt-day-body { display: grid; gap: var(--space-3); padding: 0 var(--space-4) var(--space-4) calc(var(--space-4) + 52px + var(--space-3)); }
 .pt-day-body[hidden] { display: none; }
-@media (max-width: 699px) { .pt-day-body { padding-left: var(--space-4); } }
+@media (max-width: 700px) { .pt-day-body { padding-left: var(--space-4); } }
 .pt-part { display: grid; grid-template-columns: 96px 1fr; gap: var(--space-3); font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
 .pt-part small { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); line-height: var(--leading-body); }
 .pt-part-text { margin: 0; }
-@media (max-width: 499px) { .pt-part { grid-template-columns: 1fr; gap: 2px; } }
+@media (max-width: 480px) { .pt-part { grid-template-columns: 1fr; gap: 2px; } }
 .pt-daychips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-1); }
 .pt-daychips li { padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); background: var(--surface-sunken); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 
@@ -885,7 +881,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-rg-track { position: relative; height: 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
 .pt-rg-track i { position: absolute; top: 0; bottom: 0; border-radius: var(--radius-pill); background: var(--umber-300); }
 .pt-rg-fig { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
-@media (max-width: 499px) {
+@media (max-width: 480px) {
   .pt-rg { grid-template-columns: 1fr auto; }
   .pt-rg-track { grid-column: 1 / -1; grid-row: 2; }
 }
@@ -1132,7 +1128,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .near-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin: var(--space-5) 0 var(--space-5); }
 .near-tools .ar-radius { flex: 1 1 auto; min-width: 0; }
 .storyr.near-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: var(--space-6) var(--space-4); }
-@media (max-width: 559px) { .storyr.near-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); } }
+@media (max-width: 599px) { .storyr.near-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); } }
 
 /* ── Day trips (T1036): the Explore rail; the facts, then the line it is
    known for, under each photograph. ── */

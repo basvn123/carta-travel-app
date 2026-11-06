@@ -3,233 +3,31 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.guide-sub { color: var(--ink-soft); font-size: 13px; margin: 4px 0 16px; }
-.guide-country-block { margin-bottom: 20px; }
-.guide-block-head {
-  display: flex; align-items: center; gap: 7px;
-  font-family: var(--display);
-  font-size: 15px;
-  color: var(--ink);
-  margin-bottom: 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--rule);
-}
-.guide-nights-zero { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); font-weight: 600; }
-.guide-when-nights {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink);
-  padding-bottom: 10px;
-  white-space: nowrap;
-}
-@media (hover: hover) {
-  .guide-design-btn:hover { opacity: 0.93; }
-}
-.guide-tier-legend-note { color: var(--ink-mute); font-size: 10.5px; }
-@media (hover: hover) {
-  .citypick-pin:hover { transform: translateY(-1px); border-color: var(--ink-soft); box-shadow: 0 2px 8px rgba(26, 26, 26, 0.22); }
-}
-.citypick-name { font-size: 11px; font-weight: 600; color: var(--ink); white-space: nowrap; }
-.citypick-meta {
-  font-family: var(--mono); font-size: var(--text-micro); font-weight: 600;
-  color: var(--ink-soft);
-  background: var(--paper-dim);
-  padding: 0.5px 4px; border-radius: 5px;
-  white-space: nowrap;
-}
-.citypick-meta:empty { display: none; }
-.citypick-meta.is-nights { color: var(--on-fill); background: var(--ink-fill); }
-.citypick-pin.on {
-  background: var(--select-bg); border-color: var(--select-border);
-}
-.citypick-pin { position: relative; }
-.citypick-fly { display: none; }
-.citypick-pin.anchor {
-  padding: 5px 11px 5px 10px;
-  background: var(--ink);
-  border-color: var(--ink);
-  box-shadow: var(--shadow-2);
-  z-index: 5;
-}
-.citypick-pin.anchor .citypick-ic { display: none; }
-.guide-search:focus { outline: none; border-color: var(--accent); }
-.guide-stay-group { margin-bottom: 14px; }
-.guide-stay-group-title {
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-soft);
-  margin: 10px 0 7px;
-}
-@media (hover: hover) {
-  .guide-show-more:hover { border-color: var(--accent); color: var(--accent); }
-}
-.guide-anchor-badge {
-  display: inline-flex; align-items: center; gap: 3px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: var(--ink-fill);
-  color: var(--on-fill);
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: 11px;
-  white-space: nowrap;
-}
-.guide-empty { font-size: 12.5px; color: var(--ink-soft); }
-.guide-foot-actions { display: flex; gap: 10px; }
-.itin-stop-city { display: block; font-family: var(--display); font-size: 15.5px; color: var(--ink); }
-.itin-leg-rail {
-  position: absolute;
-  left: 23px; top: 0; bottom: 0;
-  width: 2px;
-  background: var(--rule);
-}
-.itin-leg-modes {
-  display: flex; gap: 6px;
-  padding: 0 10px 10px 14px;
-}
-.itin-leg .trip-leg-links { margin: 0; padding: 0 10px 10px 14px; }
-.itin-day-row-num { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
-.itin-day-row-meta { font-size: 12.5px; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.guide-thumb-fallback { font-family: var(--display); color: var(--ink-mute); }
-.guide-city-thumb .guide-thumb-fallback { font-size: 22px; }
-.guide-arrange-thumb .guide-thumb-fallback { font-size: 18px; }
-.itin-stop-thumb-fallback { font-family: var(--display); font-size: 18px; color: var(--ink-mute); }
-.guide-city-insight {
-  font-size: 11.5px;
-  color: var(--ink-soft);
-  margin-top: 2px;
-  line-height: 1.4;
-  overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-}
-.guide-nights-val { font-size: 12px; min-width: 52px; text-align: center; color: var(--ink-soft); }
-.guide-note {
-  display: flex; align-items: center; gap: 6px;
-  margin-top: 16px;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-}
-.guide-ownflight .guide-search { margin-bottom: 0; }
-.guide-city-combo { font-size: 12px; color: var(--ink-soft); margin-top: 3px; }
-.citypick-pin.tier-top .citypick-ic { color: var(--accent); }
-.citypick-pin.tier-great .citypick-ic { color: var(--good-mid); }
-.citypick-pin.tier-good .citypick-ic { color: var(--ink-soft); }
-.citypick-pin.tier-ok .citypick-ic { color: var(--ink-mute); }
-.citypick-pin.tier-ok .citypick-name { font-weight: 500; color: var(--ink-soft); }
-.citypick-pin.on .citypick-name,
-.citypick-pin.on .citypick-ic { color: var(--select-ink); }
-.citypick-pin.on .citypick-meta { color: var(--on-fill); background: rgba(255, 255, 255, 0.22); }
-.citypick-pin.anchor .citypick-name { color: var(--on-fill); font-size: 12.5px; font-weight: 700; }
-.citypick-pin.anchor .citypick-meta { color: var(--on-fill); background: rgba(255, 255, 255, 0.22); }
-.citypick-pin.anchor .citypick-fly::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 4px solid transparent;
-  border-top-color: var(--ink);
-}
-.guide-chip.on .guide-chip-kind { color: var(--select-ink); }
-.itin-stop.active .itin-stop-idx { background: var(--select-bg); color: var(--select-ink); }
-.itin-stop-sub { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); margin-top: 1px; }
-@media (hover: hover) {
-  .itin-leg-main:hover .itin-leg-change { color: var(--accent); border-color: var(--accent); }
-}
-.itin-days-list { margin-top: 16px; }
 
 /* ---- T500: the trip wizard frame and steps (roadmap 1.3c sections 1 and 2) ----
    From 1024 px the step takes the left 55 percent and the right column holds
    the price card before Where, the step's map from Where on, and the total
    bar at its foot. Tokens only. */
-.trip-wizard-modal .wiz-main.has-rail.wiz-split {
-  grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
-  gap: var(--space-7);
-}
-.trip-wizard-modal .wiz-aside .wiz-aside-body { min-width: 0; }
-.trip-wizard-modal .wiz-aside .wiz-aside-map .cpm,
-.trip-wizard-modal .wiz-aside .wiz-aside-map .citypick-map {
-  width: 100%;
-  height: min(62dvh, 600px);
-  min-height: 320px;
-  margin: 0;
-  border-radius: var(--radius-card);
-  overflow: hidden;
-}
-.trip-wizard-modal .wiz-aside .wiz-aside-map .cpm-legend { margin-top: var(--space-2); }
 
 /* A picked country on the map key matches the map: the selected tint with
    a --text edge (owner T490-d). */
-.trip-wizard-modal .cpm-legend .cpm-key-sel { background: var(--select-bg); border-color: var(--text); }
 
 /* The phone progress bar does not act, so it is ink, not brown. */
 
 /* Back and Next are the step's main actions: --tap-main (T485-a). */
-.trip-wizard-modal .guide-foot-actions .btn.wiz-foot-btn {
-  min-height: var(--tap-main);
-  height: var(--tap-main);
-}
 
 /* The first step: what is booked, then who is going. */
-.trip-wizard-modal .wbw-who { margin-top: var(--space-7); }
 
 /* Steppers that are a step's main control take 48 px: the party on the
    first step, the nights on Your stays, the nights in the Stay briefing. */
-.trip-wizard-modal .party.is-main .fstepper-btn,
-.trip-wizard-modal .wstay-nights .fstepper-btn {
-  width: var(--tap-main);
-  height: var(--tap-main);
-}
-.trip-wizard-modal .guide-nights .icon-btn.wiz-icon-main {
-  width: var(--tap-main);
-  height: var(--tap-main);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
-  font-size: inherit;
-  color: var(--text);
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .trip-wizard-modal .guide-nights .icon-btn.wiz-icon-main:hover:not(:disabled) {
-    background: var(--surface-hover);
-    border-color: var(--text-2);
-  }
-}
-.trip-wizard-modal .guide-nights .icon-btn.wiz-icon-main:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-.trip-wizard-modal .guide-nights .icon-btn.wiz-icon-main:disabled {
-  color: var(--text-3);
-  border-color: var(--border-soft);
-  background: var(--surface-sunken);
-  cursor: default;
-}
-.trip-wizard-modal .wstay-nights-ctl .guide-nights-val {
-  min-width: 0;
-  font-size: var(--text-body);
-  color: var(--text);
-  white-space: nowrap;
-}
 
 /* From: the arrival search wears a visible label (T490-l, rule Field). */
-.trip-wizard-modal .wfrom-label {
-  display: block;
-  margin: 0 0 var(--space-2);
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text-2);
-}
 
 /* The day's cost sits inside the pick button, under the name band, as one
    sentence (T490-i). */
 
 /* Stay: the picked cities, numbered in route order. */
-.trip-wizard-modal .wstay-route { margin: 0; padding: 0; list-style: none; }
 
 /* With the map in the right column the Stay briefing takes the step's width. */
-.trip-wizard-modal .guide-stay-wrap.is-aside { display: block; }
-.trip-wizard-modal .guide-stay-wrap.is-aside .guide-city-side { width: auto; max-width: none; flex: none; }
 
 /* T507 (T500-b): the stops map numbers its pins in trip order, and a picked stop's row lights up. */
-.citypick-pin.anchor .citypick-ic.is-num { display: inline; color: var(--action-text); }
-.wstay.is-picked { border-color: var(--select-border); outline: 2px solid var(--focus); outline-offset: 1px; }

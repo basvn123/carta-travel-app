@@ -263,8 +263,6 @@
 }
 .xov-quick .btn.xquick-filters.is-on .btn-icon { color: var(--select-ink); }
 .xov-quick .btn.xquick-filters .xfilters-n { margin-left: var(--space-1); }
-.xov-quick .btn.xquick-all { border-color: transparent; color: var(--action); font-weight: 600; }
-.xov-quick .btn.xquick-all .btn-icon { color: var(--action); }
 
 @media (min-width: 769px) {
   .xov-hero { margin: 0 0 var(--space-6); }

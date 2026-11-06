@@ -8,122 +8,31 @@
    trip style) lives in .filter-tray, a panel that drops below the header and
    overlays the map, so opening it never grows --filter-h and shrinks the map.
    On mobile all of this collapses (see the mobile sheet block further down)
-   and the fields fall straight into the existing 2-column grid. */
-
-.filter-row-primary { align-items: stretch; }/* Trigger + reset, pushed to the trailing edge of the primary row. */
-
-.filter-tray-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 13px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.55);
-  color: var(--ink-soft);
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: color .15s, border-color .15s, background .15s;
-}
-@media (hover: hover) {
-  .filter-tray-btn:hover { color: var(--ink); border-color: var(--ink-mute); }
-}
-.filter-tray-btn.open {
-  color: var(--select-ink);
-  background: var(--select-bg);
-  border-color: var(--select-border);
-}
-.filter-tray-btn.has-active { border-color: var(--accent); color: var(--accent); }
-.filter-tray-btn.has-active.open { color: var(--paper); }
-.filter-tray-btn svg { flex: none; }
+   and the fields fall straight into the existing 2-column grid. *//* Trigger + reset, pushed to the trailing edge of the primary row. */
 /* Count of narrowing filters, so one left on inside a closed tray can never
    silently explain an empty map. */
-.filter-tray-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 17px;
-  height: 17px;
-  padding: 0 4px;
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-  color: var(--paper);
-  font-size: 10px;
-  letter-spacing: 0;
-  font-variant-numeric: tabular-nums;
-}
-.filter-tray-btn.open .filter-tray-caret { transform: rotate(180deg); }
 
 /* Closed by default at every width; the desktop rule below opens it, the
    mobile sheet dissolves it into the grid. */
-.filter-tray { display: none; }
 
 @media (min-width: 769px) {
   /* Anchor for the tray: the full-width filters band of the header. Scoped to
      desktop because the MOBILE sheet (.filter-bar.mobile-open .filter-rows)
      anchors to .top-bar instead and would clip inside this band. */
-  .app-header-filters { position: relative; }
-
-  .filter-tray.is-open {
-    display: block;
-    position: absolute;
-    /* Clears the header's 9px bottom padding + rule, and then the category
-       rail: the tray cannot escape .app-header (backdrop-filter makes it a
-       containing block), so it is told how tall the rail is instead. Without
-       this the rail's chips paint over the tray's first row, which is where
-       the Budget and Quality captions live. */
-    top: calc(100% + 10px);
-    left: 0; right: 0;
-    z-index: var(--z-tray);
-    /* Fully opaque: at even 2% transparency the results rows and price pills
-       behind it ghost straight through the tray's own labels. */
-    background: var(--paper);
-    border: 1px solid var(--rule);
-    border-radius: 0 0 14px 14px;
-    border-top: none;
-    box-shadow: var(--shadow-2);
-    animation: filter-tray-in var(--dur-3) var(--ease-out);
-  }/* Three labelled groups on a fixed grid (Budget | Quality over Where), not a
+  .app-header-filters { position: relative; }/* Three labelled groups on a fixed grid (Budget | Quality over Where), not a
      flex wrap that re-orders itself at every window width. The panel is the
      surface, so the group cards drop their own chrome and lean on captions
      plus gutter hairlines instead. Trip style used to hold the fourth cell;
      the category rail owns that question now. */
-
-  .filter-tray .filter-group {
-    background: none;
-    border: 0;
-    border-radius: 0;
-    padding: 0 26px 13px 0;
-  }
   /* Wrap rather than squeeze: a quadrant's slider keeps its full rail and the
      band box / toggles drop onto a second line when the column is narrow. */
-  .filter-tray .group-fields { flex-wrap: wrap; gap: 14px 20px; }
 
   /* Hairlines live on the quadrants themselves, so a group that wraps its
      fields can't leave a rule floating at the wrong height. */
-  .filter-tray .group-quality {
-    border-left: 1px solid var(--rule);
-    padding-left: 26px;
-  }
-  .filter-tray .group-place {
-    border-top: 1px solid var(--rule);
-    padding-top: 15px;
-  }
 }
 
 /* Narrow desktop windows: one column, so a quadrant never squeezes a slider
    down to a stub. The hairlines become simple row rules. */
-@media (min-width: 769px) and (max-width: 1120px) {
-  .filter-tray .group-quality { border-left: none; padding-left: 0; }
-  .filter-tray .group-quality,
-  .filter-tray .group-place {
-    border-top: 1px solid var(--rule);
-    padding-top: 15px;
-  }
-}
 
 @keyframes filter-tray-in {
   from { opacity: 0; transform: translateY(-6px); }
@@ -138,22 +47,6 @@
   min-width: 0;
 }/* Rules between categories are obsolete now the group cards carry their own
    borders; the elements stay in the markup for the mobile grid's sake. */
-
-.filter-label {
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  line-height: 12px;
-  min-height: 12px;
-  white-space: nowrap;
-  color: var(--ink-soft);
-}
-
-.filter-control {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
 
 .filter select,
 .filter input[type="number"] {
@@ -192,50 +85,8 @@
   cursor: pointer;
   user-select: none;
 }
-.toggle-pill {
-  width: 32px;
-  height: 18px;
-  border-radius: 9px;
-  background: var(--rule);
-  position: relative;
-  transition: background .2s;
-}
-.toggle-pill::after {
-  content: '';
-  position: absolute;
-  top: 2px; left: 2px;
-  width: 14px; height: 14px;
-  border-radius: 50%;
-  background: var(--paper);
-  transition: transform .2s;
-  box-shadow: var(--shadow-1);
-}
-.toggle.on .toggle-pill { background: var(--accent); }
-.toggle.on .toggle-pill::after { transform: translateX(14px); }
-
-.filter-stats {
-  margin-left: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  font-family: var(--mono);
-  font-size: var(--text-micro);
-  color: var(--ink-soft);
-  line-height: 1.3;
-}
-.filter-stats strong {
-  font-weight: 600;
-  color: var(--ink);
-  font-size: var(--text-label);
-}
 
 /* ───────── Map ───────── */
-
-.map-wrap {
-  position: absolute;
-  top: var(--filter-h); left: var(--panel-w);
-  right: 0; bottom: var(--bottom-nav-h);
-}
 
 .maplibregl-ctrl-bottom-left,
 .maplibregl-ctrl-bottom-right {
@@ -251,111 +102,11 @@
    marker-root is positioned by MapLibre (anchor: bottom);
    we keep it width:auto so children determine size. */
 
-.price-pill {
-  display: inline-block;
-  background: var(--paper);
-  border: 1px solid var(--ink);
-  border-radius: 4px;
-  padding: 3px 8px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  white-space: nowrap;
-  box-shadow: var(--shadow-1);
-  /* T391: the overshoot curve is retired (DIRECTION.md 2.1) and a shadow is
-     never animated; transform settles and the colours answer in --dur-1. */
-  transition: transform var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-  user-select: none;
-}
-
-@media (hover: hover) {
-  .marker-root:hover .price-pill {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-2);
-    z-index: var(--z-pin-hover);
-  }
-}
-
 /* "Deal" - cheapest 25% - gets the rust accent */
-.price-pill.is-deal {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--paper);
-  font-weight: 600;
-  box-shadow: var(--shadow-1);
-}
-@media (hover: hover) {
-  .marker-root:hover .price-pill.is-deal {
-    background: var(--orange);
-    box-shadow: var(--shadow-2);
-  }
-}
 
 /* Selected: invert to ink for high contrast */
-.price-pill.selected {
-  background: var(--select-bg);
-  color: var(--select-ink);
-  border-color: var(--select-border);
-  font-weight: 600;
-  z-index: var(--z-pin-selected);
-}
-.price-pill.is-deal.selected {
-  /* keep deal-rust but stronger */
-  background: var(--select-bg);
-  border-color: var(--select-border);
-  color: var(--select-ink);
-}
 
 /* Tiny dot at the actual lat/lon (below the pill) */
-.pin-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--ink);
-  outline: 1.5px solid var(--paper);
-  transition: transform .14s, background .14s, box-shadow .14s;
-}
-.pin-dot.is-deal {
-  background: var(--accent);
-}
-.pin-dot.selected {
-  transform: scale(1.6);
-  background: var(--ink);
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
-}
-
-@media (hover: hover) {
-  .marker-root:hover .pin-dot {
-    transform: scale(1.4);
-  }
-}
-@media (hover: hover) {
-  .marker-root:hover .pin-dot.selected {
-    transform: scale(1.8);
-  }
-}
-
-.cluster-pill {
-  background: var(--ink);
-  color: var(--paper);
-  border-radius: var(--radius-pill);
-  padding: 6px 13px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--shadow-1);
-  white-space: nowrap;
-  user-select: none;
-  transition: transform .12s;
-}
-@media (hover: hover) {
-  .cluster-pill:hover { transform: scale(1.06); }
-}
 
 /* ───────── Side panel ───────── */
 
@@ -388,27 +139,6 @@
    the cross is in the same place at every scroll position: a full screen
    surface whose only exit scrolls away is a trap. */
 
-.dsheet-bar.is-stuck {
-  background: var(--paper);
-  border-bottom-color: var(--rule);
-}
-.dsheet-bar-name {
-  flex: 1;
-  min-width: 0;
-  font-family: var(--display);
-  font-size: 19px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity .18s ease, transform .18s ease;
-}
-.dsheet-bar.is-stuck .dsheet-bar-name { opacity: 1; transform: none; }
-
 /* The card under the hero: country, what the place is known for, the badges
    the bar leaves out, and the two save actions. */
 .panel-header {
@@ -438,34 +168,6 @@
   .panel-close:hover { background: rgba(26, 26, 26, 0.72); }
 }
 .panel-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.dsheet-bar.is-stuck .panel-close {
-  border-color: var(--rule);
-  background: var(--paper);
-  color: var(--ink-soft);
-}
-@media (hover: hover) {
-  .dsheet-bar.is-stuck .panel-close:hover {
-    background: var(--paper-dim);
-    color: var(--ink);
-    border-color: var(--ink-soft);
-  }
-}
-
-.panel-tag {
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-  margin-bottom: 6px;
-}
-.panel-city {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: 38px;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
 
 .panel-section {
   padding: 22px 28px;
@@ -479,39 +181,6 @@
   font-size: var(--text-caption);
   color: var(--ink-soft);
   margin-bottom: 12px;
-}
-
-.total-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  padding: 10px 0;
-}
-.total-row.grand {
-  border-top: 2px solid var(--ink);
-  margin-top: 10px;
-  padding-top: 14px;
-}
-.total-row .label {
-  font-size: var(--text-label);
-  color: var(--ink-soft);
-}
-.total-row.grand .label {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: 18px;
-  color: var(--ink);
-}
-.total-row .val {
-  font-family: var(--mono);
-  font-weight: 500;
-  font-size: var(--text-body);
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-.total-row.grand .val {
-  font-size: 22px;
-  font-weight: 600;
 }
 
 .line {
@@ -529,64 +198,6 @@
   font-family: var(--mono);
   color: var(--ink);
   font-variant-numeric: tabular-nums;
-}
-
-.weather-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 4px 18px;
-  font-size: var(--text-caption);
-}
-.weather-grid .w-row {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: 1px dotted var(--rule);
-  padding: 5px 0;
-}
-.weather-grid .w-row span:first-child { color: var(--ink-soft); }
-.weather-grid .w-row span:last-child { font-family: var(--mono); }
-
-.attr-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
-.attr-item {
-  display: flex;
-  gap: 12px;
-  padding: 8px 0;
-  border-bottom: 1px dotted var(--rule);
-}
-.attr-item:last-child { border-bottom: none; }
-.attr-img {
-  width: 56px; height: 56px;
-  flex-shrink: 0;
-  background: var(--paper-dim);
-  border-radius: 4px;
-  background-size: cover;
-  background-position: center;
-}
-.attr-text { flex: 1; min-width: 0; }
-.attr-name {
-  font-weight: 500;
-  font-size: var(--text-label);
-  margin-bottom: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-.attr-name a { color: var(--ink); text-decoration: none; border-bottom: 1px solid transparent; }
-@media (hover: hover) {
-  .attr-name a:hover { border-bottom-color: var(--accent); }
-}
-.attr-meta {
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.attr-desc {
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-  line-height: 1.4;
 }
 
 .tabs {
@@ -611,11 +222,6 @@
 .tab.active {
   color: var(--ink);
   border-bottom-color: var(--accent);
-}
-
-.book-row {
-  display: flex; flex-direction: column; gap: 8px;
-  margin-top: 14px;
 }
 .book-btn {
   display: flex;
@@ -696,30 +302,19 @@
 
 /* Scoped to .filter-bar so these win over later, equal-specificity rules and
    stay hidden on desktop. */
-.filter-bar .mobile-account-btn,
-.filter-bar .mobile-header-actions { display: none; }
 /* Depart/Return are normal stacked label-over-value fields on desktop, same
    as every other card field; hidden on mobile because the calendar icon's
    popover covers the same two fields instead. */
-.row-date-fields { display: flex; }
 
-@media (max-width: 880px) {
+@media (max-width: 1023px) {
   .filter-bar { flex-wrap: wrap; padding: 12px 16px; height: auto; gap: 12px; }
   .filters { gap: 14px; }
   .panel { width: 100%; }
   /* The ranked list is hidden below 880px (see its own rule); reclaim its left
      gutter so the map fills the width instead of leaving a blank column. */
-  .map-wrap { left: 0; }
 }
 
 /* ─── Filter bar additions: segmented toggle, country dropdown, range slider ─── */
-
-.filter-section-break {
-  width: 1px;
-  align-self: stretch;
-  background: var(--rule);
-  margin: 0 4px;
-}
 
 .segmented {
   display: inline-flex;
@@ -753,66 +348,11 @@
 }
 
 /* Icon-only variant (Travel by plane / car). */
-.segmented.seg-icons button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px 11px;
-}
-.segmented.seg-icons svg {
-  display: block;
-  width: 16px;
-  height: 16px;
-}
 
 /* ─── Pill toggles (UNESCO / Top beaches highlights) ─── */
-.pill-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.pill-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  height: 24px;
-  padding: 0 11px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-pill);
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  font-family: inherit;
-  font-size: var(--text-caption);
-  letter-spacing: 0.04em;
-  line-height: 1;
-  white-space: nowrap;
-  transition: color .15s, background .15s, border-color .15s;
-}
-.pill-toggle .gem { opacity: 0.7; flex: none; }
-@media (hover: hover) {
-  .pill-toggle:hover {
-    color: var(--ink);
-    border-color: var(--ink-mute);
-  }
-}
-.pill-toggle.on {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--paper);
-}
-.pill-toggle.on .gem { opacity: 1; }
 
 /* Reach filter: the quiet "no travel-time data" state where the hour chips
-   would be. Sized like a chip row so the tray doesn't jump between origins. */
-.reach-note {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  font-size: var(--text-caption);
-  color: var(--ink-mute);
-}/* ─── Band sliders: rating (0-10) and price, each a dual-handle rail with a
+   would be. Sized like a chip row so the tray doesn't jump between origins. *//* ─── Band sliders: rating (0-10) and price, each a dual-handle rail with a
    bordered box echoing the chosen range (or "Any" when untouched). Shared
    layout/box classes keep the two filters visually consistent. ─── */
 /* The rating slider carries a 0/5/10 axis under its rail that the price slider
@@ -821,74 +361,10 @@
    UNESCO / Top beaches pills next door, so top-align this row instead. */
 
 /* Tier-cutoff guide ticks drawn on the slider rail. */
-.dual-range-mark {
-  position: absolute;
-  top: 50%;
-  width: 2px;
-  height: 9px;
-  background: var(--ink-mute);
-  opacity: 0.4;
-  border-radius: 1px;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-.range-band-box.is-narrowed {
-  border-color: var(--accent);
-  background: var(--accent-bg);
-  color: var(--ink);
-}
-
-.reset-filters-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 13px;
-  border: 1px solid var(--accent);
-  border-radius: var(--radius-pill);
-  background: var(--paper-dim);
-  color: var(--accent);
-  font-family: inherit;
-  font-size: var(--text-caption);
-  letter-spacing: 0.04em;
-  line-height: 1;
-  white-space: nowrap;
-  cursor: pointer;
-  flex-shrink: 0;
-  align-self: center;   /* the row is align-items:stretch; keep the pill its own height */
-  transition: color .15s, background .15s, border-color .15s;
-}
-@media (hover: hover) {
-  .reset-filters-btn:hover {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--paper);
-  }
-}
 
 /* ─── Collapsible left list ───
    A chevron in the list header hides it (widening the map); a floating tab
    brings it back. */
-.results-collapse {
-  margin-left: auto;
-  width: 24px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-sm);
-  color: var(--ink-mute);
-  font-size: var(--text-lead);
-  line-height: 1;
-  transition: color .15s, border-color .15s, background .15s;
-}
-@media (hover: hover) {
-  .results-collapse:hover {
-    color: var(--ink);
-    border-color: var(--ink-soft);
-    background: var(--paper-dim);
-  }
-}
 
 /* ── The map's floating control row ──────────────────────────────────────
    One strip under the top panel carrying the map's own controls: the
@@ -896,26 +372,11 @@
    of the MAP (not the viewport), so it clears the destinations gutter when
    that is open and slides left with it when it collapses. Pointer events are
    off on the strip itself so the map stays draggable through the gaps. */
-.map-toolrow {
-  position: absolute;
-  top: calc(var(--filter-h) + 12px);
-  left: calc(var(--panel-w) + 12px);
-  /* Above the drive prompt (z 15): the picker's popover drops over that card,
-     and the popover is where the prompt's own button sends you. */
-  z-index: calc(var(--z-float) + 4);
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  pointer-events: none;
-}
 /* The strip is a stacking context, so nothing inside it can climb over the top
    bar (z 25) however high its own z-index is - which is what buried the From
    popover under the trip-kind chips. Lift the whole strip for as long as the
    popover is down, and only then, so the header's filter tray keeps the map to
    itself the rest of the time. */
-.map-toolrow.pop-open { z-index: calc(var(--z-header) + 1); }
-.map-toolrow > * { pointer-events: auto; }
-.app.list-collapsed .map-toolrow { left: 12px; }
 
 /* ── Size toggle: cities, or everything down to the villages ──────────────
    Sits to the right of the From picker and wears the same map-control pill, so
@@ -969,32 +430,6 @@
 .size-toggle.on .size-toggle-label b { color: var(--select-ink); }
 .size-toggle.on .size-toggle-cap { color: rgba(246, 245, 242, 0.72); }
 
-.list-reopen {
-  display: none;            /* shown only when .app.list-collapsed */
-  align-items: center;
-  gap: 6px;
-  padding: 7px 13px 7px 9px;
-  align-self: center;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-1);
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-  transition: border-color .15s, color .15s;
-}
-@media (hover: hover) {
-  .list-reopen:hover { border-color: var(--ink); color: var(--ink); }
-}
-.list-reopen .chev { font-size: var(--text-body); line-height: 1; }
-
-.app.list-collapsed .results-list { display: none; }
-.app.list-collapsed .map-wrap { left: 0; }
-.app.list-collapsed .accom-panel { left: 0; }
-.app.list-collapsed .list-reopen { display: inline-flex; }
-
 .panel-segment {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1030,115 +465,10 @@
 
 /* ─── Dual-handle range slider ─── */
 
-.filter.price-range {
-  min-width: 130px;
-}
-.dual-range {
-  width: 124px;
-}
-.dual-range-track {
-  position: relative;
-  height: 18px;
-  display: flex;
-  align-items: center;
-}
-.dual-range-track::before {
-  content: "";
-  position: absolute;
-  inset: 50% 0 auto 0;
-  height: 2px;
-  background: var(--rule);
-  transform: translateY(-50%);
-  border-radius: 2px;
-}
-.dual-range-fill {
-  position: absolute;
-  height: 2px;
-  background: var(--accent);
-  top: 50%;
-  transform: translateY(-50%);
-  border-radius: 2px;
-  pointer-events: none;
-}
-.dual-range-input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  appearance: none;
-  pointer-events: none;
-  margin: 0;
-}
-.dual-range-input::-webkit-slider-thumb {
-  appearance: none;
-  width: 14px; height: 14px;
-  border-radius: 50%;
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  cursor: pointer;
-  pointer-events: auto;
-  margin-top: 0;
-}
-.dual-range-input::-moz-range-thumb {
-  width: 14px; height: 14px;
-  border-radius: 50%;
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  cursor: pointer;
-  pointer-events: auto;
-}
-.dual-range-input::-webkit-slider-runnable-track {
-  background: transparent;
-  height: 100%;
-}
-.dual-range-input::-moz-range-track {
-  background: transparent;
-  height: 100%;
-}
-.dual-range-vals {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-mute);
-  margin-top: 2px;
-  font-variant-numeric: tabular-nums;
-}
-
 /* Static 0/5/10 scale under the rating rail: a plain reference, positioned by
    value so the endpoints sit flush with the track ends. */
-.dual-range-axis {
-  position: relative;
-  height: 12px;
-  margin-top: 3px;
-}
-.dual-range-axis-tick {
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  font-family: var(--mono);
-  font-size: var(--text-micro);
-  line-height: 1;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-  pointer-events: none;
-}
-.dual-range-axis-tick:first-child { transform: none; }
-.dual-range-axis-tick:last-child { transform: translateX(-100%); }
 
 /* ─── Stepper (cars / drivers) ─── */
-
-.rental-controls {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 18px;
-  padding: 14px;
-  background: var(--paper-dim);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--rule);
-}
 .stepper {
   display: flex;
   flex-direction: column;
@@ -1160,46 +490,6 @@
   font-style: italic;
   color: var(--ink-mute);
   opacity: 0.7;
-}
-.stepper-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.stepper-controls button {
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  cursor: pointer;
-  font-family: var(--mono);
-  font-size: var(--text-lead);
-  color: var(--ink-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  line-height: 1;
-  transition: border-color .15s, color .15s, background .15s;
-}
-@media (hover: hover) {
-  .stepper-controls button:hover:not(:disabled) {
-    border-color: var(--ink);
-    color: var(--ink);
-  }
-}
-.stepper-controls button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-.stepper-value {
-  font-family: var(--mono);
-  font-size: var(--text-lead);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-  min-width: 24px;
-  text-align: center;
 }
 
 /* ─── Footnote (small italic note under sections) ─── */
@@ -1248,118 +538,9 @@
 
 /* ─── Weather filter ─── */
 
-.filter.weather-filter {
-  min-width: 320px;
-}
-.filter.weather-filter .filter-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  justify-content: flex-start;
-}
-.mini-toggle {
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  padding: 1px 6px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-soft);
-  cursor: pointer;
-  line-height: 1.4;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .mini-toggle:hover { border-color: var(--ink); color: var(--ink); }
-}
-.mini-toggle.on {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--paper);
-}
-
 /* Single-handle slider (used in weather max-rain) */
-.single-range {
-  width: 200px;
-  appearance: none;
-  background: transparent;
-  height: 18px;
-  cursor: pointer;
-}
-.single-range::-webkit-slider-runnable-track {
-  height: 2px;
-  background: var(--rule);
-  border-radius: 2px;
-}
-.single-range::-moz-range-track {
-  height: 2px;
-  background: var(--rule);
-  border-radius: 2px;
-}
-.single-range::-webkit-slider-thumb {
-  appearance: none;
-  width: 14px; height: 14px;
-  margin-top: -6px;
-  border-radius: 50%;
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  cursor: pointer;
-}
-.single-range::-moz-range-thumb {
-  width: 14px; height: 14px;
-  border-radius: 50%;
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  cursor: pointer;
-}
 
 /* ─── "More filters" button + popover ─── */
-
-.more-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-soft);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: var(--text-caption);
-  transition: border-color .15s, color .15s;
-}
-@media (hover: hover) {
-  .more-btn:hover { border-color: var(--ink); color: var(--ink); }
-}
-.more-btn.open {
-  background: var(--paper-dim);
-  border-color: var(--ink);
-  color: var(--ink);
-}
-.more-btn.has-active {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-.more-btn .badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: var(--radius-control);
-  background: var(--accent);
-  color: var(--paper);
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-}
-.more-btn .chev {
-  font-size: 10px;
-  color: var(--ink-mute);
-}
 .account-lifestyle-btn { width: 100%; justify-content: space-between; }
 
 /* ─── Account hub: app language ───
@@ -1400,56 +581,8 @@
    Replaces the old row of unlabelled 40px icon circles. Modelled on the
    desktop search strip: a single bordered row split by an internal hairline,
    the dates half stating the chosen window in mono (a measured fact), the
-   filters half a labelled trigger carrying its active count. */
-
-.mobile-seg {
-  display: inline-flex;
-  align-items: stretch;
-  min-height: 44px;
-  max-width: 100%;
-  min-width: 0;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-pill);
-  background: var(--paper);
-}
-.mobile-seg .mobile-dates-anchor {
-  display: flex;
-  min-width: 0;
-}
-.mobile-seg-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  min-height: 44px;
-  min-width: 0;
-  padding: 0 13px;
-  border-radius: var(--radius-pill);
-  color: var(--ink-soft);
-  transition: color .15s, background .15s;
-}
-
-.mobile-seg-btn.open { background: var(--paper-dim); color: var(--ink); }
-@media (hover: hover) {
-  .mobile-seg-btn:hover { background: var(--paper-dim); color: var(--ink); }
-}
-.mobile-seg-btn.has-active { color: var(--accent); }
-.mobile-seg-btn svg { flex-shrink: 0; }/* The chosen dates are a measured fact, so they read in mono. Ellipsis is the
+   filters half a labelled trigger carrying its active count. *//* The chosen dates are a measured fact, so they read in mono. Ellipsis is the
    safety valve for the widest locales on the narrowest phones. */
-
-.mobile-seg-count {
-  min-width: 17px;
-  height: 17px;
-  padding: 0 4px;
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-  color: var(--paper);
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 17px;
-  text-align: center;
-  flex-shrink: 0;
-}
 
 /* ═══════════════════════════════════════════════════════════════════════
    PHONE FILTER SHEET  (.fsheet, see browse/FilterSheet.jsx)
@@ -1616,15 +749,7 @@
      are the map of this screen, so they get the darker grey. */
   color: var(--ink-soft);
 }
-.fsheet-field > .fsheet-label { margin-bottom: 8px; }
-.fsheet-hint {
-  display: block;
-  margin-top: 2px;
-  font-size: var(--text-caption);
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--ink-mute);
-}/* Label left, control right, one line: the counts do not deserve two rows. */
+.fsheet-field > .fsheet-label { margin-bottom: 8px; }/* Label left, control right, one line: the counts do not deserve two rows. */
 
 /* ── Chips: every option visible, one tap to switch, wrapping across the
       horizontal axis instead of stacking dropdowns down the vertical one.
@@ -1635,10 +760,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-}
-.fchips.cols-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
 }
 .fchip {
   display: inline-flex;
@@ -1710,44 +831,10 @@
 
 /* ── Sliders: the rail carries the price distribution, so a handle is dragged
       against the shape of the data instead of into the dark. ── */
-.fsheet .dual-range { width: 100%; }
-.fsheet .dual-range-track { height: 40px; }
-.fsheet .dual-range-track::before,
-.fsheet .dual-range-fill { height: 3px; border-radius: 3px; }
 /* 24px clears the WCAG 2.5.8 target minimum with the handle still reading as
    a handle; the readout below takes the precision work. */
-.fsheet .dual-range-input::-webkit-slider-thumb {
-  width: 24px; height: 24px;
-  border-width: 2px;
-  box-shadow: var(--shadow-1);
-}
-.fsheet .dual-range-input::-moz-range-thumb {
-  width: 24px; height: 24px;
-  border-width: 2px;
-}
-.fsheet .dual-range-axis-tick { font-size: 10.5px; }
-.fsheet .dual-range-hist { height: 34px; }
-
-.dual-range-hist {
-  display: flex;
-  align-items: flex-end;
-  gap: 1px;
-  /* Shallow on the desktop tray, where the rail is 124px wide and a tall
-     chart would swamp it; the sheet gives it room below. */
-  height: 22px;
-  margin-bottom: 2px;
-  pointer-events: none;
-}
-.dual-range-bar {
-  flex: 1;
-  min-height: 1px;
-  border-radius: 1px 1px 0 0;
-  background: var(--rule);
-  transition: background .15s;
-}
 /* Muted, not the full accent: the bars are context, and the one thing on this
    screen allowed to shout in action-brown is the action button. */
-.dual-range-bar.in { background: var(--accent-soft); opacity: 0.62; }
 
 /* Secondary, full-width action inside a section (lifestyle). */
 
@@ -1827,97 +914,9 @@
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
-
-.more-panel {
-  position: absolute;
-  top: var(--filter-h);
-  left: var(--panel-w);
-  right: 0;
-  background: var(--paper);
-  border-left: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-  box-shadow: var(--shadow-2);
-  padding: 24px 28px 20px;
-  display: grid;
-  grid-template-columns: 1.6fr 1fr 1.4fr;
-  gap: 32px;
-  align-items: start;
-  z-index: calc(var(--z-float) + 6);
-  animation: slide-down var(--dur-3) var(--ease-out);
-}
-.more-panel.with-detail {
-  right: var(--panel-w);
-  border-right: 1px solid var(--rule);
-  /* Tighter columns when squeezed between two side panels */
-  grid-template-columns: 1.2fr 0.9fr 1.4fr;
-  gap: 20px;
-  padding: 20px 22px 18px;
-}
-.more-panel.with-detail .big-toggle {
-  padding: 10px 12px;
-  gap: 10px;
-}
-.more-panel.with-detail .big-toggle-text strong {
-  font-size: var(--text-label);
-}
-.more-panel.with-detail .big-toggle-text small {
-  font-size: 10px;
-}
 @keyframes slide-down {
   from { transform: translateY(-8px); opacity: 0; }
   to   { transform: translateY(0); opacity: 1; }
-}
-
-.more-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 0;
-}
-.more-section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-.more-section-title {
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-}
-.more-clear {
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  background: transparent;
-  border: none;
-  color: var(--ink-soft);
-  cursor: pointer;
-  padding: 2px 6px;
-}
-@media (hover: hover) {
-  .more-clear:hover { color: var(--accent); }
-}
-
-.more-close {
-  position: static;
-  grid-column: 1 / -1;
-  justify-self: end;
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  padding: 6px 16px;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  border-radius: var(--radius-pill);
-  color: var(--ink-soft);
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-  margin-top: 8px;
-}
-@media (hover: hover) {
-  .more-close:hover { border-color: var(--ink); color: var(--ink); }
 }
 
 /* ─── Trip-kind chips ─── */
@@ -1952,188 +951,11 @@
 
 /* ─── Big toggle (car only) ─── */
 
-.big-toggle {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-sm);
-  background: var(--paper);
-  cursor: pointer;
-  text-align: left;
-  font-family: inherit;
-  transition: border-color .15s, background .15s;
-  width: 100%;
-}
-@media (hover: hover) {
-  .big-toggle:hover { border-color: var(--ink); }
-}
-.big-toggle.on {
-  background: var(--accent-bg);
-  border-color: var(--accent);
-}
-.big-toggle-pill {
-  width: 32px; height: 18px;
-  border-radius: var(--radius-pill);
-  background: var(--rule);
-  position: relative;
-  flex-shrink: 0;
-  transition: background .15s;
-}
-.big-toggle-pill::after {
-  content: "";
-  position: absolute;
-  top: 2px; left: 2px;
-  width: 14px; height: 14px;
-  border-radius: 50%;
-  background: var(--paper);
-  transition: transform .15s;
-  box-shadow: var(--shadow-1);
-}
-.big-toggle.on .big-toggle-pill { background: var(--accent); }
-.big-toggle.on .big-toggle-pill::after { transform: translateX(14px); }
-.big-toggle-text {
-  display: flex;
-  flex-direction: column;
-}
-.big-toggle-text strong {
-  font-size: var(--text-body);
-  font-weight: 500;
-  color: var(--ink);
-  letter-spacing: 0.01em;
-}
-.big-toggle-text small {
-  font-size: var(--text-micro);
-  color: var(--ink-mute);
-  margin-top: 2px;
-}
-
 /* ─── Weather filter ─── */
-
-.weather-section {
-  min-width: 0;
-}
 /* ─── Weather filter - cleaner, darker ─── */
-
-.weather-control {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-top: 8px;
-  padding: 14px 16px;
-  background: var(--paper-dim);
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  transition: opacity .15s, border-color .15s;
-}
-.weather-control[data-disabled="true"] {
-  opacity: 0.45;
-  pointer-events: none;
-}
 /* When weather is on, give it a slightly stronger boundary */
-.weather-section .mini-toggle.on ~ .weather-control,
-.weather-control:not([data-disabled="true"]) {
-  border-color: var(--ink-soft);
-}
-
-.weather-sub {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.sub-label {
-  font-family: var(--ui);
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-  font-weight: 500;
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-.sub-vals {
-  font-family: var(--mono);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-  text-transform: none;
-  letter-spacing: 0.02em;
-}
-.weather-sub .dual-range { width: 100%; }
 
 /* Make the dual-range tracks heavier inside the weather panel */
-.weather-control .dual-range-track::before {
-  height: 3px;
-}
-.weather-control .dual-range-fill {
-  height: 3px;
-  background: var(--ink);
-}
-.weather-control .dual-range-input::-webkit-slider-thumb {
-  width: 16px; height: 16px;
-  border-width: 2px;
-}
-.weather-control .dual-range-input::-moz-range-thumb {
-  width: 16px; height: 16px;
-  border-width: 2px;
-}
-
-.mini-toggle {
-  font-family: var(--ui);
-  font-size: var(--text-caption);
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-soft);
-  cursor: pointer;
-  line-height: 1.4;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-  font-weight: 600;
-}
-@media (hover: hover) {
-  .mini-toggle:hover { border-color: var(--ink); color: var(--ink); }
-}
-.mini-toggle.on {
-  background: var(--select-bg);
-  border-color: var(--select-border);
-  color: var(--select-ink);
-}
-
-.single-range {
-  width: 100%;
-  appearance: none;
-  background: transparent;
-  height: 20px;
-  cursor: pointer;
-}
-.single-range::-webkit-slider-runnable-track {
-  height: 3px;
-  background: var(--rule);
-  border-radius: 2px;
-}
-.single-range::-moz-range-track {
-  height: 3px;
-  background: var(--rule);
-  border-radius: 2px;
-}
-.single-range::-webkit-slider-thumb {
-  appearance: none;
-  width: 16px; height: 16px;
-  margin-top: -7px;
-  border-radius: 50%;
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  cursor: pointer;
-}
-.single-range::-moz-range-thumb {
-  width: 16px; height: 16px;
-  border-radius: 50%;
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  cursor: pointer;
-}
 
 /* ─── Custom dropdown ─── */
 
@@ -2327,29 +1149,6 @@
 
 /* ─── Sub-row in breakdown (sub-line for baggage under flight) ─── */
 
-.total-row.sub-row {
-  padding-top: 6px;
-  padding-bottom: 14px;
-  border-bottom: none;
-  padding-left: 16px;
-  position: relative;
-}
-.total-row.sub-row::before {
-  content: "";
-  position: absolute;
-  left: 4px; top: 6px; bottom: 14px;
-  width: 1px;
-  background: var(--rule);
-}
-.total-row.sub-row .label {
-  color: var(--ink-soft);
-  font-size: var(--text-label);
-}
-.total-row.sub-row .val {
-  color: var(--ink-soft);
-  font-weight: 400;
-}
-
 /* ─── Accommodation panel (left side) ─── */
 
 .accom-panel {
@@ -2408,7 +1207,6 @@
    Shares classes with other panels, so scoped here. Darker text and plain,
    sentence-case stepper labels instead of faint tiny-caps - less visual fuss,
    easier to read. */
-.accom-panel .panel-country { color: var(--ink-soft); }
 .accom-panel .section-title { color: var(--ink-soft); }
 .accom-panel .footnote { color: var(--ink-soft); }
 .accom-panel .line .lbl { color: var(--ink-soft); }
@@ -2576,7 +1374,6 @@
   gap: var(--space-3);
 }
 .lifestyle-food .stepper-label { flex: 1; min-width: 0; }
-.lifestyle-food .stepper-controls { flex: none; }
 .lifestyle-food .stepper + .stepper {
   margin-top: var(--space-2);
   padding-top: var(--space-2);
@@ -2677,61 +1474,6 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 6px;
-}
-.star-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 10px 4px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-sm);
-  background: var(--paper);
-  cursor: pointer;
-  font-family: inherit;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .star-btn:hover { border-color: var(--ink-soft); }
-}
-.star-btn.on {
-  border-color: var(--select-border);
-  background: var(--select-bg);
-  color: var(--select-ink);
-}
-.star-number {
-  font-family: var(--mono);
-  font-size: var(--text-label);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-.star-btn.on .star-number { color: var(--select-ink); }
-.star-icons {
-  font-size: var(--text-micro);
-  letter-spacing: 0;
-  color: var(--accent);
-  line-height: 1;
-}
-.star-btn.on .star-icons { color: var(--accent); }
-.star-label {
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-}
-.star-btn.on .star-label { color: rgba(246, 245, 242, 0.7); }
-
-.hostel-note {
-  font-size: var(--text-label);
-  line-height: 1.6;
-  color: var(--ink-soft);
-  font-style: italic;
-  padding: 14px 16px;
-  background: var(--paper-dim);
-  border-radius: var(--radius-sm);
-  /* T391: the accent side stripe went (rule "Accent marks": an accent mark
-     means "this one acts"); the tinted box alone sets the note apart. */
 }
 
 .accom-preview {

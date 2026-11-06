@@ -529,6 +529,8 @@ if (mode === 'check' && args.includes('--hold')) {
   process.exit(0);
 }
 
+function walkSrc(d, o = []) { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) walkSrc(p, o); else o.push(p); } return o; }
+
 if (mode === 'check') {
   const problems = [];
   const routeEntries = [];
@@ -539,7 +541,15 @@ if (mode === 'check') {
     const listed = fs.existsSync(entrySheet) ? [...fs.readFileSync(entrySheet, 'utf8').matchAll(/@import '\.\/[^/]+\/([^']+)'/g)].map((m) => m[1]) : [];
     for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.css'))) {
       const fi = order.indexOf(file);
-      if (fi < 0) { problems.push(`${fam}/${file}: no global sheet of that name in src/styles.css`); continue; }
+      if (fi < 0) {
+        // T1126: a route sheet a component imports itself (WizardChrome.jsx and
+        // others) was never part of the split, so it has no global twin to prove
+        // against. Skip it when some source file imports it; flag it otherwise.
+        const needle = `styles/${fam}/${file}`;
+        const owned = listed.includes(file) || walkSrc(path.join(APP, 'src')).some((f) => /\.jsx?$/.test(f) && fs.readFileSync(f, 'utf8').includes(needle));
+        if (!owned) problems.push(`${fam}/${file}: no global sheet of that name in src/styles.css`);
+        continue;
+      }
       if (!listed.includes(file)) problems.push(`${fam}/${file}: not imported by src/styles/${fam}.css`);
       const list = entriesOf(postcss.parse(fs.readFileSync(path.join(dir, file), 'utf8')), { fi, fam, file: `${fam}/${file}` });
       for (const e of list) if (familyOf(e.sel) !== fam) problems.push(`${fam}/${file}: "${e.sel}" is not ${fam}-only in this build; it belongs in src/styles/${file}`);

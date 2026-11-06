@@ -129,11 +129,11 @@
    1. Tighten first: the tabs lose padding and the wordmark loses its
       strapline, which buys about 90px without losing a single word.
    2. Then drop the words: icon-only pills, titles still on hover. */
-@media (min-width: 769px) and (max-width: 1180px) {
+@media (min-width: 769px) and (max-width: 1200px) {
   .app-header { gap: 14px; padding: 9px 20px; }
   .header-nav-item { padding: 8px 10px; }
 }
-@media (min-width: 769px) and (max-width: 1060px) {
+@media (min-width: 769px) and (max-width: 1100px) {
   .header-nav-label { display: none; }
   .header-nav-item { padding: 9px; }
 }
@@ -256,10 +256,10 @@
    that matters. */
 /* Under a laptop, nine columns would put "Mountains" under an ellipsis, so
    the rail steps down to five and takes a second row. */
-@media (max-width: 900px) {
+@media (max-width: 1023px) {
   .kind-rail-scroll { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
-@media (max-width: 560px) {
+@media (max-width: 599px) {
   .kind-rail-scroll { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
   .kind-rail-chip { padding: 6px 4px; font-size: var(--text-micro); }
 }
@@ -277,62 +277,6 @@
    into --filter-h: the map fills the space right under the header and the
    expanded text overlays the map instead of shifting everything down. ─────── */
 
-.map-guide-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 11px;
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  border: 0;
-  box-shadow: var(--elev-1);
-  font-family: var(--ui);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  color: var(--action);
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .map-guide-toggle:hover { background: var(--action-tint); }
-}
-.map-guide-caret {
-  font-size: var(--text-micro);
-  transition: transform var(--dur-2) var(--ease-out);
-}
-.map-guide.open .map-guide-caret { transform: rotate(180deg); }
-
-.map-guide-pop {
-  margin-top: 6px;
-  width: 280px;
-  max-width: min(280px, calc(100vw - 32px));
-  padding: 13px 15px 12px;
-  background: var(--surface);
-  border-radius: var(--radius-control);
-  box-shadow: var(--elev-2);
-}
-.map-guide-text {
-  margin: 0;
-  font-size: var(--text-caption);
-  line-height: 1.5;
-  color: var(--text-2);
-}
-.map-guide-dismiss {
-  margin-top: 11px;
-  padding: 5px 12px;
-  border-radius: var(--radius-control);
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text);
-  font-size: var(--text-micro);
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .map-guide-dismiss:hover { opacity: 0.85; }
-}
-
 @media (max-width: 768px) {/* The From pill moved to the map's control strip on the LEFT (.map-toolrow),
      so the guide tip has the right corner back and no longer needs the 46px
      drop that kept the two from overlapping. */
@@ -343,7 +287,6 @@
      Hide it while the list is open; it returns once the list is collapsed and
      the map is visible again. Desktop keeps the pill (list is a side gutter
      there, not an overlay, so there's nothing to cover). */
-  .app:not(.list-collapsed) .map-guide { display: none; }
 }
 
 /* The header language flag is gone: the app language now switches from the
@@ -474,18 +417,6 @@
    On the map it is not a header pill any more: it is the control that decides
    what every price on screen means, so it gets the size to say so. It also
    opens leftward, since it now sits at the map's left edge. */
-.map-toolrow .origin-btn {
-  max-width: 300px;
-  gap: 10px;
-  padding: 9px 14px 9px 12px;
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-}
-.map-toolrow .origin-btn-from { font-size: var(--text-micro); }
-.map-toolrow .origin-btn-caret { font-size: var(--text-micro); }
-.map-toolrow .origin-btn-label { gap: 2px; }
-.map-toolrow .origin-btn-label b { font-size: var(--text-body); max-width: 220px; }
-.map-toolrow .origin-pop { left: 0; right: auto; }
 
 /* Drive mode: the pill states which question it is asking, and glows while
    that question is the reason the map is empty. */
@@ -553,66 +484,10 @@
 /* The same question, restated over the empty map it is holding back. Centred
    in the map rather than tucked under the picker: the picker's popover drops
    into exactly that spot, and the prompt was swallowing its Search button. */
-.drive-ask {
-  position: absolute;
-  top: calc(var(--filter-h) + 22vh);
-  left: var(--panel-w);
-  right: 0;
-  margin: 0 auto;
-  z-index: calc(var(--z-float) + 3);
-  width: 340px;
-  max-width: calc(100vw - 24px);
-  padding: 16px 18px;
-  background: var(--surface);
-  border-radius: var(--radius-card);
-  box-shadow: var(--elev-2);
-}
-.app.list-collapsed .drive-ask { left: 0; }
-.drive-ask-title { font-family: var(--font); font-size: var(--text-lead); color: var(--text); }
-.drive-ask-body {
-  margin-top: 6px;
-  font-size: var(--text-caption);
-  line-height: 1.55;
-  color: var(--text-3);
-}
-.drive-ask-actions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 14px;
-}
-.drive-ask-btn {
-  padding: 9px 15px;
-  white-space: nowrap;
-  border: 1px solid var(--action);
-  border-radius: var(--radius-pill);
-  background: var(--action);
-  color: var(--action-text);
-  font-family: var(--ui);
-  font-weight: 600;
-  font-size: var(--text-caption);
-  cursor: pointer;
-}
-.drive-ask-alt {
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--text-2);
-  font-family: var(--ui);
-  font-size: var(--text-caption);
-  text-decoration: underline;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .drive-ask-alt:hover { color: var(--text); }
-}
 
-@media (max-width: 880px) {
+@media (max-width: 1023px) {
   /* The destinations gutter is gone below 880px, so the strip follows the map
      to the viewport edge. */
-  .map-toolrow { left: 12px; }
-  .drive-ask { left: 0; }
 }
 
 @media (max-width: 768px) {
@@ -620,9 +495,6 @@
   .origin-btn-label b { max-width: 96px; }
   /* Phones: the strip is the only chrome over the map, so the picker keeps its
      label but drops back to pill size next to the Destinations tab. */
-  .map-toolrow .origin-btn { padding: 7px 11px; gap: 7px; }
-  .map-toolrow .origin-btn-label b { font-size: var(--text-caption); max-width: 120px; }
-  .map-toolrow .origin-btn-from { display: block; font-size: var(--text-micro); }
   /* Phones: the strip carries two pills now, so the size toggle drops to the
      picker's size, keeps its caption and swaps to the short label. Both stay
      well over the 44px target. */
@@ -637,14 +509,7 @@
      of air, and if a longer origin name ever breaks that, the strip wraps
      instead of running off the screen. Both pills hold the 44px touch target,
      which the picker alone did not. */
-  .map-toolrow {
-    gap: 8px;
-    flex-wrap: wrap;
-    max-width: calc(100vw - 24px);
-  }
-  .map-toolrow .origin-btn,
   .size-toggle { min-height: 44px; }
-  .drive-ask { top: calc(var(--filter-h) + 96px); left: 12px; right: 12px; width: auto; }
   /* Phones: the anchored popover overflowed the screen when its trigger sat
      mid-layout (e.g. the wizard's "Flying from" row). Pin it to the viewport
      instead so the full search + list is always on screen. Its top follows the
@@ -663,7 +528,6 @@
   /* ...and it has to outrank the map-control rule above (two classes, so a
      media query alone does not win it): on a phone the list is a sheet across
      the viewport, not a dropdown hung off the left edge of the pill. */
-  .map-toolrow .origin-pop { left: 12px; right: 12px; }
 }
 
 /* ───────── Bottom nav, PHONE only: Explore | Plan | My trips | Account
@@ -762,26 +626,6 @@
 }
 
 /* ───────── Tab panels (Trip planner / Day planner placeholders) ───────── */
-
-.tab-panel {
-  position: absolute;
-  top: var(--filter-h);
-  left: 0; right: 0; bottom: var(--bottom-nav-h);
-  overflow-y: auto;
-}
-.tab-panel-placeholder-inner {
-  max-width: 560px;
-  margin: 64px auto;
-  padding: 0 24px;
-  text-align: center;
-  color: var(--text-2);
-}
-.tab-panel-placeholder-inner .section-title {
-  font-family: var(--font);
-  font-size: var(--text-title);
-  color: var(--text);
-  margin-bottom: 10px;
-}
 
 /* A tab's own h1 (T186) steps aside while a full page with its own h1 is
    open over it (a detail, journey, trip or region page), so that title is

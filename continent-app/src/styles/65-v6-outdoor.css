@@ -30,7 +30,7 @@
   margin: 0;
   border-top: 1px solid var(--rule-soft);
 }
-@media (min-width: 560px) {
+@media (min-width: 600px) {
   .dsk-page .dsk-kf-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .dsk-page .dsk-kf-label {
@@ -78,15 +78,12 @@
    you, stacked on a phone and side by side from 900 px. */
 .dsk-page .dsk-handoff { margin: var(--space-5) 0 0; }
 .dsk-page .dsk-primary-row { margin: 0 0 var(--space-4); }
-.dsk-page .dsk-primary,
-.dsk-page .dsk-primary.bpage-base,
-.dsk-page .dsk-primary.tpage-cta {
+.dsk-page .dsk-primary {
   width: 100%;
   min-height: var(--tap);
   margin: 0;
   border-radius: var(--radius-sm);
 }
-.dsk-page .dsk-primary.tpage-primary,
 .dsk-page .dsk-primary.cycle-gpx {
   display: flex;
   align-items: center;
@@ -101,7 +98,7 @@
   font-weight: 600;
 }
 .dsk-page .dsk-handoff-cols { display: grid; gap: var(--space-5); }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .dsk-page .dsk-handoff-cols {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--space-6);
@@ -131,20 +128,6 @@
 
 /* Take it with you: the secondaries in one wrapping row, every one --tap
    high and 6 px round, the day plan door in the same look. */
-.dsk-page .dsk-take .tpage-acts { margin: 0; gap: var(--space-2); }
-.dsk-page .dsk-take .feat-dayplan,
-.dsk-page .dsk-take .tpage-primary {
-  height: auto;
-  min-height: var(--tap);
-  margin: 0;
-  border-radius: var(--radius-sm);
-}
-.dsk-page .dsk-take .tpage-primary {
-  display: inline-flex;
-  width: auto;
-  padding: 0 var(--space-4);
-  font-size: 13.5px;
-}
 
 /* The rows: a preview wraps to two lines instead of an ellipsis that cuts a
    word, and the sub heads inside a grouped row read as labels. */
@@ -213,7 +196,7 @@
   overflow: hidden;
   background: var(--bg-card);
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .dsk-page .dsk-ptrack-frame { flex-basis: 70%; }
 }
 .dsk-page .dsk-ptrack-media img,
@@ -260,11 +243,6 @@
 /* Status, not green (brief V4-10, rule N6): a positive verdict is ink words
    after a 6 px --status-success dot on the card ground; the warning tones
    keep their tints, the hazard list its amber note. */
-.dsk-page .lpage-swim-ok,
-.dsk-page .mpage-way-ride {
-  border-color: var(--rule-soft);
-  background: var(--bg-card);
-}
 
 /* The cycle route's plain profile (plan item 3): one ink-ramp area under
    the ink line, the accent left to the scrub marker alone; and air between

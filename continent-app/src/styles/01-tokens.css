@@ -1,3 +1,11 @@
+/* Breakpoint scale (T1126, G7). CSS cannot read a custom property inside a
+   media query, so the scale is a rule checked by scripts/ci/css-breakpoints.mjs
+   (--check lists any width off it). Boundaries, in px: 360, 380, 420, 430 (small
+   phones), 480, 600, 700, 768, 1024, 1100, 1200, 1240, 1280, 1440, 1600, 1800.
+   Write max-width as boundary minus 1 for 600, 1024 and 1280 (599, 1023, 1279),
+   min-width as the boundary, and keep the old 768 pair (max-width 768,
+   min-width 769). 700, 1100, 1200 and 1240 stay because JSX matchMedia calls use
+   the same numbers; they fold into 768 and 1024 when the JS moves with them. */
 /* ==========================================================================
    Carta, Europe Travel: design tokens (T421 Lagoon structure; the teal became
    one warm brown, umber, on 2026-10-13 in T438)

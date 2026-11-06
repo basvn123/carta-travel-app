@@ -165,14 +165,8 @@
 .flt-chip-text { overflow: hidden; text-overflow: ellipsis; }
 
 /* Hours, under the row it filters. */
-.flt-hours { padding: var(--space-1) 0 var(--space-2); }
-.flt-hours .seg { width: 100%; }
 
 /* Where the flight sits in other screens' own blocks (T518). */
-.xprice-flight { display: flex; font-weight: 400; margin-top: 2px; min-width: 0; }
-.itin-flight,
-.tleg-flight { margin-top: var(--space-2); }
-.itin-flight .flt-hours,
-.tleg-flight .flt-hours { padding-top: var(--space-2); }
+.itin-flight { margin-top: var(--space-2); }
 /* The airline mark inside a receipt line's label. */
 .tprice .flt-mark { vertical-align: middle; margin-right: var(--space-2); }

@@ -39,8 +39,6 @@
 .mt-tabs .ui-tabs::-webkit-scrollbar { display: none; }
 .mt-tabs .ui-tab { flex: none; min-height: var(--tap); font-size: var(--text-lead); font-weight: 600; white-space: nowrap; }
 .mt-tabs .ui-tab-count { margin-left: 6px; font-size: var(--text-label); }
-
-.mt-refine { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
 .mt-filter-label {
   display: block;
   margin-bottom: var(--space-2);
@@ -48,13 +46,7 @@
   font-weight: 600;
   color: var(--text-2);
 }
-.mt-filters { display: flex; flex-direction: column; gap: var(--space-5); }
-.mt-filters.is-compact { flex-direction: row; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
-.mt-filter { min-width: 0; }
 .mt-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.mt-refine .mt-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
-.mt-refine .mt-chips::-webkit-scrollbar { display: none; }
-.mt-refine .ui-chip { flex: none; }
 
 /* A link that navigates (All in Plan): a real anchor in the action brown. */
 .mt-link {
@@ -176,7 +168,7 @@
 .mt-next-body { flex: 1; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4); min-width: 0; }
 .mt-next-top { display: flex; align-items: flex-start; gap: var(--space-2); }
 .mt-next-heading { flex: 1; min-width: 0; }
-.mt-next-top .flag-stack, .mt-next-top > span:not(.mt-next-heading) { margin-top: 6px; }
+.mt-next-top > span:not(.mt-next-heading) { margin-top: 6px; }
 .mt-next-title {
   margin: 0;
   font-size: var(--text-title);
@@ -275,7 +267,6 @@
 .mt-row-meta > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mt-row-go { color: var(--text-3); margin-right: var(--space-2); }
 .mt-row.is-missing .card-title { color: var(--text-3); }
-.mt-plan-these { display: flex; }
 
 /* The card menu: a popover under its button. */
 .mt-menu { position: relative; }
@@ -319,61 +310,18 @@
 }
 .mt-map > div { position: absolute; inset: 0; }
 .mt-map-wait { background: var(--surface-sunken); }
-.mt-map-expand { position: absolute; top: var(--space-2); left: var(--space-2); z-index: 2; }
-.mt-map-shield { display: none; }
 @media (pointer: coarse) {
   /* The map in the page is a picture on touch; its controls live full size. */
   .mt-map .maplibregl-ctrl-group { display: none; }
-  .mt-map-shield {
-    display: block;
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-  }
 }
 
 /* The figures the record adds up to: one band, label over value. */
-.mt-band {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
-  margin: 0;
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-}
-.mt-band-cell { padding: var(--space-3); min-width: 0; }
-.mt-band-cell + .mt-band-cell { border-left: 1px solid var(--border-soft); }
-.mt-band dt { font-size: var(--text-caption); color: var(--text-2); }
-.mt-band dd {
-  margin: 2px 0 0;
-  font-size: var(--text-title);
-  font-weight: 600;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-}
 /* T467: the countries cell is the band's hero: the figure large and the
    flags beside it, the rest of the list behind a "+n". */
-.mt-band-hero dd { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
-.mt-band-fig { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); }
-.mt-band-flags { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--space-1); }
-.mt-band-flags[data-more]::after {
-  content: attr(data-more);
-  margin-left: var(--space-1);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  color: var(--text-2);
-}
 
 /* T503 (T467-b): the countries live in the band's hero cell. Edit or Add
    sits at the end of the cell; the names are a list for screen readers
    (.mt-flags), the flags beside the figure are what the eye reads. */
-.mt-band-hero dd .mt-band-edit { margin-left: auto; }
-.mt-band.is-empty { grid-template-columns: minmax(0, 1fr); }
-.mt-band.is-empty .mt-band-hero { border-bottom: 0; }
 
 .mt-year { display: flex; flex-direction: column; gap: var(--space-2); }
 .mt-year + .mt-year { margin-top: var(--space-3); }
@@ -1042,17 +990,10 @@
 
 /* ── Phone ── */
 @media (max-width: 768px) {
-  .mt-band { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .mt-band-hero { grid-column: 1 / -1; border-bottom: 1px solid var(--border-soft); }
-  .mt-band-hero + .mt-band-cell { border-left: 0; }
-  .mt-band-cell { padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3); }
-  .mt-band-hero { padding: var(--space-3); }
-  .mt-band dd { font-size: var(--text-lead); }
-  .mt-band-hero .mt-band-fig { font-size: var(--text-headline); }
   .mt-next-actions .btn { flex: 1 1 auto; }
   .mt-next-actions .btn-primary { flex-basis: 100%; }
 }
-@media (max-width: 400px) {
+@media (max-width: 420px) {
   .mt-steps { grid-template-columns: minmax(0, 1fr); }
 }
 

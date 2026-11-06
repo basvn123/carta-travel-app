@@ -3,30 +3,6 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.trip-carfrom { margin: 8px 0 4px; }
-.trip-carfrom-row { display: flex; gap: 8px; }
-.trip-carfrom-btn:disabled { opacity: 0.5; cursor: default; }
-@media (hover: hover) {
-  .trip-carfrom-result:hover { border-color: var(--ink); color: var(--ink); }
-}
-@media (hover: hover) {
-  .trip-carfrom-change:hover { color: var(--ink); border-color: var(--ink); }
-}
-.guide-stay-filter { display: flex; align-items: center; gap: 6px; }
-.guide-stay-price {
-  font-family: var(--mono); font-size: var(--text-micro);
-  color: var(--ink-soft);
-  background: var(--paper-dim);
-  border-radius: 999px;
-  padding: 2px 7px;
-  white-space: nowrap;
-}
-.day-flow-screen {
-  display: flex;
-  justify-content: center;
-  padding: 0;
-  overflow-y: auto;
-}
 .dtcards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));

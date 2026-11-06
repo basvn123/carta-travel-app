@@ -395,7 +395,7 @@
 
 /* ── Wider screens ───────────────────────────────────────────────────── */
 
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .hm-in { padding: 0 var(--space-7); }
   .hm-cost { padding: 120px 0 var(--space-8); margin-top: calc(var(--radius-stage) * -1.5); border-radius: calc(var(--radius-stage) * 1.6) calc(var(--radius-stage) * 1.6) 0 0; }
   .hm-cost-grid { grid-template-columns: minmax(0, 1fr) 420px; gap: var(--space-8); }

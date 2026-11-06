@@ -475,7 +475,7 @@
 /* Build it myself: Where, then What, then the places, in one column. */
 .dayw-manual .dayex-view { display: inline-flex; flex: none; }
 /* Three places a theme, side by side wherever three fit. */
-@media (min-width: 640px) {
+@media (min-width: 600px) {
   .dayw-manual .dayex-cards > :where(.dayex-card, .pcard) { flex: none; }
 }
 
