@@ -1497,3 +1497,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1106-a | T1106 | Run the seeded-error browser spec and look at `?seedError=explore` in `npm run dev` with real app data (the cloud container has none) | user | open |  |
 | T1106-b | T1106 | Wrap individual cards (explore, price) with `SectionBoundary compact`; trail cards, beach strip, plan flow and auth were off limits tonight | next task | open |  |
 | T1106-c | T1106 | The 107 silent catches named in H13 were not reviewed; T1106 covers render errors only | next task | open |  |
+| T1109-a | T1109 | Number and paste `supabase/migrations/PENDING_channel_counts.sql` (rename it and add a `_down` file); until then channel ticks fail silently and the admin card is hidden | user | open |  |
+| T1109-b | T1109 | K12 remainder: Search Console per page type, waitlist/referral funnel and the I16 unlock numbers in the weekly view | next task | open |  |

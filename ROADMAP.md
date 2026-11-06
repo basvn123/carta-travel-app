@@ -1100,7 +1100,7 @@ docs/
 | K9 | Beta programme | Closed beta of 50 from the waitlist (P3), open beta in March for summer planners (P4); feedback loop into the register; testimonials collected with consent | M | P3 to P4 | todo |
 | K10 | Press kit and list | A press page (facts, screenshots, methodology, contact); a list of about 40 BE, NL and UK travel and data journalists and newsletters | S | P2 to P3 | todo |
 | K11 | Launch campaign | Product Hunt on 4 May, waitlist email, courtesy notes to the credited bodies (`archive/docs-2026-11/LAUNCH-OUTREACH-DRAFTS.md`), community posts, mid-May beach ranking; a two-week plan with owners per thread | M | P5 | todo |
-| K12 | Marketing measurement | Cookieless channel counts (UTM to the existing counters), Search Console per page type, waitlist and referral funnel, one weekly marketing number in admin; the I16 unlock numbers (monthly users, affiliate clicks and bookings per partner) | S | P0 to P1 | todo |
+| K12 | Marketing measurement | Cookieless channel counts (UTM to the existing counters), Search Console per page type, waitlist and referral funnel, one weekly marketing number in admin; the I16 unlock numbers (monthly users, affiliate clicks and bookings per partner) | S | P0 to P1 | partly done (T1109: channel counts built, migration pending) |
 | K13 | The creative slot | One experiment every two weeks from P2, picked from K-R3's shortlist; each written up in one paragraph (idea, what it took, what it did) | S each | P2 onwards | todo |
 
 ### Item details

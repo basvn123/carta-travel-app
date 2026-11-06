@@ -114,6 +114,13 @@ export const adminLaunchMetrics = (days = 30) =>
   call('admin_launch_metrics', { p_days: days });
 
 /**
+ * Visits per week by channel (K12, T1109; pending migration
+ * channel_counts). Per-day counts of utm_source with no identifier.
+ */
+export const adminChannelWeekly = (weeks = 8) =>
+  call('admin_channel_weekly', { p_weeks: weeks });
+
+/**
  * The ai_plan_cache hit rate (migration 029). One row per plan-day lookup,
  * hit or miss, so the rate is a division rather than a guess.
  *
