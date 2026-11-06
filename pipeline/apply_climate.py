@@ -98,7 +98,8 @@ def extras(rec: dict, did: str, elev: dict) -> dict:
     global _RAW, _SEA
     if _RAW is None:
         _RAW = _load(RAW)
-        _SEA = _load(SEA)
+        # T1097: ov.save wraps the rows as {"_meta", "rows"}; read the rows
+        _SEA = _load(SEA).get("rows") or {}
     out = {}
     raw = _RAW.get(did) or {}
     lat = rec.get("lat")

@@ -68,6 +68,26 @@ SOURCE = ("NASA JPL MUR SST v4.1 via NOAA CoastWatch ERDDAP jplMURSST41mday, "
 LICENCE = "Public domain (NASA PO.DAAC, no restrictions on use; credit requested)"
 
 
+# T1097: a polite pace towards the public ERDDAP server (seconds between two
+# tile calls that really hit the network; --delay changes it) and one place for
+# the HTTP call, so a test or a dry run can swap it for a recorded response.
+DEFAULT_DELAY_S = 1.5
+DELAY_S = DEFAULT_DELAY_S
+_LAST_CALL = [0.0]
+
+
+def http_get(url: str) -> str:
+    wait = DELAY_S - (time.monotonic() - _LAST_CALL[0])
+    if wait > 0:
+        time.sleep(wait)
+    try:
+        req = urllib.request.Request(url, headers=UA)
+        with urllib.request.urlopen(req, timeout=300) as r:
+            return r.read().decode("utf-8")
+    finally:
+        _LAST_CALL[0] = time.monotonic()
+
+
 def _tile_dir(base: Path) -> Path:
     d = base / "sea_temp"
     d.mkdir(parents=True, exist_ok=True)
@@ -97,9 +117,7 @@ def fetch_tile(la: int, lo: int, base: Path) -> dict:
     body = ""
     for attempt in range(4):
         try:
-            req = urllib.request.Request(url, headers=UA)
-            with urllib.request.urlopen(req, timeout=300) as r:
-                body = r.read().decode("utf-8")
+            body = http_get(url)
             break
         except Exception as exc:
             last = exc
@@ -128,8 +146,10 @@ def fetch_tile(la: int, lo: int, base: Path) -> dict:
             vals = [round(s / n, 1) for s, n in acc]
             if all(PLAUSIBLE[0] <= v <= PLAUSIBLE[1] for v in vals):
                 cells.append([key[0], key[1], vals])
-    path.write_text(json.dumps({"tile": [la, lo], "stride": STRIDE, "cells": cells},
-                               separators=(",", ":")), encoding="utf-8")
+    tmp = path.with_suffix(".tmp")      # atomic: a killed run never leaves a half tile
+    tmp.write_text(json.dumps({"tile": [la, lo], "stride": STRIDE, "cells": cells},
+                              separators=(",", ":")), encoding="utf-8")
+    tmp.replace(path)
     return {(c[0], c[1]): c[2] for c in cells}
 
 
@@ -205,8 +225,21 @@ def main():
     ap.add_argument("--out-dir")
     ap.add_argument("--max-hours", type=float, default=0,
                     help="stop fetching new tiles after this many hours (0: no limit)")
+    ap.add_argument("--delay", type=float, default=DEFAULT_DELAY_S,
+                    help="seconds between two ERDDAP calls (default %(default)s)")
+    ap.add_argument("--fixture", help="read recorded ERDDAP CSV from this folder "
+                    "(<lat>_<lon>.csv per tile) instead of the network, for a dry run")
     a = ap.parse_args()
-    global DEADLINE
+    global DEADLINE, DELAY_S
+    DELAY_S = a.delay
+    if a.fixture:
+        fx = Path(a.fixture)
+
+        def _from_fixture(url: str) -> str:
+            m = __import__("re").search(r"\(([-\d.]+)\):3:\([-\d.]+\)%5D%5B\(([-\d.]+)\):3:", url)
+            f = fx / f"{int(float(m.group(1)))}_{int(float(m.group(2)))}.csv"
+            return f.read_text(encoding="utf-8") if f.exists() else ""
+        globals()["http_get"] = _from_fixture
     if a.max_hours:
         DEADLINE = time.monotonic() + a.max_hours * 3600
     base = Path(a.out_dir) if a.out_dir else ov.CACHE

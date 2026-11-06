@@ -1466,3 +1466,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1101-b | T1101 | After the next deploy, ask five questions on a phone and desktop width and check the written line names only places on the first three cards | user | open |  |
 | T1101-c | T1101 | A sentence naming a place on a "more places" card (4th to 6th) is dropped until the traveller opens it; decide if the text should instead grow with the cards | next task | open |  |
 | T1085-x | orchestrator (2026-11-06 merge) | docs/runbooks has two overlapping backup docs after the overnight merge: backup.md (T1085, short) and backup-restore.md (T1086, full procedure); fold backup.md into backup-restore.md and keep one. | next task | open | |
+| T1097-a | T1097 | Run the sea_temp harvest on the box (about 6 h of ERDDAP calls), then the climate and beach exports, so beaches carry `sea_temp` and destinations `water_c` (command and checks in Execution/P15/T1097-sea-temp.md, Owner steps) | user | open | |
+| T1097-b | T1097 | Check one real beach page on a phone after the box run and deploy: the strip shows and the warmest months are plausible for the sea | user | open | |

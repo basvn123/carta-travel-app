@@ -402,7 +402,7 @@ def v2_fields(beach):
       aspect   the true bearing from the sand out to sea
       sunset   whether the sun sets over this beach's water in season
       prot     the protected site this beach is INSIDE, from polygons
-      sst      monthly sea surface temperature climatology
+      sea_temp monthly sea surface temperature climatology (input key `sst` too)
       nameSrc  where the name came from, when it was not the beach's own:
                "eea" is a bathing register entry, "osm_near" is borrowed
                from the nearest named bay or village
@@ -427,7 +427,7 @@ def v2_fields(beach):
         # T641: monthly water temperature, NASA MUR SST (harvest_sea_temp.py)
         sst = (xov.load_rows("sea_temp_beaches").get(bi.unique_beach_id(beach)) or {}).get("c")
     if isinstance(sst, list) and len(sst) == 12:
-        out["sst"] = sst
+        out["sea_temp"] = sst       # T1097: the wire key the app and the contract name
     # T641: walk from the town centre and the nearest ferry pier, modelled
     # (harvest_beach_walks.py): walkFrom {centre: {km, min, town, m}, pier: {km, min, name?, m}}
     walk = xov.load_rows("beach_walks").get(bi.unique_beach_id(beach))

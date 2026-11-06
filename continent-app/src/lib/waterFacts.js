@@ -227,3 +227,15 @@ export function windProfileOf(profile) {
   const hi = Math.max(...ok);
   return { lo: Math.round(Math.min(...ok)), hi: Math.round(hi), peak: kmh.indexOf(hi) };
 }
+
+/* T1097: the sea by month of a beach row (wire key sea_temp, twelve figures in
+   C, NASA MUR SST). Twelve finite numbers or nothing: a short or broken
+   series never draws a strip. warmest is the indexes (0 to 11) of the three
+   warmest months, warmest first. */
+export function seaByMonth(beach) {
+  const raw = beach?.sea_temp;
+  if (!Array.isArray(raw) || raw.length !== 12 || !raw.every((v) => v !== null && Number.isFinite(Number(v)))) return null;
+  const sea = raw.map(Number);
+  const warmest = [...sea.keys()].sort((a, b) => sea[b] - sea[a]).slice(0, 3);
+  return { sea, warmest, peakI: warmest[0] };
+}
