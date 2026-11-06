@@ -1,3 +1,4 @@
+// Retired T1089: it walks the old trip wizard to a Trips step from the .plan-start-tile door; that door and the wizard Trips step are gone (trip library is Plan's Carta's own trips, T1030).
 // The Trips step as one clean list (T5), and the Getting there step (T6).
 //
 //   npm run build && npm run preview     (or npm run dev)

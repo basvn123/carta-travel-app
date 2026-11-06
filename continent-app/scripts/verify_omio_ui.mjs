@@ -16,7 +16,7 @@ import { mkdirSync } from 'node:fs';
 
 // NOTE: not 4190, that port is on the fetch spec's blocked-port list
 // (ManageSieve) and node's fetch refuses to health-check it.
-const PORT = 4192;
+const PORT = Number(process.env.CARTA_PORT || 4192);
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });

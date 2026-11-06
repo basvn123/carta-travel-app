@@ -1,0 +1,10 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch();
+const p = await (await b.newContext({ viewport:{width:1280,height:900}, serviceWorkers:'block'})).newPage();
+await p.addInitScript(()=>{localStorage.setItem('continent.lang.v1','en');localStorage.setItem('continent.guestMode.v1','1');localStorage.setItem('continent.homeSeen.v1','1');localStorage.setItem('carta.welcomeSeen','1');});
+await p.goto('http://localhost:4173/#itin=at-salzburg-vienna-chain-6d');
+await p.waitForTimeout(9000);
+await p.screenshot({path:'/tmp/claude-0/l.png'});
+console.log(p.url());
+console.log(await p.evaluate(()=>{const r=document.querySelector('[class*=tpage],[class*=ipage],.jpage');return [...document.querySelectorAll('h1,h2,[id^=sec-],[class*=tday],[class*=pt-]')].slice(0,40).map(e=>e.tagName+'#'+e.id+'.'+String(e.className).slice(0,40)+'|'+e.textContent.trim().slice(0,30)).join('\n')}));
+await b.close();

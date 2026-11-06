@@ -1,3 +1,4 @@
+// T1089 needs: dist (a VITE_CATALOGUE=viewport build; not built in a session without dist/)
 // T059: prove that the 'viewport' catalogue mode boots on the boot index and
 // a few shards, and that panning the Explore map fetches shard by shard.
 //
@@ -33,7 +34,7 @@ let failed = 0;
 const pass = (m) => console.log(`  ok    ${m}`);
 const fail = (m) => { failed += 1; console.log(`  FAIL  ${m}`); };
 
-if (!existsSync(join(DIST, 'boot.json'))) { console.error('dist/boot.json missing: build first'); process.exit(1); }
+if (!existsSync(join(DIST, 'boot.json'))) { console.log('SKIP (needs dist): dist/boot.json missing; build with VITE_CATALOGUE=viewport first'); process.exit(0); }
 const bundle = readFileSync(join(DIST, 'index.html'), 'utf-8');
 const boot = JSON.parse(readFileSync(join(DIST, 'boot.json'), 'utf-8'));
 const allShards = Object.keys(boot.chunks);

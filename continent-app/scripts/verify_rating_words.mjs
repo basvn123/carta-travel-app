@@ -48,17 +48,18 @@ function judge(where, list) {
 const seen = {};
 for (const id of PLACES) {
   await page.goto(`${URL}#dest=${encodeURIComponent(id)}`, { waitUntil: 'domcontentloaded' });
-  const head = await page.waitForSelector('.destp-score .score-chip', { timeout: 30000 }).catch(() => null);
+  const head = await page.waitForSelector('.destp .pt-score .score-chip', { timeout: 15000 }).catch(() => null);
   if (!head) { fails.push(`${id}: no Score in the head`); continue; }
-  const [h] = await readChips('.destp-score');
+  const [h] = await readChips('.destp .pt-score');
   seen[id] = h.word;
   judge(`${id} head`, [h]);
-  judge(`${id} page`, await readChips('.destp-grid'));
-  // "Why it rates" lives on Practical; the head Score opens it.
-  await page.click('.destp-score');
-  const rb = await page.waitForSelector('[data-testid="rating-breakdown"] .score-chip', { timeout: 10000 }).catch(() => null);
+  judge(`${id} page`, await readChips('.destp'));
+  // T1089: "Why it rates" is the RatingSheet the head Score opens (T1029).
+  await page.click('.destp .pt-score');
+  const rb = await page.waitForSelector('.rs-sheet .rs-hero .score-chip', { timeout: 10000 }).catch(() => null);
   if (rb) {
-    const [b] = await readChips('[data-testid="rating-breakdown"]');
+    const [b] = await readChips('.rs-sheet .rs-hero');
+    await page.keyboard.press('Escape');
     judge(`${id} breakdown`, [b]);
     if (b.band !== h.band) fails.push(`${id}: head ${h.band}, breakdown ${b.band}`);
   } else {

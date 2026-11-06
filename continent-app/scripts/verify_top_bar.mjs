@@ -41,7 +41,7 @@ const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 
 // The emrldtp loader is an accepted risk that always fails offline; its fetch
 // noise is not a regression signal for this bar.
-const NOISE = /ERR_FAILED|config is not valid/;
+const NOISE = /ERR_FAILED|config is not valid|ERR_TUNNEL|ERR_CONNECTION|Failed to load resource/;
 
 const boot = async (viewport, tag) => {
   const page = await browser.newPage({ viewport });
@@ -76,8 +76,11 @@ const rightEdge = async (page, sel) => {
 
   // T502: a phone draws no header bar on a browse view (T496-T501); the
   // settings line stands on top instead.
-  check('no header bar on a phone browse view', !(await page.locator('.app-header').isVisible()));
-  check('the settings line stands on top', await page.locator('.settings-line-phone').isVisible());
+  // T1089: a phone header carries the brand and the doors again (Together,
+  // Account); the search dock's pill replaced the phone settings line.
+  check('the phone header is brand and doors only', await page.locator('.app-header').isVisible()
+    && await page.locator('.app-header-brand').isVisible());
+  check('the search dock stands over the bar', await page.locator('.sdock-pill').isVisible());
 
   // The map era, gone rather than merely hidden.
   for (const [what, sel] of [
@@ -93,7 +96,7 @@ const rightEdge = async (page, sel) => {
   const navVisible = await page.locator('.header-nav-item').locator('visible=true').count();
   check('no section tabs in the phone header', navVisible === 0, `${navVisible} visible`);
   const slots = page.locator('.bottom-nav-item');
-  check('the bottom bar carries the four sections', await slots.count() === 4, `${await slots.count()} items`);
+  check('the bottom bar carries the three sections', await slots.count() === 3, `${await slots.count()} items`);
   const slotBox = await box(page, '.bottom-nav-item');
   check('bottom-bar slot >= 44px tall', !!slotBox && slotBox.height >= 43.5,
     slotBox ? `${Math.round(slotBox.width)}x${Math.round(slotBox.height)}` : 'missing');
@@ -106,22 +109,29 @@ const rightEdge = async (page, sel) => {
   await page.screenshot({ path: `${SHOTS}/top-bar-mobile.png` });
 
   // ── Language: in the Account panel, and it really switches. ──
-  await page.locator('.bottom-nav-item').filter({ hasText: /account/i }).first().click();
+  // T1089: Account is the header avatar on a phone now, not a bottom-bar item.
+  await page.locator('.account-door:not(.tg-door):visible').first().click();
   await page.waitForTimeout(900);
-  const opts = page.locator('.account-lang-opt');
-  check('account panel shows the language grid', await page.locator('.account-lang-grid').isVisible());
-  // T502: "Prices in EUR" and "How Carta works" moved into Account (T496-T501).
-  check('account carries the currency line', await page.locator('.account-currency').isVisible());
+  // T1089: Account's overview lists Language and Currency as rows (.ac-row);
+  // Language opens Preferences, whose Language row opens a radio list.
+  const rowOf = (name) => page.locator('.ac-row:visible', { hasText: name }).first();
+  check('account overview carries the language row', await rowOf('Language').isVisible());
+  check('account carries the currency row', await rowOf('Currency').isVisible());
   check('account has a How Carta works row to Home',
-    /tab=home/.test(await page.locator('a.account-nav[href*="tab=home"]').first().getAttribute('href').catch(() => '') || ''));
+    /tab=home/.test(await page.locator('a.ac-row[href*="tab=home"]').first().getAttribute('href').catch(() => '') || ''));
+  await rowOf('Language').click();
+  await page.waitForTimeout(1500);
+  await rowOf('Language').click();
+  await page.waitForTimeout(800);
+  const opts = page.locator('.ac-langs [role="radio"]');
   check('all six languages listed', await opts.count() === 6, String(await opts.count()));
   await page.screenshot({ path: `${SHOTS}/top-bar-account-lang.png` });
 
   await opts.filter({ hasText: 'Deutsch' }).click();
   await page.waitForTimeout(700);
-  const active = await page.locator('.account-lang-opt.on').innerText().catch(() => '');
-  check('picked language marked active', /deutsch/i.test(active), active.trim());
-  // T502: the bottom bar's Account label is the relabel probe now.
+  const active = await page.locator('.ac-row:visible', { hasText: /Sprache|Language/ }).first().innerText().catch(() => '');
+  check('picked language marked active', /deutsch/i.test(active), active.replace(/\s+/g, ' ').trim());
+  // T1089: the bottom bar's last label (My trips) is the relabel probe.
   const passDe = await page.locator('.bottom-nav-item .bottom-nav-label').last().innerText().catch(() => '');
   check('the bottom bar relabels in German', passDe.trim().length > 0 && passDe.trim() !== passText.trim(),
     `${passText.trim()} -> ${passDe.trim()}`);
@@ -192,7 +202,7 @@ const rightEdge = async (page, sel) => {
   // Clicking a tab really moves: Plan is a different surface (T502).
   await tabs.filter({ hasText: /^plan$/i }).first().click();
   await page.waitForTimeout(1800);
-  check('a tab click changes the surface', await page.locator('.plan-start').isVisible());
+  check('a tab click changes the surface', await page.locator('.pf-open-start').isVisible());
   await page.screenshot({ path: `${SHOTS}/top-bar-desktop.png` });
   await page.close();
 }

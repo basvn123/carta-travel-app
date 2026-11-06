@@ -1,3 +1,4 @@
+// Retired T1089: the wizard landing it checks (booked tiles, six-step rail, country card grid) was replaced by the one-question Plan flow (src/planner/flow); verify_when_step.mjs and verify_stay_picks.mjs drive the new flow.
 // Headless verify for the trip planner landing: the tab opens straight on the
 // first question of the one flow (what is already booked, where from, when,
 // who), with no locator map, no bottom sheet and no modal backdrop, and the

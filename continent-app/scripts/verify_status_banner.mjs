@@ -1,3 +1,4 @@
+// T1089 needs: dist (an app served with VITE_DATA_BASE pointing at the loopback stand-in; skips when the app never asks it)
 /**
  * verify_status_banner.mjs, the data host status line in a real browser
  * (T316, register T218-a; src/lib/statusFile.js, AnnouncementBar.jsx).
@@ -20,7 +21,10 @@ import { fileURLToPath } from 'node:url';
 
 const APP_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PUB = join(APP_ROOT, 'public');
-const BASE = process.env.CARTA_BASE || 'http://localhost:5206';
+const BASE = process.env.CARTA_BASE || `http://localhost:${process.env.CARTA_PORT || 5206}`;
+// T1089: Explore's landing no longer mounts .places-tab, so the app counts as
+// booted once a nav item is on screen (the header's or the bottom bar's).
+const BOOT = '.header-nav-item:visible, .bottom-nav-item:visible';
 const STANDIN = 'http://127.0.0.1:59999';
 const SHOTS = join(APP_ROOT, 'shots');
 mkdirSync(SHOTS, { recursive: true });
@@ -82,7 +86,7 @@ async function open(browser, { width, height, status, delay = 0, lang = 'en', di
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message.split('\n')[0]));
   await page.goto(BASE + '/', { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForSelector('.places-tab', { state: 'visible', timeout: 45000 }).catch(() => {});
+  await page.waitForSelector(BOOT, { state: 'visible', timeout: 45000 }).catch(() => {});
   return { ctx, page, statusHits, errors };
 }
 
@@ -92,6 +96,20 @@ async function settle(page, ms = 1500) { await page.waitForTimeout(ms); }
 
 const browser = await chromium.launch();
 try {
+  // Precondition: the served app must be built (or started) with
+  // VITE_DATA_BASE=http://127.0.0.1:59999/data, or it never asks the stand-in
+  // for status.json and every check below would be meaningless. Detect it.
+  {
+    const probe = await open(browser, { width: 1440, height: 900, status: undefined });
+    await settle(probe.page, 3000);
+    const wired = probe.statusHits.length > 0;
+    await probe.ctx.close();
+    if (!wired) {
+      console.log('SKIP (needs dist): the app made no request to the data-host stand-in; serve it with VITE_DATA_BASE=http://127.0.0.1:59999/data');
+      await browser.close();
+      process.exit(0);
+    }
+  }
   console.log('1. silent states');
   for (const [label, status] of [
     ['no file (404)', undefined],
@@ -102,7 +120,7 @@ try {
   ]) {
     const { ctx, page, statusHits, errors } = await open(browser, { width: 1440, height: 900, status });
     await settle(page);
-    const booted = await page.locator('.places-tab').isVisible();
+    const booted = await page.locator(BOOT).first().isVisible();
     check(`${label}: no banner, app booted`, booted && (await page.locator('.site-banner').count()) === 0
       && errors.length === 0, `${statusHits.length} request(s)${errors.length ? `, ${errors[0]}` : ''}`);
     await ctx.close();
@@ -146,7 +164,7 @@ try {
     await banner(page).locator('.site-banner-close').click();
     check('the close button hides it', (await page.locator('.site-banner').count()) === 0);
     await page.reload({ waitUntil: 'domcontentloaded' });
-    await page.waitForSelector('.places-tab', { state: 'visible', timeout: 45000 }).catch(() => {});
+    await page.waitForSelector(BOOT, { state: 'visible', timeout: 45000 }).catch(() => {});
     await settle(page);
     check('the same line stays gone after a reload', (await page.locator('.site-banner').count()) === 0);
     await ctx.close();
@@ -170,7 +188,7 @@ try {
     const t0 = Date.now();
     const { ctx, page, errors } = await open(browser, { width: 1440, height: 900, status: LIVE, delay: 8000 });
     const bootMs = Date.now() - t0;
-    check('a hung data host does not hold the app back', await page.locator('.places-tab').isVisible(), `${bootMs} ms to the places tab`);
+    check('a hung data host does not hold the app back', await page.locator(BOOT).first().isVisible(), `${bootMs} ms to the places tab`);
     await page.waitForTimeout(9000);
     check('a reply after the 3 s timeout is ignored', (await page.locator('.site-banner').count()) === 0);
     check('no page errors', errors.length === 0, errors[0] || '');

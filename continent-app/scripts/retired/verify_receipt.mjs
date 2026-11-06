@@ -1,3 +1,4 @@
+// Retired T1089: the #trip= share hash now opens the tabbed trip page (Overview, Itinerary, Costs, Days, Notes), not the .itin receipt; the group expense ledger (.exp-ledger) and the breakdown toggle it drives are gone.
 // Headless smoke for the receipt-side additions: the Bag check panel (LCC
 // rules engine), the secondary-hub ground-link notes, and the group expense
 // ledger. Injects a trip via the #trip=0.<b64url> share hash (the documented

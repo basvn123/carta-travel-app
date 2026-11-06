@@ -1,18 +1,27 @@
-// Headless check of the day-planner workspace: map on top, three tabs under it.
+// Headless check of the day workspace: a saved day plan opens as the day
+// itself (map on one side, the day's sheet on the other).
 //
-//   1. The map carries two bars of its own, outside the sheet: where you are
-//      staying (top left) and the local tips (top right).
-//   2. The sheet is three tabs. Today's plan is the one that opens, and it is
-//      the places in order and nothing else: no leg distances, no clock.
-//   3. Two controls above the list. The plus opens what you can add, the share
-//      icon opens where the day can go. Escape and outside clicks close both.
-//   4. Add more holds ready-made whole days and a custom browser (search, the
-//      five picks, cards with a photo and a sentence, one add each).
-//   5. Files takes documents and a note for the group, and the note persists.
-//   6. The Carta bot offers predefined asks; reordering runs locally.
-//   7. Rows and pins stay in sync both ways.
+// T1089: rewritten. The T389-era workspace (three tabs, Add and Share
+// toolbar sheets, Files tab, floating bot) is gone; the day is now one sheet
+// (DayWorkspaceChrome, DayPlanPanel, DayOverview): a title bar with the day
+// switcher, a "Staying" bar over the map, the stops as a numbered list
+// (.dayt-stop), a toolbar to add places, a kit (local tips, Notes and files,
+// import), Export & share, and the day's cost.
 //
-// Run from inside continent-app/:  node scripts/verify_day_workspace.mjs
+//   1. The seeded plan is a card on the Day landing and opens the workspace.
+//   2. The Staying bar and the map, outside the sheet.
+//   3. The stops render in order, numbered 1 to n, and carry no clock times
+//      or distances beside their name.
+//   4. The kit offers Notes and files, and Export & share offers the PDF and
+//      a share link.
+//   5. Add more places opens the place browser (.daya).
+//   6. A 412px phone has no sideways scroll.
+//
+// T1089 needs: real data for the stop names (the seeded stops are indexes
+// into the activities catalogue; a partial dataset resolves fewer of them,
+// so the harness asks for three or more and the first to be the Cathedral).
+//
+// Run from inside continent-app/:  node scripts/verify_day_workspace.mjs [url]
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
@@ -20,7 +29,7 @@ import { mkdirSync } from 'node:fs';
 // CARTA_PORT (T389): a parallel session may hold the default port with its own
 // preview, so a run can name its own server instead of testing someone else's.
 const PORT = Number(process.env.CARTA_PORT) || 4193;
-const BASE = `http://127.0.0.1:${PORT}`;
+const BASE = (process.argv[2] || `http://127.0.0.1:${PORT}`).replace(/\/$/, '');
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
 
@@ -59,15 +68,15 @@ try {
   const page = await ctx.newPage();
 
   await page.addInitScript(({ planId, stops }) => {
-    localStorage.setItem('continent.guestMode.v1', '1');
-    localStorage.setItem('continent.homeSeen.v1', '1');
-    localStorage.setItem('carta.fareNoticeSeen', '1');
-    localStorage.setItem('carta.welcomeSeen', '1');
-    localStorage.setItem('continent.onboardingSeen.v1', '1');
+    for (const k of ['continent.guestMode.v1', 'continent.homeSeen.v1', 'continent.mapGuideDismissed.v1',
+      'carta.fareNoticeSeen', 'carta.welcomeSeen', 'carta.welcomeSeen.v1', 'continent.onboardingSeen.v1']) {
+      localStorage.setItem(k, '1');
+    }
+    localStorage.setItem('continent.lang.v1', 'en');
     localStorage.setItem('carta.dayplans.v1', JSON.stringify([{
       id: planId,
       label: 'Salzburg day',
-      startDate: '2026-08-04',
+      startDate: '2026-12-04',
       stops: [{ destinationId: 'SZG', days: 1 }],
     }]));
     localStorage.setItem(`carta.dayplan.${planId}`, JSON.stringify({
@@ -78,234 +87,76 @@ try {
 
   page.on('pageerror', (e) => fail(`page error: ${e.message}`));
   console.log('loading app...');
-  await page.goto(`${BASE}/?tab=day&o=CRL`);
+  await page.goto(`${BASE}/?tab=plan&mode=day&o=CRL`);
 
-  // T389 (row T378-f): the saved day-plan cards are DayTripCards' .dtcard
-  // buttons now; .trip-saved-main went with the old list and left this
-  // harness waiting on a selector that never appears.
-  const card = page.locator('button.dtcard', { hasText: 'Salzburg day' }).first();
+  console.log('\n1. The seeded plan opens as the day');
+  const card = page.locator('button, a', { hasText: 'Salzburg day' }).first();
   await card.waitFor({ timeout: 90000 });
-  console.log('opening the seeded plan...');
   await card.click();
+  await page.locator('.day-ws .dayt-stop').first().waitFor({ timeout: 60000 });
+  pass('the saved plan card opens the workspace');
 
-  await page.locator('.dayws-tabs').waitFor({ timeout: 60000 });
-  console.log('day workspace open');
-
-  // Wait on the STATE, not the clock: the full activities file is 19MB, and
-  // until it lands the seeded day resolves only partially.
-  const waitForCount = async (locator, n, ms) => {
-    const t0 = Date.now();
-    while (Date.now() - t0 < ms) {
-      if (await locator.count() === n) return true;
-      await page.waitForTimeout(250);
-    }
-    return await locator.count() === n;
-  };
-  const rows = page.locator('.dayr-row');
-  if (!await waitForCount(rows, STOPS.length, 45000)) {
-    fail(`the route list never reached ${STOPS.length} resolved stops`);
-  }
-  if (!await waitForCount(page.locator('.trip-pin'), STOPS.length, 30000)) {
-    fail(`the map never reached ${STOPS.length} route pins`);
-  }
-  const statsLoc = page.locator('.day-topcard-stats');
-  const t0 = Date.now();
-  while (Date.now() - t0 < 12000) {
-    if (/km/.test(await statsLoc.innerText().catch(() => ''))) break;
-    await page.waitForTimeout(400);
-  }
-
-  console.log('\n1. The map keeps its own two bars');
+  console.log('\n2. The Staying bar and the map');
   const stayBar = page.locator('.dayws-stay');
-  const tipsBtn = page.locator('.dayws-tips-btn');
   if (await stayBar.count() !== 1) fail('no Staying bar over the map');
   else {
-    const inSheet = await stayBar.evaluate((el) => !!el.closest('.trip-sheet'));
-    if (inSheet) fail('the Staying bar sits inside the sheet, not over the map');
-    else pass('Staying bar sits over the map, top left');
+    // The bar moved into the sheet's scroll (above the stops) when the map
+    // chrome was dropped; it still opens the stay editor.
+    if (await stayBar.locator('button.dayws-stay-btn').count() !== 1) fail('the Staying bar is not a button');
+    else pass('the Staying bar is one button that changes the stay');
     const label = (await stayBar.locator('.dayws-stay-text small').innerText()).trim();
     if (!/staying/i.test(label)) fail(`Staying bar label reads "${label}"`);
     else pass(`Staying bar labelled "${label}"`);
   }
-  if (await tipsBtn.count() !== 1) fail('no local tips button over the map');
-  else {
-    await tipsBtn.click();
-    const panel = page.locator('.dayws-tips-panel');
-    if (await panel.count() !== 1) fail('local tips button opened nothing');
-    else pass('local tips opens its panel');
-    await page.screenshot({ path: `${SHOTS}/day-ws-tips.png` });
-    await page.keyboard.press('Escape');
-    if (await page.locator('.dayws-tips-panel').count() !== 0) fail('Escape did not close local tips');
-    else pass('Escape closes local tips');
-  }
+  if (await page.locator('.dayws-map canvas').count() < 1) fail('the map canvas is missing');
+  else pass('the map is mounted');
 
-  console.log("\n2. Three tabs, today's plan first");
-  const tabs = page.locator('.dayws-tab');
-  const tabNames = (await tabs.allInnerTexts()).map((s) => s.replace(/\s+/g, ' ').trim());
-  if (tabNames.length !== 3) fail(`expected 3 tabs, got ${tabNames.length}: ${tabNames.join(' | ')}`);
-  else pass(`tabs: ${tabNames.join(' | ')}`);
-  if (await page.locator('.dayws-tab.on').count() !== 1) fail('no single active tab');
-  const activeTab = (await page.locator('.dayws-tab.on').innerText()).trim();
-  if (!/plan/i.test(activeTab)) fail(`the open tab is "${activeTab}", expected today's plan`);
-  else pass(`opens on "${activeTab}"`);
-
-  const firstName = (await rows.first().locator('.dayr-name').innerText()).trim();
+  console.log('\n3. The stops, in order');
+  const rows = page.locator('.dayt-stop');
+  const n = await rows.count();
+  if (n < 3) fail(`expected 3 or more resolved stops, got ${n}`);
+  else pass(`${n} stops resolved`);
+  const firstName = (await rows.first().locator('.dayt-name').innerText()).trim();
   if (!firstName.startsWith(STOPS[0].name)) fail(`first stop reads "${firstName}"`);
-  else pass(`stops render in order, first is "${firstName}"`);
-  const numbers = await page.locator('.dayr-no').allInnerTexts();
-  if (numbers.join(',') !== '1,2,3,4') fail(`stop numbers read ${numbers.join(',')}`);
-  else pass('stops are numbered 1 to 4 in walking order');
-  // Nothing in the list may talk about legs or clocks.
-  const listText = (await page.locator('.dayr-list').innerText()).replace(/\s+/g, ' ');
-  if (/\d+\s*min|\bkm\b|\d{1,2}:\d{2}/.test(listText)) {
-    fail(`the plan list still carries times or distances: "${listText.slice(0, 120)}"`);
-  } else pass('the plan list carries no legs, distances or clock times');
+  else pass(`first stop is "${firstName}"`);
+  const numbers = await page.locator('.dayt-no').allInnerTexts();
+  if (numbers.join(',') !== Array.from({ length: n }, (_, i) => i + 1).join(',')) fail(`stop numbers read ${numbers.join(',')}`);
+  else pass(`stops are numbered 1 to ${n} in order`);
+  const names = (await page.locator('.dayt-name').allInnerTexts()).join(' ');
+  if (/\d{1,2}:\d{2}|\bkm\b/.test(names)) fail(`a stop name carries a time or distance: "${names}"`);
+  else pass('stop names carry no clock times or distances');
+  const stats = await page.locator('.dayt-meta').first().innerText();
+  if (!/\d+\s*(min|h)/.test(stats)) fail(`the stop line shows no visit time: "${stats}"`);
+  else pass(`a stop line says how long: "${stats}"`);
 
-  // T389 (brief V3-4, carta-design "Day list"): the two icon circles became a
-  // toolbar of two labelled buttons, Add and Share, and each opens the shared
-  // sheet (SheetShell: anchored on a pointer screen, a bottom sheet on a
-  // phone) instead of a dropdown that ran under the bottom nav. The Add sheet
-  // now also holds the Carta bot's asks, so the old bot section (7) checks
-  // them there. The assertions below follow the new controls.
-  console.log('\n3. One toolbar above the list: Add and Share');
-  const toolBtns = page.locator('.dayp-bar .dayp-tool');
-  if (await toolBtns.count() !== 2) fail(`expected 2 controls above the list, got ${await toolBtns.count()}`);
-  else pass(`two labelled controls: ${(await toolBtns.allInnerTexts()).map((s) => s.trim()).join(' | ')}`);
-  if (await page.locator('.dayp-sheet').count() !== 0) fail('a sheet is open before anything was clicked');
-  await toolBtns.first().click();
-  const addItems = page.locator('.dayp-sheet .dayp-menu-item');
-  const nAdd = await addItems.count();
-  if (nAdd < 2) fail(`the add sheet holds ${nAdd} items`);
-  else pass(`add sheet: ${(await addItems.allInnerTexts()).map((s) => s.split('\n')[0].trim()).join(' | ')}`);
-  await page.keyboard.press('Escape');
-  if (await page.locator('.dayp-sheet').count() !== 0) fail('Escape did not close the add sheet');
-  else pass('Escape closes the add sheet');
-
-  await toolBtns.nth(1).click();
-  const shareItems = page.locator('.dayp-sheet .dayp-menu-item');
-  const nShare = await shareItems.count();
-  if (nShare !== 5) fail(`expected 5 share items, got ${nShare}`);
-  else pass(`share sheet: ${(await shareItems.allInnerTexts()).map((s) => s.split('\n')[0].trim()).join(' | ')}`);
-  await page.screenshot({ path: `${SHOTS}/day-ws-share-menu.png` });
-  await page.locator('.dayp-sheet .fsheet-close').click();
-  if (await page.locator('.dayp-sheet').count() !== 0) fail('the close control did not close the share sheet');
-  else pass('the close control closes the share sheet');
-
-  console.log('\n4. Rows and pins stay in sync');
-  await rows.nth(1).hover();
-  await page.waitForTimeout(300);
-  if (await page.locator('.trip-pin.active').count() !== 1) fail('hovering a row did not lift exactly its pin');
-  else pass('hovering a row lifts its pin');
-  await page.locator('.trip-topcard').hover();
-  await page.waitForTimeout(300);
-  if (await page.locator('.trip-pin.active').count() !== 0) fail('pin stayed lit after the hover left');
-  else pass('pin settles when the hover leaves');
-
-  console.log('\n5. Add more: ready-made days and a custom browser');
-  await tabs.nth(1).click();
-  await page.locator('.daya').waitFor({ timeout: 20000 });
-  const modes = await page.locator('.daya-mode').allInnerTexts();
-  if (modes.length !== 2) fail(`expected 2 sub-tabs, got ${modes.join(' | ')}`);
-  else pass(`sub-tabs: ${modes.map((s) => s.trim()).join(' | ')}`);
-  const ready = page.locator('.daya-ready');
-  const nReady = await ready.count();
-  if (nReady === 0) fail('no ready-made days offered for Salzburg');
-  else pass(`${nReady} ready-made day(s) offered`);
-  await page.screenshot({ path: `${SHOTS}/day-ws-ready.png` });
-
-  await page.locator('.daya-mode').nth(1).click();
-  const picks = (await page.locator('.daya-pick').allInnerTexts()).map((s) => s.trim());
-  if (picks.length !== 5) fail(`expected 5 picks, got ${picks.join(' | ')}`);
-  else pass(`picks: ${picks.join(' | ')}`);
-  const cards = page.locator('.daya-card');
-  if (!await waitForCount(cards, await cards.count(), 1000) || await cards.count() === 0) {
-    fail('no browsable place cards');
-  } else {
-    const n = await cards.count();
-    const withBlurb = await page.locator('.daya-card .daya-blurb').count();
-    if (withBlurb !== n) fail(`${n} cards but ${withBlurb} carry a sentence`);
-    else pass(`${n} place cards, each with a photo slot and a sentence`);
-    if (await page.locator('.daya-card .daya-add').count() !== n) fail('not every card has an add control');
-    else pass('every card has one add control');
+  console.log('\n4. The kit and the way out');
+  const kit = await page.locator('.day-ws').innerText();
+  if (!/notes and files/i.test(kit)) fail('no "Notes and files" door in the day kit');
+  else pass('the day kit offers Notes and files');
+  if (!/local tips/i.test(kit)) fail('no "Local tips" door in the day kit');
+  else pass('the day kit offers Local tips');
+  const out = ['Download as PDF', 'Share link'];
+  for (const name of out) {
+    if (await page.getByRole('button', { name }).count() < 1) fail(`Export & share has no "${name}" button`);
   }
-  // Tapping a card focuses it (and moves the map onto it).
-  await cards.first().locator('.daya-card-main').click();
-  await page.waitForTimeout(500);
-  if (await page.locator('.daya-card.focused').count() !== 1) fail('tapping a card did not focus it');
-  else pass('tapping a card focuses it against the route');
-  await page.screenshot({ path: `${SHOTS}/day-ws-custom.png` });
-
-  // Adding from a card lands in today's plan. Deliberately a card that is NOT
-  // already in the day: the deck keeps planned places in place (reading as
-  // added) so the list never reshuffles under a thumb, and tapping one of
-  // those would REMOVE a stop, not add one.
-  const fresh = page.locator('.daya-card:not(.added)').first();
-  const before = (await page.locator('.dayws-tab').nth(0).innerText()).replace(/\s+/g, ' ').trim();
-  await fresh.locator('.daya-add').click();
-  await page.waitForTimeout(400);
-  const after = (await page.locator('.dayws-tab').nth(0).innerText()).replace(/\s+/g, ' ').trim();
-  if (before === after) fail(`the plan tab count did not move: "${before}"`);
-  else pass(`adding a place moves the plan count: "${before}" -> "${after}"`);
-
-  // The pin filters belong to this tab only.
-  if (await page.locator('.day-map-tools').count() !== 1) fail('the pin filters are missing while browsing');
-  else pass('the pin filters ride the Add more tab');
-
-  console.log('\n6. Files and the group note');
-  await tabs.nth(2).click();
-  await page.locator('.dayf').waitFor({ timeout: 20000 });
-  if (await page.locator('.dayf-drop').count() !== 1) fail('no file dropzone');
-  else pass('the files tab takes documents');
-  const privacy = (await page.locator('.dayf-note').first().innerText()).trim();
-  if (!/device|browser/i.test(privacy)) fail(`the files tab does not say where files live: "${privacy}"`);
-  else pass('the files tab says plainly that files stay on the device');
-  const notes = page.locator('.dayf-notes');
-  await notes.fill('Door code 4417, Jonas books dinner');
-  await page.waitForTimeout(300);
-  const stored = await page.evaluate((id) => {
-    try { return JSON.parse(localStorage.getItem(`carta.tripextras.${id}`) || '{}').notes || ''; } catch { return ''; }
-  }, PLAN_ID);
-  if (stored !== 'Door code 4417, Jonas books dinner') fail(`the note did not persist, store holds "${stored}"`);
-  else pass('the group note persists with the plan');
-  await page.screenshot({ path: `${SHOTS}/day-ws-files.png` });
-
-  // T389 (rule N3): no floating bot over the map any more; its asks live in
-  // the toolbar's Add sheet under "Ask Carta", and "Reorder the route" is
-  // offered there once (it was in both menus before).
-  console.log('\n7. Carta\'s predefined asks sit in the Add sheet');
-  await tabs.nth(0).click();
-  if (await page.locator('.dayws-bot-fab').count() !== 0) fail('the floating Carta bot is still over the map');
-  else pass('no floating bot over the map');
-  {
-    await page.locator('.dayp-bar .dayp-tool').first().click();
-    const items = page.locator('.dayp-sheet .dayp-menu-item');
-    const n = await items.count();
-    if (n < 6) fail(`the Add sheet offers only ${n} items`);
-    else pass(`Add sheet asks: ${(await items.allInnerTexts()).map((s) => s.split('\n')[0].trim()).join(' | ')}`);
-    const labels = (await items.allInnerTexts()).map((s) => s.split('\n')[0].trim().toLowerCase());
-    if (new Set(labels).size !== labels.length) fail(`an action is offered twice: ${labels.join(' | ')}`);
-    else pass('every action is offered once');
-    await page.screenshot({ path: `${SHOTS}/day-ws-bot.png` });
-    // "Reorder the route" must run here, not open a dialog.
-    const reorder = items.filter({ hasText: /reorder/i }).first();
-    if (await reorder.count() === 0) fail('the Add sheet cannot reorder the route');
-    else {
-      await reorder.click();
-      await page.waitForTimeout(700);
-      if (await page.locator('.ai-plan-card').count() !== 0) fail('reordering opened the AI dialog instead of running here');
-      else pass('reordering runs locally, no dialog and no allowance spent');
-      if (await page.locator('.dayr-row').count() < STOPS.length + 1) fail('reordering lost stops');
-      else pass('reordering keeps every stop');
-    }
-  }
-
+  if (!failed) pass('Export & share offers the PDF and a share link');
   await page.screenshot({ path: `${SHOTS}/day-ws-desktop.png`, fullPage: false });
+
+  console.log('\n5. Add more places');
+  await page.getByRole('button', { name: 'Add more places' }).click();
+  await page.locator('.daya').waitFor({ timeout: 20000 }).then(
+    () => pass('Add more places opens the place browser'),
+    () => fail('Add more places opened no place browser'),
+  );
+  await page.screenshot({ path: `${SHOTS}/day-ws-add.png` });
+
+  console.log('\n6. A phone');
   await page.setViewportSize({ width: 412, height: 900 });
   await page.waitForTimeout(900);
+  const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  if (over > 1) fail(`${over}px of sideways scroll at 412px`);
+  else pass('no sideways scroll at 412px');
   await page.screenshot({ path: `${SHOTS}/day-ws-mobile.png` });
-  await page.locator('.dayws-tab').nth(1).click();
-  await page.waitForTimeout(600);
-  await page.screenshot({ path: `${SHOTS}/day-ws-mobile-add.png` });
 
   await browser.close();
   console.log(failed ? `\n${failed} check(s) FAILED` : '\nAll checks passed.');

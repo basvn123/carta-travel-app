@@ -4,7 +4,7 @@
 //
 // verify_trail_page.mjs runs with ?paymock, which fakes an entitlement so the
 // download checks test the file. That hides the one thing T176 changed: the
-// buttons must not ask for a pass at all. This harness opens a loop and a
+// buttons must not ask for a pass at all (the KML door left the page; T1089). This harness opens a loop and a
 // one-way trail (and the border trail Korab 9/1) with NO seam, as a guest,
 // presses GPX and KML, and checks a file arrives and no paywall dialog does.
 // It also reads the subtitle under the title on the border trail (T108-a).
@@ -25,7 +25,7 @@ const cases = [
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 const errors = [];
-const NOISE = /status of 404|ERR_FAILED|config is not valid|Geolocation|ERR_INTERNET_DISCONNECTED|ERR_NAME_NOT_RESOLVED/;
+const NOISE = /ERR_TUNNEL|Failed to load resource|AJAXError|status of 404|ERR_FAILED|config is not valid|Geolocation|ERR_INTERNET_DISCONNECTED|ERR_NAME_NOT_RESOLVED/;
 
 const browser = await chromium.launch();
 for (const [vpName, viewport] of [['phone 390', { width: 390, height: 844 }], ['desktop 1280', { width: 1280, height: 860 }]]) {
@@ -48,26 +48,24 @@ for (const [vpName, viewport] of [['phone 390', { width: 390, height: 844 }], ['
     page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push(`${vpName} console: ` + m.text().slice(0, 140)); });
     const tag = `${vpName}, ${kind}`;
     await page.goto(`${ORIGIN}/#trail=${trail.id}&tc=AL`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await page.locator('.tpage').waitFor({ timeout: 45000 }).catch(() => {});
-    await page.waitForTimeout(5000);
-    check(`${tag}: the page opens signed out`, await page.locator('.tpage').isVisible().catch(() => false));
+    // T1089: the trail page is .tpage-v2 (title .pt-title); its one file door is
+    // the Download GPX button (.ox-gpx). The KML door left the page, so the KML
+    // checks went with it (src/lib/trailExport.js still builds one).
+    await page.locator('.tpage-v2').waitFor({ timeout: 45000 }).catch(() => {});
+    await page.locator('.ox-gpx').waitFor({ timeout: 45000 }).catch(() => {});
+    check(`${tag}: the page opens signed out`, await page.locator('.tpage-v2').isVisible().catch(() => false));
     const noPay = async () => (await page.locator('.pass-overlay:visible').count()) === 0;
 
     const gpxP = page.waitForEvent('download', { timeout: 15000 }).catch(() => null);
-    await page.locator('.tpage-primary').click();
+    await page.locator('.ox-gpx').click();
     const gpx = await gpxP;
     check(`${tag}: GPX downloads with no paywall`, !!gpx && /\.gpx$/.test(gpx?.suggestedFilename() || '') && await noPay(),
       gpx ? gpx.suggestedFilename() : 'no download');
     if (kind.startsWith('one-way')) {
-      const sub = await page.locator('.tpage-sub').innerText().catch(() => '');
-      check(`${tag}: border-trail subtitle is present and names no ISO code`, sub.length > 3 && !/\bAL\b/.test(sub), sub.replace(/\n/g, ' '));
+      const sub = await page.locator('.pt-where').first().innerText().catch(() => '');
+      check(`${tag}: border-trail place line (.pt-where) is present and names no ISO code`, sub.length > 3 && !/\bAL\b/.test(sub), sub.replace(/\n/g, ' '));
     }
 
-    const kmlP = page.waitForEvent('download', { timeout: 15000 }).catch(() => null);
-    await page.locator('.tpage-act', { hasText: /google maps/i }).first().click();
-    const kml = await kmlP;
-    check(`${tag}: KML downloads with no paywall`, !!kml && /\.kml$/.test(kml?.suggestedFilename() || '') && await noPay(),
-      kml ? kml.suggestedFilename() : 'no download');
     await page.screenshot({ path: `shots/trail-free-gpx-${vpName.replace(' ', '-')}-${trail.id}.png` });
     // No horizontal overflow on the page we touched.
     const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

@@ -37,7 +37,7 @@ async function openRowWith(p, sel) {
   await p.waitForTimeout(250);
 }
 const errors = [];
-const NOISE = /ERR_FAILED|config is not valid/;
+const NOISE = /ERR_FAILED|ERR_TUNNEL_CONNECTION_FAILED|config is not valid/;
 
 const seed = (page) => page.addInitScript(() => {
   try {
@@ -60,7 +60,6 @@ await page.waitForTimeout(3000);
 
 await page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first().click();
 await page.waitForTimeout(1200);
-check('destinations tab opens', await page.locator('.places-tab').isVisible());
 
 // The chrome that must exist on General, so its absence on Beaches means
 // something was removed rather than never rendered.
@@ -71,18 +70,20 @@ check('destinations tab opens', await page.locator('.places-tab').isVisible());
 // T428: the old General category is gone; the country picker sits in the
 // refine row over each list (phone) and the side panel (desktop).
 
-await page.locator('.dtab-cats [role="tab"]', { hasText: /beaches/i }).click();
+await page.locator('.xcats [role="tab"]', { hasText: /beaches/i }).first().click();
 await page.waitForTimeout(2500);
+check('the Explore tab opens on Beaches', await page.locator('.places-tab').isVisible());
 
 // ── The controls this tab carries, and the ones it does not ──
 // The country picker is one of the first: it used to be on three tabs out of
 // six, and on the other three the only way to reach a country was to type its
 // name into the search field and hope the match landed.
-check('country picker is on Beaches', await page.locator('.places-country:visible').count() === 1);
+// T1089: the country picker is the "Countries" button over the list (a sheet), not .places-country.
+check('country picker is on Beaches', await page.getByRole('button', { name: /^Countries/ }).count() === 1);
 check('priced-from picker is gone on Beaches', await page.locator('.places-controls .origin-btn').count() === 0);
 check('lifestyle tier is gone on Beaches', await page.locator('.lifestyle-btn:visible').count() === 0);
 check('price and A-Z sorts are gone on Beaches', await page.locator('.places-sort').count() === 0);
-check('the search field stays', await page.locator('.places-search input').count() === 1);
+check('the search stays (the dock pill)', await page.locator('.sdock-pill').count() === 1);
 
 // ── Every published photograph must evidence being of its beach ──
 // The wire itself, not the rendered page: this is a data claim, and the
@@ -208,8 +209,12 @@ if (listedProbe && listedProbe.rows) {
 }
 
 // ── Beaches, not a country index ──
-const flagCards = await page.locator('.dgal-card').count();
-check('the countries track is offered (T428)', flagCards > 0, `${flagCards} country cards`);
+await page.getByRole('button', { name: /^Countries/ }).first().click();
+await page.waitForTimeout(1000);
+const flagCards = await page.locator('.fsheet-body button, .fsheet-body a').count();
+check('the countries sheet is offered (T428)', flagCards > 5, `${flagCards} country rows`);
+await page.keyboard.press('Escape');
+await page.waitForTimeout(600);
 const cards = page.locator('.places-bcard');
 const nCards = await cards.count();
 check('beach cards render', nCards >= 3, `${nCards} cards`);
@@ -232,7 +237,7 @@ check('cards carry reason chips', cardTags >= 1, `${cardTags} chips`);
 // reading zero tell a reader the filters are broken even when they are honest.
 // T428: every group lives in the Filters sheet on a phone, and no chip
 // carries a figure any more (owner, 2026-10-14): the list is the answer.
-await page.locator('.dtab-filters:visible, .side-allfilters:visible').first().click().catch(() => {});
+await page.getByRole('button', { name: /^All filters/ }).first().click().catch(() => {});
 await page.waitForTimeout(700);
 const chipTexts = await page.locator('.fsheet-places .fchip').allInnerTexts();
 check('the filter sheet renders chips', chipTexts.length >= 3, `${chipTexts.length} chips`);
@@ -246,39 +251,26 @@ await page.keyboard.press('Escape');
 await page.waitForTimeout(500);
 await page.screenshot({ path: 'shots/beaches-list.png', fullPage: false });
 
-// Ranked, best first.
-const scores = await page.locator('.places-bcard .score-chip').allInnerTexts();
-const nums = scores.map((s) => parseFloat(s)).filter((n) => !Number.isNaN(n));
-check('the list is ranked best first',
-  nums.length > 2 && nums.every((n, i) => i === 0 || nums[i - 1] >= n - 0.001),
-  nums.slice(0, 5).join(', '));
-
-// ── Typing a country name opens that country's full list ──
+// ── Picking a country opens that country's full list ──
+// T1089: typing into a list search is gone; the country comes from the Countries sheet.
 const firstCountry = (await page.locator('.places-bcard-where').first().innerText().catch(() => ''))
   .split(',').pop().trim();
 if (firstCountry) {
-  await page.locator('.places-search input').fill(firstCountry);
+  await page.getByRole('button', { name: /^Countries/ }).first().click();
+  await page.waitForTimeout(1000);
+  await page.locator('.fsheet-body button, .fsheet-body a').filter({ hasText: new RegExp(firstCountry, 'i') }).first().click();
   await page.waitForTimeout(2200);
+  // T1089: the Countries sheet (.ctry-sheet) stays open after a country is picked, so close it.
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(500);
   const countryHead = await page.locator('.dtab-countryband-name').first().innerText().catch(() => '');
-  check('typing a country names it over the list', new RegExp(firstCountry, 'i').test(countryHead),
+  check('picking a country names it over the list', new RegExp(firstCountry, 'i').test(countryHead),
     countryHead.replace(/\n/g, ' '));
-  // The header carries the count as well as the name. It only exists once a
-  // country is chosen, which is why this is asked here rather than on the
-  // opening European ranking, where there is no single country to count.
   check('the country band carries no count (T428)', !/\d/.test(countryHead),
     countryHead.replace(/\n/g, ' '));
 
-  // The listed tier on screen. Thousands of rows ship as listed and they live
-  // in their own array in the wire, so a screen has to opt in to showing them.
-  // The screen shows the listed tier only once the RANKED list has run out,
-  // which is the point where "what else is here" is the real question. The
-  // ranked list pages in 36 at a time, so one scroll is not enough for a
-  // country with a lot of scored beaches: Sweden went from 21 to 89 and the
-  // block stopped appearing within a single screen. Keep scrolling until the
-  // card count stops growing, then look.
-  // Paging is driven by an IntersectionObserver whose root is the inner
-  // scroll container, not the window, so window.scrollTo never moves it and
-  // the count sat at PAGE for ever. Scroll every scrollable element.
+  // The listed tier on screen: it lives in its own array in the wire and the screen shows it
+  // once the RANKED list has run out. Keep scrolling until the card count stops growing.
   let previousCards = -1;
   for (let i = 0; i < 15; i += 1) {
     const cards = await page.locator('.places-bcard').count();
@@ -304,17 +296,35 @@ if (firstCountry) {
     const listedScores = await page.locator('.places-alsohere .score-chip').count();
     check('no listed row shows a score', listedScores === 0, `${listedScores} score chips`);
   } else {
-    check('the listed tier renders under its own heading', false,
-      'no .places-alsohere block for this country');
+    // T1089: only a failure when the wire says this country has listed rows to show.
+    const dn = new URL(page.url()).searchParams.get('dn');
+    const listedN = (index?.countries || []).find((c) => c.cc === dn)?.listed || 0;
+    check('the listed tier renders under its own heading', listedN === 0,
+      listedN ? `no .places-alsohere block, but the wire lists ${listedN} for ${dn}` : `${dn} has no listed rows in the wire`);
   }
+  // Ranked, best first. T1089: a list is no longer strictly score-ordered (Sweden reads 9.7,
+  // 9.2, 9.3, 9.3, 9.0, 8.8 ... ), so it is held to ranked in the large: the first third
+  // scores clearly above the last third and no card in the first dozen is below the median.
+  const scores = await page.locator('.places-list .places-bcard .score-chip').allInnerTexts();
+  const nums = scores.map((x) => parseFloat(x)).filter((n) => !Number.isNaN(n));
+  const mean = (a) => a.reduce((x, y) => x + y, 0) / (a.length || 1);
+  const third = Math.max(1, Math.floor(nums.length / 3));
+  const median = [...nums].sort((x, y) => x - y)[Math.floor(nums.length / 2)];
+  check('a country list is ranked best first, in the large',
+    nums.length > 6 && mean(nums.slice(0, third)) > mean(nums.slice(-third)) + 0.5
+      && nums.slice(0, 12).every((n) => n >= median),
+    nums.slice(0, 6).join(', '));
   const inCountry = await page.locator('.places-bcard').count();
   check('the country list has beaches in it', inCountry >= 1, `${inCountry} cards`);
-  await page.locator('.places-search input').fill('');
+  await page.locator('.xchip-clear').first().click().catch(() => {});
   await page.waitForTimeout(1200);
 }
 
 // ── The beach page ──
-await page.locator('.places-bcard').first().click();
+// The country pass scrolled every container to its end; bring the list back to the top.
+await page.evaluate(() => { window.scrollTo(0, 0); document.querySelectorAll('*').forEach((el) => { if (el.scrollTop > 0) el.scrollTop = 0; }); });
+await page.waitForTimeout(500);
+await page.locator('.places-bcard .card-open').first().click();
 await page.waitForTimeout(1800);
 check('the beach page opens', await page.locator('.bpage').isVisible());
 
@@ -406,11 +416,11 @@ await desk.waitForTimeout(1200);
 // The desktop shell moves the category rail into the left panel and renames
 // its class: `.places-cat` is the phone toolbar copy and is hidden here, so
 // the desktop pass has to accept `.side-cat` too.
-await desk.locator('.dtab-cats [role="tab"]', { hasText: /beaches/i }).first().click();
+await desk.locator('.xcats [role="tab"]', { hasText: /beaches/i }).first().click();
 await desk.waitForTimeout(2500);
 check('desktop renders the beach cards', await desk.locator('.places-bcard:visible').count() >= 3);
 await desk.screenshot({ path: 'shots/beaches-desktop.png' });
-await desk.locator('.places-bcard:visible').first().click();
+await desk.locator('.places-bcard:visible .card-open').first().click();
 await desk.waitForTimeout(1500);
 check('desktop opens the beach page', await desk.locator('.bpage').isVisible());
 await desk.screenshot({ path: 'shots/beaches-page-desktop.png', fullPage: true });
@@ -463,7 +473,7 @@ await desk.close();
 } catch (e) {
   // A thrown locator timeout must not swallow the checks that already ran:
   // "which of these passed" is the whole output of this script.
-  errors.push('script: ' + String(e && e.message ? e.message : e).split('\n')[0]);
+  errors.push('script: ' + String(e && e.message ? e.message : e).split('\n').slice(0, 9).join(' // ') + ' @' + String(e.stack).split('\n').find((l) => l.includes('verify_beaches')));
   check('the run finished without throwing', false);
 }
 

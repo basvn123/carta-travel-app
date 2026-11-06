@@ -1,0 +1,12 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch(); const p = await (await b.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true})).newPage();
+await p.addInitScript(()=>{for(const k of ['continent.guestMode.v1','continent.homeSeen.v1','carta.fareNoticeSeen','carta.welcomeSeen','continent.onboardingSeen.v1'])localStorage.setItem(k,'1');localStorage.setItem('continent.lang.v1','en')});
+await p.goto('http://localhost:4173/?tab=map'); await p.waitForTimeout(6000);
+console.log(await p.evaluate(()=>[...document.querySelectorAll('button')].filter(e=>e.offsetParent).map(e=>e.className+'|'+(e.getAttribute('aria-label')||e.innerText.replace(/\s+/g,' ').slice(0,25))).slice(0,30)));await b.close();process.exit();
+console.log('sheet', await p.locator('.fsheet-explore').isVisible(), await p.locator('.fsheet-explore .xrail-tiles').count(), await p.locator('.fsheet-explore .xpane-chips').count());
+const sh=p.locator('.fsheet-explore');
+await sh.locator('.ui-chip',{hasText:'Beach'}).first().click(); await p.waitForTimeout(800);
+console.log(await p.evaluate(()=>[...document.querySelectorAll('.fsheet-apply, .fsheet-explore button')].filter(e=>e.offsetParent).map(e=>e.className+'|'+e.innerText.replace(/\s+/g,' ').slice(0,30)).slice(0,20)));
+await p.keyboard.press('Escape'); await p.waitForTimeout(1500);
+console.log(p.url().replace(/&d=.*/,''), await p.evaluate(()=>({vis:[...document.querySelectorAll('.xrow')].filter(e=>e.offsetParent).length,chips:[...document.querySelectorAll('.xchips .xchip')].map(e=>e.className+':'+e.innerText),overflow:document.documentElement.scrollWidth-document.documentElement.clientWidth})));
+await b.close();

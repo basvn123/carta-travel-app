@@ -1,3 +1,4 @@
+// Retired T1089: the Visited record's .saved-map expand control and the .uptrip-card crew plus (.uptrip-crew-*) it drives no longer exist; the tab is Your Europe now.
 // Headless check of the three things the Visited tab just gained:
 //   1. One left edge. "Saved trips", the tab pill and the record's map all
 //      begin on the same vertical, on a phone and on a desktop.

@@ -20,7 +20,7 @@ const browser = await chromium.launch();
 const checks = [];
 const errors = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
-const NOISE = /ERR_FAILED|config is not valid|404/;
+const NOISE = /ERR_FAILED|ERR_TUNNEL_CONNECTION_FAILED|config is not valid|404/;
 
 // A spread across the tiers, airports and gems alike. `badge` tracks the
 // PRE-EXISTING rule in crowdBadgeWorthShowing: only the extremes (tier 0 Quiet
@@ -55,6 +55,7 @@ for (const c of CASES) {
   await page.goto(BASE + '#dest=' + c.id, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(2600);
   const destp = page.locator('.destp').first();
+  await destp.waitFor({ state: 'visible', timeout: 20000 }).catch(() => {});
   const open = await destp.isVisible().catch(() => false);
   check(`${c.name}: page opens`, open);
   if (!open) continue;
@@ -67,16 +68,15 @@ for (const c of CASES) {
   // The number itself, in case a translation slips the wording.
   check(`${c.name}: no raw per-km2 figure`, !/per km²/i.test(text));
 
-  // The tier badge is the part that stays.
+  // T1089: the destination page no longer carries a header tier pill (CrowdCalendar, which drew
+  // it, is not mounted by DestinationPage any more; crowds read in the When to go strip, DestWhen).
+  // So the check that survives is the one that matters here: if a pill IS drawn, the figure lives
+  // in its tooltip and never in the body; and a middling tier never earns one.
   const badges = await page.locator('.destp .crowd-badge').count();
   if (!c.badge) check(`${c.name}: middling tier still shows no pill`, badges === 0, String(badges));
-  if (c.badge) {
-    check(`${c.name}: tier badge still shown`, badges >= 1, String(badges));
-    // And the figure still lives in the badge's tooltip, not in the body.
-    if (badges >= 1) {
-      const tip = await page.locator('.destp .crowd-badge').first().getAttribute('title', { timeout: 5000 }).catch(() => '');
-      check(`${c.name}: figure survives in the tooltip`, /km²/.test(tip || ''), (tip || '').slice(0, 60));
-    }
+  if (c.badge && badges >= 1) {
+    const tip = await page.locator('.destp .crowd-badge').first().getAttribute('title', { timeout: 5000 }).catch(() => '');
+    check(`${c.name}: figure survives in the tooltip`, /km²/.test(tip || ''), (tip || '').slice(0, 60));
   }
 }
 

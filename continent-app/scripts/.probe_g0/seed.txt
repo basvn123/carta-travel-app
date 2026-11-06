@@ -1,0 +1,44 @@
+  await page.addInitScript(({ planId, stops }) => {
+    localStorage.setItem('continent.guestMode.v1', '1');
+    localStorage.setItem('continent.homeSeen.v1', '1');
+    localStorage.setItem('carta.fareNoticeSeen', '1');
+    localStorage.setItem('carta.welcomeSeen', '1');
+    localStorage.setItem('continent.onboardingSeen.v1', '1');
+    localStorage.setItem('carta.dayplans.v1', JSON.stringify([{
+      id: planId,
+      label: 'Salzburg day',
+      startDate: '2026-08-04',
+      stops: [{ destinationId: 'SZG', days: 1 }],
+    }]));
+    localStorage.setItem(`carta.dayplan.${planId}`, JSON.stringify({
+      0: { 0: stops.map((s) => s.idx) },
+    }));
+    // An imported Carta bot plan for the same day: this is the state that used
+    // to render the itinerary twice.
+    localStorage.setItem(`carta.dayprefs.${planId}`, JSON.stringify({
+      routeMode: 'manual',
+      aiPlans: {
+        '0:0': {
+          summary: 'An old-town morning, the fortress at midday, gardens to finish.',
+          stops: [
+            ...stops.map((s, i) => ({
+              id: String(s.idx),
+              name: s.name,
+              arrive: ['09:30', '10:14', '11:40', '14:20'][i],
+              why: `Reason ${i + 1} from the Carta bot for visiting ${s.name}.`,
+            })),
+            {
+              external: true,
+              name: 'Sternbrau beer garden',
+              lat: 47.7995,
+              lon: 13.0421,
+              why: 'A shaded courtyard for the late afternoon.',
+            },
+          ],
+          totals: { walkKm: 4.2, endTime: '16:10' },
+          appliedAt: Date.now(),
+        },
+      },
+    }));
+  }, { planId: PLAN_ID, stops: STOPS });
+

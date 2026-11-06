@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch();
+const p = await (await b.newContext({ viewport:{width:1440,height:900}, serviceWorkers:'block'})).newPage();
+await p.addInitScript(()=>{localStorage.setItem('continent.lang.v1','en');localStorage.setItem('continent.guestMode.v1','1');localStorage.setItem('continent.homeSeen.v1','1');localStorage.setItem('carta.welcomeSeen','1');localStorage.setItem('carta.fareNoticeSeen','1');localStorage.setItem('carta.onboardSeen','1');});
+await p.goto('http://localhost:4173/?o=CRL&d=2026-08-04&r=2026-08-11&st=dorm&tab=explore');
+await p.waitForTimeout(3000);
+console.log(await p.evaluate(()=>[...document.querySelectorAll('[class*=settings-]')].filter(e=>e.offsetParent&&e.tagName=='BUTTON').map(b=>b.className+'|'+(b.getAttribute('aria-label')||b.textContent).slice(0,60)).join('\n')));
+await p.locator('.settings-part-lifestyle:visible').first().click();
+await p.waitForTimeout(1000);
+console.log('tiles', await p.locator('.lifestyle-panel .ls-tiles').first().locator('.ls-tile').allInnerTexts(), 'on', await p.locator('.lifestyle-panel .ls-tile.on').allInnerTexts());
+await p.locator('.lifestyle-panel .ls-tile').filter({hasText:'Hotel'}).first().click();
+await p.waitForTimeout(600);
+console.log('kind', await p.locator('.ls-kind .seg-item').allInnerTexts(), await p.locator('.ls-kind .seg-item.is-selected').allInnerTexts());await p.locator('.lifestyle-panel .ls-tile').filter({hasText:'Home'}).first().click();await p.waitForTimeout(500);console.log('kindhome', await p.locator('.ls-kind .seg-item').allInnerTexts(),p.url());await p.locator('.lifestyle-panel .ls-tile').filter({hasText:'Hostel'}).first().click();await p.waitForTimeout(500);console.log('kindhostel', await p.locator('.ls-kind .seg-item').allInnerTexts());await p.locator('.ls-kind .seg-item').first().click();await p.waitForTimeout(800);console.log(p.url(), await p.locator('.settings-part-lifestyle:visible').first().getAttribute('aria-label'));
+await b.close();

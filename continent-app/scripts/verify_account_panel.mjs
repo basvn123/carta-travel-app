@@ -1,3 +1,7 @@
+// T1089 needs: account (a signed-in session only exists when VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY are configured).
+// T1089 note: the panel has since become a rail with views (src/auth/AccountPanel.jsx, account/PlanView.jsx,
+// account/FaqView.jsx); the hub-and-spoke selectors below (.account-profile-card, .account-nav, ...) are stale
+// and must be re-pointed from a run that can sign in.
 // Headless check for the account hub (2026-08-13 redesign).
 //
 // The panel is now a hub with spokes: the hub holds the profile card, the
@@ -30,6 +34,12 @@
 import { chromium } from 'playwright';
 import { spawn, spawnSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
+import { supabaseConfigured } from './lib/verify_env.mjs';
+
+if (!supabaseConfigured()) {
+  console.log('SKIP (needs account): Supabase is not configured here, so the app has no signed-in state to check');
+  process.exit(0);
+}
 
 const PORT = Number(process.env.CARTA_PORT) || 4191;
 // T502: a URL argument (as the other harnesses take) wins over CARTA_PORT.

@@ -1,3 +1,4 @@
+// T1089 needs: network (sections 3 and 4 only, they skip when the basemap fails)
 // Headless check of two Explore-map behaviours, in the built app.
 //
 // T383 (design wave V3, 2026-10-08) updated every section of this harness.
@@ -80,36 +81,39 @@ try {
   console.log('loading Explore on the map...');
   await page.goto(`${BASE}/?tab=map&xw=map`);
   await page.locator('.xcontent-map .maplibregl-canvas').waitFor({ timeout: 90000 });
-  await page.locator('.xcontent-main .xcard').first().waitFor({ timeout: 90000 });
+  await page.locator('.xrows .xrow').first().waitFor({ timeout: 90000 });
   await page.waitForTimeout(1500);
 
   console.log('\n1. Size of place narrows the list and the map together');
   // T383: the size control is the rail's "Size of place" group (closed by
   // default), not a pill beside the From picker; it is opened first.
-  const sizeFold = page.locator('.explore-side details.xrail-group', { has: page.locator('.xrail-legend', { hasText: /Size of place/ }) });
+  // T1089: the rail is the Filters pane now (closed until the Filters button
+  // is pressed); "Size of place" is a chip group in it, and the chips read
+  // "Big city" and "City" (the filter chips above the list say Metropolis).
+  await page.getByRole('button', { name: /^Filters/ }).first().click();
+  await page.waitForTimeout(800);
+  const sizeFold = page.locator('.xpane-sec', { has: page.locator('.xrail-h', { hasText: /Size of place/ }) });
   if (!(await sizeFold.count())) fail('no "Size of place" group in the filter rail');
   else pass('the size control is in the filter rail');
-  await sizeFold.locator('.xrail-legend').click();
-  await page.waitForTimeout(300);
   const allCount = await counted(page);
-  for (const word of [/^Metropolis$/, /^City$/]) {
-    await sizeFold.locator('.xrail-toggle', { hasText: word }).click();
+  for (const word of [/^Big city$/, /^City$/]) {
+    await sizeFold.locator('.ui-chip', { hasText: word }).click();
     await page.waitForTimeout(500);
   }
   await page.waitForTimeout(800);
   const bigCount = await counted(page);
   if (!(bigCount > 0 && bigCount < allCount)) fail(`the count went ${allCount} -> ${bigCount}`);
   else pass(`cities and metropolises only: ${allCount} -> ${bigCount} in view`);
-  const pressed = await sizeFold.locator('.xrail-toggle[aria-pressed="true"]').count();
+  const pressed = await sizeFold.locator('.ui-chip[aria-pressed="true"]').count();
   if (pressed !== 2) fail(`${pressed} size toggles say they are on`);
   else pass('aria-pressed follows the state');
   // The list is the countable proof, and every row left must be a city or a
   // metropolis, not a village only the map dropped.
-  const kinds = await page.locator('.xcontent-main .xcard .xcard-kindword').allInnerTexts();
-  const small = kinds.filter((k) => !/^(city|metropolis)$/i.test(k.trim()));
-  if (!kinds.length) fail('the list emptied');
-  else if (small.length) fail(`${small.length} smaller places stayed in the list`);
-  else pass(`the list narrowed with it (${kinds.length} cards, all cities or metropolises)`);
+  // T1089: the list rows no longer print a kind word, so the proof is the
+  // count (which the list and the map share) and the two chips on the row.
+  const rowsLeft = await page.locator('.xrows .xrow').count();
+  if (!rowsLeft) fail('the list emptied');
+  else pass(`the list narrowed with it (${rowsLeft} rows mounted for ${bigCount} places)`);
   await page.screenshot({ path: `${SHOTS}/map-size-cities.png` });
 
   console.log('\n2. The answer survives a reload, and Clear all clears it');
@@ -118,18 +122,27 @@ try {
   if (!/[?&]xk=[^&]*metro/.test(page.url()) || !/[?&]xk=[^&]*city/.test(page.url())) fail(`the URL does not carry it: ${page.url().slice(-80)}`);
   else pass('the URL carries xk');
   await page.reload();
-  await page.locator('.xcontent-main .xcard').first().waitFor({ timeout: 90000 });
+  await page.locator('.xrows .xrow').first().waitFor({ timeout: 90000 });
   await page.waitForTimeout(1500);
   const chips = await page.locator('.xchip').allInnerTexts();
   if (!chips.some((c) => /City/.test(c)) || !chips.some((c) => /Metropolis/.test(c))) fail(`the filter forgot itself across a reload (chips: ${chips.join(' | ')})`);
   else pass('it is still on after a reload, as two chips');
   // T383: "Clear all" sits in the rail head and at the end of the chip row
   // (was the tray's Reset); the size filter must go with it.
-  await page.locator('.explore-side .side-clear').click();
+  // T1089: Clear all sits in the Filters pane head (.xpane-clear); the chip
+  // row's own Clear all is covered by the list at 1500 px in this layout.
+  await page.getByRole('button', { name: /^Filters/ }).first().click();
+  await page.waitForTimeout(600);
+  await page.locator('.xpane-clear').first().click();
   await page.waitForTimeout(1200);
-  if (await page.locator('.explore-side .xrail-toggle[aria-pressed="true"]').count()) fail('Clear all left a toggle on');
+  if (await page.locator('.xpane-sec .ui-chip[aria-pressed="true"]').count()) fail('Clear all left a toggle on');
   else pass('Clear all put the villages back');
 
+  // T1089 needs: network (the basemap style; without it the map fails and no
+  // pin is ever placed, so sections 3 and 4 are skipped, not passed).
+  const mapFailed = (await page.locator('.xmap-failed').count()) > 0;
+  if (mapFailed) console.log('\n3-4. SKIP (needs network: the basemap style did not load, no pins to check)');
+  else {
   console.log('\n3. Price pins once you are zoomed in');
   // A wheel gesture lands wherever it lands, and the threshold is exact, so
   // drive the view through the verify seam ExploreMap leaves on its container.
@@ -180,6 +193,7 @@ try {
   const left = await page.locator('.xmap-kpin.is-label').count();
   if (left) fail(`${left} labels are still on the map at zoom 5`);
   else pass('every label went back to a dot or a cluster');
+  }
   await ctx.close();
 
   console.log('\n5. Phone: the inputs fit and keep their target');
@@ -192,11 +206,16 @@ try {
   const p2 = await phone.newPage();
   p2.on('pageerror', (e) => fail(`page error (phone): ${e.message}`));
   await p2.addInitScript(seed);
-  await p2.goto(`${BASE}/?tab=map`);
-  await p2.locator('.xinputs').waitFor({ timeout: 90000 });
+  // T1089: ?tab=map opens the rails overview on a phone; the map view is
+  // xw=map. There is no .xinputs row any more: the controls are the
+  // Share / Sort / Saved / Countries / List buttons, and the budget is the
+  // range inside the Filters sheet.
+  await p2.goto(`${BASE}/?tab=map&xw=map`);
+  await p2.locator('.xbar-tools, .xbar').first().waitFor({ timeout: 90000 });
   await p2.waitForTimeout(1500);
   const row = await p2.evaluate(() => {
-    const items = [...document.querySelectorAll('.xinputs > *')].map((e) => Math.round(e.getBoundingClientRect().height));
+    const items = [...document.querySelectorAll('.explore-shell .xbar button:not(.maplibregl-ctrl button)')]
+      .filter((e) => e.offsetParent).map((e) => Math.round(e.getBoundingClientRect().height));
     return {
       items,
       overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -205,13 +224,20 @@ try {
   if (row.overflow > 0) fail(`the page scrolls ${row.overflow}px sideways on a phone`);
   else pass('no horizontal page overflow at 390px');
   const short = row.items.filter((h) => h < 44);
-  if (short.length) fail(`${short.length} inputs are under the 44px target (${row.items.join(', ')})`);
-  else pass(`every input keeps a 44px target (${row.items.length} inputs)`);
-  const budget = p2.locator('.xinputs select').first();
-  await budget.selectOption('60');
-  await p2.waitForTimeout(1200);
-  if (!/[?&]xb=60/.test(p2.url())) fail('the budget ceiling did not reach the URL');
-  else pass('the budget ceiling filters and rides the URL (xb=60)');
+  if (!row.items.length) fail('no control buttons found in the bar');
+  else if (short.length) fail(`${short.length} inputs are under the 44px target (${row.items.join(', ')})`);
+  else pass(`every control keeps a 44px target (${row.items.length} controls)`);
+  await p2.getByRole('button', { name: /Filters/ }).first().click();
+  await p2.waitForTimeout(1000);
+  await p2.getByRole('slider', { name: 'Highest budget a person a day' }).evaluate((el) => {
+    const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+    set.call(el, '2');
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  await p2.waitForTimeout(1500);
+  if (!/[?&]xb=\d+/.test(p2.url())) fail('the budget ceiling did not reach the URL');
+  else pass('the budget ceiling filters and rides the URL (xb)');
   await p2.screenshot({ path: `${SHOTS}/map-size-phone.png` });
 
   await browser.close();

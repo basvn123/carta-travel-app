@@ -1,0 +1,11 @@
+import { chromium } from 'playwright';
+const [,, url, w='1280', ...rest] = process.argv;
+const b = await chromium.launch();
+const c = await b.newContext({ viewport:{width:+w,height:900}, serviceWorkers:'block'});
+const p = await c.newPage();
+await p.addInitScript(()=>{localStorage.setItem('continent.lang.v1','en');localStorage.setItem('continent.guestMode.v1','1');localStorage.setItem('continent.homeSeen.v1','1');localStorage.setItem('carta.welcomeSeen','1');localStorage.setItem('carta.fareNoticeSeen','1');localStorage.setItem('continent.onboardingSeen.v1','1');});
+await p.goto(url);
+await p.waitForTimeout(9000);
+await p.screenshot({path:'/tmp/claude-0/p4.png'});
+console.log(await p.evaluate(()=>[...document.querySelectorAll('a,button,[role=tab],h1,h2,h3')].filter(e=>e.offsetParent).map(b=>b.tagName+'.'+String(b.className).slice(0,50)+'|'+(b.getAttribute('aria-label')||b.textContent).trim().slice(0,40)+(b.getAttribute('href')?'|'+b.getAttribute('href'):'')).join('\n')));
+await b.close();

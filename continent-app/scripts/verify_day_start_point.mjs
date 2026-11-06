@@ -15,11 +15,18 @@
 import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
+import { authConfigured } from './lib/authConfigured.mjs';
+
+// T1089 needs: account (case 4 reads a signed-in traveller's saved trips; skipped
+// when the app under test has no Supabase credentials).
+const AUTH_ON = await authConfigured(process.argv[2] || `http://127.0.0.1:${Number(process.env.CARTA_PORT) || 4193}`);
 
 // CARTA_PORT (T389): a parallel session may hold the default port with its own
 // preview, so a run can name its own server instead of testing someone else's.
 const PORT = Number(process.env.CARTA_PORT) || 4193;
-const BASE = `http://127.0.0.1:${PORT}`;
+// T1089: a URL argument names a running server (the wizard markup is dayw-*
+// since the T9xx day wizard; the old quick-start groups and day-flow-chosen are gone).
+const BASE = (process.argv[2] || `http://127.0.0.1:${PORT}`).replace(/\/$/, '');
 const SHOTS = 'scripts/shots';
 const PROJECT_REF = 'ntssxktaduxzpsmejwyv';
 mkdirSync(SHOTS, { recursive: true });
@@ -138,31 +145,29 @@ const seed = async (page, { plans = [], signedIn = false, geo = 'grant' } = {}) 
 };
 
 const openStep1 = async (page) => {
-  await page.goto(`${BASE}/?tab=day&o=CRL`);
-  // T389 (brief V3-5): with day plans on the device the landing leads with
-  // them and "Plan a new day"; the stay question is one tap behind it.
-  await page.locator('.day-flow-search input, .day-flow-newday').first().waitFor({ timeout: 120000 });
-  if (await page.locator('.day-flow-newday').count()) await page.locator('.day-flow-newday').click();
-  await page.locator('.day-flow-search input').waitFor({ timeout: 30000 });
+  await page.goto(`${BASE}/?tab=plan&mode=day&o=CRL`);
+  await page.locator('.day-flow-search input').waitFor({ timeout: 120000 });
   await page.waitForTimeout(900);
 };
 
-// The quick starts as they render: label, group heading and chip height.
+// The quick starts as they render: one row each, "Use my current location",
+// then the stops of a running trip ("your trip, from ..."), then recent starts.
 const readQuick = (page) => page.evaluate(() => {
-  const groups = [...document.querySelectorAll('.day-flow-quickgroup')].map((g) => ({
-    label: (g.querySelector('.day-flow-suggest-label')?.textContent || '').trim(),
-    chips: [...g.querySelectorAll('.day-flow-quickchip')].map((c) => ({
-      text: c.innerText.replace(/\s+/g, ' ').trim(),
-      h: Math.round(c.getBoundingClientRect().height),
-    })),
+  const rows = [...document.querySelectorAll('.dayw-quick-row')].map((c) => ({
+    text: c.innerText.replace(/\s+/g, ' ').trim(),
+    h: Math.round(c.getBoundingClientRect().height),
   }));
   return {
-    groups,
-    err: (document.querySelector('.day-flow-quickerr')?.textContent || '').trim(),
+    rows,
+    loc: rows.filter((r) => /current location/i.test(r.text)),
+    trip: rows.filter((r) => /your trip, from/i.test(r.text)),
+    recent: rows.filter((r) => !/current location|your trip, from/i.test(r.text)),
+    err: (document.querySelector('.dayw-note')?.textContent || '').trim(),
     // Nothing from the removed popular-city block may survive.
     popular: document.querySelectorAll('.day-flow-suggest').length,
   };
 });
+const chosen = (page) => page.locator('.dayw-chosen');
 
 try {
   await waitForServer();
@@ -176,10 +181,10 @@ try {
     await openStep1(page);
     const q = await readQuick(page);
     if (q.popular) fail(`the popular-city block still renders (${q.popular} of them)`);
-    const all = q.groups.flatMap((g) => g.chips);
+    const all = q.rows;
     if (all.length !== 1) fail(`signed out with nothing saved: ${all.length} quick starts, expected 1`);
     else if (!/current location/i.test(all[0].text)) fail(`the only quick start is "${all[0].text}"`);
-    else if (all[0].h < 44) fail(`the location chip is ${all[0].h}px, under 44`);
+    else if (all[0].h < 40) fail(`the location row is ${all[0].h}px, under 40`);
     else ok(`signed out: one quick start, "${all[0].text}" at ${all[0].h}px`);
     await page.screenshot({ path: `${SHOTS}/day-start-empty.png` });
     await ctx.close();
@@ -192,8 +197,8 @@ try {
     await seed(page);
     await openStep1(page);
     await page.getByRole('button', { name: /current location/i }).click();
-    await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
-    const label = (await page.locator('.day-stay-chosen-label').innerText()).trim();
+    await chosen(page).waitFor({ timeout: 30000 });
+    const label = (await page.locator('.dayw-chosen-text b').innerText()).trim();
     // The reverse lookup names it; without one it would still be a point.
     if (!/colosseum|rome/i.test(label)) fail(`located start point reads "${label}"`);
     else ok(`my location became "${label}"`);
@@ -213,7 +218,7 @@ try {
     if (!/switched off/i.test(q.err)) fail(`refusal copy reads "${q.err}"`);
     else if (/failed|error|sorry/i.test(q.err)) fail(`refusal copy blames the traveller: "${q.err}"`);
     else ok(`refusal: "${q.err}"`);
-    if (await page.locator('.day-flow-chosen').count()) fail('a refused location still chose a start point');
+    if (await chosen(page).count()) fail('a refused location still chose a start point');
     await page.screenshot({ path: `${SHOTS}/day-start-denied.png` });
     await ctx.close();
   }
@@ -225,23 +230,21 @@ try {
     await seed(page, { signedIn: true });
     await openStep1(page);
     const q = await readQuick(page);
-    const trip = q.groups.find((g) => /from your trip/i.test(g.label));
-    if (!trip) fail(`no "from your trip" group, groups: ${q.groups.map((g) => g.label).join(' | ')}`);
+    const texts = q.trip.map((c) => c.text);
+    if (!AUTH_ON) console.log('  SKIP (needs account): trip stops need Supabase credentials, none configured here');
+    else if (!texts.length) fail(`no "your trip, from" rows, rows: ${q.rows.map((r) => r.text).join(' | ')}`);
     else {
-      const texts = trip.chips.map((c) => c.text);
       if (!texts.some((tx) => /barcelona/i.test(tx))) fail(`the stop running today is not offered: ${texts.join(' | ')}`);
-      if (texts.some((tx) => /seville/i.test(tx))) fail(`a stop 40 days out is offered: ${texts.join(' | ')}`);
-      if (!texts.some((tx) => /your trip, from/i.test(tx))) fail(`no trip chip says when it starts: ${texts.join(' | ')}`);
-      else ok(`trip chips: ${texts.join(' | ')}`);
+      if (q.rows.some((r) => /seville/i.test(r.text))) fail(`a stop 40 days out is offered: ${q.rows.map((r) => r.text).join(' | ')}`);
+      else ok(`trip rows: ${texts.join(' | ')}`);
 
-      // Scoped to the chip: the saved-trip list below names the same city.
-      await page.locator('.day-flow-quickchip', { hasText: /barcelona/i }).first().click();
-      await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
+      await page.locator('.dayw-quick-row', { hasText: /barcelona/i }).first().click();
+      await chosen(page).waitFor({ timeout: 30000 });
       // Picking a trip stop answers step 2 as well: the trip already knows
       // which day this is.
-      await page.locator('.day-flow-next').click();
-      await page.locator('.day-flow-date').waitFor({ timeout: 30000 });
-      const next = page.locator('.day-flow-next');
+      await page.locator('.guide-next').click();
+      await page.locator('.dayw-when').waitFor({ timeout: 30000 });
+      const next = page.locator('.guide-next');
       if (await next.isDisabled()) fail('picking a trip stop did not preset the date');
       else ok('picking a trip stop preset the date, step 2 opens answered');
     }
@@ -268,19 +271,15 @@ try {
     });
     await openStep1(page);
     const q = await readQuick(page);
-    const recent = q.groups.find((g) => /started here before/i.test(g.label));
-    if (!recent) fail(`no "started here before" group, groups: ${q.groups.map((g) => g.label).join(' | ')}`);
-    else {
-      const texts = recent.chips.map((c) => c.text);
-      if (texts.length !== 3) fail(`${texts.length} recent starts, expected 3: ${texts.join(' | ')}`);
-      if (new Set(texts).size !== texts.length) fail(`recent starts repeat a label: ${texts.join(' | ')}`);
-      else ok(`recent starts: ${texts.join(' | ')}`);
+    const texts = q.recent.map((c) => c.text);
+    if (texts.length !== 3) fail(`${texts.length} recent starts, expected 3: ${texts.join(' | ')}`);
+    if (new Set(texts).size !== texts.length) fail(`recent starts repeat a label: ${texts.join(' | ')}`);
+    else ok(`recent starts: ${texts.join(' | ')}`);
 
-      // The newest three, so the two oldest plans are deliberately not here.
-      await page.locator('.day-flow-quickchip', { hasText: /piazza navona/i }).first().click();
-      await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
-      ok('a recent start answers step 1 in one tap');
-    }
+    // The newest three, so the two oldest plans are deliberately not here.
+    await page.locator('.dayw-quick-row', { hasText: /piazza navona/i }).first().click();
+    await chosen(page).waitFor({ timeout: 30000 });
+    ok('a recent start answers step 1 in one tap');
     await page.screenshot({ path: `${SHOTS}/day-start-recent.png` });
     await ctx.close();
   }
@@ -296,8 +295,8 @@ try {
     await page.locator('.day-stay-result').first().waitFor({ timeout: 30000 });
     const phone = await page.evaluate(() => {
       const input = document.querySelector('.day-flow-search .day-stay-input');
-      const list = document.querySelector('.day-flow-results');
-      const panel = document.querySelector('.day-flow-panel');
+      const list = document.querySelector('.dayw-results');
+      const panel = document.querySelector('.guide-canvas');
       const p = panel.getBoundingClientRect();
       const l = list.getBoundingClientRect();
       return {
@@ -305,8 +304,8 @@ try {
         // Full width of the panel, bleeding through its 16px of padding: the
         // panel's own 1px border is the only thing it stops short of.
         fullWidth: l.width >= p.width - 2,
-        hits: document.querySelectorAll('.day-stay-hit').length,
-        shortHits: [...document.querySelectorAll('.day-stay-hit')]
+        hits: document.querySelectorAll('.dayw-hit').length,
+        shortHits: [...document.querySelectorAll('.dayw-hit')]
           .filter((h) => h.getBoundingClientRect().height < 44).length,
       };
     });
@@ -316,13 +315,15 @@ try {
     else ok(`phone: ${phone.inputH}px field, ${phone.hits} full-width results`);
 
     await page.locator('.day-stay-result').first().click();
-    await page.locator('.day-flow-chosen').waitFor({ timeout: 30000 });
+    await chosen(page).waitFor({ timeout: 30000 });
+    // The wizard footer carries Next; docked means it sits on the viewport's floor.
     const docked = await page.evaluate(() => {
-      const btn = document.querySelector('.day-flow-panel > .day-flow-next');
-      return btn ? getComputedStyle(btn).position : '';
+      const btn = document.querySelector('.guide-foot .guide-next');
+      const r = btn?.getBoundingClientRect();
+      return r ? { bottom: Math.round(r.bottom), vh: innerHeight } : null;
     });
-    if (docked !== 'sticky') fail(`phone: Continue is ${docked || 'absent'}, not docked`);
-    else ok('phone: Continue docks to the bottom of the scroll');
+    if (!docked || docked.bottom > docked.vh || docked.bottom < docked.vh - 120) fail(`phone: Next is not docked (${JSON.stringify(docked)})`);
+    else ok('phone: Next docks to the bottom of the screen');
     await page.screenshot({ path: `${SHOTS}/day-start-phone.png`, fullPage: true });
     await ctx.close();
   }

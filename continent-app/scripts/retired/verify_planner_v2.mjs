@@ -1,3 +1,4 @@
+// Retired T1089: origin-first Trip basics wizard (address, nearby airports, party on one step) was replaced by the one-question plan flow; its entry button and steps are gone.
 // Headless verify for the origin-first wizard: Trip basics (address -> nearby
 // airports, dates, party, travel style), the Where step, the curated Stay
 // templates on the build-your-own path, the daily-spend estimate line, and the

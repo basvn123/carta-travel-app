@@ -12,6 +12,7 @@
 // A pass means the route came back in the search fields and the page title
 // names both cities. The generic "Find Cheap Flights Worldwide" title is the
 // failure: it means Google rejected the sentence and threw the route away.
+// T1089 needs: network (google.com). Without it the script says SKIP and exits 0.
 import { chromium } from 'playwright';
 import { googleFlightsLink, googleFlightsExploreLink } from '../src/lib/transportLinks.js';
 
@@ -21,6 +22,13 @@ const CASES = [
   { label: 'an undated route', url: googleFlightsLink({ fromIata: 'BRU', toIata: 'LIS', lang: 'en' }), want: [/Brussels/i, /Lisbon/i] },
   { label: 'explore, with a month', url: googleFlightsExploreLink({ fromIata: 'BRU', month: '2026-11', lang: 'en' }), want: [/Brussels/i, /anywhere/i] },
 ];
+
+const reachable = await fetch('https://www.google.com/generate_204', { signal: AbortSignal.timeout(8000) })
+  .then(() => true).catch(() => false);
+if (!reachable) {
+  console.log('SKIP (needs network): www.google.com does not answer from here');
+  process.exit(0);
+}
 
 const browser = await chromium.launch();
 const ctx = await browser.newContext({ locale: 'en-GB' });

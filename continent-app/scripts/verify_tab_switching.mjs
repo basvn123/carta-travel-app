@@ -31,7 +31,7 @@ const check = (label, ok, note = '') => checks.push({ label, ok, note });
 // The emrldtp affiliate loader always fails offline (accepted risk), and the
 // weather calls are rate-capped. Neither says anything about the section
 // switch, so neither is a regression signal here.
-const NOISE = /ERR_FAILED|config is not valid/;
+const NOISE = /ERR_FAILED|config is not valid|ERR_TUNNEL|ERR_CONNECTION|Failed to load resource/;
 
 const SEED = () => {
   try {
@@ -57,18 +57,24 @@ const READ = () => {
   // planners. Explore is the default place, so its address carries no tab.
   return {
     explore: shown('.explore-tab'),
-    plan: shown('.plan-start'),
+    // T1089: Plan's first page is PlanHome (.pf-open-start is its door); a trip or day
+    // being planned shows .trip-planner-screen.
+    plan: shown('.pf-open-start'),
     trip: shown('.trip-planner-screen:not(.day-flow-screen)'),
     day: shown('.day-flow-screen'),
-    account: !!document.querySelector('.account-panel:not(.saved-trips-panel)'),
-    saved: !!document.querySelector('.saved-trips-panel'),
+    // T1089: Account, My trips and Together all borrow .saved-trips-panel; the
+    // account page adds .ac-panel, Together .tg-panel.
+    account: !!document.querySelector('.ac-panel'),
+    saved: !!document.querySelector('.saved-trips-panel:not(.ac-panel):not(.tg-panel)'),
     lifestyle: !!document.querySelector('.lifestyle-panel'),
     hdrActive: [...document.querySelectorAll('.header-nav-item.active .header-nav-label')].map((b) => b.textContent.trim()).join(','),
     avatarOn: !!document.querySelector('.account-door.on'),
     tab: new URLSearchParams(location.search).get('tab') || 'explore',
     mode: new URLSearchParams(location.search).get('mode') || '',
     sbw: getComputedStyle(document.documentElement).getPropertyValue('--sbw').trim(),
-    slotFields: document.getElementById('header-search-slot')?.querySelectorAll('input, .gsearch-trigger').length ?? -1,
+    // T1089: Explore no longer portals a search field into the header; its
+    // header settings line (the From part) is what only Explore draws.
+    slotFields: [...document.querySelectorAll('.settings-part-origin')].filter((e) => { const r = e.getBoundingClientRect(); return r.width > 2 && r.height > 2; }).length,
     exploreScroll: document.querySelector('.explore-tab')?.scrollTop ?? null,
   };
 };
@@ -94,8 +100,7 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
   const read = () => page.evaluate(READ);
   // T502: the header items carry no title now; the label is the name.
   const nav = (name) => page.locator('.header-nav-item').filter({ has: page.locator('.header-nav-label', { hasText: new RegExp(`^${name}$`) }) }).click();
-  const tile = (mode) => page.locator(`.plan-start-tile[href*="mode=${mode}"]:visible`).first().click();
-  const TABS = [
+    const TABS = [
     ['Explore', 'explore', 'explore'],
     ['Plan', 'plan', 'plan'],
   ];
@@ -127,18 +132,24 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
     }
   }
 
-  // T502: Plan's two tiles are the doors into the planners.
+  // T1089: Plan's first page has one door, Start planning, which opens the
+  // one-question flow (mode=new); the day planner is reached by ?mode=day.
   await nav('Plan');
   await page.waitForTimeout(1500);
-  await tile('trip');
+  await page.locator('.pf-open-start').first().click();
   await page.waitForTimeout(2600);
-  const onTripTile = await read();
-  check('Plan -> Trip tile shows the trip planner and writes mode=trip',
-    only(onTripTile, 'trip') && onTripTile.tab === 'plan' && onTripTile.mode === 'trip' && onTripTile.hdrActive === 'Plan',
-    JSON.stringify(onTripTile).slice(0, 150));
+  const onStart = await read();
+  check('Plan -> Start planning opens the question flow and writes mode=new',
+    onStart.tab === 'plan' && onStart.mode === 'new' && onStart.hdrActive === 'Plan' && !onStart.explore
+      && await page.locator('h2.pf-title').first().isVisible(),
+    JSON.stringify(onStart).slice(0, 150));
+  // The flow is a focus screen: the header steps aside and its Plan back door
+  // returns to Plan home.
+  await page.locator('.tpage-back').first().click();
+  await page.waitForTimeout(1500);
   await nav('Explore');
   await page.waitForTimeout(2200);
-  check('trip planner -> Explore shows only explore', await read().then((s) => only(s, 'explore')));
+  check('question flow -> Explore shows only explore', await read().then((s) => only(s, 'explore')));
   await page.goto(new globalThis.URL('?tab=plan&mode=day', URL).href, { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(4000);
   const onDayTile = await read();
@@ -149,7 +160,7 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
 
   // 2 + 3: the account page must not survive a section switch.
   for (const [to, body] of [['Explore', 'explore']]) {
-    await page.locator('.account-door').click();
+    await page.locator('.account-door:not(.tg-door)').click();
     await page.waitForTimeout(900);
     const opened = await read();
     check(`account page open marks the avatar, not a tab (before ${to})`,
@@ -217,7 +228,7 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
   const scrolledTo = onExplore.exploreScroll;
   check('Explore scrolls', scrolledTo > 0, String(scrolledTo));
   // Explore is the place that portals its search: exactly one field.
-  check('Explore portals one search field into the header',
+  check('Explore draws its header settings line once',
     onExplore.slotFields === 1, String(onExplore.slotFields));
   check('the bar reserves a real scrollbar gutter', /^\d+px$/.test(onExplore.sbw), onExplore.sbw);
   // The gutter used to be written as 0 before the data landed and only
@@ -230,12 +241,12 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
   const onPlan = await read();
   check('the gutter does not move on a planner tab',
     onPlan.sbw === onExplore.sbw, `${onExplore.sbw} -> ${onPlan.sbw}`);
-  check('no search field portals in from a hidden tab', onPlan.slotFields === 0, String(onPlan.slotFields));
+  check('no settings line shows through from a hidden tab', onPlan.slotFields === 0, String(onPlan.slotFields));
   await nav('Explore');
   await page.waitForTimeout(2200);
   const back = await read();
   check('scroll position survives the hop', back.exploreScroll === scrolledTo, `${scrolledTo} -> ${back.exploreScroll}`);
-  check('Explore still portals exactly one search field', back.slotFields === 1, String(back.slotFields));
+  check('Explore still draws exactly one settings line', back.slotFields === 1, String(back.slotFields));
 
   await page.close();
 }
@@ -244,12 +255,12 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
 {
   const page = await open({ width: 390, height: 844 });
   const read = () => page.evaluate(READ);
-  // T502: 0 Explore, 1 Plan, 2 My trips, 3 Account (no plus since T496-T501).
+  // T1089: 0 Explore, 1 Plan, 2 My trips; Account is the header avatar.
   const item = (i) => page.locator('nav.bottom-nav[aria-label="Sections"] .bottom-nav-item').nth(i).click();
-  check('phone: the bottom nav carries four links',
-    await page.locator('nav.bottom-nav[aria-label="Sections"] a.bottom-nav-item').count() === 4);
+  check('phone: the bottom nav carries three links',
+    await page.locator('nav.bottom-nav[aria-label="Sections"] a.bottom-nav-item').count() === 3);
 
-  await item(3);
+  await page.locator('.account-door:not(.tg-door)').click();
   await page.waitForTimeout(1100);
   check('phone: Account opens', await read().then((s) => s.account));
   await item(0);
@@ -267,8 +278,9 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
 
   await item(0);
   await page.waitForTimeout(2000);
-  // T401: the settings line's Lifestyle part is the door (Explore's own button is gone).
-  await page.locator('.settings-part-lifestyle:visible, .settings-bed:visible, .lifestyle-btn:visible').first().click();
+  // T1089: on a phone the search dock's pill opens a sheet whose Stay card is the door.
+  await page.locator('.sdock-pill').first().click();
+  await page.locator('.sdock-card-head').filter({ hasText: /stay/i }).first().click();
   await page.waitForTimeout(900);
   check('phone: Lifestyle opens', await read().then((s) => s.lifestyle));
   // T391 (shell V4, brief V4-6): on a phone Lifestyle is a bottom sheet over
@@ -290,16 +302,13 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
   check('phone: Lifestyle closes, then Plan opens',
     await read().then((s) => !s.lifestyle && only(s, 'plan')));
 
-  // T502: the plus is gone (T496-T501); Plan's Trip tile is the door.
-  await page.locator('.plan-start-tile[href*="mode=trip"]:visible').first().click();
+  // T1089: Plan home's Start planning is the door; the question flow is a focus
+  // screen (the desktop header steps aside), the system back leaves it.
+  await page.locator('.pf-open-start').first().click();
   await page.waitForTimeout(2600);
-  check('phone: the Trip tile lands on the Trip planner', await read().then((s) => only(s, 'trip')));
-  // The bar steps aside inside a wizard step on a phone (T468), so the way
-  // out is the system back, twice: to Plan, then to Explore.
-  check('phone: the bar steps aside inside the wizard',
-    !(await page.locator('nav.bottom-nav[aria-label="Sections"]').isVisible()));
-  await page.goBack();
-  await page.waitForTimeout(1500);
+  check('phone: Start planning opens the question flow', await page.locator('h2.pf-title').first().isVisible());
+  // T1089: Start planning replaces Plan home's history entry, so one system
+  // back from the flow lands on the section before it (Explore here).
   await page.goBack();
   await page.waitForTimeout(2000);
   check('phone: Explore comes back from a planner', await read().then((s) => only(s, 'explore')));

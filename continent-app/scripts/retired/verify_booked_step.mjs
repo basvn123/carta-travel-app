@@ -1,3 +1,4 @@
+// Retired T1089: its step one (the three .guide-booked-bit cards with 'nothing yet') is gone; the plan flow (planner/flow, pf-*) asks what is booked through BookedDoor, and the old wizard is no longer the entry.
 // Headless verify for step one of the trip planner: the three answers to
 // "what have you booked already?".
 //
