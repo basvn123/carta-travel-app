@@ -49,6 +49,10 @@ export function SupportPage({ onClose }) {
       </p>
       <p>{t('support.contactTip')}</p>
 
+      <p>
+        <a className="support-press" href="?legal=press">{t('support.pressLink')}</a>
+      </p>
+
       <h3>{t('support.statusH')}</h3>
       <p role="status" className="support-status" data-tone={notice ? notice.tone : 'ok'}>
         {notice === undefined ? t('support.statusLoading') : notice ? notice.text : t('support.statusOk')}

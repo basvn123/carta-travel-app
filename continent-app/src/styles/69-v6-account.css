@@ -682,3 +682,12 @@
   border: 1px solid var(--line, rgba(0,0,0,.12)); background: var(--surface, #fff);
 }
 .legal-body .support-status[data-tone="warn"] { border-color: currentColor; }
+
+/* T1131: press kit */
+.legal-body .press-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: .6rem; margin: .6rem 0; }
+.legal-body .press-fact { border: 1px solid var(--line, #ddd); border-radius: 10px; padding: .6rem .75rem; }
+.legal-body .press-fact dt { font-size: .8rem; opacity: .75; }
+.legal-body .press-fact dd { margin: 0; font-size: 1.4rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.legal-body .press-asset { margin: .8rem 0; }
+.legal-body .press-asset figcaption { font-size: .9rem; margin-top: .3rem; }
+.legal-body .press-founder[data-placeholder] { font-style: italic; opacity: .7; }
