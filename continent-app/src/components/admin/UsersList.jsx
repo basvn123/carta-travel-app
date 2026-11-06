@@ -57,7 +57,7 @@ export function UsersList({ list, openUser }) {
       {rows.length === 0 ? (
         (!listBusy && !listErr) && <p className="adminpage-muted">{t('admin.none')}</p>
       ) : (
-        <div className="adminpage-tablewrap">
+        <div className="adminpage-tablewrap" tabIndex={0}>
           <table className="adminpage-table">
             <thead>
               <tr>

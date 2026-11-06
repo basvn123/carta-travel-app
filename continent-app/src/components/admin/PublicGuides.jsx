@@ -49,7 +49,7 @@ export function PublicGuides({ guidesIndex, onOpenUser, unpublish }) {
       {!error && rows.length === 0 ? (
         (!busy && guides) && <p className="adminpage-muted">{t('admin.guidesEmpty')}</p>
       ) : !error && (
-        <div className="adminpage-tablewrap">
+        <div className="adminpage-tablewrap" tabIndex={0}>
           <table className="adminpage-table adminpage-table-static">
             <thead>
               <tr>

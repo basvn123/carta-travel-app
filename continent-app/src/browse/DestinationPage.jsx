@@ -647,9 +647,11 @@ export function DestinationPage({
                 score={verdict?.score != null && (
                   // T1029: the Score opens why it rates what it rates.
                   <button type="button" className="pt-score" aria-haspopup="dialog"
-                    onClick={() => setRatingOpen(true)}
-                    aria-label={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}>
-                    <ScoreChip rating={verdict} size="lg" band />
+                    onClick={() => setRatingOpen(true)}>
+                    {/* Read as its figure and word, then what it opens (T1128,
+                        WCAG 2.5.3: the old name left out "Exceptional"). */}
+                    <ScoreChip rating={verdict} size="lg" band asText />
+                    <span className="sr-only">{`. ${t('dest.ratingTitle', { score: fmtScore(verdict.score) })}`}</span>
                   </button>
                 )}>
                 {/* T765: the match after the rank lines, never merged into the Score. */}

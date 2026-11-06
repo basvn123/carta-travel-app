@@ -46,7 +46,12 @@ export function MemberPlaces({ members, focusName, t }) {
                 is English in every language. */}
             {safeUrl(m.wiki) && (
               <a className="destp-member-link" href={safeUrl(m.wiki)}
-                target="_blank" rel="noreferrer">{t('dest.memberRead')}</a>
+                target="_blank" rel="noreferrer">
+                {t('dest.memberRead')}
+                {/* Each link says which place it reads about (T1128, WCAG
+                    2.4.4: eight links were all "Read more"). */}
+                <span className="sr-only">{`: ${m.name} ${t('plan.opensNewTab')}`}</span>
+              </a>
             )}
           </li>
         );

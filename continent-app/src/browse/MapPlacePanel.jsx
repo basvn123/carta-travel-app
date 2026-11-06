@@ -91,8 +91,7 @@ export function MapPlacePanel({
               {rows.map((p) => (
                 <PlaceOverview key={p.id} p={p} {...overviewOf(p)} t={t}
                   fav={favSet ? favSet.has(p.id) : false} onToggleFav={onToggleFav}
-                  onOpen={() => onPick(p.id)}
-                  hitProps={{ 'aria-label': t('mapPanel.show', { city: p.city }) }} />
+                  onOpen={() => onPick(p.id)} />
               ))}
             </div>
           )}

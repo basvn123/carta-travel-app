@@ -55,7 +55,7 @@ export function AuditLog({ audit, auditBusy, loadAudit }) {
       {(audit?.rows || []).length === 0 ? (
         <p className="adminpage-muted">{t('admin.auditEmpty')}</p>
       ) : (
-        <div className="adminpage-tablewrap">
+        <div className="adminpage-tablewrap" tabIndex={0}>
           <table className="adminpage-table">
             <thead>
               <tr>

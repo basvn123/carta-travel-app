@@ -177,13 +177,15 @@ export function StayLine({ destId, city, km = null, onOpen }) {
       : t('ox.stayPrice', { price: formatMoney(view.day(base.dayEur)), unit: view.unit }))
     : (kmText != null ? t('detail.exitKm', { km: kmText }) : '');
   return (
+    // Named by its visible text (T1128, WCAG 2.5.3: an aria-label that
+    // added "See" no longer held the words on screen).
     <a className="ox-stay" href={featureHref('dest', { id: destId }) || undefined}
-      aria-label={[t('ox.stayNearby'), t('ox.seeTown', { city }), line].filter(Boolean).join(', ')}
       onClick={linkOpener(() => onOpen?.(destId))}>
       <span className="ox-stay-label">{t('ox.stayNearby')}</span>
+      {' '}
       <span className="ox-stay-town">
         <b>{city}</b>
-        {line && <small>{line}</small>}
+        {line && <>{' '}<small>{line}</small></>}
       </span>
       <span className="ox-stay-go" aria-hidden="true"><ChevronRightIcon size={20} /></span>
     </a>
@@ -326,7 +328,7 @@ export function OutdoorPage({
               <PlaceHead title={head.title} sub={head.sub} where={head.where} iso2={head.iso2} headRef={headRef}
                 score={head.rating && (whyRates && !head.rating.unscored ? (
                   <a className="pt-score" href="#ox-why" onClick={openWhy}>
-                    <ScoreChip rating={head.rating} size="lg" band />
+                    <ScoreChip rating={head.rating} size="lg" band asText />
                   </a>
                 ) : (
                   <span className="pt-score"><ScoreChip rating={head.rating} size="lg" band /></span>

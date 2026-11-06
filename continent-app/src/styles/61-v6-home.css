@@ -372,7 +372,10 @@
     --border: color-mix(in srgb, var(--home-ink-on-deep) 45%, transparent);
     --surface-sunken: color-mix(in srgb, var(--home-ink-on-deep) 18%, transparent);
     --focus: var(--home-ink-on-deep); /* the ring on the film is white */
-    text-shadow: 0 1px 2px color-mix(in srgb, var(--neutral-900) 45%, transparent),
+    /* T1128: a hairline and a tight layer in full ink keep the white labels at 4.5:1 or
+       more against their own shadow, so they hold before the film has
+       loaded (or when it never does) and not only on the film's tint. */
+    text-shadow: 0 0 1px var(--neutral-900), 0 1px 2px var(--neutral-900),
       0 0 16px color-mix(in srgb, var(--neutral-900) 40%, transparent);
   }
   .hv-plan-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }

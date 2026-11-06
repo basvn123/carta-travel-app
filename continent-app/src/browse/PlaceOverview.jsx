@@ -78,7 +78,8 @@ export const PlaceOverview = React.memo(function PlaceOverview({
           e.preventDefault();
           onOpen?.(e);
         }}
-        aria-label={t('explore.openDest', { city: p.city })}
+        // Named by the row itself, city first (T1128, WCAG 2.5.3: a short
+        // "Open {city}" left out the price and month the row shows).
         aria-current={selected ? 'true' : undefined}
         {...hitProps}
       >
@@ -138,7 +139,8 @@ function PlaceCard({
         className="xrow-hit xpc-hit"
         href={`#dest=${encodeURIComponent(p.id)}`}
         onClick={(e) => openHere(e, onOpen)}
-        aria-label={t('explore.openDest', { city: p.city })}
+        // Named by the row itself, city first (T1128, WCAG 2.5.3: a short
+        // "Open {city}" left out the price and month the row shows).
         aria-current={selected ? 'true' : undefined}
         {...hitProps}
       >

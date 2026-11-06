@@ -121,7 +121,7 @@ export function Margin({ report, monthsBack, onMonth }) {
       {tiers.length === 0 ? (
         <p className="adminpage-muted">No passes sold in this month.</p>
       ) : (
-        <div className="adminpage-tablewrap">
+        <div className="adminpage-tablewrap" tabIndex={0}>
           <table className="adminpage-table adminpage-table-static">
             <thead>
               <tr>
@@ -153,7 +153,7 @@ export function Margin({ report, monthsBack, onMonth }) {
       )}
 
       <h3 className="adminpage-h3">From gross to contribution</h3>
-      <div className="adminpage-tablewrap">
+      <div className="adminpage-tablewrap" tabIndex={0}>
         <table className="adminpage-table adminpage-table-static">
           <thead>
             <tr>
@@ -269,7 +269,7 @@ export function Margin({ report, monthsBack, onMonth }) {
       </p>
 
       <h3 className="adminpage-h3">Reconciliation to the ledger</h3>
-      <div className="adminpage-tablewrap">
+      <div className="adminpage-tablewrap" tabIndex={0}>
         <table className="adminpage-table adminpage-table-static">
           <thead>
             <tr>
@@ -308,7 +308,7 @@ export function Margin({ report, monthsBack, onMonth }) {
         </p>
       )}
       {items.length > 0 && (
-        <div className="adminpage-tablewrap">
+        <div className="adminpage-tablewrap" tabIndex={0}>
           <table className="adminpage-table adminpage-table-static">
             <thead>
               <tr>

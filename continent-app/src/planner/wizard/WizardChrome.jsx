@@ -36,9 +36,11 @@ export function WizardHead({ inline, onClose, steps, step, isDesktop, stepsOpen,
             onClick={() => setStepsOpen(true)}
             aria-haspopup="dialog"
             aria-expanded={stepsOpen}
-            aria-label={`${name}, ${t('pf.position', { x: step, n: steps.length })}. ${t('wizard.stepsTitle')}`}
+            aria-label={`${t('pf.position', { x: step, n: steps.length })} ${name}. ${t('wizard.stepsTitle')}`}
           >
+            {/* The name reads in the order the eye does (T1128, WCAG 2.5.3). */}
             <span className="wz-head-pos">{t('pf.position', { x: step, n: steps.length })}</span>
+            {' '}
             <span className="wz-head-name">
               {name}
               <ChevronDownIcon size={16} className="wz-head-chev" />

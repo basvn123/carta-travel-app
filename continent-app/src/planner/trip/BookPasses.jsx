@@ -195,7 +195,7 @@ function Pass({ row }) {
           {fig && row.yours && <small>{t('plan.yours')}</small>}
         </span>
         {row.link && (
-          <Button href={row.link.href} external variant="primary" size="sm" className="tbp-book" aria-label={row.link.label}>
+          <Button href={row.link.href} external variant="primary" size="sm" className="tbp-book" aria-label={`${t('tp.book')}: ${row.link.label}`}>
             {t('tp.book')}
           </Button>
         )}

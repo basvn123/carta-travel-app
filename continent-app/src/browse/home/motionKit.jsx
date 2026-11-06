@@ -54,7 +54,12 @@ export function MaskedText({ as = 'h2', className, parts, id }) {
   });
   const label = words.map((x) => x.w).join(' ');
   return (
-    <Tag ref={ref} id={id} className={className} aria-label={label}>
+    // The words are split for the reveal and hidden from assistive tech; the
+    // whole line is read once from a visually hidden copy. aria-label would
+    // be ignored on a <p> (no name allowed on that role; T1128, axe
+    // aria-prohibited-attr).
+    <Tag ref={ref} id={id} className={className}>
+      <span className="sr-only">{label}</span>
       {words.map((x, i) => (
         <React.Fragment key={i}>
           <span className="hm-word" aria-hidden="true">

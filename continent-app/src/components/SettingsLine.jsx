@@ -158,6 +158,9 @@ function Part({
       {children || (
         <>
           <span className="settings-part-label" aria-hidden="true">{label}</span>
+          {/* A space between label and value, so the visible text reads as
+              two words wherever it is taken as text (T1128, WCAG 2.5.3). */}
+          {' '}
           <span ref={valueRef} className={`settings-part-value${mono ? ' is-mono' : ''}`} aria-hidden="true">{display ?? value}</span>
         </>
       )}
@@ -703,7 +706,10 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
               value={`${bed}, ${vibe}`}
               display={(
                 <>
-                  <span>{bed}</span>
+                  {/* The space sits inside the first word's box: a bare space
+                      between flex items has no box, so tools that read the
+                      visible text ran the two together (T1128). */}
+                  <span>{`${bed} `}</span>
                   <span className="settings-vibe">{vibe}</span>
                 </>
               )}

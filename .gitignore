@@ -229,6 +229,8 @@ Execution/**/*.jpg
 Execution/**/*.jpeg
 Execution/**/*.webp
 Execution/**/*.gif
+# T1128: the shots folder as a whole (audit JSON and logs land there too).
+Execution/P*/T*-shots/
 .pytest_cache/
 .wrangler/
 .claude/worktrees/
