@@ -84,3 +84,7 @@
 @import './styles/admin-held.css';
 /* T481: route rules held in the first paint by css-routes --hold. */
 @import './styles/items-held.css';
+
+/* T1106: a crash that stays inside one screen, section or card. */
+.section-crash { margin: var(--space-5, 24px) auto; padding: 0 var(--space-4, 16px); max-width: 560px; }
+.section-crash.is-compact { margin: 0; padding: 0; max-width: none; }

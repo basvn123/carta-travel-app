@@ -6501,6 +6501,9 @@ export const en = {
   'crash.message': 'Carta hit a problem it could not fix. Your trips are saved on this device, so reload to carry on.',
   'crash.reload': 'Reload the app',
   'crash.retry': 'Try again',
+  // T1106: a crash that stays inside one screen, section or card
+  'crash.section': 'This part could not load. The rest of Carta still works.',
+  'crash.card': 'This card could not load.',
   'date.choose': 'Choose date',
   'date.prevMonth': 'Previous month',
   'date.nextMonth': 'Next month',

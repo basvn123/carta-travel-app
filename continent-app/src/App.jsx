@@ -10,6 +10,7 @@ import { crossTab } from './lib/sharedElement.js';
 import { usePresence, useDialogExit } from './lib/motion.js';
 import { useFocusTrap } from './hooks/useFocusTrap.js';
 import { readJourneyFromUrl } from './lib/journeys.js';
+import { SectionBoundary } from './components/ErrorBoundary.jsx';
 import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
 import { DestinationPage } from './browse/DestinationPage.jsx';
@@ -1892,6 +1893,7 @@ function TravelApp() {
           panel and the loaded images survive a tab hop. */}
       {visitedTabs.has('map') && (
         <div className={activeTab === 'map' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
+          <SectionBoundary name="explore">
           <div onClick={(e) => e.stopPropagation()}>
             <ExploreTab
               data={data}
@@ -1945,6 +1947,7 @@ function TravelApp() {
             />
           </div>
 
+          </SectionBoundary>
         </div>
       )}
 
@@ -1979,6 +1982,7 @@ function TravelApp() {
           alive like the tabs: it holds nothing worth keeping. */}
       {activeTab === 'home' && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
+          <SectionBoundary name="home">
           <HomePage
             data={data}
             indices={exploreIndices}
@@ -1989,6 +1993,7 @@ function TravelApp() {
             onOpenDest={openDetail}
             onOpenTrips={openSaved}
           />
+          </SectionBoundary>
         </div>
       )}
 
@@ -1997,6 +2002,7 @@ function TravelApp() {
           map tab, where the detail panel already knows how to price it. */}
       {visitedTabs.has('places') && (
         <div className={`explore-dest-view${activeTab === 'places' ? '' : ' tab-keep-hidden'}`} inert={behindPanel} onClick={(e) => e.stopPropagation()}>
+          <SectionBoundary name="places">
           <DestinationsTab
             data={data}
             pricedAll={pricedAll}
@@ -2039,6 +2045,7 @@ function TravelApp() {
             returnTo={destReturn}
             indices={exploreIndices}
           />
+          </SectionBoundary>
         </div>
       )}
 
@@ -2047,6 +2054,7 @@ function TravelApp() {
           MapLibre (v4, ResizeObserver) resizes itself when shown again. */}
       {visitedTabs.has('trip') && (
         <div className={activeTab === 'trip' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
+          <SectionBoundary name="trip">
           <Suspense fallback={<TabFallback />}>
             {/* The planners read every place in full, so a tab opened while
                 the catalogue is still partial (T271) waits for the rest. */}
@@ -2076,10 +2084,12 @@ function TravelApp() {
               onPlanHome={() => goToTab('planstart')}
             />}
           </Suspense>
+          </SectionBoundary>
         </div>
       )}
       {visitedTabs.has('day') && (
         <div className={activeTab === 'day' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
+          <SectionBoundary name="day">
           <Suspense fallback={<TabFallback />}>
             {partial ? <TabFallback /> : <DayPlannerTab
               key={activeTripId}
@@ -2107,6 +2117,7 @@ function TravelApp() {
               onSharedDayConsumed={() => setSharedDayRaw(null)}
             />}
           </Suspense>
+          </SectionBoundary>
         </div>
       )}
 
@@ -2115,6 +2126,7 @@ function TravelApp() {
           Not kept alive: its answers live in the planner draft. */}
       {activeTab === 'planstart' && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
+          <SectionBoundary name="planstart">
           <Suspense fallback={<TabFallback />}>
             <PlanFlow
               pageOver={!!selectedDest || savedTripsOpen || accountOpen || !!countryPage || !!pendingRegion}
@@ -2128,16 +2140,19 @@ function TravelApp() {
               onInnerChange={setPlanInner}
             />
           </Suspense>
+          </SectionBoundary>
         </div>
       )}
 
       {/* The Trip Pass prices, a place with its own address (T496). */}
       {activeTab === 'pricing' && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
+          <SectionBoundary name="pricing">
           <Suspense fallback={<TabFallback />}>
             {/* A cold /pricing visit has no page to go back to: Back opens Explore. */}
             <PricingPage onBack={() => (window.history.length > 1 ? window.history.back() : goTo('explore'))} />
           </Suspense>
+          </SectionBoundary>
         </div>
       )}
       </main>

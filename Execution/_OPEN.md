@@ -1494,3 +1494,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1104-c | T1104 | planner/tripsStore.js has no outside change signal: a Plan home or trips list already on screen shows trips pulled by account sync only at its next render, and the planner's in-memory store is not told when a previous account's open trip is removed; export a notify call from tripsStore and call it from auth/accountSync.js | next task | open | |
 | T1104-d | T1104 | The traveller-facing "N trips moved to your account" notice (ROADMAP I5): accountSync.js already counts moved and dispatches carta:account-sync; needs copy in six locales and the carta-design review | next task | open | |
 | T1104-e | T1104 | The rest of ROADMAP I5: Apple sign-in and magic link (audit P-47); Apple sign-in waits on the Apple Developer membership in T272-b | next task | open | |
+| T1106-a | T1106 | Run the seeded-error browser spec and look at `?seedError=explore` in `npm run dev` with real app data (the cloud container has none) | user | open |  |
+| T1106-b | T1106 | Wrap individual cards (explore, price) with `SectionBoundary compact`; trail cards, beach strip, plan flow and auth were off limits tonight | next task | open |  |
+| T1106-c | T1106 | The 107 silent catches named in H13 were not reviewed; T1106 covers render errors only | next task | open |  |
