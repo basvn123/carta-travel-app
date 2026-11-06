@@ -808,6 +808,7 @@ function runTests(bin) {
       plain: { role: 'authenticated', claims: { sub: PLAIN, role: 'authenticated', aal: 'aal1' } },
       third: { role: 'authenticated', claims: { sub: THIRD, role: 'authenticated', aal: 'aal1' } },
       anon: { role: 'anon', claims: { role: 'anon' } },
+      service: { role: 'service_role', claims: { role: 'service_role' } },
     };
     /** Run one statement as a given caller. Never throws. */
     const runAs = (who, sql) => {
@@ -1129,6 +1130,56 @@ function runTests(bin) {
     const capUpdate = affectedAs('victim', `update public.account_things set updated_at = now() where user_id = '${VICTIM}' and item_id = 'cap1'`);
     check('while an update at the cap still goes through', capUpdate.ok && capUpdate.out === '1', describe(capUpdate));
     psql(bin, TEST_DB, ['-c', `delete from public.account_things where item_id like 'cap%' or (user_id = '${PLAIN}')`]);
+
+    // 066 (T1110): the waitlist. The table is closed (no policy); the
+    // Edge Function reaches it as the service role through five functions.
+    // A sign-up is stored unconfirmed, confirmed, unsubscribed, and the
+    // audience read for use never holds an address before its confirmation.
+    console.log('');
+    console.log('  The waitlist stores, confirms and unsubscribes through the service role only (066):');
+    const wl = (sql) => runAs('service', sql);
+    const joined = wl(`select public.waitlist_join('  Ada@Example.COM ', 'nl', 'home')`);
+    check('a sign-up is stored and asks for a confirmation mail', joined.ok && joined.out.split('\n').pop() === 'send', describe(joined));
+    check('the address is stored lower-cased, unconfirmed, in the visitor\'s language',
+      scalar(bin, TEST_DB, `select email || '/' || locale || '/' || (confirmed_at is null) from public.waitlist_signups`) === 'ada@example.com/nl/true');
+    const audience0 = wl('select count(*) from public.waitlist_audience()');
+    check('before the confirmation the audience holds nobody', audience0.ok && audience0.out.split('\n').pop() === '0', describe(audience0));
+    const again = wl(`select public.waitlist_join('ada@example.com', 'nl', 'home')`);
+    check('signing up again within ten minutes is throttled, not mailed twice', again.ok && again.out.split('\n').pop() === 'wait', describe(again));
+    check('a confirmation for an unknown address does nothing', wl(`select public.waitlist_confirm('nobody@example.com')`).out.split('\n').pop() === 'f');
+    check('the confirmation sets confirmed_at', wl(`select public.waitlist_confirm('ada@example.com')`).out.split('\n').pop() === 't');
+    check('and a second click is harmless', wl(`select public.waitlist_confirm('ada@example.com')`).out.split('\n').pop() === 't');
+    const audience1 = wl('select email from public.waitlist_audience()');
+    check('after the confirmation the audience holds the address', audience1.ok && audience1.out.split('\n').pop() === 'ada@example.com', describe(audience1));
+    check('a confirmed address signing up again is told nothing new', wl(`select public.waitlist_join('ada@example.com', 'nl', 'home')`).out.split('\n').pop() === 'already');
+    wl(`select public.waitlist_join('bo@example.com', 'en', 'home')`);
+    const audience2 = wl('select count(*) from public.waitlist_audience()');
+    check('a second, unconfirmed address stays out of the audience', audience2.ok && audience2.out.split('\n').pop() === '1', describe(audience2));
+    check('the unsubscribe is recorded', wl(`select public.waitlist_unsubscribe('ada@example.com')`).out.split('\n').pop() === 't');
+    const audience3 = wl('select count(*) from public.waitlist_audience()');
+    check('and the address leaves the audience', audience3.ok && audience3.out.split('\n').pop() === '0', describe(audience3));
+    check('an unsubscribed address cannot be re-confirmed by an old link', wl(`select public.waitlist_confirm('ada@example.com')`).out.split('\n').pop() === 'f');
+    check('the row is kept, so a later import does not mail an address that opted out',
+      scalar(bin, TEST_DB, `select (unsubscribed_at is not null)::text from public.waitlist_signups where email = 'ada@example.com'`) === 'true');
+    psql(bin, TEST_DB, ['-c', `update public.waitlist_signups set last_sent_at = now() - interval '1 hour'`]);
+    check('joining again after an unsubscribe starts over, unconfirmed', wl(`select public.waitlist_join('ada@example.com', 'nl', 'home')`).out.split('\n').pop() === 'send'
+      && scalar(bin, TEST_DB, `select (confirmed_at is null and unsubscribed_at is null)::text from public.waitlist_signups where email = 'ada@example.com'`) === 'true');
+    const badMail = wl(`select public.waitlist_join('not-an-address', 'en', 'home')`);
+    check('an address that is not one is refused by the table check', !badMail.ok, describe(badMail));
+    psql(bin, TEST_DB, ['-c', `update public.waitlist_signups set created_at = now() - interval '40 days'`]);
+    const tooSoon = wl('select public.waitlist_purge(3)');
+    check('the purge refuses fewer than 7 days', !tooSoon.ok, describe(tooSoon));
+    check('the purge removes addresses never confirmed (both are unconfirmed now)', wl('select public.waitlist_purge(30)').out.split('\n').pop() === '2');
+    for (const who of ['victim', 'plain', 'anon']) {
+      const read = runAs(who, 'select count(*) from public.waitlist_signups');
+      check(`waitlist_signups: ${who} reads nothing`, nothing(read), describe(read));
+      const write = runAs(who, `insert into public.waitlist_signups (email) values ('${who}@example.com')`);
+      check(`waitlist_signups: ${who} cannot insert directly`, !write.ok, describe(write));
+      for (const fn of [`waitlist_join('${who}@example.com', 'en', 'home')`, 'waitlist_audience()', `waitlist_confirm('${who}@example.com')`, `waitlist_unsubscribe('${who}@example.com')`, 'waitlist_purge(30)']) {
+        const call = runAs(who, `select * from public.${fn}`);
+        check(`${who} cannot call ${fn.split('(')[0]}`, denied(call), describe(call));
+      }
+    }
 
     // ---------------------------------------------------------------------
     // 4b. The two closed tables 047 widened (T284). The closed-table probe

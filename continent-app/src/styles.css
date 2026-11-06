@@ -78,6 +78,8 @@
    the place page. */
 @import './styles/92-cost-card.css';
 @import './styles/93-flight-pass.css';
+/* T1110: the waitlist form on the Home page. */
+@import './styles/94-waitlist.css';
 /* T481: route rules css-routes --hold keeps in the first paint, after the
    whole main sheet as their route sheet loaded them. */
 @import './styles/planners-held.css';

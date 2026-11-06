@@ -3,6 +3,7 @@ import { useI18n } from '../../i18n/index.jsx';
 import Logo from '../../components/Logo.jsx';
 import { Button } from '../../components/ui/index.js';
 import { SiteFooter } from '../../components/SiteFooter.jsx';
+import WaitlistForm from '../../components/WaitlistForm.jsx';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { cheapestReturnAnyMonth } from '../../lib/flights/flights.js';
@@ -151,6 +152,7 @@ export function HomePage({
           <h2 id="hv-close-title" className="hv-h2 hv-close-title">{t('home.closeTitle')}</h2>
           <AskField t={t} onSearch={onSearch} id="hv-ask-close" />
         </section>
+        <WaitlistForm />
       </div>
       <SiteFooter />
     </div>

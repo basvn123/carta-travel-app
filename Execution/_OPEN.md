@@ -1497,3 +1497,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1106-a | T1106 | Run the seeded-error browser spec and look at `?seedError=explore` in `npm run dev` with real app data (the cloud container has none) | user | open |  |
 | T1106-b | T1106 | Wrap individual cards (explore, price) with `SectionBoundary compact`; trail cards, beach strip, plan flow and auth were off limits tonight | next task | open |  |
 | T1106-c | T1106 | The 107 silent catches named in H13 were not reviewed; T1106 covers render errors only | next task | open |  |
+| T1110-a | T1110 | Paste `supabase/migrations/066_waitlist.sql` in the Supabase SQL editor after 065 and look for "waitlist self-check passed" | user | open | 1 |
+| T1110-b | T1110 | Set the secrets `RESEND_API_KEY`, `WAITLIST_FROM`, `WAITLIST_SECRET`, verify the sending domain in Resend, deploy `waitlist` with `--no-verify-jwt` | user | open | 2 |
+| T1110-c | T1110 | Sign up with a real address on a preview, confirm from the mail, unsubscribe from the mail, and look at the form on a phone and a desktop | user | open | 3 |
+| T1110-d | T1110 | The privacy policy and docs/legal/ARTICLE30.md must name the waitlist (purpose, legal basis consent, retention, processor Resend) before the form goes live; owner/legal call | user | open | |
+| T1110-e | T1110 | Schedule `waitlist_purge(30)` (pg_cron) and decide the newsletter send path (a sender job that reads `waitlist_audience()` and puts the unsubscribe link in each mail); K3 referral jump and issue 1 stay open | next task | open | |
