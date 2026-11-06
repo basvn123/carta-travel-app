@@ -1685,6 +1685,25 @@ try {
   ok('the notice and the flags publish exactly what the app reads');
   await page.screenshot({ animations: 'disabled', path: `${SHOTS}/admin-site.png` });
 
+  // ---- 9h. Data health (T1142, D2): the quality card, the gate and the
+  // 90-day trend, from the snapshot scripts/quality/engine.py writes.
+  console.log('9h. data health');
+  await gotoSection(page, 'Data health');
+  await page.locator('[data-health="card"]').waitFor({ timeout: WAIT });
+  {
+    const layers = await page.locator('[data-health="layers"] tbody tr').count();
+    const trends = await page.locator('[data-health="layers"] [data-trend]').count();
+    const bars = await page.locator('[data-trend="core"] .adminpage-sparkbar').count();
+    const gate = await page.locator('[data-gate]').getAttribute('data-gate');
+    const mustSee = await page.locator('[data-health="must-see"] tbody tr').count();
+    if (layers < 12) fail(`the data health card shows ${layers} layers, not 12`);
+    if (trends !== layers) fail('a layer row has no trend chart');
+    if (bars < 1) fail('the core trend has no bar');
+    if (!['pass', 'fail'].includes(gate)) fail('the gate result is not stated');
+    if (mustSee < 1) fail('the must-see fields table is empty');
+    ok(`data health: ${layers} layers, ${trends} trends, core ${bars} runs, gate ${gate}, ${mustSee} must-see fields`);
+  }
+
   // ---- 10. Audit section.
   console.log('10. audit');
   await gotoSection(page, 'Audit');

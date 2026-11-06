@@ -590,7 +590,7 @@ docs/
 | ID | Item | Done when | Size | Phase | Status |
 |---|---|---|---|---|---|
 | D1 | One machine-readable contract | A seeded bad value fails both pipeline write and app sync, with the field path | M | P3 | done (T1133: docs/wire.schema.json, read by the pipeline write guard, the sync and CI) |
-| D2 | Quality engine and scorecard | One engine, scorecard and 90-day trend per run, admin Data health panel | M | P3 | in progress (T1134: scripts/quality/scorecard.py, per layer completeness, validity, freshness, accuracy; first card in data/reports/quality/; rules.yaml, run hook, trend panel still to do) |
+| D2 | Quality engine and scorecard | One engine, scorecard and 90-day trend per run, admin Data health panel | M | P3 | in progress (T1134: scripts/quality/scorecard.py, per layer completeness, validity, freshness, accuracy; first card in data/reports/quality/. T1142: scripts/quality/rules.yaml with 75 rules, one per scorecard field; engine.py gate fails the run on a must_see drop of more than 2 points or a hard floor; run_pipeline.py hook; admin Data health tab with the 90-day trend. Open: audit scripts not folded in, rules gate completeness only, T1142 rows) |
 | D3 | Provenance and freshness per field | Every key block carries `_src` and `_asof`; sources registry generated | M | P4 | todo |
 | D4 | Truth set | 150 items verified by hand, scored per release | M | P3 | todo |
 | D5 | Scraper and source health | Yield, drift and staleness alerts reach admin and email | S | P1 | in progress (T1074: box steps T1074-c) |

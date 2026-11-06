@@ -3253,6 +3253,11 @@ def main():
     except Exception as e:
         log(f"(freshness report failed: {type(e).__name__}: {e})")
 
+    # Quality gate (D2, T1142): scorecard against scripts/quality/rules.yaml,
+    # history line, 90-day trend and the admin Data health snapshot.
+    if run_cmd([sys.executable, "-I", str(ROOT / "scripts" / "quality" / "engine.py"), "--write"]) != 0:
+        failed.append("quality")
+
     # Report the run to admin_health, whether it succeeded or not: a run that
     # failed is exactly the case the admin panel most needs to show as stale,
     # not a run to hide because it went badly. Only a plan with nothing due
