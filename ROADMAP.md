@@ -1011,7 +1011,7 @@ docs/
 | H1 | CI that runs everything | `npm run ci`, `npm test`, ruff, mypy, pytest on every push and PR; branch protection on `main` | S | P0 | done (T1057; branch protection T1057-c) |
 | H2 | Error tracking | Sentry (EU) for app, Pages functions, Edge Functions, pipeline; release tags, PII scrubbing | S | P2 | partly done (T1120: app and Pages Functions, no-op until the DSN; Edge Functions, pipeline, source maps open) |
 | H3 | Durable rate limiting | Limits for ask, flights, stays hold across isolates | S | P3 | todo |
-| H4 | Load tests | k6 at 10x launch traffic, p95 under budget, report in docs | M | P4 | todo |
+| H4 | Load tests | k6 at 10x launch traffic, p95 under budget, report in docs | M | P4 | partly (T1158: scripts and doc, preview run is the owner's) |
 | H5 | Backups and restore drill | Nightly encrypted `pg_dump` to R2, 30-day retention, timed restore written up | S | P3 | todo |
 | H6 | Owner gates cleared | Unapplied migrations (022, 029, 030, 031 and the rest), Stripe live setup, secrets, Dashboard steps | M | P3 | todo |
 | H7 | Pipeline unattended on the box | Every scheduled task with manifest, retries, D2 gate before publish, failure alert; two clean weeks | M | P3 | todo |

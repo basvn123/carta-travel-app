@@ -1967,3 +1967,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1153-f | T1153 | No CI workflow runs the linking eval (scripts/eval/run.mjs linking --check); add it, with a sparse cone holding public/app_data.json, search_index.json and search/ask/lexicon.json | next task | open |  |
 | T1153-g | T1153 | Two linking misses: "Fårö" links Faro (a part alias with matching accents does not beat a name) and "pafos" ranks Paros over Paphos (no sound-alike for Greek spellings) | next task | open |  |
 | T1153-h | T1153 | src/hooks/useDestinationSearch.js still matches by plain substring; move it to the shared linker like Explore | next task | open |  |
+| T1158-a | T1158 | Run the k6 scripts: first locally against `wrangler pages dev` (to record local p95) and then against the Pages preview (`docs/runbooks/load-tests.md`), and paste the p95 numbers in a report | user | open |  |
+| T1158-b | T1158 | `tests/load/smoke.test.mjs` is not in `continent-app/tests/`, so `npm test` does not run it; run it in CI or move it under the test glob | next task | open |  |
+| T1158-c | T1158 | The 10x figure rests on assumed per-user rates (E-R3 section 3, flights 4, 2 sessions a month); replace with E4 and K12 data | next task | open |  |
