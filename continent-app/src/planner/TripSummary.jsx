@@ -108,9 +108,12 @@ function MapCard({ map, mapFull, title, trace, headId }) {
         )}
       </div>
       {drawn ? (
-        <button type="button" className="tpg-mapcard-hit" onClick={() => (mapFull || map) && setFull(true)} aria-label={t('saved.mapExpand')}>
+        // A pointer shortcut only: the "Open the map" button above is the
+        // control, and the drawn route stays readable as itself (T1128: a
+        // button named "Open the map" over the town list broke WCAG 2.5.3).
+        <div className="tpg-mapcard-hit" onClick={() => (mapFull || map) && setFull(true)}>
           {drawn}
-        </button>
+        </div>
       ) : (
         <div className="tpg-map" data-testid="tpg-map">
           {!full && map}
@@ -337,6 +340,7 @@ export function TripSummary({
     : tab === 'costs' && !wide ? <div className="tpg-costs">{costCard}{panels.costs || null}</div>
       : (panels[tab] || null);
 
+  const whereLine = [leadCountry, t(places.length === 1 ? 'tp.places1' : 'tp.placesN', { n: places.length })].filter(Boolean).join(', ');
   return (
     <div className={`tpg is-${tab}${wide ? '' : ' has-dock'}`}>
       <div className="tpg-top">
@@ -402,9 +406,11 @@ export function TripSummary({
               )}
             </div>
           )}
-          <Button variant="quiet" size="sm" className="tpg-where" onClick={() => go('itinerary')} aria-label={`${t('tp.tab.itinerary')}: ${places.join(', ')}`}>
+          {/* Named from its visible line first, then the towns and where it
+              goes (T1128, WCAG 2.5.3). */}
+          <Button variant="quiet" size="sm" className="tpg-where" onClick={() => go('itinerary')} aria-label={`${whereLine}: ${places.join(', ')}. ${t('tp.tab.itinerary')}`}>
             {lead?.iso2 && <CountryFlag country={lead.iso2} size={13} />}
-            <span>{[leadCountry, t(places.length === 1 ? 'tp.places1' : 'tp.placesN', { n: places.length })].filter(Boolean).join(', ')}</span>
+            <span>{whereLine}</span>
           </Button>
         </div>
       </header>
@@ -414,8 +420,11 @@ export function TripSummary({
           <Button key={key} variant="quiet" className="tpg-cell" onClick={onClick} data-chip={key}
             aria-label={t('tp.bar.edit', { what: label, value: [text, sub].filter(Boolean).join(', ') })} aria-haspopup={dialog ? 'dialog' : undefined}
             ref={(el) => { chipEls.current[key] = el; }}>
-            <span className="tpg-cell-k">{label}</span>
-            <span className="tpg-cell-v">{text}</span>
+            {/* Each part ends in a space inside its own box: a bare space
+                between grid items has no box, so the visible text read as
+                "When6 Nov" (T1128, WCAG 2.5.3). */}
+            <span className="tpg-cell-k">{`${label} `}</span>
+            <span className="tpg-cell-v">{sub ? `${text} ` : text}</span>
             {sub && <span className="tpg-cell-sub">{sub}</span>}
             <PencilIcon size={14} className="tpg-cell-pen" aria-hidden="true" />
           </Button>

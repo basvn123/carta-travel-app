@@ -41,13 +41,27 @@ function Star({ filled }) {
   );
 }
 
-export function ScoreChip({ rating, size = 'sm', band = true }) {
+// `asText` (T1128): inside a link or button the chip is read as text, the
+// visible figure and word first and the scale after them, so the control's
+// name holds the words on screen (WCAG 2.5.3). Elsewhere it stays one image.
+export function ScoreChip({ rating, size = 'sm', band = true, asText = false }) {
   const { t } = useI18n();
   if (rating?.unscored) return <NotYet className={`score-chip-none ${size}`} />;
   const w = ratingWords(rating, t);
   if (!w) return null;
   const word = band ? w.word : '';
   const aria = w.word ? `${t('score.aria', { n: w.shown })}, ${w.word}` : t('score.aria', { n: w.shown });
+  if (asText) {
+    return (
+      <span className={`score-chip ${tierClass(rating)} ${size}`} title={aria}
+        data-band={w.band || ''} data-score={w.figure}>
+        <Star filled />
+        <span className="score-chip-n">{w.shown}</span>
+        {word && <>{' '}<span className="score-chip-band">{word}</span></>}
+        <span className="sr-only">{`, ${t('score.outOf10')}`}</span>
+      </span>
+    );
+  }
   return (
     <span className={`score-chip ${tierClass(rating)} ${size}`} role="img" aria-label={aria} title={aria}
       data-band={w.band || ''} data-score={w.figure}>

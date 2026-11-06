@@ -148,7 +148,7 @@ export function AiUsage({ report }) {
       {users.length === 0 ? (
         <p className="adminpage-muted">No AI usage recorded in this window.</p>
       ) : (
-        <div className="adminpage-tablewrap">
+        <div className="adminpage-tablewrap" tabIndex={0}>
           <table className="adminpage-table adminpage-table-static">
             <thead>
               <tr>

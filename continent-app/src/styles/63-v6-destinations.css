@@ -61,7 +61,11 @@
   font-size: var(--text-lead);
   padding-right: calc(var(--tap) + var(--space-1));
 }
-.dtab-top .places-search input:focus { outline: none; border-color: var(--focus); }
+.dtab-top .places-search input:focus { border-color: var(--focus); }
+/* T1128 (WCAG 2.4.7): the same 2 px ring as every other field, not only a
+   1 px border tint, when the keyboard brings focus here. */
+.dtab-top .places-search input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.dtab-top .places-search input:focus:not(:focus-visible) { outline: none; }
 .dtab-count { margin-left: var(--space-1); }
 @media (min-width: 769px) {
   .dtab-top .places-search { max-width: 560px; }

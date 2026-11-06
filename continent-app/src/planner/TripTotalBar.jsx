@@ -52,14 +52,17 @@ export function TripTotalBar({ priced, onOpen = null, layout = 'bar', className 
   const forPeople = t('receipt.total', { people });
   // One accessible name, read as one sentence (T490-i): the figure in its
   // spoken form, then who it is for, then what a tap does.
-  const spoken = t('plan.totalBarName', {
-    price: t('money.estSpoken', { price: formatMoney(total, { precision: 'cents', locale: lang }) }),
-    people,
-  });
+  // The foot bar shows "Your trip" over the figure, so its name starts with
+  // those words (T1128, WCAG 2.5.3: the name holds the visible label).
+  const priceSpoken = t('money.estSpoken', { price: formatMoney(total, { precision: 'cents', locale: lang }) });
+  const spoken = layout === 'foot'
+    ? t('plan.totalBarNameFoot', { label: t('plan.yourTrip'), price: priceSpoken, people })
+    : t('plan.totalBarName', { price: priceSpoken, people });
 
   const body = layout === 'foot' ? (
     <>
       <span className="ttb-lbl">{t('plan.yourTrip')}</span>
+      {' '}
       <span ref={figRef} className="ttb-n"><Money value={total} est precision="cents" /></span>
     </>
   ) : layout === 'strip' ? (

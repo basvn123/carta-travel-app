@@ -115,10 +115,12 @@ export function OriginPicker({
           title={t('origin.btnTitle')}
         >
           <span className="settings-part-label" aria-hidden="true">{t('settings.from')}</span>
+          {' '}
           <span className="settings-part-value" aria-hidden="true">
             {origin ? (
               <>
                 {originCity && <span className="settings-origin-city">{originCity}</span>}
+                {originCity && ' '}
                 <span className="is-mono">{origin}</span>
               </>
             ) : t('settings.pickAirport')}

@@ -839,11 +839,13 @@ export function AccountPanel({
       className="ac-me"
       href={hrefOf('profile')}
       onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); go('profile'); }}
-      aria-label={t('ac.editProfileAria', { name: storedName || storedEmail })}
     >
+      {/* Named by what it shows, then what it does (T1128, WCAG 2.5.3: the
+          old aria-label left out the plan and the counts on the card). */}
       <span className="ac-face" aria-hidden="true">{avatarEmoji || monogram(storedName, storedEmail)}</span>
       <span className="ac-me-tx">
         <b>{storedName || storedEmail}</b>
+        {' '}
         {storedHandle ? <span>@{storedHandle}</span> : storedName ? <span>{storedEmail}</span> : null}
       </span>
       {entitlement.known && (
@@ -859,6 +861,7 @@ export function AccountPanel({
           ))}
         </dl>
       )}
+      <span className="sr-only">{`, ${t('ac.editProfile')}`}</span>
     </a>
   );
 

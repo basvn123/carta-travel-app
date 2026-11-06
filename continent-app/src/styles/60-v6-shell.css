@@ -123,7 +123,7 @@
 }
 .settings-part-label { font-size: var(--text-label); color: var(--text-2); }
 .settings-part-value { font-size: var(--text-label); font-weight: 500; color: var(--text); }
-.settings-origin-city { margin-right: var(--space-1); }
+.settings-origin-city { margin-right: 0; } /* the space after it in the markup is the gap (T1128) */
 .settings-part-lifestyle .settings-part-value { display: inline-flex; gap: var(--space-2); }
 .settings-vibe { color: var(--text-2); font-weight: 400; }
 .settings-line .is-mono,

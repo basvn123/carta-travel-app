@@ -95,6 +95,7 @@ export function SearchDock({ onSearch }) {
         <span className="sdock-act" data-act={kind.key} aria-hidden="true"><kind.Icon size={20} /></span>
         <span className="sdock-text" aria-hidden="true">
           <span className="sdock-line1">{title}</span>
+          {' '}
           <span className="sdock-line2">{line}</span>
         </span>
       </button>
