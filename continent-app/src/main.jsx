@@ -1,4 +1,6 @@
 import './lib/pathBoot.js';
+// T1122: keep a ?cc=umber cost card preview before the address is rewritten.
+import './planner/trip/costCardVariant.js';
 import React, { Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';

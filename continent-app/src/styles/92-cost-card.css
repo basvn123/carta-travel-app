@@ -137,3 +137,128 @@ div.ccard-hit { cursor: default; }
 .ccard-all.btn { margin-left: calc(-1 * var(--space-2)); }
 .ccard-paid.btn { margin-right: calc(-1 * var(--space-2)); }
 @media (prefers-reduced-motion: reduce) { .ccard-arc-seg, .ccard-hit { transition: none; } }
+
+/* ---- The umber cost card as signature (T1122, ROADMAP G3) ----
+   A variant of the card above, drawn only with .is-umber, which CostCard
+   sets behind the flag in planner/trip/costCardVariant.js (OFF until the
+   owner approves docs/design/direction.md, row T1122-a; preview ?cc=umber).
+   Direction section 3: the deep umber ground, the stage radius, the soft
+   umber shadow, cream text; in bands: the total and its per person line,
+   the cost bar in the cost colours with what is not priced as a dashed
+   track, the rows on a lighter umber band, a foot strip with one action.
+   Contrast (tests/costCardUmber.test.mjs): cream on the ground 9.8:1, on
+   the band 7.3:1; every bar segment 3:1 or more against the cream track. */
+.ccard.is-umber {
+  --ccu-ground: var(--home-ground-deep);
+  --ccu-band: var(--umber-700);
+  --ccu-track: var(--umber-50);
+  --ccu-fly: var(--sun-400);
+  --ccu-around: var(--sun-800);
+  --ccu-bed: var(--action);
+  --ccu-food: var(--lagoon-600);
+  container-type: inline-size;
+  gap: 0;
+  padding: 0;
+  border-radius: var(--radius-stage);
+  background: var(--ccu-ground);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--umber-800) 6%, transparent),
+    0 24px 60px -28px color-mix(in srgb, var(--umber-800) 28%, transparent);
+}
+@media (min-width: 1024px) { :is(.tpg-side, .pt-side) .ccard.is-umber { padding: 0; } }
+.ccu-head { display: grid; gap: var(--space-3); padding: var(--space-4) var(--space-4) var(--space-4); }
+@media (min-width: 1024px) { .ccu-head { padding: var(--space-5) var(--space-5) var(--space-4); } }
+
+/* The total: showcase weight, tabular, sized to the card (the stage figure
+   on a wide card, never past the card's width on a narrow one). */
+.ccu-sum { display: grid; gap: 2px; margin: 0; }
+.ccu-n {
+  font-size: min(var(--text-total), 13cqi);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--ccard-ink);
+  font-variant-numeric: tabular-nums;
+  animation: ccu-settle var(--dur-3) var(--ease-out) both;
+}
+/* Settle, never count up (Operate, the Tabular Rule): a new figure rises a
+   hair into place. The span is keyed on the figure, so this runs per change. */
+@keyframes ccu-settle { from { opacity: 0.35; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.ccu-per { font-size: var(--text-label); font-weight: 600; color: var(--ccard-ink); font-variant-numeric: tabular-nums; }
+.ccard.is-umber .ccard-budget { justify-items: start; }
+.ccard.is-umber .tpbud.is-compact { text-align: left; align-items: flex-start; }
+.ccard.is-umber .tpbud.is-compact .tpbud-line { justify-content: flex-start; }
+.ccard.is-umber .tpbud.is-compact > .tpbud-edit.btn { align-self: flex-start; padding-inline: 0; }
+
+/* The cost bar: a cream track, segments 3 px apart, round outer ends. */
+.ccu-bar {
+  display: flex;
+  gap: 3px;
+  height: 28px;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--ccu-track);
+}
+.ccu-seg {
+  display: grid;
+  align-items: center;
+  flex: 1 1 0;
+  min-width: 6px;
+  border-radius: 4px;
+  font-style: normal;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition:
+    transform var(--dur-4) var(--ease-out) calc(var(--i, 0) * 140ms),
+    flex-grow var(--dur-4) var(--ease-out);
+}
+.ccu-bar.is-drawn .ccu-seg { transform: none; }
+.ccu-seg:first-child { border-top-left-radius: var(--radius-pill); border-bottom-left-radius: var(--radius-pill); }
+.ccu-seg:last-child { border-top-right-radius: var(--radius-pill); border-bottom-right-radius: var(--radius-pill); }
+.ccu-seg > span { padding-left: var(--space-2); overflow: hidden; color: var(--umber-50); font-size: var(--text-caption); font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ccu-k-travel { background: var(--ccu-fly); box-shadow: inset 0 0 0 1.5px var(--umber-600); }
+.ccu-k-travel > span { color: var(--umber-800); }
+.ccu-k-around { background: var(--ccu-around); }
+.ccu-k-stay { background: var(--ccu-bed); }
+.ccu-k-food { background: var(--ccu-food); }
+/* Not priced yet: an empty dashed track; its width is a mark, not a figure. */
+.ccu-seg.is-missing { flex: 0 0 16%; background: none; border: 2px dashed var(--umber-500); }
+
+/* The rows, on the lighter umber band. */
+.ccu-band { display: grid; gap: var(--space-2); padding: var(--space-1) var(--space-3) var(--space-3); background: var(--ccu-band); }
+@media (min-width: 1024px) { .ccu-band { padding: var(--space-1) var(--space-4) var(--space-3); } }
+.ccard.is-umber .ccard-rows { border-top: 0; }
+.ccard.is-umber .ccard-k-travel .ccard-ico { background: var(--ccu-fly); color: var(--umber-800); }
+.ccard.is-umber .ccard-k-around .ccard-ico { background: var(--ccu-around); color: var(--umber-50); }
+.ccard.is-umber .ccard-k-stay .ccard-ico { background: var(--ccu-bed); color: var(--umber-50); }
+.ccard.is-umber .ccard-k-food .ccard-ico { background: var(--ccu-food); color: var(--umber-50); }
+.ccard.is-umber .ccard-ico:not(.is-marks) { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--umber-50) 55%, transparent); }
+.ccard.is-umber .ccard-ico.is-marks .flt-mark { box-shadow: 0 0 0 2px var(--ccu-fly); }
+
+/* The foot strip: the quiet second door left, the one primary right, cream
+   on umber (the brown primary would vanish on this ground). Full width on a phone. */
+.ccu-foot { padding: var(--space-3) var(--space-4); background: var(--ccu-ground); }
+.ccu-foot .ccu-go.btn-primary { margin-left: auto; background: var(--umber-50); border-color: var(--umber-50); color: var(--umber-800); }
+@media (hover: hover) { .ccu-foot .ccu-go.btn-primary:hover { background: var(--umber-100); border-color: var(--umber-100); color: var(--umber-800); } }
+.ccu-foot .ccu-go .btn-icon { transition: transform var(--dur-2) var(--ease-out); }
+@media (hover: hover) { .ccu-foot .ccu-go:hover .btn-icon { transform: translateX(3px); } }
+@media (max-width: 480px) { .ccu-foot .ccu-go.btn-primary { flex: 1 1 100%; justify-content: center; } }
+
+/* Dark surroundings: the card is already dark, so the shadow would vanish;
+   one elevation still, a cream hairline instead of the shadow. */
+@media (prefers-color-scheme: dark) {
+  .ccard.is-umber { box-shadow: 0 0 0 1px color-mix(in srgb, var(--umber-50) 18%, transparent); }
+}
+/* Forced colours: the system draws the card; segments keep a visible edge. */
+@media (forced-colors: active) {
+  .ccard.is-umber { border: 1px solid CanvasText; }
+  .ccu-bar { border: 1px solid CanvasText; }
+  .ccu-seg { border: 1px solid CanvasText; }
+}
+/* Reduced motion: every end state at once; no grow, no settle. */
+@media (prefers-reduced-motion: reduce) {
+  .ccu-seg { transform: none; transition: none; }
+  .ccu-n { animation: none; }
+  .ccu-foot .ccu-go .btn-icon { transition: none; }
+}
+.ccu-foot .ccard-paid.btn { margin: 0 0 0 calc(-1 * var(--space-2)); }
