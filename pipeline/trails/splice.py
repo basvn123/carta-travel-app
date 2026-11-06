@@ -45,6 +45,7 @@ Usage, from the repo root (DB up: cd tools/trailslab && docker compose up -d):
 """
 
 import argparse
+import json
 import sys
 from collections import Counter
 from pathlib import Path
@@ -54,6 +55,7 @@ from psycopg.types.json import Jsonb
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+from chain import apply_order, best_chain, haversine_m  # noqa: E402
 from db import connect  # noqa: E402
 
 # The longest break this will bridge with a straight line, in metres.
@@ -80,6 +82,30 @@ MAX_GAPS = 8
 #                   reading except a percentage.
 MAX_SPLICE_M = 750.0
 MAX_SPLICE_SHARE = 0.05
+
+# --- T1094 (D7): the same splice, in walking order -------------------------
+#
+# Everything above measures a break from the end of part i to the start of
+# part i+1 IN THE ORDER THE GEOMETRY STORES THEM. A part stored backwards, or
+# listed after the part that follows it on the ground, then reads as a break
+# of kilometres between two ends that are metres apart, and the route is
+# refused. That is not a gap in the walk; it is the order of a list.
+#
+# The reorder pass asks the question in walking order: chain.best_chain()
+# finds the order and direction of the parts that makes every break as short
+# as it really is, using every part (nothing is dropped), and the result is
+# held to EXACTLY the limits above: each break <= SPLICE_M, at most MAX_GAPS,
+# MAX_SPLICE_M and MAX_SPLICE_SHARE in total. One relaxation, and it is the
+# only one: when every break is under TINY_GAP_M the count cap rises to
+# TINY_MAX_GAPS. Twenty breaks of four metres each are a relation whose
+# mapper never joined the nodes, not a route that was never finished; the
+# total caps still bound what is drawn. Likya Yolu (breaks to 138 km) and
+# Offa's Dyke Path (one 189 km break) stay out, as they should.
+REORDER_MAX_PARTS = 40
+TINY_GAP_M = 25.0
+TINY_MAX_GAPS = 30
+# A join shorter than this is the same point written twice, not a bridge.
+SAME_POINT_M = 0.5
 
 
 # ---------------------------------------------------------------------------
@@ -224,6 +250,151 @@ def splice_one(conn, row, verbose=False):
 
 
 # ---------------------------------------------------------------------------
+# The reorder pass (T1094)
+# ---------------------------------------------------------------------------
+
+def plan_reorder(coord_parts, length_m):
+    """(plan, None) or (None, reason) for one multi-part route.
+
+    `coord_parts` are the stored parts as coordinate lists ([lon, lat, z]),
+    `length_m` the route's stated length. The plan carries the joined line
+    and the figures repair_info records. Pure, so the rule is tested without
+    a database."""
+    parts = []
+    for pts in coord_parts:
+        if len(pts) < 2:
+            continue
+        seg = sum(chain_len(a, b) for a, b in zip(pts, pts[1:]))
+        parts.append({"start": tuple(pts[0][:2]), "end": tuple(pts[-1][:2]),
+                      "len_m": seg})
+    kept = [pts for pts in coord_parts if len(pts) >= 2]
+    if len(parts) < 2:
+        return None, "single_part"
+    if len(parts) > REORDER_MAX_PARTS:
+        return None, "too_many_parts"
+    got = best_chain(parts, SPLICE_M, require_all=True)
+    if got is None:
+        return None, "break_over_limit"
+    bridges = [g for g in got["gaps"] if g > SAME_POINT_M]
+    total = sum(bridges)
+    length = max(1.0, float(length_m or 0) or sum(p["len_m"] for p in parts))
+    cap = (TINY_MAX_GAPS if bridges and max(bridges) <= TINY_GAP_M
+           else MAX_GAPS)
+    if len(bridges) > cap:
+        return None, "too_many_breaks"
+    if total > MAX_SPLICE_M or total / length > MAX_SPLICE_SHARE:
+        return None, "too_much_bridged"
+    flips = sum(1 for _i, f in got["order"] if f)
+    moved = sum(1 for k, (i, _f) in enumerate(got["order"]) if i != k)
+    return {
+        "line": apply_order(kept, got["order"]),
+        "bridges": len(bridges),
+        "max_bridge_m": round(max(bridges), 1) if bridges else 0.0,
+        "total_bridge_m": round(total, 1),
+        "bridge_share": round(total / length, 5),
+        "flipped_parts": flips,
+        "moved_parts": moved,
+        "tiny_rule": cap == TINY_MAX_GAPS and len(bridges) > MAX_GAPS,
+    }, None
+
+
+def chain_len(a, b):
+    return haversine_m(tuple(a[:2]), tuple(b[:2]))
+
+
+# The multi-part candidates the stored-order pass above did not take: same
+# population filter, no fresh repair, and the parts as 3D GeoJSON so Z rides
+# through to the joined line exactly as it does in SPLICE_SQL.
+REORDER_SQL = """
+    SELECT t.id, t.country, t.title, t.distance_m,
+           ST_AsGeoJSON(t.geom, 7) AS gj,
+           md5(ST_AsBinary(ST_Force2D(t.geom))) AS src_md5,
+           ST_Length(t.geom::geography) AS orig_len
+    FROM trips t
+    WHERE t.category = 'hike' AND t.source = 'osm'
+      AND t.status <> 'rejected'
+      AND t.title NOT LIKE 'OSM route %%'
+      AND t.distance_m BETWEEN 2000 AND 400000
+      AND ST_NumGeometries(t.geom) BETWEEN 2 AND %(max_parts)s
+      AND (%(countries)s::text[] IS NULL OR t.country = ANY(%(countries)s))
+      AND NOT EXISTS (SELECT 1 FROM trip_repairs r WHERE r.trip_id = t.id
+                      AND r.repair_info->>'source_geom_md5'
+                          = md5(ST_AsBinary(ST_Force2D(t.geom))))
+    ORDER BY t.country, t.id
+"""
+
+REORDER_WRITE_SQL = """
+    WITH l AS (
+        SELECT ST_Multi(ST_SetSRID(ST_GeomFromGeoJSON(%(gj)s), 4326)) AS geom
+    )
+    INSERT INTO trip_repairs
+        (trip_id, geom, repaired, divergence_pct, original_len_m,
+         repaired_len_m, repair_info)
+    SELECT %(id)s, l.geom, true,
+           CASE WHEN %(orig)s > 0
+                THEN (ST_Length(l.geom::geography) - %(orig)s) / %(orig)s * 100
+                ELSE 0 END,
+           %(orig)s, ST_Length(l.geom::geography), %(info)s
+    FROM l
+    ON CONFLICT (trip_id) DO UPDATE SET
+        geom = EXCLUDED.geom, repaired = EXCLUDED.repaired,
+        divergence_pct = EXCLUDED.divergence_pct,
+        original_len_m = EXCLUDED.original_len_m,
+        repaired_len_m = EXCLUDED.repaired_len_m,
+        repair_info = EXCLUDED.repair_info,
+        created_at = now()
+"""
+
+
+def reorder_pass(conn, countries, skip_ids, dry_run=False, verbose=False):
+    """Run the reorder rule over what the stored-order pass left. Counter."""
+    done = Counter()
+    with conn.cursor() as cur:
+        cur.execute(REORDER_SQL, {"max_parts": REORDER_MAX_PARTS,
+                                  "countries": list(countries) or None})
+        rows = cur.fetchall()
+    for rid, cc, title, dist, gj, src_md5, orig_len in rows:
+        if rid in skip_ids:
+            continue
+        coords = json.loads(gj).get("coordinates") or []
+        plan, why = plan_reorder(coords, dist)
+        if plan is None:
+            done[f"refused_{why}"] += 1
+            continue
+        done["reordered"] += 1
+        done[f"cc_{cc}"] += 1
+        if plan["tiny_rule"]:
+            done["tiny_rule"] += 1
+        if verbose:
+            print(f"    {rid} {cc} {title[:40]}: {plan['bridges']} break(s), "
+                  f"{plan['total_bridge_m']} m, {plan['flipped_parts']} "
+                  f"flipped, {plan['moved_parts']} moved")
+        if dry_run:
+            continue
+        info = {k: v for k, v in plan.items() if k != "line"}
+        info.update({
+            "method": "ordered-splice",
+            "source_geom_md5": src_md5,
+            "limit_m": SPLICE_M,
+            "total_limit_m": MAX_SPLICE_M,
+            "note": ("parts put in walking order and direction, then joined "
+                     "with straight connectors; no routing engine was "
+                     "involved (T1094)"),
+        })
+        with conn.cursor() as cur:
+            cur.execute(REORDER_WRITE_SQL, {
+                "id": rid,
+                "gj": json.dumps({"type": "LineString",
+                                  "coordinates": plan["line"]}),
+                "orig": float(orig_len or 0),
+                "info": Jsonb(info),
+            })
+    if not dry_run:
+        conn.commit()
+    return done
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 
@@ -247,7 +418,7 @@ SYNC_SQL = """
       FROM trip_repairs r
      WHERE r.trip_id = t.id
        AND r.repaired
-       AND r.repair_info->>'method' = 'straight-splice'
+       AND r.repair_info->>'method' IN ('straight-splice', 'ordered-splice')
        AND r.repair_info->>'source_geom_md5'
            = md5(ST_AsBinary(ST_Force2D(t.geom)))
        AND t.distance_m IS DISTINCT FROM r.repaired_len_m
@@ -260,6 +431,16 @@ def sync_distances(conn):
         n = cur.rowcount
     conn.commit()
     return n
+
+
+def print_reorder(more):
+    print(f"T1094 reorder pass: {more['reordered']:,} more route(s) bridge "
+          f"once their parts are in walking order "
+          f"({more['tiny_rule']:,} of them under the tiny-break count rule)")
+    for key in sorted(k for k in more if k.startswith("refused_")):
+        print(f"  {key[8:]}: {more[key]:,}")
+    for key in sorted(k for k in more if k.startswith("cc_")):
+        print(f"  {key[3:]}: {more[key]:,}")
 
 
 def main():
@@ -293,6 +474,9 @@ def main():
             by_country = Counter(r["country"] for r in rows)
             for cc, n in sorted(by_country.items()):
                 print(f"  {cc}: {n}")
+            more = reorder_pass(conn, countries, {r["id"] for r in rows},
+                                dry_run=True, verbose=args.verbose)
+            print_reorder(more)
             print("dry run: nothing written")
             return
 
@@ -307,6 +491,10 @@ def main():
                 conn.commit()
                 print(f"  {i}/{len(rows)} ...", flush=True)
         conn.commit()
+
+        more = reorder_pass(conn, countries, {r["id"] for r in rows},
+                            verbose=args.verbose)
+        print_reorder(more)
 
         synced = sync_distances(conn)
         print(f"\nspliced {done['spliced']:,} route(s), "

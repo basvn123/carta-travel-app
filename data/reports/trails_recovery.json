@@ -1,0 +1,512 @@
+{
+ "generated_at": "2026-11-06T00:57:52+00:00",
+ "task": "T1094",
+ "inputs": {
+  "registry_generated_at": "2026-09-18T03:48:46+00:00",
+  "coverage_generated_at": "2026-10-02T00:19:51+00:00"
+ },
+ "sweep_2026_09_18": {
+  "candidates": 15943,
+  "published": 1630,
+  "way_only_not_derived": 8893,
+  "failed_continuity": 3518,
+  "famous_published": 14
+ },
+ "coverage_file": {
+  "trail_rows": 17289,
+  "matched": 2025,
+  "missing": 15264,
+  "published_rows": 17619
+ },
+ "way_only_not_derived": {
+  "rows": 8891,
+  "buckets": {
+   "walk_multi": 120,
+   "no_signal": 8621,
+   "walk_lone": 126,
+   "also_relation": 17,
+   "network_only": 7
+  },
+  "lone_named_like_a_structure": 56,
+  "derivation_ceiling": 190,
+  "sample": {
+   "walk_multi": [
+    "Orla Perć (PL, 0.74)",
+    "Fürstensteig (LI, 0.69)",
+    "Ruta del Cares (ES, 0.60)",
+    "sentier des Roches (FR, 0.48)",
+    "Via dell'Amore (IT, 0.48)",
+    "Perć Akademików (SK, 0.37)",
+    "Ravennaschlucht (DE, 0.37)",
+    "Samperin veturitie (FI, 0.36)",
+    "Perć Akademików (PL, 0.36)",
+    "Schwedenlöcher (DE, 0.35)"
+   ],
+   "no_signal": [
+    "Schulweg (DE, 0.55)",
+    "Via Roma (IT, 0.55)",
+    "chemin des Révoires (MC, 0.53)",
+    "Ekmans gränd (SE, 0.48)",
+    "Allée Danielle Mitterrand (FR, 0.48)",
+    "Ketelmeer (NL, 0.47)",
+    "Reichensteiner Viadukt - Vennbahn (RAVeL Route 48 (BE, 0.45)",
+    "Aleea Clasicilor (MD, 0.45)",
+    "Solkanski most (SI, 0.45)",
+    "Purmer (NL, 0.44)"
+   ],
+   "walk_lone": [
+    "Besseggen (NO, 0.51)",
+    "Schiessentümpel (LU, 0.46)",
+    "Haytor Granite Tramway (GB, 0.39)",
+    "Sky Bridge 721 (CZ, 0.36)",
+    "Pavey Ark (GB, 0.36)",
+    "Sokola Perć (SK, 0.34)",
+    "Charles Kuonen Hängebrücke (CH, 0.34)",
+    "Ruijantie (FI, 0.33)",
+    "Haute Route Pyreneennes (FR, 0.33)",
+    "Pont génois (FR, 0.33)"
+   ],
+   "also_relation": [
+    "Sörmlandsleden, etapp 1 (SE, 0.43)",
+    "Via Domitia (FR, 0.39)",
+    "Coulée Verte René-Dumont (FR, 0.39)",
+    "Havelhöhenweg (DE, 0.38)",
+    "Lehrpfad der unholdigen Personen (DE, 0.37)",
+    "Mediterranean Steps (ES, 0.32)",
+    "Römerstraße (DE, 0.31)",
+    "Lämmertwiete (DE, 0.25)",
+    "Ścieżka edukacyjna „Czerwone Bagno” (PL, 0.24)",
+    "Bullengrabenweg (DE, 0.23)"
+   ],
+   "network_only": [
+    "Chemin de Randonnée Européen E4, Partie Française (FR, 0.30)",
+    "Adler-Gang (DE, 0.23)",
+    "Haasenhof (DE, 0.23)",
+    "Füchtings Hof (DE, 0.20)",
+    "Füchtingshof (DE, 0.20)",
+    "Rabenscheider Tunnel (DE, 0.20)",
+    "Notre-Dame-du-Mont - Cours Julien (FR, 0.20)"
+   ]
+  }
+ },
+ "failed_continuity": {
+  "rows": 4555,
+  "buckets": {
+   "needs_lab_split": 4169,
+   "same_relation_other_country": 251,
+   "already_published": 9,
+   "parent_of_published_stage": 126
+  },
+  "sample": {
+   "needs_lab_split": [
+    "Peaks of the Balkans (ME)",
+    "Likya Yolu (TR)",
+    "Szlak Orlich Gniazd (PL)",
+    "Główny Szlak Sudecki (PL)",
+    "Laugavegur (IS)",
+    "Jakobsweg Böhmen-Bayern-Tirol (AT)",
+    "Jakobsweg Böhmen-Bayern-Tirol Variante/Baumgarten (AT)",
+    "Voralpiner Jakobsweg (AT)"
+   ],
+   "same_relation_other_country": [
+    "Hochrhein Jakobsweg (2 (DE)",
+    "Jakobsweg Tillyschanz > Nürnberg, Abschnitt Tillyschanz - Ensdorf (DE)",
+    "Svatojakubská cesta, Východočeská trasa, Krzeszów - Meziměstí (PL)",
+    "E4: Derdap – Vratna (RO)",
+    "Via Francigena - 01 Valle d'Aosta (IT)",
+    "Connector Norwegian/Swedish border - Vasaloppsleden (SE)",
+    "E4: Horgoš – Ada (HU)",
+    "Cesta hrdinov SNP (PL)"
+   ],
+   "already_published": [
+    "Jakobsweg Nürnberg-Schwabach (DE)",
+    "Via Alpina Red R23 (AT)",
+    "ST316 Hercegszántó - Bezdan (HU)",
+    "Záhorácka magistrála (CZ)",
+    "Streekpad De Brabantse Wal - 4 (NL)",
+    "Szlak Bohaterów Wieży Spadochronowej (PL)",
+    "Erzweg, Etappe 7: Sulzbach - Amberg (DE)",
+    "Nordkalottruta Etapp 41: Sårjåsjaurestugan - Sorjushytta (NO)"
+   ],
+   "parent_of_published_stage": [
+    "E11: Mežtaka, Latvija (LV)",
+    "Via Francigena - 07 Lazio (IT)",
+    "Hermannsweg (DE)",
+    "European long distance path E4 - part Greece (GR)",
+    "Via Francigena (CH)",
+    "Trans Pennine Trail (GB)",
+    "Cammino di Francesco (IT)",
+    "European long distance path E9 - part alternative Great Britain (FR)"
+   ]
+  }
+ },
+ "famous": [
+  {
+   "country": "FR",
+   "fixture": "Sentier des Roches",
+   "published_as": null,
+   "registry_name": "sentier des Roches",
+   "reason": "way_only_not_derived",
+   "named_ways": 18,
+   "relation_id": null,
+   "sac_scale": "demanding_mountain_hiking",
+   "outcome": "recovered by derivation",
+   "rule": "fame chain, with the T1094 spine rule if it branches"
+  },
+  {
+   "country": "FR",
+   "fixture": "Tour du Mont Blanc",
+   "published_as": "Tour du Mont Blanc - Itinéraire principal",
+   "registry_name": "mont Blanc",
+   "reason": "matched",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "FR",
+   "fixture": "GR 20",
+   "published_as": "GR 20 Principale",
+   "registry_name": "GR 20 Principale",
+   "reason": "matched",
+   "named_ways": 0,
+   "relation_id": 12484370,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "FR",
+   "fixture": "Cirque de Gavarnie",
+   "published_as": null,
+   "registry_name": "Cirque de Gavarnie",
+   "reason": "unresolved_seed",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "not recovered",
+   "rule": "no rule: unresolved_seed"
+  },
+  {
+   "country": "ES",
+   "fixture": "Ruta del Cares",
+   "published_as": null,
+   "registry_name": "Ruta del Cares",
+   "reason": "way_only_not_derived",
+   "named_ways": 7,
+   "relation_id": null,
+   "sac_scale": "hiking",
+   "outcome": "recovered by derivation",
+   "rule": "fame chain, with the T1094 spine rule if it branches"
+  },
+  {
+   "country": "ES",
+   "fixture": "Caminito del Rey",
+   "published_as": "Caminito del Rey",
+   "registry_name": "Caminito del Rey",
+   "reason": "matched",
+   "named_ways": 1,
+   "relation_id": null,
+   "sac_scale": "mountain_hiking",
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "ES",
+   "fixture": "Teide",
+   "published_as": null,
+   "registry_name": "Teide Telesforo Bravo",
+   "reason": "unresolved_seed",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "not recovered",
+   "rule": "no rule: unresolved_seed"
+  },
+  {
+   "country": "CH",
+   "fixture": "Hardergrat",
+   "published_as": null,
+   "registry_name": null,
+   "reason": null,
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "no registry row",
+   "rule": "-"
+  },
+  {
+   "country": "CH",
+   "fixture": "Eiger Trail",
+   "published_as": "Eiger Trail",
+   "registry_name": null,
+   "reason": "matched",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "CH",
+   "fixture": "Gornergrat",
+   "published_as": null,
+   "registry_name": "Gornergrat",
+   "reason": "no_osm_data",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "not recovered",
+   "rule": "no rule: no_osm_data"
+  },
+  {
+   "country": "IS",
+   "fixture": "Laugavegur",
+   "published_as": null,
+   "registry_name": "Laugavegur",
+   "reason": "failed_continuity",
+   "named_ways": 0,
+   "relation_id": 1225037,
+   "sac_scale": null,
+   "outcome": "recovered only if its breaks are order artefacts",
+   "rule": "T1094 reorder pass (splice.py)"
+  },
+  {
+   "country": "IS",
+   "fixture": "Fimmvorduhals",
+   "published_as": "Fimmvörðuháls",
+   "registry_name": "Fimmvörðuháls",
+   "reason": "matched",
+   "named_ways": 0,
+   "relation_id": 396940,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "PL",
+   "fixture": "Rysy",
+   "published_as": "Czarny Staw Pod Rysami - Rysy",
+   "registry_name": "Rysy",
+   "reason": "matched",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "PL",
+   "fixture": "Morskie Oko",
+   "published_as": null,
+   "registry_name": "Morskie Oko",
+   "reason": "no_osm_data",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "not recovered",
+   "rule": "no rule: no_osm_data"
+  },
+  {
+   "country": "PL",
+   "fixture": "Orla Perc",
+   "published_as": null,
+   "registry_name": "Orla Perć",
+   "reason": "way_only_not_derived",
+   "named_ways": 12,
+   "relation_id": null,
+   "sac_scale": "demanding_alpine_hiking",
+   "outcome": "recovered by derivation",
+   "rule": "fame chain, with the T1094 spine rule if it branches"
+  },
+  {
+   "country": "PT",
+   "fixture": "Pico Ruivo",
+   "published_as": null,
+   "registry_name": "Pico Ruivo",
+   "reason": "no_osm_data",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "not recovered",
+   "rule": "no rule: no_osm_data"
+  },
+  {
+   "country": "IT",
+   "fixture": "Seceda",
+   "published_as": null,
+   "registry_name": "Seceda",
+   "reason": "no_osm_data",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "not recovered",
+   "rule": "no rule: no_osm_data"
+  },
+  {
+   "country": "IT",
+   "fixture": "Alpe di Siusi",
+   "published_as": null,
+   "registry_name": "Alpe di Siusi",
+   "reason": "unresolved_seed",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "not recovered",
+   "rule": "no rule: unresolved_seed"
+  },
+  {
+   "country": "IT",
+   "fixture": "Tre Cime di Lavaredo",
+   "published_as": null,
+   "registry_name": "Tre Cime di Lavaredo",
+   "reason": "unresolved_seed",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "not recovered",
+   "rule": "no rule: unresolved_seed"
+  },
+  {
+   "country": "IT",
+   "fixture": "Sentiero degli Dei",
+   "published_as": "Sentiero degli Dei",
+   "registry_name": "Sentiero degli Dei",
+   "reason": "matched",
+   "named_ways": 0,
+   "relation_id": 4757514,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "GR",
+   "fixture": "Mount Olympus",
+   "published_as": null,
+   "registry_name": "Mount Olympus Mytikas",
+   "reason": "unresolved_seed",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "not recovered",
+   "rule": "no rule: unresolved_seed"
+  },
+  {
+   "country": "GR",
+   "fixture": "Samaria",
+   "published_as": "Samaria Gorge Trail",
+   "registry_name": null,
+   "reason": "matched",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "HR",
+   "fixture": "Plitvice",
+   "published_as": null,
+   "registry_name": "Plitvice",
+   "reason": "unresolved_seed",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "not recovered",
+   "rule": "no rule: unresolved_seed"
+  },
+  {
+   "country": "NO",
+   "fixture": "Trolltunga",
+   "published_as": "Trolltunga",
+   "registry_name": "Trolltunga",
+   "reason": "matched",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "NO",
+   "fixture": "Preikestolen",
+   "published_as": "Preikestolen Roundtrip",
+   "registry_name": "Preikestolen",
+   "reason": "matched",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "NO",
+   "fixture": "Besseggen",
+   "published_as": "Gjendesheim-Besseggen-Memurubu",
+   "registry_name": "Besseggen",
+   "reason": "matched",
+   "named_ways": 1,
+   "relation_id": null,
+   "sac_scale": "demanding_mountain_hiking",
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "GB",
+   "fixture": "Ben Nevis",
+   "published_as": "Ben Nevis Mountain Path",
+   "registry_name": "Ben Nevis Mountain Track",
+   "reason": "matched",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "GB",
+   "fixture": "West Highland Way",
+   "published_as": "West Highland Way (Kingshouse to Kinlochleven)",
+   "registry_name": "West Highland Way",
+   "reason": "matched",
+   "named_ways": 1,
+   "relation_id": 16287,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "SI",
+   "fixture": "Triglav",
+   "published_as": "Dolič - Triglav",
+   "registry_name": "Triglav",
+   "reason": "matched",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  },
+  {
+   "country": "AT",
+   "fixture": "Adlerweg",
+   "published_as": "Adlerweg Etappe 12",
+   "registry_name": "Adlerweg",
+   "reason": "matched",
+   "named_ways": null,
+   "relation_id": null,
+   "sac_scale": null,
+   "outcome": "published",
+   "rule": "-"
+  }
+ ],
+ "famous_outcomes": {
+  "recovered by derivation": 3,
+  "published": 15,
+  "not recovered": 10,
+  "no registry row": 1,
+  "recovered only if its breaks are order artefacts": 1
+ }
+}

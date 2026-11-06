@@ -94,6 +94,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import osmium  # noqa: E402
 
+from chain import spine  # noqa: E402
 from db import connect  # noqa: E402
 from names import base_name, squash  # noqa: E402
 from schema import ensure  # noqa: E402
@@ -229,6 +230,36 @@ STRICT_JOINS = {"fame", "base-name"}
 # cannot disagree about what "the right trail" means.
 EXPECTED_KM_TOL = 0.40
 
+# --- T1094 (D7): three rules for the famous walks the strict passes lost ----
+#
+# 1. One article, two spellings. A mapper tags one way wikidata=Q123 and the
+#    next only wikipedia=pl:Orla Perc. The fame key used to be "wikidata, else
+#    wikipedia", so those two ways carried different keys, the fame pass saw
+#    a hole in the middle of the walk and refused it as branching. Where any
+#    way in the extract carries BOTH tags, that pair is learnt and a way with
+#    only the wikipedia tag joins under the wikidata key. No guess: the pair
+#    is the mapper's own statement that the two name one thing.
+#
+# 2. A famous walk mapped as ONE way. Besseggen in the registry has one named
+#    way, and the strict passes skip a lone way ("a lone way is not a
+#    chain"). Right for a name, wrong for a way that cites an article AND is
+#    graded or waymarked: that is a mapped walk, only not a split one. It
+#    still has to clear MIN_M_STRONG, so a famous bridge deck (Charles Kuonen
+#    494 m) cannot, and a way tagged bridge or tunnel never seeds this rule.
+LONE_EVIDENCE_KEYS = ("sac_scale",) + WAYMARK_KEYS
+#
+# 3. The main line of a branching famous chain. Orla Perc has a one-way
+#    section with a parallel return and spurs to the cols; Ruta del Cares has
+#    the Cain spur. Every strict chain that branched was refused, so the
+#    worst miss in Europe stayed missing. chain.spine() takes the longest
+#    continuous line through the pieces, and it ships only when it carries
+#    chain.SPINE_SHARE_MIN (80%) of the chain: a walk with a variant, not two
+#    walks. What it sets aside is recorded in gap_info (spine_set_aside_m).
+#    Pieces join only where they already share a node (SPINE_JOIN_M), so the
+#    rule draws no line; the 50 m near-joins were already bridged and counted
+#    against BRIDGE_MAX_TOTAL_M before it runs.
+SPINE_JOIN_M = 1.0
+
 BATCH = 200
 
 
@@ -252,6 +283,10 @@ class WalkWays:
     def __init__(self):
         self.nodes = {}
         self.tags = {}
+        # Ways that are a bridge or a tunnel. Not in KEEP_WAY_TAGS, because
+        # the derived trip should not inherit bridge=yes from one member; held
+        # apart so the lone-way rule can refuse a famous bridge deck.
+        self.structure = set()
 
     def __len__(self):
         return len(self.nodes)
@@ -278,6 +313,8 @@ def scan_ways(pbf_path, verbose=False):
             continue
         out.nodes[way.id] = refs
         out.tags[way.id] = {k: tags[k] for k in KEEP_WAY_TAGS if k in tags}
+        if tags.get("bridge", "no") != "no" or tags.get("tunnel", "no") != "no":
+            out.structure.add(way.id)
     if verbose:
         print(f"    {seen:,} walkable way(s), {len(out.nodes):,} usable")
     return out
@@ -462,6 +499,44 @@ def _grow(seed, key, ways, lengths, ends, named, used, rule,
     return members, total
 
 
+def fame_keys(ways):
+    """{way id: the article it cites}, one key per article (T1094 rule 1).
+
+    wikidata when the way carries it. A way citing only a Wikipedia title
+    takes the wikidata id another way in the same extract pairs with that
+    title, so "wikidata on some members, wikipedia on the rest" is one walk
+    and not a walk with holes in it. A title nobody pairs keeps itself."""
+    qid_of = {}
+    for t in ways.tags.values():
+        wd, wp = t.get("wikidata"), t.get("wikipedia")
+        if wd and wp:
+            qid_of.setdefault(str(wp).strip(), str(wd).strip())
+    out = {}
+    for wid, t in ways.tags.items():
+        wd, wp = t.get("wikidata"), t.get("wikipedia")
+        if wd:
+            out[wid] = str(wd).strip()
+        elif wp:
+            wp = str(wp).strip()
+            out[wid] = qid_of.get(wp, wp)
+    return out
+
+
+def lone_walk(wid, ways):
+    """May this single way be derived as a walk on its own? (T1094 rule 2)
+
+    It cites an article (the fame pass only seeds on those), it carries a
+    grade or a waymark, it is a path, track or bridleway or graded, and it
+    is not a bridge or a tunnel. The length floor is applied by the caller,
+    the same MIN_M_STRONG every strong chain gets."""
+    t = ways.tags.get(wid, {})
+    if wid in getattr(ways, "structure", ()):
+        return False
+    if not any(t.get(k) for k in LONE_EVIDENCE_KEYS):
+        return False
+    return t.get("highway") in SEED_HIGHWAYS or bool(t.get("sac_scale"))
+
+
 def cluster(ways, lengths, near=None, can_ship=None, verbose=False):
     """Named ways grouped into candidate routes.
 
@@ -508,11 +583,8 @@ def cluster(ways, lengths, near=None, can_ship=None, verbose=False):
     named = {wid: fold_name(t.get("name")) for wid, t in ways.tags.items()}
     # The key each pass chains on, per way. A way with no key for a pass can
     # neither seed it nor join it.
-    fame_key, base_key = {}, {}
+    fame_key, base_key = fame_keys(ways), {}
     for wid, t in ways.tags.items():
-        fame = t.get("wikidata") or t.get("wikipedia")
-        if fame:
-            fame_key[wid] = str(fame).strip()
         if t.get("name"):
             base_key[wid] = squash(base_name(t["name"])) or None
     keys = {"fame": fame_key, "base-name": base_key,
@@ -559,8 +631,13 @@ def cluster(ways, lengths, near=None, can_ship=None, verbose=False):
                 continue          # a graded but unnamed path seeds any-named
             members, total = _grow(seed, key, ways, lengths, ends, named,
                                    used, rule, key_map, near)
+            lone = False
             if rule in STRICT_JOINS and len(members) < 2:
-                continue          # a lone way is not a chain; nothing derived
+                # A lone way is not a chain, unless it is a famous walk
+                # mapped as one way (T1094 rule 2).
+                if not (rule == "fame" and lone_walk(seed, ways)):
+                    continue
+                lone = True
             floor = MIN_M
             if rule in STRICT_JOINS and has_trail_evidence(
                     {"fame": fame_key.get(seed), "ways": members}, ways):
@@ -572,7 +649,12 @@ def cluster(ways, lengths, near=None, can_ship=None, verbose=False):
                 "key": key, "ways": members, "len_m": total,
                 "seed": seed, "join": rule,
                 "fame": fame_key.get(seed),
+                "lone": lone,
             }
+            if rule == "fame":
+                rec["fame_raw"] = sorted({
+                    str(ways.tags[w][k]).strip() for w in members
+                    for k in ("wikidata", "wikipedia") if ways.tags[w].get(k)})
             # A strict cluster has to prove it is one line BEFORE it claims
             # its ways. Refusing it later and claiming anyway is how the
             # strong passes silently cost Albania two routes on the first
@@ -669,8 +751,11 @@ def trim_tail(cluster_rec, ways, lengths):
         if tags.get("sac_scale"):
             return False
         if rule == "fame":
-            own = tags.get("wikidata") or tags.get("wikipedia")
-            if own and str(own).strip() == key:
+            # Either spelling of the article counts (T1094 rule 1): the
+            # chain's key is the wikidata id where a pair was learnt.
+            own = {str(tags[k]).strip() for k in ("wikidata", "wikipedia")
+                   if tags.get(k)}
+            if own & ({key} | set(cluster_rec.get("fame_raw") or ())):
                 return False
         elif tags.get("name") and squash(base_name(tags["name"])) == key:
             return False
@@ -846,16 +931,88 @@ def build_geometry(cluster_rec, ways, locator, pairs=None, strict=False):
         return None, 0.0, gap_info
     if len(pieces) > 1:
         if strict:
-            # A network, not a line. Refused rather than published as its
-            # longest fragment under the whole walk's name.
-            gap_info["refused"] = "branching"
-            gap_info["pieces"] = len(pieces)
-            return None, 0.0, gap_info
+            # A network, not a line, unless one continuous line through it
+            # carries nearly all of it (T1094 rule 3): then that line is the
+            # walk and the rest is a variant or a spur, set aside and
+            # recorded. Otherwise refused rather than published as a fragment
+            # under the whole walk's name.
+            main = spine_line(merged, locator, stats)
+            if main is None:
+                gap_info["refused"] = "branching"
+                gap_info["pieces"] = len(pieces)
+                return None, 0.0, gap_info
+            wkt_part, length_m, set_aside_m, n_aside = main
+            gap_info["spine_from"] = len(pieces)
+            gap_info["spine_set_aside"] = n_aside
+            gap_info["spine_set_aside_m"] = round(set_aside_m, 1)
+            gap_info["merged_segments"] = 1
+            return "MULTILINESTRING(" + wkt_part + ")", length_m, gap_info
         pieces.sort(key=lambda p: -p[0])
         gap_info["trimmed_from"] = len(pieces)
         gap_info["merged_segments"] = 1
     length_m, wkt_part = pieces[0]
     return "MULTILINESTRING(" + wkt_part + ")", length_m, gap_info
+
+
+def split_at_junctions(segments):
+    """Cut node-id segments wherever another segment touches them.
+
+    The ingest stitcher walks straight through a junction when the member
+    order allows, so a segment can carry, in its middle, the node a variant
+    or a spur leaves from. The spine needs pieces that meet END TO END, so
+    every segment is cut at each interior node that is an end of another
+    segment or lies on more than one segment."""
+    seen = defaultdict(int)
+    ends = set()
+    for seg in segments:
+        ends.add(seg[0])
+        ends.add(seg[-1])
+        for node in set(seg):
+            seen[node] += 1
+    out = []
+    for seg in segments:
+        cur = [seg[0]]
+        for node in seg[1:-1]:
+            cur.append(node)
+            if node in ends or seen[node] > 1:
+                out.append(cur)
+                cur = [node]
+        cur.append(seg[-1])
+        out.append(cur)
+    return [tuple(x) for x in out if len(x) >= 2]
+
+
+def spine_line(segments, locator, stats):
+    """(wkt part, length, set-aside m, set-aside count) or None.
+
+    The main line through node-id segments that meet at shared nodes, by
+    chain.spine(). Segments with no located points are left out of the
+    choice, the same as part_geometry drops them."""
+    parts, nodes = [], []
+    for seg in split_at_junctions(segments):
+        ok, xs, ys = locator.coords_for([seg[0], seg[-1]])
+        _wkt, seg_len = part_geometry(seg, locator, stats)
+        if not ok.all() or not seg_len:
+            continue
+        parts.append({"start": (xs[0] / 1e7, ys[0] / 1e7),
+                      "end": (xs[1] / 1e7, ys[1] / 1e7),
+                      "len_m": seg_len})
+        nodes.append(list(seg))
+    if len(parts) < 2:
+        return None
+    got = spine(parts, SPINE_JOIN_M)
+    if got is None:
+        return None
+    line = []
+    for i, flipped in got["order"]:
+        pts = nodes[i][::-1] if flipped else nodes[i]
+        if line and line[-1] == pts[0]:
+            pts = pts[1:]
+        line.extend(pts)
+    wkt_part, length_m = part_geometry(line, locator, stats)
+    if not wkt_part:
+        return None
+    return wkt_part, length_m, got["set_aside_m"], len(got["set_aside"])
 
 
 # ---------------------------------------------------------------------------
@@ -948,17 +1105,56 @@ def run_country(conn, slug, cc, args, expected_km=None):
               f"pipeline/trails/ingest_osm_routes.py first")
         return Counter({"no_extract": 1})
 
+    records, counts = derive_extract(pbf, cc, expected_km=expected_km,
+                                     limit=args.limit, label=slug)
+    for r in records:
+        r["raw_tags"] = Jsonb(r["raw_tags"])
+        r["gap_info"] = Jsonb(r["gap_info"])
+
+    if args.dry_run:
+        print(f"[{slug}] dry run: {len(records)} derived route(s), "
+              f"longest: " + "; ".join(
+                  f"{r['title'][:32]} ({r['length_m'] / 1000:.1f} km)"
+                  for r in sorted(records, key=lambda r: -r["length_m"])[:3]))
+        print(f"[{slug}] T1094 rules: {counts['lone_way']} lone famous "
+              f"way(s), {counts['spine']} main line(s) of a branching "
+              f"famous chain, {counts['fame_key_joined']} way(s) joined "
+              f"by a wikipedia/wikidata pair", flush=True)
+        return counts
+
+    for i in range(0, len(records), BATCH):
+        with conn.cursor() as cur:
+            cur.executemany(INSERT_SQL, records[i:i + BATCH])
+        conn.commit()
+    dropped = drop_duplicates(conn, cc, verbose=args.verbose)
+    counts["duplicate"] += dropped
+    print(f"[{slug}] staged {len(records)} derived route(s) "
+          f"({counts['trimmed']} trimmed to their longest run), "
+          f"{dropped} rejected as duplicates of existing relations, "
+          f"{counts['not_continuous']} with no continuous run", flush=True)
+    return counts
+
+
+def derive_extract(pbf, cc, expected_km=None, limit=0, label=None):
+    """Every derived route one extract yields, as plain dicts, no database.
+
+    The whole derivation short of staging: scan, locate, near-pairs, the four
+    passes, the geometry and every gate. run_country stages what this
+    returns; the tests run it on small .osm fixtures shaped like the real
+    mapping (T1094), which is how the chaining rules are proven without a
+    44-country extract on the machine."""
+    label = label or cc
     counts = Counter()
     t0 = time.time()
     ways = scan_ways(pbf, verbose=True)
-    print(f"[{slug}] scanned in {time.time() - t0:.0f}s", flush=True)
+    print(f"[{label}] scanned in {time.time() - t0:.0f}s", flush=True)
     if not len(ways):
-        return counts
+        return [], counts
 
     t0 = time.time()
     node_ids = np.unique(np.concatenate(list(ways.nodes.values())))
     locator = load_locations(pbf, node_ids)
-    print(f"[{slug}] {len(locator.ids):,}/{len(node_ids):,} node location(s) "
+    print(f"[{label}] {len(locator.ids):,}/{len(node_ids):,} node location(s) "
           f"({time.time() - t0:.0f}s)", flush=True)
 
     lengths = {}
@@ -990,8 +1186,13 @@ def run_country(conn, slug, cc, args, expected_km=None):
 
     clusters = cluster(ways, lengths, near=near, can_ship=can_ship,
                        verbose=True)
-    if args.limit:
-        clusters = clusters[:args.limit]
+    if limit:
+        clusters = clusters[:limit]
+    fk = fame_keys(ways)
+    counts["fame_key_joined"] = sum(
+        1 for w, t in ways.tags.items()
+        if not t.get("wikidata") and t.get("wikipedia")
+        and fk.get(w) != str(t["wikipedia"]).strip())
 
     records = []
     for rec in clusters:
@@ -1018,6 +1219,11 @@ def run_country(conn, slug, cc, args, expected_km=None):
         if not (floor <= length_m <= MAX_M):
             counts["out_of_band"] += 1
             continue
+        if gap_info.get("spine_from"):
+            counts["spine"] += 1
+        if rec.get("lone"):
+            gap_info["lone_way"] = True
+            counts["lone_way"] += 1
         tags = merge_tags(rec, ways, lengths)
         records.append({
             "country": cc,
@@ -1032,32 +1238,14 @@ def run_country(conn, slug, cc, args, expected_km=None):
             "source_ref": f"w{rec['seed']}",
             "license": LICENSE,
             "attribution": ATTRIBUTION,
-            "raw_tags": Jsonb(tags),
-            "gap_info": Jsonb(gap_info),
+            "raw_tags": tags,
+            "gap_info": gap_info,
             # The working: which ways this chain was assembled from. Null on
             # relation-sourced rows, which resolve theirs via route_relations.
             "member_way_ids": [int(w) for w in rec["ways"]],
         })
         counts["built"] += 1
-
-    if args.dry_run:
-        print(f"[{slug}] dry run: {len(records)} derived route(s), "
-              f"longest: " + "; ".join(
-                  f"{r['title'][:32]} ({r['length_m'] / 1000:.1f} km)"
-                  for r in sorted(records, key=lambda r: -r["length_m"])[:3]))
-        return counts
-
-    for i in range(0, len(records), BATCH):
-        with conn.cursor() as cur:
-            cur.executemany(INSERT_SQL, records[i:i + BATCH])
-        conn.commit()
-    dropped = drop_duplicates(conn, cc, verbose=args.verbose)
-    counts["duplicate"] += dropped
-    print(f"[{slug}] staged {len(records)} derived route(s) "
-          f"({counts['trimmed']} trimmed to their longest run), "
-          f"{dropped} rejected as duplicates of existing relations, "
-          f"{counts['not_continuous']} with no continuous run", flush=True)
-    return counts
+    return records, counts
 
 
 def main():
