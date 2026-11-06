@@ -150,6 +150,16 @@ div.ccard-hit { cursor: default; }
    the band 7.3:1; every bar segment 3:1 or more against the cream track. */
 .ccard.is-umber {
   --ccu-ground: var(--home-ground-deep);
+  /* Card-scoped shadow and ring values (T1122), named here like the colours
+     above so each box-shadow below reads one variable. */
+  --ccu-shadow-stage:
+    0 1px 2px color-mix(in srgb, var(--umber-800) 6%, transparent),
+    0 24px 60px -28px color-mix(in srgb, var(--umber-800) 28%, transparent);
+  --ccu-ring-travel: inset 0 0 0 1.5px var(--umber-600);
+  --ccu-ring-ico: 0 0 0 1.5px color-mix(in srgb, var(--umber-50) 55%, transparent);
+  --ccu-ring-mark: 0 0 0 2px var(--ccu-fly);
+  --ccu-ring-card: 0 0 0 1px color-mix(in srgb, var(--umber-50) 18%, transparent);
+  --text-ccu-total: min(var(--text-total), 13cqi);
   --ccu-band: var(--umber-700);
   --ccu-track: var(--umber-50);
   --ccu-fly: var(--sun-400);
@@ -161,9 +171,7 @@ div.ccard-hit { cursor: default; }
   padding: 0;
   border-radius: var(--radius-stage);
   background: var(--ccu-ground);
-  box-shadow:
-    0 1px 2px color-mix(in srgb, var(--umber-800) 6%, transparent),
-    0 24px 60px -28px color-mix(in srgb, var(--umber-800) 28%, transparent);
+  box-shadow: var(--ccu-shadow-stage);
 }
 @media (min-width: 1024px) { :is(.tpg-side, .pt-side) .ccard.is-umber { padding: 0; } }
 .ccu-head { display: grid; gap: var(--space-3); padding: var(--space-4) var(--space-4) var(--space-4); }
@@ -173,7 +181,7 @@ div.ccard-hit { cursor: default; }
    on a wide card, never past the card's width on a narrow one). */
 .ccu-sum { display: grid; gap: 2px; margin: 0; }
 .ccu-n {
-  font-size: min(var(--text-total), 13cqi);
+  font-size: var(--text-ccu-total);
   font-weight: 800;
   letter-spacing: -0.035em;
   line-height: 1;
@@ -204,19 +212,19 @@ div.ccard-hit { cursor: default; }
   align-items: center;
   flex: 1 1 0;
   min-width: 6px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   font-style: normal;
   transform: scaleX(0);
   transform-origin: left center;
   transition:
-    transform var(--dur-4) var(--ease-out) calc(var(--i, 0) * 140ms),
+    transform var(--dur-4) var(--ease-out) calc(var(--i, 0) * var(--dur-1)),
     flex-grow var(--dur-4) var(--ease-out);
 }
-.ccu-bar.is-drawn .ccu-seg { transform: none; }
+.ccard.is-umber .ccu-bar.is-drawn .ccu-seg { transform: none; }
 .ccu-seg:first-child { border-top-left-radius: var(--radius-pill); border-bottom-left-radius: var(--radius-pill); }
 .ccu-seg:last-child { border-top-right-radius: var(--radius-pill); border-bottom-right-radius: var(--radius-pill); }
 .ccu-seg > span { padding-left: var(--space-2); overflow: hidden; color: var(--umber-50); font-size: var(--text-caption); font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.ccu-k-travel { background: var(--ccu-fly); box-shadow: inset 0 0 0 1.5px var(--umber-600); }
+.ccu-k-travel { background: var(--ccu-fly); box-shadow: var(--ccu-ring-travel); }
 .ccu-k-travel > span { color: var(--umber-800); }
 .ccu-k-around { background: var(--ccu-around); }
 .ccu-k-stay { background: var(--ccu-bed); }
@@ -232,8 +240,8 @@ div.ccard-hit { cursor: default; }
 .ccard.is-umber .ccard-k-around .ccard-ico { background: var(--ccu-around); color: var(--umber-50); }
 .ccard.is-umber .ccard-k-stay .ccard-ico { background: var(--ccu-bed); color: var(--umber-50); }
 .ccard.is-umber .ccard-k-food .ccard-ico { background: var(--ccu-food); color: var(--umber-50); }
-.ccard.is-umber .ccard-ico:not(.is-marks) { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--umber-50) 55%, transparent); }
-.ccard.is-umber .ccard-ico.is-marks .flt-mark { box-shadow: 0 0 0 2px var(--ccu-fly); }
+.ccard.is-umber .ccard-ico:not(.is-marks) { box-shadow: var(--ccu-ring-ico); }
+.ccard.is-umber .ccard-ico.is-marks .flt-mark { box-shadow: var(--ccu-ring-mark); }
 
 /* The foot strip: the quiet second door left, the one primary right, cream
    on umber (the brown primary would vanish on this ground). Full width on a phone. */
@@ -247,7 +255,7 @@ div.ccard-hit { cursor: default; }
 /* Dark surroundings: the card is already dark, so the shadow would vanish;
    one elevation still, a cream hairline instead of the shadow. */
 @media (prefers-color-scheme: dark) {
-  .ccard.is-umber { box-shadow: 0 0 0 1px color-mix(in srgb, var(--umber-50) 18%, transparent); }
+  .ccard.is-umber { box-shadow: var(--ccu-ring-card); }
 }
 /* Forced colours: the system draws the card; segments keep a visible edge. */
 @media (forced-colors: active) {
