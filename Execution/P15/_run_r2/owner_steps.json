@@ -334,5 +334,155 @@
    "Correct the id or the ledger in `pipeline/config/sources.yaml` or `src/ingestion/core/registry.py`",
    "Run `python -I pipeline/provenance_sources.py`"
   ]
+ },
+ {
+  "id": "T1138-a",
+  "title": "Benchmark the box and run the batch evals on it",
+  "why": "Batch jobs move to Carta's own CPU (no quota, no data leaving the box) only after a measured pass.",
+  "where": "docs/ai/model-strategy.md, \"Moving a batch job to the box\"",
+  "how": [
+   "On the box build llama.cpp, fetch Qwen3-30B-A3B-Q4_K_M.gguf and run llama-bench, then write the speeds into box_cpu in continent-app/config/ai_models.json",
+   "Start llama-server -m Qwen3-30B-A3B-Q4_K_M.gguf --port 8080 -np 2 -c 16384 and run each job's eval with AI_<JOB>_PROVIDER=box AI_BOX_EVAL_RUN=1 (commands in the config, first tagging once the S66 tagger exists)",
+   "For a job within 2 points of Gemini, add it to BOX_PASSED in pipeline/ai_gateway.py and box_passed in the config in one commit"
+  ]
+ },
+ {
+  "id": "T1138-e",
+  "title": "Run the live Ask eval on two more models",
+  "why": "Ask's model choice has one measured option (Qwen3, 88.7 percent kept, from 2026-10-22).",
+  "where": "continent-app/config/ai_models.json, docs/ai/model-strategy.md",
+  "how": [
+   "In continent-app set AI_ASK_PROVIDER=gemini AI_ASK_MODELS=gemini-3.5-flash-lite GEMINI_API_KEY in .dev.vars, run npx wrangler pages dev and node scripts/ask-eval-live.mjs --endpoint http://localhost:8799 --out ../data/reports/evals/ask-live-gemini-flash-lite.json",
+   "Repeat with AI_ASK_PROVIDER=openai, the OVHcloud base URL and key, and Mistral-Small-3.2-24B-Instruct-2506",
+   "Repeat with no override (Qwen3)",
+   "Write the kept shares into features.ask.options in ai_models.json"
+  ]
+ },
+ {
+  "id": "T1138-h",
+  "title": "Decide the live features and the trigger values",
+  "why": "No live feature moves without the owner; the triggers decide when to look again.",
+  "where": "continent-app/config/ai_models.json, docs/ai/model-strategy.md",
+  "how": [
+   "Read the table in docs/ai/model-strategy.md (Ask stays on Workers AI at 0.15 EUR per 1,000 calls",
+   "Plan-day, suggest-city and parse-booking stay on Gemini Flash-Lite at about 3 EUR per 1,000 calls)",
+   "Confirm or change the values in switch.triggers (2,800 MAU, EUR 1.67 and 10.50 a day, a 2 point quality drop)",
+   "Put the monthly review (first Monday) in the calendar"
+  ]
+ },
+ {
+  "id": "T1146-a",
+  "title": "Review the D15 add list per country",
+  "why": "Nothing is added to the catalogue until I approve it, and S63 waits on this.",
+  "where": "docs/data/catalogue-gaps/",
+  "how": [
+   "Open `docs/data/catalogue-gaps/README.md`, then each country sheet",
+   "Strike any add that should not ship (or tell S63 which reserve to take instead)",
+   "Say yes or no to the stretch list (worth 0.30 to 0.40) per country",
+   "Answer the 3 merge reviews (Chios, Elafonisos, Krk)"
+  ]
+ },
+ {
+  "id": "T1146-e",
+  "title": "Refresh Wikipedia attention for the gap countries",
+  "why": "Most candidates are scored without readership, so quiet but read places rank too low.",
+  "where": "pipeline/harvest_place_signals.py",
+  "how": [
+   "On the box run `python pipeline/build_place_candidates.py`, then `python pipeline/harvest_place_signals.py --undesignated-top 20000` (the default measures only the top 2,500 register-less candidates",
+   "The script has no per-country option)",
+   "Then `python pipeline/build_place_candidates.py`",
+   "Then `python -I pipeline/catalogue_gaps.py` and commit the new list"
+  ]
+ },
+ {
+  "id": "T1139-a",
+  "title": "Paste migration 071",
+  "why": "Without it no event is stored and the admin view stays empty.",
+  "where": "supabase/migrations/071_ai_model_events_calls.sql",
+  "how": [
+   "Open the Supabase SQL editor",
+   "Paste 071_ai_model_events_calls.sql after 028 and 069",
+   "Check `select count(*) from cron.job where jobname='carta_ai_events_prune'` is 1 (enable pg_cron first if it is 0)"
+  ]
+ },
+ {
+  "id": "T1139-b",
+  "title": "Deploy the gateway with event logging",
+  "why": "The events only flow once the new code runs.",
+  "where": "Execution/P15/T1139-llm-observability.md",
+  "how": [
+   "Deploy plan-day, suggest-city, parse-booking and the Pages build (the same deploy as T1137-a and T1140-a)",
+   "In the Pages project add SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and AI_EVENTS_SALT (a random 32 character string) as secrets"
+  ]
+ },
+ {
+  "id": "T1139-c",
+  "title": "Optional: turn on Langfuse export",
+  "why": "Traces on the build box beside the table.",
+  "where": "continent-app/scripts/eval/langfuse/README.md",
+  "how": [
+   "After T1148-b is installed, set AI_TRACE_LANGFUSE=on, LANGFUSE_HOST, LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY as function secrets",
+   "Check one trace appears",
+   "Leave off otherwise"
+  ]
+ },
+ {
+  "id": "T1144-a",
+  "title": "Verify the truth set by hand",
+  "why": "The score now rests on 90 seeded rows that share the data's own sources; only hand answers measure accuracy, and the eval gates from 80 percent verified.",
+  "where": "evals/truth/GUIDE.md",
+  "how": [
+   "Open `evals/truth/sheet.csv` in a spreadsheet and follow `evals/truth/GUIDE.md` row by row (look up first, then fill verified_value, status verified, source_url, evidence, by, verified_on)",
+   "Confirm or correct the seeded rows",
+   "Run `python -I evals/run_truth.py`, then `python -I evals/run_truth.py --write-baseline` and commit the sheet and baseline"
+  ]
+ },
+ {
+  "id": "T1144-b",
+  "title": "Label the 50 texts for the judge",
+  "why": "The text judge may not gate until its kappa against a human is known.",
+  "where": "evals/truth/judge/labels.json",
+  "how": [
+   "Read `evals/truth/judge/rubric.md`",
+   "For t01 to t50 in `text-sample.json` write supported, unsupported or contradicted in `labels.json` (do not open `text-sample-key.json`)",
+   "Fill by and at",
+   "Run `cd continent-app && node scripts/eval/run.mjs truth` and commit `labels.json`"
+  ]
+ },
+ {
+  "id": "T1144-c",
+  "title": "Run the Gemini text judge once",
+  "why": "A second judge to compare with the blind session judge.",
+  "where": "evals/truth/judge/judge.mjs",
+  "how": [
+   "On a machine with the pipeline's `GEMINI_API_KEY`: `node evals/truth/judge/judge.mjs --backend gemini --model <a pinned Flash model>`",
+   "Then `cd continent-app && node scripts/eval/run.mjs truth`",
+   "Commit `evals/truth/judge/judgments/`"
+  ]
+ },
+ {
+  "id": "T1144-e",
+  "title": "Decide the rule for place blurbs and their cited source",
+  "why": "The judge found none of 15 shipped blurbs backed by the Wikivoyage text they cite, so the page cites a source that does not carry its claims.",
+  "where": "Execution/P15/T1144-truth-set.md",
+  "how": [
+   "Read the 15 shipped blurb verdicts in `evals/truth/judge/judgments/session-2026-11-06-rubric1.json`",
+   "Choose one: cite the source that backs each blurb, rewrite blurbs from the cited text, or drop the citation",
+   "Record the choice as a task"
+  ]
+ },
+ {
+  "id": "T1183-a",
+  "title": "Run the routed trail repair on the box",
+  "why": "Repairs the broken trails D24 counts (3,518 in the sweep, 33 T1181 reference misses) and is the only way to measure the step.",
+  "where": "Execution/P15/T1183-trail-continuity.md, pipeline/trails/route_bridge.py",
+  "how": [
+   "On the box with the lab up, stage tiles for one country first: `python tools/brouter/prepare.py --country IE --up --wait`",
+   "Dry run and read the counts against the report's expected numbers: `python pipeline/trails/route_bridge.py --countries IE --dry-run --verbose`, then open data/reports/trails_route_bridge.json and check one route's bridges on the map",
+   "Real run: `python pipeline/trails/route_bridge.py --countries IE` then `python pipeline/trails/splice.py --sync-only`",
+   "Repeat per country (GB, DE next), or set `CARTA_TRAILS_ROUTE_BRIDGE=1` and let `python run_pipeline.py --only trails_route_bridge` run it with the tiles staged",
+   "Then `python run_pipeline.py --only trails_curate`, the normal elevation and rate chain, `python pipeline/trails/coverage_report.py --all` and `python -I scripts/validation/trails_external.py --write`",
+   "Put the before and after counts in the next task's report"
+  ]
  }
 ]

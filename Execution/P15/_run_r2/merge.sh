@@ -9,8 +9,10 @@ conf=$(git diff --name-only --diff-filter=U)
 for f in $conf; do
   case $f in
     Execution/_OPEN.md|ROADMAP.md|Execution/_OPEN-CLOSED.md) python3 $D/union.py $f; git add $f;;
+    docs/reference/*|docs/architecture/lineage.md) git checkout --ours $f; regen=1; git add $f;;
   esac
 done
+if [ -n "$regen" ]; then python3 -I scripts/docs/build_reference.py >/dev/null 2>&1; python3 -I scripts/docs/build_lineage.py >/dev/null 2>&1; git add docs/reference docs/architecture/lineage.md; fi
 left=$(git diff --name-only --diff-filter=U)
 if [ -n "$left" ]; then echo "CONFLICTS LEFT: $left"; exit 1; fi
 if [ -f .git/MERGE_HEAD ]; then git commit -q -m "Merge $b into p15-round2"; fi
@@ -40,6 +42,28 @@ for l in cur:
     out.append(l)
 open('ROADMAP.md','w').write('\n'.join(out)+'\n')
 print('roadmap rows changed by branch:', sorted(changed), 'restored/deduped:', fixed)
+PY
+# any ROADMAP row id now doubled: keep the copy that differs from HEAD^1 (the pre-merge integration branch)
+python3 - <<'PY'
+import subprocess, re, collections
+pat=re.compile(r'^\| ([A-Z]{1,2}-?[A-Z]?\d+[a-z]?) \|')
+prev={}
+for l in subprocess.run(['git','show','HEAD^1:ROADMAP.md'],capture_output=True,text=True).stdout.splitlines():
+    m=pat.match(l)
+    if m: prev.setdefault(m.group(1), l)
+lines=open('ROADMAP.md').read().splitlines()
+ids=[pat.match(l).group(1) if pat.match(l) else None for l in lines]
+dup={k for k,c in collections.Counter(i for i in ids if i).items() if c>1}
+out=[]; done=set()
+for l,i in zip(lines,ids):
+    if i in dup:
+        if i in done: continue
+        cands=[x for x,j in zip(lines,ids) if j==i]
+        pick=next((x for x in cands if x!=prev.get(i)), cands[0])
+        out.append(pick); done.add(i); continue
+    out.append(l)
+if dup: open('ROADMAP.md','w').write('\n'.join(out)+'\n')
+print('doubled roadmap ids fixed:', sorted(dup) if dup else 'none')
 PY
 # doubled register ids
 python3 - <<'PY'
