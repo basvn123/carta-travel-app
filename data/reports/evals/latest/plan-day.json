@@ -1,0 +1,104 @@
+{
+ "schema": "carta-eval/1",
+ "eval": "plan-day",
+ "title": "Plan-day plans and judge",
+ "kind": "llm-plan",
+ "at": "2026-11-06T16:01:32.249Z",
+ "git": "6d5a0ebd7",
+ "status": "pass",
+ "gated": false,
+ "headline": {
+  "key": "rules_pass",
+  "value": 1,
+  "label": "plans meeting every rule (reference planner)",
+  "higher_is_better": true
+ },
+ "metrics": {
+  "rules_pass": 1,
+  "mean_check_share": 1,
+  "checks.valid": 1,
+  "checks.named": 1,
+  "checks.pace": 1,
+  "checks.walk": 1,
+  "checks.hours": 1,
+  "checks.vibe": 1,
+  "checks.text": 1,
+  "sample.plans": 40,
+  "sample.rules_pass": 22,
+  "sample.human_labels": 0,
+  "sample.judge_verdicts": 40,
+  "kappa.judge_vs_human": null,
+  "kappa.rules_vs_human": null,
+  "kappa.judge_vs_rules": 0.898
+ },
+ "gate": {
+  "ok": true,
+  "rule": "advisory: every plan meets every rule check",
+  "tolerance": null,
+  "baseline": null,
+  "failures": []
+ },
+ "cases": {
+  "n": 20,
+  "passed": 20
+ },
+ "judge": {
+  "backend": "session",
+  "model": "session judge (Claude Code subagent, blind to the key)",
+  "file": "continent-app/scripts/eval/plan-day/judgments/session-2026-11-06-rubric2.json",
+  "rubric_sha": "dd1b55440404",
+  "n": 40,
+  "use": "uncalibrated",
+  "agreement": {
+   "judge_vs_human": {
+    "n": 0,
+    "missing": 40,
+    "po": null,
+    "pe": null,
+    "kappa": null,
+    "se": null,
+    "ci95": null,
+    "band": null,
+    "table": {}
+   },
+   "rules_vs_human": {
+    "n": 0,
+    "missing": 40,
+    "po": null,
+    "pe": null,
+    "kappa": null,
+    "se": null,
+    "ci95": null,
+    "band": null,
+    "table": {}
+   },
+   "judge_vs_rules": {
+    "n": 40,
+    "missing": 0,
+    "po": 0.95,
+    "pe": 0.51,
+    "kappa": 0.898,
+    "se": 0.0703,
+    "ci95": [
+     0.7601,
+     1
+    ],
+    "band": "almost perfect",
+    "table": {
+     "pass|pass": 22,
+     "pass|fail": 2,
+     "fail|fail": 16
+    }
+   }
+  }
+ },
+ "inputs": {
+  "set": 1,
+  "planner": "reference",
+  "labels_by": null,
+  "seconds": 0
+ },
+ "notes": [
+  "no hand labels yet (plan-day/labels.json): judge against human kappa is an owner step"
+ ]
+}
