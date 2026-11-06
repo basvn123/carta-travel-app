@@ -80,6 +80,14 @@ same as a missing variable to Python; it exports the file and then unsets
 every blank, so an unfilled line means "not configured", as it does on the
 laptop.
 
+Since T1107 (ROADMAP H9) three timers run the pipeline: weekly (Monday
+09:00), monthly (first Saturday 03:00) and quarterly (third Saturday of
+January, April, July and October 03:00), each passing its tier as
+`--max-cadence` through `CARTA_TIER`. `cron/schedule.py` is the table and its
+`--dry-run --check` proves every task is in a tier; `cax11/push_status.py`
+copies the state and freshness reports to `r2:carta/status/` after every run.
+The runbook `docs/runbooks/build-box.md` has the enable commands.
+
 The units cloud-init writes are T046's, kept on purpose: `carta-weekly.timer`
 fires every Monday at 09:00 Brussels time and ten minutes after every boot, so
 the schedule can be proven without waiting for a Monday, but the service does

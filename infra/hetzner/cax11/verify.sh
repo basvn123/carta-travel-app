@@ -103,6 +103,11 @@ check "carta-weekly.timer active" systemctl is-active carta-weekly.timer
 info "next firing: $(systemctl show carta-weekly.timer -p NextElapseUSecRealtime --value 2>/dev/null)"
 last="$(systemctl show carta-weekly.service -p Result --value 2>/dev/null)"
 info "last service result: ${last:-unknown}"
+# T1107: the monthly and quarterly timers come with cron/install.sh, the last
+# owner step, so before it they are reported, not failed.
+for tier in monthly quarterly; do
+  info "carta-$tier.timer: $(systemctl is-enabled carta-$tier.timer 2>/dev/null || echo 'not installed (cron/install.sh)'), next $(systemctl show carta-$tier.timer -p NextElapseUSecRealtime --value 2>/dev/null)"
+done
 
 log="$HOME/logs/weekly.log"
 n=0; [ -f "$log" ] && n="$(grep -c 'cron fired' "$log" || true)"

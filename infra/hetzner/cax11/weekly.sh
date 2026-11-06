@@ -54,8 +54,27 @@ if [ "${CARTA_PIPELINE_ENABLED:-0}" != "1" ]; then
   exit 0
 fi
 
-printf '%s cron fired on %s (pipeline run starting; %d of %d env variables set)\n' \
-  "$(date -Is)" "$(hostname)" "$set_count" "$total" >> "$LOG_DIR/weekly.log"
+printf '%s cron fired on %s (%s run starting; %d of %d env variables set)\n' \
+  "$(date -Is)" "$(hostname)" "${CARTA_TIER:-${CARTA_MAX_CADENCE:-weekly}}" "$set_count" "$total" >> "$LOG_DIR/weekly.log"
+
+# T1107 (H9): three timers (weekly, monthly, quarterly) now start this script,
+# so one can fire while another run is still going. Take logs/carta-run.lock
+# HERE, before the code update below: a git reset under a running pipeline
+# would rewrite its files mid-run. CARTA_LOCK_WAIT (seconds, set by each unit)
+# is how long to wait for the other run; then this run is given up (exit 75)
+# and its tasks stay due for the next slot. run_pipeline.sh sees
+# CARTA_RUN_LOCKED=1 and uses this lock (fd 9) instead of taking its own.
+local repo_dir lock_wait
+repo_dir="$(cd "$HERE/../../.." && pwd)"
+mkdir -p "$repo_dir/logs"
+lock_wait="${CARTA_LOCK_WAIT:-0}"
+exec 9>"$repo_dir/logs/carta-run.lock"
+if ! flock -w "$lock_wait" 9; then
+  printf '%s %s run NOT started: logs/carta-run.lock still held after %s s (another run is going); its tasks stay due (exit 75)\n' \
+    "$(date -Is)" "${CARTA_TIER:-weekly}" "$lock_wait" >> "$LOG_DIR/weekly.log"
+  exit 75
+fi
+export CARTA_RUN_LOCKED=1
 
 # T994: bring the clone to the newest main before the run. The box never
 # pulled by itself, so a fix on main reached it only by hand; run 2

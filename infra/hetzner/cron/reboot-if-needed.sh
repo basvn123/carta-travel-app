@@ -7,7 +7,8 @@
 #
 # A run is active when any of these holds, and each is checked because each
 # catches a case the others miss:
-#   carta-weekly.service is active            the scheduled run
+#   carta-{weekly,monthly,quarterly}.service  a scheduled run (T1107), or
+#     is active                               one waiting for the run lock
 #   logs/carta-run.lock is held (flock)       run_pipeline.sh or verify_tasks.sh by hand
 #   a run_pipeline.py process exists          a bare python run_pipeline.py by hand
 #   a CAX41 spawn is live                     spawn.sh drives a worker for hours;
@@ -24,10 +25,12 @@ if [ ! -f /var/run/reboot-required ]; then
 fi
 pkgs="$(tr '\n' ' ' < /var/run/reboot-required.pkgs 2>/dev/null || true)"
 
-if systemctl is-active --quiet carta-weekly.service; then
-  say "reboot required (${pkgs:-packages unknown}) but carta-weekly.service is running; skipped until next week"
-  exit 0
-fi
+for unit in carta-weekly.service carta-monthly.service carta-quarterly.service; do
+  if systemctl is-active --quiet "$unit"; then
+    say "reboot required (${pkgs:-packages unknown}) but $unit is running (or waiting for the run lock); skipped until next week"
+    exit 0
+  fi
+done
 if [ -e "$REPO/logs/carta-run.lock" ] && ! flock -n "$REPO/logs/carta-run.lock" true; then
   say "reboot required but $REPO/logs/carta-run.lock is held (a hand run or verify_tasks.sh); skipped"
   exit 0

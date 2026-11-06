@@ -181,6 +181,14 @@ def npm_exe():
     return _resolve(["npm", "npm.cmd"], [Path(d) / _NPM_BIN for d in _NODE_DIRS])
 
 CADENCE_DAYS = {"weekly": 7, "monthly": 30, "quarterly": 90}
+# T1107 (H9): the box fires each tier on a calendar (infra/hetzner/cron/
+# schedule.py), and a task's last_success is stamped when it FINISHES. Without
+# slack a weekly task that ended at 11:00 is 2 hours short of due at next
+# Monday's 09:00 and runs every other week; the first Saturday of a month is
+# 28 days after the last one in February, and the third Saturday of a quarter
+# can be 84 days after the previous one. A task is due once its interval less
+# this slack has passed.
+CADENCE_SLACK_DAYS = {"weekly": 1.5, "monthly": 4, "quarterly": 10}
 # "after" has no interval: the task is due when a task it declares in `after`
 # succeeded more recently than it did. Ranked with the monthly tier so a
 # monthly-tier run still finishes a chain a quarterly ingest started; it cannot
@@ -2543,6 +2551,53 @@ TASKS = [
                  "cache/osm_settlements.json, cache/sea_temp_beaches.json when present, "
                  "and the placeholder files cache/outdoor/{layer}.json. Idempotent."),
     },
+    # T1107 (H9): the harvests of T1095 and T1096 on the box schedule. All
+    # three are keyless, paced and resumable (a cached id is never fetched
+    # twice without --refresh), so a quarterly run only asks for new places.
+    # They sit before `dossier` because build_dossier reads their caches; in a
+    # quarterly run the plan keeps this order.
+    {
+        "key": "place_intros",
+        "title": "Grounded Wikipedia and Wikivoyage intros for the top places (T1095, D9)",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "rev": "T1107",
+        "est_h": 0.5,
+        "cmds": [[PY, "pipeline/dossier/harvest_place_intros.py"]],
+        "note": ("Writes cache/dossier/place_intros.json; the next dossier build "
+                 "merges ok records. Needs en.wikipedia.org and en.wikivoyage.org. "
+                 "Widen --top / --countries in this entry once T1095-a's reject "
+                 "rate is read (T1095-c)."),
+    },
+    {
+        "key": "place_gallery",
+        "title": "Gallery pass: licensed Commons photos for places below 5 (T1096, D9)",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "rev": "T1107",
+        "est_h": 0.5,
+        "cmds": [[PY, "pipeline/photos/place_gallery.py", "--max-minutes", "60"]],
+        "note": ("Writes cache/dossier/place_gallery.json from the shipped dossiers' "
+                 "shortfall; build_dossier.compose_gallery applies the licence gate."),
+    },
+    {
+        "key": "poi_descriptions",
+        "title": "Grounded descriptions for must-see and recommended POIs (T1096, D9)",
+        "cadence": "quarterly",
+        "writes_app_data": True,
+        "soft": True,
+        "rev": "T1107",
+        "est_h": 0.5,
+        "cmds": [
+            [PY, "pipeline/poi_descriptions.py"],
+            [PY, PUBLISH, "--layer", "master", *MASTER_KEEP, "--",
+             PY, "pipeline/poi_descriptions.py", "apply"],
+        ],
+        "note": ("Harvest into cache/poi_descriptions.json, then apply to "
+                 "activities.items_full in the master. Needs en.wikipedia.org."),
+    },
     {
         "key": "dossier",
         "title": "Destination dossiers: the per-destination contract for panel + PDF",
@@ -2797,7 +2852,8 @@ def is_due(task, state):
     last = _last_success(task["key"], state)
     if last is None:
         return True
-    return (now_utc() - last) >= timedelta(days=days)
+    slack = CADENCE_SLACK_DAYS.get(task["cadence"], 0)
+    return (now_utc() - last) >= timedelta(days=days - slack)
 
 
 def chain_followups(plan, state, args, done_keys):
