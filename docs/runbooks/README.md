@@ -10,5 +10,6 @@ Step by step procedures for the operator (the owner). Built by T1073 (ROADMAP B2
 | [refund.md](refund.md) | A traveller asks for money back |
 | [incident.md](incident.md) | Something is broken for travellers: the outage line, where to look first, five worked incidents |
 | [backup.md](backup.md) | What is backed up and where, in short (T1085); the full procedure is backup-restore.md |
+| [drift-and-scorecard.md](drift-and-scorecard.md) | The docs drift check failed in CI, or a pipeline run needs its quality scorecard (T1134) |
 
 Rules for every runbook: names and places only, never a secret value (see [../security/SECRETS.md](../security/SECRETS.md)); say what the traveller sees; say how to undo.

@@ -250,7 +250,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Decides: which photographs a trail shows and which town it is tied to.
 - Rule: up to 6 highlights along the way, each with the route photo taken within 1.5 km of it; gallery is the detail images, else the card image, else the nearest place's photo labelled as a photo nearby. A walk without its own photo borrows the nearest place's hero only within 25 km; the nearest place is looked up within 80 km; the "stay nearby" town within 30 km.
 - Constant: literal `d <= 1500` in `continent-app/src/browse/TrailPage.jsx:628`
-- Constant: `NEAR_PHOTO_KM` in `continent-app/src/lib/trailCards.js:61` = 25
+- Constant: `TOWN_KM` in `continent-app/src/lib/trailPhoto.js:27` = 25
 - Constant: `ASSOC_MAX_KM` in `continent-app/src/lib/trailCards.js:46` = 80
 - Constant: `NEAR_TOWN_KM` in `continent-app/src/browse/TrailPage.jsx:118` = 30
 - Test: no test

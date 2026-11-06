@@ -1702,3 +1702,11 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1127-d | T1127 | Styled map thumbnails in brand colours for the walks left on the route glyph (G8 second half); needs a design rule first | next task | open |  |
 | T1125-a | T1125 | Look at Explore, Plan, Help and the press kit with data loaded at phone and desktop width; the type and radius token swap was not seen in a browser (Execution/P15/T1125-type-radius.md) | user | open |  |
 | T1125-b | T1125 | 895 font sizes and 414 radii off the token scale remain; each needs a rounding decision (Execution/P15/T1125-type-radius.md) | next task | open |  |
+| T1134-a | T1134 | The quality scorecard is not called by `run_pipeline.py` yet; add one call after `build_freshness_report` so every run writes a card (Execution/P15/T1134-drift-scorecard.md) | next task | open |  |
+| T1134-b | T1134 | Run `scripts/quality/scorecard.py --write` on the box after the next full run and `npm run data`, and push the card with the data; the first card is from the shipped wires only (Execution/P15/T1134-drift-scorecard.md) | user | open |  |
+| T1134-c | T1134 | D2 rule half: `pipeline/quality/rules.yaml` hard and soft rules, fail a run on a drop of more than 2 points on a must_see field, 90 day trend in the admin Data health panel | next task | open |  |
+| T1134-d | T1134 | B7 rest: per-area History drift from MAP.md globs, executable examples, lychee link check, interrogate floor, carta-docs skill and Stop hook, CLAUDE.md task step | next task | open |  |
+| T1134-e | T1134 | 79 logic catalogue values are objects or prose and are not compared by `scripts/docs/drift.py`; write them as JSON literals so the check covers them | next task | open |  |
+| T1134-f | T1134 | MAP.md does not name `scripts/docs/drift.py`, `scripts/quality/scorecard.py` or `data/reports/quality/` | next task | open |  |
+| T1134-g | T1134 | Decide which fields count per quality layer (`APP_LAYERS`, `SHARD_LAYERS`); tags 2%, wikidata 1% and transfer 3% may be optional by design (Execution/P15/T1134-drift-scorecard.md) | user | open |  |
+| T1134-h | T1134 | 114 trails with an empty name and 54 cycling routes with no name, found by the scorecard's basic checks | next task | open |  |
