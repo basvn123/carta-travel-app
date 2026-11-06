@@ -65,7 +65,7 @@
 /* T1128 (WCAG 2.4.7): the same 2 px ring as every other field, not only a
    1 px border tint, when the keyboard brings focus here. */
 .dtab-top .places-search input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
-.dtab-top .places-search input:focus:not(:focus-visible) { outline: none; }
+.dtab-top .places-search input:focus:not(:focus-visible) { outline: 2px solid transparent; }
 .dtab-count { margin-left: var(--space-1); }
 @media (min-width: 769px) {
   .dtab-top .places-search { max-width: 560px; }

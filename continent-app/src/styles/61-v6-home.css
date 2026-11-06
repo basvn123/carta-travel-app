@@ -375,8 +375,9 @@
     /* T1128: a hairline and a tight layer in full ink keep the white labels at 4.5:1 or
        more against their own shadow, so they hold before the film has
        loaded (or when it never does) and not only on the film's tint. */
-    text-shadow: 0 0 1px var(--neutral-900), 0 1px 2px var(--neutral-900),
+    --hv-label-shadow: 0 0 1px var(--neutral-900), 0 1px 2px var(--neutral-900),
       0 0 16px color-mix(in srgb, var(--neutral-900) 40%, transparent);
+    text-shadow: var(--hv-label-shadow);
   }
   .hv-plan-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hv-plan { padding: var(--space-6) var(--space-5) var(--space-5) 0; }
