@@ -2,7 +2,7 @@ import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'rea
 import { useI18n } from '../../i18n/index.jsx';
 import { plannerStore } from '../plannerStore.js';
 import { Button, IconButton } from '../../components/ui/index.js';
-import { HomeIcon, MapPinIcon, PlusIcon, SettingsIcon } from '../../components/Icons.jsx';
+import { ArrowRightIcon, HomeIcon, MapPinIcon, PlusIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { TripHead } from '../TripSummary.jsx';
 import { partyText } from '../../lib/party.js';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
@@ -19,6 +19,8 @@ import { TRIPS_SCREEN, continueTo, engineScreens, guideQuestions, guideScreens, 
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
 import { takePlan } from '../../lib/recommend/keptStore.js';
 import { clearQuickStart, peekQuickStart } from './quickStart.js';
+import { recallPlace, rememberPlace } from './flowMemory.js';
+import { tripsStore } from '../tripsStore.js';
 import { RefineCard } from './RefineCard.jsx';
 import NotYet from '../../components/NotYet.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
@@ -64,10 +66,21 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   const arriveTrip = useRef(readTripHash());
   // T1103 (G12): a trip made by the Plan opening's short setup opens on its
   // priced trips; the help-me-choose questions then refine them.
-  const quick = useRef(peekQuickStart());
+  const [fresh] = useState(peekQuickStart);
   useEffect(() => { clearQuickStart(); }, []);
-  const [walked, setWalked] = useState(!quick.current);
-  const [phase, setPhase] = useState(() => (arriveTrip.current || quick.current ? TRIPS_SCREEN : 'home')); // home | g:* | ff | engine
+  // T1123 (G4): a reload (or a tab hop that remounts the planner) comes back
+  // to the screen it left, the priced trips above all, instead of the trip's
+  // empty home. Not over an address's trip page, a fresh short setup or a
+  // country page's seed, which each say where to open.
+  const [kept] = useState(() => (arriveTrip.current || fresh || seed?.iso2 ? null
+    : recallPlace('trip', tripsStore.getActiveId(), [...guideScreens(settings), 'ff', 'home'])));
+  // The trip came from the short setup (now, or before the reload).
+  const quick = useRef(fresh || Boolean(kept?.quick));
+  const [walked, setWalked] = useState(kept ? Boolean(kept.walked) : !fresh);
+  const [phase, setPhase] = useState(() => (arriveTrip.current || fresh ? TRIPS_SCREEN : kept?.phase || 'home')); // home | g:* | ff | engine
+  useEffect(() => {
+    rememberPlace('trip', tripsStore.getActiveId(), phase === 'engine' ? null : { phase, walked, quick: quick.current });
+  }, [phase, walked]);
   const [door, setDoor] = useState(() => settings.door || 'guide');
   const [settingsOpen, setSettingsOpen] = useState(false);
   // A question reopened from the trips' answers bar (T798) comes straight
@@ -235,7 +248,18 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
 
   let body;
   if (phase === 'home') {
-    body = <TripHome settings={settings} onStart={start} actions={bar} />;
+    // T1123 (G4): after the short setup the trip's next step is its priced
+    // trips, not the ten questions in front of them (Back from the trips
+    // lands here, and Start planning used to walk them all again).
+    const toTrips = quick.current && !walked;
+    body = (
+      <TripHome
+        settings={settings}
+        onStart={toTrips ? () => setPhase(TRIPS_SCREEN) : start}
+        startLabel={toTrips ? t('pf.home.seeTrips') : ''}
+        actions={bar}
+      />
+    );
   } else if (phase === 'ff') {
     body = (
       <Suspense fallback={<div className="pf-step" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
@@ -259,7 +283,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
           // T1103: straight from the short setup there is no question
           // behind the trips yet; back is the trip's own page.
           onBack={() => setPhase(walked ? questions[questions.length - 1] : 'home')}
-          refine={walked ? null : <RefineCard onFit={start} onSleep={() => reopen('sleep')} />}
+          refine={walked ? null : <RefineCard count={questions.length} onFit={start} onSleep={() => reopen('sleep')} />}
           headEnd={bar}
           onWiden={reopen}
           edits={finderEdits}
@@ -317,7 +341,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
  * one dashed slot where the first stop will go (T751: three grey rows read
  * as a page still loading), and Start planning.
  */
-function TripHome({ settings, onStart, actions = null }) {
+function TripHome({ settings, onStart, startLabel = '', actions = null }) {
   const { t } = useI18n();
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -352,7 +376,9 @@ function TripHome({ settings, onStart, actions = null }) {
         </span>
       </div>
       <div className="pf-foot">
-        <Button variant="primary" block iconStart={<PlusIcon size={18} />} onClick={onStart}>{t('pf.home.plan')}</Button>
+        {startLabel
+          ? <Button variant="primary" block iconEnd={<ArrowRightIcon size={18} />} onClick={onStart}>{startLabel}</Button>
+          : <Button variant="primary" block iconStart={<PlusIcon size={18} />} onClick={onStart}>{t('pf.home.plan')}</Button>}
       </div>
     </div>
   );

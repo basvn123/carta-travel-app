@@ -1702,3 +1702,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1127-d | T1127 | Styled map thumbnails in brand colours for the walks left on the route glyph (G8 second half); needs a design rule first | next task | open |  |
 | T1125-a | T1125 | Look at Explore, Plan, Help and the press kit with data loaded at phone and desktop width; the type and radius token swap was not seen in a browser (Execution/P15/T1125-type-radius.md) | user | open |  |
 | T1125-b | T1125 | 895 font sizes and 414 radii off the token scale remain; each needs a rounding decision (Execution/P15/T1125-type-radius.md) | next task | open |  |
+| T1123-a | T1123 | A phone's Back gesture inside the plan setup questions leaves Plan, because the questions are not history steps; adding them must fit App.jsx's popstate rule (Execution/P15/T1123-core-flow-fixes.md) | next task | open |  |
+| T1123-b | T1123 | G4's scope should come from the G-R3 interviews and unmoderated test, which have not run; T1123 worked from the audit and the T1103 usability note (Execution/P15/T1123-core-flow-fixes.md) | user | open |  |
+| T1123-c | T1123 | The When reason line sits under the calendar, below the fold on a 390 phone; moving it near the dates needs a style rule, left while S42 consolidates the stylesheets | next task | open |  |
+| T1123-d | T1123 | Look on a real phone at the reload fixes: reload on a setup question and on the priced trips, then Back to the trip home and "See your priced trips" (Execution/P15/T1123-core-flow-fixes.md) | user | open |  |
