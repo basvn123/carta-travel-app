@@ -31,6 +31,7 @@ ROOT = HERE.parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
 
 import apply_image_dims as aid  # noqa: E402
+from wire_contract import check_wire  # noqa: E402
 
 MASTERS = [
     ROOT / "app_data" / "app_data.json",
@@ -120,6 +121,7 @@ def main():
         total_fixed += fixed
         total_stuck += stuck
         if fixed:
+            check_wire(path, data)
             tmp = path.with_suffix(".tmp")
             with open(tmp, "w", encoding="utf-8") as fh:
                 json.dump(data, fh, ensure_ascii=False,

@@ -35,12 +35,13 @@
  * T082 added two halves on top of that, and a CI workflow that runs the lot
  * (.github/workflows/schema-contract.yml in the root repository).
  *
- * The documented key set. docs/SCHEMA.md carries a "Wire contract" table
- * listing every top-level meta key and every top-level destination key, and
+ * The documented key set. docs/wire.schema.json (T1133) lists every
+ * top-level meta key and every top-level destination key, its type, and
  * whether a destination key is on every record or on some. The real payload
- * must match it both ways: no key the table does not list, no listed key
- * missing. The header's schema version must equal EXPECTED_SCHEMA_VERSION.
- * A renamed field therefore fails until SCHEMA.md says the new name.
+ * must match it both ways: no key the schema does not list, no listed key
+ * missing. docs/SCHEMA.md's "Wire contract" table is generated from the
+ * schema and must match it, header version included. A renamed field
+ * therefore fails until the schema says the new name.
  *
  * The database. Every Supabase call site in continent-app/src and in
  * supabase/functions (tables, columns, select strings, rpc names and their
@@ -76,9 +77,11 @@ import { spawnSync, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
   validateAppData, validateSplitWires, EXPECTED_SCHEMA_VERSION,
-  parseSchemaContract, extractSupabaseCalls, validateDbContract,
+  WIRE_SCHEMA, WIRE_SCHEMA_PATH, checkWireSchema, checkSchemaTable,
+  extractSupabaseCalls, validateDbContract,
   normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires, validateTrailImages,
 } from './contract.mjs';
+import { schemaKeySet } from '../../src/lib/wireSchema.js';
 import { splitCatalogue, mergeCatalogue } from '../../src/lib/bootIndex.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -317,26 +320,29 @@ if (!fs.existsSync(APP_DATA)) {
 
 console.log('contract gate\n');
 
-// ---------------------------------------------------------------- docs/SCHEMA.md
-// Parsed first: the payload checks below use its key table. A missing or
-// malformed document fails the gate rather than skipping the key checks.
+// ------------------------------------------- docs/wire.schema.json and SCHEMA.md
+// The schema is the contract (T1133); the payload checks below read it. Its
+// own consistency comes first, then the human table in docs/SCHEMA.md, which
+// must be the one the schema renders. A broken schema or a stale table fails
+// the gate rather than skipping the key checks.
 let contract = null;
+{
+  const own = checkWireSchema(WIRE_SCHEMA);
+  if (own.length) {
+    fail(`${WIRE_SCHEMA_PATH} is not a usable contract:\n` + own.map((p) => `          ${p}`).join('\n'));
+  } else {
+    contract = WIRE_SCHEMA;
+    const keys = schemaKeySet(WIRE_SCHEMA);
+    pass(`docs/wire.schema.json read (schema_version ${keys.version}, ${keys.meta.size} meta keys, `
+      + `${keys.every.size} destination keys on every record, ${keys.some.size} on some)`);
+  }
+}
 if (!fs.existsSync(SCHEMA_MD)) {
   fail(`${SCHEMA_MD} is missing; set CARTA_REPO_ROOT to the root checkout`);
 } else {
-  contract = parseSchemaContract(fs.readFileSync(SCHEMA_MD, 'utf8'));
-  if (contract.problems.length) {
-    fail('docs/SCHEMA.md is not a usable contract:\n'
-      + contract.problems.map((p) => `          ${p}`).join('\n'));
-    contract = null;
-  } else if (contract.version !== EXPECTED_SCHEMA_VERSION) {
-    fail(`docs/SCHEMA.md says meta.schema_version ${contract.version}, contract.mjs pins `
-      + `${EXPECTED_SCHEMA_VERSION}; change both in the same commit`);
-  } else {
-    pass(`docs/SCHEMA.md wire contract read (schema_version ${contract.version}, `
-      + `${contract.meta.size} meta keys, ${contract.every.size} destination keys on every record, `
-      + `${contract.some.size} on some)`);
-  }
+  const drift = checkSchemaTable(fs.readFileSync(SCHEMA_MD, 'utf8'), WIRE_SCHEMA);
+  if (drift.length) fail('docs/SCHEMA.md does not match docs/wire.schema.json:\n' + drift.map((p) => `          ${p}`).join('\n'));
+  else pass('docs/SCHEMA.md wire table and header version match docs/wire.schema.json');
 }
 
 let real = JSON.parse(fs.readFileSync(APP_DATA, 'utf8'));
@@ -350,7 +356,7 @@ if (seed && seed in PAYLOAD_SEEDS) {
 }
 
 {
-  const problems = validateAppData(real, { contract, catalogue: true });
+  const problems = validateAppData(real, { catalogue: true });
   if (problems.length) {
     fail(`public/app_data.json does not satisfy the contract:\n`
       + problems.slice(0, 12).map((p) => `          ${p}`).join('\n')
@@ -516,7 +522,7 @@ if (!fs.existsSync(FIXTURE)) {
     + 'run `node scripts/ci/make-fixture.mjs`');
 } else {
   const fixture = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-  const problems = validateAppData(fixture, { contract });
+  const problems = validateAppData(fixture);
   if (problems.length) {
     fail(`the fixture no longer satisfies the contract (regenerate it with `
       + `node scripts/ci/make-fixture.mjs):\n`
@@ -531,7 +537,7 @@ if (!fs.existsSync(FIXTURE)) {
   let rejected = 0;
   for (const name of names) {
     const broken = BREAKS[name](clone(fixture));
-    const found = validateAppData(broken, { contract });
+    const found = validateAppData(broken);
     if (found.length) {
       rejected += 1;
       pass(`${name}  ->  rejected: ${found[0]}`);
@@ -557,10 +563,10 @@ if (!fs.existsSync(FIXTURE)) {
 if (contract) {
   console.log('\ncatalogue breaks on the real payload, each one must be REJECTED\n');
   const names = Object.keys(CATALOGUE_BREAKS);
-  const baseline = new Set(validateAppData(pristine, { contract, catalogue: true }));
+  const baseline = new Set(validateAppData(pristine, { catalogue: true }));
   let rejected = 0;
   for (const name of names) {
-    const found = validateAppData(CATALOGUE_BREAKS[name](clone(pristine)), { contract, catalogue: true })
+    const found = validateAppData(CATALOGUE_BREAKS[name](clone(pristine)), { catalogue: true })
       .filter((p) => !baseline.has(p));
     if (found.length) {
       rejected += 1;
