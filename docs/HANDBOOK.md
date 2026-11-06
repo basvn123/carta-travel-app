@@ -1602,7 +1602,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 
 **How it works.**
 1. Tabs (`TripPlannerTab.jsx` `TRIP_TABS`): overview, itinerary, costs, days, notes. The tab rides in the URL as `?tt=`. From 1024 px the map and the tools stay in a side column.
-2. Totals: every figure comes from the price engine through `lib/tripTotal.js` `tripLines`; the page adds no price of its own. The cost card (`CostCard.jsx`) shows the total and four groups: flights, getting around, stay, food. Stay and food open the Lifestyle sheet. `BudgetCard.jsx` sets the total against the person's budget.
+2. Totals: every figure comes from the price engine through `lib/tripTotal.js` `tripLines`; the page adds no price of its own. The cost card (`CostCard.jsx`) shows the total and four groups: flights, getting around, stay, food. Stay and food open the Lifestyle sheet. `BudgetCard.jsx` sets the total against the person's budget. The umber signature variant (T1122, G3) is built behind `COST_CARD_UMBER = false` in `planner/trip/costCardVariant.js`: the total on `--text-total`, a cost bar on a cream track (flight `--sun-400`, getting around `--sun-800`, bed `--action`, food `--lagoon-600`, a missing group as a dashed mark), the rows on an `--umber-700` band, one cream primary in the foot. Off for travellers until the owner approves the direction (row T1122-a); preview with `?cc=umber`, back with `?cc=arc` (kept for the tab's session).
 3. Editing:
    - undo and redo for every change (`editHistory.js`): up to `HISTORY_CAP = 50` steps, repeated changes within `COALESCE_MS = 900` ms are one step, a 6-second Undo message
    - change trip (`changeTrip.js`): the three start days before and after, none in the past, each with what it does to the total

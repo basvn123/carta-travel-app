@@ -1715,3 +1715,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1126-c | T1126 | Dead-CSS leftovers the scan kept: .money-est, .trip-leg*, .savedmap, and classes built from data in public/ JSON | next task | open |  |
 | T1126-d | T1126 | Look at signed-in screens (saved trip page, day planner steps, admin, account) at 390 and 1440 after the dead-CSS removal | user | open |  |
 | T1126-e | T1126 | Wire npm run ci:breakpoints into the design-lint workflow | next task | open |  |
+| T1122-a | T1122 | Approve the T1111 direction (row T1111-a), then flip `COST_CARD_UMBER` to true in continent-app/src/planner/trip/costCardVariant.js; compare first with `?cc=umber` vs `?cc=arc` on a trip page (Execution/P15/T1122-cost-card.md) | user | open | 2 |
+| T1122-b | T1122 | After the flip: put the same umber card on the place page (DestPriceCard), the Plan receipt and the Explore card detail, retire CostArc and close T1026-c, so G3 is one component in four places (Execution/P15/T1122-cost-card.md) | next task | open | 3 |
+| T1122-c | T1122 | Look at the umber variant on a real phone (iOS Safari, Android Chrome) with the dark system setting and reduced motion on (Execution/P15/T1122-cost-card.md) | user | open |  |
