@@ -904,7 +904,7 @@ docs/
 | H9 | Every pipeline task on a schedule | Monthly and quarterly tiers run on the box; the box pushes `pipeline_state.json` and a freshness report to R2 after each run (P-15) | M | P1 | todo |
 | H10 | No laptop-only steps | Ask index, stays scrape, guided search, trails lab and trip promotion run on the box or the worker; the trails lab dump is in R2 (P-17) | M | P3 | todo |
 | H11 | One scripted ship and a stable toolbox | `ship` script that stops on any failed step; css-routes check in `npm test`; `PYTHONUTF8=1`; a worktree script that handles junctions; stale `continent-app/.git` removed (P-18, P-19) | M | P3 | todo |
-| H12 | Fast first load and self-hosted images | Entry chunk under 150 KB gzip (224 today); DestinationsTab, DestinationPage, AccountPanel and planner screens lazy; CSS split by route; own AVIF and WebP images live (P-11, P-41) | M | P1 | todo |
+| H12 | Fast first load and self-hosted images | Entry chunk under 150 KB gzip (224 today); DestinationsTab, DestinationPage, AccountPanel and planner screens lazy; CSS split by route; own AVIF and WebP images live (P-11, P-41) | M | P1 | in progress (T1105: first paint prefers own copies, waits on the R2 upload) |
 | H13 | Errors that stay local | Error boundary per tab; the 107 silent catches reviewed, data errors show a visible state (P-42) | S | P1 | done (T1106; owner look pending) |
 | H14 | Code health | DestinationsTab and DayPlannerTab split; App overlays into a shell; 18 dead files removed; finder TripPage renamed; react-refresh warnings quieted (P-43, P-44, P-45) | M | P4 | todo |
 

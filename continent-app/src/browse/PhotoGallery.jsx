@@ -3,7 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { Button, IconButton } from '../components/ui/index.js';
 import { CameraIcon, ChevronRightIcon, CloseIcon } from '../components/Icons.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { HeroImage } from '../components/HeroImage.jsx';
+import { HeroImage, LadderImg } from '../components/HeroImage.jsx';
 import { claimShared } from '../lib/sharedElement.js';
 import { scrollBehavior } from '../lib/motion.js';
 
@@ -191,6 +191,28 @@ function AllPhotos({ imgs, label, onClose }) {
  * phone, the large one from 700 px; every credit is in the all-photos view
  * and the sources fold. A missing photograph is the flag-and-name placeholder.
  */
+/**
+ * One mosaic photograph (H12, T1105): our own AVIF/WebP copy when the
+ * ladder is live for it (components/HeroImage.jsx LadderImg), else the
+ * Wikimedia URL at the width `sizes` asks for. A photo that brings its own
+ * srcSet keeps it, exactly as before.
+ */
+function GalleryImg({
+  g, className, sizes, alt, eager = false, imgRef, onError, maxWidth = 960, fetchPriority,
+}) {
+  if (g.srcSet) {
+    return (
+      <img ref={imgRef} className={className} src={g.url} srcSet={g.srcSet} sizes={sizes} alt={alt}
+        loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? (fetchPriority || 'high') : undefined}
+        decoding="async" onError={onError} />
+    );
+  }
+  return (
+    <LadderImg image={g} url={g.url} className={className} maxWidth={maxWidth} sizes={sizes} alt={alt}
+      eager={eager} imgRef={imgRef} onError={onError} fetchPriority={fetchPriority} />
+  );
+}
+
 function PhotoMosaic({ photos, label, claimKey, fallback, className }) {
   const { t } = useI18n();
   const track = useRef(null);
@@ -236,11 +258,8 @@ function PhotoMosaic({ photos, label, claimKey, fallback, className }) {
         } : undefined}
       >
         {imgs.map((g, i) => (
-          <img key={g.url} className="pmos-slide" src={g.url} srcSet={g.srcSet || undefined}
-            sizes={g.srcSet ? '100vw' : undefined} alt={g.caption || label}
-            ref={i === 0 ? claimRef : undefined}
-            loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : undefined}
-            decoding="async" onError={() => fail(g.url)} />
+          <GalleryImg key={g.url} g={g} className="pmos-slide" sizes="100vw" alt={g.caption || label}
+            imgRef={i === 0 ? claimRef : undefined} eager={i === 0} onError={() => fail(g.url)} />
         ))}
       </div>
       {n > 1 && (
@@ -264,9 +283,10 @@ function PhotoMosaic({ photos, label, claimKey, fallback, className }) {
         {tiles.map((g, i) => (
           <button type="button" key={g.url} className={`pmos-tile${i === 0 ? ' is-main' : ''}`} onClick={() => setAll(true)}
             aria-label={t('destx.photosAll', { n })}>
-            <img src={g.url} srcSet={g.srcSet || undefined}
-              sizes={g.srcSet ? (i === 0 ? '(max-width: 1240px) 60vw, 740px' : '(max-width: 1240px) 20vw, 250px') : undefined}
-              alt={g.caption || label} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" onError={() => fail(g.url)} />
+            <GalleryImg g={g} maxWidth={i === 0 ? 960 : 500}
+              sizes={i === 0 ? '(max-width: 1240px) 60vw, 740px' : '(max-width: 1240px) 20vw, 250px'}
+              alt={g.caption || label} eager={i === 0} fetchPriority={i === 0 ? 'auto' : undefined}
+              onError={() => fail(g.url)} />
           </button>
         ))}
       </div>

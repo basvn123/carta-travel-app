@@ -1,0 +1,16 @@
+{
+  "schema": "carta.hero-ladder.v1",
+  "ladder": "ladder_v1",
+  "live": false,
+  "note": "No derive manifest was given: every photograph stays on Wikimedia. Written by pipeline/photos/hero_ladder.py; do not edit by hand.",
+  "generated_at": null,
+  "layers": [
+    "dest",
+    "dossier"
+  ],
+  "titles": 13976,
+  "derived": 0,
+  "missing": [],
+  "rev": {},
+  "dims": {}
+}
