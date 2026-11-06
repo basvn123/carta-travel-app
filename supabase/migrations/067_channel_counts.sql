@@ -1,18 +1,12 @@
--- PENDING migration, T1109 (K12): cookieless channel counts.
--- NOT NUMBERED ON PURPOSE: the orchestrator assigns the next free number
--- (after 065) and renames this file and its _down. Apply by pasting in the
--- SQL editor, as for 048. Until then the app's calls fail silently and the
+-- 067, T1109 (K12): cookieless channel counts. Numbered 067 by the overnight
+-- orchestrator (065 is T1104, 066 is T1110); the down migration is
+-- 067_channel_counts_down.sql. Apply by pasting in the SQL editor, as for 048. Until then the app's calls fail silently and the
 -- admin card stays hidden.
 --
 -- One integer per day per (channel, medium). No row per visit, no device id,
 -- no session id, no IP, no path, no time of day. Same shape and ceilings as
 -- launch_counts (048).
 --
--- DOWN (kept in this file until it is numbered):
---   drop function if exists public.admin_channel_weekly(int);
---   drop function if exists public.channel_visit(text, text);
---   drop table if exists public.channel_counts;
---   drop table if exists public.channel_daily_total;
 
 create table if not exists public.channel_counts (
   day     date   not null default current_date,

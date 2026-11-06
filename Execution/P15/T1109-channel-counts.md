@@ -16,7 +16,7 @@ Privacy note. Counted: visits per channel per day. Not counted or stored: utm_ca
 - `continent-app/src/components/admin/ChannelCounts.jsx` (new), `Overview.jsx`, `useOverview.js`
 - `continent-app/src/auth/admin.js` (`adminChannelWeekly`), `continent-app/src/main.jsx`
 - `continent-app/tests/channelCounts.test.mjs` (new, 4 tests, stubbed backend)
-- `supabase/migrations/PENDING_channel_counts.sql` (new, unnumbered, down steps in its header)
+- `supabase/migrations/067_channel_counts.sql` (new, unnumbered, down steps in its header)
 - `docs/HANDBOOK.md`, `docs/legal/ARTICLE30.md`, `ROADMAP.md` (K12 status), `Execution/_OPEN.md`
 
 ## Commands run
@@ -52,4 +52,4 @@ Admin Overview card not looked at in a browser (no Supabase in the container); v
 
 ## Owner steps (for the checklist)
 
-- [T1109-a] Apply channel counts migration | the server half of K12 is only a file | rename `PENDING_channel_counts.sql` to the next free number and add a `_down` file; paste it in the Supabase SQL editor; open `/?utm_source=test` once and check the admin Overview card | supabase/migrations/PENDING_channel_counts.sql
+- [T1109-a] Apply channel counts migration | the server half of K12 is only a file | rename `067_channel_counts.sql` to the next free number and add a `_down` file; paste it in the Supabase SQL editor; open `/?utm_source=test` once and check the admin Overview card | supabase/migrations/067_channel_counts.sql
