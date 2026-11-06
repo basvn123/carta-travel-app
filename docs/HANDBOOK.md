@@ -119,6 +119,7 @@ Written 2026-11-04 (T1045) from the code, config and migrations on `main` at com
    - [Admin panel, moderation and telemetry](#admin-panel-moderation-and-telemetry)
    - [The data wire (pipeline to app)](#the-data-wire-pipeline-to-app)
    - [Data quality scorecard and gate](#data-quality-scorecard-and-gate)
+   - [Catalogue gaps: add and prune places (D15)](#catalogue-gaps-add-and-prune-places-d15)
    - [Hand corrections (pipeline overrides)](#hand-corrections-pipeline-overrides)
    - [Evals (one runner, one results format)](#evals-one-runner-one-results-format)
    - [Deploy (Cloudflare Pages, R2, prerender, SEO)](#deploy-cloudflare-pages-r2-prerender-seo)
@@ -2680,6 +2681,24 @@ This section covers the parts of Carta that sit around the travel content: the A
 **Where it lives.** `scripts/quality/scorecard.py`, `scripts/quality/engine.py`, `scripts/quality/rules.yaml`, `run_pipeline.py` (the hook), `continent-app/src/components/admin/DataHealth.jsx`, `continent-app/src/admin/dataHealth.json`. Tests: `tests/test_quality_scorecard.py`, `tests/test_quality_engine.py`, `continent-app/tests/dataHealth.test.mjs`, step 9h of `continent-app/scripts/verify_admin_panel.mjs`. Runbook: `docs/runbooks/drift-and-scorecard.md`.
 
 **Limits.** Rules read completeness only; validity, freshness and accuracy are on the card but no rule gates them yet. The panel's snapshot reaches the app at the next build, not the next data push; on the box the reset puts the committed snapshot back before each build, so until the panel fetches the card at run time (T1142-d) it shows the last committed card. The audit scripts the ROADMAP names for D2 (`audit_quality.py`, `audit_gaps.py`, `dossier/audit.py`, image audits) are not folded in. Register rows `T1142-a` and on.
+
+### Catalogue gaps: add and prune places (D15)
+
+**What it does.** Turns the place gaps D6 ranked (a country or a NUTS 2 region with fewer places than its fair share) into one review list per country: places to add, pairs to merge, places to remove or fix, each with its reason and its source. It writes nothing the app reads; the owner reviews the add list per country and S63 applies it.
+
+**How it works** (`pipeline/catalogue_gaps.py`, T1146, part 1).
+1. Gaps: the `country places` and `region places` lines of `docs/data/coverage-parity.csv` with item D15 (36 on 2026-11-06, 807 places short).
+2. Candidates: `data/derived/place_candidates.json` (built offline by `build_place_candidates.py` from GeoNames cities500, the Overture POI corpus and the designation registry), scored with `score_place_candidates.score_candidate` and its coverage radius, then passed through `promote_place_candidates`' gates in their order: worth at least `MIN_WORTH` (0.40), not covered, not a POI cluster, no slug clash, no district name, not a district of a shipped city, `MIN_SEPARATION_KM` (6) from another pick, an anchor airport within `ANCHOR_MAX_KM` (400). The functions are imported, so a change to the selection rules moves the list. D15 adds one gate: a candidate that is a shipped place under another spelling (same GeoNames id or Wikidata QID, or a GeoNames alternate name within 10 km) is dropped. Each survivor is shaped as the spec promote writes and checked against D2 (the `rules.yaml` fields with a floor of `PER_PLACE_FLOOR` 0.90 or more that the spec carries, present and valid against `docs/wire.schema.json`).
+3. Allocation: region gaps first, best worth first, up to their shortfall; a country gap then takes its shortfall minus what its regions added. Up to 5 reserves per gap. A second pass at `STRETCH_FLOOR` (0.30, the scorer's own queue floor) lists what a lower floor would add; the stretch list is never on the approve list, because taking it changes the selection rule.
+4. Merge, among shipped places (gateway rows left out): same QID or GeoNames id (each place is resolved to its GeoNames row by name within 10 km), the same folded name, or a GeoNames alternate name (Rodos for Rhodes) within `ALIAS_KM` 10 km (`ALIAS_KM_BIG` 25 km at 300,000 people or more) is a merge; names `SIMILAR_MIN` 0.90 alike (difflib) within `SIMILAR_KM` 5 km, or a sure match where one name carries a bracketed qualifier (Chios (Mastic Villages)), goes to review. The airport row is kept, then the higher rating, then the fuller record.
+5. Remove or fix, per shipped place: each D2 field with a floor of 0.90 or more that the place's tier carries on at least half its rows (`TIER_SHARE`; an airport row has no blurb by design) must be present and valid. A broken identity field (tier, city, country, iso2, lat, lon, or coordinates outside Europe) means remove; anything else means fix, naming the layer that refills it. A city with no Latin form (its name key and slug fold to nothing) is a fix.
+6. Output: `data/catalogue/d15/review.json` (per country `add`, `stretch`, `merge`, `remove`, `fix` and `approve`, the keys `promote_place_candidates.py --approve` reads) and `docs/data/catalogue-gaps/` (README with counts per gap and per country, one sheet per country). About 11 s.
+
+**Data behind it.** `docs/data/coverage-parity.csv`, `data/derived/place_candidates.json` (gitignored, rebuilt in about 40 s), `cache/place_signals.json`, `cache/geonames_cities500.txt` and `cache/overture_pois_eu.parquet` (Git LFS), `cache/nuts3_2021.geojson`, `scripts/quality/rules.yaml`, the master (`app_data/app_data.json`) or, where it is absent, the wire.
+
+**Where it lives.** `pipeline/catalogue_gaps.py`; tests `tests/test_catalogue_gaps.py`. Run: `python pipeline/build_place_candidates.py` (if the candidate file is absent), then `python -I pipeline/catalogue_gaps.py`.
+
+**Limits.** On 2026-11-06 today's rules fill 142 of 807 short places; the stretch floor adds 440 more and 207 stay unfilled, because the Europe-wide expansion already took the candidates above 0.40 and Wikipedia attention (`cache/place_signals.json`) covers about 4,000 of 90,000 candidates. `promote_place_candidates.py` itself still rejects every candidate without a parent city while a shipped city folds to an empty key (T1146-b). Register rows `T1146-a` and on.
 
 ### External validation runner and scorecard (D23)
 
