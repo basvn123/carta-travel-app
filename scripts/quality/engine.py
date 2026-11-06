@@ -7,7 +7,9 @@ health panel snapshot with the 90-day trend.
 A run fails (exit 1) when
 - a must_see field's completeness falls by more than gate.must_see_drop_points
   percentage points against the previous passing card, or
-- a hard rule's field is under its floor (`min`).
+- a hard rule's field is under its floor (`min`), or
+- a hard check of a layer's latest external validation result (D23,
+  scripts/validation/runner.py gate_from_disk) fails against its baseline.
 A soft rule under its floor only warns. A scorecard field with no rule, or a
 rule for a field the scorecard does not measure, is a configuration error
 (exit 2) so the rules cannot fall behind the layers.
@@ -36,6 +38,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 RULES = HERE / "rules.yaml"
 APP_SNAPSHOT = ROOT / "continent-app" / "src" / "admin" / "dataHealth.json"
+VALIDATION = Path(os.environ.get("CARTA_VALIDATION_DIR") or ROOT / "data" / "reports" / "validation")
 PANEL_VERSION = 1
 LEVELS, KINDS = {"must_see", "must_have"}, {"hard", "soft"}
 
@@ -48,6 +51,17 @@ def _scorecard():
     sys.modules["scorecard"] = mod
     spec.loader.exec_module(mod)
     return mod
+
+
+def _validation_gate(valid_dir):
+    """D23 (T1187): the latest external validation result of every layer,
+    re-checked against its baseline; a failed hard check fails this run."""
+    if valid_dir is None:
+        return [], []
+    spec = importlib.util.spec_from_file_location("validation_runner", ROOT / "scripts" / "validation" / "runner.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.gate_from_disk(Path(valid_dir))
 
 
 def _when(s: str) -> datetime:
@@ -191,7 +205,8 @@ def panel(card: dict, result: dict, points: list[dict], days: int, baseline_at: 
 
 
 def run(public: Path, now: datetime | None, out: Path, rules_path: Path = RULES,
-        write: bool = False, snapshot: Path | None = APP_SNAPSHOT) -> tuple[int, dict]:
+        write: bool = False, snapshot: Path | None = APP_SNAPSHOT,
+        validation: Path | None = VALIDATION) -> tuple[int, dict]:
     cfg = load_rules(rules_path)
     problems = coverage_problems(cfg["rules"])
     if problems:
@@ -200,6 +215,10 @@ def run(public: Path, now: datetime | None, out: Path, rules_path: Path = RULES,
     card = sc.build(public, now)
     prev, prev_at = previous_fields(out, card["generated_at"])
     result = evaluate(card, cfg, prev)
+    vfail, vwarn = _validation_gate(validation)
+    result["failures"] += vfail
+    result["warnings"] += vwarn
+    result["ok"] = not result["failures"]
     card["gate"] = {"ok": result["ok"], "failures": len(result["failures"]),
                     "warnings": len(result["warnings"]), "baseline_at": prev_at}
     current = {"at": card["generated_at"], "gate_ok": result["ok"],
@@ -232,11 +251,15 @@ def main(argv=None) -> int:
     ap.add_argument("--write", action="store_true", help="write the card, a history line and the panel")
     ap.add_argument("--no-snapshot", action="store_true",
                     help="do not refresh continent-app/src/admin/dataHealth.json")
+    ap.add_argument("--validation", default=str(VALIDATION),
+                    help="folder of the D23 validation results whose hard checks join the gate")
+    ap.add_argument("--no-validation", action="store_true", help="leave the D23 validation gate out")
     a = ap.parse_args(argv)
     now = _when(a.now) if a.now else None
     try:
         rc, data = run(Path(a.public).resolve(), now, Path(a.out), Path(a.rules), a.write,
-                       None if a.no_snapshot else APP_SNAPSHOT)
+                       None if a.no_snapshot else APP_SNAPSHOT,
+                       None if a.no_validation else Path(a.validation))
     except ValueError as e:
         print(f"quality: {e}", file=sys.stderr)
         return 2

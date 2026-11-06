@@ -1,0 +1,29 @@
+{
+ "layer": "trails",
+ "date": "2026-11-06",
+ "reference": {
+  "path": "data/reports/validation/trails_reference.json",
+  "sha": "08dd8590d3af",
+  "sources": 15,
+  "n": 282
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 5,
+  "salt": "d23",
+  "n": 282,
+  "population": 282,
+  "countries": 35
+ },
+ "metrics": {
+  "in_top": 0.3298,
+  "coverage": 0.5284,
+  "fact.length": 0.6429,
+  "fact_share": 0.6429,
+  "agreement_tau": 0.0084,
+  "agreement_rho": 0.0109,
+  "error_mae": 4.486,
+  "error_mdape": 0.1446
+ }
+}
