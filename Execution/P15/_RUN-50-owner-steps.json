@@ -573,5 +573,221 @@
    "Raise `--rps` only if the Travelpayouts limit allows)",
    "Send back `cache/flights/aviasales_probe/coverage.md`"
   ]
+ },
+ {
+  "id": "T1105-a",
+  "title": "Put the self-hosted destination photos live",
+  "why": "The app now prefers Carta's own AVIF and WebP copies on Explore and destination pages, but only once they are on R2 and the manifest says so.",
+  "where": "`pipeline/photos/hero_ladder.py`, `continent-app/src/lib/heroLadder.json`",
+  "how": [
+   "On the build box run `python pipeline/photos/derive.py sources dest dossier --out <dir> --upload r2`",
+   "Run the CAX41 `image_transcode` job for the `dest` and `dossier` layers (`derive.py run dest ...` and `run dossier ...` with `--upload r2`)",
+   "`rclone copy r2:carta/img/manifest <dir>/manifest`",
+   "`python pipeline/photos/hero_ladder.py --manifests <dir>/manifest` and check it prints `live=True` with a small `missing`",
+   "Commit `continent-app/src/lib/heroLadder.json`",
+   "Build and deploy as usual"
+  ]
+ },
+ {
+  "id": "T1105-b",
+  "title": "Look at photos on a real phone after going live",
+  "why": "The numbers come from a local stand-in, and sharpness at the new rail size needs a real screen.",
+  "where": "`continent-app/src/browse/StoryRail.jsx`",
+  "how": [
+   "Open Explore and a destination page on a phone on mobile data",
+   "Check the rail photos are sharp, the photos come from cdn.carta-europetravel.com (`?pic=off` shows the old Wikimedia load for comparison) and the credit still shows under the gallery"
+  ]
+ },
+ {
+  "id": "T1107-b",
+  "title": "Confirm the price tasks in the monthly tier",
+  "why": "The monthly timer now runs stays, food and flight_routes, which T640 held back for price batch F0.",
+  "where": "Execution/P15/T1107-box-schedule.md",
+  "how": [
+   "Answer yes, or tell the next session to move them to backfill in run_pipeline.py",
+   "Do it before the first Saturday after T1107-a"
+  ]
+ },
+ {
+  "id": "T1107-a",
+  "title": "Enable the weekly, monthly and quarterly timers on the box",
+  "why": "Until install.sh runs, only the Monday timer exists and the monthly and quarterly tasks run nowhere.",
+  "where": "docs/runbooks/build-box.md",
+  "how": [
+   "Ssh carta@<box>",
+   "Cd ~/carta && git fetch -q origin main && git reset -q --hard FETCH_HEAD",
+   "~/venv/bin/python infra/hetzner/cron/schedule.py --dry-run --check (must end \"unscheduled: none\" and \"units: match the schedule\")",
+   "CARTA_TIER=quarterly CARTA_AUTO_UPDATE=0 CARTA_PIPELINE_ENABLED=1 bash infra/hetzner/cax11/weekly.sh --dry-run",
+   "Sudo bash infra/hetzner/cron/install.sh --dry-run",
+   "Sudo bash infra/hetzner/cron/install.sh",
+   "Systemctl list-timers 'carta-*' --no-pager (four timers: weekly, monthly, quarterly, reboot)"
+  ]
+ },
+ {
+  "id": "T1107-c",
+  "title": "Read the status after the first monthly and quarterly runs",
+  "why": "Proves the tiers ran and the status push reaches R2, and the first quarterly run's length is unknown.",
+  "where": "docs/runbooks/build-box.md",
+  "how": [
+   "After the first Saturday: tail -n 5 ~/logs/weekly.log",
+   "Rclone cat r2:carta/status/last_run.json (tier monthly, exit 0)",
+   "Rclone cat r2:carta/status/freshness_wires.json (n_over_cadence below 8)",
+   "After 2027-01-16 the same for quarterly, and compare its duration with the 120 h TimeoutStartSec in carta-quarterly.service"
+  ]
+ },
+ {
+  "id": "T1113-a",
+  "title": "Upload the new prerender",
+  "why": "The bar drops indexed places from 3,754 to 337 and removes thin beaches, lakes, mountains and duplicate trips from the sitemap.",
+  "where": "continent-app/scripts/prerender/push.mjs",
+  "how": [
+   "Run the prerender on the box with full data",
+   "Check `_sitemap.json` shows 337 places",
+   "`node scripts/prerender/push.mjs`",
+   "Deploy to preview, then main",
+   "WARNING: expect indexed places to fall to 337 and the D9 intros to lift them later"
+  ]
+ },
+ {
+  "id": "T1113-d",
+  "title": "Check the trip canonicals and thin pages after the upload",
+  "why": "Proves noindex,follow and canonicals are served.",
+  "where": "Execution/P15/_OPEN-search-console.md",
+  "how": [
+   "View source on a thin lake and a duplicate trip",
+   "Confirm the x-robots-tag header",
+   "Watch \"alternate page with proper canonical\" in Search Console"
+  ]
+ },
+ {
+  "id": "T1114-a",
+  "title": "Look at the price notes on four screens",
+  "why": "The container could not load app data, so no screen was seen.",
+  "where": "continent-app/src/components/PriceNotes.jsx",
+  "how": [
+   "Npm run dev",
+   "Open an Explore card (grid and rail), an Ask place card, a trip page and a day receipt",
+   "Check 375 and 1440 wide",
+   "Check Dutch"
+  ]
+ },
+ {
+  "id": "T1117-a",
+  "title": "Deploy the AI guard",
+  "why": "The guard on Ask, plan-day and parse-booking is code only until deployed.",
+  "where": "`supabase/functions/plan-day/index.ts`, `supabase/functions/parse-booking/index.ts`, `continent-app/functions/api/ask/answer.js`",
+  "how": [
+   "`supabase functions deploy plan-day`",
+   "`supabase functions deploy parse-booking`",
+   "Deploy the Pages build per CLAUDE.md Deploy (preview first)",
+   "On the preview, run one plan-day day and one magic import and check `meta.guard` is in the answer"
+  ]
+ },
+ {
+  "id": "T1117-b",
+  "title": "Live red-team pass with the real models",
+  "why": "The CI set uses stubbed outputs, so how the real Gemini and Workers AI models behave under the 50 attacks is unrecorded.",
+  "where": "`continent-app/scripts/ai/redteam_live.mjs`",
+  "how": [
+   "After T1117-a, sign in to a test account with plan quota on the preview and copy its access token",
+   "Run `CARTA_BASE=<preview url> SUPABASE_URL=<url> SUPABASE_ANON_KEY=<anon key> CARTA_JWT=<token> node continent-app/scripts/ai/redteam_live.mjs` (spends about 25 plan units)",
+   "Read `evals/injection/recorded-live-<date>.json`",
+   "For every FAIL line add the attack phrasing to `evals/injection/attacks.json` and open a task"
+  ]
+ },
+ {
+  "id": "T1118-c",
+  "title": "Paste migration 069 and turn on the daily retention job",
+  "why": "Without it nothing sweeps on a schedule and deletion leaves the waitlist address, feedback and audit detail behind.",
+  "where": "supabase/migrations/069_privacy_gdpr.sql",
+  "how": [
+   "Supabase Dashboard, SQL editor: paste supabase/migrations/069_privacy_gdpr.sql after 067 and 068",
+   "Look for \"privacy self-check passed\"",
+   "Database, Extensions: enable pg_cron, then paste 069 again (or run the cron.schedule line it prints)",
+   "Account, Download my data on a real account and check the file says \"schema\": 4",
+   "Create a throwaway account, join the waitlist with its address, delete it, and check waitlist_signups no longer holds the address"
+  ]
+ },
+ {
+  "id": "T1118-a",
+  "title": "Legal review of the Article 30 record and the retention lines",
+  "why": "The wording and day counts are plain drafts written overnight.",
+  "where": "docs/legal/ARTICLE30.md",
+  "how": [
+   "Read docs/legal/ARTICLE30.md sections 2, 2a, 3, 4 and 8",
+   "Change any day count in section 2a and the matching constant in 069's privacy_retention_sweep",
+   "Check the account.keep* and account.deleteHint strings in the six i18n files",
+   "Sign the record"
+  ]
+ },
+ {
+  "id": "T1118-b",
+  "title": "Decide how long the anonymised VAT and waiver record is kept",
+  "why": "Pass_grants rows outlive the account with no end date.",
+  "where": "docs/legal/ARTICLE30.md",
+  "how": [
+   "Confirm the Belgian VAT record period with the accountant",
+   "Add a line for pass_grants to privacy_retention_sweep in a new migration and to ARTICLE30.md section 2a"
+  ]
+ },
+ {
+  "id": "T1118-d",
+  "title": "Accept and record Resend's DPA",
+  "why": "Resend now receives addresses for reminders and the waitlist, and section 3 has no contract version or transfer basis.",
+  "where": "docs/legal/ARTICLE30.md",
+  "how": [
+   "In the Resend dashboard, read and accept the DPA",
+   "Note its version and whether the transfer runs under the DPF or SCCs",
+   "Fill the Resend row in ARTICLE30.md section 3"
+  ]
+ },
+ {
+  "id": "T1119-b",
+  "title": "Require the static-analysis check",
+  "why": "So a red Semgrep gate blocks merging into main.",
+  "where": ".github/workflows/static-analysis.yml",
+  "how": [
+   "GitHub repo Settings",
+   "Branches",
+   "Edit the rule for main",
+   "Add `semgrep` (workflow static-analysis) to required status checks",
+   "Save"
+  ]
+ },
+ {
+  "id": "T1120-a",
+  "title": "Create the error-tracking project and set its DSN",
+  "why": "Nothing is reported until a DSN exists.",
+  "where": "continent-app/.env.example",
+  "how": [
+   "Sign up at sentry.io, choose region EU (de.sentry.io)",
+   "Create a Browser JavaScript project",
+   "Project Settings, Security and Privacy: turn on \"Prevent storing of IP addresses\" and \"Data scrubber\", set retention to 30 days",
+   "Sign the DPA",
+   "Copy the DSN"
+  ]
+ },
+ {
+  "id": "T1120-b",
+  "title": "Allow the tracker host and set the variables",
+  "why": "The CSP blocks an unlisted host and the app reads the DSN at build time.",
+  "where": "continent-app/public/_headers",
+  "how": [
+   "Add the exact ingest host from the DSN (`https://oNNN.ingest.de.sentry.io`, no wildcard) to connect-src in continent-app/public/_headers",
+   "Set VITE_ERROR_DSN (and optionally VITE_ERROR_SAMPLE, VITE_RELEASE) in the Pages project variables",
+   "Set SENTRY_DSN as a Pages secret",
+   "Redeploy"
+  ]
+ },
+ {
+  "id": "T1120-c",
+  "title": "Check the kill switch and a live event",
+  "why": "Proves the setup before real traffic.",
+  "where": "Execution/P15/T1120-error-tracking.md",
+  "how": [
+   "Open the preview with `?seedError=explore` in a dev build against the real DSN (dev builds do not send, so instead throw once in the console of the preview: `setTimeout(()=>{throw new Error('probe')})`)",
+   "See one scrubbed event with no IP",
+   "Set VITE_ERROR_TRACKING=off and confirm nothing arrives"
+  ]
  }
 ]
