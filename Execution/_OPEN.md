@@ -1731,3 +1731,12 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1128-f | T1128 | verify_axe.mjs takes about 45 min for 30 runs on a dev server, too slow for ci.yml; add a nightly or path-triggered workflow on a preview build with a short screen list | next task | open |  |
 | T1128-g | T1128 | AskTurn.jsx gives its place rows hitProps aria-label askChat.pickAria, the pattern T1128 removed from the map panel (WCAG 2.5.3); Ask was not in the audit | next task | open |  |
 | T1128-h | T1128 | Look at the home header on the real film at 1280 px: its labels now carry a hairline ink shadow so they hold 4.5:1 without the film (the container could not load the film or photos) | user | open |  |
+| T1135-a | T1135 | E-R3 prices are quoted through web search (ai.google.dev and developers.cloudflare.com were blocked in the session); verify each against the primary page, and whether Workers AI can keep requests in the EU, before E7 relies on them | next task | open |  |
+| T1135-b | T1135 | E-R3 quality per option is expected, not measured; E7 (S54) runs E1, and F6 for tagging, on at least three options per AI feature | next task | open |  |
+| T1135-c | T1135 | E-R3 call rates per user are assumptions; replace them with E4 and K12 data and recompute the switch triggers in docs/research/E-R3-models-and-hosting.md | next task | open |  |
+| T1135-d | T1135 | Decide whether booking documents must be processed in the EU (C9, ARTICLE30); if yes parse-booking moves to Gemini on Vertex AI EU or an EU vision model that passes E1 | user | open |  |
+| T1135-e | T1135 | DEFAULT_MODEL_CHAIN and rewrite_intros.py use -latest aliases whose model and price move without notice; pin the ids in the E3 model-access module | next task | open |  |
+| T1135-f | T1135 | CAX41 CPU speed is inferred from Ampere A1 figures; run llama-bench with Qwen3-30B-A3B Q4_K_M on the box before moving batch jobs | next task | open |  |
+| T1135-g | T1135 | Moving plan-day or suggest-city off Gemini at the E-R3 trigger is an owner decision, with CLAUDE.md updated in the same change | user | open |  |
+| T1135-h | T1135 | Ask's free Workers AI Neurons cover about 560 answers a day (about 2,800 MAU); past that switch on the Workers paid plan or Ask answers with facts only | user | open |  |
+| T1135-i | T1135 | At about 10,000 MAU grounded searches pass 80 percent of Gemini's free 5,000 a month; review the grounded allowance per tier in plan_tiers against USD 14 per 1,000 searches | user | open |  |
