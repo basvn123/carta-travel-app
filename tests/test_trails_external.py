@@ -106,7 +106,7 @@ def test_stage_matches_and_representative_prefers_strong_match(world):
     assert r["status"] == "matched"
     # The stage carries the parent name exactly; the link path only contains it.
     assert r["best"]["id"] == 1 and r["in_top"]
-    assert r["methods"] == {"name exact": 1, "name": 1}
+    assert r["methods"] == {"name exact": 1, "side trail": 1}
 
 
 def test_ids_from_registry_match_and_low_rank_has_a_cause(world):
@@ -154,3 +154,16 @@ def test_gate_passes_on_shipped_data():
     p = te.run()
     assert p["summary"]["n"] >= 100
     assert p["gate"]["ok"], p["gate"]["failures"]
+
+
+def test_t1181_seeds_are_new_ascii_and_placed():
+    sys.path.insert(0, str(ROOT / "pipeline" / "trails"))
+    fr = pytest.importorskip("famous_registry")
+    assert "Causeway Coast Way" in fr.SEEDS["GB"]
+    assert "Causeway Coast Way" not in fr.SEEDS["IE"]
+    for cc, names in fr.SEEDS_T1181.items():
+        blind = {fr.squash(fr.base_name(n)) for n in fr.SEEDS_BLIND.get(cc, [])}
+        for n in names:
+            assert n.isascii(), n
+            assert fr.SEEDS[cc].count(n) == 1, (cc, n)
+            assert fr.squash(fr.base_name(n)) not in blind, (cc, n)

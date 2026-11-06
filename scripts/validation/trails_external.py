@@ -29,7 +29,11 @@ Matching, strongest first. A reference trail is matched by a published row
              whole words in one of the row's names: its title, its family,
              the parent it is a stage of (h.of, h.top) or its ref, or
   3. near    the row starts or ends within NEAR_M of the trail's start and
-             the two share a word that is not a stopword.
+             shares at least half of the trail's content words.
+A name with a compass word the trail's name lacks ("North Kerry Way") does
+not match, and a row that carries the name only as the trunk of a side loop
+or link path ("Moselsteig Seitensprung ...", "Liaison ... GR20") is recorded
+as a side trail: a trail with nothing but side trails counts as missing.
 A trail split into stages is matched by any stage. Its representative row,
 for ranking, is the matched row with the highest v5 score among the
 strongest kind of match present (an id or an exact name, then a name inside
@@ -81,6 +85,8 @@ TOP_CUT = 8.3            # lowest v5 score in the top band on the wire
 NEAR_M = 1500.0          # start or end of a row near the trail's start
 TREK_MAX_KM = 400        # curate.TREK_MAX_M, the longest single record
 GAPS_N = 30
+GAPS_MISSING = 20        # of the 30: the largest coverage gaps
+GAPS_LOW = GAPS_N - GAPS_MISSING   # and the largest ranking gaps
 
 # How much a label says about fame. A certified or national trail is one a
 # traveller looks for by name; a Wikipedia list entry less so on its own.
@@ -156,6 +162,25 @@ def usable_key(k):
 
 def word_in(needle, hay):
     return bool(needle and hay) and f" {needle} " in f" {hay} "
+
+
+DIRECTIONS = {"north", "south", "east", "west", "nord", "sud", "ost", "west",
+              "northern", "southern", "eastern", "western", "noord", "zuid",
+              "oost", "norra", "sodra", "ostra", "vastra"}
+
+# A row whose title names the trail only as the trunk of a side loop, a spur
+# or a link path is not the trail: "Moselsteig Seitensprung ..." is one of
+# the certified side loops, "Liaison ... GR20" a link to it.
+SIDE_RE = re.compile(r"\b(seitensprung|spur|zuweg|zubringer|zugangsweg|liaison|"
+                     r"link|verbindungsweg|anbindung|raccordement|bretelle|"
+                     r"collegamento|enlace)\b")
+
+
+def direction_conflict(ref_key, row_key):
+    """True when the row's name carries a compass word the trail's name does
+    not: "North Kerry Way" is not the Kerry Way."""
+    rw, kw = set(row_key.split()), set(ref_key.split())
+    return bool((rw & DIRECTIONS) - kw)
 
 
 def content_words(k):
@@ -320,29 +345,40 @@ def match_ref(ref, idx, reg):
     hits = registry_hits(ref, keys, reg)
     found = {}
 
+    # Ids count only inside the trail's countries: one Wikidata item for "the
+    # Way of St James" is cited by pilgrim paths from Basel to Budapest.
     for h in hits[:3]:
         for r in idx.by_osm.get(h.get("osm"), []) if h.get("osm") else []:
-            found.setdefault(r["id"], (r, "osm id"))
+            if r["cc"] in ccs:
+                found.setdefault(r["id"], (r, "osm id"))
         for r in idx.by_qid.get(h.get("wikidata"), []) if h.get("wikidata") else []:
-            found.setdefault(r["id"], (r, "wikidata id"))
+            if r["cc"] in ccs:
+                found.setdefault(r["id"], (r, "wikidata id"))
     if ref.get("wikidata"):
         for r in idx.by_qid.get(ref["wikidata"], []):
-            found.setdefault(r["id"], (r, "wikidata id"))
+            if r["cc"] in ccs:
+                found.setdefault(r["id"], (r, "wikidata id"))
 
     for cc in ccs:
         for r in idx.by_cc.get(cc, []):
             if r["id"] in found:
                 continue
+            own_side = bool(SIDE_RE.search(fold(r["name"])))
             if keys & r["keys"]:
-                found[r["id"]] = (r, "name exact")
-            elif any(word_in(k, rk) for k in keys for rk in r["keys"]):
-                found[r["id"]] = (r, "name")
+                found[r["id"]] = (r, "side trail" if own_side else "name exact")
+                continue
+            hit = [(k, rk) for k in keys for rk in r["keys"]
+                   if word_in(k, rk) and not direction_conflict(k, rk)]
+            if hit:
+                side = own_side or any(SIDE_RE.search(rk) for _, rk in hit)
+                found[r["id"]] = (r, "side trail" if side else "name")
 
     start = ref.get("start") or {}
     if start.get("lat") is not None and start.get("lon") is not None:
         words = set()
         for k in keys:
             words |= content_words(k)
+        need = max(1, math.ceil(len(words) / 2))
         if words:
             for cc in ccs:
                 for r in idx.by_cc.get(cc, []):
@@ -355,13 +391,15 @@ def match_ref(ref, idx, reg):
                     rw = set()
                     for rk in r["keys"]:
                         rw |= content_words(rk)
-                    if words & rw:
+                    if len(words & rw) >= need and not any(
+                            direction_conflict(k, rk) for k in keys for rk in r["keys"]
+                            if content_words(k) & content_words(rk)):
                         found[r["id"]] = (r, "near start")
     return list(found.values()), hits
 
 
 METHOD_RANK = {"osm id": 0, "wikidata id": 0, "name exact": 0, "name": 1,
-               "near start": 2}
+               "near start": 2, "side trail": 3}
 
 
 def score_key(r):
@@ -382,7 +420,8 @@ REASON_TEXT = {
     "unplaced": "in the registry with no coordinate, so no region holds it",
     "unresolved_seed": "a seeded name that resolved to no evidence",
     "out_of_scope": "outside the catalogue or not a walk",
-    "matched": "registry row matched an earlier wire, but no published row carries this name now",
+    "matched": ("the coverage report (the lab's state) has it published and the shipped wire "
+                "does not: it ships with the next trails export"),
 }
 
 
@@ -393,8 +432,12 @@ def auto_cause(ref, res):
         if (ref.get("length_km") or 0) > TREK_MAX_KM:
             return ("too_long", (f"longer than the {TREK_MAX_KM} km single-record cap "
                                  "(curate.TREK_MAX_M); needs one parent record with stages (D24, S100)"))
+        side = (f"; only {res['side_trails']} side loops or link paths named after it are published"
+                if res.get("side_trails") else "")
         if hit and hit.get("reason"):
-            return (hit["reason"], REASON_TEXT.get(hit["reason"], hit["reason"]))
+            return (hit["reason"], REASON_TEXT.get(hit["reason"], hit["reason"]) + side)
+        if side:
+            return ("side_trails_only", side[2:])
         if hit:
             return ("not_in_coverage", "in the famous registry but not in the coverage report")
         return ("not_in_registry", ("not in the famous registry under this name: no Wikidata, "
@@ -416,6 +459,9 @@ def evaluate(refs, rows, reg):
     for ref in refs:
         matched, hits = match_ref(ref, idx, reg)
         hit = hits[0] if hits else None
+        side_only = [r for r, m in matched if m == "side trail"]
+        if len(side_only) == len(matched):
+            matched = []
         res = {
             "id": ref["id"], "name": ref["name"],
             "countries": ref.get("countries") or [],
@@ -424,6 +470,7 @@ def evaluate(refs, rows, reg):
             "status": "matched" if matched else "missing",
             "methods": dict(Counter(m for _, m in matched)),
             "n_rows": len(matched),
+            "side_trails": len(side_only),
             "registry": ({k: hit.get(k) for k in ("id", "name", "wikidata", "osm",
                                                   "pageviews", "fame", "reason")}
                          if hit else None),
@@ -525,8 +572,14 @@ def run(reference=REFERENCE, wire_dir=WIRE_DIR, registry=REGISTRY,
     summary = summarise(results)
     baseline = load_json(baseline_path)
     fails = gate(summary, baseline) if rows else ["no wire rows read"]
-    gaps = sorted((r for r in results if gap_size(r) > 0),
-                  key=lambda r: (-gap_size(r), r["id"]))
+    # The review list: the largest coverage gaps and the largest ranking gaps,
+    # GAPS_MISSING and GAPS_LOW of each, so a long tail of misses never hides
+    # the famous walks Carta has but rates low.
+    ranked = sorted((r for r in results if gap_size(r) > 0),
+                    key=lambda r: (-gap_size(r), r["id"]))
+    gaps = ([r for r in ranked if r["status"] == "missing"][:GAPS_MISSING]
+            + [r for r in ranked if r["status"] == "matched"][:GAPS_LOW])
+    gaps.sort(key=lambda r: (-gap_size(r), r["id"]))
     payload = {
         "schema": "carta-validation/1", "layer": "trails",
         "reference": {"path": str(Path(reference).relative_to(ROOT))
@@ -537,7 +590,7 @@ def run(reference=REFERENCE, wire_dir=WIRE_DIR, registry=REGISTRY,
         "summary": summary,
         "gate": {"ok": not fails, "failures": fails,
                  "baseline": baseline, "rule": "coverage and top_share at or above the baseline"},
-        "gaps": [{**r, "gap": gap_size(r)} for r in gaps[:GAPS_N]],
+        "gaps": [{**r, "gap": gap_size(r)} for r in gaps],
         "results": results,
     }
     return payload
@@ -581,7 +634,8 @@ def render_md(p, reviews=None):
     lines += ["", "## Causes (automatic)", "", "| Cause | Trails |", "|---|---|"]
     for k, v in s["causes"].items():
         lines.append(f"| {k} | {v} |")
-    lines += ["", f"## The {GAPS_N} largest gaps", "",
+    lines += ["", f"## The {GAPS_N} largest gaps ({GAPS_MISSING} coverage, {GAPS_LOW} ranking)", "",
+              "Causes from the hand review in `trails_gap_reviews.json` where one exists, else the automatic cause.", "",
               "| # | Trail | Countries | Labels | Status | Best row | Gap | Cause |",
               "|---|---|---|---|---|---|---|---|"]
     for i, g in enumerate(p["gaps"], 1):
@@ -633,7 +687,8 @@ def main(argv=None):
     if a.write:
         reviews = (load_json(VALID_DIR / "trails_gap_reviews.json", {}) or {}).get("reviews") or {}
         OUT_JSON.write_text(json.dumps(compact(p), ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
-        OUT_MD.write_text(render_md(p, {k: v.get("cause") for k, v in reviews.items()}), encoding="utf-8")
+        OUT_MD.write_text(render_md(p, {k: f"{v.get('cause')} Next: {v.get('next')}."
+                                        for k, v in reviews.items()}), encoding="utf-8")
     if a.json:
         print(json.dumps({"summary": s, "gate": p["gate"], "reference": p["reference"],
                           "wire_generated_at": p["wire_generated_at"], "wire_rows": p["wire_rows"]}))

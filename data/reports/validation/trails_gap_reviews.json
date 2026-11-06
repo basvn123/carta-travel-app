@@ -1,0 +1,127 @@
+{
+ "task": "T1181",
+ "reviewed": "2026-11-06",
+ "note": "Hand review of the 30 largest gaps in trails_external.json; one cause and one next step each.",
+ "reviews": {
+  "moselsteig": {
+   "cause": "OSM relation 3632589 fails the one-line gate (failed_continuity) and at 365 km it can enter only as a famous trek; only 5 Seitensprung side loops are published. LQT and Top Trail, so the largest gap.",
+   "next": "T1181-b (S99 repair, S100 stages)"
+  },
+  "offas-dyke-path": {
+   "cause": "OSM relation 9649 fails the one-line gate; 285 km, so it needs the trek pool or one parent record with stages.",
+   "next": "T1181-b"
+  },
+  "st-cuthberts-way": {
+   "cause": "The registry row has no coordinate (unplaced), so no region holds it and coverage never asks for it; the OSM relation 4515009 exists.",
+   "next": "T1181-c (place a registry trail from its relation)"
+  },
+  "fife-coastal-path": {
+   "cause": "OSM relation 10841122 fails the one-line gate (187 km).",
+   "next": "T1181-b"
+  },
+  "kerry-way": {
+   "cause": "OSM relation 183744 fails the one-line gate (200 km). The only Kerry Way row on the wire is the North Kerry Way, a different trail, which the compass rule now refuses.",
+   "next": "T1181-b"
+  },
+  "rob-roy-way": {
+   "cause": "OSM relation 189465 fails the one-line gate (127 km).",
+   "next": "T1181-b"
+  },
+  "speyside-way": {
+   "cause": "OSM relation fails the one-line gate; only the Tominoul Spur is published, filed under the trail's name, and the check now counts a spur as a side trail.",
+   "next": "T1181-b"
+  },
+  "glyndwrs-way": {
+   "cause": "OSM relation 77256 fails the one-line gate (217 km).",
+   "next": "T1181-b"
+  },
+  "beara-way": {
+   "cause": "OSM relation 2989585 fails the one-line gate. 10 of the 16 Irish National Waymarked Trails in the reference miss for this one reason: the Irish relations are split or out of order.",
+   "next": "T1181-b"
+  },
+  "burren-way": {
+   "cause": "OSM relation 6532111 fails the one-line gate (Irish pattern, see Beara Way).",
+   "next": "T1181-b"
+  },
+  "barrow-way": {
+   "cause": "OSM relation 1330012 fails the one-line gate (Irish pattern).",
+   "next": "T1181-b"
+  },
+  "south-leinster-way": {
+   "cause": "OSM relation 1352495 fails the one-line gate (Irish pattern).",
+   "next": "T1181-b"
+  },
+  "ballyhoura-way": {
+   "cause": "OSM relation 2999741 fails the one-line gate (Irish pattern).",
+   "next": "T1181-b"
+  },
+  "east-munster-way": {
+   "cause": "OSM relation 2177435 fails the one-line gate (Irish pattern).",
+   "next": "T1181-b"
+  },
+  "lago-di-braies-loop": {
+   "cause": "The registry holds the lake (a place with an article, no path), so coverage files it no_osm_data; the lakeside path is OSM ways without a route relation or a walk name. The nearest published row is the Alta Via 1 start, 1 km away.",
+   "next": "T1181-d (famous short loops built from ways)"
+  },
+  "giewont": {
+   "cause": "The registry holds the summit, not a path; the Tatra paths up it are colour-marked PTTK routes whose names do not say Giewont, so nothing names the walk.",
+   "next": "T1181-d"
+  },
+  "orla-perc": {
+   "cause": "Named ways without a relation (way_only_not_derived), known since T1094; the T1094 rules are expected to derive it on the next box run.",
+   "next": "T1094 box run (owner)"
+  },
+  "cleveland-way": {
+   "cause": "The registry row has no coordinate (unplaced); the OSM relation 4087652 exists.",
+   "next": "T1181-c"
+  },
+  "grand-canal-way": {
+   "cause": "OSM relation 1330089 fails the one-line gate (Irish pattern).",
+   "next": "T1181-b"
+  },
+  "pennine-bridleway": {
+   "cause": "Not a walk in Carta's sense: OSM maps it as a horse and bicycle route, and the ingest reads route=hiking, foot and walking only. By design; it stays in the reference as a national trail, and counts as a miss.",
+   "next": "none (by design)"
+  },
+  "peddars-way-norfolk-coast-path": {
+   "cause": "Published as Peddars Way, good 7.0: shape 0.00 (a 75 km one-way line) and surface 0.28 (road share). The Norfolk Coast Path half is not published as its own row.",
+   "next": "T1181-e (shape and scenery for long linear trails)"
+  },
+  "fairy-pools-skye": {
+   "cause": "Below pleasant 5.2: the row has no highlights at all, so scenery (0.31), variety (0.35) and photos (0.46) sit at the zero floor; the waterfalls it is famous for are not matched as sights, and designation is 0.04 (no network tag).",
+   "next": "T1181-f (highlights for famous landforms)"
+  },
+  "old-man-of-storr": {
+   "cause": "Below pleasant 4.9: no highlights, so scenery, variety and photos sit at the zero floor; the Storr pinnacles are not a highlight kind. The row's reasons also say loop while its route type is out and back.",
+   "next": "T1181-f, T1181-g"
+  },
+  "quiraing": {
+   "cause": "Below pleasant 5.4: no highlights (the landslip and pinnacles are not a highlight kind), scenery, variety and photos at the zero floor. Reasons say loop, route type says point to point.",
+   "next": "T1181-f, T1181-g"
+  },
+  "snowdon-rhyd-ddu-path": {
+   "cause": "Below pleasant 5.0 with relief 0.05: the path is drawn from the summit down, the T1180 case. T1180 estimates 6.9 (good) after the re-rate on the box.",
+   "next": "T1180-a (owner re-rate)"
+  },
+  "lechweg": {
+   "cause": "Good 7.5 for an LQT: shape 0.01 (120 km one-way) and scenery 0.07, because scenery is highlight weight per kilometre and a long valley trail dilutes it.",
+   "next": "T1181-e"
+  },
+  "sentiero-azzurro": {
+   "cause": "Pleasant 6.6: no highlights on the row (the five villages and the sea are not highlight kinds), so scenery 0.06 and prominence 0.09. The Sentiero Verde Azzurro row of the same coast is exceptional 9.6.",
+   "next": "T1181-f"
+  },
+  "imbros-gorge": {
+   "cause": "Pleasant 6.7: shape 0.12 (a one-way gorge) and prominence 0.14; the gorge itself is not scored.",
+   "next": "T1181-e, T1181-f"
+  },
+  "thames-path": {
+   "cause": "Very good 7.7: shape 0.02 (312 km one-way) and relief 0.14 (flat riverside). Below the top band is defensible for a flat path; the shape term is the part to look at.",
+   "next": "T1181-e"
+  },
+  "mull-of-galloway-trail": {
+   "cause": "Good 7.4: shape 0.02 (one-way) and surface 0.14 (road share).",
+   "next": "T1181-e"
+  }
+ }
+}
