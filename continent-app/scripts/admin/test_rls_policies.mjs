@@ -1244,6 +1244,18 @@ function runTests(bin) {
       check(`launch_counts: ${who} cannot write a count directly`, !forge.ok, describe(forge));
     }
 
+    // 4d. The funnel counters of 070 (T1129): same shape, same closed doors.
+    console.log('');
+    console.log('  The funnel counters land through their writer and stay closed (070):');
+    check('a visitor counts a funnel step', runAs('anon', `select public.funnel_step('explore_opened')`).ok);
+    check('a signed-in traveller counts a funnel step', runAs('victim', `select public.funnel_step('trip_saved')`).ok);
+    for (const who of ['victim', 'plain', 'anon']) {
+      const read = runAs(who, 'select count(*) from public.funnel_counts');
+      check(`funnel_counts: ${who} reads none of the rows`, (read.ok && read.out === '0') || denied(read), describe(read));
+      const forge = runAs(who, `insert into public.funnel_counts (step, n) values ('shared', 1000000)`);
+      check(`funnel_counts: ${who} cannot write a count directly`, !forge.ok, describe(forge));
+    }
+
     // ---------------------------------------------------------------------
     // 4e. The upload path (061, T1070): the storage policies, the RPCs, the
     //     account folder and the sweep, end to end against the stubbed

@@ -873,6 +873,45 @@ function runTests(bin) {
     psql(bin, TEST_DB, ['-c', 'delete from public.launch_counts; delete from public.launch_daily_total; delete from public.edge_errors; delete from public.admin_audit_log']);
 
     // ---------------------------------------------------------------------
+    // 11b. The funnel counters and their reader (070, T1129): the writer
+    //      counts per day per step with no identifier and drops unknown
+    //      steps; the reader groups by week and is for admins only.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  funnel_step and admin_funnel_weekly (070):');
+    psql(bin, TEST_DB, ['-c', 'delete from public.funnel_counts; delete from public.funnel_daily_total']);
+    const fticks = (claims, steps) => {
+      const args = ['-At', '-c', claims ? 'set role authenticated' : 'set role anon'];
+      if (claims) args.push('-c', claimsSql(claims));
+      for (const s of steps) args.push('-c', `select public.funnel_step(${s})`);
+      return psqlRun(bin, TEST_DB, args);
+    };
+    const fguest = fticks(null, [`'explore_opened'`, `'explore_opened'`, `'place_opened'`, `'plan_started'`, `'nonsense'`, `null`]);
+    check('a visitor can call the funnel writer', fguest.ok, (fguest.err.match(/ERROR:.*$/m) || [''])[0]);
+    const fsigned = fticks(plainClaims, [`'priced_draft'`, `'trip_saved'`, `'shared'`, `'SHARED'`]);
+    check('a signed-in traveller can call the funnel writer', fsigned.ok, (fsigned.err.match(/ERROR:.*$/m) || [''])[0]);
+    check('the funnel rows are exactly the known steps, unknown ones dropped',
+      scalar(bin, TEST_DB, `select string_agg(step || '=' || n, ' ' order by step) from public.funnel_counts`)
+        === 'explore_opened=2 place_opened=1 plan_started=1 priced_draft=1 shared=2 trip_saved=1');
+    check('funnel_counts has no column that could name a person', scalar(bin, TEST_DB,
+      `select string_agg(column_name, ',' order by ordinal_position) from information_schema.columns
+        where table_schema = 'public' and table_name = 'funnel_counts'`) === 'day,step,n');
+    psql(bin, TEST_DB, ['-c', `update public.funnel_daily_total set n = 99999 where day = current_date`]);
+    fticks(null, [`'shared'`, `'shared'`, `'shared'`]);
+    check('the funnel daily total stops at 100,000',
+      scalar(bin, TEST_DB, 'select n from public.funnel_daily_total where day = current_date') === '100000');
+    psql(bin, TEST_DB, ['-c', `update public.funnel_daily_total set n = 3 where day = current_date`]);
+    const fweekly = adminCall('select public.admin_funnel_weekly(4)');
+    const fsteps = Object.fromEntries((fweekly.weeks?.[0]?.steps || []).map((s) => [s.step, Number(s.n)]));
+    check('the admin reader returns this week with each step\'s count',
+      fsteps.explore_opened === 2 && fsteps.place_opened === 1 && fsteps.trip_saved === 1 && fsteps.shared >= 2, JSON.stringify(fweekly));
+    const fplain = psqlRun(bin, TEST_DB, ['-At', '-c', 'set role authenticated', '-c', claimsSql(plainClaims),
+      '-c', 'select public.admin_funnel_weekly(4)::text']);
+    check('a normal signed-in user gets forbidden from the funnel reader', refused({ ok: fplain.ok, out: fplain.out.trim() }),
+      fplain.out.trim() || fplain.err.trim());
+    psql(bin, TEST_DB, ['-c', 'delete from public.funnel_counts; delete from public.funnel_daily_total']);
+
+    // ---------------------------------------------------------------------
     // 12. The upload decision (061, T1070): publishing needs the server
     //     privacy pass, a decline needs a ground and a statement of reasons,
     //     every decision writes one audit row, and open notices on the

@@ -91,6 +91,7 @@ import { usePlaceRows } from './hooks/usePlaceRows.js';
 import { countryName as localCountryName } from './lib/countryName.js';
 import { readFavList, isFav, favDestIds, favKey, toggleFav as toggleFavKey } from './lib/favorites.js';
 import { noteSaved, noteUnsaved, loadSavedLists } from './lib/savedLists.js';
+import { trackFunnel, stepOfTab } from './lib/funnelCounts.js';
 import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
@@ -672,6 +673,7 @@ function TravelApp() {
   // look at another tab never wipes an in-progress plan.
   const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map', urlTab || (firstVisit ? 'home' : 'map')]));
   useEffect(() => {
+    trackFunnel(stepOfTab(activeTab));
     setVisitedTabs((prev) => (prev.has(activeTab) ? prev : new Set([...prev, activeTab])));
   }, [activeTab]);
   // A day plan chosen from the Saved-trips overview: handed to DayPlannerTab,
@@ -1248,6 +1250,7 @@ function TravelApp() {
   // the deep link readDestFromUrl reads at boot), so it can be shared or
   // reopened. Stable, so every Explore card's memo survives parent renders.
   const openDetail = useCallback((id) => {
+    if (id) trackFunnel('place_opened');
     try {
       if (id && window.history.state?.cartaDest !== id) {
         window.history.pushState({ ...(window.history.state || {}), cartaDest: id }, '',

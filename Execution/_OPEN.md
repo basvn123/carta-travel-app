@@ -1543,3 +1543,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1105-d | T1105 | About 60 other `HeroImage` callers (planner, trips, together, region, country pages) and the Home film stills pass only a URL, so they stay on Wikimedia; pass the wire image record (`image=`) as T1105 did for Explore and the destination page | next task | open |  |
 | T1105-e | T1105 | Non-image bytes on one build swing between 760 and 1,326 KB from run to run in the T1105 harness (worth about 3 s of LCP on Slow 4G); find which fetch is optional and make it wait for idle | next task | open |  |
 | T1105-f | T1105 | Join `ih` and `d` into the wire (T052-d) so the bundle never needs the `missing` list; `hero_ladder.py` refuses to go live above 2,500 missing photographs | next task | open |  |
+| T1129-a | T1129 | Paste `supabase/migrations/070_funnel_counts.sql` in the SQL editor; until then funnel ticks fail silently and the admin Funnel card is hidden | user | open |  |
+| T1129-b | T1129 | Look at the admin Overview Funnel card on a real project after the paste, and hit each step once | user | open |  |

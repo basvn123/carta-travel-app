@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-  adminAiCacheReport, adminChannelWeekly, adminAiModelReport, adminAiUsage, adminAnalytics,
+  adminAiCacheReport, adminChannelWeekly, adminFunnelWeekly, adminAiModelReport, adminAiUsage, adminAnalytics,
   adminEdgeErrors, adminHealth, adminLaunchMetrics, adminListContentReports, adminOssThreshold,
   adminParseFailures, adminPaywallFunnel, adminPipelineHealth, adminStats,
 } from '../../auth/admin.js';
@@ -24,6 +24,8 @@ export function useOverview(unlocked) {
   const [launch, setLaunch] = useState(null);
   // Weekly visits per UTM channel (K12). Missing before the migration is pasted.
   const [channels, setChannels] = useState(null);
+  // Weekly product funnel (I11). Missing before migration 070 is pasted.
+  const [funnelWeekly, setFunnelWeekly] = useState(null);
   // DSA notices still marked new, so the Reports tab can carry a count
   // without being opened (T068-b). Only the count; the queue loads on its tab.
   const [newReports, setNewReports] = useState(null);
@@ -43,6 +45,7 @@ export function useOverview(unlocked) {
     adminOssThreshold().then(setOss).catch(() => setOss(null));
     adminLaunchMetrics(30).then(setLaunch).catch(() => setLaunch(null));
     adminChannelWeekly(8).then(setChannels).catch(() => setChannels(null));
+    adminFunnelWeekly(8).then(setFunnelWeekly).catch(() => setFunnelWeekly(null));
     adminListContentReports('new', 1, 0)
       .then((r) => setNewReports(typeof r?.new === 'number' ? r.new : null))
       .catch(() => setNewReports(null));
@@ -55,7 +58,7 @@ export function useOverview(unlocked) {
 
   return {
     stats, health, analytics, funnel, modelReport, cacheReport, aiUsage,
-    pipelineHealth, edgeErrors, parseFailures, oss, launch, channels, newReports,
+    pipelineHealth, edgeErrors, parseFailures, oss, launch, channels, funnelWeekly, newReports,
     refreshStats, refreshAnalytics,
   };
 }

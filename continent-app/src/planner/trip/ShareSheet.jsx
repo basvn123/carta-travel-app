@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/index.js';
 import { ChevronRightIcon, DownloadIcon, LinkIcon, CalendarIcon } from '../../components/Icons.jsx';
 import { usePaywall } from '../../hooks/usePaywall.jsx';
 import { buildTripShareUrl } from '../../lib/shareLink.js';
+import { trackFunnel } from '../../lib/funnelCounts.js';
 import { VisibilityChoice } from '../flow/VisibilityChoice.jsx';
 
 /**
@@ -26,6 +27,7 @@ export function ShareSheet({ anchorRef = null, title, visibility, onVisibility, 
   const copy = async () => {
     const url = await buildTripShareUrl(sharePayload);
     if (!url) return;
+    trackFunnel('shared');
     if (typeof navigator !== 'undefined' && navigator.share && window.matchMedia?.('(pointer: coarse)').matches) {
       try { await navigator.share({ title, url }); return; } catch (e) { if (e?.name === 'AbortError') return; }
     }
