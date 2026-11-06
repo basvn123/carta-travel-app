@@ -484,5 +484,126 @@
    "Then `python run_pipeline.py --only trails_curate`, the normal elevation and rate chain, `python pipeline/trails/coverage_report.py --all` and `python -I scripts/validation/trails_external.py --write`",
    "Put the before and after counts in the next task's report"
   ]
+ },
+ {
+  "id": "T1150-a",
+  "title": "Run the tagger's verifier",
+  "why": "The lexical tagger only beats today's tags by a little, and the verifier is the step meant to raise precision on uncertain tags.",
+  "where": "Execution/P15/T1150-taxonomy-2.md",
+  "how": [
+   "With GEMINI_API_KEY set, run `python -I pipeline/taxonomy/tagger.py --items gold --verify --eval-out gold-verify.json` and `python -I pipeline/taxonomy/tagger.py --items gold --eval-out gold-lexical.json` (once T1149-b has filled gold.csv",
+   "Before that use `--items seed`)",
+   "Score both with `cd continent-app && node scripts/eval/run.mjs taxonomy --predictions ../gold-verify.json` and the same for gold-lexical.json",
+   "Only if the verifier lifts R-precision at 5 or micro F1, run `python -I pipeline/taxonomy/tagger.py --all --verify` on the box (about 26,000 calls, see T1150-e)"
+  ]
+ },
+ {
+  "id": "T1150-b",
+  "title": "Try the bi-encoder on the box",
+  "why": "A dense list catches paraphrases the phrase and BM25 lists miss.",
+  "where": "pipeline/taxonomy/tagger.py",
+  "how": [
+   "On the box `pip install fastembed`",
+   "Run `python -I pipeline/taxonomy/tagger.py --items gold --dense --eval-out gold-dense.json` and compare with gold-lexical.json through `node continent-app/scripts/eval/run.mjs taxonomy --predictions`",
+   "Keep `--dense` in the `taxonomy_tags` task in run_pipeline.py only if R-precision at 5 or recall at 10 rises"
+  ]
+ },
+ {
+  "id": "T1152-a",
+  "title": "Paste migration 072 (taste profile)",
+  "why": "Taste verdicts and the profile only follow the account, and the acceptance rate is only counted, once the kind and the counter exist.",
+  "where": "supabase/migrations/072_taste_profile.sql",
+  "how": [
+   "In the Supabase SQL editor paste supabase/migrations/072_taste_profile.sql after 071",
+   "Look for \"taste profile self-check passed\"",
+   "From continent-app/ run node scripts/verify_live_policies.mjs"
+  ]
+ },
+ {
+  "id": "T1152-b",
+  "title": "Check taste verdicts on two devices",
+  "why": "The sync is proven against a stubbed account only.",
+  "where": "Execution/P15/T1152-taste-profile.md",
+  "how": [
+   "After T1152-a and a deploy, on a phone signed in open My trips, Your Europe, and say Yes to one chip and Not me to another",
+   "On a laptop signed in to the same account open the same tab: the Yes chip is first with a tick and the other is under Hidden",
+   "Show again on the laptop and reopen the phone: it is back"
+  ]
+ },
+ {
+  "id": "T1152-f",
+  "title": "Legal read of the taste counter",
+  "why": "EDPB Guidelines 2/2023 say a ping from the device can fall under ePrivacy 5(3) without cookies.",
+  "where": "docs/legal/ARTICLE30.md",
+  "how": [
+   "Read docs/legal/ARTICLE30.md row 13d with rows 13 to 13c",
+   "Confirm no consent is needed or tell the next task to gate taste_tick behind consent"
+  ]
+ },
+ {
+  "id": "T1153-a",
+  "title": "Try the place linker in Explore search, then decide the default",
+  "why": "The linker finds typos, exonyms and booking words today's search misses (accuracy@1 0.543 to 0.993 on the set) but is off for travellers.",
+  "where": "continent-app/src/lib/linking/flag.js, Execution/P15/T1153-place-linking.md",
+  "how": [
+   "Open Explore with ?link=1 at the end of the URL",
+   "Search a few misspelt and foreign names (dubrovnk, lissabon, Kraków Balice)",
+   "If it reads right, ask a session to flip the default in flag.js"
+  ]
+ },
+ {
+  "id": "T1153-c",
+  "title": "Label 300 real place mentions for the linking eval",
+  "why": "The current set was written by the session that built the linker, so its score is an upper bound.",
+  "where": "continent-app/scripts/eval/linking/set.json, continent-app/scripts/eval/linking/build-set.mjs",
+  "how": [
+   "Collect real search box queries, parse-booking titles and Ask questions",
+   "Mark the catalogue id each one means in the set.json shape",
+   "Ask a session to swap them in and re-bless"
+  ]
+ },
+ {
+  "id": "T1184-a",
+  "title": "Run the trails export with treks and check the counts",
+  "why": "Puts the 119 trek records and 445 stage links on the wire, which is what the trail page shows.",
+  "where": "Execution/P15/T1184-multi-stage-treks.md, pipeline/trails/treks.py",
+  "how": [
+   "Where the lab is up, run `python run_pipeline.py --only trails_rate` (or the trails publish task), which ends in `export_wire.py` and prints a \"treks:\" line",
+   "Open data/reports/trails_treks.json and check against this report (expect about 119 treks, 445 stages, refused 449 single_stage, 56 not_one_path, 62 loop_network, if the wire is otherwise the 2026-09-13 one",
+   "More if T1183-a repaired routes first)",
+   "Run `cd continent-app && node scripts/ci/check-contract.mjs` and confirm \"treks and stage rows agree\"",
+   "Open one stage page (for example BergeSeen Trail, AT 20040) and see the trek block"
+  ]
+ },
+ {
+  "id": "T1189-h",
+  "title": "Refresh the register and rerun beaches on the box",
+  "why": "The committed run uses the register cached on 2026-10-29 and the D2 gate reads the latest result.",
+  "where": "`scripts/validation/layer_beaches.py`, `docs/HANDBOOK.md`",
+  "how": [
+   "`python3 pipeline/harvest_bathing_water.py --sites-only`",
+   "`python3 -I scripts/validation/runner.py beaches --write --check`",
+   "If coverage moved on purpose rerun with `--write-baseline` and say why",
+   "Commit `data/reports/validation/beaches/`"
+  ]
+ },
+ {
+  "id": "T1189-i",
+  "title": "Export the Wikidata Blue Flag list and run it",
+  "why": "The Blue Flag layer has no reference until then; FEE's own list must not be scraped.",
+  "where": "`scripts/validation/layer_beaches_blueflag.py`",
+  "how": [
+   "Run a SPARQL query on query.wikidata.org for beaches with award received Blue Flag (id, name, lat, lon, country code) and save as CSV to `data/reports/validation/beaches/blueflag_wikidata.csv`",
+   "`python3 -I scripts/validation/runner.py beaches_blueflag --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1189-j",
+  "title": "Confirm the EEA licence text and the download URL",
+  "why": "The research could not reach eea.europa.eu.",
+  "where": "`docs/HANDBOOK.md` (Beaches)",
+  "how": [
+   "Open the Data Hub item \"Bathing water directive, status of bathing water\", confirm CC BY 4.0 and the Discodata table, add the attribution line to `docs/tos/` if needed"
+  ]
  }
 ]
