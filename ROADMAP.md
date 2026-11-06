@@ -591,7 +591,7 @@ docs/
 |---|---|---|---|---|---|
 | D1 | One machine-readable contract | A seeded bad value fails both pipeline write and app sync, with the field path | M | P3 | done (T1133: docs/wire.schema.json, read by the pipeline write guard, the sync and CI) |
 | D2 | Quality engine and scorecard | One engine, scorecard and 90-day trend per run, admin Data health panel | M | P3 | in progress (T1134: scripts/quality/scorecard.py, per layer completeness, validity, freshness, accuracy; first card in data/reports/quality/. T1142: scripts/quality/rules.yaml with 75 rules, one per scorecard field; engine.py gate fails the run on a must_see drop of more than 2 points or a hard floor; run_pipeline.py hook; admin Data health tab with the 90-day trend. Open: audit scripts not folded in, rules gate completeness only, T1142 rows) |
-| D3 | Provenance and freshness per field | Every key block carries `_src` and `_asof`; sources registry generated | M | P4 | todo |
+| D3 | Provenance and freshness per field | Every key block carries `_src` and `_asof`; sources registry generated | M | P4 | done in code (T1143: schema 20, 49,328 of 49,328 key blocks stamped on the shipped wire; pipeline/config/sources.yaml, docs/data/sources.md generated, `pipeline/provenance_sources.py --check` in pytest. Open: master migration on the box (T1143-a), the other wire files (T1143-b)) |
 | D4 | Truth set | 150 items verified by hand, scored per release | M | P3 | todo |
 | D5 | Scraper and source health | Yield, drift and staleness alerts reach admin and email | S | P1 | in progress (T1074: box steps T1074-c) |
 | D6 | Coverage fairness | Parity table per country, region and language in `docs/data/` | S | P4 | done (T1145; Ask recall per language T1145-c, blend review T1145-e) |

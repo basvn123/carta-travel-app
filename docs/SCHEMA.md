@@ -1,6 +1,6 @@
 # app_data schema
 
-Live master: `meta.schema_version` = 19. The `Schema vN` sections further down
+Live master: `meta.schema_version` = 20. The `Schema vN` sections further down
 are the additive changelog of layers (their numbering ran ahead of the meta
 field; treat the sections as history, `meta.schema_version` as the contract).
 
@@ -1400,6 +1400,30 @@ Gate: `pipeline/field_stubs/gate.py` ranges `sea_temp` 0 to 32, `alt_m` -450 to
 beaches +37 KB (+0.28%), lakes +16 KB (+0.21%), mountains +53 KB (+0.87%),
 cycling detail +1.26 MB (+0.28%); the trails and cycling country files are
 unchanged.
+
+## Schema v20: provenance per key block (T1143, ROADMAP D3, 2026-11-06)
+
+Every key block of a destination, the 18 object-valued keys the wire
+contract lists, carries two more keys:
+
+| Key | Type | Means |
+|---|---|---|
+| `_src` | string, one of the ids in `pipeline/config/sources.yaml` (the schema's `$defs.src` enum) | where the block's values come from |
+| `_asof` | string `YYYY-MM-DD` | the date its pipeline layer last built the block |
+
+```
+"rating": { "score": 8.1, "band": "very_good", ..., "_src": "carta_rating", "_asof": "2026-11-06" }
+```
+
+The sources, their licence, cadence and owner, and which block each one
+stamps are in `docs/data/sources.md`, generated from the registry. Lists
+(`designations`, `members`, `gateways`), scalars and `null` blocks carry no
+stamp. The schema requires both keys on every key block, so a v19 wire fails
+the v20 contract until it is migrated (`python pipeline/provenance.py
+--backfill <wire>`, which dates every block by the wire's own
+`meta.generated_at`). The app reads both: its loader lifts the stamps off
+the blocks into a side table (`continent-app/src/lib/provenance.js`) and a
+v19 shard has none to lift. Every v19 key keeps its name and value.
 
 ## Planned: local transport fare per place (T1115, 2026-11-06)
 
