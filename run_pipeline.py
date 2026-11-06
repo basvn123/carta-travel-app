@@ -592,6 +592,16 @@ def guard_brouter_up(ctx):
                        "--country GB --up --wait`")
 
 
+def guard_trails_route_bridge(ctx):
+    """T1183 (D24): the routed continuity repair is off unless the owner sets
+    CARTA_TRAILS_ROUTE_BRIDGE=1, and then needs the lab and BRouter (with
+    the tiles of the countries it runs on). Off or down is a SKIP."""
+    if os.environ.get("CARTA_TRAILS_ROUTE_BRIDGE", "").strip() != "1":
+        return False, ("off: set CARTA_TRAILS_ROUTE_BRIDGE=1 to run the routed "
+                       "continuity repair (T1183)")
+    return guard_brouter_up(ctx)
+
+
 def guard_reachable(label, *hosts):
     """A network source: due tasks SKIP, not fail, when none of `hosts` answers
     on 443 (an IPv6-only box, a DNS hiccup, the source down for the day)."""
@@ -1762,6 +1772,26 @@ TASKS = [
                  "place. Anything with a real gap stays out."),
     },
     {
+        "key": "trails_route_bridge",
+        "title": "Trails: route the longer breaks on foot paths (D24)",
+        "cadence": "after",
+        "after": ["trails_splice"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trails_route_bridge,
+        "cmds": [[PY, "pipeline/trails/route_bridge.py"],
+                 [PY, "pipeline/trails/splice.py", "--sync-only"]],
+        "note": ("T1183, behind CARTA_TRAILS_ROUTE_BRIDGE=1. Takes what both "
+                 "splice passes left and routes each break up to 2 km with "
+                 "BRouter's hiking-mountain profile, keeping relation order. "
+                 "A route is repaired only when every break closes: bridge at "
+                 "most 3x its gap plus 200 m and 3 km, 80% on paths, nothing "
+                 "on motorway, trunk or ferry, at most 8 bridges, 5 km and 10% "
+                 "of the route. Every refusal is kept in validation_runs "
+                 "(route_bridge) and data/reports/trails_route_bridge.json. "
+                 "Runs before trails_curate, which decides what is published."),
+    },
+    {
         "key": "trails_regionize",
         "title": "Trails: region ids on every staged route",
         "cadence": "after",
@@ -1827,7 +1857,8 @@ TASKS = [
         "key": "trails_curate",
         "title": "Trails: per-region quota, loop-first, continuity gated",
         "cadence": "after",
-        "after": ["trails_splice", "trails_regionize", "trails_hierarchy"],
+        "after": ["trails_splice", "trails_route_bridge", "trails_regionize",
+                  "trails_hierarchy"],
         "writes_app_data": False,
         "soft": True,
         "guard": guard_trailslab_up,
