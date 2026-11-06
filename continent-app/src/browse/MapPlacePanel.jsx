@@ -114,7 +114,7 @@ function PickedPlace({ p, ov, headRef, t, onBack, onOpen, fav, onToggleFav, comp
         </Button>
       </div>
       <div className="mpp-media">
-        <HeroImage url={p.image} city={p.city} iso2={p.iso2} className="mpp-img"
+        <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} className="mpp-img"
           maxWidth={800} sizes={compact ? '100vw' : '400px'} ratio={[4, 3]} />
         {onToggleFav && (
           <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city}

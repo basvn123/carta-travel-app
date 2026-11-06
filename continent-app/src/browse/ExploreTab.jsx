@@ -1581,7 +1581,10 @@ export function ExploreTab({
               <ExploreRails rails={rails} onSelect={openPlace} t={t}
                 favorites={favSet} onToggleFav={onToggleFav}
                 month={xf.month || railMonth}
-                lead={railLead} hideDoors />
+                lead={railLead} hideDoors
+                /* H12 (T1105): eager only while the rails are on screen; the
+                   tab stays mounted under Home and under a page over it. */
+                eager={isActive && !pageOver} />
             )}
 
             {gridTotal === 0 && (

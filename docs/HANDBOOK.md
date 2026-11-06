@@ -2175,14 +2175,21 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
    - Sizes: `HERO_SIZES = '(min-width: 769px) 860px, 100vw'`, `THUMB_SIZES = '(min-width: 769px) 215px, 25vw'`.
    - The hero loads eagerly with high priority and an AVIF preload. On error it falls back to the plain image.
 5. **Switch.** `lib/pictureFlag.js`: `PICTURE_LAYERS = ['beaches', 'lakes', 'mountains']`, turned on by `VITE_PICTURE_LAYERS` or `?pic=`. It is off when unset.
+6. **First paint: own copies first (H12, T1105).** Destination heroes and gallery photos (Explore cards and rails, the destination page mosaic and its similar cards) go through `HeroImage` / `LadderImg` (`components/HeroImage.jsx`) with the wire `image` record.
+   - `lib/heroImage.js` `heroLadder(image, max)` works the address out in the browser: `commonsTitle(url)` folds the title exactly as `derive.canonical_title`, `sha1Hex` hashes it, and `ladderDims(w, h)` gives the rung sizes as `derive.rung_dims` (from the 1920 source, never upscaled, halves rounded to even). A record that already carries `ih` and `d` uses them.
+   - Whether the copy exists comes from `lib/heroLadder.json` (`carta.hero-ladder.v1`), written by `pipeline/photos/hero_ladder.py` from derive.py's manifests: `live`, `missing` (12 hex characters of the title sha1 for each published photograph with no copy), `rev` (re-upload addresses) and `dims` (copies whose size differs from the wire's). `MAX_MISSING = 2500` keys; past that it stays not live and the ladder belongs on the wire (T052-d).
+   - Not live, listed as missing, no w and h, not a Commons file, or `?pic=off`: the plain Wikimedia `<img>`, as before. A copy that fails to load drops that photograph back to Wikimedia.
+   - The srcset offers rungs up to the first one at least `maxWidth` wide; the fallback `src` stays the Wikimedia URL and the credit is printed from the record, never from the copy.
+   - The first two cards of the first two Explore rails load eagerly (`EAGER_RAILS`, `EAGER_CARDS` in `browse/ExploreRails.jsx`); every other card is lazy. `STORY_SIZES` is `(max-width: 768px) 64vw, (max-width: 1079px) 68vw, 570px` (a phone card is a 42vw square).
 
 **Data behind it.** R2 bucket `carta` behind `cdn.carta-europetravel.com`. Objects are cached for a year as immutable; manifests for 300 seconds. Garbage collection (`derive.py gc`) waits 14 days and refuses to delete over 25% of the bucket without `--force`. Transcoding runs as `image_transcode` on a Hetzner CAX41.
 
-**Where it lives.** `pipeline/photos/derive.py`, `pipeline/photos/wire_ladder.py`, `continent-app/src/lib/imageLadder.js`, `continent-app/src/lib/heroImage.js`, `continent-app/src/lib/pictureFlag.js`, `continent-app/src/components/LayerPhoto.jsx`, `continent-app/src/components/HeroImage.jsx`, `archive/docs-2026-11/PHOTOS.md`.
+**Where it lives.** `pipeline/photos/derive.py`, `pipeline/photos/wire_ladder.py`, `pipeline/photos/hero_ladder.py`, `continent-app/src/lib/imageLadder.js`, `continent-app/src/lib/heroImage.js`, `continent-app/src/lib/heroLadder.json`, `continent-app/src/lib/pictureFlag.js`, `continent-app/src/components/LayerPhoto.jsx`, `continent-app/src/components/HeroImage.jsx`, `archive/docs-2026-11/PHOTOS.md`.
 
 **Limits.**
 - The CDN is not live: open rows T049-a to T049-d, T052-a and T235-d.
 - Nothing joins the manifest into the wire, so production has no `ih` or `d` (T052-d).
+- `heroLadder.json` ships not live until the owner's derive run of the `dest` and `dossier` layers is on R2 and `hero_ladder.py` is re-run (T1105-a).
 - Every surface except beach, lake and mountain pages still links to Wikimedia directly (T052-f).
 
 ### Licensed photo sources and credits

@@ -163,7 +163,7 @@ function Similar({ rows, data, indices, t, view, onSelect }) {
             <li key={r.id} className="pt-sim">
               <a className="pt-sim-link" href={href} onClick={linkOpener(() => onSelect?.(r.id))}>
                 <span className="pt-sim-photo">
-                  <HeroImage url={rec?.image?.url || null} city={r.name} iso2={r.iso2 || rec?.iso2} maxWidth={500}
+                  <HeroImage url={rec?.image?.url || null} image={rec?.image} city={r.name} iso2={r.iso2 || rec?.iso2} maxWidth={500}
                     sizes="(max-width: 700px) 45vw, 240px" ratio={[4, 3]} />
                 </span>
                 <span className="pt-sim-name">{r.name}</span>

@@ -219,5 +219,10 @@ export function StoryCard({
 // about 1.9 times the card's width (5/4 times 3/2). The sizes say that width,
 // and the callers allow the ladder up to 1280, so a phone at 2x or 3x gets a
 // 960 or a 1280 instead of an upscaled 500.
+// H12 (T1105): since T968 a phone (up to 768 px) shows two square cards a
+// row, about 42vw each (166 px at 390, measured), so the square crop of a 3:2
+// photograph needs 1.5 times that, 64vw. The old 133vw was the 70 percent
+// 4:5 card of T622 and made a 3x phone fetch a 1280 for a 166 px card. The
+// wider bands keep T622's numbers (a 320 px 4:5 card at 1440 needs 600).
 export const STORY_MAX = 1280;
-export const STORY_SIZES = '(max-width: 559px) 133vw, (max-width: 1079px) 68vw, 570px';
+export const STORY_SIZES = '(max-width: 768px) 64vw, (max-width: 1079px) 68vw, 570px';

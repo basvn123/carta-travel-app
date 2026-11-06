@@ -83,7 +83,7 @@ export const PlaceOverview = React.memo(function PlaceOverview({
         {...hitProps}
       >
         <span className="xrow-media">
-          <HeroImage url={p.image} city={p.city} iso2={p.iso2} className="xrow-img"
+          <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} className="xrow-img"
             maxWidth={ROW_MAX} sizes={ROW_SIZES} ratio={[1, 1]} />
         </span>
         <span className="xrow-body">
@@ -143,7 +143,7 @@ function PlaceCard({
         {...hitProps}
       >
         <span className="xpc-media">
-          <HeroImage url={p.image} city={p.city} iso2={p.iso2} className="xpc-img"
+          <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} className="xpc-img"
             maxWidth={CARD_MAX} sizes={CARD_SIZES} ratio={[3, 2]} />
           {(rating || p.rating)?.score != null && (
             <span className="xpc-score"><ScoreChip rating={rating || p.rating} size="sm" /></span>
