@@ -367,7 +367,7 @@ Plus: runbooks (how to operate), a glossary (every Carta term), and research not
 |---|---|---|---|---|---|
 | B1 | Carta Handbook | `docs/HANDBOOK.md` explains every feature from the code (T1045: 93 features) | M | P0 | done |
 | B2 | Docs tree and area docs | New `docs/` tree, 12 distrusted docs archived, stale core rewritten, 9 missing area docs written, CLAUDE.md corrected | M | P1 | in progress (T1073: tree and area docs; T1085: REGIONS, LAKES, layer and backup docs rewritten from code; T1086: backup, refund, incident runbooks; T1073-a) |
-| B3 | Logic catalogue | Every rule tagged with an ID in code, one catalogue entry per ID, two-way CI check | L | P2 to P3 | todo |
+| B3 | Logic catalogue | Every rule tagged with an ID in code, one catalogue entry per ID, two-way CI check | L | P2 to P3 | in progress (T1132: catalogue first pass, 8 domains; code tags and logic_check.py still to do) |
 | B4 | Config reference | `_doc` on every key of `rating.json`, `pricing.json` and quality rules; tables generated | S | P3 | todo |
 | B5 | Data lineage and diagrams | Per field: source, task, file; Mermaid diagrams of the pipeline and the request paths, generated | M | P3 | todo |
 | B6 | Generated reference and docs site | pdoc, TypeDoc, task catalogue, OpenAPI, SQL tables; MkDocs site with search on private Cloudflare Pages | M | P4 | todo |
