@@ -11,14 +11,14 @@ How it runs:
 
 | S | Task | Session | Branch | State | Merged | Owner steps |
 |---|---|---|---|---|---|---|
-| 01 | T1085 | session_0156MmZ4TDetsod3Jd5XwLj4 | p15-s01-docs-truth | running | | |
-| 02 | T1086 | session_0156MmZ4Muup4v7t4uhhm3bi | p15-s02-runbooks | running | | |
-| 03 | T1087 | session_0156MmZ7EaiBuWGxYvPNo4L9 | p15-s03-admin-harness-ci | running | | |
-| 04 | T1088 | session_0156MmZ3SPm4Y2EnZTdqua3E | p15-s04-supply-chain-gates | running | | |
+| 01 | T1085 | session_0156MmZ4TDetsod3Jd5XwLj4 | p15-s01-docs-truth | push retry asked |  |  |
+| 02 | T1086 | session_0156MmZ4Muup4v7t4uhhm3bi | p15-s02-runbooks | done | yes | 3 |
+| 03 | T1087 | session_0156MmZ7EaiBuWGxYvPNo4L9 | p15-s03-admin-harness-ci | done | yes | 2 |
+| 04 | T1088 | session_0156MmZ3SPm4Y2EnZTdqua3E | p15-s04-supply-chain-gates | push retry asked |  |  |
 | 05 | T1089 | session_0156MmZ5VRsioL6jYDKbHUSW | p15-s05-verify-harness-refresh | running | | |
-| 06 | T1090 | session_0156MmZ675FBGFYLWfxY8p45 | p15-s06-csp-no-inline-style | running | | |
-| 07 | T1091 | session_0156MmZ6GNqyadqQA6n59dSe | p15-s07-attribution-ledger | running | | |
-| 08 | T1092 | session_0156MmZ2rL9aioyUBz7HyAUN | p15-s08-trail-names | running | | |
+| 06 | T1090 | session_0156MmZ675FBGFYLWfxY8p45 | p15-s06-csp-no-inline-style | done | yes | 1 |
+| 07 | T1091 | session_0156MmZ6GNqyadqQA6n59dSe | p15-s07-attribution-ledger | done | yes | 0 |
+| 08 | T1092 | session_0156MmZ2rL9aioyUBz7HyAUN | p15-s08-trail-names | done | yes | 2 |
 | 09 | T1093 | session_0156MmZ2XaXpz3fPcyv1z5q5 | p15-s09-trail-photos | running | | |
 | 11 | T1095 | session_0156MmZ6PwzecPhXbvrLigr2 | p15-s11-place-intros | running | | |
 | 14 | T1098 | session_0156MmZ5CEX2gM2DENuNzhjF | p15-s14-uk-crowds | running | | |
