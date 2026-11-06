@@ -1,0 +1,3022 @@
+{
+ "version": 1,
+ "about": "T1153 place linking set (ROADMAP F4), built by scripts/eval/linking/build-set.mjs. Even cases are dev, odd are test.",
+ "cases": [
+  {
+   "id": "l001",
+   "split": "dev",
+   "mention": "porto",
+   "gold": [
+    "OPO"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g045"
+  },
+  {
+   "id": "l002",
+   "split": "test",
+   "mention": "hallstatt",
+   "gold": [
+    "gem:hallstatt"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g046"
+  },
+  {
+   "id": "l003",
+   "split": "dev",
+   "mention": "hallstatt",
+   "gold": [
+    "gem:hallstatt"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g047"
+  },
+  {
+   "id": "l004",
+   "split": "test",
+   "mention": "dubrovnik",
+   "gold": [
+    "DBV"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g048"
+  },
+  {
+   "id": "l005",
+   "split": "dev",
+   "mention": "seville",
+   "gold": [
+    "SVQ"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g049"
+  },
+  {
+   "id": "l006",
+   "split": "test",
+   "mention": "bergen",
+   "gold": [
+    "BGO"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g050"
+  },
+  {
+   "id": "l007",
+   "split": "dev",
+   "mention": "ghent",
+   "gold": [
+    "gem:ghent"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g051"
+  },
+  {
+   "id": "l008",
+   "split": "test",
+   "mention": "kotor",
+   "gold": [
+    "gem:kotor"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g052"
+  },
+  {
+   "id": "l009",
+   "split": "dev",
+   "mention": "zermatt",
+   "gold": [
+    "gem:zermatt"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g053"
+  },
+  {
+   "id": "l010",
+   "split": "test",
+   "mention": "annecy",
+   "gold": [
+    "gem:annecy"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g054"
+  },
+  {
+   "id": "l011",
+   "split": "dev",
+   "mention": "bruges",
+   "gold": [
+    "gem:bruges"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g055"
+  },
+  {
+   "id": "l012",
+   "split": "test",
+   "mention": "interlaken",
+   "gold": [
+    "gem:interlaken"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g056"
+  },
+  {
+   "id": "l013",
+   "split": "dev",
+   "mention": "ljubljana",
+   "gold": [
+    "LJU"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g057"
+  },
+  {
+   "id": "l014",
+   "split": "test",
+   "mention": "lisbon",
+   "gold": [
+    "LIS"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g058"
+  },
+  {
+   "id": "l015",
+   "split": "dev",
+   "mention": "split",
+   "gold": [
+    "SPU"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g059"
+  },
+  {
+   "id": "l016",
+   "split": "test",
+   "mention": "innsbruck",
+   "gold": [
+    "INN"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g060"
+  },
+  {
+   "id": "l017",
+   "split": "dev",
+   "mention": "bruges",
+   "gold": [
+    "gem:bruges"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g061"
+  },
+  {
+   "id": "l018",
+   "split": "test",
+   "mention": "lucca",
+   "gold": [
+    "gem:lucca"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g062"
+  },
+  {
+   "id": "l019",
+   "split": "dev",
+   "mention": "porto",
+   "gold": [
+    "OPO"
+   ],
+   "src": "ask",
+   "lang": "nl",
+   "from": "g083"
+  },
+  {
+   "id": "l020",
+   "split": "test",
+   "mention": "gent",
+   "gold": [
+    "gem:ghent"
+   ],
+   "src": "ask",
+   "lang": "nl",
+   "from": "g084"
+  },
+  {
+   "id": "l021",
+   "split": "dev",
+   "mention": "lissabon",
+   "gold": [
+    "LIS"
+   ],
+   "src": "ask",
+   "lang": "nl",
+   "from": "g085"
+  },
+  {
+   "id": "l022",
+   "split": "test",
+   "mention": "salzburg",
+   "gold": [
+    "SZG"
+   ],
+   "src": "ask",
+   "lang": "de",
+   "from": "g097"
+  },
+  {
+   "id": "l023",
+   "split": "dev",
+   "mention": "hallstatt",
+   "gold": [
+    "gem:hallstatt"
+   ],
+   "src": "ask",
+   "lang": "de",
+   "from": "g098"
+  },
+  {
+   "id": "l024",
+   "split": "test",
+   "mention": "innsbruck",
+   "gold": [
+    "INN"
+   ],
+   "src": "ask",
+   "lang": "de",
+   "from": "g099"
+  },
+  {
+   "id": "l025",
+   "split": "dev",
+   "mention": "seville",
+   "gold": [
+    "SVQ"
+   ],
+   "src": "ask",
+   "lang": "fr",
+   "from": "g111"
+  },
+  {
+   "id": "l026",
+   "split": "test",
+   "mention": "annecy",
+   "gold": [
+    "gem:annecy"
+   ],
+   "src": "ask",
+   "lang": "fr",
+   "from": "g112"
+  },
+  {
+   "id": "l027",
+   "split": "dev",
+   "mention": "dubrovnik",
+   "gold": [
+    "DBV"
+   ],
+   "src": "ask",
+   "lang": "fr",
+   "from": "g113"
+  },
+  {
+   "id": "l028",
+   "split": "test",
+   "mention": "granada",
+   "gold": [
+    "gem:granada"
+   ],
+   "src": "ask",
+   "lang": "es",
+   "from": "g123"
+  },
+  {
+   "id": "l029",
+   "split": "dev",
+   "mention": "cracovia",
+   "gold": [
+    "KRK"
+   ],
+   "src": "ask",
+   "lang": "es",
+   "from": "g124"
+  },
+  {
+   "id": "l030",
+   "split": "test",
+   "mention": "oporto",
+   "gold": [
+    "OPO"
+   ],
+   "src": "ask",
+   "lang": "es",
+   "from": "g125"
+  },
+  {
+   "id": "l031",
+   "split": "dev",
+   "mention": "lisboa",
+   "gold": [
+    "LIS"
+   ],
+   "src": "ask",
+   "lang": "es",
+   "from": "g125"
+  },
+  {
+   "id": "l032",
+   "split": "test",
+   "mention": "dubrovnik",
+   "gold": [
+    "DBV"
+   ],
+   "src": "ask",
+   "lang": "it",
+   "from": "g135"
+  },
+  {
+   "id": "l033",
+   "split": "dev",
+   "mention": "salisburgo",
+   "gold": [
+    "SZG"
+   ],
+   "src": "ask",
+   "lang": "it",
+   "from": "g136"
+  },
+  {
+   "id": "l034",
+   "split": "test",
+   "mention": "firenze",
+   "gold": [
+    "FLR"
+   ],
+   "src": "ask",
+   "lang": "it",
+   "from": "g137"
+  },
+  {
+   "id": "l035",
+   "split": "dev",
+   "mention": "florence",
+   "gold": [
+    "FLR"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g062"
+  },
+  {
+   "id": "l036",
+   "split": "test",
+   "mention": "salzburg",
+   "gold": [
+    "SZG"
+   ],
+   "src": "ask",
+   "lang": "en",
+   "from": "g060"
+  },
+  {
+   "id": "l037",
+   "split": "dev",
+   "mention": "best time to visit porto",
+   "gold": [
+    "OPO"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g045"
+  },
+  {
+   "id": "l038",
+   "split": "test",
+   "mention": "when should I go to hallstatt",
+   "gold": [
+    "gem:hallstatt"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g046"
+  },
+  {
+   "id": "l039",
+   "split": "dev",
+   "mention": "when is the cheapest time for dubrovnik",
+   "gold": [
+    "DBV"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g048"
+  },
+  {
+   "id": "l040",
+   "split": "test",
+   "mention": "best month for seville",
+   "gold": [
+    "SVQ"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g049"
+  },
+  {
+   "id": "l041",
+   "split": "dev",
+   "mention": "when to go to bergen",
+   "gold": [
+    "BGO"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g050"
+  },
+  {
+   "id": "l042",
+   "split": "test",
+   "mention": "what is ghent like in december",
+   "gold": [
+    "gem:ghent"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g051"
+  },
+  {
+   "id": "l043",
+   "split": "dev",
+   "mention": "tell me about kotor",
+   "gold": [
+    "gem:kotor"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g052"
+  },
+  {
+   "id": "l044",
+   "split": "test",
+   "mention": "is zermatt worth it in june",
+   "gold": [
+    "gem:zermatt"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g053"
+  },
+  {
+   "id": "l045",
+   "split": "dev",
+   "mention": "annecy in august",
+   "gold": [
+    "gem:annecy"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g054"
+  },
+  {
+   "id": "l046",
+   "split": "test",
+   "mention": "how expensive is bruges",
+   "gold": [
+    "gem:bruges"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g055"
+  },
+  {
+   "id": "l047",
+   "split": "dev",
+   "mention": "do I need a car in interlaken",
+   "gold": [
+    "gem:interlaken"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g056"
+  },
+  {
+   "id": "l048",
+   "split": "test",
+   "mention": "what to do in ljubljana",
+   "gold": [
+    "LJU"
+   ],
+   "src": "ask-sentence",
+   "lang": "en",
+   "from": "g057"
+  },
+  {
+   "id": "l049",
+   "split": "dev",
+   "mention": "wanneer is de beste tijd voor porto",
+   "gold": [
+    "OPO"
+   ],
+   "src": "ask-sentence",
+   "lang": "nl",
+   "from": "g083"
+  },
+  {
+   "id": "l050",
+   "split": "test",
+   "mention": "hoe is gent in december",
+   "gold": [
+    "gem:ghent"
+   ],
+   "src": "ask-sentence",
+   "lang": "nl",
+   "from": "g084"
+  },
+  {
+   "id": "l051",
+   "split": "dev",
+   "mention": "wann ist die beste reisezeit fur salzburg",
+   "gold": [
+    "SZG"
+   ],
+   "src": "ask-sentence",
+   "lang": "de",
+   "from": "g097"
+  },
+  {
+   "id": "l052",
+   "split": "test",
+   "mention": "wie ist hallstatt im dezember",
+   "gold": [
+    "gem:hallstatt"
+   ],
+   "src": "ask-sentence",
+   "lang": "de",
+   "from": "g098"
+  },
+  {
+   "id": "l053",
+   "split": "dev",
+   "mention": "quand partir a seville",
+   "gold": [
+    "SVQ"
+   ],
+   "src": "ask-sentence",
+   "lang": "fr",
+   "from": "g111"
+  },
+  {
+   "id": "l054",
+   "split": "test",
+   "mention": "comment est annecy en aout",
+   "gold": [
+    "gem:annecy"
+   ],
+   "src": "ask-sentence",
+   "lang": "fr",
+   "from": "g112"
+  },
+  {
+   "id": "l055",
+   "split": "dev",
+   "mention": "cuando es la mejor epoca para granada",
+   "gold": [
+    "gem:granada"
+   ],
+   "src": "ask-sentence",
+   "lang": "es",
+   "from": "g123"
+  },
+  {
+   "id": "l056",
+   "split": "test",
+   "mention": "como es cracovia en diciembre",
+   "gold": [
+    "KRK"
+   ],
+   "src": "ask-sentence",
+   "lang": "es",
+   "from": "g124"
+  },
+  {
+   "id": "l057",
+   "split": "dev",
+   "mention": "quando andare a dubrovnik",
+   "gold": [
+    "DBV"
+   ],
+   "src": "ask-sentence",
+   "lang": "it",
+   "from": "g135"
+  },
+  {
+   "id": "l058",
+   "split": "test",
+   "mention": "com'e salisburgo a dicembre",
+   "gold": [
+    "SZG"
+   ],
+   "src": "ask-sentence",
+   "lang": "it",
+   "from": "g136"
+  },
+  {
+   "id": "l059",
+   "split": "dev",
+   "mention": "Ryanair FR 8341 to BCN",
+   "gold": [
+    "BCN"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l060",
+   "split": "test",
+   "mention": "Flight to BCN",
+   "gold": [
+    "BCN"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l061",
+   "split": "dev",
+   "mention": "easyJet U2 3725 Nice",
+   "gold": [
+    "NCE"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l062",
+   "split": "test",
+   "mention": "Hotel Ibis Lisboa Centro",
+   "gold": [
+    "LIS"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l063",
+   "split": "dev",
+   "mention": "Apartamento en Sevilla centro",
+   "gold": [
+    "SVQ"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l064",
+   "split": "test",
+   "mention": "Pansion Villa Dubrovnik",
+   "gold": [
+    "DBV"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l065",
+   "split": "dev",
+   "mention": "Kraków Balice airport",
+   "gold": [
+    "KRK"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l066",
+   "split": "test",
+   "mention": "Krakow Airport (KRK)",
+   "gold": [
+    "KRK"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l067",
+   "split": "dev",
+   "mention": "Aeroporto di Napoli",
+   "gold": [
+    "NAP"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l068",
+   "split": "test",
+   "mention": "Flughafen München",
+   "gold": [
+    "MUC"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l069",
+   "split": "dev",
+   "mention": "Wien Hauptbahnhof",
+   "gold": [
+    "VIE"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l070",
+   "split": "test",
+   "mention": "Praha hlavní nádraží",
+   "gold": [
+    "PRG"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l071",
+   "split": "dev",
+   "mention": "B&B in Firenze",
+   "gold": [
+    "FLR"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l072",
+   "split": "test",
+   "mention": "Hostel Roma Termini",
+   "gold": [
+    "CIA",
+    "FCO"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l073",
+   "split": "dev",
+   "mention": "Venezia Santa Lucia",
+   "gold": [
+    "TSF",
+    "VCE"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l074",
+   "split": "test",
+   "mention": "Train to Brugge",
+   "gold": [
+    "gem:bruges"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l075",
+   "split": "dev",
+   "mention": "Hotel Gent centrum",
+   "gold": [
+    "gem:ghent"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l076",
+   "split": "test",
+   "mention": "Antwerpen Centraal",
+   "gold": [
+    "gem:antwerp"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l077",
+   "split": "dev",
+   "mention": "Den Haag Centraal",
+   "gold": [
+    "gem:the-hague"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l078",
+   "split": "test",
+   "mention": "Bruxelles-Midi",
+   "gold": [
+    "BRU"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l079",
+   "split": "dev",
+   "mention": "Brussel Zuid",
+   "gold": [
+    "BRU"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l080",
+   "split": "test",
+   "mention": "Wizz Air W6 to Budapest",
+   "gold": [
+    "BUD"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l081",
+   "split": "dev",
+   "mention": "Transavia HV to Málaga",
+   "gold": [
+    "AGP"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l082",
+   "split": "test",
+   "mention": "Vueling VY Barcelona El Prat",
+   "gold": [
+    "BCN"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l083",
+   "split": "dev",
+   "mention": "Booking.com: Hotel in Hallstatt, Austria",
+   "gold": [
+    "gem:hallstatt"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l084",
+   "split": "test",
+   "mention": "Airbnb Kotor old town",
+   "gold": [
+    "gem:kotor"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l085",
+   "split": "dev",
+   "mention": "Stay at Zermatt chalet",
+   "gold": [
+    "gem:zermatt"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l086",
+   "split": "test",
+   "mention": "Rental car pick up Faro airport",
+   "gold": [
+    "FAO"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l087",
+   "split": "dev",
+   "mention": "Ferry to Hvar",
+   "gold": [
+    "gem:hvar"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l088",
+   "split": "test",
+   "mention": "Day trip Sintra",
+   "gold": [
+    "gem:sintra"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l089",
+   "split": "dev",
+   "mention": "Cascais beach day",
+   "gold": [
+    "gem:cascais"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l090",
+   "split": "test",
+   "mention": "Hotel near Lagos Portugal",
+   "gold": [
+    "gem:lagos-pt"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l091",
+   "split": "dev",
+   "mention": "Ljubljana bus station",
+   "gold": [
+    "LJU"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l092",
+   "split": "test",
+   "mention": "Lake Bled boat",
+   "gold": [
+    "gem:bled"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l093",
+   "split": "dev",
+   "mention": "Bled",
+   "gold": [
+    "gem:bled"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l094",
+   "split": "test",
+   "mention": "Cesky Krumlov castle",
+   "gold": [
+    "gem:cesky-krumlov"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l095",
+   "split": "dev",
+   "mention": "Zakopane mountain hut",
+   "gold": [
+    "gem:zakopane"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l096",
+   "split": "test",
+   "mention": "Gdańsk old town",
+   "gold": [
+    "GDN"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l097",
+   "split": "dev",
+   "mention": "Wrocław Główny",
+   "gold": [
+    "WRO"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l098",
+   "split": "test",
+   "mention": "Warszawa Chopin",
+   "gold": [
+    "WAW",
+    "WMI"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l099",
+   "split": "dev",
+   "mention": "Tallinn ferry terminal",
+   "gold": [
+    "TLL"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l100",
+   "split": "test",
+   "mention": "Riga Airport",
+   "gold": [
+    "RIX"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l101",
+   "split": "dev",
+   "mention": "København H",
+   "gold": [
+    "CPH"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l102",
+   "split": "test",
+   "mention": "Kobenhavn",
+   "gold": [
+    "CPH"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l103",
+   "split": "dev",
+   "mention": "Stockholm Arlanda",
+   "gold": [
+    "ARN",
+    "BMA",
+    "NYO"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l104",
+   "split": "test",
+   "mention": "Oslo Gardermoen",
+   "gold": [
+    "OSL",
+    "TRF"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l105",
+   "split": "dev",
+   "mention": "Helsinki-Vantaa",
+   "gold": [
+    "HEL"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l106",
+   "split": "test",
+   "mention": "Reykjavík Keflavík",
+   "gold": [
+    "KEF"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l107",
+   "split": "dev",
+   "mention": "Edinburgh Waverley",
+   "gold": [
+    "EDI"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l108",
+   "split": "test",
+   "mention": "Dublin Airport T1",
+   "gold": [
+    "DUB"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l109",
+   "split": "dev",
+   "mention": "Belfast City",
+   "gold": [
+    "BFS"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l110",
+   "split": "test",
+   "mention": "Bath Spa",
+   "gold": [
+    "gem:bath"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l111",
+   "split": "dev",
+   "mention": "York Minster",
+   "gold": [
+    "gem:york"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l112",
+   "split": "test",
+   "mention": "Cambridge colleges",
+   "gold": [
+    "gem:cambridge"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l113",
+   "split": "dev",
+   "mention": "Lille Flandres",
+   "gold": [
+    "gem:lille"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l114",
+   "split": "test",
+   "mention": "Strasbourg Christmas market",
+   "gold": [
+    "gem:strasbourg"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l115",
+   "split": "dev",
+   "mention": "Avignon TGV",
+   "gold": [
+    "gem:avignon"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l116",
+   "split": "test",
+   "mention": "Carcassonne cité",
+   "gold": [
+    "CCF"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l117",
+   "split": "dev",
+   "mention": "Toulouse Blagnac",
+   "gold": [
+    "TLS"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l118",
+   "split": "test",
+   "mention": "Lyon Part-Dieu",
+   "gold": [
+    "LYS"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l119",
+   "split": "dev",
+   "mention": "Marseille Saint-Charles",
+   "gold": [
+    "MRS"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l120",
+   "split": "test",
+   "mention": "Genève Cornavin",
+   "gold": [
+    "GVA"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l121",
+   "split": "dev",
+   "mention": "Zürich HB",
+   "gold": [
+    "ZRH"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l122",
+   "split": "test",
+   "mention": "Basel SBB",
+   "gold": [
+    "BSL"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l123",
+   "split": "dev",
+   "mention": "Interlaken Ost",
+   "gold": [
+    "gem:interlaken"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l124",
+   "split": "test",
+   "mention": "Chamonix-Mont-Blanc",
+   "gold": [
+    "gem:chamonix"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l125",
+   "split": "dev",
+   "mention": "Milano Centrale",
+   "gold": [
+    "BGY",
+    "LIN",
+    "MXP"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l126",
+   "split": "test",
+   "mention": "Torino Porta Nuova",
+   "gold": [
+    "TRN"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l127",
+   "split": "dev",
+   "mention": "Genova",
+   "gold": [
+    "GOA"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l128",
+   "split": "test",
+   "mention": "Bologna Centrale",
+   "gold": [
+    "BLQ"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l129",
+   "split": "dev",
+   "mention": "Pisa Centrale",
+   "gold": [
+    "PSA"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l130",
+   "split": "test",
+   "mention": "Cinque Terre card",
+   "gold": [
+    "gem:cinque-terre"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l131",
+   "split": "dev",
+   "mention": "Positano",
+   "gold": [
+    "gem:amalfi-coast"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l132",
+   "split": "test",
+   "mention": "Capri ferry",
+   "gold": [
+    "gem:capri"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l133",
+   "split": "dev",
+   "mention": "Catania Fontanarossa",
+   "gold": [
+    "CTA"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l134",
+   "split": "test",
+   "mention": "Matera sassi",
+   "gold": [
+    "gem:matera"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l135",
+   "split": "dev",
+   "mention": "Verona Porta Nuova",
+   "gold": [
+    "VRN"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l136",
+   "split": "test",
+   "mention": "Athina",
+   "gold": [
+    "ATH"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l137",
+   "split": "dev",
+   "mention": "Kerkyra",
+   "gold": [
+    "CFU"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l138",
+   "split": "test",
+   "mention": "Valletta",
+   "gold": [
+    "MLA"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l139",
+   "split": "dev",
+   "mention": "Bucharest Otopeni",
+   "gold": [
+    "OTP"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l140",
+   "split": "test",
+   "mention": "Ibiza town",
+   "gold": [
+    "IBZ"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l141",
+   "split": "dev",
+   "mention": "Palma",
+   "gold": [
+    "PMI"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l142",
+   "split": "test",
+   "mention": "Funchal Madeira",
+   "gold": [
+    "FNC"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l143",
+   "split": "dev",
+   "mention": "Donostia San Sebastián",
+   "gold": [
+    "gem:san-sebastian"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l144",
+   "split": "test",
+   "mention": "Toledo day trip",
+   "gold": [
+    "gem:toledo"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l145",
+   "split": "dev",
+   "mention": "Valencia Joaquín Sorolla",
+   "gold": [
+    "VLC"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l146",
+   "split": "test",
+   "mention": "Nürnberg",
+   "gold": [
+    "NUE"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l147",
+   "split": "dev",
+   "mention": "Nuernberg",
+   "gold": [
+    "NUE"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l148",
+   "split": "test",
+   "mention": "Hamburg Hbf",
+   "gold": [
+    "HAM"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l149",
+   "split": "dev",
+   "mention": "Berlin Brandenburg",
+   "gold": [
+    "BER"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l150",
+   "split": "test",
+   "mention": "Amsterdam Centraal",
+   "gold": [
+    "AMS"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l151",
+   "split": "dev",
+   "mention": "barc",
+   "gold": [
+    "BCN"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l152",
+   "split": "test",
+   "mention": "lisb",
+   "gold": [
+    "LIS"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l153",
+   "split": "dev",
+   "mention": "dubro",
+   "gold": [
+    "DBV"
+   ],
+   "src": "booking"
+  },
+  {
+   "id": "l154",
+   "split": "test",
+   "mention": "visegrad",
+   "gold": [
+    "gem:visegrad"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "BA"
+   }
+  },
+  {
+   "id": "l155",
+   "split": "dev",
+   "mention": "visegrad",
+   "gold": [
+    "gem:visegrad-hu"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "HU"
+   }
+  },
+  {
+   "id": "l156",
+   "split": "test",
+   "mention": "Visegrad castle",
+   "gold": [
+    "gem:visegrad-hu"
+   ],
+   "src": "context",
+   "ctx": {
+    "airport": "BUD"
+   }
+  },
+  {
+   "id": "l157",
+   "split": "dev",
+   "mention": "dinan",
+   "gold": [
+    "gem:dinan"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l158",
+   "split": "test",
+   "mention": "dinant",
+   "gold": [
+    "gem:dinant"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l159",
+   "split": "dev",
+   "mention": "dinan",
+   "gold": [
+    "gem:dinant"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "BE"
+   }
+  },
+  {
+   "id": "l160",
+   "split": "test",
+   "mention": "roma",
+   "gold": [
+    "gem:roma"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "SE"
+   }
+  },
+  {
+   "id": "l161",
+   "split": "dev",
+   "mention": "roma",
+   "gold": [
+    "CIA",
+    "FCO"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l162",
+   "split": "test",
+   "mention": "faro",
+   "gold": [
+    "FAO"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l163",
+   "split": "dev",
+   "mention": "faro",
+   "gold": [
+    "gem:faro-gotland"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "SE"
+   }
+  },
+  {
+   "id": "l164",
+   "split": "test",
+   "mention": "Fårö",
+   "gold": [
+    "gem:faro-gotland"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l165",
+   "split": "dev",
+   "mention": "burgos",
+   "gold": [
+    "gem:burgos"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l166",
+   "split": "test",
+   "mention": "burgas",
+   "gold": [
+    "BOJ"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l167",
+   "split": "dev",
+   "mention": "burgis",
+   "gold": [
+    "gem:burgos"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "ES"
+   }
+  },
+  {
+   "id": "l168",
+   "split": "test",
+   "mention": "burgis",
+   "gold": [
+    "BOJ"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "BG"
+   }
+  },
+  {
+   "id": "l169",
+   "split": "dev",
+   "mention": "celle",
+   "gold": [
+    "gem:celle"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l170",
+   "split": "test",
+   "mention": "celje",
+   "gold": [
+    "gem:celje"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l171",
+   "split": "dev",
+   "mention": "celye",
+   "gold": [
+    "gem:celje"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "SI"
+   }
+  },
+  {
+   "id": "l172",
+   "split": "test",
+   "mention": "baden",
+   "gold": [
+    "gem:baden"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "CH"
+   }
+  },
+  {
+   "id": "l173",
+   "split": "dev",
+   "mention": "boden",
+   "gold": [
+    "gem:boden"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l174",
+   "split": "test",
+   "mention": "essen",
+   "gold": [
+    "gem:essen"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l175",
+   "split": "dev",
+   "mention": "assen",
+   "gold": [
+    "gem:assen"
+   ],
+   "src": "context",
+   "ctx": {
+    "airport": "GRQ"
+   }
+  },
+  {
+   "id": "l176",
+   "split": "test",
+   "mention": "gijon",
+   "gold": [
+    "gem:gijon"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l177",
+   "split": "dev",
+   "mention": "dijon",
+   "gold": [
+    "gem:dijon"
+   ],
+   "src": "context",
+   "ctx": {
+    "airport": "LYS"
+   }
+  },
+  {
+   "id": "l178",
+   "split": "test",
+   "mention": "barga",
+   "gold": [
+    "gem:barga"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "IT"
+   }
+  },
+  {
+   "id": "l179",
+   "split": "dev",
+   "mention": "parga",
+   "gold": [
+    "gem:parga"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "GR"
+   }
+  },
+  {
+   "id": "l180",
+   "split": "test",
+   "mention": "lefkada",
+   "gold": [
+    "gem:lefkada"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l181",
+   "split": "dev",
+   "mention": "lefkara",
+   "gold": [
+    "gem:lefkara"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "CY"
+   }
+  },
+  {
+   "id": "l182",
+   "split": "test",
+   "mention": "oland",
+   "gold": [
+    "gem:oland"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l183",
+   "split": "dev",
+   "mention": "aland",
+   "gold": [
+    "gem:aland"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "FI"
+   }
+  },
+  {
+   "id": "l184",
+   "split": "test",
+   "mention": "ronne",
+   "gold": [
+    "gem:ronne"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "DK"
+   }
+  },
+  {
+   "id": "l185",
+   "split": "dev",
+   "mention": "altea",
+   "gold": [
+    "gem:altea"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l186",
+   "split": "test",
+   "mention": "alta",
+   "gold": [
+    "gem:alta"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "NO"
+   }
+  },
+  {
+   "id": "l187",
+   "split": "dev",
+   "mention": "soria",
+   "gold": [
+    "gem:soria"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l188",
+   "split": "test",
+   "mention": "sofia",
+   "gold": [
+    "SOF"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l189",
+   "split": "dev",
+   "mention": "matala",
+   "gold": [
+    "gem:matala"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "GR"
+   }
+  },
+  {
+   "id": "l190",
+   "split": "test",
+   "mention": "tortona",
+   "gold": [
+    "gem:tortona"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l191",
+   "split": "dev",
+   "mention": "lliria",
+   "gold": [
+    "gem:lliria"
+   ],
+   "src": "context",
+   "ctx": {
+    "airport": "VLC"
+   }
+  },
+  {
+   "id": "l192",
+   "split": "test",
+   "mention": "frankfurt",
+   "gold": [
+    "FRA"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l193",
+   "split": "dev",
+   "mention": "frankfurt oder",
+   "gold": [
+    "gem:frankfurt-oder"
+   ],
+   "src": "context",
+   "ctx": {}
+  },
+  {
+   "id": "l194",
+   "split": "test",
+   "mention": "devils bridge",
+   "gold": [
+    "gem:devils-bridge-wales"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "GB"
+   }
+  },
+  {
+   "id": "l195",
+   "split": "dev",
+   "mention": "devils bridge",
+   "gold": [
+    "gem:devils-bridge-ardino"
+   ],
+   "src": "context",
+   "ctx": {
+    "country": "BG"
+   }
+  },
+  {
+   "id": "l196",
+   "split": "test",
+   "mention": "stari br",
+   "gold": [
+    "gem:stari-bar"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l197",
+   "split": "dev",
+   "mention": "yprres",
+   "gold": [
+    "gem:ypres"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l198",
+   "split": "test",
+   "mention": "le crosiic",
+   "gold": [
+    "gem:le-croisic"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l199",
+   "split": "dev",
+   "mention": "bad gasteun",
+   "gold": [
+    "gem:bad-gastein"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l200",
+   "split": "test",
+   "mention": "rosasza",
+   "gold": [
+    "gem:rosazza"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l201",
+   "split": "dev",
+   "mention": "lepuy en velay",
+   "gold": [
+    "gem:le-puy-en-velay"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l202",
+   "split": "test",
+   "mention": "wurzbug",
+   "gold": [
+    "gem:wurzburg"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l203",
+   "split": "dev",
+   "mention": "glen ccoe",
+   "gold": [
+    "gem:glencoe"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l204",
+   "split": "test",
+   "mention": "iibza",
+   "gold": [
+    "IBZ"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l205",
+   "split": "dev",
+   "mention": "toleso",
+   "gold": [
+    "gem:toledo"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l206",
+   "split": "test",
+   "mention": "montalkino",
+   "gold": [
+    "gem:montalcino"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l207",
+   "split": "dev",
+   "mention": "galwaycliffs of moher",
+   "gold": [
+    "gem:galway-cliffs"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l208",
+   "split": "test",
+   "mention": "morano calaro",
+   "gold": [
+    "gem:morano-calabro"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l209",
+   "split": "dev",
+   "mention": "locronnan",
+   "gold": [
+    "gem:locronan"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l210",
+   "split": "test",
+   "mention": "sant aagta",
+   "gold": [
+    "gem:sant-agata"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l211",
+   "split": "dev",
+   "mention": "cascata selle marmore",
+   "gold": [
+    "gem:cascata-delle-marmore"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l212",
+   "split": "test",
+   "mention": "acureyri",
+   "gold": [
+    "AEY"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l213",
+   "split": "dev",
+   "mention": "campoligure",
+   "gold": [
+    "gem:campo-ligure"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l214",
+   "split": "test",
+   "mention": "podgoryn",
+   "gold": [
+    "gem:podgorzyn"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l215",
+   "split": "dev",
+   "mention": "hawees",
+   "gold": [
+    "gem:hawes"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l216",
+   "split": "test",
+   "mention": "sopleto",
+   "gold": [
+    "gem:spoleto"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l217",
+   "split": "dev",
+   "mention": "psklenica",
+   "gold": [
+    "gem:paklenica"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l218",
+   "split": "test",
+   "mention": "seven sisters kliffs",
+   "gold": [
+    "gem:seven-sisters"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l219",
+   "split": "dev",
+   "mention": "villefranchesur mer",
+   "gold": [
+    "gem:nice-villefranche"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l220",
+   "split": "test",
+   "mention": "croone",
+   "gold": [
+    "CRV"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l221",
+   "split": "dev",
+   "mention": "fabriaano",
+   "gold": [
+    "gem:fabriano"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l222",
+   "split": "test",
+   "mention": "trolsltigen",
+   "gold": [
+    "gem:trollstigen"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l223",
+   "split": "dev",
+   "mention": "jeraey",
+   "gold": [
+    "JER"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l224",
+   "split": "test",
+   "mention": "snovdonia",
+   "gold": [
+    "gem:snowdonia"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l225",
+   "split": "dev",
+   "mention": "viseude sus",
+   "gold": [
+    "gem:viseu-de-sus"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l226",
+   "split": "test",
+   "mention": "pieniy",
+   "gold": [
+    "gem:dunajec-gorge"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l227",
+   "split": "dev",
+   "mention": "veronna",
+   "gold": [
+    "VRN"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l228",
+   "split": "test",
+   "mention": "roods",
+   "gold": [
+    "gem:rodos"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l229",
+   "split": "dev",
+   "mention": "laguaedia",
+   "gold": [
+    "gem:laguardia"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l230",
+   "split": "test",
+   "mention": "nevgrange",
+   "gold": [
+    "gem:bru-na-boinne"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l231",
+   "split": "dev",
+   "mention": "letouquet paris plage",
+   "gold": [
+    "gem:le-touquet-paris-plage"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l232",
+   "split": "test",
+   "mention": "hoter",
+   "gold": [
+    "gem:hoxter"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l233",
+   "split": "dev",
+   "mention": "turrin",
+   "gold": [
+    "TRN"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l234",
+   "split": "test",
+   "mention": "nouro",
+   "gold": [
+    "gem:nuoro"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l235",
+   "split": "dev",
+   "mention": "tsrgu mures",
+   "gold": [
+    "TGM"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l236",
+   "split": "test",
+   "mention": "piko island",
+   "gold": [
+    "gem:pico-azores"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l237",
+   "split": "dev",
+   "mention": "lapalma",
+   "gold": [
+    "SPC"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l238",
+   "split": "test",
+   "mention": "saint remyde provence",
+   "gold": [
+    "gem:saint-remy-de-provence"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l239",
+   "split": "dev",
+   "mention": "rhossilli",
+   "gold": [
+    "gem:rhossili"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l240",
+   "split": "test",
+   "mention": "svenbdorg",
+   "gold": [
+    "gem:svendborg"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l241",
+   "split": "dev",
+   "mention": "friedrichahafen",
+   "gold": [
+    "FDH"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l242",
+   "split": "test",
+   "mention": "albarrakin",
+   "gold": [
+    "gem:albarracin"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l243",
+   "split": "dev",
+   "mention": "praiadas catedrais",
+   "gold": [
+    "gem:as-catedrais"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l244",
+   "split": "test",
+   "mention": "ars e re",
+   "gold": [
+    "gem:ars-en-re"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l245",
+   "split": "dev",
+   "mention": "rovvinj",
+   "gold": [
+    "gem:rovinj"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l246",
+   "split": "test",
+   "mention": "beavgna",
+   "gold": [
+    "gem:bevagna"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l247",
+   "split": "dev",
+   "mention": "sistwron",
+   "gold": [
+    "gem:sisteron"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l248",
+   "split": "test",
+   "mention": "winkhester",
+   "gold": [
+    "gem:winchester"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l249",
+   "split": "dev",
+   "mention": "vaisonla romaine",
+   "gold": [
+    "gem:vaison-la-romaine"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l250",
+   "split": "test",
+   "mention": "gerande",
+   "gold": [
+    "gem:guerande"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l251",
+   "split": "dev",
+   "mention": "saalerno",
+   "gold": [
+    "QSR"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l252",
+   "split": "test",
+   "mention": "sasa fee",
+   "gold": [
+    "gem:saas-fee"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l253",
+   "split": "dev",
+   "mention": "levica",
+   "gold": [
+    "gem:levoca"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l254",
+   "split": "test",
+   "mention": "white kliffs of dover",
+   "gold": [
+    "gem:white-cliffs-dover"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l255",
+   "split": "dev",
+   "mention": "islesof scilly",
+   "gold": [
+    "gem:isles-of-scilly"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l256",
+   "split": "test",
+   "mention": "zeaitija np",
+   "gold": [
+    "gem:zemaitija"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l257",
+   "split": "dev",
+   "mention": "perrth",
+   "gold": [
+    "gem:perth"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l258",
+   "split": "test",
+   "mention": "schwabicsh hall",
+   "gold": [
+    "gem:schwabisch-hall"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l259",
+   "split": "dev",
+   "mention": "zarec",
+   "gold": [
+    "gem:zatec"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l260",
+   "split": "test",
+   "mention": "santilana del mar",
+   "gold": [
+    "gem:santillana-del-mar"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l261",
+   "split": "dev",
+   "mention": "lakemyvatn",
+   "gold": [
+    "gem:myvatn"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l262",
+   "split": "test",
+   "mention": "cueca",
+   "gold": [
+    "gem:cuenca"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l263",
+   "split": "dev",
+   "mention": "civvita",
+   "gold": [
+    "gem:civita"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l264",
+   "split": "test",
+   "mention": "bratilsava",
+   "gold": [
+    "BTS"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l265",
+   "split": "dev",
+   "mention": "kitzvuhel",
+   "gold": [
+    "gem:kitzbuhel"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l266",
+   "split": "test",
+   "mention": "terskhelling",
+   "gold": [
+    "gem:terschelling"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l267",
+   "split": "dev",
+   "mention": "fortwilliam",
+   "gold": [
+    "gem:fort-william"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l268",
+   "split": "test",
+   "mention": "bondne",
+   "gold": [
+    "gem:bondone"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l269",
+   "split": "dev",
+   "mention": "porto errcole",
+   "gold": [
+    "gem:porto-ercole"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l270",
+   "split": "test",
+   "mention": "brugh",
+   "gold": [
+    "gem:burgh"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l271",
+   "split": "dev",
+   "mention": "eiswnach",
+   "gold": [
+    "gem:eisenach"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l272",
+   "split": "test",
+   "mention": "westfyords",
+   "gold": [
+    "gem:westfjords"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l273",
+   "split": "dev",
+   "mention": "sacalobra",
+   "gold": [
+    "gem:sa-calobra"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l274",
+   "split": "test",
+   "mention": "kazanak",
+   "gold": [
+    "gem:kazanlak"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l275",
+   "split": "dev",
+   "mention": "esssen",
+   "gold": [
+    "gem:essen"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l276",
+   "split": "test",
+   "mention": "tmapere",
+   "gold": [
+    "TMP"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l277",
+   "split": "dev",
+   "mention": "sieolo",
+   "gold": [
+    "gem:sirolo-conero"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l278",
+   "split": "test",
+   "mention": "gjogw",
+   "gold": [
+    "gem:gjogv"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l279",
+   "split": "dev",
+   "mention": "sarmizegetusaregia",
+   "gold": [
+    "gem:sarmizegetusa-regia"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l280",
+   "split": "test",
+   "mention": "folina",
+   "gold": [
+    "gem:follina"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l281",
+   "split": "dev",
+   "mention": "colllioure",
+   "gold": [
+    "gem:collioure"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l282",
+   "split": "test",
+   "mention": "lilelhammer",
+   "gold": [
+    "gem:lillehammer"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l283",
+   "split": "dev",
+   "mention": "kefalonua",
+   "gold": [
+    "EFL"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l284",
+   "split": "test",
+   "mention": "pafos",
+   "gold": [
+    "PFO"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l285",
+   "split": "dev",
+   "mention": "grancanaria",
+   "gold": [
+    "LPA"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l286",
+   "split": "test",
+   "mention": "grossglockner hig alpine road",
+   "gold": [
+    "gem:grossglockner-road"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l287",
+   "split": "dev",
+   "mention": "estaaing",
+   "gold": [
+    "gem:estaing"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l288",
+   "split": "test",
+   "mention": "pacinao",
+   "gold": [
+    "gem:paciano"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l289",
+   "split": "dev",
+   "mention": "paestym",
+   "gold": [
+    "gem:paestum"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l290",
+   "split": "test",
+   "mention": "glendalugh",
+   "gold": [
+    "gem:glendalough"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l291",
+   "split": "dev",
+   "mention": "barafundlebay",
+   "gold": [
+    "gem:barafundle-bay"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l292",
+   "split": "test",
+   "mention": "britol",
+   "gold": [
+    "BRS"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l293",
+   "split": "dev",
+   "mention": "carrapaateira",
+   "gold": [
+    "gem:carrapateira"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l294",
+   "split": "test",
+   "mention": "krkaow",
+   "gold": [
+    "KRK"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  },
+  {
+   "id": "l295",
+   "split": "dev",
+   "mention": "montwfalco",
+   "gold": [
+    "gem:montefalco"
+   ],
+   "src": "typo",
+   "slip": "key"
+  },
+  {
+   "id": "l296",
+   "split": "test",
+   "mention": "dawolja varos",
+   "gold": [
+    "gem:djavolja-varos"
+   ],
+   "src": "typo",
+   "slip": "sound"
+  },
+  {
+   "id": "l297",
+   "split": "dev",
+   "mention": "castiglionedel lago",
+   "gold": [
+    "gem:castiglione-del-lago"
+   ],
+   "src": "typo",
+   "slip": "space"
+  },
+  {
+   "id": "l298",
+   "split": "test",
+   "mention": "san lorenz dorsino",
+   "gold": [
+    "gem:san-lorenzo-dorsino"
+   ],
+   "src": "typo",
+   "slip": "drop"
+  },
+  {
+   "id": "l299",
+   "split": "dev",
+   "mention": "lagrassse",
+   "gold": [
+    "gem:lagrasse"
+   ],
+   "src": "typo",
+   "slip": "double"
+  },
+  {
+   "id": "l300",
+   "split": "test",
+   "mention": "kingston uopn thames",
+   "gold": [
+    "gem:kingston-upon-thames"
+   ],
+   "src": "typo",
+   "slip": "swap"
+  }
+ ]
+}

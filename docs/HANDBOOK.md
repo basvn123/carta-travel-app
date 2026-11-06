@@ -252,6 +252,7 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 3. Outdoor list suggestions (`rankPlaces` in `lib/placeSearch.js`, 6 suggestions): rank 0 whole name equals the term, 1 name starts with it, 2 a word inside starts with it, 3 the term sits inside a word; then shorter name first, then alphabet.
 4. Near mode: Enter geocodes through Nominatim (at least 3 characters). The list then shows the closest items to that point, up to 80 (`NEAR_MAX_ROWS`), with the distance on each card. The crosshair asks the browser for the device location instead.
 5. The last category, country and near place are remembered in this browser (try/catch, a link always wins).
+6. Behind the place linking flag (T1153, off by default; see "Place linking"), the Explore box asks the linker instead of `querySearchIndex` for anything that is not a region word, in the same result shape.
 
 **Data behind it.** `public/search_index.json`, built by hand with `python pipeline/search_index_layer.py` (not a scheduled task; file dated 2026-10-29). It holds folded names, parenthetical names, a curated endonym and exonym table (checked against the catalogue at build time), member names and region boxes. Nominatim (OpenStreetMap) for free text.
 
@@ -2762,6 +2763,25 @@ This section covers the parts of Carta that sit around the travel content: the A
 **Where it lives.** `pipeline/apply_overrides.py`, `run_pipeline.py` (the hook), `data/overrides/`, `continent-app/src/components/admin/PipelineOverrides.jsx`, `continent-app/src/components/admin/pipelineOverrides.js`, `continent-app/src/admin/pipelineOverrides.json`. Tests: `tests/test_apply_overrides.py`, `continent-app/tests/pipelineOverrides.test.mjs`. Runbook: `docs/runbooks/content-ops.md` (who updates which content, how often, from which source, and a correction step by step).
 
 **Limits.** Outputs built from the master earlier in the same run (dossier, search and Ask indexes) carry a new correction from the following run. Trails and cycle routes have no pipeline override file. The snapshot reaches the tab at the next build. The draft form takes one field per entry; a second field on the same item is a second entry. Register rows `T1173-a` and on.
+
+### Place linking
+
+**What it does.** Turns a messy place mention ("Dubrovnk", "Hotel Ibis Lisboa Centro", "Kraków Balice airport", "cracovia", "flight to BCN") into the catalogue place it means, with a confidence, and offers "did you mean" when it is not sure (ROADMAP F4, T1153). One function for search, Ask and parse-booking; today only the Explore search box uses it, behind a flag.
+
+**How it works.**
+1. Alias table (`buildAliases` in `lib/linking/aliases.js`), from shipped data only: the catalogue name (weight 1), its parenthetical parts and a gem's slug (0.92), the endonym keys of `search_index.json` (0.97), the place exonyms of `search/ask/lexicon.json` (0.95), member villages resolving to their parent (0.86), and each airport's IATA code (`KIND_WEIGHT`). Built from the search index alone if no catalogue is in memory. About 7,400 rows, 70 to 100 ms to build.
+2. Reading the mention (`linkPlace` in `lib/linking/linker.js`): fold as `searchIndex.js` does, read uppercase three-letter IATA codes, take a country name written in it as context, drop booking, trip, month and airline words (the `NOISE` and `MONTHS` lists, six languages).
+3. Candidates: exact alias keys over every window of up to four words; BM25 over alias words (k1 1.2, b 0.75); the `pool` (120) aliases sharing the most rare character trigrams (each gram weighted by its inverse frequency).
+4. Score per alias: string similarity (exact, Dice on trigrams, edit distance with transpositions, a prefix for a word still being typed) times the kind weight, less `uncovered` (0.25) times the share of the mention a window leaves unexplained, plus `prior` (0.08) times a popularity prior (place size and population), plus `bm25` (0.04), plus `countryBonus` 0.1 or minus `countryMalus` 0.12 when a country is known, plus `airportBonus` 0.08 for a place at or within `airportKm` (60 km) of a given airport, plus `accent` 0.05 when the mention carries the name's own accents. An IATA code scores 1.1 and wins.
+5. A city's airports are one place (Rome is FCO with CIA). Confident when the top score is at least `confident` (0.86) and leads the next place by `margin` (0.05); otherwise the top three at `suggest` (0.55) or more are the "did you mean" (`LINK_DEFAULTS`).
+6. Search (`lib/linking/search.js`): a region word still filters by its box; confident gives the linked place, otherwise the "did you mean" places are the hits and their names the empty state's suggestions. The flag (`lib/linking/flag.js`): `?link=1` (remembered), localStorage `carta.placeLinking` = `1`, or `VITE_PLACE_LINKING=1`.
+7. Eval: `node continent-app/scripts/eval/run.mjs linking`, 300 mentions in `scripts/eval/linking/set.json` (built by `build-set.mjs`: Ask place words and whole questions, booking strings, near-twin names with context, seeded typos), MRR and accuracy@1 for today's search and the linker. Gate: within 2 points of `linking/baseline.json`.
+
+**Data behind it.** `public/app_data.json`, `public/search_index.json`, `public/search/ask/lexicon.json`. No model.
+
+**Where it lives.** `continent-app/src/lib/linking/` (`fold.js`, `aliases.js`, `linker.js`, `search.js`, `flag.js`, `index.js`), `continent-app/src/browse/ExploreTab.jsx` (the flagged caller), `continent-app/scripts/eval/linking/`, `continent-app/scripts/eval/adapters/linking.mjs`, `continent-app/tests/placeLinking.test.mjs`.
+
+**Limits.** The 300 mentions were written by the session that built the linker, so the score is an upper bound until real queries are labelled (T1153-c). Wikidata labels are not in the data (T1153-b). Ask and parse-booking do not call it yet (T1153-d, T1153-e). Known misses: "Fårö" goes to Faro, "pafos" to Paros.
 
 ### Evals (one runner, one results format)
 

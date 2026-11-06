@@ -85,7 +85,7 @@ test('results: write, history and the dashboard page', () => {
   }
   assert.equal(spark([0, 1]), '▁█');
   assert.equal(spark([]), '');
-  assert.deepEqual(EVALS, ['ask', 'trail-summaries', 'data-quality', 'plan-day', 'taxonomy', 'trails-external', 'truth']);
+  assert.deepEqual(EVALS, ['ask', 'trail-summaries', 'data-quality', 'plan-day', 'taxonomy', 'trails-external', 'truth', 'linking']);
 });
 
 test('plan-day: the committed cases are what the builder makes from the dossiers', () => {
