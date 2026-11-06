@@ -1547,3 +1547,9 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1115-b | T1115 | Once the source is chosen, build the fare layer for the 127 metros (115 city centres) per the planned field in docs/SCHEMA.md; add wire-contract rows and contract.mjs then | next task | open |  |
 | T1129-a | T1129 | Paste `supabase/migrations/070_funnel_counts.sql` in the SQL editor; until then funnel ticks fail silently and the admin Funnel card is hidden | user | open |  |
 | T1129-b | T1129 | Look at the admin Overview Funnel card on a real project after the paste, and hit each step once | user | open |  |
+| T1130-a | T1130 | Review the K5 drafts (`docs/brand/data-stories/europe-week-2027.nl.md`, `.en.md`), pick the headline, add a quote and the release date, and decide where they go (press list K10, blog) | user | open |  |
+| T1130-b | T1130 | The basket has no way there: the flight sweep lives on R2, not in the shipped catalogue; export the sweep fares from BRU and AMS to a local file so a next task can add "getting there" to the script | user | open |  |
+| T1130-c | T1130 | Confirm that publishing aggregated Booking.com scrape prices in a press story is fine under the source terms and the licence ledger (T1021-e still credits other sources) | user | open | 1 |
+| T1130-d | T1130 | Decide whether Walloon press gets a French version (ROADMAP K5 names Flemish and Walloon press; owner decision 6 says Dutch and English) | user | open |  |
+| T1130-e | T1130 | Check the outlier beds inside bounds before quoting them: Knokke EUR 363.93 a person a night (week EUR 3,001), De Koog EUR 387.67, De Cocksdorp EUR 306.29; the shipped catalogue has no observation counts, the stays wire does | next task | open |  |
+| T1130-f | T1130 | Rerun `node scripts/stories/basket_per_country.mjs` after the next stays build and before release (Sunshine Saturday, 2 Jan 2027); if `--check` fails, update every figure in both drafts | user | open | 2 |
