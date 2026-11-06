@@ -5,6 +5,7 @@ import App from './App.jsx';
 import { I18nProvider } from './i18n/index.jsx';
 import { ErrorBoundary } from './components/ErrorBoundary.jsx';
 import { installAffiliateClickCounter } from './lib/launchEvents.js';
+import { trackChannelVisit } from './lib/channelCounts.js';
 import { installTouchFeedback } from './lib/touchFeedback.js';
 import './styles.css';
 
@@ -12,6 +13,7 @@ import './styles.css';
 // sub-ID they already carry (migration 048, T215-c). Nothing is stored on
 // the device.
 installAffiliateClickCounter();
+trackChannelVisit();
 installTouchFeedback();
 
 // T1000: a tab left open across a deploy asks for chunks the new deploy no

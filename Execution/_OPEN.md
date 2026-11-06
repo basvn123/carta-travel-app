@@ -1504,3 +1504,5 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1108-a | T1108 | Give the dedicated support address (and set up the mailbox with SPF, DKIM, DMARC): `SUPPORT_EMAIL` in `continent-app/src/lib/contact.js` is a placeholder equal to the general address | user | open |  |
 | T1108-b | T1108 | Review the Dutch support strings (`support.*`, `footer.support` in nl.js); the Dutch is a draft, and de, es, fr, it fall back to English | user | open |  |
 | T1108-c | T1108 | I9 rest: About page and accessibility statement (EU Accessibility Act) are not built; the page has no status history, only the live line from status.json (needs T1056-a published) | next task | open |  |
+| T1109-a | T1109 | Number and paste `supabase/migrations/PENDING_channel_counts.sql` (rename it and add a `_down` file); until then channel ticks fail silently and the admin card is hidden | user | open |  |
+| T1109-b | T1109 | K12 remainder: Search Console per page type, waitlist/referral funnel and the I16 unlock numbers in the weekly view | next task | open |  |
