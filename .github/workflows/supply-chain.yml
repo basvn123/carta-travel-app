@@ -2,8 +2,7 @@ name: supply-chain
 
 # C6 (T1080): dependency audits and SBOMs.
 # - npm audit on the shipped dependencies fails on a critical advisory.
-# - pip-audit has no severity filter, so it reports and never fails (the reason
-#   is on the step); the same findings reach a pull request through OSV.
+# - pip-audit has no severity filter; any advisory in constraints.txt fails (T1088).
 # - OSV-Scanner reads both lockfiles and every requirements file.
 # - SBOMs (CycloneDX) are built on tags, releases and manual runs only.
 # Actions are pinned to commit SHAs (tag in the comment beside each).
@@ -52,14 +51,12 @@ jobs:
       - name: npm audit, shipped dependencies, fail on critical
         working-directory: continent-app
         run: npm audit --omit=dev --audit-level=critical
-      - name: npm audit, whole tree, report only
+      - name: npm audit, whole tree incl. dev, fail on high (clean since T1088)
         working-directory: continent-app
-        continue-on-error: true
-        run: npm audit --audit-level=none || true
-      - name: npm audit, trailslab review tool, report only (never shipped)
+        run: npm audit --audit-level=high
+      - name: npm audit, trailslab review tool, fail on high (never shipped)
         working-directory: tools/trailslab/review
-        continue-on-error: true
-        run: npm audit --omit=dev --audit-level=none || true
+        run: npm audit --audit-level=high
 
   pip-audit:
     runs-on: ubuntu-latest
@@ -75,13 +72,13 @@ jobs:
       - run: pip install pip-audit==2.10.1
       # requirements.txt holds floors (">="), which pip-audit cannot audit, so
       # the audit reads constraints.txt, the exact pins the pipeline runs.
-      # pip-audit 2.x has no severity filter (it prints an advisory ID and fix
-      # versions only), so this step reports and does not fail. A gate that
-      # failed on any advisory would be red from day one (12 packages on
-      # 2026-11-05). Move to a gate when the constraints are bumped (T1080-b).
-      - name: pip-audit constraints.txt (report only)
-        continue-on-error: true
-        run: pip-audit -r constraints.txt --no-deps --disable-pip --progress-spinner off || true
+      # pip-audit has no severity filter, so any advisory fails the build.
+      # T1088 bumped the 12 flagged pins, so this is clean (0 advisories on
+      # 2026-11-05) and now a gate.
+      - name: pip-audit constraints.txt (gate)
+        run: pip-audit -r constraints.txt --no-deps --disable-pip --progress-spinner off
+      # requirements-ml.txt ends in a range ("huggingface-hub>=0.34,<1.0"),
+      # which pip-audit refuses, so it cannot be a gate yet (T1088-e).
       - name: pip-audit requirements-ml.txt (report only)
         continue-on-error: true
         run: pip-audit -r requirements-ml.txt --no-deps --disable-pip --progress-spinner off || true
@@ -95,10 +92,8 @@ jobs:
         with:
           fetch-depth: 1
       # Scans the two lockfiles and the pinned Python file. It fails on any
-      # known advisory, so it is report-only until the baseline is cleared
-      # (T1080-b); the log lists every finding.
+      # known advisory; the baseline was cleared in T1088, so it is a gate.
       - name: OSV-Scanner
-        continue-on-error: true
         uses: google/osv-scanner-action/osv-scanner-action@b1d267aea5211fa648d9d442fa64b90dbdcbdd36 # v2.7.0
         with:
           scan-args: |-
