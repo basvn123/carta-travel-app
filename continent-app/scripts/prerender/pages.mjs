@@ -130,6 +130,30 @@ export function trailHeadline(tr) {
   return `${kmOf(tr.distance_m)} km ${g ? `${t(g).toLowerCase()} ` : ''}${shape}`;
 }
 
+/**
+ * Prose for a trail page, from the fields the row has and nothing else (T1113).
+ * A field the row lacks is left out of the sentence, so the word count is an
+ * honest measure of how much the data says.
+ */
+export function trailAbout(tr, { name, region, climb, season, paved, places }) {
+  const out = [];
+  const shape = tr.is_loop ? 'a loop that ends where it starts' : 'a point to point route';
+  const a = [`${name} is ${shape} of ${kmOf(tr.distance_m)} km in ${region}`];
+  if (climb?.up) a.push(`with ${n0(climb.up)} m of climbing${climb.down ? ` and ${n0(climb.down)} m of descent` : ''}`);
+  const first = sentence(a.join(' '));
+  const b = [];
+  if (isNum(tr.duration_min)) b.push(`Allow about ${fmtHours(tr.duration_min / 60)} on foot, an estimate from distance and climb.`);
+  const g = T.gradeLabelKey(tr);
+  if (g) b.push(`Carta grades it ${t(g).toLowerCase()}.`);
+  if (tr.ele?.max) b.push(`The highest point is ${n0(tr.ele.max)} m.`);
+  if (paved != null) b.push(`${paved}% of the way is paved.`);
+  if (season) b.push(`The season runs ${season}${tr.f?.se?.est ? ' (an estimate)' : ''}.`);
+  if (tr.f?.ref) b.push(`Follow the signs marked ${clean(tr.f.ref)}.`);
+  if (places?.length) b.push(`The nearest ${places.length === 1 ? 'town' : 'towns'} Carta covers: ${places.map((x) => `${x.name}${x.km != null ? ` (${d1(x.km)} km)` : ''}`).join(', ')}.`);
+  if (b.length) out.push(`${first} ${b.join(' ')}`);
+  return out;
+}
+
 export function trailPage(tr, ctx) {
   const cc = tr.country;
   const name = clean(tr.name);
@@ -152,6 +176,10 @@ export function trailPage(tr, ctx) {
   const parent = tr.h?.cls === 'stage' && (tr.h.top || tr.h.of) ? ctx.trailByName(cc, tr.h.top || tr.h.of) : null;
   const family = (ctx.familyOf(cc, tr.fam?.k) || []).filter((r) => r.id !== tr.id);
   const nearby = ctx.topTrails(cc, tr.rg?.n2, tr.id, 8);
+  // T1113 (K2): the places whose pages list this trail, nearest first, and a
+  // plain paragraph written only from the measured fields the row has.
+  const places = ctx.placesOfTrail ? ctx.placesOfTrail(cc, tr.id, 4) : [];
+  const about = trailAbout(tr, { name, region: region || countryName(cc), climb, season, paved, places });
   const subject = {
     '@type': 'TouristAttraction',
     additionalType: 'Hiking route',
@@ -190,7 +218,9 @@ export function trailPage(tr, ctx) {
       tr.f?.ref ? { label: 'Signs to follow', value: clean(tr.f.ref) } : null,
     ].filter(Boolean),
     sections: [
+      about.length ? { h2: 'About this walk', paras: about } : null,
       reasons.length ? { h2: 'What you pass', paras: reasons } : null,
+      places.length ? { h2: 'Places to stay near it', links: places.map((x) => ({ name: x.name, path: paths.dest(x.slug), meta: x.km != null ? `${d1(x.km)} km` : '', metaNum: true })) } : null,
       parent ? { h2: 'Part of a longer route', links: [{ name: clean(parent.name), path: paths.trail(cc, parent.id, parent.name), meta: `${kmOf(parent.distance_m)} km`, metaNum: true }] } : null,
       family.length ? {
         h2: `More of ${clean(tr.fam?.n || name)}`,
@@ -951,6 +981,8 @@ export function tripPage(trip, ctx) {
   return {
     kind: 'trip',
     path: paths.trip(trip.id),
+    // T1113: a near-duplicate trip (same towns, other nights or pace) points to its representative.
+    ...(ctx.tripCanonical && ctx.tripCanonical(trip.id) ? { canonical: paths.trip(ctx.tripCanonical(trip.id)) } : {}),
     title: fitTitle(joinNames(names), `${trip.days} days`, countryName(cc)),
     description: foreign ? fitDescription(derivedTrip) : fitDescription([hook, cost, season.length ? `Best ${monthSpan(season)}.` : '']),
     h1,

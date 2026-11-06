@@ -49,7 +49,7 @@ import * as P from './pages.mjs';
 import { pageFloor, listedFloor, newTally, addToTally, daysPlan } from './floor.mjs';
 import { haversineKm } from '../../src/lib/runtime_pricing.js';
 import { writeSitemaps } from './sitemap.mjs';
-import { pageBar } from './quality.mjs';
+import { pageBar, canonicalTrips } from './quality.mjs';
 
 const APP = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const argv = process.argv.slice(2);
@@ -142,13 +142,19 @@ setStayRecords(mergeStayFiles(list('stays/v1').filter((f) => f.endsWith('.json')
 const costs = priceDays(destRows, DEFAULT_PRICE_REQUEST);
 const dossierFiles = list('dossier').filter((f) => f.endsWith('.json'));
 const trailLinkedFrom = new Set(); // `${cc}/${id}` of every trail a destination page links to (the bar's linked place)
+const trailPlaces = new Map(); // `${cc}/${id}` -> [{ name, slug, km }] the destination pages that link to the trail (T1113)
 const dests = new Map(); // id -> { id, slug, name, cc, score, dayEur, measured, lat, lon, built, week, perDay }
 const destByCity = new Map();
 for (const f of dossierFiles) {
   const d = readJson(`dossier/${f}`);
   if (!d?.slug || !d.place?.iso2 || !COUNTRY_SLUGS[d.place.iso2]) continue;
   const cost = costs.get(d.id);
-  for (const x of d.around?.trails || []) trailLinkedFrom.add(`${x.cc}/${x.id}`);
+  for (const x of d.around?.trails || []) {
+    const k = `${x.cc}/${x.id}`;
+    trailLinkedFrom.add(k);
+    if (!trailPlaces.has(k)) trailPlaces.set(k, []);
+    trailPlaces.get(k).push({ name: clean(d.place?.name), slug: d.slug, km: typeof x.km === 'number' ? x.km : null, score: d.verdict?.score ?? 0 });
+  }
   // The week receipt (T224) is the figure the cost and trip-length pages use,
   // so a town's week and its four days come from the same printed lines.
   const week = P.weekReceipt(cost, destRows[d.id]);
@@ -189,7 +195,10 @@ const journeys = list('journeys/journey').filter((f) => f.endsWith('.json')).map
 
 const SECTION_SRC = { trails: 'trails', beaches: 'beaches', lakes: 'lakes', mountains: 'mountains', cycling: 'cycling', trips: 'trips' };
 const ONE = { trails: 'walk', beaches: 'beach', lakes: 'lake', mountains: 'mountain', cycling: 'cycling route' };
+const tripCanon = canonicalTrips(Object.values(W.trips).flatMap((w) => w.rated || [])); // near-duplicate trip -> representative (T1113)
 const ctx = {
+  tripCanonical: (id) => tripCanon.get(id) || null,
+  placesOfTrail: (cc, id, n) => (trailPlaces.get(`${cc}/${id}`) || []).slice().sort((a, b) => (a.km ?? 1e9) - (b.km ?? 1e9) || b.score - a.score).slice(0, n),
   regionName: (n2) => (n2 && regions.get(n2) ? clean(regions.get(n2).region.name) : null),
   trailByName: (cc, name) => trailByName.get(`${cc}|${clean(name).toLowerCase()}`) || null,
   familyOf: (cc, k) => (k ? families.get(`${cc}|${k}`) || [] : []),
@@ -369,9 +378,11 @@ function write(page, key) {
   // The quality bar (T1076, K2): a page that exists but is thin ships
   // noindex,follow and stays out of the sitemap until its data clears it.
   const bar = pageBar(page, { dos: dosByPath.get(page.path), row: wireRow(page), cc: parsePath(page.path)?.cc, linkedFrom: trailLinkedFrom });
-  if (bar && !bar.ok) page.noindex = true;
-  if (page.kind === 'trail' && bar) {
-    const h = (barHeadroom.trail ||= { total: 0, ok: 0, okIfPhotoLicensed: 0 });
+  // A page whose canonical is another page (a near-duplicate trip) is not also noindex: the canonical already says which page counts.
+  const canonElsewhere = page.canonical && page.canonical !== page.path;
+  if (bar && !bar.ok && !canonElsewhere) page.noindex = true;
+  if ((page.kind === 'trail' || page.kind === 'cycle') && bar) {
+    const h = (barHeadroom[page.kind] ||= { total: 0, ok: 0, okIfPhotoLicensed: 0 });
     h.total += 1;
     if (bar.ok) h.ok += 1;
     // The headroom the pipeline's photo licence work would unlock: every other test passes.

@@ -1,7 +1,7 @@
 // T1076 (K2): the page quality bar, the noindex,follow head and the sitemap gate.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { placeBar, trailBar, pageBar, words, internalLinks, introWords, hasYearOfClimate } from "../scripts/prerender/quality.mjs";
+import { placeBar, trailBar, layerBar, cycleBar, tripBar, canonicalTrips, pageBar, words, internalLinks, introWords, hasYearOfClimate } from "../scripts/prerender/quality.mjs";
 import { renderPage } from "../scripts/prerender/html.mjs";
 import { select } from "../scripts/prerender/sitemap.mjs";
 
@@ -92,8 +92,10 @@ test("trail bar: no destination page linking to it fails the place test", () => 
   assert.equal(trailBar(goodTrail(), goodRow(), "AT", null).ok, false);
 });
 
-test("pageBar applies to places and trails only", () => {
-  assert.equal(pageBar({ kind: "beach" }, {}), null);
+test("pageBar applies to places, trails, layers, cycling and trips; not to hubs or costs", () => {
+  assert.equal(pageBar({ kind: "country" }, {}), null);
+  assert.equal(pageBar({ kind: "cost" }, {}), null);
+  assert.ok(pageBar({ kind: "beach" }, {}));
   assert.equal(pageBar({ kind: "dest" }, {}), null);
   assert.ok(pageBar(goodPlace(), { dos: goodDos() }));
 });
@@ -133,4 +135,82 @@ test("sitemap: a page below the bar stays out, with its own reason; hubs stay in
   assert.equal(summary.excluded.dest["below the quality bar"], 1);
   assert.equal(summary.excluded.trail["below the quality bar"], 1);
   assert.equal(words("a b  c"), 3);
+});
+
+// ---------------------------------------------------------------- T1113 (K2)
+const goodLayer = (kind = "beach") => ({
+  kind, path: `/spain/${kind}s/1-x`,
+  image: { src: "https://x/p.jpg", licence: "CC BY 4.0" },
+  lead: [w(30)], sections: [{ h2: "Why go", paras: [w(40)] }, { h2: "Where to stay", links: [{ path: "/spain/malaga" }] },
+    { h2: "More", links: [{ path: "/spain/beaches/2-y" }] }],
+  crumbs: [{ path: "/" }, { path: "/spain" }],
+  facts: [{ label: "Carta score" }, { label: "Nearest town" }, { label: { beach: "Bathing water", lake: "Swim season", mountain: "Snow free" }[kind] }],
+});
+
+test("layer bar: a complete beach, lake and mountain pass", () => {
+  for (const k of ["beach", "lake", "mountain"]) assert.equal(layerBar(goodLayer(k)).ok, true, k);
+});
+
+for (const [name, mutate, t_] of [
+  ["no licensed photo", (p) => { p.image = null; }, "photo"],
+  ["thin prose", (p) => { p.lead = [w(10)]; p.sections[0].paras = [w(10)]; }, "prose"],
+  ["no seasonal fact", (p) => { p.facts = p.facts.filter((f) => f.label !== "Bathing water"); }, "season"],
+  ["no parent place", (p) => { p.facts = p.facts.filter((f) => f.label !== "Nearest town"); }, "place"],
+  ["no score", (p) => { p.facts = p.facts.filter((f) => f.label !== "Carta score"); }, "rating"],
+]) {
+  test(`layer bar: ${name} fails the ${t_} test`, () => {
+    const p = goodLayer(); mutate(p);
+    assert.equal(layerBar(p)[t_], false);
+    assert.equal(layerBar(p).ok, false);
+  });
+}
+
+test("cycle bar: needs a licensed wire photo and 60 words", () => {
+  const page = { kind: "cycle", path: "/a/cycling/1-x", lead: [w(70)], sections: [{ links: [{ path: "/a/b" }, { path: "/a/c" }, { path: "/a/d" }] }],
+    facts: [{ label: "Distance" }, { label: "Climb" }, { label: "Carta score" }] };
+  assert.equal(cycleBar(page, { img: { u: "x", lic: "CC0" } }).ok, true);
+  assert.equal(cycleBar(page, { img: { u: "x" } }).photo, false);
+  assert.equal(cycleBar({ ...page, lead: [w(5)] }, { img: { u: "x", lic: "CC0" } }).prose, false);
+});
+
+test("trip bar: a stop on a destination page, a cost, a season and four links", () => {
+  const trip = { kind: "trip", path: "/trips/a", crumbs: [{ path: "/" }, { path: "/spain" }],
+    facts: [{ label: "A day for one person, estimated" }, { label: "Season" }],
+    sections: [{ h2: "Where you stay", links: [{ path: "/spain/malaga" }] }, { h2: "More", links: [{ path: "/trips/b" }] }] };
+  assert.equal(tripBar(trip).ok, true);
+  assert.equal(tripBar({ ...trip, sections: [{ h2: "Where you stay", links: [] }] }).stops, false);
+  assert.equal(tripBar({ ...trip, facts: [{ label: "Season" }] }).cost, false);
+});
+
+test("near-duplicate trips: same towns in a country share the best scored trip as canonical", () => {
+  const cs = (...names) => names.map((city) => ({ city, cc: "ES", n: 2 }));
+  const trips = [
+    { id: "es-a-6d", cc: "ES", score: 9.5, cities: cs("Granada", "Seville") },
+    { id: "es-a-8d", cc: "ES", score: 9.1, cities: cs("Seville", "Granada") },
+    { id: "es-a-5d", cc: "ES", score: 8, cities: cs("granada", "seville") },
+    { id: "es-b-4d", cc: "ES", score: 7, cities: cs("Madrid") },
+  ];
+  const m = canonicalTrips(trips);
+  assert.equal(m.get("es-a-8d"), "es-a-6d");
+  assert.equal(m.get("es-a-5d"), "es-a-6d");
+  assert.equal(m.has("es-a-6d"), false);
+  assert.equal(m.has("es-b-4d"), false);
+});
+
+test("a thin page gets noindex,follow in the head and leaves the sitemap (end to end)", () => {
+  const thin = goodLayer("lake"); thin.facts = thin.facts.filter((f) => f.label !== "Nearest town");
+  const bar = pageBar(thin);
+  assert.equal(bar.ok, false);
+  const html = renderPage({ ...model({ kind: "lake", path: thin.path }), noindex: !bar.ok });
+  assert.match(html, /<meta name="robots" content="noindex,follow">/);
+  const good = goodLayer("lake"); const gb = pageBar(good);
+  const pages = [
+    { kind: "lake", path: thin.path, indexable: !(!bar.ok), canonical: thin.path, bar },
+    { kind: "lake", path: "/spain/lakes/9-z", indexable: true, canonical: "/spain/lakes/9-z", bar: gb },
+    { kind: "trip", path: "/trips/dup", indexable: true, canonical: "/trips/best", bar: { ok: true } },
+  ];
+  const { groups, summary } = select(pages);
+  assert.deepEqual(groups.get("lakes").map((e) => e.path), ["/spain/lakes/9-z"]);
+  assert.equal(summary.excluded.lake["below the quality bar"], 1);
+  assert.equal(summary.excluded.trip["canonical is another page"], 1);
 });

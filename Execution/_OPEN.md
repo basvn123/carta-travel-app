@@ -1512,3 +1512,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1107-d | T1107 | The admin Data health panel (D2) should read `r2:carta/status/` (pipeline_state, both freshness reports, last_run); the archive bucket is private, so it needs a signed read or an Edge Function | next task | open | |
 | T1107-e | T1107 | `run_pipeline.py --dry-run`'s hero_audit probe rewrites tracked files (cache/hero_image_meta.json, data/reports/hero_images_audit.json); a dry run should write to a scratch path | next task | open | |
 | T1107-f | T1107 | Move T048-h (weekly ceiling) and T1099-b (push freshness_wires.json after each box run) to `_OPEN-CLOSED.md` as closed by T1107; the overnight brief did not allow this session to edit other rows | next task | open | |
+| T1113-a | T1113 | Upload the new prerender; warning: indexed places drop from 3,754 to 337 (owner decision 1) and thin beaches, lakes, mountains and duplicate trips leave the sitemap | user | open | |
+| T1113-b | T1113 | Trail and cycling photo licence on the wire still blocks all trails and cycling routes; 10,397 trails and 188 routes would pass with it | next task | open | |
+| T1113-c | T1113 | 6,798 trails are linked from no place page; widen dossier around.trails to lift them | next task | open | |
+| T1113-d | T1113 | After the upload confirm trip canonicals and thin-page noindex,follow in Search Console and view source (follows T1076-f) | user | open | after T1113-a |
