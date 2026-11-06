@@ -140,10 +140,9 @@ export function SettleView({ headRef, groupId, onView }) {
                       {(link || mine) && (
                         <span className="tg-wr-acts">
                           {link && (
-                            <a className="btn btn-secondary btn-sm" href={link} target="_blank" rel="noopener noreferrer">
-                              <span className="btn-label">{t('tg2.payWith', { site: payHost(link) })}</span>
-                              <span className="btn-icon" aria-hidden="true"><ExternalIcon size={16} /></span>
-                            </a>
+                            <Button href={link} external size="sm" iconEnd={<ExternalIcon size={16} />}>
+                              {t('tg2.payWith', { site: payHost(link) })}
+                            </Button>
                           )}
                           {mine && (
                             <Button variant={link ? 'quiet' : 'secondary'} size="sm"

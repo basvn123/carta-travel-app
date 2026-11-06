@@ -7,6 +7,7 @@ import { fmtDate, addDays } from '../../lib/dates.js';
 import { stayDatesLink } from '../../lib/transportLinks.js';
 import { paidEur } from '../../lib/tripTotal.js';
 import { BedIcon, CloseIcon } from '../../components/Icons.jsx';
+import { Button } from '../../components/ui/index.js';
 import { PaidField } from '../PlanTotal.jsx';
 import { Flag, CityThumb } from '../GuidedTripWizardParts.jsx';
 import { useI18n } from '../../i18n/index.jsx';
@@ -88,18 +89,19 @@ export function StepStays({
                   </div>
                   <div className="wstay-acts">
                     {row.arrive && !(ownStays[row.id] > 0) && (
-                      <a
-                        className="btn btn-quiet btn-sm wrev-find"
+                      <Button
                         href={stayDatesLink({
                           city: dest.city, country: dest.country, checkin: row.arrive, checkout: leave,
                           adults, children: kids,
                         })}
-                        target="_blank"
-                        rel="noreferrer noopener"
+                        external
+                        variant="quiet"
+                        size="sm"
+                        className="wrev-find"
+                        iconAfter={<span className="sr-only"> {t('plan.opensNewTab')}</span>}
                       >
-                        <span className="btn-label">{t('plan.findStay')}</span>
-                        <span className="sr-only"> {t('plan.opensNewTab')}</span>
-                      </a>
+                        {t('plan.findStay')}
+                      </Button>
                     )}
                     <PaidField
                       id={`bed-${row.id}`}

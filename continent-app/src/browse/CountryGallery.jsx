@@ -1,8 +1,7 @@
 import React, { useRef } from 'react';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { ChevronRightIcon } from '../components/Icons.jsx';
-import { Card, IconButton } from '../components/ui/index.js';
+import { Card, CarouselArrows } from '../components/ui/index.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { countryPhotos, countryKnownKey } from '../lib/countryGallery.js';
 
@@ -64,14 +63,8 @@ export function GalleryStrip({ cc, name, t, eager = false, sizes, onPhoto = null
       </div>
       {photos.length > 1 && (
         <span className="dgal-nav">
-          <IconButton tone="photo" className="dgal-arrow is-prev"
-            label={t('dtab.photoPrev', { country: name })} onClick={() => page(-1)}>
-            <ChevronRightIcon size={16} />
-          </IconButton>
-          <IconButton tone="photo" className="dgal-arrow"
-            label={t('dtab.photoNext', { country: name })} onClick={() => page(1)}>
-            <ChevronRightIcon size={16} />
-          </IconButton>
+          <CarouselArrows className="dgal-arrow" onStep={page}
+            prevLabel={t('dtab.photoPrev', { country: name })} nextLabel={t('dtab.photoNext', { country: name })} />
         </span>
       )}
     </div>

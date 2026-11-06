@@ -1,6 +1,7 @@
 import React from 'react';
 import { m } from 'motion/react';
 import { useI18n } from '../../i18n/index.jsx';
+import { Button } from '../../components/ui/index.js';
 import { formatMoney } from '../../lib/money.js';
 import { FILM, exploreHref, placeDay } from '../../lib/homeDemo.js';
 import { MaskedText, Reveal, SPRING } from './motionKit.jsx';
@@ -88,9 +89,10 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
           </div>
           <div className="hm-try-foot">
             <p><b>{t('home.tryFit', { n: fit, total: list.length })}</b><span className="sr-only" aria-live="polite">{said}</span></p>
-            <a className="btn btn-primary hm-yours-go" href={exploreHref(facets)} onClick={go}>
-              <span className="btn-label">{t('home.trySee', { price: money(budget) })}</span><ArrowRight {...ICON} size={18} weight="bold" aria-hidden="true" />
-            </a>
+            <Button href={exploreHref(facets)} onClick={go} variant="primary" className="hm-yours-go"
+              iconAfter={<ArrowRight {...ICON} size={18} weight="bold" aria-hidden="true" />}>
+              {t('home.trySee', { price: money(budget) })}
+            </Button>
           </div>
         </Reveal>
       </div>

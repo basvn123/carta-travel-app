@@ -1,6 +1,7 @@
 import React from 'react';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { Card, Money } from '../components/ui/index.js';
+import { Card, Money, SlotText } from '../components/ui/index.js';
+import { SLOT } from '../lib/slot.js';
 import { TilePhotos } from './PhotoGallery.jsx';
 import { countryName as localCountryName } from '../lib/countryName.js';
 import { typeLabel, typeDesc, monthsShort, journeyHash } from '../lib/journeys.js';
@@ -36,17 +37,11 @@ export const RAIL_SIZES = '(max-width: 559px) 80vw, (max-width: 1079px) 40vw, 32
 
 /** A sentence with the kit's Money in its {eur} slot (T451): the trip
  *  budgets are estimates, so they carry Explore's ~ and est. mark. */
-const SLOT = '\u0001';
-function withMoney(text, money) {
-  const at = text.indexOf(SLOT);
-  if (at < 0) return text;
-  return <>{text.slice(0, at)}{money}{text.slice(at + SLOT.length)}</>;
-}
 
 /** "From {eur} a person a day" with the estimate mark, or null when there is no figure. */
-export function DayFrom({ value, t }) {
+export function DayFrom({ value, t, className = 'jcap-fig' }) {
   if (!Number.isFinite(value)) return null;
-  return <span className="jcap-fig">{withMoney(t('journey.fromPpDay', { eur: SLOT }), <Money value={value} est />)}</span>;
+  return <span className={className}><SlotText text={t('journey.fromPpDay', { eur: SLOT })}><Money value={value} est /></SlotText></span>;
 }
 
 /** One style as a kit tile (T428, T431): the photograph of people doing

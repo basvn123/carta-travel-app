@@ -4,7 +4,7 @@ import { ChevronRightIcon } from '../components/Icons.jsx';
 import { kindOf } from '../lib/taxonomy.js';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { Button, MoneyUnit } from '../components/ui/index.js';
 import { PlaceTile } from './ExploreCards.jsx';
 import { Strip } from './SectionOpening.jsx';
 import { GalleryStrip } from './CountryGallery.jsx';
@@ -184,8 +184,7 @@ export function CountryPage({
                       <div className="rgnp-fact">
                         <dt>{t('cpage.kDay')}<DayPriceDot /></dt>
                         <dd>
-                          <Money value={view.day(day)} est={dayEst} />
-                          <span className="rgnp-unit"> {view.unit}</span>
+                          <MoneyUnit value={view.day(day)} est={dayEst} unit={view.unit} unitClassName="rgnp-unit" />
                         </dd>
                       </div>
                     )}

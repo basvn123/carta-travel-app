@@ -5,9 +5,9 @@ import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
-  CalendarIcon, ChevronRightIcon, CrosshairIcon, MountainIcon, PiggyIcon, RouteIcon,
+  CalendarIcon, CrosshairIcon, MountainIcon, PiggyIcon, RouteIcon,
 } from '../components/Icons.jsx';
-import { Button, Card, IconButton, Money, Segmented } from '../components/ui/index.js';
+import { Button, Card, CarouselArrows, Money, Segmented } from '../components/ui/index.js';
 import { TilePhotos } from './PhotoGallery.jsx';
 import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 import { tripGrade } from '../lib/trailCards.js';
@@ -139,14 +139,8 @@ export function Strip({ id, title, onSeeAll = null, t, className = '', children 
           </Button>
         )}
         <span className="dtab-nav">
-          <IconButton tone="surface" className="dtab-arrow is-prev" label={t('explore.railPrev')}
-            onClick={() => page(-1)} disabled={ends.atStart}>
-            <ChevronRightIcon size={16} />
-          </IconButton>
-          <IconButton tone="surface" className="dtab-arrow" label={t('explore.railNext')}
-            onClick={() => page(1)} disabled={ends.atEnd}>
-            <ChevronRightIcon size={16} />
-          </IconButton>
+          <CarouselArrows tone="surface" className="dtab-arrow" onStep={page} atStart={ends.atStart} atEnd={ends.atEnd}
+            prevLabel={t('explore.railPrev')} nextLabel={t('explore.railNext')} />
         </span>
       </div>
       <ul className="dtab-strip" ref={stripRef} onKeyDown={onKeyDown} aria-label={title}>

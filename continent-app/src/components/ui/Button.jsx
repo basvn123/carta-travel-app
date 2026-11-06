@@ -20,6 +20,13 @@
  *   loading    keeps the width, shows a spinner, sets aria-busy and blocks clicks
  *   iconStart, iconEnd   an icon node beside the label; hidden from assistive tech
  *   block      fills the width of its container
+ *   href       a link styled as a button (T1121, G2): renders <a> with the same
+ *              classes, for a step that navigates; `external` opens it in a
+ *              new tab with rel="noopener noreferrer". type, disabled and
+ *              loading do not apply to a link.
+ *   iconAfter  for links only: a node placed bare after the label (an
+ *              external-link glyph that carries its own aria-hidden, or an
+ *              sr-only "opens in a new tab")
  *
  * Labels are passed as children by the caller, who owns the i18n key. Verb
  * first, sentence case, no terminal punctuation.
@@ -32,7 +39,8 @@ const SIZES = ['md', 'sm'];
 export const Button = React.forwardRef(function Button(
   {
     variant = 'secondary', size = 'md', type = 'button', loading = false, block = false,
-    iconStart = null, iconEnd = null, className = '', disabled, onClick, children, ...rest
+    iconStart = null, iconEnd = null, className = '', disabled, onClick, children,
+    href = null, external = false, rel, iconAfter = null, ...rest
   },
   ref
 ) {
@@ -40,6 +48,18 @@ export const Button = React.forwardRef(function Button(
   const s = SIZES.includes(size) ? size : 'md';
   const cls = ['btn', `btn-${v}`, s === 'sm' && 'btn-sm', block && 'btn-block', loading && 'is-loading', className]
     .filter(Boolean).join(' ');
+  if (href != null) {
+    return (
+      <a ref={ref} className={cls} href={href}
+        {...(external ? { target: '_blank', rel: rel || 'noopener noreferrer' } : rel ? { rel } : {})}
+        onClick={onClick} {...rest}>
+        {iconStart && <span className="btn-icon" aria-hidden="true">{iconStart}</span>}
+        <span className="btn-label">{children}</span>
+        {iconEnd && <span className="btn-icon" aria-hidden="true">{iconEnd}</span>}
+        {iconAfter}
+      </a>
+    );
+  }
   return (
     <button
       ref={ref}

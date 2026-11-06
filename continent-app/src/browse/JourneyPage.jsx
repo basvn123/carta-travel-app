@@ -19,9 +19,8 @@ import { railAlternative } from '../lib/railAlternative.js';
 import { parseGateway } from '../lib/gateway.js';
 import { formatMoney } from '../lib/money.js';
 import { SLOTS } from '../lib/tripPrice.js';
-import { Button, Chip, Money } from '../components/ui/index.js';
+import { Button, Chip, Money, PlaceHead } from '../components/ui/index.js';
 import { InfoDot } from '../components/InfoDot.jsx';
-import { CountryFlag } from '../components/CountryFlag.jsx';
 import { ErrorBlock } from '../components/StateBlocks.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { PageBar } from './PageBar.jsx';
@@ -39,7 +38,7 @@ import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { waysThere } from './placeWays.js';
 import { homePoint, partyOf, groundReturn, GROUND_MODES } from '../lib/travelWay.js';
 import { useItemPdf } from '../hooks/useItemPdf.js';
-import { JumpBar, PSection, PBlock, PriceDock, scrollToSection, useWide } from './PageTemplate.jsx';
+import { JumpBar, PSection, PBlock, PriceDock, WayFig, scrollToSection, useWide } from './PageTemplate.jsx';
 import {
   AlertIcon, BedIcon, BulbIcon, BusIcon, CarIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon,
   CloseIcon, CloudIcon, FamilyIcon, FriendsIcon, HeartIcon, InfoIcon, LuggageIcon, PiggyIcon,
@@ -633,15 +632,7 @@ export function JourneyPage({
 
           <div className="pt-body">
             <div className="pt-main">
-              <header className="pt-head" ref={headEl}>
-                <h1 className="pt-title" tabIndex={-1}>{title}</h1>
-                {subtitle && <p className="pt-subtitle">{subtitle}</p>}
-                {where && (
-                  <p className="pt-where">
-                    {trip.countryCode && <CountryFlag country={trip.countryCode} size={15} />}
-                    <span>{where}</span>
-                  </p>
-                )}
+              <PlaceHead title={title} sub={subtitle} where={where} iso2={trip.countryCode} whereLine headRef={headEl}>
                 <div className="pt-badges">
                   <Chip kind="status" className="pt-badge">{typeLabel(trip.tripTypeSlug, t, trip.tripType)}</Chip>
                   <DifficultyChip profile={profile} stats={stats} />
@@ -650,7 +641,7 @@ export function JourneyPage({
                 {hook && (
                   <p className="pt-lead">{hook.built ? t('journey.hookBuilt', hook.built) : stripDashes(hook.line)}</p>
                 )}
-              </header>
+              </PlaceHead>
 
               <KeyFacts cells={facts} className="pt-facts" />
 
@@ -810,10 +801,7 @@ export function JourneyPage({
                               </span>
                               {sub && <small>{sub}</small>}
                             </span>
-                            <span className="pt-way-fig">
-                              <b>{formatMoney(w.perPerson, { precision: 'whole', locale: lang })}</b>
-                              <small>{wayUnit}</small>
-                            </span>
+                            <WayFig amount={formatMoney(w.perPerson, { precision: 'whole', locale: lang })} unit={wayUnit} />
                           </li>
                         );
                       })}
@@ -831,10 +819,7 @@ export function JourneyPage({
                                 <span className="pt-way-name">{t(`way.${w.mode}`)}</span>
                                 {Number.isFinite(w.hours) && <small>{t('destx.aboutTime', { time: minutesText(Math.round(w.hours * 60)) })}</small>}
                               </span>
-                              <span className="pt-way-fig">
-                                <b>{formatMoney(w.oneWay, { precision: 'whole', locale: lang })}</b>
-                                <small>{t('jx.oneWay')}</small>
-                              </span>
+                              <WayFig amount={formatMoney(w.oneWay, { precision: 'whole', locale: lang })} unit={t('jx.oneWay')} />
                             </li>
                           );
                         })}

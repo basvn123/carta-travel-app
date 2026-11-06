@@ -1,6 +1,7 @@
 import React from 'react';
 import { CalendarIcon, PiggyIcon, StarIcon } from '../components/Icons.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { Button, Money, SlotText } from '../components/ui/index.js';
+import { SLOT } from '../lib/slot.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
@@ -59,13 +60,6 @@ export function interleaveByCountry(rows) {
   return out;
 }
 
-const SLOT = '\u0001';
-/** A sentence with a node (the kit's Money) in its one slot. */
-function withNode(text, node) {
-  const at = text.indexOf(SLOT);
-  if (at < 0) return text;
-  return <>{text.slice(0, at)}{node}{text.slice(at + SLOT.length)}</>;
-}
 
 // The rails whose own question already says the month, or the gem: their
 // cards do not repeat it in the status pill.
@@ -90,7 +84,7 @@ function railFacts(rows, month, monthLong, t) {
       key: 'from',
       icon: PiggyIcon,
       figure: true,
-      text: withNode(t('rail.factFrom', { price: SLOT }), <Money value={low.cost.dayEur} est={isNational(low.cost)} />),
+      text: <SlotText text={t('rail.factFrom', { price: SLOT })}><Money value={low.cost.dayEur} est={isNational(low.cost)} /></SlotText>,
     });
   }
   if (month && rows.length && rows.every((p) => inMonth(p, month))) {
@@ -105,7 +99,7 @@ function railFacts(rows, month, monthLong, t) {
       figure: !priced.length,
       text: priced.length
         ? t('rail.factScore', { n: best })
-        : withNode(t('rail.factScore', { n: SLOT }), <span className="storyr-num">{best}</span>),
+        : <SlotText text={t('rail.factScore', { n: SLOT })}><span className="storyr-num">{best}</span></SlotText>,
     });
   }
   return facts;

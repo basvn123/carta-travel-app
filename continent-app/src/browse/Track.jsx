@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, IconButton } from '../components/ui/index.js';
-import { ChevronRightIcon } from '../components/Icons.jsx';
+import { Button, CarouselArrows } from '../components/ui/index.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { clampIndex, trackIndex, trackKey, trackLeft } from '../lib/dayTrack.js';
 
@@ -111,14 +110,9 @@ export function Track({
                 <span className="itrack-pos" aria-live="polite">
                   {t('detail.photoPos', { n: index + 1, total: n })}
                 </span>
-                <IconButton tone="plain" className="itrack-arrow is-prev" label={t('detail.trackPrev')}
-                  onClick={() => go(indexRef.current - 1)} disabled={index === 0} aria-controls={id}>
-                  <ChevronRightIcon size={20} />
-                </IconButton>
-                <IconButton tone="plain" className="itrack-arrow" label={t('detail.trackNext')}
-                  onClick={() => go(indexRef.current + 1)} disabled={index >= n - 1} aria-controls={id}>
-                  <ChevronRightIcon size={20} />
-                </IconButton>
+                <CarouselArrows tone="plain" className="itrack-arrow" size={20} index={index} count={n} controls={id}
+                  onStep={(dir) => go(indexRef.current + dir)}
+                  prevLabel={t('detail.trackPrev')} nextLabel={t('detail.trackNext')} />
               </>
             )}
             {showAll && n > 1 && (

@@ -41,7 +41,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { usePageArrival } from '../hooks/usePageArrival.js';
-import { Button, Card, Chip, Money } from '../components/ui/index.js';
+import { Button, Card, Chip, MoneyUnit } from '../components/ui/index.js';
 import { PageBar } from './PageBar.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -397,8 +397,8 @@ export function RegionPage({
                 <div className="rgnp-fact">
                   <dt>{t('item.dayIn', { city: priced.city })}</dt>
                   <dd>
-                    <Money value={view.day(priced.cost.dayEur)} est={isNational(priced.cost)} />
-                    <span className="rgnp-unit"> {view.unit}</span>
+                    <MoneyUnit value={view.day(priced.cost.dayEur)} est={isNational(priced.cost)} unit={view.unit}
+                      unitClassName="rgnp-unit" />
                   </dd>
                 </div>
               )}

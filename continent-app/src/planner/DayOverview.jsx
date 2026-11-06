@@ -104,10 +104,9 @@ export function DayGmaps({ parts, dayNumber = null }) {
   if (!parts?.length) return null;
   const title = dayNumber ? t('day.gmapsOpen', { n: dayNumber }) : t('export.openInGmaps');
   const link = (href, label, key) => (
-    <a key={key} className="btn btn-secondary btn-sm itin-export-link" href={href} target="_blank" rel="noreferrer">
-      <span className="btn-icon" aria-hidden="true"><MapPinIcon size={16} /></span>
-      <span className="btn-label">{label}</span>
-    </a>
+    <Button key={key} href={href} external size="sm" className="itin-export-link" iconStart={<MapPinIcon size={16} />}>
+      {label}
+    </Button>
   );
   if (parts.length === 1) return <div className="dayx-gmaps">{link(parts[0].url, title)}</div>;
   return (
