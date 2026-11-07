@@ -1,9 +1,8 @@
-import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { LoadingBlock } from '../components/StateBlocks.jsx';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { stripDashes } from '../lib/format.js';
 import { countryName as localCountryName } from '../lib/countryName.js';
 import { needsCountry } from '../lib/favorites.js';
 import { railOrigin } from '../lib/railAlternative.js';
@@ -14,405 +13,73 @@ import { HeroPreload } from '../components/LayerPhoto.jsx';
 import { loadTrails, loadListedTrails, loadTrailsIndex, loadTopTrails } from '../lib/trails.js';
 import { trailHash } from '../lib/routeLinks.js';
 import { useTrailPhotoPool } from '../lib/trailPhotoPool.js';
-import {
-  loadBeachIndex, loadBeaches, loadListedBeaches, loadTopBeaches,
-} from '../lib/beaches.js';
-import {
-  beachRating,
-  BEACH_FACETS, applyBeachFacets, beachFacetCounts,
-} from '../lib/beachStory.js';
-import {
-  loadLakeIndex, loadLakes, loadListedLakes, loadTopLakes,
-} from '../lib/lakes.js';
-import {
-  lakeRating,
-  LAKE_FACETS, applyLakeFacets, lakeFacetCounts,
-} from '../lib/lakeStory.js';
-import {
-  loadMountainIndex, loadMountains, loadListedMountains, loadTopMountains,
-} from '../lib/mountains.js';
-import {
-  loadTripIndex, loadTrips, loadTopTrips, rankTrips,
-} from '../lib/trips.js';
-import { loadCyclingIndex, loadCycling, loadTopCycling } from '../lib/cycling.js';
-import {
-  cycleRating, routeTitle,
-  CYCLE_FACET_GROUPS, cycleMatchesFacets, cycleFacetCounts, isLocalNetworkRow,
-} from '../lib/cycleStory.js';
-import {
-  mountainRating,
-  MOUNTAIN_FACETS, applyMountainFacets, mountainFacetCounts,
-} from '../lib/mountainStory.js';
-import {
-  associateTrip, haversineKm, tripCentre, tripKindKey, tripThemes,
-  DISTANCE_BANDS, tripBand, trailRating,
-  ASCENT_BANDS, tripClimbBand, GRADES, tripGrade,
-  ROUTE_TYPES, tripRouteType, HIGHLIGHTS, tripHighlights,
-  SUITABILITY, tripSuitability, isListed,
-  tripSacBand, tripDurationBands, tripReachable,
-} from '../lib/trailCards.js';
-import { SAC_BANDS, DURATION_BANDS } from '../lib/routeEffort.js';
+import { loadMountains } from '../lib/mountains.js';
+import { loadTripIndex, loadTrips, loadTopTrips } from '../lib/trips.js';
+import { associateTrip, tripKindKey, tripThemes } from '../lib/trailCards.js';
 import NotYet from '../components/NotYet.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { geocodeAddress, reverseGeocode, geoLines } from '../lib/geocode.js';
 import { rankPlaces } from '../lib/placeSearch.js';
-import { bandBreak, scopeForRows } from '../lib/regions.js';
-import {
-  SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, SuitcaseIcon, BootIcon,
-  BeachIcon, MountainIcon, MapPinIcon, CrosshairIcon,
-  CityIcon, TownIcon, VillageIcon, AreaIcon, LoopIcon, LakeIcon, FilterIcon,
-  BikeIcon, ArrowLeftIcon, ListDayIcon, CheckIcon,
-} from '../components/Icons.jsx';
+import { scopeForRows } from '../lib/regions.js';
+import { SearchIcon, ChevronRightIcon, RouteIcon, SkylineIcon, MapPinIcon, CrosshairIcon, CityIcon, TownIcon, VillageIcon, AreaIcon, FilterIcon, ArrowLeftIcon, ListDayIcon, CheckIcon } from '../components/Icons.jsx';
 import { CountriesButton } from '../components/CountriesControl.jsx';
 import { JourneysSection } from './JourneysSection.jsx';
 import { loadAllJourneyCards, dropJourneyHash } from '../lib/journeys.js';
-import CreditFold from './CreditFold.jsx';
 import { useSettings, useTravelMonth } from '../components/SettingsLine.jsx';
 import { CoverageEmpty } from './CoverageEmpty.jsx';
 import { MICROSTATES, countryGeo, pointGeo } from '../lib/coverageEmpty.js';
 import { loadStubs } from '../lib/stubs.js';
 import { CardStrip } from './CardStrip.jsx';
-import {
-  PlaceCard, PlaceCardPhoto, PlaceCardNoPhoto, PlaceCardSkeletons,
-} from './PlaceCard.jsx';
-import { GRADE_KEY, placeLine, displayName, trailFigures } from '../lib/cardFillings.js';
-import { SectionOpening, SectionHead, Strip } from './SectionOpening.jsx';
-import { CountryGalleryCard } from './CountryGallery.jsx';
-import { countryKnownKey, countryPhotos } from '../lib/countryGallery.js';
+import { PlaceCard, PlaceCardPhoto, PlaceCardNoPhoto } from './PlaceCard.jsx';
+import { SectionOpening, SectionHead } from './SectionOpening.jsx';
+import { countryKnownKey } from '../lib/countryGallery.js';
 import { Button, Chip, Field, Segmented, Tile, TileGroup } from '../components/ui/index.js';
 import { createPortal } from 'react-dom';
 import { pickIcons, buildRails, photoOf, photosOf } from '../lib/openingScreen.js';
-import { okPhoto, firstOkImage } from '../lib/photoVeto.js';
 import { offeredStayTiers } from '../lib/runtime_pricing.js';
-import {
-  TripCard, CycleCard, CycleTourCard, BeachCard, LakeCard, MountainCard, ItinCard,
-} from './DestCards.jsx';
 import { ExploreCategories } from './ExploreCategories.jsx';
 import { EmptyResult } from './EmptyResult.jsx';
 import { OutdoorMap } from './OutdoorMap.jsx';
 import { WhereBar, FilterChipBar, SortPill } from './WhereBar.jsx';
 import { setDockKind, setDockResults, setDockHandlers } from './searchDockStore.js';
-import {
-  baseOfOutdoor, pointOfOutdoor, mapRowOf, regionsForLayer,
-} from '../lib/exploreLayers.js';
-import { loadRegionIndex, nearestPriced } from '../lib/regions.js';
-import { usePlaceRows } from '../hooks/usePlaceRows.js';
-import { isNational } from '../components/CostSummary.jsx';
+import { regionsForLayer } from '../lib/exploreLayers.js';
+import { loadRegionIndex } from '../lib/regions.js';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { browseQueryFrom } from '../lib/urlState.js';
-
-/**
- * The Destinations tab: the whole catalogue and every published trip as a
- * browsable section of its own, reachable from the bottom bar (mobile) and
- * the header tabs (desktop).
- *
- * Six categories share one search, one country filter and one sort row:
- *   General    every priced place as a photo card, and a country index of
- *              flag cards when nothing is filtered yet
- *   Trips      composed city days from the content lab
- *   Trails     drawn hikes from the content lab
- *   Beaches    the published beach layer (pipeline/beaches)
- *   Lakes      the published lake layer (pipeline/lakes): lakes, reservoirs,
- *              lagoons, tarns and crater lakes, each with a swimming verdict
- *   Mountains  the published mountain layer (pipeline/mountains): summits,
- *              volcanoes, ridges, sea cliffs and lowland high points, each
- *              with the way to the top on it. It used to be the
- *              mountain-flavoured slice of the published hikes, which meant
- *              the Mountains tab showed trails and never showed the
- *              Matterhorn.
- *
- * Trips are published one country at a time, so the four trip categories
- * browse country first: flag cards from the index until a country (or a
- * near-city search) is picked. Tapping any trip opens the TrailPage: the route
- * on a real map, what to expect, the exports, and live following.
- *
- * A hike now brings its own photograph and its own rating in the wire
- * (pipeline/trails/trail_images.py and rate.py); only a city day's picture and
- * every price still come from the catalogue join in lib/trailCards.js.
- *
- * Trails are the one category with no price, so the priced chrome stays off:
- * no priced-from origin, no stay tier, no price sort. What replaces it is the
- * chrome a walk actually needs, and only Trails shows it: length bands, a
- * loops-only chip, and rating/length/A-Z sorts.
- *
- * The search box answers two questions with one field. Typing filters the
- * catalogue as you go (local, instant) and offers the matching cities as
- * suggestions. Anything else, a village Carta does not price, a postcode, a
- * street and house number, is a location rather than a destination: Enter (or
- * the "search anywhere" row) geocodes it through Nominatim and the tab
- * switches to near-mode, listing the closest places and trips to that point
- * with the distance on every card. That is what makes "what can I reach from
- * my own front door" a question this tab can answer. The crosshair in the
- * field asks the browser the same question without the typing.
- */
-
-const PAGE = 36;
-const NEAR_MAX_ROWS = 80;
-
-/**
- * Remembered browse state (T384, brief V3-8, rule N10): the category, the
- * country and the near place of the last visit, per viewer, in this
- * browser. A convenience and nothing more: every read and write is in a
- * try/catch (a private window, blocked storage or a thumbnail capture can
- * all throw or come back empty), anything malformed is ignored, and the tab
- * is correct without it. A link that names a category, a country or a place
- * still wins, because those arrive through their own effects after this.
- */
-const MEMORY_KEY = 'carta.places.v1';
-// T593: the What and Where bar and the quick filter row, per outdoor tab.
-// What is one existing facet group (the tab's kinds); the quick row holds
-// the groups a reader reaches for first, in the reference's order.
-const WHAT_GROUP = {
-  trails: 'highlights', cycling: 'cycle-bike', beaches: 'beach-bestfor',
-  lakes: 'lake-doing', mountains: 'mtn-kind',
-};
-const QUICK_GROUPS = {
-  trails: ['grade', 'length', 'climb', 'shape'],
-  cycling: ['cycle-surface', 'cycle-length', 'cycle-climb'],
-  beaches: ['beach-water', 'beach-substrate', 'beach-facilities'],
-  lakes: ['lake-swim', 'lake-water', 'lake-setting'],
-  mountains: ['mtn-acc', 'mtn-diff', 'mtn-ele'],
-};
-/** The first point of a route's (Multi)LineString, [lon, lat], or null. */
-function lineStartOf(geometry) {
-  const c = geometry?.coordinates;
-  if (!Array.isArray(c) || !c.length) return null;
-  const p = geometry.type === 'MultiLineString' ? c[0]?.[0] : c[0];
-  return Array.isArray(p) && Number.isFinite(p[0]) && Number.isFinite(p[1]) ? p : null;
-}
-
-function readMemory() {
-  try {
-    const raw = window.localStorage.getItem(MEMORY_KEY);
-    const m = raw ? JSON.parse(raw) : null;
-    if (!m || typeof m !== 'object') return null;
-    const near = m.near && typeof m.near === 'object'
-      && typeof m.near.name === 'string'
-      && Number.isFinite(m.near.lat) && Number.isFinite(m.near.lon)
-      ? {
-        id: typeof m.near.id === 'string' ? m.near.id : null,
-        name: m.near.name,
-        sub: typeof m.near.sub === 'string' ? m.near.sub : '',
-        iso2: typeof m.near.iso2 === 'string' && /^[A-Z]{2}$/.test(m.near.iso2) ? m.near.iso2 : null,
-        lat: m.near.lat,
-        lon: m.near.lon,
-      }
-      : null;
-    return {
-      cat: typeof m.cat === 'string' ? m.cat : null,
-      country: typeof m.country === 'string' && /^[A-Z]{2}$/.test(m.country) ? m.country : '',
-      near,
-    };
-  } catch {
-    return null;
-  }
-}
-/** The section (dc), country (dn) and Where text (dq, T600) a link names,
- *  or nothing (T428). */
-function readUrlBrowse() {
-  try {
-    const p = new URLSearchParams(window.location.search);
-    const cat = p.get('dc');
-    const cc = (p.get('dn') || '').toUpperCase();
-    return { cat: cat || null, country: /^[A-Z]{2}$/.test(cc) ? cc : '', q: browseQueryFrom(window.location.search) };
-  } catch {
-    return { cat: null, country: '', q: '' };
-  }
-}
-function writeMemory(m) {
-  try { window.localStorage.setItem(MEMORY_KEY, JSON.stringify(m)); } catch { /* storage refused: nothing to keep */ }
-}
-
-// Lazy: the page imports maplibre-gl, which stays out of the main bundle.
-const StubPage = lazy(() => import('./StubPage.jsx').then((m) => ({ default: m.StubPage })));
-const TrailPage = lazy(() => import('./TrailPage.jsx').then((m) => ({ default: m.TrailPage })));
-// Lazy for symmetry, not for weight: the beach page carries no map, but it is
-// only ever reached by tapping a card, so it can arrive then.
-const BeachPage = lazy(() => import('./BeachPage.jsx').then((m) => ({ default: m.BeachPage })));
-const LakePage = lazy(() => import('./LakePage.jsx').then((m) => ({ default: m.LakePage })));
-const MountainPage = lazy(() => import('./MountainPage.jsx').then((m) => ({ default: m.MountainPage })));
-const CyclePage = lazy(() => import('./CyclePage.jsx').then((m) => ({ default: m.CyclePage })));
-const CycleFamilyPage = lazy(
-  () => import('./CyclePage.jsx').then((m) => ({ default: m.CycleFamilyPage })),
-);
-// The itinerary page mounts TripMap, and TripMap pulls in maplibre-gl.
-const TripPage = lazy(() => import('./TripPage.jsx').then((m) => ({ default: m.TripPage })));
-// The curated week's page: no map, but only ever reached by tapping a card.
-const JourneyPage = lazy(() => import('./JourneyPage.jsx').then((m) => ({ default: m.JourneyPage })));
-// The Trips overview card reuses the same TripMap, lazily for the same
-// reason: maplibre-gl stays out of the main bundle until a map is on screen.
-
-// Framing margins for the trips overview map, module-level so their identity
-// is stable: TripMap redraws every pin when `fitPadding` changes, and an
-// inline object would change on every keystroke in the search field.
-
-const norm = (s) => String(s || '')
-  .toLowerCase()
-  .normalize('NFD')
-  .replace(/[̀-ͯ]/g, '')
-  .replace(/ł/g, 'l'); // l-with-stroke does not decompose
-
-// How long the trip is, which is the first thing a traveller knows and the
-// last thing the catalogue could answer. 1 is the drawn one-day city walk from
-// the content lab; everything above it is a composed itinerary from
-// pipeline/trips. `null` is "any length".
-const TRIP_DAYS = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14];
-const TRIP_MAX_DAYS = 14;
-
-// How hard the trip works, and how big the places on it are. Both are things
-// the composer BUILT differently rather than labels over one set: relaxed and
-// packed are different routes, and so are icons and hidden.
-const TRIP_PACES = [
-  { key: 'relaxed', labelKey: 'trip.paceRelaxed' },
-  { key: 'balanced', labelKey: 'trip.paceBalanced' },
-  { key: 'packed', labelKey: 'trip.pacePacked' },
-];
-const TRIP_SCALES = [
-  { key: 'icons', labelKey: 'trip.scaleIcons' },
-  { key: 'hidden', labelKey: 'trip.scaleHidden' },
-];
-
-/* 'general' - the priced city catalogue - used to lead this rail. It was the
- * same browse surface Explore already is, one tab away, so the two disagreed
- * about which one was "the places list". Destinations is now the published,
- * hand-checked content (trips, trails, beaches, lakes, mountains, cycling) and
- * Explore is the catalogue. The code behind `cat === 'general'` is now
- * unreachable and is queued for deletion; it is left in place here so this
- * change is a one-line revert. */
-const CATS = [
-  { key: 'trips', Icon: SuitcaseIcon, labelKey: 'places.catTrips' },
-  { key: 'trails', Icon: BootIcon, labelKey: 'places.catTrails' },
-  { key: 'beaches', Icon: BeachIcon, labelKey: 'places.catBeaches' },
-  { key: 'lakes', Icon: LakeIcon, labelKey: 'places.catLakes' },
-  { key: 'mountains', Icon: MountainIcon, labelKey: 'places.catMountains' },
-  { key: 'cycling', Icon: BikeIcon, labelKey: 'places.catCycling' },
-];
+import { SourcesFold } from './destinations/DestTabParts.jsx';
+import { readMemory, readUrlBrowse, writeMemory } from './destinations/browseMemory.js';
+import { CATS, CYCLE_SORTS, PAGE, QUICK_GROUPS, SORTS, TRAIL_SORTS, TRIP_DAYS, WHAT_GROUP, norm } from './destinations/destTabConsts.js';
+import { BeachPage, CycleFamilyPage, CyclePage, JourneyPage, LakePage, MountainPage, StubPage, TrailPage, TripPage } from './destinations/lazyPages.js';
+import { useFacetGroups } from './destinations/useFacetGroups.js';
+import { useCycleLayer } from './destinations/useCycleLayer.js';
+import { useMountainLayer } from './destinations/useMountainLayer.js';
+import { useLakeLayer } from './destinations/useLakeLayer.js';
+import { useBeachLayer } from './destinations/useBeachLayer.js';
+import { useItineraryLayer } from './destinations/useItineraryLayer.js';
+import { useDestMapItems } from './destinations/useDestMapItems.js';
+import { useDescribeFacts } from './destinations/useDescribeFacts.js';
+import { useTrailLayer } from './destinations/useTrailLayer.js';
+import { TrailTripList } from './destinations/TrailTripList.jsx';
+import { CycleList } from './destinations/CycleList.jsx';
+import { ItineraryList } from './destinations/ItineraryList.jsx';
+import { MountainList } from './destinations/MountainList.jsx';
+import { LakeList } from './destinations/LakeList.jsx';
+import { BeachList } from './destinations/BeachList.jsx';
 
 
-/**
- * Chip filters for the three published layers, and the one shape all of them
- * share: a key, a label, and a predicate over one wire row.
- *
- * They are a model rather than markup because the same list has to render
- * twice, as the quick chip row under the toolbar and as the full set inside
- * the Filters sheet. A filter that exists in one of those and not the other
- * is the bug this shape prevents.
- *
- * Several chips selected means ALL of them hold, not any. "A volcano you can
- * walk up" is the question people actually ask; "a volcano or anything you
- * can walk up" is not one.
- */
-
-// Mountains have their own model, in lib/mountainStory.js: brief 05 asks for
-// seven filters rather than one row of chips, and the tests belong next to
-// the code that reads the wire. MOUNTAIN_FACETS is the same shape as the
-// lists below, grouped, with `toolbar` deciding which group is short enough
-// for the row under the search field.
-
-// Lakes have their own model too, in lib/lakeStory.js: brief 04 asks for
-// nine filters rather than one row of four chips, and the tests belong next
-// to the code that reads the wire. LAKE_FACETS is the same grouped shape as
-// MOUNTAIN_FACETS, and `toolbar` picks the group short enough for the row
-// under the search field (swimming, which is what a lake list is asked for
-// first).
-
-// Beaches keep their model in lib/beachStory.js too (BEACH_FACETS), the same
-// grouped shape as LAKE_FACETS and MOUNTAIN_FACETS. Brief 03 section 4 asked
-// for nine groups in place of the three chips that shipped, two of which read
-// zero in every scope, and for the rule those two chips broke: a chip whose
-// count is zero here is not rendered at all.
-
-const SORTS = [
-  { key: 'rating', labelKey: 'places.sortRating', defaultDir: -1 },
-  { key: 'price', labelKey: 'places.sortPrice', defaultDir: 1 },
-  { key: 'az', labelKey: 'places.sortAZ', defaultDir: 1 },
-];
-
-/**
- * Sorts for the Trails category. A hike has no price, so the priced sorts do
- * not apply, but it now has a rating (pipeline/trails/rate.py) and the one
- * number every walker checks first: how far.
- *
- * Rating leads and is the default, which is also the order the wire arrives
- * in, so the list a country opens on is that country's best walks.
- */
-const TRAIL_SORTS = [
-  { key: 'rating', labelKey: 'places.sortRating', defaultDir: -1 },
-  { key: 'distance', labelKey: 'trails.sortDistance', defaultDir: 1 },
-  { key: 'az', labelKey: 'places.sortAZ', defaultDir: 1 },
-];
-// The same three orderings for a cycle route, under the same labels.
-const CYCLE_SORTS = [
-  { key: 'rating', labelKey: 'places.sortRating', defaultDir: -1 },
-  { key: 'distance', labelKey: 'trails.sortDistance', defaultDir: 1 },
-  { key: 'az', labelKey: 'places.sortAZ', defaultDir: 1 },
-];
 
 
-/**
- * A layer that could not be LOADED, as opposed to one with nothing published.
- *
- * The distinction is the whole point: "nothing here matches" is a claim about
- * the catalogue and it was being made on the strength of a dropped request.
- * This says what actually happened and offers the way back, in the tone the
- * geolocation failure already uses: no blame, one button.
- */
-/**
- * Where everything on the section comes from, in one closed row at its end
- * (T428). The credit sentences used to sit under every list with a coverage
- * footer beside them; the owner asked for no text the traveller does not
- * need, and a licence still has to be honoured, so the words wait here: the
- * section's data credit, then every photograph on screen that is not a
- * place's own (the section's head, the country galleries), each with its
- * author, licence and file page.
- */
-const SECTION_CREDIT = {
-  trails: ['trails.credit'],
-  beaches: ['beach.credit'],
-  lakes: ['lake.credit'],
-  mountains: ['mtn.credit'],
-  cycling: ['cycle.sourceNote', 'credit.licence.cycle'],
-};
 
-function PhotoCredit({ p }) {
-  return (
-    <li>
-      {p.place}: <a href={p.page} target="_blank" rel="noreferrer">{p.author}</a>, {p.licence}
-    </li>
-  );
-}
 
-function SourcesFold({ cat, isComposedTrips, sectionHead, countries, t }) {
-  const keys = cat === 'trips'
-    ? [isComposedTrips ? 'trip.credit' : 'journey.credit']
-    : (SECTION_CREDIT[cat] || []);
-  const photos = [];
-  if (sectionHead?.photo) photos.push(sectionHead.photo);
-  for (const cc of countries || []) photos.push(...countryPhotos(cc));
-  if (!keys.length && !photos.length) return null;
-  return (
-    <div className="dtab-sources">
-      <CreditFold t={t} licenceKeys={keys}>
-        {photos.length > 0 && (
-          <>
-            <p className="dtab-sources-head">{t('dtab.photoCredits')}</p>
-            <ul className="dtab-sources-list">
-              {photos.map((p) => <PhotoCredit key={p.u} p={p} />)}
-            </ul>
-          </>
-        )}
-      </CreditFold>
-    </div>
-  );
-}
 
-function LayerError({ onRetry, t, msg = 'layer.loadFailed' }) {
-  return (
-    <div className="places-empty places-loaderr" role="status">
-      <ErrorBlock message={t(msg)} onRetry={onRetry} retryLabel={t('layer.retry')} />
-    </div>
-  );
-}
+
+
+
+
+
+
+
+
 
 export function DestinationsTab({
   data, pricedAll, availableCountries = [], onSelectDest,
@@ -1225,134 +892,10 @@ export function DestinationsTab({
     }
   }, [wantedTrail, tripCards, countryTrips]);
 
-  // The walk-shape chips as one test on a trip (T600: the Europe-wide map
-  // uses it too). A band set is a union: tapping two chips asks for either
-  // length, which is how somebody with "an afternoon or a full day" thinks.
-  const trailPass = useCallback((tr) => {
-    if (bands.length && !bands.includes(tripBand(tr))) return false;
-    if (grades.length && !grades.includes(tripGrade(tr))) return false;
-    if (climbs.length && !climbs.includes(tripClimbBand(tr))) return false;
-    if (shapes.length && !shapes.includes(tripRouteType(tr))) return false;
-    if (hls.length) {
-      const on = tripHighlights(tr);
-      if (!hls.some((k) => on.includes(k))) return false;
-    }
-    if (suits.length) {
-      const on = tripSuitability(tr);
-      if (!suits.some((k) => on.includes(k))) return false;
-    }
-    if (sacs.length && !sacs.includes(tripSacBand(tr))) return false;
-    if (durs.length && !durs.some((k) => tripDurationBands(tr).includes(k))) return false;
-    if (reachOnly && !tripReachable(tr)) return false;
-    if (loopsOnly && !tr.is_loop) return false;
-    return true;
-  }, [bands, grades, climbs, shapes, hls, suits, loopsOnly, sacs, durs, reachOnly]);
-
-  const tripRows = useMemo(() => {
-    if (!tripCards) return null;
-    let rows = tripCards.filter((c) => (
-      cat === 'trips' ? c.tr.category === 'citytrip'
-        : cat === 'trails' ? c.tr.category !== 'citytrip'
-          : cat === 'beaches' ? c.themes.has('beach')
-            : c.themes.has('mountains')
-    ));
-    if (q) rows = rows.filter((c) => norm(c.tr.name).includes(q));
-    // Walk-shape filters, Trails only (trailPass above).
-    if (cat === 'trails') rows = rows.filter((c) => trailPass(c.tr));
-    if (nearPlace) {
-      return rows
-        .map((c) => {
-          const ctr = tripCentre(c.tr);
-          return ctr ? { c, km: haversineKm(nearPlace.lat, nearPlace.lon, ctr.lat, ctr.lon) } : null;
-        })
-        .filter(Boolean)
-        .sort((a, b) => a.km - b.km)
-        .slice(0, NEAR_MAX_ROWS);
-    }
-    const out = rows.map((c) => ({ c, km: null }));
-    // Trails have their own sorts, because they have no price. The wire
-    // already arrives in rating order, so the default costs nothing and the
-    // list a country opens on is that country's best walks.
-    if (cat === 'trails') {
-      const d = trailSort.dir;
-      if (trailSort.key === 'distance') {
-        out.sort((a, b) => d * ((a.c.tr.distance_m ?? Infinity) - (b.c.tr.distance_m ?? Infinity)));
-      } else if (trailSort.key === 'az') {
-        out.sort((a, b) => d * a.c.tr.name.localeCompare(b.c.tr.name));
-      } else {
-        out.sort((a, b) => d * ((a.c.tr.v5?.score ?? -1) - (b.c.tr.v5?.score ?? -1)));
-      }
-      return out;
-    }
-    const dir = sort.dir;
-    if (sort.key === 'rating') {
-      out.sort((a, b) => dir * ((a.c.assoc.dest?.rating?.score ?? -1) - (b.c.assoc.dest?.rating?.score ?? -1)));
-    } else if (sort.key === 'price') {
-      const v = (c) => c.price?.pp ?? Infinity;
-      out.sort((a, b) => dir * (v(a.c) - v(b.c)));
-    } else {
-      out.sort((a, b) => dir * a.c.tr.name.localeCompare(b.c.tr.name));
-    }
-    return out;
-  }, [tripCards, cat, q, nearPlace, sort, trailSort, trailPass]);
-
-  // How many walks each length band holds in this country, and how many of
-  // them loop, so a chip can carry its own count and grey itself out instead
-  // of leading to an empty list.
-  //
-  // Counted BEFORE the band and loop filters are applied (but after the search
-  // text), which is what lets the counts stay still while chips are tapped. A
-  // count that changed every tap would be describing the filter rather than
-  // the country.
-  const trailFacets = useMemo(() => {
-    if (cat !== 'trails' || !tripCards) return null;
-    const rows = tripCards.filter((c) => c.tr.category !== 'citytrip'
-      && (!q || norm(c.tr.name).includes(q)));
-    const tally = (defs) => new Map(defs.map((d) => [d.key, 0]));
-    const bump = (map, key) => {
-      if (key != null && map.has(key)) map.set(key, map.get(key) + 1);
-    };
-    const byBand = tally(DISTANCE_BANDS);
-    const byGrade = tally(GRADES);
-    const byClimb = tally(ASCENT_BANDS);
-    const byShape = tally(ROUTE_TYPES);
-    const byHl = tally(HIGHLIGHTS);
-    const bySuit = tally(SUITABILITY);
-    const bySac = tally(SAC_BANDS);
-    const byDur = tally(DURATION_BANDS);
-    let reach = 0;
-    let loops = 0;
-    let listed = 0;
-    for (const c of rows) {
-      bump(byBand, tripBand(c.tr));
-      bump(byGrade, tripGrade(c.tr));
-      bump(byClimb, tripClimbBand(c.tr));
-      bump(byShape, tripRouteType(c.tr));
-      for (const k of new Set(tripHighlights(c.tr))) bump(byHl, k);
-      for (const k of new Set(tripSuitability(c.tr))) bump(bySuit, k);
-      bump(bySac, tripSacBand(c.tr));
-      for (const k of tripDurationBands(c.tr)) bump(byDur, k);
-      if (tripReachable(c.tr)) reach += 1;
-      if (c.tr.is_loop) loops += 1;
-      if (isListed(c.tr)) listed += 1;
-    }
-    return { byBand, byGrade, byClimb, byShape, byHl, bySuit, bySac, byDur, reach,
-      loops, listed, total: rows.length };
-  }, [cat, tripCards, q]);
-
-  // The country index for trip categories: published countries as flag cards.
-  const tripCountries = useMemo(() => {
-    if (!isTripCat || !trailsIndex) return [];
-    return trailsIndex.countries
-      .map((c) => {
-        const n = cat === 'trips' ? (c.counts?.citytrip || 0)
-          : cat === 'trails' ? (c.counts?.hike || 0)
-            : c.n_trips;
-        return { cc: c.country, name: countryName(c.country), n };
-      })
-      .filter((c) => c.n > 0)
-      .sort((a, b) => a.name.localeCompare(b.name, lang));
-  }, [isTripCat, trailsIndex, cat, countryName, lang]);
+  const { trailPass, tripRows, trailFacets, tripCountries } = useTrailLayer({
+    bands, cat, climbs, countryName, durs, grades, hls, isTripCat, lang, loopsOnly, nearPlace,
+    q, reachOnly, sacs, shapes, sort, suits, trailSort, trailsIndex, tripCards,
+  });
 
 
   // ── Trips: the composed itineraries (pipeline/trips) ──────────────────
@@ -1400,545 +943,41 @@ export function DestinationsTab({
     // clearing openTrip, so the hand-off still runs once per link.
   }, [openTrip, onOpenTripConsumed]);
 
-  const itinRows = useMemo(() => {
-    if (!isItinCat) return null;
-    const source = itinCountry ? itinCountryRows : itinTop;
-    if (!source) return null;
-    let rows = rankTrips(source, {
-      days: itinDays, pace: itinPace, scale: itinScale,
-    });
-    if (q) {
-      rows = rows.filter((tr) => norm(tr.cities.map((c) => c.city).join(' ')).includes(q)
-        || tr.cities.some((c) => norm(c.city).includes(q)));
-    }
-    if (nearPlace) {
-      return rows
-        .map((tr) => ({ tr, km: haversineKm(nearPlace.lat, nearPlace.lon, tr.lat, tr.lon) }))
-        .filter((r) => Number.isFinite(r.km))
-        .sort((a, b) => a.km - b.km)
-        .slice(0, NEAR_MAX_ROWS);
-    }
-    return rows.map((tr) => ({ tr, km: null }));
-  }, [isItinCat, itinCountry, itinCountryRows, itinTop, itinDays, itinPace,
-    itinScale, q, nearPlace]);
+  const { itinRows, itinFacets } = useItineraryLayer({
+    isItinCat, itinCountry, itinCountryRows, itinDays, itinPace, itinScale, itinTop, nearPlace,
+    q,
+  });
 
-  // Which day counts can actually be answered here, so a length nobody
-  // composed is greyed out rather than offered and returning nothing.
-  const itinFacets = useMemo(() => {
-    const pace = new Map();
-    const scale = new Map();
-    const source = itinCountry ? itinCountryRows : itinTop;
-    for (const tr of source || []) {
-      if (itinDays && !rankTrips([tr], { days: itinDays }).length) continue;
-      pace.set(tr.pace, (pace.get(tr.pace) || 0) + 1);
-      scale.set(tr.scale, (scale.get(tr.scale) || 0) + 1);
-    }
-    return { pace, scale };
-  }, [itinCountry, itinCountryRows, itinTop, itinDays]);
+  const { wantBeachCountry, beachRows, beachCounts } = useBeachLayer({
+    beachFacets, beachIndex, country, countryBeaches, countryName, failLayer, isBeachCat,
+    layerError, nearPlace, onOpenBeachConsumed, openBeach, q, retryTick, setBeachIndex,
+    setBeachesLoading, setCat, setCountryBeaches, setListedBeaches, setNearPlace, setPageBeach,
+    setQuery, setTopBeaches, topBeaches,
+  });
 
-  // ── The trips overview map: every listed trip as a pin ────────────────
-  //
-  // Built from the SAME filtered rows the cards below render, so the country
-  // filter, the day rail, the pace chips and a near-search all filter the
-  // ── Beaches: the published beach layer ───────────────────────────────
+  const { wantLakeCountry, lakeRows, lakeCounts, absentLakeCountry } = useLakeLayer({
+    country, countryLakes, countryName, failLayer, isLakeCat, lakeFacets, lakeIndex, layerError,
+    nearPlace, onOpenLakeConsumed, openLake, q, retryTick, setCat, setCountryLakes,
+    setLakeIndex, setLakesLoading, setListedLakes, setNearPlace, setPageLake, setQuery,
+    setTopLakes, topLakes,
+  });
 
-  // Deliberately NOT guarded on beachesLoading, and beachesLoading is
-  // deliberately not a dependency. Setting it re-renders, a re-render with it
-  // in the dependency list re-runs the effect, the cleanup marks the first
-  // fetch stale, and the reply that arrives is thrown away by a run that has
-  // already returned early: the list would sit on its loading dots forever.
-  // `topBeaches` is the only thing that says the work is done.
-  useEffect(() => {
-    if (!isBeachCat || topBeaches || layerError.beaches) return undefined;
-    let live = true;
-    setBeachesLoading(true);
-    Promise.all([loadBeachIndex(), loadTopBeaches()]).then(([idx, top]) => {
-      if (!live) return;
-      setBeachIndex(idx);
-      setTopBeaches(top || []);
-      setBeachesLoading(false);
-    }).catch((e) => {
-      if (!live) return;
-      setBeachesLoading(false);
-      failLayer('beaches')(e);
-    });
-    return () => { live = false; };
-  }, [isBeachCat, topBeaches, layerError.beaches, retryTick, failLayer]);
+  const { wantMountainCountry, mountainRows, mtnCounts } = useMountainLayer({
+    country, countryMountains, countryName, failLayer, isMountainCat, layerError, mountainIndex,
+    mtnFacets, nearPlace, q, retryTick, setCountryMountains, setListedMountains,
+    setMountainIndex, setMountainsLoading, setTopMountains, topMountains,
+  });
 
-  // Which countries have beaches at all. The tab never offers one that does
-  // not: the export gate decides, so Andorra cannot appear here by having a
-  // trip published in it, which is exactly how it used to.
-  const beachCountries = useMemo(() => {
-    const set = new Set((beachIndex?.countries || []).map((c) => c.cc));
-    return set;
-  }, [beachIndex]);
-
-  // The country a typed word points at, so "croatia" or "HR" widens the list
-  // from the capped European ranking to all 120 Croatian beaches. This is what
-  // replaces the country dropdown on this tab.
-  const queryCountry = useMemo(() => {
-    if (!isBeachCat || !q || q.length < 2) return null;
-    for (const cc of beachCountries) {
-      if (norm(cc) === q || norm(countryName(cc)).startsWith(q)) return cc;
-    }
-    return null;
-  }, [isBeachCat, q, beachCountries, countryName]);
-
-  // Full country files are pulled in only when something asks for one: the
-  // country picked in the toolbar, one named in the search, or the country a
-  // searched address sits in.
-  const wantBeachCountry = (country && beachCountries.has(country) ? country : null)
-    || queryCountry
-    || (nearPlace && beachCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null);
-
-  useEffect(() => {
-    if (!isBeachCat || !wantBeachCountry || countryBeaches[wantBeachCountry]
-      || layerError.beaches) return undefined;
-    let live = true;
-    Promise.all([
-      loadBeaches(wantBeachCountry),
-      loadListedBeaches(wantBeachCountry),
-    ]).then(([rows, listed]) => {
-      if (!live) return;
-      setCountryBeaches((cur) => ({ ...cur, [wantBeachCountry]: rows || [] }));
-      setListedBeaches((cur) => ({ ...cur, [wantBeachCountry]: listed || [] }));
-    }).catch((e) => { if (live) failLayer('beaches')(e); });
-    return () => { live = false; };
-  }, [isBeachCat, wantBeachCountry, countryBeaches, layerError.beaches, retryTick, failLayer]);
-
-  const beachRows = useMemo(() => {
-    if (!isBeachCat || !topBeaches) return null;
-    // One country asked for wins outright: its own file is the complete list
-    // for that country, where the European ranking only ever held its best.
-    const loaded = wantBeachCountry ? countryBeaches[wantBeachCountry] : null;
-    let pool = loaded || topBeaches;
-    // Measuring from an address is the one case where the country file is not
-    // the whole answer: a beach 30 km away can be over a border, and "nearest
-    // beaches to here" that stops at customs is a worse answer than a longer
-    // list. The European ranking is folded in, deduped by id.
-    if (loaded && nearPlace) {
-      const have = new Set(loaded.map((b) => b.id));
-      pool = [...loaded, ...topBeaches.filter((b) => !have.has(b.id))];
-    }
-    let rows = applyBeachFacets(pool, beachFacets);
-    if (q && !queryCountry) {
-      rows = rows.filter((b) => norm(b.name).includes(q)
-        || norm(b.nameLocal || '').includes(q)
-        || norm(b.region || '').includes(q)
-        || norm(countryName(b.cc)).includes(q));
-    }
-    if (nearPlace) {
-      return rows
-        .map((b) => ({ b, km: haversineKm(nearPlace.lat, nearPlace.lon, b.lat, b.lon) }))
-        .sort((x, y) => x.km - y.km)
-        .slice(0, NEAR_MAX_ROWS);
-    }
-    return rows.map((b) => ({ b, km: null }));
-  }, [isBeachCat, topBeaches, countryBeaches, wantBeachCountry, q, queryCountry,
-    nearPlace, countryName, beachFacets]);
-
-  const beachCounts = useMemo(() => beachFacetCounts(
-    (wantBeachCountry ? countryBeaches[wantBeachCountry] : null) || topBeaches,
-    beachFacets,
-  ), [topBeaches, countryBeaches, wantBeachCountry, beachFacets]);
-
-  // A shared #beach= link, opened once its country file has landed.
-  useEffect(() => {
-    if (!openBeach) return;
-    setCat('beaches');
-    setQuery('');
-    setNearPlace(null);
-    loadBeaches(openBeach.cc).then((rows) => {
-      const hit = (rows || []).find((b) => b.id === openBeach.id);
-      if (hit) setPageBeach(hit);
-      setCountryBeaches((cur) => ({ ...cur, [openBeach.cc]: rows || [] }));
-    }).catch(failLayer('beaches'));
-    onOpenBeachConsumed?.();
-  }, [openBeach, onOpenBeachConsumed, failLayer]);
-
-  // ── Lakes: the published lake layer ──────────────────────────────────
-  //
-  // The same three-artifact shape as beaches above, and the same trap avoided
-  // the same way: `topLakes` is what says the work is done, never the loading
-  // flag, because putting the flag in the dependency list makes the effect
-  // re-run on its own state change and throw away its own reply.
-  useEffect(() => {
-    if (!isLakeCat || topLakes || layerError.lakes) return undefined;
-    let live = true;
-    setLakesLoading(true);
-    Promise.all([loadLakeIndex(), loadTopLakes()]).then(([idx, top]) => {
-      if (!live) return;
-      setLakeIndex(idx);
-      setTopLakes(top || []);
-      setLakesLoading(false);
-    }).catch((e) => {
-      if (!live) return;
-      setLakesLoading(false);
-      failLayer('lakes')(e);
-    });
-    return () => { live = false; };
-  }, [isLakeCat, topLakes, layerError.lakes, retryTick, failLayer]);
-
-  const lakeCountries = useMemo(
-    () => new Set((lakeIndex?.countries || []).map((c) => c.cc)),
-    [lakeIndex],
-  );
-
-  const queryLakeCountry = useMemo(() => {
-    if (!isLakeCat || !q || q.length < 2) return null;
-    for (const cc of lakeCountries) {
-      if (norm(cc) === q || norm(countryName(cc)).startsWith(q)) return cc;
-    }
-    return null;
-  }, [isLakeCat, q, lakeCountries, countryName]);
-
-  const wantLakeCountry = (country && lakeCountries.has(country) ? country : null)
-    || queryLakeCountry
-    || (nearPlace && lakeCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null);
-
-  useEffect(() => {
-    if (!isLakeCat || !wantLakeCountry || countryLakes[wantLakeCountry]
-      || layerError.lakes) return undefined;
-    let live = true;
-    Promise.all([
-      loadLakes(wantLakeCountry),
-      loadListedLakes(wantLakeCountry),
-    ]).then(([rows, listed]) => {
-      if (!live) return;
-      setCountryLakes((cur) => ({ ...cur, [wantLakeCountry]: rows || [] }));
-      setListedLakes((cur) => ({ ...cur, [wantLakeCountry]: listed || [] }));
-    }).catch((e) => { if (live) failLayer('lakes')(e); });
-    return () => { live = false; };
-  }, [isLakeCat, wantLakeCountry, countryLakes, layerError.lakes, retryTick, failLayer]);
-
-  const lakeRows = useMemo(() => {
-    if (!isLakeCat || !topLakes) return null;
-    const loaded = wantLakeCountry ? countryLakes[wantLakeCountry] : null;
-    let pool = loaded || topLakes;
-    // Measuring from an address is the one case where the country file is not
-    // the whole answer: Lake Constance is 20 km from a German address and sits
-    // in three countries, and a nearest-first list that stops at customs is a
-    // worse answer than a longer one.
-    if (loaded && nearPlace) {
-      const have = new Set(loaded.map((l) => l.id));
-      pool = [...loaded, ...topLakes.filter((l) => !have.has(l.id))];
-    }
-    let rows = applyLakeFacets(pool, lakeFacets);
-    if (q && !queryLakeCountry) {
-      rows = rows.filter((l) => norm(l.name).includes(q)
-        || norm(l.nameLocal || '').includes(q)
-        || norm(l.region || '').includes(q)
-        || norm(countryName(l.cc)).includes(q));
-    }
-    if (nearPlace) {
-      return rows
-        .map((l) => ({ b: l, km: haversineKm(nearPlace.lat, nearPlace.lon, l.lat, l.lon) }))
-        .sort((x, y) => x.km - y.km)
-        .slice(0, NEAR_MAX_ROWS);
-    }
-    return rows.map((l) => ({ b: l, km: null }));
-  }, [isLakeCat, topLakes, countryLakes, wantLakeCountry, q, queryLakeCountry,
-    nearPlace, countryName, lakeFacets]);
-
-  const lakeCounts = useMemo(() => lakeFacetCounts(
-    (wantLakeCountry ? countryLakes[wantLakeCountry] : null) || topLakes,
-    lakeFacets,
-  ), [topLakes, countryLakes, wantLakeCountry, lakeFacets]);
-
-  // A country the traveller typed that has NO published water. `absent` is
-  // written by the export gate and carries the difference between "nothing
-  // cleared the gate here" and "there is no inland water in this country",
-  // which is a real distinction and the reason the empty state does not just
-  // say "no match". Monaco is the only country in the second category.
-  const absentLakeCountry = useMemo(() => {
-    if (!isLakeCat || !q || q.length < 2 || !lakeIndex) return null;
-    for (const cc of Object.keys(lakeIndex.absent || {})) {
-      if (norm(cc) === q || norm(countryName(cc)).startsWith(q)) return cc;
-    }
-    return null;
-  }, [isLakeCat, q, lakeIndex, countryName]);
-
-  // A shared #lake= link, opened once its country file has landed.
-  useEffect(() => {
-    if (!openLake) return;
-    setCat('lakes');
-    setQuery('');
-    setNearPlace(null);
-    loadLakes(openLake.cc).then((rows) => {
-      const hit = (rows || []).find((l) => l.id === openLake.id);
-      if (hit) setPageLake(hit);
-      setCountryLakes((cur) => ({ ...cur, [openLake.cc]: rows || [] }));
-    }).catch(failLayer('lakes'));
-    onOpenLakeConsumed?.();
-  }, [openLake, onOpenLakeConsumed, failLayer]);
-
-  // ── Mountains: the published mountain layer ──────────────────────────
-  //
-  // Third layer, third time this shape, and the same trap avoided the same
-  // way: `topMountains` is what says the work is done, never the loading flag.
-  useEffect(() => {
-    if (!isMountainCat || topMountains || layerError.mountains) return undefined;
-    let live = true;
-    setMountainsLoading(true);
-    Promise.all([loadMountainIndex(), loadTopMountains()]).then(([idx, top]) => {
-      if (!live) return;
-      setMountainIndex(idx);
-      setTopMountains(top || []);
-      setMountainsLoading(false);
-    }).catch((e) => {
-      if (!live) return;
-      setMountainsLoading(false);
-      failLayer('mountains')(e);
-    });
-    return () => { live = false; };
-  }, [isMountainCat, topMountains, layerError.mountains, retryTick, failLayer]);
-
-  const mountainCountries = useMemo(
-    () => new Set((mountainIndex?.countries || []).map((c) => c.cc)),
-    [mountainIndex],
-  );
-
-  const queryMountainCountry = useMemo(() => {
-    if (!isMountainCat || !q || q.length < 2) return null;
-    for (const cc of mountainCountries) {
-      if (norm(cc) === q || norm(countryName(cc)).startsWith(q)) return cc;
-    }
-    return null;
-  }, [isMountainCat, q, mountainCountries, countryName]);
-
-  const wantMountainCountry = (country && mountainCountries.has(country) ? country : null)
-    || queryMountainCountry
-    || (nearPlace && mountainCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null);
-
-  useEffect(() => {
-    if (!isMountainCat || !wantMountainCountry
-      || countryMountains[wantMountainCountry] || layerError.mountains) return undefined;
-    let live = true;
-    Promise.all([
-      loadMountains(wantMountainCountry),
-      loadListedMountains(wantMountainCountry),
-    ]).then(([rows, listed]) => {
-      if (!live) return;
-      setCountryMountains((cur) => ({ ...cur, [wantMountainCountry]: rows || [] }));
-      setListedMountains((cur) => ({ ...cur, [wantMountainCountry]: listed || [] }));
-    }).catch((e) => { if (live) failLayer('mountains')(e); });
-    return () => { live = false; };
-  }, [isMountainCat, wantMountainCountry, countryMountains, layerError.mountains,
-    retryTick, failLayer]);
-
-  const mountainRows = useMemo(() => {
-    if (!isMountainCat || !topMountains) return null;
-    const loaded = wantMountainCountry ? countryMountains[wantMountainCountry] : null;
-    let pool = loaded || topMountains;
-    // Measuring from an address is the one case where the country file is not
-    // the whole answer: a border summit sits in two countries and a
-    // nearest-first list that stops at customs is a worse answer.
-    if (loaded && nearPlace) {
-      const have = new Set(loaded.map((m) => m.id));
-      pool = [...loaded, ...topMountains.filter((m) => !have.has(m.id))];
-    }
-    let rows = applyMountainFacets(pool, mtnFacets);
-    if (q && !queryMountainCountry) {
-      rows = rows.filter((m) => norm(m.name).includes(q)
-        || norm(m.nameLocal || '').includes(q)
-        || norm(m.range || '').includes(q)
-        || norm(countryName(m.cc)).includes(q));
-    }
-    if (nearPlace) {
-      return rows
-        .map((m) => ({ b: m, km: haversineKm(nearPlace.lat, nearPlace.lon, m.lat, m.lon) }))
-        .sort((x, y) => x.km - y.km)
-        .slice(0, NEAR_MAX_ROWS);
-    }
-    return rows.map((m) => ({ b: m, km: null }));
-  }, [isMountainCat, topMountains, countryMountains, wantMountainCountry, q,
-    queryMountainCountry, nearPlace, countryName, mtnFacets]);
-
-  const mtnCounts = useMemo(() => mountainFacetCounts(
-    (wantMountainCountry ? countryMountains[wantMountainCountry] : null) || topMountains,
-    mtnFacets,
-  ), [topMountains, countryMountains, wantMountainCountry, mtnFacets]);
-
-  // ---------------------------------------------------------------- cycling
-  //
-  // Two lists, never one. `routes` are rated and carry a score; `listed` rows
-  // are verified to exist and correctly named but have NO score key at all,
-  // so they live under their own heading and a screen has to opt in to
-  // showing them. `tours` are the composed multi-day plans, which are the
-  // reason the layer exists: nothing about them is generated when a reader
-  // asks, and each one passed ten hard checks before it was published.
-  const cycleCountries = useMemo(
-    () => new Set((cycleIndex?.countries || []).map((c) => c.country)),
-    [cycleIndex],
-  );
-
-  // T600: Where text that names a country Trails or Cycling publishes, as
-  // that country's code: the exact name or code, else (3 letters on) the
-  // one country whose name starts with it. Null for any other text.
-  const countryOfText = useCallback((text) => {
-    const n = norm(text).trim();
-    if (n.length < 2) return null;
-    const codes = cat === 'trails' ? (trailsIndex?.countries || []).map((c) => c.country)
-      : cat === 'cycling' ? [...cycleCountries] : [];
-    const exact = codes.find((c) => norm(c) === n || norm(countryName(c)) === n);
-    if (exact || n.length < 3) return exact || null;
-    const starts = codes.filter((c) => norm(countryName(c)).startsWith(n));
-    return starts.length === 1 ? starts[0] : null;
-  }, [cat, trailsIndex, cycleCountries, countryName]);
-  // Handed-over Where text (a link, Explore's overview) read as a country
-  // once the index that says which countries exist is in.
-  useEffect(() => {
-    if (!pendingWhere) return;
-    if (cat !== 'trails' && cat !== 'cycling') { setPendingWhere(''); return; }
-    if (cat === 'trails' ? !trailsIndex : !cycleIndex) return;
-    const cc = countryOfText(pendingWhere);
-    if (cc) {
-      setCountry(cc);
-      setNearPlace(null);
-      setQuery('');
-      setDebouncedQuery('');
-    }
-    setPendingWhere('');
-  }, [pendingWhere, cat, trailsIndex, cycleIndex, countryOfText]);
-  // End check (T600): the hand-off from Explore raced the category change
-  // and left "Italy" filtering the walks by name. Whatever the path, a Where
-  // text that IS a country's name on Trails or Cycling picks that country.
-  useEffect(() => {
-    if ((cat !== 'trails' && cat !== 'cycling') || !debouncedQuery) return;
-    if (cat === 'trails' ? !trailsIndex : !cycleIndex) return;
-    const n = norm(debouncedQuery).trim();
-    const cc = countryOfText(debouncedQuery);
-    if (!cc || (norm(countryName(cc)) !== n && norm(cc) !== n)) return;
-    if (country && country !== cc) return;
-    setCountry(cc);
-    setNearPlace(null);
-    setQuery('');
-    setDebouncedQuery('');
-  }, [cat, country, debouncedQuery, trailsIndex, cycleIndex, countryOfText, countryName]);
-
-  const queryCycleCountry = useMemo(() => {
-    if (!isCycleCat || !q || q.length < 2) return null;
-    for (const cc of cycleCountries) {
-      if (norm(cc) === q || norm(countryName(cc)).startsWith(q)) return cc;
-    }
-    return null;
-  }, [isCycleCat, q, cycleCountries, countryName]);
-
-  const wantCycleCountry = (country && cycleCountries.has(country) ? country : null)
-    || queryCycleCountry
-    || (nearPlace && cycleCountries.has(nearPlace.iso2) ? nearPlace.iso2 : null)
-    // No country chosen means the Europe-wide top file, never the first
-    // country in the index: that default opened the tab on one Andorran
-    // route under a picker that said "All countries".
-    || null;
-
-  // Stable per-card handler. CycleCard already hands its own row back to
-  // onOpen, so the inline arrow each card used to get bought nothing and
-  // defeated the memo on every keystroke.
-  const openCycleRoute = React.useCallback((r) => {
-    setPageCycle({ routeId: r.id, country: r.cc || wantCycleCountry });
-  }, [wantCycleCountry]);
-  const openCycleTour = React.useCallback((tr) => {
-    setPageCycle({ tourSlug: tr.slug, country: tr.cc || wantCycleCountry });
-  }, [wantCycleCountry]);
-
-  useEffect(() => {
-    if (!isCycleCat || cycleIndex || layerError.cycling) return undefined;
-    let live = true;
-    loadCyclingIndex().then((idx) => { if (live) setCycleIndex(idx); })
-      .catch((e) => { if (live) failLayer('cycling')(e); });
-    return () => { live = false; };
-  }, [isCycleCat, cycleIndex, layerError.cycling, retryTick, failLayer]);
-
-  useEffect(() => {
-    if (!isCycleCat || wantCycleCountry || cycleTop || layerError.cycling) return undefined;
-    let live = true;
-    setCyclingLoading(true);
-    loadTopCycling().then((top) => {
-      if (!live) return;
-      setCycleTop(top || { routes: [], listed: [], tours: [] });
-      setCyclingLoading(false);
-    }).catch((e) => {
-      if (!live) return;
-      setCyclingLoading(false);
-      failLayer('cycling')(e);
-    });
-    return () => { live = false; };
-  }, [isCycleCat, wantCycleCountry, cycleTop, layerError.cycling, retryTick, failLayer]);
-
-  useEffect(() => {
-    if (!isCycleCat || !wantCycleCountry || countryCycling[wantCycleCountry]
-      || layerError.cycling) {
-      return undefined;
-    }
-    let live = true;
-    setCyclingLoading(true);
-    loadCycling(wantCycleCountry).then((bundle) => {
-      if (!live) return;
-      setCountryCycling((cur) => ({ ...cur, [wantCycleCountry]: bundle || null }));
-      setCyclingLoading(false);
-    }).catch((e) => {
-      if (!live) return;
-      setCyclingLoading(false);
-      failLayer('cycling')(e);
-    });
-    return () => { live = false; };
-  }, [isCycleCat, wantCycleCountry, countryCycling, layerError.cycling, retryTick, failLayer]);
-
-  const cycleBundle = !isCycleCat ? null
-    : wantCycleCountry ? countryCycling[wantCycleCountry] : cycleTop;
-
-  // Every row in scope before the facets, for the chip counts: a count is
-  // what the chip would leave on screen, so it is taken over the rows the
-  // query leaves and nothing else.
-  const cycleScope = useMemo(() => {
-    if (!isCycleCat || !cycleBundle) return [];
-    const inQuery = (r) => !q || queryCycleCountry
-      || norm(r.name || '').includes(q) || norm(r.ref || '').includes(q);
-    return [...(cycleBundle.routes || []), ...(cycleBundle.listed || [])].filter(inQuery);
-  }, [isCycleCat, cycleBundle, q, queryCycleCountry]);
-  const cycleCounts = useMemo(() => cycleFacetCounts(cycleScope), [cycleScope]);
-
-  const cycleRows = useMemo(() => {
-    if (!isCycleCat || !cycleBundle) return null;
-    const match = (r) => (!q || queryCycleCountry
-      || norm(r.name || '').includes(q) || norm(r.ref || '').includes(q))
-      && cycleMatchesFacets(r, cycleFacets);
-    const d = cycleSort.dir;
-    const title = (r) => routeTitle(r, t);
-    const sortRows = (rows) => {
-      const arr = [...rows];
-      if (cycleSort.key === 'distance') {
-        arr.sort((a, b) => d * ((a.km || 0) - (b.km || 0)));
-      } else if (cycleSort.key === 'az') {
-        arr.sort((a, b) => d * title(a).localeCompare(title(b), lang));
-      } else {
-        arr.sort((a, b) => d * ((a.v5?.score || 0) - (b.v5?.score || 0)));
-      }
-      return arr;
-    };
-    const listedAll = (cycleBundle.listed || []).filter(match);
-    const localN = listedAll.filter(isLocalNetworkRow).length;
-    const listed = cycleShowLocal ? listedAll : listedAll.filter((r) => !isLocalNetworkRow(r));
-    return {
-      tours: (cycleBundle.tours || []).filter(
-        (tr) => !q || queryCycleCountry || norm(tr.title || '').includes(q),
-      ),
-      routes: sortRows((cycleBundle.routes || []).filter(match)),
-      listed: sortRows(listed),
-      localHidden: cycleShowLocal ? 0 : localN,
-    };
-  }, [isCycleCat, cycleBundle, q, queryCycleCountry, cycleFacets, cycleShowLocal,
-    cycleSort, lang, t]);
-
-  // Cycling renders three stacked lists off one scroll, so its row count is
-  // their sum and the paging window is spent across them in order: the tours
-  // first, then whatever is left goes to the routes, then to the listed ones.
-  // Slicing each list at `visible` on its own would mount three pages at a
-  // time and the sentinel would never be reached.
-  const cycleTotal = cycleRows
-    ? cycleRows.tours.length + cycleRows.routes.length + cycleRows.listed.length
-    : 0;
+  const {
+    countryOfText, wantCycleCountry, openCycleRoute, openCycleTour, cycleScope, cycleCounts,
+    cycleRows, cycleTotal,
+  } = useCycleLayer({
+    cat, country, countryCycling, countryName, cycleFacets, cycleIndex, cycleShowLocal,
+    cycleSort, cycleTop, debouncedQuery, failLayer, isCycleCat, lang, layerError, nearPlace,
+    pendingWhere, q, retryTick, setCountry, setCountryCycling, setCycleIndex, setCycleTop,
+    setCyclingLoading, setDebouncedQuery, setNearPlace, setPageCycle, setPendingWhere, setQuery,
+    t, trailsIndex,
+  });
   const cycleWindow = useMemo(() => {
     if (!cycleRows) return null;
     const tours = Math.min(cycleRows.tours.length, visible);
@@ -2163,253 +1202,15 @@ export function DestinationsTab({
     if (!countryOptions.some(([cc]) => cc === country)) setCountry('');
   }, [country, countryOptions]);
 
-  // One description of what narrows THIS tab, rendered twice: as the chip row
-  // in the toolbar and as the full set inside the Filters sheet. Built here
-  // rather than in either of them so the two cannot drift apart.
-  const facetGroups = useMemo(() => {
-    const out = [];
-    if (isItinCat) {
-      out.push({
-        key: 'pace',
-        label: t('trip.askPace'),
-        toolbar: true,
-        onToggle: (k) => setItinPace((cur) => (cur === k ? null : k)),
-        options: TRIP_PACES.map(({ key, labelKey }) => {
-          const n = itinFacets.pace.get(key) || 0;
-          const isOn = itinPace === key;
-          return { key, label: t(labelKey), n, on: isOn, disabled: !n && !isOn };
-        }),
-      });
-      out.push({
-        key: 'scale',
-        label: t('trip.askScale'),
-        toolbar: true,
-        onToggle: (k) => setItinScale((cur) => (cur === k ? null : k)),
-        options: TRIP_SCALES.map(({ key, labelKey }) => {
-          const n = itinFacets.scale.get(key) || 0;
-          const isOn = itinScale === key;
-          return { key, label: t(labelKey), n, on: isOn, disabled: !n && !isOn };
-        }),
-      });
-    }
-    if (cat === 'trails' && !showCountryIndex && trailFacets && trailFacets.total > 0) {
-      // Six groups, in the order a walker decides in: how long have I got,
-      // how hard do I want it, how much climb, where does it leave me, what
-      // will I see, who is coming. A group with nothing to offer in this
-      // country is not rendered at all rather than rendered empty.
-      const fromCounts = (key, label, defs, on, counts, setter) => {
-        const options = defs
-          .map((d) => {
-            const n = counts.get(d.key) || 0;
-            const isOn = on.includes(d.key);
-            return { key: d.key, label: t(d.labelKey), n, on: isOn,
-              disabled: !n && !isOn };
-          })
-          .filter((o) => o.n > 0 || o.on);
-        if (!options.length) return;
-        out.push({ key, label, onToggle: toggleChip(setter), options });
-      };
-
-      const lengthOpts = DISTANCE_BANDS.map(({ key, labelKey }) => {
-        const n = trailFacets.byBand.get(key) || 0;
-        const isOn = bands.includes(key);
-        return { key, label: t(labelKey), n, on: isOn, disabled: !n && !isOn };
-      });
-      if (trailFacets.loops > 0) {
-        lengthOpts.push({
-          key: 'loop',
-          Icon: LoopIcon,
-          // Its own class because it is not a length: it rides at the end of
-          // the same rail, since "two hours, and a loop" is one thought.
-          cls: 'places-loopchip',
-          label: t('trails.loopsOnly'),
-          n: trailFacets.loops,
-          on: loopsOnly,
-        });
-      }
-      out.push({
-        key: 'length',
-        label: t('trails.lengthLabel'),
-        // The one walk group inline: how long have I got is the first
-        // question (T384, brief V3-1); the other five live in the sheet.
-        toolbar: true,
-        onToggle: (k) => (k === 'loop' ? setLoopsOnly((v) => !v) : toggleBand(k)),
-        options: lengthOpts,
-      });
-      fromCounts('grade', t('trails.gradeLabel'), GRADES, grades,
-        trailFacets.byGrade, setGrades);
-      fromCounts('climb', t('trails.climbLabel'), ASCENT_BANDS, climbs,
-        trailFacets.byClimb, setClimbs);
-      fromCounts('shape', t('trails.shapeLabel'), ROUTE_TYPES, shapes,
-        trailFacets.byShape, setShapes);
-      fromCounts('highlights', t('trails.hlLabel'), HIGHLIGHTS, hls,
-        trailFacets.byHl, setHls);
-      fromCounts('suitability', t('trails.suitLabel'), SUITABILITY, suits,
-        trailFacets.bySuit, setSuits);
-      // T630: three groups that stay on screen even when no row can answer
-      // them yet. A chip with no rows behind it is disabled and the group
-      // says so (notYet), instead of the group being left out.
-      const sacTotal = SAC_BANDS.reduce((n, d) => n + (trailFacets.bySac.get(d.key) || 0), 0);
-      out.push({
-        key: 'sac',
-        label: t('route.facetSac'),
-        notYet: sacTotal === 0,
-        onToggle: toggleChip(setSacs),
-        options: SAC_BANDS.map((d) => {
-          const n = trailFacets.bySac.get(d.key) || 0;
-          const isOn = sacs.includes(d.key);
-          return { key: d.key, label: t(d.labelKey), n, on: isOn, disabled: !n && !isOn };
-        }),
-      });
-      out.push({
-        key: 'duration',
-        label: t('route.facetDuration'),
-        onToggle: toggleChip(setDurs),
-        options: DURATION_BANDS.map((d) => {
-          const n = trailFacets.byDur.get(d.key) || 0;
-          const isOn = durs.includes(d.key);
-          return { key: d.key, label: t(d.labelKey), n, on: isOn, disabled: !n && !isOn };
-        }),
-      });
-      out.push({
-        key: 'reach',
-        label: t('route.facetTransit'),
-        notYet: trailFacets.reach === 0,
-        onToggle: () => setReachOnly((v) => !v),
-        options: [{
-          key: 'reach',
-          label: t('route.facetTransitOn'),
-          n: trailFacets.reach,
-          on: reachOnly,
-          disabled: trailFacets.reach === 0 && !reachOnly,
-        }],
-      });
-    }
-    if (isCycleCat && cycleRows && cycleScope.length > 0) {
-      // Six groups, in the order a rider decides in. Same contract as the
-      // beach chips: a count is the rows it would leave, a zero chip is not
-      // rendered, and a chip already on survives at zero.
-      for (const group of CYCLE_FACET_GROUPS) {
-        const on = cycleFacets[group.key] || [];
-        const options = group.options
-          .map((o) => ({
-            key: o.key,
-            label: t(o.labelKey),
-            n: cycleCounts.get(`${group.key}:${o.key}`) ?? 0,
-            on: on.includes(o.key),
-          }))
-          .filter((o) => o.n > 0 || o.on);
-        if (!options.length) continue;
-        out.push({
-          key: `cycle-${group.key}`,
-          label: t(group.labelKey),
-          toolbar: !!group.toolbar,
-          onToggle: (k) => setCycleFacets((cur) => {
-            const was = cur[group.key] || [];
-            return { ...cur,
-              [group.key]: was.includes(k) ? was.filter((x) => x !== k) : [...was, k] };
-          }),
-          options,
-        });
-      }
-    }
-    if (isBeachCat && beachRows) {
-      // Nine groups (brief 03 section 4). Every chip carries a count, and a
-      // chip whose count is zero in this scope is NOT RENDERED: not greyed
-      // out, absent. A disabled control still occupies the rail and still
-      // reads as something that ought to work, which is exactly the
-      // impression "Nothing built on it 0" gave. A chip the reader has
-      // already selected always survives, even at zero, or tapping it would
-      // strand them in an empty list with no way back out.
-      for (const group of BEACH_FACETS) {
-        const on = beachFacets[group.key] || [];
-        const options = group.options
-          .map((o) => ({
-            key: o.key,
-            label: t(o.labelKey),
-            n: beachCounts.get(`${group.key}:${o.key}`) ?? 0,
-            on: on.includes(o.key),
-          }))
-          .filter((o) => o.n > 0 || o.on);
-        if (!options.length) continue;
-        out.push({
-          key: `beach-${group.key}`,
-          label: t(group.labelKey),
-          toolbar: !!group.toolbar,
-          onToggle: (k) => setBeachFacets((cur) => {
-            const was = cur[group.key] || [];
-            return { ...cur,
-                     [group.key]: was.includes(k) ? was.filter((x) => x !== k)
-                                                  : [...was, k] };
-          }),
-          options,
-        });
-      }
-    }
-    if (isLakeCat && lakeRows) {
-      // Nine filters (brief 04 section 4), and its one hard rule: NEVER
-      // render a chip with a zero count. A chip offering "Sufficient water"
-      // over a list that holds none of it is a promise the list cannot keep,
-      // and greying it out still puts the word on screen. So a zero option is
-      // dropped outright, and a group whose every option is zero never
-      // renders. A SELECTED chip survives its own zero, because the way back
-      // out of an empty list is the chip you tapped to get there.
-      for (const group of LAKE_FACETS) {
-        const on = lakeFacets[group.key] || [];
-        const options = group.options
-          .map((o) => {
-            const n = lakeCounts.get(`${group.key}:${o.key}`) ?? 0;
-            return { key: o.key, label: t(o.labelKey), n, on: on.includes(o.key) };
-          })
-          .filter((o) => o.n > 0 || o.on);
-        if (!options.length) continue;
-        out.push({
-          key: `lake-${group.key}`,
-          label: t(group.labelKey),
-          toolbar: !!group.toolbar,
-          onToggle: (k) => setLakeFacets((cur) => {
-            const was = cur[group.key] || [];
-            return { ...cur,
-                     [group.key]: was.includes(k) ? was.filter((x) => x !== k)
-                                                  : [...was, k] };
-          }),
-          options,
-        });
-      }
-    }
-    if (isMountainCat && mountainRows) {
-      // Seven filters, plus the kind chips v1 already had. Every one of them
-      // carries a count, and a chip with a zero count in this scope renders
-      // disabled rather than leading to an empty list (brief 05 section 4).
-      for (const group of MOUNTAIN_FACETS) {
-        const on = mtnFacets[group.key] || [];
-        const options = group.options.map((o) => {
-          const n = mtnCounts.get(`${group.key}:${o.key}`) ?? 0;
-          const isOn = on.includes(o.key);
-          return { key: o.key, label: t(o.labelKey), n, on: isOn,
-                   disabled: !n && !isOn };
-        });
-        if (!options.some((o) => o.n || o.on)) continue;
-        out.push({
-          key: `mtn-${group.key}`,
-          label: t(group.labelKey),
-          toolbar: !!group.toolbar,
-          onToggle: (k) => setMtnFacets((cur) => {
-            const was = cur[group.key] || [];
-            return { ...cur,
-                     [group.key]: was.includes(k) ? was.filter((x) => x !== k)
-                                                  : [...was, k] };
-          }),
-          options,
-        });
-      }
-    }
-    return out;
-  }, [isCycleCat, cycleRows, cycleScope, cycleCounts, cycleFacets, cat, t, showCountryIndex, isItinCat, itinFacets,
-    itinPace, itinScale, trailFacets, bands, loopsOnly, sacs, durs, reachOnly,
-    grades, climbs, shapes, hls, suits, isBeachCat, beachRows,
-    beachFacets, beachCounts, isLakeCat, lakeRows, lakeFacets, lakeCounts,
-    isMountainCat, mountainRows, mtnFacets, mtnCounts]);
+  const { facetGroups } = useFacetGroups({
+    bands, beachCounts, beachFacets, beachRows, cat, climbs, cycleCounts, cycleFacets,
+    cycleRows, cycleScope, durs, grades, hls, isBeachCat, isCycleCat, isItinCat, isLakeCat,
+    isMountainCat, itinFacets, itinPace, itinScale, lakeCounts, lakeFacets, lakeRows, loopsOnly,
+    mountainRows, mtnCounts, mtnFacets, reachOnly, sacs, setBeachFacets, setClimbs,
+    setCycleFacets, setDurs, setGrades, setHls, setItinPace, setItinScale, setLakeFacets,
+    setLoopsOnly, setMtnFacets, setReachOnly, setSacs, setShapes, setSuits, shapes,
+    showCountryIndex, suits, t, toggleBand, toggleChip, trailFacets,
+  });
 
   // What the Filters badge counts, and what Clear all clears. The country is
   // one of them: it is the filter every tab now carries.
@@ -2545,66 +1346,7 @@ export function DestinationsTab({
     }
   };
 
-  // One tile's words: the name, where it is, one measured fact and the
-  // Score (T428: the same tile Explore's rails draw, through the kit Card).
-  const describeFacts = (row) => {
-    const layer = opening?.layer;
-    const km = (v, digits) => `${Number(v).toLocaleString(lang, { maximumFractionDigits: digits })} km`;
-    if (layer === 'trail') {
-      const grade = tripGrade(row);
-      return {
-        name: displayName(row.name),
-        cc: opening?.europe ? row.country : null,
-        // Europe-wide (T453) the country is what a tile has to say first;
-        // within one country, the grade.
-        where: opening?.europe ? countryName(row.country)
-          : (grade && GRADE_KEY[grade] ? t(GRADE_KEY[grade]) : null),
-        // G13: length, walking time and climb, the three a walk is chosen by.
-        fact: trailFigures(row).join(', ') || null,
-        factLabel: null,
-        rating: trailRating(row),
-      };
-    }
-    if (layer === 'cycle') {
-      return {
-        name: routeTitle(row, t),
-        cc: row.cc,
-        where: countryName(row.cc),
-        fact: row.km != null ? km(row.km, 0) : null,
-        factLabel: t('card.vLength'),
-        rating: cycleRating(row, t),
-      };
-    }
-    if (layer === 'mountain') {
-      return {
-        name: displayName(row.name),
-        cc: row.cc,
-        where: placeLine(row.range, countryName(row.cc)),
-        fact: row.ele != null ? `${Math.round(row.ele).toLocaleString(lang)} m` : null,
-        factLabel: t('card.vHeight'),
-        rating: mountainRating(row, t),
-      };
-    }
-    if (layer === 'lake') {
-      const a = row.size?.areaKm2;
-      return {
-        name: displayName(row.name),
-        cc: row.cc,
-        where: placeLine(row.region, countryName(row.cc)),
-        factLabel: t('card.vArea'),
-        fact: a != null ? `${a.toLocaleString(lang, { maximumFractionDigits: a < 10 ? 1 : 0 })} km²` : null,
-        rating: lakeRating(row, t),
-      };
-    }
-    return {
-      name: displayName(row.name),
-      cc: row.cc,
-      where: placeLine(row.region, countryName(row.cc)),
-      factLabel: t('card.vLength'),
-      fact: row.lengthM != null ? `${Math.round(row.lengthM).toLocaleString(lang)} m` : null,
-      rating: beachRating(row, t),
-    };
-  };
+  const { describeFacts } = useDescribeFacts({ countryName, lang, opening, t });
   // A rail tile carries the same "Bed and food in {city}" line as the list
   // card (owner T489-d; T502: the rails still printed only a length).
   const RAIL_LAYER = { beach: 'beaches', lake: 'lakes', mountain: 'mountains', cycle: 'cycling' };
@@ -2657,149 +1399,12 @@ export function DestinationsTab({
       label: dockLabel, query: query || '', filterCount: activeFilters, filtersOpen: sheetOpen,
     } : null);
   }, [isActive, isDesktop, cat, dockOn, dockLabel, query, activeFilters, sheetOpen]);
-  // The By country track is one of the rails (T457): four on a desktop and
-  // three on a phone in all, as on Explore, so the full list comes after the
-  // same number of rails as Explore's "All places" does.
-  // T622 (owner 2026-10-23: "the by country section needs to go, use the
-  // country filter"): Countries is a control in the filter row, so no rail
-  // is spent on a country track any more.
-  const hasCountryTrack = false;
-  const railCap = (isDesktop ? 4 : 3) - (hasCountryTrack ? 1 : 0);
-  const openingRails = useMemo(() => {
-    if (!opening) return { rails: [], starters: [] };
-    const all = [];
-    if (opening.icons.length >= 3) {
-      all.push({
-        key: 'best',
-        title: opening.layer === 'trail' && !opening.europe
-          ? t('dtab.railBestTrail', { country: countryName(country) })
-          : t(`dtab.railBest.${opening.layer}`),
-        rows: opening.icons,
-        onSeeAll: null,
-      });
-    }
-    // A place is shown once across the rails where it can be (row T444-d:
-    // Voidokilia stood in three of them); a rail that would drop under four
-    // keeps its own order rather than go thin.
-    const seen = new Set(all.flatMap((r) => r.rows.map((x) => x.id)));
-    for (const r of opening.rails) {
-      const fresh = r.rows.filter((x) => !seen.has(x.id));
-      const rows = fresh.length >= 4 ? fresh : r.rows;
-      rows.forEach((x) => seen.add(x.id));
-      all.push({
-        key: r.def.key,
-        title: t(r.def.titleKey),
-        rows,
-        onSeeAll: opening.europe ? null : () => applyRail(opening.layer, r.def.facets),
-      });
-    }
-    return {
-      rails: all.slice(0, railCap),
-      starters: all.slice(railCap).filter((r) => r.onSeeAll)
-        .map((r) => ({ key: r.key, title: r.title, onPick: r.onSeeAll })),
-    };
-    // applyRail only calls the setters, which are stable.
-  }, [opening, railCap, t, country, countryName]);
-  // In the Full list view every saved cut is a door over the list.
-  const openingDoors = useMemo(() => [
-    ...openingRails.rails.filter((r) => r.onSeeAll)
-      .map((r) => ({ key: r.key, title: r.title, onPick: r.onSeeAll })),
-    ...openingRails.starters,
-  ], [openingRails]);
-  // ── Bed and food, the map, the region doors (T498, roadmap 1.3b) ──────
-  //
-  // "Bed and food in {city}" on an outdoor card (owner answer T489-d): the
-  // town the item names as its base, else (a cycle route) the nearest priced
-  // town within 25 km, priced from the same cost index the Explore card
-  // reads. One object per item while the prices stand, so the memoised
-  // cards keep their identity across renders.
-  const outdoorCat = cat !== 'trips';
-  const placeRows = usePlaceRows(data, indices, isActive && isCycleCat && !!indices);
-  // A fresh cache whenever the prices or the towns change.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const baseCache = useMemo(() => new Map(), [indices, placeRows]);
-  const bedFood = useCallback((layer, row) => {
-    if (!indices || !row) return null;
-    const id = layer === 'trails' ? row.tr?.id : row.id;
-    const key = `${layer}:${id}`;
-    if (baseCache.has(key)) return baseCache.get(key);
-    let base = baseOfOutdoor(layer, row);
-    if (!base && layer === 'cycling') {
-      const near = nearestPriced(placeRows, pointOfOutdoor(layer, row), row.cc, 25);
-      if (near) base = { id: near.id, city: near.city };
-    }
-    const cost = base ? indices.get(base.id) : null;
-    const out = cost && cost.dayEur != null
-      ? { city: base.city || data?.destinations?.[base.id]?.city || '', dayEur: cost.dayEur, est: isNational(cost), cost }
-      : null;
-    baseCache.set(key, out);
-    return out;
-  }, [indices, baseCache, placeRows, data]);
-
-  // The layer's list as map rows, List | Map like Places (owner T489-c).
-  const mapItems = useMemo(() => {
-    if (!outdoorCat || !isActive) return [];
-    const out = [];
-    const push = (layer, row, name, cc, where, score, image) => {
-      const base = bedFood(layer, row);
-      const m = mapRowOf(layer, row, {
-        name, cc, country: countryName(cc), where, score, image, cost: base?.cost || null,
-      });
-      if (m) out.push({ m, layer, row });
-    };
-    if (cat === 'beaches') for (const { b } of beachRows || []) push('beaches', b, displayName(b.name), b.cc, placeLine(b.region, countryName(b.cc)), b.v5?.score, firstOkImage(b.images)?.u);
-    else if (cat === 'lakes') for (const { b } of lakeRows || []) push('lakes', b, displayName(b.name), b.cc, placeLine(b.region, countryName(b.cc)), b.v5?.score, firstOkImage(b.images)?.u);
-    else if (cat === 'mountains') for (const { b } of mountainRows || []) push('mountains', b, displayName(b.name), b.cc, placeLine(b.range || b.region, countryName(b.cc)), b.v5?.score, firstOkImage(b.images)?.u);
-    else if (cat === 'trails' && tripRows) for (const { c } of tripRows) push('trails', c, displayName(c.tr.name), c.tr.cc || c.tr.country, countryName(c.tr.cc || c.tr.country), c.tr.v5?.score, okPhoto(c.assoc?.photoUrl));
-    // T600: with no country, the Europe-wide best walks (trails/top.json,
-    // already loaded for the rails), under the same chips and search text.
-    else if (cat === 'trails' && !trailsCountry && topTrails?.length) {
-      for (const tr of topTrails) {
-        if (q && !norm(tr.name).includes(q)) continue;
-        if (!trailPass(tr)) continue;
-        push('trails', { tr }, displayName(tr.name), tr.country, countryName(tr.country), tr.v5?.score, okPhoto(tr.img));
-      }
-    }
-    else if (cat === 'cycling') for (const r of cycleRows?.routes || []) push('cycling', r, routeTitle(r, t), r.cc, countryName(r.cc), r.v5?.score, okPhoto(r.img));
-    return out;
-  }, [outdoorCat, isActive, cat, beachRows, lakeRows, mountainRows, tripRows, cycleRows, bedFood, countryName, t,
-    trailsCountry, topTrails, q, trailPass]);
-  // T593: a walk or a ride is drawn as its line (the list rows carry the
-  // simplified one), its pin moved to the start with the length on it.
-  const routeMap = useMemo(() => {
-    if (cat !== 'trails' && cat !== 'cycling') return null;
-    const features = [];
-    const starts = new Map();
-    mapItems.forEach(({ m, row }, i) => {
-      const geometry = cat === 'trails' ? row.tr?.geometry : row.geometry;
-      const at = lineStartOf(geometry);
-      if (!at) return;
-      const km = cat === 'trails' ? (row.tr?.distance_m ?? 0) / 1000 : row.km;
-      const label = Number.isFinite(km) && km > 0
-        ? t('where.km', { n: km.toLocaleString(lang, { maximumFractionDigits: km < 10 ? 1 : 0 }) })
-        : '';
-      starts.set(m.id, at);
-      features.push({ type: 'Feature', geometry, properties: { id: m.id, label, rank: i } });
-    });
-    return features.length ? { lines: { type: 'FeatureCollection', features }, starts } : null;
-  }, [cat, mapItems, t, lang]);
-  const mapRows = useMemo(() => mapItems.map(({ m }) => {
-    const at = routeMap?.starts.get(m.id);
-    return at ? { ...m, lon: at[0], lat: at[1] } : m;
-  }), [mapItems, routeMap]);
-  const openMapItem = useCallback((id) => {
-    const hit = mapItems.find((x) => x.m.id === id);
-    if (!hit) return;
-    if (hit.layer === 'beaches') setPageBeach(hit.row);
-    else if (hit.layer === 'lakes') setPageLake(hit.row);
-    else if (hit.layer === 'mountains') setPageMountain(hit.row);
-    // A Europe-wide walk has no country list behind it (T600): its card is
-    // built the way a neighbour's is.
-    else if (hit.layer === 'trails') { if (hit.row.assoc) setPageCard(hit.row); else openNeighbour('trail', hit.row.tr); }
-    else if (hit.layer === 'cycling') openCycleRoute(hit.row);
-    // openNeighbour only calls setters and reads the catalogue.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapItems, openCycleRoute]);
+  const { openingRails, openingDoors, outdoorCat, bedFood, routeMap, mapRows, openMapItem } = useDestMapItems({
+    applyRail, beachRows, cat, country, countryName, cycleRows, data, indices, isActive,
+    isCycleCat, isDesktop, lakeRows, lang, mountainRows, openCycleRoute, openNeighbour, opening,
+    q, setPageBeach, setPageCard, setPageLake, setPageMountain, t, topTrails, trailPass,
+    trailsCountry, tripRows,
+  });
   const mapOn = dview === 'map' && outdoorCat && mapRows.length > 0;
   const viewSwitch = outdoorCat && (mapRows.length > 0 || dview === 'map') ? {
     label: t('explore.viewAria'),
@@ -3407,87 +2012,15 @@ export function DestinationsTab({
             Typing a country's name swaps the capped European ranking for that
             country's full list. */}
         {isBeachCat && (
-          <div className="places-list pcard-grid">
-            {layerError.beaches && (
-              <LayerError onRetry={() => retryLayer('beaches')} t={t} msg="beach.loadFailed" />
-            )}
-
-            {beachesLoading && <PlaceCardSkeletons label={t('card.loading')} />}
-
-            {!beachesLoading && beachRows && (
-              beachRows.length > 0
-                ? (
-                  <>
-                    {beachRows.slice(0, visible).map(({ b, km }, i) => (
-                      <React.Fragment key={b.id}>
-                        {bandBreak(beachRows, i) && (
-                          <p className="places-bandhead">{t(bandBreak(beachRows, i))}</p>
-                        )}
-                        <BeachCard
-                          beach={b}
-                          km={km}
-                          countryName={countryName(b.cc)}
-                          onOpen={setPageBeach}
-                          t={t}
-                          base={bedFood('beaches', b)}
-                        />
-                      </React.Fragment>
-                    ))}
-                    {/* The listed tier, under its own heading and never
-                        interleaved: these rows carry no score key at all, so
-                        they cannot be ranked and must not look as if they
-                        were. Shown once the ranked list has run out, which is
-                        where "what else is here" is the actual question, and
-                        it is what keeps a stretch of coast from looking empty
-                        because nobody has photographed it yet. */}
-                    {wantBeachCountry && !nearPlace
-                      && (listedBeaches[wantBeachCountry] || []).length > 0
-                      && beachRows.length <= visible && (
-                      <div className="places-alsohere">
-                        <p className="places-beachhead">
-                          {t('beach.alsoHead', {
-                            country: countryName(wantBeachCountry),
-                          })}
-                        </p>
-                        <ul className="places-listedrows">
-                          {(listedBeaches[wantBeachCountry] || []).map((b) => (
-                            <li key={b.id} className="places-listedrow">
-                              <span className="places-listedrow-name">
-                                {b.name}
-                              </span>
-                              {b.region && (
-                                <span className="places-listedrow-ele">
-                                  {b.region}
-                                </span>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </>
-                )
-                : Object.values(beachFacets).some((l) => l?.length)
-                  ? facetEmpty('beach', () => setBeachFacets({}))
-                  : nearPlace
-                    ? radiusEmpty('beach')
-                    : typedCc
-                      ? countryEmpty('beach', typedCc)
-                      : queryEmpty('beach.noneMatch')
-            )}
-
-            {/* Not loaded yet (the first frame, before the fetch starts): the
-                same skeleton the fetch shows. A failed fetch is LayerError
-                above, never a claim that the layer has not shipped. */}
-            {!beachesLoading && !beachRows && !layerError.beaches && (
-              <PlaceCardSkeletons label={t('card.loading')} />
-            )}
-
-            {visible < (beachRows?.length ?? 0) && (
-              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
-            )}
-
-          </div>
+          <BeachList
+            beachFacets={beachFacets} beachRows={beachRows} beachesLoading={beachesLoading}
+            bedFood={bedFood} countryEmpty={countryEmpty} countryName={countryName}
+            facetEmpty={facetEmpty} layerError={layerError} listedBeaches={listedBeaches}
+            nearPlace={nearPlace} queryEmpty={queryEmpty} radiusEmpty={radiusEmpty}
+            retryLayer={retryLayer} sentinelRef={sentinelRef} setBeachFacets={setBeachFacets}
+            setPageBeach={setPageBeach} t={t} typedCc={typedCc} visible={visible}
+            wantBeachCountry={wantBeachCountry}
+          />
         )}
 
         {/* Lakes. Same shape as beaches: no country index in front of the
@@ -3495,85 +2028,16 @@ export function DestinationsTab({
             is not an answer to it. Typing a country's name swaps the capped
             European ranking for that country's full list. */}
         {isLakeCat && (
-          <div className="places-list pcard-grid">
-            {layerError.lakes && (
-              <LayerError onRetry={() => retryLayer('lakes')} t={t} msg="lake.loadFailed" />
-            )}
-
-            {lakesLoading && <PlaceCardSkeletons label={t('card.loading')} />}
-
-            {!lakesLoading && lakeRows && (
-              lakeRows.length > 0
-                ? (
-                  <>
-                    {lakeRows.slice(0, visible).map(({ b, km }, i) => (
-                      <React.Fragment key={b.id}>
-                        {bandBreak(lakeRows, i) && (
-                          <p className="places-bandhead">{t(bandBreak(lakeRows, i))}</p>
-                        )}
-                        <LakeCard
-                          lake={b}
-                          km={km}
-                          countryName={countryName(b.cc)}
-                          onOpen={setPageLake}
-                          t={t}
-                          base={bedFood('lakes', b)}
-                          month={travelMonth}
-                          warmC={lakeIndex?.model?.warm_c ?? 18}
-                          lang={lang}
-                        />
-                      </React.Fragment>
-                    ))}
-                    {/* The listed tier, under its own heading and never
-                        interleaved: these rows carry no score key at all, so
-                        they cannot be ranked and must not look as if they
-                        were. Shown once the ranked list has run out, which is
-                        where "what else is here" is the actual question. */}
-                    {wantLakeCountry && !nearPlace
-                      && (listedLakes[wantLakeCountry] || []).length > 0
-                      && lakeRows.length <= visible && (
-                      <div className="places-alsohere">
-                        <p className="places-beachhead">
-                          {t('lake.alsoHead', {
-                            country: countryName(wantLakeCountry),
-                          })}
-                        </p>
-                        <ul className="places-listedrows">
-                          {(listedLakes[wantLakeCountry] || []).map((l) => (
-                            <li key={l.id} className="places-listedrow">
-                              <span className="places-listedrow-name">
-                                {l.name}
-                              </span>
-                              {l.region && (
-                                <span className="places-listedrow-ele">
-                                  {l.region}
-                                </span>
-                              )}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </>
-                )
-                : Object.values(lakeFacets).some((l) => l?.length)
-                  ? facetEmpty('lake', () => setLakeFacets({}))
-                  : nearPlace
-                    ? radiusEmpty('lake')
-                    : (absentLakeCountry || typedCc)
-                      ? countryEmpty('lake', absentLakeCountry || typedCc)
-                      : queryEmpty('lake.noneMatch')
-            )}
-
-            {!lakesLoading && !lakeRows && !layerError.lakes && (
-              <PlaceCardSkeletons label={t('card.loading')} />
-            )}
-
-            {visible < (lakeRows?.length ?? 0) && (
-              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
-            )}
-
-          </div>
+          <LakeList
+            absentLakeCountry={absentLakeCountry} bedFood={bedFood} countryEmpty={countryEmpty}
+            countryName={countryName} facetEmpty={facetEmpty} lakeFacets={lakeFacets}
+            lakeIndex={lakeIndex} lakeRows={lakeRows} lakesLoading={lakesLoading} lang={lang}
+            layerError={layerError} listedLakes={listedLakes} nearPlace={nearPlace}
+            queryEmpty={queryEmpty} radiusEmpty={radiusEmpty} retryLayer={retryLayer}
+            sentinelRef={sentinelRef} setLakeFacets={setLakeFacets} setPageLake={setPageLake}
+            t={t} travelMonth={travelMonth} typedCc={typedCc} visible={visible}
+            wantLakeCountry={wantLakeCountry}
+          />
         )}
 
         {/* Mountains. Same shape as beaches and lakes: no country index in
@@ -3581,86 +2045,16 @@ export function DestinationsTab({
             a page of flags is not an answer to it. Typing a country's name
             swaps the capped European ranking for that country's full list. */}
         {isMountainCat && (
-          <div className="places-list pcard-grid">
-            {layerError.mountains && (
-              <LayerError onRetry={() => retryLayer('mountains')} t={t} msg="mtn.loadFailed" />
-            )}
-
-            {mountainsLoading && <PlaceCardSkeletons label={t('card.loading')} />}
-
-            {!mountainsLoading && mountainRows && (
-              mountainRows.length > 0
-                ? (
-                  <>
-                    {/* The listed tier, under its own heading and never
-                        inside the ranked list. These rows carry no score
-                        key at all, so there is nothing to sort them by and
-                        nothing to render as a rating: they say the mountain
-                        exists, is named correctly and is in this region,
-                        which is the honest answer where the gates could not
-                        say more. */}
-                    {mountainRows.slice(0, visible).map(({ b, km }, i) => (
-                      <React.Fragment key={b.id}>
-                        {bandBreak(mountainRows, i) && (
-                          <p className="places-bandhead">{t(bandBreak(mountainRows, i))}</p>
-                        )}
-                        <MountainCard
-                          mountain={b}
-                          km={km}
-                          countryName={countryName(b.cc)}
-                          onOpen={setPageMountain}
-                          t={t}
-                          base={bedFood('mountains', b)}
-                          lang={lang}
-                        />
-                      </React.Fragment>
-                    ))}
-                    {wantMountainCountry && !nearPlace
-                      && (listedMountains[wantMountainCountry] || []).length > 0
-                      && mountainRows.length <= visible && (
-                      <div className="places-alsohere">
-                        <p className="places-beachhead">
-                          {t('mtn.alsoHead', {
-                            country: countryName(wantMountainCountry),
-                          })}
-                        </p>
-                        <ul className="places-listedrows">
-                          {(listedMountains[wantMountainCountry] || [])
-                            .map((m) => (
-                              <li key={m.id} className="places-listedrow">
-                                <span className="places-listedrow-name">
-                                  {m.name}
-                                </span>
-                                {m.ele != null && (
-                                  <span className="places-listedrow-ele">
-                                    {Math.round(m.ele).toLocaleString(lang)} m
-                                  </span>
-                                )}
-                              </li>
-                            ))}
-                        </ul>
-                      </div>
-                    )}
-                  </>
-                )
-                : Object.values(mtnFacets).some((l) => l?.length)
-                  ? facetEmpty('mountain', () => setMtnFacets({}))
-                  : nearPlace
-                    ? radiusEmpty('mountain')
-                    : (absentMountainCountry || typedCc)
-                      ? countryEmpty('mountain', absentMountainCountry || typedCc)
-                      : queryEmpty('mtn.noneMatch')
-            )}
-
-            {!mountainsLoading && !mountainRows && !layerError.mountains && (
-              <PlaceCardSkeletons label={t('card.loading')} />
-            )}
-
-            {visible < (mountainRows?.length ?? 0) && (
-              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
-            )}
-
-          </div>
+          <MountainList
+            absentMountainCountry={absentMountainCountry} bedFood={bedFood}
+            countryEmpty={countryEmpty} countryName={countryName} facetEmpty={facetEmpty}
+            lang={lang} layerError={layerError} listedMountains={listedMountains}
+            mountainRows={mountainRows} mountainsLoading={mountainsLoading}
+            mtnFacets={mtnFacets} nearPlace={nearPlace} queryEmpty={queryEmpty}
+            radiusEmpty={radiusEmpty} retryLayer={retryLayer} sentinelRef={sentinelRef}
+            setMtnFacets={setMtnFacets} setPageMountain={setPageMountain} t={t}
+            typedCc={typedCc} visible={visible} wantMountainCountry={wantMountainCountry}
+          />
         )}
 
         {/* Cycling. Tours first, because a tour is the answer to "plan me a
@@ -3668,130 +2062,17 @@ export function DestinationsTab({
             Listed routes sit under their own heading with no score, which is
             what makes the coverage honest rather than merely large. */}
         {isCycleCat && (
-          <div className="places-list pcard-grid" data-testid="cycle-list">
-            {layerError.cycling && (
-              <LayerError onRetry={() => retryLayer('cycling')} t={t} msg="cycle.loadFailed" />
-            )}
-
-            {cyclingLoading && <PlaceCardSkeletons label={t('card.loading')} />}
-
-            {/* EuroVelo families. In OSM a EuroVelo is one relation PER
-                COUNTRY SECTION under a superroute, so without this band the
-                catalogue shows "EuroVelo 6 part Germany 3" and never the
-                6,308 km thing it belongs to. The manifest is the same
-                membership the harvest stamps; the geometry stays in the
-                per-route files. */}
-            {!cyclingLoading && (cycleIndex?.families || []).length > 0 && (
-              <>
-                <p className="places-bandhead">{t('cycle.familiesTitle')}</p>
-                <div className="cycle-famrow">
-                  {(cycleIndex.families || []).map((f) => (
-                    <button
-                      type="button"
-                      key={f.ref}
-                      className="cycle-famchip"
-                      data-testid="cycle-famchip"
-                      onClick={() => setPageCycle({ familyRef: f.ref })}
-                    >
-                      <span className="cycle-famchip-ref">{f.ref}</span>
-                      {/* The route's own name (T455). Its length and country
-                          count were the sum of the sections Carta holds,
-                          not the route, so they are not shown. */}
-                      {f.name && <span className="cycle-famchip-meta">{f.name}</span>}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {!cyclingLoading && cycleRows && (
-              <>
-                {cycleWindow.tours > 0 && (
-                  <>
-                    <p className="places-bandhead">{t('cycle.toursTitle')}</p>
-                    {cycleRows.tours.slice(0, cycleWindow.tours).map((tr) => (
-                      <CycleTourCard
-                        key={tr.slug}
-                        tr={tr}
-                        t={t}
-                        countryName={countryName(tr.cc || wantCycleCountry)}
-                        onOpen={openCycleTour}
-                      />
-                    ))}
-                  </>
-                )}
-
-                {cycleWindow.routes > 0 && (
-                  <>
-                    <p className="places-bandhead">{t('cycle.routesTitle')}</p>
-                    {cycleRows.routes.slice(0, cycleWindow.routes).map((r) => (
-                      <CycleCard
-                        key={r.id}
-                        r={r}
-                        t={t}
-                        countryName={countryName(r.cc || wantCycleCountry)}
-                        onOpen={openCycleRoute}
-                        base={bedFood('cycling', r)}
-                      />
-                    ))}
-                  </>
-                )}
-
-                {cycleWindow.listed > 0 && (
-                  <>
-                    <p className="places-bandhead"
-                      data-testid="cycle-listed-head">
-                      {t('cycle.listedHeading')}
-                    </p>
-                    {cycleRows.listed.slice(0, cycleWindow.listed).map((r) => (
-                      <CycleCard
-                        key={r.id}
-                        r={r}
-                        t={t}
-                        countryName={countryName(r.cc || wantCycleCountry)}
-                        onOpen={openCycleRoute}
-                        base={bedFood('cycling', r)}
-                      />
-                    ))}
-                  </>
-                )}
-
-                {wantCycleCountry && (cycleRows.localHidden > 0 || cycleShowLocal) && (
-                  <Button
-                    variant="quiet"
-                    size="sm"
-                    className="cycle-localtoggle"
-                    data-testid="cycle-local-toggle"
-                    onClick={() => setCycleShowLocal((v) => !v)}
-                  >
-                    {cycleShowLocal
-                      ? t('cycle.hideLocal')
-                      : t('cycle.showLocal')}
-                  </Button>
-                )}
-
-                {!cycleRows.tours.length && !cycleRows.routes.length
-                  && !cycleRows.listed.length && !cycleRows.localHidden && (
-                  Object.values(cycleFacets).some((l) => l?.length)
-                    ? facetEmpty('cycle', () => setCycleFacets({}))
-                    : nearPlace
-                      ? radiusEmpty('cycling')
-                      : typedCc
-                        ? countryEmpty('cycling', typedCc)
-                        : queryEmpty('cycle.noneMatch')
-                )}
-
-                {visible < cycleTotal && (
-                  <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
-                )}
-              </>
-            )}
-
-            {!cyclingLoading && !cycleRows && !layerError.cycling && (
-              <PlaceCardSkeletons label={t('card.loading')} />
-            )}
-
-          </div>
+          <CycleList
+            bedFood={bedFood} countryEmpty={countryEmpty} countryName={countryName}
+            cycleFacets={cycleFacets} cycleIndex={cycleIndex} cycleRows={cycleRows}
+            cycleShowLocal={cycleShowLocal} cycleTotal={cycleTotal} cycleWindow={cycleWindow}
+            cyclingLoading={cyclingLoading} facetEmpty={facetEmpty} layerError={layerError}
+            nearPlace={nearPlace} openCycleRoute={openCycleRoute} openCycleTour={openCycleTour}
+            queryEmpty={queryEmpty} radiusEmpty={radiusEmpty} retryLayer={retryLayer}
+            sentinelRef={sentinelRef} setCycleFacets={setCycleFacets}
+            setCycleShowLocal={setCycleShowLocal} setPageCycle={setPageCycle} t={t}
+            typedCc={typedCc} visible={visible} wantCycleCountry={wantCycleCountry}
+          />
         )}
 
         {isJourneyBrowse && (
@@ -3835,173 +2116,32 @@ export function DestinationsTab({
         )}
 
         {isItinCat && (
-          <div className="places-list">
-            {layerError.trips && (
-              <LayerError onRetry={() => retryLayer('trips')} t={t} msg="trip.loadFailed" />
-            )}
-
-            {/* itinRows === null is this list's loading state, which is also
-                exactly where a failed fetch leaves it: without the guard the
-                dots spun forever on a dropped connection. Still blocks of a
-                card's size, not an ellipsis (T394, carta-design "Loading"). */}
-            {itinRows === null && !layerError.trips && <PlaceCardSkeletons n={3} label={t('card.loading')} />}
-
-            {itinRows && itinRows.length > 0 && (
-              <>
-                {/* No count line here: the slider already carries the number,
-                    and saying it twice was one sentence too many. */}
-                {itinRows.slice(0, visible).map(({ tr, km }, i) => (
-                  <React.Fragment key={tr.id}>
-                    {bandBreak(itinRows, i) && (
-                      <p className="places-bandhead">{t(bandBreak(itinRows, i))}</p>
-                    )}
-                    <ItinCard tr={tr} km={km} onOpen={setPageItin} t={t} />
-                  </React.Fragment>
-                ))}
-              </>
-            )}
-
-            {itinRows && itinRows.length === 0 && (
-              nearPlace
-                ? radiusEmpty('itin', (layer, row) => setPageItin(row))
-                // A country with no composed trip at all, nothing else set:
-                // the coverage module, not "nothing matches those filters".
-                : (itinCountry && !itinDays && !itinPace && !itinScale && !q)
-                  ? countryEmpty('itin', itinCountry, (layer, row) => setPageItin(row))
-                  : itinDays
-                  ? (
-                    <div className="places-empty empty-act">
-                      <p>{t('trip.emptyDays', { n: itinDays })}</p>
-                      {/* The two lengths either side, where anything was
-                          composed at them; a button that led to another
-                          empty list would only move the dead end. */}
-                      {[itinDays - 1, itinDays + 1]
-                        .filter((n) => n >= 2 && rankTrips(itinCountry ? itinCountryRows : itinTop,
-                          { days: n, pace: itinPace, scale: itinScale }).some((tr) => tr.days === n))
-                        .map((n) => (
-                          <Button key={n} variant="secondary" size="sm" className="cov-empty-btn" onClick={() => setItinDays(n)}>
-                            {t('journey.nDays', { n })}
-                          </Button>
-                        ))}
-                    </div>
-                  )
-                  : chipsEmpty('trip.emptyAll', () => {
-                    setItinDays(null); setItinPace(null); setItinScale(null); setQuery('');
-                  }, 'empty.clearFilters')
-            )}
-
-            {itinRows && visible < itinRows.length && (
-              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
-            )}
-
-          </div>
+          <ItineraryList
+            chipsEmpty={chipsEmpty} countryEmpty={countryEmpty} itinCountry={itinCountry}
+            itinCountryRows={itinCountryRows} itinDays={itinDays} itinPace={itinPace}
+            itinRows={itinRows} itinScale={itinScale} itinTop={itinTop} layerError={layerError}
+            nearPlace={nearPlace} q={q} radiusEmpty={radiusEmpty} retryLayer={retryLayer}
+            sentinelRef={sentinelRef} setItinDays={setItinDays} setItinPace={setItinPace}
+            setItinScale={setItinScale} setPageItin={setPageItin} setQuery={setQuery} t={t}
+            visible={visible}
+          />
         )}
 
         {isTripCat && !isItinCat && (
-          <div className={`places-list${showCountryIndex ? ' dtab-trail-index' : ' pcard-grid'}`}>
-            {showCountryIndex && (
-              <>
-                {/* The near-me door moved up into the section head (T430). */}
-                {/* T451: a track like every other section's "By country", not a
-                    grid of forty galleries that ran fourteen thousand pixels. */}
-                {tripCountries.length > 0 && (
-                  <Strip id="dtab-trail-countries" title={t('dtab.chooseCountry')} t={t} className="dtab-bycountry">
-                    {tripCountries.map((c) => (
-                      <li key={c.cc} className="dtab-item dtab-item-country">
-                        <CountryGalleryCard
-                          cc={c.cc}
-                          name={c.name}
-                          onPick={pickCountry}
-                          t={t}
-                          href={`?tab=places&dc=${cat}&dn=${c.cc}`}
-                          sizes="(max-width: 768px) 80vw, 320px"
-                        />
-                      </li>
-                    ))}
-                  </Strip>
-                )}
-                {trailsIndex && tripCountries.length === 0 && (
-                  <CoverageEmpty layer="trail" cc="" countryName={countryName} onOpen={openNeighbour} />
-                )}
-              </>
-            )}
-
-            {!showCountryIndex && layerError.trails && (
-              <LayerError onRetry={() => retryLayer('trails')} t={t} msg="trails.loadFailed" />
-            )}
-
-            {!showCountryIndex && trailsLoading && !layerError.trails && <PlaceCardSkeletons label={t('card.loading')} />}
-
-            {!showCountryIndex && !trailsLoading && tripRows && (
-              tripRows.length > 0
-                ? tripRows.slice(0, visible).map(({ c, km }, i) => (
-                  <React.Fragment key={c.tr.id}>
-                    {bandBreak(tripRows, i) && (
-                      <p className="places-bandhead">{t(bandBreak(tripRows, i))}</p>
-                    )}
-                    <TripCard card={c} km={km} onOpen={setPageCard} t={t} countryName={countryName}
-                      base={cat === 'trails' ? bedFood('trails', c) : null} />
-                  </React.Fragment>
-                ))
-                : trailFiltersOn
-                  ? facetEmpty('trail', clearTrailFilters)
-                  : cat !== 'trails'
-                    ? (nearPlace
-                      ? chipsEmpty('places.noneNear', () => setNearPlace(null), 'cov.showAll', { city: nearPlace.name })
-                      : (
-                        <div className="places-empty empty-act">
-                          <p>{t('places.cityWalksEmpty', { country: countryName(trailsCountry || country) })}</p>
-                          <Button variant="secondary" size="sm" className="cov-empty-btn" onClick={() => { setQuery(''); setCountry(''); }}>
-                            {t('cov.showAll')}
-                          </Button>
-                        </div>
-                      ))
-                    : nearPlace
-                      ? radiusEmpty('trail')
-                      : countryEmpty('trail', trailsCountry || country)
-            )}
-
-            {!showCountryIndex && !trailsLoading && !tripRows && nearNoCountry
-              && !layerError.trails && (
-              cat === 'trails'
-                ? radiusEmpty('trail')
-                : chipsEmpty('places.noneNear', () => setNearPlace(null), 'cov.showAll', { city: nearPlace.name })
-            )}
-
-            {!showCountryIndex && visible < (tripRows?.length ?? 0) && (
-              <div ref={sentinelRef} className="places-sentinel" aria-hidden="true" style={{ height: 1 }} />
-            )}
-
-            {showTripRows && (
-              <>
-                {stubs.length > 0 && (
-                  <div className="stub-list" data-testid="stub-list">
-                    <h2 className="stub-list-head">{t('stub.listHead')}</h2>
-                    <ul>
-                      {(stubsAll ? stubs : stubs.slice(0, 6)).map((st) => (
-                        <li key={st.id}>
-                          <button type="button" className="stub-row" onClick={() => setPageStub(st)}>
-                            <span className="stub-row-name">{stripDashes(st.name)}</span>
-                            <span className="stub-row-meta">
-                              {st.region ? `${st.region}` : ''}
-                              {Number.isFinite(st.km) && (
-                                <span className="mono">{st.region ? ' ' : ''}{fmt(Math.round(st.km))} km</span>
-                              )}
-                            </span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                    {!stubsAll && stubs.length > 6 && (
-                      <Button variant="quiet" size="sm" className="stub-more" onClick={() => setStubsAll(true)}>
-                        {t('stub.showAll')}
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+          <TrailTripList
+            bedFood={bedFood} cat={cat} chipsEmpty={chipsEmpty}
+            clearTrailFilters={clearTrailFilters} country={country} countryEmpty={countryEmpty}
+            countryName={countryName} facetEmpty={facetEmpty} fmt={fmt} layerError={layerError}
+            nearNoCountry={nearNoCountry} nearPlace={nearPlace} openNeighbour={openNeighbour}
+            pickCountry={pickCountry} radiusEmpty={radiusEmpty} retryLayer={retryLayer}
+            sentinelRef={sentinelRef} setCountry={setCountry} setNearPlace={setNearPlace}
+            setPageCard={setPageCard} setPageStub={setPageStub} setQuery={setQuery}
+            setStubsAll={setStubsAll} showCountryIndex={showCountryIndex}
+            showTripRows={showTripRows} stubs={stubs} stubsAll={stubsAll} t={t}
+            trailFiltersOn={trailFiltersOn} trailsCountry={trailsCountry}
+            trailsIndex={trailsIndex} trailsLoading={trailsLoading}
+            tripCountries={tripCountries} tripRows={tripRows} visible={visible}
+          />
         )}
 
         </div>
