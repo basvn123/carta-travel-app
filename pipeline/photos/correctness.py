@@ -419,23 +419,31 @@ def cheap_check(subject, photo, meta=None, gaz=None, cfg=None):
 # Tier 2: vision
 # ---------------------------------------------------------------------------
 
-VISION_KINDS = ("photo_of_place", "map", "logo_or_emblem", "interior", "group_or_portrait",
-                "animal_or_object", "other_place", "other")
-VISION_SCHEMA = {
-    "type": "OBJECT",
-    "properties": {
-        "shows_place": {"type": "STRING", "enum": ["yes", "no", "unsure"]},
-        "kind": {"type": "STRING", "enum": list(VISION_KINDS)},
-        "confidence": {"type": "NUMBER"},
-        "reason": {"type": "STRING"},
-    },
-    "required": ["shows_place", "kind", "confidence", "reason"],
-}
-
-
 def vision_prompt(cfg=None):
     from prompt_registry import prompt as _registry_prompt
     return _registry_prompt(((cfg or {}).get("vision") or {}).get("prompt") or "photo-check")
+
+
+def vision_kinds(p=None):
+    """The kinds the model may answer, read from the rubric's answer shape
+    (`"kind": "a" | "b" | ...`), so the list lives once, in the prompt."""
+    p = p or vision_prompt()
+    m = re.search(r'"kind":\s*((?:"[a-z_]+"\s*\|?\s*)+)', p.text("rubric"))
+    return tuple(re.findall(r'"([a-z_]+)"', m.group(1))) if m else ("photo_of_place", "other")
+
+
+def vision_schema(p=None):
+    """The JSON schema Gemini answers in (the gateway's `schema`)."""
+    return {
+        "type": "OBJECT",
+        "properties": {
+            "shows_place": {"type": "STRING", "enum": ["yes", "no", "unsure"]},
+            "kind": {"type": "STRING", "enum": list(vision_kinds(p))},
+            "confidence": {"type": "NUMBER"},
+            "reason": {"type": "STRING"},
+        },
+        "required": ["shows_place", "kind", "confidence", "reason"],
+    }
 
 
 def build_vision_prompt(subject, photo, p=None):
@@ -455,7 +463,7 @@ def normalise_vision(ans, min_conf=0.6):
     if not isinstance(ans, dict):
         return None
     shows = str(ans.get("shows_place") or "").lower()
-    kind = ans.get("kind") if ans.get("kind") in VISION_KINDS else "other"
+    kind = ans.get("kind") if ans.get("kind") in vision_kinds() else "other"
     try:
         conf = float(ans.get("confidence"))
     except (TypeError, ValueError):
@@ -568,7 +576,7 @@ class GeminiVision:
                              opener=image_opener(base64.b64encode(data).decode("ascii"), mime, self.base))
         screen = [AUDIT.readable(photo.get("title") or ""), photo.get("caption") or "", subject["name"]]
         try:
-            res = gw.call(build_vision_prompt(subject, photo, self.p), json=True, schema=VISION_SCHEMA,
+            res = gw.call(build_vision_prompt(subject, photo, self.p), json=True, schema=vision_schema(self.p),
                           screen=screen, temperature=0.0, max_tokens=512)
         except self.ai.AIRefusal:
             return None

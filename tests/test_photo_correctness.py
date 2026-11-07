@@ -231,6 +231,12 @@ def test_a_strong_cheap_flag_stands_whatever_the_model_says():
     assert PC.decide({"verdict": "ok"}, {"verdict": "flag"}) == "ok"
 
 
+def test_the_answer_kinds_live_in_the_prompt():
+    kinds = PC.vision_kinds()
+    assert kinds[0] == "photo_of_place" and "other_place" in kinds and kinds[-1] == "other" and len(kinds) == 8
+    assert PC.vision_schema()["properties"]["kind"]["enum"] == list(kinds)
+
+
 def test_vision_answers_are_normalised():
     ok = PC.normalise_vision({"shows_place": "yes", "kind": "photo_of_place", "confidence": 0.9})
     assert ok["verdict"] == "ok"
