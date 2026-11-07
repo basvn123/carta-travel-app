@@ -35,6 +35,7 @@ import { useAirlines } from '../lib/flights/useAirlines.js';
 import { homeFlightSetup, withEnds } from './cartaFlight.js';
 import { useStaysVersion } from '../lib/staysData.js';
 import { rule } from '../lib/price/config.js';
+import { returnKg, kgText, methodUrl } from '../lib/footprint/footprint.js';
 import { useDayView } from '../hooks/useDayView.js';
 import { PriceItems } from '../components/PriceItems.jsx';
 
@@ -248,6 +249,10 @@ export function DestPriceCard({
       other: minutesText(Math.round(cheapRow.doorHours * 60)),
     }) : '';
   const wayName = (w) => (w.mode === 'plane' ? (w.iata ? t('destx.flyToIata', { iata: w.iata }) : t('way.plane')) : t(`way.${w.mode}`));
+  const fpText = (w) => {
+    const kg = returnKg(w.mode, ways?.km, { seats: people });
+    return kg == null ? '' : t('footprint.each', { kg: kgText(kg) });
+  };
   const waySub = (w) => (w.mode === 'plane' && w.dep && w.arr
     ? [t('destx.flightTimes', { dep: w.dep, arr: w.arr }), w.minutes ? minutesText(w.minutes) : ''].filter(Boolean)
       .map((part, i, all) => <span key={part}>{part}{i < all.length - 1 ? ',' : ''}</span>)
@@ -366,6 +371,7 @@ export function DestPriceCard({
                           {fastest === w.mode && fastest !== ways.cheapest && <span className="tcard-badge">{t('tc.fastest')}</span>}
                         </span>
                         <span className="tcard-way-sub">{waySub(w)}</span>
+                        {fpText(w) && <span className="tcard-way-fp">{fpText(w)}</span>}
                       </span>
                       <span className="tcard-way-fig">
                         <b>{money(w.perPerson)}</b>
@@ -376,6 +382,11 @@ export function DestPriceCard({
                 })}
               </div>
               {pickNote && <p className="tcard-note">{pickNote}</p>}
+              {Number.isFinite(ways?.km) && (
+                <p className="tcard-fp-note">
+                  <a href={methodUrl()} target="_blank" rel="noopener noreferrer">{t('footprint.note')}</a>
+                </p>
+              )}
               {mode === 'plane' && (
                 <div className="tcard-acts">
                   {cartaLine && (

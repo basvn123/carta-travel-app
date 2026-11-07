@@ -5,6 +5,8 @@ import { legLinks, TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks
 import { fmtDate, addDays } from '../lib/dates.js';
 import { useI18n } from '../i18n/index.jsx';
 import { notYet } from '../components/NotYet.jsx';
+import { oneWayKg, kgText, methodUrl } from '../lib/footprint/footprint.js';
+import { legKm } from '../lib/gettingThere.js';
 import { Button, IconButton, Money, Segmented } from '../components/ui/index.js';
 import {
   TrainIcon, BusIcon, CarIcon, FerryIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CalendarIcon,
@@ -149,6 +151,7 @@ function LegCard({ leg, value, onChange, adults, estimate, pricedMode, t, lang, 
     subId: `wiz_${leg.kind}`,
     lang,
   })), [leg, mode, adults, lang]);
+  const fpKg = mode ? oneWayKg(mode, legKm(leg), { routeKm: leg.published?.km, seats: adults }) : null;
   const headId = `leg-${leg.key}-h`;
   const fromName = cityLabel(leg.from.city) || leg.from.name;
   const toName = cityLabel(leg.to.city) || leg.to.name;
@@ -234,6 +237,14 @@ function LegCard({ leg, value, onChange, adults, estimate, pricedMode, t, lang, 
           <Money value={estimate} est precision="cents" />
         </p>
       ) : null}
+
+      {fpKg != null && (
+        <p className="wz-leg-fp">
+          {t('footprint.each', { kg: kgText(fpKg) })}
+          {' '}
+          <a href={methodUrl()} target="_blank" rel="noopener noreferrer">{t('footprint.note')}</a>
+        </p>
+      )}
 
       {!leg.booked && (
         <div className="wz-leg-acts">

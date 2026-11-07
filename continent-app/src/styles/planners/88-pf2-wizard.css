@@ -439,3 +439,7 @@
   .trip-wizard-modal .wz-progress > span,
   .trip-wizard-modal .wz-fold-chev { transition: none; }
 }
+
+/* T1204 (D22): the trip footprint under a leg's fare, quiet and labelled as an estimate. */
+.trip-wizard-modal .wz-leg-fp { margin: 4px 0 0; font-size: var(--text-caption); color: var(--text-2); }
+.trip-wizard-modal .wz-leg-fp a { color: inherit; text-decoration: underline; }
