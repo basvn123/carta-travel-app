@@ -11,6 +11,9 @@ import { CalendarIcon, RouteIcon, LinkIcon, PencilIcon, ReceiptIcon } from '../c
 import { shareReceiptOn } from '../lib/share/flag.js';
 // T1175: the receipt sheet loads on first use; it is behind a flag.
 const ShareReceiptSheet = lazy(() => import('../components/ShareReceiptSheet.jsx').then((m) => ({ default: m.ShareReceiptSheet })));
+// T1215 (T1152-g): the taste card, its profile code and the taxonomy map load
+// with the Your Europe tab, not with My trips.
+const TasteChips = lazy(() => import('./mytrips/TasteChips.jsx').then((m) => ({ default: m.TasteChips })));
 import { Button, Chip } from '../components/ui/index.js';
 import { loadDeviceTrip, clearDeviceTrip } from '../planner/deviceTripStore.js';
 import { PastTripForm } from './PastTripForm.jsx';
@@ -62,7 +65,6 @@ import { sharedKeys } from '../lib/sharedListModel.js';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
-import { TasteChips } from './mytrips/TasteChips.jsx';
 
 /**
  * My trips (T434, rebuilt as Concept A by T923 to T927). One header with
@@ -1241,7 +1243,9 @@ export function SavedTripsPanel({
           )}
           {/* T1152 (F3): the taste profile with its evidence, yes and no per chip. */}
           {tab === 'europe' && !(recapOpen && recap) && (
-            <TasteChips saves={tasteSaves} trips={tasteTrips} destinations={destinations} userId={user?.id || null} />
+            <Suspense fallback={null}>
+              <TasteChips saves={tasteSaves} trips={tasteTrips} destinations={destinations} userId={user?.id || null} />
+            </Suspense>
           )}
         </div>
 
