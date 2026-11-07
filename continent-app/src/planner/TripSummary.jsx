@@ -21,6 +21,7 @@ import { ChangeTripSheet } from './trip/ChangeTripSheet.jsx';
 import { bookRows } from './trip/ReadyToBook.jsx';
 import { BookPasses } from './trip/BookPasses.jsx';
 import { Journey } from './trip/Journey.jsx';
+import { PassMoment } from '../pass/PassMoment.jsx';
 import { TripTrace } from './trip/TripTrace.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { useLifestyleParts } from './planHooks.js';
@@ -330,6 +331,9 @@ export function TripSummary({
           carTip={carTip} rows={rows} onCar={onCar} carDelta={carDelta} onChangeFlight={onChangeFlight}
         />
       </section>
+
+      {/* T1171 (I14): the Pass moment, behind its flag; renders nothing when off. */}
+      <PassMoment priced={priced?.grandTotal > 0} />
 
       {!wide && tools}
     </div>

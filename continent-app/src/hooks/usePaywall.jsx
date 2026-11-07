@@ -35,6 +35,8 @@ import {
   trackPaywall, trackPaywallOnExit, isLeavingForCheckout,
 } from '../lib/paywallEvents.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
+// T1171: keeps a ?pm=on preview of the Pass moment before the app rewrites the address.
+import '../pass/passMoment.js';
 
 /**
  * Every reason the pass modal can open, and how insistent each one is.
