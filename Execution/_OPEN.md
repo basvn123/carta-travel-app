@@ -2053,3 +2053,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1163-f | T1163 | Extracted parts with long argument lists (DayPlannerStart 93 props, DayBody 79, AppOverlays 67, ExploreContent 56, useFacetGroups 52): group them where a screen is next touched | next task | open |  |
 | T1163-g | T1163 | DestinationsTab 2,325, DayPlannerTab 2,227 and App.jsx 1,888 lines are still the largest app files; the rest is render JSX and closures reading later state, which needs declarations reordered by hand before a further split | next task | open |  |
 | T1163-h | T1163 | no-unused-vars cannot see a destructured prop used only as a JSX tag (TitleTag in OverviewHero and ExploreToolbar); fix in eslint.config.js (argsIgnorePattern or jsx-uses-vars) | next task | open |  |
+| T1170-a | T1170 | Native review of the machine-drafted nl, de, fr, es, it strings listed in docs/i18n/review.md (about 3,200 strings, admin.* last) | user | open |  |
+| T1170-b | T1170 | Display currency choice (P-40) not built: it touches the price formatting lib, outside T1170's files | next task | open |  |
+| T1170-c | T1170 | en.js `day.place`, `day.poiDepthNote`, `day.townDepthNote` are cut off mid-string; fix the English, then retranslate the three in all five | next task | open |  |
+| T1170-d | T1170 | I8 rest: place intros are English only and need the other five languages | next task | open |  |
+| T1170-e | T1170 | French register is mixed (tu on home, vous elsewhere); owner picks one, then align fr.js | user | open |  |
