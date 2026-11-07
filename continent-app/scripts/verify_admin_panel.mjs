@@ -1704,6 +1704,32 @@ try {
     ok(`data health: ${layers} layers, ${trends} trends, core ${bars} runs, gate ${gate}, ${mustSee} must-see fields`);
   }
 
+  // ---- 9i. Overrides (T1173, I13; step T1214 from T1173-d): the file entries
+  // from the snapshot pipeline/apply_overrides.py writes, the review and live
+  // tiles, and a draft that turns ready and gives the layer file and the PR text.
+  console.log('9i. overrides');
+  await gotoSection(page, 'Overrides');
+  await page.locator('[data-overrides="panel"]').waitFor({ timeout: WAIT });
+  {
+    const tiles = await page.locator('[data-overrides="panel"] [data-count]').count();
+    if (tiles < 6) fail(`the overrides panel shows ${tiles} count tiles, not 6 (four layers, review due, live)`);
+    const listed = await page.locator('[data-overrides="list"], [data-overrides="empty"]').count();
+    if (listed !== 1) fail('the overrides panel shows neither the list nor its empty state');
+    if (await page.locator('[data-draft="incomplete"]').count() !== 1) fail('an empty draft is not marked incomplete');
+    await page.locator('#ov2-layer').selectOption('lake');
+    await page.locator('#ov2-id').fill('verify-lake');
+    await page.locator('#ov2-path').fill('name');
+    await page.locator('#ov2-value').fill('Verify Lake');
+    await page.locator('#ov2-who').fill('verify');
+    await page.locator('#ov2-why').fill('The name carried the wrong spelling.');
+    await page.locator('#ov2-source').fill('https://www.openstreetmap.org/relation/1');
+    await page.locator('[data-draft="ready"]').waitFor({ timeout: WAIT });
+    if (!/"verify-lake"/.test(await page.locator('[data-out="entry"]').innerText())) fail('the drafted entry does not carry the item id');
+    if (!/Override: lake verify-lake name/.test(await page.locator('[data-out="pr"]').innerText())) fail('the pull request title is wrong');
+    if (await page.locator('[data-action="download"]').count() !== 1) fail('the layer file download is missing');
+    ok(`overrides: ${tiles} tiles, draft ready, entry, download and pull request text`);
+  }
+
   // ---- 10. Audit section.
   console.log('10. audit');
   await gotoSection(page, 'Audit');
