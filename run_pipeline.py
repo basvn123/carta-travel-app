@@ -2022,6 +2022,25 @@ TASKS = [
                  "against Dutch walks. Exports straight after, since the wire "
                  "order is the rating order the app renders."),
     },
+    {
+        # T1201 (row T1179-b): the T1179 summaries rebuilt from the wire the
+        # export just wrote, so data/trails/summaries.json never lags the
+        # wire (the staleness of row T1179-e). Reads the wire only, no lab.
+        # How the summaries then reach travellers waits on the owner's choice
+        # (row T1179-a): English `summary` on the wire, or `parts` through t().
+        "key": "trails_summaries",
+        "title": "Trails: fact-checked summaries for the top band (T1179)",
+        "cadence": "after",
+        "after": ["trails_rate"],
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [[PY, "pipeline/trails/summaries.py"]],
+        "note": ("templates over the wire's own facts, each checked before it "
+                 "is written (summaries.check: closed vocabulary, figures from "
+                 "the facts, house rules); writes data/trails/summaries.json and "
+                 "data/reports/trails_summaries.json, which the D2 text checks "
+                 "re-read (scripts/quality/rules.yaml text_checks)."),
+    },
 
     # ---- cycling layer (pipeline/cycling, same lab): soft + guarded ---- #
     #

@@ -1935,7 +1935,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 **Where it lives.** `pipeline/trails/summaries.py`. Tests: `tests/test_trail_summaries.py`, whose last test rebuilds every committed summary from the wire and checks it again.
 
-**Limits.** The summaries are a sidecar and are not on the wire: the app prints a row's `summary` as English prose on the trail page and in the planner, so shipping them needs the i18n choice in T1179-a. A sight's kind is the OSM tag's, so a fountain tagged as water reads "the lake" (T1179-c). On the wire of 2026-09-13 the top band is 2,089 rows, not the 2,348 in ROADMAP D24.
+**Limits.** The summaries are a sidecar and are not on the wire: the app prints a row's `summary` as English prose on the trail page and in the planner, so shipping them needs the i18n choice in T1179-a. Since T1201 the runner rebuilds them as task `trails_summaries`, right after `trails_rate` exports the wire, and the D2 gate re-checks the file (`text_checks`, see "Data quality gate"); the export no longer ships the retired describe.py lead as a walk's `summary` (`export_wire.wire_summary`). A sight's kind is the OSM tag's, so a fountain tagged as water reads "the lake" (T1179-d). On the wire of 2026-09-13 the top band is 2,089 rows, not the 2,348 in ROADMAP D24.
 
 ### Trails external check
 
