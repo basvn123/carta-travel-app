@@ -139,13 +139,14 @@ export function drawOps(ctx, ops, { pal = {}, family = 'sans-serif' } = {}) {
  * equal the value `expected` gives for its key (recomputed from the data by
  * the caller, by a second path). Returns the list of problems; empty is a
  * pass. A text op marked date: true holds a date the caller checks
- * itself (its digits are days and years, not figures). `allow` is a list of regexes for digits that are not figures (a
+ * itself (its digits are days and years, not figures); plain: true marks
+ * fixed words with digits (a licence name, CC BY 4.0). `allow` is a list of regexes for digits that are not figures (a
  * year, a date) and are checked by the caller's own words.
  */
 export function checkFigures(ops, { expected = {}, format = String, allow = [], tol = 0.005 } = {}) {
   const problems = [];
   for (const o of ops) {
-    if (o.t !== 'text' || o.date) continue;
+    if (o.t !== 'text' || o.date || o.plain) continue;
     let text = String(o.text);
     for (const re of allow) text = text.replace(re, '');
     if (!o.fig) {

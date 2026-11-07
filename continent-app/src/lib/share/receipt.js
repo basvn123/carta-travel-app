@@ -40,11 +40,11 @@ export const RECEIPT_LINE_KEY = {
 };
 
 /** The cost colour of each line (carta-design: flight saffron, bed the
- *  action umber, food and drink lagoon; the rest a quiet umber). */
+ *  action umber, food and drink lagoon; the rest slate). */
 export const RECEIPT_LINE_TONE = {
   out: 'sun-400', back: 'sun-400', travel: 'sun-400', beds: 'umber-600', days: 'lagoon-600',
 };
-const OTHER_TONE = 'umber-200';
+const OTHER_TONE = 'neutral-600';
 
 /** The receipt's figures for a saved trip, or null when it cannot be priced. */
 export function receiptModel(plan, { data, stayTier = 'home', lifestyle = null } = {}) {
@@ -101,20 +101,23 @@ export function receiptOps(model, { t, money, dateText = () => '', pricedOn = ''
   // The head: kicker, the route, the dates, the nights and the party.
   const titleLines = wrapText(model.title, 28).slice(0, 2);
   if (wrapText(model.title, 28).length > 2) titleLines[1] = `${titleLines[1].replace(/,?$/, '')} ...`;
-  const headH = 230 + (titleLines.length - 1) * 58;
+  const dates = dateText(model.start, model.end);
+  const headH = (dates ? 270 : 230) + (titleLines.length - 1) * 58;
   ops.push({ t: 'rect', x: X0, y: 60, w: W, h: headH, r: 28, fill: 'umber-100' });
   ops.push({ t: 'rect', x: X0, y: 60 + headH - 40, w: W, h: 40, fill: 'umber-100' });
   ops.push({ t: 'text', x: L, y: 128, text: t('share.receiptKicker'), size: 24, weight: 700, fill: 'umber-700' });
   titleLines.forEach((line, i) => ops.push({ t: 'text', x: L, y: 186 + i * 58, text: line, size: 50, weight: 800, fill: 'neutral-900' }));
   let y = 186 + (titleLines.length - 1) * 58 + 52;
-  const dates = dateText(model.start, model.end);
   const stay = [
     t(model.nights === 1 ? 'plan.nightsOne' : 'plan.nightsMany', { n: model.nights }),
     t(model.party === 1 ? 'share.receiptParty1' : 'share.receiptPartyN', { n: model.party }),
   ].join(', ');
-  ops.push({ t: 'text', x: L, y, text: dates ? `${dates},` : '', size: 28, weight: 500, fill: 'neutral-700', date: true });
+  if (dates) {
+    ops.push({ t: 'text', x: L, y, text: dates, size: 28, weight: 500, fill: 'neutral-700', date: true });
+    y += 40;
+  }
   ops.push({
-    t: 'text', x: dates ? R : L, y, text: stay, size: 28, weight: 600, fill: 'neutral-700', anchor: dates ? 'end' : 'start',
+    t: 'text', x: L, y, text: stay, size: 28, weight: 700, fill: 'neutral-700',
     fig: [{ key: 'nights', value: model.nights }, { key: 'party', value: model.party }],
   });
 
@@ -133,17 +136,17 @@ export function receiptOps(model, { t, money, dateText = () => '', pricedOn = ''
   });
 
   // The lines.
-  y += 24 + 64;
-  const step = Math.min(64, 520 / Math.max(1, model.lines.length));
+  y += 24 + 76;
+  const step = Math.round(Math.min(84, (dates ? 480 : 520) / Math.max(1, model.lines.length)));
   for (const l of model.lines) {
     const label = t(RECEIPT_LINE_KEY[l.key] || 'plan.lineBetween') + (l.kind === 'yours' ? ` (${t('plan.yours')})` : '');
-    ops.push({ t: 'circle', cx: L + 9, cy: y - 10, r: 9, fill: l.kind === 'missing' ? 'none' : (RECEIPT_LINE_TONE[l.key] || OTHER_TONE), stroke: l.kind === 'missing' ? 'umber-200' : null, sw: 2 });
-    ops.push({ t: 'text', x: L + 32, y, text: label, size: 28, weight: 600, fill: 'neutral-900' });
+    ops.push({ t: 'circle', cx: L + 10, cy: y - 11, r: 10, fill: l.kind === 'missing' ? 'none' : (RECEIPT_LINE_TONE[l.key] || OTHER_TONE), stroke: l.kind === 'missing' ? 'umber-200' : null, sw: 2 });
+    ops.push({ t: 'text', x: L + 32, y, text: label, size: 32, weight: 600, fill: 'neutral-900' });
     if (l.kind === 'missing') {
-      ops.push({ t: 'text', x: R, y, text: t('plan.notIn'), size: 24, weight: 500, fill: 'neutral-600', anchor: 'end' });
+      ops.push({ t: 'text', x: R, y, text: t('plan.notIn'), size: 26, weight: 500, fill: 'neutral-600', anchor: 'end' });
     } else {
       const v = Math.round(l.eur);
-      ops.push({ t: 'text', x: R, y, text: money(v), size: 30, weight: 700, fill: 'neutral-900', anchor: 'end', fig: { key: `line.${l.key}`, value: v, money: true } });
+      ops.push({ t: 'text', x: R, y, text: money(v), size: 34, weight: 700, fill: 'neutral-900', anchor: 'end', fig: { key: `line.${l.key}`, value: v, money: true } });
     }
     y += step;
   }
