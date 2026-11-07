@@ -491,7 +491,7 @@ docs/
 | C7 | Static analysis | Semgrep or CodeQL on every PR, findings triaged to zero high | S | P3 | done (T1119) |
 | C8 | AI security | OWASP LLM Top 10 mapped to Carta; guardrail module (E3) covers injection, output handling, excessive agency, data leakage; injection set in CI | M | P3 | in progress (T1117: `aiGuard` on Ask, plan-day, parse-booking; 50-attack set in `npm test`; OWASP map in the threat model. Live red team is T1117-a; suggest-city is T1117-b) |
 | C9 | Privacy and GDPR | Data map (what personal data, where, how long), retention jobs, export and delete tested end to end, Article 30 current, a light DPIA for AI features | M | P3 | partly done (T1118: Article 30 current with a retention line per table, 069 retention sweep, export schema 4 and erase trigger tested end to end; legal review, paste and the AI DPIA open) |
-| C10 | Security testing | ZAP baseline scan in CI against preview deploys; full ASVS L2 checklist walked and recorded | M | P4 | todo |
+| C10 | Security testing | ZAP baseline scan in CI against preview deploys; full ASVS L2 checklist walked and recorded | M | P4 | in progress (T1164: `zap.yml` with a High gate, local preview scan 0 High; Edge and Pages auth tests in `npm test`; ASVS 5.0.0 L2 walked in `docs/security/asvs.md`, 50 gaps as rows; preview scan and live probes are T1164-a, T1164-b) |
 | C11 | External check and disclosure | `SECURITY.md`, `security.txt`, incident response for security events; an outside review or a structured self-pentest, then retest | M | P4 | todo |
 
 ### Item details
