@@ -249,3 +249,6 @@ cache/open_prices/
 reports/coverage_backlog_*_20*.csv
 .docs-site/
 docs/assets/ask-docs/index.js
+
+# Open dataset export (T1176): outputs are built, only the datasheet and README are tracked
+scripts/open_data/out/
