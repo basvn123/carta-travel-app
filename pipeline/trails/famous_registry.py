@@ -169,6 +169,8 @@ TRAIL_CLASSES = {"Q2143825", "Q17008256", "Q1826691"}
 # relation, or a walkable way that somebody bothered to name or grade. The
 # name-or-sac_scale test is what keeps 300,000 anonymous field paths out.
 ROUTE_VALUES = {"hiking", "foot", "walking"}
+# T1201: member ways (or child relations) tried for a relation's coordinate.
+MEMBER_TRIES = 25
 WALK_HIGHWAYS = {"path", "footway", "track", "steps", "bridleway"}
 
 # The highway values that are a WALK rather than a way somebody walks along.
@@ -548,19 +550,17 @@ def scan_osm_fame(cc, slug, verbose=False):
             # registry exists to make impossible. Remember the first member
             # way and resolve it in the way pass below.
             if g["first_node"] is None:
-                first_rel = None
-                for mem in obj.members:
-                    if mem.type == "w":
-                        way_want.setdefault(mem.ref, []).append(key)
-                        break
-                    if mem.type == "r" and first_rel is None:
-                        first_rel = mem.ref
-                else:
-                    # T1201 (row T1181-c): a superroute holds stage relations,
-                    # not ways (the Cleveland Way, St Cuthbert's Way), so its
-                    # coordinate comes from its first stage's first way.
-                    if first_rel is not None:
-                        rel_want.setdefault(first_rel, []).append(key)
+                # T1201 (row T1181-c): up to MEMBER_TRIES member ways, not
+                # just the first, because a cross-border route's first way can
+                # lie outside this country's extract (the HRP in AD); and a
+                # superroute holds stage relations, not ways (the Cleveland
+                # Way), so its child relations are followed below.
+                ways = [m.ref for m in obj.members if m.type == "w"][:MEMBER_TRIES]
+                for ref in ways:
+                    way_want.setdefault(ref, []).append(key)
+                if not ways:
+                    for ref in [m.ref for m in obj.members if m.type == "r"][:MEMBER_TRIES]:
+                        rel_want.setdefault(ref, []).append(key)
         else:
             g["named_ways"] += 1
             if g["first_node"] is None:
@@ -581,18 +581,14 @@ def scan_osm_fame(cc, slug, verbose=False):
             .with_filter(osmium.filter.IdFilter(set(rel_want)))
         for rel in fp:
             keys = rel_want.get(rel.id, [])
-            way = sub = None
-            for mem in rel.members:
-                if mem.type == "w":
-                    way = mem.ref
-                    break
-                if mem.type == "r" and sub is None:
-                    sub = mem.ref
+            ways = [m.ref for m in rel.members if m.type == "w"][:MEMBER_TRIES]
+            subs = [m.ref for m in rel.members if m.type == "r"][:MEMBER_TRIES]
             for key in keys:
-                if way is not None:
-                    way_want.setdefault(way, []).append(key)
-                elif sub is not None:
-                    deeper.setdefault(sub, []).append(key)
+                for ref in ways:
+                    way_want.setdefault(ref, []).append(key)
+                if not ways:
+                    for ref in subs:
+                        deeper.setdefault(ref, []).append(key)
         rel_want = deeper
 
     # Resolve the member ways the relations are waiting on, then the nodes.

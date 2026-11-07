@@ -34,3 +34,20 @@ def test_superroute_is_placed_from_its_first_stage(tmp_path, monkeypatch):
     out = fr.scan_osm_fame("GB", "great-britain")
     row = next(v for v in out.values() if v["relation_id"] == 201)
     assert (row["lat"], row["lon"]) == (54.5, -1.2)
+
+
+def test_cross_border_route_is_placed_from_a_way_in_this_extract(tmp_path, monkeypatch):
+    # The first member way (99) lies in the neighbour's extract; a later one
+    # (10) is here, and places the route.
+    osm = OSM.replace(
+        '<relation id="201"',
+        '<relation id="300" version="1"><member type="way" ref="99" role=""/>'
+        '<member type="way" ref="10" role=""/><tag k="type" v="route"/>'
+        '<tag k="route" v="hiking"/><tag k="name" v="Haute Route"/>'
+        '<tag k="wikidata" v="Q2"/></relation>\n <relation id="201"')
+    pbf = tmp_path / "ad.osm"
+    pbf.write_text(osm)
+    monkeypatch.setattr(fr, "cached_extract", lambda slug: pbf)
+    out = fr.scan_osm_fame("AD", "andorra")
+    row = next(v for v in out.values() if v["relation_id"] == 300)
+    assert (row["lat"], row["lon"]) == (54.5, -1.2)
