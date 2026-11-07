@@ -1012,7 +1012,7 @@ docs/
 | H2 | Error tracking | Sentry (EU) for app, Pages functions, Edge Functions, pipeline; release tags, PII scrubbing | S | P2 | partly done (T1120: app and Pages Functions, no-op until the DSN; Edge Functions, pipeline, source maps open) |
 | H3 | Durable rate limiting | Limits for ask, flights, stays hold across isolates | S | P3 | code done (T1157: per-endpoint RL_ASK, RL_FLIGHTS, RL_STAYS, RL_FORECAST bindings with in-memory fallback; creating the bindings is owner step T1157-a) |
 | H4 | Load tests | k6 at 10x launch traffic, p95 under budget, report in docs | M | P4 | partly (T1158: scripts and doc, preview run is the owner's) |
-| H5 | Backups and restore drill | Nightly encrypted `pg_dump` to R2, 30-day retention, timed restore written up | S | P3 | todo |
+| H5 | Backups and restore drill | Nightly encrypted `pg_dump` to R2, 30-day retention, timed restore written up | S | P3 | code done (T1159); live drill is the owner's |
 | H6 | Owner gates cleared | Unapplied migrations (022, 029, 030, 031 and the rest), Stripe live setup, secrets, Dashboard steps | M | P3 | todo |
 | H7 | Pipeline unattended on the box | Every scheduled task with manifest, retries, D2 gate before publish, failure alert; two clean weeks | M | P3 | todo |
 | H8 | SLOs and incident drill | Uptime, error rate, p95 per API, freshness on one panel; one drill written up | S | P4 | todo |

@@ -1,6 +1,6 @@
 # Runbook: backup and restore
 
-Owner and only operator: Bas. Rewritten by T1086 (ROADMAP B2) from `ops/backup_supabase.sh`, `ops/restore_supabase.sh`, `infra/hetzner/cax11/run_pipeline.sh`, `pipeline/archive/push.py` and `pipeline/archive/manifest.yml`, with the retired `archive/docs-2026-11/BACKUP.md` as a guide only. Every command below was checked to exist in the repo on 2026-11-05. None was run: this session had no Supabase, R2 or box access.
+Owner and only operator: Bas. Nightly job and drill script added by T1159 (ROADMAP H5); proven only against a local Postgres 16 with the migrations applied, never against the live project. Rewritten by T1086 (ROADMAP B2) from `ops/backup_supabase.sh`, `ops/restore_supabase.sh`, `infra/hetzner/cax11/run_pipeline.sh`, `pipeline/archive/push.py` and `pipeline/archive/manifest.yml`, with the retired `archive/docs-2026-11/BACKUP.md` as a guide only. Every command below was checked to exist in the repo on 2026-11-05. None was run: this session had no Supabase, R2 or box access.
 
 What is backed up, and why it matters: everything a traveller saved (profiles, trips, shares, passes, entitlements, `pass_grants`) lives only in the Supabase project `ntssxktaduxzpsmejwyv`. It cannot be rebuilt from the pipeline. Pipeline data can: the master and caches are in R2 (`r2:carta/archive/`, see [build-box.md](build-box.md)).
 
@@ -25,6 +25,40 @@ ops/backup_supabase.sh                      # or: ops/backup_supabase.sh --out <
 
 It refuses to call a file under 2 KB a success. Then copy the `.dump.gpg` and its `.sha256` off the laptop (a cloud drive, a disk kept elsewhere, or R2); a copy on the same disk is not a backup. Keep the last few.
 
+## Nightly dump on the box (T1159)
+
+`carta-backup.timer` runs `ops/backup_nightly.sh` every night at 01:30 Brussels (up to 10 minutes of random delay; a night missed while the box was off runs once at boot). It is installed by `infra/hetzner/cron/install.sh` with the other timers. The script:
+
+1. counts rows per public table (the manifest the drill checks against);
+2. streams `pg_dump -Fc` of the `public` schema through `gpg --encrypt` to the owner's public key (`CARTA_BACKUP_KEY`); nothing readable touches disk;
+3. writes `supabase-nightly-<UTC stamp>.dump.gpg`, a `.sha256` and a `.counts.json` to `~/archive-out/nightly/`;
+4. copies all three to `r2:carta/archive/db/supabase-nightly/`, checks the size in R2, and only then deletes R2 objects there older than 30 days (`CARTA_BACKUP_RETENTION_DAYS`). The R2 lifecycle rule on `archive/db/` (`push.py --lifecycle`) is the second net;
+5. keeps 7 days of local copies and writes `~/archive-out/nightly/last_backup.json` (`ok` or `failed`) and `r2:carta/status/backup.json` after every run. A failed run also leaves `carta-backup.service` failed.
+
+It needs the same two values as the weekly dump in `~/.config/carta/env` (`SUPABASE_DB_URL`, `CARTA_BACKUP_KEY`), `pg_dump` 17 or newer, `gpg` with the public key imported, and `rclone` with the `R2` remote. The counts manifest holds table names and row counts, no row data, and is not encrypted.
+
+```
+systemctl list-timers carta-backup.timer
+sudo systemctl start --no-block carta-backup.service ; journalctl -u carta-backup.service -n 30
+cat ~/archive-out/nightly/last_backup.json
+rclone lsl r2:carta/archive/db/supabase-nightly/
+```
+
+Check every week that the newest object in R2 is under 36 hours old. Nothing alerts yet (register row T1159-c); R2's lifecycle rule keeps deleting on schedule even when the backups have stopped, so a silent failure empties the bucket after 30 days.
+
+## Restore drill (monthly)
+
+`ops/restore_drill.sh` fetches the newest nightly dump, checks the checksum, decrypts, restores into a scratch database and compares row counts with the manifest, timing each stage. Run it on the laptop, which holds the GPG secret key (the box must not). Needs `rclone` with the R2 remote, a scratch Postgres 17 reachable through `PGHOST`, `PGPORT`, `PGUSER`, and the key in the local keyring.
+
+```
+ops/restore_drill.sh --latest --report ~/restore-drill.json
+ops/restore_drill.sh --file <x.dump.gpg> --db my_scratch      # a dump already on disk
+```
+
+It refuses a target whose host is the live project or the host in `SUPABASE_DB_URL`, drops and recreates `carta_restore_drill`, loads `ops/supabase_local_stub.sql` (the `anon`, `authenticated` and `service_role` roles, an `auth` schema with `auth.uid()` and an empty `auth.users`, a minimal `storage` schema), then restores. A few restore errors are expected: foreign keys to `auth.users` cannot be added because the dump holds no users. Judge it by `problems: 0` and the row counts. Write the total seconds in the register after the first live run (row T1159-a). Hand dumps (passphrase) work too: set `CARTA_BACKUP_PASSPHRASE`.
+
+Measured in the container on 2026-11-06 against a local Postgres 16 with all migrations: 69 tables, 108 seeded rows, 87 KB dump, fetch 0.11 s, decrypt 0.03 s, restore 0.73 s, verify 1.68 s, total 2.55 s. The live project is larger, so expect more; the live number is the owner's.
+
 ## Weekly dump on the box
 
 Runs on its own with the weekly run (`carta-weekly.timer`, Mondays 09:00 Brussels). It is skipped, with a log line, if any of these is missing: `pg_dump` 17 or newer, `gpg`, `CARTA_BACKUP_KEY`, that key in the box's keyring (`gpg --import carta-backups.pub.asc`), or `SUPABASE_DB_URL` (the Supabase session pooler string). Check it:
@@ -41,7 +75,7 @@ List what is in R2 (needs the `R2` rclone remote variables from `infra/hetzner/c
 rclone lsl r2:carta/archive/db/supabase/
 ```
 
-## Prove a dump can be read (do this monthly)
+## Prove a hand dump can be read
 
 Hand dump, restored to a scratch local Postgres (reachable with `PGHOST`, `PGPORT`, `PGUSER`; default `localhost:5432` as `postgres`):
 
