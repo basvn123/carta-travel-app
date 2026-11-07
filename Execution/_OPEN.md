@@ -2115,3 +2115,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1178-c | T1178 | Other post types (cheapest week, what changed, new on Carta, seasonal rankings, how we measure) and the Dutch blog (I8) are not built; part 2 | next task | open |  |
 | T1178-d | T1178 | The pipeline task needs a current app_data.json on the box and a scheduled pull request routine (K14 step 3); not set up | user | open |  |
 | T1178-e | T1178 | Owner approval of the sample December 2026 draft, then set status published; wire vintage is 2026-06-07 so a fresh wire should be used first | user | open |  |
+| T1194-a | T1194 | Climate normals CSV (DWD CLIMAT) not exported; climate layer has no real run, baseline or gap review | user | open |  |
+| T1194-b | T1194 | Copernicus sea temperature CSV not exported and T1097-a not run; sea layer has no real run | user | open |  |
+| T1194-c | T1194 | Eurostat tour_occ_nim export missing; crowds layer has no real run | user | open |  |
+| T1194-d | T1194 | The 30 largest gaps per layer need a verdict (gap_reviews.json) and fixes at the cause | next task | open |  |
+| T1194-e | T1194 | Wire lacks climate.elev; rebuild so the elevation guard works | user | open |  |
