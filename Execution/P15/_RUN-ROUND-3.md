@@ -6,11 +6,11 @@ Rules: as in round 2's "Batch schedule" (`Execution/P15/_RUN-ROUND-2.md`): a bat
 
 | S | Task | Item | Branch | State | Merged | Owner steps |
 |---|---|---|---|---|---|---|
-| 113 | T1197 | D16 | p15-s113-link-health | planned | | |
-| 114 | T1198 | D17 | p15-s114-photo-correctness | planned | | |
-| 115 | T1199 | D19 | p15-s115-entry-rules | planned | | |
-| 116 | T1200 | D20 | p15-s116-heat-fire | planned | | |
-| 117 | T1201 | register follow-up (trails) | p15-s117-sweep-trails | planned | | |
+| 113 | T1197 | D16 | p15-s113-link-health | started | | |
+| 114 | T1198 | D17 | p15-s114-photo-correctness | started | | |
+| 115 | T1199 | D19 | p15-s115-entry-rules | started | | |
+| 116 | T1200 | D20 | p15-s116-heat-fire | started | | |
+| 117 | T1201 | register follow-up (trails) | p15-s117-sweep-trails | started | | |
 | 118 | T1202 | D18 | p15-s118-seasons-closures | planned | | |
 | 119 | T1203 | D21 | p15-s119-accessibility-facts | planned | | |
 | 120 | T1204 | D22 | p15-s120-trip-footprint | planned | | |
@@ -29,4 +29,4 @@ Rules: as in round 2's "Batch schedule" (`Execution/P15/_RUN-ROUND-2.md`): a bat
 | 133 | T1217 | register follow-up (docs) | p15-s133-sweep-docs | planned | | |
 
 Merge notes:
-
+- 10:48 Round 3 started on p15-round3 (b9fa5be8cc). Hourly check-in trig_01SHzvG3YBsJvHaSNnNrmgoi resumes the run after a usage limit. Batch 13 started: S113 (session_0156MmZ5ZAc9LvYWFjdxWXMW), S114 (session_0156MmZ6A3M5oDJDrb66gS5i), S115 (session_0156MmZ5zGUag7kBLCJofUob), S116 (session_0156MmZ6uTWy2SczhMNCcCao), S117 (session_0156MmZ6nyqgzMxNvL88cgP7). Held from round 2: S63, S67, S93 (owner rows open).
