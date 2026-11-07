@@ -711,6 +711,9 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .tcard-acts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
 .ccard .tcard-acts .btn, .ccard .tcard-acts .btn:is(:hover, :focus, :active, [aria-expanded="true"]) { background: transparent; color: var(--ccard-ink); }
 @media (hover: hover) { .ccard .tcard-acts .btn:hover { background: color-mix(in srgb, var(--umber-50) 10%, transparent); } }
+.tcard-way-fp { display: block; font-size: var(--text-caption); color: var(--ccard-ink-2); }
+.tcard-fp-note { margin: 6px 0 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }
+.tcard-fp-note a { color: inherit; text-decoration: underline; }
 .tcard-way-sub > span { white-space: nowrap; }
 .tcard-more svg { transition: transform var(--dur-2) var(--ease-out); }
 .tcard-more[aria-expanded="true"] svg { transform: rotate(180deg); }

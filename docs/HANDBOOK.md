@@ -1373,6 +1373,26 @@ Worked example: an airport 100 road km away, 2 adults, 7 nights. Car: 0.1397 per
 
 ---
 
+### Trip footprint: CO2e beside the price (D22)
+
+**What it does.** Beside the price of each way there (the place page's trip card) and each leg of the planner's Getting there step, Carta shows "About N kg CO2e each", per person, with a link to the method. It is an estimate from published averages, never a measurement, and nothing is ranked or hidden by it.
+
+**How it works.** `lib/footprint/footprint.js`, factors in `footprint.factors`:
+1. Flight: straight line x `flight_uplift` 1.08 x `flight_short_g_pkm` 126 (up to `short_haul_max_km` 3700) or `flight_long_g_pkm` 117 g per passenger-km.
+2. Train `train_g_pkm` 35, coach `coach_g_pkm` 39, ferry `ferry_g_pkm` 113 g per passenger-km, on the route km (a published leg's km, else the straight line x `ground_detour` 1.3).
+3. Car: `car_g_km` 170 g per car-km, shared by the party (at most 5 seats).
+4. A return journey doubles the one way. A mode or distance with no factor shows nothing, never a guess.
+
+Worked example: 1000 km flight one way = 1000 x 1.08 x 126 / 1000 = 136.08 kg; return 272 kg. 400 km by train = 400 x 35 / 1000 = 14 kg.
+
+**Data behind it.** UK DESNZ/DEFRA conversion factors (Open Government Licence v3.0), 2025/2026 editions, radiative forcing included for flights. UK averages are a proxy for Europe; European rail is often lower.
+
+**Where it lives.** `continent-app/src/lib/footprint/footprint.js`, `src/browse/DestPriceCard.jsx`, `src/planner/TravelLegsSection.jsx`; test `tests/footprint.test.mjs`.
+
+**Limits.** The factor values came from secondary mirrors because the build container could not open gov.uk; checking them against the workbook is an owner step (T1204-a). Not counted: the airport transfer, hotel, activities.
+
+---
+
 ### The way there: which mode a card opens on (D13)
 
 **What it does.** Where Carta prices several ways to reach a place (the place page's trip card, an Explore card under "any way", the Places list under "any way"), it opens on one. It used to open on the cheapest, which showed a car to Bergen or a 512 euro train to Taormina while flights existed (audit P-31). It now opens on the way that is sensible door to door; every way stays listed with its own price and the cheapest keeps its "Cheapest" mark.

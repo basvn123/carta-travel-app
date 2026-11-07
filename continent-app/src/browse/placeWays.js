@@ -52,7 +52,7 @@ export function waysThere({ dest, anchor, home = null, party = null, flights = n
   const choice = chooseWay(rows, { km: wayKm(home, dest), transferMinutes: transferMinutesOf(dest) });
   if (!choice) return null;
   return {
-    from: home?.name || '', rows: choice.rows,
+    from: home?.name || '', km: wayKm(home, dest), rows: choice.rows,
     cheapest: choice.cheapest, fastest: choice.fastest, pick: choice.pick, reason: choice.reason,
   };
 }
