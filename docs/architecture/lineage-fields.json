@@ -577,7 +577,9 @@
       "writers": [
         "pipeline/harvest_activities.py",
         "pipeline/pois/harvest_pois_overture.py",
-        "pipeline/score_significance.py"
+        "pipeline/score_significance.py",
+        "pipeline/poi_labels.py",
+        "pipeline/backfill_landmarks.py"
       ],
       "note": "sync-data.mjs moves activities.items_full to public/poi/{shard}.json."
     },

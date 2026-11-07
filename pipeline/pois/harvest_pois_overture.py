@@ -42,6 +42,7 @@ from pathlib import Path
 import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # pipeline/: shared libraries (T1207)
 from pipeline_io import atomic_write_json
+from provenance import touch  # T1214: activities is edited in place
 
 ROOT = Path(__file__).resolve().parents[2]
 MASTER = ROOT / "app_data" / "app_data.json"
@@ -227,6 +228,7 @@ def assign(dry_run):
                 items.append({"name": r["name"], "kind": r["kind"]})
                 inames.add(fold(r["name"]))
         a["items"] = items
+        touch(a)
         grown += 1
         added_total += len(add)
 

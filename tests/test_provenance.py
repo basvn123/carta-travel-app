@@ -145,8 +145,26 @@ def test_in_place_writers_touch_their_block():
     """The two layers that edit a block in place (rather than assign a fresh
     one) must call touch(), or their edits keep the old date."""
     for f, needle in (("pipeline/apply_tourist_premium.py", "touch(costs)"),
-                      ("pipeline/apply_airport_anchors.py", "touch(tr)")):
+                      ("pipeline/apply_airport_anchors.py", "touch(tr)"),
+                      # T1214 (T1143-c): the writers that edit activities in place
+                      ("pipeline/pois/harvest_pois_overture.py", "touch(a)"),
+                      ("pipeline/backfill_landmarks.py", "touch(acts)"),
+                      ("pipeline/score_significance.py", 'touch_changed(data["destinations"], "activities", before)'),
+                      ("pipeline/poi_labels.py", 'touch_changed(data["destinations"], "activities", before)')):
         assert needle in (ROOT / f).read_text(encoding="utf-8"), f
+
+
+def test_touch_changed_redates_only_the_edited_blocks():
+    """T1214 (T1143-c): a fingerprint before an in-place pass, touch_changed after it."""
+    dests = {"A": {"activities": {"items": [1], "_src": "poi_mix", "_asof": "2026-01-01"}},
+             "B": {"activities": {"items": [2], "_src": "poi_mix", "_asof": "2026-01-01"}},
+             "C": {"activities": None}}
+    before = pv.fingerprints(dests, "activities")
+    dests["A"]["activities"]["items"].append(3)
+    assert pv.touch_changed(dests, "activities", before) == 1
+    assert "_asof" not in dests["A"]["activities"] and dests["B"]["activities"]["_asof"] == "2026-01-01"
+    pv.stamp_payload({"meta": {}, "destinations": dests}, asof=TODAY)
+    assert dests["A"]["activities"]["_asof"] == TODAY and dests["B"]["activities"]["_asof"] == "2026-01-01"
 
 
 @pytest.mark.skipif(not WIRE.exists(), reason="the shipped wire is not in this checkout")
