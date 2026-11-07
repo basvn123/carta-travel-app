@@ -131,3 +131,17 @@ test("one difficulty: dossier rows and the GPX name the grade", () => {
   assert.ok(gpx.includes("very hard"));
   assert.ok(!gpx.includes("moderate"));
 });
+
+// T1201 (T1181-g): a "loop" reason is dropped when the route type says the
+// walk is one way or there and back, even while the loop flag is true (Old
+// Man of Storr 188352: out and back, roundtrip tag; Quiraing 188351: one way).
+test("T1201: the loop reason follows the route type, not the loop flag", () => {
+  const reasons = [{ code: "loop" }];
+  const says = (trip) => trailReasons(reasons, t, 6, trip).length > 0;
+  assert.equal(says({ is_loop: true, f: { rt: "out_back" } }), false);
+  assert.equal(says({ is_loop: true, f: { rt: "point" } }), false);
+  assert.equal(says({ is_loop: true, f: { rt: "loop" } }), true);
+  assert.equal(says({ is_loop: true, f: { rt: "figure8" } }), true);
+  assert.equal(says({ is_loop: true, f: {} }), true);
+  assert.equal(says({ is_loop: false }), false);
+});

@@ -274,6 +274,11 @@ POPULARITY_MISSING = 0.35
 # Endpoints this close count as the same place. 250 m is the brief's figure
 # and about the length of a car park.
 LOOP_GAP_M = 250
+# T1201 (T1184-d, T1185-d, T1181-g): the roundtrip tag wins over the ends
+# only while the published line, merged, has its ends within this distance
+# (or does not merge to one line, so its ends cannot be read). Same number as
+# attributes.TAG_LOOP_MAX_M and the trail page's T430 guard.
+TAG_LOOP_MAX_M = 1000
 
 # Routes whose title is a synthetic "OSM route 12345" have neither a name nor
 # a ref upstream. They cannot be presented to a traveller as anything, so they
@@ -396,7 +401,12 @@ def apply_schema(conn):
 MARK_LOOPS_SQL = """
     UPDATE trips t SET
         is_loop = CASE
-            WHEN lower(coalesce(g.roundtrip, '')) IN ('yes', 'true') THEN true
+            WHEN lower(coalesce(g.roundtrip, '')) IN ('yes', 'true')
+                 AND NOT (GeometryType(g.line) = 'LINESTRING'
+                          AND NOT ST_DWithin(ST_StartPoint(g.line)::geography,
+                                             ST_EndPoint(g.line)::geography,
+                                             %(tag_max)s))
+                THEN true
             WHEN ST_NumGeometries(g.geom) = 1 AND ST_DWithin(
                     ST_StartPoint(ST_GeometryN(g.geom, 1))::geography,
                     ST_EndPoint(ST_GeometryN(g.geom, 1))::geography, %(gap)s)
@@ -404,6 +414,10 @@ MARK_LOOPS_SQL = """
             ELSE false END,
         loop_source = CASE
             WHEN lower(coalesce(g.roundtrip, '')) IN ('yes', 'true')
+                 AND NOT (GeometryType(g.line) = 'LINESTRING'
+                          AND NOT ST_DWithin(ST_StartPoint(g.line)::geography,
+                                             ST_EndPoint(g.line)::geography,
+                                             %(tag_max)s))
                 THEN 'tagged'
             WHEN ST_NumGeometries(g.geom) = 1 AND ST_DWithin(
                     ST_StartPoint(ST_GeometryN(g.geom, 1))::geography,
@@ -413,7 +427,8 @@ MARK_LOOPS_SQL = """
     FROM (
         SELECT t2.id,
                t2.raw_tags->>'roundtrip' AS roundtrip,
-               COALESCE(r.geom, t2.geom) AS geom
+               COALESCE(r.geom, t2.geom) AS geom,
+               ST_LineMerge(ST_Force2D(COALESCE(r.geom, t2.geom))) AS line
         FROM trips t2
         LEFT JOIN trip_repairs r
                ON r.trip_id = t2.id AND r.repaired
@@ -429,10 +444,13 @@ def mark_loops(conn, countries):
     """Set is_loop/loop_source across the pool.
 
     Tagged wins over measured: a mapper who wrote roundtrip=yes on a figure of
-    eight knows something the endpoints do not say. Measured catches the
+    eight knows something the endpoints do not say, unless the merged line's
+    ends lie more than TAG_LOOP_MAX_M apart (T1201): then the tag is wrong.
+    Measured catches the
     overwhelming majority, since only 48k of 236k relations carry the tag."""
     with conn.cursor() as cur:
-        cur.execute(MARK_LOOPS_SQL, {"gap": LOOP_GAP_M, "cc": countries})
+        cur.execute(MARK_LOOPS_SQL, {"gap": LOOP_GAP_M, "cc": countries,
+                                     "tag_max": TAG_LOOP_MAX_M})
         n = cur.rowcount
     conn.commit()
     return n

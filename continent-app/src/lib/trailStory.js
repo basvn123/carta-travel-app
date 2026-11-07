@@ -323,6 +323,11 @@ export function trailReasons(reasons, t, limit = 6, trip = null) {
     if ((code === 'summit' || code === 'summits') && Number.isFinite(Number(r.ele))
       && Number.isFinite(top) && Number(r.ele) > top + 60) continue;
     if (code === 'loop' && trip && trip.is_loop === false) continue;
+    // T1201 (T1181-g): the route type wins over the loop flag, which is also
+    // true on an out and back (Old Man of Storr) and on near loops typed as
+    // one way (Quiraing), so the reason would contradict the shape fact.
+    const shape = trip?.f?.rt;
+    if (code === 'loop' && shape && shape !== 'loop' && shape !== 'figure8') continue;
     const text = reasonText(r, t);
     if (!text || seen.has(text)) continue;
     seen.add(text);

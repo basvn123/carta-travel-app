@@ -622,7 +622,13 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const srcName = detail?.src_name || tr.src_name || '';
 
   // One way, a loop or there and back: the wire's shape, else the loop test.
-  const rt = tripRouteType(src) || tripRouteType(tr);
+  // T1201 (T1184-d, T1185-d): the wire's route type came from the mapper's
+  // roundtrip tag on many A to B stages (all of the BergeSeen Trail), so a
+  // loop whose ends lie more than a kilometre apart reads as one way, the
+  // same T430 guard `loop` has above. The pipeline fixes it at the next export.
+  const rtWire = tripRouteType(src) || tripRouteType(tr);
+  const rt = (rtWire === 'loop' || rtWire === 'figure8') && endsApartKm != null && endsApartKm > 1
+    ? 'point' : rtWire;
   const shapeKey = rt && ROUTE_LABEL[rt] ? ROUTE_LABEL[rt]
     : loop === true ? 'trails.shapeLoop' : loop === false ? 'trails.shapePoint' : null;
   const shapeWord = shapeKey ? t(shapeKey) : '';

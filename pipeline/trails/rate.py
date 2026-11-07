@@ -401,6 +401,19 @@ def is_comfortable_day(row):
     return mins is None or mins <= COMFORT_MAX_MIN
 
 
+def says_loop(row):
+    """True when a reason may say "loop" (T1201, T1181-g).
+
+    attributes.py's route_type wins where it exists, as it does in
+    shape_raw: an out and back also ends where it starts, so `is_loop` (can I
+    leave the car here) is true on the Old Man of Storr while the walk is
+    there and back. The flag answers only for a row with no route type."""
+    rt = row.get("route_type")
+    if rt is not None:
+        return rt in ("loop", "figure8")
+    return bool(row.get("is_loop"))
+
+
 def reasons_for(row, parts):
     """Reason codes plus the numbers the app needs to write the sentence.
 
@@ -463,7 +476,7 @@ def reasons_for(row, parts):
         add("water", n=by_kind.get("spring", 0) + by_kind.get("water", 0))
 
     # What kind of outing it is.
-    if row.get("is_loop"):
+    if says_loop(row):
         add("loop")
     d = row.get("distance_m") or 0
     if DAY_MIN_M <= d <= DAY_MAX_M:
