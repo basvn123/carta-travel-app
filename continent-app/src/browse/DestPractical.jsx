@@ -14,10 +14,12 @@ import { useStayRecord } from '../lib/staysData.js';
 import { baseCity } from '../lib/nearby.js';
 import { stayBookLinks } from '../lib/transportLinks.js';
 import { stayKindsOf } from '../lib/whenGuide.js';
-import { BunkIcon, HomeIcon, HotelIcon } from '../components/Icons.jsx';
+import { AccessIcon, BunkIcon, HomeIcon, HotelIcon } from '../components/Icons.jsx';
 import { practicalSlotRows } from './DestPracticalSlots.jsx';
 import { BeforeYouGo } from './DestBefore.jsx';
 import { parkingTruth } from '../lib/parkingTruth.js';
+import { useDestInfo } from '../lib/destInfo.js';
+import { accessCard } from '../lib/accessFacts.js';
 import { PSection, WayFig } from './PageTemplate.jsx';
 import '../styles/94-when-stay.css';
 import {
@@ -242,6 +244,9 @@ export function DestPractical({ p }) {
   const matchFit = useFit(destination, month);
   const qf = quickFacts(p);
   const truth = React.useMemo(() => parkingTruth(p.parking), [p.parking]);
+  // D21: shown only when OpenStreetMap carries a wheelchair tag for this place.
+  const destInfo = useDestInfo(destination);
+  const access = React.useMemo(() => accessCard(destInfo?.access, t, lang), [destInfo, t, lang]);
   const aroundBits = [
     aroundStat?.value || null,
     getting?.why && lang === 'en' ? getting.why : null,
@@ -264,6 +269,7 @@ export function DestPractical({ p }) {
     },
     aroundBits.length > 0 && { key: 'around', Icon: BusIcon, title: t('dest.keyAround'), text: aroundBits.join(' ') },
     rhythm && lang === 'en' && { key: 'rhythm', Icon: ClockIcon, title: t('destx.rhythm'), text: rhythm },
+    access && { key: 'access', Icon: AccessIcon, title: t('access.title'), text: access.lines.join(' '), note: access.source },
     ...practicalSlotRows(p),
   ].filter(Boolean);
 
@@ -279,6 +285,7 @@ export function DestPractical({ p }) {
               <h3 className="pcard-title">{c.title}</h3>
               {c.value && <p className="pcard-value">{c.value}</p>}
               {c.text && <p className="pcard-text">{c.text}</p>}
+              {c.note && <p className="pcard-note">{c.note}</p>}
               {c.links?.length > 0 && <CardLinks links={c.links} />}
             </li>
           ))}

@@ -2309,6 +2309,21 @@ TASKS = [
                  "from-scratch pass after a catalogue expansion."),
     },
     {
+        "key": "access_facts",
+        "title": "Accessibility facts per destination (OSM wheelchair tags, D21) -> public/destinfo",
+        "cadence": "quarterly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [
+            [PY, "pipeline/harvest_access.py"],
+            [PY, "pipeline/export_destinfo.py"],
+        ],
+        "note": ("the place page's Access block: step-free stations, accessible "
+                 "toilets and mapped museums and sights, only where OpenStreetMap "
+                 "carries a wheelchair tag. Resumable Overpass harvest like "
+                 "parking; delete cache/access_osm.json to force a fresh pass."),
+    },
+    {
         "key": "activities",
         "title": "POIs / attractions (OpenTripMap+Wikivoyage+Wikipedia)",
         "cadence": "backfill",

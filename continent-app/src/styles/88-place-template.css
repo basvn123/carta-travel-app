@@ -492,6 +492,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pcard-title { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .pcard-value { margin: 0; font-size: var(--text-body); font-weight: 700; line-height: 1.3; color: var(--text); }
 .pcard-text { margin: 0; font-size: var(--text-label); line-height: var(--leading-ui); color: var(--text); text-wrap: pretty; }
+.pcard-note { margin: 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); text-wrap: pretty; }
 .pcard-value + .pcard-text { color: var(--text-2); }
 
 /* The links at the card's foot: the first a small umber button, the rest
