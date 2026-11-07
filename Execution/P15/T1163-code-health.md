@@ -27,7 +27,7 @@ A research subagent compared the options (versions checked on registry.npmjs.org
 - Renamed: `continent-app/src/planner/finder/TripPage.jsx` to `FoundTripPage.jsx` (export `FoundTripPage`), its one importer `continent-app/src/planner/finder/FindingTrips.jsx`.
 - Deleted (26): `continent-app/src/auth/radioKeys.js`; `continent-app/src/browse/` BathingWater, CrowdCalendar, DerivedModules, FlashDeck, GettingThere, HonestFooters, LifestyleButton, LifestyleSlider, RailFold, RouteFacts, RoutesFromHere, SwimSafety, WaterSheet, WebcamEmbed, WeekPlan (`.jsx`); `continent-app/src/components/` CountryPicker, CrowdingBadge, FactMeter, FavStar, KindGlyph (`.jsx`); `continent-app/src/lib/citytrips.js`; `continent-app/src/planner/WhereQuiz.jsx`, `continent-app/src/planner/flow/BookedDoor.jsx`, `continent-app/src/planner/flow/KnowDoor.jsx`, `continent-app/src/planner/trip/CostTiles.jsx`.
 - One baseline comment line added before each of the 125 react-refresh exports in 61 files under `continent-app/src/`.
-- `continent-app/scripts/ci/design-lint.baseline.json` (regenerated; see the measurements), `MAP.md`, `ROADMAP.md` (H14 status), `Execution/_OPEN.md` (rows appended), this report.
+- `continent-app/scripts/ci/design-lint.baseline.json` (regenerated; see the measurements), `docs/logic/plan-day.md` and `docs/logic/seasons-crowds.md` (constant pointers to moved or deleted code, so the docs drift check passes), `MAP.md`, `ROADMAP.md` (H14 status), `Execution/_OPEN.md` (rows appended), this report.
 
 ## Commands run
 
@@ -78,6 +78,7 @@ None.
 | `DayPlannerTab` chunk | 251,750 B | 261,881 B | +10,131 |
 | `TripPlannerTab` chunk | 445,172 B | 453,295 B | +8,123 |
 | Fast build time | about 2 s | about 2 s | 0 |
+| Python tests (CI set, quarantine deselected) | not run | 822 pass, 3 fail, 10 skipped before the docs fix; the docs drift test then passes; `test_beauty_v2_reads_no_register` and `test_adding_places_moves_nobody_else` fail the same on the base branch here (data on this container) | |
 
 ## What broke and how it was fixed
 
@@ -91,6 +92,7 @@ None.
 | `sectionBoundary.test.mjs` failed when the four tab panels moved out of `App.jsx` | The test reads `App.jsx` for each named `SectionBoundary` | Kept the tab panels in `App.jsx`; only the overlays moved |
 | Statement anchors matched the wrong statement once (`useAppSettingsValue` took one line) | The anchor window ran past the end of a short statement | The window stops at the statement's end; the App split was replayed from the base file |
 | Design lint reported moved violations as new | Its baseline keys on file path | `--update-baseline`, then proved per rule and line text that no count grew (total fell by the 19 in deleted files) |
+| `tests/test_docs_drift.py` failed: 7 drift | `docs/logic/` records name constants by file (`perDay`, `SUGGEST_TOWN_KM`, `SUGGEST_TOWN_CAP`, `inSeason`, `CardPreview`) and two deleted files | Pointed the four records at the new modules; SEASON-028 now says the pill and its files are gone (its Rule line still describes the retired pill, row T1163-d). `scripts/docs/drift.py`: 0 drift |
 | Browser checks could not load data | This checkout has no `public/boot.json` or `dest/` (gitignored, built from the master dataset) | `sync-data.mjs --split-only` from `public/app_data.json`; the rank tier check fails on this data, so both sides of every comparison use the same data |
 | Playwright in the app wants chromium 1228; the container has 1243 | Version pin | `PLAYWRIGHT_BROWSERS_PATH` to a scratch folder linking 1228 to 1243 |
 | Several extracted parts take many arguments (DayPlannerStart 93 props, DayBody 79, AppOverlays 67, ExploreContent 56, useFacetGroups 52) | Mechanical extraction passes every free name | Kept: the 150-prop wizard step canvas, the 104-prop DestinationsTab list switch, the four App tab panels and a 46-input `startOver` hook were rolled back as poor value. Grouping the rest is row T1163-f |
@@ -99,9 +101,15 @@ None.
 
 DOM checks, not screenshots: each `scripts/verify_*.mjs` below ran against the base branch (`origin/p15-round2`, dev server on 4174) and the split code (the committed branch, dev server on 4175), on the same local data, and the PASS and FAIL lines were compared. The scripts cover phone and desktop widths where they define them.
 
-VERIFY_TABLE
+Every log below is identical on both sides once ports, timings and stack lines are removed (33 scripts compared line by line).
 
-Not run here: `verify_core_flow.mjs` and `verify_plan_short.mjs` (they expect a served fast build on port 5871 and a shots folder); `verify_trip_price_consistency.mjs` fails the same 5 checks on both sides (data on this container).
+| Result on both sides | Scripts |
+|---|---|
+| All checks pass | destination_page (37), trip_page (59), trip_share, when_step (13), focus_trap (11), shortlist (10), day_workspace, day_overview, day_steps, day_ideas, day_dates, day_routes, day_start_point, continue_trip |
+| Same checks pass and the same fail (data on this container: the boot index is split from public/app_data.json and its rank tier check fails) | explore (98 of 98, exit 1 on console errors from blocked hosts), destinations (53 pass, 35 fail), lakes (78, 3), cycling (64, 8), beaches (46, 8), mountains (30, 2), journeys (46, 1), tab_switching (39 of 40), day_landing (1 fail), trip_price_consistency (5 fail) |
+| Stop early the same way (timeouts or a harness they start themselves) | home, bottom_nav, desktop_shell, trails, trail_page, from_picker (starts its own vite preview), core_flow and plan_short (expect a served fast build on port 5871) |
+
+The whole-app end check at phone and desktop width on real data belongs to the batch end check after merge.
 
 ## What is still open
 
