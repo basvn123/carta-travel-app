@@ -124,6 +124,7 @@ Written 2026-11-04 (T1045) from the code, config and migrations on `main` at com
    - [Hand corrections (pipeline overrides)](#hand-corrections-pipeline-overrides)
    - [Evals (one runner, one results format)](#evals-one-runner-one-results-format)
    - [Travel taxonomy and tagging](#travel-taxonomy-and-tagging)
+   - [Why this place and refreshed dates](#why-this-place-and-refreshed-dates)
    - [Carta Intelligence API](#carta-intelligence-api)
    - [Truth set (hand-verified answers, scored per release)](#truth-set-hand-verified-answers-scored-per-release)
    - [Deploy (Cloudflare Pages, R2, prerender, SEO)](#deploy-cloudflare-pages-r2-prerender-seo)
@@ -2657,6 +2658,21 @@ This section covers the parts of Carta that sit around the travel content: the A
 **Where it lives.** `continent-app/src/lib/taste/` (profile.js, store.js, sync.js, counts.js, taxonomyMap.js), `continent-app/src/auth/mytrips/TasteChips.jsx`, `continent-app/src/styles/71-taste.css`, `supabase/migrations/072_taste_profile.sql`, `continent-app/tests/tasteProfile.test.mjs`, `continent-app/scripts/verify_taste_profile.mjs`.
 
 **Limits.** 94 of the 138 nodes it uses have English labels only, so other languages show those in English (T1149-c). The evidence is today's tags mapped to nodes, not the S66 tagger's. Weights and thresholds are starting values to tune once acceptance data exists.
+
+### Why this place and refreshed dates
+
+**What it does (T1208, G9).** Place cards (Explore's rail cards, the list and map cards, the tile) carry up to two "why this place" chips, and the place page a "Why this place" section, saying why a place fits this traveller. Under the day price the page says when the prices were refreshed. Nothing shows without evidence.
+
+**How it works.**
+- A chip needs evidence on both sides (`continent-app/src/lib/why.js`). The place: a taxonomy node from its own listing (`categories` and `tags` mapped through `lib/taste/taxonomyMap.js`) or a tagger tag with its quote (tagger format, `pipeline/taxonomy/tagger.py`; not on the wire yet, T1150-d). The traveller: a Yes in "Your taste" (`carta.taste.v1`) on that node or a broader one, or a picked like (`taste.likes`) that maps to it.
+- A listing tag is scored the way the tagger scores a mapped tag: noisy-OR of `MAPPED_WEIGHT` 0.62 over at most two listing values, so one value is 0.62 and two are 0.86. A tagger tag keeps its own score. Under `LIKELY` 0.6 (the tagger's profile threshold) there is no tag; a tag with no evidence is dropped; a node gives way to a narrower node the place also carries.
+- Confidence is said in two words, never a percent (the score is not a calibrated probability): "Strong evidence" from `STRONG` 0.75 (the tagger's filter threshold), "Likely" from 0.6. A card chip under 0.75 reads "Castle (likely)" and wears a dashed edge.
+- A Not me on a node hides it and everything under it. `BROAD` nodes (set.heritage, act.sightseeing: on most places) match only a Yes by name; `tests/why.test.mjs` fails when another node passes half the catalogue.
+- Cards: at most `CARD_MAX` 2 chips, Yes before likes, then score. The page: up to four "Fits your taste" rows, each with its confidence word, the traveller's evidence and the place's evidence, then up to `KNOWN_MAX` 3 "Known for" rows (strong tags only). A tagger quote is English, so other languages say "From its description".
+- `lib/why.js` carries the taxonomy map (about 5 KB gzip), so it loads on demand: a card asks for it only when the traveller has a Yes or a like, the place page always.
+- Dates (`continent-app/src/lib/asOf.js`): the oldest `_asof` of the price blocks (`costs`, `accommodation`; T1143) as "Prices refreshed 7 Jun 2026" through `Intl.DateTimeFormat` in UTC. `_asof` is the date the layer rebuilt the block, not the source's vintage (T1143-d), so the words say "refreshed", never "checked". Past `STALE_DAYS.prices` 90 days (three missed MONTHLY runs) the line adds "they may have moved since". No stamp, no line.
+
+**Where.** `continent-app/src/browse/WhyChips.jsx` (`WhyChips`, `WhyPlace`, `PricesRefreshed`), `src/styles/80-why.css`, keys `why.place.*` in the six catalogues. Checks: `tests/why.test.mjs`, `scripts/verify_why_chips.mjs`.
 
 ### Together, sharing and collaborative trips
 
