@@ -190,7 +190,11 @@ const planBody = (extra = {}) => ({
 });
 const planAnswer = text({
   summary: 'A day', stops: [
-    { id: 'c1', dwellMin: 40, why: 'a' }, { id: 'c2', dwellMin: 40, why: 'b' }, { id: 'c3', dwellMin: 40, why: 'c' },
+    // Since T1117 a stop must carry its name (guardPlanOutput drops one that
+    // does not), so the stub answers the way the model is asked to.
+    { id: 'c1', name: 'Place c1', arrive: '09:00', dwellMin: 40, why: 'a' },
+    { id: 'c2', name: 'Place c2', arrive: '10:00', dwellMin: 40, why: 'b' },
+    { id: 'c3', name: 'Place c3', arrive: '11:00', dwellMin: 40, why: 'c' },
   ],
 });
 const towns = ['t1', 't2', 't3', 't4'].map((id) => ({ id, name: `Town ${id}`, country: 'AT', km: 30, rating: 7, tags: [] }));
@@ -310,7 +314,9 @@ async function sharedContract(spec) {
     r.status === 502 && shapeOf(r) === 'ai_bad_output' && refunded().join() === 'plan');
 
   // 13 cache hit: still spends a unit, never calls Gemini
-  base({ cache: { payload: { stops: [], suggestions: [], bookings: [], meta: {} }, created_at: new Date().toISOString() } });
+  // The payload carries every key the three payload guards ask for (T1117:
+  // plan-day needs summary, parse-booking activities); a row without them is a miss.
+  base({ cache: { payload: { summary: '', stops: [], suggestions: [], bookings: [], activities: [], meta: {} }, created_at: new Date().toISOString() } });
   r = await call(name, spec.body());
   check(`${name}: a cache hit answers 200 without calling Gemini`, r.status === 200 && world.fetchCalls.length === 0);
   check(`${name}: a cache hit still spends the unit`, consumed('plan') === 1 && refunded().length === 0);
@@ -458,8 +464,9 @@ async function modelEventNotBlocking() {
   world.hung.forEach((f) => f());
   await Promise.all(world.waited);
 
-  // fall-over is recorded as such
-  resetWorld({ world: { gemini: [{ status: 503 }, planAnswer] } });
+  // fall-over is recorded as such. Since T1137 a 5xx retries the same model
+  // once (aiModels), so m1 answers 503 twice before m2 is asked.
+  resetWorld({ world: { gemini: [{ status: 503 }, { status: 503 }, planAnswer] } });
   await call('plan-day', planBody());
   await Promise.all(world.waited);
   check('model event: a fall-over is logged with fell_back true on the model that answered',
@@ -495,7 +502,7 @@ async function modelEventNotBlocking() {
     r.status === 200 && modelEvents().length === 1);
 
   // a cache hit generates nothing, so logs no model event
-  resetWorld({ world: { cache: { payload: { stops: [], meta: {} }, created_at: new Date().toISOString() } } });
+  resetWorld({ world: { cache: { payload: { summary: '', stops: [], meta: {} }, created_at: new Date().toISOString() } } });
   await call('plan-day', planBody());
   check('model event: a cache hit logs no model event', modelEvents().length === 0);
 }
