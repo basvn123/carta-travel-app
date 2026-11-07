@@ -25,7 +25,7 @@
  * (Deno) and Ask can load the same file. No model is called.
  */
 import { buildAliases } from './aliases.js';
-import { clean } from './fold.js';
+import { clean, soundKey } from './fold.js';
 
 export const LINK_DEFAULTS = {
   confident: 0.86,     // top score at or above this, and
@@ -35,7 +35,9 @@ export const LINK_DEFAULTS = {
   limit: 10,
   pool: 120,           // trigram candidates scored per mention
   uncovered: 0.25,     // cost of an exact window that explains only part of the mention
-  accent: 0.05,        // the mention spelt with the name's own accents (Fårö, not Faro)
+  accent: 0.05,        // the mention spelt with the name's own accents (Fårö, not Faro);
+                       // the same cost when the mention's accents are not the name's (T1215)
+  sound: 0.9,          // a sound-alike spelling (pafos for Paphos, hania for Chania), T1215
   prior: 0.08,         // weight of the popularity prior
   bm25: 0.04,          // weight of the BM25 word score
   countryBonus: 0.1,
@@ -114,6 +116,7 @@ export function makeLinker(inputs = {}, options = {}) {
   const byKey = new Map();
   const byGram = new Map();
   const byToken = new Map();
+  const bySound = new Map();
   const gramSets = [];
   let totalLen = 0;
   rows.forEach((r, i) => {
@@ -124,12 +127,16 @@ export function makeLinker(inputs = {}, options = {}) {
     const toks = r.key.split(' ');
     totalLen += toks.length;
     for (const t of new Set(toks)) (byToken.get(t) || byToken.set(t, []).get(t)).push(i);
+    if (r.key.length >= 4) {
+      const sk = soundKey(r.key);
+      (bySound.get(sk) || bySound.set(sk, []).get(sk)).push(i);
+    }
   });
   const countries = new Map();
   for (const p of Object.values(places)) {
     if (p.country && p.iso2) countries.set(clean(p.country), p.iso2);
   }
-  return { rows, places, codes, byKey, byGram, byToken, gramSets, avgLen: totalLen / Math.max(1, rows.length), countries, opts, N: rows.length };
+  return { rows, places, codes, byKey, byGram, byToken, bySound, gramSets, avgLen: totalLen / Math.max(1, rows.length), countries, opts, N: rows.length };
 }
 
 function readMention(linker, raw) {
@@ -183,10 +190,14 @@ export function linkPlace(linker, mention, ctx = {}) {
   for (const w of windows(m.words, 4)) {
     if (w.length < 3 || NOISE.has(w) || MONTHS.has(w)) continue;
     const hits = linker.byKey.get(w);
-    if (!hits) continue;
+    // A sound-alike key (pafos, hania) is nearly as good as the key itself.
+    const alike = w.length >= 4 ? linker.bySound.get(soundKey(w)) : null;
+    if (!hits && !alike) continue;
     const covered = w.split(' ').filter((t) => coreSet.has(t)).length;
     const cover = m.core.length ? Math.min(1, covered / m.core.length) : 1;
-    for (const i of hits) bump(i, 1 - o.uncovered * (1 - cover));
+    const f = 1 - o.uncovered * (1 - cover);
+    for (const i of hits || []) bump(i, f);
+    for (const i of alike || []) bump(i, o.sound * f);
   }
 
   const coreStr = m.core.join(' ');
@@ -255,7 +266,9 @@ export function linkPlace(linker, mention, ctx = {}) {
     }
     if (sim <= 0 && !v.bm) continue;
     const p = linker.places[r.id];
-    let score = (accented && r.raw === rawLow ? o.accent : 0) + sim * r.w + o.prior * p.prior + o.bm25 * (bmMax ? v.bm / bmMax : 0);
+    // Accents decide between twins: "Fårö" is the Gotland island, not Faro.
+    const accentFit = !accented || !r.raw ? 0 : r.raw === rawLow ? o.accent : clean(r.raw) === clean(rawLow) ? -o.accent : 0;
+    let score = accentFit + sim * r.w + o.prior * p.prior + o.bm25 * (bmMax ? v.bm / bmMax : 0);
     if (ctxCountry && p.iso2) score += p.iso2 === ctxCountry ? o.countryBonus : -o.countryMalus;
     if (ctx.airport) {
       const code = String(ctx.airport).toUpperCase();

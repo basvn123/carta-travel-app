@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { foldName } from '../src/lib/searchIndex.js';
 import { fold, makeLinker, linkPlace } from '../src/lib/linking/index.js';
 import { editDistance } from '../src/lib/linking/linker.js';
+import { soundKey } from '../src/lib/linking/fold.js';
 import { linkSearchHits, linkerFor } from '../src/lib/linking/search.js';
 import { runLinkingEval, gate, BASELINE_PATH } from '../scripts/eval/linking/eval.mjs';
 
@@ -62,11 +63,42 @@ test('context tells near twins apart', () => {
 });
 
 test('below the threshold the answer is a did you mean', () => {
-  const r = linkPlace(L, 'pafos');
+  const r = linkPlace(L, 'iraklion');
   assert.equal(r.confident, false);
   assert.equal(r.linked, null);
   assert.ok(r.didYouMean.length >= 1 && r.didYouMean.length <= 3);
-  assert.ok(r.didYouMean.some((x) => x.id === 'PFO'));
+  assert.ok(r.didYouMean.some((x) => x.id === 'HER'));
+});
+
+// T1215 (row T1153-g): accents and sound-alike spellings.
+test('the mention spelt with the name\'s accents links that name, not its unaccented twin', () => {
+  const r = linkPlace(L, 'Fårö');
+  assert.equal(r.confident, true);
+  assert.equal(r.linked.id, 'gem:faro-gotland');
+  // Without the accents Faro in Portugal still comes first.
+  assert.equal(top('faro').id, 'FAO');
+  assert.equal(top('Faro').id, 'FAO');
+});
+
+test('sound-alike keys fold Greek and Nordic spellings together', () => {
+  assert.equal(soundKey('Pafos'), soundKey('Paphos'));
+  assert.equal(soundKey('Hania'), soundKey('Chania'));
+  assert.equal(soundKey('Aarhus'), soundKey('Århus'));
+  assert.equal(soundKey('Tromsoe'), soundKey('Tromsø'));
+  assert.notEqual(soundKey('Paros'), soundKey('Paphos'));
+  assert.notEqual(soundKey('Hawes'), soundKey('Chaves'));
+});
+
+test('sound-alike spellings link the place they sound like', () => {
+  const r = linkPlace(L, 'pafos');
+  assert.equal(r.confident, true);
+  assert.equal(r.linked.id, 'PFO');
+  assert.equal(top('Páfos').id, 'PFO');
+  assert.equal(top('hania').id, 'CHQ');
+  assert.equal(top('tromsoe').id, 'TOS');
+  // An exact name still beats a sound-alike of another place.
+  assert.equal(top('paros').id, 'gem:paros');
+  assert.equal(top('hawees').id, 'gem:hawes');
 });
 
 test('the linker builds from the search index alone', () => {
@@ -85,8 +117,8 @@ test('the search adapter keeps the querySearchIndex shape', () => {
   const region = linkSearchHits(lk, inputs.searchIndex, 'tuscany');
   assert.ok(region.bbox && region.ids === null);
   assert.equal(linkSearchHits(lk, inputs.searchIndex, 'ro').ids, null);
-  const dym = linkSearchHits(lk, inputs.searchIndex, 'pafos');
-  assert.ok(dym.suggestions.length >= 1 && dym.ids.has('PFO'));
+  const dym = linkSearchHits(lk, inputs.searchIndex, 'iraklion');
+  assert.ok(dym.suggestions.length >= 1 && dym.ids.has('HER'));
 });
 
 test('the eval: 300 cases, the linker beats today\'s search, a seeded drop fails the gate', () => {

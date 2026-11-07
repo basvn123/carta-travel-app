@@ -23,3 +23,20 @@ export function fold(s) {
 export function clean(s) {
   return fold(s).replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
+
+// Spellings that sound alike across Greek and Nordic transliterations
+// (T1215, row T1153-g): Pafos and Paphos, Hania and Chania, Aarhus and
+// Arhus, Tromsoe and Tromso. Applied in order to a cleaned key, on both sides.
+const SOUND = [
+  [/ph/g, 'f'], [/th/g, 't'], [/dh/g, 'd'], [/gh/g, 'g'], [/kh/g, 'h'], [/ch/g, 'h'],
+  [/ck/g, 'k'], [/c/g, 'k'], [/q/g, 'k'],
+  [/aa/g, 'a'], [/ae/g, 'e'], [/oe/g, 'o'], [/ou/g, 'u'], [/ei/g, 'i'], [/y/g, 'i'],
+  [/([a-z])\1+/g, '$1'],
+];
+
+/** A cleaned key reduced to how it sounds; equal keys are sound-alikes. */
+export function soundKey(s) {
+  let x = clean(s);
+  for (const [re, to] of SOUND) x = x.replace(re, to);
+  return x;
+}
