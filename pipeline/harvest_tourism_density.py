@@ -268,6 +268,38 @@ def month_tier_t642(density, cuts):
     return 3 if density >= cuts[2] else 2 if density >= cuts[1] else 1 if density >= cuts[0] else 0
 
 
+# NUTS writes Greece as EL and the United Kingdom as UK (T1214, from T1145-h).
+NUTS_PREFIX = {"GR": "EL", "GB": "UK"}
+NEAR_DEG = 0.07                                        # ~<8 km in degrees
+
+
+def nuts_prefix(iso2):
+    iso2 = (iso2 or "").upper()
+    return NUTS_PREFIX.get(iso2, iso2)
+
+
+def pick_region(pt, iso2, regions, geoms, tree):
+    """The NUTS 3 region for a point (T1214, from T1145-h). A region of the
+    place's own country wins: among the polygons that contain the point, then
+    the nearest own region within NEAR_DEG (a coastal point just outside the
+    generalised boundary). Only a country with no NUTS region of its own
+    (Andorra, Monaco, San Marino, Vatican) falls back to its neighbour's
+    region, and the caller labels that value a proxy."""
+    own = nuts_prefix(iso2)
+    contains = [int(i) for i in np.atleast_1d(tree.query(pt)) if geoms[int(i)].contains(pt)]
+    for i in contains:
+        if regions[i]["code"][:2] == own:
+            return regions[i]
+    own_idx = [i for i, r in enumerate(regions) if r["code"][:2] == own]
+    if own_idx:
+        near = min(own_idx, key=lambda i: geoms[i].distance(pt))
+        return regions[near] if geoms[near].distance(pt) < NEAR_DEG else None
+    if contains:
+        return regions[contains[0]]
+    j = int(np.atleast_1d(tree.nearest(pt))[0])
+    return regions[j] if geoms[j].distance(pt) < NEAR_DEG else None
+
+
 def match_destinations(dests, regions, monthly=None, cuts=None):
     geoms = [r["geom"] for r in regions]
     tree = STRtree(geoms)                              # shapely 2.x: query returns indices
@@ -279,18 +311,7 @@ def match_destinations(dests, regions, monthly=None, cuts=None):
             d.pop("crowding", None)
             continue
         pt = Point(lon, lat)
-        cand = tree.query(pt)                          # bbox candidates (indices)
-        region = None
-        for i in np.atleast_1d(cand):
-            if geoms[int(i)].contains(pt):
-                region = regions[int(i)]
-                break
-        if region is None:
-            # coastal point just outside the generalised boundary: nearest region
-            near = tree.nearest(pt)
-            j = int(np.atleast_1d(near)[0])
-            if geoms[j].distance(pt) < 0.07:           # ~<8 km in degrees
-                region = regions[j]
+        region = pick_region(pt, d.get("iso2"), regions, geoms, tree)
         if region is None:
             d.pop("crowding", None)
             continue
@@ -303,6 +324,11 @@ def match_destinations(dests, regions, monthly=None, cuts=None):
             "year": region["year"],
             "source": "jrc_eurostat_nuts3",
         }
+        if d.get("iso2") and region["code"][:2] != nuts_prefix(d.get("iso2")):
+            # A microstate with no Eurostat region: the neighbouring region's
+            # density stands in, and says so (T1214, from T1145-h).
+            d["crowding"]["proxy"] = True
+            d["crowding"]["proxy_country"] = region["code"][:2]
         # T642-l: the same density spread over the year by the region's own
         # monthly nights (NUTS 2, else the country). tier[i] is the annual tier
         # moved by month i's seasonality (T649, month_tier).
