@@ -34,7 +34,7 @@ def test_checks_placeholders_digits_dash_and_english():
     assert "placeholder_invented" in bt.checks("To {airport}", "Naar {luchthaven}")
     assert "placeholder_dropped" in bt.checks("To {airport} now", "Naar het vliegveld nu")
     assert "digits_changed" in bt.checks("Up to 3 trips", "Tot 4 reizen")
-    assert "dash" in bt.checks("A walk", "Een wandeling — kort")
+    assert "dash" in bt.checks("A walk", "Een wandeling \u2014 kort")
     assert "left_in_english" in bt.checks("Spam links in shared trips", "Spam links in shared trips")
     assert bt.checks("Google", "Google") == []  # a brand name may stay as is
     assert bt.checks("x", "  ") == ["empty"]
