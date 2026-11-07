@@ -1,0 +1,23 @@
+# The trails lab review UI on the build box (T1182, ROADMAP D24).
+# Serves the built app (lab.sh review-build) with vite preview on
+# 127.0.0.1:4174, which proxies /api to the API unit on 127.0.0.1:8011, so the
+# browser talks to one origin (the API accepts writes from 4174). Reached only
+# through an SSH tunnel (lab.sh tunnel).
+[Unit]
+Description=Carta trails lab review UI (127.0.0.1:4174)
+After=network-online.target carta-trailslab-review-api.service
+Wants=carta-trailslab-review-api.service
+
+[Service]
+Type=simple
+User=carta
+WorkingDirectory=/home/carta/carta/tools/trailslab/review
+ExecStart=/usr/local/bin/node node_modules/vite/bin/vite.js preview --host 127.0.0.1 --port 4174 --strictPort
+Restart=on-failure
+RestartSec=10
+MemoryMax=256M
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -65,7 +65,25 @@ Dry runs: `CARTA_TIER=monthly CARTA_BOX_ML=all CARTA_SHIP=none bash infra/hetzne
 
 Restore the lab from R2 into an empty lab: `cd tools/trailslab && docker compose up -d`, then `bash infra/hetzner/cax41/trailslab_dump.sh restore` (with the owner's or the worker's secret key in the keyring; `--force` replaces a lab that has trips).
 
-What still needs the laptop, and why: the trails lab and its curator review UI (the `trails_*` tasks other than the worker's steps, and approving trips) until the lab moves (S98, batch 10); the Booking half of the scrape until a home host exists (Booking turns away datacenter addresses); the owner's own gpg key, which never leaves the owner.
+What still needs the laptop, and why: the trails lab and its curator review UI until the owner enables the box lab (T1182, below); the Booking half of the scrape until a home host exists (Booking turns away datacenter addresses); the owner's own gpg key, which never leaves the owner.
+
+## The trails lab on the box (T1182, ROADMAP D24)
+
+The lab and its review app on the CAX11, filled from the R2 dump. Code: `tools/trailslab/box/` (`lab.sh`, `docker-compose.box.yml`, `lab.env.example`, two review units, `README.md`).
+
+| Part | What | Where |
+|---|---|---|
+| Storage | a Hetzner Volume of 80 GB, ext4, mounted at `/mnt/trailslab` (the root disk has about 12 GB free; a restored lab is tens of GB plus a 5 GB dump while it restores) | `TRAILSLAB_DATA_DIR=/mnt/trailslab/pgdata`, `CARTA_TRAILSLAB_DUMP_DIR=/mnt/trailslab/dump` |
+| Database | the laptop's image through compose, loopback 5433, 1.5 GB memory cap, `restart: unless-stopped` | `bash tools/trailslab/box/lab.sh up` |
+| Switch | `CARTA_TRAILSLAB_HOME=box`: the `trails_*` tasks run on the box, the `trailslab_worker` task stands down | `~/.config/carta/env` (`lab.sh env` prints the block) |
+| Review | API 127.0.0.1:8011 and UI 127.0.0.1:4174, started only while reviewing | `lab.sh review on`, then `lab.sh tunnel` on the owner's machine |
+| Sync | `lab.sh push` (dump to R2) and `lab.sh restore`; a restore over unpushed reviews is refused | stamp file beside the data directory |
+
+Enable it (owner; the commands are in `tools/trailslab/box/README.md`, "Enable it on the box"): create and attach the volume, add swap, install Docker and the PostgreSQL 18 client, append the env block, `lab.sh check`, `lab.sh up`, `lab.sh restore`, `lab.sh status`. Check: `lab.sh status` shows the trips count the laptop had; `python run_pipeline.py --only trails_validate --dry-run` says the lab is reachable.
+
+Dry runs: `lab.sh config` (validates both compose files, no daemon), `lab.sh up --dry-run`, `lab.sh restore --dry-run`.
+
+Undo: `lab.sh push` first if reviews were made on the box, then `lab.sh down`, blank `CARTA_TRAILSLAB_HOME` (the worker comes back). The volume keeps the data until it is deleted (`hcloud volume detach` then `delete`, owner).
 
 ## Weekly run
 

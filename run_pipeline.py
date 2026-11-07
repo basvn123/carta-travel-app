@@ -567,6 +567,12 @@ def trailslab_endpoint():
     return host, port
 
 
+def trailslab_home():
+    """T1182 (D24): where the trails lab lives. "box" when the box secrets
+    file sets CARTA_TRAILSLAB_HOME=box (tools/trailslab/box/), else "laptop"."""
+    return "box" if os.environ.get("CARTA_TRAILSLAB_HOME", "").strip().lower() == "box" else "laptop"
+
+
 def guard_trailslab_up(ctx):
     """Trails tasks need the Docker lab on 5433. A lab that is down is a SKIP,
     never a failure: it is a local dev container, not part of the data ship."""
@@ -575,9 +581,10 @@ def guard_trailslab_up(ctx):
         with socket.create_connection((host, port), timeout=4):
             return True, f"trails lab reachable at {host}:{port}"
     except OSError as e:
+        start = ("bash tools/trailslab/box/lab.sh up" if trailslab_home() == "box"
+                 else "cd tools/trailslab && docker compose up -d")
         return False, (f"trails lab not reachable at {host}:{port} "
-                       f"({type(e).__name__}) - start it with "
-                       f"`cd tools/trailslab && docker compose up -d`")
+                       f"({type(e).__name__}) - start it with `{start}`")
 
 
 def guard_brouter_up(ctx):
@@ -2854,7 +2861,15 @@ TASK_BY_KEY = {t["key"]: t for t in TASKS}
 def _trailslab_worker_guard(ctx=None):
     """T647: (ok, reason) from trailslab_worker.py check, which exits 3 with
     the reason when a prerequisite is missing (the switch, HCLOUD_TOKEN, R2,
-    the worker key, bash on a Windows laptop)."""
+    the worker key, bash on a Windows laptop).
+
+    T1182 (D24): with the lab on this box (CARTA_TRAILSLAB_HOME=box) the
+    worker stands down. It would restore the newest R2 dump, which misses the
+    reviews made on the box since its last push, and its fresh dump would then
+    hide them from the next restore. The box runs the trails_* tasks itself."""
+    if trailslab_home() == "box":
+        return False, ("the trails lab lives on this box (CARTA_TRAILSLAB_HOME=box): "
+                       "the trails_* tasks run here; the worker stands down")
     try:
         r = subprocess.run([PY, str(ROOT / "infra/hetzner/cax41/trailslab_worker.py"), "check"],
                            cwd=str(ROOT), capture_output=True, text=True, timeout=60)

@@ -1,0 +1,62 @@
+# The trails lab on the build box (T1182, ROADMAP D24, register row T784-a).
+#
+# An override of ../docker-compose.yml, so the image pin stays in one place.
+# Always used through lab.sh, which runs, from the repo root:
+#
+#   docker compose -f tools/trailslab/docker-compose.yml \
+#                  -f tools/trailslab/box/docker-compose.box.yml <command>
+#
+# Relative paths below resolve against tools/trailslab/, the directory of the
+# first file (compose rule), not against this one.
+#
+# What the box changes, and why:
+#   - the data lives on a Hetzner Volume (TRAILSLAB_DATA_DIR), not in a Docker
+#     named volume on the 40 GB root disk: a restored lab is tens of GB
+#   - no initdb scripts: the restore brings the schema (initdb-empty/README.txt)
+#   - a real password from the box secrets file: the laptop's literal
+#     "trailslab" default is refused here
+#   - memory capped and Postgres tuned for a 4 GB box that also runs the
+#     weekly pipeline (TRAILSLAB_MEM_LIMIT, TRAILSLAB_SHARED_BUFFERS, ...)
+#   - restart unless-stopped, so the lab is up after the Sunday reboot and the
+#     run_pipeline.py trails_* guards find it
+# The port stays the base file's 127.0.0.1:5433: loopback only. The review
+# app is reached through an SSH tunnel (lab.sh tunnel), never a public port.
+# ASCII clean, no em dashes, per project convention.
+
+services:
+  trailslab-db:
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${TRAILSLAB_PASSWORD:?set TRAILSLAB_PASSWORD in ~/.config/carta/env (lab.sh env)}
+    volumes:
+      - ./box/initdb-empty:/docker-entrypoint-initdb.d:ro
+      - type: bind
+        source: ${TRAILSLAB_DATA_DIR:?set TRAILSLAB_DATA_DIR to a directory on the lab volume (lab.sh env)}
+        target: /var/lib/postgresql/data
+    mem_limit: ${TRAILSLAB_MEM_LIMIT:-1536m}
+    shm_size: ${TRAILSLAB_SHM_SIZE:-256m}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=${TRAILSLAB_SHARED_BUFFERS:-384MB}
+      - -c
+      - effective_cache_size=${TRAILSLAB_EFFECTIVE_CACHE:-1GB}
+      - -c
+      - work_mem=${TRAILSLAB_WORK_MEM:-16MB}
+      - -c
+      - maintenance_work_mem=${TRAILSLAB_MAINT_MEM:-256MB}
+      - -c
+      - max_connections=${TRAILSLAB_MAX_CONNECTIONS:-20}
+      - -c
+      - max_parallel_workers_per_gather=1
+      - -c
+      - max_wal_size=2GB
+      - -c
+      - checkpoint_timeout=15min
+      - -c
+      - random_page_cost=1.1
+    logging:
+      driver: local
+      options:
+        max-size: 20m
+        max-file: "3"
