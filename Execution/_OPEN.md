@@ -2053,3 +2053,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1163-f | T1163 | Extracted parts with long argument lists (DayPlannerStart 93 props, DayBody 79, AppOverlays 67, ExploreContent 56, useFacetGroups 52): group them where a screen is next touched | next task | open |  |
 | T1163-g | T1163 | DestinationsTab 2,325, DayPlannerTab 2,227 and App.jsx 1,888 lines are still the largest app files; the rest is render JSX and closures reading later state, which needs declarations reordered by hand before a further split | next task | open |  |
 | T1163-h | T1163 | no-unused-vars cannot see a destructured prop used only as a JSX tag (TitleTag in OverviewHero and ExploreToolbar); fix in eslint.config.js (argsIgnorePattern or jsx-uses-vars) | next task | open |  |
+| T1172-a | T1172 | Register the affiliate programmes and set the four partner ids; until then partner links stay plain (owner step) | user | open |  |
+| T1172-b | T1172 | Approve the partner disclosure wording against the I-R5 legal checklist and PRODUCT.md (I-e) | user | open |  |
+| T1172-c | T1172 | Stay links (Booking.com, Airbnb, Hostelworld), Skyscanner and Trainline are undecorated; when joined, add a builder and its ClickOf to partnerOf | next task | open |  |
+| T1172-d | T1172 | Exported PDF partner links carry no mark or disclosure line; add one to the PDF footer | next task | open |  |
+| T1172-e | T1172 | pytest does not collect in the cloud container (pipeline/trails/smoke_test.py, missing deps); run the Python suite where the deps exist | next task | open |  |

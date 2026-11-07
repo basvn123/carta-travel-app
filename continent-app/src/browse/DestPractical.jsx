@@ -1,4 +1,6 @@
 import React from 'react';
+import { partnerLinkProps } from '../lib/partnerLink.js';
+import { PartnerMark, PartnerNote } from '../components/PartnerMark.jsx';
 import { Button } from '../components/ui/index.js';
 import { safeUrl } from '../lib/format.js';
 import { formatMoney } from '../lib/money.js';
@@ -216,14 +218,18 @@ function CardLinks({ links }) {
   if (!links.length) return null;
   const [first, ...rest] = links;
   return (
-    <div className="pcard-links">
-      {[first, ...rest].map((l, i) => (
-        <a key={l.key} className={i ? 'pcard-alt' : 'pcard-go'} href={l.href} target="_blank" rel="noreferrer noopener">
-          {l.label}
-          {!i && <ExternalIcon size={13} />}
-        </a>
-      ))}
-    </div>
+    <>
+      <PartnerNote links={links} />
+      <div className="pcard-links">
+        {[first, ...rest].map((l, i) => (
+          <a key={l.key} {...partnerLinkProps(l.href, { className: i ? 'pcard-alt' : 'pcard-go' })}>
+            {l.label}
+            {!i && <ExternalIcon size={13} />}
+            <PartnerMark href={l.href} />
+          </a>
+        ))}
+      </div>
+    </>
   );
 }
 

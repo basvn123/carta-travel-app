@@ -1,0 +1,9 @@
+/* I15 (T1172): the partner link mark and the disclosure line before the links. */
+.partner-mark {
+  display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: var(--radius-pill);
+  font-size: var(--text-label); font-weight: 600; line-height: 1.5; white-space: nowrap;
+  color: var(--umber-700); background: var(--umber-100, rgba(0, 0, 0, 0.05));
+  text-decoration: none; vertical-align: middle;
+}
+.partner-note { margin: 6px 0 0; font-size: var(--text-label); color: var(--umber-700); }
+.partner-note a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }

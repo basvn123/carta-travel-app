@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { partnerButtonProps } from '../lib/partnerLink.js';
+import { PartnerMark } from '../components/PartnerMark.jsx';
 import { eur, eurExact, fmtHours, safeUrl } from '../lib/format.js';
 import { fmtDate } from '../lib/dates.js';
 import { formatMoney } from '../lib/money.js';
@@ -1077,9 +1079,10 @@ export function TripItinerary({
                               mode: leg.mode, date: next?.arriveDate || '',
                             })[0];
                             return link ? (
-                              <Button href={link.url} external variant="quiet" size="sm" className="itin-find"
+                              <Button {...partnerButtonProps(link.url)} variant="quiet" size="sm" className="itin-find"
                                 aria-label={t('plan.findTicketsOn', { site: link.label })} iconAfter={<ExternalIcon size={12} />}>
                                 {link.label}
+                                <PartnerMark href={link.url} />
                               </Button>
                             ) : null;
                           })()}
