@@ -52,7 +52,7 @@ None.
 | Beaches: BG name `ШКОРПИЛОВЦИ-ЦЕНТРАЛЕН ПЛАЖ` tokens | none (dropped whole) | shkorpilovtsi, tsentralen | |
 | Beaches: coverage on the committed 322-site sample | 25.78% | 25.78% | 0 (the sample has no matchable BG Cyrillic site; the full register is on the box) |
 | Beaches dated result, sample run | 105.5 KB | 18.0 KB with --gaps-only | -83% |
-| pytest (validation, quality engine) | | all pass | |
+| pytest, whole suite minus quarantine | | 1,116 passed, 12 skipped, 2 failed | the 2 (test_rating_inputs::test_beauty_v2_reads_no_register, test_rating_stability::test_adding_places_moves_nobody_else) fail the same on origin/p15-round3 in this container: they read caches that are git-lfs pointers here |
 
 ## Rows closed (11)
 
