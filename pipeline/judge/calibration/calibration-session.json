@@ -1,0 +1,407 @@
+{
+ "backend": "session",
+ "model": "session judge (blind subagent, judge-text prompt only)",
+ "prompt_sha": "a40e854e32a6",
+ "verdicts_file": "pipeline/judge/calibration/judgments/session-2026-11-07.json",
+ "labels": "seeded",
+ "labelled": 50,
+ "not_supported": 40,
+ "kappa": {
+  "n": 50,
+  "missing": 0,
+  "po": 0.98,
+  "pe": 0.668,
+  "kappa": 0.9398,
+  "se": 0.0596,
+  "ci95": [
+   0.8229,
+   1
+  ],
+  "band": "almost perfect",
+  "table": {
+   "not|not": 39,
+   "supported|supported": 10,
+   "supported|not": 1
+  }
+ },
+ "kappa_low95": 0.7788,
+ "ac1": 0.9701,
+ "planted": {
+  "judge": {
+   "n": 20,
+   "caught": 20,
+   "share": 1.0
+  },
+  "human": {
+   "n": 20,
+   "caught": 20,
+   "share": 1.0
+  }
+ },
+ "threshold": {
+  "kappa_min": 0.7,
+  "kappa_low95_min": 0.5,
+  "planted_recall_min": 0.9,
+  "min_labels": 40,
+  "min_not_supported": 15,
+  "accept_seeded": false
+ },
+ "counts": false,
+ "reasons": [
+  "labels are seeded, not a human's (T1144-b)"
+ ],
+ "rows": [
+  {
+   "text_id": "t01",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t02",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "supported",
+   "judge": "supported"
+  },
+  {
+   "text_id": "t03",
+   "kind": "trail_summary",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t04",
+   "kind": "place_blurb",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t05",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t06",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "supported",
+   "judge": "supported"
+  },
+  {
+   "text_id": "t07",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t08",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t09",
+   "kind": "place_blurb",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t10",
+   "kind": "place_blurb",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t11",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t12",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "supported",
+   "judge": "supported"
+  },
+  {
+   "text_id": "t13",
+   "kind": "trail_summary",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t14",
+   "kind": "trail_summary",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t15",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "supported",
+   "judge": "supported"
+  },
+  {
+   "text_id": "t16",
+   "kind": "place_blurb",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t17",
+   "kind": "trail_summary",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t18",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t19",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t20",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t21",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "supported",
+   "judge": "supported"
+  },
+  {
+   "text_id": "t22",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "supported",
+   "judge": "supported"
+  },
+  {
+   "text_id": "t23",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t24",
+   "kind": "trail_summary",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t25",
+   "kind": "place_blurb",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t26",
+   "kind": "place_blurb",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t27",
+   "kind": "place_blurb",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t28",
+   "kind": "place_blurb",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t29",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "supported",
+   "judge": "supported"
+  },
+  {
+   "text_id": "t30",
+   "kind": "trail_summary",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t31",
+   "kind": "place_blurb",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t32",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t33",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t34",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t35",
+   "kind": "place_blurb",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t36",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t37",
+   "kind": "trail_summary",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t38",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t39",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t40",
+   "kind": "trail_summary",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t41",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t42",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "not",
+   "judge": "supported"
+  },
+  {
+   "text_id": "t43",
+   "kind": "trail_summary",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t44",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t45",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "supported",
+   "judge": "supported"
+  },
+  {
+   "text_id": "t46",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "supported",
+   "judge": "supported"
+  },
+  {
+   "text_id": "t47",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t48",
+   "kind": "trail_summary",
+   "planted": true,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t49",
+   "kind": "place_blurb",
+   "planted": false,
+   "human": "not",
+   "judge": "not"
+  },
+  {
+   "text_id": "t50",
+   "kind": "trail_summary",
+   "planted": false,
+   "human": "supported",
+   "judge": "supported"
+  }
+ ],
+ "labels_file": "pipeline/judge/calibration/seeded-labels.json",
+ "at": "2026-11-07T01:15:31Z"
+}

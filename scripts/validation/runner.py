@@ -65,7 +65,7 @@ SNAPSHOT = ROOT / "continent-app" / "src" / "components" / "admin" / "validation
 SCHEMA = "carta-validation/2"
 CARD_SCHEMA = "carta-validation-scorecard/1"
 LAYERS = {"trails": "layer_trails", "beaches": "layer_beaches",
-          "beaches_blueflag": "layer_beaches_blueflag"}
+          "beaches_blueflag": "layer_beaches_blueflag", "texts": "layer_texts"}
 Z95 = 1.96
 TREND_POINTS = 24
 
