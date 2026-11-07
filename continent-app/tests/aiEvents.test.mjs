@@ -186,3 +186,12 @@ test('the migration weekly RPC computes p50, p95 and failure counts per feature'
   assert.match(up, /percentile_cont\(0\.95\)/);
   assert.match(up, /admin_guard\('read'\)/);
 });
+
+test('the Overview tab mounts the weekly model-call card, fetched once at unlock (T1206, row T1139-d)', () => {
+  const overview = read('continent-app/src/components/admin/Overview.jsx');
+  const hook = read('continent-app/src/components/admin/useOverview.js');
+  assert.match(overview, /import \{ AiCalls \} from '\.\/AiCalls\.jsx'/);
+  assert.match(overview, /<AiCalls report=\{aiCalls\} t=\{t\} \/>/);
+  assert.match(hook, /const aiCalls = useAiCalls\(unlocked\)/);
+  assert.match(hook, /newReports, aiCalls,/);
+});

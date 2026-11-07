@@ -5,6 +5,7 @@ import { Margin } from './Margin.jsx';
 import { AiUsage } from './AiUsage.jsx';
 import { CacheHitRate } from './CacheHitRate.jsx';
 import { AiModelFallbacks } from './AiModelFallbacks.jsx';
+import { AiCalls } from './AiCalls.jsx';
 import { PipelineHealth } from './PipelineHealth.jsx';
 import { EdgeErrors } from './EdgeErrors.jsx';
 import { ParseFailures } from './ParseFailures.jsx';
@@ -21,7 +22,7 @@ export function Overview({ overview, marginDash, audit, attention, goTo }) {
   const { t } = useI18n();
   const {
     stats, analytics, funnel, modelReport, cacheReport, aiUsage,
-    pipelineHealth, edgeErrors, parseFailures, oss, launch, channels, funnelWeekly,
+    pipelineHealth, edgeErrors, parseFailures, oss, launch, channels, funnelWeekly, aiCalls,
   } = overview;
   const { margin, marginBack, setMarginBack } = marginDash;
   return (
@@ -161,6 +162,8 @@ export function Overview({ overview, marginDash, audit, attention, goTo }) {
       {cacheReport && !cacheReport.error && <CacheHitRate report={cacheReport} />}
 
       {modelReport && !modelReport.error && <AiModelFallbacks modelReport={modelReport} />}
+
+      {aiCalls && <AiCalls report={aiCalls} t={t} />}
 
       {edgeErrors && !edgeErrors.error && <EdgeErrors report={edgeErrors} calls={launch && !launch.error ? launch.aiCalls : null} />}
 
