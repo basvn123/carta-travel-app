@@ -1400,3 +1400,4 @@ Rows from `_OPEN.md` whose item is done, with the task that closed it. Moved her
 | T1163-c | T1163 | CSS for the 26 components deleted by T1163 is still in the stylesheets | next task | closed by T1211 |  |
 | T1163-d | T1163 | docs/HANDBOOK.md, docs/SCHEMA.md, docs/areas/climate-crowds.md and docs/areas/trip-library.md still name files T1163 deleted or planner/finder/TripPage.jsx (now FoundTripPage.jsx) | next task | closed by T1211 |  |
 | T1163-h | T1163 | no-unused-vars cannot see a destructured prop used only as a JSX tag (TitleTag in OverviewHero and ExploreToolbar); fix in eslint.config.js (argsIgnorePattern or jsx-uses-vars) | next task | closed by T1211 |  |
+| T1164-l | T1164 | Uploads get a privacy pass but no antivirus scan before an admin publishes them (ASVS V5.4.3); decide on a scanner in upload-scan or record why JPEG, PNG and GPX re-encoding is enough | next task | closed by T1211 |  |
