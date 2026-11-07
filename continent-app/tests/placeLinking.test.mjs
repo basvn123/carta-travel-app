@@ -10,6 +10,7 @@ import { fold, makeLinker, linkPlace } from '../src/lib/linking/index.js';
 import { editDistance } from '../src/lib/linking/linker.js';
 import { soundKey } from '../src/lib/linking/fold.js';
 import { linkSearchHits, linkerFor } from '../src/lib/linking/search.js';
+import { locationMatch } from '../src/hooks/useDestinationSearch.js';
 import { runLinkingEval, gate, BASELINE_PATH } from '../scripts/eval/linking/eval.mjs';
 
 const APP = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -134,4 +135,21 @@ test('the eval: 300 cases, the linker beats today\'s search, a seeded drop fails
 
 test('set.json is what build-set.mjs builds', () => {
   execFileSync(process.execPath, [join(APP, 'scripts/eval/linking/build-set.mjs'), '--check'], { stdio: 'pipe' });
+});
+
+// T1215 (row T1153-h): the Destinations hook reads the linker the way Explore does.
+test('the Destinations location match: plain substring alone, widened by linker hits', () => {
+  const dbv = { id: 'DBV', city: 'Dubrovnik', country: 'Croatia', lat: 42.56, lon: 18.27 };
+  // Flag off (no hits): the plain substring, as before.
+  assert.equal(locationMatch(dbv, '', null), true);
+  assert.equal(locationMatch(dbv, 'dubrov', null), true);
+  assert.equal(locationMatch(dbv, 'croatia', null), true);
+  assert.equal(locationMatch(dbv, 'dubrovnk', null), false);
+  // Flag on: the linker's hits count too, and never take a substring hit away.
+  const lk = linkerFor(inputs.searchIndex, inputs.destinations, inputs.lexicon);
+  const hits = linkSearchHits(lk, inputs.searchIndex, 'dubrovnk');
+  assert.equal(locationMatch(dbv, 'dubrovnk', hits), true);
+  assert.equal(locationMatch({ ...dbv, id: 'XXX', city: 'Elsewhere' }, 'dubrovnk', hits), false);
+  assert.equal(locationMatch(dbv, 'croatia', { ids: new Set(), bbox: null }), true);
+  assert.equal(locationMatch(dbv, 'dalmatia', { ids: null, bbox: [13, 42, 19.5, 44.5] }), true);
 });
