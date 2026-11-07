@@ -19,8 +19,8 @@ for p in (ROOT / "pipeline" / "taxonomy", ROOT / "pipeline"):
     if str(p) not in sys.path:
         sys.path.insert(0, str(p))
 
-import tagger
-import taxonomy as tx
+import tagger  # noqa: E402
+import taxonomy as tx  # noqa: E402
 
 LAYERS = tagger.LAYERS
 USES = tagger.USES

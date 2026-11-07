@@ -12,11 +12,11 @@ import pytest
 SERVICE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SERVICE))
 
-from fastapi.testclient import TestClient
-from intelligence import engines as E
-from intelligence.app import create_app
-from intelligence.auth import hash_key
-from intelligence.config import ROOT, KeySpec, Settings
+from fastapi.testclient import TestClient  # noqa: E402
+from intelligence import engines as E  # noqa: E402
+from intelligence.app import create_app  # noqa: E402
+from intelligence.auth import hash_key  # noqa: E402
+from intelligence.config import ROOT, KeySpec, Settings  # noqa: E402
 
 KEY = "test-pipeline-key-0123456789abcdef"
 OTHER = "test-ops-key-abcdef0123456789"
