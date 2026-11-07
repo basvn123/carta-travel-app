@@ -20,6 +20,9 @@ REM   schtasks /Change /TN TravelAppFareRefresh /ENABLE
 cd /d "%~dp0"
 if not exist "logs" mkdir "logs"
 set "LOG=%~dp0logs\pipeline_run.log"
+REM UTF-8 mode for python (H11, T1162): open() without an encoding reads and
+REM writes UTF-8, not cp1252, in this run and every script it starts.
+set "PYTHONUTF8=1"
 
 echo. >> "%LOG%"
 echo ============================================================ >> "%LOG%"

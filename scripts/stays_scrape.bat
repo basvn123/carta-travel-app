@@ -48,6 +48,9 @@ REM 2026-10-23. Installing is a no-op when the browsers are already there.
 set "PLAYWRIGHT_BROWSERS_PATH=%LOCALAPPDATA%\ms-playwright-carta-stays"
 REM UTF-8 output (T741): a town name with a letter outside cp1252 crashed the log line.
 set "PYTHONIOENCODING=utf-8"
+REM UTF-8 mode for python (H11, T1162): open() without an encoding reads and
+REM writes UTF-8, not cp1252, in this run and every script it starts.
+set "PYTHONUTF8=1"
 python -m playwright install chromium chromium-headless-shell >nul 2>&1
 
 echo. >> "%LOG%"

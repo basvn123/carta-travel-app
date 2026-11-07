@@ -1997,3 +1997,9 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1160-c | T1160 | Run the incident drill on the live stack and add the timings to `docs/runbooks/drill-log.md` | user | open | |
 | T1160-d | T1160 | Review the SLO targets in `config/slo.json` after a month of real snapshots; close ROADMAP H-R1 | next task | open | |
 | T1160-e | T1160 | `scripts/docs/config_reference.py` does not list `config/slo.json`; add it so `docs/reference/config.md` covers it | next task | open | |
+| T1162-a | T1162 | Delete the stale continent-app/.git on the laptop (no remote, master at T915); ship.mjs and worktree.mjs warn while it exists (procedure: Execution/P15/T1162-scripted-ship.md, Owner steps) | user | open | |
+| T1162-b | T1162 | Run scripts/worktree.mjs add and remove once on Windows with --link-node-modules and check the main node_modules keeps its entries; the tests proved it with a Linux symlink only | user | open | |
+| T1162-c | T1162 | Ship the next deploy with node scripts/ship.mjs (dry run first, then --live, --from after a fix) and report any step that differs on the laptop | user | open | |
+| T1162-d | T1162 | CLAUDE.md's Deploy line still lists six commands by hand; point it at scripts/ship.mjs and name scripts/worktree.mjs under Disk and worktrees (CLAUDE.md was outside T1162's files) | next task | open | |
+| T1162-e | T1162 | The heredoc cluster (44 What broke entries) needs a written CLAUDE.md rule (files via Write or Python, never a Bash heredoc), not a script | next task | open | |
+| T1162-f | T1162 | PYTHONUTF8=1 is not yet set by pipeline/*.ps1, scripts/stays_scrape_task.ps1 or infra/hetzner/cax11/run_pipeline.sh (S77's files this batch); the risk is on Windows | next task | open | |
