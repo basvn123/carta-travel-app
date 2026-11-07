@@ -1508,3 +1508,7 @@ the start of its first). Loops, listed-tier rows and trek stages carry none.
 | `_src`, `_asof` | string | provenance (T1143) |
 
 The page says "we do not know" for a one-way walk with no `wb`.
+
+## destinfo `access` row (D21, T1203)
+
+Additive, no schema version change. `public/destinfo/{CC}.json` `dests.{id}.access`, built by `pipeline/export_destinfo.py` `pick_access` from `cache/access_osm.json` (`harvest_access.py`, format `access_v1`, OSM `wheelchair` and `toilets:wheelchair` tags): `{station?: {wc: "yes"|"limited"|"no"|"designated", m, name?, tw?}, toilets?: {n, m}, places?: {yes, limited, no, named?[]}, _src: "openstreetmap", _asof: "YYYY-MM-DD"}`. A part is present only when a tag exists; absent means "not mapped", never "not accessible". `destinfo/index.json` counts the rows per country as `access`. The app words every line "mapped as" (`src/lib/accessFacts.js`).
