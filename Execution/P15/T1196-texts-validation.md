@@ -113,7 +113,7 @@ None.
 | `length_ratio` and `left_in_english` failed good strings ("Cómo es"; the cut-off English `day.place`) | Soft signals treated as failures | Split into hard checks (fail) and soft checks (send to the judge). |
 | `npm test`: 1 failure, "no eight-word run of any registry prompt is left in a code file" | The blind prompt was written in `texts_backtranslation.py` and shared a phrase with the `judge-text` rubric | Both prompt texts moved to the registry prompt `backtranslate` v1 (sha d8e908068bab). The regenerated prompt files carry the same strings and items as the run's. |
 | Regex parsing of the catalogues missed about 2,200 keys | Values in single quotes, backticks and over several lines | The catalogues are read by node (`import()` of each ES module). |
-| Full pytest: 2 failures (`test_rating_inputs.py::test_beauty_v2_reads_no_register`, `test_rating_stability.py::test_adding_places_moves_nobody_else`) | Not this task: the same as T1188 and T1179 (a cache input that is not in this container) | None here. 946 passed, 11 skipped. |
+| Full pytest: 2 failures (`test_rating_inputs.py::test_beauty_v2_reads_no_register`, `test_rating_stability.py::test_adding_places_moves_nobody_else`) | Not this task: the same as T1188 and T1179 (a cache input that is not in this container) | None here. 946 passed, 11 skipped. `npm test` after the registry fix: 1,898 tests, 1,886 pass, 0 fail, 12 skipped. |
 
 ## Screens checked
 
