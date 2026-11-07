@@ -895,15 +895,15 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 2. Monthly tier (`month_tier`, rule `t649-v1`): month share = that month's fraction of the year's nights (NUTS 2 region, else country; averaged over the complete years among the last three). `shift = round(3 x log2(12 x share))` (`SEASON_GAIN` 3), set to 0 when under 0.5 (`SEASON_DEAD_BAND`), limited to at most +1 (`SEASON_MAX_UP`) and -2 (`SEASON_MAX_DOWN`). `tier = annual tier + shift`, clamped 0 to 3.
 3. App (`crowdMonth.js crowdFor`): with a month, that month's tier (none if no monthly series; never the annual tier dressed as the month). With no month: a pattern (months at the lowest and highest tier), or one flat tier.
 4. Quiet flag (`quietFor`): tier at most 1 (`QUIET_MAX_TIER`); a month with no series falls back to the yearly tier; missing data never passes.
-5. Crowd calendar badge on the place page (`CrowdCalendar.jsx`): shows the tier and the data year, only for tier 0 or 3 (`crowdBadgeWorthShowing`).
+5. Place page facts row (`DestinationPage.jsx`, "Crowds"): `crowdFor` with the trip's month gives that month's tier, else the quiet and busy months or one flat tier. The old crowd calendar badge (`CrowdCalendar.jsx`, `CrowdingBadge.jsx`) was unmounted and deleted by T1163.
 
 **Data behind it.** Eurostat `tour_occ_nin3` and `tour_occ_nin2m`, GISCO NUTS 2021 boundaries; `cache/eurostat_nights_nuts3.json`, `cache/eurostat_nights_nuts2_monthly.json`; `dest.crowding = {nights_per_km2, tier, label, nuts3, region, year, monthly: {share, tier, geo}}`. `python run_pipeline.py --only crowding`, quarterly (Eurostat updates about yearly).
 
 6. Places Eurostat does not cover (T1098, `harvest_uk_crowds.py`, task `crowding_uk`, runs after `crowding`): Great Britain by ONS ITL1 region (12), and Bosnia (BA), Faroes (FO), Moldova (MD), Kosovo (XK) as one region per country. Same method: density = newest complete year's nights / land area, tier against the Eurostat cutoffs in `meta.crowding_model` (so tiers mean the same everywhere), monthly tier by `month_tier` (rule `t649-v1`) from the average month share of the last three complete years. Output shape is the same `dest.crowding`; `source` is `ons_visitbritain_itl1` or `national_statistics_office`. A place with an Eurostat block is never overwritten. The input is `cache/uk_crowds_nights.csv` (`geo,name,year,month,nights`; geo = ITL1 code or iso2) plus `cache/uk_itl1_boundaries.geojson` (ONS Open Geography Portal, ITL1 boundaries, Open Government Licence v3.0); the owner prepares both (no network from the build tooling), and the task does nothing while the CSV is absent. Land areas for the four countries are fixed in `COUNTRY_AREA_KM2`.
 
-**Where it lives.** `pipeline/harvest_tourism_density.py`, `pipeline/harvest_uk_crowds.py`, `continent-app/src/lib/crowdMonth.js`, `continent-app/src/browse/CrowdCalendar.jsx`, `continent-app/src/components/CrowdingBadge.jsx`.
+**Where it lives.** `pipeline/harvest_tourism_density.py`, `pipeline/harvest_uk_crowds.py`, `continent-app/src/lib/crowdMonth.js`, `continent-app/src/browse/DestinationPage.jsx` (the facts row).
 
-**Limits.** The doc comment in `CrowdCalendar.jsx` still says no monthly data exists; it does now. That comment also says 54% of the catalogue, including all of the UK, has no crowding measurement; the UK stays that way until the owner runs the T1098 loader (524 of 526 GB places had no monthly crowds at the 2026-11-04 audit). The monthly shape is regional (NUTS 2 or country), not per place. Guided search's Not crowded filter keeps only tier 1 and drops Quiet places (T475-f). Layer rows (beaches, walks) carry no crowding (T181-c, T183-c).
+**Limits.** The doc comment of the deleted `CrowdCalendar.jsx` said 54% of the catalogue, including all of the UK, has no crowding measurement; the UK stays that way until the owner runs the T1098 loader (524 of 526 GB places had no monthly crowds at the 2026-11-04 audit). The monthly shape is regional (NUTS 2 or country), not per place. Guided search's Not crowded filter keeps only tier 1 and drops Quiet places (T475-f). Layer rows (beaches, walks) carry no crowding (T181-c, T183-c).
 
 ---
 
@@ -1694,7 +1694,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 
 **Data behind it.** `trip_plans` and `trip_plan_stops` for signed-in travellers, the device draft for guests; trip extras (ideas, notes, expenses, imported bookings, photos) in the `day_plans` payload (migration 004) and in localStorage. Live flights from `/api/flights`.
 
-**Where it lives.** App: `continent-app/src/planner/TripPlannerTab.jsx`, `continent-app/src/planner/TripSummary.jsx`, `continent-app/src/planner/TripItinerary.jsx`, `continent-app/src/planner/PlanTotal.jsx`, `continent-app/src/planner/trip/`. Note: `MAP.md` names `planner/finder/TripPage.jsx` for this page, but that file is the trip finder's page for one found trip; the planned trip page is `TripPlannerTab.jsx` with `TripSummary.jsx`. Docs: `archive/docs-2026-11/ITEM_PAGE_DATA_CONTRACT.md`. Latest: `Execution/P15/T1001-new-trip-trip-bar.md` to `T1017-days-prompt-names.md`.
+**Where it lives.** App: `continent-app/src/planner/TripPlannerTab.jsx`, `continent-app/src/planner/TripSummary.jsx`, `continent-app/src/planner/TripItinerary.jsx`, `continent-app/src/planner/PlanTotal.jsx`, `continent-app/src/planner/trip/`. Note: `MAP.md` names `planner/finder/FoundTripPage.jsx` for this page, but that file is the trip finder's page for one found trip; the planned trip page is `TripPlannerTab.jsx` with `TripSummary.jsx`. Docs: `archive/docs-2026-11/ITEM_PAGE_DATA_CONTRACT.md`. Latest: `Execution/P15/T1001-new-trip-trip-bar.md` to `T1017-days-prompt-names.md`.
 
 **Limits.**
 - Deleting a trip on Plan home asks for a confirm rather than an Undo (row T809-a).
@@ -1799,7 +1799,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 
 **Data behind it.** `ai_plan_cache`, `ai_usage`; parse failures table (migration 042). Results land in the trip extras (`day_plans` payload) and the trip settings' imports.
 
-**Where it lives.** Backend: `supabase/functions/parse-booking/index.ts`, `supabase/functions/parse-booking/logic.mjs`, `supabase/functions/parse-booking/README.md`. App: `continent-app/src/planner/bookingImport.js`, `continent-app/src/planner/bookingImportLogic.js`, `continent-app/src/planner/MagicImportZone.jsx`, `continent-app/src/planner/flow/BookedDoor.jsx`, `continent-app/src/planner/flow/importStays.js`, `continent-app/src/auth/mytrips/AddBookingSheet.jsx`.
+**Where it lives.** Backend: `supabase/functions/parse-booking/index.ts`, `supabase/functions/parse-booking/logic.mjs`, `supabase/functions/parse-booking/README.md`. App: `continent-app/src/planner/bookingImport.js`, `continent-app/src/planner/bookingImportLogic.js`, `continent-app/src/planner/MagicImportZone.jsx`, `continent-app/src/planner/flow/importStays.js`, `continent-app/src/auth/mytrips/AddBookingSheet.jsx`.
 
 **Limits.**
 - Cache rows holding booking codes are read for 24 hours but never deleted (row T319-c).
