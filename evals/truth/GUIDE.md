@@ -62,7 +62,7 @@ Judge against the source only, not against what you know. When the text changes 
 
 ## The text check calibration (separate, 50 texts)
 
-The LLM judge of texts is only trusted once it agrees with you. `judge/text-sample.json` holds 50 texts with their sources; some carry a planted fault. For each `t01` to `t50` write your verdict in `judge/labels.json`, with the rules above (also in `judge/rubric.md`). Do not open `judge/text-sample-key.json`: it says which texts were changed. Then run `cd continent-app && node scripts/eval/run.mjs truth` and read the kappa line. The judge may gate at kappa 0.61 or more and is advisory from 0.41.
+The LLM judge of texts is only trusted once it agrees with you. `judge/text-sample.json` holds 50 texts with their sources; some carry a planted fault. For each `t01` to `t50` write your verdict in `judge/labels.json`, with the rules above (also in the judge's rubric, `prompts/truth-judge/v1.md`). Do not open `judge/text-sample-key.json`: it says which texts were changed. Then run `cd continent-app && node scripts/eval/run.mjs truth` and read the kappa line. The judge may gate at kappa 0.61 or more and is advisory from 0.41.
 
 ## After filling
 

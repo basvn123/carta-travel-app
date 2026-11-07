@@ -8,12 +8,13 @@
  *                         built by evals/truth/build_sample.py
  *   text-sample-key.json  which 20 of them carry a planted fault; the human
  *                         labeller and a session judge never open it
- *   rubric.md             the judge's instructions (prompt text lives here,
- *                         not in code: the prompt registry rule, T1140)
+ *   the rubric            the prompt registry's truth-judge prompt
+ *                         (prompts/truth-judge, T1214 from T1144-d); its hash
+ *                         is pinned in prompts/registry.json
  *   labels.json           the owner's verdicts (null until filled)
  *   judgments/            one verdicts file per judge run
  *
- * Backends: a Claude Code or Cowork session that reads rubric.md and the
+ * Backends: a Claude Code or Cowork session that reads the rubric and the
  * prompts written by `judge.mjs --prompts <dir>` and writes a verdicts file
  * by hand (no API call), or Gemini through the model gateway (aiModels.mjs,
  * feature eval-judge, temperature 0). The Claude API is never used.
@@ -28,11 +29,11 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { callModel } from '../../../supabase/functions/_shared/aiModels.mjs';
 import { cohenKappa, judgeUse } from '../../../continent-app/scripts/eval/lib/kappa.mjs';
+import { frag, loadPrompt } from '../../../scripts/prompts/lib.mjs';
 
 export const JUDGE_DIR = dirname(fileURLToPath(import.meta.url));
 export const TEXT_SAMPLE_PATH = join(JUDGE_DIR, 'text-sample.json');
 export const TEXT_KEY_PATH = join(JUDGE_DIR, 'text-sample-key.json');
-export const RUBRIC_PATH = join(JUDGE_DIR, 'rubric.md');
 export const LABELS_PATH = join(JUDGE_DIR, 'labels.json');
 export const JUDGMENTS_DIR = join(JUDGE_DIR, 'judgments');
 export const FIXTURES_DIR = join(JUDGE_DIR, 'fixtures');
@@ -57,12 +58,14 @@ export const JUDGE_SCHEMA = {
   required: ['verdict', 'claims'],
 };
 
-export function rubricText(path = RUBRIC_PATH) {
-  return readFileSync(path, 'utf8');
+// The rubric is the registry's truth-judge prompt (T1214, from T1144-d), moved
+// byte for byte from rubric.md, so rubricSha() and the verdict files still match.
+export function rubricText() {
+  return frag(loadPrompt('truth-judge'), 'rubric');
 }
 
-export function rubricSha(path = RUBRIC_PATH) {
-  return createHash('sha256').update(rubricText(path)).digest('hex').slice(0, 12);
+export function rubricSha() {
+  return createHash('sha256').update(rubricText()).digest('hex').slice(0, 12);
 }
 
 /** The judge's input for one text: the rubric, then the text and its source as JSON. */
