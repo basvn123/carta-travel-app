@@ -64,7 +64,7 @@ MIN_SEASON = 30
 PER_COUNTRY = 2
 CROWD_WORD = {0: "quiet", 1: "moderate", 2: "busy", 3: "crowded"}  # crowding.tier scale, lib/crowdMonth.js
 BANNED = re.compile(r"\b(seamless|unlock|effortless|elevate|leverage|empower|curated|simply|just|easy)\b", re.I)
-DASH = re.compile("[–—]")
+DASH = re.compile("[\u2013\u2014]")
 MAX_PROSE = 400
 
 

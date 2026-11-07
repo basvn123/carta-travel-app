@@ -49,7 +49,7 @@ HYPE = re.compile(
     r"breathtaking|vibrant|nestled|must-see|number one|world'?s|ever|always|never|everyone|"
     r"hidden gems?|paradise|dream|bucket list)\b", re.I)
 SEASON_TERM = re.compile(r"\bbest months?\b", re.I)  # Carta's own term (climate.best)
-DASH = re.compile("[–—]")
+DASH = re.compile("[\u2013\u2014]")
 MIDDOT = re.compile(r"\s[·•]\s")
 STOP = set("a an and are at best by for from how in is it of on or the to what when where which with".split())
 
