@@ -1,0 +1,22 @@
+# Carta box trails lab dump to R2 when due (T1201, register row T1182-e).
+# In box mode the lab on this box is the only live copy and R2 expires
+# archive/db/ after 30 days; infra/hetzner/cax11/trailslab_push_due.sh runs
+# tools/trailslab/box/lab.sh push when the last push is 21 days old or more,
+# and logs a skip outside box mode (CARTA_TRAILSLAB_HOME=box).
+[Unit]
+Description=Carta box trails lab push to R2 when due (T1201)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=carta
+Group=carta
+WorkingDirectory=/home/carta/carta
+Environment=LANG=C.UTF-8
+ExecStart=/bin/bash /home/carta/carta/infra/hetzner/cax11/trailslab_push_due.sh
+# A 5 GB dump through gpg to R2 is under an hour on the CAX11; three is stuck.
+TimeoutStartSec=3h
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
