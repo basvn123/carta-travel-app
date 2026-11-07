@@ -52,7 +52,7 @@ export function chartHtml(chart) {
   if (!chart?.bars?.length) return '';
   const max = Math.max(...chart.bars.map((b) => b.value), 1);
   const items = chart.bars.map((b) => `<li><span class="bl-lab">${escapeHtml(b.label)}</span>`
-    + `<span class="bl-bar" aria-hidden="true"><i style="width:${Math.max(2, Math.round((b.value / max) * 100))}%"></i></span>`
+    + `<svg class="bl-bar" viewBox="0 0 100 1" preserveAspectRatio="none" aria-hidden="true"><rect width="${Math.max(2, Math.round((b.value / max) * 100))}" height="1" rx="0.5"/></svg>`
     + `<span class="bl-val n">${escapeHtml(b.value)} ${escapeHtml(chart.unit || '')}</span></li>`).join('');
   return `<figure class="bl-chart"><figcaption>${escapeHtml(chart.title)}</figcaption><ol>${items}</ol></figure>`;
 }

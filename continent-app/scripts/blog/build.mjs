@@ -90,8 +90,8 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ui)}
 .bl-chart figcaption{font-weight:600;margin-bottom:var(--space-2)}
 .bl-chart ol{list-style:none;margin:0;padding:0}
 .bl-chart li{display:grid;grid-template-columns:minmax(80px,30%) 1fr auto;gap:var(--space-3);align-items:center;padding:var(--space-1) 0;font-size:14px}
-.bl-bar{display:block;height:10px;background:var(--paper-dim);border-radius:5px;overflow:hidden}
-.bl-bar i{display:block;height:100%;background:var(--accent);border-radius:5px}
+.bl-bar{display:block;width:100%;height:10px;background:var(--paper-dim);border-radius:5px}
+.bl-bar rect{fill:var(--accent)}
 .bl-val{color:var(--ink-soft);white-space:nowrap}
 .bl-fig{margin:var(--space-5) 0}.bl-fig img{display:block;max-width:100%;height:auto;border-radius:10px}
 .bl-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule-soft)}

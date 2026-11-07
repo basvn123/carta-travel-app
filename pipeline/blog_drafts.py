@@ -230,7 +230,7 @@ def model_intro(data):
 
 def render_markdown(data, intro):
     name, year = data["month_name"], data["year"]
-    c, crit = data["counts"], data["criteria"]
+    crit = data["criteria"]
     rows = data["rows"]
     table = ["| Place | Country | High C | Rain mm | Crowds | Day EUR | Rating |",
              "|---|---|---|---|---|---|---|"]

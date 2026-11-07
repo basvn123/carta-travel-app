@@ -29,7 +29,7 @@ test('markdown renders a table with numeric cells marked and a chart from data',
   });
   assert.match(h, /<th scope="row">Merida<\/th><td class="n">65<\/td>/);
   assert.match(h, /class="bl-chart"/);
-  assert.match(h, /width:100%/);
+  assert.match(h, /<rect width="100"/);
   assert.equal(chartHtml(null), '');
 });
 
