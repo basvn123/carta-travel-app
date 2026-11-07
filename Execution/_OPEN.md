@@ -1988,3 +1988,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1154-e | T1154 | intelligence.yml has no pip-audit and the image is pinned by tag, not digest; add both with the C6 supply-chain jobs | next task | open | |
 | T1154-f | T1154 | The rate limit lives in memory with one worker; a second worker or a public route would need a shared store (Redis) and TLS first | next task | open | |
 | T1154-g | T1154 | MAP.md has no row or line for services/intelligence/; add it with the next MAP edit | next task | open | |
+| T1186-a | T1186 | Run fill_water.py on the box (EEA cache, OSM swim tag sweep, --apply) and record the water class and unknown swim counts; optionally drop national CSVs in cache/lakes/national_water/ | user | open | |
+| T1186-b | T1186 | Run fill_route_up.py --harvest --apply on the box and record the routes count | user | open | |
+| T1186-c | T1186 | Replace the Overpass-per-summit route sweep with osmium filtering of the Geofabrik extracts for a full batch | next task | open | |
+| T1186-d | T1186 | Export and the app do not read routeUp or the new water/swim `_src`/`_asof` fields yet; wire them into export_peaks.py and MountainPage after the run | next task | open | after T1186-b |

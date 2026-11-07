@@ -86,3 +86,11 @@ Seven weighted components, each 0 to 1 (`WEIGHTS`, sum 1.00): scenery 0.24, acce
 - `lift_note` in the wire (`export_peaks.py`) says 700 m while the rule is 250 m; `enrich_peaks.py` still collects with `SUMMIT_LIFT_M = 700` and `peak_index.py` applies 250.
 - The season is a ~50 km grid climatology corrected by lapse rate; the module calls it an estimate.
 - Opening seasons of lifts are not in this layer except the OSM `opening_hours` string where mapped.
+
+## Route up fill (`pipeline/mountains/fill_route_up.py`)
+
+T1186 (ROADMAP D24, D7). Rows with no `routes` (1,868 of 2,143 on 2026-11-07;
+275 have one) get a `routeUp` block from OSM ways within 400 m of the summit:
+`kind` marked, path, track or none, `near_m`, `sac` as tagged, `ways`, `names`,
+`_src`, `_asof`. It states what is mapped, never that a route is safe. Run
+(box, Overpass paced): `python pipeline/mountains/fill_route_up.py --harvest --apply`.
