@@ -7,7 +7,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
-  allowedOrigin, withCors, readJson, bodyProblem, secretMatches, BodyError, APP_ORIGINS,
+  allowedOrigin, withCors, readJson, bodyProblem, secretMatches, BodyError, APP_ORIGINS, securityEvent,
 } from '../../supabase/functions/_shared/http.mjs';
 
 const post = (body, headers = {}) => new Request('https://x/f', { method: 'POST', body, headers });
@@ -51,6 +51,28 @@ test('withCors turns an escaped exception into a fixed 500 without the message',
   const r = await h(new Request('https://x/f'));
   assert.equal(r.status, 500);
   assert.equal(await r.text(), JSON.stringify({ code: 'server' }));
+});
+
+test('a refused request logs one security event with no credential in it (T1211, T1164-i)', async () => {
+  const lines = [];
+  const warn = console.warn;
+  console.warn = (l) => lines.push(l);
+  try {
+    const refuse = withCors(async () => new Response('{}', { status: 401 }));
+    await refuse(new Request('https://x.supabase.co/functions/v1/plan-day', {
+      method: 'POST', headers: { authorization: 'Bearer secret.token.value', origin: 'https://evil.example' } }));
+    const ok = withCors(async () => new Response('{}', { status: 200 }));
+    await ok(new Request('https://x/functions/v1/plan-day', { method: 'POST' }));
+  } finally { console.warn = warn; }
+  assert.equal(lines.length, 1);
+  assert.ok(!lines[0].includes('secret.token.value'));
+  const e = JSON.parse(lines[0]);
+  assert.deepEqual({ ...e, at: 'x' }, { carta_security: 'auth_refused', fn: 'plan-day', method: 'POST', status: 401,
+    credential: 'bearer', app_origin: false, at: 'x' });
+  const out = [];
+  securityEvent(new Request('https://x/functions/v1/notify'), 403, 'https://www.carta-europetravel.com', (l) => out.push(JSON.parse(l)));
+  assert.equal(out[0].credential, 'none');
+  assert.equal(out[0].app_origin, true);
 });
 
 test('readJson reads an object and refuses oversize, non-object and malformed bodies', async () => {

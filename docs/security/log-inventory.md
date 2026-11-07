@@ -47,7 +47,7 @@ Routes `/api/ask`, `/api/ask/answer`, `/api/flights`, `/api/forecast`. No `conso
 | Email sent | Kind and trip or place ref per mail, account id | Postgres row | `email_log` (060) | 400 days |
 | Upload scans | Scan result and decision per upload | Postgres row | `user_uploads` (061) | With the upload |
 
-Not logged today: 401 and 403 answers of the Edge Functions and failed sign-ins in a Carta store (row T1164-i). Supabase's own Auth log holds sign-ins.
+Since T1211, 401 and 403 answers of the functions wrapped in `withCors` write one JSON line each to the function log (`{"carta_security":"auth_refused","fn","method","status","credential":"bearer|other|none","app_origin","at"}`, no token, address or body; `securityEvent` in `_shared/http.mjs`). Not yet: shipping those lines and failed sign-ins to a separate store with an alert (row T1164-i). Supabase's own Auth log holds sign-ins.
 
 ## 5. Supabase database and Auth
 
@@ -85,6 +85,6 @@ Event and log tables have no client policy and no client grant: only definer fun
 ## 8. Gaps
 
 - No log store outside each platform, so no single place to search or alert on security events (row T1164-i, ASVS V16.4.3).
-- Edge Function 401 and 403 answers and failed sign-ins are not in a Carta log (T1164-i).
+- Edge Function 401 and 403 lines stay in the Supabase function log only, and failed sign-ins only in Supabase Auth's own log; nothing ships them to a separate store with an alert (T1164-i).
 - The error tracker is built but not connected (T1120-a to T1120-d).
 - Platform retentions (Cloudflare, Supabase, GitHub, journald, Docker) are not recorded; read them from the Dashboards when T1164-i is done.
