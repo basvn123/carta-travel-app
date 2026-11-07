@@ -56,3 +56,17 @@ def test_loop_reason_follows_the_route_type():
     assert rate.says_loop({"route_type": "figure8"}) is True
     assert rate.says_loop({"route_type": None, "is_loop": True}) is True
     assert rate.says_loop({}) is False
+
+
+# --- T1201 (T1179-f): the retired describe.py lead stays off the wire ------
+
+def test_retired_lead_is_not_shipped():
+    import export_wire
+    lead = ("Kelduleid is a 9.3 km walking route in IS. This easy path "
+            "features 68 m of ascent and 35 m of descent.")
+    assert export_wire.wire_summary({"description": lead, "category": "hike"}) is None
+    based = "Based on its distance and ascent, this route is classified as easy."
+    assert export_wire.wire_summary({"description": based, "category": "hike"}) is None
+    city = "A one day city sightseeing walk past 6 sightseeing stops."
+    assert export_wire.wire_summary({"description": city, "category": "citytrip"}) == city
+    assert export_wire.wire_summary({"description": None, "category": "hike"}) is None

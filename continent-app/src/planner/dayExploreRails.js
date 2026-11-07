@@ -31,6 +31,7 @@ import { fmtDur } from './dayFormat.js';
 // the one place that turns it into the { score, tier } a rating chip reads,
 // so a trail chip is the same shade of confidence here as on the trails tab.
 import { trailRating } from '../lib/trailCards.js';
+import { looksTemplated } from '../lib/trailStory.js';
 import { natureRating } from '../lib/rating.js';
 
 /** How far each layer is worth reaching for, from the stay. A beach 40 km off
@@ -241,7 +242,9 @@ export function trailRow(tr, centre, stay) {
     photo: tr.img?.u || '',
     rating: trailRating(tr),
     sub: '',
-    desc: tr.summary || '',
+    // T1201 (T1179-f): a retired describe.py lead ("This easy path ..." over
+    // a hard climb, English in every language) is not printed.
+    desc: tr.summary && !looksTemplated(tr.summary) ? tr.summary : '',
     score: tr.v5?.score ?? 0,
     lenKm: Number.isFinite(tr.distance_m) ? Math.round(tr.distance_m / 100) / 10 : null,
     ascentM: Number.isFinite(tr.ascent_m) ? Math.round(tr.ascent_m) : null,

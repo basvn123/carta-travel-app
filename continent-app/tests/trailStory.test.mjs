@@ -9,7 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   trailClimb, trailGrade, trailheadCountry, trailPlace, isComfortableDay,
-  trailReasons, trailStory, trailClimbUp, gradeLabelKey,
+  trailReasons, trailStory, trailClimbUp, gradeLabelKey, looksTemplated,
 } from "../src/lib/trailStory.js";
 import { trailFactLine, trailKml, trailGpx } from "../src/lib/trailExport.js";
 
@@ -156,4 +156,16 @@ test("T1201: routed bridges are told apart from straight connectors", () => {
   assert.equal(keyOf({ n: 2, total_m: 900, routed: 2 }), "trails.sBridgesRouted");
   assert.equal(keyOf({ n: 1, total_m: 600, routed: 1 }), "trails.sBridgeRouted");
   assert.equal(keyOf({ n: 3, total_m: 900, routed: 1 }), "trails.sBridgesMixed");
+});
+
+// T1201 (T1179-f): every retired describe.py lead shape on the 2026-09-13
+// wire reads as templated, so it is never printed as prose.
+test("T1201: retired describe.py leads read as templated", () => {
+  for (const lead of [
+    "Based on its distance and ascent, this route is classified as easy.",
+    "Kelduleid is a 9.3 km walking route in IS. This easy path features 68 m of ascent and 35 m of descent.",
+    "The European long distance path E11 in the Netherlands is a walking route measuring 346.5 km.",
+    "The Triesen Post to Vaduz route is a waymarked hiking path located in LI.",
+  ]) assert.equal(looksTemplated(lead), true, lead);
+  assert.equal(looksTemplated("A ridge walk above the lake with two huts."), false);
 });

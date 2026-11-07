@@ -343,6 +343,13 @@ const TEMPLATE_MARKS = [
   /derived from|based on the distance and ascent|from the distance and ascent/i,
   /sightseeing stops|one day city sightseeing walk/i,
   /covers a distance of|spanning [\d.]+ km|covering [\d.]+ km/i,
+  // T1201 (T1179-f): the rest of the retired describe.py leads ("Based on
+  // its distance and ascent", "is a 9.3 km walking route in IS. This easy
+  // path features 68 m of ascent"), the same marks as export_wire.RETIRED_LEAD.
+  /based on its distance|waymarked hiking path|walking route measuring/i,
+  /is an? (?:[\d.]+ km )?(?:walking|hiking) (?:route|path|trail)/i,
+  /this (?:easy|moderate|difficult|hard|challenging) (?:path|trail|route|walk)/i,
+  /features \d+ m of ascent/i,
 ];
 
 /** True when the description is the pipeline's composed boilerplate. */

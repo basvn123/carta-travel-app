@@ -531,6 +531,32 @@ def summary_of(description):
     return re.sub(r"\s+", " ", lead).strip() or None
 
 
+# T1201 (T1179-f): the retired describe.py lead ("... is a walking route in
+# GB. This easy path covers 7.2 km ...", "Based on its distance and ascent")
+# says "easy" over 1,949 m of climb and is English in every language, so it
+# no longer reaches a walk's card or the planner rail. The same marks as the
+# app's looksTemplated (continent-app/src/lib/trailStory.js), which stays as
+# the guard for wires exported before this. City days keep theirs: their lead
+# comes from compose_citytrips.py and the app reads it as such.
+RETIRED_LEAD = re.compile(
+    r"DIN 33466|hiking time rule|waymarked hiking (?:route|network|path)"
+    r"|derived from|based on (?:the|its) distance|from the distance and ascent"
+    r"|covers a distance of|spanning [\d.]+ km|covering [\d.]+ km"
+    r"|is an? (?:[\d.]+ km )?(?:walking|hiking) (?:route|path|trail)"
+    r"|this (?:easy|moderate|difficult|hard|challenging) (?:path|trail|route|walk)"
+    r"|features \d+ m of ascent|walking route measuring",
+    re.I)
+
+
+def wire_summary(t):
+    """The `summary` a country row carries: the lead, except a retired
+    describe.py lead on a walk, which ships as None (T1201)."""
+    lead = summary_of(t.get("description"))
+    if lead and t.get("category") != "citytrip" and RETIRED_LEAD.search(lead):
+        return None
+    return lead
+
+
 def anchor_of(raw_tags):
     """Which catalogue destination a daytrip or citytrip hangs off, so the app
     can shelve it under that city without geocoding the line."""
@@ -972,7 +998,7 @@ def wire_item(t, n_stops, hier=None):
         "name": names.wire_name(t["title"], t["country"]),
         "category": t["category"],
         "country": t["country"],
-        "summary": summary_of(t["description"]),
+        "summary": wire_summary(t),
         "distance_m": t["distance_m"],
         "ascent_m": t["ascent_m"],
         "duration_min": t["duration_min"],
