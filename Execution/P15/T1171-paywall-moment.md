@@ -68,6 +68,7 @@ None. `PASS_MOMENT` stays `false`.
 | Entry chunk (`index-*.js`), fast build | 853,225 B | 854,404 B | +1,179 B |
 | All built assets, fast build | 10,048,983 B | 10,059,384 B | +10,401 B |
 | npm test | full suite not run on the base; its 2 failing files run on the base: 3 fail there too | 1850 tests: 1842 pass, 3 fail (the same 3), 5 skipped; the 8 new pass | +8 tests |
+| pytest (quarantine deselected), no Python touched | | 848 pass, 2 fail, 10 skipped; the 2 are row T1133-g (JSONDecodeError on a local pageviews file) | |
 | design-lint new violations | 0 | 0 | |
 | impeccable detect on the new files | | [] | |
 | CSP screen check | | 0 violations over 40 loads | |
