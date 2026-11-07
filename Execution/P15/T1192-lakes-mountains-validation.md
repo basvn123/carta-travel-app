@@ -67,7 +67,8 @@ Lake numbers are on the committed wire (2026-10-28) and the full register; mount
 |---|---|---|
 | Lake shore sites of big lakes never matched (Balaton) | the lake row is a centre point, 25 km from the shore | named matches reach `1.6 * sqrt(area/pi) + 2` km for lakes over 50 km2; coverage 26.2% to 27.5% |
 | Kebnekaise missed at 2 km | the row is 3 km from the summit | name match up to 4 km, with `position` its own fact |
-| First mountain run would have failed the D2 gate | a hard check with no baseline fails | mountains checks are soft until the owner baseline |
+| First mountain run would have failed the D2 gate | a hard check with no baseline fails | mountains checks are soft; a seed baseline (soft only) is committed so the D2 run shows no new warnings, and the owner run replaces it |
+| `test_quality_engine` failed once the results were on disk | the D2 hook warned on lakes `fact.poor` (3 items, needs 5) and on a missing mountains baseline | `fact.poor` min_n 3; seed baseline for mountains |
 
 ## Screens checked
 

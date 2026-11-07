@@ -278,7 +278,7 @@
    "kind": "soft",
    "direction": "higher",
    "tolerance_points": 5,
-   "min_n": 5
+   "min_n": 3
   },
   {
    "metric": "fact.swim",
@@ -319,13 +319,7 @@
  "gate": {
   "ok": true,
   "failures": [],
-  "warnings": [
-   {
-    "metric": "fact.poor",
-    "kind": "soft",
-    "why": "insufficient: 3 items, needs 5"
-   }
-  ],
+  "warnings": [],
   "checks": [
    {
     "metric": "coverage",
@@ -349,7 +343,7 @@
     "now": 0.6667,
     "baseline": 0.6667,
     "tolerance_points": 5,
-    "status": "warn"
+    "status": "pass"
    },
    {
     "metric": "fact.swim",

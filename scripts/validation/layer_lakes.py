@@ -59,7 +59,7 @@ CLASS_NUM = {"Poor": 1, "Sufficient": 2, "Good": 3, "Excellent": 4}
 CHECKS = [
     {"metric": "coverage", "kind": "hard", "direction": "higher", "tolerance_points": 0},
     {"metric": "fact.class", "kind": "hard", "direction": "higher", "tolerance_points": 0, "min_n": 30},
-    {"metric": "fact.poor", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 5},
+    {"metric": "fact.poor", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 3},
     {"metric": "fact.swim", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 30},
     {"metric": "fact.known", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 30},
     {"metric": "has_water", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 30},

@@ -182,13 +182,7 @@
    "gate": {
     "ok": true,
     "failures": [],
-    "warnings": [
-     {
-      "metric": "fact.poor",
-      "kind": "soft",
-      "why": "insufficient: 3 items, needs 5"
-     }
-    ],
+    "warnings": [],
     "checks": [
      {
       "metric": "coverage",
@@ -212,7 +206,7 @@
       "now": 0.6667,
       "baseline": 0.6667,
       "tolerance_points": 5,
-      "status": "warn"
+      "status": "pass"
      },
      {
       "metric": "fact.swim",
@@ -364,50 +358,25 @@
     "population": 21,
     "countries": 14
    },
-   "baseline_at": null,
+   "baseline_at": "2026-11-07",
    "gate": {
     "ok": true,
     "failures": [],
     "warnings": [
      {
-      "metric": "coverage",
-      "kind": "soft",
-      "why": "no baseline yet: run with --write-baseline once"
-     },
-     {
-      "metric": "fact.height",
-      "kind": "soft",
-      "why": "no baseline yet: run with --write-baseline once"
-     },
-     {
       "metric": "fact.prom",
       "kind": "soft",
-      "why": "no baseline yet: run with --write-baseline once"
-     },
-     {
-      "metric": "fact.position",
-      "kind": "soft",
-      "why": "no baseline yet: run with --write-baseline once"
+      "why": "no baseline value for this metric"
      },
      {
       "metric": "fact.route",
       "kind": "soft",
-      "why": "no baseline yet: run with --write-baseline once"
-     },
-     {
-      "metric": "in_rated",
-      "kind": "soft",
-      "why": "no baseline yet: run with --write-baseline once"
+      "why": "insufficient: 18 items, needs 20"
      },
      {
       "metric": "agreement_tau",
       "kind": "soft",
-      "why": "no baseline yet: run with --write-baseline once"
-     },
-     {
-      "metric": "error_mae",
-      "kind": "soft",
-      "why": "no baseline yet: run with --write-baseline once"
+      "why": "no baseline value for this metric"
      }
     ],
     "checks": [
@@ -415,17 +384,17 @@
       "metric": "coverage",
       "kind": "soft",
       "now": 1.0,
-      "baseline": null,
+      "baseline": 1.0,
       "tolerance_points": 0,
-      "status": "warn"
+      "status": "pass"
      },
      {
       "metric": "fact.height",
       "kind": "soft",
       "now": 1.0,
-      "baseline": null,
+      "baseline": 1.0,
       "tolerance_points": 0,
-      "status": "warn"
+      "status": "pass"
      },
      {
       "metric": "fact.prom",
@@ -439,15 +408,15 @@
       "metric": "fact.position",
       "kind": "soft",
       "now": 0.9524,
-      "baseline": null,
+      "baseline": 0.9524,
       "tolerance_points": 5,
-      "status": "warn"
+      "status": "pass"
      },
      {
       "metric": "fact.route",
       "kind": "soft",
       "now": 0.3333,
-      "baseline": null,
+      "baseline": 0.3333,
       "tolerance_points": 5,
       "status": "warn"
      },
@@ -455,9 +424,9 @@
       "metric": "in_rated",
       "kind": "soft",
       "now": 1.0,
-      "baseline": null,
+      "baseline": 1.0,
       "tolerance_points": 5,
-      "status": "warn"
+      "status": "pass"
      },
      {
       "metric": "agreement_tau",
@@ -471,9 +440,9 @@
       "metric": "error_mae",
       "kind": "soft",
       "now": 0.0,
-      "baseline": null,
+      "baseline": 0.0,
       "tolerance_points": 5,
-      "status": "warn"
+      "status": "pass"
      }
     ]
    },

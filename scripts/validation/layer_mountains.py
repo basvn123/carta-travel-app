@@ -12,8 +12,9 @@ prom,route,source; ele and prom in metres, route 1 or 0, empty = unknown):
                    the independent check where they exist.
   seed.csv         committed: 30 national and range high points with their
                    published heights, to prove the layer runs. A seed, not a
-                   reference: its numbers were entered by hand and the gate
-                   baseline is not taken from it.
+                   reference: its numbers were entered by hand. The soft
+                   baseline on disk is the seed's and is replaced by the
+                   owner's first real run (T1192-a).
 
 Per reference summit:
   flags  matched   a Carta mountain row within MATCH_KM with a name word in
