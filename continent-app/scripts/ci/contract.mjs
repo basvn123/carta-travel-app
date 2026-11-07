@@ -320,6 +320,44 @@ export function validateTrailTreks(files) {
 }
 
 /**
+ * The way back for one-way walks (T1185, ROADMAP D24, docs/SCHEMA.md "Way
+ * back"). `wb` sits on a one-way row that is not a trek stage and on a trek
+ * record. It needs a positive straight-line `km`, `_src` and `_asof`, a taxi
+ * that is flagged `est` with a whole-5 minute time, and, where `pt` is
+ * present, lists of modes with `both` the intersection of `s` and `e`. No
+ * public transport minutes are allowed: the repo holds no timetable.
+ */
+const WB_MODES = new Set(['rail', 'bus', 'ferry']);
+export function validateTrailWayBack(files) {
+  const problems = [];
+  let n = 0;
+  const check = (wb, where) => {
+    n += 1;
+    if (!Number.isFinite(wb.km) || wb.km <= 0) problems.push(`${where}.wb km ${wb.km} is not positive`);
+    if (!String(wb._src || '').trim() || !ISO_DAY.test(String(wb._asof || ''))) problems.push(`${where}.wb misses _src or _asof`);
+    if (wb.taxi) {
+      if (wb.taxi.est !== true) problems.push(`${where}.wb taxi is not flagged as an estimate`);
+      if (!Number.isInteger(wb.taxi.min) || wb.taxi.min % 5 !== 0 || wb.taxi.min <= 0) problems.push(`${where}.wb taxi minutes ${wb.taxi.min} are not a positive multiple of 5`);
+    }
+    if (wb.pt) {
+      const ok = (l) => Array.isArray(l) && l.every((m) => WB_MODES.has(m));
+      if (!ok(wb.pt.s) || !ok(wb.pt.e) || !ok(wb.pt.both)) problems.push(`${where}.wb pt has a bad mode list`);
+      else if (wb.pt.both.some((m) => !wb.pt.s.includes(m) || !wb.pt.e.includes(m))) problems.push(`${where}.wb pt.both is not in both ends`);
+      if ('min' in wb.pt) problems.push(`${where}.wb pt carries minutes, which no timetable backs`);
+    }
+  };
+  for (const [cc, doc] of Object.entries(files || {})) {
+    for (const t of (doc && doc.treks) || []) if (t && t.wb) check(t.wb, `trails/${cc}.treks/${t.id}`);
+    for (const r of [...((doc && doc.trips) || []), ...((doc && doc.listed) || [])]) {
+      if (!r || !r.wb) continue;
+      check(r.wb, `trails/${cc}/${r.id}`);
+      if (r.trek) problems.push(`trails/${cc}/${r.id} is a trek stage and carries its own wb`);
+    }
+  }
+  return { problems, n };
+}
+
+/**
  * Validate the split wires that sit beside app_data.json (T267, closing the
  * gap T029 recorded): the boot index, the per-country destination files it
  * names, the per-destination POI shards and the country insights (the

@@ -18,6 +18,8 @@ import {
 } from '../lib/trailGeo.js';
 import { SurfaceBar, Stages, Bases } from './RouteParts.jsx';
 import { TrekStages } from './TrekStages.jsx';
+import { WayBack } from './WayBack.jsx';
+import { wayBackFor } from '../lib/wayBack.js';
 import { pointAlong } from '../lib/signature.js';
 import {
   trailGpx, trailFileBase, trailShareUrl, trailheadDirectionsUrl,
@@ -801,6 +803,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const hasStops = Array.isArray(stops) && stops.length > 0;
   const hasFamily = Boolean(family && family.size > 1);
 
+  // T1185 (D24): a one-way walk says how to get back; no record is said out
+  // loud as "we do not know". A loop or an out-and-back needs no way back.
+  const wayBack = wayBackFor(tr, trek);
+  // The record is judged by the line's own ends, so it wins over `is_loop`,
+  // a flag that is wrongly true on many A to B stages (T1184-d).
+  const showWayBack = !isCityDay && Boolean(start) && rt !== 'out_back'
+    && (Boolean(wayBack.wb) || (Boolean(shapeKey) && !isLoopShape));
+
   const onAdd = onAddToDay ? () => onAddToDay({
     id: tr.id, cc: tr.country || tr.cc, name: named.name,
     lat: start ? start.lat : (tr.bbox ? (tr.bbox[1] + tr.bbox[3]) / 2 : tr.lat),
@@ -1008,6 +1018,9 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       {gettingRows.some(Boolean) && (
         <PSection id="ox-getting" title={t('detail.gettingThere')}>
           <CheckRows rows={gettingRows} />
+          {showWayBack && (
+            <WayBack wb={wayBack.wb} viaTrek={wayBack.viaTrek} t={t} lang={lang} onPlan={onAdd} />
+          )}
         </PSection>
       )}
 

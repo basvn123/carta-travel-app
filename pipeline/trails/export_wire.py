@@ -64,6 +64,7 @@ from db import connect  # noqa: E402  (also puts pipeline/ on sys.path)
 from validate import PILOT_COUNTRIES  # noqa: E402
 import route_schema  # noqa: E402  (ROUTES.md R1: the route-layer keys)
 import names  # noqa: E402  (T1092: display names on the wire)
+import way_back  # noqa: E402  (T1185: the way back, D24)
 import treks  # noqa: E402  (T1184: multi-stage treks, D24)
 
 # The lake layer's card-shape helpers, loaded by path as the beach, peak and
@@ -230,6 +231,7 @@ TRIPS_SQL = """
            t.stage_of, t.top_of,
            eff.info AS repair_info,
            {transit_col} AS transit,
+           {transit_end_col} AS transit_end,
            ST_NPoints(eff.geom) AS n_full,
            ST_XMin(eff.geom), ST_YMin(eff.geom),
            ST_XMax(eff.geom), ST_YMax(eff.geom),
@@ -271,7 +273,7 @@ TRIP_COLS = ("id", "country", "category", "title", "description",
              "hierarchy", "hierarchy_src", "parent_refs",
              "stage_index", "stage_count", "co_located",
              "stage_of", "top_of",
-             "repair_info", "transit",
+             "repair_info", "transit", "transit_end",
              "n_full", "xmin", "ymin", "xmax", "ymax",
              "wire_geom", "full_geom")
 
@@ -298,11 +300,21 @@ TRANSIT_COL = """(
         ) q WHERE q.k IS NOT NULL)"""
 
 
+# T1185: the same lookup at the END of the line, for the way back. An empty
+# object means looked up and nothing found; NULL means no transit table.
+TRANSIT_END_COL = "COALESCE(" + TRANSIT_COL.replace(
+    "ST_StartPoint(ST_GeometryN(eff.geom, 1))",
+    "ST_EndPoint(ST_GeometryN(eff.geom, ST_NumGeometries(eff.geom)))"
+) + ", '{}'::jsonb)"
+
+
 def fetch_trips(conn, statuses, countries, tolerance):
     with conn.cursor() as cur:
         cur.execute("SELECT to_regclass('transit_stops') IS NOT NULL")
         has_transit = bool(cur.fetchone()[0])
         sql = TRIPS_SQL.replace("{transit_col}", TRANSIT_COL if has_transit else "NULL::jsonb")
+        sql = sql.replace("{transit_end_col}",
+                          TRANSIT_END_COL if has_transit else "NULL::jsonb")
         cur.execute(sql, {
             "transit_m": TRANSIT_M,
             "tol": tolerance,
@@ -1444,6 +1456,13 @@ def main():
         asof=generated_at[:10])
     treks.apply({c: {"trips": items} for c, items in items_of.items()},
                 trek_list, trek_refs)
+    # T1185 (D24): the way back, after the treks so a stage knows its trek.
+    wb_counts = way_back.apply(
+        items_of, trek_list,
+        {t["id"]: t.get("transit_end") for t in trips}, generated_at[:10])
+    print(f"  way back: {wb_counts['rows']} one-way row(s), "
+          f"{wb_counts['treks']} trek(s), {wb_counts['pt_unknown']} "
+          f"without transit data")
     treks_by_cc = defaultdict(list)
     for trek in trek_list:
         treks_by_cc[trek["cc"]].append(trek)
