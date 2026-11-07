@@ -487,6 +487,7 @@ def scan_osm_fame(cc, slug, verbose=False):
     groups = {}
     node_want = set()
     way_want = {}          # way id -> the group keys waiting on it
+    rel_want = {}          # child relation id -> group keys (T1201, T1181-c)
     t0 = time.time()
     fp = osmium.FileProcessor(str(pbf), osmium.osm.WAY | osmium.osm.RELATION) \
         .with_filter(osmium.filter.KeyFilter("wikidata", "wikipedia"))
@@ -547,10 +548,19 @@ def scan_osm_fame(cc, slug, verbose=False):
             # registry exists to make impossible. Remember the first member
             # way and resolve it in the way pass below.
             if g["first_node"] is None:
+                first_rel = None
                 for mem in obj.members:
                     if mem.type == "w":
                         way_want.setdefault(mem.ref, []).append(key)
                         break
+                    if mem.type == "r" and first_rel is None:
+                        first_rel = mem.ref
+                else:
+                    # T1201 (row T1181-c): a superroute holds stage relations,
+                    # not ways (the Cleveland Way, St Cuthbert's Way), so its
+                    # coordinate comes from its first stage's first way.
+                    if first_rel is not None:
+                        rel_want.setdefault(first_rel, []).append(key)
         else:
             g["named_ways"] += 1
             if g["first_node"] is None:
@@ -560,6 +570,30 @@ def scan_osm_fame(cc, slug, verbose=False):
                     pass
                 if g["first_node"] is not None:
                     node_want.add(g["first_node"])
+
+    # T1201: superroutes first. Up to two levels of child relations (a
+    # superroute of superroutes), each an IdFilter pass, to the first way.
+    for _ in range(2):
+        if not rel_want:
+            break
+        deeper = {}
+        fp = osmium.FileProcessor(str(pbf), osmium.osm.RELATION) \
+            .with_filter(osmium.filter.IdFilter(set(rel_want)))
+        for rel in fp:
+            keys = rel_want.get(rel.id, [])
+            way = sub = None
+            for mem in rel.members:
+                if mem.type == "w":
+                    way = mem.ref
+                    break
+                if mem.type == "r" and sub is None:
+                    sub = mem.ref
+            for key in keys:
+                if way is not None:
+                    way_want.setdefault(way, []).append(key)
+                elif sub is not None:
+                    deeper.setdefault(sub, []).append(key)
+        rel_want = deeper
 
     # Resolve the member ways the relations are waiting on, then the nodes.
     # Two extra filtered passes; both are IdFilter and run in C++.
