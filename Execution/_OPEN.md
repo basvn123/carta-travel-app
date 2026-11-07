@@ -1969,3 +1969,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1157-a | T1157 | Create the rate limit namespaces in Cloudflare (RL_ASK, RL_FLIGHTS, RL_STAYS, RL_FORECAST in wrangler.toml), confirm Pages accepts `[[ratelimits]]` on the first preview deploy, else add one WAF rate rule | user | open |  |
 | T1157-b | T1157 | /api/stays has no Pages Function yet; wire `overLimit(env, request, limiter, 'stays')` into it when it lands (RL_STAYS is declared) | next task | open |  |
 | T1157-c | T1157 | Edge Functions have per-user ai_consume caps in the database (durable) but no per-address limit; Supabase has no Cloudflare binding, so it needs a database counter or the WAF in front, an owner decision | user | open |  |
+| T1158-a | T1158 | Run the k6 scripts: first locally against `wrangler pages dev` (to record local p95) and then against the Pages preview (`docs/runbooks/load-tests.md`), and paste the p95 numbers in a report | user | open |  |
+| T1158-b | T1158 | `tests/load/smoke.test.mjs` is not in `continent-app/tests/`, so `npm test` does not run it; run it in CI or move it under the test glob | next task | open |  |
+| T1158-c | T1158 | The 10x figure rests on assumed per-user rates (E-R3 section 3, flights 4, 2 sessions a month); replace with E4 and K12 data | next task | open |  |
