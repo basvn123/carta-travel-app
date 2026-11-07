@@ -1352,6 +1352,7 @@ Guided search: areas, nearby layers, vibe scores -> public/search/guided.json
 
 - Cadence: after, follows dossier, beaches, lakes, mountains, trails_rate
 - Writes: the wire files in `continent-app/public/`
+- Wire files: `search/`
 - Code: guard `guard_guided_search`
 - Note: T439, scheduled by T1161 (H10): it was a laptop-only manual step. Reads the master and the beach, trail, lake and peak layer files, so it follows the same exports ask_index does. Vibe embeddings from thenlper/gte-small on the CPU, cached in cache/guided/vibes.npz by document hash, so a rerun embeds only new or changed destinations (a fresh box embeds all of them once). Needs CARTA_BOX_ML=all on the box.
 - Reads and runs: `pipeline/guided_search_layer.py`
