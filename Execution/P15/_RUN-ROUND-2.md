@@ -55,11 +55,16 @@ How it runs:
 | 84 | T1168 | B8 | p15-s84-ask-the-docs | done | yes | 3 |
 | 104 | T1188 | D23, D4 | p15-s104-llm-judge | done | yes | 2 |
 | 106 | T1190 | D23 | p15-s106-prices-validation | done | yes | 4 |
-| 85 | T1169 | I7 | p15-s85-pwa | started | | |
-| 86 | T1170 | I8 | p15-s86-six-languages | started | | |
-| 87 | T1171 | I14 | p15-s87-paywall-moment | started | | |
-| 88 | T1172 | I15 | p15-s88-affiliate-links | started | | |
-| 98 | T1182 | D24 | p15-s98-trails-lab-box | started | | |
+| 85 | T1169 | I7 | p15-s85-pwa | done | yes | 2 |
+| 86 | T1170 | I8 | p15-s86-six-languages | done | yes | 2 |
+| 87 | T1171 | I14 | p15-s87-paywall-moment | done | yes | 1 |
+| 88 | T1172 | I15 | p15-s88-affiliate-links | done | yes | 2 |
+| 98 | T1182 | D24 | p15-s98-trails-lab-box | done | yes | 2 |
+| 94 | T1178 | K14 | p15-s94-data-blog-1 | started | | |
+| 91 | T1175 | K7 | p15-s91-shareable-assets | started | | |
+| 92 | T1176 | K8 | p15-s92-open-dataset | started | | |
+| 107 | T1191 | D23 | p15-s107-ratings-validation | started | | |
+| 108 | T1192 | D23 | p15-s108-lakes-mountains-validation | started | | |
 
 The batch schedule for the rest of round 2 is in "Batch schedule" below.
 
@@ -115,3 +120,4 @@ Merge notes:
 - 01:22 Batch 8 CI: ci run 248 failed on a stale `docs/reference/tasks.md`; the orchestrator had regenerated the reference before the lineage fix that changed a task's wire mapping. Regenerated (1e8aeb713a); ci run 252 green. Rule: the full checks run again after the last merge fix of a batch.
 - 02:40 Batch 9 merged: S106 (prices as the third validation layer: Eurostat price levels, 406 of 407 country items matched, MdAPE 14.2%, 30 gaps reviewed, a 48-row hand sample drawn), S104 (one LLM judge for cited texts with a session and a Gemini backend, prompt `judge-text` in the registry, wired in as the `texts` layer; seeded kappa 0.94, it counts only after the owner labels), S84 (Ask the docs: a CLI and a search box on the docs site with citations, prompt `ask-docs`, eval recall@5 0.979), S79 (the six largest components split into 68 modules with no behaviour change, App.jsx 2,446 to 1,888 lines, 26 dead files out). Fixes at merge: the validation runner's layer list and the prompt registry each had two additions on both sides (both kept); ROADMAP D23 was edited by S104 and S106 and the restore kept only S104's text (S106's prices entry put back; the helper now flags rows changed on both sides); the logic catalogue still pointed at code S79 moved or deleted (7 drift lines, now 0; SEASON-028's crowd pill is marked removed, since its files were dead). npm test 1842: 1830 pass, 0 fail; full pytest 850 pass; eslint 0 errors; design-lint 4,595 with 0 new; the Chromium CSP check on the fast build 0 violations over 40 screen loads; prompt registry check OK with 18 prompts in a bare venv. 92 round 2 owner steps on the checklist. Batch 10 started. Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a).
 - 02:35 Batch 10 started from f4a4e4fc55: S85 (session_0156MmZ7BatDSsT2oHTff9o9), S86 (session_0156MmZ43Z7PxB7FeaUimBPJ), S87 (session_0156MmZ4W9W9VpH1TWXinbSY), S88 (session_0156MmZ7BYuWGpermLTeHgFt), S98 (session_0156MmZ3r24z6co81EvqNvFa). S85, S87 and S88 add i18n keys in all six files under their own namespaces; S86 fills every other missing key and adds the parity test.
+- 03:20 Linux CI green on 2ed774808b (batch 9 merged, ci run 274; ask-eval, prompts and intelligence green). Batch 10 merged: S86 (0 missing keys in nl, de, fr, es, it, down from 583 and 651; machine-drafted strings listed for the native review; a key-parity test in npm test; browser language on first visit), S98 (the trails lab and its review app set up for the box in `tools/trailslab/box/`, dry-run), S88 (one `partnerLink` helper with `rel="sponsored noopener"`, a partner mark, the disclosure page, cookieless counting), S85 (the offline promise fixed: the service worker caches the shell and a saved trip; install prompt at one moment), S87 (the Pass moment behind a flag that is off, preview `?pm=on`). Fixes at merge: S86 and S88, then S85, all appended keys at the end of the five language files (union of both sides, every language at 10,051 keys with parity); the direct ROADMAP restore after the hand merge doubled I8 (one row kept, T1170's). npm test 1882: 1870 pass, 0 fail; full pytest 857 pass; CSP check 0 violations over every screen; design-lint 0 new. 101 round 2 owner steps on the checklist. Batch 11 started. Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a).
