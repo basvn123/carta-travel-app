@@ -456,6 +456,60 @@ export function validateSplitWires({ boot, chunkNames = null, chunks = {}, poiSh
   return problems;
 }
 
+/**
+ * Validate public/entry_rules.json (T1199, ROADMAP D19), written by
+ * pipeline/entry_rules.py, whose validate() words the same rules. Per
+ * country: `_src` and `_asof` (T1143), the four traveller groups, each a
+ * list of known codes with a date checked and, when it names a source, an
+ * https link to it; the advice link names a known source and a date. The
+ * `countries` floor is the catalogue's country set, so a country added to
+ * the catalogue without an entry block fails here.
+ */
+export const ENTRY_RULES_VERSION = 1;
+const ENTRY_GROUPS = ['eu', 'uk', 'visa_free', 'visa'];
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+export function validateEntryRules(doc, { countries = [] } = {}) {
+  const problems = [];
+  const bad = (m) => problems.push(m);
+  if (doc === null || typeof doc !== 'object' || Array.isArray(doc)) return ['entry_rules.json is not an object'];
+  if (doc.schema_version !== ENTRY_RULES_VERSION) {
+    bad(`entry_rules.json schema_version is ${JSON.stringify(doc.schema_version)}, expected ${ENTRY_RULES_VERSION}`);
+  }
+  const sources = doc.sources && typeof doc.sources === 'object' ? doc.sources : {};
+  if (!Object.keys(sources).length) bad('entry_rules.json sources is missing');
+  for (const [id, s] of Object.entries(sources)) {
+    if (!s || !String(s.url || '').startsWith('https://') || !s.licence) bad(`sources.${id} needs an https url and a licence`);
+  }
+  const codes = new Set(Array.isArray(doc.codes) ? doc.codes : []);
+  if (!codes.size) bad('entry_rules.json codes is missing');
+  const all = doc.countries && typeof doc.countries === 'object' ? doc.countries : {};
+  if (!Object.keys(all).length) return [...problems, 'entry_rules.json countries is missing or empty'];
+  for (const iso2 of countries) if (!all[iso2]) bad(`entry_rules.json has no block for ${iso2}`);
+  for (const [iso2, c] of Object.entries(all)) {
+    const at = `countries.${iso2}`;
+    if (!c || typeof c !== 'object') { bad(`${at} is not a country block`); continue; }
+    if (c._src !== 'entry_rules' || !ISO_DATE.test(String(c._asof || ''))) bad(`${at} lacks _src or _asof`);
+    for (const g of ENTRY_GROUPS) {
+      const line = c.rules?.[g];
+      if (!line || typeof line !== 'object') { bad(`${at}.rules.${g} is missing`); continue; }
+      if (!Array.isArray(line.needs) || !line.needs.length || line.needs.some((n) => !codes.has(n))) {
+        bad(`${at}.rules.${g}.needs is not a list of known codes`);
+      }
+      if (!ISO_DATE.test(String(line.checked || ''))) bad(`${at}.rules.${g}.checked is not a date`);
+      if (line.src != null) {
+        if (!sources[line.src]) bad(`${at}.rules.${g}.src ${JSON.stringify(line.src)} is not in sources`);
+        if (!String(line.url || '').startsWith('https://')) bad(`${at}.rules.${g}.url is not an https link`);
+      }
+    }
+    const adv = c.advice;
+    if (adv != null && (!sources[adv.src] || !String(adv.url || '').startsWith('https://')
+      || !ISO_DATE.test(String(adv.checked || '')))) {
+      bad(`${at}.advice needs a known src, an https url and a checked date`);
+    }
+  }
+  return problems;
+}
+
 // ======================================================================
 // The documented key set (T082, generated from the schema since T1133)
 // ======================================================================
