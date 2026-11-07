@@ -244,6 +244,28 @@ export function tasteWeights(verdicts = {}) {
   return out;
 }
 
+/**
+ * For a ranker (T1215, T1152-c): a function from a destination to its taste
+ * lean, the sum of the weights the place meets. Each node the place carries
+ * meets the nearest weighted node on its own path (itself, then its
+ * ancestors), so an accepted "wine" under a rejected "food and drink" reads
+ * as the acceptance; every weighted node counts once per place. Null when
+ * there are no weights, so a ranker can skip the work.
+ */
+export function tasteLeanOf(weights = {}) {
+  if (!Object.keys(weights).length) return null;
+  return (d) => {
+    const met = new Set();
+    for (const n of nodesOfDestination(d)) {
+      const hit = [n, ...ancestors(n)].find((m) => weights[m] != null);
+      if (hit) met.add(hit);
+    }
+    let s = 0;
+    for (const m of met) s += weights[m];
+    return s;
+  };
+}
+
 /** The position bucket a chip's tick carries: 1 (places 1 to 3), 2 (4 to 6), 3 (7 on). */
 export const positionBucket = (index) => (index < 3 ? 1 : index < 6 ? 2 : 3);
 

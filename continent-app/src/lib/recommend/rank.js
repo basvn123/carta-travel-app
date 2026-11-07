@@ -139,6 +139,33 @@ export function flightPull(trips, lever) {
   return out;
 }
 
+/**
+ * The taste nudge (T1215, T1152-c): the Yes and Not me the traveller gave
+ * their taste chips (lib/taste/profile.js tasteWeights, +1 and -3 a node)
+ * move a trip a little. A place's lean is the sum of the weights it meets
+ * (profile.js tasteLeanOf); the trip's is its places' lean weighed by their
+ * nights. The score moves by TASTE_STEP a weight unit, at most TASTE_CAP
+ * either way: one rejection costs 6 points of the match, one acceptance
+ * adds 2, so a rejection is a negative and never a filter, and the answers
+ * still lead. Zero without verdicts.
+ */
+export const TASTE_STEP = 0.02;
+export const TASTE_CAP = 0.06;
+
+export function tasteNudge(trip, lean, destinations) {
+  if (!lean) return 0;
+  let s = 0;
+  let n = 0;
+  for (const p of trip.places || []) {
+    const d = destinations?.[p.id];
+    if (!d) continue;
+    s += lean(d) * (p.nights || 1);
+    n += p.nights || 1;
+  }
+  if (!n) return 0;
+  return Math.max(-TASTE_CAP, Math.min(TASTE_CAP, (s / n) * TASTE_STEP));
+}
+
 // The fit of a trip depends on its places, month and the taste only, all
 // fixed per answer set (trips are memoised per answer set), so it is kept.
 const fits = new WeakMap();
@@ -164,9 +191,10 @@ export function qualifies(info, settings) {
 
 /**
  * Rank priced trips (trips.js) for one answer set.
- * opts: { settings, taste (the saved one), data, levers }
+ * opts: { settings, taste (the saved one), data, levers, tasteLean (the
+ * taste chips' verdicts as profile.js tasteLeanOf, or null) }
  */
-export function rankTrips(trips, { settings, taste = null, data, levers = null } = {}) {
+export function rankTrips(trips, { settings, taste = null, data, levers = null, tasteLean = null } = {}) {
   const t = tasteFor(settings, taste);
   const destinations = data?.destinations || {};
   const levered = applyLevers(trips.map((x) => ({ ...x, base: x.base || x })), levers);
@@ -182,7 +210,8 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
     const p = tripPersona(trip, persona, destinations);
     const said = personaReason(trip, persona, destinations);
     const quality = info.Q ?? trip.signals?.countryScore ?? null;
-    const score = (blendOf(info.F, p, quality) ?? 0) - sink / 10 - (pull.get(trip.id) || 0) / 10;
+    const score = (blendOf(info.F, p, quality) ?? 0) - sink / 10 - (pull.get(trip.id) || 0) / 10
+      + tasteNudge(trip, tasteLean, destinations);
     // T1021: the shown match keeps show_min too, not only the fit behind it: a
     // budget sink could pull a fitting trip's figure under it.
     const shown = matchPct(score);
@@ -211,5 +240,5 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null }
  * per answer set), ranked, with the levers applied. input: buildTrips' input.
  */
 export function findTrips(input, { levers = null } = {}) {
-  return rankTrips(buildTrips(input), { settings: input.settings, taste: input.taste || null, data: input.data, levers });
+  return rankTrips(buildTrips(input), { settings: input.settings, taste: input.taste || null, data: input.data, levers, tasteLean: input.tasteLean || null });
 }
