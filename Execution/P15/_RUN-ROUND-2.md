@@ -41,11 +41,16 @@ How it runs:
 | 69 | T1153 | F4 | p15-s69-place-linking | done | yes | 2 |
 | 100 | T1184 | D24 | p15-s100-multi-stage-treks | done | yes | 1 |
 | 105 | T1189 | D23 | p15-s105-beaches-validation | done | yes | 3 |
-| 70 | T1154 | F5 | p15-s70-intelligence-api | started | | |
+| 70 | T1154 | F5 | p15-s70-intelligence-api | done | yes | 1 |
 | 73 | T1157 | H3 | p15-s73-durable-rate-limit | done | yes | 1 |
 | 74 | T1158 | H4 | p15-s74-load-tests | done | yes | 1 |
-| 75 | T1159 | H5 | p15-s75-backups | started | | |
-| 101 | T1185 | D24 | p15-s101-way-back | started | | |
+| 75 | T1159 | H5 | p15-s75-backups | done | yes | 3 |
+| 101 | T1185 | D24 | p15-s101-way-back | done | yes | 1 |
+| 76 | T1160 | H8 | p15-s76-slos | started | | |
+| 77 | T1161 | H10 | p15-s77-no-laptop-steps | started | | |
+| 78 | T1162 | H11 | p15-s78-scripted-ship | started | | |
+| 80 | T1164 | C10 | p15-s80-security-testing | started | | |
+| 102 | T1186 | D24, D7 | p15-s102-mountains-lakes | started | | |
 
 The batch schedule for the rest of round 2 is in "Batch schedule" below.
 
@@ -93,3 +98,4 @@ Merge notes:
 - 19:55 Batch 6 merged: S66 (batch tagger on taxonomy v1 for places, trails, beaches, lakes and mountains with evidence per tag, verifier through the gateway only where uncertain; full run on the box), S68 (Your taste card on My trips: chips with evidence, accept and reject, in the GDPR export; migration 072 with a down file), S69 (`linkPlace` with an alias table, BM25 and n-grams, did you mean, a 300-mention eval in run.mjs; search uses it behind a flag), S100 (treks: stages of one long walk grouped into one ordered trek record, the stage page shows the whole trek), S105 (beaches as the second validation layer: 14,861 EEA sites against 6,618 beaches, 30 gaps reviewed). Fixes at merge: S66's verifier prompt was a string in `tagger.py`, which the no-prompt-in-code test forbids: moved byte for byte into `prompts/tag-verify/v1.md` (registry, guarded by the taxonomy eval, check OK with 16 prompts); the doubled-row fix had kept the older D23 row when S100 merged after S105 (T1189's row restored; the helper now keeps the integration branch's copy of rows a branch did not change; a check that every merged task's ROADMAP rows name it passes for all 23); generated reference and lineage regenerated. Local Postgres 16 with 065 to 072: RLS 856 of 856, harnesses 17 of 17. npm test 1725: 1713 pass, 0 fail; full pytest 794 pass; contract gate and every other check OK. 57 round 2 owner steps on the checklist. Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a).
 - 20:05 Linux CI green on 94ff37dd35 (batch 6 merged, ci run 212). Batch 7 started from 94ff37dd35: S70 (session_0156MmZ5zkykqG3i6ikXWoW9), S73 (session_0156MmZ4pzaeQQv6F2dQj9QQ), S74 (session_0156MmZ2fuLg2NZ6wWbB25dG), S75 (session_0156MmZ7892AX9wr1s2XJdHE), S101 (session_0156MmZ4z9F1Nn7BWL6aSRT4). From batch 7 each brief asks the session to run npm test and the full pytest before its last push.
 - 00:15 (2026-11-07) S70, S75 and S101 stopped at 20:10 on the account's 5-hour usage limit (reset 21:40) without a commit; the orchestrator's own container restarted in the same window. All three were asked to continue at 00:13. Owner rule (2026-11-07): keep retrying after a usage limit so the run continues as soon as the limit lifts. So an hourly scheduled check-in on this session (trig_01Vb3WMzi58g83ttUN4oHQoR, minute 17) resumes the orchestrator from this log and sends a continue message to every task session of the current batch that stopped on a limit; it is deleted when the schedule is done. S73 (durable rate limiting through the Cloudflare binding with an in-memory fallback; T1079-d closed) and S74 (k6 load tests for ask, flights, stays and the static wire, a local run recorded) merged. Fix at merge: `recommendLevers.test.mjs` failed on every branch from 2026-11-07, because its fixture flight sweep aged out against the real clock; the test now pins `Date.now` to its own day. npm test 1726: 1714 pass, 0 fail; full pytest 794 pass; other checks OK.
+- 00:35 Batch 7 merged after the retry: S75 (nightly encrypted dump timer on the box, 30-day retention, a timed local restore), S101 (`way_back.py` stamps `wb` on every published one-way walk, shown on the trail page), S70 (Intelligence API in `services/intelligence/`: /tag, /link, /similar, /taxonomy, /profile over the merged F1, F3 and F4 code, key auth, rate limit, Docker, 90 tests with eval sets as contract tests, OpenAPI in the reference). S70 saw two rating pytest failures in its own container; they need LFS files the orchestrator has, and pass here. npm test 1729: 1717 pass, 0 fail; full pytest 806 pass; Intelligence API 90 pass and its OpenAPI check OK; other checks OK; generated reference regenerated. 65 round 2 owner steps on the checklist. Batch 8 started (sessions below). Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a).

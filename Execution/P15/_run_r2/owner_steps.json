@@ -605,5 +605,95 @@
   "how": [
    "Open the Data Hub item \"Bathing water directive, status of bathing water\", confirm CC BY 4.0 and the Discodata table, add the attribution line to `docs/tos/` if needed"
   ]
+ },
+ {
+  "id": "T1154-a",
+  "title": "Start the Intelligence API on the box",
+  "why": "The pipeline's batch jobs and any later caller need the service running; nothing calls it until it is up.",
+  "where": "services/intelligence/README.md, \"Run\"",
+  "how": [
+   "On the box, from the repo root: `cd services/intelligence && python -c \"from intelligence.auth import new_key",
+   "K, h = new_key()",
+   "Print(k)",
+   "Print(h)\"`, keep the key for the caller",
+   "Copy `.env.example` to `.env` and set `INTEL_API_KEYS=pipeline:<hash>:6000`",
+   "Run `python -I pipeline/taxonomy/tagger.py --all` (30 s) so `/similar` indexes every item",
+   "`docker compose -f services/intelligence/compose.yaml up -d --build`",
+   "Check `curl localhost:8090/healthz`"
+  ]
+ },
+ {
+  "id": "T1157-a",
+  "title": "Create rate limit bindings",
+  "why": "The limits only hold across isolates once Cloudflare has the bindings.",
+  "where": "continent-app/wrangler.toml, Execution/P15/T1157-durable-rate-limit.md",
+  "how": [
+   "In Pages, deploy a preview and check the build accepts the `[[ratelimits]]` entries",
+   "If it rejects them add one WAF rate rule on /api/ask, /api/flights, /api/stays (Security, Security rules, Rate limiting)",
+   "Check a burst returns 429"
+  ]
+ },
+ {
+  "id": "T1157-c",
+  "title": "Decide the Edge Function per-address limit",
+  "why": "Supabase functions have only per-user caps.",
+  "where": "Execution/_OPEN.md",
+  "how": [
+   "Choose a database counter by address or a WAF rule in front of the Supabase domain"
+  ]
+ },
+ {
+  "id": "T1158-a",
+  "title": "Run the k6 load tests on the preview",
+  "why": "Proves the 10x launch budgets before the public launch.",
+  "where": "docs/runbooks/load-tests.md",
+  "how": [
+   "Install k6",
+   "Run `k6 run -e BASE_URL=https://<preview>.carta-app.pages.dev -e SPOOF_IP=0 tests/load/all.js` (or Actions, \"load\", Run workflow)",
+   "Paste the p95 lines into a report"
+  ]
+ },
+ {
+  "id": "T1159-a",
+  "title": "Install the nightly backup timer",
+  "why": "The routine backup only exists once the box runs it.",
+  "where": "docs/runbooks/backup-restore.md",
+  "how": [
+   "On the box: `git pull`",
+   "`sudo bash infra/hetzner/cron/install.sh`",
+   "Confirm `SUPABASE_DB_URL` and `CARTA_BACKUP_KEY` in `~/.config/carta/env`",
+   "`sudo systemctl start --no-block carta-backup.service` and check `journalctl -u carta-backup.service`"
+  ]
+ },
+ {
+  "id": "T1159-b",
+  "title": "Run the restore drill and record the time",
+  "why": "An untested backup is a guess, and the live restore time is the figure to plan an incident around.",
+  "where": "docs/runbooks/backup-restore.md",
+  "how": [
+   "On the laptop with the GPG secret key and a scratch Postgres 17: `ops/restore_drill.sh --latest --report ~/restore-drill.json`",
+   "Write the total seconds into the runbook"
+  ]
+ },
+ {
+  "id": "T1159-c",
+  "title": "Check the R2 lifecycle rule and the newest object",
+  "why": "Retention only works if the rule exists, and a stopped backup is invisible.",
+  "where": "docs/runbooks/backup-restore.md",
+  "how": [
+   "`python pipeline/archive/push.py --lifecycle` (needs Cloudflare token)",
+   "`rclone lsl r2:carta/archive/db/supabase-nightly/` shows an object under 36 hours old"
+  ]
+ },
+ {
+  "id": "T1185-a",
+  "title": "Run the trails export with way back",
+  "why": "The wire carries no `wb` until the export runs on the box with the lab.",
+  "where": "Execution/P15/T1185-way-back.md",
+  "how": [
+   "Start the lab",
+   "Run `python pipeline/trails/export_wire.py`",
+   "Run `node continent-app/scripts/ci/check-contract.mjs` and open one one-way trail page"
+  ]
  }
 ]
