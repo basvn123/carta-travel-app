@@ -2515,6 +2515,24 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Limits.** Signed out, trips kept from the trip finder stay on the device only; signed in they sync once migration 065 is live (T1104). The paywall's device gates can be bypassed with devtools by design (usePaywall.jsx comment). Not found in code: any server-side cap on the number of account trips.
 
+### Installable app and offline
+
+**What it does.** Carta installs to a phone's home screen and opens offline after one visit: the app shell, My trips and every trip kept on this device. Prices, the AI, live flights and the account wait for the network, and My trips says so with one status line. ROADMAP I7 (PWA part), T1169.
+
+**How it works.**
+- Manifest `continent-app/public/manifest.webmanifest`: standalone, start `/`, icons 192, 512 and a maskable 512 (the compass mark inside the 80 percent safe zone, `scripts/og/icons.mjs`).
+- Worker `continent-app/public/sw.js`, served unbuilt, cache `CACHE_VERSION` (`carta-v8`). Install precaches the shell (`SHELL`) and every file `index.html` names (entry script, modulepreloads, stylesheets, `/boot.json`, the font). Registration (`src/pwa/registerServiceWorker.js`, production only) then posts `carta:warm` with the files the page loaded before the worker took over; the worker adds those and every lazy chunk the entry script names (about 4.6 MB raw, 1.4 MB on the wire, once, in the background). Language bundles stay on demand.
+- Never stored: same-origin `/api/`, `/functions/`, `/auth/` (`NEVER`), any request with an `Authorization`, `apikey` or `x-client-info` header, every other host except the data host (so never Supabase), `/activities_full.json` and `/sw.js`.
+- Per path rules are unchanged: navigations network first with the shell as fallback, `/dest/` and `/boot.json` stale while revalidate, layer wires network first, hashed `/assets/` cache first.
+- Install hint (`src/auth/InstallHint.jsx`): one row in My trips, on a phone browser only, after a trip is kept, never on the first run; dismissed once, it never returns. Offline, the same row shows `pwa.offline.saved` (or `pwa.offline.empty` with no trip kept) on any width.
+- Check: `node scripts/verify_pwa.mjs --dist ../.fastbuild` (installability through Chromium's own `Page.getInstallabilityErrors`, Cache Storage contents, offline reload, My trips and the kept trip offline, CSP).
+
+**Data behind it.** Cache Storage (origin storage about 6.7 MB after the first visit on the fixture) and the device keys of My trips. No server table.
+
+**Where it lives.** `continent-app/public/sw.js`, `continent-app/public/manifest.webmanifest`, `continent-app/src/pwa/registerServiceWorker.js`, `continent-app/src/auth/InstallHint.jsx`, `continent-app/scripts/verify_pwa.mjs`, `continent-app/tests/pwa.test.mjs`.
+
+**Limits.** Account trips are read from Supabase and do not open offline unless the account sync has mirrored them to the device (T1169-a). Not checked on a real iPhone or Android phone (T246-c, T1169-b). No store listing; the route is I-R3's decision (T1169-c). The precache list is read from the built page and entry script, not from Vite's manifest (T1169-d).
+
 ### Taste profile with validation
 
 **What it does.** On My trips, Your Europe tab, a "Your taste" card shows the interests Carta reads from the traveller's own saves, trips and filters, as chips on the Carta travel taxonomy (T1149, five facets). Each chip says what it rests on ("2 trips, 1 saved place", then up to three names) and has a Yes and a Not me. Yes keeps the chip first and shown while any evidence remains; Not me hides it under "Hidden (n)", where Show again takes it back, and turns it into a negative. Start over clears every verdict. ROADMAP F3, T1152.

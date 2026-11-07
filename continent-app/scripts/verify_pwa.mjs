@@ -197,7 +197,8 @@ try {
     if ((size === last && size > 0) || Date.now() - t0 > 45000) break;
     last = size;
   }
-  console.log(`cache settled at ${size} entries after ${Math.round((Date.now() - t0) / 1000)} s`);
+  const usage = await page.evaluate(async () => (await navigator.storage.estimate()).usage || 0);
+  console.log(`cache settled at ${size} entries, ${(usage / 1048576).toFixed(1)} MB origin storage, after ${Math.round((Date.now() - t0) / 1000)} s`);
 
   // 3 + 4. What the cache holds after one visit.
   const cached = await page.evaluate(async () => {
