@@ -101,9 +101,15 @@ None.
 
 DOM checks, not screenshots: each `scripts/verify_*.mjs` below ran against the base branch (`origin/p15-round2`, dev server on 4174) and the split code (the committed branch, dev server on 4175), on the same local data, and the PASS and FAIL lines were compared. The scripts cover phone and desktop widths where they define them.
 
-VERIFY_TABLE
+Every log below is identical on both sides once ports, timings and stack lines are removed (33 scripts compared line by line).
 
-Not run here: `verify_core_flow.mjs` and `verify_plan_short.mjs` (they expect a served fast build on port 5871 and a shots folder); `verify_trip_price_consistency.mjs` fails the same 5 checks on both sides (data on this container).
+| Result on both sides | Scripts |
+|---|---|
+| All checks pass | destination_page (37), trip_page (59), trip_share, when_step (13), focus_trap (11), shortlist (10), day_workspace, day_overview, day_steps, day_ideas, day_dates, day_routes, day_start_point, continue_trip |
+| Same checks pass and the same fail (data on this container: the boot index is split from public/app_data.json and its rank tier check fails) | explore (98 of 98, exit 1 on console errors from blocked hosts), destinations (53 pass, 35 fail), lakes (78, 3), cycling (64, 8), beaches (46, 8), mountains (30, 2), journeys (46, 1), tab_switching (39 of 40), day_landing (1 fail), trip_price_consistency (5 fail) |
+| Stop early the same way (timeouts or a harness they start themselves) | home, bottom_nav, desktop_shell, trails, trail_page, from_picker (starts its own vite preview), core_flow and plan_short (expect a served fast build on port 5871) |
+
+The whole-app end check at phone and desktop width on real data belongs to the batch end check after merge.
 
 ## What is still open
 
