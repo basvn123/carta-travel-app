@@ -11,6 +11,7 @@ import { editDistance } from '../src/lib/linking/linker.js';
 import { soundKey } from '../src/lib/linking/fold.js';
 import { linkSearchHits, linkerFor } from '../src/lib/linking/search.js';
 import { locationMatch } from '../src/hooks/useDestinationSearch.js';
+import { buildAskVocab, parseIntent, linkUnknownPlace } from '../src/lib/ask/intent.js';
 import { runLinkingEval, gate, BASELINE_PATH } from '../scripts/eval/linking/eval.mjs';
 
 const APP = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -152,4 +153,34 @@ test('the Destinations location match: plain substring alone, widened by linker 
   assert.equal(locationMatch({ ...dbv, id: 'XXX', city: 'Elsewhere' }, 'dubrovnk', hits), false);
   assert.equal(locationMatch(dbv, 'croatia', { ids: new Set(), bbox: null }), true);
   assert.equal(locationMatch(dbv, 'dalmatia', { ids: null, bbox: [13, 42, 19.5, 44.5] }), true);
+});
+
+// T1215 (row T1153-d): Ask reads a place word its vocabulary does not hold through the linker.
+test('Ask: an unknown place word links through the place linker, only when one is given', async () => {
+  const { en } = await import('../src/i18n/en.js');
+  const rows = Object.values(inputs.destinations);
+  const guided = J('search/guided.json');
+  const countries = [...new Map(rows.map((p) => [p.iso2, p.country])).entries()];
+  const base = { t: (k) => en[k] ?? k, lang: 'en', guided, rows, countries, index: inputs.searchIndex, lexicon: inputs.lexicon };
+  const now = new Date('2026-11-07T12:00:00');
+  const link = (m) => linkPlace(L, m, { whole: true });
+  const plain = buildAskVocab(base);
+  const linked = buildAskVocab({ ...base, link });
+  // Without a linker: as before, the typo stays unknown.
+  const off = parseIntent('when to visit dubrovnk', { vocab: plain, lang: 'en', now });
+  assert.deepEqual(off.places, []);
+  assert.ok(off.unknown.includes('dubrovnk'));
+  // With one (on the vocabulary or in ctx): a when question about Dubrovnik.
+  const on = parseIntent('when to visit dubrovnk', { vocab: linked, lang: 'en', now });
+  assert.equal(on.type, 'when');
+  assert.deepEqual(on.places, ['DBV']);
+  assert.ok(!on.unknown.includes('dubrovnk'));
+  assert.deepEqual(parseIntent('when to visit pafos', { vocab: plain, lang: 'en', now, link }).places, ['PFO']);
+  // A place outside Europe is not completed into a catalogue name (Peru is not Perugia).
+  assert.deepEqual(parseIntent('vacaciones en peru', { vocab: linked, lang: 'es', now }).places, []);
+  // A question that names a known place is read as before.
+  assert.deepEqual(parseIntent('when to visit lisbon', { vocab: linked, lang: 'en', now }).places,
+    parseIntent('when to visit lisbon', { vocab: plain, lang: 'en', now }).places);
+  assert.equal(linkUnknownPlace(['ab'], link), null);
+  assert.equal(linkUnknownPlace([], link), null);
 });

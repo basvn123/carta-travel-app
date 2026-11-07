@@ -171,7 +171,11 @@ function windows(tokens, max) {
   return out;
 }
 
-/** Rank catalogue places for one mention. ctx: { country, airport, lat, lon }. */
+/**
+ * Rank catalogue places for one mention. ctx: { country, airport, lat, lon, whole }.
+ * whole: true says the mention is complete (an Ask question, a booking), not
+ * a word still being typed, so a prefix ("peru" of Perugia) is no match (T1215).
+ */
 export function linkPlace(linker, mention, ctx = {}) {
   const o = linker.opts;
   const m = readMention(linker, mention);
@@ -260,7 +264,7 @@ export function linkPlace(linker, mention, ctx = {}) {
         const ed = L >= 4 ? editDistance(w, r.key, 3) : 9;
         const es = ed <= 3 ? 1 - ed / L : 0;
         // A word still being typed: "barc" is on its way to "barcelona".
-        const pre = w === coreStr && last.length >= 3 && r.key.startsWith(w) ? 0.72 + 0.2 * (w.length / r.key.length) : 0;
+        const pre = !ctx.whole && w === coreStr && last.length >= 3 && r.key.startsWith(w) ? 0.72 + 0.2 * (w.length / r.key.length) : 0;
         sim = Math.max(sim, f * Math.max(d, es), pre);
       }
     }
