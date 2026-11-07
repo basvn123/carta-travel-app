@@ -1,0 +1,4 @@
+.ask-docs { margin: 0 0 1.5rem; padding: .75rem 1rem; border: 1px solid var(--md-default-fg-color--lightest); border-radius: .4rem; }
+.ask-docs input { width: min(28rem, 70%); padding: .3rem .5rem; }
+.ask-docs button { padding: .3rem .8rem; }
+.ask-docs ol { margin-top: .4rem; }
