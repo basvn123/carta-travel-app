@@ -1,0 +1,22 @@
+# The trails lab review API on the build box (T1182, ROADMAP D24).
+# Installed by `lab.sh install`, started by `lab.sh review on`; not enabled at
+# boot, so it runs only while a curator is reviewing. Binds 127.0.0.1:8011 and
+# refuses a non-local lab (tools/trailslab/review/api/server.py). Reached only
+# through an SSH tunnel (lab.sh tunnel).
+[Unit]
+Description=Carta trails lab review API (127.0.0.1:8011)
+After=network-online.target docker.service
+
+[Service]
+Type=simple
+User=carta
+WorkingDirectory=/home/carta/carta
+ExecStart=/bin/bash -c '. infra/hetzner/cax11/load-env.sh; exec /home/carta/venv/bin/python tools/trailslab/review/api/server.py --host 127.0.0.1 --port 8011'
+Restart=on-failure
+RestartSec=10
+MemoryMax=512M
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
