@@ -1164,8 +1164,13 @@ def guard_dossier(ctx=None):
     if not (pub / "app_data.json").exists():
         return False, ("continent-app/public/app_data.json is missing; the "
                        "dossier builds off the shipped wires, not the master")
-    if not (pub / "activities_full.json").exists():
-        return False, ("continent-app/public/activities_full.json is missing; "
+    # T1219: sync-data.mjs no longer writes public/activities_full.json (the
+    # app reads per-destination shards), so the dossier reads the same lists
+    # from the master; either file is enough (pipeline/dossier/common.py).
+    if not ((pub / "activities_full.json").exists()
+            or (ROOT / "app_data" / "app_data.json").exists()):
+        return False, ("neither app_data/app_data.json nor "
+                       "continent-app/public/activities_full.json is on disk; "
                        "every dossier would ship without its things to do")
     if not (CACHE / "dossier" / "landmarks.json").exists():
         return True, ("dossier stages present; no landmark cache yet, so the "
