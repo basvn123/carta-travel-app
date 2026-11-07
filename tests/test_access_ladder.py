@@ -7,7 +7,7 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline" / "stays"))
-from ladder import ladder_on, refuse_if_stopped  # noqa: E402
+from ladder import ladder_on, refuse_if_stopped
 
 CFG = json.loads((ROOT / "continent-app" / "config" / "access-ladder.json").read_text(encoding="utf-8"))
 ENVS = {s["flag"]["env"] for s in CFG["sources"]}
