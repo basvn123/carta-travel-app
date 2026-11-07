@@ -46,11 +46,15 @@ How it runs:
 | 74 | T1158 | H4 | p15-s74-load-tests | done | yes | 1 |
 | 75 | T1159 | H5 | p15-s75-backups | done | yes | 3 |
 | 101 | T1185 | D24 | p15-s101-way-back | done | yes | 1 |
-| 76 | T1160 | H8 | p15-s76-slos | started | | |
-| 77 | T1161 | H10 | p15-s77-no-laptop-steps | started | | |
-| 78 | T1162 | H11 | p15-s78-scripted-ship | started | | |
-| 80 | T1164 | C10 | p15-s80-security-testing | started | | |
-| 102 | T1186 | D24, D7 | p15-s102-mountains-lakes | started | | |
+| 76 | T1160 | H8 | p15-s76-slos | done | yes | 2 |
+| 77 | T1161 | H10 | p15-s77-no-laptop-steps | done | yes | 5 |
+| 78 | T1162 | H11 | p15-s78-scripted-ship | done | yes | 3 |
+| 80 | T1164 | C10 | p15-s80-security-testing | done | yes | 5 |
+| 102 | T1186 | D24, D7 | p15-s102-mountains-lakes | done | yes | 2 |
+| 79 | T1163 | H14 | p15-s79-code-health | started | | |
+| 84 | T1168 | B8 | p15-s84-ask-the-docs | started | | |
+| 104 | T1188 | D23, D4 | p15-s104-llm-judge | started | | |
+| 106 | T1190 | D23 | p15-s106-prices-validation | started | | |
 
 The batch schedule for the rest of round 2 is in "Batch schedule" below.
 
@@ -101,3 +105,4 @@ Merge notes:
 - 00:35 Batch 7 merged after the retry: S75 (nightly encrypted dump timer on the box, 30-day retention, a timed local restore), S101 (`way_back.py` stamps `wb` on every published one-way walk, shown on the trail page), S70 (Intelligence API in `services/intelligence/`: /tag, /link, /similar, /taxonomy, /profile over the merged F1, F3 and F4 code, key auth, rate limit, Docker, 90 tests with eval sets as contract tests, OpenAPI in the reference). S70 saw two rating pytest failures in its own container; they need LFS files the orchestrator has, and pass here. npm test 1729: 1717 pass, 0 fail; full pytest 806 pass; Intelligence API 90 pass and its OpenAPI check OK; other checks OK; generated reference regenerated. 65 round 2 owner steps on the checklist. Batch 8 started (sessions below). Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a).
 - 00:32 Batch 8 started from 37ddc80c12: S76 (session_0156MmZ3mxF6Ycei4zwrTztZ), S77 (session_0156MmZ7C3BJBf1qHQCKasF1), S78 (session_0156MmZ5EM1qyT46PvbwTw9z), S80 (session_0156MmZ5tdtV8i2CpjjDH5Ks), S102 (session_0156MmZ3dK5zkigr7gUZoQko). The briefs now ask each session to commit and push early, so work survives a usage limit.
 - 00:50 Two workflow failures found by listing every workflow on p15-round2, not only ci: `intelligence` (S70) failed ruff 0.14.3, the version CI pins (E402 on the service's post-path imports; the local ruff 0.16 passed it): fixed with noqa markers (5aaad210bd); `prompts` failed on 0da4d90102 because the taxonomy eval that guards `tag-verify` needs PyYAML, which that workflow did not install: added to the workflow and reproduced in a bare venv (ad3d7f1eef). The merge checks now run ruff 0.14.3 on the pipeline and each service, and every workflow run on a pushed commit is read, not only ci. S102 merged early (mountains route up and lake water class fill steps).
+- 01:25 Batch 8 merged: S76 (12 SLOs in `continent-app/config/slo.json`, an admin error budget panel, an incident drill script), S77 (the five laptop-only steps each have a box or worker path with a dry run, switched on by one line in the box install), S78 (`scripts/ship.mjs` runs the six deploy steps and stops on the first failure, dry-run tested; css-routes in npm test; a worktree script), S80 (ZAP baseline workflow on manual dispatch, auth tests, the ASVS L2 checklist with gaps as rows), S102 (mountain route up and lake water class fill steps with `_src` and `_asof`). Fix at merge: S77 made guided search a pipeline task that writes `search/`, but the lineage table still named it manual; the lineage row now names `guided_search`. npm test 1835: 1823 pass, 0 fail; full pytest 825 pass; ruff 0.14.3 on the pipeline and the services; every other check OK; no new migration. 82 round 2 owner steps on the checklist. Batch 9 started (S79 is the only app code writer). Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a).
