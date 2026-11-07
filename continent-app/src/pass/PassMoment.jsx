@@ -13,6 +13,12 @@ function store(kind) {
   try { return typeof window === 'undefined' ? null : window[kind]; } catch { return null; }
 }
 
+/** The plans balance for the free list: only a signed in traveller with a known read. */
+function balanceOf(paywall) {
+  const e = paywall.entitlement || {};
+  return { signedIn: !!paywall.signedIn, known: !!e.known, left: Math.max(0, e.plansLeft ?? 0) };
+}
+
 /**
  * The Pass moment (T1171, ROADMAP I14): where the paywall meets the journey.
  *
@@ -41,7 +47,7 @@ export function PassMoment({ priced }) {
   }
   if (!showPassMoment({ on, priced, paid: paywall.paid, later })) return null;
 
-  return <PassMomentCard locale={locale} onSee={() => paywall.openPrices('browse')}
+  return <PassMomentCard locale={locale} balance={balanceOf(paywall)} onSee={() => paywall.openPrices('browse')}
     onLater={() => { setLater(hideForLater(store('localStorage'))); setJustHidden(true); }} />;
 }
 
@@ -49,10 +55,10 @@ export function PassMoment({ priced }) {
  * The card itself, without the rules: what PassMoment draws when it shows.
  * Apart so a test and the verify script can render it with no paywall.
  */
-export function PassMomentCard({ locale, onSee, onLater }) {
+export function PassMomentCard({ locale, onSee, onLater, balance = null }) {
   const { t } = useI18n();
   const uid = useId();
-  const { free, pass } = momentLines(TIERS);
+  const { free, pass } = momentLines(TIERS, balance);
   const price = formatPrice(TIERS.trip.priceCents, locale);
 
   return (

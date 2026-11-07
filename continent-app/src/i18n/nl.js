@@ -7681,6 +7681,8 @@ export const nl = {
   "paywall.free.share": "Een link delen en samen plannen",
   "paywall.free.keep": "Eén bewaarde reis en elk GPX-bestand",
   "paywall.free.ai": "{n} dagplannen van de Carta-bot om mee te beginnen",
+  "paywall.free.aiLeft": "Nog {n} dagplannen van de Carta-bot over",
+  "paywall.free.aiNone": "Geen dagplannen van de Carta-bot meer over",
   "paywall.passHead": "Trip Pass, {price} eenmalig voor {days} dagen",
   "paywall.footBold": "Inclusief btw, geen abonnement.",
   "paywall.footNote": "Je reis gaat hoe dan ook gratis verder.",

@@ -91,12 +91,26 @@ export function showPassMoment({ on, priced, paid, later = { until: 0, count: 0 
  * one saved trip (useTripSave) and every GPX file (pass.subExport); the free
  * Carta bot plans are TIERS.free.aiPlans, once for the account.
  */
-export function momentLines(tiers) {
+/**
+ * The Carta bot line of the free list (T1171-d). A signed in traveller whose
+ * balance is known sees the plans left; a guest, or a failed read, sees the
+ * starting number from pricing.js.
+ */
+function aiLine(tiers, balance) {
+  if (balance && balance.signedIn && balance.known && Number.isFinite(balance.left)) {
+    return balance.left > 0
+      ? { key: 'paywall.free.aiLeft', vars: { n: balance.left } }
+      : { key: 'paywall.free.aiNone' };
+  }
+  return { key: 'paywall.free.ai', vars: { n: tiers.free.aiPlans } };
+}
+
+export function momentLines(tiers, balance = null) {
   const free = [
     { key: 'paywall.free.plan' },
     { key: 'paywall.free.share' },
     { key: 'paywall.free.keep' },
-    { key: 'paywall.free.ai', vars: { n: tiers.free.aiPlans } },
+    aiLine(tiers, balance),
   ];
   const pass = [
     { key: 'pass.addExports' },

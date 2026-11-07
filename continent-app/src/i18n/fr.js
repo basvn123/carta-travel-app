@@ -7670,6 +7670,8 @@ export const fr = {
   "paywall.free.share": "Partager un lien et planifier ensemble",
   "paywall.free.keep": "Un voyage enregistré et tous les fichiers GPX",
   "paywall.free.ai": "{n} plans de journée du bot Carta pour commencer",
+  "paywall.free.aiLeft": "Il reste {n} plans de journée du bot Carta",
+  "paywall.free.aiNone": "Plus de plans de journée du bot Carta",
   "paywall.passHead": "Trip Pass, {price} une fois pour {days} jours",
   "paywall.footBold": "TVA incluse, sans abonnement.",
   "paywall.footNote": "Votre voyage continue gratuitement dans tous les cas.",

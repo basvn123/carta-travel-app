@@ -8303,6 +8303,8 @@ export const en = {
   "paywall.free.share": "Share a link and plan together",
   "paywall.free.keep": "One saved trip and every GPX file",
   "paywall.free.ai": "{n} Carta bot day plans to start with",
+  "paywall.free.aiLeft": "{n} Carta bot day plans left",
+  "paywall.free.aiNone": "No Carta bot day plans left",
   "paywall.passHead": "Trip Pass, {price} once for {days} days",
   "paywall.footBold": "VAT included, no subscription.",
   "paywall.footNote": "Your trip carries on free either way.",
