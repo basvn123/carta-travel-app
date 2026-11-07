@@ -159,6 +159,20 @@ def test_eval_predictions_file(corpus):
     assert all(set(x) == {"tag", "score"} for v in pred["items"].values() for x in v)
 
 
+def test_mapped_tags_read_the_corpus_data_root(corpus, monkeypatch):
+    """T1154-d: today's tags come from the same data root as the passages, not always the repo's."""
+    pairs = tax.old_tags("trail", "7", "AT", corpus.public)
+    assert ("trail.highlights", "waterfall") in pairs and ("trail.category", "easy") in pairs
+    res = tg.run(list(corpus.items(("trail",))), corpus, log=None)
+    t = by_tag(res["items"]["trail:7"]["tags"])
+    assert "mapped" in t["set.waterfall"]["by"]
+    monkeypatch.setenv("CARTA_PUBLIC", str(corpus.public))
+    assert tax.default_public() == corpus.public
+    assert tax.old_tags("trail", "7", "AT") == pairs, "no root given: CARTA_PUBLIC"
+    monkeypatch.delenv("CARTA_PUBLIC")
+    assert tax.default_public() == ROOT / "continent-app" / "public"
+
+
 def test_seed_items_from_the_shipped_data():
     items = tg.eval_items("seed")
     assert len(items) == 15

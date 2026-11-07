@@ -60,7 +60,7 @@ from prompt_registry import prompt as _registry_prompt  # noqa: E402
 import taxonomy as tx
 
 TAGGER_VERSION = 1
-PUBLIC = ROOT / "continent-app" / "public"
+PUBLIC = tx.default_public()   # CARTA_PUBLIC, else continent-app/public (T1154-d)
 OUT = ROOT / "cache" / "taxonomy" / "tags.json"
 LAYERS = ("place", "trail", "beach", "lake", "mountain")
 
@@ -333,14 +333,15 @@ def noisy_or(ws) -> float:
     return 1.0 - p
 
 
-def tag_item(it: dict, passages: list[dict], dense=None) -> list[dict]:
-    """The candidates of one item, best first: [{tag, score, by, evidence, uses, implied}]."""
+def tag_item(it: dict, passages: list[dict], dense=None, public: Path | str | None = None) -> list[dict]:
+    """The candidates of one item, best first: [{tag, score, by, evidence, uses, implied}].
+    `public` is the data root today's tags are read from (the Corpus's; default tx.default_public())."""
     layer = it["layer"]
     allowed = set(eligible(layer))
     text_nodes = {i for i in allowed if node_table()[i]["source"] != "data"}
     # mapped tags: today's tags through mapping.yaml
     mapped: dict[str, list[str]] = defaultdict(list)
-    for src, v in tx.old_tags(layer, it["item_id"], it["country"]):
+    for src, v in tx.old_tags(layer, it["item_id"], it["country"], public):
         for t in tx.map_value(src, v):
             if t in node_table():
                 mapped[t].append(f"{src}={v}")
@@ -503,7 +504,7 @@ def run(items: list[dict], corpus: Corpus, gateway=None, dense=None, log=print) 
     out, stats = {}, Counter()
     for k, it in enumerate(items):
         ps = corpus.passages(it)
-        tags = tag_item(it, ps, dense)
+        tags = tag_item(it, ps, dense, corpus.public)
         if gateway is not None:
             v = verify(it, ps, tags, gateway)
             for key in ("asked", "yes", "no", "unquoted"):
