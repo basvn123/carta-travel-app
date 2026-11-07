@@ -2391,6 +2391,47 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 It also found 200 cross-layer duplicates. The hero audit of 2026-08-25 found images on 3,035 of 3,038 destinations, flagged 115 and fixed 647.
 
+### Photo correctness (D17)
+
+**What it does.** Checks a weekly sample of heroes against the place they front. It catches a wrong town, a map, a logo or flag, an interior, a group photo or portrait, and an animal or object. A flagged hero is replaced by the next good photo on its own ladder. The flag rate is a D2 rule (ROADMAP D17, T1198).
+
+**How it works.** `pipeline/photos/correctness.py`, run by the task `photo_check` (cadence `after` dossier, beaches, lakes and mountains; soft):
+1. **Sample.** For each layer it takes `sample.per_layer` rows from `pipeline/photos/correctness.json`: destinations 200, beaches 100, lakes 100, mountains 100. Rows are picked by the lowest `sha256(week|layer|id)`, where week is the ISO week, so the sample rotates weekly. At a 5% flag rate, 500 heroes give a 95% interval of about plus or minus 2 points. `--all` checks every row.
+2. **The ladder.** A destination's ladder is its `image` followed by its dossier `gallery` in order. A beach, lake or mountain row's ladder is its `images` list, with `images[0]` as the hero.
+3. **Tier 1: cheap signals, no model.** Each reason is a strong flag or a weak doubt.
+   - **Reused from the hero audit** (`classify` in `pipeline/audit_hero_images.py`): file name, Commons categories, MIME type and size. These give svg, not_photo, map, emblem, diagram, satellite, document, collage, historical and off_subject.
+   - **Added here:**
+     - Strong: `interior`, `people` (group photo, portrait, minister) and `animal`.
+     - Weak: `institution` (university, ministry, hospital), `weak_subject` (airport, station, stadium), `names_other_place` (the file names another place of the run and not this one) and `unnamed` (nothing names the subject).
+     - The published coordinate (EXIF or {{Location}}), with a limit per layer (`km` in the config). Over `certain` is `wrong_place` (strong); over `far` is `far_coord` (weak).
+   - **The subject's own name is removed before the word lists run**, so a beach called President, the Slezska Harta reservoir ("harta" is Romanian for map) and a Plaza Mayor pass.
+   - A file with strong reasons is `flag`. One with only weak reasons is `unsure`. The rest are `ok`.
+4. **Tier 2: vision, only for `unsure`.**
+   - Gemini (feature `photo_check`, chain `gemini-flash-latest`, then `gemini-3.5-flash`) runs through `pipeline/ai_gateway.py` with the registry prompt `photo-check`. It gets the 640 px Commons thumbnail inline at low media resolution.
+   - Settings: `vision.max_calls` 150 per run, and an answer below `min_confidence` 0.6 stays unsure.
+   - A strong tier 1 flag stands whatever the model says.
+   - Without `GEMINI_API_KEY` this tier is skipped and the unsure heroes go to review.
+   - `--vision session:FILE` reads verdicts that a Claude Code session wrote from the prompts `--vision-prompts DIR` produces. The Claude API is never used.
+5. **Replacement.** For a flagged hero the check walks the ladder up to `ladder_depth` (6) and takes the first candidate that comes out `ok`. Nothing outside the ladder is ever picked, so credit, licence and evidence travel with the file. If no candidate is ok, the hero stays and the row goes on the review list.
+6. **Writes.** The check writes `data/reports/photo_check/<date>.json` (`carta-photo-check/1`). It contains totals and per-layer rates, each result with its tier 1 reasons, tier 2 answer, ladder tries and action (`keep`, `replace`, `review`), and the review list. The wires change only with `--apply`. That re-checks the keys, moves the replacement to `images[0]` (dropping `ph`, which the next export recomputes) or rewrites a destination's `image` from the gallery record.
+7. **The D2 rule.** The runner layer `photos` (`scripts/validation/layer_photos.py`) turns the report into shares: `flagged` (hard, lower is better, 2 points of tolerance, `min_n` 100), `unsure` (soft) and `coverage` (soft). `scripts/quality/engine.py` reads it through `gate_from_disk`. The task writes that result (`--validate`) only once `data/reports/validation/photos/baseline.json` exists.
+
+**Data behind it.** The shipped wires (`public/app_data.json`, `dossier/`, `beaches/`, `lakes/`, `mountains/`) and `cache/hero_image_meta.json` (the hero audit's Commons metadata, filled by `--fetch-meta`).
+
+**Where it lives.** `pipeline/photos/correctness.py`, `pipeline/photos/correctness.json`, `prompts/photo-check/v1.md`, `scripts/validation/layer_photos.py`, the task in `run_pipeline.py`. Tests: `tests/test_photo_correctness.py`.
+
+**Limits.**
+- **Before any run.** On 2026-11-07 the cheap tier ran in a cloud container with no Commons metadata, so the file name and caption signals only. The week's sample of 500 had 1 flagged (0.2%) and 63 unsure (12.6%). The whole list of 8,942 heroes had 42 flagged (0.47%), 1,110 unsure and 12 with a ladder replacement.
+- **Real finds:**
+  - Keir Starmer's official portrait on Tiverton, Hythe and Rothwell
+  - the Japanese Emperor's flag on Tenno
+  - the Flag of Europe on Eu
+  - a grizzly bear on Fur
+  - telephone dialling code maps on Kington and Heathfield
+- **Not yet run with Commons metadata or the vision tier** (owner steps T1198-b and T1198-d).
+- `unnamed` sends about one hero in five to tier 2 (lakes 19%), which `max_calls` caps.
+- Trails, cycling and trips heroes are not sampled yet.
+
 ### When there is no photo (map and placeholder fallback)
 
 **What it does.** When Carta has no photo it may publish, it says so plainly and shows a map or a neutral placeholder, instead of a wrong or unlicensed image.
