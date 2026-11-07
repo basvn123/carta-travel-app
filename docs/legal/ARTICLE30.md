@@ -138,6 +138,8 @@ legal review (T1118-a); each is one constant in 069.
 | `paywall_events` | 022 | Yes | 180 days; account id set to null on deletion | 022 prune in the sweep |
 | `pipeline_runs` | 041 | No | Not limited | None needed |
 | `plan_tiers` | 007 | No (price catalogue) | Not limited | None needed |
+| `price_alert_consent` | 073 | Yes | Until the account is deleted: the request, confirmation and unsubscribe dates are the record of consent | Cascade |
+| `price_alerts` | 073 | Yes | Until 30 days after the alert fires or expires (90 days after saving or the first travel date, whichever is first); with the account at the latest | Purge (`price_alert_purge` after each box run), cascade |
 | `profiles` | 010 | Yes | Until the account is deleted | Cascade |
 | `saved_trips` | schema.sql | Yes | Until the account is deleted | Cascade |
 | `shared_list_items` | 059 | Yes | Until the list or the author's account is deleted | Cascade |
