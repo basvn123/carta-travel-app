@@ -18,7 +18,7 @@
     }
   },
   "backup": {
-    "enabled": false,
+    "enabled": true,
     "url": "https://data.carta-europetravel.com/status/backup.json",
     "max_age_hours": 36,
     "_note": "T1159-c (T1211): ops/backup_nightly.sh writes r2:carta/status/backup.json after each verified upload. Set enabled to true once that URL answers 200 with the box's backup running (owner step T1211); a stale or missing file then turns the uptime run red."
