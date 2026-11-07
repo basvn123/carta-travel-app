@@ -140,6 +140,16 @@ def norm_city(name):
     return re.sub(r"[^a-z0-9]+", "", s.lower())
 
 
+def shipped_parent(r, shipped_cities):
+    """The candidate's parent city when that city is already shipped, else None.
+
+    A candidate with no parent city is never a district (T1214, from T1146-b):
+    norm_city(None) is "", and two shipped cities with no Latin form also fold
+    to "", so testing the empty key skipped every parentless candidate."""
+    parent = norm_city(r.get("parent_city"))
+    return r.get("parent_city") if parent and parent in shipped_cities else None
+
+
 def slugify(name):
     s = unicodedata.normalize("NFKD", name or "")
     s = "".join(c for c in s if not unicodedata.combining(c))
@@ -307,7 +317,7 @@ def main():
                 w in DISTRICT_NAME_WORDS for w in re.findall(r"[a-z]+", (r["name"] or "").lower())):
             skipped.append((r["name"], "names a district, not a place"))
             continue
-        if SKIP_PARENT_ALREADY_SHIPPED and norm_city(r.get("parent_city")) in shipped_cities:
+        if SKIP_PARENT_ALREADY_SHIPPED and shipped_parent(r, shipped_cities):
             skipped.append((r["name"], f"is a district of {r['parent_city']}, already shipped"))
             continue
         near = next((p for p in accepted_pts

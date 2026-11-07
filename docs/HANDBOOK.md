@@ -2878,7 +2878,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Where it lives.** `pipeline/catalogue_gaps.py`; tests `tests/test_catalogue_gaps.py`. Run: `python pipeline/build_place_candidates.py` (if the candidate file is absent), then `python -I pipeline/catalogue_gaps.py`.
 
-**Limits.** On 2026-11-06 today's rules fill 142 of 807 short places; the stretch floor adds 440 more and 207 stay unfilled, because the Europe-wide expansion already took the candidates above 0.40 and Wikipedia attention (`cache/place_signals.json`) covers about 4,000 of 90,000 candidates. `promote_place_candidates.py` itself still rejects every candidate without a parent city while a shipped city folds to an empty key (T1146-b). Register rows `T1146-a` and on.
+**Limits.** On 2026-11-06 today's rules fill 142 of 807 short places; the stretch floor adds 440 more and 207 stay unfilled, because the Europe-wide expansion already took the candidates above 0.40 and Wikipedia attention (`cache/place_signals.json`) covers about 4,000 of 90,000 candidates. `promote_place_candidates.py` tests a candidate's parent city only when it has one (`shipped_parent`, T1214; before, every parentless candidate was rejected because two shipped cities fold to an empty key, 126 of the 142 approved adds). Register rows `T1146-a` and on.
 
 ### Link and page health (D16)
 
