@@ -69,6 +69,10 @@ Verdicts are from the wire alone and stay provisional until the reference is ver
 | Geometry fact false on a near line | Segments were indexed only in their end cells | Index every cell along a segment |
 | quality engine test fails | Fails on the base branch too | Not touched, register row T1193-g |
 
+## Final checks
+
+In this container `npm test` gave 1152 pass, 88 fail and full pytest 805 pass, 4 fail, 8 collection errors (missing modules and git-lfs data); none touches the cycling layer, and `test_validation_cycling.py` passes 6 of 6. The failures were not compared with the base branch beyond the quality engine test.
+
 ## Screens checked
 
 None. The admin snapshot now lists the cycling layer; the end check should look at Admin, Data health, External validation.
