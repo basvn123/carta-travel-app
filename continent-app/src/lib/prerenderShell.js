@@ -117,12 +117,15 @@ export function sitemapKey(pathname) {
  * needs two rules because `/spain/*` does not match `/spain` itself.
  * 43 countries x 2 + trips + journeys + the cards + the two sitemap rules =
  * 91 rules, plus one `/nl/*` rule for each of the five other languages
- * (T1212) = 96 of the 100 Pages allows.
+ * (T1212), plus `/api/*` for the API Functions = 97 of the 100 Pages allows.
  */
 export function routesJson() {
   const include = [];
   for (const cw of Object.values(COUNTRY_SLUGS).sort()) include.push(`/${cw}`, `/${cw}/*`);
   include.push('/trips/*', '/journeys/*', '/og/p/*', '/sitemap.xml', '/sitemap-*');
+  // The API Functions (functions/api/) were added to public/_routes.json by
+  // hand; T1212 folds them in here so the file and this module agree again.
+  include.push('/api/*');
   for (const l of PRERENDER_LANGS) if (l !== 'en') include.push(`/${l}/*`);
   return { version: 1, include, exclude: [] };
 }
