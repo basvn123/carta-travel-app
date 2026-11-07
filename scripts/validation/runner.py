@@ -68,7 +68,8 @@ LAYERS = {"trails": "layer_trails", "beaches": "layer_beaches",
           "beaches_blueflag": "layer_beaches_blueflag", "prices": "layer_prices",
           "prices_fares": "layer_prices_fares", "prices_sample": "layer_prices_sample",
           "texts": "layer_texts", "lakes": "layer_lakes",
-          "mountains": "layer_mountains"}
+          "mountains": "layer_mountains",
+          "ratings": "layer_ratings"}
 Z95 = 1.96
 TREND_POINTS = 24
 
