@@ -45,6 +45,15 @@ def test_the_mapping_covers_the_big_vocabularies():
     assert len(COLLECTED["likes"]) == 12
 
 
+def test_trail_detail_highlight_kinds_are_covered():
+    """T1149-h: the detail files' kinds come from scenic.py KINDS; a sample of the files must hold no other kind."""
+    kinds = COLLECTED["trail.detail_highlights"]
+    assert {"volcano", "arch", "hot_spring", "spring", "peak", "lake"} <= set(kinds)
+    seen = sources.detail_highlight_kinds(every=40)
+    assert seen, "no trail detail file read: the sample lost its source"
+    assert set(seen) <= set(kinds), sorted(set(seen) - set(kinds))
+
+
 def test_not_a_concept_is_small():
     none = [(s, v) for s, vs in COLLECTED.items() for v in vs if not tax.map_value(s, v)]
     total = sum(len(v) for v in COLLECTED.values())
