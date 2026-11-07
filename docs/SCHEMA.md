@@ -1445,6 +1445,7 @@ Country file `trails/{CC}.json`, key `treks` (absent when none is filed there):
 | `how` | strings | evidence used: `superroute`, `name`, `registry` |
 | `order` | `position` or `name` | what set the order: the superroute member position, else the numbers in the names (the first that passes the line check) |
 | `n` | integer, 2 or more | published stages |
+| `of` | integer, optional (T1201) | stages the whole path has: the superroute's member count, which `hierarchy.py` writes on each stage row as `h.n`; present only when at least `n` and at least the highest stage number shown |
 | `km`, `up`, `down`, `min` | numbers | sums over the published stages (km, metres up, metres down, minutes) |
 | `days` | integer | one per stage, or the stage's own `f.d` when it is a multi-day walk |
 | `stages` | `[{id, i, name, cc, km, up, min}]` | the published stages in walking order; `i` is the stage number shown (the name's own, else the position) |

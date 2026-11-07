@@ -228,3 +228,30 @@ def test_chain_settles_a_position_conflict_when_the_ends_touch():
     assert len(trek_list) == 1 and trek_list[0]["order"] == "chain"
     apart = [_stage(1, P[0], P[1], of="Doppel", pos=1), _stage(2, P[2], P[3], of="Doppel", pos=1)]
     assert treks.build(apart)[2]["refused"]["order_conflict"] == 1
+
+
+def test_trek_says_how_many_stages_the_whole_path_has():
+    # T1201 (T1184-e): hierarchy.py puts the superroute's stage count on each
+    # stage (`h.n`); the trek keeps it when it is at least what is shown.
+    rows = [_stage(1, P[0], P[1], pos=1), _stage(2, P[1], P[2], pos=2)]
+    for r in rows:
+        r["h"]["n"] = 7
+    t = treks.build(rows)[0][0]
+    assert t["n"] == 2 and t["of"] == 7
+    for r in rows:
+        r["h"]["n"] = 1
+    assert "of" not in treks.build(rows)[0][0]
+
+
+def test_hierarchy_gives_a_stage_its_superroute_count():
+    import hierarchy
+    g = {1: {"country": "AT", "in_store": True, "parents": [], "children": [2, 3, 4],
+             "name": "BergeSeen Trail", "type": "superroute",
+             "rmembers": [(2, ""), (3, ""), (4, "")]}}
+    for i in (2, 3, 4):
+        g[i] = {"country": "AT", "in_store": True, "parents": [1], "children": [],
+                "name": f"BergeSeen Trail 0{i - 1}", "type": "route", "rmembers": []}
+    out = hierarchy.classify_graph(g, [])[0]
+    assert out[1]["count"] == 3
+    assert [out[i]["count"] for i in (2, 3, 4)] == [3, 3, 3]
+    assert [out[i]["index"] for i in (2, 3, 4)] == [1, 2, 3]

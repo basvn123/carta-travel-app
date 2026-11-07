@@ -33,7 +33,7 @@ export function TrekStages({ trek, currentId = null, t, lang = 'en', onOpenStage
     isHere(s.id) ? t('trek.here') : '',
   ].filter(Boolean).join(', ');
   const totalLine = [
-    t('trek.stages', { n: tot.n }),
+    tot.of ? t('trek.stagesOf', { n: tot.n, of: tot.of }) : t('trek.stages', { n: tot.n }),
     tot.km > 0 ? t('trek.km', { km: nf(tot.km) }) : '',
     tot.up > 0 ? t('trek.up', { m: nf(tot.up) }) : '',
   ].filter(Boolean).join(', ');
@@ -41,7 +41,7 @@ export function TrekStages({ trek, currentId = null, t, lang = 'en', onOpenStage
     <div className="pt-block" data-testid="trek-stages" data-trek={trek.id}>
       <h3 className="pt-block-title">{trek.name}</h3>
       <p className="pt-muted" data-testid="trek-total">
-        {here ? `${t('trek.thisStage', { i: here.i })}. ` : ''}
+        {here ? `${tot.of ? t('trek.thisStageOf', { i: here.i, of: tot.of }) : t('trek.thisStage', { i: here.i })}. ` : ''}
         {totalLine}. {t('trek.days', { n: tot.days })}
       </p>
       <div aria-label={t('trek.listLabel', { name: trek.name })} role="group">

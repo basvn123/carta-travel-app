@@ -3794,6 +3794,8 @@ export const es = {
   "trek.up": "{m} m de subida",
   "trek.days": "Unos {n} días a pie",
   "trek.thisStage": "Esta es la etapa {i}",
+  "trek.thisStageOf": "Esta es la etapa {i} de {of}",
+  "trek.stagesOf": "{n} de {of} etapas publicadas",
   "trek.here": "esta etapa",
   "trek.listLabel": "Etapas de {name}",
   "trek.openWhole": "Abrir la ruta completa",

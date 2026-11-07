@@ -4722,6 +4722,8 @@ export const en = {
   "trek.up": "{m} m up",
   "trek.days": "About {n} days on foot",
   "trek.thisStage": "This is stage {i}",
+  "trek.thisStageOf": "This is stage {i} of {of}",
+  "trek.stagesOf": "{n} of {of} stages published",
   "trek.here": "this stage",
   "trek.listLabel": "Stages of {name}",
   "trek.openWhole": "Open the whole route",

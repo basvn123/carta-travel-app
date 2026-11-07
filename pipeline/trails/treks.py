@@ -501,6 +501,11 @@ def build(rows, parent_osm=None, registry=None, asof=None):
             "min": m.get("duration_min"),
         } for m in ordered]
         km = sum(s["km"] or 0 for s in stages)
+        # T1201 (row T1184-e): how many stages the whole path has, from the
+        # superroute's member count hierarchy.py puts on each stage (`h.n`);
+        # kept only when it can be true of the numbers shown.
+        whole = max(((m.get("h") or {}).get("n") or 0 for m in ordered), default=0)
+        of = whole if whole >= len(stages) and whole >= max(s["i"] for s in stages) else None
         trek = {
             "id": tid,
             "name": names.wire_name(name, cc),
@@ -509,6 +514,7 @@ def build(rows, parent_osm=None, registry=None, asof=None):
             "how": src,
             "order": order_how,
             "n": len(stages),
+            **({"of": of} if of else {}),
             "km": round(km, 1),
             "up": sum(m.get("ascent_m") or 0 for m in ordered),
             "down": sum(m.get("descent_m") or 0 for m in ordered),

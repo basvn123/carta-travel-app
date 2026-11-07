@@ -3803,6 +3803,8 @@ export const nl = {
   "trek.up": "{m} m klimmen",
   "trek.days": "Ongeveer {n} dagen te voet",
   "trek.thisStage": "Dit is etappe {i}",
+  "trek.thisStageOf": "Dit is etappe {i} van {of}",
+  "trek.stagesOf": "{n} van {of} etappes gepubliceerd",
   "trek.here": "deze etappe",
   "trek.listLabel": "Etappes van {name}",
   "trek.openWhole": "Open de hele route",

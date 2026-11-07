@@ -3794,6 +3794,8 @@ export const fr = {
   "trek.up": "{m} m de montée",
   "trek.days": "Environ {n} jours à pied",
   "trek.thisStage": "Ceci est l'étape {i}",
+  "trek.thisStageOf": "Ceci est l'étape {i} sur {of}",
+  "trek.stagesOf": "{n} étapes publiées sur {of}",
   "trek.here": "cette étape",
   "trek.listLabel": "Étapes de {name}",
   "trek.openWhole": "Ouvrir l'itinéraire complet",
