@@ -1408,3 +1408,4 @@ Rows from `_OPEN.md` whose item is done, with the task that closed it. Moved her
 | T1164-l | T1164 | Uploads get a privacy pass but no antivirus scan before an admin publishes them (ASVS V5.4.3); decide on a scanner in upload-scan or record why JPEG, PNG and GPX re-encoding is enough | next task | closed by T1211 |  |
 | T1142-a | T1142 | The audit scripts ROADMAP D2 names (audit_quality.py, audit_gaps.py, dossier/audit.py, image audits, trails freshness) are not folded into scripts/quality/rules.yaml | next task | closed by T1214 |  |
 | T1142-b | T1142 | Quality rules gate completeness only; validity, freshness and rating accuracy are on the card but no rule reads them (a hard freshness rule would fail every run today, app_data 152 days old) | next task | closed by T1214 |  |
+| T1142-g | T1142 | MAP.md does not name scripts/quality/engine.py, rules.yaml or the admin Data health tab (adds to T1134-f) | next task | closed by T1214 |  |

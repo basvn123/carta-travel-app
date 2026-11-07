@@ -1745,7 +1745,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1142-d | T1142 | The Data health panel imports its snapshot at build time and the box's reset restores the committed one; decide a run-time path for panel.json (R2 status/ or a box commit) and fetch it | user | open |  |
 | T1142-e | T1142 | verify_admin_panel.mjs step 9h (Data health) has not run end to end: the cloud container cannot reach data.carta-europetravel.com, so the app stops before the account door | next task | open |  |
 | T1142-f | T1142 | On the box set CARTA_QUALITY_OUT=logs/status/quality and seed it from data/reports/quality/, so the quality history and drop baseline survive weekly.sh's git reset | user | open |  |
-| T1142-g | T1142 | MAP.md does not name scripts/quality/engine.py, rules.yaml or the admin Data health tab (adds to T1134-f) | next task | open |  |
 | T1142-h | T1142 | docs/runbooks/drift-and-scorecard.md still calls the scorecard not a gate and has no section on the quality gate or a failed quality task | next task | open |  |
 | T1145-a | T1145 | D15 (S62) works the 36 place gaps D6-001 to D6-036 in docs/data/coverage-parity.csv and reruns scripts/coverage/coverage_parity.py after its adds | next task | open | 1 |
 | T1145-b | T1145 | No Eurostat tourist nights for GB, BA, XK, MD, FO, AD, MC, SM, so their expectation uses two terms and their regions are not tested; fetch ONS or VisitBritain regional nights (D11) and a national source for the rest (source hosts blocked in the cloud) | next task | open |  |
