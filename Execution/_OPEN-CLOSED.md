@@ -1426,3 +1426,4 @@ Rows from `_OPEN.md` whose item is done, with the task that closed it. Moved her
 | T1173-b | T1173 | Trails and cycle routes have no pipeline override file (only the live content_overrides layer 'trail'); add one with the trail pipeline owner (S97) so a trail text fix survives trails_* reruns | next task | closed by T1214 |  |
 | T1173-c | T1173 | Outputs built from the master earlier in the same run (dossier, search index, Ask index) carry a new dest override only from the next run; apply the step before the dossier and ask_index tasks, or rerun them when an override changed | next task | closed by T1214 |  |
 | T1173-e | T1173 | admin.nav.overrides is in en.js only; nl, de, fr, es and it fall back to English, as admin.nav.health does | next task | closed by T1214 |  |
+| T1173-h | T1173 | The Overrides tab does not flag entries past review_by, and does not show the live content_overrides rows next to the file entries | next task | closed by T1214 |  |
