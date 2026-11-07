@@ -60,11 +60,16 @@ How it runs:
 | 87 | T1171 | I14 | p15-s87-paywall-moment | done | yes | 1 |
 | 88 | T1172 | I15 | p15-s88-affiliate-links | done | yes | 2 |
 | 98 | T1182 | D24 | p15-s98-trails-lab-box | done | yes | 2 |
-| 94 | T1178 | K14 | p15-s94-data-blog-1 | started | | |
-| 91 | T1175 | K7 | p15-s91-shareable-assets | started | | |
-| 92 | T1176 | K8 | p15-s92-open-dataset | started | | |
-| 107 | T1191 | D23 | p15-s107-ratings-validation | started | | |
-| 108 | T1192 | D23 | p15-s108-lakes-mountains-validation | started | | |
+| 94 | T1178 | K14 | p15-s94-data-blog-1 | done | yes | 2 |
+| 91 | T1175 | K7 | p15-s91-shareable-assets | done | yes | 3 |
+| 92 | T1176 | K8 | p15-s92-open-dataset | done | yes | 3 |
+| 107 | T1191 | D23 | p15-s107-ratings-validation | done | yes | 5 |
+| 108 | T1192 | D23 | p15-s108-lakes-mountains-validation | done | yes | 3 |
+| 90 | T1174 | K14 | p15-s90-data-blog-2 | started | | |
+| 109 | T1193 | D23 | p15-s109-cycling-validation | started | | |
+| 110 | T1194 | D23 | p15-s110-climate-validation | started | | |
+| 111 | T1195 | D23 | p15-s111-trips-validation | started | | |
+| 112 | T1196 | D23 | p15-s112-texts-validation | started | | |
 
 The batch schedule for the rest of round 2 is in "Batch schedule" below.
 
@@ -122,3 +127,4 @@ Merge notes:
 - 02:35 Batch 10 started from f4a4e4fc55: S85 (session_0156MmZ7BatDSsT2oHTff9o9), S86 (session_0156MmZ43Z7PxB7FeaUimBPJ), S87 (session_0156MmZ4W9W9VpH1TWXinbSY), S88 (session_0156MmZ7BYuWGpermLTeHgFt), S98 (session_0156MmZ3r24z6co81EvqNvFa). S85, S87 and S88 add i18n keys in all six files under their own namespaces; S86 fills every other missing key and adds the parity test.
 - 03:20 Linux CI green on 2ed774808b (batch 9 merged, ci run 274; ask-eval, prompts and intelligence green). Batch 10 merged: S86 (0 missing keys in nl, de, fr, es, it, down from 583 and 651; machine-drafted strings listed for the native review; a key-parity test in npm test; browser language on first visit), S98 (the trails lab and its review app set up for the box in `tools/trailslab/box/`, dry-run), S88 (one `partnerLink` helper with `rel="sponsored noopener"`, a partner mark, the disclosure page, cookieless counting), S85 (the offline promise fixed: the service worker caches the shell and a saved trip; install prompt at one moment), S87 (the Pass moment behind a flag that is off, preview `?pm=on`). Fixes at merge: S86 and S88, then S85, all appended keys at the end of the five language files (union of both sides, every language at 10,051 keys with parity); the direct ROADMAP restore after the hand merge doubled I8 (one row kept, T1170's). npm test 1882: 1870 pass, 0 fail; full pytest 857 pass; CSP check 0 violations over every screen; design-lint 0 new. 101 round 2 owner steps on the checklist. Batch 11 started. Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a).
 - 03:18 Batch 11 started from 2cdf95de7a: S94 slot, blog part 1 (session_0156MmZ2yG78Wv2csngxLn7E), S91 (session_0156MmZ4q2ZtgkqxBpDLVohB), S92 (session_0156MmZ3uWRJDYXeBpTGciJV), S107 (session_0156MmZ48DefCcFnKq6DoCHh), S108 (session_0156MmZ6VX7xTQ6yr3zL7BP6). New i18n keys go into all six files now that the parity test is in npm test.
+- 04:30 Linux CI green on 5c417c7c94 (batch 10 merged, ci run 294). Batch 11 merged: S92 (a CC BY 4.0 subset of 39 columns with a licence test per field, datasheet and a Show HN draft), S108 (lakes and mountains as validation layers), S107 (place ratings as a validation layer: T760 repeated on 3,855 places, list AUC 0.773, 30 gaps reviewed), S91 (three share images from Carta's own data with a numbers check and credits), S94 slot (blog part 1: `/blog/`, the monthly `blog_drafts` task and the draft check script; nothing published). Fixes at merge: the runner's layer list again (all kept); the D23 row doubled after a hand merge (S107 and S108 entries combined); the i18n key appends of S91 and S94 (union, parity at 10,078); `blog_drafts` had been appended after `photo_sources`, which must stay last apart from the trailslab worker (moved before it). The container restarted during the last check run; rerun on d08baec052: npm test 1898: 1886 pass, 0 fail; full pytest 937 pass; CSP check 0 violations; every other check OK. 117 round 2 owner steps on the checklist. Batch 12 started (the last). Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a), all still open.
