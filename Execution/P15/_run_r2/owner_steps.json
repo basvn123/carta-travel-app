@@ -1275,5 +1275,166 @@
    "Drop CSVs (id,name,lat,lon,cc,class) into `data/reports/validation/lakes/national/` from France data.gouv (check each dataset's licence), SYKE, HaV",
    "Rerun the lakes layer"
   ]
+ },
+ {
+  "id": "T1174-b",
+  "title": "Switch on the monthly blog branch",
+  "why": "Without it `blog_pr` only prints what it would push, so no drafts reach a pull request.",
+  "where": "content/blog/README.md, run_pipeline.py task blog_pr",
+  "how": [
+   "Give the box a git credential that may push `blog-drafts-*` branches (not main)",
+   "Add `CARTA_BLOG_PR=1` to the box secrets file",
+   "After the first Saturday run open the pull request from the `blog-drafts-YYYY-MM` branch, read the drafts, set `status: published` on the ones to publish, run `python scripts/blog/check_draft.py`, merge"
+  ]
+ },
+ {
+  "id": "T1193-a",
+  "title": "Verify the EuroVelo seed list",
+  "why": "The whole coverage number rests on a list written from memory.",
+  "where": "`data/reports/validation/cycling/reference/eurovelo.csv`",
+  "how": [
+   "Open eurovelo.com route pages",
+   "Correct names, total km and country lists in `eurovelo.csv`",
+   "Set verified=yes",
+   "Rerun `python3 -I scripts/validation/runner.py cycling --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1193-b",
+  "title": "Add official km per country",
+  "why": "Gives the length fact and error numbers.",
+  "where": "`data/reports/validation/cycling/reference/README.md`",
+  "how": [
+   "Write `ev,cc,km` rows from the route pages",
+   "Rerun the layer"
+  ]
+ },
+ {
+  "id": "T1193-c",
+  "title": "Add open official tracks",
+  "why": "Gives the geometry fact.",
+  "where": "`scripts/validation/layer_cycling.py`",
+  "how": [
+   "Convert open data (France data.gouv, Sustrans, Swiss opendata) to `geom/EV6-AT.geojson` style files after reading their terms",
+   "Keep EuroVelo GPX out of git",
+   "Rerun"
+  ]
+ },
+ {
+  "id": "T1193-f",
+  "title": "Add national network lists",
+  "why": "National cycle networks are not compared yet.",
+  "where": "`data/reports/validation/cycling/reference/README.md`",
+  "how": [
+   "Fill `national.csv` (id,name,cc,ref,net,km) from portals whose terms allow it",
+   "Rerun"
+  ]
+ },
+ {
+  "id": "T1194-a",
+  "title": "Export climate normals and run the climate layer",
+  "why": "The climate row cannot be validated without outside normals.",
+  "where": "scripts/validation/layer_climate.py",
+  "how": [
+   "Build data/reports/validation/climate/normals.csv (id,name,cc,lat,lon,elev_m,month,tmax_c,tmin_c,precip_mm,source,period) from DWD CLIMAT 1991-2020 (read the licence first), about 300 stations across the countries",
+   "Run `python -I scripts/validation/runner.py climate --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1194-b",
+  "title": "Export Copernicus sea temperature and run the sea layer",
+  "why": "The sea row needs an independent product.",
+  "where": "scripts/validation/layer_sea.py",
+  "how": [
+   "With a free Copernicus Marine account export OSTIA REP monthly means 2003-2022 at about 300 coastal points to data/reports/validation/sea/cmems_sst.csv (id,name,cc,lat,lon,month,sst_c,source,period)",
+   "First finish T1097-a so Carta has sea temperatures",
+   "Run `runner.py sea --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1194-c",
+  "title": "Export Eurostat nights by month and run the crowds layer",
+  "why": "The crowds row needs the national monthly profile.",
+  "where": "scripts/validation/layer_crowds.py",
+  "how": [
+   "Download tour_occ_nim (all countries, total accommodation, nights) to data/reports/validation/crowds/eurostat_nights_country_month.csv (cc,year,month,nights)",
+   "Confirm the reuse notice",
+   "Run `runner.py crowds --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1194-d",
+  "title": "Review the 30 largest gaps of each layer",
+  "why": "D23 requires a verdict and a fix at the cause.",
+  "where": "scripts/validation/layer_tables.py",
+  "how": [
+   "Run `python -I scripts/validation/layer_tables.py climate` (and sea, crowds)",
+   "Fill data/reports/validation/<layer>/gap_reviews.json as {id: {verdict, note}}",
+   "Rerun the tables"
+  ]
+ },
+ {
+  "id": "T1194-e",
+  "title": "Rebuild the wire with climate.elev",
+  "why": "The elevation guard on climate pairs is idle on the 2026-06-07 wire.",
+  "where": "pipeline/apply_climate.py",
+  "how": [
+   "Run `apply_climate.py` and `sync-data.mjs` as in docs/SCHEMA.md, then rerun T1194-a"
+  ]
+ },
+ {
+  "id": "T1195-a",
+  "title": "Run the trips timetable check on open GTFS feeds",
+  "why": "The trips layer only covers 81 hand-read legs; the library-wide share of honest leg times needs the timetables.",
+  "where": "Execution/P15/T1195-trips-validation.md, scripts/validation/trips_timetables.py",
+  "how": [
+   "Download the feeds to cache/gtfs/ (gtfs.de fv_free for DE, opentransportdata.swiss GTFS for CH, the Austria GTFS from data.oebb.at, the SNCF national and FlixBus GTFS from transport.data.gouv.fr, Entur NO, Trafiklab Sverige 2 with a free key, NTA Ireland with a key)",
+   "Run `python -I scripts/validation/trips_timetables.py legs` then `python -I scripts/validation/trips_timetables.py gtfs --date <a mid-season Tuesday> --feed cache/gtfs/de_fv.zip:DE --feed cache/gtfs/ch.zip:CH ...` (one --feed per zip with the countries it covers)",
+   "Run `python -I scripts/validation/runner.py trips --write --write-baseline` and commit data/reports/validation/trips/"
+  ]
+ },
+ {
+  "id": "T1195-b",
+  "title": "Route the car legs on a self-hosted router",
+  "why": "1,021 car legs have no reference and the public OSRM server forbids bulk use.",
+  "where": "scripts/validation/trips_timetables.py",
+  "how": [
+   "Start a local OSRM (Docker osrm/osrm-backend on a Geofabrik Europe or per-country extract, car profile) or adapt tools/brouter",
+   "Run `python -I scripts/validation/trips_timetables.py osrm --url http://127.0.0.1:5000`",
+   "Rerun the runner with --write and commit"
+  ]
+ },
+ {
+  "id": "T1195-e",
+  "title": "Decide the timetable sources with no open licence",
+  "why": "Italy, Czechia, Poland, the Netherlands and Denmark have no confirmed open feed, Belgium needs a signed contract, Sweden and Ireland a free key.",
+  "where": "Execution/_OPEN.md T1195-e",
+  "how": [
+   "Email gtfs@sncb.be for the SNCB licence if Belgium is wanted",
+   "Register the Trafiklab and NTA keys",
+   "For IT, CZ, PL, NL, DK confirm a feed's licence or leave them \"no open reference\""
+  ]
+ },
+ {
+  "id": "T1196-a",
+  "title": "Native review starting from the back-translation worst list",
+  "why": "11 drafted strings say something other than the English (one reverses a direction, two read \"card\" or \"target\" as map or destination) and the judge that passed the rest is lenient and uncalibrated.",
+  "where": "docs/i18n/review.md",
+  "how": [
+   "Open docs/i18n/review.md, section Back-translation check",
+   "Have a native reader confirm or correct the \"Fix these first\" list, then the borderline list, then the traveller-facing groups",
+   "Send the corrections for a next task (T1196-b)"
+  ]
+ },
+ {
+  "id": "T1196-f",
+  "title": "Cross-check the texts run and the translations with Gemini",
+  "why": "The session translators and judges are one model family, so a second family shows how much of the verdict is the model's own taste.",
+  "where": "Execution/P15/T1196-texts-validation.md",
+  "how": [
+   "On the box with GEMINI_API_KEY set run python -I scripts/validation/judge.py gemini --items data/reports/validation/texts/items.json --out data/reports/validation/texts/verdicts-gemini-YYYY-MM-DD.json",
+   "Then python -I scripts/validation/texts_sample.py report --verdicts that file",
+   "Commit both and compare the per-stratum table with provisional-2026-11-07.md"
+  ]
  }
 ]
