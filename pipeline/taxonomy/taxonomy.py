@@ -89,6 +89,17 @@ def validate(tax: dict | None = None) -> list[str]:
         for l in LANGS:
             if l not in lab:
                 bad.append(f"{i}: label has no {l} key (null is fine)")
+        syn = n.get("synonyms")
+        if not isinstance(syn, dict) or "en" not in syn:
+            bad.append(f"{i}: synonyms must be a map with an en list")
+        else:
+            for l, words in syn.items():
+                if l not in LANGS:
+                    bad.append(f"{i}: synonyms language {l} is not one of {LANGS}")
+                if not isinstance(words, list) or not all(isinstance(w, str) and w.strip() for w in words):
+                    bad.append(f"{i}: synonyms.{l} must be a list of non-empty strings")
+                elif len({w.lower() for w in words}) != len(words):
+                    bad.append(f"{i}: synonyms.{l} repeats a word")
         if not (n.get("definition") or "").strip():
             bad.append(f"{i}: no definition")
         for x in n.get("not_to_be_confused_with") or []:
@@ -232,6 +243,7 @@ def summary() -> dict:
         "by_level": dict(Counter(n["level"] for n in ns)),
         "labelled_six_languages": sum(1 for n in ns if all((n.get("label") or {}).get(l) for l in LANGS)),
         "by_source": dict(Counter(n["source"] for n in ns)),
+        "synonyms_by_language": {l: sum(len((n.get("synonyms") or {}).get(l) or []) for n in ns) for l in LANGS},
     }
 
 

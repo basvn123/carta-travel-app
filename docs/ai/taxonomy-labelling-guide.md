@@ -1,6 +1,6 @@
 # Labelling guide: Carta travel taxonomy
 
-For the owner (or a second labeller) filling `continent-app/scripts/eval/taxonomy/gold.csv`, the 400 items the taxonomy eval scores (T1149, ROADMAP F1). The taxonomy is `pipeline/taxonomy/carta_taxonomy.yaml`, version 1.0.0; the node list at the end of this page is generated from it, and the YAML wins where they differ. Background: [taxonomy.md](taxonomy.md).
+For the owner (or a second labeller) filling `continent-app/scripts/eval/taxonomy/gold.csv`, the 400 items the taxonomy eval scores (T1149, ROADMAP F1). The taxonomy is `pipeline/taxonomy/carta_taxonomy.yaml`, version 1.1.0; the node list at the end of this page is generated from it, and the YAML wins where they differ. Background: [taxonomy.md](taxonomy.md).
 
 ## The job
 
@@ -38,7 +38,7 @@ Two examples:
 
 ## Agreement
 
-One labeller gives a gold set; two give a gold set you can trust. If a second person labels, both label the same 60 rows first (the first 60 of the file, every layer is in them), blind to each other. Then run `python -I pipeline/taxonomy/taxonomy.py check` for validity, and compare: agreement per item is the overlap of the two sets (MASI distance, Passonneau 2006), summed over items into Krippendorff's alpha; 0.67 is the usual floor and 0.8 the aim. Nodes the two disagree on most get their definition or "not to be confused with" sharpened before the other 340 rows. SkillSpan went from 0.6 to about 0.75 this way. The agreement script is open work (T1149-e).
+One labeller gives a gold set; two give a gold set you can trust. If a second person labels, both label the same 60 rows first (the first 60 of the file, every layer is in them), blind to each other. Then run `python -I pipeline/taxonomy/taxonomy.py check` for validity, and compare: agreement per item is the overlap of the two sets (MASI distance, Passonneau 2006), summed over items into Krippendorff's alpha; 0.67 is the usual floor and 0.8 the aim. Nodes the two disagree on most get their definition or "not to be confused with" sharpened before the other 340 rows. SkillSpan went from 0.6 to about 0.75 this way. To compare, each labeller saves a copy of `gold.csv` and runs `python -I pipeline/taxonomy/agreement.py first.csv second.csv` (add `--json` for the numbers as JSON; `--rows 0` scores every shared labelled row instead of the first 60). It prints the alpha and Cohen's kappa per node, worst first: the nodes at the top are the ones to sharpen.
 
 ## When you are done
 
