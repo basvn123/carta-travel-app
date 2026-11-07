@@ -1,0 +1,1442 @@
+{
+ "schema": "carta-judge-verdicts/1",
+ "backend": "session",
+ "model": "session judge (blind subagent, judge-text prompt only)",
+ "prompt": "judge-text",
+ "prompt_version": 1,
+ "prompt_sha": "a40e854e32a6",
+ "at": "2026-11-07T00:00:00Z",
+ "items": "evals/truth/judge/text-sample.json",
+ "verdicts": {
+  "t01": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Ios is a Cyclades island",
+     "verdict": "supported",
+     "evidence": "Ios is a small island of the Cyclades group."
+    },
+    {
+     "claim": "a party island by night",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "arc of golden Mylopotas beach",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Only the Cyclades location is in the source; the party scene and Mylopotas beach are not."
+  },
+  "t02": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"red:white:red_lower:5A:black\""
+    },
+    {
+     "claim": "located in BE",
+     "verdict": "supported",
+     "evidence": "\"country\": \"BE\""
+    },
+    {
+     "claim": "13.2 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 13.2"
+    },
+    {
+     "claim": "41 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 41"
+    },
+    {
+     "claim": "38 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 38"
+    }
+   ],
+   "reason": "Every number, the country and the waymark match the source."
+  },
+  "t03": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"red:red:yellow_cross\""
+    },
+    {
+     "claim": "in LU",
+     "verdict": "supported",
+     "evidence": "\"country\": \"LU\""
+    },
+    {
+     "claim": "hard",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"hard\""
+    },
+    {
+     "claim": "international network route",
+     "verdict": "supported",
+     "evidence": "\"network\": \"iwn\""
+    },
+    {
+     "claim": "spans 42.1 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\": 23.1"
+    },
+    {
+     "claim": "391 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 391"
+    },
+    {
+     "claim": "477 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 477"
+    }
+   ],
+   "reason": "The distance of 42.1 km conflicts with the source's 23.1 km."
+  },
+  "t04": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "located on Crete",
+     "verdict": "contradicted",
+     "evidence": "Sremski Karlovci is in Syrmia (Serbian: Srem), Vojvodina."
+    },
+    {
+     "claim": "prettiest old town",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Venetian harbour",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Ottoman minarets",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "hilltop fortezza",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "long city beach",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The text places the town on Crete while the source puts it in Vojvodina, Serbia."
+  },
+  "t05": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "UNESCO site",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Moravian planned town of 1773",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "honey-cake bakeries",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "uniform yellow-brick streets",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The cited source describes Kolding and says nothing about Christiansfeld."
+  },
+  "t06": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"yellow:white:yellow_bar\""
+    },
+    {
+     "claim": "in France",
+     "verdict": "supported",
+     "evidence": "\"country\": \"FR\""
+    },
+    {
+     "claim": "covers 13.7 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 13.7"
+    },
+    {
+     "claim": "314 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 314"
+    },
+    {
+     "claim": "314 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 314"
+    },
+    {
+     "claim": "moderate difficulty",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"moderate\""
+    }
+   ],
+   "reason": "All figures match Carta's measured numbers in the source, and the route carries a waymark."
+  },
+  "t07": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "coronation cathedral of French kings",
+     "verdict": "supported",
+     "evidence": "its world heritage listed cathedral, where generations of French kings were crowned"
+    },
+    {
+     "claim": "above miles of champagne cellars",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The cathedral is supported but the champagne cellars are not in the source."
+  },
+  "t08": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "known as the White Town",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "by the Skagerrak",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "immaculate wooden houses",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "yacht-filled harbour",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source only says Risor is a well preserved coastal town; none of the specific claims appear."
+  },
+  "t09": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "triangular thatched palheiro cottages",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "flower gardens",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "gateway to the laurel forest",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "gateway to Caldeirao Verde",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source only says Saint-Tropez is a town in the French Riviera and states none of these features."
+  },
+  "t10": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "UNESCO spa town",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "pastel colonnades",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "singing fountain",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "forested promenades",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "None of the claims appear in the source, which describes a city known for its Grand Bazaar."
+  },
+  "t11": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Cradle of Portugal",
+     "verdict": "supported",
+     "evidence": "it's known as the \"Cradle of Portugal\""
+    },
+    {
+     "claim": "hilltop castle",
+     "verdict": "unsupported",
+     "evidence": "The historical centre has a medieval castle"
+    },
+    {
+     "claim": "perfectly kept medieval core",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The castle is in the source but its hilltop setting and the well kept medieval core are not."
+  },
+  "t12": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"yellow:yellow\""
+    },
+    {
+     "claim": "in LI",
+     "verdict": "supported",
+     "evidence": "\"country\": \"LI\""
+    },
+    {
+     "claim": "easy",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"easy\""
+    },
+    {
+     "claim": "8.9 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 8.9"
+    },
+    {
+     "claim": "17 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 17"
+    },
+    {
+     "claim": "6 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 6"
+    }
+   ],
+   "reason": "Every claim matches the source."
+  },
+  "t13": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "walking route in GB",
+     "verdict": "supported",
+     "evidence": "\"country\": \"GB\""
+    },
+    {
+     "claim": "easy",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"easy\""
+    },
+    {
+     "claim": "covers 15.2 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\": 7.2"
+    },
+    {
+     "claim": "25 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 25"
+    },
+    {
+     "claim": "33 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 33"
+    }
+   ],
+   "reason": "The distance of 15.2 km conflicts with the source's 7.2 km."
+  },
+  "t14": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "35.3 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\": 19.0"
+    },
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"green:blue:white_bar\""
+    },
+    {
+     "claim": "in LU",
+     "verdict": "supported",
+     "evidence": "\"country\": \"LU\""
+    },
+    {
+     "claim": "hard",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"hard\""
+    },
+    {
+     "claim": "about 6.5 hours on DIN 33466",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 19.0, \"ascent_m\": 674, \"descent_m\": 654"
+    },
+    {
+     "claim": "674 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 674"
+    },
+    {
+     "claim": "654 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 654"
+    }
+   ],
+   "reason": "The distance of 35.3 km conflicts with the source's 19.0 km."
+  },
+  "t15": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"red:white:red_diamond\""
+    },
+    {
+     "claim": "in Germany",
+     "verdict": "supported",
+     "evidence": "\"country\": \"DE\""
+    },
+    {
+     "claim": "90.2 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 90.2"
+    },
+    {
+     "claim": "2879 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 2879"
+    },
+    {
+     "claim": "3476 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 3476"
+    }
+   ],
+   "reason": "Every claim matches the source."
+  },
+  "t16": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "iconic island church",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "alpine lake",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source describes Vadstena as a historic small town and mentions neither an island church nor an alpine lake."
+  },
+  "t17": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"blue:orange:white_lower\""
+    },
+    {
+     "claim": "in MT",
+     "verdict": "supported",
+     "evidence": "\"country\": \"MT\""
+    },
+    {
+     "claim": "19.3 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\": 9.6"
+    },
+    {
+     "claim": "168 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 168"
+    },
+    {
+     "claim": "122 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 122"
+    },
+    {
+     "claim": "about 2.8 hours on DIN 33466",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 9.6, \"ascent_m\": 168, \"descent_m\": 122"
+    }
+   ],
+   "reason": "The distance of 19.3 km conflicts with the source's 9.6 km."
+  },
+  "t18": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Britain's smallest city",
+     "verdict": "supported",
+     "evidence": "is Britain's smallest city"
+    },
+    {
+     "claim": "a cathedral",
+     "verdict": "supported",
+     "evidence": "home to Wales' most important cathedral"
+    },
+    {
+     "claim": "purple stone cathedral",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "wild coast path cliffs",
+     "verdict": "unsupported",
+     "evidence": "The city is in the Pembrokeshire Coast National Park"
+    }
+   ],
+   "reason": "The smallest city and cathedral are supported but the purple stone and coast path cliffs are not."
+  },
+  "t19": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "in Italy",
+     "verdict": "supported",
+     "evidence": "\"country\": \"IT\""
+    },
+    {
+     "claim": "17.0 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 17.0"
+    },
+    {
+     "claim": "moderate difficulty",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"moderate\""
+    }
+   ],
+   "reason": "The tags carry no osmc:symbol and no waymark ref, so waymarked is unsupported."
+  },
+  "t20": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "baroque spires",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Europe's oldest megalithic dolmens",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "karst landscape of El Torcal",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source only locates Antequera in Malaga province and states none of these features."
+  },
+  "t21": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "easy",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"easy\""
+    },
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"blue:blue:white_pointer\""
+    },
+    {
+     "claim": "in Austria",
+     "verdict": "supported",
+     "evidence": "\"country\": \"AT\""
+    },
+    {
+     "claim": "loop",
+     "verdict": "supported",
+     "evidence": "\"is_loop\": true"
+    },
+    {
+     "claim": "10.3 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 10.3"
+    },
+    {
+     "claim": "369 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 369"
+    },
+    {
+     "claim": "370 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 370"
+    }
+   ],
+   "reason": "Every claim matches the source."
+  },
+  "t22": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"waymark_ref\": \"AATE01\""
+    },
+    {
+     "claim": "in Austria",
+     "verdict": "supported",
+     "evidence": "\"country\": \"AT\""
+    },
+    {
+     "claim": "rated moderate",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"moderate\""
+    },
+    {
+     "claim": "13.5 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 13.5"
+    },
+    {
+     "claim": "168 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 168"
+    },
+    {
+     "claim": "1229 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 1229"
+    }
+   ],
+   "reason": "Every number, the country, the rating and the waymark match the source."
+  },
+  "t23": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Wadden island",
+     "verdict": "unsupported",
+     "evidence": "Terschelling is one of the West Frisian Islands in the north of the Netherlands."
+    },
+    {
+     "claim": "30 km of wide beaches",
+     "verdict": "unsupported",
+     "evidence": "spend time on the beaches"
+    },
+    {
+     "claim": "dunes",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "cranberry woods",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "home of the Oerol theatre festival",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source mentions beaches but not their 30 km length, the dunes, cranberries or the Oerol festival."
+  },
+  "t24": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "hard",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"hard\""
+    },
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"red:white:red_bar\""
+    },
+    {
+     "claim": "in AL",
+     "verdict": "supported",
+     "evidence": "\"country\": \"AL\""
+    },
+    {
+     "claim": "35.8 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\": 19.5"
+    },
+    {
+     "claim": "937 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 937"
+    },
+    {
+     "claim": "1177 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 1177"
+    },
+    {
+     "claim": "about 7.9 hours on DIN 33466",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 19.5, \"ascent_m\": 937, \"descent_m\": 1177"
+    }
+   ],
+   "reason": "The distance of 35.8 km conflicts with the source's 19.5 km."
+  },
+  "t25": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "tiny island",
+     "verdict": "contradicted",
+     "evidence": "Sinaia is one of Romania's finest holiday resorts, deep into the Carpathian Mountains."
+    },
+    {
+     "claim": "women still wear striped skirts daily",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "UNESCO-listed living culture",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The text calls Sinaia a tiny island while the source places it deep in the Carpathian Mountains."
+  },
+  "t26": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Byzantine lakeside town",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "on a peninsula",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "50 medieval churches",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "mansions",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "lakeshore walk",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source only says Pilsen is in Bohemia and is the birthplace of pilsner, and states none of these claims."
+  },
+  "t27": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "medieval pilgrim city",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "around England's mother cathedral",
+     "verdict": "contradicted",
+     "evidence": "Rijeka Crnojevica is a small historical town in Central Montenegro"
+    }
+   ],
+   "reason": "The text ties the town to England while the source places it in Central Montenegro."
+  },
+  "t28": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "wild Weststrand beach",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "in Germany, on the Baltic",
+     "verdict": "contradicted",
+     "evidence": "seaside resort and fishing town in Greater Lisbon, Estremadura, Portugal"
+    },
+    {
+     "claim": "wind-bent trees and driftwood",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The text describes a German Baltic beach while the source places Ericeira in Portugal on the Atlantic."
+  },
+  "t29": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "walking route in IS",
+     "verdict": "supported",
+     "evidence": "\"country\": \"IS\""
+    },
+    {
+     "claim": "easy",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"easy\""
+    },
+    {
+     "claim": "6.1 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 6.1"
+    },
+    {
+     "claim": "58 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 58"
+    },
+    {
+     "claim": "49 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 49"
+    }
+   ],
+   "reason": "Every claim matches the source."
+  },
+  "t30": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"blue:blue:shell_modern\""
+    },
+    {
+     "claim": "47.7 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\": 26.5"
+    },
+    {
+     "claim": "national network",
+     "verdict": "supported",
+     "evidence": "\"network\": \"nwn\""
+    },
+    {
+     "claim": "about 7.9 hours on DIN 33466",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 26.5, \"ascent_m\": 479, \"descent_m\": 532"
+    },
+    {
+     "claim": "hard",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"hard\""
+    }
+   ],
+   "reason": "The distance of 47.7 km conflicts with the source's 26.5 km."
+  },
+  "t31": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "UNESCO garden landscape",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "links Lednice and Valtice chateaux",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "follies and vineyards",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source describes a white village on a mountain cone and mentions none of these features."
+  },
+  "t32": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "island",
+     "verdict": "supported",
+     "evidence": "Rømø is an island in the Wadden Sea National Park"
+    },
+    {
+     "claim": "causeway island",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Denmark's widest beach",
+     "verdict": "unsupported",
+     "evidence": "the enormous beaches"
+    },
+    {
+     "claim": "you drive onto the sand among kite buggies",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The island and big beaches are supported but the causeway, widest beach ranking and driving on the sand are not."
+  },
+  "t33": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "iconic island church",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "alpine lake",
+     "verdict": "unsupported",
+     "evidence": "Bled is a town in Slovenia, on the east side of Lake Bled."
+    }
+   ],
+   "reason": "The source names Lake Bled but says nothing of an island church or an alpine setting."
+  },
+  "t34": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Petrovaradin fortress",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "home of EXIT festival",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Danube beaches",
+     "verdict": "unsupported",
+     "evidence": "Situated on the Danube River"
+    },
+    {
+     "claim": "Fruska Gora wineries",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source places Novi Sad on the Danube but mentions none of the fortress, festival, beaches or wineries."
+  },
+  "t35": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "red shore-houses",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "cobbled old town",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "easy day-trip from Helsinki",
+     "verdict": "contradicted",
+     "evidence": "Valbona National Park, also called the Albanian miracle of Alps"
+    }
+   ],
+   "reason": "The text describes a coastal town near Helsinki while the source describes an Albanian alpine national park."
+  },
+  "t36": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "archipelago",
+     "verdict": "supported",
+     "evidence": "the Westman Islands archipelago"
+    },
+    {
+     "claim": "town of Heimaey",
+     "verdict": "supported",
+     "evidence": "Vestmannaeyjar (Westman Islands) is a town on the island of Heimaey."
+    },
+    {
+     "claim": "volcanic",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "puffin cliffs",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "1973 eruption",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The archipelago and Heimaey are supported but the volcanism, puffins and 1973 eruption are not."
+  },
+  "t37": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"waymark_ref\": \"lwn\""
+    },
+    {
+     "claim": "27.6 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\": 14.7"
+    },
+    {
+     "claim": "648 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 648"
+    },
+    {
+     "claim": "461 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 461"
+    },
+    {
+     "claim": "about 5.2 hours on DIN 33466",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 14.7, \"ascent_m\": 648, \"descent_m\": 461"
+    }
+   ],
+   "reason": "The distance of 27.6 km conflicts with the source's 14.7 km."
+  },
+  "t38": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "walking route in GR",
+     "verdict": "supported",
+     "evidence": "\"country\": \"GR\""
+    },
+    {
+     "claim": "42.2 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 42.2"
+    },
+    {
+     "claim": "hard",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"hard\""
+    },
+    {
+     "claim": "part of the national waymarked hiking network",
+     "verdict": "unsupported",
+     "evidence": "\"network\": \"nwn\""
+    },
+    {
+     "claim": "about 11 hours on DIN 33466",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 42.2, \"ascent_m\": 311, \"descent_m\": 258"
+    }
+   ],
+   "reason": "The route is on the national network but its tags carry no osmc:symbol or waymark ref, so waymarked is unsupported."
+  },
+  "t39": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "in Albania",
+     "verdict": "supported",
+     "evidence": "\"country\": \"AL\""
+    },
+    {
+     "claim": "starts and finishes at the same place",
+     "verdict": "supported",
+     "evidence": "\"is_loop\": true"
+    },
+    {
+     "claim": "10.4 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 10.4"
+    }
+   ],
+   "reason": "The tags carry no osmc:symbol and no waymark ref, so waymarked is unsupported."
+  },
+  "t40": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route signposted M05",
+     "verdict": "supported",
+     "evidence": "\"waymark_ref\": \"M05\""
+    },
+    {
+     "claim": "in RO",
+     "verdict": "supported",
+     "evidence": "\"country\": \"RO\""
+    },
+    {
+     "claim": "international network",
+     "verdict": "supported",
+     "evidence": "\"network\": \"iwn\""
+    },
+    {
+     "claim": "easy",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"easy\""
+    },
+    {
+     "claim": "passes a famous glacier halfway",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The glacier claim is not in the source."
+  },
+  "t41": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "in Herzegovina",
+     "verdict": "supported",
+     "evidence": "Trebinje is a town in the Herzegovina region."
+    },
+    {
+     "claim": "plane shaded squares",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Ottoman bridges",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "wine cellars",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "just over the hill from Dubrovnik",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Only the Herzegovina location is in the source."
+  },
+  "t42": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"red:white:red_lower:128:black\""
+    },
+    {
+     "claim": "in BE",
+     "verdict": "supported",
+     "evidence": "\"country\": \"BE\""
+    },
+    {
+     "claim": "9.6 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 9.6"
+    },
+    {
+     "claim": "about 2.5 hours on DIN 33466",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 9.6, \"ascent_m\": 20, \"descent_m\": 24"
+    }
+   ],
+   "reason": "Every claim matches the source, and the time follows from its figures."
+  },
+  "t43": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"red:black:yellow_hiker\""
+    },
+    {
+     "claim": "in IE",
+     "verdict": "supported",
+     "evidence": "\"country\": \"IE\""
+    },
+    {
+     "claim": "72.9 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\": 41.1"
+    },
+    {
+     "claim": "national network",
+     "verdict": "supported",
+     "evidence": "\"network\": \"nwn\""
+    },
+    {
+     "claim": "signposted DMW",
+     "verdict": "supported",
+     "evidence": "\"ref\": \"DMW\""
+    }
+   ],
+   "reason": "The distance of 72.9 km conflicts with the source's 41.1 km."
+  },
+  "t44": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "7.8 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 7.8"
+    },
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "in MT",
+     "verdict": "supported",
+     "evidence": "\"country\": \"MT\""
+    },
+    {
+     "claim": "144 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 144"
+    },
+    {
+     "claim": "143 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 143"
+    },
+    {
+     "claim": "about 2.3 hours on DIN 33466",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 7.8, \"ascent_m\": 144, \"descent_m\": 143"
+    },
+    {
+     "claim": "easy",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"easy\""
+    },
+    {
+     "claim": "local network",
+     "verdict": "supported",
+     "evidence": "\"network\": \"lwn\""
+    }
+   ],
+   "reason": "The tags carry no osmc:symbol and no waymark ref, so waymarked is unsupported."
+  },
+  "t45": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"waymark_ref\": \"1\""
+    },
+    {
+     "claim": "in LI",
+     "verdict": "supported",
+     "evidence": "\"country\": \"LI\""
+    },
+    {
+     "claim": "easy",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"easy\""
+    },
+    {
+     "claim": "6.2 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 6.3"
+    },
+    {
+     "claim": "signposted as 1",
+     "verdict": "supported",
+     "evidence": "\"ref\": \"1\""
+    }
+   ],
+   "reason": "Every claim matches, with 6.2 km within 0.1 km of the source's 6.3 km."
+  },
+  "t46": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"yellow:white:yellow_diamond:TMR:black\""
+    },
+    {
+     "claim": "in Switzerland",
+     "verdict": "supported",
+     "evidence": "\"country\": \"CH\""
+    },
+    {
+     "claim": "12.3 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 12.3"
+    },
+    {
+     "claim": "1707 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 1707"
+    },
+    {
+     "claim": "36 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 36"
+    }
+   ],
+   "reason": "Every claim matches Carta's measured numbers in the source."
+  },
+  "t47": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "1994 Olympic town",
+     "verdict": "supported",
+     "evidence": "best remembered as the site of the 1994 Winter Olympics"
+    },
+    {
+     "claim": "huge Maihaugen open-air museum",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "classic Norwegian ski slopes",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The Olympics are supported but Maihaugen and the ski slopes are not in the source."
+  },
+  "t48": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "waymarked route RW_ISL41",
+     "verdict": "supported",
+     "evidence": "\"waymark_ref\": \"RW_ISL41\""
+    },
+    {
+     "claim": "in IS",
+     "verdict": "supported",
+     "evidence": "\"country\": \"IS\""
+    },
+    {
+     "claim": "regional network",
+     "verdict": "supported",
+     "evidence": "\"network\": \"rwn\""
+    },
+    {
+     "claim": "15.4 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\": 7.3"
+    }
+   ],
+   "reason": "The distance of 15.4 km conflicts with the source's 7.3 km."
+  },
+  "t49": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "the Faroes' south",
+     "verdict": "supported",
+     "evidence": "the southernmost of the islands in the Faroe Islands"
+    },
+    {
+     "claim": "forgotten",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "vertiginous west-coast cliffs",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "villages beyond the ferry",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Only the southern position is in the source; the cliffs and ferry villages are not."
+  },
+  "t50": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"blue:blue:white_hiker\""
+    },
+    {
+     "claim": "in DK",
+     "verdict": "supported",
+     "evidence": "\"country\": \"DK\""
+    },
+    {
+     "claim": "26.6 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 26.6"
+    },
+    {
+     "claim": "97 m of ascent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 97"
+    },
+    {
+     "claim": "97 m of descent",
+     "verdict": "supported",
+     "evidence": "\"descent_m\": 97"
+    }
+   ],
+   "reason": "Every claim matches the source."
+  }
+ }
+}

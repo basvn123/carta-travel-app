@@ -1,0 +1,26 @@
+{
+ "about": "The D23 text judge (T1188): the threshold rule and the backends. A judge's verdicts count only when its calibration against human labels passes every rule under `threshold`; otherwise the runner keeps them out of the gate (the text layer's `supported` share is None, so the check warns). Research and reasons: Execution/P15/T1188-llm-judge.md.",
+ "prompt": "judge-text",
+ "threshold": {
+  "kappa_min": 0.7,
+  "kappa_low95_min": 0.5,
+  "planted_recall_min": 0.9,
+  "min_labels": 40,
+  "min_not_supported": 15,
+  "accept_seeded": false
+ },
+ "bootstrap": {"resamples": 2000, "seed": 1188},
+ "gemini": {
+  "feature": "judge",
+  "models": ["gemini-pro-latest", "gemini-flash-latest"],
+  "temperature": 1.0,
+  "votes": 1,
+  "note": "A Pro tier judges the Flash-written texts (less self-preference); flash-latest is the fallback and the result names the model that ran. Gemini 3 guidance keeps temperature at 1.0; votes > 1 takes the majority verdict."
+ },
+ "labels": {
+  "human": "evals/truth/judge/labels.json",
+  "seeded": "pipeline/judge/calibration/seeded-labels.json",
+  "sample": "evals/truth/judge/text-sample.json",
+  "key": "evals/truth/judge/text-sample-key.json"
+ }
+}
