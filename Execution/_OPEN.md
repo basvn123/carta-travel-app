@@ -1967,3 +1967,10 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1153-f | T1153 | No CI workflow runs the linking eval (scripts/eval/run.mjs linking --check); add it, with a sparse cone holding public/app_data.json, search_index.json and search/ask/lexicon.json | next task | open |  |
 | T1153-g | T1153 | Two linking misses: "Fårö" links Faro (a part alias with matching accents does not beat a name) and "pafos" ranks Paros over Paphos (no sound-alike for Greek spellings) | next task | open |  |
 | T1153-h | T1153 | src/hooks/useDestinationSearch.js still matches by plain substring; move it to the shared linker like Explore | next task | open |  |
+| T1154-a | T1154 | The Intelligence API is not running on the box: make a key, write services/intelligence/.env, run the full tagger, start compose (owner step in the T1154 report) | user | open | 1 |
+| T1154-b | T1154 | No pipeline job calls the Intelligence API yet; the roadmap's "pipeline calls it in batch" needs a first caller (for example taxonomy tags or parse-booking place linking in batch) | next task | open | 2 |
+| T1154-c | T1154 | /similar is checked only against the 15 seed labels written by a session (nearest 0.213 vs random 0.053 gold Jaccard); score it on the owner's 400 labels once gold.csv is filled (T1149) | next task | open | |
+| T1154-d | T1154 | The tagger's mapped tags always read continent-app/public under the repo root (pipeline/taxonomy/taxonomy.py), so CARTA_PUBLIC moves only the Corpus; make taxonomy.py take the data root too | next task | open | |
+| T1154-e | T1154 | intelligence.yml has no pip-audit and the image is pinned by tag, not digest; add both with the C6 supply-chain jobs | next task | open | |
+| T1154-f | T1154 | The rate limit lives in memory with one worker; a second worker or a public route would need a shared store (Redis) and TLS first | next task | open | |
+| T1154-g | T1154 | MAP.md has no row or line for services/intelligence/; add it with the next MAP edit | next task | open | |
