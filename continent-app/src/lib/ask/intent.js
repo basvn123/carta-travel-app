@@ -18,6 +18,14 @@
  *   }
  *
  * The facets stay Explore's, so "Show all" is one applyGuided() call.
+ *
+ * T1215 (row T1153-d): a place word the vocabulary does not hold (a typo,
+ * a sound-alike, a booking-style name: "dubrovnk", "pafos") is read by
+ * the shared place linker (src/lib/linking/) when the caller passes one as
+ * ctx.link or buildAskVocab's ctx.link (mention -> linkPlace result; the app
+ * gives one behind the place linking flag, hooks/usePlaceLink.js). It is a fallback only: it runs
+ * when the question named no place the vocabulary knows, on the words left
+ * unknown, and takes a confident link alone. Without ctx.link nothing changes.
  */
 import {
   buildVocab, parseQuery, partsToFacets, budgetStep, words,
@@ -191,6 +199,8 @@ export function buildAskVocab(ctx) {
       if (e) addKey(e, mf.format(new Date(2026, m - 1, 15)));
     }
   }
+  // T1215 (T1153-d): the place linker parseIntent falls back on, when given.
+  vocab.link = ctx.link || null;
   const byId = new Map((rows || []).map((p) => [p.id, p]));
   for (const [phrase, , slot, value] of lexicon?.phrases || []) {
     let e = null;
@@ -246,10 +256,34 @@ function placeMentions(toks, used, vocab, stop, preferPlace = false) {
   return out;
 }
 
+// A single word shorter than this is never sent to the linker on its own.
+const LINK_MIN = 4;
+
+/**
+ * The longest run of unknown words the place linker links with confidence:
+ * { id, words } or null. Runs of up to three neighbouring unknown words,
+ * longest first; `link` is ctx.link (a mention -> linkPlace result).
+ */
+export function linkUnknownPlace(unknown, link, stop = new Set()) {
+  if (!link || !unknown?.length) return null;
+  const list = unknown.filter((w) => w && !stop.has(w));
+  for (let n = Math.min(3, list.length); n >= 1; n--) {
+    for (let i = 0; i + n <= list.length; i++) {
+      const run = list.slice(i, i + n);
+      if (n === 1 && run[0].length < LINK_MIN) continue;
+      if (/^\d+$/.test(run.join(''))) continue;
+      const r = link(run.join(' '));
+      if (r?.confident && r.linked?.id) return { id: r.linked.id, words: run };
+    }
+  }
+  return null;
+}
+
 /**
  * The question as one Intent.
  *
- *   ctx: { vocab (buildAskVocab), lang, now: Date, steps? }
+ *   ctx: { vocab (buildAskVocab), lang, now: Date, steps?, link? }
+ *   link defaults to vocab.link (buildAskVocab's ctx.link).
  */
 export function parseIntent(text, ctx) {
   const { vocab, lang = 'en' } = ctx;
@@ -418,6 +452,26 @@ export function parseIntent(text, ctx) {
     });
     if (said) facets.nb = [...new Set([...(facets.nb || []), nb])];
   }
+  // T1215 (T1153-d): no known place was named, but a word left unknown
+  // links to one (a typo, a sound-alike): read it as that place.
+  let unknown = parsed.unknown;
+  const link = ctx.link || vocab.link || null;
+  if (link && !mentions.length && !facets.near && !facets.area && !facets.country && !budget.origin) {
+    const hit = linkUnknownPlace(unknown, link, stop);
+    if (hit) {
+      const gone = new Set(hit.words);
+      unknown = unknown.filter((w) => !gone.has(w));
+      if (type === 'find' && (cues.when || cues.about)) type = cues.when ? 'when' : 'about';
+      if (type === 'when' || type === 'about' || type === 'plan') places.push(hit.id);
+      else if (type === 'find' || type === 'budget') {
+        facets.near = hit.id;
+        // A place and nothing to look for around it is a question about it.
+        if (!facets.vibe && !facets.nb && !facets.budget && !budget.total && !extra.nocar && !extra.quiet) {
+          places.push(hit.id); delete facets.near; type = 'about';
+        }
+      }
+    }
+  }
   // A quiet place alone is a place out of the crowds too.
   if (facets.vibe === 'quiet') extra.quiet = true;
   // A lone place with a month and nothing else is a question about it
@@ -446,7 +500,7 @@ export function parseIntent(text, ctx) {
     budget,
     places,
     compare,
-    unknown: parsed.unknown,
+    unknown,
     fragment: parsed.fragment,
     text: String(text || '').slice(0, 200),
   };

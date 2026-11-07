@@ -8,7 +8,11 @@ import { dirname, join } from 'node:path';
 import { foldName } from '../src/lib/searchIndex.js';
 import { fold, makeLinker, linkPlace } from '../src/lib/linking/index.js';
 import { editDistance } from '../src/lib/linking/linker.js';
+import { soundKey } from '../src/lib/linking/fold.js';
 import { linkSearchHits, linkerFor } from '../src/lib/linking/search.js';
+import { locationMatch } from '../src/hooks/useDestinationSearch.js';
+import { buildAskVocab, parseIntent, linkUnknownPlace } from '../src/lib/ask/intent.js';
+import { linkBookingPlace, linkBookingPlaces, sanitizeTripContext } from '../../supabase/functions/parse-booking/logic.mjs';
 import { runLinkingEval, gate, BASELINE_PATH } from '../scripts/eval/linking/eval.mjs';
 
 const APP = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -62,11 +66,42 @@ test('context tells near twins apart', () => {
 });
 
 test('below the threshold the answer is a did you mean', () => {
-  const r = linkPlace(L, 'pafos');
+  const r = linkPlace(L, 'iraklion');
   assert.equal(r.confident, false);
   assert.equal(r.linked, null);
   assert.ok(r.didYouMean.length >= 1 && r.didYouMean.length <= 3);
-  assert.ok(r.didYouMean.some((x) => x.id === 'PFO'));
+  assert.ok(r.didYouMean.some((x) => x.id === 'HER'));
+});
+
+// T1215 (row T1153-g): accents and sound-alike spellings.
+test('the mention spelt with the name\'s accents links that name, not its unaccented twin', () => {
+  const r = linkPlace(L, 'Fårö');
+  assert.equal(r.confident, true);
+  assert.equal(r.linked.id, 'gem:faro-gotland');
+  // Without the accents Faro in Portugal still comes first.
+  assert.equal(top('faro').id, 'FAO');
+  assert.equal(top('Faro').id, 'FAO');
+});
+
+test('sound-alike keys fold Greek and Nordic spellings together', () => {
+  assert.equal(soundKey('Pafos'), soundKey('Paphos'));
+  assert.equal(soundKey('Hania'), soundKey('Chania'));
+  assert.equal(soundKey('Aarhus'), soundKey('Århus'));
+  assert.equal(soundKey('Tromsoe'), soundKey('Tromsø'));
+  assert.notEqual(soundKey('Paros'), soundKey('Paphos'));
+  assert.notEqual(soundKey('Hawes'), soundKey('Chaves'));
+});
+
+test('sound-alike spellings link the place they sound like', () => {
+  const r = linkPlace(L, 'pafos');
+  assert.equal(r.confident, true);
+  assert.equal(r.linked.id, 'PFO');
+  assert.equal(top('Páfos').id, 'PFO');
+  assert.equal(top('hania').id, 'CHQ');
+  assert.equal(top('tromsoe').id, 'TOS');
+  // An exact name still beats a sound-alike of another place.
+  assert.equal(top('paros').id, 'gem:paros');
+  assert.equal(top('hawees').id, 'gem:hawes');
 });
 
 test('the linker builds from the search index alone', () => {
@@ -85,8 +120,8 @@ test('the search adapter keeps the querySearchIndex shape', () => {
   const region = linkSearchHits(lk, inputs.searchIndex, 'tuscany');
   assert.ok(region.bbox && region.ids === null);
   assert.equal(linkSearchHits(lk, inputs.searchIndex, 'ro').ids, null);
-  const dym = linkSearchHits(lk, inputs.searchIndex, 'pafos');
-  assert.ok(dym.suggestions.length >= 1 && dym.ids.has('PFO'));
+  const dym = linkSearchHits(lk, inputs.searchIndex, 'iraklion');
+  assert.ok(dym.suggestions.length >= 1 && dym.ids.has('HER'));
 });
 
 test('the eval: 300 cases, the linker beats today\'s search, a seeded drop fails the gate', () => {
@@ -102,4 +137,73 @@ test('the eval: 300 cases, the linker beats today\'s search, a seeded drop fails
 
 test('set.json is what build-set.mjs builds', () => {
   execFileSync(process.execPath, [join(APP, 'scripts/eval/linking/build-set.mjs'), '--check'], { stdio: 'pipe' });
+});
+
+// T1215 (row T1153-h): the Destinations hook reads the linker the way Explore does.
+test('the Destinations location match: plain substring alone, widened by linker hits', () => {
+  const dbv = { id: 'DBV', city: 'Dubrovnik', country: 'Croatia', lat: 42.56, lon: 18.27 };
+  // Flag off (no hits): the plain substring, as before.
+  assert.equal(locationMatch(dbv, '', null), true);
+  assert.equal(locationMatch(dbv, 'dubrov', null), true);
+  assert.equal(locationMatch(dbv, 'croatia', null), true);
+  assert.equal(locationMatch(dbv, 'dubrovnk', null), false);
+  // Flag on: the linker's hits count too, and never take a substring hit away.
+  const lk = linkerFor(inputs.searchIndex, inputs.destinations, inputs.lexicon);
+  const hits = linkSearchHits(lk, inputs.searchIndex, 'dubrovnk');
+  assert.equal(locationMatch(dbv, 'dubrovnk', hits), true);
+  assert.equal(locationMatch({ ...dbv, id: 'XXX', city: 'Elsewhere' }, 'dubrovnk', hits), false);
+  assert.equal(locationMatch(dbv, 'croatia', { ids: new Set(), bbox: null }), true);
+  assert.equal(locationMatch(dbv, 'dalmatia', { ids: null, bbox: [13, 42, 19.5, 44.5] }), true);
+});
+
+// T1215 (row T1153-d): Ask reads a place word its vocabulary does not hold through the linker.
+test('Ask: an unknown place word links through the place linker, only when one is given', async () => {
+  const { en } = await import('../src/i18n/en.js');
+  const rows = Object.values(inputs.destinations);
+  const guided = J('search/guided.json');
+  const countries = [...new Map(rows.map((p) => [p.iso2, p.country])).entries()];
+  const base = { t: (k) => en[k] ?? k, lang: 'en', guided, rows, countries, index: inputs.searchIndex, lexicon: inputs.lexicon };
+  const now = new Date('2026-11-07T12:00:00');
+  const link = (m) => linkPlace(L, m, { whole: true });
+  const plain = buildAskVocab(base);
+  const linked = buildAskVocab({ ...base, link });
+  // Without a linker: as before, the typo stays unknown.
+  const off = parseIntent('when to visit dubrovnk', { vocab: plain, lang: 'en', now });
+  assert.deepEqual(off.places, []);
+  assert.ok(off.unknown.includes('dubrovnk'));
+  // With one (on the vocabulary or in ctx): a when question about Dubrovnik.
+  const on = parseIntent('when to visit dubrovnk', { vocab: linked, lang: 'en', now });
+  assert.equal(on.type, 'when');
+  assert.deepEqual(on.places, ['DBV']);
+  assert.ok(!on.unknown.includes('dubrovnk'));
+  assert.deepEqual(parseIntent('when to visit pafos', { vocab: plain, lang: 'en', now, link }).places, ['PFO']);
+  // A place outside Europe is not completed into a catalogue name (Peru is not Perugia).
+  assert.deepEqual(parseIntent('vacaciones en peru', { vocab: linked, lang: 'es', now }).places, []);
+  // A question that names a known place is read as before.
+  assert.deepEqual(parseIntent('when to visit lisbon', { vocab: linked, lang: 'en', now }).places,
+    parseIntent('when to visit lisbon', { vocab: plain, lang: 'en', now }).places);
+  assert.equal(linkUnknownPlace(['ab'], link), null);
+  assert.equal(linkUnknownPlace([], link), null);
+});
+
+// T1215 (row T1153-e): parse-booking links each booking's place, with the trip's countries as context.
+test('parse-booking: a booking links its catalogue place, and nothing without the linker', () => {
+  const linking = { linker: L, linkPlace };
+  const ctx = sanitizeTripContext({ stops: [{ city: 'Visby', country: 'Sweden', nights: 3 }, { city: 'Stockholm', country: 'SE', nights: 2 }] });
+  // The city field first, the title when the city is empty.
+  assert.equal(linkBookingPlace({ title: 'Hotel Ibis Lisboa Centro', city: '' }, ctx, linking).id, 'LIS');
+  assert.equal(linkBookingPlace({ title: 'Ryanair FR123', city: 'Dubrovnk' }, ctx, linking).id, 'DBV');
+  // The stops' countries decide a near twin: Faro on a Swedish trip is Fårö.
+  assert.equal(linkBookingPlace({ title: 'Cottage', city: 'Faro' }, ctx, linking).id, 'gem:faro-gotland');
+  assert.equal(linkBookingPlace({ title: 'Cottage', city: 'Faro' }, sanitizeTripContext({ stops: [{ city: 'Lagos', country: 'Portugal' }] }), linking).id, 'FAO');
+  // Not confident, no data, no booking: no place, and the rest of the booking is untouched.
+  assert.equal(linkBookingPlace({ title: 'Booking 123', city: '' }, ctx, linking), null);
+  assert.equal(linkBookingPlace({ title: 'Cottage', city: 'Faro' }, ctx, null), null);
+  const out = linkBookingPlaces([{ title: 'Flight to BCN', city: 'Barcelona', code: 'X1' }, { title: 'Stay', city: '' }], ctx, linking);
+  assert.deepEqual(out.map((b) => b.placeId), ['BCN', null]);
+  assert.equal(out[0].code, 'X1');
+  assert.deepEqual(linkBookingPlaces([{ title: 'A', city: 'Rome' }], ctx, null), [{ title: 'A', city: 'Rome', placeId: null }]);
+  // What a Deno function could load (the search index and lexicon, not app_data) links too.
+  const slim = { linker: makeLinker({ searchIndex: inputs.searchIndex, lexicon: inputs.lexicon }), linkPlace };
+  assert.equal(linkBookingPlace({ title: 'Hotel', city: 'Lissabon' }, ctx, slim).id, 'LIS');
 });

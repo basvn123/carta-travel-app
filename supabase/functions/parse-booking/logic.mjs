@@ -156,6 +156,53 @@ export function sanitizeParsed(parsed, { totalDays = 60 } = {}) {
   };
 }
 
+/* ---- the booking's place, linked to the catalogue (T1215, row T1153-e) ---- */
+
+// A country written as the trip stop carries it ("Croatia", "HR"), as the
+// cleaned key the linker reads countries by (linker.countries, fold.js clean).
+const countryKey = (s) => String(s || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
+
+/**
+ * Link one booking to a catalogue place with the shared place linker
+ * (continent-app/src/lib/linking/linker.js, pure, runs in Deno as is).
+ * `linking` is injected: { linker (makeLinker), linkPlace }, or null when
+ * the alias data is not available, and then nothing is linked. The trip's
+ * stop countries are the context: the mention (the booking's city, then its
+ * title) is linked once without a country and once per stop country, and
+ * the best confident link wins. -> { id, name, score } or null.
+ */
+export function linkBookingPlace(booking, context, linking) {
+  if (!linking?.linker || typeof linking.linkPlace !== 'function' || !booking) return null;
+  const { linker, linkPlace } = linking;
+  const isos = new Set();
+  for (const s of context?.stops || []) {
+    const c = String(s?.country || '').trim();
+    if (/^[A-Za-z]{2}$/.test(c)) isos.add(c.toUpperCase());
+    else if (c && linker.countries?.get(countryKey(c))) isos.add(linker.countries.get(countryKey(c)));
+  }
+  const mentions = [...new Set([booking.city, booking.title].map((m) => String(m || '').trim()).filter(Boolean))];
+  let best = null;
+  for (const mention of mentions) {
+    for (const country of [null, ...isos]) {
+      let r = null;
+      try { r = linkPlace(linker, mention, { country, whole: true }); } catch { r = null; }
+      const top = r?.confident ? r.linked : null;
+      if (top && (!best || top.score > best.score)) best = { id: top.id, name: top.name || null, score: top.score };
+    }
+    if (best) break; // the city field, when it links, is the booking's place
+  }
+  return best;
+}
+
+/** Every booking with its linked place id (`placeId`, null when none). */
+export function linkBookingPlaces(bookings, context, linking) {
+  return (Array.isArray(bookings) ? bookings : []).map((b) => {
+    const hit = linkBookingPlace(b, context, linking);
+    return { ...b, placeId: hit ? hit.id : null };
+  });
+}
+
 /* ---- URL ingestion (a travel blog, a shared itinerary page) ---- */
 
 // Hosts a server-side fetch must never be pointed at: the function fetches
