@@ -18,7 +18,7 @@ that destructures a record is missed. Request paths are in [request-paths.md](re
 | ...written only or partly by a legacy step | 29 |
 | ...written only or partly by a script no task schedules | 20 |
 | ...with no writer left in the repo | 2 |
-| run_pipeline.py tasks | 83 |
+| run_pipeline.py tasks | 84 |
 | ...that write a wire field or a wire file | 43 |
 | Wire files and folders | 27 |
 
@@ -62,7 +62,7 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `meta.end_date` | Ryanair fare window of the first harvest (legacy notebook 02_flights) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | `src/lib/dates.js`, `src/planner/GuidedTripWizard.jsx` (2 files) |
 | `meta.defaults` | Carta constants (group size, trip length, baggage, lifestyle) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | `src/hooks/useAppData.js`, `src/planner/finder/finderHooks.js`, `src/lib/wizardTransit.js` (6 files) |
 | `meta.baggage_options` | Ryanair published bag fees (first harvest) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | `src/hooks/useAppData.js`, `src/lib/flights/bagFees.js` (2 files) |
-| `meta.generated_at` | build clock | `fame`, `poi_significance` | app_data/app_data.json (master) | `pipeline/apply_rating_layer.py` | boot.json (meta) | name only: `src/components/admin/DataHealth.jsx`, `src/components/admin/PipelineOverrides.jsx`, `src/components/admin/useValidation.js` |
+| `meta.generated_at` | build clock | `fame`, `poi_significance` | app_data/app_data.json (master) | `pipeline/apply_rating_layer.py` | boot.json (meta) | name only: `src/components/admin/DataHealth.jsx`, `src/components/admin/LinkHealth.jsx`, `src/components/admin/PipelineOverrides.jsx` |
 | `meta.origins` | Eurostat avia_par routes (T512): every European airport with a scheduled route | `flight_routes`, `sync` | data/flights/_airports.json | `continent-app/scripts/sync-data.mjs` | boot.json (meta) | `src/lib/origins.js`, `src/components/OriginPicker.jsx`, `src/components/FromPicker.jsx` (18 files) |
 | `meta.home_city` | Carta constant (Brussels, the first home) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | none found |
 | `meta.home` | Carta constant (Brussels coordinates) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | `src/lib/price/trip.js`, `src/hooks/useAppData.js`, `src/hooks/useDestinationSearch.js` (5 files) |
@@ -89,7 +89,7 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `meta.place_model` | GeoNames population, POI mix, place class rules | `fame` | app_data/app_data.json (master) | `pipeline/apply_place_layer.py` | boot.json (meta) | none found |
 | `meta.rating_model` | the rating layer and continent-app/config/rating.json | `fame`, `poi_significance` | app_data/app_data.json (master) | `pipeline/apply_rating_layer.py` | boot.json (meta) | none found |
 | `meta.tourist_premium_model` | Eurostat nights per NUTS3 against the country base | `tourist_premium` | app_data/app_data.json (master) | `pipeline/apply_tourist_premium.py` | boot.json (meta) | none found |
-| `destinations.*.id` | Carta catalogue (IATA code or gem:slug) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (id) | `src/auth/SavedTripsPanel.jsx`, `src/browse/DestinationPage.jsx`, `src/planner/finder/finderText.js` (224 files) |
+| `destinations.*.id` | Carta catalogue (IATA code or gem:slug) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (id) | `src/auth/SavedTripsPanel.jsx`, `src/browse/DestinationPage.jsx`, `src/planner/finder/finderText.js` (225 files) |
 | `destinations.*.tier` | Carta catalogue (airport, gem, longtail) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (f (flag AIRPORT)), dest/_rank.json, dest/{cc}.json | `src/browse/ExploreMap.jsx`, `src/lib/linking/aliases.js`, `src/components/admin/UsersList.jsx` (28 files) |
 | `destinations.*.iata` | Ryanair airport list, then the catalogue | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | dest/_rank.json, dest/{cc}.json | `src/lib/airportReach.js`, `src/components/AirportReach.jsx`, `src/planner/wizard/OriginCard.jsx` (23 files) |
 | `destinations.*.city` | Carta catalogue (display name) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | dest/_rank.json, dest/{cc}.json | `src/planner/TripItinerary.jsx`, `src/auth/PastTripForm.jsx`, `src/lib/tripExport.js` (154 files) |
@@ -915,7 +915,7 @@ flowchart LR
 
 These feed caches, reports or other tasks (their output reaches the wire through a task above, or not at all).
 
-`ingestion`, `demand_events`, `coverage`, `register_intake`, `audit`, `routes_attach`, `trails_ingest`, `trails_elevation`, `trails_validate`, `trails_popularity`, `trails_registry`, `trails_splice`, `trails_route_bridge`, `trails_regionize`, `trails_derive_routes`, `trails_hierarchy`, `trails_curate`, `trails_forests`, `trails_scenic`, `trails_images`, `trails_way_tags`, `trails_attributes`, `cycling_harvest`, `cycling_enrich`, `cycling_photos`, `cycling_bridge`, `unesco`, `image_audit`, `must_descs`, `poi_images`, `sea_temp`, `dest_overlays`, `poi_fees`, `place_intros`, `place_gallery`, `field_stubs_report`, `taxonomy_tags`, `blog_drafts`, `blog_pr`, `photo_sources`
+`ingestion`, `demand_events`, `coverage`, `register_intake`, `audit`, `routes_attach`, `trails_ingest`, `trails_elevation`, `trails_validate`, `trails_popularity`, `trails_registry`, `trails_splice`, `trails_route_bridge`, `trails_regionize`, `trails_derive_routes`, `trails_hierarchy`, `trails_curate`, `trails_forests`, `trails_scenic`, `trails_images`, `trails_way_tags`, `trails_attributes`, `cycling_harvest`, `cycling_enrich`, `cycling_photos`, `cycling_bridge`, `unesco`, `image_audit`, `must_descs`, `poi_images`, `sea_temp`, `dest_overlays`, `poi_fees`, `place_intros`, `place_gallery`, `field_stubs_report`, `taxonomy_tags`, `blog_drafts`, `blog_pr`, `link_health`, `photo_sources`
 
 ## Wire files beside the contract
 

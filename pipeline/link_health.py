@@ -43,7 +43,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib import robotparser
-from urllib.parse import urlsplit, urljoin
+from urllib.parse import urljoin, urlsplit
 
 import yaml
 
@@ -53,9 +53,10 @@ STATE_DIR = Path(os.environ.get("CARTA_LINKS_OUT") or ROOT / "logs" / "status" /
 SNAPSHOT = ROOT / "continent-app" / "src" / "admin" / "linkHealth.json"
 SNAPSHOT_VERSION = 1
 LIST_CAP = 200
+OFFLINE_MIN, OFFLINE_SHARE = 20, 0.8
 URL_RE = re.compile(r"^https?://[^\s]+$")
-IMG_EXT = re.compile(r"\.(jpe?g|png|webp|gif|svg|avif)(\?|$)", re.I)
-SOURCE_HOSTS = re.compile(r"(^|\.)(wikipedia|wikivoyage|wikidata|wikimedia)\.org$", re.I)
+IMG_EXT = re.compile(r"\.(jpe?g|png|webp|gif|svg|avif)(\?|$)", re.IGNORECASE)
+SOURCE_HOSTS = re.compile(r"(^|\.)(wikipedia|wikivoyage|wikidata|wikimedia)\.org$", re.IGNORECASE)
 KINDS = ("image", "source", "official", "partner")
 
 
@@ -159,7 +160,7 @@ class Polite:
                     rp.parse([])  # no robots.txt: everything allowed
                 else:
                     rp.parse(r.text.splitlines())
-            except Exception:  # robots unreadable: treat as allowed, the fetch will show the real state
+            except Exception:  # noqa: BLE001 - robots unreadable: treat as allowed, the fetch will show the real state
                 rp = None
             self.robots[key] = rp
         rp = self.robots[key]
@@ -268,7 +269,8 @@ def run(cfg, found, state, polite, now: datetime, limit=None, budget_min=None, k
     t0 = clock()
     budget = (budget_min if budget_min is not None else cfg.get("budget_minutes", 120)) * 60
     done = 0
-    for i, u in enumerate(todo):
+    before = {u: state.get(u) for u in todo}
+    for u in todo:
         if clock() - t0 > budget:
             break
         res = polite.check(u)
@@ -276,9 +278,21 @@ def run(cfg, found, state, polite, now: datetime, limit=None, budget_min=None, k
         done += 1
         if save and done % 200 == 0:
             save(state)
+    # Offline guard: when nearly every answer in a sizeable run is a network
+    # error, the box (or its proxy) was down, not the links. Keep the old rows
+    # so no strike is counted and the links are due again next run.
+    fresh = [u for u in todo if state.get(u) is not before[u]]
+    down = [u for u in fresh if state[u]["status"] is None and state[u]["err"] not in (None, "robots", "TooManyRedirects")]
+    offline = len(fresh) >= OFFLINE_MIN and len(down) / len(fresh) >= OFFLINE_SHARE
+    if offline:
+        for u in fresh:
+            if before[u] is None:
+                state.pop(u, None)
+            else:
+                state[u] = before[u]
     if save:
         save(state)
-    return {"due": n_due, "checked": done}
+    return {"due": n_due, "checked": done, "offline": offline}
 
 
 def snapshot(found: dict, state: dict, now: str, cfg: dict) -> dict:
@@ -338,6 +352,8 @@ def main(argv=None) -> int:
         r = run(cfg, found, state, Polite(cfg, s), now, a.limit, a.budget_min,
                 set(a.kind.split(",")) if a.kind else None, save=lambda st: save_state(state_path, st))
         print(f"link_health: {r['checked']} checked of {r['due']} due")
+        if r["offline"]:
+            print("link_health: almost every answer was a network error, so this run is discarded (offline guard)")
     snap = snapshot(found, state, _now(now), cfg)
     if not a.no_snapshot:
         write_snapshot(snap)

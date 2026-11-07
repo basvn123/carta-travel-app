@@ -157,10 +157,10 @@ def test_run_is_resumable_and_the_snapshot_lists_broken(tmp_path, cfg):
               "https://rome.example/robots.txt": Resp(404), "https://beach.example/robots.txt": Resp(404),
               "https://upload.wikimedia.org/a.jpg": Resp(404), "https://en.wikipedia.org/wiki/Rome": Resp(200),
               "https://rome.example/": Resp(200), "https://beach.example/": Resp(200)}
-    p, s = polite(cfg, routes)
+    p, _ = polite(cfg, routes)
     state = {}
     r = lh.run(cfg, found, state, p, NOW, limit=2)
-    assert r == {"due": 4, "checked": 2}
+    assert (r["due"], r["checked"]) == (4, 2)
     assert lh.due(found, state, cfg, NOW)  # two left
     lh.run(cfg, found, state, p, NOW)
     assert lh.due(found, state, cfg, NOW) == []  # nothing is fetched twice
@@ -176,3 +176,20 @@ def test_config_is_polite_by_design():
     c = lh.load_config()
     assert c["per_host_delay_s"] >= 1.0 and c["host_delay_s"]["upload.wikimedia.org"] >= 0.5
     assert c["strikes"] >= 2 and c["timeout_s"] <= 30
+
+
+def test_an_offline_run_is_discarded_and_counts_no_strike(cfg):
+    cfg = {**cfg, "sources": [], "partners": [], "strikes": 1}
+    import requests
+    found = {f"https://h{i}.test/x": {"kind": "official", "n": 1, "where": []} for i in range(25)}
+    routes = {f"https://h{i}.test/robots.txt": requests.ConnectionError("down") for i in range(25)}
+    routes.update({f"https://h{i}.test/x": requests.ConnectionError("down") for i in range(25)})
+    p, _ = polite(cfg, routes)
+    state = {}
+    r = lh.run(cfg, found, state, p, NOW)
+    assert r["offline"] and state == {}
+    # A few real network errors among good answers still count.
+    routes.update({f"https://h{i}.test/x": Resp(200) for i in range(1, 25)})
+    p, _ = polite(cfg, routes)
+    r = lh.run(cfg, found, state, p, NOW)
+    assert not r["offline"] and state["https://h0.test/x"]["state"] == "broken"

@@ -1,6 +1,7 @@
 import React from 'react';
 import snapshot from '../../admin/dataHealth.json';
 import { Validation } from './Validation.jsx';
+import { LinkHealth } from './LinkHealth.jsx';
 
 // Data health (ROADMAP D2, T1142): the quality scorecard of the shipped data
 // and its 90-day trend. scripts/quality/engine.py writes the snapshot at the
@@ -41,6 +42,7 @@ export function DataHealth({ data = snapshot, validation }) {
           (scripts/quality/engine.py --write); the next build shows it here.
         </p>
         <Validation data={validation} />
+        <LinkHealth />
       </section>
     );
   }
@@ -139,6 +141,9 @@ export function DataHealth({ data = snapshot, validation }) {
 
       {/* D23 (T1187): the external validation scorecard, beside the D2 card. */}
       <Validation data={validation} />
+
+      {/* D16 (T1197): link and page health, with fix-or-drop for broken links. */}
+      <LinkHealth />
     </section>
   );
 }
