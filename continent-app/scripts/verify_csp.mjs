@@ -76,6 +76,8 @@ function withoutWikimedia(csp) {
 // the home page shows.
 const SCREENS = [
   { name: 'home', hash: '', fresh: true },
+  // T1209 (G14): the new home behind its flag, previewed by its query.
+  { name: 'home-g14', hash: '?home=g14', fresh: true },
   { name: 'map', hash: '' },
   { name: 'trip-planner', hash: '', click: /trip planner/i },
   { name: 'day-planner', hash: '', click: /day planner/i },

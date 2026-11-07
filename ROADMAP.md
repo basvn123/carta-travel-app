@@ -946,7 +946,7 @@ docs/
 | G11 | Quality gates and usability retest | axe-core, Lighthouse CI, bundle budget, visual baselines for 10 screens at 390 and 1440; 5-person retest of core flows; one real-phone pass per release replaces the 49 per-task phone rows | M | P4 | todo |
 | G13 | Trail cards and trail links | Cards show time and climb next to length; trail pages get their own URL like places; display names from D7 (P-36, P-37) | S | P1 | done T1102 (open items in the register) |
 | G12 | Onboarding and a shorter plan flow | First plan in 5 screens or fewer (12 today); a priced draft after 3 answers; Explore's start dialog inline and dismissible; sample trip on an empty Plan home (P-33, P-34, P-46) | M | P1 | in progress (T1103: shorter plan flow done; Explore start dialog and sample trip open, rows T1103-a, T1103-b) |
-| G14 | Home page | Home passes the marketing surface gate on its own: one clear promise from PRODUCT.md, the waitlist (K3), a live example priced from real data, links into Explore and a sample trip, fast first load (H12) and checked on a real phone | M | P2 | todo (added 2026-11-06 at the owner's request) |
+| G14 | Home page | Home passes the marketing surface gate on its own: one clear promise from PRODUCT.md, the waitlist (K3), a live example priced from real data, links into Explore and a sample trip, fast first load (H12) and checked on a real phone | M | P2 | in progress (T1209: built behind the HOME_G14 flag, off until T1111-a; LCP and the real phone open) |
 
 ### Item details
 

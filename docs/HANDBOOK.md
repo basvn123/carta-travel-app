@@ -163,6 +163,12 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 - The story place and the film places are fixed in code, not chosen per traveller.
 - The design-lint check fails on the approved gradients (register T998-a, owner decision pending).
 
+**The G14 home, behind a flag (T1209).** A second, compact home built for ROADMAP G14. It is off: `HOME_G14 = false` in `continent-app/src/browse/home/homeVariant.js`, so every visitor gets the home above until the owner approves the design direction (row T1111-a). `?home=g14` previews it for the browser tab's session (sessionStorage key `carta.home`), `?home=v3` goes back. When chosen, App.jsx fetches its chunk (`HomeG14.jsx`, about 1.7 KB plus 1.4 KB CSS gzip) while the catalogue loads and draws it directly.
+1. Promise: the kicker, `home.title` as the h1 and `home.sub`, then two doors: "Find a place" (Explore) and "See a sample trip" (`#journey=si-hiking-triglav-hut-to-hut`, `SAMPLE_JOURNEY`).
+2. One real day: Bled (`EXAMPLE_PLACE = 'gem:bled'`) this calendar month, a person: `priceDay` with `priceRequest({ choices, xm: <this month> })` and no switched-off items, so the bed and the food and drink at the traveller's Lifestyle and stay tier. Total = `stayEur + foodEur` (`dayParts`), a two-part bar and two lines. Priced in an idle callback after the first paint. Hidden when either part has no price. No flight: the foot strip says the flight comes on top from Google Flights when planning.
+3. Waitlist: the K3 form (`WaitlistForm`, source `home_g14`), then the referral link: one fixed link for everyone, `/?utm_source=waitlist_share&utm_medium=referral` (`shareUrl`), shared with the system share sheet, else copied to the clipboard, else shown in a field. The K12 channel counts count it as channel `waitlist_share`, medium `referral`. It carries no person and nothing is stored.
+4. Checks: `tests/homeG14.test.mjs` (flag, parts, link, six languages) and `scripts/verify_home_g14.mjs` (DOM at 390 and 1440); `verify_csp.mjs` loads it as screen `home-g14`.
+
 ### Explore (map, cards, filters, rails, sort)
 
 **What it does.** Explore is the catalogue of places as a photo grid and a map. Each card shows the name, the Score, the country, and what a day there costs one person, plus the way there. At rest it shows themed rails ("Best in October", "Hiking bases"); any filter or search turns it into one filtered list. On a desktop the map sits beside the list and both show the same places.
