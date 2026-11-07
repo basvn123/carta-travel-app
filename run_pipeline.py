@@ -504,10 +504,14 @@ def run_cmd(argv, cwd=None):
     that does (every pipeline/ script) would not, and one accented place name
     in a progress line would then kill the driver mid-task with a decode error
     rather than anything to do with the data. errors="replace" keeps a stray
-    byte from a non-python child cosmetic."""
+    byte from a non-python child cosmetic.
+
+    PYTHONUTF8=1 (H11, T1162) goes further than the pipe: UTF-8 mode makes a
+    child's open() without an encoding read and write UTF-8 too, where Windows
+    would pick cp1252 (the "encoding" cluster of What broke entries)."""
     pretty = " ".join(str(a) for a in argv)
     log(f"  $ {pretty}")
-    env = dict(os.environ, PYTHONIOENCODING="utf-8")
+    env = dict(os.environ, PYTHONIOENCODING="utf-8", PYTHONUTF8="1")
     try:
         proc = subprocess.Popen(
             argv, cwd=str(cwd or ROOT), stdout=subprocess.PIPE,
