@@ -50,6 +50,9 @@ export const GROUP_OF = Object.freeze({
   // destination pages they sit under.
   days: 'countries', cost: 'costs',
 });
+/** The select() key of a group in a language: bare for English. */
+export const groupKey = (g, lang) => (!lang || lang === 'en' ? g : `${g}|${lang}`);
+
 /** English first, then the five language prefixes (T1212). */
 export const SITEMAP_LANGS = Object.freeze(['en', 'nl', 'de', 'fr', 'es', 'it']);
 const GROUP_ORDER = ['site', 'countries', 'destinations', 'costs', 'trails', 'cycling', 'beaches', 'lakes', 'mountains', 'trips', 'journeys'];
@@ -83,8 +86,9 @@ export function select(pages) {
     if (!p.indexable) { skip(p.kind, 'noindex', p); continue; }
     const g = GROUP_OF[p.kind];
     if (!g) { skip(p.kind, 'no sitemap group', p); continue; }
-    // T1212: one file per type and language; English keeps its old names.
-    const gk = `${g}|${p.lang || 'en'}`;
+    // T1212: one file per type and language. English keeps its bare group key
+    // (and its file names); another language is keyed `group|lang`.
+    const gk = groupKey(g, p.lang);
     if (!groups.has(gk)) groups.set(gk, []);
     groups.get(gk).push({ path: p.path, lastmod: day(p.lastmod), kind: p.kind });
     out.listed += 1;
@@ -123,12 +127,12 @@ export function writeSitemaps(manifest, buildDir, { coverageDate = null } = {}) 
   fs.rmSync(dir, { recursive: true, force: true });
   fs.mkdirSync(dir, { recursive: true });
   const { groups, summary } = select(manifest.pages);
-  groups.set('site|en', sitePages(coverageDate).map((p) => ({ ...p, kind: 'site' })));
-  summary.listed += groups.get('site|en').length;
+  groups.set('site', sitePages(coverageDate).map((p) => ({ ...p, kind: 'site' })));
+  summary.listed += groups.get('site').length;
 
   const files = [];
   for (const lang of SITEMAP_LANGS) for (const g of GROUP_ORDER) {
-    const entries = (groups.get(`${g}|${lang}`) || []).sort((a, b) => a.path.localeCompare(b.path));
+    const entries = (groups.get(groupKey(g, lang)) || []).sort((a, b) => a.path.localeCompare(b.path));
     if (!entries.length) continue;
     chunk(entries).forEach((part, i) => {
       const name = `sitemap-${g}-${lang}${i ? `-${i + 1}` : ''}.xml`;
