@@ -83,7 +83,7 @@ python run_pipeline.py --only fares --ship data   # force one task, sync only
 The orchestrator backs up the master before every write, refuses to run two
 writers at once, and coverage-guards the patch steps that could null data.
 Individual scripts in `pipeline/` can still be run by hand **from the repo
-root** (e.g. `python pipeline/audit_gaps.py`).
+root** (e.g. `python pipeline/audit/audit_gaps.py`).
 
 The legacy fare refresher (`reharvest_flights.py` + `refresh_fares*.bat`) is in
 `archive/` - the live fare system is `pipeline/harvest_all_origins.py`, driven

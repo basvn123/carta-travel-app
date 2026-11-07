@@ -1,10 +1,10 @@
 # The data pipeline
 
-Written for T1085 (ROADMAP B2) from the code, not from the retired `archive/docs-2026-11/PIPELINE.md`. Source of truth: `run_pipeline.py` (3,203 lines, `TASKS` list from line 1203). Where the code could not settle a point, it says "not verified".
+Written for T1085 (ROADMAP B2) from the code, not from the retired `archive/docs-2026-11/PIPELINE.md`. Source of truth: `run_pipeline.py` (the CLI, planner and runner) and `pipeline/tasks/` (the `TASKS` table, one module per domain since T1207, ROADMAP A2). Where the code could not settle a point, it says "not verified".
 
 ## What it is
 
-`run_pipeline.py` is one orchestrator over the scripts in `pipeline/` and the collectors in `src/ingestion/`. It holds a list of 74 tasks (`TASKS`; `python run_pipeline.py --list` prints key, cadence, last success and due). Each task has a cadence, optional guard, and either `cmds` (argv lists run in order) or a `run` function. Nothing in it calls the Claude API (not used).
+`run_pipeline.py` is one orchestrator over the scripts in `pipeline/` and the collectors in `src/ingestion/`. It runs a list of 91 tasks (`TASKS`, from `pipeline/tasks/registry.py`, which joins the domain modules `pipeline/tasks/<domain>.py` in the `DOMAINS` order of `pipeline/tasks/__init__.py`; `python run_pipeline.py --list` prints key, cadence, last success and due). `last` (photo_sources, trailslab_worker) is always the final module. `tests/test_pipeline_tasks_registry.py` pins the table to `tests/fixtures/pipeline_tasks.json`: a task change refreshes it with `python tests/test_pipeline_tasks_registry.py --write`. Each task has a cadence, optional guard, and either `cmds` (argv lists run in order) or a `run` function. Nothing in it calls the Claude API (not used).
 
 ## How to run
 

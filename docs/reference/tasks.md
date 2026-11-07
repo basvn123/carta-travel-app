@@ -165,15 +165,15 @@ POI significance: signals -> dedupe -> gated re-tier -> rating
 - Writes: the master `app_data.json`
 - Wire fields it owns (6): `destinations.*.activities`, `destinations.*.gateway_of`, `destinations.*.gateways`, `destinations.*.rating`, `meta.generated_at`, `meta.rating_model`
 - Note: the 2026-08 open-signal rate engine (docs/QUALITY_UPGRADE_PLAN.md): pageviews + Wikidata sitelinks/heritage + Wikivoyage See/Do listings -> composite score -> local-quota rate 0-3. All harvests resumable + cache-only; score_significance apply REFUSES to write when the anchor validation gate fails (logs/significance_report.json). apply_rating_layer last: the dest rating's things component saturates on the new rates.
-- Reads and runs: `pipeline/harvest_pageviews.py`, `pipeline/harvest_poi_wikidata.py`, `pipeline/harvest_wikivoyage_listings.py`, `pipeline/dedupe_pois.py`, `pipeline/normalize_poi_kinds.py`, `pipeline/score_significance.py`, `pipeline/apply_rating_layer.py`
+- Reads and runs: `pipeline/harvest_pageviews.py`, `pipeline/pois/harvest_poi_wikidata.py`, `pipeline/harvest_wikivoyage_listings.py`, `pipeline/pois/dedupe_pois.py`, `pipeline/pois/normalize_poi_kinds.py`, `pipeline/score_significance.py`, `pipeline/apply_rating_layer.py`
 - Commands:
 
 ```
 python pipeline/harvest_pageviews.py pois
-python pipeline/harvest_poi_wikidata.py
+python pipeline/pois/harvest_poi_wikidata.py
 python pipeline/harvest_wikivoyage_listings.py
-python pipeline/dedupe_pois.py
-python pipeline/normalize_poi_kinds.py
+python pipeline/pois/dedupe_pois.py
+python pipeline/pois/normalize_poi_kinds.py
 python pipeline/score_significance.py apply
 python pipeline/apply_rating_layer.py
 ```
@@ -214,11 +214,11 @@ Data-quality audit scorecard (read-only)
 - Cadence: monthly
 - Writes: neither the master nor the wire directly
 - Note: coords/dupes/rate-inflation/coverage report -> logs/audit_quality_report.json; never blocks, but read it after any POI-layer change.
-- Reads and runs: `pipeline/audit_quality.py`
+- Reads and runs: `pipeline/audit/audit_quality.py`
 - Commands:
 
 ```
-python pipeline/audit_quality.py
+python pipeline/audit/audit_quality.py
 ```
 
 ### <a id="bathing_water"></a>`bathing_water`
@@ -910,13 +910,13 @@ Hero image audit: flag maps/emblems/thumbnails, swap in photographs
 - Wire fields it owns (1): `destinations.*.image`
 - Code: dry run `hero_audit_dry`
 - Note: every new destination arrives with whatever Wikipedia leads its article with, which for a small town is often a locator map or a coat of arms. Monthly because it only has work to do after a catalogue expansion. Writes the same cache/wiki_images.json as `images`, so it MUST run after it. Review data/reports/hero_images_contact_sheet.html before shipping: the swaps are automatic, the taste is not. Then, against a served build: node scripts/verify_hero_images.mjs - it samples the audited heroes and loads each one, which is how the spliced tracking-param thumb URLs were caught.
-- Reads and runs: `pipeline/audit_hero_images.py`
+- Reads and runs: `pipeline/audit/audit_hero_images.py`
 - Commands:
 
 ```
-python pipeline/audit_hero_images.py check
-python pipeline/audit_hero_images.py fix
-python pipeline/audit_hero_images.py patch
+python pipeline/audit/audit_hero_images.py check
+python pipeline/audit/audit_hero_images.py fix
+python pipeline/audit/audit_hero_images.py patch
 ```
 
 ### <a id="image_audit"></a>`image_audit`
@@ -1006,11 +1006,11 @@ Overture Maps sightseeing POIs -> items_full (additive)
 - Writes: the master `app_data.json`
 - Wire fields it owns (2): `destinations.*.activities`, `meta.data_sources`
 - Note: merges the cached Overture parquet (cache/overture_pois_eu.parquet) into items_full, cap 150/dest, rate<=2; additive (never nulls). Re-run `harvest_pois_overture.py extract` first only to pull a newer Overture release (edit RELEASE). Run BEFORE poi_enrich.
-- Reads and runs: `pipeline/harvest_pois_overture.py`
+- Reads and runs: `pipeline/pois/harvest_pois_overture.py`
 - Commands:
 
 ```
-python pipeline/harvest_pois_overture.py assign
+python pipeline/pois/harvest_pois_overture.py assign
 ```
 
 ### <a id="must_descs"></a>`must_descs`
@@ -1020,11 +1020,11 @@ Must-see POI images + descriptions (high-value subset only)
 - Cadence: backfill
 - Writes: the master `app_data.json`
 - Note: enriches ONLY the day-planner-surfaced must-see + worth-the-detour POIs (a few thousand), not the 87k long tail; cheap, additive, resumable. Prefer this over poi_enrich when you only want the high-value image/description gap filled.
-- Reads and runs: `pipeline/enrich_must_descs.py`
+- Reads and runs: `pipeline/pois/enrich_must_descs.py`
 - Commands:
 
 ```
-python pipeline/enrich_must_descs.py
+python pipeline/pois/enrich_must_descs.py
 ```
 
 ### <a id="poi_images_wikidata"></a>`poi_images_wikidata`
@@ -1035,11 +1035,11 @@ Bulk POI images via Wikidata P18 (fast)
 - Writes: the master `app_data.json`
 - Wire fields it owns (2): `destinations.*.activities`, `meta.data_sources`
 - Note: one WDQS box query per dest (~1,500) then match image-less POIs to nearby imaged Wikidata entities by distance + Commons filename. FAR faster than the per-POI Commons sweep - run this FIRST, then poi_images mops up the remainder. Additive (never nulls).
-- Reads and runs: `pipeline/harvest_pois_wikidata_images.py`
+- Reads and runs: `pipeline/pois/harvest_pois_wikidata_images.py`
 - Commands:
 
 ```
-python pipeline/harvest_pois_wikidata_images.py all
+python pipeline/pois/harvest_pois_wikidata_images.py all
 ```
 
 ### <a id="poi_images"></a>`poi_images`
@@ -1232,11 +1232,11 @@ POI entry fee flags and charge records (OSM, not shown)
 - Expected hours of a warm run: 2.5
 - Code: guard `guard_all(guard_files(('continent-app/public/poi/*.json', 10`
 - Note: cache/poi_fees.json, resumable (asked POIs are skipped), read by derive_do.facts_of in the dossier build. No price is shown.
-- Reads and runs: `pipeline/harvest_poi_fees.py`
+- Reads and runs: `pipeline/pois/harvest_poi_fees.py`
 - Commands:
 
 ```
-python pipeline/harvest_poi_fees.py
+python pipeline/pois/harvest_poi_fees.py
 ```
 
 ### <a id="trails_fields"></a>`trails_fields`
@@ -1440,12 +1440,12 @@ Data blog: next month's 'Where to go in <month>' draft (K14, T1178)
 - Cadence: monthly
 - Writes: neither the master nor the wire directly
 - Command revision: `T1178`
-- Note: pipeline/blog_drafts.py reads continent-app/public/app_data.json and writes content/blog/<slug>.md (status: draft) plus content/blog/data/<slug>.json, then runs scripts/blog/check_draft.py on it and fails when the check refuses. Never publishes: the owner reads the draft in a pull request and changes status to published. Add --prose to the cmd for a Gemini opening paragraph (prompt blog-intro). Docs: content/blog/README.md, HANDBOOK 'Data blog'.
-- Reads and runs: `pipeline/blog_drafts.py`
+- Note: pipeline/blog/blog_drafts.py reads continent-app/public/app_data.json and writes content/blog/<slug>.md (status: draft) plus content/blog/data/<slug>.json, then runs scripts/blog/check_draft.py on it and fails when the check refuses. Never publishes: the owner reads the draft in a pull request and changes status to published. Add --prose to the cmd for a Gemini opening paragraph (prompt blog-intro). Docs: content/blog/README.md, HANDBOOK 'Data blog'.
+- Reads and runs: `pipeline/blog/blog_drafts.py`
 - Commands:
 
 ```
-python pipeline/blog_drafts.py
+python pipeline/blog/blog_drafts.py
 ```
 
 ### <a id="blog_pr"></a>`blog_pr`
@@ -1471,12 +1471,12 @@ Link and page health: every outbound link and image URL, politely (D16, T1197)
 - Writes: neither the master nor the wire directly
 - Expected hours of a warm run: 2
 - Command revision: `T1197`
-- Note: pipeline/link_health.py collects the links in the shipped wires and checks them with HEAD (GET headers only when HEAD is refused), robots.txt respected, a gap per host, a user agent naming Carta. It resumes: the state is logs/status/links/results.json, a 120 minute budget a week (pipeline/config/link_health.yaml), so the ~80k image URLs are covered over several weeks. Writes continent-app/src/admin/linkHealth.json for the admin Data health tab; the D2 gate reads its broken share (scripts/quality/rules.yaml `links`). HANDBOOK 'Link and page health'.
-- Reads and runs: `pipeline/link_health.py`
+- Note: pipeline/audit/link_health.py collects the links in the shipped wires and checks them with HEAD (GET headers only when HEAD is refused), robots.txt respected, a gap per host, a user agent naming Carta. It resumes: the state is logs/status/links/results.json, a 120 minute budget a week (pipeline/config/link_health.yaml), so the ~80k image URLs are covered over several weeks. Writes continent-app/src/admin/linkHealth.json for the admin Data health tab; the D2 gate reads its broken share (scripts/quality/rules.yaml `links`). HANDBOOK 'Link and page health'.
+- Reads and runs: `pipeline/audit/link_health.py`
 - Commands:
 
 ```
-python pipeline/link_health.py run
+python pipeline/audit/link_health.py run
 ```
 
 ### <a id="photo_check"></a>`photo_check`

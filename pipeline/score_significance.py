@@ -74,6 +74,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent / "pois"))  # dedupe_pois (T1207)
 from pipeline_io import atomic_write_json, load_json
 import rating_config
 from rating_config import cfg, section

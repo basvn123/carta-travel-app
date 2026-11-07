@@ -1,6 +1,7 @@
 """Reference generators for the pipeline task catalogue and the Supabase schema
 (ROADMAP B6, T1167). Used by scripts/docs/build_reference.py; no third-party
-imports, nothing is imported from the repo's own code (run_pipeline.py and the
+imports, nothing is imported from the repo's own code (the task table in
+pipeline/tasks/ is parsed by pipeline/tasks/source.py, a stdlib-only reader, and the
 migrations are read as text).
 
     tasks.md     every run_pipeline.py TASKS entry: cadence, what it reads and
@@ -13,7 +14,6 @@ from __future__ import annotations
 import ast
 import json
 import re
-import warnings
 from pathlib import Path
 
 # ---------------------------------------------------------------- tasks
@@ -42,12 +42,20 @@ def _argv_strings(node) -> list[str]:
     return out
 
 
+def _task_source(root):
+    """pipeline/tasks/source.py loaded by path: the task table is split over
+    pipeline/tasks/<domain>.py since T1207 (ROADMAP A2)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "carta_task_source", Path(root) / "pipeline" / "tasks" / "source.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def read_tasks(root: Path) -> list[dict]:
-    """TASKS from run_pipeline.py with ast, never imported."""
-    src = (root / "run_pipeline.py").read_text(encoding="utf-8")
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        tree = ast.parse(src)
+    """TASKS from pipeline/tasks/*.py (run_pipeline.py's table since T1207) with ast, never imported."""
+    tree = _task_source(root).task_tree(root)
     funcs = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
     node = None
     for n in tree.body:

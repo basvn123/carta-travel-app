@@ -513,13 +513,13 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 **How it works.**
 1. Source order (`load_appeal`): a hand score in `app_data/curated_appeal.json` always wins; else a rubric score (`source: rubric`).
 2. Rubric (`archive/docs-2026-11/RATING_RUBRIC.md`): applied by Claude in Claude Code sessions, never through an API, one fact card at a time. Classes: metro (300,000 people or more), city (50,000 or more), town (8,000 or more), village (under 8,000), area (no centre, or nature-tagged under 1,200). Five criteria scored 0 to 10 for the record (setting, character, signature sights, atmosphere, uniqueness). The band test decides the band; anchors in `continent-app/config/rating_anchors.json` place the score inside it. Low-confidence cards stay at 7.5 or below unless a source shows more.
-3. Drift check: each shard holds five hidden hand-scored controls; their rubric scores must sit within 0.5 of the hand scores on average, else the shard is rescored. `pipeline/validate_rubric_scores.py` checks schema, ranges, band match, six languages and no em dash.
+3. Drift check: each shard holds five hidden hand-scored controls; their rubric scores must sit within 0.5 of the hand scores on average, else the shard is rescored. `pipeline/audit/validate_rubric_scores.py` checks schema, ranges, band match, six languages and no em dash.
 4. Per-class appeal scale (`appeal_scale.rescale`): appeal at or below the class median is unchanged. Above it, `t = min(1, (a - median) / (best - median))` and `out = median + (ceiling - median) x t^gamma`, with `gamma` = 0.7 and the class ceilings above. Median and best per class are frozen in the reference.
 5. Reason sentence: one English sentence per place (`rating.why`, hand reason first, then rubric reason), at most 25 words. Other languages are lazy files `public/app_data/why_i18n/<lang>.json`, loaded by `loadRatingWhy`.
 
 **Data behind it.** `app_data/curated_appeal.json` (about 1,570 hand scores per the rubric doc), `data/rating/rubric_scores/shard_XX.json`, `data/rating/fact_cards/`, `app_data/curated_why_i18n.json`.
 
-**Where it lives.** `pipeline/rating_layer.py` (`load_appeal`, `load_why_en`), `pipeline/appeal_scale.py`, `pipeline/validate_rubric_scores.py`, `archive/docs-2026-11/RATING_RUBRIC.md`, `continent-app/config/rating_anchors.json`.
+**Where it lives.** `pipeline/rating_layer.py` (`load_appeal`, `load_why_en`), `pipeline/appeal_scale.py`, `pipeline/audit/validate_rubric_scores.py`, `archive/docs-2026-11/RATING_RUBRIC.md`, `continent-app/config/rating_anchors.json`.
 
 **Limits.** The rubric needs a Claude Code session per shard; new places arrive as estimates until scored. The owner spot-checks 5% of each round (`reports/rubric_spotcheck_v5.md`).
 
@@ -2393,7 +2393,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 **Data behind it.** The sources above. Tasks `photo_sources`, `clip_sweep` (Hetzner), `images` and `hero_audit`.
 
-**Where it lives.** `pipeline/photos/selection.py`, `technical.py`, `aesthetics.py`, `relevance.py`, `dedupe.py`, `season.py`, `vision_prompt.py`, `pipeline/audit_hero_images.py`, `continent-app/src/lib/heroImage.js`, `archive/docs-2026-11/IMAGE_BRIEF.md`.
+**Where it lives.** `pipeline/photos/selection.py`, `technical.py`, `aesthetics.py`, `relevance.py`, `dedupe.py`, `season.py`, `vision_prompt.py`, `pipeline/audit/audit_hero_images.py`, `continent-app/src/lib/heroImage.js`, `archive/docs-2026-11/IMAGE_BRIEF.md`.
 
 **Limits.**
 - The NIMA model is not converted, so its weight drops out.
@@ -2439,7 +2439,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 **Data behind it.** The image wire files, the Commons API and the HTTP probe.
 
-**Where it lives.** `pipeline/images/audit_all.py`, `pipeline/images/checks.py`, `pipeline/images/drop_dead_files.py`, `pipeline/images/fix_url_queries.py`, `pipeline/audit_hero_images.py`, `pipeline/apply_image_dims.py`.
+**Where it lives.** `pipeline/images/audit_all.py`, `pipeline/images/checks.py`, `pipeline/images/drop_dead_files.py`, `pipeline/images/fix_url_queries.py`, `pipeline/audit/audit_hero_images.py`, `pipeline/apply_image_dims.py`.
 
 **Limits.** The latest `image_audit.json` is from 2026-08-26, so its numbers may be stale:
 
@@ -2463,7 +2463,7 @@ It also found 200 cross-layer duplicates. The hero audit of 2026-08-25 found ima
 1. **Sample.** For each layer it takes `sample.per_layer` rows from `pipeline/photos/correctness.json`: destinations 200, beaches 100, lakes 100, mountains 100. Rows are picked by the lowest `sha256(week|layer|id)`, where week is the ISO week, so the sample rotates weekly. At a 5% flag rate, 500 heroes give a 95% interval of about plus or minus 2 points. `--all` checks every row.
 2. **The ladder.** A destination's ladder is its `image` followed by its dossier `gallery` in order. A beach, lake or mountain row's ladder is its `images` list, with `images[0]` as the hero.
 3. **Tier 1: cheap signals, no model.** Each reason is a strong flag or a weak doubt.
-   - **Reused from the hero audit** (`classify` in `pipeline/audit_hero_images.py`): file name, Commons categories, MIME type and size. These give svg, not_photo, map, emblem, diagram, satellite, document, collage, historical and off_subject.
+   - **Reused from the hero audit** (`classify` in `pipeline/audit/audit_hero_images.py`): file name, Commons categories, MIME type and size. These give svg, not_photo, map, emblem, diagram, satellite, document, collage, historical and off_subject.
    - **Added here:**
      - Strong: `interior`, `people` (group photo, portrait, minister) and `animal`.
      - Weak: `institution` (university, ministry, hospital), `weak_subject` (airport, station, stadium), `names_other_place` (the file names another place of the run and not this one) and `unnamed` (nothing names the subject).
@@ -2860,7 +2860,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **What it does.** Once a week Carta checks every outbound link and image URL in the shipped data and lists the dead ones in the admin Data health tab, with a fix-or-drop action. The share of broken links is a quality rule, so a rotting set of links shows up as a warning before travellers meet it (ROADMAP D16, T1197).
 
-**How it works.** `pipeline/link_health.py`, weekly soft task `link_health` (before `photo_sources`), settings in `pipeline/config/link_health.yaml`.
+**How it works.** `pipeline/audit/link_health.py`, weekly soft task `link_health` (before `photo_sources`), settings in `pipeline/config/link_health.yaml`.
 1. **Collect**: every `http(s)` string in `app_data.json`, the beach, lake, mountain, cycling and region wires, plus four partner landing pages, deduplicated (88,718 distinct on 2026-11-07: 79,910 image, 7,566 source, 1,238 official, 4 partner). Each link keeps the item (`layer`, `id`, dotted `path`) that carries it.
 2. **Check politely**: user agent `CartaLinkCheck/1.0` with the repository URL, no personal data; robots.txt read once per host and respected (a disallowed URL is never fetched); HEAD first, one GET with headers only when HEAD gets 403, 405 or 501; redirects followed by hand, every hop paced and recorded (`max_redirects` 5); `per_host_delay_s` 1.0 and 0.5 s for the Wikimedia hosts (`host_delay_s`); `timeout_s` 15.
 3. **Classes**: ok; moved (a redirect chain ending 2xx, `final` is the fix); unsure (timeout, 429, 5xx, 403, proxy error: never counted); robots; broken. A 404, 410, DNS failure, refused connection or redirect loop is a strike; `strikes` 2 in a row make it broken, so one hiccup never lists a link.
@@ -2869,7 +2869,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 6. **Admin**: `continent-app/src/admin/linkHealth.json` (rebuilt each run) feeds `LinkHealth.jsx`, under the Data health card: totals, a table by kind, the broken list (first 200) with the item that uses each. **Fix** and **Drop** draft an I13 override (`linkFix.js`: Drop sets the field to null, Fix to the moved address or one typed in) and download the layer file; it lands through a pull request. Links inside a list (a path with a position) and partner pages have no override path: change them in the source.
 7. **D2 rule**: `scripts/quality/rules.yaml` `links`: broken share of checked links above `max_broken_share` 0.02 warns, above `hard_broken_share` 0.10 fails the run. Silent until `min_checked` 500 links have a result. Unsure and robots results are not in the share.
 
-**Where it lives.** `pipeline/link_health.py`, `pipeline/config/link_health.yaml`, `scripts/quality/engine.py` (`_links_gate`), `continent-app/src/components/admin/{LinkHealth.jsx,linkFix.js}`; tests `tests/test_link_health.py`, `tests/test_quality_engine.py`, `continent-app/tests/linkHealth.test.mjs`. Run: `python pipeline/link_health.py run --limit 200` (or `collect` to count only).
+**Where it lives.** `pipeline/audit/link_health.py`, `pipeline/config/link_health.yaml`, `scripts/quality/engine.py` (`_links_gate`), `continent-app/src/components/admin/{LinkHealth.jsx,linkFix.js}`; tests `tests/test_link_health.py`, `tests/test_quality_engine.py`, `continent-app/tests/linkHealth.test.mjs`. Run: `python pipeline/audit/link_health.py run --limit 200` (or `collect` to count only).
 
 **Limits.** Built and tested on fixtures; the cloud proxy blocks the real hosts, so the first real run is a box task (T1197-a). A page that answers 200 but shows an error page (a soft 404) is not detected. HEAD answers on image CDNs can differ from GET.
 
@@ -3200,15 +3200,15 @@ Reading every feature against its code turned up places where the docs, the comm
 **What it does.** A blog at `/blog/` with monthly posts built from Carta's own data, starting with "Where to go in <month>". Posts are drafted by a script, checked by a script and published only by the owner.
 
 **How it works.**
-1. `pipeline/blog_drafts.py` picks places for the month: in their best months (`climate.best`), or, when fewer than 30 places qualify (`MIN_SEASON`, winter), the top tenth for comfort; crowd tier 0 or 1 that month (`MAX_TIER`); rating 7.0 or more (`MIN_RATING`). It ranks by an indicative day for one person (half a `hotel3` room plus one cheap and one mid-range meal), lowest first, ten places (`LIST_N`), two a country (`PER_COUNTRY`).
+1. `pipeline/blog/blog_drafts.py` picks places for the month: in their best months (`climate.best`), or, when fewer than 30 places qualify (`MIN_SEASON`, winter), the top tenth for comfort; crowd tier 0 or 1 that month (`MAX_TIER`); rating 7.0 or more (`MIN_RATING`). It ranks by an indicative day for one person (half a `hotel3` room plus one cheap and one mid-range meal), lowest first, ten places (`LIST_N`), two a country (`PER_COUNTRY`).
 2. It writes `content/blog/<slug>.md` (status draft, template prose) and `content/blog/data/<slug>.json` (rows, counts, chart, the snapshot cited and its hash). `--prose` sends only the opening paragraph through the gateway (feature `blog_intro`, prompt `blog-intro`); the paragraph may contain only numbers from the data file.
 3. `scripts/blog/check_draft.py` refuses: a number not in the data file, a table cell that differs, a hash or snapshot mismatch (and with `--wire`, a row that differs from the wire), dashes, banned words, superlatives, an image without an allowed licence, credit and alt text, fewer than 5 rows of data, or a repeated question (same slug or 70 percent of the same words).
 4. `continent-app/scripts/blog/build.mjs` renders published posts to static pages with BlogPosting and breadcrumb JSON-LD, canonical, Open Graph, an RSS feed and `sitemap-blog-en.xml`. Drafts never reach the feed or sitemap.
 
-**More post types (T1174).** `pipeline/blog_drafts_more.py` adds three types on the same files and the same check. *What changed*: places with a `hotel3` price in this and the previous snapshot whose price moved by 5 percent or more (`MIN_CHANGE_PCT`), the ten largest moves, two a country. *New on Carta*: ids in the wire and not in the previous snapshot that have a rating and a day price, ranked by rating, three a country. *Lowest fare week*: from a fares file (the flight sweep export), per place the week with the lowest return fare against its median week, for places with fares in at least 3 weeks (`MIN_WEEKS`). Each run writes a snapshot `content/blog/data/snapshots/places-<date>.json` (id, name, country, bed price, day price, rating) for the next month to compare; without an earlier snapshot the two comparison types are skipped, and without `--fares` the fare type is. The check also refuses a post whose earlier snapshot or fares file differs from the hash it cites, whose rows do not follow from that file, or whose "new" place was in the earlier snapshot. The posts say "lowest", never the superlative, because the check bans it.
+**More post types (T1174).** `pipeline/blog/blog_drafts_more.py` adds three types on the same files and the same check. *What changed*: places with a `hotel3` price in this and the previous snapshot whose price moved by 5 percent or more (`MIN_CHANGE_PCT`), the ten largest moves, two a country. *New on Carta*: ids in the wire and not in the previous snapshot that have a rating and a day price, ranked by rating, three a country. *Lowest fare week*: from a fares file (the flight sweep export), per place the week with the lowest return fare against its median week, for places with fares in at least 3 weeks (`MIN_WEEKS`). Each run writes a snapshot `content/blog/data/snapshots/places-<date>.json` (id, name, country, bed price, day price, rating) for the next month to compare; without an earlier snapshot the two comparison types are skipped, and without `--fares` the fare type is. The check also refuses a post whose earlier snapshot or fares file differs from the hash it cites, whose rows do not follow from that file, or whose "new" place was in the earlier snapshot. The posts say "lowest", never the superlative, because the check bans it.
 
 **Monthly routine.** Pipeline task `blog_pr` (monthly tier, follows `blog_drafts`) runs `scripts/blog/monthly_pr.py`: check, commit `content/blog/` to branch `blog-drafts-YYYY-MM`, push, restore the checkout. A dry run until `CARTA_BLOG_PR=1`. It never pushes main and never publishes.
 
 **Data behind it.** `continent-app/public/app_data.json` (climate, crowding, rating, accommodation, costs).
 
-**Where it lives.** `pipeline/blog_drafts.py`, `scripts/blog/check_draft.py`, `continent-app/scripts/blog/build.mjs`, `continent-app/src/blog/`, `content/blog/`, `prompts/blog-intro/`. Tests: `tests/test_blog_drafts.py`, `continent-app/tests/blog.test.mjs`, `continent-app/scripts/verify_blog.mjs`.
+**Where it lives.** `pipeline/blog/blog_drafts.py`, `scripts/blog/check_draft.py`, `continent-app/scripts/blog/build.mjs`, `continent-app/src/blog/`, `content/blog/`, `prompts/blog-intro/`. Tests: `tests/test_blog_drafts.py`, `continent-app/tests/blog.test.mjs`, `continent-app/scripts/verify_blog.mjs`.

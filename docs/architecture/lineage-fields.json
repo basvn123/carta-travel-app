@@ -242,8 +242,8 @@
         "pipeline/harvest_protected_areas_osm.py",
         "pipeline/harvest_tourism_density.py",
         "pipeline/harvest_uk_crowds.py",
-        "pipeline/harvest_pois_overture.py",
-        "pipeline/harvest_pois_wikidata_images.py"
+        "pipeline/pois/harvest_pois_overture.py",
+        "pipeline/pois/harvest_pois_wikidata_images.py"
       ]
     },
     "meta.crowding_model": {
@@ -560,7 +560,7 @@
       "artifact": "cache/wiki_images.json",
       "writers": [
         "pipeline/harvest_images.py",
-        "pipeline/audit_hero_images.py"
+        "pipeline/audit/audit_hero_images.py"
       ],
       "note": "sync-data.mjs strips image.hires on the wire."
     },
@@ -576,7 +576,7 @@
       "artifact": "cache/activities.json",
       "writers": [
         "pipeline/harvest_activities.py",
-        "pipeline/harvest_pois_overture.py",
+        "pipeline/pois/harvest_pois_overture.py",
         "pipeline/score_significance.py"
       ],
       "note": "sync-data.mjs moves activities.items_full to public/poi/{shard}.json."

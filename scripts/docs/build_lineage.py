@@ -7,7 +7,7 @@
 Inputs, all read, none changed:
 - docs/wire.schema.json            every wire field (T1133): 33 meta keys, 43 destination keys
 - docs/architecture/lineage-fields.json   the hand-curated half: source, task, artifact, writer
-- run_pipeline.py TASKS            task keys, cadence, commands (read with ast, never imported)
+- run_pipeline.py TASKS            task keys, cadence, commands (pipeline/tasks/*.py, read with ast, never imported)
 - continent-app/src/lib/bootIndex.js      BOOT_COLS and RANK_FIELDS: which wire file holds a field
 - continent-app/src/lib/dataHost.js       R2_TIER: which folders the data host serves
 - continent-app/src                        app readers, found by a pattern search (see READERS)
@@ -41,7 +41,6 @@ CURATED = ROOT / "docs" / "architecture" / "lineage-fields.json"
 OUT = ROOT / "docs" / "architecture" / "lineage.md"
 PATHS_DOC = ROOT / "docs" / "architecture" / "request-paths.md"
 REQUEST_PATHS = ["First load", "Explore", "Place page", "Plan", "Ask", "plan-day", "Account sync"]
-PIPELINE = ROOT / "run_pipeline.py"
 BOOT_INDEX = APP / "src" / "lib" / "bootIndex.js"
 DATA_HOST = APP / "src" / "lib" / "dataHost.js"
 TOKENS = {"legacy", "manual", "sync"}
@@ -69,8 +68,19 @@ def schema_fields() -> list[str]:
     return meta + dest
 
 
+def _task_source(root):
+    """pipeline/tasks/source.py loaded by path: the task table is split over
+    pipeline/tasks/<domain>.py since T1207 (ROADMAP A2)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "carta_task_source", Path(root) / "pipeline" / "tasks" / "source.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def pipeline_tasks() -> dict[str, dict]:
-    tree = ast.parse(PIPELINE.read_text(encoding="utf-8"))
+    tree = _task_source(ROOT).task_tree(ROOT)
     for node in tree.body:
         if isinstance(node, ast.Assign) and any(getattr(t, "id", None) == "TASKS" for t in node.targets):
             break

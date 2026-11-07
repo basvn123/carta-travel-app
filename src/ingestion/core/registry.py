@@ -164,15 +164,15 @@ RUNS: dict[str, Run] = {
     "pipeline/harvest_access.py": Run("quarterly", "access_facts", "soft"),
     "pipeline/harvest_seasons.py": Run("quarterly", "seasons", "soft"),
     "pipeline/harvest_place_signals.py": Run("quarterly", "coverage", "soft"),
-    "pipeline/harvest_poi_wikidata.py": Run("monthly", "poi_significance", "soft"),
-    "pipeline/harvest_pois_overture.py": Run("backfill", "overture", "hard"),
-    "pipeline/harvest_pois_wikidata_images.py": Run("backfill", "poi_images_wikidata", "hard"),
+    "pipeline/pois/harvest_poi_wikidata.py": Run("monthly", "poi_significance", "soft"),
+    "pipeline/pois/harvest_pois_overture.py": Run("backfill", "overture", "hard"),
+    "pipeline/pois/harvest_pois_wikidata_images.py": Run("backfill", "poi_images_wikidata", "hard"),
     "pipeline/harvest_protected_areas_osm.py": Run("backfill", "nature", "hard"),
     "pipeline/harvest_tourism_density.py": Run("quarterly", "crowding", "soft"),
     "pipeline/harvest_uk_crowds.py": Run("quarterly", "crowding_uk", "soft"),
     "pipeline/harvest_emergency.py": Run("quarterly", "dest_overlays", "soft"),
     "pipeline/harvest_swim_bans.py": Run("quarterly", "dest_overlays", "soft"),
-    "pipeline/harvest_poi_fees.py": Run("quarterly", "poi_fees", "soft"),
+    "pipeline/pois/harvest_poi_fees.py": Run("quarterly", "poi_fees", "soft"),
     "pipeline/harvest_sea_temp.py": Run("quarterly", "sea_temp", "soft"),
     "pipeline/harvest_unesco_whc.py": Run("quarterly", "unesco", "soft"),
     "pipeline/harvest_urban_fabric.py": Run("manual", "", "manual"),
@@ -273,23 +273,40 @@ def load_all() -> dict[str, type]:
 # --------------------------------------------------------------------------
 
 STAY_PREFIXES = ("harvest_", "scrape_", "price_", "discover_", "calibrate_")
+# The domain folders ROADMAP A2 (T1207) grouped top-level harvesters into: their
+# harvest_*.py files stay on the ledger exactly as when they sat in pipeline/.
+GROUPED_HARVEST_DIRS = ("pois",)
 
 
 def harvester_scripts(root: Path = ROOT) -> list[str]:
-    """Every pipeline/harvest_*.py in the tree, plus the stay layer's fetchers
+    """Every pipeline/harvest_*.py in the tree (and in GROUPED_HARVEST_DIRS), plus the stay layer's fetchers
     (pipeline/stays/{harvest,scrape,price,discover,calibrate}_*.py), repo-relative, posix."""
     top = list((root / "pipeline").glob("harvest_*.py"))
+    for d in GROUPED_HARVEST_DIRS:
+        top += list((root / "pipeline" / d).glob("harvest_*.py"))
     stays = [p for p in (root / "pipeline" / "stays").glob("*.py")
              if p.name.startswith(STAY_PREFIXES)]
     return sorted(p.relative_to(root).as_posix() for p in top + stays)
 
 
+def _task_source(root):
+    """pipeline/tasks/source.py loaded by path: the task table is split over
+    pipeline/tasks/<domain>.py since T1207 (ROADMAP A2)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "carta_task_source", Path(root) / "pipeline" / "tasks" / "source.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def pipeline_tasks(root: Path = ROOT) -> dict[str, dict]:
     """run_pipeline.py's task table, read by regex (key, cadence, soft), so
     the RUNS copy of a cadence is checked against the driver that owns it.
-    run_pipeline.py is never imported: importing it runs environment setup."""
+    The table is pipeline/tasks/<domain>.py since T1207; it is never imported:
+    importing run_pipeline.py runs environment setup."""
     import re
-    src = (root / "run_pipeline.py").read_text(encoding="utf-8")
+    src = _task_source(root).task_text(root)
     tasks = {}
     for m in re.finditer(r'\{\s*\n\s*"key":\s*"([^"]+)"', src):
         depth, start = 0, m.start()
@@ -1470,7 +1487,7 @@ SOURCES = (
     Source(
         key="wikimedia_commons",
         section="content_layers",
-        scripts=('pipeline/harvest_pois_wikidata_images.py',),
+        scripts=('pipeline/pois/harvest_pois_wikidata_images.py',),
         name="Wikimedia Commons (destination hero images, POI thumbnails via `harvest_pois_wikidata_images.py`)",
         takes="Photo files hotlinked as thumbnails",
         licence="Per file: CC BY-SA, CC BY or public domain",
@@ -1492,8 +1509,8 @@ SOURCES = (
     Source(
         key="wikidata_sitelink_counts_live",
         section="content_layers",
-        scripts=('pipeline/backfill_landmarks.py', 'pipeline/harvest_poi_wikidata.py', 'pipeline/harvest_pois_wikidata_images.py', 'pipeline/score_significance.py', 'pipeline/trails/popularity.py'),
-        name="Wikidata (`pipeline/harvest_pois_wikidata_images.py`, `pipeline/harvest_poi_wikidata.py` QID/sitelink/P1435/P1174 per POI, `pipeline/backfill_landmarks.py` box harvest reused by `pipeline/score_significance.py` as per-POI sitelink evidence for the absolute significance (`it.sig`, 2026-09), `pipeline/trails/popularity.py` sitelink counts, live `cityResearch.js`)",
+        scripts=('pipeline/backfill_landmarks.py', 'pipeline/pois/harvest_poi_wikidata.py', 'pipeline/pois/harvest_pois_wikidata_images.py', 'pipeline/score_significance.py', 'pipeline/trails/popularity.py'),
+        name="Wikidata (`pipeline/pois/harvest_pois_wikidata_images.py`, `pipeline/pois/harvest_poi_wikidata.py` QID/sitelink/P1435/P1174 per POI, `pipeline/backfill_landmarks.py` box harvest reused by `pipeline/score_significance.py` as per-POI sitelink evidence for the absolute significance (`it.sig`, 2026-09), `pipeline/trails/popularity.py` sitelink counts, live `cityResearch.js`)",
         takes="Entity coordinates, labels, P18 image pointers, descriptions, sitelink counts, heritage designations, visitor counts",
         licence="CC0",
         attribution="No",
@@ -1525,8 +1542,8 @@ SOURCES = (
     Source(
         key="overture_maps_places",
         section="content_layers",
-        scripts=('pipeline/harvest_pois_overture.py',),
-        name="Overture Maps Places (`pipeline/harvest_pois_overture.py`)",
+        scripts=('pipeline/pois/harvest_pois_overture.py',),
+        name="Overture Maps Places (`pipeline/pois/harvest_pois_overture.py`)",
         takes="Bulk sightseeing POIs for the whole catalogue",
         licence="CDLA-Permissive 2.0",
         attribution="Not required, credit recommended",
@@ -1569,8 +1586,8 @@ SOURCES = (
     Source(
         key="openstreetmap_charge_tag",
         section="content_layers",
-        scripts=('pipeline/harvest_poi_fees.py',),
-        name="OpenStreetMap `charge` and `fee` tags via Overpass (`pipeline/harvest_poi_fees.py`)",
+        scripts=('pipeline/pois/harvest_poi_fees.py',),
+        name="OpenStreetMap `charge` and `fee` tags via Overpass (`pipeline/pois/harvest_poi_fees.py`)",
         takes="POI entry fee flags and charge records, read by the dossier build; no price is shown",
         licence="ODbL 1.0",
         attribution="Yes: © OpenStreetMap contributors",

@@ -19,7 +19,7 @@ def _load(name, rel):
     return mod
 
 
-lh = _load("link_health", "pipeline/link_health.py")
+lh = _load("link_health", "pipeline/audit/link_health.py")
 
 
 class Resp:

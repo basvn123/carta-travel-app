@@ -21,7 +21,7 @@
 # fails the run, whatever its kind and floor.
 version: 1
 # Link health (ROADMAP D16, T1197): the share of checked links that are broken
-# (pipeline/link_health.py, the weekly task). Soft above max_broken_share (a
+# (pipeline/audit/link_health.py, the weekly task). Soft above max_broken_share (a
 # warning in the Data health tab), hard above hard_broken_share. Counted only
 # once min_checked links have a result, so a first small sample or a missing
 # run neither warns nor fails. Unsure results (timeouts, 429) and links robots.txt

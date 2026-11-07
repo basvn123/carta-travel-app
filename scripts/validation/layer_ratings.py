@@ -1,6 +1,6 @@
 """Place ratings on the D23 validation runner (T1191, ROADMAP D23 Place ratings row).
 
-Repeats T760 (pipeline/external_check.py) on the current ratings with more
+Repeats T760 (pipeline/audit/external_check.py) on the current ratings with more
 references, as a layer on the T1187 runner. The research in T1191 says: keep
 each reference separate (no blended "outside score"), match the statistic to
 the reference, and review the largest gaps with the references that flag them.

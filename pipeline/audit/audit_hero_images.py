@@ -65,6 +65,7 @@ import urllib.request
 from datetime import date
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # pipeline/: shared libraries (T1207)
 from pipeline_io import atomic_write_json, load_json
 
 try:
@@ -72,7 +73,7 @@ try:
 except Exception:
     pass
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 PRIMARY = ROOT / "app_data" / "app_data.json"
 IMG_CACHE = ROOT / "cache" / "wiki_images.json"          # shared with harvest_images.py
 META_CACHE = ROOT / "cache" / "hero_image_meta.json"     # file title -> Commons metadata
@@ -1257,7 +1258,7 @@ def main():
     if cmd == "dupes":
         dupes(dests, dry_run=dry, only=only)
         if not dry:
-            sys.path.insert(0, str(Path(__file__).resolve().parent))
+            sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
             import harvest_images
             harvest_images.patch()
         return
@@ -1275,7 +1276,7 @@ def main():
     if cmd in ("all", "fix") and not dry:
         sheet(report)
     if cmd in ("all", "patch") and not dry:
-        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
         import harvest_images
         harvest_images.patch()
 

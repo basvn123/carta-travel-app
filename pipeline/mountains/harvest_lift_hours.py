@@ -44,6 +44,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 INPUT = Path(os.environ.get("CARTA_INPUT_ROOT", ROOT))
 sys.path.insert(0, str(ROOT / "pipeline"))
+sys.path.insert(0, str(ROOT / "pipeline" / "pois"))  # harvest_poi_fees (T1207)
 sys.path.insert(0, str(ROOT / "pipeline" / "beaches"))
 import explore_overlay as ov  # noqa: E402
 import sources  # noqa: E402

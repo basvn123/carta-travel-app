@@ -15,7 +15,7 @@ the second question, on a sample per run, in three tiers by cost:
      publishes (EXIF GPS or the {{Location}} template, both in Commons'
      `coordinates`). The map, emblem, diagram, satellite, document, collage
      and historical lexicons and the distance rule are the hero audit's
-     (pipeline/audit_hero_images.py classify), reused, never copied. Added
+     (pipeline/audit/audit_hero_images.py classify), reused, never copied. Added
      here: interiors, group and portrait photos, animals, institutional
      buildings, a file that names ANOTHER place of the run and not this one,
      and the positive evidence that the file names its subject at all.
@@ -94,10 +94,10 @@ SHAPE_LAYERS = ("beaches", "lakes", "mountains")
 
 
 def _audit():
-    """pipeline/audit_hero_images.py, loaded once by path (its lexicons and classify)."""
+    """pipeline/audit/audit_hero_images.py, loaded once by path (its lexicons and classify)."""
     if "carta_audit_hero_images" in sys.modules:
         return sys.modules["carta_audit_hero_images"]
-    spec = importlib.util.spec_from_file_location("carta_audit_hero_images", PIPELINE / "audit_hero_images.py")
+    spec = importlib.util.spec_from_file_location("carta_audit_hero_images", PIPELINE / "audit" / "audit_hero_images.py")
     mod = importlib.util.module_from_spec(spec)
     sys.modules["carta_audit_hero_images"] = mod
     spec.loader.exec_module(mod)

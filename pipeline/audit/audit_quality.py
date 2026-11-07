@@ -43,12 +43,13 @@ import sys
 import unicodedata
 from collections import Counter, defaultdict
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # pipeline/: shared libraries (T1207)
 from pipeline_io import atomic_write_json
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "app_data" / "app_data.json"
 OUT = ROOT / "logs" / "audit_quality_report.json"
 
@@ -140,7 +141,7 @@ def audit(dests, top_n):
     try:
         import harvest_image_licenses as hil
         lic_cache = json.loads(
-            (Path(__file__).resolve().parents[1] / "cache" /
+            (Path(__file__).resolve().parents[2] / "cache" /
              "poi_image_licenses.json").read_text(encoding="utf-8"))
     except Exception:
         hil, lic_cache = None, {}

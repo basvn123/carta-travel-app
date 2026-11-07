@@ -93,16 +93,16 @@ def main():
                 time.sleep(180)
 
     run("landmarks apply", [PY, "-u", "-X", "utf8", "pipeline/backfill_landmarks.py", "apply"])
-    run("descs apply", [PY, "-u", "-X", "utf8", "pipeline/enrich_must_descs.py", "apply"])
+    run("descs apply", [PY, "-u", "-X", "utf8", "pipeline/pois/enrich_must_descs.py", "apply"])
     atomium_check()
 
-    run("descs broad (long)", [PY, "-u", "-X", "utf8", "pipeline/enrich_must_descs.py", "broad"])
+    run("descs broad (long)", [PY, "-u", "-X", "utf8", "pipeline/pois/enrich_must_descs.py", "broad"])
     run("poi_images mop-up (long)",
         [PY, "-u", "-X", "utf8", "run_pipeline.py", "--only", "poi_images", "--force", "--ship", "none"])
 
     # The long fetches and any late writer may have raced; re-apply is cheap.
     run("landmarks re-apply", [PY, "-u", "-X", "utf8", "pipeline/backfill_landmarks.py", "apply"])
-    run("descs re-apply", [PY, "-u", "-X", "utf8", "pipeline/enrich_must_descs.py", "apply"])
+    run("descs re-apply", [PY, "-u", "-X", "utf8", "pipeline/pois/enrich_must_descs.py", "apply"])
     atomium_check()
 
     env = dict(os.environ)

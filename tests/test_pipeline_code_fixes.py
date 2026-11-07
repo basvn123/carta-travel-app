@@ -427,10 +427,12 @@ def test_waymarked_keeps_placements_without_extracts(monkeypatch, tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# run_pipeline.py's task table, read as text (importing it sets up the run)
+# run_pipeline.py's task table, read as text (importing it sets up the run).
+# Since T1207 (ROADMAP A2) the table is pipeline/tasks/<domain>.py, joined in
+# run order by pipeline/tasks/source.py.
 # ---------------------------------------------------------------------------
 
-RUN_PIPELINE = (ROOT / "run_pipeline.py").read_text(encoding="utf-8")
+RUN_PIPELINE = registry._task_source(ROOT).task_text(ROOT)
 
 
 def _task_body(key):
