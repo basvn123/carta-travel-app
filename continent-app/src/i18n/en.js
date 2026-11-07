@@ -10345,4 +10345,15 @@ export const en = {
   // T1169 (I7): installable app, offline line.
   "pwa.offline.saved": "You are offline. Trips kept here still open; prices and your account wait for the network.",
   "pwa.offline.empty": "You are offline. Saved trips open here once you have opened them with a connection.",
+  // T1178 (K14): the data blog's page text. Machine draft outside English, pending native review.
+  "blog.title": "Blog",
+  "blog.lead": "Monthly posts built from Carta's own data: weather, crowds, ratings and prices, with the numbers behind each one.",
+  "blog.empty": "No posts yet.",
+  "blog.draft": "This is a draft. It is not published and search engines are asked to skip it.",
+  "blog.data": "The data behind this post (JSON)",
+  "blog.rss": "RSS feed",
+  "blog.by": "By {author}",
+  "blog.published": "Published {date}",
+  "blog.source": "Data: Carta catalogue as of {date}.",
+  "blog.all": "All posts",
 };

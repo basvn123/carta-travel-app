@@ -128,7 +128,7 @@ def copy_problems(label, text):
         out.append(f"{label}: em or en dash")
     if MIDDOT.search(text):
         out.append(f"{label}: middot separator")
-    if "!" in text:
+    if "!" in text.replace("![", "["):
         out.append(f"{label}: exclamation mark")
     for m in sorted({m.group(0).lower() for m in BANNED.finditer(text)}):
         out.append(f"{label}: banned word '{m}'")

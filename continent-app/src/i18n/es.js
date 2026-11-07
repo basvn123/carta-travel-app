@@ -10259,4 +10259,15 @@ export const es = {
   // T1169 (I7): installable app, offline line. Machine draft, pending native review.
   "pwa.offline.saved": "Estás sin conexión. Los viajes guardados aquí siguen abriéndose; los precios y tu cuenta esperan a la red.",
   "pwa.offline.empty": "Estás sin conexión. Los viajes guardados se abren aquí una vez que los hayas abierto con conexión.",
+  // T1178 (K14): the data blog's page text. Machine draft outside English, pending native review.
+  "blog.title": "Blog",
+  "blog.lead": "Artículos mensuales hechos con los datos propios de Carta: clima, afluencia, valoraciones y precios, con las cifras detrás de cada uno.",
+  "blog.empty": "Todavía no hay artículos.",
+  "blog.draft": "Esto es un borrador. No está publicado y se pide a los buscadores que lo omitan.",
+  "blog.data": "Los datos de este artículo (JSON)",
+  "blog.rss": "Canal RSS",
+  "blog.by": "Por {author}",
+  "blog.published": "Publicado el {date}",
+  "blog.source": "Datos: catálogo de Carta a fecha de {date}.",
+  "blog.all": "Todos los artículos",
 };
