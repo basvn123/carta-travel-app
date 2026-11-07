@@ -47,6 +47,26 @@ systemctl list-timers 'carta-*' --no-pager                                  # we
 
 Check after the first monthly run: `tail -n 5 ~/logs/weekly.log`, then `rclone cat r2:carta/status/last_run.json` (tier `monthly`, exit 0). Pause everything: `sudo bash infra/hetzner/cron/install.sh --disable`. Run one tier now: `sudo systemctl start --no-block carta-monthly.service`.
 
+## No laptop-only steps (T1161, ROADMAP H10)
+
+| Step | Box or worker path | Tier | Inputs and where they come from | Switch |
+|---|---|---|---|---|
+| Ask Carta index | `ask_index` task on the box | `after` (dossier, beaches, lakes, mountains, trails_rate), so monthly or quarterly | the shipped wires in `continent-app/public/`; the model from Hugging Face on first run; `minisearch` from `npm ci` | `CARTA_BOX_ML=ask` (the default) |
+| Guided search | `guided_search` task on the box, in `~/venv-guided` | `after`, the same list | `app_data/app_data.json` (pulled from R2), the layer files; thenlper/gte-small from Hugging Face; `cache/guided/vibes.npz` rebuilt on the first run | `CARTA_BOX_ML=all` |
+| Stays scrape, Hostelworld | `carta-stays-scrape.timer`, 00:05 nightly, works in March and September | its own timer, not a tier | the destination list in the repo; `cache/stays/journal_scrape.sqlite` resumes; journal to `r2:carta-stays-state/state/` | `CARTA_STAYS_SCRAPE=1` |
+| Stays scrape, Booking | the same script on a home host with a residential address | the same timer, installed there | as above | `CARTA_STAYS_SITES=both`, `CARTA_STAYS_BOOKING_EGRESS=residential` |
+| Stays build and publish | `stays` task (T1021) | monthly | the journal from R2 | none (on since T1107) |
+| Trip promotion | `trailslab_worker` task, job argument `promote` | weekly task, spawns every 28 days | the newest trailslab dump in R2 | `CARTA_TRAILSLAB_PROMOTE=1` |
+| Trails lab dump | `infra/hetzner/cax41/trailslab_dump.sh push` from the lab; the worker writes one each run | by hand until the worker runs | a running lab on port 5433; `CARTA_BACKUP_KEY` and the worker public key | none |
+
+The ML extras install on the next run after the switch (`run_pipeline.sh`, stamped in `~/venv/.carta-ml` and `~/venv-guided/.carta-ml`). One-time system packages for the scrape, as root: `apt-get install -y xvfb` (Booking only) and `~/venv/bin/python -m playwright install-deps chromium`.
+
+Dry runs: `CARTA_TIER=monthly CARTA_BOX_ML=all CARTA_SHIP=none bash infra/hetzner/cax11/run_pipeline.sh --dry-run` (the two `ML extras ... would be installed` lines); `FORCE=1 CARTA_STAYS_SITES=hostelworld bash infra/hetzner/cax11/stays_scrape.sh --dry-run`; `CARTA_TRAILSLAB_PROMOTE=1 python infra/hetzner/cax41/trailslab_worker.py run --dry-run` (spawn.sh gets `promote`); `bash infra/hetzner/cax41/trailslab_dump.sh push --dry-run`.
+
+Restore the lab from R2 into an empty lab: `cd tools/trailslab && docker compose up -d`, then `bash infra/hetzner/cax41/trailslab_dump.sh restore` (with the owner's or the worker's secret key in the keyring; `--force` replaces a lab that has trips).
+
+What still needs the laptop, and why: the trails lab and its curator review UI (the `trails_*` tasks other than the worker's steps, and approving trips) until the lab moves (S98, batch 10); the Booking half of the scrape until a home host exists (Booking turns away datacenter addresses); the owner's own gpg key, which never leaves the owner.
+
 ## Weekly run
 
 `carta-weekly.timer` (and the monthly and quarterly timers the same way) starts `weekly.sh`, which takes the run lock and runs `run_pipeline.sh` only when `CARTA_PIPELINE_ENABLED=1`: venv re-sync, pull of the master from R2, `run_pipeline.py` up to the `CARTA_TIER` ceiling, encrypted dumps, pushes, upload to R2. With `CARTA_DEPLOY=1` it deploys `dist/` to Pages after a data publish (handbook; T992 to T996).

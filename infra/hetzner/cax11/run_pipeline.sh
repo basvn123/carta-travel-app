@@ -64,6 +64,8 @@
 #   CARTA_MAX_CADENCE  weekly (default), monthly, quarterly, or all, for a hand
 #                      run without CARTA_TIER.
 #   CARTA_VENV         default /home/carta/venv ($HOME/venv)
+#   CARTA_BOX_ML       ask (default), all or none: the ML extras (T1161, below)
+#   CARTA_GUIDED_VENV  the guided search venv for CARTA_BOX_ML=all, default $HOME/venv-guided
 #   CARTA_ARCHIVE_OUT  pack.py's tarball and dump directory, default $HOME/archive-out
 #   CARTA_SHIP         build (default), data or none; passed as --ship
 #   CARTA_EXTRA_TASKS  comma list passed as --also (T640): these tasks run when
@@ -240,6 +242,64 @@ if [ "$want" != "$have" ]; then
     fi
   fi
 fi
+# --- T1161 (H10): the ML extras, so no pipeline step needs the laptop -------
+# requirements-ml.txt is not part of the venv sync above, and it cannot be one
+# pip call: model2vec 0.10.0 needs huggingface-hub 2.x, sentence-transformers
+# 3.3.1 (through transformers 4.x) needs it below 1.0 (T1161, checked with pip
+# on Python 3.12). So the two halves live apart. CARTA_BOX_ML picks:
+#   ask   (default) model2vec into this venv, for ask_index (no torch; nothing
+#         in requirements.txt reads huggingface-hub)
+#   all   ask, plus a second venv (CARTA_GUIDED_VENV, default ~/venv-guided)
+#         with CPU-only torch and the rest of requirements-ml.txt, for
+#         guided_search; run_pipeline.py runs that task with CARTA_GUIDED_PY
+#   none  nothing; both tasks skip on their guards as before T1161
+# Stamped like the venv, so pip runs only when a file or the mode changes. A
+# failure is logged and the run goes on: both tasks are soft and skip.
+BOX_ML="${CARTA_BOX_ML:-ask}"
+ML_REQ="requirements-ml.txt"
+TORCH_REQ="infra/hetzner/jobs/requirements-torch-cpu.txt"
+GVENV="${CARTA_GUIDED_VENV:-$HOME/venv-guided}"
+ml_sync() {  # label, stamp file, then the pip arguments after "install"
+  local label="$1" stamp="$2" want have; shift 2
+  want="$(printf '%s\n' "$label" | cat - "$ML_REQ" "$TORCH_REQ" constraints.txt 2>/dev/null | sha256sum | cut -c1-16)"
+  have="$(cat "$stamp" 2>/dev/null || true)"
+  [ "$want" = "$have" ] && return 0
+  if [ $DRY_RUN -eq 1 ]; then
+    say "ML extras ($label) would be installed (stamp ${have:-none} -> $want)"; return 0
+  fi
+  say "installing the ML extras ($label) (stamp ${have:-none} -> $want)"
+  if "$@"; then echo "$want" > "$stamp"; return 0; fi
+  say "WARNING: the ML extras ($label) did not install; its task will skip"; return 1
+}
+ml_ask() {
+  local req; req="$(mktemp)"
+  grep -E '^model2vec==' "$ML_REQ" > "$req"
+  "$PY" -m pip install --quiet --only-binary=:all: -r "$req" -c constraints.txt; local rc=$?
+  rm -f "$req"; return $rc
+}
+ml_guided() {
+  local req; req="$(mktemp)"
+  [ -x "$GVENV/bin/python" ] || "$PY" -m venv "$GVENV" || { rm -f "$req"; return 1; }
+  # CPU torch first, from its own index (PyPI's Linux wheels pull the CUDA
+  # runtime, several GB, for a box with no GPU); torchvision is the photo
+  # jobs' and is left out. pip then keeps that torch for sentence-transformers.
+  grep -E '^(--index-url|torch==)' "$TORCH_REQ" > "$req"
+  "$GVENV/bin/python" -m pip install --quiet --only-binary=:all: -r "$req" || { rm -f "$req"; return 1; }
+  grep -vE '^[[:space:]]*(#|$)|^model2vec' "$ML_REQ" > "$req"
+  "$GVENV/bin/python" -m pip install --quiet --only-binary=:all: -r "$req" -c constraints.txt; local rc=$?
+  rm -f "$req"; return $rc
+}
+case "$BOX_ML" in
+  none) ;;
+  ask|all)
+    ml_sync ask "$VENV/.carta-ml" ml_ask
+    if [ "$BOX_ML" = "all" ]; then
+      ml_sync guided "$GVENV/.carta-ml" ml_guided
+      [ -x "$GVENV/bin/python" ] && export CARTA_GUIDED_PY="$GVENV/bin/python"
+    fi ;;
+  *) say "CARTA_BOX_ML=$BOX_ML is not ask, all or none; installing no ML extras" ;;
+esac
+
 if "$PY" -c "import anthropic" 2>/dev/null; then
   say "WARNING: the anthropic SDK is in the venv; CLAUDE.md forbids it (pip uninstall anthropic)"
 fi

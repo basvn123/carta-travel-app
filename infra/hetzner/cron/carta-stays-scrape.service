@@ -1,0 +1,26 @@
+# Carta stays scrape on the box (T1161, ROADMAP H10): the Linux twin of the
+# laptop's CartaStayScrape task. Runs infra/hetzner/cax11/stays_scrape.sh,
+# which does work only when CARTA_STAYS_SCRAPE=1 in ~/.config/carta/env and
+# only in March and September (Hostelworld on the box; Booking only on a host
+# with a residential address). It takes the pipeline's run lock without
+# waiting, so a pipeline run means no scrape that night.
+[Unit]
+Description=Carta stays scrape, March and September (T1161)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=carta
+Group=carta
+WorkingDirectory=/home/carta/carta
+Environment=LANG=C.UTF-8
+ExecStart=/bin/bash /home/carta/carta/infra/hetzner/cax11/stays_scrape.sh
+# Six hours of scraping per site, side by side, plus the browser install and
+# the upload.
+TimeoutStartSec=7h
+# 75: the pipeline held the lock; not a failure.
+SuccessExitStatus=75
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
