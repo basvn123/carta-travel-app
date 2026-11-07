@@ -66,7 +66,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "pipeline" / "trails"))
 
-from names import base_name  # noqa: E402
+from names import base_name
 
 DATA_ROOT = Path(os.environ.get("CARTA_DATA_ROOT") or ROOT).resolve()
 WIRE_DIR = DATA_ROOT / "continent-app" / "public" / "trails"
@@ -164,8 +164,7 @@ def word_in(needle, hay):
     return bool(needle and hay) and f" {needle} " in f" {hay} "
 
 
-DIRECTIONS = {"north", "south", "east", "west", "nord", "sud", "ost", "west",
-              "northern", "southern", "eastern", "western", "noord", "zuid",
+DIRECTIONS = {"north", "south", "east", "west", "nord", "sud", "ost", "northern", "southern", "eastern", "western", "noord", "zuid",
               "oost", "norra", "sodra", "ostra", "vastra"}
 
 # A row whose title names the trail only as the trunk of a side loop, a spur
