@@ -10277,4 +10277,15 @@ export const nl = {
   "share.receiptNote": "Schatting van Carta op {date}. Bedden en eten zijn schattingen van Carta uit steekproeven van lijstprijzen; een vluchtregel is de prijs die Google Flights toonde.",
   "share.receiptBrand": "Gepland met Carta, carta-europetravel.com",
   "share.receiptClose": "Sluiten",
+  // T1178 (K14): the data blog's page text. Machine draft outside English, pending native review.
+  "blog.title": "Blog",
+  "blog.lead": "Maandelijkse berichten op basis van Carta's eigen data: weer, drukte, beoordelingen en prijzen, met de cijfers erachter.",
+  "blog.empty": "Nog geen berichten.",
+  "blog.draft": "Dit is een concept. Het is niet gepubliceerd en zoekmachines worden gevraagd het over te slaan.",
+  "blog.data": "De data achter dit bericht (JSON)",
+  "blog.rss": "RSS-feed",
+  "blog.by": "Door {author}",
+  "blog.published": "Gepubliceerd op {date}",
+  "blog.source": "Data: Carta-catalogus van {date}.",
+  "blog.all": "Alle berichten",
 };

@@ -10277,4 +10277,15 @@ export const fr = {
   "share.receiptNote": "Estimation de Carta le {date}. Lits et repas sont des estimations de Carta tirées de prix affichés relevés ; une ligne de vol est le tarif affiché par Google Flights.",
   "share.receiptBrand": "Préparé avec Carta, carta-europetravel.com",
   "share.receiptClose": "Fermer",
+  // T1178 (K14): the data blog's page text. Machine draft outside English, pending native review.
+  "blog.title": "Blog",
+  "blog.lead": "Des articles mensuels tirés des données propres à Carta : météo, affluence, notes et prix, avec les chiffres derrière chacun.",
+  "blog.empty": "Aucun article pour le moment.",
+  "blog.draft": "Ceci est un brouillon. Il n'est pas publié et les moteurs de recherche sont priés de l'ignorer.",
+  "blog.data": "Les données de cet article (JSON)",
+  "blog.rss": "Flux RSS",
+  "blog.by": "Par {author}",
+  "blog.published": "Publié le {date}",
+  "blog.source": "Données : catalogue Carta au {date}.",
+  "blog.all": "Tous les articles",
 };

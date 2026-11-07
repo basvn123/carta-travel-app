@@ -367,6 +367,26 @@
         "value": 0.979,
         "at": "2026-11-07T01:13:02.045Z"
       }
+    },
+    "blog-intro": {
+      "version": 1,
+      "file": "prompts/blog-intro/v1.md",
+      "format": "registry",
+      "sha256": "46683fa290e814b37142da43da6e46492c43c3904ebce9b7622d4c3220439024",
+      "runtime": "python",
+      "eval": null,
+      "guard": "the job's own output checks (blog_drafts.guard_prose), scripts/blog/check_draft.py and tests/test_blog_drafts.py",
+      "callers": [
+        "pipeline/blog_drafts.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-07T03:21:43.318Z"
+      }
     }
   }
 }

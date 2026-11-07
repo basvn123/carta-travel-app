@@ -10363,4 +10363,15 @@ export const en = {
   "share.receiptNote": "Carta's estimate on {date}. Beds and food are Carta estimates from sampled list prices; a flight line is the fare Google Flights showed.",
   "share.receiptBrand": "Planned with Carta, carta-europetravel.com",
   "share.receiptClose": "Close",
+  // T1178 (K14): the data blog's page text. Machine draft outside English, pending native review.
+  "blog.title": "Blog",
+  "blog.lead": "Monthly posts built from Carta's own data: weather, crowds, ratings and prices, with the numbers behind each one.",
+  "blog.empty": "No posts yet.",
+  "blog.draft": "This is a draft. It is not published and search engines are asked to skip it.",
+  "blog.data": "The data behind this post (JSON)",
+  "blog.rss": "RSS feed",
+  "blog.by": "By {author}",
+  "blog.published": "Published {date}",
+  "blog.source": "Data: Carta catalogue as of {date}.",
+  "blog.all": "All posts",
 };

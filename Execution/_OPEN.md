@@ -2110,3 +2110,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1175-d | T1175 | The offline share images (map, calendar) are English only: their words live in scripts/share/share_assets.mjs, not in the six i18n catalogues; add a --lang that reads share.* keys | next task | open |  |
 | T1175-e | T1175 | The trip kept on a device without an account gets an empty card menu (planMenu in SavedTripsPanel.jsx), so it cannot share its receipt; offer the receipt there too | next task | open |  |
 | T1175-f | T1175 | Nothing counts how many receipts are shared (a launch or paywall style event would need its reason added); and the offline rasteriser could move from Playwright to @resvg/resvg-js if a package may be added | next task | open |  |
+| T1178-a | T1178 | Serve the blog on deploy: copy continent-app/dist-blog into dist in build-pages.mjs (static files, not in _routes.json), add sitemap-blog-en.xml to the sitemap index in prerender/sitemap.mjs, and run the build in the deploy (shared files, outside this task's scope) | next task | open |  |
+| T1178-b | T1178 | Add a visible link to /blog/ (footer or home) once the first post is published; shared components were not touched | next task | open |  |
+| T1178-c | T1178 | Other post types (cheapest week, what changed, new on Carta, seasonal rankings, how we measure) and the Dutch blog (I8) are not built; part 2 | next task | open |  |
+| T1178-d | T1178 | The pipeline task needs a current app_data.json on the box and a scheduled pull request routine (K14 step 3); not set up | user | open |  |
+| T1178-e | T1178 | Owner approval of the sample December 2026 draft, then set status published; wire vintage is 2026-06-07 so a fresh wire should be used first | user | open |  |

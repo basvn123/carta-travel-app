@@ -2854,6 +2854,22 @@ TASKS = [
                  "(no lab on this box). Owner steps: "
                  "Execution/P15/_OPEN-explore-data-runs.md, T647."),
     },
+    {
+        "key": "blog_drafts",
+        "title": "Data blog: next month's 'Where to go in <month>' draft (K14, T1178)",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "rev": "T1178",
+        "cmds": [[PY, "pipeline/blog_drafts.py"]],
+        "note": ("pipeline/blog_drafts.py reads continent-app/public/app_data.json and "
+                 "writes content/blog/<slug>.md (status: draft) plus content/blog/data/"
+                 "<slug>.json, then runs scripts/blog/check_draft.py on it and fails "
+                 "when the check refuses. Never publishes: the owner reads the draft in a "
+                 "pull request and changes status to published. Add --prose to the cmd "
+                 "for a Gemini opening paragraph (prompt blog-intro). Docs: "
+                 "content/blog/README.md, HANDBOOK 'Data blog'."),
+    },
 ]
 TASK_BY_KEY = {t["key"]: t for t in TASKS}
 

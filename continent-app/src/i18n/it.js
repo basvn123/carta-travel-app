@@ -10277,4 +10277,15 @@ export const it = {
   "share.receiptNote": "Stima di Carta del {date}. Letti e cibo sono stime di Carta da campioni di prezzi di listino; una riga del volo è la tariffa mostrata da Google Flights.",
   "share.receiptBrand": "Pianificato con Carta, carta-europetravel.com",
   "share.receiptClose": "Chiudi",
+  // T1178 (K14): the data blog's page text. Machine draft outside English, pending native review.
+  "blog.title": "Blog",
+  "blog.lead": "Articoli mensili costruiti sui dati propri di Carta: meteo, affollamento, valutazioni e prezzi, con i numeri dietro ciascuno.",
+  "blog.empty": "Ancora nessun articolo.",
+  "blog.draft": "Questa è una bozza. Non è pubblicata e ai motori di ricerca si chiede di ignorarla.",
+  "blog.data": "I dati di questo articolo (JSON)",
+  "blog.rss": "Feed RSS",
+  "blog.by": "Di {author}",
+  "blog.published": "Pubblicato il {date}",
+  "blog.source": "Dati: catalogo Carta al {date}.",
+  "blog.all": "Tutti gli articoli",
 };

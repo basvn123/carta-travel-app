@@ -1,0 +1,218 @@
+{
+  "type": "where-to-go",
+  "slug": "where-to-go-in-december-2026",
+  "month": 12,
+  "month_name": "December",
+  "year": 2026,
+  "source": {
+    "file": "continent-app/public/app_data.json",
+    "generated_at": "2026-06-07T13:21:17.357184+00:00",
+    "n_destinations": 3868
+  },
+  "criteria": {
+    "min_rating": 7.0,
+    "max_crowd_tier": 1,
+    "list_n": 10,
+    "per_country": 2,
+    "season": "its weather comfort in December is in the highest tenth of all places",
+    "day": "half a mid-range hotel room, one cheap meal and one mid-range meal, one person"
+  },
+  "counts": {
+    "with_figures": 2285,
+    "in_season": 246,
+    "quiet": 225,
+    "rated": 82,
+    "listed": 10,
+    "season_rule": "top_comfort"
+  },
+  "rows": [
+    {
+      "id": "gem:merida",
+      "place": "Merida",
+      "country": "Spain",
+      "iso2": "ES",
+      "high_c": 13,
+      "low_c": 3,
+      "rain_mm": 52,
+      "comfort": 48,
+      "crowd_tier": 0,
+      "day_eur": 65,
+      "rating": 8.0,
+      "crowd": "quiet"
+    },
+    {
+      "id": "TER",
+      "place": "Terceira (Azores)",
+      "country": "Portugal",
+      "iso2": "PT",
+      "high_c": 17,
+      "low_c": 16,
+      "rain_mm": 110,
+      "comfort": 53,
+      "crowd_tier": 0,
+      "day_eur": 67,
+      "rating": 7.2,
+      "crowd": "quiet"
+    },
+    {
+      "id": "gem:cordoba",
+      "place": "Córdoba",
+      "country": "Spain",
+      "iso2": "ES",
+      "high_c": 15,
+      "low_c": 5,
+      "rain_mm": 62,
+      "comfort": 56,
+      "crowd_tier": 0,
+      "day_eur": 68,
+      "rating": 7.3,
+      "crowd": "quiet"
+    },
+    {
+      "id": "gem:mertola",
+      "place": "Mertola",
+      "country": "Portugal",
+      "iso2": "PT",
+      "high_c": 16,
+      "low_c": 6,
+      "rain_mm": 61,
+      "comfort": 58,
+      "crowd_tier": 0,
+      "day_eur": 68,
+      "rating": 7.3,
+      "crowd": "quiet"
+    },
+    {
+      "id": "RHO",
+      "place": "Rhodes",
+      "country": "Greece",
+      "iso2": "GR",
+      "high_c": 17,
+      "low_c": 14,
+      "rain_mm": 161,
+      "comfort": 49,
+      "crowd_tier": 1,
+      "day_eur": 72,
+      "rating": 7.2,
+      "crowd": "moderate"
+    },
+    {
+      "id": "PFO",
+      "place": "Paphos",
+      "country": "Cyprus",
+      "iso2": "CY",
+      "high_c": 18,
+      "low_c": 13,
+      "rain_mm": 92,
+      "comfort": 60,
+      "crowd_tier": 1,
+      "day_eur": 80,
+      "rating": 7.9,
+      "crowd": "moderate"
+    },
+    {
+      "id": "gem:scala-dei-turchi",
+      "place": "Scala dei Turchi",
+      "country": "Italy",
+      "iso2": "IT",
+      "high_c": 16,
+      "low_c": 9,
+      "rain_mm": 88,
+      "comfort": 51,
+      "crowd_tier": 0,
+      "day_eur": 80,
+      "rating": 7.0,
+      "crowd": "quiet"
+    },
+    {
+      "id": "gem:rethymno",
+      "place": "Rethymno",
+      "country": "Greece",
+      "iso2": "GR",
+      "high_c": 17,
+      "low_c": 14,
+      "rain_mm": 95,
+      "comfort": 55,
+      "crowd_tier": 1,
+      "day_eur": 85,
+      "rating": 8.1,
+      "crowd": "moderate"
+    },
+    {
+      "id": "gem:paestum",
+      "place": "Paestum",
+      "country": "Italy",
+      "iso2": "IT",
+      "high_c": 14,
+      "low_c": 9,
+      "rain_mm": 82,
+      "comfort": 46,
+      "crowd_tier": 0,
+      "day_eur": 86,
+      "rating": 8.7,
+      "crowd": "quiet"
+    },
+    {
+      "id": "gem:bonifacio",
+      "place": "Bonifacio",
+      "country": "France",
+      "iso2": "FR",
+      "high_c": 14,
+      "low_c": 12,
+      "rain_mm": 72,
+      "comfort": 46,
+      "crowd_tier": 0,
+      "day_eur": 100,
+      "rating": 8.6,
+      "crowd": "quiet"
+    }
+  ],
+  "chart": {
+    "title": "An indicative day for one person in December",
+    "unit": "EUR",
+    "bars": [
+      {
+        "label": "Merida",
+        "value": 65
+      },
+      {
+        "label": "Terceira (Azores)",
+        "value": 67
+      },
+      {
+        "label": "Córdoba",
+        "value": 68
+      },
+      {
+        "label": "Mertola",
+        "value": 68
+      },
+      {
+        "label": "Rhodes",
+        "value": 72
+      },
+      {
+        "label": "Paphos",
+        "value": 80
+      },
+      {
+        "label": "Scala dei Turchi",
+        "value": 80
+      },
+      {
+        "label": "Rethymno",
+        "value": 85
+      },
+      {
+        "label": "Paestum",
+        "value": 86
+      },
+      {
+        "label": "Bonifacio",
+        "value": 100
+      }
+    ]
+  },
+  "images": [],
+  "rows_sha256": "30136540e5bbcf7f441c6fbe8911095fb8da7f51bbe5cc589370454639fbcba7"
+}
