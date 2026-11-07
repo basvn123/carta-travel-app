@@ -81,6 +81,8 @@ jobs:
         run: node node_modules/vite/bin/vite.js build --config ../scripts/vite.fast.mjs
       - name: No CSP violation on any screen
         run: node scripts/verify_csp.mjs --dist ../.fastbuild
+      - name: Installable app and offline reopen (T1169)
+        run: node scripts/verify_pwa.mjs --dist ../.fastbuild
 
   python:
     runs-on: ubuntu-latest

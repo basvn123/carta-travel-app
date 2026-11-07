@@ -63,7 +63,16 @@ test('every figure comes from pricing.js', () => {
   assert.equal(pass.find((l) => l.key === 'pass.addPlansTrip').vars.n, TIERS.trip.aiPlans);
 });
 
-const KEYS = ['title', 'freeHead', 'free.plan', 'free.share', 'free.keep', 'free.ai', 'passHead', 'footBold', 'footNote', 'see', 'later', 'hidden'].map((k) => `paywall.${k}`);
+test('the free list shows plans left for a signed in traveller with a known balance', () => {
+  const ai = (b) => momentLines(TIERS, b).free.find((l) => l.key.startsWith('paywall.free.ai'));
+  assert.equal(ai(null).key, 'paywall.free.ai');
+  assert.equal(ai({ signedIn: false, known: true, left: 1 }).key, 'paywall.free.ai');
+  assert.equal(ai({ signedIn: true, known: false, left: 0 }).key, 'paywall.free.ai');
+  assert.deepEqual(ai({ signedIn: true, known: true, left: 1 }), { key: 'paywall.free.aiLeft', vars: { n: 1 } });
+  assert.equal(ai({ signedIn: true, known: true, left: 0 }).key, 'paywall.free.aiNone');
+});
+
+const KEYS = ['title', 'freeHead', 'free.plan', 'free.share', 'free.keep', 'free.ai', 'free.aiLeft', 'free.aiNone', 'passHead', 'footBold', 'footNote', 'see', 'later', 'hidden'].map((k) => `paywall.${k}`);
 const BANNED = /\b(seamless|unlock|effortless|elevate|leverage|empower|curated|simply|just|easy)\b/i;
 const phs = (s) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(',');
 

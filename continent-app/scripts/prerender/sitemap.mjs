@@ -130,6 +130,10 @@ export function writeSitemaps(manifest, buildDir, { coverageDate = null } = {}) 
     });
   }
   const index = ['<?xml version="1.0" encoding="UTF-8"?>', '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'];
+  // T1178-a: the blog's own sitemap is a static file built by scripts/blog/build.mjs
+  // (only when a post is published); it joins the index, never the Function's files.
+  const blogMap = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'dist-blog', 'sitemap-blog-en.xml');
+  if (fs.existsSync(blogMap)) index.push(`  <sitemap><loc>${ORIGIN}/sitemap-blog-en.xml</loc></sitemap>`);
   for (const f of files) index.push(`  <sitemap><loc>${ORIGIN}/${f.name}</loc>${f.lastmod ? `<lastmod>${f.lastmod}</lastmod>` : ''}</sitemap>`);
   index.push('</sitemapindex>', '');
   fs.writeFileSync(path.join(dir, 'sitemap.xml'), index.join('\n'), 'utf8');

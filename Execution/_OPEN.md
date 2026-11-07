@@ -2008,7 +2008,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1163-h | T1163 | no-unused-vars cannot see a destructured prop used only as a JSX tag (TitleTag in OverviewHero and ExploreToolbar); fix in eslint.config.js (argsIgnorePattern or jsx-uses-vars) | next task | open |  |
 | T1170-a | T1170 | Native review of the machine-drafted nl, de, fr, es, it strings listed in docs/i18n/review.md (about 3,200 strings, admin.* last) | user | open |  |
 | T1170-b | T1170 | Display currency choice (P-40) not built: it touches the price formatting lib, outside T1170's files | next task | open |  |
-| T1170-c | T1170 | en.js `day.place`, `day.poiDepthNote`, `day.townDepthNote` are cut off mid-string; fix the English, then retranslate the three in all five | next task | open |  |
 | T1170-d | T1170 | I8 rest: place intros are English only and need the other five languages | next task | open |  |
 | T1170-e | T1170 | French register is mixed (tu on home, vous elsewhere); owner picks one, then align fr.js | user | open |  |
 | T1182-a | T1182 | Enable the trails lab on the box: an 80 GB volume at /mnt/trailslab, 2 GB swap, docker.io, docker-compose-v2 and postgresql-client-18, the lab.sh env block, lab.sh check, up, restore, status, then the review units; the first lab.sh up is also the first run of the multi-arch image on arm64 (T324-a) (procedure: tools/trailslab/box/README.md, "Enable it on the box") | user | open | after T1161-d |
@@ -2018,19 +2017,16 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1172-a | T1172 | Register the affiliate programmes and set the four partner ids; until then partner links stay plain (owner step) | user | open |  |
 | T1172-b | T1172 | Approve the partner disclosure wording against the I-R5 legal checklist and PRODUCT.md (I-e) | user | open |  |
 | T1172-c | T1172 | Stay links (Booking.com, Airbnb, Hostelworld), Skyscanner and Trainline are undecorated; when joined, add a builder and its ClickOf to partnerOf | next task | open |  |
-| T1172-d | T1172 | Exported PDF partner links carry no mark or disclosure line; add one to the PDF footer | next task | open |  |
 | T1172-e | T1172 | pytest does not collect in the cloud container (pipeline/trails/smoke_test.py, missing deps); run the Python suite where the deps exist | next task | open |  |
 | T1169-a | T1169 | Account trips (trip_plans on Supabase) do not open offline: the worker never stores account answers by rule, so offline reading needs a device mirror of the signed-in traveller's trips in the app, not in the worker | next task | open |  |
 | T1169-b | T1169 | The installed app is untested on a real iPhone and Android phone: install from the hint, offline reopen of a kept trip, update after a deploy (CACHE_VERSION carta-v8); see the owner step in Execution/P15/T1169-pwa.md | user | open |  |
 | T1169-c | T1169 | Store apps (Play, App Store) wait for the I-R3 route decision (stay a PWA, Capacitor or native); store masters already exist in continent-app/brand/store/ | user | open |  |
 | T1169-d | T1169 | The worker reads its precache list from the built index.html and the entry script; a list written by scripts/build-pages.mjs from Vite's .vite/manifest.json (the research pick) is sturdier against a change in how the entry names its chunks | next task | open |  |
 | T1169-e | T1169 | pwa.offline.saved and pwa.offline.empty are machine drafts in de, fr, es and it (nl written by hand); native review with the I8 language pass | next task | open |  |
-| T1169-f | T1169 | scripts/verify_pwa.mjs is not in any CI workflow yet; add it beside verify_csp.mjs once that job runs a browser on the fast build | next task | open |  |
 | T1169-g | T1169 | The manifest has no screenshots or shortcuts, so Android shows the plain install sheet, not the richer one; add two phone screenshots and a My trips shortcut once the screens settle | next task | open |  |
 | T1171-a | T1171 | The Pass moment is built behind PASS_MOMENT (off); the closed beta tests it with ?pm=on and the owner decides whether to set the flag true (procedure in docs/design/pass-moment.md, Turning it on) | user | open |  |
 | T1171-b | T1171 | The Pass moment sends no paywall event, so the beta cannot count how often it was seen, opened or put off; add a reason for it to paywallEvents.js and the check in migration 022 (with the admin funnel) | next task | open |  |
 | T1171-c | T1171 | "Not now" on the Pass moment is kept per device (localStorage), not carried to the account on sign in, so a second device shows the card again | next task | open |  |
-| T1171-d | T1171 | The free list says "{n} Carta bot day plans to start with" from TIERS.free.aiPlans even after an account used them; once the moment is on, show the plans left (entitlement.plansLeft) for a signed in traveller | next task | open |  |
 | T1176-a | T1176 | Confirm where `id`, `name` and rounded `lat`/`lon` of gem places come from (GeoNames match or OpenStreetMap, which is ODbL) before the dataset goes public; if any is OSM only, drop it for those rows | user | open | |
 | T1176-b | T1176 | Run the export on the box against the live wire, read the output and the datasheet, create the public GitHub repo and upload `scripts/open_data/out/` plus README and DATASHEET | user | open | |
 | T1176-c | T1176 | Post the Show HN draft (`Execution/P15/T1176-show-hn-draft.md`) only once the free part of Carta needs no signup | user | open | |
@@ -2061,7 +2057,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1175-d | T1175 | The offline share images (map, calendar) are English only: their words live in scripts/share/share_assets.mjs, not in the six i18n catalogues; add a --lang that reads share.* keys | next task | open |  |
 | T1175-e | T1175 | The trip kept on a device without an account gets an empty card menu (planMenu in SavedTripsPanel.jsx), so it cannot share its receipt; offer the receipt there too | next task | open |  |
 | T1175-f | T1175 | Nothing counts how many receipts are shared (a launch or paywall style event would need its reason added); and the offline rasteriser could move from Playwright to @resvg/resvg-js if a package may be added | next task | open |  |
-| T1178-a | T1178 | Serve the blog on deploy: copy continent-app/dist-blog into dist in build-pages.mjs (static files, not in _routes.json), add sitemap-blog-en.xml to the sitemap index in prerender/sitemap.mjs, and run the build in the deploy (shared files, outside this task's scope) | next task | open |  |
 | T1178-b | T1178 | Add a visible link to /blog/ (footer or home) once the first post is published; shared components were not touched | next task | open |  |
 | T1178-c | T1178 | Other post types (cheapest week, what changed, new on Carta, seasonal rankings, how we measure) and the Dutch blog (I8) are not built; part 2 | next task | open |  |
 | T1178-d | T1178 | The pipeline task needs a current app_data.json on the box and a scheduled pull request routine (K14 step 3); not set up | user | open |  |

@@ -26,6 +26,7 @@ export async function downloadItemPdf(kind, item, ctx = {}) {
   const kit = await createPdf({
     footerLabel: `Carta, ${name}`,
     pageLabel: (n, of) => t('pdf.page', { n, of }),
+    partnerNote: t('partner.pdfNote'),
   });
   const photos = (m.photos || []).filter((p) => p && p.url);
 
