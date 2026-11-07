@@ -8,6 +8,7 @@ import { crowdStanding, monthsOf, stayByMonth, stayKindsOf, whenVerdict } from '
 import { Segmented } from '../components/ui/index.js';
 import { bestMonthsFor, riskMonths } from '../lib/heatRisk.js';
 import { PSection } from './PageTemplate.jsx';
+import { closedMonths, seasonItems } from '../lib/season.js';
 import '../styles/94-when-stay.css';
 
 /**
@@ -101,6 +102,17 @@ function StayPrices({ t, lang, rec, kinds, names, month, setMonth, monthList }) 
   );
 }
 
+/** A check date (YYYY-MM-DD) as month and year in the reader's language, or null. */
+function seasonChecked(iso, lang) {
+  if (typeof iso !== 'string' || !/^\d{4}-\d{2}/.test(iso)) return null;
+  const d = new Date(`${iso.slice(0, 7)}-15T12:00:00Z`);
+  try {
+    return new Intl.DateTimeFormat(lang, { month: 'short', year: 'numeric' }).format(d);
+  } catch {
+    return iso.slice(0, 7);
+  }
+}
+
 export function DestWhen({ p }) {
   const { t, lang, destination, data, water, monthPick, festivals, monthList, heatGuard } = p;
   const rec = useStayRecord(destination.id);
@@ -124,8 +136,18 @@ export function DestWhen({ p }) {
   const [picked, setMonth] = React.useState(null);
   const month = picked ?? monthPick ?? verdict?.best?.[0] ?? new Date().getMonth() + 1;
 
+  // T1202 (D18): the months the place is shut (its own hut, lift or lido,
+  // or every ferry to the island) and the seasonal huts, lifts and ferries
+  // nearby, from OSM opening_hours (lib/season.js).
+  const season = destination.season;
+  const shut = closedMonths(season);
+  const closed = new Set(shut);
+  const shutWord = t(season?.conf === 'low' ? 'season.maybeClosed' : 'season.closed');
+  const items = seasonItems(season);
+  const checked = seasonChecked(season?.checked, lang);
+
   const swim = water?.n_sites > 0 && Number.isFinite(water?.excellent_pct) ? water : null;
-  if (!months && !kinds.length && !dated.length && !swim) return null;
+  if (!months && !kinds.length && !dated.length && !swim && !shut.length && !items.length) return null;
 
   const sel = months?.[month - 1] || null;
   const fests = dated.filter((f) => f.months.includes(month));
@@ -143,8 +165,8 @@ export function DestWhen({ p }) {
           <div className="when-strip" role="group" aria-label={t('dest.whenTitle')}>
             {months.map((m, i) => (
               <button type="button" key={m.month} aria-pressed={m.month === month} onClick={() => setMonth(m.month)}
-                className={`when-m is-${m.tier}${verdict?.best.includes(m.month) ? ' is-best' : ''}${m.month === month ? ' is-on' : ''}`}
-                aria-label={[names.long[i], t(`when.rate.${m.tier}`), `${m.hi}°`, crowdWord(m.crowd)].filter(Boolean).join(', ')}>
+                className={`when-m is-${m.tier}${verdict?.best.includes(m.month) ? ' is-best' : ''}${m.month === month ? ' is-on' : ''}${closed.has(m.month) ? ' is-closed' : ''}`}
+                aria-label={[names.long[i], closed.has(m.month) && shutWord, t(`when.rate.${m.tier}`), `${m.hi}°`, crowdWord(m.crowd)].filter(Boolean).join(', ')}>
                 <span className="when-hi" aria-hidden="true">{m.hi}°</span>
                 <span className="when-bar" aria-hidden="true" />
                 {m.crowd != null && (
@@ -158,6 +180,7 @@ export function DestWhen({ p }) {
           <ul className="when-key" aria-hidden="true">
             {['great', 'good', 'mixed', 'poor'].map((k) => <li key={k} className={`is-${k}`}>{t(`when.rate.${k}`)}</li>)}
             {months.some((m) => m.crowd != null) && <li className="is-crowd">{t('when.crowds')}</li>}
+            {shut.length > 0 && <li className="is-closed">{shutWord}</li>}
           </ul>
           {sel && (
             <div className="when-detail" aria-live="polite">
@@ -165,10 +188,34 @@ export function DestWhen({ p }) {
                 <b>{names.long[month - 1]}</b>
                 <span className={`when-tag is-${sel.tier}`}>{t(`when.rate.${sel.tier}`)}</span>
                 {sel.crowd != null && <span className="when-tag is-crowd">{crowdWord(sel.crowd)}</span>}
+                {closed.has(month) && <span className="when-tag is-closed">{shutWord}</span>}
               </p>
               <p className="when-detail-text">{t('when.weather', { hi: sel.hi, lo: sel.lo, rain: sel.rain })}</p>
               {fests.length > 0 && <p className="when-detail-text">{fests.map((f) => f.name).join(', ')}</p>}
             </div>
+          )}
+        </div>
+      )}
+
+      {(shut.length > 0 || items.length > 0) && (
+        <div className="when-season">
+          {shut.length > 0 && (
+            <p className="when-season-shut">
+              <b>{t(season.why === 'ferry' ? 'season.closedFerry' : 'season.closedOwn', { months: monthList(shut) })}</b>
+              {season.conf === 'low' ? <span>{t('season.guide')}</span> : checked && <span>{t('season.checked', { date: checked })}</span>}
+            </p>
+          )}
+          {items.length > 0 && (
+            <>
+              <p className="when-season-head">{t('season.nearby')}</p>
+              <ul className="when-season-items">
+                {items.map((r) => (
+                  <li key={`${r.k}:${r.n}`}>
+                    {t('season.item', { name: r.n, kind: t(`season.kind.${r.k}`), months: monthList(r.open) })}
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </div>
       )}

@@ -10,16 +10,16 @@ that destructures a record is missed. Request paths are in [request-paths.md](re
 
 | What | Count |
 |---|---|
-| Wire fields in `docs/wire.schema.json` | 76 |
-| ...with a lineage row | 76 |
-| ...read by the app (pattern search found a reader) | 46 |
+| Wire fields in `docs/wire.schema.json` | 77 |
+| ...with a lineage row | 77 |
+| ...read by the app (pattern search found a reader) | 47 |
 | ...named in app code but no `rec.field` read (destructured or a string key) | 4 |
 | ...no reader found (shipped, not shown) | 26 |
 | ...written only or partly by a legacy step | 29 |
 | ...written only or partly by a script no task schedules | 20 |
 | ...with no writer left in the repo | 2 |
-| run_pipeline.py tasks | 88 |
-| ...that write a wire field or a wire file | 44 |
+| run_pipeline.py tasks | 89 |
+| ...that write a wire field or a wire file | 45 |
 | Wire files and folders | 28 |
 
 ## The trunk
@@ -131,6 +131,7 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `destinations.*.guide` | Wikivoyage lead and link (CC BY-SA) | `guide` | cache/wikivoyage.json | `pipeline/apply_wikivoyage.py` | dest/{cc}.json | `src/browse/DestinationPage.jsx`, `src/planner/flow/tellChips.js` (2 files) |
 | `destinations.*.members` | Wikidata landmarks and GeoNames towns grouped under a place | `manual` | cache/wikidata_landmarks.json | `pipeline/member_layer.py` | dest/{cc}.json | `src/browse/DestinationPage.jsx`, `src/lib/linking/search.js`, `src/together/groupBand.js` (3 files) |
 | `destinations.*.wikidata` | Wikidata Special:EntityData (CC0) | `legacy` | app_data/app_data.json (master) | none in the repo | dest/{cc}.json | name only: `src/browse/BeachPage.jsx`, `src/browse/LakePage.jsx`, `src/browse/MountainPage.jsx` |
+| `destinations.*.season` | OSM opening_hours and seasonal tags (Geofabrik extracts) | `seasons` | cache/dest_seasons.json | `pipeline/harvest_seasons.py` | dest/_rank.json, dest/{cc}.json | `src/browse/SectionOpening.jsx`, `src/browse/DestWhen.jsx`, `src/lib/runtime_pricing.js` (4 files) |
 | `destinations.*.anchor_estimated` | nearest served airport within 50 km (auto-anchor) | `airports` | app_data/app_data.json (master) | `pipeline/apply_airport_anchors.py` | dest/_rank.json, dest/{cc}.json | none found |
 
 Notes:
@@ -145,6 +146,7 @@ Notes:
 - `destinations.*.activities`: sync-data.mjs moves activities.items_full to public/poi/{shard}.json.
 - `destinations.*.guide`: sync-data.mjs trims the lead to a short blurb on the wire.
 - `destinations.*.wikidata`: On 43 places of the 2026-07c gem batch; the harvest that wrote it is retired (archive/harvest_osm_wikidata.py), so it is carried forward in the master.
+- `destinations.*.season`: T1202 (D18): present only on places with seasonal facts; presence pending until the first run.
 
 ## Per pipeline task
 
@@ -909,6 +911,21 @@ flowchart LR
   T_entry_rules --> C0
   W0["entry_rules.json (Pages)"]
   C0 --> W0
+```
+
+### `seasons` (quarterly)
+
+```mermaid
+flowchart LR
+  T_seasons["seasons"]
+  C0["pipeline/harvest_seasons.py"]
+  T_seasons --> C0
+  M["app_data/app_data.json"]
+  C0 --> M
+  S["sync-data.mjs"]
+  M --> S
+  F0["dest.season"]
+  S --> F0
 ```
 
 ### `trailslab_worker` (weekly)

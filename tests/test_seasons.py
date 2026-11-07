@@ -6,14 +6,14 @@ it, so that one test skips there.
 """
 import json
 import sys
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
-import harvest_seasons as hs  # noqa: E402
+import harvest_seasons as hs
 
 FIX = ROOT / "tests" / "fixtures" / "seasons" / "facilities.json"
 TODAY = date(2026, 11, 7)
@@ -49,8 +49,8 @@ def test_cross_check_with_opening_hours_py():
         oh = oh_lib.OpeningHours(text)
         got = []
         for m in range(1, 13):
-            start = datetime(2026, m, 1)
-            end = datetime(2026 + (m == 12), m % 12 + 1, 1)
+            start = datetime(2026, m, 1)  # noqa: DTZ001 (the library takes naive local times)
+            end = datetime(2026 + (m == 12), m % 12 + 1, 1)  # noqa: DTZ001
             # open when any interval of the month is open
             if any(str(iv[2]).lower().endswith("open") for iv in oh.intervals(start, end)):
                 got.append(m)

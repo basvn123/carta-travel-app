@@ -392,7 +392,7 @@ def main(argv=None) -> int:
         facilities = json.loads(Path(a.facilities).read_text(encoding="utf-8"))
     else:
         sys.path.insert(0, str(ROOT / "pipeline" / "beaches"))
-        import osm_extract  # noqa: E402
+        import osm_extract
         have = osm_extract.available()
         want = set(a.countries.upper().split(",")) if a.countries else set(have)
         paths = sorted({p for cc, p in have.items() if cc in want})
@@ -411,7 +411,7 @@ def main(argv=None) -> int:
     print(json.dumps(summary(rows)))
     if a.dry_run:
         return 0
-    import explore_overlay as ov  # noqa: E402
+    import explore_overlay as ov
     meta = {"source": "OpenStreetMap contributors", "licence": "ODbL-1.0", "date": today.isoformat(),
             "facilities": len(facilities), "rule": "t1202-v1"}
     ov.save(OVERLAY, rows, meta)
@@ -421,7 +421,7 @@ def main(argv=None) -> int:
         "license": "ODbL (c) OpenStreetMap contributors",
         "used_for": "the months a place, its huts, lifts and ferries are open",
     }
-    from pipeline_io import atomic_write_json  # noqa: E402
+    from pipeline_io import atomic_write_json
     atomic_write_json(master, data)
     return 0
 
