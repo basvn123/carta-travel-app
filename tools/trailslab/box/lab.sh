@@ -19,6 +19,8 @@
 #   lab.sh review on|off         start or stop the review API and UI (127.0.0.1 only)
 #   lab.sh tunnel                the ssh -L command to run on the owner's machine
 #
+# push and restore pass --crypt worker-key|plain to trailslab_dump.sh
+# (worker-key, the default, is what the worker and the box share).
 # Every command takes --dry-run (print, change nothing). Settings come from
 # the box secrets file through infra/hetzner/cax11/load-env.sh; the names are
 # in box/lab.env.example. Exit codes: 0 done, 1 a step failed, 2 bad
@@ -32,10 +34,11 @@ LOADENV="$REPO/infra/hetzner/cax11/load-env.sh"
 [ -r "$LOADENV" ] && [ "${CARTA_LAB_NO_ENV:-0}" != "1" ] && . "$LOADENV"
 
 MODE="${1:-}"; [ $# -gt 0 ] && shift
-DRY=0; FORCE=0; ARG=""
+DRY=0; FORCE=0; ARG=""; CRYPT=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) DRY=1 ;;
+    --crypt) CRYPT=(--crypt "${2:-}"); shift ;;
     --force) FORCE=1 ;;
     on|off) ARG="$1" ;;
     *) echo "lab.sh: unknown argument $1" >&2; exit 2 ;;
@@ -150,11 +153,11 @@ case "$MODE" in
         say "this lab has reviews up to id $now, newer than its last sync (${last:-none}): push them first (lab.sh push), or --force to drop them"; exit 3
       fi
     fi
-    FARGS=(); [ $FORCE -eq 1 ] && FARGS=(--force); [ $DRY -eq 1 ] && FARGS+=(--dry-run)
+    FARGS=("${CRYPT[@]}"); [ $FORCE -eq 1 ] && FARGS+=(--force); [ $DRY -eq 1 ] && FARGS+=(--dry-run)
     x bash "$DUMP_SH" restore "${FARGS[@]}" || exit $?
     [ $DRY -eq 1 ] || { echo "restore $(review_max) $(date -u +%FT%TZ)" > "$STAMP"; say "sync stamp: reviews up to id $(review_max)"; } ;;
   push)
-    FARGS=(); [ $DRY -eq 1 ] && FARGS=(--dry-run)
+    FARGS=("${CRYPT[@]}"); [ $DRY -eq 1 ] && FARGS+=(--dry-run)
     x bash "$DUMP_SH" push "${FARGS[@]}" || exit $?
     [ $DRY -eq 1 ] || { echo "push $(review_max) $(date -u +%FT%TZ)" > "$STAMP"; say "sync stamp: reviews up to id $(review_max)"; } ;;
   init-schema)
