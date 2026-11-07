@@ -10276,4 +10276,5 @@ export const es = {
   "share.receiptPerDay": "{price} por persona y día",
   "share.receiptNote": "Estimación de Carta el {date}. Camas y comida son estimaciones de Carta a partir de muestras de precios publicados; una línea de vuelo es la tarifa que mostró Google Flights.",
   "share.receiptBrand": "Planificado con Carta, carta-europetravel.com",
+  "share.receiptClose": "Cerrar",
 };

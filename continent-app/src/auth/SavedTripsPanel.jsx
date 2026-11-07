@@ -7,7 +7,9 @@ import {
   loadTripExtras, persistTripExtras, hasTripExtras,
 } from '../planner/dayPlanStore.js';
 import { tripsStore } from '../planner/tripsStore.js';
-import { CalendarIcon, RouteIcon, LinkIcon, PencilIcon } from '../components/Icons.jsx';
+import { CalendarIcon, RouteIcon, LinkIcon, PencilIcon, ReceiptIcon } from '../components/Icons.jsx';
+import { ShareReceiptSheet } from '../components/ShareReceiptSheet.jsx';
+import { shareReceiptOn } from '../lib/share/flag.js';
 import { Button, Chip } from '../components/ui/index.js';
 import { loadDeviceTrip, clearDeviceTrip } from '../planner/deviceTripStore.js';
 import { PastTripForm } from './PastTripForm.jsx';
@@ -563,6 +565,9 @@ export function SavedTripsPanel({
 
   // ── Trips: view models for the focal card and the rows. ──
   const priceFor = useCallback((p) => tripFigure(p, { data, stayTier, lifestyle }), [data, stayTier, lifestyle]);
+  // T1175 (K7): the receipt image sheet, for the trip whose menu asked.
+  const receiptFlag = useMemo(() => shareReceiptOn(), []);
+  const [receiptFor, setReceiptFor] = useState('');
   const isoFor = (countries) => COUNTRY_ISO2[countries?.[0]] || '';
 
   // Browser storage is read once per plan list and per store change, never
@@ -649,6 +654,8 @@ export function SavedTripsPanel({
     { key: 'edit', label: t('mt.editTrip'), icon: <PencilIcon size={16} />, onClick: () => onLoadTripPlan?.({ id: p.id, edit: true }) },
     { key: 'days', label: t('saved.planDays'), icon: <CalendarIcon size={16} />, onClick: () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }) },
     ...(p.coplan ? [] : [{ key: 'share', label: t('saved.shareInvite'), icon: <LinkIcon size={16} />, onClick: () => toggleShare(p.id) }]),
+    // T1175 (K7): the trip as a shareable receipt image, behind its flag.
+    ...(receiptFlag && figures[p.id] ? [{ key: 'receipt', label: t('share.receiptMenu'), icon: <ReceiptIcon size={16} />, onClick: () => setReceiptFor(p.id) }] : []),
   ]);
 
   const planModel = (p, focal) => {
@@ -1127,8 +1134,13 @@ export function SavedTripsPanel({
     />
   ) : null;
 
+  const receiptPlan = receiptFor ? datedPlans.find((p) => p.id === receiptFor) : null;
+
   return (
     <div className="saved-shell mytrips">
+      {receiptPlan && (
+        <ShareReceiptSheet plan={receiptPlan} data={data} stayTier={stayTier} lifestyle={lifestyle} onClose={() => setReceiptFor('')} />
+      )}
       <div className="panel open account-panel saved-trips-panel">
         <header className="panel-header saved-panel-header mt-header">
           <MyTripsHead

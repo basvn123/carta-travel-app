@@ -10362,4 +10362,5 @@ export const en = {
   "share.receiptPerDay": "{price} a person a day",
   "share.receiptNote": "Carta's estimate on {date}. Beds and food are Carta estimates from sampled list prices; a flight line is the fare Google Flights showed.",
   "share.receiptBrand": "Planned with Carta, carta-europetravel.com",
+  "share.receiptClose": "Close",
 };

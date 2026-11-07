@@ -10276,4 +10276,5 @@ export const nl = {
   "share.receiptPerDay": "{price} per persoon per dag",
   "share.receiptNote": "Schatting van Carta op {date}. Bedden en eten zijn schattingen van Carta uit steekproeven van lijstprijzen; een vluchtregel is de prijs die Google Flights toonde.",
   "share.receiptBrand": "Gepland met Carta, carta-europetravel.com",
+  "share.receiptClose": "Sluiten",
 };
