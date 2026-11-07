@@ -43,10 +43,16 @@ import glob
 import json
 import math
 import re
+import sys
 import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from pipeline.trails.names import transliterate
+
 REGISTER = ROOT / "cache" / "eea_bathing_water.json"
 SAMPLE = ROOT / "data" / "reports" / "validation" / "beaches" / "reference_sample.json"
 WIRE_DIR = ROOT / "continent-app" / "public" / "beaches"
@@ -91,19 +97,31 @@ _STOP = {"beach", "playa", "plage", "spiaggia", "praia", "strand", "plaza", "pla
          "de", "da", "di", "del", "della", "des", "du", "la", "le", "el", "il", "lo", "los", "las",
          "the", "of", "bw", "zone", "baignade", "badestelle", "bathing", "water", "site",
          "lido", "bay", "cala", "baia", "bucht", "strandbad", "see", "lake", "lac", "lago",
-         "nord", "sud", "north", "south", "east", "west", "est", "ouest", "centro", "centre"}
+         "plazh", "nord", "sud", "north", "south", "east", "west", "est", "ouest", "centro", "centre"}
+# T1216 (T1189-g): the BG register names its sites in Cyrillic, which the
+# [a-z0-9] word test dropped whole (Shkorpilovtsi). The trails' transliterator
+# (pipeline/trails/names.py, T1092: Bulgarian streamlined system, the other
+# national Cyrillic tables, Greek by ELOT 743) turns them into Latin first.
+def translit(name, country=None):
+    return transliterate(name or "", country)
+
+
 _SAMPLE_POINT = re.compile(r"\s+(?:pm|pt|p)\s*\d{1,2}\s*$", re.IGNORECASE)
 
 
-def tokens(name):
-    s = unicodedata.normalize("NFKD", _SAMPLE_POINT.sub("", name or ""))
+def stratum_cc(ref):
+    return ((ref.get("countries") or [None])[0]) if isinstance(ref, dict) else None
+
+
+def tokens(name, country=None):
+    s = unicodedata.normalize("NFKD", translit(_SAMPLE_POINT.sub("", name or ""), country))
     s = "".join(c for c in s if not unicodedata.combining(c)).lower()
     return {t for t in re.findall(r"[a-z0-9]+", s) if len(t) > 2 and t not in _STOP and not t.isdigit()}
 
 
-def names_agree(a, b):
+def names_agree(a, b, country=None):
     """Some shared distinctive word, or one name inside the other."""
-    ta, tb = tokens(a), tokens(b)
+    ta, tb = tokens(a, country), tokens(b, country)
     if ta and tb and (ta & tb):
         return True
     na = "".join(sorted(ta)) if ta else ""
@@ -210,7 +228,9 @@ def best_match(ref, grid):
     """The nearest Carta beach that is the same place, with how it was matched."""
     best = None
     for row, d in grid.near(ref["lat"], ref["lon"], MATCH_KM):
-        named = names_agree(ref["name"], row["name"]) or (row["site"] and names_agree(ref["name"], row["site"]))
+        cc = stratum_cc(ref)
+        named = (names_agree(ref["name"], row["name"], cc)
+                 or (row["site"] and names_agree(ref["name"], row["site"], cc)))
         if not named and d > SAME_PLACE_KM:
             continue
         key = (0 if named else 1, d)
@@ -285,7 +305,7 @@ def cause(r):
     if row is None:
         if r["flags"]["near"]:
             return "near_miss_name_or_dedupe"
-        if not tokens(ref["name"]):
+        if not tokens(ref["name"], stratum_cc(ref)):
             return "registry_name_is_code_or_place"
         return "not_published_cap_or_gate"
     if r["note"] == "stale_one_season":

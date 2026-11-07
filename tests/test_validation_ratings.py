@@ -85,6 +85,33 @@ def test_unesco_join_fact_and_pageviews_zero_left_out(tmp_path):
     assert res["metrics"]["agreement_tau"]["value"] == 1.0
 
 
+def test_serial_site_counts_at_every_component_point(tmp_path):
+    """T1216 (T1191-k): a serial site's far component reaches the place."""
+    dests = italy()
+    dests[0]["designations"] = [{"kind": "unesco_whc"}]
+    raw = tmp_path / "whc_raw.xml"
+    raw.write_text(
+        '<?xml version="1.0" encoding="UTF-8"?><query><row><site>Serial Site</site>'
+        '<geolocations><poi><latitude>46.3</latitude><longitude>10.0</longitude></poi>'
+        '<poi><latitude>40.01</latitude><longitude>10.0</longitude></poi></geolocations></row>'
+        '<row><site>No points</site><geolocations></geolocations></row></query>', encoding="utf-8")
+    ctx = setup(tmp_path, dests)
+    ctx["unesco_raw"] = raw
+    built = lr.build(ctx)
+    assert built["n_sites"] == 1 and built["n_site_points"] == 2
+    assert built["places"]["IT0"]["unesco_near"] == ["Serial Site"]
+    f = vr.run(lr, ctx)["metrics"]["fact.unesco_join"]
+    assert (f["k"], f["n"]) == (1, 1)
+
+
+def test_unreadable_raw_export_falls_back_to_harvested_sites(tmp_path):
+    sites = [{"name": "Site A", "lat": 40.0, "lon": 10.0}]
+    ctx = setup(tmp_path, italy(), sites=sites)
+    ctx["unesco_raw"] = tmp_path / "missing.xml"
+    built = lr.build(ctx)
+    assert built["n_sites"] == 1 and built["places"]["IT0"]["unesco_near"] == ["Site A"]
+
+
 def test_agreement_per_country_pools_small_countries(tmp_path):
     dests = italy() + [place(f"MT{i}", f"Malta {i}", "MT", "Malta", 6 + i, 50 * (3 - i)) for i in range(3)]
     wv = {f"IT{i}": {"url": "x"} for i in range(0, 40, 5)}

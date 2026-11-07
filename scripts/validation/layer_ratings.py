@@ -25,7 +25,9 @@ these references, all read from disk:
                European Best Destinations: owner step, one row per entry with
                its page).
   unesco       a World Heritage site lies within UNESCO_KM of the place
-               (cache/unesco_whc.json). CIRCULAR: World Heritage is in the
+               (cache/unesco_whc.json; T1216: every component point of a
+               serial site from cache/unesco_whc_raw.xml when that file is
+               there, so Hedeby counts for Dannewerk). CIRCULAR: World Heritage is in the
                score's recognition part, so this reference checks the
                designation join, not the rating. Its agreement is reported
                and labelled, never gated.
@@ -73,6 +75,7 @@ import runner as vr
 CATALOGUE = ROOT / "continent-app" / "public" / "app_data.json"
 WIKIVOYAGE = ROOT / "cache" / "wikivoyage.json"
 UNESCO = ROOT / "cache" / "unesco_whc.json"
+UNESCO_RAW = ROOT / "cache" / "unesco_whc_raw.xml"
 EXTERNAL = ROOT / "data" / "rating" / "external"
 OUT_DIR = ROOT / "data" / "reports" / "validation" / "ratings"
 SOURCES = OUT_DIR / "sources"
@@ -110,6 +113,52 @@ def load_json(path, default=None):
         return json.loads(Path(path).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return default
+
+
+def _num(text):
+    try:
+        return float(text)
+    except (TypeError, ValueError):
+        return None
+
+
+def load_sites(ctx):
+    """World Heritage points, one per component of a serial site.
+
+    The harvested cache/unesco_whc.json keeps one point per site, so a
+    serial site counts only at its listed centre (Hedeby lies 10.8 km from
+    Dannewerk). The raw UNESCO export behind it lists every component under
+    <geolocations>; when it is readable each component is its own point with
+    the site's name. Otherwise the harvested points are used as before.
+    Returns (points, number of sites).
+    """
+    # A ctx that names its own harvested file (the tests) reads only that.
+    raw = ctx.get("unesco_raw", None if "unesco" in ctx else UNESCO_RAW)
+    root = None
+    if raw:
+        try:
+            import xml.etree.ElementTree as ET  # stdlib; the file is UNESCO's own export
+            root = ET.parse(Path(raw)).getroot()
+        except (OSError, ValueError, SyntaxError):
+            root = None
+    if root is not None:
+        points, n = [], 0
+        for row in root.iter("row"):
+            name = (row.findtext("site") or row.findtext("name_en") or "").strip()
+            pts = [(_num(p.findtext("latitude")), _num(p.findtext("longitude")))
+                   for p in row.iter("poi")]
+            if not pts:
+                pts = [(_num(row.findtext("latitude")), _num(row.findtext("longitude")))]
+            pts = [(a, b) for a, b in pts if a is not None and b is not None]
+            if not pts:
+                continue
+            n += 1
+            points += [{"name": name, "lat": a, "lon": b} for a, b in pts]
+        if n:
+            return points, n
+    sites = [s for s in load_json(ctx.get("unesco", UNESCO), []) or []
+             if isinstance(s, dict) and s.get("lat") is not None and s.get("lon") is not None]
+    return sites, len(sites)
 
 
 def norm(s):
@@ -249,16 +298,16 @@ def build(ctx):
             holes.append({"name": r.get("name"), "country": r.get("country"), "label": label,
                           "cc": cc_of_country.get(norm(r.get("country"))) or "??"})
 
-    sites = [s for s in load_json(ctx.get("unesco", UNESCO), []) or []
-             if s.get("lat") is not None and s.get("lon") is not None]
+    sites, n_sites = load_sites(ctx)
     places = {}
     for k, d in rated.items():
         lat, lon = d.get("city_lat") or d.get("lat"), d.get("city_lon") or d.get("lon")
         cls = (d.get("place") or {}).get("class") or "town"
         reach = UNESCO_KM.get(cls, 5.0)
-        near = [s["name"] for s in sites
-                if lat is not None and abs(s["lat"] - lat) < 0.3 and abs(s["lon"] - lon) < 0.4
-                and km(lat, lon, s["lat"], s["lon"]) <= reach]
+        near = list(dict.fromkeys(
+            s["name"] for s in sites
+            if lat is not None and abs(s["lat"] - lat) < 0.3 and abs(s["lon"] - lon) < 0.4
+            and km(lat, lon, s["lat"], s["lon"]) <= reach))
         wv = wv_cache.get(k) or {}
         has_wv = bool(wv.get("url")) or bool((d.get("guide") or {}).get("url"))
         status = wv_status.get(k)
@@ -276,7 +325,7 @@ def build(ctx):
             "lists": listed.get(k, []), "nights": nights.get(k),
         }
     built = {"places": places, "holes": holes, "generated_at": gen_at, "n_list_rows": len(rows),
-             "n_sites": len(sites), "wv_status_n": len(wv_status), "nights_n": len(nights)}
+             "n_sites": n_sites, "n_site_points": len(sites), "wv_status_n": len(wv_status), "nights_n": len(nights)}
     ctx["_built"] = built
     return built
 

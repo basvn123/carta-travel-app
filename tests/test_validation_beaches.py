@@ -55,6 +55,23 @@ def test_names_and_aliases():
     assert lb.iso2("EL") == "GR" and lb.iso2("UK") == "GB"
 
 
+def test_cyrillic_register_names_are_transliterated():
+    """T1216 (T1189-g): BG names in Cyrillic pass the name test."""
+    assert lb.tokens("ШКОРПИЛОВЦИ-ЦЕНТРАЛЕН ПЛАЖ") == {"shkorpilovtsi", "tsentralen"}
+    assert lb.names_agree("ШКОРПИЛОВЦИ-ЦЕНТРАЛЕН ПЛАЖ", "Shkorpilovtsi Beach")
+    assert lb.tokens("Слънчев бряг", "BG") == {"slanchev", "bryag"}
+    assert not lb.names_agree("Слънчев бряг", "Golden Sands", "BG")
+    assert lb.tokens("Παραλία Μύρτου", "GR") == {"paralia", "myrtou"}
+
+
+def test_gaps_only_keeps_metrics_and_drops_other_items():
+    res = {"gaps": [{"id": "b"}], "results": [{"id": "a"}, {"id": "b"}, {"id": "c"}],
+           "metrics": {"coverage": {"value": 0.5}}}
+    vr.keep_gap_results(res)
+    assert [r["id"] for r in res["results"]] == ["b"]
+    assert res["results_dropped"] == 2 and res["metrics"]["coverage"]["value"] == 0.5
+
+
 def test_match_flags_facts_and_gaps(tmp_path):
     items = [
         beach("a", "Playa Uno", 40.0, 3.0, "Excellent"),
