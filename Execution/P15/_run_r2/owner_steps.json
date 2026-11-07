@@ -1436,5 +1436,136 @@
    "Then python -I scripts/validation/texts_sample.py report --verdicts that file",
    "Commit both and compare the per-stratum table with provisional-2026-11-07.md"
   ]
+ },
+ {
+  "id": "T1197-a",
+  "title": "First full link run on the box",
+  "why": "The checker is proven on fixtures only; the real hosts are unreachable from the cloud.",
+  "where": "docs/HANDBOOK.md \"Link and page health (D16)\"",
+  "how": [
+   "On the box run `python pipeline/link_health.py run --limit 500`, read the totals, then let the weekly task continue",
+   "Commit the refreshed `continent-app/src/admin/linkHealth.json`"
+  ]
+ },
+ {
+  "id": "T1197-b",
+  "title": "Confirm Wikimedia's bot policy",
+  "why": "The pace (0.5 s per host) and user agent were set from secondary sources.",
+  "where": "pipeline/config/link_health.yaml",
+  "how": [
+   "Read the Wikimedia User-Agent and Robot policy pages",
+   "Change `host_delay_s` and `user_agent` in `pipeline/config/link_health.yaml` if they differ"
+  ]
+ },
+ {
+  "id": "T1198-b",
+  "title": "Photo check first run and baseline",
+  "why": "The flag rate is measured but not gated until a baseline exists.",
+  "where": "docs/HANDBOOK.md, Photo correctness (D17)",
+  "how": [
+   "On the box: `python pipeline/photos/correctness.py --fetch-meta`",
+   "Read data/reports/photo_check/<date>.json (totals, review list)",
+   "`CARTA_PHOTO_CHECK=data/reports/photo_check/<date>.json python -I scripts/validation/runner.py photos --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1198-d",
+  "title": "Photo check vision tier run",
+  "why": "Confirms the Gemini image calls, answers and cost (prices from aggregators only).",
+  "where": "pipeline/photos/correctness.json (vision)",
+  "how": [
+   "With GEMINI_API_KEY set: `python pipeline/photos/correctness.py --fetch-meta --vision gemini`",
+   "Check `vision.calls` and the tier 2 answers in the report",
+   "Compare the token use in AI_EVENTS_JSONL with https://ai.google.dev/pricing"
+  ]
+ },
+ {
+  "id": "T1198-f",
+  "title": "Review the flagged heroes before applying",
+  "why": "Replacements are automatic, taste is not (Starmer on Tiverton, Flag of Europe on Eu, a grizzly on Fur).",
+  "where": "Execution/P15/T1198-photo-correctness.md",
+  "how": [
+   "`python pipeline/photos/correctness.py --all --fetch-meta`",
+   "Read every `flag` result and its `replacement`",
+   "Approve with `--apply` (lasts until the next export, see T1198-e) or fix by hand in the review queue (`python pipeline/photos/review.py`)"
+  ]
+ },
+ {
+  "id": "T1199-a",
+  "title": "Check the entry rules against the official pages",
+  "why": "The lines were checked from search results because the cloud session could not open the EU and GOV.UK sites, and a wrong entry line misleads a traveller at the border.",
+  "where": "pipeline/entry_rules.py",
+  "how": [
+   "Open travel-europe.europa.eu/ees_en and /etias_en, the Your Europe travel documents page, EUR-Lex 2018/1806 and gov.uk/guidance/apply-for-an-electronic-travel-authorisation-eta",
+   "Compare with rules_for() in pipeline/entry_rules.py (ETIAS must still have no start date)",
+   "Set RULES_CHECKED to that day and run python pipeline/entry_rules.py"
+  ]
+ },
+ {
+  "id": "T1199-b",
+  "title": "Run the entry rules refresh on the box",
+  "why": "Each country's advice line then shows the GOV.UK page's own update date instead of only the table date.",
+  "where": "run_pipeline.py task entry_rules, docs/HANDBOOK.md \"Entry rules\"",
+  "how": [
+   "On the box run python run_pipeline.py entry_rules (or python pipeline/entry_rules.py --refresh)",
+   "Check that it reports 41 pages read (42 countries, Denmark and the Faroe Islands share one page)",
+   "Commit continent-app/public/entry_rules.json"
+  ]
+ },
+ {
+  "id": "T1200-a",
+  "title": "Build the Fire Weather Index table",
+  "why": "The fire months stay a dry-heat proxy until a true FWI table exists.",
+  "where": "docs/HANDBOOK.md (Heat and fire months)",
+  "how": [
+   "Request cems-fire-historical-v1 monthly means 1991-2020 on a free CDS account and confirm the licence and attribution wording",
+   "Convert with xarray or cdo monmean to nearest-cell values per place id",
+   "Save as cache/fire_fwi.json {\"<id>\": [12 values]}"
+  ]
+ },
+ {
+  "id": "T1200-b",
+  "title": "Run the task",
+  "why": "The shipped wire has no heat or fire months until it runs.",
+  "where": "run_pipeline.py task heat_fire",
+  "how": [
+   "Python run_pipeline.py --only heat_fire",
+   "Rebuild the wire",
+   "Check Seville shows fire months and Oslo none"
+  ]
+ },
+ {
+  "id": "T1201-b",
+  "title": "Run the trails chain so the T1201 fixes reach the wire",
+  "why": "The loop flag, route type, lake and landform highlights, stage counts, routed bridges and the dropped describe.py leads are in code but not on the wire.",
+  "where": "Execution/P15/T1201-sweep-trails.md",
+  "how": [
+   "On the box with the lab up (T1182-a), run `python run_pipeline.py --only trails_hierarchy,trails_curate,trails_scenic,trails_attributes,trails_rate` (trails_rate exports, then `trails_summaries` follows)",
+   "Then count rows with `is_loop` true and ends over 1 km (296 before, expect about 0), lake highlights with fountain, basin or harbour names (790 before), walks with no highlight (a quarter before), stage rows with `h.n`, treks with `of`, walk summaries on the wire (244 before, expect 0)",
+   "Run `python -I scripts/validation/trails_external.py --write --check`",
+   "Put the numbers in the next report"
+  ]
+ },
+ {
+  "id": "T1181-b",
+  "title": "Rerun the trails external check after the routed repair",
+  "why": "33 reference trails miss for broken geometry, and only the box run of the routed repair can change that.",
+  "where": "Execution/P15/T1181-trails-external.md, Execution/P15/T1183-trail-continuity.md",
+  "how": [
+   "After T1183-a and the export: `python -I scripts/validation/trails_external.py --write --check`",
+   "Compare the 33 failed_continuity misses (Moselsteig, Offa's Dyke Path, 10 Irish Ways)",
+   "Move the baseline with `--write-baseline` if coverage rose"
+  ]
+ },
+ {
+  "id": "T1182-d",
+  "title": "Decide which trails inputs live on the box volume",
+  "why": "14 of 22 lab-guarded tasks need extracts, DEM tiles, BRouter tiles, Overpass or Commons; on the volume they cost EUR 0.0572 a GB a month, otherwise those tasks stay with the worker.",
+  "where": "Execution/P15/T1182-trails-lab-box.md",
+  "how": [
+   "Read T1182's task list",
+   "Pick per input: volume (size it) or worker",
+   "Tell the next session, which then writes T1182-c"
+  ]
  }
 ]

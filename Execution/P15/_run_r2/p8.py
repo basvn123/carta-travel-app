@@ -21,7 +21,7 @@ for rp in sys.argv[2:]:
         if how: it['how'] = [h[:1].upper() + h[1:] for h in how]
         items.append(it); seen.add(iid)
 json.dump(items, open(store, 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
-phase = "    { key: 'round2', title: '8. From round 2', blurb: 'Steps the round 2 sessions (S51 and on, from 2026-11-06) could not do from the cloud. Each comes from that task report; most wait until the code is merged and deployed.', items: " + json.dumps(items, ensure_ascii=False) + " }"
+phase = "    { key: 'round2', title: '8. From rounds 2 and 3', blurb: 'Steps the round 2 and round 3 sessions (S51 to S133, from 2026-11-06) could not do from the cloud. Each comes from that task report; most wait until the code is merged and deployed.', items: " + json.dumps(items, ensure_ascii=False) + " }"
 h = open(html_path, encoding='utf-8').read()
 block = "/*P8*/\n" + phase + "\n/*P8END*/"
 if '/*P8*/' in h:
