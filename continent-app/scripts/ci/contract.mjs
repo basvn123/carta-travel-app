@@ -73,7 +73,8 @@ export function checkWireSchema(schema = WIRE_SCHEMA) {
   for (const k of schema?.$defs?.destination?.required || []) if (!(k in destProps)) problems.push(`${SCHEMA_NAME}: required destination key "${k}" has no property`);
   for (const [k, p] of Object.entries(metaProps)) if (p['x-presence'] !== 'required') problems.push(`${SCHEMA_NAME}: meta key "${k}" must have x-presence "required"`);
   for (const [k, p] of Object.entries(destProps)) {
-    if (!['every', 'some'].includes(p['x-presence'])) problems.push(`${SCHEMA_NAME}: destination key "${k}" must have x-presence "every" or "some"`);
+    // T1202: "pending" is a key listed before its first pipeline run (shape checked, absence allowed).
+    if (!['every', 'some', 'pending'].includes(p['x-presence'])) problems.push(`${SCHEMA_NAME}: destination key "${k}" must have x-presence "every", "some" or "pending"`);
     if (typeof p.description !== 'string' || !p.description) problems.push(`${SCHEMA_NAME}: destination key "${k}" has no description`);
   }
   // A vacuous gate on an emptied schema is the failure to rule out.
@@ -569,27 +570,29 @@ export function parseSchemaContract(markdown) {
   const meta = new Set();
   const every = new Set();
   const some = new Set();
+  const pending = new Set();
   const start = text.search(/^## Wire contract/m);
   if (start < 0) {
     problems.push('docs/SCHEMA.md has no "## Wire contract" section');
-    return { version, meta, every, some, problems };
+    return { version, meta, every, some, pending, problems };
   }
   const rest = text.slice(start + 3);
   const end = rest.search(/^## /m);
   const section = end < 0 ? rest : rest.slice(0, end);
-  const ROW = /^\|\s*`([A-Za-z0-9_]+)`\s*\|\s*(meta|destination)\s*\|\s*(required|every|some)\s*\|/;
+  const ROW = /^\|\s*`([A-Za-z0-9_]+)`\s*\|\s*(meta|destination)\s*\|\s*(required|every|some|pending)\s*\|/;
   for (const line of section.split(/\r?\n/)) {
     const m = ROW.exec(line);
     if (!m) continue;
     const [, key, block, presence] = m;
-    const seen = block === 'meta' ? meta.has(key) : (every.has(key) || some.has(key));
+    const seen = block === 'meta' ? meta.has(key) : (every.has(key) || some.has(key) || pending.has(key));
     if (seen) problems.push(`docs/SCHEMA.md lists ${block} key "${key}" twice`);
     if (block === 'meta') {
       if (presence !== 'required') problems.push(`docs/SCHEMA.md meta key "${key}" must be "required"`);
       meta.add(key);
     } else if (presence === 'every') every.add(key);
     else if (presence === 'some') some.add(key);
-    else problems.push(`docs/SCHEMA.md destination key "${key}" must be "every" or "some"`);
+    else if (presence === 'pending') pending.add(key);
+    else problems.push(`docs/SCHEMA.md destination key "${key}" must be "every", "some" or "pending"`);
   }
   // The document cannot drop a key the app has no fallback for, and the
   // table cannot quietly empty itself (a vacuous gate on an empty set).
@@ -598,7 +601,7 @@ export function parseSchemaContract(markdown) {
   if (meta.size < 10 || every.size + some.size < 20) {
     problems.push(`docs/SCHEMA.md wire contract lists ${meta.size} meta and ${every.size + some.size} destination keys; expected at least 10 and 20`);
   }
-  return { version, meta, every, some, problems };
+  return { version, meta, every, some, pending, problems };
 }
 
 /**
@@ -620,6 +623,7 @@ export function checkSchemaTable(markdown, schema = WIRE_SCHEMA) {
   diff('meta', doc.meta, want.meta);
   diff('destination "every"', doc.every, want.every);
   diff('destination "some"', doc.some, want.some);
+  diff('destination "pending"', doc.pending, want.pending);
   const a = markdown.indexOf(TABLE_START);
   const b = markdown.indexOf(TABLE_END);
   if (a < 0 || b < a) problems.push('docs/SCHEMA.md has no wire-table markers around the table');

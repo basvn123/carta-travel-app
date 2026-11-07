@@ -15,7 +15,8 @@
  * Keywords: type, enum, const, pattern, minLength, minimum, maximum, items,
  * prefixItems, minItems, maxItems, properties, required,
  * additionalProperties, minProperties, $ref (local #/$defs/ only), plus
- * x-presence (required | every | some), checked only with catalogue: true.
+ * x-presence (required | every | some | pending), checked only with catalogue: true
+ * (pending, T1202: a key listed before its first run, shape only).
  *
  * Pure: no Node or DOM APIs, the caller passes the parsed schema in, so the
  * same function can run at hydration time in the browser.
@@ -160,15 +161,17 @@ export function validateWire(data, schema, { catalogue = false } = {}) {
   return problems;
 }
 
-/** The key set the schema documents: { version, meta, every, some }. */
+/** The key set the schema documents: { version, meta, every, some, pending }. */
 export function schemaKeySet(schema) {
   const meta = new Set(Object.keys(schema?.properties?.meta?.properties || {}));
   const every = new Set();
   const some = new Set();
+  const pending = new Set();
   for (const [k, p] of Object.entries(schema?.$defs?.destination?.properties || {})) {
     if (p['x-presence'] === 'every') every.add(k);
     else if (p['x-presence'] === 'some') some.add(k);
+    else if (p['x-presence'] === 'pending') pending.add(k);
   }
   const version = schema?.['x-schema-version'] ?? null;
-  return { version, meta, every, some };
+  return { version, meta, every, some, pending };
 }

@@ -789,6 +789,17 @@
         "pipeline/harvest_protected_areas_osm.py"
       ]
     },
+    "destinations.*.season": {
+      "source": "OSM opening_hours and seasonal tags (Geofabrik extracts)",
+      "tasks": [
+        "seasons"
+      ],
+      "artifact": "cache/dest_seasons.json",
+      "writers": [
+        "pipeline/harvest_seasons.py"
+      ],
+      "note": "T1202 (D18): present only on places with seasonal facts; presence pending until the first run."
+    },
     "destinations.*.guide": {
       "source": "Wikivoyage lead and link (CC BY-SA)",
       "tasks": [

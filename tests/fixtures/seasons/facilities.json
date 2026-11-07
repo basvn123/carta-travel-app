@@ -1,0 +1,9 @@
+[
+  {"kind": "hut", "name": "Knorrhuette", "lat": 47.4100, "lon": 11.0300, "seasonal": true, "open": [6, 7, 8, 9, 10], "conf": "high", "checked": "2025-06-14"},
+  {"kind": "lift", "name": "Sonnenkar", "lat": 47.4200, "lon": 11.0000, "seasonal": true, "open": [1, 2, 3, 4, 12], "conf": "medium", "checked": null},
+  {"kind": "ferry", "name": "Isola Ferry", "lat": 40.0000, "lon": 15.0000, "seasonal": true, "open": [5, 6, 7, 8, 9], "conf": "medium", "checked": null,
+   "pts": [[40.0000, 15.0000], [40.0500, 15.0200]]},
+  {"kind": "ferry", "name": "Year round line", "lat": 43.0000, "lon": 16.0000, "seasonal": false},
+  {"kind": "ferry", "name": "Summer line", "lat": 43.0010, "lon": 16.0010, "seasonal": true, "open": [6, 7, 8], "conf": "high", "checked": "2026-05-01"},
+  {"kind": "place", "name": "Rifugio Alto", "lat": 46.5000, "lon": 11.8000, "seasonal": true, "open": [6, 7, 8, 9], "conf": "low", "checked": null}
+]

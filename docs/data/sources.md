@@ -40,6 +40,7 @@ the build box schedule, `owner` by hand.
 | `open_prices` | Open Food Facts Open Prices daily dump | primary | ODbL-1.0 | MONTHLY | box | `food` |  | `open_food_facts_open_prices` |
 | `osm` | OpenStreetMap via Overpass and Geofabrik (roads, transit lines, ferries, parking) | primary | ODbL-1.0 | MONTHLY | box | `transit_lines` |  | `openstreetmap_via_overpass`, `openstreetmap_via_overpass_harvest_parking`, `openstreetmap_via_geofabrik_country` |
 | `osm_protected` | OpenStreetMap protected areas, national parks and nature reserves (Overpass) | primary | ODbL-1.0 | IRREG | box | `nature` |  | `openstreetmap_via_overpass` |
+| `osm_seasons` | OpenStreetMap opening_hours and seasonal tags of places, huts, lifts and ferries (Geofabrik extracts) | primary | ODbL-1.0 | QUARTERLY | box | `seasons` |  | `openstreetmap_via_geofabrik_country` |
 | `ourairports` | OurAirports airport list | primary | LicenseRef-public-domain | QUARTERLY | box | `airports` |  | `ourairports` |
 | `poi_mix` | Things to do from OpenTripMap, OpenStreetMap, Overture Places, Wikidata and Wikivoyage listings | derived | LicenseRef-carta-derived | MONTHLY | box | `activities`, `overture`, `poi_significance` | `osm`, `wikidata`, `wikivoyage` | `opentripmap`, `overture_maps_places`, `wikidata_sitelink_counts_live`, `wikivoyage` |
 | `stays_scrape` | Booking.com and Hostelworld search lists, owner-run sample (stays journal, T1021) | primary | LicenseRef-site-terms | MONTHLY | owner |  |  | `booking_com_search_lists`, `hostelworld_city_lists` |
@@ -71,5 +72,6 @@ the build box schedule, `owner` by hand.
 | `nature` | `osm_protected` | ODbL-1.0 | IRREG | `pipeline/harvest_protected_areas_osm.py` |
 | `guide` | `wikivoyage` | CC-BY-SA-4.0 | IRREG | `pipeline/apply_wikivoyage.py` |
 | `wikidata` | `wikidata` | CC0-1.0 | IRREG |  |
+| `season` | `osm_seasons` | ODbL-1.0 | QUARTERLY | `pipeline/harvest_seasons.py` |
 
-24 sources, 18 key blocks.
+25 sources, 19 key blocks.

@@ -226,6 +226,9 @@ export const RANK_FIELDS = Object.freeze({
   bathing_water: { omit: ['nearest'] },
   image: { pick: ['url', 'w', 'h'] },
   climate: { pick: ['best'] },
+  // T1202 (D18): the plan flow's candidates skip a place shut in the trip's
+  // month (lib/season.js openIn) before the country files land.
+  season: { pick: ['open', 'conf'] },
   // T765: the place taste profile without its evidence, so a list can sort
   // "For you" before the country files land (closes T762-b; the page reads
   // the full profile, with the facts behind each bar, from the shard).
