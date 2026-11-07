@@ -1424,3 +1424,4 @@ Rows from `_OPEN.md` whose item is done, with the task that closed it. Moved her
 | T1146-h | T1146 | MAP.md does not name pipeline/catalogue_gaps.py or docs/data/catalogue-gaps/ | next task | closed by T1214 |  |
 | T1173-a | T1173 | MAP.md does not name pipeline/apply_overrides.py, data/overrides/ or the admin Overrides tab (Admin and Data wire rows); MAP.md was outside this task's files | next task | closed by T1214 |  |
 | T1173-b | T1173 | Trails and cycle routes have no pipeline override file (only the live content_overrides layer 'trail'); add one with the trail pipeline owner (S97) so a trail text fix survives trails_* reruns | next task | closed by T1214 |  |
+| T1173-c | T1173 | Outputs built from the master earlier in the same run (dossier, search index, Ask index) carry a new dest override only from the next run; apply the step before the dossier and ask_index tasks, or rerun them when an override changed | next task | closed by T1214 |  |
