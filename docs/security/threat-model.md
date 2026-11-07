@@ -278,7 +278,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 ## 13. Carta MCP server (T1155, F7)
 
-**Data flow.** `services/mcp/` is a local stdio server a traveller or developer starts on their own machine and connects to their own MCP client. It reads the shipped wire files (`app_data.json`, `journeys/`) from disk and answers four tools: `search_places`, `place_facts`, `price_trip`, `list_trips`. It is not deployed to Cloudflare, Supabase or the box, listens on no port, and makes no network call.
+**Data flow.** `services/mcp/` is a local stdio server a traveller or developer starts on their own machine and connects to their own MCP client. It reads the shipped wire files (`app_data.json`, `journeys/`, and a swept `flights/<IATA>.json` when one is present) from disk and answers four tools: `search_places`, `place_facts`, `price_trip`, `list_trips`. It is not deployed to Cloudflare, Supabase or the box, listens on no port, and makes no network call.
 
 **Assets.** Nothing private: the same data the public app and R2 already serve. No account, trip, booking or user data is reachable, and `list_trips` means the public library trips, not a traveller's saved trips.
 
@@ -293,7 +293,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 | Claude API | None; no Anthropic SDK (the MCP SDK is the protocol library only) | static grep |
 | Tool argument abuse | Strict zod schemas: string lengths, integer ranges, enums, at most 10 stops, 25 results; unknown ids give an error result, not a crash | `smoke.test.mjs` |
 | Indirect prompt injection (OWASP LLM01) through wire text | Every free-text field passes `safeText`, which runs the app's `scrubData` (the aiGuard scanner), drops instruction-shaped sentences and caps length; tool descriptions tell the client to treat text as data | `tools.test.mjs` |
-| Wrong money | `price_trip` and `place_facts` call the app's own `priceDay`, so a figure equals Explore's; the result states what is excluded (flights, legs) | `tools.test.mjs` parity test |
+| Wrong money | `place_facts` calls the app's own `priceDay` and `price_trip` the planner's `quoteTrip` (T1215), so a figure equals Explore's and the planner's; the result states what is excluded (the way there and home without a `flights` input, activities) | `tools.test.mjs` and `price_trip.test.mjs` parity tests, `tests/eval/price_trip.eval.json` |
 | Dependency supply chain | One protocol library pinned exactly (`@modelcontextprotocol/sdk` 1.32.2) plus zod; lockfile committed; `npm audit` in CI (`mcp.yml`) | CI |
 | Unbounded consumption | Local process, results capped, catalogue read once | none needed |
 
