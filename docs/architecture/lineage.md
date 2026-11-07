@@ -18,9 +18,9 @@ that destructures a record is missed. Request paths are in [request-paths.md](re
 | ...written only or partly by a legacy step | 29 |
 | ...written only or partly by a script no task schedules | 20 |
 | ...with no writer left in the repo | 2 |
-| run_pipeline.py tasks | 85 |
-| ...that write a wire field or a wire file | 43 |
-| Wire files and folders | 27 |
+| run_pipeline.py tasks | 87 |
+| ...that write a wire field or a wire file | 44 |
+| Wire files and folders | 28 |
 
 ## The trunk
 
@@ -900,6 +900,17 @@ flowchart LR
   C1 --> W0
 ```
 
+### `entry_rules` (monthly)
+
+```mermaid
+flowchart LR
+  T_entry_rules["entry_rules"]
+  C0["pipeline/entry_rules.py"]
+  T_entry_rules --> C0
+  W0["entry_rules.json (Pages)"]
+  C0 --> W0
+```
+
 ### `trailslab_worker` (weekly)
 
 ```mermaid
@@ -915,7 +926,7 @@ flowchart LR
 
 These feed caches, reports or other tasks (their output reaches the wire through a task above, or not at all).
 
-`ingestion`, `demand_events`, `coverage`, `register_intake`, `audit`, `routes_attach`, `trails_ingest`, `trails_elevation`, `trails_validate`, `trails_popularity`, `trails_registry`, `trails_splice`, `trails_route_bridge`, `trails_regionize`, `trails_derive_routes`, `trails_hierarchy`, `trails_curate`, `trails_forests`, `trails_scenic`, `trails_images`, `trails_way_tags`, `trails_attributes`, `cycling_harvest`, `cycling_enrich`, `cycling_photos`, `cycling_bridge`, `unesco`, `image_audit`, `must_descs`, `poi_images`, `sea_temp`, `heat_fire`, `dest_overlays`, `poi_fees`, `place_intros`, `place_gallery`, `field_stubs_report`, `taxonomy_tags`, `blog_drafts`, `blog_pr`, `photo_check`, `photo_sources`
+`ingestion`, `demand_events`, `coverage`, `register_intake`, `audit`, `routes_attach`, `trails_ingest`, `trails_elevation`, `trails_validate`, `trails_popularity`, `trails_registry`, `trails_splice`, `trails_route_bridge`, `trails_regionize`, `trails_derive_routes`, `trails_hierarchy`, `trails_curate`, `trails_forests`, `trails_scenic`, `trails_images`, `trails_way_tags`, `trails_attributes`, `cycling_harvest`, `cycling_enrich`, `cycling_photos`, `cycling_bridge`, `unesco`, `image_audit`, `must_descs`, `poi_images`, `sea_temp`, `heat_fire`, `dest_overlays`, `poi_fees`, `place_intros`, `place_gallery`, `field_stubs_report`, `taxonomy_tags`, `blog_drafts`, `blog_pr`, `link_health`, `photo_check`, `photo_sources`
 
 ## Wire files beside the contract
 
@@ -929,6 +940,7 @@ The contract covers `app_data.json`. The other folders the app fetches, with the
 | `poi/{shard}.json` | `sync` | `continent-app/scripts/sync-data.mjs` | R2 | `src/lib/appData.js` | activities.items_full of one place |
 | `app_data.json` | `sync` | `continent-app/scripts/sync-data.mjs` | none (not fetched) | `scripts/ci/check-contract.mjs` | the whole wire; input of the contract check and the harnesses |
 | `country_insights.json` | `sync` | `continent-app/scripts/sync-data.mjs` | Pages | `src/lib/appData.js`, `src/hooks/useCountryInsights.js` | per-country intel, copied from app_data/country_insights.json |
+| `entry_rules.json` | `entry_rules` | `pipeline/entry_rules.py` | Pages | `src/lib/entryRules.js`, `scripts/ci/check-contract.mjs` | entry rules per country and traveller group, with source and date checked (T1199, D19) |
 | `dossier/` | `dossier` | `pipeline/dossier/build_dossier.py` | R2 | `src/lib/dossier.js` | the per-place contract for the place page and the PDF |
 | `destinfo/` | `events`, `parking`, `dossier` | `pipeline/export_destinfo.py` | R2 | `src/lib/destInfo.js` | events, parking and practical facts per place (loader exists, no screen calls it today) |
 | `trips/` | `trips` | `pipeline/trips/build_trips.py` | R2 | `src/lib/trips.js` | ready-made 2 to 14 day trips |

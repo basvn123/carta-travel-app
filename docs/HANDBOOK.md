@@ -400,13 +400,32 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 3. Best months: each place votes for its best months; months with at least 60 percent of the top vote count are shown.
 4. Getting around: share of places with `car_needed`: over 0.6 says most need a car, over 0.3 some, else few.
 5. Its best: places with a `country_badge`, sorted by `country_rank`. Its cities: metro or city places not already in the best rail, up to 12. A place shows once on the page.
-6. A section with no content is not drawn.
+6. Check before you go (T1199, D19): see "Entry rules" below.
+7. A section with no content is not drawn.
 
 **Data behind it.** The catalogue rows Explore holds (ratings and `country_rank` from `python run_pipeline.py fame`), `public/country_insights.json`, journeys from `public/journeys/`, region index from `public/region/`.
 
 **Where it lives.** continent-app/src/browse/CountryPage.jsx, continent-app/src/browse/CountryGallery.jsx. Pipeline: pipeline/regions/, pipeline/intake/. Docs: docs/REGIONS.md, archive/docs-2026-11/COVERAGE.md.
 
 **Limits.** Five places are not reachable by links from any country page (register T225-a). No share card image for country pages (register T212-c).
+
+### Entry rules (Check before you go)
+
+**What it does.** On the country page, one line per traveller group (EU, EEA or Swiss citizen; British citizen; US and other visa free; visa required) says what to carry and what to do before the trip, in short neutral words, with the official page it rests on and the date it was checked. Under them, the official travel advice for the country (GOV.UK, written for British travellers) with its own date. A line is a pointer to the official page, never a paraphrase of a legal rule.
+
+**How it works.**
+1. `pipeline/entry_rules.py` puts each catalogue country in one zone (`ZONES`): Schengen (29 members, all running the Entry/Exit System since 2026-04-10), EU outside Schengen (CY, IE: no EES), open border micro states (AD, MC, SM: entered through a Schengen neighbour), the UK, own rules (AL, BA, ME, MK, RS, XK, MD) and the Faroe Islands.
+2. The zone fixes a list of codes per group (`CODES`: `id_or_passport`, `passport`, `ees`, `etias_tba`, `schengen_visa`, `uk_eta`, `uk_visa`, `cta_id`, `national_visa`, `own_country`, `check_official`) and the source (`SOURCES`, each with its licence). ETIAS has no start date, so it is only ever `etias_tba`.
+3. Every line carries `checked`: `RULES_CHECKED`, the day a person last checked the table against the sources, or the day the pipeline last read the GOV.UK page when that is later (UK group only).
+4. `--refresh` (the monthly `entry_rules` task) reads the GOV.UK Content API per country into `cache/entry_rules/govuk_fta.json`: the page's `public_updated_at` and whether it has an entry requirements part. A page that fails keeps its cached date; with no cache the advice shows the table date and no update date.
+5. Each country block carries `_src` (`entry_rules`) and `_asof` (build date), as T1143 asks of every key block.
+6. The app (`src/lib/entryRules.js`, `src/browse/CountryEntry.jsx`) joins the words of the codes (`entry.need.*`, six languages); a `check_official` line with no source reads "ask the country's embassy". No file or no block for the country: the section is not drawn.
+
+**Data behind it.** `continent-app/public/entry_rules.json` (about 36 KB, app host), written by `python pipeline/entry_rules.py`; contract in `pipeline/entry_rules.py validate` and `continent-app/scripts/ci/contract.mjs validateEntryRules` (run by `check-contract.mjs` with four seeded breaks).
+
+**Where it lives.** pipeline/entry_rules.py, continent-app/src/lib/entryRules.js, continent-app/src/browse/CountryEntry.jsx. Report: Execution/P15/T1199-entry-rules.md.
+
+**Limits.** The visa required line for the own rules zone and the Faroe Islands links no source yet (register T1199-c). The table was checked from official pages found by search; the first live check is an owner step (T1199-a).
 
 ### Shortlist (saving places)
 

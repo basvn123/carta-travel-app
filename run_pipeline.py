@@ -2856,6 +2856,8 @@ TASKS = [
                  "over several weeks. Writes continent-app/src/admin/linkHealth.json for "
                  "the admin Data health tab; the D2 gate reads its broken share "
                  "(scripts/quality/rules.yaml `links`). HANDBOOK 'Link and page health'."),
+    },
+    {
         "key": "photo_check",
         "title": "Photo correctness: a weekly sample of heroes checked against their place (D17)",
         "cadence": "after",
@@ -2873,6 +2875,25 @@ TASKS = [
                  "The flag rate is the D2 rule through the D23 runner layer photos, "
                  "gated once its baseline is written (T1198-b). Docs: HANDBOOK "
                  "'Photo correctness'."),
+    },
+    {
+        "key": "entry_rules",
+        "title": "Entry rules per country and traveller group, with the GOV.UK advice dates (D19, T1199)",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "rev": "T1199",
+        "guard": guard_reachable("GOV.UK", "www.gov.uk"),
+        "cmds": [[PY, "pipeline/entry_rules.py", "--refresh"]],
+        "note": ("pipeline/entry_rules.py writes continent-app/public/entry_rules.json: "
+                 "per country the codes for four traveller groups (EU, UK, visa free, "
+                 "visa) from the zone table, each with its official source and the "
+                 "date checked, and the GOV.UK foreign travel advice link with its "
+                 "update date from the Content API (OGL v3.0, cached in "
+                 "cache/entry_rules/). A page that fails keeps its cached date. "
+                 "RULES_CHECKED moves only when a person checks the table again. "
+                 "Docs: HANDBOOK 'Entry rules'."),
     },
     {
         "key": "photo_sources",

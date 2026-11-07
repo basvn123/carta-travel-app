@@ -80,6 +80,7 @@ import {
   WIRE_SCHEMA, WIRE_SCHEMA_PATH, checkWireSchema, checkSchemaTable,
   extractSupabaseCalls, validateDbContract,
   normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires, validateTrailImages, validateTrailTreks, validateTrailWayBack,
+  validateEntryRules,
 } from './contract.mjs';
 import { schemaKeySet } from '../../src/lib/wireSchema.js';
 import { splitCatalogue, mergeCatalogue } from '../../src/lib/bootIndex.js';
@@ -462,6 +463,35 @@ if (seed && seed in PAYLOAD_SEEDS) {
     if (rejected === Object.keys(WIRE_BREAKS).length) {
       pass(`${rejected}/${rejected} seeded split-wire breaks rejected`);
     }
+  }
+}
+
+// ------------------------------------------------- entry rules (T1199, D19)
+// public/entry_rules.json: one block per catalogue country, four traveller
+// groups, each line with its source and date checked; plus seeded breaks.
+{
+  const file = path.join(APP_ROOT, 'public', 'entry_rules.json');
+  if (!fs.existsSync(file)) {
+    fail('public/entry_rules.json is missing (run python pipeline/entry_rules.py)');
+  } else {
+    const doc = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const countries = [...new Set(Object.values(real.destinations).map((d) => d.iso2).filter(Boolean))].sort();
+    const problems = validateEntryRules(doc, { countries });
+    if (problems.length) fail(`entry_rules.json breaks the contract:\n${problems.slice(0, 12).map((p) => `          ${p}`).join('\n')}`);
+    else pass(`entry_rules.json covers ${countries.length}/${countries.length} catalogue countries x 4 groups, each with a source and a date`);
+    const first = Object.keys(doc.countries || {})[0];
+    const BREAKS = {
+      'entry-asof-dropped': (d) => { delete d.countries[first]._asof; return d; },
+      'entry-unknown-code': (d) => { d.countries[first].rules.uk.needs = ['made_up']; return d; },
+      'entry-group-missing': (d) => { delete d.countries[first].rules.visa; return d; },
+      'entry-country-missing': (d) => { delete d.countries[first]; return d; },
+    };
+    let rejected = 0;
+    for (const [name, brk] of Object.entries(BREAKS)) {
+      if (validateEntryRules(brk(structuredClone(doc)), { countries }).length) rejected += 1;
+      else fail(`entry rules break ${name} was ACCEPTED; the gate is vacuous for it`);
+    }
+    if (rejected === Object.keys(BREAKS).length) pass(`${rejected}/${rejected} seeded entry rules breaks rejected`);
   }
 }
 

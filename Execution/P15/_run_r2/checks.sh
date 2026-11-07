@@ -21,3 +21,12 @@ cd $R
 run ruff /var/tmp/ruff143/bin/ruff check --select E9,F63,F7,F82 pipeline src scripts run_pipeline.py tests
 for d in services/*/; do [ -f $d/requirements-dev.txt ] && grep -q ruff $d/requirements-dev.txt && run ruff-$(basename $d) /var/tmp/ruff143/bin/ruff check $d; done
 cd $A; run csp env CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome node scripts/verify_csp.mjs --dist ../.fastbuild
+cd $R; run dupkeys python3 -c "
+import ast,sys
+bad=[]
+for f in ['run_pipeline.py']:
+    for n in ast.walk(ast.parse(open(f).read())):
+        if isinstance(n,ast.Dict):
+            ks=[k.value for k in n.keys if isinstance(k,ast.Constant)]
+            bad+=[(f,n.lineno,k) for k in set(ks) if ks.count(k)>1]
+print('duplicate dict keys:', bad or 'none'); sys.exit(1 if bad else 0)"

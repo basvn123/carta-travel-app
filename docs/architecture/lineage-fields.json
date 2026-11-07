@@ -907,6 +907,19 @@
       "what": "per-country intel, copied from app_data/country_insights.json"
     },
     {
+      "path": "entry_rules.json",
+      "tasks": [
+        "entry_rules"
+      ],
+      "writer": "pipeline/entry_rules.py",
+      "host": "Pages",
+      "readers": [
+        "continent-app/src/lib/entryRules.js",
+        "continent-app/scripts/ci/check-contract.mjs"
+      ],
+      "what": "entry rules per country and traveller group, with source and date checked (T1199, D19)"
+    },
+    {
       "path": "dossier/",
       "tasks": [
         "dossier"
