@@ -14,4 +14,9 @@ run entry python3 -I scripts/docs/check_entry_points.py
 run drift python3 -I scripts/docs/drift.py
 run configref python3 -I scripts/docs/config_reference.py --check
 run lineage python3 -I scripts/docs/build_lineage.py --check
-if [ $# -gt 0 ]; then run pytest python3 -m pytest -q -x --no-header -p no:cacheprovider "$@"; fi
+args=$(grep -v "^#" tests/quarantine.txt | grep . | sed "s/^/--deselect /"); run pytest python3 -m pytest tests -q -p no:cacheprovider $args
+run reference python3 -I scripts/docs/build_reference.py --check
+(cd services/mcp && [ -d node_modules ] && run mcp npm test)
+cd $R
+run ruff /var/tmp/ruff143/bin/ruff check --select E9,F63,F7,F82 pipeline src scripts run_pipeline.py tests
+for d in services/*/; do [ -f $d/requirements-dev.txt ] && grep -q ruff $d/requirements-dev.txt && run ruff-$(basename $d) /var/tmp/ruff143/bin/ruff check $d; done
