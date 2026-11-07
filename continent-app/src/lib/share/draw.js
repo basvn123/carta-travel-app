@@ -80,7 +80,7 @@ export function opsToSvg(ops, { w, h, pal = {}, family = 'sans-serif', bg = null
       const tf = (o.tx || o.ty || o.scale) ? ` transform="translate(${o.tx || 0} ${o.ty || 0}) scale(${o.scale || 1})"` : '';
       out.push(`<path d="${o.d}"${tf} fill="${col(pal, o.fill)}"${o.stroke ? ` stroke="${col(pal, o.stroke)}" stroke-width="${o.sw || 1}" vector-effect="non-scaling-stroke" stroke-linejoin="round"` : ''}/>`);
     } else if (o.t === 'text') {
-      out.push(`<text x="${o.x}" y="${o.y}" font-family="${esc(family)}" font-size="${o.size}" font-weight="${o.weight || 400}" fill="${col(pal, o.fill)}" text-anchor="${ANCHOR[o.anchor] || 'start'}" style="font-variant-numeric: tabular-nums">${esc(o.text)}</text>`);
+      out.push(`<text x="${o.x}" y="${o.y}" font-family="${esc(family)}" font-size="${o.size}" font-weight="${o.weight || 400}" fill="${col(pal, o.fill)}" text-anchor="${ANCHOR[o.anchor] || 'start'}">${esc(o.text)}</text>`);
     }
   }
   out.push('</svg>');

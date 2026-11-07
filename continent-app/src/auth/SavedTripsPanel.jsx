@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
@@ -8,8 +8,9 @@ import {
 } from '../planner/dayPlanStore.js';
 import { tripsStore } from '../planner/tripsStore.js';
 import { CalendarIcon, RouteIcon, LinkIcon, PencilIcon, ReceiptIcon } from '../components/Icons.jsx';
-import { ShareReceiptSheet } from '../components/ShareReceiptSheet.jsx';
 import { shareReceiptOn } from '../lib/share/flag.js';
+// T1175: the receipt sheet loads on first use; it is behind a flag.
+const ShareReceiptSheet = lazy(() => import('../components/ShareReceiptSheet.jsx').then((m) => ({ default: m.ShareReceiptSheet })));
 import { Button, Chip } from '../components/ui/index.js';
 import { loadDeviceTrip, clearDeviceTrip } from '../planner/deviceTripStore.js';
 import { PastTripForm } from './PastTripForm.jsx';
@@ -1139,7 +1140,9 @@ export function SavedTripsPanel({
   return (
     <div className="saved-shell mytrips">
       {receiptPlan && (
-        <ShareReceiptSheet plan={receiptPlan} data={data} stayTier={stayTier} lifestyle={lifestyle} onClose={() => setReceiptFor('')} />
+        <Suspense fallback={null}>
+          <ShareReceiptSheet plan={receiptPlan} data={data} stayTier={stayTier} lifestyle={lifestyle} onClose={() => setReceiptFor('')} />
+        </Suspense>
       )}
       <div className="panel open account-panel saved-trips-panel">
         <header className="panel-header saved-panel-header mt-header">
