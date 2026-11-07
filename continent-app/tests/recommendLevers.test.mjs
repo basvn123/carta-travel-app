@@ -69,6 +69,13 @@ test("a bases lever that leaves no trip falls back to every trip", () => {
 
 const PUB = new URL("../public/", import.meta.url);
 const hasData = existsSync(new URL("app_data.json", PUB));
+
+// The fixture flight sweep was taken around the test's own "today" (2026-10-28). flights.js judges a fare's
+// age against the real clock, so after the fixture ages out the flight legs drop and the lever has nothing
+// to move. Pin the clock for this file to the test's day (fixed at the round 2 batch 7 merge, 2026-11-07).
+const REAL_NOW = Date.now;
+test.before(() => { Date.now = () => Date.parse("2026-10-28T12:00:00Z"); });
+test.after(() => { Date.now = REAL_NOW; });
 const pub = (p) => JSON.parse(readFileSync(new URL(p, PUB), "utf8"));
 
 function baseInput(extra = {}) {
