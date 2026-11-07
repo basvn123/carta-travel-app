@@ -70,3 +70,29 @@ def test_retired_lead_is_not_shipped():
     city = "A one day city sightseeing walk past 6 sightseeing stops."
     assert export_wire.wire_summary({"description": city, "category": "citytrip"}) == city
     assert export_wire.wire_summary({"description": None, "category": "hike"}) is None
+
+
+# --- T1201 (T1179-d, T1181-f): what a highlight is ------------------------
+
+def test_only_a_lake_is_a_lake():
+    import scenic
+    assert scenic.classify({"natural": "water"}) == "lake"
+    assert scenic.classify({"natural": "water", "water": "reservoir"}) == "lake"
+    assert scenic.classify({"natural": "water", "water": "stream_pool"}) == "lake"
+    for w in ("fountain", "harbour", "basin", "wastewater", "reflecting_pool", "canal"):
+        assert scenic.classify({"natural": "water", "water": w}) is None, w
+    assert scenic.classify({"natural": "water", "water": "river"}) == "water"
+
+
+def test_landform_kinds_are_highlights_with_a_chip():
+    import scenic
+    assert scenic.classify({"natural": "stone"}) == "rock"
+    assert scenic.classify({"natural": "rock"}) == "rock"
+    assert scenic.classify({"natural": "arete"}) == "ridge"
+    assert scenic.classify({"natural": "ridge"}) == "ridge"
+    assert scenic.classify({"natural": "cape"}) == "cape"
+    for k in ("rock", "ridge", "saddle", "cape", "bay"):
+        assert scenic.KINDS[k] > 0
+        assert k in attributes.HIGHLIGHT_CODE
+    sel = " ".join(scenic.SELECTORS)
+    assert "rock|stone|ridge|arete|saddle|cape|bay" in sel

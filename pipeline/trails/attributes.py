@@ -417,6 +417,9 @@ HIGHLIGHT_CODE = {
     # glacier and spring have no chip of their own: a glacier reads as a
     # summit day and a spring is a convenience, not a reason.
     "glacier": "summit",
+    # T1201 (T1181-f): the landform kinds scenic.py added.
+    "rock": "gorge", "ridge": "summit", "saddle": "summit",
+    "cape": "coast", "bay": "coast",
 }
 
 # Only what the route genuinely TOUCHES earns a code. scenic.py stores both

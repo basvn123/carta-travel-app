@@ -84,6 +84,11 @@ KINDS = {
     "lake": 0.7, "castle": 0.7, "ruins": 0.6, "monastery": 0.6,
     "lighthouse": 0.6, "beach": 0.6, "hut": 0.5, "forest": 0.5,
     "spring": 0.25, "water": 0.15,
+    # T1201 (row T1181-f): landforms a famous walk is named for (the Old Man
+    # of Storr is a rock pinnacle, the Quiraing a ridge of landslips, Striding
+    # Edge an arete) and the coast's capes and bays. Without them a quarter of
+    # walks had no highlight at all and sat on the scenery floor.
+    "rock": 0.7, "ridge": 0.8, "saddle": 0.5, "cape": 0.6, "bay": 0.4,
     # A village is a highlight and NOT a density signal. It earns a chip
     # ("what you pass": village) because walking through one is a different
     # day from walking round a reservoir, and it earns nothing in the scenery
@@ -116,6 +121,9 @@ SELECTORS = [
     'nwr["historic"~"^(castle|ruins|monastery)$"]["name"]',
     'nwr["amenity"="monastery"]["name"]',
     'node["man_made"="lighthouse"]["name"]',
+    # T1201 (T1181-f): named landforms; natural=stone is the same idea as rock
+    # (a single boulder or stack), ridge and arete are lines (`out center`).
+    'nwr["natural"~"^(rock|stone|ridge|arete|saddle|cape|bay)$"]["name"]',
     'node["place"~"^(village|hamlet)$"]["name"]',
 ]
 
@@ -180,6 +188,14 @@ def live_endpoints(verbose=False):
     return sources.OVERPASS_ENDPOINTS
 
 
+# The `water=*` values that are a lake to a walker (absent counts as lake:
+# most mapped lakes carry no subtag), and the running waters kept as "water".
+# Everything else under natural=water (fountain, basin, reflecting_pool,
+# wastewater, harbour, canal, ditch, moat, lock, pool...) is no highlight.
+LAKE_WATERS = {"lake", "pond", "reservoir", "oxbow", "lagoon", "lake;pond",
+               "stream_pool"}
+RUNNING_WATERS = {"river", "stream", "canal_natural"}
+
 KIND_OF_TAGS = [
     ("volcano", lambda t: t.get("natural") == "volcano"),
     ("peak", lambda t: t.get("natural") == "peak"),
@@ -197,8 +213,21 @@ KIND_OF_TAGS = [
     ("lighthouse", lambda t: t.get("man_made") == "lighthouse"),
     ("beach", lambda t: t.get("natural") == "beach"),
     ("hut", lambda t: t.get("tourism") in ("alpine_hut", "wilderness_hut")),
-    ("lake", lambda t: t.get("natural") == "water"),
+    # T1201 (row T1179-d): natural=water is a lake only when its `water`
+    # subtag is one (or absent). A fountain, a harbour, a retention basin or
+    # a Kneipp pool read "the lake" in the T1179 summaries (Tritonenbrunnen,
+    # Avant-Port; 790 of 10,090 lake highlights on the 2026-09-13 wire carry
+    # such a name); a river or canal is water, not a lake.
+    ("lake", lambda t: t.get("natural") == "water"
+                       and (t.get("water") or "lake") in LAKE_WATERS),
+    ("water", lambda t: t.get("natural") == "water"
+                        and t.get("water") in RUNNING_WATERS),
     ("cliff", lambda t: t.get("natural") == "cliff"),
+    ("rock", lambda t: t.get("natural") in ("rock", "stone")),
+    ("ridge", lambda t: t.get("natural") in ("ridge", "arete")),
+    ("saddle", lambda t: t.get("natural") == "saddle"),
+    ("cape", lambda t: t.get("natural") == "cape"),
+    ("bay", lambda t: t.get("natural") == "bay"),
     # Kept as a classifier with no selector above it: the extract pass that
     # will supply forests writes the same tags, so this reads them without
     # needing a second mapping. See FOREST, below.
