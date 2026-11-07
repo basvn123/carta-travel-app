@@ -261,6 +261,11 @@ function printSummary(s) {
   for (const [r, v] of Object.entries(s.retrievers)) {
     console.log(`${r.padEnd(10)} ${String(v.cases).padStart(5)} ${pct(v['recall@5'])}  ${pct(v['recall@10'])}  ${pct(v['hit@10'])}  ${pct(v.mrr)}  ${pct(v['ndcg@10'])}  | ${pct(v.list?.['recall@10'])}  ${pct(v.list?.mrr)} | ${pct(v.grounding)} (${v.checks})`);
   }
+  const main = Object.keys(s.retrievers).at(-1);
+  const byLang = s.retrievers[main]?.by_lang || {};
+  if (Object.keys(byLang).length) {
+    console.log(`${main} recall@10 by language: ${Object.entries(byLang).map(([l, v]) => `${l} ${pct(v['recall@10']).trim()} (${v.cases})`).join(', ')}`);
+  }
   const a = s.abstain;
   console.log(`abstain: ${a.caught}/${a.cases} out-of-scope questions answered "Carta does not know", ${a.falseAlarm} in-scope questions wrongly refused, correct ${pct(a.correct)}%`);
 }

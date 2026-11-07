@@ -13,6 +13,8 @@ What to read for what. Built by T1073 (ROADMAP B2). Every session reads CLAUDE.m
 | Understand how the parts fit (Pages, Functions, R2, Supabase, Edge Functions, build box, CI) | [architecture/](architecture/README.md) |
 | Trace a wire field from its source to the screen, or see what a screen fetches from where | [architecture/lineage.md](architecture/lineage.md) (generated), [architecture/request-paths.md](architecture/request-paths.md) |
 | Know the data contract, sources and licences | [data/](data/README.md), [SCHEMA.md](SCHEMA.md), [tos/data_licenses.md](tos/data_licenses.md) |
+| Know where a block's values come from and how fresh they are (`_src`, `_asof`) | [data/sources.md](data/sources.md) (generated from `pipeline/config/sources.yaml`), `pipeline/provenance.py`, `continent-app/src/lib/provenance.js` |
+| Know which data checks gate a run, and fix a value by hand | handbook "Data quality scorecard and gate" (`scripts/quality/rules.yaml`), [runbooks/content-ops.md](runbooks/content-ops.md) (`data/overrides/`) |
 | Deploy, run the build box, handle an incident | [runbooks/](runbooks/README.md) |
 | Look up a Carta word | [glossary.md](glossary.md) |
 | Know where it hurts today | [AUDIT-2026-11.md](AUDIT-2026-11.md) |

@@ -1,0 +1,217 @@
+{
+ "about": "T1214 (register row T1144-f): the 5 shipped trail summaries the T1144 session judge found not supported by their OSM facts (evals/truth/judge/judgments/session-2026-11-06-rubric1.json), with the facts pipeline/trails/summaries.py facts_of() reads for the same walks on the 2026-09-13 wire.",
+ "cases": [
+  {
+   "id": "201993",
+   "judge_text_id": "t19",
+   "shipped_summary": "Dolomites World Heritage Geotrail 13 is a waymarked hiking route located in Italy. The path covers a distance of 17.0 km with a moderate difficulty rating.",
+   "facts": {
+    "id": 201993,
+    "country": "IT",
+    "km": "17",
+    "climb_m": 685,
+    "minutes": 369,
+    "shape": "one_way",
+    "from": "Armentarola",
+    "to": "Pederü",
+    "stage": {
+     "i": 13,
+     "of": "Dolomites World Heritage Geotrail"
+    },
+    "top_m": 2171,
+    "sights": [
+     {
+      "kind": "peak",
+      "noun": "peak",
+      "name": "Col de Locia",
+      "ele": 2069,
+      "beside": false
+     },
+     {
+      "kind": "lake",
+      "noun": "lake",
+      "name": "Lé de Limo",
+      "ele": null,
+      "beside": false
+     },
+     {
+      "kind": "waterfall",
+      "noun": "waterfall",
+      "name": "Cascata",
+      "ele": null,
+      "beside": false
+     }
+    ],
+    "season": {
+     "from": "jul",
+     "to": "sep",
+     "n": 3,
+     "est": true
+    }
+   }
+  },
+  {
+   "id": "74210",
+   "judge_text_id": "t38",
+   "shipped_summary": "Κλασικός Μαραθώνιος Αθηνών is a walking route in GR that covers 42.2 km. This hard route is part of the national waymarked hiking network and takes about 11 hours on the DIN 33466 hiking time rule.",
+   "facts": {
+    "id": 74210,
+    "country": "GR",
+    "km": "42.2",
+    "climb_m": 311,
+    "minutes": 680,
+    "days": 2,
+    "shape": "one_way",
+    "from": "Marathona",
+    "to": "Panathinaiko Stadio",
+    "top_m": 243,
+    "ground": "paved",
+    "sights": [
+     {
+      "kind": "viewpoint",
+      "noun": "viewpoint",
+      "name": "Sotirios",
+      "ele": null,
+      "beside": false
+     },
+     {
+      "kind": "ruins",
+      "noun": "ruin",
+      "name": "Ysteroromaiko ktisma",
+      "ele": null,
+      "beside": false
+     },
+     {
+      "kind": "peak",
+      "noun": "peak",
+      "name": "Ardittos",
+      "ele": 133,
+      "beside": false
+     }
+    ],
+    "season": {
+     "from": "jan",
+     "to": "dec",
+     "n": 12,
+     "est": true
+    }
+   }
+  },
+  {
+   "id": "63504",
+   "judge_text_id": "t39",
+   "shipped_summary": "The Liqeni i Lepurit Circuit is a waymarked hiking route located in Albania. This circuit starts and finishes at the same place, covering a distance of 10.4 km.",
+   "facts": {
+    "id": 63504,
+    "country": "AL",
+    "km": "10.4",
+    "climb_m": 674,
+    "minutes": 293,
+    "shape": "loop",
+    "top_m": 1363,
+    "sights": [
+     {
+      "kind": "lake",
+      "noun": "lake",
+      "name": "Liqeni i Lepurit",
+      "ele": null,
+      "beside": false
+     },
+     {
+      "kind": "castle",
+      "noun": "castle",
+      "name": "Kalaja e Skrepit",
+      "ele": null,
+      "beside": false
+     },
+     {
+      "kind": "peak",
+      "noun": "peak",
+      "name": "Maja e Skrepit",
+      "ele": 985,
+      "beside": false
+     }
+    ],
+    "season": {
+     "from": "apr",
+     "to": "nov",
+     "n": 8,
+     "est": true
+    }
+   }
+  },
+  {
+   "id": "96033",
+   "judge_text_id": "t42",
+   "shipped_summary": "The GR 128 Variant Gent-Destelbergen is a waymarked hiking route in BE. It covers a distance of 9.6 km and takes about 2.5 hours on the DIN 33466 hiking time rule.",
+   "facts": {
+    "id": 96033,
+    "country": "BE",
+    "km": "9.6",
+    "climb_m": 20,
+    "minutes": 147,
+    "shape": "one_way",
+    "top_m": 15,
+    "ground": "paved",
+    "sights": [
+     {
+      "kind": "castle",
+      "noun": "castle",
+      "name": "Gravensteen",
+      "ele": null,
+      "beside": false
+     },
+     {
+      "kind": "castle",
+      "noun": "castle",
+      "name": "Kasteel Succa",
+      "ele": null,
+      "beside": false
+     },
+     {
+      "kind": "castle",
+      "noun": "castle",
+      "name": "Kasteel Van Acker",
+      "ele": null,
+      "beside": false
+     }
+    ],
+    "passes": [
+     "De Graslei",
+     "Ghent"
+    ],
+    "season": {
+     "from": "jan",
+     "to": "dec",
+     "n": 12,
+     "est": true
+    }
+   }
+  },
+  {
+   "id": "62406",
+   "judge_text_id": "t44",
+   "shipped_summary": "The Ramla Walk is a 7.8 km waymarked hiking route located in MT. It features 144 m of ascent and 143 m of descent, requiring about 2.3 hours on the DIN 33466 hiking time rule. This easy route is derived from distance and ascent as part of a local waymarked hiking network.",
+   "facts": {
+    "id": 62406,
+    "country": "MT",
+    "km": "7.8",
+    "climb_m": 144,
+    "minutes": 139,
+    "shape": "one_way",
+    "from": "Marsalforn",
+    "to": "Ir-Ramla l-Ħamra",
+    "top_m": 142,
+    "passes": [
+     "Gozo"
+    ],
+    "season": {
+     "from": "jan",
+     "to": "dec",
+     "n": 12,
+     "est": true
+    }
+   }
+  }
+ ]
+}

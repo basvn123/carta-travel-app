@@ -12,7 +12,7 @@ Carta has one operator, the owner. Nearly all content is written by the pipeline
 | Place intros and blurbs | pipeline `guide`, `place_intros` | Wikivoyage leads, Wikipedia leads (verbatim sentences, CC BY-SA 4.0) | quarterly (`place_intros`), backfill (`guide`) | owner; `check_grounded` refuses any sentence not in a source |
 | Place photos | pipeline `images`, `hero_audit`, `place_gallery`, `image_audit` | Wikipedia lead image, Wikimedia Commons (licensed, with credit) | quarterly (`place_gallery`), backfill (`images`) | owner; the image audits flag maps, emblems and thumbnails |
 | Beaches, lakes, mountains (names, photos, why lines) | pipeline `beaches`, `lakes`, `mountains` and their context tasks | OSM, EEA bathing water, Wikidata, Commons | quarterly | owner |
-| Trail and cycle route text | trail and cycling pipeline (`trails_*`, `cycling_*`), `pipeline/trails/summaries.py` | OSM relations and the trail's own measured facts, templates only | after each trails run | owner; trail curation lives in `pipeline/trails/curate.py`, not in the overrides below |
+| Trail and cycle route text | trail and cycling pipeline (`trails_*`, `cycling_*`), `pipeline/trails/summaries.py` | OSM relations and the trail's own measured facts, templates only | after each trails run | owner; rules that pick or drop walks live in `pipeline/trails/curate.py`, one item's text or photo in the `trail` and `cycle` overrides below (T1214) |
 | Food and drink prices | pipeline `food`, `tourist_premium` | Eurostat price levels, Open Prices | monthly | owner; formulas in `continent-app/config/pricing.json` |
 | Bed prices | pipeline `stays` | Booking and Hostelworld scrape | monthly | owner; `docs/runbooks/build-box.md` for the scrape |
 | Flight prices | Worker `flight-sweep` (routes from pipeline `flight_routes`) | Google Flights; routes from Eurostat airport pairs | sweep every minute, routes monthly | owner; the price is always Google Flights', never Carta's |
@@ -25,7 +25,7 @@ Carta has one operator, the owner. Nearly all content is written by the pipeline
 | Where | admin page, Content tab; table `content_overrides` (migrations 018, 043) | `data/overrides/{layer}.json`, in git |
 | Reaches travellers | on their next page load, no deploy | after the pull request is merged, the next pipeline run and the next data push |
 | Fields | name, image, blurb, hidden, featured | any field the record carries, except computed numbers (below) |
-| Layers | beach, lake, mountain, trail, dest | dest, beach, lake, mountain |
+| Layers | beach, lake, mountain, trail, cycle, dest | dest, beach, lake, mountain, trail, cycle |
 | Record | status, review date, reason; audit log row | who, when, why, source; the git commit |
 | Use it for | an urgent fix: a wrong photo, an embarrassing entry | a fix that should hold for good |
 
@@ -35,7 +35,7 @@ Never corrected by hand, in either path: prices, scores, tiers (`costs`, `accomm
 
 ## 3. A hand correction, step by step
 
-1. **Find the item.** Get its wire id: for a place, its key in `destinations` in `continent-app/public/app_data.json`; for a beach, lake or mountain, its `id` in `continent-app/public/{beaches,lakes,mountains}/<CC>.json`.
+1. **Find the item.** Get its wire id: for a place, its key in `destinations` in `continent-app/public/app_data.json`; for a beach, lake or mountain, its `id` in `continent-app/public/{beaches,lakes,mountains}/<CC>.json`; for a trail or cycle route, its `id` in `continent-app/public/{trails,cycling}/<CC>.json`.
 2. **Check the source.** Every correction needs one: a link (Wikipedia, Wikidata, an official site, an OSM object), a document, or a site visit with its date. No source, no correction.
 3. **Draft it.** Admin page, Overrides tab, "Draft an override": layer, item id, field (dotted for a nested one, `place.visit_h`), value type, new value, who, when, why (10 to 500 characters, plain words, no en or em dashes) and source. "Check draft" runs the same rules as the pipeline. Nothing is saved.
 4. **Take the output.** "Download {layer}.json" gives the whole layer file with the new entry appended; "Download JSON Patch" gives the same change as an RFC 6902 patch; "Copy pull request text" gives the title and body.
@@ -77,4 +77,4 @@ An invalid overrides file (a missing who, when, why or source; a computed field;
 
 ## 6. What the traveller sees
 
-The corrected value, everywhere that layer's file is read: the card, the page, the map. For `beach`, `lake` and `mountain` the summary copies in `index.json` and `top.json` get the same field when they carry it. Files built from the master inside the same run before the step (the dossier, the search and Ask indexes) pick a new correction up on the following run.
+The corrected value, everywhere that layer's file is read: the card, the page, the map. For `beach`, `lake` and `mountain` the summary copies in `index.json` and `top.json` get the same field when they carry it. For `trail`, the detail file `trails/trip/<id>.json` gets the field too when it carries it. The dossier, guided search and Ask index carry a new place correction in the same run: the step applies `dest` before each of them (T1214).

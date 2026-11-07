@@ -187,3 +187,24 @@ def test_every_committed_summary_matches_its_facts():
             assert summaries.check(item["text"], facts) == [], row["id"]
             assert summaries.compose(facts)[0] == item["text"], row["id"]
     assert seen == len(items)
+
+
+JUDGE_CASES = json.loads((ROOT / "tests" / "fixtures" / "trail_summary_judge_cases.json").read_text(encoding="utf-8"))["cases"]
+
+
+@pytest.mark.parametrize("case", JUDGE_CASES, ids=[c["id"] for c in JUDGE_CASES])
+def test_check_rejects_the_summaries_the_truth_judge_found_unsupported(case):
+    """T1214 (register row T1144-f): the T1144 judge found these shipped summaries
+    not supported by their OSM facts ("waymarked" with no symbol or ref, the DIN
+    33466 hours line, raw tag figures). check() must reject each one, and the
+    text compose() writes for the same walk must pass and say none of it."""
+    bad = summaries.check(case["shipped_summary"], case["facts"])
+    assert bad, case["id"]
+    if "waymarked" in case["shipped_summary"]:
+        assert "unknown word waymarked" in bad
+    if "DIN 33466" in case["shipped_summary"]:
+        assert "number 33466 not in facts" in bad
+    text, _ = summaries.compose(case["facts"])
+    assert summaries.check(text, case["facts"]) == []
+    low = text.lower()
+    assert "waymark" not in low and "din" not in low.split() and "33466" not in text

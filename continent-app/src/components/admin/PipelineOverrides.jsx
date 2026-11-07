@@ -3,7 +3,7 @@ import snapshot from '../../admin/pipelineOverrides.json';
 import { Button } from '../ui/Button.jsx';
 import {
   LAYERS, LAYER_LABEL, FIELD_HINTS, VALUE_KINDS, emptyDraft, draftProblems,
-  buildEntry, layerFile, jsonPatch, prText,
+  buildEntry, layerFile, jsonPatch, prText, reviewDue, liveFor,
 } from './pipelineOverrides.js';
 
 // Overrides (ROADMAP I13, T1173): the hand corrections in data/overrides/,
@@ -51,7 +51,7 @@ function Field({ id, label, problem, children, hint }) {
   );
 }
 
-function OverrideList({ rows, layer }) {
+function OverrideList({ rows, layer, live, today }) {
   const shown = layer === 'all' ? rows : rows.filter((r) => r.layer === layer);
   if (!shown.length) {
     return (
@@ -85,7 +85,17 @@ function OverrideList({ rows, layer }) {
                     : r.source}
                 </span>
               </td>
-              <td>{r.who}<br /><span className="adminpage-muted adminpage-fine">{r.when}{r.review_by ? `, review by ${r.review_by}` : ''}</span></td>
+              <td>
+                {r.who}<br /><span className="adminpage-muted adminpage-fine">{r.when}{r.review_by && !reviewDue(r, today) ? `, review by ${r.review_by}` : ''}</span>
+                {reviewDue(r, today) && (
+                  <><br /><span className="adminpage-err" data-review="due">Review was due {r.review_by}</span></>
+                )}
+                {liveFor(r, live).map((o) => (
+                  <div key={`${o.layer}/${o.itemId}`} className="adminpage-muted adminpage-fine" data-live={`${o.layer}/${o.itemId}`}>
+                    Also a live override in the Content tab ({Object.keys(o.patch || {}).join(', ') || 'no fields'}), which wins in the app
+                  </div>
+                ))}
+              </td>
               <td className={STATUS_CLASS[r.status] || 'adminpage-muted'} data-status={r.status}>
                 {STATUS_TEXT[r.status] || r.status}
               </td>
@@ -97,7 +107,7 @@ function OverrideList({ rows, layer }) {
   );
 }
 
-export function PipelineOverrides({ data = snapshot, initialDraft }) {
+export function PipelineOverrides({ data = snapshot, initialDraft, live = [], today = new Date().toISOString().slice(0, 10) }) {
   const rows = useMemo(() => data?.overrides || [], [data]);
   const counts = data?.counts || {};
   const [layer, setLayer] = useState('all');
@@ -118,6 +128,8 @@ export function PipelineOverrides({ data = snapshot, initialDraft }) {
   };
 
   const orphans = rows.filter((r) => STATUS_CLASS[r.status]).length;
+  const due = rows.filter((r) => reviewDue(r, today)).length;
+  const liveRows = (live || []).length;
 
   return (
     <section data-overrides="panel">
@@ -133,6 +145,8 @@ export function PipelineOverrides({ data = snapshot, initialDraft }) {
           <div key={l} className="adminpage-tile" data-count={l}><b>{counts[l] ?? 0}</b><span>{LAYER_LABEL[l]}</span></div>
         ))}
         <div className="adminpage-tile"><b>{orphans}</b><span>Need a look</span></div>
+        <div className="adminpage-tile" data-count="review-due"><b>{due}</b><span>Review due</span></div>
+        <div className="adminpage-tile" data-count="live"><b>{liveRows}</b><span>Live in the Content tab</span></div>
       </div>
 
       <label className="adminpage-inline" htmlFor="ov2-show">
@@ -142,7 +156,7 @@ export function PipelineOverrides({ data = snapshot, initialDraft }) {
         </select>
       </label>
 
-      <OverrideList rows={rows} layer={layer} />
+      <OverrideList rows={rows} layer={layer} live={live} today={today} />
 
       <h2 className="adminpage-h2">Draft an override</h2>
       <p className="adminpage-muted">

@@ -247,6 +247,31 @@ def check(fields, curated, tasks, r2) -> list[str]:
     return errs
 
 
+def check_block_writers(curated, registry: Path | None = None) -> list[str]:
+    """T1214 (T1143-h): the block writers are listed twice, here per field and
+    in pipeline/config/sources.yaml `blocks` (which stamps `_src` and `_asof`).
+    Each block's writers must agree, leaving out the one-off scripts under
+    pipeline/oneoff/, which create whole records but do not build a block."""
+    import yaml
+
+    registry = registry or ROOT / "pipeline" / "config" / "sources.yaml"
+    blocks = (yaml.safe_load(registry.read_text(encoding="utf-8")) or {}).get("blocks") or {}
+    rows = curated["fields"]
+    errs = []
+    for b, v in sorted(blocks.items()):
+        row = rows.get(f"destinations.*.{b}")
+        if row is None:
+            errs.append(f"sources.yaml block {b}: no lineage row destinations.*.{b}")
+            continue
+        reg = set(v.get("writers") or [])
+        lin = {w for w in row.get("writers") or [] if not w.startswith("pipeline/oneoff/")}
+        for w in sorted(reg - lin):
+            errs.append(f"block {b}: writer {w} is in sources.yaml but not in lineage-fields.json")
+        for w in sorted(lin - reg):
+            errs.append(f"block {b}: writer {w} is in lineage-fields.json but not in sources.yaml")
+    return errs
+
+
 def check_request_paths() -> list[str]:
     """Each request path is an H2 in request-paths.md with a Mermaid diagram,
     and every repo file named in backticks exists."""
@@ -442,7 +467,7 @@ def main(argv: list[str]) -> int:
     fields = schema_fields()
     curated = json.loads(CURATED.read_text(encoding="utf-8"))
     tasks = pipeline_tasks()
-    errs = check(fields, curated, tasks, r2_tier()) + check_request_paths()
+    errs = check(fields, curated, tasks, r2_tier()) + check_request_paths() + check_block_writers(curated)
     for e in errs:
         print(f"FAIL {e}")
     if errs:

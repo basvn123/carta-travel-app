@@ -116,6 +116,13 @@ export function summarise(results, retrievers) {
       list: lists.length ? round(meanOf(lists)) : null,
       grounding: checks.length ? round1(checks.filter((c) => c[1]).length / checks.length) : 0,
       checks: checks.length,
+      // Recall per language (T1214, from T1145-c, the D6 language parity):
+      // reported, not gated; gatedNumbers reads only the keys above.
+      by_lang: Object.fromEntries([...new Set(rows.map((c) => c.lang || 'en'))].sort().map((lang) => {
+        const mine = rows.filter((c) => (c.lang || 'en') === lang);
+        const m = round(meanOf(mine.map((c) => c.by[r].cards)));
+        return [lang, { cases: mine.length, 'recall@10': m['recall@10'], mrr: m.mrr }];
+      })),
     };
   }
   const main = retrievers[retrievers.length - 1];

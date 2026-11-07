@@ -97,6 +97,49 @@ def test_layer_files_and_their_summary_copies(tmp_path):
     assert full["name"] == "Hallstaetter See"
 
 
+def pipeline_writes_trails(root, summary="Pipeline summary."):
+    """Stand-in for the trails_* export: a country file, a summary copy and a detail file."""
+    d = root / "continent-app" / "public" / "trails"
+    (d / "trip").mkdir(parents=True, exist_ok=True)
+    walk = {"id": 62406, "name": "Ramla Walk", "summary": summary, "country": "MT"}
+    listed = {"id": 70001, "name": "Listed walk", "country": "MT"}
+    (d / "MT.json").write_text(json.dumps({"country": "MT", "trips": [walk], "listed": [listed]}), encoding="utf-8")
+    (d / "top.json").write_text(json.dumps({"trips": [{"id": 62406, "name": "Ramla Walk"}]}), encoding="utf-8")
+    (d / "trip" / "62406.json").write_text(json.dumps(
+        {"id": 62406, "name": "Ramla Walk", "description_md": "Long text.", "country": "MT"}), encoding="utf-8")
+
+
+def test_trail_overrides_reach_the_country_file_the_copies_and_the_detail(tmp_path):
+    """T1214 (register row T1173-b): a trail text fix survives a trails_* rerun."""
+    write_overrides(tmp_path, "trail", [
+        entry("62406", {"name": "Ramla Bay Walk", "summary": "A 7.8 km walk from Marsalforn to Ramla."}),
+        entry("70001", {"name": "Listed walk, renamed"}),
+    ])
+    pipeline_writes_trails(tmp_path)
+    res = {r["id"]: r for r in ao.apply_all(tmp_path)["trail"]}
+    assert res["62406"]["status"] == "applied" and res["62406"]["copies"] == 2  # top.json and the detail file
+    assert res["70001"]["status"] == "applied"                                # a row in "listed"
+    d = tmp_path / "continent-app" / "public" / "trails"
+    walk = json.loads((d / "MT.json").read_text(encoding="utf-8"))["trips"][0]
+    detail = json.loads((d / "trip" / "62406.json").read_text(encoding="utf-8"))
+    assert walk["name"] == "Ramla Bay Walk" and walk["summary"].startswith("A 7.8 km")
+    # The detail file gets only the fields it already carries.
+    assert detail["name"] == "Ramla Bay Walk" and "summary" not in detail
+    pipeline_writes_trails(tmp_path, summary="Pipeline summary, run two.")     # rerun
+    ao.apply_all(tmp_path)
+    walk = json.loads((d / "MT.json").read_text(encoding="utf-8"))["trips"][0]
+    assert walk["summary"].startswith("A 7.8 km")
+
+
+def test_cycle_overrides_patch_routes(tmp_path):
+    d = tmp_path / "continent-app" / "public" / "cycling"
+    d.mkdir(parents=True)
+    (d / "NL.json").write_text(json.dumps({"routes": [{"id": "ev12-nl", "name": "EV12"}], "listed": [], "tours": []}))
+    write_overrides(tmp_path, "cycle", [entry("ev12-nl", {"name": "North Sea Cycle Route"})])
+    assert ao.apply_all(tmp_path)["cycle"][0]["status"] == "applied"
+    assert json.loads((d / "NL.json").read_text())["routes"][0]["name"] == "North Sea Cycle Route"
+
+
 @pytest.mark.parametrize("missing", ["who", "when", "why", "source"])
 def test_every_override_names_who_when_why_and_source(tmp_path, missing):
     bad = entry("hallstatt", {"blurb": "x"})
@@ -158,3 +201,25 @@ def test_the_committed_files_are_valid_and_the_snapshot_lists_them():
     snap = json.loads((ROOT / ao.SNAPSHOT).read_text(encoding="utf-8"))
     assert {(r["layer"], r["id"]) for r in snap["overrides"]} == {
         (layer, e["id"]) for layer, rows in entries.items() for e in rows}
+
+
+def test_layers_option_applies_only_those_layers(tmp_path):
+    """T1214 (T1173-c): run_pipeline.py applies dest alone before the tasks that read the master."""
+    write_overrides(tmp_path, "dest", [entry("hallstatt", {"blurb": "Corrected blurb."})])
+    write_overrides(tmp_path, "lake", [entry("hallstaetter-see", {"name": "Hallstaetter See"})])
+    pipeline_writes_master(tmp_path)
+    pipeline_writes_lakes(tmp_path)
+    assert ao.main(["--root", str(tmp_path), "--layers", "dest"]) == 0
+    assert master(tmp_path)["hallstatt"]["blurb"] == "Corrected blurb."
+    lake = json.loads((tmp_path / "continent-app/public/lakes/AT.json").read_text(encoding="utf-8"))["lakes"][0]
+    assert lake["name"] == "Hallstatt Lake"                      # not applied yet
+    assert ao.main(["--root", str(tmp_path), "--layers", "nope"]) == 2
+
+
+def test_run_pipeline_applies_dest_before_the_master_readers():
+    src = (ROOT / "run_pipeline.py").read_text(encoding="utf-8")
+    assert 'OVERRIDES_BEFORE = ("dossier", "guided_search", "ask_index")' in src
+    assert '"apply_overrides.py"), "--layers", "dest"]' in src
+    tasks = "".join(f.read_text(encoding="utf-8") for f in (ROOT / "pipeline" / "tasks").glob("*.py"))
+    for key in ("dossier", "guided_search", "ask_index"):
+        assert f'"key": "{key}"' in tasks, key                 # each is a real task key

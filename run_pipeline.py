@@ -548,6 +548,11 @@ def print_freshness_summary(report):
 # Before T047 the hold was only ever written by hand, so a scheduled rebuild
 # ran unguarded, and nothing at all stopped a rebuild starting beside a sweep.
 # The hold is a correctness guard only; memory is not what it arbitrates.
+# Tasks that build an output from the master: the dest hand corrections are
+# applied before each, so they carry a correction made since the last run
+# (T1214, from T1173-c). apply_overrides.py does nothing when dest has no entry.
+OVERRIDES_BEFORE = ("dossier", "guided_search", "ask_index")
+
 RESCORE_LAYERS = {"beaches": "beaches", "lakes": "lakes", "mountains": "mountains",
                   # T640: the explore data fill re-enriches the same caches.
                   "beach_context": "beaches", "lake_detail": "lakes",
@@ -1039,6 +1044,14 @@ def main():
                 if t.get("writes_app_data") and not args.no_backup and not backed_up:
                     backup_master()
                     backed_up = True
+
+                # Hand corrections to places reach the tasks that build from
+                # the master in this same run, not the next one (T1214, from
+                # T1173-c). The full step after the loop applies them again.
+                if t["key"] in OVERRIDES_BEFORE and run_cmd(
+                        [sys.executable, str(ROOT / "pipeline" / "apply_overrides.py"), "--layers", "dest"]) != 0:
+                    log("  overrides: the dest file is invalid; the task reads the master as it is "
+                        "and the overrides step after the loop fails the run")
 
                 t0 = time.time()
                 partial = False

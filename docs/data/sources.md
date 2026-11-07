@@ -56,10 +56,10 @@ the build box schedule, `owner` by hand.
 |---|---|---|---|---|
 | `costs` | `carta_food` | LicenseRef-carta-derived | MONTHLY | `pipeline/apply_food_prices.py`, `pipeline/apply_tourist_premium.py` |
 | `accommodation` | `stays_scrape` | LicenseRef-site-terms | MONTHLY | `pipeline/stays/apply_stays.py` |
-| `local_transport` | `osm` | ODbL-1.0 | MONTHLY | `pipeline/apply_car_layer.py`, `pipeline/apply_airport_anchors.py` |
+| `local_transport` | `osm` | ODbL-1.0 | MONTHLY | `pipeline/apply_car_layer.py` |
 | `beauty` | `carta_beauty` | LicenseRef-carta-derived | MONTHLY | `pipeline/apply_beauty_layer.py` |
 | `image` | `commons` | LicenseRef-per-file | MONTHLY | `pipeline/harvest_images.py`, `pipeline/audit/audit_hero_images.py` |
-| `activities` | `poi_mix` | LicenseRef-carta-derived | MONTHLY | `pipeline/harvest_activities.py`, `pipeline/pois/harvest_pois_overture.py`, `pipeline/score_significance.py` |
+| `activities` | `poi_mix` | LicenseRef-carta-derived | MONTHLY | `pipeline/harvest_activities.py`, `pipeline/pois/harvest_pois_overture.py`, `pipeline/score_significance.py`, `pipeline/poi_labels.py`, `pipeline/backfill_landmarks.py` |
 | `rating` | `carta_rating` | LicenseRef-carta-derived | MONTHLY | `pipeline/apply_rating_layer.py` |
 | `taste` | `carta_taste` | LicenseRef-carta-derived | WEEKLY | `pipeline/place_taste_profile.py` |
 | `transfer` | `carta_transfer` | LicenseRef-carta-derived | QUARTERLY | `pipeline/apply_airport_anchors.py` |

@@ -93,6 +93,27 @@ def touch(block) -> None:
         block.pop(ASOF, None)
 
 
+def fingerprints(dests: dict, block: str) -> dict:
+    """{id: a fingerprint of the destination's ``block``}, taken before an
+    in-place edit; ``touch_changed`` compares against it afterwards."""
+    return {did: json.dumps((d or {}).get(block), sort_keys=True, default=str)
+            for did, d in dests.items() if isinstance(d, dict)}
+
+
+def touch_changed(dests: dict, block: str, before: dict) -> int:
+    """touch() every ``block`` that differs from its fingerprint in ``before``
+    (T1214, from T1143-c), so a writer that edits a block in place dates only
+    what it changed. Returns the number of blocks touched."""
+    n = 0
+    for did, d in dests.items():
+        if not isinstance(d, dict) or not isinstance(d.get(block), dict):
+            continue
+        if json.dumps(d.get(block), sort_keys=True, default=str) != before.get(did):
+            touch(d[block])
+            n += 1
+    return n
+
+
 def stamp(block: dict, src: str, asof: str) -> bool:
     """Stamp one block if it has no stamp yet. True when it was stamped."""
     if not isinstance(block, dict) or is_stamped(block):

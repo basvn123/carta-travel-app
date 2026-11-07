@@ -255,10 +255,10 @@ sources:
 blocks:
   costs:           {src: carta_food,     writers: [pipeline/apply_food_prices.py, pipeline/apply_tourist_premium.py]}
   accommodation:   {src: stays_scrape,   writers: [pipeline/stays/apply_stays.py]}
-  local_transport: {src: osm,            writers: [pipeline/apply_car_layer.py, pipeline/apply_airport_anchors.py]}
+  local_transport: {src: osm,            writers: [pipeline/apply_car_layer.py]}
   beauty:          {src: carta_beauty,   writers: [pipeline/apply_beauty_layer.py]}
   image:           {src: commons,        writers: [pipeline/harvest_images.py, pipeline/audit/audit_hero_images.py]}
-  activities:      {src: poi_mix,        writers: [pipeline/harvest_activities.py, pipeline/pois/harvest_pois_overture.py, pipeline/score_significance.py]}
+  activities:      {src: poi_mix,        writers: [pipeline/harvest_activities.py, pipeline/pois/harvest_pois_overture.py, pipeline/score_significance.py, pipeline/poi_labels.py, pipeline/backfill_landmarks.py]}
   rating:          {src: carta_rating,   writers: [pipeline/apply_rating_layer.py]}
   taste:           {src: carta_taste,    writers: [pipeline/place_taste_profile.py]}
   transfer:        {src: carta_transfer, writers: [pipeline/apply_airport_anchors.py]}

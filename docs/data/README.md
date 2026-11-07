@@ -19,6 +19,7 @@ Where Carta's data contract, sources and licences are documented. Nothing moved:
 | Credits shown to travellers | `continent-app/src/data/attribution.js`, derived from the ledger |
 | Personal data processed (Article 30 record) | [../legal/ARTICLE30.md](../legal/ARTICLE30.md) |
 | Licensed photo sources | handbook section [Licensed photo sources and credits](../HANDBOOK.md#licensed-photo-sources-and-credits) |
+| Where each wire block comes from and when it was built (`_src`, `_asof`) | [sources.md](sources.md), generated from `pipeline/config/sources.yaml` by `pipeline/provenance_sources.py`; stamped by `pipeline/provenance.py`, read in the app by `continent-app/src/lib/provenance.js` (T1143) |
 
 ## Layer notes read by code
 
@@ -57,4 +58,12 @@ Do not move or rename these. `REGIONS.md` and `LAKES.md` were rewritten from the
 
 ## Quality rules
 
-A single quality rules file is planned by ROADMAP B4 (`pipeline/quality/rules.yaml` does not exist in the tree today). Data checks that do exist run as workflows: `golden-set.yml`, `rating-tests.yml`, `coverage-contract.yml`, `trip-validator.yml`, `data-licences.yml`.
+The quality rules live in `scripts/quality/rules.yaml`, run by `scripts/quality/engine.py` as the `quality` task after each run (T1142, handbook "Data quality scorecard and gate", runbook [../runbooks/drift-and-scorecard.md](../runbooks/drift-and-scorecard.md)). Other data checks run as workflows: `golden-set.yml`, `rating-tests.yml`, `coverage-contract.yml`, `trip-validator.yml`, `data-licences.yml`.
+
+## Coverage, catalogue gaps and hand fixes
+
+| What | Where |
+|---|---|
+| Coverage parity per country and region (expected against shipped) | [coverage-parity.md](coverage-parity.md), [coverage-parity.csv](coverage-parity.csv), `scripts/coverage/coverage_parity.py` (T1145) |
+| Catalogue gaps per country | [catalogue-gaps/](catalogue-gaps/), `pipeline/catalogue_gaps.py` (T1146) |
+| Hand corrections that survive reruns | `data/overrides/`, applied by `pipeline/apply_overrides.py`; runbook [../runbooks/content-ops.md](../runbooks/content-ops.md) (T1173) |

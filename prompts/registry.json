@@ -427,6 +427,27 @@
         "value": null,
         "at": "2026-11-07T10:58:11.658Z"
       }
+    },
+    "truth-judge": {
+      "version": 1,
+      "file": "prompts/truth-judge/v1.md",
+      "format": "registry",
+      "sha256": "fb6727388c991bf48c98c53f3d1b2a02ccf6dfb35c05619fa4d9d663b762e643",
+      "runtime": "node",
+      "eval": "truth",
+      "scoreKey": "text.kappa.judge_vs_human",
+      "guard": null,
+      "callers": [
+        "evals/truth/judge/judge-lib.mjs"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "truth",
+        "status": "pass",
+        "key": "text.kappa.judge_vs_human",
+        "value": null,
+        "at": "2026-11-07T15:50:53.843Z"
+      }
     }
   }
 }

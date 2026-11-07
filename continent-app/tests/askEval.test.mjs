@@ -97,3 +97,13 @@ test("gate on the real catalogue: a seeded drop fails", { skip: !HAVE && "public
   assert.equal(g.ok, false);
   assert.ok(g.failures.some((f) => f.key === "rules.recall@10"));
 });
+
+test("T1214 (T1145-c): the summary reports recall@10 per language, outside the gated numbers", () => {
+  const card = (r) => ({ "recall@5": r, "recall@10": r, "hit@10": r, mrr: r, "ndcg@10": r });
+  const row = (id, lang, r) => ({ id, lang, places: true, abstain: false, by: { bm25: { cards: card(r), checks: [] } } });
+  const s = summarise([row("a", "en", 1), row("b", "en", 0.5), row("c", "nl", 0)], ["bm25"]);
+  assert.deepEqual(s.retrievers.bm25.by_lang, {
+    en: { cases: 2, "recall@10": 0.75, mrr: 0.75 },
+    nl: { cases: 1, "recall@10": 0, mrr: 0 },
+  });
+});
