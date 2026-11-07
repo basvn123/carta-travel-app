@@ -1483,3 +1483,26 @@ Rules for the layer when it is built:
 - A fare older than 18 months is flagged stale in the report, not dropped.
 - The first scope is the 127 metros in `reports/local_fares_metros_127.csv`, then the 614 cities (roadmap D10). The engine is `lib/price/priceDay.js`, with `transport.rides_per_day` in `config/pricing.json`; no engine change is needed when the field appears.
 - Add the keys to the "Wire contract" table and `scripts/ci/contract.mjs` only in the task that produces data, with the schema version note.
+
+## Way back on the trails wire (T1185, ROADMAP D24, 2026-11-06)
+
+Additive, no schema version change. Written by `pipeline/trails/way_back.py`
+from `export_wire.py` (after the treks, so a stage knows its trek); checked by
+`validateTrailWayBack` in `continent-app/scripts/ci/contract.mjs` (seven seeded
+breaks); read by `src/lib/wayBack.js` and shown by `src/browse/WayBack.jsx`.
+Status: code and fixtures, awaiting the export run on the box.
+
+`wb` sits on a country-file row that is a one-way walk (its line's ends are
+more than `LOOP_KM = 0.5` apart, judged by the line, not by `is_loop`) and is
+NOT a trek stage, and on every trek record (from the end of its last stage to
+the start of its first). Loops, listed-tier rows and trek stages carry none.
+
+| Key | Type | Means |
+|---|---|---|
+| `km` | number | straight line from the end back to the start |
+| `walk` | `{km, min}` | on foot back along the route: its own distance and time (forward time; a trek adds every stage) |
+| `taxi` | `{km, min, est: true}` | road estimate: straight line x 1.3, 50 km/h, minutes rounded up to 5; absent beyond 150 km straight line |
+| `pt` | `{s, e, both}` | modes (`rail`, `bus`, `ferry`) found within 500 m of the start, of the end, and at both. Absent = transit not looked up (no `transit_stops` table), which is not the same as empty lists = looked up, none found. There are no public transport minutes: the repo holds no timetable |
+| `_src`, `_asof` | string | provenance (T1143) |
+
+The page says "we do not know" for a one-way walk with no `wb`.

@@ -79,7 +79,7 @@ import {
   validateAppData, validateSplitWires, EXPECTED_SCHEMA_VERSION,
   WIRE_SCHEMA, WIRE_SCHEMA_PATH, checkWireSchema, checkSchemaTable,
   extractSupabaseCalls, validateDbContract,
-  normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires, validateTrailImages, validateTrailTreks,
+  normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires, validateTrailImages, validateTrailTreks, validateTrailWayBack,
 } from './contract.mjs';
 import { schemaKeySet } from '../../src/lib/wireSchema.js';
 import { splitCatalogue, mergeCatalogue } from '../../src/lib/bootIndex.js';
@@ -542,6 +542,34 @@ if (seed && seed in PAYLOAD_SEEDS) {
     };
     for (const [name, wire] of Object.entries(seeds)) {
       if (!validateTrailTreks(wire).problems.length) fail(`trail trek break ${name} was ACCEPTED`);
+    }
+  }
+  {
+    // T1185: the way back on one-way rows and treks.
+    const dir = path.join(PUB, 'trails');
+    const files = {};
+    if (fs.existsSync(dir)) {
+      for (const f of fs.readdirSync(dir).filter((x) => /^[A-Z]{2}\.json$/.test(x))) {
+        files[f.slice(0, 2)] = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+      }
+    }
+    const got = validateTrailWayBack(files);
+    if (got.problems.length) fail(`trail way back breaks the contract:\n          ${got.problems.slice(0, 8).join('\n          ')}`);
+    else pass(got.n ? `${got.n} way-back records agree` : 'no way-back records yet (awaiting the T1185 export run)');
+    const wb = (over = {}) => ({ km: 15.2, taxi: { km: 19.7, min: 25, est: true }, pt: { s: ['rail'], e: ['rail'], both: ['rail'] }, _src: 'osm', _asof: '2026-11-06', ...over });
+    const wire = (w, extra = {}) => ({ DE: { trips: [{ id: 1, wb: w, ...extra }] } });
+    if (validateTrailWayBack(wire(wb())).problems.length) fail('way back rule rejects a good wire');
+    const seeds = {
+      'wb-no-asof': wire(wb({ _asof: undefined })),
+      'wb-zero-km': wire(wb({ km: 0 })),
+      'wb-taxi-not-est': wire(wb({ taxi: { km: 19.7, min: 25 } })),
+      'wb-taxi-odd-min': wire(wb({ taxi: { km: 19.7, min: 23, est: true } })),
+      'wb-pt-minutes': wire(wb({ pt: { s: ['rail'], e: ['rail'], both: ['rail'], min: 40 } })),
+      'wb-pt-both': wire(wb({ pt: { s: ['rail'], e: ['bus'], both: ['rail'] } })),
+      'wb-on-trek-stage': wire(wb(), { trek: { id: 'x', cc: 'DE', i: 1 } }),
+    };
+    for (const [name, w] of Object.entries(seeds)) {
+      if (!validateTrailWayBack(w).problems.length) fail(`way back break ${name} was ACCEPTED`);
     }
   }
   const one = Object.keys(byKind)[0];

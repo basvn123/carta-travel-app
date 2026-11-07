@@ -1967,3 +1967,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1153-f | T1153 | No CI workflow runs the linking eval (scripts/eval/run.mjs linking --check); add it, with a sparse cone holding public/app_data.json, search_index.json and search/ask/lexicon.json | next task | open |  |
 | T1153-g | T1153 | Two linking misses: "Fårö" links Faro (a part alias with matching accents does not beat a name) and "pafos" ranks Paros over Paphos (no sound-alike for Greek spellings) | next task | open |  |
 | T1153-h | T1153 | src/hooks/useDestinationSearch.js still matches by plain substring; move it to the shared linker like Explore | next task | open |  |
+| T1185-a | T1185 | Run the trails export on the box so `wb` reaches the wire (needs the lab with `transit_stops`); until then pages with no record say "we do not know" | user | open |  |
+| T1185-b | T1185 | `transit_stops` holds rail, coach stations, ferries and bus stops, but no timetable: public transport minutes need an open GTFS feed per country (licence review) and an offline pass | next task | open |  |
+| T1185-c | T1185 | Taxi factors (1.3, 50 km/h) come from a vendor blog and OSRM defaults; replace with a local OSRM or Valhalla road time per trail end on the box | next task | open |  |
+| T1185-d | T1185 | `is_loop` is true on many A to B walks, so the page's shape line and "plan the way back" copy still call them loops; the way back block ignores the flag | next task | open |  |
