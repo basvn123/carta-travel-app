@@ -18,7 +18,7 @@ that destructures a record is missed. Request paths are in [request-paths.md](re
 | ...written only or partly by a legacy step | 29 |
 | ...written only or partly by a script no task schedules | 20 |
 | ...with no writer left in the repo | 2 |
-| run_pipeline.py tasks | 81 |
+| run_pipeline.py tasks | 82 |
 | ...that write a wire field or a wire file | 43 |
 | Wire files and folders | 27 |
 
@@ -106,7 +106,7 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `destinations.*.accommodation` | Booking and Hostelworld scrape journal (T1021) | `manual` | cache/stays build (pipeline/stays/common.py OUT) | `pipeline/stays/apply_stays.py` | dest/_rank.json, dest/{cc}.json | `src/lib/stayPrice.js`, `src/browse/DestinationPage.jsx`, `src/lib/budgetSearch.js` (11 files) |
 | `destinations.*.local_transport` | OSM road network, GTFS lines, OSM ferry legs, OSM parking | `transit_lines` | cache/transit_lines.json | `pipeline/apply_car_layer.py` | dest/_rank.json, dest/{cc}.json | `src/lib/runtime_pricing.js`, `src/lib/ask/rank.js`, `src/lib/mobility.js` (16 files) |
 | `destinations.*.beauty` | designations, protected areas, coast and relief signals | `fame` | app_data/app_data.json (master) | `pipeline/apply_beauty_layer.py` | dest/_rank.json, dest/{cc}.json | `src/hooks/useDestinationSearch.js`, `src/lib/knownFor.js`, `src/lib/trip_planner_pricing.js` (12 files) |
-| `destinations.*.image` | Wikipedia and Wikimedia Commons lead images | `images`, `hero_audit` | cache/wiki_images.json | `pipeline/harvest_images.py`, `pipeline/audit_hero_images.py` | dest/_rank.json, dest/{cc}.json | `src/browse/explore/useExploreRails.js`, `src/lib/countryBrief.js`, `src/lib/recommend/persona.js` (52 files) |
+| `destinations.*.image` | Wikipedia and Wikimedia Commons lead images | `images`, `hero_audit` | cache/wiki_images.json | `pipeline/harvest_images.py`, `pipeline/audit_hero_images.py` | dest/_rank.json, dest/{cc}.json | `src/browse/explore/useExploreRails.js`, `src/lib/countryBrief.js`, `src/lib/recommend/persona.js` (53 files) |
 | `destinations.*.activities` | OpenTripMap, OSM, Overture Places, Wikidata, Wikivoyage listings | `activities`, `overture`, `poi_significance`, `poi_descriptions`, `poi_images_wikidata` | cache/activities.json | `pipeline/harvest_activities.py`, `pipeline/harvest_pois_overture.py`, `pipeline/score_significance.py` | dest/{cc}.json, poi/{shard}.json (items_full) | `src/lib/tripGuide.js`, `src/lib/trip_planner_pricing.js`, `src/planner/DayPlannerTab.jsx` (15 files) |
 | `destinations.*.rating` | fame (pageviews), designations, beauty, place class, POI rates | `fame`, `poi_significance` | cache/dest_pageviews.json | `pipeline/apply_rating_layer.py` | boot.json (f (flag HIDDEN_GEM), r (band)), dest/_rank.json, dest/{cc}.json | `src/lib/countryMatch.js`, `src/browse/PlaceOverview.jsx`, `src/browse/explore/useExploreRails.js` (66 files) |
 | `destinations.*.gateways` | multi-airport city table (T755) | `fame`, `poi_significance` | app_data/app_data.json (master) | `pipeline/rating_layer.py` | dest/{cc}.json | name only: `src/browse/JourneyPage.jsx`, `src/browse/cartaFlight.js`, `src/browse/explore/ExploreContent.jsx` |
@@ -915,7 +915,7 @@ flowchart LR
 
 These feed caches, reports or other tasks (their output reaches the wire through a task above, or not at all).
 
-`ingestion`, `demand_events`, `coverage`, `register_intake`, `audit`, `routes_attach`, `trails_ingest`, `trails_elevation`, `trails_validate`, `trails_popularity`, `trails_registry`, `trails_splice`, `trails_route_bridge`, `trails_regionize`, `trails_derive_routes`, `trails_hierarchy`, `trails_curate`, `trails_forests`, `trails_scenic`, `trails_images`, `trails_way_tags`, `trails_attributes`, `cycling_harvest`, `cycling_enrich`, `cycling_photos`, `cycling_bridge`, `unesco`, `image_audit`, `must_descs`, `poi_images`, `sea_temp`, `dest_overlays`, `poi_fees`, `place_intros`, `place_gallery`, `field_stubs_report`, `taxonomy_tags`, `photo_sources`
+`ingestion`, `demand_events`, `coverage`, `register_intake`, `audit`, `routes_attach`, `trails_ingest`, `trails_elevation`, `trails_validate`, `trails_popularity`, `trails_registry`, `trails_splice`, `trails_route_bridge`, `trails_regionize`, `trails_derive_routes`, `trails_hierarchy`, `trails_curate`, `trails_forests`, `trails_scenic`, `trails_images`, `trails_way_tags`, `trails_attributes`, `cycling_harvest`, `cycling_enrich`, `cycling_photos`, `cycling_bridge`, `unesco`, `image_audit`, `must_descs`, `poi_images`, `sea_temp`, `dest_overlays`, `poi_fees`, `place_intros`, `place_gallery`, `field_stubs_report`, `taxonomy_tags`, `blog_drafts`, `photo_sources`
 
 ## Wire files beside the contract
 
