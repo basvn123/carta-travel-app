@@ -1043,6 +1043,7 @@ here yet.
 | `guide` | destination | some | not yet described (Wikivoyage lead and link, `apply_wikivoyage.py`) |
 | `members` | destination | some | not yet described (towns grouped under this one, `member_layer.py`) |
 | `wikidata` | destination | some | Schema v15 section 2 |
+| `season` | destination | pending | T1202 (D18): open months of the place (`open`, only when it closes part of the year), `conf`, `why` (own or ferry), `checked`, and up to four seasonal huts, lifts or ferries nearby (`items`), from OSM opening_hours and seasonal (`harvest_seasons.py`) |
 | `anchor_estimated` | destination | some | Flight data provenance (auto-anchored destinations) |
 <!-- wire-table:end -->
 

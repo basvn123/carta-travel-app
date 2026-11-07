@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://carta.travel/schema/wire.schema.json",
   "title": "Carta wire contract: continent-app/public/app_data.json",
-  "description": "The one machine-readable data contract (T1133, ROADMAP D1). Read by the pipeline writers (pipeline/wire_contract.py, called from pipeline_io.atomic_write_json before every write of the wire), by the app sync (continent-app/scripts/sync-data.mjs) and by the CI contract gate (continent-app/scripts/ci/contract.mjs, check-contract.mjs). The table \"Wire contract\" in docs/SCHEMA.md is generated from this file (node continent-app/scripts/ci/wire-table.mjs --write). Keywords used: a JSON Schema 2020-12 subset (type, enum, const, pattern, minLength, minimum, maximum, items, prefixItems, minItems, maxItems, properties, required, additionalProperties, minProperties, $ref) plus x-presence (required, every, some), which is checked only on a full catalogue.",
+  "description": "The one machine-readable data contract (T1133, ROADMAP D1). Read by the pipeline writers (pipeline/wire_contract.py, called from pipeline_io.atomic_write_json before every write of the wire), by the app sync (continent-app/scripts/sync-data.mjs) and by the CI contract gate (continent-app/scripts/ci/contract.mjs, check-contract.mjs). The table \"Wire contract\" in docs/SCHEMA.md is generated from this file (node continent-app/scripts/ci/wire-table.mjs --write). Keywords used: a JSON Schema 2020-12 subset (type, enum, const, pattern, minLength, minimum, maximum, items, prefixItems, minItems, maxItems, properties, required, additionalProperties, minProperties, $ref) plus x-presence (required, every, some, pending), which is checked only on a full catalogue; pending (T1202) is a key listed before its first run: its shape is checked, its absence is not.",
   "x-schema-version": 20,
   "type": "object",
   "required": [
@@ -753,6 +753,100 @@
             "_asof"
           ]
         },
+        "season": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "x-presence": "pending",
+          "description": "T1202 (D18): open months of the place (`open`, only when it closes part of the year), `conf`, `why` (own or ferry), `checked`, and up to four seasonal huts, lifts or ferries nearby (`items`), from OSM opening_hours and seasonal (`harvest_seasons.py`)",
+          "properties": {
+            "open": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12
+              },
+              "minItems": 1,
+              "maxItems": 12
+            },
+            "conf": {
+              "type": "string",
+              "enum": [
+                "high",
+                "medium",
+                "low"
+              ]
+            },
+            "why": {
+              "type": "string",
+              "enum": [
+                "own",
+                "ferry"
+              ]
+            },
+            "checked": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "items": {
+              "type": "array",
+              "maxItems": 4,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "n": {
+                    "type": "string"
+                  },
+                  "k": {
+                    "type": "string",
+                    "enum": [
+                      "hut",
+                      "lift",
+                      "ferry",
+                      "place"
+                    ]
+                  },
+                  "open": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 12
+                    },
+                    "minItems": 1,
+                    "maxItems": 12
+                  },
+                  "conf": {
+                    "type": "string",
+                    "enum": [
+                      "high",
+                      "medium",
+                      "low"
+                    ]
+                  }
+                },
+                "required": [
+                  "n",
+                  "k",
+                  "open",
+                  "conf"
+                ]
+              }
+            },
+            "_src": {
+              "$ref": "#/$defs/src"
+            },
+            "_asof": {
+              "$ref": "#/$defs/asof"
+            }
+          },
+          "required": [
+            "_src",
+            "_asof"
+          ]
+        },
         "anchor_estimated": {
           "type": [
             "boolean",
@@ -1020,6 +1114,7 @@
         "open_prices",
         "osm",
         "osm_protected",
+        "osm_seasons",
         "ourairports",
         "poi_mix",
         "stays_scrape",

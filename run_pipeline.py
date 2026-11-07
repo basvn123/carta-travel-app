@@ -2915,6 +2915,23 @@ TASKS = [
                  "Docs: HANDBOOK 'Entry rules'."),
     },
     {
+        "key": "seasons",
+        "title": "Seasons and closures: open months of places, huts, lifts and ferries (D18, T1202)",
+        "cadence": "quarterly",
+        "writes_app_data": True,
+        "soft": True,
+        "rev": "T1202",
+        "guard": guard_files(("data/raw/geofabrik/*/*.osm.pbf", 1,
+                              "download the Geofabrik country extracts first (beaches osm_extract reads the same files)")),
+        "cmds": [[PY, "pipeline/harvest_seasons.py"]],
+        "note": ("pipeline/harvest_seasons.py reads opening_hours and seasonal from the "
+                 "Geofabrik extracts (pyosmium, one pass each), keeps huts, lifts, "
+                 "ferries and places named like a destination, writes "
+                 "cache/dest_seasons.json and the destination `season` block "
+                 "(open months, confidence, why, check date, nearby seasonal items) "
+                 "into the master; sync-data ships it. Docs: HANDBOOK 'Seasons and closures'."),
+    },
+    {
         "key": "photo_sources",
         # T269-b. Last in the table on purpose: it reads the wires the layer
         # exports above have just written, so it must follow every one of them.

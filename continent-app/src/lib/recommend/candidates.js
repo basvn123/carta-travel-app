@@ -35,6 +35,7 @@ import { haversineKm } from '../runtime_pricing.js';
 import { sweptNear, sweptCheapest } from '../flights/flights.js';
 import { tripTaste, normalizeTaste } from '../taste.js';
 import { quizAnswers, spendFor } from '../../planner/flow/tripSettings.js';
+import { openIn } from '../season.js';
 
 export const CANDIDATES = Object.freeze(RECOMMEND.candidates);
 const DATES = RECOMMEND.dates;
@@ -86,12 +87,17 @@ function monthsAhead(today) {
 /**
  * The best month for these places: the mean high closest to what the
  * weather answer asks (config month.tmaxByWeather), or with no weather
- * answer the best month score. Earlier months win ties.
+ * answer the best month score. Earlier months win ties. T1202 (D18): a
+ * month the first place is shut (lib/season.js openIn) is not chosen while
+ * another month is open.
  */
 export function bestMonth(dests, weather, today) {
   const target = MONTH.tmaxByWeather[weather];
   let best = null;
-  for (const m of monthsAhead(today)) {
+  const ahead = monthsAhead(today);
+  const open = ahead.filter((m) => openIn(dests[0], m));
+  const pool = open.length ? open : ahead;
+  for (const m of pool) {
     let score = null;
     if (target != null) {
       const highs = dests.map((d) => d?.taste?.tmax_by_month?.[m - 1]).filter(Number.isFinite);
@@ -102,7 +108,7 @@ export function bestMonth(dests, weather, today) {
     }
     if (score != null && (!best || score > best.score)) best = { m, score };
   }
-  return best?.m ?? monthsAhead(today)[1];
+  return best?.m ?? pool[Math.min(1, pool.length - 1)];
 }
 
 /** The first `startWeekday` (config, 6 = Saturday) of the next time month m comes round after today. */
@@ -324,7 +330,10 @@ export function buildCandidates(input) {
     const month = fixedMonth ?? bestMonth(dests, settings.guide.weather, today);
     const dates = datesFor(settings, month, today);
     const n = placesFor(shape, dates.nights);
-    const placeIds = n == null ? null : placesNear(ids, n, shape, destinations, personaReach(personaOf(settings.guide)));
+    // T1202 (D18): a place shut that month (its hut, lift or only ferry
+    // closed, medium or high confidence) is never suggested for it.
+    const openIds = ids.filter((id) => openIn(destinations[id], month));
+    const placeIds = n == null ? null : placesNear(openIds, n, shape, destinations, personaReach(personaOf(settings.guide)));
     if (!placeIds) return null;
     const nights = splitNights(dates.nights, n);
     return {

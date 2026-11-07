@@ -15,8 +15,9 @@ Keywords (JSON Schema 2020-12 subset): type, enum, const, pattern,
 minLength, minimum, maximum, items, prefixItems, minItems, maxItems,
 properties, required, additionalProperties, minProperties, $ref (local
 ``#/$defs/...`` only). Plus one of ours, ``x-presence``: ``required`` (the key
-is on the object), ``every`` (on every record of the map) or ``some`` (on at
-least one), checked only with ``catalogue=True`` on a full catalogue.
+is on the object), ``every`` (on every record of the map), ``some`` (on at
+least one) or ``pending`` (listed before its first run, T1202: never
+required), checked only with ``catalogue=True`` on a full catalogue.
 
 The pipeline checks shape, not presence: a layer run part way through a fresh
 build may not have filled every key yet, but it must never write a key the

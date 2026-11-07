@@ -170,6 +170,15 @@ sources:
     cadence: IRREG
     tasks: [nature]
     owner: box
+  osm_seasons:
+    title: OpenStreetMap opening_hours and seasonal tags of places, huts, lifts and ferries (Geofabrik extracts)
+    kind: primary
+    inputs: []
+    ledger: [openstreetmap_via_geofabrik_country]
+    licence: ODbL-1.0
+    cadence: QUARTERLY
+    tasks: [seasons]
+    owner: box
   ourairports:
     title: OurAirports airport list
     kind: primary
@@ -262,3 +271,4 @@ blocks:
   nature:          {src: osm_protected,  writers: [pipeline/harvest_protected_areas_osm.py]}
   guide:           {src: wikivoyage,     writers: [pipeline/apply_wikivoyage.py]}
   wikidata:        {src: wikidata,       writers: []}
+  season:          {src: osm_seasons,    writers: [pipeline/harvest_seasons.py]}

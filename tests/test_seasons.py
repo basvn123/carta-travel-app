@@ -121,3 +121,19 @@ def test_cli_dry_run(tmp_path, capsys):
     assert hs.main(["--facilities", str(FIX), "--master", str(wire), "--dry-run"]) == 0
     out = json.loads(capsys.readouterr().out.strip().splitlines()[-1])
     assert out["with_open"] == 2 and out["by_why"] == {"ferry": 1, "own": 1}
+
+
+def test_wire_contract_takes_the_block_and_refuses_a_bad_one():
+    import wire_contract as wc
+    wire = json.loads((ROOT / "continent-app" / "public" / "app_data.json").read_text(encoding="utf-8"))
+    dests = wire["destinations"]
+    gid = next(k for k, d in dests.items() if d.get("tier") == "gem")
+    small = {"meta": wire["meta"], "destinations": {gid: dict(dests[gid])}}
+    rows = hs.join(_dests(), json.loads(FIX.read_text(encoding="utf-8")))
+    hs.apply({gid: small["destinations"][gid]}, {gid: rows["gem:isola"]}, "2026-11-07")
+    assert [p for p in wc.validate(small) if ".season" in p] == []
+    small["destinations"][gid]["season"]["open"] = [13]
+    assert any(".season.open" in p for p in wc.validate(small))
+    # pending: no record carrying it is not a catalogue problem.
+    del small["destinations"][gid]["season"]
+    assert not [p for p in wc.validate(small, catalogue=True) if "season" in p]

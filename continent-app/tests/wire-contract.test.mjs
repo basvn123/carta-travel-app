@@ -102,7 +102,7 @@ test('docs/SCHEMA.md carries the table the schema renders', () => {
   const md = fs.readFileSync(path.join(REPO, 'docs', 'SCHEMA.md'), 'utf8');
   assert.deepEqual(checkSchemaTable(md), []);
   const keys = schemaKeySet(WIRE_SCHEMA);
-  assert.equal(renderWireTable().split('\n').length, 2 + keys.meta.size + keys.every.size + keys.some.size);
+  assert.equal(renderWireTable().split('\n').length, 2 + keys.meta.size + keys.every.size + keys.some.size + keys.pending.size);
   // A key dropped from the table (or added to the schema alone) is drift.
   const drifted = md.replace(/^\| `gateway_of` .*\n/m, '');
   assert.ok(checkSchemaTable(drifted).some((p) => p.includes('"gateway_of"')));
