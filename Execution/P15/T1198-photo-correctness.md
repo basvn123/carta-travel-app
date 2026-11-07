@@ -48,7 +48,7 @@ A research subagent compared the options on 2026-11-07. It could not reach ai.go
   - `pipeline/photos/correctness.json`: the sample, distance limits, ladder depth and vision settings
   - `prompts/photo-check/v1.md`
   - `scripts/validation/layer_photos.py`
-  - `tests/test_photo_correctness.py` (17 tests)
+  - `tests/test_photo_correctness.py` (18 tests)
   - this report
 - **Modified:**
   - `run_pipeline.py`: the task `photo_check`, before `photo_sources`
@@ -86,7 +86,10 @@ None. The tier 2 run needs `GEMINI_API_KEY` on the box, which the other Gemini j
 | Whole list, cheap tier, names only | Not measured | 42 flagged of 8,942 (0.47%): destinations 37 of 3,841, beaches 4 of 2,745, lakes 0 of 1,628, mountains 1 of 728 | |
 | Flagged heroes with an ok candidate on the ladder (whole list) | n/a | 12 of 42 | |
 | Fur's grizzly hero | passes the hero audit's `classify` | flagged (`animal`), replaced by the Fur Museum photo at ladder index 5 on the shipped wire | |
-| tests/test_photo_correctness.py | 0 tests | 17 pass | +17 |
+| tests/test_photo_correctness.py | 0 tests | 18 pass | +18 |
+| pytest, CI set (minus quarantine), in this container | 2 fail on the untouched base branch too (test_rating_inputs, test_rating_stability: LFS pointer inputs) | 993 pass, the same 2 fail, 11 skipped | 0 new failures |
+| npm test (continent-app) | | 1,898 tests, 1,886 pass, 0 fail | |
+| npm run lint | | exit 0 | |
 | Gateway guard (continent-app/tests/aiGateway.test.mjs) | 33 pass | 33 pass | 0 |
 
 ## What broke and how it was fixed
@@ -97,6 +100,7 @@ None. The tier 2 run needs `GEMINI_API_KEY` on the box, which the other Gemini j
 | Town halls were sent to tier 2 as institutions | A town hall is an ordinary, good hero | Removed from the institution list (1,194 unsure became 1,110) |
 | The gateway sends text parts only | `ai_gateway.py` has no image input and no `photo_check` feature, and it is outside this task's files | An opener passed to the gateway adds one `inline_data` part, and the feature is registered at run time, as the text judge does (`pipeline/judge/backends.py`). No provider endpoint is named outside the gateway, and `aiGateway.test.mjs` passes (33 of 33). Moving both into the gateway is T1198-a. |
 | A hard D23 check with no baseline fails by design | The first pipeline run would fail D2 before anyone had seen a report | `--validate` writes the runner result only once `data/reports/validation/photos/baseline.json` exists (owner step T1198-b) |
+| The prompt registry test failed in npm test ("no eight-word run of any registry prompt is left in a code file") | The answer kinds were a tuple in correctness.py that repeated the rubric's answer shape | The kinds are now read from the rubric (`vision_kinds`), so the list lives only in the prompt. The test passes (11 of 11). |
 | `test_rates` expected 5 replacements | My count missed Tiverton, Appenzell and Kirkenes, whose fixture ladders hold a named photo | The expected value is now 7, with the list in a comment. The code was right. |
 
 ## Screens checked
