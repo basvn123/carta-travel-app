@@ -127,3 +127,22 @@ test('the shipped snapshot renders (empty today) and the tab is routed', async (
   const en = readFileSync(new URL('../src/i18n/en.js', import.meta.url), 'utf8');
   assert.match(en, /'admin\.nav\.overrides': 'Overrides'/);
 });
+
+test('T1214 (T1173-h): an entry past review_by is flagged and a live override on the same item is shown', async () => {
+  const { reviewDue, liveFor } = await import('../src/components/admin/pipelineOverrides.js');
+  const row = fixture.overrides[1];
+  assert.equal(reviewDue(row, '2026-12-31'), false);
+  assert.equal(reviewDue(row, '2027-01-02'), true);
+  assert.equal(reviewDue(fixture.overrides[0], '2030-01-01'), false); // no review_by
+  const live = [{ layer: 'dest', itemId: 'gone-town', patch: { blurb: 'y', name: 'z' } }, { layer: 'lake', itemId: 'gone-town', patch: {} }];
+  assert.deepEqual(liveFor(row, live).map((o) => o.layer), ['dest']);
+  const render = await load();
+  const html = render({ data: fixture, live, today: '2027-01-02' });
+  assert.match(html, /data-review="due">Review was due 2027-01-01/);
+  assert.match(html, /data-live="dest\/gone-town"[^>]*>Also a live override in the Content tab \(blurb, name\)/);
+  assert.match(html, /data-count="review-due"><b>1<\/b>/);
+  assert.match(html, /data-count="live"><b>2<\/b>/);
+  const before = render({ data: fixture, today: '2026-12-01' });
+  assert.doesNotMatch(before, /data-review="due"/);
+  assert.match(before, /review by 2027-01-01/);
+});

@@ -37,6 +37,20 @@ function validDate(s) {
   return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
 }
 
+/** True when the entry's review_by date has passed (T1214, from T1173-h). */
+export function reviewDue(row, today = new Date().toISOString().slice(0, 10)) {
+  return Boolean(row?.review_by) && validDate(row.review_by) && row.review_by < today;
+}
+
+/**
+ * The live content_overrides rows (the Content tab, no deploy) on the same
+ * layer and item as a file entry (T1214, from T1173-h). A live row is applied
+ * in the browser after the file entry, so it wins where both set a field.
+ */
+export function liveFor(row, live = []) {
+  return (live || []).filter((o) => o && o.layer === row.layer && String(o.itemId) === String(row.id));
+}
+
 /** The draft's value in the type the admin chose, or { error }. */
 export function parseValue(kind, raw) {
   const text = String(raw ?? '');

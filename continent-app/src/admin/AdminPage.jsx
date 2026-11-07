@@ -252,7 +252,7 @@ export function AdminPage({ onClose }) {
 
             {section === 'slo' && <SloPanel />}
 
-            {section === 'overrides' && <PipelineOverrides />}
+            {section === 'overrides' && <PipelineOverrides live={content.overrides} />}
 
             {section === 'audit' && (
               <AuditLog audit={audit} auditBusy={auditBusy} loadAudit={loadAudit} />
