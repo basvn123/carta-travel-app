@@ -326,6 +326,26 @@
         "value": 0.4333,
         "at": "2026-11-06T19:48:29.348Z"
       }
+    },
+    "judge-text": {
+      "version": 1,
+      "file": "prompts/judge-text/v1.md",
+      "format": "registry",
+      "sha256": "a40e854e32a6d8d10f9b6f86572c5f2cb7815756da22bb1c8a3af6198aaea271",
+      "runtime": "python",
+      "eval": null,
+      "guard": "the D4 calibration in pipeline/judge/calibrate.py (Cohen's kappa against evals/truth/judge/labels.json, planted fault recall) and tests/test_judge.py",
+      "callers": [
+        "pipeline/judge/core.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-07T01:11:07.609Z"
+      }
     }
   }
 }
