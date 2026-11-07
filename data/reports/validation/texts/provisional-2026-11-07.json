@@ -1,0 +1,898 @@
+{
+ "schema": "carta-texts-validation/1",
+ "task": "T1196",
+ "layer": "texts",
+ "provisional": true,
+ "why_provisional": "the judge counts only once calibrated on the owner's labels (T1144-a, T1144-b, T1188-a); labels are seeded, not a human's (T1144-b)",
+ "items": "data/reports/validation/texts/items.json",
+ "verdicts": "data/reports/validation/texts/verdicts-session-2026-11-07.json",
+ "judge": {
+  "backend": "session",
+  "model": "claude-code-session (blind subagents, T1196)",
+  "prompt": "judge-text",
+  "prompt_sha": "a40e854e32a6",
+  "stale": false
+ },
+ "calibration": {
+  "counts": false,
+  "labels": "seeded",
+  "kappa": 0.9398,
+  "kappa_low95": 0.7788
+ },
+ "n": 120,
+ "judged": 120,
+ "overall": {
+  "supported": {
+   "value": 0.3417,
+   "k": 41,
+   "n": 120,
+   "low": 0.2629,
+   "high": 0.4303
+  },
+  "unsupported": {
+   "value": 0.6083,
+   "k": 73,
+   "n": 120,
+   "low": 0.5189,
+   "high": 0.691
+  },
+  "contradicted": {
+   "value": 0.05,
+   "k": 6,
+   "n": 120,
+   "low": 0.0231,
+   "high": 0.1048
+  }
+ },
+ "supported_weighted_by_population": 0.6671,
+ "supported_shipped_weighted": 0.1934,
+ "per_stratum": {
+  "place_blurb": {
+   "population": 771,
+   "n": 40,
+   "supported": {
+    "value": 0.05,
+    "k": 2,
+    "n": 40,
+    "low": 0.0138,
+    "high": 0.165
+   },
+   "unsupported": {
+    "value": 0.95,
+    "k": 38,
+    "n": 40,
+    "low": 0.835,
+    "high": 0.9862
+   },
+   "contradicted": {
+    "value": 0.0,
+    "k": 0,
+    "n": 40,
+    "low": 0.0,
+    "high": 0.0876
+   }
+  },
+  "trail_summary/t1179": {
+   "population": 2080,
+   "n": 20,
+   "supported": {
+    "value": 1.0,
+    "k": 20,
+    "n": 20,
+    "low": 0.8389,
+    "high": 1.0
+   },
+   "unsupported": {
+    "value": 0.0,
+    "k": 0,
+    "n": 20,
+    "low": 0.0,
+    "high": 0.1611
+   },
+   "contradicted": {
+    "value": 0.0,
+    "k": 0,
+    "n": 20,
+    "low": 0.0,
+    "high": 0.1611
+   }
+  },
+  "trail_summary/wire": {
+   "population": 433,
+   "n": 20,
+   "supported": {
+    "value": 0.4,
+    "k": 8,
+    "n": 20,
+    "low": 0.2188,
+    "high": 0.6134
+   },
+   "unsupported": {
+    "value": 0.55,
+    "k": 11,
+    "n": 20,
+    "low": 0.3421,
+    "high": 0.7418
+   },
+   "contradicted": {
+    "value": 0.05,
+    "k": 1,
+    "n": 20,
+    "low": 0.0089,
+    "high": 0.2361
+   }
+  },
+  "trip_text": {
+   "population": 258,
+   "n": 40,
+   "supported": {
+    "value": 0.275,
+    "k": 11,
+    "n": 40,
+    "low": 0.1611,
+    "high": 0.4283
+   },
+   "unsupported": {
+    "value": 0.6,
+    "k": 24,
+    "n": 40,
+    "low": 0.446,
+    "high": 0.7365
+   },
+   "contradicted": {
+    "value": 0.125,
+    "k": 5,
+    "n": 40,
+    "low": 0.0546,
+    "high": 0.2611
+   }
+  }
+ },
+ "worst": [
+  {
+   "id": "x018",
+   "ref": "wire:64714",
+   "stratum": "trail_summary/wire",
+   "country": "LT",
+   "subject": "Camino Lituano Žemaitija",
+   "verdict": "contradicted",
+   "reason": "215.6 km is 0.7 km off the source's 216.3 km.",
+   "claims": [
+    {
+     "claim": "215.6 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\":216.3"
+    }
+   ]
+  },
+  {
+   "id": "x032",
+   "ref": "journey:it-cozy-towns-umbria",
+   "stratum": "trip_text",
+   "country": "IT",
+   "subject": "Umbrian Hill Towns: Spello, Bevagna & the Sagrantino Hills",
+   "verdict": "contradicted",
+   "reason": "Bevagna gets three nights (days 4 to 6) and there is one town move, not four nights and two moves.",
+   "claims": [
+    {
+     "claim": "Bevagna for four nights",
+     "verdict": "contradicted",
+     "evidence": "Flight home, or an early dinner in Perugia with a night in hand."
+    },
+    {
+     "claim": "shutters down 13:30-16:00",
+     "verdict": "unsupported",
+     "evidence": "The town is shuttered until 16:00 anyway"
+    },
+    {
+     "claim": "town reappearing on the corso at 18:30",
+     "verdict": "unsupported",
+     "evidence": "Passeggiata peaks around 19:15 on Via Garibaldi"
+    },
+    {
+     "claim": "Two town moves in seven days",
+     "verdict": "contradicted",
+     "evidence": "Move to Bevagna"
+    }
+   ]
+  },
+  {
+   "id": "x052",
+   "ref": "journey:li-road-trip-rhine-triangle",
+   "stratum": "trip_text",
+   "country": "LI",
+   "subject": "The Rhine Alpine Triangle, Vaduz, the Silvretta and Graubünden",
+   "verdict": "contradicted",
+   "reason": "Only days 2 to 6 loop back to Vaduz; day 7 is a one-way exit to Zurich, so there are five loops, not six.",
+   "claims": [
+    {
+     "claim": "six day loops",
+     "verdict": "contradicted",
+     "evidence": "Rhine valley and out ... Drop the car at Zürich airport."
+    }
+   ]
+  },
+  {
+   "id": "x059",
+   "ref": "journey:pt-city-lisbon",
+   "stratum": "trip_text",
+   "country": "PT",
+   "subject": "Lisbon on Foot: Seven Hills, Seven Days",
+   "verdict": "contradicted",
+   "reason": "The stated order conflicts with the data: Chiado is day 1 before Alfama, and Belem (day 3) comes before Principe Real (day 4).",
+   "claims": [
+    {
+     "claim": "neighbourhood sequence: Alfama and Mouraria, then Chiado, then Principe Real, then the river",
+     "verdict": "contradicted",
+     "evidence": "\"title\": \"Landing on the Grid: Baixa and Chiado\""
+    },
+    {
+     "claim": "trades tram 28",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Bairro Alto",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x071",
+   "ref": "journey:me-trail-running-durmitor",
+   "stratum": "trip_text",
+   "country": "ME",
+   "subject": "Durmitor Ridges",
+   "verdict": "contradicted",
+   "reason": "Savin Kuk is day 6 and the last run is the katun loop; several headline numbers are also absent.",
+   "claims": [
+    {
+     "claim": "48 peaks over 2,000 m",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "drive across in forty minutes",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "highest town in the Balkans",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "fast finish on Savin Kuk",
+     "verdict": "contradicted",
+     "evidence": "Last run: the Ivan Do-Lokvice katun loop from Crno jezero"
+    }
+   ]
+  },
+  {
+   "id": "x079",
+   "ref": "journey:md-culinary-codru-stefan-voda",
+   "stratum": "trip_text",
+   "country": "MD",
+   "subject": "Underground Streets and Feteasca Neagră: A Week Through Codru and Ștefan Vodă",
+   "verdict": "contradicted",
+   "reason": "Cricova is toured by electric train, so only one of the two underground cellars is driven.",
+   "claims": [
+    {
+     "claim": "the only wine country where you tour cellars by car",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "tour two of the cellars by car",
+     "verdict": "contradicted",
+     "evidence": "The tour runs by electric train through galleries"
+    },
+    {
+     "claim": "street signs that read Cabernet and Feteasca",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x003",
+   "ref": "place:gem:vaduz",
+   "stratum": "place_blurb",
+   "country": "LI",
+   "subject": "Vaduz, Liechtenstein",
+   "verdict": "unsupported",
+   "reason": "The source says nothing about mountains or views.",
+   "claims": [
+    {
+     "claim": "mountain views",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x005",
+   "ref": "place:gem:pecs",
+   "stratum": "place_blurb",
+   "country": "HU",
+   "subject": "Pécs, Hungary",
+   "verdict": "unsupported",
+   "reason": "Roman tombs and the Ottoman mosque are not in the source.",
+   "claims": [
+    {
+     "claim": "Roman tombs",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Ottoman mosque",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x007",
+   "ref": "place:gem:avignon",
+   "stratum": "place_blurb",
+   "country": "FR",
+   "subject": "Avignon, France",
+   "verdict": "unsupported",
+   "reason": "The source names a UNESCO historic centre but no papal palace.",
+   "claims": [
+    {
+     "claim": "UNESCO papal palace",
+     "verdict": "unsupported",
+     "evidence": "its historical centre has been inscribed on the UNESCO World Heritage list"
+    }
+   ]
+  },
+  {
+   "id": "x009",
+   "ref": "place:gem:stevns-klint",
+   "stratum": "place_blurb",
+   "country": "DK",
+   "subject": "Stevns Klint, Denmark",
+   "verdict": "unsupported",
+   "reason": "The source only describes the municipality and its farmland.",
+   "claims": [
+    {
+     "claim": "UNESCO chalk cliff",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "recording the dinosaur-killing asteroid",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "medieval church teetering on the edge",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x015",
+   "ref": "place:gem:klaipeda",
+   "stratum": "place_blurb",
+   "country": "LT",
+   "subject": "Klaipeda, Lithuania",
+   "verdict": "unsupported",
+   "reason": "The source mentions coast and historic sights but no port, timber houses or Curonian Spit.",
+   "claims": [
+    {
+     "claim": "Lithuania's port city",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Prussian timber houses",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "gateway to the Curonian Spit",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x017",
+   "ref": "place:gem:fredrikstad",
+   "stratum": "place_blurb",
+   "country": "NO",
+   "subject": "Fredrikstad, Norway",
+   "verdict": "unsupported",
+   "reason": "Moats and cobbled lanes are not mentioned in the source.",
+   "claims": [
+    {
+     "claim": "moats and cobbled lanes still fully intact",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x020",
+   "ref": "place:gem:saas-fee",
+   "stratum": "place_blurb",
+   "country": "CH",
+   "subject": "Saas-Fee, Switzerland",
+   "verdict": "unsupported",
+   "reason": "The source only covers the valley, winter sport and summer skiing.",
+   "claims": [
+    {
+     "claim": "Car-free",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "'Pearl of the Alps'",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "ringed by thirteen 4,000 m peaks",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "world's highest revolving restaurant",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x022",
+   "ref": "place:gem:sankt-peter-ording",
+   "stratum": "place_blurb",
+   "country": "DE",
+   "subject": "Sankt Peter-Ording, Germany",
+   "verdict": "unsupported",
+   "reason": "Beach length, stilt houses and buggies are not in the source, and it says one of the prime spots, not the best.",
+   "claims": [
+    {
+     "claim": "12 km North Sea beach",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "stilt-house restaurants",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "kite buggies",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Germany's best kitesurfing",
+     "verdict": "unsupported",
+     "evidence": "one of Germany's prime destinations for surfing and kite-surfing"
+    }
+   ]
+  },
+  {
+   "id": "x027",
+   "ref": "place:gem:koli",
+   "stratum": "place_blurb",
+   "country": "FI",
+   "subject": "Koli National Park, Finland",
+   "verdict": "unsupported",
+   "reason": "Only the lake is in the source.",
+   "claims": [
+    {
+     "claim": "Finland's national landscape",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "white quartzite hills",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "island-studded",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x030",
+   "ref": "place:gem:jurmala",
+   "stratum": "place_blurb",
+   "country": "LV",
+   "subject": "Jūrmala, Latvia",
+   "verdict": "unsupported",
+   "reason": "The source gives no beach length, villas or Riga link.",
+   "claims": [
+    {
+     "claim": "30 km Baltic beach",
+     "verdict": "unsupported",
+     "evidence": "It claims to have the longest beach in Northern Europe."
+    },
+    {
+     "claim": "wooden art-nouveau villas",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "easy from Riga",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x033",
+   "ref": "place:gem:waterford",
+   "stratum": "place_blurb",
+   "country": "IE",
+   "subject": "Waterford, Ireland",
+   "verdict": "unsupported",
+   "reason": "Oldest city, Viking Triangle and Reginald's Tower are not in the source.",
+   "claims": [
+    {
+     "claim": "Ireland's oldest city",
+     "verdict": "unsupported",
+     "evidence": "Founded over 1100 years ago"
+    },
+    {
+     "claim": "the Viking Triangle",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Reginald's Tower",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x036",
+   "ref": "place:gem:san-marino",
+   "stratum": "place_blurb",
+   "country": "SM",
+   "subject": "San Marino, San Marino",
+   "verdict": "unsupported",
+   "reason": "UNESCO status and fortresses are not in the source.",
+   "claims": [
+    {
+     "claim": "UNESCO",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "fortress",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x037",
+   "ref": "place:gem:mavrovo",
+   "stratum": "place_blurb",
+   "country": "MK",
+   "subject": "Mavrovo National Park, North Macedonia",
+   "verdict": "unsupported",
+   "reason": "Korab, the church and Galicnik are not named in the source.",
+   "claims": [
+    {
+     "claim": "under Mt Korab",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "half-submerged church",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "stone village of Galicnik",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x041",
+   "ref": "place:gem:znojmo",
+   "stratum": "place_blurb",
+   "country": "CZ",
+   "subject": "Znojmo, Czechia",
+   "verdict": "unsupported",
+   "reason": "The Dyje gorge setting and the 27 km underground are not in the source.",
+   "claims": [
+    {
+     "claim": "stacked above the Dyje river gorge",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "27 km medieval underground",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x045",
+   "ref": "place:gem:herceg-novi",
+   "stratum": "place_blurb",
+   "country": "ME",
+   "subject": "Herceg Novi, Montenegro",
+   "verdict": "unsupported",
+   "reason": "The source only compares Herceg Novi with Kotor and states none of these facts.",
+   "claims": [
+    {
+     "claim": "stair-stepped fortress town",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "town of flowers",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "at the Bay of Kotor's mouth",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Savina monastery",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "sea baths",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x047",
+   "ref": "place:gem:seydisfjordur",
+   "stratum": "place_blurb",
+   "country": "IS",
+   "subject": "Seyðisfjörður, Iceland",
+   "verdict": "unsupported",
+   "reason": "Only the East Iceland location is in the source.",
+   "claims": [
+    {
+     "claim": "rainbow street",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "pastel Norwegian houses",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "waterfall-lined fjord",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x051",
+   "ref": "place:gem:hiiumaa",
+   "stratum": "place_blurb",
+   "country": "EE",
+   "subject": "Hiiumaa, Estonia",
+   "verdict": "unsupported",
+   "reason": "Lighthouses, beaches and juniper heath are not in the source.",
+   "claims": [
+    {
+     "claim": "slow-paced",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "historic lighthouses",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "empty beaches",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "juniper heath",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x062",
+   "ref": "place:gem:torun",
+   "stratum": "place_blurb",
+   "country": "PL",
+   "subject": "Torun, Poland",
+   "verdict": "unsupported",
+   "reason": "Gingerbread and the Copernicus house are not in the source.",
+   "claims": [
+    {
+     "claim": "brick lanes",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "gingerbread",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "house of Copernicus",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x064",
+   "ref": "place:gem:prizren",
+   "stratum": "place_blurb",
+   "country": "XK",
+   "subject": "Prizren, Kosovo",
+   "verdict": "unsupported",
+   "reason": "Bridges, the fortress and the old town ranking are not in the source.",
+   "claims": [
+    {
+     "claim": "Ottoman bridges",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "hilltop fortress",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Kosovo's prettiest old town",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x067",
+   "ref": "place:gem:grazalema",
+   "stratum": "place_blurb",
+   "country": "ES",
+   "subject": "Grazalema, Spain",
+   "verdict": "unsupported",
+   "reason": "Griffon-cliff hikes are not mentioned in the source.",
+   "claims": [
+    {
+     "claim": "greenest",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "hub for griffon-cliff hikes",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x069",
+   "ref": "place:gem:kranjska-gora",
+   "stratum": "place_blurb",
+   "country": "SI",
+   "subject": "Kranjska Gora, Slovenia",
+   "verdict": "unsupported",
+   "reason": "Triglav, the Vrsic Pass and Planica are not named in the source.",
+   "claims": [
+    {
+     "claim": "under Triglav's peaks",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "gateway to the Vrsic Pass",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Planica's ski jumps",
+     "verdict": "unsupported",
+     "evidence": "known for alpine skiing and ski jumping"
+    }
+   ]
+  },
+  {
+   "id": "x070",
+   "ref": "place:gem:high-fens",
+   "stratum": "place_blurb",
+   "country": "BE",
+   "subject": "High Fens, Belgium",
+   "verdict": "unsupported",
+   "reason": "The cited source is an unrelated High Desert disambiguation line.",
+   "claims": [
+    {
+     "claim": "Belgium's rooftop",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "plateau of peat bogs",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "boardwalk trails",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "mist-swept open moor",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x072",
+   "ref": "place:gem:bojnice",
+   "stratum": "place_blurb",
+   "country": "SK",
+   "subject": "Bojnice, Slovakia",
+   "verdict": "unsupported",
+   "reason": "The source mentions no castle or zoo.",
+   "claims": [
+    {
+     "claim": "fairytale castle",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "turrets and moat",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Europe's oldest zoo next door",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  },
+  {
+   "id": "x077",
+   "ref": "place:gem:hvar",
+   "stratum": "place_blurb",
+   "country": "HR",
+   "subject": "Hvar, Croatia",
+   "verdict": "unsupported",
+   "reason": "The source names neither the Adriatic nor any glamour.",
+   "claims": [
+    {
+     "claim": "Adriatic",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "glam",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ]
+  }
+ ]
+}

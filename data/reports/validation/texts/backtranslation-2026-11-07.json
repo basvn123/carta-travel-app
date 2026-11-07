@@ -1,0 +1,374 @@
+{
+ "schema": "carta-backtranslation/1",
+ "task": "T1196",
+ "provisional": true,
+ "why_provisional": "the judge counts only once calibrated on the owner's labels (T1144-b, T1188-a), and the native review (T1170-a) is the real check",
+ "method": {
+  "chrf": "chrF++ char 6 word 2 beta 2",
+  "chrf_min": 45.0,
+  "flag_share": 0.15,
+  "control_share": 0.05
+ },
+ "strings": 3187,
+ "holds": {
+  "k": 3176,
+  "n": 3187,
+  "value": 0.9965,
+  "low": 0.9938,
+  "high": 0.9981
+ },
+ "langs": {
+  "nl": {
+   "strings": 583,
+   "back_translated": 583,
+   "flagged": 376,
+   "failed_checks": 0,
+   "judged": 385,
+   "holds": {
+    "k": 578,
+    "n": 583,
+    "value": 0.9914,
+    "low": 0.9801,
+    "high": 0.9963
+   },
+   "holds_traveller_facing": {
+    "k": 173,
+    "n": 175,
+    "value": 0.9886
+   },
+   "control": {
+    "n": 9,
+    "supported": 9
+   },
+   "chrf_median": 93.21,
+   "checks": {},
+   "verdicts": {
+    "supported": 380,
+    "contradicted": 4,
+    "unsupported": 1
+   }
+  },
+  "de": {
+   "strings": 651,
+   "back_translated": 651,
+   "flagged": 408,
+   "failed_checks": 0,
+   "judged": 416,
+   "holds": {
+    "k": 650,
+    "n": 651,
+    "value": 0.9985,
+    "low": 0.9914,
+    "high": 0.9997
+   },
+   "holds_traveller_facing": {
+    "k": 242,
+    "n": 243,
+    "value": 0.9959
+   },
+   "control": {
+    "n": 8,
+    "supported": 8
+   },
+   "chrf_median": 84.66,
+   "checks": {},
+   "verdicts": {
+    "supported": 415,
+    "contradicted": 1
+   }
+  },
+  "fr": {
+   "strings": 651,
+   "back_translated": 651,
+   "flagged": 400,
+   "failed_checks": 0,
+   "judged": 417,
+   "holds": {
+    "k": 650,
+    "n": 651,
+    "value": 0.9985,
+    "low": 0.9914,
+    "high": 0.9997
+   },
+   "holds_traveller_facing": {
+    "k": 242,
+    "n": 243,
+    "value": 0.9959
+   },
+   "control": {
+    "n": 17,
+    "supported": 17
+   },
+   "chrf_median": 83.39,
+   "checks": {
+    "left_in_english": 1
+   },
+   "verdicts": {
+    "supported": 416,
+    "unsupported": 1
+   }
+  },
+  "es": {
+   "strings": 651,
+   "back_translated": 651,
+   "flagged": 408,
+   "failed_checks": 0,
+   "judged": 418,
+   "holds": {
+    "k": 649,
+    "n": 651,
+    "value": 0.9969,
+    "low": 0.9889,
+    "high": 0.9992
+   },
+   "holds_traveller_facing": {
+    "k": 243,
+    "n": 243,
+    "value": 1.0
+   },
+   "control": {
+    "n": 10,
+    "supported": 10
+   },
+   "chrf_median": 84.44,
+   "checks": {
+    "length_ratio": 1
+   },
+   "verdicts": {
+    "supported": 416,
+    "unsupported": 2
+   }
+  },
+  "it": {
+   "strings": 651,
+   "back_translated": 651,
+   "flagged": 403,
+   "failed_checks": 0,
+   "judged": 420,
+   "holds": {
+    "k": 649,
+    "n": 651,
+    "value": 0.9969,
+    "low": 0.9889,
+    "high": 0.9992
+   },
+   "holds_traveller_facing": {
+    "k": 242,
+    "n": 243,
+    "value": 0.9959
+   },
+   "control": {
+    "n": 17,
+    "supported": 17
+   },
+   "chrf_median": 82.5,
+   "checks": {
+    "left_in_english": 1
+   },
+   "verdicts": {
+    "supported": 418,
+    "contradicted": 2
+   }
+  }
+ },
+ "worst": [
+  {
+   "lang": "nl",
+   "key": "notfor.mtnExposure",
+   "en": "Not for you if you are uneasy with exposure. There is a long drop beside the path.",
+   "target": "Niets voor jou als je je ongemakkelijk voelt bij hoogte en diepte. Naast het pad is een lange val.",
+   "back": "Nothing for you if you feel uncomfortable with height and depth. Next to the path is a long fall.",
+   "chrf": 40.35,
+   "checks": [],
+   "verdict": "contradicted",
+   "reason": "een lange val means a long fall (an event), not a drop in the ground (lead review, T1196).",
+   "claims": [
+    {
+     "claim": "een lange val",
+     "verdict": "contradicted",
+     "evidence": "There is a long drop beside the path."
+    }
+   ]
+  },
+  {
+   "lang": "nl",
+   "key": "trip.practicalParkRide",
+   "en": "Park and ride {dist} out",
+   "target": "P+R {dist} verderop",
+   "back": "P+R {dist} further on",
+   "chrf": 26.77,
+   "checks": [],
+   "verdict": "unsupported",
+   "reason": "verderop (further along) drops out of the centre (lead review, T1196).",
+   "claims": [
+    {
+     "claim": "verderop",
+     "verdict": "unsupported",
+     "evidence": "Park and ride {dist} out"
+    }
+   ]
+  },
+  {
+   "lang": "nl",
+   "key": "admin.reviewLateToday",
+   "en": "was due {date}",
+   "target": "was verschuldigd op {date}",
+   "back": "was due on {date}",
+   "chrf": 69.73,
+   "checks": [],
+   "verdict": "contradicted",
+   "reason": "Verschuldigd means owed (as a debt), which changes the meaning of due for review into owed.",
+   "claims": [
+    {
+     "claim": "was verschuldigd op {date}",
+     "verdict": "contradicted",
+     "evidence": "was due {date}"
+    }
+   ]
+  },
+  {
+   "lang": "nl",
+   "key": "admin.reviewLateOne",
+   "en": "was due {date}, 1 day ago",
+   "target": "was verschuldigd op {date}, 1 dag geleden",
+   "back": "was due on {date}, 1 day ago",
+   "chrf": 84.28,
+   "checks": [],
+   "verdict": "contradicted",
+   "reason": "Verschuldigd means owed (as a debt), which changes the meaning of due for review into owed.",
+   "claims": [
+    {
+     "claim": "was verschuldigd op {date}",
+     "verdict": "contradicted",
+     "evidence": "was due {date}"
+    }
+   ]
+  },
+  {
+   "lang": "nl",
+   "key": "admin.reviewLate",
+   "en": "was due {date}, {n} days ago",
+   "target": "was verschuldigd op {date}, {n} dagen geleden",
+   "back": "was due on {date}, {n} days ago",
+   "chrf": 86.63,
+   "checks": [],
+   "verdict": "contradicted",
+   "reason": "Verschuldigd means owed (as a debt), which changes the meaning of due for review into owed.",
+   "claims": [
+    {
+     "claim": "was verschuldigd op {date}",
+     "verdict": "contradicted",
+     "evidence": "was due {date}"
+    }
+   ]
+  },
+  {
+   "lang": "de",
+   "key": "crash.card",
+   "en": "This card could not load.",
+   "target": "Diese Karte konnte nicht geladen werden.",
+   "back": "This map could not be loaded.",
+   "chrf": 46.14,
+   "checks": [],
+   "verdict": "contradicted",
+   "reason": "Karte reads as map in a travel app; the English means a UI card (lead review, T1196).",
+   "claims": [
+    {
+     "claim": "Diese Karte",
+     "verdict": "contradicted",
+     "evidence": "This card could not load."
+    }
+   ]
+  },
+  {
+   "lang": "fr",
+   "key": "trip.timedLabel",
+   "en": "Worth timing",
+   "target": "À chronométrer",
+   "back": "To be timed",
+   "chrf": 9.95,
+   "checks": [],
+   "verdict": "unsupported",
+   "reason": "The translation turns the judgement that the visit is worth timing into an instruction to time it with a stopwatch, dropping the original meaning.",
+   "claims": [
+    {
+     "claim": "To be timed with a stopwatch (A chronometrer)",
+     "verdict": "unsupported",
+     "evidence": "Worth timing"
+    }
+   ]
+  },
+  {
+   "lang": "es",
+   "key": "admin.colTarget",
+   "en": "Target",
+   "target": "Destino",
+   "back": "Destination",
+   "chrf": 8.16,
+   "checks": [],
+   "verdict": "unsupported",
+   "reason": "Destino reads as a travel destination in this app (lead review, T1196).",
+   "claims": [
+    {
+     "claim": "Destino",
+     "verdict": "unsupported",
+     "evidence": "Target"
+    }
+   ]
+  },
+  {
+   "lang": "es",
+   "key": "admin.fGroundUsed",
+   "en": "Grounded searches used",
+   "target": "Búsquedas con datos en directo usadas",
+   "back": "Searches with live data used",
+   "chrf": 37.7,
+   "checks": [],
+   "verdict": "unsupported",
+   "reason": "The original says grounded searches; the translation adds that they use live data, which the source does not state.",
+   "claims": [
+    {
+     "claim": "searches with live data (datos en directo)",
+     "verdict": "unsupported",
+     "evidence": "Grounded searches used"
+    }
+   ]
+  },
+  {
+   "lang": "it",
+   "key": "trip.practicalAirport",
+   "en": "{airport}, {min} min to the middle of {city}",
+   "target": "{airport}, {min} min dal centro di {city}",
+   "back": "{airport}, {min} min from the centre of {city}",
+   "chrf": 68.15,
+   "checks": [],
+   "verdict": "contradicted",
+   "reason": "Direction reversed: from the centre for to the middle (lead review, T1196).",
+   "claims": [
+    {
+     "claim": "dal centro",
+     "verdict": "contradicted",
+     "evidence": "to the middle"
+    }
+   ]
+  },
+  {
+   "lang": "it",
+   "key": "admin.colTarget",
+   "en": "Target",
+   "target": "Destinatario",
+   "back": "Recipient",
+   "chrf": 6.49,
+   "checks": [],
+   "verdict": "contradicted",
+   "reason": "Destinatario is a recipient, not the target of an audit action (lead review, T1196).",
+   "claims": [
+    {
+     "claim": "Destinatario",
+     "verdict": "contradicted",
+     "evidence": "Target"
+    }
+   ]
+  }
+ ]
+}
