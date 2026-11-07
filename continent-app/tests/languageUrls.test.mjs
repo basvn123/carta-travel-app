@@ -117,7 +117,7 @@ test("every language carries every chrome string, with the same slots and no das
   for (const l of LANGS) {
     assert.deepEqual(Object.keys(STRINGS[l]).sort(), Object.keys(STRINGS.en).sort(), l);
     for (const [k, v] of Object.entries(STRINGS[l])) {
-      assert.ok(v && !/[–—]/.test(v), `${l}.${k}`);
+      assert.ok(v && !/[\u2013\u2014]/.test(v), `${l}.${k}`);
       assert.equal(slots(v), slots(STRINGS.en[k]), `${l}.${k}`);
     }
   }
