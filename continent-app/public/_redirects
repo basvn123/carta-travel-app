@@ -28,3 +28,20 @@
 /pricing/     / 200
 /:lang/pricing  / 200
 /:lang/pricing/ / 200
+
+# Language in the address (T1212, ROADMAP I12). /nl/, /de/, /fr/, /es/ and /it/
+# are the app in that language; pathBoot.js and src/i18n read the prefix. A
+# prefixed path with a prerendered page is answered by the Pages Function
+# (/nl/* is in _routes.json); anything else under a prefix falls through to
+# here and gets the app shell, which reads the path. Without these lines the
+# 404.html would answer every language address.
+/nl     / 200
+/nl/*   / 200
+/de     / 200
+/de/*   / 200
+/fr     / 200
+/fr/*   / 200
+/es     / 200
+/es/*   / 200
+/it     / 200
+/it/*   / 200

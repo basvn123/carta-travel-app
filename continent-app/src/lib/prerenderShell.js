@@ -36,10 +36,16 @@ export const PRERENDER_KINDS = Object.freeze([
   'beach', 'lake', 'mountain', 'region', 'trip', 'journey', 'cost', 'days', 'receipt',
 ]);
 
-/** Languages that have pages in the bucket. hreflang wave one is English only
- *  (docs/SEO.md); a language joins here when its pages are built, and the
- *  routes below grow with it. */
-export const PRERENDER_LANGS = Object.freeze(['en']);
+/** Languages that have pages in the bucket (T1212, I12). English is the root;
+ *  the other five sit under their prefix, and the routes below grow with them. */
+export const PRERENDER_LANGS = Object.freeze(['en', 'nl', 'de', 'fr', 'es', 'it']);
+
+/** The page kinds built in the five other languages (T1212). These are the
+ *  kinds whose English-only prose T368 displaces with sentences derived from
+ *  the record (scripts/prerender/derived.mjs) and whose page chrome
+ *  scripts/prerender/strings.mjs translates. Every other kind is English only:
+ *  under a prefix it has no key and the app shell answers. */
+export const LANG_PAGE_KINDS = Object.freeze(['dest', 'trip', 'journey']);
 
 /**
  * The bucket key for a content path, or null when the path has no static page.
@@ -50,6 +56,7 @@ export const PRERENDER_LANGS = Object.freeze(['en']);
 export function prerenderKey(pathname) {
   const p = parsePath(pathname);
   if (!p || !PRERENDER_KINDS.includes(p.kind) || !PRERENDER_LANGS.includes(p.lang)) return null;
+  if (p.lang !== 'en' && !LANG_PAGE_KINDS.includes(p.kind)) return null;
   const cw = COUNTRY_SLUGS[p.cc];
   const k = (rest) => `${p.lang}/${rest}.html`;
   switch (p.kind) {
@@ -76,6 +83,17 @@ export function prerenderKey(pathname) {
   }
 }
 
+/**
+ * True for an address under a language prefix (/nl, /nl/, /nl/anything), T1212.
+ * Pages does not apply public/_redirects to a route a Function owns, so for
+ * such an address with no stored page the Function itself answers the app
+ * shell (index.html), which reads the prefix; anything else falls through to
+ * the static server as before.
+ */
+export function isLangShellPath(pathname) {
+  return /^\/(?:nl|de|fr|es|it)(?:\/|$)/.test(String(pathname || ''));
+}
+
 /** A page's share card (T212-b) sits beside it: /og/p/en/austria.png is the
  *  card of /austria, stored as og/en/austria.png. Null for anything else. */
 export function cardKey(pathname) {
@@ -84,10 +102,11 @@ export function cardKey(pathname) {
 }
 
 /** A sitemap file (T222) sits in the same bucket under sitemaps/: /sitemap.xml
- *  is the index, /sitemap-trails-en.xml one type, -2 and so on a split file.
+ *  is the index, /sitemap-trails-en.xml one type, -2 and so on a split file,
+ *  /sitemap-destinations-nl.xml the Dutch pages of a type (T1212).
  *  Null for anything else. */
 export function sitemapKey(pathname) {
-  const m = /^\/(sitemap(?:-[a-z]+-en(?:-[0-9]{1,3})?)?\.xml)$/.exec(String(pathname || ''));
+  const m = /^\/(sitemap(?:-[a-z]+-(?:en|nl|de|fr|es|it)(?:-[0-9]{1,3})?)?\.xml)$/.exec(String(pathname || ''));
   return m ? `sitemaps/${m[1]}` : null;
 }
 
@@ -97,7 +116,8 @@ export function sitemapKey(pathname) {
  * serving and never count against the Functions request budget. Each country
  * needs two rules because `/spain/*` does not match `/spain` itself.
  * 43 countries x 2 + trips + journeys + the cards + the two sitemap rules =
- * 91 rules of the 100 Pages allows. A language joining PRERENDER_LANGS adds one rule, `/nl/*`.
+ * 91 rules, plus one `/nl/*` rule for each of the five other languages
+ * (T1212) = 96 of the 100 Pages allows.
  */
 export function routesJson() {
   const include = [];

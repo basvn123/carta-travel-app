@@ -21,6 +21,7 @@
  * first direction then consumes.
  */
 import { parsePath, pathToLegacyHash, legacyHashToPath } from './urlScheme.js';
+import { langFromPath, langRoot } from './langPath.js';
 
 /**
  * A destination path names the dossier slug and the app opens a destination by
@@ -41,8 +42,15 @@ export function bootPaths(loc = window.location, hist = window.history, flagOn =
     if (/^\/(?:(?:nl|de|fr|es|it)\/)?pricing\/?$/.test(path)) {
       const q = new URLSearchParams(loc.search || '');
       q.set('tab', 'pricing');
-      hist.replaceState(null, '', `/?${q.toString()}${loc.hash || ''}`);
+      hist.replaceState(null, '', `${langRoot(langFromPath(path))}?${q.toString()}${loc.hash || ''}`);
       return 'pricing';
+    }
+    // T1212 (I12): /nl/ and /nl are the app shell in Dutch; the prefix stays
+    // in the address and i18n reads it (src/i18n/index.jsx).
+    const lang = langFromPath(path);
+    if (lang && (path === `/${lang}` || path === `/${lang}/`)) {
+      if (path === `/${lang}`) hist.replaceState(null, '', `/${lang}/${loc.search || ''}${loc.hash || ''}`);
+      return 'lang-root';
     }
     if (path !== '/') {
       const parsed = parsePath(path);
@@ -50,7 +58,8 @@ export function bootPaths(loc = window.location, hist = window.history, flagOn =
       const hash = pathToLegacyHash(parsed)
         || (parsed?.kind === 'dest' || parsed?.kind === 'cost' ? prerenderedBoot(doc) : null);
       if (hash && !(loc.hash || '').includes('=')) {
-        hist.replaceState(null, '', `/${loc.search || ''}${hash}`);
+        // The language prefix stays: /nl/spain/trails/1-x opens the trail at /nl/.
+        hist.replaceState(null, '', `${langRoot(parsed?.lang)}${loc.search || ''}${hash}`);
         return 'path-to-hash';
       }
       return 'none';
