@@ -18,7 +18,7 @@ What to read for what. Built by T1073 (ROADMAP B2). Every session reads CLAUDE.m
 | Know where it hurts today | [AUDIT-2026-11.md](AUDIT-2026-11.md) |
 | Know what is planned | [../ROADMAP.md](../ROADMAP.md) |
 | Know who Carta is for and the design tokens | [../PRODUCT.md](../PRODUCT.md), [../DESIGN.md](../DESIGN.md) |
-| See secrets, owner accounts, the threat model | [security/](security/) (Track C writes it; `SECRETS.md` exists today) |
+| See secrets, owner accounts, the threat model | [security/](security/): `SECRETS.md`, `threat-model.md`, the ASVS walk `asvs.md` and the documents it points to (crypto, logs, data classes, sessions, dependency windows, resource-heavy features) |
 | Know what personal data is processed | [legal/ARTICLE30.md](legal/ARTICLE30.md) |
 | Read launch research and positioning | [research/](research/), [brand/POSITIONING.md](brand/POSITIONING.md) |
 | Know what happened in a task | `Execution/P*/_DIGEST.md` and `Execution/P15/` |

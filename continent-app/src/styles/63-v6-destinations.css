@@ -151,7 +151,6 @@
 }
 .dtab-refine .field { margin: 0; min-width: 0; }
 .dtab-refine .dtab-length { flex: 1 1 160px; }
-.dtab-refine .country-picker { flex: 1 1 160px; min-width: 0; }
 .dtab-refine .lifestyle-btn { flex: 1 1 100%; }
 @media (max-width: 768px) {
   .dtab-refine {
@@ -256,8 +255,6 @@
 /* The header field gets its width back where the head's near-me door
    replaces the crosshair (T457). */
 .header-search-slot .places-search:not(:has(.places-locate)) input { padding-right: var(--space-3); }
-.country-picker-pop .origin-opt-flag { display: inline-flex; flex: none; width: 17px; }
-.country-picker .origin-btn-caret { flex: none; color: var(--text-3); }
 
 /* The By country track is one of the rails (T457): the rails' 4:3 photo,
    not the gallery's 3:2, so the four strips share one aspect. */

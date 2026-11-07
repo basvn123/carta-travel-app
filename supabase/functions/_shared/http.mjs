@@ -53,8 +53,34 @@ export function withCors(handler, { methods = 'POST, OPTIONS', extraOrigins = ()
     }
     for (const [k, v] of Object.entries(cors)) res.headers.set(k, v);
     if (!origin) res.headers.delete('Access-Control-Allow-Origin');
+    if (res.status === 401 || res.status === 403) securityEvent(req, res.status, origin);
     return res;
   };
+}
+
+/**
+ * One JSON log line per refused request (T1211, row T1164-i, ASVS V16.3.1 and
+ * V16.3.2): 401 and 403 answers of every function wrapped in withCors land in
+ * the Supabase function logs with a fixed shape an alert can match on
+ * ("carta_security":"auth_refused"). No token, address, e-mail or body is
+ * written: only the function, the method, the status, whether a credential
+ * was sent and whether the origin was an app origin.
+ */
+export function securityEvent(req, status, origin, log = console.warn) {
+  let fn = '';
+  try { fn = new URL(req.url).pathname.split('/').filter(Boolean).pop() || ''; } catch { /* keep blank */ }
+  const auth = req.headers.get('authorization') || '';
+  try {
+    log(JSON.stringify({
+      carta_security: 'auth_refused',
+      fn: fn.slice(0, 40),
+      method: req.method,
+      status,
+      credential: auth ? (/^Bearer\s+\S+/i.test(auth) ? 'bearer' : 'other') : 'none',
+      app_origin: !!origin,
+      at: new Date().toISOString(),
+    }));
+  } catch { /* logging never breaks an answer */ }
 }
 
 /** Thrown by readJson: code is 'too_large' or 'bad_json'. */

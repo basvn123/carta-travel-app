@@ -25,6 +25,7 @@ param(
 
 $ErrorActionPreference = "Continue"
 $env:PYTHONIOENCODING = 'utf-8'
+$env:PYTHONUTF8 = '1'
 # Not $PSScriptRoot: launch_detached runs a snapshot from
 # pipeline\logs\.snapshots\, so a root derived from the script's own path
 # lands two levels deep and every relative path doubles.

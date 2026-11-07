@@ -279,5 +279,3 @@ a.cov-near-row { text-decoration: none; }
 .clm-series { margin: var(--space-3) 0 0; }
 .clm-label { margin: 0 0 2px; font-size: var(--text-label); color: var(--text); }
 .clm-label small { display: block; font-size: 11.5px; color: var(--ink-soft); }
-.ss-zones { margin: 0 0 var(--space-3); padding-left: 18px; font-size: 13.5px; }
-.ss-hazards { margin: 0 0 var(--space-3); padding-left: 18px; font-size: 13.5px; }

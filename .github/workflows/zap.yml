@@ -77,6 +77,9 @@ jobs:
           npm ci
           node node_modules/vite/bin/vite.js build --config ../scripts/vite.fast.mjs
           cp public/_headers public/_redirects public/_routes.json ../.fastbuild/
+          # the deploy's 404.html (scripts/build-pages.mjs, T294-a), so an unknown path
+          # answers 404 here as it does live (T1164-e, T1211)
+          cp ../.fastbuild/index.html ../.fastbuild/404.html
       # wrangler.toml minus the Workers AI binding, which `pages dev` can only
       # run remotely (it needs a Cloudflare token the scan must not have). The
       # Ask answer route then refuses with no_ai, which is fine for a header scan.

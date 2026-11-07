@@ -40,6 +40,10 @@ jobs:
         run: npm run lint
       - name: Unit tests
         run: npm test
+      # T1158-b (T1211): the k6 scripts sit outside the app's test glob; this
+      # smoke test checks they load and hold their p95 budgets.
+      - name: Load script smoke test
+        run: node --test ../tests/load/smoke.test.mjs
       - name: Fast build (publicDir off, see scripts/vite.fast.mjs)
         env:
           FAST_OUT: ../.fastbuild
@@ -55,6 +59,24 @@ jobs:
   # print popup and a prerendered page, in Chromium. Fails on any CSP refusal
   # (style-src has no 'unsafe-inline' since T1090) or a screen that never
   # paints. Hermetic: remote requests are stubbed or aborted. About 5 minutes.
+  # T1164-k (T1211): the Edge Function auth tests again on the real Deno
+  # runtime, not Node with a loader. The import map in
+  # tests/fixtures/edge-auth/deno.json points the npm: imports at the same
+  # stubs; --allow-net=none keeps every call inside the process. No npm ci.
+  edge-deno:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
+        with:
+          deno-version: 2.9.6
+      - name: Edge Function auth tests under Deno
+        run: >-
+          deno test --no-check --allow-read --allow-env --allow-net=none
+          --config continent-app/tests/fixtures/edge-auth/deno.json
+          continent-app/tests/edgeAuth.test.mjs
+
   csp:
     runs-on: ubuntu-latest
     timeout-minutes: 20

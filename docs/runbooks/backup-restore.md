@@ -33,7 +33,9 @@ It refuses to call a file under 2 KB a success. Then copy the `.dump.gpg` and it
 2. streams `pg_dump -Fc` of the `public` schema through `gpg --encrypt` to the owner's public key (`CARTA_BACKUP_KEY`); nothing readable touches disk;
 3. writes `supabase-nightly-<UTC stamp>.dump.gpg`, a `.sha256` and a `.counts.json` to `~/archive-out/nightly/`;
 4. copies all three to `r2:carta/archive/db/supabase-nightly/`, checks the size in R2, and only then deletes R2 objects there older than 30 days (`CARTA_BACKUP_RETENTION_DAYS`). The R2 lifecycle rule on `archive/db/` (`push.py --lifecycle`) is the second net;
-5. keeps 7 days of local copies and writes `~/archive-out/nightly/last_backup.json` (`ok` or `failed`) and `r2:carta/status/backup.json` after every run. A failed run also leaves `carta-backup.service` failed.
+5. keeps 7 days of local copies and writes `~/archive-out/nightly/last_backup.json` (`ok` or `failed`) after every run, and `r2:carta/status/backup.json` after each verified upload only. A failed run also leaves `carta-backup.service` failed.
+
+Alert (T1211, row T1159-c): `scripts/monitor/check.py`, the 15-minute uptime run, reads `status/backup.json` from the data host and fails when its `at` is over 36 hours old, its status is not `ok` or it cannot be read. It is off until `backup.enabled` is true in `scripts/monitor/targets.json`; turn it on once `https://data.carta-europetravel.com/status/backup.json` answers 200.
 
 It needs the same two values as the weekly dump in `~/.config/carta/env` (`SUPABASE_DB_URL`, `CARTA_BACKUP_KEY`), `pg_dump` 17 or newer, `gpg` with the public key imported, and `rclone` with the `R2` remote. The counts manifest holds table names and row counts, no row data, and is not encrypted.
 
@@ -58,6 +60,10 @@ ops/restore_drill.sh --file <x.dump.gpg> --db my_scratch      # a dump already o
 It refuses a target whose host is the live project or the host in `SUPABASE_DB_URL`, drops and recreates `carta_restore_drill`, loads `ops/supabase_local_stub.sql` (the `anon`, `authenticated` and `service_role` roles, an `auth` schema with `auth.uid()` and an empty `auth.users`, a minimal `storage` schema), then restores. A few restore errors are expected: foreign keys to `auth.users` cannot be added because the dump holds no users. Judge it by `problems: 0` and the row counts. Write the total seconds in the register after the first live run (row T1159-a). Hand dumps (passphrase) work too: set `CARTA_BACKUP_PASSPHRASE`.
 
 Measured in the container on 2026-11-06 against a local Postgres 16 with all migrations: 69 tables, 108 seeded rows, 87 KB dump, fetch 0.11 s, decrypt 0.03 s, restore 0.73 s, verify 1.68 s, total 2.55 s. The live project is larger, so expect more; the live number is the owner's.
+
+## Rebuild the schema from the repo (no dump)
+
+The public schema rebuilds from the repo alone, in this order: `ops/supabase_local_stub.sql` (only on a plain Postgres, never on Supabase), `supabase/schema.sql` (the base tables `saved_trips` and `user_settings`, which no migration creates), then every `supabase/migrations/NNN_*.sql` that does not end in `_down.sql`, in name order. `tests/test_backup_restore.py` does exactly this and fails if any migration or its self-test fails (T1211, row T1159-d). It is the schema only: the data comes from a dump.
 
 ## Weekly dump on the box
 

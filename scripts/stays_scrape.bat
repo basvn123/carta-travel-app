@@ -23,6 +23,9 @@ REM A run that spans two months keeps one tag (else the second month starts the
 REM plan again):  set STAYS_RUN=2026-10 before calling this file.
 cd /d "%~dp0.."
 if not exist "logs" mkdir "logs"
+REM UTF-8 for every python this file starts (T1162-f, T1211): Windows defaults to cp1252.
+set "PYTHONUTF8=1"
+set "PYTHONIOENCODING=utf-8"
 set "SITE=%~1"
 if "%SITE%"=="" set "SITE=both"
 if /i not "%SITE%"=="both" if /i not "%SITE%"=="booking" if /i not "%SITE%"=="hostelworld" (

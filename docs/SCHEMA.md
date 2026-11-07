@@ -627,10 +627,9 @@ Eurostat post-Brexit (honest gap, not faked). NUTS 3 is province-level, so a
 famous village in a large rural province can read lower than it feels (e.g.
 Hallstatt = Busy, not Crowded), inherent to regional data.
 
-UI: `components/CrowdingBadge.jsx`. To keep the DetailPanel header uncluttered
-the pill shows only the actionable extremes, Quiet (dodge the crowds) and
-Crowded (a heads-up) via `crowdBadgeWorthShowing()`; all four tiers appear in
-the `knownForFacts` "Crowds" row. i18n `crowd.*` keys, 6 languages.
+UI: the place page facts row (`browse/DestinationPage.jsx`, `crowdFor` in
+`lib/crowdMonth.js`) and the `knownForFacts` "Crowds" row; the old header
+pill (`components/CrowdingBadge.jsx`) was deleted by T1163. i18n `crowd.*` keys, 6 languages.
 `useDestinationSearch` copies `crowding` onto the priced row.
 
 Pairs with (but is independent of) `rating.hidden_gem` (fame-based) and the
@@ -1197,7 +1196,7 @@ All additive. Existing keys keep their meaning.
 |---|---|---|---|
 | `dest.airports[]` | `{iata, straight_km, road_km, ryanair, options[], transfer_min, transfer_mode, transfer_source}` | `pipeline/airport_access.py` (airport tier rows, GTFS) | up to 4 airports within 110 km, nearest first, the anchor always kept. `options[]` is `{mode, minutes, source}` with source `road_estimate` (mode `car`, haversine x 1.3 at 65 km/h) or `gtfs:<feed>+access_estimate` (mode `train`, median door to door over a Wednesday, 07:00 to 21:00 every 30 min). |
 | `dest.transfer.transfer_mode` / `transfer_mode_source` | `"car"` / `"road_estimate"` | `apply_airport_anchors.py` | the existing `transfer_minutes_one_way` is the road estimate, now labelled. |
-| `practical.getting_there.airports[]` | `{iata, km, transfer_min, transfer_mode, options[]}` | `build_dossier.py` | read by GettingThere and the Airport key fact. |
+| `practical.getting_there.airports[]` | `{iata, km, transfer_min, transfer_mode, options[]}` | `build_dossier.py` | read by `GettingThere` in `planner/CountryBrief.jsx` and the Airport key fact. |
 | `dest.local_transport.car_basis` | `"category"` or `"transit_lines"` | `car_layer.py` | `transit_lines` when `practical.transit.*` decided the value. |
 | `dest.local_transport.car_useful_for` | string | `car_layer.py` | what a car still adds where it is optional (remote valleys, trailheads). |
 | `dest.local_transport.parking_hard` | bool | `cache/parking_osm.json` | fewer than 2 public lots within 1.5 km of the centre; absent without a parking harvest. |

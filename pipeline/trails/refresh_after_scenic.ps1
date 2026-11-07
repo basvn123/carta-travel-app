@@ -33,6 +33,7 @@ Set-Location $Repo
 $L = Join-Path $Repo "pipeline\logs"
 New-Item -ItemType Directory -Force $L | Out-Null
 $env:PYTHONIOENCODING = "utf-8"
+$env:PYTHONUTF8 = "1"
 
 # The 43-country wire list, verbatim from run_pipeline.py's trails_rate task.
 $CC = "AL,AD,AT,BE,BA,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GB,GR,HU,IS,IE,IT," +

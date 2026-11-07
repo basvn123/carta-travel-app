@@ -26,7 +26,11 @@ POST /functions/v1/parse-booking      (user JWT required)
 
 A `url` is fetched server-side BEFORE quota is spent (an unreachable link
 fails free): HTML is stripped to text, a direct PDF link joins the document
-files, and `safeFetchUrl` refuses private hosts (SSRF). Error codes mirror
+files. SSRF guard: `safeFetchUrl` refuses private hosts by name, and
+`fetchGuard.mjs` resolves every hop (A and AAAA, via `Deno.resolveDns`),
+refuses any non-public address, and follows at most 3 redirects by hand,
+re-checking each Location (T1211). fetch still does its own DNS lookup
+after the check, a small rebinding window Deno cannot pin. Error codes mirror
 plan-day: `auth`, `user_cap`, `global_cap`, `no_ai`, `nothing_to_parse`,
 `url_unreachable`, `url_too_big`, `url_empty`, `ai_timeout`, `ai_error`,
 `ai_bad_output`.

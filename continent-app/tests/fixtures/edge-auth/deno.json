@@ -1,0 +1,7 @@
+{
+  "_about": "T1211 (row T1164-k): deno test runs the Edge Function auth tests on the Deno runtime; the two npm: imports map to the same stubs the Node loader uses (loader.mjs).",
+  "imports": {
+    "npm:@supabase/supabase-js@2": "./supabase-stub.mjs",
+    "npm:stripe@17": "./stripe-stub.mjs"
+  }
+}

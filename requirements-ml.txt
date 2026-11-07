@@ -1,17 +1,30 @@
-# Laptop-only machine-learning dependencies for Manual pipeline layers.
-# Not installed on the Linux orchestrator: nothing scheduled needs them, and
-# torch alone is a multi-gigabyte install.
+# Machine-learning dependencies for two pipeline layers, in TWO halves that
+# cannot share one environment (T1161, T1211): model2vec 0.10.0 needs
+# huggingface-hub 1.0 or newer, sentence-transformers 3.3.1 (through
+# transformers 4.x) needs it below 1.0, so one pip call over this whole file
+# fails with ResolutionImpossible. Install each half on its own, as the box does
+# (infra/hetzner/cax11/run_pipeline.sh, CARTA_BOX_ML):
 #
-#   python -m pip install --user -r requirements-ml.txt -c constraints.txt
+#   # half 1, the Ask index, into the main environment (no torch):
+#   python -m pip install model2vec==0.10.0 -c constraints.txt
+#   # half 2, guided search, into its own venv (CPU torch first, as on the box):
+#   python -m venv ~/venv-guided
+#   ~/venv-guided/bin/python -m pip install -r infra/hetzner/jobs/requirements-torch-cpu.txt
+#   ~/venv-guided/bin/python -m pip install sentence-transformers==3.3.1 "huggingface-hub>=0.34,<1.0" -c constraints.txt
+#   # then run guided_search with CARTA_GUIDED_PY=~/venv-guided/bin/python
 #
-# pipeline/guided_search_layer.py (T439): vibe scores from thenlper/gte-small
-# (MIT licence), run on the CPU. Pulls in torch, transformers and tokenizers;
-# numpy and scikit-learn stay at the constraints.txt pins.
-sentence-transformers==3.3.1
+# On Windows the venv python is ~/venv-guided/Scripts/python.exe. The box
+# reads this file by line: the model2vec line is half 1, every other package
+# line is half 2. Keep one package per line.
 
-# pipeline/ask_index_layer.py (T551): the Ask Carta index, embedded with
-# minishlab/potion-multilingual-128M (MIT) through model2vec (MIT), a static
-# model on the CPU. model2vec pulls huggingface-hub 1.x, which breaks the
-# transformers sentence-transformers needs, so the hub stays below 1.0.
-model2vec==0.10.0
+# pipeline/guided_search_layer.py (T439), half 2: vibe scores from
+# thenlper/gte-small (MIT licence), run on the CPU. Pulls in torch,
+# transformers and tokenizers; numpy and scikit-learn stay at the
+# constraints.txt pins.
+sentence-transformers==3.3.1
 huggingface-hub>=0.34,<1.0
+
+# pipeline/ask_index_layer.py (T551), half 1: the Ask Carta index, embedded
+# with minishlab/potion-multilingual-128M (MIT) through model2vec (MIT), a
+# static model on the CPU.
+model2vec==0.10.0

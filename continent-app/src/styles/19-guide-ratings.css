@@ -91,10 +91,6 @@
 }
 .crowd-badge.lg { font-size: 10px; padding: 2px 7px 2px 6px; }
 .crowd-badge svg { flex: none; }
-.crowd-badge.cr-quiet    { --cr-ink: var(--good-vivid); }    /* calm green - avoid the crowds */
-.crowd-badge.cr-moderate { --cr-ink: var(--crowd-mid); }    /* neutral grey */
-.crowd-badge.cr-busy     { --cr-ink: var(--amber); }    /* amber */
-.crowd-badge.cr-crowded  { --cr-ink: var(--crowd-hot); }/* warning orange */
 /* Detail panel: the rating hero row under the city name */
 
 

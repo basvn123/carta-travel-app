@@ -3,8 +3,8 @@ import { useSloSnapshot } from '../../hooks/useSloSnapshot.js';
 
 // SLOs and error budgets (ROADMAP H8, T1160): uptime, error rate, p95 per API
 // and data freshness, each against config/slo.json. Reads a snapshot built
-// from the sources named there (see docs/runbooks/slo.md). Not wired into
-// AdminPage yet (T1160-a). Not i18n'd, like the other owner-only panels.
+// from the sources named there (see docs/runbooks/slo.md). Mounted as the
+// Admin "slo" section (T1211, T1160-a). Not i18n'd, like the other owner-only panels.
 
 const LABEL = { ok: 'Within budget', warn: 'Budget low', breached: 'Budget spent', nodata: 'No data yet' };
 const pct = (v, d = 1) => (v == null ? 'n/a' : `${(v * 100).toFixed(d)}%`);

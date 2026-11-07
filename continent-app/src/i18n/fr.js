@@ -9950,6 +9950,7 @@ export const fr = {
   "admin.nav.audit": "Audit",
   "admin.nav.prices": "Prix",
   "admin.nav.health": "Santé des données",
+  "admin.nav.slo": "Niveaux de service",
   "admin.nav.overrides": "Dérogations",
   "admin.pricesHint": "D'où vient chaque prix, pour les choix actuels dans l'app : chaque ligne du moteur de prix avec son statut, sa qualité, sa base et sa source, et chaque règle de config/pricing.json avec sa date de revue. Les voyageurs ne voient que le montant.",
   "admin.pricesFind": "Nom ou id du lieu",

@@ -55,6 +55,7 @@ $L = Join-Path $Repo "pipeline\logs"
 New-Item -ItemType Directory -Force $L | Out-Null
 $Master = Join-Path $L "finish_run.log"
 $env:PYTHONIOENCODING = "utf-8"
+$env:PYTHONUTF8 = "1"   # T1162-f (T1211): UTF-8 mode, not cp1252, for every python below
 $StartedAt = Get-Date
 
 function Log([string]$m) {

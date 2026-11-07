@@ -40,6 +40,7 @@ param(
 
 $ErrorActionPreference = "Continue"
 $env:PYTHONIOENCODING = 'utf-8'
+$env:PYTHONUTF8 = '1'
 # NOT $PSScriptRoot: launch_detached.ps1 runs a SNAPSHOT of this file from
 # pipeline\logs\.snapshots\, so a repo root derived from the script's own
 # location lands two directories deep and every relative path doubles into

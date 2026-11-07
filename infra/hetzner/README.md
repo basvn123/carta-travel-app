@@ -302,10 +302,20 @@ more and compare by sha256. `out/MANIFEST.txt` says what passed. The loop
 stops early when less than 2.5 h of the ceiling is left, so the exports and
 the dump always fit: the dump is the one output that must not be lost.
 
-Why `--no-promote`: moving an approved trip to published is the human review
-step's decision. On an unattended worker it would change the row set the
-difficulty gate holds fixed, and it would write a publish decision nobody made
-into the dump. The laptop's `trails_rate` task still promotes.
+Why `--no-promote` by default: moving an approved trip to published is the
+human review step's decision. On an unattended worker it would change the row
+set the difficulty gate holds fixed, and it would write a publish decision
+nobody made into the dump. Since T1161 the orchestrator can pass the job
+argument `promote` (`CARTA_TRAILSLAB_PROMOTE=1` in the box secrets file): the
+worker lists the approved ids, exports with promotion, and
+`trailslab_worker.py rows-check` replaces the fixed row set, so no live row may
+go and every new one must be an approved id. It stays off until the owner
+switches it on after one worker run with `--no-install` has passed (register
+row T1161-e). The dual-key lab dump the job restores is pushed with
+`cax41/trailslab_dump.sh push` (T1161-d). Until then the laptop's
+`trails_rate` task is the one that promotes. The other laptop-only steps (Ask
+index, guided search, stays scrape) and their box switches are in
+`docs/runbooks/build-box.md`, "No laptop-only steps".
 
 What the orchestrator does (`trailslab_worker.py run`): it uploads what the
 worker's LFS-free clone cannot have (`cache/nuts3_2021.geojson`, which the

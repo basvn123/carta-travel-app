@@ -86,6 +86,7 @@ def box():
     repo = base / "repo"
     shutil.copytree(ROOT / "ops", repo / "ops")
     shutil.copytree(ROOT / "supabase" / "migrations", repo / "supabase" / "migrations")
+    shutil.copy(ROOT / "supabase" / "schema.sql", repo / "supabase" / "schema.sql")
     (repo / "infra" / "hetzner" / "cax11").mkdir(parents=True)
     shutil.copy(ROOT / "infra/hetzner/cax11/load-env.sh", repo / "infra/hetzner/cax11/")
     shim = base / "bin" / "rclone"
@@ -123,9 +124,12 @@ def box():
          "-l", str(base / "pg.log"), "-w", "start"])
     run(["createdb", "src"])
     run(["psql", "-X", "-q", "-d", "src", "-f", "ops/supabase_local_stub.sql"])
+    # supabase/schema.sql is the base the migrations build on (saved_trips,
+    # user_settings); with it every migration and its self-test passes (T1211, T1159-d).
+    run(["psql", "-X", "-q", "-d", "src", "-v", "ON_ERROR_STOP=1", "-f", "supabase/schema.sql"])
     for f in sorted(glob.glob(str(repo / "supabase/migrations/*.sql"))):
-        if not f.endswith("_down.sql"):   # a migration's own self-test may fail on the stub: tolerated
-            run(["psql", "-X", "-q", "-d", "src", "-v", "ON_ERROR_STOP=1", "-f", f], check=False)
+        if not f.endswith("_down.sql"):
+            run(["psql", "-X", "-q", "-d", "src", "-v", "ON_ERROR_STOP=1", "-f", f])
     run(["psql", "-X", "-q", "-d", "src", "-c", """
         insert into auth.users (id, email) select gen_random_uuid(), 'u'||g||'@x.test' from generate_series(1,5) g;
         insert into public.trip_plans (user_id, label) select id, 'trip '||email from auth.users;

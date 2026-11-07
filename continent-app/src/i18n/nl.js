@@ -10009,6 +10009,7 @@ export const nl = {
   "admin.nav.audit": "Audit",
   "admin.nav.prices": "Prijzen",
   "admin.nav.health": "Datagezondheid",
+  "admin.nav.slo": "Serviceniveaus",
   "admin.nav.overrides": "Overrides",
   "admin.pricesHint": "Waar elke prijs vandaan komt, voor de huidige keuzes in de app: elke regel van de prijsmotor met status, kwaliteit, basis en bron, en elke regel van config/pricing.json met de controledatum. Reizigers zien alleen het bedrag.",
   "admin.pricesFind": "Plaatsnaam of id",
