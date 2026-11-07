@@ -483,6 +483,36 @@ sources:
       village: [set.village]
       waterfall: [set.waterfall]
 
+  trail.detail_highlights:
+    where: continent-app/public/trails/trip/{id}.json highlights[].kind (vocabulary pipeline/trails/scenic.py KINDS)
+    map:
+      arch: [set.rock-formations]
+      bay: [set.bay]
+      beach: [set.beach]
+      cape: [set.peninsula]
+      castle: [set.castle]
+      cave: [set.cave]
+      cliff: [set.cliffs]
+      forest: [set.forest]
+      glacier: [set.glacier]
+      gorge: [set.gorge]
+      hot_spring: [set.hot-spring]
+      hut: [set.mountain-hut]
+      lake: [set.lake]
+      lighthouse: [set.lighthouse]
+      monastery: [set.monastery]
+      peak: [set.peak]
+      ridge: [set.ridge]
+      rock: [set.rock-formations]
+      ruins: [set.ruins]
+      saddle: [set.mountains]
+      spring: [set.spring]
+      village: [set.village]
+      viewpoint: [act.viewpoints, vibe.views]
+      volcano: [set.volcano]
+      water: [set.river]
+      waterfall: [set.waterfall]
+
   trail.suitability:
     where: continent-app/public/trails/{CC}.json trips[].f.su and f.sd
     map:

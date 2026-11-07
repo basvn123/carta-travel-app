@@ -3,4 +3,4 @@ fastapi==0.162.0          # MIT
 uvicorn==0.54.0           # BSD-3-Clause
 pydantic==2.13.5          # MIT (the version FastAPI 0.162 resolved here)
 prometheus-client==0.26.0 # Apache-2.0 / BSD-2-Clause
-PyYAML>=6.0,<7            # MIT, the taxonomy loader (pipeline/taxonomy/taxonomy.py)
+PyYAML==6.0.3             # MIT, the taxonomy loader (pipeline/taxonomy/taxonomy.py); exact so pip-audit can read it (T1215)

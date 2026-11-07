@@ -4,8 +4,8 @@ Tier: Manual
 
 Companion to `apply_airport_categories.py` (which handles the airport tier). This
 applies the curated overrides in `gem_category_overrides.py` to gem-tier
-destinations only. Idempotent: re-running just refreshes the values. Also unions
-any newly used tags into meta.categories so the controlled vocab stays complete.
+destinations only. Idempotent: re-running just refreshes the values. Also sets
+meta.categories to the tags in use, so the controlled vocab matches the data.
 
 Usage:
     python apply_gem_categories.py                      # patches the default targets
@@ -60,9 +60,9 @@ def patch(path: Path) -> None:
 
     missing = sorted(set(overrides) - seen_ids)
 
-    vocab = set(meta.get("categories") or [])
-    vocab.update(used_tags)
-    meta["categories"] = sorted(vocab)
+    # Exactly the categories in use, not a union with the old list (T1215,
+    # row T1149-i); atomic_write_json does the same on every write.
+    meta["categories"] = sorted(used_tags)
 
     atomic_write_json(path, data, indent=1, ensure_ascii=False)
     print(f"  {path.name}: {len(overrides)} gem overrides, {n_changed} updated"

@@ -10,6 +10,7 @@ import { parseBudget, DAYS_MIN, DAYS_MAX, MODES } from '../lib/budgetSearch.js';
 import { MAX_PARTY } from '../lib/tripTotal.js';
 import { formatMoney } from '../lib/money.js';
 import { makeRetriever } from '../lib/ask/retrieve.js';
+import { AiMark, AiReport } from '../components/AiMark.jsx';
 import '../styles/75-ask.css';
 
 // One hybrid retriever for the app (T554): BM25 in the browser, /api/ask dense.
@@ -179,6 +180,7 @@ export function AskSearchFull({
             ) : (
               <AskAnswer t={t} lang={lang} answer={answer} facts={facts} intent={intent} written={written}
                 answerRef={answerRef} onOpen={open1} favorites={favorites} onToggleFav={onToggleFav} onMore={askState.more}
+                report={{ question: askState.question }}
                 device={onDevice ? <DeviceSwitch t={t} lang={lang} device={onDevice} onChange={() => setDeviceTick((n) => n + 1)} /> : null}>
                 <AskRefine t={t} lang={lang} guided={guided} countries={countries} labels={labels} intent={intent}
                   budgetSteps={budgetSteps} rows={rows} onRefine={askState.refine} onBudget={askState.setBudget} />
@@ -290,7 +292,7 @@ function Cite({ n }) {
   return <sup className="ask-cite">{n}</sup>;
 }
 
-function WrittenAnswer({ t, written, device }) {
+function WrittenAnswer({ t, written, device, report = null }) {
   const { state, sentences } = written;
   if (state === 'idle') return null;
   const line = {
@@ -310,6 +312,8 @@ function WrittenAnswer({ t, written, device }) {
           ))}
         </p>
       )}
+      {/* T1215: every model sentence carries the AI line; Report once it is done. */}
+      {sentences.length > 0 && <AiMark report={state === 'done' ? report : null} />}
       {state === 'writing' && !sentences.length && <span className="ask-written-wait" role="status">{t('ask.written.writing')}</span>}
       {quiet && <p className="ask-written-off"><SparkIcon size={16} className="ask-written-mark" />{t(line)}</p>}
       {device}
@@ -317,14 +321,29 @@ function WrittenAnswer({ t, written, device }) {
   );
 }
 
+/** What a report on an Ask answer sends: the question, the written sentences
+ *  when there are any, else the lead and the places shown (T1215). */
+// eslint-disable-next-line react-refresh/only-export-components -- shared with AskTurn's list reply
+export function askReport(question, answer, facts, written) {
+  const said = written?.sentences?.length ? written.sentences.map((s) => s.text).join(' ') : '';
+  const places = (answer?.picks || []).map((p) => facts?.picks?.find((x) => x.id === p.id)?.dest?.city).filter(Boolean);
+  const text = said || [answer?.lead, places.join(', ')].filter(Boolean).join(' ');
+  return { feature: 'ask', question: question || '', answer: text, model: said ? (written.backend || null) : null };
+}
+
 /** The answer to one question; also each turn of the chat (T570), which
  *  puts its trip card under the written answer through `afterWritten`. */
-export function AskAnswer({ t, answer, facts, intent, written, answerRef, onOpen, favorites, onToggleFav, onMore, device, afterWritten = null, children }) {
+export function AskAnswer({ t, answer, facts, intent, written, answerRef, onOpen, favorites, onToggleFav, onMore, device, afterWritten = null, report = null, children }) {
+  // T1215: "Report" on every answer. With model sentences it sits on their AI
+  // line; a code-built answer gets it alone at the end (a wrong place there is
+  // an Ask eval case too).
+  const hasWritten = written.state === 'done' && written.sentences.length > 0;
+  const rep = report ? askReport(report.question, answer, facts, written) : null;
   return (
     <div className="ask-answer">
       <h3 className="ask-lead" tabIndex={-1} ref={answerRef}>{answer.lead}</h3>
       {answer.note && <p className="ask-note">{answer.note}</p>}
-      <WrittenAnswer t={t} written={written} device={device} />
+      <WrittenAnswer t={t} written={written} device={device} report={rep} />
       {afterWritten}
       {answer.picks.length > 0 && (
         <ol className="ask-picks explore-shell" aria-label={t('ask.picksLabel')}>
@@ -349,6 +368,7 @@ export function AskAnswer({ t, answer, facts, intent, written, answerRef, onOpen
       {answer.notes.length > 0 && (
         <ul className="ask-notes">{answer.notes.map((n) => <li key={n}>{n}</li>)}</ul>
       )}
+      {rep && !hasWritten && written.state !== 'writing' && <AiReport {...rep} />}
       {children}
     </div>
   );

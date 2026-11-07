@@ -52,7 +52,10 @@ export function buildAliases({ destinations = null, searchIndex = null, lexicon 
     const w = KIND_WEIGHT[kind];
     const k = `${key}|${id}`;
     const had = best.get(k);
-    if (!had || had.w < w) best.set(k, { key, id, kind, w, label: extra.label || null, lang: extra.lang || null, raw: extra.raw || null });
+    // The accented spelling of a name ("fårö") survives when the same key
+    // also comes in, unaccented, from a stronger source (T1215, row T1153-g).
+    if (!had || had.w < w) best.set(k, { key, id, kind, w, label: extra.label || null, lang: extra.lang || null, raw: extra.raw || had?.raw || null });
+    else if (!had.raw && extra.raw) had.raw = extra.raw;
   };
 
   const place = (id) => {

@@ -1,5 +1,6 @@
 /* Your taste (T1152, ROADMAP F3) on My trips, Your Europe tab. Imported by
-   auth/mytrips/TasteChips.jsx only, so it rides the My trips chunk. Scoped
+   auth/mytrips/TasteChips.jsx only, which My trips loads lazily (T1215), so
+   it rides the taste card's own chunk. Scoped
    under .tp. One Carta card (white, stage radius, the soft umber shadow);
    each interest is a row with a facet tone edge, its evidence and a Yes
    and a No of 44 px. Accepted rows take the umber tint and a tick, so the
@@ -54,6 +55,29 @@
 }
 .tp .tp-ev { margin: 0; font-size: var(--text-caption); color: var(--text-2); display: grid; }
 .tp .tp-ev-names { color: var(--text); overflow-wrap: anywhere; }
+
+/* Every item behind a chip (T1215, T1152-e): a quiet disclosure of 44 px,
+   then one row per item, its kind as a small label and the narrower
+   interest it came through, when it came up through one. */
+.tp .tp-all { display: grid; gap: var(--space-1); justify-items: start; }
+.tp .tp-all-toggle {
+  min-height: var(--tap); margin-left: calc(-1 * var(--space-2));
+  padding: 0 var(--space-2);
+}
+.tp .tp-all-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tp .tp-all-list {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: var(--space-1); width: 100%;
+}
+.tp .tp-all-row {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2);
+  font-size: var(--text-caption); color: var(--text-2);
+}
+.tp .tp-all-kind {
+  font-weight: 600; padding: 0 var(--space-2);
+  border-radius: var(--radius-pill); background: var(--surface);
+}
+.tp .tp-all-name { color: var(--text); overflow-wrap: anywhere; }
 
 .tp .tp-acts { display: flex; gap: var(--space-1); flex: none; }
 .tp .tp-act {

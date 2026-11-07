@@ -10,6 +10,7 @@ import { fetchAskChats, upsertAskChat, deleteAskChat, missingTable } from '../..
 import { loadSearchIndex } from '../../lib/searchIndex.js';
 import { loadAskLexicon } from '../../lib/ask/data.js';
 import { buildAskVocab } from '../../lib/ask/intent.js';
+import { usePlaceLink } from '../../hooks/usePlaceLink.js';
 import { makeRetriever } from '../../lib/ask/retrieve.js';
 import { scrollBehavior } from '../../lib/motion.js';
 import {
@@ -113,11 +114,13 @@ export default function AskChat(props) {
     loadSearchIndex().then((ix) => setIndex(ix || {}));
     loadAskLexicon().then((l) => setLexicon(l || null));
   }, []);
+  // T1215 (T1153-d): the place linker reads unknown place words, behind its flag.
+  const link = usePlaceLink({ index, lexicon, rows });
   const vocab = React.useMemo(
     () => (guided && rows?.length && index && lexicon !== undefined
-      ? buildAskVocab({ t, lang, guided, rows, countries, index, lexicon })
+      ? buildAskVocab({ t, lang, guided, rows, countries, index, lexicon, link })
       : null),
-    [guided, rows, countries, index, lexicon, t, lang],
+    [guided, rows, countries, index, lexicon, t, lang, link],
   );
   const byId = React.useMemo(() => new Map((rows || []).map((p) => [p.id, p])), [rows]);
 

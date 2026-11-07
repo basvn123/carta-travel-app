@@ -8,11 +8,16 @@
 
 The method, ESCO style extreme multi-label tagging in four steps:
 
-1. Passages. Each item's English text from the shipped data, by field: the
+1. Passages. Each item's text from the shipped data, by field: the
    lead (blurb, dossier lead, trail summary, name), the body (Wikivoyage
    guide, dossier intro body, things to do), lists (highlight and sight names
-   with their kinds) and facts (the tags Carta already holds, mapped through
-   mapping.yaml). Nothing is fetched.
+   with their kinds; for a trail also the detail file's highlights and stops,
+   trails/trip/<id>.json) and facts (the tags Carta already holds, mapped
+   through mapping.yaml). A trail's OSM description in German, French,
+   Spanish, Italian or Dutch is a passage with its `lang`, matched only
+   against the taxonomy's labels and synonyms in that language (T1215, row
+   T1150-g; nodes with a null label in that language simply have no phrase).
+   Nothing is fetched.
 2. Candidates. Up to CANDIDATES (25) nodes per item, fused by reciprocal rank
    from four lists: phrase hits of a node's English label and synonyms in the
    passages, today's tags mapped, BM25 of the item text against each node's
@@ -31,6 +36,13 @@ The method, ESCO style extreme multi-label tagging in four steps:
    score; a use reads the tags at or over its threshold. Ancestors of a
    selected node are kept with `implied: true` (the gold rule is "the most
    specific node only").
+
+Journeys (T1215, row T1149-e) are an opt-in sixth layer, `--layers journey`
+(not in --all, so the Intelligence API's tag file and /similar keep the five
+catalogue layers): the curated journeys (journeys/journey/<id>.json) are read
+from their title, hook, summary, day titles and free-text tags, and their
+trip type is the mapped tag. A node applies to a journey when its applies_to
+names journey, place or trail (JOURNEY_FROM).
 
 Nodes with source "data" (trail grade, Blue Flag) are set by rule from a data
 field: they come only from the mapped tags, at score 1, `by: ["rule"]`.
@@ -60,9 +72,12 @@ from prompt_registry import prompt as _registry_prompt  # noqa: E402
 import taxonomy as tx
 
 TAGGER_VERSION = 1
-PUBLIC = ROOT / "continent-app" / "public"
+PUBLIC = tx.default_public()   # CARTA_PUBLIC, else continent-app/public (T1154-d)
 OUT = ROOT / "cache" / "taxonomy" / "tags.json"
 LAYERS = ("place", "trail", "beach", "lake", "mountain")
+JOURNEY = "journey"
+ALL_LAYERS = LAYERS + (JOURNEY,)
+JOURNEY_FROM = ("journey", "place", "trail")   # a journey holds what its places and trails hold
 
 CANDIDATES = 25
 RRF_K = 60
@@ -128,6 +143,11 @@ def sentences(s: str) -> list[str]:
     return [x for x in _SENT.split(s) if x] if s else []
 
 
+# Languages a passage may carry besides English (the taxonomy's label keys).
+OTHER_LANGS = ("de", "fr", "es", "it", "nl")
+DETAIL_MAX = 12        # highlights and stops read per trail detail file
+
+
 # ---------------------------------------------------------------------------
 # The taxonomy side: which nodes, their phrases and their BM25 documents
 @lru_cache(maxsize=1)
@@ -136,7 +156,8 @@ def node_table() -> dict[str, dict]:
 
 
 def eligible(layer: str) -> list[str]:
-    return [i for i, n in node_table().items() if layer in (n.get("applies_to") or [])]
+    want = set(JOURNEY_FROM) if layer == JOURNEY else {layer}
+    return [i for i, n in node_table().items() if want & set(n.get("applies_to") or [])]
 
 
 @lru_cache(maxsize=1)
@@ -152,6 +173,23 @@ def phrase_index() -> tuple[dict[tuple, set], int]:
                 continue
             idx[key].add(i)
     return dict(idx), max(len(k) for k in idx)
+
+
+@lru_cache(maxsize=8)
+def phrase_index_lang(lang: str) -> tuple[dict[tuple, set], int]:
+    """The same for one other language: the node's label and synonyms in `lang`, where set.
+    Single words under four letters are skipped (too many senses across languages)."""
+    idx: dict[tuple, set] = defaultdict(set)
+    for i, n in node_table().items():
+        if n["source"] == "data":
+            continue
+        lab = (n.get("label") or {}).get(lang)
+        for p in [lab, *((n.get("synonyms") or {}).get(lang) or [])]:
+            key = tuple(words(p)) if p else ()
+            if not key or (len(key) == 1 and len(key[0]) < 4):
+                continue
+            idx[key].add(i)
+    return dict(idx), max((len(k) for k in idx), default=0)
 
 
 def ancestors(i: str) -> list[str]:
@@ -220,6 +258,20 @@ class Corpus:
         d = data.get("destinations") or {}
         self.dests = {x["id"]: x for x in d} if isinstance(d, list) else d
         self._layer: dict[str, dict] = {}
+        self._journeys: dict[str, dict] | None = None
+
+    def journeys(self) -> dict[str, dict]:
+        if self._journeys is None:
+            self._journeys = {}
+            for f in sorted((self.public / "journeys" / "journey").glob("*.json")):
+                j = _jload(f) or {}
+                if j.get("id"):
+                    self._journeys[str(j["id"])] = j
+        return self._journeys
+
+    def trip_detail(self, rid: str) -> dict:
+        """A trail's detail file, read only for the item being tagged."""
+        return _jload(self.public / "trails" / "trip" / f"{rid}.json") or {}
 
     def dossier(self, did: str) -> dict:
         base = "gem-" + did[4:] if did.startswith("gem:") else did.upper()
@@ -239,7 +291,11 @@ class Corpus:
 
     def items(self, layers=LAYERS):
         for layer in layers:
-            if layer == "place":
+            if layer == JOURNEY:
+                for jid, j in sorted(self.journeys().items()):
+                    yield {"item_id": jid, "layer": JOURNEY, "country": j.get("countryCode") or "",
+                           "kind": j.get("tripTypeSlug") or "", "name": j.get("title") or jid}
+            elif layer == "place":
                 for did, d in sorted(self.dests.items()):
                     yield {"item_id": did, "layer": "place", "country": d.get("iso2") or "",
                            "kind": (d.get("place") or {}).get("class") or "", "name": d.get("city") or did}
@@ -257,6 +313,20 @@ class Corpus:
                 out.append({"field": field, "src": src, "text": s})
 
         layer, iid = it["layer"], it["item_id"]
+        if layer == JOURNEY:
+            j = self.journeys().get(str(iid)) or {}
+            def unmd(t):
+                return re.sub(r"\*\*|__", "", str(t or ""))
+            if j.get("title"):
+                out.append({"field": "lead", "src": "title", "text": unmd(j["title"])})
+            add("lead", "hook", unmd(j.get("hook")))
+            add("lead", "summary", unmd(j.get("summary")))
+            for d in (j.get("itinerary") or [])[:21]:
+                if d.get("title"):
+                    out.append({"field": "body", "src": "itinerary.title", "text": unmd(d["title"])})
+            for t in j.get("tags") or []:
+                out.append({"field": "list", "src": "tags", "text": str(t).replace("-", " ")})
+            return out
         if layer == "place":
             d = self.dests.get(iid) or {}
             dz = self.dossier(iid)
@@ -290,6 +360,7 @@ class Corpus:
             for x in r.get("reasons") or []:
                 if x.get("code"):
                     out.append({"field": "list", "src": "reasons", "text": re.sub(r"(?<!^)(?=[A-Z])", " ", x["code"]).lower()})
+            out += self.detail_passages(iid)
             return out
         for fld in ("kind", "surface", "range"):
             if r.get(fld):
@@ -303,12 +374,42 @@ class Corpus:
         return out
 
 
+    def detail_passages(self, rid: str) -> list[dict]:
+        """The trail detail file: highlight names with kinds, stop names, OSM descriptions (T1150-g)."""
+        dt = self.trip_detail(str(rid))
+        if not dt:
+            return []
+        out: list[dict] = []
+        for h in (dt.get("highlights") or [])[:DETAIL_MAX]:
+            if h.get("name") or h.get("kind"):
+                kind = str(h.get("kind") or "sight").replace("_", " ")
+                out.append({"field": "list", "src": "detail.highlights", "text": f"{h.get('name') or kind} ({kind})"})
+        for st in (dt.get("stops") or [])[:DETAIL_MAX]:
+            ref = str(st.get("poi_ref") or "")
+            name = ref.rsplit(":", 1)[-1].replace("-", " ").strip()
+            if name:
+                out.append({"field": "list", "src": "detail.stops", "text": name})
+        raw = dt.get("tags_raw") or {}
+        for s in sentences(raw.get("description:en"))[:6]:
+            out.append({"field": "body", "src": "osm.description:en", "text": s})
+        for lang in OTHER_LANGS:
+            for s in sentences(raw.get(f"description:{lang}"))[:6]:
+                out.append({"field": "body", "src": f"osm.description:{lang}", "text": s, "lang": lang})
+        return out
+
+
 # ---------------------------------------------------------------------------
 # Candidates, scores, verifier
+def is_english(p: dict) -> bool:
+    return p.get("lang") in (None, "en")
+
+
 def phrase_hits(passages: list[dict], allowed: set[str]) -> dict[str, list[dict]]:
-    idx, longest = phrase_index()
+    """Phrase hits per node. An English passage is matched against the English phrases, a passage
+    with another `lang` only against that language's labels and synonyms."""
     hits: dict[str, list[dict]] = defaultdict(list)
     for p in passages:
+        idx, longest = phrase_index() if is_english(p) else phrase_index_lang(p["lang"])
         ws = words(p["text"])
         for n in range(longest, 0, -1):
             for k in range(len(ws) - n + 1):
@@ -333,20 +434,22 @@ def noisy_or(ws) -> float:
     return 1.0 - p
 
 
-def tag_item(it: dict, passages: list[dict], dense=None) -> list[dict]:
-    """The candidates of one item, best first: [{tag, score, by, evidence, uses, implied}]."""
+def tag_item(it: dict, passages: list[dict], dense=None, public: Path | str | None = None) -> list[dict]:
+    """The candidates of one item, best first: [{tag, score, by, evidence, uses, implied}].
+    `public` is the data root today's tags are read from (the Corpus's; default tx.default_public())."""
     layer = it["layer"]
     allowed = set(eligible(layer))
     text_nodes = {i for i in allowed if node_table()[i]["source"] != "data"}
     # mapped tags: today's tags through mapping.yaml
     mapped: dict[str, list[str]] = defaultdict(list)
-    for src, v in tx.old_tags(layer, it["item_id"], it["country"]):
+    for src, v in tx.old_tags(layer, it["item_id"], it["country"], public):
         for t in tx.map_value(src, v):
             if t in node_table():
                 mapped[t].append(f"{src}={v}")
     hits = phrase_hits(passages, text_nodes)
-    bm = [i for i, _ in bm25().scores(words(" ".join(p["text"] for p in passages)), text_nodes)[:CANDIDATES]]
-    dn = [i for i in (dense(it, passages, text_nodes) if dense else [])][:CANDIDATES]
+    english = [p for p in passages if is_english(p)]   # BM25 and the bi-encoder are English
+    bm = [i for i, _ in bm25().scores(words(" ".join(p["text"] for p in english)), text_nodes)[:CANDIDATES]]
+    dn = [i for i in (dense(it, english, text_nodes) if dense else [])][:CANDIDATES]
     by_hits = sorted(hits, key=lambda i: (-len(hits[i]), i))
     by_map = sorted((t for t in mapped if t in text_nodes), key=lambda i: (-len(mapped[i]), i))
     cand = rrf([x for x in (by_hits, by_map, bm, dn) if x])[:CANDIDATES]
@@ -485,7 +588,7 @@ def pick(items: list[dict], per_layer: int) -> list[dict]:
     for it in items:
         by[it["layer"]].append(it)
     out = []
-    for layer in LAYERS:
+    for layer in ALL_LAYERS:
         xs = sorted(by.get(layer, []), key=lambda i: hashlib.sha1(f"{layer}:{i['item_id']}".encode()).hexdigest())
         out += xs[:per_layer]
     return out
@@ -503,7 +606,7 @@ def run(items: list[dict], corpus: Corpus, gateway=None, dense=None, log=print) 
     out, stats = {}, Counter()
     for k, it in enumerate(items):
         ps = corpus.passages(it)
-        tags = tag_item(it, ps, dense)
+        tags = tag_item(it, ps, dense, corpus.public)
         if gateway is not None:
             v = verify(it, ps, tags, gateway)
             for key in ("asked", "yes", "no", "unquoted"):
@@ -512,6 +615,7 @@ def run(items: list[dict], corpus: Corpus, gateway=None, dense=None, log=print) 
                 stats[f"verify_refused_{v['refused']}"] += 1
         stats["items"] += 1
         stats["passages"] += len(ps)
+        stats["passages_other_lang"] += sum(1 for p in ps if not is_english(p))
         stats["no_passages"] += not ps
         for u in USES:
             stats[f"tags_{u}"] += sum(1 for t in tags if u in t["uses"] and not t["implied"])
@@ -548,7 +652,7 @@ def main(argv=None) -> int:
     g.add_argument("--all", action="store_true", help="every place, trail, beach, lake and mountain")
     g.add_argument("--sample", type=int, metavar="N", help="N items per layer, deterministic")
     g.add_argument("--items", choices=("seed", "gold"), help="the eval's seed or gold items")
-    ap.add_argument("--layers", default=",".join(LAYERS))
+    ap.add_argument("--layers", default=",".join(LAYERS), help=f"comma list of {', '.join(ALL_LAYERS)} (journey is opt-in)")
     ap.add_argument("--public", default=str(PUBLIC))
     ap.add_argument("--out", default=None, help=f"tag file (default {OUT.relative_to(ROOT)}; sample runs: tags-sample.json)")
     ap.add_argument("--eval-out", default=None, help="also write the eval predictions file here")
@@ -557,7 +661,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
 
     corpus = Corpus(Path(a.public))
-    layers = tuple(x for x in a.layers.split(",") if x in LAYERS)
+    layers = tuple(x for x in a.layers.split(",") if x in ALL_LAYERS)
     if a.items:
         items = [i for i in eval_items(a.items) if i["layer"] in layers]
     else:

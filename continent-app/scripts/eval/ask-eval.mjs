@@ -39,6 +39,9 @@
  *   --seed-drop  take the first labelled place of every second labelled
  *                question out of the catalogue: a known regression, so the
  *                gate can be seen to fail (tests/askEval.test.mjs, CI)
+ *   --link       parse with the shared place linker as the fallback for
+ *                unknown place words (T1215, row T1153-d), as the app does
+ *                with the place linking flag on (src/lib/linking/flag.js)
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -55,6 +58,7 @@ import { makeLabels } from '../../src/lib/guidedSearch.js';
 import { priceDays, DEFAULT_PRICE_REQUEST } from '../../src/lib/price/index.js';
 import { ASK_BM25_OPTIONS, bm25Doc } from '../../functions/_lib/askTerms.js';
 import { SPARSE_PER_SOURCE, loadSparse, sparseSearch } from '../../functions/_lib/askSparse.js';
+import { makeLinker, linkPlace } from '../../src/lib/linking/linker.js';
 import { scoreList, groundingChecks, summarise, gate, TOLERANCE } from './ask-eval-lib.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -164,7 +168,7 @@ const strings = (a) => {
 
 async function runCase(c, retriever, env) {
   const { vocab, ctx, today, t, labels } = env;
-  const raw = parseIntent(c.q, { vocab, lang: c.lang, now: today });
+  const raw = parseIntent(c.q, { vocab, lang: c.lang, now: today, link: env.link });
   const abstained = !!outsidePlace(c.q, raw) || intentIsEmpty(raw);
   if (c.abstain) return { abstained };
   const found = retriever ? await retriever(raw, c.q) : null;
@@ -208,8 +212,11 @@ async function runCase(c, retriever, env) {
 
 // ---- The run ----------------------------------------------------------------
 
-export async function runEval({ only = null, seedDrop = false, dump = null, set = J(SET_PATH), askDir = null } = {}) {
+export async function runEval({ only = null, seedDrop = false, dump = null, set = J(SET_PATH), askDir = null, link = false } = {}) {
   const cat = loadCatalogue();
+  // T1215 (T1153-d): the place linker over the same catalogue, the app's fallback with the flag on.
+  const linker = link ? makeLinker({ destinations: cat.rows, searchIndex: cat.index, lexicon: cat.lexicon }) : null;
+  const linkFn = linker ? (m) => linkPlace(linker, m, { whole: true }) : undefined;
   const cats = await catalogs();
   const today = new Date(`${set.now}T12:00:00`);
   const tFor = (lang) => (k, v) => String(cats[lang][k] ?? cats.en[k] ?? k).replace(/\{(\w+)\}/g, (m, x) => (v && v[x] != null ? String(v[x]) : m));
@@ -237,7 +244,7 @@ export async function runEval({ only = null, seedDrop = false, dump = null, set 
   for (const c of set.cases) {
     const t = tFor(c.lang);
     const labels = { ...makeLabels({ t, lang: c.lang, guided: cat.guided, countries: cat.countries }), place: (id) => byId.get(id)?.city || id };
-    const env = { vocab: vocabs[c.lang], ctx: { rows, byId, guided: cat.guided }, today, t, labels, dump };
+    const env = { vocab: vocabs[c.lang], ctx: { rows, byId, guided: cat.guided }, today, t, labels, dump, link: linkFn };
     const res = { id: c.id, q: c.q, lang: c.lang, places: !!c.places, abstain: !!c.abstain, by: {} };
     for (const r of retrievers) {
       const out = await runCase(c, all[r], env);
@@ -251,6 +258,7 @@ export async function runEval({ only = null, seedDrop = false, dump = null, set 
   summary.bm25 = sparse.how;
   summary.skipped = Object.keys(all).filter((r) => !retrievers.includes(r));
   if (seedDrop) summary.seedDrop = true;
+  if (link) summary.link = true;
   return { summary, results };
 }
 
@@ -273,7 +281,7 @@ function printSummary(s) {
 async function main() {
   const only = arg('--only') ? arg('--only').split(',') : null;
   const dump = arg('--dump') ? arg('--dump').split(',') : null;
-  const { summary, results } = await runEval({ only, seedDrop: flag('--seed-drop'), dump, askDir: arg('--ask-dir') ? resolve(arg('--ask-dir')) : null });
+  const { summary, results } = await runEval({ only, seedDrop: flag('--seed-drop'), dump, askDir: arg('--ask-dir') ? resolve(arg('--ask-dir')) : null, link: flag('--link') });
   printSummary(summary);
   for (const r of results) for (const [k, v] of Object.entries(r.by)) if (v.notes) console.log(`${k} ${r.id} "${r.q}"\n  ${v.notes.join('\n  ')}`);
   if (flag('--verbose')) {

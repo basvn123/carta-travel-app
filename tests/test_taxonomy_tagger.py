@@ -159,6 +159,78 @@ def test_eval_predictions_file(corpus):
     assert all(set(x) == {"tag", "score"} for v in pred["items"].values() for x in v)
 
 
+def test_mapped_tags_read_the_corpus_data_root(corpus, monkeypatch):
+    """T1154-d: today's tags come from the same data root as the passages, not always the repo's."""
+    pairs = tax.old_tags("trail", "7", "AT", corpus.public)
+    assert ("trail.highlights", "waterfall") in pairs and ("trail.category", "easy") in pairs
+    res = tg.run(list(corpus.items(("trail",))), corpus, log=None)
+    t = by_tag(res["items"]["trail:7"]["tags"])
+    assert "mapped" in t["set.waterfall"]["by"]
+    monkeypatch.setenv("CARTA_PUBLIC", str(corpus.public))
+    assert tax.default_public() == corpus.public
+    assert tax.old_tags("trail", "7", "AT") == pairs, "no root given: CARTA_PUBLIC"
+    monkeypatch.delenv("CARTA_PUBLIC")
+    assert tax.default_public() == ROOT / "continent-app" / "public"
+
+
+def test_trail_detail_file_passages(corpus):
+    """T1150-g: a trail's detail file adds its highlights, stops and OSM descriptions."""
+    (corpus.public / "trails" / "trip").mkdir()
+    detail = {"highlights": [{"kind": "hot_spring", "name": "Warm pool"}, {"kind": "peak", "name": "Hochkogel"}],
+              "stops": [{"seq": 1, "poi_ref": "poi:DRS:church-of-our-lady"}],
+              "tags_raw": {"description:en": "A loop past a volcano.", "description:de": "Eine Runde zum Wasserfall.",
+                           "description:ru": "not read"}}
+    (corpus.public / "trails" / "trip" / "7.json").write_text(json.dumps(detail), encoding="utf-8")
+    it = next(corpus.items(("trail",)))
+    ps = corpus.passages(it)
+    got = [(p["src"], p["text"], p.get("lang")) for p in ps if p["src"].startswith(("detail", "osm"))]
+    assert got == [("detail.highlights", "Warm pool (hot spring)", None), ("detail.highlights", "Hochkogel (peak)", None),
+                   ("detail.stops", "church of our lady", None), ("osm.description:en", "A loop past a volcano.", None),
+                   ("osm.description:de", "Eine Runde zum Wasserfall.", "de")]
+    t = by_tag(tg.tag_item(it, ps, public=corpus.public))
+    assert "set.volcano" in t and "set.hot-spring" in t
+
+
+def test_other_languages_match_only_their_own_labels():
+    """A German passage is read with the German labels only; null labels give no phrase."""
+    node = next((i for i, n in tg.node_table().items() if n["source"] != "data" and "trail" in n["applies_to"]
+                 and len(tg.words((n["label"] or {}).get("de") or "")) == 1
+                 and len(tg.words(n["label"]["de"])[0]) >= 4 and n["label"]["de"].lower() != n["label"]["en"].lower()), None)
+    if node is None:
+        pytest.skip("no German one-word label yet")
+    de = tg.node_table()[node]["label"]["de"]
+    ps = [{"field": "body", "src": "osm.description:de", "text": f"Hier gibt es {de}.", "lang": "de"}]
+    assert node in tg.phrase_hits(ps, {node})
+    en = [{"field": "body", "src": "summary", "text": f"Here is {de}."}]
+    assert node not in tg.phrase_hits([{**en[0], "lang": "fr"}], {node}) or \
+        (tg.node_table()[node]["label"].get("fr") or "").lower() == de.lower()
+    lab = tg.node_table()[node]["label"]["en"]
+    assert node not in tg.phrase_hits([{"field": "body", "src": "x", "text": lab, "lang": "de"}], {node}) or \
+        tg.words(lab) == tg.words(de) or tuple(tg.words(lab)) in tg.phrase_index_lang("de")[0]
+
+
+def test_journey_layer_tags_from_text(corpus):
+    """T1149-e: journeys are tagged from their text, opt-in, with their trip type as the mapped tag."""
+    jd = corpus.public / "journeys" / "journey"
+    jd.mkdir(parents=True)
+    j = {"id": "at-hiking-x", "title": "Glacier walks of **Tyrol**", "countryCode": "AT", "tripTypeSlug": "hiking",
+         "summary": "A week of hut to hut trekking below the glaciers.", "itinerary": [{"day": 1, "title": "Up to the mountain hut"}],
+         "tags": ["via-ferrata", "tyrol"]}
+    (jd / "at-hiking-x.json").write_text(json.dumps(j), encoding="utf-8")
+    assert [i["layer"] for i in corpus.items()] == ["place", "trail"], "not in the default layers"
+    it = next(corpus.items((tg.JOURNEY,)))
+    assert it == {"item_id": "at-hiking-x", "layer": "journey", "country": "AT", "kind": "hiking", "name": j["title"]}
+    ps = corpus.passages(it)
+    assert ps[0] == {"field": "lead", "src": "title", "text": "Glacier walks of Tyrol"}
+    assert {p["src"] for p in ps} == {"title", "summary", "itinerary.title", "tags"}
+    assert set(tg.eligible("journey")) >= set(tg.eligible("place")) | set(tg.eligible("trail"))
+    assert ("journey.types", "hiking") in tax.old_tags("journey", "at-hiking-x", "AT", corpus.public)
+    res = tg.run([it], corpus, log=None)
+    t = by_tag(res["items"]["journey:at-hiking-x"]["tags"])
+    assert "mapped" in t["act.hiking"]["by"]
+    assert t["set.glacier"]["score"] >= tg.USES["profile"] and "act.via-ferrata" in t
+
+
 def test_seed_items_from_the_shipped_data():
     items = tg.eval_items("seed")
     assert len(items) == 15

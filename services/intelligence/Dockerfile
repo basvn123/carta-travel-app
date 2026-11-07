@@ -3,9 +3,11 @@
 # The shipped data is mounted read-only at run time (compose.yaml), not baked in.
 # Node comes from the official image of the same Debian release (multi-stage copy):
 # the bridge needs only the node binary, no npm and no node_modules.
-FROM node:24-trixie-slim AS node
+# Base images pinned by digest (T1215, register row T1154-e; digests read from Docker Hub on 2026-11-07).
+# To move a base: read the new index digest for the tag and change both the tag comment and the digest.
+FROM node:24-trixie-slim@sha256:0820eaa85e07d0490446dd01d14707e17e6108a36988cf374899cd057eb3812d AS node
 
-FROM python:3.13-slim-trixie
+FROM python:3.13-slim-trixie@sha256:09a17cad02668ae61ece136b4fd36ac3849e14f670ebedb637ea3e15580525bc
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
 RUN useradd --system --uid 10001 --home /app app

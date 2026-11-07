@@ -38,12 +38,12 @@ test('place_facts: facts and the engine day price', () => {
   assert.throws(() => placeFacts(data, { id: 'nope' }), ToolError);
 });
 
-test('price_trip: total = day price x seats x nights, summed over stops', () => {
+test('price_trip: stops plus legs make the total (more in price_trip.test.mjs)', () => {
   const r = priceTrip(data, { stops: [{ id: 'gem:bruges', nights: 3 }, { id: 'MAD', nights: 2 }], adults: 2, children: 1, stay: 'hotel3' });
   assert.equal(r.nights, 5);
   assert.equal(r.stops.length, 2);
-  assert.equal(r.stops[0].total_eur, Math.round(r.stops[0].day_eur_per_person * 3 * 3 * 100) / 100);
-  const sum = r.stops.reduce((a, s) => a + s.total_eur, 0);
+  assert.equal(r.stops[0].total_eur, Math.round((r.stops[0].beds_eur + r.stops[0].days_eur) * 100) / 100);
+  const sum = r.stops.reduce((a, s) => a + s.total_eur, 0) + r.legs.reduce((a, l) => a + l.total_eur, 0);
   assert.ok(Math.abs(sum - r.total_eur) < 0.02);
   assert.match(r.excludes, /flights/);
   const solo = priceTrip(data, { stops: [{ id: 'MAD', nights: 1 }], adults: 1 });

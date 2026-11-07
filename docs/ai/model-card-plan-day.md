@@ -4,7 +4,7 @@ ROADMAP F8, T1156. Status: current as of 2026-11-06. Public summary: `/?legal=ai
 
 ## What it is
 
-An Edge Function that turns a town and a traveller's answers into a walking day (up to 7 days) chosen from up to 24 of Carta's own places, with one line on why each stop fits. The sister functions suggest-city (town suggestions) and parse-booking (booking import) use the same gateway and chain and are covered in the public page; they do not have their own card yet (T1156-e).
+An Edge Function that turns a town and a traveller's answers into a walking day (up to 7 days) chosen from up to 24 of Carta's own places, with one line on why each stop fits. The sister functions suggest-city (town suggestions) and parse-booking (booking import) use the same gateway and chain and are covered in the public page; each has its own card: [model-card-suggest-city.md](model-card-suggest-city.md) and [model-card-parse-booking.md](model-card-parse-booking.md) (T1215).
 
 ## Model
 

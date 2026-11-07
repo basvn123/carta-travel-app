@@ -4,7 +4,7 @@ ROADMAP F1, part 1 (T1149). The taxonomy, its mapping from today's tags, the han
 
 | What | Where |
 |---|---|
-| The taxonomy (version 1.0.0, 268 nodes) | `pipeline/taxonomy/carta_taxonomy.yaml` |
+| The taxonomy (version 1.1.0, 268 nodes) | `pipeline/taxonomy/carta_taxonomy.yaml` |
 | Mapping from every tag in use today | `pipeline/taxonomy/mapping.yaml` |
 | The live list of today's vocabularies | `pipeline/taxonomy/tag_sources.py` |
 | Loader, checks, the today's-tags baseline | `pipeline/taxonomy/taxonomy.py` |
@@ -13,6 +13,8 @@ ROADMAP F1, part 1 (T1149). The taxonomy, its mapping from today's tags, the han
 | The eval (P@5, F1) | `continent-app/scripts/eval/adapters/taxonomy.mjs`, metrics in `continent-app/scripts/eval/taxonomy/metrics.mjs` |
 | How to label | [taxonomy-labelling-guide.md](taxonomy-labelling-guide.md) |
 | Tests | `tests/test_taxonomy.py` (the mapping test), `continent-app/tests/taxonomyEval.test.mjs` |
+| The batch tagger (part 2, T1150): phrase, mapped-tag and BM25 lists fused, evidence quoted, optional Gemini verifier | `pipeline/taxonomy/tagger.py`, pipeline task `taxonomy_tags` (`python run_pipeline.py taxonomy_tags`), output `cache/taxonomy/tags.json`; tests `tests/test_taxonomy_tagger.py`; rules in HANDBOOK "Travel taxonomy and tagging" |
+| The same tagger over HTTP | `services/intelligence/` (`POST /tag`, HANDBOOK "Carta Intelligence API") |
 
 ## Why `pipeline/taxonomy/`
 
@@ -38,7 +40,9 @@ Node fields, after ESCO and SKOS: a stable `id` (never renamed or reused; a reti
 - `data`: set by rule from a data field, never by a model (33: trail grade and shape, Blue Flag, bathing water, wheelchair, lift up, cost).
 - `both`: a data rule where the field exists, the text elsewhere (30: national park, cove, quiet, iconic).
 
-Labels: 103 nodes carry all six languages, taken from the app's own strings (`continent-app/src/i18n/*.js`) or the guided search vibes (`public/search/guided.json`), so a tag reads the way the app already says it. The other 165 are English only, with `null` in the five other languages (T1149-b). `label_source` on each node says where its labels come from.
+Labels: all 268 nodes carry all six languages since version 1.1.0. 103 are taken from the app's own strings (`continent-app/src/i18n/*.js`) or the guided search vibes (`public/search/guided.json`), so a tag reads the way the app already says it. The other 165 were English only until T1215 translated them (short travel app labels, sentence case, app strings reused where one exists, such as the trail shapes); their `label_source` says they are not yet checked by a native speaker. The owner checks the Dutch; a native check of de, fr, es and it is advisable before they face travellers. `label_source` on each node says where its labels come from.
+
+Synonyms: `synonyms` is a map from language to a list (`en` always, `de`, `fr`, `es`, `it`, `nl` optional). Since 1.1.0, 168 nodes carry local words in all five other languages (de 270, fr 251, es 244, it 244, nl 245 synonyms; en 458), chosen where the concept has common local words (Altstadt, centro storico, Klamm, calanque, hunebed). `taxonomy.py check` validates the map: known languages only, lists of non-empty strings, no repeats. The tagger (`tagger.py`) and `taxonomy.lexical_index()` read only the `en` list, so the local words do not change English matching; they are there for the `/taxonomy` endpoint of the intelligence service, the app and a future multilingual tagger.
 
 ## What the mapping covers
 

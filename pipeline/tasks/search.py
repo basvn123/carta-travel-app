@@ -52,6 +52,14 @@ def guard_guided_search(ctx=None):
 
 
 
+def guard_intel_url(ctx=None):
+    """T1215 (T1154-b): the Intelligence API batch caller runs only where the
+    service does (the box), named by INTEL_URL; elsewhere it SKIPS."""
+    if not (os.environ.get("INTEL_URL") or "").strip():
+        return False, "INTEL_URL is not set (the Intelligence API runs on the box, T1154-a)"
+    return True, "INTEL_URL set"
+
+
 TASKS = [
     {
         "key": "taxonomy_tags",
@@ -67,6 +75,23 @@ TASKS = [
                  "per use. Reads only the shipped wires; no model call by "
                  "default (the verifier is --verify, the bi-encoder --dense, "
                  "both owner runs). Not the wire: wiring is a later task."),
+    },
+    {
+        "key": "intel_tags",
+        "title": "Intelligence API batch: /tag on the seed items and a sample -> cache/taxonomy/intel-tags.json",
+        "cadence": "after",
+        "after": ["taxonomy_tags"],
+        "writes_app_data": False,
+        "writes_wire": False,
+        "soft": True,
+        "guard": guard_intel_url,
+        "cmds": [[PY, "pipeline/intel_client.py", "tag"]],
+        "note": ("T1215 (T1154-b, F5): the first pipeline caller of the "
+                 "Intelligence API. Batch POST /tag (100 items a request, "
+                 "Retry-After honoured) with INTEL_URL and INTEL_API_KEY from "
+                 "the environment, and a parity report against the local tag "
+                 "file: under 1.0 means the service runs other code or data. "
+                 "Skips without INTEL_URL."),
     },
     {
         "key": "guided_search",

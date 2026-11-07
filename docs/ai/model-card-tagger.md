@@ -4,7 +4,7 @@ ROADMAP F8 and F1, T1156. Status: **stub. This model does not exist yet.** Do no
 
 ## What it will be
 
-The F2 distilled tagger (S67) assigns taxonomy tags to places and trails, trained on the F1 labels (S66). The taxonomy is `pipeline/taxonomy/carta_taxonomy.yaml` 1.0.0: 268 nodes in five facets (activity, setting, vibe, traveller, practical). See [taxonomy.md](taxonomy.md) and T1149.
+The F2 distilled tagger (S67) assigns taxonomy tags to places and trails, trained on the F1 labels (S66). The taxonomy is `pipeline/taxonomy/carta_taxonomy.yaml` 1.1.0 (labels in six languages since T1215): 268 nodes in five facets (activity, setting, vibe, traveller, practical). See [taxonomy.md](taxonomy.md) and T1149.
 
 ## What exists today
 

@@ -15,6 +15,7 @@ export function dataDirFrom(env = process.env) {
 export function openData(dir = dataDirFrom()) {
   let catalogue = null;
   let trips = null;
+  const flightFiles = {};
   const readJson = (p) => JSON.parse(readFileSync(p, 'utf8'));
 
   return {
@@ -28,6 +29,21 @@ export function openData(dir = dataDirFrom()) {
         catalogue = { meta: j.meta || {}, destinations: j.destinations || {} };
       }
       return catalogue;
+    },
+    /**
+     * A home airport's swept flight file (the sweep's flights/{IATA}.json,
+     * the same file the app fetches), or null when the data directory holds
+     * none. The app's shipped public/ has no flights folder: copy the
+     * sweep's files there, or point CARTA_DATA_DIR at a folder that has them.
+     */
+    flights(iata) {
+      const code = String(iata || '').toUpperCase();
+      if (!/^[A-Z]{3}$/.test(code)) return null;
+      if (!(code in flightFiles)) {
+        const p = join(dir, 'flights', `${code}.json`);
+        flightFiles[code] = existsSync(p) ? readJson(p) : null;
+      }
+      return flightFiles[code];
     },
     /** Library trips (journeys), read once from journeys/journey/*.json. */
     trips() {

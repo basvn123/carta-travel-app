@@ -48,7 +48,7 @@ logged (`/profile` carries a traveller's own saves and trips).
 | `INTEL_RATE_PER_MIN`, `INTEL_BURST` | 120, 30 | the default bucket |
 | `INTEL_BRIDGE_TIMEOUT_S` | 10 | per bridge call |
 | `INTEL_TAGS_PATH` | `cache/taxonomy/tags.json`, else `tags-sample.json` | the tag file `/similar` indexes |
-| `CARTA_PUBLIC` | `continent-app/public` | the shipped data; the tagger's mapped tags always read `continent-app/public` under the repo root, so mount the data there |
+| `CARTA_PUBLIC` | `continent-app/public` | the shipped data: the tagger's Corpus and its mapped tags both read it (T1154-d) |
 | `INTEL_NODE` | `node` | the Node binary |
 
 ## Run

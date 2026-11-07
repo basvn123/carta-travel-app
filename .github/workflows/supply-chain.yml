@@ -18,6 +18,7 @@ on:
       - "requirements*.txt"
       - "constraints.txt"
       - "infra/hetzner/jobs/requirements*.txt"
+      - "services/intelligence/requirements*.txt"
       - ".github/workflows/supply-chain.yml"
   schedule:
     - cron: "17 5 * * 1"
@@ -77,6 +78,10 @@ jobs:
       # 2026-11-05) and now a gate.
       - name: pip-audit constraints.txt (gate)
         run: pip-audit -r constraints.txt --no-deps --disable-pip --progress-spinner off
+      # The Intelligence API's own pins (T1215, register row T1154-e): every
+      # line is exact, so this is a gate like constraints.txt.
+      - name: pip-audit services/intelligence/requirements.txt (gate)
+        run: pip-audit -r services/intelligence/requirements.txt --no-deps --disable-pip --progress-spinner off
       # requirements-ml.txt ends in a range ("huggingface-hub>=0.34,<1.0"),
       # which pip-audit refuses, so it cannot be a gate yet (T1088-e).
       - name: pip-audit requirements-ml.txt (report only)

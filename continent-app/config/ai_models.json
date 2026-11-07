@@ -489,12 +489,12 @@
    "today": {
     "provider": "none",
     "models": [],
-    "planned": "F1 tagger (S66)"
+    "planned": "lexical tagger built (T1150, pipeline task taxonomy_tags); the Gemini verifier waits for its first run (T1150-a)"
    },
    "tokens_per_call": {
     "input": 600,
     "output": 80,
-    "source": "E-R3 section 2 (estimated from the prompts)"
+    "source": "E-R3 section 2 (estimated from the prompts); measured tokens per verifier call wait for T1150-a"
    },
    "eval": "F1 taxonomy eval (run.mjs taxonomy --predictions; micro F1 and R-precision at 5)",
    "personal_data": "none (public catalogue)",
@@ -503,11 +503,11 @@
      "option": "no-model",
      "quality": {
       "status": "measured",
-      "value": 0.4309,
-      "metric": "micro F1 (today's tags mapped)",
-      "eval": "F1 taxonomy, 15-item seed set (the numbers mean little until gold.csv is filled, T1149-a)",
+      "value": 0.4375,
+      "metric": "micro F1 (lexical tagger: phrase, mapped tags, BM25; R-precision at 5 0.5033)",
+      "eval": "F1 taxonomy, 15-item seed set (the numbers mean little until gold.csv is filled, T1149-b)",
       "n": 15,
-      "source": "this task, 2026-11-06"
+      "source": "T1150 and T1215, 2026-11-07; today's tags mapped scored 0.4309"
      },
      "cost_eur_per_1000_calls": 0.0
     },
@@ -518,7 +518,7 @@
       "value": null,
       "eval": "taxonomy",
       "command": "the S66 tagger with AI_TAGGING_PROVIDER=gemini AI_TAGGING_MODELS=gemini-3.5-flash-lite writes predictions.json; node continent-app/scripts/eval/run.mjs taxonomy --predictions predictions.json",
-      "blocked_by": "S66 tagger"
+      "blocked_by": "T1150-a (first verifier run; the tagger exists)"
      },
      "cost_eur_per_1000_calls": 0.17
     },
@@ -529,7 +529,7 @@
       "value": null,
       "eval": "taxonomy",
       "command": "the S66 tagger with AI_TAGGING_PROVIDER=workers-ai; then run.mjs taxonomy --predictions",
-      "blocked_by": "S66 tagger"
+      "blocked_by": "T1150-a (first verifier run; the tagger exists)"
      },
      "cost_eur_per_1000_calls": 0.05
     },
@@ -540,7 +540,7 @@
       "value": null,
       "eval": "taxonomy",
       "command": "on the box: llama-server -m Qwen3-30B-A3B-Q4_K_M.gguf --port 8080 -np 2 -c 16384; then the S66 tagger with AI_TAGGING_PROVIDER=box AI_BOX_EVAL_RUN=1; node continent-app/scripts/eval/run.mjs taxonomy --predictions predictions.json",
-      "blocked_by": "S66 tagger"
+      "blocked_by": "T1150-a (first verifier run; the tagger exists)"
      },
      "cost_eur_per_1000_calls": 0.04
     }

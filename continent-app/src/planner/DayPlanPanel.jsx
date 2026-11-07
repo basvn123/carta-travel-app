@@ -15,6 +15,7 @@ import { googleMapsDirUrl } from '../lib/routing.js';
 import { durationMs } from '../lib/motion.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { isWalkable } from '../lib/dayRoute.js';
+import { AiMark } from '../components/AiMark.jsx';
 
 /**
  * Close a popover on outside click and on Escape.
@@ -552,6 +553,8 @@ export function DayPlanPanel({
     <div className="dayp">
       {head}
       {aiSummary && <p className="dayp-summary"><SparkIcon size={14} /> {aiSummary}</p>}
+      {/* T1215: the summary is the model's words. */}
+      {aiSummary && <AiMark className="dayp-ai-mark" />}
 
       <ol className={`dayt${timed ? '' : ' is-untimed'}${banded ? ' is-bands' : ''}`} ref={listRef}>
         {body}
