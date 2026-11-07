@@ -164,6 +164,7 @@ function Run-Stage([string]$name, $argv) {
     Log-All "=== $name : $stamp ==="
     $log = Join-Path $L "cycling_$name.log"
     $env:PYTHONIOENCODING = "utf-8"
+    $env:PYTHONUTF8 = "1"
     # cmd-level redirection: PowerShell's *> writes UTF-16 in 5.1 and wraps
     # stderr lines in ErrorRecords; cmd hands the bytes through untouched.
     cmd /c "`"$Py`" -u $($argv -join ' ') > `"$log`" 2>&1"
@@ -178,6 +179,7 @@ function Run-Photos {
     if ($PhotoLimit -le 0) { Log-All "=== photos : skipped (PhotoLimit 0) ==="; return 0 }
     $log = Join-Path $L "cycling_photos.log"
     $env:PYTHONIOENCODING = "utf-8"
+    $env:PYTHONUTF8 = "1"
     $worst = 0
     foreach ($cc in $PhotoCountries) {
         $stamp = Get-Date -Format HH:mm:ss
