@@ -53,3 +53,21 @@ test('plan-day page does not claim a human-rated quality score', () => {
   assert.match(page, /not yet measured it against human/);
   assert.doesNotMatch(page, /human[- ]rated quality score of/i);
 });
+
+test('T1215: the page names the AI label and the Report button as live, not planned', () => {
+  const act = text('aiPage.actP');
+  assert.match(act, /Written by AI/);
+  assert.doesNotMatch(act, /still to come/);
+  const wrong = text('aiPage.wrongP');
+  assert.match(wrong, /Tap Report/);
+  assert.match(wrong, /without your account/);
+  assert.doesNotMatch(wrong, /planned/);
+  // The label and the button exist where the page says they are.
+  assert.match(read('src/browse/AskSearchFull.jsx'), /<AiMark /);
+  assert.match(read('src/browse/ask/AskTurn.jsx'), /<AiMark /);
+  assert.match(read('src/planner/AiDayPlanModal.jsx'), /<AiMark report=/);
+  assert.match(read('src/planner/days/DayBotChat.jsx'), /<AiMark report=/);
+  assert.match(read('src/planner/DayPlanPanel.jsx'), /<AiMark /);
+  assert.match(read('src/planner/TownPickerStep.jsx'), /<AiMark /);
+  assert.match(read('src/components/AiMark.jsx'), /href="\?legal=ai"/);
+});

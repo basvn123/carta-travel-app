@@ -13,7 +13,8 @@ import {
 } from '../../lib/ask/reply.js';
 import { prefersReducedMotion } from '../../lib/motion.js';
 import { googleFlightsLink } from '../../lib/flights/flights.js';
-import { AskAnswer } from '../AskSearchFull.jsx';
+import { AskAnswer, askReport } from '../AskSearchFull.jsx';
+import { AiMark, AiReport } from '../../components/AiMark.jsx';
 import { PlaceOverview } from '../PlaceOverview.jsx';
 import { AskTripCard } from './AskTripCard.jsx';
 import { CornerArrow } from './marks.jsx';
@@ -318,6 +319,10 @@ function ListReply({ t, lang, ctx, turn, s, latest, animate }) {
           </Button>
         )}
         {turn.within && <p className="ac-within">{t('askChat.within', { filters: turn.within })}</p>}
+        {/* T1215: the model's words carry the AI line; every answer can be reported. */}
+        {revealed && (fromModel
+          ? <AiMark report={askReport(turn.q, answer, facts, written)} />
+          : <AiReport {...askReport(turn.q, answer, facts, null)} />)}
       </div>
       {revealed && latest && chips.length > 0 && (
         <div className="ac-bubble ac-ask">
@@ -373,7 +378,7 @@ function AnswerTurn({ turn, vocab, ctx, latest }) {
         )}
         {phase === 'ready' && answer && !listy && (
           <div className="ac-bubble">
-            <AskAnswer t={t} answer={answer} facts={facts} intent={intent} written={short}
+            <AskAnswer t={t} answer={answer} facts={facts} intent={intent} written={short} report={{ question: turn.q }}
               onOpen={ctx.onOpen} favorites={ctx.favorites} onToggleFav={ctx.onToggleFav}
               afterWritten={showTrip ? (
                 <AskTripCard t={t} lang={lang} pick={pick} month={intent.facets?.month || null} trip={trip}

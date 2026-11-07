@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { CreditChip } from '../components/CreditChip.jsx';
+import { AiMark } from '../components/AiMark.jsx';
 import {
   HomeIcon, SearchIcon, SparkIcon, MapPinIcon,
 } from '../components/Icons.jsx';
@@ -342,6 +343,8 @@ export function TownPickerStep({
                     </span>
                   </button>
                 ))}
+                {/* T1215: the reasons under each town are the model's words. */}
+                <AiMark />
               </div>
             ) : (
               <div className="trip-note empty-act">
