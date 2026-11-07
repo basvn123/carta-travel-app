@@ -973,6 +973,7 @@ Accessibility facts per destination (OSM wheelchair tags, D21) -> public/destinf
 
 - Cadence: quarterly
 - Writes: neither the master nor the wire directly
+- Wire files: `destinfo/`
 - Note: the place page's Access block: step-free stations, accessible toilets and mapped museums and sights, only where OpenStreetMap carries a wheelchair tag. Resumable Overpass harvest like parking; delete cache/access_osm.json to force a fresh pass.
 - Reads and runs: `pipeline/harvest_access.py`, `pipeline/export_destinfo.py`
 - Commands:

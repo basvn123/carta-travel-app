@@ -1,6 +1,6 @@
 # Seasons and crowds logic (SEASON)
 
-How Carta turns climate normals, sea temperature and visitor nights into the twelve-month climate strip, the best months, the traveller's month, the crowd level by month and the When to go verdict. Main code: `pipeline/harvest_climate_power.py`, `pipeline/apply_climate.py`, `pipeline/harvest_sea_temp.py`, `pipeline/harvest_tourism_density.py`, `pipeline/harvest_uk_crowds.py`, `continent-app/src/lib/when.js`, `continent-app/src/lib/crowdMonth.js`, `continent-app/src/lib/whenGuide.js`, `continent-app/src/browse/ClimateStrip.jsx`, `continent-app/src/browse/CrowdCalendar.jsx`. HANDBOOK pointer: "Climate strip and best months", "When logic (the traveller's month) and When to go", "Crowds by month and the crowd calendar", "Sea temperature", "Month and \"any time\" selection" (docs/HANDBOOK.md). Last verified against the code: 2026-11-06 (T1132).
+How Carta turns climate normals, sea temperature and visitor nights into the twelve-month climate strip, the best months, the traveller's month, the crowd level by month and the When to go verdict. Main code: `pipeline/harvest_climate_power.py`, `pipeline/apply_climate.py`, `pipeline/harvest_sea_temp.py`, `pipeline/harvest_tourism_density.py`, `pipeline/harvest_uk_crowds.py`, `continent-app/src/lib/when.js`, `continent-app/src/lib/crowdMonth.js`, `continent-app/src/lib/whenGuide.js`, `continent-app/src/browse/ClimateStrip.jsx`, `continent-app/src/browse/CrowdCalendar.jsx`; closures (SEASON-037 to SEASON-040, T1202, added by T1217): `pipeline/harvest_seasons.py`, `continent-app/src/lib/season.js`, `continent-app/src/browse/DestWhen.jsx`. HANDBOOK pointer: "Climate strip and best months", "When logic (the traveller's month) and When to go", "Crowds by month and the crowd calendar", "Sea temperature", "Month and \"any time\" selection" (docs/HANDBOOK.md). Last verified against the code: 2026-11-06 (T1132).
 
 IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags in code and `scripts/docs/logic_check.py` are the second half of ROADMAP B3 and not yet done. Line numbers are as of 2026-11-06 and will drift; the constant name is the stable handle.
 
@@ -244,6 +244,42 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Rule: share of the other places with a density figure that have fewer nights per km2 (`below / (n - 1)`); null without a figure or with fewer than two places.
 - Constant: `crowdStanding` in `continent-app/src/lib/whenGuide.js:110`
 - Test: `continent-app/tests/whenGuide.test.mjs` :: "T1022: the crowd standing is the share of places with fewer nights"
+
+### SEASON-037 Facility months and confidence
+- Decides: the months a hut, lift, ferry or a place's own facility (a lido) is open, and how sure Carta is.
+- Rule: OSM `opening_hours` read at month level only (rules split on `;` and `||`, a later rule overrides an earlier one, `off` or `closed` closes its months, a month counts open when any day of it is; week numbers, easter or nth weekdays make the string unreadable and the facility is skipped); else a `seasonal=` word by the European convention. Confidence: high = opening_hours months with a check date under three years old, medium = opening_hours months with no or an older check date, low = a seasonal word only.
+- Constant: `CHECK_FRESH_DAYS` in `pipeline/harvest_seasons.py:91` = 3 x 365
+- Constant: `SEASON_WORDS` in `pipeline/harvest_seasons.py:97` = spring 3 to 5, summer 6 to 8, autumn 9 to 11, winter 12 to 2
+- Constant: `months_open` / `season_of` in `pipeline/harvest_seasons.py:140`, `:192`
+- Test: `tests/test_seasons.py` :: "test_month_reader"
+- Test: `tests/test_seasons.py` :: "test_confidence_from_tags"
+
+### SEASON-038 When a place itself is closed
+- Decides: whether a destination gets `season.open` (shut part of the year) or only a list of seasonal things nearby.
+- Rule: `open` is set only when (own) a seasonal facility within 2 km carries the destination's own name, or (ferry) the destination is an island and every ferry within 3 km is seasonal with medium or high confidence (the union of their months; one year-round ferry keeps the island open). A hut or lift near a village never closes the village. `conf` is the lowest confidence behind `open`, `checked` the newest check date. Up to four seasonal facilities nearby, nearest first, go under `items` (huts within 8 km, lifts 5, ferries 3, own facilities 2). No `open` and no item: no block at all, which means nothing seasonal is mapped, never open all year.
+- Constant: `OWN_KM` in `pipeline/harvest_seasons.py:92` = 2.0
+- Constant: `FERRY_KM` in `pipeline/harvest_seasons.py:93` = 3.0
+- Constant: `ITEM_KM` in `pipeline/harvest_seasons.py:94` = hut 8, lift 5, ferry 3, place 2
+- Constant: `KEEP_ITEMS` in `pipeline/harvest_seasons.py:95` = 4
+- Constant: `season_block` in `pipeline/harvest_seasons.py:264`
+- Test: `tests/test_seasons.py` :: "test_join_on_fixtures"
+- Test: `tests/test_seasons.py` :: "test_kinds_and_year_round_ferry_kept"
+
+### SEASON-039 Closed months on the place page
+- Decides: the shut months drawn on the place's month strip and the nearby seasonal items listed under it.
+- Rule: closed months are the twelve months minus `season.open`, none when `open` is missing or holds all twelve; a low confidence block says "may be closed" instead of "closed"; items need a name and a part-year month list, at most four.
+- Constant: `closedMonths` / `seasonItems` in `continent-app/src/lib/season.js:22`, `:39`
+- Test: `continent-app/tests/seasons.test.mjs` :: "closed months are the complement of the open ones; none without a block"
+- Test: `continent-app/tests/seasonStrip.test.mjs` :: "a low-confidence season says "may be closed" and that it is a guide"
+
+### SEASON-040 Closed places are not suggested that month
+- Decides: whether the trip finder may put a place in a trip for a month, and which month it picks.
+- Rule: a place is skipped for a month only when its block has medium or high confidence and the month is closed; a low confidence block is still suggested (a guessed season never hides a place). The finder's best month skips months the first place is shut while another month is open; the trip's places are then drawn only from places open that month.
+- Constant: `SKIP_CONF` in `continent-app/src/lib/season.js:17` = ["high", "medium"]
+- Constant: `openIn` in `continent-app/src/lib/season.js:30`
+- Constant: `bestMonth` in `continent-app/src/lib/recommend/candidates.js:94`
+- Test: `continent-app/tests/seasons.test.mjs` :: "openIn skips only medium or high confidence; a low one is still suggested"
+- Test: `continent-app/tests/seasons.test.mjs` :: "bestMonth does not choose a month the first place is shut"
 
 ## Rules with no test
 
