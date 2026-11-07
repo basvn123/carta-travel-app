@@ -29,6 +29,10 @@ def rows(ref):
     return d
 b0, b1 = rows(base), rows(br)
 changed = {k:v for k,v in b1.items() if b0.get(k)!=v}
+pre = rows('HEAD^1') if subprocess.run(['git','rev-parse','-q','--verify','HEAD^2'],capture_output=True).returncode==0 else rows('HEAD')
+both = [k for k in changed if pre.get(k) not in (b0.get(k), changed[k])]
+for k in both: changed.pop(k)
+if both: print('ROADMAP ROWS CHANGED ON BOTH SIDES, combine by hand:', both)
 cur = open('ROADMAP.md').read().splitlines()
 fixed=0; out=[]; seen=set()
 for l in cur:
