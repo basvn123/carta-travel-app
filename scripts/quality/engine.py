@@ -14,6 +14,13 @@ A run fails (exit 1) when
   shipped generated text that breaks the house rules: today the trail
   summaries in data/trails/summaries.json, re-checked with the same
   pipeline/trails/summaries.py check() that wrote them.
+- a hard layer rule (rules.yaml `layer_rules`, T1214 from T1142-b) finds a
+  layer's validity or accuracy under its floor. Freshness is a soft layer
+  rule: a stale wire warns, it does not fail the run.
+- a hard report rule (rules.yaml `reports`, T1214 from T1142-a) finds an
+  audit script's report over its limit: the dossier audit, the hero image
+  audit and the POI audit. A report file that is not on disk is skipped (the
+  POI audit runs on the box only).
 A soft rule under its floor only warns. A scorecard field with no rule, or a
 rule for a field the scorecard does not measure, is a configuration error
 (exit 2) so the rules cannot fall behind the layers.
@@ -47,6 +54,7 @@ SUMMARIES = ROOT / "data" / "trails" / "summaries.json"
 VALIDATION = Path(os.environ.get("CARTA_VALIDATION_DIR") or ROOT / "data" / "reports" / "validation")
 PANEL_VERSION = 1
 LEVELS, KINDS = {"must_see", "must_have"}, {"hard", "soft"}
+METRICS = {"validity", "freshness", "accuracy"}
 
 
 def _scorecard():
@@ -93,6 +101,57 @@ def _links_gate(cfg: dict, snap_path: Path | None) -> tuple[list, list]:
     return [], []
 
 
+def _dig(blob, path: str):
+    for part in path.split("."):
+        if not isinstance(blob, dict) or part not in blob:
+            return None
+        blob = blob[part]
+    return blob
+
+
+def _count(v):
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, (int, float)):
+        return v
+    if isinstance(v, (list, dict)):
+        return len(v)
+    return None
+
+
+def reports_gate(checks: list[dict], root: Path = ROOT) -> tuple[list, list]:
+    """T1214 (from T1142-a): the audit scripts' own reports, read from disk.
+    Each check reads one number at `path` in `file` (a list or object counts
+    its entries; `keys` sums those keys of an object) and compares it with
+    `max`. A report that is not on disk, or a path it does not carry, is
+    skipped: that audit did not run here."""
+    failures, warnings = [], []
+    for c in checks:
+        f = root / c["file"]
+        if not f.is_file():
+            continue
+        try:
+            blob = json.loads(f.read_text(encoding="utf-8"))
+        except ValueError:
+            (failures if c["kind"] == "hard" else warnings).append(
+                {"id": c["id"], "kind": c["kind"], "why": f"{c['file']} does not parse"})
+            continue
+        node = _dig(blob, c["path"])
+        if c.get("keys"):
+            if not isinstance(node, dict):
+                continue
+            v = sum(_count(node.get(k)) or 0 for k in c["keys"])
+        else:
+            v = _count(node)
+        if v is None or v <= c["max"]:
+            continue
+        (failures if c["kind"] == "hard" else warnings).append(
+            {"id": c["id"], "layer": "reports", "field": c["path"], "level": "must_have", "kind": c["kind"],
+             "min": c["max"], "value": v, "previous": None, "delta_points": None,
+             "why": f"{v:g} in {c['file']} {c['path']} (limit {c['max']:g}; written by {c['source']})"})
+    return failures, warnings
+
+
 def _when(s: str) -> datetime:
     return datetime.fromisoformat(s.replace("Z", "+00:00"))
 
@@ -126,6 +185,42 @@ def load_rules(path: Path = RULES) -> dict:
             errors.append(f"{c.get('id')}: check must be one of {sorted(TEXT_CHECKS)}")
     if errors:
         raise ValueError("rules.yaml: " + "; ".join(errors))
+    layer_rules = d.get("layer_rules") or []
+    seen_lr = set()
+    for r in layer_rules:
+        rid = r.get("id")
+        if rid in seen_lr or rid in seen:
+            errors.append(f"duplicate rule id {rid}")
+        seen_lr.add(rid)
+        if r.get("metric") not in METRICS:
+            errors.append(f"{rid}: metric must be one of {sorted(METRICS)}")
+        if r.get("kind") not in KINDS:
+            errors.append(f"{rid}: kind must be one of {sorted(KINDS)}")
+        m = r.get("min")
+        if not isinstance(m, (int, float)) or not 0 <= m <= 1:
+            errors.append(f"{rid}: min must be a share between 0 and 1")
+        lays = r.get("layers")
+        if lays != "all" and not (isinstance(lays, list) and lays and all(isinstance(x, str) for x in lays)):
+            errors.append(f"{rid}: layers must be 'all' or a list of layer names")
+    if errors:
+        raise ValueError("rules.yaml: " + "; ".join(errors))
+    reports = d.get("reports") or []
+    for c in reports:
+        rid = c.get("id")
+        if rid in seen or rid in seen_lr:
+            errors.append(f"duplicate rule id {rid}")
+        seen_lr.add(rid)
+        if c.get("kind") not in KINDS:
+            errors.append(f"{rid}: kind must be one of {sorted(KINDS)}")
+        for k in ("file", "path", "source"):
+            if not isinstance(c.get(k), str) or not c[k]:
+                errors.append(f"{rid}: {k} must be a non-empty string")
+        if not isinstance(c.get("max"), (int, float)) or c["max"] < 0:
+            errors.append(f"{rid}: max must be a number of at least 0")
+        if "keys" in c and not (isinstance(c["keys"], list) and c["keys"]):
+            errors.append(f"{rid}: keys must be a non-empty list")
+    if errors:
+        raise ValueError("rules.yaml: " + "; ".join(errors))
     gate = d.get("gate") or {}
     lk = d.get("links")
     if lk is not None:
@@ -138,7 +233,7 @@ def load_rules(path: Path = RULES) -> dict:
             errors.append("links.max_broken_share must not exceed hard_broken_share")
     if errors:
         raise ValueError("rules.yaml: " + "; ".join(errors))
-    return {"links": lk, "rules": rules, "texts": texts, "drop_points": float(gate.get("must_see_drop_points", 2)),
+    return {"links": lk, "rules": rules, "texts": texts, "layer_rules": layer_rules, "reports": reports, "drop_points": float(gate.get("must_see_drop_points", 2)),
             "trend_days": int(gate.get("trend_days", 90))}
 
 
@@ -240,6 +335,44 @@ def measured_fields() -> set[tuple[str, str]]:
     out = {(layer, f) for layer, fields in sc.APP_LAYERS.items() for f in fields}
     out |= {(layer, f) for layer, spec in sc.SHARD_LAYERS.items() for f in spec[3]}
     return out
+
+
+def measured_layers() -> set[str]:
+    sc = _scorecard()
+    return set(sc.APP_LAYERS) | set(sc.SHARD_LAYERS)
+
+
+def layer_rule_problems(layer_rules: list[dict]) -> list[str]:
+    known = measured_layers()
+    out = []
+    for r in layer_rules:
+        if isinstance(r.get("layers"), list):
+            out += [f"layer rule {r['id']} names {x}, which the scorecard does not measure"
+                    for x in r["layers"] if x not in known]
+    return out
+
+
+def evaluate_layers(card: dict, layer_rules: list[dict]) -> tuple[list, list]:
+    """Validity, freshness and accuracy per layer against rules.yaml
+    `layer_rules` (T1214, from T1142-b). A layer the card did not measure for
+    that metric (no records, or accuracy n/a) is skipped: completeness already
+    reports an empty layer, and accuracy exists only where an eval set does."""
+    failures, warnings = [], []
+    for r in layer_rules:
+        lays = [x["layer"] for x in card["layers"]] if r["layers"] == "all" else r["layers"]
+        for row in card["layers"]:
+            if row["layer"] not in lays:
+                continue
+            v = row.get(r["metric"])
+            if v is None or v >= r["min"]:
+                continue
+            extra = f", {row.get('age_days')} days old" if r["metric"] == "freshness" and row.get("age_days") is not None else ""
+            item = {"id": f"{r['id']}.{row['layer']}", "layer": row["layer"], "field": r["metric"],
+                    "level": "must_have", "kind": r["kind"], "min": r["min"], "value": v,
+                    "previous": None, "delta_points": None,
+                    "why": f"{r['metric']} {v * 100:.1f}% is under the floor {r['min'] * 100:.0f}%{extra}"}
+            (failures if r["kind"] == "hard" else warnings).append(item)
+    return failures, warnings
 
 
 def coverage_problems(rules: list[dict]) -> list[str]:
@@ -350,15 +483,22 @@ def panel(card: dict, result: dict, points: list[dict], days: int, baseline_at: 
 def run(public: Path, now: datetime | None, out: Path, rules_path: Path = RULES,
         write: bool = False, snapshot: Path | None = APP_SNAPSHOT,
         validation: Path | None = VALIDATION, links: Path | None = LINKS,
-        summaries: Path | None = SUMMARIES) -> tuple[int, dict]:
+        summaries: Path | None = SUMMARIES, reports_root: Path | None = ROOT) -> tuple[int, dict]:
     cfg = load_rules(rules_path)
-    problems = coverage_problems(cfg["rules"])
+    problems = coverage_problems(cfg["rules"]) + layer_rule_problems(cfg.get("layer_rules") or [])
     if problems:
         return 2, {"config_errors": problems}
     sc = _scorecard()
     card = sc.build(public, now)
     prev, prev_at = previous_fields(out, card["generated_at"])
     result = evaluate(card, cfg, prev)
+    mfail, mwarn = evaluate_layers(card, cfg.get("layer_rules") or [])
+    result["failures"] += mfail
+    result["warnings"] += mwarn
+    if reports_root is not None:
+        rfail, rwarn = reports_gate(cfg.get("reports") or [], reports_root)
+        result["failures"] += rfail
+        result["warnings"] += rwarn
     vfail, vwarn = _validation_gate(validation)
     lfail, lwarn = _links_gate(cfg, links)
     result["failures"] += vfail + lfail

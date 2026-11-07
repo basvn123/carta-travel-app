@@ -230,3 +230,78 @@ def test_repo_rules_name_the_summary_checks(eng):
     cfg = eng.load_rules()
     kinds = {c["check"]: c["kind"] for c in cfg["texts"]}
     assert kinds == {"dash": "hard", "banned": "hard", "facts": "soft", "length": "soft"}
+
+
+def test_layer_rules_read_validity_freshness_and_accuracy(eng, tmp_path):
+    """T1214 (from T1142-b): validity and accuracy floors fail hard, a stale wire only warns."""
+    p = soft_rules(eng, tmp_path)
+    d = yaml.safe_load(p.read_text())
+    d["layer_rules"] = [
+        {"id": "freshness", "metric": "freshness", "layers": "all", "kind": "soft", "min": 0.5},
+        {"id": "validity.core", "metric": "validity", "layers": ["core"], "kind": "hard", "min": 0.98},
+        {"id": "accuracy.rating", "metric": "accuracy", "layers": ["rating"], "kind": "hard", "min": 0.96},
+    ]
+    p.write_text(yaml.safe_dump(d))
+    (tmp_path / "novalid").mkdir()
+    pub = make_public(tmp_path / "pub")
+    # Inside the cadence: nothing from the layer rules (accuracy n/a on the fixture is skipped).
+    rc, data = eng.run(pub, NOW, tmp_path / "out", p, snapshot=None, validation=tmp_path / "novalid")
+    assert rc == 0 and not [w for w in data["gate"]["warnings"] if w["id"].startswith("freshness")]
+    # A year later the wire is stale: a soft warning per app_data layer, never a failure.
+    late = datetime(2027, 11, 6, 18, tzinfo=timezone.utc)
+    rc, data = eng.run(pub, late, tmp_path / "out2", p, snapshot=None, validation=tmp_path / "novalid")
+    assert rc == 0
+    stale = [w for w in data["gate"]["warnings"] if w["id"].startswith("freshness.")]
+    assert "freshness.core" in {w["id"] for w in stale} and all("days old" in w["why"] for w in stale)
+    # A card whose core validity is under the hard floor fails.
+    card = {"layers": [{"layer": "core", "validity": 0.9, "freshness": 1.0, "accuracy": None}]}
+    fails, warns = eng.evaluate_layers(card, d["layer_rules"])
+    assert [f["id"] for f in fails] == ["validity.core.core"] and warns == []
+
+
+def test_layer_rules_are_validated(eng, tmp_path):
+    p = soft_rules(eng, tmp_path)
+    d = yaml.safe_load(p.read_text())
+    d["layer_rules"] = [{"id": "x", "metric": "speed", "layers": "all", "kind": "soft", "min": 0.5}]
+    p.write_text(yaml.safe_dump(d))
+    with pytest.raises(ValueError, match="metric must be one of"):
+        eng.load_rules(p)
+    d["layer_rules"] = [{"id": "x", "metric": "validity", "layers": ["nope"], "kind": "soft", "min": 0.5}]
+    p.write_text(yaml.safe_dump(d))
+    rc, data = eng.run(make_public(tmp_path / "pub"), NOW, tmp_path / "out", p, snapshot=None)
+    assert rc == 2 and any("names nope" in e for e in data["config_errors"])
+
+
+def test_repo_rules_carry_the_layer_rules(eng):
+    cfg = eng.load_rules()
+    metrics = {r["metric"]: r["kind"] for r in cfg["layer_rules"]}
+    assert metrics["freshness"] == "soft" and metrics["accuracy"] == "hard" and metrics["validity"] == "hard"
+    assert eng.layer_rule_problems(cfg["layer_rules"]) == []
+
+
+def test_report_rules_read_the_audit_reports(eng, tmp_path):
+    """T1214 (from T1142-a): an audit script's report over its limit breaks the rule; a missing report is skipped."""
+    rep = tmp_path / "data" / "reports"
+    rep.mkdir(parents=True)
+    (rep / "dossier_audit.json").write_text(json.dumps({"failure_counts": {"IMG-2": 2, "HL-4": 90}}))
+    (rep / "hero.json").write_text(json.dumps({"counts": {"missing": 12}}))
+    checks = [
+        {"id": "dossier.hard", "source": "audit.py", "file": "data/reports/dossier_audit.json",
+         "path": "failure_counts", "keys": ["IMG-2", "IMG-3"], "max": 0, "kind": "hard"},
+        {"id": "dossier.soft", "source": "audit.py", "file": "data/reports/dossier_audit.json",
+         "path": "failure_counts", "keys": ["HL-4"], "max": 100, "kind": "soft"},
+        {"id": "hero.missing", "source": "hero.py", "file": "data/reports/hero.json",
+         "path": "counts.missing", "max": 10, "kind": "soft"},
+        {"id": "poi.box_only", "source": "audit_quality.py", "file": "logs/nope.json",
+         "path": "coords.null_island", "max": 0, "kind": "hard"},
+    ]
+    fails, warns = eng.reports_gate(checks, tmp_path)
+    assert [f["id"] for f in fails] == ["dossier.hard"] and fails[0]["value"] == 2
+    assert [w["id"] for w in warns] == ["hero.missing"]
+
+
+def test_repo_report_rules_pass_on_the_committed_reports(eng):
+    cfg = eng.load_rules()
+    assert {c["id"] for c in cfg["reports"]} >= {"dossier.hard", "hero_images.missing", "poi.null_island"}
+    fails, _ = eng.reports_gate(cfg["reports"])
+    assert fails == []
