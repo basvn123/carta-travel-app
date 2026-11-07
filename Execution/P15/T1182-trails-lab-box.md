@@ -114,7 +114,7 @@ The existing `TRAILSLAB_HOST`, `TRAILSLAB_PORT`, `TRAILSLAB_DB`, `TRAILSLAB_USER
 | initdb files applied by `lab.sh init-schema` | n/a | 12 of 12, 22 tables, PostGIS 3.4.2 and pgRouting 3.6.1 (PostgreSQL 16 here) | n/a |
 | `tests/test_trailslab_box.py` | none | 8 tests (the round trip run as `nobody`) | +8 |
 | pytest (quarantine deselected) | T1161 recorded 811 passed, 2 failed on its base | 855 passed, 2 failed, 11 skipped. The 2 are the same data-dependent tests T1161 recorded: `test_rating_inputs::test_beauty_v2_reads_no_register` and `test_rating_stability::test_adding_places_moves_nobody_else` | same 2 failures |
-| `npm test` | not run on the base | see the line below | none |
+| `npm test` | not run on the base | 1842 tests, 1830 passed, 0 failed (the rest skipped) | none |
 
 ## What broke and how it was fixed
 
