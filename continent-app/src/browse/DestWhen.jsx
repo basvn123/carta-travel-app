@@ -6,6 +6,7 @@ import { CROWD_TIER_KEYS } from '../lib/crowdMonth.js';
 import { useStayRecord } from '../lib/staysData.js';
 import { crowdStanding, monthsOf, stayByMonth, stayKindsOf, whenVerdict } from '../lib/whenGuide.js';
 import { Segmented } from '../components/ui/index.js';
+import { bestMonthsFor, riskMonths } from '../lib/heatRisk.js';
 import { PSection } from './PageTemplate.jsx';
 import '../styles/94-when-stay.css';
 
@@ -50,6 +51,17 @@ function Verdict({ t, verdict, monthList }) {
   );
 }
 
+/** D20: the honest one-line note on extreme heat and fire months, drawn only when there are some. */
+export function HeatNote({ t, risk, monthList, basis }) {
+  if (!risk || !risk.any.length) return null;
+  return (
+    <p className="when-risk" role="note">
+      {risk.heat.length > 0 && <span>{t('heat.hot', { months: monthList(risk.heat) })} </span>}
+      {risk.fire.length > 0 && <span>{t(basis === 'fwi' ? 'heat.fireFwi' : 'heat.fireDry', { months: monthList(risk.fire) })}</span>}
+    </p>
+  );
+}
+
 function StayPrices({ t, lang, rec, kinds, names, month, setMonth, monthList }) {
   const [kind, setKind] = React.useState(null);
   const shown = kinds.includes(kind) ? kind : kinds[0];
@@ -90,12 +102,15 @@ function StayPrices({ t, lang, rec, kinds, names, month, setMonth, monthList }) 
 }
 
 export function DestWhen({ p }) {
-  const { t, lang, destination, data, water, monthPick, festivals, monthList } = p;
+  const { t, lang, destination, data, water, monthPick, festivals, monthList, heatGuard } = p;
   const rec = useStayRecord(destination.id);
   const months = React.useMemo(() => monthsOf(destination.climate, destination.crowding),
     [destination.climate, destination.crowding]);
-  const verdict = React.useMemo(() => whenVerdict(months, destination.climate?.best),
-    [months, destination.climate?.best]);
+  const risk = React.useMemo(() => riskMonths(destination.climate), [destination.climate]);
+  const bestShown = React.useMemo(() => bestMonthsFor(destination.climate, !!heatGuard).best,
+    [destination.climate, heatGuard]);
+  const verdict = React.useMemo(() => whenVerdict(months, bestShown),
+    [months, bestShown]);
   const standing = React.useMemo(() => crowdStanding(destination.id, data?.destinations),
     [destination.id, data?.destinations]);
   const kinds = React.useMemo(() => stayKindsOf(rec), [rec]);
@@ -121,6 +136,7 @@ export function DestWhen({ p }) {
   return (
     <PSection id="pt-when" title={t('dest.whenTitle')}>
       {verdict && <Verdict t={t} verdict={verdict} monthList={monthList} />}
+      <HeatNote t={t} risk={risk} monthList={monthList} basis={destination.climate?.risk?.fire_basis} />
 
       {months && (
         <div className="when-months">

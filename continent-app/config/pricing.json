@@ -213,6 +213,21 @@
       "review": "2027-05-03",
       "test": "tests/whenGuide.test.mjs"
     },
+    "when.heat": {
+      "value": {
+        "extreme_c": 35,
+        "fire_high_c": 28,
+        "fire_dry_mm": 30,
+        "fire_fwi": 21.3,
+        "min_best": 1
+      },
+      "unit": "extreme_c and fire_high_c: monthly mean daytime high in C; fire_dry_mm: monthly rain in mm; fire_fwi: Fire Weather Index class 'high' floor",
+      "kind": "estimate",
+      "source": "Heat and fire months (D20): a month whose mean daytime high is extreme_c or more is extreme heat; a month with a high of fire_high_c or more and under fire_dry_mm of rain is a dry-heat fire month, or, when an EFFIS/CEMS Fire Weather Index table is supplied, a month at fire_fwi or more (EFFIS 'high' class); best months drop these for families and heat avoiders, never below min_best months",
+      "date": "2026-11-07",
+      "review": "2027-05-07",
+      "test": "tests/heatRisk.test.mjs"
+    },
     "bands.feel": {
       "value": {
         "gap": 0.1,

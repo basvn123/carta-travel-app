@@ -1,3 +1,4 @@
+import { bestMonthsFor, guardsHeat } from '../lib/heatRisk.js';
 import React from 'react';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { knownFor } from '../lib/knownFor.js';
@@ -407,7 +408,9 @@ export function DestinationPage({
     : crowd.kind === 'pattern' ? t('dest.crowdPattern', { quiet: monthList(crowd.quiet), busy: monthList(crowd.busy) })
     : t('dest.crowdFlat', { label: t(CROWD_TIER_KEYS[crowd.tier]) });
   const visitH = Number(d?.place?.visit_h ?? intro?.facts?.visit_h);
-  const bestMonths = d?.when?.best?.length ? d.when.best : destination.climate?.best;
+  // D20: a family or a heat avoider is not sent to a heat or fire month.
+  const heatGuard = guardsHeat({ children: settingsCtx?.children, babies: settingsCtx?.babies, avoid: settingsCtx?.avoid });
+  const bestMonths = d?.when?.best?.length ? d.when.best : bestMonthsFor(destination.climate, heatGuard).best;
   const keyFacts = [
     bestMonths?.length > 0 && { key: 'best', label: t('dest.keyBest'), value: monthList(bestMonths) },
     crowdText && { key: 'crowds', label: t('dest.keyCrowds'), value: crowdText },
@@ -555,7 +558,7 @@ export function DestinationPage({
     highlights, doRows, monthList, fmtScore,
     cats,
     area: isArea(d), hasRoutes, members, memberFocus,
-    monthPick: statMonth, water, festivals,
+    monthPick: statMonth, water, festivals, heatGuard,
     getting, rhythm, bookAhead, verdict, tips, packs, month, parking, tours, flightLinks, bookPhoto,
     isOpen, toggle, onOpenLifestyle, onOpenFeature, onSelect, onOpenItin, goTab,
     ways, aroundStat, airportText, airportIata, guideUrl,

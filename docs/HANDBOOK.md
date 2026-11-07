@@ -814,6 +814,8 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 
 **Where it lives.** `continent-app/src/browse/ClimateStrip.jsx`, `continent-app/src/lib/whenGuide.js`, `continent-app/src/lib/waterFacts.js`, `pipeline/harvest_climate_power.py`, `pipeline/apply_climate.py`.
 
+**Heat and fire months (D20, T1200).** `pipeline/heat_fire.py` (task `heat_fire`) adds `climate.heat` (mean daytime high at or above `extreme_c`, 35 C) and `climate.fire` (months at FWI 21.3 or more when `cache/fire_fwi.json` exists, else a dry-heat proxy: high at or above 28 C and under 30 mm rain) plus `climate.risk`. All numbers are the rule `when.heat` in `config/pricing.json`. `lib/heatRisk.js` is the one app rule: for a party with children or babies, or an "avoid heat" answer, the place page's best months drop those months (never below one month); When to go prints a note naming them.
+
 **Limits.** Month initials on the strip are English only (T1022-a). Elevation still comes from the Open-Meteo API, non-commercial tier (T470-b). An i18n string still says 30 years of normals (T469-i).
 
 ---
