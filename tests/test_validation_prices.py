@@ -149,3 +149,21 @@ def test_committed_reference_and_sheet_are_well_formed():
     assert len(rows) >= 36 and set(rows[0]) == set(ls.COLUMNS)
     reviews = json.loads((lp.OUT_DIR / "gap_reviews.json").read_text(encoding="utf-8"))
     assert len(reviews["gaps"]) == 30 and all(g["verdict"] and g["cause"] for g in reviews["gaps"])
+
+
+def test_eurostat_dir_overrides(tmp_path):
+    d = tmp_path / "es"
+    d.mkdir()
+    doc = {"id": ["geo", "time"], "size": [2, 2],
+           "dimension": {"geo": {"category": {"index": {"EL": 0, "DE": 1}}},
+                         "time": {"category": {"index": {"2024": 0, "2025": 1}}}},
+           "value": {"0": 80.0, "1": 82.5, "2": 101.0}}
+    (d / "A011102.json").write_text(json.dumps(doc), encoding="utf-8")
+    got = lp.read_eurostat_dir(d)
+    assert got == {"A011102": {"GR": {"value": 82.5, "year": 2025}, "DE": {"value": 101.0, "year": 2024}}}
+    inputs = tmp_path / "in.json"
+    inputs.write_text(json.dumps({"pli": {"A0111": {"DE": {"value": 100, "year": 2024}}}}), encoding="utf-8")
+    ref = lp.refresh_reference(inputs, tmp_path / "ref.json", d)
+    assert set(ref["pli"]) == {"A0111", "A011102"}
+    refs = lp.references({"reference": tmp_path / "ref.json"})
+    assert {r["cat"] for r in refs if r["group"] == "bed"} == {"A011102"}

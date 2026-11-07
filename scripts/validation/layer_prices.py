@@ -43,6 +43,7 @@ that.
     python -I scripts/validation/runner.py prices --write
     python -I scripts/validation/layer_prices.py --table     # errors per country and category
     python -I scripts/validation/layer_prices.py --refresh-reference   # from cache/food_price_inputs.json
+    python -I scripts/validation/layer_prices.py --refresh-reference --eurostat-dir cache/eurostat_pli
 
 No network, no model.
 """
@@ -146,10 +147,49 @@ def bed_value(acc, tier):
 # Reference
 # ---------------------------------------------------------------------------
 
-def refresh_reference(inputs=INPUTS, out=REFERENCE):
-    """Write the committed subset of prc_ppp_ind from the food harvest."""
-    blob = load_json(inputs)
-    if not blob or "pli" not in blob:
+def jsonstat_rows(doc):
+    """Flatten a Eurostat JSON-stat 2.0 document to (dims, value) rows
+    (the same reading as pipeline/harvest_food_prices.py)."""
+    ids, sizes = doc["id"], doc["size"]
+    cats = [{v: k for k, v in doc["dimension"][d]["category"]["index"].items()} for d in ids]
+    for flat, val in doc["value"].items():
+        flat, pos = int(flat), []
+        for size in reversed(sizes):
+            pos.append(flat % size)
+            flat //= size
+        pos.reverse()
+        yield {d: cats[i][q] for i, (d, q) in enumerate(zip(ids, pos))}, val
+
+
+def read_eurostat_dir(path):
+    """{cat: {cc: {value, year}}} from <path>/<ppp_cat>.json API answers,
+    the latest year with a value per country."""
+    out = {}
+    for f in sorted(Path(path).glob("*.json")):
+        doc = load_json(f)
+        if not doc or "value" not in doc:
+            continue
+        best = {}
+        for dims, val in jsonstat_rows(doc):
+            geo = dims.get("geo") or ""
+            if val is None or (len(geo) != 2 and geo != "EU27_2020"):
+                continue
+            yr = int(dims["time"])
+            if geo not in best or yr > best[geo]["year"]:
+                best[geo] = {"value": val, "year": yr}
+        if best:
+            out[f.stem] = {iso2(g) if len(g) == 2 else g: v for g, v in best.items()}
+    return out
+
+
+def refresh_reference(inputs=INPUTS, out=REFERENCE, eurostat_dir=None):
+    """Write the committed subset of prc_ppp_ind from the food harvest, with
+    any category downloaded into eurostat_dir taking precedence."""
+    blob = load_json(inputs) or {}
+    if eurostat_dir:
+        blob = {**blob, "pli": {**(blob.get("pli") or {}), **read_eurostat_dir(eurostat_dir)},
+                "harvested": datetime.now(timezone.utc).date().isoformat()}
+    if not blob.get("pli"):
         raise SystemExit(f"prices: {inputs} has no price levels (git lfs pull it, or run harvest_food_prices.py)")
     pli = {c: {iso2(g): v for g, v in sorted((blob["pli"].get(c) or {}).items())}
            for c in HARVEST_CATS if blob["pli"].get(c)}
@@ -392,11 +432,12 @@ def table_markdown(tab, summary, at):
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Prices validation helpers (T1190)")
     ap.add_argument("--refresh-reference", action="store_true")
+    ap.add_argument("--eurostat-dir", help="folder of prc_ppp_ind API answers named <ppp_cat>.json")
     ap.add_argument("--table", action="store_true", help="write errors.json and errors.md")
     ap.add_argument("--out", default=str(OUT_DIR))
     a = ap.parse_args(argv)
     if a.refresh_reference:
-        doc = refresh_reference(out=Path(a.out) / "reference_pli.json")
+        doc = refresh_reference(out=Path(a.out) / "reference_pli.json", eurostat_dir=a.eurostat_dir)
         print(f"reference: {sum(len(v) for v in doc['pli'].values())} levels, harvested {doc['harvested']}")
     if a.table:
         ctx = {"reference": Path(a.out) / "reference_pli.json"}
