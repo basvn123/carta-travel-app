@@ -1,0 +1,75 @@
+{
+ "batch": 5,
+ "rows": [
+  {
+   "s": 54,
+   "task": "T1138",
+   "item": "E7",
+   "branch": "p15-s54-model-strategy",
+   "slug": "model-strategy",
+   "model": "opus",
+   "owns": "model config and switch triggers, pipeline batch jobs' model choice",
+   "reads": "Execution/P15/T1135-model-research.md (E-R3), T1136-ask-eval-gate.md (E1), T1137-ai-gateway.md (E3), T1140-prompt-registry.md (E5), T1148-eval-platform.md (F6), T1141-retrieval.md",
+   "scope": "Model strategy (ROADMAP E7 row and detail): apply the E-R3 research. For every AI feature (Ask, plan-day, suggest-city, parse-booking, the pipeline jobs: tagging, summaries, blog drafts) record cost per 1,000 calls and a quality score on its eval for at least three options, as far as the container can run them (offline evals and fixtures; options that need a live key or the box become owner runs with the exact command). Make every batch job that passes its eval selectable to run on the box's CPU through the gateway config (`ai_gateway.py` provider entry), without moving any live traveller feature off Gemini or Workers AI (that is the owner's decision: write it as an owner step with the numbers). Write the switch triggers (monthly users, cost per day, quality drop) as config plus a doc.",
+   "files": "the gateway's model config only (`continent-app/config/` AI model config, `pipeline/ai_gateway.py` provider table), new `docs/ai/model-strategy.md`, a cost and quality table under `data/reports/` or `docs/ai/`, tests for the provider selection. Do not edit the gateway's call path or logging (S55 owns telemetry).",
+   "gate": "Box access and the owner's decision on live features: do the code and the measured table; the box run and any live switch are owner steps.",
+   "done": "Cost per 1,000 calls and quality per feature recorded for three options each (measured or marked as an owner run), triggers written, batch jobs switchable by config, tests green."
+  },
+  {
+   "s": 55,
+   "task": "T1139",
+   "item": "E4",
+   "branch": "p15-s55-llm-observability",
+   "slug": "llm-observability",
+   "model": "sonnet",
+   "owns": "gateway telemetry, ai_model_events, admin AI cost panel",
+   "reads": "Execution/P15/T1137-ai-gateway.md (E3), T1148-eval-platform.md (the Langfuse compose file, T1148-b), T1140-prompt-registry.md, T1118 privacy report (grep Execution/P15 for T1118), docs/legal/ARTICLE30.md",
+   "scope": "LLM observability (ROADMAP E4): one `ai_model_events` row per model call through the gateway (feature, provider, model, prompt version from the registry, tokens in and out, cost estimate, latency, outcome), privacy safe (no prompt or answer text, Ask query hashed, 30-day retention), an admin panel with cost per day, p50 and p95 latency and failure rate per feature (a weekly view), and an optional exporter to self-hosted tracing (Langfuse on the box, off by default). If the table needs a Supabase migration it takes number 071 (free: S59 wrote no migration; check `supabase/migrations/` at your start), with a down file and RLS so only the service role writes; the paste is an owner step.",
+   "files": "the gateway's logging hook (`supabase/functions/_shared/aiModels.mjs` and its copies, `pipeline/ai_gateway.py`, the Ask answer function) for the event write only, `supabase/migrations/07x_ai_model_events*.sql`, a new admin component and hook under `continent-app/src/components/admin/`, its `admin.*` i18n keys appended, tests. Do not change model choice or provider config (S54 owns it).",
+   "gate": "Self-hosted tracing on the box and the migration paste are owner steps.",
+   "done": "Every gateway call writes one event in tests, the admin weekly view renders from fixtures, the retention and hashing are tested, RLS harness covers the table."
+  },
+  {
+   "s": 60,
+   "task": "T1144",
+   "item": "D4",
+   "branch": "p15-s60-truth-set",
+   "slug": "truth-set",
+   "model": "opus",
+   "owns": "evals/truth/ and the truth runner",
+   "reads": "Execution/P15/T1142-quality-engine-2.md (D2), T1145-coverage-fairness.md, T1148-eval-platform.md (eval runner and judge calibration), T1179-trail-summaries.md, T1181-trails-external.md",
+   "scope": "Truth set (ROADMAP D4): a stratified sample of 100 places, 25 trails and 25 beaches and lakes from the shipped data, the fields to verify per item, a hand-verification sheet and guide the owner fills (`evals/truth/`), `evals/run_truth.py` (or the eval runner adapter `truth`) that scores the current data against the verified answers per release, and the text check: an LLM-judge harness against cited sources that runs offline in a session or through the gateway on Gemini, never the Claude API, with calibration on 50 human judgments as an owner step. Seed the answers you can check from the repo itself (cited source fields already in the data), mark the rest unverified.",
+   "files": "new `evals/truth/`, `evals/run_truth.py` or `continent-app/scripts/eval/adapters/truth.mjs` plus its line in `run.mjs` and the pinned EVALS test, tests, a HANDBOOK D4 section",
+   "gate": "The owner verifies the sample by hand: build the sample, sheet and scorer; the hand check is an owner step.",
+   "done": "Sample and sheet committed, the scorer runs and gives a score on the seeded answers, the judge harness runs on fixtures, a seeded wrong value lowers the score in a test."
+  },
+  {
+   "s": 62,
+   "task": "T1146",
+   "item": "D15",
+   "branch": "p15-s62-catalogue-gaps-1",
+   "slug": "catalogue-gaps-1",
+   "model": "opus",
+   "owns": "candidate generation for catalogue gaps, the add, merge and remove list",
+   "reads": "Execution/P15/T1145-coverage-fairness.md (D6 gap list), T1142-quality-engine-2.md (D2 rules), T1149-taxonomy-1.md, docs/REGIONS.md",
+   "scope": "Catalogue gaps, part 1 (ROADMAP D15): from D6's ranked gaps, generate candidate places per gap from the sources the catalogue already uses (the caches in `cache/` and the regions layer you can read; live Wikidata or Wikivoyage calls are owner runs), pass each through the same selection rules and D2 checks as today's 3,868, find duplicates (the same town under two spellings, for example Rhodes and Rodos) and places failing D2 on must-have fields. Output one reviewed-ready list per country: add, merge, remove, each with its reason and source, in `data/catalogue/` or `docs/data/`. Do not change the master or the wire (S63 applies the list after the owner approves).",
+   "files": "new `pipeline/catalogue_gaps.py` (or a folder), its output list, tests, a HANDBOOK D15 section. No writer or master edits.",
+   "gate": "The owner reviews the add list per country: produce the list; the review is an owner step that unblocks S63.",
+   "done": "A per-country add, merge and remove list with reasons and sources, its counts per gap in the report, and the generator tested."
+  },
+  {
+   "s": 99,
+   "task": "T1183",
+   "item": "D24",
+   "branch": "p15-s99-trail-continuity",
+   "slug": "trail-continuity",
+   "model": "opus",
+   "owns": "pipeline/trails/ continuity repair",
+   "reads": "Execution/P15/T1094-recover-walks.md, T1180-downhill-relief.md, T1181-trails-external.md (T1181-b: 33 reference trails miss for broken geometry), T1092-trail-names.md, docs on trails (grep docs/HANDBOOK.md for failed_continuity)",
+   "scope": "Repair the 3,518 `failed_continuity` routes (ROADMAP D24) with the routing engine (BRouter in `tools/brouter/`, or the trails lab) within strict limits: a gap is bridged only when the routed bridge is short (set and justify a cap in metres and as a share of the route), follows paths, and keeps the route's start, end and order; publish only what becomes continuous, keep every refusal reason. Build and test it on fixtures from the repo; the full run needs the box or laptop with the lab and extracts (owner step with the exact commands and the expected counts). Re-check the T1181-b trails in the dry-run fixtures where you can.",
+   "files": "`pipeline/trails/` (new continuity repair module and its step in the trails chain, not the rating or export logic), its config keys, tests, the HANDBOOK trails section",
+   "gate": "Box or laptop run: the code half here, the run as an owner step.",
+   "done": "The repair step with limits and refusal reasons, tested on fixtures, wired into the trails chain behind a flag, and the expected before and after counts written for the owner run."
+  }
+ ]
+}

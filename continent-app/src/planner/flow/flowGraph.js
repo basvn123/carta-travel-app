@@ -5,6 +5,9 @@
  * itself, then an optional run about the days. Which screens a trip gets
  * depends on its answers, mostly on what is already booked:
  *
+ *   first     T1103 (G12): a new trip from the Plan opening asks only tell, who,
+ *             when and from (firstSetup), is made with its defaults and opens on
+ *             its priced trips; the rest of setup and guide refine them there
  *   setup     tell (free text and files, skippable), booked, who, sleep, priority, when, from, way, airports
  *             (when, from and the way there drop out when bookings fix them; airports
  *             only when the way there may fly, T860), then create
@@ -51,6 +54,31 @@ export function setupScreens(s) {
     if (id === 'airports') return !s.booked.flights && FLYING_WAYS.includes(s.way || '');
     return true;
   });
+}
+
+/**
+ * T1103 (ROADMAP G12, audit P-33): the questions a new trip asks before its
+ * first priced trips. Who, when and from are what the prices hang on (the
+ * party, the dates, the airport); Tell Carta can answer all three in one
+ * sentence. What is booked, where they sleep, what matters most, the way
+ * there and the airports keep their defaults and refine the trips from the
+ * trips screen and the trip settings. A trip under way keeps its own run.
+ */
+export const FIRST_SETUP = ['tell', 'who', 'when', 'from'];
+
+export function firstSetup(s) {
+  const all = setupScreens(s);
+  return s.kind === 'now' ? all : all.filter((id) => FIRST_SETUP.includes(id));
+}
+
+/**
+ * Whether one of these trips is under way today (its start on or before
+ * today, its end on or after it). Only then does Start planning ask "a new
+ * trip or the one you are on" (G12: skip the choice when nothing is in
+ * progress). Dates are ISO days; a trip without both is not under way.
+ */
+export function tripUnderWay(trips, today) {
+  return (trips || []).some((x) => x && x.start && x.end && x.start <= today && x.end >= today);
 }
 
 /** Whether the engine's steps follow the door. With stays booked the places

@@ -1,0 +1,408 @@
+{
+ "backend": "session",
+ "model": "session judge (Claude Code subagent, blind to the key)",
+ "rubric_sha": "0ec9069002a6",
+ "at": "2026-11-06T15:58:08Z",
+ "verdicts": {
+  "p01": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Why lines are generic and repeat the same template."
+  },
+  "p02": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Only one of the two active picks used and why lines are generic."
+  },
+  "p03": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Why lines are generic apart from the named stop."
+  },
+  "p04": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "The list holds no active places so the culture picks are acceptable; why lines are template text."
+  },
+  "p05": {
+   "named": 5,
+   "pace": 2,
+   "walk": 1,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Ten stops for a packed day is too many and needs about 11 hours of visits and walking."
+  },
+  "p06": {
+   "named": 5,
+   "pace": 5,
+   "walk": 2,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "About 9.6 km in straight lines is over the 8 km limit with three hops of 3 km or more."
+  },
+  "p07": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 1,
+   "verdict": "fail",
+   "reason": "Summary has an em dash and several why lines are just Nice."
+  },
+  "p08": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 1,
+   "verdict": "fail",
+   "reason": "Summary has an em dash and several why lines are just Nice."
+  },
+  "p09": {
+   "named": 5,
+   "pace": 5,
+   "walk": 2,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Walks about 11 km against a 10 km limit and needs nearly 12 hours, with two 3 km hops at the start."
+  },
+  "p10": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Compact all culture old town day, only the generic why lines hold it back."
+  },
+  "p11": {
+   "named": 5,
+   "pace": 5,
+   "walk": 1,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "About 20 km of straight line walking against a 9 km limit with hops of 7 and 6 km."
+  },
+  "p12": {
+   "named": 5,
+   "pace": 3,
+   "walk": 5,
+   "vibe": 3,
+   "catalogue": 1,
+   "text": 2,
+   "verdict": "fail",
+   "reason": "Stop h99 is not a candidate, and its why line is a market blurb for an invented place."
+  },
+  "p13": {
+   "named": 5,
+   "pace": 3,
+   "walk": 3,
+   "vibe": 4,
+   "catalogue": 1,
+   "text": 2,
+   "verdict": "fail",
+   "reason": "Stop h99 is not a candidate, and its why line is a market blurb for an invented place."
+  },
+  "p14": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Fine overall, only the template why lines are weak."
+  },
+  "p15": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Only one active place exists on the list so culture heavy is fine; why lines are generic."
+  },
+  "p16": {
+   "named": 5,
+   "pace": 5,
+   "walk": 1,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "About 16.5 km walked against a 9 km limit, with three hops of about 5 km."
+  },
+  "p17": {
+   "named": 5,
+   "pace": 3,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 1,
+   "text": 2,
+   "verdict": "fail",
+   "reason": "Stop h99 is not a candidate, and its why line is a market blurb for an invented place."
+  },
+  "p18": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 1,
+   "verdict": "fail",
+   "reason": "Summary has an em dash and two why lines are just Nice."
+  },
+  "p19": {
+   "named": 5,
+   "pace": 5,
+   "walk": 2,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Straight line walking is 8.6 km over the 8 km limit, so real streets would be longer."
+  },
+  "p20": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 1,
+   "verdict": "fail",
+   "reason": "Summary has an em dash and three why lines are just Nice."
+  },
+  "p21": {
+   "named": 5,
+   "pace": 3,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 1,
+   "text": 2,
+   "verdict": "fail",
+   "reason": "Stop h99 is not a candidate, and its why line is a market blurb for an invented place."
+  },
+  "p22": {
+   "named": 5,
+   "pace": 1,
+   "walk": 1,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Ten stops for a relaxed day needs over 12 hours."
+  },
+  "p23": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "A 5 km hop in the middle of the day is long but the total of 8.6 km is within 15 km."
+  },
+  "p24": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Plan is sound; the odd Congress of Berlin pick and generic why lines are the weak spots."
+  },
+  "p25": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Day fills about 8.4 of 8.5 hours with a 3.4 km hop to the stadium, tight but workable."
+  },
+  "p26": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Walks 11.8 km with three hops of about 3 km, within the limit but heavy."
+  },
+  "p27": {
+   "named": 1,
+   "pace": 5,
+   "walk": 2,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "The named New Town (h5) is missing, and the walk is 9.5 km against 8 with over 10 hours needed."
+  },
+  "p28": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 1,
+   "verdict": "fail",
+   "reason": "Summary has an em dash and two why lines are just Nice."
+  },
+  "p29": {
+   "named": 5,
+   "pace": 1,
+   "walk": 1,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Ten stops for a relaxed day with about 23 km of walking against 7 km."
+  },
+  "p30": {
+   "named": 5,
+   "pace": 5,
+   "walk": 2,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Eight stops need about 10.5 hours with lunch, well past 18:00."
+  },
+  "p31": {
+   "named": 5,
+   "pace": 5,
+   "walk": 2,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Eight stops need about 9.4 hours with lunch, running nearly an hour past 18:00."
+  },
+  "p32": {
+   "named": 5,
+   "pace": 3,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 1,
+   "text": 2,
+   "verdict": "fail",
+   "reason": "Stop h99 is not a candidate, and its why line is a market blurb for an invented place."
+  },
+  "p33": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Day ends right at 18:00 with a 2.6 km hop, tight but realistic."
+  },
+  "p34": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Good short culture day, only minor generic wording."
+  },
+  "p35": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Fine overall, why lines are template text."
+  },
+  "p36": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Fine overall, why lines are template text."
+  },
+  "p37": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Only one active place used for an active vibe, otherwise a tidy compact day."
+  },
+  "p38": {
+   "named": 5,
+   "pace": 2,
+   "walk": 1,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Five stops for a packed day and about 21 km of walking against 10 km, with 7 km hops."
+  },
+  "p39": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Compact and sensible, why lines are generic."
+  },
+  "p40": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "Runs about 20 minutes past 18:00 and has a 5.3 km final hop."
+  }
+ }
+}

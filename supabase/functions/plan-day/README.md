@@ -32,9 +32,15 @@ rejects anonymous callers anyway, but the gateway check is a free first wall.
 
 | Secret | Default | Meaning |
 | --- | --- | --- |
-| `GEMINI_MODEL` | `gemini-flash-latest` | Pin the model tried FIRST if the alias moves under you. The default fallbacks stay behind it. |
+| `GEMINI_MODEL` | (unset: the chain's first rung, `gemini-flash-lite-latest`) | Pin the model tried FIRST if the alias moves under you. The default fallbacks stay behind it. |
 | `GEMINI_MODELS` | (unset) | Comma separated chain that replaces the default outright, e.g. `gemini-3.5-flash-lite,gemini-3.1-flash-lite`. Max 6. |
 | `AI_GLOBAL_DAILY_CAP` | `200` | Generations across all users per day, the abuse backstop. The 200 default applies only when the secret is unset; setting it high effectively removes the backstop. |
+| `AI_PLAN_DAY_PROVIDER` | `gemini` | The model provider (T1137 gateway, `_shared/aiModels.mjs`): `gemini`, `workers-ai` or `openai`. A switch changes which model answers travellers: the owner's call, with an eval run (`docs/ai/model-strategy.md`). |
+| `AI_PLAN_DAY_MODELS` | the provider's default chain | Comma separated chain for this function only, first model first, max 6. |
+| `AI_PLAN_DAY_BASE_URL` | (unset) | Provider `openai` only: the OpenAI-compatible server. `AI_OPENAI_BASE_URL` is the fallback for every function. |
+| `AI_OPENAI_API_KEY` | (unset) | Provider `openai` only: its key (a secret, see `docs/security/SECRETS.md`). |
+| `CF_ACCOUNT_ID`, `CF_AI_TOKEN` | (unset) | Provider `workers-ai` only: the account and an API token scoped to Workers AI (secrets). |
+| `AI_TRACE_LANGFUSE` (+ `LANGFUSE_HOST`, `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`) | off | `on` sends each call's metadata (no prompt or answer text) to Langfuse on the build box (T1139). |
 
 Per-user caps are rows in `public.plan_tiers` (migration 007), not env vars.
 The old `AI_USER_DAILY_CAP` secret is dead: no function reads it.
@@ -65,17 +71,21 @@ PostgreSQL 16 or later works; `initdb` into a scratch directory and
 
 Every model carries its OWN free daily request budget, so trying a second
 model after the first is exhausted is not a redundancy trick, it multiplies
-the ceiling. Measured on this project's key (2026-07-27):
+the ceiling. The chain is `GEMINI_CHAIN` in `supabase/functions/_shared/aiModels.mjs`
+(the source of truth; this table follows it, T1217). Free budgets were measured
+on this project's key on 2026-07-27, before the lite alias moved to the front:
 
 | Rung | Model | Free requests per day | Notes |
 | --- | --- | --- | --- |
-| 1 | `gemini-flash-latest` (3.6 Flash today) | 20 | Best sequencing. A thinking model, ~2700 to 3850 thought tokens per day plan. |
-| 2 | `gemini-3.5-flash` | 20 | Same class, separate budget. |
-| 3 | `gemini-3.5-flash-lite` | 500 | Does not reason first, so plans are flatter but valid. Much faster. |
-| 4 | `gemini-3.1-flash-lite` | 500 | Same shape as rung 3. |
+| 1 | `gemini-flash-lite-latest` (an alias: its model and price can move, T1135-e) | not measured | Lite class: does not reason first, so plans are flatter but valid, and fast. |
+| 2 | `gemini-3.5-flash-lite` | 500 | Same shape as rung 1. |
+| 3 | `gemini-flash-latest` | 20 | Best sequencing. A thinking model, ~2700 to 3850 thought tokens per day plan. |
+| 4 | `gemini-3.1-flash-lite` | 500 | Same shape as rung 1. |
 
-Roughly 1,040 free generations a day combined, which is why the 200 global
-cap is comfortable. The chain advances on 429 (budget spent), 404 (model
+The 2026-07-27 chain (two 20 a day Flash rungs, then two 500 a day lite rungs)
+gave roughly 1,040 free generations a day; this chain has not been measured,
+but its two known lite rungs alone give 1,000, which is why the 200 global cap
+is comfortable. The chain advances on 429 (budget spent), 404 (model
 retired under a pinned config) and 5xx (Google's "high demand" 503). It stops
 on any other 4xx, because a malformed request fails identically everywhere.
 A timeout also stops it, so one slow model cannot hold the traveller for

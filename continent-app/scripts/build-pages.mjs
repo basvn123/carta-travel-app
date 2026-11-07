@@ -35,7 +35,7 @@
  *   node scripts/r2/push-data.mjs --live --prune  after production is live
  */
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync } from 'node:fs';
+import { copyFileSync, cpSync, existsSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -55,7 +55,15 @@ function step(label, cmd, args) {
 }
 
 console.log(`[build-pages] data base ${env.VITE_DATA_BASE}`);
+// T1178-a: the blog is built first, so the sitemap step inside the build can
+// list its sitemap-blog-en.xml; its static files are copied into dist/ after.
+step('blog build', process.execPath, [resolve(appRoot, 'scripts', 'blog', 'build.mjs')]);
 step('npm run build', 'npm', ['run', 'build']);
+const blogDir = resolve(appRoot, 'dist-blog');
+if (existsSync(blogDir)) {
+  cpSync(blogDir, resolve(appRoot, 'dist'), { recursive: true });
+  console.log('[build-pages] dist-blog copied into dist/ (static files, not in _routes.json)');
+}
 // T294-a: a real 404 for unknown paths on the app host.
 const indexHtml = resolve(appRoot, 'dist', 'index.html');
 if (!existsSync(indexHtml)) {

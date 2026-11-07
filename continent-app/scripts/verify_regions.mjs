@@ -1,3 +1,4 @@
+// T1089 needs: network (the card-picture check only; the wire and page checks run on public/)
 // Region layer harness: the scope ladder, travel bands, region pages and
 // the tier rules on the wire.
 //
@@ -40,7 +41,7 @@ import { join } from 'node:path';
 // CARTA_REPO_ROOT names the root checkout when continent-app is a sibling
 // worktree rather than a child of it (T296-c); the default is the parent.
 const REPO_ROOT = process.env.CARTA_REPO_ROOT || '..';
-const PORT = 4213;
+const PORT = Number(process.env.CARTA_PORT) || 4213;
 const BASE = `http://127.0.0.1:${PORT}/`;
 mkdirSync('shots', { recursive: true });
 
@@ -302,7 +303,9 @@ try {
   // screenshot this whole programme started from.
   const nearScreen = async (place) => {
     const ctx = await browser.newContext({
-      viewport: { width: 390, height: 844 },
+      // T1089: the locate crosshair lives in the Where field, which a phone
+      // no longer draws (the search dock owns it), so this runs on desktop.
+      viewport: { width: 1280, height: 900 },
       geolocation: { latitude: place.lat, longitude: place.lon },
       permissions: ['geolocation'],
     });
@@ -318,10 +321,12 @@ try {
     }));
     await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 45000 });
     await page.waitForTimeout(2500);
-    await page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first()
+    await page.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first()
       .click({ timeout: 15000 }).catch(() => {});
     await page.waitForTimeout(800);
-    await page.locator('.dtab-cats [role="tab"]', { hasText: /beaches/i }).first()
+    // Explore's own category row opens the Beaches layer (.dtab-cats only
+    // exists once a layer is open).
+    await page.locator('.xcats [role="tab"]:visible', { hasText: /beaches/i }).first()
       .click({ timeout: 15000 }).catch(() => {});
     await page.waitForTimeout(1500);
     const locate = page.locator('.places-locate:visible').first();
@@ -428,9 +433,21 @@ try {
     const withPhoto = [...perLayer.values()].reduce((n, k) => n + Math.min(12, k), 0)
       + (wireFile?.listed || []).filter(pic).length;
     const rendered = await page2.locator('.rgnp-card img').count();
-    check('every card with a picture in the wire renders it',
-      withPhoto > 0 && rendered >= withPhoto,
-      `${rendered} rendered vs ${withPhoto} in the wire`);
+    // A photo that cannot load falls back to a blank frame (no <img>), so
+    // the count only means something when the photo host is reachable.
+    const photoHostUp = await page2.evaluate(async () => {
+      try {
+        await fetch('https://upload.wikimedia.org/', { mode: 'no-cors', signal: AbortSignal.timeout(6000) });
+        return true;
+      } catch { return false; }
+    });
+    if (photoHostUp) {
+      check('every card with a picture in the wire renders it',
+        withPhoto > 0 && rendered >= withPhoto,
+        `${rendered} rendered vs ${withPhoto} in the wire`);
+    } else {
+      console.log(`SKIP (needs network): every card with a picture in the wire renders it (${rendered} rendered, ${withPhoto} in the wire; upload.wikimedia.org unreachable)`);
+    }
     await page2.screenshot({ path: 'shots/regions-page-belgian-coast.png' });
     await page2.keyboard.press('Escape');
     await page2.waitForTimeout(400);

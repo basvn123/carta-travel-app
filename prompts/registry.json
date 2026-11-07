@@ -1,0 +1,453 @@
+{
+  "schema": "carta-prompts/1",
+  "about": "The prompt registry (T1140, ROADMAP E5). One entry per prompt: its current version and file, the hash of its text, where it runs (bundle: the generated module for the Edge Functions, Pages Functions and the app; node: read from the file by a Node script; python: read from the file by pipeline/prompt_registry.py), the run.mjs eval that guards it and its last score, or the other guard when no run.mjs eval exists. Format, rules and commands: prompts/README.md.",
+  "prompts": {
+    "security-rules": {
+      "version": 1,
+      "file": "prompts/security-rules/v1.md",
+      "format": "registry",
+      "sha256": "5bfe68273fb940d6a583c9d4260aaae17d870db76b3bc8410a048b99c7c3c195",
+      "runtime": "bundle",
+      "eval": "injection",
+      "guard": null,
+      "callers": [
+        "supabase/functions/_shared/aiGuard.mjs",
+        "continent-app/functions/_lib/aiGuard.js"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "injection",
+        "status": "pass",
+        "key": "blocked_share",
+        "value": 1,
+        "at": "2026-11-07T12:18:00.406Z"
+      }
+    },
+    "ask": {
+      "version": 1,
+      "file": "prompts/ask/v1.md",
+      "format": "registry",
+      "sha256": "3a5076fd487b063ad85b20b1e224f7ebb4105c13907973bcbb365364acaea011",
+      "runtime": "bundle",
+      "eval": "ask",
+      "guard": null,
+      "callers": [
+        "continent-app/src/lib/ask/context.js",
+        "supabase/functions/_shared/aiGuard.mjs",
+        "continent-app/functions/_lib/aiGuard.js"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "ask",
+        "status": "pass",
+        "key": "rules.ndcg@10",
+        "value": 0.6003,
+        "at": "2026-11-06T17:24:21.508Z"
+      }
+    },
+    "plan-day": {
+      "version": 1,
+      "file": "prompts/plan-day/v1.md",
+      "format": "registry",
+      "sha256": "93f2d664a6f0f66a5ece864c73f0909001b9cba711d7555ad5cdc1ad57c9a47f",
+      "runtime": "bundle",
+      "eval": "plan-day",
+      "guard": null,
+      "callers": [
+        "supabase/functions/plan-day/prompt.mjs"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "plan-day",
+        "status": "pass",
+        "key": "rules_pass",
+        "value": 1,
+        "at": "2026-11-06T17:24:21.707Z"
+      }
+    },
+    "suggest-city": {
+      "version": 2,
+      "file": "prompts/suggest-city/v2.md",
+      "format": "registry",
+      "sha256": "c8733978d2c877ab6706dce55016141d33e9592eadddef5a25eeec63fcb85151",
+      "runtime": "bundle",
+      "eval": "suggest-city",
+      "guard": null,
+      "callers": [
+        "supabase/functions/suggest-city/prompt.mjs"
+      ],
+      "lastScore": {
+        "version": 2,
+        "eval": "suggest-city",
+        "status": "pass",
+        "key": "rules_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:00.618Z"
+      }
+    },
+    "parse-booking": {
+      "version": 1,
+      "file": "prompts/parse-booking/v1.md",
+      "format": "registry",
+      "sha256": "1a9b1fc3dcd1fad88a8891410c1b48f76f54af2d788e6a011fe3d1ea4040a64f",
+      "runtime": "bundle",
+      "eval": "parse-booking",
+      "guard": null,
+      "callers": [
+        "supabase/functions/parse-booking/prompt.mjs"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "parse-booking",
+        "status": "pass",
+        "key": "field_accuracy",
+        "value": 1,
+        "at": "2026-11-07T12:18:00.523Z"
+      }
+    },
+    "eval-judge": {
+      "version": 1,
+      "file": "prompts/eval-judge/v1.md",
+      "format": "registry",
+      "sha256": "64a8a825581441e727417b8da720f93ab344dd12f21c331588d1f22007c07dfa",
+      "runtime": "node",
+      "eval": "plan-day",
+      "scoreKey": "kappa.judge_vs_rules",
+      "guard": null,
+      "callers": [
+        "continent-app/scripts/eval/plan-day/plan-day-lib.mjs"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "plan-day",
+        "status": "pass",
+        "key": "kappa.judge_vs_rules",
+        "value": 0.898,
+        "at": "2026-11-06T17:24:30.131Z"
+      }
+    },
+    "intros": {
+      "version": 1,
+      "file": "prompts/intros/v1.md",
+      "format": "registry",
+      "sha256": "738bbc1839c9dc8af6018ba41a971b677e4a205c00c1aa33b693171c1bb27f37",
+      "runtime": "python",
+      "eval": null,
+      "guard": "the job's own output checks (rewrite_intros.guard) and tests/test_ai_gateway.py",
+      "callers": [
+        "pipeline/dossier/rewrite_intros.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-06T17:24:05.503Z"
+      }
+    },
+    "parking": {
+      "version": 1,
+      "file": "prompts/parking/v1.md",
+      "format": "registry",
+      "sha256": "112dd6714ecfe9aef378235e3cada8752a8bfa53a92174ff5cdecaed7451094c",
+      "runtime": "python",
+      "eval": null,
+      "guard": "tests/test_ai_gateway.py (pipeline attacks)",
+      "callers": [
+        "pipeline/dossier/parking_check.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-06T17:24:05.560Z"
+      }
+    },
+    "lexicon": {
+      "version": 1,
+      "file": "prompts/lexicon/v1.md",
+      "format": "registry",
+      "sha256": "66c8eaaf95b5688298da76de777dd87c90a880118f8d491ad417ae59af3e8fff",
+      "runtime": "python",
+      "eval": null,
+      "guard": "a person reviews every word list",
+      "callers": [
+        "pipeline/ask_lexicon.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-06T17:24:05.607Z"
+      }
+    },
+    "trips-shared": {
+      "version": 2,
+      "file": "prompts/trips-shared/v2.md",
+      "format": "registry",
+      "sha256": "8efadf3fad9d3ad2da7fe1a45c4546a483f4f047eee4f3f2bd9e1437e59b7312",
+      "runtime": "python",
+      "eval": "trips-golden",
+      "guard": null,
+      "callers": [
+        "Trips/carta-unified/carta-unified/pipeline/generate_trip.py",
+        "Trips/carta-unified/carta-unified/pipeline/backfill_modules.py"
+      ],
+      "lastScore": {
+        "version": 2,
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:17:57.428Z"
+      }
+    },
+    "trips-skeleton": {
+      "version": 1,
+      "file": "Trips/carta-unified/carta-unified/pipeline/prompts/k2-skeleton.md",
+      "format": "trips-header",
+      "sha256": "9ac418ce2895af08a570a5c5fa837c5b46752e243f13fe3ad36cf3e15faeb891",
+      "runtime": "python",
+      "eval": "trips-golden",
+      "guard": null,
+      "callers": [
+        "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:03.620Z"
+      }
+    },
+    "trips-prose": {
+      "version": 1,
+      "file": "Trips/carta-unified/carta-unified/pipeline/prompts/k2-prose.md",
+      "format": "trips-header",
+      "sha256": "b2590bb9de9ea5b2e8292d2b8557de2d30e8274dc1c79e09ea9aea367d59f6ae",
+      "runtime": "python",
+      "eval": "trips-golden",
+      "guard": null,
+      "callers": [
+        "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:06.033Z"
+      }
+    },
+    "trips-numbers": {
+      "version": 3,
+      "file": "Trips/carta-unified/carta-unified/pipeline/prompts/k2-numbers.md",
+      "format": "trips-header",
+      "sha256": "d1840cd5c51878d13db5214445310f333063773182f4fdf3b119ab9d54eb3af9",
+      "runtime": "python",
+      "eval": "trips-golden",
+      "guard": null,
+      "callers": [
+        "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
+      ],
+      "lastScore": {
+        "version": 3,
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:08.845Z"
+      }
+    },
+    "trips-critic": {
+      "version": 1,
+      "file": "Trips/carta-unified/carta-unified/pipeline/prompts/k4-critic.md",
+      "format": "trips-header",
+      "sha256": "e121fd49ba3dea350569e7aa4f96205a32e1540c141f2c551bd8d73a63a8d657",
+      "runtime": "python",
+      "eval": "trips-golden",
+      "guard": null,
+      "callers": [
+        "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:11.937Z"
+      }
+    },
+    "trips-packing": {
+      "version": 1,
+      "file": "Trips/carta-unified/carta-unified/pipeline/prompts/k10-packing-risk.md",
+      "format": "trips-header",
+      "sha256": "32864461b7149e1bf6ea94f9974ae43dfd8ee3651f2e0f15eabcc96f38ce0e9d",
+      "runtime": "python",
+      "eval": "trips-golden",
+      "guard": null,
+      "callers": [
+        "Trips/carta-unified/carta-unified/pipeline/backfill_modules.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:14.590Z"
+      }
+    },
+    "tag-verify": {
+      "version": 1,
+      "file": "prompts/tag-verify/v1.md",
+      "format": "registry",
+      "sha256": "049ae6a9b3dc2485bff8287f30b8af8604f9d4c609c0946fd0bec2ab34299fae",
+      "runtime": "python",
+      "eval": "taxonomy",
+      "guard": null,
+      "callers": [
+        "pipeline/taxonomy/tagger.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "taxonomy",
+        "status": "pass",
+        "key": "rp_at_5",
+        "value": 0.4333,
+        "at": "2026-11-06T19:48:29.348Z"
+      }
+    },
+    "judge-text": {
+      "version": 1,
+      "file": "prompts/judge-text/v1.md",
+      "format": "registry",
+      "sha256": "a40e854e32a6d8d10f9b6f86572c5f2cb7815756da22bb1c8a3af6198aaea271",
+      "runtime": "python",
+      "eval": null,
+      "guard": "the D4 calibration in pipeline/judge/calibrate.py (Cohen's kappa against evals/truth/judge/labels.json, planted fault recall) and tests/test_judge.py",
+      "callers": [
+        "pipeline/judge/core.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-07T01:11:07.609Z"
+      }
+    },
+    "ask-docs": {
+      "version": 1,
+      "file": "prompts/ask-docs/v1.md",
+      "format": "registry",
+      "sha256": "430c2f7d826be2e58648ddbedf541d79a1a069eca2031b267e9c161d9ff6eb06",
+      "runtime": "node",
+      "eval": "ask-docs",
+      "scoreKey": "recall5",
+      "guard": null,
+      "callers": [
+        "scripts/docs/ask_docs.mjs"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "ask-docs",
+        "status": "pass",
+        "key": "recall5",
+        "value": 0.979,
+        "at": "2026-11-07T01:13:02.045Z"
+      }
+    },
+    "blog-intro": {
+      "version": 1,
+      "file": "prompts/blog-intro/v1.md",
+      "format": "registry",
+      "sha256": "46683fa290e814b37142da43da6e46492c43c3904ebce9b7622d4c3220439024",
+      "runtime": "python",
+      "eval": null,
+      "guard": "the job's own output checks (blog_drafts.guard_prose), scripts/blog/check_draft.py and tests/test_blog_drafts.py",
+      "callers": [
+        "pipeline/blog/blog_drafts.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-07T03:21:43.318Z"
+      }
+    },
+    "backtranslate": {
+      "version": 1,
+      "file": "prompts/backtranslate/v1.md",
+      "format": "registry",
+      "sha256": "d8e908068bab4fcb80ee777f5a24817481bab274848bed82fa0177179009049f",
+      "runtime": "python",
+      "eval": null,
+      "guard": "planted wrong translations in the judge batches (T1196) and tests/test_texts_validation.py",
+      "callers": [
+        "scripts/validation/texts_backtranslation.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-07T04:34:10.024Z"
+      }
+    },
+    "photo-check": {
+      "version": 1,
+      "file": "prompts/photo-check/v1.md",
+      "format": "registry",
+      "sha256": "aeee9dfff0c34a16e2eae04bbc39093aab78ee9a5dd87df6559caf1ba6ef1442",
+      "runtime": "python",
+      "eval": null,
+      "guard": "tests/test_photo_correctness.py (answer shape, confidence floor, a strong tier 1 flag stands); a labelled eval is register row T1198-c",
+      "callers": [
+        "pipeline/photos/correctness.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-07T10:58:11.658Z"
+      }
+    },
+    "truth-judge": {
+      "version": 1,
+      "file": "prompts/truth-judge/v1.md",
+      "format": "registry",
+      "sha256": "fb6727388c991bf48c98c53f3d1b2a02ccf6dfb35c05619fa4d9d663b762e643",
+      "runtime": "node",
+      "eval": "truth",
+      "scoreKey": "text.kappa.judge_vs_human",
+      "guard": null,
+      "callers": [
+        "evals/truth/judge/judge-lib.mjs"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "truth",
+        "status": "pass",
+        "key": "text.kappa.judge_vs_human",
+        "value": null,
+        "at": "2026-11-07T15:50:53.843Z"
+      }
+    }
+  }
+}

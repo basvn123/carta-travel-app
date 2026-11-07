@@ -5,11 +5,15 @@ import { Margin } from './Margin.jsx';
 import { AiUsage } from './AiUsage.jsx';
 import { CacheHitRate } from './CacheHitRate.jsx';
 import { AiModelFallbacks } from './AiModelFallbacks.jsx';
+import { AiCalls } from './AiCalls.jsx';
 import { PipelineHealth } from './PipelineHealth.jsx';
 import { EdgeErrors } from './EdgeErrors.jsx';
 import { ParseFailures } from './ParseFailures.jsx';
 import { OssThreshold } from './OssThreshold.jsx';
 import { LaunchMetrics } from './LaunchMetrics.jsx';
+import { ChannelCounts } from './ChannelCounts.jsx';
+import { FunnelCounts } from './FunnelCounts.jsx';
+import { TasteAcceptance } from './TasteAcceptance.jsx';
 import { RecentAudit } from './AuditLog.jsx';
 
 // The Overview tab: how is it going. Pure render. Every figure here was
@@ -19,7 +23,7 @@ export function Overview({ overview, marginDash, audit, attention, goTo }) {
   const { t } = useI18n();
   const {
     stats, analytics, funnel, modelReport, cacheReport, aiUsage,
-    pipelineHealth, edgeErrors, parseFailures, oss, launch,
+    pipelineHealth, edgeErrors, parseFailures, oss, launch, channels, funnelWeekly, tasteWeekly, aiCalls,
   } = overview;
   const { margin, marginBack, setMarginBack } = marginDash;
   return (
@@ -144,6 +148,13 @@ export function Overview({ overview, marginDash, audit, attention, goTo }) {
 
       {launch && !launch.error && <LaunchMetrics report={launch} />}
 
+      {channels && !channels.error && <ChannelCounts report={channels} />}
+
+      {funnelWeekly && !funnelWeekly.error && <FunnelCounts report={funnelWeekly} />}
+
+      {/* Shown before 072 too, saying what it waits for (T1152-d). */}
+      <TasteAcceptance report={tasteWeekly} />
+
       {funnel && !funnel.error && <PaywallFunnel funnel={funnel} t={t} />}
 
       {margin && !margin.error && (
@@ -155,6 +166,8 @@ export function Overview({ overview, marginDash, audit, attention, goTo }) {
       {cacheReport && !cacheReport.error && <CacheHitRate report={cacheReport} />}
 
       {modelReport && !modelReport.error && <AiModelFallbacks modelReport={modelReport} />}
+
+      {aiCalls && <AiCalls report={aiCalls} t={t} />}
 
       {edgeErrors && !edgeErrors.error && <EdgeErrors report={edgeErrors} calls={launch && !launch.error ? launch.aiCalls : null} />}
 

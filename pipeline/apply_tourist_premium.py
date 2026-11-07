@@ -48,7 +48,9 @@ Usage:
 import json
 import sys
 from pathlib import Path
+
 from pipeline_io import atomic_write_json
+from provenance import touch  # T1143: costs is edited in place
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
@@ -185,14 +187,17 @@ def patch(path: Path) -> None:
             # A rerun after removing a place from the list must undo it.
             if costs and costs.get("tourist_premium"):
                 _strip_block(costs)
+                touch(costs)
             continue
         dining, grocery, club, _ = MULTIPLIERS[tier]
         if costs and costs.get("level") == "country":
             _apply_block(costs, [(DINING_KEYS, dining), (GROCERY_KEYS, grocery),
                                  (CLUB_KEYS, club)], tier)
+            touch(costs)
             n_cost += 1
         elif costs and costs.get("tourist_premium"):
             _strip_block(costs)   # gained real city data since - undo the bump
+            touch(costs)
     data["meta"]["tourist_premium_model"] = PREMIUM_MODEL
     atomic_write_json(path, data, indent=1, ensure_ascii=False)
     unmatched = [d for d in PREMIUM_TIERS if d not in dests]

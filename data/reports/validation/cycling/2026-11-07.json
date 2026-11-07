@@ -1,0 +1,2681 @@
+{
+ "schema": "carta-validation/2",
+ "layer": "cycling",
+ "generated_at": "2026-11-07T12:00:00Z",
+ "date": "2026-11-07",
+ "reference": {
+  "path": "data/reports/validation/cycling/reference",
+  "source": "EuroVelo route list (seed from memory, verified=no)",
+  "n": 119
+ },
+ "carta": {
+  "wire_generated_at": "2026-10-23T17:45:33+00:00",
+  "rows": 16973
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 5,
+  "salt": "d23",
+  "n": 119,
+  "population": 119,
+  "countries": 34
+ },
+ "metrics": {
+  "nonfrag": {
+   "value": 0.86,
+   "k": 43,
+   "n": 50,
+   "low": 0.7381,
+   "high": 0.9305
+  },
+  "rated": {
+   "value": 0.42,
+   "k": 21,
+   "n": 50,
+   "low": 0.2937,
+   "high": 0.5577
+  },
+  "coverage": {
+   "value": 0.4202,
+   "k": 50,
+   "n": 119,
+   "low": 0.3353,
+   "high": 0.51
+  },
+  "fact.geometry": {
+   "value": null,
+   "k": 0,
+   "n": 0,
+   "low": null,
+   "high": null
+  },
+  "fact.length": {
+   "value": null,
+   "k": 0,
+   "n": 0,
+   "low": null,
+   "high": null
+  },
+  "agreement_tau": {
+   "value": null,
+   "n": 0
+  },
+  "agreement_rho": {
+   "value": null,
+   "n": 0
+  },
+  "error_mae": {
+   "value": null,
+   "n": 0
+  },
+  "error_mdape": {
+   "value": null,
+   "n": 0
+  }
+ },
+ "by_country": {
+  "AL": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "AT": {
+   "population": 5,
+   "sampled": 5,
+   "matched": 4,
+   "coverage": 0.8
+  },
+  "BE": {
+   "population": 5,
+   "sampled": 5,
+   "matched": 1,
+   "coverage": 0.2
+  },
+  "BG": {
+   "population": 2,
+   "sampled": 2,
+   "matched": 1,
+   "coverage": 0.5
+  },
+  "CH": {
+   "population": 4,
+   "sampled": 4,
+   "matched": 2,
+   "coverage": 0.5
+  },
+  "CY": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "CZ": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "DE": {
+   "population": 10,
+   "sampled": 10,
+   "matched": 6,
+   "coverage": 0.6
+  },
+  "DK": {
+   "population": 4,
+   "sampled": 4,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "EE": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "ES": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 3,
+   "coverage": 1.0
+  },
+  "FI": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 1,
+   "coverage": 0.3333
+  },
+  "FR": {
+   "population": 10,
+   "sampled": 10,
+   "matched": 10,
+   "coverage": 1.0
+  },
+  "GB": {
+   "population": 4,
+   "sampled": 4,
+   "matched": 3,
+   "coverage": 0.75
+  },
+  "GR": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "HR": {
+   "population": 5,
+   "sampled": 5,
+   "matched": 1,
+   "coverage": 0.2
+  },
+  "HU": {
+   "population": 4,
+   "sampled": 4,
+   "matched": 4,
+   "coverage": 1.0
+  },
+  "IE": {
+   "population": 2,
+   "sampled": 2,
+   "matched": 2,
+   "coverage": 1.0
+  },
+  "IT": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 1,
+   "coverage": 0.3333
+  },
+  "LT": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "LU": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "LV": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "ME": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "MK": {
+   "population": 2,
+   "sampled": 2,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "MT": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 1,
+   "coverage": 1.0
+  },
+  "NL": {
+   "population": 4,
+   "sampled": 4,
+   "matched": 1,
+   "coverage": 0.25
+  },
+  "NO": {
+   "population": 6,
+   "sampled": 6,
+   "matched": 1,
+   "coverage": 0.1667
+  },
+  "PL": {
+   "population": 6,
+   "sampled": 6,
+   "matched": 2,
+   "coverage": 0.3333
+  },
+  "PT": {
+   "population": 1,
+   "sampled": 1,
+   "matched": 1,
+   "coverage": 1.0
+  },
+  "RO": {
+   "population": 2,
+   "sampled": 2,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "RS": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 2,
+   "coverage": 0.6667
+  },
+  "SE": {
+   "population": 4,
+   "sampled": 4,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "SI": {
+   "population": 4,
+   "sampled": 4,
+   "matched": 1,
+   "coverage": 0.25
+  },
+  "SK": {
+   "population": 3,
+   "sampled": 3,
+   "matched": 2,
+   "coverage": 0.6667
+  }
+ },
+ "checks": [
+  {
+   "metric": "coverage",
+   "kind": "soft",
+   "direction": "higher",
+   "tolerance_points": 0,
+   "min_n": 5
+  },
+  {
+   "metric": "fact.length",
+   "kind": "soft",
+   "direction": "higher",
+   "tolerance_points": 5,
+   "min_n": 5
+  },
+  {
+   "metric": "fact.geometry",
+   "kind": "soft",
+   "direction": "higher",
+   "tolerance_points": 5,
+   "min_n": 3
+  },
+  {
+   "metric": "nonfrag",
+   "kind": "soft",
+   "direction": "higher",
+   "tolerance_points": 5,
+   "min_n": 5
+  },
+  {
+   "metric": "error_mdape",
+   "kind": "soft",
+   "direction": "lower",
+   "tolerance_points": 5,
+   "min_n": 5
+  }
+ ],
+ "gate": {
+  "ok": true,
+  "failures": [],
+  "warnings": [
+   {
+    "metric": "fact.length",
+    "kind": "soft",
+    "why": "no baseline value for this metric"
+   },
+   {
+    "metric": "fact.geometry",
+    "kind": "soft",
+    "why": "no baseline value for this metric"
+   },
+   {
+    "metric": "error_mdape",
+    "kind": "soft",
+    "why": "no baseline value for this metric"
+   }
+  ],
+  "checks": [
+   {
+    "metric": "coverage",
+    "kind": "soft",
+    "now": 0.4202,
+    "baseline": 0.4202,
+    "tolerance_points": 0,
+    "status": "pass"
+   },
+   {
+    "metric": "fact.length",
+    "kind": "soft",
+    "now": null,
+    "baseline": null,
+    "tolerance_points": 5,
+    "status": "warn"
+   },
+   {
+    "metric": "fact.geometry",
+    "kind": "soft",
+    "now": null,
+    "baseline": null,
+    "tolerance_points": 5,
+    "status": "warn"
+   },
+   {
+    "metric": "nonfrag",
+    "kind": "soft",
+    "now": 0.86,
+    "baseline": 0.86,
+    "tolerance_points": 5,
+    "status": "pass"
+   },
+   {
+    "metric": "error_mdape",
+    "kind": "soft",
+    "now": null,
+    "baseline": null,
+    "tolerance_points": 5,
+    "status": "warn"
+   }
+  ]
+ },
+ "gaps": [
+  {
+   "id": "EV1:NO",
+   "name": "Atlantic Coast Route",
+   "country": "NO",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.75
+  },
+  {
+   "id": "EV13:LT",
+   "name": "Iron Curtain Trail",
+   "country": "LT",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV13:RO",
+   "name": "Iron Curtain Trail",
+   "country": "RO",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV13:NO",
+   "name": "Iron Curtain Trail",
+   "country": "NO",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV13:GR",
+   "name": "Iron Curtain Trail",
+   "country": "GR",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV13:RS",
+   "name": "Iron Curtain Trail",
+   "country": "RS",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV13:EE",
+   "name": "Iron Curtain Trail",
+   "country": "EE",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV13:HR",
+   "name": "Iron Curtain Trail",
+   "country": "HR",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV13:MK",
+   "name": "Iron Curtain Trail",
+   "country": "MK",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV13:PL",
+   "name": "Iron Curtain Trail",
+   "country": "PL",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV13:LV",
+   "name": "Iron Curtain Trail",
+   "country": "LV",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV13:CZ",
+   "name": "Iron Curtain Trail",
+   "country": "CZ",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 113.0
+  },
+  {
+   "id": "EV10:SE",
+   "name": "Baltic Sea Cycle Route",
+   "country": "SE",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 111.25
+  },
+  {
+   "id": "EV10:EE",
+   "name": "Baltic Sea Cycle Route",
+   "country": "EE",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 111.25
+  },
+  {
+   "id": "EV10:LT",
+   "name": "Baltic Sea Cycle Route",
+   "country": "LT",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 111.25
+  },
+  {
+   "id": "EV10:LV",
+   "name": "Baltic Sea Cycle Route",
+   "country": "LV",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 111.25
+  },
+  {
+   "id": "EV10:FI",
+   "name": "Baltic Sea Cycle Route",
+   "country": "FI",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 111.25
+  },
+  {
+   "id": "EV10:DK",
+   "name": "Baltic Sea Cycle Route",
+   "country": "DK",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 111.25
+  },
+  {
+   "id": "EV7:CZ",
+   "name": "Sun Route",
+   "country": "CZ",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 109.25
+  },
+  {
+   "id": "EV7:SE",
+   "name": "Sun Route",
+   "country": "SE",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 109.25
+  },
+  {
+   "id": "EV7:IT",
+   "name": "Sun Route",
+   "country": "IT",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 109.25
+  },
+  {
+   "id": "EV7:DE",
+   "name": "Sun Route",
+   "country": "DE",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 109.25
+  },
+  {
+   "id": "EV7:DK",
+   "name": "Sun Route",
+   "country": "DK",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 109.25
+  },
+  {
+   "id": "EV7:AT",
+   "name": "Sun Route",
+   "country": "AT",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 109.25
+  },
+  {
+   "id": "EV12:DK",
+   "name": "North Sea Cycle Route",
+   "country": "DK",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 107.5
+  },
+  {
+   "id": "EV11:PL",
+   "name": "East Europe Route",
+   "country": "PL",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 107.5
+  },
+  {
+   "id": "EV12:NL",
+   "name": "North Sea Cycle Route",
+   "country": "NL",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 107.5
+  },
+  {
+   "id": "EV11:GR",
+   "name": "East Europe Route",
+   "country": "GR",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 107.5
+  },
+  {
+   "id": "EV12:DE",
+   "name": "North Sea Cycle Route",
+   "country": "DE",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 107.5
+  },
+  {
+   "id": "EV11:NO",
+   "name": "East Europe Route",
+   "country": "NO",
+   "status": "missing",
+   "official_km": null,
+   "carta_km": 0,
+   "pieces": 0,
+   "geometry_share": null,
+   "cause": "route_absent_or_untagged_in_country",
+   "verified": false,
+   "gap": 107.5
+  }
+ ],
+ "results": [
+  {
+   "id": "EV8:AL",
+   "country": "AL",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV14:AT",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV9:AT",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV7:AT",
+   "country": "AT",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:AT",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV6:AT",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV12:BE",
+   "country": "BE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV19:BE",
+   "country": "BE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV4:BE",
+   "country": "BE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV3:BE",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV5:BE",
+   "country": "BE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV6:BG",
+   "country": "BG",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:BG",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV5:CH",
+   "country": "CH",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV15:CH",
+   "country": "CH",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV6:CH",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV17:CH",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV8:CY",
+   "country": "CY",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:CZ",
+   "country": "CZ",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV7:CZ",
+   "country": "CZ",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV9:CZ",
+   "country": "CZ",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV3:DE",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:DE",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV6:DE",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV10:DE",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV4:DE",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV15:DE",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV2:DE",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV7:DE",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV5:DE",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV12:DE",
+   "country": "DE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV7:DK",
+   "country": "DK",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV3:DK",
+   "country": "DK",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV12:DK",
+   "country": "DK",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV10:DK",
+   "country": "DK",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:EE",
+   "country": "EE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV10:EE",
+   "country": "EE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:EE",
+   "country": "EE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV3:ES",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV8:ES",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV1:ES",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": false
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV10:FI",
+   "country": "FI",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:FI",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:FI",
+   "country": "FI",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV17:FR",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV8:FR",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV4:FR",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": false
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV1:FR",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": false
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV6:FR",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": false
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV3:FR",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": false
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV15:FR",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV19:FR",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": false
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV12:FR",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV5:FR",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV5:GB",
+   "country": "GB",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV12:GB",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV1:GB",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV2:GB",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV8:GR",
+   "country": "GR",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:GR",
+   "country": "GR",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:GR",
+   "country": "GR",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV9:HR",
+   "country": "HR",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:HR",
+   "country": "HR",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV14:HR",
+   "country": "HR",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV8:HR",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV6:HR",
+   "country": "HR",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:HU",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV14:HU",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV6:HU",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:HU",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV2:IE",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV1:IE",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": false
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV8:IT",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV7:IT",
+   "country": "IT",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV5:IT",
+   "country": "IT",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:LT",
+   "country": "LT",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:LT",
+   "country": "LT",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV10:LT",
+   "country": "LT",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV5:LU",
+   "country": "LU",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV10:LV",
+   "country": "LV",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:LV",
+   "country": "LV",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:LV",
+   "country": "LV",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV8:ME",
+   "country": "ME",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:MK",
+   "country": "MK",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:MK",
+   "country": "MK",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV7:MT",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV15:NL",
+   "country": "NL",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV2:NL",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV12:NL",
+   "country": "NL",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV19:NL",
+   "country": "NL",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:NO",
+   "country": "NO",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV3:NO",
+   "country": "NO",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV12:NO",
+   "country": "NO",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV1:NO",
+   "country": "NO",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV7:NO",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:NO",
+   "country": "NO",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV9:PL",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:PL",
+   "country": "PL",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV4:PL",
+   "country": "PL",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:PL",
+   "country": "PL",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV2:PL",
+   "country": "PL",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV10:PL",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV1:PT",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:RO",
+   "country": "RO",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV6:RO",
+   "country": "RO",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:RS",
+   "country": "RS",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV6:RS",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:RS",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV7:SE",
+   "country": "SE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV10:SE",
+   "country": "SE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV3:SE",
+   "country": "SE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV12:SE",
+   "country": "SE",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV8:SI",
+   "country": "SI",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV14:SI",
+   "country": "SI",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV9:SI",
+   "country": "SI",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:SI",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV11:SK",
+   "country": "SK",
+   "flags": {
+    "matched": false,
+    "rated": null,
+    "nonfrag": null
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV6:SK",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "rated": false,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  },
+  {
+   "id": "EV13:SK",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "rated": true,
+    "nonfrag": true
+   },
+   "facts": {
+    "length": null,
+    "geometry": null
+   },
+   "rank": null,
+   "error": null,
+   "note": null
+  }
+ ]
+}

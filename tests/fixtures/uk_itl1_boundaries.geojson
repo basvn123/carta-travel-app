@@ -1,0 +1,3 @@
+{"type":"FeatureCollection","features":[
+{"type":"Feature","properties":{"ITL121CD":"TLK","ITL121NM":"South West (England)"},"geometry":{"type":"Polygon","coordinates":[[[-5,50],[-2,50],[-2,52],[-5,52],[-5,50]]]}},
+{"type":"Feature","properties":{"ITL121CD":"TLC","ITL121NM":"North East (England)"},"geometry":{"type":"Polygon","coordinates":[[[-2,54.5],[-1,54.5],[-1,55.5],[-2,55.5],[-2,54.5]]]}}]}

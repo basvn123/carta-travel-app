@@ -61,8 +61,11 @@
   font-size: var(--text-lead);
   padding-right: calc(var(--tap) + var(--space-1));
 }
-.dtab-top .places-search input:focus { outline: none; border-color: var(--focus); }
-.dtab-filters { flex: none; }
+.dtab-top .places-search input:focus { border-color: var(--focus); }
+/* T1128 (WCAG 2.4.7): the same 2 px ring as every other field, not only a
+   1 px border tint, when the keyboard brings focus here. */
+.dtab-top .places-search input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.dtab-top .places-search input:focus:not(:focus-visible) { outline: 2px solid transparent; }
 .dtab-count { margin-left: var(--space-1); }
 @media (min-width: 769px) {
   .dtab-top .places-search { max-width: 560px; }
@@ -71,7 +74,6 @@
 /* -- The panel ---------------------------------------------------------------- */
 
 .dtab-panel { min-width: 0; }
-.dtab-title-solo { margin: 0 0 var(--space-4); }
 /* Trails at rest (T451): the countries track under the head. T430 fixed the
    selector, which a comment wedged into it had narrowed to ".dtab-head +
    .places-list", and moved the near-me door up into the head. */
@@ -148,10 +150,7 @@
   margin: 0 0 var(--space-3);
 }
 .dtab-refine .field { margin: 0; min-width: 0; }
-.dtab-refine .dtab-sort { flex: 1 1 140px; }
 .dtab-refine .dtab-length { flex: 1 1 160px; }
-.dtab-refine .country-picker { flex: 1 1 160px; min-width: 0; }
-.dtab-refine .places-country { width: 100%; max-width: none; min-height: var(--tap); }
 .dtab-refine .lifestyle-btn { flex: 1 1 100%; }
 @media (max-width: 768px) {
   .dtab-refine {
@@ -179,16 +178,6 @@
 /* The country picker beside the sort on a phone reads as the same control:
    the kit field's height, border, radius and type (CountryPicker draws a
    button). The desktop panel's country is the rail's fold. */
-.dtab-refine .places-country {
-  height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  font-size: var(--text-lead);
-  font-weight: 400;
-  color: var(--text);
-}
 
 /* The EuroVelo families: one row a thumb can swipe, not a wall of chips
    in front of the list. */
@@ -215,14 +204,11 @@
    the short facet set and All filters, the country fold last. The rail's
    own gap spaces the groups, so the older group margin steps aside. */
 @media (min-width: 769px) {
-  .places-side .xrail > .side-group { margin-top: 0; }
-  .places-side .side-facets { display: flex; flex-direction: column; gap: var(--space-5); }
   .places-side .xrail-sec > .field .field-label {
     font-size: var(--text-caption);
     font-weight: 600;
     color: var(--text-2);
   }
-  .side-allfilters { justify-content: flex-start; }
 }
 
 /* -- A picked country's band over the list (T428 drew it; T457 sets it) ----- */
@@ -269,8 +255,6 @@
 /* The header field gets its width back where the head's near-me door
    replaces the crosshair (T457). */
 .header-search-slot .places-search:not(:has(.places-locate)) input { padding-right: var(--space-3); }
-.country-picker-pop .origin-opt-flag { display: inline-flex; flex: none; width: 17px; }
-.country-picker .origin-btn-caret { flex: none; color: var(--text-3); }
 
 /* The By country track is one of the rails (T457): the rails' 4:3 photo,
    not the gallery's 3:2, so the four strips share one aspect. */
@@ -300,15 +284,6 @@
 
 /* T451: the trip cards are kit Cards; the legacy .jcap-card look (66-v6-trips,
    loaded later) must not repaint their edge, surface or press. */
-.jsec .card.card-tile.jcap-card {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  color: var(--text);
-}
-.jsec .card.jcap-card:active { transform: none; }
-.jsec .card-tile.jcap-card .card-media { position: relative; aspect-ratio: 3 / 2; }
-.jsec .jcap-card .places-card-img { position: absolute; inset: 0; }
 /* T452: a style's trips are the list's compact rows (37-card-fillings.css
    .pcard); the legacy column card of 66-v6-trips must not fold them. */
 .places-list.jsec.jsec-trips {
@@ -316,30 +291,10 @@
   gap: 0 var(--space-6);
 }
 .places-list.jsec.jsec-trips > :not(.jcard) { grid-column: 1 / -1; }
-.jsec .card.card-row.jcap-card { flex-direction: row; overflow: visible; }
-.jsec .card.card-row.jcap-card .jcard-title { font-size: var(--text-lead); }
-.jsec .card.card-row.jcap-card .jcap-noimg > span { display: none; }
-.jsec .card.card-row.jcap-card .card-price { font-size: var(--text-label); font-weight: 400; color: var(--text-2); }
 .jstyle-desc { display: block; font-size: var(--text-body); line-height: var(--leading-ui); color: var(--text-2); }
-.jcard-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.jcard-meta .jcap-where { display: flex; align-items: center; gap: var(--space-1); color: var(--text-2); }
-.jcard-meta .jcap-meta { color: var(--text-3); }
 .jcap-fig { font-variant-numeric: tabular-nums; color: var(--text); }
 .jcap-fig.is-none { font-weight: 400; color: var(--text-3); }
 .jcomposed { grid-column: 1 / -1; }
-.jsec-head { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
-.jsec-title {
-  margin: 0;
-  font-size: var(--text-headline);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  color: var(--text);
-}
-.jsec-desc { margin: 0; font-size: var(--text-lead); color: var(--text-2); }
-.jsec-beds { grid-column: 1 / -1; }
-@media (max-width: 768px) {
-  .jsec-title { font-size: var(--text-title); }
-}
 
 /* -- Sources ------------------------------------------------------------------- */
 
@@ -479,7 +434,6 @@
   .dtab-mapwrap .xmap { border-radius: 0; border-inline: 0; height: min(70dvh, 640px); }
 }
 /* The trip library's filters, portalled into the side panel (T498). */
-.places-side .tlib-slot:empty { display: none; }
 
 /* T504 end check: the outdoor layers' desktop map took the Explore shell's absolute flex rule and collapsed to 2 px. */
 @media (min-width: 769px) {

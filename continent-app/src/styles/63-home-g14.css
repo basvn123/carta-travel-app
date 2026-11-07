@@ -1,0 +1,123 @@
+/* The G14 home page (T1209, behind the HOME_G14 flag in
+   src/browse/home/homeVariant.js). Loaded with its lazy chunk, so the
+   current home pays nothing for it. Tokens only; the card follows the design
+   direction draft (docs/design/direction.md section 3). */
+
+.hg-page {
+  /* The scroll box, the footer and the button links come from .hv-page
+     (61-v6-home.css), the same box today's home uses. */
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+}
+.hg-page a.btn { text-decoration: none; }
+.hg-in { width: min(1120px, 100%); margin: 0 auto; padding: 0 var(--space-4); box-sizing: border-box; }
+
+/* The promise: big type on a mist ground, the first paint is text. */
+.hg-hero {
+  background: var(--home-ground-mist);
+  padding: clamp(48px, 9vw, 112px) 0 clamp(40px, 7vw, 88px);
+}
+.hg-kick {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-label); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--umber-800);
+}
+.hg-title {
+  margin: 0; max-width: 16ch;
+  font-size: var(--text-showcase); font-weight: 800; letter-spacing: -0.035em;
+  line-height: var(--leading-tight); text-wrap: balance;
+}
+.hg-sub {
+  margin: var(--space-4) 0 0; max-width: 52ch;
+  font-size: var(--text-lead); line-height: var(--leading-body); color: var(--text-2);
+}
+.hg-doors { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-5); margin-top: var(--space-6); }
+.hg-link {
+  display: inline-flex; align-items: center; min-height: 44px;
+  color: var(--umber-800); font-weight: 600; text-decoration: underline; text-underline-offset: 4px;
+}
+.hg-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
+.hg-arrow { display: inline-block; margin-left: var(--space-2); transition: transform var(--dur-2) var(--ease-out); }
+.hg-go:hover .hg-arrow { transform: translateX(4px); }
+
+/* The example: one real day on the umber cost card. */
+.hg-example { margin-top: calc(-1 * var(--space-6)); }
+.hg-card {
+  overflow: hidden; border-radius: var(--radius-stage);
+  background: var(--home-ground-deep); color: var(--surface);
+  /* The soft umber shadow of the direction draft has no token yet
+     (row T1209-c); the nearest elevation token stands in. */
+  box-shadow: var(--elev-3);
+}
+.hg-card-main { padding: clamp(24px, 4vw, 48px); }
+.hg-card-kick {
+  margin: 0; font-size: var(--text-label); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--umber-200);
+}
+.hg-card-title { margin: var(--space-2) 0 0; font-size: var(--text-title); font-weight: 700; line-height: var(--leading-ui); }
+.hg-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-3); margin: var(--space-4) 0 0; }
+.hg-total-fig { font-size: var(--text-total); font-weight: 800; letter-spacing: -0.035em; line-height: 1; }
+.hg-total-unit { font-size: var(--text-lead); color: var(--umber-50); }
+
+/* The bar: bed then food, each part grows from the left once. */
+.hg-bar { display: flex; gap: 3px; height: 14px; margin-top: var(--space-5); border-radius: var(--radius-pill); overflow: hidden; }
+.hg-seg {
+  flex: 0 0 auto; width: var(--w);
+  transform-origin: left center;
+  animation: hg-grow var(--dur-reveal) var(--ease-out) both;
+  animation-delay: calc(var(--i) * var(--dur-1));
+}
+.hg-seg-stay { background: var(--umber-200); }
+.hg-seg-food { background: var(--lagoon-100); }
+@keyframes hg-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.hg-lines { list-style: none; margin: var(--space-5) 0 0; padding: 0; display: grid; gap: var(--space-3); }
+.hg-line {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4); border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--surface) 8%, var(--home-ground-deep));
+}
+.hg-dot { width: 12px; height: 12px; border-radius: 50%; }
+.hg-line-stay .hg-dot { background: var(--umber-200); }
+.hg-line-food .hg-dot { background: var(--lagoon-100); }
+.hg-line-label { display: flex; flex-direction: column; font-weight: 600; }
+.hg-line-label small { font-size: var(--text-label); font-weight: 400; color: var(--umber-50); }
+.hg-line-fig { font-size: var(--text-title); font-weight: 800; }
+@media (min-width: 720px) {
+  .hg-lines { grid-template-columns: 1fr 1fr; }
+}
+
+.hg-foot {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-5);
+  padding: var(--space-4) clamp(24px, 4vw, 48px);
+  background: color-mix(in srgb, var(--home-ground-mist) 55%, var(--surface));
+  color: var(--text);
+}
+.hg-foot-line { margin: 0; font-weight: 700; max-width: 46ch; }
+@media (max-width: 599px) {
+  .hg-foot .hg-go { width: 100%; justify-content: center; }
+}
+
+/* The waitlist and the referral link. */
+.hg-join {
+  display: grid; gap: var(--space-6);
+  padding-top: clamp(40px, 7vw, 88px); padding-bottom: clamp(40px, 7vw, 88px);
+}
+.hg-join .wl { margin-top: 0; }
+@media (min-width: 900px) {
+  .hg-join { grid-template-columns: 3fr 2fr; align-items: start; }
+}
+.hg-share {
+  padding: var(--space-5); border-radius: var(--radius-stage);
+  background: var(--surface); border: 1px solid var(--border);
+}
+.hg-share-title { margin: 0; font-size: var(--text-title); font-weight: 700; line-height: var(--leading-ui); }
+.hg-share-lead { margin: var(--space-2) 0 var(--space-4); color: var(--text-2); line-height: var(--leading-body); }
+.hg-share-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.hg-share-ok { font-weight: 600; }
+.hg-share-url { width: 100%; margin-top: var(--space-3); box-sizing: border-box; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hg-seg { animation: none; }
+  .hg-arrow { transition: none; }
+}

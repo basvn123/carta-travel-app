@@ -1,6 +1,6 @@
 # app_data schema
 
-Live master: `meta.schema_version` = 19. The `Schema vN` sections further down
+Live master: `meta.schema_version` = 20. The `Schema vN` sections further down
 are the additive changelog of layers (their numbering ran ahead of the meta
 field; treat the sections as history, `meta.schema_version` as the contract).
 
@@ -627,10 +627,9 @@ Eurostat post-Brexit (honest gap, not faked). NUTS 3 is province-level, so a
 famous village in a large rural province can read lower than it feels (e.g.
 Hallstatt = Busy, not Crowded), inherent to regional data.
 
-UI: `components/CrowdingBadge.jsx`. To keep the DetailPanel header uncluttered
-the pill shows only the actionable extremes, Quiet (dodge the crowds) and
-Crowded (a heads-up) via `crowdBadgeWorthShowing()`; all four tiers appear in
-the `knownForFacts` "Crowds" row. i18n `crowd.*` keys, 6 languages.
+UI: the place page facts row (`browse/DestinationPage.jsx`, `crowdFor` in
+`lib/crowdMonth.js`) and the `knownForFacts` "Crowds" row; the old header
+pill (`components/CrowdingBadge.jsx`) was deleted by T1163. i18n `crowd.*` keys, 6 languages.
 `useDestinationSearch` copies `crowding` onto the priced row.
 
 Pairs with (but is independent of) `rating.hidden_gem` (fame-based) and the
@@ -766,6 +765,9 @@ written and a pipeline run has not filled the wire yet.
 | trails | `sac_segments` `[[from_m, to_m, "T2"]]` | detail | member ways with `sac_scale`, run length coded, positions approximate (member order) | awaiting run |
 | trails | `transit` `{rail, bus, ferry}` | country row | stub, `pipeline/field_stubs/t630_routes.py` | stub |
 | trails | `duration_min` | row and detail | DIN 33466 (`elevation.py:duration_min_din33466`: 4 km/h, 300 m/h up, 500 m/h down, the smaller of flat and vertical time counted half), with `elevation.duration_rule` | live |
+| trails | `f.d` | country row and detail, inside `f` | days the walk takes, only when 2 or more: DIN 33466 hours, one day up to 10 h, else 6 h stages (`pipeline/trails/difficulty.py`, `export_wire.days_of_trip`, T1092); the app prints "Long" for it when `f.g` is moderate or easier | awaiting run |
+| trails | `src_name` | country row and detail | the relation's own `name` tag (any script, at most 64 characters), only when it differs from `name`; `name` itself is now `names.wire_name()` (network prefix folded, Cyrillic and Greek transliterated, at most 42 characters), T1092 | awaiting run |
+| trails | `img` `{u, w, h, lic, by?, licUrl?, page?}` | country row, inside the card | the hero photograph with the credit it owes: `lic` the Commons licence (only CC0, CC BY, CC BY-SA, public domain ship, `photo_licence.reusable`), `by` the photographer (absent on CC0 and public domain), `licUrl` the licence text, `page` the Commons file page; `export_wire.card_img` (T1093). The detail file's `images[]` keep `author`, `license`, `license_url`, `page`. The contract check `validateTrailImages` rejects a disallowed licence, a named-licence photo with no `by`, and a half-rebuilt wire | awaiting run |
 | cycling | `rt` `loop` / `out_back` / `point` | country card and detail | `export_cycling.route_shape`, from the line (roundtrip=yes stays `loop`) | awaiting run |
 | cycling | `dur.min`, `dur.rule` = `flat18_climb10` | card and detail | house rule, 18 km/h plus 10 min per 100 m of climb | live |
 | mountains | `slopeDeg` | full row | `terrain.easiest_slope`, steepest stretch of the gentlest side; the app warns over 30 | awaiting run |
@@ -803,14 +805,15 @@ This is not part of the CI wire contract below, which pins `app_data.json`.
 
 | Wire | Shape |
 |---|---|
-| `search/ask/manifest.json` | `{version: 1, model, dims, built, sources: {<src>: {n, passages, i8, b1}}, model_files: {vocab, emb, scale}, bm25: {file, fields, boost, sources, n, bytes, gzip, options}}` |
-| `search/ask/passages-<src>.json` | `{source, rows: [[pid, destId or null, text, payload]]}`; pid `<src>:<id>`; text 1 to 3 sentences, at most 300 characters, no em or en dashes; payload `{cc, kind, m: [best months], tags, ref: {type, id}, name}`, for `lexicon` `{slot, value, lang}` |
+| `search/ask/manifest.json` | `{version: 1, model, dims, built, catalogue: {file, generated_at, schema_version}, sources: {<src>: {n, passages, i8, b1}}, model_files: {vocab, emb, scale}, bm25: {file, fields, boost, sources, n, bytes, gzip, options, server: {<src>: "bm25-<src>.json"}}}`. `catalogue` is the `app_data.json` meta the index was read from (T1206); `bm25.server` lists the server BM25 indexes (T1141) |
+| `search/ask/passages-<src>.json` | `{source, rows: [[pid, destId or null, text, payload]]}`; pid `<src>:<id>`, unique within the file (T1206: the layer folders' `top.json` and `index.json` are not read, and a sight whose name has no Latin letters gets `x-` plus a short hash of the name); text 1 to 3 sentences, at most 300 characters, no em or en dashes; payload `{cc, kind, m: [best months], tags, ref: {type, id}, name}`, for `lexicon` `{slot, value, lang}` |
 | `search/ask/vectors-<src>.i8` | n x D int8, row order of the passages: each row L2-normalised, x127, rounded |
 | `search/ask/vectors-<src>.b1` | n x D/8 bytes: sign bits, dimension i at byte i>>3, bit i&7 |
 | `search/ask/model/vocab.json` | `{version, type: "unigram", model, dims, unk_id, normalizer: [steps], metaspace: {replacement, prepend}, max_tokens, pieces: [...], scores: [...]}`: the pruned tokenizer |
 | `search/ask/model/emb.i8` | vocab x D int8, one row per piece: the row / its max absolute value x127 |
 | `search/ask/model/scale.f32` | vocab float32 little endian: each row's max absolute value |
-| `search/ask/bm25.json` | MiniSearch `toJSON()`; id = pid, fields name, tags, text, nothing stored; load with `ASK_BM25_OPTIONS` from `functions/_lib/askTerms.js` |
+| `search/ask/bm25.json` | MiniSearch `toJSON()`; id = pid, fields name, tags, text, stores `cc` (the passage's country code, T1141, so the browser filters on country); load with `ASK_BM25_OPTIONS` from `functions/_lib/askTerms.js`. The browser downloads it whole: over 400 KB gzip with every source it covers `dest` and `lexicon` only (`manifest.bm25.sources`) |
+| `search/ask/bm25-<src>.json` | T1141: one server index per source in `SPARSE_SOURCES` of `functions/_lib/askSparse.js` (today `beach`, `lake`, `peak`), same MiniSearch shape and options as `bm25.json`, written by `build-ask-bm25.mjs` and listed in `manifest.bm25.server`. Read by `/api/ask` only, never downloaded by the browser, so no gzip budget |
 | `search/ask/lexicon.json` | input, not output: `{version, phrases: [[phrase, lang, slot, value]]}` (T552), indexed as the `lexicon` source when present |
 
 Sources (one adapter each in `SOURCES`): `dest` (every destination: city,
@@ -823,6 +826,22 @@ opens: `dest` for dest, highlight and sight; otherwise `trail`, `journey`,
 `beach`, `lake`, `peak` or `country`. `destId` is the destination a hit
 belongs to or is nearest (same country, 25 km; 40 km for a journey), or
 null.
+
+`GET /api/ask` (T554, T1141) takes `q` (the question), `src`, `cc`, `d`,
+`u` and `b`: `b` is the question's English BM25 words
+(`src/lib/ask/query.js`, at most 200 characters), searched over the server
+indexes of `manifest.bm25.server` with the same `cc` and `d` filters. The
+answer is `{v, hits: {<src>: [[pid, destId, score, text, name]]}, sparse:
+{<src>: [same rows]}, lex: [[word, slot, value, score]]}`; `sparse` holds
+the BM25 hits per server source and is empty without `b` or without the
+server indexes.
+
+Staleness (T1206, ROADMAP E2 item 4): `continent-app/scripts/check-ask-index.mjs`
+fails when `manifest.catalogue.generated_at` is older than the
+`meta.generated_at` of the `app_data.json` on the wire (a manifest without
+`catalogue` is compared by its `built` time), and `build-ask-bm25.mjs` runs
+the same check before it builds, so the `ask_index` task stops on a stale
+index.
 
 ## Explore completeness, climate, lakes and beaches (T631, added 2026-10-23)
 
@@ -889,7 +908,7 @@ when the source says nothing; absence means unknown, never "no".
 | `pool` | `true` | context bucket `swimming_pool` (leisure=swimming_pool added to the existing leisure clause, plus water_park) |
 | `kidsPool` | `true` | context bucket `kids_pool`: a swimming pool whose `pool=` value or name says children |
 | `rentals` | `true` | context bucket `sunbed_rental`: a new Overpass clause, `rental` matching umbrella, sunbed, sun_lounger, deckchair or beach |
-| `sst` | 12 numbers | forwarded by `v2_fields` when a beach carries it; no source today (stub) |
+| `sst` | 12 numbers | input key on an enriched beach; `v2_fields` forwards it to the wire as `sea_temp` (T1097) |
 
 The context buckets only exist after `enrich_beaches.py` re-runs its Overpass
 context pass (two extra lookups per batch), then `export_beaches.py`.
@@ -915,22 +934,46 @@ names, water sport zones, lake lifeguards, swimming bans, currents, lido prices,
 surface at the water entry, walk from pier and centre, luxury audience, gorge
 flag). `python pipeline/field_stubs/report.py` lists them.
 
-## Wire contract, checked in CI (T082)
+## Wire contract, checked in CI (T082, machine-readable since T1133)
 
-This table is the contract for the top level of `public/app_data.json`, and
-`continent-app/scripts/ci/check-contract.mjs` parses it on every run (locally
-in `npm run ci`, and in `.github/workflows/schema-contract.yml`). The payload
-must match it both ways. A key the payload carries and this table does not
-list fails, so a renamed field cannot ship under its new name unnoticed. A
-listed key the payload lacks fails too: a `meta` key must be present, a
-`destination` key marked `every` must be on every record (its value may be
-null), and one marked `some` must be on at least one record. To change the
-wire, change this table in the same commit, and if `meta.schema_version` moves,
-change the header line above and `EXPECTED_SCHEMA_VERSION` in
-`continent-app/scripts/ci/contract.mjs` with it.
+The contract for `public/app_data.json` is `docs/wire.schema.json`, one
+machine-readable file (JSON Schema 2020-12 subset). It lists every top-level
+`meta` and `destination` key with its type, range or enum and its presence,
+and it goes deeper where a wrong shape has broken a screen before (`rating`,
+`rating.class_rank`, `taste` and its twelve likes). It sits here beside this
+file because three readers share it and none of them owns it:
 
-Only the top level is pinned; the keys inside a block (`rating.score`,
-`costs.meal_mid_eur`) are described in the sections above and not yet checked.
+- the pipeline writers: `pipeline/wire_contract.py` is called from
+  `pipeline_io.atomic_write_json` (and from the three image fixers that write
+  the wire directly) before every write of `continent-app/public/app_data.json`.
+  A payload that breaks the schema raises `WireContractError`, naming each
+  field path, and the file on disk is left as it was. The pipeline checks
+  shape only: no unknown key, no wrong type.
+- the app sync: `continent-app/scripts/sync-data.mjs` checks the core payload
+  the same way before it writes `public/`, and stops with the field path.
+- the CI gate: `continent-app/scripts/ci/contract.mjs` (`validateAppData`) and
+  `check-contract.mjs`, in `npm run ci` and `.github/workflows/schema-contract.yml`,
+  add the presence half on the real catalogue: a `meta` key must be present, a
+  `destination` key marked `every` must be on every record (its value may be
+  null where the schema allows it), and one marked `some` must be on at least
+  one record. They also hold the relations a schema cannot say (an id matches
+  its key, a city's `gateways` point back at it, every rated record has a
+  `taste`).
+
+Both interpreters, `pipeline/wire_contract.py` and
+`continent-app/src/lib/wireSchema.js`, word each problem the same way, so a
+seeded bad value fails `pytest tests/test_wire_contract.py` and `npm test`
+(`tests/wire-contract.test.mjs`) with the same message, for example
+`destinations.BRU.lat is "50.9", expected number`. The shared cases are in
+`tests/fixtures/wire_contract_cases.json`.
+
+To change the wire, change `docs/wire.schema.json` in the same commit, then
+run `node continent-app/scripts/ci/wire-table.mjs --write` to regenerate the
+table below; the gate fails when the table is stale. If `meta.schema_version`
+moves, change `x-schema-version` and the `meta.schema_version` const in the
+schema and the header line above, and follow CLAUDE.md for a contract change
+end to end.
+
 `routes`, described in the first block, is not on the wire. Since T511 there
 are no fare slices; flights come from the sweep files ("Flight prices" above).
 
@@ -938,6 +981,7 @@ The column after the presence says where this file describes the field.
 "Not yet described" marks a field that ships and is read but has no section
 here yet.
 
+<!-- wire-table:start, generated from docs/wire.schema.json by continent-app/scripts/ci/wire-table.mjs; do not edit by hand -->
 | Key | Block | Presence | Described |
 |---|---|---|---|
 | `schema_version` | meta | required | header line; read on boot |
@@ -1015,7 +1059,9 @@ here yet.
 | `guide` | destination | some | not yet described (Wikivoyage lead and link, `apply_wikivoyage.py`) |
 | `members` | destination | some | not yet described (towns grouped under this one, `member_layer.py`) |
 | `wikidata` | destination | some | Schema v15 section 2 |
+| `season` | destination | pending | T1202 (D18): open months of the place (`open`, only when it closes part of the year), `conf`, `why` (own or ferry), `checked`, and up to four seasonal huts, lifts or ferries nearby (`items`), from OSM opening_hours and seasonal (`harvest_seasons.py`) |
 | `anchor_estimated` | destination | some | Flight data provenance (auto-anchored destinations) |
+<!-- wire-table:end -->
 
 ## Schema v18 (added 2026-10-21, T530-T536): bed prices for every bed type and month
 
@@ -1125,7 +1171,7 @@ row for the id they write.
 | lakes | `lifeguards` | `{n, sites: [{n?, lat, lon}]}` | OSM `lifeguard=yes/seasonal`, `emergency=lifeguard*`, `leisure=swimming_area` + `supervised=yes` | measured | same |
 | lakes | `swim.ban` | `{n, sites: [...], src: "osm"}` | OSM `swimming=no`, `bathing=no` | measured | same |
 | lakes | `wind.profile` | `{ms: [12], src, m: "modelled"}` mean 10 m wind in m/s | NASA POWER WS10M climatology 2001 to 2020 at the lake centre (open). Thermal winds are not in any open source | modelled | same |
-| beaches | `sst` | 12 numbers, C | NASA JPL MUR SST, nearest valid cell within 6 km | measured | `harvest_sea_temp.py --beaches`, `export_beaches.v2_fields` |
+| beaches | `sea_temp` (T1097: was written as `sst`, which no screen read) | 12 numbers, C | NASA JPL MUR SST, nearest valid cell within 6 km | measured | `harvest_sea_temp.py --beaches`, `export_beaches.v2_fields` |
 | beaches | `walkFrom` | `{centre?: {km, min, town, m}, pier?: {km, min, name?, m}}`, `m` = `modelled` | base town and beach positions, OSM ferry terminals within 4 km; straight line x 1.3 at 4.5 km/h, not a routed path | modelled | `beaches/harvest_beach_walks.py` |
 | mountains | `lift.hours` (string), `lift.fare` (price record, not shown) | OSM `opening_hours` string kept unparsed; `charge` when it parses to one amount | OSM aerialway and funicular within 2.5 km of the peak | measured | `mountains/harvest_lift_hours.py`, `export_peaks.py` |
 | trails | `transit` `{rail?, bus?, ferry?}` | each true only when found within 500 m of the start of the line; the key is absent when none was found | OSM stations, coach stations, bus stops (`highway=bus_stop`, `public_transport=platform` + `bus=yes`) and ferry terminals in `transit_stops` | measured | `trails/transit_stops.py` (new kinds `ferry`, `bus_stop`), `trails/export_wire.py` |
@@ -1150,7 +1196,7 @@ All additive. Existing keys keep their meaning.
 |---|---|---|---|
 | `dest.airports[]` | `{iata, straight_km, road_km, ryanair, options[], transfer_min, transfer_mode, transfer_source}` | `pipeline/airport_access.py` (airport tier rows, GTFS) | up to 4 airports within 110 km, nearest first, the anchor always kept. `options[]` is `{mode, minutes, source}` with source `road_estimate` (mode `car`, haversine x 1.3 at 65 km/h) or `gtfs:<feed>+access_estimate` (mode `train`, median door to door over a Wednesday, 07:00 to 21:00 every 30 min). |
 | `dest.transfer.transfer_mode` / `transfer_mode_source` | `"car"` / `"road_estimate"` | `apply_airport_anchors.py` | the existing `transfer_minutes_one_way` is the road estimate, now labelled. |
-| `practical.getting_there.airports[]` | `{iata, km, transfer_min, transfer_mode, options[]}` | `build_dossier.py` | read by GettingThere and the Airport key fact. |
+| `practical.getting_there.airports[]` | `{iata, km, transfer_min, transfer_mode, options[]}` | `build_dossier.py` | read by `GettingThere` in `planner/CountryBrief.jsx` and the Airport key fact. |
 | `dest.local_transport.car_basis` | `"category"` or `"transit_lines"` | `car_layer.py` | `transit_lines` when `practical.transit.*` decided the value. |
 | `dest.local_transport.car_useful_for` | string | `car_layer.py` | what a car still adds where it is optional (remote valleys, trailheads). |
 | `dest.local_transport.parking_hard` | bool | `cache/parking_osm.json` | fewer than 2 public lots within 1.5 km of the centre; absent without a parking harvest. |
@@ -1343,8 +1389,9 @@ a derived parking row this way). Read `typeof access === "object"`.
 | | `access` | shared shape, from the start point, parking within 400 m | parking derived, transit placeholder | 964 |
 | | `dogs` | `"yes"\|"leash"\|"no"` | `cache/outdoor/trails.json` | placeholder (0) |
 | | `permit` | short plain English sentence | `cache/outdoor/trails.json` | placeholder (0) |
+| | `bridges` | `{n, max_m, total_m, routed?}` | `trip_repairs.repair_info`: `straight-splice` (splice.py, straight connectors) or `routed-bridge` (route_bridge.py, T1183; `routed` = how many of the `n` breaks follow mapped paths, the rest are straight); `export_wire.bridges_of` (T1201) | derived, only on repaired rows |
 | | `huts[].season`, `huts[].booking` | `[fromMonth, toMonth]`, `true\|false`, merged into the existing `huts[]` by folded hut name | `cache/outdoor/trails.json` `huts: {name: {...}}` | placeholder (0) |
-| beaches, `beaches/{CC}.json` rows (`beaches` and `listed`) | `sea_temp` | 12 numbers, monthly mean sea surface temperature, C | the row's `sst`, else `cache/sea_temp_beaches.json` (T641 NASA MUR harvest, `pipeline/harvest_sea_temp.py`, not on disk in this checkout), else placeholder | 0 until the harvest lands |
+| beaches, `beaches/{CC}.json` rows (`beaches` and `listed`) | `sea_temp` | 12 numbers, monthly mean sea surface temperature, C | the row's `sst`, else `cache/sea_temp_beaches.json` (T641 NASA MUR harvest, `pipeline/harvest_sea_temp.py`, not on disk in this checkout), else placeholder; written by `export_beaches.v2_fields` (T1097) | 0 until the box harvest runs (T1097-a) |
 | | `access` | shared shape, parking within 500 m of the beach point | parking derived, transit placeholder | 522 |
 | | `step_free` | `true\|false` | OSM `wheelchair=yes` (row `wheelchair`) is true, `access: "steps"` is false; placeholder wins | derived, 33 |
 | | `shade` | `true\|false` (trees or cover within 50 m) | placeholder (no offline tree layer) | 0 |
@@ -1371,3 +1418,114 @@ Gate: `pipeline/field_stubs/gate.py` ranges `sea_temp` 0 to 32, `alt_m` -450 to
 beaches +37 KB (+0.28%), lakes +16 KB (+0.21%), mountains +53 KB (+0.87%),
 cycling detail +1.26 MB (+0.28%); the trails and cycling country files are
 unchanged.
+
+## Schema v20: provenance per key block (T1143, ROADMAP D3, 2026-11-06)
+
+Every key block of a destination, the 18 object-valued keys the wire
+contract lists, carries two more keys:
+
+| Key | Type | Means |
+|---|---|---|
+| `_src` | string, one of the ids in `pipeline/config/sources.yaml` (the schema's `$defs.src` enum) | where the block's values come from |
+| `_asof` | string `YYYY-MM-DD` | the date its pipeline layer last built the block |
+
+```
+"rating": { "score": 8.1, "band": "very_good", ..., "_src": "carta_rating", "_asof": "2026-11-06" }
+```
+
+The sources, their licence, cadence and owner, and which block each one
+stamps are in `docs/data/sources.md`, generated from the registry. Lists
+(`designations`, `members`, `gateways`), scalars and `null` blocks carry no
+stamp. The schema requires both keys on every key block, so a v19 wire fails
+the v20 contract until it is migrated (`python pipeline/provenance.py
+--backfill <wire>`, which dates every block by the wire's own
+`meta.generated_at`). The app reads both: its loader lifts the stamps off
+the blocks into a side table (`continent-app/src/lib/provenance.js`) and a
+v19 shard has none to lift. Every v19 key keeps its name and value.
+
+## Multi-stage treks on the trails wire (T1184, ROADMAP D24, 2026-11-06)
+
+Additive, no schema version change. Written by `pipeline/trails/export_wire.py`
+through `pipeline/trails/treks.py`; checked by `validateTrailTreks` in
+`continent-app/scripts/ci/contract.mjs` (run by `check-contract.mjs`, with
+seeded breaks); read by `continent-app/src/lib/trails.js` `loadTreks` and
+`src/lib/treks.js`. Status: code and fixtures, awaiting the export run.
+
+Country file `trails/{CC}.json`, key `treks` (absent when none is filed there):
+
+| Key | Type | Means |
+|---|---|---|
+| `id` | string | `trek-r{osm}` when the parent relation is known, else `trek-{cc}-{slug}`; unique across the wire |
+| `name` | string | the registry name when the registry knows the trek, else the parent relation's, through `names.wire_name` |
+| `cc` | ISO code | the country file it is filed in: the country of its first stage |
+| `countries` | ISO codes | every country a stage is filed under |
+| `how` | strings | evidence used: `superroute`, `name`, `registry` |
+| `order` | `position` or `name` | what set the order: the superroute member position, else the numbers in the names (the first that passes the line check) |
+| `n` | integer, 2 or more | published stages |
+| `of` | integer, optional (T1201) | stages the whole path has: the superroute's member count, which `hierarchy.py` writes on each stage row as `h.n`; present only when at least `n` and at least the highest stage number shown |
+| `km`, `up`, `down`, `min` | numbers | sums over the published stages (km, metres up, metres down, minutes) |
+| `days` | integer | one per stage, or the stage's own `f.d` when it is a multi-day walk |
+| `stages` | `[{id, i, name, cc, km, up, min}]` | the published stages in walking order; `i` is the stage number shown (the name's own, else the position) |
+| `row` | integer, optional | the trek's own published row (a parent relation that is itself on the wire) |
+| `osm` | integer, optional | the parent relation id |
+| `wd` | string, optional | Wikidata id from the registry |
+| `missing` | integers, optional | stage numbers between the first and last that are not published (at most 40) |
+| `_src`, `_asof` | `osm`, `YYYY-MM-DD` | provenance as in schema v20 (T1143): the source id and the export date |
+
+Stage row (`trips[]` and `listed[]`), key `trek` (absent when the row is not a
+stage of a built trek): `{id, cc, i, n}`, the trek id, the country file that
+holds it, this stage's number and the published count. The contract requires
+each pointer to name a trek that lists the row under that number, and each
+listed stage that is loaded to point back. Size on the 2026-09-13 wire: the 45
+country files grow by about 105 KB (0.32%); detail files are unchanged.
+
+## Planned: local transport fare per place (T1115, 2026-11-06)
+
+Not in the wire, not produced by any script. The owner's decision 4 (2026-11-05) on the fare source is "Not now"; this section fixes the shape so a later session can build the layer without redesigning it. It refines the one-line row `dest.local_transport.fare` in the T642 table above (same key, same engine reading).
+
+`dest.local_transport.fare`, optional and additive, one object per place; absent means "Not yet measured" and the day price stays bed and food, never a zero.
+
+| Key | Type | Rule |
+|---|---|---|
+| `ride_eur` | number, 0 to 20 | single ticket, adult, full price, zone 1 or the central fare, in euro |
+| `day_pass_eur` | number or null, 0 to 60 | 24 hour pass for the same zone; null when the operator sells none |
+| `currency` | ISO 4217 string | the currency the operator publishes in (`PLN`, `GBP`, `CHF`...) |
+| `ride_local` | number | the same single ticket as published, in `currency` |
+| `day_pass_local` | number or null | the same day pass as published, in `currency` |
+| `source` | string | operator name plus the page URL, or the dataset name and version |
+| `date` | `YYYY-MM-DD` | the as-of date: the day the fare was read from the source, not the day it is valid from |
+| `quality` | `"measured"` or `"modelled"` | `measured` only for a fare read from the source for this city; `modelled` for a country or tier prior |
+
+Rules for the layer when it is built:
+- Euro values are converted from the local value with `cache/fx_rates_eur.json` and a stated rate date; the local value is kept so a rate move never rewrites history.
+- `ride_eur <= day_pass_eur` is not required (a day pass can be cheaper than two rides); `day_pass_eur` must be at least `ride_eur` when present.
+- A fare older than 18 months is flagged stale in the report, not dropped.
+- The first scope is the 127 metros in `reports/local_fares_metros_127.csv`, then the 614 cities (roadmap D10). The engine is `lib/price/priceDay.js`, with `transport.rides_per_day` in `config/pricing.json`; no engine change is needed when the field appears.
+- Add the keys to the "Wire contract" table and `scripts/ci/contract.mjs` only in the task that produces data, with the schema version note.
+
+## Way back on the trails wire (T1185, ROADMAP D24, 2026-11-06)
+
+Additive, no schema version change. Written by `pipeline/trails/way_back.py`
+from `export_wire.py` (after the treks, so a stage knows its trek); checked by
+`validateTrailWayBack` in `continent-app/scripts/ci/contract.mjs` (seven seeded
+breaks); read by `src/lib/wayBack.js` and shown by `src/browse/WayBack.jsx`.
+Status: code and fixtures, awaiting the export run on the box.
+
+`wb` sits on a country-file row that is a one-way walk (its line's ends are
+more than `LOOP_KM = 0.5` apart, judged by the line, not by `is_loop`) and is
+NOT a trek stage, and on every trek record (from the end of its last stage to
+the start of its first). Loops, listed-tier rows and trek stages carry none.
+
+| Key | Type | Means |
+|---|---|---|
+| `km` | number | straight line from the end back to the start |
+| `walk` | `{km, min}` | on foot back along the route: its own distance and time (forward time; a trek adds every stage) |
+| `taxi` | `{km, min, est: true}` | road estimate: straight line x 1.3, 50 km/h, minutes rounded up to 5; absent beyond 150 km straight line |
+| `pt` | `{s, e, both}` | modes (`rail`, `bus`, `ferry`) found within 500 m of the start, of the end, and at both. Absent = transit not looked up (no `transit_stops` table), which is not the same as empty lists = looked up, none found. There are no public transport minutes: the repo holds no timetable |
+| `_src`, `_asof` | string | provenance (T1143) |
+
+The page says "we do not know" for a one-way walk with no `wb`.
+
+## destinfo `access` row (D21, T1203)
+
+Additive, no schema version change. `public/destinfo/{CC}.json` `dests.{id}.access`, built by `pipeline/export_destinfo.py` `pick_access` from `cache/access_osm.json` (`harvest_access.py`, format `access_v1`, OSM `wheelchair` and `toilets:wheelchair` tags): `{station?: {wc: "yes"|"limited"|"no"|"designated", m, name?, tw?}, toilets?: {n, m}, places?: {yes, limited, no, named?[]}, _src: "openstreetmap", _asof: "YYYY-MM-DD"}`. A part is present only when a tag exists; absent means "not mapped", never "not accessible". `destinfo/index.json` counts the rows per country as `access`. The app words every line "mapped as" (`src/lib/accessFacts.js`).

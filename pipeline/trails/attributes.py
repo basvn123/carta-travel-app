@@ -74,6 +74,7 @@ from db import connect  # noqa: E402
 from schema import ensure  # noqa: E402
 from way_tags import SAC_RANK, VIS_RANK, ferrata_value, sac_value  # noqa: E402
 from names import is_latin, title_ladder  # noqa: E402
+import difficulty  # noqa: E402
 
 SCHEMA_SQL = ROOT / "tools" / "trailslab" / "initdb" / "07_filters.sql"
 
@@ -144,14 +145,15 @@ DEM_LADDER = [
 # DEM cannot tell the difference from the profile alone.
 DERIVED_ALPINE_MIN_TOP_M = 1500.0
 
-# Effort, from what the walk asks of a day rather than of a foot. Capped at
-# very_hard on purpose: length and climb make a long day, terrain makes an
-# alpine one, and a 60 km flat trek is not alpine.
-EFFORT_LADDER = [
-    ("very_hard", 40_000, 2_200),
-    ("hard", 25_000, 1_400),
-    ("moderate", 15_000, 800),
-]
+# A derived (DEM) terrain grade above moderate needs this much relief between
+# the lowest and highest point of the line. One 90 m span at 26 percent on a
+# route whose highest point is 112 m (the Veluwe Zwerfpad's dune) is a sandy
+# ramp, not hard ground, and a DSM over woodland makes such spans out of
+# tree edges. Tagged grades are never capped (T1092).
+DERIVED_HARD_MIN_RELIEF_M = 200.0
+
+# Effort lives in difficulty.py since T1092: the hours and the climb of ONE
+# day of the walk, so a flat 286 km path is long (f.d), not very hard.
 
 
 def _max_grade(*grades):
@@ -220,19 +222,20 @@ def dem_grade(row):
                               or float(top) < DERIVED_ALPINE_MIN_TOP_M):
         grade = "very_hard"
         parts["alpine_capped"] = "top below 1500 m"
+    bottom = elev.get("ele_min_m")
+    if GRADE_RANK[grade] > GRADE_RANK["moderate"] and top is not None \
+            and bottom is not None \
+            and float(top) - float(bottom) < DERIVED_HARD_MIN_RELIEF_M:
+        grade = "moderate"
+        parts["relief_capped"] = int(round(float(top) - float(bottom)))
     return grade, parts
 
 
 def effort_grade(row):
-    """Grade from distance and ascent alone. Always available."""
-    distance = row.get("distance_m") or 0
-    ascent = row.get("ascent_m") or 0
-    for name, max_m, max_asc in EFFORT_LADDER:
-        if distance > max_m or ascent > max_asc:
-            return name
-    if distance <= 8_000 and ascent <= 350:
-        return "easy"
-    return "moderate"
+    """Grade from what one day of the walk asks: DIN 33466 hours and climb,
+    split into days (difficulty.py). Always available. Pass the oriented()
+    row, as grade_of does."""
+    return difficulty.day_effort(row)["grade"]
 
 
 # ---------------------------------------------------------------------------
@@ -287,13 +290,15 @@ def grade_of(row):
     wt = row.get("way_tags")
     from_tags, tag_parts = tagged_grade(wt)
     from_dem, dem_parts = dem_grade(row)
-    effort = effort_grade(row)
+    day = difficulty.day_effort(row)
+    effort = day["grade"]
 
     terrain = from_tags if from_tags else from_dem
     source = "tagged" if from_tags else "derived"
     grade = _max_grade(terrain, effort) or effort
     parts = {"terrain": terrain, "terrain_from": source, "effort": effort,
-             **tag_parts, **dem_parts}
+             "days": day["days"], "day_h": day["day_h"],
+             "day_climb_m": day["day_climb_m"], **tag_parts, **dem_parts}
     return grade, source, parts
 
 
@@ -305,6 +310,13 @@ def grade_of(row):
 # about the length of a car park; curate.py's is_loop uses a looser 250 m
 # because it answers a different question (can I leave the car here).
 CLOSE_M = 100.0
+# T1201 (T1184-d, T1181-g): a roundtrip=yes tag lifts a route to a loop only
+# while its merged line's ends are within this distance. Further apart, the
+# tag is a mapping error on an A to B stage (all of the BergeSeen Trail is
+# tagged so, with ends 5 to 16 km apart) and the line wins. 1 km is the same
+# bound the trail page has used since T430 to refuse a loop whose ends lie
+# apart; curate.TAG_LOOP_MAX_M holds the same number for is_loop.
+TAG_LOOP_MAX_M = 1000.0
 # Buffer around the outbound half, in metres, and the share of the inbound
 # half that has to fall inside it.
 RETRACE_BUFFER_M = 15.0
@@ -378,7 +390,7 @@ def route_type_of(rec):
         # into two rings. More crossings than that is a network, not a shape
         # with a name, and stays a loop.
         return ("figure8" if int(rec["pieces"]) == 2 else "loop"), "geometry", parts
-    if closed or tagged:
+    if closed or (tagged and gap <= TAG_LOOP_MAX_M):
         return "loop", ("tagged" if tagged and not closed else "geometry"), parts
     return "point", "geometry", parts
 
@@ -405,6 +417,9 @@ HIGHLIGHT_CODE = {
     # glacier and spring have no chip of their own: a glacier reads as a
     # summit day and a spring is a convenience, not a reason.
     "glacier": "summit",
+    # T1201 (T1181-f): the landform kinds scenic.py added.
+    "rock": "gorge", "ridge": "summit", "saddle": "summit",
+    "cape": "coast", "bay": "coast",
 }
 
 # Only what the route genuinely TOUCHES earns a code. scenic.py stores both
@@ -688,7 +703,8 @@ def title_of(row, route_type, passes, labels=None):
     out = title_ladder(tags, title=row.get("title"), features=features,
                        passes=passes, route_type=route_type,
                        distance_m=row.get("distance_m"),
-                       wikidata_label=(labels or {}).get(qid))
+                       wikidata_label=(labels or {}).get(qid),
+                       country=row.get("country"))
     return out["title"], out["ref"], out["rung"]
 
 

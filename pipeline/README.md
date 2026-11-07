@@ -43,6 +43,29 @@ Superseded
   not run correctly from inside `archive/` in the CURRENT tree, because the
   files it reads have moved on; that is intentional, it is retired.
 
+## Layout (ROADMAP A2, T1207)
+
+Scripts are grouped by domain, and the file name keeps its stage prefix
+(`harvest_`, `apply_`, `enrich_`, `audit_`), so `pipeline/**/harvest_*.py`
+still finds every harvester. The decision and its research are in
+`Execution/P15/T1207-pipeline-structure.md` (A-R1).
+
+- `pipeline/tasks/`: the task table `run_pipeline.py` runs, one module per
+  domain, in the `DOMAINS` order of `pipeline/tasks/__init__.py`.
+- Domain folders: `audit/` (audits and checks), `blog/` (the data blog),
+  `pois/` (POI harvests and clean-up), plus the older layer folders
+  (`beaches/`, `lakes/`, `trails/` and the rest).
+- The shared libraries (`pipeline_io`, `rating_config`, `pricing_config`,
+  `provenance`, `wire_contract`, `ai_gateway`, `prompt_registry`,
+  `env_local` and the other modules many scripts import) stay at the top of
+  `pipeline/` for now. A script in a domain folder puts `pipeline/` on
+  `sys.path` (`Path(__file__).resolve().parents[1]`) to import them, as the
+  layer folders already did.
+- The flat files that are left move folder by folder in later tasks, in the
+  order the register rows `T1207-*` give. A `harvest_*.py` that moves into a
+  new folder also adds that folder to `GROUPED_HARVEST_DIRS` in
+  `src/ingestion/core/registry.py`, and the ledger is regenerated.
+
 ## How a new script gets its tier
 
 Ask two questions in order.
@@ -85,7 +108,7 @@ concurrency lockfile (`logs/pipeline.lock`) and state file
 ## Scheduled
 
 Every Scheduled script, grouped by the run_pipeline.py task key that owns
-it. See `run_pipeline.py`'s own docstring and task table for what each key
+it. See `run_pipeline.py`'s own docstring and the task table in `pipeline/tasks/` (one module per domain, T1207) for what each key
 does and how often it runs; this list exists so a reader can find which
 script belongs to which task without grepping the 2,672-line file.
 
@@ -172,7 +195,7 @@ the index, not the whole story.
 | `apply_image_dims.py` | `python pipeline/apply_image_dims.py` | hero image files | `app_data/app_data.json` image dimensions | Re-run after a hero image harvest or swap so crop math stays correct. |
 | `apply_new_gems.py` | `python pipeline/apply_new_gems.py <spec.json>` | a spec file from `promote_place_candidates.py` | `app_data/app_data.json` (new destinations) | The last, deliberately manual step of the coverage loop; adding a destination is an editorial act, never scheduled. |
 | `apply_toll_layer.py` | `python pipeline/apply_toll_layer.py` | `toll_layer.py` rate tables | `app_data/app_data.json` driving_toll | Re-run after a toll/vignette rate table update. |
-| `audit_gaps.py` | `python pipeline/audit_gaps.py` | `app_data/app_data.json` | stdout report only | Read the printed counts to see where fields are missing across the catalogue. |
+| `audit_gaps.py` | `python pipeline/audit/audit_gaps.py` | `app_data/app_data.json` | stdout report only | Read the printed counts to see where fields are missing across the catalogue. |
 | `backfill_landmarks.py` | `python pipeline/backfill_landmarks.py apply` | Wikidata sitelink boxes | `app_data/app_data.json` items_full (adds missing famous sights) | Run after a catalogue expansion so world-famous but out-of-radius sights are not missing. |
 | `cycling/_truncate_lc.py` | `python pipeline/cycling/_truncate_lc.py --yes` | trailslab Postgres `cycle_landcover` table | truncates that table | A destructive DB maintenance script; run only when the landcover cache needs a full rebuild. Does nothing on import, and without `--yes` only prints what it would do (T260). |
 | `cycling/build_cycling.py` | `python pipeline/cycling/build_cycling.py` | everything the nine cycling stages read | `public/cycling/*` | Convenience wrapper for a full local rebuild; the same nine stages are individually Scheduled. Use for dev/test, not for the live schedule. |
@@ -209,7 +232,7 @@ the index, not the whole story.
 | `promote_place_candidates.py` | `python pipeline/promote_place_candidates.py` | `data/reports/coverage/*`, `coverage_gaps.json` | a new-gem spec file | Deliberately not scheduled, same reasoning as apply_new_gems.py: a human decides what enters the catalogue. |
 | `rating_shadow_report.py` | `python pipeline/rating_shadow_report.py` | `app_data/curated_appeal.json`, independent signals | `app_data/rating_review_queue.json` | A human review queue for curator/data disagreements; never auto-corrects. |
 | `search_index_layer.py` | `python pipeline/search_index_layer.py` | destination names | `continent-app/public/search_index.json` | Run whenever destination names change (a catalogue expansion, a rename); nothing schedules this, and a stale index means new places are unsearchable. |
-| `guided_search_layer.py` | `python pipeline/guided_search_layer.py` | the catalogue, the beach, lake, mountain and trail wires | `continent-app/public/search/guided.json` | The guided search (T439): named areas, distances to the nearest beach, trail, lake and peak, and vibe scores from category facts plus a local gte-small embedding. Laptop only (`pip install -r requirements-ml.txt`); embeddings are cached in `cache/guided/vibes.npz` (ignored, derived), so a rerun after an ingest embeds only new or changed places. Run after every catalogue ingest; a place missing here has no vibe in search. The run ends with the golden set (hits in the top 10). |
+| `guided_search_layer.py` | `python pipeline/guided_search_layer.py` | the catalogue, the beach, lake, mountain and trail wires | `continent-app/public/search/guided.json` | The guided search (T439): named areas, distances to the nearest beach, trail, lake and peak, and vibe scores from category facts plus a local gte-small embedding. Runs on the box with `CARTA_BOX_ML=all` in its own venv (`~/venv-guided`, CPU torch, T1161) or on the laptop; install the guided-search half of `requirements-ml.txt` as its header says (the file has two halves that cannot share one environment); embeddings are cached in `cache/guided/vibes.npz` (ignored, derived), so a rerun after an ingest embeds only new or changed places. Run after every catalogue ingest; a place missing here has no vibe in search. The run ends with the golden set (hits in the top 10). |
 | `trails/compose_citytrips.py` | see archive/docs-2026-11/TRAILS.md | | | |
 | `trails/crosscheck_portals.py` | see archive/docs-2026-11/TRAILS.md | | | |
 | `trails/elevation_validate.py` | see archive/docs-2026-11/TRAILS.md | | | |
@@ -217,7 +240,7 @@ the index, not the whole story.
 | `trails/quality_report.py` | see archive/docs-2026-11/TRAILS.md | | | |
 | `trails/repair.py` | see archive/docs-2026-11/TRAILS.md | | | |
 | `trails/smoke_test.py` | see archive/docs-2026-11/TRAILS.md | | | |
-| `verify_skip_flags.py` | `python pipeline/verify_skip_flags.py [--layer beaches\|lakes\|mountains\|trips]` | a copied small-country cache | pass/fail per layer | Run after touching any layer's skip-flag logic (`--no-images`, `--seed-only`, etc.) to confirm a skipped run never writes a thinner cache than it started with. |
+| `verify_skip_flags.py` | `python pipeline/audit/verify_skip_flags.py [--layer beaches\|lakes\|mountains\|trips]` | a copied small-country cache | pass/fail per layer | Run after touching any layer's skip-flag logic (`--no-images`, `--seed-only`, etc.) to confirm a skipped run never writes a thinner cache than it started with. |
 
 ## One-shot (pipeline/oneoff/)
 

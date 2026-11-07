@@ -11,6 +11,8 @@ It checks, in order:
      count that dropped more than max_drop_fraction against the run before.
      Needs CARTA_SUPABASE_URL and CARTA_SUPABASE_SERVICE_KEY; absent, this
      section reports "skip", never "ok".
+  4. The nightly database backup (T1211): status/backup.json no older than
+     max_age_hours (36). Off until "backup.enabled" is true in targets.json.
 
 Alert delivery: every failing check becomes one line in a payload
 {"text": ..., "failures": [...]}. If ALERT_WEBHOOK_URL is set the payload is POSTed
@@ -163,6 +165,40 @@ def check_pipeline(cfg, env):
         return [("pipeline", False, f"pipeline_runs answer not understood ({type(e).__name__})")]
 
 
+def evaluate_backup(doc, cfg, now=None):
+    """The nightly database backup (T1159, T1211): r2:carta/status/backup.json is
+    written by ops/backup_nightly.sh after each verified upload, so a stopped
+    backup shows as an old `at`, not as a missing file."""
+    now = now or datetime.now(timezone.utc)
+    max_h = float(cfg.get("max_age_hours", 36))
+    if not isinstance(doc, dict) or doc.get("status") != "ok" or not doc.get("at"):
+        return [("backup", False, "backup status not understood")]
+    try:
+        at = datetime.strptime(str(doc["at"]), "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
+    except ValueError:
+        try:
+            at = _parse_ts(str(doc["at"]))
+        except ValueError:
+            return [("backup", False, f"backup time {doc['at']!r} not understood")]
+    age = (now - at).total_seconds() / 3600
+    if age > max_h:
+        return [("backup", False, f"newest backup is {age:.0f} hours old (limit {max_h:.0f}): {doc.get('file')}")]
+    return [("backup", True, f"{doc.get('file')} {age:.0f} hours old")]
+
+
+def check_backup(cfg):
+    if not cfg or not cfg.get("enabled"):
+        return [("backup", None, "skipped: backup check not enabled in targets.json")]
+    status, body, err = fetch(cfg["url"])
+    if err or status != 200:
+        return [("backup", False, f"{cfg['url']} not readable ({err or status})")]
+    try:
+        doc = json.loads(body.decode("utf-8-sig"))
+    except Exception:
+        doc = None
+    return evaluate_backup(doc, cfg)
+
+
 def build_payload(results):
     failures = [{"check": n, "detail": d} for n, ok, d in results if ok is False]
     if failures:
@@ -186,7 +222,8 @@ def notify(payload, url):
 
 
 def run(cfg, env):
-    return check_http(cfg["http"], env) + check_wire(cfg["wire_layers"]) + check_pipeline(cfg["pipeline"], env)
+    return (check_http(cfg["http"], env) + check_wire(cfg["wire_layers"]) + check_pipeline(cfg["pipeline"], env)
+            + check_backup(cfg.get("backup")))
 
 
 def main(argv=None):

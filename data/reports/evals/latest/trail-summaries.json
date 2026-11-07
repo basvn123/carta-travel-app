@@ -1,0 +1,52 @@
+{
+ "schema": "carta-eval/1",
+ "eval": "trail-summaries",
+ "title": "Trail summaries fact check",
+ "kind": "text-check",
+ "at": "2026-11-07T12:21:42.365Z",
+ "git": "1a63861c64",
+ "status": "pass",
+ "gated": true,
+ "headline": {
+  "key": "pass_share",
+  "value": 1,
+  "label": "summaries that pass every check",
+  "higher_is_better": true
+ },
+ "metrics": {
+  "pass_share": 1,
+  "counts.rated_rows": 17619,
+  "counts.candidates": 2089,
+  "counts.written": 2089,
+  "counts.failed": 0,
+  "counts.no_detail_file": 0,
+  "chars.min": 113,
+  "chars.median": 237,
+  "chars.max": 320,
+  "clauses.lead": 2089,
+  "clauses.ground": 2087,
+  "clauses.sights": 2028,
+  "clauses.season": 2021,
+  "clauses.passes": 326,
+  "clauses.stage": 290
+ },
+ "gate": {
+  "ok": true,
+  "rule": "no top-band summary refused by summaries.check(), and at least one read",
+  "tolerance": 0,
+  "baseline": null,
+  "failures": []
+ },
+ "cases": {
+  "n": 2089,
+  "passed": 2089
+ },
+ "judge": null,
+ "inputs": {
+  "scope": "top band (v5 exceptional, excellent)",
+  "wire": "continent-app/public/trails",
+  "wire_generated_at": "2026-09-13T19:17:15+00:00",
+  "seconds": 2.8
+ },
+ "notes": []
+}

@@ -80,6 +80,14 @@ same as a missing variable to Python; it exports the file and then unsets
 every blank, so an unfilled line means "not configured", as it does on the
 laptop.
 
+Since T1107 (ROADMAP H9) three timers run the pipeline: weekly (Monday
+09:00), monthly (first Saturday 03:00) and quarterly (third Saturday of
+January, April, July and October 03:00), each passing its tier as
+`--max-cadence` through `CARTA_TIER`. `cron/schedule.py` is the table and its
+`--dry-run --check` proves every task is in a tier; `cax11/push_status.py`
+copies the state and freshness reports to `r2:carta/status/` after every run.
+The runbook `docs/runbooks/build-box.md` has the enable commands.
+
 The units cloud-init writes are T046's, kept on purpose: `carta-weekly.timer`
 fires every Monday at 09:00 Brussels time and ten minutes after every boot, so
 the schedule can be proven without waiting for a Monday, but the service does
@@ -294,10 +302,20 @@ more and compare by sha256. `out/MANIFEST.txt` says what passed. The loop
 stops early when less than 2.5 h of the ceiling is left, so the exports and
 the dump always fit: the dump is the one output that must not be lost.
 
-Why `--no-promote`: moving an approved trip to published is the human review
-step's decision. On an unattended worker it would change the row set the
-difficulty gate holds fixed, and it would write a publish decision nobody made
-into the dump. The laptop's `trails_rate` task still promotes.
+Why `--no-promote` by default: moving an approved trip to published is the
+human review step's decision. On an unattended worker it would change the row
+set the difficulty gate holds fixed, and it would write a publish decision
+nobody made into the dump. Since T1161 the orchestrator can pass the job
+argument `promote` (`CARTA_TRAILSLAB_PROMOTE=1` in the box secrets file): the
+worker lists the approved ids, exports with promotion, and
+`trailslab_worker.py rows-check` replaces the fixed row set, so no live row may
+go and every new one must be an approved id. It stays off until the owner
+switches it on after one worker run with `--no-install` has passed (register
+row T1161-e). The dual-key lab dump the job restores is pushed with
+`cax41/trailslab_dump.sh push` (T1161-d). Until then the laptop's
+`trails_rate` task is the one that promotes. The other laptop-only steps (Ask
+index, guided search, stays scrape) and their box switches are in
+`docs/runbooks/build-box.md`, "No laptop-only steps".
 
 What the orchestrator does (`trailslab_worker.py run`): it uploads what the
 worker's LFS-free clone cannot have (`cache/nuts3_2021.geojson`, which the
@@ -348,6 +366,22 @@ argument spawn.sh passes:
   encrypted, and anyone holding an R2 token could read it.
 The Supabase dump is not touched by either: it holds personal data and stays
 encrypted to the owner key only, from the box's run_pipeline.sh.
+
+### The box lab instead of the worker (T1182, T1201)
+
+The lab can also live on this box, on a Hetzner Volume, with its curator
+review app (`tools/trailslab/box/`, procedure in its README, "Enable it on
+the box"). One switch in `~/.config/carta/env` turns that on:
+`CARTA_TRAILSLAB_HOME=box`, with the `TRAILSLAB_*` lines that
+`tools/trailslab/box/lab.env.example` lists (`lab.sh env` prints them with a
+fresh password). In box mode the `trails_*` tasks of `run_pipeline.py` run
+here against the box lab, and the `trailslab_worker` task stands down, since
+a worker would restore an R2 dump that misses the box lab's reviews (row
+T1182-c). The box lab is then the only live copy, and `archive/db/` expires
+after 30 days, so `carta-trailslab-push.timer` (installed by
+`cron/install.sh`) runs `cax11/trailslab_push_due.sh` every Tuesday 02:30:
+`lab.sh push` when the last push is `CARTA_TRAILSLAB_PUSH_DAYS` (blank = 21)
+days old or more, a logged skip outside box mode.
 
 ## What comes next
 

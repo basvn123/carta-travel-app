@@ -161,15 +161,18 @@ RUNS: dict[str, Run] = {
     "pipeline/harvest_pageviews.py": Run("monthly", "poi_significance", "soft",
                                          "the fame task imports it for the destination half"),
     "pipeline/harvest_parking.py": Run("quarterly", "parking", "soft"),
+    "pipeline/harvest_access.py": Run("quarterly", "access_facts", "soft"),
+    "pipeline/harvest_seasons.py": Run("quarterly", "seasons", "soft"),
     "pipeline/harvest_place_signals.py": Run("quarterly", "coverage", "soft"),
-    "pipeline/harvest_poi_wikidata.py": Run("monthly", "poi_significance", "soft"),
-    "pipeline/harvest_pois_overture.py": Run("backfill", "overture", "hard"),
-    "pipeline/harvest_pois_wikidata_images.py": Run("backfill", "poi_images_wikidata", "hard"),
+    "pipeline/pois/harvest_poi_wikidata.py": Run("monthly", "poi_significance", "soft"),
+    "pipeline/pois/harvest_pois_overture.py": Run("backfill", "overture", "hard"),
+    "pipeline/pois/harvest_pois_wikidata_images.py": Run("backfill", "poi_images_wikidata", "hard"),
     "pipeline/harvest_protected_areas_osm.py": Run("backfill", "nature", "hard"),
     "pipeline/harvest_tourism_density.py": Run("quarterly", "crowding", "soft"),
+    "pipeline/harvest_uk_crowds.py": Run("quarterly", "crowding_uk", "soft"),
     "pipeline/harvest_emergency.py": Run("quarterly", "dest_overlays", "soft"),
     "pipeline/harvest_swim_bans.py": Run("quarterly", "dest_overlays", "soft"),
-    "pipeline/harvest_poi_fees.py": Run("quarterly", "poi_fees", "soft"),
+    "pipeline/pois/harvest_poi_fees.py": Run("quarterly", "poi_fees", "soft"),
     "pipeline/harvest_sea_temp.py": Run("quarterly", "sea_temp", "soft"),
     "pipeline/harvest_unesco_whc.py": Run("quarterly", "unesco", "soft"),
     "pipeline/harvest_urban_fabric.py": Run("manual", "", "manual"),
@@ -270,23 +273,40 @@ def load_all() -> dict[str, type]:
 # --------------------------------------------------------------------------
 
 STAY_PREFIXES = ("harvest_", "scrape_", "price_", "discover_", "calibrate_")
+# The domain folders ROADMAP A2 (T1207) grouped top-level harvesters into: their
+# harvest_*.py files stay on the ledger exactly as when they sat in pipeline/.
+GROUPED_HARVEST_DIRS = ("pois",)
 
 
 def harvester_scripts(root: Path = ROOT) -> list[str]:
-    """Every pipeline/harvest_*.py in the tree, plus the stay layer's fetchers
+    """Every pipeline/harvest_*.py in the tree (and in GROUPED_HARVEST_DIRS), plus the stay layer's fetchers
     (pipeline/stays/{harvest,scrape,price,discover,calibrate}_*.py), repo-relative, posix."""
     top = list((root / "pipeline").glob("harvest_*.py"))
+    for d in GROUPED_HARVEST_DIRS:
+        top += list((root / "pipeline" / d).glob("harvest_*.py"))
     stays = [p for p in (root / "pipeline" / "stays").glob("*.py")
              if p.name.startswith(STAY_PREFIXES)]
     return sorted(p.relative_to(root).as_posix() for p in top + stays)
 
 
+def _task_source(root):
+    """pipeline/tasks/source.py loaded by path: the task table is split over
+    pipeline/tasks/<domain>.py since T1207 (ROADMAP A2)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "carta_task_source", Path(root) / "pipeline" / "tasks" / "source.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def pipeline_tasks(root: Path = ROOT) -> dict[str, dict]:
     """run_pipeline.py's task table, read by regex (key, cadence, soft), so
     the RUNS copy of a cadence is checked against the driver that owns it.
-    run_pipeline.py is never imported: importing it runs environment setup."""
+    The table is pipeline/tasks/<domain>.py since T1207; it is never imported:
+    importing run_pipeline.py runs environment setup."""
     import re
-    src = (root / "run_pipeline.py").read_text(encoding="utf-8")
+    src = _task_source(root).task_text(root)
     tasks = {}
     for m in re.finditer(r'\{\s*\n\s*"key":\s*"([^"]+)"', src):
         depth, start = 0, m.start()
@@ -1467,7 +1487,7 @@ SOURCES = (
     Source(
         key="wikimedia_commons",
         section="content_layers",
-        scripts=('pipeline/harvest_pois_wikidata_images.py',),
+        scripts=('pipeline/pois/harvest_pois_wikidata_images.py',),
         name="Wikimedia Commons (destination hero images, POI thumbnails via `harvest_pois_wikidata_images.py`)",
         takes="Photo files hotlinked as thumbnails",
         licence="Per file: CC BY-SA, CC BY or public domain",
@@ -1489,8 +1509,8 @@ SOURCES = (
     Source(
         key="wikidata_sitelink_counts_live",
         section="content_layers",
-        scripts=('pipeline/backfill_landmarks.py', 'pipeline/harvest_poi_wikidata.py', 'pipeline/harvest_pois_wikidata_images.py', 'pipeline/score_significance.py', 'pipeline/trails/popularity.py'),
-        name="Wikidata (`pipeline/harvest_pois_wikidata_images.py`, `pipeline/harvest_poi_wikidata.py` QID/sitelink/P1435/P1174 per POI, `pipeline/backfill_landmarks.py` box harvest reused by `pipeline/score_significance.py` as per-POI sitelink evidence for the absolute significance (`it.sig`, 2026-09), `pipeline/trails/popularity.py` sitelink counts, live `cityResearch.js`)",
+        scripts=('pipeline/backfill_landmarks.py', 'pipeline/pois/harvest_poi_wikidata.py', 'pipeline/pois/harvest_pois_wikidata_images.py', 'pipeline/score_significance.py', 'pipeline/trails/popularity.py'),
+        name="Wikidata (`pipeline/pois/harvest_pois_wikidata_images.py`, `pipeline/pois/harvest_poi_wikidata.py` QID/sitelink/P1435/P1174 per POI, `pipeline/backfill_landmarks.py` box harvest reused by `pipeline/score_significance.py` as per-POI sitelink evidence for the absolute significance (`it.sig`, 2026-09), `pipeline/trails/popularity.py` sitelink counts, live `cityResearch.js`)",
         takes="Entity coordinates, labels, P18 image pointers, descriptions, sitelink counts, heritage designations, visitor counts",
         licence="CC0",
         attribution="No",
@@ -1522,8 +1542,8 @@ SOURCES = (
     Source(
         key="overture_maps_places",
         section="content_layers",
-        scripts=('pipeline/harvest_pois_overture.py',),
-        name="Overture Maps Places (`pipeline/harvest_pois_overture.py`)",
+        scripts=('pipeline/pois/harvest_pois_overture.py',),
+        name="Overture Maps Places (`pipeline/pois/harvest_pois_overture.py`)",
         takes="Bulk sightseeing POIs for the whole catalogue",
         licence="CDLA-Permissive 2.0",
         attribution="Not required, credit recommended",
@@ -1566,8 +1586,8 @@ SOURCES = (
     Source(
         key="openstreetmap_charge_tag",
         section="content_layers",
-        scripts=('pipeline/harvest_poi_fees.py',),
-        name="OpenStreetMap `charge` and `fee` tags via Overpass (`pipeline/harvest_poi_fees.py`)",
+        scripts=('pipeline/pois/harvest_poi_fees.py',),
+        name="OpenStreetMap `charge` and `fee` tags via Overpass (`pipeline/pois/harvest_poi_fees.py`)",
         takes="POI entry fee flags and charge records, read by the dossier build; no price is shown",
         licence="ODbL 1.0",
         attribution="Yes: © OpenStreetMap contributors",
@@ -1583,7 +1603,7 @@ SOURCES = (
         licence="Public domain (NASA PO.DAAC data policy: no restrictions on use or redistribution)",
         attribution="Requested, not required: credit NASA JPL MUR SST",
         share_alike="No",
-        attributed="Not yet credited in the app; add a line to the Data sources screen (register row T1084-a)",
+        attributed="Account > Data sources and Imprint > Data credits (NASA JPL MUR SST entry, T1091)",
     ),
     Source(
         key="openstreetmap_via_overpass_harvest_parking",
@@ -1595,6 +1615,28 @@ SOURCES = (
         attribution="Yes: © OpenStreetMap contributors",
         share_alike="Yes: the destinfo parking slice is an OSM-derived database",
         attributed="Explore panel's parking section prints the OSM credit; Account panel's Data sources screen (OSM entry covers it)",
+    ),
+    Source(
+        key="openstreetmap_via_overpass_harvest_access",
+        section="content_layers",
+        scripts=('pipeline/harvest_access.py',),
+        name="OpenStreetMap via Overpass (`pipeline/harvest_access.py`)",
+        takes="wheelchair and toilets:wheelchair tags at key places and stations near each destination (T1203, ROADMAP D21); shown only where mapped, as \"Mapped as\"",
+        licence="ODbL 1.0",
+        attribution="Yes: © OpenStreetMap contributors",
+        share_alike="Yes: the accessibility facts are an OSM-derived database",
+        attributed="The place page's accessibility block names OpenStreetMap; Account panel's Data sources screen (OSM entry covers it)",
+    ),
+    Source(
+        key="openstreetmap_via_overpass_harvest_seasons",
+        section="content_layers",
+        scripts=('pipeline/harvest_seasons.py',),
+        name="OpenStreetMap via Overpass (`pipeline/harvest_seasons.py`)",
+        takes="opening_hours and seasonal tags of places, huts, lifts and ferries near each destination (T1202, ROADMAP D18): the open months",
+        licence="ODbL 1.0",
+        attribution="Yes: © OpenStreetMap contributors",
+        share_alike="Yes: the open months are an OSM-derived database",
+        attributed="The month strip's closed-months note names OpenStreetMap; Account panel's Data sources screen (OSM entry covers it)",
     ),
     Source(
         key="openstreetmap_via_geofabrik_country",
@@ -1862,6 +1904,7 @@ SOURCES = (
     ),
     Source(
         key="open_meteo_forecast_api",
+        retired=True,
         section="content_layers",
         scripts=('continent-app/src/lib/weather.js',),
         name="Open-Meteo forecast API (live, `continent-app/src/lib/weather.js`)",
@@ -1869,7 +1912,29 @@ SOURCES = (
         licence="Free tier for non-commercial use, data CC BY 4.0; commercial use needs the paid API, verify Carta's affiliate status against their definition",
         attribution="Yes, link to Open-Meteo",
         share_alike="No",
-        attributed="Explore panel's weather section prints \"Live forecast by Open-Meteo.com\"; add to Data sources screen. RISK: commercial scope. This is now the LAST non-commercial source on a shipped surface, the WorldClim pair having been replaced on 2026-08-30; resolve with an API subscription if Carta monetises",
+        attributed="RETIRED: the forecast moved to MET Norway (T483, row below); the app no longer calls Open-Meteo, so no credit is owed (audit T1091)",
+    ),
+    Source(
+        key="met_norway_locationforecast",
+        section="content_layers",
+        scripts=('continent-app/src/lib/metForecast.js',),
+        name="MET Norway Locationforecast 2.0 (live via the forecast proxy, `continent-app/src/lib/metForecast.js`)",
+        takes="Up to 10-day forecast per destination cell, reduced to daily rows",
+        licence="CC BY 4.0 and NLOD; User-Agent with a contact required (api.met.no terms)",
+        attribution="Yes, credit MET Norway (Norwegian Meteorological Institute)",
+        share_alike="No",
+        attributed="Account > Data sources and Imprint > Data credits (MET Norway entry); audit T1091 added the row",
+    ),
+    Source(
+        key="mapterhorn_terrain_tiles",
+        section="content_layers",
+        scripts=('continent-app/src/lib/terrainSource.js',),
+        name="Mapterhorn terrain tiles (client-side, `continent-app/src/lib/terrainSource.js`)",
+        takes="Elevation tiles for the 3D terrain and relief shading",
+        licence="Open elevation sources, credited at mapterhorn.com/attribution",
+        attribution="Yes, credit Mapterhorn and its elevation sources",
+        share_alike="No",
+        attributed="Account > Data sources and Imprint > Data credits (Mapterhorn entry); audit T1091 added the row",
     ),
     Source(
         key="eurostat_tour_occ_nin3",
@@ -1881,6 +1946,17 @@ SOURCES = (
         attribution="Yes, both",
         share_alike="No",
         attributed="Crowding tooltip cites Eurostat with year; the EuroGeographics boundary notice is in the Account panel's Data sources screen",
+    ),
+    Source(
+        key="uk_crowds_ons",
+        section="content_layers",
+        scripts=('pipeline/harvest_uk_crowds.py',),
+        name="ONS / VisitBritain monthly nights by ITL 1 region plus ONS ITL 1 boundaries (`pipeline/harvest_uk_crowds.py`, T1098)",
+        takes="Monthly crowding shape for GB places (and BA, FO, MD, XK from national offices where open)",
+        licence="Open Government Licence v3.0 (ONS, VisitBritain); ONS boundaries carry the OS and ONS copyright notice",
+        attribution="Yes, both",
+        share_alike="No",
+        attributed="Not yet: nothing ships until the owner's first run (T1098 owner step); the crowding tooltip credit is added with that run",
     ),
     Source(
         key="eurostat_avia_par",
@@ -2801,6 +2877,8 @@ STORABLE: dict[str, str] = {
     'overture_maps_places': 'Yes',
     'openstreetmap_via_overpass': 'Yes, with credit and share-alike',
     'openstreetmap_via_overpass_harvest_parking': 'Yes, with credit and share-alike',
+    'openstreetmap_via_overpass_harvest_access': 'Yes, with credit and share-alike',
+    'openstreetmap_via_overpass_harvest_seasons': 'Yes, with credit and share-alike',
     'openstreetmap_via_geofabrik_country': 'Yes, with credit and share-alike',
     'openstreetmap_via_geofabrik_country_enrich_beaches': 'Yes, with credit and share-alike',
     'wikidata_beaches': 'Yes',
@@ -2826,7 +2904,10 @@ STORABLE: dict[str, str] = {
     'wikipedia_mountain_articles': 'Yes, with credit and share-alike',
     'wikidata_recurring_events': 'Yes',
     'open_meteo_forecast_api': 'No',
+    'met_norway_locationforecast': 'No',
+    'mapterhorn_terrain_tiles': 'No',
     'eurostat_tour_occ_nin3': 'Yes, with credit',
+    'uk_crowds_ons': 'Yes, with credit',
     'eurostat_avia_par': 'Yes, with credit',
     'ourairports': 'Yes',
     'google_flights_fli': 'Verify',
@@ -2956,8 +3037,11 @@ APP_CREDITS: dict[str, tuple] = {
     "Digitraffic": ("traficom_finap_plus_digitraffic",),
     "opentransportdata.swiss": ("opentransportdata_swiss",),
     "transport.data.gouv.fr": ("transport_data_gouv_fr",),
-    "Open-Meteo": ("open_meteo_forecast_api",),
+    "MET Norway": ("met_norway_locationforecast",),
     "Exchange Rate API": ("exchangerate_api_open_endpoint",),
+    "Mapterhorn": ("mapterhorn_terrain_tiles",),
+    "Xotelo": ("xotelo_tripadvisor_rates",),
+    "NASA JPL MUR SST": ("nasa_jpl_mur_sst",),
 }
 
 WIRE_REVIEW = (
@@ -3016,3 +3100,128 @@ WIRE_REVIEW = (
         travels="obligations ended with publication (section 8)",
     ),
 )
+
+
+# Credit audit (T1091). A ledger row whose `attribution` column asks for a
+# credit must be credited in the app. APP_CREDITS names the rows that have an
+# entry of their own; the two tables below account for every other such row,
+# so none can be silently uncredited:
+#   CREDIT_COVERED_BY  row key -> the attribution.js entry whose wording covers it
+#   CREDIT_NOT_SHOWN   row key -> why no traveller sees this data yet (raw ETL,
+#                      staging, a validation signal, a credit given inline)
+# `uncredited_rows()` is the rule; tests/test_data_licences.py enforces it.
+CREDIT_COVERED_BY: dict[str, str] = {
+    "nordic_ferry_feeds_via": "Entur",
+    "eurostat_tourist_nights_per": "Eurostat",
+    "eurostat_gisco_lau_2024": "EuroGeographics",
+    "eurostat_food_price_tables": "Eurostat",
+    "unesco_world_heritage_list": "UNESCO World Heritage Centre",
+    "copernicus_glo_30_dem_terrain": "Copernicus GLO-30",
+    "copernicus_glo_30_dem_elevation": "Copernicus GLO-30",
+    "wikipedia_lead_images_via": "Wikipedia",
+    "wikimedia_commons_photographs": "Wikimedia Commons",
+    "wikimedia_commons_per_file": "Wikimedia Commons",
+    "wikimedia_commons_beach_photographs": "Wikimedia Commons",
+    "wikimedia_commons_lake_photographs": "Wikimedia Commons",
+    "wikimedia_commons_mountain_photographs": "Wikimedia Commons",
+    "wikimedia_commons_trail_photographs": "Wikimedia Commons",
+    "wikimedia_commons_and_geograph": "Wikimedia Commons",
+    "wikivoyage_listings": "Wikivoyage",
+    "wikivoyage_go_next_graph": "Wikivoyage",
+    "wikivoyage_itinerary_articles": "Wikivoyage",
+    "wikivoyage_get_in_sections": "Wikivoyage",
+    "wikivoyage_article_status": "Wikivoyage",
+    "eea_wise_bathing_water_enrich_beaches": "European Environment Agency",
+    "eea_wise_bathing_water_eea_spine": "European Environment Agency",
+    "eea_wise_bathing_water_enrich_lakes": "European Environment Agency",
+    "eea_wise_bathing_water_harvest_bathing_water": "European Environment Agency",
+    "eea_coastline_for_analysis": "European Environment Agency",
+    "eea_coastline_for_analysis_regions": "European Environment Agency",
+    "eea_coastline_for_analysis_cycling": "European Environment Agency",
+    "eea_biogeographical_regions": "European Environment Agency",
+    "eea_wise_wfd_river": "European Environment Agency",
+    "natura_2000_and_the": "European Environment Agency, protected sites",
+    "eea_emerald_network": "European Environment Agency, protected sites",
+    "osm_protected_areas": "OpenStreetMap",
+    "openstreetmap_via_overpass": "OpenStreetMap",
+    "wikidata_emergency_numbers": "OpenStreetMap",
+    "openstreetmap_swimming_no": "OpenStreetMap",
+    "openstreetmap_charge_tag": "OpenStreetMap",
+    "openstreetmap_via_overpass_harvest_parking": "OpenStreetMap",
+    "openstreetmap_via_overpass_harvest_access": "OpenStreetMap",
+    "openstreetmap_via_overpass_harvest_seasons": "OpenStreetMap",
+    "openstreetmap_via_geofabrik_country_enrich_beaches": "OpenStreetMap",
+    "openstreetmap_named_water_bodies": "OpenStreetMap",
+    "openstreetmap_via_overpass_enrich_lakes": "OpenStreetMap",
+    "openstreetmap_via_overpass_enrich_peaks": "OpenStreetMap",
+    "openstreetmap_named_landforms_via": "OpenStreetMap",
+    "openstreetmap_route_relations_via": "OpenStreetMap",
+    "openstreetmap_scenic_features_via": "OpenStreetMap",
+    "openstreetmap_via_the_existing": "OpenStreetMap",
+    "openstreetmap_relations_via_geofabrik": "OpenStreetMap",
+    "openstreetmap_node_network": "OpenStreetMap",
+    "openstreetmap_services": "OpenStreetMap",
+    "openstreetmap_land_cover": "OpenStreetMap",
+    "self_hosted_valhalla_over": "OpenStreetMap",
+    "osrm_on_fossgis": "OpenStreetMap",
+    "nominatim": "OpenStreetMap",
+    "overpass_api": "OpenStreetMap",
+    "waymarked_trails_route_list": "OpenStreetMap",
+}
+
+CREDIT_NOT_SHOWN: dict[str, str] = {
+    "uk_crowds_ons": "nothing ships until the owner's first T1098 run; credit it in the crowding tooltip with that run (register row T1098)",
+    "sncf_gtfs_rt_plus": "raw ETL; no traveller surface reads it. Credit it the day one does",
+    "french_nap_cross_border": "raw ETL; no traveller surface reads it",
+    "era_registers": "raw ETL; no traveller surface reads it",
+    "opensky_network": "raw ETL; no traveller surface reads it (commercial-use question open)",
+    "eurocontrol_statfor": "raw ETL; no traveller surface reads it",
+    "open_food_facts_open_prices": "no Open Food Facts figure is in the app today (checked 2026-11-05); credit it before one ships (register row T536)",
+    "bayerische_vermessungsverwaltung_wanderwege": "validation signal only; no BVV geometry or figure is published",
+    "environment_agency_and_natural": "nothing from it ships yet (SEPA and DAERA are not wired)",
+    "google_flights_fli": "credited inline on every flight price (\"Google Flights, checked\"), not a dataset credit",
+    "eurostat_urban_audit_plus": "staging only; not shown to travellers",
+    "statistics_norway_statbank_table": "staging only; not shown to travellers",
+    "statistik_austria_ogd": "staging only; not shown to travellers",
+    "wikimedia_commons_stop_images": "staging only; per-file credit ships with any published citytrip surface",
+    "base_nationale_des_amenagements": "excluded from the agreement measurement; nothing from it is shown",
+    "toerisme_vlaanderen_cycling_node": "excluded from the agreement measurement; nothing from it is shown",
+}
+
+
+def credit_required(row: "Source") -> bool:
+    """True when the row's attribution column asks for a credit and the row
+    is live. Retired rows are history; their credit is owed only while the
+    data still ships, which APP_CREDITS covers when it does."""
+    if row.retired:
+        return False
+    return row.attribution.strip().lower().startswith(("yes", "requested", "credit", "osm credit"))
+
+
+def uncredited_rows() -> list[str]:
+    """Problems with the credit audit (T1091). Empty means every live
+    credit-required row has an app entry, is covered by one, or is
+    recorded as not shown."""
+    problems = []
+    direct = {k for keys in APP_CREDITS.values() for k in keys}
+    by_key = {s.key: s for s in SOURCES}
+    for key in direct:
+        if key not in by_key:
+            problems.append(f"APP_CREDITS names {key!r}, which is not a ledger row")
+    for key, entry in CREDIT_COVERED_BY.items():
+        if key not in by_key:
+            problems.append(f"CREDIT_COVERED_BY names {key!r}, which is not a ledger row")
+        if entry not in APP_CREDITS:
+            problems.append(f"CREDIT_COVERED_BY maps {key!r} to {entry!r}, which is not an app entry")
+    for key in CREDIT_NOT_SHOWN:
+        if key not in by_key:
+            problems.append(f"CREDIT_NOT_SHOWN names {key!r}, which is not a ledger row")
+    for s in SOURCES:
+        if not credit_required(s):
+            continue
+        places = [s.key in direct, s.key in CREDIT_COVERED_BY, s.key in CREDIT_NOT_SHOWN]
+        if sum(places) == 0:
+            problems.append(f"{s.key!r} requires a credit but has no app entry, no covering entry and no not-shown reason")
+        if sum(places) > 1:
+            problems.append(f"{s.key!r} is accounted for in more than one credit table")
+    return problems

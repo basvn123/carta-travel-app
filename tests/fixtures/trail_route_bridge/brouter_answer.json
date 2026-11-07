@@ -1,0 +1,12 @@
+{"type": "FeatureCollection",
+ "features": [{"type": "Feature",
+  "properties": {"creator": "BRouter-1.7.10", "name": "brouter_hiking-mountain_0",
+   "track-length": "640", "filtered ascend": "12", "plain-ascend": "15",
+   "messages": [
+    ["Longitude", "Latitude", "Elevation", "Distance", "CostPerKm", "ElevCost", "TurnCost", "NodeCost", "InitialCost", "WayTags", "NodeTags", "Time", "Energy"],
+    ["-9601000", "51960000", "40", "420", "1000", "0", "0", "0", "0", "highway=path surface=ground", "", "300", "0"],
+    ["-9596000", "51960000", "52", "160", "1000", "0", "0", "0", "0", "highway=track tracktype=grade2", "", "120", "0"],
+    ["-9594000", "51960000", "52", "60", "1300", "0", "0", "0", "0", "highway=tertiary surface=asphalt", "", "40", "0"]
+   ]},
+  "geometry": {"type": "LineString", "coordinates": [
+    [-9.601, 51.96, 40.0], [-9.598, 51.9605, 45.0], [-9.596, 51.96, 52.0], [-9.594, 51.96, 52.0], [-9.5917, 51.96, 50.0]]}}]}

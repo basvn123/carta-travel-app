@@ -25,6 +25,7 @@ function initialUrlAuthType() {
  * present we assume there IS a password, because hiding the current-password
  * field on a guess would remove the check this whole flow exists to add.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function hasPasswordIdentity(user) {
   if (!user) return false;
   const ids = user.identities;
@@ -95,6 +96,26 @@ export function AuthProvider({ children }) {
       if (sub) sub.unsubscribe();
     };
   }, []);
+
+  // T1104 (ROADMAP I5): kept trips, bookmarked Carta trips, trips in
+  // progress and the device trip follow the signed-in account
+  // (auth/accountSync.js, migration 065). Loaded only once somebody is
+  // signed in, so a guest's first paint carries none of it.
+  const syncUserId = session?.user?.id || null;
+  useEffect(() => {
+    if (!syncUserId) return undefined;
+    let live = true;
+    let unbind = null;
+    Promise.all([import('./accountSync.js'), import('./accountThingsCloud.js')])
+      .then(([sync, cloudMod]) => {
+        if (live) unbind = sync.bindAccountSync(syncUserId, cloudMod.accountThingsCloud);
+      })
+      .catch(() => { /* the chunk failed to load: the things stay on the device */ });
+    return () => {
+      live = false;
+      if (unbind) unbind();
+    };
+  }, [syncUserId]);
 
   const signUp = useCallback(async (email, password, fullName) => {
     const supabase = await getSupabase();
@@ -284,6 +305,16 @@ export function AuthProvider({ children }) {
     if (error) throw error;
     if (data?.error) throw new Error(data.error);
     const u = session?.user || null;
+    const account = {
+      email: u?.email || null,
+      name: u?.user_metadata?.full_name || null,
+      createdAt: u?.created_at || null,
+      signInMethods: (u?.identities || []).map((i) => i.provider),
+    };
+    // T1118: schema 4 (069) already carries askChats, accountThings and every
+    // other table with the traveller's rows, so the two reads below are only
+    // for a project that has not pasted 069 yet.
+    if ((Number(data?.schema) || 0) >= 4) return { ...data, account };
     // T575: Ask Carta's chats in the account, read under their own RLS (054).
     // A project without the table has none to give; any other failure stops
     // the export rather than hand over a file that leaves something out.
@@ -296,15 +327,22 @@ export function AuthProvider({ children }) {
         chatId: r.chat_id, title: r.title, turns: r.turns, updatedAt: r.updated_at, deletedAt: r.deleted_at,
       }));
     }
+    // T1104: the synced things (065), read the same way. Tombstones are
+    // left out: they hold nothing but the id and the time.
+    let accountThings = [];
+    if (u?.id) {
+      const { data: rows, error: thingsError } = await supabase
+        .from('account_things').select('kind, item_id, body, updated_at, deleted_at').eq('user_id', u.id);
+      if (thingsError && !['PGRST205', '42P01'].includes(thingsError.code)) throw thingsError;
+      accountThings = (rows || []).filter((r) => !r.deleted_at).map((r) => ({
+        kind: r.kind, id: r.item_id, thing: r.body, updatedAt: r.updated_at,
+      }));
+    }
     return {
       ...data,
       askChats,
-      account: {
-        email: u?.email || null,
-        name: u?.user_metadata?.full_name || null,
-        createdAt: u?.created_at || null,
-        signInMethods: (u?.identities || []).map((i) => i.provider),
-      },
+      accountThings,
+      account,
     };
   }, [session]);
 
@@ -337,6 +375,7 @@ export function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');

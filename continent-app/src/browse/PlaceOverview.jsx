@@ -10,6 +10,7 @@ import { useSettings } from '../components/SettingsLine.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { ratingWords } from '../lib/rating.js';
 import { MatchLine } from './WhyItMatches.jsx';
+import { WhyChips } from './WhyChips.jsx';
 import '../styles/79-place-card.css';
 
 /**
@@ -78,12 +79,13 @@ export const PlaceOverview = React.memo(function PlaceOverview({
           e.preventDefault();
           onOpen?.(e);
         }}
-        aria-label={t('explore.openDest', { city: p.city })}
+        // Named by the row itself, city first (T1128, WCAG 2.5.3: a short
+        // "Open {city}" left out the price and month the row shows).
         aria-current={selected ? 'true' : undefined}
         {...hitProps}
       >
         <span className="xrow-media">
-          <HeroImage url={p.image} city={p.city} iso2={p.iso2} className="xrow-img"
+          <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} className="xrow-img"
             maxWidth={ROW_MAX} sizes={ROW_SIZES} ratio={[1, 1]} />
         </span>
         <span className="xrow-body">
@@ -138,12 +140,13 @@ function PlaceCard({
         className="xrow-hit xpc-hit"
         href={`#dest=${encodeURIComponent(p.id)}`}
         onClick={(e) => openHere(e, onOpen)}
-        aria-label={t('explore.openDest', { city: p.city })}
+        // Named by the row itself, city first (T1128, WCAG 2.5.3: a short
+        // "Open {city}" left out the price and month the row shows).
         aria-current={selected ? 'true' : undefined}
         {...hitProps}
       >
         <span className="xpc-media">
-          <HeroImage url={p.image} city={p.city} iso2={p.iso2} className="xpc-img"
+          <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} className="xpc-img"
             maxWidth={CARD_MAX} sizes={CARD_SIZES} ratio={[3, 2]} />
           {(rating || p.rating)?.score != null && (
             <span className="xpc-score"><ScoreChip rating={rating || p.rating} size="sm" /></span>
@@ -168,6 +171,8 @@ function PlaceCard({
             )}
             <MatchLine place={p} />
           </span>
+          {/* T1208 (G9): why it fits this traveller, only with evidence on both sides. */}
+          <WhyChips place={p} className="xpc-whychips" />
           {reason && <span className="xrow-why xpc-why">{reason}</span>}
           {dates && (
             <span className="xpc-dates">

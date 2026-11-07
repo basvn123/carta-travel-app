@@ -21,7 +21,8 @@ layer (T551) embeds them as the `lexicon` source, so a word close to one of
 them ("chilled") still finds its facet through the vectors.
 
 Optional, free and local: `--ollama` asks a local Ollama model (default
-qwen3:4b on http://localhost:11434) for more candidates per vibe and
+qwen3:4b on the Ollama server set in pipeline/ai_gateway.py, feature
+"lexicon") for more candidates per vibe and
 language and writes them to pipeline/ask_lexicon_candidates.json for a
 person to review. Candidates never reach lexicon.json on their own; a
 reviewed word is added to the tables here. No paid API is called.
@@ -34,7 +35,6 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -321,12 +321,13 @@ EXONYMS: dict[str, list[tuple[str, str]]] = {
     "gem:canterbury": [("fr", "cantorbery")],
 }
 
-OLLAMA_PROMPT = (
-    "You list words travellers type. Language: {lang}. Topic: {label}.\n"
-    "Give 15 short everyday words or 2 to 3 word phrases a traveller would type "
-    "in a travel search box meaning '{label}', in {lang} only, lower case, no "
-    "explanations. Reply as a JSON array of strings."
-)
+def ollama_prompt(lang, label):
+    """The word-list prompt: the registry's "lexicon" prompt (prompts/lexicon, T1140)."""
+    try:
+        from pipeline.prompt_registry import prompt
+    except ImportError:  # run as a script from pipeline/
+        from prompt_registry import prompt
+    return prompt("lexicon").text("user", lang=lang, label=label)
 
 
 def fold(s: str) -> str:
@@ -391,17 +392,23 @@ def build(app: Path) -> dict:
 
 
 def ollama_candidates(app: Path, model: str, host: str) -> dict:
+    # Through the pipeline's model gateway (T1137, feature "lexicon"): Ollama
+    # at --host by default; AI_LEXICON_PROVIDER and AI_LEXICON_MODELS switch it.
+    try:
+        from pipeline.ai_gateway import Gateway
+    except ImportError:  # run as a script from pipeline/
+        from ai_gateway import Gateway
+    import os
+    gw = Gateway("lexicon", models=[model] if model else None,
+                 env={**({"AI_LEXICON_BASE_URL": host} if host else {}), **os.environ})
     g = json.loads((app / "public" / "search" / "guided.json").read_text(encoding="utf-8"))
     out: dict[str, dict[str, list[str]]] = {}
     for v in g["vibes"]:
         for lang in LANGS:
             label = v["label"].get(lang) or v["label"]["en"]
-            body = json.dumps({"model": model, "prompt": OLLAMA_PROMPT.format(lang=lang, label=label),
-                               "stream": False, "format": "json", "options": {"temperature": 0.3}}).encode()
-            req = urllib.request.Request(f"{host}/api/generate", data=body, headers={"Content-Type": "application/json"})
             try:
-                with urllib.request.urlopen(req, timeout=300) as r:
-                    text = json.loads(r.read())["response"]
+                text = gw.call(ollama_prompt(lang, label), json=True, temperature=0.3,
+                               screen=[label]).text
                 words = json.loads(text)
                 if isinstance(words, dict):
                     words = next((x for x in words.values() if isinstance(x, list)), [])
@@ -420,7 +427,7 @@ def main() -> None:
     ap.add_argument("--app", type=Path, default=ROOT / "continent-app")
     ap.add_argument("--ollama", action="store_true", help="also ask a local Ollama model for candidates (review only)")
     ap.add_argument("--model", default="qwen3:4b")
-    ap.add_argument("--host", default="http://localhost:11434")
+    ap.add_argument("--host", default=None, help="Ollama server (default: the gateway's lexicon base URL)")
     args = ap.parse_args()
     lex = build(args.app)
     out = args.app / "public" / "search" / "ask" / "lexicon.json"

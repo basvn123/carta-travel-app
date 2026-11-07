@@ -1,0 +1,66 @@
+/* T1215: the "written by AI" line and the report form (components/AiMark.jsx).
+   Quiet metadata under a model's text: --text-caption in --text-2, the link
+   in --action. Every control is --tap high (the owner's 44 px for this line,
+   also on a fine pointer, so the target never shrinks under a caption). No new token. */
+.ai-mark {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-2);
+  margin: var(--space-1) 0 0;
+}
+.ai-mark-line {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.ai-mark-icon { color: var(--text-2); flex: none; }
+.ai-mark-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  color: var(--action);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.ai-mark-link:focus-visible,
+.ai-report-note:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ai-mark .ai-report-btn,
+.ai-report .ai-report-btn { min-height: var(--tap); }
+
+.ai-report {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  margin-top: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+}
+.ai-report-h { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text); }
+.ai-report-reasons { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ai-report-note-label { font-size: var(--text-label); font-weight: 600; color: var(--text); }
+.ai-report-note {
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-lead);
+  resize: vertical;
+}
+.ai-report-what,
+.ai-report-done { margin: 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); }
+.ai-report-fail { margin: 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--amber-ink); }
+.ai-report-fail a { color: var(--action); }
+.ai-report-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }

@@ -58,10 +58,14 @@
 #                                                            anything after -- goes to run_pipeline.py
 #
 # Environment (all optional; the secrets file may set them):
-#   CARTA_MAX_CADENCE  weekly (default), monthly, quarterly, or all. The box runs
-#                      the weekly tier only until the monthly and quarterly
-#                      tasks are verified on arm64 (register row T048-h).
+#   CARTA_TIER         weekly, monthly or quarterly: set by the unit that started
+#                      the run (T1107; infra/hetzner/cron/schedule.py) and passed
+#                      as --max-cadence. Wins over CARTA_MAX_CADENCE.
+#   CARTA_MAX_CADENCE  weekly (default), monthly, quarterly, or all, for a hand
+#                      run without CARTA_TIER.
 #   CARTA_VENV         default /home/carta/venv ($HOME/venv)
+#   CARTA_BOX_ML       ask (default), all or none: the ML extras (T1161, below)
+#   CARTA_GUIDED_VENV  the guided search venv for CARTA_BOX_ML=all, default $HOME/venv-guided
 #   CARTA_ARCHIVE_OUT  pack.py's tarball and dump directory, default $HOME/archive-out
 #   CARTA_SHIP         build (default), data or none; passed as --ship
 #   CARTA_EXTRA_TASKS  comma list passed as --also (T640): these tasks run when
@@ -121,10 +125,16 @@ done
 cd "$REPO" || exit 5
 mkdir -p "$LOG_DIR"
 
-exec 9>"$LOG_DIR/carta-run.lock"
-if ! flock -n 9; then
-  echo "run_pipeline.sh: another run holds $LOG_DIR/carta-run.lock (timer, hand run or verify_tasks.sh); not starting" >&2
-  exit 75
+# T1107: weekly.sh takes the lock itself (before its code update) and says so
+# with CARTA_RUN_LOCKED=1, passing the locked descriptor on as fd 9.
+if [ "${CARTA_RUN_LOCKED:-0}" = "1" ] && { true >&9; } 2>/dev/null; then
+  :
+else
+  exec 9>"$LOG_DIR/carta-run.lock"
+  if ! flock -n 9; then
+    echo "run_pipeline.sh: another run holds $LOG_DIR/carta-run.lock (timer, hand run or verify_tasks.sh); not starting" >&2
+    exit 75
+  fi
 fi
 
 # Everything below goes to the journal (stdout) and to logs/pipeline_run.log,
@@ -177,6 +187,24 @@ if [ -n "$EXTRA_TASKS" ]; then
   add_class PACK_CLASSES explore-overlays
   add_class PUSH_CLASSES explore-overlays
 fi
+# --- T1107 (H9): the tier this run is, and the caches its tasks need --------
+# CARTA_TIER is set by the unit that started the run (carta-weekly, -monthly,
+# -quarterly) and wins over CARTA_MAX_CADENCE from the secrets file. A
+# quarterly run runs the explore fill and the nature context tasks
+# (beach_context, peak_context, lake_detail, sea_temp, climate_daily,
+# dest_overlays), so it pulls and pushes the classes the T640 block above names
+# for them. A monthly run builds the dossiers, which read the overlays.
+TIER="${CARTA_TIER:-}"
+case "$TIER" in
+  ""|weekly) ;;
+  monthly) add_class PULL_CLASSES explore-overlays ;;
+  quarterly)
+    for c in beaches-cache mountains-cache explore-overlays; do
+      add_class PULL_CLASSES "$c"; add_class PACK_CLASSES "$c"; add_class PUSH_CLASSES "$c"
+    done
+    add_class PULL_CLASSES regions-cache; add_class PULL_CLASSES lakes-json ;;
+  *) say "CARTA_TIER=$TIER is not weekly, monthly or quarterly"; exit 2 ;;
+esac
 MAX_HOURS="${CARTA_MAX_HOURS:-}"
 if [ -z "$MAX_HOURS" ] && [ -n "$EXTRA_TASKS" ]; then MAX_HOURS=16; fi
 
@@ -214,6 +242,64 @@ if [ "$want" != "$have" ]; then
     fi
   fi
 fi
+# --- T1161 (H10): the ML extras, so no pipeline step needs the laptop -------
+# requirements-ml.txt is not part of the venv sync above, and it cannot be one
+# pip call: model2vec 0.10.0 needs huggingface-hub 2.x, sentence-transformers
+# 3.3.1 (through transformers 4.x) needs it below 1.0 (T1161, checked with pip
+# on Python 3.12). So the two halves live apart. CARTA_BOX_ML picks:
+#   ask   (default) model2vec into this venv, for ask_index (no torch; nothing
+#         in requirements.txt reads huggingface-hub)
+#   all   ask, plus a second venv (CARTA_GUIDED_VENV, default ~/venv-guided)
+#         with CPU-only torch and the rest of requirements-ml.txt, for
+#         guided_search; run_pipeline.py runs that task with CARTA_GUIDED_PY
+#   none  nothing; both tasks skip on their guards as before T1161
+# Stamped like the venv, so pip runs only when a file or the mode changes. A
+# failure is logged and the run goes on: both tasks are soft and skip.
+BOX_ML="${CARTA_BOX_ML:-ask}"
+ML_REQ="requirements-ml.txt"
+TORCH_REQ="infra/hetzner/jobs/requirements-torch-cpu.txt"
+GVENV="${CARTA_GUIDED_VENV:-$HOME/venv-guided}"
+ml_sync() {  # label, stamp file, then the pip arguments after "install"
+  local label="$1" stamp="$2" want have; shift 2
+  want="$(printf '%s\n' "$label" | cat - "$ML_REQ" "$TORCH_REQ" constraints.txt 2>/dev/null | sha256sum | cut -c1-16)"
+  have="$(cat "$stamp" 2>/dev/null || true)"
+  [ "$want" = "$have" ] && return 0
+  if [ $DRY_RUN -eq 1 ]; then
+    say "ML extras ($label) would be installed (stamp ${have:-none} -> $want)"; return 0
+  fi
+  say "installing the ML extras ($label) (stamp ${have:-none} -> $want)"
+  if "$@"; then echo "$want" > "$stamp"; return 0; fi
+  say "WARNING: the ML extras ($label) did not install; its task will skip"; return 1
+}
+ml_ask() {
+  local req; req="$(mktemp)"
+  grep -E '^model2vec==' "$ML_REQ" > "$req"
+  "$PY" -m pip install --quiet --only-binary=:all: -r "$req" -c constraints.txt; local rc=$?
+  rm -f "$req"; return $rc
+}
+ml_guided() {
+  local req; req="$(mktemp)"
+  [ -x "$GVENV/bin/python" ] || "$PY" -m venv "$GVENV" || { rm -f "$req"; return 1; }
+  # CPU torch first, from its own index (PyPI's Linux wheels pull the CUDA
+  # runtime, several GB, for a box with no GPU); torchvision is the photo
+  # jobs' and is left out. pip then keeps that torch for sentence-transformers.
+  grep -E '^(--index-url|torch==)' "$TORCH_REQ" > "$req"
+  "$GVENV/bin/python" -m pip install --quiet --only-binary=:all: -r "$req" || { rm -f "$req"; return 1; }
+  grep -vE '^[[:space:]]*(#|$)|^model2vec' "$ML_REQ" > "$req"
+  "$GVENV/bin/python" -m pip install --quiet --only-binary=:all: -r "$req" -c constraints.txt; local rc=$?
+  rm -f "$req"; return $rc
+}
+case "$BOX_ML" in
+  none) ;;
+  ask|all)
+    ml_sync ask "$VENV/.carta-ml" ml_ask
+    if [ "$BOX_ML" = "all" ]; then
+      ml_sync guided "$GVENV/.carta-ml" ml_guided
+      [ -x "$GVENV/bin/python" ] && export CARTA_GUIDED_PY="$GVENV/bin/python"
+    fi ;;
+  *) say "CARTA_BOX_ML=$BOX_ML is not ask, all or none; installing no ML extras" ;;
+esac
+
 if "$PY" -c "import anthropic" 2>/dev/null; then
   say "WARNING: the anthropic SDK is in the venv; CLAUDE.md forbids it (pip uninstall anthropic)"
 fi
@@ -333,7 +419,7 @@ if [ $PULL_ONLY -eq 1 ]; then
 fi
 
 # --- the pipeline ----------------------------------------------------------------
-CADENCE="${CARTA_MAX_CADENCE:-weekly}"
+CADENCE="${TIER:-${CARTA_MAX_CADENCE:-weekly}}"
 ARGS=(--ship "$SHIP")
 case "$CADENCE" in
   weekly|monthly|quarterly) ARGS+=(--max-cadence "$CADENCE") ;;
@@ -536,6 +622,22 @@ else
       fi
     fi
   fi
+fi
+
+# --- status to R2 after every run (T1107, ROADMAP H9) ---------------------------
+# Whatever the exit: the state file, the freshness reports and a last_run
+# record go to status/ in the archive bucket. That prefix is read by people and
+# the admin panel and never pulled by a box, so a failed run can report itself
+# without R2's archive/state claiming work the R2 master does not hold.
+if r2_configured || [ $DRY_RUN -eq 1 ]; then
+  STATUS_RC=$rc
+  if [ $rc -eq 0 ] && { [ $ARCHIVE_FAILED -ne 0 ] || [ $PUBLISH_FAILED -ne 0 ] || [ $DEPLOY_FAILED -ne 0 ]; }; then
+    STATUS_RC=3
+  fi
+  "$PY" infra/hetzner/cax11/push_status.py --tier "$CADENCE" --rc "$STATUS_RC" --started "$t0" "${ARCHIVE_DRY[@]}" \
+    || archive_fail "push status"
+else
+  say "status push skipped: R2 not configured (the freshness report stays in data/derived)"
 fi
 
 if [ $ARCHIVE -eq 1 ] && [ "$PULL_ONLY" -eq 0 ]; then

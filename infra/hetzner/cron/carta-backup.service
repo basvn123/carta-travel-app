@@ -1,0 +1,23 @@
+# Carta nightly database backup (T1159, ROADMAP H5): encrypted pg_dump of the
+# live Supabase project to R2, 30-day retention. Runs ops/backup_nightly.sh.
+# Needs SUPABASE_DB_URL and CARTA_BACKUP_KEY in ~/.config/carta/env and the
+# public key imported (docs/runbooks/backup-restore.md). A failed run leaves
+# this unit failed and writes {"status":"failed"} to
+# ~/archive-out/nightly/last_backup.json.
+[Unit]
+Description=Carta nightly Supabase backup to R2 (T1159)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=carta
+Group=carta
+WorkingDirectory=/home/carta/carta
+Environment=LANG=C.UTF-8
+ExecStart=/bin/bash /home/carta/carta/ops/backup_nightly.sh
+# A dump of the public schema is minutes at most; an hour is a stuck connection.
+TimeoutStartSec=1h
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7

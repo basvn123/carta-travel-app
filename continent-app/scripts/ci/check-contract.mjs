@@ -35,12 +35,13 @@
  * T082 added two halves on top of that, and a CI workflow that runs the lot
  * (.github/workflows/schema-contract.yml in the root repository).
  *
- * The documented key set. docs/SCHEMA.md carries a "Wire contract" table
- * listing every top-level meta key and every top-level destination key, and
+ * The documented key set. docs/wire.schema.json (T1133) lists every
+ * top-level meta key and every top-level destination key, its type, and
  * whether a destination key is on every record or on some. The real payload
- * must match it both ways: no key the table does not list, no listed key
- * missing. The header's schema version must equal EXPECTED_SCHEMA_VERSION.
- * A renamed field therefore fails until SCHEMA.md says the new name.
+ * must match it both ways: no key the schema does not list, no listed key
+ * missing. docs/SCHEMA.md's "Wire contract" table is generated from the
+ * schema and must match it, header version included. A renamed field
+ * therefore fails until the schema says the new name.
  *
  * The database. Every Supabase call site in continent-app/src and in
  * supabase/functions (tables, columns, select strings, rpc names and their
@@ -76,9 +77,12 @@ import { spawnSync, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import {
   validateAppData, validateSplitWires, EXPECTED_SCHEMA_VERSION,
-  parseSchemaContract, extractSupabaseCalls, validateDbContract,
-  normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires,
+  WIRE_SCHEMA, WIRE_SCHEMA_PATH, checkWireSchema, checkSchemaTable,
+  extractSupabaseCalls, validateDbContract,
+  normaliseCatalogue, CATALOGUE_SQL, validateV19Pois, validateNatureWires, validateTrailImages, validateTrailTreks, validateTrailWayBack,
+  validateEntryRules,
 } from './contract.mjs';
+import { schemaKeySet } from '../../src/lib/wireSchema.js';
 import { splitCatalogue, mergeCatalogue } from '../../src/lib/bootIndex.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -239,6 +243,11 @@ const CATALOGUE_BREAKS = {
     for (const r of Object.values(d.destinations)) if (r.taste) delete r.taste.likes.ski;
     return d;
   },
+  // T1143 (D3): a layer that rebuilt its block without the provenance stamp.
+  'v20-block-date-dropped': (d) => {
+    for (const r of Object.values(d.destinations)) if (r.climate) delete r.climate._asof;
+    return d;
+  },
   'v19-gateway-points-nowhere': (d) => {
     const city = Object.values(d.destinations).find((r) => r.rating);
     if (city) city.gateways = ['NOT-A-GATEWAY'];
@@ -317,26 +326,29 @@ if (!fs.existsSync(APP_DATA)) {
 
 console.log('contract gate\n');
 
-// ---------------------------------------------------------------- docs/SCHEMA.md
-// Parsed first: the payload checks below use its key table. A missing or
-// malformed document fails the gate rather than skipping the key checks.
+// ------------------------------------------- docs/wire.schema.json and SCHEMA.md
+// The schema is the contract (T1133); the payload checks below read it. Its
+// own consistency comes first, then the human table in docs/SCHEMA.md, which
+// must be the one the schema renders. A broken schema or a stale table fails
+// the gate rather than skipping the key checks.
 let contract = null;
+{
+  const own = checkWireSchema(WIRE_SCHEMA);
+  if (own.length) {
+    fail(`${WIRE_SCHEMA_PATH} is not a usable contract:\n` + own.map((p) => `          ${p}`).join('\n'));
+  } else {
+    contract = WIRE_SCHEMA;
+    const keys = schemaKeySet(WIRE_SCHEMA);
+    pass(`docs/wire.schema.json read (schema_version ${keys.version}, ${keys.meta.size} meta keys, `
+      + `${keys.every.size} destination keys on every record, ${keys.some.size} on some)`);
+  }
+}
 if (!fs.existsSync(SCHEMA_MD)) {
   fail(`${SCHEMA_MD} is missing; set CARTA_REPO_ROOT to the root checkout`);
 } else {
-  contract = parseSchemaContract(fs.readFileSync(SCHEMA_MD, 'utf8'));
-  if (contract.problems.length) {
-    fail('docs/SCHEMA.md is not a usable contract:\n'
-      + contract.problems.map((p) => `          ${p}`).join('\n'));
-    contract = null;
-  } else if (contract.version !== EXPECTED_SCHEMA_VERSION) {
-    fail(`docs/SCHEMA.md says meta.schema_version ${contract.version}, contract.mjs pins `
-      + `${EXPECTED_SCHEMA_VERSION}; change both in the same commit`);
-  } else {
-    pass(`docs/SCHEMA.md wire contract read (schema_version ${contract.version}, `
-      + `${contract.meta.size} meta keys, ${contract.every.size} destination keys on every record, `
-      + `${contract.some.size} on some)`);
-  }
+  const drift = checkSchemaTable(fs.readFileSync(SCHEMA_MD, 'utf8'), WIRE_SCHEMA);
+  if (drift.length) fail('docs/SCHEMA.md does not match docs/wire.schema.json:\n' + drift.map((p) => `          ${p}`).join('\n'));
+  else pass('docs/SCHEMA.md wire table and header version match docs/wire.schema.json');
 }
 
 let real = JSON.parse(fs.readFileSync(APP_DATA, 'utf8'));
@@ -350,7 +362,7 @@ if (seed && seed in PAYLOAD_SEEDS) {
 }
 
 {
-  const problems = validateAppData(real, { contract, catalogue: true });
+  const problems = validateAppData(real, { catalogue: true });
   if (problems.length) {
     fail(`public/app_data.json does not satisfy the contract:\n`
       + problems.slice(0, 12).map((p) => `          ${p}`).join('\n')
@@ -454,6 +466,35 @@ if (seed && seed in PAYLOAD_SEEDS) {
   }
 }
 
+// ------------------------------------------------- entry rules (T1199, D19)
+// public/entry_rules.json: one block per catalogue country, four traveller
+// groups, each line with its source and date checked; plus seeded breaks.
+{
+  const file = path.join(APP_ROOT, 'public', 'entry_rules.json');
+  if (!fs.existsSync(file)) {
+    fail('public/entry_rules.json is missing (run python pipeline/entry_rules.py)');
+  } else {
+    const doc = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const countries = [...new Set(Object.values(real.destinations).map((d) => d.iso2).filter(Boolean))].sort();
+    const problems = validateEntryRules(doc, { countries });
+    if (problems.length) fail(`entry_rules.json breaks the contract:\n${problems.slice(0, 12).map((p) => `          ${p}`).join('\n')}`);
+    else pass(`entry_rules.json covers ${countries.length}/${countries.length} catalogue countries x 4 groups, each with a source and a date`);
+    const first = Object.keys(doc.countries || {})[0];
+    const BREAKS = {
+      'entry-asof-dropped': (d) => { delete d.countries[first]._asof; return d; },
+      'entry-unknown-code': (d) => { d.countries[first].rules.uk.needs = ['made_up']; return d; },
+      'entry-group-missing': (d) => { delete d.countries[first].rules.visa; return d; },
+      'entry-country-missing': (d) => { delete d.countries[first]; return d; },
+    };
+    let rejected = 0;
+    for (const [name, brk] of Object.entries(BREAKS)) {
+      if (validateEntryRules(brk(structuredClone(doc)), { countries }).length) rejected += 1;
+      else fail(`entry rules break ${name} was ACCEPTED; the gate is vacuous for it`);
+    }
+    if (rejected === Object.keys(BREAKS).length) pass(`${rejected}/${rejected} seeded entry rules breaks rejected`);
+  }
+}
+
 // ------------------------------------------------- schema v19: POIs and nature
 // The POI shards carry label, category and tags; every rated nature row
 // carries v5 {score, band, rank, facts, confidence} (T761, T762).
@@ -487,6 +528,81 @@ if (seed && seed in PAYLOAD_SEEDS) {
   const problems = validateNatureWires(byKind);
   if (problems.length) fail(`nature rows miss v19 keys:\n          ${problems.slice(0, 8).join('\n          ')}`);
   else pass(`${Object.values(byKind).reduce((a, r) => a + r.length, 0)} rated nature rows carry v5`);
+  {
+    const got = validateTrailImages(byKind.trails || []);
+    if (got.problems.length) fail(`trail photographs break the credit rule:\n          ${got.problems.slice(0, 8).join('\n          ')}`);
+    else pass(`${got.n} trail card photographs ${got.rebuilt ? 'carry an allowed licence and a name' : 'counted; the wire has no licence fields yet (awaiting the T1093 run)'}`);
+    const seeds = {
+      'trail-photo-nc': [{ id: 1, img: { u: 'x', lic: 'CC BY-NC 2.0', by: 'A' } }],
+      'trail-photo-gfdl': [{ id: 1, img: { u: 'x', lic: 'GFDL 1.2', by: 'A' } }],
+      'trail-photo-no-name': [{ id: 1, img: { u: 'x', lic: 'CC BY-SA 4.0' } }],
+      'trail-photo-half-rebuilt': [{ id: 1, img: { u: 'x', lic: 'CC0' } }, { id: 2, img: { u: 'y' } }],
+    };
+    for (const [name, rows] of Object.entries(seeds)) {
+      if (!validateTrailImages(rows).problems.length) fail(`trail photo break ${name} was ACCEPTED`);
+    }
+    if (validateTrailImages([{ id: 1, img: { u: 'x', lic: 'Public domain' } }, { id: 2, img: { u: 'y', lic: 'CC BY 4.0', by: 'B' } }]).problems.length) {
+      fail('trail photo rule rejects a good wire');
+    }
+  }
+  {
+    // T1184: the multi-stage trek records and the stage rows that point at them.
+    const dir = path.join(PUB, 'trails');
+    const files = {};
+    if (fs.existsSync(dir)) {
+      for (const f of fs.readdirSync(dir).filter((x) => /^[A-Z]{2}\.json$/.test(x))) {
+        files[f.slice(0, 2)] = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+      }
+    }
+    const got = validateTrailTreks(files);
+    if (got.problems.length) fail(`trail treks break the contract:\n          ${got.problems.slice(0, 8).join('\n          ')}`);
+    else pass(got.n ? `${got.n} treks and ${got.rows} stage rows agree` : 'no trek records yet (awaiting the T1184 export run)');
+    const trek = (over = {}) => ({ id: 'trek-x', name: 'X', cc: 'DE', n: 2, km: 16, _src: 'osm', _asof: '2026-11-06',
+      stages: [{ id: 1, i: 1, km: 8 }, { id: 2, i: 2, km: 8 }], ...over });
+    const rows = [{ id: 1, trek: { id: 'trek-x', cc: 'DE', i: 1 } }, { id: 2, trek: { id: 'trek-x', cc: 'DE', i: 2 } }];
+    const good = { DE: { treks: [trek()], trips: rows } };
+    if (validateTrailTreks(good).problems.length) fail('trail trek rule rejects a good wire');
+    const seeds = {
+      'trek-one-stage': { DE: { treks: [trek({ n: 1, km: 8, stages: [{ id: 1, i: 1, km: 8 }] })], trips: [rows[0]] } },
+      'trek-order': { DE: { treks: [trek({ stages: [{ id: 1, i: 2, km: 8 }, { id: 2, i: 1, km: 8 }] })], trips: [] } },
+      'trek-total': { DE: { treks: [trek({ km: 30 })], trips: rows } },
+      'trek-no-asof': { DE: { treks: [trek({ _asof: undefined })], trips: rows } },
+      'trek-of-too-small': { DE: { treks: [trek({ of: 1 })], trips: rows } },
+      'trek-dangling-row': { DE: { treks: [], trips: rows } },
+      'trek-no-backlink': { DE: { treks: [trek()], trips: [{ id: 1 }, rows[1]] } },
+    };
+    for (const [name, wire] of Object.entries(seeds)) {
+      if (!validateTrailTreks(wire).problems.length) fail(`trail trek break ${name} was ACCEPTED`);
+    }
+  }
+  {
+    // T1185: the way back on one-way rows and treks.
+    const dir = path.join(PUB, 'trails');
+    const files = {};
+    if (fs.existsSync(dir)) {
+      for (const f of fs.readdirSync(dir).filter((x) => /^[A-Z]{2}\.json$/.test(x))) {
+        files[f.slice(0, 2)] = JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8'));
+      }
+    }
+    const got = validateTrailWayBack(files);
+    if (got.problems.length) fail(`trail way back breaks the contract:\n          ${got.problems.slice(0, 8).join('\n          ')}`);
+    else pass(got.n ? `${got.n} way-back records agree` : 'no way-back records yet (awaiting the T1185 export run)');
+    const wb = (over = {}) => ({ km: 15.2, taxi: { km: 19.7, min: 25, est: true }, pt: { s: ['rail'], e: ['rail'], both: ['rail'] }, _src: 'osm', _asof: '2026-11-06', ...over });
+    const wire = (w, extra = {}) => ({ DE: { trips: [{ id: 1, wb: w, ...extra }] } });
+    if (validateTrailWayBack(wire(wb())).problems.length) fail('way back rule rejects a good wire');
+    const seeds = {
+      'wb-no-asof': wire(wb({ _asof: undefined })),
+      'wb-zero-km': wire(wb({ km: 0 })),
+      'wb-taxi-not-est': wire(wb({ taxi: { km: 19.7, min: 25 } })),
+      'wb-taxi-odd-min': wire(wb({ taxi: { km: 19.7, min: 23, est: true } })),
+      'wb-pt-minutes': wire(wb({ pt: { s: ['rail'], e: ['rail'], both: ['rail'], min: 40 } })),
+      'wb-pt-both': wire(wb({ pt: { s: ['rail'], e: ['bus'], both: ['rail'] } })),
+      'wb-on-trek-stage': wire(wb(), { trek: { id: 'x', cc: 'DE', i: 1 } }),
+    };
+    for (const [name, w] of Object.entries(seeds)) {
+      if (!validateTrailWayBack(w).problems.length) fail(`way back break ${name} was ACCEPTED`);
+    }
+  }
   const one = Object.keys(byKind)[0];
   if (one && !validateNatureWires({ [one]: [{ id: 'seeded', v5: { score: 11, band: 'best', confidence: 'sure', facts: null, rank: null } }] }).length) {
     fail('v19 nature break was ACCEPTED');
@@ -499,7 +615,7 @@ if (!fs.existsSync(FIXTURE)) {
     + 'run `node scripts/ci/make-fixture.mjs`');
 } else {
   const fixture = JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
-  const problems = validateAppData(fixture, { contract });
+  const problems = validateAppData(fixture);
   if (problems.length) {
     fail(`the fixture no longer satisfies the contract (regenerate it with `
       + `node scripts/ci/make-fixture.mjs):\n`
@@ -514,7 +630,7 @@ if (!fs.existsSync(FIXTURE)) {
   let rejected = 0;
   for (const name of names) {
     const broken = BREAKS[name](clone(fixture));
-    const found = validateAppData(broken, { contract });
+    const found = validateAppData(broken);
     if (found.length) {
       rejected += 1;
       pass(`${name}  ->  rejected: ${found[0]}`);
@@ -540,10 +656,10 @@ if (!fs.existsSync(FIXTURE)) {
 if (contract) {
   console.log('\ncatalogue breaks on the real payload, each one must be REJECTED\n');
   const names = Object.keys(CATALOGUE_BREAKS);
-  const baseline = new Set(validateAppData(pristine, { contract, catalogue: true }));
+  const baseline = new Set(validateAppData(pristine, { catalogue: true }));
   let rejected = 0;
   for (const name of names) {
-    const found = validateAppData(CATALOGUE_BREAKS[name](clone(pristine)), { contract, catalogue: true })
+    const found = validateAppData(CATALOGUE_BREAKS[name](clone(pristine)), { catalogue: true })
       .filter((p) => !baseline.has(p));
     if (found.length) {
       rejected += 1;

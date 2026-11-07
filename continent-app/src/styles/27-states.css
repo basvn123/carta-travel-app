@@ -4,12 +4,12 @@
 .state-skel { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-2) 0; }
 .state-skel-item {
   display: block;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper-dim);
-  animation: state-skel-breathe 1.6s ease-in-out infinite;
+  animation: state-skel-breathe var(--dur-breathe) var(--ease-in-out) infinite;
 }
 .state-skel-row .state-skel-item { height: 56px; }
-.state-skel-card .state-skel-item { height: 120px; border-radius: 10px; }
+.state-skel-card .state-skel-item { height: 120px; border-radius: var(--radius-control); }
 .state-skel-line .state-skel-item { height: 14px; width: 60%; }
 .state-skel-line .state-skel-item:first-of-type { width: 80%; }
 .state-skel-item:nth-child(3n + 2) { animation-delay: 0.2s; }
@@ -24,7 +24,7 @@
   display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3);
   padding: var(--space-4) 0;
 }
-.state-err-msg { margin: 0; font-size: 14px; line-height: 1.45; color: var(--ink); }
+.state-err-msg { margin: 0; font-size: var(--text-body); line-height: 1.45; color: var(--ink); }
 
 /* The busy rows that replaced two spinners sit inside their old wrappers. */
 .extras-drop-busy .state-skel { flex: 1; padding: 0; }
@@ -32,14 +32,14 @@
 .ai-plan-busy .state-skel { margin: 0 auto; max-width: 320px; }
 
 /* A control that is waiting says so by breathing, not by turning. */
-.state-pulse { display: inline-flex; animation: state-skel-breathe 1.6s ease-in-out infinite; }
+.state-pulse { display: inline-flex; animation: state-skel-breathe var(--dur-breathe) var(--ease-in-out) infinite; }
 @media (prefers-reduced-motion: reduce) { .state-pulse { animation: none; } }
 
 /* G2: the card photograph grows into the page header. The browser draws the
    morph; this only sets how long it takes and removes it for reduced motion. */
 ::view-transition-group(carta-shared-hero) {
-  animation-duration: 260ms;
-  animation-timing-function: ease-out;
+  animation-duration: var(--dur-2);
+  animation-timing-function: var(--ease-out);
 }
 ::view-transition-old(carta-shared-hero),
 ::view-transition-new(carta-shared-hero) {

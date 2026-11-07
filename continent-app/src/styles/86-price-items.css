@@ -43,3 +43,10 @@
   color: var(--text);
 }
 .pitems-amount { font-variant-numeric: tabular-nums; color: var(--text-2); }
+
+/* T1114 (D10): the price notes on a card, the trip page, the receipt and Ask:
+   one quiet caption line under the price, never a figure. */
+.pnotes { margin: var(--space-1) 0 0; display: flex; flex-wrap: wrap; gap: 0 var(--space-2); font-size: var(--text-caption); font-weight: 500; line-height: 1.35; color: var(--text-2); }
+.pnotes-item { overflow-wrap: anywhere; }
+.ccard .pnotes { color: var(--ccard-ink-2); padding: 0 var(--space-4); }
+.day-receipt-notes { margin-top: var(--space-2); }

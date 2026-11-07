@@ -53,6 +53,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(ROOT / "pipeline"))
 
 from db import connect  # noqa: E402
+from photo_licence import reusable  # noqa: E402
 from beaches.sources import COMMONS_API, SourceError, mediawiki  # noqa: E402
 
 # How many photographs a route ships. One hero plus a short gallery: past
@@ -87,7 +88,8 @@ CACHE_DIR = ROOT / "cache" / "trails" / "photos"
 # are a property of the file, not of the walk.
 CATEGORY_CACHE = ROOT / "cache" / "trails" / "photo_categories.json"
 CACHE_KEEP = ("url", "thumburl", "thumbwidth", "thumbheight", "width", "height")
-CACHE_META = ("LicenseShortName", "LicenseUrl", "Artist", "ImageDescription")
+CACHE_META = ("LicenseShortName", "LicenseUrl", "Artist", "Attribution",
+              "ImageDescription")
 
 
 def cache_path(tid):
@@ -185,7 +187,7 @@ def fetch_categories(titles, table, verbose=False):
     done = 0
     for start in range(0, len(todo), CATEGORY_BATCH):
         batch = todo[start:start + CATEGORY_BATCH]
-        time.sleep(CATEGORY_PACE_S)
+        PACER.wait()
         try:
             data = mediawiki({"titles": "|".join(batch),
                               "prop": "categories", "cllimit": "max",
@@ -213,8 +215,8 @@ IMAGE_PROPS = {
     "prop": "imageinfo",
     "iiprop": "url|size|extmetadata",
     "iiurlwidth": 1280,
-    "iiextmetadatafilter": "LicenseShortName|LicenseUrl|Artist|ImageDescription"
-                           "|GPSLatitude|GPSLongitude",
+    "iiextmetadatafilter": "LicenseShortName|LicenseUrl|Artist|Attribution"
+                           "|ImageDescription|GPSLatitude|GPSLongitude",
 }
 
 # Files that are not photographs of a landscape. Same shape as the beach
@@ -448,7 +450,8 @@ def fetch_targets(conn, countries, refresh, missing=False):
             WHERE t.category = 'hike' AND t.status IN ('approved', 'published')
               AND t.country = ANY(%s)
               {having}
-            ORDER BY t.country, t.distance_m DESC""", (countries,))
+            ORDER BY array_position(%s::text[], t.country),
+                     t.distance_m DESC""", (countries, countries))
         return [r[0] for r in cur.fetchall()]
 
 
@@ -525,7 +528,65 @@ def coords_of(info):
     return val("GPSLatitude"), val("GPSLongitude")
 
 
-def candidates_for(row, verbose=False):
+# ---------------------------------------------------------------------------
+# Pacing and order (T1093)
+# ---------------------------------------------------------------------------
+
+# One request every REQUEST_PACE_S across ALL workers, not per worker: Commons
+# asks anonymous clients to stay near one request a second, and six workers
+# each sleeping on their own clock add up to six. The limiter is shared, so
+# the rate holds whatever WORKERS is.
+REQUEST_PACE_S = 0.8
+
+
+class Pacer:
+    """Allow one call per `interval` seconds across threads."""
+
+    def __init__(self, interval, clock=time.monotonic, sleep=time.sleep):
+        import threading
+        self.interval, self.clock, self.sleep = interval, clock, sleep
+        self._lock = threading.Lock()
+        self._next = 0.0
+
+    def wait(self):
+        with self._lock:
+            now = self.clock()
+            at = max(now, self._next)
+            self._next = at + self.interval
+        if at > now:
+            self.sleep(at - now)
+
+
+PACER = Pacer(REQUEST_PACE_S)
+
+
+def order_countries(countries, coverage):
+    """Worst photo coverage first, so a stopped run has spent its time where
+    the wire is emptiest. `coverage` is {country: (with_photo, total)}; a
+    country with no entry counts as 0 of 1 and goes first. Ties keep the
+    order given."""
+    def share(cc):
+        got, tot = coverage.get(cc, (0, 1))
+        return got / max(tot, 1)
+    return sorted(countries, key=share)
+
+
+def wire_coverage(trails_dir):
+    """{country: (trails with a card photo, trails)} read from the shipped
+    country wires, the before number of the harvest."""
+    out = {}
+    for path in sorted(Path(trails_dir).glob("[A-Z][A-Z].json")):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        rows = [t for t in data.get("trips") or [] if (t.get("t") or "r") == "r"
+                or "t" not in t]
+        out[path.stem] = (sum(1 for t in rows if t.get("img")), len(rows))
+    return out
+
+
+def candidates_for(row, verbose=False, fetch=None):
     """Commons files photographed near this route, deduped by title.
 
     Two kinds of probe. The coordinate probes are what find pictures of an
@@ -538,7 +599,11 @@ def candidates_for(row, verbose=False):
 
     def collect(params, probe):
         try:
-            data = mediawiki(params, api=COMMONS_API)
+            if fetch is None:
+                PACER.wait()
+                data = mediawiki(params, api=COMMONS_API)
+            else:                       # recorded fixture (tests)
+                data = fetch(params)
         except (SourceError, ValueError, KeyError):
             return
         for page in (data.get("query") or {}).get("pages") or []:
@@ -838,6 +903,12 @@ def pick(cands, row, categories=None):
     scored = []
     seen_subjects = {}
     for c in cands:
+        # Licence first (T1093): a file we may not reuse must not win a slot
+        # and then be dropped at store time, leaving the walk with no hero.
+        lic = (((c.get("info") or {}).get("extmetadata") or {})
+               .get("LicenseShortName") or {}).get("value")
+        if not reusable(strip_html(lic or "")):
+            continue
         c_cats = cats.get(c["title"]) or []
         s = score_image(c, row, c_cats)
         if s < MIN_SCORE:
@@ -924,7 +995,7 @@ def store(conn, tid, picked):
             licence = val("LicenseShortName") or "unknown"
             # The table's CHECK would refuse these anyway; refusing here keeps
             # one bad file from aborting a whole route's insert.
-            if NC_ND_RE.search(licence):
+            if NC_ND_RE.search(licence) or not reusable(licence):
                 continue
             page = ("https://commons.wikimedia.org/wiki/"
                     + urllib.parse.quote(c["title"].replace(" ", "_")))
@@ -932,7 +1003,9 @@ def store(conn, tid, picked):
             # of uploads put the licence in it instead of a name. Stored as
             # given so nothing is lost; export_wire.clean_author() decides
             # what is printable, which also repairs rows already harvested.
-            author = val("Artist")[:160]
+            # Attribution is the wording the photographer asked to be credited
+            # as and outranks Artist (pipeline/photos/credit.py), T1093.
+            author = (val("Attribution") or val("Artist"))[:160]
             attribution = ", ".join(
                 x for x in (c["title"].replace("File:", ""), author, licence) if x
             )[:400]
@@ -1057,13 +1130,30 @@ def main():
                     help="re-rank from the cached candidates, no Commons "
                          "traffic at all. Use after changing score_image().")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--worst-first", action="store_true",
+                    help="order the countries by photo coverage on the "
+                         "shipped wire, emptiest first (T1093)")
+    ap.add_argument("--max-minutes", type=float, default=0,
+                    help="stop taking new routes after this long; the run "
+                         "resumes where it stopped, because every finished "
+                         "route is stored or marked empty")
+    ap.add_argument("--pace", type=float, default=REQUEST_PACE_S,
+                    help="seconds between Commons requests, all workers "
+                         "together")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
     sys.stdout.reconfigure(errors="replace")
+    PACER.interval = args.pace
     with connect() as conn:
         countries = ([c.strip().upper() for c in args.countries.split(",") if c.strip()]
                      if args.countries else curated_countries(conn))
+        if args.worst_first:
+            cov = wire_coverage(ROOT / "continent-app" / "public" / "trails")
+            countries = order_countries(countries, cov)
+            print("worst first: " + ", ".join(
+                f"{c} {cov.get(c, (0, 0))[0]}/{cov.get(c, (0, 0))[1]}"
+                for c in countries[:8]))
         if args.categories:
             titles = contested_titles(conn, countries, args.verbose)
             table = load_categories()
@@ -1113,8 +1203,17 @@ def main():
         # connections are not shared across threads, and the measure/score/
         # store step is fast enough that serialising it costs nothing.
         with ThreadPoolExecutor(max_workers=WORKERS) as pool:
-            futures = {pool.submit(candidates_for, row, args.verbose): row
-                       for row in rows}
+            deadline = (time.time() + args.max_minutes * 60
+                        if args.max_minutes else None)
+
+            def search(row):
+                # Past the deadline a route is left untouched: no photograph
+                # and no empty marker, so the next run picks it up.
+                if deadline and time.time() > deadline:
+                    return None
+                return candidates_for(row, args.verbose)
+
+            futures = {pool.submit(search, row): row for row in rows}
             for fut in as_completed(futures):
                 row = futures[fut]
                 done += 1
@@ -1123,6 +1222,9 @@ def main():
                 except Exception as exc:                  # noqa: BLE001
                     print(f"    {row['id']} failed: {str(exc)[:90]}")
                     counts["failed"] += 1
+                    continue
+                if cands is None:
+                    counts["deferred"] += 1
                     continue
                 cache_write(row["id"], cands)
                 measure(conn, row["id"], cands)
@@ -1143,6 +1245,9 @@ def main():
                           f"{counts['no_photo']} without")
 
         print("\n" + "=" * 58)
+        if counts["deferred"]:
+            print(f"{counts['deferred']:,} routes left for the next run "
+                  f"(--max-minutes reached)")
         print(f"{counts['images']:,} photographs on {counts['with_photos']:,} "
               f"routes; {counts['no_photo']:,} routes found nothing usable")
         for cc in sorted(by_country):

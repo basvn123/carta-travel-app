@@ -1,0 +1,177 @@
+# Data quality rules (ROADMAP D2, T1142). Read by scripts/quality/engine.py.
+#
+# One rule per must-have field of every layer the scorecard measures
+# (scripts/quality/scorecard.py APP_LAYERS and SHARD_LAYERS). The engine
+# refuses to run when a scorecard field has no rule here, so a new field
+# cannot slip past the gate unnoticed.
+#
+# Each rule reads the field's completeness: the share of records that carry
+# a non-empty value (0 to 1).
+#
+#   level  must_see   a field the traveller sees on a card or page.
+#          must_have  a field the app reads but does not show on its own.
+#   kind   hard       a breach fails the pipeline run (exit 1).
+#          soft       a breach is printed as a warning; the run goes on.
+#   min    the floor for the share. Set on 2026-11-06 at two points under
+#          the shipped value, rounded down to a whole point; the comment on
+#          each line gives the value it was set from.
+#
+# The gate: a must_see field whose share falls by more than
+# gate.must_see_drop_points percentage points against the previous card
+# fails the run, whatever its kind and floor.
+version: 1
+# Link health (ROADMAP D16, T1197): the share of checked links that are broken
+# (pipeline/audit/link_health.py, the weekly task). Soft above max_broken_share (a
+# warning in the Data health tab), hard above hard_broken_share. Counted only
+# once min_checked links have a result, so a first small sample or a missing
+# run neither warns nor fails. Unsure results (timeouts, 429) and links robots.txt
+# keeps us from are not in the share.
+links:
+  id: links.broken_share
+  max_broken_share: 0.02
+  hard_broken_share: 0.10
+  min_checked: 500
+gate:
+  must_see_drop_points: 2
+  trend_days: 90
+rules:
+  # core (app_data, 3855 records on 2026-11-06)
+  - {id: core.tier, layer: core, field: tier, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: core.city, layer: core, field: city, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: core.country, layer: core, field: country, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: core.iso2, layer: core, field: iso2, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  - {id: core.lat, layer: core, field: lat, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: core.lon, layer: core, field: lon, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: core.categories, layer: core, field: categories, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: core.tags, layer: core, field: tags, level: must_have, kind: soft, min: 0.00}  # 2.1%
+  - {id: core.blurb, layer: core, field: blurb, level: must_see, kind: hard, min: 0.91}  # 93.6%
+  # flights (app_data, 3855 records on 2026-11-06)
+  - {id: flights.anchor_airport, layer: flights, field: anchor_airport, level: must_see, kind: hard, min: 0.94}  # 96.5%
+  - {id: flights.transfer, layer: flights, field: transfer, level: must_have, kind: soft, min: 0.01}  # 3.3%
+  # prices (app_data, 3855 records on 2026-11-06)
+  - {id: prices.costs, layer: prices, field: costs, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: prices.accommodation, layer: prices, field: accommodation, level: must_see, kind: hard, min: 0.84}  # 86.6%
+  - {id: prices.local_transport, layer: prices, field: local_transport, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  # rating (app_data, 3855 records on 2026-11-06)
+  - {id: rating.rating, layer: rating, field: rating, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: rating.taste, layer: rating, field: taste, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  - {id: rating.beauty, layer: rating, field: beauty, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  - {id: rating.country_rank, layer: rating, field: country_rank, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  - {id: rating.country_percentile, layer: rating, field: country_percentile, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  - {id: rating.class_percentile, layer: rating, field: class_percentile, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  # climate (app_data, 3855 records on 2026-11-06)
+  - {id: climate.climate, layer: climate, field: climate, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: climate.bathing_water, layer: climate, field: bathing_water, level: must_have, kind: soft, min: 0.21}  # 23.1%
+  - {id: climate.crowding, layer: climate, field: crowding, level: must_have, kind: soft, min: 0.83}  # 85.1%
+  # place (app_data, 3855 records on 2026-11-06)
+  - {id: place.place, layer: place, field: place, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: place.geonames, layer: place, field: geonames, level: must_have, kind: soft, min: 0.95}  # 97.8%
+  - {id: place.wikidata, layer: place, field: wikidata, level: must_have, kind: soft, min: 0.00}  # 1.1%
+  - {id: place.designations, layer: place, field: designations, level: must_have, kind: soft, min: 0.45}  # 47.9%
+  - {id: place.nature, layer: place, field: nature, level: must_have, kind: soft, min: 0.36}  # 38.0%
+  - {id: place.guide, layer: place, field: guide, level: must_have, kind: soft, min: 0.24}  # 26.6%
+  # imagery (app_data, 3855 records on 2026-11-06)
+  - {id: imagery.image, layer: imagery, field: image, level: must_see, kind: hard, min: 0.97}  # 99.3%
+  - {id: imagery.activities, layer: imagery, field: activities, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  # trails (trails, 17958 records on 2026-11-06)
+  - {id: trails.name, layer: trails, field: name, level: must_see, kind: hard, min: 0.97}  # 99.4%
+  - {id: trails.summary, layer: trails, field: summary, level: must_have, kind: soft, min: 0.00}  # 2.9%
+  - {id: trails.distance_m, layer: trails, field: distance_m, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: trails.ascent_m, layer: trails, field: ascent_m, level: must_have, kind: soft, min: 0.96}  # 98.8%
+  - {id: trails.duration_min, layer: trails, field: duration_min, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: trails.difficulty, layer: trails, field: difficulty, level: must_see, kind: hard, min: 0.95}  # 97.2%
+  - {id: trails.rating, layer: trails, field: rating, level: must_see, kind: hard, min: 0.96}  # 98.8%
+  - {id: trails.img, layer: trails, field: img, level: must_have, kind: soft, min: 0.19}  # 21.7%
+  - {id: trails.rg, layer: trails, field: rg, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  # beaches (beaches, 2984 records on 2026-11-06)
+  - {id: beaches.name, layer: beaches, field: name, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: beaches.lat, layer: beaches, field: lat, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: beaches.lon, layer: beaches, field: lon, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: beaches.score, layer: beaches, field: score, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: beaches.tier, layer: beaches, field: tier, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  - {id: beaches.why, layer: beaches, field: why, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: beaches.images, layer: beaches, field: images, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: beaches.region, layer: beaches, field: region, level: must_have, kind: soft, min: 0.88}  # 90.2%
+  - {id: beaches.wiki, layer: beaches, field: wiki, level: must_have, kind: soft, min: 0.22}  # 24.4%
+  # lakes (lakes, 1815 records on 2026-11-06)
+  - {id: lakes.name, layer: lakes, field: name, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: lakes.lat, layer: lakes, field: lat, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: lakes.lon, layer: lakes, field: lon, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: lakes.score, layer: lakes, field: score, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: lakes.tier, layer: lakes, field: tier, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  - {id: lakes.why, layer: lakes, field: why, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: lakes.images, layer: lakes, field: images, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: lakes.region, layer: lakes, field: region, level: must_have, kind: soft, min: 0.90}  # 92.7%
+  - {id: lakes.wiki, layer: lakes, field: wiki, level: must_have, kind: soft, min: 0.76}  # 78.4%
+  # mountains (mountains, 932 records on 2026-11-06)
+  - {id: mountains.name, layer: mountains, field: name, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: mountains.lat, layer: mountains, field: lat, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: mountains.lon, layer: mountains, field: lon, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: mountains.score, layer: mountains, field: score, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: mountains.tier, layer: mountains, field: tier, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  - {id: mountains.why, layer: mountains, field: why, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: mountains.images, layer: mountains, field: images, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: mountains.ele, layer: mountains, field: ele, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  - {id: mountains.wd, layer: mountains, field: wd, level: must_have, kind: soft, min: 0.97}  # 99.8%
+  # cycling (cycling, 713 records on 2026-11-06)
+  - {id: cycling.name, layer: cycling, field: name, level: must_see, kind: hard, min: 0.90}  # 92.4%
+  - {id: cycling.km, layer: cycling, field: km, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: cycling.score, layer: cycling, field: score, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: cycling.why, layer: cycling, field: why, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: cycling.img, layer: cycling, field: img, level: must_see, kind: hard, min: 0.98}  # 100.0%
+  - {id: cycling.paved, layer: cycling, field: paved, level: must_have, kind: soft, min: 0.97}  # 99.9%
+  - {id: cycling.safe, layer: cycling, field: safe, level: must_have, kind: soft, min: 0.98}  # 100.0%
+  - {id: cycling.rg, layer: cycling, field: rg, level: must_have, kind: soft, min: 0.98}  # 100.0%
+
+# Text checks (T1201, register row T1179-c): generated texts on disk,
+# re-checked with the check() that wrote them (scripts/quality/engine.py
+# text_gate). source trails_summaries is data/trails/summaries.json (T1179)
+# against the trail wire in --public. check is one family of reasons:
+# dash (dashes, list separators), banned (banned words), facts (a word,
+# figure, month or claim the walk's facts do not hold), length.
+# facts is soft until T1179-b runs the summaries step in the same pipeline run
+# as the export: until then a trails rebuild makes the committed file stale
+# (T1179-e) and every moved figure would fail the run.
+text_checks:
+  - {id: trails_summaries.dash, source: trails_summaries, check: dash, kind: hard}
+  - {id: trails_summaries.banned, source: trails_summaries, check: banned, kind: hard}
+  - {id: trails_summaries.facts, source: trails_summaries, check: facts, kind: soft}
+  - {id: trails_summaries.length, source: trails_summaries, check: length, kind: soft}
+# Layer rules (T1214, register row T1142-b): the card's other three numbers per
+# layer. `layers` is `all` or a list of scorecard layers; a layer the card did
+# not measure for the metric (no records, accuracy n/a) is skipped.
+#   validity   hard, two points under the lowest shipped layer on 2026-11-07
+#              (cycling 92.4%, trails 99.4%, every app_data layer 100%).
+#   freshness  soft: a wire older than its cadence warns in the Data health
+#              tab. Hard would fail every run today (app_data is 153 days old,
+#              freshness 22.9%); make it hard once the box ships app_data on
+#              its cadence again.
+#   accuracy   hard, the rating layer's pairwise order against
+#              tests/golden_ratings.json (98.5% on 2026-11-07).
+layer_rules:
+  - {id: validity.app, metric: validity, layers: [core, flights, prices, rating, climate, place, imagery], kind: hard, min: 0.98}  # 100.0%
+  - {id: validity.trails, metric: validity, layers: [trails], kind: hard, min: 0.97}  # 99.4%
+  - {id: validity.outdoor, metric: validity, layers: [beaches, lakes, mountains], kind: hard, min: 0.98}  # 100.0%
+  - {id: validity.cycling, metric: validity, layers: [cycling], kind: hard, min: 0.90}  # 92.4%
+  - {id: freshness, metric: freshness, layers: all, kind: soft, min: 0.50}  # app_data 22.9% (153 d), trails 63.9%
+  - {id: accuracy.rating, metric: accuracy, layers: [rating], kind: hard, min: 0.96}  # 98.5%
+# Report rules (T1214, register row T1142-a): the audit scripts ROADMAP D2
+# names, folded in by reading the report each one already writes. `path` is a
+# dot path to a number (a list or object counts its entries); `keys` sums
+# those keys of an object; over `max` breaks the rule. A report that is not on
+# disk is skipped. Values on 2026-11-07 in the comments.
+#   pipeline/dossier/audit.py           HARD checks fail, coverage checks warn
+#   pipeline/audit/audit_hero_images.py destinations with no hero image warn
+#   pipeline/audit/audit_quality.py     box only (logs/); soft until a box
+#                                       report gives the baseline (T1214-a)
+# audit_gaps.py is a manual print of what the scorecard's completeness
+# already measures per field, and trails freshness is the `freshness` layer
+# rule on the trails layer; neither needs a report rule.
+reports:
+  - {id: dossier.hard, source: pipeline/dossier/audit.py, file: data/reports/dossier_audit.json, path: failure_counts, keys: [IMG-2, IMG-3, IMG-4, IMG-5, HL-2, HL-3, HL-5, DO-1, DO-2, TRIP-1, TRIP-2, INT-1, SCH-1, LNG-1], max: 0, kind: hard}  # 0
+  - {id: dossier.soft, source: pipeline/dossier/audit.py, file: data/reports/dossier_audit.json, path: failure_counts, keys: [IMG-1, HL-1, HL-4, DO-3, FEST-1, CRD-1], max: 110, kind: soft}  # 100 (HL-4 80, FEST-1 20)
+  - {id: hero_images.missing, source: pipeline/audit/audit_hero_images.py, file: data/reports/hero_images_audit.json, path: counts.missing, max: 10, kind: soft}  # 3
+  - {id: hero_images.unfixed, source: pipeline/audit/audit_hero_images.py, file: data/reports/hero_images_audit.json, path: counts.unfixed, max: 0, kind: soft}  # 0
+  - {id: poi.null_island, source: pipeline/audit/audit_quality.py, file: logs/audit_quality_report.json, path: coords.null_island, max: 0, kind: soft}
+  - {id: poi.out_of_bbox, source: pipeline/audit/audit_quality.py, file: logs/audit_quality_report.json, path: coords.out_of_bbox, max: 0, kind: soft}
+  - {id: poi.bad_licence, source: pipeline/audit/audit_quality.py, file: logs/audit_quality_report.json, path: tasl.bad_license, max: 0, kind: soft}

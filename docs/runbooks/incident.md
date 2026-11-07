@@ -50,6 +50,36 @@ Traveller sees: paid, still on the free tier. Money taken with nothing granted i
 
 Do: Stripe Dashboard, Developers, Webhooks, the endpoint, failed deliveries; the response code says why (from the archived runbook): 401 the function was deployed without `--no-verify-jwt`; 400 with a signature error, `STRIPE_WEBHOOK_SECRET` does not match; 500 function-not-found, a migration and the function are out of step; 5xx or timeout, Supabase itself. Fix the cause, then Resend each failed event. `grant_pass` is keyed on the Checkout session id (see `supabase/functions/_shared/passes.mjs` and the webhook), so a resend that already landed does nothing.
 
+## 4. R2 or Cloudflare has an incident
+
+Carried from the archived runbook (T218) and re-checked against the repo on 2026-11-05 (T1086); dashboards and alerts are still not re-verified.
+
+Alert: `.github/workflows/uptime.yml` runs `scripts/monitor/check.py` every 15 minutes (targets in `scripts/monitor/targets.json`: the app, the data host, the Supabase project). A failure turns the scheduled run red, which emails the repository owner, and posts to `ALERT_WEBHOOK_URL` when that secret is set. Also www.cloudflarestatus.com and reports. Confirm with `node scripts/r2/verify-data.mjs` from `continent-app/`.
+
+Traveller sees: with only R2 down, the app opens and the map draws, but destination detail, places, dossiers and trails fail to load and self-hosted photos are missing. With Cloudflare Pages or the zone down, the site does not load at all.
+
+Do: tell Cloudflare from us. A bad publish shows as wrong or missing files with a 200; an incident shows errors or timeouts across everything. For an incident there is little to do but watch the status page. With only R2 down, Supabase still answers, so use the site notice ("Destination details and photos are not loading. The map and your saved trips still work."); the status file lives on R2 and cannot speak for it. With the whole zone down there is no in-app line. For a bad publish, push the previous good build (see [deploy.md](deploy.md)); Pages keeps earlier deployments, and the rollback steps are in that file. There is no second host.
+
+## 5. The Supabase project has a problem
+
+Alert: the same monitor probes `https://ntssxktaduxzpsmejwyv.supabase.co/auth/v1/health` (401 without the anon key still proves it answers). Supabase emails the owner about limits and pauses; status.supabase.com covers platform incidents. The Admin health line names missing tables after a bad paste.
+
+Traveller sees: the catalogue, map and destination pages come from static files and keep working. Sign-in, saved trips, shared trips, the bot, booking import and checkout fail with their own error lines. The site notice is stored in Supabase and cannot show; post the status file instead (the outage line, above), for example "Signing in and saving trips are down. Your trips are safe.", and clear it with `--clear` when the project is back.
+
+Do, by kind. A platform incident: wait. A paused or over-limit project: the Dashboard names the limit; restore the project or reduce the cause. A broken migration paste: most migrations from 024 on carry a DOWN block in their header (032 and most before 024 do not); run it in the order written, or re-paste the previous definition of each function it replaced. Function deploys follow the SQL they call. A leaked service role key: rotate it in the Dashboard, then update it in the box's `~/.config/carta/env` and in the function secrets (see [../security/SECRETS.md](../security/SECRETS.md)). Lost data: [backup-restore.md](backup-restore.md); anything newer than the last dump is gone, so say so to the affected travellers.
+
+## After every incident
+
+Add one admin note on any affected user, switch the site notice off, and if a fix needs code, open a task for it. Write two lines in the next task report that touches the area: what failed, how long, what changed.
+
 ## Not covered here
 
-An R2 or Cloudflare incident and a Supabase problem: sections 4 and 5 of the archived runbook; not carried over because they depend on dashboards and alerts not re-verified. A leaked secret and a data breach are not covered by either file. Secrets and rotation: [../security/SECRETS.md](../security/SECRETS.md) and `Execution/P15/_OPEN-secrets-rotation.md`.
+A leaked secret and a data breach are not covered. Secrets and rotation: [../security/SECRETS.md](../security/SECRETS.md) and `Execution/P15/_OPEN-secrets-rotation.md`. Refunds: [refund.md](refund.md).
+
+## Drill
+
+Practise before it is real. Targets and error budgets are in [slo.md](slo.md).
+
+Local (any time, nothing leaves the machine): `python -I ops/drill/drill.py --out docs/runbooks/drill-log.md`. It serves a copy of the wire indexes, truncates the trails index (a bad data push), runs `scripts/monitor/check.py` against it, delivers the alert to a local pager, restores the last good file and checks the monitor is green again. Each run is written to `docs/runbooks/drill-log.md`.
+
+Live (owner, about 30 minutes, once a quarter): (1) pick a quiet hour; (2) in a scratch R2 prefix or with `ALERT_WEBHOOK_URL` pointed at a test topic, run `scripts/monitor/check.py` with a `targets.json` copy whose floor for one layer is above the real count; (3) note the time to see the alert on your phone; (4) practise the notice: `node scripts/status_notice.mjs "Drill, ignore" --until <ISO time>`, upload, see the line in the app, then clear it; (5) add the timings to `drill-log.md`. Never break production data for a drill.

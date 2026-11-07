@@ -69,7 +69,6 @@
   /* The panel names the page, so the content stops naming it too: with the
      rail up, the "Account" overline above the profile card was the same word
      twice, one under the other. */
-  .account-shell .panel-tag { display: none; }
   .account-shell .panel-header.account-header-bare + .panel-section { padding-top: 22px; }
 
   /* The way out is the header (press the tab again) or Escape, exactly as it
@@ -84,62 +83,12 @@
 
   /* The rail's rows. Modelled on .side-sort: a quiet tile until it is the
      page you are on, and then the full accent. */
-  .side-nav { display: flex; flex-direction: column; gap: 6px; }
-  .side-navrow {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    width: 100%;
-    padding: 9px 12px;
-    border: 1px solid var(--rule-soft);
-    border-radius: 10px;
-    background: var(--paper-dim);
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--ink-soft);
-    text-align: left;
-    transition: color .15s, background .15s, border-color .15s;
-  }
-  .side-navrow svg { flex: none; }
-  .side-navrow span {
-    min-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  .side-navrow:hover { color: var(--ink); border-color: var(--rule); }
   /* Where you are is a pressed toggle, so --ink-fill like .side-cat.on (T186). */
-  .side-navrow.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-  .side-navrow.on svg { color: var(--select-ink); }
-  .side-navrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-  .saved-side .side-cat {
-    flex-direction: row;
-    align-items: center;
-    gap: 9px;
-    padding: 9px 12px;
-    font-size: 12.5px;
-  }
-  .saved-side .side-cat span { flex: 1; text-align: left; }
-  .saved-side .side-cat small {
-    flex: none;
-    min-width: 20px;
-    padding: 1px 6px;
-    border-radius: 999px;
-    background: var(--paper);
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    color: var(--ink-soft);
-    text-align: center;
-  }
-  .saved-side .side-cat.on small { background: rgba(255, 255, 255, 0.22); color: var(--on-fill); }
 }
 
 /* Narrow desktop windows: the rail is worth less than the content beside it,
    so it gives up width first, in the same two steps the header takes. */
-@media (min-width: 769px) and (max-width: 1120px) {
+@media (min-width: 769px) and (max-width: 1100px) {
   .saved-side, .account-side { flex-basis: 216px; width: 216px; padding-left: 16px; }
 }
 
@@ -163,12 +112,12 @@
     gap: 5px;
     padding: 13px 4px 9px;
     border: 1px solid var(--rule-soft);
-    border-radius: 10px;
+    border-radius: var(--radius-control);
     background: var(--paper-dim);
     font-size: 10.5px;
     font-weight: 600;
     color: var(--ink-soft);
-    transition: color .15s, background .15s, border-color .15s;
+    transition: color var(--dur-1), background var(--dur-1), border-color var(--dur-1);
   }
   /* The small accent tick every tab on this app wears. */
   .saved-cat::before {
@@ -193,7 +142,7 @@
     top: 5px; right: 5px;
     min-width: 16px;
     padding: 0 4px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: var(--paper);
     font-family: var(--mono);
     font-size: var(--text-micro);
@@ -214,7 +163,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .side-navrow, .saved-cat { transition: none; }
+  .saved-cat { transition: none; }
 }
 
 /* == Published guides (community/GuidesPanel.jsx) ==========================
@@ -252,7 +201,6 @@
   color: var(--text);
 }
 .gld-strip-btn { flex: none; }
-.frn-guides { padding-top: 0; }
 
 /* The gallery. ONE column, and the card runs across rather than down.
    A two-up grid of photo tiles is a shape for a page; this lives in a 440px
@@ -282,76 +230,10 @@
   .gld-card:hover { border-color: var(--ink-mute); }
 }
 .gld-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.gld-card-photo {
-  position: relative;
-  display: block;
-  flex: none;
-  width: 116px;
-  align-self: stretch;
-  background: var(--paper-dim);
-}
-.gld-card-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.gld-card-nophoto {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: var(--ink-mute);
-}
-.gld-card-flags {
-  position: absolute;
-  right: 6px;
-  top: 6px;
-  display: inline-flex;
-  padding: 3px 6px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
-}
-.gld-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  flex: 1;
-  min-width: 0;
-  padding: 11px 13px 11px 12px;
-}
 /* Two lines before it truncates: a guide's title is the one thing on the card
    that carries what it is about, so clipping it at 20 characters made every
    card read the same. */
-.gld-card-title {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  font-size: 13.5px;
-  font-weight: 600;
-  line-height: 1.35;
-  color: var(--ink);
-}
-.gld-card-route {
-  font-size: 12px;
-  color: var(--ink-soft);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 /* Nights and season are measured facts. Comma separated, never a middot. */
-.gld-card-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  margin-top: 2px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-mute);
-}
 .gld-card-by {
   display: inline-flex;
   align-items: center;
@@ -369,17 +251,16 @@
   margin-bottom: 10px;
   padding: 5px 11px 5px 8px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   cursor: pointer;
 }
 @media (hover: hover) {
   .gld-back:hover { border-color: var(--ink); color: var(--ink); }
 }
-.gld-back-chev { transform: rotate(90deg); }
 .gld-title {
   margin: 0 0 6px;
   font-family: var(--display);
@@ -415,7 +296,7 @@
   min-height: 34px;
   padding: 7px 14px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   font-family: var(--ui);
   font-size: 12.5px;
@@ -473,7 +354,7 @@
 .gld-highlights {
   margin: 0;
   padding-left: 18px;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.6;
   color: var(--ink-soft);
 }
@@ -500,7 +381,7 @@
 .gld-report .section-title { margin-bottom: 0; }
 .gld-report-lede {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.55;
   color: var(--ink-soft);
 }
@@ -537,30 +418,8 @@
   flex-wrap: wrap;
   gap: 7px;
 }
-.gld-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  min-height: 30px;
-  padding: 5px 12px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  background: transparent;
-  font-family: var(--ui);
-  font-size: 12px;
-  color: var(--ink-soft);
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .gld-chip:hover { border-color: var(--ink-mute); }
-}
-.gld-chip.on {
-  border-color: transparent;
-  background: var(--select-bg);
-  color: var(--select-ink);
-}
 @media (prefers-reduced-motion: reduce) {
-  .gld-card, .gld-chip, .gld-strip-btn { transition: none; }
+  .gld-card, .gld-strip-btn { transition: none; }
 }
 
 /* == Co-planners (auth/coplanners.js, TripSharePanel, FriendsSpoke) ========
@@ -594,7 +453,7 @@
   min-width: 0;
 }
 .coplan-who b {
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -603,7 +462,7 @@
 /* Asked, or editing. A state, so it takes the ochre seal rather than the
    accent, which in this app means "press this". */
 .coplan-state {
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
 }
 .coplan-ask {
@@ -794,7 +653,7 @@
   border: 0;
   background: none;
   padding: 8px 4px;
-  font-size: 20px;
+  font-size: var(--text-title);
   line-height: 1;
   cursor: pointer;
   color: var(--ink);
@@ -853,7 +712,7 @@
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18);
 }
 .cycle-elev { margin: 4px 0 10px; }
-.cycle-note { margin: 6px 0; font-size: 14px; color: var(--ink-soft); }
+.cycle-note { margin: 6px 0; font-size: var(--text-body); color: var(--ink-soft); }
 
 /* Measured facts. Tabular so a column of distances does not jitter. */
 .cycle-facts {
@@ -865,7 +724,7 @@
   border-top: 1px solid var(--rule-soft);
   border-bottom: 1px solid var(--rule-soft);
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
@@ -900,7 +759,7 @@
   align-self: start;
   min-width: 34px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-mute);
 }
 
@@ -908,16 +767,16 @@
   margin: 12px 0 0;
   padding: 10px 12px;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  font-size: 13px;
+  border-radius: var(--radius-control);
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 .cycle-gpx {
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: none;
   padding: 8px 14px;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 500;
   cursor: pointer;
   color: var(--ink);
@@ -935,7 +794,7 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
 }
 .cycle-shot figcaption {
   margin-top: 4px;
@@ -947,22 +806,15 @@
 /* Route and tour cards use the photo-card template every other layer
    uses (.places-bcard), so they carry no layout of their own. What is
    cycling's alone is the unscored marker in the badge slot. */
-.places-card-right .cycle-card-unrated {
-  font-size: 11px;
-  line-height: 1.2;
-  color: var(--on-fill);
-  opacity: 0.85;
-  white-space: nowrap;
-}
 .cycle-tourcard-title { font-size: 15px; font-weight: 600; color: var(--ink); }
 .cycle-tourcard-meta, .cycle-tourcard-pace, .cycle-card-meta,
 .cycle-card-surface, .cycle-card-score {
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;
   color: var(--ink-mute);
 }
-.cycle-tourcard-towns, .cycle-card-why { font-size: 13px; color: var(--ink-soft); }
+.cycle-tourcard-towns, .cycle-card-why { font-size: var(--text-label); color: var(--ink-soft); }
 .cycle-card-name { font-size: 15px; font-weight: 600; color: var(--ink); }
 /* A listed row has no score, and says so rather than showing a gap. */
 .cycle-card-unrated {
@@ -984,7 +836,7 @@
   flex-direction: column;
   gap: 2px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   padding: 8px 12px;
   cursor: pointer;
@@ -994,7 +846,7 @@
 @media (hover: hover) {
   .cycle-famchip:hover { background: var(--paper-dim); }
 }
-.cycle-famchip-ref { font-size: 14px; font-weight: 600; }
+.cycle-famchip-ref { font-size: var(--text-body); font-weight: 600; }
 .cycle-famchip-meta {
   font-family: var(--mono);
   font-size: 11.5px;
@@ -1021,7 +873,7 @@
   display: block;
   margin: 6px 0 4px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   padding: 8px 14px;
   font-size: 13.5px;
@@ -1045,13 +897,13 @@
   gap: 10px;
   padding: 7px 0;
   border-bottom: 1px solid var(--rule-soft);
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .cycle-town-km {
   flex: none;
   min-width: 56px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;
   color: var(--ink-mute);
 }
@@ -1073,10 +925,10 @@
   cursor: pointer;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 599px) {
   .cycle-map { height: 240px; }
 }
-@media (max-width: 560px) {
+@media (max-width: 599px) {
   .cycle-gallery { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1118,14 +970,6 @@
   font-size: 11.5px;
   color: var(--ink-mute);
 }
-.nbx-unscored {
-  font-size: 11px;
-  color: var(--ink-mute);
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  padding: 2px 8px;
-  white-space: nowrap;
-}
 
 /* ==========================================================================
    Curated trip library (journeys): the Trips tab's front door.
@@ -1135,152 +979,19 @@
 /* The library cards, the list head, the composed door and the page head moved
    to 66-v6-trips.css (T387). */
 
-.jpage-tags { margin-top: 10px; }
-
 /* The budget as an itemised receipt: hairline rows, right-aligned mono,
    a heavier rule above the sum. */
-.jpage-budget-rows { list-style: none; margin: 0; padding: 0; }
-.jpage-budget-rows li {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 9px 0;
-  border-top: 1px solid var(--rule-soft);
-}
-.jpage-budget-rows li:first-child { border-top: 0; }
-.jpage-budget-label { font-size: 13px; }
-.jpage-budget-label small {
-  display: block;
-  margin-top: 2px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-  line-height: 1.4;
-}
-.jpage-budget-eur {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-.jpage-budget-total {
-  border-top: 2px solid var(--ink) !important;
-}
-.jpage-budget-total .jpage-budget-label { font-weight: 600; }
-.jpage-budget-total .jpage-budget-eur { font-size: 15px; font-weight: 500; }
 
 /* The rail alternative sits under the receipt, outside the sum. */
-.jpage-rail { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--rule-soft); }
-.jpage-rail-label { font-size: 13px; font-weight: 600; }
-.jpage-rail-line { margin: var(--space-1) 0 0; font-size: 14px; color: var(--ink); }
 
 /* One authored day: the number in mono, the title in display, then the
    three parts of the day with their labels in the margin of the text. */
-.jpage-day {
-  padding: 14px 0 4px;
-  border-top: 1px solid var(--rule-soft);
-}
-.jpage-day:first-of-type { border-top: 0; padding-top: 4px; }
-.jpage-day-head {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-.jpage-day-n {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  font-weight: 500;
-  color: var(--rate);
-  white-space: nowrap;
-}
-.jpage-day-head h3,
-.jpage-day-head h4 {
-  font-family: var(--display);
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-.jpage-day-part { margin-bottom: 8px; }
-.jpage-day-when {
-  display: block;
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--ink-mute);
-  margin-bottom: 2px;
-}
-.jpage-day-text {
-  font-size: 13.5px;
-  line-height: 1.55;
-  color: var(--ink-soft);
-}
-.jpage-day-stats {
-  margin: 6px 0 8px;
-  /* Words in sans, figures in the .mono runs inside (T397, the mono rule). */
-  font-family: var(--ui);
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-.jpage-day-stats .mono {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
 /* An estimated figure (T146): a small mono mark beside it. Sourced and
    derived figures carry none; the footer line states the whole split. */
-.jpage-est {
-  margin-left: var(--space-1);
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 400;
-  line-height: 1;
-  color: var(--ink-soft);
-  vertical-align: top;
-  white-space: nowrap;
-}
-.jpage-day-sleep {
-  margin: 4px 0 8px;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-}
 
 /* Where to sleep: one bordered card per named property. */
-.jpage-stay {
-  padding: 14px 16px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 12px;
-  background: var(--bg-card);
-  margin-bottom: 10px;
-}
-.jpage-stay header {
-  display: flex;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  margin-bottom: 4px;
-}
-.jpage-stay h3 { font-size: 14px; font-weight: 700; }
-.jpage-stay-kind { font-size: 12px; color: var(--ink-mute); }
-.jpage-stay-desc {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.jpage-stay-book {
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.jpage-stay-book .mono {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-}
 
 /* Good to know: the logistics slots as definition rows. */
-.jpage-log-row dd { color: var(--ink-soft); }
-.jpage-log-text { font-size: 13px; line-height: 1.5; }
 .jpage-lrow-btn {
   display: flex;
   align-items: center;
@@ -1296,7 +1007,7 @@
   cursor: pointer;
 }
 .jpage-lrow-icon { flex: none; color: var(--ink-soft); }
-.jpage-lrow-label { flex: none; font-size: 13px; font-weight: 600; }
+.jpage-lrow-label { flex: none; font-size: var(--text-label); font-weight: 600; }
 .jpage-lrow-sum {
   flex: 1;
   min-width: 0;
@@ -1306,46 +1017,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.jpage-lrow-chev { flex: none; margin-left: auto; color: var(--ink-mute); transition: transform .18s ease; }
+.jpage-lrow-chev { flex: none; margin-left: auto; color: var(--ink-mute); transition: transform var(--dur-2) var(--ease-in-out); }
 @media (prefers-reduced-motion: reduce) { .jpage-lrow-chev { transition: none; } }
 
-.jpage-tips ul { list-style: none; margin: 0; padding: 0; }
-.jpage-tips li {
-  position: relative;
-  padding: 8px 0 8px 18px;
-  border-top: 1px solid var(--rule-soft);
-}
-.jpage-tips li:first-child { border-top: 0; }
-.jpage-tips li::before {
-  content: '';
-  position: absolute;
-  left: 2px;
-  top: 15px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--rate);
-}
-.jpage-tip-text {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-
 /* What must be re-checked before booking, said once, tinted, never buried. */
-.jpage-verify {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin: 0 0 20px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: var(--rate-bg);
-  color: var(--rate);
-  font-size: 12.5px;
-  line-height: 1.45;
-}
-.jpage-verify svg { flex: none; margin-top: 2px; }
 
 /* Journeys on a phone: the style cards keep the two-abreast tile grammar
    (the .places-ccard rules above already reshape them), only the display
@@ -1355,8 +1030,7 @@
 @media (max-width: 768px) {
   .jstyle-card .jstyle-name { font-size: 15.5px; }
   .jcard { grid-column: 1 / -1; }
-  .jcard .jcard-title { font-size: 16px; }
-  .jsec-title { font-size: 19px; }
+  .jcard .jcard-title { font-size: var(--text-lead); }
 }
 
 /* ==========================================================================
@@ -1367,70 +1041,18 @@
    ========================================================================== */
 
 /* --- the four-slot card body ------------------------------------------- */
-.xcard-kind {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-.xcard-dot { opacity: 0.6; }
 .kind-glyph { flex: none; display: inline-block; }
-.xcard-verdict {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  min-height: 20px;
-}
-.xcard-country-line {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--rate-soft);
-}
-.xcard-foot {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.xcard-role { font-weight: 600; }
-.xcard-hours { display: inline-flex; align-items: center; gap: 3px; color: var(--ink-mute); }
-.xcard-car { display: inline-flex; color: var(--ink-mute); }
 
 /* the verdict ribbon: filled for the top tier, outlined for a detour */
 
 /* --- grid header: the live count and the sort select -------------------- */
-.xgrid-head {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 2px 2px 10px;
-}
-.xgrid-sort {
-  margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12.5px;
-  color: var(--ink-mute);
-}
-.xgrid-sort select {
-  font: inherit;
-  color: var(--ink);
-  background: var(--bg-card);
-  border: 1px solid var(--rule-soft);
-  border-radius: 8px;
-  padding: 5px 8px;
-}
 
 /* --- the filter rail ---------------------------------------------------- */
 .xrail { display: flex; flex-direction: column; gap: 14px; }
 
 .xrail-count {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink);
   font-variant-numeric: tabular-nums;
   margin: 0 0 10px;
@@ -1438,7 +1060,7 @@
 .xrail-count-inline {
   margin-left: auto;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
@@ -1450,11 +1072,11 @@
   align-items: center;
   gap: 6px;
   font: inherit;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink);
   background: var(--rate-bg);
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 4px 10px;
   cursor: pointer;
 }
@@ -1468,39 +1090,6 @@
 /* Was a <details> fold; it is now the same .places-filter-btn Destinations
    uses, opening the shared sheet. The .explore-fold rules below are kept so a
    revert is one JSX swap. */
-.explore-filterbar {
-  display: flex;
-  margin: 0 0 10px;
-}
-.explore-filterbar .places-filter-btn { flex: 1 1 auto; justify-content: center; }
-@media (min-width: 769px) {
-  .explore-filterbar { display: none; }
-}
-
-.explore-fold {
-  margin: 0 0 10px;
-  background: var(--bg-card);
-  border: 1px solid var(--rule-soft);
-  border-radius: 14px;
-  padding: 0;
-}
-.explore-fold > summary {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  list-style: none;
-  cursor: pointer;
-  padding: 11px 14px;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.explore-fold > summary::-webkit-details-marker { display: none; }
-.explore-fold[open] > summary { border-bottom: 1px solid var(--rule-soft); }
-.explore-fold .xrail { padding: 12px 14px 14px; }
-@media (min-width: 769px) {
-  .explore-fold { display: none; }
-}
 
 /* The mosaic card is body-forward again: the pre-rebuild desktop CSS hid
    .xcard-body behind a photo overlay that no longer exists. Scoped to the
@@ -1508,35 +1097,6 @@
 
 /* --- Explore rails (PLAN.md C5): editorial strips before the grid -------- */
 .xrails { display: flex; flex-direction: column; gap: 18px; margin: 0 0 22px; }
-.xrails-head { display: flex; align-items: baseline; gap: 12px; margin: 0 2px 8px; }
-.xrails-title {
-  font-family: var(--display);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--ink);
-  margin: 0;
-}
-.xrails-all {
-  margin-left: auto;
-  font: inherit;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--rate-soft);
-  background: none;
-  border: 0;
-  cursor: pointer;
-  padding: 2px 4px;
-}
-@media (hover: hover) {
-  .xrails-all:hover { text-decoration: underline; }
-}
-.xrails-strip {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  padding: 2px 2px 8px;
-}
 .railcard {
   flex: 0 0 172px;
   scroll-snap-align: start;
@@ -1550,36 +1110,6 @@
   overflow: hidden;
   cursor: pointer;
   padding: 0;
-}
-.railcard-media { position: relative; display: block; }
-.railcard-img { width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block; }
-.railcard-seal {
-  position: absolute;
-  top: 7px;
-  left: 7px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--rate);
-}
-.railcard-seal.rt-2 { background: var(--bg-card); border: 2px solid var(--rate); }
-.railcard-body { display: flex; flex-direction: column; gap: 3px; padding: 8px 10px 10px; }
-.railcard-kind {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10.5px;
-  color: var(--ink-mute);
-}
-.railcard-name {
-  font-family: var(--display);
-  font-size: 14.5px;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* --- tier legend (PLAN.md C8) ------------------------------------------- */
@@ -1618,6 +1148,24 @@
 .cpg-months { margin-top: var(--space-2); }
 .cpg-fact-text { font-weight: 400; }
 .cpg-every { align-self: flex-start; }
+/* "Check before you go" (T1199): the fact grammar (label over value,
+   hairlines between, no card), two columns from 769 px. The source link is
+   a real link under each line; the advice line closes the section. */
+.cpg-entry-lead { margin: 0 0 var(--space-3); font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); max-width: var(--measure); }
+.cpg-entry-list { margin: 0; display: grid; grid-template-columns: 1fr; column-gap: var(--space-6); }
+.cpg-entry-row { display: flex; flex-direction: column; gap: 2px; padding: var(--space-3) 0; border-top: 1px solid var(--border-soft); }
+.cpg-entry-row dt { font-size: var(--text-caption); color: var(--text-2); }
+.cpg-entry-row dd { margin: 0; display: flex; flex-direction: column; gap: 2px; }
+.cpg-entry-need { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.cpg-entry-src,
+.cpg-entry-advice a { color: var(--action); text-underline-offset: 2px; }
+.cpg-entry-src { font-size: var(--text-caption); align-self: flex-start; min-height: 24px; display: inline-flex; align-items: center; }
+.cpg-entry-advice { margin: var(--space-3) 0 0; display: flex; flex-wrap: wrap; gap: 2px var(--space-2); font-size: var(--text-body); }
+.cpg-entry-advice a { font-weight: 600; min-height: 24px; display: inline-flex; align-items: center; }
+.cpg-entry-advice span { color: var(--text-2); font-size: var(--text-caption); align-self: center; }
+@media (min-width: 769px) {
+  .cpg-entry-list { grid-template-columns: 1fr 1fr; }
+}
 @media (min-width: 769px) {
   .cpg-hero { max-height: 60vh; max-height: 60dvh; }
 }
@@ -1639,85 +1187,13 @@
    verdict card, sleep, getting there, the sized highlight grid, consensus
    groups and area members.
    ========================================================================== */
-.destp-subnav {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  display: flex;
-  gap: 4px;
-  overflow-x: auto;
-  padding: 6px 14px;
-  background: var(--paper);
-  border-bottom: 1px solid var(--rule-soft);
-}
-.destp-subnav button {
-  font: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  background: var(--bg-card);
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  padding: 4px 11px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-@media (hover: hover) {
-  .destp-subnav button:hover { border-color: var(--rule); color: var(--ink); }
-}
-
-.destp-verdict-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; }
-.destp-verdict-label { font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--rate-soft); }
-.destp-verdict-country { font-size: 13px; font-weight: 600; color: var(--rate-soft); }
-.destp-confidence {
-  font-size: 12.5px;
-  color: var(--ink-soft);
-  background: var(--rate-bg);
-  border-radius: 8px;
-  padding: 7px 10px;
-  margin: 10px 0 0;
-  max-width: 64ch;
-}
-.destp-howlong { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-soft); margin: 10px 0 0; }
 
 /* sleep */
 
-/* getting there */
-.destp-getting { display: flex; flex-direction: column; gap: 7px; }
-.destp-get-row { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink); margin: 0; }
-.destp-get-airports { list-style: none; margin: 0; padding: 0 0 0 22px; font-size: 13px; color: var(--ink-soft); }
-.destp-get-airport + .destp-get-airport { margin-top: 2px; }
-.destp-get-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
-.destp-get-transit.is-excellent .destp-get-dot, .destp-get-transit.is-good .destp-get-dot { background: var(--status-success); }
-/* Weak transit is a fact, not an alarm (T446): a hollow ink dot beside the
-   words; --danger is for destroying something, --rate for ratings. */
-.destp-get-transit.is-limited .destp-get-dot,
-.destp-get-transit.is-poor .destp-get-dot { background: none; border: 2px solid var(--text-3); box-sizing: border-box; }
-
 /* crowding + water */
 .destp-crowd, .destp-water { margin: 12px 0 0; padding-top: 10px; border-top: 1px solid var(--rule-soft); }
-.destp-crowd-head, .destp-water-head { display: flex; align-items: center; gap: 8px; }
-.destp-crowd-year { font-size: 11px; color: var(--ink-mute); }
-.destp-water-line { font-size: 12.5px; color: var(--ink-soft); margin: 6px 0 0; }
 
 /* highlights: size, plates, groups, significance */
-.destp-hl-group { font-size: 11.5px; font-weight: 700; color: var(--ink-mute); margin: 12px 2px 6px; }
-.destp-hl.is-top { grid-column: span 2; }
-.destp-hl.is-top img, .destp-hl.is-top .destp-hl-plate { min-height: 150px; }
-.destp-hl-plate {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 92px;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
-  font-family: var(--display);
-  font-size: 34px;
-  font-weight: 600;
-}
-.destp-hl-sig { color: var(--rate-soft); font-size: 10px; letter-spacing: 1px; }
-.destp-do-group { font-size: 11.5px; font-weight: 700; color: var(--ink-mute); margin: 12px 2px 6px; }
-.destp-do-group .mono { color: var(--rate-soft); }
 
 /* members */
 /* A list under hairlines, not a grid of boxes (T446): name, the hours to
@@ -1738,59 +1214,6 @@
 .pass-overlay { z-index: calc(var(--z-page) + 120); }
 
 /* --- practical layer (PLAN.md D4) ---------------------------------------- */
-.destp-rhythm { font-size: 13px; color: var(--ink-soft); margin: 10px 0 0; max-width: 66ch; }
-.destp-bookahead {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--ink);
-  background: var(--rate-bg);
-  border-radius: 8px;
-  padding: 8px 11px;
-  margin: 10px 0 0;
-}
-.destp-bookahead-mark {
-  flex: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--rate);
-  color: var(--on-fill);
-  font-size: 11px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transform: translateY(2px);
-}
-.destp-pairs { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin: 12px 0 0; }
-.destp-pairs-label { font-size: 12px; font-weight: 700; color: var(--ink-mute); }
-.destp-pair {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font: inherit;
-  font-size: 12.5px;
-  color: var(--ink);
-  background: var(--bg-card);
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  padding: 4px 11px;
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .destp-pair:hover { border-color: var(--rate-soft); }
-}
-.destp-pair .mono { color: var(--ink-mute); font-size: 11px; }
-.destp-triptotal {
-  margin: 10px 0 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  border-top: 1px solid var(--rule-soft);
-  padding-top: 9px;
-}
 
 /* ==========================================================================
    Explore v5 (2026-09-12): the calm page.
@@ -1823,27 +1246,8 @@
 }
 .xbar .explore-mock { margin: 0; align-self: flex-start; }
 .xbar-tools { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-
-.xbar .xgrid-sort { margin-left: 0; gap: 8px; color: var(--ink-mute); }
-.xgrid-sort-field { position: relative; display: inline-flex; align-items: center; }
 /* A select is a field: the control radius, as every select in the rail
    beside it (T474, row T435-h; it was a pill). */
-.xbar .xgrid-sort select {
-  appearance: none;
-  height: 38px;
-  padding: 0 32px 0 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .xbar .xgrid-sort select:hover { border-color: var(--neutral-300); }
-}
-.xbar .xgrid-sort select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.xgrid-sort-chev { position: absolute; right: 11px; pointer-events: none; color: var(--ink-mute); }
 
 /* Under the bar: the active chips wear the accent tint, the one colour
    "selected" has on this page, and the key becomes one quiet line. */
@@ -1856,37 +1260,17 @@
 
 /* --- the rails: three strips and a row of doors ------------------------- */
 .xrails { gap: 26px; margin: 0 0 30px; }
-.xrails-head { align-items: center; gap: 12px; margin: 0 0 10px; }
-.xrails-title { font-size: 20px; letter-spacing: -0.01em; }
-.xrails-all { margin-left: auto; color: var(--accent); font-weight: 600; }
-@media (hover: hover) {
-  .xrails-all:hover { color: var(--accent-soft); text-decoration: none; }
-}
-.xrails-nav { display: none; gap: 6px; }
-
-@media (min-width: 769px) and (hover: hover) { .xrails-nav { display: inline-flex; } }
-.xrails-strip {
-  gap: 14px;
-  padding: 4px 2px 10px;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-}
-.xrails-strip::-webkit-scrollbar { display: none; }
 .railcard {
   flex: 0 0 200px;
   border: 1px solid var(--rule-soft);
   border-radius: 14px;
   box-shadow: var(--shadow-1);
-  transition: transform .2s cubic-bezier(.16, 1, .3, 1), box-shadow .2s;
+  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2);
 }
 @media (hover: hover) {
   .railcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); }
 }
 .railcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.railcard-body { gap: 4px; padding: 10px 12px 12px; }
-.railcard-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
-.railcard-name { flex: 1 1 auto; min-width: 0; font-size: 15px; }
-.railcard-kind { gap: 5px; font-size: 11px; }
 
 /* --- the card: four facts, soft elevation -------------------------------- */
 
@@ -1895,9 +1279,6 @@
 
 /* Two rows the card gave up, now in the preview: the role beside the
    country, and the country rank where one was earned. */
-.xcard-preview-role { display: inline-flex; align-items: center; gap: 6px; }
-.xcard-preview-role::before { content: ''; width: 1px; height: 9px; background: rgba(255, 255, 255, 0.35); }
-.xcard-preview-rank { margin: 0; font-size: 11.5px; font-weight: 600; color: var(--rate-bg); }
 
 /* --- the feed: grid alone, or grid beside a sticky map ------------------- */
 
@@ -1905,8 +1286,7 @@
 
 @media (max-width: 768px) {
   .xbar { align-items: center; margin: 2px 0 12px; padding-bottom: 12px; }
-  .xbar-title,
-  .xbar .xgrid-sort-label {
+  .xbar-title {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -1917,12 +1297,9 @@
     white-space: nowrap;
     border: 0;
   }
-  .xbar .xgrid-sort select { height: var(--tap); }
   /* T193: the 44px tap floor on the phone. Chips and toggles grow; the two
      small text controls keep their look and take a transparent tap box. */
   .xchip { min-height: var(--tap); }
-  .xrails-all { position: relative; }
-  .xrails-all::before { content: ''; position: absolute; inset: -11px -6px; }
 }
 @media (max-width: 768px) {
   /* The floating switch covers the bottom of the feed. Telling the scroller
@@ -1940,7 +1317,7 @@
     gap: 5px;
     padding: 10px 3px 8px;
     border-color: var(--rule-soft);
-    border-radius: 10px;
+    border-radius: var(--radius-control);
     background: var(--bg-card);
     font-size: 10.5px;
   }
@@ -1964,7 +1341,6 @@
 /* A narrow card lets the place line wrap rather than cut "Spain" to "Sp". */
 /* The phone fold repeats the count only while it is open and has pushed the
    control bar's own count off screen. */
-.explore-fold:not([open]) .xrail-count-inline { display: none; }
 @media (max-width: 768px) {
   /* Room under the last row for the floating grid/map switch. */
   .explore-wrap { padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
@@ -2019,7 +1395,7 @@
   .dsec-toggle:hover .dsec-title { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 }
 .dsec-icon { flex: none; color: var(--ink-soft); }
-.dsec-title { font-family: var(--display); font-size: 16px; font-weight: 600; letter-spacing: -0.005em; white-space: nowrap; }
+.dsec-title { font-family: var(--display); font-size: var(--text-lead); font-weight: 600; letter-spacing: -0.005em; white-space: nowrap; }
 .dsec-summary {
   flex: 1;
   min-width: 0;
@@ -2043,18 +1419,18 @@
   border-radius: 8px;
   border: 1px solid var(--rule);
   background: var(--bg-card);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
 }
 @media (hover: hover) {
   .dsec-more:hover { color: var(--ink); border-color: var(--ink-soft); }
 }
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .dsec-toggle { padding: 11px 12px; gap: 8px; }
   .dsec-title { font-size: 15px; }
   .dsec-body { padding: 0 12px 12px; }
-  .dsec-summary { font-size: 12px; }
+  .dsec-summary { font-size: var(--text-caption); }
   .dsec-head { padding-right: 12px; }
   .dsec-aside { width: 100%; padding: 0 12px 8px; }
 }
@@ -2062,7 +1438,7 @@
 
 /* ── Around here: tabs, rows, pictures for every row ── */
 .dar-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .dar-tabs { flex-wrap: nowrap; overflow-x: auto; margin: 0 -12px; padding: 0 12px 2px; scrollbar-width: none; }
   .dar-tabs::-webkit-scrollbar { display: none; }
   .dar-tab { flex: none; }
@@ -2073,10 +1449,10 @@
   gap: 6px;
   height: 30px;
   padding: 0 11px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--rule);
   background: var(--bg-card);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
 }
@@ -2110,6 +1486,8 @@
   text-align: left;
   border-bottom: 1px solid var(--rule-soft);
   cursor: pointer;
+  color: inherit;
+  text-decoration: none;
 }
 .dar-list li:last-child .dar-row { border-bottom: none; }
 .dar-row:disabled { cursor: default; }
@@ -2128,71 +1506,29 @@
 }
 .dar-photo.is-tile { filter: saturate(0.85); }
 .dar-main { min-width: 0; }
-.dar-name { display: block; font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dar-name { display: block; font-size: var(--text-label); font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (hover: hover) {
   .dar-row:hover:not(:disabled) .dar-name { color: var(--accent); }
 }
-.dar-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 11px; color: var(--ink-mute); margin-top: 2px; }
+.dar-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: var(--text-micro); color: var(--ink-mute); margin-top: 2px; }
 .dar-sub svg { color: var(--ink-mute); }
 .dar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; flex: none; }
 .dar-km { font-size: 11.5px; color: var(--ink-soft); white-space: nowrap; }
 
 /* ── Rating v2: the scale in bands, the parts in tiles ── */
-.rb-head { display: flex; align-items: center; gap: 12px; margin: 2px 0 12px; }
 /* The head score is the kit Score at lg (T437), one size up here. */
-.rb-head .score-chip { font-size: var(--text-title); }
 .rb-head-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.rb-label { font-family: var(--display); font-size: 18px; font-weight: 600; color: var(--ink); line-height: 1.15; }
-.rb-country { font-size: 12px; font-weight: 600; color: var(--rate); }
-.rb-scale { margin: 0 0 14px; }
-.rb-bands { position: relative; display: flex; height: 10px; border-radius: 5px; overflow: visible; gap: 2px; }
-.rb-band { display: block; height: 100%; border-radius: 3px; background: var(--paper-dim); }
-.rb-band.rt-1 { background: var(--rule); }
-.rb-band.rt-2 { background: var(--rate-bg); }
-.rb-band.rt-3 { background: var(--rate-soft); opacity: 0.55; }
-.rb-me {
-  position: absolute;
-  top: -4px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  transform: translateX(-50%);
-  background: var(--text);
-  border: 3px solid var(--surface);
-  box-shadow: var(--elev-1);
-}
-.rb-ticks { position: relative; height: 16px; margin-top: 6px; }
 /* No legend under the scale (carta-design "Data drawings": no legend; the
    ticks carry their figures, the band word is in the head). T446. */
-.rb-legend { display: none; }
-.rb-leg { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
-.rb-leg-swatch { display: inline-block; width: 10px; height: 6px; border-radius: 2px; background: var(--rule); }
-.rb-leg.rt-2 .rb-leg-swatch { background: var(--rate-bg); border: 1px solid var(--rate-soft); }
-.rb-leg.rt-3 .rb-leg-swatch { background: var(--rate-soft); opacity: 0.7; }
-.rb-tick {
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1px;
-  font-size: 10px;
-  color: var(--ink-mute);
-  white-space: nowrap;
-}
-.rb-tick::before { content: ''; display: block; width: 1px; height: 5px; background: var(--rule); }
-.rb-tick .mono { font-size: 10.5px; color: var(--ink-soft); }
 .rb-parts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 /* The parts as label-over-value rows under hairlines, not boxed tiles (T446). */
 .rb-part { display: flex; flex-direction: column; gap: 4px; padding: var(--space-2) 0; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }
 .rb-part-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.rb-part-name { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
-.rb-part-val { font-size: 14px; font-weight: 600; color: var(--ink); }
+.rb-part-name { font-size: var(--text-caption); font-weight: 600; color: var(--ink-soft); }
+.rb-part-val { font-size: var(--text-body); font-weight: 600; color: var(--ink); }
 .rb-part-track { display: block; height: 5px; border-radius: 3px; background: var(--paper-dim); overflow: hidden; }
 .rb-part-fill { display: block; height: 100%; border-radius: 3px; background: var(--rate-soft); }
 /* The weight ("70% of the score") is method; it left the page (T446). */
-.rb-part-weight { display: none; }
 
 /* T765: the personal match (browse/WhyItMatches.jsx): a card's one line, the
    fact under each bar and each conflict, in the breakdown's own type. */
@@ -2208,157 +1544,8 @@
 @media (max-width: 380px) { .rb-parts { grid-template-columns: 1fr; } }
 
 /* ── Parking: the city's own word beside the OSM rows ── */
-.dpark-web { padding: 10px 12px; border-radius: 10px; background: var(--trail-bg); border: 1px solid var(--trail-rule); margin-bottom: 10px; }
-.dpark-web-head { display: flex; align-items: center; gap: 6px; margin: 0 0 4px; font-size: 11.5px; font-weight: 700; color: var(--trail-ink); }
-.dpark-web-line { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink); }
-.dpark-web-line.is-warn { color: var(--danger); font-weight: 600; }
-.dpark-web-link { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--trail-ink); text-decoration: underline; text-underline-offset: 2px; }
-.dpark-ok { display: inline-flex; align-items: center; gap: 3px; margin-left: 8px; font-size: 10px; font-weight: 700; color: var(--trail-ink); }
-.dpark-search { margin-top: 10px; width: 100%; justify-content: center; }
-.destp-v2 .destp-park-nav a { height: 26px; padding: 0 9px; font-size: 11px; }
-@media (max-width: 380px) {
-  .destp-v2 .destp-park { flex-wrap: wrap; }
-  .destp-v2 .destp-park-nav { width: 100%; }
-}
-
-/* Live webcam views: the provider's own player in an iframe, never stored. */
-.webcams-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
-  gap: var(--space-4);
-  margin: 0 0 var(--space-3);
-}
-.webcam-card {
-  container-type: inline-size;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-.webcam-label {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.webcam-location {
-  margin: 0;
-  font-size: 13px;
-  color: var(--ink-soft);
-}
-/* foto-webcam.eu asks for height = width * 9/16 + 95 px (+145 px under 450 px). */
-.webcam-frame-wrap {
-  position: relative;
-  width: 100%;
-  height: 0;
-  padding-bottom: calc(56.25% + 95px);
-  overflow: hidden;
-  background: var(--paper-dim);
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-}
-@container (max-width: 449px) {
-  .webcam-frame-wrap { padding-bottom: calc(56.25% + 145px); }
-}
-/* The player needs about 320 px; on a 380 px phone the card is 311 px, so the frame bleeds 8 px each side (9 px more height at 9/16). */
-@media (max-width: 400px) {
-  .webcam-frame-wrap {
-    width: auto;
-    margin-inline: calc(-1 * var(--space-2));
-    padding-bottom: calc(56.25% + 154px);
-  }
-}
-.webcam-frame {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-.webcam-credit {
-  margin: 0;
-  font-size: 13px;
-  color: var(--ink-soft);
-}
-.webcam-credit a {
-  color: var(--ink);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.webcam-credit a:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-.webcam-note {
-  margin: var(--space-3) 0 0;
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--ink-mute);
-}
 
 /* Side-column facts keep their existing styles; the fold only frames them. */
-.destp-v2 .destp-howlong { margin-top: 8px; }
-.destp-v2 .destp-further { grid-template-columns: 1fr 1fr; }
-.destp-v2 .xp-source { margin-top: 8px; }
-
-/* Routes from here (ROUTES.md R6). One row per PATH, with the stretch that
-   passes named underneath, so the reader can tell the Via Francigena from
-   the nine kilometres of it that happen to run past this town. Deliberately
-   text only: a route is a line and a 64px thumbnail of one is a smudge, which
-   is why this does not borrow .dar-row's photo column. */
-.drh-group + .drh-group { margin-top: 16px; }
-.drh-head {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0 0 4px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-.drh-list { list-style: none; margin: 0; padding: 0; }
-.drh-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 11px;
-  width: 100%;
-  padding: 8px 0;
-  border: none;
-  background: none;
-  text-align: left;
-  border-bottom: 1px solid var(--rule-soft);
-  cursor: pointer;
-}
-.drh-list li:last-child .drh-row { border-bottom: none; }
-.drh-row:disabled { cursor: default; }
-.drh-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.drh-name { font-weight: 600; }
-.drh-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 10px;
-  font-size: 0.86rem;
-  color: var(--ink-soft);
-}
-.drh-stage,
-.drh-carfree {
-  font-size: 0.84rem;
-  color: var(--ink-soft);
-}
-.drh-carfree {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--ink);
-}
-.drh-go { color: var(--ink-mute); }
-.drh-note,
-.drh-credit {
-  margin: 12px 0 0;
-  font-size: 0.8rem;
-  color: var(--ink-soft);
-}
-.drh-credit { color: var(--ink-mute); }
 
 /* Route page parts (ROUTES.md R7): what is underfoot, the stages of a path,
    and our own towns along the line. Shared by the trail and cycle pages via
@@ -2431,19 +1618,6 @@
 .rbases li:last-child .rbase { border-bottom: none; }
 .rbase-main { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 
-/* Node-network cycling (ROUTES.md R8): a measurement of the mesh, never a
-   list of its edges. Sits inside the routes block, after the routes. */
-.drh-nodenet { margin-top: 16px; }
-.drh-nn-line {
-  margin: 0;
-  font-weight: 600;
-}
-.drh-nn-how {
-  margin: 3px 0 0;
-  font-size: 0.84rem;
-  color: var(--ink-soft);
-}
-
 /* ========================================================================
    P4: Explore and the destination page
    ======================================================================== */
@@ -2475,39 +1649,14 @@
    the card that page draws itself. This card carries more than a name and a
    travel line, so the body is sized by its content. A fixed 62px height cut
    the blurb and the "Open the page" link in half, because the card clips. */
-.dtrip-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: var(--space-1);
-  flex: 1 1 auto;
-  min-height: 0;
-  padding: var(--space-2) var(--space-3) var(--space-3);
-  box-sizing: border-box;
-}
-.dtrip-name,
-.dtrip-sub {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 /* The travel line is one row of chips that must not wrap into the blurb. */
-.dtrip-sub { flex: none; flex-wrap: nowrap; }
-.dtrip-sub .mono { overflow: hidden; text-overflow: ellipsis; }
 /* The link sits at the foot of every card, so a short blurb and a long one
    still line up across the row. */
-.dtrip-go { margin-top: auto; padding-top: var(--space-1); }
 /* Equal-height cards: the grid row stretches, the body takes the slack. */
-.dtrips { align-items: stretch; }
-.dtrip { height: 100%; }
-.dtrip-photo { aspect-ratio: 4 / 3; flex: none; }
 
 /* --- P4.2 the rail title and the score explainer -------------------------
    A rail called "The 41" told the reader nothing. Every rail now says what
    the list is and, under it, how it was chosen. */
-.xrails-head { flex-wrap: wrap; }
-.xrails-headings { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
-.xrails-head .xrails-all { flex: none; align-self: center; }
 
 /* The "?" is a real icon button on the legend row's baseline, and the method
    opens in the app's sheet rather than reflowing the legend under it. */
@@ -2519,8 +1668,6 @@
    actually touched, on the new scale rather than more hand-tuned pixels. */
 @media (max-width: 768px) {
   .xrails { gap: var(--space-5); margin: 0 0 var(--space-5); }
-  .xrails-head { margin: 0 0 var(--space-2); }
-  .xrails-title { font-size: 18px; }
   /* At 375px the first photograph sat 567px down an 812px screen: a search
      field, a lifestyle line, a Filters button, a sort, and a four-row key
      to a grid the reader had not reached yet. The key is a legend, so on a
@@ -2547,23 +1694,12 @@
    finger needs (WCAG 2.5.5). The glyphs and labels keep their size; the
    box around them grows, and the row wraps rather than overflowing once
    they do. */
-.destp-head-actions { flex-wrap: wrap; gap: var(--space-2); }
-.destp-head-actions .panel-fav,
-.destp-head-actions .destp-pdf {
-  min-height: var(--tap);
-  padding: var(--space-2) var(--space-4);
-  font-size: 12.5px;
-}
 /* Icon-only buttons need the width too, not just the height. */
-.destp-head-actions .panel-fav:not(:has(span)) { min-width: var(--tap); justify-content: center; }
 
 /* "Highlights and map" ran on three gutters at once: the strip sat 12px
    under the map, its columns were 10px apart and its rows 12px, so nothing
    in the section lined up with anything else. One token for all three, and
    the map spans the strip's full width so both share their two edges. */
-.dhl-wrap { display: grid; gap: var(--space-3); }
-.dhl-wrap .dmap { width: 100%; margin: 0; }
-.dhl-strip { gap: var(--space-3); margin-top: 0; }
 
 /* --- P4.5 the map card ---------------------------------------------------
    Zoomed in, a pin opens as a small card: the photo, the place, the rating
@@ -2574,30 +1710,9 @@
 /* The thumbnail on "Best things to do" (P4.4). The card becomes a photo
    beside its text; where the shard has no photograph of the place, the
    frame holds the type glyph rather than a hole. */
-.ddo {
-  display: grid;
-  grid-template-columns: 58px minmax(0, 1fr);
-  grid-template-rows: auto;
-  align-items: start;
-  column-gap: 10px;
-}
-.ddo-photo {
-  grid-row: 1 / span 5;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 58px;
-  aspect-ratio: 1;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
-}
-.ddo-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ddo-type, .ddo-name, .ddo-detail, .ddo-foot { grid-column: 2; }
 
 /* Booking order (T169): the booking windows as steps, furthest lead first. */
-.jpage-book-hint { margin: 0 0 var(--space-3); font-size: 12px; color: var(--ink-mute); }
+.jpage-book-hint { margin: 0 0 var(--space-3); font-size: var(--text-caption); color: var(--ink-mute); }
 .jpage-book-list { list-style: none; margin: 0; padding: 0; counter-reset: book; }
 .jpage-book-list li { border-top: 1px solid var(--rule-soft); }
 .jpage-book-list li:first-child { border-top: 0; }
@@ -2643,17 +1758,17 @@
   grid-column: 2;
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink);
   padding-top: 2px;
 }
-.jpage-book-text { grid-column: 3; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+.jpage-book-text { grid-column: 3; font-size: var(--text-label); line-height: 1.5; color: var(--ink-soft); }
 .jpage-book-list li.is-done .jpage-book-text,
 .jpage-book-list li.is-done .jpage-book-lead { color: var(--ink-mute); text-decoration: line-through; }
-.jpage-book-count { margin: var(--space-2) 0 0; font-size: 12px; color: var(--ink-mute); }
-.jpage-book-sub { margin: var(--space-4) 0 var(--space-2); font-size: 12px; font-weight: 600; color: var(--ink-soft); }
-.jpage-book-notes { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+.jpage-book-count { margin: var(--space-2) 0 0; font-size: var(--text-caption); color: var(--ink-mute); }
+.jpage-book-sub { margin: var(--space-4) 0 var(--space-2); font-size: var(--text-caption); font-weight: 600; color: var(--ink-soft); }
+.jpage-book-notes { margin: 0; padding-left: 18px; font-size: var(--text-label); line-height: 1.5; color: var(--ink-soft); }
 @media (max-width: 480px) {
   .jpage-book-list label { grid-template-columns: 22px 1fr; }
   .jpage-book-lead { grid-column: 2; }
@@ -2663,8 +1778,6 @@
 /* The suitability strip (T360): a solid --paper band flush under the hero,
    three cells in a fixed order. No alpha, no gradient, nothing over the photo.
    Square at the top where it meets the picture, card radius at the bottom. */
-.jpage-shot { border-radius: 12px 12px 0 0; }
-.jpage-hero:not(:has(.jpage-shot)) .jstrip { border-top: 1px solid var(--rule); border-radius: 12px; }
 .jstrip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2681,7 +1794,7 @@
   min-width: 0;
   padding: 10px 12px;
   color: var(--ink);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
 }
 .jstrip-cell + .jstrip-cell { border-left: 1px solid var(--rule-soft); }
@@ -2696,7 +1809,7 @@
 .jstrip-word { min-width: 0; overflow-wrap: anywhere; text-transform: capitalize; }
 .jstrip-word.mono { font-family: var(--mono); font-weight: 500; text-transform: none; }
 @media (max-width: 480px) {
-  .jstrip-cell { padding: 8px 8px; font-size: 12px; }
+  .jstrip-cell { padding: 8px 8px; font-size: var(--text-caption); }
   .jstrip-sq { width: 8px; height: 8px; }
 }
 
@@ -2714,7 +1827,7 @@
   background: none;
   border: 0;
   border-bottom: 2px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--ink-soft);
   font: inherit;
   cursor: pointer;
@@ -2724,142 +1837,13 @@
   padding-top: var(--space-2);
   border-top: 1px solid var(--rule-soft);
   min-height: 3em;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.5;
   color: var(--ink-soft);
 }
 
-/* The week plan (T170, spec M2, M3, M5): how the week runs, arrive and
-   leave, and the weather plan. Weight carries the measure, not hue: effort
-   bars are ink, the hard days full ink, and a change of bed is a 2px ink
-   edge on the new base. */
-.jweek-sum { margin: 0 0 var(--space-3); font-size: 13.5px; line-height: 1.5; color: var(--ink); }
-.jweek-effort,
-.jweek-days,
-.jweek-beds {
-  display: grid;
-  grid-template-columns: repeat(var(--jweek-days, 7), minmax(0, 1fr));
-  gap: var(--space-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.jweek-effort {
-  height: 48px;
-  align-items: end;
-  border-bottom: 1px solid var(--rule);
-}
-.jweek-col {
-  position: relative;
-  height: 100%;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-.jweek-bar {
-  display: block;
-  width: 60%;
-  max-width: 28px;
-  height: 0;
-  border-radius: 3px 3px 0 0;
-  background: var(--ink-soft);
-}
-.jweek-col.lv-1 .jweek-bar { height: 33%; }
-.jweek-col.lv-2 .jweek-bar { height: 66%; }
-.jweek-col.lv-3 .jweek-bar { height: 100%; background: var(--ink); }
-.jweek-rest {
-  position: absolute;
-  bottom: var(--space-1);
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 11px;
-  color: var(--ink-mute);
-}
-.jweek-days { margin-top: var(--space-1); }
-.jweek-days span {
-  text-align: center;
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-.jweek-beds { margin-top: var(--space-2); }
-.jweek-bed {
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  min-height: 32px;
-  padding: 0 var(--space-2);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-}
-/* A change of bed is a new chip; the 2 px side stripe that also marked it
-   went (T387: the detector's side-tab, brief row V9). */
-.jweek-bed.is-out { border-style: dashed; background: transparent; }
-.jweek-bed-name {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 12px;
-  color: var(--ink);
-}
-.jweek-bed.is-out .jweek-bed-name { color: var(--ink-mute); }
-.jweek-key { margin: var(--space-3) 0 0; font-size: 12px; line-height: 1.45; color: var(--ink-mute); }
-
-.jends { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
-.jends-side h3,
-.jwx-groups h3,
-.jwx-groups h4,
-.jwx-sub {
-  margin: 0 0 var(--space-2);
-  font-family: var(--display);
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.jends .bpage-fact dt { width: 104px; }
-.jends .bpage-fact dd .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 500; }
-@media (min-width: 760px) {
-  .jends { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-.jwx-groups { margin-bottom: var(--space-5); }
-.jwx-hint { margin: 0 0 var(--space-2); font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); }
-.jwx-group ul { margin: 0; padding: 0; list-style: none; }
-.jwx-group li + li { margin-top: var(--space-1); }
-@media (max-width: 480px) {
-  .jwx-group { flex-direction: column; gap: var(--space-1); }
-  .jwx-group dt { width: auto; }
-}
-.jwx-n {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 11.5px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
-.jwx-days { margin: 0; padding: 0; list-style: none; }
-.jwx-days li {
-  display: grid;
-  grid-template-columns: 52px minmax(0, 1fr);
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  border-top: 1px solid var(--rule-soft);
-}
-.jwx-days li:first-child { border-top: 0; }
-.jwx-days .jwx-n { padding-top: 2px; }
-.jwx-title { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
-.jwx-body p { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
-.jwx-body p b { font-weight: 600; color: var(--ink); }
-.jwx-days li.is-empty .jwx-body p { color: var(--ink-mute); }
-
 /* T171: three computed ways out at the foot of a journey, and the one detail
    from the route in the footer. Hairlines, not cards (a run of related links). */
-.jpage-hook { margin: 0 0 var(--space-3); }
 .jpage-exits { margin: 0 0 var(--space-5); }
 .jpage-exits h2 {
   margin: 0 0 var(--space-2);
@@ -2890,9 +1874,8 @@
 }
 .jpage-exit:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .jpage-exit-kind { font-size: 12.5px; color: var(--ink-soft); }
-.jpage-exit-title { font-size: 14px; font-weight: 600; line-height: 1.35; }
+.jpage-exit-title { font-size: var(--text-body); font-weight: 600; line-height: 1.35; }
 .jpage-exit-meta { font-size: 12.5px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
-.jpage-detail b { font-weight: 600; color: var(--ink); }
 
 /* The week profile and the journey route fold (T174, trips spec E3 and E4).
    The chart is the trail page's elevation chart (.tpage-elev-*); this adds
@@ -2921,11 +1904,5 @@
 .rfig-up { color: var(--ink); }
 .rfig-down { color: var(--ink-soft); }
 .rfig-dn { color: var(--ink-mute); }
-.jroute-h {
-  margin: var(--space-5) 0 var(--space-2);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink);
-}
 .cycle-bars { margin: var(--space-2) 0 var(--space-4); }
 .cycle-bars .rsurf + .rsurf { margin-top: var(--space-3); }

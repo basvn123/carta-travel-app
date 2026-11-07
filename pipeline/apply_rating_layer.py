@@ -46,6 +46,8 @@ import place_registries
 import rating_config
 import rating_layer
 from pipeline_io import atomic_write_json
+from provenance import SCHEMA_VERSION  # T1143: schema 20, the provenance stamps
+from wire_stamp import build_stamp
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_TARGETS = [
@@ -210,9 +212,12 @@ def main() -> None:
         sys.exit(1)
     data["meta"]["rating_model"] = rating_layer.RATING_MODEL
     # Schema v19 (T762): rating.band, rating.why, rating.class_rank and
-    # gateways are additive keys; every v18 key keeps its value.
+    # gateways are additive keys; every v18 key keeps its value. Schema v20
+    # (T1143): every key block carries _src and _asof (provenance.py).
     data["meta"]["schema_version"] = max(
-        data["meta"].get("schema_version", 0), 19)
+        data["meta"].get("schema_version", 0), SCHEMA_VERSION)
+    # D12 (T1099): the master's stamp is the real build time of this layer run.
+    data["meta"]["generated_at"] = build_stamp()
     # Atomic: write_text truncates the 100+ MB master before streaming it back,
     # so an interrupted or out-of-space write destroys the dataset every other
     # script reads. A full disk took out a harvest cache this way on
@@ -249,7 +254,8 @@ def main() -> None:
                 d.pop("rating", None)
         served["meta"]["rating_model"] = rating_layer.RATING_MODEL
         served["meta"]["schema_version"] = max(
-            served["meta"].get("schema_version", 0), 19)
+            served["meta"].get("schema_version", 0), SCHEMA_VERSION)
+        served["meta"]["generated_at"] = data["meta"]["generated_at"]
         atomic_write_json(path, served, indent=None, separators=(",", ":"))
         print(f"  {path.name}: mirrored rating onto {n} dests")
 

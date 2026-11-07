@@ -114,7 +114,7 @@
   transition: transform var(--dur-2) var(--ease-out);
 }
 .sdock-ask-word {
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 800;
   line-height: 1;
   letter-spacing: .01em;
@@ -198,7 +198,7 @@ html.sdock-locked body { overflow: hidden; }
     width: min(560px, calc(100vw - 32px));
     max-height: calc(100vh - 104px);
     transform: translateX(-50%);
-    border-radius: 28px;
+    border-radius: var(--radius-stage);
     animation: none;
   }
 }
@@ -249,7 +249,7 @@ html.sdock-locked body { overflow: hidden; }
   width: 100%;
   max-width: 64px;
   aspect-ratio: 1;
-  border-radius: 20px;
+  border-radius: var(--radius-sheet);
   background: var(--act-bg);
   color: var(--act-ink);
   transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out),
@@ -327,7 +327,7 @@ html.sdock-locked body { overflow: hidden; }
   min-height: 54px;
   padding: 0 6px 0 var(--space-4);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   background: var(--surface);
   transition: border-color var(--dur-1) var(--ease-out), box-shadow var(--dur-1) var(--ease-out);
 }

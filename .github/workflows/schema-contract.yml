@@ -7,9 +7,13 @@ name: schema-contract
 #                  insights, and the boot index and country files the app
 #                  builds from them, against the required fields in
 #                  contract.mjs;
-#   SCHEMA.md      every top-level meta and destination key, both ways,
-#                  against the "Wire contract" table in docs/SCHEMA.md, and
-#                  the header's schema version against contract.mjs;
+#   the schema     docs/wire.schema.json (T1133) is the machine-readable
+#                  contract: every meta and destination key, both ways, with
+#                  types and ranges; the "Wire contract" table in
+#                  docs/SCHEMA.md must be the one the schema renders, header
+#                  version included. The same file is read by the pipeline
+#                  writers (pipeline/wire_contract.py), so the last steps run
+#                  the shared seeded cases on both sides;
 #   the database   every Supabase call site in continent-app/src and
 #                  supabase/functions (tables, columns, select strings, rpc
 #                  names and argument names, Edge Function names, the grants
@@ -47,6 +51,20 @@ on:
       - "continent-app/public/country_insights.json"
       - "continent-app/public/fares/**"
       - "docs/SCHEMA.md"
+      - "docs/wire.schema.json"
+      - "pipeline/wire_contract.py"
+      - "pipeline/pipeline_io.py"
+      - "continent-app/scripts/sync-data.mjs"
+      - "continent-app/tests/wire-contract.test.mjs"
+      - "tests/test_wire_contract.py"
+      - "tests/fixtures/wire_contract_cases.json"
+      # T1214 (T1143-f): the source registry writes the schema's source-id
+      # enum and docs/data/sources.md, so a registry-only change runs here too.
+      - "pipeline/config/sources.yaml"
+      - "pipeline/provenance.py"
+      - "pipeline/provenance_sources.py"
+      - "docs/data/sources.md"
+      - "tests/test_provenance.py"
       - ".github/workflows/schema-contract.yml"
   pull_request:
     paths:
@@ -61,6 +79,20 @@ on:
       - "continent-app/public/country_insights.json"
       - "continent-app/public/fares/**"
       - "docs/SCHEMA.md"
+      - "docs/wire.schema.json"
+      - "pipeline/wire_contract.py"
+      - "pipeline/pipeline_io.py"
+      - "continent-app/scripts/sync-data.mjs"
+      - "continent-app/tests/wire-contract.test.mjs"
+      - "tests/test_wire_contract.py"
+      - "tests/fixtures/wire_contract_cases.json"
+      # T1214 (T1143-f): the source registry writes the schema's source-id
+      # enum and docs/data/sources.md, so a registry-only change runs here too.
+      - "pipeline/config/sources.yaml"
+      - "pipeline/provenance.py"
+      - "pipeline/provenance_sources.py"
+      - "docs/data/sources.md"
+      - "tests/test_provenance.py"
       - ".github/workflows/schema-contract.yml"
   workflow_dispatch:
 
@@ -117,6 +149,14 @@ jobs:
             /continent-app/src/
             /continent-app/config/
             /continent-app/scripts/ci/
+            /continent-app/scripts/sync-data.mjs
+            /continent-app/tests/wire-contract.test.mjs
+            /pipeline/
+            /tests/test_provenance.py
+            /tests/conftest.py
+            /tests/needs_master.txt
+            /tests/test_wire_contract.py
+            /tests/fixtures/wire_contract_cases.json
             /continent-app/public/fares/
             /continent-app/public/app_data.json
             /continent-app/public/country_insights.json
@@ -152,3 +192,20 @@ jobs:
             echo "$brk: the gate failed, as it must"
             grep -m 3 'FAIL' "seed-$brk.log" || true
           done
+
+      # T1133: one contract, two readers. The same seeded bad values
+      # (tests/fixtures/wire_contract_cases.json) must fail the pipeline's
+      # write guard and the app's validator, each naming the field path.
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Pipeline write guard rejects the seeded bad values (pytest)
+        working-directory: .
+        run: pip install pytest pyyaml && python -m pytest tests/test_wire_contract.py -q
+      # T1214 (T1143-f): the registry, its generated doc and the schema enum agree,
+      # and the provenance stamps hold on the wire (tests/test_provenance.py).
+      - name: Source registry and provenance (pytest)
+        working-directory: .
+        run: python -I pipeline/provenance_sources.py --check && python -m pytest tests/test_provenance.py -q
+      - name: App validator rejects the same seeded bad values (node --test)
+        run: node --test tests/wire-contract.test.mjs

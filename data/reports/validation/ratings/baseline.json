@@ -1,0 +1,38 @@
+{
+ "layer": "ratings",
+ "date": "2026-11-07",
+ "reference": {
+  "sources": [
+   "pageviews",
+   "wikivoyage",
+   "lists",
+   "unesco (circular)",
+   "nights"
+  ],
+  "list_rows": 83,
+  "unesco_sites": 1364,
+  "wikivoyage_status": 0,
+  "eurostat_nights": 0,
+  "list_entries_not_rated": 6,
+  "n": 3861
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 5,
+  "salt": "d23",
+  "n": 3861,
+  "population": 3861,
+  "countries": 43
+ },
+ "metrics": {
+  "listed_upper": 0.9655,
+  "coverage": 0.8286,
+  "fact.unesco_join": 0.7556,
+  "fact_share": 0.7556,
+  "agreement_tau": 0.1533,
+  "agreement_rho": 0.2227,
+  "error_mae": null,
+  "error_mdape": null
+ }
+}

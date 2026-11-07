@@ -15,6 +15,7 @@ import { rule } from './config.js';
 import { atDates, priceRequest } from './request.js';
 import { priceDay } from './priceDay.js';
 import { carHire } from './car.js';
+import { chooseWay, transferMinutesOf, legDuration, wayKm } from '../wayChoice.js';
 
 /** Hiring a car at a destination that needs one (local_transport.car_needed)
  *  for a composed plane trip: the engine's car (lib/price/car.js) for the
@@ -111,27 +112,45 @@ export function quoteComposed(dest, departDate, returnDate, choices, allDests = 
   // handed in as opts.ground so this module stays free of the leg
   // estimator), the party's return journey from the From point, or null.
   const want = choices.transport_mode || 'any';
-  const wayTotal = (m) => {
+  const groundOf = (m) => {
     if (typeof opts?.ground !== 'function') return null;
     const r = opts.ground(dest, m);
-    return r && Number.isFinite(r.total) ? r.total : null;
+    return r && Number.isFinite(r.total) ? r : null;
   };
-  const trainWay = want === 'train' || want === 'any' ? wayTotal('train') : null;
-  const busWay = want === 'bus' || want === 'any' ? wayTotal('bus') : null;
+  const trainRide = want === 'train' || want === 'any' ? groundOf('train') : null;
+  const busRide = want === 'bus' || want === 'any' ? groundOf('bus') : null;
+  const trainWay = trainRide ? trainRide.total : null;
+  const busWay = busRide ? busRide.total : null;
   const trainGrand = trainWay != null ? trainWay + stayTotal : null;
   const busGrand = busWay != null ? busWay + stayTotal : null;
 
   // --- Pick the effective mode. A chosen way prices that way; plane falls
-  // back to the car as it always did; any way takes the cheapest that reaches.
+  // back to the car as it always did. Any way (T1100, D13) weighs the ways
+  // on door-to-door time and cost and flies above a distance when a fare
+  // exists (lib/wayChoice.js); a plane without a fare in the sweep is only
+  // the answer when nothing else reaches, never the "cheapest" by leaving
+  // the flight out.
   let mode;
+  let choice = null;
   if (want === 'train' || want === 'bus') {
     if ((want === 'train' ? trainGrand : busGrand) == null) return null;
     mode = want;
   } else if (want === 'any') {
-    const options = [['plane', planeGrand], ['car', carGrand], ['train', trainGrand], ['bus', busGrand]]
-      .filter(([, v]) => v != null);
-    if (!options.length) return null;
-    mode = options.reduce((a, b) => (b[1] < a[1] ? b : a))[0];
+    const ways = [];
+    if (planeGrand != null && flightRt) {
+      ways.push({ mode: 'plane', perPerson: (planeGrand - stayTotal) / groupSize, minutes: legDuration(flightRt.out) });
+    }
+    if (carGrand != null) ways.push({ mode: 'car', perPerson: driving.total / groupSize, hours: driving.drive_hours_one_way });
+    if (trainRide) ways.push({ mode: 'train', perPerson: trainWay / groupSize, hours: trainRide.hours });
+    if (busRide) ways.push({ mode: 'bus', perPerson: busWay / groupSize, hours: busRide.hours });
+    // The way's own costs only: the stay is the same whichever way you come.
+    choice = chooseWay(ways, {
+      km: driving?.straight_km ?? wayKm(home, dest),
+      transferMinutes: transferMinutesOf(dest),
+    });
+    if (choice) mode = choice.pick;
+    else if (planeGrand != null) mode = 'plane';   // a route but no fare: as before (T511)
+    else return null;
   } else {
     mode = want === 'car' && drivable ? 'car' : 'plane';
     if (mode === 'plane' && planeGrand == null) {
@@ -148,6 +167,8 @@ export function quoteComposed(dest, departDate, returnDate, choices, allDests = 
     nights,
     transport_mode:     mode,            // the mode actually priced: plane | car | train | bus
     requested_mode:     want,
+    // T1100: why any way picked this mode (lib/wayChoice.js reason), or null.
+    way_reason:         choice?.reason || null,
     // T582: the train or bus journey in the total, group return, when priced.
     way_total:          mode === 'train' ? round2(trainWay) : mode === 'bus' ? round2(busWay) : null,
     drivable,

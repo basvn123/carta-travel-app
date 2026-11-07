@@ -115,6 +115,23 @@ export function loadTrailFacets(country) {
   return cached(`/trails/${cc}.json`).then((raw) => raw?.facets || null);
 }
 
+/**
+ * The multi-stage treks one country file holds (T1184, ROADMAP D24): one
+ * record per trek with its published stages in order and the totals
+ * (pipeline/trails/treks.py). A trek is filed in the country of its first
+ * stage, and every stage row carries `trek {id, cc, i, n}` pointing there.
+ * Resolves an empty array for a country with none, or before the first
+ * export that writes them.
+ */
+export function loadTreks(country) {
+  const cc = String(country || '').toUpperCase();
+  if (!COUNTRY_RE.test(cc)) return Promise.resolve([]);
+  return cached(`/trails/${cc}.json`)
+    .then((raw) => (raw && Array.isArray(raw.treks) ? raw.treks.filter(isTrek) : []));
+}
+
+const isTrek = (t) => t && t.id && Array.isArray(t.stages) && t.stages.length >= 2;
+
 /** One trip in full, for the detail view: full-resolution geometry, the whole
  *  description, the elevation profile and the stops. */
 export function loadTrail(id) {

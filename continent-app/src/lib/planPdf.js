@@ -62,6 +62,7 @@ export async function downloadPlanPdf({
   const kit = await createPdf({
     footerLabel: `Carta, ${name}`,
     pageLabel: (n, of) => t('pdf.page', { n, of }),
+    partnerNote: t('partner.pdfNote'),
   });
   const { C } = kit;
   const people = priced.groupSize === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: priced.groupSize });

@@ -1,3 +1,4 @@
+// T1089 needs: real data (public/poi shards) and network (OSRM and Valhalla)
 // T433: is every walk the day planner draws a real walk?
 //
 //   node scripts/verify_day_routes.mjs [--towns=8] [--no-valhalla]
@@ -28,6 +29,13 @@ const argv = Object.fromEntries(process.argv.slice(2).map((a) => {
 const DATA = new URL('../public/app_data.json', import.meta.url);
 if (!existsSync(DATA)) { console.error('public/app_data.json missing'); process.exit(2); }
 const data = JSON.parse(readFileSync(DATA, 'utf8'));
+// T1089: the places come from the per-town POI shards (R2-only data) and the
+// legs are routed on public OSRM / Valhalla. Without either there is nothing
+// to judge, which is an environment limit, not a pass: say so and stop.
+if (!existsSync(new URL('../public/poi/', import.meta.url))) {
+  console.log('SKIP (needs real data): public/poi shards are absent, so no town has places to route');
+  process.exit(0);
+}
 
 const TOWNS = [
   'LIS', 'OPO', 'gem:bruges', 'SZG', 'INN', 'DBV', 'gem:kotor', 'EDI', 'SVQ', 'gem:granada',

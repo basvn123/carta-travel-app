@@ -1,0 +1,32 @@
+{
+ "layer": "lakes",
+ "date": "2026-11-07",
+ "reference": {
+  "path": "cache/eea_bathing_water.json",
+  "source": "EEA WISE bathing water register, Lake sites",
+  "n": 6211
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 5,
+  "salt": "d23",
+  "n": 6211,
+  "population": 6211,
+  "countries": 27
+ },
+ "metrics": {
+  "has_water": 0.8443,
+  "rated": 0.8642,
+  "coverage": 0.275,
+  "fact.class": 0.9872,
+  "fact.known": 0.8623,
+  "fact.poor": 0.6667,
+  "fact.swim": 1.0,
+  "fact_share": 0.9475,
+  "agreement_tau": 0.1409,
+  "agreement_rho": 0.1694,
+  "error_mae": 0.014,
+  "error_mdape": 0.0
+ }
+}

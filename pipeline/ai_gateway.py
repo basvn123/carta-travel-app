@@ -1,0 +1,746 @@
+"""The pipeline's one way to call a language model (T1137, ROADMAP E3).
+
+The Python twin of supabase/functions/_shared/aiModels.mjs (model access) and
+the input and output rules of aiGuard.mjs (T1117), for the batch jobs that
+call a model: pipeline/dossier/rewrite_intros.py, pipeline/dossier/
+parking_check.py, pipeline/ask_lexicon.py (--ollama) and the trip generator
+Trips/carta-unified/carta-unified/pipeline/generate_trip.py. Nothing else may
+name a provider endpoint; continent-app/tests/aiGateway.test.mjs greps the
+repository and fails on any direct call.
+
+Config. Each job is a feature in FEATURES. The environment overrides it, so a
+switch of provider or model is a config change:
+
+    AI_<FEATURE>_PROVIDER   gemini | workers-ai | openai | ollama | box
+    AI_<FEATURE>_MODELS     comma-separated chain, first model first
+    AI_<FEATURE>_BASE_URL   openai and ollama: the server (llama.cpp on the
+                            build box, Scaleway, OVHcloud, Mistral, Ollama)
+
+The box (T1138, ROADMAP E7): provider "box" is the llama.cpp server on the
+build box's CPU (OpenAI-compatible, AI_BOX_BASE_URL, default
+http://localhost:8080/v1, model BOX_MODEL). Only a batch job listed in
+BOX_PASSED may select it: that table records the job's eval score on the box
+model. AI_BOX_EVAL_RUN=1 lifts the rule for the eval run itself. The live
+traveller features are not in this module, so this cannot move them; their
+strategy and switch triggers are continent-app/config/ai_models.json and
+docs/ai/model-strategy.md.
+
+Keys: GEMINI_API_KEY; CF_ACCOUNT_ID and CF_AI_TOKEN for Workers AI;
+AI_OPENAI_API_KEY for an OpenAI-compatible server that needs one. A job's
+own --model flag pins the chain (Gateway(models=[...])). The Claude API is
+refused as a config error (CLAUDE.md: never the Claude API).
+
+Rules, the same as the Edge Functions (aiModels.mjs), with batch timings:
+  input   the prompt is capped (max_prompt_chars, too_big); the harvested
+          data a job passes as `screen` (or the whole user turn) is scanned
+          for instruction-shaped text with aiGuard's rule families, and a hit
+          refuses the call (unsafe): a batch job skips that item and logs it.
+  output  an answer over max_output_chars is ai_bad_output; a prompt leak,
+          chat-template tokens or a turned model (aiGuard's severe issues) is
+          ai_bad_output too. The job's own schema check stays in the job.
+  failure one time budget per call, a larger first attempt; 429 waits
+          retry_429_s once and retries the model, then falls over; 404 falls
+          over; 5xx or a dropped connection retries once, then falls over; a
+          timeout falls over; any other 4xx stops. Refusals raise AIRefusal
+          with one of AI_CODES.
+
+Batch mode (T1206): Gateway.batch() sends many calls of one job as one
+Gemini Batch Mode job at half price, with the same input and output rules.
+No job uses it yet; see the method's docstring.
+
+Standard library only, so every job and test can import it.
+"""
+from __future__ import annotations
+
+import json
+import os
+import re
+import time
+import unicodedata
+import urllib.error
+import urllib.parse
+import urllib.request
+from dataclasses import dataclass, field
+
+AI_GATEWAY_VERSION = 1
+
+PROVIDERS = ("gemini", "workers-ai", "openai", "ollama", "box")
+
+AI_CODES = {
+    "no_ai": 503, "config": 503, "unsafe": 400, "too_big": 400,
+    "ai_timeout": 504, "ai_error": 502, "global_cap": 429, "ai_bad_output": 502,
+}
+
+GEMINI_CHAIN = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
+
+# Batch timings: no traveller waits, so the budget is long and a 429 waits.
+FEATURES = {
+    "intros": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=600, first_s=120, later_s=120,
+                   min_s=10, retry_429_s=30, min_interval_s=6.5,
+                   max_prompt_chars=200_000, max_output_chars=200_000),
+    "parking": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=600, first_s=120, later_s=120,
+                    min_s=10, retry_429_s=30, min_interval_s=6.5,
+                    max_prompt_chars=20_000, max_output_chars=100_000),
+    "trips": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=1500, first_s=300, later_s=300,
+                  min_s=20, retry_429_s=30, min_interval_s=6.5,
+                  max_prompt_chars=600_000, max_output_chars=600_000),
+    "lexicon": dict(provider="ollama", models=["qwen3:4b"], budget_s=600, first_s=300, later_s=300,
+                    min_s=10, retry_429_s=0, min_interval_s=0,
+                    max_prompt_chars=4_000, max_output_chars=20_000,
+                    base_url="http://localhost:11434"),
+    # Planned batch jobs (E7, from E-R3): no caller yet. When F1 tagging,
+    # the D7 and D9 summaries or K14 blog drafts call a model, they call
+    # Gateway("tagging"), Gateway("summaries") or Gateway("blog").
+    "tagging": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=600, first_s=120, later_s=120,
+                    min_s=10, retry_429_s=30, min_interval_s=6.5,
+                    max_prompt_chars=20_000, max_output_chars=20_000),
+    "summaries": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=600, first_s=120, later_s=120,
+                      min_s=10, retry_429_s=30, min_interval_s=6.5,
+                      max_prompt_chars=40_000, max_output_chars=40_000),
+    "blog": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=900, first_s=300, later_s=300,
+                 min_s=20, retry_429_s=30, min_interval_s=6.5,
+                 max_prompt_chars=100_000, max_output_chars=100_000),
+}
+
+# The box (T1138, E7): llama.cpp's llama-server on the build box, CPU only.
+# E-R3 picked Qwen3-30B-A3B in 4-bit (about 18 GB, fits the CAX41's 32 GB);
+# its speed there is still to be measured (T1135-f).
+BOX_MODEL = "qwen3-30b-a3b-q4_k_m"
+BOX_BASE_URL = "http://localhost:8080/v1"
+# Batch jobs that passed their eval on the box model, and may select it.
+# One entry per job: the eval, its score, the threshold it passed, the model
+# and the date, copied from the owner's run (docs/ai/model-strategy.md,
+# "Moving a batch job to the box"). Empty until the first box run.
+# continent-app/config/ai_models.json mirrors it; tests/test_ai_model_strategy.py
+# fails when the two disagree.
+BOX_PASSED = {}
+# On the CPU an answer takes minutes, not seconds, and there is no quota:
+# longer waits, no 429 wait and no rate floor.
+def BOX_TIMING(base):
+    return {"budget_s": max(base["budget_s"], 3600), "first_s": max(base["first_s"], 1200),
+            "later_s": max(base["later_s"], 1200), "retry_429_s": 0, "min_interval_s": 0}
+
+
+# Jobs that can never run on the box: they need Google Search grounding.
+BOX_NEVER = {"parking": "needs Google Search grounding (search=True)"}
+
+DEFAULT_MODELS = {
+    "gemini": GEMINI_CHAIN,
+    "workers-ai": ["@cf/qwen/qwen3-30b-a3b-fp8"],
+    "openai": [],
+    "ollama": ["qwen3:4b"],
+    "box": [BOX_MODEL],
+}
+MAX_CHAIN = 6
+FORBIDDEN = re.compile(r"anthropic|claude", re.I)
+
+
+class AIRefusal(Exception):
+    """A refused or failed call: code is one of AI_CODES, status its HTTP status."""
+
+    def __init__(self, code, reason="", attempts=None, upstream=0):
+        super().__init__(f"{code}{': ' + reason if reason else ''}")
+        self.code = code
+        self.status = AI_CODES.get(code, 502)
+        self.reason = reason
+        self.upstream = upstream
+        self.attempts = attempts or []
+
+
+@dataclass
+class AIResult:
+    text: str
+    model: str
+    provider: str
+    fell_back: bool
+    sources: list = field(default_factory=list)
+    usage: dict = field(default_factory=dict)
+    raw: dict = field(default_factory=dict)
+    attempts: list = field(default_factory=list)
+
+
+def _env_name(feature):
+    return "AI_" + re.sub(r"[^A-Z0-9]", "_", feature.upper())
+
+
+def _list(s):
+    return [m.strip() for m in str(s or "").split(",") if m.strip()]
+
+
+def _dedupe(items):
+    return list(dict.fromkeys(items))[:MAX_CHAIN]
+
+
+def resolve_config(feature, env=None, models=None):
+    """The resolved config for a feature, with cfg["error"] set when it may not run."""
+    env = os.environ if env is None else env
+    base = FEATURES.get(feature)
+    if not base:
+        return {"feature": feature, "provider": "", "models": [], "error": "unknown_feature"}
+    pre = _env_name(feature)
+    provider = str(env.get(f"{pre}_PROVIDER") or base["provider"]).strip().lower()
+    if models:
+        chain = _dedupe(models)
+    elif _list(env.get(f"{pre}_MODELS")):
+        chain = _dedupe(_list(env.get(f"{pre}_MODELS")))
+    elif provider == base["provider"]:
+        chain = list(base["models"])
+    else:
+        chain = list(DEFAULT_MODELS.get(provider, []))
+    if provider == "box":
+        base_url = str(env.get(f"{pre}_BASE_URL") or env.get("AI_BOX_BASE_URL") or BOX_BASE_URL).strip().rstrip("/")
+    else:
+        base_url = str(env.get(f"{pre}_BASE_URL") or (base.get("base_url") if provider == base["provider"] else "")
+                       or env.get("AI_OPENAI_BASE_URL") or "").strip().rstrip("/")
+    cfg = {**base, "feature": feature, "provider": provider, "models": chain, "base_url": base_url, "error": None}
+    if provider == "box":
+        cfg.update(BOX_TIMING(base))
+    if provider not in PROVIDERS:
+        cfg["error"] = "unknown_provider"
+    elif not chain:
+        cfg["error"] = "no_models"
+    elif provider in ("openai", "ollama", "box") and not re.match(r"^https?://[^/\s]+", base_url):
+        cfg["error"] = "no_base_url"
+    elif provider in ("openai", "box") and base_url.startswith("http://") and not re.match(r"^http://(localhost|127\.0\.0\.1)[:/]", base_url):
+        cfg["error"] = "no_base_url"  # plain http only to a server on this machine
+    elif provider == "box" and feature in BOX_NEVER:
+        cfg["error"] = "box_unsupported"
+    elif provider == "box" and feature not in BOX_PASSED and str(env.get("AI_BOX_EVAL_RUN") or "") != "1":
+        cfg["error"] = "box_not_passed"  # the job has not passed its eval on the box model
+    if FORBIDDEN.search(provider) or any(FORBIDDEN.search(m) for m in chain) or FORBIDDEN.search(base_url):
+        cfg["error"] = "claude_api_forbidden"
+    return cfg
+
+
+def should_fall_over(status):
+    return status in (429, 404) or status >= 500
+
+
+def attempt_timeout_s(index, elapsed_s, cfg):
+    left = cfg["budget_s"] - max(0.0, elapsed_s or 0.0)
+    if left < cfg["min_s"]:
+        return 0
+    return min(cfg["first_s"] if index == 0 else cfg["later_s"], left)
+
+
+def parse_model_json(text, loose=False):
+    """A model's JSON answer, or None. loose also takes a fenced block or the outermost {...}."""
+    s = str(text or "")
+    try:
+        return json.loads(s.strip())
+    except ValueError:
+        if not loose:
+            return None
+    m = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", s, re.I)
+    if m:
+        try:
+            return json.loads(m.group(1))
+        except ValueError:
+            pass
+    a, b = s.find("{"), s.rfind("}")
+    if a >= 0 and b > a:
+        try:
+            return json.loads(s[a:b + 1])
+        except ValueError:
+            return None
+    return None
+
+
+# ---- the guard, ported from supabase/functions/_shared/aiGuard.mjs ----
+# Same rule families over the same folded text; continent-app/tests/
+# aiGateway.test.mjs runs both scanners over the attack set and fails when
+# they disagree.
+
+CANARY = "cg-k7q2-ward"
+INVISIBLE = re.compile("[\u00ad\u180e\u200b-\u200f\u202a-\u202e\u2060-\u2064\u2066-\u206f\ufeff\U000e0000-\U000e007f]")
+HOMOGLYPH = {"\u0430": "a", "\u0435": "e", "\u043e": "o", "\u0440": "p", "\u0441": "c", "\u0443": "y",
+             "\u0445": "x", "\u0456": "i", "\u0458": "j", "\u0455": "s", "\u0501": "d", "\u0261": "g", "\u0131": "i"}
+LEET = {"0": "o", "1": "i", "3": "e", "4": "a", "5": "s", "7": "t", "@": "a", "$": "s"}
+
+
+def strip_invisible(s):
+    return INVISIBLE.sub("", str(s or ""))
+
+
+def fold_for_scan(s):
+    t = unicodedata.normalize("NFKD", strip_invisible(s))
+    t = re.sub("[\u0300-\u036f]", "", t).lower()
+    t = re.sub("[\u0400-\u04ff\u0250-\u02af\u0131]", lambda m: HOMOGLYPH.get(m.group(0), m.group(0)), t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def _de_leet(s):
+    return re.sub(r"[013457@$]", lambda m: LEET[m.group(0)], s)
+
+
+def _despace(s):
+    return re.sub(r"\b(?:[a-z][ .\-_*]){3,}[a-z]\b", lambda m: re.sub(r"[ .\-_*]", "", m.group(0)), s)
+
+
+_W = r"[^.!?\n]{0,40}"
+INJECTION_RULES = [
+    ("override", re.compile(rf"\b(ignore|disregard|forget|override|bypass|skip|drop)\b{_W}\b(previous|prior|above|earlier|preceding|all|any|your|these|those|system|original|carta'?s?)\b{_W}\b(instructions?|rules?|prompts?|directions?|guidelines?|constraints?|guardrails?)\b")),
+    ("override_nl", re.compile(rf"\b(negeer|vergeet|omzeil)\b{_W}\b(instructies|regels|opdrachten|richtlijnen)\b")),
+    ("override_de", re.compile(rf"\b(ignorier\w*|vergiss\w*|missachte\w*)\b{_W}\b(anweisungen|regeln|vorgaben|instruktionen)\b")),
+    ("override_fr", re.compile(rf"\b(ignore[rz]?|oublie[rz]?)\b{_W}\b(instructions|regles|consignes)\b")),
+    ("override_es", re.compile(rf"\b(ignora\w*|olvida\w*)\b{_W}\b(instrucciones|reglas|indicaciones)\b")),
+    ("override_it", re.compile(rf"\b(ignora\w*|dimentica\w*)\b{_W}\b(istruzioni|regole|indicazioni)\b")),
+    ("new_rules", re.compile(r"\b(new|updated|real|actual|true|additional|revised|override)\s+(system\s+)?(instructions?|rules|prompt|directives?|orders)\s*[:=]")),
+    ("from_now", re.compile(r"\bfrom now on\b[^.!?\n]{0,40}\b(you|answer|respond|reply|only|always|never)\b")),
+    ("role", re.compile(r"\byou are (now|no longer)\b|\b(act|behave|respond) as (an?\s+|the\s+)?(unfiltered|unrestricted|uncensored|different|new|evil|dan|developer|admin|root|system|jailbroken|hacker)\b|\bpretend (to be|you are|that you)\b|\broleplay as\b|\b(je bent nu|du bist jetzt|tu es maintenant|ahora eres|ora sei)\b")),
+    ("jailbreak", re.compile(r"\b(jailbreak\w*|dan mode|developer mode|god mode|do anything now|unfiltered mode|no restrictions mode)\b")),
+    ("reveal", re.compile(r"\b(reveal|print|show|repeat|output|tell me|display|leak|dump|recite|summari[sz]e)\b[^.!?\n]{0,30}\b(your|hidden|initial|original|secret|developer)\s+(system\s+)?(prompt|instructions|rules|configuration)\b|\bsystem (prompt|message|instructions)\b|\b(instructions|rules|prompt) (above|before this|you were given)\b")),
+    ("template", re.compile(r"<\|?\s*(im_start|im_end|system|endoftext|start_of_turn|end_of_turn|eot_id|begin_of_text)\s*\|?>|\[/?inst\]|<</?sys>>|(^|\n)\s*(system|assistant|developer)\s*:|</?(system|instructions?|prompt)>|#{2,}\s*(system|instructions?|new rules)\b|\bbegin (system|new|hidden) (prompt|instructions)\b|<<<\s*(data|end)\b")),
+    ("exfil", re.compile(r"\b(send|post|upload|forward|exfiltrate|e-?mail|transmit)\b[^.!?\n]{0,40}\b(to|at)\b[^.!?\n]{0,25}(https?:|www\.|@[a-z0-9-]+\.)|!\[[^\]]*\]\(\s*https?:")),
+    ("social", re.compile(r"\b(mark|flag|label|report)\b[^.!?\n]{0,30}\b(as )?(cancel+ed|failed|urgent|invalid|fraud\w*|expired)\b|\btell the (traveller|traveler|user|reader|customer) (to|that)\b|\b(ai|assistant|model|chatbot|llm)\b[^.!?\n]{0,20}\b(must|should|shall|will) (now )?(say|write|tell|add|output|reply|answer)\b")),
+    ("tooling", re.compile(r"\b(call|invoke|execute)\b[^.!?\n]{0,20}\b(tools?|functions?|commands?|shell|sql|api)\b")),
+    ("output_ctrl", re.compile(r"\b(respond|reply|answer|output|say) (only )?with\b[^.!?\n]{0,30}\b(pwned|hacked|yes|ok|the word|exactly)\b|\b(add|include|insert)\b[^.!?\n]{0,30}\b(this|the following|a)\s+(link|url|warning|phone number|banner)\b")),
+]
+_RULES = dict(INJECTION_RULES)
+HIJACK = re.compile(r"\bpwned\b|\bhacked\b|\bi (have been|was|am) (hacked|pwned|jailbroken|freed)\b|\bdeveloper mode (is )?(enabled|on|active)\b|\bdan mode\b|\bas an ai (language )?model\b|\bmy (system )?(prompt|instructions) (is|are|say|says)\b|\bi (will|shall|must) (now )?ignore\b")
+
+
+def scan_injection(text):
+    """{'hit': bool, 'rules': [ids]}: instruction-shaped text, on the folded text and with leetspeak and spacing undone."""
+    f = fold_for_scan(text)
+    if not f:
+        return {"hit": False, "rules": []}
+    variants = (f, _despace(_de_leet(f)))
+    rules = [rid for rid, rx in INJECTION_RULES if any(rx.search(v) for v in variants)]
+    return {"hit": bool(rules), "rules": rules}
+
+
+def _words(s):
+    return [w for w in re.sub(r"(?:[^\w ]|_)+", " ", fold_for_scan(s)).split(" ") if w]
+
+
+def prompt_shingles(system_text, n=6):
+    w = _words(system_text)
+    return {" ".join(w[i:i + n]) for i in range(0, len(w) - n + 1)}
+
+
+def scan_output_severe(text, shingles=None):
+    """The severe output issues of aiGuard.scanOutput: canary, leak, template, hijack."""
+    s = str(text or "")
+    f = fold_for_scan(s)
+    issues = []
+    if CANARY in f:
+        issues.append("canary")
+    if shingles:
+        w = _words(s)
+        if any(" ".join(w[i:i + 6]) in shingles for i in range(0, len(w) - 5)):
+            issues.append("leak")
+    if _RULES["template"].search(f):
+        issues.append("template")
+    if HIJACK.search(f):
+        issues.append("hijack")
+    return issues
+
+
+# ---- provider adapters ----
+
+class _HttpStatus(Exception):
+    def __init__(self, status):
+        super().__init__(f"status {status}")
+        self.status = status
+
+
+def _post(url, body, headers, timeout_s, opener):
+    req = urllib.request.Request(url, data=json.dumps(body).encode("utf-8"),
+                                 headers={"Content-Type": "application/json", **headers}, method="POST")
+    try:
+        with opener(req, timeout=timeout_s) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        raise _HttpStatus(exc.code) from None
+
+
+def _gemini_body(req):
+    """The generateContent request body for one call (also one item of a batch)."""
+    body = {
+        "contents": [{"role": "user", "parts": [{"text": req["user"]}]}],
+        "generationConfig": {"temperature": req["temperature"], "maxOutputTokens": req["max_tokens"]},
+    }
+    if req["system"]:
+        body["systemInstruction"] = {"parts": [{"text": req["system"]}]}
+    if req["search"]:
+        body["tools"] = [{"google_search": {}}]
+    elif req["json"]:
+        body["generationConfig"]["responseMimeType"] = "application/json"
+        if req["schema"] is not None:
+            body["generationConfig"]["responseSchema"] = req["schema"]
+    return body
+
+
+def _gemini_parse(data):
+    """(text, sources, usage) of one generateContent response."""
+    cand = (data.get("candidates") or [{}])[0]
+    text = "".join(p.get("text", "") for p in (cand.get("content") or {}).get("parts", []))
+    gm = cand.get("groundingMetadata") or {}
+    sources = [c.get("web", {}).get("uri") for c in gm.get("groundingChunks", []) if c.get("web", {}).get("uri")]
+    u = data.get("usageMetadata") or {}
+    return text, sources, {"in": u.get("promptTokenCount", 0), "out": u.get("candidatesTokenCount", 0)}
+
+
+GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta"
+
+
+def _gemini(cfg, env, req, model, timeout_s, opener):
+    url = f"{GEMINI_BASE}/models/{urllib.parse.quote(model)}:generateContent"
+    data = _post(url, _gemini_body(req), {"x-goog-api-key": env.get("GEMINI_API_KEY")}, timeout_s, opener)
+    return (*_gemini_parse(data), data)
+
+
+def _get(url, headers, timeout_s, opener):
+    req = urllib.request.Request(url, headers=headers, method="GET")
+    try:
+        with opener(req, timeout=timeout_s) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        raise _HttpStatus(exc.code) from None
+
+
+# Gemini Batch Mode (T1206, register row T1138-g; E-R3: half the price of a
+# normal call, answered within 24 hours). Shape from Google's Batch Mode docs
+# for the REST API (inline requests): POST models/<model>:batchGenerateContent
+# with {"batch": {"display_name", "input_config": {"requests": {"requests":
+# [{"request": <generateContent body>, "metadata": {"key"}}]}}}} answers an
+# operation named "batches/<id>"; GET <name> until its state is terminal;
+# the answers are inlinedResponses, each {"response"} or {"error"} with its
+# "metadata.key". Coded against a fake transport only: the first real run
+# is an owner step (docs/ai/model-strategy.md). The parse below accepts
+# both the operation form and the bare batch form of the state and output.
+BATCH_DONE = {"BATCH_STATE_SUCCEEDED", "JOB_STATE_SUCCEEDED"}
+BATCH_FAILED = {"BATCH_STATE_FAILED", "BATCH_STATE_CANCELLED", "BATCH_STATE_EXPIRED",
+                "JOB_STATE_FAILED", "JOB_STATE_CANCELLED", "JOB_STATE_EXPIRED"}
+
+
+def _batch_state(op):
+    meta = op.get("metadata") or {}
+    return str(meta.get("state") or op.get("state") or "")
+
+
+def _batch_items(op):
+    """The inlined responses of a finished batch, whatever level they sit at."""
+    for holder in (op.get("response"), (op.get("metadata") or {}).get("output"), op.get("output"), op.get("dest")):
+        if not isinstance(holder, dict):
+            continue
+        inl = holder.get("inlinedResponses")
+        if isinstance(inl, dict):
+            inl = inl.get("inlinedResponses")
+        if isinstance(inl, list):
+            return inl
+    return None
+
+
+def _chat(url, key, req, model, timeout_s, opener):
+    msgs = ([{"role": "system", "content": req["system"]}] if req["system"] else []) + \
+        [{"role": "user", "content": req["user"]}]
+    body = {"model": model, "messages": msgs, "temperature": req["temperature"], "max_tokens": req["max_tokens"]}
+    if req["json"]:
+        body["response_format"] = {"type": "json_object"}
+    data = _post(url, body, {"Authorization": f"Bearer {key}"} if key else {}, timeout_s, opener)
+    text = str(((data.get("choices") or [{}])[0].get("message") or {}).get("content") or "")
+    u = data.get("usage") or {}
+    return text, [], {"in": u.get("prompt_tokens", 0), "out": u.get("completion_tokens", 0)}, data
+
+
+def _workers(cfg, env, req, model, timeout_s, opener):
+    acct = urllib.parse.quote(str(env.get("CF_ACCOUNT_ID") or ""))
+    return _chat(f"https://api.cloudflare.com/client/v4/accounts/{acct}/ai/v1/chat/completions",
+                 env.get("CF_AI_TOKEN"), req, model, timeout_s, opener)
+
+
+def _openai(cfg, env, req, model, timeout_s, opener):
+    return _chat(f"{cfg['base_url']}/chat/completions", env.get("AI_OPENAI_API_KEY"), req, model, timeout_s, opener)
+
+
+def _ollama(cfg, env, req, model, timeout_s, opener):
+    body = {"model": model, "prompt": req["user"], "stream": False, "options": {"temperature": req["temperature"]}}
+    if req["system"]:
+        body["system"] = req["system"]
+    if req["json"]:
+        body["format"] = "json"
+    data = _post(f"{cfg['base_url']}/api/generate", body, {}, timeout_s, opener)
+    return str(data.get("response") or ""), [], {"in": data.get("prompt_eval_count", 0), "out": data.get("eval_count", 0)}, data
+
+
+ADAPTERS = {"gemini": _gemini, "workers-ai": _workers, "openai": _openai, "ollama": _ollama, "box": _openai}
+READY = {
+    "gemini": lambda env: bool(env.get("GEMINI_API_KEY")),
+    "workers-ai": lambda env: bool(env.get("CF_ACCOUNT_ID") and env.get("CF_AI_TOKEN")),
+    "openai": lambda env: True,  # a local llama.cpp server needs no key
+    "ollama": lambda env: True,
+    "box": lambda env: True,  # llama-server on the box needs no key
+}
+
+
+class Gateway:
+    """One job's model access: its config, the rate floor between calls and token counters.
+
+    gw = Gateway("intros", models=[args.model] if args.model else None)
+    res = gw.call(user, system=SYSTEM, json=True, screen=[extract, ...])
+    """
+
+    def __init__(self, feature, models=None, env=None, opener=None, clock=None, sleep=None, min_interval_s=None,
+                 event_sink=None):
+        self.events = []
+        self._event_sink = event_sink
+        self.env = os.environ if env is None else env
+        self.cfg = resolve_config(feature, self.env, models)
+        if self.cfg["error"]:
+            raise AIRefusal("config", self.cfg["error"])
+        if not READY[self.cfg["provider"]](self.env):
+            raise AIRefusal("no_ai", f"{self.cfg['provider']} is not configured (key or account id missing)")
+        self.feature = feature
+        self.provider = self.cfg["provider"]
+        self.models = self.cfg["models"]
+        self.model = self.models[0]
+        self.tokens_in = self.tokens_out = 0
+        self.min_interval_s = self.cfg["min_interval_s"] if min_interval_s is None else min_interval_s
+        self._opener = opener or urllib.request.urlopen
+        self._clock = clock or time.monotonic
+        self._sleep = sleep or time.sleep
+        self._last = None
+
+    def _pace(self):
+        if self._last is not None:
+            wait = self._last + self.min_interval_s - self._clock()
+            if wait > 0:
+                self._sleep(wait)
+        self._last = self._clock()
+
+    def call(self, user, **kw):
+        """One call under the rules in the module docstring. Returns AIResult or raises AIRefusal.
+        Every call, answered or refused, leaves one privacy safe event in self.events (T1139, E4):
+        names and counts only, never prompt or answer text. AI_EVENTS_JSONL=<path> appends it to a file."""
+        t0 = self._clock()
+        chars = len(kw.get("system") or "") + len(user or "")
+        try:
+            res = self._call(user, **kw)
+        except AIRefusal as exc:
+            self._emit(None, chars, t0, exc)
+            raise
+        self._emit(res, chars, t0, None)
+        return res
+
+    def _emit(self, res, chars, t0, exc):
+        usage = (res.usage if res else None) or {}
+        refused = exc is not None and exc.code in ("config", "no_ai", "too_big", "unsafe")
+        ev = {
+            "feature": self.feature, "provider": self.provider,
+            "model": res.model if res else self.models[0],
+            "prompt_id": None, "prompt_version": None,
+            "tokens_in": usage.get("in") if usage else -(-chars // 4),
+            "tokens_out": usage.get("out") if usage else None,
+            "tokens_estimated": not usage,
+            "latency_ms": max(0, round((self._clock() - t0) * 1000)),
+            "outcome": ("fallback" if res.fell_back else "ok") if res else ("refused" if refused else "failed"),
+            "code": exc.code if exc else None,
+            "attempts": len(res.attempts if res else getattr(exc, "attempts", None) or []),
+            "fell_back": bool(res and res.fell_back), "query_hash": None,
+        }
+        self.events.append(ev)
+        path = self._event_sink or self.env.get("AI_EVENTS_JSONL")
+        try:
+            if callable(path):
+                path(ev)
+            elif path:
+                import json as _json
+                with open(path, "a", encoding="utf-8") as fh:
+                    fh.write(_json.dumps(ev) + "\n")
+        except (OSError, TypeError, ValueError):
+            pass
+
+    def _call(self, user, *, system="", json=False, schema=None, search=False, temperature=0.2,
+              max_tokens=8192, screen=None):
+        cfg = self.cfg
+        if search and self.provider != "gemini":
+            raise AIRefusal("ai_error", "search_unsupported")
+        if len(system or "") + len(user or "") > cfg["max_prompt_chars"]:
+            raise AIRefusal("too_big", "prompt")
+        for item in ([user] if screen is None else screen):
+            hit = scan_injection(item)
+            if hit["hit"]:
+                raise AIRefusal("unsafe", ",".join(hit["rules"]))
+        req = {"user": user, "system": system, "json": json, "schema": schema, "search": search,
+               "temperature": temperature, "max_tokens": max_tokens}
+        adapter = ADAPTERS[self.provider]
+        attempts = []
+        start = self._clock()
+        last_status = 0
+        timed_out = False
+        i = 0
+        for model in self.models:
+            tries = 0
+            waited = False
+            while True:
+                t = attempt_timeout_s(i, self._clock() - start, cfg)
+                if not t:
+                    break
+                self._pace()
+                t0 = self._clock()
+                try:
+                    text, sources, usage, raw = adapter(cfg, self.env, req, model, t, self._opener)
+                except _HttpStatus as exc:
+                    i += 1
+                    last_status = exc.status
+                    attempts.append({"model": model, "status": exc.status})
+                    if exc.status == 429 and cfg["retry_429_s"] and not waited and \
+                            self._clock() - start + cfg["retry_429_s"] + cfg["min_s"] < cfg["budget_s"]:
+                        waited = True
+                        print(f"  note: {model} rate limited, waiting {cfg['retry_429_s']}s")
+                        self._sleep(cfg["retry_429_s"])
+                        continue
+                    if exc.status >= 500 and tries == 0:
+                        tries += 1
+                        continue
+                    if should_fall_over(exc.status):
+                        print(f"  note: {model} returned {exc.status}, trying the next model")
+                        break
+                    raise AIRefusal("ai_error", f"{model} returned {exc.status}", attempts, exc.status) from None
+                except TimeoutError as exc:
+                    i += 1
+                    attempts.append({"model": model, "status": 0, "error": "timeout"})
+                    timed_out = True
+                    print(f"  note: {model} timed out ({exc}), trying the next model")
+                    break
+                except (urllib.error.URLError, ConnectionError, OSError, ValueError) as exc:
+                    i += 1
+                    reason = getattr(exc, "reason", None)
+                    if isinstance(reason, TimeoutError):
+                        attempts.append({"model": model, "status": 0, "error": "timeout"})
+                        timed_out = True
+                        break
+                    attempts.append({"model": model, "status": 0, "error": "network"})
+                    if tries == 0:
+                        tries += 1
+                        continue
+                    break
+                attempts.append({"model": model, "status": 200, "s": round(self._clock() - t0, 1)})
+                if len(text) > cfg["max_output_chars"]:
+                    raise AIRefusal("ai_bad_output", "too_long", attempts)
+                severe = scan_output_severe(text, prompt_shingles(system) if system else None)
+                if severe:
+                    raise AIRefusal("ai_bad_output", "unsafe_output:" + ",".join(severe), attempts)
+                self.model = model
+                self.tokens_in += usage.get("in", 0) or 0
+                self.tokens_out += usage.get("out", 0) or 0
+                return AIResult(text=text, model=model, provider=self.provider, fell_back=model != self.models[0],
+                                sources=sources, usage=usage, raw=raw, attempts=attempts)
+        if timed_out and last_status != 429:
+            raise AIRefusal("ai_timeout", "", attempts)
+        if last_status == 429:
+            raise AIRefusal("global_cap", "every model is rate limited", attempts, 429)
+        raise AIRefusal("ai_error", f"every model failed (last {last_status})", attempts, last_status)
+
+    def batch(self, items, *, system="", json=False, schema=None, temperature=0.2, max_tokens=8192,
+              poll_s=60, max_wait_s=26 * 3600, display_name=None):
+        """Gemini Batch Mode for many calls of this job at half price (T1206, T1138-g).
+
+        items: [{"key": str, "user": str, "screen": [str] (optional)}]. Each item passes the
+        same input rules as call(): the prompt cap and the injection screen; a refused item
+        never reaches the batch. The batch runs on the chain's first model only (a batch has
+        no fall-over; a failed batch raises and the job may rerun the items with call()).
+        Waits poll_s between polls, at most max_wait_s. Returns {key: AIResult or AIRefusal};
+        each answer passes the same output check as call(). One event per item.
+
+        No job uses it yet: moving a job to batch mode changes when its results arrive,
+        which is that job's own decision (docs/ai/model-strategy.md).
+        """
+        if self.provider != "gemini":
+            raise AIRefusal("config", "batch_unsupported")
+        cfg = self.cfg
+        model = self.models[0]
+        out, requests, chars = {}, [], {}
+        t0 = self._clock()
+        for it in items:
+            key, user = str(it["key"]), it["user"]
+            chars[key] = len(system or "") + len(user or "")
+            try:
+                if chars[key] > cfg["max_prompt_chars"]:
+                    raise AIRefusal("too_big", "prompt")
+                for text in (it.get("screen") or [user]):
+                    hit = scan_injection(text)
+                    if hit["hit"]:
+                        raise AIRefusal("unsafe", ",".join(hit["rules"]))
+            except AIRefusal as exc:
+                out[key] = exc
+                self._emit(None, chars[key], t0, exc)
+                continue
+            req = {"user": user, "system": system, "json": json, "schema": schema, "search": False,
+                   "temperature": temperature, "max_tokens": max_tokens}
+            requests.append({"request": _gemini_body(req), "metadata": {"key": key}})
+        if not requests:
+            return out
+        headers = {"x-goog-api-key": self.env.get("GEMINI_API_KEY")}
+        body = {"batch": {"display_name": display_name or f"carta-{self.feature}",
+                          "input_config": {"requests": {"requests": requests}}}}
+        url = f"{GEMINI_BASE}/models/{urllib.parse.quote(model)}:batchGenerateContent"
+        pending = [r["metadata"]["key"] for r in requests]
+
+        def fail_all(code, reason, status=0):
+            for k in pending:
+                exc = AIRefusal(code, reason, [{"model": model, "status": status}], status)
+                out[k] = exc
+                self._emit(None, chars[k], t0, exc)
+            return out
+
+        try:
+            op = _post(url, body, headers, cfg["first_s"], self._opener)
+        except _HttpStatus as exc:
+            code = "global_cap" if exc.status == 429 else "ai_error"
+            return fail_all(code, f"{model} batch create returned {exc.status}", exc.status)
+        name = str(op.get("name") or "")
+        if not re.match(r"^batches/[\w-]+$", name):
+            return fail_all("ai_error", "batch create answered no batch name")
+        start = self._clock()
+        while True:
+            state = _batch_state(op)
+            if op.get("done") or state in BATCH_DONE or state in BATCH_FAILED:
+                break
+            if self._clock() - start + poll_s > max_wait_s:
+                return fail_all("ai_timeout", f"{name} not done after {max_wait_s}s ({state or 'no state'})")
+            self._sleep(poll_s)
+            try:
+                op = _get(f"{GEMINI_BASE}/{name}", headers, cfg["later_s"], self._opener)
+            except _HttpStatus as exc:
+                if exc.status >= 500 or exc.status == 429:
+                    continue  # a poll that failed is retried at the next poll
+                return fail_all("ai_error", f"{name} poll returned {exc.status}", exc.status)
+            except (urllib.error.URLError, ConnectionError, OSError, ValueError):
+                continue
+        if state in BATCH_FAILED or op.get("error"):
+            return fail_all("ai_error", f"{name} ended {state or 'with an error'}")
+        answers = _batch_items(op)
+        if answers is None:
+            return fail_all("ai_bad_output", f"{name} has no inlined responses")
+        shingles = prompt_shingles(system) if system else None
+        by_key = {}
+        for pos, a in enumerate(answers):
+            k = str(((a or {}).get("metadata") or {}).get("key") or (pending[pos] if pos < len(pending) else ""))
+            by_key[k] = a or {}
+        for k in pending:
+            a = by_key.get(k)
+            attempt = [{"model": model, "status": 200, "batch": name}]
+            if a is None or a.get("error") or not isinstance(a.get("response"), dict):
+                why = (a or {}).get("error", {}).get("message", "") if a else "missing from the batch"
+                exc = AIRefusal("ai_error", f"{name} item {k}: {why}"[:200], attempt)
+            else:
+                text, sources, usage = _gemini_parse(a["response"])
+                severe = scan_output_severe(text, shingles)
+                if len(text) > cfg["max_output_chars"]:
+                    exc = AIRefusal("ai_bad_output", "too_long", attempt)
+                elif severe:
+                    exc = AIRefusal("ai_bad_output", "unsafe_output:" + ",".join(severe), attempt)
+                else:
+                    res = AIResult(text=text, model=model, provider=self.provider, fell_back=False, sources=sources,
+                                   usage=usage, raw=a["response"], attempts=attempt)
+                    self.tokens_in += usage.get("in", 0) or 0
+                    self.tokens_out += usage.get("out", 0) or 0
+                    out[k] = res
+                    self._emit(res, chars[k], t0, None)
+                    continue
+            out[k] = exc
+            self._emit(None, chars[k], t0, exc)
+        return out

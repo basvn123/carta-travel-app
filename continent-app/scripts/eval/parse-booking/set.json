@@ -1,0 +1,383 @@
+{
+ "version": 1,
+ "about": "T1206 (register rows T1140-b, T1138-c): synthetic booking documents with gold fields for the parse-booking eval. Every document, name, code and domain is made up (.example domains). Gold: bookings by kind, code, date, euro total (within 10 percent when converted from another currency), printed amount and currency, a printed link only, the trip city; activities by name and trip day. The default answers (answers.json) are hand-written reference answers, with one planted fault the shipped path must remove (an invented manage link on pb08); a live run records real answers with --answers.",
+ "docs": [
+  {
+   "id": "pb01",
+   "about": "flight out, EUR, printed manage link",
+   "lang": "en",
+   "context": {
+    "groupSize": 2,
+    "stops": [
+     {
+      "city": "Palermo",
+      "country": "Italy",
+      "arrive": "2027-05-14",
+      "nights": 3
+     },
+     {
+      "city": "Catania",
+      "country": "Italy",
+      "nights": 2
+     }
+    ]
+   },
+   "text": "Skylark Air booking confirmation\nBooking reference: QX7K2P\nPassengers: 2 adults\nFlight SK 4821 Brussels Charleroi (CRL) to Palermo (PMO)\nFriday 14 May 2027, departs 06:35, arrives 09:10\nTotal paid: EUR 89.98\nManage your booking: https://www.skylark.example/manage/QX7K2P",
+   "gold": {
+    "bookings": [
+     {
+      "kind": "flight_out",
+      "title": "Skylark Air CRL to PMO",
+      "city": "Palermo",
+      "code": "QX7K2P",
+      "eur": 89.98,
+      "amount": null,
+      "currency": "",
+      "link": "https://www.skylark.example/manage/QX7K2P",
+      "date": "2027-05-14"
+     }
+    ],
+    "activities": []
+   }
+  },
+  {
+   "id": "pb02",
+   "about": "hotel stay, EUR, no link",
+   "lang": "en",
+   "context": {
+    "groupSize": 2,
+    "stops": [
+     {
+      "city": "Palermo",
+      "country": "Italy",
+      "arrive": "2027-05-14",
+      "nights": 3
+     },
+     {
+      "city": "Catania",
+      "country": "Italy",
+      "nights": 2
+     }
+    ]
+   },
+   "text": "Hotel Miramare, Via Roma 12, 90133 Palermo\nThank you for your reservation.\nConfirmation number: 554120\nCheck-in: 14 May 2027 from 14:00\nCheck-out: 17 May 2027 by 11:00\n3 nights, double room with breakfast\nTotal price: EUR 312.00, paid at booking",
+   "gold": {
+    "bookings": [
+     {
+      "kind": "stay",
+      "title": "Hotel Miramare",
+      "city": "Palermo",
+      "code": "554120",
+      "eur": 312,
+      "amount": null,
+      "currency": "",
+      "link": "",
+      "date": "2027-05-14"
+     }
+    ],
+    "activities": []
+   }
+  },
+  {
+   "id": "pb03",
+   "about": "car hire, EUR",
+   "lang": "en",
+   "context": {
+    "groupSize": 2,
+    "stops": [
+     {
+      "city": "Palermo",
+      "country": "Italy",
+      "arrive": "2027-05-14",
+      "nights": 3
+     },
+     {
+      "city": "Catania",
+      "country": "Italy",
+      "nights": 2
+     }
+    ]
+   },
+   "text": "Your car hire voucher\nVoucher no. CT-209-7781\nPick-up: Catania Airport (CTA), 17 May 2027 10:00\nDrop-off: Catania Airport (CTA), 19 May 2027 18:00\nCompact car, unlimited km\nAmount charged: 146.40 EUR",
+   "gold": {
+    "bookings": [
+     {
+      "kind": "car",
+      "title": "Car hire at Catania Airport",
+      "city": "Catania",
+      "code": "CT-209-7781",
+      "eur": 146.4,
+      "amount": null,
+      "currency": "",
+      "link": "",
+      "date": "2027-05-17"
+     }
+    ],
+    "activities": []
+   }
+  },
+  {
+   "id": "pb04",
+   "about": "hotel stay printed in GBP",
+   "lang": "en",
+   "context": {
+    "groupSize": 1,
+    "stops": [
+     {
+      "city": "Edinburgh",
+      "country": "United Kingdom",
+      "arrive": "2027-08-09",
+      "nights": 3
+     }
+    ]
+   },
+   "text": "Canongate Rooms, Edinburgh\nBooking ID 77310492\nArrival 9 August 2027, departure 12 August 2027 (3 nights)\nSingle room, room only\nTotal: GBP 245.00 (charged in pounds sterling)",
+   "gold": {
+    "bookings": [
+     {
+      "kind": "stay",
+      "title": "Canongate Rooms",
+      "city": "Edinburgh",
+      "code": "77310492",
+      "eur": 287,
+      "amount": 245,
+      "currency": "GBP",
+      "link": "",
+      "date": "2027-08-09"
+     }
+    ],
+    "activities": []
+   }
+  },
+  {
+   "id": "pb05",
+   "about": "train between two stops, printed in CZK",
+   "lang": "en",
+   "context": {
+    "groupSize": 2,
+    "stops": [
+     {
+      "city": "Vienna",
+      "country": "Austria",
+      "arrive": "2027-06-02",
+      "nights": 2
+     },
+     {
+      "city": "Prague",
+      "country": "Czechia",
+      "nights": 3
+     }
+    ]
+   },
+   "text": "Rail ticket\nOrder number: RJ-55K-0193\nWien Hbf 08:10 to Praha hl.n. 12:12, 4 June 2027\n2 passengers, standard class, seats 23 and 24 in coach 5\nPrice: CZK 1,290",
+   "gold": {
+    "bookings": [
+     {
+      "kind": "transfer",
+      "title": "Train Vienna to Prague",
+      "city": "Prague",
+      "code": "RJ-55K-0193",
+      "eur": 51,
+      "amount": 1290,
+      "currency": "CZK",
+      "link": "",
+      "date": "2027-06-04"
+     }
+    ],
+    "activities": []
+   }
+  },
+  {
+   "id": "pb06",
+   "about": "a booked guided visit",
+   "lang": "en",
+   "context": {
+    "groupSize": 2,
+    "stops": [
+     {
+      "city": "Palermo",
+      "country": "Italy",
+      "arrive": "2027-05-14",
+      "nights": 3
+     },
+     {
+      "city": "Catania",
+      "country": "Italy",
+      "nights": 2
+     }
+    ]
+   },
+   "text": "Ticket confirmation\nPalatine Chapel and Norman Palace, guided visit in English\nSunday 16 May 2027, 10:00\n2 adults\nReference: PC-88231\nTotal: EUR 36.00",
+   "gold": {
+    "bookings": [
+     {
+      "kind": "activity",
+      "title": "Palatine Chapel guided visit",
+      "city": "Palermo",
+      "code": "PC-88231",
+      "eur": 36,
+      "amount": null,
+      "currency": "",
+      "link": "",
+      "date": "2027-05-16"
+     }
+    ],
+    "activities": []
+   }
+  },
+  {
+   "id": "pb07",
+   "about": "an itinerary page with activities, no bookings",
+   "lang": "en",
+   "context": {
+    "groupSize": 2,
+    "stops": [
+     {
+      "city": "Palermo",
+      "country": "Italy",
+      "arrive": "2027-05-14",
+      "nights": 3
+     },
+     {
+      "city": "Catania",
+      "country": "Italy",
+      "nights": 2
+     }
+    ]
+   },
+   "text": "Our three days in Palermo\nDay 1: walk the Ballaro market in the morning, then the cathedral roof terraces (about EUR 10 each).\nDay 2: the Palatine Chapel, then a long lunch.\nDay 3: a boat to Mondello beach for the afternoon.\nThen two days in Catania, with a morning climbing Etna on day 5.",
+   "gold": {
+    "bookings": [],
+    "activities": [
+     {
+      "name": "Ballaro market",
+      "city": "Palermo",
+      "day": 1,
+      "eur": null
+     },
+     {
+      "name": "Cathedral roof terraces",
+      "city": "Palermo",
+      "day": 1,
+      "eur": 10
+     },
+     {
+      "name": "Palatine Chapel",
+      "city": "Palermo",
+      "day": 2,
+      "eur": null
+     },
+     {
+      "name": "Mondello beach",
+      "city": "Palermo",
+      "day": 3,
+      "eur": null
+     },
+     {
+      "name": "Etna",
+      "city": "Catania",
+      "day": 5,
+      "eur": null
+     }
+    ]
+   }
+  },
+  {
+   "id": "pb08",
+   "about": "flight home with no link printed (an invented one must not survive)",
+   "lang": "en",
+   "context": {
+    "groupSize": 2,
+    "stops": [
+     {
+      "city": "Palermo",
+      "country": "Italy",
+      "arrive": "2027-05-14",
+      "nights": 3
+     },
+     {
+      "city": "Catania",
+      "country": "Italy",
+      "nights": 2
+     }
+    ]
+   },
+   "text": "Skylark Air e-ticket\nBooking reference: ZR4M9T\nCatania (CTA) to Brussels Charleroi (CRL)\nWednesday 19 May 2027, departs 20:05\n2 adults, 2 cabin bags\nTotal paid: EUR 121.50",
+   "gold": {
+    "bookings": [
+     {
+      "kind": "flight_home",
+      "title": "Skylark Air CTA to CRL",
+      "city": "Catania",
+      "code": "ZR4M9T",
+      "eur": 121.5,
+      "amount": null,
+      "currency": "",
+      "link": "",
+      "date": "2027-05-19"
+     }
+    ],
+    "activities": []
+   }
+  },
+  {
+   "id": "pb09",
+   "about": "a newsletter with no trip facts",
+   "lang": "en",
+   "context": {
+    "groupSize": 2,
+    "stops": [
+     {
+      "city": "Palermo",
+      "country": "Italy",
+      "arrive": "2027-05-14",
+      "nights": 3
+     },
+     {
+      "city": "Catania",
+      "country": "Italy",
+      "nights": 2
+     }
+    ]
+   },
+   "text": "Summer sale! Up to 30 percent off city breaks this month. Unsubscribe at any time in your account settings. You are receiving this because you signed up to our newsletter.",
+   "gold": {
+    "bookings": [],
+    "activities": []
+   }
+  },
+  {
+   "id": "pb10",
+   "about": "a Dutch hotel confirmation",
+   "lang": "nl",
+   "context": {
+    "groupSize": 2,
+    "stops": [
+     {
+      "city": "Amsterdam",
+      "country": "Netherlands",
+      "arrive": "2027-06-02",
+      "nights": 2
+     }
+    ]
+   },
+   "text": "Bevestiging van uw reservering\nHotel De Gouden Leeuw, Amsterdam\nReserveringsnummer: NL4410\nAankomst: 2 juni 2027, vertrek: 4 juni 2027 (2 nachten)\nTweepersoonskamer\nTotaal: EUR 268,00",
+   "gold": {
+    "bookings": [
+     {
+      "kind": "stay",
+      "title": "Hotel De Gouden Leeuw",
+      "city": "Amsterdam",
+      "code": "NL4410",
+      "eur": 268,
+      "amount": null,
+      "currency": "",
+      "link": "",
+      "date": "2027-06-02"
+     }
+    ],
+    "activities": []
+   }
+  }
+ ]
+}

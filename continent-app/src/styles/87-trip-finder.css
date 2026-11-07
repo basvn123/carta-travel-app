@@ -68,8 +68,6 @@
 .tff-check.is-done .tff-check-mark { background: var(--text); border-color: var(--text); }
 .tff-check-mark svg { transform: scale(0.6); opacity: 0; transition: transform var(--dur-2) var(--ease-out), opacity var(--dur-2) var(--ease-out); }
 .tff-check.is-done .tff-check-mark svg { transform: none; opacity: 1; }
-
-.tff-skip { display: flex; justify-content: center; margin-top: var(--space-2); }
 .tff-fail { margin: 0; text-align: center; color: var(--text-2); font-size: var(--text-body); }
 
 @media (prefers-reduced-motion: reduce) {
@@ -99,10 +97,8 @@
 }
 .tff-check { animation: tff-in var(--dur-2) var(--ease-out) both; }
 @keyframes tff-in { from { opacity: 0; } to { opacity: 1; } }
-.tff-early { margin-top: var(--space-5); }
-.tff-early > li { animation: tff-in var(--dur-2) var(--ease-out) both; }
 @media (prefers-reduced-motion: reduce) {
-  .tff-check, .tff-early > li { animation: none; }
+  .tff-check { animation: none; }
 }
 
 /* ---- Searching, the brief (owner, plan flow walk 2026-10-30) ----
@@ -744,18 +740,6 @@
   .tff-gal-prev.icon-btn, .tff-gal-next.icon-btn { top: 138px; }
 }
 
-.tff-pv-match {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  padding: 0 var(--space-2);
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-size: var(--text-caption);
-  font-weight: 700;
-}
-
 /* The trip page's sections (T811, kept by T870) */
 .tff-sec { display: grid; gap: var(--space-3); align-content: start; }
 
@@ -769,8 +753,6 @@
 .tff-route-name { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .tff-route-n { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); color: var(--text-2); }
 .tff-route-n svg { color: var(--text-3); }
-
-.tff-fit { display: grid; gap: var(--space-3); }
 .tff-fit-bars, .tff-fit-lines { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
 .tff-fit-bar {
   display: grid;
@@ -893,13 +875,13 @@
 @media (max-width: 768px) {
   .fsheet.tff-cmp-sheet { height: 100dvh; max-height: 100dvh; max-width: none; border-radius: 0; }
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .fsheet.tff-cmp-sheet { max-width: 880px; }
 }
 .tff-cmp-scroll { overscroll-behavior-x: contain; background: var(--surface); }
 .tff-cmp-table th, .tff-cmp-table td { padding: var(--space-2); }
 .tff-cmp-table thead th:not(.cmp-rowhead), .tff-cmp-table td { min-width: 128px; }
-@media (min-width: 640px) {
+@media (min-width: 600px) {
   .tff-cmp-table thead th:not(.cmp-rowhead), .tff-cmp-table td { min-width: 168px; }
 }
 /* The row labels stay put while three or four trips scroll sideways. */
@@ -1019,8 +1001,6 @@
   .tff-tp-grid { grid-template-columns: minmax(0, 1fr) 360px; grid-template-areas: "lead side" "main side"; column-gap: var(--space-7); }
   .tff-tp-side { align-self: start; position: sticky; top: var(--space-5); }
 }
-
-.tff-tp-who { display: grid; gap: var(--space-2); }
 .tff-tp-prose { margin: 0; max-width: var(--measure); font-size: var(--text-lead); font-weight: 400; line-height: var(--leading-body); color: var(--text); }
 
 /* The fact band: label over value, an icon each, no card and no colour. */
@@ -1035,11 +1015,10 @@
 .tff-tp-unit { font-size: var(--text-caption); color: var(--text-2); }
 .tff-tp-costbar { display: flex; gap: 1px; height: 8px; margin: 0; border-radius: var(--radius-pill); overflow: hidden; background: var(--surface); }
 .tff-tp-costbar > span { display: block; height: 100%; min-width: 4px; }
-.tff-tp-costbar > .is-travel, .tff-tp-line-name.is-travel .plan-total-dot { background: var(--cost-travel); }
-.tff-tp-costbar > .is-around, .tff-tp-line-name.is-around .plan-total-dot { background: var(--cost-around); }
-.tff-tp-costbar > .is-stay, .tff-tp-line-name.is-stay .plan-total-dot { background: var(--cost-stay); }
-.tff-tp-costbar > .is-food, .tff-tp-line-name.is-food .plan-total-dot { background: var(--cost-food); }
-.tff-tp-line-name .plan-total-dot { display: inline-block; width: 8px; height: 8px; flex: none; border-radius: var(--radius-pill); }
+.tff-tp-costbar > .is-travel { background: var(--cost-travel); }
+.tff-tp-costbar > .is-around { background: var(--cost-around); }
+.tff-tp-costbar > .is-stay { background: var(--cost-stay); }
+.tff-tp-costbar > .is-food { background: var(--cost-food); }
 .tff-tp-lines { margin: 0; padding: 0; list-style: none; }
 .tff-tp-line { border-bottom: 1px solid var(--border-soft); }
 .tff-tp-line:first-child { border-top: 1px solid var(--border-soft); }
@@ -1061,10 +1040,8 @@
 .tff-tp-line-btn .btn-label { display: contents; }
 .tff-tp-line-btn .btn-icon { grid-column: 3; grid-row: 1; color: var(--text-3); }
 @media (hover: hover) { .tff-tp-line-btn.btn:hover { background: var(--surface-hover); } }
-.tff-tp-line-name { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-body); font-weight: 600; }
 .tff-tp-line-fig { font-size: var(--text-body); font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
 .tff-tp-line-fig .not-yet { font-size: var(--text-caption); font-weight: 500; color: var(--text-3); }
-.tff-tp-line-sub { grid-column: 1 / -1; padding-left: calc(8px + var(--space-2)); font-size: var(--text-caption); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tff-tp-acts { display: flex; align-items: center; gap: var(--space-2); }
 .tff-tp-plan.btn { flex: 1; }
 
@@ -1087,10 +1064,6 @@
   font-variant-numeric: tabular-nums;
 }
 .tff-rpin { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px var(--space-2) 2px 2px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface); color: var(--text); font-size: var(--text-caption); font-weight: 600; white-space: nowrap; }
-
-.tff-tp-two { display: grid; gap: var(--space-6); }
-@media (min-width: 769px) { .tff-tp-two { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-7); } }
-.tff-tp-two .tff-fit-lines li { font-size: var(--text-body); }
 .tff-tp .tff-see-row { grid-auto-columns: minmax(160px, 200px); }
 .tff-tp-alts.tff-list { margin: 0; padding: 0; list-style: none; }
 .tff-tp.is-picking { max-width: 720px; }

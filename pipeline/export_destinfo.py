@@ -9,6 +9,7 @@ public/trails: a wire the app reads, never the caches themselves).
 Merges, per destination:
   parking   cache/parking_osm.json      (harvest_parking.py, OSM Overpass)
   events    cache/events_wikidata.json  (harvest_events.py, Wikidata)
+  access    cache/access_osm.json       (harvest_access.py, OSM wheelchair tags, D21)
 
 A destination with neither is simply absent from its country file, and a
 country with no rows still gets a file with an empty dests map, so the app
@@ -36,11 +37,13 @@ ROOT = Path(__file__).resolve().parents[1]
 MASTER = ROOT / "app_data" / "app_data.json"
 PARKING = ROOT / "cache" / "parking_osm.json"
 EVENTS = ROOT / "cache" / "events_wikidata.json"
+ACCESS = ROOT / "cache" / "access_osm.json"
 OUT_DIR = ROOT / "continent-app" / "public" / "destinfo"
 
 SOURCES = {
     "parking": {"name": "OpenStreetMap contributors", "url": "https://www.openstreetmap.org/copyright"},
     "events": {"name": "Wikidata", "url": "https://www.wikidata.org"},
+    "access": {"name": "OpenStreetMap contributors", "url": "https://www.openstreetmap.org/copyright"},
 }
 
 
@@ -109,6 +112,51 @@ def slim_parking(rec):
     return out
 
 
+ACCESS_YES = {"yes", "designated"}
+ACCESS_SRC = "openstreetmap"
+
+
+def pick_access(feats, asof):
+    """The shipped accessibility row (D21) from a destination's raw tagged
+    features, or None when nothing is tagged. Facts only where mappers tagged
+    them: absent means "not mapped", never "not accessible". `_src` and
+    `_asof` stay on the row so the app can say where and when."""
+    if not feats:
+        return None
+    out = {}
+    stations = sorted((f for f in feats if f.get("kind") == "station" and f.get("wc")),
+                      key=lambda f: f.get("dist_m", 1e9))
+    if stations:
+        st = stations[0]
+        row = {"wc": st["wc"], "m": st.get("dist_m", 0)}
+        if st.get("name"):
+            row["name"] = st["name"]
+        if st.get("tw"):
+            row["tw"] = st["tw"]
+        out["station"] = row
+    loos = sorted((f for f in feats
+                   if (f.get("kind") == "toilets" and f.get("wc") in ACCESS_YES)
+                   or (f.get("kind") == "toilets_at" and f.get("tw") in ACCESS_YES)),
+                  key=lambda f: f.get("dist_m", 1e9))
+    if loos:
+        out["toilets"] = {"n": len(loos), "m": loos[0].get("dist_m", 0)}
+    places = [f for f in feats if f.get("kind") == "place" and f.get("wc")]
+    if places:
+        yes = sorted((f for f in places if f["wc"] in ACCESS_YES), key=lambda f: f.get("dist_m", 1e9))
+        row = {"yes": len(yes),
+               "limited": sum(1 for f in places if f["wc"] == "limited"),
+               "no": sum(1 for f in places if f["wc"] == "no")}
+        named = [f["name"] for f in yes if f.get("name")][:3]
+        if named:
+            row["named"] = named
+        out["places"] = row
+    if not out:
+        return None
+    out["_src"] = ACCESS_SRC
+    out["_asof"] = (asof or "")[:10]
+    return out
+
+
 def slim_event(e):
     out = {"name": e["name"], "links": e["links"], "km": e["km"]}
     if e.get("months"):
@@ -134,6 +182,9 @@ def main():
     parking_raw = parking_cache.get("dests") if parking_cache.get("format") == "spots_v2" else {}
     parking = {did: pick_parking(spots) for did, spots in (parking_raw or {}).items()}
     events = (load_json(EVENTS) or {}).get("dests") or {}
+    access_cache = load_json(ACCESS) or {}
+    access_raw = access_cache.get("dests") if access_cache.get("format") == "access_v1" else {}
+    access_asof = access_cache.get("generated_at") or ""
 
     by_cc = {}
     for did, d in dests.items():
@@ -148,6 +199,9 @@ def main():
         ev = events.get(did)
         if ev:
             row["events"] = [slim_event(e) for e in ev]
+        ac = pick_access((access_raw or {}).get(did), access_asof)
+        if ac:
+            row["access"] = ac
         if row:
             by_cc[cc][did] = row
 
@@ -165,13 +219,15 @@ def main():
         }, indent=None, separators=(",", ":"))
         n_park = sum(1 for r in rows.values() if "parking" in r)
         n_ev = sum(1 for r in rows.values() if "events" in r)
-        index["countries"][cc] = {"parking": n_park, "events": n_ev}
+        n_acc = sum(1 for r in rows.values() if "access" in r)
+        index["countries"][cc] = {"parking": n_park, "events": n_ev, "access": n_acc}
     atomic_write_json(OUT_DIR / "index.json", index, indent=None, separators=(",", ":"))
 
     t_park = sum(c["parking"] for c in index["countries"].values())
     t_ev = sum(c["events"] for c in index["countries"].values())
+    t_acc = sum(c["access"] for c in index["countries"].values())
     print(f"wrote {len(ccs)} country files: {t_park} dests with parking, "
-          f"{t_ev} with events")
+          f"{t_ev} with events, {t_acc} with accessibility facts")
 
 
 if __name__ == "__main__":

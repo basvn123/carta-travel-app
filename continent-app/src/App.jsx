@@ -1,18 +1,15 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo, useSyncExternalStore, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, useSyncExternalStore, Suspense } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
-import { BottomNav } from './components/BottomNav.jsx';
 import { setFooterNavigate } from './components/SiteFooter.jsx';
 import { AnnouncementBar, PassExpiryBanner, BottomSlot } from './components/AnnouncementBar.jsx';
 import { SettingsLine, SettingsContext } from './components/SettingsLine.jsx';
-import { LoadingBlock } from './components/StateBlocks.jsx';
 import { CloseIcon } from './components/Icons.jsx';
 import { crossTab } from './lib/sharedElement.js';
 import { usePresence, useDialogExit } from './lib/motion.js';
 import { useFocusTrap } from './hooks/useFocusTrap.js';
-import { readJourneyFromUrl } from './lib/journeys.js';
+import { SectionBoundary } from './components/ErrorBoundary.jsx';
 import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
-import { DestinationPage } from './browse/DestinationPage.jsx';
 import { LifestylePanel } from './browse/LifestylePanel.jsx';
 import { TasteSheetHost } from './browse/TasteDoor.jsx';
 import { DestinationsTab } from './browse/DestinationsTab.jsx';
@@ -21,75 +18,40 @@ import Logo from './components/Logo.jsx';
 // visit paints, and a lazy chunk cost that paint about 1.8 s on a slow
 // phone (React suspends and renders the shell twice; T462 report).
 import { HomePage } from './browse/home/HomePage.jsx';
-
-// A failed dynamic import is almost always a stale bundle: the client is still
-// running an old index.html whose chunk hashes no longer exist on the server
-// (common on mobile Safari / installed PWAs after a redeploy). Safari reports
-// this as "Importing a module script failed." Rather than surface that as a
-// crash, force one hard reload to fetch the fresh manifest, guarding against a
-// reload loop so a genuinely-broken chunk still eventually shows the error.
-const CHUNK_RELOAD_KEY = 'continent.chunkReloaded.v1';
-function lazyWithReload(factory) {
-  return lazy(async () => {
-    try {
-      const mod = await factory();
-      try { window.sessionStorage.removeItem(CHUNK_RELOAD_KEY); } catch {}
-      return mod;
-    } catch (err) {
-      let alreadyReloaded = false;
-      try { alreadyReloaded = !!window.sessionStorage.getItem(CHUNK_RELOAD_KEY); } catch {}
-      if (!alreadyReloaded) {
-        try { window.sessionStorage.setItem(CHUNK_RELOAD_KEY, '1'); } catch {}
-        window.location.reload();
-        // Never resolve: keep the Suspense fallback up until the reload lands,
-        // so React doesn't render the error state in the meantime.
-        return new Promise(() => {});
-      }
-      throw err;
-    }
-  });
+// T1209 (G14): the new home, behind its flag (off until T1111-a); its own chunk.
+import { homeVariant } from './browse/home/homeVariant.js';
+// The module once fetched: drawn directly then, because React.lazy suspends
+// once even for a chunk already loaded, and the shell's first effects would
+// run before its retry.
+let homeG14Ready = null;
+const loadHomeG14 = () => import('./browse/home/HomeG14.jsx').then((m) => { homeG14Ready = m.default; return m; });
+const HomeG14Lazy = React.lazy(loadHomeG14);
+function HomeG14(props) {
+  const Ready = homeG14Ready;
+  if (Ready) return <Ready {...props} />;
+  return <Suspense fallback={<TabFallback />}><HomeG14Lazy {...props} /></Suspense>;
 }
+const homeVariantNow = () => {
+  let store = null;
+  try { store = window.sessionStorage; } catch { store = null; }
+  return homeVariant(window.location.search, store);
+};
+// With the G14 home chosen, fetch its chunk while the catalogue loads, so it
+// paints the moment the shell does instead of one round trip later.
+if (typeof window !== 'undefined' && homeVariantNow() === 'g14') loadHomeG14().catch(() => {});
 
-// Code-split the two planner tabs (maplibre-gl rides along with them), so the
-// first paint only ships the browse UI shell. The Explore tab itself no
-// longer mounts a map at all.
-const TripPlannerTab = lazyWithReload(() => import('./planner/TripPlannerTab.jsx').then((m) => ({ default: m.TripPlannerTab })));
-const DayPlannerTab = lazyWithReload(() => import('./planner/DayPlannerTab.jsx').then((m) => ({ default: m.DayPlannerTab })));
-// The Plan place with nothing open (T654): the opening, the trip-kind sheet
-// and a new trip's setup questions. Lazy, with the planners' sheet.
-const PlanFlow = lazyWithReload(() => import('./planner/flow/PlanFlow.jsx').then((m) => ({ default: m.PlanFlow })));
-// The back office. Lazy because it ships to one account in the whole user
-// base, and every traveller would otherwise pay for its bytes.
-const AdminPage = lazyWithReload(() => import('./admin/AdminPage.jsx').then((m) => ({ default: m.AdminPage })));
-// The Trip Pass prices, a place with its own address (T496, owner T488-d).
-// The page itself is T497's; App only gives it a route.
-const PricingPage = lazyWithReload(() => import('./pass/PricingPage.jsx'));
 
-// A quiet placeholder while a lazy chunk downloads or the full catalogue
-// arrives. It sits in the tab's own region, between the top bar and the
-// bottom nav, so both stay usable while it shows (T381; carta-design
-// "Loading"): it used to cover the whole window at z-index 100, which left no
-// way to change tab until the chunk landed.
-function TabFallback() {
-  const { t } = useI18n();
-  return (
-    <div className="tab-fallback">
-      <LoadingBlock label={t('state.loading')} rows={3} shape="card" />
-    </div>
-  );
-}
+
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
 import { priceDays, priceRequest } from './lib/price/index.js';
 import { loadStaysFor, setLiveBase, useStaysVersion } from './lib/staysData.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
 import { normalizeTaste } from './lib/taste.js';
-import {
-  loadInitialState, tabHref, routeFromSearch, placeOf, VIEW_KEYS, countryFromHash, countryHash,
-} from './lib/urlState.js';
+import { loadInitialState, tabHref, routeFromSearch, placeOf, VIEW_KEYS, countryFromHash } from './lib/urlState.js';
 import { usePlaceRows } from './hooks/usePlaceRows.js';
-import { countryName as localCountryName } from './lib/countryName.js';
 import { readFavList, isFav, favDestIds, favKey, toggleFav as toggleFavKey } from './lib/favorites.js';
 import { noteSaved, noteUnsaved, loadSavedLists } from './lib/savedLists.js';
+import { trackFunnel, stepOfTab } from './lib/funnelCounts.js';
 import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
@@ -97,11 +59,6 @@ import { IconButton } from './components/ui/index.js';
 import { readCoplanTokenFromUrl, stripCoplanTokenFromUrl, holdCoplanToken, acceptCoplanLink } from './auth/coplanners.js';
 import { readGuideIdFromUrl, stripGuideIdFromUrl } from './community/guides.js';
 
-// The guides gallery streams in on demand: it is a whole browse surface
-// plus the trip map, and most sessions never open it.
-const GuidesPanel = lazy(() => import('./community/GuidesPanel.jsx').then((m) => ({ default: m.GuidesPanel })));
-const RegionPage = lazy(() => import('./browse/RegionPage.jsx').then((m) => ({ default: m.RegionPage })));
-const CountryPage = lazy(() => import('./browse/CountryPage.jsx').then((m) => ({ default: m.CountryPage })));
 import { readTrailFromUrl } from './lib/trails.js';
 import { readDestFromUrl, destFromHash } from './lib/dossier.js';
 import { readBeachFromUrl } from './lib/beaches.js';
@@ -113,7 +70,6 @@ import { readTripFromUrl } from './lib/trips.js';
 import { loadTripDraft } from './planner/tripDraftStore.js';
 import { tripsStore } from './planner/tripsStore.js';
 import { loadDeviceTrip } from './planner/deviceTripStore.js';
-import { PLAN_ONCE_KEY } from './lib/recommend/keptStore.js';
 import { bindDayPlanCloud } from './planner/dayPlanSync.js';
 import { AuthProvider, useAuth } from './auth/AuthContext.jsx';
 import { I18nProvider, useI18n } from './i18n/index.jsx';
@@ -121,12 +77,6 @@ import { AuthModal } from './auth/AuthModal.jsx';
 import { AuthGate } from './auth/AuthGate.jsx';
 import { SharedTripView } from './auth/SharedTripView.jsx';
 import { ResetPasswordScreen } from './auth/ResetPasswordScreen.jsx';
-import { AccountPanel } from './auth/AccountPanel.jsx';
-// My trips is its own chunk with its own stylesheet (T434): nothing of it is
-// needed before the traveller opens it.
-const SavedTripsPanel = lazy(() => import('./auth/SavedTripsPanel.jsx').then((m) => ({ default: m.SavedTripsPanel })));
-const TogetherPage = lazy(() => import('./together/TogetherPage.jsx').then((m) => ({ default: m.TogetherPage })));
-const TogetherSheet = lazy(() => import('./planner/finder/FindingTrips.jsx').then((m) => ({ default: m.TogetherSheet })));
 import { PaywallProvider } from './hooks/usePaywall.jsx';
 import { LegalFromUrl } from './components/LegalFromUrl.jsx';
 import { originHome, nearestOrigin } from './lib/origins.js';
@@ -150,6 +100,11 @@ import { loadEmailPrefs } from './auth/account/emailPrefs.js';
 import { SearchDock } from './components/SearchDock.jsx';
 import { useIsDesktop } from './hooks/useIsDesktop.js';
 import { requestShowAll } from './browse/searchDockStore.js';
+import { TabFallback } from './shell/TabFallback.jsx';
+import { DayPlannerTab, PlanFlow, PricingPage, TripPlannerTab } from './shell/lazyScreens.js';
+import { AppOverlays } from './shell/AppOverlays.jsx';
+import { useAppOpeners } from './shell/useAppOpeners.js';
+import { useAppSettingsValue } from './shell/useAppSettingsValue.js';
 
 // Once someone picks "continue without an account" on the entry gate, don't
 // ask again on this device, only a fresh sign-in should bring accounts back.
@@ -175,10 +130,6 @@ function hasPlanOpen() {
   } catch { return false; }
 }
 
-// A trip held by Kept trips' "Plan this trip" (keptStore holdPlan, T806).
-function heldPlanWaiting() {
-  try { return Boolean(window.sessionStorage.getItem(PLAN_ONCE_KEY)); } catch { return false; }
-}
 
 // The pass picker used to be mounted here, in the account panel and in the
 // day planner, each opening it on its own terms. It now lives inside
@@ -671,6 +622,7 @@ function TravelApp() {
   // look at another tab never wipes an in-progress plan.
   const [visitedTabs, setVisitedTabs] = useState(() => new Set(['map', urlTab || (firstVisit ? 'home' : 'map')]));
   useEffect(() => {
+    trackFunnel(stepOfTab(activeTab));
     setVisitedTabs((prev) => (prev.has(activeTab) ? prev : new Set([...prev, activeTab])));
   }, [activeTab]);
   // A day plan chosen from the Saved-trips overview: handed to DayPlannerTab,
@@ -819,274 +771,25 @@ function TravelApp() {
     if (pendingTrip) goToTab('places', { replace: true });
   }, [pendingTrip, goToTab]);
 
-  // The six category tiles (T498, roadmap 1.3b A) and every door that names
-  // a layer come through here. The country travels with the traveller
-  // (rule 3): Italy on Places stays Italy on Beaches, and back again.
-  // `query` (T600) is the text typed in the overview's Where field: it rides
-  // in the address as `dq` and the layer starts with it in its own Where.
-  const openExploreSection = useCallback((key, cc = undefined, query = '') => {
-    if (key === 'places') {
-      if (cc !== undefined) setCountryFilter(cc ? [cc] : []);
-      goToTab('map');
-      return;
-    }
-    setPendingCategory(key);
-    // '' says "every country" (Places had none), null leaves it alone.
-    if (cc !== undefined) setPendingCountry(cc ? String(cc).toUpperCase() : '');
-    goToTab('places', { cat: key, q: typeof query === 'string' ? query : '' });
-  }, [goToTab, setCountryFilter]);
-  // The trip library inside Explore (owner T484-e, T489-a): "See all" on the
-  // Trip styles row, one style from it, or a country's weeks.
-  const [pendingStyle, setPendingStyle] = useState(null);
-  // T1030 (owner: "two different pages; use the one from Plan"): every door
-  // to the trip library (a style tile, a country's weeks) opens Plan's
-  // Carta's own trips, with the style or the country already chosen.
-  const [planOpen, setPlanOpen] = useState(null);
-  // T1037: Plan past its opening shows its own page bar, not the app head.
-  const [planInner, setPlanInner] = useState(false);
-  const openTripStyles = useCallback((slug = null, cc = null) => {
-    setPlanOpen({ screen: 'carta', style: slug || null, cc: cc ? String(cc).toUpperCase() : null, n: Date.now() });
-    goToTab('planstart');
-  }, [goToTab]);
-  // A trip's page closes back onto Plan's Carta's own trips (T1030): the
-  // trip library has one home, so a week never lands on a second list.
-  // The page closes by stepping history back, and App's own Back handling
-  // restores the tab under it on that same popstate, so the move to Plan
-  // waits one tick to land after it.
-  const onJourneyClosed = useCallback(() => {
-    window.setTimeout(() => {
-      setPlanOpen({ screen: 'carta', n: Date.now() });
-      goToTab('planstart');
-    }, 0);
-  }, [goToTab]);
-
-  // One journey (a week from the journeys library) to open, handed to
-  // Destinations like the other pending items: a shared #journey=<id> link
-  // at boot (T387 reads it in lib/journeys.js), or a starred week in My trips.
-  // The id stays here until Destinations says the page is open (T474, row
-  // T435-a), so a remount or React running an effect twice cannot drop it,
-  // which is how the old take-once handover in JourneysSection lost it.
-  const [pendingJourney, setPendingJourney] = useState(null);
-  const clearPendingJourney = useCallback(() => setPendingJourney(null), []);
-  const [bootJourney] = useState(() => readJourneyFromUrl());
-  useEffect(() => {
-    if (!bootJourney) return;
-    setPendingCategory('trips');
-    setPendingJourney({ id: bootJourney, fromLink: true });
-    goToTab('places', { replace: true });
-    // Once, at boot: the id is read once and never changes.
-  }, [bootJourney, goToTab]);
-
-  // A published itinerary handed to the trip planner, where every stop, night
-  // and date stays editable. It goes in through the same door a shared trip
-  // uses, so the planner needs no new code path for it.
-  const openTripInPlanner = useCallback((trip) => {
-    const stops = (trip.stops || [])
-      // T942: a stop from Saved may carry day activities (a trail or a beach
-      // at its nearest town), by name, as the planner keeps them.
-      .map((st) => ({
-        destinationId: st.dest,
-        nights: st.nights,
-        activities: Array.isArray(st.dayActivities) ? st.dayActivities.slice(0, 20).map((a) => String(a).slice(0, 80)) : [],
-      }))
-      .filter((st) => st.destinationId && st.nights);
-    if (!stops.length) return;
-    // The published trip already says how each hop is made: bus here, train
-    // there, a ferry where there is water. That was thrown away at this door,
-    // so a traveller who had just read "bus to Barcelona" arrived in the
-    // planner and was asked how they were getting to Barcelona. The legs keep
-    // their modes, keyed by leg index the way the planner keys them.
-    const legModes = {};
-    (trip.legs || []).forEach((leg, i) => {
-      if (leg?.mode) legModes[i] = leg.mode === 'drive' ? 'car' : leg.mode;
-    });
-    setPendingSharedTrip({
-      stops,
-      label: trip.name || '',
-      transportPref: trip.transport === 'car' ? 'owncar' : 'public',
-      legModes,
-      // Nobody has said when. The planner asks for the window itself rather
-      // than inventing dates a published trip never carried.
-      tripStart: '',
-    });
-    goToTab('trip');
-  }, [goToTab]);
-
-  /** Open one published trip's page from the planner. Stable, like every
-   *  other callback handed to the two planner tabs: they stay mounted behind
-   *  display:none, so a fresh arrow here re-renders 3,000 lines of component
-   *  on every unrelated keystroke. */
-  const openTripPage = useCallback((id) => {
-    if (!id) return;
-    setPendingTrip({ id: String(id) });
-    goToTab('places');
-  }, [goToTab]);
-
-  /** "Plan a trip here" on a destination page: the trip wizard's Where step
-   *  with that destination's country already picked. The wizard maps the
-   *  iso2 onto the country name it keys its picks by. */
-  const openTripForCountry = useCallback((iso2, destId = null) => {
-    if (!iso2 || !/^[A-Za-z]{2}$/.test(String(iso2))) return;
-    // T504 (row T498-b): a region page names its nearest priced town too.
-    // The wizard reads only the country so far (GuidedTripWizard.jsx, the
-    // seed effect); `destId` is there for it to take as the first stop.
-    setPendingTripSeed(destId
-      ? { iso2: String(iso2).toUpperCase(), destId: String(destId) }
-      : { iso2: String(iso2).toUpperCase() });
-    goToTab('trip');
-  }, [goToTab]);
-
-  /** "Plan a day here" on a destination page: the day flow, staying in that
-   *  city, opened on the When question. */
-  const openDayForDest = useCallback((id, date = null) => {
-    if (!id) return;
-    // T929: "Plan a day together" names the day too.
-    setPendingDaySeed(date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? { destId: String(id), date } : { destId: String(id) });
-    goToTab('day');
-  }, [goToTab]);
-  // The friends signals across Carta (T929: the Plan date step, the place
-  // page) ask for the same door with one event, so no prop runs through
-  // every planner and page between here and them.
-  useEffect(() => {
-    const onPlanDay = (e) => { if (e.detail?.destId) openDayForDest(e.detail.destId, e.detail.date || null); };
-    window.addEventListener('carta:plan-day', onPlanDay);
-    return () => window.removeEventListener('carta:plan-day', onPlanDay);
-  }, [openDayForDest]);
-
-  /** "Add to a day plan" on a trail, beach, lake or mountain page: the day
-   *  flow with that place as the first idea, staying in the nearest town.
-   *  The page passes what it knows (name, point); a share link passes only
-   *  kind, country and id, and the day tab resolves the rest. */
-  const openDayForFeature = useCallback((kind, ref) => {
-    if (!kind || !ref || ref.id == null) return;
-    const k = kind === 'trails' ? 'trail' : kind === 'beaches' ? 'beach'
-      : kind === 'lakes' ? 'lake' : kind === 'mountains' ? 'mountain' : kind;
-    setPendingDaySeed({
-      feature: {
-        kind: k, cc: ref.cc || ref.country || '', id: String(ref.id),
-        name: ref.name || '', lat: ref.lat, lon: ref.lon,
-      },
-    });
-    goToTab('day');
-  }, [goToTab]);
-
-  /** "Back to trip" on a day plan that came out of a saved trip: reopen that
-   *  trip in the planner. A null id means the still-unsaved draft, which the
-   *  planner is already holding. */
-  const openTripFromDay = useCallback((planId) => {
-    if (planId) setPendingTripPlanId(planId);
-    goToTab('trip');
-  }, [goToTab]);
-
-  /**
-   * Open one feature layer's full-screen page, from anywhere.
-   *
-   * Three callers now hand the same {layer, ref} pair around - the region
-   * page, the destination page and the shortlist - and each was spelling out
-   * the same five-way branch. One function, so a new layer is added in one
-   * place and the three can never disagree about what `cc` means.
-   */
-  const openFeature = useCallback((layer, ref) => {
-    if (!ref || ref.id == null) return;
-    if (layer === 'trails' || layer === 'trail') setPendingTrail({ id: Number(ref.id), country: ref.cc });
-    else if (layer === 'beaches' || layer === 'beach') setPendingBeach({ id: String(ref.id), cc: ref.cc });
-    else if (layer === 'lakes' || layer === 'lake') setPendingLake({ id: String(ref.id), cc: ref.cc });
-    else if (layer === 'mountains' || layer === 'mountain') setPendingMountain({ id: String(ref.id), cc: ref.cc });
-    else if (layer === 'cycling' || layer === 'cycle') setPendingCycle({ kind: 'route', id: Number(ref.id), country: ref.cc });
-    else if (layer === 'trips' || layer === 'trip') setPendingTrip({ id: String(ref.id) });
-    // A starred journey (T390-c): the week opens over the Trips category, the
-    // list it belongs to, through the same door a shared link uses (T474,
-    // closes row T391-a).
-    // T1030: closing the week goes back to Plan's Carta's own trips (see
-    // onJourneyClosed); the page still sits on the Trips category, which
-    // Destinations' own back handling expects.
-    else if (layer === 'journey' || layer === 'journeys') {
-      setPendingCategory('trips');
-      setPendingJourney({ id: String(ref.id) });
-    }
-    // A starred region (T478, row T474-a): its page is hoisted above the tabs,
-    // so it opens over the Destinations tab the shortlist hops to.
-    else if (layer === 'region' || layer === 'regions') setPendingRegion({ id: String(ref.id) });
-    else return;
-    goToTab('places');
-  }, [goToTab]);
-  // One of Carta's own trips from the trip planner (T752): stable, like every
-  // callback handed to the planner tabs, which stay mounted behind display:none.
-  const openJourneyPage = useCallback((id) => openFeature('journey', { id }), [openFeature]);
-
-  // ── The country page and the region page (T498, roadmap 1.3b D and E) ──
-  //
-  // A country is a real page now: hoisted over every view like the region
-  // and destination pages, with its own address (#country=IT, see
-  // lib/urlState.js), so Explore, an outdoor layer, the planner's country
-  // brief and a shared link all open the same page, and Back closes it.
-  // Opening it pushes one history entry; closing it by its own control
-  // steps back over that entry, the way a destination page does.
-  const [countryPage, setCountryPage] = useState(
-    () => (typeof window !== 'undefined' ? countryFromHash(window.location.hash) : null));
-  const countryHandoffRef = useRef(false);
-  const openCountryPage = useCallback((iso2) => {
-    const cc = String(iso2 || '').toUpperCase();
-    if (!/^[A-Z]{2}$/.test(cc)) return;
-    try {
-      if (window.history.state?.cartaCountry !== cc) {
-        window.history.pushState({ ...(window.history.state || {}), cartaCountry: cc }, '',
-          `${window.location.pathname}${window.location.search}${countryHash(cc)}`);
-      }
-    } catch { /* sandboxed: the page still opens */ }
-    setCountryPage(cc);
-  }, []);
-  const prevCountryRef = useRef(countryPage);
-  useEffect(() => {
-    const was = prevCountryRef.current;
-    prevCountryRef.current = countryPage;
-    const handoff = countryHandoffRef.current;
-    countryHandoffRef.current = false;
-    if (!was || countryPage) return;
-    try {
-      if (!handoff && window.history.state?.cartaCountry === was) window.history.back();
-      else if (countryFromHash(window.location.hash)) {
-        // Opened from an address, or left for another surface: the address
-        // stops naming the country, so a reload does not bring it back.
-        window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}`);
-      }
-    } catch { /* sandboxed */ }
-  }, [countryPage]);
-  // Leaving the page for another surface (a layer, the planner, a week):
-  // its history entry stays where it is, and nothing steps back over it.
-  const leaveCountryPage = useCallback(() => {
-    setCountryPage((cur) => {
-      if (cur) countryHandoffRef.current = true;
-      return null;
-    });
-  }, []);
-
-  // The region page is a step in the history too (T504, row T498-d): Back on
-  // a region page opened over a country page closes the region alone. Its
-  // address keeps the country (#country=IT&region=...), so stepping back
-  // lands on the country page, and its own close steps back over the entry.
-  const regionPushedRef = useRef(false);
-  const regionHandoffRef = useRef(false);
-  const openRegionPage = useCallback((rid) => {
-    const id = String(rid || '');
-    if (!id) return;
-    try {
-      if (window.history.state?.cartaRegion !== id) {
-        const cc = countryFromHash(window.location.hash);
-        window.history.pushState({ ...(window.history.state || {}), cartaRegion: id }, '',
-          `${window.location.pathname}${window.location.search}${cc ? `${countryHash(cc)}&` : '#'}region=${encodeURIComponent(id)}`);
-        regionPushedRef.current = true;
-      }
-    } catch { /* sandboxed: the page still opens */ }
-    setPendingRegion({ id });
-  }, []);
+  const {
+    openExploreSection, pendingStyle, setPendingStyle, planOpen, planInner, setPlanInner,
+    openTripStyles, onJourneyClosed, pendingJourney, clearPendingJourney, bootJourney,
+    openTripInPlanner, openTripPage, openTripForCountry, openDayForDest, openDayForFeature,
+    openTripFromDay, openFeature, openJourneyPage, countryPage, setCountryPage, openCountryPage,
+    leaveCountryPage, regionPushedRef, regionHandoffRef, openRegionPage,
+  } = useAppOpeners({
+    goToTab, setCountryFilter, setPendingBeach, setPendingCategory, setPendingCountry,
+    setPendingCycle, setPendingDaySeed, setPendingLake, setPendingMountain, setPendingRegion,
+    setPendingSharedTrip, setPendingTrail, setPendingTrip, setPendingTripPlanId,
+    setPendingTripSeed,
+  });
   // Leaving the region page for another surface: its entry stays.
   const leaveRegionPage = useCallback(() => {
     setPendingRegion((cur) => {
       if (cur) regionHandoffRef.current = true;
       return null;
     });
-  }, []);
+  }, [regionHandoffRef]);
   const prevRegionRef = useRef(pendingRegion?.id ?? null);
   useEffect(() => {
     const was = prevRegionRef.current;
@@ -1098,7 +801,7 @@ function TravelApp() {
     try {
       if (!handoff && window.history.state?.cartaRegion === was) window.history.back();
     } catch { /* sandboxed */ }
-  }, [pendingRegion]);
+  }, [pendingRegion, regionHandoffRef]);
 
   // Where a page opened FROM the country or region page returns to (owner
   // note on T489-a: back paths land where you came from). The trail, beach
@@ -1239,7 +942,7 @@ function TravelApp() {
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
-  }, [setSavedTripsOpen, setAccountOpen, setLifestyleOpen]);
+  }, [setSavedTripsOpen, setAccountOpen, setLifestyleOpen, setCountryPage, regionPushedRef]);
 
   // Opening a place is one step in the history (T444, the Explore check):
   // Back, and a phone's swipe back, close the page onto the list it came
@@ -1247,6 +950,7 @@ function TravelApp() {
   // the deep link readDestFromUrl reads at boot), so it can be shared or
   // reopened. Stable, so every Explore card's memo survives parent renders.
   const openDetail = useCallback((id) => {
+    if (id) trackFunnel('place_opened');
     try {
       if (id && window.history.state?.cartaDest !== id) {
         window.history.pushState({ ...(window.history.state || {}), cartaDest: id }, '',
@@ -1640,47 +1344,13 @@ function TravelApp() {
     [dateFlex, departDate, returnDate, ownDates, exploreMonth],
   );
   const travelMonth = whenMonth(when);
-  const settings = useMemo(() => ({
-    data,
-    origin: choices.origin,
-    setOrigin,
-    // T577: the From place (a named town or the traveller's location), else
-    // null and the line names the home airport's town.
-    fromPlace: choices.drive_home || null,
-    setFrom,
-    // T860: the home airports in reach and how they were chosen.
-    airports: choices.origins || [],
-    airportHours: choices.airport_hours ?? null,
-    setAirports,
-    sweptOrigins,
-    departDate, returnDate, setDepartDate, setReturnDate,
-    defaultDates, dateBounds,
-    ownDates,
-    dateFlex, setDateFlex,
-    travelMonth, when,
-    // T663: the one price request, and the Explore month filter it reads.
-    priceRequest: request, exploreMonth, setExploreMonth,
-    party: choices.group_size,
-    children: choices.children || 0,
-    babies: choices.babies || 0,
-    setParty,
-    setPartyParts,
-    transportMode: choices.transport_mode || 'any',
-    setTransportMode,
-    priceView: choices.price_view || 'pp',
-    setPriceView,
-    priceExcluded: choices.price_excluded || [],
-    setPriceExcluded,
-    // T581: Explore's countries, in or out.
-    countryFilter, setCountryFilter, countryNot, setCountryNot,
-    availableCountries,
-    stayTier: choices.stay_tier || 'home',
-    lifestyle: choices.lifestyle,
-    openLifestyle,
-  }), [data, choices.origin, setOrigin, choices.drive_home, setFrom, choices.origins, choices.airport_hours, setAirports, sweptOrigins, departDate, returnDate, defaultDates, dateBounds,
-    ownDates, dateFlex, travelMonth, when, request, exploreMonth, choices.group_size, choices.children, choices.babies, setParty, setPartyParts,
-    choices.transport_mode, setTransportMode, choices.price_view, setPriceView, choices.price_excluded, setPriceExcluded, countryFilter, setCountryFilter, countryNot, setCountryNot,
-    availableCountries, choices.stay_tier, choices.lifestyle, openLifestyle]);
+  const { settings } = useAppSettingsValue({
+    availableCountries, choices, countryFilter, countryNot, data, dateBounds, dateFlex,
+    defaultDates, departDate, exploreMonth, openLifestyle, ownDates, request, returnDate,
+    setAirports, setCountryFilter, setCountryNot, setDateFlex, setDepartDate, setExploreMonth,
+    setFrom, setOrigin, setParty, setPartyParts, setPriceExcluded, setPriceView, setReturnDate,
+    setTransportMode, sweptOrigins, travelMonth, when,
+  });
 
   // Which parts of the settings line each tab shows. Explore and Destinations
   // price from every input. The Trip planner keeps its own origin, dates and
@@ -1892,6 +1562,7 @@ function TravelApp() {
           panel and the loaded images survive a tab hop. */}
       {visitedTabs.has('map') && (
         <div className={activeTab === 'map' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
+          <SectionBoundary name="explore">
           <div onClick={(e) => e.stopPropagation()}>
             <ExploreTab
               data={data}
@@ -1945,6 +1616,7 @@ function TravelApp() {
             />
           </div>
 
+          </SectionBoundary>
         </div>
       )}
 
@@ -1979,6 +1651,17 @@ function TravelApp() {
           alive like the tabs: it holds nothing worth keeping. */}
       {activeTab === 'home' && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
+          <SectionBoundary name="home">
+          {homeVariantNow() === 'g14' ? (
+            <HomeG14
+              data={data}
+              choices={choices}
+              pageOver={!!selectedDest || savedTripsOpen || accountOpen || !!countryPage || !!pendingRegion}
+              onNavigate={goTo}
+              onOpenDest={openDetail}
+              onOpenJourney={openJourneyPage}
+            />
+          ) : (
           <HomePage
             data={data}
             indices={exploreIndices}
@@ -1989,6 +1672,8 @@ function TravelApp() {
             onOpenDest={openDetail}
             onOpenTrips={openSaved}
           />
+          )}
+          </SectionBoundary>
         </div>
       )}
 
@@ -1997,6 +1682,7 @@ function TravelApp() {
           map tab, where the detail panel already knows how to price it. */}
       {visitedTabs.has('places') && (
         <div className={`explore-dest-view${activeTab === 'places' ? '' : ' tab-keep-hidden'}`} inert={behindPanel} onClick={(e) => e.stopPropagation()}>
+          <SectionBoundary name="places">
           <DestinationsTab
             data={data}
             pricedAll={pricedAll}
@@ -2039,6 +1725,7 @@ function TravelApp() {
             returnTo={destReturn}
             indices={exploreIndices}
           />
+          </SectionBoundary>
         </div>
       )}
 
@@ -2047,6 +1734,7 @@ function TravelApp() {
           MapLibre (v4, ResizeObserver) resizes itself when shown again. */}
       {visitedTabs.has('trip') && (
         <div className={activeTab === 'trip' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
+          <SectionBoundary name="trip">
           <Suspense fallback={<TabFallback />}>
             {/* The planners read every place in full, so a tab opened while
                 the catalogue is still partial (T271) waits for the rest. */}
@@ -2076,10 +1764,12 @@ function TravelApp() {
               onPlanHome={() => goToTab('planstart')}
             />}
           </Suspense>
+          </SectionBoundary>
         </div>
       )}
       {visitedTabs.has('day') && (
         <div className={activeTab === 'day' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
+          <SectionBoundary name="day">
           <Suspense fallback={<TabFallback />}>
             {partial ? <TabFallback /> : <DayPlannerTab
               key={activeTripId}
@@ -2107,6 +1797,7 @@ function TravelApp() {
               onSharedDayConsumed={() => setSharedDayRaw(null)}
             />}
           </Suspense>
+          </SectionBoundary>
         </div>
       )}
 
@@ -2115,6 +1806,7 @@ function TravelApp() {
           Not kept alive: its answers live in the planner draft. */}
       {activeTab === 'planstart' && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
+          <SectionBoundary name="planstart">
           <Suspense fallback={<TabFallback />}>
             <PlanFlow
               pageOver={!!selectedDest || savedTripsOpen || accountOpen || !!countryPage || !!pendingRegion}
@@ -2128,16 +1820,19 @@ function TravelApp() {
               onInnerChange={setPlanInner}
             />
           </Suspense>
+          </SectionBoundary>
         </div>
       )}
 
       {/* The Trip Pass prices, a place with its own address (T496). */}
       {activeTab === 'pricing' && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
+          <SectionBoundary name="pricing">
           <Suspense fallback={<TabFallback />}>
             {/* A cold /pricing visit has no page to go back to: Back opens Explore. */}
             <PricingPage onBack={() => (window.history.length > 1 ? window.history.back() : goTo('explore'))} />
           </Suspense>
+          </SectionBoundary>
         </div>
       )}
       </main>
@@ -2149,238 +1844,35 @@ function TravelApp() {
           and destination pages, so it opens over every view; the region and
           destination pages it opens stand over it, and closing them lands
           back on it. */}
-      {countryPage && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <Suspense fallback={null}>
-            <CountryPage
-              iso2={countryPage}
-              rows={placeRows}
-              backLabel={backToLabel}
-              onClose={() => setCountryPage(null)}
-              onSelect={openDetail}
-              favorites={favDests}
-              onToggleFav={toggleFav}
-              onShowAll={(cc) => { leaveCountryPage(); openExploreSection('places', cc); }}
-              onOpenLayer={(layer, cc) => { leaveCountryPage(); openExploreSection(layer, cc); }}
-              onOpenRegion={openRegionPage}
-              onPlanTrip={(cc) => { leaveCountryPage(); openTripForCountry(cc); }}
-              onOpenJourney={(card) => openFeatureFrom(
-                { kind: 'country', id: countryPage, label: localCountryName(countryPage) }, 'journey', { id: card.id })}
-              onSeeAllWeeks={(cc) => { leaveCountryPage(); openTripStyles(null, cc); }}
-            />
-          </Suspense>
-        </div>
-      )}
-
-      {/* The full-screen region page, hoisted for the same reason the
-          destination page is: a shared Costa de la Luz link opens over
-          whatever view the recipient happens to be on. Opened from a
-          country page, its back names that country. */}
-      {pendingRegion && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <Suspense fallback={null}>
-            <RegionPage
-              id={pendingRegion.id}
-              fav={isFavorite(pendingRegion.id, 'region')}
-              onFav={() => toggleFav(pendingRegion.id, 'region')}
-              backLabel={countryPage ? localCountryName(countryPage) : backToLabel}
-              onClose={() => setPendingRegion(null)}
-              onOpenRegion={openRegionPage}
-              onOpenFeature={(layer, ref, name) => openFeatureFrom(
-                { kind: 'region', id: pendingRegion.id, label: name || null }, layer, ref)}
-              rows={placeRows}
-              onSelectDest={openDetail}
-              onPlanTrip={(cc, destId) => { leaveRegionPage(); leaveCountryPage(); openTripForCountry(cc, destId); }}
-              onOpenJourney={(card, name) => openFeatureFrom(
-                { kind: 'region', id: pendingRegion.id, label: name || null }, 'journey', { id: card.id })}
-              onSeeAllLayer={(layer, cc) => { leaveRegionPage(); leaveCountryPage(); openExploreSection(layer, cc); }}
-              favorites={favDests}
-              onToggleFav={toggleFav}
-            />
-          </Suspense>
-        </div>
-      )}
-
-      {/* The full-screen destination page, hoisted above the tab blocks so it
-          opens over Explore AND Destinations without a tab hop. Renders from
-          the dossier contract; the PDF export renders from the same file. */}
-      {selectedDest && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <DestinationPage
-            destination={selectedDest}
-            data={data}
-            indices={exploreIndices}
-            choices={choices}
-            onOpenLifestyle={openLifestyle}
-            onClose={() => setSelectedId(null)}
-            backLabel={backToLabel}
-            onSelect={openDetail}
-            isFavorite={selectedId ? isFavorite(selectedId, 'dest') : false}
-            onToggleFavorite={selectedId ? () => toggleFav(selectedId, 'dest') : undefined}
-            onOpenFeature={(layer, ref) => { setSelectedId(null); openFeature(layer, ref); }}
-            onOpenItin={(id) => {
-              setSelectedId(null);
-              setPendingTrip({ id });
-              goToTab('places');
-            }}
-            onPlanTrip={selectedDest.iso2 ? () => { setSelectedId(null); openTripForCountry(selectedDest.iso2); } : undefined}
-            onPlanDay={selectedId ? () => { setSelectedId(null); openDayForDest(selectedId); } : undefined}
-          />
-        </div>
-      )}
-
-      <div onClick={(e) => e.stopPropagation()}>
-        <BottomNav
-          user={user}
-          place={place}
-          onNavigate={goTo}
-          savedCount={savedCount}
-          planInProgress={planInProgress}
-        />
-      </div>
-
-      {authConfigured && authModalOpen && (
-        <AuthModal initialMode={authModalMode} onClose={() => setAuthModalOpen(false)} />
-      )}
-      {togetherCode && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <Suspense fallback={null}>
-            <TogetherSheet code={togetherCode} onClose={() => setTogetherCode(null)} />
-          </Suspense>
-        </div>
-      )}
-      {savedTripsOpen && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <Suspense fallback={<div className="mt-loading" aria-busy="true" />}>
-          <SavedTripsPanel
-            data={data}
-            startWithPast={pastAtOpen}
-            onPastStarted={() => setPastAtOpen(false)}
-            onClose={closeOverlay}
-            onLoadTrip={(trip) => {
-              handleLoadTrip(trip);
-              goToTab('map'); // the loaded trip opens as a map detail panel
-            }}
-            /* Signing in from My trips keeps My trips open behind the modal
-               (T390-b), so the traveller is back on the shelf, not on the
-               tab under it, once they are in. */
-            onOpenAuth={() => { setAuthModalMode('signin'); setAuthModalOpen(true); }}
-            /* The day cost of every saved place and plan, from the same
-               computeCosts() map Explore's cards print from (T390-a), and
-               friends' trips as one line pointing at Friends. */
-            costs={exploreIndices}
-            stayTier={choices.stay_tier || 'home'}
-            lifestyle={choices.lifestyle}
-            onPlanTripCountry={openTripForCountry}
-            onOpenFriends={() => openTogether('home')}
-            /* An empty shelf offers the tab that fills it, so "nothing here
-               yet" comes with somewhere to go. */
-            onGoToTab={(key, opts) => {
-              // T809 (row T806-b): "Plan this trip" from Kept trips starts a
-              // new trip in the list when one with stops is open, so the held
-              // plan lands instead of being dropped behind the open trip.
-              if (key === 'trip' && heldPlanWaiting() && loadTripDraft()) tripsStore.startNew();
-              goToTab(key, opts);
-            }}
-            onOpenDayPlan={(id) => {
-              setPendingDayPlanId(id);
-              goToTab('day');
-            }}
-            onLoadTripPlan={openPlanInList}
-            /* T925: "Plan a trip with these" from Saved hands the picked
-               places to the trip planner through Explore's own door. */
-            onPlanStops={(stops) => openTripInPlanner({ stops })}
-            /* The trip kept on this device (T503, T500-a) opens in Plan through
-               the same hand-off, marked so the planner reads the device. */
-            onOpenDeviceTrip={() => openPlanInList({ device: true })}
-            /* The shortlist, which the Favorites tab now shows alongside the
-               account's own saved destinations. Opening a row is the same
-               door every other surface uses, so a starred trail lands on the
-               trail page rather than a second, lesser version of it. */
-            favorites={favorites}
-            onToggleFav={toggleFav}
-            onOpenFeature={(layer, ref) => { setSavedTripsOpen(false); openFeature(layer, ref); }}
-            onOpenDest={(id) => { setSavedTripsOpen(false); openDetail(id); }}
-          />
-          </Suspense>
-        </div>
-      )}
-      {guidesOpen && (
-        <Suspense fallback={<TabFallback />}>
-          <div onClick={(e) => e.stopPropagation()}>
-            <GuidesPanel
-              onClose={() => { setGuidesOpen(false); setPendingGuide(''); }}
-              destinations={data?.destinations}
-              openGuideId={pendingGuide || ''}
-              onPublish={() => { setGuidesOpen(false); setPendingGuide(''); openSaved(); }}
-            />
-          </div>
-        </Suspense>
-      )}
-      {togetherOpen && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <Suspense fallback={<div className="mt-loading" aria-busy="true" />}>
-            <TogetherPage
-              view={togetherView.view}
-              viewId={togetherView.id}
-              onView={(v, id) => openTogether(v, id)}
-              onClose={closeOverlay}
-              destinations={data?.destinations}
-              costs={exploreIndices}
-              pendingHandle={pendingFriend}
-              onOpenGuides={openGuides}
-              onOpenSaved={openSaved}
-              onOpenAuth={() => { setAuthModalMode('signin'); setAuthModalOpen(true); }}
-              onPlanDay={(destId, date) => openDayForDest(destId, date)}
-              onOpenTripPlan={openPlanInList}
-              favorites={favorites}
-              choices={choices}
-              onPlanPlace={(id) => { const d = data?.destinations?.[id]; if (d?.iso2) openTripForCountry(d.iso2, id); }}
-            />
-          </Suspense>
-        </div>
-      )}
-      {accountOpen && (
-        <div onClick={(e) => e.stopPropagation()}>
-          <AccountPanel
-            key={accountEntry}
-            initialView={accountView}
-            onViewChange={onAccountView}
-            pendingFriendHandle={pendingFriend}
-            destinations={data?.destinations}
-            costs={exploreIndices}
-            favorites={favorites}
-            onClose={closeOverlay}
-            onOpenAdmin={() => setAdminOpen(true)}
-            /* Lifestyle is a dialog: it opens over Account, which stays the
-               place on screen (and in the address) behind it. */
-            onOpenLifestyle={() => setLifestyleOpen(true)}
-            onOpenSaved={openSaved}
-            onOpenGuides={openGuides}
-            onOpenTogether={(v) => openTogether(v || 'home')}
-            onOpenHome={() => goToTab('home')}
-            stayTier={choices.stay_tier || 'home'}
-            lifestyle={choices.lifestyle}
-            /* For the read-only trip settings rows (T390-g, for T400). */
-            origin={choices.origin}
-            groupSize={choices.group_size}
-            /* Signing in keeps Account open behind the dialog, so the
-               traveller is back on Account once they are in. */
-            onOpenAuth={() => { setAuthModalMode('signin'); setAuthModalOpen(true); }}
-          />
-        </div>
-      )}
-
-      {/* The back office, over everything. It renders only for accounts on
-          the admin list, and every call it makes is re-checked server side,
-          so this flag is a door rather than a permission. */}
-      {adminOpen && (
-        <Suspense fallback={<TabFallback />}>
-          <div onClick={(e) => e.stopPropagation()}>
-            <AdminPage onClose={() => setAdminOpen(false)} />
-          </div>
-        </Suspense>
-      )}
+      <AppOverlays
+        accountEntry={accountEntry} accountOpen={accountOpen} accountView={accountView}
+        adminOpen={adminOpen} authConfigured={authConfigured} authModalMode={authModalMode}
+        authModalOpen={authModalOpen} backToLabel={backToLabel} choices={choices}
+        closeOverlay={closeOverlay} countryPage={countryPage} data={data}
+        exploreIndices={exploreIndices} favDests={favDests} favorites={favorites} goTo={goTo}
+        goToTab={goToTab} guidesOpen={guidesOpen} handleLoadTrip={handleLoadTrip}
+        isFavorite={isFavorite} leaveCountryPage={leaveCountryPage}
+        leaveRegionPage={leaveRegionPage} onAccountView={onAccountView}
+        openDayForDest={openDayForDest} openDetail={openDetail}
+        openExploreSection={openExploreSection} openFeature={openFeature}
+        openFeatureFrom={openFeatureFrom} openGuides={openGuides} openLifestyle={openLifestyle}
+        openPlanInList={openPlanInList} openRegionPage={openRegionPage} openSaved={openSaved}
+        openTogether={openTogether} openTripForCountry={openTripForCountry}
+        openTripInPlanner={openTripInPlanner} openTripStyles={openTripStyles}
+        pastAtOpen={pastAtOpen} pendingFriend={pendingFriend} pendingGuide={pendingGuide}
+        pendingRegion={pendingRegion} place={place} placeRows={placeRows}
+        planInProgress={planInProgress} savedCount={savedCount} savedTripsOpen={savedTripsOpen}
+        selectedDest={selectedDest} selectedId={selectedId} setAdminOpen={setAdminOpen}
+        setAuthModalMode={setAuthModalMode} setAuthModalOpen={setAuthModalOpen}
+        setCountryPage={setCountryPage} setGuidesOpen={setGuidesOpen}
+        setLifestyleOpen={setLifestyleOpen} setPastAtOpen={setPastAtOpen}
+        setPendingDayPlanId={setPendingDayPlanId} setPendingGuide={setPendingGuide}
+        setPendingRegion={setPendingRegion} setPendingTrip={setPendingTrip}
+        setSavedTripsOpen={setSavedTripsOpen} setSelectedId={setSelectedId}
+        setTogetherCode={setTogetherCode} togetherCode={togetherCode}
+        togetherOpen={togetherOpen} togetherView={togetherView} toggleFav={toggleFav}
+        user={user}
+      />
 
       {/* One bottom slot for every transient message (T381, carta-design
           "Bottom slot"): above the bottom nav on a phone, bottom centre on

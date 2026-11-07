@@ -8,31 +8,26 @@
  *
  *   waysThere({ dest, anchor, home, party, flights, request, bagKey })
  *     -> { from, rows: [{ mode, perPerson, minutes?, hours?, dep?, arr?,
- *          airline?, iata? }], cheapest } or null when no mode is priced
+ *          airline?, iata?, doorHours }], cheapest, fastest, pick, reason }
+ *        or null when no mode is priced
+ *
+ * T1100 (D13): `pick` is the way the card opens on, by door-to-door time and
+ * cost and the flight above a distance (lib/wayChoice.js); `fastest` counts
+ * the door-to-door hours, so a flight is not "fastest" on its air time alone.
  *
  * Pure: no fetching, no React.
  */
 import { flightLegs } from '../lib/price/flight.js';
 import { legCost } from '../lib/flights/flights.js';
 import { groundReturn, flightPerSeat, GROUND_MODES } from '../lib/travelWay.js';
+import { chooseWay, legDuration, wayKm, transferMinutesOf } from '../lib/wayChoice.js';
 
 const hhmm = (s) => {
   const m = typeof s === 'string' ? /^(\d{1,2}):(\d{2})/.exec(s) : null;
   return m ? `${m[1].padStart(2, '0')}:${m[2]}` : null;
 };
-const minutesOf = (s) => {
-  const m = typeof s === 'string' ? /^(\d{1,2}):(\d{2})/.exec(s) : null;
-  return m ? Number(m[1]) * 60 + Number(m[2]) : null;
-};
 
-/** The minutes a leg takes from its local clock times, or null. */
-export function legDuration(leg) {
-  const a = minutesOf(leg?.dep);
-  const b = minutesOf(leg?.arr);
-  if (a == null || b == null) return null;
-  const d = b - a;
-  return d > 0 ? d : d + 1440;
-}
+export { legDuration };
 
 export function waysThere({ dest, anchor, home = null, party = null, flights = null, request = null, bagKey } = {}) {
   if (!dest) return null;
@@ -54,7 +49,10 @@ export function waysThere({ dest, anchor, home = null, party = null, flights = n
       if (r && r.perPerson > 0) rows.push({ mode, perPerson: r.perPerson, hours: r.hours });
     }
   }
-  if (!rows.length) return null;
-  const cheapest = rows.reduce((a, b) => (b.perPerson < a.perPerson ? b : a)).mode;
-  return { from: home?.name || '', rows, cheapest };
+  const choice = chooseWay(rows, { km: wayKm(home, dest), transferMinutes: transferMinutesOf(dest) });
+  if (!choice) return null;
+  return {
+    from: home?.name || '', km: wayKm(home, dest), rows: choice.rows,
+    cheapest: choice.cheapest, fastest: choice.fastest, pick: choice.pick, reason: choice.reason,
+  };
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import { partnerButtonProps } from '../../lib/partnerLink.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip, Money } from '../../components/ui/index.js';
 import NotYet from '../../components/NotYet.jsx';
@@ -91,10 +92,10 @@ export function Journey({
         {fig && (row?.yours ? <small>{t('plan.yours')}</small> : figNote && <small>{figNote}</small>)}
       </span>
       {!row?.booked && row?.link && (
-        <a className="btn btn-secondary btn-sm jr-book" href={row.link.href} target="_blank" rel="noreferrer noopener" aria-label={row.link.label}>
-          <span className="btn-label">{t('tp.book')}</span>
-          <ExternalIcon size={13} />
-        </a>
+        <Button {...partnerButtonProps(row.link.href)} size="sm" className="jr-book" aria-label={row.link.label}
+          iconAfter={<ExternalIcon size={13} />}>
+          {t('tp.book')}
+        </Button>
       )}
     </div>
   );

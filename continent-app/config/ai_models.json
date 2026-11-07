@@ -1,0 +1,797 @@
+{
+ "version": 1,
+ "task": "T1138",
+ "roadmap": "E7",
+ "updated": "2026-11-06",
+ "doc": "docs/ai/model-strategy.md",
+ "rules": [
+  "Never the Claude API or an Anthropic SDK (CLAUDE.md).",
+  "Live traveller features move off Gemini or Workers AI only by an owner decision (T1135-g).",
+  "A batch job selects the box only after it passes its eval there (pipeline/ai_gateway.py BOX_PASSED)."
+ ],
+ "fx_eur_per_usd": 0.87,
+ "cost_formula": "per 1,000 calls: (input tokens x input price + (output tokens + extra_out_tokens) x output price) / 1,000, in EUR; box: CPU seconds per call = input / (prompt_tok_s x parallel_slots_speedup) + output / (gen_tok_s x parallel_slots_speedup), at the CAX41 hourly price",
+ "prices_source": "docs/research/E-R3-models-and-hosting.md section 4, quoted through search; verify against the primary pages (T1135-a)",
+ "options": {
+  "gemini-3.5-flash-lite": {
+   "label": "Gemini 3.5 Flash-Lite",
+   "provider": "gemini",
+   "model": "gemini-3.5-flash-lite",
+   "in_per_m": 0.3,
+   "out_per_m": 2.5,
+   "currency": "USD",
+   "extra_out_tokens": 0,
+   "residency": "global (Gemini API)"
+  },
+  "gemini-3.5-flash-lite-batch": {
+   "label": "Gemini 3.5 Flash-Lite, batch mode",
+   "provider": "gemini",
+   "model": "gemini-3.5-flash-lite",
+   "in_per_m": 0.15,
+   "out_per_m": 1.25,
+   "currency": "USD",
+   "extra_out_tokens": 0,
+   "residency": "global (Gemini API)",
+   "note": "batch mode is half price; pipeline/ai_gateway.py Gateway.batch() can send it (T1206), coded against a fake transport and not yet run live; no job uses it"
+  },
+  "gemini-3.6-flash": {
+   "label": "Gemini 3.6 Flash, thinking, intro price",
+   "provider": "gemini",
+   "model": "gemini-flash-latest",
+   "in_per_m": 0.75,
+   "out_per_m": 3.75,
+   "currency": "USD",
+   "extra_out_tokens": 2000,
+   "residency": "global (Gemini API)",
+   "note": "price doubles from 2027-01-01 (E-R3)"
+  },
+  "workers-qwen3-30b": {
+   "label": "Workers AI Qwen3-30B-A3B",
+   "provider": "workers-ai",
+   "model": "@cf/qwen/qwen3-30b-a3b-fp8",
+   "in_per_m": 0.051,
+   "out_per_m": 0.335,
+   "currency": "USD",
+   "extra_out_tokens": 0,
+   "residency": "Cloudflare global, no EU pin confirmed"
+  },
+  "ovh-mistral-small-3.2": {
+   "label": "OVHcloud Mistral Small 3.2 24B",
+   "provider": "openai",
+   "model": "Mistral-Small-3.2-24B-Instruct-2506",
+   "in_per_m": 0.09,
+   "out_per_m": 0.28,
+   "currency": "USD",
+   "extra_out_tokens": 0,
+   "residency": "EU (France)"
+  },
+  "scaleway-gemma-4-26b": {
+   "label": "Scaleway Gemma 4 26B-A4B (vision)",
+   "provider": "openai",
+   "model": "gemma-4-26b-a4b-it",
+   "in_per_m": 0.25,
+   "out_per_m": 0.5,
+   "currency": "EUR",
+   "extra_out_tokens": 0,
+   "residency": "EU (Paris)"
+  },
+  "workers-gemma-3-12b": {
+   "label": "Workers AI Gemma 3 12B (images)",
+   "provider": "workers-ai",
+   "model": "@cf/google/gemma-3-12b-it",
+   "in_per_m": 0.345,
+   "out_per_m": 0.556,
+   "currency": "USD",
+   "extra_out_tokens": 0,
+   "residency": "Cloudflare global"
+  },
+  "box-qwen3-30b-cpu": {
+   "label": "Box CPU, llama.cpp Qwen3-30B-A3B Q4_K_M",
+   "provider": "box",
+   "model": "qwen3-30b-a3b-q4_k_m",
+   "in_per_m": null,
+   "out_per_m": null,
+   "currency": "EUR",
+   "extra_out_tokens": 0,
+   "residency": "EU (Carta's own Hetzner box)"
+  },
+  "on-device-qwen2.5-1.5b": {
+   "label": "On device, WebLLM Qwen 2.5 1.5B",
+   "provider": "on-device",
+   "model": "Qwen2.5-1.5B-Instruct-q4f16_1-MLC",
+   "in_per_m": 0,
+   "out_per_m": 0,
+   "currency": "EUR",
+   "extra_out_tokens": 0,
+   "residency": "never leaves the device"
+  },
+  "no-model": {
+   "label": "No model (code: facts answer, reference planner, templates, today's tags)",
+   "provider": "none",
+   "model": null,
+   "in_per_m": 0,
+   "out_per_m": 0,
+   "currency": "EUR",
+   "extra_out_tokens": 0,
+   "residency": "no model call"
+  }
+ },
+ "box_cpu": {
+  "server": "Hetzner CAX41 (16 vCPU Ampere, 32 GB), on demand",
+  "eur_per_month": 31.49,
+  "hours_per_month": 730,
+  "prompt_tok_s": 420,
+  "gen_tok_s": 20,
+  "parallel_slots_speedup": 1.6,
+  "measured": false,
+  "source": "E-R3 section 4, Ampere Altra llama.cpp figures; measure on the box (T1135-f)"
+ },
+ "box_passed": {},
+ "features": {
+  "ask": {
+   "kind": "live",
+   "today": {
+    "provider": "workers-ai",
+    "models": [
+     "@cf/qwen/qwen3-30b-a3b-fp8",
+     "@cf/meta/llama-3.2-3b-instruct"
+    ]
+   },
+   "tokens_per_call": {
+    "input": 1500,
+    "output": 300,
+    "source": "E-R3 section 2 (estimated from the prompts)"
+   },
+   "eval": "E1 (ask-eval.mjs, retrieval and grounding) plus ask-eval-live.mjs (share of sentences verify.js keeps)",
+   "personal_data": "low",
+   "options": [
+    {
+     "option": "workers-qwen3-30b",
+     "quality": {
+      "status": "measured",
+      "value": 0.887,
+      "metric": "sentences kept by verify.js",
+      "eval": "ask-eval-live, 140 golden questions",
+      "n": 698,
+      "source": "T563 v3, 2026-10-22"
+     },
+     "cost_eur_per_1000_calls": 0.15
+    },
+    {
+     "option": "gemini-3.5-flash-lite",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "ask-eval-live",
+      "command": "cd continent-app; set AI_ASK_PROVIDER=gemini AI_ASK_MODELS=gemini-3.5-flash-lite GEMINI_API_KEY=<key> in .dev.vars; npx wrangler pages dev; node scripts/ask-eval-live.mjs --endpoint http://localhost:8799 --out ../data/reports/evals/ask-live-gemini-flash-lite.json"
+     },
+     "cost_eur_per_1000_calls": 1.04
+    },
+    {
+     "option": "ovh-mistral-small-3.2",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "ask-eval-live",
+      "command": "cd continent-app; set AI_ASK_PROVIDER=openai AI_ASK_MODELS=Mistral-Small-3.2-24B-Instruct-2506 AI_ASK_BASE_URL=<OVHcloud AI Endpoints base URL> AI_OPENAI_API_KEY=<key> in .dev.vars; npx wrangler pages dev; node scripts/ask-eval-live.mjs --endpoint http://localhost:8799 --out ../data/reports/evals/ask-live-ovh-mistral-small.json"
+     },
+     "cost_eur_per_1000_calls": 0.19
+    },
+    {
+     "option": "on-device-qwen2.5-1.5b",
+     "quality": {
+      "status": "measured",
+      "value": 0.111,
+      "metric": "sentences kept by verify.js",
+      "eval": "one question on an Iris Xe laptop, not an eval run",
+      "n": 9,
+      "source": "T564, 2026-10-22"
+     },
+     "cost_eur_per_1000_calls": 0.0
+    },
+    {
+     "option": "no-model",
+     "quality": {
+      "status": "measured",
+      "value": 0.9956,
+      "metric": "grounding (labelled facts reach the cards and notes)",
+      "eval": "E1 ask-eval.mjs, 200 questions",
+      "n": 689,
+      "source": "this task, 2026-11-06"
+     },
+     "cost_eur_per_1000_calls": 0.0
+    }
+   ],
+   "recommendation": "Stay on Workers AI Qwen3-30B-A3B; it is the cheapest server option and keeps 88.7 percent of sentences. The facts answer stays the fallback; on device stays opt-in.",
+   "box": "no"
+  },
+  "plan-day": {
+   "kind": "live",
+   "today": {
+    "provider": "gemini",
+    "models": [
+     "gemini-flash-lite-latest",
+     "gemini-3.5-flash-lite",
+     "gemini-flash-latest",
+     "gemini-3.1-flash-lite"
+    ]
+   },
+   "tokens_per_call": {
+    "input": 4500,
+    "output": 900,
+    "source": "E-R3 section 2 (estimated from the prompts)"
+   },
+   "eval": "F6 plan-day eval (run.mjs plan-day: seven rule checks on 20 cases; the judge is calibrated at kappa 0.898 against the rules)",
+   "personal_data": "low to medium",
+   "options": [
+    {
+     "option": "gemini-3.5-flash-lite",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "plan-day",
+      "command": "record the 20 plan-day eval cases on the deployed plan-day as it runs today (Flash-Lite first) (recorder: T1138-b), then: node continent-app/scripts/eval/run.mjs plan-day --plans <recorded plans.json>",
+      "blocked_by": "T1138-b"
+     },
+     "cost_eur_per_1000_calls": 3.13
+    },
+    {
+     "option": "gemini-3.6-flash",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "plan-day",
+      "command": "record the 20 plan-day eval cases on the deployed plan-day with AI_PLAN_DAY_MODELS=gemini-flash-latest (recorder: T1138-b), then: node continent-app/scripts/eval/run.mjs plan-day --plans <recorded plans.json>",
+      "blocked_by": "T1138-b"
+     },
+     "cost_eur_per_1000_calls": 12.4
+    },
+    {
+     "option": "workers-qwen3-30b",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "plan-day",
+      "command": "record the 20 plan-day eval cases on a local supabase functions serve plan-day with AI_PLAN_DAY_PROVIDER=workers-ai, CF_ACCOUNT_ID and CF_AI_TOKEN (recorder: T1138-b), then: node continent-app/scripts/eval/run.mjs plan-day --plans <recorded plans.json>",
+      "blocked_by": "T1138-b"
+     },
+     "cost_eur_per_1000_calls": 0.46
+    },
+    {
+     "option": "ovh-mistral-small-3.2",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "plan-day",
+      "command": "record the 20 plan-day eval cases on a local supabase functions serve plan-day with AI_PLAN_DAY_PROVIDER=openai and the OVHcloud base URL and key (recorder: T1138-b), then: node continent-app/scripts/eval/run.mjs plan-day --plans <recorded plans.json>",
+      "blocked_by": "T1138-b"
+     },
+     "cost_eur_per_1000_calls": 0.57
+    },
+    {
+     "option": "no-model",
+     "quality": {
+      "status": "measured",
+      "value": 1.0,
+      "metric": "plans meeting every rule",
+      "eval": "F6 plan-day, 20 cases (reference planner)",
+      "n": 20,
+      "source": "this task, 2026-11-06"
+     },
+     "cost_eur_per_1000_calls": 0.0
+    }
+   ],
+   "recommendation": "Stay on Gemini. Pin the model ids (T1135-e): the chain starts on the gemini-flash-lite-latest alias, whose model and price can move without notice. Move to an open model only at the plan-day trigger and only if it scores within 2 points of Gemini on the plan-day eval.",
+   "box": "no"
+  },
+  "suggest-city": {
+   "kind": "live",
+   "today": {
+    "provider": "gemini",
+    "models": [
+     "gemini-flash-lite-latest",
+     "gemini-3.5-flash-lite",
+     "gemini-flash-latest",
+     "gemini-3.1-flash-lite"
+    ]
+   },
+   "tokens_per_call": {
+    "input": 8000,
+    "output": 400,
+    "source": "E-R3 section 2 (estimated from the prompts)"
+   },
+   "eval": "none yet (T1138-c)",
+   "personal_data": "low",
+   "options": [
+    {
+     "option": "gemini-3.5-flash-lite",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "suggest-city eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-c"
+     },
+     "cost_eur_per_1000_calls": 2.96
+    },
+    {
+     "option": "gemini-3.6-flash",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "suggest-city eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-c"
+     },
+     "cost_eur_per_1000_calls": 13.05
+    },
+    {
+     "option": "workers-qwen3-30b",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "suggest-city eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-c"
+     },
+     "cost_eur_per_1000_calls": 0.47
+    },
+    {
+     "option": "ovh-mistral-small-3.2",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "suggest-city eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-c"
+     },
+     "cost_eur_per_1000_calls": 0.72
+    }
+   ],
+   "recommendation": "Stay on Gemini; grounded calls must (no open option has Google Search). The ungrounded path follows plan-day's model once an eval exists.",
+   "box": "no"
+  },
+  "parse-booking": {
+   "kind": "live",
+   "today": {
+    "provider": "gemini",
+    "models": [
+     "gemini-flash-lite-latest",
+     "gemini-3.5-flash-lite",
+     "gemini-flash-latest",
+     "gemini-3.1-flash-lite"
+    ]
+   },
+   "tokens_per_call": {
+    "input": 4000,
+    "output": 1000,
+    "source": "E-R3 section 2 (estimated from the prompts)"
+   },
+   "eval": "none yet (T1138-c); scripts/ai/verify_magic_import.mjs checks the flow on a canned answer, not the model",
+   "personal_data": "high (names, booking codes, emails)",
+   "options": [
+    {
+     "option": "gemini-3.5-flash-lite",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "parse-booking eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-c"
+     },
+     "cost_eur_per_1000_calls": 3.22
+    },
+    {
+     "option": "gemini-3.6-flash",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "parse-booking eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-c"
+     },
+     "cost_eur_per_1000_calls": 12.4
+    },
+    {
+     "option": "scaleway-gemma-4-26b",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "parse-booking eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-c"
+     },
+     "cost_eur_per_1000_calls": 1.5
+    },
+    {
+     "option": "workers-gemma-3-12b",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "parse-booking eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-c"
+     },
+     "cost_eur_per_1000_calls": 1.68
+    }
+   ],
+   "recommendation": "Stay on Gemini (native PDF). The trigger is legal, not volume: if C9 says booking documents stay in the EU, Gemini on Vertex AI EU or Scaleway Gemma 4 once it passes the eval (T1135-d).",
+   "box": "no"
+  },
+  "intros": {
+   "kind": "batch",
+   "today": {
+    "provider": "gemini",
+    "models": [
+     "gemini-flash-latest",
+     "gemini-3.5-flash",
+     "gemini-3.5-flash-lite"
+    ]
+   },
+   "tokens_per_call": {
+    "input": 12050,
+    "output": 1540,
+    "source": "E-R3 section 2 (estimated from the prompts)"
+   },
+   "eval": "none yet (T1138-d); the job's own schema check only",
+   "personal_data": "none (public catalogue)",
+   "options": [
+    {
+     "option": "gemini-3.6-flash",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "intros eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-d"
+     },
+     "cost_eur_per_1000_calls": 19.41
+    },
+    {
+     "option": "gemini-3.5-flash-lite-batch",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "intros eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-d"
+     },
+     "cost_eur_per_1000_calls": 3.25
+    },
+    {
+     "option": "workers-qwen3-30b",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "intros eval",
+      "command": "none until the eval exists",
+      "blocked_by": "T1138-d"
+     },
+     "cost_eur_per_1000_calls": 0.98
+    },
+    {
+     "option": "box-qwen3-30b-cpu",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "intros eval",
+      "command": "on the box: llama-server -m Qwen3-30B-A3B-Q4_K_M.gguf --port 8080 -np 2 -c 16384; then AI_INTROS_PROVIDER=box AI_BOX_EVAL_RUN=1 python pipeline/dossier/rewrite_intros.py --limit 50 into a scratch copy, then the intros eval",
+      "blocked_by": "T1138-d"
+     },
+     "cost_eur_per_1000_calls": 0.79
+    }
+   ],
+   "recommendation": "Move to the box once an intros eval exists and the box scores within 2 points of Gemini on it. Today the batch chain (pipeline GEMINI_CHAIN) starts on gemini-flash-latest, a thinking model: 19.41 EUR per 1,000 calls against 3.25 for Flash-Lite in batch mode, so a full run costs about 7.57 EUR instead of 1.27 (E-R3 assumed Flash-Lite).",
+   "box": "eligible after its eval"
+  },
+  "tagging": {
+   "kind": "batch",
+   "today": {
+    "provider": "none",
+    "models": [],
+    "planned": "lexical tagger built (T1150, pipeline task taxonomy_tags); the Gemini verifier waits for its first run (T1150-a)"
+   },
+   "tokens_per_call": {
+    "input": 600,
+    "output": 80,
+    "source": "E-R3 section 2 (estimated from the prompts); measured tokens per verifier call wait for T1150-a"
+   },
+   "eval": "F1 taxonomy eval (run.mjs taxonomy --predictions; micro F1 and R-precision at 5)",
+   "personal_data": "none (public catalogue)",
+   "options": [
+    {
+     "option": "no-model",
+     "quality": {
+      "status": "measured",
+      "value": 0.4375,
+      "metric": "micro F1 (lexical tagger: phrase, mapped tags, BM25; R-precision at 5 0.5033)",
+      "eval": "F1 taxonomy, 15-item seed set (the numbers mean little until gold.csv is filled, T1149-b)",
+      "n": 15,
+      "source": "T1150 and T1215, 2026-11-07; today's tags mapped scored 0.4309"
+     },
+     "cost_eur_per_1000_calls": 0.0
+    },
+    {
+     "option": "gemini-3.5-flash-lite-batch",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "taxonomy",
+      "command": "the S66 tagger with AI_TAGGING_PROVIDER=gemini AI_TAGGING_MODELS=gemini-3.5-flash-lite writes predictions.json; node continent-app/scripts/eval/run.mjs taxonomy --predictions predictions.json",
+      "blocked_by": "T1150-a (first verifier run; the tagger exists)"
+     },
+     "cost_eur_per_1000_calls": 0.17
+    },
+    {
+     "option": "workers-qwen3-30b",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "taxonomy",
+      "command": "the S66 tagger with AI_TAGGING_PROVIDER=workers-ai; then run.mjs taxonomy --predictions",
+      "blocked_by": "T1150-a (first verifier run; the tagger exists)"
+     },
+     "cost_eur_per_1000_calls": 0.05
+    },
+    {
+     "option": "box-qwen3-30b-cpu",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "taxonomy",
+      "command": "on the box: llama-server -m Qwen3-30B-A3B-Q4_K_M.gguf --port 8080 -np 2 -c 16384; then the S66 tagger with AI_TAGGING_PROVIDER=box AI_BOX_EVAL_RUN=1; node continent-app/scripts/eval/run.mjs taxonomy --predictions predictions.json",
+      "blocked_by": "T1150-a (first verifier run; the tagger exists)"
+     },
+     "cost_eur_per_1000_calls": 0.04
+    }
+   ],
+   "recommendation": "Build the tagger on the box from the start (E-R3: about 19 CPU hours for 20,000 items); Gemini batch mode is the fallback.",
+   "box": "eligible after its eval"
+  },
+  "summaries": {
+   "kind": "batch",
+   "today": {
+    "provider": "none",
+    "models": [],
+    "planned": "trail summaries are templates (pipeline/trails/summaries.py); D7 and D9 summaries planned"
+   },
+   "tokens_per_call": {
+    "input": 1500,
+    "output": 200,
+    "source": "E-R3 section 2 (estimated from the prompts)"
+   },
+   "eval": "F6 trail-summaries (T1179 check over the top-band walks)",
+   "personal_data": "none (public data)",
+   "options": [
+    {
+     "option": "no-model",
+     "quality": {
+      "status": "measured",
+      "value": 1.0,
+      "metric": "summaries passing every check",
+      "eval": "F6 trail-summaries, 2,089 top-band walks (templates)",
+      "n": 2089,
+      "source": "this task, 2026-11-06"
+     },
+     "cost_eur_per_1000_calls": 0.0
+    },
+    {
+     "option": "gemini-3.5-flash-lite-batch",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "trail-summaries",
+      "command": "a model-written summary job does not exist; write one only if templates stop being enough",
+      "blocked_by": "no model job"
+     },
+     "cost_eur_per_1000_calls": 0.41
+    },
+    {
+     "option": "box-qwen3-30b-cpu",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "trail-summaries",
+      "command": "on the box: llama-server -m Qwen3-30B-A3B-Q4_K_M.gguf --port 8080 -np 2 -c 16384; then a summaries job with AI_SUMMARIES_PROVIDER=box AI_BOX_EVAL_RUN=1 and the trail-summaries eval on its output",
+      "blocked_by": "no model job"
+     },
+     "cost_eur_per_1000_calls": 0.1
+    }
+   ],
+   "recommendation": "Keep the templates: free, and 2,089 of 2,089 pass. A model would only add prose variety.",
+   "box": "eligible after its eval"
+  },
+  "blog": {
+   "kind": "batch",
+   "today": {
+    "provider": "none",
+    "models": [],
+    "planned": "K14 blog drafts"
+   },
+   "tokens_per_call": {
+    "input": 8000,
+    "output": 1500,
+    "source": "E-R3 section 2 (estimated from the prompts)"
+   },
+   "eval": "none yet (K14 owns it)",
+   "personal_data": "none",
+   "options": [
+    {
+     "option": "gemini-3.5-flash-lite",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "blog eval",
+      "command": "none until K14 defines its review",
+      "blocked_by": "K14"
+     },
+     "cost_eur_per_1000_calls": 5.35
+    },
+    {
+     "option": "gemini-3.6-flash",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "blog eval",
+      "command": "none until K14 defines its review",
+      "blocked_by": "K14"
+     },
+     "cost_eur_per_1000_calls": 16.64
+    },
+    {
+     "option": "box-qwen3-30b-cpu",
+     "quality": {
+      "status": "owner_run",
+      "value": null,
+      "eval": "blog eval",
+      "command": "none until K14 defines its review",
+      "blocked_by": "K14"
+     },
+     "cost_eur_per_1000_calls": 0.7
+    }
+   ],
+   "recommendation": "Ten drafts a month cost cents on any option; draft on the box once K14 has a review, owner edits every draft.",
+   "box": "eligible after its eval"
+  }
+ },
+ "other_jobs": {
+  "parking": {
+   "kind": "batch",
+   "today": {
+    "provider": "gemini",
+    "models": [
+     "gemini-flash-latest",
+     "gemini-3.5-flash",
+     "gemini-3.5-flash-lite"
+    ]
+   },
+   "box": "never: needs Google Search grounding"
+  },
+  "trips": {
+   "kind": "batch",
+   "today": {
+    "provider": "gemini",
+    "models": [
+     "gemini-flash-latest",
+     "gemini-3.5-flash",
+     "gemini-3.5-flash-lite"
+    ]
+   },
+   "eval": "golden_set.py (Trips)",
+   "box": "possible for ungrounded runs after golden_set passes on the box"
+  },
+  "lexicon": {
+   "kind": "batch helper",
+   "today": {
+    "provider": "ollama",
+    "models": [
+     "qwen3:4b"
+    ]
+   },
+   "box": "already local (Ollama)"
+  }
+ },
+ "switch": {
+  "review": "monthly, first Monday, against E4 telemetry (ai_model_events) and K12 users; update docs/ai/model-strategy.md",
+  "quality_drop_points": 2.0,
+  "quality_drop_rule": "a feature's eval headline more than 2 points under its recorded score (E1 tolerance) moves it back one step in its chain until fixed",
+  "gpu": {
+   "server": "Hetzner GEX45",
+   "eur_per_month": 214,
+   "multiple": 1.5,
+   "months": 2
+  },
+  "triggers": [
+   {
+    "id": "ask-free-neurons",
+    "feature": "ask",
+    "metric": "mau",
+    "op": ">=",
+    "value": 2800,
+    "window_days": 30,
+    "action": "Ask's free 10,000 Neurons a day run out (about 560 answers a day): switch on the Workers paid plan, or Ask answers with facts only",
+    "owner": "T1135-h"
+   },
+   {
+    "id": "ask-cost",
+    "feature": "ask",
+    "metric": "cost_eur_per_day",
+    "op": ">=",
+    "value": 10.5,
+    "window_days": 60,
+    "action": "Ask's Workers AI spend is past 1.5 times a GEX45 (EUR 320 a month): price a self-hosted GPU",
+    "owner": "T1135-g"
+   },
+   {
+    "id": "plan-day-open-model",
+    "feature": "plan-day",
+    "metric": "cost_eur_per_day",
+    "op": ">=",
+    "value": 1.67,
+    "window_days": 60,
+    "action": "plan-day's Gemini spend is past EUR 50 a month (about 11,000 MAU): run the plan-day eval on Workers AI Qwen3-30B-A3B and OVHcloud Mistral Small 3.2 and put the best within 2 points first in the chain",
+    "owner": "T1135-g"
+   },
+   {
+    "id": "plan-day-mau",
+    "feature": "plan-day",
+    "metric": "mau",
+    "op": ">=",
+    "value": 11000,
+    "window_days": 30,
+    "action": "same as plan-day-open-model, when telemetry has no cost yet",
+    "owner": "T1135-g"
+   },
+   {
+    "id": "suggest-city-open-model",
+    "feature": "suggest-city",
+    "metric": "cost_eur_per_day",
+    "op": ">=",
+    "value": 1.67,
+    "window_days": 60,
+    "action": "ungrounded suggest-city calls follow plan-day's model, once a suggest-city eval exists",
+    "owner": "T1135-g"
+   },
+   {
+    "id": "grounding",
+    "feature": "plan-day,suggest-city",
+    "metric": "grounded_searches_per_month",
+    "op": ">=",
+    "value": 4000,
+    "window_days": 30,
+    "action": "80 percent of Gemini's free 5,000 grounded prompts: review the grounded allowance per tier in plan_tiers",
+    "owner": "T1135-i"
+   },
+   {
+    "id": "gpu",
+    "feature": "all live",
+    "metric": "cost_eur_per_day",
+    "op": ">=",
+    "value": 10.5,
+    "window_days": 60,
+    "action": "open-model spend of the features that can share one model past EUR 320 a month for two months: price and test a GEX45 with vLLM, managed API kept as fallback",
+    "owner": "T1135-g"
+   },
+   {
+    "id": "gemini-price",
+    "feature": "all gemini",
+    "metric": "price_change",
+    "op": "any",
+    "value": null,
+    "window_days": null,
+    "action": "a Gemini price change (3.6 Flash doubles 2027-01-01) or a -latest alias moving: recompute this table",
+    "owner": "next task"
+   },
+   {
+    "id": "quality-drop",
+    "feature": "any",
+    "metric": "quality_drop_points",
+    "op": ">",
+    "value": 2.0,
+    "window_days": 7,
+    "action": "move the feature back one step (previous model, then the no-model fallback) and open a register row",
+    "owner": "next task"
+   }
+  ]
+ }
+}

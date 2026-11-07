@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Strip } from './SectionOpening.jsx';
-import { JourneyCard, RAIL_SIZES } from './JourneyCards.jsx';
+import { DayFrom, JourneyCard, RAIL_SIZES } from './JourneyCards.jsx';
 import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { PiggyIcon } from '../components/Icons.jsx';
-import { Money } from '../components/ui/index.js';
+import { Money, SlotText } from '../components/ui/index.js';
+import { SLOT } from '../lib/slot.js';
 import { loadJourneyIndex, loadAllJourneyCards, typeLabel, typeDesc } from '../lib/journeys.js';
 import { fitLength, lengthOptions, readTripLength } from '../lib/tripLength.js';
 import { inCountry, lowestPerDay, weeksFor } from '../lib/tripFilters.js';
@@ -70,7 +71,7 @@ export function TripStylesRow({ t, lang: _lang, country = null, onPick, onSeeAll
   if (!styles.length) return null;
   const lows = styles.map((tp) => perDay[tp.slug]).filter(Number.isFinite);
   const facts = lows.length
-    ? [{ key: 'from', icon: PiggyIcon, figure: true, text: withMoney(t('rail.factFrom', { price: SLOT }), <Money value={Math.min(...lows)} est />) }]
+    ? [{ key: 'from', icon: PiggyIcon, figure: true, text: <SlotText text={t('rail.factFrom', { price: SLOT })}><Money value={Math.min(...lows)} est /></SlotText> }]
     : [];
   // T587: a StoryRail, the lead card holding the heading and "See all", the
   // styles as tall photo cards (no Score and no status: a style has neither).
@@ -85,13 +86,6 @@ export function TripStylesRow({ t, lang: _lang, country = null, onPick, onSeeAll
   );
 }
 
-const SLOT = '\u0001';
-/** A sentence with the kit's Money in its one slot. */
-function withMoney(text, money) {
-  const at = text.indexOf(SLOT);
-  if (at < 0) return text;
-  return <>{text.slice(0, at)}{money}{text.slice(at + SLOT.length)}</>;
-}
 
 /** One style as a StoryRail photo card: the photograph of people doing it,
  *  the name, one line of what the week is, and "From {price} a person a
@@ -108,7 +102,7 @@ function StyleStoryCard({ type, perDay, onPick, t }) {
       onOpen={() => onPick(type.slug)}
       meta={desc ? <span>{desc}</span> : null}
       price={Number.isFinite(perDay)
-        ? <span className="xprice">{withMoney(t('journey.fromPpDay', { eur: SLOT }), <Money value={perDay} est />)}</span>
+        ? <DayFrom value={perDay} t={t} className="xprice" />
         : <span className="jcap-fig is-none">{t('journey.fromNone')}</span>}
     />
   );

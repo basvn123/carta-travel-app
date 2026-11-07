@@ -223,7 +223,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   color: var(--umber-800);
 }
 .pt-lead { display: grid; gap: var(--space-2); margin-top: var(--space-5); max-width: 62ch; }
-.pt-lead-first { margin: 0; font-size: 20px; font-weight: 600; line-height: 1.45; letter-spacing: -0.01em; color: var(--text); text-wrap: pretty; }
+.pt-lead-first { margin: 0; font-size: var(--text-title); font-weight: 600; line-height: 1.45; letter-spacing: -0.01em; color: var(--text); text-wrap: pretty; }
 .pt-lead-rest { margin: 0; font-size: var(--text-lead); line-height: 1.65; color: var(--text-2); text-wrap: pretty; }
 
 /* ── The facts (T1024): soft tiles on the page's ground, two across on a
@@ -242,7 +242,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   margin: 0;
   padding: var(--space-3);
   border: 0;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   background: var(--surface-sunken);
   min-width: 0;
 }
@@ -314,6 +314,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-sec-note { font-size: var(--text-label); color: var(--text-3); }
 .pt-block { display: grid; gap: var(--space-3); min-width: 0; }
 .pt-block-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+.pt-way-list { margin: 0; padding-left: var(--space-4); display: grid; gap: var(--space-2); color: var(--text); }
 .pt-block-title { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .pt-muted { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 
@@ -392,7 +393,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-step-gap { display: inline-flex; align-items: center; gap: 2px; font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
 
 /* Around */
-.pt-count-n { margin-left: var(--space-1); font-weight: 700; font-variant-numeric: tabular-nums; }
 
 /* When to go */
 .pt-cells { display: grid; gap: var(--space-2); }
@@ -492,6 +492,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pcard-title { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .pcard-value { margin: 0; font-size: var(--text-body); font-weight: 700; line-height: 1.3; color: var(--text); }
 .pcard-text { margin: 0; font-size: var(--text-label); line-height: var(--leading-ui); color: var(--text); text-wrap: pretty; }
+.pcard-note { margin: 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-2); text-wrap: pretty; }
 .pcard-value + .pcard-text { color: var(--text-2); }
 
 /* The links at the card's foot: the first a small umber button, the rest
@@ -535,7 +536,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 /* On the place page the sources read as the folds above them: a row
    under a rule, no box (T1028). */
 #pt-practical .pt-fold { background: none; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; padding: 0; }
-#pt-practical .pt-fold summary { min-height: 52px; font-size: 16px; }
+#pt-practical .pt-fold summary { min-height: 52px; font-size: var(--text-lead); }
 .pt-fold summary {
   min-height: var(--tap);
   display: flex;
@@ -603,8 +604,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-split li { display: grid; grid-template-columns: 18px 1fr auto; gap: 2px var(--space-2); align-items: center; }
 .pt-split-icon { color: var(--text-3); }
 .pt-split b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
-.pt-split-bar { grid-column: 2 / -1; height: 4px; border-radius: var(--radius-pill); background: var(--surface-sunken); overflow: hidden; }
-.pt-split-bar i { display: block; height: 100%; background: var(--umber-200); border-radius: var(--radius-pill); }
 .pt-tot { margin: 0; display: grid; gap: var(--space-2); padding-top: var(--space-3); border-top: 1px solid var(--border-soft); font-size: var(--text-body); color: var(--text-2); }
 .pt-tot > div { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
 .pt-tot dt { min-width: 0; }
@@ -614,7 +613,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-card .destp-plan-btn { width: 100%; }
 .pt-alts { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 var(--space-2); margin-top: calc(-1 * var(--space-2)); }
 .pt-card .dprice-dates { display: grid; gap: var(--space-3); }
-.pt-ranges-total { display: flex; justify-content: space-between; gap: var(--space-3); }
 .pt-card-row { display: flex; gap: var(--space-2); }
 .pt-card-row > .btn { flex: 1; }
 
@@ -663,7 +661,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .tcard-band { display: grid; gap: var(--space-1); padding: var(--space-4); }
 .tcard-band .dpc-inputs { margin-bottom: var(--space-3); }
 .tcard-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; }
-.tcard-total .money { font-size: 40px; font-weight: 800; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--ccard-ink); }
+.tcard-total .money { font-size: var(--text-display); font-weight: 800; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--ccard-ink); }
 .tcard-total > span { font-size: var(--text-label); color: var(--ccard-ink-2); }
 .tcard-each { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-1); margin: 0; font-size: var(--text-label); color: var(--ccard-ink-2); font-variant-numeric: tabular-nums; }
 .tcard-each > span:first-child::after { content: ","; }
@@ -705,13 +703,18 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .tcard-way-fig { display: grid; justify-items: end; gap: 2px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .tcard-way-fig b { font-size: var(--text-lead); font-weight: 800; }
 .tcard-way-fig small { font-size: var(--text-caption); color: var(--ccard-ink-2); }
-.tcard-badge { display: inline-flex; align-items: center; min-height: 20px; padding: 0 var(--space-2); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--umber-50) 16%, transparent); font-size: 11px; font-weight: 700; letter-spacing: 0.01em; }
+.tcard-badge { display: inline-flex; align-items: center; min-height: 20px; padding: 0 var(--space-2); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--umber-50) 16%, transparent); font-size: var(--text-micro); font-weight: 700; letter-spacing: 0.01em; }
 .tcard-badge.is-cheap { background: var(--sun-400); color: var(--umber-800); }
 .tcard-way.is-on .tcard-badge:not(.is-cheap) { background: var(--umber-100); }
+/* T1100: why the card opened on a dearer way than the cheapest, in hours. */
+.tcard-note { margin: 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }
 
 .tcard-acts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
 .ccard .tcard-acts .btn, .ccard .tcard-acts .btn:is(:hover, :focus, :active, [aria-expanded="true"]) { background: transparent; color: var(--ccard-ink); }
 @media (hover: hover) { .ccard .tcard-acts .btn:hover { background: color-mix(in srgb, var(--umber-50) 10%, transparent); } }
+.tcard-way-fp { display: block; font-size: var(--text-caption); color: var(--ccard-ink-2); }
+.tcard-fp-note { margin: 6px 0 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }
+.tcard-fp-note a { color: inherit; text-decoration: underline; }
 .tcard-way-sub > span { white-space: nowrap; }
 .tcard-more svg { transition: transform var(--dur-2) var(--ease-out); }
 .tcard-more[aria-expanded="true"] svg { transform: rotate(180deg); }
@@ -761,7 +764,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 
 .dpc-flights { display: grid; gap: var(--space-2); }
 .dpc-pass { display: grid; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface); color: var(--text); }
-.dpc-pass .jr-code { font-size: 20px; }
+.dpc-pass .jr-code { font-size: var(--text-title); }
 .dpc-pass-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; padding-top: var(--space-2); border-top: 1px solid var(--border-soft); }
 .dpc-pass-fig .money { font-size: var(--text-lead); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
 .dpc-pass-fig small { font-size: var(--text-caption); color: var(--text-2); }
@@ -773,7 +776,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 /* Below 1024 px the foot bar holds the page's one primary, so the card's
    own primary hides (one primary at a time, carta-design). */
 @media (max-width: 1023px) {
-  .pt-inlinecost .destp-plan-btn, .pt-inlinecost .jpage-plan { display: none; }
+  .pt-inlinecost .destp-plan-btn { display: none; }
 }
 
 /* ── The foot bar below 1024 px: the price, the inputs, the primary. ── */
@@ -868,11 +871,11 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .pt-day-chev { transition: none; } }
 .pt-day-body { display: grid; gap: var(--space-3); padding: 0 var(--space-4) var(--space-4) calc(var(--space-4) + 52px + var(--space-3)); }
 .pt-day-body[hidden] { display: none; }
-@media (max-width: 699px) { .pt-day-body { padding-left: var(--space-4); } }
+@media (max-width: 700px) { .pt-day-body { padding-left: var(--space-4); } }
 .pt-part { display: grid; grid-template-columns: 96px 1fr; gap: var(--space-3); font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
 .pt-part small { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); line-height: var(--leading-body); }
 .pt-part-text { margin: 0; }
-@media (max-width: 499px) { .pt-part { grid-template-columns: 1fr; gap: 2px; } }
+@media (max-width: 480px) { .pt-part { grid-template-columns: 1fr; gap: 2px; } }
 .pt-daychips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-1); }
 .pt-daychips li { padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); background: var(--surface-sunken); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 
@@ -883,7 +886,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-rg-track { position: relative; height: 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
 .pt-rg-track i { position: absolute; top: 0; bottom: 0; border-radius: var(--radius-pill); background: var(--umber-300); }
 .pt-rg-fig { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
-@media (max-width: 499px) {
+@media (max-width: 480px) {
   .pt-rg { grid-template-columns: 1fr auto; }
   .pt-rg-track { grid-column: 1 / -1; grid-row: 2; }
 }
@@ -931,7 +934,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .bf-rows, .rs-parts ul { list-style: none; margin: 0; padding: 0 var(--space-4); border-radius: 14px; background: var(--surface-sunken); }
 .bf-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); min-height: 60px; padding: var(--space-2) 0; }
 .bf-row + .bf-row { border-top: 1px solid var(--border-soft); }
-.bf-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: var(--umber-100); color: var(--umber-700); }
+.bf-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: var(--radius-control); background: var(--umber-100); color: var(--umber-700); }
 .bf-what { display: grid; gap: 2px; min-width: 0; }
 .bf-what b { font-size: var(--text-body); font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
 .bf-what small { font-size: var(--text-caption); color: var(--text-2); }
@@ -959,7 +962,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .rs-part-name { font-size: var(--text-body); font-weight: 600; color: var(--text); }
 .rs-gem { margin: 0; font-size: var(--text-label); line-height: 1.5; color: var(--text-2); }
 .rs-part-val { font-size: var(--text-body); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
-.rs-track { display: block; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--umber-700) 12%, transparent); overflow: hidden; }
+.rs-track { display: block; height: 6px; border-radius: var(--radius-pill); background: color-mix(in srgb, var(--umber-700) 12%, transparent); overflow: hidden; }
 .rs-track > span { display: block; height: 100%; border-radius: inherit; background: var(--umber-700); }
 
 /* ── What to see and Best things to do (T1032) ──
@@ -987,7 +990,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   background: var(--surface-sunken);
   scroll-snap-align: start;
   transition: box-shadow var(--dur-2) var(--ease-out);
@@ -1025,7 +1028,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
   border-radius: var(--radius-pill);
   background: var(--sun-400);
   color: var(--umber-800);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 700;
 }
 .spot-body { display: grid; align-content: start; gap: 4px; padding: var(--space-3) var(--space-4) var(--space-4); min-width: 0; }
@@ -1037,7 +1040,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
    its ::after to the title, and a press begun on the photograph would miss
    it (the kit card's T428 fix, 04-ui.css). The card answers the press. */
 .spot .spot-hit.spot-hit:active { scale: none; opacity: 1; }
-.spot:has(.spot-hit:active) { scale: 0.99; transition-duration: 0.06s; }
+.spot:has(.spot-hit:active) { scale: 0.99; transition-duration: var(--dur-1); }
 .spot:has(.spot-hit:focus-visible) { box-shadow: 0 0 0 2px var(--focus); }
 .spot-meta { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
 .spot-text {
@@ -1052,7 +1055,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 }
 .btn.spots-more { display: none; }
 .spots-map { margin-top: var(--space-4); }
-.spots-map .dmap { border-radius: 16px; }
+.spots-map .dmap { border-radius: var(--radius-card); }
 .spots-map .place-map-wait { height: 420px; }
 @media (min-width: 700px) {
   .pt-wrap .spots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4) var(--space-3); margin: 0; padding: 0; overflow: visible; }
@@ -1064,7 +1067,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 
 /* The photo pins: the sight's photograph in a round frame, its number on
    the corner; the name shows on hover and on the chosen pin only. */
-.dmap-pin.has-photo .dmap-pin-in { position: relative; padding: 3px; gap: 0; border-radius: 999px; }
+.dmap-pin.has-photo .dmap-pin-in { position: relative; padding: 3px; gap: 0; border-radius: var(--radius-pill); }
 .dmap-pin-ph { display: block; width: 40px; height: 40px; border-radius: 50%; background: var(--umber-100) center / cover no-repeat; }
 .dmap-pin.has-photo .dmap-pin-n { position: absolute; top: -6px; left: -6px; min-width: 20px; height: 20px; box-shadow: 0 0 0 2px var(--surface); }
 .dmap-pin.has-photo .dmap-pin-name { display: none; padding: 0 8px 0 6px; }
@@ -1097,7 +1100,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
   padding: var(--space-3);
   overflow: hidden;
   border: 0;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   background: linear-gradient(160deg, var(--umber-600), var(--umber-800));
   color: #fff;
   font: inherit;
@@ -1125,12 +1128,12 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .near-wrap { padding-top: var(--space-5); padding-bottom: var(--space-8); }
 .near-head { display: grid; gap: var(--space-1); }
 .near-title { margin: 0; font-size: 32px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; color: var(--text); text-wrap: balance; }
-@media (min-width: 700px) { .near-title { font-size: 40px; } }
+@media (min-width: 700px) { .near-title { font-size: var(--text-display); } }
 .near-sub { margin: 0; font-size: var(--text-body); color: var(--text-2); }
 .near-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin: var(--space-5) 0 var(--space-5); }
 .near-tools .ar-radius { flex: 1 1 auto; min-width: 0; }
 .storyr.near-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: var(--space-6) var(--space-4); }
-@media (max-width: 559px) { .storyr.near-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); } }
+@media (max-width: 599px) { .storyr.near-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); } }
 
 /* ── Day trips (T1036): the Explore rail; the facts, then the line it is
    known for, under each photograph. ── */

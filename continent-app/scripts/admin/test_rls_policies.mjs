@@ -576,6 +576,16 @@ const FIXTURES = [
     ownerWrites: true,
   },
   {
+    // 065 (T1104): the owner's synced things only; anon has no grant at all.
+    table: 'account_things',
+    seed: [{ as: 'victim', sql: `insert into public.account_things (user_id, kind, item_id, body) values ('${VICTIM}', 'kept', 't1104kept', '{"id": "t1104kept", "name": "Porto"}')` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `body = '{"name": "tampered"}'`,
+    forge: `insert into public.account_things (user_id, kind, item_id, body) values ('${VICTIM}', 'journey', 't1104forged', '{}')`,
+    reads: 'private',
+    ownerWrites: true,
+  },
+  {
     // 060: the owner reads and writes their switches; no delete policy.
     table: 'email_prefs',
     seed: [{ as: 'victim', sql: `insert into public.email_prefs (user_id, trip_reminders, lang) values ('${VICTIM}', true, 'nl')` }],
@@ -592,6 +602,26 @@ const FIXTURES = [
     mine: `user_id = '${VICTIM}'`,
     mutate: `ref = 'tampered'`,
     forge: `insert into public.email_log (user_id, kind, ref) values ('${VICTIM}', 'price_drop', 'forged')`,
+    reads: 'private',
+    ownerWrites: false,
+  },
+  {
+    // 073 (T1205): saved through price_alert_save only; the owner reads and deletes.
+    table: 'price_alerts',
+    seed: [{ as: 'victim', sql: `select public.price_alert_save('place', 'dest:LIS', 'Lisbon', '{"stops":[{"id":"LIS","cc":"PT","nights":3}],"month":5,"adults":2,"bed":"hotel3"}'::jsonb, 0.10, 'nl', 'alerts-v1')` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `drop_share = 0.20`,
+    forge: `insert into public.price_alerts (user_id, kind, ref, label, spec, drop_share, expires_at) values ('${VICTIM}', 'place', 'dest:BCN', 'Forged', '{"stops":[]}', 0.05, now() + interval '1 day')`,
+    reads: 'private',
+    ownerWrites: false,
+  },
+  {
+    // 073 (T1205): the double opt-in, written by definer functions only; the owner reads.
+    table: 'price_alert_consent',
+    seed: [{ as: 'db', sql: `insert into public.price_alert_consent (user_id, lang) values ('${VICTIM}', 'nl') on conflict (user_id) do nothing` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `confirmed_at = now()`,
+    forge: `insert into public.price_alert_consent (user_id, confirmed_at) values ('${VICTIM}', now()) on conflict (user_id) do update set confirmed_at = now()`,
     reads: 'private',
     ownerWrites: false,
   },
@@ -798,6 +828,7 @@ function runTests(bin) {
       plain: { role: 'authenticated', claims: { sub: PLAIN, role: 'authenticated', aal: 'aal1' } },
       third: { role: 'authenticated', claims: { sub: THIRD, role: 'authenticated', aal: 'aal1' } },
       anon: { role: 'anon', claims: { role: 'anon' } },
+      service: { role: 'service_role', claims: { role: 'service_role' } },
     };
     /** Run one statement as a given caller. Never throws. */
     const runAs = (who, sql) => {
@@ -1088,6 +1119,167 @@ function runTests(bin) {
       check(`a visitor may call ${fn.split('(')[0]} and learns nothing from it (063)`, r.ok && r.out === 'null', describe(r));
     }
 
+    // 065 (T1104): the synced things. The owner's sync writes a tombstone
+    // with an upsert, a second user's upsert on the same key cannot take the
+    // row over, the shape checks refuse a bad kind and a non-object body,
+    // and the per-account cap refuses the 1001st row.
+    console.log('');
+    console.log('  The synced things keep one account out of another (065):');
+    const tomb = affectedAs('victim', `insert into public.account_things (user_id, kind, item_id, body, updated_at, deleted_at)
+      values ('${VICTIM}', 'kept', 't1104kept', '{}', now(), now())
+      on conflict (user_id, kind, item_id) do update set body = excluded.body, updated_at = excluded.updated_at, deleted_at = excluded.deleted_at`);
+    check('the owner writes a tombstone over their own row with an upsert', tomb.ok && tomb.out === '1', describe(tomb));
+    const steal = affectedAs('plain', `insert into public.account_things (user_id, kind, item_id, body)
+      values ('${VICTIM}', 'kept', 't1104kept', '{"name": "stolen"}')
+      on conflict (user_id, kind, item_id) do update set body = excluded.body`);
+    check('a second user cannot upsert over the owner\'s row', !steal.ok, describe(steal));
+    const own = affectedAs('plain', `insert into public.account_things (user_id, kind, item_id, body) values ('${PLAIN}', 'kept', 't1104kept', '{}')`);
+    check('the same kind and id under the second user\'s own account is their own row', own.ok && own.out === '1', describe(own));
+    const seenByPlain = countAs('plain', 'account_things', `item_id = 't1104kept'`);
+    check('and they read only that one', seenByPlain.ok && seenByPlain.out === '1', describe(seenByPlain));
+    const thingKind = affectedAs('victim', `insert into public.account_things (user_id, kind, item_id) values ('${VICTIM}', 'secrets', 'x1')`);
+    check('a kind outside the four is refused', !thingKind.ok, describe(thingKind));
+    const thingBody = affectedAs('victim', `insert into public.account_things (user_id, kind, item_id, body) values ('${VICTIM}', 'kept', 'x2', '[1]')`);
+    check('a body that is not an object is refused', !thingBody.ok, describe(thingBody));
+    const thingId = affectedAs('victim', `insert into public.account_things (user_id, kind, item_id) values ('${VICTIM}', 'kept', E'a\\nb')`);
+    check('an id with a control character is refused', !thingId.ok, describe(thingId));
+    psql(bin, TEST_DB, ['-c', `insert into public.account_things (user_id, kind, item_id)
+      select '${VICTIM}', 'journey', 'cap' || g from generate_series(1, 1000 - (select count(*) from public.account_things where user_id = '${VICTIM}')) g`]);
+    const capped = affectedAs('victim', `insert into public.account_things (user_id, kind, item_id) values ('${VICTIM}', 'journey', 'one-too-many')`);
+    check('the 1001st row of one account is refused by the cap', !capped.ok && /at most 1000/.test(capped.err || ''), describe(capped));
+    const capUpdate = affectedAs('victim', `update public.account_things set updated_at = now() where user_id = '${VICTIM}' and item_id = 'cap1'`);
+    check('while an update at the cap still goes through', capUpdate.ok && capUpdate.out === '1', describe(capUpdate));
+    psql(bin, TEST_DB, ['-c', `delete from public.account_things where item_id like 'cap%' or (user_id = '${PLAIN}')`]);
+
+    // 066 (T1110): the waitlist. The table is closed (no policy); the
+    // Edge Function reaches it as the service role through five functions.
+    // A sign-up is stored unconfirmed, confirmed, unsubscribed, and the
+    // audience read for use never holds an address before its confirmation.
+    console.log('');
+    console.log('  The waitlist stores, confirms and unsubscribes through the service role only (066):');
+    const wl = (sql) => runAs('service', sql);
+    const joined = wl(`select public.waitlist_join('  Ada@Example.COM ', 'nl', 'home')`);
+    check('a sign-up is stored and asks for a confirmation mail', joined.ok && joined.out.split('\n').pop() === 'send', describe(joined));
+    check('the address is stored lower-cased, unconfirmed, in the visitor\'s language',
+      scalar(bin, TEST_DB, `select email || '/' || locale || '/' || (confirmed_at is null) from public.waitlist_signups`) === 'ada@example.com/nl/true');
+    const audience0 = wl('select count(*) from public.waitlist_audience()');
+    check('before the confirmation the audience holds nobody', audience0.ok && audience0.out.split('\n').pop() === '0', describe(audience0));
+    const again = wl(`select public.waitlist_join('ada@example.com', 'nl', 'home')`);
+    check('signing up again within ten minutes is throttled, not mailed twice', again.ok && again.out.split('\n').pop() === 'wait', describe(again));
+    check('a confirmation for an unknown address does nothing', wl(`select public.waitlist_confirm('nobody@example.com')`).out.split('\n').pop() === 'f');
+    check('the confirmation sets confirmed_at', wl(`select public.waitlist_confirm('ada@example.com')`).out.split('\n').pop() === 't');
+    check('and a second click is harmless', wl(`select public.waitlist_confirm('ada@example.com')`).out.split('\n').pop() === 't');
+    const audience1 = wl('select email from public.waitlist_audience()');
+    check('after the confirmation the audience holds the address', audience1.ok && audience1.out.split('\n').pop() === 'ada@example.com', describe(audience1));
+    check('a confirmed address signing up again is told nothing new', wl(`select public.waitlist_join('ada@example.com', 'nl', 'home')`).out.split('\n').pop() === 'already');
+    wl(`select public.waitlist_join('bo@example.com', 'en', 'home')`);
+    const audience2 = wl('select count(*) from public.waitlist_audience()');
+    check('a second, unconfirmed address stays out of the audience', audience2.ok && audience2.out.split('\n').pop() === '1', describe(audience2));
+    check('the unsubscribe is recorded', wl(`select public.waitlist_unsubscribe('ada@example.com')`).out.split('\n').pop() === 't');
+    const audience3 = wl('select count(*) from public.waitlist_audience()');
+    check('and the address leaves the audience', audience3.ok && audience3.out.split('\n').pop() === '0', describe(audience3));
+    check('an unsubscribed address cannot be re-confirmed by an old link', wl(`select public.waitlist_confirm('ada@example.com')`).out.split('\n').pop() === 'f');
+    check('the row is kept, so a later import does not mail an address that opted out',
+      scalar(bin, TEST_DB, `select (unsubscribed_at is not null)::text from public.waitlist_signups where email = 'ada@example.com'`) === 'true');
+    psql(bin, TEST_DB, ['-c', `update public.waitlist_signups set last_sent_at = now() - interval '1 hour'`]);
+    check('joining again after an unsubscribe starts over, unconfirmed', wl(`select public.waitlist_join('ada@example.com', 'nl', 'home')`).out.split('\n').pop() === 'send'
+      && scalar(bin, TEST_DB, `select (confirmed_at is null and unsubscribed_at is null)::text from public.waitlist_signups where email = 'ada@example.com'`) === 'true');
+    const badMail = wl(`select public.waitlist_join('not-an-address', 'en', 'home')`);
+    check('an address that is not one is refused by the table check', !badMail.ok, describe(badMail));
+    psql(bin, TEST_DB, ['-c', `update public.waitlist_signups set created_at = now() - interval '40 days'`]);
+    const tooSoon = wl('select public.waitlist_purge(3)');
+    check('the purge refuses fewer than 7 days', !tooSoon.ok, describe(tooSoon));
+    check('the purge removes addresses never confirmed (both are unconfirmed now)', wl('select public.waitlist_purge(30)').out.split('\n').pop() === '2');
+    for (const who of ['victim', 'plain', 'anon']) {
+      const read = runAs(who, 'select count(*) from public.waitlist_signups');
+      check(`waitlist_signups: ${who} reads nothing`, nothing(read), describe(read));
+      const write = runAs(who, `insert into public.waitlist_signups (email) values ('${who}@example.com')`);
+      check(`waitlist_signups: ${who} cannot insert directly`, !write.ok, describe(write));
+      for (const fn of [`waitlist_join('${who}@example.com', 'en', 'home')`, 'waitlist_audience()', `waitlist_confirm('${who}@example.com')`, `waitlist_unsubscribe('${who}@example.com')`, 'waitlist_purge(30)']) {
+        const call = runAs(who, `select * from public.${fn}`);
+        check(`${who} cannot call ${fn.split('(')[0]}`, denied(call), describe(call));
+      }
+    }
+
+    // 073 (T1205): price alerts. The traveller saves through
+    // price_alert_save; the box and the price-alerts function reach the rest
+    // as the service role. No email before the opt-in click, one email per
+    // alert, and none after an unsubscribe.
+    console.log('');
+    console.log('  Price alerts: double opt-in, one email per alert, unsubscribe (073):');
+    const paSvc = (sql) => runAs('service', sql);
+    const paLast = (r) => r.out.split('\n').pop();
+    const paLISBON = `'{"stops":[{"id":"LIS","cc":"PT","nights":3}],"month":5,"adults":2,"bed":"hotel3"}'::jsonb`;
+    const paAlertId = scalar(bin, TEST_DB, `select id from public.price_alerts where user_id = '${VICTIM}' and ref = 'dest:LIS'`);
+    check('the fixture saved the victim\'s alert unarmed', /^[0-9a-f-]{36}$/.test(paAlertId)
+      && scalar(bin, TEST_DB, `select (baseline_eur is null and fired_at is null)::text from public.price_alerts where id = '${paAlertId}'`) === 'true');
+    const paResave = runAs('victim', `select public.price_alert_save('place', 'dest:LIS', 'Lisbon', ${paLISBON}, 0.10, 'nl', 'alerts-v1')::text`);
+    check('saving the same alert again answers unconfirmed and keeps one row', paResave.ok && /"confirmed": false/.test(paResave.out)
+      && scalar(bin, TEST_DB, `select count(*) from public.price_alerts where user_id = '${VICTIM}'`) === '1', describe(paResave));
+    const paBadShare = runAs('victim', `select public.price_alert_save('place', 'dest:OPO', 'Porto', ${paLISBON}, 0.15)`);
+    check('a share other than 5, 10 or 20 percent is refused', !paBadShare.ok, describe(paBadShare));
+    const paNoStops = runAs('victim', `select public.price_alert_save('place', 'dest:OPO', 'Porto', '{"stops":[]}'::jsonb, 0.10)`);
+    check('an alert with no stop is refused', !paNoStops.ok, describe(paNoStops));
+    const paStarted = runAs('victim', `select public.price_alert_save('trip', 'trip:x1', 'Old trip', '{"stops":[{"id":"LIS","cc":"PT","nights":2}],"start":"2020-01-01"}'::jsonb, 0.10)`);
+    check('a trip that has started is refused', !paStarted.ok, describe(paStarted));
+    const paAnonSave = runAs('anon', `select public.price_alert_save('place', 'dest:OPO', 'Porto', ${paLISBON}, 0.10)`);
+    check('a signed-out visitor cannot save an alert', !paAnonSave.ok, describe(paAnonSave));
+    const paDated = runAs('plain', `select public.price_alert_save('trip', 'trip:p1', 'Spring', ('{"stops":[{"id":"LIS","cc":"PT","nights":2}],"start":"' || (current_date + 30)::text || '"}')::jsonb, 0.05)`);
+    check('a dated alert expires on its first travel date', paDated.ok && scalar(bin, TEST_DB,
+      `select (expires_at::date = current_date + 30)::text from public.price_alerts where user_id = '${PLAIN}' and ref = 'trip:p1'`) === 'true', describe(paDated));
+    psql(bin, TEST_DB, ['-c', `insert into public.price_alerts (user_id, kind, ref, label, spec, drop_share, expires_at)
+      select '${PLAIN}', 'place', 'dest:C' || g, 'Cap', '{"stops":[{"id":"X"}]}', 0.10, now() + interval '9 days' from generate_series(1, 19) g`]);
+    const paCapped = runAs('plain', `select public.price_alert_save('place', 'dest:ONEMORE', 'One more', ${paLISBON}, 0.10)`);
+    check('the 21st open alert of one account is refused', !paCapped.ok && /at most 20/.test(paCapped.err || ''), describe(paCapped));
+    const paRecap = runAs('plain', `select public.price_alert_save('place', 'dest:C1', 'Cap', ${paLISBON}, 0.20)`);
+    check('while saving one of the 20 again still goes through', paRecap.ok, describe(paRecap));
+    psql(bin, TEST_DB, ['-c', `delete from public.price_alerts where user_id = '${PLAIN}'`]);
+
+    const paOpen0 = paSvc('select count(*) from public.price_alerts_open()');
+    check('before the opt-in click the box is given no alert to price', paOpen0.ok && paLast(paOpen0) === '0', describe(paOpen0));
+    check('nor can a check arm it', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 900)`)) === 'gone');
+    check('and price_alert_mail yields no address', paLast(paSvc(`select count(*) from public.price_alert_mail('${paAlertId}')`)) === '0');
+    check('the opt-in mail is claimed once', paLast(paSvc(`select public.price_alert_optin_claim('${VICTIM}')`)) === 'send');
+    check('a second request within ten minutes waits', paLast(paSvc(`select public.price_alert_optin_claim('${VICTIM}')`)) === 'wait');
+    paSvc(`select public.price_alert_optin_unclaim('${VICTIM}')`);
+    check('a failed send releases the claim', paLast(paSvc(`select public.price_alert_optin_claim('${VICTIM}')`)) === 'send');
+    check('an unknown account has nothing to confirm', paLast(paSvc(`select public.price_alert_optin_claim('00000000-0000-0000-0000-00000000c0ff')`)) === 'none');
+    check('the confirmation link records the consent', paLast(paSvc(`select public.price_alert_confirm('${VICTIM}')`)) === 't');
+    check('and the next opt-in request is told "already"', paLast(paSvc(`select public.price_alert_optin_claim('${VICTIM}')`)) === 'already');
+    const paOpen1 = paSvc('select id from public.price_alerts_open()');
+    check('after the click the box is given the alert', paOpen1.ok && paLast(paOpen1) === paAlertId, describe(paOpen1));
+    check('the first check arms it with the baseline', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 900)`)) === 'armed'
+      && scalar(bin, TEST_DB, `select baseline_eur from public.price_alerts where id = '${paAlertId}'`) === '900');
+    check('a drop smaller than the share holds', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 811)`)) === 'hold');
+    check('a drop of the share fires', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 810)`)) === 'fire');
+    check('and only once: the next check finds it gone', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 700)`)) === 'gone');
+    const paMail = paSvc(`select email || '/' || lang || '/' || baseline_eur || '/' || fired_eur from public.price_alert_mail('${paAlertId}')`);
+    check('the email gets the address, language and both totals', paLast(paMail) === 'victim@example.test/nl/900/810' || /\/nl\/900\/810$/.test(paLast(paMail)), describe(paMail));
+    check('a fired alert is not given to the box again', paLast(paSvc('select count(*) from public.price_alerts_open()')) === '0');
+    paSvc(`select public.price_alert_release('${paAlertId}')`);
+    check('a failed send releases the alert for the next run', paLast(paSvc('select count(*) from public.price_alerts_open()')) === '1');
+    check('a bad total is refused', !paSvc(`select public.price_alert_record('${paAlertId}', 0)`).ok);
+    check('the unsubscribe link is recorded', paLast(paSvc(`select public.price_alert_unsubscribe('${VICTIM}')`)) === 't');
+    check('after it no alert is priced and no email is addressed', paLast(paSvc('select count(*) from public.price_alerts_open()')) === '0'
+      && paLast(paSvc(`select count(*) from public.price_alert_mail('${paAlertId}')`)) === '0'
+      && paLast(paSvc(`select public.price_alert_record('${paAlertId}', 500)`)) === 'gone');
+    check('an old confirmation link cannot undo the unsubscribe', paLast(paSvc(`select public.price_alert_confirm('${VICTIM}')`)) === 'f');
+    const paAgain = runAs('victim', `select public.price_alert_save('place', 'dest:LIS', 'Lisbon', ${paLISBON}, 0.10, 'nl', 'alerts-v1')::text`);
+    check('saving again after an unsubscribe asks for consent anew', paAgain.ok && /"confirmed": false/.test(paAgain.out)
+      && scalar(bin, TEST_DB, `select (confirmed_at is null and unsubscribed_at is null)::text from public.price_alert_consent where user_id = '${VICTIM}'`) === 'true', describe(paAgain));
+    psql(bin, TEST_DB, ['-c', `update public.price_alerts set expires_at = now() - interval '40 days' where id = '${paAlertId}'`]);
+    check('the purge deletes an alert 30 days past expiry', paLast(paSvc('select public.price_alert_purge()')) === '1');
+    // Put the victim's alert back for the export and the later sections.
+    runAs('victim', `select public.price_alert_save('place', 'dest:LIS', 'Lisbon', ${paLISBON}, 0.10, 'nl', 'alerts-v1')`);
+    for (const who of ['victim', 'plain', 'anon']) {
+      for (const fn of ['price_alerts_open()', `price_alert_record('${paAlertId}', 1)`, `price_alert_confirm('${VICTIM}')`,
+        `price_alert_unsubscribe('${VICTIM}')`, `price_alert_optin_claim('${VICTIM}')`, `price_alert_mail('${paAlertId}')`,
+        `price_alert_release('${paAlertId}')`, 'price_alert_purge()']) {
+        const call = runAs(who, `select * from public.${fn}`);
+        check(`${who} cannot call ${fn.split('(')[0]}`, denied(call), describe(call));
+      }
+    }
+
     // ---------------------------------------------------------------------
     // 4b. The two closed tables 047 widened (T284). The closed-table probe
     //     above runs while they are empty, where "reads nothing" would also
@@ -1150,6 +1342,41 @@ function runTests(bin) {
       const forge = runAs(who, `insert into public.launch_counts (event, target, surface, n) values ('affiliate_click', 'omio', 'leg', 1000000)`);
       check(`launch_counts: ${who} cannot write a count directly`, !forge.ok, describe(forge));
     }
+
+    // 4d. The funnel counters of 070 (T1129): same shape, same closed doors.
+    console.log('');
+    console.log('  The funnel counters land through their writer and stay closed (070):');
+    check('a visitor counts a funnel step', runAs('anon', `select public.funnel_step('explore_opened')`).ok);
+    check('a signed-in traveller counts a funnel step', runAs('victim', `select public.funnel_step('trip_saved')`).ok);
+    for (const who of ['victim', 'plain', 'anon']) {
+      const read = runAs(who, 'select count(*) from public.funnel_counts');
+      check(`funnel_counts: ${who} reads none of the rows`, (read.ok && read.out === '0') || denied(read), describe(read));
+      const forge = runAs(who, `insert into public.funnel_counts (step, n) values ('shared', 1000000)`);
+      check(`funnel_counts: ${who} cannot write a count directly`, !forge.ok, describe(forge));
+    }
+
+    // 4d2. Call events of 071 (T1139, E4): the table the gateway writes, only the
+    //      service role writes it, and nobody else reads a row.
+    console.log('');
+    console.log('  ai_model_events call rows stay closed (071):');
+    // Supabase's service_role has BYPASSRLS; the stub role does not. Give it the real posture for this block.
+    runAs('db', 'alter role service_role bypassrls');
+    check('the service role writes a call row', runAs('service', `insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome) values ('call', 'ask', 'workers-ai', 'm', 120, 'ok')`).ok);
+    for (const who of ['victim', 'plain', 'anon']) {
+      const read = runAs(who, 'select count(*) from public.ai_model_events');
+      check(`ai_model_events: ${who} reads none of the rows`, (read.ok && read.out === '0') || denied(read), describe(read));
+      const forge = runAs(who, `insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome) values ('call', 'ask', 'x', 'm', 1, 'ok')`);
+      check(`ai_model_events: ${who} cannot write a row`, !forge.ok, describe(forge));
+    }
+    check('a call row cannot carry a user id', !runAs('service', `insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome, user_id) values ('call', 'ask', 'p', 'm', 1, 'ok', gen_random_uuid())`).ok);
+    check('a query hash must be 64 hex characters', !runAs('service', `insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome, query_hash) values ('call', 'ask', 'p', 'm', 1, 'ok', 'what is the best lake')`).ok);
+    check('ai_events_prune is not callable by a traveller', !runAs('victim', 'select public.ai_events_prune()').ok);
+    check('ai_events_prune deletes call rows older than 30 days and keeps newer ones', (() => {
+      runAs('db', `insert into public.ai_model_events (kind, feature, provider, model, latency_ms, outcome, created_at) values ('call', 'ask', 'p', 'old', 1, 'ok', now() - interval '31 days'), ('call', 'ask', 'p', 'new', 1, 'ok', now() - interval '29 days')`);
+      runAs('service', 'select public.ai_events_prune()');
+      return runAs('db', `select string_agg(model, ',') from public.ai_model_events where model in ('old', 'new')`).out === 'new';
+    })());
+    runAs('db', 'alter role service_role nobypassrls');
 
     // ---------------------------------------------------------------------
     // 4e. The upload path (061, T1070): the storage policies, the RPCs, the
@@ -1296,7 +1523,7 @@ function runTests(bin) {
     };
     const victimHandle = scalar(bin, TEST_DB, `select handle from public.profiles where user_id = '${VICTIM}'`);
     const mineExp = exportOf('victim');
-    check('the victim\'s export parses and is schema 3', mineExp && mineExp.schema === 3, JSON.stringify(mineExp || {}).slice(0, 120));
+    check('the victim\'s export parses and is schema 3 or later (4 since 069)', mineExp && mineExp.schema >= 3, JSON.stringify(mineExp || {}).slice(0, 120));
     if (mineExp) {
       for (const key of ['tripPlans', 'tripPlanStops', 'dayPlans', 'tripShares', 'coplanners', 'friends',
         'passGrants', 'achievements', 'moderationStatements', 'edgeErrors', 'feedback']) {
@@ -1315,7 +1542,8 @@ function runTests(bin) {
         && c.otherHandle === thirdHandle), JSON.stringify(mineExp.coplanners));
       const text = JSON.stringify(mineExp);
       check('export: no other traveller\'s user id is anywhere in the file',
-        !text.includes(THIRD) && !text.includes(PLAIN), 'a friend or co-planner id leaked');
+        !text.includes(THIRD) && !text.includes(PLAIN),
+        `a friend or co-planner id leaked in ${Object.keys(mineExp).filter((k) => /c00[23]/.test(JSON.stringify(mineExp[k]))).join(', ')}`);
     }
     const plainExp = exportOf('plain');
     check('a second traveller\'s export parses', Boolean(plainExp));
@@ -1345,6 +1573,60 @@ function runTests(bin) {
       leaked.ok && leaked.out === '1', describe(leaked));
     const sealed = countAs('plain', 'trip_plans', `id = '${PLAN}'`);
     check('and with it dropped again, does not', sealed.ok && sealed.out === '0', describe(sealed));
+
+    // ---------------------------------------------------------------------
+    // 6. Every SECURITY DEFINER function pins its search_path (T1087,
+    //    register row T1078-b, threat model section 5). A definer function
+    //    runs with its owner's rights; with the caller's search_path it can
+    //    be pointed at a schema the caller controls and read their object
+    //    instead of public's. admin-rpc-security checks this for admin_*
+    //    only; this checks every definer function in every non-system
+    //    schema, discovered from pg_proc, so a new one is covered with no
+    //    edit. Asserted per function: a search_path entry in proconfig, no
+    //    "$user" in it, and no listed schema a client role may CREATE in.
+    // ---------------------------------------------------------------------
+    console.log('');
+    console.log('  Every SECURITY DEFINER function pins a safe search_path (T1087):');
+    const definerSql = `
+      select coalesce(json_agg(json_build_object(
+        'fn', p.oid::regprocedure::text,
+        'path', (select substr(c, length('search_path=') + 1) from unnest(coalesce(p.proconfig, '{}')) c
+                  where c like 'search_path=%' limit 1)
+      ) order by p.oid::regprocedure::text), '[]')
+        from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+       where p.prosecdef
+         and n.nspname not in ('pg_catalog', 'information_schema')
+         and n.nspname not like 'pg_toast%'`;
+    const definers = JSON.parse(scalar(bin, TEST_DB, definerSql));
+    check('the catalogue holds SECURITY DEFINER functions to check (at least 50)', definers.length >= 50,
+      `found ${definers.length}`);
+    const writableBy = (schema) => scalar(bin, TEST_DB,
+      `select coalesce((select has_schema_privilege('anon', n.oid, 'CREATE') or has_schema_privilege('authenticated', n.oid, 'CREATE')
+         from pg_namespace n where n.nspname = '${schema.replace(/'/g, "''")}'), false)`) === 't';
+    const pathVerdict = (path) => {
+      if (path == null) return 'no search_path in proconfig';
+      const parts = path.split(',').map((x) => x.trim().replace(/^"(.*)"$/, '$1')).filter(Boolean);
+      if (parts.includes('$user')) return `"$user" in search_path=${path}`;
+      const open = parts.filter((x) => x !== 'pg_temp' && writableBy(x));
+      if (open.length) return `client-writable schema ${open.join(',')} in search_path=${path}`;
+      return '';
+    };
+    const unpinned = definers.map((d) => ({ ...d, why: pathVerdict(d.path) })).filter((d) => d.why);
+    check(`all ${definers.length} SECURITY DEFINER functions pin a safe search_path`, unpinned.length === 0,
+      unpinned.map((d) => `${d.fn}: ${d.why}`).join('; '));
+    // The control: an unpinned definer function must be caught, or the
+    // check above proved nothing.
+    psql(bin, TEST_DB, ['-c', `create function public.t1087_unpinned() returns int language sql security definer as 'select 1'`]);
+    const caught = JSON.parse(scalar(bin, TEST_DB, definerSql))
+      .filter((d) => d.fn === 't1087_unpinned()' && pathVerdict(d.path));
+    psql(bin, TEST_DB, ['-c', 'drop function public.t1087_unpinned()']);
+    check('an unpinned SECURITY DEFINER function added for the control is caught', caught.length === 1);
+    psql(bin, TEST_DB, ['-c', `create schema t1087_open; grant create on schema t1087_open to authenticated;
+      create function public.t1087_open_path() returns int language sql security definer set search_path = t1087_open, public as 'select 1'`]);
+    const caughtOpen = JSON.parse(scalar(bin, TEST_DB, definerSql))
+      .filter((d) => d.fn === 't1087_open_path()' && pathVerdict(d.path));
+    psql(bin, TEST_DB, ['-c', 'drop function public.t1087_open_path(); drop schema t1087_open']);
+    check('and so is one whose search_path names a schema a client may create in', caughtOpen.length === 1);
 
     console.log('');
     console.log(`  note  ${covered} tables covered by an isolation fixture, ${closed.length} closed tables probed, ${policies.length} policies in force`);

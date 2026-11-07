@@ -1,0 +1,464 @@
+"""Reference generators for the pipeline task catalogue and the Supabase schema
+(ROADMAP B6, T1167). Used by scripts/docs/build_reference.py; no third-party
+imports, nothing is imported from the repo's own code (the task table in
+pipeline/tasks/ is parsed by pipeline/tasks/source.py, a stdlib-only reader, and the
+migrations are read as text).
+
+    tasks.md     every run_pipeline.py TASKS entry: cadence, what it reads and
+                 writes, flags, the commands it runs
+    supabase.md  every table (columns, RLS state, policies), function and index
+                 in supabase/migrations, replayed in numeric order
+"""
+from __future__ import annotations
+
+import ast
+import json
+import re
+from pathlib import Path
+
+# ---------------------------------------------------------------- tasks
+
+CADENCE_ORDER = ["weekly", "monthly", "quarterly", "after", "backfill"]
+
+
+def _lit(node):
+    try:
+        return ast.literal_eval(node)
+    except Exception:
+        return None
+
+
+def _argv_strings(node) -> list[str]:
+    out = []
+    for el in getattr(node, "elts", []):
+        if isinstance(el, ast.Constant) and isinstance(el.value, str):
+            out.append(el.value)
+        elif isinstance(el, ast.Name):
+            out.append("<" + el.id + ">")
+        elif isinstance(el, ast.Attribute):
+            out.append("<" + ast.unparse(el) + ">")
+        else:
+            out.append("<...>")
+    return out
+
+
+def _task_source(root):
+    """pipeline/tasks/source.py loaded by path: the task table is split over
+    pipeline/tasks/<domain>.py since T1207 (ROADMAP A2)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "carta_task_source", Path(root) / "pipeline" / "tasks" / "source.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def read_tasks(root: Path) -> list[dict]:
+    """TASKS from pipeline/tasks/*.py (run_pipeline.py's table since T1207) with ast, never imported."""
+    tree = _task_source(root).task_tree(root)
+    funcs = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
+    node = None
+    for n in tree.body:
+        if isinstance(n, ast.Assign) and any(getattr(t, "id", None) == "TASKS" for t in n.targets):
+            node = n
+            break
+    if node is None:
+        raise SystemExit("run_pipeline.py: no TASKS list")
+    consts = {}
+    for n in tree.body:
+        if isinstance(n, ast.Assign) and len(n.targets) == 1 and isinstance(n.targets[0], ast.Name):
+            v = _lit(n.value)
+            if isinstance(v, str):
+                consts[n.targets[0].id] = v
+    tasks = []
+    for el in node.value.elts:
+        t = {"cmds": [], "key": None}
+        for k, v in zip(el.keys, el.values):
+            key = k.value if isinstance(k, ast.Constant) else None
+            if key in ("key", "title", "cadence", "writes_app_data", "writes_wire", "soft", "rev", "est_h"):
+                t[key] = _lit(v)
+            elif key == "after":
+                t["after"] = _lit(v) or []
+            elif key == "note":
+                val = _lit(v)
+                if val is None:
+                    try:
+                        val = "".join(_lit(p) or "" for p in v.values) if isinstance(v, ast.JoinedStr) else None
+                    except Exception:
+                        val = None
+                t["note"] = val
+            elif key == "cmds":
+                for cmd in getattr(v, "elts", []):
+                    argv = _argv_strings(cmd)
+                    if argv:
+                        t["cmds"].append(argv)
+            elif key in ("run", "guard", "dry_run"):
+                t[key] = getattr(v, "id", None) if isinstance(v, ast.Name) else (ast.unparse(v)[:60])
+        # a custom step: first line of its docstring tells what it does
+        fn = funcs.get(t.get("run") or "")
+        t["run_doc"] = (ast.get_docstring(fn) or "").split("\n\n")[0].replace("\n", " ") if fn else ""
+        tasks.append(t)
+    for t in tasks:
+        for k, v in list(t.items()):
+            if isinstance(v, str):
+                for name, val in consts.items():
+                    if v == name:
+                        t[k] = val
+    return tasks
+
+
+def _cmd_text(argv: list[str]) -> str:
+    parts = []
+    for a in argv:
+        parts.append("python" if a in ("<PY>", "<sys.executable>") else a)
+    return " ".join(parts)
+
+
+def _script_paths(t: dict) -> list[str]:
+    seen = []
+    for argv in t["cmds"]:
+        for a in argv:
+            if "/" in a and not a.startswith("-") and a not in seen and not a.startswith("<"):
+                seen.append(a)
+                break
+    return seen
+
+
+def _cell(s) -> str:
+    return str(s if s is not None else "").replace("|", "\\|").replace("\n", " ").replace("\u2014", "-").replace("\u2013", "-").strip()
+
+
+def render_tasks(root: Path, lineage: dict | None) -> str:
+    tasks = read_tasks(root)
+    writes = {}
+    if lineage:
+        for f, r in lineage.get("fields", {}).items():
+            for tk in r.get("tasks", []):
+                writes.setdefault(tk, []).append(f)
+        wf_by_task = {}
+        for wf in lineage.get("wire_files", []):
+            for tk in wf.get("tasks", []):
+                wf_by_task.setdefault(tk, []).append(wf["path"])
+    else:
+        wf_by_task = {}
+    lines = [
+        "# Pipeline task catalogue",
+        "",
+        "Generated by `python -I scripts/docs/build_reference.py` from `run_pipeline.py` (the `TASKS` list, read with `ast`, never imported) and the field lists in `docs/architecture/lineage-fields.json`. Do not edit by hand (ROADMAP B6, T1167). How a run works is in `docs/data/pipeline.md`; per-field lineage is in `docs/architecture/lineage.md`.",
+        "",
+        f"{len(tasks)} tasks. Cadence: weekly, monthly, quarterly run on a schedule; `after` runs when a task it follows succeeded more recently than it did; `backfill` runs only with `--only`. `writes master` means the task writes `app_data.json` (a pre-write backup and a concurrency guard apply); `writes wire` means it writes `continent-app/public/` directly.",
+        "",
+    ]
+    counts = {}
+    for t in tasks:
+        counts[t.get("cadence")] = counts.get(t.get("cadence"), 0) + 1
+    lines.append("| Cadence | Tasks |")
+    lines.append("|---|---|")
+    for c in CADENCE_ORDER + sorted(set(counts) - set(CADENCE_ORDER), key=str):
+        if c in counts:
+            lines.append(f"| {c} | {counts[c]} |")
+    lines.append("")
+    lines.append("## Overview")
+    lines.append("")
+    lines.append("| Task | Cadence | Writes | Follows | Flags | Title |")
+    lines.append("|---|---|---|---|---|---|")
+    for c in CADENCE_ORDER + sorted(set(counts) - set(CADENCE_ORDER), key=str):
+        for t in tasks:
+            if t.get("cadence") != c:
+                continue
+            w = []
+            if t.get("writes_app_data"):
+                w.append("master")
+            if t.get("writes_wire"):
+                w.append("wire")
+            flags = []
+            if t.get("soft"):
+                flags.append("soft")
+            if t.get("guard"):
+                flags.append("guard")
+            if t.get("dry_run"):
+                flags.append("dry-run")
+            lines.append(
+                f"| [`{t['key']}`](#{t['key']}) | {c} | {', '.join(w) or 'neither'} | "
+                f"{_cell(', '.join(t.get('after') or []))} | {', '.join(flags)} | {_cell(t.get('title'))} |"
+            )
+    lines.append("")
+    lines.append("## Tasks")
+    for t in tasks:
+        lines += ["", f'### <a id="{t["key"]}"></a>`{t["key"]}`', "", _cell(t.get("title")), ""]
+        lines.append(f"- Cadence: {t.get('cadence')}" + (f", follows {', '.join(t['after'])}" if t.get("after") else ""))
+        w = []
+        if t.get("writes_app_data"):
+            w.append("the master `app_data.json`")
+        if t.get("writes_wire"):
+            w.append("the wire files in `continent-app/public/`")
+        lines.append("- Writes: " + (" and ".join(w) if w else "neither the master nor the wire directly"))
+        fl = writes.get(t["key"])
+        if fl:
+            lines.append(f"- Wire fields it owns ({len(fl)}): " + ", ".join(f"`{x}`" for x in sorted(fl)[:12]) + (" ..." if len(fl) > 12 else ""))
+        wfs = wf_by_task.get(t["key"])
+        if wfs:
+            lines.append("- Wire files: " + ", ".join(f"`{x}`" for x in wfs))
+        if t.get("est_h"):
+            lines.append(f"- Expected hours of a warm run: {t['est_h']}")
+        if t.get("rev"):
+            lines.append(f"- Command revision: `{t['rev']}`")
+        extra = []
+        for k, label in (("guard", "guard"), ("dry_run", "dry run"), ("run", "custom step")):
+            if t.get(k):
+                extra.append(f"{label} `{t[k]}`")
+        if extra:
+            lines.append("- Code: " + ", ".join(extra))
+        if t.get("run_doc"):
+            lines.append(f"- Step: {_cell(t['run_doc'])}")
+        if t.get("note"):
+            lines.append(f"- Note: {_cell(t['note'])}")
+        scripts = _script_paths(t)
+        if scripts:
+            lines.append("- Reads and runs: " + ", ".join(f"`{s}`" for s in scripts))
+        if t["cmds"]:
+            lines.append("- Commands:")
+            lines.append("")
+            lines.append("```")
+            for argv in t["cmds"]:
+                lines.append(_cmd_text(argv))
+            lines.append("```")
+    lines.append("")
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------- sql
+
+def _strip_comments(sql: str) -> str:
+    sql = re.sub(r"/\*.*?\*/", " ", sql, flags=re.S)
+    return re.sub(r"--[^\n]*", "", sql)
+
+
+def split_statements(sql: str) -> list[str]:
+    """Split on ; outside $tag$...$tag$ bodies and quotes."""
+    sql = _strip_comments(sql)
+    out, buf, i, n = [], [], 0, len(sql)
+    dollar = None
+    quote = False
+    while i < n:
+        ch = sql[i]
+        if dollar:
+            if sql.startswith(dollar, i):
+                buf.append(dollar)
+                i += len(dollar)
+                dollar = None
+                continue
+            buf.append(ch)
+            i += 1
+            continue
+        if quote:
+            buf.append(ch)
+            if ch == "'":
+                quote = False
+            i += 1
+            continue
+        if ch == "'":
+            quote = True
+        elif ch == "$":
+            m = re.match(r"\$[A-Za-z_]*\$", sql[i:])
+            if m:
+                dollar = m.group(0)
+                buf.append(dollar)
+                i += len(dollar)
+                continue
+        elif ch == ";":
+            s = "".join(buf).strip()
+            if s:
+                out.append(s)
+            buf = []
+            i += 1
+            continue
+        buf.append(ch)
+        i += 1
+    s = "".join(buf).strip()
+    if s:
+        out.append(s)
+    return out
+
+
+def _tname(s: str) -> str:
+    s = s.strip().strip('"')
+    s = s.replace('"', "")
+    return s if "." in s else "public." + s
+
+
+def _split_top(body: str) -> list[str]:
+    parts, depth, cur = [], 0, []
+    for ch in body:
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+        if ch == "," and depth == 0:
+            parts.append("".join(cur).strip())
+            cur = []
+        else:
+            cur.append(ch)
+    if "".join(cur).strip():
+        parts.append("".join(cur).strip())
+    return parts
+
+
+def _body(stmt: str) -> str:
+    a = stmt.index("(")
+    depth = 0
+    for i in range(a, len(stmt)):
+        if stmt[i] == "(":
+            depth += 1
+        elif stmt[i] == ")":
+            depth -= 1
+            if depth == 0:
+                return stmt[a + 1 : i]
+    return stmt[a + 1 :]
+
+
+CONSTRAINT = re.compile(r"^(primary\s+key|unique|foreign\s+key|check|constraint|exclude)\b", re.I)
+
+
+def _col(def_: str) -> tuple[str, str] | None:
+    m = re.match(r'^"?([A-Za-z_][\w]*)"?\s+(.*)$', def_.strip(), re.S)
+    if not m:
+        return None
+    return m.group(1), re.sub(r"\s+", " ", m.group(2)).strip()
+
+
+def replay(root: Path) -> dict:
+    mig = root / "supabase" / "migrations"
+    files = sorted(p for p in mig.glob("*.sql") if not p.stem.endswith("_down"))
+    state = {"tables": {}, "functions": {}, "indexes": {}, "files": [p.name for p in files]}
+    T = state["tables"]
+
+    def table(name):
+        return T.setdefault(name, {"cols": {}, "rls": False, "policies": {}, "created": None, "cons": []})
+
+    for p in files:
+        for st in split_statements(p.read_text(encoding="utf-8")):
+            low = re.sub(r"\s+", " ", st.lower())
+            m = re.match(r"create table (?:if not exists )?([\w\".]+)\s*\(", re.sub(r"\s+", " ", st), re.I)
+            if m:
+                n = _tname(m.group(1))
+                t = table(n)
+                t["created"] = t["created"] or p.name[:3]
+                for d in _split_top(_body(st)):
+                    if CONSTRAINT.match(d):
+                        t["cons"].append(re.sub(r"\s+", " ", d))
+                    else:
+                        c = _col(d)
+                        if c:
+                            t["cols"].setdefault(c[0], c[1])
+                continue
+            m = re.match(r"alter table (?:if exists )?(?:only )?([\w\".]+) (.*)", re.sub(r"\s+", " ", st), re.I | re.S)
+            if m:
+                n = _tname(m.group(1))
+                rest = m.group(2)
+                if re.search(r"\benable row level security\b", rest, re.I):
+                    table(n)["rls"] = True
+                if re.search(r"\bdisable row level security\b", rest, re.I):
+                    table(n)["rls"] = False
+                for am in re.finditer(r"add column (?:if not exists )?\"?(\w+)\"? ([^,]+?)(?:,|$)", rest, re.I):
+                    table(n)["cols"].setdefault(am.group(1), am.group(2).strip())
+                for dm in re.finditer(r"drop column (?:if exists )?\"?(\w+)\"?", rest, re.I):
+                    table(n)["cols"].pop(dm.group(1), None)
+                continue
+            m = re.match(r"drop table (?:if exists )?([\w\".]+)", low)
+            if m:
+                T.pop(_tname(m.group(1)), None)
+                continue
+            m = re.match(r"drop policy (?:if exists )?(\"[^\"]+\"|\w+) on ([\w\".]+)", re.sub(r"\s+", " ", st), re.I)
+            if m:
+                table(_tname(m.group(2)))["policies"].pop(m.group(1).strip('"'), None)
+                continue
+            m = re.match(r"create policy (\"[^\"]+\"|\w+) on ([\w\".]+)(.*)", re.sub(r"\s+", " ", st), re.I | re.S)
+            if m:
+                rest = m.group(3)
+                cmd = re.search(r"\bfor (all|select|insert|update|delete)\b", rest, re.I)
+                to = re.search(r"\bto ([\w, ]+?)(?= using| with check|$)", rest, re.I)
+                us = re.search(r"\busing \((.*)\)(?= with check|$)", rest, re.I)
+                wc = re.search(r"\bwith check \((.*)\)$", rest, re.I)
+                if us and wc and wc.start() < us.end():
+                    us = re.search(r"\busing \((.*?)\)\s*with check", rest, re.I)
+                table(_tname(m.group(2)))["policies"][m.group(1).strip('"')] = {
+                    "cmd": (cmd.group(1).lower() if cmd else "all"),
+                    "to": (to.group(1).strip() if to else "all roles"),
+                    "using": us.group(1).strip() if us else "",
+                    "check": wc.group(1).strip() if wc else "",
+                    "file": p.name[:3],
+                }
+                continue
+            m = re.match(r"create (?:or replace )?function ([\w\".]+)\s*\(", re.sub(r"\s+", " ", st), re.I)
+            if m:
+                n = m.group(1).replace('"', "")
+                n = n if "." in n else "public." + n
+                args = re.sub(r"\s+", " ", _body(st)).strip()
+                flat = re.sub(r"\s+", " ", st)
+                ret = re.search(r"\breturns ((?:setof )?[\w\.\[\]]+(?: ?\([^)]*\))?|table ?\(.*?\))\s", flat, re.I)
+                state["functions"][f"{n}({args})"] = {
+                    "name": n,
+                    "args": args,
+                    "returns": ret.group(1) if ret else "",
+                    "definer": bool(re.search(r"security definer", flat, re.I)),
+                    "lang": (re.search(r"language (\w+)", flat, re.I) or [None, ""])[1],
+                    "file": p.name[:3],
+                }
+                continue
+            m = re.match(r"create (unique )?index (?:if not exists )?(\w+) on ([\w\".]+)", re.sub(r"\s+", " ", st), re.I)
+            if m:
+                state["indexes"][m.group(2)] = {"table": _tname(m.group(3)), "unique": bool(m.group(1)), "file": p.name[:3]}
+                continue
+            m = re.match(r"drop index (?:if exists )?(?:public\.)?(\w+)", low)
+            if m:
+                state["indexes"].pop(m.group(1), None)
+    return state
+
+
+def render_supabase(root: Path) -> str:
+    s = replay(root)
+    T = {k: v for k, v in s["tables"].items() if k.startswith("public.") and v["created"]}
+    npol = sum(len(t["policies"]) for t in T.values())
+    nrls = sum(1 for t in T.values() if t["rls"])
+    lines = [
+        "# Supabase tables, policies and functions",
+        "",
+        "Generated by `python -I scripts/docs/build_reference.py` by replaying `supabase/migrations/*.sql` in numeric order (down files skipped) as text. Nothing is run against a database, so this is what the migrations say, not what a live project holds: the owner applies migrations by hand and a live project can lag. Do not edit by hand (ROADMAP B6, T1167). The row level security test that proves the policies is `continent-app/scripts/admin/test_rls_policies.mjs`.",
+        "",
+        f"{len(s['files'])} migration files, {len(T)} public tables ({nrls} with row level security on, {npol} policies), {len(s['functions'])} functions, {len(s['indexes'])} indexes.",
+        "",
+        "## Tables",
+        "",
+        "| Table | Columns | RLS | Policies | Created in |",
+        "|---|---|---|---|---|",
+    ]
+    for n in sorted(T):
+        t = T[n]
+        lines.append(f"| [`{n[7:]}`](#{n[7:].replace('_', '-')}) | {len(t['cols'])} | {'on' if t['rls'] else '**off**'} | {len(t['policies'])} | {t['created']} |")
+    for n in sorted(T):
+        t = T[n]
+        lines += ["", f"### {n[7:]}", ""]
+        lines.append(f"Created in migration {t['created']}. Row level security: {'on' if t['rls'] else 'off'}.")
+        lines += ["", "| Column | Definition |", "|---|---|"]
+        for c, d in t["cols"].items():
+            lines.append(f"| `{c}` | {_cell(d)} |")
+        if t["cons"]:
+            lines += ["", "Constraints: " + "; ".join(f"`{_cell(c)}`" for c in t["cons"])]
+        if t["policies"]:
+            lines += ["", "| Policy | For | To | Using | With check | Migration |", "|---|---|---|---|---|---|"]
+            for pn, p in sorted(t["policies"].items()):
+                lines.append(f"| `{pn}` | {p['cmd']} | {_cell(p['to'])} | `{_cell(p['using'])}` | `{_cell(p['check'])}` | {p['file']} |")
+        idx = [f"`{i}`" for i, v in sorted(s["indexes"].items()) if v["table"] == n]
+        if idx:
+            lines += ["", "Indexes: " + ", ".join(idx)]
+    lines += ["", "## Functions", "", "| Function | Returns | Security | Language | Migration |", "|---|---|---|---|---|"]
+    for k, f in sorted(s["functions"].items()):
+        lines.append(f"| `{_cell(k)}` | {_cell(f['returns'])} | {'definer' if f['definer'] else 'invoker'} | {f['lang']} | {f['file']} |")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def load_lineage(root: Path) -> dict | None:
+    p = root / "docs" / "architecture" / "lineage-fields.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.is_file() else None

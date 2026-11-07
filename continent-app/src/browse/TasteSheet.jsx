@@ -43,6 +43,7 @@ const PRESET_ICONS = {
 };
 
 /** The traveller's taste and the writers for it. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useTaste() {
   const ctx = useFirstRun();
   const setChoices = ctx?.setChoices;

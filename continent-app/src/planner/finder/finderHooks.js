@@ -35,6 +35,7 @@ import { engineOriginCode } from '../../lib/airportReach.js';
 import { EARLY, priceInSlices } from './priceSlices.js';
 import { flightRows, knowTrip } from '../../lib/recommend/doorTrips.js';
 import { rankTrips } from '../../lib/recommend/rank.js';
+import { useTasteVerdicts, verdictsKey } from '../../lib/taste/store.js';
 import { keptRecord } from '../../lib/recommend/kept.js';
 import { keep, unkeep, useKept } from '../../lib/recommend/keptStore.js';
 import { planOf } from './planOf.js';
@@ -99,6 +100,19 @@ export function useKeepTrip({ destinations, lang, keepWith = null }) {
   return { isKept, toggle };
 }
 
+/**
+ * The ranker's taste lean for the verdicts (lib/taste/profile.js), loaded
+ * on demand so the taxonomy stays out of the finder's chunk; null without a
+ * verdict or when the module fails to load (the trips rank as before).
+ */
+async function tasteLeanFor(verdicts) {
+  if (!Object.keys(verdicts || {}).length) return null;
+  try {
+    const { tasteWeights, tasteLeanOf } = await import('../../lib/taste/profile.js');
+    return tasteLeanOf(tasteWeights(verdicts));
+  } catch { return null; }
+}
+
 /** Yield to the browser so a finished stage is painted before the next one runs. */
 const nextFrame = () => new Promise((r) => {
   if (typeof requestAnimationFrame === 'function') requestAnimationFrame(() => setTimeout(r, 0));
@@ -118,6 +132,9 @@ export function useTripFinder(settings) {
   const choices = firstRun?.choices || {};
   const countryInsights = useCountryInsights();
   const taste = useTaste();
+  // The Yes and Not me on the taste chips (T1215, T1152-c), node and verdict only.
+  const { verdicts } = useTasteVerdicts();
+  const verdictKey = verdictsKey(verdicts);
   const [run, setRun] = useState({ key: null, stages: NO_STAGES, early: null, trips: null, error: null, input: null });
   const runId = useRef(0);
 
@@ -127,8 +144,8 @@ export function useTripFinder(settings) {
   // The answer set this run is for; a new one restarts the stages.
   const answers = answersOf(settings);
   const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, origin?.iata, stayTier, lifestyle, taste,
-    (data?.meta?.home_airports || []).map((a) => a.iata)]),
-  [settings, origin, stayTier, lifestyle, taste, data]); // eslint-disable-line react-hooks/exhaustive-deps -- answers is settings without old levers
+    (data?.meta?.home_airports || []).map((a) => a.iata), verdictKey]),
+  [settings, origin, stayTier, lifestyle, taste, data, verdictKey]); // eslint-disable-line react-hooks/exhaustive-deps -- answers is settings without old levers
 
   useEffect(() => {
     if (!data?.destinations || countryInsights == null) return undefined;
@@ -146,7 +163,10 @@ export function useTripFinder(settings) {
           data, countryInsights, layerIndexes, settings: answers, taste, origin, flights,
           lifestyle, stayTier, today: todayISO(),
         };
-        const rank = (trips) => rankTrips(trips, { settings: answers, taste, data });
+        // The taxonomy only loads when the traveller gave a verdict.
+        const tasteLean = await tasteLeanFor(verdicts);
+        if (!alive()) return;
+        const rank = (trips) => rankTrips(trips, { settings: answers, taste, data, tasteLean });
         setRun((r) => ({ ...r, input, stages: { ...r.stages, flights: true } }));
         await nextFrame();
         if (!alive()) return;
@@ -165,7 +185,7 @@ export function useTripFinder(settings) {
       }
     })();
     return () => { runId.current += 1; };
-  }, [key, data, countryInsights]); // eslint-disable-line react-hooks/exhaustive-deps -- `key` stands for the answers, origin, stay tier, Lifestyle and taste
+  }, [key, data, countryInsights]); // eslint-disable-line react-hooks/exhaustive-deps -- `key` stands for the answers, origin, stay tier, Lifestyle, taste and verdicts
 
   const fresh = run.key === key;
   return {

@@ -1,0 +1,56 @@
+{
+  "_about": "The data access ladder (ROADMAP I16, T1213). One entry per commercial data source: where Carta stands today, the legal route, the number that unlocks the next step and the flag that would switch the code path on. Thresholds are edited here, not in code. Every flag is off until the owner sets its environment variable to 1; nothing in this file switches anything live. docs/data/access-ladder.md holds the dated terms check and the owner steps.",
+  "version": 1,
+  "terms_checked": "2026-11-07",
+  "metrics": {
+    "_note": "Where the admin reads each unlock number (K12 weekly marketing view). A metric with no reader yet is listed in docs/data/access-ladder.md.",
+    "monthly_users": "cookieless weekly counters, summed over four weeks",
+    "affiliate_clicks": "affiliateClickOf launch counters per partner",
+    "affiliate_bookings": "partner dashboard figures, entered by the owner",
+    "aviasales_coverage_pct": "share of the 10,094 routes with a cached Aviasales fare, measured by the P1 coverage run"
+  },
+  "sources": [
+    {
+      "id": "flights_fares",
+      "title": "Flight fares",
+      "today": "scraped from Google Flights by the flight sweep Worker and the late sweep",
+      "route": "Aviasales Data API via Travelpayouts",
+      "unlock": { "metric": "aviasales_coverage_pct", "threshold": 80, "note": "switch per route where covered; the 80 is a starting value to confirm after the P1 run" },
+      "must_stop_before": "the first paid sale",
+      "flag": { "env": "LADDER_STOP_GOOGLE_FLIGHTS", "effect": "the sweep Worker runs no Google Flights search" }
+    },
+    {
+      "id": "flights_live_search",
+      "title": "Live flight search",
+      "today": "not available",
+      "route": "Travelpayouts Flight Search API",
+      "unlock": { "metric": "monthly_users", "threshold": 50000 },
+      "flag": { "env": "LADDER_LIVE_FLIGHT_SEARCH", "effect": "reserved: no code path yet; the apply step is the owner's" }
+    },
+    {
+      "id": "beds",
+      "title": "Bed prices",
+      "today": "owner-run sample of Booking.com list prices, twice a year (decision I-g, option A)",
+      "route": "Booking.com Demand API (Managed Affiliate Partners only)",
+      "unlock": { "metric": "affiliate_bookings", "threshold": null, "note": "not published by Booking: ask once there is a track record" },
+      "review_before": "the Booking.com affiliate application (P4)",
+      "flag": { "env": "LADDER_STOP_BOOKING_SCRAPE", "effect": "scrape_booking.py refuses to run; prices stay on the last build and the bands" }
+    },
+    {
+      "id": "hostels",
+      "title": "Hostel prices",
+      "today": "owner-run sample of Hostelworld list prices, twice a year",
+      "route": "direct partnership (no public API); affiliate programme through Partnerize",
+      "unlock": { "metric": "affiliate_clicks", "threshold": null, "note": "approach with numbers after launch" },
+      "flag": { "env": "LADDER_STOP_HOSTELWORLD_SCRAPE", "effect": "scrape_hostelworld.py refuses to run" }
+    },
+    {
+      "id": "activities",
+      "title": "Activity prices",
+      "today": "none",
+      "route": "Viator (Basic tier), Tiqets (self-service API), GetYourGuide (partner manager)",
+      "unlock": { "metric": "monthly_users", "threshold": 0, "note": "available now; planned for P3 with I4" },
+      "flag": { "env": "LADDER_ACTIVITY_PRICES", "effect": "reserved: no code path yet" }
+    }
+  ]
+}

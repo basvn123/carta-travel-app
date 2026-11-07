@@ -1,0 +1,30 @@
+{
+ "layer": "prices",
+ "date": "2026-11-07",
+ "reference": {
+  "path": "data/reports/validation/prices/reference_pli.json",
+  "source": "Eurostat prc_ppp_ind, na_item PLI_EU27_2020 (EU27_2020 = 100)",
+  "licence": "CC BY 4.0 (Eurostat reuse policy)",
+  "harvested": "2026-10-22",
+  "n": 418
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 5,
+  "salt": "d23",
+  "n": 418,
+  "population": 418,
+  "countries": 38
+ },
+ "metrics": {
+  "independent": 0.7759,
+  "coverage": 0.9975,
+  "fact.level": 0.746,
+  "fact_share": 0.746,
+  "agreement_tau": 0.5755,
+  "agreement_rho": 0.7571,
+  "error_mae": 19.322,
+  "error_mdape": 0.1418
+ }
+}

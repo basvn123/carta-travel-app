@@ -62,6 +62,7 @@ function toggleIn(list, v) {
  * Old links and saved filters carry v4 tiers ("1" to "3", or "2,3"); each
  * reads as the v5 band of the same cutoff (rating.js filterBand).
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function minVerdict(verdicts) {
   let low = '';
   for (const v of verdicts || []) {
@@ -72,11 +73,13 @@ export function minVerdict(verdicts) {
 }
 
 /** "This band and up": the verdict list a minimum band stands for. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function verdictsFrom(min) {
   return min && RATING_STEPS.includes(min) ? [min] : [];
 }
 
 /** The "Good for" choice a role list stands for, or '' for any. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function goodForOf(roles) {
   if (!roles?.length) return '';
   const hit = GOOD_FOR.find((g) => g.roles.some((r) => roles.includes(r)));
@@ -89,6 +92,7 @@ export function goodForOf(roles) {
  * day. Local times, so a leg that crosses a time zone reads an hour or two
  * off its real length. Null when either time is missing.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function legMinutes(leg) {
   const hm = (s) => {
     const m = typeof s === 'string' ? /^(\d{1,2}):(\d{2})/.exec(s) : null;

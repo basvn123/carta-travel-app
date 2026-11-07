@@ -4,7 +4,7 @@ import { ChevronRightIcon } from '../components/Icons.jsx';
 import { kindOf } from '../lib/taxonomy.js';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { Button, MoneyUnit } from '../components/ui/index.js';
 import { PlaceTile } from './ExploreCards.jsx';
 import { Strip } from './SectionOpening.jsx';
 import { GalleryStrip } from './CountryGallery.jsx';
@@ -22,6 +22,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { usePageArrival } from '../hooks/usePageArrival.js';
 import CreditFold from './CreditFold.jsx';
 import { useDayView } from '../hooks/useDayView.js';
+import { CountryEntry } from './CountryEntry.jsx';
 
 /**
  * A country as a destination of its own (PLAN.md C9; T450 on the kit; T498
@@ -39,6 +40,8 @@ import { useDayView } from '../hooks/useDayView.js';
  * trip in {country}", a sticky side column from 1024 px; three rails (its
  * best, its weeks, its cities); the doors to its outdoor layers and to its
  * coasts and ranges; every place on Places; the credits in one closed row.
+ * Before the doors, "Check before you go": what each traveller group needs
+ * to enter, with the official page and the date checked (T1199).
  *
  * Every section renders only when it has content: a thin country shows a
  * shorter page, never an empty row.
@@ -184,8 +187,7 @@ export function CountryPage({
                       <div className="rgnp-fact">
                         <dt>{t('cpage.kDay')}<DayPriceDot /></dt>
                         <dd>
-                          <Money value={view.day(day)} est={dayEst} />
-                          <span className="rgnp-unit"> {view.unit}</span>
+                          <MoneyUnit value={view.day(day)} est={dayEst} unit={view.unit} unitClassName="rgnp-unit" />
                         </dd>
                       </div>
                     )}
@@ -229,6 +231,9 @@ export function CountryPage({
             )}
             <Rail id={`cpg-cities-${iso2}`} title={t('cpage.cities')} rows={cities}
               onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t} />
+
+            {/* Entry rules and official advice per traveller group (T1199, D19). */}
+            <CountryEntry iso2={iso2} country={country} t={t} />
 
             {/* Further cuts are one row of door buttons each (carta-design
                 "Rails and cuts"): the outdoor layers in this country, then

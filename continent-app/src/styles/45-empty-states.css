@@ -18,14 +18,14 @@
 }
 .cov-empty .cov-empty-why {
   margin-top: var(--space-2);
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.45;
   color: var(--ink);
 }
 .cov-empty .cov-empty-head,
 .cov-empty .cov-empty-far {
   margin-top: var(--space-4);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 .cov-near {
@@ -47,7 +47,7 @@
   background: transparent;
   font: inherit;
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
   text-align: left;
   cursor: pointer;
@@ -60,7 +60,7 @@ a.cov-near-row { text-decoration: none; }
 .cov-near-meta {
   flex: none;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 /* The legacy button look; a kit Button with this class keeps the kit's own
@@ -71,10 +71,10 @@ a.cov-near-row { text-decoration: none; }
   margin-top: var(--space-4);
   padding: 0 var(--space-4);
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 500;
   color: var(--ink-soft);
   cursor: pointer;
@@ -115,13 +115,13 @@ a.cov-near-row { text-decoration: none; }
   margin: 0;
 }
 .empty-act > .cov-empty-btn { margin-top: 0; }
-.cbrief-note.empty-act { color: var(--ink-soft); font-size: 13px; }
+.cbrief-note.empty-act { color: var(--ink-soft); font-size: var(--text-label); }
 
 /* The one line a detail-page section keeps when it has nothing to show
    (docs/ONBOARDING_AND_EMPTY_STATES.md, "The detail-page rule"). */
 .sec-none p {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.45;
   color: var(--ink);
 }
@@ -149,15 +149,6 @@ a.cov-near-row { text-decoration: none; }
 
 /* Explore's empty grid: the sentence is the content, so it leaves the count
    badge's pill and sits in ink beside its one button. */
-.explore-count .explore-count-badge.is-empty {
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--ink);
-}
-.explore-count .explore-empty-clear { margin-top: 0; }
 
 /* The filter sheet's zero line, above the sticky bar. */
 .fsheet-none {
@@ -165,7 +156,7 @@ a.cov-near-row { text-decoration: none; }
   margin: 0;
   padding: var(--space-2) var(--space-4) 0;
   border-top: 1px solid var(--rule-soft);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink);
 }
 
@@ -176,14 +167,9 @@ a.cov-near-row { text-decoration: none; }
 .stub-list { margin-top: var(--space-5); }
 .stub-list p { margin: 0; }
 .stub-list-head {
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--ink);
-}
-.stub-list .stub-list-note {
-  margin-top: var(--space-1);
-  font-size: 13px;
-  color: var(--ink-soft);
 }
 .stub-list ul {
   margin: var(--space-3) 0 0;
@@ -203,7 +189,7 @@ a.cov-near-row { text-decoration: none; }
   border: 0;
   background: transparent;
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
   text-align: left;
   cursor: pointer;
@@ -214,7 +200,7 @@ a.cov-near-row { text-decoration: none; }
 .stub-row-meta {
   flex: none;
   max-width: 45%;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-mute);
   text-align: right;
 }
@@ -231,7 +217,7 @@ a.cov-near-row { text-decoration: none; }
   gap: var(--space-3);
   padding: var(--space-2) 0;
   border-bottom: 1px solid var(--rule-soft);
-  font-size: 14px;
+  font-size: var(--text-body);
 }
 .stub-fact dt { color: var(--ink-soft); }
 .stub-fact dd { margin: 0; color: var(--ink); }
@@ -244,7 +230,7 @@ a.cov-near-row { text-decoration: none; }
 .stub-acts .upl-open { margin-top: 0; }
 .stub-note {
   margin: var(--space-3) 0 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 
@@ -272,7 +258,7 @@ a.cov-near-row { text-decoration: none; }
 /* A field the sheet keeps before the data has it (T630, components/NotYet.jsx):
    the words in the secondary ink, never a blank or a dash. */
 .not-yet { color: var(--ink-soft); font-style: normal; }
-.not-yet-line { display: block; margin: 0; font-size: 14px; line-height: 1.45; }
+.not-yet-line { display: block; margin: 0; font-size: var(--text-body); line-height: 1.45; }
 
 /* T631 (climate, lakes and beaches): the monthly figures under the climate
    strip (ClimateStrip.jsx ClimateExtras) and the zone lists of the lake sheet.
@@ -288,10 +274,8 @@ a.cov-near-row { text-decoration: none; }
   text-align: center;
   font-variant-numeric: tabular-nums;
 }
-.clm-months { font-size: 11px; color: var(--ink-soft); }
-.clm-cells { font-size: 12px; color: var(--text); }
+.clm-months { font-size: var(--text-micro); color: var(--ink-soft); }
+.clm-cells { font-size: var(--text-caption); color: var(--text); }
 .clm-series { margin: var(--space-3) 0 0; }
-.clm-label { margin: 0 0 2px; font-size: 13px; color: var(--text); }
+.clm-label { margin: 0 0 2px; font-size: var(--text-label); color: var(--text); }
 .clm-label small { display: block; font-size: 11.5px; color: var(--ink-soft); }
-.ss-zones { margin: 0 0 var(--space-3); padding-left: 18px; font-size: 13.5px; }
-.ss-hazards { margin: 0 0 var(--space-3); padding-left: 18px; font-size: 13.5px; }

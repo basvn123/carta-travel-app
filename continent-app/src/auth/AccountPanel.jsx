@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
 import {
-  ArrowLeftIcon, BedIcon, CheckIcon, CloseIcon, DownloadIcon, EyeIcon, EyeOffIcon,
+  ArrowLeftIcon, BedIcon, CheckIcon, ClockIcon, CloseIcon, DownloadIcon, EyeIcon, EyeOffIcon,
   FeedbackIcon, FriendsIcon, GlobeIcon, HomeIcon, LinkIcon, LockIcon, MapPinIcon, PencilIcon,
   PersonIcon, PlaneIcon, QuestionIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
   SparkIcon, TicketIcon, TrashIcon,
@@ -282,6 +282,8 @@ export function AccountPanel({
   // downloading your own data is not dangerous and filing it under a red
   // heading would make a right look like a threat.
   const [exportArmed, setExportArmed] = useState(false);
+  // T1118: what Carta keeps and for how long, opened in place under its row.
+  const [keepOpen, setKeepOpen] = useState(false);
   const [exportPassword, setExportPassword] = useState('');
   const [exportEmail, setExportEmail] = useState('');
   const [exportBusy, setExportBusy] = useState(false);
@@ -837,11 +839,13 @@ export function AccountPanel({
       className="ac-me"
       href={hrefOf('profile')}
       onClick={(e) => { if (!plainClick(e)) return; e.preventDefault(); go('profile'); }}
-      aria-label={t('ac.editProfileAria', { name: storedName || storedEmail })}
     >
+      {/* Named by what it shows, then what it does (T1128, WCAG 2.5.3: the
+          old aria-label left out the plan and the counts on the card). */}
       <span className="ac-face" aria-hidden="true">{avatarEmoji || monogram(storedName, storedEmail)}</span>
       <span className="ac-me-tx">
         <b>{storedName || storedEmail}</b>
+        {' '}
         {storedHandle ? <span>@{storedHandle}</span> : storedName ? <span>{storedEmail}</span> : null}
       </span>
       {entitlement.known && (
@@ -857,6 +861,7 @@ export function AccountPanel({
           ))}
         </dl>
       )}
+      <span className="sr-only">{`, ${t('ac.editProfile')}`}</span>
     </a>
   );
 
@@ -1455,6 +1460,22 @@ export function AccountPanel({
           />
           {exportArmed && exportForm}
           {exportDone && <div className="panel-section ac-inline">{exportDoneLine}</div>}
+          <Row
+            icon={ClockIcon}
+            label={t('account.keepBtn')}
+            expanded={keepOpen}
+            onClick={() => setKeepOpen((v) => !v)}
+          />
+          {keepOpen && (
+            // The plain version of docs/legal/ARTICLE30.md section 2a.
+            <div className="panel-section ac-inline">
+              <ul className="account-section-hint ac-keep-list">
+                {['keepAccount', 'keepDeleted', 'keepLogs', 'keepWaitlist', 'keepRecords'].map((k) => (
+                  <li key={k}>{t(`account.${k}`)}</li>
+                ))}
+              </ul>
+            </div>
+          )}
           <Row icon={SparkIcon} label={t('ac.ai')} href={hrefOf('ai')} onClick={() => go('ai')} />
           <Row icon={ShieldIcon} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
           <Row icon={EyeOffIcon} label={t('ac2.cookies')} onClick={() => setCookiesOpen(true)} />

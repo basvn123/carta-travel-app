@@ -4,7 +4,7 @@
  *
  * Reads public/search/ask/manifest.json and the passages-<src>.json files
  * pipeline/ask_index_layer.py wrote, builds one MiniSearch index over them
- * (fields name x3, tags x2, text x1; id = pid; nothing stored; the options
+ * (fields name x3, tags x2, text x1; id = pid; the country code stored, T1141; the options
  * in functions/_lib/askTerms.js) and writes its toJSON() to bm25.json. The
  * browser downloads that file whole, so it has a budget: over BUDGET_GZIP
  * with every source, it is rebuilt over dest + lexicon only (T554), and
@@ -13,7 +13,16 @@
  *
  *   node scripts/build-ask-bm25.mjs [--dir public/search/ask] [--sources dest,highlight]
  *
+ * T1141: it also writes one server index per source in SPARSE_SOURCES
+ * (functions/_lib/askSparse.js), bm25-<src>.json, which /api/ask searches
+ * beside the dense half; manifest.bm25.server lists them. They are not
+ * downloaded by the browser, so they have no gzip budget. A passage id
+ * seen twice keeps its first row (MiniSearch refuses a duplicate id).
+ *
  * run_pipeline.py task `ask_index` runs it straight after the Python layer.
+ * It first runs the staleness check (scripts/check-ask-index.mjs, T1141-d):
+ * passages read from an older catalogue than the one on the wire stop the
+ * build. --app-data names another catalogue (default public/app_data.json).
  */
 import { readFileSync, writeFileSync, renameSync, existsSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
@@ -21,6 +30,8 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join } from 'node:path';
 import MiniSearch from 'minisearch';
 import { ASK_BM25_OPTIONS, ASK_BM25_BOOST, ASK_BM25_FIELDS, bm25Doc } from '../functions/_lib/askTerms.js';
+import { SPARSE_SOURCES } from '../functions/_lib/askSparse.js';
+import { checkAskIndex } from './check-ask-index.mjs';
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const BUDGET_GZIP = 400 * 1024;
@@ -37,6 +48,11 @@ const dir = resolve(appRoot, arg('--dir', 'public/search/ask'));
 const manifestPath = join(dir, 'manifest.json');
 if (!existsSync(manifestPath)) {
   console.error(`[ask-bm25] no ${manifestPath}; run python pipeline/ask_index_layer.py first`);
+  process.exit(1);
+}
+const fresh = checkAskIndex({ dir, appData: resolve(appRoot, arg('--app-data', 'public/app_data.json')) });
+if (!fresh.ok) {
+  console.error(`[ask-bm25] stale: ${fresh.reason}`);
   process.exit(1);
 }
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
@@ -56,7 +72,8 @@ function build(sources) {
   const ms = new MiniSearch(ASK_BM25_OPTIONS);
   let n = 0;
   for (const src of sources) {
-    const docs = rows(src).map(bm25Doc);
+    const seen = new Set();
+    const docs = rows(src).filter((r) => !seen.has(r[0]) && seen.add(r[0])).map(bm25Doc);
     ms.addAll(docs);
     n += docs.length;
   }
@@ -93,6 +110,16 @@ manifest.bm25 = {
   gzip: pick.gz,
   options: 'functions/_lib/askTerms.js ASK_BM25_OPTIONS (lower case, accents folded)',
 };
+const server = {};
+for (const src of SPARSE_SOURCES.filter((x) => all.includes(x))) {
+  const one = build([src]);
+  const file = `bm25-${src}.json`;
+  writeFileSync(join(dir, `${file}.tmp`), one.text);
+  renameSync(join(dir, `${file}.tmp`), join(dir, file));
+  server[src] = file;
+  console.log(`[ask-bm25] server ${file}: ${one.n} passages, ${kb(one.bytes)} (${one.ms} ms)`);
+}
+manifest.bm25.server = server;
 writeFileSync(`${manifestPath}.tmp`, `${JSON.stringify(manifest, null, 1)}\n`);
 renameSync(`${manifestPath}.tmp`, manifestPath);
 console.log(`[ask-bm25] wrote ${out}: ${pick.sources.join(' + ')}, ${pick.n} passages, ${kb(pick.bytes)}, gzip ${kb(pick.gz)}`);

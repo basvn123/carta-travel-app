@@ -14,14 +14,21 @@
  *   d    destination ids to keep, comma separated, at most 12 (optional)
  *   u    words the rules could not place, | separated, at most 5: each is
  *        matched to the lexicon (T552) for a facet it may mean
+ *   b    the question's BM25 words (src/lib/ask/query.js, at most 200
+ *        characters): searched with BM25 over the server sources of
+ *        functions/_lib/askSparse.js (T1141), same filters, when the
+ *        deploy has their indexes (manifest.bm25.server)
  *
- * Answer: { v, hits: { src: [[pid, destId, score, text, name]] }, lex: [[word, slot, value, score]] }
+ * Answer: { v, hits: { src: [[pid, destId, score, text, name]] }, sparse: { src: [...same] },
+ *           lex: [[word, slot, value, score]] }
  * Edge cached for an hour per URL. Pages does not apply public/_headers to
  * a Function's response, so the headers are set here.
  */
 import { createEmbedder } from '../_lib/askEmbed.js';
 import { search } from '../_lib/askScore.js';
+import { SPARSE_PER_SOURCE, loadSparse, sparseSearch } from '../_lib/askSparse.js';
 import { fail, methodNotAllowed, createLimiter, overLimit, rateRefusal, parseAskQuery } from '../_lib/guard.js';
+import { withTracking } from '../_lib/track.js';
 
 const BASE = '/search/ask/';
 const HOLD = 3600;
@@ -51,7 +58,7 @@ async function load(env, request) {
       const [vocab, emb, scale] = await Promise.all([
         asset(env, request, f.vocab, 'json'), asset(env, request, f.emb, 'bin'), asset(env, request, f.scale, 'bin'),
       ]);
-      return { manifest, embedder: createEmbedder({ vocab, emb, scale }), sources: new Map() };
+      return { manifest, embedder: createEmbedder({ vocab, emb, scale }), sources: new Map(), sparse: new Map() };
     })().catch((e) => { state = null; throw e; });
   }
   return state;
@@ -70,7 +77,20 @@ async function source(s, name, env, request) {
   return s.sources.get(name);
 }
 
-export async function onRequestGet({ request, env }) {
+/** One server BM25 index (T1141), once per isolate, with its source's rows. */
+async function sparseSource(s, name, env, request) {
+  if (!s.sparse.has(name)) {
+    s.sparse.set(name, (async () => {
+      const [text, src] = await Promise.all([
+        asset(env, request, s.manifest.bm25.server[name], 'bin'), source(s, name, env, request),
+      ]);
+      return { index: loadSparse(new TextDecoder().decode(text)), rows: src.rows };
+    })().catch((e) => { s.sparse.delete(name); throw e; }));
+  }
+  return s.sparse.get(name);
+}
+
+async function handleGet({ request, env }) {
   const url = new URL(request.url);
   const parsed = parseAskQuery(url.searchParams);
   if (!parsed) return fail(400, 'bad_request');
@@ -103,6 +123,19 @@ export async function onRequestGet({ request, env }) {
   } catch {
     return fail(503, 'unavailable');
   }
+  // BM25 over the server sources: a failure costs these hits only.
+  const sparse = {};
+  const bwords = String(url.searchParams.get('b') || '').replace(/[\u0000-\u001f\u007f]/g, ' ').slice(0, 200).trim();
+  const server = s.manifest.bm25?.server || {};
+  if (bwords) {
+    for (const name of Object.keys(server)) {
+      if (!s.manifest.sources[name]) continue;
+      try {
+        const sp = await sparseSource(s, name, env, request);
+        sparse[name] = sparseSearch(sp.index, sp.rows, bwords, { k: SPARSE_PER_SOURCE[name] || 10, cc, d });
+      } catch { /* this source stays dense only */ }
+    }
+  }
   const lex = [];
   if (words.length && s.manifest.sources.lexicon) {
     const L = await source(s, 'lexicon', env, request);
@@ -114,7 +147,7 @@ export async function onRequestGet({ request, env }) {
       }
     }
   }
-  return new Response(JSON.stringify({ v: s.manifest.version, hits, lex }), {
+  return new Response(JSON.stringify({ v: s.manifest.version, hits, sparse, lex }), {
     status: 200,
     headers: {
       'content-type': 'application/json; charset=utf-8',
@@ -123,3 +156,5 @@ export async function onRequestGet({ request, env }) {
     },
   });
 }
+
+export const onRequestGet = withTracking('api/ask', handleGet);

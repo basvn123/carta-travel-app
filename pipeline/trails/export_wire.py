@@ -63,6 +63,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from db import connect  # noqa: E402  (also puts pipeline/ on sys.path)
 from validate import PILOT_COUNTRIES  # noqa: E402
 import route_schema  # noqa: E402  (ROUTES.md R1: the route-layer keys)
+import names  # noqa: E402  (T1092: display names on the wire)
+import way_back  # noqa: E402  (T1185: the way back, D24)
+import treks  # noqa: E402  (T1184: multi-stage treks, D24)
 
 # The lake layer's card-shape helpers, loaded by path as the beach, peak and
 # trip layers load them. The frame here is the 9/4 .places-tcard strip.
@@ -228,6 +231,7 @@ TRIPS_SQL = """
            t.stage_of, t.top_of,
            eff.info AS repair_info,
            {transit_col} AS transit,
+           {transit_end_col} AS transit_end,
            ST_NPoints(eff.geom) AS n_full,
            ST_XMin(eff.geom), ST_YMin(eff.geom),
            ST_XMax(eff.geom), ST_YMax(eff.geom),
@@ -269,7 +273,7 @@ TRIP_COLS = ("id", "country", "category", "title", "description",
              "hierarchy", "hierarchy_src", "parent_refs",
              "stage_index", "stage_count", "co_located",
              "stage_of", "top_of",
-             "repair_info", "transit",
+             "repair_info", "transit", "transit_end",
              "n_full", "xmin", "ymin", "xmax", "ymax",
              "wire_geom", "full_geom")
 
@@ -296,11 +300,21 @@ TRANSIT_COL = """(
         ) q WHERE q.k IS NOT NULL)"""
 
 
+# T1185: the same lookup at the END of the line, for the way back. An empty
+# object means looked up and nothing found; NULL means no transit table.
+TRANSIT_END_COL = "COALESCE(" + TRANSIT_COL.replace(
+    "ST_StartPoint(ST_GeometryN(eff.geom, 1))",
+    "ST_EndPoint(ST_GeometryN(eff.geom, ST_NumGeometries(eff.geom)))"
+) + ", '{}'::jsonb)"
+
+
 def fetch_trips(conn, statuses, countries, tolerance):
     with conn.cursor() as cur:
         cur.execute("SELECT to_regclass('transit_stops') IS NOT NULL")
         has_transit = bool(cur.fetchone()[0])
         sql = TRIPS_SQL.replace("{transit_col}", TRANSIT_COL if has_transit else "NULL::jsonb")
+        sql = sql.replace("{transit_end_col}",
+                          TRANSIT_END_COL if has_transit else "NULL::jsonb")
         cur.execute(sql, {
             "transit_m": TRANSIT_M,
             "tol": tolerance,
@@ -406,9 +420,33 @@ sys.path.insert(0, str(ROOT / "pipeline" / "photos"))
 from credit import owes_credit  # noqa: E402
 
 
+from photo_licence import reusable  # noqa: E402
+
+
 def credited(rows):
-    """The photographs of one trip that we can lawfully credit, in order."""
-    return [r for r in rows if not owes_credit(r)]
+    """The photographs of one trip that we can lawfully credit, in order.
+
+    Two gates, both must pass: the licence allows reuse with credit (CC0, CC BY,
+    CC BY-SA, public domain: photo_licence.reusable, T1093) and a licence that
+    owes a name has one (credit.owes_credit, T280)."""
+    return [r for r in rows if reusable(r.get("license")) and not owes_credit(r)]
+
+
+def card_img(hero):
+    """The card's one picture, with the credit it owes riding along (T1093).
+
+    Short keys like the beach and lake rows: by (photographer, absent on a
+    public domain file), lic (the licence), licUrl, page (the Commons file
+    page). The detail file keeps the long names; the app maps both."""
+    out = {"u": hero["u"], "w": hero["w"], "h": hero["h"],
+           "lic": hero.get("license")}
+    if hero.get("author"):
+        out["by"] = hero["author"]
+    if hero.get("license_url"):
+        out["licUrl"] = hero["license_url"]
+    if hero.get("page"):
+        out["page"] = hero["page"]
+    return out
 
 
 def fetch_stops(conn, ids):
@@ -493,6 +531,32 @@ def summary_of(description):
     return re.sub(r"\s+", " ", lead).strip() or None
 
 
+# T1201 (T1179-f): the retired describe.py lead ("... is a walking route in
+# GB. This easy path covers 7.2 km ...", "Based on its distance and ascent")
+# says "easy" over 1,949 m of climb and is English in every language, so it
+# no longer reaches a walk's card or the planner rail. The same marks as the
+# app's looksTemplated (continent-app/src/lib/trailStory.js), which stays as
+# the guard for wires exported before this. City days keep theirs: their lead
+# comes from compose_citytrips.py and the app reads it as such.
+RETIRED_LEAD = re.compile(
+    r"DIN 33466|hiking time rule|waymarked hiking (?:route|network|path)"
+    r"|derived from|based on (?:the|its) distance|from the distance and ascent"
+    r"|covers a distance of|spanning [\d.]+ km|covering [\d.]+ km"
+    r"|is an? (?:[\d.]+ km )?(?:walking|hiking) (?:route|path|trail)"
+    r"|this (?:easy|moderate|difficult|hard|challenging) (?:path|trail|route|walk)"
+    r"|features \d+ m of ascent|walking route measuring",
+    re.I)
+
+
+def wire_summary(t):
+    """The `summary` a country row carries: the lead, except a retired
+    describe.py lead on a walk, which ships as None (T1201)."""
+    lead = summary_of(t.get("description"))
+    if lead and t.get("category") != "citytrip" and RETIRED_LEAD.search(lead):
+        return None
+    return lead
+
+
 def anchor_of(raw_tags):
     """Which catalogue destination a daytrip or citytrip hangs off, so the app
     can shelve it under that city without geocoding the line."""
@@ -529,15 +593,31 @@ def reasons_of(rating_parts, limit=None):
 
 
 def bridges_of(repair_info):
-    """How much of a published line was joined rather than mapped."""
+    """How much of a published line was joined rather than mapped.
+
+    straight-splice (splice.py): straight connectors. routed-bridge
+    (route_bridge.py, T1201 from T1183-b): breaks routed on mapped foot
+    paths, with `routed` saying how many of them; the rest are straight."""
     info = repair_info or {}
-    if info.get("method") != "straight-splice" or not info.get("bridges"):
-        return None
-    return {
-        "n": int(info["bridges"]),
-        "max_m": info.get("max_bridge_m"),
-        "total_m": info.get("total_bridge_m"),
-    }
+    method = info.get("method")
+    if method == "straight-splice" and info.get("bridges"):
+        return {
+            "n": int(info["bridges"]),
+            "max_m": info.get("max_bridge_m"),
+            "total_m": info.get("total_bridge_m"),
+        }
+    if method == "routed-bridge" and info.get("bridges"):
+        listed = info.get("bridge_list") or []
+        max_m = info.get("max_bridge_m")
+        if max_m is None and listed:
+            max_m = max(b.get("bridge_m") or 0 for b in listed)
+        return {
+            "n": int(info["bridges"]),
+            "max_m": max_m,
+            "total_m": info.get("bridged_m"),
+            "routed": int(info.get("routed") or 0),
+        }
+    return None
 
 
 def highlights_of(raw):
@@ -638,8 +718,11 @@ def wire_difficulty(t):
     # grade the row carries (the same two floors attributes.py applies).
     import attributes  # noqa: E402  (psycopg, db: already imported above)
     old = t.get("difficulty")
+    # T1092: the effort floor reads one day of the walk, uphill, so a flat
+    # multi-day path is not floored at very_hard by its length.
     floors = [old if old in attributes.GRADE_RANK else None,
-              attributes.effort_grade(t) if t.get("distance_m") else None,
+              attributes.effort_grade(attributes.oriented(t))
+              if t.get("distance_m") else None,
               attributes.SAC_GRADE.get(sac_scale_of(t))]
     return attributes._max_grade(*floors) or old
 
@@ -734,7 +817,24 @@ def filters_of(t):
     surface = t.get("surface") or {}
     if surface.get("road_share"):
         out["road"] = surface["road_share"]
+    # T1092: the days the walk takes (difficulty.py, DIN 33466 hours in
+    # 6 h stages), only when it is a multi-day walk and only beside a grade.
+    # The app reads it to print "Long" where the grade would otherwise make
+    # a flat 286 km path read "very hard".
+    days = days_of_trip(t)
+    if out and days:
+        out["d"] = days
     return out or None
+
+
+def days_of_trip(t):
+    """The days a trip takes when that is two or more, else None."""
+    if not t.get("distance_m"):
+        return None
+    import attributes
+    import difficulty
+    days = difficulty.day_effort(attributes.oriented(t))["days"]
+    return days if difficulty.is_long(days) else None
 
 
 def facet_counts(items):
@@ -807,7 +907,9 @@ def filter_model():
             "sources": ["tagged", "derived"],
             "from": "worst member way sac_scale / trail_visibility / "
                     "via_ferrata_scale, else DEM sustained gradient and "
-                    "ascent per km; raised by distance and ascent",
+                    "ascent per km; raised by the hours and climb of one "
+                    "day (DIN 33466, multi-day walks in 6 h stages)",
+            "days_key": "f.d",
         },
         "distance": {
             "key": "distance_m",
@@ -893,10 +995,10 @@ def wire_item(t, n_stops, hier=None):
     draw it and credit it, and a pointer to the rest."""
     item = {
         "id": t["id"],
-        "name": t["title"],
+        "name": names.wire_name(t["title"], t["country"]),
         "category": t["category"],
         "country": t["country"],
-        "summary": summary_of(t["description"]),
+        "summary": wire_summary(t),
         "distance_m": t["distance_m"],
         "ascent_m": t["ascent_m"],
         "duration_min": t["duration_min"],
@@ -912,6 +1014,11 @@ def wire_item(t, n_stops, hier=None):
     rg = rg_of(t)
     if rg:
         item["rg"] = rg
+    # T1092: the source name, when it differs from the display name, so a
+    # search for "European long distance path E7" still finds "E7, Andorra".
+    src_name = names.source_label(t.get("raw_tags"), t["title"], item["name"])
+    if src_name:
+        item["src_name"] = src_name
     # The tier, on every row, and the rating ONLY on a rated one. Absent, not
     # null: the app tests for the key, and a null would render as a number
     # nobody earned the moment somebody wrote `row.rating ?? 0`.
@@ -955,7 +1062,7 @@ def wire_item(t, n_stops, hier=None):
     # the gallery keeps every picture, and the reader is not shown a sliver.
     hero = (card_images(t) or [None])[0]
     if hero:
-        item["img"] = {"u": hero["u"], "w": hero["w"], "h": hero["h"]}
+        item["img"] = card_img(hero)
     if n_stops:
         item["n_stops"] = n_stops
     anchor = anchor_of(t["raw_tags"])
@@ -974,9 +1081,10 @@ def detail_item(t, stops, generated_at, hier=None):
     """One trip in full: the on-demand half. Full-resolution 3D geometry lives
     here and only here, one file per trip, so nothing serves the lab's
     geometry in bulk."""
+    shown = names.wire_name(t["title"], t["country"])
     out = {
         "id": t["id"],
-        "name": t["title"],
+        "name": shown,
         "category": t["category"],
         "country": t["country"],
         "generated_at": generated_at,
@@ -1033,6 +1141,12 @@ def detail_item(t, stops, generated_at, hier=None):
         out["publisher"] = t["publisher"]
     if t.get("waymark_ref"):
         out["waymark_ref"] = t["waymark_ref"]
+    # T1092: the name as the source wrote it, in its own field, only when it
+    # differs from `name` ("European long distance path E7, Andorra" beside
+    # "E7, Andorra"; the Cyrillic original beside its transliteration).
+    src_name = names.source_label(t.get("raw_tags"), t["title"], shown)
+    if src_name:
+        out["src_name"] = src_name
     if t.get("family_key"):
         out["family"] = {"k": t["family_key"], "n": t.get("family_name"),
                          "size": t.get("family_size") or 1}
@@ -1087,7 +1201,40 @@ def validate_listed(rows):
     return bad
 
 
-def country_file(country, rated, listed, generated_at, tolerance):
+# T1094 (D7): the one cross-border case that is a mistake of the extract, not
+# a judgement about a long walk. Geofabrik cuts Northern Ireland into the
+# "ireland-and-northern-ireland" extract, so every walk there is staged as IE
+# (ingest_osm_routes.COUNTRIES). T456's rule refiles a walk whose midpoint
+# lies in another country only under 30 km, because a long cross-border path
+# belongs where its owner decided; but the Mourne Wall Challenge (31 km), the
+# Antrim Hills Way and the Newcastle Way are not cross-border at all, they
+# are wholly in the UK, and stayed under Ireland. A row filed by its extract
+# under one of these countries whose owning region (rg.n2, the midpoint) lies
+# in the named other country is refiled there, whatever its length.
+EXTRACT_QUIRKS = {("IE", "GB")}
+
+
+def extract_quirk_country(rg, filed, known):
+    """The country a row belongs to when its extract filed it wrongly."""
+    import place_truth
+    there = place_truth.nuts_country((rg or {}).get("n2"))
+    if (filed, there) in EXTRACT_QUIRKS and there in known:
+        return there
+    return filed
+
+
+def parent_osm_of(trips):
+    """{row id: parent relation id} for the trek grouping (T1184): the
+    parent the classify step chose, else the first parent the graph knows."""
+    out = {}
+    for t in trips:
+        parent = t.get("stage_of") or next(iter(t.get("parent_refs") or []), None)
+        if parent is not None:
+            out[t["id"]] = int(parent)
+    return out
+
+
+def country_file(country, rated, listed, generated_at, tolerance, trek_list=None):
     items = rated + listed
     counts = Counter(i["category"] for i in rated)
     credits = {i["attribution_text"] for i in items if i["attribution_text"]}
@@ -1140,6 +1287,9 @@ def country_file(country, rated, listed, generated_at, tolerance):
     # carries something keeps the files honest about which countries needed it.
     if listed:
         doc["listed"] = listed
+    # T1184: the treks whose first stage is filed here, absent when none.
+    if trek_list:
+        doc["treks"] = trek_list
     return doc
 
 
@@ -1326,6 +1476,7 @@ def main():
     known = {t["country"] for t in trips}
     for t in trips:
         t["country"] = place_truth.trail_country(t.get("rg"), t["country"], t.get("distance_m"), known)
+        t["country"] = extract_quirk_country(t.get("rg"), t["country"], known)
     by_country = defaultdict(list)
     for t in trips:
         by_country[t["country"]].append(t)
@@ -1335,11 +1486,41 @@ def main():
     wanted = sorted(set(countries) | set(by_country)) if countries \
         else sorted(by_country)
 
+    # T1184 (D24): every row of the run first, so a trek whose stages are
+    # filed under two countries is grouped once, then the files.
+    items_of = {country: [wire_item(t, len(stops.get(t["id"], [])), hier)
+                          for t in by_country.get(country, [])]
+                for country in wanted}
+    trek_list, trek_refs, trek_report = treks.build(
+        [i for items in items_of.values() for i in items],
+        parent_osm=parent_osm_of(trips),
+        registry=treks.Registry.load(),
+        asof=generated_at[:10])
+    treks.apply({c: {"trips": items} for c, items in items_of.items()},
+                trek_list, trek_refs)
+    # T1185 (D24): the way back, after the treks so a stage knows its trek.
+    wb_counts = way_back.apply(
+        items_of, trek_list,
+        {t["id"]: t.get("transit_end") for t in trips}, generated_at[:10])
+    print(f"  way back: {wb_counts['rows']} one-way row(s), "
+          f"{wb_counts['treks']} trek(s), {wb_counts['pt_unknown']} "
+          f"without transit data")
+    treks_by_cc = defaultdict(list)
+    for trek in trek_list:
+        treks_by_cc[trek["cc"]].append(trek)
+    trek_report["countries"] = sorted(wanted)
+    treks.REPORT.parent.mkdir(parents=True, exist_ok=True)
+    treks.REPORT.write_text(json.dumps(trek_report, indent=1, ensure_ascii=False),
+                            encoding="utf-8")
+    print(f"  treks: {trek_report['treks']} built from "
+          f"{trek_report['stages_in_treks']} stage(s); refused "
+          + ", ".join(f"{k} {v}" for k, v in trek_report["refused"].items()))
+
     total_bytes, index_countries, credits = 0, [], set()
     listed_total = 0
     for country in wanted:
         rows = by_country.get(country, [])
-        items = [wire_item(t, len(stops.get(t["id"], [])), hier) for t in rows]
+        items = items_of[country]
         rated = [i for i in items if i.get("t") != "l"]
         listed = [i for i in items if i.get("t") == "l"]
         bad = validate_listed(listed)
@@ -1354,7 +1535,7 @@ def main():
             continue
         listed_total += len(listed)
         payload = country_file(country, rated, listed, generated_at,
-                               args.tolerance)
+                               args.tolerance, treks_by_cc.get(country))
         size = write_json(out_dir / f"{country}.json", payload)
         total_bytes += size
         credits.update(payload["attribution"])

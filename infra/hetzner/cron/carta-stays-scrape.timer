@@ -1,0 +1,16 @@
+# Every night at 00:05 Brussels time; the script idles outside March and
+# September. Six hours end before the Monday 09:00 weekly tier. The backup
+# (01:30) needs no lock and runs beside it. On the first and third Saturday the
+# 03:00 tiers wait for the scrape's lock (up to 36 h), which ends by 07:00.
+[Unit]
+Description=Carta stays scrape timer (00:05 Europe/Brussels)
+
+[Timer]
+OnCalendar=*-*-* 00:05:00 Europe/Brussels
+RandomizedDelaySec=10min
+Persistent=false
+AccuracySec=1min
+Unit=carta-stays-scrape.service
+
+[Install]
+WantedBy=timers.target

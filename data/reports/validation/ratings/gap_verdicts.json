@@ -1,0 +1,247 @@
+{
+ "task": "T1191",
+ "reviewed": "2026-11-07",
+ "method": "Each verdict is made from the row's score parts, its appeal reason and the references in the layer result; no page could be opened from the cloud container, so the two adjust verdicts wait for the owner (T1191-c).",
+ "verdicts": [
+  {
+   "id": "gem:ikaria",
+   "verdict": "keep",
+   "cause": "depth_coverage",
+   "proposed_appeal": null,
+   "reason": "Hand appeal 7.0 stands (T760 kept it too). The Q of 5.5 comes from depth 0.024 and recognition 0 on an island row: the POI layer finds almost nothing within reach, which is a coverage gap, not an appeal error.",
+   "register_row": "T1191-e"
+  },
+  {
+   "id": "gem:gelsenkirchen",
+   "verdict": "keep",
+   "cause": "reference_noise",
+   "proposed_appeal": null,
+   "reason": "Rubric 4.0 fits a Ruhr football and mining city. The UNESCO flag is Zollverein, which lies in Essen (the proximity reference counts it inside the city reach) and the pageviews follow the football club's fame.",
+   "register_row": null
+  },
+  {
+   "id": "GLA",
+   "verdict": "keep",
+   "cause": "class_curve",
+   "proposed_appeal": null,
+   "reason": "Hand 6.5 stands, as in T760: Victorian grid, Kelvingrove and Mackintosh against grey edges. Among metros a 6.5 lands at percentile 39, which is the class curve working as written; the list mention is a trending list.",
+   "register_row": null
+  },
+  {
+   "id": "TLS",
+   "verdict": "keep",
+   "cause": "depth_coverage",
+   "proposed_appeal": null,
+   "reason": "Appeal is already 6.8 (raised by T760). What still holds it at percentile 41 among metros is depth 0.091, impossible for a metro of half a million with the Capitole, Saint-Sernin and the Canal du Midi: the POI depth input is broken for this row.",
+   "register_row": "T1191-e"
+  },
+  {
+   "id": "SMI",
+   "verdict": "catalogue",
+   "cause": "designation_missing",
+   "proposed_appeal": null,
+   "reason": "Hand 7.0 fits the island. Pythagoreion and the Heraion (World Heritage) lie 11.8 km from the row's point, inside the island, yet the row carries no unesco_whc designation, so recognition is 0.",
+   "register_row": "T1191-a"
+  },
+  {
+   "id": "gem:wismar",
+   "verdict": "catalogue",
+   "cause": "designation_missing",
+   "proposed_appeal": null,
+   "reason": "Rubric 7.0 fits. The World Heritage site 'Historic Centres of Stralsund and Wismar' lies 1.2 km from the row's point and the row has no designation at all: a join miss that costs the full recognition part.",
+   "register_row": "T1191-a"
+  },
+  {
+   "id": "CRL",
+   "verdict": "catalogue",
+   "cause": "designation_missing",
+   "proposed_appeal": null,
+   "reason": "Hand 2.5 is harsh but within reason for a city Wikivoyage itself frames as post-industrial. The join is wrong: Bois du Cazier (Major Mining Sites of Wallonia) lies 4.5 km away inside the city and the belfry is part of the Belfries of Belgium and France, yet recognition is 0.",
+   "register_row": "T1191-a"
+  },
+  {
+   "id": "HHN",
+   "verdict": "keep",
+   "cause": "reference_noise",
+   "proposed_appeal": null,
+   "reason": "Hand 2.5 is right for a Hunsrueck airfield village. The pageviews are the airport article's, so the reference measures the airport, not the place.",
+   "register_row": "T1191-d"
+  },
+  {
+   "id": "EMA",
+   "verdict": "keep",
+   "cause": "reference_noise",
+   "proposed_appeal": null,
+   "reason": "Hand 4.2 is right for an airport hinterland row. The pageviews read the airport article.",
+   "register_row": "T1191-d"
+  },
+  {
+   "id": "KOW",
+   "verdict": "keep",
+   "cause": "reference_noise",
+   "proposed_appeal": null,
+   "reason": "Hand 4.0 fits a pilgrimage village; the views come from the shrine and the airport, which the score already weighs.",
+   "register_row": "T1191-d"
+  },
+  {
+   "id": "gem:golem",
+   "verdict": "keep",
+   "cause": "reference_noise",
+   "proposed_appeal": null,
+   "reason": "Rubric 4.8 (low confidence, data_conflict) fits a beach strip by Durres. 1,641 daily views for a place of no listed population is a title collision with the golem of folklore: the pageviews harvest read the wrong article.",
+   "register_row": "T1191-d"
+  },
+  {
+   "id": "TIV",
+   "verdict": "keep",
+   "cause": "depth_coverage",
+   "proposed_appeal": null,
+   "reason": "Hand 5.0 fits a marina town; Kotor and its Venetian walls lie 5 to 7 km away and are scored at Kotor's own row. Depth 0.026 for a town of 6,000 next to the Bay of Kotor is thin POI coverage.",
+   "register_row": "T1191-e"
+  },
+  {
+   "id": "gem:faliraki",
+   "verdict": "keep",
+   "cause": "reference_noise",
+   "proposed_appeal": null,
+   "reason": "Rubric 5.0 fits a built-up resort strip; the views come from its party-resort fame, which is attention, not appeal.",
+   "register_row": null
+  },
+  {
+   "id": "gem:kernave",
+   "verdict": "keep",
+   "cause": "class_curve",
+   "proposed_appeal": null,
+   "reason": "Hand 4.5 fits: the mounds are atmospheric but small, and recognition is already 1 (the World Heritage join works here). A low area percentile is right for a single archaeological site.",
+   "register_row": null
+  },
+  {
+   "id": "TGD",
+   "verdict": "keep",
+   "cause": "reference_noise",
+   "proposed_appeal": null,
+   "reason": "Hand 3.5 fits a transit capital with little leisure draw; capital status drives the views.",
+   "register_row": null
+  },
+  {
+   "id": "gem:peja",
+   "verdict": "keep",
+   "cause": "q_above_appeal",
+   "proposed_appeal": null,
+   "reason": "Hand 7.0 fits the Rugova canyon and the Patriarchate of Pec. The Q of 9.1 sits 2.1 points over the appeal through depth 0.83 and recognition 1, and 17 daily views for a city of 49,000 suggests the pageviews read a thin article.",
+   "register_row": "T1191-b"
+  },
+  {
+   "id": "gem:dannewerk",
+   "verdict": "adjust",
+   "cause": "q_above_appeal",
+   "proposed_appeal": 6.2,
+   "reason": "A village of 1,075 by the Danevirke earthworks; Hedeby and Schleswig, the real draws, lie 4 to 11 km away and the rubric credits them. Propose 6.2 (the T760 Tenno precedent) and review why Q reaches 8.3.",
+   "register_row": "T1191-c"
+  },
+  {
+   "id": "gem:arrabida",
+   "verdict": "keep",
+   "cause": "row_scope",
+   "proposed_appeal": null,
+   "reason": "Hand 7.5 fits the Arrabida coves; the row stands for the natural park under the name of a hamlet, so pageviews of 'Portinho' cannot see it.",
+   "register_row": null
+  },
+  {
+   "id": "gem:douro",
+   "verdict": "keep",
+   "cause": "row_scope",
+   "proposed_appeal": null,
+   "reason": "Hand 8.2 fits the Alto Douro wine region (World Heritage, recognition 1); the row is the valley under Pinhao's name, so village pageviews undercount it.",
+   "register_row": null
+  },
+  {
+   "id": "gem:genzano-di-roma",
+   "verdict": "keep",
+   "cause": "q_above_appeal",
+   "proposed_appeal": null,
+   "reason": "Rubric 6.8 fits a Castelli Romani town (T760 cut nearby Castel Gandolfo to 6.8, so the two now match). The Q of 7.9 comes from depth 0.954: the 30 minute reach collects Nemi, Ariccia and the lakes.",
+   "register_row": "T1191-b"
+  },
+  {
+   "id": "gem:montagnana",
+   "verdict": "keep",
+   "cause": "register_not_referenced",
+   "proposed_appeal": null,
+   "reason": "Rubric 7.2 fits a walled town with 2 km of intact medieval walls, a Borghi piu belli member. None of this layer's references sees the village associations, so the gap is the references' blind spot.",
+   "register_row": null
+  },
+  {
+   "id": "gem:castelnou",
+   "verdict": "keep",
+   "cause": "register_not_referenced",
+   "proposed_appeal": null,
+   "reason": "Rubric 6.7 fits a Plus Beaux Villages hill village under the Canigou; the references do not see the association.",
+   "register_row": null
+  },
+  {
+   "id": "gem:opi",
+   "verdict": "keep",
+   "cause": "q_above_appeal",
+   "proposed_appeal": null,
+   "reason": "Rubric 7.4 fits a Borghi village at 1,250 m in the Abruzzo national park; the Q of 8.8 is 1.4 points over the appeal through depth 0.92 and recognition 0.95.",
+   "register_row": "T1191-b"
+  },
+  {
+   "id": "gem:praia-da-falesia",
+   "verdict": "catalogue",
+   "cause": "class_wrong",
+   "proposed_appeal": null,
+   "reason": "Hand 6.8 fits the red-cliff beach. The row is a beach classed as a town (the population is Olhos de Agua's), so it is ranked against towns.",
+   "register_row": "T1191-f"
+  },
+  {
+   "id": "gem:bleggio-superiore",
+   "verdict": "adjust",
+   "cause": "q_above_appeal",
+   "proposed_appeal": 6.1,
+   "reason": "The Borghi piu belli entry is the hamlet of Rango, not the comune (the T760 Tenno and Canale case); Stenico castle and Fiave lie 4 km out. Propose 6.1 and review the Q lift (7.7 on a 6.5 appeal).",
+   "register_row": "T1191-c"
+  },
+  {
+   "id": "gem:san-giovanni-di-fassa",
+   "verdict": "keep",
+   "cause": "q_above_appeal",
+   "proposed_appeal": null,
+   "reason": "Rubric 7.4 fits a Dolomites valley village under the Vajolet towers; the Q of 8.7 lifts 1.3 points over it through depth and recognition.",
+   "register_row": "T1191-b"
+  },
+  {
+   "id": "gem:logar-valley",
+   "verdict": "keep",
+   "cause": "hidden_gem_by_design",
+   "proposed_appeal": null,
+   "reason": "Hand 7.4 fits one of the finest alpine valleys in Slovenia; few views is what the hidden gem flag is for.",
+   "register_row": null
+  },
+  {
+   "id": "gem:srednja-vas-v-bohinju",
+   "verdict": "keep",
+   "cause": "hidden_gem_by_design",
+   "proposed_appeal": null,
+   "reason": "Rubric 7.4 fits a Bohinj village with the Savica falls and Triglav in reach; low views by design.",
+   "register_row": null
+  },
+  {
+   "id": "gem:villalago",
+   "verdict": "keep",
+   "cause": "q_above_appeal",
+   "proposed_appeal": null,
+   "reason": "Rubric 6.8 fits a very small Borghi village by Lake San Domenico; the Q of 8.5 is 1.7 points over it through depth 0.87 and recognition 0.95.",
+   "register_row": "T1191-b"
+  },
+  {
+   "id": "gem:humlebaek-louisiana",
+   "verdict": "keep",
+   "cause": "row_scope",
+   "proposed_appeal": null,
+   "reason": "Hand 7.0 fits the Louisiana museum; the row stands for the museum under the town's name, so the town's views undercount it.",
+   "register_row": null
+  }
+ ]
+}

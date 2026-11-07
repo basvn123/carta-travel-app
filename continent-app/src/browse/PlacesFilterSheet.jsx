@@ -30,10 +30,12 @@ import NotYet from '../components/NotYet.jsx';
  * class names, so every filter sheet is one surface with different contents.
  */
 /** The nouns the primary can count (filter.showOne.* and filter.showMany.*). */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const SHOW_NOUNS = ['places', 'trails', 'beaches', 'lakes', 'mountains', 'cycling', 'trips'];
 
 /** "Show 214 places": the answer to the filters, not a catalogue count, so
  *  it may stand on the button (roadmap 1.3b B). Zero says so in words. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function showLabel(t, noun, n, lang) {
   const k = SHOW_NOUNS.includes(noun) ? noun : 'places';
   if (!n) return t('filter.showNone');

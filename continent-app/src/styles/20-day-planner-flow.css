@@ -30,7 +30,7 @@
   width: 15px;
   height: 15px;
   margin-left: 1px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper-dim);
   color: var(--ink-soft);
 }
@@ -112,14 +112,14 @@
 }
 .carta-plan-chip {
   padding: 6px 11px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid var(--rule);
   background: var(--paper);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color 0.14s, background 0.14s, color 0.14s;
+  transition: border-color var(--dur-1), background var(--dur-1), color var(--dur-1);
 }
 
 /* The which-part-of-town answer: honest options built from the data, each
@@ -137,25 +137,25 @@
   width: 100%;
   text-align: left;
   padding: 8px 11px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   border: 1px solid var(--rule);
   background: var(--paper);
   cursor: pointer;
-  transition: border-color 0.14s, background 0.14s;
+  transition: border-color var(--dur-1), background var(--dur-1);
 }
 @media (hover: hover) {
   .carta-area:hover { border-color: var(--accent); }
 }
 .carta-area.on { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; background: var(--bg-card); }
 .carta-area-text b { display: block; font-size: 12.5px; color: var(--ink); }
-.carta-area-text small { display: block; font-size: 11px; color: var(--ink-mute); margin-top: 1px; }
+.carta-area-text small { display: block; font-size: var(--text-micro); color: var(--ink-mute); margin-top: 1px; }
 .carta-area-count {
   flex: none;
   font-family: var(--mono);
   font-size: 10px;
   color: var(--ink-soft);
   background: var(--paper-dim);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 2px 8px;
   white-space: nowrap;
 }
@@ -171,7 +171,7 @@
 .carta-route-list { display: flex; flex-direction: column; gap: 8px; }
 .carta-route {
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   padding: 10px 11px;
 }
@@ -182,7 +182,7 @@
   gap: 8px;
 }
 .carta-route-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.carta-route-title b { font-size: 13px; color: var(--ink); }
+.carta-route-title b { font-size: var(--text-label); color: var(--ink); }
 .carta-route-rec {
   display: inline-flex;
   align-items: center;
@@ -192,7 +192,7 @@
   color: var(--accent);
 }
 .carta-route-desc { display: block; font-size: 11.5px; line-height: 1.45; color: var(--ink-soft); margin-top: 2px; }
-.carta-route-stats { display: block; font-size: 11px; font-weight: 600; color: var(--ink-soft); margin-top: 4px; }
+.carta-route-stats { display: block; font-size: var(--text-micro); font-weight: 600; color: var(--ink-soft); margin-top: 4px; }
 .carta-route-stops {
   margin: 6px 0 0;
   padding-left: 18px;
@@ -223,18 +223,18 @@
 .trip-carfrom-note b { color: var(--ink); }
 .trip-ownflight-date > span {
   font-family: var(--ui);
-  font-weight: 600; font-size: 12px;
+  font-weight: 600; font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 
 /* ── Stay step: rating/price filters + per-night price chip ── */
 .guide-stay-filter > span {
   font-family: var(--ui);
-  font-weight: 600; font-size: 12px;
+  font-weight: 600; font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .guide-stay-filter select {
-  font-size: 12px; color: var(--ink);
+  font-size: var(--text-caption); color: var(--ink);
   border: 1px solid var(--rule); border-radius: 8px;
   background: var(--paper); padding: 5px 8px;
 }
@@ -247,7 +247,7 @@
 .ai-plan-head h3 { font-family: var(--display); font-size: 17px; font-weight: 600; color: var(--ink); }
 .ai-plan-note { font-size: 11.5px; color: var(--ink-mute); line-height: 1.5; margin-top: 10px; }
 .ai-plan-hills input { accent-color: var(--accent); width: 15px; height: 15px; }
-.ai-plan-busy p { font-size: 13px; color: var(--ink-soft); margin-top: 12px; }
+.ai-plan-busy p { font-size: var(--text-label); color: var(--ink-soft); margin-top: 12px; }
 
 /* The proposed schedule (modal) + the applied schedule card (day rail). */
 /* The Carta bot's day lands as a cascade rather than all at once, so the
@@ -260,7 +260,7 @@
 /* The block a proposed stop sits in ("Morning"), labelled once per block, in
    place of the arrival clock this column used to carry. Wider than a 44px
    "09:30" needed, and quiet: it orients, it does not command. */
-.ai-sched-body b { font-size: 13px; font-weight: 600; color: var(--ink); }
+.ai-sched-body b { font-size: var(--text-label); font-weight: 600; color: var(--ink); }
 .ai-sched-body small { font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; }
 
 /* ── The proposal as a route: a map of the day above the stops it lists ──
@@ -299,12 +299,12 @@ button.ai-sched-main { cursor: pointer; }
   border-radius: 8px;
   padding-left: 6px; padding-right: 6px;
   margin-left: -6px; margin-right: -6px;
-  transition: background 0.15s;
+  transition: background var(--dur-1);
 }
 button.ai-sched-main:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
 }
 
 /* Applied-schedule card in the day rail */
@@ -337,10 +337,10 @@ button.ai-sched-main:focus-visible {
   flex: 1 1 auto;
   min-width: 0;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   color: var(--ink);
-  font: inherit; font-size: 13px;
+  font: inherit; font-size: var(--text-label);
   padding: 9px 11px;
 }
 
@@ -426,7 +426,7 @@ button.ai-sched-main:focus-visible {
 
 /* Signed out, and empty. Both used to be a sentence of grey type, and an
    offer with nothing to press is not an offer. */
-.dtsignin-text b { display: block; font-size: 14px; }
+.dtsignin-text b { display: block; font-size: var(--text-body); }
 .dtsignin-text p { margin: 3px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
 /* T389 (brief V3-6): "Sign in" and "Plan a trip" are secondaries. Sign in was
    the only filled control on the day planner's first screen, so the page's
@@ -443,14 +443,14 @@ button.ai-sched-main:focus-visible {
   min-width: 158px;
   padding: 5px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   box-shadow: var(--shadow-1);
 }
 
 /* "Which day?": every day of the trip, grouped under its stop. Picking one
    answers the stay question and the date question at once. */
-.dtday-chip b { font-size: 13px; font-weight: 600; }
+.dtday-chip b { font-size: var(--text-label); font-weight: 600; }
 .dtday-chip small {
   font-family: var(--mono);
   font-size: 10.5px;
@@ -575,11 +575,11 @@ button.ai-sched-main:focus-visible {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: transparent;
   text-align: left;
   cursor: pointer;
-  transition: background 0.12s ease, border-color 0.12s ease;
+  transition: background var(--dur-1) var(--ease-in-out), border-color var(--dur-1) var(--ease-in-out);
 }
 .day-ideas-row-text b {
   font-size: 13.5px; font-weight: 500; color: var(--ink);

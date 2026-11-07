@@ -4,18 +4,22 @@ import { ReportProblem } from '../components/ReportProblem.jsx';
 import maplibregl from '../map/maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { RouteRainWarning } from './RouteRainWarning.jsx';
-import { loadTrail, loadTrails } from '../lib/trails.js';
+import { loadTrail, loadTrails, loadTreks } from '../lib/trails.js';
+import { trekCountry, trekOfRow } from '../lib/treks.js';
 import {
   haversineKm, stopNameFromRef, trailRating,
   tripGrade, gradeIsDerived, tripHighlights, ROUTE_TYPES, tripRouteType,
   trailWaymarked, trailSeason,
 } from '../lib/trailCards.js';
-import { trailStory, trailReasons, trailPlace } from '../lib/trailStory.js';
+import { trailStory, trailReasons, trailPlace, isLongWalk, trailDays } from '../lib/trailStory.js';
 import {
   routePoints, routeLength, nearestOnRoute, sliceRoute, remainingRelief,
   hikeTimeMin, isLoopRoute, basesAlong,
 } from '../lib/trailGeo.js';
 import { SurfaceBar, Stages, Bases } from './RouteParts.jsx';
+import { TrekStages } from './TrekStages.jsx';
+import { WayBack } from './WayBack.jsx';
+import { wayBackFor } from '../lib/wayBack.js';
 import { pointAlong } from '../lib/signature.js';
 import {
   trailGpx, trailFileBase, trailShareUrl, trailheadDirectionsUrl,
@@ -257,6 +261,42 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     () => new Map((stageRows || []).map((r) => [String(r.id), r])),
     [stageRows],
   );
+
+  // T1184 (D24): the multi-stage trek this walk is a stage of, or whose
+  // published parent row it is. The record sits in the country file of the
+  // trek's first stage (row.trek.cc), already cached when that is this
+  // walk's own country; its stages can sit in other countries' files, which
+  // are read only to make each stage a link.
+  const [trek, setTrek] = useState(null);
+  const [trekRows, setTrekRows] = useState(() => new Map());
+  const trekCc = trekCountry(tr);
+  const mayHaveTrek = !isCityDay && Boolean(tr.trek?.id || tr.h?.cls === 'parent');
+  useEffect(() => {
+    let live = true;
+    setTrek(null);
+    if (!mayHaveTrek) return undefined;
+    loadTreks(trekCc).then((list) => { if (live) setTrek(trekOfRow(list, tr)); })
+      .catch(() => { if (live) setTrek(null); });
+    return () => { live = false; };
+  }, [mayHaveTrek, trekCc, tr]);
+  useEffect(() => {
+    let live = true;
+    if (!trek) return undefined;
+    const ccs = [...new Set([trek.cc, ...trek.stages.map((s) => s.cc)].filter(Boolean))];
+    Promise.all(ccs.map((cc) => loadTrails(cc).catch(() => null))).then((lists) => {
+      if (!live) return;
+      const m = new Map();
+      for (const rows of lists) for (const r of rows || []) m.set(String(r.id), r);
+      setTrekRows(m);
+    });
+    return () => { live = false; };
+  }, [trek]);
+  const openTrekRow = (id) => {
+    const row = trekRows.get(String(id));
+    if (row && onOpenNeighbour) onOpenNeighbour('trail', row);
+  };
+  const trekParentOpens = Boolean(trek && trek.row != null && String(trek.row) !== String(tr.id)
+    && trekRows.has(String(trek.row)) && onOpenNeighbour);
 
   const src = detail || tr;
   const pts = useMemo(() => routePoints(src.geometry), [src]);
@@ -572,10 +612,23 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const sacTag = SAC_STEP[src.sac_scale] || SAC_STEP[tr.sac_scale] || 0;
   const gradeStep = isCityDay ? 0 : (sacTag || GRADE_STEP[grade] || 0);
   const gradeEst = !sacTag && (derivedGrade || !grade);
-  const gradeWord = gradeStep ? t('ox.gradeShort', { n: gradeStep, word: t(`ox.grade.t${gradeStep}`) }) : '';
+  // T1092 (D7): a multi-day walk on easy ground reads "Long, 14 days"
+  // where Carta's own grade would stand. A mapper's SAC tag still wins.
+  const longDays = !isCityDay && !sacTag && (isLongWalk(src) || isLongWalk(tr))
+    ? (trailDays(src) || trailDays(tr)) : null;
+  const gradeWord = longDays ? t('trails.gradeLongDays', { n: longDays })
+    : gradeStep ? t('ox.gradeShort', { n: gradeStep, word: t(`ox.grade.t${gradeStep}`) }) : '';
+  // T1092: the name as the source wrote it, when it differs from the title.
+  const srcName = detail?.src_name || tr.src_name || '';
 
   // One way, a loop or there and back: the wire's shape, else the loop test.
-  const rt = tripRouteType(src) || tripRouteType(tr);
+  // T1201 (T1184-d, T1185-d): the wire's route type came from the mapper's
+  // roundtrip tag on many A to B stages (all of the BergeSeen Trail), so a
+  // loop whose ends lie more than a kilometre apart reads as one way, the
+  // same T430 guard `loop` has above. The pipeline fixes it at the next export.
+  const rtWire = tripRouteType(src) || tripRouteType(tr);
+  const rt = (rtWire === 'loop' || rtWire === 'figure8') && endsApartKm != null && endsApartKm > 1
+    ? 'point' : rtWire;
   const shapeKey = rt && ROUTE_LABEL[rt] ? ROUTE_LABEL[rt]
     : loop === true ? 'trails.shapeLoop' : loop === false ? 'trails.shapePoint' : null;
   const shapeWord = shapeKey ? t(shapeKey) : '';
@@ -631,7 +684,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     photo: nearestShot(h.along_m),
   }));
   const galleryPhotos = shots.length ? shots
-    : (tr.img?.u ? toPhotos([{ u: tr.img.u, w: tr.img.w, h: tr.img.h }], { fallbackCaption: named.name })
+    : (tr.img?.u ? toPhotos([tr.img], { fallbackCaption: named.name })
       : (assoc.photoUrl ? toPhotos([assoc.photoUrl], { caption: assoc.photoOf ? t('detail.photoNear', { place: assoc.photoOf }) : named.name }) : []));
   const before = beforeGoItems({
     lines: notForLines('trail', tr, { reasons: detail?.reasons || tr.reasons, grade, ascent, totalM }),
@@ -756,6 +809,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const hasStops = Array.isArray(stops) && stops.length > 0;
   const hasFamily = Boolean(family && family.size > 1);
 
+  // T1185 (D24): a one-way walk says how to get back; no record is said out
+  // loud as "we do not know". A loop or an out-and-back needs no way back.
+  const wayBack = wayBackFor(tr, trek);
+  // The record is judged by the line's own ends, so it wins over `is_loop`,
+  // a flag that is wrongly true on many A to B stages (T1184-d).
+  const showWayBack = !isCityDay && Boolean(start) && rt !== 'out_back'
+    && (Boolean(wayBack.wb) || (Boolean(shapeKey) && !isLoopShape));
+
   const onAdd = onAddToDay ? () => onAddToDay({
     id: tr.id, cc: tr.country || tr.cc, name: named.name,
     lat: start ? start.lat : (tr.bbox ? (tr.bbox[1] + tr.bbox[3]) / 2 : tr.lat),
@@ -866,7 +927,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
     { key: 'near', id: 'ox-near', label: t('ox.jump.nearby') },
   ];
 
-  const hasAlong = sights.length > 0 || hasStages || bases.length > 0 || hasStops || hasFamily;
+  const hasAlong = sights.length > 0 || hasStages || Boolean(trek) || bases.length > 0 || hasStops || hasFamily;
   const climbLine = isNum(ascent) ? t('ox.climbM', { m: nf(ascent) }) : '';
 
   return (
@@ -889,6 +950,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       photoFallback={{ city: named.name, iso2: tr.country || tr.cc }}
       head={{
         title: named.name,
+        sub: srcName ? t('trails.alsoCalled', { name: srcName }) : '',
         iso2: tr.country || tr.cc,
         where: place ? [place.country, place.city].filter(Boolean).join(', ') : '',
         rating: isCityDay ? (assoc.dest?.rating || null) : (rating || null),
@@ -962,13 +1024,27 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       {gettingRows.some(Boolean) && (
         <PSection id="ox-getting" title={t('detail.gettingThere')}>
           <CheckRows rows={gettingRows} />
+          {showWayBack && (
+            <WayBack wb={wayBack.wb} viaTrek={wayBack.viaTrek} t={t} lang={lang} onPlan={onAdd} />
+          )}
         </PSection>
       )}
 
       {hasAlong && (
         <PSection id="ox-along" title={t('ox.jump.along')}>
           <AlongCards items={sights} />
-          {hasStages && (
+          {trek && (
+            <TrekStages
+              trek={trek}
+              currentId={tr.id}
+              t={t}
+              lang={lang}
+              canOpen={(st) => Boolean(onOpenNeighbour) && trekRows.has(String(st.id))}
+              onOpenStage={onOpenNeighbour ? (st) => openTrekRow(st.id) : null}
+              onOpenWhole={trekParentOpens ? () => openTrekRow(trek.row) : null}
+            />
+          )}
+          {hasStages && !trek && (
             <div className="pt-block">
               <h3 className="pt-block-title">{t('route.stagesTitle')}</h3>
               <Stages
@@ -1005,7 +1081,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
               </ol>
             </div>
           )}
-          {hasFamily && (
+          {hasFamily && !trek && (
             <p className="pt-muted">
               {t('trails.familyPart', { name: family.n || family.k })}
               {', '}

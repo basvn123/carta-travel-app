@@ -15,6 +15,7 @@
 import { stripDashes } from '../format.js';
 import { formatMoney, formatEst } from '../money.js';
 import { monthRow } from './rank.js';
+import { ask as askPrompt, frag } from '../../../functions/_lib/prompts.js';
 
 // v2 (T563): comparisons and budget verdicts are written by code as notes
 // of their own, and the prompt forbids the model any it is not given.
@@ -40,18 +41,8 @@ const cut = (s, n) => {
  * each rule is one the verifier also checks.
  */
 export function systemPrompt(lang) {
-  return [
-    `You write short travel answers for Carta in ${LANG_NAME[lang] || 'English'}.`,
-    'Use only the numbered notes. Never add a fact, price, number, month or place that is not in them.',
-    'After every sentence, the first one too, write the note numbers it comes from, like [2] or [1][4].',
-    'Copy figures exactly as the notes write them.',
-    'Compare places, or call one better, best, cheaper, drier or warmer, only when a note says so, and cite that note.',
-    'Name places in the order the notes list them.',
-    'Write 2 or 3 short sentences in a warm, plain voice, like a friend who knows the places: name the best one to three places and the one reason that matters for each.',
-    'Do not say how many places match. Do not repeat the same phrase for each place, such as "has the highest score". No lists, no headings, no dashes.',
-    'If the notes do not answer the question, say in one sentence that Carta does not know.',
-    '/no_think',
-  ].join('\n');
+  // The text is the registry's ask prompt (prompts/ask, T1140).
+  return frag(askPrompt, 'system', { lang: LANG_NAME[lang] || 'English' });
 }
 
 /** One fact row as a note, from a facts-answer pick (compose.js) and its facts (rank.js). */
@@ -168,6 +159,23 @@ export function comparisonNotes(facts, { estWord = 'est.', monthName = monthEn }
     out.push(d.crowding?.tier
       ? `Carta's crowd figure for ${d.city} covers the whole year, not single months, so Carta does not know its least crowded month.`
       : `Carta has no crowd figure for ${d.city}.`);
+    // The cheapest months stand on a note of their own (T1206, T1136-d):
+    // as an answer note they came after the twelve month rows and fell
+    // past the notes cap.
+    const cheap = facts.when?.cheapest || [];
+    out.push(cheap.length
+      ? `Beds in ${d.city} are cheapest in ${cheap.map(monthName).join(', ')}.`
+      : `Carta has no measured bed prices by month for ${d.city}, so it does not know its cheapest month.`);
+  }
+  // An about answer: whether a car is needed, from the place's own
+  // transport facts (T1136-d); the answer's table was not in the notes.
+  if (facts.type === 'about' && picks[0]) {
+    const d = picks[0].dest;
+    const lt = d.local_transport || {};
+    const how = [lt.transit_quality ? `public transport is ${lt.transit_quality}` : '', String(lt.reason || '').replace(/[.\s]+$/, '')].filter(Boolean).join('; ');
+    if (lt.car_needed === false) out.push(`You do not need a car in ${d.city}${how ? `: ${how}` : ''}.`);
+    else if (lt.car_needed === true) out.push(`You need a car to get around ${d.city}${how ? `: ${how}` : ''}.`);
+    else out.push(`Carta does not know whether you need a car in ${d.city}.`);
   }
   return out;
 }
@@ -224,9 +232,9 @@ export function buildPack({ question, lang, facts, answer, passages = [], labels
 export function userPrompt(pack) {
   const notes = pack.notes.map((n) => (typeof n === 'string' ? n : n.text));
   return [
-    `Question: ${pack.question}`,
+    frag(askPrompt, 'device.question', { question: pack.question }),
     '',
-    'Notes:',
+    frag(askPrompt, 'device.notes'),
     ...notes.map((text, i) => `[${i + 1}] ${text}`),
   ].join('\n');
 }

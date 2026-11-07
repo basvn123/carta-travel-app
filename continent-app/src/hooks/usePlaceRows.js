@@ -43,6 +43,8 @@ export function usePlaceRows(data, indices, enabled = true) {
         country_rank: d.country_rank ?? null,
         country_badge: d.country_badge ?? null,
         image: dupHeroes.has(id) ? null : (d.image?.url || null),
+        // H12 (T1105): the whole record, so the card can ask for our own copy.
+        photo: dupHeroes.has(id) ? null : (d.image || null),
         climate: d.climate || null,
         cost: indices?.get(id) || {},
       });

@@ -49,6 +49,7 @@ import { TRAVEL_MODES } from '../lib/travelWay.js';
 // the cadence toggle (toCadence leaves it alone).
 export const COFFEE_MAX = 6;
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const PERIOD_FIELDS = [
   { key: 'dinners_per_week',            max: { week: 21, day: 3 } },
   { key: 'lunches_per_week',            max: { week: 21, day: 4 } },
@@ -64,6 +65,7 @@ export { PROFILES };
 
 // Display keys for the profile names above; the PROFILES keys stay as logic
 // keys (matchProfile / setProfile) and are resolved to text at render time.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const PROFILE_LABEL_KEYS = {
   Backpacker: 'lifestyle.profileBackpacker',
   Easygoing: 'lifestyle.profileEasygoing',
@@ -74,6 +76,7 @@ export const PROFILE_LABEL_KEYS = {
 };
 
 // One glyph per preset, so the grid is scannable before it is read.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const PROFILE_ICONS = {
   Backpacker: BackpackIcon,
   Easygoing: LeafIcon,
@@ -85,6 +88,7 @@ export const PROFILE_ICONS = {
 
 // One glyph per way to sleep. The table itself lives in lib/sleepGroups.js
 // so the headless harness can import it without a JSX loader.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const SLEEP_ICONS = { hostel: BunkIcon, home: HomeIcon, hotel: HotelIcon };
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -94,6 +98,7 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 // decimal (3 dinners/week is honestly 0.4/day, not 0) so no category the
 // traveller set is silently zeroed and the priced total survives the toggle;
 // day -> week rounds back to whole numbers.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function toCadence(ls, target) {
   const from = ls.cadence || 'week';
   if (from === target) return { ...ls, cadence: target };
@@ -111,6 +116,7 @@ export function toCadence(ls, target) {
 /** The preset a lifestyle currently equals, or null when it has been tuned
  *  by hand. Exported so the Explore toolbar can name what is set without
  *  keeping a second copy of the table. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function matchProfile(ls) {
   const wk = toCadence(ls, 'week');
   for (const [name, p] of Object.entries(PROFILES)) {

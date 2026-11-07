@@ -114,6 +114,28 @@ export const adminLaunchMetrics = (days = 30) =>
   call('admin_launch_metrics', { p_days: days });
 
 /**
+ * Visits per week by channel (K12, T1109; pending migration
+ * channel_counts). Per-day counts of utm_source with no identifier.
+ */
+export const adminChannelWeekly = (weeks = 8) =>
+  call('admin_channel_weekly', { p_weeks: weeks });
+
+/**
+ * The product funnel per week (I11, T1129; pending migration 070,
+ * funnel_counts). Per-day step counts with no identifier.
+ */
+export const adminFunnelWeekly = (weeks = 8) =>
+  call('admin_funnel_weekly', { p_weeks: weeks });
+
+/**
+ * Taste chip acceptance per week (F3, T1152-d; pending migration 072,
+ * taste_profile). Per-day counts of shown, accept and reject by facet and
+ * position bucket, with no identifier.
+ */
+export const adminTasteWeekly = (weeks = 8) =>
+  call('admin_taste_weekly', { p_weeks: weeks });
+
+/**
  * The ai_plan_cache hit rate (migration 029). One row per plan-day lookup,
  * hit or miss, so the rate is a division rather than a guess.
  *

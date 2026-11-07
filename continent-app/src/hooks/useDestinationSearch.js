@@ -5,10 +5,27 @@ import { groundReturn, homePoint, partyOf } from '../lib/travelWay.js';
 import { matchesAnyKind } from '../lib/trip_kinds.js';
 import { isFullRatingRange } from '../lib/rating.js';
 import { isBigPlace } from '../lib/placeSize.js';
+import { placeLinkingOn } from '../lib/linking/flag.js';
 
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
 function normalize(s) {
   return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+}
+
+/**
+ * Does a row answer the location box? The plain name and country substring,
+ * widened (T1215, row T1153-h) by the place linker's hits when the place
+ * linking flag is on, the same way Explore reads them (useExploreCatalog):
+ * a linked id or a region box counts too. Additive only, and with no hits
+ * (flag off, or still loading) it is the plain substring it always was.
+ */
+export function locationMatch(p, q, hits = null) {
+  if (!q) return true;
+  if (normalize(p.city).includes(q) || normalize(p.country).includes(q)) return true;
+  if (!hits) return false;
+  if (hits.ids?.has(p.id)) return true;
+  const b = hits.bbox;
+  return !!b && p.lat >= b[1] && p.lat <= b[3] && p.lon >= b[0] && p.lon <= b[2];
 }
 
 // City name without the airport parenthetical: "Rome (Fiumicino)" -> "Rome".
@@ -220,9 +237,31 @@ export function useDestinationSearch({
 
   const q = useMemo(() => normalize(locationQuery), [locationQuery]);
 
+  // T1215 (row T1153-h): behind the place linking flag (lib/linking/flag.js),
+  // the shared linker widens the substring, as on Explore. The linker, the
+  // search index and the Ask lexicon load on demand, so with the flag off the
+  // main bundle and the matching are what they were.
+  const linkOn = useMemo(() => placeLinkingOn(), []);
+  const linkCountry = !countryNot && countryFilter.length === 1 ? countryFilter[0] : null;
+  const linkDest = linkOn ? data?.destinations || null : null;
+  const [linkHits, setLinkHits] = useState(null);
+  useEffect(() => {
+    let live = true;
+    if (!linkOn || !locationQuery || locationQuery.length < 3) { setLinkHits(null); return undefined; }
+    Promise.all([
+      import('../lib/searchIndex.js').then((m) => m.loadSearchIndex().then((ix) => [m, ix])),
+      import('../lib/ask/data.js').then((m) => m.loadAskLexicon()).catch(() => null),
+      import('../lib/linking/search.js'),
+    ]).then(([[ixMod, ix], lex, linking]) => {
+      if (!live) return;
+      setLinkHits(ix ? linking.linkSearchHits(linking.linkerFor(ix, linkDest, lex), ix, locationQuery, { country: linkCountry }) : ixMod.querySearchIndex(ix, locationQuery));
+    }).catch(() => { if (live) setLinkHits(null); });
+    return () => { live = false; };
+  }, [linkOn, locationQuery, linkDest, linkCountry]);
+
   const filtered = useMemo(() => {
     return pricedAll.filter((p) => {
-      if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
+      if (!locationMatch(p, q, linkHits)) return false;
       if (countryFilter.length && countryFilter.includes(p.iso2) === countryNot) return false;
       if (priceRange) {
         const v = priceMode === 'pp' ? p.pp : p.total;
@@ -247,7 +286,7 @@ export function useDestinationSearch({
       }
       return true;
     });
-  }, [pricedAll, q, countryFilter, countryNot, priceRange, priceMode, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, bigOnly, reachActive, reachCutoffMin, reachMinutes]);
+  }, [pricedAll, q, linkHits, countryFilter, countryNot, priceRange, priceMode, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, bigOnly, reachActive, reachCutoffMin, reachMinutes]);
 
   // "Top picks" trims the filtered set to the N best by price or beauty. Applied
   // here (not just in the list) so the map and stats reflect the shortlist too.
@@ -263,7 +302,7 @@ export function useDestinationSearch({
   // but no price filter, they have no price).
   const unreachable = useMemo(() => {
     return unreachableAll.filter((p) => {
-      if (q && !(normalize(p.city).includes(q) || normalize(p.country).includes(q))) return false;
+      if (!locationMatch(p, q, linkHits)) return false;
       if (countryFilter.length && countryFilter.includes(p.iso2) === countryNot) return false;
       if (tripKinds.length > 0 && !matchesAnyKind(p.categories, tripKinds)) return false;
       if (ratingActive) {
@@ -282,7 +321,7 @@ export function useDestinationSearch({
       }
       return true;
     });
-  }, [unreachableAll, q, countryFilter, countryNot, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, bigOnly, reachActive, reachCutoffMin, reachMinutes]);
+  }, [unreachableAll, q, linkHits, countryFilter, countryNot, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, bigOnly, reachActive, reachCutoffMin, reachMinutes]);
 
   const dealThreshold = useMemo(() => {
     if (priced.length === 0) return null;

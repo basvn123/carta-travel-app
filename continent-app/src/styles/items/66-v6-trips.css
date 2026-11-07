@@ -3,23 +3,8 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.jpage .jpage-shot { max-height: 40dvh; width: 100%; object-fit: cover; }
-@media (min-width: 769px) {
-  .jpage .jpage-shot { max-height: 60dvh; }
-}
 .jpage-book-list label { min-height: var(--tap); }
 .jpage-book-count { font-family: var(--ui); }
-@media (min-width: 1024px) {
-  .jpage .jpage-wrap {
-    max-width: var(--w-detail);  /* T1041: the detail width */
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--panel-w);
-    column-gap: var(--space-7);
-    row-gap: 0;
-    align-items: start;
-  }
-  .jpage .jpage-body { display: contents; }
-}
 .itin-capband {
   background: var(--paper);
   border-bottom: 1px solid var(--rule);
@@ -67,22 +52,6 @@
 .jpage .jstrip-word:has(.mono) { text-transform: none; }
 .jpage .rfig-week .tpage-elev-area { fill: var(--rule-soft); }
 .jpage .rfig-week .tpage-elev-line { stroke: var(--ink); }
-@media (max-width: 599px) {
-  .jpage .jweek-beds {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .jpage .jweek-bed {
-    min-height: 32px;
-    padding-block: var(--space-1);
-  }
-  .jpage .jweek-bed:not(.is-out) .jweek-bed-name { display: none; }
-}
-.jpage .lpage-credit-line {
-  white-space: normal;
-  text-overflow: clip;
-}
 @media print {
   body:has(.jpage),
   :has(.jpage) {
@@ -107,16 +76,11 @@
     overflow: visible;
   }
   .jpage .srail,
-  .jpage .jpage-bar-acts,
   .jpage .dtrack-bar,
   .jpage .dtrack-dots,
   .jpage .tl-seg,
-  .jpage .ls-slider-input,
-  .jpage .jweek-picks,
-  .jpage .jpage-exits,
-  .jpage .bpage-base { display: none; }
-  .jpage .jpage-book-list li,
-  .jpage .jpage-budget-rows li { break-inside: avoid; }
+  .jpage .jpage-exits { display: none; }
+  .jpage .jpage-book-list li { break-inside: avoid; }
   .jpage .dsec-head,
   .jpage h2,
   .jpage h3,

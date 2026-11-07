@@ -1,6 +1,6 @@
 # Architecture overview
 
-How Carta's parts fit together. Built by T1073 (ROADMAP B2) from `continent-app/wrangler.toml`, `continent-app/scripts/build-pages.mjs`, `continent-app/src/lib/dataHost.js`, `supabase/functions/`, `infra/hetzner/README.md`, `.github/workflows/` and the handbook sections "The data wire", "Deploy", "The build box" and "CI and checks". Diagrams per request path and per pipeline task come with ROADMAP B5; ADRs go in this folder when decisions are recorded.
+How Carta's parts fit together. Built by T1073 (ROADMAP B2) from `continent-app/wrangler.toml`, `continent-app/scripts/build-pages.mjs`, `continent-app/src/lib/dataHost.js`, `supabase/functions/`, `infra/hetzner/README.md`, `.github/workflows/` and the handbook sections "The data wire", "Deploy", "The build box" and "CI and checks". Diagrams per request path are in [request-paths.md](request-paths.md) and the lineage per wire field and per pipeline task in [lineage.md](lineage.md) (ROADMAP B5, T1166); ADRs go in this folder when decisions are recorded.
 
 ## The picture
 

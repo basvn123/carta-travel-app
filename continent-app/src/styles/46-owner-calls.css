@@ -5,16 +5,6 @@
    Explore has no primary of its own, and the phone showed this as its only
    filled control. Scoped to the Explore filter bar: Destinations keeps its
    own row. */
-.explore-filterbar .places-filter-btn {
-  border: 1px solid var(--rule);
-  background: var(--bg-card);
-  color: var(--ink);
-}
-@media (hover: hover) {
-  .explore-filterbar .places-filter-btn:hover { background: var(--paper-dim); border-color: var(--ink-soft); }
-}
-.explore-filterbar .places-filter-btn.has-active { border-color: var(--ink); }
-.explore-filterbar .places-filter-btn .filter-tray-badge { background: var(--ink-fill); color: var(--on-fill); }
 
 /* The scrim behind every modal dialog is --ink at 28 percent (carta-design,
    Components). It was a literal rgba of the same colour. */
@@ -26,7 +16,6 @@
    device keeps --tap through the phone rules above, so this stays off any
    viewport the phone layout owns. */
 @media (pointer: fine) and (min-width: 769px) {
-  .xrails-all { min-height: 32px; padding: 0 8px; }
   /* The trip planner's compact chips and links. */
   .guide-recap-chip.is-link { min-height: 32px; box-sizing: border-box; }
   .wtrip-len { min-width: 32px; min-height: 32px; }
@@ -40,13 +29,6 @@
 /* The compact receipt on an Explore card says, per figure, whether it was
    measured in the city or is a country-level one (T098-b, owner call). */
 
-.cost-level {
-  flex: none;
-  font-size: 10.5px;
-  font-weight: 600;
-  opacity: 0.8;
-}
-
 /* The install hint in My trips (T246-d, owner call): one line, one secondary
    button, an ordinary row under the tabs. */
 .install-hint {
@@ -57,7 +39,7 @@
   margin: var(--space-3) var(--space-4) 0;
   padding: var(--space-3);
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
 }
 .install-hint-text { margin: 0; font-size: 13.5px; color: var(--ink); min-width: 0; }

@@ -48,6 +48,12 @@ suggestions, never bad data reaching the client.
 | `AI_USER_DAILY_CAP` | `10` | Shared with `plan-day`'s cap - both spend from the same daily bucket. |
 | `AI_GLOBAL_DAILY_CAP` | `200` | Same shared bucket, global side. |
 | `AI_ENABLE_CITY_GROUNDING` | `true` | **Must be `false` on a free-tier key**, see below. Off, it answers from the catalogue only, with strict `responseSchema` output. |
+| `AI_SUGGEST_CITY_PROVIDER` | `gemini` | The model provider (T1137 gateway, `_shared/aiModels.mjs`): `gemini`, `workers-ai` or `openai`. A switch changes which model answers travellers: the owner's call, with an eval run (`docs/ai/model-strategy.md`). |
+| `AI_SUGGEST_CITY_MODELS` | the provider's default chain | Comma separated chain for this function only, first model first, max 6. |
+| `AI_SUGGEST_CITY_BASE_URL` | (unset) | Provider `openai` only: the OpenAI-compatible server. `AI_OPENAI_BASE_URL` is the fallback for every function. |
+| `AI_OPENAI_API_KEY` | (unset) | Provider `openai` only: its key (a secret, see `docs/security/SECRETS.md`). |
+| `CF_ACCOUNT_ID`, `CF_AI_TOKEN` | (unset) | Provider `workers-ai` only: the account and an API token scoped to Workers AI (secrets). |
+| `AI_TRACE_LANGFUSE` (+ `LANGFUSE_HOST`, `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`) | off | `on` sends each call's metadata (no prompt or answer text) to Langfuse on the build box (T1139). |
 
 ## Grounding is not available on the free tier
 

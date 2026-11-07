@@ -53,6 +53,8 @@ sys.path.insert(0, str(HERE))
 import appeal_scale  # noqa: E402
 import beauty_layer  # noqa: E402
 from pipeline_io import atomic_write_json, load_json  # noqa: E402
+# T1214: the labels edit activities in place, so changed blocks are re-dated.
+from provenance import fingerprints, touch_changed  # noqa: E402
 from rating_config import cfg, section  # noqa: E402
 
 DATA = ROOT / "app_data" / "app_data.json"
@@ -161,7 +163,9 @@ def main():
     if sys.platform == "win32":
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     data = load_json(DATA)
+    before = fingerprints(data["destinations"], "activities")
     by_class = label_all(data)
+    touch_changed(data["destinations"], "activities", before)
     for cls, c in sorted(by_class.items()):
         n = sum(c.values())
         print(f"  {cls:8} {n:7,} POIs: " + ", ".join(

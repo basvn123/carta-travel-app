@@ -21,7 +21,7 @@ Full rules, formulas and thresholds (read these, do not copy them):
 
 ## Files
 
-App: continent-app/src/browse/ClimateStrip.jsx, continent-app/src/browse/CrowdCalendar.jsx, continent-app/src/lib/crowdMonth.js, continent-app/src/lib/when.js
+App: continent-app/src/browse/ClimateStrip.jsx, continent-app/src/browse/DestinationPage.jsx (the crowds fact), continent-app/src/lib/crowdMonth.js, continent-app/src/lib/when.js
 
 Pipeline and backend: pipeline/apply_climate.py, pipeline/harvest_tourism_density.py, pipeline/harvest_sea_temp.py
 

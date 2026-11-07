@@ -66,11 +66,14 @@ const PSQL_CANDIDATES = [
   process.env.PSQL || '',
   'psql',
 ];
+// A bare 'psql' is on PATH, not a file path, so existsSync('psql') is false
+// everywhere and the suite used to SKIP on every POSIX box (T1087). Each
+// candidate is probed by running it instead.
 let psql = PSQL_CANDIDATES.find((x) => {
   if (!x) return false;
   const path = x.replace(/^"/, '').split(/\s+/)[0];
   try {
-    return existsSync(path);
+    return spawnSync(path, ['--version'], { encoding: 'utf-8' }).status === 0;
   } catch {
     return false;
   }

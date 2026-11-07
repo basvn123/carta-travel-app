@@ -226,17 +226,34 @@ export const RANK_FIELDS = Object.freeze({
   bathing_water: { omit: ['nearest'] },
   image: { pick: ['url', 'w', 'h'] },
   climate: { pick: ['best'] },
+  // T1202 (D18): the plan flow's candidates skip a place shut in the trip's
+  // month (lib/season.js openIn) before the country files land.
+  season: { pick: ['open', 'conf'] },
   // T765: the place taste profile without its evidence, so a list can sort
   // "For you" before the country files land (closes T762-b; the page reads
   // the full profile, with the facts behind each bar, from the shard).
   taste: { map: compactTaste },
 });
 
+// T1143 (D3): the schema 20 provenance stamps stay in the country files. A
+// lite record has none (provenanceOf reads null until the shard lands), and
+// the pools stay as small as before: two blocks that differ only in their
+// date would otherwise be two pool entries.
+const PROV_KEYS = ['_src', '_asof'];
+function unstamped(value) {
+  if (!('_src' in value) && !('_asof' in value)) return value;
+  const out = { ...value };
+  for (const k of PROV_KEYS) delete out[k];
+  return out;
+}
+
 function projectField(value, how) {
-  if (how === true || value == null || typeof value !== 'object' || Array.isArray(value)) return value;
-  if (how.map) return how.map(value);
+  if (value == null || typeof value !== 'object' || Array.isArray(value)) return value;
+  if (how === true) return unstamped(value);
+  if (how.map) return how.map(unstamped(value));
   const out = {};
   for (const [k, v] of Object.entries(value)) {
+    if (PROV_KEYS.includes(k)) continue;
     if (how.pick && !how.pick.includes(k)) continue;
     if (how.omit && how.omit.includes(k)) continue;
     out[k] = v;

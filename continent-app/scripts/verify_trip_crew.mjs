@@ -17,7 +17,8 @@ import { chromium } from 'playwright';
 import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 
-const PORT = 4193;
+// T1089: CARTA_PORT points the harness at a server already running.
+const PORT = Number(process.env.CARTA_PORT) || 4193;
 const BASE = `http://127.0.0.1:${PORT}`;
 const SHOTS = 'scripts/shots';
 mkdirSync(SHOTS, { recursive: true });
@@ -52,6 +53,9 @@ const enterApp = async (page) => {
   await page.waitForTimeout(600);
 };
 
+// T1089: My trips is Trips | Saved | Your Europe now; the visited cards live on
+// Your Europe (.mt-jcard), and the past-trip form opens from Plan's Start
+// planning screen ("Add a past trip"), which hands over to My trips.
 const openSaved = async (page) => {
   const btn = page.locator('.header-nav-item, .bottom-nav-item')
     .filter({ hasText: /^(Saved trips|My trips)$/ }).locator('visible=true').first();
@@ -61,10 +65,17 @@ const openSaved = async (page) => {
   await page.waitForTimeout(500);
 };
 
-// Visited is the third segment of the panel's tab strip.
 const openVisited = async (page) => {
-  await page.locator('.saved-tab:visible').nth(2).click();
+  await page.locator('.ui-tab:visible', { hasText: /Your Europe/ }).first().click();
+  await page.locator('.mt-jcard').first().waitFor({ timeout: 10000 });
   await page.waitForTimeout(400);
+};
+
+const openPastForm = async (page) => {
+  await page.goto(`${BASE}/?tab=plan`, { waitUntil: 'domcontentloaded' });
+  await page.locator('.pf-open-start').first().click({ timeout: 60000 });
+  await page.locator('.pf-past').click();
+  await page.locator('.pasttrip-form').waitFor({ timeout: 8000 });
 };
 
 // Walk the calendar back to a month in the past and click a day in it. Not
@@ -85,9 +96,8 @@ const pickPastDate = async (page, which, monthsBack, day) => {
 
 /** Files a past trip: one city, dates last month, and `names` in "who came". */
 const fileTripWithCrew = async (page, names) => {
-  await page.locator('.saved-add-past').click();
+  await openPastForm(page);
   const form = page.locator('.pasttrip-form');
-  await form.waitFor({ timeout: 8000 });
 
   await form.locator('.pasttrip-input').first().fill('Salzburg');
   await page.waitForTimeout(600);
@@ -97,6 +107,7 @@ const fileTripWithCrew = async (page, names) => {
   await pickPastDate(page, 0, 1, 8);
   await pickPastDate(page, 1, 1, 12);
 
+  await form.locator('.pasttrip-details').click();
   await form.locator('.pasttrip-fold-head').filter({ hasText: 'Who came' }).first().click();
   await page.waitForTimeout(200);
   for (const name of names) {
@@ -123,13 +134,11 @@ const run = async () => {
   await page.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
   await page.goto(BASE, { waitUntil: 'domcontentloaded' });
   await enterApp(page);
-  await openSaved(page);
-  await openVisited(page);
 
   await fileTripWithCrew(page, ['Sofie', 'Jonas']);
   await page.screenshot({ path: `${SHOTS}/crew-record.png` });
 
-  const cardText = async () => page.locator('.uptrip-card.is-visited').first().innerText();
+  const cardText = async () => page.locator('.mt-jcard').first().innerText();
   let text = await cardText();
   if (/Sofie/.test(text) && /Jonas/.test(text)) ok('both people show on the record card');
   else fail(`the card does not name who came:\n${text}`);
@@ -139,7 +148,7 @@ const run = async () => {
   else ok('no banned separator in the crew line');
 
   // The memory view names them too, next to the traveller count.
-  await page.locator('.saved-card-footer').first().click();
+  await page.locator('.mt-jcard-title').first().click();
   await page.locator('.memo').waitFor({ timeout: 5000 });
   const memo = await page.locator('.memo').innerText();
   if (/Sofie and Jonas/.test(memo)) ok('the opened memory names who came');
@@ -208,10 +217,8 @@ const run = async () => {
   await mpage.addInitScript(() => localStorage.setItem('continent.homeSeen.v1', '1'));
   await mpage.goto(BASE, { waitUntil: 'domcontentloaded' });
   await enterApp(mpage);
-  await openSaved(mpage);
-  await openVisited(mpage);
-  await mpage.locator('.saved-add-past').click();
-  await mpage.locator('.pasttrip-form').waitFor({ timeout: 8000 });
+  await openPastForm(mpage);
+  await mpage.locator('.pasttrip-details').click();
   await mpage.locator('.pasttrip-fold-head').filter({ hasText: 'Who came' }).first().click();
   await mpage.locator('.pasttrip-ghost').filter({ hasText: 'Add a name' }).click();
   await mpage.locator('.pasttrip-fold-body .pasttrip-input').last().fill('Anna de Vries');

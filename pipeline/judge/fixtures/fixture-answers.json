@@ -1,0 +1,11 @@
+{
+ "note": "T1188: the answer a model is recorded to give per fixture text (keyed by subject) and the verdict the judge must end with. f5's answer says supported while a claim is contradicted: normalise_verdict raises it.",
+ "answers": {
+  "Fixture Loop A": {"verdict": "supported", "claims": [{"claim": "waymarked", "verdict": "supported", "evidence": "osmc:symbol"}, {"claim": "12.4 km", "verdict": "supported", "evidence": "distance_km: 12.4"}], "reason": "every claim is in the facts"},
+  "Fixtureville": {"verdict": "unsupported", "claims": [{"claim": "cheese market", "verdict": "supported", "evidence": "known for its weekly cheese market"}, {"claim": "Gothic cathedral", "verdict": "unsupported", "evidence": ""}], "reason": "the cathedral is not in the source"},
+  "Fixture day 2": {"verdict": "contradicted", "claims": [{"claim": "09:40", "verdict": "contradicted", "evidence": "depart: 09:10"}, {"claim": "12 euros", "verdict": "supported", "evidence": "price_eur: 12"}], "reason": "the train leaves at 09:10"},
+  "Fixture question": {"verdict": "supported", "claims": [{"claim": "closed on Mondays", "verdict": "supported", "evidence": "closed on Mondays"}], "reason": "stated"},
+  "Fixture translation": {"verdict": "supported", "claims": [{"claim": "5 km", "verdict": "contradicted", "evidence": "8 km"}], "reason": "inconsistent on purpose"}
+ },
+ "expected": {"f1": "supported", "f2": "unsupported", "f3": "contradicted", "f4": "supported", "f5": "contradicted"}
+}

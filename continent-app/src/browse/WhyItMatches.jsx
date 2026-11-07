@@ -24,9 +24,11 @@ import { CheckIcon } from '../components/Icons.jsx';
  */
 
 /** The month (1 to 12) the surrounding list or page speaks about, or null. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const MatchMonth = React.createContext(null);
 
 /** The traveller's taste from the app's choices, null when nothing is set. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useTaste() {
   const firstRun = useFirstRun();
   const raw = firstRun?.choices?.taste;
@@ -34,6 +36,7 @@ export function useTaste() {
 }
 
 /** The fit of `place` for this traveller and month, or null. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useFit(place, month) {
   const taste = useTaste();
   const ctxMonth = React.useContext(MatchMonth);

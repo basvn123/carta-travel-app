@@ -171,6 +171,7 @@ function PriceFeel({ t, destination }) {
 }
 
 /** The item prices this place has (a coffee, a meal), in their order. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function foodPriceKeys(destination) {
   const costs = destination?.costs;
   return costs ? FOOD_ITEMS.filter((k) => costs[k] > 0) : [];

@@ -16,6 +16,7 @@ import { SheetShell } from '../browse/SheetShell.jsx';
  */
 
 /** "All of Europe", "Italy", "Italy, Spain", "4 countries", "Not France", "All but 3". */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function countriesValue(t, list, not, names) {
   if (!list?.length) return t('settings.countriesAll');
   const name = (cc) => names.get(cc) || cc;

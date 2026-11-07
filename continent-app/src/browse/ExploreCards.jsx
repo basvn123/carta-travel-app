@@ -3,11 +3,13 @@ import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { MatchLine } from './WhyItMatches.jsx';
+import { WhyChips } from './WhyChips.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { BookmarkIcon, BusIcon, CarIcon, TrainIcon } from '../components/Icons.jsx';
 import { formatEst } from '../lib/money.js';
 import { Card, IconButton } from '../components/ui/index.js';
 import { PriceParts } from '../components/PriceParts.jsx';
+import { PriceNotes } from '../components/PriceNotes.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { countryName } from '../lib/countryName.js';
@@ -86,7 +88,7 @@ export function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
       layout="tile"
       className="xtile"
       media={(
-        <HeroImage url={p.image} city={p.city} iso2={p.iso2}
+        <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2}
           className="xtile-img" maxWidth={960}
           sizes="(max-width: 768px) 78vw, 280px" ratio={[4, 3]} />
       )}
@@ -108,9 +110,11 @@ export function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
           </span>
           {/* T765: "86% match: hiking, quiet", from 55% up, beside the Score. */}
           <MatchLine place={p} />
+          {/* T1208 (G9): why it fits, with evidence on both sides. */}
+          <WhyChips place={p} />
         </>
       )}
-      price={<><DayPrice cost={p.cost} t={t} /><FriendCardLine destId={p.id} /></>}
+      price={<><DayPrice cost={p.cost} t={t} /><PriceNotes row={p.cost} className="xprice-notes" /><FriendCardLine destId={p.id} /></>}
       rating={<ScoreChip rating={p.rating} size="sm" />}
       actions={onToggleFav ? (
         <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} tone="photo" name={p.city} />

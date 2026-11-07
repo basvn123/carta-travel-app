@@ -1253,6 +1253,17 @@ export function StormIcon({ size = 15, className = '', labelled = false }) {
   );
 }
 
+export function AccessIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Access">
+      <circle cx="12" cy="4.6" r="1.7" />
+      <path d="M12 8.2v6h4.4l2.2 4.6" />
+      <path d="M12 11h4" />
+      <path d="M10 13.2a4.6 4.6 0 1 0 5.6 6.2" />
+    </Glyph>
+  );
+}
+
 export function ParkingIcon({ size = 15, className = '', labelled = false }) {
   return (
     <Glyph size={size} className={className} labelled={labelled} label="Parking">

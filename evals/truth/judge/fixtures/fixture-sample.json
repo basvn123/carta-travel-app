@@ -1,0 +1,14 @@
+{
+ "version": "truth-text-fixtures/1",
+ "note": "T1144: four hand-made texts for the judge harness test. Not shipped data.",
+ "items": [
+  {"text_id": "f01", "kind": "trail_summary", "subject": "Fixture Loop A", "text": "Fixture Loop A is a waymarked route of 12.4 km with 300 m of ascent that starts and finishes at the same place.",
+   "source": {"cited": "https://www.openstreetmap.org/relation/1", "facts": {"name": "Fixture Loop A", "distance_km": 12.4, "ascent_m": 300, "is_loop": true, "osm_tags": {"roundtrip": "yes"}}}},
+  {"text_id": "f02", "kind": "trail_summary", "subject": "Fixture Line B", "text": "Fixture Line B covers 30.0 km between two villages.",
+   "source": {"cited": "https://www.openstreetmap.org/relation/2", "facts": {"name": "Fixture Line B", "distance_km": 18.0, "is_loop": false}}},
+  {"text_id": "f03", "kind": "place_blurb", "subject": "Fixtureville, Nowhere", "text": "Canal town famous for its cheese market and a Gothic cathedral.",
+   "source": {"cited": "https://en.wikivoyage.org/wiki/Fixtureville", "text": "Fixtureville is a small canal town known for its weekly cheese market."}},
+  {"text_id": "f04", "kind": "place_blurb", "subject": "Fixtureburg, Nowhere", "text": "Hilltop castle town above the river.",
+   "source": {"cited": "https://en.wikivoyage.org/wiki/Fixtureburg", "text": "Fixtureburg lies on flat polder land far from any river."}}
+ ]
+}

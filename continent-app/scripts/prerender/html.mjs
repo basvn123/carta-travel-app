@@ -14,6 +14,7 @@
  * are set in --mono, prose in --ui, the name in --display (DESIGN.md).
  */
 import { stripDashes } from '../../src/lib/format.js';
+import { S, ogLocale } from './strings.mjs';
 import {
   HEAD_OPEN, HEAD_CLOSE, BODY_OPEN, BODY_CLOSE,
 } from '../../src/lib/prerenderShell.js';
@@ -84,7 +85,7 @@ export function fitDescription(texts) {
   return out;
 }
 
-const STYLE = `.pr{box-sizing:border-box;max-width:760px;margin:0 auto;padding:var(--space-6) var(--space-4) var(--space-8);font-family:var(--ui);font-size:16px;line-height:1.5;color:var(--ink);background:var(--paper)}
+export const STYLE = `.pr{box-sizing:border-box;max-width:760px;margin:0 auto;padding:var(--space-6) var(--space-4) var(--space-8);font-family:var(--ui);font-size:16px;line-height:1.5;color:var(--ink);background:var(--paper)}
 .pr *{box-sizing:border-box}
 .pr a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
 .pr a:hover{text-decoration-color:var(--accent)}
@@ -172,7 +173,7 @@ function graph(pg) {
       '@id': `${url}#page`,
       url,
       name: clean(pg.h1),
-      inLanguage: 'en',
+      inLanguage: pg.lang || 'en',
       isPartOf: { '@id': `${ORIGIN}/#site` },
       ...(pg.lastmod ? { dateModified: pg.lastmod } : {}),
       breadcrumb: { '@id': `${url}#crumbs` },
@@ -193,12 +194,15 @@ function graph(pg) {
 /** The stored document for one page model. */
 export function renderPage(pg) {
   const url = `${ORIGIN}${pg.canonical || pg.path}`;
-  const card = pg.card || SITE_CARD;
+  // T1212: the site card's alt text in the page's language.
+  const card = pg.card || (pg.lang && pg.lang !== 'en' ? { ...SITE_CARD, alt: S(pg.lang, 'cardAlt') } : SITE_CARD);
   const head = [
     `<title>${esc(pg.title)}</title>`,
     `<meta name="description" content="${esc(pg.description)}">`,
     `<link rel="canonical" href="${attr(url)}">`,
     pg.noindex ? '<meta name="robots" content="noindex,follow">' : '',
+    // T1212: the hreflang set, only on an indexed page (langs.mjs).
+    ...(pg.alternates || []).map((a) => `<link rel="alternate" hreflang="${attr(a.hreflang)}" href="${attr(a.href)}">`),
     '<meta property="og:type" content="website">',
     `<meta property="og:url" content="${attr(url)}">`,
     `<meta property="og:title" content="${esc(pg.title)}">`,
@@ -208,7 +212,7 @@ export function renderPage(pg) {
     `<meta property="og:image:width" content="${card.w}">`,
     `<meta property="og:image:height" content="${card.h}">`,
     `<meta property="og:image:alt" content="${esc(card.alt)}">`,
-    '<meta property="og:locale" content="en">',
+    `<meta property="og:locale" content="${pg.lang && pg.lang !== 'en' ? ogLocale(pg.lang) : 'en'}">`,
     '<meta name="twitter:card" content="summary_large_image">',
     `<meta name="twitter:title" content="${esc(pg.title)}">`,
     `<meta name="twitter:description" content="${esc(pg.description)}">`,
@@ -219,7 +223,8 @@ export function renderPage(pg) {
     `<style>${STYLE}</style>`,
   ].filter(Boolean).join('\n');
 
-  const crumbs = `<nav class="pr-crumbs" aria-label="Breadcrumb"><ol>${pg.crumbs
+  const lang = pg.lang || 'en';
+  const crumbs = `<nav class="pr-crumbs" aria-label="${attr(S(lang, 'breadcrumb'))}"><ol>${pg.crumbs
     .map((c) => `<li><a href="${attr(c.path)}">${esc(c.name)}</a></li>`).join('')}</ol></nav>`;
   const hero = pg.image
     ? `<figure class="pr-hero"><img src="${attr(pg.image.src)}" alt="${esc(pg.image.alt)}"${pg.image.w ? ` width="${pg.image.w}" height="${pg.image.h}"` : ''} loading="lazy" decoding="async">${pg.image.credit ? `<figcaption>${esc(pg.image.credit)}</figcaption>` : ''}</figure>`
@@ -233,11 +238,11 @@ export function renderPage(pg) {
     facts(pg.facts),
     hero,
     ...(pg.sections || []).filter((s) => s && (s.links?.length || s.paras?.length || s.facts?.length)).map(section),
-    pg.pager ? `<nav class="pr-pages" aria-label="Pages">${pg.pager.map((l) => `<a href="${attr(l.path)}">${esc(l.name)}</a>`).join('')}</nav>` : '',
+    pg.pager ? `<nav class="pr-pages" aria-label="${attr(S(lang, 'pages'))}">${pg.pager.map((l) => `<a href="${attr(l.path)}">${esc(l.name)}</a>`).join('')}</nav>` : '',
     pg.coverage ? `<p class="pr-note">${esc(pg.coverage)}</p>` : '',
-    pg.credits?.length ? `<p class="pr-credits">${esc(`Sources: ${pg.credits.join('; ')}.`)}</p>` : '',
+    pg.credits?.length ? `<p class="pr-credits">${esc(lang === 'en' ? `Sources: ${pg.credits.join('; ')}.` : S(lang, 'sources', { list: pg.credits.join('; ') }))}</p>` : '',
     '</main>',
   ].filter(Boolean).join('\n');
 
-  return `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n${HEAD_OPEN}\n${head}\n${HEAD_CLOSE}\n</head>\n<body>\n${BODY_OPEN}\n${body}\n${BODY_CLOSE}\n</body>\n</html>\n`;
+  return `<!doctype html>\n<html lang="${lang}">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n${HEAD_OPEN}\n${head}\n${HEAD_CLOSE}\n</head>\n<body>\n${BODY_OPEN}\n${body}\n${BODY_CLOSE}\n</body>\n</html>\n`;
 }

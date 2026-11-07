@@ -1,0 +1,24 @@
+# Carta Intelligence API on the build box (T1154, ROADMAP F5). Owner step: see README "Run on the box".
+#   cd <repo> && docker compose -f services/intelligence/compose.yaml up -d --build
+# Bound to localhost only: the pipeline on the box calls it; nothing outside reaches it.
+services:
+  intelligence:
+    build:
+      context: ../..
+      dockerfile: services/intelligence/Dockerfile
+    image: carta-intelligence:1.0.0
+    restart: unless-stopped
+    init: true
+    ports:
+      - "127.0.0.1:8090:8090"
+    env_file: .env
+    volumes:
+      - ../../continent-app/public:/app/continent-app/public:ro
+      - ../../cache/taxonomy:/app/cache/taxonomy:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 1g
+    cpus: 2

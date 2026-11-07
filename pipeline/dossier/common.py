@@ -502,7 +502,7 @@ class TaslStore:
 # for a city is often a coat of arms, a locator map or a 19th century
 # engraving. Those are correct and useless in a travel guide: Paris shipped
 # its city crest as the third gallery photograph. Same rule set as
-# pipeline/audit_hero_images.py, kept short here because the dossier only has
+# pipeline/audit/audit_hero_images.py, kept short here because the dossier only has
 # a filename and a size to judge from.
 _BAD_IMAGE_RE = re.compile(
     r"\b(coat of arms|coats of arms|wappen|blason|blazon|escudo|stemma|grb|"

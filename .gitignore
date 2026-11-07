@@ -229,6 +229,8 @@ Execution/**/*.jpg
 Execution/**/*.jpeg
 Execution/**/*.webp
 Execution/**/*.gif
+# T1128: the shots folder as a whole (audit JSON and logs land there too).
+Execution/P*/T*-shots/
 .pytest_cache/
 .wrangler/
 .claude/worktrees/
@@ -245,3 +247,8 @@ cache/open_prices/
 
 # Dated coverage backlogs, written by pipeline/regions/coverage.py on every run (T1050)
 reports/coverage_backlog_*_20*.csv
+.docs-site/
+docs/assets/ask-docs/index.js
+
+# Open dataset export (T1176): outputs are built, only the datasheet and README are tracked
+scripts/open_data/out/

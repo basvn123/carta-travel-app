@@ -1,0 +1,18 @@
+ev,name,total_km,countries,verified
+EV1,Atlantic Coast Route,11000,NO;GB;IE;FR;ES;PT,no
+EV2,Capitals Route,5500,IE;GB;NL;DE;PL,no
+EV3,Pilgrims Route,5100,NO;SE;DK;DE;BE;FR;ES,no
+EV4,Central Europe Route,4000,FR;BE;DE;PL,no
+EV5,Via Romea Francigena,3900,GB;FR;BE;LU;DE;CH;IT,no
+EV6,Rivers Route,3650,FR;CH;DE;AT;SK;HU;HR;RS;RO;BG,no
+EV7,Sun Route,7400,NO;SE;DK;DE;CZ;AT;IT;MT,no
+EV8,Mediterranean Route,5900,ES;FR;IT;SI;HR;ME;AL;GR;CY,no
+EV9,Amber Route,1930,PL;CZ;AT;SI;HR,no
+EV10,Baltic Sea Cycle Route,9000,DK;SE;FI;EE;LV;LT;PL;DE,no
+EV11,East Europe Route,6000,NO;FI;EE;LV;LT;PL;SK;HU;RS;MK;GR,no
+EV12,North Sea Cycle Route,6000,GB;NO;SE;DK;DE;NL;BE;FR,no
+EV13,Iron Curtain Trail,10400,NO;FI;EE;LV;LT;PL;DE;CZ;AT;SK;HU;SI;HR;RS;RO;BG;MK;GR,no
+EV14,Waters of Central Europe,1135,AT;HU;SI;HR,no
+EV15,Rhine Cycle Route,1230,CH;FR;DE;NL,no
+EV17,Rhone Cycle Route,1115,CH;FR,no
+EV19,Meuse Cycle Route,1050,FR;BE;NL,no

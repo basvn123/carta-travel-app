@@ -77,8 +77,6 @@
 .tg-block-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: var(--tap); }
 .tg-muted { margin: 0; font-size: var(--text-body); color: var(--text-2); }
 .tg-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
-.tg-empty { display: grid; gap: var(--space-3); justify-items: start; }
-.tg-empty p { margin: 0; font-size: var(--text-body); color: var(--text-2); }
 
 /* Phone: one column in the page's own order. Desktop: two columns. */
 .tg-grid { display: grid; gap: var(--space-5); }
@@ -89,7 +87,6 @@
 .tg-o-people { order: 5; }
 .tg-o-badges { order: 6; }
 .tg-o-guides { order: 7; }
-.tg-o-privacy { order: 8; justify-self: start; }
 @media (min-width: 769px) and (max-width: 1023px) {
   .tg-page { max-width: 760px; }
 }
@@ -197,18 +194,12 @@
   pointer-events: none;
 }
 .tg-meet-acts { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-.tg-meet .btn.tg-on-dark {
-  background: var(--surface);
-  color: var(--text);
-  border-color: var(--surface);
-}
 .tg-meet .btn.tg-on-dark-quiet {
   background: transparent;
   color: var(--surface);
   border-color: color-mix(in srgb, var(--surface) 40%, transparent);
 }
 @media (hover: hover) {
-  .tg-meet .btn.tg-on-dark:hover { background: var(--surface-sunken); }
   .tg-meet .btn.tg-on-dark-quiet:hover { background: color-mix(in srgb, var(--surface) 10%, transparent); }
 }
 .tg-meet .btn:focus-visible { outline-color: var(--surface); }
@@ -608,4 +599,4 @@
 .tg-out-body .tg-h1 { margin: 0; }
 .tg-out-line { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
 .tg-out-go.btn { margin-top: var(--space-2); }
-@media (min-width: 560px) { .tg-out-go.btn { align-self: flex-start; } }
+@media (min-width: 600px) { .tg-out-go.btn { align-self: flex-start; } }

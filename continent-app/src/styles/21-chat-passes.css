@@ -16,8 +16,8 @@
   display: inline-block;
   max-width: 88%;
   padding: 11px 15px;
-  border-radius: 16px;
-  font-size: 14px;
+  border-radius: var(--radius-card);
+  font-size: var(--text-body);
   line-height: 1.5;
 }
 /* Still the right shape for the town picker's short "ask Carta" wait, which
@@ -26,7 +26,7 @@
 .chat-typing span {
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--ink-mute);
-  animation: chat-blink 1.2s infinite ease-in-out;
+  animation: chat-blink var(--dur-dots) infinite var(--ease-in-out);
 }
 @keyframes chat-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
 
@@ -60,7 +60,7 @@
 .rbs-line-row.now .rbs-line-ico {
   background: var(--accent);
   color: var(--on-fill);
-  animation: rbs-pulse 1.5s ease-in-out infinite;
+  animation: rbs-pulse var(--dur-breathe) var(--ease-in-out) infinite;
 }
 @keyframes rbs-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
 /* Numbers inside the log are measured facts, so they are set like every other
@@ -79,11 +79,11 @@
   border-radius: 12px;
   background: var(--paper);
   color: var(--ink);
-  font-size: 14px;
+  font-size: var(--text-body);
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
 }
-.chat-opt-text b { font-size: 14px; font-weight: 600; }
+.chat-opt-text b { font-size: var(--text-body); font-weight: 600; }
 .chat-opt-text small { font-size: 11.5px; color: var(--ink-mute); }
 .chat-send {
   margin-top: 12px;
@@ -91,7 +91,7 @@
   padding: 12px 22px;
   border: none; border-radius: 12px;
   background: var(--accent); color: var(--on-fill);
-  font-size: 14px; font-weight: 700;
+  font-size: var(--text-body); font-weight: 700;
   cursor: pointer;
 }
 /* The final free-text step stacks: the input, then a full-width "Build my
@@ -107,7 +107,7 @@
   border-radius: 12px;
   background: var(--paper);
   color: var(--ink);
-  font: inherit; font-size: 14px;
+  font: inherit; font-size: var(--text-body);
   padding: 12px 14px;
 }
 
@@ -166,7 +166,7 @@
 
 /* ───────── Passes: the pricing modal and the account pass row ───────── */
 
-.pass-overlay { animation: pass-overlay-in .25s ease backwards; }
+.pass-overlay { animation: pass-overlay-in var(--dur-2) var(--ease-in-out) backwards; }
 
 @keyframes pass-overlay-in { from { opacity: 0; } }
 @keyframes pass-card-in { from { opacity: 0; transform: translateY(14px) scale(.985); } }
@@ -209,7 +209,6 @@
    the title), so the header shrinks to its overline and the card climbs up to
    meet the Passes row instead of floating half a thumb below it. */
 .account-panel .panel-header.account-header-bare { padding-bottom: 0; }
-.account-panel .panel-header.account-header-bare .panel-tag { margin-bottom: 0; }
 .account-panel .panel-header.account-header-bare + .panel-section { padding-top: 10px; }
 /* One left edge on a phone (T502): the heading sat on the 16 px gutter while
    every section below used .panel-section's 28 px, as My trips once did. */
@@ -218,7 +217,7 @@
 }
 
 .account-section-hint {
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.55;
   color: var(--ink-soft);
   margin-bottom: 14px;
@@ -232,12 +231,6 @@
 .account-panel .auth-submit { min-height: 44px; }
 /* The profile form saves an edit somebody already made, so it does not need
    to compete with the two buttons in this panel that start something. */
-.auth-submit-quiet {
-  background: var(--paper);
-  color: var(--ink);
-  border: 1px solid var(--rule);
-}
-.auth-submit-quiet:disabled { opacity: 1; color: var(--ink-mute); border-color: var(--rule-soft); }
 
 /* A field's verdict, at the end of its own label line. The profile form asks
    for three things that can each be wrong on their own, and one error at the
@@ -292,13 +285,13 @@
   margin-top: 10px;
   padding: 6px 12px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   cursor: pointer;
-  transition: border-color .15s, color .15s, background .15s;
+  transition: border-color var(--dur-1), color var(--dur-1), background var(--dur-1);
 }
 .account-avatar-picker {
   display: flex;
@@ -315,17 +308,17 @@
   align-items: center;
   justify-content: center;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   font-size: 19px;
   line-height: 1;
   cursor: pointer;
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1), background var(--dur-1);
 }
 .account-avatar-opt.on { border-color: var(--accent); background: var(--accent-bg); }
 
 .auth-hint {
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.5;
   color: var(--ink-soft);
   margin-top: 2px;
@@ -345,9 +338,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--ink-soft);
-  transition: color .15s, background .15s;
+  transition: color var(--dur-1), background var(--dur-1);
 }
 
 .pw-gauge { display: flex; flex-direction: column; gap: 8px; margin-top: -4px; }
@@ -358,14 +351,14 @@
   height: 3px;
   border-radius: 2px;
   background: var(--rule-soft);
-  transition: background .15s;
+  transition: background var(--dur-1);
 }
 .pw-strength.weak .pw-strength-seg.on { background: var(--danger); }
 .pw-strength.fair .pw-strength-seg.on { background: var(--rate); }
 .pw-strength.strong .pw-strength-seg.on { background: var(--green); }
 .pw-strength-label {
   flex: none;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   white-space: nowrap;
 }
@@ -374,7 +367,7 @@
   font-family: var(--mono);
   font-weight: 400;
   font-variant-numeric: tabular-nums;
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   margin-left: 6px;
 }
@@ -406,7 +399,7 @@
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.45;
   color: var(--danger);
 }
@@ -417,7 +410,7 @@
 /* Only ever the mismatch: a match is reported by the tick in the field. */
 .pw-match {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.45;
   color: var(--danger);
 }
@@ -430,7 +423,7 @@
   gap: 9px;
   min-height: 44px;
   padding: 4px 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.45;
   color: var(--ink-soft);
   cursor: pointer;
@@ -469,11 +462,11 @@
   justify-content: center;
   margin: -3px 0;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--green);
   cursor: pointer;
-  transition: background .15s;
+  transition: background var(--dur-1);
 }
 
 /* Forgot your password, as a step rather than a trapdoor. Pressing the link
@@ -501,7 +494,7 @@
 
 .account-pass-card {
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   padding: 14px 16px;
 }
@@ -517,7 +510,7 @@
    spending it on running prose is what stops it meaning anything when it
    lands on the price below. Tabular figures because the balance ticks down. */
 .account-pass-status {
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;
   color: var(--ink-soft);
   text-align: right;
@@ -532,14 +525,14 @@
 .account-danger-title svg { color: var(--danger); }
 .account-danger {
   border: 1px solid color-mix(in srgb, var(--danger) 38%, var(--paper));
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: color-mix(in srgb, var(--danger) 5%, var(--paper));
   padding: 14px 16px;
 }
 /* Was mono at 11px in --ink-mute, which read as a caption nobody had to take
    seriously. This is the most consequential sentence in the panel. */
 .account-danger-text {
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.55;
   color: var(--ink-soft);
   margin-bottom: 12px;
@@ -552,7 +545,7 @@
 }
 .account-delete-actions .book-btn { flex: 1; justify-content: center; min-height: 44px; }
 
-@media (max-width: 520px) {
+@media (max-width: 480px) {
   .account-pass-status { text-align: left; }
   .account-delete-actions { flex-direction: column; }
 }

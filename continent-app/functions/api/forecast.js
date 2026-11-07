@@ -20,6 +20,7 @@
 import { MET_URL, MET_USER_AGENT, cell, metDaily, altitudeStep } from '../../src/lib/metForecast.js';
 
 import { fail, methodNotAllowed, createLimiter, overLimit, rateRefusal, parseForecastQuery } from '../_lib/guard.js';
+import { withTracking } from '../_lib/track.js';
 
 const HOLD = 1800;
 // MET asks every client to stay polite; the edge caches by cell, so a normal
@@ -28,7 +29,7 @@ const limiter = createLimiter({ max: 60 });
 
 export const onRequest = () => methodNotAllowed('GET');
 
-export async function onRequestGet({ request, env }) {
+async function handleGet({ request, env }) {
   const q = new URL(request.url).searchParams;
   const pos = parseForecastQuery(q);
   if (!pos) return fail(400, 'bad_request');
@@ -61,3 +62,5 @@ export async function onRequestGet({ request, env }) {
     },
   });
 }
+
+export const onRequestGet = withTracking('api/forecast', handleGet);

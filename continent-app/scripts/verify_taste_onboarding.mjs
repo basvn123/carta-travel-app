@@ -52,6 +52,17 @@ async function openExplore(page) {
   if (await guest.isVisible({ timeout: 1500 }).catch(() => false)) await guest.click();
 }
 
+// T1089: the header chip left Explore (T947); the taste now reads from the
+// "Your travel style" door in the Filters sheet. On a phone the Filters round
+// button shows on a results view, so open one rail's See all first.
+async function openTasteDoor(page) {
+  await page.getByText('See all').first().click({ timeout: 20000 }).catch(() => {});
+  await page.locator('.sdock-filters').click({ timeout: 20000 }).catch(() => {});
+  const door = page.locator('.taste-door:visible').first();
+  await door.waitFor({ timeout: 20000 }).catch(() => {});
+  return door;
+}
+
 const dialog = (page) => page.locator('.xstart[role="dialog"]');
 
 // (a) the fewest taps that set a taste with words on the chip.
@@ -77,10 +88,9 @@ const dialog = (page) => page.locator('.xstart[role="dialog"]');
     const ms = Date.now() - t0;
     check('a. the dialog closes after Skip', !(await d.isVisible().catch(() => false)));
     check('a. a taste is set in under 30 s', ms < 30000, `${taps} taps, ${ms} ms (scripted; a person reads each screen)`);
-    const chip = page.locator('.xtaste-chip').first();
-    await chip.waitFor({ timeout: 30000 }).catch(() => {});
-    const chipText = (await chip.textContent().catch(() => '')) || '';
-    check('a. the header chip reads the taste', /For you: hiking/i.test(chipText), chipText.trim());
+    const door = await openTasteDoor(page);
+    const chipText = (await door.textContent().catch(() => '')) || '';
+    check('a. the travel-style door reads the taste', /hiking/i.test(chipText), chipText.trim());
     console.log(`TAPS_SET_TASTE=${taps} ELAPSED_MS=${ms}`);
 
     // (b) the taste survives a reload.
@@ -88,16 +98,15 @@ const dialog = (page) => page.locator('.xstart[role="dialog"]');
     const stored = await page.evaluate(() => localStorage.getItem('continent.state.v1') || '');
     check('b. the local mirror carries ty', /(?:^|&)ty=/.test(stored), stored.slice(0, 120));
     await page.reload({ waitUntil: 'domcontentloaded' });
-    const chip2 = page.locator('.xtaste-chip').first();
-    await chip2.waitFor({ timeout: 20000 }).catch(() => {});
+    const chip2 = await openTasteDoor(page);
     const chipText2 = (await chip2.textContent().catch(() => '')) || '';
-    check('b. after a reload the chip still reads the taste', /For you: hiking/i.test(chipText2), chipText2.trim());
+    check('b. after a reload the door still reads the taste', /hiking/i.test(chipText2), chipText2.trim());
     check('b. no start dialog after a reload', !(await dialog(page).isVisible().catch(() => false)));
     // The chip opens the same four questions as a sheet.
     await chip2.click().catch(() => {});
     const sheet = page.locator('.taste-sheet[role="dialog"]');
     const sheetOpen = await sheet.waitFor({ timeout: 30000 }).then(() => true, () => false);
-    check('b. the chip opens the taste sheet', sheetOpen);
+    check('b. the door opens the taste sheet', sheetOpen);
     if (sheetOpen) check('b. the sheet starts on the same first question', ((await sheet.locator('.taste-q').textContent()) || '').includes('Who usually comes'));
   }
   await context.close();
@@ -116,8 +125,8 @@ const dialog = (page) => page.locator('.xstart[role="dialog"]');
     await d.locator('.taste-skip').click(); taps += 1;
     await d.waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
     check('c. Skip is one tap', !(await d.isVisible().catch(() => false)) && taps === 1, `${taps} tap`);
-    const chipText = (await page.locator('.xtaste-chip').first().textContent().catch(() => '')) || '';
-    check('c. after Skip the chip invites', /Tell Carta what you like/i.test(chipText), chipText.trim());
+    const chipText = (await (await openTasteDoor(page)).textContent().catch(() => '')) || '';
+    check('c. after Skip the door shows no taste', /Not set yet/i.test(chipText), chipText.trim());
     console.log(`TAPS_SKIP=${taps}`);
   }
   await context.close();

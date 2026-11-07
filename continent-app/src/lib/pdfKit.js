@@ -23,6 +23,7 @@
  * jsPDF arrives with the first PDF; nothing here loads before that.
  */
 import { stripDashes, formatRange } from './format.js';
+import { isPartnerLink } from './partnerLink.js';
 import { TOKEN_COLOURS } from '../map/tokenColors.js';
 
 export const PAGE_W = 210;
@@ -126,8 +127,10 @@ export const fileSlug = (s) => clean(s).toLowerCase().normalize('NFKD').replace(
 /**
  * A new A4 document with the kit's helpers bound to it.
  * `footerLabel` names the page in the footer ("Carta, Mount Korab").
+ * `partnerNote` is the disclosure line (I15): a page that carries a partner
+ * link prints it above the footer rule, so the mark is not lost in the PDF.
  */
-export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => `${n} / ${of}` } = {}) {
+export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => `${n} / ${of}`, partnerNote = '' } = {}) {
   const { jsPDF } = await import('jspdf');
   const fonts = await loadFonts();
   const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true });
@@ -144,7 +147,16 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
     select: rgb('--select-bg'), warn: rgb('--amber-ink'), ok: rgb('--status-success'),
     rate: rgb('--rate'), white: [255, 255, 255],
   };
-  const state = { y: M, page: 1 };
+  const state = { y: M, page: 1, partner: false };
+  // Any link written to the page that carries a partner id flags the page.
+  for (const fn of ['link', 'textWithLink']) {
+    const orig = doc[fn].bind(doc);
+    doc[fn] = (...a) => {
+      const url = a.find((x) => x && typeof x === 'object' && typeof x.url === 'string')?.url;
+      if (url && isPartnerLink(url)) state.partner = true;
+      return orig(...a);
+    };
+  }
   const TOTAL = '{total_pages}';
 
   const font = (style, size, color = C.text) => {
@@ -163,6 +175,10 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
     doc.setLineWidth(0.2);
     doc.line(M, PAGE_H - FOOT, PAGE_W - M, PAGE_H - FOOT);
     font('normal', 7.5, C.text3);
+    if (state.partner && partnerNote) {
+      doc.text(clean(partnerNote), M, PAGE_H - FOOT - 1.5);
+      state.partner = false;
+    }
     doc.text(clean(footerLabel), M, PAGE_H - FOOT + 4.5);
     doc.text(pageLabel(state.page, TOTAL), PAGE_W - M, PAGE_H - FOOT + 4.5, { align: 'right' });
   };

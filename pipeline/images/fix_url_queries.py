@@ -27,10 +27,14 @@ Usage, from the repo root:
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
+sys.path.insert(0, str(HERE.parent))
+
+from wire_contract import check_wire  # noqa: E402
 
 TARGETS = [
     ROOT / "app_data" / "app_data.json",
@@ -69,6 +73,7 @@ def repair(path, dry):
           % (path.name + " (" + path.parent.name + ")", heroes, pois,
              "  [dry run]" if dry else ""))
     if not dry and (heroes or pois):
+        check_wire(path, data)
         tmp = path.with_suffix(".tmp")
         with open(tmp, "w", encoding="utf-8") as fh:
             json.dump(data, fh, ensure_ascii=False, separators=(",", ":"))

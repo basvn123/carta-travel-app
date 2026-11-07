@@ -4,7 +4,7 @@ Area doc for the MAP.md row "Build box (Hetzner, scheduled runs)". Template: ROA
 
 ## Purpose
 
-The Hetzner build box: scheduled pipeline runs, on-demand heavy workers.
+The Hetzner build box: scheduled pipeline runs, on-demand heavy workers. The boxes run in production (owner decision 7, 2026-11-05).
 
 Screens: None (operator).
 
@@ -48,13 +48,13 @@ Not measured by this doc. Figures for this area sit in the latest task reports n
 
 ## Security notes
 
-Key-only SSH, firewall with port 22 only, secrets file mode 600 (infra/hetzner/README.md).
+Key-only SSH, firewall with port 22 only, secrets file mode 600 (`infra/hetzner/README.md`).
 
 The threat model and controls live in `docs/security/` (Track C); this doc does not restate them.
 
 ## Known limits
 
-Each linked handbook section ends with a "Limits" paragraph; read those first. The README says the boxes existed as code only when written; whether they run today is not verified here (see the handbook section and Execution/P3/_OPEN-hetzner.md).
+Each linked handbook section ends with a "Limits" paragraph; read those first. The boxes run in production (owner decision 7, 2026-11-05, `Execution/P15/_HANDOVER-2026-11-05.md`); `infra/hetzner/README.md` still says they existed as code only when written, which is out of date. Hetzner server backups are off; see [../runbooks/backup.md](../runbooks/backup.md) for what is backed up. Owner steps: `Execution/P3/_OPEN-hetzner.md` (superseded) and `Execution/P15/_OPEN-hetzner-box.md`.
 
 ## Open items
 
@@ -66,7 +66,7 @@ grep -i -E "hetzner|build box|box" Execution/_OPEN.md
 
 ## History
 
-- 2026-11-05, T1073: first written from MAP.md and the handbook. Earlier history: the task reports named above and `Execution/P*/_DIGEST.md`.
+- 2026-11-05, T1085: states that the boxes run in production (owner decision 7). 2026-11-05, T1073: first written from MAP.md and the handbook. Earlier history: the task reports named above and `Execution/P*/_DIGEST.md`.
 
 ## Last verified
 

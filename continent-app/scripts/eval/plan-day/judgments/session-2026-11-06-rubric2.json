@@ -1,0 +1,408 @@
+{
+ "backend": "session",
+ "model": "session judge (Claude Code subagent, blind to the key)",
+ "rubric_sha": "dd1b55440404",
+ "at": "2026-11-06T16:00:32Z",
+ "verdicts": {
+  "p01": {
+   "named": 5,
+   "pace": 5,
+   "walk": 4,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Zoo is a long detour for a relaxed day, but the walk stays about 3 km and the picks suit active."
+  },
+  "p02": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Only Boboli Gardens is truly active among four stops, but the list has few active places."
+  },
+  "p03": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Whys are formulaic but the compact museum day fits relaxed culture well."
+  },
+  "p04": {
+   "named": 5,
+   "pace": 5,
+   "walk": 4,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Free picks are not active, though the candidate list holds almost no active places."
+  },
+  "p05": {
+   "named": 5,
+   "pace": 2,
+   "walk": 2,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Ten stops for a packed day is too many and about 620 minutes cannot fit between 09:30 and 18:00."
+  },
+  "p06": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Two stadiums far apart add 3 km hops for a mixed relaxed day, weak but within the walk limit."
+  },
+  "p07": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 2,
+   "verdict": "fail",
+   "reason": "Summary has an em dash and two whys are just Nice."
+  },
+  "p08": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 2,
+   "verdict": "fail",
+   "reason": "Summary has an em dash and three whys are just Nice."
+  },
+  "p09": {
+   "named": 5,
+   "pace": 5,
+   "walk": 4,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Eight stops fit only barely at about 505 of 510 minutes, so the day is very tight."
+  },
+  "p10": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Six compact culture stops, only formulaic wording to criticise."
+  },
+  "p11": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Charlottenburg Palace adds a 5.6 km hop away from the rest, though total walking stays inside 9 km."
+  },
+  "p12": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 1,
+   "text": 4,
+   "verdict": "fail",
+   "reason": "Stop h99 Barcelona Old Market Hall is not in the candidate list."
+  },
+  "p13": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 4,
+   "catalogue": 1,
+   "text": 4,
+   "verdict": "fail",
+   "reason": "Stop h99 is invented and the day also runs about 518 minutes, past the window."
+  },
+  "p14": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Compact balanced day with six real stops, little to fault beyond generic whys."
+  },
+  "p15": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Mostly culture and squares for an active vibe, but the list has few active places."
+  },
+  "p16": {
+   "named": 5,
+   "pace": 5,
+   "walk": 2,
+   "vibe": 2,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "fail",
+   "reason": "Walk is about 10.7 km against a 9 km limit and about 538 minutes, and it skips the 10-rated cathedral for 7-rated churches in a classic day."
+  },
+  "p17": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 1,
+   "text": 4,
+   "verdict": "fail",
+   "reason": "Stop h99 Athens Old Market Hall is not a real candidate."
+  },
+  "p18": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 2,
+   "verdict": "fail",
+   "reason": "Summary has an em dash and two whys are just Nice."
+  },
+  "p19": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Estadio do Dragao is a long 3 km hop for a mixed day, but the total of 6 km is within 8."
+  },
+  "p20": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 2,
+   "verdict": "fail",
+   "reason": "Summary has an em dash and three whys are just Nice."
+  },
+  "p21": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 1,
+   "text": 4,
+   "verdict": "fail",
+   "reason": "Stop h99 Naples Old Market Hall is not in the candidate list."
+  },
+  "p22": {
+   "named": 5,
+   "pace": 1,
+   "walk": 2,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Ten stops for a relaxed day is far too many and about 675 minutes cannot fit the day."
+  },
+  "p23": {
+   "named": 5,
+   "pace": 5,
+   "walk": 4,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Belem is a 4 km hop from the centre but sensible for a relaxed culture day."
+  },
+  "p24": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "pass",
+   "reason": "One free pick is the oddly named congress of Berlin, whose why line reads strangely."
+  },
+  "p25": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Group of six makes the day tight at about 502 of 510 minutes with a 3.4 km hop to the stadium."
+  },
+  "p26": {
+   "named": 5,
+   "pace": 5,
+   "walk": 4,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Fine classic day with all top places, whys are only formulaic."
+  },
+  "p27": {
+   "named": 1,
+   "pace": 5,
+   "walk": 4,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "fail",
+   "reason": "The named place New Town was dropped from the plan."
+  },
+  "p28": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 2,
+   "verdict": "fail",
+   "reason": "Summary has an em dash and two whys are just Nice."
+  },
+  "p29": {
+   "named": 5,
+   "pace": 1,
+   "walk": 1,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 3,
+   "verdict": "fail",
+   "reason": "Ten stops for a relaxed day, about 10.6 km against 7 and about 867 minutes."
+  },
+  "p30": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Includes low-rated 7.6 and 7.8 picks and a 4.5 km hop for a classic packed day, but still fits."
+  },
+  "p31": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Solid packed mix day with the named place included and a compact route."
+  },
+  "p32": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 1,
+   "text": 4,
+   "verdict": "fail",
+   "reason": "Stop h99 Amsterdam Old Market Hall is not in the candidate list."
+  },
+  "p33": {
+   "named": 5,
+   "pace": 5,
+   "walk": 4,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Only Croke Park and the Green are active for an active vibe, but the list is thin."
+  },
+  "p34": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Compact relaxed culture day with the named museum, formulaic wording only."
+  },
+  "p35": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Four big sights in a tight area suit a relaxed day."
+  },
+  "p36": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Compact balanced culture day with the named museum, only formulaic wording to criticise."
+  },
+  "p37": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 3,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Day is full at about 495 minutes and drops active Croke Park for another museum in an active vibe."
+  },
+  "p38": {
+   "named": 5,
+   "pace": 2,
+   "walk": 2,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "fail",
+   "reason": "Five stops for a packed day and about 13.4 km walking against a 10 km limit."
+  },
+  "p39": {
+   "named": 5,
+   "pace": 5,
+   "walk": 5,
+   "vibe": 5,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "Ponte Vecchio and Boboli fit active, a small walk and well paced relaxed day."
+  },
+  "p40": {
+   "named": 5,
+   "pace": 5,
+   "walk": 3,
+   "vibe": 4,
+   "catalogue": 5,
+   "text": 4,
+   "verdict": "pass",
+   "reason": "A 3.7 km hop makes the walk less tidy, but the culture day fits the limit."
+  }
+ }
+}

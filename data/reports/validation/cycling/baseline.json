@@ -1,0 +1,29 @@
+{
+ "layer": "cycling",
+ "date": "2026-11-07",
+ "reference": {
+  "path": "data/reports/validation/cycling/reference",
+  "source": "EuroVelo route list (seed from memory, verified=no)",
+  "n": 119
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 5,
+  "salt": "d23",
+  "n": 119,
+  "population": 119,
+  "countries": 34
+ },
+ "metrics": {
+  "nonfrag": 0.86,
+  "rated": 0.42,
+  "coverage": 0.4202,
+  "fact.geometry": null,
+  "fact.length": null,
+  "agreement_tau": null,
+  "agreement_rho": null,
+  "error_mae": null,
+  "error_mdape": null
+ }
+}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { fetchSavedTrips, deleteTrip } from './tripStorage.js';
 import { fetchTripPlans, deleteTripPlan } from './tripPlanStorage.js';
@@ -7,7 +7,13 @@ import {
   loadTripExtras, persistTripExtras, hasTripExtras,
 } from '../planner/dayPlanStore.js';
 import { tripsStore } from '../planner/tripsStore.js';
-import { CalendarIcon, RouteIcon, LinkIcon, PencilIcon } from '../components/Icons.jsx';
+import { CalendarIcon, RouteIcon, LinkIcon, PencilIcon, ReceiptIcon } from '../components/Icons.jsx';
+import { shareReceiptOn } from '../lib/share/flag.js';
+// T1175: the receipt sheet loads on first use; it is behind a flag.
+const ShareReceiptSheet = lazy(() => import('../components/ShareReceiptSheet.jsx').then((m) => ({ default: m.ShareReceiptSheet })));
+// T1215 (T1152-g): the taste card, its profile code and the taxonomy map load
+// with the Your Europe tab, not with My trips.
+const TasteChips = lazy(() => import('./mytrips/TasteChips.jsx').then((m) => ({ default: m.TasteChips })));
 import { Button, Chip } from '../components/ui/index.js';
 import { loadDeviceTrip, clearDeviceTrip } from '../planner/deviceTripStore.js';
 import { PastTripForm } from './PastTripForm.jsx';
@@ -57,6 +63,7 @@ import { SavedTab } from './mytrips/SavedTab.jsx';
 import { useSharedLists, MOCK_FRIENDS } from './sharedLists.js';
 import { sharedKeys } from '../lib/sharedListModel.js';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
+import { scrollBehavior } from '../lib/motion.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
 
 /**
@@ -553,7 +560,7 @@ export function SavedTripsPanel({
     if (opening) {
       requestAnimationFrame(() => requestAnimationFrame(() => {
         const el = document.getElementById(`tshare-${planId}`);
-        el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        el?.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() });
         el?.focus({ preventScroll: true });
       }));
     }
@@ -561,6 +568,9 @@ export function SavedTripsPanel({
 
   // ── Trips: view models for the focal card and the rows. ──
   const priceFor = useCallback((p) => tripFigure(p, { data, stayTier, lifestyle }), [data, stayTier, lifestyle]);
+  // T1175 (K7): the receipt image sheet, for the trip whose menu asked.
+  const receiptFlag = useMemo(() => shareReceiptOn(), []);
+  const [receiptFor, setReceiptFor] = useState('');
   const isoFor = (countries) => COUNTRY_ISO2[countries?.[0]] || '';
 
   // Browser storage is read once per plan list and per store change, never
@@ -647,6 +657,8 @@ export function SavedTripsPanel({
     { key: 'edit', label: t('mt.editTrip'), icon: <PencilIcon size={16} />, onClick: () => onLoadTripPlan?.({ id: p.id, edit: true }) },
     { key: 'days', label: t('saved.planDays'), icon: <CalendarIcon size={16} />, onClick: () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }) },
     ...(p.coplan ? [] : [{ key: 'share', label: t('saved.shareInvite'), icon: <LinkIcon size={16} />, onClick: () => toggleShare(p.id) }]),
+    // T1175 (K7): the trip as a shareable receipt image, behind its flag.
+    ...(receiptFlag && figures[p.id] ? [{ key: 'receipt', label: t('share.receiptMenu'), icon: <ReceiptIcon size={16} />, onClick: () => setReceiptFor(p.id) }] : []),
   ]);
 
   const planModel = (p, focal) => {
@@ -1097,6 +1109,14 @@ export function SavedTripsPanel({
     })),
   }));
   const tripsCount = datedPlans.length + upcomingDayPlans.length;
+  // T1152: what the taste profile reads (the traveller's own saves and trips).
+  const keptAll = useKept();
+  const tasteSaves = useMemo(() => shortRows.map((r) => ({ key: r.key, kind: r.kind, id: r.id, name: r.name })), [shortRows]);
+  const tasteTrips = useMemo(() => [
+    ...tripPlans.map((p) => ({ id: p.id, name: p.label || '', at: p.updated_at || p.created_at || p.start_date, destIds: p.destination_ids || [] })),
+    ...(devicePlan ? [{ id: `device:${devicePlan.id || 'trip'}`, name: devicePlan.label || '', at: devicePlan.updated_at || devicePlan.start_date, destIds: devicePlan.destination_ids || [] }] : []),
+    ...keptAll.map((r) => ({ id: `kept:${r.id}`, name: r.name || '', at: r.keptAt, destIds: r.plan?.order || [] })),
+  ], [tripPlans, devicePlan, keptAll]);
 
   // Land on Trips once a trip ahead is known, unless a tab was picked this visit.
   useEffect(() => {
@@ -1117,8 +1137,15 @@ export function SavedTripsPanel({
     />
   ) : null;
 
+  const receiptPlan = receiptFor ? datedPlans.find((p) => p.id === receiptFor) : null;
+
   return (
     <div className="saved-shell mytrips">
+      {receiptPlan && (
+        <Suspense fallback={null}>
+          <ShareReceiptSheet plan={receiptPlan} data={data} stayTier={stayTier} lifestyle={lifestyle} onClose={() => setReceiptFor('')} />
+        </Suspense>
+      )}
       <div className="panel open account-panel saved-trips-panel">
         <header className="panel-header saved-panel-header mt-header">
           <MyTripsHead
@@ -1213,6 +1240,12 @@ export function SavedTripsPanel({
               error={tripPlansError}
               fmtMonth={fmtMonth}
             />
+          )}
+          {/* T1152 (F3): the taste profile with its evidence, yes and no per chip. */}
+          {tab === 'europe' && !(recapOpen && recap) && (
+            <Suspense fallback={null}>
+              <TasteChips saves={tasteSaves} trips={tasteTrips} destinations={destinations} userId={user?.id || null} />
+            </Suspense>
           )}
         </div>
 

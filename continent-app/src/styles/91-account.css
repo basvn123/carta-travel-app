@@ -24,7 +24,7 @@
 
 /* The rail: desktop only. */
 .ac-rail { display: none; }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .ac-page {
     grid-template-columns: 240px minmax(0, 1fr);
     gap: var(--space-7);
@@ -91,7 +91,7 @@
 }
 .ac-back:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .ac-back-desk { display: none; }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .ac-back-phone { display: none; }
   .ac-back-desk { display: inline-flex; }
   .ac-phone-only { display: none !important; }
@@ -378,3 +378,6 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 @media (prefers-reduced-motion: reduce) {
   .ac-rail-a, .ac-row-chev { transition: none; }
 }
+
+/* T1118: what Carta keeps, and for how long (the plain Article 30 lines). */
+.ac-keep-list { margin: 0; padding-left: 1.1em; display: grid; gap: var(--space-1); }

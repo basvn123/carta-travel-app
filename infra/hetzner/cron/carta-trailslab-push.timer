@@ -1,0 +1,17 @@
+# Every Tuesday at 02:30 Brussels: after the 01:30 backup, before nothing else
+# (the weekly tier starts Monday 09:00, the monthly and quarterly Saturdays
+# 03:00). The service pushes only when the last push is 21 days old or more,
+# so two pushes are never more than 28 days apart (R2 keeps a dump 30 days).
+# Persistent=true: a Tuesday missed while the box was off runs at next boot.
+[Unit]
+Description=Carta box trails lab push timer (Tuesdays 02:30 Europe/Brussels)
+
+[Timer]
+OnCalendar=Tue *-*-* 02:30:00 Europe/Brussels
+RandomizedDelaySec=10min
+Persistent=true
+AccuracySec=1min
+Unit=carta-trailslab-push.service
+
+[Install]
+WantedBy=timers.target

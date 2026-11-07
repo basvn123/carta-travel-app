@@ -33,80 +33,24 @@
    read as five unrelated widgets that happened to share a background. This
    is the same instrument Explore carries, in the same order, so a reader who
    has used one has already used the other. */
-.places-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  /* No margin of its own: the wrap's own top padding is the whole distance
-     from the header, so the card starts the same 12px under the Passes row
-     as Explore's does instead of twice that. */
-  padding: 12px 14px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 16px;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-1);
-}
 
 /* Six category tabs: icon above a tiny label, the active one on the warm
    accent tile. General is the catalogue; the other five browse the wire.
    A grid rather than a flex row, like Explore's kind rail: equal columns mean
    the block ends flush with the search field under it. */
-.places-cats {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 5px;
-  flex-basis: 100%;
-  min-width: 0;
-}
-.places-cat {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  min-width: 0;
-  padding: 7px 2px 6px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 9px;
-  background: var(--paper);
-  font-size: 10.5px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  /* A selection answers at once (T394): colour only, in --dur-1. */
-  transition: color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out),
-    border-color var(--dur-1) var(--ease-out);
-}
 /* T404: a long label (Radfahren, Wandelroutes) wraps at 360 px instead of
    losing letters to an ellipsis; 63-v6-destinations.css sets the wrap. */
-.places-cat span { max-width: 100%; }
 /* Six categories, not five. At 390px the labels are 59px apart and
    "Mountains" lost its last two letters to the ellipsis, so the rail tightens
    on a narrow phone rather than scrolling: a brand new category nobody knows
    about must not be the one that starts off screen. */
-@media (max-width: 430px) {
-  .places-cats { gap: 4px; }
-  .places-cat { padding: 7px 0 6px; font-size: var(--text-micro); }
-}
 /* A phone cannot hold six legible columns (at 390px that is a 58px card,
    narrower than the word "Mountains"), so the rail drops to three and takes a
    second row. Every row still spans the card exactly. The rest of the phone
    toolbar rules live in the two width blocks further down this sheet, which
    already own those widths and would otherwise override anything set here. */
-@media (max-width: 560px) {
-  .places-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-@media (hover: hover) {
-  .places-cat:hover { color: var(--ink); }
-}
 /* The selected category is the house selected state (T384, rule N9 and
    shell R8): ink fill, never the accent tint, which is spent on actions. */
-.places-cat.on {
-  background: var(--select-bg);
-  border-color: var(--select-border);
-  color: var(--select-ink);
-}
-.places-cat.on svg { color: var(--select-ink); }
 
 /* Size rail: which places are on screen, by how big they are.
    The glyph sits in a real circle because the four sizes are a set you scan
@@ -119,129 +63,20 @@
 /* Wraps rather than scrolling: four sizes do not fit one 390px row once each
    carries a count, and a size that has scrolled off the edge is a size nobody
    discovers. Two tidy rows beat one row with a secret in it. */
-.places-classes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-.places-class {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  flex: 0 0 auto;
-  padding: 5px 12px 5px 5px;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  transition: color .15s, border-color .15s, background .15s;
-}
-.places-class-dot {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  transition: background .15s, color .15s;
-}
-.places-class-n {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-}
 /* Hover only where there is a pointer that hovers, and never over a chip
    that is on (T384): a tap on a phone left the hover's ink text on the ink
    fill, which read as a blank chip. */
-@media (hover: hover) {
-  .places-class:hover:not(:disabled):not(.on) { color: var(--ink); border-color: var(--rule); }
-  .places-class:hover:not(:disabled):not(.on) .places-class-dot { background: var(--rule-soft); }
-}
 /* A chip that is on wears the house selected state (T384, shell R8): ink
    fill, on-fill text. It was an accent-soft ring with an accent-tinted dot,
    which spent the action colour on a selection. */
-.places-class.on {
-  background: var(--select-bg);
-  border-color: var(--select-border);
-  color: var(--select-ink);
-}
-.places-class.on .places-class-dot { background: transparent; color: var(--on-fill); }
-.places-class.on .places-class-n { color: var(--select-ink); }
-.places-class:disabled { opacity: .4; }
-.places-class:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
 
 /* The same glyph on the card, so the size stays legible while scrolling.
    Bottom-left, opposite the km badge, over the scrim where the type already
    sits on dark. */
-.places-card-class {
-  position: absolute;
-  top: 10px; left: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(26, 26, 26, 0.55);
-  color: var(--on-fill);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .places-class, .places-class-dot { transition: none; }
-}
 
 /* Sort: one segmented control rather than a row of separate pills, because
    the four are one choice and only one of them can be on. The arrow says
    which way the active one runs. */
-.places-sorts {
-  display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-}
-.places-sort {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 7px 14px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: none;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  white-space: nowrap;
-  transition: color .15s, background .15s;
-}
-@media (hover: hover) {
-  .places-sort:hover { color: var(--ink); }
-}
-.places-sort.on {
-  background: var(--select-bg);
-  color: var(--select-ink);
-}
-.places-sort.on .places-sort-dir { color: var(--select-ink); }
-.places-sort-dir { font-family: var(--mono); font-size: 11px; color: var(--accent); }
-
-.places-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  flex-basis: 100%;
-  min-width: 0;
-}
 /* Search takes the whole row. This column is 780px wide, so the sorts and
    the Filters group never fit beside it at any width: capping the field at
    400px only left a hole to the right of it on desktop while the controls
@@ -252,47 +87,13 @@
   max-width: none;
   min-width: 180px;
 }
-.places-toolbar-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  row-gap: 10px;
-  flex-wrap: wrap;
-  flex: 1 1 100%;
-  min-width: 0;
-}
 /* Filters, the country, the origin and the stay tier as one group, so a wrap
    breaks after the sorts rather than splitting this group's own members. */
-.places-chips {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
 /* Filters is the one primary door in the row, the way to everything else
    that can narrow the list, so it carries the accent fill. Everything beside
    it stays a neutral pill. Destinations' own look is in 63-v6-destinations.css
    (T384); this base rule also dresses Explore's phone Filters door, which
    46-owner-calls.css recolours. */
-.places-filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 38px;
-  padding: 0 14px;
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-  background: var(--accent);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--on-fill);
-  transition: background .15s, border-color .15s;
-}
-@media (hover: hover) {
-  .places-filter-btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
-}
-.places-filter-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.places-filter-btn .filter-tray-badge { background: var(--paper); color: var(--accent); }
 
 /* What this tab narrows by, in the same card: a chip that changes WHICH rows
    are listed is the same kind of control as the search field above it, and it
@@ -303,23 +104,6 @@
    one's begin. The top divider that used to mark the seam is gone too - once
    every group carries its own caption, a second, unrelated hairline directly
    under Filters/All countries read as a stray mark rather than structure. */
-.places-facets {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  flex-basis: 100%;
-  min-width: 0;
-  margin-top: 14px;
-}
-.places-facet-group { min-width: 0; }
-.places-facet-label {
-  margin: 0 0 6px;
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--ink-mute);
-}
-.places-facets .places-classes { margin-top: 0; }
-.places-facets .trip-slider { flex: 1 1 100%; max-width: 420px; }
 .places-search-icon {
   position: absolute;
   left: 12px; top: 50%;
@@ -332,7 +116,7 @@
   height: 40px;
   padding: 0 42px 0 34px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   font-size: 13.5px;
   color: var(--ink);
@@ -362,51 +146,8 @@
   line-height: 1.45;
   color: var(--ink-soft);
 }
-.places-country {
-  height: 38px;
-  max-width: 190px;
-  padding: 0 10px;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--paper-dim);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-@media (hover: hover) {
-  .places-country:hover { border-color: var(--ink-mute); color: var(--ink); }
-}
 /* A chip in the sheet carries the same count its twin in the toolbar does,
    so the two rows say the same thing about the same filter. */
-.fchip-n {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  font-variant-numeric: tabular-nums;
-  opacity: .7;
-}
-.places-country:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-/* The country filter, as a button + anchored panel (CountryPicker) rather
-   than a native <select>: a native select hands its open list to the OS to
-   place, which is why it used to land flush against the viewport edge
-   instead of under the pill. .country-picker is just the positioning root;
-   .places-country still carries the pill's own look so every existing size
-   rule (side panel, mobile stack, toolbar) keeps applying unchanged. */
-.country-picker { position: relative; display: inline-flex; min-width: 0; }
-.country-picker .places-country {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  width: 100%;
-  cursor: pointer;
-}
-.country-picker .places-country.on { border-color: var(--accent-soft); color: var(--ink); }
-.country-picker-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.country-picker .origin-btn-caret { font-size: var(--text-micro); }
 /* Left-anchored, unlike origin's right-anchored pop: the country pill sits
    left of the toolbar, not at its right edge. Desktop/tablet only - the
    phone breakpoint below pins .origin-pop (which this also is) to the
@@ -418,24 +159,11 @@
    its map pill by default, so it takes the row's 38px shell here: Filters,
    the country, this and Lifestyle are one bar and used to stand at three
    different heights. */
-.places-controls .origin-btn {
-  height: 38px;
-  max-width: none;
-  padding: 0 12px;
-  border-radius: 10px;
-  background: var(--bg-card);
-}
-@media (hover: hover) {
-  .places-controls .origin-btn:hover { background: var(--bg-card); border-color: var(--accent-soft); }
-}
 /* The narrow-screen rule that drops the caption is for the header pill; here
    the caption is what says these prices depend on the airport. */
-.places-controls .origin-btn-from { display: block; }
-.places-controls .origin-btn-label b { max-width: none; }
 
 /* The lifestyle door lives in .lifestyle-btn (one rule set for every tab);
    this only gives it the 38px shell the rest of this bar uses. */
-.places-controls .lifestyle-btn { height: 38px; border-radius: 10px; }
 
 /* Near-search suggestions, anchored under the input. */
 .places-sugg {
@@ -514,31 +242,20 @@
   gap: 12px;
   margin-top: 12px;
 }
-@media (min-width: 640px) {
+@media (min-width: 600px) {
   .places-list { grid-template-columns: 1fr 1fr; }
 }
 /* Three across once the column is wide enough to keep a card above ~370px,
    which is where the 2.6:1 photo strip still reads as a photograph. */
-@media (min-width: 1040px) {
+@media (min-width: 1024px) {
   .places-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .places-list > .places-empty,
-.places-list > .places-credit,
 .places-list > .places-sentinel { grid-column: 1 / -1; }
 
 /* ── Photo cards: every list entry is an image with its facts laid over a
       scrim, the mono numbers stay mono. One shared overlay grammar for
       destination cards, trip cards and country flag cards. ── */
-
-.places-dcard {
-  position: relative;
-  display: block;
-  width: 100%;
-  border-radius: 14px;
-  overflow: hidden;
-  background: var(--paper-dim);
-  text-align: left;
-}
 
 /* The card heights, as ratios rather than pixels so a phone card and a two
    column desktop card crop identically.
@@ -549,17 +266,12 @@
    also made the page two and a half screens longer, and a list you scroll
    past is worth less than a crop. What pays for the crop instead is
    --card-focus below. */
-.places-dcard { aspect-ratio: 12 / 5; }
 /* The country strip was 4:1, and at that shape the average catalogue
    photograph keeps 37 per cent of its frame: measured over the 3,021 heroes
    whose size the wire now carries, only 136 are 2:1 or wider, so no choice of
    picture could rescue it and the index read as a row of doorways and roofs.
    2.6:1 keeps 58 per cent of a 3:2 photograph, and is still a shade wider
    than the destination card under it. */
-.places-dcard:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
 
 /* Where a wide card crops its photograph.
  *
@@ -623,14 +335,6 @@
    cards carry their caption in a band under the photo (63-v6-destinations.css). */
 
 /* The small flag sits beside the country name in the caption band. */
-.places-card-flag {
-  display: inline-block;
-  vertical-align: -1px;
-  margin-right: 8px;
-  border-radius: 2px;
-}
-
-.places-card-main { flex: 1; min-width: 0; }
 .places-card-name {
   display: block;
   font-family: var(--display);
@@ -645,14 +349,6 @@
 /* T394: the names and the figures sit in a band on paper now, never on a
    photograph, so they are ink; the white and the text shadow went with the
    scrim. */
-.places-card-sub {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 3px;
-  font-size: 11.5px;
-  color: var(--ink-soft);
-}
 /* One row of measured figures, never two. "16.4 km 7.8 h +985 m" wrapping to
    a second line was the other half of the overflow, and a ragged second line
    of numbers reads as a different card. Mono and tabular because these are
@@ -663,7 +359,7 @@
   gap: 4px 10px;
   margin-top: 3px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink);
   font-variant-numeric: tabular-nums;
   overflow: hidden;
@@ -673,7 +369,7 @@
   display: inline-block;
   margin-top: 6px;
   padding: 2px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.18);
   font-size: 10.5px;
   font-weight: 600;
@@ -683,7 +379,7 @@
 .places-card-kind.city { background: rgba(11, 116, 128, 0.55); }
 .places-card-price {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--on-fill);
   white-space: nowrap;
@@ -691,17 +387,15 @@
   text-shadow: 0 1px 2px rgba(26, 26, 26, 0.4);
 }
 .places-card-price small { font-size: 10px; font-weight: 400; opacity: 0.8; }
-.places-card-price .prov-from { margin-right: 4px; color: rgba(255, 255, 255, 0.8); }
 .places-card-diff {
   font-size: 10.5px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 1px 7px;
   white-space: nowrap;
 }
-.places-card-chev { color: rgba(255, 255, 255, 0.8); flex-shrink: 0; }
 /* How far a card is from a searched place: the first part of the card's
    hook line since T394 (it was a chip on the photograph). */
 .places-card-km {
@@ -711,36 +405,17 @@
 
 .places-empty {
   padding: 20px 2px;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.5;
   color: var(--ink-soft);
 }
 .places-empty p { margin: 0; }
 /* The way out of an empty result: search the map for what was typed. */
-.places-empty-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 12px;
-  padding: 9px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  background: var(--bg-card);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent);
-  cursor: pointer;
-}
-@media (hover: hover) {
-  .places-empty-cta:hover { border-color: var(--accent-soft); }
-}
-.places-empty-cta:disabled { color: var(--ink-mute); cursor: default; }
 
 /* A layer that failed to LOAD, which is not the same as a layer with nothing
    published. The empty state makes a claim about the catalogue; this one only
    reports what happened to the request, and carries the way back. */
 .places-loaderr { display: block; }
-.places-loaderr-msg { margin: 0; }
 
 .places-nearhead {
   display: flex;
@@ -767,7 +442,7 @@
 .places-nearclear {
   flex-shrink: 0;
   margin-left: auto;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--accent);
   padding: 2px 4px;
@@ -776,16 +451,9 @@
   .places-nearclear:hover { text-decoration: underline; }
 }
 
-.places-credit { margin: 14px 0 0; font-size: 11px; color: var(--ink-mute); }
-
 @media (max-width: 768px) {
   .places-wrap { padding: 8px 16px calc(32px + env(safe-area-inset-bottom, 0px)); }
-  .places-toolbar { padding: 10px; gap: 8px; }
   .places-search { flex: 1 1 100%; max-width: none; }
-  .places-toolbar-right { margin-left: 0; width: 100%; }
-  .places-sorts { width: 100%; }
-  .places-sort { flex: 1; justify-content: center; padding: 7px 6px; }
-  .places-country, .country-picker { flex: 1 1 130px; max-width: none; }
 }
 @media (max-width: 480px) {
   /* Stacked: every control takes the full width, the origin pill included, so
@@ -794,35 +462,15 @@
      flex: none on the field is not a tidy-up. In a COLUMN flex container the
      basis is a height, so the search wrapper inherited its 240px basis as a
      240px tall box with the input floating in the middle of it. */
-  .places-controls { flex-direction: column; align-items: stretch; }
   .places-search { flex: none; width: 100%; min-width: 0; }
-  .places-toolbar-right { flex-direction: column; align-items: stretch; }
-  .places-chips { width: 100%; }
-  .places-filter-btn { flex: 1 1 120px; justify-content: center; }
-  /* min-width: 0 is what lets the two share a row. A <select>'s automatic
-     minimum size is the width of its longest option ("Bosnia and
-     Herzegovina"), so below about 390px it stopped fitting beside Filters and
-     took a band of its own. */
-  .places-country, .country-picker { max-width: none; flex: 1 1 130px; min-width: 0; }
   /* The departure and the stay tier share one row rather than taking a
      full-width band each: they are both statements about what the prices
      below assume, and stacking them cost the card 46px on the width where
      it matters most. Both ellipse rather than push the row wider. */
-  .places-controls .origin-picker { flex: 1 1 140px; min-width: 0; }
-  .places-controls .origin-btn { width: 100%; }
-  .places-controls .origin-btn-label { flex: 1; min-width: 0; }
-  .places-controls .origin-btn-label b { max-width: 100%; }
-  .places-controls .lifestyle-btn { flex: 1 1 140px; min-width: 0; max-width: none; overflow: hidden; }
   /* The bed already says which kind of fact this is, so on a phone the word
      "Lifestyle" gives up its room to the answer: "Entire place" reads,
      "Lifestyle Entire ..." does not. The habits go with it. */
-  .places-controls .lifestyle-btn .lifestyle-btn-label,
-  .places-controls .lifestyle-btn .lifestyle-btn-vibe { display: none; }
   .trip-slider { max-width: none; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .places-cat, .places-sort { transition: none; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -854,173 +502,13 @@
    nothing else. No map: the page is opened from a list and read on a phone,
    and a map library to draw one pin would be the heaviest thing on it. */
 
-.bpage-wrap {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 14px 16px 48px;
-}
-
 /* Where it is, first thing on the page. A link, because the only thing anyone
    wants to do with a coordinate is open it somewhere that can drive them
    there. */
-.bpage-where {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 12px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--bg-card);
-  font-size: 12.5px;
-  color: var(--ink-soft);
-  text-decoration: none;
-}
-@media (hover: hover) {
-  .bpage-where:hover { border-color: var(--accent-soft); color: var(--ink); }
-}
-.bpage-where svg:first-child { flex: none; color: var(--accent); }
-.bpage-where-text {
-  flex: 1;
-  min-width: 0;
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.bpage-where-coord {
-  flex: none;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-}
-@media (max-width: 480px) {
-  .bpage-where-coord { display: none; }
-}
-
-.bpage-head { margin: 16px 0 12px; }
-.bpage-name {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  font-family: var(--display);
-  /* The page title of the type scale (T411; it was 27 px). */
-  font-size: 28px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-  color: var(--ink);
-}
-@media (min-width: 769px) { .bpage-name { font-size: 40px; } }
-.bpage-flag { flex: none; border-radius: 2px; }
-.bpage-local {
-  margin-top: 3px;
-  font-size: 13px;
-  color: var(--ink-mute);
-}
-.bpage-scorerow {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 10px;
-}
-.bpage-band { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
 
 /* ── Photographs. One large, the rest as a strip under it. ── */
-.bpage-gallery { margin: 0 0 18px; }
-.bpage-shot {
-  display: block;
-  width: 100%;
-  /* The img's width and height attributes map to CSS width and height, and
-     without this the height attribute wins over aspect-ratio: the hero drew
-     10 px tall from 2026-09-14 (width 16, height 10) until T052. With it the
-     attributes only tell the browser the shape to reserve. */
-  height: auto;
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
-  border-radius: 12px;
-  background: var(--paper-dim);
-}
-.bpage-strip {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  gap: 6px;
-  margin-top: 6px;
-}
-.bpage-thumb {
-  position: relative;
-  height: 62px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--paper-dim);
-  opacity: .72;
-  transition: opacity .15s ease;
-}
-.bpage-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.bpage-thumb.on { opacity: 1; box-shadow: inset 0 0 0 2px var(--accent); }
-@media (hover: hover) {
-  .bpage-thumb:hover { opacity: 1; }
-}
-.bpage-thumb:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-
-.bpage-credit {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 7px;
-  font-size: 11px;
-  color: var(--ink-mute);
-}
-.bpage-credit svg { flex: none; }
-.bpage-credit a { color: var(--ink-mute); text-decoration: none; }
-@media (hover: hover) {
-  .bpage-credit a:hover { color: var(--ink-soft); text-decoration: underline; }
-}
 
 /* ── The reasons, as chips and then as prose ── */
-.bpage-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 0 0 18px;
-  padding: 0;
-  list-style: none;
-}
-.bpage-tags li {
-  padding: 4px 10px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 7px;
-  background: var(--bg-card);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-
-.bpage-wrap section { margin-bottom: 24px; }
-.bpage-wrap section h2 {
-  margin-bottom: 8px;
-  font-family: var(--display);
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-.bpage-lede {
-  font-size: 15px;
-  line-height: 1.55;
-  font-weight: 600;
-  color: var(--ink);
-}
-.bpage-prose {
-  margin-top: 8px;
-  font-size: 14.5px;
-  line-height: 1.62;
-  color: var(--ink-soft);
-}
-.bpage-for { margin-top: 10px; font-size: 13px; color: var(--ink-soft); }
-.bpage-for b { color: var(--ink); }
 
 /* Who this is not for. Plain on purpose: dim paper, a hairline above and
    below, no icon and no colour. It is the one block on the page that is not
@@ -1034,52 +522,14 @@
 }
 .notfor-line {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.5;
   color: var(--ink-soft);
 }
 .notfor-line + .notfor-line { margin-top: 6px; }
 
-/* ── What is there. A run of facts is a list with hairlines, not cards. ── */
-.bpage-fact {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  padding: 9px 0;
-  border-top: 1px solid var(--rule-soft);
-}
-.bpage-fact dt {
-  flex: none;
-  width: 132px;
-  font-size: 12.5px;
-  color: var(--ink-mute);
-}
-.bpage-fact dd {
-  flex: 1;
-  min-width: 0;
-  margin: 0;
-  font-size: 13.5px;
-  color: var(--ink);
-}
-.bpage-fact dd.mono {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-}
-.bpage-fact.bpage-fact-empty dd {
-  color: var(--ink-mute);
-}
-.bpage-fact dd small {
-  display: block;
-  margin-top: 2px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-
 /* The data sheet (T175): the first three rows are what this trip type leads
    with, so they carry weight; the strip row needs the full width. */
-.dsheet-lead dd.mono { font-weight: 600; }
-.dsheet-row dd small { font-family: var(--ui); font-weight: 400; }
-.dsheet-row dd .ms { max-width: 100%; }
 
 /* ── The month strip: twelve cells, January to December. Good months are a
       tinted fill, avoid months a hairline strike, the rest plain. The tint is
@@ -1103,7 +553,7 @@
   height: 28px;
   border-radius: 4px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1;
   color: var(--ink-soft);
 }
@@ -1121,7 +571,7 @@
    line up. Cheap is the green tint (good news in data), dear is a rule under
    the cell; the glyph carries the meaning too, so colour is never alone. */
 .mstrip.has-price { display: block; }
-.mstrip-cap { display: block; margin: 0 0 4px; font-size: 12px; color: var(--ink-mute); }
+.mstrip-cap { display: block; margin: 0 0 4px; font-size: var(--text-caption); color: var(--ink-mute); }
 .mstrip-cap:not(:first-child) { margin-top: 10px; }
 .mstrip-cell.is-price-cheap {
   background: color-mix(in srgb, var(--green) 16%, var(--bg-card));
@@ -1135,7 +585,7 @@
   box-sizing: border-box;
   border-bottom: 2px solid var(--ink-soft);
 }
-.mstrip-note { margin: 6px 0 0; font-size: 12px; line-height: 1.45; color: var(--ink-soft); max-width: 400px; }
+.mstrip-note { margin: 6px 0 0; font-size: var(--text-caption); line-height: 1.45; color: var(--ink-soft); max-width: 400px; }
 .mstrip-info {
   flex: none;
   display: inline-flex;
@@ -1145,7 +595,7 @@
   height: 28px;
   padding: 0;
   border: 0;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink-mute);
   cursor: pointer;
@@ -1164,46 +614,14 @@
 .mstrip-panel p { margin: 0 0 6px; }
 .mstrip-panel p:last-child { margin-bottom: 0; }
 @media (max-width: 420px) {
-  .mstrip-cell { height: 26px; font-size: 11px; }
+  .mstrip-cell { height: 26px; font-size: var(--text-micro); }
 }
-
-/* ── Difficulty as five segments, and the gateway as airport rows. Carta-design
-      has no rule for a meter; these are small, flat and use the existing ink
-      and rule tokens, with no colour coding of the level. ── */
-.fmeter-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
-.fmeter-segs { display: inline-flex; gap: 3px; }
-.fmeter-seg {
-  width: 18px;
-  height: 8px;
-  border-radius: 2px;
-  background: var(--rule-soft);
-}
-.fmeter-seg.is-on { background: var(--select-bg); }
-.fmeter-text { font-size: 13px; color: var(--ink); }
-.fmeter-panel { flex-basis: 100%; }
-.fgate { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px 8px; }
-.fgate-rows { flex: 1; min-width: 0; margin: 0; padding: 0; list-style: none; }
-.fgate-row {
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
-  column-gap: 8px;
-  padding: 2px 0;
-  font-size: 13.5px;
-}
-.fgate-code { font-size: 12.5px; color: var(--ink); }
-.fgate-name { color: var(--ink); }
-.fgate-detail {
-  grid-column: 2;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-.fgate .mstrip-panel { flex-basis: 100%; }
 
 /* ── The score, shown as its parts. The number is only worth as much as the
       reader's ability to check it. ── */
 .bpage-note {
   margin-bottom: 12px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.55;
   color: var(--ink-mute);
 }
@@ -1238,57 +656,9 @@
 }
 
 /* Where to sleep near it: the one link back into the priced catalogue. */
-.bpage-base {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  margin-bottom: 24px;
-  padding: 12px 14px;
-  border: 1px solid var(--accent);
-  border-radius: 10px;
-  background: var(--accent);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--on-fill);
-  text-align: left;
-}
-@media (hover: hover) {
-  .bpage-base:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
-}
-.bpage-base small {
-  display: block;
-  margin-top: 2px;
-  font-size: 11.5px;
-  font-weight: 400;
-  color: var(--on-fill);
-}
-.bpage-base svg { flex: none; color: var(--on-fill); }
-
-.bpage-sources ul { margin: 0; padding: 0; list-style: none; }
-.bpage-sources li { padding: 5px 0; }
-.bpage-sources a {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: var(--accent);
-  text-decoration: none;
-}
-@media (hover: hover) {
-  .bpage-sources a:hover { text-decoration: underline; }
-}
-.bpage-attrib {
-  margin-top: 10px;
-  font-size: 11px;
-  line-height: 1.6;
-  color: var(--ink-mute);
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .places-bcard .places-card-img,
-  .bpage-thumb { transition: none; }
+  .places-bcard .places-card-img { transition: none; }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -1362,7 +732,7 @@
 .places-listedrow-ele {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .places-listedrow-chip {
@@ -1376,34 +746,11 @@
    and a red "technical climb" badge would rank it by making it look
    dangerous. peak_index_v2 keeps difficulty out of the score for exactly
    that reason, and the card should not put it back in through the palette. */
-.places-mcard-diff {
-  font-variant-numeric: tabular-nums;
-}
 /* The floor line, under a country header. Its own line rather than a
    parenthesis, because it explains a short list and a reader who wants the
    explanation is looking under the count. */
-.places-beachhead-note {
-  display: block;
-  margin-top: 2px;
-  color: var(--ink-soft);
-}
 /* Every way in, under the way up. A quiet row: the lift already has the
    loud slot above it, and these are the answers for somebody without a car. */
-.mpage-way-ways {
-  flex-basis: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 2px;
-}
-.mpage-way-ways span {
-  padding: 2px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--line);
-  font-size: 11.5px;
-  color: var(--ink-soft);
-  white-space: nowrap;
-}
 
 .places-bcard-tags .tag-gem {
   background: color-mix(in srgb, var(--rate) 78%, transparent);
@@ -1419,15 +766,11 @@
   gap: 4px 10px;
   margin: 0 0 16px;
   padding: 11px 13px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   border: 1px solid color-mix(in srgb, var(--sw-ink) 42%, transparent);
   background: color-mix(in srgb, var(--sw-ink) 9%, transparent);
 }
-.lpage-swim-ok { --sw-ink: var(--good-vivid); }
 .lpage-swim-warn { --sw-ink: var(--amber); }
-.lpage-swim-stop { --sw-ink: var(--warn-vivid); }
-.lpage-swim-unknown { --sw-ink: var(--slate-ink); }
-.lpage-swim-src { font-size: 12.5px; color: var(--ink-soft); }
 .lpage-swim-season {
   flex-basis: 100%;
   font-size: 12.5px;
@@ -1437,26 +780,6 @@
 
 /* The credit line is one flex item so the comma between the author and the
    licence keeps its own spacing instead of inheriting the row's gap. */
-.lpage-credit-line {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  /* Room inside the clip for a focused link's ring (T190); the negative
-     margin keeps the line exactly where it was. */
-  padding: 2px;
-  margin: -2px;
-}
-.lpage-credit-line a:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
-
-.lpage-gem {
-  padding: 2px 8px;
-  border-radius: 6px;
-  background: var(--rate-bg);
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--rate);
-}
 
 /* The three sub scores. Side by side and equal, because choosing between a
    cold beautiful lake and a warm ordinary one is the actual decision, and one
@@ -1471,7 +794,7 @@
   padding: 0;
   list-style: none;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   overflow: hidden;
   background: var(--rule-soft);
 }
@@ -1488,28 +811,6 @@
 /* Hazards, in their own block and never folded into the paragraph: a cold
    shock warning that got trimmed off the end of a sentence is a warning that
    was not given. */
-.lpage-hazards {
-  padding: 14px 15px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--amber) 38%, transparent);
-  background: color-mix(in srgb, var(--amber) 8%, transparent);
-}
-.lpage-hazards h2 {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 8px;
-  color: var(--amber-ink-alt);
-}
-.lpage-hazards h2 svg { flex: none; }
-.lpage-hazards ul { margin: 0; padding: 0; list-style: none; }
-.lpage-hazards li {
-  padding: 6px 0;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
-.lpage-hazards li + li { border-top: 1px solid color-mix(in srgb, var(--amber) 22%, transparent); }
 
 /* The month strip. Twelve bars, the warm ones filled. An estimate, and the
    note above it says so. */
@@ -1527,59 +828,14 @@
   align-items: center;
   gap: 3px;
 }
-.lpage-month-bar {
-  display: flex;
-  align-items: flex-end;
-  width: 100%;
-  height: 54px;
-  border-radius: 4px;
-  background: var(--paper-dim);
-  overflow: hidden;
-}
-.lpage-month-bar > span {
-  width: 100%;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--ink-mute) 45%, transparent);
-}
-.lpage-month-c {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 10.5px;
-  color: var(--ink-mute);
-}
-.lpage-months li.warm .lpage-month-c { color: var(--ink); font-weight: 500; }
-.lpage-month-m {
-  font-size: var(--text-micro);
-  color: var(--ink-mute);
-}
 
 /* Walks from here: our own published trails wire, joined by bounding box. A
    list of related facts, so hairlines rather than cards. */
-.lpage-walks ul { margin: 0; padding: 0; list-style: none; }
-.lpage-walks li {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 9px 0;
-  border-top: 1px solid var(--rule-soft);
-  font-size: 13.5px;
-  color: var(--ink);
-}
-.lpage-walks li svg { flex: none; color: var(--ink-mute); }
-.lpage-walks li small {
-  flex: none;
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
 
 @media (max-width: 420px) {
   /* Twelve bars will not fit a narrow phone with a legible number under each,
      so the figure goes and the bars stay: the shape of the season is the
      point, and the exact degree is in the sentence above. */
-  .lpage-month-c { display: none; }
-  .lpage-month-bar { height: 44px; }
 }
 
 /* ── The mountain page ──────────────────────────────────────────────────── */
@@ -1589,56 +845,15 @@
    the field the reader came for, so it cannot be something you scroll past.
    Three tones, and none of them is a warning colour, because "you have to
    walk" is not a hazard. */
-.mpage-way {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
-  margin: 0 0 16px;
-  padding: 11px 13px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--way-ink) 42%, transparent);
-  background: color-mix(in srgb, var(--way-ink) 9%, transparent);
-}
-.mpage-way-ride { --way-ink: var(--good-vivid); }
-.mpage-way-near { --way-ink: var(--slate-ink); }
-.mpage-way-foot { --way-ink: var(--slate-ink); }
 /* The lift's own name is a proper noun off the map, so it reads as a name
    rather than as part of the sentence. */
-.mpage-way-note {
-  flex-basis: 100%;
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
 
 /* Height beside the score. Mono, because it is measured. */
-.mpage-height {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-  font-size: 13px;
-  color: var(--ink-soft);
-}
 
 /* The line under the hazards that sends the reader to a local forecast. Not
    small print: it is the most important sentence in the block. */
-.mpage-check {
-  margin: 10px 0 0;
-  font-size: 12.5px;
-  line-height: 1.6;
-  font-weight: 600;
-  color: var(--amber-ink-alt);
-}
 
 /* The card's height and way up, on one line under the name. */
-.places-mcard-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  font-size: 12px;
-  color: var(--ink-mute);
-}
 .places-mcard-ele {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
@@ -1706,7 +921,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   opacity: 0;
-  transition: opacity .18s ease;
+  transition: opacity var(--dur-2) var(--ease-in-out);
 }
 .tpage-bar-title.on { opacity: 1; }
 .tpage-bar-act {
@@ -1756,7 +971,7 @@
   background: var(--ink);
   border: 3px solid var(--on-fill);
   box-shadow: 0 0 0 0 rgba(31, 42, 51, 0.35);
-  animation: tpage-me-pulse 2s ease-out infinite;
+  animation: tpage-me-pulse var(--dur-pulse) var(--ease-out) infinite;
 }
 @keyframes tpage-me-pulse {
   0% { box-shadow: 0 0 0 0 rgba(31, 42, 51, 0.30); }
@@ -1781,7 +996,7 @@
   width: 34px;
   height: 34px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   color: var(--ink);
 }
@@ -1797,7 +1012,7 @@
   height: 34px;
   padding: 0 14px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-size: 12.5px;
   font-weight: 600;
@@ -1816,13 +1031,13 @@
   background: var(--paper);
   box-shadow: var(--shadow-2);
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .tpage-hud-card { left: auto; right: 16px; width: 340px; }
   .tpage-recentre { left: auto; right: 186px; transform: none; }
 }
 .tpage-hud-err, .tpage-hud-wait {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.5;
   color: var(--ink-soft);
 }
@@ -1855,29 +1070,6 @@
   max-width: 760px;
   margin: 0 auto;
   padding: 16px 18px calc(44px + env(safe-area-inset-bottom, 0px));
-}
-.tpage-head .places-card-kind {
-  margin-top: 0;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-}
-.tpage-head .places-card-kind.city { background: var(--accent-bg); color: var(--accent); }
-.tpage-title {
-  margin: 8px 0 0;
-  font-family: var(--display);
-  font-size: clamp(21px, 4.4vw, 28px);
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  line-height: 1.18;
-  color: var(--ink);
-}
-.tpage-sub {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-  font-size: 12.5px;
-  color: var(--ink-mute);
 }
 
 /* The measured facts as one bordered instrument. A 1px grid gap over a hairline
@@ -1918,55 +1110,11 @@
 
 /* The one primary action: leaving with the route. Following it in the browser
    sits in the secondary row below, because a tab cannot promise more. */
-.tpage-primary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  height: 48px;
-  margin-top: 14px;
-  border-radius: 12px;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: 15px;
-  font-weight: 600;
-}
 @media (min-width: 700px) {
   /* A 720px wide button reads as a banner, not an action. */
-  .tpage-primary { max-width: 340px; }
-}
-.tpage-primary + .tpage-acts { margin-top: 10px; }
-
-.tpage-sec { margin-top: 24px; }
-.tpage-sec-title {
-  margin: 0 0 9px;
-  font-family: var(--display);
-  font-size: 15.5px;
-  font-weight: 600;
-  color: var(--ink);
 }
 
 /* What to expect: a run of related facts, so hairlines rather than boxes. */
-.tpage-story { list-style: none; margin: 0; padding: 0; }
-.tpage-story li {
-  display: flex;
-  gap: 10px;
-  padding: 9px 0;
-  border-top: 1px solid var(--rule-soft);
-  font-size: 13.5px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.tpage-story li:first-child { border-top: none; padding-top: 2px; }
-.tpage-story-icon { flex: none; margin-top: 2px; color: var(--ink-soft); }
-
-.tpage-prose p {
-  margin: 0 0 10px;
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: var(--ink-soft);
-}
 
 .tpage-elev { margin-top: 2px; }
 .tpage-elev-area { fill: var(--accent-bg); stroke: none; }
@@ -1989,12 +1137,10 @@
   gap: 12px;
   margin-top: 1px;
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
   font-variant-numeric: tabular-nums;
 }
-
-.tpage-acts { display: flex; flex-wrap: wrap; gap: 8px; }
 .tpage-act {
   display: inline-flex;
   align-items: center;
@@ -2002,61 +1148,14 @@
   height: 42px;
   padding: 0 14px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   font-size: 13.5px;
   font-weight: 600;
   color: var(--ink);
   text-decoration: none;
 }
-.tpage-act-wide { width: 100%; justify-content: center; margin-top: 10px; }
-.tpage-note {
-  margin: 10px 0 0;
-  font-size: 11.5px;
-  line-height: 1.5;
-  color: var(--ink-mute);
-}
-.tpage-note + .tpage-note { margin-top: 6px; }
-
-.tpage-start {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 14px;
-}
-
-.tpage-cta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  margin-top: 24px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: 14px;
-  font-weight: 600;
-  text-align: left;
-}
-@media (hover: hover) {
-  .tpage-cta:hover { background: var(--accent-hover); }
-}
 /* T166: a city-day trail prices the trip, so the GPX download steps down to a bordered secondary. */
-.tpage:has(.tpage-cta) .tpage-primary { background: var(--bg-card); color: var(--ink); border: 1px solid var(--rule); }
-@media (hover: hover) {
-  .tpage:has(.tpage-cta) .tpage-primary:hover { filter: none; border-color: var(--ink-soft); background: var(--paper-dim); }
-}
-.tpage-cta-right { display: flex; align-items: center; gap: 10px; }
-.tpage-cta-price {
-  font-family: var(--mono);
-  font-size: 12.5px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-  opacity: 0.9;
-  white-space: nowrap;
-}
 .tpage-credit {
   margin: 20px 0 0;
   font-size: var(--text-micro);
@@ -2070,113 +1169,26 @@
    them two visual treatments would suggest one is worth more. What the
    section adds is a tint, because this block is the argument for the walk
    and the reader should find it without looking. */
-.tpage-why {
-  padding: 12px 14px 4px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 12px;
-  background: var(--paper-dim);
-}
-.tpage-why .tpage-sec-title { margin-bottom: 4px; }
-.tpage-why .tpage-story li { border-top-color: var(--rule); }
 
 /* Loop marker beside the title, matching the chip on the card. */
-.tpage-loop {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 1px 8px;
-  border-radius: 999px;
-  background: var(--accent-bg);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--accent);
-}
 
 /* ── Views along the way ───────────────────────────────────────────────
    A horizontal strip rather than a grid: the pictures are ordered along
    the route, so scrolling them left to right is walking it. Snap points
    keep a frame centred instead of leaving two half-photographs. */
-.tpage-views {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 4px;
-  margin: 0 -18px;
-  padding-left: 18px;
-  padding-right: 18px;
-  scrollbar-width: thin;
-}
-.tpage-view {
-  position: relative;
-  flex: 0 0 auto;
-  width: 232px;
-  height: 156px;
-  padding: 0;
-  border: none;
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--paper-dim);
-  scroll-snap-align: start;
-  cursor: pointer;
-}
-.tpage-view img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.tpage-view-at {
-  position: absolute;
-  left: 8px;
-  bottom: 8px;
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: rgba(15, 18, 26, 0.66);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--on-fill);
-  font-variant-numeric: tabular-nums;
-}
 /* The credit only appears on tap. Commons requires it to travel with the
    file, and it does: it is one tap away on every frame and the source line
    under the strip covers the set. Burning it into every thumbnail would
    make the strip unreadable as photographs. */
-.tpage-view-credit {
-  position: absolute;
-  inset: auto 0 0;
-  padding: 6px 8px;
-  background: rgba(15, 18, 26, 0.82);
-  font-size: 10px;
-  line-height: 1.35;
-  color: rgba(255, 255, 255, 0.92);
-  text-align: left;
-}
-.tpage-views-credit { margin-top: 8px; }
 
 /* ── What you walk past ────────────────────────────────────────────────
    Numbered like the city-day stop list, because it is the same promise:
    these are in the order you meet them. */
-.tpage-highlights { margin: 0; padding: 0 0 0 22px; }
-.tpage-highlights li { padding: 7px 0; border-top: 1px solid var(--rule-soft); }
-.tpage-highlights li:first-child { border-top: none; }
-.tpage-hl-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  margin-top: 1px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-}
 
 /* ── Trails filter rail ────────────────────────────────────────────────
    The length chips carry no glyph (a number is its own picture), so they
    lose the left inset .places-class reserves for one. The loop chip keeps
    it, which is also what sets it apart from the four lengths beside it. */
-.places-bands .places-class { padding: 5px 12px; }
-.places-bands .places-loopchip { padding: 5px 12px 5px 5px; }
 .places-loopchip { margin-left: 4px; }
 
 /* Kind chips on a trip card sit on one line, so "Day hike" and "Loop"
@@ -2227,22 +1239,11 @@
 /* A listed row says what it is instead of showing a number it never earned.
    Sits exactly where the rating badge would, so a column of cards keeps one
    right-hand rhythm whether or not a row is scored. */
-.places-card-unrated {
-  padding: 2px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: rgba(255, 255, 255, 0.86);
-  white-space: nowrap;
-}
 
 /* The tilde on a derived grade. A whole word ("estimated") would not fit a
    card and a different colour would read as a warning; one character that
    the title attribute explains is the smallest honest mark. */
-.places-card-diff.est i,
-.tpage-chip.est i {
+.places-card-diff.est i {
   font-style: normal;
   opacity: 0.65;
   margin-left: 2px;
@@ -2252,53 +1253,16 @@
    Two chip families in one wrap, deliberately different weights. A
    highlight is a reason to go and carries the accent; a suitability is a
    constraint being satisfied and carries the rule. */
-.tpage-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
-}
-.tpage-chip {
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-}
-.tpage-chip-suit {
-  border: 1px solid var(--rule);
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-}
 
 /* Provenance: claims about the DATA rather than about the walk. Set small
    and quiet, because somebody choosing a Saturday walk does not need to
    read them and somebody deciding whether to trust the line does. */
-.tpage-provenance {
-  margin-top: 12px;
-  padding: 10px 12px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--paper-dim);
-}
-.tpage-provenance p {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.tpage-provenance p + p { margin-top: 6px; }
 
 /* The path a stage belongs to. Set as a section rather than as a chip
    because it is a different KIND of fact from the rest: not something about
    this walk, but the thing this walk is part of. */
-.tpage-family .tpage-sec-title { margin-bottom: 2px; }
-.tpage-family-n {
-  margin: 0;
-  font-size: 12px;
-  color: var(--ink-soft);
-}
 
-.tpage-back:focus-visible, .tpage-bar-act:focus-visible, .tpage-primary:focus-visible, .tpage-cta:focus-visible {
+.tpage-back:focus-visible, .tpage-bar-act:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
@@ -2317,11 +1281,6 @@
 /* The detail panel owns its scroll in an inner container so the phone sheet
    can pin a grip above it. Side effect on desktop: the close button now
    stays put while the content scrolls, instead of scrolling away. */
-.panel.dest-panel {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
 
 /* ── Fold: the animated collapse behind the cost groups and the about
       accordion. The body stays mounted; grid-rows animates the height and
@@ -2330,79 +1289,25 @@
   display: grid;
   grid-template-rows: 0fr;
   visibility: hidden;
-  transition: grid-template-rows .26s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear .26s;
+  transition: grid-template-rows var(--dur-2) var(--ease-in-out), visibility 0s linear var(--dur-2);
 }
 .acc-fold[aria-hidden="false"] {
   grid-template-rows: 1fr;
   visibility: visible;
-  transition: grid-template-rows .26s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: grid-template-rows var(--dur-2) var(--ease-in-out);
 }
 .acc-fold-inner { overflow: hidden; min-height: 0; }
 
 /* ── About accordion: population, nearest nature and the guide lead, folded
-      into one tappable row instead of a permanently open block. ── */
-.panel-section-acc { padding: 0; }
-.panel-acc-head {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  width: 100%;
-  padding: 14px 22px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-}
-.panel-acc-head:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.panel-acc-icon { display: flex; color: var(--ink-mute); }
-.panel-acc-title {
-  flex: 1;
-  min-width: 0;
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--ink);
-}
-.panel-acc-meta {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-mute);
-  max-width: 40%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.panel-acc-chev {
-  flex: none;
-  color: var(--ink-mute);
-  transition: transform .22s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.panel-acc.open .panel-acc-chev { transform: rotate(180deg); }
-.panel-acc-body { padding: 0 22px 16px; }/* ── Header compaction: same content, less air, so price and dates arrive
+      into one tappable row instead of a permanently open block. ── *//* ── Header compaction: same content, less air, so price and dates arrive
       a full screen earlier. Scoped to the destination panel only. ── */
 
 /* Three tabs in a 440px panel: tight enough that none of them wraps onto a
    second line, at every width. A tab label broken in half reads as a fault. */
-.dest-panel .panel-tabs .tab {
-  flex: none;
-  white-space: nowrap;
-  padding-left: 0;
-  padding-right: 15px;
-  font-size: var(--text-micro);
-  letter-spacing: 0.06em;
-}
-.dest-panel .panel-city { font-size: 33px; }
-.dest-panel .panel-section { padding: 16px 22px; }
 
 /* ── Micro-interactions: press states on everything tappable in the panel.
       Transform only, so layout never shifts. ── */
-.panel-fav:active,
-.stay-tier-chip:active,
-.bt-cta:active,
-.via-airport-open:active,
-.panel-tabs .tab:active { transform: scale(0.96); }
-.cost-action:active { transform: translateY(1px) scale(0.98); }
-.cost-group-head:active { background: var(--rule); }
-.panel-acc-head:active .panel-acc-title { color: var(--ink-soft); }
+.stay-tier-chip:active { transform: scale(0.96); }
 
 /* ── Phone layout: the panel is a page over the whole device ──────────────
       It used to be a bottom sheet: a half snap on open, a grip to drag it
@@ -2412,65 +1317,22 @@
       gesture nobody is told about. So it covers the screen, the bottom bar
       included, and the cross in its own bar is the way back. ── */
 @media (max-width: 768px) {
-  .panel.dest-panel {
-    position: fixed;
-    inset: 0;
-    top: 0; right: 0; bottom: 0; left: 0;
-    width: 100%;
-    max-width: none;
-    height: 100dvh;
-    max-height: none;
-    /* Over the bottom nav (50) and the header (57), under the auth overlays
-       (60): while a destination is open it IS the screen. */
-    z-index: calc(var(--z-shell) + 3);
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-    transform: translateY(100%);
-    transition: transform .3s cubic-bezier(0.2, 0.9, 0.3, 1);
-  }
-  .panel.dest-panel.open { transform: translateY(0); }
-  .xp-hero-card { margin: 0 12px 12px; }
-  .dsheet-card { margin-left: 12px; margin-right: 12px; }
   /* Clear of the floating bar: the hero starts at the top of the page, so the
-     first card carries the inset instead of the scroller. */
-  .dest-panel-scroll > .xp-hero-card:first-child { margin-top: 0; }/* Three tabs on a 390px screen: they scroll rather than wrap into a
+     first card carries the inset instead of the scroller. *//* Three tabs on a 390px screen: they scroll rather than wrap into a
      three-line block that pushes the receipt off the sheet. */
 
   /* Charts turn into swipeable strips instead of squeezing 12 columns into
      a phone width: each month keeps a readable column and the row scrolls. */
-  .dest-panel .climate-chart,
-  .dest-panel .dow-chart {
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    padding-bottom: 6px;
-    scrollbar-width: thin;
-  }
-  .dest-panel .climate-col { flex: 0 0 40px; scroll-snap-align: start; }
 
   /* Chip rows swipe sideways rather than stacking three rows tall. */
-  .dest-panel .bt-length-chips,
-  .dest-panel .stay-tier-row {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .dest-panel .bt-length-chips .chip,
-  .dest-panel .stay-tier-chip { flex: none; }
 
   /* The tall header scrolls away on the phone sheet (sticky, it ate ~250px
      of an 844px screen); the slim tab bar sticks instead, so switching
      between the breakdown and best-time stays one tap from anywhere. */
-  .dest-panel .panel-header { position: static; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .panel.dest-panel,
-  .dsheet-bar,
-  .dsheet-bar-name,
-  .acc-fold,
-  .cost-group-caret,
-  .panel-acc-chev { transition: none; }
+  .acc-fold { transition: none; }
 }
 
 /* ── Sharing a saved trip (auth/TripSharePanel.jsx) ─────────────────────────
@@ -2504,14 +1366,14 @@
   background: var(--bg-card);
 }
 .modnote-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; color: var(--ink-soft); }
-.modnote-title { margin: 0; font-family: var(--ui); font-size: 14px; font-weight: 600; color: var(--ink); }
-.modnote-date { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
-.modnote-line { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink-soft); }
+.modnote-title { margin: 0; font-family: var(--ui); font-size: var(--text-body); font-weight: 600; color: var(--ink); }
+.modnote-date { font-family: var(--mono); font-size: var(--text-caption); color: var(--ink-mute); font-variant-numeric: tabular-nums; }
+.modnote-line { margin: 0; font-size: var(--text-label); line-height: 1.5; color: var(--ink-soft); }
 /* .modnote-toggle is the kit small secondary (T474): 32 px on a fine pointer, --tap on touch. */
 .modnote-body { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 100%; }
 .modnote-facts { margin: 0; width: 100%; }
 .modnote-facts > div { padding: 9px 0; border-top: 1px solid var(--rule-soft); }
-.modnote-facts dt { font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+.modnote-facts dt { font-size: var(--text-caption); font-weight: 600; color: var(--ink-soft); }
 .modnote-facts dd { margin: 2px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
 .modnote-quote { white-space: pre-line; }
 .modnote-form { display: flex; flex-direction: column; gap: 12px; width: 100%; }
@@ -2551,7 +1413,7 @@
 .tshare-row-meta b { font-size: 12.5px; color: var(--ink); }
 .tshare-row-date {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink-mute);
 }
 
@@ -2582,7 +1444,7 @@
   color: var(--ink);
 }
 .stview-kicker {
-  font-size: 11px;
+  font-size: var(--text-micro);
   font-weight: 600;
   color: var(--ink-mute);
 }
@@ -2593,8 +1455,7 @@
   line-height: 1.15;
   color: var(--ink);
 }
-.stview-dates,
-.stview-loading {
+.stview-dates {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -2605,7 +1466,7 @@
 }
 .stview-sub {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.5;
   color: var(--ink-soft);
 }
@@ -2633,7 +1494,7 @@
   border-bottom: 1px solid var(--rule-soft);
 }
 .stview-stop-mark { display: inline-flex; color: var(--ink-mute); }
-.stview-stop-city { flex: 1; font-size: 14px; color: var(--ink); }
+.stview-stop-city { flex: 1; font-size: var(--text-body); color: var(--ink); }
 .stview-stop-dates {
   font-family: var(--mono);
   font-size: 11.5px;
@@ -2649,7 +1510,7 @@
   padding-top: 18px;
   border-top: 1px solid var(--rule-soft);
 }
-.stview-from { font-size: 12px; color: var(--ink-mute); }
+.stview-from { font-size: var(--text-caption); color: var(--ink-mute); }
 /* The memory view is built to sit under a card; standing alone it needs its
    own top edge back. */
 .stview .memo {
@@ -2668,10 +1529,10 @@
   display: flex;
   align-items: center;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper);
   overflow: hidden;
-  transition: border-color .15s, background .15s;
+  transition: border-color var(--dur-1), background var(--dur-1);
 }
 @media (hover: hover) {
   .acct-handle-row:hover { border-color: var(--ink-soft); }
@@ -2680,7 +1541,7 @@
 .acct-handle-at {
   padding: 0 2px 0 11px;
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink-mute);
 }
 .acct-handle-row input {
@@ -2690,7 +1551,7 @@
   border: 0;
   background: transparent;
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink);
 }
 .acct-handle-row input:focus { outline: none; }
@@ -2709,7 +1570,7 @@
 }
 .ftrip-note {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-mute);
 }
 .ftrip .stview-stops { margin-top: 0; }
@@ -2734,10 +1595,10 @@
   min-height: 30px;
   padding: 5px 11px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   cursor: pointer;
 }

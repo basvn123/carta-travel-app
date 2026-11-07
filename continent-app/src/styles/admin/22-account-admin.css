@@ -3,7 +3,6 @@
    of the two, so edit it where it is. This sheet loads with the route's
    chunk, after the main sheet, and holds only rules nothing later in the
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
-.admin-chip.staff { border-color: var(--ink-soft); color: var(--ink-soft); }
 .admin-days {
   display: flex;
   align-items: center;
@@ -61,7 +60,7 @@
 .adminpage-search:focus-within { border-color: var(--accent); }
 .adminpage-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .adminpage-table tbody tr:last-child td { border-bottom: none; }
-.adminpage-table tbody tr { cursor: pointer; transition: background .12s; }
+.adminpage-table tbody tr { cursor: pointer; transition: background var(--dur-1); }
 @media (hover: hover) {
   .adminpage-table tbody tr:hover { background: var(--paper-dim); }
 }
@@ -363,7 +362,7 @@
   color: var(--ink);
 }
 .adminpage-auditrest { grid-column: 1 / -1; margin: 0; overflow-wrap: anywhere; }
-@media (max-width: 640px) {
+@media (max-width: 599px) {
   .adminpage-auditpair { grid-template-columns: 1fr; }
 }
 .adminpage-badge {
@@ -507,4 +506,21 @@
 .adminpage-reviewset legend { float: left; width: 100%; padding: 0; }
 .adminpage-reviewset .adminpage-segment { clear: both; margin-bottom: 6px; }
 .adminpage-reviewset .adminpage-textarea { margin-bottom: 0; }
-.adminpage-reviewset { min-width: 0; }
+.adminpage-reviewset { min-width: 0; }/* Overrides tab (T1173): the draft form and its output. */
+.adminpage-ovform { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 4px 16px; align-items: start; }
+.adminpage-ovform .adminpage-editoractions { grid-column: 1 / -1; justify-content: flex-start; margin-top: 6px; }
+.adminpage-ovfield { display: flex; flex-direction: column; gap: 2px; min-width: 0; margin-bottom: 10px; }
+.adminpage-ovfield .adminpage-lock-input { width: 100%; margin-bottom: 0; min-height: 44px; box-sizing: border-box; }
+.adminpage-ovout { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.adminpage-ovpre {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-control);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 320px;
+  overflow: auto;
+}

@@ -13,4 +13,5 @@ export {
 } from '@phosphor-icons/react';
 
 /** The weight and size every home icon uses. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const ICON = { weight: 'duotone', size: 22 };

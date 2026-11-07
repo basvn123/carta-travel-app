@@ -41,6 +41,10 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+# T1214: activities is edited in place, so the edited block is re-dated.
+from provenance import touch  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "cache" / "wikidata_landmarks.json"
@@ -331,6 +335,7 @@ def apply(dry_run=False):
         if local:
             added += local
             dests_touched += 1
+            touch(acts)  # T1214 (T1143-c): the next wire write dates the edited block
 
     print(f"apply: {added} famous sights appended across {dests_touched} destinations")
     if dry_run:

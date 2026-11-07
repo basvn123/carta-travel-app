@@ -169,6 +169,8 @@ TRAIL_CLASSES = {"Q2143825", "Q17008256", "Q1826691"}
 # relation, or a walkable way that somebody bothered to name or grade. The
 # name-or-sac_scale test is what keeps 300,000 anonymous field paths out.
 ROUTE_VALUES = {"hiking", "foot", "walking"}
+# T1201: member ways (or child relations) tried for a relation's coordinate.
+MEMBER_TRIES = 25
 WALK_HIGHWAYS = {"path", "footway", "track", "steps", "bridleway"}
 
 # The highway values that are a WALK rather than a way somebody walks along.
@@ -349,7 +351,7 @@ SEEDS = {
            "Dubrovnik city walls"],
     "HU": ["Orszagos Kektura", "Bukk Szalajka", "Matra Kekes",
            "Csobanc", "Tihany"],
-    "IE": ["Wicklow Way", "Kerry Way", "Dingle Way", "Causeway Coast Way",
+    "IE": ["Wicklow Way", "Kerry Way", "Dingle Way",
            "Cliffs of Moher Coastal Walk", "Diamond Hill",
            "Carrauntoohil Devil's Ladder", "Glendalough Spinc"],
     "IS": ["Laugavegur", "Fimmvorduhals", "Reykjadalur", "Glymur",
@@ -401,6 +403,30 @@ SEEDS = {
     "XK": ["Rugova Canyon", "Peaks of the Balkans", "Gjeravica",
            "Mirusha waterfalls"],
 }
+
+# T1181 (ROADMAP D23, D24): the misses of the trails external check
+# (scripts/validation/trails_external.py) that no seed named. Certified and
+# national trails first, then the famous day walks. The Causeway Coast Way
+# moved here from IE: it runs along the Antrim coast, in Northern Ireland.
+SEEDS_T1181 = {
+    "BE": ["Hoge Kempen National Park Trail"],
+    "CH": ["Zermatt 5-Seenweg", "Bachalpsee", "Aescher Ebenalp"],
+    "CZ": ["Hrebenovka Ceske Svycarsko"],
+    "DE": ["Westerwald-Steig", "Bastei", "Breitachklamm", "Wutachschlucht"],
+    "ES": ["Montserrat Sant Jeroni"],
+    "FI": ["Saana"],
+    "FR": ["Tour de la Vanoise", "Etretat", "Sentier des Ocres"],
+    "GB": ["Causeway Coast Way", "Peddars Way", "Pennine Bridleway",
+           "Deeside Way", "Hebridean Way", "St Magnus Way", "Aonach Eagach",
+           "Catbells", "Arthur's Seat", "Mam Tor", "Yorkshire Three Peaks",
+           "Cuilcagh Boardwalk", "Durdle Door"],
+    "IE": ["Royal Canal Way", "Croagh Patrick", "Slieve League"],
+    "IT": ["Via degli Dei", "Lago di Sorapis", "Adolf-Munkel-Weg"],
+    "LT": ["Hill of Witches"],
+    "SE": ["Kullaleden"],
+}
+for _cc, _names in SEEDS_T1181.items():
+    SEEDS.setdefault(_cc, []).extend(n for n in _names if n not in SEEDS.get(_cc, []))
 
 
 # Names that the wide class net drags in and that no traveller means by "a
@@ -463,6 +489,7 @@ def scan_osm_fame(cc, slug, verbose=False):
     groups = {}
     node_want = set()
     way_want = {}          # way id -> the group keys waiting on it
+    rel_want = {}          # child relation id -> group keys (T1201, T1181-c)
     t0 = time.time()
     fp = osmium.FileProcessor(str(pbf), osmium.osm.WAY | osmium.osm.RELATION) \
         .with_filter(osmium.filter.KeyFilter("wikidata", "wikipedia"))
@@ -523,10 +550,17 @@ def scan_osm_fame(cc, slug, verbose=False):
             # registry exists to make impossible. Remember the first member
             # way and resolve it in the way pass below.
             if g["first_node"] is None:
-                for mem in obj.members:
-                    if mem.type == "w":
-                        way_want.setdefault(mem.ref, []).append(key)
-                        break
+                # T1201 (row T1181-c): up to MEMBER_TRIES member ways, not
+                # just the first, because a cross-border route's first way can
+                # lie outside this country's extract (the HRP in AD); and a
+                # superroute holds stage relations, not ways (the Cleveland
+                # Way), so its child relations are followed below.
+                ways = [m.ref for m in obj.members if m.type == "w"][:MEMBER_TRIES]
+                for ref in ways:
+                    way_want.setdefault(ref, []).append(key)
+                if not ways:
+                    for ref in [m.ref for m in obj.members if m.type == "r"][:MEMBER_TRIES]:
+                        rel_want.setdefault(ref, []).append(key)
         else:
             g["named_ways"] += 1
             if g["first_node"] is None:
@@ -536,6 +570,26 @@ def scan_osm_fame(cc, slug, verbose=False):
                     pass
                 if g["first_node"] is not None:
                     node_want.add(g["first_node"])
+
+    # T1201: superroutes first. Up to two levels of child relations (a
+    # superroute of superroutes), each an IdFilter pass, to the first way.
+    for _ in range(2):
+        if not rel_want:
+            break
+        deeper = {}
+        fp = osmium.FileProcessor(str(pbf), osmium.osm.RELATION) \
+            .with_filter(osmium.filter.IdFilter(set(rel_want)))
+        for rel in fp:
+            keys = rel_want.get(rel.id, [])
+            ways = [m.ref for m in rel.members if m.type == "w"][:MEMBER_TRIES]
+            subs = [m.ref for m in rel.members if m.type == "r"][:MEMBER_TRIES]
+            for key in keys:
+                for ref in ways:
+                    way_want.setdefault(ref, []).append(key)
+                if not ways:
+                    for ref in subs:
+                        deeper.setdefault(ref, []).append(key)
+        rel_want = deeper
 
     # Resolve the member ways the relations are waiting on, then the nodes.
     # Two extra filtered passes; both are IdFilter and run in C++.

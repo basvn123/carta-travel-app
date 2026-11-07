@@ -1,0 +1,1724 @@
+[
+ {
+  "id": "T1135-d",
+  "title": "Decide EU residency for booking documents",
+  "why": "parse-booking reads travellers' booking files; whether they may leave the EU sets which model hosts are allowed, not volume.",
+  "where": "docs/research/E-R3-models-and-hosting.md",
+  "how": [
+   "Read the parse-booking row of the research doc",
+   "Choose: EU-hosted only, or any host with a data processing agreement",
+   "Tell the next session (E7, S54)"
+  ]
+ },
+ {
+  "id": "T1180-a",
+  "title": "Re-rate the trails with the downhill relief fix",
+  "why": "The fix is in code; about 265 downhill walks move up a band and 37 enter the top band only once the box re-rates.",
+  "where": "Execution/P15/T1180-downhill-relief.md",
+  "how": [
+   "On the box with the trails lab up: python run_pipeline.py --only trails_rate",
+   "python run_pipeline.py --only rating_v5_profile",
+   "python pipeline/nature_tiers.py --check must print wire matches frozen: True (do not run --recalibrate)",
+   "Rerun python pipeline/trails/summaries.py and pytest tests/test_trail_summaries.py",
+   "Commit data/trails/summaries.json and data/reports/trails_summaries.json with the new wire"
+  ]
+ },
+ {
+  "id": "T1136-a",
+  "title": "Bless the dense and hybrid baseline",
+  "why": "The Ask index (`public/search/ask/`, about 50 MB) is not in git or in the cloud container.",
+  "where": "continent-app/scripts/eval/ask-baseline.json",
+  "how": [
+   "In the main checkout, with `python run_pipeline.py ask_index` already run, `cd continent-app && node scripts/eval/ask-eval.mjs --bless`, then commit `scripts/eval/ask-baseline.json`. Note that the BM25 numbers then come from the shipped index, and CI skips them against a rebuilt run"
+  ]
+ },
+ {
+  "id": "T1136-g",
+  "title": "Read the place labels",
+  "why": "The labels were written by one session from general knowledge.",
+  "where": "continent-app/scripts/eval/ask-set.json",
+  "how": [
+   "Open `continent-app/scripts/eval/ask-set.json` and check that the places listed for each question are the ones a traveller would expect",
+   "Change or add ids, then run `--bless`"
+  ]
+ },
+ {
+  "id": "T1142-f",
+  "title": "Keep the quality history on the box",
+  "why": "`weekly.sh` resets the checkout before each run, which would put the tracked history back and lose the drop baseline.",
+  "where": "scripts/quality/engine.py",
+  "how": [
+   "On the box add `CARTA_QUALITY_OUT=logs/status/quality` to the environment the timers use, then once `mkdir -p logs/status/quality && cp data/reports/quality/* logs/status/quality/`"
+  ]
+ },
+ {
+  "id": "T1142-c",
+  "title": "Confirm the rules",
+  "why": "Which fields are must_see (hard, gated on a 2 point drop) and the floors are my call from what each card and page shows.",
+  "where": "scripts/quality/rules.yaml",
+  "how": [
+   "Read `scripts/quality/rules.yaml` (the comment on each line is the share the floor was set from)",
+   "Change `level`, `kind` or `min`, or ask a session to"
+  ]
+ },
+ {
+  "id": "T1142-d",
+  "title": "Decide where the live panel reads from",
+  "why": "The panel shows the snapshot the build carried; a run-time read needs a published path for `panel.json`.",
+  "where": "continent-app/src/components/admin/DataHealth.jsx",
+  "how": [
+   "Choose: R2 `status/` made readable to the admin page, or the box commits the snapshot after each run"
+  ]
+ },
+ {
+  "id": "T1179-a",
+  "title": "Choose how trail summaries reach travellers",
+  "why": "2,089 checked summaries exist in data/trails/summaries.json but are not on the wire; the app prints `summary` as English prose in every language.",
+  "where": "Execution/P15/T1179-trail-summaries.md",
+  "how": [
+   "Pick one: (1) ship the English text as `summary` (fast, English only), or (2) a next task renders `parts` through t() in en, nl, de, fr, es and it (six languages, more work)",
+   "Tell the next session which"
+  ]
+ },
+ {
+  "id": "T1179-e",
+  "title": "Rerun the summaries after the trails rebuild",
+  "why": "The top band, names and grades move when T1092-a and T1094-a run, and the committed file then goes stale.",
+  "where": "Execution/P15/T1179-trail-summaries.md",
+  "how": [
+   "On the box after `trails_rate` and the v5 pass: `python pipeline/trails/summaries.py`, then `python -m pytest tests/test_trail_summaries.py -q`, then commit data/trails/summaries.json and data/reports/trails_summaries.json"
+  ]
+ },
+ {
+  "id": "T1137-a",
+  "title": "Deploy the model gateway",
+  "why": "Plan-day, suggest-city, parse-booking and Ask call models through aiModels only once deployed; suggest-city's guard too.",
+  "where": "`supabase/functions/_shared/aiModels.mjs`, `continent-app/functions/api/ask/answer.js`",
+  "how": [
+   "After T1117-a or together with it: `supabase functions deploy plan-day`, `supabase functions deploy suggest-city`, `supabase functions deploy parse-booking`",
+   "The Pages build per CLAUDE.md Deploy (preview first)",
+   "On the preview run one plan-day day, one town suggestion and one magic import and check each answer's `meta.model` and `meta.guard`, and ask one Ask question"
+  ]
+ },
+ {
+  "id": "T1148-a",
+  "title": "Label the plan-day calibration sample",
+  "why": "The LLM judge needs a kappa against a human before it may gate.",
+  "where": "continent-app/scripts/eval/plan-day/labels.json",
+  "how": [
+   "Open `continent-app/scripts/eval/plan-day/sample.json` and `rubric.md`, and for each of the 40 plans write \"pass\" or \"fail\" in `labels.json` (would a careful local friend hand this plan over as it is?)",
+   "Do not open `sample-key.json`",
+   "Fill `by` and `at`",
+   "Then `cd continent-app && node scripts/eval/run.mjs plan-day --write --dashboard` and commit `labels.json`, `data/reports/evals/` and `docs/reference/evals.md`"
+  ]
+ },
+ {
+  "id": "T1148-b",
+  "title": "Install Langfuse on the build box",
+  "why": "Tracing for E4 and a home for eval runs.",
+  "where": "continent-app/scripts/eval/langfuse/README.md",
+  "how": [
+   "Follow `continent-app/scripts/eval/langfuse/README.md`: compare the compose file with the official one, pin digests, fill `.env` from `.env.example`, `docker compose up -d`, open over an SSH tunnel"
+  ]
+ },
+ {
+  "id": "T1148-e",
+  "title": "Run the Gemini judge once",
+  "why": "A second judge to compare with the session judge.",
+  "where": "continent-app/scripts/eval/plan-day/judge.mjs",
+  "how": [
+   "On a machine with the pipeline's `GEMINI_API_KEY`: `cd continent-app && CARTA_JUDGE_MODEL=<a model outside plan-day's chain> node scripts/eval/plan-day/judge.mjs --backend gemini`, then `node scripts/eval/run.mjs plan-day --write --dashboard`, commit `judgments/` and the results"
+  ]
+ },
+ {
+  "id": "T1140-a",
+  "title": "Deploy the prompt registry",
+  "why": "The Edge Functions and Ask load their prompts from the bundled registry module only once deployed; the prompts are unchanged.",
+  "where": "`supabase/functions/_shared/prompts.js`, `continent-app/functions/_lib/prompts.js`",
+  "how": [
+   "With T1137-a: `supabase functions deploy plan-day`, `supabase functions deploy suggest-city`, `supabase functions deploy parse-booking`, then the Pages build per CLAUDE.md Deploy (preview first)",
+   "On the preview run one plan-day day, one town suggestion, one magic import and one Ask question and check each answers as before"
+  ]
+ },
+ {
+  "id": "T1141-a",
+  "title": "Reranker live check (E-R2)",
+  "why": "Workers AI is not reachable from the cloud container.",
+  "where": "Execution/P15/T1141-retrieval.md",
+  "how": [
+   "For 20 E1 questions per language, take the top 30 passages of the current path, then run `curl -s -o out.json -w '%{time_total}\\n' https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/ai/run/@cf/baai/bge-reranker-base -H \"Authorization: Bearer $CF_API_TOKEN\" -H \"Content-Type: application/json\" -d '{\"query\":\"quiet lake village\",\"contexts\":[{\"text\":\"<passage 1>\"},{\"text\":\"<passage 2>\"}],\"top_k\":10}'` (check the response wrapper on the first call), re-order, score nDCG@10 and recall@5 with `scripts/eval/ask-eval-lib.mjs`",
+   "Time p50 and p95 over 200 calls from a deployed Worker with `env.AI.run`, since curl adds your own link. Go only on +0.03 nDCG@10 for free-text questions, no drop on facet questions, added p95 at most 300 ms"
+  ]
+ },
+ {
+  "id": "T1141-b",
+  "title": "Rebuild and bless the full index",
+  "why": "The index is not in git or the container.",
+  "where": "continent-app/public/search/ask/, continent-app/scripts/eval/ask-baseline.json",
+  "how": [
+   "In the main checkout `python run_pipeline.py ask_index` (it runs `build-ask-bm25.mjs`), confirm the log line for `bm25.json` stays under 400 KB gzip and lists `bm25-beach.json`, `bm25-lake.json`, `bm25-peak.json`, then `cd continent-app && node scripts/eval/ask-eval.mjs --check` (expect sparse, dense and hybrid to run) and `--bless`, and commit `scripts/eval/ask-baseline.json`"
+  ]
+ },
+ {
+  "id": "T1149-a",
+  "title": "Review the taxonomy before labelling",
+  "why": "The labels and the S66 tagger both use this vocabulary, so changes are cheapest now.",
+  "where": "pipeline/taxonomy/carta_taxonomy.yaml",
+  "how": [
+   "Read the node tables at the end of `docs/ai/taxonomy-labelling-guide.md` and the `not_a_concept` blocks in `pipeline/taxonomy/mapping.yaml`",
+   "Add, merge or rename nodes in `pipeline/taxonomy/carta_taxonomy.yaml` (keep ids stable, bump `version`), then `python -I pipeline/taxonomy/taxonomy.py check` and `python -m pytest tests/test_taxonomy.py -q`"
+  ]
+ },
+ {
+  "id": "T1149-b",
+  "title": "Label the 400 items",
+  "why": "P@5 and F1 on 400 labelled items is the F1 done condition.",
+  "where": "continent-app/scripts/eval/taxonomy/gold.csv",
+  "how": [
+   "Open `continent-app/scripts/eval/taxonomy/gold.csv` in a spreadsheet, follow `docs/ai/taxonomy-labelling-guide.md` (every true tag, most specific node, skip the data-rule nodes",
+   "About 40 hours at ten items an hour), save as UTF-8 CSV with the same columns, then `cd continent-app && node scripts/eval/run.mjs taxonomy --write --dashboard` and commit `gold.csv`, `data/reports/evals/` and `docs/reference/evals.md`"
+  ]
+ },
+ {
+  "id": "T1173-f",
+  "title": "Promote lasting live corrections",
+  "why": "Live `content_overrides` rows hold fixes that vanish if the table is reset and are not in git.",
+  "where": "docs/runbooks/content-ops.md section 2",
+  "how": [
+   "In the admin Content tab, list the rows",
+   "For each that should hold for good, draft it in the Overrides tab, merge the pull request, run the pipeline and push the data, then clear the live row"
+  ]
+ },
+ {
+  "id": "T1173-i",
+  "title": "Decide how an admin edit should be written",
+  "why": "ROADMAP I13 asks for an editor that writes, this task drafts only.",
+  "where": "ROADMAP.md I13",
+  "how": [
+   "Choose: a pull request opened from the admin page (needs a GitHub token on an Edge Function), or a staging table the pipeline reads at run time (needs a migration)"
+  ]
+ },
+ {
+  "id": "T1181-a",
+  "title": "Verify and complete the trails reference list",
+  "why": "The 282-trail list was written from search snippets; Wikidata, Wikipedia, the ERA site and national portals were unreachable from the cloud.",
+  "where": "data/reports/validation/trails_reference.json",
+  "how": [
+   "Where those hosts are reachable, check each start against Wikidata P625 and each relation id (P402)",
+   "Complete the Leading Quality Trails (11 of about 24) and Irish trails (16 of about 40)",
+   "Rerun python scripts/validation/trails_external.py and commit the reference and results"
+  ]
+ },
+ {
+  "id": "T1181-e",
+  "title": "Decide on the shape term for long certified trails",
+  "why": "The v5 shape term (0 for one-way) and per-km scenery hold long certified trails below the top band (Lechweg 7.5, Peddars Way 7.0, Thames Path 7.7).",
+  "where": "Execution/P15/T1181-trails-external.md",
+  "how": [
+   "Read the 30 gap reviews in the report",
+   "Choose: keep the rule, or ask a session to lift certified long trails"
+  ]
+ },
+ {
+  "id": "T1181-i",
+  "title": "Resolve the 34 new trail seeds on the box",
+  "why": "The SEEDS_T1181 rows in the famous registry only resolve once the registry and coverage run on the box.",
+  "where": "pipeline/trails/famous_registry.py",
+  "how": [
+   "On the box run python run_pipeline.py trails_registry",
+   "Then python pipeline/trails/coverage_report.py --all",
+   "Rerun python scripts/validation/trails_external.py and commit its results"
+  ]
+ },
+ {
+  "id": "T1155-d",
+  "title": "Try the MCP server in a real client",
+  "why": "The tests use the library client; a real client proves the setup text works.",
+  "where": "services/mcp/README.md",
+  "how": [
+   "In `continent-app` run `npm ci`",
+   "In `services/mcp` run `npm ci`",
+   "Add the `mcpServers` entry from the README to your client and ask it to price a trip"
+  ]
+ },
+ {
+  "id": "T1167-a",
+  "title": "Create the private carta-docs site",
+  "why": "The docs site only exists as a CI artifact until it is hosted behind a login.",
+  "where": "Execution/P15/T1167-docs-site.md",
+  "how": [
+   "In Cloudflare Pages create project `carta-docs`",
+   "Put Cloudflare Access (owner email only) in front of it",
+   "Download the `carta-docs-site` artifact from a docs-site run (or build with `pip install -r requirements-docs.txt && mkdocs build -d .docs-site`) and run `npx wrangler pages deploy .docs-site --project-name carta-docs`"
+  ]
+ },
+ {
+  "id": "T1187-h",
+  "title": "Run the first trails validation on the box",
+  "why": "The committed result was made on the cloud copy of the wire of 2026-09-13; the box holds the newer lab state, and the D2 gate reads the latest result.",
+  "where": "`scripts/validation/runner.py`, `docs/HANDBOOK.md` (External validation runner and scorecard)",
+  "how": [
+   "After the next trails export run `python -I scripts/validation/runner.py trails --write --check`",
+   "If coverage or top band moved on purpose, rerun with `--write-baseline` and say why in a report",
+   "Commit `data/reports/validation/`"
+  ]
+ },
+ {
+  "id": "T1156-a",
+  "title": "Legal read of the AI page",
+  "why": "The page and cards state a view of the EU AI Act (Article 50 duty, not high-risk, provider versus deployer); a wrong reading published is a liability.",
+  "where": "continent-app/src/i18n/en.js (aiPage.actP), docs/ai/",
+  "how": [
+   "Open `/?legal=ai` on the preview and `docs/ai/model-card-ask.md`, `model-card-plan-day.md`",
+   "Send to the lawyer",
+   "Change the `aiPage.actP` text and the cards' \"EU AI Act reading\" sections to what they confirm"
+  ]
+ },
+ {
+  "id": "T1156-b",
+  "title": "Native check and translation of the AI page",
+  "why": "Travellers in five languages see it in English; a machine pass could misstate what a model does.",
+  "where": "continent-app/src/i18n/*.js",
+  "how": [
+   "Export the 39 `aiPage.*` keys from en.js",
+   "Translate",
+   "Have a native speaker read each",
+   "Append them to nl, de, fr, es, it"
+  ]
+ },
+ {
+  "id": "T1156-f",
+  "title": "Name Ask's AI processing in the privacy policy",
+  "why": "The policy names Google but not Cloudflare Workers AI, which sees the Ask question and notes.",
+  "where": "continent-app/src/components/PrivacyPolicy.jsx, docs/legal/ARTICLE30.md",
+  "how": [
+   "Confirm with Cloudflare whether Workers AI keeps requests in the EU on the current plan (T1135-a)",
+   "Add a paragraph to the privacy policy and a row to `docs/legal/ARTICLE30.md`"
+  ]
+ },
+ {
+  "id": "T1155-a",
+  "title": "Decide whether the MCP server may read saved trips",
+  "why": "Saved traveller trips need a per-user auth design (token, scopes, RLS) and a threat model review before any MCP tool can offer them.",
+  "where": "Execution/P15/T1155-mcp-server.md"
+ },
+ {
+  "id": "T1155-b",
+  "title": "Decide how the MCP server ships",
+  "why": "It runs only from a repo checkout today; packaging it or a remote HTTP mode is a choice, and a remote mode needs auth and rate limits first.",
+  "where": "services/mcp/README.md"
+ },
+ {
+  "id": "T1143-a",
+  "title": "Migrate the master to schema 20",
+  "why": "The box's `app_data/app_data.json` has no stamps, so the next `npm run data` stops at the sync guard and no layer run can ship.",
+  "where": "`pipeline/provenance.py`, `docs/HANDBOOK.md` (data wire, Provenance per field)",
+  "how": [
+   "On the box pull the branch",
+   "Copy `app_data/app_data.json` to `app_data/app_data.v19.json` (the rollback)",
+   "`python pipeline/provenance.py --count app_data/app_data.json` (expect 0 stamped)",
+   "`python pipeline/provenance.py --backfill app_data/app_data.json`",
+   "Run `--count` again (expect every block stamped)",
+   "`cd continent-app && npm run data` and check it passes the guard",
+   "Then the next scheduled layer runs date their blocks today"
+  ]
+ },
+ {
+  "id": "T1143-g",
+  "title": "Confirm the custom licence ids",
+  "why": "Sources.yaml names UNESCO, Numbeo, the stays scrape, Commons and US Government data with `LicenseRef` ids, and the ledger marks some as verify.",
+  "where": "`pipeline/config/sources.yaml`",
+  "how": [
+   "Open `docs/data/sources.md`",
+   "For each `LicenseRef` row read its ledger row in `docs/tos/data_licenses.md`",
+   "Correct the id or the ledger in `pipeline/config/sources.yaml` or `src/ingestion/core/registry.py`",
+   "Run `python -I pipeline/provenance_sources.py`"
+  ]
+ },
+ {
+  "id": "T1138-a",
+  "title": "Benchmark the box and run the batch evals on it",
+  "why": "Batch jobs move to Carta's own CPU (no quota, no data leaving the box) only after a measured pass.",
+  "where": "docs/ai/model-strategy.md, \"Moving a batch job to the box\"",
+  "how": [
+   "On the box build llama.cpp, fetch Qwen3-30B-A3B-Q4_K_M.gguf and run llama-bench, then write the speeds into box_cpu in continent-app/config/ai_models.json",
+   "Start llama-server -m Qwen3-30B-A3B-Q4_K_M.gguf --port 8080 -np 2 -c 16384 and run each job's eval with AI_<JOB>_PROVIDER=box AI_BOX_EVAL_RUN=1 (commands in the config, first tagging once the S66 tagger exists)",
+   "For a job within 2 points of Gemini, add it to BOX_PASSED in pipeline/ai_gateway.py and box_passed in the config in one commit"
+  ]
+ },
+ {
+  "id": "T1138-e",
+  "title": "Run the live Ask eval on two more models",
+  "why": "Ask's model choice has one measured option (Qwen3, 88.7 percent kept, from 2026-10-22).",
+  "where": "continent-app/config/ai_models.json, docs/ai/model-strategy.md",
+  "how": [
+   "In continent-app set AI_ASK_PROVIDER=gemini AI_ASK_MODELS=gemini-3.5-flash-lite GEMINI_API_KEY in .dev.vars, run npx wrangler pages dev and node scripts/ask-eval-live.mjs --endpoint http://localhost:8799 --out ../data/reports/evals/ask-live-gemini-flash-lite.json",
+   "Repeat with AI_ASK_PROVIDER=openai, the OVHcloud base URL and key, and Mistral-Small-3.2-24B-Instruct-2506",
+   "Repeat with no override (Qwen3)",
+   "Write the kept shares into features.ask.options in ai_models.json"
+  ]
+ },
+ {
+  "id": "T1138-h",
+  "title": "Decide the live features and the trigger values",
+  "why": "No live feature moves without the owner; the triggers decide when to look again.",
+  "where": "continent-app/config/ai_models.json, docs/ai/model-strategy.md",
+  "how": [
+   "Read the table in docs/ai/model-strategy.md (Ask stays on Workers AI at 0.15 EUR per 1,000 calls",
+   "Plan-day, suggest-city and parse-booking stay on Gemini Flash-Lite at about 3 EUR per 1,000 calls)",
+   "Confirm or change the values in switch.triggers (2,800 MAU, EUR 1.67 and 10.50 a day, a 2 point quality drop)",
+   "Put the monthly review (first Monday) in the calendar"
+  ]
+ },
+ {
+  "id": "T1146-a",
+  "title": "Review the D15 add list per country",
+  "why": "Nothing is added to the catalogue until I approve it, and S63 waits on this.",
+  "where": "docs/data/catalogue-gaps/",
+  "how": [
+   "Open `docs/data/catalogue-gaps/README.md`, then each country sheet",
+   "Strike any add that should not ship (or tell S63 which reserve to take instead)",
+   "Say yes or no to the stretch list (worth 0.30 to 0.40) per country",
+   "Answer the 3 merge reviews (Chios, Elafonisos, Krk)"
+  ]
+ },
+ {
+  "id": "T1146-e",
+  "title": "Refresh Wikipedia attention for the gap countries",
+  "why": "Most candidates are scored without readership, so quiet but read places rank too low.",
+  "where": "pipeline/harvest_place_signals.py",
+  "how": [
+   "On the box run `python pipeline/build_place_candidates.py`, then `python pipeline/harvest_place_signals.py --undesignated-top 20000` (the default measures only the top 2,500 register-less candidates",
+   "The script has no per-country option)",
+   "Then `python pipeline/build_place_candidates.py`",
+   "Then `python -I pipeline/catalogue_gaps.py` and commit the new list"
+  ]
+ },
+ {
+  "id": "T1139-a",
+  "title": "Paste migration 071",
+  "why": "Without it no event is stored and the admin view stays empty.",
+  "where": "supabase/migrations/071_ai_model_events_calls.sql",
+  "how": [
+   "Open the Supabase SQL editor",
+   "Paste 071_ai_model_events_calls.sql after 028 and 069",
+   "Check `select count(*) from cron.job where jobname='carta_ai_events_prune'` is 1 (enable pg_cron first if it is 0)"
+  ]
+ },
+ {
+  "id": "T1139-b",
+  "title": "Deploy the gateway with event logging",
+  "why": "The events only flow once the new code runs.",
+  "where": "Execution/P15/T1139-llm-observability.md",
+  "how": [
+   "Deploy plan-day, suggest-city, parse-booking and the Pages build (the same deploy as T1137-a and T1140-a)",
+   "In the Pages project add SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY and AI_EVENTS_SALT (a random 32 character string) as secrets"
+  ]
+ },
+ {
+  "id": "T1139-c",
+  "title": "Optional: turn on Langfuse export",
+  "why": "Traces on the build box beside the table.",
+  "where": "continent-app/scripts/eval/langfuse/README.md",
+  "how": [
+   "After T1148-b is installed, set AI_TRACE_LANGFUSE=on, LANGFUSE_HOST, LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY as function secrets",
+   "Check one trace appears",
+   "Leave off otherwise"
+  ]
+ },
+ {
+  "id": "T1144-a",
+  "title": "Verify the truth set by hand",
+  "why": "The score now rests on 90 seeded rows that share the data's own sources; only hand answers measure accuracy, and the eval gates from 80 percent verified.",
+  "where": "evals/truth/GUIDE.md",
+  "how": [
+   "Open `evals/truth/sheet.csv` in a spreadsheet and follow `evals/truth/GUIDE.md` row by row (look up first, then fill verified_value, status verified, source_url, evidence, by, verified_on)",
+   "Confirm or correct the seeded rows",
+   "Run `python -I evals/run_truth.py`, then `python -I evals/run_truth.py --write-baseline` and commit the sheet and baseline"
+  ]
+ },
+ {
+  "id": "T1144-b",
+  "title": "Label the 50 texts for the judge",
+  "why": "The text judge may not gate until its kappa against a human is known.",
+  "where": "evals/truth/judge/labels.json",
+  "how": [
+   "Read `evals/truth/judge/rubric.md`",
+   "For t01 to t50 in `text-sample.json` write supported, unsupported or contradicted in `labels.json` (do not open `text-sample-key.json`)",
+   "Fill by and at",
+   "Run `cd continent-app && node scripts/eval/run.mjs truth` and commit `labels.json`"
+  ]
+ },
+ {
+  "id": "T1144-c",
+  "title": "Run the Gemini text judge once",
+  "why": "A second judge to compare with the blind session judge.",
+  "where": "evals/truth/judge/judge.mjs",
+  "how": [
+   "On a machine with the pipeline's `GEMINI_API_KEY`: `node evals/truth/judge/judge.mjs --backend gemini --model <a pinned Flash model>`",
+   "Then `cd continent-app && node scripts/eval/run.mjs truth`",
+   "Commit `evals/truth/judge/judgments/`"
+  ]
+ },
+ {
+  "id": "T1144-e",
+  "title": "Decide the rule for place blurbs and their cited source",
+  "why": "The judge found none of 15 shipped blurbs backed by the Wikivoyage text they cite, so the page cites a source that does not carry its claims.",
+  "where": "Execution/P15/T1144-truth-set.md",
+  "how": [
+   "Read the 15 shipped blurb verdicts in `evals/truth/judge/judgments/session-2026-11-06-rubric1.json`",
+   "Choose one: cite the source that backs each blurb, rewrite blurbs from the cited text, or drop the citation",
+   "Record the choice as a task"
+  ]
+ },
+ {
+  "id": "T1183-a",
+  "title": "Run the routed trail repair on the box",
+  "why": "Repairs the broken trails D24 counts (3,518 in the sweep, 33 T1181 reference misses) and is the only way to measure the step.",
+  "where": "Execution/P15/T1183-trail-continuity.md, pipeline/trails/route_bridge.py",
+  "how": [
+   "On the box with the lab up, stage tiles for one country first: `python tools/brouter/prepare.py --country IE --up --wait`",
+   "Dry run and read the counts against the report's expected numbers: `python pipeline/trails/route_bridge.py --countries IE --dry-run --verbose`, then open data/reports/trails_route_bridge.json and check one route's bridges on the map",
+   "Real run: `python pipeline/trails/route_bridge.py --countries IE` then `python pipeline/trails/splice.py --sync-only`",
+   "Repeat per country (GB, DE next), or set `CARTA_TRAILS_ROUTE_BRIDGE=1` and let `python run_pipeline.py --only trails_route_bridge` run it with the tiles staged",
+   "Then `python run_pipeline.py --only trails_curate`, the normal elevation and rate chain, `python pipeline/trails/coverage_report.py --all` and `python -I scripts/validation/trails_external.py --write`",
+   "Put the before and after counts in the next task's report"
+  ]
+ },
+ {
+  "id": "T1150-a",
+  "title": "Run the tagger's verifier",
+  "why": "The lexical tagger only beats today's tags by a little, and the verifier is the step meant to raise precision on uncertain tags.",
+  "where": "Execution/P15/T1150-taxonomy-2.md",
+  "how": [
+   "With GEMINI_API_KEY set, run `python -I pipeline/taxonomy/tagger.py --items gold --verify --eval-out gold-verify.json` and `python -I pipeline/taxonomy/tagger.py --items gold --eval-out gold-lexical.json` (once T1149-b has filled gold.csv",
+   "Before that use `--items seed`)",
+   "Score both with `cd continent-app && node scripts/eval/run.mjs taxonomy --predictions ../gold-verify.json` and the same for gold-lexical.json",
+   "Only if the verifier lifts R-precision at 5 or micro F1, run `python -I pipeline/taxonomy/tagger.py --all --verify` on the box (about 26,000 calls, see T1150-e)"
+  ]
+ },
+ {
+  "id": "T1150-b",
+  "title": "Try the bi-encoder on the box",
+  "why": "A dense list catches paraphrases the phrase and BM25 lists miss.",
+  "where": "pipeline/taxonomy/tagger.py",
+  "how": [
+   "On the box `pip install fastembed`",
+   "Run `python -I pipeline/taxonomy/tagger.py --items gold --dense --eval-out gold-dense.json` and compare with gold-lexical.json through `node continent-app/scripts/eval/run.mjs taxonomy --predictions`",
+   "Keep `--dense` in the `taxonomy_tags` task in run_pipeline.py only if R-precision at 5 or recall at 10 rises"
+  ]
+ },
+ {
+  "id": "T1152-a",
+  "title": "Paste migration 072 (taste profile)",
+  "why": "Taste verdicts and the profile only follow the account, and the acceptance rate is only counted, once the kind and the counter exist.",
+  "where": "supabase/migrations/072_taste_profile.sql",
+  "how": [
+   "In the Supabase SQL editor paste supabase/migrations/072_taste_profile.sql after 071",
+   "Look for \"taste profile self-check passed\"",
+   "From continent-app/ run node scripts/verify_live_policies.mjs"
+  ]
+ },
+ {
+  "id": "T1152-b",
+  "title": "Check taste verdicts on two devices",
+  "why": "The sync is proven against a stubbed account only.",
+  "where": "Execution/P15/T1152-taste-profile.md",
+  "how": [
+   "After T1152-a and a deploy, on a phone signed in open My trips, Your Europe, and say Yes to one chip and Not me to another",
+   "On a laptop signed in to the same account open the same tab: the Yes chip is first with a tick and the other is under Hidden",
+   "Show again on the laptop and reopen the phone: it is back"
+  ]
+ },
+ {
+  "id": "T1152-f",
+  "title": "Legal read of the taste counter",
+  "why": "EDPB Guidelines 2/2023 say a ping from the device can fall under ePrivacy 5(3) without cookies.",
+  "where": "docs/legal/ARTICLE30.md",
+  "how": [
+   "Read docs/legal/ARTICLE30.md row 13d with rows 13 to 13c",
+   "Confirm no consent is needed or tell the next task to gate taste_tick behind consent"
+  ]
+ },
+ {
+  "id": "T1153-a",
+  "title": "Try the place linker in Explore search, then decide the default",
+  "why": "The linker finds typos, exonyms and booking words today's search misses (accuracy@1 0.543 to 0.993 on the set) but is off for travellers.",
+  "where": "continent-app/src/lib/linking/flag.js, Execution/P15/T1153-place-linking.md",
+  "how": [
+   "Open Explore with ?link=1 at the end of the URL",
+   "Search a few misspelt and foreign names (dubrovnk, lissabon, Kraków Balice)",
+   "If it reads right, ask a session to flip the default in flag.js"
+  ]
+ },
+ {
+  "id": "T1153-c",
+  "title": "Label 300 real place mentions for the linking eval",
+  "why": "The current set was written by the session that built the linker, so its score is an upper bound.",
+  "where": "continent-app/scripts/eval/linking/set.json, continent-app/scripts/eval/linking/build-set.mjs",
+  "how": [
+   "Collect real search box queries, parse-booking titles and Ask questions",
+   "Mark the catalogue id each one means in the set.json shape",
+   "Ask a session to swap them in and re-bless"
+  ]
+ },
+ {
+  "id": "T1184-a",
+  "title": "Run the trails export with treks and check the counts",
+  "why": "Puts the 119 trek records and 445 stage links on the wire, which is what the trail page shows.",
+  "where": "Execution/P15/T1184-multi-stage-treks.md, pipeline/trails/treks.py",
+  "how": [
+   "Where the lab is up, run `python run_pipeline.py --only trails_rate` (or the trails publish task), which ends in `export_wire.py` and prints a \"treks:\" line",
+   "Open data/reports/trails_treks.json and check against this report (expect about 119 treks, 445 stages, refused 449 single_stage, 56 not_one_path, 62 loop_network, if the wire is otherwise the 2026-09-13 one",
+   "More if T1183-a repaired routes first)",
+   "Run `cd continent-app && node scripts/ci/check-contract.mjs` and confirm \"treks and stage rows agree\"",
+   "Open one stage page (for example BergeSeen Trail, AT 20040) and see the trek block"
+  ]
+ },
+ {
+  "id": "T1189-h",
+  "title": "Refresh the register and rerun beaches on the box",
+  "why": "The committed run uses the register cached on 2026-10-29 and the D2 gate reads the latest result.",
+  "where": "`scripts/validation/layer_beaches.py`, `docs/HANDBOOK.md`",
+  "how": [
+   "`python3 pipeline/harvest_bathing_water.py --sites-only`",
+   "`python3 -I scripts/validation/runner.py beaches --write --check`",
+   "If coverage moved on purpose rerun with `--write-baseline` and say why",
+   "Commit `data/reports/validation/beaches/`"
+  ]
+ },
+ {
+  "id": "T1189-i",
+  "title": "Export the Wikidata Blue Flag list and run it",
+  "why": "The Blue Flag layer has no reference until then; FEE's own list must not be scraped.",
+  "where": "`scripts/validation/layer_beaches_blueflag.py`",
+  "how": [
+   "Run a SPARQL query on query.wikidata.org for beaches with award received Blue Flag (id, name, lat, lon, country code) and save as CSV to `data/reports/validation/beaches/blueflag_wikidata.csv`",
+   "`python3 -I scripts/validation/runner.py beaches_blueflag --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1189-j",
+  "title": "Confirm the EEA licence text and the download URL",
+  "why": "The research could not reach eea.europa.eu.",
+  "where": "`docs/HANDBOOK.md` (Beaches)",
+  "how": [
+   "Open the Data Hub item \"Bathing water directive, status of bathing water\", confirm CC BY 4.0 and the Discodata table, add the attribution line to `docs/tos/` if needed"
+  ]
+ },
+ {
+  "id": "T1154-a",
+  "title": "Start the Intelligence API on the box",
+  "why": "The pipeline's batch jobs and any later caller need the service running; nothing calls it until it is up.",
+  "where": "services/intelligence/README.md, \"Run\"",
+  "how": [
+   "On the box, from the repo root: `cd services/intelligence && python -c \"from intelligence.auth import new_key",
+   "K, h = new_key()",
+   "Print(k)",
+   "Print(h)\"`, keep the key for the caller",
+   "Copy `.env.example` to `.env` and set `INTEL_API_KEYS=pipeline:<hash>:6000`",
+   "Run `python -I pipeline/taxonomy/tagger.py --all` (30 s) so `/similar` indexes every item",
+   "`docker compose -f services/intelligence/compose.yaml up -d --build`",
+   "Check `curl localhost:8090/healthz`"
+  ]
+ },
+ {
+  "id": "T1157-a",
+  "title": "Create rate limit bindings",
+  "why": "The limits only hold across isolates once Cloudflare has the bindings.",
+  "where": "continent-app/wrangler.toml, Execution/P15/T1157-durable-rate-limit.md",
+  "how": [
+   "In Pages, deploy a preview and check the build accepts the `[[ratelimits]]` entries",
+   "If it rejects them add one WAF rate rule on /api/ask, /api/flights, /api/stays (Security, Security rules, Rate limiting)",
+   "Check a burst returns 429"
+  ]
+ },
+ {
+  "id": "T1157-c",
+  "title": "Decide the Edge Function per-address limit",
+  "why": "Supabase functions have only per-user caps.",
+  "where": "Execution/_OPEN.md",
+  "how": [
+   "Choose a database counter by address or a WAF rule in front of the Supabase domain"
+  ]
+ },
+ {
+  "id": "T1158-a",
+  "title": "Run the k6 load tests on the preview",
+  "why": "Proves the 10x launch budgets before the public launch.",
+  "where": "docs/runbooks/load-tests.md",
+  "how": [
+   "Install k6",
+   "Run `k6 run -e BASE_URL=https://<preview>.carta-app.pages.dev -e SPOOF_IP=0 tests/load/all.js` (or Actions, \"load\", Run workflow)",
+   "Paste the p95 lines into a report"
+  ]
+ },
+ {
+  "id": "T1159-a",
+  "title": "Install the nightly backup timer",
+  "why": "The routine backup only exists once the box runs it.",
+  "where": "docs/runbooks/backup-restore.md",
+  "how": [
+   "On the box: `git pull`",
+   "`sudo bash infra/hetzner/cron/install.sh`",
+   "Confirm `SUPABASE_DB_URL` and `CARTA_BACKUP_KEY` in `~/.config/carta/env`",
+   "`sudo systemctl start --no-block carta-backup.service` and check `journalctl -u carta-backup.service`"
+  ]
+ },
+ {
+  "id": "T1159-b",
+  "title": "Run the restore drill and record the time",
+  "why": "An untested backup is a guess, and the live restore time is the figure to plan an incident around.",
+  "where": "docs/runbooks/backup-restore.md",
+  "how": [
+   "On the laptop with the GPG secret key and a scratch Postgres 17: `ops/restore_drill.sh --latest --report ~/restore-drill.json`",
+   "Write the total seconds into the runbook"
+  ]
+ },
+ {
+  "id": "T1159-c",
+  "title": "Check the R2 lifecycle rule and the newest object",
+  "why": "Retention only works if the rule exists, and a stopped backup is invisible.",
+  "where": "docs/runbooks/backup-restore.md",
+  "how": [
+   "`python pipeline/archive/push.py --lifecycle` (needs Cloudflare token)",
+   "`rclone lsl r2:carta/archive/db/supabase-nightly/` shows an object under 36 hours old"
+  ]
+ },
+ {
+  "id": "T1185-a",
+  "title": "Run the trails export with way back",
+  "why": "The wire carries no `wb` until the export runs on the box with the lab.",
+  "where": "Execution/P15/T1185-way-back.md",
+  "how": [
+   "Start the lab",
+   "Run `python pipeline/trails/export_wire.py`",
+   "Run `node continent-app/scripts/ci/check-contract.mjs` and open one one-way trail page"
+  ]
+ },
+ {
+  "id": "T1160-b",
+  "title": "Feed the SLO panel",
+  "why": "The panel is empty until a snapshot exists.",
+  "where": "docs/runbooks/slo.md",
+  "how": [
+   "Give a task the GitHub token, Sentry token and Supabase service key it needs for the collector",
+   "Run it weekly on the box",
+   "Commit or push the snapshot"
+  ]
+ },
+ {
+  "id": "T1160-c",
+  "title": "Run the live incident drill",
+  "why": "Proves the page reaches your phone and the notice works.",
+  "where": "docs/runbooks/incident.md",
+  "how": [
+   "Follow the Live steps in incident.md, note the times in drill-log.md"
+  ]
+ },
+ {
+  "id": "T1161-d",
+  "title": "Push a trailslab dump the worker can open",
+  "why": "The worker restores only a dump encrypted to its key, and the laptop lab is the only copy.",
+  "where": "docs/runbooks/build-box.md",
+  "how": [
+   "Start the lab (cd tools/trailslab && docker compose up -d)",
+   "On the box make the worker public key without touching its keyring (h=$(mktemp -d)",
+   "Gpg --homedir $h --batch --import ~/.config/carta/trailslab-worker.sec.asc",
+   "Gpg --homedir $h --armor --export > worker.pub.asc",
+   "Rm -rf $h) and copy worker.pub.asc to the laptop",
+   "There, in WSL or Git Bash with a PostgreSQL 18 client, gpg and rclone's r2 remote: CARTA_BACKUP_KEY=<your key id> CARTA_WORKER_GPG_PUBLIC_FILE=worker.pub.asc bash infra/hetzner/cax41/trailslab_dump.sh push"
+  ]
+ },
+ {
+  "id": "T1161-a",
+  "title": "Build the Ask index and guided search on the box",
+  "why": "Removes the last ML steps from the laptop.",
+  "where": "docs/runbooks/build-box.md",
+  "how": [
+   "Add CARTA_BOX_ML=all to ~/.config/carta/env",
+   "The next monthly run installs model2vec and ~/venv-guided (check df -h after, about 1 GB)",
+   "After it: grep -E \"ask_index|guided_search|golden total\" ~/carta/logs/pipeline_run.log and free -m during a run"
+  ]
+ },
+ {
+  "id": "T1161-b",
+  "title": "Switch on the stays scrape for Hostelworld on the box",
+  "why": "The March scrape no longer needs the laptop.",
+  "where": "infra/hetzner/cax11/stays_scrape.sh",
+  "how": [
+   "Give the box's R2 token write access to the carta-stays-state bucket (Cloudflare dashboard, R2, API tokens)",
+   "Sudo ~/venv/bin/python -m playwright install-deps chromium",
+   "Sudo bash infra/hetzner/cron/install.sh",
+   "Test one town: CARTA_STAYS_SCRAPE=1 FORCE=1 STAYS_RUN=2026-11 bash infra/hetzner/cax11/stays_scrape.sh -- --only FLR and read ~/carta/logs/stays_hostelworld.log for rows or a block",
+   "If it passes, set CARTA_STAYS_SCRAPE=1 in ~/.config/carta/env before March"
+  ]
+ },
+ {
+  "id": "T1161-c",
+  "title": "Choose where Booking scrapes",
+  "why": "Booking turns away datacenter addresses, so the box cannot do it.",
+  "where": "Execution/P15/T1161-no-laptop-steps.md",
+  "how": [
+   "Decide: a home device (recommended, about EUR 130 to 150 once) or a residential proxy (about USD 16 to 240 a year)",
+   "On a home Linux device: clone the repo, a Python 3.12 venv with requirements.txt, apt-get install xvfb, the rclone r2 remote, then CARTA_STAYS_SCRAPE=1 CARTA_STAYS_SITES=booking CARTA_STAYS_BOOKING_EGRESS=residential and the two carta-stays-scrape units",
+   "Turn off the laptop's CartaStayScrape task after the first good March night"
+  ]
+ },
+ {
+  "id": "T1161-e",
+  "title": "Decide whether the worker promotes approved trips",
+  "why": "Until then approved trips reach the wire only through the laptop's trails_rate run.",
+  "where": "infra/hetzner/README.md, \"The trailslab job\"",
+  "how": [
+   "After one worker run with --no-install has passed: set CARTA_TRAILSLAB_PROMOTE=1 in ~/.config/carta/env",
+   "After the next worker run read logs/trailslab_worker/<run>/out/MANIFEST.txt (promoted=N) and reports/logs/rows_check.log"
+  ]
+ },
+ {
+  "id": "T1162-a",
+  "title": "Delete the stale continent-app/.git",
+  "why": "It shows hundreds of false changes and a commit made there is lost; ship and worktree.mjs warn while it exists.",
+  "where": "Execution/P15/T1162-scripted-ship.md",
+  "how": [
+   "In the root checkout run `git -C continent-app log -1 --oneline` to confirm it is the T915 master with no remote",
+   "Delete the folder `continent-app\\.git` (only that folder)",
+   "Run `node scripts/ship.mjs --check` and see \"no stale continent-app/.git\""
+  ]
+ },
+ {
+  "id": "T1162-b",
+  "title": "Prove worktree.mjs on Windows with a junction",
+  "why": "Junctions are where the old deletes happened, and this container could only test symlinks.",
+  "where": "scripts/worktree.mjs",
+  "how": [
+   "Run `node scripts/worktree.mjs add t1162-proof --base main --link-node-modules`",
+   "Note the count of `continent-app\\node_modules` entries in the main checkout",
+   "Run `node scripts/worktree.mjs remove t1162-proof --force`",
+   "Check the count is unchanged and delete the branch `p15-t1162-proof`"
+  ]
+ },
+ {
+  "id": "T1162-c",
+  "title": "Ship the next deploy with the script",
+  "why": "One command that stops on any failed step replaces six by hand.",
+  "where": "scripts/ship.mjs",
+  "how": [
+   "From the root checkout on main run `node scripts/ship.mjs` (dry run) and read the warnings",
+   "Run `node scripts/ship.mjs --live`",
+   "If a step fails, fix it and rerun with the printed `--from <step>`",
+   "Type \"delete\" at the prune"
+  ]
+ },
+ {
+  "id": "T1164-a",
+  "title": "Scan the preview with ZAP",
+  "why": "The CI gate has only seen a local preview; the real headers come from Cloudflare's edge and can differ.",
+  "where": "`.github/workflows/zap.yml`",
+  "how": [
+   "Deploy the preview as usual",
+   "GitHub, Actions, zap, Run workflow, job \"preview\", target `https://preview.carta-app.pages.dev`",
+   "Read the summary table (the job fails on any High) and note Mediums in the register"
+  ]
+ },
+ {
+  "id": "T1164-b",
+  "title": "Probe the live Edge Functions' auth",
+  "why": "The tests prove the handler code, not the deployed gateway and Supabase Auth.",
+  "where": "`continent-app/tests/edgeAuth.test.mjs`, `Execution/P15/T1164-security-testing.md`",
+  "how": [
+   "`curl -i -X POST https://<ref>.supabase.co/functions/v1/plan-day -H 'content-type: application/json' -d '{}'` and expect 401",
+   "Repeat with `-H 'Authorization: Bearer <an expired access token>'` and with the anon key as the bearer, both 401",
+   "`curl -i -X POST https://<ref>.supabase.co/functions/v1/stripe-webhook -H 'stripe-signature: t=1,v1=00' -d '{}'` and expect 400",
+   "Then close T1079-f"
+  ]
+ },
+ {
+  "id": "T1164-f",
+  "title": "Decide the password and MFA policy",
+  "why": "ASVS L2 forbids composition rules and asks for MFA for every account; today the form demands upper case, a digit and a symbol, and only the admin has TOTP.",
+  "where": "`continent-app/src/lib/passwordStrength.js`, `docs/security/asvs.md` V6",
+  "how": [
+   "Decide: drop the three composition rules and keep length plus the leaked-password check",
+   "Decide whether travellers get optional TOTP",
+   "Name the context words to refuse (Carta, the traveller's name and e-mail)"
+  ]
+ },
+ {
+  "id": "T1164-j",
+  "title": "Set session lifetimes in Supabase",
+  "why": "Sessions never time out and e-mail codes live an hour.",
+  "where": "`Execution/P15/_OPEN-auth-settings.md`, `docs/security/asvs.md` V7",
+  "how": [
+   "Supabase Dashboard, Authentication, Sessions: set an inactivity timeout and time-boxed sessions (both may need the Pro plan)",
+   "Authentication, Providers, Email: OTP expiry 600 seconds",
+   "Record the values in `_OPEN-auth-settings.md`"
+  ]
+ },
+ {
+  "id": "T1164-n",
+  "title": "Close the unused GraphQL endpoint",
+  "why": "Pg_graphql answers introspection on the project although the app never uses GraphQL.",
+  "where": "`supabase/config.toml`, `docs/security/asvs.md` V4.3",
+  "how": [
+   "Supabase Dashboard, Settings, API: remove `graphql_public` from the exposed schemas (or Database, Extensions: disable pg_graphql)",
+   "Then load the app and confirm nothing broke"
+  ]
+ },
+ {
+  "id": "T1186-a",
+  "title": "Lake water class run",
+  "why": "Fills water class and unknown swim flags on the wire.",
+  "where": "pipeline/lakes/fill_water.py",
+  "how": [
+   "`git lfs pull` or `python pipeline/harvest_bathing_water.py --refresh`",
+   "`python pipeline/lakes/fill_water.py --harvest-osm --apply`",
+   "Record before/after counts"
+  ]
+ },
+ {
+  "id": "T1186-b",
+  "title": "Mountain route up run",
+  "why": "Fills route up for summits with no route.",
+  "where": "pipeline/mountains/fill_route_up.py",
+  "how": [
+   "`python pipeline/mountains/fill_route_up.py --harvest --apply` (paced Overpass, resumable)",
+   "Record counts"
+  ]
+ },
+ {
+  "id": "T1163-b",
+  "title": "Decide on four unmounted admin and AI files",
+  "why": "They are tested but never shown, so they are either a lost feature or dead code.",
+  "where": "Execution/P15/T1163-code-health.md (What is still open)",
+  "how": [
+   "Open the admin page and confirm AI calls and SLO panels are not there",
+   "Choose mount or delete",
+   "Tell the next task which"
+  ]
+ },
+ {
+  "id": "T1168-a",
+  "title": "Build the ask index in the docs deploy",
+  "why": "The box shows nothing until `index.js` exists in the built site.",
+  "where": ".github/workflows/docs-site.yml",
+  "how": [
+   "In `.github/workflows/docs-site.yml` add `node scripts/docs/ask_docs.mjs build` before `mkdocs build`",
+   "Push",
+   "Confirm the box answers on the deployed site"
+  ]
+ },
+ {
+  "id": "T1168-b",
+  "title": "Decide on dense vectors",
+  "why": "BM25 misses paraphrases with no shared word; the static model could fix that.",
+  "where": "Execution/P15/T1168-ask-the-docs.md",
+  "how": [
+   "`pip install model2vec`",
+   "Embed the 3,600 passages with `minishlab/potion-multilingual-128M`",
+   "Fuse with BM25 by RRF (k 60)",
+   "Keep it only if recall@5 or MRR rises on the question set without losing abstention"
+  ]
+ },
+ {
+  "id": "T1168-c",
+  "title": "Run the model rewrite once",
+  "why": "The gateway is not reachable from the cloud container.",
+  "where": "scripts/docs/ask_docs.mjs",
+  "how": [
+   "With `CF_ACCOUNT_ID` and `CF_AI_TOKEN` set run `node scripts/docs/ask_docs.mjs \"how do I restore a database backup?\" --model`",
+   "Check the answer keeps its `[n]` marks"
+  ]
+ },
+ {
+  "id": "T1188-a",
+  "title": "Label the 50 judge calibration texts",
+  "why": "The text judge's verdicts count only after a human's labels pass kappa 0.7 (bootstrap low 0.5) and 90% planted recall; today they rest on seeded labels.",
+  "where": "evals/truth/judge/labels.json, Execution/P15/T1188-llm-judge.md",
+  "how": [
+   "Open evals/truth/judge/labels.json and, for each of the 50 texts in text-sample.json, write supported, unsupported or contradicted per rubric (do not open text-sample-key.json), fill by and at",
+   "Run python -I scripts/validation/judge.py calibrate --write",
+   "Commit pipeline/judge/calibration/calibration-session.json"
+  ]
+ },
+ {
+  "id": "T1188-b",
+  "title": "Run and calibrate the Gemini judge",
+  "why": "The session judge needs a person at the keyboard; the Gemini judge can run every release, but only once it is calibrated on its own verdicts.",
+  "where": "pipeline/judge/config.json, Execution/P15/T1188-llm-judge.md",
+  "how": [
+   "On the box with GEMINI_API_KEY set run python -I scripts/validation/judge.py gemini --items evals/truth/judge/text-sample.json --out pipeline/judge/calibration/judgments/gemini-YYYY-MM-DD.json (if gemini-pro-latest is refused, set AI_JUDGE_MODELS to a current Pro model id)",
+   "Run python -I scripts/validation/judge.py calibrate --verdicts that file --write",
+   "Commit both files"
+  ]
+ },
+ {
+  "id": "T1190-a",
+  "title": "Check the price hand sample",
+  "why": "The only check of absolute euros (a bias common to every country is invisible to Eurostat's indices).",
+  "where": "data/reports/validation/prices/hand_sample.csv, Execution/P15/T1190-prices-validation.md",
+  "how": [
+   "Open data/reports/validation/prices/hand_sample.csv",
+   "For each row open the site by hand (Booking, Hostelworld or Airbnb for beds, the place's own menus for dinner), check-in 30 to 60 days out, one night, two adults for home and hotel3, one for dorm, sort by price and note the median of the first 20 results with taxes in found_eur, plus checked_on, site, n_seen and url",
+   "Then run `python -I scripts/validation/runner.py prices_sample --write-baseline --write` and commit the sheet and the result"
+  ]
+ },
+ {
+  "id": "T1190-b",
+  "title": "Refresh the Eurostat price levels with the narrow categories",
+  "why": "Beds are checked against restaurants and hotels together until accommodation alone is in.",
+  "where": "scripts/validation/layer_prices.py",
+  "how": [
+   "`mkdir -p cache/eurostat_pli`",
+   "`for c in A0111 A011101 A011102 A010101 A010201",
+   "Do curl -sS \"https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_ppp_ind?format=JSON&lang=EN&na_item=PLI_EU27_2020&ppp_cat=$c&sinceTimePeriod=2022\" -o cache/eurostat_pli/$c.json",
+   "Done`",
+   "`python -I scripts/validation/layer_prices.py --refresh-reference --eurostat-dir cache/eurostat_pli`",
+   "`python -I scripts/validation/runner.py prices --write --write-baseline` and `python -I scripts/validation/layer_prices.py --table`",
+   "Commit data/reports/validation/prices/"
+  ]
+ },
+ {
+  "id": "T1190-c",
+  "title": "Enter published fare examples and run the fares check",
+  "why": "Flights have no open price reference, so the swept fares are not checked at all.",
+  "where": "scripts/validation/layer_prices_fares.py",
+  "how": [
+   "Add about 20 rows to data/reports/validation/prices/fare_examples.csv (one adult one way EUR fares read by hand from an airline or airport page, routes spread over short, medium and long, columns id,origin,dest,month,fare_eur,cc,source,url,read_on)",
+   "`mkdir -p cache/flights_wire`",
+   "For each origin `curl -sS https://data.carta-europetravel.com/data/flights/<IATA>.json -o cache/flights_wire/<IATA>.json`",
+   "`python -I scripts/validation/runner.py prices_fares --write-baseline --write`"
+  ]
+ },
+ {
+  "id": "T1190-h",
+  "title": "Decide on the Numbeo anchors",
+  "why": "Numbeo's terms forbid copying and derived works without a licence, and the June 2026 food baskets cite Numbeo pages.",
+  "where": "cache/costs.json, pipeline/apply_food_prices.py",
+  "how": [
+   "Decide: license Numbeo, or replace the anchored baskets with Eurostat levels and national statistics prices",
+   "Tell the next prices task"
+  ]
+ },
+ {
+  "id": "T1169-b",
+  "title": "Check the installed app on real phones",
+  "why": "The offline trip and the install path are proven only in desktop Chromium, and iOS has no install prompt.",
+  "where": "Execution/P15/T1169-pwa.md",
+  "how": [
+   "After the next deploy, open the site on an Android phone in Chrome, keep a trip, tap Add to home screen in My trips",
+   "Open the installed app, turn on airplane mode, reopen it and open the kept trip",
+   "Repeat on an iPhone in Safari through Share, Add to Home Screen",
+   "Note anything that fails in the T1169-b row"
+  ]
+ },
+ {
+  "id": "T1169-c",
+  "title": "Decide the phone route for the stores",
+  "why": "A Play or App Store listing needs the I-R3 choice (stay a PWA, wrap with Capacitor, or native).",
+  "where": "ROADMAP.md (I-R3, I7, I-d)",
+  "how": [
+   "Read ROADMAP I-R3",
+   "Pick the route",
+   "Record it as decision I-d in ROADMAP.md"
+  ]
+ },
+ {
+  "id": "T1170-a",
+  "title": "Native review of drafted translations",
+  "why": "The strings are machine-drafted and travellers read them.",
+  "where": "docs/i18n/review.md",
+  "how": [
+   "Open docs/i18n/review.md",
+   "Have a native speaker read nl, de, fr, es, it, traveller-facing groups first",
+   "Send corrections"
+  ]
+ },
+ {
+  "id": "T1170-e",
+  "title": "Pick one French register",
+  "why": "Fr.js mixes tu and vous.",
+  "where": "docs/i18n/review.md",
+  "how": [
+   "Decide tu or vous for French",
+   "Tell the next session"
+  ]
+ },
+ {
+  "id": "T1171-a",
+  "title": "Beta test the Pass moment",
+  "why": "It is the one designed paid moment in the journey and is off until the beta says it reads right.",
+  "where": "docs/design/pass-moment.md",
+  "how": [
+   "Open a priced trip page with ?pm=on on a tester's phone and desktop",
+   "Watch whether \"Not now\" and \"See the Trip Pass\" feel fair",
+   "Set PASS_MOMENT = true in continent-app/src/pass/passMoment.js or tell the next task what to change"
+  ]
+ },
+ {
+  "id": "T1172-a",
+  "title": "Register affiliate programmes and set the ids",
+  "why": "Partner links only earn once an id exists; until then they stay plain.",
+  "where": "continent-app/src/lib/affiliate.js, omio.js, activityAffiliates.js",
+  "how": [
+   "Register Travelpayouts, Impact (Omio), GetYourGuide and Viator",
+   "Set VITE_TP_MARKER, VITE_OMIO_TRACKING_LINK, VITE_GYG_PARTNER_ID, VITE_VIATOR_PID in .env and the Cloudflare Pages project",
+   "Rebuild and look for the Partner link mark"
+  ]
+ },
+ {
+  "id": "T1172-b",
+  "title": "Approve the disclosure wording",
+  "why": "EU guidance wants a clear disclosure before the click.",
+  "where": "continent-app/src/i18n/en.js (partner.*), ROADMAP.md I-R5",
+  "how": [
+   "Read /?legal=partner in all six languages",
+   "Run it against the I-R5 legal checklist",
+   "Confirm the PRODUCT.md wording (I-e)"
+  ]
+ },
+ {
+  "id": "T1182-a",
+  "title": "Move the trails lab and its review app to the box",
+  "why": "Trail runs and reviews stop needing the laptop, and T784-a can close.",
+  "where": "tools/trailslab/box/README.md, \"Enable it on the box\"",
+  "how": [
+   "After T1161-d, stop reviewing on the laptop",
+   "Hcloud volume create --name carta-trailslab --size 80 --server carta-orchestrator --format ext4",
+   "On the box mount it at /mnt/trailslab through fstab, add a 2 GB swapfile, sudo apt-get install -y docker.io docker-compose-v2 postgresql-client-18 and add carta to the docker group",
+   "Bash tools/trailslab/box/lab.sh env >> ~/.config/carta/env",
+   "Lab.sh check, lab.sh up, lab.sh restore, lab.sh status (the laptop's trips count)",
+   "Lab.sh review-build, lab.sh install, lab.sh review on, and from your machine ssh -N -L 4174:127.0.0.1:4174 -L 8011:127.0.0.1:8011 carta@<box>"
+  ]
+ },
+ {
+  "id": "T1182-b",
+  "title": "Check the box lab under a real run",
+  "why": "The 1.5 GB cap and the tuning are planning figures for a 4 GB box that also runs the pipeline.",
+  "where": "docs/runbooks/build-box.md, \"The trails lab on the box\"",
+  "how": [
+   "During the first monthly run with the lab up, run free -m and bash tools/trailslab/box/lab.sh status",
+   "Afterwards grep trails_ ~/carta/logs/pipeline_run.log for minutes and skips",
+   "If the box swaps hard, lower TRAILSLAB_MEM_LIMIT or rescale to a CAX21"
+  ]
+ },
+ {
+  "id": "T1175-a",
+  "title": "Turn on the trip receipt share",
+  "why": "The button is built but hidden behind a flag until someone has seen the image on real devices.",
+  "where": "continent-app/src/lib/share/flag.js",
+  "how": [
+   "Open My trips with ?receipt=1 on a phone and a desktop",
+   "Open a saved trip's menu and choose Share the receipt",
+   "Check the figures against the trip page, then share or save once",
+   "If it reads right, set the default in shareReceiptOn to on (a next task can do the edit)"
+  ]
+ },
+ {
+  "id": "T1175-b",
+  "title": "Make the real cheapest week calendars",
+  "why": "The stays wire with the month curves lives on the data host and the owner box, not in the cloud container.",
+  "where": "scripts/share/share_assets.mjs",
+  "how": [
+   "On the box, copy the stays files (data/stays-live/v1/{cc}.json, or stays/v1) into one folder",
+   "Run node scripts/share/share_assets.mjs --stays that-folder --png",
+   "Look at scripts/share/out/calendar/*.png and pick the places to share"
+  ]
+ },
+ {
+  "id": "T1175-c",
+  "title": "Clear the credit line before publishing",
+  "why": "The map and calendars quote aggregates of owner-run list price samples, whose terms are not settled (T1130-c).",
+  "where": "docs/tos/data_licenses.md",
+  "how": [
+   "Read the credit line printed on map_100.png",
+   "Decide whether \"Carta's own samples of list prices\" may be published and whether a source must be named",
+   "Note the answer in the register"
+  ]
+ },
+ {
+  "id": "T1176-a",
+  "title": "Confirm gem identity provenance",
+  "why": "An ODbL-only name or coordinate would break the CC BY promise.",
+  "where": "scripts/open_data/DATASHEET.md, Known gaps",
+  "how": [
+   "Check how gem names and lat/lon were sourced (GeoNames match vs OpenStreetMap)",
+   "If OSM only, drop those columns for those rows in `FIELDS`",
+   "Rerun the tests"
+  ]
+ },
+ {
+  "id": "T1176-b",
+  "title": "Build and publish the dataset",
+  "why": "Publishing is the owner's.",
+  "where": "scripts/open_data/README.md",
+  "how": [
+   "Run `python scripts/open_data/export_open_dataset.py` on the box",
+   "Read the output",
+   "Create a public GitHub repo and upload `scripts/open_data/out/`, README.md, DATASHEET.md"
+  ]
+ },
+ {
+  "id": "T1176-c",
+  "title": "Post the Show HN",
+  "why": "Only once the free part needs no signup.",
+  "where": "Execution/P15/T1176-show-hn-draft.md",
+  "how": [
+   "Confirm the free part has no signup",
+   "Fill the repo link",
+   "Post the draft"
+  ]
+ },
+ {
+  "id": "T1178-d",
+  "title": "Run the monthly draft on the box",
+  "why": "The draft needs a current wire and a pull request each month.",
+  "where": "run_pipeline.py task blog_drafts, content/blog/README.md",
+  "how": [
+   "On the box run `python run_pipeline.py --only blog_drafts` after the monthly data run",
+   "Open a pull request with the new `content/blog/` files (a scheduled Claude Code routine can do this)",
+   "Add `--prose` to the task cmd if you want the Gemini opening"
+  ]
+ },
+ {
+  "id": "T1178-e",
+  "title": "Approve the first post",
+  "why": "Publishing is yours and the sample uses a wire dated 2026-06-07.",
+  "where": "content/blog/where-to-go-in-december-2026.md",
+  "how": [
+   "Regenerate the December draft on a fresh wire",
+   "Read and edit it",
+   "Set `status: published`",
+   "Run `python scripts/blog/check_draft.py`"
+  ]
+ },
+ {
+  "id": "T1191-c",
+  "title": "Decide two proposed appeal changes",
+  "why": "The 30-gap review found two villages scored on sights outside them, and scores are never hand-edited without you.",
+  "where": "`data/reports/validation/ratings/gap_verdicts.json`",
+  "how": [
+   "Open the rows Dannewerk and Bleggio Superiore in `data/reports/validation/ratings/gap_verdicts.json`",
+   "Check the Danevirke and Rango (Borghi piu belli) pages",
+   "Accept or reject 6.2 and 6.1 in `app_data/rubric_appeal.json` via the next rating task"
+  ]
+ },
+ {
+  "id": "T1191-g",
+  "title": "Fetch the Wikivoyage status tiers",
+  "why": "Turns the yes/no Wikivoyage reference into a four-tier one, the best quality signal the research found.",
+  "where": "`scripts/validation/layer_ratings.py`",
+  "how": [
+   "On your box run `python -I scripts/validation/layer_ratings.py fetch-wikivoyage`",
+   "Then `python -I scripts/validation/runner.py ratings --write`",
+   "Commit `data/reports/validation/ratings/sources/wikivoyage_status.json` and the new result"
+  ]
+ },
+ {
+  "id": "T1191-h",
+  "title": "Add tourism board and best-of lists and Eurostat nights",
+  "why": "The brief's extra references; the cloud cannot reach them.",
+  "where": "`data/reports/validation/ratings/sources/README.md`",
+  "how": [
+   "Write one JSON per list (GNTB Top 100, European Best Destinations, others whose terms allow it) in `data/reports/validation/ratings/sources/lists/`, names, ranks and pages only",
+   "Save Eurostat city nights as `sources/eurostat_nights.json` keyed by place id",
+   "Rerun the ratings layer with `--write`"
+  ]
+ },
+ {
+  "id": "T1191-j",
+  "title": "Decide on catalogue rows for listed places",
+  "why": "Lonely Planet names Skanor-Falsterbo and Tipperary, and Tripadvisor and Lonely Planet name Sicily, Sardinia and the Veneto; Carta has no row for any of them.",
+  "where": "`Execution/P15/T1191-ratings-validation.md`",
+  "how": [
+   "Decide which (if any) get a row",
+   "File it as a catalogue task"
+  ]
+ },
+ {
+  "id": "T1191-l",
+  "title": "Check the reference licences",
+  "why": "The UNESCO and Tripadvisor terms limit republication, and T760's Tripadvisor file stores names and ranks.",
+  "where": "`data/rating/external/tripadvisor.json`",
+  "how": [
+   "Read UNESCO FAQ 126 and the Tripadvisor terms",
+   "Decide whether `data/rating/external/tripadvisor.json` stays in git or becomes a local-only input"
+  ]
+ },
+ {
+  "id": "T1192-a",
+  "title": "Mountains reference export and baseline",
+  "why": "The layer only has a 21-summit seed; the real check needs Wikidata heights and prominence plus national lists.",
+  "where": "`scripts/validation/layer_mountains.py`, docs/HANDBOOK.md (External validation)",
+  "how": [
+   "Run the Wikidata SPARQL (P31 mountain/peak in Europe with P2044, P2660, P625, by country batches under 60 s) to `data/reports/validation/mountains/wikidata_CC.csv` (columns id,name,lat,lon,cc,ele,prom,route,source)",
+   "Optionally add DoBIH and swisstopo CSVs as `national_*.csv`",
+   "Run `python -I scripts/validation/runner.py mountains --write --write-baseline`, then flip coverage and fact.height to hard in `layer_mountains.py` and add the fact.prom and agreement_tau checks"
+  ]
+ },
+ {
+  "id": "T1192-h",
+  "title": "Rerun lakes on the box after the water fill",
+  "why": "The T1186-a fill should lift water class and known swim rules; the baseline here is the pre-fill state.",
+  "where": "`scripts/validation/layer_lakes.py`",
+  "how": [
+   "After `fill_water.py --apply` run `python -I scripts/validation/runner.py lakes --write`",
+   "If coverage or class agreement moved on purpose rerun with `--write-baseline` and say why in a report"
+  ]
+ },
+ {
+  "id": "T1192-g",
+  "title": "National lake lists",
+  "why": "Fresher and extra sites beyond the EEA, and the only partly independent class check.",
+  "where": "`scripts/validation/layer_lakes.py`",
+  "how": [
+   "Drop CSVs (id,name,lat,lon,cc,class) into `data/reports/validation/lakes/national/` from France data.gouv (check each dataset's licence), SYKE, HaV",
+   "Rerun the lakes layer"
+  ]
+ },
+ {
+  "id": "T1174-b",
+  "title": "Switch on the monthly blog branch",
+  "why": "Without it `blog_pr` only prints what it would push, so no drafts reach a pull request.",
+  "where": "content/blog/README.md, run_pipeline.py task blog_pr",
+  "how": [
+   "Give the box a git credential that may push `blog-drafts-*` branches (not main)",
+   "Add `CARTA_BLOG_PR=1` to the box secrets file",
+   "After the first Saturday run open the pull request from the `blog-drafts-YYYY-MM` branch, read the drafts, set `status: published` on the ones to publish, run `python scripts/blog/check_draft.py`, merge"
+  ]
+ },
+ {
+  "id": "T1193-a",
+  "title": "Verify the EuroVelo seed list",
+  "why": "The whole coverage number rests on a list written from memory.",
+  "where": "`data/reports/validation/cycling/reference/eurovelo.csv`",
+  "how": [
+   "Open eurovelo.com route pages",
+   "Correct names, total km and country lists in `eurovelo.csv`",
+   "Set verified=yes",
+   "Rerun `python3 -I scripts/validation/runner.py cycling --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1193-b",
+  "title": "Add official km per country",
+  "why": "Gives the length fact and error numbers.",
+  "where": "`data/reports/validation/cycling/reference/README.md`",
+  "how": [
+   "Write `ev,cc,km` rows from the route pages",
+   "Rerun the layer"
+  ]
+ },
+ {
+  "id": "T1193-c",
+  "title": "Add open official tracks",
+  "why": "Gives the geometry fact.",
+  "where": "`scripts/validation/layer_cycling.py`",
+  "how": [
+   "Convert open data (France data.gouv, Sustrans, Swiss opendata) to `geom/EV6-AT.geojson` style files after reading their terms",
+   "Keep EuroVelo GPX out of git",
+   "Rerun"
+  ]
+ },
+ {
+  "id": "T1193-f",
+  "title": "Add national network lists",
+  "why": "National cycle networks are not compared yet.",
+  "where": "`data/reports/validation/cycling/reference/README.md`",
+  "how": [
+   "Fill `national.csv` (id,name,cc,ref,net,km) from portals whose terms allow it",
+   "Rerun"
+  ]
+ },
+ {
+  "id": "T1194-a",
+  "title": "Export climate normals and run the climate layer",
+  "why": "The climate row cannot be validated without outside normals.",
+  "where": "scripts/validation/layer_climate.py",
+  "how": [
+   "Build data/reports/validation/climate/normals.csv (id,name,cc,lat,lon,elev_m,month,tmax_c,tmin_c,precip_mm,source,period) from DWD CLIMAT 1991-2020 (read the licence first), about 300 stations across the countries",
+   "Run `python -I scripts/validation/runner.py climate --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1194-b",
+  "title": "Export Copernicus sea temperature and run the sea layer",
+  "why": "The sea row needs an independent product.",
+  "where": "scripts/validation/layer_sea.py",
+  "how": [
+   "With a free Copernicus Marine account export OSTIA REP monthly means 2003-2022 at about 300 coastal points to data/reports/validation/sea/cmems_sst.csv (id,name,cc,lat,lon,month,sst_c,source,period)",
+   "First finish T1097-a so Carta has sea temperatures",
+   "Run `runner.py sea --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1194-c",
+  "title": "Export Eurostat nights by month and run the crowds layer",
+  "why": "The crowds row needs the national monthly profile.",
+  "where": "scripts/validation/layer_crowds.py",
+  "how": [
+   "Download tour_occ_nim (all countries, total accommodation, nights) to data/reports/validation/crowds/eurostat_nights_country_month.csv (cc,year,month,nights)",
+   "Confirm the reuse notice",
+   "Run `runner.py crowds --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1194-d",
+  "title": "Review the 30 largest gaps of each layer",
+  "why": "D23 requires a verdict and a fix at the cause.",
+  "where": "scripts/validation/layer_tables.py",
+  "how": [
+   "Run `python -I scripts/validation/layer_tables.py climate` (and sea, crowds)",
+   "Fill data/reports/validation/<layer>/gap_reviews.json as {id: {verdict, note}}",
+   "Rerun the tables"
+  ]
+ },
+ {
+  "id": "T1194-e",
+  "title": "Rebuild the wire with climate.elev",
+  "why": "The elevation guard on climate pairs is idle on the 2026-06-07 wire.",
+  "where": "pipeline/apply_climate.py",
+  "how": [
+   "Run `apply_climate.py` and `sync-data.mjs` as in docs/SCHEMA.md, then rerun T1194-a"
+  ]
+ },
+ {
+  "id": "T1195-a",
+  "title": "Run the trips timetable check on open GTFS feeds",
+  "why": "The trips layer only covers 81 hand-read legs; the library-wide share of honest leg times needs the timetables.",
+  "where": "Execution/P15/T1195-trips-validation.md, scripts/validation/trips_timetables.py",
+  "how": [
+   "Download the feeds to cache/gtfs/ (gtfs.de fv_free for DE, opentransportdata.swiss GTFS for CH, the Austria GTFS from data.oebb.at, the SNCF national and FlixBus GTFS from transport.data.gouv.fr, Entur NO, Trafiklab Sverige 2 with a free key, NTA Ireland with a key)",
+   "Run `python -I scripts/validation/trips_timetables.py legs` then `python -I scripts/validation/trips_timetables.py gtfs --date <a mid-season Tuesday> --feed cache/gtfs/de_fv.zip:DE --feed cache/gtfs/ch.zip:CH ...` (one --feed per zip with the countries it covers)",
+   "Run `python -I scripts/validation/runner.py trips --write --write-baseline` and commit data/reports/validation/trips/"
+  ]
+ },
+ {
+  "id": "T1195-b",
+  "title": "Route the car legs on a self-hosted router",
+  "why": "1,021 car legs have no reference and the public OSRM server forbids bulk use.",
+  "where": "scripts/validation/trips_timetables.py",
+  "how": [
+   "Start a local OSRM (Docker osrm/osrm-backend on a Geofabrik Europe or per-country extract, car profile) or adapt tools/brouter",
+   "Run `python -I scripts/validation/trips_timetables.py osrm --url http://127.0.0.1:5000`",
+   "Rerun the runner with --write and commit"
+  ]
+ },
+ {
+  "id": "T1195-e",
+  "title": "Decide the timetable sources with no open licence",
+  "why": "Italy, Czechia, Poland, the Netherlands and Denmark have no confirmed open feed, Belgium needs a signed contract, Sweden and Ireland a free key.",
+  "where": "Execution/_OPEN.md T1195-e",
+  "how": [
+   "Email gtfs@sncb.be for the SNCB licence if Belgium is wanted",
+   "Register the Trafiklab and NTA keys",
+   "For IT, CZ, PL, NL, DK confirm a feed's licence or leave them \"no open reference\""
+  ]
+ },
+ {
+  "id": "T1196-a",
+  "title": "Native review starting from the back-translation worst list",
+  "why": "11 drafted strings say something other than the English (one reverses a direction, two read \"card\" or \"target\" as map or destination) and the judge that passed the rest is lenient and uncalibrated.",
+  "where": "docs/i18n/review.md",
+  "how": [
+   "Open docs/i18n/review.md, section Back-translation check",
+   "Have a native reader confirm or correct the \"Fix these first\" list, then the borderline list, then the traveller-facing groups",
+   "Send the corrections for a next task (T1196-b)"
+  ]
+ },
+ {
+  "id": "T1196-f",
+  "title": "Cross-check the texts run and the translations with Gemini",
+  "why": "The session translators and judges are one model family, so a second family shows how much of the verdict is the model's own taste.",
+  "where": "Execution/P15/T1196-texts-validation.md",
+  "how": [
+   "On the box with GEMINI_API_KEY set run python -I scripts/validation/judge.py gemini --items data/reports/validation/texts/items.json --out data/reports/validation/texts/verdicts-gemini-YYYY-MM-DD.json",
+   "Then python -I scripts/validation/texts_sample.py report --verdicts that file",
+   "Commit both and compare the per-stratum table with provisional-2026-11-07.md"
+  ]
+ },
+ {
+  "id": "T1197-a",
+  "title": "First full link run on the box",
+  "why": "The checker is proven on fixtures only; the real hosts are unreachable from the cloud.",
+  "where": "docs/HANDBOOK.md \"Link and page health (D16)\"",
+  "how": [
+   "On the box run `python pipeline/link_health.py run --limit 500`, read the totals, then let the weekly task continue",
+   "Commit the refreshed `continent-app/src/admin/linkHealth.json`"
+  ]
+ },
+ {
+  "id": "T1197-b",
+  "title": "Confirm Wikimedia's bot policy",
+  "why": "The pace (0.5 s per host) and user agent were set from secondary sources.",
+  "where": "pipeline/config/link_health.yaml",
+  "how": [
+   "Read the Wikimedia User-Agent and Robot policy pages",
+   "Change `host_delay_s` and `user_agent` in `pipeline/config/link_health.yaml` if they differ"
+  ]
+ },
+ {
+  "id": "T1198-b",
+  "title": "Photo check first run and baseline",
+  "why": "The flag rate is measured but not gated until a baseline exists.",
+  "where": "docs/HANDBOOK.md, Photo correctness (D17)",
+  "how": [
+   "On the box: `python pipeline/photos/correctness.py --fetch-meta`",
+   "Read data/reports/photo_check/<date>.json (totals, review list)",
+   "`CARTA_PHOTO_CHECK=data/reports/photo_check/<date>.json python -I scripts/validation/runner.py photos --write --write-baseline`"
+  ]
+ },
+ {
+  "id": "T1198-d",
+  "title": "Photo check vision tier run",
+  "why": "Confirms the Gemini image calls, answers and cost (prices from aggregators only).",
+  "where": "pipeline/photos/correctness.json (vision)",
+  "how": [
+   "With GEMINI_API_KEY set: `python pipeline/photos/correctness.py --fetch-meta --vision gemini`",
+   "Check `vision.calls` and the tier 2 answers in the report",
+   "Compare the token use in AI_EVENTS_JSONL with https://ai.google.dev/pricing"
+  ]
+ },
+ {
+  "id": "T1198-f",
+  "title": "Review the flagged heroes before applying",
+  "why": "Replacements are automatic, taste is not (Starmer on Tiverton, Flag of Europe on Eu, a grizzly on Fur).",
+  "where": "Execution/P15/T1198-photo-correctness.md",
+  "how": [
+   "`python pipeline/photos/correctness.py --all --fetch-meta`",
+   "Read every `flag` result and its `replacement`",
+   "Approve with `--apply` (lasts until the next export, see T1198-e) or fix by hand in the review queue (`python pipeline/photos/review.py`)"
+  ]
+ },
+ {
+  "id": "T1199-a",
+  "title": "Check the entry rules against the official pages",
+  "why": "The lines were checked from search results because the cloud session could not open the EU and GOV.UK sites, and a wrong entry line misleads a traveller at the border.",
+  "where": "pipeline/entry_rules.py",
+  "how": [
+   "Open travel-europe.europa.eu/ees_en and /etias_en, the Your Europe travel documents page, EUR-Lex 2018/1806 and gov.uk/guidance/apply-for-an-electronic-travel-authorisation-eta",
+   "Compare with rules_for() in pipeline/entry_rules.py (ETIAS must still have no start date)",
+   "Set RULES_CHECKED to that day and run python pipeline/entry_rules.py"
+  ]
+ },
+ {
+  "id": "T1199-b",
+  "title": "Run the entry rules refresh on the box",
+  "why": "Each country's advice line then shows the GOV.UK page's own update date instead of only the table date.",
+  "where": "run_pipeline.py task entry_rules, docs/HANDBOOK.md \"Entry rules\"",
+  "how": [
+   "On the box run python run_pipeline.py entry_rules (or python pipeline/entry_rules.py --refresh)",
+   "Check that it reports 41 pages read (42 countries, Denmark and the Faroe Islands share one page)",
+   "Commit continent-app/public/entry_rules.json"
+  ]
+ },
+ {
+  "id": "T1200-a",
+  "title": "Build the Fire Weather Index table",
+  "why": "The fire months stay a dry-heat proxy until a true FWI table exists.",
+  "where": "docs/HANDBOOK.md (Heat and fire months)",
+  "how": [
+   "Request cems-fire-historical-v1 monthly means 1991-2020 on a free CDS account and confirm the licence and attribution wording",
+   "Convert with xarray or cdo monmean to nearest-cell values per place id",
+   "Save as cache/fire_fwi.json {\"<id>\": [12 values]}"
+  ]
+ },
+ {
+  "id": "T1200-b",
+  "title": "Run the task",
+  "why": "The shipped wire has no heat or fire months until it runs.",
+  "where": "run_pipeline.py task heat_fire",
+  "how": [
+   "Python run_pipeline.py --only heat_fire",
+   "Rebuild the wire",
+   "Check Seville shows fire months and Oslo none"
+  ]
+ },
+ {
+  "id": "T1201-b",
+  "title": "Run the trails chain so the T1201 fixes reach the wire",
+  "why": "The loop flag, route type, lake and landform highlights, stage counts, routed bridges and the dropped describe.py leads are in code but not on the wire.",
+  "where": "Execution/P15/T1201-sweep-trails.md",
+  "how": [
+   "On the box with the lab up (T1182-a), run `python run_pipeline.py --only trails_hierarchy,trails_curate,trails_scenic,trails_attributes,trails_rate` (trails_rate exports, then `trails_summaries` follows)",
+   "Then count rows with `is_loop` true and ends over 1 km (296 before, expect about 0), lake highlights with fountain, basin or harbour names (790 before), walks with no highlight (a quarter before), stage rows with `h.n`, treks with `of`, walk summaries on the wire (244 before, expect 0)",
+   "Run `python -I scripts/validation/trails_external.py --write --check`",
+   "Put the numbers in the next report"
+  ]
+ },
+ {
+  "id": "T1181-b",
+  "title": "Rerun the trails external check after the routed repair",
+  "why": "33 reference trails miss for broken geometry, and only the box run of the routed repair can change that.",
+  "where": "Execution/P15/T1181-trails-external.md, Execution/P15/T1183-trail-continuity.md",
+  "how": [
+   "After T1183-a and the export: `python -I scripts/validation/trails_external.py --write --check`",
+   "Compare the 33 failed_continuity misses (Moselsteig, Offa's Dyke Path, 10 Irish Ways)",
+   "Move the baseline with `--write-baseline` if coverage rose"
+  ]
+ },
+ {
+  "id": "T1182-d",
+  "title": "Decide which trails inputs live on the box volume",
+  "why": "14 of 22 lab-guarded tasks need extracts, DEM tiles, BRouter tiles, Overpass or Commons; on the volume they cost EUR 0.0572 a GB a month, otherwise those tasks stay with the worker.",
+  "where": "Execution/P15/T1182-trails-lab-box.md",
+  "how": [
+   "Read T1182's task list",
+   "Pick per input: volume (size it) or worker",
+   "Tell the next session, which then writes T1182-c"
+  ]
+ },
+ {
+  "id": "T1202-a",
+  "title": "Run the seasons harvest on the box",
+  "why": "Until it runs no place carries open months, so the strip shows no closures and the plan flow can still suggest a shut island or hut.",
+  "where": "run_pipeline.py task seasons, docs/HANDBOOK.md \"Seasons and closures (D18)\"",
+  "how": [
+   "Check the extracts are on disk with python pipeline/beaches/osm_extract.py --list",
+   "Run python run_pipeline.py seasons (or python pipeline/harvest_seasons.py --countries AT,CH,IT,HR,GR first to try a few)",
+   "Note the printed blocks, with_open and by_conf counts in the report",
+   "Cd continent-app and npm run data",
+   "Open two islands and one hut place in the app and check the strip",
+   "Commit continent-app/public/app_data.json"
+  ]
+ },
+ {
+  "id": "T1203-a",
+  "title": "Run the accessibility harvest",
+  "why": "The card shows nowhere until OSM tags are harvested.",
+  "where": "pipeline/harvest_access.py, run_pipeline.py task access_facts",
+  "how": [
+   "On the box run `python run_pipeline.py access_facts` (about 150 Overpass queries)",
+   "Check the printed count of destinations with accessibility facts",
+   "Publish the destinfo files the way parking is published (push-data)"
+  ]
+ },
+ {
+  "id": "T1203-b",
+  "title": "Look at the Access card on a real place",
+  "why": "A screen change was only checked on fixtures.",
+  "where": "continent-app/src/browse/DestPractical.jsx",
+  "how": [
+   "After the run open two places with tags and one without at 390 and 1280 px",
+   "The card must be absent for the untagged one"
+  ]
+ },
+ {
+  "id": "T1204-a",
+  "title": "Verify footprint factors",
+  "why": "The numbers were read from secondary mirrors, not the DESNZ workbook.",
+  "where": "continent-app/config/pricing.json",
+  "how": [
+   "Open the latest DESNZ conversion factors workbook",
+   "Compare flight short and long haul economy, national rail, coach, average petrol car and ferry with `footprint.factors`",
+   "Correct the values and the source year"
+  ]
+ },
+ {
+  "id": "T1205-a",
+  "title": "Paste migration 073",
+  "why": "The price alert tables, their RLS and the save, opt-in and check functions do not exist until then.",
+  "where": "supabase/migrations/073_price_alerts.sql",
+  "how": [
+   "Open the Supabase SQL editor",
+   "Paste supabase/migrations/073_price_alerts.sql after 072",
+   "Look for \"price alerts self-check passed\""
+  ]
+ },
+ {
+  "id": "T1205-b",
+  "title": "Set the price alert secrets and deploy the function",
+  "why": "Without them the function answers \"off\" and the box checks nothing.",
+  "where": "supabase/functions/price-alerts/README.md",
+  "how": [
+   "In Resend confirm the sender alerts@carta-europetravel.com is on the verified domain and that a send accepts custom List-Unsubscribe headers",
+   "Run supabase secrets set PRICE_ALERTS_FROM, PRICE_ALERTS_LINK_SECRET and PRICE_ALERTS_BOX_SECRET (two different openssl rand -hex 32 values)",
+   "Supabase functions deploy price-alerts --no-verify-jwt",
+   "Add PRICE_ALERTS_URL and PRICE_ALERTS_BOX_SECRET to ~/.config/carta/env on the box"
+  ]
+ },
+ {
+  "id": "T1205-c",
+  "title": "Turn price alerts on after a test",
+  "why": "Both flags are off, so no traveller sees the control and no email is sent.",
+  "where": "docs/HANDBOOK.md \"Price alerts (double opt-in)\"",
+  "how": [
+   "Build a preview with VITE_PRICE_ALERTS=1 and set PRICE_ALERTS_ENABLED=1",
+   "Save an alert on a place with your own account, click the confirmation email, run python pipeline/price_alerts.py --dry-run then without it on the box",
+   "When happy, build production with VITE_PRICE_ALERTS=1"
+  ]
+ },
+ {
+  "id": "T1205-g",
+  "title": "Decide on the older price-drop email",
+  "why": "The T944 notify email on saved places (060) and I17 alerts both mail about cheaper places, which may double up.",
+  "where": "supabase/functions/notify/README.md",
+  "how": [
+   "Keep both, or retire the price-drop switch in Account once alerts are live and say so in a task"
+  ]
+ },
+ {
+  "id": "T1206-d",
+  "title": "First Gemini batch run",
+  "why": "Half-price batch jobs depend on a verified request shape.",
+  "where": "pipeline/ai_gateway.py, Execution/P15/T1206-sweep-ai.md",
+  "how": [
+   "Set GEMINI_API_KEY on the box",
+   "Run a 3-item `Gateway(\"intros\").batch(...)` with `models=[\"gemini-3.5-flash-lite\"]`",
+   "Compare the answers and events with a normal call"
+  ]
+ },
+ {
+  "id": "T1206-e",
+  "title": "Live red team with the new attacks",
+  "why": "Suggest-city and the pipeline jobs are not yet attacked live.",
+  "where": "continent-app/scripts/ai/redteam_live.mjs",
+  "how": [
+   "`node continent-app/scripts/ai/redteam_live.mjs --dry-run` to see the 75 requests",
+   "Run it without the flag against the deployed functions with the keys set",
+   "File any attack that passes"
+  ]
+ },
+ {
+  "id": "T1206-f",
+  "title": "Record plan-day plans per provider",
+  "why": "The plan-day eval can only score the reference planner until real plans are recorded.",
+  "where": "continent-app/scripts/eval/plan-day/record.mjs",
+  "how": [
+   "`supabase functions serve plan-day` with AI_PLAN_DAY_PROVIDER set",
+   "`node continent-app/scripts/eval/plan-day/record.mjs --out <file>`",
+   "`node continent-app/scripts/eval/run.mjs plan-day --plans <file>`"
+  ]
+ },
+ {
+  "id": "T1135-f",
+  "title": "llama-bench on the box",
+  "why": "The box CPU speeds are inferred, not measured.",
+  "where": "continent-app/config/ai_models.json",
+  "how": [
+   "Run llama-bench with Qwen3-30B-A3B Q4_K_M on the CAX41",
+   "Put the numbers in ai_models.json box_cpu (with T1138-a)"
+  ]
+ },
+ {
+  "id": "T1141-g",
+  "title": "BM25 over highlights on the box",
+  "why": "The highlight source gave 0 passages in this checkout.",
+  "where": "pipeline/ask_index_layer.py",
+  "how": [
+   "After T1141-b, count highlight passages in the rebuilt index",
+   "Run the Ask eval with sparse on"
+  ]
+ },
+ {
+  "id": "T1168-d",
+  "title": "Real questions for Ask the docs",
+  "why": "The question set was written by its builder.",
+  "where": "continent-app/scripts/eval/ask-docs/",
+  "how": [
+   "Write or collect 30 real questions about the docs",
+   "Replace continent-app/scripts/eval/ask-docs set",
+   "Measure Material's built-in search on the same set"
+  ]
+ }
+]

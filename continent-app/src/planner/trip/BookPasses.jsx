@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { IconButton, Money } from '../../components/ui/index.js';
+import { Button, IconButton, Money } from '../../components/ui/index.js';
 import { BedIcon, BusIcon, ChevronRightIcon, FerryIcon, TrainIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
@@ -195,9 +195,9 @@ function Pass({ row }) {
           {fig && row.yours && <small>{t('plan.yours')}</small>}
         </span>
         {row.link && (
-          <a className="btn btn-primary btn-sm tbp-book" href={row.link.href} target="_blank" rel="noreferrer noopener" aria-label={row.link.label}>
-            <span className="btn-label">{t('tp.book')}</span>
-          </a>
+          <Button href={row.link.href} external variant="primary" size="sm" className="tbp-book" aria-label={`${t('tp.book')}: ${row.link.label}`}>
+            {t('tp.book')}
+          </Button>
         )}
       </div>
     </article>

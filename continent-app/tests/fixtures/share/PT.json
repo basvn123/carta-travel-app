@@ -1,0 +1,89 @@
+{
+ "v": 1,
+ "built": "2026-01-01T00:00:00Z",
+ "_note": "T1175 test fixture: a made-up month curve, never published",
+ "dests": {
+  "LIS": {
+   "month": {
+    "bnb_home": [
+     93,
+     90,
+     105,
+     128,
+     150,
+     188,
+     232,
+     255,
+     195,
+     138,
+     96,
+     99
+    ],
+    "hotel3": [
+     65,
+     63,
+     74,
+     89,
+     105,
+     131,
+     163,
+     178,
+     136,
+     97,
+     67,
+     69
+    ]
+   },
+   "weekend": 1.12,
+   "peak": {},
+   "season_q": "mmmmmmmmmmmm",
+   "src": {
+    "bnb_home": {
+     "q": "measured",
+     "n": 40
+    }
+   }
+  },
+  "OPO": {
+   "month": {
+    "bnb_home": [
+     74,
+     72,
+     84,
+     102,
+     120,
+     150,
+     186,
+     204,
+     156,
+     110,
+     77,
+     79
+    ],
+    "hotel3": [
+     52,
+     50,
+     59,
+     71,
+     84,
+     105,
+     130,
+     143,
+     109,
+     77,
+     54,
+     55
+    ]
+   },
+   "weekend": 1.12,
+   "peak": {},
+   "season_q": "mmmmmmmmmmmm",
+   "src": {
+    "bnb_home": {
+     "q": "measured",
+     "n": 40
+    }
+   }
+  }
+ }
+}

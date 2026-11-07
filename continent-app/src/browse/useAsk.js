@@ -9,6 +9,7 @@ import React from 'react';
 import { loadSearchIndex } from '../lib/searchIndex.js';
 import { loadAskLexicon } from '../lib/ask/data.js';
 import { buildAskVocab, parseIntent } from '../lib/ask/intent.js';
+import { usePlaceLink } from '../hooks/usePlaceLink.js';
 import { answerFacts } from '../lib/ask/rank.js';
 import { composeAnswer, unknownNote } from '../lib/ask/compose.js';
 import { buildPack } from '../lib/ask/context.js';
@@ -37,11 +38,13 @@ export function useAsk({ open, t, lang, guided, rows, countries, labels, price =
     if (lexicon === undefined) loadAskLexicon().then((l) => setLexicon(l || null));
   }, [open, index, lexicon]);
 
+  // T1215 (T1153-d): the place linker reads unknown place words, behind its flag.
+  const link = usePlaceLink({ open, index, lexicon, rows });
   const vocab = React.useMemo(
     () => (open && guided && rows?.length && index && lexicon !== undefined
-      ? buildAskVocab({ t, lang, guided, rows, countries, index, lexicon })
+      ? buildAskVocab({ t, lang, guided, rows, countries, index, lexicon, link })
       : null),
-    [open, guided, rows, countries, index, lexicon, t, lang],
+    [open, guided, rows, countries, index, lexicon, t, lang, link],
   );
   const byId = React.useMemo(() => new Map((rows || []).map((p) => [p.id, p])), [rows]);
 

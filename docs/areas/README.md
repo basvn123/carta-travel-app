@@ -14,6 +14,7 @@ One file per row of the Product areas table in [../../MAP.md](../../MAP.md), sam
 | [my-trips.md](my-trips.md) | My trips, account, together | Sign-in, the account panel, My trips storage and Together (shared trips). |
 | [pass-paywall.md](pass-paywall.md) | Pass, paywall, Stripe | The Pass tiers, the paywall and Stripe checkout. |
 | [ask-carta.md](ask-carta.md) | Ask Carta (chat, RAG) | Ask Carta: a chat that answers from the catalogue with retrieval and an open model. |
+| [intelligence.md](intelligence.md) | Travel intelligence (taxonomy, tagger, taste, place linking, Intelligence API, MCP) | One travel vocabulary and the code that reads places and travellers through it: tagger, taste profile, place linker, Intelligence API, MCP server. |
 | [price-engine.md](price-engine.md) | Price engine (bed, food, trip total) | Bed, food, local transport and trip total: one price request for every screen. |
 | [flights.md](flights.md) | Flights, fares, airports | Swept and live flight fares, airports in reach and the way to the airport. |
 | [stays.md](stays.md) | Stays (Booking, Hostelworld scrape) | Hotel and hostel prices from the Booking and Hostelworld scrape and live stays. |

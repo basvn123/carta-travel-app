@@ -35,6 +35,7 @@ import { haversineKm } from '../runtime_pricing.js';
 import { sweptNear, sweptCheapest } from '../flights/flights.js';
 import { tripTaste, normalizeTaste } from '../taste.js';
 import { quizAnswers, spendFor } from '../../planner/flow/tripSettings.js';
+import { openIn } from '../season.js';
 
 export const CANDIDATES = Object.freeze(RECOMMEND.candidates);
 const DATES = RECOMMEND.dates;
@@ -86,12 +87,17 @@ function monthsAhead(today) {
 /**
  * The best month for these places: the mean high closest to what the
  * weather answer asks (config month.tmaxByWeather), or with no weather
- * answer the best month score. Earlier months win ties.
+ * answer the best month score. Earlier months win ties. T1202 (D18): a
+ * month the first place is shut (lib/season.js openIn) is not chosen while
+ * another month is open.
  */
 export function bestMonth(dests, weather, today) {
   const target = MONTH.tmaxByWeather[weather];
   let best = null;
-  for (const m of monthsAhead(today)) {
+  const ahead = monthsAhead(today);
+  const open = ahead.filter((m) => openIn(dests[0], m));
+  const pool = open.length ? open : ahead;
+  for (const m of pool) {
     let score = null;
     if (target != null) {
       const highs = dests.map((d) => d?.taste?.tmax_by_month?.[m - 1]).filter(Number.isFinite);
@@ -102,7 +108,7 @@ export function bestMonth(dests, weather, today) {
     }
     if (score != null && (!best || score > best.score)) best = { m, score };
   }
-  return best?.m ?? monthsAhead(today)[1];
+  return best?.m ?? pool[Math.min(1, pool.length - 1)];
 }
 
 /** The first `startWeekday` (config, 6 = Saturday) of the next time month m comes round after today. */
@@ -300,7 +306,7 @@ export function tasteFor(settings, saved = null) {
 export function buildCandidates(input) {
   const { data, countryInsights = null, layerIndexes = {}, settings, taste = null, origin = null, flights = null, getting = null, today } = input;
   const destinations = data?.destinations || {};
-  const answers = quizAnswers(settings, spendFor(settings));
+  const answers = broadWhenUnasked(quizAnswers(settings, spendFor(settings)), settings);
   const fixedMonth = setupMonth(settings, today);
   const matched = matchCountries({
     destinations,
@@ -324,7 +330,10 @@ export function buildCandidates(input) {
     const month = fixedMonth ?? bestMonth(dests, settings.guide.weather, today);
     const dates = datesFor(settings, month, today);
     const n = placesFor(shape, dates.nights);
-    const placeIds = n == null ? null : placesNear(ids, n, shape, destinations, personaReach(personaOf(settings.guide)));
+    // T1202 (D18): a place shut that month (its hut, lift or only ferry
+    // closed, medium or high confidence) is never suggested for it.
+    const openIds = ids.filter((id) => openIn(destinations[id], month));
+    const placeIds = n == null ? null : placesNear(openIds, n, shape, destinations, personaReach(personaOf(settings.guide)));
     if (!placeIds) return null;
     const nights = splitNights(dates.nights, n);
     return {
@@ -394,6 +403,22 @@ export function buildCandidates(input) {
     if (c.topPlaces.length > 1) push(build(c, 'one', c.topPlaces.slice(1)));
   }
   return out;
+}
+
+/**
+ * T1103 (G12): the trip types a match ranks by when "What are you up for"
+ * was never asked (the short plan flow prices trips before it). The country
+ * match ranks by trip types and finds nothing without one, so an unasked
+ * question takes the answer that narrows least (quizAnswers' own rule):
+ * the three types most of the catalogue is tagged for. Only the ranking
+ * reads them; no like is written to the settings or shown as an answer, and
+ * the trips' reasons come from the traveller's own likes (rank.js).
+ */
+export const BROAD_TYPES = Object.freeze(['city', 'culture', 'food']);
+
+export function broadWhenUnasked(answers, settings) {
+  if (answers.types.length || settings?.answered?.includes('g:likes')) return answers;
+  return { ...answers, types: [...BROAD_TYPES] };
 }
 
 /**

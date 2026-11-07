@@ -1,4 +1,7 @@
 import React from 'react';
+import { partnerLinkProps } from '../lib/partnerLink.js';
+import { PartnerMark, PartnerNote } from '../components/PartnerMark.jsx';
+import { Button } from '../components/ui/index.js';
 import { safeUrl } from '../lib/format.js';
 import { formatMoney } from '../lib/money.js';
 import { minutesText } from '../lib/journeys.js';
@@ -11,11 +14,13 @@ import { useStayRecord } from '../lib/staysData.js';
 import { baseCity } from '../lib/nearby.js';
 import { stayBookLinks } from '../lib/transportLinks.js';
 import { stayKindsOf } from '../lib/whenGuide.js';
-import { BunkIcon, HomeIcon, HotelIcon } from '../components/Icons.jsx';
+import { AccessIcon, BunkIcon, HomeIcon, HotelIcon } from '../components/Icons.jsx';
 import { practicalSlotRows } from './DestPracticalSlots.jsx';
 import { BeforeYouGo } from './DestBefore.jsx';
 import { parkingTruth } from '../lib/parkingTruth.js';
-import { PSection } from './PageTemplate.jsx';
+import { useDestInfo } from '../lib/destInfo.js';
+import { accessCard } from '../lib/accessFacts.js';
+import { PSection, WayFig } from './PageTemplate.jsx';
 import '../styles/94-when-stay.css';
 import {
   SunIcon, RainIcon, SnowIcon, ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon, BackpackIcon, SparkIcon, BusIcon, TrainIcon, CarIcon, ExternalIcon, ClockIcon, TicketIcon,
@@ -87,11 +92,11 @@ export function DestStay({ p }) {
               <b className="stay-what">{t(`stay.kind.${k}`)}</b>
               <span className="stay-go">
                 {links.map((l) => (
-                  <a key={l.provider} className="btn btn-secondary btn-sm stay-btn" href={l.href} target="_blank" rel="noreferrer noopener"
-                    aria-label={t('stay.searchOn', { kind: t(`stay.kind.${k}`), provider: l.provider })}>
-                    <span className="btn-label">{l.provider}</span>
-                    <ExternalIcon size={13} />
-                  </a>
+                  <Button key={l.provider} href={l.href} external size="sm" className="stay-btn"
+                    aria-label={t('stay.searchOn', { kind: t(`stay.kind.${k}`), provider: l.provider })}
+                    iconAfter={<ExternalIcon size={13} />}>
+                    {l.provider}
+                  </Button>
                 ))}
               </span>
             </li>
@@ -136,10 +141,7 @@ export function DestGetting({ p }) {
                 </span>
                 {sub(w) && <small>{sub(w)}</small>}
               </span>
-              <span className="pt-way-fig">
-                <b>{formatMoney(view.way(w.perPerson), { precision: 'whole' })}</b>
-                <small>{unit}</small>
-              </span>
+              <WayFig amount={formatMoney(view.way(w.perPerson), { precision: 'whole' })} unit={unit} />
             </li>
           );
         })}
@@ -218,14 +220,18 @@ function CardLinks({ links }) {
   if (!links.length) return null;
   const [first, ...rest] = links;
   return (
-    <div className="pcard-links">
-      {[first, ...rest].map((l, i) => (
-        <a key={l.key} className={i ? 'pcard-alt' : 'pcard-go'} href={l.href} target="_blank" rel="noreferrer noopener">
-          {l.label}
-          {!i && <ExternalIcon size={13} />}
-        </a>
-      ))}
-    </div>
+    <>
+      <PartnerNote links={links} />
+      <div className="pcard-links">
+        {[first, ...rest].map((l, i) => (
+          <a key={l.key} {...partnerLinkProps(l.href, { className: i ? 'pcard-alt' : 'pcard-go' })}>
+            {l.label}
+            {!i && <ExternalIcon size={13} />}
+            <PartnerMark href={l.href} />
+          </a>
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -238,6 +244,9 @@ export function DestPractical({ p }) {
   const matchFit = useFit(destination, month);
   const qf = quickFacts(p);
   const truth = React.useMemo(() => parkingTruth(p.parking), [p.parking]);
+  // D21: shown only when OpenStreetMap carries a wheelchair tag for this place.
+  const destInfo = useDestInfo(destination);
+  const access = React.useMemo(() => accessCard(destInfo?.access, t, lang), [destInfo, t, lang]);
   const aroundBits = [
     aroundStat?.value || null,
     getting?.why && lang === 'en' ? getting.why : null,
@@ -260,6 +269,7 @@ export function DestPractical({ p }) {
     },
     aroundBits.length > 0 && { key: 'around', Icon: BusIcon, title: t('dest.keyAround'), text: aroundBits.join(' ') },
     rhythm && lang === 'en' && { key: 'rhythm', Icon: ClockIcon, title: t('destx.rhythm'), text: rhythm },
+    access && { key: 'access', Icon: AccessIcon, title: t('access.title'), text: access.lines.join(' '), note: access.source },
     ...practicalSlotRows(p),
   ].filter(Boolean);
 
@@ -275,6 +285,7 @@ export function DestPractical({ p }) {
               <h3 className="pcard-title">{c.title}</h3>
               {c.value && <p className="pcard-value">{c.value}</p>}
               {c.text && <p className="pcard-text">{c.text}</p>}
+              {c.note && <p className="pcard-note">{c.note}</p>}
               {c.links?.length > 0 && <CardLinks links={c.links} />}
             </li>
           ))}

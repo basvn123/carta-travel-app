@@ -145,7 +145,7 @@
 /* All prices is the kit's quiet Button; only its place and the chevron's
    turn are this panel's. */
 .pfeel-more { justify-self: center; }
-.pfeel-more svg { transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1); }
+.pfeel-more svg { transition: transform var(--dur-1) var(--ease-out); }
 .pfeel-more[aria-expanded="true"] svg { transform: rotate(180deg); }
 @media (prefers-reduced-motion: reduce) { .pfeel-more svg { transition: none; } }
 .pfeel-prices { margin-top: calc(-1 * var(--space-2)); }
@@ -153,5 +153,5 @@
    cramped across; stacked under the dishes on a phone the verdict keeps a
    section's distance from the chips. */
 .pt-eat .pfeel-prices { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
-@media (max-width: 699px) { .pt-eat .pfeel { margin-top: var(--space-4); } }
+@media (max-width: 700px) { .pt-eat .pfeel { margin-top: var(--space-4); } }
 .pfeel-prices[hidden] { display: none; }

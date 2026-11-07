@@ -5,7 +5,8 @@ import { readOwnFare, writeOwnFare, markFirstResultSeen } from '../lib/firstRun.
 import { tripDaysBetween } from '../lib/runtime_pricing.js';
 import { addDays, fmtDate } from '../lib/dates.js';
 import { quoteNights } from '../lib/price/nights.js';
-import { unmeasuredParts } from '../lib/price/display.js';
+import { priceNotes } from '../lib/price/notes.js';
+import { NotMeasuredValue, ThinBedNote } from '../components/PriceNotes.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { Button, Money, Segmented } from '../components/ui/index.js';
 import { formatMoney } from '../lib/money.js';
@@ -34,8 +35,11 @@ import { useAirlines } from '../lib/flights/useAirlines.js';
 import { homeFlightSetup, withEnds } from './cartaFlight.js';
 import { useStaysVersion } from '../lib/staysData.js';
 import { rule } from '../lib/price/config.js';
+import { returnKg, kgText, methodUrl } from '../lib/footprint/footprint.js';
 import { useDayView } from '../hooks/useDayView.js';
 import { PriceItems } from '../components/PriceItems.jsx';
+import { PriceAlertControl } from '../components/PriceAlertControl.jsx';
+import { placeSpec } from '../lib/priceAlerts.js';
 
 /**
  * The destination page's price card (T429): what a day here costs at the
@@ -145,10 +149,11 @@ export function DestPriceCard({
   const [actsOn, setActsOn] = React.useState(() => new Set());
   const chosenActs = React.useMemo(() => pricedDo.filter((a) => actsOn.has(a.key)), [pricedDo, actsOn]);
   // T1026: the way there the traveller picked among the page's ways (plane,
-  // train, bus, car); a typed fare keeps the plane, else the cheapest way.
+  // train, bus, car); a typed fare keeps the plane, else the way the rule
+  // picks by door-to-door time and cost (T1100, D13, lib/wayChoice.js).
   const rows = ways?.rows || [];
   const mode = rows.some((w) => w.mode === modePick) ? modePick
-    : fare || !rows.length ? 'plane' : (ways.cheapest || rows[0].mode);
+    : fare || !rows.length ? 'plane' : (ways.pick || ways.cheapest || rows[0].mode);
   const pickedWay = rows.find((w) => w.mode === mode) || null;
   const price = React.useMemo(
     // T695: a flight switched off in the opened price leaves the receipt.
@@ -231,10 +236,25 @@ export function DestPriceCard({
   const datesText = from && to ? t('settings.datesRange', { start: shortDate(from), end: shortDate(to) }) : '';
   const pill = (open) => `dpc-pill${open ? ' is-open' : ''}`;
   const money = (v) => formatMoney(v, { precision: 'whole', locale: lang });
-  const minutesOf = (w) => (w.minutes ?? (Number.isFinite(w.hours) ? w.hours * 60 : null));
-  const timed = rows.filter((w) => minutesOf(w) != null);
-  const fastest = timed.length > 1 ? timed.reduce((a, b) => (minutesOf(b) < minutesOf(a) ? b : a)).mode : null;
+  // T1100: fastest door to door (the airport and the transfer count), so a
+  // flight is not "Fastest" on its air time alone.
+  const fastest = ways?.fastest || null;
+  // T1100: when the card opens on a dearer way than the cheapest, it says
+  // why in numbers: the door-to-door hours of the pick against the cheapest.
+  const pickRow = !modePick && !fare && ways?.pick && ways.pick !== ways.cheapest
+    ? rows.find((w) => w.mode === ways.pick) : null;
+  const cheapRow = pickRow ? rows.find((w) => w.mode === ways.cheapest) : null;
+  const pickNote = pickRow && cheapRow && pickRow.doorHours != null && cheapRow.doorHours != null
+    && cheapRow.doorHours > pickRow.doorHours
+    ? t('destx.wayPickWhy', {
+      time: minutesText(Math.round(pickRow.doorHours * 60)),
+      other: minutesText(Math.round(cheapRow.doorHours * 60)),
+    }) : '';
   const wayName = (w) => (w.mode === 'plane' ? (w.iata ? t('destx.flyToIata', { iata: w.iata }) : t('way.plane')) : t(`way.${w.mode}`));
+  const fpText = (w) => {
+    const kg = returnKg(w.mode, ways?.km, { seats: people });
+    return kg == null ? '' : t('footprint.each', { kg: kgText(kg) });
+  };
   const waySub = (w) => (w.mode === 'plane' && w.dep && w.arr
     ? [t('destx.flightTimes', { dep: w.dep, arr: w.arr }), w.minutes ? minutesText(w.minutes) : ''].filter(Boolean)
       .map((part, i, all) => <span key={part}>{part}{i < all.length - 1 ? ',' : ''}</span>)
@@ -353,6 +373,7 @@ export function DestPriceCard({
                           {fastest === w.mode && fastest !== ways.cheapest && <span className="tcard-badge">{t('tc.fastest')}</span>}
                         </span>
                         <span className="tcard-way-sub">{waySub(w)}</span>
+                        {fpText(w) && <span className="tcard-way-fp">{fpText(w)}</span>}
                       </span>
                       <span className="tcard-way-fig">
                         <b>{money(w.perPerson)}</b>
@@ -362,6 +383,12 @@ export function DestPriceCard({
                   );
                 })}
               </div>
+              {pickNote && <p className="tcard-note">{pickNote}</p>}
+              {Number.isFinite(ways?.km) && (
+                <p className="tcard-fp-note">
+                  <a href={methodUrl()} target="_blank" rel="noopener noreferrer">{t('footprint.note')}</a>
+                </p>
+              )}
               {mode === 'plane' && (
                 <div className="tcard-acts">
                   {cartaLine && (
@@ -380,12 +407,11 @@ export function DestPriceCard({
                   <FlightPass dir="out" leg={withEnds(carta.out, home, airport)} paying={people} bagKey={bagKey} airlines={airlines} />
                   <FlightPass dir="back" leg={withEnds(carta.back, airport, home)} paying={people} bagKey={bagKey} airlines={airlines} />
                   <p className="dpc-flt-note">
-                    <a className="btn btn-secondary btn-sm jr-book" target="_blank" rel="noopener noreferrer"
-                      href={googleFlightsLink(home, airport, carta.out?.date, { back: carta.back?.date, lang })}
-                      aria-label={t('plan.findOn', { provider: 'Google Flights' })}>
-                      <span className="btn-label">{t('tp.book')}</span>
-                      <ExternalIcon size={13} />
-                    </a>
+                    <Button href={googleFlightsLink(home, airport, carta.out?.date, { back: carta.back?.date, lang })}
+                      external size="sm" className="jr-book" aria-label={t('plan.findOn', { provider: 'Google Flights' })}
+                      iconAfter={<ExternalIcon size={13} />}>
+                      {t('tp.book')}
+                    </Button>
                   </p>
                 </div>
               )}
@@ -424,16 +450,16 @@ export function DestPriceCard({
                 </dt>
                 <dd>
                   <Money value={l.eur} />
-                  {l.thin && <small className="tcard-thin">{t('price.bedThin')}</small>}
+                  {l.thin && <ThinBedNote />}
                 </dd>
               </div>
             ))}
             {/* T1075 (D10): a part with no figure yet says so in words; the
                 total under it does not include it, and is never padded. */}
-            {unmeasuredParts(costRow).map((key) => (
+            {priceNotes(costRow).unmeasured.map((key) => (
               <div key={key} className="tcard-line is-unmeasured">
                 <dt>{t(`price.item.${key}`)}</dt>
-                <dd><span className="money is-missing tcard-unmeasured">{t('price.notMeasured')}</span></dd>
+                <dd><NotMeasuredValue /></dd>
               </div>
             ))}
             <div className="tcard-line is-total">
@@ -466,6 +492,21 @@ export function DestPriceCard({
       {onPlanDay && (
         <Button variant="quiet" size="sm" className="tcard-day" onClick={onPlanDay}>{t('destx.planOneDay')}</Button>
       )}
+      {/* T1205 (I17): a price alert on this place, behind its flag. */}
+      <PriceAlertControl
+        refId={`dest:${dest.id}`}
+        label={city || dest.city || dest.id}
+        spec={placeSpec({
+          dest,
+          start: datesOwn ? from : null,
+          month: from ? Number(from.slice(5, 7)) : null,
+          nights,
+          adults: people,
+          bed: tier,
+          fly: datesOwn && mode === 'plane' && carta && !fare && !flightOff
+            ? { from: choices?.origin, to: airport, out: from, back: to } : null,
+        })}
+      />
       {reportItem && (
         <div className="dprice-report">
           <ReportProblem priceOnly item={reportItem} />

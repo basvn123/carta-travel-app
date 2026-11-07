@@ -1,0 +1,24 @@
+{
+ "_about": "Photo correctness check (T1198, ROADMAP D17). Read by pipeline/photos/correctness.py. Numbers explained in its docstring and in docs/HANDBOOK.md, Photo correctness.",
+ "version": 1,
+ "sample": {
+  "per_layer": {"dest": 200, "beaches": 100, "lakes": 100, "mountains": 100},
+  "salt": "week"
+ },
+ "km": {
+  "dest": {"far": 30, "certain": 300},
+  "dest_area": {"far": 70, "certain": 300},
+  "beaches": {"far": 5, "certain": 50},
+  "lakes": {"far": 10, "certain": 80},
+  "mountains": {"far": 25, "certain": 150}
+ },
+ "ladder_depth": 6,
+ "vision": {
+  "prompt": "photo-check",
+  "feature": "photo_check",
+  "models": ["gemini-flash-latest", "gemini-3.5-flash"],
+  "thumb_px": 640,
+  "max_calls": 150,
+  "min_confidence": 0.6
+ }
+}

@@ -1,0 +1,9 @@
+# ZAP baseline rules for Carta (T1164, ROADMAP C10). Read by .github/workflows/zap.yml
+# through zap-baseline.py -c. Format: plugin id, TAB, IGNORE|INFO|WARN|FAIL, TAB, note.
+# The CI gate is by risk, not by this file: any alert with riskcode 3 (High) fails
+# the job (see the "Gate" step). This file only quiets rules that are noise for a
+# static single-page app, each with its reason, and it never IGNOREs a rule that
+# can raise a High. Add a line only with a reason and a register row.
+10027	IGNORE	(Information Disclosure - Suspicious Comments: words like "user" or "admin" in minified vendor JS; informational only)
+10109	IGNORE	(Modern Web Application: informational marker that the page is a JS app, not a finding)
+10096	INFO	(Timestamp Disclosure - Unix: build-time constants in the hero image bundle, Low; kept visible as INFO)

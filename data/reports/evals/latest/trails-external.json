@@ -1,0 +1,64 @@
+{
+ "schema": "carta-eval/1",
+ "eval": "trails-external",
+ "title": "Trails external check",
+ "kind": "data",
+ "at": "2026-11-07T12:22:08.581Z",
+ "git": "1a63861c64",
+ "status": "pass",
+ "gated": true,
+ "headline": {
+  "key": "coverage",
+  "value": 0.5567,
+  "label": "reference trails Carta publishes",
+  "higher_is_better": true
+ },
+ "metrics": {
+  "coverage": 0.5567,
+  "top_share": 0.3475,
+  "top_share_of_matched": 0.6242,
+  "reference_trails": 282,
+  "matched": 157,
+  "in_top": 98,
+  "label.lqt.coverage": 0.5455,
+  "label.lqt.top_share": 0.2727,
+  "label.quality_label.coverage": 0.7222,
+  "label.quality_label.top_share": 0.5556,
+  "label.wikipedia_list.coverage": 0.6885,
+  "label.wikipedia_list.top_share": 0.4344,
+  "label.national_trail.coverage": 0.4853,
+  "label.national_trail.top_share": 0.3235,
+  "label.famous_day.coverage": 0.4151,
+  "label.famous_day.top_share": 0.2075,
+  "cause.rated_low": 59,
+  "cause.not_in_registry": 58,
+  "cause.failed_continuity": 33,
+  "cause.no_osm_data": 13,
+  "cause.too_long": 8,
+  "cause.unresolved_seed": 6,
+  "cause.unplaced": 4,
+  "cause.way_only_not_derived": 2,
+  "cause.matched": 1
+ },
+ "gate": {
+  "ok": true,
+  "rule": "coverage and the top-band share of the reference trails at or above the baseline",
+  "tolerance": 0,
+  "baseline": "baseline of the wire 2026-09-13T19:17:15+00:00, reference 08dd8590d3af",
+  "failures": []
+ },
+ "cases": {
+  "n": 282,
+  "passed": 157
+ },
+ "judge": null,
+ "inputs": {
+  "reference": "data/reports/validation/trails_reference.json",
+  "reference_sha": "08dd8590d3af",
+  "wire": "continent-app/public/trails",
+  "wire_generated_at": "2026-09-13T19:17:15+00:00",
+  "wire_rows": 17455,
+  "seconds": 14
+ },
+ "notes": []
+}

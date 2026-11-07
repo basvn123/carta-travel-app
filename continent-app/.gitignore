@@ -40,6 +40,7 @@ public/region/
 public/reach/
 # The R2 upload tree scripts/r2/stage-data.mjs moves out of dist/ (T054).
 dist-data/
+dist-blog/
 
 shots/
 scripts/ai/shots/

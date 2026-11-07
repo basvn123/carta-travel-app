@@ -29,7 +29,7 @@ function Bring({ p, glyphs }) {
   return (
     <>
       <p className="bf-note">{t('dest.packSummaryFor', { month: mon })}</p>
-      <ul className="pcards" aria-label={t('explore.packTitle')}>
+      <ul className="pcards" aria-label={t('explore.packTitle')} tabIndex={0}>
         {packs.map((key) => {
           const Glyph = glyphs[key];
           const r = why[key];

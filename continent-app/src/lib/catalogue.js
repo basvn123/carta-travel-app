@@ -34,6 +34,7 @@
  * can drive it with fake fetches and count what a pan costs.
  */
 
+import { liftShard } from './provenance.js';
 import {
   chunkList, decodeRankTier, mergeCatalogue, shardKey,
 } from './bootIndex.js';
@@ -168,7 +169,9 @@ export function createCatalogue({
     if (inflight.has(key)) return inflight.get(key);
     requested.push(key);
     const p = Promise.resolve(loadCountry(key, hashes[key])).then((recs) => {
-      chunks[key] = recs && typeof recs === 'object' ? recs : {};
+      // T1143: lift the schema 20 provenance stamps off each block (no-op on
+      // a schema 19 shard), so the screens see the blocks they always had.
+      chunks[key] = recs && typeof recs === 'object' ? liftShard(recs) : {};
       inflight.delete(key);
       announce();
       return chunks[key];

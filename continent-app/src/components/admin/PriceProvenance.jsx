@@ -45,7 +45,7 @@ export function PriceProvenance() {
       {row && (
         <>
           <h2 className="adminpage-h2">{`${match.city} (${match.id}): ${formatMoney(row.dayEur, { precision: 'cents' })}`}</h2>
-          <div className="adminpage-tablewrap">
+          <div className="adminpage-tablewrap" tabIndex={0}>
             <table className="adminpage-table">
               <thead>
                 <tr><th>item</th><th>status</th><th>eur</th><th>quality</th><th>basis</th><th>provenance</th></tr>
@@ -68,7 +68,7 @@ export function PriceProvenance() {
       )}
       {q.trim() && !row && <p className="adminpage-muted">{t('admin.pricesNone')}</p>}
       <h2 className="adminpage-h2">{t('admin.pricesRules')}</h2>
-      <div className="adminpage-tablewrap">
+      <div className="adminpage-tablewrap" tabIndex={0}>
         <table className="adminpage-table">
           <thead>
             <tr><th>rule</th><th>kind</th><th>unit</th><th>source</th><th>set</th><th>review</th></tr>

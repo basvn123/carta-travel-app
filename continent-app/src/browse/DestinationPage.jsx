@@ -1,3 +1,4 @@
+import { bestMonthsFor, guardsHeat } from '../lib/heatRisk.js';
 import React from 'react';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { knownFor } from '../lib/knownFor.js';
@@ -21,13 +22,14 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import { MatchLine } from './WhyItMatches.jsx';
+import { WhyPlace, PricesRefreshed } from './WhyChips.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
 import { DestPriceCard } from './DestPriceCard.jsx';
 import { PageBar } from './PageBar.jsx';
 import { RatingSheet } from './RatingSheet.jsx';
 import { KeyFacts } from './KeyFacts.jsx';
 import { usePageArrival } from '../hooks/usePageArrival.js';
-import { Button, Money } from '../components/ui/index.js';
+import { Button, Money, MoneyUnit, PlaceHead, PlaceTag } from '../components/ui/index.js';
 import { sentences } from '../lib/journeys.js';
 import { BedIcon, CompassIcon, RouteIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -163,7 +165,7 @@ function Similar({ rows, data, indices, t, view, onSelect }) {
             <li key={r.id} className="pt-sim">
               <a className="pt-sim-link" href={href} onClick={linkOpener(() => onSelect?.(r.id))}>
                 <span className="pt-sim-photo">
-                  <HeroImage url={rec?.image?.url || null} city={r.name} iso2={r.iso2 || rec?.iso2} maxWidth={500}
+                  <HeroImage url={rec?.image?.url || null} image={rec?.image} city={r.name} iso2={r.iso2 || rec?.iso2} maxWidth={500}
                     sizes="(max-width: 700px) 45vw, 240px" ratio={[4, 3]} />
                 </span>
                 <span className="pt-sim-name">{r.name}</span>
@@ -175,8 +177,7 @@ function Similar({ rows, data, indices, t, view, onSelect }) {
               </span>
               {Number.isFinite(cost?.dayEur) && (
                 <span className="pt-sim-price">
-                  <Money value={view.day(cost.dayEur)} />
-                  <span className="pt-sim-unit"> {view.unit}</span>
+                  <MoneyUnit value={view.day(cost.dayEur)} unit={view.unit} unitClassName="pt-sim-unit" />
                 </span>
               )}
               {why.length > 0 && <span className="pt-sim-why">{why.join(', ')}</span>}
@@ -408,7 +409,9 @@ export function DestinationPage({
     : crowd.kind === 'pattern' ? t('dest.crowdPattern', { quiet: monthList(crowd.quiet), busy: monthList(crowd.busy) })
     : t('dest.crowdFlat', { label: t(CROWD_TIER_KEYS[crowd.tier]) });
   const visitH = Number(d?.place?.visit_h ?? intro?.facts?.visit_h);
-  const bestMonths = d?.when?.best?.length ? d.when.best : destination.climate?.best;
+  // D20: a family or a heat avoider is not sent to a heat or fire month.
+  const heatGuard = guardsHeat({ children: settingsCtx?.children, babies: settingsCtx?.babies, avoid: settingsCtx?.avoid });
+  const bestMonths = d?.when?.best?.length ? d.when.best : bestMonthsFor(destination.climate, heatGuard).best;
   const keyFacts = [
     bestMonths?.length > 0 && { key: 'best', label: t('dest.keyBest'), value: monthList(bestMonths) },
     crowdText && { key: 'crowds', label: t('dest.keyCrowds'), value: crowdText },
@@ -536,17 +539,17 @@ export function DestinationPage({
   // The standing as small tags (T1024): the strongest first.
   const tags = [
     verdict?.hidden_gem && <li key="gem"><HiddenGemTag /></li>,
-    verdictClassRank && <li key="class" className="pt-tag is-rank">{verdictClassRank}</li>,
+    verdictClassRank && <PlaceTag key="class">{verdictClassRank}</PlaceTag>,
     verdict?.country_rank === 1
-      ? <li key="country" className="pt-tag is-rank">{t('card.topOf', { country: countryLabel })}</li>
+      ? <PlaceTag key="country">{t('card.topOf', { country: countryLabel })}</PlaceTag>
       : verdict?.country_badge
-        ? <li key="country" className="pt-tag is-rank">{t('card.rankIn', { n: verdict.country_rank, country: countryLabel })}</li>
+        ? <PlaceTag key="country">{t('card.rankIn', { n: verdict.country_rank, country: countryLabel })}</PlaceTag>
         : null,
     isUnesco && (
-      <li key="unesco" className="pt-tag is-unesco"
+      <PlaceTag key="unesco" tone="unesco"
         title={(destination.designations || []).find((g) => g.kind === 'unesco_whc')?.name || ''}>
         {t('dest.unesco')}
-      </li>
+      </PlaceTag>
     ),
   ].filter(Boolean);
 
@@ -556,7 +559,7 @@ export function DestinationPage({
     highlights, doRows, monthList, fmtScore,
     cats,
     area: isArea(d), hasRoutes, members, memberFocus,
-    monthPick: statMonth, water, festivals,
+    monthPick: statMonth, water, festivals, heatGuard,
     getting, rhythm, bookAhead, verdict, tips, packs, month, parking, tours, flightLinks, bookPhoto,
     isOpen, toggle, onOpenLifestyle, onOpenFeature, onSelect, onOpenItin, goTab,
     ways, aroundStat, airportText, airportIata, guideUrl,
@@ -644,26 +647,20 @@ export function DestinationPage({
               {/* T1024 (owner 2026-11-03: compact, clean, no travel style here):
                   the name, then one line of where it is and how it rates, then
                   the standing as small tags, then the intro, answer first. */}
-              <header className="pt-head">
-                <h1 className="pt-title" ref={titleRef} tabIndex={-1}>{city}</h1>
-                <div className="pt-meta">
-                  <span className="pt-where">
-                    <CountryFlag country={destination.iso2} size={15} />
-                    <span>{countryLabel}</span>
-                  </span>
-                  {verdict?.score != null && (
-                    // T1029: the Score opens why it rates what it rates.
-                    <button type="button" className="pt-score" aria-haspopup="dialog"
-                      onClick={() => setRatingOpen(true)}
-                      aria-label={t('dest.ratingTitle', { score: fmtScore(verdict.score) })}>
-                      <ScoreChip rating={verdict} size="lg" band />
-                    </button>
-                  )}
-                </div>
-                {tags.length > 0 && <ul className="pt-tags">{tags}</ul>}
+              <PlaceHead title={city} titleRef={titleRef} where={countryLabel} iso2={destination.iso2} tags={tags}
+                score={verdict?.score != null && (
+                  // T1029: the Score opens why it rates what it rates.
+                  <button type="button" className="pt-score" aria-haspopup="dialog"
+                    onClick={() => setRatingOpen(true)}>
+                    {/* Read as its figure and word, then what it opens (T1128,
+                        WCAG 2.5.3: the old name left out "Exceptional"). */}
+                    <ScoreChip rating={verdict} size="lg" band asText />
+                    <span className="sr-only">{`. ${t('dest.ratingTitle', { score: fmtScore(verdict.score) })}`}</span>
+                  </button>
+                )}>
                 {/* T765: the match after the rank lines, never merged into the Score. */}
                 <MatchLine place={destination} month={tripMonth} />
-              </header>
+              </PlaceHead>
 
               {!settled && (
                 <div className="destp-wait" aria-busy="true">
@@ -688,6 +685,8 @@ export function DestinationPage({
                     </div>
                   )}
                   <KeyFacts cells={keyFacts} className="pt-facts" />
+                  {/* T1208 (G9): why this place, with evidence and confidence in words. */}
+                  <WhyPlace destination={destination} />
                   <DestOverview p={p} />
                   {/* Friends here (T466, T929), right after Good to know: the
                       approved place for it, where the decision is made. */}
@@ -696,6 +695,7 @@ export function DestinationPage({
                   {!wide && priceCard && waysInCard && (
                     <PSection id="pt-cost" title={t('destx.dayCosts')} className="pt-inlinecost">
                       {priceCard}
+                      <PricesRefreshed record={destination} />
                     </PSection>
                   )}
                   <DestSee p={p} />
@@ -711,7 +711,7 @@ export function DestinationPage({
                 </>
               )}
             </div>
-            {settled && wide && <aside className="pt-side" aria-label={t('destx.dayCosts')}>{priceCard}</aside>}
+            {settled && wide && <aside className="pt-side" aria-label={t('destx.dayCosts')}>{priceCard}<PricesRefreshed record={destination} /></aside>}
           </div>
         </div>
       </div>

@@ -20,10 +20,12 @@ const SWIM_CATS = new Set([
   'beach', 'coast', 'island', 'islands', 'lake', 'lakes',
   'surf', 'diving', 'sailing', 'fjord', 'fjords',
 ]);
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function swimRelevant(dest) {
   return !!dest?.bathing_water && (dest.categories || []).some((c) => SWIM_CATS.has(c));
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const CLASS_KEY = {
   Excellent: 'water.excellent',
   Good: 'water.good',
@@ -48,6 +50,7 @@ function WaveIcon({ size = 11 }) {
 
 /** Human tooltip: "Excellent water. 89% of 19 nearby bathing sites rated
  *  Excellent (EEA 2025). Nearest: La Barceloneta, 1.0 km." */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function waterTooltip(bw, t) {
   if (!bw) return '';
   const cls = t(CLASS_KEY[bw.rating] || 'water.excellent');
@@ -65,6 +68,7 @@ export function waterTooltip(bw, t) {
 }
 
 /** EEA names are ALL CAPS ("PLAYA DE LA BARCELONETA PM1"); tidy for display. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function titleCase(s) {
   if (!s) return '';
   return s.toLowerCase().replace(/\b([a-z])/g, (m, c) => c.toUpperCase());

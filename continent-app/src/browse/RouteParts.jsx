@@ -57,7 +57,16 @@ export function Stages({ stages, t, onOpenRoute, canOpen = () => true }) {
         const inner = (
           <>
             <span className="rstage-n mono">{s.i}</span>
-            <span className="rstage-name">{s.name || t('route.stageN', { n: s.i })}</span>
+            {s.sub ? (
+              // T1184: a trek's stage carries its distance and climb under
+              // the name, in the Bases list's two-line shape.
+              <span className="rbase-main">
+                <span className="rstage-name">{s.name || t('route.stageN', { n: s.i })}</span>
+                <span className="rbase-sub">{s.sub}</span>
+              </span>
+            ) : (
+              <span className="rstage-name">{s.name || t('route.stageN', { n: s.i })}</span>
+            )}
             {!s.id && <span className="rstage-off">{t('route.stageNotPublished')}</span>}
           </>
         );

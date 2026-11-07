@@ -1,0 +1,126 @@
+{
+ "findings": {
+  "carta-dom-inner-html|continent-app/src/browse/DestMap.jsx|b564c0b4e8e0": {
+   "at": "continent-app/src/browse/DestMap.jsx:48",
+   "count": 1
+  },
+  "carta-dom-inner-html|continent-app/src/map/CityPickerMap.jsx|29224c11961c": {
+   "at": "continent-app/src/map/CityPickerMap.jsx:108",
+   "count": 1
+  },
+  "carta-dom-inner-html|continent-app/src/map/CityPickerMap.jsx|61c6d93b51a5": {
+   "at": "continent-app/src/map/CityPickerMap.jsx:98",
+   "count": 1
+  },
+  "carta-dom-inner-html|continent-app/src/map/DayExploreMap.jsx|1985fcb55c2f": {
+   "at": "continent-app/src/map/DayExploreMap.jsx:180",
+   "count": 1
+  },
+  "carta-dom-inner-html|continent-app/src/map/DayExploreMap.jsx|9b6848750085": {
+   "at": "continent-app/src/map/DayExploreMap.jsx:198",
+   "count": 1
+  },
+  "carta-dom-inner-html|continent-app/src/map/DayExploreMap.jsx|9ebafa6b241c": {
+   "at": "continent-app/src/map/DayExploreMap.jsx:98",
+   "count": 1
+  },
+  "carta-dom-inner-html|continent-app/src/map/DayExploreMap.jsx|f9995c4d30f5": {
+   "at": "continent-app/src/map/DayExploreMap.jsx:183",
+   "count": 1
+  },
+  "carta-dom-inner-html|continent-app/src/map/TripMap.jsx|7331115aab88": {
+   "at": "continent-app/src/map/TripMap.jsx:843",
+   "count": 1
+  },
+  "carta-dom-inner-html|continent-app/src/map/TripMap.jsx|7bbf9e9f16f4": {
+   "at": "continent-app/src/map/TripMap.jsx:851",
+   "count": 1
+  },
+  "carta-dom-inner-html|continent-app/src/map/TripMap.jsx|9cf20069647d": {
+   "at": "continent-app/src/map/TripMap.jsx:623",
+   "count": 1
+  },
+  "carta-dom-inner-html|continent-app/src/map/TripMap.jsx|f241e0898e6f": {
+   "at": "continent-app/src/map/TripMap.jsx:875",
+   "count": 1
+  },
+  "carta-js-exec-shell|continent-app/workers/shared/build-fli.mjs|0c6b1876916f": {
+   "at": "continent-app/workers/shared/build-fli.mjs:11",
+   "count": 1
+  },
+  "carta-py-sql-fstring|pipeline/cycling/landcover.py|63387abc27b8": {
+   "at": "pipeline/cycling/landcover.py:446",
+   "count": 1
+  },
+  "carta-py-sql-fstring|pipeline/pois/harvest_pois_overture.py|1a8c048b46b4": {
+   "at": "pipeline/pois/harvest_pois_overture.py:136",
+   "count": 1
+  },
+  "carta-py-sql-fstring|pipeline/pois/harvest_pois_overture.py|331bd24ca919": {
+   "at": "pipeline/pois/harvest_pois_overture.py:145",
+   "count": 1
+  },
+  "carta-py-sql-fstring|pipeline/pois/harvest_pois_overture.py|c64c66cd9d39": {
+   "at": "pipeline/pois/harvest_pois_overture.py:124",
+   "count": 1
+  },
+  "carta-py-sql-fstring|pipeline/stays/build_stays.py|2e635b2c8ead": {
+   "at": "pipeline/stays/build_stays.py:148",
+   "count": 1
+  },
+  "carta-py-sql-fstring|pipeline/stays/common.py|fcf33e8a2c92": {
+   "at": "pipeline/stays/common.py:187",
+   "count": 1
+  },
+  "carta-py-sql-fstring|pipeline/trails/crosscheck_portals.py|2c99e3570a7c": {
+   "at": "pipeline/trails/crosscheck_portals.py:268",
+   "count": 1
+  },
+  "carta-py-sql-fstring|pipeline/trails/crosscheck_portals.py|dfab7b9fab45": {
+   "at": "pipeline/trails/crosscheck_portals.py:278",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/dossier/common.py|9784daf0e481": {
+   "at": "pipeline/dossier/common.py:311",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/guided_search_layer.py|b1331f1a535f": {
+   "at": "pipeline/guided_search_layer.py:345",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/journeys/build_wire.py|5912f03088dc": {
+   "at": "pipeline/journeys/build_wire.py:658",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/photos/aesthetics.py|2e0693c66c40": {
+   "at": "pipeline/photos/aesthetics.py:179",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/photos/derive.py|47d3b8d7940e": {
+   "at": "pipeline/photos/derive.py:349",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/photos/derive.py|b8b3a627864a": {
+   "at": "pipeline/photos/derive.py:1248",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/photos/relevance.py|b0c2c2b82d5d": {
+   "at": "pipeline/photos/relevance.py:132",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/photos/takedown.py|23fc7253789d": {
+   "at": "pipeline/photos/takedown.py:329",
+   "count": 1
+  },
+  "carta-py-weak-hash|scripts/ci/semgrep_gate.py|57e4f92232ff": {
+   "at": "scripts/ci/semgrep_gate.py:62",
+   "count": 1
+  }
+ },
+ "triage": {
+  "carta-dom-inner-html": "Noise. Every baselined hit assigns a module-level constant (SVG icon strings, static pin markup) or markup whose dynamic parts go through esc() (DestMap.jsx). No traveller or third-party text reaches innerHTML. A new hit still fails so a reviewer looks.",
+  "carta-js-exec-shell": "Noise. build-fli.mjs is a build script that runs a fixed npx esbuild command.",
+  "carta-py-sql-fstring": "Noise. Local DuckDB/SQLite pipeline code on the build box; interpolated parts are constants, column names from our own schema or table names from sqlite_master, never user input. T1119-a asks for a parameterised rewrite where cheap.",
+  "carta-py-weak-hash": "Noise. md5/sha1 used for cache keys, photo dedupe and content ids, not for security."
+ }
+}

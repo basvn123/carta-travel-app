@@ -1,0 +1,182 @@
+{
+ "country": "AT",
+ "generated_at": "2026-11-06T00:00:00+00:00",
+ "simplify_m": 25,
+ "n_trips": 3,
+ "n_listed": 0,
+ "counts": {
+  "hike": 3
+ },
+ "attribution": [
+  "(c) OpenStreetMap contributors, ODbL"
+ ],
+ "trips": [
+  {
+   "id": 502,
+   "name": "Grenzsteig Etappe 2",
+   "category": "hike",
+   "country": "AT",
+   "distance_m": 12000,
+   "ascent_m": 900,
+   "descent_m": 850,
+   "duration_min": 300,
+   "difficulty": "moderate",
+   "bbox": [
+    11.3,
+    47.4,
+    11.4,
+    47.4
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.3,
+      47.4
+     ],
+     [
+      11.325,
+      47.4
+     ],
+     [
+      11.35,
+      47.4
+     ],
+     [
+      11.375,
+      47.4
+     ],
+     [
+      11.4,
+      47.4
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/502.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Grenzsteig",
+    "top": "Grenzsteig",
+    "i": 2,
+    "n": null
+   }
+  },
+  {
+   "id": 503,
+   "name": "Grenzsteig Etappe 3",
+   "category": "hike",
+   "country": "AT",
+   "distance_m": 11000,
+   "ascent_m": 700,
+   "descent_m": 650,
+   "duration_min": 280,
+   "difficulty": "moderate",
+   "bbox": [
+    11.4,
+    47.4,
+    11.5,
+    47.4
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.4,
+      47.4
+     ],
+     [
+      11.425,
+      47.4
+     ],
+     [
+      11.45,
+      47.4
+     ],
+     [
+      11.475,
+      47.4
+     ],
+     [
+      11.5,
+      47.4
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/503.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "stage",
+    "of": "Grenzsteig",
+    "top": "Grenzsteig",
+    "i": 3,
+    "n": null
+   },
+   "f": {
+    "d": 2
+   }
+  },
+  {
+   "id": 600,
+   "name": "Patscherkofel Rundweg",
+   "category": "hike",
+   "country": "AT",
+   "distance_m": 8000,
+   "ascent_m": 400,
+   "descent_m": 350,
+   "duration_min": 180,
+   "difficulty": "moderate",
+   "bbox": [
+    11.45,
+    47.190000000000005,
+    11.479999999999999,
+    47.21
+   ],
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      11.45,
+      47.2
+     ],
+     [
+      11.469999999999999,
+      47.21
+     ],
+     [
+      11.479999999999999,
+      47.190000000000005
+     ],
+     [
+      11.45,
+      47.2
+     ]
+    ]
+   },
+   "source": "osm",
+   "license": "ODbL-1.0",
+   "attribution_text": "(c) OpenStreetMap contributors, ODbL",
+   "detail": "/trails/trip/600.json",
+   "t": "r",
+   "rating": 7.2,
+   "is_loop": false,
+   "h": {
+    "cls": "standalone",
+    "of": null,
+    "top": null,
+    "i": null,
+    "n": null
+   }
+  }
+ ]
+}

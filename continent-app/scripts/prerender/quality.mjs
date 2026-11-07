@@ -18,15 +18,20 @@
  *
  * It is one pure function per kind over data the build already holds, so no
  * wire key and no schema change are needed: the `indexable` flag lives in the
- * prerender manifest, which the sitemap reads. Kinds not listed here keep the
- * floor alone (beach, lake, mountain, cycle, cost); the research bar for them
+ * prerender manifest, which the sitemap reads. Cost pages keep the floor alone; the research bar for them
  * needs monthly data the wire does not carry yet (see the T1076 report).
+ * T1113 adds the layer, cycling and trip bars below.
  */
 
 export const PLACE_MIN_WORDS = 120;
 export const PLACE_MIN_LINKS = 5;
 export const TRAIL_MIN_WORDS = 60;
-export const BAR_KINDS = Object.freeze(['dest', 'trail']);
+export const LAYER_MIN_WORDS = 60;
+export const LAYER_MIN_LINKS = 3;
+export const CYCLE_MIN_WORDS = 60;
+export const TRIP_MIN_STOPS = 1;
+export const TRIP_MIN_LINKS = 4;
+export const BAR_KINDS = Object.freeze(['dest', 'trail', 'beach', 'lake', 'mountain', 'cycle', 'trip']);
 
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
@@ -100,9 +105,99 @@ export function trailBar(page, row, cc, linkedFrom) {
   return { ...f, ok: Object.values(f).every(Boolean) };
 }
 
+const pageProse = (page) => words([...(page.lead || []), ...(page.sections || []).flatMap((s) => s?.paras || [])].join(' '));
+const factLabels = (page) => new Set((page.facts || []).map((f) => f.label));
+
+// The fact that stands for "monthly data" on each layer page (T1113): the wire
+// carries no twelve-month series for them, so the bar asks for the one
+// seasonal or measured fact each layer prints.
+const LAYER_SEASON_FACT = { beach: ['Bathing water'], lake: ['Swim season', 'Swimming'], mountain: ['Snow free'] };
+
+/**
+ * { photo, prose, season, place, rating, links, ok } for a beach, lake or
+ * mountain page (T1113, K2): a licensed photo, 60 words of page prose, the
+ * layer's seasonal or measured fact, a parent place (the nearest town, which
+ * links to a destination page), a Carta score and three internal links.
+ */
+export function layerBar(page) {
+  const labels = factLabels(page);
+  const f = {
+    photo: Boolean(page.image?.src && page.image?.licence),
+    prose: pageProse(page) >= LAYER_MIN_WORDS,
+    season: (LAYER_SEASON_FACT[page.kind] || []).some((l) => labels.has(l)),
+    place: labels.has('Nearest town'),
+    rating: labels.has('Carta score'),
+    links: internalLinks(page) >= LAYER_MIN_LINKS,
+  };
+  return { ...f, ok: Object.values(f).every(Boolean) };
+}
+
+/**
+ * { photo, prose, length, climb, rating, links, ok } for a cycling route.
+ * The page renders no photograph, so the photo is the wire row's, as in the
+ * page floor.
+ */
+export function cycleBar(page, row) {
+  const labels = factLabels(page);
+  const f = {
+    photo: Boolean(row?.img?.u && (row.img.lic || row.img.licence)),
+    prose: pageProse(page) >= CYCLE_MIN_WORDS,
+    length: labels.has('Distance'),
+    climb: labels.has('Climb'),
+    rating: labels.has('Carta score'),
+    links: internalLinks(page) >= LAYER_MIN_LINKS,
+  };
+  return { ...f, ok: Object.values(f).every(Boolean) };
+}
+
+/**
+ * { stops, cost, season, links, ok } for a trip: at least one stop that links
+ * to a destination page (the parent place), a cost per day, a season and four
+ * internal links.
+ */
+export function tripBar(page) {
+  const labels = factLabels(page);
+  const stops = (page.sections || []).find((s) => s?.h2 === 'Where you stay')?.links || [];
+  const f = {
+    stops: stops.filter((l) => l.path).length >= TRIP_MIN_STOPS,
+    cost: labels.has('A day for one person, estimated'),
+    season: labels.has('Season'),
+    links: internalLinks(page) >= TRIP_MIN_LINKS,
+  };
+  return { ...f, ok: Object.values(f).every(Boolean) };
+}
+
+/**
+ * Near-duplicate trips (T1113). Two trips of a country that visit the same
+ * set of towns differ only in nights, pace or order: one page is the
+ * representative and the others carry its canonical. The representative is the
+ * best scored, then the shortest id. Returns Map(tripId -> representative id)
+ * holding only the trips that are not their own representative.
+ */
+export function canonicalTrips(trips) {
+  const groups = new Map();
+  for (const t of trips || []) {
+    const stops = (t.cities || []).map((c) => `${c.cc}|${String(c.city || '').toLowerCase()}`);
+    if (stops.length < 1) continue;
+    const key = `${t.cc}#${[...new Set(stops)].sort().join('+')}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(t);
+  }
+  const out = new Map();
+  for (const g of groups.values()) {
+    if (g.length < 2) continue;
+    g.sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || String(a.id).length - String(b.id).length || String(a.id).localeCompare(String(b.id)));
+    for (const t of g.slice(1)) out.set(t.id, g[0].id);
+  }
+  return out;
+}
+
 /** The bar for any page; null for kinds it does not apply to. */
 export function pageBar(page, { dos = null, row = null, cc = null, linkedFrom = null } = {}) {
   if (page.kind === 'dest' && dos) return placeBar(page, dos);
   if (page.kind === 'trail' && row) return trailBar(page, row, cc, linkedFrom);
+  if (page.kind === 'beach' || page.kind === 'lake' || page.kind === 'mountain') return layerBar(page);
+  if (page.kind === 'cycle') return cycleBar(page, row);
+  if (page.kind === 'trip') return tripBar(page);
   return null;
 }

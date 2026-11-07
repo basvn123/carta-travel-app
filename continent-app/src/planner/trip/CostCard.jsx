@@ -1,7 +1,8 @@
-import React, { useId } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Money, Segmented } from '../../components/ui/index.js';
 import NotYet from '../../components/NotYet.jsx';
+import { PriceNotes } from '../../components/PriceNotes.jsx';
 import { BedIcon, CarIcon, ChevronRightIcon, DiningIcon, PencilIcon, RouteIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
@@ -9,8 +10,48 @@ import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { costTiles } from '../../lib/price/tiles.js';
 import { formatMoney } from '../../lib/money.js';
 import { CostArc, CostRow } from '../../components/CostCardKit.jsx';
+import { barSegments, costCardVariant, SHARE_MIN } from './costCardVariant.js';
 
 const LABEL = { travel: 'tp.tile.flights', around: 'tp.tile.around', stay: 'tp.tile.stay', food: 'tp.tile.food' };
+
+// T1122: the umber variant's flag, behind ?cc=umber until the owner approves (costCardVariant.js).
+function readVariant() {
+  if (typeof window === 'undefined') return costCardVariant('', null);
+  let store = null;
+  try { store = window.sessionStorage; } catch { store = null; }
+  return costCardVariant(window.location.search, store);
+}
+
+/**
+ * The cost bar of the umber card (T1122): one bar on a cream track, a
+ * segment per priced group in order, sized by its share of the sum, its
+ * share printed inside when wide enough. A group with no figure yet is drawn
+ * as a dashed track at the end, so the missing part is seen, not hidden; its
+ * width is a mark, not a figure. Segments grow from the left once, about
+ * 140 ms apart; after that they move to their new widths. Decorative: every
+ * figure is in the rows under it (aria-hidden).
+ */
+export function CostBar({ tiles, lang = 'en' }) {
+  const [drawn, setDrawn] = useState(false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const id = window.requestAnimationFrame(() => setDrawn(true));
+    return () => window.cancelAnimationFrame(id);
+  }, []);
+  const segs = barSegments(tiles);
+  const pct = (n) => new Intl.NumberFormat(lang, { style: 'percent', maximumFractionDigits: 0 }).format(n / 100);
+  return (
+    <div className={`ccu-bar${drawn ? ' is-drawn' : ''}`} aria-hidden="true" data-cc-bar="">
+      {segs.map((x, i) => (x.missing ? (
+        <i key={x.key} className="ccu-seg is-missing" style={{ '--i': i }} data-seg={x.key} />
+      ) : (
+        <i key={x.key} className={`ccu-seg ccu-k-${x.key}`} style={{ flexGrow: x.share, '--i': i }} data-seg={x.key}>
+          {x.share >= SHARE_MIN && <span>{pct(x.share)}</span>}
+        </i>
+      )))}
+    </div>
+  );
+}
 
 /**
  * What the trip costs (T1003, owner 2026-11-02: "fully redesign it: too busy,
@@ -49,6 +90,8 @@ export function CostCard({
   lifestyle = null, onLifestyle = null, onChangeFlight = null,
 }) {
   const { t, lang } = useI18n();
+  const [variant] = useState(readVariant);
+  const umber = variant === 'umber';
   const airlines = useAirlines();
   const headId = useId();
   const total = priced?.grandTotal;
@@ -99,6 +142,59 @@ export function CostCard({
     );
   };
 
+  const unit = per === 'person' ? t('tp.totalAPerson') : t('receipt.total', { people: people === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: people }) });
+
+  if (umber) {
+    // The direction's bands: the total and its per person line, the bar,
+    // the rows on a lighter umber band, the foot strip with one action.
+    const perLine = per === 'group' && people > 1 && Number.isFinite(priced?.perPerson)
+      ? t('plan.aPerson', { price: formatMoney(priced.perPerson, { precision: 'whole', locale: lang }) }) : '';
+    return (
+      <section className="ccard is-umber" aria-labelledby={headId} data-testid="ts-total" data-cc="umber">
+        <div className="ccu-head">
+          <div className="ccard-top">
+            <h2 className="ccard-h" id={headId}>{t('tf.tp.price')}</h2>
+            {people > 1 && (
+              <Segmented size="sm" className="ccard-per" label={t('tp.showFor')} value={per} onChange={onPer}
+                options={[{ value: 'group', label: t('tp.forGroup') }, { value: 'person', label: t('tp.forPerson') }]} />
+            )}
+          </div>
+          <p className="ccu-sum">
+            {/* Keyed on the figure, so a change settles in place (no count-up in Operate). */}
+            <span key={Number.isFinite(shown) ? String(shown) : 'none'} className="ccu-n"
+              data-total={Number.isFinite(total) ? String(total) : ''}>
+              {Number.isFinite(shown) ? <Money value={shown} est precision="cents" /> : <NotYet />}
+            </span>
+            <span className="ccard-unit">{unit}</span>
+            {perLine && <span className="ccu-per">{perLine}</span>}
+          </p>
+          {budget && <div className="ccard-budget">{budget}</div>}
+          {tiles.length > 0 && <CostBar tiles={tiles} lang={lang} />}
+        </div>
+
+        <div className="ccu-band">
+          <ul className="ccard-rows">{tiles.map(rowOf)}</ul>
+          <PriceNotes row={(priced?.stayCosts || []).map((s) => s?.day)} className="ccard-notes" />
+        </div>
+
+        {(onAll || onAddPaid) && (
+          <div className="ccard-foot ccu-foot">
+            {onAddPaid && (
+              <Button variant="quiet" size="sm" className="ccard-paid" iconStart={<PencilIcon size={16} />} onClick={onAddPaid}>
+                {t('tp.addPaid')}
+              </Button>
+            )}
+            {onAll && (
+              <Button variant="primary" className="ccu-go" iconEnd={<ChevronRightIcon size={16} />} onClick={onAll}>
+                {t('tp.tab.costs')}
+              </Button>
+            )}
+          </div>
+        )}
+      </section>
+    );
+  }
+
   return (
     <section className="ccard" aria-labelledby={headId} data-testid="ts-total">
       <div className="ccard-top">
@@ -114,15 +210,14 @@ export function CostCard({
           <span className="ccard-n" data-total={Number.isFinite(total) ? String(total) : ''}>
             {Number.isFinite(shown) ? <Money value={shown} est precision="cents" /> : <NotYet />}
           </span>
-          <span className="ccard-unit">
-            {per === 'person' ? t('tp.totalAPerson') : t('receipt.total', { people: people === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: people }) })}
-          </span>
+          <span className="ccard-unit">{unit}</span>
         </p>
       </CostArc>
 
       {budget && <div className="ccard-budget">{budget}</div>}
 
       <ul className="ccard-rows">{tiles.map(rowOf)}</ul>
+      <PriceNotes row={(priced?.stayCosts || []).map((s) => s?.day)} className="ccard-notes" />
 
       {(onAll || onAddPaid) && (
         <div className="ccard-foot">

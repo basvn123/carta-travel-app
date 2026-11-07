@@ -1,0 +1,34 @@
+{
+ "version": "truth-fields/1",
+ "note": "T1144, ROADMAP D4. What each field of the truth set means, the rule that compares the shipped value with the verified answer (evals/run_truth.py compare()) and the tolerance. Tolerances follow the research in Execution/P15/T1144-truth-set.md.",
+ "fields": {
+  "place": {
+   "country": {"compare": "exact", "means": "ISO 3166 alpha-2 code of the country the place is in", "answer": "two letters, e.g. NL", "where": "any map; Wikipedia infobox"},
+   "coords": {"compare": "coords", "tolerance": {"m": 2000}, "means": "the centre of the town or city (its main square, old town or town hall), not the airport", "answer": "lat, lon in decimal degrees, e.g. 52.0116, 4.3571", "where": "OpenStreetMap or Wikipedia coordinates"},
+   "population": {"compare": "number", "tolerance": {"rel": 0.15}, "means": "residents of the town or municipality the place is named after, latest census or estimate", "answer": "a whole number, e.g. 95060", "where": "Wikipedia infobox or the national statistics office"},
+   "image_depicts": {"compare": "yes", "means": "the cover photo shows this place (not another town, not a generic view)", "answer": "yes or no", "where": "open current_value (the photo URL)"},
+   "blurb": {"compare": "verdict", "means": "the one-line blurb is supported by the cited Wikivoyage text (guide.url) or by well-known facts on the place's Wikipedia page", "answer": "supported, unsupported or contradicted", "where": "the source_url of the row"}
+  },
+  "trail": {
+   "distance_km": {"compare": "number", "tolerance": {"rel": 0.1, "abs": 0.5}, "means": "length of the walk as Carta presents it (one way for a point to point, round for a loop)", "answer": "km, e.g. 16.4", "where": "the OSM relation (distance tag) or the operator's page"},
+   "ascent_m": {"compare": "number", "tolerance": {"rel": 0.15, "abs": 60}, "means": "total climb in metres", "answer": "metres, e.g. 985", "where": "the OSM relation (ascent tag) or the operator's page"},
+   "loop": {"compare": "bool", "means": "the walk ends where it starts", "answer": "yes or no", "where": "the OSM relation (roundtrip tag) or its map"},
+   "difficulty": {"compare": "category", "order": ["easy", "moderate", "hard", "very hard", "alpine"], "means": "Carta's grade: easy, moderate, hard, very_hard or alpine, as the operator or SAC scale would put it", "answer": "one of easy, moderate, hard, very_hard, alpine", "where": "operator page, sac_scale tag; see GUIDE.md for the mapping"},
+   "trailhead": {"compare": "coords", "tolerance": {"m": 300}, "means": "where the walk starts", "answer": "lat, lon", "where": "the OSM relation, the operator's page"},
+   "summary": {"compare": "verdict", "means": "every claim of the summary is supported by the trail's source facts (OSM relation, its tags and map)", "answer": "supported, unsupported or contradicted", "where": "the source_url of the row"}
+  },
+  "beach": {
+   "coords": {"compare": "coords", "tolerance": {"m": 500}, "means": "a point on the beach", "answer": "lat, lon", "where": "OpenStreetMap"},
+   "name": {"compare": "exact", "means": "the beach's local name, accents ignored", "answer": "text", "where": "OpenStreetMap, the municipality, Wikipedia"},
+   "water_quality": {"compare": "category", "order": ["excellent", "good", "sufficient", "poor", "none"], "means": "the latest EU bathing water class of the nearest monitored site (none when there is no site)", "answer": "excellent, good, sufficient, poor or none", "where": "EEA bathing water viewer"},
+   "surface": {"compare": "exact", "means": "what the beach is mostly made of", "answer": "sand, pebble, gravel, rock, shingle, concrete", "where": "photos, OpenStreetMap surface tag"}
+  },
+  "lake": {
+   "coords": {"compare": "coords", "tolerance": {"m": 1000}, "means": "a point on or at the lake (its centre is fine)", "answer": "lat, lon", "where": "OpenStreetMap, Wikipedia"},
+   "name": {"compare": "exact", "means": "the lake's local name, accents ignored", "answer": "text", "where": "OpenStreetMap, Wikipedia"},
+   "water_quality": {"compare": "category", "order": ["excellent", "good", "sufficient", "poor", "none"], "means": "the latest EU bathing water class of a monitored site on the lake (none when there is no site)", "answer": "excellent, good, sufficient, poor or none", "where": "EEA bathing water viewer"},
+   "swim": {"compare": "category", "order": ["yes", "limited", "no", "unknown"], "means": "whether swimming is allowed and done (limited: only at some spots or some months)", "answer": "yes, limited, no or unknown", "where": "municipality or tourist board page, Wikipedia"},
+   "area_km2": {"compare": "number", "tolerance": {"rel": 0.1, "abs": 0.05}, "means": "surface area of the lake", "answer": "km2, e.g. 46.2", "where": "Wikipedia infobox"}
+  }
+ }
+}

@@ -1,0 +1,63 @@
+{
+ "generated_at": "2026-11-06T14:31:21Z",
+ "scope": "top band (v5 exceptional, excellent)",
+ "counts": {
+  "rated_rows": 17619,
+  "rated_rows_with_wire_summary": 458,
+  "candidates": 2089,
+  "written": 2089
+ },
+ "failures": {},
+ "per_country": {
+  "AD": 7,
+  "AL": 2,
+  "AT": 126,
+  "BE": 38,
+  "BG": 12,
+  "CH": 108,
+  "CY": 9,
+  "CZ": 82,
+  "DE": 475,
+  "DK": 8,
+  "EE": 6,
+  "ES": 187,
+  "FI": 6,
+  "FR": 153,
+  "GB": 96,
+  "GR": 26,
+  "HR": 26,
+  "HU": 36,
+  "IE": 22,
+  "IS": 27,
+  "IT": 144,
+  "LI": 7,
+  "LT": 1,
+  "LU": 32,
+  "LV": 3,
+  "ME": 10,
+  "MK": 1,
+  "MT": 7,
+  "NL": 18,
+  "NO": 43,
+  "PL": 82,
+  "PT": 37,
+  "RO": 25,
+  "RS": 59,
+  "SE": 30,
+  "SI": 64,
+  "SK": 74
+ },
+ "clauses": {
+  "lead": 2089,
+  "ground": 2087,
+  "sights": 2028,
+  "season": 2021,
+  "passes": 326,
+  "stage": 290
+ },
+ "chars": {
+  "min": 113,
+  "median": 237,
+  "max": 320
+ }
+}

@@ -11,6 +11,7 @@
    files that only its route renders. scripts/css-routes.mjs moves them and its
    --check proves on every build that none of them can change a screen. */
 
+@import './styles/00-fonts.css';
 @import './styles/01-tokens.css';
 @import './styles/02-base.css';
 @import './styles/03-button.css';
@@ -35,13 +36,11 @@
 @import './styles/27-states.css';
 @import './styles/28-detail-skeleton.css';
 @import './styles/29-signature.css';
-@import './styles/29-derived-modules.css';
 @import './styles/30-section-opening.css';
 @import './styles/31-infodot.css';
 @import './styles/32-day-carousel.css';
 @import './styles/33-flashcards.css';
 @import './styles/34-section-rail.css';
-@import './styles/35-lifestyle-slider.css';
 @import './styles/36-cost-bar.css';
 @import './styles/37-card-fillings.css';
 @import './styles/38-first-run.css';
@@ -77,9 +76,15 @@
    the place page. */
 @import './styles/92-cost-card.css';
 @import './styles/93-flight-pass.css';
+/* T1110: the waitlist form on the Home page. */
+@import './styles/94-waitlist.css';
 /* T481: route rules css-routes --hold keeps in the first paint, after the
    whole main sheet as their route sheet loaded them. */
 @import './styles/planners-held.css';
 @import './styles/admin-held.css';
 /* T481: route rules held in the first paint by css-routes --hold. */
 @import './styles/items-held.css';
+
+/* T1106: a crash that stays inside one screen, section or card. */
+.section-crash { margin: var(--space-5, 24px) auto; padding: 0 var(--space-4, 16px); max-width: 560px; }
+.section-crash.is-compact { margin: 0; padding: 0; max-width: none; }

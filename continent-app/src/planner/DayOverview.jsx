@@ -91,6 +91,7 @@ export function DayKit({ tools }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const KIT_ICONS = { tips: BulbIcon, notes: PencilIcon, files: TicketIcon, ideas: SparkIcon };
 
 /**
@@ -104,10 +105,9 @@ export function DayGmaps({ parts, dayNumber = null }) {
   if (!parts?.length) return null;
   const title = dayNumber ? t('day.gmapsOpen', { n: dayNumber }) : t('export.openInGmaps');
   const link = (href, label, key) => (
-    <a key={key} className="btn btn-secondary btn-sm itin-export-link" href={href} target="_blank" rel="noreferrer">
-      <span className="btn-icon" aria-hidden="true"><MapPinIcon size={16} /></span>
-      <span className="btn-label">{label}</span>
-    </a>
+    <Button key={key} href={href} external size="sm" className="itin-export-link" iconStart={<MapPinIcon size={16} />}>
+      {label}
+    </Button>
   );
   if (parts.length === 1) return <div className="dayx-gmaps">{link(parts[0].url, title)}</div>;
   return (

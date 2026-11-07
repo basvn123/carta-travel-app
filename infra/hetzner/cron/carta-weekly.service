@@ -16,6 +16,14 @@ WorkingDirectory=/home/carta/carta
 # weekly.sh runs the pipeline only when this is set; the T046 unit did not set
 # it, which is what keeps a freshly provisioned box from starting a harvest.
 Environment=CARTA_PIPELINE_ENABLED=1
+# T1107 (H9): the tier this unit runs, passed as --max-cadence. CARTA_TIER wins
+# over CARTA_MAX_CADENCE in the secrets file, so the env file cannot turn the
+# Monday run into a full one; the monthly and quarterly units run the rest
+# (infra/hetzner/cron/schedule.py is the table, the test keeps them in step).
+Environment=CARTA_TIER=weekly
+# Seconds weekly.sh waits for logs/carta-run.lock when a Saturday run is still
+# going, before it gives this week up (exit 75; the tasks stay due).
+Environment=CARTA_LOCK_WAIT=21600
 Environment=LANG=C.UTF-8
 ExecStart=/bin/bash /home/carta/carta/infra/hetzner/cax11/weekly.sh
 # The laptop's last complete fare chain took 29.8 h (fares 24.5 h, wizz_fares

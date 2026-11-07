@@ -39,6 +39,7 @@ function dishesOf(d) {
 }
 
 /** Whether the Overview has anything to show (the jump bar asks). */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function overviewShown(p) {
   return goodRows(p).length > 0 || dishesOf(p.d).length > 0 || foodPriceKeys(p.destination).length > 0;
 }

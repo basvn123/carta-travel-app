@@ -40,6 +40,8 @@
  */
 
 import { haversineKm } from './nearby.js';
+import LADDER_MANIFEST from './heroLadder.json' with { type: 'json' };
+import { ladderUrl, ladderOf } from './imageLadder.js';
 
 // The only widths upload.wikimedia.org renders. Do not add to this list
 // without probing: an unlisted width returns 400, not a resized image.
@@ -74,6 +76,215 @@ export function srcSetFor(url, max = 960) {
 
 /** The src a browser without srcset support should get. */
 export const fallbackSrc = (url, width = 500) => thumbAt(url, width);
+
+/*
+ * OWN COPIES FIRST (H12, T1105). pipeline/photos/derive.py keeps every
+ * published photograph as ladder_v1 (AVIF 320/640/1280, WebP 320/640) under
+ * one content address, the SHA-1 of its canonical Commons title. A wire
+ * record that already carries `ih` and `d` (the T052 join) uses them. Every
+ * other record, which today is every destination hero and gallery photo,
+ * has its address worked out here from its Wikimedia URL, exactly as
+ * derive.canonical_title and sha1_of do it, and its rung sizes from the
+ * wire's own w and h, exactly as derive.rung_dims does.
+ *
+ * Whether the copy is really on the CDN is not guessed: lib/heroLadder.json,
+ * written by pipeline/photos/hero_ladder.py from derive.py's manifests,
+ * says whether the ladder is live and lists the published photographs that
+ * have no copy (`missing`), the ones re-uploaded under a new address (`rev`)
+ * and the ones whose wire size disagrees with the copy's (`dims`). While it
+ * says not live (no derive run has reached R2 yet) every photograph renders
+ * from Wikimedia exactly as before. `?pic=off` forces that too, for an A/B
+ * on one build, and a copy that fails to load drops back to Wikimedia in
+ * the component (components/HeroImage.jsx).
+ */
+
+const LADDER_RUNGS = [320, 640, 1280];
+const LADDER_WEBP = 2; // the WebP rungs are the first two
+const SOURCE_WIDTH = 1920; // derive.SOURCE_WIDTH: what the copies are cut from
+const KEY_LEN = 12;
+
+/** Commons' own title folding (derive._fold_name). */
+function foldName(raw) {
+  let name = String(raw || '');
+  if (name.includes('%')) {
+    try { name = decodeURIComponent(name); } catch { /* keep it as it is */ }
+  }
+  name = name.replace(/[\s_]+/g, ' ').trim().normalize('NFC');
+  if (name) {
+    const first = String.fromCodePoint(name.codePointAt(0));
+    const upper = first.toUpperCase();
+    if ([...upper].length === 1) name = upper + name.slice(first.length);
+  }
+  return name;
+}
+
+const NS_PREFIX = /^(?:file|image)\s*:\s*/i;
+
+/**
+ * "File:<folded name>" for a Commons upload, thumb or file page URL, else
+ * null (a Geograph photo or anything off Commons keeps its own URL).
+ */
+export function commonsTitle(url) {
+  if (typeof url !== 'string' || !url) return null;
+  let u;
+  try { u = new URL(url); } catch { return null; }
+  const host = u.hostname.toLowerCase();
+  const path = u.pathname;
+  if (path.includes('/wiki/')) {
+    let tail = path.split('/wiki/')[1];
+    try { tail = decodeURIComponent(tail); } catch { /* keep it */ }
+    if (!NS_PREFIX.test(tail)) return null;
+    const name = foldName(tail.replace(NS_PREFIX, ''));
+    return name ? `File:${name}` : null;
+  }
+  if (!host.includes('wikimedia.org')) return null;
+  const segs = path.split('/').filter(Boolean);
+  let i = segs.indexOf('commons');
+  if (i < 0) return null;
+  i += 1;
+  if (segs[i] === 'thumb') i += 1;
+  i += 2;
+  if (i >= segs.length) return null;
+  const name = foldName(segs[i]);
+  return name ? `File:${name}` : null;
+}
+
+// SHA-1 of a UTF-8 string, hex. Small and synchronous on purpose: the
+// address is needed during render, and crypto.subtle is asynchronous.
+function rotl(x, n) { return (x << n) | (x >>> (32 - n)); }
+export function sha1Hex(text) {
+  const bytes = new TextEncoder().encode(text);
+  const len = bytes.length;
+  const words = new Uint32Array((((len + 8) >> 6) + 1) * 16);
+  for (let i = 0; i < len; i += 1) words[i >> 2] |= bytes[i] << (24 - (i % 4) * 8);
+  words[len >> 2] |= 0x80 << (24 - (len % 4) * 8);
+  words[words.length - 1] = len * 8;
+  const w = new Uint32Array(80);
+  let h0 = 0x67452301; let h1 = 0xefcdab89; let h2 = 0x98badcfe; let h3 = 0x10325476; let h4 = 0xc3d2e1f0;
+  for (let b = 0; b < words.length; b += 16) {
+    for (let t = 0; t < 16; t += 1) w[t] = words[b + t];
+    for (let t = 16; t < 80; t += 1) w[t] = rotl(w[t - 3] ^ w[t - 8] ^ w[t - 14] ^ w[t - 16], 1);
+    let a = h0; let bb = h1; let c = h2; let d = h3; let e = h4;
+    for (let t = 0; t < 80; t += 1) {
+      let f; let k;
+      if (t < 20) { f = (bb & c) | (~bb & d); k = 0x5a827999; }
+      else if (t < 40) { f = bb ^ c ^ d; k = 0x6ed9eba1; }
+      else if (t < 60) { f = (bb & c) | (bb & d) | (c & d); k = 0x8f1bbcdc; }
+      else { f = bb ^ c ^ d; k = 0xca62c1d6; }
+      const tmp = (rotl(a, 5) + f + e + k + w[t]) | 0;
+      e = d; d = c; c = rotl(bb, 30); bb = a; a = tmp;
+    }
+    h0 = (h0 + a) | 0; h1 = (h1 + bb) | 0; h2 = (h2 + c) | 0; h3 = (h3 + d) | 0; h4 = (h4 + e) | 0;
+  }
+  return [h0, h1, h2, h3, h4].map((x) => (x >>> 0).toString(16).padStart(8, '0')).join('');
+}
+
+// Python's round(): halves go to the even neighbour, so a height computed
+// here matches the one derive.py wrote to the bytes.
+function pyRound(x) {
+  const r = Math.round(x);
+  return Math.abs(x - Math.trunc(x)) === 0.5 && r % 2 !== 0 ? r - 1 : r;
+}
+
+/** derive.rung_dims: a w x h source at `width`, never upscaled. */
+function rungDims(w, h, width) {
+  const rw = Math.min(width, w);
+  return [rw, Math.max(1, pyRound((h * rw) / w))];
+}
+
+/** The [[w,h] x 3] sizes of the 320, 640 and 1280 rungs, from the wire's
+ *  own measurement of the original. */
+export function ladderDims(w, h) {
+  if (!(w > 0 && h > 0)) return null;
+  const src = rungDims(w, h, SOURCE_WIDTH);
+  return LADDER_RUNGS.map((r) => rungDims(src[0], src[1], r));
+}
+
+function pageOff() {
+  try {
+    if (typeof window === 'undefined') return false;
+    const v = new URLSearchParams(window.location.search).get('pic');
+    return v != null && /^(off|none|0)$/i.test(v.trim());
+  } catch {
+    return false;
+  }
+}
+
+/** Reads one manifest into what the lookup needs. Exported for the tests. */
+export function readLadderManifest(m) {
+  const live = !!m && m.schema === 'carta.hero-ladder.v1' && m.ladder === 'ladder_v1' && m.live === true;
+  return {
+    live,
+    missing: new Set(live ? m.missing || [] : []),
+    rev: (live && m.rev) || {},
+    dims: (live && m.dims) || {},
+  };
+}
+
+const ACTIVE = pageOff() ? readLadderManifest(null) : readLadderManifest(LADDER_MANIFEST);
+
+/** True while the self-hosted ladder is live for this page load. */
+export const heroLadderLive = () => ACTIVE.live;
+
+function srcSetOf(ih, d, rungs, fmt) {
+  const seen = new Set();
+  const out = [];
+  for (let i = 0; i < rungs; i += 1) {
+    const w = d[i][0];
+    if (seen.has(w)) continue;
+    seen.add(w);
+    out.push(`${ladderUrl(ih, LADDER_RUNGS[i], fmt)} ${w}w`);
+  }
+  return out.join(', ');
+}
+
+// How many rungs a layout drawing at most `max` css px is offered: every
+// rung up to the first one at least that wide, the way srcSetFor caps the
+// Wikimedia list, so a 300 px card is never offered the 1280.
+function rungsFor(max) {
+  const i = LADDER_RUNGS.findIndex((r) => r >= max);
+  return i < 0 ? LADDER_RUNGS.length : i + 1;
+}
+
+/**
+ * Our own copy of a photograph, or null when it must come from Wikimedia.
+ * `image` is a wire image record ({url, w, h} or {ih, d}) or a bare URL
+ * (then it has no size and stays on Wikimedia). Returns {avif, webp, size,
+ * src} where src is the copy's 640 WebP, the one every browser decodes.
+ */
+export function heroLadder(image, max = 960, manifest = ACTIVE) {
+  if (!image || typeof image !== 'object') return null;
+  const n = rungsFor(max);
+  // Already joined on the wire (T052): the record knows its own address.
+  if (image.ih) {
+    if (!manifest.live) return null;
+    const own = ladderOf(image);
+    if (!own) return null;
+    return {
+      avif: srcSetOf(image.ih, image.d, n, 'avif'),
+      webp: srcSetOf(image.ih, image.d, Math.min(n, LADDER_WEBP), 'webp'),
+      size: own.size,
+      src: ladderUrl(image.ih, LADDER_RUNGS[Math.min(n, LADDER_WEBP) - 1], 'webp'),
+    };
+  }
+  if (!manifest.live) return null;
+  const title = commonsTitle(image.url);
+  if (!title) return null;
+  const plain = sha1Hex(title);
+  const key = plain.slice(0, KEY_LEN);
+  if (manifest.missing.has(key)) return null;
+  const d = manifest.dims[key] || ladderDims(image.w, image.h);
+  if (!d) return null;
+  const ih = manifest.rev[key] || plain;
+  const webpN = Math.min(n, LADDER_WEBP);
+  return {
+    avif: srcSetOf(ih, d, n, 'avif'),
+    webp: srcSetOf(ih, d, webpN, 'webp'),
+    size: d[2],
+    src: ladderUrl(ih, LADDER_RUNGS[webpN - 1], 'webp'),
+  };
+}
+
 
 /**
  * Which destinations must NOT render their wire photo, because another

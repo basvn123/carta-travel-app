@@ -9,7 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   trailClimb, trailGrade, trailheadCountry, trailPlace, isComfortableDay,
-  trailReasons, trailStory, trailClimbUp, gradeLabelKey,
+  trailReasons, trailStory, trailClimbUp, gradeLabelKey, looksTemplated,
 } from "../src/lib/trailStory.js";
 import { trailFactLine, trailKml, trailGpx } from "../src/lib/trailExport.js";
 
@@ -130,4 +130,42 @@ test("one difficulty: dossier rows and the GPX name the grade", () => {
   const gpx = trailGpx(KORAB_9_1);
   assert.ok(gpx.includes("very hard"));
   assert.ok(!gpx.includes("moderate"));
+});
+
+// T1201 (T1181-g): a "loop" reason is dropped when the route type says the
+// walk is one way or there and back, even while the loop flag is true (Old
+// Man of Storr 188352: out and back, roundtrip tag; Quiraing 188351: one way).
+test("T1201: the loop reason follows the route type, not the loop flag", () => {
+  const reasons = [{ code: "loop" }];
+  const says = (trip) => trailReasons(reasons, t, 6, trip).length > 0;
+  assert.equal(says({ is_loop: true, f: { rt: "out_back" } }), false);
+  assert.equal(says({ is_loop: true, f: { rt: "point" } }), false);
+  assert.equal(says({ is_loop: true, f: { rt: "loop" } }), true);
+  assert.equal(says({ is_loop: true, f: { rt: "figure8" } }), true);
+  assert.equal(says({ is_loop: true, f: {} }), true);
+  assert.equal(says({ is_loop: false }), false);
+});
+
+// T1201 (T1183-b): routed bridges get their own sentence, straight ones keep
+// theirs, and a mix says how many were routed.
+test("T1201: routed bridges are told apart from straight connectors", () => {
+  const keyOf = (bridges) => (JSON.stringify(trailStory({ id: 1, category: "hike" }, { bridges }, { t }))
+    .match(/trails\.sBridge\w*/) || [])[0];
+  assert.equal(keyOf({ n: 2, total_m: 90 }), "trails.sBridges");
+  assert.equal(keyOf({ n: 1, total_m: 40 }), "trails.sBridge");
+  assert.equal(keyOf({ n: 2, total_m: 900, routed: 2 }), "trails.sBridgesRouted");
+  assert.equal(keyOf({ n: 1, total_m: 600, routed: 1 }), "trails.sBridgeRouted");
+  assert.equal(keyOf({ n: 3, total_m: 900, routed: 1 }), "trails.sBridgesMixed");
+});
+
+// T1201 (T1179-f): every retired describe.py lead shape on the 2026-09-13
+// wire reads as templated, so it is never printed as prose.
+test("T1201: retired describe.py leads read as templated", () => {
+  for (const lead of [
+    "Based on its distance and ascent, this route is classified as easy.",
+    "Kelduleid is a 9.3 km walking route in IS. This easy path features 68 m of ascent and 35 m of descent.",
+    "The European long distance path E11 in the Netherlands is a walking route measuring 346.5 km.",
+    "The Triesen Post to Vaduz route is a waymarked hiking path located in LI.",
+  ]) assert.equal(looksTemplated(lead), true, lead);
+  assert.equal(looksTemplated("A ridge walk above the lake with two huts."), false);
 });

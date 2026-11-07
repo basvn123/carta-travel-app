@@ -3,6 +3,8 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip, IconButton } from '../../components/ui/index.js';
 import { ArrowRightIcon, CheckIcon, CloseIcon, CopyIcon, PlusIcon, RedoIcon, SparkIcon } from '../../components/Icons.jsx';
 import { useFocusTrap } from '../../hooks/useFocusTrap.js';
+import { AiMark } from '../../components/AiMark.jsx';
+import { planAnswerText } from '../../lib/aiReport.js';
 
 /**
  * The Carta bot as a chat (T899, the owner's plan days board 2026-10-30),
@@ -184,6 +186,13 @@ export function DayBotChat({
                   )}
                 </div>
               </div>
+              {/* T1215: the summary and the stops' reasons are the model's words. */}
+              <AiMark report={{
+                feature: 'plan',
+                question: [city, msgs[i - 1]?.text].filter(Boolean).join(': '),
+                answer: planAnswerText(p),
+                model: p.meta?.model || null,
+              }} />
               <div className="dbot-tools">
                 <IconButton label={t('bot.copy')} onClick={() => copy(p)}><CopyIcon size={15} /></IconButton>
                 {i === last && <IconButton label={t('ai.retry')} onClick={() => send(msgs[i - 1]?.text || t('bot.s.plan'))}><RedoIcon size={15} /></IconButton>}

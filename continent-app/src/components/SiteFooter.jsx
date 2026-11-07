@@ -2,7 +2,7 @@ import React from 'react';
 import Logo from './Logo.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
-import { CONTACT } from '../lib/contact.js';
+import { SUPPORT_EMAIL } from '../lib/contact.js';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { ChevronDownIcon, GlobeIcon } from './Icons.jsx';
 import '../styles/82-site-footer.css';
@@ -15,6 +15,7 @@ import '../styles/82-site-footer.css';
  * ?legal= addresses (LegalFromUrl) and load as their own page.
  */
 let navigate = null;
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function setFooterNavigate(fn) { navigate = fn; }
 
 function FooterLink({ href, to, opts, children, external }) {
@@ -98,13 +99,15 @@ export function SiteFooter() {
             <FooterLink to="home" href={() => tabHref('home')}>{t('footer.how')}</FooterLink>,
             <FooterLink to="pricing" href={() => tabHref('pricing')}>{t('footer.pricing')}</FooterLink>,
             <FooterLink to="faq" href={() => tabHref('account', undefined, { view: 'faq' })}>{t('footer.faq')}</FooterLink>,
-            <a className="site-footer-link" href={`mailto:${CONTACT}`}>{CONTACT}</a>,
+            <FooterLink href={() => '?legal=support'}>{t('footer.support')}</FooterLink>,
+            <a className="site-footer-link" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>,
           ])}
           {col('legal', t('footer.legal'), [
             <FooterLink href={() => '?legal=terms'}>{t('footer.terms')}</FooterLink>,
             <FooterLink href={() => '?legal=privacy'}>{t('footer.privacy')}</FooterLink>,
             <FooterLink href={() => '?legal=imprint'}>{t('footer.imprint')}</FooterLink>,
             <FooterLink href={() => '?legal=cookies'}>{t('ac2.cookies')}</FooterLink>,
+            <FooterLink href={() => '?legal=ai'}>{t('aiPage.footer')}</FooterLink>,
           ])}
         </nav>
         <div className="site-footer-base">

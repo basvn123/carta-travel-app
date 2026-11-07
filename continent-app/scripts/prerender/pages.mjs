@@ -33,6 +33,7 @@ import * as C from '../../src/lib/cycleStory.js';
 import { trailRating } from '../../src/lib/trailCards.js';
 import { fitTitle, fitDescription, clean } from './html.mjs';
 import * as D from './derived.mjs';
+import { S, num0, num1, eur as eurIn, countryIn, monthIn, listIn } from './strings.mjs';
 
 /** The English catalogue as the app's t(): same keys, same {slot} rule. */
 export const t = (key, vars) => {
@@ -48,6 +49,9 @@ const kmOf = (m) => (m >= 10000 ? n0(m / 1000) : d1(m / 1000));
 const MON3 = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 const MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const monthOf = (code) => MONTH[typeof code === 'number' ? code - 1 : MON3.indexOf(String(code).slice(0, 3).toLowerCase())] || null;
+/** A month code (6 or 'jun') by name in a language (T1212); English keeps monthOf. */
+const monthLang = (lang, code) => (lang === 'en' ? monthOf(code)
+  : monthIn(lang, typeof code === 'number' ? code : MON3.indexOf(String(code).slice(0, 3).toLowerCase()) + 1));
 const sentence = (s) => { const c = clean(s); return c && !/[.!?]$/.test(c) ? `${c}.` : c; };
 // The Carta score fact in rating v5's words ("8.9 Exceptional", T763), from
 // lib/rating.js; none for an item listed without a v5 score.
@@ -130,6 +134,30 @@ export function trailHeadline(tr) {
   return `${kmOf(tr.distance_m)} km ${g ? `${t(g).toLowerCase()} ` : ''}${shape}`;
 }
 
+/**
+ * Prose for a trail page, from the fields the row has and nothing else (T1113).
+ * A field the row lacks is left out of the sentence, so the word count is an
+ * honest measure of how much the data says.
+ */
+export function trailAbout(tr, { name, region, climb, season, paved, places }) {
+  const out = [];
+  const shape = tr.is_loop ? 'a loop that ends where it starts' : 'a point to point route';
+  const a = [`${name} is ${shape} of ${kmOf(tr.distance_m)} km in ${region}`];
+  if (climb?.up) a.push(`with ${n0(climb.up)} m of climbing${climb.down ? ` and ${n0(climb.down)} m of descent` : ''}`);
+  const first = sentence(a.join(' '));
+  const b = [];
+  if (isNum(tr.duration_min)) b.push(`Allow about ${fmtHours(tr.duration_min / 60)} on foot, an estimate from distance and climb.`);
+  const g = T.gradeLabelKey(tr);
+  if (g) b.push(`Carta grades it ${t(g).toLowerCase()}.`);
+  if (tr.ele?.max) b.push(`The highest point is ${n0(tr.ele.max)} m.`);
+  if (paved != null) b.push(`${paved}% of the way is paved.`);
+  if (season) b.push(`The season runs ${season}${tr.f?.se?.est ? ' (an estimate)' : ''}.`);
+  if (tr.f?.ref) b.push(`Follow the signs marked ${clean(tr.f.ref)}.`);
+  if (places?.length) b.push(`The nearest ${places.length === 1 ? 'town' : 'towns'} Carta covers: ${places.map((x) => `${x.name}${x.km != null ? ` (${d1(x.km)} km)` : ''}`).join(', ')}.`);
+  if (b.length) out.push(`${first} ${b.join(' ')}`);
+  return out;
+}
+
 export function trailPage(tr, ctx) {
   const cc = tr.country;
   const name = clean(tr.name);
@@ -152,6 +180,10 @@ export function trailPage(tr, ctx) {
   const parent = tr.h?.cls === 'stage' && (tr.h.top || tr.h.of) ? ctx.trailByName(cc, tr.h.top || tr.h.of) : null;
   const family = (ctx.familyOf(cc, tr.fam?.k) || []).filter((r) => r.id !== tr.id);
   const nearby = ctx.topTrails(cc, tr.rg?.n2, tr.id, 8);
+  // T1113 (K2): the places whose pages list this trail, nearest first, and a
+  // plain paragraph written only from the measured fields the row has.
+  const places = ctx.placesOfTrail ? ctx.placesOfTrail(cc, tr.id, 4) : [];
+  const about = trailAbout(tr, { name, region: region || countryName(cc), climb, season, paved, places });
   const subject = {
     '@type': 'TouristAttraction',
     additionalType: 'Hiking route',
@@ -190,7 +222,9 @@ export function trailPage(tr, ctx) {
       tr.f?.ref ? { label: 'Signs to follow', value: clean(tr.f.ref) } : null,
     ].filter(Boolean),
     sections: [
+      about.length ? { h2: 'About this walk', paras: about } : null,
       reasons.length ? { h2: 'What you pass', paras: reasons } : null,
+      places.length ? { h2: 'Places to stay near it', links: places.map((x) => ({ name: x.name, path: paths.dest(x.slug), meta: x.km != null ? `${d1(x.km)} km` : '', metaNum: true })) } : null,
       parent ? { h2: 'Part of a longer route', links: [{ name: clean(parent.name), path: paths.trail(cc, parent.id, parent.name), meta: `${kmOf(parent.distance_m)} km`, metaNum: true }] } : null,
       family.length ? {
         h2: `More of ${clean(tr.fam?.n || name)}`,
@@ -429,7 +463,7 @@ export function destPage(dos, ctx) {
   const cost = ctx.costOf(dos.id);
   const measured = cost && cost.stayLevel === 'city';
   const v = dos.verdict || {};
-  const best = (dos.when?.best || []).map(monthOf).filter(Boolean);
+  const best = (dos.when?.best || []).map((m) => monthLang(ctx.lang || 'en', m)).filter(Boolean);
   // T368 (owner call T362 on T205-g): on a page that is not English the
   // English-only Wikivoyage intro is displaced by sentences derived from the
   // structured fields (derived.mjs). ctx.lang is unset for the English build.
@@ -437,35 +471,41 @@ export function destPage(dos, ctx) {
   const foreign = lang !== 'en';
   const intro = foreign ? '' : clean(dos.intro?.short || '');
   const body = foreign ? '' : clean(dos.intro?.body || '');
-  const day = cost?.dayEur != null ? `€${n0(cost.dayEur)}` : null;
-  const headNum = measured && day ? `${day} a day` : (isNum(v.score) ? `rated ${d1(v.score)}` : null);
+  const day = cost?.dayEur != null ? (foreign ? eurIn(lang, cost.dayEur) : `€${n0(cost.dayEur)}`) : null;
+  // T1212: the country's name, numbers and chrome in the page's language.
+  const cname = foreign ? countryIn(lang, cc) : countryName(cc);
+  const s = (k, vars) => S(lang, k, vars);
+  const km1 = (v) => (foreign ? `${num1(lang, v)} km` : `${d1(v)} km`);
+  const away = (v) => (foreign ? s('kmAway', { km: num1(lang, v) }) : `${d1(v)} km away`);
+  const headNum = measured && day ? (foreign ? s('aDay', { eur: day }) : `${day} a day`)
+    : (isNum(v.score) ? (foreign ? s('rated', { score: num1(lang, v.score) }) : `rated ${d1(v.score)}`) : null);
   const costLine = day
     ? (measured
       ? `A day in ${name} costs about ${day} for one person: a bed measured from ${cost.listings ? `${n0(cost.listings)} stays in the town` : 'stays in the town'} and a day of food.`
       : `A day in ${name} costs about ${day} for one person, from ${cost.stayLevel === 'region' ? 'the nearest measured town' : 'national figures'} rather than stays measured in the town.`)
     : null;
   const rankLine = isNum(v.country_rank) && isNum(v.country_n) ? `Rated ${n0(v.country_rank)} of ${n0(v.country_n)} places in ${countryName(cc)}.` : null;
-  const derivedLead = foreign ? D.destLead(lang, { name, country: countryName(cc), score: v.score, day }) : null;
+  const derivedLead = foreign ? D.destLead(lang, { name, country: cname, score: v.score, day }) : null;
   const derivedRank = foreign && isNum(v.country_rank) && isNum(v.country_n)
-    ? D.destRank(lang, { rank: v.country_rank, n: v.country_n, country: countryName(cc) }) : null;
+    ? D.destRank(lang, { rank: v.country_rank, n: v.country_n, country: cname }) : null;
   const image = destImage(dos, name);
   const ar = dos.around || {};
-  const trailLinks = (ar.trails || []).filter((x) => ctx.isTrail(x.cc, x.id)).map((x) => ({ name: clean(x.name), path: paths.trail(x.cc, x.id, x.name), meta: `${d1(x.km_len)} km`, metaNum: true }));
-  const cycleLinks = (ar.cycling || []).filter((x) => ctx.isCycle(x.cc, x.id)).map((x) => ({ name: clean(x.name || x.ref), path: paths.cycle(x.cc, x.id, x.name || x.ref), meta: isNum(x.km_len) ? `${d1(x.km_len)} km` : '', metaNum: true }));
+  const trailLinks = (ar.trails || []).filter((x) => ctx.isTrail(x.cc, x.id)).map((x) => ({ name: clean(x.name), path: paths.trail(x.cc, x.id, x.name), meta: km1(x.km_len), metaNum: true }));
+  const cycleLinks = (ar.cycling || []).filter((x) => ctx.isCycle(x.cc, x.id)).map((x) => ({ name: clean(x.name || x.ref), path: paths.cycle(x.cc, x.id, x.name || x.ref), meta: isNum(x.km_len) ? km1(x.km_len) : '', metaNum: true }));
   const water = [...(dos.nearby?.beaches || []), ...(dos.nearby?.lakes || []), ...(ar.beaches || [])]
     .map((x) => ({ ...x, kind: (x.layer || '').startsWith('lake') ? 'lake' : 'beach' }))
     .filter((x, i, a) => a.findIndex((y) => y.id === x.id) === i && ctx.isLayer(x.kind, x.id))
-    .map((x) => ({ name: clean(x.name), path: paths[x.kind](x.cc, x.id), meta: `${d1(x.km)} km away`, metaNum: true }));
+    .map((x) => ({ name: clean(x.name), path: paths[x.kind](x.cc, x.id), meta: away(x.km), metaNum: true }));
   const peaks = (dos.nearby?.mountains || []).filter((x) => ctx.isLayer('mountain', x.id))
-    .map((x) => ({ name: clean(x.name), path: paths.mountain(x.cc, x.id), meta: `${d1(x.km)} km away`, metaNum: true }));
+    .map((x) => ({ name: clean(x.name), path: paths.mountain(x.cc, x.id), meta: away(x.km), metaNum: true }));
   const days = (dos.trips || []).map((x) => ({ x, d: x.id ? ctx.destById(x.id) : null })).filter((o) => o.d)
-    .map(({ x, d }) => ({ name: d.name, path: paths.dest(d.slug), meta: x.travel?.minutes ? `${fmtHours(x.travel.minutes / 60)} by ${x.travel.mode || 'road'}` : `${n0(x.dist_km)} km`, metaNum: true }));
+    .map(({ x, d }) => ({ name: d.name, path: paths.dest(d.slug), meta: foreign ? (isNum(x.dist_km) ? `${num0(lang, x.dist_km)} km` : '') : (x.travel?.minutes ? `${fmtHours(x.travel.minutes / 60)} by ${x.travel.mode || 'road'}` : `${n0(x.dist_km)} km`), metaNum: true }));
   const hl = (dos.highlights || []).slice(0, 8).map((h) => (h.fact && !foreign ? `${clean(h.name)}: ${sentence(h.fact)}` : sentence(h.name)));
   const subject = {
     '@type': 'TouristDestination',
     name,
     geo: geo(pl.lat, pl.lon),
-    containedInPlace: { '@type': 'Country', name: countryName(cc) },
+    containedInPlace: { '@type': 'Country', name: cname },
     ...(pl.categories?.length ? { touristType: pl.categories } : {}),
     ...(image ? { image: imageNode(image) } : {}),
     ...((dos.highlights || []).length ? { includesAttraction: dos.highlights.slice(0, 8).map((h) => ({ '@type': 'TouristAttraction', name: clean(h.name) })) } : {}),
@@ -477,11 +517,19 @@ export function destPage(dos, ctx) {
   return {
     kind: 'dest',
     path: paths.dest(dos.slug),
-    title: fitTitle(name, headNum, countryName(cc)),
+    title: fitTitle(name, headNum, cname),
     description: foreign ? fitDescription([...derivedLead, derivedRank]) : fitDescription([intro || body, costLine, rankLine]),
     h1: name,
     lead: foreign ? derivedLead : [intro || body, costLine].filter(Boolean),
-    facts: [
+    facts: foreign ? [
+      // The crowding and bathing-water words are English data; a language page leaves them out.
+      day ? { label: s(measured ? 'dayOne' : 'dayOneEst'), value: day, num: true } : null,
+      cost?.stayEur != null ? { label: s('bed'), value: eurIn(lang, cost.stayEur), num: true } : null,
+      cost?.foodEur != null ? { label: s('food'), value: eurIn(lang, cost.foodEur), num: true } : null,
+      isNum(v.score) ? { label: s('score'), value: s('scoreOf', { score: num1(lang, v.score) }), num: true } : null,
+      isNum(pl.visit_h) ? { label: s('visit'), value: fmtHours(pl.visit_h), num: true } : null,
+      best.length ? { label: s('bestMonths'), value: listIn(lang, best) } : null,
+    ].filter(Boolean) : [
       day ? { label: measured ? 'A day for one person' : 'A day for one person, estimated', value: day, num: true } : null,
       cost?.stayEur != null ? { label: 'Bed, a night', value: `€${n0(cost.stayEur)}`, num: true } : null,
       cost?.foodEur != null ? { label: 'Food, a day', value: `€${n0(cost.foodEur)}`, num: true } : null,
@@ -492,7 +540,21 @@ export function destPage(dos, ctx) {
       dos.when?.crowding?.label ? { label: 'Crowds', value: dos.when.crowding.label } : null,
     ].filter(Boolean),
     image,
-    sections: [
+    sections: foreign ? [
+      // T1212: the same links in the page's language. The week receipts are
+      // English-only pages with English names, so a language page skips them.
+      cost?.dayEur != null && paths.cost(dos.slug) ? {
+        h2: s('weekCostH', { name }),
+        links: [{ name: s('weekCostLink', { name }), path: paths.cost(dos.slug), meta: eurIn(lang, weekReceipt(cost, ctx.destRow(dos.id)).total), metaNum: true }],
+      } : null,
+      hl.length ? { h2: s('seeH'), paras: hl } : null,
+      trailLinks.length ? { h2: s('walksH', { name }), links: linkRows(trailLinks, 6) } : null,
+      cycleLinks.length ? { h2: s('cyclingH'), links: linkRows(cycleLinks, 4) } : null,
+      water.length ? { h2: s('waterH'), links: linkRows(water, 6) } : null,
+      peaks.length ? { h2: s('peaksH'), links: linkRows(peaks, 4) } : null,
+      days.length ? { h2: s('dayTripsH', { name }), links: linkRows(days, 8) } : null,
+      (() => { const seen = new Set(days.map((x) => x.path)); const near = ctx.nearPlaces(dos.id, 4, lang).filter((x) => !seen.has(x.path)); return near.length ? { h2: s('nearH', { name }), links: near } : null; })(),
+    ] : [
       // T224: the week receipt is its own page; the destination links to it.
       cost?.dayEur != null && paths.cost(dos.slug) ? {
         h2: `What a week in ${name} costs`,
@@ -510,7 +572,7 @@ export function destPage(dos, ctx) {
     ],
     coverage: foreign ? derivedRank : rankLine,
     credits: (dos.credits || []).map((c) => clean(`${c.name}${c.licence && c.licence !== 'see site' ? `, ${c.licence}` : ''}`)),
-    crumbs: [home, countryCrumb(cc)],
+    crumbs: [home, foreign ? { name: cname, path: paths.country(cc) } : countryCrumb(cc)],
     boot: `#dest=${encodeURIComponent(dos.id)}`,
     subject,
     lastmod: dos.built_at || null,
@@ -948,9 +1010,49 @@ export function tripPage(trip, ctx) {
   const cost = trip.cost?.per_day_eur ? sentence(`About €${n0(trip.cost.per_day_eur)} a day for one person for the beds and the ground transport, an estimate from the catalogue`) : null;
   const cc = trip.cc;
   const derivedTrip = foreign ? D.tripLead(lang, { days: trip.days, nights: trip.nights, names, perDayEur: trip.cost?.per_day_eur }) : null;
+  // T1212: the page in another language. Transport and pace are English data
+  // words and the week receipt is an English page; a language page leaves them out.
+  if (foreign) {
+    const s = (k, vars) => S(lang, k, vars);
+    const cname = countryIn(lang, cc);
+    const seasonL = (trip.season || []).map((m) => monthLang(lang, m)).filter(Boolean);
+    const nightsOf = (n) => s(n === 1 ? 'night' : 'nights', { n });
+    const h1L = s('tripH1', { names: listIn(lang, names), n: trip.days });
+    return {
+      kind: 'trip',
+      path: paths.trip(trip.id),
+      ...(ctx.tripCanonical && ctx.tripCanonical(trip.id) ? { canonical: paths.trip(ctx.tripCanonical(trip.id)) } : {}),
+      title: fitTitle(listIn(lang, names), s('days', { n: trip.days }), cname),
+      description: fitDescription(derivedTrip),
+      h1: h1L,
+      lead: derivedTrip,
+      facts: [
+        { label: s('length'), value: s('daysNights', { days: trip.days, nights: trip.nights }), num: true },
+        isNum(trip.km) ? { label: s('distance'), value: `${num0(lang, trip.km)} km`, num: true } : null,
+        trip.cost?.per_day_eur ? { label: s('dayOneEst'), value: eurIn(lang, trip.cost.per_day_eur), num: true } : null,
+        seasonL.length ? { label: s('season'), value: seasonL.length === 1 ? seasonL[0] : s('span', { a: seasonL[0], b: seasonL[seasonL.length - 1] }) } : null,
+      ].filter(Boolean),
+      sections: [
+        { h2: s('stayH'), links: cities.filter((c) => c.d).map((c) => ({ name: c.d.name, path: paths.dest(c.d.slug), meta: nightsOf(c.n), metaNum: true })) },
+        trip.sights?.length ? { h2: s('sightsH'), paras: [sentence(listIn(lang, trip.sights.map(clean)))] } : null,
+        { h2: s('moreTripsH', { country: cname }), links: ctx.topTrips(cc, trip.id, 6).map((x) => ({ name: listIn(lang, (x.cities || []).map((c) => clean(c.city))), path: paths.trip(x.id), meta: s('days', { n: x.days }), metaNum: true })) },
+      ],
+      coverage: s('tripCoverage'),
+      credits: [s('tripCredit')],
+      crumbs: [home, { name: cname, path: paths.country(cc) }, { name: s('trips'), path: paths.section(cc, 'trips') }],
+      boot: null,
+      subject: {
+        '@type': 'TouristTrip', name: h1L,
+        itinerary: { '@type': 'ItemList', itemListElement: cities.map((c, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'TouristDestination', name: clean(c.d?.name || c.city) } })) },
+      },
+      lastmod: ctx.generatedAt('trips', cc),
+    };
+  }
   return {
     kind: 'trip',
     path: paths.trip(trip.id),
+    // T1113: a near-duplicate trip (same towns, other nights or pace) points to its representative.
+    ...(ctx.tripCanonical && ctx.tripCanonical(trip.id) ? { canonical: paths.trip(ctx.tripCanonical(trip.id)) } : {}),
     title: fitTitle(joinNames(names), `${trip.days} days`, countryName(cc)),
     description: foreign ? fitDescription(derivedTrip) : fitDescription([hook, cost, season.length ? `Best ${monthSpan(season)}.` : '']),
     h1,
@@ -991,6 +1093,43 @@ export function journeyPage(j, ctx) {
   const days = foreign ? [] : (j.itinerary || []).map((d) => `Day ${d.day}: ${sentence(d.title)}`);
   const derivedJourney = foreign ? D.journeyLead(lang, { name, days: j.durationDays, country: countryName(cc), perDayEur: perDay?.low }) : null;
   const others = ctx.journeysOfType(j.tripTypeSlug, j.id, 6);
+  // T1212: the page in another language. Trip type and effort are English
+  // data words; a language page leaves them out.
+  if (foreign) {
+    const s = (k, vars) => S(lang, k, vars);
+    const cname = cc ? countryIn(lang, cc) : null;
+    const monthsL = (j.bestPeriod?.months || []).map((m) => monthLang(lang, m)).filter(Boolean);
+    // dataVintage is a year (2026) or a month (2026-05).
+    const vintage = /^(\d{4})(?:-(\d{2}))?$/.exec(String(j.dataVintage ?? ''));
+    const when = vintage ? (vintage[2] ? `${monthIn(lang, Number(vintage[2]))} ${vintage[1]}` : vintage[1]) : null;
+    const derivedL = D.journeyLead(lang, { name, days: j.durationDays, country: cname || '', perDayEur: perDay?.low });
+    return {
+      kind: 'journey',
+      path: paths.journey(j.id),
+      title: fitTitle(name, s('days', { n: j.durationDays }), null),
+      description: fitDescription(derivedL),
+      h1: name,
+      lead: derivedL,
+      facts: [
+        { label: s('length'), value: s('days', { n: j.durationDays }), num: true },
+        monthsL.length ? { label: s('bestMonths'), value: listIn(lang, monthsL) } : null,
+        perDay?.low ? { label: s('dayOne'), value: perDay.high && perDay.high !== perDay.low ? s('range', { low: eurIn(lang, perDay.low), high: eurIn(lang, perDay.high) }) : eurIn(lang, perDay.low), num: true } : null,
+      ].filter(Boolean),
+      sections: [
+        cc && paths.country(cc) ? { h2: s('moreInH', { country: cname }), links: [
+          { name: cname, path: paths.country(cc) },
+          ...(ctx.hasSection(cc, 'trails') ? [{ name: s('walksIn', { country: cname }), path: paths.section(cc, 'trails') }] : []),
+          ...(ctx.hasSection(cc, 'trips') ? [{ name: s('tripsIn', { country: cname }), path: paths.section(cc, 'trips') }] : []),
+        ] } : null,
+        others.length ? { h2: s('moreJourneysH'), links: others.map((o) => ({ name: clean(o.title), path: paths.journey(o.id), meta: s('days', { n: o.durationDays }), metaNum: true })) } : null,
+      ],
+      coverage: when ? s('checked', { when }) : null,
+      credits: [s('journeyCredit')],
+      crumbs: cc && paths.country(cc) ? [home, { name: cname, path: paths.country(cc) }] : [home],
+      subject: { '@type': 'TouristTrip', name },
+      lastmod: j.generated_at || null,
+    };
+  }
   return {
     kind: 'journey',
     path: paths.journey(j.id),

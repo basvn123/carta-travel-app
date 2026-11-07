@@ -39,17 +39,32 @@
  *
  * Secrets (set via `supabase secrets set`): GEMINI_API_KEY, and optionally
  * GEMINI_MODEL (default gemini-flash-latest), AI_GLOBAL_DAILY_CAP (200).
+ * Provider and model chain (T1137): AI_PLAN_DAY_PROVIDER, AI_PLAN_DAY_MODELS
+ * and the other keys in supabase/functions/_shared/aiModels.mjs.
  * Per-user caps now come from public.plan_tiers, not from env.
  */
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import {
   cleanText, sanitizeCandidates, selectCandidates, dayCentroid, sanitizeAiStops,
-  scheduleDay, cacheKeyInput, modelChain, shouldFallOver, attemptTimeoutMs, CACHE_KEY_VERSION,
+  scheduleDay, cacheKeyInput, CACHE_KEY_VERSION,
   signRefineToken, verifyRefineToken, REFINES_FREE,
 } from './logic.mjs';
 import { consume, logCapRejection, logModelEvent, refund } from '../_shared/passes.mjs';
 
 import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
+// AI security (T1117, C8): traveller and client-sent text is scrubbed and
+// fenced as data, the security rules ride in systemInstruction, and every
+// answer (fresh or cached) passes the shape and text check before it is sent.
+import {
+  LIMITS, guardPlanInput, guardPlanOutput, guardPlanPayload, makeNonce, systemRules,
+} from '../_shared/aiGuard.mjs';
+// Model access (T1137, E3): the provider, the chain, the time budget, retries
+// and the refusal shape. A provider or model switch is an AI_PLAN_DAY_* value.
+import {
+  modelAccess, callModel, chainKey, supportsSearch, parseModelJson, refusalBody,
+} from '../_shared/aiModels.mjs';
+// The prompt and the response schema, from the prompt registry (T1140, E5).
+import { LANG_NAMES, RESPONSE_SCHEMA, buildPrompt } from './prompt.mjs';
 
 // The largest body this function reads (T1079): refused with 413 beyond it.
 const MAX_BODY = 400000;
@@ -65,151 +80,10 @@ const json = (status: number, body: unknown) => new Response(
   { status, headers: { ...CORS, 'Content-Type': 'application/json' } },
 );
 
-const LANG_NAMES: Record<string, string> = {
-  en: 'English', nl: 'Dutch', fr: 'French', de: 'German', es: 'Spanish', it: 'Italian',
-};
-
-// Gemini structured output: the schema makes malformed JSON impossible and
-// hallucinated keys unrepresentable. inCatalog=true stops carry an id from
-// the candidate list; discoveries carry their own coordinates instead.
-const RESPONSE_SCHEMA = {
-  type: 'OBJECT',
-  properties: {
-    summary: { type: 'STRING', description: 'One or two sentences on how the day flows and why it fits the group.' },
-    stops: {
-      type: 'ARRAY',
-      items: {
-        type: 'OBJECT',
-        properties: {
-          id: { type: 'STRING', description: 'Candidate id, required when inCatalog is true.' },
-          name: { type: 'STRING' },
-          arrive: { type: 'STRING', description: '24h HH:MM arrival estimate.' },
-          dwellMin: { type: 'INTEGER' },
-          why: { type: 'STRING', description: 'One short sentence: why this stop, in this slot.' },
-          inCatalog: { type: 'BOOLEAN' },
-          isEvent: { type: 'BOOLEAN', description: 'True for a festival, market or dated event rather than a permanent place.' },
-          lat: { type: 'NUMBER', description: 'Only for inCatalog=false discoveries.' },
-          lon: { type: 'NUMBER', description: 'Only for inCatalog=false discoveries.' },
-        },
-        required: ['name', 'arrive', 'dwellMin', 'why', 'inCatalog'],
-      },
-    },
-  },
-  required: ['summary', 'stops'],
-};
-
 /** "08:00" to minutes past midnight, or null when there was no answer. */
 function startMinFrom(hhmm: unknown): number | null {
   const m = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(hhmm ?? ''));
   return m ? Number(m[1]) * 60 + Number(m[2]) : null;
-}
-
-const PACE_STOPS: Record<string, string> = {
-  relaxed: '3 or 4 stops with generous time at each',
-  balanced: '5 or 6 stops at a comfortable rhythm',
-  packed: '7 or 8 stops, quick visits, see a lot',
-};
-
-function buildPrompt(p: {
-  city: string; country: string; dateISO: string; month: number; groupSize: number;
-  pace: string; vibe: string; avoidHills: boolean; freeText: string; lang: string;
-  hasStay: boolean; candidates: ReturnType<typeof sanitizeCandidates>;
-  wantEvents: boolean; refine: string; prevStops: string[];
-  profile: Record<string, unknown> | null;
-  mustInclude: { name: string; id: string | null; lat: number | null; lon: number | null; timeOfDay: string | null }[];
-  days: number;
-}) {
-  const langName = LANG_NAMES[p.lang] || 'English';
-  const summer = p.month >= 6 && p.month <= 8;
-  const lines = [
-    `You are Carta's day planner: you turn a vetted candidate list into one great, physically realistic walking day in ${p.city}, ${p.country} on ${p.dateISO}.`,
-    '',
-    `CANDIDATES (JSON, all researched and real; id, name, kind, category, traveller rating 0-10, mustSee, typical visit minutes, coordinates):`,
-    JSON.stringify(p.candidates.map((c) => ({
-      id: c.id, name: c.name, kind: c.kind, cat: c.cat, rating: c.rating,
-      mustSee: c.mustSee, dwellMin: c.dwellMin, lat: c.lat, lon: c.lon,
-      ...(c.desc ? { desc: c.desc } : {}),
-    }))),
-    '',
-    'RULES:',
-    p.days > 1
-      // T433: several days. The app cuts them by neighbourhood and orders and
-      // times each one on routed footpaths, so the model only chooses.
-      ? `- Choose the places for ${p.days} days, ${PACE_STOPS[p.pace] || PACE_STOPS.balanced} EACH day, so about ${p.days * (p.pace === 'relaxed' ? 4 : p.pace === 'packed' ? 7 : 5)} stops in all. List them strongest first; Carta splits them into days by neighbourhood and orders each day itself, so do not worry about the order or the arrival times beyond a rough guess.`
-      : `- Build ${PACE_STOPS[p.pace] || PACE_STOPS.balanced}. Start at ${(p.profile?.startTime as string) || '09:30'}, be finished by 18:00.`,
-    // The named stops are exempt, or two rules would contradict each other:
-    // a traveller who named three places we do not hold would otherwise be
-    // asking for a day the 80 percent rule forbids.
-    // T433: catalogue places only. A place Carta has not checked has no
-    // position it can route to safely, so the app never puts one on a walk.
-    '- EVERY stop MUST come from the candidate list, referenced by its exact id with inCatalog=true. Never invent an id, and never add a place that is not in the list.',
-    '- Sequence to minimise backtracking: neighbouring stops belong next to each other. Alternate heavy visits (museums, castles) with light ones (squares, views).',
-    `- Group of ${p.groupSize}. ${p.groupSize >= 5 ? 'Large group: walking is about 20 percent slower, spontaneous restaurant tables are unrealistic, prefer roomy venues and note where booking ahead matters.' : ''}`,
-    summer ? '- Peak-summer heat: place indoor or shaded stops between 13:00 and 16:00, outdoor highlights in the morning or late afternoon.' : '',
-    p.avoidHills ? '- The group avoids steep hills and stairs: prefer flat ground, mention step-free alternatives in the why lines when relevant.' : '',
-    p.hasStay ? '- The day starts from the traveller\'s stay; the first stop should be the natural first leg from there.' : '',
-    // The chat planner's answer profile. Each line only appears when the
-    // traveller actually answered it, so the prompt never argues with itself.
-    ...(p.profile ? [
-      // Walking is asked for in the traveller's own unit and in the one the
-      // schedule enforces: they answered in steps, the router thinks in km.
-      p.profile.steps
-        ? `- Total walking must stay under about ${p.profile.steps} steps for the whole day, which is roughly ${p.profile.maxWalkKm || Math.round(Number(p.profile.steps) / 1350)} km. Never plan a day that clearly exceeds it.`
-        : (p.profile.maxWalkKm ? `- Total walking must stay near ${p.profile.maxWalkKm} km for the whole day. Prefer stops that keep it under that; never plan a day that clearly exceeds it.` : ''),
-      p.profile.avoidHills ? '- Flat ground: avoid hills, steps and steep streets, and say so where it matters.' : '',
-      p.profile.transitOk ? '- A bus, tram or metro for the longer hops is welcome: one such leg may connect two clusters that are too far apart to walk between, and the why line should say which line or stop to use.' : '',
-      p.profile.companions === 'family' ? '- Travelling with children: stops must hold a child\'s attention, keep single stretches short, and favour places with somewhere to sit, eat and use a toilet. Say in the why line what a child gets out of each stop.' : '',
-      p.profile.companions === 'solo' ? '- Travelling alone: solo-friendly places, counter seating over a formal table, and nothing that only works for a group.' : '',
-      p.profile.companions === 'partner' ? '- A couple: one or two calm, memorable places matter more than volume.' : '',
-      p.profile.companions === 'group' ? '- A larger group: prefer roomy venues, note where booking ahead matters, and avoid anything with a tight queue or a small room.' : '',
-      p.profile.known === 'first' ? '- First visit: the famous, unmissable places belong in this day.' : '',
-      p.profile.known === 'again' ? '- They have been here before: lean away from the obvious headline sights and toward lesser known, local-feeling places.' : '',
-      p.profile.window === 'morning' ? '- A morning only: finish by about 13:00.' : '',
-      p.profile.window === 'afternoon' ? '- An afternoon only: start after lunch and finish by about 18:30.' : '',
-      p.profile.window === 'evening' ? '- A long day: keep going into the evening, and end somewhere good after dark.' : '',
-      p.profile.food === 'sit' ? '- Include one proper sit-down meal at a realistic hour and treat it as a stop.' : '',
-      p.profile.food === 'quick' ? '- Keep eating quick and casual: a market, bakery or street food stop rather than a long lunch.' : '',
-      p.profile.food === 'picnic' ? '- A picnic: include a bakery, deli or market stop to buy from, and a good outdoor place to eat it, in that order.' : '',
-      p.profile.food === 'none' ? '- No food stops: they will sort meals out themselves.' : '',
-      Array.isArray(p.profile.diet) && (p.profile.diet as string[]).length
-        ? `- Food must suit: ${(p.profile.diet as string[]).join(', ')}. Only pick eating stops that genuinely work for that, and say so in the why line.`
-        : '',
-      p.profile.avoidCrowds ? '- They want to avoid crowds: prefer the quieter hour for each busy place, and where a famous stop has a calmer alternative nearby, take it.' : '',
-      p.profile.indoor ? '- Keep at least one indoor stop in every day, in case of rain.' : '',
-      p.profile.stepFree ? '- Step-free: they have a pushchair or a wheelchair. Prefer places with level access, skip towers, catacombs and anything known for stairs, and keep the day compact.' : '',
-      (p.profile.weather as { rain?: boolean } | null)?.rain
-        ? '- Rain is likely: weight the day toward indoor stops, and keep the outdoor ones short and close together.' : '',
-      (p.profile.weather as { hot?: boolean } | null)?.hot
-        ? '- It will be very hot: indoor or shaded stops between 13:00 and 17:00, and outdoor highlights early or late.' : '',
-      Array.isArray(p.profile.moods) && p.profile.moods.length
-        ? `- What they are in the mood for: ${(p.profile.moods as string[]).join(', ')}. Let this drive which candidates make the cut.`
-        : '',
-    ] : []),
-    // Places the traveller named by hand. This is the one instruction the
-    // model may not trade away for a tidier route: dropping a stop somebody
-    // asked for by name is the single failure that makes a plan worthless.
-    p.mustInclude.length
-      ? `- These stops were named by the traveller and MUST all appear in the day: ${p.mustInclude.map((m) => {
-        const when = m.timeOfDay ? ` in the ${m.timeOfDay}` : '';
-        return m.id ? `${m.name} (candidate id ${m.id})${when}` : `${m.name}${when}`;
-      }).join('; ')}. Where one carries a candidate id, use that id with inCatalog=true; one without an id is not a place Carta can route to, so leave it out. Honour any stated time of day. Build the rest of the day around these, and if the walking budget is tight, drop other stops rather than these.`
-      : '',
-    p.freeText
-      ? `- The traveller's own wish, treat as a hard requirement if feasible: "${p.freeText}". Meet it with places from the candidate list; never fake a candidate id for it.`
-      : '',
-    // Events are the one thing the catalogue structurally cannot hold: it
-    // stores permanent places, not what happens on a given Tuesday.
-    p.wantEvents
-      ? `- ALSO look for festivals, markets, fairs or seasonal events that plausibly run in ${p.city} around ${p.dateISO || `month ${p.month}`}, and add at most two of them as inCatalog=false stops with isEvent=true and the event name; Carta lists them beside the day as things to check, never on the walking route. Only suggest ones you genuinely believe recur at that time of year. In their "why" line, say plainly that the traveller should confirm this year's dates, because you cannot see live listings. Never state a specific date as fact.`
-      : '',
-    // The refine loop: the traveller has seen a plan and asked for a change.
-    p.refine
-      ? `\nREVISION: the traveller already saw this plan: ${p.prevStops.join(', ') || '(none)'}.\nThey asked for: "${p.refine}".\nProduce a NEW plan that honours that request. Keep what they did not complain about, change what they did. Do not simply return the same plan.`
-      : '',
-    `- Write "summary" and every "why" in ${langName}. Keep each "why" to one short, concrete sentence.`,
-    '- Never use em dashes or en dashes in any text.',
-  ];
-  return lines.filter(Boolean).join('\n');
 }
 
 async function sha256Hex(s: string): Promise<string> {
@@ -220,15 +94,16 @@ async function sha256Hex(s: string): Promise<string> {
 Deno.serve(withCors(async (req) => {
   if (req.method !== 'POST') return json(405, { code: 'method' });
 
-  const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || '';
-  // Ordered models to try. Each has its own free daily budget, so exhausting
-  // the first is a reason to step down a rung, not to fail the request.
-  const CHAIN = modelChain(Deno.env.get('GEMINI_MODEL'), Deno.env.get('GEMINI_MODELS'));
+  // Provider and ordered models from config (aiModels). Each Gemini model has
+  // its own free daily budget, so exhausting the first is a reason to step
+  // down a rung, not to fail the request.
+  const envGet = (k: string) => Deno.env.get(k);
+  const access = modelAccess('plan-day', envGet);
   const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
   const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
   const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-  if (!GEMINI_API_KEY) return json(503, { code: 'no_ai' });
+  if (access.refusal) return json(access.refusal.status, refusalBody(access.refusal));
 
   // Only signed-in travellers may spend AI quota: the JWT in the Authorization
   // header must resolve to a real user.
@@ -256,16 +131,16 @@ Deno.serve(withCors(async (req) => {
   const pace = ['relaxed', 'balanced', 'packed'].includes(String(body.pace)) ? String(body.pace) : 'balanced';
   const vibe = ['classic', 'culture', 'active', 'foodie', 'mix'].includes(String(body.vibe)) ? String(body.vibe) : 'mix';
   const avoidHills = !!body.avoidHills;
-  const freeText = cleanText(String(body.freeText ?? ''), 280);
+  let freeText = cleanText(String(body.freeText ?? ''), 280);
   const lang = LANG_NAMES[String(body.lang)] ? String(body.lang) : 'en';
   const stay = body.stay && Number.isFinite(Number((body.stay as Record<string, unknown>).lat))
     ? { lat: Number((body.stay as Record<string, unknown>).lat), lon: Number((body.stay as Record<string, unknown>).lon) }
     : null;
-  const candidates = sanitizeCandidates(body.candidates);
+  let candidates = sanitizeCandidates(body.candidates);
   // Refine loop: the traveller saw a plan and asked for a change. prevStops
   // are names only, so a tampered payload can never inject coordinates.
-  const refine = cleanText(String(body.refine ?? ''), 280);
-  const prevStops = Array.isArray(body.prevStops)
+  let refine = cleanText(String(body.refine ?? ''), 280);
+  let prevStops = Array.isArray(body.prevStops)
     ? (body.prevStops as unknown[]).slice(0, 12).map((s) => cleanText(String(s), 90)).filter(Boolean)
     : [];
   const wantEvents = !!body.wantEvents;
@@ -313,7 +188,7 @@ Deno.serve(withCors(async (req) => {
   // id must match a real candidate: an unchecked id here would let a payload
   // name a stop the deck never offered.
   const candIds = new Set(candidates.map((c) => c.id));
-  const mustInclude = Array.isArray(body.mustInclude)
+  let mustInclude = Array.isArray(body.mustInclude)
     ? (body.mustInclude as unknown[]).slice(0, 8).map((raw) => {
       const m = (raw || {}) as Record<string, unknown>;
       const name = cleanText(String(m.name ?? ''), 90);
@@ -330,6 +205,12 @@ Deno.serve(withCors(async (req) => {
       };
     }).filter(Boolean) as { name: string; id: string | null; lat: number | null; lon: number | null; timeOfDay: string | null }[]
     : [];
+  // ---- AI security: every text the prompt prints, scrubbed (T1117) ----
+  // Before the cache key and the quota, so an injection spends nothing and
+  // cannot share a cache row with a clean request.
+  const inGuard = guardPlanInput({ city, country, freeText, refine, prevStops, mustInclude, candidates });
+  ({ freeText, refine, prevStops, mustInclude, candidates } = inGuard);
+  if (inGuard.badDest) return json(400, { code: 'bad_dest' });
   if (!destId || !city || !Number.isFinite(centreLat) || !Number.isFinite(centreLon)) {
     return json(400, { code: 'bad_dest' });
   }
@@ -428,7 +309,7 @@ Deno.serve(withCors(async (req) => {
   // a distinction may leave the key only when nothing downstream can see it,
   // and nothing downstream of this point ever sees the untrimmed deck again.
   const hash = await sha256Hex(cacheKeyInput({
-    model: CHAIN.join(','), destId, month, dateISO, groupSize, pace, vibe, avoidHills,
+    model: chainKey(access.cfg), destId, month, dateISO, groupSize, pace, vibe, avoidHills,
     freeText, lang, candidates: promptCandidates, refine, prevStopIds: prevStops, wantEvents,
     profile, mustInclude, days,
   }));
@@ -463,10 +344,13 @@ Deno.serve(withCors(async (req) => {
     key_version: CACHE_KEY_VERSION,
   }).then(() => {}, () => {});
 
-  if (isHit) {
+  // A cached row passes the same payload check as a fresh answer; one that
+  // fails it (off-schema, or written before the guard) is a miss.
+  const cachedSafe = isHit ? guardPlanPayload(cached.payload) : null;
+  if (cachedSafe) {
     return json(200, {
-      ...cached.payload,
-      meta: { ...cached.payload.meta, cached: true, freeRefine },
+      ...cachedSafe,
+      meta: { ...cachedSafe.meta, cached: true, freeRefine },
       pass: { tier: quota.tier, plansLeft: quota.left ?? null },
       ...(await nextToken()),
     });
@@ -482,10 +366,13 @@ Deno.serve(withCors(async (req) => {
   };
 
   // ---- the one AI call: plain generateContent, no tools, low temperature ----
+  const nonce = makeNonce();
+  const security = systemRules(nonce);
   const prompt = buildPrompt({
     city, country, dateISO, month, groupSize, pace, vibe, avoidHills, freeText, lang,
-    hasStay: !!stay, candidates: promptCandidates, wantEvents, refine, prevStops, profile, mustInclude, days,
+    hasStay: !!stay, candidates: promptCandidates, wantEvents, refine, prevStops, profile, mustInclude, days, nonce,
   });
+  if (prompt.length > LIMITS.planPromptChars) return await failed(400, { code: 'too_big' });
   // Google Search grounding is the paid feature, and the only one here that
   // reliably costs money: on Gemini 3 it bills per individual search query the
   // model decides to run, so one grounded day can be several billed units.
@@ -496,7 +383,10 @@ Deno.serve(withCors(async (req) => {
   // traveller still gets their day, just built without live listings, and
   // meta.groundingSkipped tells the client which upsell to show. Refusing
   // outright would punish a free user for ticking a box they were shown.
-  const groundingEnabled = (Deno.env.get('AI_ENABLE_GROUNDING') || '').toLowerCase() !== 'false';
+  // Live search needs a provider that has it (only Gemini today): another
+  // provider is the same as grounding switched off.
+  const groundingEnabled = (Deno.env.get('AI_ENABLE_GROUNDING') || '').toLowerCase() !== 'false'
+    && supportsSearch(access.cfg);
   let groundingSkipped: string | null = null;
   let useGrounding = false;
   if (wantEvents) {
@@ -517,72 +407,35 @@ Deno.serve(withCors(async (req) => {
       }
     }
   }
-  let aiText = '';
-  let usedModel = '';
-  let lastStatus = 0;
-  let timedOut = false;
-  const aiStart = Date.now();
-  for (const [i, model] of CHAIN.entries()) {
-    // One time budget for the whole chain (T415): a slow first model falls
-    // over to a faster one instead of ending the request.
-    const attemptMs = attemptTimeoutMs(i, Date.now() - aiStart);
-    if (!attemptMs) break;
-    let resp: Response;
-    try {
-      resp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
-          body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            ...(useGrounding ? { tools: [{ google_search: {} }] } : {}),
-            generationConfig: {
-              temperature: refine ? 0.45 : 0.25, // a revision must actually differ
-              // See suggest-city: gemini-flash-latest is a thinking model now
-              // and its thoughts spend this budget, so a full day of stops can
-              // truncate at 4096 and come back as ai_bad_output. Headroom costs
-              // nothing, only generated tokens are billed.
-              maxOutputTokens: 8192,
-              responseMimeType: 'application/json',
-              responseSchema: RESPONSE_SCHEMA,
-            },
-          }),
-          signal: AbortSignal.timeout(attemptMs),
-        },
-      );
-    } catch {
-      // A timeout or a dropped connection on this model. The next model gets
-      // what is left of the budget; attemptTimeoutMs stops the chain once too
-      // little is left, so the traveller is never held for minutes.
-      timedOut = true;
-      continue;
-    }
-    if (!resp.ok) {
-      lastStatus = resp.status;
-      if (shouldFallOver(resp.status)) continue;
-      return await failed(502, { code: 'ai_error', status: resp.status });
-    }
-    const data = await resp.json();
-    aiText = (data?.candidates?.[0]?.content?.parts || [])
-      .map((p: { text?: string }) => p.text || '')
-      .join('');
-    usedModel = model;
-    break;
-  }
-  // Chain exhausted. A trailing 429 means every model's budget is spent, which
-  // for the traveller is exactly the "come back tomorrow" case the quota copy
-  // already describes, so say that rather than "hiccup".
-  if (!usedModel) {
-    // Out of time with no model answering: the same ai_timeout as before.
-    if (timedOut && lastStatus !== 429) return await failed(504, { code: 'ai_timeout' });
-    return lastStatus === 429
-      ? await failed(429, { code: 'global_cap' })
-      : await failed(502, { code: 'ai_error', status: lastStatus });
-  }
+  // The one AI call, through aiModels: one time budget for the whole chain
+  // (T415), a 429 or 404 steps down a rung, a 5xx is retried once, a timeout
+  // falls over while budget is left. A trailing 429 everywhere is global_cap
+  // (the "come back tomorrow" copy), no answer in time is ai_timeout.
+  const ai = await callModel({
+    feature: 'plan-day',
+    env: envGet,
+    system: security,
+    user: prompt,
+    json: true,
+    schema: RESPONSE_SCHEMA,
+    search: useGrounding,
+    temperature: refine ? 0.45 : 0.25, // a revision must actually differ
+    // gemini-flash-latest is a thinking model and its thoughts spend this
+    // budget, so a full day of stops can truncate at 4096. Headroom costs
+    // nothing, only generated tokens are billed.
+    maxOutputTokens: 8192,
+  });
+  if (!ai.ok) return await failed(ai.status, refusalBody(ai));
+  const aiText: string = ai.text;
+  const usedModel: string = ai.model;
 
-  let parsed: { summary?: unknown; stops?: unknown };
-  try { parsed = JSON.parse(aiText); } catch { return await failed(502, { code: 'ai_bad_output' }); }
+  if (aiText.length > LIMITS.modelOutputChars) return await failed(502, { code: 'ai_bad_output' });
+  const raw: unknown = parseModelJson(aiText);
+  if (raw === undefined) return await failed(502, { code: 'ai_bad_output' });
+  // ---- AI security: the shape and text check, before anything reads the answer ----
+  const outGuard = guardPlanOutput(raw, { systemText: `${security}\n${prompt}` });
+  if (!outGuard.value) return await failed(502, { code: 'ai_bad_output' });
+  const parsed: { summary?: unknown; stops?: unknown } = outGuard.value;
 
   // ---- server-side truth pass: validate stops, then re-time the day ----
   // Validated against promptCandidates, the deck the model actually saw, not
@@ -626,7 +479,7 @@ Deno.serve(withCors(async (req) => {
     return await failed(400, { code: 'too_few' });
   }
 
-  const payload = {
+  const built = {
     summary: cleanText(String(parsed.summary ?? ''), 400),
     stops: sched.stops,
     events,
@@ -643,7 +496,7 @@ Deno.serve(withCors(async (req) => {
       // True when the primary was unavailable and a lower rung answered.
       // Worth surfacing in logs: a day of this means the free budget on the
       // good model is consistently gone before travellers get to it.
-      fellBack: usedModel !== CHAIN[0],
+      fellBack: ai.fellBack,
       optimized: sched.optimized,
       dropped,
       // Stops the model chose that were past the day's walking budget. A
@@ -660,8 +513,14 @@ Deno.serve(withCors(async (req) => {
       // The first two are the upsell moments.
       groundingSkipped,
       freeRefine,
+      // What the AI guard did (T1117): input fields it scrubbed, output stops
+      // it dropped for their shape, fields it repaired. Counts and names only.
+      guard: { input: inGuard.flags, dropped: outGuard.dropped, repaired: outGuard.repaired },
     },
   };
+  // The payload check every path runs (the cache path above runs it too).
+  const payload = guardPlanPayload(built);
+  if (!payload) return await failed(502, { code: 'ai_bad_output' });
 
   // Cache best-effort: a failed insert must never fail the response.
   try { await service.from('ai_plan_cache').upsert({ hash, payload, model: usedModel }); } catch { /* ignore */ }
@@ -671,7 +530,7 @@ Deno.serve(withCors(async (req) => {
   // admin panel to show the model distribution per day and compute the
   // fallback rate as (fallbacks / total) per day.
   const kindUsed = useGrounding ? 'ground' : 'plan';
-  const fellBack = usedModel !== CHAIN[0];
+  const fellBack = ai.fellBack;
   // Not awaited (T300-r): the response must not wait on telemetry. The helper
   // hands the promise to EdgeRuntime.waitUntil so the insert still completes.
   const edge = (globalThis as { EdgeRuntime?: { waitUntil?: (p: Promise<unknown>) => void } }).EdgeRuntime;

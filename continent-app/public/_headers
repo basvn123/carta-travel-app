@@ -144,6 +144,10 @@
 #     files come from data.carta-europetravel.com/ask/model/, already in
 #     connect-src; worker-src 'self' blob: was already enough.
 #
+#   - T1120 (H2): the error tracker's ingest host is NOT listed yet, on purpose: it
+#     is the exact host in the owner's DSN (o<id>.ingest.de.sentry.io, no wildcard),
+#     added to connect-src with the DSN (register row T1120-a). Until then the
+#     reporter is a no-op and the CSP would refuse it anyway.
 #   - wss://*.supabase.co removed from connect-src (T1079, C5): no code opens a
 #     Supabase realtime channel (grep for .channel( and realtime in src/ is
 #     empty), so the socket host allowed nothing. Add it back with the first
@@ -153,6 +157,14 @@
 #     print view opens a popup from window.open (tripExport.js), which plain
 #     same-origin would sever. Every host still in the CSP is called by code:
 #     checked one by one in the T1079 report.
+#   - style-src 'unsafe-inline' removed (T1090, C5). The app styles itself from
+#     the bundled sheets ('self') and through the CSSOM (React style props,
+#     MapLibre, element.style), which no style-src governs. The two <style>
+#     blocks it writes are allowed by hash and nothing else: the print view's
+#     popup (PRINT_CSS, src/lib/tripExport.js) and a prerendered page's reading
+#     column (STYLE, scripts/prerender/html.mjs). Change either and run
+#     `node scripts/csp-hashes.mjs --write`; npm test fails until you do, and
+#     scripts/verify_csp.mjs (CI job csp) fails on any refusal on any screen.
 #
 # The data-host stanzas above (poi, dest, fares, reach, the layer directories
 # and the three catalogue-sized root files) are also read by
@@ -165,8 +177,13 @@
 #
 # Removing the Wikimedia and Geograph hosts before the ladder ships would blank
 # every photograph in the app. The order is: add, migrate, verify, then remove.
+# Pages adds Access-Control-Allow-Origin: * to every static answer by default
+# (ZAP 10098, T1164). Nothing reads this host's files from another origin: the
+# app fetches them same-origin, and the data shards are on R2 with their own
+# CORS. So the default is detached here (T1164-d, T1211, ASVS V3.4.2).
 /*
-  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://*.cartocdn.com https://cdn.carta-europetravel.com https://data.carta-europetravel.com https://upload.wikimedia.org https://thumb.wikimedia.org https://commons.wikimedia.org https://s0.geograph.org.uk https://s1.geograph.org.uk https://s2.geograph.org.uk https://s3.geograph.org.uk https://tile.openstreetmap.org https://tiles.mapterhorn.com https://flagcdn.com; frame-src https://www.foto-webcam.eu; connect-src 'self' https://data.carta-europetravel.com https://*.supabase.co https://*.cartocdn.com https://routing.openstreetmap.de https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://*.wikipedia.org https://tiles.mapterhorn.com; manifest-src 'self'; upgrade-insecure-requests
+  ! Access-Control-Allow-Origin
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'sha256-czAy1a8jl0ZlfqmX1r8uBBiDzGCYhp5dpQoYABQFhAo=' 'sha256-MDz8ez0nW4buys6c4AOOf4l0q+L51Ez9KZj2RNEAIps='; font-src 'self' data:; img-src 'self' data: blob: https://*.cartocdn.com https://cdn.carta-europetravel.com https://data.carta-europetravel.com https://upload.wikimedia.org https://thumb.wikimedia.org https://commons.wikimedia.org https://s0.geograph.org.uk https://s1.geograph.org.uk https://s2.geograph.org.uk https://s3.geograph.org.uk https://tile.openstreetmap.org https://tiles.mapterhorn.com https://flagcdn.com; frame-src https://www.foto-webcam.eu; connect-src 'self' https://data.carta-europetravel.com https://*.supabase.co https://*.cartocdn.com https://routing.openstreetmap.de https://nominatim.openstreetmap.org https://overpass-api.de https://overpass.kumi.systems https://*.wikipedia.org https://tiles.mapterhorn.com; manifest-src 'self'; upgrade-insecure-requests
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

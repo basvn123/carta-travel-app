@@ -65,6 +65,20 @@ from derive_do import derive  # noqa: E402
 import derive_practical  # noqa: E402  (T641: emergency, transit, swim bans)
 import derive_place_page  # noqa: E402  (T911: essentials, eat, walk, similar)
 
+
+def _load_place_gallery():
+    """pipeline/photos/place_gallery.py by path (T1096): that folder holds
+    modules named like ours (derive, credit), so it never joins sys.path."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
+                        "photos", "place_gallery.py")
+    spec = importlib.util.spec_from_file_location("place_gallery", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+place_gallery = _load_place_gallery()
+
 SCHEMA = "dossier_v2"
 OUT_DIR = os.path.join(PUB, "dossier")
 
@@ -449,7 +463,7 @@ def attach_tasl(img, tasl, refusals):
 
 
 def compose_gallery(dest, highlights, nearby, tasl, refusals, target=8,
-                    landmarks=()):
+                    landmarks=(), extras=()):
     cands = []
     hero = (dest.get("image") or {}).get("url")
     if hero:
@@ -474,6 +488,10 @@ def compose_gallery(dest, highlights, nearby, tasl, refusals, target=8,
         for f in (nearby or {}).get(layer, []):
             if f.get("thumb") and (f.get("tier") or 0) < 2:
                 cands.append({"url": f["thumb"], "caption": f["name"], "role": layer})
+    # Last of all: the Commons gallery pass (T1096, pipeline/photos/
+    # place_gallery.py). Records carry their own author and licence; they go
+    # through the same TASL, licence and not-a-photograph gates below.
+    cands.extend(extras or ())
 
     out, seen, per_author = [], set(), Counter()
     for c in cands:
@@ -484,6 +502,7 @@ def compose_gallery(dest, highlights, nearby, tasl, refusals, target=8,
         img = {"url": thumb_at(c["url"], 960), "thumb": thumb_at(c["url"], 500)}
         if c.get("caption"):
             img["caption"] = c["caption"]
+        img.update(c.get("meta") or {})
         attach_tasl(img, tasl, refusals)
         # And ACT on that verdict. attach_tasl has always computed ok_print and
         # recorded a refusal, but nothing ever dropped the image, so a file with
@@ -648,7 +667,8 @@ def compose_short(dest, extract, facts, llm_intros=None):
     return " ".join(x for x in sents if x), "composed"
 
 
-def compose_intro(dest, wv, city_intros=None, facts=None, llm_intros=None):
+def compose_intro(dest, wv, city_intros=None, facts=None, llm_intros=None,
+                  place_intros=None):
     """What this PLACE is, never what its airport is.
 
     A gateway record carries the airport's article, so CDG opened with the
@@ -673,6 +693,15 @@ def compose_intro(dest, wv, city_intros=None, facts=None, llm_intros=None):
                 "title": rec.get("title"), "url": rec.get("url"),
                 "licence": "CC BY-SA 4.0",
             })
+    # T1095 (D9): a grounded, checked Wikivoyage + Wikipedia intro from
+    # harvest_place_intros.py replaces the body when it is longer. It is whole
+    # source sentences, so it is not trimmed to 700 characters.
+    pi = (place_intros or {}).get(dest["id"])
+    if (isinstance(pi, dict) and pi.get("status") == "ok" and pi.get("body")
+            and pi.get("grounding")
+            and len(pi["body"].split()) > len(body.split())):
+        body = pi["body"]
+        grounding = [dict(g) for g in pi["grounding"]]
     if not lead or (TEMPLATE_BLURB_RE.search(lead) and body):
         lead = ""
     intro = {}
@@ -1488,6 +1517,9 @@ def load_context():
     wv = load_json(os.path.join(CACHE, "wikivoyage.json"), {})
     city_intros = load_json(os.path.join(DCACHE, "city_intros.json"), {}) or {}
     llm_intros = load_json(os.path.join(DCACHE, "intros_llm.json"), {}) or {}
+    place_intros = load_json(os.path.join(DCACHE, "place_intros.json"), {}) or {}
+    place_gallery_store = load_json(
+        os.path.join(DCACHE, "place_gallery.json"), {}) or {}
     landmarks = load_json(os.path.join(DCACHE, "landmarks.json"), {}) or {}
     listings = load_json(os.path.join(CACHE, "wikivoyage_listings.json"), {})
     poi_wd = load_json(os.path.join(CACHE, "poi_wikidata.json"), {})
@@ -1524,7 +1556,8 @@ def load_context():
 
     return {
         "dests": dests, "acts": acts, "wv": wv, "city_intros": city_intros,
-        "llm_intros": llm_intros,
+        "llm_intros": llm_intros, "place_intros": place_intros,
+        "place_gallery": place_gallery_store,
         "landmarks": landmarks, "listings": listings,
         "poi_wd": poi_wd, "parking": parking, "gonext": gonext,
         "destinfo": destinfo, "trips_by_cc": trips_by_cc,
@@ -1604,8 +1637,9 @@ def build_one(dest, ctx, refusal_log):
                     f["thumb_ok_print"] = bool(rec) and licence_verdict(
                         rec.get("licence"), rec.get("author")) == "ok"
 
-    gallery = compose_gallery(dest, highlights, nearby, ctx["tasl"], refusals,
-                              landmarks=landmarks)
+    gallery = compose_gallery(
+        dest, highlights, nearby, ctx["tasl"], refusals, landmarks=landmarks,
+        extras=place_gallery.extras_for(ctx["place_gallery"], dest.get("id")))
     around = compose_around(dest, ctx["layer_index"])
     cl0 = dest.get("climate") or {}
     intro_facts = {
@@ -1618,7 +1652,7 @@ def build_one(dest, ctx, refusal_log):
                       for g in dest.get("designations") or []),
     }
     intro = compose_intro(dest, ctx["wv"], ctx["city_intros"], intro_facts,
-                          ctx.get("llm_intros"))
+                          ctx.get("llm_intros"), ctx.get("place_intros"))
     events = (ctx["destinfo"].get(dest.get("iso2"), {}).get(did) or {}).get(
         "events") or []
     research = load_json(os.path.join(

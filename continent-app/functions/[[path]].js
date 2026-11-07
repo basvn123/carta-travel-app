@@ -30,8 +30,9 @@
  * Function refuses to serve the page rather than serve it unprotected.
  */
 import {
-  prerenderKey, cardKey, sitemapKey, spliceShell, pageIsNoindex,
+  prerenderKey, cardKey, sitemapKey, spliceShell, pageIsNoindex, isLangShellPath,
 } from '../src/lib/prerenderShell.js';
+import { withTracking } from './_lib/track.js';
 
 const HTML = 'text/html; charset=utf-8';
 
@@ -70,7 +71,7 @@ async function serveSitemap(env, key, method, next) {
   });
 }
 
-export async function onRequest(context) {
+async function handle(context) {
   const { request, env, next } = context;
   if (request.method !== 'GET' && request.method !== 'HEAD') return next();
   const url = new URL(request.url);
@@ -82,7 +83,12 @@ export async function onRequest(context) {
   // favicon probe); never a page.
   if (/\.[a-z0-9]{1,8}$/i.test(url.pathname)) return next();
   const key = prerenderKey(url.pathname);
-  if (!key || !env.PRERENDER) return next();
+  // T1212: _redirects does not reach a Function's routes, so a language
+  // address with no stored page gets the app shell here (it reads the prefix).
+  const fallback = () => (isLangShellPath(url.pathname) && env.ASSETS
+    ? env.ASSETS.fetch(new Request(new URL('/', url), { method: request.method, headers: request.headers }))
+    : next());
+  if (!key || !env.PRERENDER) return fallback();
 
   let page;
   let shellRes;
@@ -91,7 +97,7 @@ export async function onRequest(context) {
       env.PRERENDER.get(key),
       env.ASSETS.fetch(new Request(new URL('/', url), { headers: { accept: 'text/html' } })),
     ]);
-    if (!obj || !shell.ok) return next();
+    if (!obj || !shell.ok) return fallback();
     page = await obj.text();
     shellRes = shell;
   } catch {
@@ -112,3 +118,5 @@ export async function onRequest(context) {
   if (pageIsNoindex(page)) headers.set('x-robots-tag', 'noindex, follow');
   return new Response(request.method === 'HEAD' ? null : html, { status: 200, headers });
 }
+
+export const onRequest = withTracking('prerender', handle, { fallback: (c) => c.next() });

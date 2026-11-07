@@ -20,6 +20,11 @@
  *   --sample   at most N pages of each kind, for a check run.
  *   --cards    also render each page's share card (scripts/og) to og/<key>.png
  *              and point og:image at it; slow, about 0.7 s a card.
+ *   --langs    the other languages to build (T1212): nl,de,fr,es,it by
+ *              default, `none` for English only. Only destinations, trips
+ *              and journeys get language pages (prerenderShell LANG_PAGE_KINDS).
+ *   --reviewed a preview of the indexing switch, nl:dest+trip,de:dest; the
+ *              committed switch is langs.mjs REVIEWED.
  *
  * Two passes. The first reads every layer file once and keeps the light rows
  * (no geometry), so any page can link any other page and only ever links a
@@ -49,7 +54,9 @@ import * as P from './pages.mjs';
 import { pageFloor, listedFloor, newTally, addToTally, daysPlan } from './floor.mjs';
 import { haversineKm } from '../../src/lib/runtime_pricing.js';
 import { writeSitemaps } from './sitemap.mjs';
-import { pageBar } from './quality.mjs';
+import { pageBar, canonicalTrips } from './quality.mjs';
+import { S, num0, eur } from './strings.mjs';
+import { LANGS, langVariant, isReviewed, hreflangLinks, parseReviewed } from './langs.mjs';
 
 const APP = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 const argv = process.argv.slice(2);
@@ -61,6 +68,9 @@ const OUT = path.resolve(APP, arg('--out', 'dist-prerender'));
 const ONLY = arg('--only', '') ? new Set(arg('--only').split(',')) : null;
 const SAMPLE = Number(arg('--sample', 0)) || 0;
 const CARDS = has('--cards');
+const LANGS_BUILD = arg('--langs', 'all') === 'none' ? []
+  : (arg('--langs', 'all') === 'all' ? [...LANGS] : arg('--langs').split(',').filter((l) => LANGS.includes(l)));
+const REVIEWED_RUN = parseReviewed(arg('--reviewed', ''));
 const COUNTRIES = (arg('--country', '') ? arg('--country').toUpperCase().split(',') : Object.keys(COUNTRY_SLUGS))
   .filter((cc) => COUNTRY_SLUGS[cc]);
 
@@ -142,13 +152,19 @@ setStayRecords(mergeStayFiles(list('stays/v1').filter((f) => f.endsWith('.json')
 const costs = priceDays(destRows, DEFAULT_PRICE_REQUEST);
 const dossierFiles = list('dossier').filter((f) => f.endsWith('.json'));
 const trailLinkedFrom = new Set(); // `${cc}/${id}` of every trail a destination page links to (the bar's linked place)
+const trailPlaces = new Map(); // `${cc}/${id}` -> [{ name, slug, km }] the destination pages that link to the trail (T1113)
 const dests = new Map(); // id -> { id, slug, name, cc, score, dayEur, measured, lat, lon, built, week, perDay }
 const destByCity = new Map();
 for (const f of dossierFiles) {
   const d = readJson(`dossier/${f}`);
   if (!d?.slug || !d.place?.iso2 || !COUNTRY_SLUGS[d.place.iso2]) continue;
   const cost = costs.get(d.id);
-  for (const x of d.around?.trails || []) trailLinkedFrom.add(`${x.cc}/${x.id}`);
+  for (const x of d.around?.trails || []) {
+    const k = `${x.cc}/${x.id}`;
+    trailLinkedFrom.add(k);
+    if (!trailPlaces.has(k)) trailPlaces.set(k, []);
+    trailPlaces.get(k).push({ name: clean(d.place?.name), slug: d.slug, km: typeof x.km === 'number' ? x.km : null, score: d.verdict?.score ?? 0 });
+  }
   // The week receipt (T224) is the figure the cost and trip-length pages use,
   // so a town's week and its four days come from the same printed lines.
   const week = P.weekReceipt(cost, destRows[d.id]);
@@ -189,7 +205,10 @@ const journeys = list('journeys/journey').filter((f) => f.endsWith('.json')).map
 
 const SECTION_SRC = { trails: 'trails', beaches: 'beaches', lakes: 'lakes', mountains: 'mountains', cycling: 'cycling', trips: 'trips' };
 const ONE = { trails: 'walk', beaches: 'beach', lakes: 'lake', mountains: 'mountain', cycling: 'cycling route' };
+const tripCanon = canonicalTrips(Object.values(W.trips).flatMap((w) => w.rated || [])); // near-duplicate trip -> representative (T1113)
 const ctx = {
+  tripCanonical: (id) => tripCanon.get(id) || null,
+  placesOfTrail: (cc, id, n) => (trailPlaces.get(`${cc}/${id}`) || []).slice().sort((a, b) => (a.km ?? 1e9) - (b.km ?? 1e9) || b.score - a.score).slice(0, n),
   regionName: (n2) => (n2 && regions.get(n2) ? clean(regions.get(n2).region.name) : null),
   trailByName: (cc, name) => trailByName.get(`${cc}|${clean(name).toLowerCase()}`) || null,
   familyOf: (cc, k) => (k ? families.get(`${cc}|${k}`) || [] : []),
@@ -224,13 +243,16 @@ const ctx = {
     }).slice(0, k);
   },
   // The nearest places in the same country within NEAR_PLACE_KM, nearest first (T225).
-  nearPlaces: (id, n) => {
+  // lang (T1212): the words of a language page; English when unset.
+  nearPlaces: (id, n, lang = 'en') => {
     const me = dests.get(id);
     if (!me || !Number.isFinite(me.lat)) return [];
     return (destsByCc.get(me.cc) || []).filter((d) => d.id !== id && Number.isFinite(d.lat))
       .map((d) => ({ d, km: haversineKm(me.lat, me.lon, d.lat, d.lon) }))
       .filter((x) => x.km <= NEAR_PLACE_KM).sort((a, b) => a.km - b.km).slice(0, n)
-      .map(({ d, km }) => ({ name: `${d.name}, ${Math.round(km)} km away`, path: paths.dest(d.slug), meta: d.dayEur != null ? `€${Math.round(d.dayEur)} a day` : '', metaNum: true }));
+      .map(({ d, km }) => (lang === 'en'
+        ? { name: `${d.name}, ${Math.round(km)} km away`, path: paths.dest(d.slug), meta: d.dayEur != null ? `€${Math.round(d.dayEur)} a day` : '', metaNum: true }
+        : { name: S(lang, 'nameKmAway', { name: d.name, km: num0(lang, km) }), path: paths.dest(d.slug), meta: d.dayEur != null ? S(lang, 'aDay', { eur: eur(lang, d.dayEur) }) : '', metaNum: true }));
   },
   destsOf: (cc) => [...dests.values()].filter((d) => d.cc === cc),
   isLayer: (kind, id) => Boolean(layerIdx[kind]?.has(id)),
@@ -323,6 +345,7 @@ const manifest = [];
 const counts = {};
 const seen = new Map();
 const problems = [];
+const langCounts = {};
 const unreadable = [];
 let cardJobs = [];
 
@@ -369,24 +392,56 @@ function write(page, key) {
   // The quality bar (T1076, K2): a page that exists but is thin ships
   // noindex,follow and stays out of the sitemap until its data clears it.
   const bar = pageBar(page, { dos: dosByPath.get(page.path), row: wireRow(page), cc: parsePath(page.path)?.cc, linkedFrom: trailLinkedFrom });
-  if (bar && !bar.ok) page.noindex = true;
-  if (page.kind === 'trail' && bar) {
-    const h = (barHeadroom.trail ||= { total: 0, ok: 0, okIfPhotoLicensed: 0 });
+  // A page whose canonical is another page (a near-duplicate trip) is not also noindex: the canonical already says which page counts.
+  const canonElsewhere = page.canonical && page.canonical !== page.path;
+  if (bar && !bar.ok && !canonElsewhere) page.noindex = true;
+  if ((page.kind === 'trail' || page.kind === 'cycle') && bar) {
+    const h = (barHeadroom[page.kind] ||= { total: 0, ok: 0, okIfPhotoLicensed: 0 });
     h.total += 1;
     if (bar.ok) h.ok += 1;
     // The headroom the pipeline's photo licence work would unlock: every other test passes.
     if (Object.entries(bar).every(([k, v]) => k === 'photo' || k === 'ok' || v)) h.okIfPhotoLicensed += 1;
   }
+  // T1212: the hreflang set lists English and the reviewed languages, and
+  // only when the English page itself is indexed and its own canonical.
+  const selfCanon = !canonElsewhere;
+  const variants = (page.variants || []).filter(Boolean);
+  const onLangs = !page.noindex && selfCanon ? variants.filter((v) => isReviewed(v.lang, page.kind, REVIEWED_RUN)).map((v) => v.lang) : [];
+  if (onLangs.length) page.alternates = hreflangLinks(page.path, onLangs);
   const file = path.join(OUT, key);
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, renderPage(page));
   manifest.push({
-    path: page.path, canonical: page.canonical || page.path, key, kind: page.kind,
+    path: page.path, canonical: page.canonical || page.path, key, kind: page.kind, lang: 'en',
     lastmod: page.lastmod || null, indexable: !page.noindex,
     ...(floor ? { floor } : {}),
     ...(bar ? { bar } : {}),
   });
+  // The language pages ride on their English page's floor and bar (same record).
+  for (const v of variants) {
+    const vkey = prerenderKey(v.path);
+    if (!vkey) { problems.push(`no key for ${v.path}`); continue; }
+    v.noindex = Boolean(page.noindex) || !isReviewed(v.lang, page.kind, REVIEWED_RUN);
+    if (!v.noindex && onLangs.length) v.alternates = page.alternates;
+    langCounts[v.lang] = (langCounts[v.lang] || 0) + 1;
+    const vfile = path.join(OUT, vkey);
+    fs.mkdirSync(path.dirname(vfile), { recursive: true });
+    fs.writeFileSync(vfile, renderPage(v));
+    manifest.push({
+      path: v.path, canonical: v.canonical || v.path, key: vkey, kind: v.kind, lang: v.lang, en: page.path,
+      lastmod: v.lastmod || null, indexable: !v.noindex,
+      ...(floor ? { floor } : {}),
+      ...(bar ? { bar } : {}),
+    });
+  }
 }
+
+/** The language pages of one record (T1212): the builder again with ctx.lang. */
+const langPages = (build) => LANGS_BUILD.map((l) => langVariant(build({ ...ctx, lang: l }), l));
+const withLangs = (page, build) => {
+  if (page && (!ONLY || ONLY.has(page.kind))) page.variants = langPages(build);
+  return page;
+};
 
 for (const cc of COUNTRIES) {
   emit(P.countryPage(cc, ctx));
@@ -402,7 +457,7 @@ for (const cc of COUNTRIES) {
     for (const r of W[layer][cc]?.rated || []) emit(P.layerPage(kind, r, ctx), { type: kind, row: r });
   }
   for (const x of W.trips[cc]?.rated || []) {
-    emit(P.tripPage(x, ctx));
+    emit(withLangs(P.tripPage(x, ctx), (c) => P.tripPage(x, c)));
     if (receiptByTrip.has(x.id)) emit(P.receiptPage(receiptByTrip.get(x.id), ctx));
   }
 }
@@ -412,12 +467,12 @@ for (const d of dests.values()) {
   if (ONLY && !ONLY.has('dest') && !ONLY.has('cost')) break;
   if (SAMPLE && (counts.dest || 0) >= SAMPLE && (counts.cost || 0) >= SAMPLE) break;
   const dos = readJson(`dossier/${d.file}`);
-  const dpage = P.destPage(dos, ctx);
+  const dpage = withLangs(P.destPage(dos, ctx), (c) => P.destPage(dos, c));
   if (dpage) dosByPath.set(dpage.path, dos);
   emit(dpage, { type: 'destination', key: d.id });
   emit(P.costPage(dos, ctx));
 }
-for (const j of journeys) if (!arg('--country', '') || COUNTRIES.includes(j.countryCode)) emit(P.journeyPage(j, ctx));
+for (const j of journeys) if (!arg('--country', '') || COUNTRIES.includes(j.countryCode)) emit(withLangs(P.journeyPage(j, ctx), (c) => P.journeyPage(j, c)));
 
 if (cardJobs.length) {
   const { renderCards } = await import('./cards.mjs');
@@ -440,6 +495,7 @@ const total = manifest.length;
 console.log(`[prerender] ${total} pages in ${((Date.now() - t0) / 1000).toFixed(1)} s to ${OUT}`);
 if (unreadable.length) console.log(`[prerender] ${unreadable.length} paths held back because they do not read back as their kind, first: ${unreadable.slice(0, 5).join(' ')}`);
 console.log(`[prerender] by kind: ${Object.entries(counts).map(([k, v]) => `${k} ${v}`).join(', ')}`);
+if (LANGS_BUILD.length) console.log(`[prerender] language pages (T1212): ${Object.entries(langCounts).map(([k, v]) => `${k} ${v}`).join(', ')}; indexed: ${Object.entries(REVIEWED_RUN).filter(([, ks]) => ks.length).map(([l, ks]) => `${l} ${ks.join('+')}`).join(', ') || 'none until the native review (langs.mjs REVIEWED)'}`);
 if (problems.length) {
   console.error(`[prerender] ${problems.length} problems, first ten:\n  ${problems.slice(0, 10).join('\n  ')}`);
   process.exit(1);

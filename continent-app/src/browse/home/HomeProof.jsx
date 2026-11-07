@@ -1,6 +1,7 @@
 import React from 'react';
 import { animate, m, useInView, useReducedMotion } from 'motion/react';
 import { useI18n } from '../../i18n/index.jsx';
+import { Button } from '../../components/ui/index.js';
 import { formatMoney } from '../../lib/money.js';
 import { MaskedText, SPRING } from './motionKit.jsx';
 import { accented, STORY_NIGHTS } from './HomeCost.jsx';
@@ -59,9 +60,10 @@ export function HomeProof({ week, place, onPlan, planHref }) {
               <b>{t('home.proofFoot')}</b>
               <span>{t('home.proofNote', { place, n: STORY_NIGHTS })}</span>
             </p>
-            <a className="btn btn-primary hm-yours-go" href={planHref} onClick={go}>
-              <span className="btn-label">{t('home.priceYours')}</span><ArrowRight {...ICON} size={18} weight="bold" aria-hidden="true" />
-            </a>
+            <Button href={planHref} onClick={go} variant="primary" className="hm-yours-go"
+              iconAfter={<ArrowRight {...ICON} size={18} weight="bold" aria-hidden="true" />}>
+              {t('home.priceYours')}
+            </Button>
           </m.div>
         </div>
       </div>

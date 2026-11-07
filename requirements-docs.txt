@@ -1,0 +1,3 @@
+# Docs site toolchain (ROADMAP B6, T1167). Pinned; see Execution/P15/T1167-docs-site.md, Research.
+mkdocs==1.6.1
+mkdocs-material==9.8.0

@@ -1,0 +1,57 @@
+{
+ "schema": "carta-eval/1",
+ "eval": "ask-docs",
+ "title": "Ask the docs (recall, grounding, abstention)",
+ "kind": "retrieval",
+ "at": "2026-11-07T12:22:13.224Z",
+ "git": "1a63861c64",
+ "status": "pass",
+ "gated": true,
+ "headline": {
+  "key": "recall5",
+  "value": 0.979,
+  "label": "recall@5 of the right doc on 48 doc questions",
+  "higher_is_better": true
+ },
+ "metrics": {
+  "n": 56,
+  "answerable": 48,
+  "unanswerable": 8,
+  "passages": 3766,
+  "recall1": 0.833,
+  "recall3": 0.917,
+  "recall5": 0.979,
+  "mrr": 0.891,
+  "section5": 0.896,
+  "answered": 0.958,
+  "cited_gold": 0.854,
+  "nl_recall5": 1,
+  "abstain": 0.875,
+  "grounded": 1,
+  "latency_ms.p50": 2.203,
+  "latency_ms.p95": 5.258
+ },
+ "gate": {
+  "ok": true,
+  "rule": "recall@5 0.85, abstention 0.8 and grounding 1 at least, no metric more than 2 points under the baseline",
+  "tolerance": 0.02,
+  "baseline": "scripts/eval/ask-docs/baseline.json",
+  "failures": []
+ },
+ "cases": {
+  "n": 56,
+  "passed": 54
+ },
+ "judge": null,
+ "inputs": {
+  "set": "scripts/eval/ask-docs/set.json",
+  "n": 56,
+  "passages": 3766,
+  "seed_drop": false,
+  "seconds": 0.8
+ },
+ "notes": [
+  "Misses: d31. Answered an unanswerable question: u03.",
+  "The question set was written by the session that built the feature (T1168): read recall as an upper bound until real questions are logged (T1168-d)."
+ ]
+}

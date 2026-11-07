@@ -1,34 +1,22 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { countriesFromData, cityTier } from '../lib/tripGuide.js';
-import { monthOptions } from '../lib/wizardFlights.js';
+import { countriesFromData } from '../lib/tripGuide.js';
 import { TRAVEL_STYLES, nearbyAirports } from '../lib/wizardTransit.js';
-import { plannerStore, usePlannerStore } from './plannerStore.js';
-import { fromDraft, flightRanking, normalizeSettings, withEngineEdits } from './flow/tripSettings.js';
-import { staysFromImports, nearestStop, arrivalFromImports } from './flow/importStays.js';
+import { plannerStore } from './plannerStore.js';
 import { trackLaunch } from '../lib/launchEvents.js';
+import { trackFunnel } from '../lib/funnelCounts.js';
 import { ReadyTripsStep } from './ReadyTripsStep.jsx';
 // The trip's own page, the one the Destinations tab opens. Lazy because it
 // pulls a map with it, and nobody reaching the Trips step has asked for one
 // until they tap "What's there".
 const TripPage = lazy(() => import('../browse/TripPage.jsx').then((m) => ({ default: m.TripPage })));
 import { PlanTotal } from './PlanTotal.jsx';
-import { quoteTrip as priceWholeTrip, wizardPlannerState, paidEur, PLANNER_BAG } from '../lib/tripTotal.js';
-import { prefillMode, openJaw, publishedLeg } from '../lib/gettingThere.js';
-import { useSettings } from '../components/SettingsLine.jsx';
-import { loadDossier } from '../lib/dossier.js';
-import { TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { buildCountryBriefs } from '../lib/countryBrief.js';
-import { matchCountries } from '../lib/countryMatch.js';
-import { tripTaste } from '../lib/taste.js';
-import { useTaste } from '../browse/WhyItMatches.jsx';
 import { loadTrailsIndex } from '../lib/trails.js';
 import { loadBeachIndex } from '../lib/beaches.js';
 import { loadLakeIndex } from '../lib/lakes.js';
 import { loadMountainIndex } from '../lib/mountains.js';
 import { loadCyclingIndex } from '../lib/cycling.js';
-import { eurDay } from '../lib/costIndex.js';
-import { priceDays, tripRequest, atDates } from '../lib/price/index.js';
 import { routeOrder } from '../lib/cartaRoute.js';
 import { loadTrip } from '../lib/trips.js';
 import { loadJourney } from '../lib/journeys.js';
@@ -36,21 +24,16 @@ import { JourneyPeek } from './JourneyPeek.jsx';
 import { CompareSheet } from './CompareSheet.jsx';
 import { MAX_COMPARE } from '../lib/countryCompare.js';
 import { buildCityIndex, isJourneyId, journeyStops, JOURNEY_PREFIX } from '../lib/journeyTrips.js';
-import { tripHeadline } from '../lib/tripStory.js';
-import { haversineKm, tripDaysBetween } from '../lib/runtime_pricing.js';
-import { cityLabel, cityKeyName } from '../lib/placeName.js';
+import { haversineKm } from '../lib/runtime_pricing.js';
 import { duplicateHeroes } from '../lib/heroImage.js';
 import { pickWithDupes } from '../lib/countryCovers.js';
 import { fmtDate, addDays, laterISO, useToday, planningHorizon } from '../lib/dates.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
-import { CheckIcon, RouteIcon, BedIcon, MapPinIcon, CalendarIcon, PersonIcon, CarIcon } from '../components/Icons.jsx';
-import { PlaneIcon } from '../components/TransportIcons.jsx';
+import { CheckIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { wizardSteps, restoreStep, STEP_LABEL_KEYS, nightsText, cheapestDay } from './wizard/wizardSteps.js';
-import { pickedLive } from './wizard/flightChoices.js';
-import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
+import { wizardSteps, restoreStep, STEP_LABEL_KEYS, nightsText } from './wizard/wizardSteps.js';
 import { OriginCard } from './wizard/OriginCard.jsx';
 import { StepBookedWho } from './wizard/StepBookedWho.jsx';
 import { StepFrom } from './wizard/StepFrom.jsx';
@@ -62,7 +45,13 @@ import { StepGettingThere } from './wizard/StepGettingThere.jsx';
 import { StepReview } from './wizard/StepReview.jsx';
 import { WizardAside } from './wizard/WizardAside.jsx';
 import { WizardHead, WizardStepsSheet, WizardFoot } from './wizard/WizardChrome.jsx';
-import { isGateway } from '../lib/rating.js';
+import { useWizardPricing } from './wizard/useWizardPricing.js';
+import { useWizardHandOver } from './wizard/useWizardHandOver.js';
+import { useWizardCountries } from './wizard/useWizardCountries.js';
+import { useWizardTravel } from './wizard/useWizardTravel.js';
+import { useWizardSelection } from './wizard/useWizardSelection.js';
+import { useWizardDraftSync } from './wizard/useWizardDraftSync.js';
+import { wizardRecapChips } from './wizard/wizardRecapChips.js';
 
 // Shared empty catalogue for before the data lands: a fresh `{}` per render
 // would invalidate the dozen memos below that read destinations (T192).
@@ -375,62 +364,14 @@ export function GuidedTripWizard({
   const [stayQuery, setStayQuery] = useState('');
 
 
-  // Memoized: these three feed downstream memos (companionsFor, mapCities, which
-  // each scan the whole destinations map). Recreating them as fresh arrays every
-  // render gave those memos new deps every render, so a Stay-step re-render
-  // (typing, +/- nights) re-ran N x all-destinations haversine work each time.
-  const selectedCountries = useMemo(
-    () => allCountries.filter((c) => countries.has(c.country)),
-    [allCountries, countries],
-  );
-  const includedIds = useMemo(
-    () => order.filter((id) => (nights[id] || 0) > 0),
-    [order, nights],
-  );
-  // T675 (row T657-b): stays read from uploaded bookings fill Your stays
-  // once the catalogue is here: the town, the nights to the next check-in,
-  // the price paid. Once per mount, and never over towns already chosen.
-  const importedStays = useRef(false);
-  useEffect(() => {
-    if (importedStays.current || !flowSteps?.length || !Object.keys(destinations).length) return;
-    importedStays.current = true;
-    const s = fromDraft(plannerStore.getState());
-    // An uploaded flight out answers "Where do you land?".
-    if (s.booked.flights && !arrivalId) {
-      const lands = arrivalFromImports(s.imports, destinations);
-      if (lands) setArrivalId(lands);
-    }
-    if (order.length) return;
-    let rows = s.booked.stays ? staysFromImports(s.imports, destinations, s.when) : [];
-    // T675 (row T659-a): a trip under way starts where the traveller is,
-    // for the nights until they go home.
-    if (!rows.length && s.kind === 'now') {
-      const here = nearestStop(s.now, destinations);
-      if (here) rows = [{ id: here, nights: Math.min(21, s.when.nights || 1), eur: 0 }];
-    }
-    if (!rows.length) return;
-    setOrder(rows.map((r) => r.id));
-    setNights(Object.fromEntries(rows.map((r) => [r.id, r.nights])));
-    setOwnStays((prev) => ({ ...Object.fromEntries(rows.filter((r) => r.eur > 0).map((r) => [r.id, r.eur])), ...prev }));
-    setCountries((prev) => (prev.size ? prev : new Set(rows.map((r) => destinations[r.id]?.country).filter(Boolean))));
-  }, [destinations, flowSteps]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot, guarded by importedStays: the rows are read once the catalogue arrives
-  const totalNights = useMemo(
-    () => includedIds.reduce((sum, id) => sum + (nights[id] || 0), 0),
-    [includedIds, nights],
-  );
-  // One date model for every shape of trip: exact dates, or a number of
-  // nights in a month. The old landed path asked its own way and then had to
-  // be special-cased in nine places.
-  const windowNights = dateMode === 'exact' ? tripDaysBetween(startDate, endDate) : flexNights;
-  const months = useMemo(() => monthOptions(dateMin, dateMax), [dateMin, dateMax]);
-
-  // ---- Origin-first: where does this trip leave from? --------------------
-  // A typed address (geocoded on an explicit search, Nominatim fair use)
-  // unlocks every fare-carrying airport within 200 km; until one is typed the
-  // app's chosen departure airport stands in, so nothing here blocks anyone.
-  const [originQuery, setOriginQuery] = useState('');
-  const [originResults, setOriginResults] = useState([]);
-  const [originBusy, setOriginBusy] = useState(false);
+  const {
+    selectedCountries, includedIds, totalNights, windowNights, months, originQuery,
+    setOriginQuery, originResults, setOriginResults, originBusy, setOriginBusy,
+  } = useWizardSelection({
+    allCountries, arrivalId, countries, dateMax, dateMin, dateMode, destinations, endDate,
+    flexNights, flowSteps, nights, order, setArrivalId, setCountries, setNights, setOrder,
+    setOwnStays, startDate,
+  });
   const [originPlace, setOriginPlace] = useState(() => {
     const o = plannerStore.getState().origin;
     return o ? { name: o.name, lat: o.lat, lon: o.lng, iso2: o.countryCode || null } : null;
@@ -606,153 +547,11 @@ export function GuidedTripWizard({
   // (the app's origin, which the setup's From set), not the one nearest the
   // town: the line on Getting there says what the prices already say.
   const homeIata = originCode && nearAirports.some((a) => a.iata === originCode) ? originCode : (nearAirports[0]?.iata || '');
-  const homePoint = useMemo(() => ({
-    city: originPlace?.name || originCity,
-    country: null,
-    iso2: originPlace?.iso2 || originRec?.iso2 || null,
-    lat: originPoint?.lat ?? null,
-    lon: originPoint?.lon ?? null,
-    iata: depIataOk || homeIata || originCode || null,
-  }), [originPlace, originCity, originRec, originPoint?.lat, originPoint?.lon, homeIata, originCode, depIataOk]);
-
-  const pointOf = useCallback((id) => {
-    const d = destinations[id];
-    if (!d) return null;
-    return {
-      city: cityLabel(d.city),
-      country: d.country,
-      iso2: d.iso2,
-      lat: d.city_lat ?? d.lat,
-      lon: d.city_lon ?? d.lon,
-      iata: d.iata || null,
-      anchorIata: d.anchor_airport || null,
-    };
-  }, [destinations]);
-
-  // Every hop of the trip, in order: out from home, stop to stop, home again.
-  const travelLegs = useMemo(() => {
-    if (!stopDates.length || !homePoint) return [];
-    const legs = [];
-    const first = pointOf(stopDates[0].id);
-    const lastRow = stopDates[stopDates.length - 1];
-    const last = pointOf(lastRow.id);
-    const endDate = tripStartDate ? addDays(tripStartDate, totalNights) : '';
-    if (first) {
-      legs.push({
-        key: 'out', kind: 'out', from: homePoint, to: first,
-        date: stopDates[0].arrive,
-        // A return search is what most people actually buy, so the outbound
-        // link carries the way home too when both ends are flown.
-        returnDate: endDate,
-      });
-    }
-    for (let i = 0; i < stopDates.length - 1; i += 1) {
-      const a = pointOf(stopDates[i].id);
-      const b = pointOf(stopDates[i + 1].id);
-      if (a && b) legs.push({ key: `leg${i}`, kind: 'inter', index: i, from: a, to: b, date: stopDates[i + 1].arrive });
-    }
-    if (last) {
-      legs.push({ key: 'back', kind: 'back', from: last, to: homePoint, date: endDate });
-    }
-    return legs;
-  }, [stopDates, homePoint, tripStartDate, totalNights, pointOf]);
-
-  // ---- Getting there: what the step knows before anyone answers ----------
-  // The airports that actually fly somewhere near the two ends of the trip,
-  // and, where the dossier has it, how long the ride from the runway into town
-  // takes. Only the two ends: the hops in between are not flown.
-  const endIds = useMemo(() => {
-    if (!stopDates.length) return { first: null, last: null };
-    return { first: stopDates[0].id, last: stopDates[stopDates.length - 1].id };
-  }, [stopDates]);
-  const [endTransfers, setEndTransfers] = useState({});
-  useEffect(() => {
-    let live = true;
-    const ids = [endIds.first, endIds.last].filter(Boolean);
-    if (!ids.length) { setEndTransfers({}); return undefined; }
-    Promise.all(ids.map((id) => loadDossier(id).then((d) => [id, d?.practical?.getting_there || null])))
-      .then((rows) => { if (live) setEndTransfers(Object.fromEntries(rows)); });
-    return () => { live = false; };
-  }, [endIds.first, endIds.last]);
-
-  /** The airports near one stop, each carrying the dossier's transfer time
-   *  when that airport is the one the dossier names as the anchor. */
-  const airportsFor = useCallback((id) => {
-    const d = destinations[id];
-    if (!d) return [];
-    const got = endTransfers[id] || null;
-    return nearbyAirports(data?.meta, d.city_lat ?? d.lat, d.city_lon ?? d.lon, { limit: 3 })
-      .map((a) => (got && got.airport === a.iata
-        ? { ...a, transferMin: got.transfer_min ?? null, transferMode: got.transfer_mode || null }
-        : a));
-  }, [destinations, endTransfers, data?.meta]);
-
-  // The legs, with everything the step guesses on them: which airports serve
-  // each end, what the trip's own composer measured for a hop, and the mode
-  // that follows from both. A leg the traveller has already answered keeps
-  // their answer; nothing here overwrites a choice.
-  const gettingLegs = useMemo(() => {
-    if (!travelLegs.length) return [];
-    const inAir = endIds.first ? airportsFor(endIds.first) : [];
-    const outAir = endIds.last ? airportsFor(endIds.last) : [];
-    return travelLegs.map((leg) => {
-      const isOut = leg.kind === 'out';
-      const isBack = leg.kind === 'back';
-      const pub = leg.kind === 'inter'
-        ? publishedLeg(tripDetail, stopDates[leg.index]?.id, stopDates[leg.index + 1]?.id)
-        : null;
-      return {
-        ...leg,
-        airports: isOut ? inAir : isBack ? outAir : [],
-        published: pub,
-        // Travel they told us is already booked is not a question. Only the
-        // legs that touch home were ever booked in that answer: the hops
-        // between stops are the part this step is for.
-        booked: booked.travel && (isOut || isBack),
-      };
-    });
-  }, [travelLegs, tripDetail, stopDates, endIds, booked.travel, airportsFor]);
-
-  // "Fly into BCN, home from GRO", when the far end of the trip has a
-  // meaningfully closer airport than the one it started at.
-  const jawHint = useMemo(() => {
-    if (!booked.travel && gettingLegs.length > 1) {
-      const jaw = openJaw(gettingLegs[0]?.airports, gettingLegs[gettingLegs.length - 1]?.airports);
-      if (jaw) return t('travel.openJaw', { into: jaw.into.iata, home: jaw.home.iata });
-    }
-    return '';
-  }, [gettingLegs, booked.travel, t]);
-
-  // Every leg opens already answered. The guess is written into the same state
-  // the traveller edits, once per leg, so it flows into finish() unchanged and
-  // an answer already given is never overwritten.
-  // T856: the way of travel the traveller chose (choices.transport_mode)
-  // answers every leg it fits.
-  const wayOfTravel = useSettings()?.transportMode || 'any';
-  useEffect(() => {
-    if (!gettingLegs.length) return;
-    setTravelValues((prev) => {
-      let next = prev;
-      for (const leg of gettingLegs) {
-        // A guess is not an answer: an older draft's guess is made again.
-        if (prev[leg.key]?.mode && !prev[leg.key].guessed) continue;
-        const mode = prefillMode(leg, {
-          quiz,
-          way: wayOfTravel,
-          published: leg.published?.mode || '',
-          // drivingThere, not the ownCarChosen alias below: that is declared
-          // further down the component and this effect runs before it.
-          drivingOwnCar: drivingThere,
-        });
-        if (!mode || mode === prev[leg.key]?.mode) continue;
-        if (next === prev) next = { ...prev };
-        // Marked as Carta's guess (T388): the draft and the recap only repeat
-        // back what the traveller said, and a guess is not that.
-        next[leg.key] = { ...next[leg.key], mode, guessed: true };
-      }
-      return next;
-    });
-  }, [gettingLegs]); // eslint-disable-line react-hooks/exhaustive-deps -- runs per new leg set only: re-running on quiz or drivingThere would refill a mode the traveller just cleared
+  const { homePoint, travelLegs, gettingLegs, jawHint } = useWizardTravel({
+    booked, data, depIataOk, destinations, drivingThere, homeIata, originCity, originCode,
+    originPlace, originPoint, originRec, quiz, setTravelValues, stopDates, t, totalNights,
+    tripDetail, tripStartDate,
+  });
 
   const setTravelLeg = (key, patch) => {
     // Anything the traveller sets on a leg makes it their answer (T388).
@@ -788,58 +587,10 @@ export function GuidedTripWizard({
     return () => { alive = false; };
   }, [whereTab, stepName]);
 
-  // The month the trip actually falls in, which the When step already asked.
-  // The same answer as tripMonth, written the way a calendar writes it, for
-  // the handful of places (Google Flights Explore) that want a real month.
-  const tripYearMonth = useMemo(() => {
-    const iso = startDate || (flexMonth ? `${flexMonth}-05` : '');
-    const m = /^(\d{4}-\d{2})/.exec(iso);
-    return m ? m[1] : '';
-  }, [startDate, flexMonth]);
-  const tripMonth = useMemo(() => {
-    const iso = startDate || (flexMonth ? `${flexMonth}-05` : '');
-    const m = /^\d{4}-(\d{2})/.exec(iso);
-    return m ? Number(m[1]) : null;
-  }, [startDate, flexMonth]);
-
-  // T766: the traveller's taste, with this trip's likes in place of the
-  // profile's (the trip's answers seed the taste for this trip only).
-  const savedTaste = useTaste();
-  const quizTaste = useMemo(() => tripTaste(savedTaste, quiz.types), [savedTaste, quiz.types]);
-  const countryMatches = useMemo(() => {
-    if (!quiz.types?.length) return [];
-    // T657: behind booked flights the trip starts where the flight lands, so
-    // the matches are measured from the arrival and kept within a short hop
-    // of it, not from home.
-    const landed = booked.travel && arrivalDest && arrivalDest.lat != null;
-    const rows = matchCountries({
-      destinations,
-      insights: countryInsights,
-      layerIndexes,
-      answers: landed ? { ...quiz, distance: 'short' } : quiz,
-      month: tripMonth,
-      taste: quizTaste,
-      origin: landed
-        ? { lat: arrivalDest.lat, lon: arrivalDest.lon }
-        : (originPoint ? { lat: originPoint.lat, lon: originPoint.lon } : null),
-    });
-    // The card wants a photograph and three real places; the scorer returns
-    // ids, because it stays node-runnable and knows nothing about images.
-    return rows.map((r) => ({
-      ...r,
-      cover: countryCovers.get(r.country) || countryBriefs.get(r.country)?.cover || null,
-      places: (r.topPlaces || [])
-        .map((id) => ({ id, dest: destinations[id] }))
-        .filter((x) => x.dest),
-    }));
-  }, [quiz, destinations, countryInsights, layerIndexes, tripMonth, originPoint,
-    countryCovers, countryBriefs, booked.travel, arrivalDest, quizTaste]);
-
-  /** The names the quiz recommended, for the map's dotted outline. */
-  const recommendedNames = useMemo(
-    () => new Set(countryMatches.slice(0, 6).map((m) => m.country)),
-    [countryMatches],
-  );
+  const { tripYearMonth, tripMonth, quizTaste, countryMatches, recommendedNames } = useWizardCountries({
+    arrivalDest, booked, countryBriefs, countryCovers, countryInsights, destinations, flexMonth,
+    layerIndexes, originPoint, quiz, startDate,
+  });
 
   // Stops whose nights Carta is allowed to keep rebalancing (added by a map
   // tap and never touched by hand). A stepper touch makes a stop "manual".
@@ -1003,83 +754,11 @@ export function GuidedTripWizard({
   };
 
 
-  // The trip the wizard will hand over, as a value (T432). The running
-  // estimate prices exactly this through lib/tripTotal.js, the planned trip
-  // loads exactly this, so the two figures are one figure.
-  const handOver = useMemo(() => {
-    const orderedIds = readyTrip ? includedIds : orderedIncludedIds;
-    const stops = orderedIds.map((id) => ({
-      destinationId: id,
-      nights: Math.max(1, nights[id] || 1),
-      activities: [],
-    }));
-    const start = tripStartDate;
-    // The end follows the stops as handed over (each at least one night), so
-    // a stop left at 0 nights never ends the trip a day short (T812, from the
-    // T815 date audit).
-    const handedNights = stops.reduce((n, x) => n + x.nights, 0);
-    const end = start && handedNights ? addDays(start, handedNights) : null;
-    const stopCountries = [...new Set(orderedIds.map((id) => destinations[id]?.country).filter(Boolean))];
-    const label = readyTrip
-      ? tripHeadline(readyTrip, t)
-      : (selectedCountries.length
-        ? selectedCountries.map((c) => c.country).slice(0, 2).join(' & ')
-        : stopCountries.slice(0, 2).join(' & '));
-    const out = travelValues.out || {};
-    const back = travelValues.back || {};
-    const legModes = {};
-    const ownLegs = {};
-    for (const leg of travelLegs) {
-      if (leg.kind !== 'inter') continue;
-      const v = travelValues[leg.key];
-      if (!v?.mode) continue;
-      legModes[leg.index] = v.mode;
-      const paid = paidEur(v.eur);
-      if (paid > 0) ownLegs[leg.index] = { mode: v.mode, eur: paid };
-    }
-    const paidOut = paidEur(out.eur);
-    const paidBack = paidEur(back.eur);
-    const ownStaysNow = {};
-    for (const id of orderedIds) {
-      const v = paidEur(ownStays[id]);
-      if (v) ownStaysNow[id] = v;
-    }
-    return {
-      startDate: start,
-      // Adults; children and babies are priced by their own rule (T458).
-      groupSize: adults,
-      children: kids,
-      babies,
-      stayTier: effectiveStayTier,
-      // Driving there means driving between the stops too.
-      transport: ownCarChosen ? 'owncar' : 'auto',
-      pace,
-      baggage: PLANNER_BAG,
-      anchorId: booked.travel && !ownCarChosen ? arrivalId : null,
-      anchorOrigin: null,
-      returnAnchorId: null,
-      // Carta prices no transport, so this is always the traveller's own
-      // figure, with each direction kept apart so an own car typed one way
-      // keeps Carta's estimate for the other.
-      ownFlight: {
-        airline: [out.service, back.service].map((x) => (x || '').trim()).filter(Boolean).join(' / '),
-        mode: out.mode || back.mode || 'fly',
-        costTotal: Math.round((paidOut + paidBack) * 100) / 100,
-        costOut: paidOut,
-        costBack: paidBack,
-        outDate: start || null,
-        retDate: end,
-      },
-      carHome: ownCarChosen ? originPlace : null,
-      legModes,
-      ownLegs,
-      ownStays: ownStaysNow,
-      label,
-      stops,
-    };
-  }, [readyTrip, includedIds, orderedIncludedIds, nights, tripStartDate, destinations,
-    selectedCountries, travelValues, travelLegs, ownStays, adults, kids, babies, effectiveStayTier, ownCarChosen,
-    pace, booked.travel, arrivalId, originPlace, t]);
+  const { handOver } = useWizardHandOver({
+    adults, arrivalId, babies, booked, destinations, effectiveStayTier, includedIds, kids,
+    nights, orderedIncludedIds, originPlace, ownCarChosen, ownStays, pace, readyTrip,
+    selectedCountries, t, travelLegs, travelValues, tripStartDate,
+  });
 
   const finish = () => {
     // The flight Review priced, each way, goes with the trip: the one picked
@@ -1093,205 +772,19 @@ export function GuidedTripWizard({
     });
     // The launch metric "priced-trip completions" (migration 048, T215-b).
     trackLaunch('trip_priced', '', readyTrip ? 'ready' : 'built');
+    trackFunnel('priced_draft');
   };
 
-  // The wizard's price request (T702, plan F6): its party, the stay tier and
-  // the Lifestyle, the same question the trip it hands over is priced for.
-  const dailyLifestyle = useMemo(
-    () => lifestyle || data?.meta?.defaults?.lifestyle || null,
-    [lifestyle, data],
-  );
-  const wizardRequest = useMemo(
-    () => tripRequest({ groupSize: adults, children: kids, babies, stayTier: effectiveStayTier, lifestyle: dailyLifestyle }),
-    [adults, kids, babies, effectiveStayTier, dailyLifestyle],
-  );
-  // The per-night stay price for the WHOLE group at a candidate city: the
-  // engine's bed at a 2-night stay from the start date (so one-off fees
-  // amortize), priced once for the catalogue per request.
-  const nightBeds = useMemo(() => {
-    const start = startDate || null;
-    const req = start ? atDates(wizardRequest, start, addDays(start, 2)) : { ...wizardRequest, nights: 2 };
-    return priceDays(destinations, req);
-  }, [destinations, wizardRequest, startDate]);
-  // A callback so the memos that call it can name it as a dependency.
-  const nightlyFor = useCallback((id) => {
-    const bed = nightBeds.get(id)?.stayEur;
-    return bed > 0 ? Math.round(bed * groupSize) : null;
-  }, [nightBeds, groupSize]);
-  const passesStayFilters = useCallback((id, dest) => {
-    // T755: an airport of a multi-airport city is never a stay of its own.
-    if (isGateway(dest)) return false;
-    if (stayMinRating > 0 && (dest.rating?.score ?? 0) < stayMinRating) return false;
-    if (stayMaxNightly > 0) {
-      const n = nightlyFor(id, dest);
-      if (n != null && n > stayMaxNightly) return false;
-    }
-    return true;
-  }, [stayMinRating, stayMaxNightly, nightlyFor]);
-
-
-  // The whole trip priced by the planner's own function (lib/tripTotal.js,
-  // T432): the hand-over above, as the planned trip will hold it.
-  // T657: the trip settings' "what matters most" orders the live flights.
-  const plannerDraft = usePlannerStore();
-  const flightRank = useMemo(() => flightRanking(fromDraft(plannerDraft)).sort, [plannerDraft]);
-  const planned = handOver;
-  // T812: a flight picked on Getting there prices the trip on that flight
-  // (one live answer per way, keyed by its day, so a moved trip drops it).
-  const flightPickOut = travelValues.out?.pick || null;
-  const flightPickBack = travelValues.back?.pick || null;
-  const picked = useMemo(() => pickedLive({ out: flightPickOut, back: flightPickBack }), [flightPickOut, flightPickBack]);
-  const priced = useMemo(() => {
-    if (!planned.stops.length) return null;
-    const state = { ...wizardPlannerState(planned, { stayTier: effectiveStayTier, lifestyle: dailyLifestyle }), flightRank };
-    // T855: a pick holds its direction.
-    const withPicks = picked.length
-      ? { ...state, liveFlights: new Map([...(state.liveFlights || []), ...picked]), flightPicks: { out: flightPickOut, back: flightPickBack } }
-      : state;
-    return priceWholeTrip(withPicks, { data, countryInsights });
-  }, [planned, effectiveStayTier, dailyLifestyle, data, countryInsights, flightRank, picked, flightPickOut, flightPickBack]);
-  // Carta's figure for each leg the traveller has not priced, keyed the way
-  // the Getting there rows are, so a row shows the estimate its own figure
-  // replaces.
-  const legEstimates = useMemo(() => {
-    const out = {};
-    if (!priced) return out;
-    priced.legs.forEach((l, i) => {
-      const m = l?.modes?.[l.mode];
-      if (m && !m.own && m.eur_total > 0) out[`leg${i}`] = m.eur_total;
-    });
-    if (priced.driveLegs?.out?.ground_total) out.out = priced.driveLegs.out.ground_total;
-    if (priced.driveLegs?.home?.ground_total) out.back = priced.driveLegs.home.ground_total;
-    return out;
-  }, [priced]);
-  // The mode each hop between the stops is priced with, for its card's icons (T812).
-  const pricedModes = useMemo(() => {
-    const out = {};
-    (priced?.legs || []).forEach((l, i) => { if (l?.mode) out[`leg${i}`] = l.mode; });
-    return out;
-  }, [priced]);
-  // The day's flights, both ways, for Getting there's rows and the review
-  // (T812; useLiveFlights shares answers with the planned trip for ten minutes).
-  const flightQueries = (stepName === 'Getting' || stepName === 'Finish') ? priced?.cartaFlight?.queries || null : null;
-  const liveAnswers = useLiveFlights(flightQueries);
-  const flightWaiting = useMemo(() => {
-    const q = flightQueries || [];
-    const has = (x) => Boolean(x && liveAnswers.has(`${x.o}-${x.d}-${x.date}`));
-    return { out: Boolean(q[0]) && !has(q[0]), back: Boolean(q[1]) && !has(q[1]) };
-  }, [flightQueries, liveAnswers]);
-  const flightParty = useMemo(() => (priced
-    ? { paying: priced.groupSize, babies: priced.party?.babies || 0, bagKey: PLANNER_BAG }
-    : null), [priced]);
-  const onPickFlight = (dir, pick) => setTravelLeg(dir, { pick, mode: 'fly' });
-  // The flight the running total is priced on for one way, as a pick
-  // (pickedLive's shape), or null when that way is not flown by Carta.
-  const pricedFlight = (dir) => {
-    const cf = priced?.cartaFlight;
-    const leg = cf?.[dir];
-    const q = cf?.queries?.[dir === 'out' ? 0 : 1];
-    if (!leg || !q || !Number.isFinite(leg.price)) return null;
-    const { cost, ...flight } = leg; // eslint-disable-line no-unused-vars -- the planner prices the cost itself
-    // T855: keyed by the trip's day; a leg on the nearest swept day keeps its own.
-    const own = flight.flightDate || flight.date;
-    return { ...flight, date: q.date, ...(own && own !== q.date ? { flightDate: own } : {}), from: q.o, to: q.d };
-  };
-  // Carta's bed estimate per stay, for the field that replaces it.
-  const bedEstimate = (id) => {
-    const i = priced ? priced.stopDetails.findIndex((sd) => sd.destinationId === id) : -1;
-    const sc = i >= 0 ? priced.stayCosts[i] : null;
-    return sc ? (sc.estAccomTotal ?? sc.accomTotal) : null;
-  };
-
-  // ---- The price from the first place (T388, rule "Cost on cards") --------
-  // Every town's day per person at the traveller's Lifestyle, from the cost
-  // index Explore prices its cards with, so a country here and a town there
-  // never disagree. A country card says "from" the cheapest town (never an
-  // average); the brief gives the range.
-  const dayCosts = useMemo(() => priceDays(destinations, wizardRequest), [destinations, wizardRequest]);
-  const countryDayCost = useMemo(() => {
-    const out = new Map();
-    for (const [id, row] of dayCosts) {
-      if (row.dayEur == null) continue;
-      const country = destinations[id]?.country;
-      if (!country) continue;
-      const cur = out.get(country);
-      const national = row.stayLevel !== 'city' || row.foodLevel !== 'city';
-      if (!cur) { out.set(country, { min: row.dayEur, max: row.dayEur, national }); continue; }
-      if (row.dayEur < cur.min) { cur.min = row.dayEur; cur.national = national; }
-      if (row.dayEur > cur.max) cur.max = row.dayEur;
-    }
-    for (const c of out.values()) {
-      c.minText = eurDay(c.min);
-      c.maxText = eurDay(c.max);
-      // Whole euros, as Explore's cards print a day; equal once rounded is
-      // one figure, not a range.
-      if (c.minText === c.maxText) c.max = c.min;
-    }
-    return out;
-  }, [dayCosts, destinations]);
-  // A ready-made trip's beds and days for the party, stop by stop through
-  // the engine (lib/price/stay.js), the receipt's own. null when a stop is missing.
-  const cityIndex = useMemo(() => {
-    const m = new Map();
-    for (const [id, d] of Object.entries(destinations)) {
-      if (!d?.city || isGateway(d)) continue;
-      m.set(`${String(d.iso2 || '').toUpperCase()}|${cityKeyName(cityLabel(d.city)).toLowerCase()}`, id);
-    }
-    return m;
-  }, [destinations]);
-  // A ready-made trip's card carries one price line (owner T490-e): "From
-  // (estimate) a person a day", the day per person at the traveller's
-  // Lifestyle from the cheapest town it sleeps in, read from the same cost
-  // index as a country card, so the two never disagree. Null when no stop is
-  // in the catalogue with a price.
-  const tripDayCost = useCallback((cities) => cheapestDay((cities || []).map((c) => {
-    const id = cityIndex.get(`${String(c.cc || '').toUpperCase()}|${cityKeyName(cityLabel(c.city)).toLowerCase()}`);
-    return id ? dayCosts.get(id) : null;
-  })), [cityIndex, dayCosts]);
-
-  // Every city of the chosen countries for the map picker, plus any selected
-  // strays from outside them (search picks stay visible on the map). From
-  // 1024 px the steps after Stay show the picked stops alone, on the right.
-  const stopsMapStep = railOn && ['Stays', 'Trips', 'Getting', 'Finish'].includes(stepName);
-  const mapCities = useMemo(() => {
-    if (stepName !== 'Stay' && !stopsMapStep) return [];
-    const out = [];
-    for (const c of (stepName === 'Stay' ? selectedCountries : [])) {
-      for (const { id, dest } of c.cities) {
-        // Same minimum-rating / nightly-budget narrowing as the list view,
-        // so switching between Map and List shows the same candidate pool.
-        if (!passesStayFilters(id, dest)) continue;
-        out.push({
-          id,
-          city: cityLabel(dest.city),
-          lat: dest.lat,
-          lon: dest.lon,
-          tierKey: cityTier(dest).key,
-          score: dest.rating?.score ?? null,
-          selected: (nights[id] || 0) > 0,
-          nights: nights[id] || 0,
-          isAnchor: id === anchorId,
-          focused: id === focusedId,
-        });
-      }
-    }
-    // The stops map numbers its pins in trip order (the same numbers as the list).
-    const orderOf = new Map(orderedIncludedIds.map((id, i) => [id, i + 1]));
-    for (const id of (stopsMapStep ? orderedIncludedIds : includedIds)) {
-      if (out.some((o) => o.id === id)) continue;
-      const dest = destinations[id];
-      if (!dest || dest.lat == null) continue;
-      out.push({
-        id, city: cityLabel(dest.city), lat: dest.lat, lon: dest.lon,
-        tierKey: cityTier(dest).key, score: dest.rating?.score ?? null,
-        selected: true, nights: nights[id] || 0,
-        isAnchor: id === anchorId, focused: id === (stopsMapStep ? pickedStopId : focusedId),
-        order: stopsMapStep ? orderOf.get(id) : 0,
-      });
-    }
-    return out;
-  }, [stepName, stopsMapStep, selectedCountries, nights, includedIds, orderedIncludedIds, anchorId, focusedId,
-    pickedStopId, destinations, passesStayFilters]);
+  const {
+    nightlyFor, passesStayFilters, planned, flightPickOut, flightPickBack, priced, legEstimates,
+    pricedModes, liveAnswers, flightWaiting, flightParty, onPickFlight, pricedFlight,
+    bedEstimate, dayCosts, countryDayCost, tripDayCost, mapCities,
+  } = useWizardPricing({
+    adults, anchorId, babies, countryInsights, data, destinations, effectiveStayTier, focusedId,
+    groupSize, handOver, includedIds, kids, lifestyle, nights, orderedIncludedIds, pickedStopId,
+    railOn, selectedCountries, setTravelLeg, startDate, stayMaxNightly, stayMinRating, stepName,
+    travelValues,
+  });
 
   // Landing somewhere pins that country onto the trip, so the Stay step has a
   // region to talk about (more countries can still be added by search).
@@ -1311,132 +804,18 @@ export function GuidedTripWizard({
     const i = steps.indexOf(name);
     return i >= 0 && i + 1 < step ? i + 1 : null;
   };
-  const recapChips = [];
-  if (step > 1) {
-    if (originPlace) {
-      recapChips.push({ Icon: MapPinIcon, text: t('wizard.fromPlaceRecap', { place: originPlace.name }), to: stepNo('From') || stepNo('Getting') });
-    }
-    recapChips.push({
-      Icon: PersonIcon,
-      text: groupSize === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: groupSize }),
-      to: stepNo('Booked'),
-    });
-    if (selectedCountries.length) {
-      recapChips.push({
-        Icon: MapPinIcon,
-        text: selectedCountries.map((c) => c.country).slice(0, 3).join(', ')
-          + (selectedCountries.length > 3 ? ` +${selectedCountries.length - 3}` : ''),
-        to: stepNo('Where'),
-      });
-    }
-    if (booked.travel && arrivalDest) {
-      recapChips.push({ Icon: PlaneIcon, text: t('wizard.arrivingIn', { city: cityLabel(arrivalDest.city) }), to: stepNo('From') });
-    }
-    if (dateMode === 'exact' && startDate && endDate) {
-      recapChips.push({ Icon: CalendarIcon, text: t('plan.dateRange', { a: fmtDate(startDate, true), b: fmtDate(endDate, true) }), to: stepNo('When') });
-    } else if (dateMode === 'flex') {
-      recapChips.push({ Icon: CalendarIcon, text: `${nightsText(t, flexNights)}, ${flexMonth ? months.find((m) => m.key === flexMonth)?.label || flexMonth : t('wizard.anyMonth')}`, to: stepNo('When') });
-    }
-    // How they get there is their own answer now, so the recap repeats it back
-    // rather than naming an airport Carta chose.
-    if (travelValues.out?.mode && !travelValues.out?.guessed) {
-      recapChips.push({
-        Icon: travelValues.out.mode === 'car' ? CarIcon : RouteIcon,
-        text: t(TRAVEL_MODE_LABEL[travelValues.out.mode]),
-        to: stepNo('Getting'),
-      });
-    }
-    if ((stepName === 'Stay' || stepName === 'Finish') && stayStyle === 'single') {
-      recapChips.push({ Icon: BedIcon, text: t('wizard.oneHomeBaseChip'), to: stepNo('Stay') });
-    }
-    if (includedIds.length && stepName === 'Finish') {
-      recapChips.push({
-        Icon: RouteIcon,
-        text: t('wizard.staysNights', { stays: t(includedIds.length === 1 ? 'wizard.staysOne' : 'wizard.staysMany', { n: includedIds.length }), nights: nightsText(t, totalNights) }),
-        to: stepNo('Stay') || stepNo('Stays') || stepNo('Trips'),
-      });
-    }
-  }
+  const { recapChips } = wizardRecapChips({
+    arrivalDest, booked, dateMode, endDate, flexMonth, flexNights, groupSize, includedIds,
+    months, originPlace, selectedCountries, startDate, stayStyle, step, stepName, stepNo, t,
+    totalNights, travelValues,
+  });
 
-  // ---- The global planner draft (plannerStore) ---------------------------
-  // The wizard is the writer; the store makes the draft survive tab hops and
-  // reloads and gives other surfaces one place to read the context from.
-  useEffect(() => {
-    // T675: the flow's settings follow the engine's When and Who (row T653-a).
-    const flowSettings = plannerStore.getState().settings;
-    const engineSettings = (raw) => {
-      const ns = normalizeSettings(raw);
-      const next = withEngineEdits(ns, { dateMode, startDate, endDate, flexMonth, nights: windowNights, adults, kids, babies });
-      return next === ns ? raw : next;
-    };
-    plannerStore.set({
-      ...(flowSettings ? { settings: engineSettings(flowSettings) } : {}),
-      origin: originPlace
-        ? { name: originPlace.name, lat: originPlace.lat, lng: originPlace.lon, countryCode: originPlace.iso2 || '' }
-        : null,
-      nearbyAirports: nearAirports.map((a) => ({ iata: a.iata, name: a.name, distanceKm: a.km })),
-      travelDates: {
-        isFlexible: dateMode === 'flex',
-        startDate,
-        endDate,
-        durationNights: windowNights || flexNights || 0,
-        flexibleMonths: flexMonth ? [flexMonth] : [],
-      },
-      travelers: { adults, children: kids, babies, lifestyle: travelStyle },
-      wizard: {
-        step,
-        // The step's name survives a renumbering of the list (T500).
-        stepName,
-        countries: [...countries],
-        buildMode,
-        tripPickId: tripPick?.id || null,
-        dateMode,
-        flexMonth,
-        flexNights,
-        quiz,
-        // Everything else that decides which step a number means and what is
-        // on it (T388, row T377-e): a reload lands on the same named step
-        // with the same answers.
-        booked,
-        nights,
-        order,
-        travelValues,
-        arrivalId,
-        pace,
-        stayStyle,
-        ownStays,
-        depIata,
-      },
-      selectedDestination: [...countries][0] || null,
-      // How they told us they are getting there, and what they said it cost.
-      // Carta no longer shops for a fare, so there is no cheapest or fastest
-      // to claim and the store carries neither.
-      selectedTransit: travelValues.out?.mode && !travelValues.out?.guessed
-        ? {
-          type: travelValues.out.mode === 'car' ? 'drive' : travelValues.out.mode,
-          providerOrRoute: (travelValues.out.service || '').trim() || null,
-          estimatedCostEur: Math.max(0, Math.round(Number(String(travelValues.out.eur ?? '').replace(',', '.')) || 0)),
-          enteredByTraveller: true,
-        }
-        : null,
-      stops: includedIds.map((id, i) => {
-        const d = destinations[id];
-        const nightly = d ? nightlyFor(id, d) : null;
-        return {
-          cityId: id,
-          cityName: cityLabel(d?.city) || id,
-          nights: nights[id] || 0,
-          // Whole-group nightly from the same anchors the receipt uses.
-          estimatedNightlyRateEur: nightly ?? 0,
-          order: i,
-        };
-      }),
-    });
-    if (stayStyle === 'single') plannerStore.setItineraryType('single');
-  }, [originPlace, nearAirports, dateMode, startDate, endDate, windowNights, flexNights,
-    flexMonth, adults, kids, babies, travelStyle, countries, travelValues, includedIds, nights,
-    stayStyle, step, buildMode, tripPick?.id, quiz, destinations, nightlyFor,
-    booked, order, arrivalId, pace, ownStays, depIata, stepName]);
+  useWizardDraftSync({
+    adults, arrivalId, babies, booked, buildMode, countries, dateMode, depIata, destinations,
+    endDate, flexMonth, flexNights, includedIds, kids, nearAirports, nightlyFor, nights, order,
+    originPlace, ownStays, pace, quiz, startDate, stayStyle, step, stepName, travelStyle,
+    travelValues, tripPick, windowNights,
+  });
 
   // A new step starts at its own top. Without this the body keeps the previous
   // step's scroll offset, so a long screen can open halfway down its own

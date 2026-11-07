@@ -24,57 +24,9 @@
    name, the figure and the length sit on a solid band flush under it. The
    old .jstyle-card, .jcard and .jsec rules in 25-feature-pages.css moved
    here and were deleted there in the same commit. */
-
-.jsec-coverage {
-  grid-column: 1 / -1;
-  margin: 0 2px;
-  font-size: 13px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-
-.jcap-card {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  width: 100%;
-  padding: 0;
-  overflow: hidden;
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  background: var(--bg-card);
-  color: var(--ink);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color var(--dur-1) var(--ease-out);
-}
-.jcap-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-@media (hover: hover) {
-  .jcap-card:hover { border-color: var(--rule); }
-}
-.jcap-photo {
-  position: relative;
-  display: block;
-  aspect-ratio: 3 / 2;
-  background: var(--paper-dim);
-}
-.jcap-noimg {
-  display: flex;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  font-size: 13px;
-  color: var(--ink-soft);
-}
-.jcap-band {
-  display: grid;
-  gap: 2px;
-  padding: var(--space-2) var(--space-3) var(--space-3);
-  background: var(--bg-card);
-}
 .jcap-name {
   font-family: var(--display);
-  font-size: 16px;
+  font-size: var(--text-lead);
   font-weight: 600;
   line-height: 1.2;
   color: var(--ink);
@@ -84,36 +36,20 @@
    brief V4.4; JourneysSection FigLine). */
 .jcap-fig {
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink);
 }
 .jcap-fig .mono {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
 }
-.jcap-where,
-.jcap-meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-width: 0;
-  font-size: 12px;
-  line-height: 1.35;
-  color: var(--ink-soft);
-}
-.jcap-count { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 /* Two abreast on a phone (DIRECTION part 3): 3:2 leaves the half-width
    card too short to read, so the phone grid takes 16:10. */
-@media (max-width: 639px) {
+@media (max-width: 599px) {
   .places-list.jsec { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-2); }
 }
 @media (max-width: 768px) {
-  .jcap-photo { aspect-ratio: 16 / 10; }
-  .jcap-band { padding: var(--space-2); }
-  .jstyle-card .jcap-name { font-size: 16px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .jcap-card { transition: none; }
+  .jstyle-card .jcap-name { font-size: var(--text-lead); }
 }
 
 /* The composer's door: a plain bordered row, no icon tile (never-do 1). */
@@ -125,7 +61,7 @@
   min-height: var(--tap);
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   color: var(--ink);
   font: inherit;
@@ -137,19 +73,6 @@
   .jcomposed-card:hover { border-color: var(--ink-mute); }
 }
 .jcomposed-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.jcomposed-text { flex: 1; min-width: 0; }
-.jcomposed-title {
-  display: block;
-  font-family: var(--display);
-  font-size: 16px;
-  font-weight: 600;
-}
-.jcomposed-sub {
-  display: block;
-  margin-top: 2px;
-  font-size: 12px;
-  color: var(--ink-soft);
-}
 @media (prefers-reduced-motion: reduce) {
   .jcomposed-card { transition: none; }
 }
@@ -165,7 +88,7 @@
   display: grid;
   gap: var(--space-2);
   padding-bottom: var(--space-3);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   border: 1px solid var(--rule-soft);
   overflow: hidden;
@@ -179,17 +102,12 @@
   display: block;
   height: 12px;
   margin: 0 var(--space-3);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper-dim);
 }
 .jskel-line.is-short { width: 45%; }
-.jpage-skel { display: grid; gap: var(--space-3); }
-.jpage-skel .jskel-line { margin: 0; }
-.jpage-skel .jskel-line.is-title { height: 28px; width: 70%; }
 
 /* ── One style's list: the head, the one filter row, the chips ──────────── */
-
-.jsec-head { grid-column: 1 / -1; margin: 0 2px; }
 .jsec-back {
   display: inline-flex;
   align-items: center;
@@ -200,7 +118,7 @@
   background: transparent;
   color: var(--ink);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   cursor: pointer;
 }
@@ -209,30 +127,7 @@
   .jsec-back:hover span { text-decoration: underline; }
 }
 .jsec-back-solo { margin-top: var(--space-3); }
-.jsec-title {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: var(--space-1) 0 0;
-  font-family: var(--display);
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-}
-@media (min-width: 769px) {
-  .jsec-title { font-size: 26px; }
-}
 /* Count chip (rule "Count chip"). */
-.jsec-n {
-  padding: 1px var(--space-2);
-  border-radius: 999px;
-  background: var(--paper-dim);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--ink);
-}
 
 /* T498 (roadmap 1.3b rule 4): the library has no filter bar of its own.
    The active filters are chips in the one refine row, led by Filters on a
@@ -281,42 +176,6 @@
 }
 
 /* ── The journey page: the head in the traveller's order ─────────────────── */
-
-.jpage-bar-acts {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  margin-left: auto;
-}
-.jpage-copied {
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.jpage .bpage-head { margin-bottom: var(--space-3); }
-.jpage-hero { margin-bottom: var(--space-3); }
-.jpage .jpage-hook { margin: var(--space-3) 0; }
-.jpage-loc {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-1) var(--space-2);
-  margin: var(--space-3) 0 var(--space-4);
-  font-size: 13px;
-  color: var(--ink-soft);
-}
-.jpage-loc-pin { color: var(--ink-soft); flex: none; }
-.jpage-loc-coord { font-size: 12px; color: var(--ink-soft); }
-.jpage-loc-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-  color: var(--ink);
-  text-decoration: underline;
-}
-.jpage-loc-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-@media (pointer: fine) {
-  .jpage-loc-link { min-height: 32px; }
-}
 /* A hero is at most 40 percent of the viewport on a phone and 60 on a
    desktop, so the strip and its price are on the first screen. */
 
@@ -324,7 +183,7 @@
 .tl-seg {
   display: inline-flex;
   border: 1px solid var(--rule);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   background: var(--bg-card);
 }
@@ -333,13 +192,11 @@
   padding: 0 var(--space-3);
   border: 0;
   border-radius: 0;
-  font-size: 14px;
+  font-size: var(--text-body);
   font-family: var(--ui);
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .tl-seg .tl-btn + .tl-btn { border-left: 1px solid var(--rule); }
-.jpage .tl-pick { margin: 0 0 var(--space-3); }
-.jpage .tl-note { margin-top: var(--space-2); font-size: 12px; }
 @media (pointer: fine) {
   .tl-seg .tl-btn { min-height: 32px; }
 }
@@ -356,54 +213,20 @@
 .jblock-h {
   margin: 0 0 var(--space-2);
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   font-weight: 600;
   color: var(--ink);
 }
-.jpage-facts { margin: 0; }
 
 /* The trip's own receipt (rule "Receipt, extended"). The Cost group's fold
    already draws the one box on this page, so the receipt inside it adds no
    second border (no card inside a fold). */
-.jrcpt { padding: 0; }
-.jpage-budget-party .jpage-budget-label { color: var(--ink-soft); }
-.jpage-budget-party .jpage-budget-eur { font-size: 13px; }
-.jpage-town {
-  margin-top: var(--space-4);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--rule-soft);
-}
-.jpage-town-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: 14px;
-  text-align: left;
-  cursor: pointer;
-}
-.jpage-town-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.jpage-town-btn svg { transition: transform var(--dur-2) var(--ease-out); }
-.jpage-town-btn svg.is-open { transform: rotate(180deg); }
-.jpage-town-body { margin-top: var(--space-3); }
-@media (pointer: fine) {
-  .jpage-town-btn { min-height: 32px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .jpage-town-btn svg { transition: none; }
-}
 
 /* Booking order: whole rows at --tap, the due month under the clause. */
 .jpage-book-due {
   display: block;
   margin-top: 2px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink);
 }
@@ -415,19 +238,6 @@
 }
 
 /* ── Desktop: a plan column and a sticky cost column (rule R8) ──────────── */
-@media (min-width: 1024px) {
-  .jpage .jpage-wrap > * { grid-column: 1; }
-  .jpage .jpage-body > * { grid-column: 1; }
-  .jpage .jpage-body > .jpage-side {
-    grid-column: 2;
-    grid-row: 1 / span 60;
-    position: sticky;
-    top: var(--space-4);
-    max-height: calc(100dvh - 120px);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-}
 
 /* ── T387, brief item V3.11: one grammar for the two trip pages ───────────
    The composed route page (browse/TripPage.jsx, #itin=<id>) takes the
@@ -451,14 +261,14 @@
 .itin-capband-title {
   margin: 0;
   font-family: var(--display);
-  font-size: 28px;
+  font-size: var(--text-headline);
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.015em;
   color: var(--ink);
 }
 @media (min-width: 769px) {
-  .itin-capband-title { font-size: 40px; }
+  .itin-capband-title { font-size: var(--text-display); }
 }
 .itin-capband-sub {
   display: flex;
@@ -467,24 +277,24 @@
   gap: var(--space-1);
   margin: var(--space-2) 0 0;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 /* The score is a rating, so it is ochre and mono, beside the countries. */
 .itin-capband-themes {
   margin: var(--space-1) 0 0;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 .itin-capband-credit {
   margin: var(--space-1) 0 0;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-mute);
   overflow-wrap: anywhere;
 }
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .itin-capband-in { padding: var(--space-3) var(--space-4); }
 }
 
@@ -515,13 +325,13 @@
 .dtrack .tday:first-child {
   padding: var(--space-3) var(--space-4) var(--space-2);
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
 }
 .dtrack .tday-title {
   margin: 0;
   font-family: var(--display);
-  font-size: 16px;
+  font-size: var(--text-lead);
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.01em;
@@ -548,7 +358,7 @@
   margin-top: var(--space-1);
   padding: 0;
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 @media (hover: hover) {
@@ -572,7 +382,7 @@
   background: var(--paper-dim);
   border-bottom: 1px solid var(--rule-soft);
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--ink);
 }
@@ -580,7 +390,7 @@
 .itin-receipt-days {
   flex: none;
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 500;
   color: var(--ink-soft);
   font-variant-numeric: tabular-nums;
@@ -593,14 +403,6 @@
 
 /* The photo credit link under the hero reaches the tap floor (it was a 13 px
    inline link, the one phone target under 44 px the quality floor found). */
-.jpage .bpage-credit a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-}
-@media (pointer: fine) {
-  .jpage .bpage-credit a { min-height: 32px; }
-}
 
 /* ==========================================================================
    T397, design wave V4: visual and dynamic, inside the palette
@@ -608,18 +410,6 @@
 
 /* ── Cards answer a press at once (rule "Caption band": the pressed state
    is the band turning --ink-fill) ─────────────────────────────────────── */
-.jcap-card {
-  transition: border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
-}
-.jcap-band {
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.jcap-card:active { transform: scale(0.97); }
-.jcap-card:active .jcap-band { background: var(--select-bg); }
-.jcap-card:active .jcap-name,
-.jcap-card:active .jcap-fig,
-.jcap-card:active .jcap-where,
-.jcap-card:active .jcap-meta { color: var(--on-fill); }
 
 /* ── The strip's cost cell: the range in mono, "a person" in sans ─────── */
 .jpage .jstrip-word .mono {
@@ -628,10 +418,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ── A receipt figure settles in place (LifestyleSlider SettledEur): the
-   box is the figure's own, the dip is scripted by figureChange.js ─────── */
-.ls-fig { display: inline-block; font-variant-numeric: tabular-nums; }
-
 /* ── Spend the accent once (brief V4.3) ──────────────────────────────────
    The fold header icons on the journey page read in ink (rule R6); the
    shared .dsec rules stay as they are for the other pages. The climb
@@ -639,72 +425,10 @@
    --accent. */
 /* The fold icons and the title hover are the shared .dsec rules since T411. */
 
-/* ── One selected day across the week (brief V4.1) ──────────────────────
-   The day in view on the track: its effort bar is the one --accent item of
-   the week shape, its number an --ink-fill pill (rule "Selected state"),
-   and the climb profile carries one --accent marker that slides to its
-   column (a move between two positions: --dur-2, --ease-in-out). */
-.jweek-col.is-on .jweek-bar { background: var(--accent); }
-.jweek-bar { transition: background-color var(--dur-1) var(--ease-out); }
-.jweek-picks { margin-top: var(--space-1); }
-.jweek-pick {
-  min-width: 0;
-  min-height: var(--tap);
-  padding: 0;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: var(--ink-soft);
-  font-family: var(--mono);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.jweek-pick.is-on { background: var(--select-bg); color: var(--select-ink); }
-.jweek-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-@media (hover: hover) {
-  .jweek-pick:not(.is-on):hover { background: var(--paper-dim); color: var(--ink); }
-}
-@media (pointer: fine) {
-  .jweek-pick { min-height: 32px; }
-}
-.jroute-prof { position: relative; }
-.jroute-sel {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(100% / var(--jroute-n, 7));
-  height: 96px;
-  pointer-events: none;
-  transform: translateX(calc(var(--jroute-i, 0) * 100%));
-  transition: transform var(--dur-2) var(--ease-in-out);
-}
-.jroute-sel::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(50% - 1px);
-  width: 2px;
-  background: var(--accent);
-}
-
 /* ── A new length fades the days in (brief V4.5) ─────────────────────── */
 @keyframes jpage-days-in {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-.jpage-days-swap { animation: jpage-days-in var(--dur-2) var(--ease-out); }
-
-@media (prefers-reduced-motion: reduce) {
-  .jcap-card,
-  .jcap-band,
-  .jweek-bar,
-  .jweek-pick,
-  .jroute-sel { transition: none; }
-  .jcap-card:active { transform: none; }
-  .jpage-days-swap { animation: none; }
 }
 
 /* ==========================================================================
@@ -730,7 +454,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
-    font-size: 13px;
+    font-size: var(--text-label);
     line-height: 1.2;
     overflow-wrap: anywhere;
     text-align: left;
@@ -740,28 +464,9 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     white-space: normal;
-    font-size: 13px;
+    font-size: var(--text-label);
     line-height: 1.2;
     text-align: left;
-  }
-}
-
-/* ── The bed chips on a phone (brief V5.4): a one-night chip is one column
-   wide (about 40 px), so its name read "La..." and "R...". On a phone the
-   beds list one under another with the night and the place in full, the
-   text the chip already carries for a screen reader. ──────────────────── */
-@media (max-width: 599px) {
-  .jpage .jweek-bed .jweek-bed-where {
-    position: static;
-    width: auto;
-    height: auto;
-    margin: 0;
-    overflow: visible;
-    clip-path: none;
-    white-space: normal;
-    font-size: 12.5px;
-    line-height: 1.35;
-    color: var(--ink);
   }
 }
 
@@ -798,11 +503,6 @@
   .jpage .dtrack > * {
     margin-bottom: var(--space-3);
     break-inside: avoid;
-  }
-  .jpage .jpage-day { break-inside: avoid; }
-  .jpage .jpage-hero img {
-    max-height: 7cm;
-    object-fit: cover;
   }
   .jpage * { animation: none; transition: none; }
 }

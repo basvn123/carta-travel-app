@@ -19,6 +19,9 @@ import { ContentReports } from '../components/admin/ContentReports.jsx';
 import { ConfigManager } from '../components/admin/ConfigManager.jsx';
 import { AuditLog } from '../components/admin/AuditLog.jsx';
 import { PriceProvenance } from '../components/admin/PriceProvenance.jsx';
+import { DataHealth } from '../components/admin/DataHealth.jsx';
+import { SloPanel } from '../components/admin/SloPanel.jsx';
+import { PipelineOverrides } from '../components/admin/PipelineOverrides.jsx';
 import { rowsNeedingReview, reviewState } from '../lib/overrides.js';
 import { useErrText } from '../components/admin/useErrText.js';
 import { useMargin } from '../components/admin/useMargin.js';
@@ -79,7 +82,7 @@ import { useModerationDecision } from '../components/admin/useModerationDecision
 // it) and one decision hook for dismiss, uphold and reverse. Arming either
 // kind of form closes the other, so one moderation form is open at a time.
 
-const SECTIONS = ['overview', 'users', 'content', 'guides', 'reports', 'feedback', 'site', 'prices', 'audit'];
+const SECTIONS = ['overview', 'users', 'content', 'guides', 'reports', 'feedback', 'site', 'prices', 'health', 'slo', 'overrides', 'audit'];
 
 export function AdminPage({ onClose }) {
   const { t } = useI18n();
@@ -244,6 +247,12 @@ export function AdminPage({ onClose }) {
             )}
 
             {section === 'prices' && <PriceProvenance />}
+
+            {section === 'health' && <DataHealth />}
+
+            {section === 'slo' && <SloPanel />}
+
+            {section === 'overrides' && <PipelineOverrides live={content.overrides} />}
 
             {section === 'audit' && (
               <AuditLog audit={audit} auditBusy={auditBusy} loadAudit={loadAudit} />

@@ -1,10 +1,7 @@
 import React from 'react';
-import { createPortal } from 'react-dom';
 import { PART_REACH, PART_WEIGHTS, classRank, ratingPart, ratingWhy } from '../lib/rating.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
-import { IconButton } from '../components/ui/index.js';
-import { CloseIcon } from '../components/Icons.jsx';
-import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { DialogSheet } from '../components/ui/index.js';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
@@ -39,9 +36,6 @@ function useRatingWhy(id, rating, lang) {
 
 export function RatingSheet({ rating, destination, city, country, fmtScore, onClose }) {
   const { t, lang } = useI18n();
-  const panelRef = React.useRef(null);
-  const closeRef = React.useRef(null);
-  useFocusTrap(panelRef, onClose, { initialFocusRef: closeRef });
   const why = useRatingWhy(destination?.id, rating, lang);
   if (!rating || rating.score == null) return null;
 
@@ -62,49 +56,40 @@ export function RatingSheet({ rating, destination, city, country, fmtScore, onCl
     .filter((r) => r.v != null && PART_WEIGHTS[r.k] != null);
   const title = t('rs.title', { city, score: fmtScore(rating.score) });
 
-  return createPortal(
-    <div className="frr-scrim" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="frr-sheet rs-sheet" role="dialog" aria-modal="true" aria-labelledby="rs-h" ref={panelRef}>
-        <div className="frr-sheet-head">
-          <h2 id="rs-h">{title}</h2>
-          <IconButton label={t('receipt.sheetClose')} onClick={onClose} ref={closeRef}>
-            <CloseIcon size={16} />
-          </IconButton>
+  return (
+    <DialogSheet titleId="rs-h" title={title} className="rs-sheet" onClose={onClose} closeLabel={t('receipt.sheetClose')}>
+      <div className="rs-body">
+        <div className="rs-hero">
+          <ScoreChip rating={rating} size="lg" band />
+          {why && <p className="rs-why">{why}</p>}
         </div>
-        <div className="rs-body">
-          <div className="rs-hero">
-            <ScoreChip rating={rating} size="lg" band />
-            {why && <p className="rs-why">{why}</p>}
-          </div>
 
-          {(inCountry || europe) && (
-            <dl className="rs-stand">
-              {inCountry && <div><dt>{t('rs.inCountry', { country })}</dt><dd>{inCountry}</dd></div>}
-              {europe && <div><dt>{t('rs.inEurope')}</dt><dd>{europe}</dd></div>}
-            </dl>
-          )}
+        {(inCountry || europe) && (
+          <dl className="rs-stand">
+            {inCountry && <div><dt>{t('rs.inCountry', { country })}</dt><dd>{inCountry}</dd></div>}
+            {europe && <div><dt>{t('rs.inEurope')}</dt><dd>{europe}</dd></div>}
+          </dl>
+        )}
 
-          {parts.length > 0 && (
-            <section className="rs-parts" aria-labelledby="rs-parts-h">
-              <h3 id="rs-parts-h" className="rs-h">{t('rs.parts')}</h3>
-              <ul>
-                {parts.map(({ k, v }) => (
-                  <li key={k} className="rs-part">
-                    <span className="rs-part-top">
-                      <span className="rs-part-name">{t(`rs.part.${k}`, PART_REACH)}</span>
-                      <span className="rs-part-val">{fmtScore(Math.round(v * 100) / 10)}</span>
-                    </span>
-                    <span className="rs-track" aria-hidden="true"><span style={{ width: `${Math.max(2, v * 100)}%` }} /></span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
+        {parts.length > 0 && (
+          <section className="rs-parts" aria-labelledby="rs-parts-h">
+            <h3 id="rs-parts-h" className="rs-h">{t('rs.parts')}</h3>
+            <ul>
+              {parts.map(({ k, v }) => (
+                <li key={k} className="rs-part">
+                  <span className="rs-part-top">
+                    <span className="rs-part-name">{t(`rs.part.${k}`, PART_REACH)}</span>
+                    <span className="rs-part-val">{fmtScore(Math.round(v * 100) / 10)}</span>
+                  </span>
+                  <span className="rs-track" aria-hidden="true"><span style={{ width: `${Math.max(2, v * 100)}%` }} /></span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
-          {rating.hidden_gem && <p className="rs-gem">{t('rating.gemWhy')}</p>}
-        </div>
+        {rating.hidden_gem && <p className="rs-gem">{t('rating.gemWhy')}</p>}
       </div>
-    </div>,
-    document.body,
+    </DialogSheet>
   );
 }

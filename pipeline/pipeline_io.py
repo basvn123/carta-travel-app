@@ -25,6 +25,13 @@ import json
 import time
 import os
 
+try:                                   # flat import, as the pipeline scripts do
+    import provenance
+    from wire_contract import check_wire
+except ImportError:                    # imported as pipeline.pipeline_io
+    from . import provenance
+    from .wire_contract import check_wire
+
 
 def atomic_write_json(path, data, *, indent=1, ensure_ascii=False,
                       separators=None):
@@ -33,8 +40,23 @@ def atomic_write_json(path, data, *, indent=1, ensure_ascii=False,
     ``path`` may be a str or pathlib.Path. The temp file lives beside the target
     so os.replace stays on one filesystem and is truly atomic. Pass ``indent=
     None, separators=(",", ":")`` for the compact form served files use.
+
+    A write of the served wire (continent-app/public/app_data.json) is checked
+    against docs/wire.schema.json first (T1133): a payload that breaks the
+    contract raises WireContractError, naming each field path, and the file
+    on disk is left as it was.
+
+    A write of the master or the served wire first stamps every key block
+    that has no ``_src``/``_asof`` yet with its source and today's date
+    (T1143, ``provenance.stamp_payload``) and lifts the schema to 20, and
+    sets ``meta.categories`` to the categories the destinations use
+    (``sync_meta_categories``).
     """
     path = os.fspath(path)
+    if provenance.is_stamped_path(path):
+        provenance.stamp_payload(data)
+        sync_meta_categories(data)
+    check_wire(path, data)
     tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=indent, ensure_ascii=ensure_ascii,
@@ -42,6 +64,29 @@ def atomic_write_json(path, data, *, indent=1, ensure_ascii=False,
         f.flush()
         os.fsync(f.fileno())
     _replace_with_retry(tmp, path)
+
+
+def sync_meta_categories(data) -> bool:
+    """Set ``meta.categories`` to exactly the categories the destinations hold.
+
+    T1215 (row T1149-i): the vocabulary was only ever unioned by the two
+    apply_*_categories scripts, so a category every place had lost (palace)
+    stayed listed, and categories written by other steps (catalogue_gaps,
+    the town expansion: culture, fjords, islands, lakes) never got in. Doing
+    it on every write of the master and the served wire keeps the two equal
+    whichever step wrote last. A payload without ``meta.categories`` is left
+    alone. Returns True when the list changed.
+    """
+    if not isinstance(data, dict) or not isinstance(data.get("destinations"), dict):
+        return False
+    meta = data.get("meta")
+    if not isinstance(meta, dict) or "categories" not in meta:
+        return False
+    used = sorted({c for d in data["destinations"].values() if isinstance(d, dict)
+                   for c in (d.get("categories") or []) if isinstance(c, str)})
+    changed = meta["categories"] != used
+    meta["categories"] = used
+    return changed
 
 
 # On Windows os.replace raises PermissionError (WinError 5) whenever ANY other

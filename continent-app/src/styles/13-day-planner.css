@@ -91,11 +91,6 @@
   display: block;
   flex-shrink: 0;
 }
-.brand-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
-}
 .brand .name {
   font-family: var(--display);
   font-weight: 600;
@@ -106,15 +101,9 @@
 .brand .sub {
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   margin-top: 4px;
-}
-
-.brand-divider {
-  width: 1px;
-  height: 30px;
-  background: var(--rule);
 }
 
 .filters {

@@ -12,6 +12,7 @@ import { CONTACT } from '../../lib/contact.js';
  * question opens with the keyboard and a screen reader for free. Figures in
  * the answers come from lib/pricing.js, never typed into a string.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const FAQ = [
   { group: 'account.fqgPlanning', items: ['different', 'plan', 'together', 'book', 'missing'] },
   { group: 'account.fqgPrices', items: ['day', 'est', 'lifestyle', 'flights'] },

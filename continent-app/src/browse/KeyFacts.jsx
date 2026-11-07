@@ -23,6 +23,7 @@ import {
  * which can hurt somebody and so is never a cell among others). `foot` is
  * one visible line under the band for a mark the cells carry.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const FACT_ICONS = {
   time: ClockIcon, hours: ClockIcon,
   km: RouteIcon, dist: RouteIcon, length: RouteIcon, distance: RouteIcon,

@@ -28,7 +28,7 @@
   border-bottom: 1px solid var(--rule);
   background: var(--paper-dim);
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .tpage-hero { height: 400px; }
 }
 .tpage-map {

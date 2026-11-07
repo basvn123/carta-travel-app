@@ -693,8 +693,17 @@ Added by T380 (design direction v6, `docs/design-v6/DIRECTION.md` part 2). Every
 | `--dur-4` | `480ms` | One authored movement over distance: the map camera, one leg of the route reveal (the whole reveal is capped at 900 ms) |
 | `--ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | Arrivals and settles |
 | `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Movement between two on-screen positions: a reorder, the active marker sliding, a scrub marker |
+| `--dur-spin` | `800ms` | One turn of a spinner (T1124) |
+| `--dur-blink` | `1000ms` | A blinking cursor or dot (T1124) |
+| `--dur-dots` | `1200ms` | A typing-dots or pulse cycle (T1124) |
+| `--dur-breathe` | `1600ms` | A breathing skeleton or a sheen sweep (T1124) |
+| `--dur-pulse` | `2000ms` | A slow attention pulse (T1124) |
+| `--dur-loop` | `2800ms` | A looping diagram step (T1124) |
+| `--dur-drift` | `24000ms` | Ambient background drift (T1124) |
 
-No overshoot, bounce or elastic curve exists. Durations and easings come from these tokens, never a literal. Routine motion animates `transform` and `opacity`; a press, hover or selection may also animate `background-color`, `border-color` and `color` at `--dur-1`; a reveal may animate `clip-path`, `mask-position` or `stroke-dashoffset`. Nothing animates `width`, `height`, `top`, `left`, margins, padding, `grid-template-*`, `box-shadow`, `filter` or `backdrop-filter`; `transition: all` is never written. A figure that changes updates in place with one opacity dip (`settleFigure()` in `src/lib/figureChange.js`), never a count-up. Nothing moves because the page scrolled. The press shade (opacity 0.78, `scale: 0.98`, 60 ms) comes from `02-base.css`. The reduced-motion floor in `02-base.css` zeroes every duration, and every rule carries its own `prefers-reduced-motion: reduce` branch as well.
+The ambient loops never carry an entrance or a state change. T1124 moved every literal duration and easing in the stylesheets onto these tokens (243 literals before, 1 after; the one left is the cost card's 900 ms ring in `92-cost-card.css`, owned by the cost card task). Literals were rounded to the nearest token: up to 160 ms to `--dur-1`, up to 260 to `--dur-2`, up to 400 to `--dur-3`, up to 600 to `--dur-4`; `ease` and `ease-in-out` became `--ease-in-out`, `ease-out` and the near-identical Carta cubic-beziers became `--ease-out`. `linear`, `0s` and the reduced-motion floor's `0.01ms` stay literal, and so does any `*-delay` (a stagger is arithmetic). `motion-literal` in `scripts/ci/design-lint.mjs` fails a new literal. Scripts scroll through `scrollBehavior()` in `src/lib/motion.js`, never `behavior: 'smooth'`.
+
+No overshoot, bounce or elastic curve exists. Durations and easings come from these tokens, never a literal. Routine motion animates `transform` and `opacity`; a press, hover or selection may also animate `background-color`, `border-color` and `color` at `--dur-1`; a reveal may animate `clip-path`, `mask-position` or `stroke-dashoffset`. Nothing animates `width`, `height`, `top`, `left`, margins, padding, `grid-template-*`, `box-shadow`, `filter` or `backdrop-filter`; `transition: all` is never written. A figure that changes updates in place with one opacity dip (`settleFigure()` in `src/lib/figureChange.js`), never a count-up. Nothing moves because the page scrolled. The press shade (opacity 0.78, `scale: 0.98`, `--dur-1`) comes from `02-base.css`. The reduced-motion floor in `02-base.css` zeroes every duration, and every rule carries its own `prefers-reduced-motion: reduce` branch as well.
 
 ### Home page exception v2 (T606)
 

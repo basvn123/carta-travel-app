@@ -1,0 +1,44 @@
+{
+ "Annecy": {
+  "extract": "Annecy (French pronunciation: [anesi]) is a commune in the Haute-Savoie department in the Auvergne-Rhone-Alpes region of south-eastern France. It is on the northern tip of Lake Annecy, 35 kilometres south of Geneva. The city has an estimated population of about 130,000 in its urban area and is the prefecture of the department. Its historic centre developed around the Palais de l'Isle, a medieval building on an island in the Thiou river, and the Chateau d'Annecy, a fortress that was the home of the counts of Geneva. The lake is known for the clarity of its water and is ringed by mountains, including the Semnoz and the Parmelan. Annecy hosts an international animation film festival every June and a lake festival in August. The old town was largely rebuilt in the seventeenth century after fires and keeps many arcaded streets. Visitors arrive by train from Lyon and Geneva or by road from the A41 motorway.",
+  "coords": [
+   45.8992,
+   6.1294
+  ],
+  "revid": 9001,
+  "disambiguation": false
+ },
+ "Nice": {
+  "extract": "Nice is a commune in the Alpes-Maritimes department of France, on the Mediterranean coast. The city is the second largest on the French Riviera by population and is known for its mild winters, its seafront and its airport, the third busiest in France. The old town, Vieux-Nice, has narrow streets and a daily flower market. The city has a long record of visitors from the nineteenth century onwards when English travellers wintered there and built the Promenade des Anglais along the bay of angels for walking.",
+  "coords": [
+   43.7,
+   7.25
+  ],
+  "revid": 9003,
+  "disambiguation": false
+ },
+ "Mercy": {
+  "extract": "Mercy is compassion or forgiveness shown towards someone.",
+  "coords": null,
+  "revid": 9004,
+  "disambiguation": false
+ },
+ "Brive": {
+  "extract": "Brive-la-Gaillarde is a commune in the Correze department in France.",
+  "coords": [
+   45.16,
+   1.53
+  ],
+  "revid": 9005,
+  "disambiguation": false
+ },
+ "Tiny": {
+  "extract": "Tiny is a Texas town in the United States with a small population and a long history of ranching and railroads on the plains.",
+  "coords": [
+   31.0,
+   -99.0
+  ],
+  "revid": 9006,
+  "disambiguation": false
+ }
+}

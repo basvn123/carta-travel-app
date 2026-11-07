@@ -1,0 +1,533 @@
+{
+ "about": "Ask the docs question set (T1168, ROADMAP B8). Written by the session that built the feature from the docs headings: read recall as an upper bound until real questions are logged (T1168-d). gold: docs path, optional anchor prefix of the section. answerable false: the docs must abstain.",
+ "questions": [
+  {
+   "id": "d01",
+   "q": "What do I do when the Gemini quota is exhausted?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/incident.md",
+    "anchor": "2-gemini"
+   }
+  },
+  {
+   "id": "d02",
+   "q": "Stripe webhooks stopped arriving, where do I look?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/incident.md",
+    "anchor": "3-stripe"
+   }
+  },
+  {
+   "id": "d03",
+   "q": "How do I issue a refund to a traveller?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/refund.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d04",
+   "q": "What are the steps to deploy the app?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/deploy.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d05",
+   "q": "How do I undo a deploy?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/deploy.md",
+    "anchor": "undo"
+   }
+  },
+  {
+   "id": "d06",
+   "q": "What is the SLO error budget and how does it work?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/slo.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d07",
+   "q": "How do I run the load tests?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/load-tests.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d08",
+   "q": "Is the free allowance once per account?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/quotas-paywall.md",
+    "anchor": "quota-002"
+   }
+  },
+  {
+   "id": "d09",
+   "q": "What happens to the quota when a refund is made?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/quotas-paywall.md",
+    "anchor": "quota-006"
+   }
+  },
+  {
+   "id": "d10",
+   "q": "What happens when the quota read fails?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/quotas-paywall.md",
+    "anchor": "quota-007"
+   }
+  },
+  {
+   "id": "d11",
+   "q": "How is the comfort index weighted?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/seasons-crowds.md",
+    "anchor": "season-003"
+   }
+  },
+  {
+   "id": "d12",
+   "q": "How are the best months picked for a place?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/seasons-crowds.md",
+    "anchor": "season-005"
+   }
+  },
+  {
+   "id": "d13",
+   "q": "Which lifestyle presets does the price engine have?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/price.md",
+    "anchor": "price-006"
+   }
+  },
+  {
+   "id": "d14",
+   "q": "How are child and baby shares of a trip price worked out?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/price.md",
+    "anchor": "price-005"
+   }
+  },
+  {
+   "id": "d15",
+   "q": "How many free changes does an AI day plan get?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/plan-day.md",
+    "anchor": "planday-006"
+   }
+  },
+  {
+   "id": "d16",
+   "q": "Who may ask for an AI day plan?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/plan-day.md",
+    "anchor": "planday-001"
+   }
+  },
+  {
+   "id": "d17",
+   "q": "Where are the production secrets kept?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "security/SECRETS.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d18",
+   "q": "What are the blast radius levels for secrets?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "security/SECRETS.md",
+    "anchor": "blast"
+   }
+  },
+  {
+   "id": "d19",
+   "q": "What does the threat model say about the R2 data host?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "security/threat-model.md",
+    "anchor": "3-r2"
+   }
+  },
+  {
+   "id": "d20",
+   "q": "Which model answers each AI feature and when to switch?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "ai/model-strategy.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d21",
+   "q": "How is the cost of an AI call worked out?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "ai/model-strategy.md",
+    "anchor": "how-a-cost"
+   }
+  },
+  {
+   "id": "d22",
+   "q": "How do I run the data pipeline?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "data/pipeline.md",
+    "anchor": "how-to-run"
+   }
+  },
+  {
+   "id": "d23",
+   "q": "What are the pipeline task flags?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "data/pipeline.md",
+    "anchor": "task-flags"
+   }
+  },
+  {
+   "id": "d24",
+   "q": "How are trails rated from 0 to 10?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "data/trails.md",
+    "anchor": "rating"
+   }
+  },
+  {
+   "id": "d25",
+   "q": "What is the beach beauty index model version?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "data/beaches.md",
+    "anchor": "scoring"
+   }
+  },
+  {
+   "id": "d26",
+   "q": "What is the gate in export_beaches?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "data/beaches.md",
+    "anchor": "the-gate"
+   }
+  },
+  {
+   "id": "d27",
+   "q": "What happens on first load of the app?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "architecture/request-paths.md",
+    "anchor": "first-load"
+   }
+  },
+  {
+   "id": "d28",
+   "q": "How does a request to Ask travel through the system?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "architecture/request-paths.md",
+    "anchor": "ask"
+   }
+  },
+  {
+   "id": "d29",
+   "q": "What is in the glossary under Prices?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "glossary.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d30",
+   "q": "How do flights and fares work?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "areas/flights.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d31",
+   "q": "Where does the stays data come from?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "areas/stays.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d32",
+   "q": "How does the Pass paywall work with Stripe?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "areas/pass-paywall.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d33",
+   "q": "What does the Ask Carta model card say about known limits?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "ai/model-card-ask.md",
+    "anchor": "known-limits"
+   }
+  },
+  {
+   "id": "d34",
+   "q": "How is Ask kept honest about numbers?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "ai/model-card-ask.md",
+    "anchor": "how-it-is-kept-honest"
+   }
+  },
+  {
+   "id": "d35",
+   "q": "How do I restore a database backup?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/backup.md",
+    "anchor": "restore"
+   }
+  },
+  {
+   "id": "d36",
+   "q": "Never restore over what?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/backup.md",
+    "anchor": "restore"
+   }
+  },
+  {
+   "id": "d37",
+   "q": "Hoe herstel ik een back-up van de database?",
+   "lang": "nl",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/backup.md",
+    "anchor": "restore"
+   }
+  },
+  {
+   "id": "d38",
+   "q": "Wat doe ik als Stripe webhooks niet meer aankomen?",
+   "lang": "nl",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/incident.md",
+    "anchor": "3-stripe"
+   }
+  },
+  {
+   "id": "d39",
+   "q": "Hoe werkt de terugbetaling aan een reiziger?",
+   "lang": "nl",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/refund.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d40",
+   "q": "What is ASVS and which level does Carta target?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "security/asvs.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d41",
+   "q": "How is the build box set up?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/build-box.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d42",
+   "q": "What is the drift and scorecard runbook for?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "runbooks/drift-and-scorecard.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d43",
+   "q": "Which rating rule covers confidence?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/rating.md",
+    "anchor": "rating-010"
+   }
+  },
+  {
+   "id": "d44",
+   "q": "How does the recommendation logic pick places?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/recommendation.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d45",
+   "q": "What is the Ask logic about retrieval?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "logic/ask.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d46",
+   "q": "Which mountains data does the pipeline use?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "data/mountains.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d47",
+   "q": "How are photos licensed and stored?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "data/photos.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "d48",
+   "q": "What does the taxonomy labelling guide tell labellers?",
+   "lang": "en",
+   "answerable": true,
+   "gold": {
+    "path": "ai/taxonomy-labelling-guide.md",
+    "anchor": ""
+   }
+  },
+  {
+   "id": "u01",
+   "q": "What is the recipe for lasagne?",
+   "lang": "en",
+   "answerable": false
+  },
+  {
+   "id": "u02",
+   "q": "Who won the football world cup in 2018?",
+   "lang": "en",
+   "answerable": false
+  },
+  {
+   "id": "u03",
+   "q": "How do I reset my Netflix password?",
+   "lang": "en",
+   "answerable": false
+  },
+  {
+   "id": "u04",
+   "q": "What is the airspeed of an unladen swallow?",
+   "lang": "en",
+   "answerable": false
+  },
+  {
+   "id": "u05",
+   "q": "How tall is Mount Kilimanjaro in feet?",
+   "lang": "en",
+   "answerable": false
+  },
+  {
+   "id": "u06",
+   "q": "Which bicycle brand does the owner ride on Mars?",
+   "lang": "en",
+   "answerable": false
+  },
+  {
+   "id": "u07",
+   "q": "How do I configure Kubernetes ingress for Carta?",
+   "lang": "en",
+   "answerable": false
+  },
+  {
+   "id": "u08",
+   "q": "What is the salary of the CEO of Carta?",
+   "lang": "en",
+   "answerable": false
+  }
+ ]
+}

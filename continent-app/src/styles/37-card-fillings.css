@@ -74,13 +74,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.card.card-row.pcard .jcap-where > span:last-child,
-.card.card-row.pcard .jcap-meta {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.card.card-row.pcard .jcap-where { min-width: 0; }
 .card.card-row.pcard .card-figures { display: contents; }
 .card.card-row.pcard .card-rating { grid-column: 2; grid-row: 1; }
 .card.card-row.pcard .card-meta,
@@ -169,7 +162,6 @@
 .card.pcard .pcard-hook > .pcard-gem { color: var(--text); }
 
 /* The "not scored" word in the Score's place. */
-.card.pcard .places-card-unrated,
 .card.pcard .cycle-card-unrated {
   font-size: var(--text-caption);
   color: var(--text-3);

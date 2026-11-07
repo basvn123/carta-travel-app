@@ -28,11 +28,27 @@
  * Secrets (set via `supabase secrets set`): GEMINI_API_KEY, and optionally
  * GEMINI_MODEL (default gemini-flash-latest), AI_GLOBAL_DAILY_CAP (200),
  * AI_ENABLE_CITY_GROUNDING (default true). Per-user caps come from
- * public.plan_tiers, not from env.
+ * public.plan_tiers, not from env. Provider and chain (T1137):
+ * AI_SUGGEST_CITY_PROVIDER, AI_SUGGEST_CITY_MODELS and the other keys in
+ * supabase/functions/_shared/aiModels.mjs.
+ *
+ * AI security and model access (T1137, E3, closing T1117-c): the wish and the
+ * candidate deck are scrubbed by aiGuard before the cache key and the prompt,
+ * the guard's rules ride in the system slot, the answer is shape-checked and
+ * its text repaired, and a cached payload passes the same check before it is
+ * served. The call itself goes through aiModels.callModel.
  */
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { cleanText, modelChain, shouldFallOver } from '../plan-day/logic.mjs';
+import { cleanText } from '../plan-day/logic.mjs';
+import {
+  LIMITS, guardCityInput, guardCityOutput, guardCityPayload, makeNonce, systemRules,
+} from '../_shared/aiGuard.mjs';
+import {
+  modelAccess, callModel, chainKey, supportsSearch, parseModelJson, refusalBody,
+} from '../_shared/aiModels.mjs';
 import { sanitizeTownCandidates, sanitizeSuggestions, cacheKeyInput } from './logic.mjs';
+// The prompt and the response schema, from the prompt registry (T1140, E5).
+import { LANG_NAMES, RESPONSE_SCHEMA, buildPrompt } from './prompt.mjs';
 import { consume, logCapRejection, refund, resolveTier } from '../_shared/passes.mjs';
 
 import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
@@ -51,92 +67,8 @@ const json = (status: number, body: unknown) => new Response(
   { status, headers: { ...CORS, 'Content-Type': 'application/json' } },
 );
 
-const LANG_NAMES: Record<string, string> = {
-  en: 'English', nl: 'Dutch', fr: 'French', de: 'German', es: 'Spanish', it: 'Italian',
-};
-
 const FOCUS_VALUES = ['city', 'nature', 'mix'];
 const INTEREST_VALUES = ['landmarks', 'museums', 'food', 'nature', 'beach', 'active', 'photo', 'local'];
-
-// Gemini's API rejects combining the google_search tool with
-// responseSchema/responseMimeType in one call (grounding and controlled
-// generation are mutually exclusive server-side, as of this writing). Since
-// grounding is the entire point of this endpoint and stays on by default,
-// the schema below is only actually SENT when grounding is off; when
-// grounding is on, the same shape is spelled out in the prompt instead and
-// the reply is parsed defensively (extractJson, below).
-const RESPONSE_SCHEMA = {
-  type: 'OBJECT',
-  properties: {
-    suggestions: {
-      type: 'ARRAY',
-      items: {
-        type: 'OBJECT',
-        properties: {
-          id: { type: 'STRING', description: 'Candidate id, required when inCatalog is true.' },
-          name: { type: 'STRING' },
-          country: { type: 'STRING' },
-          why: { type: 'STRING', description: 'One short, concrete sentence: why this place fits the ask.' },
-          inCatalog: { type: 'BOOLEAN' },
-          lat: { type: 'NUMBER', description: 'Only for inCatalog=false discoveries.' },
-          lon: { type: 'NUMBER', description: 'Only for inCatalog=false discoveries.' },
-        },
-        required: ['name', 'why', 'inCatalog'],
-      },
-    },
-  },
-  required: ['suggestions'],
-};
-
-function buildPrompt(p: {
-  stayLabel: string; focus: string | null; interests: string[]; freeText: string; lang: string;
-  candidates: ReturnType<typeof sanitizeTownCandidates>; groundedFormat: boolean;
-}) {
-  const langName = LANG_NAMES[p.lang] || 'English';
-  const lines = [
-    `You are Carta's destination scout: given what a traveller wants, suggest up to 5 great towns or cities for a day trip from ${p.stayLabel}.`,
-    '',
-    'CANDIDATES (JSON, real destinations Carta already has day-planning data for; id, name, country, distance in km from the stay, traveller rating 0-10 when known, descriptive tags):',
-    JSON.stringify(p.candidates),
-    '',
-    'RULES:',
-    '- Prefer a candidate from the list above (id present, inCatalog=true) whenever one genuinely fits: Carta already has rich day-planning data for it.',
-    '- If the traveller is clearly asking for something none of the candidates cover, you may suggest a REAL place beyond the list with inCatalog=false, its own name, country and approximate coordinates. Never invent a candidate id for a place that is not actually one of the candidates.',
-    '- Return 3 to 5 suggestions, best fit first. Do not pad with weak fits just to reach 5.',
-    p.focus === 'nature' ? '- They lean toward nature: parks, water, viewpoints, green space over indoor city sights.' : '',
-    p.focus === 'city' ? '- They lean toward the built city: streets, squares, architecture, museums.' : '',
-    p.interests.length ? `- What they care about most: ${p.interests.join(', ')}.` : '',
-    p.freeText
-      ? `- Their own wish, treat as the main brief: "${p.freeText}".`
-      : '- No specific wish given beyond the mood above: pick well-rounded, strong fits.',
-    `- Write "why" and "country" in ${langName}. Keep "why" to one short, concrete sentence.`,
-    '- Never use em dashes or en dashes in any text.',
-    p.groundedFormat ? [
-      '',
-      'OUTPUT FORMAT: reply with ONLY a single JSON object, no markdown code fences, no commentary before or after it, exactly this shape:',
-      '{"suggestions":[{"id":"candidate id string, ONLY when inCatalog is true","name":"string","country":"string","why":"one short sentence","inCatalog":true,"lat":0,"lon":0}]}',
-      '("lat"/"lon" only when inCatalog is false; omit "id" when inCatalog is false.)',
-    ].join('\n') : '',
-  ];
-  return lines.filter(Boolean).join('\n');
-}
-
-/** Best-effort JSON extraction: a direct parse, then a fenced ```json block,
- * then the outermost {...} span. Needed because a grounded call cannot use
- * responseSchema, so the model's adherence to the prompted shape is a strong
- * convention, not a server-enforced guarantee. sanitizeSuggestions() is the
- * real safety net regardless of which path parses. */
-function extractJson(text: string): unknown {
-  const tryParse = (s: string) => { try { return JSON.parse(s); } catch { return undefined; } };
-  let v = tryParse(text.trim());
-  if (v !== undefined) return v;
-  const fence = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-  if (fence) { v = tryParse(fence[1]); if (v !== undefined) return v; }
-  const first = text.indexOf('{');
-  const last = text.lastIndexOf('}');
-  if (first >= 0 && last > first) { v = tryParse(text.slice(first, last + 1)); if (v !== undefined) return v; }
-  return undefined;
-}
 
 async function sha256Hex(s: string): Promise<string> {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
@@ -146,14 +78,14 @@ async function sha256Hex(s: string): Promise<string> {
 Deno.serve(withCors(async (req) => {
   if (req.method !== 'POST') return json(405, { code: 'method' });
 
-  const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || '';
-  // Same ordered fallback chain as plan-day, from the shared logic module.
-  const CHAIN = modelChain(Deno.env.get('GEMINI_MODEL'), Deno.env.get('GEMINI_MODELS'));
+  // Provider and chain from config, the same rules as plan-day (aiModels).
+  const envGet = (k: string) => Deno.env.get(k);
+  const access = modelAccess('suggest-city', envGet);
   const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
   const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
   const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-  if (!GEMINI_API_KEY) return json(503, { code: 'no_ai' });
+  if (access.refusal) return json(access.refusal.status, refusalBody(access.refusal));
 
   const authHeader = req.headers.get('Authorization') || '';
   const authed = createClient(SUPABASE_URL, ANON_KEY, {
@@ -175,9 +107,14 @@ Deno.serve(withCors(async (req) => {
   const interests = Array.isArray(body.interests)
     ? (body.interests as unknown[]).slice(0, 8).map((i) => String(i)).filter((i) => INTEREST_VALUES.includes(i))
     : [];
-  const freeText = cleanText(String(body.freeText ?? ''), 160);
   const lang = LANG_NAMES[String(body.lang)] ? String(body.lang) : 'en';
-  const candidates = sanitizeTownCandidates(body.candidates);
+  // ---- AI security: the wish and the deck are data, scrubbed before the cache key ----
+  const inGuard = guardCityInput({
+    freeText: cleanText(String(body.freeText ?? ''), 160),
+    candidates: sanitizeTownCandidates(body.candidates),
+  });
+  const freeText = inGuard.freeText;
+  const candidates = inGuard.candidates;
   if (candidates.length < 3) return json(400, { code: 'too_few' });
 
   const service = createClient(SUPABASE_URL, SERVICE_KEY);
@@ -186,7 +123,9 @@ Deno.serve(withCors(async (req) => {
   // Read-only: deciding whether grounding is on the table has to happen before
   // the cache key is built (the key includes the grounded flag), and reading
   // must not spend anything.
-  const enabled = (Deno.env.get('AI_ENABLE_CITY_GROUNDING') || 'true').toLowerCase() !== 'false';
+  // Live search needs a provider that has it (only Gemini today).
+  const enabled = (Deno.env.get('AI_ENABLE_CITY_GROUNDING') || 'true').toLowerCase() !== 'false'
+    && supportsSearch(access.cfg);
   const status = await resolveTier(service, user.id);
   let useGrounding = enabled && (status?.groundLeft ?? 0) > 0;
   // A free user still gets an answer here, just one drawn purely from Carta's
@@ -234,96 +173,76 @@ Deno.serve(withCors(async (req) => {
   // ---- cache ----
   const hash = await sha256Hex(cacheKeyInput({
     // The chain, not the answering model: see plan-day for why.
-    model: CHAIN.join(','), stay, focus, interests, freeText, lang, candidates, grounded: useGrounding,
+    model: chainKey(access.cfg), stay, focus, interests, freeText, lang, candidates, grounded: useGrounding,
   }));
   const { data: cached } = await service
     .from('ai_plan_cache')
     .select('payload, created_at')
     .eq('hash', hash)
     .maybeSingle();
-  if (cached?.payload && Date.now() - Date.parse(cached.created_at) < 7 * 86400_000) {
+  // A cached row passes the same output check as a fresh answer; one that
+  // fails it is a miss and is regenerated.
+  const cachedSafe = cached?.payload && Date.now() - Date.parse(cached.created_at) < 7 * 86400_000
+    ? guardCityPayload(cached.payload)
+    : null;
+  if (cachedSafe) {
     return json(200, {
-      ...cached.payload,
-      meta: { ...cached.payload.meta, cached: true },
+      ...cachedSafe,
+      meta: { ...cachedSafe.meta, cached: true },
       pass: { tier: quota.tier, left: quota.left ?? null },
     });
   }
 
   // ---- the one AI call ----
+  // One nonce per call: the data blocks in the prompt and the security rules share it (T1206).
+  const nonce = makeNonce();
   const prompt = buildPrompt({
     stayLabel: stay ? 'their stay' : 'the area', focus, interests, freeText, lang, candidates,
-    groundedFormat: useGrounding,
+    groundedFormat: useGrounding, nonce,
   });
-  let aiText = '';
-  let usedModel = '';
-  let lastStatus = 0;
-  for (const model of CHAIN) {
-    let resp: Response;
-    try {
-      resp = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': GEMINI_API_KEY },
-          body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            // Grounding and responseSchema are mutually exclusive on Gemini's
-            // API: send one or the other, never both.
-            ...(useGrounding ? { tools: [{ google_search: {} }] } : {}),
-            generationConfig: {
-              temperature: 0.3,
-            // Generous ceiling because gemini-flash-latest now resolves to a
-            // THINKING model, and its thoughts are charged against this same
-            // budget: a real 120-candidate ask burns ~1700-2200 tokens
-            // thinking before writing a word, so the old 2048 truncated the
-            // JSON mid-object and every call died as ai_bad_output. A ceiling
-            // is not a cost, only generated tokens are, so headroom is free.
-              // thinkingBudget does not help: Gemini 3 accepts the field and
-              // ignores it.
-              maxOutputTokens: 8192,
-              ...(useGrounding
-                ? {}
-                : { responseMimeType: 'application/json', responseSchema: RESPONSE_SCHEMA }),
-            },
-          }),
-          signal: AbortSignal.timeout(45_000),
-        },
-      );
-    } catch {
-      // Timeouts stop the chain: see plan-day, latency beats completeness.
-      return await failed(504, { code: 'ai_timeout' });
-    }
-    if (!resp.ok) {
-      lastStatus = resp.status;
-      if (shouldFallOver(resp.status)) continue;
-      return await failed(502, { code: 'ai_error', status: resp.status });
-    }
-    const data = await resp.json();
-    aiText = (data?.candidates?.[0]?.content?.parts || [])
-      .map((p: { text?: string }) => p.text || '')
-      .join('');
-    usedModel = model;
-    break;
-  }
-  if (!usedModel) {
-    return lastStatus === 429
-      ? await failed(429, { code: 'global_cap' })
-      : await failed(502, { code: 'ai_error', status: lastStatus });
-  }
+  const security = systemRules(nonce);
+  if (prompt.length > LIMITS.cityPromptChars) return await failed(400, { code: 'too_big' });
+  const ai = await callModel({
+    feature: 'suggest-city',
+    env: envGet,
+    system: security,
+    user: prompt,
+    // Grounding and a response schema are mutually exclusive on Gemini:
+    // aiModels sends the schema only when search is off.
+    json: true,
+    schema: RESPONSE_SCHEMA,
+    search: useGrounding,
+    temperature: 0.3,
+    // gemini-flash-latest is a THINKING model and its thoughts are charged
+    // against this budget: a 120-candidate ask burns about 2,000 tokens
+    // thinking, so 2048 truncated the JSON. Only generated tokens are billed.
+    maxOutputTokens: 8192,
+  });
+  if (!ai.ok) return await failed(ai.status, refusalBody(ai));
+  const usedModel: string = ai.model;
 
-  const parsed = extractJson(aiText) as { suggestions?: unknown } | undefined;
-  if (!parsed) return await failed(502, { code: 'ai_bad_output' });
+  if (ai.text.length > LIMITS.modelOutputChars) return await failed(502, { code: 'ai_bad_output' });
+  // A grounded call cannot use a response schema, so the reply is parsed
+  // loosely (a fenced block or the outermost {...}); sanitizeSuggestions()
+  // is the real safety net either way.
+  const outGuard = guardCityOutput(parseModelJson(ai.text, { loose: true }), { systemText: `${security}\n${prompt}` });
+  if (!outGuard.value) return await failed(502, { code: 'ai_bad_output' });
+  const parsed = outGuard.value;
 
   const suggestions = sanitizeSuggestions(parsed.suggestions, candidates, stay);
   if (!suggestions.length) return await failed(502, { code: 'ai_bad_output' });
 
-  const payload = {
+  const payload = guardCityPayload({
     suggestions,
     meta: {
-      model: usedModel, fellBack: usedModel !== CHAIN[0], cached: false,
+      model: usedModel, fellBack: ai.fellBack, cached: false,
       grounded: useGrounding, groundingSkipped,
+      // What the AI guard did (T1137): input fields scrubbed, suggestions
+      // dropped for their shape, fields repaired. Counts and names only.
+      guard: { input: inGuard.flags, dropped: outGuard.dropped, repaired: outGuard.repaired },
     },
-  };
+  });
+  if (!payload || !payload.suggestions.length) return await failed(502, { code: 'ai_bad_output' });
 
   try { await service.from('ai_plan_cache').upsert({ hash, payload, model: usedModel }); } catch { /* ignore */ }
 

@@ -118,12 +118,11 @@ try {
   await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await page.waitForTimeout(3000);
 
-  await page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first().click();
-  await page.waitForTimeout(1200);
+  // T1089: the Trips category left the Explore tab bar; its section still
+  // lives behind ?tab=explore&cat=trips.
+  await page.goto(`${URL.split('?')[0].split('#')[0]}?tab=explore&cat=trips`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  await page.waitForTimeout(3000);
   check('destinations tab opens', await page.locator('.places-tab').isVisible());
-
-  await page.locator('.dtab-cats [role="tab"]', { hasText: /^trips$/i }).click();
-  await page.waitForTimeout(2000);
 
   // ── The style grid ──
   const styles = page.locator('.jstyle-card');
@@ -169,7 +168,9 @@ try {
   // first card's top is reported, not gated: the tab chrome above the list
   // (search, country, category tiles) belongs to the Destinations surface.
   const firstTop = await jcards.first().evaluate((el) => Math.round(el.getBoundingClientRect().top));
-  check('the trip list has one filter row', await page.locator('.tf-bar').count() === 1,
+  // T1089: the library has no filter bar of its own any more (T498); the
+  // filters are chips plus the shared sheet, so no stacked groups at all.
+  check('the trip list has no filter bar of its own', await page.locator('.tf-bar').count() === 0,
     `first card at ${firstTop} px`);
   await page.screenshot({ path: 'shots/journeys-type.png', fullPage: false });
 
@@ -182,23 +183,26 @@ try {
   // the breakdown", the days as cards with tonight's bed on each (Where to
   // sleep merged in), and Before you go as cards that swipe.
   check('the page leads with its gallery',
-    await page.locator('.jpage .ipage-gallery .pgal').count() === 1);
+    await page.locator('.jpage .pmos').count() === 1);
   check('the price card carries the total a person and the party total',
-    await page.locator('#sec-budget .tprice-fig').count() === 1
-      && await page.locator('#sec-budget .tprice-line.is-total').count() === 1);
-  check('the price card says what is and is not included',
-    await page.locator('#sec-budget .iinc-row.is-out').count() >= 2);
-  check('seven days render', await page.locator('.jpage .tday').count() === 7,
-    `${await page.locator('.jpage .tday').count()} days`);
+    await page.locator('#sec-budget .pt-pr-fig').count() === 1
+      && await page.locator('#sec-budget .pt-tot').count() === 1);
+  // T1089: the "what is not included" rows (.iinc-row.is-out) left the price
+  // card with the pt- page rebuild; the beds, food, transport and activities
+  // lines stay.
+  check('the price card carries its cost split',
+    await page.locator('#sec-budget .pt-split').count() >= 1);
+  check('seven days render', await page.locator('.jpage .pt-day').count() === 7,
+    `${await page.locator('.jpage .pt-day').count()} days`);
   check('the page has its own address',
     /^#journey=/.test(await page.evaluate(() => window.location.hash)));
-  check('tonight is on the day cards', await page.locator('.jpage .tday-night').count() >= 5);
-  check('pro tips render as cards', await page.locator('#sec-prep .gocard').count() >= 2);
+  check('tonight is on the day cards', await page.locator('.jpage .pt-day-t small').count() >= 5);
+  check('pro tips render as cards', await page.locator('.jpage .pt-tip-text').count() >= 2);
   const bookH = await page.locator('.jpage-book-list label').evaluateAll(
     (els) => els.map((e) => Math.round(e.getBoundingClientRect().height)));
   check('every booking row is at least 44 px high', bookH.length > 0 && Math.min(...bookH) >= 44,
     `${bookH.length} rows, shortest ${Math.min(...bookH)} px`);
-  const moreNames = await page.locator('.jpage .tday-more').evaluateAll(
+  const moreNames = await page.locator('.jpage .pt-day-btn').evaluateAll(
     (els) => els.map((e) => e.getAttribute('aria-label') || e.textContent.trim()));
   check('the day disclosures have distinct names',
     moreNames.length >= 5 && new Set(moreNames).size === moreNames.length,
@@ -206,12 +210,14 @@ try {
   await page.emulateMedia({ media: 'print' });
   const printed = await page.evaluate(() => {
     const d = (sel) => { const e = document.querySelector(sel); return e ? getComputedStyle(e).display : 'missing'; };
-    return { bar: d('.jpage .tpage-bar'), rail: d('.jpage .srail'), track: d('.jpage .tweek .itrack-row'),
+    return { bar: d('.jpage .tpage-bar'),
       pos: getComputedStyle(document.querySelector('.jpage')).position };
   });
   await page.emulateMedia({ media: 'screen' });
-  check('print drops the bar and the rail and stacks the days',
-    printed.bar === 'none' && printed.rail === 'none' && printed.track === 'grid',
+  // T1089: the rail and the day track left the page; print still drops the
+  // bar and lifts the page out of the fixed dialog.
+  check('print drops the bar and lifts the page into the flow',
+    printed.bar === 'none' && printed.pos === 'static',
     JSON.stringify(printed));
   await page.screenshot({ path: 'shots/journeys-page.png', fullPage: false });
   await page.screenshot({ path: 'shots/journeys-page-full.png', fullPage: true });
@@ -219,8 +225,17 @@ try {
   // Escape closes the page, back returns to the grid.
   await page.locator('.tpage-back').click();
   await page.waitForTimeout(800);
-  check('closing the page lands back on the list',
-    await page.locator('.jcard').count() >= 5);
+  // T1089: this page was entered by URL, so the browser's back step from the
+  // page can land on the entry before the Explore tab; closing is asserted as
+  // "the page and its address are gone", and the list is reopened by URL.
+  check('closing the page removes it and its address',
+    await page.locator('.jpage').count() === 0
+      && !/#journey=/.test(await page.evaluate(() => window.location.href)));
+  await page.goto(`${URL.split('?')[0].split('#')[0]}?tab=explore&cat=trips`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  await page.waitForTimeout(3000);
+  await page.locator('.jstyle-card').first().click();
+  await page.waitForTimeout(1500);
+  check('a style opens its list of trips', await page.locator('.jcard').count() >= 5);
   await page.locator('.jsec-back').click();
   await page.waitForTimeout(800);
   check('the way back reaches the style grid',
@@ -283,13 +298,8 @@ try {
   await seed(desk);
   await desk.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
   await desk.waitForTimeout(3000);
-  await desk.locator('[class*="top-tab"]', { hasText: /destinations/i })
-    .first().click().catch(() => {});
-  await desk.waitForTimeout(1000);
-  const deskCat = desk.locator('.dtab-cats [role="tab"]',
-    { hasText: /^trips$/i });
-  await deskCat.first().click();
-  await desk.waitForTimeout(2000);
+  await desk.goto(`${URL.split('?')[0].split('#')[0]}?tab=explore&cat=trips`, { waitUntil: 'domcontentloaded', timeout: 45000 });
+  await desk.waitForTimeout(3000);
   check('desktop shows the fifteen styles',
     await desk.locator('.jstyle-card').count() === 15,
     `${await desk.locator('.jstyle-card').count()} cards`);

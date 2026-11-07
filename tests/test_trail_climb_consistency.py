@@ -87,3 +87,48 @@ def test_the_wire_ships_one_difficulty():
     assert export_wire.wire_difficulty(
         {"grade": None, "difficulty": "easy"}) == "easy"
     assert export_wire.wire_difficulty({}) is None
+
+
+# T1180 (T286-c): relief read the stored ascent, so a route drawn summit to
+# valley scored as nearly flat. It now reads the climb uphill, by the same
+# rule as the reasons above, and a route scores the same relief as its twin.
+
+def reversed_twin(row):
+    return {**row, "ascent_m": row["descent_m"], "descent_m": row["ascent_m"]}
+
+
+def with_profile(row, low, top):
+    return {**row, "elevation": {**row["elevation"], "ele_min_m": low, "ele_max_m": top}}
+
+
+def test_relief_of_a_downhill_route_equals_its_uphill_twin():
+    korab = with_profile(KORAB_9, 1250.0, 2679.3)
+    twin = reversed_twin(korab)
+    assert rate.relief_raw(korab) == pytest.approx(rate.relief_raw(twin))
+    # And it is the 1,423 m climb that scores, not the 7 m stored ascent.
+    flat = {**korab, "descent_m": 7}
+    assert rate.relief_raw(korab) > rate.relief_raw(flat) + 1.0
+
+
+def test_relief_reads_the_uphill_rule_and_nothing_wider():
+    # 350 m down against 100 m up is under DOWNHILL_MIN_M (300 m apart is
+    # 250): not read as downhill, the same as the reasons and the grade.
+    row = {"distance_m": 8000, "ascent_m": 100, "descent_m": 350,
+           "elevation": {"ele_min_m": 200.0, "ele_max_m": 600.0}}
+    stored = {**row, "descent_m": 100}
+    assert rate.relief_raw(row) == pytest.approx(rate.relief_raw(stored))
+
+
+def test_relief_of_routes_drawn_uphill_is_unchanged():
+    row = with_profile(KORAB_9_1, 1150.0, 2728.8)
+    km = row["distance_m"] / 1000.0
+    expect = (rate.math.log1p(row["ascent_m"] / km) * 1.6
+              + rate.math.log1p(2728.8) * 0.5
+              + rate.math.log1p(2728.8 - 1150.0) * 0.6)
+    assert rate.relief_raw(row) == pytest.approx(expect)
+
+
+def test_v5_relief_part_is_the_same_for_twins():
+    korab = with_profile(KORAB_9, 1250.0, 2679.3)
+    a, b = rate.v5_raw(korab), rate.v5_raw(reversed_twin(korab))
+    assert a["relief"] == pytest.approx(b["relief"])

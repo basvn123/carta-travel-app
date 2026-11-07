@@ -1,0 +1,47 @@
+name: load
+
+# T1158 (ROADMAP H4). Manual only: never on push or schedule. Runs the k6 scripts in
+# tests/load/ against a URL you give it, normally the Pages preview deploy.
+# Read docs/runbooks/load-tests.md first: a run spends real Function CPU and, for
+# /api/flights, live upstream searches.
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Preview deploy URL, no trailing slash"
+        required: true
+      script:
+        description: "ask, flights, stays, static or all"
+        default: all
+      mult:
+        description: "Rate multiplier on the 10x target (1 = target, 2 = stress)"
+        default: "1"
+      duration:
+        description: "Test length per script"
+        default: 3m
+
+permissions:
+  contents: read
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: grafana/setup-k6-action@v1
+      - name: Run k6
+        env:
+          BASE_URL: ${{ inputs.base_url }}
+          SCRIPT: ${{ inputs.script }}
+          MULT: ${{ inputs.mult }}
+          DURATION: ${{ inputs.duration }}
+        run: |
+          case "$SCRIPT" in ask|flights|stays|static|all) ;; *) echo "bad script"; exit 2;; esac
+          k6 run -e BASE_URL="$BASE_URL" -e SPOOF_IP=0 -e MULT="$MULT" -e DURATION="$DURATION" \
+            --summary-export=summary.json "tests/load/$SCRIPT.js"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: k6-summary
+          path: summary.json

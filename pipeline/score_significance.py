@@ -74,7 +74,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent / "pois"))  # dedupe_pois (T1207)
 from pipeline_io import atomic_write_json, load_json
+from provenance import fingerprints, touch_changed  # T1214: activities is edited in place
 import rating_config
 from rating_config import cfg, section
 from dedupe_pois import name_core, haversine_km
@@ -558,6 +560,7 @@ def main():
             print("GATE FAILED: not writing the master.")
             sys.exit(1)
         pop = (load_json(ENRICH_CACHE).get("pop")) or {}
+        before = fingerprints(data["destinations"], "activities")
         n_rate = n_pop = n_sig = 0
         for r in rows:
             it = r["it"]
@@ -588,6 +591,8 @@ def main():
             by_class = poi_labels.label_all(data)
             for cls, c in sorted(by_class.items()):
                 print(f"  labels {cls}: " + ", ".join(f"{k} {c[k]:,}" for k in poi_labels.LABELS))
+        n_touched = touch_changed(data["destinations"], "activities", before)
+        print(f"  provenance: {n_touched} activities blocks re-dated")
         atomic_write_json(DATA, data)
         print(f"applied: {n_rate} rates rewritten, {n_pop} pop set, "
               f"{n_sig} sig written -> {DATA}")

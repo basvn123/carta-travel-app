@@ -8,3 +8,5 @@ h1 { font-family: var(--font); }
 .btn { font-family: inherit; }
 .layer { position: fixed; z-index: calc(var(--z-page) + 40); }
 .badge { position: absolute; z-index: 2; }
+.fade { transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-3, 320ms) var(--ease-in-out); animation-delay: 40ms; }
+.spin { animation: spin var(--dur-spin) linear infinite; transition-duration: 0s; }

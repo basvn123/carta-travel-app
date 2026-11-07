@@ -1,4 +1,6 @@
 import React from 'react';
+import { partnerLinkProps } from '../lib/partnerLink.js';
+import { PartnerMark } from '../components/PartnerMark.jsx';
 import { Button, Chip, ChipGroup } from '../components/ui/index.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { ArrowRightIcon, BusIcon, CalendarIcon, CarIcon, CompassIcon, ExternalIcon, MapPinIcon, SparkIcon, TrainIcon } from '../components/Icons.jsx';
@@ -16,6 +18,7 @@ import { StoryCard, StoryRail } from './StoryRail.jsx';
 import { NearPage } from './NearPage.jsx';
 import { PSection, PBlock } from './PageTemplate.jsx';
 import { DO_TYPE_KEYS, cleanName, fmtKm, thumb500 } from './destParts.js';
+import { scrollBehavior } from '../lib/motion.js';
 import { isResizable, thumbAt } from '../lib/heroImage.js';
 
 const DestMap = React.lazy(() => import('./DestMap.jsx'));
@@ -111,7 +114,7 @@ export function DestSee({ p }) {
     setFocus(i);
     if (i >= SPOTS_FIRST) setAllSights(true);
     // The card comes into view in its row (a swipe row on a phone).
-    requestAnimationFrame(() => cardRefs.current[i]?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' }));
+    requestAnimationFrame(() => cardRefs.current[i]?.scrollIntoView({ block: 'nearest', inline: 'center', behavior: scrollBehavior() }));
   };
   return (
     <PSection id="pt-see" title={t('destx.jump.see')}>
@@ -228,7 +231,7 @@ function SpotCard({ refEl, n, img, icon, chip, name, meta, text, href, active, o
           {onPick ? (
             <button type="button" className="spot-hit" onClick={onPick} onFocus={onEnter} onBlur={onLeave} aria-label={pickLabel}>{name}</button>
           ) : href ? (
-            <a className="spot-hit" href={href} target="_blank" rel="noreferrer">{name}</a>
+            <><a {...partnerLinkProps(href, { className: 'spot-hit' })}>{name}</a><PartnerMark href={href} /></>
           ) : name}
         </h3>
         {meta && <p className="spot-meta">{meta}</p>}

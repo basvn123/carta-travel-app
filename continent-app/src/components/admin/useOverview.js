@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import {
-  adminAiCacheReport, adminAiModelReport, adminAiUsage, adminAnalytics,
+  adminAiCacheReport, adminChannelWeekly, adminFunnelWeekly, adminTasteWeekly, adminAiModelReport, adminAiUsage, adminAnalytics,
   adminEdgeErrors, adminHealth, adminLaunchMetrics, adminListContentReports, adminOssThreshold,
   adminParseFailures, adminPaywallFunnel, adminPipelineHealth, adminStats,
 } from '../../auth/admin.js';
+import { useAiCalls } from './useAiCalls.js';
 
 // Everything the Overview tab shows except the margin, which has its own
 // month argument, and the audit strip. Fetched once at unlock.
@@ -22,9 +23,18 @@ export function useOverview(unlocked) {
   // Priced trips, affiliate clicks and AI calls (048). Missing before the
   // paste, which hides the Launch card and the rate on the AI failures card.
   const [launch, setLaunch] = useState(null);
+  // Weekly visits per UTM channel (K12). Missing before the migration is pasted.
+  const [channels, setChannels] = useState(null);
+  // Weekly product funnel (I11). Missing before migration 070 is pasted.
+  const [funnelWeekly, setFunnelWeekly] = useState(null);
+  // Taste chip acceptance (F3, T1152-d). { error } before migration 072 is
+  // pasted, so the card can say what it waits for instead of vanishing.
+  const [tasteWeekly, setTasteWeekly] = useState(null);
   // DSA notices still marked new, so the Reports tab can carry a count
   // without being opened (T068-b). Only the count; the queue loads on its tab.
   const [newReports, setNewReports] = useState(null);
+  // Model calls by week (E4, T1139). null before migration 071 is pasted.
+  const aiCalls = useAiCalls(unlocked);
 
   useEffect(() => {
     if (!unlocked) return;
@@ -40,6 +50,9 @@ export function useOverview(unlocked) {
     adminParseFailures(7).then(setParseFailures).catch(() => setParseFailures(null));
     adminOssThreshold().then(setOss).catch(() => setOss(null));
     adminLaunchMetrics(30).then(setLaunch).catch(() => setLaunch(null));
+    adminChannelWeekly(8).then(setChannels).catch(() => setChannels(null));
+    adminFunnelWeekly(8).then(setFunnelWeekly).catch(() => setFunnelWeekly(null));
+    adminTasteWeekly(8).then(setTasteWeekly).catch((e) => setTasteWeekly({ error: e?.code || 'unavailable' }));
     adminListContentReports('new', 1, 0)
       .then((r) => setNewReports(typeof r?.new === 'number' ? r.new : null))
       .catch(() => setNewReports(null));
@@ -52,7 +65,7 @@ export function useOverview(unlocked) {
 
   return {
     stats, health, analytics, funnel, modelReport, cacheReport, aiUsage,
-    pipelineHealth, edgeErrors, parseFailures, oss, launch, newReports,
+    pipelineHealth, edgeErrors, parseFailures, oss, launch, channels, funnelWeekly, tasteWeekly, newReports, aiCalls,
     refreshStats, refreshAnalytics,
   };
 }

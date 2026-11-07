@@ -1,0 +1,15 @@
+{
+ "note": "T1188: one made-up text per kind, for the offline tests and `python -I -m pipeline.judge fixtures`. Nothing here is Carta data.",
+ "items": [
+  {"text_id": "f1", "kind": "trail_summary", "subject": "Fixture Loop A", "text": "A waymarked loop of 12.4 km.",
+   "source": {"cited": "fixture", "facts": {"distance_km": 12.4, "is_loop": true, "osm_tags": {"osmc:symbol": "red:white"}}}},
+  {"text_id": "f2", "kind": "place_intro", "subject": "Fixtureville", "text": "Known for its weekly cheese market and a Gothic cathedral.",
+   "source": {"cited": "fixture", "text": "Fixtureville is known for its weekly cheese market."}},
+  {"text_id": "f3", "kind": "trip_text", "subject": "Fixture day 2", "text": "The train leaves at 09:40 and costs 12 euros.",
+   "source": {"legs": [{"mode": "train", "depart": "09:10", "price_eur": 12}]}},
+  {"text_id": "f4", "kind": "ask_answer", "subject": "Fixture question", "text": "The museum is closed on Mondays.",
+   "source": {"passages": [{"id": "p1", "text": "The museum is closed on Mondays and on 1 January."}]}},
+  {"text_id": "f5", "kind": "translation", "subject": "Fixture translation", "text": "Een rustige wandeling van 5 km langs de rivier.",
+   "source": {"lang": "en", "text": "A quiet 8 km walk along the river."}}
+ ]
+}

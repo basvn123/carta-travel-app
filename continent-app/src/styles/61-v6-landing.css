@@ -19,54 +19,8 @@
    cell is one touch target. The select fills the whole cell, taller than
    --tap, and the label sits over it and lets the tap through, so a finger
    anywhere in the cell opens the picker. */
-.frr-cell {
-  position: relative;
-  min-height: calc(var(--tap) + var(--space-3));
-}
-.frr-cell-label {
-  position: relative;
-  z-index: 1;
-  padding: var(--space-2) var(--space-2) 0 var(--space-3);
-  pointer-events: none;
-}
-.frr-cell select,
-.frr-cell input {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-  margin: 0;
-  /* The value sits under the label: the label's line and its top padding. */
-  padding: calc(var(--space-2) + 1.3 * 12px + var(--space-1)) var(--space-6) 0 var(--space-3);
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  /* WebKit draws a grey pill around a bare select unless told not to
-     (found on the iPhone 13 shots in T402); the chevron is drawn below. */
-  -webkit-appearance: none;
-  appearance: none;
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-}
 /* The chevron of a select cell: two ink-soft borders on a pseudo-element,
    so it reads the same in WebKit and Chromium; the tap goes to the select. */
-.frr-cell:has(> select)::after {
-  content: "";
-  position: absolute;
-  top: calc(50% + var(--space-3));
-  right: var(--space-3);
-  width: 7px;
-  height: 7px;
-  border-right: 2px solid var(--ink-soft);
-  border-bottom: 2px solid var(--ink-soft);
-  rotate: 45deg;
-  translate: 0 -75%;
-  pointer-events: none;
-}
 
 /* The cost bar (carta-design "The cost bar"): the shell's CostBar, drawn by
    ReceiptCard between the head and the lines, inset like the lines. Its own
@@ -77,15 +31,8 @@
    itself; the --paper band the track draws on a paper page would read as a
    grey box around the 44px hit area here. */
 .frr-bar .costbar-track { background: transparent; }
-.frr-bar .costbar-read { margin-top: var(--space-1); font-size: 12px; }
+.frr-bar .costbar-read { margin-top: var(--space-1); font-size: var(--text-caption); }
 
 /* The first-run strip without its Stay cell (FirstRunReceipt hideStay,
    T387-c): three cells across, and in a narrow column the party across the
    top with the two dates under it. */
-.frr-strip.is-no-stay { grid-template-columns: 0.9fr 1fr 1fr; }
-@container (max-width: 460px) {
-  .frr-strip.is-no-stay { grid-template-columns: 1fr 1fr; }
-  .frr-strip.is-no-stay .frr-cell:first-child { grid-column: 1 / -1; border-bottom: 1px solid var(--rule-soft); }
-  .frr-strip.is-no-stay .frr-cell:nth-child(2) { border-left: 0; border-bottom: 0; }
-  .frr-strip.is-no-stay .frr-cell:nth-child(3) { border-left: 1px solid var(--rule-soft); }
-}

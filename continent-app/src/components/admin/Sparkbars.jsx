@@ -10,8 +10,11 @@ export function Sparkbars({ series }) {
   const last = series.length ? series[series.length - 1].n || 0 : 0;
   return (
     <>
-      <div className="adminpage-spark" role="img"
-        aria-label={series.map((d) => `${d.day}: ${d.n}`).join(', ')}>
+      {/* No days yet: the empty box is decoration, not an unnamed image
+          (T1128, axe role-img-alt). */}
+      <div className="adminpage-spark" role={series.length ? 'img' : undefined}
+        aria-hidden={series.length ? undefined : 'true'}
+        aria-label={series.length ? series.map((d) => `${d.day}: ${d.n}`).join(', ') : undefined}>
         {series.map((d) => (
           <span key={d.day} className="adminpage-sparkbar" title={`${d.day}: ${d.n}`}>
             <span style={{ height: `${Math.max((d.n / top) * 100, d.n ? 8 : 2)}%` }} />

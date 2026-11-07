@@ -29,65 +29,19 @@
 }
 .cycle-surface { white-space: nowrap; }
 .cycle-bike { white-space: nowrap; }
-.bpage-fact:last-child { border-bottom: 1px solid var(--rule-soft); }
-.jends .bpage-fact dd { line-height: 1.5; }
-.bpage-fact dd.mono small { font-family: var(--ui); }
 .sig .mstrip-cells { max-width: none; }
 .dsk-page .jpage-lrow-body > .dsk-sub:first-child { margin-top: 0; }
-.bpage-facts dl { margin: 0; }
 .bpage-bar-fill {
   display: block;
   height: 100%;
   border-radius: 3px;
   background: var(--rate);
 }
-.lpage-months li.warm .lpage-month-bar > span {
-  background: color-mix(in srgb, var(--water-clear) 78%, transparent);
-}
-.lpage-walks li:last-child { border-bottom: 1px solid var(--rule-soft); }
-.lpage-walks li span {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.mpage-way-word {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ink);
-}
-.mpage-way-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-.mpage-way-src { font-size: 12.5px; color: var(--ink-soft); }
-@media (hover: hover) {
-  .tpage-primary:hover { filter: brightness(0.95); }
-}
 .tpage-elev-svg { display: block; width: 100%; height: 96px; }
 .tpage-elev-here { stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 3 3; }
 .tpage-stops li::marker {
   font-family: var(--mono);
-  font-size: 11px;
-  color: var(--accent);
-}
-.tpage-start-coords {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-}
-.tpage-start-near { font-size: 12.5px; color: var(--ink-soft); }
-.tpage-why .tpage-story-icon { color: var(--accent); }
-.tpage-highlights li::marker {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--accent);
-}
-.tpage-hl-name { display: block; font-size: 13.5px; font-weight: 600; color: var(--ink); }
-.tpage-chip-hl {
-  background: var(--accent-bg);
+  font-size: var(--text-micro);
   color: var(--accent);
 }
 .tpage-toast {
@@ -97,10 +51,10 @@
   transform: translateX(-50%);
   z-index: var(--z-tray);
   padding: 11px 16px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--ink);
   color: var(--paper);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   box-shadow: var(--shadow-2);
 }
@@ -115,7 +69,7 @@
 .tday-panel.is-open {
   grid-template-rows: 1fr;
   visibility: visible;
-  transition: grid-template-rows .22s ease, visibility 0s;
+  transition: grid-template-rows var(--dur-2) var(--ease-in-out), visibility 0s;
 }
 @media (prefers-reduced-motion: reduce) {
   .tday-panel.is-open { transition: none; }
@@ -141,12 +95,12 @@
 .cycle-facts .cycle-facts-bike { font-family: var(--ui); }
 .sig .sig-panel {
   padding: var(--space-3) var(--space-4);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper-dim);
 }
 .sig-panel {
   padding: var(--space-3) var(--space-4);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper-dim);
 }
 .sig-axis-months {
@@ -216,7 +170,7 @@
   max-width: calc(100% - 2 * var(--space-3));
   overflow: hidden;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
   white-space: nowrap;
@@ -228,17 +182,17 @@
 .itin-capband-score {
   margin-left: var(--space-2);
   padding: 2px var(--space-2);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--rate-bg);
   color: var(--rate);
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 .itin-receipt {
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--bg-card);
   box-shadow: var(--shadow-card);
   overflow: hidden;
@@ -247,13 +201,13 @@
   align-items: baseline;
   padding: var(--space-2) 0;
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   color: var(--ink-soft);
 }
 @media print {
   .jpage .tday-panel { grid-template-rows: 1fr; }
 }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .dsk-map .dsk-map-frame {
     height: calc(100dvh - 52px - 2 * var(--space-4) - var(--tap) - var(--space-2));
   }
@@ -267,18 +221,6 @@
   background: var(--surface-sunken);
 }
 .ipage .ipage-cost strong { color: var(--text); font-weight: 600; }
-.igo-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: var(--tap);
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-  color: var(--text);
-}
-.igo-row:first-child { border-top: 1px solid var(--border-soft); }
-.igo-sub { font-size: var(--text-caption); color: var(--text-3); font-variant-numeric: tabular-nums; }
 .iinc-row {
   display: flex;
   align-items: center;
@@ -303,45 +245,16 @@
   .ipage .dsk-map-frame { height: 52dvh; max-height: 560px; }
 }
 .tdiff-sq { width: 8px; height: 8px; border-radius: 0; border: 1px solid var(--text-3); }
-.tprice-head { display: grid; gap: var(--space-1); }
-.tprice-fig-n { font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); color: var(--text); font-variant-numeric: tabular-nums; }
-.tprice-unit { font-size: var(--text-body); color: var(--text-2); }
-.tprice-label { display: block; font-size: var(--text-label); font-weight: 500; color: var(--text); }
-.tprice-ls { display: grid; gap: var(--space-2); }
-.tprice-ls-label { font-size: var(--text-caption); font-weight: 500; color: var(--text-2); }
-.tprice-ls-value {
-  overflow: hidden;
-  font-size: var(--text-body);
-  font-weight: 600;
-  color: var(--text);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.tprice-ls-btn .btn-icon { color: var(--text-2); }
-.tprice-acts { display: grid; gap: var(--space-2); }
-.tprice-more { display: grid; gap: var(--space-2); }
-.tprice-lines[hidden] { display: none; }
-.tfit-months { display: grid; gap: var(--space-2); margin-bottom: var(--space-3); }
-.tfit-label { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
-.tweek { display: grid; gap: var(--space-4); }
 .wclimb-bar { display: block; width: min(28px, 60%); height: 100%; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--text-3); transform-origin: bottom; transition: transform var(--dur-3) var(--ease-out); }
 @media (prefers-reduced-motion: reduce) { .wclimb-bar { transition: none; } }
-.tweek-map .dsk-map-frame { height: 280px; border-radius: var(--radius-card); overflow: hidden; background: var(--surface-sunken); }
 .tday-media { aspect-ratio: 3 / 2; overflow: hidden; background: var(--surface-sunken); }
 .tday-icon.is-flip { transform: scaleY(-1); }
 .tday-night-l { color: var(--text-2); }
 .tday-night-k { display: block; font-size: var(--text-caption); color: var(--text-2); }
 .tday-when { display: block; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
-.tgo { display: grid; gap: var(--space-3); }
-.tprep { display: grid; gap: var(--space-5); }
-.gocard-icon { display: inline-flex; color: var(--text-2); }
 .tskel-photo { display: block; aspect-ratio: 16 / 9; max-height: 40vh; border-radius: var(--radius-card); background: var(--surface-sunken); }
 .tskel-line { display: block; height: 14px; width: 60%; border-radius: var(--radius-sm); background: var(--surface-sunken); }
 .tprice .iinc-row { border-bottom: 0; }
-.itin-photohero .itin-theme {
-  border-color: rgba(255, 255, 255, 0.45);
-  color: var(--on-fill);
-}
 @media (hover: hover) {
   .itin-gone-back:hover { border-color: var(--ink); }
 }
@@ -362,26 +275,15 @@
   border: 1px solid var(--ink-mute);
   background: transparent;
 }
-.dsk-page .tpage-loop {
-  border: 1px solid var(--rule);
-  background: transparent;
-  color: var(--ink-soft);
-  font-size: 12px;
-}
-.dsk-page .tpage-chip-hl {
-  border: 1px solid var(--rule);
-  background: transparent;
-  color: var(--ink-soft);
-}
 .itin-page .itin-use {
   min-height: var(--tap);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   transition: background-color var(--dur-1) var(--ease-out);
 }
 .itin-leg-fig {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   white-space: nowrap;
 }
@@ -389,7 +291,7 @@
   width: 100%;
   height: auto;
   aspect-ratio: 3 / 2;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper-dim);
 }
 .itin-receipt .itin-cost-sum {

@@ -1,0 +1,239 @@
+{
+ "_about": "T1100 (D13): ten places from public/app_data.json (generated 2026-06-07) and five homes for the way-there pick check. Rebuild with node scripts/way_choice_pairs.mjs --write-fixture.",
+ "homes": [
+  {
+   "name": "Brussels",
+   "lat": 50.8467,
+   "lon": 4.3525,
+   "iso2": "BE",
+   "country": "Belgium",
+   "airport": "BRU"
+  },
+  {
+   "name": "Amsterdam",
+   "lat": 52.3728,
+   "lon": 4.8936,
+   "iso2": "NL",
+   "country": "Netherlands",
+   "airport": "AMS"
+  },
+  {
+   "name": "Paris",
+   "lat": 48.8566,
+   "lon": 2.3522,
+   "iso2": "FR",
+   "country": "France",
+   "airport": "CDG"
+  },
+  {
+   "name": "Munich",
+   "lat": 48.1374,
+   "lon": 11.5755,
+   "iso2": "DE",
+   "country": "Germany",
+   "airport": "MUC"
+  },
+  {
+   "name": "Madrid",
+   "lat": 40.4168,
+   "lon": -3.7038,
+   "iso2": "ES",
+   "country": "Spain",
+   "airport": "MAD"
+  }
+ ],
+ "places": [
+  {
+   "id": "BGO",
+   "city": "Bergen",
+   "country": "Norway",
+   "iso2": "NO",
+   "tier": "airport",
+   "lat": 60.2934,
+   "lon": 5.2181,
+   "city_lat": 60.39299,
+   "city_lon": 5.32415,
+   "anchor_airport": "BGO",
+   "iata": "BGO",
+   "transfer": null,
+   "local_transport": {
+    "road_connected": true,
+    "car_needed": false
+   }
+  },
+  {
+   "id": "gem:amalfi-coast",
+   "city": "Amalfi Coast",
+   "country": "Italy",
+   "iso2": "IT",
+   "tier": "gem",
+   "lat": 40.634,
+   "lon": 14.6027,
+   "city_lat": 40.634,
+   "city_lon": 14.6027,
+   "anchor_airport": "NAP",
+   "iata": null,
+   "transfer": {
+    "transfer_minutes_one_way": 75,
+    "transfer_eur_one_way_pp": 22,
+    "summary": "~75 min from NAP; €22/person one-way",
+    "closer_alternatives": []
+   },
+   "local_transport": {
+    "road_connected": true,
+    "car_needed": true
+   }
+  },
+  {
+   "id": "gem:taormina",
+   "city": "Taormina",
+   "country": "Italy",
+   "iso2": "IT",
+   "tier": "gem",
+   "lat": 37.8522,
+   "lon": 15.2919,
+   "city_lat": 37.8522,
+   "city_lon": 15.2919,
+   "anchor_airport": "CTA",
+   "iata": null,
+   "transfer": null,
+   "local_transport": {
+    "road_connected": true,
+    "car_needed": true
+   }
+  },
+  {
+   "id": "PRG",
+   "city": "Prague",
+   "country": "Czechia",
+   "iso2": "CZ",
+   "tier": "airport",
+   "lat": 50.1008,
+   "lon": 14.2632,
+   "city_lat": 50.08737,
+   "city_lon": 14.42132,
+   "anchor_airport": "PRG",
+   "iata": "PRG",
+   "transfer": null,
+   "local_transport": {
+    "road_connected": true,
+    "car_needed": false
+   }
+  },
+  {
+   "id": "LIS",
+   "city": "Lisbon",
+   "country": "Portugal",
+   "iso2": "PT",
+   "tier": "airport",
+   "lat": 38.7813,
+   "lon": -9.1359,
+   "city_lat": 38.72236,
+   "city_lon": -9.1487,
+   "anchor_airport": "LIS",
+   "iata": "LIS",
+   "transfer": null,
+   "local_transport": {
+    "road_connected": true,
+    "car_needed": false
+   }
+  },
+  {
+   "id": "SPU",
+   "city": "Split",
+   "country": "Croatia",
+   "iso2": "HR",
+   "tier": "airport",
+   "lat": 43.5389,
+   "lon": 16.298,
+   "city_lat": 43.50891,
+   "city_lon": 16.43915,
+   "anchor_airport": null,
+   "iata": "SPU",
+   "transfer": null,
+   "local_transport": {
+    "road_connected": true,
+    "car_needed": false
+   }
+  },
+  {
+   "id": "INN",
+   "city": "Innsbruck",
+   "country": "Austria",
+   "iso2": "AT",
+   "tier": "airport",
+   "lat": 47.2602,
+   "lon": 11.3439,
+   "city_lat": 47.26053,
+   "city_lon": 11.35474,
+   "anchor_airport": null,
+   "iata": "INN",
+   "transfer": null,
+   "local_transport": {
+    "road_connected": true,
+    "car_needed": false
+   }
+  },
+  {
+   "id": "gem:bruges",
+   "city": "Bruges",
+   "country": "Belgium",
+   "iso2": "BE",
+   "tier": "gem",
+   "lat": 51.2093,
+   "lon": 3.2247,
+   "city_lat": 51.2093,
+   "city_lon": 3.2247,
+   "anchor_airport": "BRU",
+   "iata": null,
+   "transfer": null,
+   "local_transport": {
+    "road_connected": true,
+    "car_needed": false
+   }
+  },
+  {
+   "id": "gem:annecy",
+   "city": "Annecy",
+   "country": "France",
+   "iso2": "FR",
+   "tier": "gem",
+   "lat": 45.8992,
+   "lon": 6.1294,
+   "city_lat": 45.8992,
+   "city_lon": 6.1294,
+   "anchor_airport": null,
+   "iata": null,
+   "transfer": {
+    "transfer_minutes_one_way": 90,
+    "transfer_eur_one_way_pp": 22,
+    "summary": "~90 min from LYS; €22/person one-way",
+    "closer_alternatives": [
+     "GVA (Geneva, ~45 min)"
+    ]
+   },
+   "local_transport": {
+    "road_connected": true,
+    "car_needed": true
+   }
+  },
+  {
+   "id": "CGN",
+   "city": "Cologne-Bonn",
+   "country": "Germany",
+   "iso2": "DE",
+   "tier": "airport",
+   "lat": 50.8659,
+   "lon": 7.1427,
+   "city_lat": 50.89559,
+   "city_lon": 7.18175,
+   "anchor_airport": "CGN",
+   "iata": "CGN",
+   "transfer": null,
+   "local_transport": {
+    "road_connected": true,
+    "car_needed": false
+   }
+  }
+ ]
+}

@@ -1,0 +1,113 @@
+/* Your taste (T1152, ROADMAP F3) on My trips, Your Europe tab. Imported by
+   auth/mytrips/TasteChips.jsx only, which My trips loads lazily (T1215), so
+   it rides the taste card's own chunk. Scoped
+   under .tp. One Carta card (white, stage radius, the soft umber shadow);
+   each interest is a row with a facet tone edge, its evidence and a Yes
+   and a No of 44 px. Accepted rows take the umber tint and a tick, so the
+   state never rests on colour alone. */
+
+.tp { --tp-tone: var(--umber-600); --tp-ground: var(--umber-50); }
+
+.tp .tp-card {
+  background: var(--surface);
+  border-radius: var(--radius-stage);
+  box-shadow: var(--elev-1);
+  padding: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+@media (min-width: 700px) { .tp .tp-card { padding: var(--space-5); } }
+
+.tp .tp-line,
+.tp .tp-empty { margin: 0; color: var(--text-2); font-size: var(--text-body); }
+
+.tp .tp-list {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: var(--space-2);
+}
+@media (min-width: 900px) { .tp .tp-list { grid-template-columns: 1fr 1fr; } }
+
+.tp .tp-chip {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-4);
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--tp-ground) 70%, var(--surface));
+  border-left: 3px solid var(--tp-tone);
+  min-width: 0;
+}
+.tp .tp-chip.is-activity { --tp-tone: var(--lagoon-600); --tp-ground: var(--lagoon-50); }
+.tp .tp-chip.is-setting { --tp-tone: var(--umber-600); --tp-ground: var(--umber-50); }
+.tp .tp-chip.is-vibe { --tp-tone: var(--sun-400); --tp-ground: var(--sun-100); }
+.tp .tp-chip.is-traveller { --tp-tone: var(--lagoon-800); --tp-ground: var(--lagoon-50); }
+.tp .tp-chip.is-practical { --tp-tone: var(--umber-500); --tp-ground: var(--umber-50); }
+.tp .tp-chip.is-yes { background: var(--action-tint); }
+
+.tp .tp-chip-body { flex: 1; min-width: 0; display: grid; gap: var(--space-1); }
+.tp .tp-chip-label {
+  margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2);
+  font-size: var(--text-lead); font-weight: 700; color: var(--text); line-height: var(--leading-tight);
+}
+.tp .tp-chip-tick { color: var(--action); flex: none; }
+.tp .tp-facet {
+  font-size: var(--text-caption); font-weight: 600; color: var(--text-2);
+  padding: 0 var(--space-2); border-radius: var(--radius-pill);
+  background: var(--surface);
+}
+.tp .tp-ev { margin: 0; font-size: var(--text-caption); color: var(--text-2); display: grid; }
+.tp .tp-ev-names { color: var(--text); overflow-wrap: anywhere; }
+
+/* Every item behind a chip (T1215, T1152-e): a quiet disclosure of 44 px,
+   then one row per item, its kind as a small label and the narrower
+   interest it came through, when it came up through one. */
+.tp .tp-all { display: grid; gap: var(--space-1); justify-items: start; }
+.tp .tp-all-toggle {
+  min-height: var(--tap); margin-left: calc(-1 * var(--space-2));
+  padding: 0 var(--space-2);
+}
+.tp .tp-all-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tp .tp-all-list {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: var(--space-1); width: 100%;
+}
+.tp .tp-all-row {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2);
+  font-size: var(--text-caption); color: var(--text-2);
+}
+.tp .tp-all-kind {
+  font-weight: 600; padding: 0 var(--space-2);
+  border-radius: var(--radius-pill); background: var(--surface);
+}
+.tp .tp-all-name { color: var(--text); overflow-wrap: anywhere; }
+
+.tp .tp-acts { display: flex; gap: var(--space-1); flex: none; }
+.tp .tp-act {
+  min-width: var(--tap); min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border-color: transparent; border-radius: var(--radius-pill);
+  background: var(--surface); color: var(--text);
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
+}
+.tp .tp-act:hover { background: var(--surface-hover); }
+.tp .tp-act:active { transform: scale(.96); }
+.tp .tp-act:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tp .tp-yes[aria-pressed="true"] { background: var(--action); color: var(--action-text); }
+/* On a phone the No keeps its icon only; its name stays for screen readers. */
+@media (max-width: 479px) { .tp .tp-no .tp-no-word { display: none; } .tp .tp-no { padding: 0; } }
+
+.tp .tp-foot { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.tp .tp-clear { margin-left: auto; }
+
+.tp .tp-hidden {
+  list-style: none; margin: 0; padding: var(--space-2) 0 0;
+  border-top: 1px solid var(--border-soft);
+  display: grid; gap: var(--space-1);
+}
+.tp .tp-hidden-row {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  color: var(--text-2); font-size: var(--text-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tp .tp-act { transition: none; }
+  .tp .tp-act:active { transform: none; }
+}

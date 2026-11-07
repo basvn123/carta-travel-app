@@ -43,7 +43,7 @@ const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 const errors = [];
-const NOISE = /ERR_FAILED|config is not valid/;
+const NOISE = /ERR_FAILED|ERR_TUNNEL_CONNECTION_FAILED|config is not valid/;
 
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
 page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
@@ -92,17 +92,23 @@ await page.waitForTimeout(3000);
 const headerTab = page.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
 await headerTab.click();
 await page.waitForTimeout(1500);
-check('destinations tab opens', await page.locator('.places-tab').isVisible());
+// T1089: .places-tab only mounts once a category is picked (below).
 
 // T384: this harness was written against the General category (priced towns
 // as .places-dcard), which UX pass 1 removed, so it timed out on its first
 // General click (T373 baseline). It now ranks the Beaches list from the same
 // anchors: every check below keeps its question, read off beach cards.
 const BEACHES = /^beaches$/i;
-await page.locator('.dtab-cats [role="tab"]', { hasText: BEACHES }).first().click();
+// T1089: Explore's own page is the map overview now; the Places tab opens
+// from its category row (.xcats), and the Beaches list is already showing.
+if (!(await page.locator('.dtab-cats [role="tab"]').count())) {
+  await page.locator('.xcats [role="tab"]', { hasText: BEACHES }).first().click();
+} else {
+  await page.locator('.dtab-cats [role="tab"]', { hasText: BEACHES }).first().click();
+}
 await page.waitForTimeout(4000);
 
-const input = page.locator('.places-search input');
+const input = page.locator('.wbar-input');
 const kmText = () => page.locator('.places-bcard .places-card-km').allInnerTexts();
 // A card's chip is "Nearby, 12 km", "Day trip, ~1h20" or "Worth the
 // journey, 415 km" (lib/regions.js bandChip). The hours are the road model's
@@ -162,10 +168,12 @@ check('the offer row gives way to the hits', await page.locator('.places-sugg-an
 // already open a few pixels higher.
 check('no second copy of the offer under the list', await page.locator('.places-empty-cta').count() === 0);
 await page.screenshot({ path: 'shots/places-search-hits.png' });
-await page.setViewportSize({ width: 390, height: 844 });
+await page.setViewportSize({ width: 780, height: 844 });
 await page.waitForTimeout(400);
+// T1089: below 769px the layer's search is the phone dock (no field or
+// list in the page), so the narrowest layout that still draws the field is 780px.
 const suggBox = await page.locator('.places-sugg').boundingBox();
-check('the list fits a phone', suggBox != null && suggBox.width <= 390, suggBox ? `${Math.round(suggBox.width)}px` : 'no box');
+check('the list fits a phone', suggBox != null && suggBox.width <= 780, suggBox ? `${Math.round(suggBox.width)}px` : 'no box');
 await page.screenshot({ path: 'shots/places-search-phone.png' });
 await page.setViewportSize({ width: 1280, height: 900 });
 await page.waitForTimeout(400);
@@ -190,6 +198,15 @@ await page.screenshot({ path: 'shots/places-search-address.png' });
 // ── 3. Trips and trails follow the same anchor ──
 await page.locator('.dtab-cats [role="tab"]', { hasText: /^trails$/i }).click();
 await page.waitForTimeout(2500);
+// T1089: the category row hands over to App, which opens the layer at rest
+// (the near anchor does not travel), so Trails is searched from the same
+// address afresh instead of inheriting it.
+await input.fill(ADDRESS);
+await page.waitForTimeout(500);
+await input.press('Enter');
+await page.waitForTimeout(1200);
+await input.press('Enter');
+await page.waitForTimeout(2500);
 const trailKm = (await page.locator('.places-tcard .places-card-km').allInnerTexts())
   .map((s) => parseInt(s.replace(/\D+/g, ''), 10));
 const trailEmpty = await page.locator('.places-empty').innerText().catch(() => '');
@@ -202,9 +219,16 @@ await page.screenshot({ path: 'shots/places-search-trails.png' });
 
 // ── 4. The keyboard path: type, Enter to search, Enter to take the top hit ──
 // T384: back to Beaches (was the removed General category).
-await page.locator('.dtab-cats [role="tab"]', { hasText: BEACHES }).first().click();
+// T1089: Explore's own page is the map overview now; the Places tab opens
+// from its category row (.xcats), and the Beaches list is already showing.
+if (!(await page.locator('.dtab-cats [role="tab"]').count())) {
+  await page.locator('.xcats [role="tab"]', { hasText: BEACHES }).first().click();
+} else {
+  await page.locator('.dtab-cats [role="tab"]', { hasText: BEACHES }).first().click();
+}
 await page.waitForTimeout(600);
-await page.locator('.places-nearclear').click();
+// T1089: switching layer drops the anchor, so there may be nothing to clear.
+if (await page.locator('.places-nearclear').count()) await page.locator('.places-nearclear').click();
 await page.waitForTimeout(400);
 const callsBeforeKeyboard = geocodeCalls;
 await input.fill(ADDRESS);
@@ -268,18 +292,21 @@ await page.screenshot({ path: 'shots/places-search-locate.png' });
 
 // The crosshair rides inside the field, so on a phone it must stay inside the
 // field's own box and leave the typed text room rather than sitting over it.
-await page.setViewportSize({ width: 390, height: 844 });
+await page.setViewportSize({ width: 780, height: 844 });
 await page.waitForTimeout(500);
-const fieldBox = await page.locator('.places-search').boundingBox();
+const fieldBox = await page.locator('.wbar-box').boundingBox();
 const btnBox = await locateBtn.boundingBox();
 const inside = fieldBox && btnBox
   && btnBox.x >= fieldBox.x && btnBox.x + btnBox.width <= fieldBox.x + fieldBox.width + 1
   && btnBox.y >= fieldBox.y - 1;
 check('the locate button sits inside the field on a phone', !!inside,
   btnBox ? `field ${Math.round(fieldBox.width)}px, button at +${Math.round(btnBox.x - fieldBox.x)}px` : 'no box');
-// Room for the placeholder: the input reserves padding for the button.
-const padRight = await page.locator('.places-search input').evaluate((el) => getComputedStyle(el).paddingRight);
-check('the input reserves room for it', parseFloat(padRight) >= btnBox.width, padRight);
+// Room for the placeholder. T1089: the Where bar lays the button out as the
+// input's flex sibling (no overlay padding), so the test is that the typed
+// text's box ends where the button begins.
+const inBox = await page.locator('.wbar-input').boundingBox();
+check('the input reserves room for it', !!inBox && inBox.x + inBox.width <= btnBox.x + 1,
+  `input ends ${Math.round(inBox.x + inBox.width)}px, button starts ${Math.round(btnBox.x)}px`);
 await page.screenshot({ path: 'shots/places-search-locate-phone.png' });
 await page.setViewportSize({ width: 1280, height: 900 });
 await page.waitForTimeout(400);

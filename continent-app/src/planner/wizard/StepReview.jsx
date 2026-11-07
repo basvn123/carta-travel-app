@@ -198,7 +198,7 @@ export function StepReview({
       <StepTitle className="guide-title">{t('plan.reviewTitle')}</StepTitle>
 
       {stopPhotos.some((p) => p.url) && (
-        <ul className="wz-rev-photos" aria-label={t('wizard.revPhotos')}>
+        <ul className="wz-rev-photos" aria-label={t('wizard.revPhotos')} tabIndex={0}>
           {stopPhotos.map(({ sd, url, credit }) => sd.dest && (
             <li className="wz-rev-photo" key={sd.destinationId}>
               {url

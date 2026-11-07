@@ -21,7 +21,7 @@ Full rules, formulas and thresholds (read these, do not copy them):
 
 ## Files
 
-App: continent-app/src/browse/JourneyPage.jsx, continent-app/src/browse/TripPage.jsx (a library trip), continent-app/src/lib/journeys.js, continent-app/src/lib/trips.js, continent-app/src/planner/finder/TripsForYou.jsx, continent-app/src/planner/finder/TripPage.jsx (one found trip)
+App: continent-app/src/browse/JourneyPage.jsx, continent-app/src/browse/TripPage.jsx (a library trip), continent-app/src/lib/journeys.js, continent-app/src/lib/trips.js, continent-app/src/planner/finder/TripsForYou.jsx, continent-app/src/planner/finder/FoundTripPage.jsx (one found trip)
 
 Pipeline and backend: pipeline/trips/, pipeline/journeys/build_wire.py
 

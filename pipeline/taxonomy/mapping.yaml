@@ -1,0 +1,739 @@
+# Mapping from every tag Carta uses today to the Carta travel taxonomy (T1149, ROADMAP F1).
+#
+# One block per source vocabulary. `pipeline/taxonomy/tag_sources.py` reads each
+# source live from the code or the shipped data, and tests/test_taxonomy.py
+# fails when a value has no row here, or a row names a node that does not
+# exist. A row is either:
+#   value: [node ids]   the taxonomy nodes the old tag means (one or more)
+#   value: []           and the value is listed under `not_a_concept` with a
+#                       reason: a region name, a size class or a ranking word
+#                       that the taxonomy deliberately does not hold.
+# The mapping is a translation table for S66 (T1150), not a tagging: an old
+# tag is weak evidence, never the final tag.
+schema: carta-taxonomy-mapping/1
+taxonomy_version: 1.0.0
+
+sources:
+  place.categories:
+    where: continent-app/public/app_data.json destinations[].categories (and meta.categories)
+    map:
+      abbey: [set.monastery]
+      adventure: [vibe.adventurous, act.adventure]
+      affordable: [prac.affordable]
+      alps: [set.alpine]
+      alsace: []
+      andalusia: []
+      arctic: [set.arctic]
+      art: [act.art]
+      baroque: [set.baroque]
+      basque: []
+      beach: [set.beach]
+      beer: [act.beer]
+      bridge: [set.bridges]
+      brittany: []
+      byzantine: [set.byzantine]
+      carpathians: []
+      castle: [set.castle]
+      cathedral: [set.cathedral]
+      city: [set.big-city]
+      coast: [set.coast]
+      cornwall: []
+      cote-azur: []
+      country: [set.countryside]
+      countryside: [set.countryside]
+      culture: [act.sightseeing]
+      diving: [act.diving]
+      fairytale: [vibe.fairytale]
+      fall-foliage: [prac.autumn-colours]
+      family: [trav.families]
+      fjord: [set.fjord]
+      fjords: [set.fjord]
+      food: [act.food]
+      fortress: [set.fortress]
+      gothic: [set.gothic]
+      hiking: [act.hiking]
+      historic: [set.heritage]
+      iconic: [vibe.iconic]
+      island: [set.island]
+      islands: [set.island, set.archipelago]
+      lake: [set.lake]
+      lakes: [set.lake]
+      lavender: [set.flower-fields]
+      luxury: [trav.luxury]
+      medieval: [set.medieval]
+      memorial: [set.memorial]
+      modern: [set.modern-architecture]
+      monastery: [set.monastery]
+      mountains: [set.mountains]
+      music: [act.live-music, act.performing-arts]
+      national-park: [set.national-park]
+      nature: [set.green]
+      nightlife: [act.nightlife]
+      normandy: []
+      northern-lights: [act.northern-lights]
+      ottoman: [set.ottoman]
+      palace: [set.palace]
+      party: [act.clubbing]
+      provence: []
+      puglia: []
+      quiet: [vibe.quiet]
+      religion: [set.religious]
+      remote: [vibe.remote]
+      renaissance: [set.renaissance]
+      roman: [set.roman]
+      romantic: [vibe.romantic]
+      ruins: [set.ruins]
+      sailing: [act.sailing]
+      salzkammergut: []
+      scotland: []
+      skiing: [act.skiing]
+      spa: [act.thermal-baths, set.spa-town]
+      summer-only: [prac.summer-only]
+      surf: [act.surfing]
+      thermal: [act.thermal-baths]
+      town: [set.small-town]
+      tuscany: []
+      unesco: [set.unesco]
+      university: [set.university-town]
+      valley: [set.valley]
+      village: [set.village]
+      volcanic: [set.volcano]
+      wachau: []
+      wilderness: [set.wilderness]
+      windmills: [set.windmills]
+      wine: [act.wine]
+      winter: [prac.good-in-winter]
+    not_a_concept:
+      alsace: region name; geography is the region filter, not a tag
+      andalusia: region name
+      basque: region name
+      brittany: region name
+      carpathians: mountain range name; its meaning is carried by set.mountains on the same places
+      cornwall: region name
+      cote-azur: region name
+      normandy: region name
+      provence: region name
+      puglia: region name
+      salzkammergut: region name
+      scotland: country name
+      tuscany: region name
+      wachau: region name
+
+  place.tags:
+    where: continent-app/public/app_data.json destinations[].tags (free text, 1 to 7 uses each)
+    map:
+      alhambra: [set.landmarks]
+      aqueduct: [set.roman]
+      architecture: [act.architecture]
+      art-nouveau: [set.art-nouveau]
+      artist: [act.art, vibe.bohemian]
+      bay: [set.bay]
+      black-sand: [set.black-sand]
+      bogs: [set.moor]
+      bones: [vibe.quirky]
+      brewery: [act.beer]
+      canals: [set.canals]
+      car-free: [prac.car-free]
+      casino: [act.casino]
+      castles: [set.castle]
+      cave: [set.cave]
+      cezanne: [act.art]
+      classic: [trav.first-timer]
+      cliff: [set.cliffs]
+      cliffs: [set.cliffs]
+      curiosity: [vibe.quirky]
+      danube: [set.river]
+      deep: [set.lake]
+      dramatic: [vibe.dramatic]
+      duty-free: [act.tax-free]
+      elegant: [vibe.elegant]
+      etruscan: [set.ancient]
+      fashion: [act.fashion]
+      fishing: [set.harbour]
+      fjord-like: [set.fjord]
+      fountains: [set.squares]
+      gaelic: [vibe.authentic]
+      gaeltacht: [vibe.authentic]
+      georgian: [set.georgian]
+      glaciers: [set.glacier]
+      gorge: [set.gorge]
+      hanseatic: [set.hanseatic]
+      history: [set.heritage]
+      ice: [set.glacier]
+      imperial: [set.imperial]
+      italian: [vibe.authentic]
+      jungfrau: [set.alpine]
+      lakeside: [set.lakeside-town]
+      literary: [act.literary]
+      longest: []
+      matterhorn: [set.alpine]
+      monasteries: [set.monastery]
+      mont-blanc: [set.alpine]
+      mosaics: [set.byzantine]
+      mosque: [set.mosque]
+      old-town: [set.old-town]
+      oracle: [set.ancient-greek]
+      palaces: [set.palace]
+      papal: [set.religious]
+      peninsula: [set.peninsula]
+      pottery: [act.crafts]
+      punting: [act.boat-trips]
+      quaint: [vibe.fairytale]
+      quintessentially-english: [vibe.authentic]
+      red-cottages: [set.vernacular]
+      rocks: [set.rock-formations]
+      stone: [set.vernacular]
+      terraces: [set.vineyards]
+      thousand-windows: [act.architecture]
+      tidal-island: [set.tidal-island]
+      traditional: [vibe.authentic]
+      trulli: [set.vernacular]
+      venetian: [set.venetian]
+      viking: [set.viking]
+      villages: [set.village]
+      villas: [set.palace]
+      walled: [set.walled-town]
+      walled-city: [set.walled-town]
+      waterfalls: [set.waterfall]
+      whitewashed: [set.vernacular]
+    not_a_concept:
+      longest: a superlative with no subject (the longest of what is in the blurb, not the tag)
+
+  place.class:
+    where: continent-app/public/app_data.json destinations[].place.class
+    map:
+      metro: [set.big-city]
+      city: [set.big-city]
+      town: [set.small-town]
+      village: [set.village]
+      area: []
+    not_a_concept:
+      area: a landscape or region rather than one settlement; its setting comes from its text (coast, mountains, island)
+
+  place.designations:
+    where: continent-app/public/app_data.json destinations[].designations[].kind
+    map:
+      beautiful_village: [set.village, vibe.fairytale]
+      capital_of_culture: [act.sightseeing]
+      heritage_town: [set.old-town]
+      market_town: [set.market-town]
+      national_park: [set.national-park]
+      spa_town: [set.spa-town]
+      unesco_tentative: [set.heritage]
+      unesco_whc: [set.unesco]
+
+  place.activity_kinds:
+    where: continent-app/public/app_data.json destinations[].activities.items[].kind (POIs near a place)
+    map:
+      Activity: [activity]
+      Attraction: [act.sightseeing]
+      Beach: [set.beach]
+      Bridge: [set.bridges]
+      Canyon: [set.gorge]
+      Castle: [set.castle]
+      Cathedral: [set.cathedral]
+      Chapel: [set.church]
+      Church: [set.church]
+      Cliffs: [set.cliffs]
+      Climbing: [act.climbing]
+      Diving: [act.diving]
+      Glacier: [set.glacier]
+      Island: [set.island]
+      Lake: [set.lake]
+      Lighthouse: [set.lighthouse]
+      Monastery: [set.monastery]
+      Monument: [set.landmarks]
+      Mosque: [set.mosque]
+      Museum: [act.museums]
+      National park: [set.national-park]
+      Nature reserve: [set.nature-reserve]
+      Palace: [set.palace]
+      Peak: [set.peak]
+      River: [set.river]
+      Sauna & baths: [act.thermal-baths, act.sauna]
+      Sight: [act.sightseeing]
+      Skiing: [act.skiing]
+      Square: [set.squares]
+      Surfing: [act.surfing]
+      Swimming: [act.water]
+      Synagogue: [set.synagogue]
+      Theatre: [act.performing-arts]
+      Theme park: [act.theme-park]
+      Tour: [act.touring]
+      Tower: [set.towers]
+      Town: [set.small-town]
+      Viewpoint: [act.viewpoints]
+      Village: [set.village]
+      Water park: [act.water-park]
+      Waterfall: [set.waterfall]
+
+  dossier.highlight_kinds:
+    where: continent-app/public/dossier/*.json highlights[].kind
+    map:
+      Amphitheatre: [set.roman]
+      Aquarium: [act.aquarium]
+      Basilica: [set.cathedral]
+      Beach: [set.beach]
+      Bridge: [set.bridges]
+      Canyon: [set.gorge]
+      Castle: [set.castle]
+      Cathedral: [set.cathedral]
+      Cave: [set.cave]
+      Church: [set.church]
+      Gate: [set.walled-town]
+      Glacier: [set.glacier]
+      Island: [set.island]
+      Lake: [set.lake]
+      Landmark: [set.landmarks]
+      Lighthouse: [set.lighthouse]
+      Market: [act.markets]
+      Monastery: [set.monastery]
+      Monument: [set.landmarks]
+      Mosque: [set.mosque]
+      Museum: [act.museums]
+      National park: [set.national-park]
+      Nature reserve: [set.nature-reserve]
+      Old town: [set.old-town]
+      Palace: [set.palace]
+      Park: [set.parks]
+      Peak: [set.peak]
+      Ruins: [set.ruins]
+      Sauna & baths: [act.thermal-baths]
+      Square: [set.squares]
+      Swimming: [act.water]
+      Synagogue: [set.synagogue]
+      Theatre: [act.performing-arts]
+      Theme park: [act.theme-park]
+      Tower: [set.towers]
+      Viewpoint: [act.viewpoints]
+      Water park: [act.water-park]
+      Waterfall: [set.waterfall]
+      Zoo: [act.zoo]
+
+  vibes:
+    where: continent-app/public/search/guided.json vibes[].id (pipeline/guided_search_layer.py VIBES)
+    map:
+      adventure: [vibe.adventurous]
+      art: [act.art, act.museums]
+      beach: [set.seaside-town]
+      castles: [set.castle]
+      city: [set.big-city]
+      family: [trav.families]
+      food: [act.food]
+      hiking: [act.hiking]
+      island: [set.island]
+      lake: [set.lakeside-town]
+      mountain: [set.mountains]
+      nature: [set.green]
+      nightlife: [act.nightlife]
+      oldtown: [set.old-town]
+      quiet: [vibe.quiet]
+      romantic: [vibe.romantic]
+      spa: [act.thermal-baths]
+      unesco: [set.unesco]
+      views: [vibe.views]
+      village: [set.village]
+
+  likes:
+    where: pipeline/place_taste_profile.py LIKES (and continent-app/src/planner/flow/tripSettings.js)
+    map:
+      beach: [set.beach]
+      city: [set.big-city]
+      culture: [act.sightseeing, set.heritage]
+      cycling: [act.cycling]
+      food: [act.food]
+      hidden: [vibe.hidden-gem]
+      hiking: [act.hiking]
+      islands: [set.island]
+      lakes: [set.lake]
+      nightlife: [act.nightlife]
+      ski: [act.skiing]
+      wellness: [act.wellness]
+
+  explore.trip_kinds:
+    where: continent-app/src/lib/trip_kinds.js TRIP_KIND_MAP
+    map:
+      beach: [set.beach]
+      city: [set.big-city]
+      cultural: [act.sightseeing, set.heritage]
+      food: [act.food]
+      island: [set.island]
+      mountains: [set.mountains]
+      nature: [set.green]
+      party: [act.nightlife]
+      romantic: [vibe.romantic]
+
+  trip.themes:
+    where: pipeline/trips/trip_model.py THEME_ORDER
+    map:
+      art: [act.art]
+      city: [set.big-city]
+      coast: [set.coast]
+      food: [act.food]
+      history: [set.heritage]
+      mountains: [set.mountains]
+      nature: [set.green]
+      nightlife: [act.nightlife]
+      romantic: [vibe.romantic]
+
+  match.trip_types:
+    where: continent-app/src/lib/countryMatch.js TRIP_TYPES
+    map:
+      backpack: [trav.backpacker]
+      beach: [set.beach]
+      city: [set.big-city]
+      culture: [act.sightseeing, set.heritage]
+      cycling: [act.cycling]
+      family: [trav.families]
+      festivals: [act.festivals]
+      food: [act.food]
+      hidden: [vibe.hidden-gem]
+      hiking: [act.hiking]
+      islands: [act.island-hopping]
+      lakes: [set.lake]
+      nightlife: [act.nightlife]
+      roadtrip: [act.road-trip]
+      romantic: [vibe.romantic]
+      ski: [act.winter]
+      trailrun: [act.trail-running]
+      water: [act.water]
+      wellness: [act.wellness]
+
+  journey.types:
+    where: continent-app/public/journeys/index.json types[].slug
+    map:
+      beach-week: [set.beach]
+      city: [set.big-city]
+      cozy-towns: [set.small-town]
+      culinary: [act.food]
+      cycling: [act.cycling]
+      hiking: [act.hiking]
+      hostel: [trav.backpacker]
+      island-hopping: [act.island-hopping]
+      nature-escape: [set.green]
+      pilgrim: [act.pilgrimage]
+      rail: [act.rail-journey]
+      road-trip: [act.road-trip]
+      trail-running: [act.trail-running]
+      water-sports: [act.water]
+      winter-sports: [act.winter]
+
+  persona:
+    where: continent-app/config/recommend.json persona.ids
+    map:
+      cities: [set.big-city]
+      coast: [set.coast]
+      hidden: [vibe.hidden-gem]
+      hubtrips: [prac.car-free]
+      lively: [vibe.lively]
+      mix: []
+      nature: [set.green]
+      outside: [act.hiking, set.green]
+      slow: [vibe.slow]
+      towns: [set.small-town]
+    not_a_concept:
+      mix: the persona for "a bit of everything"; it is the absence of a preference
+
+  poi.categories:
+    where: continent-app/config/rating.json poi_categories.categories
+    map:
+      active: [act.adventure, act.hiking, act.water]
+      family: [act.family-fun]
+      food_drink: [act.food]
+      markets: [act.markets]
+      museums: [act.museums]
+      nature: [set.green]
+      nightlife: [act.nightlife]
+      sights: [act.sightseeing]
+
+  trail.category:
+    where: continent-app/public/trails/{CC}.json trips[].category
+    map:
+      hike: [act.hiking]
+      citytrip: [act.easy-walk, set.old-town]
+
+  trail.grade:
+    where: continent-app/public/trails/{CC}.json trips[].f.g
+    map:
+      easy: [prac.grade-easy]
+      moderate: [prac.grade-moderate]
+      hard: [prac.grade-hard]
+      very_hard: [prac.grade-very-hard]
+      alpine: [prac.grade-alpine]
+
+  trail.route_type:
+    where: continent-app/public/trails/{CC}.json trips[].f.rt
+    map:
+      loop: [prac.loop]
+      figure8: [prac.loop]
+      point: [prac.point-to-point]
+      out_back: [prac.out-and-back]
+
+  trail.highlights:
+    where: continent-app/public/trails/{CC}.json trips[].f.hl (and trails/index.json filter_model)
+    map:
+      castle: [set.castle]
+      coast: [set.coast, act.coastal-walk]
+      forest: [set.forest]
+      gorge: [set.gorge]
+      hut: [set.mountain-hut]
+      lake: [set.lake]
+      summit: [set.peak, act.summit-hike]
+      viewpoint: [act.viewpoints, vibe.views]
+      village: [set.village]
+      waterfall: [set.waterfall]
+
+  trail.detail_highlights:
+    where: continent-app/public/trails/trip/{id}.json highlights[].kind (vocabulary pipeline/trails/scenic.py KINDS)
+    map:
+      arch: [set.rock-formations]
+      bay: [set.bay]
+      beach: [set.beach]
+      cape: [set.peninsula]
+      castle: [set.castle]
+      cave: [set.cave]
+      cliff: [set.cliffs]
+      forest: [set.forest]
+      glacier: [set.glacier]
+      gorge: [set.gorge]
+      hot_spring: [set.hot-spring]
+      hut: [set.mountain-hut]
+      lake: [set.lake]
+      lighthouse: [set.lighthouse]
+      monastery: [set.monastery]
+      peak: [set.peak]
+      ridge: [set.ridge]
+      rock: [set.rock-formations]
+      ruins: [set.ruins]
+      saddle: [set.mountains]
+      spring: [set.spring]
+      village: [set.village]
+      viewpoint: [act.viewpoints, vibe.views]
+      volcano: [set.volcano]
+      water: [set.river]
+      waterfall: [set.waterfall]
+
+  trail.suitability:
+    where: continent-app/public/trails/{CC}.json trips[].f.su and f.sd
+    map:
+      beginner: [trav.beginner-outdoors]
+      dog: [prac.dogs]
+      family: [trav.families]
+      stroller: [prac.pushchair]
+      wheelchair: [prac.wheelchair]
+      winter: [prac.good-in-winter]
+
+  trail.reasons:
+    where: continent-app/public/trails/{CC}.json trips[].reasons[].code
+    map:
+      bigClimb: [trav.experienced-outdoors]
+      castle: [set.castle]
+      cave: [set.cave]
+      coast: [set.coast, act.coastal-walk]
+      dayOut: [act.day-hike]
+      dense: [vibe.views]
+      glacier: [set.glacier]
+      gorge: [set.gorge]
+      high: [set.alpine]
+      huts: [set.mountain-hut]
+      known: [vibe.iconic]
+      lakes: [set.lake]
+      lighthouse: [set.lighthouse]
+      loop: [prac.loop]
+      monastery: [set.monastery]
+      photogenic: [vibe.photogenic]
+      roadWalk: []
+      ruins: [set.ruins]
+      steady: [trav.beginner-outdoors]
+      summit: [set.peak, act.summit-hike]
+      summits: [set.peak, act.summit-hike]
+      trek: [act.long-distance-walk]
+      varied: [vibe.views]
+      viewpoints: [act.viewpoints, vibe.views]
+      water: [set.freshwater]
+      waterfall: [set.waterfall]
+      waymarked: []
+    not_a_concept:
+      roadWalk: a warning about road sections, kept as a trail fact (share of road), not a tag
+      waymarked: a quality fact on the trail record (marked or not), not a travel concept
+
+  beach.tags:
+    where: continent-app/public/beaches/{CC}.json beaches[].tags
+    map:
+      arch: [set.sea-cave]
+      blueFlag: [prac.blue-flag]
+      cave: [set.sea-cave]
+      cliffs: [set.cliffs]
+      dunes: [set.dunes]
+      emerald: [set.natura2000]
+      hikeIn: [prac.walk-in]
+      lagoon: [set.lagoon]
+      lifeguard: [prac.lifeguard]
+      long_strand: [set.long-strand]
+      nationalPark: [set.national-park]
+      natura2000: [set.natura2000]
+      nudist: [trav.naturist]
+      pines: [set.forest]
+      pocket_cove: [set.cove]
+      quiet: [vibe.quiet]
+      reserve: [set.nature-reserve]
+      sandColour: [set.sandy-beach]
+      shallow: [prac.shallow]
+      shipwreck: [vibe.quirky]
+      steps: [prac.steps]
+      sunset_facing: [vibe.views]
+      surf: [act.surfing]
+      turquoise: [set.clear-water]
+      turtles: [act.wildlife]
+      undeveloped: [prac.undeveloped]
+      waterExcellent: [prac.water-excellent]
+
+  beach.bestFor:
+    where: continent-app/public/beaches/{CC}.json beaches[].bestFor
+    map:
+      families: [trav.families]
+      naturism: [trav.naturist]
+      scenery: [vibe.views]
+      seclusion: [vibe.remote]
+      snorkelling: [act.snorkelling]
+      sunset: [vibe.views]
+      surfing: [act.surfing]
+      swimming: [act.sea-swimming]
+      walkers: [act.coastal-walk]
+
+  beach.size:
+    where: continent-app/public/beaches/{CC}.json beaches[].size
+    map:
+      beach: [set.beach]
+      cove: [set.cove]
+      strand: [set.long-strand]
+
+  beach.surface:
+    where: continent-app/public/beaches/{CC}.json beaches[].surface
+    map:
+      sand: [set.sandy-beach]
+      fineGravel: [set.pebble-beach]
+      gravel: [set.pebble-beach]
+      pebble: [set.pebble-beach]
+      shingle: [set.pebble-beach]
+      rock: [set.pebble-beach]
+      grass: [set.beach]
+      concrete: [set.beach]
+
+  lake.tags:
+    where: continent-app/public/lakes/{CC}.json lakes[].tags
+    map:
+      activities: [act.water]
+      area: [set.lake]
+      castle: [set.castle]
+      cliffs: [set.cliffs]
+      depth: [set.lake]
+      designated: [prac.lido]
+      forest: [set.forest]
+      glacier: [set.glacier]
+      hikeIn: [prac.walk-in]
+      islands: [set.island]
+      kindCrater: [set.crater-lake]
+      kindGeothermal: [set.hot-spring]
+      kindLagoon: [set.lagoon]
+      kindReservoir: [set.reservoir]
+      kindRiver: [set.river]
+      kindTarn: [set.mountain-lake]
+      lido: [prac.lido]
+      mountains: [set.mountains]
+      nationalPark: [set.national-park]
+      privateShore: []
+      shoreBeach: [act.lake-swimming]
+      shorePath: [act.easy-walk]
+      shoreWalk: [act.easy-walk]
+      turquoise: [set.clear-water]
+      undeveloped: [prac.undeveloped]
+      unesco: [set.unesco]
+      waterExcellent: [prac.water-excellent]
+      waterfall: [set.waterfall]
+    not_a_concept:
+      privateShore: an access warning (the shore is private), kept as a lake fact
+
+  lake.bestFor:
+    where: continent-app/public/lakes/{CC}.json lakes[].bestFor
+    map:
+      diving: [act.diving]
+      families: [trav.families]
+      kayaking: [act.paddling]
+      photography: [act.photography]
+      scenery: [vibe.views]
+      seclusion: [vibe.remote]
+      swimming: [act.lake-swimming]
+      thermal: [act.thermal-baths]
+      walking: [act.easy-walk]
+
+  lake.kind:
+    where: continent-app/public/lakes/{CC}.json lakes[].kind
+    map:
+      lake: [set.lake]
+      crater: [set.crater-lake]
+      geothermal: [set.hot-spring]
+      lagoon: [set.lagoon]
+      reservoir: [set.reservoir]
+      river: [set.river]
+      tarn: [set.mountain-lake]
+
+  mountain.tags:
+    where: continent-app/public/mountains/{CC}.json mountains[].tags
+    map:
+      activeVolcano: [set.volcano]
+      glacier: [set.glacier]
+      highpoint: [set.peak]
+      hut: [set.mountain-hut]
+      lakeBelow: [set.mountain-lake]
+      lift: [prac.lift-access]
+      observatory: [act.stargazing]
+      park: [set.national-park]
+      ski: [act.skiing]
+      summitCross: [set.peak]
+      summitFood: [prac.summit-food]
+      unesco: [set.unesco]
+      viaFerrata: [act.via-ferrata]
+      viewpoint: [act.viewpoints]
+      volcanic: [set.volcano]
+      waterView: [vibe.views]
+      wideView: [vibe.views]
+
+  mountain.bestFor:
+    where: continent-app/public/mountains/{CC}.json mountains[].bestFor
+    map:
+      climbing: [act.climbing]
+      families: [trav.families]
+      photography: [act.photography]
+      view: [vibe.views]
+      walking: [act.hiking]
+      wild: [set.wilderness]
+
+  mountain.kind:
+    where: continent-app/public/mountains/{CC}.json mountains[].kind
+    map:
+      peak: [set.peak]
+      hill: [set.hills]
+      volcano: [set.volcano]
+      massif: [set.ridge]
+      ridge: [set.ridge]
+      plateau: [set.ridge]
+      cliff: [set.cliffs]
+      rock: [set.rock-formations]
+
+  mountain.acc:
+    where: continent-app/public/mountains/{CC}.json mountains[].acc
+    map:
+      liftMountain: [prac.lift-access]
+      liftTop: [prac.lift-access]
+      remote: [vibe.remote]
+      roadTop: [prac.road-to-top]
+      trailhead: [act.summit-hike]
+      transit: [prac.car-free]
+
+  cycling.bike:
+    where: continent-app/public/cycling/{CC}.json routes[].bike
+    map:
+      touring: [act.bike-touring]
+      gravel: [act.gravel]
+      mtb: [act.mtb]

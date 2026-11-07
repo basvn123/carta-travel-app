@@ -61,6 +61,7 @@ const PHOTO_BUDGET_BYTES = 1_600_000;
 
 // Downscale in the browser: a phone photo is 4 MB of pixels nobody needs in a
 // 320px card, and the memory has to survive being stored.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function readPhoto(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

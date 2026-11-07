@@ -24,8 +24,10 @@ spots whose name the city also uses as "confirmed". Nothing here replaces a
 coordinate: the OSM rows keep their navigation links, the web block tells the
 reader what is true.
 
-Provider: Gemini through the AI Studio REST API with google_search
-grounding (GEMINI_API_KEY). Grounded requests are billed separately from
+Provider: through pipeline/ai_gateway.py (T1137, feature "parking"): Gemini
+with google_search grounding (GEMINI_API_KEY), with the gateway's model
+chain, rate floor, retries and output check (AI_PARKING_MODELS or --model
+switch the model; grounding needs a provider with live search, so Gemini). Grounded requests are billed separately from
 tokens once the monthly free allowance is spent (register row T041-c). The
 Claude provider was removed in T264: CLAUDE.md forbids the Claude API.
 
@@ -48,8 +50,6 @@ import os
 import re
 import sys
 import time
-import urllib.error
-import urllib.request
 from urllib.parse import urlsplit
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -58,93 +58,51 @@ from common import (  # noqa: E402
     DCACHE, PUB, atomic_write_json, load_json, strip_dashes,
 )
 from env_local import load_env  # noqa: E402
+from ai_gateway import AIRefusal, Gateway  # noqa: E402
+from prompt_registry import prompt  # noqa: E402
 
 OUT = os.path.join(DCACHE, "parking_web.json")
 
-SYSTEM = """You verify parking facts for a European travel guide. Use web search
-to find what the city or the car park operator itself publishes about parking
-near the centre of the place given. Prefer municipal sites, operator sites
-and the official tourist office; ignore forums and aggregators.
-
-Answer with JSON only, no prose around it:
-{
-  "official_url": "https://... or null",
-  "restricted": true or false,
-  "restricted_note": "one short sentence, or null",
-  "car_parks": [{"name": "...", "note": "fee or hours or status, short, or null"}],
-  "park_ride_names": ["..."],
-  "advice": "one sentence a driver needs, or null",
-  "confidence": "high" | "medium" | "low"
-}
-Rules: at most six car parks, named as the source names them. Only include a
-fact you found in a source. If you found nothing reliable, return the JSON
-with nulls and empty lists and confidence "low". No em dashes."""
+# The prompt text is the registry's "parking" prompt (prompts/parking, T1140).
+PROMPT = prompt("parking")
+SYSTEM = PROMPT.text("system")
 
 
 def prompt_for(dest):
     city = re.sub(r"\s*\([^)]*\)\s*$", "", dest.get("city") or "")
-    return (f"Place: {city}, {dest.get('country')}. Coordinates "
-            f"{dest.get('city_lat', dest.get('lat')):.4f}, "
-            f"{dest.get('city_lon', dest.get('lon')):.4f}. "
-            f"Find official parking information for visitors arriving by car.")
+    return PROMPT.text("user", city=city, country=dest.get("country"),
+                       lat=f"{dest.get('city_lat', dest.get('lat')):.4f}",
+                       lon=f"{dest.get('city_lon', dest.get('lon')):.4f}")
 
 
-class Gemini:
-    name = "gemini"
-    API = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
-    CHAIN = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
+class Client:
+    """The parking job's model access, through pipeline/ai_gateway.py (T1137)."""
 
     def __init__(self, model):
-        self.key = os.environ.get("GEMINI_API_KEY")
-        if not self.key:
-            raise SystemExit("GEMINI_API_KEY is not set")
-        self.chain = [model] if model else list(self.CHAIN)
-        self.model = self.chain[0]
-        self.tokens_in = self.tokens_out = 0
+        try:
+            self.gw = Gateway("parking", models=[model] if model else None)
+        except AIRefusal as exc:
+            raise SystemExit(f"parking_check: {exc}") from None
+        self.name = self.gw.provider
         self.searches = 0
-        self._last = 0.0
+
+    @property
+    def model(self):
+        return self.gw.model
+
+    @property
+    def tokens_in(self):
+        return self.gw.tokens_in
+
+    @property
+    def tokens_out(self):
+        return self.gw.tokens_out
 
     def ask(self, dest):
-        body = {
-            "systemInstruction": {"parts": [{"text": SYSTEM}]},
-            "contents": [{"role": "user", "parts": [{"text": prompt_for(dest)}]}],
-            "tools": [{"google_search": {}}],
-            "generationConfig": {"maxOutputTokens": 4096, "temperature": 0.1},
-        }
-        last = None
-        for model in self.chain:
-            for attempt in (1, 2):
-                wait = self._last + 6.5 - time.monotonic()
-                if wait > 0:
-                    time.sleep(wait)
-                self._last = time.monotonic()
-                req = urllib.request.Request(
-                    self.API.format(model=model), data=json.dumps(body).encode("utf-8"),
-                    headers={"Content-Type": "application/json", "x-goog-api-key": self.key},
-                    method="POST")
-                try:
-                    with urllib.request.urlopen(req, timeout=120) as r:
-                        data = json.loads(r.read().decode("utf-8"))
-                    self.model = model
-                    usage = data.get("usageMetadata") or {}
-                    self.tokens_in += usage.get("promptTokenCount", 0)
-                    self.tokens_out += usage.get("candidatesTokenCount", 0)
-                    cand = data["candidates"][0]
-                    text = "".join(p.get("text", "") for p in cand["content"]["parts"])
-                    gm = cand.get("groundingMetadata") or {}
-                    sources = [c.get("web", {}).get("uri") for c in gm.get("groundingChunks", [])
-                               if c.get("web", {}).get("uri")]
-                    self.searches += 1
-                    return text, sources
-                except urllib.error.HTTPError as exc:
-                    last = exc.code
-                    if exc.code == 429 and attempt == 1:
-                        print(f"  note: {model} rate limited, waiting 30s")
-                        time.sleep(30)
-                        continue
-                    break
-            print(f"  note: {model} returned {last}, trying the next model")
-        raise RuntimeError(f"every Gemini model failed (last {last})")
+        res = self.gw.call(prompt_for(dest), system=SYSTEM, search=True, temperature=0.1, max_tokens=4096,
+                           screen=[str(dest.get("city") or ""), str(dest.get("country") or "")])
+        self.searches += 1
+        return res.text, res.sources
 
 
 def parse(text):
@@ -254,7 +212,7 @@ def main():
             print(prompt_for(d))
         return
 
-    client = Gemini(args.model)
+    client = Client(args.model)
     print(f"provider {client.name}, model {client.model}")
 
     ok = fail = 0

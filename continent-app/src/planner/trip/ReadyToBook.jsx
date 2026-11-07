@@ -1,6 +1,8 @@
 import React from 'react';
+import { partnerButtonProps } from '../../lib/partnerLink.js';
+import { PartnerMark } from '../../components/PartnerMark.jsx';
 import { useI18n } from '../../i18n/index.jsx';
-import { Chip, Money } from '../../components/ui/index.js';
+import { Button, Chip, Money } from '../../components/ui/index.js';
 import { BedIcon, BusIcon, FerryIcon, TrainIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
@@ -34,6 +36,7 @@ const LEG_MODES = Object.keys(LEG_ICON);
  * link { href, label } and the paid field. Pure but for the PaidField
  * elements it builds.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function bookRows({
   tripStart, tripEnd, stopDetails, stayCosts = [], stayTier = 'home', priced, flight = null, ownFlight = null,
   party, booked = null, book = null,
@@ -160,9 +163,10 @@ export function ReadyToBook(props) {
               {r.booked && bookedMark}
               <span className="tpg-book-acts">
                 {r.link && (
-                  <a className="btn btn-quiet btn-sm tpg-book-link" href={r.link.href} target="_blank" rel="noreferrer noopener">
-                    <span className="btn-label">{r.link.label}</span>
-                  </a>
+                  <Button {...partnerButtonProps(r.link.href)} variant="quiet" size="sm" className="tpg-book-link">
+                    {r.link.label}
+                    <PartnerMark href={r.link.href} />
+                  </Button>
                 )}
                 {r.paid}
               </span>

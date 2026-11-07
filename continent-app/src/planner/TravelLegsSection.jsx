@@ -1,8 +1,12 @@
 import React, { useId, useMemo, useState } from 'react';
+import { partnerLinkProps } from '../lib/partnerLink.js';
+import { PartnerMark, PartnerNote } from '../components/PartnerMark.jsx';
 import { legLinks, TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { fmtDate, addDays } from '../lib/dates.js';
 import { useI18n } from '../i18n/index.jsx';
 import { notYet } from '../components/NotYet.jsx';
+import { oneWayKg, kgText, methodUrl } from '../lib/footprint/footprint.js';
+import { legKm } from '../lib/gettingThere.js';
 import { Button, IconButton, Money, Segmented } from '../components/ui/index.js';
 import {
   TrainIcon, BusIcon, CarIcon, FerryIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CalendarIcon,
@@ -147,6 +151,7 @@ function LegCard({ leg, value, onChange, adults, estimate, pricedMode, t, lang, 
     subId: `wiz_${leg.kind}`,
     lang,
   })), [leg, mode, adults, lang]);
+  const fpKg = mode ? oneWayKg(mode, legKm(leg), { routeKm: leg.published?.km, seats: adults }) : null;
   const headId = `leg-${leg.key}-h`;
   const fromName = cityLabel(leg.from.city) || leg.from.name;
   const toName = cityLabel(leg.to.city) || leg.to.name;
@@ -233,6 +238,14 @@ function LegCard({ leg, value, onChange, adults, estimate, pricedMode, t, lang, 
         </p>
       ) : null}
 
+      {fpKg != null && (
+        <p className="wz-leg-fp">
+          {t('footprint.each', { kg: kgText(fpKg) })}
+          {' '}
+          <a href={methodUrl()} target="_blank" rel="noopener noreferrer">{t('footprint.note')}</a>
+        </p>
+      )}
+
       {!leg.booked && (
         <div className="wz-leg-acts">
           {!askNow && !(paid > 0) && (
@@ -247,11 +260,13 @@ function LegCard({ leg, value, onChange, adults, estimate, pricedMode, t, lang, 
           )}
           {links.length > 0 && (
             <Fold label={t('plan.findTickets')} className="wz-tickets">
+              <PartnerNote links={links.slice(0, 4)} />
               <ul className="wz-links">
                 {links.slice(0, 4).map((l) => (
                   <li key={l.key}>
-                    <a className="wz-link" href={l.url} target="_blank" rel="noreferrer noopener">
+                    <a {...partnerLinkProps(l.url, { className: 'wz-link' })}>
                       {l.label}
+                      <PartnerMark href={l.url} />
                       <ExternalIcon size={14} />
                       <span className="sr-only"> {t('plan.opensNewTab')}</span>
                     </a>

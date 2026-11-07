@@ -6,58 +6,10 @@
 .country-flag { border-radius: 3px; box-shadow: 0 0 0 1px rgba(31, 42, 51, 0.12); display: block; }
 .country-flag-stack { display: flex; align-items: center; justify-content: center; }
 /* Two or three countries: overlap the flags like a fanned hand */
-.country-flag-stack.n2 .country-flag + .country-flag,
-.country-flag-stack.n3 .country-flag + .country-flag { margin-left: -8px; }
-.country-flag-stack.n2 .country-flag,
-.country-flag-stack.n3 .country-flag { box-shadow: 0 0 0 2px var(--bg-card); }
 
 /* Share / download actions under the trip overview: one toggle, collapsed by
    default, opening into a clean vertical list instead of up to six equal-width
    buttons squeezed into a row (each wrapping its label across 2-3 lines). */
-.itin-export-toggle {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 10px 14px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  cursor: pointer;
-}
-.itin-export-toggle > span:first-child { display: inline-flex; align-items: center; gap: 8px; }
-.itin-export-toggle svg:first-child { color: var(--accent); }
-.itin-export-menu {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--rule);
-  border-top: none;
-  border-radius: 0 0 12px 12px;
-  overflow: hidden;
-}
-.itin-export-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 14px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  background: var(--paper);
-  text-decoration: none; /* the Google Maps action is an <a>, keep it button-like */
-  border-top: 1px dashed var(--rule);
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.itin-export-item:first-child { border-top: none; }
-.itin-export-item svg { color: var(--accent); flex: none; }
-@media (hover: hover) {
-  .itin-export-item:hover { background: var(--paper-dim); color: var(--ink); }
-}
 
 /* Bookings / notes / packing list on the planned itinerary. One rhythm:
    28px between sections, carried by the section wrapper rather than by each
@@ -88,13 +40,13 @@
 }
 .extras-drop-actions { display: flex; align-items: center; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
 .extras-drop-actions .extras-add-btn { margin-top: 0; background: var(--paper); }
-.extras-drop-hint { font-family: var(--ui); font-size: 12px; color: var(--ink-soft); }
+.extras-drop-hint { font-family: var(--ui); font-size: var(--text-caption); color: var(--ink-soft); }
 .extras-drop-busy {
   display: flex; align-items: center; gap: 9px;
   font-size: 12.5px; color: var(--ink-soft);
   padding: 4px 0;
 }
-.extras-drop-status { margin-top: 8px; font-size: 12px; }
+.extras-drop-status { margin-top: 8px; font-size: var(--text-caption); }
 .extras-drop-status.ok { color: var(--green); }
 .extras-drop-status.err { color: var(--danger); }
 
@@ -105,7 +57,7 @@
 .extras-inbox-day .dropdown-trigger {
   min-width: 0;
   height: 28px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 11.5px;
   color: var(--accent);
   border-color: var(--accent-soft);
@@ -119,7 +71,7 @@
 .itin-day-extra small { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 .itin-day-extra button {
   border: none; background: none; cursor: pointer;
-  color: var(--ink-mute); font-size: 13px; line-height: 1; padding: 0 2px;
+  color: var(--ink-mute); font-size: var(--text-label); line-height: 1; padding: 0 2px;
 }
 @media (hover: hover) {
   .itin-day-extra button:hover { color: var(--accent); }
@@ -127,7 +79,7 @@
 .extras-row-head input[type='checkbox'] { accent-color: var(--accent); flex: none; }
 .extras-remove {
   flex: none; border: none; background: none; color: var(--ink-mute);
-  font-size: 16px; line-height: 1; padding: 0 4px; cursor: pointer;
+  font-size: var(--text-lead); line-height: 1; padding: 0 4px; cursor: pointer;
 }
 /* Two fixed rows per booking: code beside the paid amount, then the link on
    its own full line. The old flex-wrap laid the three fields out differently
@@ -138,12 +90,12 @@
   color: var(--ink);
 }
 .extras-label-input {
-  flex: 1; min-width: 0; padding: 4px 8px; font-size: 13px; font-weight: 600;
+  flex: 1; min-width: 0; padding: 4px 8px; font-size: var(--text-label); font-weight: 600;
   border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink);
 }
-.extras-delta { font-size: 11px; margin-top: 5px; color: var(--ink-soft); }
+.extras-delta { font-size: var(--text-micro); margin-top: 5px; color: var(--ink-soft); }
 .extras-add-btn {
-  margin-top: 8px; padding: 6px 12px; font-size: 12px; font-weight: 600;
+  margin-top: 8px; padding: 6px 12px; font-size: var(--text-caption); font-weight: 600;
   border: 1px solid var(--rule); border-radius: 8px; background: transparent;
   color: var(--ink-soft); cursor: pointer;
 }
@@ -155,19 +107,6 @@
 .extras-check-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
 
 /* ── Group expense ledger ── */
-.exp-person { flex: 1 1 110px; min-width: 0; }
-.exp-row-main b { font-size: 12.5px; }
-.exp-row-main small { font-size: 10.5px; color: var(--ink-mute); }
-.exp-desc { flex: 2 1 150px; min-width: 0; }
-.exp-add .extras-add-btn { margin-top: 0; white-space: nowrap; }
-.exp-balances {
-  margin-top: 10px;
-  padding: 10px 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-}
-.exp-settle { margin-top: 4px; font-size: 12px; color: var(--ink-soft); }
 
 /* Even vertical rhythm. The band between the "Saved trips" rule and the first
    shelf ran wider than the gaps between the shelves themselves, so the panel
@@ -236,7 +175,7 @@
 }
 .pasttrip-field { display: flex; flex-direction: column; gap: 8px; }
 .pasttrip-label { font-size: 12.5px; font-weight: 600; color: var(--ink); }
-.pasttrip-sublabel { font-size: 11px; color: var(--ink-mute); }
+.pasttrip-sublabel { font-size: var(--text-micro); color: var(--ink-mute); }
 .pasttrip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .pasttrip-listrow { display: flex; align-items: center; gap: 6px; }
 .pasttrip-listrow .pasttrip-input { flex: 1; min-width: 0; }
@@ -249,7 +188,7 @@
   gap: 8px;
   padding: 6px 6px 6px 9px;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper-dim);
   font-size: 12.5px;
   color: var(--ink);
@@ -270,8 +209,7 @@
   font-variant-numeric: tabular-nums;
   color: var(--ink-mute);
 }
-.pasttrip-place-x,
-.pasttrip-chip-x {
+.pasttrip-place-x {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -293,7 +231,7 @@
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--bg-card);
   overflow: hidden;
 }
@@ -303,7 +241,7 @@
   border: none;
   background: transparent;
   font-family: var(--ui);
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1;
   color: var(--ink-soft);
   cursor: pointer;
@@ -315,7 +253,7 @@
 .pasttrip-stepper-val {
   min-width: 20px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;
   text-align: center;
   color: var(--ink);
@@ -336,7 +274,7 @@
   height: 38px;
   padding: 0 12px 0 32px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   font-family: var(--ui);
   font-size: 13.5px;
@@ -358,7 +296,7 @@
   height: 34px;
   padding: 0 8px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   font-family: var(--ui);
   font-size: 12.5px;
@@ -371,10 +309,10 @@
   width: 100%;
   padding: 9px 12px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.5;
   color: var(--ink);
   resize: vertical;
@@ -385,7 +323,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   overflow: hidden;
 }
 .pasttrip-result {
@@ -398,7 +336,7 @@
   border-bottom: 1px solid var(--rule-soft);
   background: var(--paper);
   font-family: var(--ui);
-  font-size: 13px;
+  font-size: var(--text-label);
   text-align: left;
   color: var(--ink);
   cursor: pointer;
@@ -416,7 +354,7 @@
 }
 .pasttrip-result.is-found {
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
 }
 .pasttrip-geo { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 
@@ -427,10 +365,10 @@
   align-self: flex-start;
   padding: 6px 11px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
   cursor: pointer;
@@ -449,7 +387,7 @@
   font-variant-numeric: tabular-nums;
   color: var(--ink-mute);
 }
-.pasttrip-error { margin: 0; font-size: 12px; color: var(--accent); }
+.pasttrip-error { margin: 0; font-size: var(--text-caption); color: var(--accent); }
 
 /* ── The folds: everything a trip is, past where and when ── */
 .pasttrip-folds {
@@ -535,17 +473,17 @@
   gap: 8px;
   padding-top: 8px;
   border-top: 2px solid var(--ink);
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .pasttrip-total b {
   font-family: var(--mono);
-  font-size: 16px;
+  font-size: var(--text-lead);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
 }
-.pasttrip-total small { margin-left: auto; font-size: 11px; color: var(--ink-mute); }
+.pasttrip-total small { margin-left: auto; font-size: var(--text-micro); color: var(--ink-mute); }
 
 .pasttrip-rating { display: flex; flex-wrap: wrap; gap: 4px; }
 .pasttrip-rate {
@@ -614,10 +552,10 @@
   margin-top: 4px;
   padding: 3px 6px;
   border: 1px solid var(--rule-soft);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   background: var(--paper);
   font-family: var(--ui);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--ink);
 }
 .pasttrip-photo-cap:focus { outline: none; border-color: var(--accent); }
@@ -627,7 +565,7 @@
 .pasttrip-cancel,
 .pasttrip-save {
   padding: 8px 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-family: var(--ui);
   font-size: 12.5px;
   font-weight: 600;
@@ -699,20 +637,20 @@
   gap: 4px;
   align-self: flex-start;
   padding: 3px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--rate-bg);
   color: var(--rate);
 }
 .memo-rating svg { align-self: center; }
 .memo-rating b {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-variant-numeric: tabular-nums;
 }
 .memo-rating small { font-family: var(--mono); font-size: 10px; }
 .memo-story {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   line-height: 1.55;
   white-space: pre-wrap;
   color: var(--ink-soft);
@@ -794,8 +732,8 @@
 }
 .memo-recline.is-total b { font-size: 17px; }
 .memo-recline.is-each { border-bottom: none; color: var(--ink-mute); }
-.memo-recline.is-each b { font-size: 12px; color: var(--ink-mute); }
-.memo-note { margin: 0; font-size: 11px; color: var(--ink-mute); }
+.memo-recline.is-each b { font-size: var(--text-caption); color: var(--ink-mute); }
+.memo-note { margin: 0; font-size: var(--text-micro); color: var(--ink-mute); }
 
 .memo-edit {
   display: inline-flex;
@@ -804,10 +742,10 @@
   align-self: flex-start;
   padding: 7px 14px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: transparent;
   font-family: var(--ui);
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-soft);
   cursor: pointer;
@@ -822,8 +760,6 @@
 .pasttrip-save,
 .pasttrip-cancel { transition: none; }
 }
-
-.uptrip-when { font-size: 13px; font-weight: 600; color: inherit; }
 
 .savedmap-full {
   position: fixed;
@@ -855,10 +791,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   padding: 7px 13px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--paper) 94%, transparent);
   font-family: var(--display);
-  font-size: 16px;
+  font-size: var(--text-lead);
   color: var(--ink);
 }
 
@@ -870,8 +806,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .itin-export-item,
-.extras-dropzone { transition: none; }
+  .extras-dropzone { transition: none; }
 }
 
 /* Day planner: save state, top-right of the plan header card. */
@@ -888,7 +823,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--rule);
   background: var(--paper);
   font-size: 11.5px;
@@ -936,9 +871,9 @@
   color: var(--accent);
 }
 .itin-drive-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.itin-drive-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.itin-drive-label { font-size: var(--text-label); font-weight: 600; color: var(--ink); }
 .itin-drive-label b { color: var(--accent); font-weight: 600; }
-.itin-drive-sub { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+.itin-drive-sub { font-family: var(--mono); font-size: var(--text-micro); color: var(--ink-soft); }
 
 .account-signout {
   width: 100%;
@@ -948,11 +883,6 @@
 /* Cheapest trip total by month (BestTimePanel MonthBars): rounded bars,
    taller = pricier, green = cheapest month, ink dot = the user's month.
    Same visual language as the weekday and climate strips below. */
-
-.mo-col.is-cheap .mo-val { color: var(--leaf-ink); }
-.mo-col.is-cheap .mo-bar { background: var(--leaf-ink); }
-.mo-col.is-cheap .mo-name,
-.mo-col.is-you .mo-name { color: var(--ink); font-weight: 700; }
 
 .bt-legend {
   display: flex;
@@ -966,20 +896,15 @@
   gap: 5px;
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .bt-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
-.bt-dot-accent { background: var(--accent); }
-.dow-bar.min { background: var(--leaf-ink); }
-.dow-bar.max { background: var(--accent); }
-.dow-val.min { color: var(--leaf-ink); }
-.nearby-sub .gem { color: var(--accent); }
 
 /* Climate strip (BestTimePanel ClimateStrip) - 12-month comfort normals */
 .climate-best {
   margin: 2px 0 10px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .climate-best b { color: var(--ink); font-weight: 700; }
@@ -1043,8 +968,8 @@
   background: var(--ink);
   color: var(--paper);
   padding: 5px 8px;
-  border-radius: 6px;
-  font-size: 11px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-micro);
   white-space: nowrap;
   z-index: 5;
   pointer-events: none;

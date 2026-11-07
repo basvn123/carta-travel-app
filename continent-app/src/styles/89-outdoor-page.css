@@ -162,7 +162,7 @@
   border: 1px solid transparent;
   border-radius: var(--radius-card);
 }
-@media (max-width: 499px) { .ox-grade { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .ox-grade { grid-template-columns: 1fr; } }
 .ox-scale { display: flex; gap: 3px; }
 .ox-scale span {
   width: 28px;
@@ -213,7 +213,7 @@
 .ox-safety > div { background: var(--surface-page); padding: var(--space-2) var(--space-3); display: grid; gap: 2px; min-width: 0; }
 .ox-safety dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
 .ox-safety dd { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
-@media (max-width: 499px) { .ox-safety { grid-auto-flow: row; } }
+@media (max-width: 480px) { .ox-safety { grid-auto-flow: row; } }
 
 /* ── Facilities ── */
 .ox-facil {
@@ -384,4 +384,4 @@ a.ox-stage:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px;
 .oxp .ox-kv > div { border-top-color: color-mix(in srgb, var(--text) 8%, transparent); }
 /* The why-it-rates fold reads as the place page's folds: a row under a rule. */
 .oxp .pt-fold { background: none; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; padding: 0; }
-.oxp .pt-fold summary { min-height: 52px; font-size: 16px; }
+.oxp .pt-fold summary { min-height: 52px; font-size: var(--text-lead); }

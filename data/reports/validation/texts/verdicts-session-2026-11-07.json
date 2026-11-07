@@ -1,0 +1,3882 @@
+{
+ "schema": "carta-judge-verdicts/1",
+ "backend": "session",
+ "model": "claude-code-session (blind subagents, T1196)",
+ "prompt": "judge-text",
+ "prompt_version": 1,
+ "prompt_sha": "a40e854e32a6",
+ "at": "2026-11-07T04:28:38Z",
+ "items": "data/reports/validation/texts/items.json",
+ "verdicts": {
+  "x001": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "Stage 13 of the Camino Lituano",
+     "verdict": "supported",
+     "evidence": "\"of\": \"Camino Lituano\", \"i\": 13"
+    },
+    {
+     "claim": "13.7 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 13.7"
+    },
+    {
+     "claim": "273 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 273"
+    },
+    {
+     "claim": "about 4 h 07 min of walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 247"
+    },
+    {
+     "claim": "tops out at 101 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 101.3"
+    },
+    {
+     "claim": "mostly on paved roads",
+     "verdict": "supported",
+     "evidence": "\"paved\": 0.913"
+    },
+    {
+     "claim": "castle Kauno pilis",
+     "verdict": "supported",
+     "evidence": "\"kind\": \"castle\", \"name\": \"Kauno pilis\""
+    },
+    {
+     "claim": "peaks Peledu kalnas (73 m) and Parodos kalnas (75 m)",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Parodos kalnas\", \"ele_m\": 75"
+    },
+    {
+     "claim": "Usually walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12, \"to\": \"dec\""
+    }
+   ],
+   "reason": "Every number, name and the season match the source facts."
+  },
+  "x002": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "seven-day",
+     "verdict": "supported",
+     "evidence": "\"days\":7"
+    },
+    {
+     "claim": "thru-walk on the Escapardenne Eisleck Trail from Kautenbach to La Roche-en-Ardenne",
+     "verdict": "supported",
+     "evidence": "Descend into La Roche-en-Ardenne, the trail's terminus"
+    },
+    {
+     "claim": "plus a Lee Trail sampler from Vianden",
+     "verdict": "supported",
+     "evidence": "a shorter sampler day that shows the second trail's character"
+    }
+   ],
+   "reason": "Duration, route ends and the Lee Trail sampler all appear in the trip data."
+  },
+  "x003": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Tiny principality",
+     "verdict": "supported",
+     "evidence": "the main point of interest for visitors to this small country"
+    },
+    {
+     "claim": "mountain views",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source says nothing about mountains or views."
+  },
+  "x004": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "one day city sightseeing walk",
+     "verdict": "supported",
+     "evidence": "\"name\":\"Namur in a day\""
+    },
+    {
+     "claim": "anchored in Namur, Belgium",
+     "verdict": "supported",
+     "evidence": "\"country\":\"BE\""
+    },
+    {
+     "claim": "features 9 sightseeing stops",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The number of stops is not in the source."
+  },
+  "x005": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Roman tombs",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Ottoman mosque",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "vibrant arts scene",
+     "verdict": "supported",
+     "evidence": "treasure trove of science, arts and sacrality"
+    },
+    {
+     "claim": "in southern Hungary",
+     "verdict": "supported",
+     "evidence": "a town in the south-west of Hungary"
+    }
+   ],
+   "reason": "Roman tombs and the Ottoman mosque are not in the source."
+  },
+  "x006": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "21.8 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\":21.8"
+    },
+    {
+     "claim": "430 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\":430"
+    },
+    {
+     "claim": "about 6 h 36 min",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\":396"
+    },
+    {
+     "claim": "tops out at 261 m",
+     "verdict": "supported",
+     "evidence": "\"max\":260.8"
+    },
+    {
+     "claim": "peaks Killinagh (139 m), Manragh Upper (253 m), Ture (178 m)",
+     "verdict": "supported",
+     "evidence": "\"name\":\"Manragh Upper\",\"ele_m\":253"
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\":12,\"to\":\"dec\""
+    }
+   ],
+   "reason": "All figures and peaks match the source facts."
+  },
+  "x007": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "UNESCO papal palace",
+     "verdict": "unsupported",
+     "evidence": "its historical centre has been inscribed on the UNESCO World Heritage list"
+    },
+    {
+     "claim": "Provence gateway",
+     "verdict": "supported",
+     "evidence": "Vaucluse in Provence-Alpes-Cote d'Azur"
+    }
+   ],
+   "reason": "The source names a UNESCO historic centre but no papal palace."
+  },
+  "x008": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "easy",
+     "verdict": "supported",
+     "evidence": "\"difficulty\":\"easy\""
+    },
+    {
+     "claim": "waymarked",
+     "verdict": "supported",
+     "evidence": "\"waymark_ref\":\"TUR\""
+    },
+    {
+     "claim": "located in LV",
+     "verdict": "supported",
+     "evidence": "\"country\":\"LV\""
+    },
+    {
+     "claim": "local network",
+     "verdict": "supported",
+     "evidence": "\"network\":\"lwn\""
+    },
+    {
+     "claim": "5.1 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\":5.2"
+    },
+    {
+     "claim": "171 m ascent, 170 m descent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\":171,\"descent_m\":170"
+    }
+   ],
+   "reason": "5.1 km is within 0.1 km of 5.2 and the rest matches."
+  },
+  "x009": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "UNESCO chalk cliff",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "recording the dinosaur-killing asteroid",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "medieval church teetering on the edge",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source only describes the municipality and its farmland."
+  },
+  "x010": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Two nights on the crag",
+     "verdict": "supported",
+     "evidence": "Second night on the crag"
+    },
+    {
+     "claim": "independent republic since the fourth century",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "four nights in the hill country",
+     "verdict": "supported",
+     "evidence": "the advantage of a four-night base"
+    },
+    {
+     "claim": "last day-tripper takes the cable car down",
+     "verdict": "supported",
+     "evidence": "Take the cable car down to Borgo Maggiore"
+    },
+    {
+     "claim": "San Leo's cliff fortress",
+     "verdict": "supported",
+     "evidence": "a fortress sits on a sheer sandstone block"
+    },
+    {
+     "claim": "Pennabilli's poet's gardens",
+     "verdict": "supported",
+     "evidence": "Pennabilli for Tonino Guerra's gardens"
+    },
+    {
+     "claim": "Verucchio's Iron Age museum",
+     "verdict": "supported",
+     "evidence": "among the richest Iron Age finds in Italy"
+    },
+    {
+     "claim": "Santarcangelo's tufa caves and printing workshop",
+     "verdict": "supported",
+     "evidence": "Walk the tufa grotte beneath the hill"
+    },
+    {
+     "claim": "all within a 40 km radius",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "One move, two open afternoons",
+     "verdict": "supported",
+     "evidence": "Nothing scheduled."
+    },
+    {
+     "claim": "four Sundays of white truffle in October in Sant'Agata Feltria",
+     "verdict": "supported",
+     "evidence": "Fair Sundays: 4, 11, 18, 25 October"
+    }
+   ],
+   "reason": "The fourth-century founding and the 40 km radius are not in the trip data."
+  },
+  "x011": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "seven-day",
+     "verdict": "supported",
+     "evidence": "\"days\":7"
+    },
+    {
+     "claim": "hiking and alpine trekking",
+     "verdict": "supported",
+     "evidence": "About 105 km over 6 walking days"
+    },
+    {
+     "claim": "Lapland",
+     "verdict": "supported",
+     "evidence": "the symbol of Swedish Lapland"
+    },
+    {
+     "claim": "Norrbotten",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Abisko and Kebnekaise massif",
+     "verdict": "supported",
+     "evidence": "our route turns east into the Kebnekaise massif"
+    },
+    {
+     "claim": "Sweden",
+     "verdict": "supported",
+     "evidence": "\"country\":\"Sweden\""
+    }
+   ],
+   "reason": "Norrbotten is not named in the trip data."
+  },
+  "x012": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Balaton is shallow, jade-green and 77 km long",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "ring flat enough that all climbing is voluntary",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "rides the paved Balatoni Bringakor",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "anticlockwise",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "leaves it twice",
+     "verdict": "supported",
+     "evidence": "Off the ring."
+    }
+   ],
+   "reason": "The lake's length and the route name are not in the trip data."
+  },
+  "x013": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "largest continuous vineyard region in the Balkans",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "almost nobody visits it",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "between the Vardar and the Kozuf mountains",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "around 270 sunny days a year",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Vranec, the national grape",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Stanusina found nowhere else",
+     "verdict": "supported",
+     "evidence": "the endemic status of Stanusina to the Tikves basin"
+    },
+    {
+     "claim": "south from Skopje through Negotino, Kavadarci and Demir Kapija",
+     "verdict": "supported",
+     "evidence": "Bovin at Negotino"
+    },
+    {
+     "claim": "wineries built their own rooms",
+     "verdict": "supported",
+     "evidence": "which is exactly why the winery built rooms"
+    },
+    {
+     "claim": "east to Stip for pastrmajlija",
+     "verdict": "supported",
+     "evidence": "East to Stip for pastrmajlija"
+    },
+    {
+     "claim": "September ajvar over open fires",
+     "verdict": "supported",
+     "evidence": "In September, the hands-on morning: an ajvar session"
+    }
+   ],
+   "reason": "The region size, sunny days and the mountain range are not in the source."
+  },
+  "x014": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "8 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\":8.0"
+    },
+    {
+     "claim": "521 m of climbing",
+     "verdict": "supported",
+     "evidence": "the larger figure is the climb"
+    },
+    {
+     "claim": "about 2 h 43 min",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\":163"
+    },
+    {
+     "claim": "tops out at 1,856 m",
+     "verdict": "supported",
+     "evidence": "\"max\":1856.1"
+    },
+    {
+     "claim": "mostly on footpaths",
+     "verdict": "supported",
+     "evidence": "\"path\":0.707"
+    },
+    {
+     "claim": "huts hizha Aleko and Gorski dom Tintyava",
+     "verdict": "supported",
+     "evidence": "\"kind\":\"hut\",\"name\":\"хижа Алеко\""
+    },
+    {
+     "claim": "peak Kamen del (1,860 m)",
+     "verdict": "supported",
+     "evidence": "\"name\":\"Камен дел\",\"ele_m\":1860"
+    },
+    {
+     "claim": "clear of snow June to October",
+     "verdict": "supported",
+     "evidence": "\"to\":\"oct\",\"est\":true,\"from\":\"jun\""
+    }
+   ],
+   "reason": "The climb follows the source's downhill rule and all else matches."
+  },
+  "x015": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Lithuania's port city",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Prussian timber houses",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "gateway to the Curonian Spit",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source mentions coast and historic sights but no port, timber houses or Curonian Spit."
+  },
+  "x016": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "one day city sightseeing walk",
+     "verdict": "supported",
+     "evidence": "\"name\":\"Lucerne in a day\""
+    },
+    {
+     "claim": "in Switzerland",
+     "verdict": "supported",
+     "evidence": "\"country\":\"CH\""
+    },
+    {
+     "claim": "features 9 sightseeing stops",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The number of stops is not in the source."
+  },
+  "x017": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Scandinavia's best-preserved fortress town",
+     "verdict": "supported",
+     "evidence": "Northern Europe's best preserved fortified town"
+    },
+    {
+     "claim": "moats and cobbled lanes still fully intact",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Moats and cobbled lanes are not mentioned in the source."
+  },
+  "x018": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "waymarked",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\":\"blue:blue:shell_modern\""
+    },
+    {
+     "claim": "located in LT",
+     "verdict": "supported",
+     "evidence": "\"country\":\"LT\""
+    },
+    {
+     "claim": "215.6 km",
+     "verdict": "contradicted",
+     "evidence": "\"distance_km\":216.3"
+    },
+    {
+     "claim": "national waymarked hiking network",
+     "verdict": "supported",
+     "evidence": "\"network\":\"nwn\""
+    }
+   ],
+   "reason": "215.6 km is 0.7 km off the source's 216.3 km."
+  },
+  "x019": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "seven-day city trip",
+     "verdict": "supported",
+     "evidence": "\"days\":7"
+    },
+    {
+     "claim": "Harju County",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Gulf of Finland",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Estonia",
+     "verdict": "supported",
+     "evidence": "\"country\":\"Estonia\""
+    }
+   ],
+   "reason": "Harju County and the Gulf of Finland are not named in the trip data."
+  },
+  "x020": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Car-free",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "'Pearl of the Alps'",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "ringed by thirteen 4,000 m peaks",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "world's highest revolving restaurant",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source only covers the valley, winter sport and summer skiing."
+  },
+  "x021": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Most people give Krakow a weekend",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Seven days",
+     "verdict": "supported",
+     "evidence": "\"days\":7"
+    },
+    {
+     "claim": "the hejnal at 07:00",
+     "verdict": "unsupported",
+     "evidence": "Stand under St Mary's on the hour for the hejnal"
+    }
+   ],
+   "reason": "The 07:00 hejnal and the weekend claim are not in the trip data."
+  },
+  "x022": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "12 km North Sea beach",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "stilt-house restaurants",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "kite buggies",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Germany's best kitesurfing",
+     "verdict": "unsupported",
+     "evidence": "one of Germany's prime destinations for surfing and kite-surfing"
+    }
+   ],
+   "reason": "Beach length, stilt houses and buggies are not in the source, and it says one of the prime spots, not the best."
+  },
+  "x023": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "11 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\":11.0"
+    },
+    {
+     "claim": "665 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\":665"
+    },
+    {
+     "claim": "about 4 h 55 min",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\":295"
+    },
+    {
+     "claim": "tops out at 676 m",
+     "verdict": "supported",
+     "evidence": "\"max\":675.9"
+    },
+    {
+     "claim": "peak Puig Nalt (561 m)",
+     "verdict": "supported",
+     "evidence": "\"name\":\"Puig Nalt\",\"ele_m\":561"
+    },
+    {
+     "claim": "castle Chateau d'Ultrera",
+     "verdict": "supported",
+     "evidence": "\"kind\":\"castle\""
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\":12"
+    }
+   ],
+   "reason": "All figures and highlights match the source."
+  },
+  "x024": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "limestone massif",
+     "verdict": "supported",
+     "evidence": "scrambling on loose limestone"
+    },
+    {
+     "claim": "rising from a beach to 2,918 m in 18 kilometres",
+     "verdict": "unsupported",
+     "evidence": "summit of Mytikas, 2,918 m"
+    },
+    {
+     "claim": "up the forested Gortsia ridge to Petrostrouga",
+     "verdict": "supported",
+     "evidence": "Gortsia to the Petrostrouga refuge"
+    },
+    {
+     "claim": "onto the Plateau of the Muses, over Mytikas and Skolio",
+     "verdict": "supported",
+     "evidence": "add the easy 20-minute ridge to Skolio"
+    },
+    {
+     "claim": "descent through the Enipeas gorge to Litochoro and the sea",
+     "verdict": "supported",
+     "evidence": "walk the full Enipeas gorge"
+    },
+    {
+     "claim": "refuges cheap, enormous dinners",
+     "verdict": "supported",
+     "evidence": "bed EUR18 to EUR22 cash"
+    },
+    {
+     "claim": "no nonsense about check-in times",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "suits fit hikers with scrambling experience",
+     "verdict": "supported",
+     "evidence": "an exposed Grade II/III scramble on loose rock"
+    }
+   ],
+   "reason": "The beach-to-summit rise in 18 km is not in the trip data."
+  },
+  "x025": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Slovakia has one finished long-distance cycle route and one half-built",
+     "verdict": "unsupported",
+     "evidence": "the second unfinished gap"
+    },
+    {
+     "claim": "Danube dyke below Bratislava is flat, smooth asphalt",
+     "verdict": "supported",
+     "evidence": "Smooth asphalt all the way to Samorin"
+    },
+    {
+     "claim": "Europe's largest river island",
+     "verdict": "supported",
+     "evidence": "Europe's largest river island"
+    }
+   ],
+   "reason": "The claim about Slovakia's only finished route is not in the source."
+  },
+  "x026": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "located in RO",
+     "verdict": "supported",
+     "evidence": "\"country\":\"RO\""
+    },
+    {
+     "claim": "7.1 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\":7.1"
+    },
+    {
+     "claim": "7 sightseeing stops",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The number of stops is not in the source."
+  },
+  "x027": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Finland's national landscape",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "white quartzite hills",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "above Lake Pielinen",
+     "verdict": "supported",
+     "evidence": "on the western shore of Lake Pielinen"
+    },
+    {
+     "claim": "island-studded",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Only the lake is in the source."
+  },
+  "x028": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "seven-day culinary tour",
+     "verdict": "supported",
+     "evidence": "\"days\":7"
+    },
+    {
+     "claim": "and wine",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "County Cork, East Cork, Kinsale and West Cork",
+     "verdict": "supported",
+     "evidence": "East Cork: Ballymaloe and Midleton"
+    },
+    {
+     "claim": "Ireland",
+     "verdict": "supported",
+     "evidence": "\"country\":\"Ireland\""
+    }
+   ],
+   "reason": "The trip features food, whiskey and cheese but no wine."
+  },
+  "x029": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Pancicev vrh at 2,017 m",
+     "verdict": "supported",
+     "evidence": "Pancicev vrh 2,017 m"
+    },
+    {
+     "claim": "treeless on top",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "nickname Suncana planina",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "heated six-seaters",
+     "verdict": "supported",
+     "evidence": "26 lifts including heated four- and six-seaters"
+    },
+    {
+     "claim": "1,000-metre vertical descent via Brzece gondola",
+     "verdict": "supported",
+     "evidence": "continuous descent approx 950-1,000 m vertical"
+    },
+    {
+     "claim": "Suvo Rudiste core around Karaman Greben, Malo Jezero and Krst",
+     "verdict": "supported",
+     "evidence": "across to Krst on the northern side"
+    },
+    {
+     "claim": "flanks at Gobelja and Duboka",
+     "verdict": "supported",
+     "evidence": "Gobelja and Duboka: the cold flanks"
+    },
+    {
+     "claim": "inside a national park",
+     "verdict": "supported",
+     "evidence": "position inside Kopaonik National Park"
+    },
+    {
+     "claim": "apres at Konaci loud, cheap",
+     "verdict": "supported",
+     "evidence": "which starts loud at about 16:30"
+    },
+    {
+     "claim": "night skiing",
+     "verdict": "supported",
+     "evidence": "Night skiing on Malo Jezero"
+    },
+    {
+     "claim": "short lift lines mid-week",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "78 C thermal spring",
+     "verdict": "supported",
+     "evidence": "the source runs at around 78°C"
+    },
+    {
+     "claim": "twelfth-century UNESCO monastery",
+     "verdict": "supported",
+     "evidence": "founded in the 1190s by Stefan Nemanja, a UNESCO World Heritage site"
+    }
+   ],
+   "reason": "The Suncana planina nickname and treeless summit are not in the source."
+  },
+  "x030": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "30 km Baltic beach",
+     "verdict": "unsupported",
+     "evidence": "It claims to have the longest beach in Northern Europe."
+    },
+    {
+     "claim": "wooden art-nouveau villas",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "easy from Riga",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source gives no beach length, villas or Riga link."
+  },
+  "x031": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "two cities on the same EUR5 bus",
+     "verdict": "supported",
+     "evidence": "Bus from Pristina station to Prizren, ~1h45, EUR5"
+    },
+    {
+     "claim": "four days apart",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Pristina young, loud, Yugoslav brutalism",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "National Library, unfinished Orthodox cathedral",
+     "verdict": "supported",
+     "evidence": "the unfinished Christ the Saviour cathedral beside it"
+    },
+    {
+     "claim": "Newborn monument repainted each February",
+     "verdict": "supported",
+     "evidence": "repainted every 17 February"
+    },
+    {
+     "claim": "hillside fortress",
+     "verdict": "supported",
+     "evidence": "Climb to Kalaja fortress"
+    },
+    {
+     "claim": "17th-century mosque on the square",
+     "verdict": "supported",
+     "evidence": "Sinan Pasha Mosque (1615) on Shadervan"
+    },
+    {
+     "claim": "Serbian Orthodox cathedral rebuilt after 2004",
+     "verdict": "supported",
+     "evidence": "burnt in 2004, restored"
+    },
+    {
+     "claim": "Gracanica and Visoki Decani still under protection",
+     "verdict": "unsupported",
+     "evidence": "the only site in Kosovo still guarded by KFOR"
+    },
+    {
+     "claim": "Rugova gorge",
+     "verdict": "supported",
+     "evidence": "Into the Rugova Gorge"
+    },
+    {
+     "claim": "cheapest week in this collection",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Several claims, such as four days apart and the cheapest week, are not in the trip data."
+  },
+  "x032": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "Spello for three nights",
+     "verdict": "supported",
+     "evidence": "Move to Bevagna"
+    },
+    {
+     "claim": "Bevagna for four nights",
+     "verdict": "contradicted",
+     "evidence": "Flight home, or an early dinner in Perugia with a night in hand."
+    },
+    {
+     "claim": "Montefalco cellars, Trevi olive presses, Rasiglia water channels",
+     "verdict": "supported",
+     "evidence": "Rasiglia, thirty houses threaded by the Menotre's channels"
+    },
+    {
+     "claim": "shutters down 13:30-16:00",
+     "verdict": "unsupported",
+     "evidence": "The town is shuttered until 16:00 anyway"
+    },
+    {
+     "claim": "town reappearing on the corso at 18:30",
+     "verdict": "unsupported",
+     "evidence": "Passeggiata peaks around 19:15 on Via Garibaldi"
+    },
+    {
+     "claim": "Two town moves in seven days",
+     "verdict": "contradicted",
+     "evidence": "Move to Bevagna"
+    },
+    {
+     "claim": "two do-nothing blocks",
+     "verdict": "supported",
+     "evidence": "Deliberately blank."
+    }
+   ],
+   "reason": "Bevagna gets three nights (days 4 to 6) and there is one town move, not four nights and two moves."
+  },
+  "x033": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Ireland's oldest city",
+     "verdict": "unsupported",
+     "evidence": "Founded over 1100 years ago"
+    },
+    {
+     "claim": "the Viking Triangle",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Reginald's Tower",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "famous crystal craft",
+     "verdict": "supported",
+     "evidence": "it's famous for its fine glassware"
+    }
+   ],
+   "reason": "Oldest city, Viking Triangle and Reginald's Tower are not in the source."
+  },
+  "x034": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "anchored in Tarragona, Spain",
+     "verdict": "supported",
+     "evidence": "\"country\":\"ES\""
+    },
+    {
+     "claim": "features 10 sightseeing stops",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The number of stops is not in the source."
+  },
+  "x035": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "10.7 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\":10.7"
+    },
+    {
+     "claim": "668 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\":668"
+    },
+    {
+     "claim": "about 4 h 54 min",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\":294"
+    },
+    {
+     "claim": "tops out at 1,292 m",
+     "verdict": "supported",
+     "evidence": "\"max\":1291.8"
+    },
+    {
+     "claim": "mostly on tracks, steep mountain paths in places",
+     "verdict": "supported",
+     "evidence": "\"sac_worst\":\"demanding_mountain_hiking\""
+    },
+    {
+     "claim": "peak Zugberg (1,113 m), ruin Ehemaliger Kalkofen",
+     "verdict": "supported",
+     "evidence": "\"name\":\"Zugberg\",\"ele_m\":1113"
+    },
+    {
+     "claim": "passes below Rampoldplatte (1,422 m)",
+     "verdict": "supported",
+     "evidence": "\"name\":\"Rampoldplatte\",\"ele_m\":1422"
+    },
+    {
+     "claim": "clear of snow April to November",
+     "verdict": "supported",
+     "evidence": "\"to\":\"nov\",\"est\":true,\"from\":\"apr\""
+    }
+   ],
+   "reason": "All figures, surfaces and highlights match the source."
+  },
+  "x036": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "UNESCO",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "fortress",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "micro-state",
+     "verdict": "supported",
+     "evidence": "one of the world's smallest countries"
+    }
+   ],
+   "reason": "UNESCO status and fortresses are not in the source."
+  },
+  "x037": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "lake-and-peak park",
+     "verdict": "supported",
+     "evidence": "Macedonia's highest peak, as well as lakes"
+    },
+    {
+     "claim": "under Mt Korab",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "half-submerged church",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "stone village of Galicnik",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Korab, the church and Galicnik are not named in the source."
+  },
+  "x038": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\":\"yellow:white:yellow_bar:18:black\""
+    },
+    {
+     "claim": "located in France",
+     "verdict": "supported",
+     "evidence": "\"country\":\"FR\""
+    },
+    {
+     "claim": "signposted as 18",
+     "verdict": "supported",
+     "evidence": "\"waymark_ref\":\"18\""
+    },
+    {
+     "claim": "7.1 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\":7.2"
+    }
+   ],
+   "reason": "7.1 km is within 0.1 km of 7.2 and the waymark matches."
+  },
+  "x039": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "a week",
+     "verdict": "supported",
+     "evidence": "\"days\":7"
+    },
+    {
+     "claim": "Germany's warmest wine hills",
+     "verdict": "supported",
+     "evidence": "Ihringen, the warmest point in Germany"
+    },
+    {
+     "claim": "Kaiserstuhl cooperatives",
+     "verdict": "supported",
+     "evidence": "one of Germany's oldest wine cooperatives"
+    },
+    {
+     "claim": "Ortenau growers",
+     "verdict": "supported",
+     "evidence": "Ortenau and Durbach"
+    },
+    {
+     "claim": "Black Forest kitchen",
+     "verdict": "supported",
+     "evidence": "Up into the Black Forest kitchen"
+    },
+    {
+     "claim": "Freiburg's daily market",
+     "verdict": "supported",
+     "evidence": "Freiburg's daily market runs Monday to Saturday"
+    }
+   ],
+   "reason": "Each element appears in the trip data."
+  },
+  "x040": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "one day city sightseeing walk",
+     "verdict": "supported",
+     "evidence": "\"name\":\"Rimini in a day\""
+    },
+    {
+     "claim": "Rimini, Italy",
+     "verdict": "supported",
+     "evidence": "\"country\":\"IT\""
+    },
+    {
+     "claim": "3.1 km of walking",
+     "verdict": "supported",
+     "evidence": "\"distance_km\":3.1"
+    }
+   ],
+   "reason": "Distance and country match the source."
+  },
+  "x041": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "wine town",
+     "verdict": "supported",
+     "evidence": "It's famous for its compact old town centre with oldest buildings dating back to 12th century, wine"
+    },
+    {
+     "claim": "stacked above the Dyje river gorge",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "27 km medieval underground",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Podyji National Park",
+     "verdict": "supported",
+     "evidence": "nearby National Park Podyjí"
+    }
+   ],
+   "reason": "The Dyje gorge setting and the 27 km underground are not in the source."
+  },
+  "x042": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "8.1 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 8.1"
+    },
+    {
+     "claim": "498 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 498"
+    },
+    {
+     "claim": "about 3 h 40 min of walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 220"
+    },
+    {
+     "claim": "tops out at 1,291 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 1290.7"
+    },
+    {
+     "claim": "peak Hundwiler Hohi (1,305 m)",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Hundwiler Höhi\", \"ele_m\": 1305"
+    },
+    {
+     "claim": "clear of snow April to November",
+     "verdict": "supported",
+     "evidence": "\"to\": \"nov\", \"from\": \"apr\""
+    }
+   ],
+   "reason": "Every number and name matches the route facts."
+  },
+  "x043": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "three towns twenty kilometres apart",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "wines that cannot legally be made in each other's cellars",
+     "verdict": "unsupported",
+     "evidence": "the existence and separate legal status of DO Manzanilla-Sanlúcar de Barrameda"
+    },
+    {
+     "claim": "albariza chalk",
+     "verdict": "supported",
+     "evidence": "to see albariza chalk, white and spongy"
+    },
+    {
+     "claim": "flor yeast veil",
+     "verdict": "supported",
+     "evidence": "the humidity gives a visibly thicker flor than Jerez"
+    },
+    {
+     "claim": "fractional blending of the solera",
+     "verdict": "supported",
+     "evidence": "bottles other people's soleras under their names"
+    },
+    {
+     "claim": "sea humidity makes Sanlucar manzanilla thinner and saltier than Jerez fino from identical grapes",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "tabanco copa costs 1.60 euros",
+     "verdict": "supported",
+     "evidence": "tabanco copa €1.60 to €2.60"
+    },
+    {
+     "claim": "Cadiz Mercado Central",
+     "verdict": "supported",
+     "evidence": "go straight to the Mercado Central de Abastos"
+    },
+    {
+     "claim": "langostinos at the Guadalquivir mouth",
+     "verdict": "supported",
+     "evidence": "Casa Bigote at Bajo de Guía: langostinos de Sanlúcar"
+    },
+    {
+     "claim": "retinto beef from the Vejer marshes",
+     "verdict": "supported",
+     "evidence": "Retinto beef tasting at Venta El Toro"
+    },
+    {
+     "claim": "most technically interesting wine week in Spain",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The 20 km spacing and the manzanilla versus fino humidity claim are not in the trip data."
+  },
+  "x044": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "Monaco-based sailing week",
+     "verdict": "supported",
+     "evidence": "\"days\": 7"
+    },
+    {
+     "claim": "through the Yacht Club de Monaco",
+     "verdict": "supported",
+     "evidence": "The club runs sailing programmes across dinghies, offshore keelboats"
+    },
+    {
+     "claim": "coastal passage to Villefranche",
+     "verdict": "supported",
+     "evidence": "Passage to Villefranche-sur-Mer"
+    },
+    {
+     "claim": "Saint-Jean-Cap-Ferrat",
+     "verdict": "supported",
+     "evidence": "Sail the short leg around Cap Ferrat to Saint-Jean-Cap-Ferrat"
+    },
+    {
+     "claim": "crossing to Sanremo",
+     "verdict": "supported",
+     "evidence": "Crossing to Sanremo"
+    }
+   ],
+   "reason": "All places and the club appear in the itinerary."
+  },
+  "x045": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "stair-stepped fortress town",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "town of flowers",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "at the Bay of Kotor's mouth",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Savina monastery",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "sea baths",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source only compares Herceg Novi with Kotor and states none of these facts."
+  },
+  "x046": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"blue:white:::M:blue\""
+    },
+    {
+     "claim": "in BA",
+     "verdict": "supported",
+     "evidence": "\"country\": \"BA\""
+    },
+    {
+     "claim": "signposted as M02/46",
+     "verdict": "supported",
+     "evidence": "\"ref\": \"M02/46\""
+    },
+    {
+     "claim": "part of an international hiking network",
+     "verdict": "supported",
+     "evidence": "\"network\": \"iwn\""
+    }
+   ],
+   "reason": "Waymark, ref, country and iwn network all match the tags."
+  },
+  "x047": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "rainbow street",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "pastel Norwegian houses",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "waterfall-lined fjord",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "East Iceland",
+     "verdict": "supported",
+     "evidence": "Seyðisfjörður is a city in East Iceland."
+    }
+   ],
+   "reason": "Only the East Iceland location is in the source."
+  },
+  "x048": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "217.6 km walk",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 217.6"
+    },
+    {
+     "claim": "5,491 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 5491"
+    },
+    {
+     "claim": "about 69 h 03 min of walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 4143"
+    },
+    {
+     "claim": "over 12 days",
+     "verdict": "supported",
+     "evidence": "days are worked out from distance and climb"
+    },
+    {
+     "claim": "tops out at 1,006 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 1006.5"
+    },
+    {
+     "claim": "waterfall Cascata do Inferno",
+     "verdict": "supported",
+     "evidence": "\"kind\": \"waterfall\", \"name\": \"Cascata do Inferno\""
+    },
+    {
+     "claim": "peak Fraga do Seixo (1,034 m)",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Fraga do Seixo\", \"ele_m\": 1034"
+    },
+    {
+     "claim": "peak Santa Barbara (468 m)",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Santa Bárbara\", \"ele_m\": 468"
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12, \"to\": \"dec\""
+    }
+   ],
+   "reason": "All figures and highlights match; days follow from distance and climb as the note says."
+  },
+  "x049": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "Riviera principality",
+     "verdict": "supported",
+     "evidence": "The Principality of Monaco ... bounded by the French Riviera"
+    },
+    {
+     "claim": "glamorous",
+     "verdict": "supported",
+     "evidence": "a wealthy city-state ... think yachts and casinos"
+    }
+   ],
+   "reason": "Principality on the Riviera is stated; glamorous is a mild judgement backed by the source."
+  },
+  "x050": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "8.3 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 8.3"
+    },
+    {
+     "claim": "451 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 451"
+    },
+    {
+     "claim": "about 3 h 26 min",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 206"
+    },
+    {
+     "claim": "tops out at 634 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 634.1"
+    },
+    {
+     "claim": "peak Husekampen (662 m)",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Husekampen\", \"ele_m\": 662"
+    },
+    {
+     "claim": "viewpoint Haugakampen",
+     "verdict": "supported",
+     "evidence": "\"kind\": \"viewpoint\", \"name\": \"Haugakampen\""
+    },
+    {
+     "claim": "snow-free June to October",
+     "verdict": "supported",
+     "evidence": "\"to\": \"oct\", \"from\": \"jun\""
+    }
+   ],
+   "reason": "Every figure and highlight matches the route facts."
+  },
+  "x051": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "island",
+     "verdict": "supported",
+     "evidence": "Hiiumaa is the second biggest island in Estonia."
+    },
+    {
+     "claim": "slow-paced",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "historic lighthouses",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "empty beaches",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "juniper heath",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Lighthouses, beaches and juniper heath are not in the source."
+  },
+  "x052": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "one base in Vaduz",
+     "verdict": "supported",
+     "evidence": "Settle in Vaduz, 455 m."
+    },
+    {
+     "claim": "six day loops",
+     "verdict": "contradicted",
+     "evidence": "Rhine valley and out ... Drop the car at Zürich airport."
+    },
+    {
+     "claim": "into three countries",
+     "verdict": "supported",
+     "evidence": "North into Austria via Feldkirch."
+    },
+    {
+     "claim": "the Silvretta",
+     "verdict": "supported",
+     "evidence": "Silvretta Hochalpenstrasse"
+    },
+    {
+     "claim": "the Bregenzerwald",
+     "verdict": "supported",
+     "evidence": "Furkajoch and the Bregenzerwald"
+    },
+    {
+     "claim": "the Ruinaulta gorge",
+     "verdict": "supported",
+     "evidence": "the Ruinaulta, the Rhine gorge"
+    },
+    {
+     "claim": "the Graubunden passes",
+     "verdict": "supported",
+     "evidence": "Over the Wolfgangpass, 1,633 m, one of the few Graubünden passes"
+    }
+   ],
+   "reason": "Only days 2 to 6 loop back to Vaduz; day 7 is a one-way exit to Zurich, so there are five loops, not six."
+  },
+  "x053": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "28.8 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 28.8"
+    },
+    {
+     "claim": "1,277 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 1277"
+    },
+    {
+     "claim": "about 10 h 37 min",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 637"
+    },
+    {
+     "claim": "over 2 days",
+     "verdict": "supported",
+     "evidence": "days are worked out from distance and climb"
+    },
+    {
+     "claim": "tops out at 862 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 862.0"
+    },
+    {
+     "claim": "peaks Ostrica (802 m), Bukovik (851 m), Veliki Vujan (856 m)",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Острица\", \"ele_m\": 802"
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12, \"to\": \"dec\""
+    }
+   ],
+   "reason": "All numbers match and the peaks are the transliterated Cyrillic highlights."
+  },
+  "x054": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "three serious alpine roads: Vrsic, Predel, Mangart",
+     "verdict": "supported",
+     "evidence": "Julian Alps Passes: Vršič, Predel & Mangart"
+    },
+    {
+     "claim": "an area you can cross in ninety minutes",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Vrsic 1,611 m",
+     "verdict": "supported",
+     "evidence": "summit 1,611 m"
+    },
+    {
+     "claim": "fifty numbered hairpins",
+     "verdict": "supported",
+     "evidence": "50 hairpins"
+    },
+    {
+     "claim": "original 1915 Russian-laid cobbles",
+     "verdict": "unsupported",
+     "evidence": "built in 1916 by prisoners of war"
+    },
+    {
+     "claim": "Mangart 12 km toll road",
+     "verdict": "supported",
+     "evidence": "Mangart toll €10; 12 km climb"
+    },
+    {
+     "claim": "five unlit tunnels",
+     "verdict": "supported",
+     "evidence": "5 unlit tunnels"
+    },
+    {
+     "claim": "highest asphalt in the country",
+     "verdict": "supported",
+     "evidence": "Mangart, the highest asphalt in Slovenia"
+    },
+    {
+     "claim": "Soca past Trenta, Bovec and Kobarid",
+     "verdict": "supported",
+     "evidence": "Down the Soča road (Route 206) to Bovec"
+    },
+    {
+     "claim": "Predel crossing into Italy takes twenty minutes",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "an afternoon covering 40 km",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The 90-minute crossing, 1915 cobbles, 20-minute Predel crossing and 40 km afternoon are not in the trip data."
+  },
+  "x055": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "seven-day itinerary",
+     "verdict": "supported",
+     "evidence": "\"days\": 7"
+    },
+    {
+     "claim": "cabin stay",
+     "verdict": "supported",
+     "evidence": "Arrive at your first cabin near Oravi or Rantasalmi"
+    },
+    {
+     "claim": "Lake Saimaa",
+     "verdict": "supported",
+     "evidence": "Saimaa Lakeland: Linnansaari & Kolovesi Cabin Week"
+    },
+    {
+     "claim": "South Savo",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Linnansaari and Kolovesi National Parks",
+     "verdict": "supported",
+     "evidence": "Kolovesi National Park bans motorboats"
+    },
+    {
+     "claim": "Finland",
+     "verdict": "supported",
+     "evidence": "\"country\": \"Finland\""
+    }
+   ],
+   "reason": "The region name South Savo does not appear in the trip data."
+  },
+  "x056": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "high plateau of lakes at 700-900 m",
+     "verdict": "supported",
+     "evidence": "Prespa 850 m, Ohrid 695 m"
+    },
+    {
+     "claim": "walled in by 2,200 m ridges",
+     "verdict": "unsupported",
+     "evidence": "Shebenik peak 2,262 m"
+    },
+    {
+     "claim": "Greek and Macedonian borders on three sides",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "almost no coach tourism",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "starts in Korce among Ottoman bazaar streets",
+     "verdict": "supported",
+     "evidence": "a serious Ottoman-era bazaar restored in the 2010s"
+    },
+    {
+     "claim": "painted churches of Voskopoje",
+     "verdict": "supported",
+     "evidence": "Five post-Byzantine churches survive with extensive frescoes"
+    },
+    {
+     "claim": "Macedonian-speaking minority farms beans at Prespa",
+     "verdict": "supported",
+     "evidence": "are Macedonian-speaking, and the municipality is bilingual"
+    },
+    {
+     "claim": "lake full of Dalmatian pelicans",
+     "verdict": "supported",
+     "evidence": "Dalmatian pelicans move between Lesser and Greater Prespa"
+    },
+    {
+     "claim": "Lin and Pogradec on Lake Ohrid",
+     "verdict": "supported",
+     "evidence": "Lin, Pogradec and the Ohrid shore"
+    },
+    {
+     "claim": "Shebenik-Jabllanice UNESCO primeval-beech site",
+     "verdict": "supported",
+     "evidence": "inscribed on the UNESCO World Heritage list"
+    },
+    {
+     "claim": "best-documented Albanian habitat of the Balkan lynx",
+     "verdict": "unsupported",
+     "evidence": "Balkan lynx / brown bear / grey wolf presence"
+    },
+    {
+     "claim": "sleep in bujtina homestays, homemade rakia",
+     "verdict": "unsupported",
+     "evidence": "rakia poured by the host until you stop him"
+    },
+    {
+     "claim": "cash, no signal, wood stove",
+     "verdict": "supported",
+     "evidence": "Wood stove, spring water, no signal"
+    }
+   ],
+   "reason": "The three-sided borders, coach tourism and best-documented lynx habitat claims are not in the data."
+  },
+  "x057": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "a week chartering an open boat",
+     "verdict": "supported",
+     "evidence": "open sailing boat"
+    },
+    {
+     "claim": "Sneek, Heeg, Stavoren, Makkum",
+     "verdict": "supported",
+     "evidence": "Sail north to Makkum"
+    },
+    {
+     "claim": "a taste of skutsjesilen",
+     "verdict": "supported",
+     "evidence": "carries skûtsjesilen races between the SKS's competing towns"
+    },
+    {
+     "claim": "IJsselmeer short steep chop",
+     "verdict": "supported",
+     "evidence": "it builds short, steep waves fast once the wind passes force 4"
+    }
+   ],
+   "reason": "All places and features appear in the itinerary."
+  },
+  "x058": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "in Norway",
+     "verdict": "supported",
+     "evidence": "\"country\": \"NO\""
+    },
+    {
+     "claim": "11.5 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 11.5"
+    },
+    {
+     "claim": "starts and finishes at the same place",
+     "verdict": "supported",
+     "evidence": "\"roundtrip\": \"yes\""
+    },
+    {
+     "claim": "251 m ascent, 252 m descent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 251, \"descent_m\": 252"
+    }
+   ],
+   "reason": "The tags carry no osmc:symbol and no waymark ref, so waymarked is not supported."
+  },
+  "x059": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "neighbourhood sequence: Alfama and Mouraria, then Chiado, then Principe Real, then the river",
+     "verdict": "contradicted",
+     "evidence": "\"title\": \"Landing on the Grid: Baixa and Chiado\""
+    },
+    {
+     "claim": "trades tram 28",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Alfama and Mouraria",
+     "verdict": "supported",
+     "evidence": "Alfama and Mouraria end to end"
+    },
+    {
+     "claim": "Pombaline grid and Chiado",
+     "verdict": "supported",
+     "evidence": "walk the Pombaline grid from Praça do Comércio"
+    },
+    {
+     "claim": "Bairro Alto",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Principe Real",
+     "verdict": "supported",
+     "evidence": "Príncipe Real, Estrela, Gulbenkian"
+    },
+    {
+     "claim": "Belem's Manueline stonework",
+     "verdict": "supported",
+     "evidence": "Belém: Manueline stone, modern riverfront"
+    },
+    {
+     "claim": "Marvila's warehouse breweries",
+     "verdict": "supported",
+     "evidence": "Dois Corvos taproom ... the Fábrica Braço de Prata warehouse"
+    },
+    {
+     "claim": "distances short, gradients not",
+     "verdict": "supported",
+     "evidence": "2-8-12 km a day on steep basalt cobbles"
+    },
+    {
+     "claim": "Sintra day with fog and Romantic follies",
+     "verdict": "supported",
+     "evidence": "In heavy fog, swap for Quinta da Regaleira"
+    }
+   ],
+   "reason": "The stated order conflicts with the data: Chiado is day 1 before Alfama, and Belem (day 3) comes before Principe Real (day 4)."
+  },
+  "x060": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "one day city walk in Hamburg",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Hamburg in a day\""
+    },
+    {
+     "claim": "between the city's main sights",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "in Germany",
+     "verdict": "supported",
+     "evidence": "\"country\": \"DE\""
+    },
+    {
+     "claim": "5.1 km of walking",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 5.1"
+    }
+   ],
+   "reason": "Nothing in the facts says the route links the city's main sights."
+  },
+  "x061": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "rock changes halfway through the week",
+     "verdict": "supported",
+     "evidence": "After yesterday's marble the change of rock is unmistakable underfoot."
+    },
+    {
+     "claim": "north is white Triassic marble",
+     "verdict": "unsupported",
+     "evidence": "a marble amphitheatre"
+    },
+    {
+     "claim": "waterless",
+     "verdict": "supported",
+     "evidence": "a long, loose, waterless descent"
+    },
+    {
+     "claim": "centre is grey granite",
+     "verdict": "supported",
+     "evidence": "traverse south past the upper Banderishki lakes on granite slab"
+    },
+    {
+     "claim": "holds a hundred lakes",
+     "verdict": "unsupported",
+     "evidence": "a basin of a dozen tarns"
+    }
+   ],
+   "reason": "Triassic age and a hundred lakes are not in the trip data."
+  },
+  "x062": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Gothic",
+     "verdict": "supported",
+     "evidence": "one of the few examples of true Gothic architecture in Poland"
+    },
+    {
+     "claim": "brick lanes",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "gingerbread",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "house of Copernicus",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "above the Vistula",
+     "verdict": "supported",
+     "evidence": "situated on the Vistula River"
+    }
+   ],
+   "reason": "Gingerbread and the Copernicus house are not in the source."
+  },
+  "x063": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "38.7 km walk",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 38.7"
+    },
+    {
+     "claim": "705 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 705"
+    },
+    {
+     "claim": "about 11 h 32 min",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 692"
+    },
+    {
+     "claim": "over 2 days",
+     "verdict": "supported",
+     "evidence": "days are worked out from distance and climb"
+    },
+    {
+     "claim": "tops out at 146 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 146.3"
+    },
+    {
+     "claim": "mostly on paved roads",
+     "verdict": "supported",
+     "evidence": "\"paved\": 0.529"
+    },
+    {
+     "claim": "peak Flotsenberg (102 m)",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Flotsenberg\", \"ele_m\": 102"
+    },
+    {
+     "claim": "castles Kasteel Calmeyn and Kasteel van Beersel",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Kasteel van Beersel\""
+    },
+    {
+     "claim": "close to Manneken Peace and Brussels",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Manneken Peace\""
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12, \"to\": \"dec\""
+    }
+   ],
+   "reason": "Every figure, highlight and nearby place matches the facts."
+  },
+  "x064": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Ottoman bridges",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "mosques",
+     "verdict": "supported",
+     "evidence": "a charming city of mosques and monasteries"
+    },
+    {
+     "claim": "hilltop fortress",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Kosovo's prettiest old town",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Bridges, the fortress and the old town ranking are not in the source."
+  },
+  "x065": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "a week in Verbier and the 4 Vallees",
+     "verdict": "supported",
+     "evidence": "\"days\": 7"
+    },
+    {
+     "claim": "Mont-Fort",
+     "verdict": "supported",
+     "evidence": "then the Mont-Fort cable car to 3,330 m"
+    },
+    {
+     "claim": "Stairway to Heaven",
+     "verdict": "supported",
+     "evidence": "ski the Stairway to Heaven"
+    },
+    {
+     "claim": "Tortin",
+     "verdict": "supported",
+     "evidence": "Tortin face and Siviez"
+    },
+    {
+     "claim": "where the lift interconnect breaks down",
+     "verdict": "supported",
+     "evidence": "missing the last connection strands you a taxi ride from Verbier"
+    }
+   ],
+   "reason": "All named places and the interconnect caveat appear in the itinerary."
+  },
+  "x066": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "5.2 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 5.2"
+    },
+    {
+     "claim": "269 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 269"
+    },
+    {
+     "claim": "about 2 h 06 min",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 126"
+    },
+    {
+     "claim": "tops out at 606 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 606.5"
+    },
+    {
+     "claim": "mostly on footpaths",
+     "verdict": "supported",
+     "evidence": "\"path\": 0.7"
+    },
+    {
+     "claim": "peak Ploumades (602 m)",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Πλουμάδες\", \"ele_m\": 602"
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12, \"to\": \"dec\""
+    }
+   ],
+   "reason": "All figures match and the peak is the transliterated Greek highlight."
+  },
+  "x067": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "whitewashed village",
+     "verdict": "supported",
+     "evidence": "one of the largest 'white towns' (Spanish: pueblos blancos)"
+    },
+    {
+     "claim": "Spain's rainiest sierra",
+     "verdict": "supported",
+     "evidence": "is also Spain's wettest city"
+    },
+    {
+     "claim": "greenest",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "hub for griffon-cliff hikes",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Griffon-cliff hikes are not mentioned in the source."
+  },
+  "x068": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "9.8 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 9.8"
+    },
+    {
+     "claim": "525 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 525"
+    },
+    {
+     "claim": "about 4 h 02 min",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 242"
+    },
+    {
+     "claim": "tops out at 678 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 677.8"
+    },
+    {
+     "claim": "mostly on footpaths",
+     "verdict": "supported",
+     "evidence": "\"path\": 0.932"
+    },
+    {
+     "claim": "waterfalls La Rejia and La Virgen",
+     "verdict": "supported",
+     "evidence": "\"kind\": \"waterfall\", \"name\": \"La Virgen\""
+    },
+    {
+     "claim": "lake Charco de la Virgen",
+     "verdict": "supported",
+     "evidence": "\"kind\": \"lake\", \"name\": \"Charco de la Virgen\""
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12, \"to\": \"dec\""
+    }
+   ],
+   "reason": "Every figure and highlight matches."
+  },
+  "x069": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "alpine resort",
+     "verdict": "supported",
+     "evidence": "It is a base for winter sports and is known for alpine skiing"
+    },
+    {
+     "claim": "under Triglav's peaks",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "gateway to the Vrsic Pass",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Planica's ski jumps",
+     "verdict": "unsupported",
+     "evidence": "known for alpine skiing and ski jumping"
+    }
+   ],
+   "reason": "Triglav, the Vrsic Pass and Planica are not named in the source."
+  },
+  "x070": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Belgium's rooftop",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "plateau of peat bogs",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "boardwalk trails",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "mist-swept open moor",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The cited source is an unrelated High Desert disambiguation line."
+  },
+  "x071": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "48 peaks over 2,000 m",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "drive across in forty minutes",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Zabljak at 1,456 m",
+     "verdict": "supported",
+     "evidence": "Žabljak (1,456 m)"
+    },
+    {
+     "claim": "highest town in the Balkans",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "lake-circuit warm-up",
+     "verdict": "supported",
+     "evidence": "Shake out on the Crno jezero (Black Lake) circuit"
+    },
+    {
+     "claim": "summits Bobotov Kuk and Prutas",
+     "verdict": "supported",
+     "evidence": "Bobotov Kuk, 2,523 m"
+    },
+    {
+     "claim": "two-day Skrcka lakes excursion with a hut night",
+     "verdict": "supported",
+     "evidence": "Down into the Škrka cirque, hut night"
+    },
+    {
+     "claim": "recovery day on the Tara canyon rim",
+     "verdict": "supported",
+     "evidence": "a genuine recovery afternoon on the Tara rim"
+    },
+    {
+     "claim": "fast finish on Savin Kuk",
+     "verdict": "contradicted",
+     "evidence": "Last run: the Ivan Do-Lokvice katun loop from Crno jezero"
+    }
+   ],
+   "reason": "Savin Kuk is day 6 and the last run is the katun loop; several headline numbers are also absent."
+  },
+  "x072": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "fairytale castle",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "turrets and moat",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Europe's oldest zoo next door",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source mentions no castle or zoo."
+  },
+  "x073": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"ref\": \"A\""
+    },
+    {
+     "claim": "in LU",
+     "verdict": "supported",
+     "evidence": "\"country\": \"LU\""
+    },
+    {
+     "claim": "10.3 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 10.3"
+    },
+    {
+     "claim": "275 m ascent and 275 m descent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 275, \"descent_m\": 275"
+    },
+    {
+     "claim": "about 3.3 hours",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 198"
+    },
+    {
+     "claim": "on the DIN 33466 hiking time rule",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "All traveller-facing figures match; only the name of the timing method is not in the source."
+  },
+  "x074": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked hiking route",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"blue:blue:shell_modern\""
+    },
+    {
+     "claim": "in IE",
+     "verdict": "supported",
+     "evidence": "\"country\": \"IE\""
+    },
+    {
+     "claim": "22.7 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 22.7"
+    },
+    {
+     "claim": "regional network trail",
+     "verdict": "supported",
+     "evidence": "\"network\": \"rwn\""
+    },
+    {
+     "claim": "starts and finishes at the same place",
+     "verdict": "supported",
+     "evidence": "\"roundtrip\": \"yes\""
+    },
+    {
+     "claim": "about 6.3 hours",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 381"
+    },
+    {
+     "claim": "on the DIN 33466 hiking time rule",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "All traveller-facing figures match; only the name of the timing method is not in the source."
+  },
+  "x075": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "hut-to-hut week on the GR54",
+     "verdict": "supported",
+     "evidence": "The GR54, Refuges of the Écrins Amphitheatre"
+    },
+    {
+     "claim": "beneath La Meije",
+     "verdict": "supported",
+     "evidence": "the Meije's glaciers hang directly overhead"
+    },
+    {
+     "claim": "Veneon valley's Refuge du Chatelleret",
+     "verdict": "supported",
+     "evidence": "Climb steadily to Refuge du Chatelleret (2,225 m)"
+    },
+    {
+     "claim": "Col d'Arsine above Villar-d'Arene",
+     "verdict": "supported",
+     "evidence": "Re-cross the Col d'Arsine ... continue down to the village"
+    }
+   ],
+   "reason": "The huts, col and village all appear in the itinerary."
+  },
+  "x076": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "flat dam-top gravel",
+     "verdict": "supported",
+     "evidence": "half packed gravel dam-tops, half asphalt"
+    },
+    {
+     "claim": "700-year-old fishpond landscape",
+     "verdict": "unsupported",
+     "evidence": "built 1584-1590 by Jakub Krčín"
+    },
+    {
+     "claim": "linked to the Vltava cycle path",
+     "verdict": "supported",
+     "evidence": "The Vltava cycle path south from Budějovice"
+    },
+    {
+     "claim": "climb into Cesky Krumlov",
+     "verdict": "supported",
+     "evidence": "Push the last cobbled climb into the old town"
+    }
+   ],
+   "reason": "The data gives 16th-century dates but no 700-year age for the pond landscape."
+  },
+  "x077": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "island",
+     "verdict": "supported",
+     "evidence": "Hvar is an island off the coast of Croatia"
+    },
+    {
+     "claim": "Adriatic",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "glam",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source names neither the Adriatic nor any glamour."
+  },
+  "x078": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "perfectly circular 15th-century fortress",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "guarding the Dniester",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "hilltop Candle of Gratitude",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source only says Soroca is a town in northeastern Moldova."
+  },
+  "x079": {
+   "verdict": "contradicted",
+   "claims": [
+    {
+     "claim": "the only wine country where you tour cellars by car",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "tour two of the cellars by car",
+     "verdict": "contradicted",
+     "evidence": "The tour runs by electric train through galleries"
+    },
+    {
+     "claim": "street signs that read Cabernet and Feteasca",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "low Codru",
+     "verdict": "supported",
+     "evidence": "Small Codru producers within 40 km of the capital"
+    }
+   ],
+   "reason": "Cricova is toured by electric train, so only one of the two underground cellars is driven."
+  },
+  "x080": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "star shaped Vauban citadel",
+     "verdict": "unsupported",
+     "evidence": "one of the most beautiful Habsburg citadels of Europe"
+    },
+    {
+     "claim": "changing guards",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Habsburg gates",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Only a Habsburg citadel is in the source; star shape, Vauban, guards and gates are not."
+  },
+  "x081": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "4.7 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 4.7, \"is_loop\": true"
+    },
+    {
+     "claim": "103 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 103"
+    },
+    {
+     "claim": "about 1 h 27 min of walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 87"
+    },
+    {
+     "claim": "tops out at 188 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 187.9"
+    },
+    {
+     "claim": "mostly on footpaths",
+     "verdict": "supported",
+     "evidence": "\"path\": 0.965"
+    },
+    {
+     "claim": "beach Paganamaa Liivajärve supelrand on the way",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Paganamaa Liivajärve supelrand\""
+    },
+    {
+     "claim": "usually walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12, \"to\": \"dec\""
+    }
+   ],
+   "reason": "Every number and name matches the measured facts."
+  },
+  "x082": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "named Santorini in a day, one day",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Santorini in a day\""
+    },
+    {
+     "claim": "in Santorini, GR",
+     "verdict": "supported",
+     "evidence": "\"country\": \"GR\""
+    },
+    {
+     "claim": "a city sightseeing walk between the city's main sights",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source has no tags or stops saying it is a sightseeing walk between main sights."
+  },
+  "x083": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "seven days",
+     "verdict": "supported",
+     "evidence": "\"days\": 7"
+    },
+    {
+     "claim": "culinary and wine tour",
+     "verdict": "unsupported",
+     "evidence": "fruit-wine tradition"
+    },
+    {
+     "claim": "Vilnius, Aukštaitija, Biržai, Dzūkija, Lithuania",
+     "verdict": "supported",
+     "evidence": "\"country\": \"Lithuania\""
+    },
+    {
+     "claim": "Aukštaitija is northeast Lithuania",
+     "verdict": "unsupported",
+     "evidence": "Drive north toward Panevėžys and Pasvalys"
+    }
+   ],
+   "reason": "The places and length match, but 'northeast Lithuania' and the wine tour label are not stated in the trip data."
+  },
+  "x084": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "177.6 km walk",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 177.6"
+    },
+    {
+     "claim": "5,797 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 5797"
+    },
+    {
+     "claim": "about 60 h 02 min of walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 3602"
+    },
+    {
+     "claim": "over 11 days",
+     "verdict": "supported",
+     "evidence": "days are worked out from distance and climb"
+    },
+    {
+     "claim": "tops out at 500 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 500.1"
+    },
+    {
+     "claim": "viewpoint Kasselslay, peaks Immeschterbierg and Kapp 441 m",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Immeschterbierg\", \"ele_m\": 441"
+    },
+    {
+     "claim": "close to European Museum Schengen and Schengen Agreement",
+     "verdict": "supported",
+     "evidence": "\"name\": \"European Museum Schengen\""
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12"
+    }
+   ],
+   "reason": "All figures and names match; days follow from the distance and climb given."
+  },
+  "x085": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "ski slopes under Pirin peaks",
+     "verdict": "supported",
+     "evidence": "ski resort in Southwest Bulgaria, under the slopes of the Pirin Mountains"
+    },
+    {
+     "claim": "budget",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "UNESCO Pirin",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "stone-house old town",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Budget, UNESCO and the stone-house old town are not in the source."
+  },
+  "x086": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked, ref 120",
+     "verdict": "supported",
+     "evidence": "\"ref\": \"120\""
+    },
+    {
+     "claim": "national hiking network",
+     "verdict": "supported",
+     "evidence": "\"network\": \"nwn\""
+    },
+    {
+     "claim": "easy",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"easy\""
+    },
+    {
+     "claim": "10.3 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 10.3"
+    },
+    {
+     "claim": "175 m ascent, 1113 m descent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 175, \"descent_m\": 1113"
+    }
+   ],
+   "reason": "Waymark, network, difficulty and figures all match."
+  },
+  "x087": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "49.8 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 49.8"
+    },
+    {
+     "claim": "1,599 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 1599"
+    },
+    {
+     "claim": "16 h 42 min walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 1002"
+    },
+    {
+     "claim": "over 3 days",
+     "verdict": "supported",
+     "evidence": "days are worked out from distance and climb"
+    },
+    {
+     "claim": "tops out at 160 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 160.4"
+    },
+    {
+     "claim": "peaks Il-Qortin iż Żgħir 125 m, Qolla l-Bajda 20 m, Il-Qolla s-Safra 30 m",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Qolla l-Bajda\", \"ele_m\": 20"
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12"
+    }
+   ],
+   "reason": "All figures and highlights match the facts."
+  },
+  "x088": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Pyrenees",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "micro-nation",
+     "verdict": "unsupported",
+     "evidence": "capital of Andorra. It is a small alpine city"
+    }
+   ],
+   "reason": "The source calls it a small alpine capital city; Pyrenees and micro-nation are not stated."
+  },
+  "x089": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "waymarked",
+     "verdict": "unsupported",
+     "evidence": "\"waymark_ref\": null"
+    },
+    {
+     "claim": "in MT",
+     "verdict": "supported",
+     "evidence": "\"country\": \"MT\""
+    },
+    {
+     "claim": "16.0 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 16.1"
+    },
+    {
+     "claim": "418 m ascent, 385 m descent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 418, \"descent_m\": 385"
+    },
+    {
+     "claim": "moderate difficulty",
+     "verdict": "supported",
+     "evidence": "\"difficulty\": \"moderate\""
+    },
+    {
+     "claim": "difficulty derived from distance and ascent",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "No osmc:symbol or waymark ref, so 'waymarked' is not supported."
+  },
+  "x090": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "4.5 km from Stari Bar to Baltina",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 4.5"
+    },
+    {
+     "claim": "581 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 581"
+    },
+    {
+     "claim": "2 h 33 min walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 153"
+    },
+    {
+     "claim": "tops out at 694 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 693.9"
+    },
+    {
+     "claim": "castle Stari grad Bar, lake Virosovica",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Stari grad Bar\""
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12"
+    }
+   ],
+   "reason": "Every measured figure and highlight matches."
+  },
+  "x091": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "puffin island",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "ridge-walk to a lighthouse",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "archipelago's western edge",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source only praises the Faroe Islands in general."
+  },
+  "x092": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "in Malta",
+     "verdict": "supported",
+     "evidence": "Marsaxlokk is in the south-east part of Malta."
+    },
+    {
+     "claim": "rainbow luzzu boats",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Sunday fish market",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "harbour",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source gives only the location."
+  },
+  "x093": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "castle over the town",
+     "verdict": "supported",
+     "evidence": "medieval castle, spectacularly situated on a rock high above town"
+    },
+    {
+     "claim": "Our valley",
+     "verdict": "supported",
+     "evidence": "gorgeous Our valley backdrop"
+    },
+    {
+     "claim": "slate roofs",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Hugo's exile hideout",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Slate roofs and the Victor Hugo link are not in the source."
+  },
+  "x094": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "9.4 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 9.4"
+    },
+    {
+     "claim": "563 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 563"
+    },
+    {
+     "claim": "3 h 29 min walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 209"
+    },
+    {
+     "claim": "tops out at 1,012 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 1011.6"
+    },
+    {
+     "claim": "peak Dealul Warthe 726 m, viewpoint belvedere",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Dealul Warthe\", \"ele_m\": 726"
+    },
+    {
+     "claim": "close to Brașov Fortress",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Brașov Fortress\""
+    },
+    {
+     "claim": "snow-free April to November",
+     "verdict": "supported",
+     "evidence": "\"to\": \"nov\", \"est\": true, \"from\": \"apr\""
+    }
+   ],
+   "reason": "All figures and names match."
+  },
+  "x095": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "carved stone every kilometre",
+     "verdict": "unsupported",
+     "evidence": "meet your first milestone"
+    },
+    {
+     "claim": "orange T",
+     "verdict": "supported",
+     "evidence": "find the orange T"
+    },
+    {
+     "claim": "on a fence post",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "300 km of Transylvania",
+     "verdict": "unsupported",
+     "evidence": "dayStats sum to 335 km"
+    },
+    {
+     "claim": "hay meadows",
+     "verdict": "supported",
+     "evidence": "hay cut"
+    },
+    {
+     "claim": "oak forest",
+     "verdict": "supported",
+     "evidence": "oak woodland"
+    },
+    {
+     "claim": "Saxon villages",
+     "verdict": "supported",
+     "evidence": "the two quietest Saxon villages on the route"
+    }
+   ],
+   "reason": "The 300 km total and one stone every kilometre are not stated; daily distances add to 335 km."
+  },
+  "x096": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "seven days",
+     "verdict": "supported",
+     "evidence": "\"days\": 7"
+    },
+    {
+     "claim": "road trip, scenic drive",
+     "verdict": "supported",
+     "evidence": "Land at Vágar, collect the car."
+    },
+    {
+     "claim": "Streymoy, Eysturoy, Norðoyar, Sandoy, Vágar",
+     "verdict": "supported",
+     "evidence": "Norðoyar: Klaksvík, Viðareiði and Kalsoy"
+    },
+    {
+     "claim": "Faroe Islands",
+     "verdict": "supported",
+     "evidence": "\"country\": \"Faroe Islands\""
+    }
+   ],
+   "reason": "Length, driving format and all island names match the itinerary."
+  },
+  "x097": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Andorra is 468 km²",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "nearly all above 1,000 m",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "densest walking country in the Pyrenees",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Comapedrosa 2,942 m, country's high point",
+     "verdict": "supported",
+     "evidence": "Leave at 07:00 for the country's high point"
+    },
+    {
+     "claim": "Madriu UNESCO landscape, 9% of territory",
+     "verdict": "supported",
+     "evidence": "Madriu valley 42 km², 9% of Andorra"
+    },
+    {
+     "claim": "no road into it",
+     "verdict": "supported",
+     "evidence": "no vehicle access anywhere in the valley"
+    },
+    {
+     "claim": "crosses Sorteny and Juclà basins on Coronallacs",
+     "verdict": "supported",
+     "evidence": "climb the Coronallacs stage east"
+    },
+    {
+     "claim": "staffed refuges and free unstaffed shelters",
+     "verdict": "supported",
+     "evidence": "the free, unstaffed Refugi de Perafita"
+    }
+   ],
+   "reason": "Andorra's area and the 1,000 m claim are not in the trip data."
+  },
+  "x098": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "town in Portugal",
+     "verdict": "supported",
+     "evidence": "Vila Viçosa is a town in Alto Alentejo, Portugal."
+    },
+    {
+     "claim": "royal seat of the Braganza dukes",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "marble pavements, orange trees",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "vast ducal palace",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source says only where the town is."
+  },
+  "x099": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "travertine forms barriers and terraces",
+     "verdict": "unsupported",
+     "evidence": "a fan of travertine steps"
+    },
+    {
+     "claim": "park declared in 2008",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "protects 198 km²",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Unac tributary",
+     "verdict": "supported",
+     "evidence": "where the Unac joins the Una"
+    },
+    {
+     "claim": "rafting day from Štrbački buk",
+     "verdict": "supported",
+     "evidence": "Raft the classic run from below Štrbački buk"
+    },
+    {
+     "claim": "Martin Brod village and travertine day",
+     "verdict": "supported",
+     "evidence": "Martin Brod, Milančev buk and a slow village day"
+    },
+    {
+     "claim": "Klekovača old-growth beech and spruce",
+     "verdict": "supported",
+     "evidence": "some of the last old-growth beech and spruce in Bosnia"
+    },
+    {
+     "claim": "landmine briefing, marked ground",
+     "verdict": "supported",
+     "evidence": "mine-marking signs mean stop, no exceptions"
+    }
+   ],
+   "reason": "The 2008 date and 198 km² area are not in the trip data."
+  },
+  "x100": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "bridge over the Drina",
+     "verdict": "supported",
+     "evidence": "Mehmed paša Sokolović Bridge"
+    },
+    {
+     "claim": "linked to Ivo Andrić",
+     "verdict": "supported",
+     "evidence": "The Bridge over the Drina"
+    },
+    {
+     "claim": "eleven arches",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Ottoman",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "jade green Drina",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Arch count, Ottoman origin and river colour are not in the source."
+  },
+  "x101": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "a week based in St. Anton",
+     "verdict": "supported",
+     "evidence": "\"days\": 7"
+    },
+    {
+     "claim": "Flexenbahn to ski Lech, Zürs and Warth",
+     "verdict": "supported",
+     "evidence": "Take the Flexenbahn again, continuing past Zürs and Lech to Warth"
+    },
+    {
+     "claim": "guided off-piste day",
+     "verdict": "supported",
+     "evidence": "Guided off-piste day"
+    },
+    {
+     "claim": "Weisse Ring circuit",
+     "verdict": "supported",
+     "evidence": "The Weisse Ring is a 22 km circular ski safari"
+    }
+   ],
+   "reason": "Every element appears in the itinerary."
+  },
+  "x102": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "Villa d'Este and Hadrian's Villa in Tivoli",
+     "verdict": "supported",
+     "evidence": "Its two main attractions, Villa D'Este and Hadrian's Villa"
+    },
+    {
+     "claim": "hundred fountains",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "two UNESCO sites",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Fountain count and UNESCO status are not stated."
+  },
+  "x103": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "near the border",
+     "verdict": "unsupported",
+     "evidence": "in the very north of Vojvodina in northern Serbia"
+    },
+    {
+     "claim": "Hungarian art nouveau facades",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "jewel box synagogue",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source gives only the location."
+  },
+  "x104": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "converted railway from Aachen to Luxembourg",
+     "verdict": "supported",
+     "evidence": "Troisvierges ... is the end of the Vennbahn"
+    },
+    {
+     "claim": "railway gradients",
+     "verdict": "supported",
+     "evidence": "textbook rail-trail: 1.5 per cent"
+    },
+    {
+     "claim": "crossing the High Fens",
+     "verdict": "unsupported",
+     "evidence": "A luggage-free day onto the Hohes Venn"
+    },
+    {
+     "claim": "five German exclaves",
+     "verdict": "supported",
+     "evidence": "is cut off as five exclaves"
+    },
+    {
+     "claim": "three countries",
+     "verdict": "supported",
+     "evidence": "you have been in three countries in five minutes"
+    },
+    {
+     "claim": "125 km",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The 125 km length is not stated anywhere in the trip data."
+  },
+  "x105": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "above Tirana",
+     "verdict": "supported",
+     "evidence": "in the highlands just north of Tirana"
+    },
+    {
+     "claim": "Skanderbeg's citadel",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "working Ottoman bazaar",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Citadel and bazaar are not in the source."
+  },
+  "x106": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "named Karlovy Vary in a day, one day",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Karlovy Vary in a day\""
+    },
+    {
+     "claim": "in Karlovy Vary, CZ",
+     "verdict": "supported",
+     "evidence": "\"country\": \"CZ\""
+    },
+    {
+     "claim": "city sightseeing walk between the main sights",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Nothing in the facts says it is a walk between the city's main sights."
+  },
+  "x107": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "a week in Chamonix",
+     "verdict": "supported",
+     "evidence": "\"days\": 7"
+    },
+    {
+     "claim": "guided and self-directed freeride",
+     "verdict": "supported",
+     "evidence": "or a solo transceiver practice session"
+    },
+    {
+     "claim": "Vallée Blanche, Grands Montets, Le Tour",
+     "verdict": "supported",
+     "evidence": "Le Tour-Balme and the Vallée du Trient"
+    },
+    {
+     "claim": "avalanche and crevasse discipline",
+     "verdict": "supported",
+     "evidence": "Crevasses are real and hidden by snow bridges"
+    }
+   ],
+   "reason": "All named areas and the safety focus are in the itinerary."
+  },
+  "x108": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "volcanic",
+     "verdict": "supported",
+     "evidence": "Milos is a volcanic Greek island"
+    },
+    {
+     "claim": "moonscape beaches",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The source does not mention beaches or a moonscape."
+  },
+  "x109": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "seven days",
+     "verdict": "supported",
+     "evidence": "\"days\": 7"
+    },
+    {
+     "claim": "cozy towns trip",
+     "verdict": "supported",
+     "evidence": "Kurzeme Slow Week: Kuldīga, Sabile & Talsi"
+    },
+    {
+     "claim": "Kurzeme (Courland)",
+     "verdict": "supported",
+     "evidence": "Riga to Kandava, into Courland"
+    },
+    {
+     "claim": "western Latvia",
+     "verdict": "supported",
+     "evidence": "Collect a car in Riga and drive west"
+    },
+    {
+     "claim": "Latvia",
+     "verdict": "supported",
+     "evidence": "\"country\": \"Latvia\""
+    }
+   ],
+   "reason": "Length, region and country match the trip data."
+  },
+  "x110": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "123 km, Trieste to Poreč",
+     "verdict": "unsupported",
+     "evidence": "The Parenzana's route Trieste/Muggia-Poreč"
+    },
+    {
+     "claim": "narrow-gauge, ran 1902 to 1935",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "best-surfaced long gravel corridor",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "unlit tunnels and viaducts, Mirna valley",
+     "verdict": "supported",
+     "evidence": "two unlit tunnels"
+    },
+    {
+     "claim": "detours to Grožnjan, Motovun, Buje, Oprtalj",
+     "verdict": "supported",
+     "evidence": "take the spur up to Grožnjan"
+    },
+    {
+     "claim": "truffle lunch in Livade",
+     "verdict": "unsupported",
+     "evidence": "Restaurant Zigante in Livade"
+    },
+    {
+     "claim": "two days of Malvazija tasting",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Vojak 1,401 m on Učka",
+     "verdict": "supported",
+     "evidence": "via Poklon at 922 m to Vojak at 1,401 m"
+    },
+    {
+     "claim": "finish on the Rovinj coast",
+     "verdict": "supported",
+     "evidence": "into Rovinj"
+    }
+   ],
+   "reason": "The length, dates and gauge of the railway and the tasting days are not in the trip data."
+  },
+  "x111": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "named Sarandë in a day",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Sarandë in a day\""
+    },
+    {
+     "claim": "in Sarandë, AL",
+     "verdict": "supported",
+     "evidence": "\"country\": \"AL\""
+    },
+    {
+     "claim": "city sightseeing walk between the main sights",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "five sightseeing stops",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The facts list no stops and do not describe a sightseeing walk."
+  },
+  "x112": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "seven days",
+     "verdict": "supported",
+     "evidence": "\"days\": 7"
+    },
+    {
+     "claim": "cycling trip",
+     "verdict": "supported",
+     "evidence": "105-135 km signposted loop split over 5 riding days"
+    },
+    {
+     "claim": "Bornholm, Baltic Sea",
+     "verdict": "supported",
+     "evidence": "with the Baltic on your left"
+    },
+    {
+     "claim": "Denmark",
+     "verdict": "supported",
+     "evidence": "\"country\": \"Denmark\""
+    }
+   ],
+   "reason": "Everything matches the trip data."
+  },
+  "x113": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "8.6 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 8.6"
+    },
+    {
+     "claim": "302 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 302"
+    },
+    {
+     "claim": "2 h 58 min walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 178"
+    },
+    {
+     "claim": "tops out at 694 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 694.3"
+    },
+    {
+     "claim": "castles Starý and Nový zámek Votice, peak Větrov 676 m",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Větrov\", \"ele_m\": 676"
+    },
+    {
+     "claim": "snow-free April to November",
+     "verdict": "supported",
+     "evidence": "\"to\": \"nov\", \"est\": true, \"from\": \"apr\""
+    }
+   ],
+   "reason": "All figures and highlights match."
+  },
+  "x114": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "13.3 km loop",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 13.3"
+    },
+    {
+     "claim": "507 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 507"
+    },
+    {
+     "claim": "4 h 41 min walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 281"
+    },
+    {
+     "claim": "tops out at 835 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 834.8"
+    },
+    {
+     "claim": "mostly footpaths",
+     "verdict": "supported",
+     "evidence": "\"path\": 0.858"
+    },
+    {
+     "claim": "peaks Rocca del Vento 852, Bric del Tesoro 860, Bric degli Scaglioni 691",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Bric del Tesoro\", \"ele_m\": 860"
+    },
+    {
+     "claim": "walkable all year",
+     "verdict": "supported",
+     "evidence": "\"n\": 12"
+    }
+   ],
+   "reason": "All claims match Carta's measured figures and highlights."
+  },
+  "x115": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "waymarked",
+     "verdict": "supported",
+     "evidence": "\"osmc:symbol\": \"blue:blue:shell_modern\""
+    },
+    {
+     "claim": "in PT",
+     "verdict": "supported",
+     "evidence": "\"country\": \"PT\""
+    },
+    {
+     "claim": "36.1 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 36.1"
+    },
+    {
+     "claim": "604 m ascent, 787 m descent",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 604, \"descent_m\": 787"
+    },
+    {
+     "claim": "about 11 hours",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 649"
+    },
+    {
+     "claim": "DIN 33466 time rule",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "Waymark and figures match; only the name of the time rule is unstated, which is not a fact about the route."
+  },
+  "x116": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "16.9 km",
+     "verdict": "supported",
+     "evidence": "\"distance_km\": 16.9"
+    },
+    {
+     "claim": "1,183 m of climbing",
+     "verdict": "supported",
+     "evidence": "\"ascent_m\": 1183"
+    },
+    {
+     "claim": "8 h 49 min walking",
+     "verdict": "supported",
+     "evidence": "\"walking_time_min\": 529"
+    },
+    {
+     "claim": "tops out at 1,978 m",
+     "verdict": "supported",
+     "evidence": "\"max\": 1978.3"
+    },
+    {
+     "claim": "mostly footpaths",
+     "verdict": "supported",
+     "evidence": "\"path\": 0.966"
+    },
+    {
+     "claim": "View Point Qerec, Maja Kij Zhariellave 1,713 m, Shpella e Rratheve",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Maja Kij Zhariellave\", \"ele_m\": 1713"
+    },
+    {
+     "claim": "snow-free June to October",
+     "verdict": "supported",
+     "evidence": "\"to\": \"oct\", \"est\": true, \"from\": \"jun\""
+    }
+   ],
+   "reason": "All figures and highlights match."
+  },
+  "x117": {
+   "verdict": "supported",
+   "claims": [
+    {
+     "claim": "Scottish island",
+     "verdict": "supported",
+     "evidence": "off the west coast of Scotland"
+    },
+    {
+     "claim": "dramatic",
+     "verdict": "supported",
+     "evidence": "rugged mountainous island with spectacular scenery"
+    }
+   ],
+   "reason": "The source supports both parts."
+  },
+  "x118": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "seven days",
+     "verdict": "supported",
+     "evidence": "\"days\": 7"
+    },
+    {
+     "claim": "winter sports and skiing",
+     "verdict": "supported",
+     "evidence": "Hemsedal & Hallingdal: Alpine and Nordic"
+    },
+    {
+     "claim": "Hallingdal, Hemsedal, Geilo",
+     "verdict": "supported",
+     "evidence": "Drive or take the train an hour to Geilo"
+    },
+    {
+     "claim": "Viken",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Norway",
+     "verdict": "supported",
+     "evidence": "\"country\": \"Norway\""
+    }
+   ],
+   "reason": "The place name Viken does not appear in the trip data."
+  },
+  "x119": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "preserved historic port",
+     "verdict": "supported",
+     "evidence": "maintained much of its historic grandeur"
+    },
+    {
+     "claim": "VOC port",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "on the IJsselmeer",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "Zuiderzee Museum recreates fishing life",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "VOC, IJsselmeer and the Zuiderzee Museum are not in the source."
+  },
+  "x120": {
+   "verdict": "unsupported",
+   "claims": [
+    {
+     "claim": "named Sofia in a day",
+     "verdict": "supported",
+     "evidence": "\"name\": \"Sofia in a day\""
+    },
+    {
+     "claim": "in Sofia, BG",
+     "verdict": "supported",
+     "evidence": "\"country\": \"BG\""
+    },
+    {
+     "claim": "city sightseeing walk between the main sights",
+     "verdict": "unsupported",
+     "evidence": ""
+    },
+    {
+     "claim": "10 sightseeing stops",
+     "verdict": "unsupported",
+     "evidence": ""
+    }
+   ],
+   "reason": "The facts list no stops and do not describe a sightseeing walk."
+  }
+ }
+}

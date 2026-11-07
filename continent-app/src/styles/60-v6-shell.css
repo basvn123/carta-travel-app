@@ -123,7 +123,7 @@
 }
 .settings-part-label { font-size: var(--text-label); color: var(--text-2); }
 .settings-part-value { font-size: var(--text-label); font-weight: 500; color: var(--text); }
-.settings-origin-city { margin-right: var(--space-1); }
+.settings-origin-city { margin-right: 0; } /* the space after it in the markup is the gap (T1128) */
 .settings-part-lifestyle .settings-part-value { display: inline-flex; gap: var(--space-2); }
 .settings-vibe { color: var(--text-2); font-weight: 400; }
 .settings-line .is-mono,
@@ -220,18 +220,7 @@
 }
 .settings-end-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .seg-item.is-selected .settings-end-label { color: var(--text); }
-.settings-text-btn { margin-top: var(--space-2); }
 /* The six languages: kit filter chips, wrapping. */
-.settings-langs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-.settings-note {
-  margin: var(--space-2) 0 0;
-  font-size: var(--text-label);
-  color: var(--text-2);
-}
 /* Loading inside the tab (carta-design "Loading"): a still paper-dim block
    in the tab's own region, under the top bar and above the bottom nav, so
    both stay usable while a planner chunk or the full catalogue arrives. */
@@ -319,7 +308,6 @@
    (16-auth.css), and the Lifestyle door carries no tint and no accent glyph
    (DIRECTION.md part 9, "no tint on the Lifestyle door"). */
 .app-header-brand .brand-name { color: var(--text); }
-.header-friends-btn svg { color: var(--text-2); }
 .lifestyle-btn {
   border-color: var(--border);
   background: transparent;
@@ -756,8 +744,7 @@ html.kbd-open .bottom-nav { display: none; }
    panel) sits on the white surface, so it is CloseIcon at 16 px in a --tap box on a
    transparent ground, --ink-soft, never the dark disc it was built as when
    it sat on a photograph. */
-.panel-close,
-.dsheet-bar.is-stuck .panel-close {
+.panel-close {
   width: var(--tap);
   height: var(--tap);
   border: 0;
@@ -766,8 +753,7 @@ html.kbd-open .bottom-nav { display: none; }
   color: var(--text-2);
 }
 @media (hover: hover) {
-  .panel-close:hover,
-  .dsheet-bar.is-stuck .panel-close:hover { background: var(--surface-sunken); color: var(--text); border-color: transparent; }
+  .panel-close:hover { background: var(--surface-sunken); color: var(--text); border-color: transparent; }
 }
 /* The shared date trigger reaches the tap floor on touch (row T410-f); the
    MonthStrip's info button keeps 32 px on a fine pointer, not 28 (row
@@ -939,20 +925,6 @@ html.kbd-open .bottom-nav { display: none; }
   align-items: center;
   justify-content: center;
 }
-.bottom-nav-initial {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
-  color: var(--text);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  line-height: 1;
-}
-.bottom-nav-item.active .bottom-nav-initial { background: var(--surface); color: var(--select-ink); }
 .bottom-nav-item:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 
 /* The settings line on a phone (T622, owner 2026-10-23): four equal

@@ -1,0 +1,43 @@
+# Carta docs site (ROADMAP B6, T1167). Build: mkdocs build --strict=false -d .docs-site
+# Content is docs/ as it is; docs/reference/ is generated (scripts/docs/build_reference.py).
+site_name: Carta docs
+site_description: "How Carta works: handbook, data, logic, runbooks and generated reference"
+docs_dir: docs
+site_dir: .docs-site
+use_directory_urls: true
+exclude_docs: |
+  *.csv
+  *.json
+  tos/
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+extra_css:
+  - assets/ask-docs/ask-docs.css
+extra_javascript:
+  - assets/ask-docs/index.js
+  - assets/ask-docs/core.js
+  - assets/ask-docs/widget.js
+plugins:
+  - search
+markdown_extensions:
+  - tables
+  - toc:
+      permalink: true
+  - admonition
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+validation:
+  omitted_files: ignore
+  absolute_links: ignore
+  unrecognized_links: ignore
+  links:
+    not_found: ignore

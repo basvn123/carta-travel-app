@@ -1,0 +1,70 @@
+{
+ "batch": 8,
+ "rows": [
+  {
+   "s": 76,
+   "task": "T1160",
+   "item": "H8",
+   "branch": "p15-s76-slos",
+   "slug": "slos",
+   "owns": "SLO definitions, the SLO panel, the incident drill script",
+   "reads": "docs/runbooks/incident.md (and INCIDENT_RUNBOOK.md if present), the uptime workflow in .github/workflows/, Execution/P15/T1139-llm-observability.md (ai_model_events), T1120 error tracking (grep Execution/P15 for T1120), T1099 freshness report, T1142-quality-engine-2.md",
+   "scope": "SLOs and an incident drill script (ROADMAP H8): SLOs for uptime, error rate, p95 per API (ask, flights, stays, the Edge Functions) and data freshness, written in one config with their sources (uptime workflow, error tracking, `ai_model_events`, the freshness report); one panel in admin that shows each SLO and its error budget from those sources (fixtures in tests); and an incident drill script that walks a seeded incident end to end against a local stack (break a wire, detect, page, roll back) and writes the drill up. The drill on the live stack is an owner step.",
+   "files": "a new SLO config under `continent-app/config/` (and its line in the config reference), a new admin component and hook, `scripts/ops/drill.*` or `ops/drill/`, `docs/runbooks/incident.md` and a new `docs/runbooks/slo.md`, tests, `continent-app/src/i18n/*.js` (new `admin.slo.*` keys only)",
+   "gate": "None.",
+   "done": "SLOs in config, the admin panel renders from fixtures, the drill script runs locally and is written up."
+  },
+  {
+   "s": 77,
+   "task": "T1161",
+   "item": "H10",
+   "branch": "p15-s77-no-laptop-steps",
+   "slug": "no-laptop-steps",
+   "owns": "box and worker jobs for the laptop-only pipeline steps",
+   "reads": "Execution/P15/T1107-box-schedule.md, T1182 is not run yet (trails lab on the box comes in batch 10, do not do it here), docs/runbooks/build-box.md, run_pipeline.py task list (`docs/reference/tasks.md`), ROADMAP H10 and P-17 in docs/AUDIT-2026-11.md",
+   "scope": "No laptop-only steps (ROADMAP H10): make the Ask index build (`requirements-ml.txt`), the stays scrape, guided search and trip promotion run on the box or the CAX41 worker job, and put the trails lab dump in R2 (the lab move itself is S98 in batch 10: only the dump and its restore here). For each step: the box or worker unit, its schedule tier in the T1107 install, the inputs it needs and where they come from, and a dry run here where the container allows. List every remaining laptop-only step with its reason.",
+   "files": "the box install and timer files under `ops/` (or where T1107 put them), the worker job definitions, `run_pipeline.py` task flags (only where a task needs a box mode), `docs/runbooks/build-box.md`, tests",
+   "gate": "Box access is the owner's: the code and the dry runs here, enabling on the box as an owner step.",
+   "done": "Each of the five steps has a box or worker path with a dry run or test, the remaining laptop-only list is empty or justified, the runbook updated."
+  },
+  {
+   "s": 78,
+   "task": "T1162",
+   "item": "H11",
+   "branch": "p15-s78-scripted-ship",
+   "slug": "scripted-ship",
+   "owns": "the ship script and the toolbox fixes",
+   "reads": "CLAUDE.md (Deploy and Checks sections), continent-app/scripts/build-pages.mjs header, ROADMAP H11, docs/AUDIT-2026-11.md P-18 and P-19, the 'What broke' clusters (grep Execution/P*/_DIGEST.md for encoding, heredoc, worktree, flaky)",
+   "scope": "One scripted ship and a stable toolbox (ROADMAP H11): a `ship` script that runs the deploy steps from CLAUDE.md in order and stops on any failed step, with a dry-run mode (the deploy itself stays owner-triggered: never run it live); the css-routes check inside `npm test`; `PYTHONUTF8=1` set where the pipeline and scripts start; a worktree script that creates and removes worktrees safely on Windows (junctions removed on their own before the tree) and on Linux; and a check that warns when the stale `continent-app/.git` exists (its removal on the owner's laptop is an owner step). Fix the top 'What broke' causes once where a script change can.",
+   "files": "new `scripts/ship.mjs` (or `ops/ship`), `continent-app/package.json` test script, a new `scripts/worktree.*`, the entry points that need `PYTHONUTF8`, tests. Do not edit the box timer files (S77 owns them).",
+   "gate": "None (the deploy stays the owner's).",
+   "done": "ship runs end to end in dry-run and stops on a seeded failure, css-routes runs in npm test, the worktree script tested, the toolbox fixes listed with the causes they close."
+  },
+  {
+   "s": 80,
+   "task": "T1164",
+   "item": "C10",
+   "branch": "p15-s80-security-testing",
+   "slug": "security-testing",
+   "owns": "ZAP baseline workflow, docs/security/asvs.md, auth tests",
+   "reads": "docs/security/threat-model.md, Execution/P15 T1079 web hardening and T1117 AI security reports (grep), Execution/P15/T1157-durable-rate-limit.md, ROADMAP C10",
+   "scope": "Security testing (ROADMAP C10): a ZAP baseline scan workflow that runs against a preview URL (input or the preview branch) and fails on high alerts, proven here against a local preview of the fast build; auth tests against the Edge Functions and Pages Functions (no token, wrong user, expired token, admin without MFA) that run in CI with stubs; and the ASVS L2 checklist in `docs/security/asvs.md` with each requirement met, not applicable, or a gap with a register row. The scan against the real preview deploy is an owner step.",
+   "files": "`.github/workflows/zap.yml`, ZAP rules file, `docs/security/asvs.md`, new auth tests under `continent-app/tests/` or `supabase/tests/`",
+   "gate": "The preview deploy is the owner's.",
+   "done": "ZAP baseline runs locally with its result recorded, auth tests green, the ASVS checklist complete with gaps as register rows."
+  },
+  {
+   "s": 102,
+   "task": "T1186",
+   "item": "D24, D7",
+   "branch": "p15-s102-mountains-lakes",
+   "slug": "mountains-lakes",
+   "owns": "pipeline mountains and lakes fill",
+   "reads": "docs/LAKES.md, the mountains doc under docs/ (grep MAP.md), Execution/P15/T1189-beaches-validation.md, T1143-provenance.md (keep `_src` and `_asof`), ROADMAP D7 and D24",
+   "scope": "Mountains and lakes filled (ROADMAP D24, D7): the route up for mountains (14.8% today) from OSM paths to the summit and the trails layer, and for lakes the water class (55.8% today) from EEA bathing water and national sources, plus the 258 unknown swim flags. Build the fill steps with their sources and terms checked, test them on fixtures and on any cache in the repo, write the expected after numbers; the network run is an owner step. Keep `_src` and `_asof` on every block the steps write.",
+   "files": "`pipeline/mountains/`, `pipeline/lakes/` (fill steps and their writers), `docs/LAKES.md` and the mountains doc (in place), tests",
+   "gate": "Network run as an owner step.",
+   "done": "The two fill steps tested on fixtures, coverage before and after measured on what the container has, the network run command written."
+  }
+ ]
+}

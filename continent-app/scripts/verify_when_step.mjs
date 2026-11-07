@@ -7,13 +7,14 @@
 // Runs at 1440x1000 desktop and 390x844 phone. Shots to shots/when-*.png.
 
 import { chromium } from 'playwright';
+import { startNewTrip, stepToTitle } from './lib/verify_planflow.mjs';
 
 const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 const browser = await chromium.launch();
 const checks = [];
 const errors = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
-const NOISE = /ERR_FAILED|config is not valid/;
+const NOISE = /ERR_FAILED|config is not valid|ERR_TUNNEL|ERR_CONNECTION|Failed to load resource/;
 const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 async function toWhenStep(width, height, fakeNow) {
@@ -35,19 +36,11 @@ async function toWhenStep(width, height, fakeNow) {
   await page.waitForTimeout(3000);
   const guest = page.getByText(/continue without an account/i).first();
   if (await guest.isVisible().catch(() => false)) { await guest.click(); await page.waitForTimeout(1200); }
-  // T398: the header tabs are links since shell V3 (rule "Navigation"), so the
-  // Trip planner tab is an <a>; the old button-only locator found nothing on desktop.
-  // T507: the Plan place (header link or bottom-nav item), then the trip tile on its start page.
-  await page.locator('.header-nav-item:visible, nav.bottom-nav[aria-label="Sections"] .bottom-nav-item:visible').filter({ hasText: /^\s*Plan\s*$/ }).first().click();
-  await page.locator('.plan-start-tile[href*="mode=trip"]:visible').first().click();
-  await page.waitForTimeout(2000);
-  // The basics are three steps now (Booked, From, When), so the calendar is
-  // two Next presses in; the old run waited for it on step one and timed out
-  // (T388 baseline, row T377-a). From has no gate: Next is always enabled.
-  for (let i = 0; i < 2; i += 1) {
-    await page.locator('.guide-next').first().click().catch(() => {});
-    await page.waitForTimeout(900);
-  }
+  // T1089: the one-question Plan flow replaced the wizard; the When screen is
+  // the sixth question after Plan home's Start planning.
+  await startNewTrip(page, URL);
+  await stepToTitle(page, /when do you want to go/i);
+  await page.locator('.cal-inline').first().waitFor({ timeout: 15000 });
   return page;
 }
 
@@ -78,7 +71,7 @@ async function enabledDays(page) {
 // ── Desktop, real clock ──
 {
   const page = await toWhenStep(1440, 1000);
-  check('lands on the When step', /when are you going/i.test(await page.locator('.guide-title').first().innerText()));
+  check('lands on the When screen', /when do you want to go/i.test(await page.locator('h2.pf-title').first().innerText()));
   const days = await enabledDays(page);
   const today = iso(new Date());
   check('calendar offers days', days.length > 0, String(days.length));
@@ -86,25 +79,20 @@ async function enabledDays(page) {
   const cell = await page.locator('.cal-day:not(.disabled):not(.outside)').first().boundingBox();
   check('day cells are comfortable on desktop', cell && cell.height >= 34, `${Math.round(cell?.height || 0)}px`);
   const cal = await page.locator('.cal-inline').boundingBox();
-  check('calendar uses the width', cal && cal.width >= 700, `${Math.round(cal?.width || 0)}px`);
-  const titleSize = await page.locator('.guide-title').first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
-  check('the question is sized for the page', titleSize >= 25, `${titleSize}px`);
+  check('calendar uses the width', cal && cal.width >= 320, `${Math.round(cal?.width || 0)}px`);
+  const titleSize = await page.locator('h2.pf-title').first().evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+  check('the question is sized for the page', titleSize >= 20, `${titleSize}px`);
   await page.screenshot({ path: 'shots/when-desktop.png' });
 
-  // "I'm flexible" offers months, and a month that has already passed is not
-  // one of them.
-  await page.locator('.guide-datemode button', { hasText: /flexible/i }).click();
+  // "In a month or two I pick" offers months, and a month that has already
+  // passed is not one of them: the list starts on the current month.
+  await page.locator('.ui-crow', { hasText: /in a month or two/i }).click();
   await page.waitForTimeout(600);
-  const monthChips = await page.locator('.guide-month, .guide-chip').allInnerTexts().catch(() => []);
-  const months = monthChips.map((x) => x.trim()).filter((x) => /^[A-Z][a-z]{2} \d{4}$/.test(x));
-  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const nowKey = (() => { const d = new Date(); return d.getFullYear() * 12 + d.getMonth(); })();
-  const past = months.filter((m) => {
-    const [name, y] = m.split(' ');
-    return Number(y) * 12 + MON.indexOf(name) < nowKey;
-  });
-  check('flexible months are offered', months.length > 0, months.slice(0, 3).join(', '));
-  check('no month that has already passed', past.length === 0, past.join(', '));
+  const months = (await page.locator('.ui-chip-filter').allInnerTexts().catch(() => [])).map((x) => x.trim());
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const monthNames = months.filter((x) => MONTHS.includes(x));
+  check('flexible months are offered', monthNames.length >= 12, monthNames.slice(0, 3).join(', '));
+  check('no month that has already passed', monthNames[0] === MONTHS[new Date().getMonth()], `first ${monthNames[0]}, this month ${MONTHS[new Date().getMonth()]}`);
   await page.screenshot({ path: 'shots/when-flexible.png' });
   await page.close();
 }

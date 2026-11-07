@@ -125,6 +125,13 @@ _LEAD_CODE_RE = re.compile(
 _TAG_SYNTAX_RE = re.compile(
     r"[=;{}<>|]|\bosm route\b|^\s*(?:node|way|relation)/\d+", re.IGNORECASE)
 _TRAIL_PUNCT = " -:,;/.\u2013\u2014([{"
+_LEAD_PUNCT = " -:,;/.\u2013\u2014"
+# Words a shortened title must not end on: they join two places.
+_DANGLING = frozenset({
+    "via", "to", "and", "the", "of", "from", "over", "by", "at", "in", "on",
+    "de", "du", "des", "la", "le", "les", "di", "del", "della", "da",
+    "et", "und", "zum", "zur", "nach", "von", "am", "im", "an", "naar",
+    "en", "het", "van", "do", "na", "pod", "nad", "per", "por"})
 _SEGMENT_SEPS = (" - ", " \u2013 ", ": ", ", ", " / ")
 
 # Landmark kinds in the order a reader would name the walk after them.
@@ -167,7 +174,10 @@ def cap_title(text, limit=TITLE_MAX):
 
     No ellipsis: the full string is on the ref chip, and a title that ends in
     three dots reads as broken rather than as a name."""
-    s = re.sub(r"\s+", " ", str(text or "")).strip(_TRAIL_PUNCT)
+    # An opening bracket at the start is part of the name ("[C] Cesky
+    # Krumlov"), so only separators are stripped on the left (T1092).
+    s = re.sub(r"\s+", " ", str(text or "")).lstrip(_LEAD_PUNCT) \
+        .rstrip(_TRAIL_PUNCT)
     if len(s) <= limit:
         return s
     cut = s[:limit + 1]
@@ -187,7 +197,18 @@ def cap_title(text, limit=TITLE_MAX):
         out = out[:out.rfind("(")]
     if out.count("[") > out.count("]"):
         out = out[:out.rfind("[")]
-    return out.rstrip(_TRAIL_PUNCT)
+    # T1092: the same for a quote ('"Kobyle' from '"Kobyle Jezioro"'), and
+    # never end on a word that joins two places ("Circular via").
+    if out.count('"') % 2:
+        out = out[:out.rfind('"')]
+    for q, close in (("\u201e", "\u201c"), ("\u00ab", "\u00bb")):
+        if out.count(q) > out.count(close):
+            out = out[:out.rfind(q)]
+    out = out.rstrip(_TRAIL_PUNCT)
+    words = out.split(" ")
+    while len(words) > 1 and words[-1].lower() in _DANGLING:
+        words.pop()
+    return " ".join(words).rstrip(_TRAIL_PUNCT)
 
 
 def split_code(name):
@@ -348,8 +369,184 @@ def shape_place_title(route_type, passes=None, distance_m=None):
     return None
 
 
+# ---------------------------------------------------------------------------
+# T1092 (ROADMAP D7): network prefixes and transliteration
+# ---------------------------------------------------------------------------
+
+# A long network name in front of its own code says the code twice:
+# "European long distance path E7, Andorra" is "E7, Andorra" on a signpost
+# and on a card. Each pattern keeps the code and drops the words around it.
+_NETWORK_RES = (
+    # The E paths, in the languages the catalogue spells them in.
+    (re.compile(r"^(?:European|Europ\u00e4ischer|Europese|Europ\u00e9en|"
+                r"Europejski|Evropsk\u00e1|Eur\u00f3pai|Europsk\u00e1|"
+                r"Europea|Europeo|Europeu|Europ\u00e6isk|Europeisk)\b"
+                r"[^,\-\u2013(\d]*?\b(E)\s?(\d{1,2})\b",
+                re.IGNORECASE), lambda m: f"E{m.group(2)}"),
+    # Grande Randonnee in long form: "Sentier de Grande Randonnee 10".
+    (re.compile(r"^(?:sentier de )?grande? randonn[e\u00e9]e\s*(\d{1,3})\b",
+                re.IGNORECASE), lambda m: f"GR {m.group(1)}"),
+)
+# "E3 - part Poland (west)" reads "E3, Poland (west)".
+_PART_RE = re.compile(r"\s*[-\u2013:]\s*(?:part|teil|deel|partie|parte|"
+                      r"\u010d\u00e1st|cz\u0119\u015b\u0107)\s+", re.IGNORECASE)
+
+
+def strip_network(text):
+    """The name with a long network prefix folded to its code. Unchanged
+    when no pattern matches; never empty when the input was not."""
+    s = re.sub(r"\s+", " ", str(text or "")).strip()
+    for rx, short in _NETWORK_RES:
+        m = rx.match(s)
+        if m:
+            rest = s[m.end():].lstrip()
+            s = short(m) + ((" " + rest) if rest and rest[0] not in ",:-\u2013"
+                            else rest)
+            break
+    s = _PART_RE.sub(", ", s, count=1)
+    return s.lstrip(_LEAD_PUNCT).rstrip(_TRAIL_PUNCT) or str(text or "").strip()
+
+
+# Cyrillic to Latin. One base table (the BGN style most English maps use)
+# and a national table per country, because the signpost at a Serbian
+# trailhead says "Kopaonik" in the Serbian Latin alphabet, a Bulgarian one
+# uses the 2009 streamlined system ("sht" for shta), and Ukrainian has its
+# own 2010 national system. Used only when no Latin name exists in the tags.
+_CYR_BASE = {
+    "\u0430": "a", "\u0431": "b", "\u0432": "v", "\u0433": "g", "\u0434": "d",
+    "\u0435": "e", "\u0451": "e", "\u0436": "zh", "\u0437": "z", "\u0438": "i",
+    "\u0439": "y", "\u043a": "k", "\u043b": "l", "\u043c": "m", "\u043d": "n",
+    "\u043e": "o", "\u043f": "p", "\u0440": "r", "\u0441": "s", "\u0442": "t",
+    "\u0443": "u", "\u0444": "f", "\u0445": "kh", "\u0446": "ts", "\u0447": "ch",
+    "\u0448": "sh", "\u0449": "shch", "\u044a": "", "\u044b": "y", "\u044c": "",
+    "\u044d": "e", "\u044e": "yu", "\u044f": "ya",
+    "\u0456": "i", "\u0457": "yi", "\u0454": "ye", "\u0491": "g",
+    "\u0458": "j", "\u0459": "lj", "\u045a": "nj", "\u0452": "\u0111",
+    "\u045b": "\u0107", "\u045f": "d\u017e", "\u0453": "gj", "\u045c": "kj",
+    "\u0455": "dz",
+}
+# Serbian Latin (also Montenegro, Bosnia, Kosovo) and Macedonian, which
+# share the caron letters on their signposts.
+_CYR_SR = {"\u0436": "\u017e", "\u0445": "h", "\u0446": "c", "\u0447": "\u010d",
+           "\u0448": "\u0161", "\u0439": "j"}
+_CYR_NATIONAL = {
+    "sr": _CYR_SR,
+    "mk": _CYR_SR,
+    "bg": {"\u0445": "h", "\u0449": "sht", "\u044a": "a", "\u044c": "y"},
+    "uk": {"\u0433": "h", "\u0438": "y", "\u0445": "kh"},
+}
+_COUNTRY_CYR = {"RS": "sr", "ME": "sr", "BA": "sr", "XK": "sr", "MK": "mk",
+                "BG": "bg", "UA": "uk"}
+
+# Greek to Latin, ELOT 743 without its rarer rules. Pairs first.
+_GREEK_PAIRS = {"\u03bf\u03c5": "ou", "\u03b1\u03b9": "ai",
+                "\u03b5\u03b9": "ei", "\u03bf\u03b9": "oi",
+                "\u03b3\u03b3": "ng", "\u03b3\u03ba": "gk",
+                "\u03b1\u03c5": "av", "\u03b5\u03c5": "ev"}
+_GREEK = {
+    "\u03b1": "a", "\u03b2": "v", "\u03b3": "g", "\u03b4": "d", "\u03b5": "e",
+    "\u03b6": "z", "\u03b7": "i", "\u03b8": "th", "\u03b9": "i", "\u03ba": "k",
+    "\u03bb": "l", "\u03bc": "m", "\u03bd": "n", "\u03be": "x", "\u03bf": "o",
+    "\u03c0": "p", "\u03c1": "r", "\u03c3": "s", "\u03c2": "s", "\u03c4": "t",
+    "\u03c5": "y", "\u03c6": "f", "\u03c7": "ch", "\u03c8": "ps", "\u03c9": "o",
+}
+
+
+def _cyr_scheme(text, country):
+    scheme = _COUNTRY_CYR.get(str(country or "").upper())
+    if scheme:
+        return scheme
+    low = str(text).lower()
+    if any(c in low for c in "\u0453\u045c\u0455"):
+        return "mk"
+    if any(c in low for c in "\u0452\u045b"):
+        return "sr"
+    if any(c in low for c in "\u0456\u0457\u0454\u0491"):
+        return "uk"
+    return None
+
+
+def _cased(out, src_char, next_upper):
+    if not out or not src_char.isupper():
+        return out
+    # A word in capitals stays in capitals: "ЖАБЉАК" is "ZHABLJAK".
+    return out.upper() if next_upper else out[0].upper() + out[1:]
+
+
+def transliterate(text, country=None):
+    """Cyrillic and Greek letters to Latin; everything else unchanged.
+
+    Pure. The country picks the national table (see _COUNTRY_CYR); without
+    one the letters themselves hint at it, then the base table answers."""
+    s = str(text or "")
+    if not s:
+        return s
+    table = dict(_CYR_BASE)
+    table.update(_CYR_NATIONAL.get(_cyr_scheme(s, country), {}))
+    # Greek accents and diaeresis are dropped; Cyrillic breves are kept
+    # (NFD would split the short i into i plus a breve).
+    s = "".join(unicodedata.normalize("NFC", "".join(
+        c for c in unicodedata.normalize("NFD", ch)
+        if not unicodedata.combining(c))) if "\u0370" <= ch <= "\u03ff"
+        or "\u1f00" <= ch <= "\u1fff" else ch for ch in s)
+    out = []
+    i = 0
+    while i < len(s):
+        ch = s[i]
+        low = ch.lower()
+        nxt = s[i + 1] if i + 1 < len(s) else ""
+        next_upper = nxt.isupper() and ch.isupper()
+        pair = (low + nxt.lower()) if nxt else ""
+        if pair in _GREEK_PAIRS:
+            out.append(_cased(_GREEK_PAIRS[pair], ch, next_upper))
+            i += 2
+            continue
+        if low in _GREEK:
+            out.append(_cased(_GREEK[low], ch, next_upper))
+        elif low in table:
+            out.append(_cased(table[low], ch, next_upper))
+        else:
+            out.append(ch)
+        i += 1
+    return re.sub(r"\s+", " ", "".join(out)).strip()
+
+
+def readable(text, country=None):
+    """A name a reader of the app can say: network prefix folded to its
+    code, then non-Latin letters transliterated. Idempotent."""
+    s = strip_network(text)
+    if s and not is_latin(s) and any(c.isalpha() for c in s):
+        s = transliterate(s, country)
+    return s
+
+
+def wire_name(title, country=None):
+    """The `name` a trail ships with: the stored title (attributes.py, the
+    title ladder) made readable and capped. The export applies it so a wire
+    built before the ladder re-ran still reads clean; on a ladder title it
+    changes nothing."""
+    s = cap_title(readable(title, country))
+    return s or str(title or "").strip() or None
+
+
+def source_label(tags, title=None, shown=None):
+    """The source name, as the mapper wrote it, for its own wire field.
+
+    The relation's plain `name` tag (any script), else the stored title.
+    None when it reads the same as `shown` (the display name), so the page
+    prints it only when it adds something."""
+    tags = tags or {}
+    src = str(tags.get("name") or title or "").strip()
+    if not src or is_raw_osm(src):
+        return None
+    if shown is not None and squash(src) == squash(shown):
+        return None
+    return src[:ORIGINAL_MAX]
+
+
 def title_ladder(tags=None, *, title=None, features=None, passes=None,
-                 route_type=None, distance_m=None, wikidata_label=None):
+                 route_type=None, distance_m=None, wikidata_label=None,
+                 country=None):
     """The title a row ships with, and where it came from.
 
     Returns {"title", "rung", "ref", "original"}: rung names the step that
@@ -372,9 +569,11 @@ def title_ladder(tags=None, *, title=None, features=None, passes=None,
     if label:
         return _finish(label, "wikidata", ref, original)
 
-    src = source_name(tags, fallback=title)
+    src = source_name(tags, fallback=title, country=country)
     if src and not is_raw_osm(src):
-        name, code = split_code(src)
+        # T1092: "European long distance path E7, Andorra" folds to "E7,
+        # Andorra", and a name only in Cyrillic or Greek is transliterated.
+        name, code = split_code(readable(src, country))
         name = _usable(name)
         if name:
             if code and not ref:

@@ -1,0 +1,33 @@
+{
+ "layer": "mountains",
+ "date": "2026-11-07",
+ "reference": {
+  "files": [
+   "seed.csv"
+  ],
+  "source": "Wikidata, OSM, national lists, seed",
+  "n": 21
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 3,
+  "salt": "d23",
+  "n": 21,
+  "population": 21,
+  "countries": 14
+ },
+ "metrics": {
+  "in_rated": 1.0,
+  "coverage": 1.0,
+  "fact.height": 1.0,
+  "fact.position": 0.9524,
+  "fact.prom": null,
+  "fact.route": 0.3333,
+  "fact_share": 0.7833,
+  "agreement_tau": null,
+  "agreement_rho": null,
+  "error_mae": 0.0,
+  "error_mdape": 0.0
+ }
+}

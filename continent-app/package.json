@@ -26,6 +26,7 @@
     "ci:routes": "node scripts/ci/check-routes.mjs",
     "ci:contract": "node scripts/ci/check-contract.mjs",
     "ci:smoke": "node scripts/ci/smoke.mjs",
+    "ci:breakpoints": "node scripts/ci/css-breakpoints.mjs --check",
     "ci:css-routes": "node scripts/css-routes.mjs --check dist/assets",
     "ci": "npm run lint && npm run test && npm run verify && npm run ci:routes && npm run ci:contract && npm run build && npm run ci:css-routes && npm run ci:smoke && npm run build:pages"
   },
@@ -42,6 +43,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^9.39.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",

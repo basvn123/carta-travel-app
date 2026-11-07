@@ -1,0 +1,15 @@
+# Every night at 01:30 Brussels time. The pipeline tiers start at 03:00 or
+# 09:00, so the two never overlap, and the dump needs no pipeline lock.
+# Persistent=true: a night missed while the box was off runs once at next boot.
+[Unit]
+Description=Carta nightly Supabase backup timer (01:30 Europe/Brussels)
+
+[Timer]
+OnCalendar=*-*-* 01:30:00 Europe/Brussels
+RandomizedDelaySec=10min
+Persistent=true
+AccuracySec=1min
+Unit=carta-backup.service
+
+[Install]
+WantedBy=timers.target

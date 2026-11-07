@@ -39,6 +39,10 @@ export const DEVICE_THING_KEYS = [
   'carta.together.',
   'carta.friends.lastSeen',
   'carta.dayChat.v1:',
+  // T1104: which account this device last synced with, and what was in sync.
+  'carta.accountSync.v1',
+  // T1152: the traveller's yes and no on their taste chips.
+  'carta.taste.v1',
 ];
 
 /** IndexedDB databases that hold the traveller's own files. */

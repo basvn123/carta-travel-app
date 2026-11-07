@@ -41,7 +41,7 @@
 .dayws-stay-text small {
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   line-height: 1.3;
 }
@@ -127,12 +127,12 @@
 /* Outlined, not filled: a scrolling list of twelve solid action-brown pills
    turns the accent into wallpaper. It fills on hover, where it is the one
    button being aimed at. */
-.daya-sugg-text b { display: block; font-size: 13px; font-weight: 600; }
+.daya-sugg-text b { display: block; font-size: var(--text-label); font-weight: 600; }
 .daya-sugg-text small { display: block; font-size: 11.5px; color: var(--ink-mute); }
 .daya-tip svg { flex: none; margin-top: 2px; }
 
 /* ---- Tab 3: files and notes ---- */
-.dayf-head h3 { font-family: var(--display); font-size: 16px; font-weight: 500; }
+.dayf-head h3 { font-family: var(--display); font-size: var(--text-lead); font-weight: 500; }
 .dayf-note svg { flex: none; margin-top: 2px; }
 
 /* ---- Responsive ---- */
@@ -475,7 +475,7 @@
 /* Build it myself: Where, then What, then the places, in one column. */
 .dayw-manual .dayex-view { display: inline-flex; flex: none; }
 /* Three places a theme, side by side wherever three fit. */
-@media (min-width: 640px) {
+@media (min-width: 600px) {
   .dayw-manual .dayex-cards > :where(.dayex-card, .pcard) { flex: none; }
 }
 

@@ -102,6 +102,8 @@ export function useExploreCatalog({
         country_n: d.country_n ?? null,
         country_badge: d.country_badge ?? null,
         image: dupHeroes.has(destId) ? null : (d.image?.url || null),
+        // H12 (T1105): the whole record, so the card can ask for our own copy.
+        photo: dupHeroes.has(destId) ? null : (d.image || null),
         climate: d.climate || null,
         // T765: the place taste profile the "For you" sort and the match read.
         taste: d.taste || null,

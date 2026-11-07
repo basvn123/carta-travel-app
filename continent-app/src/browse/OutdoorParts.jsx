@@ -4,9 +4,8 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { usePageArrival } from '../hooks/usePageArrival.js';
 import { useBaseDay } from '../hooks/useBaseDay.js';
 import { useDayView } from '../hooks/useDayView.js';
-import { Button } from '../components/ui/index.js';
+import { Button, PlaceHead, PlaceTag } from '../components/ui/index.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
-import { CountryFlag } from '../components/CountryFlag.jsx';
 import {
   PlusIcon, ChevronRightIcon, CheckIcon, CloseIcon, ParkingIcon, BusIcon, TrainIcon, FerryIcon, MapPinIcon,
 } from '../components/Icons.jsx';
@@ -18,7 +17,7 @@ import { PhotoGallery } from './PhotoGallery.jsx';
 import { KeyFacts } from './KeyFacts.jsx';
 import { SlopeProfile } from './RouteFigures.jsx';
 import { SourcesLine } from './ItemParts.jsx';
-import { JumpBar, PSection, scrollToSection, useWide } from './PageTemplate.jsx';
+import { JumpBar, PriceDock, PSection, scrollToSection, useWide } from './PageTemplate.jsx';
 import '../styles/89-outdoor-page.css';
 
 /**
@@ -55,6 +54,7 @@ import '../styles/89-outdoor-page.css';
  */
 
 /** The model the PDF prints: what this page shows (T430's rule). */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function outdoorPdfModel({ name, hook = null, facts = [], why = [], before = [], sources = [], extra = null, t }) {
   return {
     name,
@@ -73,6 +73,7 @@ export function outdoorPdfModel({ name, hook = null, facts = [], why = [], befor
 
 /** A route's name without the OSM route number in brackets: "Mount Korab
  *  (9/1)" reads "Mount Korab", and the number moves to a badge. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function plainName(name, ref = null) {
   const s = String(name || '').trim();
   const m = s.match(/^(.*\S)\s*\(([^()]*)\)$/);
@@ -86,6 +87,7 @@ export function plainName(name, ref = null) {
 const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
 /** A month as 1 to 12, from a number or a code ("jun", "June"); null else. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function monthIndex(v) {
   if (typeof v === 'number') return v >= 1 && v <= 12 ? Math.round(v) : null;
   const n = MONTH_CODES.indexOf(String(v || '').slice(0, 3).toLowerCase()) + 1;
@@ -93,6 +95,7 @@ export function monthIndex(v) {
 }
 
 /** Month names in the reader's language: short(m) and letter(i0). */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useMonthWords() {
   const { lang } = useI18n();
   return React.useMemo(() => {
@@ -118,6 +121,7 @@ const TRANSIT_ICONS = { bus: BusIcon, train: TrainIcon, tram: TrainIcon, ferry: 
  * how far from the place, free or its price a day) and up to three stops
  * (bus, train, tram or ferry, how far on foot). Absent data, no rows.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function accessRows(access, t, lang) {
   if (!access) return [];
   const dist = (m) => (m >= 1000
@@ -147,6 +151,7 @@ export function accessRows(access, t, lang) {
 }
 
 /** The place's point with the hand-off to the traveller's maps app. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function pointRow(lat, lon, t, href) {
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
   return {
@@ -178,13 +183,15 @@ export function StayLine({ destId, city, km = null, onOpen }) {
       : t('ox.stayPrice', { price: formatMoney(view.day(base.dayEur)), unit: view.unit }))
     : (kmText != null ? t('detail.exitKm', { km: kmText }) : '');
   return (
+    // Named by its visible text (T1128, WCAG 2.5.3: an aria-label that
+    // added "See" no longer held the words on screen).
     <a className="ox-stay" href={featureHref('dest', { id: destId }) || undefined}
-      aria-label={[t('ox.stayNearby'), t('ox.seeTown', { city }), line].filter(Boolean).join(', ')}
       onClick={linkOpener(() => onOpen?.(destId))}>
       <span className="ox-stay-label">{t('ox.stayNearby')}</span>
+      {' '}
       <span className="ox-stay-town">
         <b>{city}</b>
-        {line && <small>{line}</small>}
+        {line && <>{' '}<small>{line}</small></>}
       </span>
       <span className="ox-stay-go" aria-hidden="true"><ChevronRightIcon size={20} /></span>
     </a>
@@ -227,13 +234,7 @@ function OxCard({ card, compact = false }) {
 /** A link styled as a small secondary button (Directions, a booking page). */
 export function OxLinkButton({ href, icon = null, children, external = true }) {
   if (!href) return null;
-  return (
-    <a className="btn btn-secondary btn-sm ox-linkbtn" href={href}
-      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
-      {icon && <span className="btn-icon" aria-hidden="true">{icon}</span>}
-      <span className="btn-label">{children}</span>
-    </a>
-  );
+  return <Button href={href} external={external} size="sm" className="ox-linkbtn" iconStart={icon}>{children}</Button>;
 }
 
 /* ── The shell ──────────────────────────────────────────────────────── */
@@ -328,38 +329,21 @@ export function OutdoorPage({
 
           <div className="pt-body">
             <div className="pt-main">
-              <header className="pt-head" ref={headRef}>
-                <h1 className="pt-title" tabIndex={-1}>{head.title}</h1>
-                {head.sub && <p className="pt-subtitle">{head.sub}</p>}
-                {/* T1039 (owner: the place page's head): where and the rating on
-                    one line with no dot, the standing as tags on one row. */}
-                {(head.where || head.rating) && (
-                  <div className="pt-meta">
-                    {head.where && (
-                      <span className="pt-where">
-                        {head.iso2 && <CountryFlag country={head.iso2} size={15} />}
-                        <span>{head.where}</span>
-                      </span>
-                    )}
-                    {head.rating && (whyRates && !head.rating.unscored ? (
-                      <a className="pt-score" href="#ox-why" onClick={openWhy}>
-                        <ScoreChip rating={head.rating} size="lg" band />
-                      </a>
-                    ) : (
-                      <span className="pt-score"><ScoreChip rating={head.rating} size="lg" band /></span>
-                    ))}
-                  </div>
-                )}
-                {(head.gem || head.rank || head.badges?.length > 0) && (
-                  <ul className="pt-tags">
-                    {head.gem && <li><HiddenGemTag /></li>}
-                    {head.rank && <li className="pt-tag is-rank">{head.rank}</li>}
-                    {(head.badges || []).filter(Boolean).map((b) => (
-                      <li key={b} className="pt-tag is-rank">{b}</li>
-                    ))}
-                  </ul>
-                )}
-              </header>
+              {/* T1039 (owner: the place page's head): where and the rating on
+                  one line with no dot, the standing as tags on one row. */}
+              <PlaceHead title={head.title} sub={head.sub} where={head.where} iso2={head.iso2} headRef={headRef}
+                score={head.rating && (whyRates && !head.rating.unscored ? (
+                  <a className="pt-score" href="#ox-why" onClick={openWhy}>
+                    <ScoreChip rating={head.rating} size="lg" band asText />
+                  </a>
+                ) : (
+                  <span className="pt-score"><ScoreChip rating={head.rating} size="lg" band /></span>
+                ))}
+                tags={[
+                  head.gem && <li key="gem"><HiddenGemTag /></li>,
+                  head.rank && <PlaceTag key="rank">{head.rank}</PlaceTag>,
+                  ...(head.badges || []).filter(Boolean).map((b) => <PlaceTag key={b}>{b}</PlaceTag>),
+                ]} />
 
               {/* T1039: the tabs right under the head, as on the place page. */}
               <JumpBar items={jumps} scrollRef={scrollRef} ready={`${resetKey}:${React.Children.count(children)}`}
@@ -393,24 +377,14 @@ export function OutdoorPage({
       </div>
 
       {!wide && !following && dock && (
-        <div className="pt-dock ox-dock">
-          <div className="pt-dock-text">
-            <p className="pt-dock-price">
-              <span className="pt-dock-fig">{dock.fig}</span>
-              {dock.note ? <span className="pt-dock-unit"> {dock.note}</span> : null}
-            </p>
-            {dock.sub && (
-              onDockSub ? (
-                <Button variant="quiet" size="sm" className="pt-dock-inputs" onClick={onDockSub}>{dock.sub}</Button>
-              ) : <span className="ox-dock-sub">{dock.sub}</span>
-            )}
-          </div>
-          {card?.onAdd && (
+        <PriceDock className="ox-dock" price={dock.fig} unit={dock.note}
+          inputs={onDockSub ? dock.sub : null} onInputs={onDockSub}
+          note={!onDockSub && dock.sub ? <span className="ox-dock-sub">{dock.sub}</span> : null}
+          primary={card?.onAdd && (
             <Button variant="primary" className="pt-dock-cta" iconStart={<PlusIcon size={18} />} onClick={card.onAdd}>
               {t('ox.addDay')}
             </Button>
-          )}
-        </div>
+          )} />
       )}
 
       {toast && <p className="tpage-toast" role="status">{toast}</p>}
@@ -484,6 +458,7 @@ export function HeightProfile({ elevation, plain = false, ...rest }) {
 /* ── Before you go ──────────────────────────────────────────────────── */
 
 /** SAC scale tag (OSM) to its T step. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const SAC_STEP = {
   hiking: 1, mountain_hiking: 2, demanding_mountain_hiking: 3,
   alpine_hiking: 4, demanding_alpine_hiking: 5, difficult_alpine_hiking: 6,

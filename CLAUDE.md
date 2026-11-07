@@ -57,11 +57,11 @@ When one prompt names several tasks, they run as a batch: the same depth of work
 
 ## Checks
 
-- GitHub Actions: `ci.yml` runs on every push and pull request (app lint, `npm test`, fast build; Python ruff, pytest minus `tests/quarantine.txt`, the entry-point check), plus 12 path-triggered workflows (contract, design lint, RLS, rating tests, licences and more). Run `npm test` in `continent-app/` yourself before committing anyway; a test you fix comes off `tests/quarantine.txt`. Run `python -I scripts/docs/check_entry_points.py` after editing CLAUDE.md or MAP.md. For anything a traveller sees, run `npm run dev` and look at every touched screen before committing (in a batch, once at the end).
+- GitHub Actions: `ci.yml` runs on every push and pull request (app lint, `npm test`, fast build; Python ruff, pytest minus `tests/quarantine.txt`, the entry-point check and the docs checks), plus 21 path-triggered workflows (contract, design lint, RLS, rating tests, licences, linking eval and more), two more on every push (secret scan, static analysis) and two on a schedule or by hand (uptime, load); `ls .github/workflows` is the list. Run `npm test` in `continent-app/` yourself before committing anyway; a test you fix comes off `tests/quarantine.txt`. Run `python -I scripts/docs/check_entry_points.py` after editing CLAUDE.md or MAP.md. For anything a traveller sees, run `npm run dev` and look at every touched screen before committing (in a batch, once at the end).
 - Prefer the DOM checks in `continent-app/scripts/verify_*.mjs` over screenshots. Take one screenshot per touched screen and width, only where the look is the point.
 - **Screenshots are never committed.** Save them under `Execution/P{n}/T{n}-shots/` (gitignored); the report names the screens checked and what was seen.
 - **Fast build** for any number a task promises: `cd continent-app && FAST_OUT=../.fastbuild node node_modules/vite/bin/vite.js build --config ../scripts/vite.fast.mjs`. About 10 seconds, with `publicDir` off; its `assets/` and `index.html` match a full build's. From an app worktree, set `CARTA_APP` to that worktree. The full build with `public/` is only for a deploy and needs about 1.3 GB free.
-- **Deploy** (only when the owner asks), from `continent-app/`: `VITE_E2E_SEAMS= npm run build:pages`, `node scripts/css-routes.mjs --check dist/assets`, `node scripts/r2/push-data.mjs --live` (data first), `npx wrangler pages deploy dist --project-name carta-app --branch preview`, then `--branch main`, then `push-data.mjs --live --prune`. The header of `scripts/build-pages.mjs` explains each step.
+- **Deploy** (only when the owner asks): `node scripts/ship.mjs` from the repo root, a dry run first, then `--live` (from `main`), and `--live --from <step>` to resume after a fix. It runs the six steps in order and stops on the first failure: `VITE_E2E_SEAMS= npm run build:pages`, `node scripts/css-routes.mjs --check dist/assets`, `node scripts/r2/push-data.mjs --live` (data first), `npx wrangler pages deploy dist --project-name carta-app --branch preview`, then `--branch main`, then `push-data.mjs --live --prune` (asks for a typed confirmation). The headers of `scripts/ship.mjs` and `scripts/build-pages.mjs` explain each step.
 - Every number the task implies gets a before and an after in the report. If none is implied, write "Not measured".
 - A change to the data contract (a new column, a removed or renamed key) is tested end to end: pipeline run (`run_pipeline.py`), data artifact, wire build, app load.
 
@@ -94,12 +94,13 @@ Every report says how to undo the task, normally `git revert` of its commits. Da
 
 The disk runs full; keep it clean.
 
-- Worktrees go in `C:/Users/Gebruiker/Documents/Portfolio/wt/`. Remove a task's worktree once its branch is merged, then `git worktree prune`.
+- Worktrees go in `C:/Users/Gebruiker/Documents/Portfolio/wt/`. Make and remove them with `node scripts/worktree.mjs add <slug> [--link-node-modules]` and `node scripts/worktree.mjs remove <slug>`, which unlinks every junction before it deletes. Remove a task's worktree once its branch is merged, then `git worktree prune`.
 - Before removing one, delete its junctions on their own (`cmd /c rmdir <link>`, never with `/s`). The `node_modules` and `public/*` links point into the live app, and a recursive delete through them once wiped real files. Never junction `public` into a sparse worktree.
 - Build output (`dist/`, `dist-data/`, `.fastbuild/`) and screenshots are throwaway. `cache/`, `continent-app/public/` and `tools/` are not.
 
 ## Known gotchas
 
+- Write files with the Write or Edit tool, or with a Python script, never with a Bash heredoc: heredocs eat backslashes and backticks (44 "What broke" entries, T1162).
 - `continent-app/.git` is a stale nested repo (no remote, `master` at T915): `git -C continent-app status` there shows hundreds of false changes. Commit app work in this repo; `git status` here is the truth.
 - Schema version 19 is set in each layer's writer, pinned in `continent-app/scripts/ci/contract.mjs` and documented in `docs/SCHEMA.md`; changes reach the wire format and the app's hydration, so they are slow.
 - The dev server watches `public/` and reloads.
@@ -108,4 +109,4 @@ The disk runs full; keep it clean.
 
 ---
 
-**Last updated:** 2026-11-04 (T1051)
+**Last updated:** 2026-11-07 (T1217)

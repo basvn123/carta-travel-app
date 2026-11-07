@@ -19,6 +19,8 @@
 import React, {
   createContext, useContext, useMemo, useState, useCallback, useEffect,
 } from 'react';
+import { detectBrowserLang } from './detect.js';
+import { langFromPath, withLang } from '../lib/langPath.js';
 import { setActiveLocale } from '../lib/localeState.js';
 import { enEager, enWhole } from 'virtual:carta-en';
 
@@ -38,6 +40,7 @@ const enListeners = new Set();
 let enRest = null;
 
 /** Called by the rest chunk as it evaluates. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function addEnglish(strings) {
   Object.assign(en, strings);
   enDone = true;
@@ -83,6 +86,7 @@ const isLang = (code) => code === 'en' || Object.hasOwn(LOADERS, code);
 /** Languages offered in the picker. `flag` is an ISO2 country code for
  *  CountryFlag (the app's SVG flags, no emoji). Labels are endonyms so
  *  everyone can find their own language regardless of the active one. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const LANGUAGES = [
   { code: 'en', flag: 'GB', label: 'English', bcp47: 'en-GB' },
   { code: 'nl', flag: 'NL', label: 'Nederlands', bcp47: 'nl-NL' },
@@ -95,15 +99,20 @@ export const LANGUAGES = [
 const LANG_KEY = 'continent.lang.v1';
 
 function initialLang() {
+  // T1212 (I12): a language prefix in the address (/nl/...) names the
+  // language of this visit and wins over a stored or detected one, so a link
+  // shared in Dutch opens in Dutch. The root (English) says nothing.
+  try {
+    const fromPath = typeof window !== 'undefined' ? langFromPath(window.location.pathname) : null;
+    if (fromPath && isLang(fromPath)) return fromPath;
+  } catch { /* no address */ }
   try {
     const stored = localStorage.getItem(LANG_KEY);
     if (stored && isLang(stored)) return stored;
   } catch { /* storage unavailable */ }
-  // First visit: default to English. (We used to auto-match the browser
-  // language, but the app's editorial data is English-first, so English is the
-  // intended default; a visitor can still switch via the language picker, and
-  // that choice is honored above on the next visit.)
-  return 'en';
+  // First visit (T1170, I8): the first browser language we ship, else English.
+  // A choice made in the picker is stored above and wins from then on.
+  return detectBrowserLang();
 }
 
 const interpolate = (msg, vars) => (vars
@@ -115,6 +124,7 @@ const I18nContext = createContext(null);
 /** Translate without the provider: for the crash screen, which sits above it.
  *  Uses the language stored on the device when its catalogue was loaded this
  *  session, and English otherwise, so it never waits on a download. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function tOutsideProvider(key, vars) {
   const catalog = CATALOGS[initialLang()] || en;
   return interpolate(catalog[key] ?? english(key), vars);
@@ -160,6 +170,19 @@ export function I18nProvider({ children }) {
     return () => { enListeners.delete(done); };
   }, []);
 
+  // T1212 (I12): the address and the document follow the language. The
+  // prefix is written with replaceState (a language change is not a step
+  // Back should undo); query and hash are kept as they are.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try { document.documentElement.lang = lang; } catch { /* no document */ }
+    try {
+      const { pathname, search, hash } = window.location;
+      const next = withLang(pathname, lang);
+      if (next !== pathname) window.history.replaceState(window.history.state, '', `${next}${search}${hash}`);
+    } catch { /* sandboxed */ }
+  }, [lang]);
+
   const setLang = useCallback((code) => {
     if (!isLang(code)) return;
     try { localStorage.setItem(LANG_KEY, code); } catch { /* storage unavailable */ }
@@ -186,6 +209,7 @@ export function I18nProvider({ children }) {
 }
 
 /** { lang, setLang, t, languages }, t(key, vars) with {var} interpolation. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useI18n() {
   const ctx = useContext(I18nContext);
   if (!ctx) {

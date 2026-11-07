@@ -30,62 +30,16 @@
 /* One bordered row, not four floating groups. Search, sort, Lifestyle,
    Filters and the shortlist are a single instrument: read apart they look like
    five unrelated widgets that happen to share a line. */
-.explore-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  padding: 12px 14px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 16px;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-1);
-}
 /* The fill belongs to the INPUT, which is the thing with the rounded border.
    Painting it on the wrapper too left a square beige rectangle poking out
    past the pill's corners. */
-.explore-toolbar-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  row-gap: 10px;
-  flex-wrap: wrap;
-  margin-left: auto;
-}
 /* Filters, Lifestyle and the shortlist star as one group, so the mobile
    rule below can break the row after the sort pills without the group's
    own members splitting across two lines first. */
-.explore-chips {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.explore-sort { flex-wrap: wrap; }
-.explore-sort button { padding: 7px 14px; font-size: 12.5px; }
 /* Filters is the one primary action in this row, the door to everything
    else that can narrow the list, so it carries the accent fill rather than
    an outline. Lifestyle only reshapes what the euro figures mean, so it
    stays a neutral pill beside it. */
-.explore-filter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 36px;
-  padding: 0 14px;
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-  background: var(--accent);
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--on-fill);
-  transition: background .15s, border-color .15s;
-}
-@media (hover: hover) {
-  .explore-filter-btn:hover { background: var(--accent-soft); border-color: var(--accent-soft); }
-}
-.explore-filter-btn .filter-tray-badge { background: var(--paper); color: var(--accent); }
-.explore-fav { height: 36px; padding: 0 12px; }
 
 /* ─── The lifestyle door ───
    One button, drawn the same on Destinations, on Explore and in the account
@@ -107,13 +61,13 @@
   max-width: 300px;
   padding: 0 13px;
   border: 1px solid var(--accent-soft);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--accent-bg);
   color: var(--ink-soft);
   font-size: 12.5px;
   font-weight: 600;
   white-space: nowrap;
-  transition: border-color .15s, background .15s, color .15s;
+  transition: border-color var(--dur-1), background var(--dur-1), color var(--dur-1);
 }
 @media (hover: hover) {
   .lifestyle-btn:hover { border-color: var(--accent); background: var(--accent-bg); color: var(--ink); }
@@ -159,28 +113,25 @@
   font-size: 12.5px;
   color: var(--ink-mute);
 }
-.explore-count-badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  font-size: 12px;
-  font-weight: 600;
-}
 .explore-count .mono, .explore-count b { font-family: var(--mono); }
 .explore-mock {
   margin-left: 10px;
   font-family: var(--ui);
   font-weight: 600;
-  font-size: 11px;
+  font-size: var(--text-micro);
   background: var(--accent-bg);
   color: var(--accent);
   padding: 2px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 
 /* ── The grid and its cards. ── */
+
+/* H12 (T1105): a photograph served from our own copies is wrapped in a
+   <picture>. It must not become a box of its own: the <img> inside keeps
+   laying out (and every rule written for it keeps matching) as if it were
+   the card's direct child. */
+.ladder-pic { display: contents; }
 
 /* No usable photo (none harvested, or the one on file already stands for a
    better-known place). A hole in a photo grid reads as a broken page, so the
@@ -201,65 +152,12 @@
   font-size: var(--text-title);
   font-weight: 600;
 }
-.xp-near-img.hero-blank { gap: 3px; }
-.xp-near-img.hero-blank .hero-blank-mark { font-size: 12px; }
 
 /* The tier seal. The score is a number; this is what the number MEANS, and
    it shows only on the 35% of the catalogue the model actually awarded a
    tier, which is what keeps it a signal rather than a sticker. */
-.xcard-best {
-  position: absolute;
-  left: 8px; bottom: 8px;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 9px;
-  border-radius: 999px;
-  background: rgba(31, 42, 51, 0.62);
-  color: var(--on-fill);
-  font-family: var(--mono);
-  font-size: 10.5px;
-  letter-spacing: 0.02em;
-  backdrop-filter: blur(3px);
-  transition: opacity .15s ease;
-}
 /* The season badge repeats as a row inside the full-card preview once it
    opens, so it steps aside rather than doubling the fact. */
-
-.xcard-name-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-}
-.xcard-sub {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 3px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-.xcard-known {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  margin-top: 7px;
-  font-size: 12px;
-  line-height: 1.42;
-  color: var(--ink-soft);
-  min-height: 34px;
-}
-.xcard-foot {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 9px;
-  padding-top: 9px;
-  border-top: 1px solid var(--rule-soft);
-}
 
 /* ── Cost: a euro figure and the five-step gauge that gives it a scale.
       "EUR 71 a day" means nothing to a reader who does not already know what
@@ -271,15 +169,6 @@
       because pointing at the cheapest option is the one thing this product
       exists to do; the priciest is the accent; the three in between are ink.
       A five-colour ramp would turn a measurement into a mood. ── */
-
-.cost-seg {
-  display: block;
-  width: 4px;
-  height: 10px;
-  border-radius: 1px;
-  background: var(--rule-soft);
-}
-.cost-seg.on { background: var(--ink-mute); }
 
 /* ── The hover preview: what the card cannot fit, over the WHOLE card, not
       just the photo. The real name/rating/country underneath get fully
@@ -316,7 +205,7 @@
      underneath. Even a few percent of transparency let the real name and
      price show through as a faint double-exposure behind the new text. */
   background: rgb(13, 18, 30);
-  animation: xcard-preview-in .22s cubic-bezier(.16, 1, .3, 1);
+  animation: xcard-preview-in var(--dur-2) var(--ease-out);
 }
 @keyframes xcard-preview-in {
   from { opacity: 0; transform: scale(0.97); }
@@ -325,7 +214,7 @@
 /* Each row cascades in a beat behind the last, so the preview reads as
    unfolding rather than switching on. */
 .xcard-preview > :where(.xpop-rank, .xpop-lead, .xpop-months, .xpop-row, .xpop-cost) {
-  animation: xcard-preview-row-in .3s cubic-bezier(.16, 1, .3, 1) both;
+  animation: xcard-preview-row-in var(--dur-3) var(--ease-out) both;
 }
 .xcard-preview > :where(.xpop-rank, .xpop-lead, .xpop-months, .xpop-row, .xpop-cost):nth-child(1) { animation-delay: 0ms; }
 .xcard-preview > :where(.xpop-rank, .xpop-lead, .xpop-months, .xpop-row, .xpop-cost):nth-child(2) { animation-delay: 20ms; }
@@ -338,57 +227,6 @@
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: none; }
 }
-.xcard-preview-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-}
-.xcard-preview-name {
-  font-family: var(--display);
-  font-size: 17px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--on-fill);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.xcard-preview-sub {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.72);
-}
-.xcard-preview-lead {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.88);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
-.xcard-preview-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.84);
-}
-.xcard-preview-row span {
-  /* Two lines, not an ellipsis: three sight names rarely fit one line at card
-     width, and half a name is worth less than a second row. */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
-.xcard-preview-row svg { flex: none; opacity: 0.75; }
 /* The same bed/food receipt the destination panel uses, retuned for a dark
    scrim and a fraction of the room: no provenance line, tighter rows. */
 
@@ -411,7 +249,7 @@
   width: 100%;
   margin-bottom: 11px;
   border: 1px solid var(--rule-soft);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   overflow: hidden;
   background: var(--paper-dim);
 }
@@ -421,7 +259,7 @@
   align-items: center;
   gap: 6px;
   padding: 3px 9px 3px 6px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--bg-card);
   border: 1px solid var(--rule);
   box-shadow: var(--shadow-1);
@@ -429,218 +267,30 @@
 }
 .pm-pin-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; }
 .pm-pin-name { font-size: 11.5px; font-weight: 600; color: var(--ink); }
-.pm-poi-in {
-  display: block;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: var(--ink-soft);
-  border: 2px solid var(--paper);
-  box-shadow: 0 0 0 1px rgba(31, 42, 51, 0.2);
-}
 
 /* ── Panel: what else is within a day's reach. Every row opens a real
       catalogue destination, so a suggestion is never a dead end. ── */
-.xp-nearby { list-style: none; margin: 0; padding: 0; }
-.xp-near {
-  display: grid;
-  grid-template-columns: 48px 1fr auto;
-  align-items: center;
-  gap: 11px;
-  width: 100%;
-  padding: 7px 0;
-  border-bottom: 1px solid var(--rule-soft);
-  text-align: left;
-  background: none;
-  border-left: none; border-right: none; border-top: none;
-  cursor: pointer;
-}
-.xp-near:disabled { cursor: default; }
-.xp-near-img {
-  width: 48px; height: 36px;
-  border-radius: 5px;
-  object-fit: cover;
-  background: var(--paper-dim);
-}
-.xp-near-main { min-width: 0; }
-.xp-near-name {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.xp-near-sub {
-  display: block;
-  font-size: 11px;
-  color: var(--ink-mute);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.xp-near-km {
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink-soft);
-}
-@media (hover: hover) {
-  .xp-near:hover:not(:disabled) .xp-near-name { color: var(--accent); }
-}
-.xp-near:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* ── Panel: how the score is built. A number is a verdict; this is the
       argument, at the model's own published weights. ── */
-.rate-scale { margin: 4px 0 14px; }
-.rate-scale-track {
-  position: relative;
-  height: 6px;
-  margin: 22px 6px 9px;
-  border-radius: 3px;
-  background: var(--paper-dim);
-}
-.rate-scale-tick {
-  position: absolute;
-  top: -4px;
-  width: 1px;
-  height: 14px;
-  background: var(--rule);
-}
-.rate-scale-me { position: absolute; top: -19px; transform: translateX(-50%); }
-.rate-scale-me-val {
-  display: inline-block;
-  padding: 1px 6px;
-  border-radius: 4px;
-  background: var(--ink-soft);
-  color: var(--paper);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-}
-.rate-scale-me.rt-2 .rate-scale-me-val,
-.rate-scale-me.rt-3 .rate-scale-me-val { background: var(--rate); }
-.rate-scale-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px 14px;
-  font-size: 10.5px;
-  color: var(--ink-mute);
-}
-.rate-scale-leg .mono { color: var(--ink-soft); }
-.rate-parts { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
-.rate-part {
-  display: grid;
-  grid-template-columns: 134px 1fr 30px;
-  align-items: center;
-  gap: 10px;
-}
-.rate-part-name {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.rate-part-weight { font-size: 10px; color: var(--ink-mute); }
-.rate-part-track {
-  height: 6px;
-  border-radius: 3px;
-  background: var(--paper-dim);
-  overflow: hidden;
-}
-.rate-part-fill {
-  display: block;
-  height: 100%;
-  border-radius: 3px;
-  background: var(--rate-soft);
-}
-.rate-part-val {
-  text-align: right;
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
 .rate-break-note {
   margin: 11px 0 0;
-  font-size: 11px;
+  font-size: var(--text-micro);
   line-height: 1.45;
   color: var(--ink-mute);
 }
 
 /* The hero is an <img> now, not a background, so it can carry a srcset and
    stop the panel downloading a 1280px photo onto a phone. */
-.panel-hero-img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.section-title-aside {
-  margin-left: auto;
-  font-size: 10.5px;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--ink-mute);
-}
 
 /* The Explore panel is a reading surface, not a receipt strip: it carries a
    map, a photo, a cost breakdown and four lists. 440px was set for the
    fare-era panel and is too narrow for any of that. Desktop only; the phone
    keeps its bottom sheet. */
-@media (min-width: 769px) {
-  .panel.dest-panel.explore-panel { width: clamp(460px, 44vw, 720px); }
-  .explore-panel .dest-panel-scroll { scrollbar-gutter: stable; }
-  .explore-panel .panel-hero { height: 248px; }
-}
 
 /* ── Panel: what is around. ── */
-.xp-pois { list-style: none; margin: 0 0 4px; padding: 0; }
-.xp-poi {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 7px 0;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.xp-poi:last-child { border-bottom: none; }
-.xp-poi-main { flex: 1 1 auto; min-width: 0; }
-.xp-poi-name {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.xp-poi-sub {
-  display: flex;
-  gap: 8px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-.xp-poi-sub .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-.xp-poi-map {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px; height: 28px;
-  border-radius: 50%;
-  border: 1px solid var(--rule);
-  color: var(--ink-soft);
-  transition: border-color .15s, color .15s;
-}
-@media (hover: hover) {
-  .xp-poi-map:hover { border-color: var(--accent); color: var(--accent); }
-}
 
 /* ── Panel: when to go facts under the climate strip. ── */
-.xp-when-fact {
-  margin: 10px 0 0;
-  font-size: 12.5px;
-  color: var(--ink-soft);
-}
 
 /* ── Panel: the live week. ── */
 .xp-weather {
@@ -660,122 +310,17 @@
 }
 .xp-wday-name { font-size: 10.5px; color: var(--ink-mute); }
 .xp-wday-icon { color: var(--ink-soft); }
-.xp-wday-hi { font-family: var(--mono); font-size: 12px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.xp-wday-hi { font-family: var(--mono); font-size: var(--text-caption); color: var(--ink); font-variant-numeric: tabular-nums; }
 .xp-wday-lo { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); font-variant-numeric: tabular-nums; }
 .xp-wday-rain { font-size: var(--text-micro); color: var(--rain-ink); font-family: var(--mono); }
-.xp-source {
-  margin: 9px 0 0;
-  font-size: 10.5px;
-  color: var(--ink-mute);
-}
 
 /* ── Panel: parking. ── */
-.xp-park {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 10px;
-  margin-bottom: 7px;
-}
-.xp-park.is-best { border-color: var(--rule); background: var(--paper); }
-.xp-park-main { flex: 1 1 auto; min-width: 0; }
-.xp-park-kind {
-  display: block;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--ink-mute);
-}
-.xp-park-name {
-  display: block;
-  margin-top: 1px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.xp-park-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 2px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-.xp-park-facts .mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-.xp-park-fee.free { color: var(--green); font-weight: 600; }
-.xp-park-nav {
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  height: 30px;
-  padding: 0 12px;
-  border-radius: 999px;
-  background: var(--ink-fill);
-  color: var(--paper);
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background .15s;
-}
-@media (hover: hover) {
-  .xp-park-nav:hover { background: var(--accent); }
-}
 
 /* ── Panel: events. ── */
-.xp-events { list-style: none; margin: 0; padding: 0; }
-.xp-event {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  padding: 7px 0;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.xp-event:last-child { border-bottom: none; }
-.xp-event-main { flex: 1 1 auto; min-width: 0; }
-.xp-event-name { display: block; font-size: 13px; font-weight: 600; }
-.xp-event-name a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
-@media (hover: hover) {
-  .xp-event-name a:hover { color: var(--accent); border-color: var(--accent); }
-}
-.xp-event-desc {
-  display: block;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.xp-event-month {
-  flex-shrink: 0;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--rate);
-  background: var(--rate-bg);
-  padding: 2px 8px;
-  border-radius: 999px;
-}
 
 /* ── Panel: what to bring. ── */
-.xp-pack-for { margin: 0 0 9px; font-size: 12px; color: var(--ink-mute); }
-.xp-packs { display: flex; flex-wrap: wrap; gap: 7px; }
-.xp-pack {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 11px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  font-size: 12px;
-  color: var(--ink-soft);
-  background: var(--paper);
-}
 
 /* The maps link in the action row is an anchor wearing the fav-button suit. */
-.xp-open-maps { text-decoration: none; }
 
 /* ── The unified filter sheet on wide screens: same surface, sensible
       width, centred. The phone keeps its full-width bottom sheet. ── */
@@ -797,39 +342,21 @@
   /* The right group has to span the row too, not shrink to its contents:
      its own children measure their 100% against IT, so without this the
      two rows below stop short of the search field's right edge. */
-  .explore-toolbar-right { flex-basis: 100%; min-width: 0; margin-left: 0; }
-  .explore-sort, .explore-chips { flex-basis: 100%; }
   /* Each row then fills its width rather than trailing off: the sort pills
      share it evenly, and Lifestyle takes whatever Filters and the star
      leave, so every row ends flush with the search field above it. */
-  .explore-sort button { flex: 1; text-align: center; }
   /* Filters and the star hold their size; Lifestyle absorbs the row and
      gives width back (min-width: 0 lets it shrink past its label, which
      then ellipses). Without that the label keeps the button too wide on a
      narrow phone and the star is pushed onto a row of its own. */
-  .explore-chips { flex-wrap: nowrap; min-width: 0; }
-  .explore-filter-btn, .explore-fav { flex: none; }
-  .explore-chips .lifestyle-btn { flex: 1; min-width: 0; max-width: none; }
-  .explore-chips .lifestyle-btn .lifestyle-btn-label { display: none; }
 }
 
 /* ── Grid breakpoints. ── */
 @media (max-width: 768px) {
   .explore-wrap { padding: 8px 14px calc(30px + env(safe-area-inset-bottom, 0px)); }
-  .explore-toolbar { padding: 10px; gap: 8px; }
-  .explore-chips .lifestyle-btn { padding: 0 11px; gap: 6px; }
   /* The one line stays on phones. It was hidden when it was a category word
      ("A beach town"); now it names actual sights, and a phone has no hover to
      fall back on, so it is the only explanation a phone reader gets. */
-  .xcard-known {
-    -webkit-line-clamp: 2;
-    margin-top: 5px;
-    font-size: 11px;
-    line-height: 1.36;
-    min-height: 30px;
-  }
-  .xcard-foot { gap: 8px; margin-top: 7px; padding-top: 7px; }
-  .rate-part { grid-template-columns: 108px 1fr 28px; }
 
   /* A narrow card is a short card: the name, the country and the receipt
      are what a hover cannot afford to lose, so the description and the
@@ -840,8 +367,6 @@
      bottom anchor) keeps that shorter stack looking placed, not stranded
      under a lot of empty scrim. */
   .xcard-preview { justify-content: center; padding: 32px 11px 10px; gap: 8px; }
-  .xcard-preview-lead, .xcard-preview-row { display: none; }
-  .xcard-preview-name { font-size: 15px; }
 
 }
 
@@ -849,15 +374,6 @@
    padding for the width the labels need. They used to be flex-shrink: 0 in
    a sideways scroller, which at 390px pushed the group nine pixels past the
    card's right edge and out of line with the search field above it. */
-@media (max-width: 768px) {
-  .explore-sort { flex-wrap: nowrap; max-width: 100%; }
-  .explore-sort button {
-    min-width: 0;
-    padding: 7px 4px;
-    font-size: 11.5px;
-    white-space: nowrap;
-  }
-}
 
 /* TRIPS-LAYER-START */
 /* -------------------------------------------------------------------------
@@ -873,13 +389,6 @@
    ------------------------------------------------------------------------- */
 
 /* The Trips controls: one slider for the length, then how busy and how big. */
-.places-tripbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 14px 22px;
-  margin-top: 12px;
-}
 .trip-slider {
   flex: 1 1 280px;
   min-width: 240px;
@@ -900,7 +409,7 @@
   display: inline-flex;
   align-items: baseline;
   gap: 7px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--ink-mute);
 }
@@ -939,7 +448,7 @@
   top: 0;
   transform: translateX(-50%);
   white-space: nowrap;
-  transition: color .15s;
+  transition: color var(--dur-1);
 }
 .trip-slider-tick.on { color: var(--accent); font-weight: 600; }
 /* The end ticks pull inside the track rather than centring on it, so neither
@@ -964,7 +473,7 @@
   background: var(--bg-card);
   border: 1px solid var(--rule-soft);
   text-align: left;
-  transition: box-shadow .18s, border-color .18s;
+  transition: box-shadow var(--dur-2), border-color var(--dur-2);
 }
 @media (hover: hover) {
   .places-icard:hover { box-shadow: var(--shadow-card); border-color: var(--rule); }
@@ -997,7 +506,7 @@
   align-items: center;
   gap: 4px;
   padding: 3px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgba(31, 42, 51, .72);
   color: var(--on-fill);
   font-size: 11.5px;
@@ -1005,7 +514,7 @@
 .itin-card-days b { font-family: var(--mono); font-weight: 600; }
 .itin-card-near {
   padding: 3px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: rgba(246, 245, 242, .92);
   color: var(--ink-soft);
   font-size: 10.5px;
@@ -1024,7 +533,7 @@
   flex: 1;
   min-width: 0;
   font-family: var(--display);
-  font-size: 16px;
+  font-size: var(--text-lead);
   font-weight: 600;
   line-height: 1.22;
   color: var(--on-fill);
@@ -1059,8 +568,8 @@
   gap: 4px;
   padding: 2px 8px;
   border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  font-size: 11px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-micro);
   color: var(--ink-mute);
 }
 .itin-card-chip.on {
@@ -1102,69 +611,8 @@
 /* The trip page. Reuses .tpage chrome; these are the trip-only parts. */
 
 /* The photograph the page leads with, name and score over a scrim. */
-.itin-photohero-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(31, 42, 51, 0.82) 0%, rgba(31, 42, 51, 0.10) 58%);
-  pointer-events: none;
-}
 /* Aligned to .tpage-col, not to the viewport: the title sat hard against the
    left edge while everything under it began 240 px in. */
-.itin-photohero-text {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 0 18px 18px;
-}
-@media (max-width: 720px) {
-  .itin-photohero-text { padding: 0 16px 14px; }
-}
-.itin-photohero-title {
-  margin: 6px 0 0;
-  font-family: var(--display);
-  font-size: clamp(22px, 3.4vw, 34px);
-  font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  color: var(--on-fill);
-}
-.itin-photohero-sub {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 14px;
-  margin-top: 8px;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.9);
-}
-.itin-photohero-score {
-  padding: 2px 9px;
-  border-radius: 8px;
-  background: var(--rate-bg);
-  color: var(--rate);
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.itin-photohero-credit {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  max-width: 45%;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: rgba(31, 42, 51, 0.5);
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.itin-photohero .itin-themes { margin-top: 0; }
 
 /* The map, now inside The route rather than standing in for the hero. */
 .itin-map {
@@ -1175,28 +623,17 @@
   overflow: hidden;
   border: 1px solid var(--rule-soft);
 }
-.itin-hero { position: relative; height: 260px; }
 /* !important is load order, not taste, and the same trap .tpage-map documents:
    maplibre-gl.css arrives with the lazy chunk AFTER styles.css, same
    specificity, later sheet wins. Without it the map drew in a strip down the
    right of the hero with paper beside it. */
-.itin-hero .trip-map,
 .itin-map .trip-map {
   position: absolute !important;
   inset: 0 !important;
 }
 /* A month range is longer than a mono cell, and clipping "Best May-Sep" to
    "Best May-Se" is worse than letting it wrap onto a second line. */
-.itin-sub { flex-wrap: wrap; gap: 6px 12px; }
 .itin-country { display: inline-flex; align-items: center; gap: 5px; }
-.itin-themes { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
-.itin-theme {
-  padding: 2px 9px;
-  border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
 .itin-fact { display: flex; flex-direction: column; gap: 1px; }
 .itin-fact-icon { color: var(--ink-mute); margin-bottom: 3px; }
 .itin-use {
@@ -1207,7 +644,7 @@
   width: 100%;
   height: 44px;
   margin-top: 14px;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--accent);
   color: var(--on-fill);
   font-size: 14.5px;
@@ -1229,9 +666,9 @@
   height: 38px;
   padding: 0 18px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--bg-card);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--ink);
 }
@@ -1265,7 +702,7 @@
   height: 22px;
   display: grid;
   place-items: center;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--ink);
   color: var(--paper);
   font-family: var(--mono);
@@ -1298,7 +735,6 @@
   font-size: 11.5px;
   color: var(--ink-mute);
 }
-.itin-dot { width: 3px; height: 3px; border-radius: 999px; background: var(--rule); }
 .itin-around {
   list-style: none;
   margin: 0;
@@ -1311,7 +747,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .itin-around svg { color: var(--ink-mute); }
@@ -1352,27 +788,12 @@
   list-style: none;
   margin: 6px 0 0;
   padding: 0;
-  font-size: 12px;
+  font-size: var(--text-caption);
   color: var(--ink-soft);
 }
 .itin-out-sights li { margin-bottom: 2px; }
 
 /* Day by day. */
-.itin-days { list-style: none; margin: 0; padding: 0; }
-.itin-day-no {
-  flex: none;
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
-  border-radius: 8px;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 600;
-}
-.itin-day-title { font-size: 14.5px; font-weight: 600; color: var(--ink); }
 .itin-day-leg {
   display: flex;
   align-items: center;
@@ -1386,7 +807,7 @@
 .itin-sight { display: flex; gap: 9px; align-items: flex-start; }
 .itin-sight-img { flex: none; width: 56px; height: 42px; object-fit: cover; border-radius: 7px; }
 .itin-sight-text { min-width: 0; }
-.itin-sight-desc { display: block; margin-top: 1px; font-size: 12px; color: var(--ink-mute); }
+.itin-sight-desc { display: block; margin-top: 1px; font-size: var(--text-caption); color: var(--ink-mute); }
 
 /* What it costs, as a receipt rather than a headline number. */
 .itin-cost { list-style: none; margin: 0; padding: 0; }
@@ -1414,7 +835,7 @@
   color: var(--ink);
 }
 .itin-check-pass svg { color: var(--green); }
-.itin-check-clean { margin-top: 6px; font-size: 13px; color: var(--ink-mute); }
+.itin-check-clean { margin-top: 6px; font-size: var(--text-label); color: var(--ink-mute); }
 .itin-warns { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 7px; }
 .itin-warns li {
   display: flex;
@@ -1436,13 +857,12 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   display: block;
 }
 .itin-shot figcaption { margin-top: 4px; font-size: 11.5px; color: var(--ink-mute); }
 
-@media (max-width: 720px) {
-  .itin-hero { height: 200px; }
+@media (max-width: 700px) {
   .itin-sights { margin-left: 0; }
   .itin-day-leg, .itin-day-note { margin-left: 0; }
 }
@@ -1486,8 +906,8 @@
   gap: 5px;
   padding: 3px 9px;
   border: 1px solid var(--rule-soft);
-  border-radius: 999px;
-  font-size: 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
   color: var(--ink-soft);
   white-space: nowrap;
 }
@@ -1508,7 +928,7 @@
 .tday-shot { flex: none; width: 132px; scroll-snap-align: start; }
 .tday-shot-cap {
   margin-top: 4px;
-  font-size: 11px;
+  font-size: var(--text-micro);
   line-height: 1.35;
   color: var(--ink-mute);
   overflow: hidden;
@@ -1535,7 +955,7 @@
 @media (hover: hover) {
   .tday-more:hover { color: var(--accent); }
 }
-.tday-more-chev { transition: transform .18s ease; }
+.tday-more-chev { transition: transform var(--dur-2) var(--ease-in-out); }
 .tday-more-chev.is-open { transform: rotate(180deg); }
 
 /* The accordion. The panel is always mounted and animates its row height
@@ -1546,9 +966,8 @@
   display: grid;
   grid-template-rows: 0fr;
   visibility: hidden;
-  transition: grid-template-rows .22s ease, visibility 0s linear .22s;
+  transition: grid-template-rows var(--dur-2) var(--ease-in-out), visibility 0s linear var(--dur-2);
 }
-.tday-panel-in { overflow: hidden; min-height: 0; }
 
 /* The practical block: runs of facts, divided by hairlines. */
 .tprac-group + .tprac-group { margin-top: 18px; }
@@ -1566,7 +985,7 @@
   gap: 8px;
   padding: 9px 0;
   border-top: 1px solid var(--rule-soft);
-  font-size: 13px;
+  font-size: var(--text-label);
 }
 .tprac-row.is-link > a {
   display: flex;
@@ -1592,9 +1011,8 @@
 /* On the journey page the disclosure sits in a day article that has no
    number gutter, so it aligns to the text rather than to the trip page's
    33px stop column. */
-.jpage-day .tday-more { margin-left: 0; }
 
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .tday-chips, .tday-shots, .tday-more { margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1635,107 +1053,13 @@
    DRAWER_MIN) and there is no second column to make. */
 
 /* ── The country brief ─────────────────────────────────────────────────── */
-.cbrief-head {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 13px 14px;
-  border-bottom: 1px solid var(--rule-soft);
-  background: var(--paper-dim);
-}
 /* The drawer's close, floating over the photo strip rather than sitting in a
    title bar of its own. Dark plate, because it lands on a photograph. */
-.cbrief-sect { padding: 12px 0; border-bottom: 1px solid var(--rule-soft); }
-.cbrief-sect:last-child { border-bottom: none; }
-.cbrief-h {
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--ink-mute);
-  margin-bottom: 8px;
-}
 
 /* What a day costs: the headline figure, then the two baskets it is made of. */
-.cbrief-day { display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap; }
-.cbrief-day-val {
-  font-family: var(--mono);
-  font-size: 27px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-.cbrief-day-label { font-size: 12.5px; color: var(--ink-soft); }
-.cbrief-band {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  border: 1px solid var(--rule-soft);
-  font-style: normal;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ink-soft);
-}
-.cbrief-band.b0, .cbrief-band.b1 { color: var(--green); border-color: var(--budget-low-rule); }
-.cbrief-band.b3, .cbrief-band.b4 { color: var(--rate-soft); border-color: var(--rate-rule); }
 
 /* Places, as a list with hairlines: a run of related facts, not five cards. */
-.cbrief-list { list-style: none; }
-.cbrief-place {
-  display: flex;
-  gap: 9px;
-  padding: 8px 0;
-  border-top: 1px solid var(--rule-soft);
-}
-.cbrief-place:first-child { border-top: none; padding-top: 0; }
-.cbrief-thumb {
-  width: 52px; height: 42px;
-  flex: none;
-  object-fit: cover;
-  border-radius: 8px;
-  background: var(--paper-dim);
-}
-.cbrief-thumb-none {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--rule-soft);
-  color: var(--ink-mute);
-}
-.cbrief-place-text { min-width: 0; }
-.cbrief-place-text b {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13.5px;
-  font-weight: 600;
-}
-.cbrief-place-text small {
-  display: block;
-  margin-top: 2px;
-  font-size: 11.5px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
-.cbrief-rate {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--rate-soft);
-}
-.cbrief-chip b { font-family: var(--mono); font-size: 12px; color: var(--ink); }
-.cbrief-line {
-  display: flex;
-  align-items: flex-start;
-  gap: 6px;
-  margin-top: 8px;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--ink-soft);
-}
-.cbrief-line svg { flex: none; margin-top: 2px; color: var(--ink-mute); }
+.cbrief-chip b { font-family: var(--mono); font-size: var(--text-caption); color: var(--ink); }
 .cbrief-tips li {
   display: flex;
   gap: 6px;
@@ -1754,13 +1078,6 @@
    this is only the height and the room for the sticky footer. */
 
 /* The photo strip both positions open on. */
-.cbrief-hero-scrim {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 62%;
-  background: linear-gradient(to top, rgba(31, 42, 51, .74), rgba(31, 42, 51, 0));
-  pointer-events: none;
-}
 
 /* The folds. The .dsec grammar, with the brief's own padding so a 420px
    drawer does not read as a page. */
@@ -1782,7 +1099,7 @@
   background: var(--paper);
   padding: 0 0 8px;
   overflow: hidden;
-  transition: border-color .15s, box-shadow .15s;
+  transition: border-color var(--dur-1), box-shadow var(--dur-1);
 }
 .cbrief-rail-img.is-blank small {
   font-size: 10px;
@@ -1804,7 +1121,7 @@
 
 .cbrief-retry button {
   margin-top: 9px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   font-weight: 600;
   color: var(--accent);
   text-decoration: underline;
@@ -1826,16 +1143,16 @@
 }
 .cbrief-trip-text b {
   display: block;
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   line-height: 1.3;
 }
 .cbrief-trip-text small { font-size: 11.5px; color: var(--ink-mute); }
 
 /* Things to do: one sub-rail per group. */
-.cbrief-group-h .mono { margin-left: auto; font-size: 11px; }
+.cbrief-group-h .mono { margin-left: auto; font-size: var(--text-micro); }
 .cbrief-events li {
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.45;
   color: var(--ink-soft);
   padding-left: 10px;
@@ -1854,13 +1171,13 @@
   background: var(--paper-dim);
 }
 .cbrief-fav-text b { display: block; font-size: 12.5px; font-weight: 600; }
-.cbrief-fav-text small { font-size: 11px; color: var(--ink-mute); }
+.cbrief-fav-text small { font-size: var(--text-micro); color: var(--ink-mute); }
 
 /* Getting there. */
 .cbrief-airports li { display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; }
 .cbrief-airports b { font-size: 12.5px; }
 .cbrief-airports span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cbrief-airports small { margin-left: auto; flex: none; font-size: 11px; color: var(--ink-mute); }
+.cbrief-airports small { margin-left: auto; flex: none; font-size: var(--text-micro); color: var(--ink-mute); }
 
 /* Worth knowing: the driving rules read as their own list under the tips. */
 
@@ -1880,12 +1197,6 @@
 /* ── One list of ready-made trips (T5) ─────────────────────── */
 /* The two columns, the map/list toggle and the toolbar row they sat in are
    gone: one ranked list, with the shortlist still editable above it. */
-.wready-col-n {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-}
 /* One column on a phone, two once the step has room, three on a wide desktop.
    The card's photo `sizes` is written to match: 92vw, 45vw, 380px. */
 
@@ -1894,14 +1205,13 @@
   margin-top: 10px;
   padding: 9px 12px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   font-size: 12.5px;
   font-weight: 600;
   color: var(--ink-soft);
 }
 .wready-note svg { color: var(--ink-mute); flex: none; }
-.wready-own { margin-top: 8px; }
 .wready-empty p { font-size: 13.5px; color: var(--ink-soft); }
 
 /* One published trip, as a card: a photograph, where it goes, and two ways on.
@@ -1916,16 +1226,11 @@
   border-radius: 14px;
   background: var(--paper);
   overflow: hidden;
-  transition: border-color .15s, box-shadow .15s;
+  transition: border-color var(--dur-1), box-shadow var(--dur-1);
 }
 /* aspect-ratio, not a fixed 128px: the old box letterboxed a landscape
    photograph on every screen it was drawn at. */
-.wtrip-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(31, 42, 51, 0.45) 0%, rgba(31, 42, 51, 0) 46%);
-}
-.wtrip-days b { font-family: var(--mono); font-size: 12px; }
+.wtrip-days b { font-family: var(--mono); font-size: var(--text-caption); }
 
 /* The lengths this same route was also composed at. Choosing one swaps which
    trip the card IS, so the buttons below always act on what is on screen. */
@@ -1933,7 +1238,7 @@
   min-height: 32px;
   padding: 4px 10px;
   border: 1px solid var(--rule-soft);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-family: var(--mono);
   font-size: 11.5px;
@@ -1948,8 +1253,8 @@
   flex: 1;
   min-height: var(--tap);
   padding: 0 12px;
-  border-radius: 10px;
-  font-size: 13px;
+  border-radius: var(--radius-control);
+  font-size: var(--text-label);
   font-weight: 600;
 }
 
@@ -1968,27 +1273,19 @@
   border-radius: 14px;
   background: var(--paper);
   text-align: left;
-  font-size: 13px;
+  font-size: var(--text-label);
   color: var(--ink-soft);
 }
 .wready-own-card svg { flex: none; color: var(--ink-mute); }
 .wready-own-card b { margin-left: auto; color: var(--accent); white-space: nowrap; }
 
 /* The trip once it is chosen, with the way there under it. */
-.wpicked {
-  margin-top: 18px;
-  padding: 14px 16px 16px;
-  border: 1px solid var(--accent);
-  border-radius: 14px;
-  background: var(--paper);
-  box-shadow: var(--shadow-card);
-}
 
 /* ── What the algorithm did with the cities ───────────────────────────── */
 .wroute-label svg { color: var(--accent); }
 .wroute-stop b {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: var(--text-micro);
   color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
@@ -1997,196 +1294,52 @@
 /* ── Getting there, as a step (T6) ─────────────────────────────────────── */
 /* No top rule and no title of its own any more: it IS the step, and its three
    blocks are PlannerSections like every other captioned block in the wizard. */
-.tlegs-sec .guide-section-title svg { color: var(--accent); }
 
 /* The whole journey on one line, and the way into any part of it. */
-.tstrip {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: var(--space-4);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--rule-soft);
-  border-radius: 12px;
-  background: var(--paper);
-}
-.tstrip-node {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  min-height: var(--tap);
-  padding: 4px 8px;
-  border-radius: 8px;
-  background: none;
-  text-align: left;
-}
-.tstrip-node b { font-size: 12.5px; font-weight: 600; }
-.tstrip-node small {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--ink-mute);
-  font-variant-numeric: tabular-nums;
-}
 /* hover only where there IS one: on a touch screen :hover sticks after a tap,
    so the node a traveller jumped from stays highlighted as if it were the
    selection, which it is not. */
-@media (hover: hover) {
-  .tstrip-node:hover { background: var(--accent-bg); }
-}
-.tstrip-node:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.tstrip-arrow { color: var(--ink-mute); flex: none; }
 
 @media (max-width: 768px) {
   /* One line that scrolls, not a wrapped block. Wrapped, the arrows landed at
      the end of a line pointing at nothing, and the journey stopped reading as
      a journey. Scrolling keeps the shape and keeps the whole strip reachable. */
-  .tstrip {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    /* Bleed to the screen edges so the last node does not look cut off by the
-       card, and pad it back so nothing sits under the gutter. */
-    padding-inline: var(--space-3);
-    scroll-padding-inline: var(--space-3);
-  }
-  .tstrip::-webkit-scrollbar { display: none; }
-  .tstrip-node { flex: none; }
-  .tstrip-node b { white-space: nowrap; }
   /* A scrolling row with no scrollbar has to say it scrolls, or the node cut
      off at the right edge reads as a rendering fault. The mask fades the last
      few pixels instead of slicing them. */
   /* Standard property only: Lightning CSS emits the -webkit- twin, and a
      hand-written one makes it prune to the prefix alone. */
-  .tstrip {
-    mask-image: linear-gradient(to right, var(--mask-solid) calc(100% - 22px), transparent 100%);
-  }
 }
 
 /* "Fly into BCN, home from GRO": worth a line only when the saving is real. */
-.tlegs-jaw svg { flex: none; margin-top: 2px; color: var(--accent); }
 
 /* One anchor date for the whole trip: this is the control the relative-time
    model exists for. */
-.tlegs-shift-btn {
-  width: 30px; height: 30px;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  background: var(--paper);
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--ink-soft);
-}
-.tlegs-shift-note { font-size: 11.5px; color: var(--ink-mute); flex: 1; min-width: 140px; }
 /* The header is the control that opens the leg, so it is a full-width button
    with a tap target, not a row of text with a caret beside it. */
-.tleg-chev { color: var(--ink-mute); transition: transform .15s; flex: none; }
-.tleg-tag svg { color: var(--ink-mute); }
-.tleg-tag.is-booked svg { color: var(--accent); }
 /* What the trip's own composer measured for this hop. */
-.tleg-booked svg { flex: none; margin-top: 2px; color: var(--accent); }
 
 /* Which airports actually fly somewhere near this end of the trip. */
-.tleg-airport b { font-family: var(--mono); font-size: 12px; }
-.tleg-airport small { font-size: 10.5px; color: var(--ink-mute); }
 
 /* What it cost, folded away until somebody has something to put in it. */
-.tleg-addpaid {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: var(--tap);
-  margin-top: var(--space-2);
-  padding: 0 12px;
-  border: 1px dashed var(--rule);
-  border-radius: 10px;
-  background: var(--paper);
-  font-size: 12.5px;
-  color: var(--ink-soft);
-}
-@media (hover: hover) {
-  .tleg-addpaid:hover { border-color: var(--accent); color: var(--accent); }
-}
-.tleg-addpaid svg { color: var(--ink-mute); }
-@media (hover: hover) {
-  .tleg-addpaid:hover svg { color: var(--accent); }
-}
 .tleg-mode {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 7px 11px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--paper);
   font-size: 12.5px;
   color: var(--ink-soft);
-  transition: border-color .15s, color .15s, background .15s;
+  transition: border-color var(--dur-1), color var(--dur-1), background var(--dur-1);
 }
 .tleg-mode svg { color: var(--ink-mute); }
 .tleg-mode.on svg { color: var(--accent); }
 
-.tleg-links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 9px; }
-.tleg-links-label { font-size: 11.5px; color: var(--ink-mute); }
-.tleg-link {
-  padding: 5px 10px;
-  border: 1px solid var(--rule);
-  border-radius: 9px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink);
-  text-decoration: none;
-}
-@media (hover: hover) {
-  .tleg-link:hover { border-color: var(--accent); color: var(--accent); }
-}
-
-.tleg-paid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
-.tleg-field-wide { flex: 1; min-width: 160px; }
-.tleg-input-wrap {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--rule);
-  border-radius: 9px;
-  background: var(--paper);
-  padding-left: 9px;
-}
-.tleg-cur { font-family: var(--mono); font-size: 13px; color: var(--ink-mute); }
-.tleg-input {
-  width: 88px;
-  padding: 8px 9px 8px 6px;
-  /* A stepper on a fare is nonsense: nobody nudges 180 euro one euro at a
-     time, and the arrows eat the width the figure needs. */
-  appearance: textfield;
-  border: none;
-  background: none;
-  font-family: var(--mono);
-  font-size: 13.5px;
-  font-variant-numeric: tabular-nums;
-  outline: none;
-}
-.tleg-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-
-.tlegs-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 2px solid var(--ink);
-}
-.tlegs-total-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-soft); }
-.tlegs-total { font-family: var(--mono); font-size: 18px; font-variant-numeric: tabular-nums; }
-
 /* The same legs on Finish, reporting rather than asking. */
 
 /* ── Narrow ───────────────────────────────────────────────────────────── */
-
-@media (max-width: 719px) {
-  .tleg-field-wide { min-width: 120px; }
-  .tlegs-shift-note { min-width: 100%; }
-}
 @media (prefers-reduced-motion: reduce) {
   .wtrip, .tleg-mode { transition: none; }
 }
@@ -2198,48 +1351,14 @@
    rather than sending them down a different wizard. Two of the three are
    toggles that can both be on; the third is holding nothing, which is the
    commonest answer and used to be sayable only by touching nothing. */
-.guide-booked-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
-.guide-booked-bit {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 13px;
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--paper);
-  text-align: left;
-  transition: border-color .15s, background .15s;
-}
-@media (hover: hover) {
-  .guide-booked-bit:hover { border-color: var(--accent-soft); }
-}
-.guide-booked-bit.on { border-color: var(--accent); background: var(--accent-bg); }
-.guide-booked-bit:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.guide-booked-icon { display: flex; flex: none; color: var(--ink-mute); }
-.guide-booked-bit.on .guide-booked-icon { color: var(--accent); }
-.guide-booked-text { min-width: 0; }
-.guide-booked-text b { display: block; font-size: 14px; font-weight: 600; }
-.guide-booked-text small { display: block; font-size: 11.5px; line-height: 1.4; color: var(--ink-mute); }
-.guide-booked-bit .guide-mode-check { position: absolute; top: 8px; right: 8px; }
 
 /* "Nothing yet" is an answer, not an absence, so it sits on the same row and
    carries the same weight as the two beside it: same card, same accent fill
    when chosen. It reads a shade quieter only while it is off, so the two that
    change the rest of the flow are the ones the eye reaches first. */
-.guide-booked-none:not(.on) { background: var(--paper-dim); color: var(--ink-soft); }
 
-@media (max-width: 1024px) and (min-width: 720px) {
-  .guide-booked-grid { grid-template-columns: 1fr 1fr; }
+@media (max-width: 1023px) and (min-width: 700px) {
   /* Odd card out spans the row rather than leaving a hole beside it. */
-  .guide-booked-none { grid-column: 1 / -1; }
-}
-@media (max-width: 719px) {
-  .guide-booked-grid { grid-template-columns: 1fr; }
 }
 
 .guide-when-reopen {
@@ -2249,7 +1368,7 @@
   margin-top: 10px;
   padding: 8px 12px;
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper);
   font-size: 12.5px;
   font-weight: 600;
@@ -2310,7 +1429,7 @@
     position: absolute;
     left: 2px; right: 2px; bottom: 2px;
     height: 3px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: var(--accent);
   }
   /* Words, not glyphs: the mock bar is text-only, and the underline needs a
@@ -2319,8 +1438,6 @@
   .header-nav-label { display: inline; }
 
   /* Friends folds to its icon; the avatar already says who. */
-  .header-friends-btn { width: 38px; padding: 0; justify-content: center; }
-  .header-friends-label { display: none; }
 
   /* The search field the active browse tab portals in. */
   .header-search-slot {
@@ -2391,62 +1508,21 @@
      (Destinations) or into the bar (Explore, .header-search-slot). This is
      also what retires the origin picker from this page, as the desktop
      design asks. */
-  .explore-toolbar { display: none; }
 
   /* ── Panel furniture. ── */
   /* A group label, so the UI face in sentence case: an uppercase mono
      eyebrow spends the measured-fact face on nothing (carta-design, T193). */
-  .side-label {
-    margin: 0 0 10px;
-    font-family: var(--ui);
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ink-soft);
-  }
   .side-block + .side-block {
     margin-top: 22px;
     padding-top: 18px;
     border-top: 1px solid var(--rule-soft);
   }
-  .side-group + .side-group { margin-top: 16px; }
-  .side-sub {
-    margin: 0 0 7px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--ink-mute);
-  }
-
-  .side-cat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    min-width: 0;
-    padding: 13px 4px 11px;
-    border: 1px solid var(--rule-soft);
-    border-radius: 10px;
-    background: var(--paper-dim);
-    font-size: 11.5px;
-    font-weight: 600;
-    color: var(--ink-soft);
-    transition: color .15s, background .15s, border-color .15s;
-  }
-  .side-cat span {
-    max-width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  .side-cat:hover { color: var(--ink); border-color: var(--rule); }
-  .side-cat.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-  .side-cat.on svg { color: var(--select-ink); }
-  .side-cat:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
   /* Explore's trip kinds wear the same tiles in the panel. */
   .side-panel .kind-rail-scroll { grid-template-columns: 1fr 1fr; gap: 8px; }
   .side-panel .kind-rail-chip {
     padding: 13px 4px 11px;
-    border-radius: 10px;
+    border-radius: var(--radius-control);
     background: var(--paper-dim);
     font-size: 11.5px;
   }
@@ -2462,13 +1538,12 @@
   }
 
   /* Lifestyle, Filters and the shortlist as full-width panel rows. */
-  .side-actions { display: flex; flex-direction: column; gap: 8px; }
   .side-panel .lifestyle-btn {
     width: 100%;
     max-width: none;
     height: auto;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: var(--radius-control);
     justify-content: flex-start;
     white-space: normal;
   }
@@ -2483,34 +1558,12 @@
     font-weight: 500;
   }
   .side-panel .lifestyle-btn .lifestyle-btn-vibe::before { display: none; }
-  .side-filter { width: 100%; justify-content: center; border-radius: 10px; }
-  .side-fav {
-    width: 100%;
-    justify-content: center;
-    padding: 9px;
-    border-radius: 10px;
-    background: var(--paper-dim);
-  }
 
   /* ── Explore cards: nearly all photograph. ── */
-  .xcard-best { display: none; }
 }
 
 /* The panel's own reset, on the refine label's right edge. Desktop-only by
    construction: the label only exists inside .side-panel. */
-@media (min-width: 769px) {
-  .side-label { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-  .side-clear {
-    font-family: var(--ui);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0;
-    text-transform: none;
-    color: var(--accent);
-  }
-  .side-clear:hover { color: var(--accent-soft); }
-  .side-clear:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-}
 
 /* Two nits the first screenshots caught: the pass chip must stay one line,
    and no panel row may stand on pure white. */
@@ -2525,13 +1578,13 @@
    narrow desktop window the row tightens in two steps instead of wrapping.
    First everything gives up spare padding, then the wordmark stands down
    and the logo holds the corner alone. */
-@media (min-width: 769px) and (max-width: 1120px) {
+@media (min-width: 769px) and (max-width: 1100px) {
   .app-header { gap: 10px; padding: 9px 16px; }
   .header-nav { gap: 0; }
   .header-nav-item { margin: 0 2px; }
   .header-search-slot { flex: 0 1 180px; min-width: 110px; }
 }
-@media (min-width: 769px) and (max-width: 910px) {
+@media (min-width: 769px) and (max-width: 1023px) {
   .app-header { gap: 8px; }
   .app-header-brand { gap: 0; }
   .app-header-brand .brand-name { display: none; }
@@ -2539,7 +1592,7 @@
 
 /* Wrapping is decided on flex-basis, not on the shrunken size, so on the
    narrowest desktop step the slot's base width has to come down too. */
-@media (min-width: 769px) and (max-width: 910px) {
+@media (min-width: 769px) and (max-width: 1023px) {
   .header-search-slot { flex-basis: 110px; }
 }
 
@@ -2562,7 +1615,6 @@
   }
   .app-header-brand .brand-mark { width: 32px; height: 32px; }
   .app-header-brand .brand-name { font-size: 22px; color: var(--accent); }
-  .header-friends-btn svg { color: var(--accent); }
 
   /* ── The bottom panel: the accent tick and the accent colour mark where
      you are. The other tabs are --ink-soft: --accent-soft as text is
@@ -2581,70 +1633,13 @@
 
   /* ── Explore: the same bands, the same tiles, the same cards. ── */
   .explore-wrap { padding-top: 8px; }
-  .explore-toolbar {
-    padding: 0 0 12px;
-    border: none;
-    border-radius: 0;
-    background: none;
-    box-shadow: none;
-    gap: 0;
-    border-bottom: 1px solid var(--rule-soft);
-  }
-  .explore-toolbar .kind-rail {
-    border-bottom: 1px solid var(--rule-soft);
-    padding-bottom: 12px;
-  }
-  .explore-toolbar .kind-rail-scroll {
-    display: flex;
-    overflow-x: auto;
-    gap: 7px;
-    padding: 3px 2px 0;
-    scrollbar-width: none;
-  }
-  .explore-toolbar .kind-rail-scroll::-webkit-scrollbar { display: none; }
-  .explore-toolbar .kind-rail-chip {
-    position: relative;
-    flex: 0 0 auto;
-    width: 78px;
-    padding: 12px 4px 8px;
-    border-radius: 10px;
-    background: var(--paper-dim);
-    font-size: 10.5px;
-  }
-  .explore-toolbar .kind-rail-chip::before {
-    content: '';
-    position: absolute;
-    top: 5px; left: 50%;
-    transform: translateX(-50%);
-    width: 14px; height: 2px;
-    border-radius: 2px;
-    background: var(--accent);
-  }
   /* An active kind is a pressed toggle, so --ink-fill, the same as the
      Destinations tiles above (T166); action-brown is kept for the one action
      (T193). */
-  .explore-toolbar .kind-rail-chip.on {
-    background: var(--select-bg);
-    border-color: var(--select-border);
-    color: var(--select-ink);
-  }
-  .explore-toolbar .kind-rail-chip.on::before { background: rgba(255, 255, 255, 0.7); }
-  .explore-toolbar .kind-rail-clear::before { display: none; }
-
-  .explore-toolbar-right { width: 100%; margin-left: 0; padding-top: 10px; gap: 8px; }
-  .explore-sort { display: flex; width: 100%; }
-  .explore-sort button { flex: 1 1 0; padding: 8px 4px; }
-  .results-sort button.on { background: var(--accent); color: var(--on-fill); }
-  .explore-chips { width: 100%; gap: 8px; }
-  .explore-filter-btn { flex: 1 1 0; justify-content: center; height: var(--tap); }
-  .explore-chips .lifestyle-btn { flex: 2 1 0; min-width: 0; justify-content: center; }
-  .explore-fav { height: var(--tap); }
-  .explore-chips .lifestyle-btn { min-height: var(--tap); }
 
   /* The Explore card is nearly all photograph on the phone too: the body
      folds away and the scrim carries the name, the country, the rating and
      the euros a day, exactly as the desktop card reads. */
-  .xcard-best { display: none; }
   /* The star stays a small round mark on the photo, but its tap box is the
      44px floor: a transparent ring around it takes the touch (T193). */
 }
@@ -2714,33 +1709,15 @@
   object-fit: cover;
 }
 /* Phone: one photograph at a time, full width, like a photo pager. */
-@media (max-width: 720px) {
+@media (max-width: 700px) {
   .destp-slide { width: 100%; }
   .destp-slide img { width: 100%; max-width: none; }
 }
 /* The credit is text in the caption band now (T395): see 64-v6-destination.css. */
-.destp-about { font-size: 14px; line-height: 1.65; color: var(--ink); margin: 0 0 8px; }
 
 /* Map layer toggle: one map, three honest layers. */
-.destp-layers { display: flex; gap: 6px; margin: 0 0 10px; flex-wrap: wrap; }
-.destp-layer {
-  height: 30px;
-  padding: 0 12px;
-  border-radius: 999px;
-  border: 1px solid var(--rule);
-  background: var(--bg-card);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ink-soft);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.destp-layer .mono { font-size: 10.5px; color: var(--ink-mute); }
-.destp-layer.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
-.destp-layer.on .mono { color: var(--select-ink); opacity: 0.75; }
 
-.dmap { border-radius: 10px; overflow: hidden; }
+.dmap { border-radius: var(--radius-control); overflow: hidden; }
 
 /* Map pins. The transform lives on the INNER element: maplibre rewrites the
    marker root's inline transform every frame (see DestMap.jsx header). */
@@ -2750,7 +1727,7 @@
   align-items: center;
   gap: 5px;
   padding: 2px 8px 2px 3px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--bg-card);
   border: 1px solid var(--rule);
   box-shadow: var(--shadow-1);
@@ -2805,340 +1782,32 @@
 /* 160px + a 12px gap needs 332px of card interior, and a 390px phone gives
    330px. Two columns lost to two pixels, so every highlight got a full-width
    card and the page ran to 9,750px of scroll. 140px keeps the pair. */
-.destp-hls {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px 10px;
-  margin-top: 12px;
-}
-.destp-hl {
-  position: relative;
-  margin: 0;
-  min-width: 0;
-}
-.destp-hl img,
-.destp-hl-blank {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  border-radius: 10px;
-  background: var(--paper-dim);
-  color: var(--ink-mute);
-  border: 1px solid var(--rule-soft);
-}
-.destp-hl figcaption { padding: 6px 2px 0; }
-.destp-hl-name {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.3;
-}
-.destp-hl-n {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: var(--text-micro);
-  margin-right: 6px;
-  vertical-align: 1px;
-}
-.destp-hl-sub {
-  display: flex;
-  gap: 8px;
-  font-size: 10.5px;
-  color: var(--ink-mute);
-  margin-top: 2px;
-}
-.destp-hl-fact {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-  margin-top: 3px;
-}
-.destp-hl-link { position: absolute; inset: 0 0 auto 0; aspect-ratio: 16 / 10; border-radius: 10px; }
-@media (hover: hover) {
-  .destp-hl-link:hover { background: rgba(31, 42, 51, 0.05); }
-}
 
 /* Things to do. */
-.destp-dos { list-style: none; margin: 0; padding: 0; }
-.destp-do {
-  display: flex;
-  gap: 11px;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.destp-do:last-child { border-bottom: none; }
-.destp-do-type {
-  flex: none;
-  margin-top: 2px;
-  height: fit-content;
-  padding: 2px 8px;
-  border-radius: 5px;
-  font-size: 10px;
-  font-weight: 700;
-  background: var(--paper-dim);
-  color: var(--ink-soft);
-  border: 1px solid var(--rule-soft);
-}
-.destp-do-type.is-trail { background: var(--trail-bg); color: var(--trail-ink); border-color: var(--trail-rule); }
-.destp-do-type.is-festival { background: var(--rate-bg); color: var(--rate); border-color: var(--border); }
-.destp-do-type.is-swim { background: var(--swim-bg); color: var(--swim-ink); border-color: var(--swim-rule); }
-.destp-do-main { min-width: 0; }
-.destp-do-name { font-size: 13.5px; font-weight: 600; color: var(--ink); }
-.destp-do-name a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-.destp-do-ref {
-  font: inherit;
-  font-weight: 600;
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  padding: 0;
-  background: none;
-  border: none;
-  text-align: left;
-}
-.destp-do-detail { display: block; font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; margin-top: 1px; }
-.destp-do-meta { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--ink-mute); margin-top: 3px; }
-.destp-do-evidence { color: var(--rate); font-weight: 600; }
-.destp-book-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
 
 /* Day trips. */
-.destp-trips {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 10px;
-}
-.destp-trip {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 7px;
-  border-radius: 10px;
-  border: 1px solid var(--rule-soft);
-  background: var(--bg-card);
-  text-align: left;
-  min-width: 0;
-}
-@media (hover: hover) {
-  .destp-trip:hover { border-color: var(--rule); box-shadow: var(--shadow-1); }
-}
-.destp-trip img,
-.destp-trip-blank {
-  width: 66px;
-  height: 50px;
-  flex: none;
-  object-fit: cover;
-  border-radius: 7px;
-  background: var(--paper-dim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-mute);
-}
-.destp-trip-main { min-width: 0; }
-.destp-trip-name {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.destp-trip-sub { display: flex; gap: 8px; flex-wrap: wrap; font-size: 11px; color: var(--ink-mute); margin-top: 2px; }
-.destp-trip-why { color: var(--ink-soft); }
 
 /* Insider tips run on the shared flashcard deck since T395 (33-flashcards.css);
    the ochre card and the bullet list rules went with the list. */
 
 /* Nearby nature rows. */
-.destp-nature { list-style: none; margin: 0; padding: 0; }
-.destp-nat {
-  display: grid;
-  grid-template-columns: 52px 1fr auto;
-  align-items: center;
-  gap: 11px;
-  width: 100%;
-  padding: 7px 0;
-  border: none;
-  background: none;
-  text-align: left;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.destp-nature li:last-child .destp-nat { border-bottom: none; }
-.destp-nat img,
-.destp-nat-blank {
-  width: 52px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 8px;
-  background: var(--paper-dim);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-mute);
-}
-.destp-nat-main { min-width: 0; }
-.destp-nat-name {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.destp-nat-sub { display: flex; gap: 8px; font-size: 11px; color: var(--ink-mute); margin-top: 1px; }
-.destp-nat-km { font-size: 11.5px; color: var(--ink-soft); }
-@media (hover: hover) {
-  .destp-nat:hover .destp-nat-name { color: var(--accent); }
-}
 
 /* Parking rows with their navigation deeplinks. */
-.destp-park-list { list-style: none; margin: 0; padding: 0; }
-.destp-park {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.destp-park:last-child { border-bottom: none; }
-.destp-park-main { min-width: 0; }
-.destp-park-name { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
-.destp-park-sub { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--ink-mute); margin-top: 2px; }
-.destp-park-free { color: var(--green); font-weight: 600; }
-.destp-park-nav { display: flex; gap: 6px; flex: none; }
-.destp-park-nav a {
-  display: inline-flex;
-  align-items: center;
-  height: 28px;
-  padding: 0 10px;
-  border-radius: 7px;
-  border: 1px solid var(--rule);
-  background: var(--bg-card);
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--ink);
-  text-decoration: none;
-}
-@media (hover: hover) {
-  .destp-park-nav a:hover { background: var(--paper-dim); }
-}
-
-.destp-further { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.destp-events { margin-top: 10px; }
-
-.destp-credits {
-  font-size: 11px;
-  color: var(--ink-mute);
-  line-height: 1.6;
-  margin: 4px 2px 0;
-}
-.destp-credits a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-
-@media (max-width: 720px) {
-  .destp-head { padding: 14px 14px 10px; }
-  .destp-grid { padding: 0 14px 96px; }
-  .destp-head-actions { width: 100%; }
-  .destp-pdf { flex: 1; justify-content: center; }
-}
 
 /* UNESCO chip in the destination head: ink on paper-dim, a status chip.
    Ochre is kept for ratings (carta-design "Ochre is a measure"; T395 moved
    it off this designation). */
-.destp-unesco {
-  display: inline-flex;
-  align-items: center;
-  height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: var(--paper-dim);
-  border: 1px solid var(--rule);
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 600;
-}
 
 /* Evidence lines in "best things to do". The web sweep earns the ochre of a
    measured finding; the open-data derivation is a quieter grey, because two
    institutions listing something is real but weaker than twenty guides
    naming it, and the type should not claim otherwise. */
-.destp-do-evidence.is-open {
-  color: var(--ink-mute);
-  font-weight: 500;
-}
 
 /* Day trip cards carry the score and the one line that says why, so the card
    is a recommendation rather than a distance. */
-.destp-trip-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
-.destp-trip-score {
-  flex: none;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--rate);
-  background: var(--rate-bg);
-  border-radius: 4px;
-  padding: 1px 6px;
-}
-.destp-trip-why {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  font-size: 11.5px;
-  line-height: 1.45;
-  color: var(--ink-soft);
-  margin-top: 3px;
-}
-.destp-trip { align-items: flex-start; }
-.destp-trip img, .destp-trip-blank { align-self: center; }
 
 /* Festivals: the date is the headline, because "there is a film festival"
    answers nothing on its own. */
-.destp-fests { list-style: none; margin: 0; padding: 0; }
-.destp-fest {
-  display: flex;
-  gap: 12px;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--rule-soft);
-}
-.destp-fest:last-child { border-bottom: none; }
-.destp-fest-when {
-  flex: none;
-  width: 68px;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ink);
-  background: var(--paper-dim);
-  border-radius: 6px;
-  padding: 4px 6px;
-  height: fit-content;
-}
-.destp-fest-when.is-undated {
-  color: var(--ink-mute);
-  background: var(--paper-dim);
-  font-weight: 500;
-}
-.destp-fest-main { min-width: 0; }
-.destp-fest-name { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
-.destp-fest-name a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-.destp-fest-what { display: block; font-size: 11.5px; color: var(--ink-soft); line-height: 1.45; margin-top: 1px; }
 
 /* ==========================================================================
    My trips and Account, browse chrome v4
@@ -3183,21 +1852,6 @@
 }
 /* Deleting an account is the one control in the app that keeps its own
    colour, and the quiet Save is deliberately not a primary. */
-.account-shell .auth-submit.auth-submit-quiet {
-  background: var(--paper);
-  border-color: var(--rule);
-  color: var(--ink);
-}
-@media (hover: hover) {
-  .account-shell .auth-submit.auth-submit-quiet:hover:not(:disabled) {
-    background: var(--paper-dim);
-    border-color: var(--ink);
-  }
-}
-.account-shell .auth-submit.auth-submit-quiet:disabled {
-  color: var(--ink-mute);
-  border-color: var(--rule-soft);
-}
 
 /* Fields stand on the dim ground and lift to paper when they are being
    typed into, which is the way round every field on Destinations and Explore
@@ -3206,7 +1860,7 @@
    was the old chrome's. */
 .account-shell .auth-field input,
 .account-shell .account-feedback-input {
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper-dim);
 }
 .account-shell .auth-field input:focus,
@@ -3218,7 +1872,7 @@
 }
 .account-shell .auth-submit,
 .account-shell .account-invite-btn,
-.account-shell .book-btn { border-radius: 10px; }
+.account-shell .book-btn { border-radius: var(--radius-control); }
 
 /* A door with nothing on it. The route out of the FAQ was a bare line of text
    with an icon, because .account-wide-btn only ever set a width. Given no
@@ -3226,12 +1880,12 @@
    actions wear. */
 .account-shell button.account-wide-btn:not(.auth-submit):not(.book-btn):not(.admin-btn-secondary) {
   border: 1px solid var(--rule);
-  border-radius: 10px;
+  border-radius: var(--radius-control);
   background: var(--paper-dim);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
   color: var(--ink);
-  transition: border-color .15s, color .15s;
+  transition: border-color var(--dur-1), color var(--dur-1);
 }
 @media (hover: hover) {
   .account-shell button.account-wide-btn:not(.auth-submit):not(.book-btn):not(.admin-btn-secondary):hover {

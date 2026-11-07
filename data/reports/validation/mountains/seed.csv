@@ -1,0 +1,22 @@
+id,name,lat,lon,cc,ele,prom,route,source
+seed-mont-blanc,Mont Blanc,45.8326,6.8652,FR,4806,,1,seed
+seed-matterhorn,Matterhorn,45.9763,7.6586,IT,4478,,1,seed
+seed-zugspitze,Zugspitze,47.4211,10.9863,AT,2962,,1,seed
+seed-ben-nevis,Ben Nevis,56.7969,-5.0036,GB,1345,,1,seed
+seed-mulhacen,Mulhacén,37.0535,-3.3112,ES,3479,,1,seed
+seed-etna,Etna,37.7510,14.9934,IT,3357,,1,seed
+seed-galdhopiggen,Galdhøpiggen,61.6364,8.3125,NO,2469,,1,seed
+seed-triglav,Triglav,46.3783,13.8369,SI,2864,,1,seed
+seed-musala,Musala,42.1790,23.5850,BG,2925,,1,seed
+seed-grossglockner,Grossglockner,47.0742,12.6939,AT,3798,,1,seed
+seed-kebnekaise,Kebnekaise,67.9026,18.5136,SE,2097,,1,seed
+seed-olympus,Mount Olympus,40.0856,22.3586,GR,2918,,1,seed
+seed-gerlach,Gerlachovský štít,49.1649,20.1316,SK,2655,,,seed
+seed-snowdon,Snowdon,53.0685,-4.0763,GB,1085,,1,seed
+seed-teide,Teide,28.2724,-16.6425,ES,3715,,1,seed
+seed-dufourspitze,Dufourspitze,45.9369,7.8667,CH,4634,,,seed
+seed-jungfrau,Jungfrau,46.5368,7.9626,CH,4158,,,seed
+seed-eiger,Eiger,46.5775,8.0053,CH,3967,,1,seed
+seed-hvannadalshnukur,Hvannadalshnúkur,64.0150,-16.6753,IS,2110,,1,seed
+seed-carrauntoohil,Carrauntoohil,52.0000,-9.7425,IE,1039,,1,seed
+seed-rysy,Rysy,49.1795,20.0881,SK,2501,,1,seed

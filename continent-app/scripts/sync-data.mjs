@@ -40,6 +40,7 @@ import { shardName } from '../src/lib/poiShard.js';
 import {
   splitCatalogue, mergeCatalogue, buildRankTier, decodeRankTier, RANK_PATH, RANK_FIELDS,
 } from '../src/lib/bootIndex.js';
+import { assertWire } from './ci/contract.mjs';
 import { createHash } from 'node:crypto';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));   // continent-app/scripts
@@ -156,6 +157,24 @@ for (const d of Object.values(data.destinations || {})) delete d.routes;
 //   - the pricing intermediates in DEAD_WIRE_FIELDS: model inputs the app has
 //     never read, only the priced outputs they feed.
 
+// T1143 (D3): the schema 20 provenance stamps of a record's blocks, and their
+// return onto a block the diet rebuilt (a block it dropped stays dropped).
+function provenanceOfBlocks(d) {
+  const out = {};
+  for (const [k, v] of Object.entries(d)) {
+    if (v && typeof v === 'object' && !Array.isArray(v) && ('_src' in v || '_asof' in v)) {
+      out[k] = { _src: v._src, _asof: v._asof };
+    }
+  }
+  return out;
+}
+function restoreProvenance(d, stamps) {
+  for (const [k, st] of Object.entries(stamps)) {
+    const v = d[k];
+    if (v && typeof v === 'object' && !Array.isArray(v) && !('_src' in v)) Object.assign(v, st);
+  }
+}
+
 // Per-destination fields with zero readers anywhere in src/ or scripts/.
 // Verified by grep before removal; re-check before adding to this list, since
 // a field that IS read will fail silently as a missing value, not an error.
@@ -176,6 +195,9 @@ const WHY_EN = {};
   let after = 0;
   let climatePeriod = null;
   for (const [destId, d] of Object.entries(data.destinations || {})) {
+    // T1143 (D3): the diet below rebuilds some blocks (guide, nature,
+    // geonames, climate) as new objects; their _src and _asof come along.
+    const stamps = provenanceOfBlocks(d);
     // Wikivoyage guide -> { text: blurb, url }
     if (d.guide !== undefined) {
       before += JSON.stringify(d.guide).length;
@@ -298,6 +320,7 @@ const WHY_EN = {};
       };
       after += JSON.stringify(d.climate).length;
     }
+    restoreProvenance(d, stamps);
   }
   if (climatePeriod) data.meta.climate_period = climatePeriod;
   console.log(`[sync-data] wire diet: ${Math.round(before / 1024)} KB of unread/verbose blocks -> ${Math.round(after / 1024)} KB (compact climate kept)`);
@@ -307,6 +330,10 @@ const WHY_EN = {};
 sanitizeDeep(data);
 sanitizeDeep(activitiesFull);
 
+// T1133: the payload must satisfy docs/wire.schema.json before it ships;
+// a break stops the sync here, naming each field path, and public/ keeps
+// the last good wire.
+assertWire(data, 'public/app_data.json');
 const core = JSON.stringify(data);
 writeFileSync(resolve(publicDir, 'app_data.json'), core);
 
@@ -361,7 +388,9 @@ console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations
 // public/app_data.json already on disk, for a checkout without the master
 // dataset (a worktree).
 function writeSplit(core) {
-  const n = Object.keys(JSON.parse(core).destinations || {}).length;
+  const parsed = JSON.parse(core);
+  assertWire(parsed, 'the split wires (boot.json, dest/)');   // T1133
+  const n = Object.keys(parsed.destinations || {}).length;
   const destDir = resolve(publicDir, 'dest');
   rmSync(destDir, { recursive: true, force: true });
   mkdirSync(destDir, { recursive: true });

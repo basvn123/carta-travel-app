@@ -29,6 +29,7 @@ import {
  * variant="row" gets the same look. Arrow keys, Home and End move and
  * choose, as the kit Tabs do.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const EXPLORE_TILES = [
   { key: 'places', labelKey: 'places.catPlaces', Icon: CompassIcon },
   { key: 'trails', labelKey: 'places.catTrails', Icon: BootIcon },

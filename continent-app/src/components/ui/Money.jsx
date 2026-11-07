@@ -30,3 +30,19 @@ export function Money({ value, low, high, precision = 'whole', est = false, clas
   const plain = range ? formatMoneyRange(low, high, { precision }) : formatMoney(value, { precision });
   return <span className={cls}>{plain}</span>;
 }
+
+/*
+ * A figure and its unit (T1121, G2): "€87 a person a day", the Money and
+ * then the unit in its own span, with a leading space, in the caller's
+ * class. Written out before in CountryPage, RegionPage and the place page's
+ * similar places.
+ */
+export function MoneyUnit({ value, est = false, unit, unitClassName }) {
+  return (
+    <>
+      <Money value={value} est={est} />
+      <span className={unitClassName}> {unit}</span>
+    </>
+  );
+}
+

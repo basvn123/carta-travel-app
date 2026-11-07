@@ -1,6 +1,7 @@
 import React from 'react';
 import { CalendarIcon, PiggyIcon, StarIcon } from '../components/Icons.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { Button, Money, SlotText } from '../components/ui/index.js';
+import { SLOT } from '../lib/slot.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
@@ -9,7 +10,9 @@ import { openShared } from '../lib/sharedElement.js';
 import { countryName } from '../lib/countryName.js';
 import { useI18n } from '../i18n/index.jsx';
 import { DayPrice, SaveButton } from './ExploreCards.jsx';
+import { PriceNotes } from '../components/PriceNotes.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
+import { WhyChips } from './WhyChips.jsx';
 import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 
 /**
@@ -42,6 +45,7 @@ const CAP = 12;
 
 // Round-robin by country, so a rail of 292 gems does not open on ten
 // Italian tiles: take each country's best in turn until the cap.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function interleaveByCountry(rows) {
   const byCountry = new Map();
   for (const p of rows) {
@@ -58,13 +62,6 @@ export function interleaveByCountry(rows) {
   return out;
 }
 
-const SLOT = '\u0001';
-/** A sentence with a node (the kit's Money) in its one slot. */
-function withNode(text, node) {
-  const at = text.indexOf(SLOT);
-  if (at < 0) return text;
-  return <>{text.slice(0, at)}{node}{text.slice(at + SLOT.length)}</>;
-}
 
 // The rails whose own question already says the month, or the gem: their
 // cards do not repeat it in the status pill.
@@ -89,7 +86,7 @@ function railFacts(rows, month, monthLong, t) {
       key: 'from',
       icon: PiggyIcon,
       figure: true,
-      text: withNode(t('rail.factFrom', { price: SLOT }), <Money value={low.cost.dayEur} est={isNational(low.cost)} />),
+      text: <SlotText text={t('rail.factFrom', { price: SLOT })}><Money value={low.cost.dayEur} est={isNational(low.cost)} /></SlotText>,
     });
   }
   if (month && rows.length && rows.every((p) => inMonth(p, month))) {
@@ -104,7 +101,7 @@ function railFacts(rows, month, monthLong, t) {
       figure: !priced.length,
       text: priced.length
         ? t('rail.factScore', { n: best })
-        : withNode(t('rail.factScore', { n: SLOT }), <span className="storyr-num">{best}</span>),
+        : <SlotText text={t('rail.factScore', { n: SLOT })}><span className="storyr-num">{best}</span></SlotText>,
     });
   }
   return facts;
@@ -114,7 +111,7 @@ function railFacts(rows, month, monthLong, t) {
  *  the gem (whichever the rail's own question does not already say), the
  *  Score sits top right, the flag and country under the title, then the
  *  day price. */
-function PlaceStoryCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t }) {
+function PlaceStoryCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t, eager = false }) {
   let status = null;
   if (!MONTH_RAILS.has(railKey) && inMonth(p, month)) status = t('rail.goodIn', { month: monthShort });
   else if (railKey !== 'gems' && p.rating?.hidden_gem) status = t('common.hiddenGem');
@@ -122,8 +119,8 @@ function PlaceStoryCard({ p, railKey, month, monthShort, onSelect, fav, onToggle
     <StoryCard
       className="xstory"
       photo={(
-        <HeroImage url={p.image} city={p.city} iso2={p.iso2} className="storyr-img" maxWidth={STORY_MAX}
-          sizes={STORY_SIZES} ratio={[4, 5]} />
+        <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} className="storyr-img" maxWidth={STORY_MAX}
+          sizes={STORY_SIZES} ratio={[4, 5]} eager={eager} />
       )}
       status={status}
       score={p.rating?.score != null ? <ScoreChip rating={p.rating} size="sm" /> : null}
@@ -140,17 +137,27 @@ function PlaceStoryCard({ p, railKey, month, monthShort, onSelect, fav, onToggle
         openShared(e.currentTarget.closest('.card'), p.id, () => onSelect(p.id));
       }}
       meta={(
-        <span className="xstory-meta">
-          <CountryFlag country={p.iso2} size={12} />
-          <span>{countryName(p.iso2, p.country)}</span>
-        </span>
+        <>
+          <span className="xstory-meta">
+            <CountryFlag country={p.iso2} size={12} />
+            <span>{countryName(p.iso2, p.country)}</span>
+          </span>
+          {/* T1208 (G9): why it fits this traveller, only with evidence on both sides. */}
+          <WhyChips place={p} className="xstory-why" />
+        </>
       )}
-      price={<><DayPrice cost={p.cost} t={t} /><FriendCardLine destId={p.id} /></>}
+      price={<><DayPrice cost={p.cost} t={t} /><PriceNotes row={p.cost} className="xprice-notes" /><FriendCardLine destId={p.id} /></>}
     />
   );
 }
 
-function Rail({ r, onSelect, favorites, onToggleFav, t, month, lang }) {
+// H12 (T1105): how many cards of the first rails a phone sees before it
+// scrolls. Those load eagerly (the first one is the page's largest paint);
+// every other card waits for the viewport.
+const EAGER_RAILS = 2;
+const EAGER_CARDS = 2;
+
+function Rail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false }) {
   const shown = r.rows.slice(0, CAP);
   const monthLong = month ? new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(2026, month - 1, 15)) : '';
   const monthShort = month ? new Intl.DateTimeFormat(lang, { month: 'short' }).format(new Date(2026, month - 1, 15)) : '';
@@ -167,9 +174,10 @@ function Rail({ r, onSelect, favorites, onToggleFav, t, month, lang }) {
       className="xrails-rail"
       t={t}
     >
-      {shown.map((p) => (
+      {shown.map((p, i) => (
         <PlaceStoryCard key={p.id} p={p} railKey={r.key} month={month} monthShort={monthShort}
-          onSelect={onSelect} fav={favorites?.has(p.id)} onToggleFav={onToggleFav} t={t} />
+          onSelect={onSelect} fav={favorites?.has(p.id)} onToggleFav={onToggleFav} t={t}
+          eager={eager && i < EAGER_CARDS} />
       ))}
     </StoryRail>
   );
@@ -178,7 +186,7 @@ function Rail({ r, onSelect, favorites, onToggleFav, t, month, lang }) {
 /** `hideDoors` (T599): leave out the row of further-rail buttons, for a
  *  page that shows those doors elsewhere (the overview's top). */
 export function ExploreRails({
-  rails, onSelect, favorites, onToggleFav, t, lead = 4, month = null, hideDoors = false,
+  rails, onSelect, favorites, onToggleFav, t, lead = 4, month = null, hideDoors = false, eager = false,
 }) {
   const { lang } = useI18n();
   const visible = rails.filter((r) => r.rows.length >= 4);
@@ -187,9 +195,9 @@ export function ExploreRails({
   const doors = hideDoors ? [] : visible.slice(lead);
   return (
     <div className="xrails">
-      {strips.map((r) => (
+      {strips.map((r, ri) => (
         <Rail key={r.key} r={r} onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t}
-          month={month} lang={lang} />
+          month={month} lang={lang} eager={eager && ri < EAGER_RAILS} />
       ))}
       {doors.length > 0 && (
         <nav className="xrails-doors" aria-label={t('explore.moreRails')}>

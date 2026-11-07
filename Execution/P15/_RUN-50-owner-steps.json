@@ -1,0 +1,1109 @@
+[
+ {
+  "id": "T1086-a",
+  "title": "Dry run the backup and restore runbook",
+  "why": "Nothing in it was executed against a live service.",
+  "where": "docs/runbooks/backup-restore.md",
+  "how": [
+   "Take a hand dump with ops/backup_supabase.sh",
+   "Restore it with ops/restore_supabase.sh",
+   "On the newest Supabase dump run: rclone cat (the dump) piped to gpg --decrypt piped to pg_restore --list, and check it lists the tables"
+  ]
+ },
+ {
+  "id": "T1086-b",
+  "title": "Confirm the weekly Supabase dump runs on the box",
+  "why": "A missing SUPABASE_DB_URL or key makes it skip with only a log line.",
+  "where": "docs/runbooks/backup-restore.md",
+  "how": [
+   "Grep dump ~/logs/weekly.log on the box",
+   "Check CARTA_BACKUP_KEY and SUPABASE_DB_URL in ~/.config/carta/env",
+   "Gpg --import carta-backups.pub.asc if the key is missing"
+  ]
+ },
+ {
+  "id": "T1086-c",
+  "title": "Re-verify dashboard steps and the refund gap",
+  "why": "Only repo objects were checked, not Stripe, Supabase or Cloudflare screens.",
+  "where": "docs/runbooks/refund.md",
+  "how": [
+   "Walk refund.md steps 3 to 5 once on a test sale",
+   "Check the alert and rollback lines in incident.md sections 4 and 5",
+   "Decide on a refund column for pass_grants"
+  ]
+ },
+ {
+  "id": "T1087-b",
+  "title": "Make the database checks required on main",
+  "why": "A red admin harness, RLS or RPC run should block a merge, and today none of them does.",
+  "where": ".github/workflows/admin-harnesses.yml",
+  "how": [
+   "GitHub, repo Settings",
+   "Branches (or Rules)",
+   "Edit the rule for main",
+   "Require status checks",
+   "Add `harnesses` (admin-harnesses), `rpc-security` (admin-rpc-security) and `rls-policies` (rls-policies)",
+   "Save"
+  ]
+ },
+ {
+  "id": "T1087-c",
+  "title": "Confirm live definer functions pin search_path",
+  "why": "The harness proves the migrations, not hand edits on the live project.",
+  "where": "Execution/P15/T1087-admin-harness-ci.md",
+  "how": [
+   "Supabase Dashboard",
+   "SQL editor",
+   "Paste the read-only query from the Commands run section",
+   "Check no `public` row has a null path, `$user` or a client-writable schema",
+   "Note the count next to the harness's 120"
+  ]
+ },
+ {
+  "id": "T1090-a",
+  "title": "Check the strict style-src on the preview deploy",
+  "why": "The CSP without 'unsafe-inline' only proves itself on the real Pages host and real Safari.",
+  "where": "Execution/P15/T1090-csp-no-inline-style.md",
+  "how": [
+   "After the next deploy to the preview branch, run curl -sI https://preview.carta-app.pages.dev/ and look at the content-security-policy line: style-src is self plus two sha256 hashes, no unsafe-inline",
+   "Open the preview in Chrome with the DevTools console open; walk the map, a destination, a trail and the trip planner; no \"Refused to apply inline style\" line",
+   "Open a prerendered page (any /spain/trails/... link from the sitemap): the reading column is styled and the console is clean; if not, re-run the prerender upload (node scripts/prerender/build.mjs, then push.mjs)",
+   "Print a saved trip: the print view is styled",
+   "Repeat the trail and print checks on an iPhone in Safari"
+  ]
+ },
+ {
+  "id": "T1092-a",
+  "title": "Rebuild the trails wire with the new names and per-day difficulty",
+  "why": "The code is merged, but the shipped wire still has 2,865 very-hard rows (Veluwe Zwerfpad among them) and 643 Cyrillic or Greek names until the lab reruns.",
+  "where": "Execution/P15/T1092-trail-names.md",
+  "how": [
+   "On the box with trailslab up (cd tools/trailslab && docker compose up -d)",
+   "Python run_pipeline.py trails_attributes",
+   "Python run_pipeline.py trails_rate (exports continent-app/public/trails/)",
+   "Python pipeline/trails/difficulty_gate.py must pass",
+   "Check NL.json id 114362 has f.g moderate and f.d 14",
+   "Push data with the next deploy (node scripts/r2/push-data.mjs --live)"
+  ]
+ },
+ {
+  "id": "T1092-b",
+  "title": "Look at the trail card and trail page on a real phone after the rebuild",
+  "why": "The browser check could not run in the cloud container (data host blocked).",
+  "where": "Execution/P15/T1092-trail-names.md",
+  "how": [
+   "Open Explore, Trails, Netherlands, find Veluwe Zwerfpad: the card says Long, the page grade fact says Long, 14 days",
+   "Open an E-path stage in Andorra or Poland: the title reads E7, Andorra (or E3, Poland (west)) with Also called and the full name under it",
+   "Repeat at desktop width"
+  ]
+ },
+ {
+  "id": "T1085-c",
+  "title": "Confirm backups on the live build box",
+  "why": "The code cannot show that the box has the keys and that dumps reach R2.",
+  "where": "Execution/_OPEN.md",
+  "how": [
+   "Run `rclone lsf r2:carta/archive/db/supabase/` on the box",
+   "Check `CARTA_BACKUP_KEY` and pg_dump 17+ exist",
+   "Check R2 lifecycle rules and Supabase's own backup setting"
+  ]
+ },
+ {
+  "id": "T1088-a",
+  "title": "Watch the first supply-chain.yml run",
+  "why": "The gates are unverified on GitHub and OSV was unreachable from the cloud container.",
+  "where": ".github/workflows/supply-chain.yml",
+  "how": [
+   "Push or open a PR touching a lockfile",
+   "Open the Actions run",
+   "Fix any failing step"
+  ]
+ },
+ {
+  "id": "T1088-d",
+  "title": "Re-sync venvs and run the pipeline on the new pins",
+  "why": "Lxml 6, geopandas 1.1 and others were only unit-tested.",
+  "where": "constraints.txt",
+  "how": [
+   "On the box and laptop run `pip install --only-binary=:all: -r requirements.txt -c constraints.txt`",
+   "Run one weekly pipeline",
+   "Compare output"
+  ]
+ },
+ {
+  "id": "T1093-a",
+  "title": "Harvest trail photos and rebuild the trails wire",
+  "why": "The container cannot reach Commons or the trails lab, and the wire only gets the licence fields at the next export.",
+  "where": "pipeline/trails/trail_images.py",
+  "how": [
+   "Start the lab (`cd tools/trailslab && docker compose up -d`)",
+   "After T1092-a run `python pipeline/trails/trail_images.py --countries DE,IT,GB,FR --worst-first --pace 0.8 --max-minutes 240` and repeat the same command until it prints no \"routes left for the next run\" (about 8,200 routes without a photo, about 7 requests each, so roughly 12 hours in total at 0.8 s",
+   "`--pace 0.5` cuts it to about 8 hours",
+   "This is an estimate from the route counts, not a measurement)",
+   "Then `python run_pipeline.py --only trails_rate` to export the wire",
+   "Commit the changed `continent-app/public/trails/` files"
+  ]
+ },
+ {
+  "id": "T1093-b",
+  "title": "Check the rebuilt wire and one credited page",
+  "why": "Proves the after number and the credit line.",
+  "where": "Execution/P15/T1093-trail-photos.md",
+  "how": [
+   "Per country count rows with `img` in `continent-app/public/trails/{DE,IT,GB,FR}.json` and note the percentage",
+   "Run `cd continent-app && node scripts/ci/check-contract.mjs`",
+   "Open a trail page that has a photo on a phone and read the credit under it"
+  ]
+ },
+ {
+  "id": "T1095-a",
+  "title": "Run the intro harvest",
+  "why": "The Wikipedia and Wikivoyage APIs are not reachable from the cloud box.",
+  "where": "pipeline/dossier/harvest_place_intros.py",
+  "how": [
+   "From the repo root run `python pipeline/dossier/harvest_place_intros.py` (about 300 places, 2 sources, 0.4 s pace, resumable, about 10 minutes)",
+   "Run `python pipeline/dossier/harvest_place_intros.py --report`",
+   "Open `cache/dossier/place_intros.json` and read 10 rejected rows"
+  ]
+ },
+ {
+  "id": "T1095-b",
+  "title": "Rebuild dossiers and count the bar",
+  "why": "The merge happens in the dossier build.",
+  "where": "pipeline/dossier/build_dossier.py",
+  "how": [
+   "Run `python pipeline/dossier/build_dossier.py --all` (or `python run_pipeline.py dossier`)",
+   "Run the prerender",
+   "Compare `bar.intro` passes against the 28 before",
+   "Look at one FR, one RS and one IT place page at phone and desktop width"
+  ]
+ },
+ {
+  "id": "T1098-a",
+  "title": "Prepare the nights CSV",
+  "why": "The cloud box cannot reach ONS, VisitBritain or the national offices.",
+  "where": "cache/uk_crowds_nights.csv",
+  "how": [
+   "Find the ONS / VisitBritain regional monthly nights table (ITL1), and the monthly overnight stays for BA, FO, MD, XK",
+   "Write one long CSV with columns geo,name,year,month,nights (geo = ITL1 code such as TLK, or BA/FO/MD/XK",
+   "12 months per year, 2 to 3 recent years)"
+  ]
+ },
+ {
+  "id": "T1098-b",
+  "title": "Download ITL1 boundaries",
+  "why": "Point-in-polygon needs the region shapes.",
+  "where": "cache/uk_itl1_boundaries.geojson",
+  "how": [
+   "Download the ITL1 boundaries GeoJSON (BUC or BGC) from the ONS Open Geography Portal (OGL v3)",
+   "Save as cache/uk_itl1_boundaries.geojson"
+  ]
+ },
+ {
+  "id": "T1098-c",
+  "title": "Run and count",
+  "why": "The after figure comes from the real master.",
+  "where": "run_pipeline.py",
+  "how": [
+   "Run `python run_pipeline.py --only crowding` if the Eurostat layer is stale, then `python run_pipeline.py --only crowding_uk`",
+   "Count GB places with crowding.monthly",
+   "Open 5 UK place pages and check When to go"
+  ]
+ },
+ {
+  "id": "T1100-a",
+  "title": "Run the D13 50-pair check on the real flight sweep",
+  "why": "The container only had fixture fares, and D13 is done when the pairs are checked on real fares.",
+  "where": "continent-app/scripts/way_choice_pairs.mjs",
+  "how": [
+   "Copy the sweep files BRU.json, AMS.json, CDG.json, MUC.json, MAD.json from data/flights/ into one folder",
+   "Cd continent-app",
+   "Node scripts/way_choice_pairs.mjs --flights-dir <that folder>",
+   "Check that no pair of 700 km or more with a flight opens on a ground way and that short hops do not fly",
+   "Paste the summary lines into a short follow-up note or the next report"
+  ]
+ },
+ {
+  "id": "T1100-b",
+  "title": "Confirm the way.choice values",
+  "why": "They decide which way every card opens on and are estimates, not measured.",
+  "where": "continent-app/config/pricing.json",
+  "how": [
+   "Open continent-app/config/pricing.json rule way.choice",
+   "Confirm or change fly_km 700, eur_per_hour 15, plane_overhead_hours 3",
+   "Rerun npm test"
+  ]
+ },
+ {
+  "id": "T1100-c",
+  "title": "Look at the place page trip card on a real phone",
+  "why": "The cloud check had no flight sweep, so the plane row was never on screen.",
+  "where": "continent-app/src/browse/DestPriceCard.jsx",
+  "how": [
+   "Open Bergen and Taormina with From Brussels: the card opens on the plane, the car or train keeps its price and the Cheapest mark",
+   "Open Annecy: the why caption reads well"
+  ]
+ },
+ {
+  "id": "T1101-a",
+  "title": "Add the live failing query to the Ask golden set",
+  "why": "The Workers AI model is not reachable from the cloud container.",
+  "where": "continent-app/scripts/ask-eval-live.mjs",
+  "how": [
+   "Run `node continent-app/scripts/ask-eval-live.mjs` against the deployed site with the question \"quiet lake with good walks in June under 120 a day\"",
+   "Confirm the named places equal the first three cards"
+  ]
+ },
+ {
+  "id": "T1101-b",
+  "title": "Look at Ask on a phone and desktop",
+  "why": "The app data and a browser were not available to this session.",
+  "where": "Execution/P15/T1101-ask-cards-agree.md",
+  "how": [
+   "After the next deploy ask five questions",
+   "Check the sentence names only places on the first three cards, in their order"
+  ]
+ },
+ {
+  "id": "T1094-a",
+  "title": "Rebuild the trails with the T1094 recovery rules on the box",
+  "why": "The rules are in code and tested on fixtures, but the extracts, the lab and the Wikidata harvest are only on the box, so no walk is recovered until this runs.",
+  "where": "`Execution/P15/T1094-recover-walks.md`",
+  "how": [
+   "`cd tools/trailslab && docker compose up -d && cd ../..`",
+   "`python pipeline/trails/derive_routes.py --dry-run` and keep the per-country lines plus each \"T1094 rules\" line (expect Orla Perc, Sentier des Roches and Ruta del Cares in PL, FR and ES)",
+   "`python pipeline/trails/splice.py --dry-run` and keep the \"T1094 reorder pass\" line and its refusal reasons",
+   "`python run_pipeline.py trails_registry` (re-harvests the registry with the Phase 2 classifier, about an hour, needs Wikidata)",
+   "`python run_pipeline.py trails_derive_routes` (all countries, several hours)",
+   "Then `trails_elevation`, `trails_splice`, `trails_regionize`, `trails_hierarchy`, `trails_curate` and the rest of the chain to `trails_rate`, which exports the wire",
+   "`python pipeline/trails/coverage_report.py --all`",
+   "`python pipeline/trails/recover_walks.py`",
+   "`python -c \"import sys",
+   "Sys.path.insert(0,'pipeline/trails')",
+   "Import smoke_test",
+   "Smoke_test.famous_check()\"`",
+   "Plan one overnight run in total",
+   "Expect `way_only_not_derived` to fall from 8,891 to a few hundred, at most 190 of them newly published, famous routes 15 to 18 or 19 of 30, and the Mourne Wall Challenge, Antrim Hills Way and Newcastle Way to move from IE.json to GB.json",
+   "Send the printed numbers to the next session for the report"
+  ]
+ },
+ {
+  "id": "T1096-a",
+  "title": "Run the gallery pass",
+  "why": "Commons is not reachable from the cloud box.",
+  "where": "pipeline/photos/place_gallery.py",
+  "how": [
+   "From the repo root run `python pipeline/photos/place_gallery.py --report`",
+   "Run `python pipeline/photos/place_gallery.py` (about 1,130 places, 1 s pace, about 20 to 25 minutes, resumable, `--max-minutes 30` to cap)",
+   "Run `--report` again and compare with the table above",
+   "Open `cache/dossier/place_gallery.json` and read 10 places"
+  ]
+ },
+ {
+  "id": "T1096-b",
+  "title": "Run the POI description harvest",
+  "why": "Wikipedia is not reachable from the cloud box and the master is an LFS file.",
+  "where": "pipeline/poi_descriptions.py",
+  "how": [
+   "`git lfs pull` for `app_data/app_data.json`",
+   "`cp app_data/app_data.json app_data/app_data.pre-T1096.json`",
+   "`python pipeline/poi_descriptions.py --report`",
+   "`python pipeline/poi_descriptions.py` (about 0.4 s a POI, resumable, expect 1 to 2 hours for a few thousand POIs)",
+   "`--report` again",
+   "Read 10 rejected rows in `cache/poi_descriptions.json`",
+   "Then `python pipeline/poi_descriptions.py apply`"
+  ]
+ },
+ {
+  "id": "T1096-c",
+  "title": "Rebuild dossiers and look at the galleries",
+  "why": "The merge happens in the dossier build.",
+  "where": "pipeline/dossier/build_dossier.py",
+  "how": [
+   "`python pipeline/dossier/build_dossier.py --all`",
+   "Run `place_gallery.py --report`",
+   "Look at one GB, RO, FR and IT place gallery at phone and desktop width and check each photo shows author and licence"
+  ]
+ },
+ {
+  "id": "T1097-a",
+  "title": "Run the sea temperature harvest and exports on the box",
+  "why": "ERDDAP is not reachable from the cloud container and the harvest takes about 6 hours.",
+  "where": "Execution/P15/T1097-sea-temp.md",
+  "how": [
+   "On the box in the repo root: git pull",
+   "python run_pipeline.py --only sea_temp,climate_daily,beach_context --ship none",
+   "If the harvest prints \"incomplete\" and exits 3, run the same command again (it resumes from cache/sea_temp/) until it ends clean",
+   "Check that most coastal country files in continent-app/public/beaches/ contain \"sea_temp\" and that the publish gate did not roll the beaches back",
+   "Then ship as usual"
+  ]
+ },
+ {
+  "id": "T1097-b",
+  "title": "Look at one real beach page after the deploy",
+  "why": "The strip is only proven on fixture data.",
+  "where": "continent-app/src/browse/BeachPage.jsx",
+  "how": [
+   "Open a Mediterranean beach on a phone",
+   "Check the sea strip and its warmest months"
+  ]
+ },
+ {
+  "id": "T1102-b",
+  "title": "Look at trail tiles on a real phone",
+  "why": "The container had no photographs, so the look was judged on text and layout only.",
+  "where": "continent-app/src/browse/SectionOpening.jsx",
+  "how": [
+   "Open Explore, Trails, pick a country, check the rail tile and a walk's page",
+   "Open a walk and press Back"
+  ]
+ },
+ {
+  "id": "T1103-c",
+  "title": "Decide where \"I'm on a trip now\" and \"Add a past trip\" live",
+  "why": "The trip-kind sheet that held them now shows only while a trip is under way.",
+  "where": "Execution/P15/T1103-plan-flow-short.md",
+  "how": [
+   "Open Plan on a phone with no trip under way",
+   "Tap Start planning and note the sheet is gone",
+   "Decide: keep (My trips has Add a past trip) or ask for a quiet link on Plan home"
+  ]
+ },
+ {
+  "id": "T1103-e",
+  "title": "Usability test of the short plan flow with one first-time traveller",
+  "why": "Only a real person shows where the 5-screen path still confuses.",
+  "where": "Execution/P15/T1103-plan-flow-short.md",
+  "how": [
+   "On a phone, ask someone new to Carta to \"find a priced week away\"",
+   "Watch without helping",
+   "Note where they pause (When with no dates, the refine card, Back from the trips)"
+  ]
+ },
+ {
+  "id": "T1103-f",
+  "title": "Confirm the broad ranking for an unasked \"What are you up for\"",
+  "why": "The first trips rank by city, culture and food until the traveller says what they like.",
+  "where": "continent-app/src/lib/recommend/candidates.js",
+  "how": [
+   "Look at the first trips after Tell, Who, When, From",
+   "Keep the default or name three other types for `BROAD_TYPES`"
+  ]
+ },
+ {
+  "id": "T1104-a",
+  "title": "Paste migration 065 (account sync table)",
+  "why": "Kept trips, bookmarks, trips in progress and the device trip only follow the account once the table exists.",
+  "where": "supabase/migrations/065_account_things.sql",
+  "how": [
+   "In the Supabase SQL editor paste supabase/migrations/065_account_things.sql after 064",
+   "Look for \"account things self-check passed\"",
+   "From continent-app/ run node scripts/verify_live_policies.mjs"
+  ]
+ },
+ {
+  "id": "T1104-b",
+  "title": "Check signed-in work on two devices",
+  "why": "The sync is proven only against a stubbed account here, never against the live project.",
+  "where": "Execution/P15/T1104-account-sync.md",
+  "how": [
+   "After T1104-a and a deploy, signed out on a phone keep a trip from the trip finder and bookmark a Carta trip",
+   "Sign in",
+   "On a laptop sign in to the same account and open My trips: both should be there within a few seconds",
+   "Remove the bookmark on the laptop and reopen the phone: it should be gone",
+   "Sign in on the phone as a second test account: the first account's things should leave the phone and not appear in the second account"
+  ]
+ },
+ {
+  "id": "T1106-a",
+  "title": "Check seeded errors stay in their screen",
+  "why": "The container has no app data, so the browser check could not run.",
+  "where": "Execution/P15/T1106-error-boundaries.md",
+  "how": [
+   "In continent-app run `node tests/section-boundary.spec.mjs` (set CHROMIUM_PATH if needed)",
+   "Open `npm run dev` at `/?tab=map&seedError=explore` at phone and desktop width and confirm one short message with Try again, header and nav still working"
+  ]
+ },
+ {
+  "id": "T1089-f",
+  "title": "Run the SKIPped harnesses for real",
+  "why": "They skip here for lack of an account, a build, network or the full dataset.",
+  "where": "Execution/P15/T1089-verify-harness-refresh.md",
+  "how": [
+   "On the owner's box with Supabase configured and the 140 MB master present run `node scripts/sync-data.mjs`",
+   "Build with the fast build",
+   "Run verify_account_panel, continue_trip, data_export, status_banner, viewport_catalogue, omio_ui, joins, google_flights, day_routes and plan_mocks against `npm run dev`",
+   "Report any failure"
+  ]
+ },
+ {
+  "id": "T1099-a",
+  "title": "Refresh the stale wires",
+  "why": "Seven wires are 50 to 150 days old and the pipeline inputs live on the box.",
+  "where": "scripts/freshness_report.py",
+  "how": [
+   "On the box run the destinfo, trips, region, trails, coverage, joins and reach builds, then the rating applier (stamps app_data)",
+   "Rerun the report"
+  ]
+ },
+ {
+  "id": "T1099-b",
+  "title": "Push the freshness report with the data",
+  "why": "The box should publish per wire age next to the data.",
+  "where": "scripts/freshness_report.py",
+  "how": [
+   "After each run: `python -I scripts/freshness_report.py --out dist-data/freshness_wires.json`",
+   "Push with `node scripts/r2/push-data.mjs --live` (H9 owns the schedule)"
+  ]
+ },
+ {
+  "id": "T1099-d",
+  "title": "Set the cadence per wire",
+  "why": "The 35/45/90 day limits are placeholders.",
+  "where": "scripts/freshness_report.py",
+  "how": [
+   "Edit `WIRES` in the script",
+   "Use `--strict` as the gate"
+  ]
+ },
+ {
+  "id": "T1108-a",
+  "title": "Give the support email address",
+  "why": "The page shows a placeholder (the general address) until a dedicated one exists.",
+  "where": "continent-app/src/lib/contact.js",
+  "how": [
+   "Decide the address",
+   "Create the mailbox with SPF, DKIM, DMARC",
+   "Change `SUPPORT_EMAIL` in contact.js"
+  ]
+ },
+ {
+  "id": "T1108-b",
+  "title": "Review the Dutch support texts",
+  "why": "The Dutch is a draft written without a native check.",
+  "where": "continent-app/src/i18n/nl.js",
+  "how": [
+   "Read the `support.*` and `footer.support` keys in nl.js",
+   "Correct wording"
+  ]
+ },
+ {
+  "id": "T1109-a",
+  "title": "Apply channel counts migration",
+  "why": "The server half of K12 is only a file.",
+  "where": "supabase/migrations/067_channel_counts.sql",
+  "how": [
+   "Paste supabase/migrations/067_channel_counts.sql in the Supabase SQL editor (after 066; the down file is 067_channel_counts_down.sql)",
+   "Open /?utm_source=test once and check the admin Overview card"
+  ]
+ },
+ {
+  "id": "T1110-a",
+  "title": "Apply migration 066",
+  "why": "Creates the closed waitlist table and its five service-role functions.",
+  "where": "supabase/migrations/066_waitlist.sql",
+  "how": [
+   "Open the Supabase SQL editor",
+   "Paste `supabase/migrations/066_waitlist.sql` after 065",
+   "Look for \"waitlist self-check passed\""
+  ]
+ },
+ {
+  "id": "T1110-b",
+  "title": "Resend secrets and deploy",
+  "why": "No mail is stored or sent until the sender and signing secret exist.",
+  "where": "supabase/functions/waitlist/README.md",
+  "how": [
+   "Verify the sending domain in Resend",
+   "`supabase secrets set RESEND_API_KEY=... WAITLIST_FROM=\"Carta <hello@carta-europetravel.com>\" WAITLIST_SECRET=<long random>`",
+   "`supabase functions deploy waitlist --no-verify-jwt`"
+  ]
+ },
+ {
+  "id": "T1110-c",
+  "title": "Round trip and phone look",
+  "why": "Proves the real mail, both links and the layout.",
+  "where": "continent-app/src/components/WaitlistForm.jsx",
+  "how": [
+   "On a preview sign up with a real address",
+   "Confirm from the mail",
+   "Sign up again and unsubscribe from the mail",
+   "View Home on a phone"
+  ]
+ },
+ {
+  "id": "T1110-d",
+  "title": "Privacy text and Article 30",
+  "why": "An address is personal data collected on consent.",
+  "where": "docs/legal/ARTICLE30.md",
+  "how": [
+   "Add the waitlist (purpose, consent, retention until unsubscribe or 30 days unconfirmed, Resend as processor) to the privacy policy and docs/legal/ARTICLE30.md before launch"
+  ]
+ },
+ {
+  "id": "T1111-a",
+  "title": "Approve the design direction",
+  "why": "G3 (umber cost card) and G5 (motion) are waiting on it, and it sets the look for G2, G6 and G8.",
+  "where": "docs/design/direction.md",
+  "how": [
+   "Open docs/design/direction.md",
+   "Read sections 1 to 5 (one page)",
+   "Answer the three decisions in section 7 (plan tab follows the place trip card, count-up only on home, 28 px radius on the app cost card)",
+   "Reply \"approved\" or list the changes to Claude"
+  ]
+ },
+ {
+  "id": "T1111-c",
+  "title": "Run the design research G-R1 to G-R3",
+  "why": "The direction was written without the benchmark, the premium-feel note and user testing, and they may change it.",
+  "where": "ROADMAP.md (Track G research)",
+  "how": [
+   "Run the 6-product teardown (G-R1) and the principles note (G-R2)",
+   "Run 5 short interviews and one unmoderated test on the live app (G-R3)",
+   "Hand the findings to a session to revise the direction"
+  ]
+ },
+ {
+  "id": "T1112-a",
+  "title": "Run the Aviasales coverage probe",
+  "why": "The cloud container cannot reach the API and has no token, so the real coverage is unmeasured.",
+  "where": "scripts/aviasales_probe.py",
+  "how": [
+   "Export the sweep fares (`SELECT origin AS o, dest AS d, date, price FROM fares`) to `cache/flights/sweep_export.csv`",
+   "`export AVIASALES_TOKEN=<your Travelpayouts token>`",
+   "Smoke test `python scripts/aviasales_probe.py --months 2027-01,2027-02 --limit 20 --out cache/flights/aviasales_probe`",
+   "Then the full run `python scripts/aviasales_probe.py --months 2027-01,2027-02 --sweep cache/flights/sweep_export.csv --out cache/flights/aviasales_probe` (about 20,200 requests at 2 per second, roughly 2.8 hours",
+   "Rerun the same command to resume",
+   "Raise `--rps` only if the Travelpayouts limit allows)",
+   "Send back `cache/flights/aviasales_probe/coverage.md`"
+  ]
+ },
+ {
+  "id": "T1105-a",
+  "title": "Put the self-hosted destination photos live",
+  "why": "The app now prefers Carta's own AVIF and WebP copies on Explore and destination pages, but only once they are on R2 and the manifest says so.",
+  "where": "`pipeline/photos/hero_ladder.py`, `continent-app/src/lib/heroLadder.json`",
+  "how": [
+   "On the build box run `python pipeline/photos/derive.py sources dest dossier --out <dir> --upload r2`",
+   "Run the CAX41 `image_transcode` job for the `dest` and `dossier` layers (`derive.py run dest ...` and `run dossier ...` with `--upload r2`)",
+   "`rclone copy r2:carta/img/manifest <dir>/manifest`",
+   "`python pipeline/photos/hero_ladder.py --manifests <dir>/manifest` and check it prints `live=True` with a small `missing`",
+   "Commit `continent-app/src/lib/heroLadder.json`",
+   "Build and deploy as usual"
+  ]
+ },
+ {
+  "id": "T1105-b",
+  "title": "Look at photos on a real phone after going live",
+  "why": "The numbers come from a local stand-in, and sharpness at the new rail size needs a real screen.",
+  "where": "`continent-app/src/browse/StoryRail.jsx`",
+  "how": [
+   "Open Explore and a destination page on a phone on mobile data",
+   "Check the rail photos are sharp, the photos come from cdn.carta-europetravel.com (`?pic=off` shows the old Wikimedia load for comparison) and the credit still shows under the gallery"
+  ]
+ },
+ {
+  "id": "T1107-b",
+  "title": "Confirm the price tasks in the monthly tier",
+  "why": "The monthly timer now runs stays, food and flight_routes, which T640 held back for price batch F0.",
+  "where": "Execution/P15/T1107-box-schedule.md",
+  "how": [
+   "Answer yes, or tell the next session to move them to backfill in run_pipeline.py",
+   "Do it before the first Saturday after T1107-a"
+  ]
+ },
+ {
+  "id": "T1107-a",
+  "title": "Enable the weekly, monthly and quarterly timers on the box",
+  "why": "Until install.sh runs, only the Monday timer exists and the monthly and quarterly tasks run nowhere.",
+  "where": "docs/runbooks/build-box.md",
+  "how": [
+   "Ssh carta@<box>",
+   "Cd ~/carta && git fetch -q origin main && git reset -q --hard FETCH_HEAD",
+   "~/venv/bin/python infra/hetzner/cron/schedule.py --dry-run --check (must end \"unscheduled: none\" and \"units: match the schedule\")",
+   "CARTA_TIER=quarterly CARTA_AUTO_UPDATE=0 CARTA_PIPELINE_ENABLED=1 bash infra/hetzner/cax11/weekly.sh --dry-run",
+   "Sudo bash infra/hetzner/cron/install.sh --dry-run",
+   "Sudo bash infra/hetzner/cron/install.sh",
+   "Systemctl list-timers 'carta-*' --no-pager (four timers: weekly, monthly, quarterly, reboot)"
+  ]
+ },
+ {
+  "id": "T1107-c",
+  "title": "Read the status after the first monthly and quarterly runs",
+  "why": "Proves the tiers ran and the status push reaches R2, and the first quarterly run's length is unknown.",
+  "where": "docs/runbooks/build-box.md",
+  "how": [
+   "After the first Saturday: tail -n 5 ~/logs/weekly.log",
+   "Rclone cat r2:carta/status/last_run.json (tier monthly, exit 0)",
+   "Rclone cat r2:carta/status/freshness_wires.json (n_over_cadence below 8)",
+   "After 2027-01-16 the same for quarterly, and compare its duration with the 120 h TimeoutStartSec in carta-quarterly.service"
+  ]
+ },
+ {
+  "id": "T1113-a",
+  "title": "Upload the new prerender",
+  "why": "The bar drops indexed places from 3,754 to 337 and removes thin beaches, lakes, mountains and duplicate trips from the sitemap.",
+  "where": "continent-app/scripts/prerender/push.mjs",
+  "how": [
+   "Run the prerender on the box with full data",
+   "Check `_sitemap.json` shows 337 places",
+   "`node scripts/prerender/push.mjs`",
+   "Deploy to preview, then main",
+   "WARNING: expect indexed places to fall to 337 and the D9 intros to lift them later"
+  ]
+ },
+ {
+  "id": "T1113-d",
+  "title": "Check the trip canonicals and thin pages after the upload",
+  "why": "Proves noindex,follow and canonicals are served.",
+  "where": "Execution/P15/_OPEN-search-console.md",
+  "how": [
+   "View source on a thin lake and a duplicate trip",
+   "Confirm the x-robots-tag header",
+   "Watch \"alternate page with proper canonical\" in Search Console"
+  ]
+ },
+ {
+  "id": "T1114-a",
+  "title": "Look at the price notes on four screens",
+  "why": "The container could not load app data, so no screen was seen.",
+  "where": "continent-app/src/components/PriceNotes.jsx",
+  "how": [
+   "Npm run dev",
+   "Open an Explore card (grid and rail), an Ask place card, a trip page and a day receipt",
+   "Check 375 and 1440 wide",
+   "Check Dutch"
+  ]
+ },
+ {
+  "id": "T1117-a",
+  "title": "Deploy the AI guard",
+  "why": "The guard on Ask, plan-day and parse-booking is code only until deployed.",
+  "where": "`supabase/functions/plan-day/index.ts`, `supabase/functions/parse-booking/index.ts`, `continent-app/functions/api/ask/answer.js`",
+  "how": [
+   "`supabase functions deploy plan-day`",
+   "`supabase functions deploy parse-booking`",
+   "Deploy the Pages build per CLAUDE.md Deploy (preview first)",
+   "On the preview, run one plan-day day and one magic import and check `meta.guard` is in the answer"
+  ]
+ },
+ {
+  "id": "T1117-b",
+  "title": "Live red-team pass with the real models",
+  "why": "The CI set uses stubbed outputs, so how the real Gemini and Workers AI models behave under the 50 attacks is unrecorded.",
+  "where": "`continent-app/scripts/ai/redteam_live.mjs`",
+  "how": [
+   "After T1117-a, sign in to a test account with plan quota on the preview and copy its access token",
+   "Run `CARTA_BASE=<preview url> SUPABASE_URL=<url> SUPABASE_ANON_KEY=<anon key> CARTA_JWT=<token> node continent-app/scripts/ai/redteam_live.mjs` (spends about 25 plan units)",
+   "Read `evals/injection/recorded-live-<date>.json`",
+   "For every FAIL line add the attack phrasing to `evals/injection/attacks.json` and open a task"
+  ]
+ },
+ {
+  "id": "T1118-c",
+  "title": "Paste migration 069 and turn on the daily retention job",
+  "why": "Without it nothing sweeps on a schedule and deletion leaves the waitlist address, feedback and audit detail behind.",
+  "where": "supabase/migrations/069_privacy_gdpr.sql",
+  "how": [
+   "Supabase Dashboard, SQL editor: paste supabase/migrations/069_privacy_gdpr.sql after 067 and 068",
+   "Look for \"privacy self-check passed\"",
+   "Database, Extensions: enable pg_cron, then paste 069 again (or run the cron.schedule line it prints)",
+   "Account, Download my data on a real account and check the file says \"schema\": 4",
+   "Create a throwaway account, join the waitlist with its address, delete it, and check waitlist_signups no longer holds the address"
+  ]
+ },
+ {
+  "id": "T1118-a",
+  "title": "Legal review of the Article 30 record and the retention lines",
+  "why": "The wording and day counts are plain drafts written overnight.",
+  "where": "docs/legal/ARTICLE30.md",
+  "how": [
+   "Read docs/legal/ARTICLE30.md sections 2, 2a, 3, 4 and 8",
+   "Change any day count in section 2a and the matching constant in 069's privacy_retention_sweep",
+   "Check the account.keep* and account.deleteHint strings in the six i18n files",
+   "Sign the record"
+  ]
+ },
+ {
+  "id": "T1118-b",
+  "title": "Decide how long the anonymised VAT and waiver record is kept",
+  "why": "Pass_grants rows outlive the account with no end date.",
+  "where": "docs/legal/ARTICLE30.md",
+  "how": [
+   "Confirm the Belgian VAT record period with the accountant",
+   "Add a line for pass_grants to privacy_retention_sweep in a new migration and to ARTICLE30.md section 2a"
+  ]
+ },
+ {
+  "id": "T1118-d",
+  "title": "Accept and record Resend's DPA",
+  "why": "Resend now receives addresses for reminders and the waitlist, and section 3 has no contract version or transfer basis.",
+  "where": "docs/legal/ARTICLE30.md",
+  "how": [
+   "In the Resend dashboard, read and accept the DPA",
+   "Note its version and whether the transfer runs under the DPF or SCCs",
+   "Fill the Resend row in ARTICLE30.md section 3"
+  ]
+ },
+ {
+  "id": "T1119-b",
+  "title": "Require the static-analysis check",
+  "why": "So a red Semgrep gate blocks merging into main.",
+  "where": ".github/workflows/static-analysis.yml",
+  "how": [
+   "GitHub repo Settings",
+   "Branches",
+   "Edit the rule for main",
+   "Add `semgrep` (workflow static-analysis) to required status checks",
+   "Save"
+  ]
+ },
+ {
+  "id": "T1120-a",
+  "title": "Create the error-tracking project and set its DSN",
+  "why": "Nothing is reported until a DSN exists.",
+  "where": "continent-app/.env.example",
+  "how": [
+   "Sign up at sentry.io, choose region EU (de.sentry.io)",
+   "Create a Browser JavaScript project",
+   "Project Settings, Security and Privacy: turn on \"Prevent storing of IP addresses\" and \"Data scrubber\", set retention to 30 days",
+   "Sign the DPA",
+   "Copy the DSN"
+  ]
+ },
+ {
+  "id": "T1120-b",
+  "title": "Allow the tracker host and set the variables",
+  "why": "The CSP blocks an unlisted host and the app reads the DSN at build time.",
+  "where": "continent-app/public/_headers",
+  "how": [
+   "Add the exact ingest host from the DSN (`https://oNNN.ingest.de.sentry.io`, no wildcard) to connect-src in continent-app/public/_headers",
+   "Set VITE_ERROR_DSN (and optionally VITE_ERROR_SAMPLE, VITE_RELEASE) in the Pages project variables",
+   "Set SENTRY_DSN as a Pages secret",
+   "Redeploy"
+  ]
+ },
+ {
+  "id": "T1120-c",
+  "title": "Check the kill switch and a live event",
+  "why": "Proves the setup before real traffic.",
+  "where": "Execution/P15/T1120-error-tracking.md",
+  "how": [
+   "Open the preview with `?seedError=explore` in a dev build against the real DSN (dev builds do not send, so instead throw once in the console of the preview: `setTimeout(()=>{throw new Error('probe')})`)",
+   "See one scrubbed event with no IP",
+   "Set VITE_ERROR_TRACKING=off and confirm nothing arrives"
+  ]
+ },
+ {
+  "id": "T1115-a",
+  "title": "Decide the local transport fare source",
+  "why": "The fare layer (D10, 0 of 3,868 places today) cannot start without it and decision 4 is \"Not now\".",
+  "where": "reports/local_fares_source_options.md",
+  "how": [
+   "Read reports/local_fares_source_options.md",
+   "Choose curated operator pages (recommended in the note) or a licensed dataset",
+   "Tell the next session, which then builds the layer for the 127 metros in the CSV"
+  ]
+ },
+ {
+  "id": "T1129-a",
+  "title": "Paste funnel counts migration",
+  "why": "The server half of I11 is only a file.",
+  "where": "supabase/migrations/070_funnel_counts.sql",
+  "how": [
+   "Open the SQL editor",
+   "Paste `supabase/migrations/070_funnel_counts.sql`",
+   "Run it"
+  ]
+ },
+ {
+  "id": "T1129-b",
+  "title": "Check the admin Funnel card",
+  "why": "Confirm real ticks reach the admin reader.",
+  "where": "continent-app/src/components/admin/FunnelCounts.jsx",
+  "how": [
+   "After the paste open Explore, a place, Plan, save and share a trip once each",
+   "Reload admin Overview",
+   "Check the Funnel (weekly) card shows each step"
+  ]
+ },
+ {
+  "id": "T1130-c",
+  "title": "Check source terms before publishing",
+  "why": "The story quotes aggregates of Carta's own Booking.com scrape and the licence ledger is not settled (T1021-e).",
+  "where": "docs/brand/data-stories/method.md",
+  "how": [
+   "Read the Booking.com terms on derived aggregates",
+   "Decide whether a press story may cite \"Carta's own measurements on Booking.com\"",
+   "Note the answer in the register"
+  ]
+ },
+ {
+  "id": "T1130-a",
+  "title": "Review and place the K5 drafts",
+  "why": "Publishing to press or the blog is the owner's call.",
+  "where": "docs/brand/data-stories/europe-week-2027.nl.md",
+  "how": [
+   "Read both drafts and method.md",
+   "Pick the headline",
+   "Add a quote, the Carta link and the release date",
+   "Choose outlets from the K10 press list or the blog"
+  ]
+ },
+ {
+  "id": "T1130-d",
+  "title": "Decide on a French version",
+  "why": "ROADMAP K5 pitches Walloon press while decision 6 sets Dutch and English.",
+  "where": "ROADMAP.md",
+  "how": [
+   "Decide yes or no",
+   "If yes, a next task translates the Dutch draft with the same figures"
+  ]
+ },
+ {
+  "id": "T1130-b",
+  "title": "Export the flight sweep for the basket",
+  "why": "The way there is not in the shipped data and the R2 sweep needs an owner key.",
+  "where": "scripts/stories/basket_per_country.mjs",
+  "how": [
+   "On the box, copy the flight sweep fares for origins BRU and AMS from R2 to a local JSON",
+   "Hand the path to a next task that adds a getting-there column to the script"
+  ]
+ },
+ {
+  "id": "T1130-f",
+  "title": "Rerun the numbers before release",
+  "why": "Bed and food layers move with each build.",
+  "where": "docs/brand/data-stories/data/basket_2027.json",
+  "how": [
+   "After the next stays build run `node scripts/stories/basket_per_country.mjs`",
+   "Then `--check`",
+   "Update every figure in both drafts from the new JSON before sending on 2 Jan 2027"
+  ]
+ },
+ {
+  "id": "T1131-a",
+  "title": "Write the founder line",
+  "why": "The press kit shows a placeholder until then.",
+  "where": "continent-app/src/lib/press.js",
+  "how": [
+   "Edit `PRESS_FOUNDER_LINE`",
+   "Check `/?legal=press`"
+  ]
+ },
+ {
+  "id": "T1131-b",
+  "title": "Fill the journalist list",
+  "why": "Names and addresses are personal data only the owner collects.",
+  "where": "docs/marketing/journalist-list-template.csv",
+  "how": [
+   "Open the template",
+   "Add names and public editorial addresses by hand",
+   "Grow to about 40 rows",
+   "Keep the filled copy private"
+  ]
+ },
+ {
+  "id": "T1131-c",
+  "title": "Review Dutch copy and swap the screenshot",
+  "why": "The Dutch is a draft and the image is the site OG card.",
+  "where": "continent-app/src/lib/press.js",
+  "how": [
+   "Read `press.*` in nl.js",
+   "Put a real screenshot in public and point `PRESS_SCREENSHOT` at it"
+  ]
+ },
+ {
+  "id": "T1125-a",
+  "title": "Look at the type and radius change with data",
+  "why": "No screen could render in the cloud container.",
+  "where": "Execution/P15/T1125-type-radius.md",
+  "how": [
+   "Run npm run dev with data",
+   "Open Explore, Plan, Help, press kit",
+   "Check phone 390 and desktop 1366"
+  ]
+ },
+ {
+  "id": "T1127-a",
+  "title": "Trail photo harvest",
+  "why": "2,886 walks still have no licensed photo.",
+  "where": "pipeline/trails/trail_images.py",
+  "how": [
+   "Run `python pipeline/trails/trail_images.py` on the box with Commons access with a wider radius",
+   "Re-export the trails wire",
+   "Re-run `node scripts/verify_trail_photos.mjs`"
+  ]
+ },
+ {
+  "id": "T1127-b",
+  "title": "Heroes for 27 gem destinations",
+  "why": "No licensed hero exists for them.",
+  "where": "pipeline/audit_hero_images.py",
+  "how": [
+   "Run the Commons geosearch hero pass (`pipeline/audit_hero_images.py`) for the gem tier",
+   "Re-run `pipeline/photos/hero_ladder.py`"
+  ]
+ },
+ {
+  "id": "T1133-a",
+  "title": "Prove the wire guard on the real master",
+  "why": "The cloud checkout had only the shipped wire, so the owner's full pipeline output has not been through the guard.",
+  "where": "`docs/wire.schema.json`, `pipeline/wire_contract.py`",
+  "how": [
+   "On the build box pull the branch",
+   "Run one layer that writes the wire, for example `python pipeline/country_context_layer.py`",
+   "Then `cd continent-app && npm run data`",
+   "If either stops with `WireContractError`, the message names the field path: fix the value or add the key to `docs/wire.schema.json` and run `node continent-app/scripts/ci/wire-table.mjs --write`"
+  ]
+ },
+ {
+  "id": "T1123-b",
+  "title": "Run the G-R3 usability research",
+  "why": "G4 should fix what real travellers trip over, and tonight's list came from the audit and a code walk.",
+  "where": "ROADMAP.md (G-R3, G4)",
+  "how": [
+   "Do 5 short interviews and one unmoderated test of Explore, a place page, Plan and the trip page",
+   "Rank the top 10 problems",
+   "Hand them to the next G4 task"
+  ]
+ },
+ {
+  "id": "T1123-d",
+  "title": "Check the reload fixes on a real phone",
+  "why": "Only a real phone shows the reload and swipe behaviour as travellers meet it.",
+  "where": "Execution/P15/T1123-core-flow-fixes.md",
+  "how": [
+   "On a phone, Plan, Start planning, answer to From, pull to reload (still From)",
+   "Finish, reload on the priced trips (still the trips)",
+   "Tap Back, then \"See your priced trips\""
+  ]
+ },
+ {
+  "id": "T1126-d",
+  "title": "Look at signed-in screens after the dead-CSS removal",
+  "why": "The saved trip page, day planner, admin and account need an account and were not seen.",
+  "where": "continent-app/src/styles",
+  "how": [
+   "Open each at 390 and 1440 on a preview build and compare with production",
+   "Run `node scripts/verify_admin_panel.mjs`"
+  ]
+ },
+ {
+  "id": "T1134-b",
+  "title": "Scorecard on the box after a real run",
+  "why": "The card in the report is from the shipped wires in the cloud checkout, not a fresh pipeline run.",
+  "where": "scripts/quality/scorecard.py",
+  "how": [
+   "On the box pull the branch",
+   "After the next full run and `cd continent-app && npm run data`, run `python -I scripts/quality/scorecard.py --write`",
+   "Commit `data/reports/quality/` or push it with the data next to `freshness_wires.json`"
+  ]
+ },
+ {
+  "id": "T1134-g",
+  "title": "Decide which fields count per quality layer",
+  "why": "Completeness for core, flights and place is set by fields that may be optional by design (tags 2%, wikidata 1%, transfer 3%).",
+  "where": "scripts/quality/scorecard.py",
+  "how": [
+   "Read `APP_LAYERS` and `SHARD_LAYERS` at the top of the script",
+   "Strike or keep each field",
+   "A session then edits the lists"
+  ]
+ },
+ {
+  "id": "T1122-a",
+  "title": "Approve the design direction, then switch on the umber cost card",
+  "why": "G3's card is built and waits only on the T1111 sign-off.",
+  "where": "continent-app/src/planner/trip/costCardVariant.js",
+  "how": [
+   "Read docs/design/direction.md and answer row T1111-a",
+   "Compare a trip page with ?cc=arc and ?cc=umber at phone and desktop width",
+   "If approved, set COST_CARD_UMBER = true in continent-app/src/planner/trip/costCardVariant.js (or ask a session to)"
+  ]
+ },
+ {
+  "id": "T1122-c",
+  "title": "Look at the umber card on a real phone",
+  "why": "The container has no real device, dark system setting or Safari.",
+  "where": "Execution/P15/T1122-cost-card.md",
+  "how": [
+   "On iOS Safari and Android Chrome open a trip page with ?cc=umber",
+   "Turn on dark mode and reduce motion in the phone settings and reload",
+   "Check the bar, the total and the Costs button"
+  ]
+ },
+ {
+  "id": "T1124-b",
+  "title": "Approve the T1111 design direction",
+  "why": "G5 richer motion (springs, shared photo move) cannot start without it.",
+  "where": "Execution/P15/T1124-motion-tokens.md",
+  "how": [
+   "Read the T1111 direction",
+   "Decide",
+   "Tell the next session"
+  ]
+ },
+ {
+  "id": "T1124-c",
+  "title": "Check reduced motion on a real phone",
+  "why": "Emulation passed but a device is the real test.",
+  "where": "Execution/P15/T1124-motion-tokens.md",
+  "how": [
+   "Turn on Reduce Motion in system settings",
+   "Open Explore, Plan, a place page",
+   "Sheets and tabs should snap, the home film should stand still"
+  ]
+ },
+ {
+  "id": "T1116-a",
+  "title": "Pick the register option",
+  "why": "The register is at 1,717 rows and no option gets under 250 (a 1,157, b 1,437, c 877, d 1,717), so the target or the rule must change.",
+  "where": "Execution/P15/T1116-register-rule.md",
+  "how": [
+   "Read the comparison in Execution/P15/T1116-register-rule.md section 2",
+   "Run `python -I scripts/register/dry_run.py --option all` to see the first rows",
+   "Answer a, b, c, d or c plus e in chat, and say whether the 250 target stays or moves"
+  ]
+ },
+ {
+  "id": "T1128-a",
+  "title": "Screen-reader pass on a real phone",
+  "why": "Axe checks markup, not what a person hears, and G10 asks for screen readers.",
+  "where": "Execution/P15/T1128-accessibility.md",
+  "how": [
+   "Turn on VoiceOver (iPhone: Settings, Accessibility) and TalkBack (Android)",
+   "On each of Home, Explore list and map, a place, trail and beach page, the Plan wizard, the trip page and Account, swipe through every control and note anything read wrong, twice or not at all",
+   "Send the notes to the next session"
+  ]
+ },
+ {
+  "id": "T1128-b",
+  "title": "Decide the pause for the home film and tour",
+  "why": "WCAG 2.2.2 (Level A) needs a way to pause motion that runs longer than 5 seconds, so the home page is not AA without it.",
+  "where": "Execution/_OPEN.md (T1128-b)",
+  "how": [
+   "Choose one: a small pause control on the film and tour, or both stop after 5 seconds, or keep as is and accept the gap",
+   "Reply in chat"
+  ]
+ },
+ {
+  "id": "T1128-d",
+  "title": "Decide the wizard country map's keyboard layer",
+  "why": "The map is pointer only; the card grid beside it is the keyboard path.",
+  "where": "Execution/_OPEN.md (T1128-d)",
+  "how": [
+   "Choose: keep the grid as the keyboard path, or ask for a keyboard layer like Explore's map"
+  ]
+ },
+ {
+  "id": "T1128-h",
+  "title": "Look at the home header on the real film",
+  "why": "The white labels now carry a hairline ink shadow and the container could not load the film.",
+  "where": "continent-app/src/styles/61-v6-home.css",
+  "how": [
+   "Open the home page at desktop width on the deployed preview",
+   "Check the header labels read well on every clip and the shadow does not look heavy"
+  ]
+ }
+]
