@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  fail, methodNotAllowed, clientIp, createLimiter, overLimit, isRealDate,
+  fail, methodNotAllowed, clientIp, RATE_BINDINGS, createLimiter, overLimit, isRealDate,
   parseFlightQuery, parseForecastQuery, parseAskQuery, MAX_AHEAD_DAYS,
 } from '../functions/_lib/guard.js';
 import * as flights from '../functions/api/flights.js';
@@ -127,4 +127,30 @@ test('the answer route refuses an oversized body with no content-length, and a m
   assert.equal(r.status, 413);
   const none = await answer.onRequestPost({ request: new Request('https://x/', { method: 'POST', body: '{}' }), env: {}, waitUntil() {} });
   assert.equal(none.status, 503);
+});
+
+test('overLimit uses the per-endpoint binding, with the shared one and the isolate window as fallbacks (T1157)', async () => {
+  const req = new Request('https://x/', { headers: { 'cf-connecting-ip': '203.0.113.9' } });
+  const calls = [];
+  const stub = (tag, ok) => ({ limit: async (o) => { calls.push(`${tag}:${o.key}`); return { success: ok }; } });
+  // A stub binding that allows 2 hits per key, like a real one with limit 2.
+  const counts = new Map();
+  const real = { limit: async ({ key }) => { const n = (counts.get(key) || 0) + 1; counts.set(key, n); return { success: n <= 2 }; } };
+  const env = { RL_FLIGHTS: real };
+  const verdicts = [];
+  for (let i = 0; i < 3; i++) verdicts.push(await overLimit(env, req, createLimiter({ max: 99 }), 'flights'));
+  assert.deepEqual(verdicts, [false, false, true], 'the binding enforces the limit across fresh isolates (new limiter each call)');
+  assert.equal(RATE_BINDINGS.stays, 'RL_STAYS');
+  assert.equal(RATE_BINDINGS.answer, 'RL_ASK');
+  // Endpoints are counted apart.
+  assert.equal(await overLimit({ RL_ASK: stub('ask', false), RL_FLIGHTS: stub('f', true) }, req, createLimiter({ max: 99 }), 'flights'), false);
+  assert.equal(await overLimit({ RL_ASK: stub('ask', false) }, req, createLimiter({ max: 99 }), 'ask'), true);
+  // A broken endpoint binding falls to the shared one, then to the window.
+  const broken = { limit: async () => { throw new Error('down'); } };
+  assert.equal(await overLimit({ RL_STAYS: broken, RATE_LIMIT: stub('shared', false) }, req, createLimiter({ max: 99 }), 'stays'), true);
+  assert.equal(await overLimit({ RL_STAYS: broken }, req, createLimiter({ max: 99 }), 'stays'), false);
+  const l = createLimiter({ max: 1 });
+  assert.equal(await overLimit({ RL_STAYS: broken }, req, l, 'stays'), false);
+  assert.equal(await overLimit({ RL_STAYS: broken }, req, l, 'stays'), true, 'the in-memory fallback still holds');
+  assert.ok(calls.length >= 1);
 });

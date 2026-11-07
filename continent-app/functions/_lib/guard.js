@@ -59,19 +59,38 @@ export function createLimiter({ max, windowMs = 60000, maxKeys = 5000 }) {
 }
 
 /**
- * True when this request is over its limit. Asks the RATE_LIMIT binding first
- * (when the account has one), then the in-memory window. A failing binding
- * never blocks a traveller: the in-memory answer stands.
+ * The binding names, one per endpoint (T1157, ROADMAP H3). Each has its own
+ * limit and period in wrangler.toml, so ask, flights and stays are counted
+ * apart. The old shared RATE_LIMIT binding is still honoured as a second try.
+ */
+export const RATE_BINDINGS = {
+  ask: 'RL_ASK',
+  answer: 'RL_ASK',
+  flights: 'RL_FLIGHTS',
+  stays: 'RL_STAYS',
+  forecast: 'RL_FORECAST',
+};
+
+/**
+ * True when this request is over its limit. Asks the endpoint's Workers Rate
+ * Limiting binding first (shared by every isolate in a location), then the
+ * shared RATE_LIMIT binding, then the in-memory window. A missing or failing
+ * binding never blocks a traveller: the in-memory answer stands, so local dev
+ * and tests keep working without any binding.
  */
 export async function overLimit(env, request, limiter, name) {
   const ip = clientIp(request);
-  if (env && typeof env.RATE_LIMIT?.limit === 'function') {
+  const key = `${name}:${ip}`;
+  const named = RATE_BINDINGS[name];
+  for (const binding of [named && env?.[named], env?.RATE_LIMIT]) {
+    if (typeof binding?.limit !== 'function') continue;
     try {
-      const { success } = await env.RATE_LIMIT.limit({ key: `${name}:${ip}` });
+      const { success } = await binding.limit({ key });
       if (!success) return true;
-    } catch { /* fall through to the isolate window */ }
+      break;
+    } catch { /* try the next layer */ }
   }
-  return limiter.hit(`${name}:${ip}`);
+  return limiter.hit(key);
 }
 
 export const rateRefusal = () => fail(429, 'rate', { 'retry-after': '60' });
