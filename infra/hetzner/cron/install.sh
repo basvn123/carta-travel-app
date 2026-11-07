@@ -57,7 +57,7 @@ if [ $DRY -eq 0 ] && [ "$(id -u)" -ne 0 ]; then
 fi
 
 if [ "$MODE" = disable ]; then
-  run systemctl disable --now carta-weekly.timer carta-monthly.timer carta-quarterly.timer carta-backup.timer carta-stays-scrape.timer carta-reboot.timer carta-late-sweep.service carta-late-fill.service
+  run systemctl disable --now carta-weekly.timer carta-monthly.timer carta-quarterly.timer carta-backup.timer carta-reboot.timer carta-stays-scrape.timer carta-late-sweep.service carta-late-fill.service
   echo "Every timer and the late sweep stopped. A run already in progress continues; stop it with: sudo systemctl stop carta-weekly.service carta-monthly.service carta-quarterly.service"
   exit 0
 fi
@@ -101,7 +101,7 @@ if [ $DRY -eq 0 ]; then
 fi
 
 run systemctl daemon-reload
-run systemctl enable --now carta-weekly.timer carta-monthly.timer carta-quarterly.timer carta-backup.timer carta-stays-scrape.timer carta-reboot.timer
+run systemctl enable --now carta-weekly.timer carta-monthly.timer carta-quarterly.timer carta-backup.timer carta-reboot.timer carta-stays-scrape.timer
 # T798: restart, not just start, so a new run.mjs is picked up after a code move.
 run systemctl enable carta-late-sweep.service
 run systemctl restart carta-late-sweep.service

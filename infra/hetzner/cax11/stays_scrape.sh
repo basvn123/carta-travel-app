@@ -85,8 +85,11 @@ PY="$VENV/bin/python"; [ -x "$PY" ] || PY="$(command -v python3)"
 
 # The pipeline's lock, without waiting (T1107: weekly.sh waits for it instead).
 if [ $DRY -eq 0 ]; then
-  exec 9>"$LOG_DIR/carta-run.lock"
-  flock -n 9 || { say "a pipeline run holds $LOG_DIR/carta-run.lock; no scrape tonight"; exit 75; }
+  # Always the repo's logs/, where weekly.sh and run_pipeline.sh take it,
+  # whatever CARTA_LOG_DIR says.
+  mkdir -p "$REPO/logs"
+  exec 9>"$REPO/logs/carta-run.lock"
+  flock -n 9 || { say "a pipeline run holds logs/carta-run.lock; no scrape tonight"; exit 75; }
 fi
 
 # --- browser ---------------------------------------------------------------------
