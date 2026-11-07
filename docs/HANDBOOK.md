@@ -2750,6 +2750,23 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Limits.** On 2026-11-06 today's rules fill 142 of 807 short places; the stretch floor adds 440 more and 207 stay unfilled, because the Europe-wide expansion already took the candidates above 0.40 and Wikipedia attention (`cache/place_signals.json`) covers about 4,000 of 90,000 candidates. `promote_place_candidates.py` itself still rejects every candidate without a parent city while a shipped city folds to an empty key (T1146-b). Register rows `T1146-a` and on.
 
+### Link and page health (D16)
+
+**What it does.** Once a week Carta checks every outbound link and image URL in the shipped data and lists the dead ones in the admin Data health tab, with a fix-or-drop action. The share of broken links is a quality rule, so a rotting set of links shows up as a warning before travellers meet it (ROADMAP D16, T1197).
+
+**How it works.** `pipeline/link_health.py`, weekly soft task `link_health` (before `photo_sources`), settings in `pipeline/config/link_health.yaml`.
+1. **Collect**: every `http(s)` string in `app_data.json`, the beach, lake, mountain, cycling and region wires, plus four partner landing pages, deduplicated (88,718 distinct on 2026-11-07: 79,910 image, 7,566 source, 1,238 official, 4 partner). Each link keeps the item (`layer`, `id`, dotted `path`) that carries it.
+2. **Check politely**: user agent `CartaLinkCheck/1.0` with the repository URL, no personal data; robots.txt read once per host and respected (a disallowed URL is never fetched); HEAD first, one GET with headers only when HEAD gets 403, 405 or 501; redirects followed by hand, every hop paced and recorded (`max_redirects` 5); `per_host_delay_s` 1.0 and 0.5 s for the Wikimedia hosts (`host_delay_s`); `timeout_s` 15.
+3. **Classes**: ok; moved (a redirect chain ending 2xx, `final` is the fix); unsure (timeout, 429, 5xx, 403, proxy error: never counted); robots; broken. A 404, 410, DNS failure, refused connection or redirect loop is a strike; `strikes` 2 in a row make it broken, so one hiccup never lists a link.
+4. **Offline guard**: when 80% or more of a run of 20 or more answers are network errors, the box or its proxy was down, not the links: the run is discarded, no strikes.
+5. **Resumable**: state in `logs/status/links/results.json` (`CARTA_LINKS_OUT` moves it). Never-checked links go first, partner, official and source before images, then results older than `recheck_days` 28. A run stops at `budget_minutes` 120. At the Wikimedia pace one run covers roughly 14,000 URLs, so the image set is covered over about six weeks.
+6. **Admin**: `continent-app/src/admin/linkHealth.json` (rebuilt each run) feeds `LinkHealth.jsx`, under the Data health card: totals, a table by kind, the broken list (first 200) with the item that uses each. **Fix** and **Drop** draft an I13 override (`linkFix.js`: Drop sets the field to null, Fix to the moved address or one typed in) and download the layer file; it lands through a pull request. Links inside a list (a path with a position) and partner pages have no override path: change them in the source.
+7. **D2 rule**: `scripts/quality/rules.yaml` `links`: broken share of checked links above `max_broken_share` 0.02 warns, above `hard_broken_share` 0.10 fails the run. Silent until `min_checked` 500 links have a result. Unsure and robots results are not in the share.
+
+**Where it lives.** `pipeline/link_health.py`, `pipeline/config/link_health.yaml`, `scripts/quality/engine.py` (`_links_gate`), `continent-app/src/components/admin/{LinkHealth.jsx,linkFix.js}`; tests `tests/test_link_health.py`, `tests/test_quality_engine.py`, `continent-app/tests/linkHealth.test.mjs`. Run: `python pipeline/link_health.py run --limit 200` (or `collect` to count only).
+
+**Limits.** Built and tested on fixtures; the cloud proxy blocks the real hosts, so the first real run is a box task (T1197-a). A page that answers 200 but shows an error page (a soft 404) is not detected. HEAD answers on image CDNs can differ from GET.
+
 ### External validation runner and scorecard (D23)
 
 **What it does.** Checks each data layer against outside references with one method and one result format. It measures how much of what the references name Carta has, how well its ranks agree, and how many checked facts match. A must-pass check that drops below its baseline fails the D2 quality run. The owner sees each layer's checks and their trend under the Data health card (ROADMAP D23, T1187).

@@ -2148,3 +2148,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1200-b | T1200 | Run `python run_pipeline.py --only heat_fire` and rebuild the wire so the shipped data carries climate.heat and climate.fire | user | open |  |
 | T1200-c | T1200 | No heat or fire warning yet on Explore cards, Compare or the PDF; the rule (src/lib/heatRisk.js) exists for them, and the Explore month filter still reads the unguarded climate.best | next task | open |  |
 | T1200-d | T1200 | "Avoids heat" is read from settingsCtx.avoid on the place page; confirm the settings context exposes it (family via children and babies works today) and check the pages in a browser | next task | open |  |
+| T1197-a | T1197 | Link and page health (D16) has not run against the real hosts; the cloud proxy blocks them. Run it on the box, read the broken list | user | open |  |
+| T1197-b | T1197 | Wikimedia's User-Agent and robot policy were read from secondary sources only; confirm the 0.5 s pace and the user agent in pipeline/config/link_health.yaml | user | open |  |
+| T1197-c | T1197 | Soft 404s (a 200 page that shows an error) are not detected by the link checker; add a content probe for official sites | next task | open |  |
+| T1197-d | T1197 | Broken links inside lists (activities, members) cannot be fixed from the admin: override paths have no list positions; extend the grammar or fix at the source layer | next task | open |  |
+| T1197-e | T1197 | The box schedule must keep logs/status/links across its git reset; confirm the new weekly task link_health is picked up by the Hetzner box (--max-cadence weekly) | user | open |  |

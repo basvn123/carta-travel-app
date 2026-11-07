@@ -38,6 +38,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 RULES = HERE / "rules.yaml"
 APP_SNAPSHOT = ROOT / "continent-app" / "src" / "admin" / "dataHealth.json"
+LINKS = ROOT / "continent-app" / "src" / "admin" / "linkHealth.json"
 VALIDATION = Path(os.environ.get("CARTA_VALIDATION_DIR") or ROOT / "data" / "reports" / "validation")
 PANEL_VERSION = 1
 LEVELS, KINDS = {"must_see", "must_have"}, {"hard", "soft"}
@@ -64,6 +65,29 @@ def _validation_gate(valid_dir):
     return mod.gate_from_disk(Path(valid_dir))
 
 
+def _links_gate(cfg: dict, snap_path: Path | None) -> tuple[list, list]:
+    """D16 (T1197): the share of broken links in the latest link health
+    snapshot, against rules.yaml `links`. No snapshot, or fewer than
+    min_checked results, is silent: nothing was measured yet."""
+    rule = cfg.get("links")
+    if not rule or snap_path is None or not Path(snap_path).is_file():
+        return [], []
+    try:
+        t = json.loads(Path(snap_path).read_text(encoding="utf-8")).get("totals") or {}
+    except ValueError:
+        return [], []
+    share = t.get("broken_share")
+    if share is None or (t.get("checked") or 0) < rule["min_checked"]:
+        return [], []
+    row = {"id": rule["id"], "layer": "links", "field": "broken_share", "level": "must_have", "kind": "soft",
+           "min": rule["max_broken_share"], "value": share, "previous": None, "delta_points": None}
+    if share > rule["hard_broken_share"]:
+        return [{**row, "kind": "hard", "why": f"{share * 100:.1f}% of {t['checked']} checked links are broken (hard limit {rule['hard_broken_share'] * 100:.0f}%)"}], []
+    if share > rule["max_broken_share"]:
+        return [], [{**row, "why": f"{share * 100:.1f}% of {t['checked']} checked links are broken (limit {rule['max_broken_share'] * 100:.0f}%)"}]
+    return [], []
+
+
 def _when(s: str) -> datetime:
     return datetime.fromisoformat(s.replace("Z", "+00:00"))
 
@@ -88,7 +112,18 @@ def load_rules(path: Path = RULES) -> dict:
     if errors:
         raise ValueError("rules.yaml: " + "; ".join(errors))
     gate = d.get("gate") or {}
-    return {"rules": rules, "drop_points": float(gate.get("must_see_drop_points", 2)),
+    lk = d.get("links")
+    if lk is not None:
+        for k in ("max_broken_share", "hard_broken_share"):
+            if not isinstance(lk.get(k), (int, float)) or not 0 <= lk[k] <= 1:
+                errors.append(f"links.{k} must be a share between 0 and 1")
+        if not isinstance(lk.get("min_checked"), int) or lk["min_checked"] < 0:
+            errors.append("links.min_checked must be a whole number")
+        if not errors and lk["max_broken_share"] > lk["hard_broken_share"]:
+            errors.append("links.max_broken_share must not exceed hard_broken_share")
+    if errors:
+        raise ValueError("rules.yaml: " + "; ".join(errors))
+    return {"links": lk, "rules": rules, "drop_points": float(gate.get("must_see_drop_points", 2)),
             "trend_days": int(gate.get("trend_days", 90))}
 
 
@@ -206,7 +241,7 @@ def panel(card: dict, result: dict, points: list[dict], days: int, baseline_at: 
 
 def run(public: Path, now: datetime | None, out: Path, rules_path: Path = RULES,
         write: bool = False, snapshot: Path | None = APP_SNAPSHOT,
-        validation: Path | None = VALIDATION) -> tuple[int, dict]:
+        validation: Path | None = VALIDATION, links: Path | None = LINKS) -> tuple[int, dict]:
     cfg = load_rules(rules_path)
     problems = coverage_problems(cfg["rules"])
     if problems:
@@ -216,8 +251,9 @@ def run(public: Path, now: datetime | None, out: Path, rules_path: Path = RULES,
     prev, prev_at = previous_fields(out, card["generated_at"])
     result = evaluate(card, cfg, prev)
     vfail, vwarn = _validation_gate(validation)
-    result["failures"] += vfail
-    result["warnings"] += vwarn
+    lfail, lwarn = _links_gate(cfg, links)
+    result["failures"] += vfail + lfail
+    result["warnings"] += vwarn + lwarn
     result["ok"] = not result["failures"]
     card["gate"] = {"ok": result["ok"], "failures": len(result["failures"]),
                     "warnings": len(result["warnings"]), "baseline_at": prev_at}
@@ -253,13 +289,14 @@ def main(argv=None) -> int:
                     help="do not refresh continent-app/src/admin/dataHealth.json")
     ap.add_argument("--validation", default=str(VALIDATION),
                     help="folder of the D23 validation results whose hard checks join the gate")
+    ap.add_argument("--links", default=str(LINKS), help="link health snapshot (D16) whose broken share joins the gate")
     ap.add_argument("--no-validation", action="store_true", help="leave the D23 validation gate out")
     a = ap.parse_args(argv)
     now = _when(a.now) if a.now else None
     try:
         rc, data = run(Path(a.public).resolve(), now, Path(a.out), Path(a.rules), a.write,
                        None if a.no_snapshot else APP_SNAPSHOT,
-                       None if a.no_validation else Path(a.validation))
+                       None if a.no_validation else Path(a.validation), Path(a.links))
     except ValueError as e:
         print(f"quality: {e}", file=sys.stderr)
         return 2

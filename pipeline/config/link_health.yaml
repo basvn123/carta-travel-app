@@ -1,0 +1,39 @@
+# Link and page health (ROADMAP D16, T1197). Read by pipeline/link_health.py.
+#
+# user_agent  names Carta and a contact page, no personal data.
+# per_host_delay_s  minimum seconds between two requests to one host.
+# host_delay_s  overrides for hosts with a published limit (Wikimedia asks for
+#               a gentle pace and a descriptive user agent).
+# recheck_days  a result younger than this is not fetched again. About 89k links
+#               (80k are image URLs) at the Wikimedia pace do not fit one
+#               weekly budget; the run resumes, so the whole set is covered
+#               on a rolling basis (the report gives the numbers).
+# strikes  a link is "broken" only after this many failed checks in a row on
+#          different runs; one failure is "unsure" (a hiccup, a rate limit).
+# partners  landing pages of the booking and partner programmes, checked bare:
+#           no partner id, no tracking, no traveller data. The real links are
+#           built in the app (continent-app/src/lib/affiliate.js and
+#           activityAffiliates.js); these roots are what they point at.
+user_agent: "CartaLinkCheck/1.0 (+https://github.com/basvn123/carta-travel-app; weekly link health check; respects robots.txt)"
+timeout_s: 15
+max_redirects: 5
+per_host_delay_s: 1.0
+host_delay_s:
+  upload.wikimedia.org: 0.5
+  en.wikipedia.org: 0.5
+  en.wikivoyage.org: 0.5
+recheck_days: 28
+strikes: 2
+budget_minutes: 120
+sources:
+  - continent-app/public/app_data.json
+  - continent-app/public/beaches
+  - continent-app/public/lakes
+  - continent-app/public/mountains
+  - continent-app/public/cycling
+  - continent-app/public/region
+partners:
+  - https://www.aviasales.com/
+  - https://www.omio.com/
+  - https://www.getyourguide.com/
+  - https://www.viator.com/

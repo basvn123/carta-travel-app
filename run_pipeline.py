@@ -2840,6 +2840,24 @@ TASKS = [
                  "pushes main. Docs: content/blog/README.md."),
     },
     {
+        "key": "link_health",
+        "title": "Link and page health: every outbound link and image URL, politely (D16, T1197)",
+        "cadence": "weekly",
+        "writes_app_data": False,
+        "soft": True,
+        "rev": "T1197",
+        "est_h": 2,
+        "cmds": [[PY, "pipeline/link_health.py", "run"]],
+        "note": ("pipeline/link_health.py collects the links in the shipped wires and "
+                 "checks them with HEAD (GET headers only when HEAD is refused), robots.txt "
+                 "respected, a gap per host, a user agent naming Carta. It resumes: the "
+                 "state is logs/status/links/results.json, a 120 minute budget a week "
+                 "(pipeline/config/link_health.yaml), so the ~80k image URLs are covered "
+                 "over several weeks. Writes continent-app/src/admin/linkHealth.json for "
+                 "the admin Data health tab; the D2 gate reads its broken share "
+                 "(scripts/quality/rules.yaml `links`). HANDBOOK 'Link and page health'."),
+    },
+    {
         "key": "photo_sources",
         # T269-b. Last in the table on purpose: it reads the wires the layer
         # exports above have just written, so it must follow every one of them.

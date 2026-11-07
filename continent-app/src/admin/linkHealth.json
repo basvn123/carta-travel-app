@@ -1,0 +1,10 @@
+{
+ "version": 1,
+ "generated_at": null,
+ "totals": {"links": 0, "checked": 0, "ok": 0, "moved": 0, "unsure": 0, "robots": 0, "broken": 0, "broken_share": null},
+ "kinds": {},
+ "broken": [],
+ "broken_total": 0,
+ "moved": [],
+ "moved_total": 0
+}
