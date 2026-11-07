@@ -11,7 +11,7 @@ import { useKeepTrip, useTripFinder } from './finderHooks.js';
 import { answersLine, stageLines, tripName, tripPhotos, widenQuestion } from './finderText.js';
 import { durationMs, prefersReducedMotion } from '../../lib/motion.js';
 import { TripsForYou } from './TripsForYou.jsx';
-import { TripPage } from './TripPage.jsx';
+import { FoundTripPage } from './FoundTripPage.jsx';
 import { planOf } from './planOf.js';
 import '../../styles/87-trip-finder.css';
 
@@ -19,6 +19,7 @@ import '../../styles/87-trip-finder.css';
 // own chunk made the bundler split SheetShell out, one more preload a page.
 export { default as TogetherSheet } from './TogetherSheet.jsx';
 // The kept trips' price since (T807), for the Plan home and My trips.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export { dropsFor } from '../../lib/recommend/kept.js';
 // T864, T865: two doors' screens ride in this chunk with the engine they run.
 export { FlightFirstScreen, KnowBuildScreen } from './DoorScreens.jsx';
@@ -222,7 +223,7 @@ function scrollerOf(el) {
  *   openId          T870: a trip to open on arrival (an address with #tf=)
  *   onPlan(plan)    "Plan this trip": the trip's plan (planOf.js)
  *
- * T870: a card opens the trip's page (TripPage) in place of the list, with
+ * T870: a card opens the trip's page (FoundTripPage) in place of the list, with
  * its own address (#tf=<id>) pushed as one history step, so the browser's
  * Back and the page's own back control return to the list where it was:
  * the list stays mounted under the page (its sort, view and scroll held)
@@ -349,7 +350,7 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
         )}
       </div>
       {open && (
-        <TripPage
+        <FoundTripPage
           trip={open}
           settings={settings}
           destinations={finder.data?.destinations}
