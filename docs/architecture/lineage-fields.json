@@ -1044,7 +1044,7 @@
     {
       "path": "search/",
       "tasks": [
-        "manual"
+        "guided_search"
       ],
       "writer": "pipeline/guided_search_layer.py",
       "host": "R2",

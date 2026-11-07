@@ -18,8 +18,8 @@ that destructures a record is missed. Request paths are in [request-paths.md](re
 | ...written only or partly by a legacy step | 29 |
 | ...written only or partly by a script no task schedules | 20 |
 | ...with no writer left in the repo | 2 |
-| run_pipeline.py tasks | 80 |
-| ...that write a wire field or a wire file | 42 |
+| run_pipeline.py tasks | 81 |
+| ...that write a wire field or a wire file | 43 |
 | Wire files and folders | 27 |
 
 ## The trunk
@@ -89,7 +89,7 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `meta.place_model` | GeoNames population, POI mix, place class rules | `fame` | app_data/app_data.json (master) | `pipeline/apply_place_layer.py` | boot.json (meta) | none found |
 | `meta.rating_model` | the rating layer and continent-app/config/rating.json | `fame`, `poi_significance` | app_data/app_data.json (master) | `pipeline/apply_rating_layer.py` | boot.json (meta) | none found |
 | `meta.tourist_premium_model` | Eurostat nights per NUTS3 against the country base | `tourist_premium` | app_data/app_data.json (master) | `pipeline/apply_tourist_premium.py` | boot.json (meta) | none found |
-| `destinations.*.id` | Carta catalogue (IATA code or gem:slug) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (id) | `src/auth/SavedTripsPanel.jsx`, `src/browse/ExploreTab.jsx`, `src/browse/DestinationPage.jsx` (212 files) |
+| `destinations.*.id` | Carta catalogue (IATA code or gem:slug) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (id) | `src/auth/SavedTripsPanel.jsx`, `src/browse/ExploreTab.jsx`, `src/browse/DestinationPage.jsx` (213 files) |
 | `destinations.*.tier` | Carta catalogue (airport, gem, longtail) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (f (flag AIRPORT)), dest/_rank.json, dest/{cc}.json | `src/browse/ExploreMap.jsx`, `src/lib/linking/aliases.js`, `src/components/CrowdingBadge.jsx` (29 files) |
 | `destinations.*.iata` | Ryanair airport list, then the catalogue | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | dest/_rank.json, dest/{cc}.json | `src/lib/airportReach.js`, `src/planner/GuidedTripWizard.jsx`, `src/components/AirportReach.jsx` (22 files) |
 | `destinations.*.city` | Carta catalogue (display name) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | dest/_rank.json, dest/{cc}.json | `src/planner/DayPlannerTab.jsx`, `src/planner/TripItinerary.jsx`, `src/auth/PastTripForm.jsx` (144 files) |
@@ -876,6 +876,17 @@ flowchart LR
   C9 --> W1
 ```
 
+### `guided_search` (after)
+
+```mermaid
+flowchart LR
+  T_guided_search["guided_search"]
+  C0["pipeline/guided_search_layer.py"]
+  T_guided_search --> C0
+  W0["search/ (R2)"]
+  C0 --> W0
+```
+
 ### `ask_index` (after)
 
 ```mermaid
@@ -928,7 +939,7 @@ The contract covers `app_data.json`. The other folders the app fetches, with the
 | `lakes/` | `lakes`, `lake_detail`, `rating_v5_profile` | `pipeline/lakes/export_lakes.py` | R2 | `src/browse/LakePage.jsx` | lakes per country |
 | `mountains/` | `mountains`, `peak_context`, `rating_v5_profile` | `pipeline/mountains/export_peaks.py` | R2 | `src/browse/MountainPage.jsx` | peaks per country |
 | `region/` | `regions` | `pipeline/regions/export_regions.py` | R2 | `src/lib/regions.js` | regions and their members |
-| `search/` | `manual` | `pipeline/guided_search_layer.py` | R2 | `src/lib/guidedData.js` | guided search areas, distances and vibes |
+| `search/` | `guided_search` | `pipeline/guided_search_layer.py` | R2 | `src/lib/guidedData.js` | guided search areas, distances and vibes |
 | `search/ask/` | `ask_index` | `pipeline/ask_index_layer.py` | Pages | `functions/api/ask.js` | Ask Carta passages, vectors and BM25 |
 | `stays/` | `manual` | `pipeline/stays/apply_stays.py` | R2 | `src/lib/staysData.js` | bed prices per country baked into a build |
 | `stays-live/` | `stays` | `pipeline/stays/box_stays.py` | R2 | `src/lib/staysData.js` | the monthly bed price refresh, read without a deploy |
