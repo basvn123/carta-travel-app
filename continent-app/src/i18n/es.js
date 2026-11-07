@@ -10259,4 +10259,22 @@ export const es = {
   // T1169 (I7): installable app, offline line. Machine draft, pending native review.
   "pwa.offline.saved": "Estás sin conexión. Los viajes guardados aquí siguen abriéndose; los precios y tu cuenta esperan a la red.",
   "pwa.offline.empty": "Estás sin conexión. Los viajes guardados se abren aquí una vez que los hayas abierto con conexión.",
+  // T1175 (K7): the shareable trip receipt image.
+  "share.receiptMenu": "Compartir el recibo",
+  "share.receiptTitle": "El recibo de tu viaje",
+  "share.receiptShare": "Compartir",
+  "share.receiptSave": "Guardar la imagen",
+  "share.receiptMaking": "Dibujando el recibo",
+  "share.receiptFailed": "Este dispositivo no pudo dibujar la imagen.",
+  "share.receiptAlt": "{title}: {price} por {n} noches",
+  "share.receiptHint": "Una imagen de lo que cuesta este viaje, para enviar o publicar. No muestra nombres ni reservas.",
+  "share.receiptKicker": "Mi viaje, calculado por Carta",
+  "share.receiptParty1": "1 persona",
+  "share.receiptPartyN": "{n} personas",
+  "share.receiptTotal1": "Total para una persona",
+  "share.receiptTotalN": "Total para {n} personas",
+  "share.receiptPerDay": "{price} por persona y día",
+  "share.receiptNote": "Estimación de Carta el {date}. Camas y comida son estimaciones de Carta a partir de muestras de precios publicados; una línea de vuelo es la tarifa que mostró Google Flights.",
+  "share.receiptBrand": "Planificado con Carta, carta-europetravel.com",
+  "share.receiptClose": "Cerrar",
 };

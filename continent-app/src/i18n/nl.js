@@ -10259,4 +10259,22 @@ export const nl = {
   // T1169 (I7): installable app, offline line. Machine draft, pending native review.
   "pwa.offline.saved": "Je bent offline. Bewaarde reizen openen nog; prijzen en je account wachten op het netwerk.",
   "pwa.offline.empty": "Je bent offline. Bewaarde reizen openen hier zodra je ze eens met verbinding hebt geopend.",
+  // T1175 (K7): the shareable trip receipt image.
+  "share.receiptMenu": "Deel het bonnetje",
+  "share.receiptTitle": "Het bonnetje van je reis",
+  "share.receiptShare": "Delen",
+  "share.receiptSave": "Bewaar de afbeelding",
+  "share.receiptMaking": "Het bonnetje wordt getekend",
+  "share.receiptFailed": "Dit toestel kon de afbeelding niet tekenen.",
+  "share.receiptAlt": "{title}: {price} voor {n} nachten",
+  "share.receiptHint": "Een afbeelding van wat deze reis kost, om te sturen of te posten. Er staan geen namen en geen boekingen op.",
+  "share.receiptKicker": "Mijn reis, berekend door Carta",
+  "share.receiptParty1": "1 persoon",
+  "share.receiptPartyN": "{n} personen",
+  "share.receiptTotal1": "Totaal voor één persoon",
+  "share.receiptTotalN": "Totaal voor {n} personen",
+  "share.receiptPerDay": "{price} per persoon per dag",
+  "share.receiptNote": "Schatting van Carta op {date}. Bedden en eten zijn schattingen van Carta uit steekproeven van lijstprijzen; een vluchtregel is de prijs die Google Flights toonde.",
+  "share.receiptBrand": "Gepland met Carta, carta-europetravel.com",
+  "share.receiptClose": "Sluiten",
 };

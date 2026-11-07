@@ -2807,6 +2807,24 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Limits.** The 300 mentions were written by the session that built the linker, so the score is an upper bound until real queries are labelled (T1153-c). Wikidata labels are not in the data (T1153-b). Ask and parse-booking do not call it yet (T1153-d, T1153-e). Known misses: "Fårö" goes to Faro, "pafos" to Paros.
 
+### Shareable assets (100 a day map, cheapest week, trip receipt)
+
+**What it does.** Three images to share, each built from the shipped data with a numbers check, credits printed on the image (ROADMAP K7, T1175): "Europe on 100 EUR a day" (every priced place on a map of Europe, filled where one person's day fits the budget), "the cheapest week" per place (the 52 weeks of a year at their own dates, the cheapest marked), and a saved trip's receipt, shared from My trips behind a flag.
+
+**How it works.**
+1. One drawing format (`lib/share/draw.js`): a list of ops (rect, circle, path, text) with colours as token names. The app draws it on a canvas (`drawOps`, palette from the page's `:root`); the offline script writes it as SVG (`opsToSvg`, palette parsed from `01-tokens.css`) and rasterises it with the Playwright Chromium the repo already has (`scripts/share/render_png.mjs`, Figtree inlined).
+2. Numbers check (`checkFigures`): every text op that prints a digit names its figure (`fig: { key, value }`), the formatted value must be in the text, and the value must equal the one a second path computes from the data. Dates (`date: true`) and licence names (`plain: true`) are exempt and checked by their callers. Any problem fails the script, and in the app the sheet offers nothing.
+3. The map: the default request (`DEFAULT_PRICE_REQUEST`, owner decision B5), `priceDays` over the catalogue; a place fits when `dayEur` is at most the budget (`--budget`, 100). Second path: one `priceDay` per place. The filled and hollow dots drawn must equal the counts. Base map: `public/europe_map.json` (Natural Earth, the Your Europe projection).
+4. The calendar: weeks from the first Monday of `--year` (2027), 7 nights each, `priceDay` with `atDates`, a week = `dayEur` x 7 for one person. Cells are cheap at 0.92 of the year's average or less and dear at 1.08 or more (the `priceMonths.js` thresholds). Only places with a measured month curve (`seasonCurve`, six measured months) get one; the stays wire is read from `--stays DIR`. Second path: the included line items summed again per week.
+5. The receipt (`lib/share/receipt.js`): `plannerStateFromPlan`, `quoteTrip` and `tripLines`, the lines every trip screen and the PDF print, laid out at 1080 x 1350. Second path: `tripFigure` (My trips' own figure). The lines must add up to the total. Whole euros on the image.
+6. Sharing (`components/ShareReceiptSheet.jsx`, lazy): the image is drawn when the sheet opens, so Share calls `navigator.share` with the PNG inside the tap; Share shows only where `navigator.canShare({ files })` is true, Save (a download) always. Flag (`lib/share/flag.js`): `?receipt=1` (remembered), localStorage `carta.shareReceipt` = `1`, or `VITE_SHARE_RECEIPT=1`.
+
+**Data behind it.** `public/app_data.json`, `public/europe_map.json`, the stays wire (`stays-live/v1/{cc}.json` on the data host) for the calendars, a saved trip for the receipt. Credits on each image: Natural Earth (map), GeoNames and OpenStreetMap contributors (places), Carta's own samples of list prices, Inside Airbnb, Eurostat and Open Food Facts Open Prices (prices). The receipt has no photo or map, so no image credit.
+
+**Where it lives.** `continent-app/src/lib/share/` (`draw.js`, `receipt.js`, `flag.js`), `continent-app/src/components/ShareReceiptSheet.jsx`, `continent-app/src/auth/SavedTripsPanel.jsx` (the menu item), `scripts/share/share_assets.mjs` and `render_png.mjs` (outputs in the gitignored `scripts/share/out/`). Tests: `continent-app/tests/shareAssets.test.mjs`. Browser check: `continent-app/scripts/verify_share_receipt.mjs`. Run: `node scripts/share/share_assets.mjs --stays DIR --png`; `--check` compares with `out/`.
+
+**Limits.** The offline images are in English only. The receipt is not offered for the trip kept on a device without an account (its menu is empty). Register rows `T1175-a` and on.
+
 ### Evals (one runner, one results format)
 
 **What it does.** Every eval Carta has runs through one runner and writes one results format, so the owner reads the latest score and the trend of each in one page (`docs/reference/evals.md`) and nothing that changes a model, a ranking, a text generator or the data ships without a score to compare (ROADMAP F6, T1148).

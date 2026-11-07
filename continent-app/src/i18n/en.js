@@ -10345,4 +10345,22 @@ export const en = {
   // T1169 (I7): installable app, offline line.
   "pwa.offline.saved": "You are offline. Trips kept here still open; prices and your account wait for the network.",
   "pwa.offline.empty": "You are offline. Saved trips open here once you have opened them with a connection.",
+  // T1175 (K7): the shareable trip receipt image.
+  "share.receiptMenu": "Share the receipt",
+  "share.receiptTitle": "Your trip receipt",
+  "share.receiptShare": "Share",
+  "share.receiptSave": "Save the image",
+  "share.receiptMaking": "Drawing the receipt",
+  "share.receiptFailed": "This device could not draw the image.",
+  "share.receiptAlt": "{title}: {price} for {n} nights",
+  "share.receiptHint": "An image of what this trip costs, to send or post. It shows no names and no bookings.",
+  "share.receiptKicker": "My trip, priced by Carta",
+  "share.receiptParty1": "1 person",
+  "share.receiptPartyN": "{n} people",
+  "share.receiptTotal1": "Total for one person",
+  "share.receiptTotalN": "Total for {n} people",
+  "share.receiptPerDay": "{price} a person a day",
+  "share.receiptNote": "Carta's estimate on {date}. Beds and food are Carta estimates from sampled list prices; a flight line is the fare Google Flights showed.",
+  "share.receiptBrand": "Planned with Carta, carta-europetravel.com",
+  "share.receiptClose": "Close",
 };
