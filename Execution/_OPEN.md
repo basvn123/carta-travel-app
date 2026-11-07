@@ -2084,3 +2084,11 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1176-b | T1176 | Run the export on the box against the live wire, read the output and the datasheet, create the public GitHub repo and upload `scripts/open_data/out/` plus README and DATASHEET | user | open | |
 | T1176-c | T1176 | Post the Show HN draft (`Execution/P15/T1176-show-hn-draft.md`) only once the free part of Carta needs no signup | user | open | |
 | T1176-d | T1176 | UK crowding (ONS/VisitBritain, OGL v3.0) and Wikidata ids (CC0) are not in the export yet: add them as `FIELDS` entries once the T1098 run has landed and the OGL attribution is in the ledger | next task | open | |
+| T1192-a | T1192 | Mountains layer has only a 21-summit seed: export Wikidata (and OSM, national lists), take a baseline, then make coverage and fact.height hard checks | user | open |  |
+| T1192-b | T1192 | 16 designated lakes reviewed as real holes (Malaren, Oostvoornse Meer, Zuiderplas, Lankower See, Saadjarve and more) have no Carta row; add them at the lake harvest | next task | open |  |
+| T1192-c | T1192 | Tsjukemar (NL): register says Poor, Carta prints Sufficient and swim yes; find the join or season cause in enrich_lakes.join_bathing and fix | next task | open |  |
+| T1192-d | T1192 | Wrong joins: Bruges canal sites to the Lake of Love, Tarbja Tehisjarv to Paide Tehisjarv; add a name guard to the first-pass join | next task | open |  |
+| T1192-e | T1192 | Lake class is the best of the sites on the lake; the page should name the site and say other beaches differ (Ouderkerkerplas, Beetzsee, Lipno) | next task | open |  |
+| T1192-f | T1192 | Kebnekaise row sits 3 km from the summit (Wikidata massif coordinate); check the other mountains with a position over 1 km on the owner's run | next task | open |  |
+| T1192-g | T1192 | National lake CSVs (France, Sweden, Finland) for the lakes layer; check each licence | user | open |  |
+| T1192-h | T1192 | Rerun the lakes layer on the box after the T1186-a water fill and take a new baseline if the move is intended | user | open |  |

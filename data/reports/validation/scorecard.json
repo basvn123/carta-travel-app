@@ -1,6 +1,6 @@
 {
  "schema": "carta-validation-scorecard/1",
- "generated_at": "2026-11-06T12:00:00Z",
+ "generated_at": "2026-11-07T12:00:00Z",
  "layers": [
   {
    "layer": "beaches",
@@ -160,6 +160,457 @@
       "fact.poor": 0.7778,
       "fact.water": 1.0,
       "fact_share": 0.9888
+     }
+    }
+   ]
+  },
+  {
+   "layer": "lakes",
+   "latest": "2026-11-07",
+   "generated_at": "2026-11-07T12:00:00Z",
+   "reference_n": 6211,
+   "sample": {
+    "sampled": false,
+    "share": 1.0,
+    "min_per_country": 5,
+    "salt": "d23",
+    "n": 6211,
+    "population": 6211,
+    "countries": 27
+   },
+   "baseline_at": "2026-11-07",
+   "gate": {
+    "ok": true,
+    "failures": [],
+    "warnings": [],
+    "checks": [
+     {
+      "metric": "coverage",
+      "kind": "hard",
+      "now": 0.275,
+      "baseline": 0.275,
+      "tolerance_points": 0,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.class",
+      "kind": "hard",
+      "now": 0.9872,
+      "baseline": 0.9872,
+      "tolerance_points": 0,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.poor",
+      "kind": "soft",
+      "now": 0.6667,
+      "baseline": 0.6667,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.swim",
+      "kind": "soft",
+      "now": 1.0,
+      "baseline": 1.0,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.known",
+      "kind": "soft",
+      "now": 0.8623,
+      "baseline": 0.8623,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "has_water",
+      "kind": "soft",
+      "now": 0.8443,
+      "baseline": 0.8443,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "agreement_tau",
+      "kind": "soft",
+      "now": 0.1409,
+      "baseline": 0.1409,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "error_mae",
+      "kind": "soft",
+      "now": 0.014,
+      "baseline": 0.014,
+      "tolerance_points": 5,
+      "status": "pass"
+     }
+    ]
+   },
+   "metrics": {
+    "has_water": {
+     "value": 0.8443,
+     "k": 1442,
+     "n": 1708,
+     "low": 0.8263,
+     "high": 0.8607
+    },
+    "rated": {
+     "value": 0.8642,
+     "k": 1476,
+     "n": 1708,
+     "low": 0.8471,
+     "high": 0.8796
+    },
+    "coverage": {
+     "value": 0.275,
+     "k": 1708,
+     "n": 6211,
+     "low": 0.264,
+     "high": 0.2862
+    },
+    "fact.class": {
+     "value": 0.9872,
+     "k": 1383,
+     "n": 1401,
+     "low": 0.9798,
+     "high": 0.9919
+    },
+    "fact.known": {
+     "value": 0.8623,
+     "k": 1415,
+     "n": 1641,
+     "low": 0.8448,
+     "high": 0.8781
+    },
+    "fact.poor": {
+     "value": 0.6667,
+     "k": 2,
+     "n": 3,
+     "low": 0.2077,
+     "high": 0.9385
+    },
+    "fact.swim": {
+     "value": 1.0,
+     "k": 1626,
+     "n": 1626,
+     "low": 0.9976,
+     "high": 1.0
+    },
+    "fact_share": {
+     "value": 0.9475,
+     "k": 4426,
+     "n": 4671,
+     "low": 0.9408,
+     "high": 0.9536
+    },
+    "agreement_tau": {
+     "value": 0.1409,
+     "n": 1415
+    },
+    "agreement_rho": {
+     "value": 0.1694,
+     "n": 1415
+    },
+    "error_mae": {
+     "value": 0.014,
+     "n": 1401
+    },
+    "error_mdape": {
+     "value": 0.0,
+     "n": 1401
+    }
+   },
+   "gaps": 30,
+   "trend": [
+    {
+     "date": "2026-11-07",
+     "gate_ok": true,
+     "metrics": {
+      "agreement_tau": 0.1409,
+      "coverage": 0.275,
+      "error_mae": 0.014,
+      "error_mdape": 0.0,
+      "fact.class": 0.9872,
+      "fact.known": 0.8623,
+      "fact.poor": 0.6667,
+      "fact.swim": 1.0,
+      "fact_share": 0.9475,
+      "has_water": 0.8443
+     }
+    }
+   ]
+  },
+  {
+   "layer": "mountains",
+   "latest": "2026-11-07",
+   "generated_at": "2026-11-07T12:00:00Z",
+   "reference_n": 21,
+   "sample": {
+    "sampled": false,
+    "share": 1.0,
+    "min_per_country": 3,
+    "salt": "d23",
+    "n": 21,
+    "population": 21,
+    "countries": 14
+   },
+   "baseline_at": "2026-11-07",
+   "gate": {
+    "ok": true,
+    "failures": [],
+    "warnings": [],
+    "checks": [
+     {
+      "metric": "coverage",
+      "kind": "soft",
+      "now": 1.0,
+      "baseline": 1.0,
+      "tolerance_points": 0,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.height",
+      "kind": "soft",
+      "now": 1.0,
+      "baseline": 1.0,
+      "tolerance_points": 0,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.position",
+      "kind": "soft",
+      "now": 0.9524,
+      "baseline": 0.9524,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.route",
+      "kind": "soft",
+      "now": 0.3333,
+      "baseline": 0.3333,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "in_rated",
+      "kind": "soft",
+      "now": 1.0,
+      "baseline": 1.0,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "error_mae",
+      "kind": "soft",
+      "now": 0.0,
+      "baseline": 0.0,
+      "tolerance_points": 5,
+      "status": "pass"
+     }
+    ]
+   },
+   "metrics": {
+    "in_rated": {
+     "value": 1.0,
+     "k": 21,
+     "n": 21,
+     "low": 0.8454,
+     "high": 1.0
+    },
+    "coverage": {
+     "value": 1.0,
+     "k": 21,
+     "n": 21,
+     "low": 0.8454,
+     "high": 1.0
+    },
+    "fact.height": {
+     "value": 1.0,
+     "k": 21,
+     "n": 21,
+     "low": 0.8454,
+     "high": 1.0
+    },
+    "fact.position": {
+     "value": 0.9524,
+     "k": 20,
+     "n": 21,
+     "low": 0.7733,
+     "high": 0.9915
+    },
+    "fact.prom": {
+     "value": null,
+     "k": 0,
+     "n": 0,
+     "low": null,
+     "high": null
+    },
+    "fact.route": {
+     "value": 0.3333,
+     "k": 6,
+     "n": 18,
+     "low": 0.1628,
+     "high": 0.5625
+    },
+    "fact_share": {
+     "value": 0.7833,
+     "k": 47,
+     "n": 60,
+     "low": 0.6638,
+     "high": 0.8688
+    },
+    "agreement_tau": {
+     "value": null,
+     "n": 0
+    },
+    "agreement_rho": {
+     "value": null,
+     "n": 0
+    },
+    "error_mae": {
+     "value": 0.0,
+     "n": 21
+    },
+    "error_mdape": {
+     "value": 0.0,
+     "n": 21
+    }
+   },
+   "gaps": 12,
+   "trend": [
+    {
+     "date": "2026-11-07",
+     "gate_ok": true,
+     "metrics": {
+      "agreement_tau": null,
+      "coverage": 1.0,
+      "error_mae": 0.0,
+      "error_mdape": 0.0,
+      "fact.height": 1.0,
+      "fact.position": 0.9524,
+      "fact.route": 0.3333,
+      "fact_share": 0.7833,
+      "in_rated": 1.0
+     }
+    }
+   ]
+  },
+  {
+   "layer": "prices",
+   "latest": "2026-11-07",
+   "generated_at": "2026-11-07T01:15:28Z",
+   "reference_n": 418,
+   "sample": {
+    "sampled": false,
+    "share": 1.0,
+    "min_per_country": 5,
+    "salt": "d23",
+    "n": 418,
+    "population": 418,
+    "countries": 38
+   },
+   "baseline_at": "2026-11-07",
+   "gate": {
+    "ok": true,
+    "failures": [],
+    "warnings": [],
+    "checks": [
+     {
+      "metric": "coverage",
+      "kind": "hard",
+      "now": 0.9975,
+      "baseline": 0.9975,
+      "tolerance_points": 0,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.level",
+      "kind": "soft",
+      "now": 0.746,
+      "baseline": 0.746,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "agreement_tau",
+      "kind": "soft",
+      "now": 0.5755,
+      "baseline": 0.5755,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "error_mdape",
+      "kind": "soft",
+      "now": 0.1418,
+      "baseline": 0.1418,
+      "tolerance_points": 3,
+      "status": "pass"
+     }
+    ]
+   },
+   "metrics": {
+    "independent": {
+     "value": 0.7759,
+     "k": 315,
+     "n": 406,
+     "low": 0.7328,
+     "high": 0.8137
+    },
+    "coverage": {
+     "value": 0.9975,
+     "k": 406,
+     "n": 407,
+     "low": 0.9862,
+     "high": 0.9996
+    },
+    "fact.level": {
+     "value": 0.746,
+     "k": 235,
+     "n": 315,
+     "low": 0.6952,
+     "high": 0.7909
+    },
+    "fact_share": {
+     "value": 0.746,
+     "k": 235,
+     "n": 315,
+     "low": 0.6952,
+     "high": 0.7909
+    },
+    "agreement_tau": {
+     "value": 0.5755,
+     "n": 315
+    },
+    "agreement_rho": {
+     "value": 0.7571,
+     "n": 315
+    },
+    "error_mae": {
+     "value": 19.322,
+     "n": 315
+    },
+    "error_mdape": {
+     "value": 0.1418,
+     "n": 315
+    }
+   },
+   "gaps": 30,
+   "trend": [
+    {
+     "date": "2026-11-07",
+     "gate_ok": true,
+     "metrics": {
+      "agreement_tau": 0.5755,
+      "coverage": 0.9975,
+      "error_mdape": 0.1418,
+      "fact.level": 0.746,
+      "fact_share": 0.746
      }
     }
    ]
