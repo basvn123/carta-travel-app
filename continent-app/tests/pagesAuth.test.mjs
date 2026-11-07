@@ -45,8 +45,13 @@ for (const [name, { mod, url }] of Object.entries(ROUTES)) {
     assert.deepEqual(creds.out, anon.out, `${name} answered differently with a credential`);
     assert.ok(creds.calls.length > 0 || anon.out.status !== 200, `${name}: no upstream call to inspect`);
     for (const c of creds.calls) {
-      for (const h of Object.keys(CREDS)) assert.ok(!(h in c.headers), `${name} forwarded ${h} to ${c.url}`);
-      assert.ok(!JSON.stringify(c).includes('eyJhbGci'), `${name} leaked the token to ${c.url}`);
+      // Values, not names: the flights client sends its own consent cookie
+      // (SOCS), which is fine; the caller's cookie or token must never ride along.
+      const sent = JSON.stringify(c);
+      for (const [h, v] of Object.entries(CREDS)) {
+        for (const piece of v.split(/[ ;=]+/).filter((x) => x.length > 8)) assert.ok(!sent.includes(piece), `${name} forwarded the caller's ${h} to ${c.url}`);
+      }
+      assert.ok(!('authorization' in c.headers) && !('apikey' in c.headers), `${name} sent an auth header upstream`);
     }
   });
 }
