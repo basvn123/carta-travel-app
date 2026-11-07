@@ -16,7 +16,7 @@
  *   lines     one per item (bed, food, transport, car, activities):
  *               { key, status, eur, quality, basis, provenance }
  *             status   'included' | 'optional' | 'not_included' | 'excluded'
- *             quality  'live' | 'measured' | 'modelled' | 'missing'
+ *             quality  'measured' | 'modelled' | 'missing'
  *             An item without data carries eur null and quality 'missing':
  *             it is never counted as zero (rule 8, V5).
  *             basis and provenance are stored with every price and are for
@@ -42,7 +42,6 @@ export const isThin = (n) => n != null && Number.isFinite(n) && n <= THIN;
 
 function bedQuality(row) {
   if (row.stayEur == null) return 'missing';
-  if (row.stayLive) return 'live';
   return row.stayLevel === 'city' && !row.stayRepaired ? 'measured' : 'modelled';
 }
 
@@ -107,7 +106,7 @@ function linesOf(row, req, iso2, dest = null) {
       basis: { tier: row.stayTier, tierFallback: !!row.tierFallback, nights: req.nights, seats: seatsOf(req),
         when: req.when.kind, observations: row.stayN ?? null, ...(row.stayUnits || {}) },
       provenance: { level: row.stayLevel, source: row.stayBasis, from: row.source, km: row.stayKm,
-        captured: row.captured, repaired: !!row.stayRepaired, scaled: !!row.stayScaled, live: row.stayLive },
+        captured: row.captured, repaired: !!row.stayRepaired, scaled: !!row.stayScaled },
     },
     {
       key: 'food', status: st('food', 'included'), eur: num(row.foodEur),

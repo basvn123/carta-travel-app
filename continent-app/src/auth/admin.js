@@ -36,14 +36,16 @@ export const adminListUsers = (search, limit = 50, offset = 0) =>
 export const adminGetUser = (userId) =>
   call('admin_get_user', { p_user: userId });
 
-export const adminSetTier = (userId, tier, days = null) =>
-  call('admin_set_tier', { p_user: userId, p_tier: tier, p_days: days });
+// Ban, delete and set tier carry a reason into the admin log since migration
+// 064 (T1081); the server refuses fewer than 3 characters (reason_required).
+export const adminSetTier = (userId, tier, days, reason) =>
+  call('admin_set_tier', { p_user: userId, p_tier: tier, p_reason: reason, p_days: days ?? null });
 
 export const adminResetQuota = (userId) =>
   call('admin_reset_quota', { p_user: userId });
 
-export const adminDeleteUser = (userId, confirmText) =>
-  call('admin_delete_user', { p_user: userId, p_confirm: confirmText });
+export const adminDeleteUser = (userId, confirmText, reason) =>
+  call('admin_delete_user', { p_user: userId, p_confirm: confirmText, p_reason: reason });
 
 export const adminSetConfig = (key, value) =>
   call('admin_set_config', { p_key: key, p_value: value });
@@ -62,8 +64,8 @@ export const adminListConfig = () => call('admin_list_config');
 export const adminSetConfigPublic = (key, isPublic) =>
   call('admin_set_config_public', { p_key: key, p_public: !!isPublic });
 
-export const adminBanUser = (userId, days) =>
-  call('admin_ban_user', { p_user: userId, p_days: days });
+export const adminBanUser = (userId, days, reason) =>
+  call('admin_ban_user', { p_user: userId, p_reason: reason, p_days: days });
 
 export const adminUnbanUser = (userId) =>
   call('admin_unban_user', { p_user: userId });

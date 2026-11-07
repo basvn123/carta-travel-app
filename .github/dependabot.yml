@@ -1,0 +1,62 @@
+# C6 (T1080): weekly dependency updates, minor and patch grouped, a small
+# open-PR limit. Dependabot over Renovate: it is built into GitHub and needs no
+# app install or extra token. Major bumps arrive as single PRs (not grouped) so
+# each is reviewed alone (maplibre-gl 6 and jspdf 4 are tracked as C6 tasks).
+# The Workers under continent-app/workers have no package.json of their own, so
+# they are covered by the continent-app entry.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /continent-app
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+    labels: [dependencies]
+
+  - package-ecosystem: npm
+    directory: /tools/trailslab/review
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 2
+    groups:
+      trailslab-minor-patch:
+        update-types: [minor, patch]
+    labels: [dependencies]
+
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      pip-minor-patch:
+        update-types: [minor, patch]
+    labels: [dependencies]
+
+  - package-ecosystem: pip
+    directory: /infra/hetzner/jobs
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 2
+    groups:
+      hetzner-minor-patch:
+        update-types: [minor, patch]
+    labels: [dependencies]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    groups:
+      actions-minor-patch:
+        update-types: [minor, patch]
+    labels: [dependencies]

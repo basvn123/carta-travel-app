@@ -4762,7 +4762,6 @@ export const nl = {
   "dest.tierDorm": "slaapzaal {eur}",
   "dest.tierPrivate": "privékamer {eur}",
   "dest.tierHotel": "3-sterrenhotel {eur}",
-  "stay.live": "Aangepast aan actuele prijzen voor jouw nachten",
   "dest.cheapestMonth": "Goedkoopst in {month}",
   "dest.gettingTitle": "Er komen en rondreizen",
   "dest.flyTo": "Vlieg naar {iata}",

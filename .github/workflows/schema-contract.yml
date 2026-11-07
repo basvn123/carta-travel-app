@@ -64,6 +64,9 @@ on:
       - ".github/workflows/schema-contract.yml"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   contract:
     runs-on: ubuntu-latest
@@ -100,7 +103,7 @@ jobs:
       # Cone mode also brings the files at the top of every parent folder,
       # so continent-app/public/app_data.json and country_insights.json come
       # with public/fares without pulling the 48k generated layer files.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           # Pattern mode (T1061): the nature folders hold about 17,000 files each,
           # and the gate reads only their country files.
@@ -123,7 +126,7 @@ jobs:
             /continent-app/public/mountains/[A-Z][A-Z].json
             /continent-app/public/cycling/[A-Z][A-Z].json
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "20"
 

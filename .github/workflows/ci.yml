@@ -44,6 +44,11 @@ jobs:
         env:
           FAST_OUT: ../.fastbuild
         run: node node_modules/vite/bin/vite.js build --config ../scripts/vite.fast.mjs
+      # ROADMAP C4 (T1078): no browser bundle carries a privileged Supabase
+      # key. Decodes every JWT-shaped string in the build, because a service
+      # role JWT never names its role in clear text.
+      - name: No service key in the browser bundle
+        run: node scripts/ci/check-bundle-secrets.mjs ../.fastbuild
 
   python:
     runs-on: ubuntu-latest

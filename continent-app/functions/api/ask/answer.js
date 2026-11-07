@@ -27,18 +27,21 @@
 import {
   readWirePack, packKey, systemPrompt, userPrompt, MAX_ANSWER_TOKENS,
 } from '../../../src/lib/ask/context.js';
+import { createLimiter, overLimit, methodNotAllowed } from '../../_lib/guard.js';
 
 /** The free allowance is 10,000 Neurons a day (00:00 UTC); stop well short. */
 export const CAP = 9000;
 const CACHE_TTL = 7 * 24 * 3600;
 const RATE = 8;
+const MAX_BODY = 8192;
 // Neurons per million tokens, Workers AI pricing (2026-10); in, out.
 export const MODELS = [
   { id: '@cf/qwen/qwen3-30b-a3b-fp8', in: 4625, out: 30475 },
   { id: '@cf/meta/llama-3.2-3b-instruct', in: 4625, out: 30475 },
 ];
 
-const seen = new Map();
+// Per-isolate window, plus the RATE_LIMIT binding when the account has one (T1079).
+const limiter = createLimiter({ max: RATE });
 const HEADERS = {
   'content-type': 'text/event-stream; charset=utf-8',
   'cache-control': 'no-store',
@@ -51,15 +54,6 @@ export const neurons = (m, tin, tout) => Math.ceil((tin * m.in + tout * m.out) /
 
 function fail(status, reason) {
   return new Response(`event: error\ndata: ${JSON.stringify({ reason })}\n\n`, { status, headers: HEADERS });
-}
-
-function limited(ip) {
-  const now = Date.now();
-  const list = (seen.get(ip) || []).filter((t) => now - t < 60000);
-  list.push(now);
-  seen.set(ip, list);
-  if (seen.size > 5000) seen.clear();
-  return list.length > RATE;
 }
 
 /** One piece of text out of a Workers AI stream line (two shapes exist). */
@@ -76,16 +70,21 @@ export function pieceOf(line) {
   } catch { return null; }
 }
 
+export const onRequest = () => methodNotAllowed('POST');
+
 export async function onRequestPost({ request, env, waitUntil }) {
   if (!env.AI) return fail(503, 'off');
   if (!env.ASK) return fail(503, 'nocap');
   const len = Number(request.headers.get('content-length') || 0);
-  if (len > 8192) return fail(413, 'size');
+  if (len > MAX_BODY) return fail(413, 'size');
+  let raw;
+  try { raw = await request.text(); } catch { raw = null; }
+  // content-length can be missing or false (chunked bodies): measure what arrived.
+  if (raw != null && raw.length > MAX_BODY) return fail(413, 'size');
   let wire;
-  try { wire = readWirePack(JSON.parse(await request.text())); } catch { wire = null; }
+  try { wire = readWirePack(JSON.parse(raw)); } catch { wire = null; }
   if (!wire) return fail(400, 'pack');
-  const ip = request.headers.get('cf-connecting-ip') || 'x';
-  if (limited(ip)) return fail(429, 'rate');
+  if (await overLimit(env, request, limiter, 'answer')) return fail(429, 'rate');
 
   const key = `a:${await packKey(wire)}`;
   const hit = await env.ASK.get(key);
