@@ -165,15 +165,15 @@ POI significance: signals -> dedupe -> gated re-tier -> rating
 - Writes: the master `app_data.json`
 - Wire fields it owns (6): `destinations.*.activities`, `destinations.*.gateway_of`, `destinations.*.gateways`, `destinations.*.rating`, `meta.generated_at`, `meta.rating_model`
 - Note: the 2026-08 open-signal rate engine (docs/QUALITY_UPGRADE_PLAN.md): pageviews + Wikidata sitelinks/heritage + Wikivoyage See/Do listings -> composite score -> local-quota rate 0-3. All harvests resumable + cache-only; score_significance apply REFUSES to write when the anchor validation gate fails (logs/significance_report.json). apply_rating_layer last: the dest rating's things component saturates on the new rates.
-- Reads and runs: `pipeline/harvest_pageviews.py`, `pipeline/harvest_poi_wikidata.py`, `pipeline/harvest_wikivoyage_listings.py`, `pipeline/dedupe_pois.py`, `pipeline/normalize_poi_kinds.py`, `pipeline/score_significance.py`, `pipeline/apply_rating_layer.py`
+- Reads and runs: `pipeline/harvest_pageviews.py`, `pipeline/pois/harvest_poi_wikidata.py`, `pipeline/harvest_wikivoyage_listings.py`, `pipeline/pois/dedupe_pois.py`, `pipeline/pois/normalize_poi_kinds.py`, `pipeline/score_significance.py`, `pipeline/apply_rating_layer.py`
 - Commands:
 
 ```
 python pipeline/harvest_pageviews.py pois
-python pipeline/harvest_poi_wikidata.py
+python pipeline/pois/harvest_poi_wikidata.py
 python pipeline/harvest_wikivoyage_listings.py
-python pipeline/dedupe_pois.py
-python pipeline/normalize_poi_kinds.py
+python pipeline/pois/dedupe_pois.py
+python pipeline/pois/normalize_poi_kinds.py
 python pipeline/score_significance.py apply
 python pipeline/apply_rating_layer.py
 ```
@@ -1006,11 +1006,11 @@ Overture Maps sightseeing POIs -> items_full (additive)
 - Writes: the master `app_data.json`
 - Wire fields it owns (2): `destinations.*.activities`, `meta.data_sources`
 - Note: merges the cached Overture parquet (cache/overture_pois_eu.parquet) into items_full, cap 150/dest, rate<=2; additive (never nulls). Re-run `harvest_pois_overture.py extract` first only to pull a newer Overture release (edit RELEASE). Run BEFORE poi_enrich.
-- Reads and runs: `pipeline/harvest_pois_overture.py`
+- Reads and runs: `pipeline/pois/harvest_pois_overture.py`
 - Commands:
 
 ```
-python pipeline/harvest_pois_overture.py assign
+python pipeline/pois/harvest_pois_overture.py assign
 ```
 
 ### <a id="must_descs"></a>`must_descs`
@@ -1020,11 +1020,11 @@ Must-see POI images + descriptions (high-value subset only)
 - Cadence: backfill
 - Writes: the master `app_data.json`
 - Note: enriches ONLY the day-planner-surfaced must-see + worth-the-detour POIs (a few thousand), not the 87k long tail; cheap, additive, resumable. Prefer this over poi_enrich when you only want the high-value image/description gap filled.
-- Reads and runs: `pipeline/enrich_must_descs.py`
+- Reads and runs: `pipeline/pois/enrich_must_descs.py`
 - Commands:
 
 ```
-python pipeline/enrich_must_descs.py
+python pipeline/pois/enrich_must_descs.py
 ```
 
 ### <a id="poi_images_wikidata"></a>`poi_images_wikidata`
@@ -1035,11 +1035,11 @@ Bulk POI images via Wikidata P18 (fast)
 - Writes: the master `app_data.json`
 - Wire fields it owns (2): `destinations.*.activities`, `meta.data_sources`
 - Note: one WDQS box query per dest (~1,500) then match image-less POIs to nearby imaged Wikidata entities by distance + Commons filename. FAR faster than the per-POI Commons sweep - run this FIRST, then poi_images mops up the remainder. Additive (never nulls).
-- Reads and runs: `pipeline/harvest_pois_wikidata_images.py`
+- Reads and runs: `pipeline/pois/harvest_pois_wikidata_images.py`
 - Commands:
 
 ```
-python pipeline/harvest_pois_wikidata_images.py all
+python pipeline/pois/harvest_pois_wikidata_images.py all
 ```
 
 ### <a id="poi_images"></a>`poi_images`
@@ -1232,11 +1232,11 @@ POI entry fee flags and charge records (OSM, not shown)
 - Expected hours of a warm run: 2.5
 - Code: guard `guard_all(guard_files(('continent-app/public/poi/*.json', 10`
 - Note: cache/poi_fees.json, resumable (asked POIs are skipped), read by derive_do.facts_of in the dossier build. No price is shown.
-- Reads and runs: `pipeline/harvest_poi_fees.py`
+- Reads and runs: `pipeline/pois/harvest_poi_fees.py`
 - Commands:
 
 ```
-python pipeline/harvest_poi_fees.py
+python pipeline/pois/harvest_poi_fees.py
 ```
 
 ### <a id="trails_fields"></a>`trails_fields`

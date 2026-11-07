@@ -1162,21 +1162,6 @@ What a cycling card may claim, as plain functions (T455).
 | def | `tour_key(tour: dict) -> tuple` | Two tours are the same tour when they ride the same routes in the same number of days. |
 | def | `dedupe_tours(tours: list[dict]) -> list[dict]` | One tour per route and length, keeping the one whose pace label its own ride matches (the first otherwise). |
 
-## `pipeline/dedupe_pois.py`
-
-dedupe_pois.py - master-level POI dedupe, index-stable.
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `name_core(name)` |  |
-| def | `kind_family(kind)` |  |
-| def | `trigrams(s)` |  |
-| def | `tri_sim(a, b)` |  |
-| def | `haversine_km(lat1, lon1, lat2, lon2)` |  |
-| def | `dupe_rank(it)` | Mirror of the UI's dupeRank/poiScore preference for the survivor. |
-| def | `dedupe_dest(items)` | Union-find over one destination's items. Returns list of groups (index lists) with 2+ members. |
-| def | `main()` |  |
-
 ## `pipeline/derive_sunshine.py`
 
 Monthly sunshine hours from the NASA POWER all-sky radiation we already hold.
@@ -1587,33 +1572,6 @@ Tier: Scheduled (run_pipeline task poi_images)
 | def | `targets_of(data)` |  |
 | def | `main()` |  |
 
-## `pipeline/enrich_must_descs.py`
-
-Tier: Scheduled (run_pipeline task must_descs)
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `get_json(url)` |  |
-| def | `haversine_km(lat1, lon1, lat2, lon2)` |  |
-| def | `load_cache()` |  |
-| def | `save_cache(cache)` |  |
-| def | `poi_score(it)` |  |
-| def | `city_coords(dest)` |  |
-| def | `surfaced_pois(dest)` | The POIs the app shows as top picks: must tier + far worthy. |
-| def | `parse_wiki_url(url)` |  |
-| def | `en_title_via_langlinks(lang, title)` |  |
-| def | `rest_summary(lang, title)` |  |
-| def | `en_search(name, city)` |  |
-| def | `two_sentences(extract)` | First whole sentences of the intro (up to 3), capped at DESC_MAX chars. |
-| def | `scaled_thumb(summary)` |  |
-| def | `resolve(it, dest)` | Return {desc, img, wiki} best-effort English card for one POI. |
-| def | `broad_pois(dest)` | Every item that plausibly has an article: wiki link, rate 3, heritage. |
-| def | `collect_targets(data)` |  |
-| def | `fetch_all(data, cache)` |  |
-| def | `apply_cache(data, cache)` |  |
-| def | `stats(data)` |  |
-| def | `main()` |  |
-
 ## `pipeline/entry_rules.py`
 
 Entry rules and official advice per country (T1199, ROADMAP D19).
@@ -2007,62 +1965,6 @@ harvest_place_signals.py - resolve the place registers, and measure fame.
 | def | `fetch_views(title, project='en.wikipedia')` | Average daily pageviews over the last full 12 months, or None. |
 | def | `resolve_titles(names, lang)` | Batch title -> (lat, lon) on one Wikipedia, following redirects. |
 | def | `harvest_undesignated(rows, signals, limit)` | Pageviews for the best candidates that carry no designation. |
-| def | `main()` |  |
-
-## `pipeline/harvest_poi_fees.py`
-
-Entry fee flag (and a price record) for things to do, from OpenStreetMap.
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `key_of(lat: float, lon: float) -> str` |  |
-| def | `words(s: str) -> set` |  |
-| def | `parse_charge(text: str)` | (value, currency) of the first adult looking amount in a charge tag, or None. Handles '10 EUR', 'EUR 10', '€10', '10.50 CHF'; refuses ranges and prose it cannot read. |
-| def | `query(batch: list) -> list` |  |
-| def | `match(poi: dict, els: list)` |  |
-| def | `main()` |  |
-
-## `pipeline/harvest_poi_wikidata.py`
-
-harvest_poi_wikidata.py - Wikidata significance signals for POIs.
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `parse_wiki_url(url)` | -> (lang, title) for a *.wikipedia.org/wiki/ URL, else None. |
-| def | `collect_urls(data)` |  |
-| def | `phase1_qids(urls, cache)` | Resolve titles to QIDs per language project, batched. |
-| def | `phase2_signals(cache)` | Fetch sitelinks/heritage/class-flags/visitors for QIDs missing them. |
-| def | `main()` |  |
-
-## `pipeline/harvest_pois_overture.py`
-
-harvest_pois_overture.py - maximal sightseeing POIs from Overture Maps.
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `load(p)` |  |
-| def | `fold(name)` |  |
-| def | `classify(cat)` |  |
-| def | `extract()` |  |
-| def | `assign(dry_run)` |  |
-| def | `main()` |  |
-
-## `pipeline/harvest_pois_wikidata_images.py`
-
-harvest_pois_wikidata_images.py - bulk POI images from Wikidata (P18).
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `load(p)` |  |
-| def | `fold(s)` |  |
-| def | `tokens(s)` |  |
-| def | `haversine_m(la1, lo1, la2, lo2)` |  |
-| def | `image_less_pois(d)` | (name, lat, lon, index) for every items_full POI with coords and no img. |
-| def | `dest_center(d)` |  |
-| def | `img_name_tokens(thumb)` | Name tokens from a Commons FilePath thumb URL - the filename is usually descriptive (Grand_Place_Brussels.jpg), giving a free name signal without the (too-slow) WDQS label service. |
-| def | `query_box(lat, lon, deg=BOX_DEG)` | Return [(qid, lat, lon, thumb_url)] for imaged Wikidata items in the +-deg box around (lat, lon). LABEL-FREE on purpose: the wikibase:label service makes dense-metro boxes exceed the WDQS stream/timeout and truncates the response; we name-m |
-| def | `harvest(limit=None)` |  |
-| def | `assign(dry_run=False)` |  |
 | def | `main()` |  |
 
 ## `pipeline/harvest_protected_areas_osm.py`
@@ -3114,16 +3016,6 @@ Nature items on the place ladder (Carta rating v5, batch R3, T761).
 | def | `check()` | Recompute against the frozen breakpoints and compare with the wire. |
 | def | `main()` |  |
 
-## `pipeline/normalize_poi_kinds.py`
-
-Normalize POI kinds and demote commercial noise, in place.
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `normalize_items(items)` | Mutate a list of POI items; return (n_kind, n_noise). |
-| def | `patch(path: Path) -> None` |  |
-| def | `main() -> None` |  |
-
 ## `pipeline/oneoff/add_appeal_2026_07c.py`
 
 Merge curated_appeal entries for the 2026-07c gem batch (43 new dests).
@@ -3943,6 +3835,114 @@ Three POI labels in place of scores (Carta rating v5, batch R3, T761).
 | def | `label_place(dest, wikidata, fees)` | Label one destination's POIs in place; returns the label counts. |
 | def | `label_all(data, wikidata=None, fees=None)` | Label every destination; {class: Counter(label)}. |
 | def | `main()` |  |
+
+## `pipeline/pois/dedupe_pois.py`
+
+dedupe_pois.py - master-level POI dedupe, index-stable.
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `name_core(name)` |  |
+| def | `kind_family(kind)` |  |
+| def | `trigrams(s)` |  |
+| def | `tri_sim(a, b)` |  |
+| def | `haversine_km(lat1, lon1, lat2, lon2)` |  |
+| def | `dupe_rank(it)` | Mirror of the UI's dupeRank/poiScore preference for the survivor. |
+| def | `dedupe_dest(items)` | Union-find over one destination's items. Returns list of groups (index lists) with 2+ members. |
+| def | `main()` |  |
+
+## `pipeline/pois/enrich_must_descs.py`
+
+Tier: Scheduled (run_pipeline task must_descs)
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `get_json(url)` |  |
+| def | `haversine_km(lat1, lon1, lat2, lon2)` |  |
+| def | `load_cache()` |  |
+| def | `save_cache(cache)` |  |
+| def | `poi_score(it)` |  |
+| def | `city_coords(dest)` |  |
+| def | `surfaced_pois(dest)` | The POIs the app shows as top picks: must tier + far worthy. |
+| def | `parse_wiki_url(url)` |  |
+| def | `en_title_via_langlinks(lang, title)` |  |
+| def | `rest_summary(lang, title)` |  |
+| def | `en_search(name, city)` |  |
+| def | `two_sentences(extract)` | First whole sentences of the intro (up to 3), capped at DESC_MAX chars. |
+| def | `scaled_thumb(summary)` |  |
+| def | `resolve(it, dest)` | Return {desc, img, wiki} best-effort English card for one POI. |
+| def | `broad_pois(dest)` | Every item that plausibly has an article: wiki link, rate 3, heritage. |
+| def | `collect_targets(data)` |  |
+| def | `fetch_all(data, cache)` |  |
+| def | `apply_cache(data, cache)` |  |
+| def | `stats(data)` |  |
+| def | `main()` |  |
+
+## `pipeline/pois/harvest_poi_fees.py`
+
+Entry fee flag (and a price record) for things to do, from OpenStreetMap.
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `key_of(lat: float, lon: float) -> str` |  |
+| def | `words(s: str) -> set` |  |
+| def | `parse_charge(text: str)` | (value, currency) of the first adult looking amount in a charge tag, or None. Handles '10 EUR', 'EUR 10', '€10', '10.50 CHF'; refuses ranges and prose it cannot read. |
+| def | `query(batch: list) -> list` |  |
+| def | `match(poi: dict, els: list)` |  |
+| def | `main()` |  |
+
+## `pipeline/pois/harvest_poi_wikidata.py`
+
+harvest_poi_wikidata.py - Wikidata significance signals for POIs.
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `parse_wiki_url(url)` | -> (lang, title) for a *.wikipedia.org/wiki/ URL, else None. |
+| def | `collect_urls(data)` |  |
+| def | `phase1_qids(urls, cache)` | Resolve titles to QIDs per language project, batched. |
+| def | `phase2_signals(cache)` | Fetch sitelinks/heritage/class-flags/visitors for QIDs missing them. |
+| def | `main()` |  |
+
+## `pipeline/pois/harvest_pois_overture.py`
+
+harvest_pois_overture.py - maximal sightseeing POIs from Overture Maps.
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `load(p)` |  |
+| def | `fold(name)` |  |
+| def | `classify(cat)` |  |
+| def | `extract()` |  |
+| def | `assign(dry_run)` |  |
+| def | `main()` |  |
+
+## `pipeline/pois/harvest_pois_wikidata_images.py`
+
+harvest_pois_wikidata_images.py - bulk POI images from Wikidata (P18).
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `load(p)` |  |
+| def | `fold(s)` |  |
+| def | `tokens(s)` |  |
+| def | `haversine_m(la1, lo1, la2, lo2)` |  |
+| def | `image_less_pois(d)` | (name, lat, lon, index) for every items_full POI with coords and no img. |
+| def | `dest_center(d)` |  |
+| def | `img_name_tokens(thumb)` | Name tokens from a Commons FilePath thumb URL - the filename is usually descriptive (Grand_Place_Brussels.jpg), giving a free name signal without the (too-slow) WDQS label service. |
+| def | `query_box(lat, lon, deg=BOX_DEG)` | Return [(qid, lat, lon, thumb_url)] for imaged Wikidata items in the +-deg box around (lat, lon). LABEL-FREE on purpose: the wikibase:label service makes dense-metro boxes exceed the WDQS stream/timeout and truncates the response; we name-m |
+| def | `harvest(limit=None)` |  |
+| def | `assign(dry_run=False)` |  |
+| def | `main()` |  |
+
+## `pipeline/pois/normalize_poi_kinds.py`
+
+Normalize POI kinds and demote commercial noise, in place.
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `normalize_items(items)` | Mutate a list of POI items; return (n_kind, n_noise). |
+| def | `patch(path: Path) -> None` |  |
+| def | `main() -> None` |  |
 
 ## `pipeline/practical_layer.py`
 
@@ -7033,7 +7033,7 @@ Collector registry and the data licence ledger, one module (T078).
 | def | `sources_for(name: str='', script: str='') -> tuple` | The ledger rows that cover a collector name or a script path. |
 | def | `register(cls)` | Register a collector class. Refuses one that has no execution entry or no licence row: the ledger rule enforced at import time, so a new collector without its governance fails `run_all --list`, the tests and CI rather than quietly shipping  |
 | def | `load_all() -> dict[str, type]` |  |
-| def | `harvester_scripts(root: Path=ROOT) -> list[str]` | Every pipeline/harvest_*.py in the tree, plus the stay layer's fetchers (pipeline/stays/{harvest,scrape,price,discover,calibrate}_*.py), repo-relative, posix. |
+| def | `harvester_scripts(root: Path=ROOT) -> list[str]` | Every pipeline/harvest_*.py in the tree (and in GROUPED_HARVEST_DIRS), plus the stay layer's fetchers (pipeline/stays/{harvest,scrape,price,discover,calibrate}_*.py), repo-relative, posix. |
 | def | `pipeline_tasks(root: Path=ROOT) -> dict[str, dict]` | run_pipeline.py's task table, read by regex (key, cadence, soft), so the RUNS copy of a cadence is checked against the driver that owns it. The table is pipeline/tasks/<domain>.py since T1207; it is never imported: importing run_pipeline.py |
 | def | `validate(registry: dict \| None=None, harvesters: list[str] \| None=None, root: Path=ROOT) -> list[str]` | Every rule the ledger depends on, as a list of human-readable problems. Pass `registry` and `harvesters` to test the rules against a synthetic roster; by default they are the live collectors and the harvest_*.py files on disk. |
 | def | `credit_required(row: 'Source') -> bool` | True when the row's attribution column asks for a credit and the row is live. Retired rows are history; their credit is owed only while the data still ships, which APP_CREDITS covers when it does. |

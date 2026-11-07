@@ -35,9 +35,10 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # pipeline/: shared libraries (T1207)
 from pipeline_io import atomic_write_json
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_TARGETS = [
     ROOT / "app_data" / "app_data.json",                        # master (items_full)
     ROOT / "continent-app" / "public" / "activities_full.json", # served full POI lists

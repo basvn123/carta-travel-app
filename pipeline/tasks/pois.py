@@ -23,7 +23,7 @@ TASKS = [
         "title": "Overture Maps sightseeing POIs -> items_full (additive)",
         "cadence": "backfill",
         "writes_app_data": True,
-        "cmds": [[PY, "pipeline/harvest_pois_overture.py", "assign"]],
+        "cmds": [[PY, "pipeline/pois/harvest_pois_overture.py", "assign"]],
         "note": ("merges the cached Overture parquet (cache/overture_pois_eu.parquet) "
                  "into items_full, cap 150/dest, rate<=2; additive (never nulls). "
                  "Re-run `harvest_pois_overture.py extract` first only to pull a "
@@ -34,7 +34,7 @@ TASKS = [
         "title": "Must-see POI images + descriptions (high-value subset only)",
         "cadence": "backfill",
         "writes_app_data": True,
-        "cmds": [[PY, "pipeline/enrich_must_descs.py"]],
+        "cmds": [[PY, "pipeline/pois/enrich_must_descs.py"]],
         "note": ("enriches ONLY the day-planner-surfaced must-see + worth-the-detour "
                  "POIs (a few thousand), not the 87k long tail; cheap, additive, "
                  "resumable. Prefer this over poi_enrich when you only want the "
@@ -45,7 +45,7 @@ TASKS = [
         "title": "Bulk POI images via Wikidata P18 (fast)",
         "cadence": "backfill",
         "writes_app_data": True,
-        "cmds": [[PY, "pipeline/harvest_pois_wikidata_images.py", "all"]],
+        "cmds": [[PY, "pipeline/pois/harvest_pois_wikidata_images.py", "all"]],
         "note": ("one WDQS box query per dest (~1,500) then match image-less POIs "
                  "to nearby imaged Wikidata entities by distance + Commons filename. "
                  "FAR faster than the per-POI Commons sweep - run this FIRST, then "

@@ -52,16 +52,16 @@
    "at": "pipeline/cycling/landcover.py:446",
    "count": 1
   },
-  "carta-py-sql-fstring|pipeline/harvest_pois_overture.py|1a8c048b46b4": {
-   "at": "pipeline/harvest_pois_overture.py:136",
+  "carta-py-sql-fstring|pipeline/pois/harvest_pois_overture.py|1a8c048b46b4": {
+   "at": "pipeline/pois/harvest_pois_overture.py:136",
    "count": 1
   },
-  "carta-py-sql-fstring|pipeline/harvest_pois_overture.py|331bd24ca919": {
-   "at": "pipeline/harvest_pois_overture.py:145",
+  "carta-py-sql-fstring|pipeline/pois/harvest_pois_overture.py|331bd24ca919": {
+   "at": "pipeline/pois/harvest_pois_overture.py:145",
    "count": 1
   },
-  "carta-py-sql-fstring|pipeline/harvest_pois_overture.py|c64c66cd9d39": {
-   "at": "pipeline/harvest_pois_overture.py:124",
+  "carta-py-sql-fstring|pipeline/pois/harvest_pois_overture.py|c64c66cd9d39": {
+   "at": "pipeline/pois/harvest_pois_overture.py:124",
    "count": 1
   },
   "carta-py-sql-fstring|pipeline/stays/build_stays.py|2e635b2c8ead": {

@@ -77,7 +77,7 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `meta.is_mock` | Carta flag (false on the real build) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | `src/App.jsx` (1 files) |
 | `meta.beauty_model` | designations, nature and scenery signals (beauty layer) | `fame` | app_data/app_data.json (master) | `pipeline/apply_beauty_layer.py` | boot.json (meta) | none found |
 | `meta.flight_model` | Ryanair monthly cheapest fares, densified (legacy notebook 02_flights) | `legacy` | app_data/app_data.json (master) | none in the repo | boot.json (meta) | none found |
-| `meta.data_sources` | attribution entries appended by each harvest | `climate`, `guide`, `bathing_water`, `geonames`, `nature`, `crowding`, `crowding_uk`, `overture`, `poi_images_wikidata` | app_data/app_data.json (master) | `pipeline/apply_climate.py`, `pipeline/apply_wikivoyage.py`, `pipeline/harvest_bathing_water.py`, `pipeline/harvest_geonames.py`, `pipeline/harvest_protected_areas_osm.py`, `pipeline/harvest_tourism_density.py`, `pipeline/harvest_uk_crowds.py`, `pipeline/harvest_pois_overture.py`, `pipeline/harvest_pois_wikidata_images.py` | boot.json (meta) | none found |
+| `meta.data_sources` | attribution entries appended by each harvest | `climate`, `guide`, `bathing_water`, `geonames`, `nature`, `crowding`, `crowding_uk`, `overture`, `poi_images_wikidata` | app_data/app_data.json (master) | `pipeline/apply_climate.py`, `pipeline/apply_wikivoyage.py`, `pipeline/harvest_bathing_water.py`, `pipeline/harvest_geonames.py`, `pipeline/harvest_protected_areas_osm.py`, `pipeline/harvest_tourism_density.py`, `pipeline/harvest_uk_crowds.py`, `pipeline/pois/harvest_pois_overture.py`, `pipeline/pois/harvest_pois_wikidata_images.py` | boot.json (meta) | none found |
 | `meta.crowding_model` | Eurostat tour_occ_nin2m and nin3, ONS and VisitBritain nights | `crowding`, `crowding_uk` | cache/eurostat_nights_nuts2_monthly.json | `pipeline/harvest_tourism_density.py`, `pipeline/harvest_uk_crowds.py` | boot.json (meta) | none found |
 | `meta.activities_model` | OpenTripMap, OSM, Wikidata sitelinks | `activities` | cache/activities.json | `pipeline/harvest_activities.py` | boot.json (meta) | none found |
 | `meta.climate_model` | NASA POWER and Open-Meteo climate normals | `climate` | cache/climate.json | `pipeline/apply_climate.py` | boot.json (meta) | none found |
@@ -107,7 +107,7 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `destinations.*.local_transport` | OSM road network, GTFS lines, OSM ferry legs, OSM parking | `transit_lines` | cache/transit_lines.json | `pipeline/apply_car_layer.py` | dest/_rank.json, dest/{cc}.json | `src/lib/runtime_pricing.js`, `src/lib/ask/rank.js`, `src/lib/mobility.js` (17 files) |
 | `destinations.*.beauty` | designations, protected areas, coast and relief signals | `fame` | app_data/app_data.json (master) | `pipeline/apply_beauty_layer.py` | dest/_rank.json, dest/{cc}.json | `src/hooks/useDestinationSearch.js`, `src/lib/knownFor.js`, `src/lib/trip_planner_pricing.js` (12 files) |
 | `destinations.*.image` | Wikipedia and Wikimedia Commons lead images | `images`, `hero_audit` | cache/wiki_images.json | `pipeline/harvest_images.py`, `pipeline/audit/audit_hero_images.py` | dest/_rank.json, dest/{cc}.json | `src/browse/explore/useExploreRails.js`, `src/lib/countryBrief.js`, `src/lib/recommend/persona.js` (53 files) |
-| `destinations.*.activities` | OpenTripMap, OSM, Overture Places, Wikidata, Wikivoyage listings | `activities`, `overture`, `poi_significance`, `poi_descriptions`, `poi_images_wikidata` | cache/activities.json | `pipeline/harvest_activities.py`, `pipeline/harvest_pois_overture.py`, `pipeline/score_significance.py` | dest/{cc}.json, poi/{shard}.json (items_full) | `src/lib/tripGuide.js`, `src/lib/trip_planner_pricing.js`, `src/planner/DayPlannerTab.jsx` (15 files) |
+| `destinations.*.activities` | OpenTripMap, OSM, Overture Places, Wikidata, Wikivoyage listings | `activities`, `overture`, `poi_significance`, `poi_descriptions`, `poi_images_wikidata` | cache/activities.json | `pipeline/harvest_activities.py`, `pipeline/pois/harvest_pois_overture.py`, `pipeline/score_significance.py` | dest/{cc}.json, poi/{shard}.json (items_full) | `src/lib/tripGuide.js`, `src/lib/trip_planner_pricing.js`, `src/planner/DayPlannerTab.jsx` (15 files) |
 | `destinations.*.rating` | fame (pageviews), designations, beauty, place class, POI rates | `fame`, `poi_significance` | cache/dest_pageviews.json | `pipeline/apply_rating_layer.py` | boot.json (f (flag HIDDEN_GEM), r (band)), dest/_rank.json, dest/{cc}.json | `src/lib/countryMatch.js`, `src/browse/PlaceOverview.jsx`, `src/browse/explore/useExploreRails.js` (66 files) |
 | `destinations.*.gateways` | multi-airport city table (T755) | `fame`, `poi_significance` | app_data/app_data.json (master) | `pipeline/rating_layer.py` | dest/{cc}.json | name only: `src/browse/JourneyPage.jsx`, `src/browse/cartaFlight.js`, `src/browse/explore/ExploreContent.jsx` |
 | `destinations.*.taste` | rating, nature tiers, guided-search areas | `rating_v5_profile` | public/search/guided.json | `pipeline/place_taste_profile.py` | dest/_rank.json, dest/{cc}.json | `src/lib/recommend/persona.js`, `src/auth/account/TravelView.jsx`, `src/hooks/useExploreCatalog.js` (11 files) |
@@ -194,13 +194,13 @@ flowchart LR
   T_poi_significance["poi_significance"]
   C0["pipeline/harvest_pageviews.py"]
   T_poi_significance --> C0
-  C1["pipeline/harvest_poi_wikidata.py"]
+  C1["pipeline/pois/harvest_poi_wikidata.py"]
   C0 --> C1
   C2["pipeline/harvest_wikivoyage_listings.py"]
   C1 --> C2
-  C3["pipeline/dedupe_pois.py"]
+  C3["pipeline/pois/dedupe_pois.py"]
   C2 --> C3
-  C4["pipeline/normalize_poi_kinds.py"]
+  C4["pipeline/pois/normalize_poi_kinds.py"]
   C3 --> C4
   C5["pipeline/score_significance.py"]
   C4 --> C5
@@ -638,7 +638,7 @@ flowchart LR
 ```mermaid
 flowchart LR
   T_overture["overture"]
-  C0["pipeline/harvest_pois_overture.py"]
+  C0["pipeline/pois/harvest_pois_overture.py"]
   T_overture --> C0
   M["app_data/app_data.json"]
   C0 --> M
@@ -655,7 +655,7 @@ flowchart LR
 ```mermaid
 flowchart LR
   T_poi_images_wikidata["poi_images_wikidata"]
-  C0["pipeline/harvest_pois_wikidata_images.py"]
+  C0["pipeline/pois/harvest_pois_wikidata_images.py"]
   T_poi_images_wikidata --> C0
   M["app_data/app_data.json"]
   C0 --> M

@@ -69,7 +69,7 @@
     ],
     [
      "<PY>",
-     "pipeline/harvest_poi_wikidata.py"
+     "pipeline/pois/harvest_poi_wikidata.py"
     ],
     [
      "<PY>",
@@ -77,11 +77,11 @@
     ],
     [
      "<PY>",
-     "pipeline/dedupe_pois.py"
+     "pipeline/pois/dedupe_pois.py"
     ],
     [
      "<PY>",
-     "pipeline/normalize_poi_kinds.py"
+     "pipeline/pois/normalize_poi_kinds.py"
     ],
     [
      "<PY>",
@@ -1131,7 +1131,7 @@
    "cmds": [
     [
      "<PY>",
-     "pipeline/harvest_pois_overture.py",
+     "pipeline/pois/harvest_pois_overture.py",
      "assign"
     ]
    ],
@@ -1145,7 +1145,7 @@
    "cmds": [
     [
      "<PY>",
-     "pipeline/enrich_must_descs.py"
+     "pipeline/pois/enrich_must_descs.py"
     ]
    ],
    "note": "enriches ONLY the day-planner-surfaced must-see + worth-the-detour POIs (a few thousand), not the 87k long tail; cheap, additive, resumable. Prefer this over poi_enrich when you only want the high-value image/description gap filled."
@@ -1158,7 +1158,7 @@
    "cmds": [
     [
      "<PY>",
-     "pipeline/harvest_pois_wikidata_images.py",
+     "pipeline/pois/harvest_pois_wikidata_images.py",
      "all"
     ]
    ],
@@ -1441,7 +1441,7 @@
    "cmds": [
     [
      "<PY>",
-     "pipeline/harvest_poi_fees.py"
+     "pipeline/pois/harvest_poi_fees.py"
     ]
    ],
    "note": "cache/poi_fees.json, resumable (asked POIs are skipped), read by derive_do.facts_of in the dossier build. No price is shown."

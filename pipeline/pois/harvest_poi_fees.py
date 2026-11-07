@@ -24,9 +24,9 @@ Wikivoyage listings carry none), so `do[].duration_min` stays a stub. The
 dossier already falls back to the place layer's `visit_h` where present.
 
 Usage, from the repo root:
-    python pipeline/harvest_poi_fees.py --shards AAL,VRN --out-dir DIR      # sample
-    python pipeline/harvest_poi_fees.py --wiki-only                         # full run, about 1,100 queries
-    python pipeline/harvest_poi_fees.py --min-rate 3                        # larger (97k rows)
+    python pipeline/pois/harvest_poi_fees.py --shards AAL,VRN --out-dir DIR      # sample
+    python pipeline/pois/harvest_poi_fees.py --wiki-only                         # full run, about 1,100 queries
+    python pipeline/pois/harvest_poi_fees.py --min-rate 3                        # larger (97k rows)
 Resumable: rows already in the output are not asked again.
 
 ASCII clean, no em dashes, per project convention.
@@ -42,7 +42,7 @@ import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 INPUT = Path(os.environ.get("CARTA_INPUT_ROOT", ROOT))
 sys.path.insert(0, str(ROOT / "pipeline"))
 sys.path.insert(0, str(ROOT / "pipeline" / "beaches"))

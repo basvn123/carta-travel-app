@@ -178,10 +178,10 @@ TASKS = [
         "soft": True,
         "cmds": [
             [PY, "pipeline/harvest_pageviews.py", "pois"],
-            [PY, "pipeline/harvest_poi_wikidata.py"],
+            [PY, "pipeline/pois/harvest_poi_wikidata.py"],
             [PY, "pipeline/harvest_wikivoyage_listings.py"],
-            [PY, "pipeline/dedupe_pois.py"],
-            [PY, "pipeline/normalize_poi_kinds.py"],
+            [PY, "pipeline/pois/dedupe_pois.py"],
+            [PY, "pipeline/pois/normalize_poi_kinds.py"],
             [PY, "pipeline/score_significance.py", "apply"],
             [PY, "pipeline/apply_rating_layer.py"],
         ],

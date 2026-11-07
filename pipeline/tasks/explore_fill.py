@@ -224,7 +224,7 @@ TASKS = [
             guard_files(("continent-app/public/poi/*.json", 100,
                          "the POI shards are written by the ship (sync-data); run one build first")),
             guard_reachable("Overpass", *OVERPASS)),
-        "cmds": [[PY, "pipeline/harvest_poi_fees.py"]],
+        "cmds": [[PY, "pipeline/pois/harvest_poi_fees.py"]],
         "note": ("cache/poi_fees.json, resumable (asked POIs are skipped), read by "
                  "derive_do.facts_of in the dossier build. No price is shown."),
     },

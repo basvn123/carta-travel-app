@@ -40,9 +40,10 @@ import unicodedata
 from pathlib import Path
 
 import numpy as np
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # pipeline/: shared libraries (T1207)
 from pipeline_io import atomic_write_json
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 MASTER = ROOT / "app_data" / "app_data.json"
 PARQUET = ROOT / "cache" / "overture_pois_eu.parquet"
 

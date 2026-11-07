@@ -39,6 +39,7 @@ import urllib.parse
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # pipeline/: shared libraries (T1207)
 from pipeline_io import atomic_write_json
 
 try:
@@ -46,7 +47,7 @@ try:
 except Exception:
     pass
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "app_data" / "app_data.json"
 CACHE = ROOT / "app_data" / "must_desc_cache.json"
 
