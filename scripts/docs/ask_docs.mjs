@@ -54,7 +54,7 @@ export async function modelAnswer(ans, question, env = process.env, callModel = 
   const notes = ans.citations.map((c) => `[${c.n}] (${c.label}) ${c.text}`).join('\n\n');
   const r = await call({ feature: 'ask', env, system: frag(p, 'system'), user: `${frag(p, 'user.question')}\n${question}\n\n${frag(p, 'user.notes')}\n${notes}`, temperature: 0 });
   if (!r.ok) return { ok: false, why: r.code || 'gateway' };
-  const out = { ...ans, text: r.text.replace(/[–—]/g, '-').trim() };
+  const out = { ...ans, text: r.text.replace(/[\u2013\u2014]/g, '-').trim() };
   const g = core.groundingCheck(out);
   return g.ok ? { ok: true, ans: out } : { ok: false, why: `grounding: ${g.problems[0]}` };
 }

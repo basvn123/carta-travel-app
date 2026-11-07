@@ -28,7 +28,7 @@
   const MIN_SCORE = 2.0;
   const REF_WEIGHT = 0.7;
 
-  const dash = (s) => String(s).replace(/[–—]/g, '-');
+  const dash = (s) => String(s).replace(/[\u2013\u2014]/g, '-');
   const slug = (h) => h.toLowerCase().replace(/[^\w\- ]/g, '').trim().replace(/[ ]+/g, '-');
 
   function stem(w) {

@@ -15,11 +15,11 @@ const MD = [
 ].join('\n');
 
 test('chunkMarkdown: heading paths, anchors, fences are not headings, no dashes', () => {
-  const ps = core.chunkMarkdown('guide.md', `${MD}\n\nA dash — here and – there stays out.`);
+  const ps = core.chunkMarkdown('guide.md', `${MD}\n\nA dash \u2014 here and \u2013 there stays out.`);
   const restore = ps.find((p) => p.anchor === 'restore');
   assert.equal(restore.head, 'Backups > Restore');
   assert.equal(restore.title, 'Guide');
-  assert.ok(ps.every((p) => !/[–—]/.test(p.text)));
+  assert.ok(ps.every((p) => !/[\u2013\u2014]/.test(p.text)));
   assert.ok(ps.some((p) => p.text.includes('# not a heading')));
   assert.ok(ps.every((p) => p.text.length <= core.MAX_CHARS * 2));
 });
