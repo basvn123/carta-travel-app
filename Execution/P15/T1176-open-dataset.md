@@ -41,6 +41,7 @@ None.
 
 | What | Cause | Fix |
 |---|---|---|
+| Full pytest: 2 failures, 883 passed | `test_rating_inputs::test_beauty_v2_reads_no_register` and `test_rating_stability::test_adding_places_moves_nobody_else` fail on a JSON decode of a cache file in this container; they touch none of my files | Not mine, not fixed here |
 | First test run failed | My assertion matched "rating" inside `bathing_rating` | Compare against the split header |
 
 ## Screens checked

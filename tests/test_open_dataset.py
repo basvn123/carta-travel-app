@@ -60,4 +60,4 @@ def test_datasheet_is_current():
 
 def test_no_dashes_in_datasheet():
     t = eod.render_datasheet(SOURCES)
-    assert "—" not in t and "–" not in t
+    assert chr(0x2014) not in t and chr(0x2013) not in t
