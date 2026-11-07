@@ -15,7 +15,8 @@ Others are whole stages missing (Offa's Dyke Path, one 189 km break) and
 must stay out.
 
 This step routes each remaining break with BRouter (tools/brouter, the stock
-`hiking-mountain` profile; research in Execution/P15/T1183-trail-continuity.md)
+`hiking-mountain` profile, as the house `carta-hiking` since T1201; research in
+Execution/P15/T1183-trail-continuity.md)
 and publishes the route only when EVERY break closes within the limits below.
 A route that fails any limit is left exactly as it was, and the reason is
 kept: in validation_runs (check_name `route_bridge`) and in the run report
@@ -92,7 +93,11 @@ HERE = Path(__file__).resolve().parent
 REPORT = ROOT / "data" / "reports" / "trails_route_bridge.json"
 
 BROUTER_URL = "http://127.0.0.1:17777/brouter"
-PROFILE = "hiking-mountain"
+# T1201 (T1183-e): the house profile, stock hiking-mountain with
+# hiking_routes_preference 0.5 instead of 0.2, so bridges keep to waymarked
+# ways (tools/brouter/profiles/carta-hiking.brf). --profile hiking-mountain
+# runs the stock one.
+PROFILE = "carta-hiking"
 EARTH_RADIUS_M = 6371008.8
 
 # --- The limits (see the module docstring for the reasoning) ---------------
