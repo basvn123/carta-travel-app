@@ -2115,3 +2115,10 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1178-c | T1178 | Other post types (cheapest week, what changed, new on Carta, seasonal rankings, how we measure) and the Dutch blog (I8) are not built; part 2 | next task | open |  |
 | T1178-d | T1178 | The pipeline task needs a current app_data.json on the box and a scheduled pull request routine (K14 step 3); not set up | user | open |  |
 | T1178-e | T1178 | Owner approval of the sample December 2026 draft, then set status published; wire vintage is 2026-06-07 so a fresh wire should be used first | user | open |  |
+| T1193-a | T1193 | Owner step: verify the EuroVelo seed list (route names, total km, country lists were written from memory; hosts unreachable) and set verified=yes; checks stay soft until then | user | open |  |
+| T1193-b | T1193 | Owner step: add official km per country (`eurovelo_countries.csv`) so the length fact and MdAPE have data | user | open |  |
+| T1193-c | T1193 | Owner step: supply official tracks (`geom/EV6-AT.geojson` etc.) from open sources (France data.gouv Licence Ouverte, UK NCN, Swiss opendata) for the geometry fact; EuroVelo GPX is personal use, keep it out of git | user | open |  |
+| T1193-d | T1193 | 13 EuroVelo route-country gaps look like Carta holes (no icn route in published LT, RO, GR, EE, MK, SE, DK): check the harvest reached them | next task | open |  |
+| T1193-e | T1193 | 10 gaps in PL, LV, DE, NO, NL: rows named velo carry no EV number in ref or name (PL 27, LV 18); hand check and fix the ref at the harvest | next task | open |  |
+| T1193-f | T1193 | National networks (D-Netz, Sustrans NCN, SchweizMobil, Bicitalia) not loaded: `national.csv` loader is built and tested, data is an owner step after terms are read | user | open |  |
+| T1193-g | T1193 | tests/test_quality_engine.py::test_a_two_point_drop_passes_and_a_soft_field_only_warns fails on the base branch too (not caused by T1193) | next task | open |  |

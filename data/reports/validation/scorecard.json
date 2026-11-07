@@ -165,6 +165,154 @@
    ]
   },
   {
+   "layer": "cycling",
+   "latest": "2026-11-07",
+   "generated_at": "2026-11-07T12:00:00Z",
+   "reference_n": 119,
+   "sample": {
+    "sampled": false,
+    "share": 1.0,
+    "min_per_country": 5,
+    "salt": "d23",
+    "n": 119,
+    "population": 119,
+    "countries": 34
+   },
+   "baseline_at": "2026-11-07",
+   "gate": {
+    "ok": true,
+    "failures": [],
+    "warnings": [
+     {
+      "metric": "fact.length",
+      "kind": "soft",
+      "why": "no baseline value for this metric"
+     },
+     {
+      "metric": "fact.geometry",
+      "kind": "soft",
+      "why": "no baseline value for this metric"
+     },
+     {
+      "metric": "error_mdape",
+      "kind": "soft",
+      "why": "no baseline value for this metric"
+     }
+    ],
+    "checks": [
+     {
+      "metric": "coverage",
+      "kind": "soft",
+      "now": 0.4202,
+      "baseline": 0.4202,
+      "tolerance_points": 0,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.length",
+      "kind": "soft",
+      "now": null,
+      "baseline": null,
+      "tolerance_points": 5,
+      "status": "warn"
+     },
+     {
+      "metric": "fact.geometry",
+      "kind": "soft",
+      "now": null,
+      "baseline": null,
+      "tolerance_points": 5,
+      "status": "warn"
+     },
+     {
+      "metric": "nonfrag",
+      "kind": "soft",
+      "now": 0.86,
+      "baseline": 0.86,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "error_mdape",
+      "kind": "soft",
+      "now": null,
+      "baseline": null,
+      "tolerance_points": 5,
+      "status": "warn"
+     }
+    ]
+   },
+   "metrics": {
+    "nonfrag": {
+     "value": 0.86,
+     "k": 43,
+     "n": 50,
+     "low": 0.7381,
+     "high": 0.9305
+    },
+    "rated": {
+     "value": 0.42,
+     "k": 21,
+     "n": 50,
+     "low": 0.2937,
+     "high": 0.5577
+    },
+    "coverage": {
+     "value": 0.4202,
+     "k": 50,
+     "n": 119,
+     "low": 0.3353,
+     "high": 0.51
+    },
+    "fact.geometry": {
+     "value": null,
+     "k": 0,
+     "n": 0,
+     "low": null,
+     "high": null
+    },
+    "fact.length": {
+     "value": null,
+     "k": 0,
+     "n": 0,
+     "low": null,
+     "high": null
+    },
+    "agreement_tau": {
+     "value": null,
+     "n": 0
+    },
+    "agreement_rho": {
+     "value": null,
+     "n": 0
+    },
+    "error_mae": {
+     "value": null,
+     "n": 0
+    },
+    "error_mdape": {
+     "value": null,
+     "n": 0
+    }
+   },
+   "gaps": 30,
+   "trend": [
+    {
+     "date": "2026-11-07",
+     "gate_ok": true,
+     "metrics": {
+      "agreement_tau": null,
+      "coverage": 0.4202,
+      "error_mdape": null,
+      "fact.geometry": null,
+      "fact.length": null,
+      "fact_share": null,
+      "nonfrag": 0.86
+     }
+    }
+   ]
+  },
+  {
    "layer": "lakes",
    "latest": "2026-11-07",
    "generated_at": "2026-11-07T12:00:00Z",
@@ -611,6 +759,122 @@
       "error_mdape": 0.1418,
       "fact.level": 0.746,
       "fact_share": 0.746
+     }
+    }
+   ]
+  },
+  {
+   "layer": "ratings",
+   "latest": "2026-11-07",
+   "generated_at": "2026-11-07T03:27:58Z",
+   "reference_n": 3861,
+   "sample": {
+    "sampled": false,
+    "share": 1.0,
+    "min_per_country": 5,
+    "salt": "d23",
+    "n": 3861,
+    "population": 3861,
+    "countries": 43
+   },
+   "baseline_at": "2026-11-07",
+   "gate": {
+    "ok": true,
+    "failures": [],
+    "warnings": [],
+    "checks": [
+     {
+      "metric": "coverage",
+      "kind": "hard",
+      "now": 0.8286,
+      "baseline": 0.8286,
+      "tolerance_points": 0,
+      "status": "pass"
+     },
+     {
+      "metric": "listed_upper",
+      "kind": "soft",
+      "now": 0.9655,
+      "baseline": 0.9655,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.unesco_join",
+      "kind": "soft",
+      "now": 0.7556,
+      "baseline": 0.7556,
+      "tolerance_points": 2,
+      "status": "pass"
+     },
+     {
+      "metric": "agreement_tau",
+      "kind": "soft",
+      "now": 0.1533,
+      "baseline": 0.1533,
+      "tolerance_points": 3,
+      "status": "pass"
+     }
+    ]
+   },
+   "metrics": {
+    "listed_upper": {
+     "value": 0.9655,
+     "k": 28,
+     "n": 29,
+     "low": 0.8282,
+     "high": 0.9939
+    },
+    "coverage": {
+     "value": 0.8286,
+     "k": 29,
+     "n": 35,
+     "low": 0.6732,
+     "high": 0.919
+    },
+    "fact.unesco_join": {
+     "value": 0.7556,
+     "k": 272,
+     "n": 360,
+     "low": 0.7086,
+     "high": 0.7971
+    },
+    "fact_share": {
+     "value": 0.7556,
+     "k": 272,
+     "n": 360,
+     "low": 0.7086,
+     "high": 0.7971
+    },
+    "agreement_tau": {
+     "value": 0.1533,
+     "n": 3825
+    },
+    "agreement_rho": {
+     "value": 0.2227,
+     "n": 3825
+    },
+    "error_mae": {
+     "value": null,
+     "n": 0
+    },
+    "error_mdape": {
+     "value": null,
+     "n": 0
+    }
+   },
+   "gaps": 30,
+   "trend": [
+    {
+     "date": "2026-11-07",
+     "gate_ok": true,
+     "metrics": {
+      "agreement_tau": 0.1533,
+      "coverage": 0.8286,
+      "error_mdape": null,
+      "fact.unesco_join": 0.7556,
+      "fact_share": 0.7556,
+      "listed_upper": 0.9655
      }
     }
    ]
