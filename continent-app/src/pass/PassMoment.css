@@ -10,7 +10,7 @@
   overflow: hidden;
   border-radius: var(--radius-stage);
   background: var(--surface);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--elev-1);
   animation: pm-rise var(--dur-3) var(--ease-out) both;
 }
 

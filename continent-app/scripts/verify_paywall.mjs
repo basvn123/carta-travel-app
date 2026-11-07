@@ -12,6 +12,15 @@
  *
  *     node scripts/verify_paywall.mjs
  *
+ * T1171 (ROADMAP I14) adds a DOM half, the Pass moment walked in a browser at
+ * a phone and a desktop width, with no dead end on the way. Serve a fast build
+ * with the data, then:
+ *
+ *     node scripts/verify_paywall.mjs --dom http://localhost:5871 [--shots <dir>]
+ *
+ * PW_CHROMIUM names a preinstalled browser. Screenshots (only with --shots)
+ * go to a gitignored folder, never into the repo.
+ *
  * Exits non-zero on the first category of failure, and prints every problem it
  * found rather than only the first.
  */
@@ -39,9 +48,11 @@ for (const m of (gatesBlock?.[1] ?? '').matchAll(/^\s*(\w+):\s*\{\s*kind:\s*'(ha
 if (gates.size === 0) note('usePaywall.jsx: GATES parsed as empty.');
 
 // --- 2. The copy map in the modal -------------------------------------------
+// REASON_COPY lives in lib/passMoments.js since T497 (the modal imports it).
 const modalSrc = read('components/PassModal.jsx');
-const copyBlock = modalSrc.match(/const REASON_COPY = \{([\s\S]*?)\n\};/);
-if (!copyBlock) note('PassModal.jsx: could not find REASON_COPY.');
+const momentsSrc = read('lib/passMoments.js');
+const copyBlock = momentsSrc.match(/export const REASON_COPY = \{([\s\S]*?)\n\};/);
+if (!copyBlock) note('lib/passMoments.js: could not find REASON_COPY.');
 const copy = new Map();
 for (const m of (copyBlock?.[1] ?? '').matchAll(
   /^\s*(\w+):\s*\{\s*heading:\s*'([^']+)'(?:,\s*sub:\s*'([^']+)')?\s*\}/gm
@@ -53,10 +64,10 @@ for (const m of (copyBlock?.[1] ?? '').matchAll(
 // the one that deliberately falls back to the generic pass.heading.
 for (const reason of gates.keys()) {
   if (reason === 'browse') continue;
-  if (!copy.has(reason)) note(`PassModal REASON_COPY is missing a heading for '${reason}'.`);
+  if (!copy.has(reason)) note(`passMoments REASON_COPY is missing a heading for '${reason}'.`);
 }
 for (const reason of copy.keys()) {
-  if (!gates.has(reason)) note(`PassModal REASON_COPY has '${reason}', which is not a gate.`);
+  if (!gates.has(reason)) note(`passMoments REASON_COPY has '${reason}', which is not a gate.`);
 }
 
 // --- 3. Every reason a call site actually passes -----------------------------
@@ -182,6 +193,29 @@ for (const m of adminSrc.matchAll(/t\('(admin\.funnel[\w.]*)'/g)) {
   if (!enSrc.includes(`'${m[1]}'`)) note(`i18n/en.js is missing ${m[1]}.`);
 }
 
+// --- 8. No dead end at a locked thing (T1171, ROADMAP I14) ------------------
+// Every hard gate (bar the plain price table) opens the sheet with a line
+// that says what the pass gives and how: the price and the days. The sheet
+// always keeps a way on for free (the free sentence or the keep note, and
+// the close button), and the Pass moment's own keys exist in every locale.
+for (const [reason, kind] of gates) {
+  if (kind !== 'hard' || reason === 'browse') continue;
+  const sub = copy.get(reason)?.sub;
+  if (!sub) { note(`'${reason}' opens the sheet with no line saying what the pass gives.`); continue; }
+  const line = enSrc.split('\n').find((l) => l.trimStart().startsWith(`"${sub}":`)) || '';
+  if (!line.includes('{price}')) note(`en "${sub}" (gate '${reason}') does not name the price.`);
+}
+for (const k of ["'pass.freeSentence'", "'pass.keepNote'", "label={t('shape.close')}"]) {
+  if (!modalSrc.includes(k)) note(`PassModal.jsx: the free way on (${k}) is gone.`);
+}
+const momentSrc = read('pass/PassMoment.jsx') + read('pass/passMoment.js');
+const momentKeys = new Set([...momentSrc.matchAll(/'(paywall\.[\w.]+)'/g)].map((m) => m[1]));
+if (momentKeys.size < 10) note(`pass/PassMoment.jsx: only ${momentKeys.size} paywall.* keys found.`);
+for (const lang of LOCALES) {
+  const src = read(`i18n/${lang}.js`);
+  for (const key of momentKeys) if (!src.includes(`"${key}":`)) note(`i18n/${lang}.js is missing "${key}".`);
+}
+
 // --- report ------------------------------------------------------------------
 const reasons = [...gates.entries()].map(([k, v]) => `${k}:${v}`).join(', ');
 if (problems.length) {
@@ -194,3 +228,134 @@ console.log(`  gates    ${gates.size}  (${reasons})`);
 console.log(`  keys     ${wanted.size} x ${LOCALES.length} locales = ${wanted.size * LOCALES.length} strings`);
 console.log(`  events   ${[...clientEvents].join(', ')}${sqlEvents ? ' (client and migration 022 agree)' : ''}`);
 console.log(`  scanned  ${files.length} source files for reason codes`);
+console.log(`  moment   ${momentKeys.size} paywall.* keys x ${LOCALES.length} locales`);
+
+const domAt = process.argv.indexOf('--dom');
+if (domAt > -1) {
+  const shotsAt = process.argv.indexOf('--shots');
+  const ok = await walkPassMoment({
+    base: process.argv[domAt + 1] || 'http://localhost:5871',
+    shots: shotsAt > -1 ? process.argv[shotsAt + 1] : '',
+  });
+  process.exit(ok ? 0 : 1);
+}
+
+/**
+ * The Pass moment in a browser (T1171): the plan flow's shortest walk to a
+ * priced trip (as verify_plan_short.mjs), "Plan this trip", then the card on
+ * the trip page, at 390 and 1440. No dead end: the card names what is free
+ * and what the Trip Pass adds with its price; See the Trip Pass opens the
+ * sheet, which names a way on for free and closes back to the same trip;
+ * Not now hides the card and says for how long; ?pm=off draws nothing.
+ */
+async function walkPassMoment({ base, shots }) {
+  const { chromium } = await import('playwright');
+  const { mkdirSync } = await import('node:fs');
+  const { TIERS } = await import('../src/lib/pricing.js');
+  if (shots) mkdirSync(shots, { recursive: true });
+  const browser = await chromium.launch(process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM } : {});
+  const results = [];
+  for (const W of [390, 1440]) {
+    const check = (name, ok, extra = '') => { results.push(ok); console.log(`[${W}] ${ok ? 'ok  ' : 'FAIL'} ${name}${extra ? `  (${extra})` : ''}`); };
+    const errors = [];
+    // A fresh context per walk: a planned trip stays under way in its storage.
+    const openPage = async () => {
+      const c = await browser.newContext({ viewport: { width: W, height: W < 769 ? 844 : 900 }, serviceWorkers: 'block' });
+      const p = await c.newPage();
+      p.on('pageerror', (e) => errors.push(e.message));
+      await p.addInitScript(() => {
+        try {
+          localStorage.setItem('continent.lang.v1', 'en');
+          localStorage.setItem('continent.homeSeen.v1', '1');
+          localStorage.setItem('continent.mapGuideDismissed.v1', '1');
+          localStorage.setItem('carta.fareNoticeSeen', '1');
+        } catch { /* none */ }
+      });
+      return [c, p];
+    };
+    let [ctx, page] = await openPage();
+    const shot = (name, loc) => (shots ? (loc || page).screenshot({ path: `${shots}/${W}-${name}.png` }).catch(() => {}) : null);
+
+    // To the trip page: the shortest honest walk, then the first trip.
+    const toTrip = async (q) => {
+      await page.goto(`${base}/?tab=plan&${q}`, { waitUntil: 'domcontentloaded' });
+      await page.waitForSelector('.pf-open, .pfh-new', { timeout: 60000 });
+      await page.getByRole('button', { name: 'Start planning' }).first().click();
+      for (let i = 0; i < 60; i++) {
+        await page.waitForTimeout(350);
+        if (await page.locator('.tff-card-open').count()) break;
+        const btn = page.locator('.pf-foot .btn-primary, .guide-foot .btn-primary').first();
+        if (!(await btn.count())) continue;
+        if (await btn.isDisabled()) {
+          const opts = page.locator('.pf [role=radio]:visible, .pf [role=checkbox]:visible, .pf button[aria-pressed]:visible');
+          const n = Math.min(await opts.count(), 8);
+          for (let k = 0; k < n && (await btn.isDisabled()); k++) {
+            const o = opts.nth(k);
+            if ((await o.getAttribute('aria-checked')) === 'true' || (await o.getAttribute('aria-pressed')) === 'true') continue;
+            await o.click({ timeout: 5000 }).catch(() => {});
+            await page.waitForTimeout(150);
+          }
+        }
+        if (!(await btn.isDisabled())) await btn.click();
+      }
+      await page.locator('.tff-card-open').first().click({ timeout: 30000 });
+      await page.getByRole('button', { name: 'Plan this trip' }).first().click({ timeout: 30000 });
+      await page.waitForSelector('.tpg', { timeout: 60000 });
+      await page.waitForTimeout(800);
+    };
+
+    try {
+      await toTrip('pm=on');
+      const card = page.locator('[data-testid=pass-moment]');
+      check('the Pass moment stands on the priced trip page', (await card.count()) === 1);
+      await card.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(400);
+      await shot('1-moment', card);
+      const text = await card.innerText();
+      check('it says what is free', /Planning this trip is free/.test(text) && /Share a link/.test(text));
+      const price = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR' }).format(TIERS.trip.priceCents / 100);
+      check('it names the Trip Pass with its price and days', text.includes(price) && text.includes(`${TIERS.trip.periodDays} days`), price);
+      check('four free lines and four Pass lines', (await card.locator('li').count()) === 8);
+      const sizes = await card.locator('button').evaluateAll((bs) => bs.map((b) => Math.round(b.getBoundingClientRect().height)));
+      check('two buttons, each 44 px or taller', sizes.length === 2 && sizes.every((h) => h >= 44), sizes.join(','));
+      const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      check('no sideways scroll', over <= 1, `${over}px`);
+
+      // The door: the sheet opens, names a way on for free, closes to the trip.
+      await card.getByRole('button', { name: 'See the Trip Pass' }).click();
+      const sheet = page.locator('.pass-sheet[role=dialog]');
+      await sheet.waitFor({ timeout: 15000 });
+      await shot('2-sheet');
+      const sheetText = await sheet.innerText();
+      check('See the Trip Pass opens the pass sheet', true);
+      check('the sheet has one way forward', (await sheet.locator('.btn-primary').count()) === 1);
+      check('the sheet names the free way on', /Planning is free|Your trips stay saved/.test(sheetText));
+      await sheet.getByRole('button', { name: 'Close' }).click();
+      await page.waitForTimeout(400);
+      check('closing returns to the same trip page', (await sheet.count()) === 0 && (await page.locator('.tpg').count()) === 1 && (await card.count()) === 1);
+
+      // Not now: hidden, with a line that says for how long and where prices stay.
+      await card.getByRole('button', { name: 'Not now' }).click();
+      await page.waitForTimeout(300);
+      const hidden = page.locator('[data-testid=pass-moment-hidden]');
+      check('Not now hides the card and says so', (await card.count()) === 0 && /Hidden for 14 days/.test(await hidden.innerText().catch(() => '')));
+      const later = await page.evaluate(() => JSON.parse(localStorage.getItem('carta.pm.later.v1') || 'null'));
+      check('Not now is remembered', later?.count === 1 && later.until > Date.now());
+
+      // The flag off (its default): nothing.
+      await ctx.close();
+      [ctx, page] = await openPage();
+      await toTrip('pm=off');
+      check('?pm=off draws nothing', (await page.locator('[data-testid=pass-moment]').count()) === 0);
+    } catch (e) {
+      check('walk', false, e.message.split('\n')[0]);
+      await shot('error');
+    }
+    check('no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));
+    await ctx.close();
+  }
+  await browser.close();
+  const ok = results.every(Boolean);
+  console.log(`verify_paywall --dom: ${results.filter(Boolean).length}/${results.length} ok`);
+  return ok;
+}
