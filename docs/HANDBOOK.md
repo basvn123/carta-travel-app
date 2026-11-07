@@ -51,6 +51,7 @@ Written 2026-11-04 (T1045) from the code, config and migrations on `main` at com
    - [Personal match and "For you"](#personal-match-and-for-you)
    - [Climate strip and best months](#climate-strip-and-best-months)
    - [When logic (the traveller's month) and When to go](#when-logic-the-travellers-month-and-when-to-go)
+   - [Seasons and closures (D18)](#seasons-and-closures-d18)
    - [Crowds by month and the crowd calendar](#crowds-by-month-and-the-crowd-calendar)
    - [Sea temperature](#sea-temperature)
 3. [Prices and logistics](#prices-and-logistics)
@@ -859,6 +860,27 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 **Where it lives.** `continent-app/src/lib/when.js`, `continent-app/src/lib/whenGuide.js`, `continent-app/src/browse/DestWhen.jsx`.
 
 **Limits.** A per-month price total for When to go is not built (T881-a).
+
+---
+
+### Seasons and closures (D18)
+
+**What it does.** Some places shut for part of the year: a mountain hut, a lift, an island whose only ferries run in summer, a lido. The place page's month strip marks the months a place is shut and names why, lists the seasonal huts, lifts and ferries nearby with their months, and the plan flow never suggests a place for a month it is shut (T1202).
+
+**How it works.**
+1. `pipeline/harvest_seasons.py` (task `seasons`, quarterly) reads each Geofabrik country extract once (pyosmium) and keeps huts (`tourism=alpine_hut`), lifts (`aerialway=*`, funiculars), ferries (`route=ferry`, `amenity=ferry_terminal`, kept even with no hours) and named objects with hours.
+2. Months come from the month selectors of `opening_hours` (`May-Oct`, `Jun 15-Sep 30`, `Dec-Apr; May-Nov off`; a later rule overrides an earlier one; a month counts open when any day is), else from `seasonal=summer|winter|spring|autumn` by the European convention. Week numbers, Easter and nth weekdays are not guessed: the object is skipped.
+3. Confidence: high for `opening_hours` months with a check date (`check_date`, `opening_hours:check_date`, `survey:date`) under `CHECK_FRESH_DAYS` (3 years) old; medium without one; low for a season word only.
+4. The place itself closes (`season.open`) on one of two rules only: a facility within `OWN_KM` (2 km) named like the place (why `own`), or the place is an island and every ferry within `FERRY_KM` (3 km) is seasonal at medium or high confidence (why `ferry`; one year-round ferry keeps it open). A hut or lift near a village never closes the village; it is listed under `season.items` (at most `KEEP_ITEMS`, 4, within `ITEM_KM` by kind).
+5. `lib/season.js`: `closedMonths` is the complement of `open`; `openIn(d, m)` is false only at medium or high confidence (`SKIP_CONF`). A low one is drawn as "May be closed" and still suggested.
+6. Plan flow (`lib/recommend/candidates.js`): `bestMonth` does not choose a month the first place is shut while another is open; each trip drops places shut in its month before `placesNear`. The rank tier carries `season.open` and `season.conf` so this holds before the country files land.
+7. Month strip (`DestWhen.jsx`): a shut month's bar becomes an empty dashed track, its name says Closed, the key adds Closed, the chosen month's tag says it, and one line says why with the check date.
+
+**Data behind it.** `dest.season` (`open`, `conf`, `why`, `checked`, `items`, `_src` `osm_seasons`, `_asof`), presence `pending` in `docs/wire.schema.json` until the first run; `cache/dest_seasons.json`. OpenStreetMap, ODbL 1.0.
+
+**Where it lives.** `pipeline/harvest_seasons.py`, `continent-app/src/lib/season.js`, `continent-app/src/lib/recommend/candidates.js`, `continent-app/src/browse/DestWhen.jsx`, `continent-app/src/styles/94-when-stay.css`.
+
+**Limits.** No run yet (owner step T1202-a): the wire carries no block until then. Explore filters, rails and the When to go verdict do not read closures yet (T1202-c). Operator data (alpine club huts, ferry GTFS) has no open licence (T1202 report, Research).
 
 ---
 
