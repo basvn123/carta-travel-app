@@ -1,4 +1,6 @@
 import React, { useId, useMemo, useState } from 'react';
+import { partnerLinkProps } from '../lib/partnerLink.js';
+import { PartnerMark, PartnerNote } from '../components/PartnerMark.jsx';
 import { legLinks, TRAVEL_MODES, TRAVEL_MODE_LABEL } from '../lib/transportLinks.js';
 import { fmtDate, addDays } from '../lib/dates.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -247,11 +249,13 @@ function LegCard({ leg, value, onChange, adults, estimate, pricedMode, t, lang, 
           )}
           {links.length > 0 && (
             <Fold label={t('plan.findTickets')} className="wz-tickets">
+              <PartnerNote links={links.slice(0, 4)} />
               <ul className="wz-links">
                 {links.slice(0, 4).map((l) => (
                   <li key={l.key}>
-                    <a className="wz-link" href={l.url} target="_blank" rel="noreferrer noopener">
+                    <a {...partnerLinkProps(l.url, { className: 'wz-link' })}>
                       {l.label}
+                      <PartnerMark href={l.url} />
                       <ExternalIcon size={14} />
                       <span className="sr-only"> {t('plan.opensNewTab')}</span>
                     </a>

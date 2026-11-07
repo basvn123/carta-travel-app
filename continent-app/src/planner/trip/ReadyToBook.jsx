@@ -1,4 +1,6 @@
 import React from 'react';
+import { partnerButtonProps } from '../../lib/partnerLink.js';
+import { PartnerMark } from '../../components/PartnerMark.jsx';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip, Money } from '../../components/ui/index.js';
 import { BedIcon, BusIcon, FerryIcon, TrainIcon } from '../../components/Icons.jsx';
@@ -161,8 +163,9 @@ export function ReadyToBook(props) {
               {r.booked && bookedMark}
               <span className="tpg-book-acts">
                 {r.link && (
-                  <Button href={r.link.href} external variant="quiet" size="sm" className="tpg-book-link">
+                  <Button {...partnerButtonProps(r.link.href)} variant="quiet" size="sm" className="tpg-book-link">
                     {r.link.label}
+                    <PartnerMark href={r.link.href} />
                   </Button>
                 )}
                 {r.paid}

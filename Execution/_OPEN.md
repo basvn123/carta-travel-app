@@ -2064,3 +2064,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1182-d | T1182 | Box mode passes the lab guard for all 22 lab-guarded tasks, but 14 of them name further inputs (Geofabrik extracts, Copernicus DEM tiles, BRouter tiles, Overpass, Commons); decide which of those inputs live on the lab volume and which tasks stay with the worker | next task | open |  |
 | T1182-e | T1182 | The box lab is the only live copy in box mode and archive/db/ expires after 30 days: add a timer that runs lab.sh push every 28 days (infra/hetzner/cron, outside T1182's files) | next task | open |  |
 | T1182-f | T1182 | infra/hetzner/cax11/env.example and infra/hetzner/README.md ("The trailslab job") do not name CARTA_TRAILSLAB_HOME or the box lab; add them (outside T1182's files) | next task | open |  |
+| T1172-a | T1172 | Register the affiliate programmes and set the four partner ids; until then partner links stay plain (owner step) | user | open |  |
+| T1172-b | T1172 | Approve the partner disclosure wording against the I-R5 legal checklist and PRODUCT.md (I-e) | user | open |  |
+| T1172-c | T1172 | Stay links (Booking.com, Airbnb, Hostelworld), Skyscanner and Trainline are undecorated; when joined, add a builder and its ClickOf to partnerOf | next task | open |  |
+| T1172-d | T1172 | Exported PDF partner links carry no mark or disclosure line; add one to the PDF footer | next task | open |  |
+| T1172-e | T1172 | pytest does not collect in the cloud container (pipeline/trails/smoke_test.py, missing deps); run the Python suite where the deps exist | next task | open |  |

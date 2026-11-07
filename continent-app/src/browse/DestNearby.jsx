@@ -1,4 +1,6 @@
 import React from 'react';
+import { partnerLinkProps } from '../lib/partnerLink.js';
+import { PartnerMark } from '../components/PartnerMark.jsx';
 import { Button, Chip, ChipGroup } from '../components/ui/index.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { ArrowRightIcon, BusIcon, CalendarIcon, CarIcon, CompassIcon, ExternalIcon, MapPinIcon, SparkIcon, TrainIcon } from '../components/Icons.jsx';
@@ -229,7 +231,7 @@ function SpotCard({ refEl, n, img, icon, chip, name, meta, text, href, active, o
           {onPick ? (
             <button type="button" className="spot-hit" onClick={onPick} onFocus={onEnter} onBlur={onLeave} aria-label={pickLabel}>{name}</button>
           ) : href ? (
-            <a className="spot-hit" href={href} target="_blank" rel="noreferrer">{name}</a>
+            <><a {...partnerLinkProps(href, { className: 'spot-hit' })}>{name}</a><PartnerMark href={href} /></>
           ) : name}
         </h3>
         {meta && <p className="spot-meta">{meta}</p>}
