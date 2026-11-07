@@ -141,17 +141,35 @@ PASS_PATHS = {
     ],
 }
 
+def _prompt_registry():
+    """pipeline/prompt_registry.py from the repository root (T1140, ROADMAP E5): the
+    registry's trips-shared prompt. The golden-set check's sparse checkout carries
+    it with prompts/registry.json and prompts/trips-shared/."""
+    repo = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
+    pr_dir = os.path.join(repo, "pipeline")
+    if pr_dir not in sys.path:
+        sys.path.insert(0, pr_dir)
+    import prompt_registry  # noqa: E402
+    return prompt_registry
+
+
+def _shared(name):
+    """A field description of the response schemas: the registry's trips-shared
+    prompt, fragment schema.<name> (T1206, register row T1140-c)."""
+    return _prompt_registry().prompt("trips-shared").text("schema." + name)
+
+
 # Fields a pass answers that are not in the record: pass 1's route name and
 # the named places pass 2 is confined to; pass 3's evidence rows.
 PASS_EXTRAS = {
     1: {
         "nameSlug": {"type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+){1,3}$", "maxLength": 50,
-                     "description": "Two to four lowercase words joined by hyphens naming the route."},
+                     "description": _shared("nameSlug")},
         "itinerary[]": {
             "places": {"type": "array", "minItems": 2, "maxItems": 6,
                        "items": {"type": "string", "minLength": 2, "maxLength": 80,
                                  "pattern": "^[^\u2014\u2013\u00b7]*$"},
-                       "description": "The real named places this day visits. Pass two may only write about these."},
+                       "description": _shared("places")},
         },
     },
     3: {
@@ -163,11 +181,10 @@ PASS_EXTRAS = {
                           "path": {"type": "string", "maxLength": 80},
                           "url": {"anyOf": [{"type": "string", "pattern": "^https?://", "maxLength": 400},
                                             {"type": "null"}],
-                                  "description": "The page the figure came from, or null for an estimate "
-                                                 "from general knowledge (allowed only where the prompt says)."},
+                                  "description": _shared("evidence.url")},
                           "basis": {"type": "string", "minLength": 5, "maxLength": 240},
                       }},
-            "description": "One row per figure: its dotted path, the page it came from, how the page gives it.",
+            "description": _shared("evidence"),
         },
     },
 }
@@ -593,7 +610,7 @@ CRITIC_SCHEMA = {
     "properties": {
         "checks": {
             "type": "array", "minItems": len(CRITIC_KINDS), "maxItems": len(CRITIC_KINDS),
-            "description": "One row per kind of fault saying what was examined, also when nothing was found.",
+            "description": _shared("critic.checks"),
             "items": {"type": "object", "additionalProperties": False, "required": ["kind", "looked"],
                       "properties": {
                           "kind": {"type": "string", "enum": list(CRITIC_KINDS)},
@@ -741,18 +758,6 @@ def apply_critique(fields, rows, critique, chunks):
 
 
 # ── clients ──────────────────────────────────────────────────────────────────
-
-def _prompt_registry():
-    """pipeline/prompt_registry.py from the repository root (T1140, ROADMAP E5): the
-    registry's trips-shared prompt. The golden-set check's sparse checkout carries
-    it with prompts/registry.json and prompts/trips-shared/."""
-    repo = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", ".."))
-    pr_dir = os.path.join(repo, "pipeline")
-    if pr_dir not in sys.path:
-        sys.path.insert(0, pr_dir)
-    import prompt_registry  # noqa: E402
-    return prompt_registry
-
 
 def retry_prompt(user, errs):
     """The one retry: the first prompt, the registry's retry line, then the failed checks."""

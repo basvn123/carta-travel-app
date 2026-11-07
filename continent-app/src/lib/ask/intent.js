@@ -403,11 +403,16 @@ export function parseIntent(text, ctx) {
   // One vibe slot, but a beach or a lake beside another vibe ("a seaside
   // town with great seafood") is still asked for: it becomes the close-by
   // extra, so the answer keeps both.
+  // One word is one reading (T1206, T1141-i): Dutch "meer" is a lake and
+  // German "Meer" the sea, so a word the vibe was already read from never
+  // adds the other one as well ("rustig dorp aan een meer" is no beach).
   const restToks = rest.split(' ');
+  const vibeKeys = new Set(vocab.entries.find((x) => x.kind === 'vibe' && x.value === facets.vibe)?.keys || []);
   for (const [vibe, nb] of [['beach', 'beach'], ['lake', 'lake']]) {
     if (!facets.vibe || facets.vibe === vibe) continue;
     const e = vocab.entries.find((x) => x.kind === 'vibe' && x.value === vibe);
     const said = e?.keys.some((k) => {
+      if (vibeKeys.has(k)) return false;
       const w = k.split(' ');
       return restToks.some((_, i) => w.every((x, j) => restToks[i + j] === x));
     });

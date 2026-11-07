@@ -58,6 +58,18 @@ migration needed. Probe without spending quota: POST with only the anon key;
 function is live (the key check precedes the auth check). Use curl.exe, not
 Invoke-RestMethod, to see the body.
 
+Optional gateway settings (T1137, `_shared/aiModels.mjs`), unset by default:
+`AI_PARSE_BOOKING_PROVIDER` (`gemini`, `workers-ai` or `openai`),
+`AI_PARSE_BOOKING_MODELS` (comma separated chain, max 6) and
+`AI_PARSE_BOOKING_BASE_URL` (provider `openai` only, falling back to
+`AI_OPENAI_BASE_URL`); the keys `AI_OPENAI_API_KEY` (provider `openai`) and
+`CF_ACCOUNT_ID` with `CF_AI_TOKEN` (provider `workers-ai`); and
+`AI_TRACE_LANGFUSE=on` with `LANGFUSE_HOST`, `LANGFUSE_PUBLIC_KEY` and
+`LANGFUSE_SECRET_KEY` for the metadata only trace export (T1139). A provider
+or model switch changes which model reads travellers' bookings: the owner's
+call, with an eval run (`docs/ai/model-strategy.md`). The keys are listed in
+`docs/security/SECRETS.md`.
+
 ## Tests
 
 Pure logic lives in `logic.mjs`, imported by both Deno and

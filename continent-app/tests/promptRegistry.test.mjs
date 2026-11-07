@@ -40,8 +40,24 @@ test('plan-day: the registry prompt equals the old code on every case', () => {
   assert.equal(JSON.stringify(planDay.RESPONSE_SCHEMA), golden['plan-day.schema']);
 });
 
-test('suggest-city and parse-booking: the registry prompts equal the old code', () => {
-  for (const [i, c] of golden['suggest-city'].entries()) assert.equal(suggestCity.buildPrompt(c.input), c.output, `suggest-city case ${i}`);
+test('suggest-city and parse-booking: the registry prompts equal the old code (suggest-city v2: plus its two data fences)', () => {
+  // suggest-city v2 (T1206, T1137-c) fences the wish and the candidate deck as
+  // data blocks; every other line is still v1's, byte for byte.
+  for (const [i, c] of golden['suggest-city'].entries()) {
+    const nonce = 'n0nce7q';
+    const v1Wish = `- Their own wish, treat as the main brief: "${c.input.freeText}".`;
+    const want = c.output
+      .split('\n')
+      .map((line) => (line === JSON.stringify(c.input.candidates) ? guard.dataBlock('CANDIDATES', line, nonce) : line))
+      .map((line) => (c.input.freeText && line === v1Wish
+        ? `- Their own wish (the WISH data block below), treat as the main brief:\n${guard.dataBlock('WISH', c.input.freeText, nonce)}`
+        : line))
+      .join('\n');
+    const got = suggestCity.buildPrompt({ ...c.input, nonce });
+    assert.equal(got, want, `suggest-city case ${i}`);
+    assert.ok(got.includes(`<<<DATA ${nonce} CANDIDATES>>>`), `suggest-city case ${i}: deck not fenced`);
+    if (c.input.freeText) assert.ok(got.includes(`<<<DATA ${nonce} WISH>>>`), `suggest-city case ${i}: wish not fenced`);
+  }
   assert.equal(JSON.stringify(suggestCity.RESPONSE_SCHEMA), golden['suggest-city.schema']);
   for (const [i, c] of golden['parse-booking'].entries()) assert.equal(parseBooking.buildPrompt(c.input), c.output, `parse-booking case ${i}`);
   assert.equal(JSON.stringify(parseBooking.RESPONSE_SCHEMA), golden['parse-booking.schema']);

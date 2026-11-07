@@ -1,0 +1,27 @@
+{
+ "note": "A made-up month for the switch-trigger check (T1206, tests/aiSwitchTriggers.test.mjs). Not real telemetry.",
+ "asOf": "2026-12-07",
+ "mau": 3100,
+ "groundedSearchesPerMonth": 1200,
+ "weekly": {
+  "since": "2026-10-13",
+  "weeks": [
+   {
+    "week": "2026-12-07",
+    "features": [
+     { "feature": "ask", "calls": 4000, "failed": 3, "refused": 1, "fallbacks": 0, "p50": 900, "p95": 2100, "tokensIn": 4000000, "tokensOut": 600000, "costUsd": 5.0 },
+     { "feature": "plan-day", "calls": 900, "failed": 2, "refused": 0, "fallbacks": 4, "p50": 9000, "p95": 21000, "tokensIn": 9000000, "tokensOut": 1800000, "costUsd": 12.0 }
+    ]
+   },
+   {
+    "week": "2026-11-30",
+    "features": [
+     { "feature": "ask", "calls": 3500, "failed": 1, "refused": 0, "fallbacks": 0, "p50": 880, "p95": 2000, "tokensIn": 3500000, "tokensOut": 500000, "costUsd": 4.0 },
+     { "feature": "plan-day", "calls": 950, "failed": 0, "refused": 0, "fallbacks": 2, "p50": 9100, "p95": 20500, "tokensIn": 9500000, "tokensOut": 1900000, "costUsd": 120.0 },
+     { "feature": "suggest-city", "calls": 300, "failed": 0, "refused": 0, "fallbacks": 0, "p50": 7000, "p95": 15000, "tokensIn": 1200000, "tokensOut": 90000, "costUsd": 1.0 }
+    ]
+   }
+  ],
+  "costByDay": []
+ }
+}

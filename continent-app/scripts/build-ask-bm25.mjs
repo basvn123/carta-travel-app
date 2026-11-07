@@ -20,6 +20,9 @@
  * seen twice keeps its first row (MiniSearch refuses a duplicate id).
  *
  * run_pipeline.py task `ask_index` runs it straight after the Python layer.
+ * It first runs the staleness check (scripts/check-ask-index.mjs, T1141-d):
+ * passages read from an older catalogue than the one on the wire stop the
+ * build. --app-data names another catalogue (default public/app_data.json).
  */
 import { readFileSync, writeFileSync, renameSync, existsSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
@@ -28,6 +31,7 @@ import { dirname, resolve, join } from 'node:path';
 import MiniSearch from 'minisearch';
 import { ASK_BM25_OPTIONS, ASK_BM25_BOOST, ASK_BM25_FIELDS, bm25Doc } from '../functions/_lib/askTerms.js';
 import { SPARSE_SOURCES } from '../functions/_lib/askSparse.js';
+import { checkAskIndex } from './check-ask-index.mjs';
 
 const appRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const BUDGET_GZIP = 400 * 1024;
@@ -44,6 +48,11 @@ const dir = resolve(appRoot, arg('--dir', 'public/search/ask'));
 const manifestPath = join(dir, 'manifest.json');
 if (!existsSync(manifestPath)) {
   console.error(`[ask-bm25] no ${manifestPath}; run python pipeline/ask_index_layer.py first`);
+  process.exit(1);
+}
+const fresh = checkAskIndex({ dir, appData: resolve(appRoot, arg('--app-data', 'public/app_data.json')) });
+if (!fresh.ok) {
+  console.error(`[ask-bm25] stale: ${fresh.reason}`);
   process.exit(1);
 }
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));

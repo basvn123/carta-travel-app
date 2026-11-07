@@ -7,6 +7,7 @@
  *   node scripts/prompts/registry.mjs check --seed-edit  self-test: an in-place edit must fail
  *   node scripts/prompts/registry.mjs bump <id>          copy v<N>.md to v<N+1>.md and point the registry at it
  *   node scripts/prompts/registry.mjs record <id>        hash the current version, run its eval, write the score
+ *                                                        (a judge score whose verdicts carry another rubric hash is refused)
  *
  * What check enforces (exit 1 on any failure):
  *   1. Every registry entry's file exists and parses, and its id and version match the entry.
@@ -222,6 +223,21 @@ function bump(id) {
   console.log(`${file} written; edit its fragments and changelog, then: node scripts/prompts/registry.mjs record ${id} && node scripts/prompts/registry.mjs build`);
 }
 
+/**
+ * Why a judge score may not be recorded, or null (T1206, register row T1140-d).
+ * A judge prompt (scoreKey kappa.*) is scored by the agreement of verdicts with
+ * labels; verdicts made on another rubric than the current one score the old
+ * prompt, not this version, so the score is refused until the judge is rerun.
+ */
+export function judgeScoreProblem(entry, result) {
+  if (!entry?.scoreKey || !/^kappa\./.test(entry.scoreKey)) return null;
+  const j = result?.judge;
+  if (!j) return `${entry.scoreKey}: the eval reported no judge`;
+  if (!j.verdicts_rubric_sha) return `${entry.scoreKey}: the judge verdicts carry no rubric hash; rerun the judge (continent-app/scripts/eval/plan-day/judge.mjs)`;
+  if (j.verdicts_rubric_sha !== j.rubric_sha) return `${entry.scoreKey}: the judge verdicts were made on rubric ${j.verdicts_rubric_sha}, the rubric is now ${j.rubric_sha}; rerun the judge (continent-app/scripts/eval/plan-day/judge.mjs) before recording`;
+  return null;
+}
+
 function record(id) {
   const reg = readRegistry();
   const e = reg.prompts[id];
@@ -236,6 +252,8 @@ function record(id) {
   if (e.eval) {
     const r = runEval(e.eval);
     if (r.code !== 0) { writeRegistry(reg); throw new Error(`eval ${e.eval} failed (exit ${r.code}); hash written, score not:\n${r.out.slice(-1500)}`); }
+    const stale = judgeScoreProblem(e, r.result);
+    if (stale) { writeRegistry(reg); throw new Error(`${id}: score not recorded (hash written): ${stale}`); }
     // scoreKey picks one of the eval's metrics (the judge prompt is scored by its kappa); else the headline.
     const h = r.result?.headline || {};
     const key = e.scoreKey || h.key || null;

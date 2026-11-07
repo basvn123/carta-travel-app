@@ -14,7 +14,9 @@
  *   - an unknown word in front of a place Carta does know makes a different
  *     place ("a week in New York" is not York, England);
  *   - the name of a country outside Europe, in any of the six languages,
- *     anywhere in the question ("the capital of australia").
+ *     anywhere in the question ("the capital of australia");
+ *   and a European name the parser misses ("in the Czech Republic") is
+ *   never called outside Europe.
  *
  *   outsidePlace(text, intent) -> 'Dubai' | null
  */
@@ -57,6 +59,31 @@ const EUROPE = new Set(('AD AL AM AT AX AZ BA BE BG BY CH CY CZ DE DK EE ES FI F
 // Codes Intl names that are not a country somewhere else (EU, UN, ...).
 const NOT_COUNTRY = new Set(['EU', 'EZ', 'UN', 'QO', 'ZZ', 'XA', 'XB', 'AQ', 'BV', 'HM', 'UM', 'TF', 'IO']);
 const LANGS = ['en', 'nl', 'de', 'fr', 'es', 'it'];
+// European names Intl does not give ("Czech Republic" is "Czechia" there).
+const EUROPE_ALIASES = ['czech republic', 'tschechische republik', 'republique tcheque', 'republica checa', 'repubblica ceca',
+  'tsjechische republiek', 'holland', 'england', 'engeland', 'scotland', 'schotland', 'schottland', 'ecosse', 'escocia', 'scozia',
+  'wales', 'pays de galles', 'gales', 'galles', 'great britain', 'britain', 'groot brittannie', 'grossbritannien', 'grande bretagne',
+  'gran bretana', 'gran bretagna', 'northern ireland', 'macedonia', 'bosnia', 'herzegovina', 'europe', 'europa', 'balkans', 'balkan',
+  'scandinavia', 'scandinavie', 'skandinavien', 'escandinavia', 'lapland', 'lappland', 'laponie', 'laponia', 'lapponia',
+  'sicily', 'sardinia', 'corsica', 'crete', 'canary islands', 'azores', 'madeira', 'balearic islands'];
+
+let europeNames = null;
+/** Folded words of every European country name (six languages) and the aliases above. */
+function europeWords() {
+  if (europeNames) return europeNames;
+  europeNames = new Set(EUROPE_ALIASES);
+  for (const lang of LANGS) {
+    let dn = null;
+    try { dn = new Intl.DisplayNames([lang], { type: 'region', fallback: 'none' }); } catch { dn = null; }
+    if (!dn) continue;
+    for (const code of EUROPE) {
+      const name = dn.of(code);
+      if (name) europeNames.add(fold(name).split(/[^\p{L}]+/u).filter(Boolean).join(' '));
+    }
+  }
+  return europeNames;
+}
+const inEurope = (name) => europeWords().has(fold(name).split(/[^\p{L}]+/u).filter(Boolean).join(' '));
 
 let worldNames = null;
 /** Folded names (as word lists) of every country outside Europe, six languages. */
@@ -110,6 +137,8 @@ export function outsidePlace(text, intent) {
       name += ` ${words[++j]}`;
       if (head && !unknown.has(fold(words[j]))) break;
     }
+    // A European name the parser does not know yet is not outside Europe.
+    if (inEurope(name)) continue;
     return titled(name);
   }
   if (known) return null;

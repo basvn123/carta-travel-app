@@ -65,6 +65,27 @@ test("a destination outside Carta's Europe is named, a European one is not", () 
   assert.equal(outsidePlace("Wat is er te doen in de buurt", { places: [], facets: {}, unknown: ["doen"] }), null);
 });
 
+test("articles, a known name after an unknown word, and countries outside Europe (T1136-b, T1136-c)", () => {
+  // An article after "in" is skipped and never the name itself.
+  assert.equal(outsidePlace("wandern in den alpen im juli", { places: [], facets: { area: "alps", month: 7 }, unknown: ["den"] }), null);
+  assert.equal(outsidePlace("Wandern in den Bergen der Dolomiten", { places: [], facets: { area: "dolomites" }, unknown: ["den"] }), null);
+  assert.equal(outsidePlace("diving in the Maldives", { places: [], facets: { vibe: "adventure" }, unknown: ["maldives"] }), "Maldives");
+  // "New York" is not York, England, in four languages.
+  const york = { places: ["gem:york"], facets: {}, unknown: ["new"] };
+  for (const q of ["a week in New York in December", "weekendje naar New York", "vacanza a New York", "a week in new York"]) {
+    assert.equal(outsidePlace(q, york), "New York", q);
+  }
+  assert.equal(outsidePlace("a week in York in December", { places: ["gem:york"], facets: {}, unknown: [] }), null);
+  // A country outside Europe anywhere in the question, in any of the six languages.
+  assert.equal(outsidePlace("what is the capital of australia", { places: [], facets: { vibe: "city" }, unknown: ["australia"] }), "Australia");
+  assert.equal(outsidePlace("rondreis door Thailand", { places: [], facets: {}, unknown: ["rondreis", "door", "thailand"] }), "Thailand");
+  // A European name the parser misses is never outside Europe.
+  assert.equal(outsidePlace("a castle on the hill in the Czech Republic", { places: [], facets: { vibe: "castles" }, unknown: ["hill", "czech", "republic"] }), null);
+  assert.equal(outsidePlace("a week in Scotland", { places: [], facets: {}, unknown: ["scotland"] }), null);
+  // An article before a lower-case unknown word is not a name.
+  assert.equal(outsidePlace("Warm in the way", { places: [], facets: {}, unknown: ["way"] }), null);
+});
+
 test("warm in a month keeps the warm places and lets the month's best list go", async () => {
   const { findFacts } = await import("../src/lib/ask/rank.js");
   // climate.m: [high, low, rain, score] for each month; best: the best months.

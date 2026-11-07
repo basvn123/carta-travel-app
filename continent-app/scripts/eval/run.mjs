@@ -3,14 +3,16 @@
  * The one eval runner (T1148, ROADMAP F6). Every Carta eval runs through it
  * and writes the shared results format (scripts/eval/lib/results.mjs).
  *
- *   node scripts/eval/run.mjs [ask] [trail-summaries] [data-quality] [plan-day] [taxonomy] [trails-external] [truth] [linking] [all]
+ *   node scripts/eval/run.mjs [ask] [trail-summaries] [data-quality] [plan-day] [taxonomy] [trails-external] [truth] [linking]
+ *        [ask-docs] [injection] [trips-golden] [parse-booking] [suggest-city] [all]
  *        [--check] [--write] [--dashboard] [--json]
  *        [--seed-drop]             (ask: a known regression, the gate must fail)
  *        [--plans <file>]          (plan-day: score recorded plans, not the reference planner)
  *        [--judgments <file>]      (plan-day: this verdicts file, not the newest in judgments/)
  *        [--predictions <file>]    (taxonomy: score this tagger output, not the today's-tags baseline)
+ *        [--answers <file>]        (parse-booking, suggest-city: score recorded model answers, not the fixture ones)
  *
- *   no eval named  all five
+ *   no eval named  all of them
  *   --check        exit 1 when a gated eval fails, 2 when one errors
  *   --write        write each result to the results folder (data/reports/evals/
  *                  or CARTA_EVAL_OUT): latest/<eval>.json and a history.jsonl line
@@ -27,6 +29,10 @@
  *   truth            the truth set: shipped data against hand-verified answers (T1144, ROADMAP D4), Python
  *   linking          place linking, MRR and accuracy@1 on 300 messy mentions (T1153, ROADMAP F4)
  *   ask-docs         Ask the docs: recall, grounding and abstention over docs/ (T1168, ROADMAP B8)
+ *   injection        the prompt injection set: attacks blocked on five surfaces (T1117, T1206)
+ *   trips-golden     the Trips generator's golden set and self-tests, offline (T153, T1206), Python
+ *   parse-booking    parse-booking on synthetic documents with gold fields, recorded answers (T1206)
+ *   suggest-city     suggest-city on fixture decks, recorded answers, rule checks (T1206)
  * No eval calls a model. The plan-day judge is its own optional step
  * (scripts/eval/plan-day/judge.mjs). The Claude API is never used.
  * S52's own entry point, scripts/eval/ask-eval.mjs, keeps working as before.
@@ -36,7 +42,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RESULTS_DIR, REPO, readHistory, validateResult, writeResult } from './lib/results.mjs';
 
-export const EVALS = ['ask', 'trail-summaries', 'data-quality', 'plan-day', 'taxonomy', 'trails-external', 'truth', 'linking', 'ask-docs'];
+export const EVALS = ['ask', 'trail-summaries', 'data-quality', 'plan-day', 'taxonomy', 'trails-external', 'truth', 'linking', 'ask-docs', 'injection', 'trips-golden', 'parse-booking', 'suggest-city'];
 export const DASHBOARD_PATH = join(REPO, 'docs', 'reference', 'evals.md');
 
 const argv = process.argv.slice(2);
@@ -51,7 +57,7 @@ export async function runOne(name, opts = {}) {
     r = await mod.run(opts);
   } catch (e) {
     r = {
-      schema: 'carta-eval/1', eval: name, title: mod.title || name, kind: { ask: 'retrieval', 'trail-summaries': 'text-check', 'data-quality': 'data', 'plan-day': 'llm-plan', taxonomy: 'classification', 'trails-external': 'data', truth: 'data', linking: 'retrieval', 'ask-docs': 'retrieval' }[name],
+      schema: 'carta-eval/1', eval: name, title: mod.title || name, kind: { ask: 'retrieval', 'trail-summaries': 'text-check', 'data-quality': 'data', 'plan-day': 'llm-plan', taxonomy: 'classification', 'trails-external': 'data', truth: 'data', linking: 'retrieval', 'ask-docs': 'retrieval', injection: 'text-check', 'trips-golden': 'text-check', 'parse-booking': 'extraction', 'suggest-city': 'llm-plan' }[name],
       at: new Date().toISOString(), git: null, status: 'error', gated: true,
       headline: { key: 'error', value: null, label: 'the eval did not run', higher_is_better: true },
       metrics: {}, gate: { ok: false, rule: 'the eval must run', tolerance: null, baseline: null, failures: [{ key: 'error', was: null, now: null, why: String(e.message || e).slice(0, 400) }] },
@@ -146,11 +152,11 @@ export function dashboard(dir = RESULTS_DIR) {
 /* ---- main ---- */
 
 async function main() {
-  const named = argv.filter((a, i) => !a.startsWith('--') && !(i > 0 && ['--plans', '--judgments', '--predictions'].includes(argv[i - 1])));
+  const named = argv.filter((a, i) => !a.startsWith('--') && !(i > 0 && ['--plans', '--judgments', '--predictions', '--answers'].includes(argv[i - 1])));
   const which = !named.length || named.includes('all') ? EVALS : named;
   const unknown = which.filter((e) => !EVALS.includes(e));
   if (unknown.length) { console.error(`unknown eval: ${unknown.join(', ')} (known: ${EVALS.join(', ')})`); process.exit(2); }
-  const opts = { seedDrop: flag('--seed-drop'), plans: arg('--plans'), judgments: arg('--judgments'), predictions: arg('--predictions') };
+  const opts = { seedDrop: flag('--seed-drop'), plans: arg('--plans'), judgments: arg('--judgments'), predictions: arg('--predictions'), answers: arg('--answers') };
   const results = [];
   for (const e of which) results.push(await runOne(e, opts));
   for (const r of results) {

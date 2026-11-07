@@ -1,0 +1,578 @@
+{
+ "version": 1,
+ "about": "T1206 (register rows T1140-b, T1138-c): fixture decks for the suggest-city eval. The decks are real towns with made-up distances, tags and ratings around three stays; gold names the candidates that fit each wish (good) and those that do not (avoid). The default answers (answers.json) are hand-written, with planted faults the shipped path must drop: an id not in the deck, a duplicate, a discovery 900 km from the stay and a why with a link.",
+ "cases": [
+  {
+   "id": "sc01",
+   "about": "a sea and fish wish near Lisbon",
+   "stay": {
+    "lat": 38.72,
+    "lon": -9.14
+   },
+   "focus": null,
+   "interests": [],
+   "freeText": "Somewhere by the sea with good fish",
+   "lang": "en",
+   "candidates": [
+    {
+     "id": "sintra",
+     "name": "Sintra",
+     "country": "Portugal",
+     "km": 25,
+     "tags": [
+      "palaces",
+      "forest",
+      "hills"
+     ],
+     "rating": 4.7
+    },
+    {
+     "id": "cascais",
+     "name": "Cascais",
+     "country": "Portugal",
+     "km": 30,
+     "tags": [
+      "beach",
+      "seafood"
+     ],
+     "rating": 4.5
+    },
+    {
+     "id": "obidos",
+     "name": "Obidos",
+     "country": "Portugal",
+     "km": 80,
+     "tags": [
+      "walls",
+      "castle",
+      "village"
+     ],
+     "rating": 4.6
+    },
+    {
+     "id": "evora",
+     "name": "Evora",
+     "country": "Portugal",
+     "km": 130,
+     "tags": [
+      "roman",
+      "wine",
+      "old-town"
+     ],
+     "rating": 4.6
+    },
+    {
+     "id": "arrabida",
+     "name": "Arrabida",
+     "country": "Portugal",
+     "km": 40,
+     "tags": [
+      "nature",
+      "hiking",
+      "beach"
+     ],
+     "rating": 4.8
+    },
+    {
+     "id": "setubal",
+     "name": "Setubal",
+     "country": "Portugal",
+     "km": 45,
+     "tags": [
+      "seafood",
+      "port"
+     ],
+     "rating": 4.2
+    },
+    {
+     "id": "ericeira",
+     "name": "Ericeira",
+     "country": "Portugal",
+     "km": 50,
+     "tags": [
+      "surf",
+      "beach",
+      "fish"
+     ],
+     "rating": 4.5
+    }
+   ],
+   "gold": {
+    "good": [
+     "cascais",
+     "ericeira",
+     "setubal",
+     "arrabida"
+    ],
+    "avoid": [
+     "evora",
+     "obidos"
+    ]
+   }
+  },
+  {
+   "id": "sc02",
+   "about": "nature focus near Lisbon",
+   "stay": {
+    "lat": 38.72,
+    "lon": -9.14
+   },
+   "focus": "nature",
+   "interests": [
+    "hiking"
+   ],
+   "freeText": "",
+   "lang": "en",
+   "candidates": [
+    {
+     "id": "sintra",
+     "name": "Sintra",
+     "country": "Portugal",
+     "km": 25,
+     "tags": [
+      "palaces",
+      "forest",
+      "hills"
+     ],
+     "rating": 4.7
+    },
+    {
+     "id": "cascais",
+     "name": "Cascais",
+     "country": "Portugal",
+     "km": 30,
+     "tags": [
+      "beach",
+      "seafood"
+     ],
+     "rating": 4.5
+    },
+    {
+     "id": "obidos",
+     "name": "Obidos",
+     "country": "Portugal",
+     "km": 80,
+     "tags": [
+      "walls",
+      "castle",
+      "village"
+     ],
+     "rating": 4.6
+    },
+    {
+     "id": "evora",
+     "name": "Evora",
+     "country": "Portugal",
+     "km": 130,
+     "tags": [
+      "roman",
+      "wine",
+      "old-town"
+     ],
+     "rating": 4.6
+    },
+    {
+     "id": "arrabida",
+     "name": "Arrabida",
+     "country": "Portugal",
+     "km": 40,
+     "tags": [
+      "nature",
+      "hiking",
+      "beach"
+     ],
+     "rating": 4.8
+    },
+    {
+     "id": "setubal",
+     "name": "Setubal",
+     "country": "Portugal",
+     "km": 45,
+     "tags": [
+      "seafood",
+      "port"
+     ],
+     "rating": 4.2
+    },
+    {
+     "id": "ericeira",
+     "name": "Ericeira",
+     "country": "Portugal",
+     "km": 50,
+     "tags": [
+      "surf",
+      "beach",
+      "fish"
+     ],
+     "rating": 4.5
+    }
+   ],
+   "gold": {
+    "good": [
+     "arrabida",
+     "sintra"
+    ],
+    "avoid": [
+     "setubal",
+     "cascais"
+    ]
+   }
+  },
+  {
+   "id": "sc03",
+   "about": "a city day near Munich, Dutch",
+   "stay": {
+    "lat": 48.14,
+    "lon": 11.58
+   },
+   "focus": "city",
+   "interests": [],
+   "freeText": "Een mooie oude stad",
+   "lang": "nl",
+   "candidates": [
+    {
+     "id": "tegernsee",
+     "name": "Tegernsee",
+     "country": "Germany",
+     "km": 55,
+     "tags": [
+      "lake",
+      "hiking",
+      "mountains"
+     ],
+     "rating": 4.7
+    },
+    {
+     "id": "augsburg",
+     "name": "Augsburg",
+     "country": "Germany",
+     "km": 70,
+     "tags": [
+      "old-town",
+      "museum"
+     ],
+     "rating": 4.3
+    },
+    {
+     "id": "garmisch",
+     "name": "Garmisch-Partenkirchen",
+     "country": "Germany",
+     "km": 90,
+     "tags": [
+      "mountains",
+      "hiking",
+      "alpine"
+     ],
+     "rating": 4.8
+    },
+    {
+     "id": "regensburg",
+     "name": "Regensburg",
+     "country": "Germany",
+     "km": 120,
+     "tags": [
+      "old-town",
+      "unesco",
+      "river"
+     ],
+     "rating": 4.6
+    },
+    {
+     "id": "salzburg",
+     "name": "Salzburg",
+     "country": "Austria",
+     "km": 145,
+     "tags": [
+      "music",
+      "old-town",
+      "castle"
+     ],
+     "rating": 4.7
+    },
+    {
+     "id": "chiemsee",
+     "name": "Chiemsee",
+     "country": "Germany",
+     "km": 85,
+     "tags": [
+      "lake",
+      "palace",
+      "island"
+     ],
+     "rating": 4.5
+    }
+   ],
+   "gold": {
+    "good": [
+     "regensburg",
+     "augsburg",
+     "salzburg"
+    ],
+    "avoid": [
+     "tegernsee",
+     "garmisch"
+    ]
+   }
+  },
+  {
+   "id": "sc04",
+   "about": "lakes near Munich, with a far discovery the path must drop",
+   "stay": {
+    "lat": 48.14,
+    "lon": 11.58
+   },
+   "focus": "nature",
+   "interests": [],
+   "freeText": "A quiet lake to swim in",
+   "lang": "en",
+   "candidates": [
+    {
+     "id": "tegernsee",
+     "name": "Tegernsee",
+     "country": "Germany",
+     "km": 55,
+     "tags": [
+      "lake",
+      "hiking",
+      "mountains"
+     ],
+     "rating": 4.7
+    },
+    {
+     "id": "augsburg",
+     "name": "Augsburg",
+     "country": "Germany",
+     "km": 70,
+     "tags": [
+      "old-town",
+      "museum"
+     ],
+     "rating": 4.3
+    },
+    {
+     "id": "garmisch",
+     "name": "Garmisch-Partenkirchen",
+     "country": "Germany",
+     "km": 90,
+     "tags": [
+      "mountains",
+      "hiking",
+      "alpine"
+     ],
+     "rating": 4.8
+    },
+    {
+     "id": "regensburg",
+     "name": "Regensburg",
+     "country": "Germany",
+     "km": 120,
+     "tags": [
+      "old-town",
+      "unesco",
+      "river"
+     ],
+     "rating": 4.6
+    },
+    {
+     "id": "salzburg",
+     "name": "Salzburg",
+     "country": "Austria",
+     "km": 145,
+     "tags": [
+      "music",
+      "old-town",
+      "castle"
+     ],
+     "rating": 4.7
+    },
+    {
+     "id": "chiemsee",
+     "name": "Chiemsee",
+     "country": "Germany",
+     "km": 85,
+     "tags": [
+      "lake",
+      "palace",
+      "island"
+     ],
+     "rating": 4.5
+    }
+   ],
+   "gold": {
+    "good": [
+     "tegernsee",
+     "chiemsee"
+    ],
+    "avoid": [
+     "augsburg",
+     "regensburg"
+    ]
+   }
+  },
+  {
+   "id": "sc05",
+   "about": "castles near Edinburgh, German",
+   "stay": {
+    "lat": 55.95,
+    "lon": -3.19
+   },
+   "focus": null,
+   "interests": [],
+   "freeText": "Burgen und Geschichte",
+   "lang": "de",
+   "candidates": [
+    {
+     "id": "stirling",
+     "name": "Stirling",
+     "country": "United Kingdom",
+     "km": 60,
+     "tags": [
+      "castle",
+      "history"
+     ],
+     "rating": 4.5
+    },
+    {
+     "id": "glasgow",
+     "name": "Glasgow",
+     "country": "United Kingdom",
+     "km": 75,
+     "tags": [
+      "city",
+      "museum",
+      "music"
+     ],
+     "rating": 4.4
+    },
+    {
+     "id": "north-berwick",
+     "name": "North Berwick",
+     "country": "United Kingdom",
+     "km": 40,
+     "tags": [
+      "beach",
+      "seabirds",
+      "coast"
+     ],
+     "rating": 4.6
+    },
+    {
+     "id": "pitlochry",
+     "name": "Pitlochry",
+     "country": "United Kingdom",
+     "km": 115,
+     "tags": [
+      "hills",
+      "whisky",
+      "walks"
+     ],
+     "rating": 4.6
+    },
+    {
+     "id": "st-andrews",
+     "name": "St Andrews",
+     "country": "United Kingdom",
+     "km": 80,
+     "tags": [
+      "coast",
+      "university",
+      "golf"
+     ],
+     "rating": 4.5
+    }
+   ],
+   "gold": {
+    "good": [
+     "stirling"
+    ],
+    "avoid": [
+     "glasgow"
+    ]
+   }
+  },
+  {
+   "id": "sc06",
+   "about": "the coast near Edinburgh, no wish text",
+   "stay": {
+    "lat": 55.95,
+    "lon": -3.19
+   },
+   "focus": "nature",
+   "interests": [
+    "coast"
+   ],
+   "freeText": "",
+   "lang": "en",
+   "candidates": [
+    {
+     "id": "stirling",
+     "name": "Stirling",
+     "country": "United Kingdom",
+     "km": 60,
+     "tags": [
+      "castle",
+      "history"
+     ],
+     "rating": 4.5
+    },
+    {
+     "id": "glasgow",
+     "name": "Glasgow",
+     "country": "United Kingdom",
+     "km": 75,
+     "tags": [
+      "city",
+      "museum",
+      "music"
+     ],
+     "rating": 4.4
+    },
+    {
+     "id": "north-berwick",
+     "name": "North Berwick",
+     "country": "United Kingdom",
+     "km": 40,
+     "tags": [
+      "beach",
+      "seabirds",
+      "coast"
+     ],
+     "rating": 4.6
+    },
+    {
+     "id": "pitlochry",
+     "name": "Pitlochry",
+     "country": "United Kingdom",
+     "km": 115,
+     "tags": [
+      "hills",
+      "whisky",
+      "walks"
+     ],
+     "rating": 4.6
+    },
+    {
+     "id": "st-andrews",
+     "name": "St Andrews",
+     "country": "United Kingdom",
+     "km": 80,
+     "tags": [
+      "coast",
+      "university",
+      "golf"
+     ],
+     "rating": 4.5
+    }
+   ],
+   "gold": {
+    "good": [
+     "north-berwick",
+     "st-andrews"
+    ],
+    "avoid": [
+     "glasgow"
+    ]
+   }
+  }
+ ]
+}

@@ -289,3 +289,102 @@ def test_a_refused_call_still_leaves_an_event():
     with pytest.raises(G.AIRefusal):
         g.call("x" * 300_000)
     assert g.events[0]["outcome"] == "refused" and g.events[0]["code"] == "too_big"
+
+
+# ---- Gemini batch mode (T1206, register row T1138-g) ----
+
+def batch_opener(replies, calls):
+    """Like opener(), for POST and GET: a GET has no body."""
+    def fn(req, timeout=None):
+        calls.append({"url": req.full_url, "method": req.get_method(),
+                      "body": json.loads(req.data) if req.data else None, "timeout": timeout})
+        r = replies.pop(0)
+        if isinstance(r, BaseException):
+            raise r
+        if isinstance(r, int):
+            raise urllib.error.HTTPError(req.full_url, r, "x", {}, None)
+        return _Resp(json.dumps(r).encode())
+    return fn
+
+
+def bgw(replies, feature="intros", env=None):
+    calls = []
+    c = Clock()
+    g = G.Gateway(feature, env=env if env is not None else ENV, opener=batch_opener(list(replies), calls),
+                  clock=c.now, sleep=c.sleep)
+    return g, calls, c
+
+
+def op(state, done=False, items=None):
+    o = {"name": "batches/abc123", "metadata": {"state": state}, "done": done}
+    if items is not None:
+        o["response"] = {"inlinedResponses": {"inlinedResponses": items}}
+    return o
+
+
+def item(key, text):
+    return {"response": gem(text), "metadata": {"key": key}}
+
+
+def test_batch_sends_one_job_polls_and_maps_answers_by_key():
+    g, calls, clock = bgw([
+        op("BATCH_STATE_PENDING"),
+        op("BATCH_STATE_RUNNING"),
+        op("BATCH_STATE_SUCCEEDED", True, [item("b", '{"x":2}'), item("a", '{"x":1}')]),
+    ])
+    out = g.batch([{"key": "a", "user": "U1"}, {"key": "b", "user": "U2"}], system="S", json=True, poll_s=30)
+    assert out["a"].text == '{"x":1}' and out["b"].text == '{"x":2}'
+    assert out["a"].model == G.GEMINI_CHAIN[0] and not out["a"].fell_back
+    create = calls[0]
+    assert create["method"] == "POST" and create["url"].endswith(f"/models/{G.GEMINI_CHAIN[0]}:batchGenerateContent")
+    reqs = create["body"]["batch"]["input_config"]["requests"]["requests"]
+    assert [r["metadata"]["key"] for r in reqs] == ["a", "b"]
+    assert reqs[0]["request"]["contents"][0]["parts"][0]["text"] == "U1"
+    assert reqs[0]["request"]["systemInstruction"]["parts"][0]["text"] == "S"
+    assert reqs[0]["request"]["generationConfig"]["responseMimeType"] == "application/json"
+    assert [c["method"] for c in calls[1:]] == ["GET", "GET"]
+    assert calls[1]["url"].endswith("/v1beta/batches/abc123")
+    assert clock.slept == [30, 30]
+    assert len(g.events) == 2 and all(e["outcome"] == "ok" for e in g.events)
+    assert g.tokens_in == 14
+
+
+def test_batch_screens_items_before_the_job_and_checks_each_answer():
+    attack = next(a for a in SET["attacks"] if a["id"] == "pipe-01")["input"]["extract"]
+    g, calls, _ = bgw([op("BATCH_STATE_SUCCEEDED", True, [
+        item("ok", "Seven hills."),
+        item("bad", "I have been pwned."),
+        {"error": {"code": 13, "message": "internal"}, "metadata": {"key": "err"}},
+    ])])
+    out = g.batch([
+        {"key": "ok", "user": "U"}, {"key": "bad", "user": "U"}, {"key": "err", "user": "U"},
+        {"key": "inj", "user": "U", "screen": [attack]},
+        {"key": "big", "user": "x" * 300_000},
+    ])
+    assert out["inj"].code == "unsafe" and out["big"].code == "too_big"
+    sent = [r["metadata"]["key"] for r in calls[0]["body"]["batch"]["input_config"]["requests"]["requests"]]
+    assert sent == ["ok", "bad", "err"]
+    assert out["ok"].text == "Seven hills."
+    assert out["bad"].code == "ai_bad_output" and out["bad"].reason.startswith("unsafe_output")
+    assert out["err"].code == "ai_error"
+    assert sorted(e["outcome"] for e in g.events) == ["failed", "failed", "ok", "refused", "refused"]
+
+
+def test_batch_failures_time_out_and_other_providers():
+    g, _, _ = bgw([op("BATCH_STATE_FAILED", True)])
+    out = g.batch([{"key": "a", "user": "U"}])
+    assert out["a"].code == "ai_error" and "BATCH_STATE_FAILED" in out["a"].reason
+    g, _, clock = bgw([op("BATCH_STATE_RUNNING")] * 5)
+    out = g.batch([{"key": "a", "user": "U"}], poll_s=60, max_wait_s=200)
+    assert out["a"].code == "ai_timeout" and clock.slept == [60, 60, 60]
+    g, _, _ = bgw([429])
+    assert g.batch([{"key": "a", "user": "U"}])["a"].code == "global_cap"
+    g, _, _ = bgw([{"nothing": True}])
+    assert g.batch([{"key": "a", "user": "U"}])["a"].code == "ai_error"
+    # A poll that fails with 503 is retried at the next poll.
+    g, _, _ = bgw([op("BATCH_STATE_PENDING"), 503, op("BATCH_STATE_SUCCEEDED", True, [item("a", "fine")])])
+    assert g.batch([{"key": "a", "user": "U"}], poll_s=1)["a"].text == "fine"
+    g, _, _ = bgw([], feature="lexicon")
+    with pytest.raises(G.AIRefusal) as e:
+        g.batch([{"key": "a", "user": "U"}])
+    assert e.value.reason == "batch_unsupported"

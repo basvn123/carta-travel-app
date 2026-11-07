@@ -806,14 +806,15 @@ This is not part of the CI wire contract below, which pins `app_data.json`.
 
 | Wire | Shape |
 |---|---|
-| `search/ask/manifest.json` | `{version: 1, model, dims, built, sources: {<src>: {n, passages, i8, b1}}, model_files: {vocab, emb, scale}, bm25: {file, fields, boost, sources, n, bytes, gzip, options}}` |
-| `search/ask/passages-<src>.json` | `{source, rows: [[pid, destId or null, text, payload]]}`; pid `<src>:<id>`; text 1 to 3 sentences, at most 300 characters, no em or en dashes; payload `{cc, kind, m: [best months], tags, ref: {type, id}, name}`, for `lexicon` `{slot, value, lang}` |
+| `search/ask/manifest.json` | `{version: 1, model, dims, built, catalogue: {file, generated_at, schema_version}, sources: {<src>: {n, passages, i8, b1}}, model_files: {vocab, emb, scale}, bm25: {file, fields, boost, sources, n, bytes, gzip, options, server: {<src>: "bm25-<src>.json"}}}`. `catalogue` is the `app_data.json` meta the index was read from (T1206); `bm25.server` lists the server BM25 indexes (T1141) |
+| `search/ask/passages-<src>.json` | `{source, rows: [[pid, destId or null, text, payload]]}`; pid `<src>:<id>`, unique within the file (T1206: the layer folders' `top.json` and `index.json` are not read, and a sight whose name has no Latin letters gets `x-` plus a short hash of the name); text 1 to 3 sentences, at most 300 characters, no em or en dashes; payload `{cc, kind, m: [best months], tags, ref: {type, id}, name}`, for `lexicon` `{slot, value, lang}` |
 | `search/ask/vectors-<src>.i8` | n x D int8, row order of the passages: each row L2-normalised, x127, rounded |
 | `search/ask/vectors-<src>.b1` | n x D/8 bytes: sign bits, dimension i at byte i>>3, bit i&7 |
 | `search/ask/model/vocab.json` | `{version, type: "unigram", model, dims, unk_id, normalizer: [steps], metaspace: {replacement, prepend}, max_tokens, pieces: [...], scores: [...]}`: the pruned tokenizer |
 | `search/ask/model/emb.i8` | vocab x D int8, one row per piece: the row / its max absolute value x127 |
 | `search/ask/model/scale.f32` | vocab float32 little endian: each row's max absolute value |
-| `search/ask/bm25.json` | MiniSearch `toJSON()`; id = pid, fields name, tags, text, nothing stored; load with `ASK_BM25_OPTIONS` from `functions/_lib/askTerms.js` |
+| `search/ask/bm25.json` | MiniSearch `toJSON()`; id = pid, fields name, tags, text, stores `cc` (the passage's country code, T1141, so the browser filters on country); load with `ASK_BM25_OPTIONS` from `functions/_lib/askTerms.js`. The browser downloads it whole: over 400 KB gzip with every source it covers `dest` and `lexicon` only (`manifest.bm25.sources`) |
+| `search/ask/bm25-<src>.json` | T1141: one server index per source in `SPARSE_SOURCES` of `functions/_lib/askSparse.js` (today `beach`, `lake`, `peak`), same MiniSearch shape and options as `bm25.json`, written by `build-ask-bm25.mjs` and listed in `manifest.bm25.server`. Read by `/api/ask` only, never downloaded by the browser, so no gzip budget |
 | `search/ask/lexicon.json` | input, not output: `{version, phrases: [[phrase, lang, slot, value]]}` (T552), indexed as the `lexicon` source when present |
 
 Sources (one adapter each in `SOURCES`): `dest` (every destination: city,
@@ -826,6 +827,22 @@ opens: `dest` for dest, highlight and sight; otherwise `trail`, `journey`,
 `beach`, `lake`, `peak` or `country`. `destId` is the destination a hit
 belongs to or is nearest (same country, 25 km; 40 km for a journey), or
 null.
+
+`GET /api/ask` (T554, T1141) takes `q` (the question), `src`, `cc`, `d`,
+`u` and `b`: `b` is the question's English BM25 words
+(`src/lib/ask/query.js`, at most 200 characters), searched over the server
+indexes of `manifest.bm25.server` with the same `cc` and `d` filters. The
+answer is `{v, hits: {<src>: [[pid, destId, score, text, name]]}, sparse:
+{<src>: [same rows]}, lex: [[word, slot, value, score]]}`; `sparse` holds
+the BM25 hits per server source and is empty without `b` or without the
+server indexes.
+
+Staleness (T1206, ROADMAP E2 item 4): `continent-app/scripts/check-ask-index.mjs`
+fails when `manifest.catalogue.generated_at` is older than the
+`meta.generated_at` of the `app_data.json` on the wire (a manifest without
+`catalogue` is compared by its `built` time), and `build-ask-bm25.mjs` runs
+the same check before it builds, so the `ask_index` task stops on a stale
+index.
 
 ## Explore completeness, climate, lakes and beaches (T631, added 2026-10-23)
 

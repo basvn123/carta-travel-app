@@ -44,6 +44,10 @@ Rules, the same as the Edge Functions (aiModels.mjs), with batch timings:
           timeout falls over; any other 4xx stops. Refusals raise AIRefusal
           with one of AI_CODES.
 
+Batch mode (T1206): Gateway.batch() sends many calls of one job as one
+Gemini Batch Mode job at half price, with the same input and output rules.
+No job uses it yet; see the method's docstring.
+
 Standard library only, so every job and test can import it.
 """
 from __future__ import annotations
@@ -351,8 +355,8 @@ def _post(url, body, headers, timeout_s, opener):
         raise _HttpStatus(exc.code) from None
 
 
-def _gemini(cfg, env, req, model, timeout_s, opener):
-    key = env.get("GEMINI_API_KEY")
+def _gemini_body(req):
+    """The generateContent request body for one call (also one item of a batch)."""
     body = {
         "contents": [{"role": "user", "parts": [{"text": req["user"]}]}],
         "generationConfig": {"temperature": req["temperature"], "maxOutputTokens": req["max_tokens"]},
@@ -365,14 +369,68 @@ def _gemini(cfg, env, req, model, timeout_s, opener):
         body["generationConfig"]["responseMimeType"] = "application/json"
         if req["schema"] is not None:
             body["generationConfig"]["responseSchema"] = req["schema"]
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{urllib.parse.quote(model)}:generateContent"
-    data = _post(url, body, {"x-goog-api-key": key}, timeout_s, opener)
+    return body
+
+
+def _gemini_parse(data):
+    """(text, sources, usage) of one generateContent response."""
     cand = (data.get("candidates") or [{}])[0]
     text = "".join(p.get("text", "") for p in (cand.get("content") or {}).get("parts", []))
     gm = cand.get("groundingMetadata") or {}
     sources = [c.get("web", {}).get("uri") for c in gm.get("groundingChunks", []) if c.get("web", {}).get("uri")]
     u = data.get("usageMetadata") or {}
-    return text, sources, {"in": u.get("promptTokenCount", 0), "out": u.get("candidatesTokenCount", 0)}, data
+    return text, sources, {"in": u.get("promptTokenCount", 0), "out": u.get("candidatesTokenCount", 0)}
+
+
+GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta"
+
+
+def _gemini(cfg, env, req, model, timeout_s, opener):
+    url = f"{GEMINI_BASE}/models/{urllib.parse.quote(model)}:generateContent"
+    data = _post(url, _gemini_body(req), {"x-goog-api-key": env.get("GEMINI_API_KEY")}, timeout_s, opener)
+    return (*_gemini_parse(data), data)
+
+
+def _get(url, headers, timeout_s, opener):
+    req = urllib.request.Request(url, headers=headers, method="GET")
+    try:
+        with opener(req, timeout=timeout_s) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        raise _HttpStatus(exc.code) from None
+
+
+# Gemini Batch Mode (T1206, register row T1138-g; E-R3: half the price of a
+# normal call, answered within 24 hours). Shape from Google's Batch Mode docs
+# for the REST API (inline requests): POST models/<model>:batchGenerateContent
+# with {"batch": {"display_name", "input_config": {"requests": {"requests":
+# [{"request": <generateContent body>, "metadata": {"key"}}]}}}} answers an
+# operation named "batches/<id>"; GET <name> until its state is terminal;
+# the answers are inlinedResponses, each {"response"} or {"error"} with its
+# "metadata.key". Coded against a fake transport only: the first real run
+# is an owner step (docs/ai/model-strategy.md). The parse below accepts
+# both the operation form and the bare batch form of the state and output.
+BATCH_DONE = {"BATCH_STATE_SUCCEEDED", "JOB_STATE_SUCCEEDED"}
+BATCH_FAILED = {"BATCH_STATE_FAILED", "BATCH_STATE_CANCELLED", "BATCH_STATE_EXPIRED",
+                "JOB_STATE_FAILED", "JOB_STATE_CANCELLED", "JOB_STATE_EXPIRED"}
+
+
+def _batch_state(op):
+    meta = op.get("metadata") or {}
+    return str(meta.get("state") or op.get("state") or "")
+
+
+def _batch_items(op):
+    """The inlined responses of a finished batch, whatever level they sit at."""
+    for holder in (op.get("response"), (op.get("metadata") or {}).get("output"), op.get("output"), op.get("dest")):
+        if not isinstance(holder, dict):
+            continue
+        inl = holder.get("inlinedResponses")
+        if isinstance(inl, dict):
+            inl = inl.get("inlinedResponses")
+        if isinstance(inl, list):
+            return inl
+    return None
 
 
 def _chat(url, key, req, model, timeout_s, opener):
@@ -575,3 +633,114 @@ class Gateway:
         if last_status == 429:
             raise AIRefusal("global_cap", "every model is rate limited", attempts, 429)
         raise AIRefusal("ai_error", f"every model failed (last {last_status})", attempts, last_status)
+
+    def batch(self, items, *, system="", json=False, schema=None, temperature=0.2, max_tokens=8192,
+              poll_s=60, max_wait_s=26 * 3600, display_name=None):
+        """Gemini Batch Mode for many calls of this job at half price (T1206, T1138-g).
+
+        items: [{"key": str, "user": str, "screen": [str] (optional)}]. Each item passes the
+        same input rules as call(): the prompt cap and the injection screen; a refused item
+        never reaches the batch. The batch runs on the chain's first model only (a batch has
+        no fall-over; a failed batch raises and the job may rerun the items with call()).
+        Waits poll_s between polls, at most max_wait_s. Returns {key: AIResult or AIRefusal};
+        each answer passes the same output check as call(). One event per item.
+
+        No job uses it yet: moving a job to batch mode changes when its results arrive,
+        which is that job's own decision (docs/ai/model-strategy.md).
+        """
+        if self.provider != "gemini":
+            raise AIRefusal("config", "batch_unsupported")
+        cfg = self.cfg
+        model = self.models[0]
+        out, requests, chars = {}, [], {}
+        t0 = self._clock()
+        for it in items:
+            key, user = str(it["key"]), it["user"]
+            chars[key] = len(system or "") + len(user or "")
+            try:
+                if chars[key] > cfg["max_prompt_chars"]:
+                    raise AIRefusal("too_big", "prompt")
+                for text in (it.get("screen") or [user]):
+                    hit = scan_injection(text)
+                    if hit["hit"]:
+                        raise AIRefusal("unsafe", ",".join(hit["rules"]))
+            except AIRefusal as exc:
+                out[key] = exc
+                self._emit(None, chars[key], t0, exc)
+                continue
+            req = {"user": user, "system": system, "json": json, "schema": schema, "search": False,
+                   "temperature": temperature, "max_tokens": max_tokens}
+            requests.append({"request": _gemini_body(req), "metadata": {"key": key}})
+        if not requests:
+            return out
+        headers = {"x-goog-api-key": self.env.get("GEMINI_API_KEY")}
+        body = {"batch": {"display_name": display_name or f"carta-{self.feature}",
+                          "input_config": {"requests": {"requests": requests}}}}
+        url = f"{GEMINI_BASE}/models/{urllib.parse.quote(model)}:batchGenerateContent"
+        pending = [r["metadata"]["key"] for r in requests]
+
+        def fail_all(code, reason, status=0):
+            for k in pending:
+                exc = AIRefusal(code, reason, [{"model": model, "status": status}], status)
+                out[k] = exc
+                self._emit(None, chars[k], t0, exc)
+            return out
+
+        try:
+            op = _post(url, body, headers, cfg["first_s"], self._opener)
+        except _HttpStatus as exc:
+            code = "global_cap" if exc.status == 429 else "ai_error"
+            return fail_all(code, f"{model} batch create returned {exc.status}", exc.status)
+        name = str(op.get("name") or "")
+        if not re.match(r"^batches/[\w-]+$", name):
+            return fail_all("ai_error", "batch create answered no batch name")
+        start = self._clock()
+        while True:
+            state = _batch_state(op)
+            if op.get("done") or state in BATCH_DONE or state in BATCH_FAILED:
+                break
+            if self._clock() - start + poll_s > max_wait_s:
+                return fail_all("ai_timeout", f"{name} not done after {max_wait_s}s ({state or 'no state'})")
+            self._sleep(poll_s)
+            try:
+                op = _get(f"{GEMINI_BASE}/{name}", headers, cfg["later_s"], self._opener)
+            except _HttpStatus as exc:
+                if exc.status >= 500 or exc.status == 429:
+                    continue  # a poll that failed is retried at the next poll
+                return fail_all("ai_error", f"{name} poll returned {exc.status}", exc.status)
+            except (urllib.error.URLError, ConnectionError, OSError, ValueError):
+                continue
+        if state in BATCH_FAILED or op.get("error"):
+            return fail_all("ai_error", f"{name} ended {state or 'with an error'}")
+        answers = _batch_items(op)
+        if answers is None:
+            return fail_all("ai_bad_output", f"{name} has no inlined responses")
+        shingles = prompt_shingles(system) if system else None
+        by_key = {}
+        for pos, a in enumerate(answers):
+            k = str(((a or {}).get("metadata") or {}).get("key") or (pending[pos] if pos < len(pending) else ""))
+            by_key[k] = a or {}
+        for k in pending:
+            a = by_key.get(k)
+            attempt = [{"model": model, "status": 200, "batch": name}]
+            if a is None or a.get("error") or not isinstance(a.get("response"), dict):
+                why = (a or {}).get("error", {}).get("message", "") if a else "missing from the batch"
+                exc = AIRefusal("ai_error", f"{name} item {k}: {why}"[:200], attempt)
+            else:
+                text, sources, usage = _gemini_parse(a["response"])
+                severe = scan_output_severe(text, shingles)
+                if len(text) > cfg["max_output_chars"]:
+                    exc = AIRefusal("ai_bad_output", "too_long", attempt)
+                elif severe:
+                    exc = AIRefusal("ai_bad_output", "unsafe_output:" + ",".join(severe), attempt)
+                else:
+                    res = AIResult(text=text, model=model, provider=self.provider, fell_back=False, sources=sources,
+                                   usage=usage, raw=a["response"], attempts=attempt)
+                    self.tokens_in += usage.get("in", 0) or 0
+                    self.tokens_out += usage.get("out", 0) or 0
+                    out[k] = res
+                    self._emit(res, chars[k], t0, None)
+                    continue
+            out[k] = exc
+            self._emit(None, chars[k], t0, exc)
+        return out

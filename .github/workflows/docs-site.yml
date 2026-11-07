@@ -47,6 +47,15 @@ jobs:
       # The API files move with every code edit: build from a fresh generation.
       - name: Regenerate reference
         run: python -I scripts/docs/build_reference.py
+      # Ask the docs (T1168): the passages index (git-ignored) and the core
+      # copy the site loads, both written by the builder (T1206, row T1168-e).
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+      - name: Ask the docs index and core
+        run: node scripts/docs/ask_docs.mjs build
+      - name: Ask the docs files exist
+        run: test -s docs/assets/ask-docs/index.js && cmp scripts/docs/ask_docs_core.js docs/assets/ask-docs/core.js
       - name: Build site
         run: NO_MKDOCS_2_WARNING=1 mkdocs build -d .docs-site
       - name: Search index exists

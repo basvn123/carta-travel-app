@@ -159,6 +159,23 @@ export function comparisonNotes(facts, { estWord = 'est.', monthName = monthEn }
     out.push(d.crowding?.tier
       ? `Carta's crowd figure for ${d.city} covers the whole year, not single months, so Carta does not know its least crowded month.`
       : `Carta has no crowd figure for ${d.city}.`);
+    // The cheapest months stand on a note of their own (T1206, T1136-d):
+    // as an answer note they came after the twelve month rows and fell
+    // past the notes cap.
+    const cheap = facts.when?.cheapest || [];
+    out.push(cheap.length
+      ? `Beds in ${d.city} are cheapest in ${cheap.map(monthName).join(', ')}.`
+      : `Carta has no measured bed prices by month for ${d.city}, so it does not know its cheapest month.`);
+  }
+  // An about answer: whether a car is needed, from the place's own
+  // transport facts (T1136-d); the answer's table was not in the notes.
+  if (facts.type === 'about' && picks[0]) {
+    const d = picks[0].dest;
+    const lt = d.local_transport || {};
+    const how = [lt.transit_quality ? `public transport is ${lt.transit_quality}` : '', String(lt.reason || '').replace(/[.\s]+$/, '')].filter(Boolean).join('; ');
+    if (lt.car_needed === false) out.push(`You do not need a car in ${d.city}${how ? `: ${how}` : ''}.`);
+    else if (lt.car_needed === true) out.push(`You need a car to get around ${d.city}${how ? `: ${how}` : ''}.`);
+    else out.push(`Carta does not know whether you need a car in ${d.city}.`);
   }
   return out;
 }
