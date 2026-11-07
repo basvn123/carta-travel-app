@@ -104,7 +104,7 @@ The crowding before and after was measured by running `harvest_tourism_density.m
 | Design lint violations | 4,459 | 4,459, 0 new | 0 |
 | `npm test` | not run here before the change | 2,018 tests, 2,006 pass, 0 fail, 12 skipped | 2 new tests (askEval, pipelineOverrides) |
 | Lint warnings (`npm run lint`) | 14 (T1211) | 14 | 0 |
-| pytest minus quarantine | not run here before | PYTEST_AFTER | |
+| pytest minus quarantine | not run here before the change | 1,141 passed, 12 skipped, 0 failed | 16 new tests (quality engine 5, lineage 3, crowding 5, promote 4, trail summaries 5, overrides 4, provenance 1; some parametrised) |
 
 ## What broke and how it was fixed
 
