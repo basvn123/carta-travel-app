@@ -1,0 +1,1761 @@
+{
+ "components": {
+  "schemas": {
+   "Candidate": {
+    "properties": {
+     "id": {
+      "title": "Id",
+      "type": "string"
+     },
+     "members": {
+      "description": "The catalogue ids this place stands for (a city and its airports)",
+      "items": {
+       "type": "string"
+      },
+      "title": "Members",
+      "type": "array"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "score": {
+      "title": "Score",
+      "type": "number"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "score",
+     "members"
+    ],
+    "title": "Candidate",
+    "type": "object"
+   },
+   "Chip": {
+    "properties": {
+     "evidence": {
+      "$ref": "#/components/schemas/ChipEvidence"
+     },
+     "evidence_weight": {
+      "title": "Evidence Weight",
+      "type": "number"
+     },
+     "facet": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Facet"
+     },
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "lift": {
+      "title": "Lift",
+      "type": "number"
+     },
+     "node": {
+      "title": "Node",
+      "type": "string"
+     },
+     "verdict": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Verdict"
+     }
+    },
+    "required": [
+     "node",
+     "label",
+     "facet",
+     "verdict",
+     "lift",
+     "evidence_weight",
+     "evidence"
+    ],
+    "title": "Chip",
+    "type": "object"
+   },
+   "ChipEvidence": {
+    "properties": {
+     "filters": {
+      "title": "Filters",
+      "type": "integer"
+     },
+     "more": {
+      "title": "More",
+      "type": "integer"
+     },
+     "names": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Names",
+      "type": "array"
+     },
+     "saves": {
+      "title": "Saves",
+      "type": "integer"
+     },
+     "trips": {
+      "title": "Trips",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "saves",
+     "trips",
+     "filters",
+     "names",
+     "more"
+    ],
+    "title": "ChipEvidence",
+    "type": "object"
+   },
+   "DidYouMean": {
+    "properties": {
+     "id": {
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "score": {
+      "title": "Score",
+      "type": "number"
+     }
+    },
+    "required": [
+     "id",
+     "name",
+     "score"
+    ],
+    "title": "DidYouMean",
+    "type": "object"
+   },
+   "Evidence": {
+    "properties": {
+     "match": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Match"
+     },
+     "src": {
+      "title": "Src",
+      "type": "string"
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     }
+    },
+    "required": [
+     "src",
+     "text"
+    ],
+    "title": "Evidence",
+    "type": "object"
+   },
+   "Filters": {
+    "additionalProperties": false,
+    "properties": {
+     "at": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "At"
+     },
+     "likes": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 50,
+      "title": "Likes",
+      "type": "array"
+     },
+     "tripKinds": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 50,
+      "title": "Tripkinds",
+      "type": "array"
+     }
+    },
+    "title": "Filters",
+    "type": "object"
+   },
+   "HTTPValidationError": {
+    "properties": {
+     "detail": {
+      "items": {
+       "$ref": "#/components/schemas/ValidationError"
+      },
+      "title": "Detail",
+      "type": "array"
+     }
+    },
+    "title": "HTTPValidationError",
+    "type": "object"
+   },
+   "Health": {
+    "properties": {
+     "bridge": {
+      "title": "Bridge",
+      "type": "boolean"
+     },
+     "ok": {
+      "title": "Ok",
+      "type": "boolean"
+     },
+     "similar_index_items": {
+      "title": "Similar Index Items",
+      "type": "integer"
+     },
+     "version": {
+      "title": "Version",
+      "type": "string"
+     }
+    },
+    "required": [
+     "ok",
+     "version",
+     "bridge",
+     "similar_index_items"
+    ],
+    "title": "Health",
+    "type": "object"
+   },
+   "ItemRef": {
+    "additionalProperties": false,
+    "properties": {
+     "id": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+     },
+     "layer": {
+      "enum": [
+       "place",
+       "trail",
+       "beach",
+       "lake",
+       "mountain"
+      ],
+      "title": "Layer",
+      "type": "string"
+     }
+    },
+    "required": [
+     "layer",
+     "id"
+    ],
+    "title": "ItemRef",
+    "type": "object"
+   },
+   "LinkContext": {
+    "additionalProperties": false,
+    "properties": {
+     "airport": {
+      "anyOf": [
+       {
+        "maxLength": 3,
+        "minLength": 3,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "IATA code",
+      "title": "Airport"
+     },
+     "country": {
+      "anyOf": [
+       {
+        "maxLength": 2,
+        "minLength": 2,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "ISO 3166-1 alpha-2",
+      "title": "Country"
+     },
+     "lat": {
+      "anyOf": [
+       {
+        "maximum": 90.0,
+        "minimum": -90.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lat"
+     },
+     "lon": {
+      "anyOf": [
+       {
+        "maximum": 180.0,
+        "minimum": -180.0,
+        "type": "number"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Lon"
+     }
+    },
+    "title": "LinkContext",
+    "type": "object"
+   },
+   "LinkRequest": {
+    "additionalProperties": false,
+    "properties": {
+     "limit": {
+      "default": 5,
+      "description": "Candidates per mention",
+      "maximum": 10.0,
+      "minimum": 1.0,
+      "title": "Limit",
+      "type": "integer"
+     },
+     "mentions": {
+      "items": {
+       "$ref": "#/components/schemas/Mention"
+      },
+      "maxItems": 100,
+      "minItems": 1,
+      "title": "Mentions",
+      "type": "array"
+     }
+    },
+    "required": [
+     "mentions"
+    ],
+    "title": "LinkRequest",
+    "type": "object"
+   },
+   "LinkResponse": {
+    "properties": {
+     "results": {
+      "items": {
+       "$ref": "#/components/schemas/LinkResult"
+      },
+      "title": "Results",
+      "type": "array"
+     }
+    },
+    "required": [
+     "results"
+    ],
+    "title": "LinkResponse",
+    "type": "object"
+   },
+   "LinkResult": {
+    "properties": {
+     "candidates": {
+      "items": {
+       "$ref": "#/components/schemas/Candidate"
+      },
+      "title": "Candidates",
+      "type": "array"
+     },
+     "confident": {
+      "title": "Confident",
+      "type": "boolean"
+     },
+     "did_you_mean": {
+      "items": {
+       "$ref": "#/components/schemas/DidYouMean"
+      },
+      "title": "Did You Mean",
+      "type": "array"
+     },
+     "linked": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/Candidate"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "text": {
+      "title": "Text",
+      "type": "string"
+     }
+    },
+    "required": [
+     "text",
+     "confident",
+     "linked",
+     "candidates",
+     "did_you_mean"
+    ],
+    "title": "LinkResult",
+    "type": "object"
+   },
+   "Mention": {
+    "additionalProperties": false,
+    "properties": {
+     "ctx": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/LinkContext"
+       },
+       {
+        "type": "null"
+       }
+      ]
+     },
+     "text": {
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Text",
+      "type": "string"
+     }
+    },
+    "required": [
+     "text"
+    ],
+    "title": "Mention",
+    "type": "object"
+   },
+   "Neighbour": {
+    "properties": {
+     "country": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Country"
+     },
+     "id": {
+      "title": "Id",
+      "type": "string"
+     },
+     "key": {
+      "title": "Key",
+      "type": "string"
+     },
+     "layer": {
+      "title": "Layer",
+      "type": "string"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "score": {
+      "description": "Cosine of the TF-IDF tag vectors, 0 to 1",
+      "title": "Score",
+      "type": "number"
+     },
+     "shared": {
+      "description": "Up to three taxonomy ids that weigh most in the match",
+      "items": {
+       "type": "string"
+      },
+      "title": "Shared",
+      "type": "array"
+     }
+    },
+    "required": [
+     "key",
+     "layer",
+     "id",
+     "name",
+     "country",
+     "score",
+     "shared"
+    ],
+    "title": "Neighbour",
+    "type": "object"
+   },
+   "ProfileRequest": {
+    "additionalProperties": false,
+    "properties": {
+     "all": {
+      "default": false,
+      "description": "The opened card: up to twelve chips instead of six",
+      "title": "All",
+      "type": "boolean"
+     },
+     "filters": {
+      "$ref": "#/components/schemas/Filters"
+     },
+     "now": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "ISO time the decay is measured from; default the server clock",
+      "title": "Now"
+     },
+     "saves": {
+      "items": {
+       "$ref": "#/components/schemas/Save"
+      },
+      "maxItems": 500,
+      "title": "Saves",
+      "type": "array"
+     },
+     "trips": {
+      "items": {
+       "$ref": "#/components/schemas/Trip"
+      },
+      "maxItems": 200,
+      "title": "Trips",
+      "type": "array"
+     },
+     "verdicts": {
+      "additionalProperties": {
+       "$ref": "#/components/schemas/Verdict"
+      },
+      "maxProperties": 300,
+      "title": "Verdicts",
+      "type": "object"
+     }
+    },
+    "title": "ProfileRequest",
+    "type": "object"
+   },
+   "ProfileResponse": {
+    "properties": {
+     "held": {
+      "items": {
+       "$ref": "#/components/schemas/Chip"
+      },
+      "title": "Held",
+      "type": "array"
+     },
+     "hidden": {
+      "items": {
+       "$ref": "#/components/schemas/Chip"
+      },
+      "title": "Hidden",
+      "type": "array"
+     },
+     "item_count": {
+      "title": "Item Count",
+      "type": "integer"
+     },
+     "shown": {
+      "items": {
+       "$ref": "#/components/schemas/Chip"
+      },
+      "title": "Shown",
+      "type": "array"
+     },
+     "snapshot": {
+      "additionalProperties": true,
+      "title": "Snapshot",
+      "type": "object"
+     },
+     "taxonomy_version": {
+      "title": "Taxonomy Version",
+      "type": "string"
+     },
+     "weights": {
+      "additionalProperties": {
+       "type": "number"
+      },
+      "description": "+1 accepted, -3 rejected: a ranker's negatives, never a filter",
+      "title": "Weights",
+      "type": "object"
+     }
+    },
+    "required": [
+     "taxonomy_version",
+     "item_count",
+     "shown",
+     "held",
+     "hidden",
+     "weights",
+     "snapshot"
+    ],
+    "title": "ProfileResponse",
+    "type": "object"
+   },
+   "Save": {
+    "additionalProperties": false,
+    "properties": {
+     "at": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "At"
+     },
+     "id": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+     },
+     "key": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Key",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "dest",
+       "trail",
+       "beach",
+       "lake",
+       "mountain",
+       "cycle"
+      ],
+      "title": "Kind",
+      "type": "string"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "maxLength": 200,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     }
+    },
+    "required": [
+     "key",
+     "kind",
+     "id"
+    ],
+    "title": "Save",
+    "type": "object"
+   },
+   "SimilarRequest": {
+    "additionalProperties": false,
+    "properties": {
+     "among": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "maxItems": 500,
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Only these index keys (layer:id), for a shortlist",
+      "title": "Among"
+     },
+     "item": {
+      "anyOf": [
+       {
+        "$ref": "#/components/schemas/ItemRef"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Find items like this one"
+     },
+     "k": {
+      "default": 10,
+      "maximum": 50.0,
+      "minimum": 1.0,
+      "title": "K",
+      "type": "integer"
+     },
+     "layers": {
+      "anyOf": [
+       {
+        "items": {
+         "enum": [
+          "place",
+          "trail",
+          "beach",
+          "lake",
+          "mountain"
+         ],
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Only items of these layers",
+      "title": "Layers"
+     },
+     "tags": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "maxItems": 50,
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Or: find items carrying these taxonomy ids",
+      "title": "Tags"
+     }
+    },
+    "title": "SimilarRequest",
+    "type": "object"
+   },
+   "SimilarResponse": {
+    "properties": {
+     "found": {
+      "title": "Found",
+      "type": "boolean"
+     },
+     "index_items": {
+      "title": "Index Items",
+      "type": "integer"
+     },
+     "neighbours": {
+      "items": {
+       "$ref": "#/components/schemas/Neighbour"
+      },
+      "title": "Neighbours",
+      "type": "array"
+     },
+     "query": {
+      "title": "Query",
+      "type": "string"
+     }
+    },
+    "required": [
+     "query",
+     "index_items",
+     "found",
+     "neighbours"
+    ],
+    "title": "SimilarResponse",
+    "type": "object"
+   },
+   "Tag": {
+    "properties": {
+     "by": {
+      "items": {
+       "type": "string"
+      },
+      "title": "By",
+      "type": "array"
+     },
+     "evidence": {
+      "default": [],
+      "items": {
+       "$ref": "#/components/schemas/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+     },
+     "facet": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Facet"
+     },
+     "implied": {
+      "title": "Implied",
+      "type": "boolean"
+     },
+     "label": {
+      "title": "Label",
+      "type": "string"
+     },
+     "score": {
+      "title": "Score",
+      "type": "number"
+     },
+     "tag": {
+      "title": "Tag",
+      "type": "string"
+     },
+     "uses": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Uses",
+      "type": "array"
+     }
+    },
+    "required": [
+     "tag",
+     "label",
+     "facet",
+     "score",
+     "by",
+     "uses",
+     "implied"
+    ],
+    "title": "Tag",
+    "type": "object"
+   },
+   "TagItem": {
+    "additionalProperties": false,
+    "properties": {
+     "id": {
+      "anyOf": [
+       {
+        "maxLength": 120,
+        "minLength": 1,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "A catalogue id; the tagger reads its shipped text",
+      "title": "Id"
+     },
+     "layer": {
+      "enum": [
+       "place",
+       "trail",
+       "beach",
+       "lake",
+       "mountain"
+      ],
+      "title": "Layer",
+      "type": "string"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "maxLength": 200,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Free text mode: the item's name",
+      "title": "Name"
+     },
+     "text": {
+      "anyOf": [
+       {
+        "maxLength": 20000,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "description": "Free text mode: the text to tag",
+      "title": "Text"
+     }
+    },
+    "required": [
+     "layer"
+    ],
+    "title": "TagItem",
+    "type": "object"
+   },
+   "TagRequest": {
+    "additionalProperties": false,
+    "properties": {
+     "evidence": {
+      "default": true,
+      "description": "Include the quoted passages behind each tag",
+      "title": "Evidence",
+      "type": "boolean"
+     },
+     "items": {
+      "items": {
+       "$ref": "#/components/schemas/TagItem"
+      },
+      "maxItems": 100,
+      "minItems": 1,
+      "title": "Items",
+      "type": "array"
+     },
+     "use": {
+      "default": "profile",
+      "description": "Return the tags at or over this use's threshold; all returns every candidate",
+      "enum": [
+       "filter",
+       "profile",
+       "search",
+       "all"
+      ],
+      "title": "Use",
+      "type": "string"
+     }
+    },
+    "required": [
+     "items"
+    ],
+    "title": "TagRequest",
+    "type": "object"
+   },
+   "TagResponse": {
+    "properties": {
+     "results": {
+      "items": {
+       "$ref": "#/components/schemas/TagResult"
+      },
+      "title": "Results",
+      "type": "array"
+     },
+     "tagger_version": {
+      "title": "Tagger Version",
+      "type": "integer"
+     },
+     "taxonomy_version": {
+      "title": "Taxonomy Version",
+      "type": "string"
+     },
+     "thresholds": {
+      "additionalProperties": {
+       "type": "number"
+      },
+      "title": "Thresholds",
+      "type": "object"
+     }
+    },
+    "required": [
+     "tagger_version",
+     "taxonomy_version",
+     "thresholds",
+     "results"
+    ],
+    "title": "TagResponse",
+    "type": "object"
+   },
+   "TagResult": {
+    "properties": {
+     "found": {
+      "description": "False when the catalogue id is unknown; tags is then empty",
+      "title": "Found",
+      "type": "boolean"
+     },
+     "id": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Id"
+     },
+     "layer": {
+      "enum": [
+       "place",
+       "trail",
+       "beach",
+       "lake",
+       "mountain"
+      ],
+      "title": "Layer",
+      "type": "string"
+     },
+     "n_passages": {
+      "title": "N Passages",
+      "type": "integer"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     },
+     "tags": {
+      "items": {
+       "$ref": "#/components/schemas/Tag"
+      },
+      "title": "Tags",
+      "type": "array"
+     }
+    },
+    "required": [
+     "layer",
+     "id",
+     "name",
+     "found",
+     "n_passages",
+     "tags"
+    ],
+    "title": "TagResult",
+    "type": "object"
+   },
+   "TaxonomyNode": {
+    "properties": {
+     "applies_to": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Applies To",
+      "type": "array"
+     },
+     "children": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Children",
+      "type": "array"
+     },
+     "definition": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Definition"
+     },
+     "facet": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Facet"
+     },
+     "id": {
+      "title": "Id",
+      "type": "string"
+     },
+     "label": {
+      "additionalProperties": {
+       "type": "string"
+      },
+      "title": "Label",
+      "type": "object"
+     },
+     "level": {
+      "anyOf": [
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Level"
+     },
+     "parent": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Parent"
+     },
+     "source": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Source"
+     },
+     "synonyms": {
+      "additionalProperties": {
+       "items": {
+        "type": "string"
+       },
+       "type": "array"
+      },
+      "title": "Synonyms",
+      "type": "object"
+     }
+    },
+    "required": [
+     "id",
+     "facet",
+     "parent",
+     "level",
+     "label",
+     "definition",
+     "synonyms",
+     "applies_to",
+     "source",
+     "children"
+    ],
+    "title": "TaxonomyNode",
+    "type": "object"
+   },
+   "TaxonomyResponse": {
+    "properties": {
+     "count": {
+      "title": "Count",
+      "type": "integer"
+     },
+     "facets": {
+      "items": {
+       "type": "string"
+      },
+      "title": "Facets",
+      "type": "array"
+     },
+     "nodes": {
+      "items": {
+       "$ref": "#/components/schemas/TaxonomyNode"
+      },
+      "title": "Nodes",
+      "type": "array"
+     },
+     "version": {
+      "title": "Version",
+      "type": "string"
+     }
+    },
+    "required": [
+     "version",
+     "facets",
+     "count",
+     "nodes"
+    ],
+    "title": "TaxonomyResponse",
+    "type": "object"
+   },
+   "Trip": {
+    "additionalProperties": false,
+    "properties": {
+     "at": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "At"
+     },
+     "destIds": {
+      "items": {
+       "type": "string"
+      },
+      "maxItems": 60,
+      "title": "Destids",
+      "type": "array"
+     },
+     "id": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+     },
+     "name": {
+      "anyOf": [
+       {
+        "maxLength": 200,
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "Name"
+     }
+    },
+    "required": [
+     "id"
+    ],
+    "title": "Trip",
+    "type": "object"
+   },
+   "ValidationError": {
+    "properties": {
+     "ctx": {
+      "title": "Context",
+      "type": "object"
+     },
+     "input": {
+      "title": "Input"
+     },
+     "loc": {
+      "items": {
+       "anyOf": [
+        {
+         "type": "string"
+        },
+        {
+         "type": "integer"
+        }
+       ]
+      },
+      "title": "Location",
+      "type": "array"
+     },
+     "msg": {
+      "title": "Message",
+      "type": "string"
+     },
+     "type": {
+      "title": "Error Type",
+      "type": "string"
+     }
+    },
+    "required": [
+     "loc",
+     "msg",
+     "type"
+    ],
+    "title": "ValidationError",
+    "type": "object"
+   },
+   "Verdict": {
+    "additionalProperties": false,
+    "properties": {
+     "at": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "integer"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "title": "At"
+     },
+     "v": {
+      "enum": [
+       "accept",
+       "reject"
+      ],
+      "title": "V",
+      "type": "string"
+     }
+    },
+    "required": [
+     "v"
+    ],
+    "title": "Verdict",
+    "type": "object"
+   }
+  },
+  "securitySchemes": {
+   "APIKeyHeader": {
+    "description": "The caller's API key",
+    "in": "header",
+    "name": "X-API-Key",
+    "type": "apiKey"
+   },
+   "HTTPBearer": {
+    "description": "The same key as a bearer token (for Prometheus)",
+    "scheme": "bearer",
+    "type": "http"
+   }
+  }
+ },
+ "info": {
+  "description": "Carta Intelligence: the travel taxonomy, tagging, place linking, similar items\nand the taste profile as one internal API (ROADMAP F5). Read only: nothing is stored, and\nno request or response body is logged. Runs on the build box for the pipeline's batch jobs;\nnot exposed to travellers. Auth: an API key in `X-API-Key` (or `Authorization: Bearer`).\nRate limit: a token bucket per key; 429 with `Retry-After` when empty.",
+  "title": "Carta Intelligence API",
+  "version": "1.0.0"
+ },
+ "openapi": "3.1.0",
+ "paths": {
+  "/healthz": {
+   "get": {
+    "operationId": "healthz_healthz_get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/Health"
+        }
+       }
+      },
+      "description": "Successful Response"
+     }
+    },
+    "summary": "Liveness, no key",
+    "tags": [
+     "ops"
+    ]
+   }
+  },
+  "/link": {
+   "post": {
+    "operationId": "link_link_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LinkRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/LinkResponse"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "401": {
+      "description": "Missing or wrong API key"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     },
+     "429": {
+      "description": "Rate limited; wait Retry-After seconds"
+     },
+     "503": {
+      "description": "The Node bridge (linker or taste profile) is unavailable"
+     }
+    },
+    "security": [
+     {
+      "APIKeyHeader": []
+     },
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "summary": "Link messy place mentions to catalogue places (F4 linker)",
+    "tags": [
+     "intelligence"
+    ]
+   }
+  },
+  "/metrics": {
+   "get": {
+    "operationId": "metrics_view_metrics_get",
+    "responses": {
+     "200": {
+      "description": "Successful Response"
+     },
+     "401": {
+      "description": "Missing or wrong API key"
+     },
+     "429": {
+      "description": "Rate limited; wait Retry-After seconds"
+     }
+    },
+    "security": [
+     {
+      "APIKeyHeader": []
+     },
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "summary": "Prometheus metrics",
+    "tags": [
+     "ops"
+    ]
+   }
+  },
+  "/profile": {
+   "post": {
+    "operationId": "profile_profile_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ProfileRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ProfileResponse"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "401": {
+      "description": "Missing or wrong API key"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     },
+     "429": {
+      "description": "Rate limited; wait Retry-After seconds"
+     },
+     "503": {
+      "description": "The Node bridge (linker or taste profile) is unavailable"
+     }
+    },
+    "security": [
+     {
+      "APIKeyHeader": []
+     },
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "summary": "The taste profile from a traveller's saves, trips and filters (F3)",
+    "tags": [
+     "intelligence"
+    ]
+   }
+  },
+  "/similar": {
+   "post": {
+    "operationId": "similar_similar_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/SimilarRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/SimilarResponse"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "401": {
+      "description": "Missing or wrong API key"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     },
+     "429": {
+      "description": "Rate limited; wait Retry-After seconds"
+     }
+    },
+    "security": [
+     {
+      "APIKeyHeader": []
+     },
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "summary": "Items like an item, or carrying given tags (TF-IDF cosine over F1 tags)",
+    "tags": [
+     "intelligence"
+    ]
+   }
+  },
+  "/tag": {
+   "post": {
+    "operationId": "tag_tag_post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/TagRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/TagResponse"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "401": {
+      "description": "Missing or wrong API key"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     },
+     "429": {
+      "description": "Rate limited; wait Retry-After seconds"
+     }
+    },
+    "security": [
+     {
+      "APIKeyHeader": []
+     },
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "summary": "Tag catalogue items or free text on the travel taxonomy (F1 tagger)",
+    "tags": [
+     "intelligence"
+    ]
+   }
+  },
+  "/taxonomy": {
+   "get": {
+    "operationId": "taxonomy_taxonomy_get",
+    "parameters": [
+     {
+      "description": "Only this facet",
+      "in": "query",
+      "name": "facet",
+      "required": false,
+      "schema": {
+       "anyOf": [
+        {
+         "maxLength": 40,
+         "type": "string"
+        },
+        {
+         "type": "null"
+        }
+       ],
+       "description": "Only this facet",
+       "title": "Facet"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/TaxonomyResponse"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "401": {
+      "description": "Missing or wrong API key"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     },
+     "429": {
+      "description": "Rate limited; wait Retry-After seconds"
+     }
+    },
+    "security": [
+     {
+      "APIKeyHeader": []
+     },
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "summary": "The travel taxonomy",
+    "tags": [
+     "intelligence"
+    ]
+   }
+  },
+  "/taxonomy/{node_id}": {
+   "get": {
+    "operationId": "taxonomy_node_taxonomy__node_id__get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "node_id",
+      "required": true,
+      "schema": {
+       "title": "Node Id",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/TaxonomyNode"
+        }
+       }
+      },
+      "description": "Successful Response"
+     },
+     "401": {
+      "description": "Missing or wrong API key"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/HTTPValidationError"
+        }
+       }
+      },
+      "description": "Validation Error"
+     },
+     "429": {
+      "description": "Rate limited; wait Retry-After seconds"
+     }
+    },
+    "security": [
+     {
+      "APIKeyHeader": []
+     },
+     {
+      "HTTPBearer": []
+     }
+    ],
+    "summary": "One taxonomy node",
+    "tags": [
+     "intelligence"
+    ]
+   }
+  }
+ }
+}
