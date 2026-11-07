@@ -1,5 +1,21 @@
 ﻿/** Deutsch. Vollständige Schlüsselliste in en.js (Englisch ist die Quelle). */
 export const de = {
+  // T1205 (I17): price alerts, the destination page's save-alert control.
+  "alerts.cta": "Mail mir, wenn es günstiger wird",
+  "alerts.title": "Preisalarm",
+  "alerts.lead": "Wir prüfen nach jeder Preisaktualisierung und schreiben dir einmal, wenn die Summe für diese Daten, Reisenden und Unterkunft fällt um:",
+  "alerts.shareLabel": "Fällt um",
+  "alerts.consent": "Schick mir einen Preisalarm zu diesem Ort. Ich kann mich in jeder E-Mail abmelden.",
+  "alerts.save": "Alarm speichern",
+  "alerts.cancel": "Abbrechen",
+  "alerts.saved": "Alarm gespeichert. Wir schreiben dir einmal, wenn die Summe um {pct} fällt.",
+  "alerts.confirmSent": "Schau in dein Postfach: Tippe auf den Link in unserer E-Mail, um Preisalarme einzuschalten.",
+  "alerts.confirmPending": "Alarm gespeichert. Tippe auf den Link in unserer früheren E-Mail, um Preisalarme einzuschalten.",
+  "alerts.active": "Preisalarm an: Wir schreiben dir einmal, wenn die Summe um {pct} fällt.",
+  "alerts.remove": "Alarm entfernen",
+  "alerts.removed": "Alarm entfernt.",
+  "alerts.error": "Das hat nicht geklappt. Versuch es später noch einmal.",
+  "alerts.note": "Die Summe ist eine Schätzung von Carta aus Unterkunfts- und Flugpreisen, kein Buchungsangebot.",
   'shell.tagline': 'Europa kartieren',
   'shell.failedToLoad': 'Laden fehlgeschlagen: {error}',
   'toast.emailConfirmed': 'E-Mail bestätigt. Willkommen bei Carta.',

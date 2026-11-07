@@ -37,6 +37,8 @@ import { useStaysVersion } from '../lib/staysData.js';
 import { rule } from '../lib/price/config.js';
 import { useDayView } from '../hooks/useDayView.js';
 import { PriceItems } from '../components/PriceItems.jsx';
+import { PriceAlertControl } from '../components/PriceAlertControl.jsx';
+import { placeSpec } from '../lib/priceAlerts.js';
 
 /**
  * The destination page's price card (T429): what a day here costs at the
@@ -479,6 +481,21 @@ export function DestPriceCard({
       {onPlanDay && (
         <Button variant="quiet" size="sm" className="tcard-day" onClick={onPlanDay}>{t('destx.planOneDay')}</Button>
       )}
+      {/* T1205 (I17): a price alert on this place, behind its flag. */}
+      <PriceAlertControl
+        refId={`dest:${dest.id}`}
+        label={city || dest.city || dest.id}
+        spec={placeSpec({
+          dest,
+          start: datesOwn ? from : null,
+          month: from ? Number(from.slice(5, 7)) : null,
+          nights,
+          adults: people,
+          bed: tier,
+          fly: datesOwn && mode === 'plane' && carta && !fare && !flightOff
+            ? { from: choices?.origin, to: airport, out: from, back: to } : null,
+        })}
+      />
       {reportItem && (
         <div className="dprice-report">
           <ReportProblem priceOnly item={reportItem} />

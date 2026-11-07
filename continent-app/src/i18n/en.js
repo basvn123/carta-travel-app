@@ -4,6 +4,22 @@
  * Interpolation slots are {name}-style and must be kept in translations.
  */
 export const en = {
+  // T1205 (I17): price alerts, the destination page's save-alert control.
+  "alerts.cta": "Email me when this gets cheaper",
+  "alerts.title": "Price alert",
+  "alerts.lead": "We check after each price refresh and email you once when the total for these dates, travellers and stay falls by:",
+  "alerts.shareLabel": "Falls by",
+  "alerts.consent": "Email me one price alert about this place. I can unsubscribe from every email.",
+  "alerts.save": "Save alert",
+  "alerts.cancel": "Cancel",
+  "alerts.saved": "Alert saved. We email you once when the total falls by {pct}.",
+  "alerts.confirmSent": "Check your inbox: tap the link in our email to turn price alerts on.",
+  "alerts.confirmPending": "Alert saved. Tap the link in our earlier email to turn price alerts on.",
+  "alerts.active": "Price alert on: we email you once when the total falls by {pct}.",
+  "alerts.remove": "Remove alert",
+  "alerts.removed": "Alert removed.",
+  "alerts.error": "That did not work. Try again later.",
+  "alerts.note": "The total is Carta's estimate from stay and flight prices, not a booking quote.",
   // Brand & shell
   'shell.tagline': 'Charting Europe',
   'shell.failedToLoad': 'Failed to load: {error}',

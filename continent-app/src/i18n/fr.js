@@ -1,5 +1,21 @@
 ﻿/** Français. Liste complète des clés dans en.js (l'anglais est la source). */
 export const fr = {
+  // T1205 (I17): price alerts, the destination page's save-alert control.
+  "alerts.cta": "M'écrire quand ce sera moins cher",
+  "alerts.title": "Alerte de prix",
+  "alerts.lead": "Nous vérifions après chaque mise à jour des prix et vous écrivons une fois quand le total pour ces dates, voyageurs et cet hébergement baisse de :",
+  "alerts.shareLabel": "Baisse de",
+  "alerts.consent": "Envoyez-moi une alerte de prix sur ce lieu. Je peux me désabonner depuis chaque e-mail.",
+  "alerts.save": "Enregistrer l'alerte",
+  "alerts.cancel": "Annuler",
+  "alerts.saved": "Alerte enregistrée. Nous vous écrivons une fois quand le total baisse de {pct}.",
+  "alerts.confirmSent": "Consultez votre boîte : touchez le lien de notre e-mail pour activer les alertes de prix.",
+  "alerts.confirmPending": "Alerte enregistrée. Touchez le lien de notre e-mail précédent pour activer les alertes de prix.",
+  "alerts.active": "Alerte de prix active : nous vous écrivons une fois quand le total baisse de {pct}.",
+  "alerts.remove": "Supprimer l'alerte",
+  "alerts.removed": "Alerte supprimée.",
+  "alerts.error": "Cela n'a pas fonctionné. Réessayez plus tard.",
+  "alerts.note": "Le total est une estimation de Carta d'après les prix d'hébergement et de vols, pas un devis de réservation.",
   'shell.tagline': "L'Europe en carte",
   'shell.failedToLoad': 'Échec du chargement : {error}',
   'toast.emailConfirmed': 'E-mail confirmé. Bienvenue sur Carta.',

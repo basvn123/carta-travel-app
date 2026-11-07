@@ -1,5 +1,21 @@
 ﻿/** Español. Lista completa de claves en en.js (el inglés es la fuente). */
 export const es = {
+  // T1205 (I17): price alerts, the destination page's save-alert control.
+  "alerts.cta": "Avísame cuando baje de precio",
+  "alerts.title": "Alerta de precio",
+  "alerts.lead": "Comprobamos tras cada actualización de precios y te escribimos una vez cuando el total para estas fechas, viajeros y alojamiento baje:",
+  "alerts.shareLabel": "Baja un",
+  "alerts.consent": "Envíame una alerta de precio sobre este lugar. Puedo darme de baja en cada correo.",
+  "alerts.save": "Guardar alerta",
+  "alerts.cancel": "Cancelar",
+  "alerts.saved": "Alerta guardada. Te escribimos una vez cuando el total baje un {pct}.",
+  "alerts.confirmSent": "Revisa tu bandeja: toca el enlace de nuestro correo para activar las alertas de precio.",
+  "alerts.confirmPending": "Alerta guardada. Toca el enlace de nuestro correo anterior para activar las alertas de precio.",
+  "alerts.active": "Alerta de precio activa: te escribimos una vez cuando el total baje un {pct}.",
+  "alerts.remove": "Quitar alerta",
+  "alerts.removed": "Alerta quitada.",
+  "alerts.error": "No ha funcionado. Inténtalo más tarde.",
+  "alerts.note": "El total es una estimación de Carta con precios de alojamiento y vuelos, no un presupuesto de reserva.",
   'shell.tagline': 'Cartografiando Europa',
   'shell.failedToLoad': 'Error al cargar: {error}',
   'toast.emailConfirmed': 'Correo confirmado. Bienvenido a Carta.',
