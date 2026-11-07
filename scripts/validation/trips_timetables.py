@@ -106,9 +106,9 @@ def collect_legs(trips_dir: Path = TRIPS_DIR):
         for p in t.get("plan") or []:
             dt = dts.get(p.get("daytrip"))
             si = p.get("stop")
-            if dt and isinstance(si, int) and 0 <= si < len(order) and stops.get(order[si]):
-                if dt.get("mode") and dt.get("minutes") is not None:
-                    found.append(("daytrip", stops[order[si]], dt, dt["mode"], dt.get("km"), dt["minutes"]))
+            if (dt and isinstance(si, int) and 0 <= si < len(order) and stops.get(order[si])
+                    and dt.get("mode") and dt.get("minutes") is not None):
+                found.append(("daytrip", stops[order[si]], dt, dt["mode"], dt.get("km"), dt["minutes"]))
         for kind, a, b, mode, km, minutes in found:
             i = leg_id(a["dest"], b["dest"], mode)
             row = legs.get(i)
@@ -331,7 +331,7 @@ def gtfs_reference(legs, feeds, day: date, radius_km=RADIUS_KM, transfer_min=MIN
                        "read_on": read_on, "ref_minutes": "", "changes": "", "direct_departures": 0}
                 if not fs or not ts:
                     row["status"] = "no_station"
-                    row["note"] = "no stop within %g km of %s" % (radius_km, "the start" if not fs else "the end")
+                    row["note"] = f"no stop within {radius_km:g} km of {'the start' if not fs else 'the end'}"
                 else:
                     d, c, n = fastest(trips, fs, ts, transfer_min * 60)
                     best = min(x for x in (d, c) if x is not None) if (d is not None or c is not None) else None
