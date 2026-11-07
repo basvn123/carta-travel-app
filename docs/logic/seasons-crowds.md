@@ -191,13 +191,13 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 ### SEASON-028 Crowd badge on the place page
 - Decides: whether the place page shows a crowd pill with its data year.
 - Rule: only for the annual tier 0 (Quiet) or 3 (Crowded); middle tiers show no pill (they still appear in the Crowds key fact).
-- Constant: `crowdBadgeWorthShowing` in `continent-app/src/components/CrowdingBadge.jsx:22`; used by `continent-app/src/browse/CrowdCalendar.jsx:23`
+- Removed: `CrowdingBadge.jsx` and `CrowdCalendar.jsx` were deleted by T1163 (H14) as dead files with no importer, so no screen shows this pill today; the crowd tier still appears in the Crowds key fact.
 - Test: no test
 
 ### SEASON-029 In-season filters and rails
 - Decides: which places the Explore month filter keeps, the "now", "beach" and cost rails, and the card line "good in <month>".
 - Rule: a place is in season when the month is in its `climate.best`. The month filter drops places outside; "now" also needs a Very good rating, the cost rail a Good rating and a day cost under the ceiling. The card preview says "good in <month>" when in season, else lists its best months.
-- Constant: `inSeason` in `continent-app/src/browse/ExploreTab.jsx:1143`; month filter at `continent-app/src/browse/ExploreTab.jsx:647`; `CardPreview` at `continent-app/src/browse/ExploreTab.jsx:209`; `inMonth` in `continent-app/src/browse/ExploreRails.jsx:78`
+- Constant: `inSeason` in `continent-app/src/browse/explore/useExploreRails.js:22`; month filter in `continent-app/src/browse/explore/useExploreRows.js:38`; `CardPreview` at `continent-app/src/browse/explore/ExploreCard.jsx:52`; `inMonth` in `continent-app/src/browse/ExploreRails.jsx:78`
 - Test: no test
 
 ### SEASON-030 Best months of a region

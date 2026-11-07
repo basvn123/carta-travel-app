@@ -182,7 +182,7 @@ The allowance itself (tiers, `ai_consume`, the shared daily ceiling, refunds in 
 ### PLANDAY-025 Filling the chat planner's days
 - Decides: how many places each day gets when the AI chose fewer.
 - Rule: per day 3 places for a morning or afternoon, 6 for a long day into the evening, else 5; missing places are filled from the deck in rank order, skipping those already chosen.
-- Constant: `perDay` in `continent-app/src/planner/DayPlannerTab.jsx:3390`
+- Constant: `perDay` in `continent-app/src/planner/days/useDayChatAi.js:195`
 - Test: no test
 
 ### PLANDAY-026 Mapping the plan back into the planner
@@ -200,7 +200,7 @@ The allowance itself (tiers, `ai_consume`, the shared daily ceiling, refunds in 
 ### PLANDAY-028 Town suggester candidates
 - Decides: which towns the AI may suggest for a day trip.
 - Rule: catalogue towns within 300 km of the stay, gateways left out, top rated first, at most 150, then 120 sent; the server reads at most 150 with 6 tags each, free text 160 characters, up to 8 known interests; fewer than 3 is 400 `too_few`.
-- Constant: `SUGGEST_TOWN_KM` = 300 and `SUGGEST_TOWN_CAP` = 150 in `continent-app/src/planner/DayPlannerTab.jsx:3345` to `:3346`; `buildCityCandidates` `limit = 120` in `continent-app/src/planner/aiCitySuggest.js:20`; `sanitizeTownCandidates` in `supabase/functions/suggest-city/logic.mjs:19`; `supabase/functions/suggest-city/index.ts:176` to `:181`
+- Constant: `SUGGEST_TOWN_KM` = 300 and `SUGGEST_TOWN_CAP` = 150 in `continent-app/src/planner/days/useDayChatAi.js:150` to `:151`; `buildCityCandidates` `limit = 120` in `continent-app/src/planner/aiCitySuggest.js:20`; `sanitizeTownCandidates` in `supabase/functions/suggest-city/logic.mjs:19`; `supabase/functions/suggest-city/index.ts:176` to `:181`
 - Test: `continent-app/scripts/ai/test_suggest_city_logic.mjs` :: "candidates: keeps valid, drops empty id/name/dupe"
 - Test: `continent-app/scripts/ai/test_suggest_city_logic.mjs` :: "candidates: tags capped and cleaned"
 

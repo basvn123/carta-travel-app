@@ -20,3 +20,4 @@ run reference python3 -I scripts/docs/build_reference.py --check
 cd $R
 run ruff /var/tmp/ruff143/bin/ruff check --select E9,F63,F7,F82 pipeline src scripts run_pipeline.py tests
 for d in services/*/; do [ -f $d/requirements-dev.txt ] && grep -q ruff $d/requirements-dev.txt && run ruff-$(basename $d) /var/tmp/ruff143/bin/ruff check $d; done
+cd $A; run csp env CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome node scripts/verify_csp.mjs --dist ../.fastbuild
