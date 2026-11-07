@@ -30,7 +30,9 @@ export default [
       // bang cleanup. Tighten to 'error' as the backlog is worked down.
       'react-hooks/exhaustive-deps': 'error',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^[A-Z_]' }],
+      // Capitalised names are JSX tags (TitleTag, Icon): core no-unused-vars does not see
+      // a JSX use without eslint-plugin-react, so args follow the vars pattern (T1163-h).
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^[A-Z_]', varsIgnorePattern: '^[A-Z_]' }],
       'no-empty': ['warn', { allowEmptyCatch: true }],
     },
   },
