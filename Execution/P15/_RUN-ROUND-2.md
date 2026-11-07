@@ -65,11 +65,11 @@ How it runs:
 | 92 | T1176 | K8 | p15-s92-open-dataset | done | yes | 3 |
 | 107 | T1191 | D23 | p15-s107-ratings-validation | done | yes | 5 |
 | 108 | T1192 | D23 | p15-s108-lakes-mountains-validation | done | yes | 3 |
-| 90 | T1174 | K14 | p15-s90-data-blog-2 | started | | |
-| 109 | T1193 | D23 | p15-s109-cycling-validation | started | | |
-| 110 | T1194 | D23 | p15-s110-climate-validation | started | | |
-| 111 | T1195 | D23 | p15-s111-trips-validation | started | | |
-| 112 | T1196 | D23 | p15-s112-texts-validation | started | | |
+| 90 | T1174 | K14 | p15-s90-data-blog-2 | done | yes | 1 |
+| 109 | T1193 | D23 | p15-s109-cycling-validation | done | yes | 4 |
+| 110 | T1194 | D23 | p15-s110-climate-validation | done | yes | 5 |
+| 111 | T1195 | D23 | p15-s111-trips-validation | done | yes | 3 |
+| 112 | T1196 | D23 | p15-s112-texts-validation | done | yes | 2 |
 
 The batch schedule for the rest of round 2 is in "Batch schedule" below.
 
@@ -130,3 +130,13 @@ Merge notes:
 - 04:30 Linux CI green on 5c417c7c94 (batch 10 merged, ci run 294). Batch 11 merged: S92 (a CC BY 4.0 subset of 39 columns with a licence test per field, datasheet and a Show HN draft), S108 (lakes and mountains as validation layers), S107 (place ratings as a validation layer: T760 repeated on 3,855 places, list AUC 0.773, 30 gaps reviewed), S91 (three share images from Carta's own data with a numbers check and credits), S94 slot (blog part 1: `/blog/`, the monthly `blog_drafts` task and the draft check script; nothing published). Fixes at merge: the runner's layer list again (all kept); the D23 row doubled after a hand merge (S107 and S108 entries combined); the i18n key appends of S91 and S94 (union, parity at 10,078); `blog_drafts` had been appended after `photo_sources`, which must stay last apart from the trailslab worker (moved before it). The container restarted during the last check run; rerun on d08baec052: npm test 1898: 1886 pass, 0 fail; full pytest 937 pass; CSP check 0 violations; every other check OK. 117 round 2 owner steps on the checklist. Batch 12 started (the last). Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a), all still open.
 - 04:17 Batch 12 started from a6430208f2: S90 (session_0156MmZ3UnsoH1oxj8N3oqZP), S109 (session_0156MmZ4KjSw51WUk7WkNT6o), S110 (session_0156MmZ6LoyuL7MNFxDJq6kh), S111 (session_0156MmZ3K9St55SakHgfGzdv), S112 (session_0156MmZ2YgWUd17jdpuPpLwv).
 - 04:25 Batch 11 CI: ci run 316 on ded42a2fae failed on the photo_sources order (the orchestrator had pushed before its own checks ended); fixed in d08baec052 (run 317 green); run 319 green on ce73ac0c25.
+- 05:00 Batch 12 merged: S109 (cycling as a validation layer: 16,973 routes against a seed EuroVelo list, length and geometry facts wait on owner data), S110 (climate, sea temperature and crowds layers), S90 (blog part 2: four post types, the monthly routine, a December draft left as a draft), S111 (trips: 1,806 legs listed against timetables, a seed timetable reference), S112 (texts and translations, provisional: 41 of 120 sampled texts supported by their cited source, 3,176 of 3,187 drafted strings hold under back-translation). Fixes at merge: the runner's layer list and the HANDBOOK D23 list (both sides kept, Trips numbered 11); D23 doubled three times and was combined into one row by hand (the helper flagged S112's case itself); the quality engine's soft-field test read the repo's live validation scorecard, where T1193's cycling metrics wait on owner data and warn softly, so it failed CI on 48a4cc8583, fb3c34b9bd and 21ead65ad5 (ci runs 325, 333, 336); the test now runs on an empty validation folder (ae97367a8a). npm test 1898: 1886 pass, 0 fail; full pytest 977 pass; CSP 0 violations; design-lint 0 new; prompt registry OK with 20 prompts. Linux CI green on ae97367a8a (ci run 337).
+
+## Summary (round 2, 2026-11-07 05:00)
+
+- **Merged:** 59 of the 62 round 2 rows (S51 to S112) are on `p15-round2`. Batches 1 and 2 (10 rows) were merged by the desktop session; batches 3 to 12 (49 rows) by the cloud orchestrator, from 17:50 on 2026-11-06 to 05:00 on 2026-11-07.
+- **Failed:** none. S70, S75 and S101 stopped on the account's 5-hour usage limit at 20:10 and finished after a continue message at 00:13; from then on an hourly scheduled check-in (trig_01Vb3WMzi58g83ttUN4oHQoR) resumed the run and the stopped sessions after each limit, per the owner's rule of 2026-11-07. It is deleted with this summary.
+- **Held:** S63 (D15 part 2) waits on the owner's review of S62's add, merge and remove list (T1146-a); S67 (F2 distilled tagger) on the F1 labels (T1149-a, T1149-b); S93 (G5 motion) on the design direction (T1111-a). Each starts as soon as its row closes.
+- **Owner steps:** 132 round 2 steps on the owner checklist, phase 8 (https://claude.ai/artifact/UZ1QJRDYdowJZEi6y5JCvF), kept in `Execution/P15/_run_r2/owner_steps.json`. New migrations waiting for a paste: 071 (`ai_model_events` calls, T1139-a) and 072 (taste profile, T1152); both pass the RLS suite and the 17 admin harnesses on a local Postgres 16.
+- **CI:** `ci` green on ae97367a8a; `ask-eval`, `prompts`, `ai-guard`, `mcp` and `intelligence` green on their last runs. Fixes the orchestrator made at merge are listed above per batch; the recurring ones (ROADMAP rows doubled by the union, generated reference files, the validation runner's layer list, i18n key appends) are now handled by `Execution/P15/_run_r2/merge.sh` or checked after every merge.
+- **Not done here:** nothing is merged into `main`, nothing is deployed and no migration is applied live. `p15-round2` is ready for the owner to review and merge.
