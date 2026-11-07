@@ -11,7 +11,7 @@ that resolves to no rated row (a hole in the catalogue). Each place carries
 these references, all read from disk:
 
   pageviews    average daily Wikipedia pageviews (`rating.fame`, harvested by
-               pipeline/harvest_pageviews.py). Attention, not opinion. It does
+               pipeline/harvest_pageviews.py; 0 means not measured and is left out). Attention, not opinion. It does
                not move the score (rating_layer.py: hidden-gem flag only), so
                it is not circular, but it follows size: read with the
                population-controlled rho.
@@ -85,6 +85,7 @@ MIN_N = 30                    # research: per-country statistics need 30 places
 UNESCO_KM = {"metro": 12.0, "city": 8.0, "town": 5.0, "village": 3.0, "area": 15.0}
 WV_TIER = {"outline": 1, "usable": 2, "guide": 3, "star": 4}
 GAPS_EACH = 15
+MIN_LISTED = 5                # a list AUC on fewer listed places says nothing
 TOP_T760 = 200
 # A list entry is a place only on these lists; countries, regions, routes and
 # "experiences" name no single row, so they never count against coverage.
@@ -268,7 +269,7 @@ def build(ctx):
             "score": r["score"], "band": r.get("band"), "hidden_gem": bool(r.get("hidden_gem")),
             "confidence": r.get("confidence"), "components": r.get("components") or {},
             "country_pct": d.get("country_percentile"), "class_pct": (r.get("class_rank") or {}).get("pct"),
-            "pageviews": r.get("fame"), "population": (d.get("geonames") or {}).get("population"),
+            "pageviews": r.get("fame") or None, "population": (d.get("geonames") or {}).get("population"),
             "wikivoyage": has_wv, "wv_tier": tier, "wv_status": status,
             "unesco_near": near,
             "unesco_tagged": any(x.get("kind") == "unesco_whc" for x in d.get("designations") or []),
@@ -332,7 +333,8 @@ def _stats(ps):
     tiers = [(p["wv_tier"], p["score"]) for p in ps]
     s["tau_wikivoyage"] = vr.kendall_tau_b(tiers) if len({t for t, _ in tiers}) > 1 else None
     s["auc_wikivoyage"] = auc([p["score"] for p in ps if p["wikivoyage"]], [p["score"] for p in ps if not p["wikivoyage"]])
-    s["auc_lists"] = auc([p["score"] for p in ps if p["lists"]], [p["score"] for p in ps if not p["lists"]])
+    listed = [p["score"] for p in ps if p["lists"]]
+    s["auc_lists"] = auc(listed, [p["score"] for p in ps if not p["lists"]]) if len(listed) >= MIN_LISTED else None
     s["auc_unesco_circular"] = auc([p["score"] for p in ps if p["unesco_near"]],
                                    [p["score"] for p in ps if not p["unesco_near"]])
     s["listed"] = sum(1 for p in ps if p["lists"])
@@ -471,6 +473,7 @@ def gaps(results):
         v = verdicts.get(g["id"])
         if v:
             g.update({"verdict": v.get("verdict"), "cause": v.get("cause"), "reason": v.get("reason"),
+                      "proposed_appeal": v.get("proposed_appeal"),
                       "register_row": v.get("register_row")})
     return rows
 
