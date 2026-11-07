@@ -949,14 +949,16 @@
       "tasks": [
         "events",
         "parking",
-        "dossier"
+        "dossier",
+        "access_facts"
       ],
       "writer": "pipeline/export_destinfo.py",
       "host": "R2",
       "readers": [
-        "continent-app/src/lib/destInfo.js"
+        "continent-app/src/lib/destInfo.js",
+        "continent-app/src/browse/DestPractical.jsx"
       ],
-      "what": "events, parking and practical facts per place (loader exists, no screen calls it today)"
+      "what": "events, parking, practical and accessibility facts per place (the place page's Practical Access card reads it through useDestInfo, T1203)"
     },
     {
       "path": "trips/",

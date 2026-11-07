@@ -9,6 +9,7 @@ The config files are the ones the app and the pipeline tune Carta with:
     continent-app/config/recommend.json       the trip finder's numbers
     continent-app/config/slots.json           the price lines of a found trip
     continent-app/config/slo.json             the service level objectives
+    continent-app/config/access-ladder.json   the data access ladder (I16)
     scripts/quality/rules.yaml                the data quality gate of a run
 
 The pipeline has no config file of its own: pipeline/pricing_config.py and
@@ -23,25 +24,38 @@ What a key is:
   when the top level is a block (`tiers.cutoffs`). Arrays named in ROWS are
   listed one row per id (`slots[flight]`, `rules[core.tier]`). Keys that
   start with "_" or end in "_about" are notes for people and not listed.
-- NOTES are keys that record provenance (`created`, `task`); they are listed
-  as notes and never counted dead.
+- NOTES are keys written for people, not code: provenance (`created`,
+  `version`), prose (`sources.*`) and the rubric a scoring session reads
+  (rating_anchors.json `bands`, `calibration`). They are listed with the
+  reason and never counted dead (T1217).
+- BOUNDS are keys that hold a limit another key must respect
+  (`match.lambda_range`); this script's --check enforces them, so a value
+  moved out of its bound fails CI. MIRRORS are copies that must equal their
+  source (rating_anchors.json `bands` against rating.json `bands.cutoffs`).
+- A key no code line reads but a test names is listed as "tests only", not
+  dead: the test is its reader (the stability gate, T1217).
 
 Readers are found by reading the code, not by running it (see find_readers):
 a pricing rule by its quoted key (`rule('stay.fees')`); any other key by
 `section.key` on one line, by an alias of the section (`const M =
 RATING.match` then `M.lambda`), or by the whole section being iterated
-(`Object.entries(RATING.weights_v5)`), in files that load that config. Tests,
-archive/ and the docs scripts are not readers. A key with no reader is listed
-as dead; the check never deletes anything.
+(`Object.entries(RATING.weights_v5)`), in files that load that config. A
+config handed on as an argument is followed (T1217): a default parameter
+(`cfg = config`) or a call that passes the root to an imported function
+(`evaluateAll(cfg, snapshot)`) makes that function's parameter a root in its
+file. Tests, archive/ and the docs scripts are not readers. A key with no
+reader is listed as dead; the check never deletes anything.
 
     python -I scripts/docs/config_reference.py            # write the doc
     python -I scripts/docs/config_reference.py --check    # exit 1 when the doc's
                                                           # keys differ from the config
     python -I scripts/docs/config_reference.py --json out.json
 
-The check compares keys only: a key added or removed without regenerating
-fails; a changed value or a moved line only prints a note, so an unrelated
-code edit never turns CI red. CARTA_REPO_ROOT points it at another tree.
+The check compares keys, plus the BOUNDS and MIRRORS: a key added or
+removed without regenerating fails, and so does a value outside its bound or
+a mirror that drifted; a changed value or a moved line does not, so an
+unrelated code edit never turns CI red. CARTA_REPO_ROOT points it at another
+tree.
 """
 from __future__ import annotations
 
@@ -68,9 +82,85 @@ SOURCES = [
     ("continent-app/config/recommend.json", ("recommend.json",), ()),
     ("continent-app/config/slots.json", ("slots.json",), ("slots",)),
     ("continent-app/config/slo.json", ("slo.json",), ("slos",)),
+    ("continent-app/config/access-ladder.json", ("access-ladder.json",), ("sources",)),
     ("scripts/quality/rules.yaml", ("rules.yaml",), ("rules",)),
 ]
-NOTES = {"continent-app/config/rating_anchors.json": {"created", "task", "rule", "shortfalls"}}
+# keys written for people: {file: {key or "section.*": who reads it}}
+_PROV = "provenance, read by people"
+_RUBRIC = "the rubric session reads it by hand (HANDBOOK, Appeal)"
+NOTES = {
+    "continent-app/config/pricing.json": {"version": _PROV},
+    "continent-app/config/rating.json": {"depth.categories_from": "provenance in words (T761)"},
+    "continent-app/config/rating_anchors.json": {
+        "created": _PROV, "task": _PROV, "rule": "the rubric rule in words", "shortfalls": "known gaps, in words",
+        "version": _PROV, "bands": _RUBRIC, "calibration": _RUBRIC},
+    "continent-app/config/recommend.json": {"version": _PROV},
+    "continent-app/config/slots.json": {"version": _PROV},
+    "continent-app/config/slo.json": {"version": _PROV, "sources.*": "where each number comes from, in words"},
+    "continent-app/config/access-ladder.json": {
+        "version": _PROV, "terms_checked": "the date of the terms check (docs/data/access-ladder.md)",
+        "metrics.*": "where the admin reads each unlock number, in words"},
+    "scripts/quality/rules.yaml": {"version": _PROV},
+}
+
+
+def note_of(rel, key):
+    notes = NOTES.get(rel, {})
+    if key in notes:
+        return notes[key]
+    for n, why in notes.items():
+        if n.endswith(".*") and key.startswith(n[:-1]):
+            return why
+    return None
+
+
+def _get(data, dotted):
+    for part in dotted.split("."):
+        data = data[part]
+    return data
+
+
+def _within(rng, v):
+    return isinstance(v, (int, float)) and rng[0] <= v <= rng[1]
+
+
+def _lambda_in_range(cfgs):
+    m = cfgs["continent-app/config/rating.json"]["match"]
+    return [] if _within(m["lambda_range"], m["lambda"]) else [f"match.lambda {m['lambda']} is outside match.lambda_range {m['lambda_range']}"]
+
+
+def _conflicts_in_range(cfgs):
+    m = cfgs["continent-app/config/rating.json"]["match"]
+    return [f"match.conflicts.{k} {v} is outside match.conflict_range {m['conflict_range']}"
+            for k, v in m["conflicts"].items() if not _within(m["conflict_range"], v)]
+
+
+def _anchor_bands_mirror(cfgs):
+    cut = cfgs["continent-app/config/rating.json"]["bands"]["cutoffs"]
+    bands = cfgs["continent-app/config/rating_anchors.json"]["bands"]
+    have = {re.sub(r"\W+", "_", b["band"].lower()): b["min"] for b in bands}
+    return [] if have == cut else [f"rating_anchors.json bands {have} differ from rating.json bands.cutoffs {cut}"]
+
+
+# keys whose value this script checks: (file, key, what the check is, check)
+BOUNDS = [
+    ("continent-app/config/rating.json", "match.lambda_range", "bound on `match.lambda`", _lambda_in_range),
+    ("continent-app/config/rating.json", "match.conflict_range", "bound on every `match.conflicts` factor",
+     _conflicts_in_range),
+    ("continent-app/config/rating_anchors.json", "bands", "mirror of rating.json `bands.cutoffs`", _anchor_bands_mirror),
+]
+
+
+def bound_of(rel, key):
+    return next((what for f, k, what, _ in BOUNDS if f == rel and k == key), None)
+
+
+def bound_failures():
+    cfgs = {rel: load(rel) for rel, _, _ in SOURCES}
+    out = []
+    for _, _, _, fn in BOUNDS:
+        out += fn(cfgs)
+    return out
 
 CODE_DIRS = ("continent-app/src", "continent-app/functions", "continent-app/workers",
              "continent-app/scripts", "pipeline", "scripts", "src", "supabase/functions")
@@ -101,14 +191,13 @@ def keys_of(rel, data, rows):
     if rel.endswith("pricing.json"):
         for k, r in data["rules"].items():
             out.append((k, ("rules", k), r, None))
-        out.insert(0, ("version", ("version",), data.get("version"), None))
+        out.insert(0, ("version", ("version",), data.get("version"), note_of(rel, "version")))
         return out
-    notes = NOTES.get(rel, set())
     for k, v in data.items():
         if skip_name(k):
             continue
-        if k in notes:
-            out.append((k, (k,), v, "note"))
+        if note_of(rel, k):
+            out.append((k, (k,), v, note_of(rel, k)))
         elif k in rows and isinstance(v, list):
             for i, row in enumerate(v):
                 rid = row.get("id", i) if isinstance(row, dict) else i
@@ -116,7 +205,7 @@ def keys_of(rel, data, rows):
         elif isinstance(v, dict) and any(not skip_name(c) for c in v):
             for c, cv in v.items():
                 if not skip_name(c):
-                    out.append((f"{k}.{c}", (k, c), cv, None))
+                    out.append((f"{k}.{c}", (k, c), cv, note_of(rel, f"{k}.{c}")))
         else:
             out.append((k, (k,), v, None))
     return out
@@ -178,6 +267,18 @@ def tests_naming(rel, key, path, tests):
         base = Path(rel).name
         return sorted(t for t, txt in tests.items() if base in txt and re.search(acc(key), txt))[:3]
     return sorted(t for t, txt in tests.items() if pat.search(txt))[:3]
+
+
+def tests_reading(rel, hints, key, path, tests):
+    """Tests that read the key from the config itself: the test loads the config
+    (one of its hint words) and names the key, or, for a row of a list, names the
+    list (a test that loops over `sources` reads every row). Stricter than
+    tests_naming, which only finds a mention."""
+    loading = {t: txt for t, txt in tests.items() if any(h in txt for h in hints)}
+    if len(path) == 2 and path[1].startswith("["):
+        rx = re.compile(acc(path[0]))
+        return sorted(t for t, txt in loading.items() if rx.search(txt))[:3]
+    return tests_naming(rel, key, path, loading)
 
 
 def code_lines(lines):
@@ -250,6 +351,66 @@ def file_roots(lines, base):
     return roots, calls
 
 
+DEF = re.compile(r"^\s*(?:export\s+)?(?:async\s+)?(?:function\s+|def\s+)([A-Za-z_$][\w$]*)\s*\(([^)]*)\)")
+CALL = re.compile(r"\b([A-Za-z_$][\w$]*)\(([^()]*)\)")
+_DEFS = {}
+
+
+def def_index(s_files):
+    """{function name: [(file, [parameter names])]} over every code line, built once."""
+    if not _DEFS:
+        for f, lines in s_files.items():
+            for _, ln in code_lines(lines):
+                m = DEF.match(ln)
+                if m:
+                    params = [re.split(r"[=:]", a)[0].strip().lstrip("*") for a in m.group(2).split(",")]
+                    _DEFS.setdefault(m.group(1), []).append((f, params))
+    return _DEFS
+
+
+def imports_name(lines, name):
+    rx = re.compile(r"\b(?:import|from)\b.*\b" + re.escape(name) + r"\b")
+    return any(rx.search(ln) for _, ln in code_lines(lines))
+
+
+def roots_map(aware, s_files, base):
+    """{file: (roots, calls)} for the files that load the config, plus the files
+    the config is handed to as an argument (T1217, closes T1211-d): a default
+    parameter (`cfg = config`) and a call that passes a root to an imported
+    function (`evaluateAll(cfg, snapshot)`), followed for three hops."""
+    out = {f: file_roots(s_files[f], base) for f in aware}
+    defs = def_index(s_files)
+    for _ in range(3):
+        grew = False
+        for f in list(out):
+            roots = out[f][0]
+            if not roots:
+                continue
+            rx = "|".join(map(re.escape, sorted(roots)))
+            for _, ln in code_lines(s_files[f]):
+                for m in re.finditer(r"[(,]\s*([A-Za-z_$][\w$]*)\s*=\s*(?:" + rx + r")\s*[,)]", ln):
+                    if m.group(1) not in roots:
+                        roots.add(m.group(1))
+                        grew = True
+                for m in CALL.finditer(ln):
+                    args = [a.strip() for a in m.group(2).split(",")]
+                    hits = [i for i, a in enumerate(args) if a in roots]
+                    if not hits or m.group(1) not in defs or not imports_name(s_files[f], m.group(1)):
+                        continue
+                    for g, params in defs[m.group(1)]:
+                        if g == f:
+                            continue
+                        new = {params[i] for i in hits if i < len(params) and re.fullmatch(r"[A-Za-z_$][\w$]*", params[i])}
+                        if g not in out:
+                            out[g] = (set(), [])
+                        if new - out[g][0]:
+                            out[g][0].update(new)
+                            grew = True
+        if not grew:
+            break
+    return out
+
+
 def rooted(s0, roots, calls, exact=False):
     """`s0` reached from the config itself: ROOT.s0, ROOT["s0"], cfg("s0"), cfg("s0.x").
     exact: the section itself, not a key inside it (for aliases and iteration)."""
@@ -264,18 +425,18 @@ def rooted(s0, roots, calls, exact=False):
     return re.compile("(?:" + "|".join(alts) + ")") if alts else None
 
 
-def find_readers(path, s_files, aware, pricing=False, base=""):
-    """Readers of one key: [(file, line, how)]."""
+def find_readers(path, s_files, aware, pricing=False, base="", roots_of=None):
+    """Readers of one key: [(file, line, how)]. roots_of: roots_map() for this config."""
     if pricing and len(path) == 2:                                    # a pricing rule
         return sorted({(f, i, "rule") for f, i in quoted_index(s_files).get(path[1], [])})
     hits = []
     s0 = path[0]
     s1 = path[1] if len(path) > 1 else None
     rows = s1 is not None and s1.startswith("[")
-    for f in aware:
+    for f in (roots_of or aware):
         lines = s_files[f]
         cl = code_lines(lines)
-        roots, calls = file_roots(lines, base)
+        roots, calls = roots_of[f] if roots_of else file_roots(lines, base)
         r0 = rooted(s0, roots, calls)
         if r0 is None:
             continue
@@ -500,6 +661,13 @@ SECTION_EFFECT = {
         "sources": "None directly: where each SLO's numbers come from, in words.",
         "slos": "One SLO in the admin SLO panel: its target or latency threshold and its error budget.",
     },
+    "access-ladder.json": {
+        "version": "None directly: the version of the ladder.",
+        "terms_checked": "None directly: when the partner terms were last read.",
+        "metrics": "None directly: where each unlock number is read, in words.",
+        "sources": ("None directly today: one commercial data source's route, unlock number and stop flag; "
+                    "every flag is off until the owner sets its variable."),
+    },
     "rules.yaml": {
         "version": "None directly: the version of the rule file.",
         "gate": "None directly: when a pipeline run fails; a failed run keeps the previous data live.",
@@ -602,13 +770,17 @@ def build():
         aware = [f for f, lines in files.items()
                  if any(h in ln for _, ln in code_lines(lines) for h in hints)]
         aware = [f for f in aware if f != rel]
+        roots_of = roots_map(aware, files, Path(rel).name)
         for key, path, value, note in keys[rel]:
             shown = value.get("value") if rel.endswith("pricing.json") and isinstance(value, dict) and "value" in value else value
             if note:
                 readers = []
             else:
-                readers = find_readers(path, files, aware, pricing=rel.endswith("pricing.json"), base=Path(rel).name)
+                readers = find_readers(path, files, aware, pricing=rel.endswith("pricing.json"), base=Path(rel).name,
+                                       roots_of=roots_of)
             in_tests = tests_naming(rel, key, path, tests)
+            t_read = tests_reading(rel, hints, key, path, tests)
+            bound = bound_of(rel, key)
             rows.append({
                 "file": rel, "key": key, "type": jtype(shown), "value": shown,
                 "unit": unit_of(rel, key, value), "note": note,
@@ -616,7 +788,10 @@ def build():
                 "tests_naming_it": in_tests[:3],
                 "effect": effect_of(rel, key, value),
                 "handbook": handbook_of(rel, key, heads, where),
-                "dead": not note and not readers,
+                "bound": bound,
+                "tests_reading_it": t_read,
+                "tests_only": not note and not readers and not bound and bool(t_read),
+                "dead": not note and not readers and not bound and not t_read,
             })
     return rows
 
@@ -627,6 +802,8 @@ def render(rows):
         by_file.setdefault(r["file"], []).append(r)
     total = len(rows)
     notes = sum(1 for r in rows if r["note"])
+    bounds = sum(1 for r in rows if r["bound"])
+    tonly = sum(1 for r in rows if r["tests_only"])
     dead = [r for r in rows if r["dead"]]
     out = [
         "# Config reference",
@@ -635,7 +812,8 @@ def render(rows):
         "then run `python -I scripts/docs/config_reference.py`. CI runs it with `--check` and fails when a key was added "
         "or removed without regenerating this file."),
         "",
-        (f"{total} keys in {len(by_file)} files: {total - notes - len(dead)} with a reader, {len(dead)} dead (no reader found), "
+        (f"{total} keys in {len(by_file)} files: {total - notes - bounds - tonly - len(dead)} with a reader in the code, "
+        f"{tonly} read by tests only, {bounds} bounds checked by this script, {len(dead)} dead (no reader found), "
         f"{notes} notes for people."),
         "",
         "How to read it:",
@@ -646,7 +824,10 @@ def render(rows):
         "- **Unit**: the rule's own `unit` in pricing.json; elsewhere read from the key's name, marked \"(from the name)\", or blank when the name says nothing.",
         ("- **Read by**: the first code lines that read the key (file and line on the day it was generated), found by reading the code: "
         "the quoted rule key, `section.key` on one line, an alias of the section, or the whole section iterated (\"whole block\"). "
-        "Tests, `archive/` and the docs scripts do not count. Line numbers move with every edit; regenerate to refresh them."),
+        "A config handed on as an argument is followed into the function that takes it. "
+        "Tests, `archive/` and the docs scripts do not count as code readers: a key only tests name is marked \"tests only\". "
+        "\"Note for people\" marks provenance and prose; \"bound\" marks a limit `--check` enforces. "
+        "Line numbers move with every edit; regenerate to refresh them."),
         "- **For a traveller**: what changing the key changes for someone using Carta. \"None directly\" marks a pipeline or bookkeeping key.",
         "- **Handbook**: the section in `docs/HANDBOOK.md` that explains the rule, found by the key in backticks, else by the key's section.",
         "",
@@ -665,7 +846,11 @@ def render(rows):
                 "|---|---|---|---|---|---|---|"]
         for r in rs:
             if r["note"]:
-                read = "note for people"
+                read = f"note for people: {clean(r['note'])}"
+            elif r["bound"]:
+                read = f"{r['bound']}, checked by `config_reference.py --check`"
+            elif r["tests_only"]:
+                read = "tests only: " + ", ".join(f"`{x}`" for x in r["tests_reading_it"])
             elif r["dead"]:
                 read = "**dead**: no reader found"
             else:
@@ -683,7 +868,7 @@ def render(rows):
                 read, clean(r["effect"]), hb_cell]) + " |")
         out.append("")
     out += ["## Dead keys", "",
-            ("Keys no code line reads (tests and the docs scripts do not count). They are kept, not deleted: each has a "
+            ("Keys no code line and no test reads (the docs scripts do not count). They are kept, not deleted: each has a "
             "register row in `Execution/_OPEN.md` for a task to wire it or remove it."), ""]
     if dead:
         out += ["| File | Key | Tests that name it |", "|---|---|---|"]
@@ -724,6 +909,10 @@ def check():
         print(f"FAIL: {DOC} lists {rel} key {k}, which the config no longer has")
     if added or removed:
         print("Regenerate: python -I scripts/docs/config_reference.py")
+    fails = bound_failures()
+    for msg in fails:
+        print(f"FAIL: {msg}")
+    if added or removed or fails:
         return 1
     print(f"Config reference OK: {len(want)} keys in {len(SOURCES)} files match {DOC}")
     return 0
@@ -743,6 +932,8 @@ def main(argv=None):
         Path(a.json).write_text(json.dumps(rows, indent=1, ensure_ascii=False), encoding="utf-8")
     dead = sum(1 for r in rows if r["dead"])
     print(f"Wrote {DOC}: {len(rows)} keys, {dead} dead")
+    for msg in bound_failures():
+        print(f"WARN: {msg}")
     return 0
 
 
