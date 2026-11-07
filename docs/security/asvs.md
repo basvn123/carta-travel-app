@@ -10,9 +10,9 @@ How to read a row: "Met" cites the control and, where one exists, the test that 
 
 | | Count |
 |---|---|
-| Met | 158 |
+| Met | 165 |
 | N/A | 45 |
-| Gap | 50 |
+| Gap | 43 |
 | Total | 253 |
 
 | Chapter | Met | N/A | Gap |
@@ -23,16 +23,16 @@ How to read a row: "Met" cites the control and, where one exists, the test that 
 | V4 API and Web Service | 4 | 4 | 2 |
 | V5 File Handling | 7 | 1 | 1 |
 | V6 Authentication | 21 | 2 | 12 |
-| V7 Session Management | 13 | 0 | 5 |
+| V7 Session Management | 14 | 0 | 4 |
 | V8 Authorization | 6 | 1 | 0 |
 | V9 Self-contained Tokens | 6 | 1 | 0 |
 | V10 OAuth and OIDC | 9 | 14 | 6 |
-| V11 Cryptography | 12 | 0 | 2 |
+| V11 Cryptography | 13 | 0 | 1 |
 | V12 Secure Communication | 8 | 1 | 0 |
 | V13 Configuration | 8 | 0 | 5 |
-| V14 Data Protection | 6 | 0 | 3 |
-| V15 Secure Coding and Architecture | 9 | 0 | 4 |
-| V16 Security Logging and Error Handling | 9 | 0 | 7 |
+| V14 Data Protection | 8 | 0 | 1 |
+| V15 Secure Coding and Architecture | 11 | 0 | 2 |
+| V16 Security Logging and Error Handling | 10 | 0 | 6 |
 | V17 WebRTC | 0 | 7 | 0 |
 
 Gaps by register row (the reasoning is in the T1164 report; rows not starting T1164 were already open):
@@ -52,12 +52,13 @@ Gaps by register row (the reasoning is in the T1164 report; rows not starting T1
 | T1164-d | V3.4.2 |
 | T1164-f | V6.1.2, V6.2.5, V6.2.11, V6.3.3 |
 | T1164-g | V6.6.2, V10.1.2, V10.2.1, V10.4.4, V10.4.6 |
-| T1164-h | V7.1.1, V7.1.2, V11.1.1, V11.1.2, V14.1.1, V14.1.2, V15.1.1, V15.1.3, V16.1.1 |
 | T1164-i | V16.2.1, V16.3.1, V16.3.2, V16.3.3, V16.4.3 |
 | T1164-j | V6.5.5, V7.1.1, V7.3.1, V7.3.2, V7.5.2, V10.4.8 |
 | T1164-l | V5.4.3 |
 | T1164-m | V1.3.6, V13.2.4, V13.2.5, V15.3.2 |
 | T1164-n | V4.3.1, V4.3.2 |
+
+Row T1164-h (the documents ASVS L2 expects) was closed by T1211 on 2026-11-07: `crypto-inventory.md`, `session-policy.md`, `data-classification.md`, `dependency-remediation.md`, `resource-heavy-features.md` and `log-inventory.md`. Seven of its nine requirements are now Met because the requirement is the document; V7.1.1 stays a Gap under T1164-j and V11.1.1 under T1059-c.
 
 Re-walk this list when a chapter's code changes (new auth path, new upload type, new function), and in full before ROADMAP C11 (the external check). The auth tests behind many rows run in `npm test` (`continent-app/tests/edgeAuth.test.mjs`, `pagesAuth.test.mjs`); the header rows are checked by the ZAP baseline (`.github/workflows/zap.yml`).
 
@@ -206,8 +207,8 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 
 | ID | L | Requirement | Status | Evidence |
 |---|---|---|---|---|
-| V7.1.1 | 2 | The user's session inactivity timeout and absolute maximum session lifetime are documented, are appropriate in combination with other controls, and that the... | Gap (T1164-h, T1164-j) | Session lifetimes (JWT 3600 s, refresh rotation) are config, not a written decision with an inactivity and an absolute limit. |
-| V7.1.2 | 2 | The documentation defines how many concurrent (parallel) sessions are allowed for one account as well as the intended behaviors and actions to be taken when... | Gap (T1164-h) | Concurrent sessions are unlimited and undocumented. |
+| V7.1.1 | 2 | The user's session inactivity timeout and absolute maximum session lifetime are documented, are appropriate in combination with other controls, and that the... | Gap (T1164-j) | Documented in `session-policy.md` (T1211): access token 3600 s, refresh token rotation, and no inactivity or absolute limit today. Setting the two limits is a Dashboard decision (T1164-j). |
+| V7.1.2 | 2 | The documentation defines how many concurrent (parallel) sessions are allowed for one account as well as the intended behaviors and actions to be taken when... | Met | `session-policy.md` section 3 (T1211): any number of devices by design; sign out of other devices and sign out everywhere (`AuthContext.jsx`); what a revoked session keeps (the access token to its expiry). |
 | V7.1.3 | 2 | All systems that create and manage user sessions as part of a federated identity management ecosystem (such as SSO systems) are documented along with control... | Met | Google federation through Supabase Auth is documented in the threat model section 4. |
 | V7.2.1 | 1 | The application performs all session token verification using a trusted, backend service. | Met | Tokens are verified by Supabase Auth and PostgREST; Edge Functions call `auth.getUser()` (`edgeAuth.test.mjs`). |
 | V7.2.2 | 1 | The application uses either self-contained or reference tokens that are dynamically generated for session management, i.e. | Met | Signed short-lived JWT plus rotating refresh token. |
@@ -287,8 +288,8 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 
 | ID | L | Requirement | Status | Evidence |
 |---|---|---|---|---|
-| V11.1.1 | 2 | There is a documented policy for management of cryptographic keys and a cryptographic key lifecycle that follows a key management standard such as NIST SP 80... | Gap (T1164-h, T1059-c) | Secrets are listed (`docs/security/SECRETS.md`) but there is no key lifecycle policy. |
-| V11.1.2 | 2 | A cryptographic inventory is performed, maintained, regularly updated, and includes all cryptographic keys, algorithms, and certificates used by the applicat... | Gap (T1164-h) | No cryptographic inventory (algorithms, keys, where each is used). |
+| V11.1.1 | 2 | There is a documented policy for management of cryptographic keys and a cryptographic key lifecycle that follows a key management standard such as NIST SP 80... | Gap (T1059-c) | Key lifecycle policy written in `crypto-inventory.md` section 2 (T1211, NIST SP 800-57 states, per-key rotation and compromise steps). The critical keys are still to be rolled (T1059-c). |
+| V11.1.2 | 2 | A cryptographic inventory is performed, maintained, regularly updated, and includes all cryptographic keys, algorithms, and certificates used by the applicat... | Met | `crypto-inventory.md` (T1211): every algorithm, key and certificate with the code that uses it; re-walk rule in section 4. |
 | V11.2.1 | 2 | Industry-validated implementations (including libraries and hardware-accelerated implementations) are used for cryptographic operations. | Met | WebCrypto, node:crypto, Stripe and Supabase libraries, gpg; no home-made crypto. |
 | V11.2.2 | 2 | The application is designed with crypto agility such that random number, authenticated encryption, MAC, or hashing algorithms, key lengths, rounds, ciphers a... | Met | Algorithms are named in one place each (`hmac` helpers, gpg flags) and can be swapped. |
 | V11.2.3 | 2 | All cryptographic primitives utilize a minimum of 128-bits of security based on the algorithm, key size, and configuration. | Met | HMAC-SHA256, AES256 (gpg), TLS from the platforms. |
@@ -338,8 +339,8 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 
 | ID | L | Requirement | Status | Evidence |
 |---|---|---|---|---|
-| V14.1.1 | 2 | All sensitive data created and processed by the application has been identified and classified into protection levels. | Gap (T1164-h) | Data is listed in `docs/legal/ARTICLE30.md` but not classified into protection levels. |
-| V14.1.2 | 2 | All sensitive data protection levels have a documented set of protection requirements. | Gap (T1164-h) | As V14.1.1. |
+| V14.1.1 | 2 | All sensitive data created and processed by the application has been identified and classified into protection levels. | Met | `data-classification.md` (T1211): four protection levels, every kind of data placed, built on `docs/legal/ARTICLE30.md`. |
+| V14.1.2 | 2 | All sensitive data protection levels have a documented set of protection requirements. | Met | `data-classification.md` section 3 (T1211): storage, access, transit, at rest, logs, caching, third parties, retention, deletion and export per level. |
 | V14.2.1 | 1 | Sensitive data is only sent to the server in the HTTP message body or header fields, and that the URL and query string do not contain sensitive information,... | Met | Tokens and personal data travel in headers and bodies; the unsubscribe link carries an HMAC, not a secret of the user. |
 | V14.2.2 | 2 | The application prevents sensitive data from being cached in server components, such as load balancers and application caches, or ensures that the data is se... | Met | Personal answers come from POST Edge Functions (not stored by shared caches) and the notify and waitlist pages and `fail` answers say `no-store`; public data is cached on purpose. |
 | V14.2.3 | 2 | Defined sensitive data is not sent to untrusted parties (e.g., user trackers) to prevent unwanted collection of data outside of the application's control. | Met | No third-party trackers; error reports are scrubbed and off until a DSN is set (`errorReporter.js`, T1120). |
@@ -352,9 +353,9 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 
 | ID | L | Requirement | Status | Evidence |
 |---|---|---|---|---|
-| V15.1.1 | 1 | Application documentation defines risk based remediation time frames for 3rd party component versions with vulnerabilities and for updating libraries in gene... | Gap (T1164-h) | Dependabot and audits run (T1080), but remediation time frames are not written down. |
+| V15.1.1 | 1 | Application documentation defines risk based remediation time frames for 3rd party component versions with vulnerabilities and for updating libraries in gene... | Met | `dependency-remediation.md` (T1211): windows by severity (critical 7 days, high 30, moderate 90, low next update), tied to Dependabot and `supply-chain.yml`. Edge Function imports have no advisory feed yet (its section 3). |
 | V15.1.2 | 2 | An inventory catalog, such as software bill of materials (SBOM), is maintained of all third-party libraries in use, including verifying that components come... | Met | CycloneDX SBOMs from `supply-chain.yml` (T1080). |
-| V15.1.3 | 2 | The application documentation identifies functionality which is time-consuming or resource-demanding. | Gap (T1164-h) | Resource-heavy features (AI, flight search) are guarded, but not listed in one document. |
+| V15.1.3 | 2 | The application documentation identifies functionality which is time-consuming or resource-demanding. | Met | `resource-heavy-features.md` (T1211): every AI, search, mail and scheduled job with its rate limit, cap or timeout. |
 | V15.2.1 | 1 | The application only contains components which have not breached the documented update and remediation time frames. | Gap (T1080-b, T1080-d) | Known findings still open past any time frame. |
 | V15.2.2 | 2 | The application has implemented defenses against loss of availability due to functionality which is time-consuming or resource-demanding, based on the docume... | Met | AI caps and quotas, per-address limits, upstream timeouts, edge cache on flights and forecast. |
 | V15.2.3 | 2 | The production environment only includes functionality that is required for the application to function, and does not expose extraneous functionality such as... | Met | Test seams off in production (`VITE_E2E_SEAMS=`), no dev servers deployed. |
@@ -370,7 +371,7 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 
 | ID | L | Requirement | Status | Evidence |
 |---|---|---|---|---|
-| V16.1.1 | 2 | An inventory exists documenting the logging performed at each layer of the application's technology stack, what events are being logged, log formats, where t... | Gap (T1164-h) | No log inventory (what each layer logs, where, for how long). |
+| V16.1.1 | 2 | An inventory exists documenting the logging performed at each layer of the application's technology stack, what events are being logged, log formats, where t... | Met | `log-inventory.md` (T1211): what each layer logs, format, where and how long. Platform retentions (Cloudflare, Supabase, GitHub) are not read from the Dashboards yet (T1164-i). |
 | V16.2.1 | 2 | Each log entry includes necessary metadata (such as when, where, who, what) that would allow for a detailed investigation of the timeline when an event happens. | Gap (T1164-i) | Supabase and Cloudflare logs carry when and where; Carta adds no security event log of its own. |
 | V16.2.2 | 2 | Time sources for all logging components are synchronized, and that timestamps in security event metadata use UTC or include an explicit time zone offset. | Met | Platform logs in UTC; database timestamps are `timestamptz`. |
 | V16.2.3 | 2 | The application only stores or broadcasts logs to the files and services that are documented in the log inventory. | Met | Logs go only to the documented platforms and the error tracker (T1120). |
