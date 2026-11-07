@@ -2813,6 +2813,21 @@ TASKS = [
                  "content/blog/README.md, HANDBOOK 'Data blog'."),
     },
     {
+        "key": "blog_pr",
+        "title": "Data blog: this month's drafts on a branch for a pull request (K14, T1174)",
+        "cadence": "after",
+        "after": ["blog_drafts"],
+        "writes_app_data": False,
+        "soft": True,
+        "rev": "T1174",
+        "cmds": [[PY, "scripts/blog/monthly_pr.py"]],
+        "note": ("scripts/blog/monthly_pr.py checks the drafts blog_drafts wrote, commits "
+                 "content/blog/ to a branch blog-drafts-YYYY-MM and pushes it, then returns "
+                 "the checkout to where it was. A dry run unless CARTA_BLOG_PR=1 is set in "
+                 "the box secrets file (the owner's switch, T1174-b). Never publishes, never "
+                 "pushes main. Docs: content/blog/README.md."),
+    },
+    {
         "key": "photo_sources",
         # T269-b. Last in the table on purpose: it reads the wires the layer
         # exports above have just written, so it must follow every one of them.

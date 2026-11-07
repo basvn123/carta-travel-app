@@ -2115,3 +2115,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1178-c | T1178 | Other post types (cheapest week, what changed, new on Carta, seasonal rankings, how we measure) and the Dutch blog (I8) are not built; part 2 | next task | open |  |
 | T1178-d | T1178 | The pipeline task needs a current app_data.json on the box and a scheduled pull request routine (K14 step 3); not set up | user | open |  |
 | T1178-e | T1178 | Owner approval of the sample December 2026 draft, then set status published; wire vintage is 2026-06-07 so a fresh wire should be used first | user | open |  |
+| T1174-a | T1174 | The cheapest-week type needs a fares file from the flight sweep export (`content/blog/data/inputs/fares-<airport>-<window>.json`, format in content/blog/README.md); no exporter exists yet, so the type is tested on fixtures only | next task | open |  |
+| T1174-b | T1174 | The monthly `blog_pr` routine is a dry run until the owner sets `CARTA_BLOG_PR=1` on the box and the box has a git push credential for `blog-drafts-*` branches; see the owner steps in the report | user | open |  |
+| T1174-c | T1174 | What changed and New on Carta have no real draft: only one snapshot (wire 2026-06-07) exists, committed in this task; the first real posts come from the next monthly run on a newer wire | next task | open |  |
+| T1174-d | T1174 | Seasonal rankings, how we measure and the Dutch blog (I8) from the K14 list are still not built (T1178-c stays open for them) | next task | open |  |

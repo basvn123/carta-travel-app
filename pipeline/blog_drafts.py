@@ -31,6 +31,10 @@ registry id `blog-intro`, Gemini by default, never the Claude API) and must
 pass `guard_prose`: only numbers present in the draft's data, no banned words,
 no dashes, 400 characters at most. On any refusal the template sentence stays.
 
+Part 2 (T1174): `pipeline/blog_drafts_more.py` adds what-changed, new-on-carta and
+cheapest-week (needs `--fares`), and writes a price snapshot each run so the next
+month can compare. `--types` picks a subset; the default is all four.
+
 Usage, from the repo root:
     python pipeline/blog_drafts.py                     # next month, written to content/blog
     python pipeline/blog_drafts.py --month 12 --year 2026
@@ -320,22 +324,42 @@ def main(argv=None):
     ap.add_argument("--out-dir", default=OUT_DIR)
     ap.add_argument("--prose", action="store_true", help="opening paragraph through the gateway (blog-intro prompt)")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--types", default="all",
+                    help="comma list of where-to-go, what-changed, new-on-carta, cheapest-week; default all")
+    ap.add_argument("--fares", action="append", default=[],
+                    help="fares file for a cheapest-week post (repeatable; see pipeline/blog_drafts_more.py)")
     args = ap.parse_args(argv)
     if not 1 <= args.month <= 12:
         raise SystemExit("blog_drafts: --month must be 1 to 12")
     with open(args.wire, encoding="utf-8") as fh:
         wire = json.load(fh)
-    slug, _, data = write_draft(wire, args.month, args.year, args.out_dir, args.prose,
-                                dry_run=args.dry_run)
-    print(f"blog_drafts: {slug}: {data['counts']['listed']} places of {data['counts']['rated']} that pass "
-          f"({'dry run' if args.dry_run else 'written to ' + args.out_dir})")
+    import blog_drafts_more as more
+    types = more.TYPES if args.types == "all" else tuple(t.strip() for t in args.types.split(",") if t.strip())
+    bad = [t for t in types if t not in more.TYPES]
+    if bad:
+        raise SystemExit(f"blog_drafts: unknown type {', '.join(bad)}; choose from {', '.join(more.TYPES)}")
+    slugs = []
+    if "where-to-go" in types:
+        slug, _, data = write_draft(wire, args.month, args.year, args.out_dir, args.prose, dry_run=args.dry_run)
+        slugs.append(slug)
+        print(f"blog_drafts: {slug}: {data['counts']['listed']} places of {data['counts']['rated']} that pass "
+              f"({'dry run' if args.dry_run else 'written to ' + args.out_dir})")
+    extra, notes = more.run(wire, args.month, args.year, args.out_dir, types, args.fares, dry_run=args.dry_run)
+    slugs += extra
+    for s_ in extra:
+        print(f"blog_drafts: {s_} ({'dry run' if args.dry_run else 'written to ' + args.out_dir})")
+    for n in notes:
+        print(f"blog_drafts: {n}")
     if args.dry_run:
         return 0
     import check_draft
-    problems = check_draft.check_file(os.path.join(args.out_dir, f"{slug}.md"), wire_path=args.wire)
-    for p in problems:
-        print(f"blog_drafts: CHECK FAILED: {p}")
-    return 1 if problems else 0
+    failed = 0
+    for s_ in slugs:
+        problems = check_draft.check_file(os.path.join(args.out_dir, f"{s_}.md"), wire_path=args.wire)
+        for p in problems:
+            print(f"blog_drafts: CHECK FAILED: {s_}: {p}")
+        failed += bool(problems)
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

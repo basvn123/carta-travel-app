@@ -8,7 +8,10 @@ A post under content/blog/<slug>.md is refused when any of these hold:
               the data file it cites, a table cell differs from its row in that
               file, or the file's hash is not the one in `snapshot_sha256`
   snapshot    `snapshot` is not the data file's `source.generated_at`; with
-              `--wire`, the wire is another snapshot or a row differs from it
+              `--wire`, the wire is another snapshot or a row differs from it;
+              a post that compares (what changed, new on Carta) or cites a fares
+              file also needs that earlier snapshot or file, unchanged, and its
+              rows must follow from it (T1174)
   copy        an em or en dash, a middot separator, an exclamation mark, a
               banned word (PRODUCT.md), or a superlative or hype word
   images      an image in the text that is not in the data file's `images`, or
@@ -51,6 +54,15 @@ HYPE = re.compile(
 SEASON_TERM = re.compile(r"\bbest months?\b", re.I)  # Carta's own term (climate.best)
 DASH = re.compile("[\u2013\u2014]")
 MIDDOT = re.compile(r"\s[·•]\s")
+# Table headers the check compares with the data file's rows, per post type.
+COLUMNS = {
+    "where-to-go": {"High C": "high_c", "Rain mm": "rain_mm", "Day EUR": "day_eur", "Rating": "rating"},
+    "what-changed": {"Before EUR": "bed_before", "Now EUR": "bed_now", "Change pct": "change_pct",
+                     "Direction": "direction"},
+    "new-on-carta": {"Rating": "rating", "Day EUR": "day_eur"},
+    "cheapest-week": {"Week from": "week_from", "Fare EUR": "fare_eur", "Median week EUR": "median_week_eur",
+                      "Saving EUR": "saving_eur"},
+}
 STOP = set("a an and are at best by for from how in is it of on or the to what when where which with".split())
 
 
@@ -180,7 +192,12 @@ def check_images(data, body, blog_dir, fm):
     return out
 
 
-def check_wire(data, wire_path):
+def _cell(v):
+    return ("%g" % v) if isinstance(v, float) else str(v)
+
+
+def check_wire(data, wire_path, blog_dir=None):
+    """Rows against the wire (and, per type, the snapshot or fares file the post cites)."""
     out = []
     with open(wire_path, encoding="utf-8") as fh:
         wire = json.load(fh)
@@ -188,15 +205,75 @@ def check_wire(data, wire_path):
         return [f"snapshot: the wire is {wire['meta']['generated_at']}, the draft cites {data['source']['generated_at']}; regenerate"]
     sys.path.insert(0, os.path.join(ROOT, "pipeline"))
     import blog_drafts  # noqa: PLC0415
+    typ = data.get("type", "where-to-go")
     for r in data["rows"]:
         d = wire["destinations"].get(r["id"])
-        w = blog_drafts.month_row(r["id"], d, data["month"]) if d else None
-        if not w:
+        if typ == "where-to-go":
+            w = blog_drafts.month_row(r["id"], d, data["month"]) if d else None
+            keys = ("high_c", "low_c", "rain_mm", "comfort", "crowd_tier", "day_eur", "rating")
+        elif typ == "what-changed":
+            beds = ((d or {}).get("accommodation") or {}).get("beds") or {}
+            w = {"bed_now": int(round(beds["hotel3"]))} if isinstance(beds.get("hotel3"), (int, float)) else None
+            keys = ("bed_now",)
+        elif typ == "new-on-carta":
+            sc = ((d or {}).get("rating") or {}).get("score")
+            day = blog_drafts.day_eur(d) if d else None
+            w = {"rating": round(float(sc), 1), "day_eur": day} if sc is not None and day is not None else None
+            keys = ("rating", "day_eur")
+        else:
+            w = {} if d else None
+            keys = ()
+        if w is None:
             out.append(f"numbers: {r['id']} has no figures in the wire")
             continue
-        for k in ("high_c", "low_c", "rain_mm", "comfort", "crowd_tier", "day_eur", "rating"):
+        for k in keys:
             if w[k] != r[k]:
                 out.append(f"numbers: {r['id']} {k} is {r[k]} in the draft and {w[k]} in the wire")
+    out += check_inputs(data, blog_dir or BLOG)
+    return out
+
+
+def check_inputs(data, blog_dir):
+    """The earlier snapshot or the fares file a post cites must be on disk, unchanged, and agree with its rows."""
+    out = []
+    typ = data.get("type")
+    if typ in ("what-changed", "new-on-carta"):
+        ref = data.get("source_prev") or {}
+        p = os.path.join(blog_dir, ref.get("file", ""))
+        try:
+            prev = json.load(open(p, encoding="utf-8"))
+        except (OSError, ValueError):
+            return [f"snapshot: earlier snapshot {ref.get('file')} is missing or unreadable"]
+        if snapshot_hash(prev["places"]) != ref.get("sha256") or prev.get("generated_at") != ref.get("generated_at"):
+            out.append("snapshot: the earlier snapshot does not match the one the post cites")
+        if typ == "what-changed":
+            for r in data["rows"]:
+                b = (prev["places"].get(r["id"]) or {}).get("bed")
+                if b is None or int(round(b)) != r["bed_before"]:
+                    out.append(f"numbers: {r['id']} bed_before is {r['bed_before']} in the draft and {b} in the earlier snapshot")
+                elif r["bed_before"] and abs(round((r["bed_now"] - b) / b * 100, 1) - r["change_pct"]) > 0.05:
+                    out.append(f"numbers: {r['id']} change_pct does not follow from its two prices")
+        else:
+            for r in data["rows"]:
+                if r["id"] in prev["places"]:
+                    out.append(f"numbers: {r['id']} is in the earlier snapshot, so it is not new")
+    elif typ == "cheapest-week":
+        ref = data.get("source_fares") or {}
+        p = os.path.join(blog_dir, ref.get("file", ""))
+        try:
+            raw = open(p, "rb").read()
+        except OSError:
+            return [f"snapshot: fares file {ref.get('file')} is missing"]
+        if hashlib.sha256(raw).hexdigest() != ref.get("sha256"):
+            out.append("snapshot: the fares file does not match the hash the post cites")
+        else:
+            by = {}
+            for f in json.loads(raw)["fares"]:
+                by.setdefault(f["dest"], []).append(f)
+            for r in data["rows"]:
+                lows = [f["price_eur"] for f in by.get(r["id"], [])]
+                if not lows or int(round(min(lows))) != r["fare_eur"]:
+                    out.append(f"numbers: {r['id']} fare_eur is {r['fare_eur']} in the draft and {min(lows) if lows else None} in the fares file")
     return out
 
 
@@ -232,14 +309,14 @@ def check_file(path, wire_path=None, blog_dir=None):
     elif len(cells) != len(rows):
         out.append(f"numbers: the table has {len(cells)} rows and the data {len(rows)}")
     else:
-        cols = {"High C": "high_c", "Rain mm": "rain_mm", "Day EUR": "day_eur", "Rating": "rating"}
+        cols = COLUMNS.get(data.get("type"), COLUMNS["where-to-go"])
         for r, row in zip(rows, cells):
             if row[0] != r["place"]:
                 out.append(f"numbers: table row '{row[0]}' is '{r['place']}' in the data")
             for h, key in cols.items():
                 if h in header:
                     cell = row[header.index(h)]
-                    if cell != str(r[key]):
+                    if cell not in (str(r[key]), _cell(r[key])):
                         out.append(f"numbers: {r['place']} {h} is {cell} in the table and {r[key]} in the data")
     allowed = allowed_numbers(data)
     prose = [("title", fm["title"]), ("description", fm["description"])]
@@ -250,7 +327,9 @@ def check_file(path, wire_path=None, blog_dir=None):
             if n not in allowed and not is_year(n):
                 out.append(f"numbers: {label}: {n} is not in the data file")
     if wire_path:
-        out += check_wire(data, wire_path)
+        out += check_wire(data, wire_path, blog_dir)
+    else:
+        out += check_inputs(data, blog_dir)
 
     # copy rules over everything a reader sees
     out += copy_problems("copy", "\n".join([fm["title"], fm["description"], fm["question"], body]))
