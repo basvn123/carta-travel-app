@@ -1002,6 +1002,122 @@
      }
     }
    ]
+  },
+  {
+   "layer": "trips",
+   "latest": "2026-11-07",
+   "generated_at": "2026-11-07T12:00:00Z",
+   "reference_n": 1806,
+   "sample": {
+    "sampled": false,
+    "share": 1.0,
+    "min_per_country": 5,
+    "salt": "d23",
+    "n": 1806,
+    "population": 1806,
+    "countries": 42
+   },
+   "baseline_at": "2026-11-07",
+   "gate": {
+    "ok": true,
+    "failures": [],
+    "warnings": [],
+    "checks": [
+     {
+      "metric": "fact.within",
+      "kind": "hard",
+      "now": 0.5088,
+      "baseline": 0.5088,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "fact.mode_ok",
+      "kind": "hard",
+      "now": 0.7037,
+      "baseline": 0.7037,
+      "tolerance_points": 3,
+      "status": "pass"
+     },
+     {
+      "metric": "coverage",
+      "kind": "soft",
+      "now": 0.0449,
+      "baseline": 0.0449,
+      "tolerance_points": 5,
+      "status": "pass"
+     },
+     {
+      "metric": "error_mdape",
+      "kind": "soft",
+      "now": 0.2571,
+      "baseline": 0.2571,
+      "tolerance_points": 5,
+      "status": "pass"
+     }
+    ]
+   },
+   "metrics": {
+    "coverage": {
+     "value": 0.0449,
+     "k": 81,
+     "n": 1806,
+     "low": 0.0362,
+     "high": 0.0554
+    },
+    "fact.mode_ok": {
+     "value": 0.7037,
+     "k": 57,
+     "n": 81,
+     "low": 0.5969,
+     "high": 0.7921
+    },
+    "fact.within": {
+     "value": 0.5088,
+     "k": 29,
+     "n": 57,
+     "low": 0.3826,
+     "high": 0.6338
+    },
+    "fact_share": {
+     "value": 0.6232,
+     "k": 86,
+     "n": 138,
+     "low": 0.54,
+     "high": 0.6997
+    },
+    "agreement_tau": {
+     "value": 0.5573,
+     "n": 57
+    },
+    "agreement_rho": {
+     "value": 0.7527,
+     "n": 57
+    },
+    "error_mae": {
+     "value": 32.246,
+     "n": 57
+    },
+    "error_mdape": {
+     "value": 0.2571,
+     "n": 57
+    }
+   },
+   "gaps": 30,
+   "trend": [
+    {
+     "date": "2026-11-07",
+     "gate_ok": true,
+     "metrics": {
+      "agreement_tau": 0.5573,
+      "coverage": 0.0449,
+      "error_mdape": 0.2571,
+      "fact.mode_ok": 0.7037,
+      "fact.within": 0.5088,
+      "fact_share": 0.6232
+     }
+    }
+   ]
   }
  ],
  "ok": true

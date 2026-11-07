@@ -1,0 +1,82 @@
+id,from,to,mode,ref_minutes,changes,direct_departures,status,source,feed,service_date,read_on,note
+AES>BGO>train,AES,BGO,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Alesund has no railway station
+AMS>gem:antwerp>train,AMS,gem:antwerp,train,72,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Eurostar (ex Thalys)
+ATH>gem:nafplio>train,ATH,gem:nafplio,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Nafplio has no passenger trains
+BCN>GRO>train,BCN,GRO,train,38,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,AVE
+BCN>gem:tarragona>train,BCN,gem:tarragona,train,65,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Rodalies/Euromed to Tarragona town station
+BER>DRS>train,BER,DRS,train,105,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,EC/IC
+BGO>SVG>train,BGO,SVG,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,no railway between Bergen and Stavanger (coach and ferry)
+BRN>gem:lucerne>train,BRN,gem:lucerne,train,60,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,SBB IR
+BRQ>PRG>train,BRQ,PRG,train,150,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,CD EC/RJ
+BRQ>VIE>train,BRQ,VIE,train,88,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,RJ/EC
+BUD>VIE>train,BUD,VIE,train,158,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,OeBB/MAV Railjet
+CDG>gem:chartres>train,CDG,gem:chartres,train,62,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,TER
+CDG>gem:lille>train,CDG,gem:lille,train,62,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,TGV
+CPH>BER>train,CPH,BER,train,410,1,,ok,seed,"operator timetable, read by hand",,2026-11-07,via Fredericia and Hamburg
+CPH>gem:lubeck>train,CPH,gem:lubeck,train,285,1,,ok,seed,"operator timetable, read by hand",,2026-11-07,via Fredericia and Hamburg since the Puttgarden rail ferry ended (2019)
+CPH>gem:odense>train,CPH,gem:odense,train,75,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,DSB IC
+DBV>SPU>train,DBV,SPU,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Dubrovnik has no railway
+DRS>PRG>train,DRS,PRG,train,135,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,EC
+FLR>FCO>train,FLR,FCO,train,92,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Frecciarossa
+GOT>CPH>train,GOT,CPH,train,220,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,SJ/Oresundstag
+GRO>BCN>train,GRO,BCN,train,38,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,AVE
+GRZ>VIE>train,GRZ,VIE,train,155,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,OeBB Railjet
+HAM>gem:lubeck>train,HAM,gem:lubeck,train,45,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,RE
+HEL>TMP>train,HEL,TMP,train,90,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,VR IC
+KUN>VNO>train,KUN,VNO,train,65,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,LTG Link
+LYS>gem:annecy>train,LYS,gem:annecy,train,120,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,TER
+MUC>SZG>train,MUC,SZG,train,89,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,OeBB Railjet
+NAP>FCO>train,NAP,FCO,train,70,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Frecciarossa
+OPO>gem:coimbra>train,OPO,gem:coimbra,train,60,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,CP Alfa Pendular
+PRG>gem:cesky-krumlov>train,PRG,gem:cesky-krumlov,train,170,1,,ok,seed,"operator timetable, read by hand",,2026-11-07,CD via Ceske Budejovice
+SPU>ZAD>train,SPU,ZAD,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,no railway between Split and Zadar
+STN>gem:cambridge>train,STN,gem:cambridge,train,49,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,GN fast
+STN>gem:oxford>train,STN,gem:oxford,train,57,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,GWR
+SVG>gem:kristiansand>train,SVG,gem:kristiansand,train,185,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Go-Ahead Sorlandsbanen
+SZG>INN>train,SZG,INN,train,108,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,OeBB Railjet via Germany
+SZG>VIE>train,SZG,VIE,train,142,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,OeBB Railjet Xpress
+TLL>gem:tartu>train,TLL,gem:tartu,train,120,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Elron express
+TMP>TKU>train,TMP,TKU,train,105,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,VR IC
+VCE>VRN>train,VCE,VRN,train,70,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Frecciarossa Venezia SL to Verona PN
+VIE>GRZ>train,VIE,GRZ,train,155,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,OeBB Railjet over the Semmering (base tunnel not open)
+VIE>SZG>train,VIE,SZG,train,142,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,OeBB Railjet Xpress
+VRN>VCE>train,VRN,VCE,train,70,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Frecciarossa
+WRO>KRK>train,WRO,KRK,train,185,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,PKP IC
+ZAD>LJU>train,ZAD,LJU,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Zadar has no passenger trains
+gem:aarhus>gem:odense>train,gem:aarhus,gem:odense,train,95,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,DSB IC
+gem:annecy>gem:chamonix>train,gem:annecy,gem:chamonix,train,115,1,,ok,seed,"operator timetable, read by hand",,2026-11-07,TER via La Roche-sur-Foron and Saint-Gervais
+gem:antwerp>AMS>train,gem:antwerp,AMS,train,72,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Eurostar (ex Thalys)
+gem:antwerp>gem:bruges>train,gem:antwerp,gem:bruges,train,80,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,SNCB IC
+gem:brighton>STN>train,gem:brighton,STN,train,52,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,fast to Victoria
+gem:bru-na-boinne>gem:giants-causeway>train,gem:bru-na-boinne,gem:giants-causeway,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,no railway at Newgrange
+gem:bruges>BRU>train,gem:bruges,BRU,train,58,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,SNCB IC
+gem:bruges>gem:antwerp>train,gem:bruges,gem:antwerp,train,80,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,SNCB IC
+gem:coimbra>LIS>train,gem:coimbra,LIS,train,100,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,CP Alfa Pendular
+gem:dolomites>VCE>train,gem:dolomites,VCE,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,no railway in the Dolomites place
+gem:evora>LIS>train,gem:evora,LIS,train,90,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,CP IC
+gem:granada>SVQ>train,gem:granada,SVQ,train,150,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Renfe
+gem:grossglockner-road>VCE>train,gem:grossglockner-road,VCE,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,"a mountain road, no station"
+gem:hallstatt>gem:dolomites>train,gem:hallstatt,gem:dolomites,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,no railway in the Dolomites place
+gem:helsingor>gem:mons-klint>train,gem:helsingor,gem:mons-klint,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Mons Klint has no railway
+gem:keukenhof>gem:bruges>train,gem:keukenhof,gem:bruges,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Keukenhof has no station (bus from Leiden)
+gem:kuldiga>gem:liepaja>train,gem:kuldiga,gem:liepaja,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Kuldiga has no passenger railway
+gem:lahemaa>gem:narva>train,gem:lahemaa,gem:narva,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,no railway in Lahemaa
+gem:liepaja>gem:curonian-spit>train,gem:liepaja,gem:curonian-spit,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,no railway on the Curonian Spit
+gem:lille>gem:bruges>train,gem:lille,gem:bruges,train,95,1,,ok,seed,"operator timetable, read by hand",,2026-11-07,SNCF/SNCB via Kortrijk
+gem:lubeck>HAM>train,gem:lubeck,HAM,train,45,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,RE
+gem:lucerne>BRN>train,gem:lucerne,BRN,train,60,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,SBB IR
+gem:lucerne>gem:lugano>train,gem:lucerne,gem:lugano,train,112,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,SBB via the Gotthard base tunnel
+gem:mons-klint>gem:lubeck>train,gem:mons-klint,gem:lubeck,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Mons Klint has no railway
+gem:morskie-oko>gem:banska-stiavnica>train,gem:morskie-oko,gem:banska-stiavnica,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,no railway at Morskie Oko
+gem:neuschwanstein>gem:dolomites>train,gem:neuschwanstein,gem:dolomites,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,no railway at either end
+gem:odense>CPH>train,gem:odense,CPH,train,75,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,DSB IC
+gem:piran>VCE>train,gem:piran,VCE,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Piran has no railway
+gem:reims>CDG>train,gem:reims,CDG,train,46,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,TGV
+gem:riquewihr>gem:strasbourg>train,gem:riquewihr,gem:strasbourg,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Riquewihr has no station
+gem:rock-of-cashel>gem:killarney>train,gem:rock-of-cashel,gem:killarney,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Cashel has no station
+gem:rotterdam>AMS>train,gem:rotterdam,AMS,train,40,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,NS Intercity direct
+gem:rundale>RIX>train,gem:rundale,RIX,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,no station at Rundale
+gem:toledo>MAD>train,gem:toledo,MAD,train,33,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,Avant
+gem:veliko-tarnovo>gem:nesebar>train,gem:veliko-tarnovo,gem:nesebar,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,Nesebar has no railway
+gem:viana-do-castelo>OPO>train,gem:viana-do-castelo,OPO,train,90,0,,ok,seed,"operator timetable, read by hand",,2026-11-07,CP regional
+gem:vianden>gem:riquewihr>train,gem:vianden,gem:riquewihr,train,,,,no_station,seed,"operator timetable, read by hand",,2026-11-07,neither end has a station

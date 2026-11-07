@@ -1,0 +1,41 @@
+{
+ "layer": "trips",
+ "date": "2026-11-07",
+ "reference": {
+  "legs": "/home/user/carta-travel-app/data/reports/validation/trips/legs.csv",
+  "times": "/home/user/carta-travel-app/data/reports/validation/trips/timetable_reference.csv",
+  "sources": {
+   "seed": 81
+  },
+  "tolerance": {
+   "pass": [
+    20,
+    0.2
+   ],
+   "warn": [
+    45,
+    0.35
+   ]
+  },
+  "n": 1806
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 5,
+  "salt": "d23",
+  "n": 1806,
+  "population": 1806,
+  "countries": 42
+ },
+ "metrics": {
+  "coverage": 0.0449,
+  "fact.mode_ok": 0.7037,
+  "fact.within": 0.5088,
+  "fact_share": 0.6232,
+  "agreement_tau": 0.5573,
+  "agreement_rho": 0.7527,
+  "error_mae": 32.246,
+  "error_mdape": 0.2571
+ }
+}
