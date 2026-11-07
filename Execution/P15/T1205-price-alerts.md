@@ -23,7 +23,7 @@ A research subagent compared the options (2026-11-07):
 ## Files touched
 
 - Created: `supabase/migrations/073_price_alerts.sql`, `supabase/migrations/073_price_alerts_down.sql`, `supabase/functions/price-alerts/index.ts`, `supabase/functions/price-alerts/logic.mjs`, `supabase/functions/price-alerts/README.md`, `pipeline/price_alerts.py`, `tests/test_price_alerts.py`, `continent-app/src/lib/priceAlerts.js`, `continent-app/src/components/PriceAlertControl.jsx`, `continent-app/src/styles/97-price-alert.css`, `continent-app/tests/priceAlerts.test.mjs`, this report.
-- Modified: `run_pipeline.py` (task `price_alerts`, before `photo_sources`), `continent-app/src/browse/DestPriceCard.jsx` (mounts the control), `continent-app/src/i18n/{en,nl,fr,de,es,it}.js` (15 `alerts.*` keys each), `continent-app/scripts/admin/test_rls_policies.mjs` (two fixtures and a 073 section), `docs/legal/ARTICLE30.md` (row 25), `docs/HANDBOOK.md` ("Price alerts (double opt-in)"), `ROADMAP.md` (I17 status), `Execution/_OPEN.md` (rows T1205-a to T1205-g), generated `docs/reference/{app-lib,python,supabase,tasks}.md` and `docs/architecture/lineage.md`.
+- Modified: `run_pipeline.py` (task `price_alerts`, before `photo_sources`), `continent-app/src/browse/DestPriceCard.jsx` (mounts the control), `continent-app/src/i18n/{en,nl,fr,de,es,it}.js` (15 `alerts.*` keys each), `continent-app/scripts/admin/test_rls_policies.mjs` (two fixtures and a 073 section), `docs/legal/ARTICLE30.md` (row 25, and two lines in its retention table), `docs/HANDBOOK.md` ("Price alerts (double opt-in)"), `ROADMAP.md` (I17 status), `Execution/_OPEN.md` (rows T1205-a to T1205-g), generated `docs/reference/{app-lib,python,supabase,tasks}.md` and `docs/architecture/lineage.md`.
 
 ## Commands run
 
@@ -49,7 +49,7 @@ None set. New, all owner steps: Edge Function secrets `PRICE_ALERTS_FROM`, `PRIC
 | What | Before | After |
 |---|---|---|
 | RLS harness assertions (`test_rls_policies.mjs`) | 856 | 937 (81 new, all green) |
-| Database harnesses green | 16 of 17 (`test_edge_errors` failed: `continent-app/node_modules` not installed in the container) | see "Checks at the end" below |
+| Database harnesses green | 16 of 17 (`test_edge_errors` failed: `continent-app/node_modules` not installed in the container) | 17 of 17 (after `npm ci`, and the two 073 tables added to the Article 30 retention table, which `test_privacy_gdpr` requires) |
 | App tests passing (`npm test`) | 1901 | 1912 (11 new), 0 failing, 12 skipped |
 | Python tests for this task | 0 | 16 |
 | Pipeline tasks in `run_pipeline.py` | 88 | 89 |
@@ -67,6 +67,7 @@ None set. New, all owner steps: Edge Function secrets `PRICE_ALERTS_FROM`, `PRIC
 | The first RLS run aborted at import | My section reused `const capped` and `again`, already declared in the same scope | Prefixed every name in the 073 section with `pa` |
 | Three 073 checks failed | `'...' || x || '...'::jsonb` cast only the last literal; the cap test then had 19 rows not 20; the "unknown account" probe used an account that had just saved | Parenthesised the cast; used an id with no rows |
 | The node test could not import the app lib | `supabaseClient.js` reads `import.meta.env` at load, undefined under node | `priceAlerts.js` loads the client on use; the tests inject a stub |
+| `test_privacy_gdpr` failed: "all 73 tables are listed with a retention line" | The harness requires every table in the Article 30 retention table | Added `price_alert_consent` and `price_alerts` lines there |
 | The dev page said "couldn't load travel data" | `public/boot.json` and `public/dest/` are generated, not in the checkout (as T1201 recorded) | `npm run data -- --split-only`, looked, removed the generated files |
 | After a save the control said "Price alert on" before the opt-in click | Wording | `alerts.active` now reads "Saved: we email you once ..." in all six languages |
 
@@ -78,7 +79,11 @@ Carta-design brief, the seven questions: one quiet secondary button under the ca
 
 ## Checks at the end
 
-Filled in at the final commit of this report: full pytest minus quarantine, all 17 harnesses, `npm test`, `npm run lint`, design lint, fast build and CSP. See the commit message of the last T1205 commit and the table below.
+- Database harnesses, local Postgres 16 on port 55436: 17 of 17 green (`test_rls_policies` 937 of 937, `test_privacy_gdpr` 69 of 69).
+- `npm test`: 1912 passing, 0 failing, 12 skipped. `npm run lint`: 0 errors (36 warnings, none in touched files). eslint on touched files: clean. Design lint: 0 new.
+- Fast build: built; `verify_csp.mjs`: 0 violations over 40 screen loads.
+- Pytest minus quarantine: 1065 passed, 11 skipped, 2 failed: `test_rating_inputs.py::test_beauty_v2_reads_no_register` and `test_rating_stability.py::test_adding_places_moves_nobody_else` (a JSON decode error in `beauty_layer.unesco_near`). Both fail the same way on `origin/p15-round3` in this container, and this branch touches neither file nor the rating code; not quarantined by this task. The 16 new tests pass. Ruff 0.14.3 and the CI ruff selection: clean.
+- `build_reference.py --check`, `build_lineage.py`, `config_reference.py --check`, `drift.py`: ok (generated docs regenerated for the new task, files and functions).
 
 ## What is still open
 
@@ -86,7 +91,7 @@ Filled in at the final commit of this report: full pytest minus quarantine, all 
 - T1205-b (user): Resend sender check, the function secrets, the deploy and the box env.
 - T1205-c (user): turn the two flags on after a test with your own account.
 - T1205-d (next task): a trip-level control (My trips or the planner summary). The table, the save function, the spec (`stops`, `start`) and the box formula already handle a multi-stop trip; only the button on a trip screen is missing (outside this task's files).
-- T1205-e (next task): privacy plumbing outside this task's files: the retention table in `docs/legal/ARTICLE30.md` lists tables one per row and does not yet list 073's two; `export_user_data()` does not include them; the privacy policy page does not mention price alerts.
+- T1205-e (next task): privacy plumbing outside this task's files: `export_user_data()` does not include 073's two tables and the privacy policy page does not mention price alerts. (The Article 30 retention table does list them: `test_privacy_gdpr` requires a line per table, so two lines were added beside row 25.)
 - T1205-f (next task): the alert total is the box's formula, not the card's `bedPrice()` (no peak factors, no home fees, a home sleeps 4), so the email's figures differ from the card's; and a weekly check sees a flight drop up to a week late. Consider showing the alert total in the control once armed, and a daily cadence for flight alerts.
 - T1205-g (user): the T944 client-side price-drop email (`notify`, 060) overlaps with I17; decide whether to retire it once alerts are live.
 - No Claude API anywhere: the check is arithmetic, the emails are templates.
