@@ -80,7 +80,7 @@ test('six locales carry every paywall.* key, same placeholders, no dashes, no eu
       const v = cat[k];
       assert.ok(typeof v === 'string' && v.length > 0, `${l} ${k}`);
       assert.equal(phs(v), phs(en), `${l} ${k} placeholders`);
-      assert.doesNotMatch(v, /[–—€]/, `${l} ${k}: no dash or euro sign`);
+      assert.doesNotMatch(v, /[\u2013\u2014\u20ac]/, `${l} ${k}: no dash or euro sign`);
     }
     assert.doesNotMatch(en, BANNED, `${k}: banned word`);
   }
