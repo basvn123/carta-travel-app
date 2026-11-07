@@ -13,6 +13,8 @@ ROADMAP F1, part 1 (T1149). The taxonomy, its mapping from today's tags, the han
 | The eval (P@5, F1) | `continent-app/scripts/eval/adapters/taxonomy.mjs`, metrics in `continent-app/scripts/eval/taxonomy/metrics.mjs` |
 | How to label | [taxonomy-labelling-guide.md](taxonomy-labelling-guide.md) |
 | Tests | `tests/test_taxonomy.py` (the mapping test), `continent-app/tests/taxonomyEval.test.mjs` |
+| The batch tagger (part 2, T1150): phrase, mapped-tag and BM25 lists fused, evidence quoted, optional Gemini verifier | `pipeline/taxonomy/tagger.py`, pipeline task `taxonomy_tags` (`python run_pipeline.py taxonomy_tags`), output `cache/taxonomy/tags.json`; tests `tests/test_taxonomy_tagger.py`; rules in HANDBOOK "Travel taxonomy and tagging" |
+| The same tagger over HTTP | `services/intelligence/` (`POST /tag`, HANDBOOK "Carta Intelligence API") |
 
 ## Why `pipeline/taxonomy/`
 
