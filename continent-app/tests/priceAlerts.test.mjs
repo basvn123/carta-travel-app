@@ -20,7 +20,7 @@ import { it as itCat } from '../src/i18n/it.js';
 
 const SECRET = 'test-secret-0123456789';
 const USER = '00000000-0000-0000-0000-00000000c001';
-const DASHES = /[–—]/;
+const DASHES = /[\u2013\u2014]/;
 
 test('the drop rule matches price_alert_record in 073: at or below the baseline less the share, floored', () => {
   assert.equal(isDue(900, 810, 0.1), true);
