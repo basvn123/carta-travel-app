@@ -27,7 +27,7 @@ A research subagent compared the options (versions checked on registry.npmjs.org
 - Renamed: `continent-app/src/planner/finder/TripPage.jsx` to `FoundTripPage.jsx` (export `FoundTripPage`), its one importer `continent-app/src/planner/finder/FindingTrips.jsx`.
 - Deleted (26): `continent-app/src/auth/radioKeys.js`; `continent-app/src/browse/` BathingWater, CrowdCalendar, DerivedModules, FlashDeck, GettingThere, HonestFooters, LifestyleButton, LifestyleSlider, RailFold, RouteFacts, RoutesFromHere, SwimSafety, WaterSheet, WebcamEmbed, WeekPlan (`.jsx`); `continent-app/src/components/` CountryPicker, CrowdingBadge, FactMeter, FavStar, KindGlyph (`.jsx`); `continent-app/src/lib/citytrips.js`; `continent-app/src/planner/WhereQuiz.jsx`, `continent-app/src/planner/flow/BookedDoor.jsx`, `continent-app/src/planner/flow/KnowDoor.jsx`, `continent-app/src/planner/trip/CostTiles.jsx`.
 - One baseline comment line added before each of the 125 react-refresh exports in 61 files under `continent-app/src/`.
-- `continent-app/scripts/ci/design-lint.baseline.json` (regenerated; see the measurements), `MAP.md`, `ROADMAP.md` (H14 status), `Execution/_OPEN.md` (rows appended), this report.
+- `continent-app/scripts/ci/design-lint.baseline.json` (regenerated; see the measurements), `docs/logic/plan-day.md` and `docs/logic/seasons-crowds.md` (constant pointers to moved or deleted code, so the docs drift check passes), `MAP.md`, `ROADMAP.md` (H14 status), `Execution/_OPEN.md` (rows appended), this report.
 
 ## Commands run
 
@@ -78,6 +78,7 @@ None.
 | `DayPlannerTab` chunk | 251,750 B | 261,881 B | +10,131 |
 | `TripPlannerTab` chunk | 445,172 B | 453,295 B | +8,123 |
 | Fast build time | about 2 s | about 2 s | 0 |
+| Python tests (CI set, quarantine deselected) | not run | 822 pass, 3 fail, 10 skipped before the docs fix; the docs drift test then passes; `test_beauty_v2_reads_no_register` and `test_adding_places_moves_nobody_else` fail the same on the base branch here (data on this container) | |
 
 ## What broke and how it was fixed
 
@@ -91,6 +92,7 @@ None.
 | `sectionBoundary.test.mjs` failed when the four tab panels moved out of `App.jsx` | The test reads `App.jsx` for each named `SectionBoundary` | Kept the tab panels in `App.jsx`; only the overlays moved |
 | Statement anchors matched the wrong statement once (`useAppSettingsValue` took one line) | The anchor window ran past the end of a short statement | The window stops at the statement's end; the App split was replayed from the base file |
 | Design lint reported moved violations as new | Its baseline keys on file path | `--update-baseline`, then proved per rule and line text that no count grew (total fell by the 19 in deleted files) |
+| `tests/test_docs_drift.py` failed: 7 drift | `docs/logic/` records name constants by file (`perDay`, `SUGGEST_TOWN_KM`, `SUGGEST_TOWN_CAP`, `inSeason`, `CardPreview`) and two deleted files | Pointed the four records at the new modules; SEASON-028 now says the pill and its files are gone (its Rule line still describes the retired pill, row T1163-d). `scripts/docs/drift.py`: 0 drift |
 | Browser checks could not load data | This checkout has no `public/boot.json` or `dest/` (gitignored, built from the master dataset) | `sync-data.mjs --split-only` from `public/app_data.json`; the rank tier check fails on this data, so both sides of every comparison use the same data |
 | Playwright in the app wants chromium 1228; the container has 1243 | Version pin | `PLAYWRIGHT_BROWSERS_PATH` to a scratch folder linking 1228 to 1243 |
 | Several extracted parts take many arguments (DayPlannerStart 93 props, DayBody 79, AppOverlays 67, ExploreContent 56, useFacetGroups 52) | Mechanical extraction passes every free name | Kept: the 150-prop wizard step canvas, the 104-prop DestinationsTab list switch, the four App tab panels and a 46-input `startOver` hook were rolled back as poor value. Grouping the rest is row T1163-f |
