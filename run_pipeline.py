@@ -2443,18 +2443,6 @@ TASKS = [
                  "(read by climate_daily's apply_climate). Publishes nothing itself."),
     },
     {
-        "key": "heat_fire",
-        "title": "Heat and fire months per place (D20)",
-        "cadence": "backfill",
-        "writes_app_data": True,
-        "rev": "T1200",
-        "cmds": [[PY, "pipeline/heat_fire.py"]],
-        "note": ("adds climate.heat (monthly mean high at or above when.heat extreme_c) "
-                 "and climate.fire (EFFIS/CEMS Fire Weather Index table cache/fire_fwi.json "
-                 "when supplied, else a dry-heat proxy) from the climate block; run after "
-                 "climate and climate_daily. Thresholds: config/pricing.json when.heat."),
-    },
-    {
         "key": "climate_daily",
         "title": "Climate: rain days, wind, sunshine, water temperature -> catalogue",
         "cadence": "quarterly",
@@ -2472,6 +2460,18 @@ TASKS = [
                  "apply_climate adds rain_days, wind_ms, elev_m, sun_h (derived) and "
                  "water_c (sea_temp). Gated on climate and the master: rain days "
                  "0 to 31, wind 0 to 40 m/s, water 0 to 32 C, no coverage lost."),
+    },
+    {
+        "key": "heat_fire",
+        "title": "Heat and fire months per place (D20)",
+        "cadence": "quarterly",
+        "writes_app_data": True,
+        "rev": "T1200",
+        "cmds": [[PY, "pipeline/heat_fire.py"]],
+        "note": ("adds climate.heat (monthly mean high at or above when.heat extreme_c) "
+                 "and climate.fire (EFFIS/CEMS Fire Weather Index table cache/fire_fwi.json "
+                 "when supplied, else a dry-heat proxy) from the climate block; run after "
+                 "climate and climate_daily. Thresholds: config/pricing.json when.heat."),
     },
     {
         "key": "beach_context",
