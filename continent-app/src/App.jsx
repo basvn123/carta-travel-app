@@ -20,12 +20,25 @@ import Logo from './components/Logo.jsx';
 import { HomePage } from './browse/home/HomePage.jsx';
 // T1209 (G14): the new home, behind its flag (off until T1111-a); its own chunk.
 import { homeVariant } from './browse/home/homeVariant.js';
-const HomeG14 = React.lazy(() => import('./browse/home/HomeG14.jsx'));
+// The module once fetched: drawn directly then, because React.lazy suspends
+// once even for a chunk already loaded, and the shell's first effects would
+// run before its retry.
+let homeG14Ready = null;
+const loadHomeG14 = () => import('./browse/home/HomeG14.jsx').then((m) => { homeG14Ready = m.default; return m; });
+const HomeG14Lazy = React.lazy(loadHomeG14);
+function HomeG14(props) {
+  const Ready = homeG14Ready;
+  if (Ready) return <Ready {...props} />;
+  return <Suspense fallback={<TabFallback />}><HomeG14Lazy {...props} /></Suspense>;
+}
 const homeVariantNow = () => {
   let store = null;
   try { store = window.sessionStorage; } catch { store = null; }
   return homeVariant(window.location.search, store);
 };
+// With the G14 home chosen, fetch its chunk while the catalogue loads, so it
+// paints the moment the shell does instead of one round trip later.
+if (typeof window !== 'undefined' && homeVariantNow() === 'g14') loadHomeG14().catch(() => {});
 
 
 
@@ -1640,16 +1653,14 @@ function TravelApp() {
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
           <SectionBoundary name="home">
           {homeVariantNow() === 'g14' ? (
-            <Suspense fallback={<TabFallback />}>
-              <HomeG14
-                data={data}
-                choices={choices}
-                pageOver={!!selectedDest || savedTripsOpen || accountOpen || !!countryPage || !!pendingRegion}
-                onNavigate={goTo}
-                onOpenDest={openDetail}
-                onOpenJourney={openJourneyPage}
-              />
-            </Suspense>
+            <HomeG14
+              data={data}
+              choices={choices}
+              pageOver={!!selectedDest || savedTripsOpen || accountOpen || !!countryPage || !!pendingRegion}
+              onNavigate={goTo}
+              onOpenDest={openDetail}
+              onOpenJourney={openJourneyPage}
+            />
           ) : (
           <HomePage
             data={data}

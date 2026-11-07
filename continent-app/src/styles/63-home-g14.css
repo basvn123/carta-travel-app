@@ -4,18 +4,17 @@
    direction draft (docs/design/direction.md section 3). */
 
 .hg-page {
-  background: var(--surface-page);
-  color: var(--text);
+  /* The scroll box, the footer and the button links come from .hv-page
+     (61-v6-home.css), the same box today's home uses. */
   font-family: var(--font);
   font-variant-numeric: tabular-nums;
 }
+.hg-page a.btn { text-decoration: none; }
 .hg-in { width: min(1120px, 100%); margin: 0 auto; padding: 0 var(--space-4); box-sizing: border-box; }
 
 /* The promise: big type on a mist ground, the first paint is text. */
 .hg-hero {
-  background:
-    radial-gradient(120% 80% at 85% 0%, color-mix(in srgb, var(--sun-400) 18%, transparent), transparent 60%),
-    var(--home-ground-mist);
+  background: var(--home-ground-mist);
   padding: clamp(48px, 9vw, 112px) 0 clamp(40px, 7vw, 88px);
 }
 .hg-kick {
@@ -46,9 +45,9 @@
 .hg-card {
   overflow: hidden; border-radius: var(--radius-stage);
   background: var(--home-ground-deep); color: var(--surface);
-  box-shadow:
-    0 1px 2px color-mix(in srgb, var(--umber-800) 6%, transparent),
-    0 24px 60px -28px color-mix(in srgb, var(--umber-800) 28%, transparent);
+  /* The soft umber shadow of the direction draft has no token yet
+     (row T1209-c); the nearest elevation token stands in. */
+  box-shadow: var(--elev-3);
 }
 .hg-card-main { padding: clamp(24px, 4vw, 48px); }
 .hg-card-kick {
@@ -61,15 +60,13 @@
 .hg-total-unit { font-size: var(--text-lead); color: var(--umber-50); }
 
 /* The bar: bed then food, each part grows from the left once. */
-.hg-bar { display: flex; gap: 3px; height: 14px; margin-top: var(--space-5); }
+.hg-bar { display: flex; gap: 3px; height: 14px; margin-top: var(--space-5); border-radius: var(--radius-pill); overflow: hidden; }
 .hg-seg {
-  flex: 0 0 auto; width: var(--w); border-radius: 3px;
+  flex: 0 0 auto; width: var(--w);
   transform-origin: left center;
   animation: hg-grow var(--dur-reveal) var(--ease-out) both;
-  animation-delay: calc(var(--i) * 140ms);
+  animation-delay: calc(var(--i) * var(--dur-1));
 }
-.hg-seg:first-child { border-radius: 999px 3px 3px 999px; }
-.hg-seg:last-child { border-radius: 3px 999px 999px 3px; }
 .hg-seg-stay { background: var(--umber-200); }
 .hg-seg-food { background: var(--lagoon-100); }
 @keyframes hg-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }

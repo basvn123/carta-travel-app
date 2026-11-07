@@ -46,11 +46,21 @@ export default function HomeG14({ data, choices, pageOver = false, onNavigate, o
   const month = new Date().getMonth() + 1;
 
   // This month's day at the traveller's Lifestyle: the same price engine and
-  // request Explore uses, with the month set to the current one.
-  const day = React.useMemo(() => {
-    if (!place) return null;
-    const cost = priceDay(place, priceRequest({ choices: { ...choices, price_excluded: [] }, xm: month }), destinations);
-    return dayParts(cost);
+  // request Explore uses, with the month set to the current one. Priced after
+  // the first paint (it reads the whole catalogue for the country repair), so
+  // the promise paints first and the card arrives a moment later.
+  const [day, setDay] = React.useState(null);
+  React.useEffect(() => {
+    if (!place) return undefined;
+    let live = true;
+    const run = () => {
+      if (!live) return;
+      const cost = priceDay(place, priceRequest({ choices: { ...choices, price_excluded: [] }, xm: month }), destinations);
+      setDay(dayParts(cost));
+    };
+    const idle = typeof window !== 'undefined' && window.requestIdleCallback;
+    const id = idle ? idle(run, { timeout: 1500 }) : setTimeout(run, 0);
+    return () => { live = false; if (idle) window.cancelIdleCallback(id); else clearTimeout(id); };
   }, [place, choices, month, destinations]);
 
   const money = (v) => formatMoney(v, { precision: 'whole', locale: lang });
@@ -58,7 +68,7 @@ export default function HomeG14({ data, choices, pageOver = false, onNavigate, o
   const exploreHref = tabHref('map');
 
   return (
-    <div className="hg-page" data-testid="home-g14">
+    <div className="hv-page hg-page" data-testid="home-g14">
       <section className="hg-hero" aria-labelledby="hg-title">
         <div className="hg-in">
           <p className="hg-kick">{t('home.gKick')}</p>
