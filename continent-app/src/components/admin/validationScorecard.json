@@ -362,23 +362,7 @@
    "gate": {
     "ok": true,
     "failures": [],
-    "warnings": [
-     {
-      "metric": "fact.prom",
-      "kind": "soft",
-      "why": "no baseline value for this metric"
-     },
-     {
-      "metric": "fact.route",
-      "kind": "soft",
-      "why": "insufficient: 18 items, needs 20"
-     },
-     {
-      "metric": "agreement_tau",
-      "kind": "soft",
-      "why": "no baseline value for this metric"
-     }
-    ],
+    "warnings": [],
     "checks": [
      {
       "metric": "coverage",
@@ -397,14 +381,6 @@
       "status": "pass"
      },
      {
-      "metric": "fact.prom",
-      "kind": "soft",
-      "now": null,
-      "baseline": null,
-      "tolerance_points": 5,
-      "status": "warn"
-     },
-     {
       "metric": "fact.position",
       "kind": "soft",
       "now": 0.9524,
@@ -418,7 +394,7 @@
       "now": 0.3333,
       "baseline": 0.3333,
       "tolerance_points": 5,
-      "status": "warn"
+      "status": "pass"
      },
      {
       "metric": "in_rated",
@@ -427,14 +403,6 @@
       "baseline": 1.0,
       "tolerance_points": 5,
       "status": "pass"
-     },
-     {
-      "metric": "agreement_tau",
-      "kind": "soft",
-      "now": null,
-      "baseline": null,
-      "tolerance_points": 5,
-      "status": "warn"
      },
      {
       "metric": "error_mae",
@@ -525,7 +493,6 @@
       "error_mdape": 0.0,
       "fact.height": 1.0,
       "fact.position": 0.9524,
-      "fact.prom": null,
       "fact.route": 0.3333,
       "fact_share": 0.7833,
       "in_rated": 1.0

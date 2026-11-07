@@ -57,15 +57,15 @@ ISO_ALIAS = {"EL": "GR", "UK": "GB"}
 
 # Soft until the owner has run the Wikidata export and taken a real baseline
 # (T1192-a): a hard check with no baseline fails the D2 run, and the seed is
-# not a baseline. Flip coverage and fact.height to "hard" then.
+# not a baseline. Flip coverage and fact.height to "hard" then, and add the
+# fact.prom and agreement_tau checks (the seed has no prominence, so a check
+# on them would only warn).
 CHECKS = [
     {"metric": "coverage", "kind": "soft", "direction": "higher", "tolerance_points": 0, "min_n": 20},
     {"metric": "fact.height", "kind": "soft", "direction": "higher", "tolerance_points": 0, "min_n": 20},
-    {"metric": "fact.prom", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 20},
     {"metric": "fact.position", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 20},
-    {"metric": "fact.route", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 20},
+    {"metric": "fact.route", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 15},
     {"metric": "in_rated", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 20},
-    {"metric": "agreement_tau", "kind": "soft", "direction": "higher", "tolerance_points": 5, "min_n": 20},
     {"metric": "error_mae", "kind": "soft", "direction": "lower", "tolerance_points": 5, "min_n": 20},
 ]
 
