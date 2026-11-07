@@ -146,3 +146,30 @@ def test_the_first_card_without_field_history_is_a_baseline(eng, tmp_path):
         {"generated_at": "2026-11-05T12:00:00Z", "layers": {"core": {"score": 0.9}}}) + "\n")
     prev, at = eng.previous_fields(out, "2026-11-06T00:00:00Z")
     assert at == "2026-11-05T12:00:00Z" and prev["core"]["blurb"] == 0.9
+
+
+def link_snap(tmp_path, checked, share):
+    p = tmp_path / "linkHealth.json"
+    p.write_text(json.dumps({"totals": {"checked": checked, "broken_share": share}}))
+    return p
+
+
+def test_link_health_share_is_a_soft_then_hard_rule(eng, tmp_path):
+    cfg = eng.load_rules()
+    assert cfg["links"]["id"] == "links.broken_share"
+    assert eng._links_gate(cfg, None) == ([], [])
+    assert eng._links_gate(cfg, tmp_path / "missing.json") == ([], [])
+    # Too few results: nothing was measured, so nothing warns.
+    assert eng._links_gate(cfg, link_snap(tmp_path, 100, 0.5)) == ([], [])
+    assert eng._links_gate(cfg, link_snap(tmp_path, 5000, 0.01)) == ([], [])
+    fail, warn = eng._links_gate(cfg, link_snap(tmp_path, 5000, 0.05))
+    assert fail == [] and warn[0]["id"] == "links.broken_share" and "5.0%" in warn[0]["why"]
+    fail, warn = eng._links_gate(cfg, link_snap(tmp_path, 5000, 0.2))
+    assert warn == [] and fail[0]["kind"] == "hard"
+
+
+def test_link_rule_thresholds_are_validated(eng, tmp_path):
+    bad = tmp_path / "r.yaml"
+    bad.write_text("version: 1\nlinks: {id: x, max_broken_share: 0.5, hard_broken_share: 0.1, min_checked: 1}\nrules: []\n")
+    with pytest.raises(ValueError, match="max_broken_share"):
+        eng.load_rules(bad)
