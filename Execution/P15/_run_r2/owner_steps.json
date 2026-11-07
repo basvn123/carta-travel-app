@@ -885,5 +885,119 @@
    "`python pipeline/mountains/fill_route_up.py --harvest --apply` (paced Overpass, resumable)",
    "Record counts"
   ]
+ },
+ {
+  "id": "T1163-b",
+  "title": "Decide on four unmounted admin and AI files",
+  "why": "They are tested but never shown, so they are either a lost feature or dead code.",
+  "where": "Execution/P15/T1163-code-health.md (What is still open)",
+  "how": [
+   "Open the admin page and confirm AI calls and SLO panels are not there",
+   "Choose mount or delete",
+   "Tell the next task which"
+  ]
+ },
+ {
+  "id": "T1168-a",
+  "title": "Build the ask index in the docs deploy",
+  "why": "The box shows nothing until `index.js` exists in the built site.",
+  "where": ".github/workflows/docs-site.yml",
+  "how": [
+   "In `.github/workflows/docs-site.yml` add `node scripts/docs/ask_docs.mjs build` before `mkdocs build`",
+   "Push",
+   "Confirm the box answers on the deployed site"
+  ]
+ },
+ {
+  "id": "T1168-b",
+  "title": "Decide on dense vectors",
+  "why": "BM25 misses paraphrases with no shared word; the static model could fix that.",
+  "where": "Execution/P15/T1168-ask-the-docs.md",
+  "how": [
+   "`pip install model2vec`",
+   "Embed the 3,600 passages with `minishlab/potion-multilingual-128M`",
+   "Fuse with BM25 by RRF (k 60)",
+   "Keep it only if recall@5 or MRR rises on the question set without losing abstention"
+  ]
+ },
+ {
+  "id": "T1168-c",
+  "title": "Run the model rewrite once",
+  "why": "The gateway is not reachable from the cloud container.",
+  "where": "scripts/docs/ask_docs.mjs",
+  "how": [
+   "With `CF_ACCOUNT_ID` and `CF_AI_TOKEN` set run `node scripts/docs/ask_docs.mjs \"how do I restore a database backup?\" --model`",
+   "Check the answer keeps its `[n]` marks"
+  ]
+ },
+ {
+  "id": "T1188-a",
+  "title": "Label the 50 judge calibration texts",
+  "why": "The text judge's verdicts count only after a human's labels pass kappa 0.7 (bootstrap low 0.5) and 90% planted recall; today they rest on seeded labels.",
+  "where": "evals/truth/judge/labels.json, Execution/P15/T1188-llm-judge.md",
+  "how": [
+   "Open evals/truth/judge/labels.json and, for each of the 50 texts in text-sample.json, write supported, unsupported or contradicted per rubric (do not open text-sample-key.json), fill by and at",
+   "Run python -I scripts/validation/judge.py calibrate --write",
+   "Commit pipeline/judge/calibration/calibration-session.json"
+  ]
+ },
+ {
+  "id": "T1188-b",
+  "title": "Run and calibrate the Gemini judge",
+  "why": "The session judge needs a person at the keyboard; the Gemini judge can run every release, but only once it is calibrated on its own verdicts.",
+  "where": "pipeline/judge/config.json, Execution/P15/T1188-llm-judge.md",
+  "how": [
+   "On the box with GEMINI_API_KEY set run python -I scripts/validation/judge.py gemini --items evals/truth/judge/text-sample.json --out pipeline/judge/calibration/judgments/gemini-YYYY-MM-DD.json (if gemini-pro-latest is refused, set AI_JUDGE_MODELS to a current Pro model id)",
+   "Run python -I scripts/validation/judge.py calibrate --verdicts that file --write",
+   "Commit both files"
+  ]
+ },
+ {
+  "id": "T1190-a",
+  "title": "Check the price hand sample",
+  "why": "The only check of absolute euros (a bias common to every country is invisible to Eurostat's indices).",
+  "where": "data/reports/validation/prices/hand_sample.csv, Execution/P15/T1190-prices-validation.md",
+  "how": [
+   "Open data/reports/validation/prices/hand_sample.csv",
+   "For each row open the site by hand (Booking, Hostelworld or Airbnb for beds, the place's own menus for dinner), check-in 30 to 60 days out, one night, two adults for home and hotel3, one for dorm, sort by price and note the median of the first 20 results with taxes in found_eur, plus checked_on, site, n_seen and url",
+   "Then run `python -I scripts/validation/runner.py prices_sample --write-baseline --write` and commit the sheet and the result"
+  ]
+ },
+ {
+  "id": "T1190-b",
+  "title": "Refresh the Eurostat price levels with the narrow categories",
+  "why": "Beds are checked against restaurants and hotels together until accommodation alone is in.",
+  "where": "scripts/validation/layer_prices.py",
+  "how": [
+   "`mkdir -p cache/eurostat_pli`",
+   "`for c in A0111 A011101 A011102 A010101 A010201",
+   "Do curl -sS \"https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_ppp_ind?format=JSON&lang=EN&na_item=PLI_EU27_2020&ppp_cat=$c&sinceTimePeriod=2022\" -o cache/eurostat_pli/$c.json",
+   "Done`",
+   "`python -I scripts/validation/layer_prices.py --refresh-reference --eurostat-dir cache/eurostat_pli`",
+   "`python -I scripts/validation/runner.py prices --write --write-baseline` and `python -I scripts/validation/layer_prices.py --table`",
+   "Commit data/reports/validation/prices/"
+  ]
+ },
+ {
+  "id": "T1190-c",
+  "title": "Enter published fare examples and run the fares check",
+  "why": "Flights have no open price reference, so the swept fares are not checked at all.",
+  "where": "scripts/validation/layer_prices_fares.py",
+  "how": [
+   "Add about 20 rows to data/reports/validation/prices/fare_examples.csv (one adult one way EUR fares read by hand from an airline or airport page, routes spread over short, medium and long, columns id,origin,dest,month,fare_eur,cc,source,url,read_on)",
+   "`mkdir -p cache/flights_wire`",
+   "For each origin `curl -sS https://data.carta-europetravel.com/data/flights/<IATA>.json -o cache/flights_wire/<IATA>.json`",
+   "`python -I scripts/validation/runner.py prices_fares --write-baseline --write`"
+  ]
+ },
+ {
+  "id": "T1190-h",
+  "title": "Decide on the Numbeo anchors",
+  "why": "Numbeo's terms forbid copying and derived works without a licence, and the June 2026 food baskets cite Numbeo pages.",
+  "where": "cache/costs.json, pipeline/apply_food_prices.py",
+  "how": [
+   "Decide: license Numbeo, or replace the anchored baskets with Eurostat levels and national statistics prices",
+   "Tell the next prices task"
+  ]
  }
 ]

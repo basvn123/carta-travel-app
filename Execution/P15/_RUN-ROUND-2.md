@@ -51,10 +51,15 @@ How it runs:
 | 78 | T1162 | H11 | p15-s78-scripted-ship | done | yes | 3 |
 | 80 | T1164 | C10 | p15-s80-security-testing | done | yes | 5 |
 | 102 | T1186 | D24, D7 | p15-s102-mountains-lakes | done | yes | 2 |
-| 79 | T1163 | H14 | p15-s79-code-health | started | | |
-| 84 | T1168 | B8 | p15-s84-ask-the-docs | started | | |
-| 104 | T1188 | D23, D4 | p15-s104-llm-judge | started | | |
-| 106 | T1190 | D23 | p15-s106-prices-validation | started | | |
+| 79 | T1163 | H14 | p15-s79-code-health | done | yes | 1 |
+| 84 | T1168 | B8 | p15-s84-ask-the-docs | done | yes | 3 |
+| 104 | T1188 | D23, D4 | p15-s104-llm-judge | done | yes | 2 |
+| 106 | T1190 | D23 | p15-s106-prices-validation | done | yes | 4 |
+| 85 | T1169 | I7 | p15-s85-pwa | started | | |
+| 86 | T1170 | I8 | p15-s86-six-languages | started | | |
+| 87 | T1171 | I14 | p15-s87-paywall-moment | started | | |
+| 88 | T1172 | I15 | p15-s88-affiliate-links | started | | |
+| 98 | T1182 | D24 | p15-s98-trails-lab-box | started | | |
 
 The batch schedule for the rest of round 2 is in "Batch schedule" below.
 
@@ -108,3 +113,4 @@ Merge notes:
 - 01:25 Batch 8 merged: S76 (12 SLOs in `continent-app/config/slo.json`, an admin error budget panel, an incident drill script), S77 (the five laptop-only steps each have a box or worker path with a dry run, switched on by one line in the box install), S78 (`scripts/ship.mjs` runs the six deploy steps and stops on the first failure, dry-run tested; css-routes in npm test; a worktree script), S80 (ZAP baseline workflow on manual dispatch, auth tests, the ASVS L2 checklist with gaps as rows), S102 (mountain route up and lake water class fill steps with `_src` and `_asof`). Fix at merge: S77 made guided search a pipeline task that writes `search/`, but the lineage table still named it manual; the lineage row now names `guided_search`. npm test 1835: 1823 pass, 0 fail; full pytest 825 pass; ruff 0.14.3 on the pipeline and the services; every other check OK; no new migration. 82 round 2 owner steps on the checklist. Batch 9 started (S79 is the only app code writer). Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a).
 - 01:08 Batch 9 started from 4bf1a85670: S79 (session_0156MmZ4PeayUbyXQGySKKa2, the only app code writer), S84 (session_0156MmZ3bqHVzQmpRTEKkPf8), S104 (session_0156MmZ2Wx5aD7Lk3WZB1tUi), S106 (session_0156MmZ2dB8ZE9ibnyyVU5e4).
 - 01:22 Batch 8 CI: ci run 248 failed on a stale `docs/reference/tasks.md`; the orchestrator had regenerated the reference before the lineage fix that changed a task's wire mapping. Regenerated (1e8aeb713a); ci run 252 green. Rule: the full checks run again after the last merge fix of a batch.
+- 02:40 Batch 9 merged: S106 (prices as the third validation layer: Eurostat price levels, 406 of 407 country items matched, MdAPE 14.2%, 30 gaps reviewed, a 48-row hand sample drawn), S104 (one LLM judge for cited texts with a session and a Gemini backend, prompt `judge-text` in the registry, wired in as the `texts` layer; seeded kappa 0.94, it counts only after the owner labels), S84 (Ask the docs: a CLI and a search box on the docs site with citations, prompt `ask-docs`, eval recall@5 0.979), S79 (the six largest components split into 68 modules with no behaviour change, App.jsx 2,446 to 1,888 lines, 26 dead files out). Fixes at merge: the validation runner's layer list and the prompt registry each had two additions on both sides (both kept); ROADMAP D23 was edited by S104 and S106 and the restore kept only S104's text (S106's prices entry put back; the helper now flags rows changed on both sides); the logic catalogue still pointed at code S79 moved or deleted (7 drift lines, now 0; SEASON-028's crowd pill is marked removed, since its files were dead). npm test 1842: 1830 pass, 0 fail; full pytest 850 pass; eslint 0 errors; design-lint 4,595 with 0 new; the Chromium CSP check on the fast build 0 violations over 40 screen loads; prompt registry check OK with 18 prompts in a bare venv. 92 round 2 owner steps on the checklist. Batch 10 started. Held: S63 (T1146-a), S67 (T1149-a, b), S93 (T1111-a).
