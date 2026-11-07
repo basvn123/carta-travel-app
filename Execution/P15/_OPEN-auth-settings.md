@@ -42,7 +42,7 @@ When steps 2 to 7 are done, row T1071-a can close.
 
 ## Values found on 2026-11-07 (owner screenshots of the Dashboard)
 
-Read from the Dashboard on 2026-11-07, two days after T1084 applied steps 2 to 7 from the procedure's values without reading them back. This table is that read-back (row T1084-a). "Not seen" means no screenshot covered it yet; for those, T1084's report says the owner applied the procedure's value.
+Read from the Dashboard on 2026-11-07, two days after T1084 applied steps 2 to 7 from the procedure's values without reading them back. This table is that read-back (row T1084-c). "Not seen" means no screenshot covered it yet; for those, T1084's report says the owner applied the procedure's value.
 
 | Step | Setting | Value found | Target | Verdict |
 |---|---|---|---|---|

@@ -10,8 +10,8 @@ The owner did steps 2 to 7 of `Execution/P15/_OPEN-auth-settings.md` in the Supa
 
 ## Files touched
 
-- `Execution/P15/T1084-auth-settings-close.md` (created)
-- `Execution/_OPEN.md` (T1071-a out, T1084-a and T1084-b in)
+- `Execution/P15/T1084-cuth-settings-close.md` (created)
+- `Execution/_OPEN.md` (T1071-a out, T1084-c and T1084-b in)
 - `Execution/_OPEN-CLOSED.md` (T1071-a in, closed by T1084)
 - `ROADMAP.md` (C3 status)
 - `docs/security/SECRETS.md` (row for the Resend SMTP key)
@@ -22,7 +22,7 @@ None in the repo. The owner ran these in the Dashboard: TOTP enable (Authenticat
 
 ## Config and secrets set
 
-Values the procedure gives. The owner reported each step as done but did not read back the values (T1084-a).
+Values the procedure gives. The owner reported each step as done but did not read back the values (T1084-c).
 
 - Multi-Factor: TOTP enabled for enrolment and verification; owner factor verified.
 - Email: confirm email, secure email change and secure password change on; minimum password length 12; no character class rules; leaked password check on where the plan allows it; email OTP expiry 3600 s or less.
@@ -37,7 +37,7 @@ Values the procedure gives. The owner reported each step as done but did not rea
 |---|---|---|---|
 | Admin RPC tiers that require aal2 | 1 of 3 (destructive only) | 3 of 3 (read, live, destructive) | +2 |
 
-The Dashboard values before and after were not recorded (T1084-a).
+The Dashboard values before and after were not recorded (T1084-c).
 
 ## What broke and how it was fixed
 
@@ -52,7 +52,7 @@ The owner saw the admin page at `http://localhost:5173` at desktop width: the co
 
 ## What is still open
 
-- T1084-a: the before and after values for the C3 close-out (owner).
+- T1084-c: the before and after values for the C3 close-out (owner).
 - T1084-b: the live admin page is locked until the P1 batch with the MfaStepUp box is deployed, because 062 is in the database and the deployed app cannot do the step-up (owner, deploy).
 - T1071-c (CAPTCHA) and T1071-d (browser check at 375 and 1440 plus the verify script) stay open as they were.
 - Not raised as a row, a suggestion for the owner: a refresh keeps the session's `aal2`, so a stolen refresh token from a verified session is still admin. Asking for the code again after a fixed time (for example 12 hours) would be a small app task.
