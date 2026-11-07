@@ -131,6 +131,7 @@ New environment variables read only by `pipeline/intel_client.py`: `INTEL_URL`, 
 | pip-audit, services/intelligence/requirements.txt | not run (a range line) | 0 advisories, a gate | new |
 | RLS suite / privacy harness (local PG 16, with 074) | 856 / 69 | 946 of 946 / 69 of 69 | 074's probes |
 | design-lint new violations | 0 | 0 | 0 |
+| CSP violations (`verify_csp.mjs` on the fast build, 42 screen loads) | 0 | 0 | 0 |
 
 ## What broke and how it was fixed
 
