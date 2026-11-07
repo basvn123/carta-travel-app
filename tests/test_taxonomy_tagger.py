@@ -173,6 +173,42 @@ def test_mapped_tags_read_the_corpus_data_root(corpus, monkeypatch):
     assert tax.default_public() == ROOT / "continent-app" / "public"
 
 
+def test_trail_detail_file_passages(corpus):
+    """T1150-g: a trail's detail file adds its highlights, stops and OSM descriptions."""
+    (corpus.public / "trails" / "trip").mkdir()
+    detail = {"highlights": [{"kind": "hot_spring", "name": "Warm pool"}, {"kind": "peak", "name": "Hochkogel"}],
+              "stops": [{"seq": 1, "poi_ref": "poi:DRS:church-of-our-lady"}],
+              "tags_raw": {"description:en": "A loop past a volcano.", "description:de": "Eine Runde zum Wasserfall.",
+                           "description:ru": "not read"}}
+    (corpus.public / "trails" / "trip" / "7.json").write_text(json.dumps(detail), encoding="utf-8")
+    it = next(corpus.items(("trail",)))
+    ps = corpus.passages(it)
+    got = [(p["src"], p["text"], p.get("lang")) for p in ps if p["src"].startswith(("detail", "osm"))]
+    assert got == [("detail.highlights", "Warm pool (hot spring)", None), ("detail.highlights", "Hochkogel (peak)", None),
+                   ("detail.stops", "church of our lady", None), ("osm.description:en", "A loop past a volcano.", None),
+                   ("osm.description:de", "Eine Runde zum Wasserfall.", "de")]
+    t = by_tag(tg.tag_item(it, ps, public=corpus.public))
+    assert "set.volcano" in t and "set.hot-spring" in t
+
+
+def test_other_languages_match_only_their_own_labels():
+    """A German passage is read with the German labels only; null labels give no phrase."""
+    node = next((i for i, n in tg.node_table().items() if n["source"] != "data" and "trail" in n["applies_to"]
+                 and len(tg.words((n["label"] or {}).get("de") or "")) == 1
+                 and len(tg.words(n["label"]["de"])[0]) >= 4 and n["label"]["de"].lower() != n["label"]["en"].lower()), None)
+    if node is None:
+        pytest.skip("no German one-word label yet")
+    de = tg.node_table()[node]["label"]["de"]
+    ps = [{"field": "body", "src": "osm.description:de", "text": f"Hier gibt es {de}.", "lang": "de"}]
+    assert node in tg.phrase_hits(ps, {node})
+    en = [{"field": "body", "src": "summary", "text": f"Here is {de}."}]
+    assert node not in tg.phrase_hits([{**en[0], "lang": "fr"}], {node}) or \
+        (tg.node_table()[node]["label"].get("fr") or "").lower() == de.lower()
+    lab = tg.node_table()[node]["label"]["en"]
+    assert node not in tg.phrase_hits([{"field": "body", "src": "x", "text": lab, "lang": "de"}], {node}) or \
+        tg.words(lab) == tg.words(de) or tuple(tg.words(lab)) in tg.phrase_index_lang("de")[0]
+
+
 def test_seed_items_from_the_shipped_data():
     items = tg.eval_items("seed")
     assert len(items) == 15

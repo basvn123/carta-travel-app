@@ -8,11 +8,16 @@
 
 The method, ESCO style extreme multi-label tagging in four steps:
 
-1. Passages. Each item's English text from the shipped data, by field: the
+1. Passages. Each item's text from the shipped data, by field: the
    lead (blurb, dossier lead, trail summary, name), the body (Wikivoyage
    guide, dossier intro body, things to do), lists (highlight and sight names
-   with their kinds) and facts (the tags Carta already holds, mapped through
-   mapping.yaml). Nothing is fetched.
+   with their kinds; for a trail also the detail file's highlights and stops,
+   trails/trip/<id>.json) and facts (the tags Carta already holds, mapped
+   through mapping.yaml). A trail's OSM description in German, French,
+   Spanish, Italian or Dutch is a passage with its `lang`, matched only
+   against the taxonomy's labels and synonyms in that language (T1215, row
+   T1150-g; nodes with a null label in that language simply have no phrase).
+   Nothing is fetched.
 2. Candidates. Up to CANDIDATES (25) nodes per item, fused by reciprocal rank
    from four lists: phrase hits of a node's English label and synonyms in the
    passages, today's tags mapped, BM25 of the item text against each node's
@@ -128,6 +133,11 @@ def sentences(s: str) -> list[str]:
     return [x for x in _SENT.split(s) if x] if s else []
 
 
+# Languages a passage may carry besides English (the taxonomy's label keys).
+OTHER_LANGS = ("de", "fr", "es", "it", "nl")
+DETAIL_MAX = 12        # highlights and stops read per trail detail file
+
+
 # ---------------------------------------------------------------------------
 # The taxonomy side: which nodes, their phrases and their BM25 documents
 @lru_cache(maxsize=1)
@@ -152,6 +162,23 @@ def phrase_index() -> tuple[dict[tuple, set], int]:
                 continue
             idx[key].add(i)
     return dict(idx), max(len(k) for k in idx)
+
+
+@lru_cache(maxsize=8)
+def phrase_index_lang(lang: str) -> tuple[dict[tuple, set], int]:
+    """The same for one other language: the node's label and synonyms in `lang`, where set.
+    Single words under four letters are skipped (too many senses across languages)."""
+    idx: dict[tuple, set] = defaultdict(set)
+    for i, n in node_table().items():
+        if n["source"] == "data":
+            continue
+        lab = (n.get("label") or {}).get(lang)
+        for p in [lab, *((n.get("synonyms") or {}).get(lang) or [])]:
+            key = tuple(words(p)) if p else ()
+            if not key or (len(key) == 1 and len(key[0]) < 4):
+                continue
+            idx[key].add(i)
+    return dict(idx), max((len(k) for k in idx), default=0)
 
 
 def ancestors(i: str) -> list[str]:
@@ -220,6 +247,10 @@ class Corpus:
         d = data.get("destinations") or {}
         self.dests = {x["id"]: x for x in d} if isinstance(d, list) else d
         self._layer: dict[str, dict] = {}
+
+    def trip_detail(self, rid: str) -> dict:
+        """A trail's detail file, read only for the item being tagged."""
+        return _jload(self.public / "trails" / "trip" / f"{rid}.json") or {}
 
     def dossier(self, did: str) -> dict:
         base = "gem-" + did[4:] if did.startswith("gem:") else did.upper()
@@ -290,6 +321,7 @@ class Corpus:
             for x in r.get("reasons") or []:
                 if x.get("code"):
                     out.append({"field": "list", "src": "reasons", "text": re.sub(r"(?<!^)(?=[A-Z])", " ", x["code"]).lower()})
+            out += self.detail_passages(iid)
             return out
         for fld in ("kind", "surface", "range"):
             if r.get(fld):
@@ -303,12 +335,42 @@ class Corpus:
         return out
 
 
+    def detail_passages(self, rid: str) -> list[dict]:
+        """The trail detail file: highlight names with kinds, stop names, OSM descriptions (T1150-g)."""
+        dt = self.trip_detail(str(rid))
+        if not dt:
+            return []
+        out: list[dict] = []
+        for h in (dt.get("highlights") or [])[:DETAIL_MAX]:
+            if h.get("name") or h.get("kind"):
+                kind = str(h.get("kind") or "sight").replace("_", " ")
+                out.append({"field": "list", "src": "detail.highlights", "text": f"{h.get('name') or kind} ({kind})"})
+        for st in (dt.get("stops") or [])[:DETAIL_MAX]:
+            ref = str(st.get("poi_ref") or "")
+            name = ref.rsplit(":", 1)[-1].replace("-", " ").strip()
+            if name:
+                out.append({"field": "list", "src": "detail.stops", "text": name})
+        raw = dt.get("tags_raw") or {}
+        for s in sentences(raw.get("description:en"))[:6]:
+            out.append({"field": "body", "src": "osm.description:en", "text": s})
+        for lang in OTHER_LANGS:
+            for s in sentences(raw.get(f"description:{lang}"))[:6]:
+                out.append({"field": "body", "src": f"osm.description:{lang}", "text": s, "lang": lang})
+        return out
+
+
 # ---------------------------------------------------------------------------
 # Candidates, scores, verifier
+def is_english(p: dict) -> bool:
+    return p.get("lang") in (None, "en")
+
+
 def phrase_hits(passages: list[dict], allowed: set[str]) -> dict[str, list[dict]]:
-    idx, longest = phrase_index()
+    """Phrase hits per node. An English passage is matched against the English phrases, a passage
+    with another `lang` only against that language's labels and synonyms."""
     hits: dict[str, list[dict]] = defaultdict(list)
     for p in passages:
+        idx, longest = phrase_index() if is_english(p) else phrase_index_lang(p["lang"])
         ws = words(p["text"])
         for n in range(longest, 0, -1):
             for k in range(len(ws) - n + 1):
@@ -346,8 +408,9 @@ def tag_item(it: dict, passages: list[dict], dense=None, public: Path | str | No
             if t in node_table():
                 mapped[t].append(f"{src}={v}")
     hits = phrase_hits(passages, text_nodes)
-    bm = [i for i, _ in bm25().scores(words(" ".join(p["text"] for p in passages)), text_nodes)[:CANDIDATES]]
-    dn = [i for i in (dense(it, passages, text_nodes) if dense else [])][:CANDIDATES]
+    english = [p for p in passages if is_english(p)]   # BM25 and the bi-encoder are English
+    bm = [i for i, _ in bm25().scores(words(" ".join(p["text"] for p in english)), text_nodes)[:CANDIDATES]]
+    dn = [i for i in (dense(it, english, text_nodes) if dense else [])][:CANDIDATES]
     by_hits = sorted(hits, key=lambda i: (-len(hits[i]), i))
     by_map = sorted((t for t in mapped if t in text_nodes), key=lambda i: (-len(mapped[i]), i))
     cand = rrf([x for x in (by_hits, by_map, bm, dn) if x])[:CANDIDATES]
@@ -513,6 +576,7 @@ def run(items: list[dict], corpus: Corpus, gateway=None, dense=None, log=print) 
                 stats[f"verify_refused_{v['refused']}"] += 1
         stats["items"] += 1
         stats["passages"] += len(ps)
+        stats["passages_other_lang"] += sum(1 for p in ps if not is_english(p))
         stats["no_passages"] += not ps
         for u in USES:
             stats[f"tags_{u}"] += sum(1 for t in tags if u in t["uses"] and not t["implied"])
