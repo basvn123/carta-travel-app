@@ -89,7 +89,12 @@ def test_a_two_point_drop_passes_and_a_soft_field_only_warns(eng, tmp_path):
                                          "core.tags": {"min": 0.5}})
     out = tmp_path / "out"
     history(out, "2026-11-05T12:00:00Z", {"blurb": 1.0, "tags": 1.0})
-    rc, data = eng.run(make_public(tmp_path / "pub", no_blurb=2), NOW, out, rules, snapshot=None)
+    # An empty validation folder: this test is about the fixture, not the repo's
+    # live D23 scorecard (whose soft checks may warn, for example T1193's cycling
+    # metrics that wait on owner data).
+    (tmp_path / "novalid").mkdir()
+    rc, data = eng.run(make_public(tmp_path / "pub", no_blurb=2), NOW, out, rules, snapshot=None,
+                       validation=tmp_path / "novalid")
     assert rc == 0
     assert data["gate"]["failures"] == []
     core = [w for w in data["gate"]["warnings"] if w["layer"] == "core"]
