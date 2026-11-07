@@ -1,0 +1,82 @@
+{
+ "batch": 16,
+ "rows": [
+  {
+   "s": 128,
+   "task": "T1212",
+   "item": "I12",
+   "branch": "p15-s128-language-urls",
+   "slug": "language-urls",
+   "owns": "language in the URL and prerendered language pages",
+   "reads": "ROADMAP I12, Execution/P15/T1170-six-languages.md, T1113 SEO bar (grep T1113), the prerender scripts (`continent-app/scripts/prerender/`), T1076 SEO (grep T1076)",
+   "scope": "Growth, language in the URL (ROADMAP I12): `/nl/...`, `/de/...` and so on for the five non-English languages, with the router reading and writing the prefix, `hreflang` alternates, the sitemap per language and the prerender producing language pages that pass the SEO bar; English stays at the root. Only translated pages are indexed (the machine-drafted strings from T1170 are noindex until the native review, if that is what the SEO bar asks).",
+   "files": "the router and language detection, the prerender build and sitemap, `public/_headers` or redirects only if needed, tests and a verify script",
+   "gate": "You are the only session in this batch that edits the router.",
+   "done": "Language URLs route and prerender on the fast build, hreflang and sitemap tested, CSP check green.",
+   "model": "opus",
+   "extra": ""
+  },
+  {
+   "s": 129,
+   "task": "T1213",
+   "item": "I16",
+   "branch": "p15-s129-data-access-ladder",
+   "slug": "data-access-ladder",
+   "owns": "the data access ladder records",
+   "reads": "ROADMAP I16 (the ladder table), Execution/P15/T1052-data-access-ladder.md, T1172-affiliate-links.md, docs/tos/ and docs/legal/",
+   "scope": "Data access ladder (ROADMAP I16): for each commercial data source in the ladder table, a written record (today, legal route, what unlocks it, the step), the terms re-checked by a research subagent with the date and links, the thresholds as config the admin can see, and the code paths that would switch on at each step behind flags (no live switch). Owner applications to partners become owner steps.",
+   "files": "`docs/data/access-ladder.md` (or under docs/legal/), a small config, flags in the relevant fetchers only, tests",
+   "gate": "Partner applications are the owner's.",
+   "done": "Every source has a dated record with links, thresholds in config, flags tested off by default.",
+   "model": "sonnet",
+   "extra": ""
+  },
+  {
+   "s": 130,
+   "task": "T1214",
+   "item": "register follow-up (data quality and catalogue)",
+   "branch": "p15-s130-sweep-data-quality",
+   "slug": "sweep-data-quality",
+   "owns": "the open next-task rows of T1142, T1143, T1144, T1145, T1146, T1173",
+   "reads": "Execution/P15/T1142-quality-engine-2.md, T1143-provenance.md, T1144-truth-set.md, T1145-coverage-fairness.md, T1146-catalogue-gaps-1.md, T1173-content-ops.md",
+   "scope": "Round 2 follow-up sweep, data quality and catalogue: the open `next task` rows raised by T1142, T1143, T1144, T1145, T1146, T1173 (round 2 tasks). Read each raising report first.",
+   "files": "the files each row names: quality engine and rules, provenance and sources, truth set, coverage, catalogue gap tools, content ops; no catalogue writes (S63 waits on the owner)",
+   "gate": "None (rows that need the owner stay open with a reason).",
+   "done": "Every row in the group is closed, or open with a one-line reason in the report; counts before and after; checks green.",
+   "model": "opus",
+   "extra": "Sweep rules: you work through the register rows named in the scope (grep `Execution/_OPEN.md` for `| T<n>-` with `| next task |`). For each row: do it when the container allows and it stays inside the files the row names; then move the row, with Status `closed by T1214`, from `Execution/_OPEN.md` to `Execution/_OPEN-CLOSED.md` in a commit of its own (rows are never deleted). A row you cannot do here (needs the box, a live service, a host the proxy blocks, or an owner decision) stays open: list it in the report with a one-line reason, and if it is really an owner step change its Owner to `user` and add it to the report's Owner steps. A row that is no longer true (already fixed by a later task) is closed with the proof in the report. No new features beyond what the rows ask; anything new becomes a new row `T1214-x`. Report the count before and after: open rows in your group, closed, still open, moved to user."
+  },
+  {
+   "s": 131,
+   "task": "T1215",
+   "item": "register follow-up (intelligence)",
+   "branch": "p15-s131-sweep-intelligence",
+   "slug": "sweep-intelligence",
+   "owns": "the open next-task rows of T1149, T1150, T1152, T1153, T1154, T1155, T1156",
+   "reads": "Execution/P15/T1149-taxonomy-1.md, T1150-taxonomy-2.md, T1152-taste-profile.md, T1153-place-linking.md, T1154-intelligence-api.md, T1155-mcp-server.md, T1156-responsible-ai.md",
+   "scope": "Round 2 follow-up sweep, intelligence: the open `next task` rows raised by T1149, T1150, T1152, T1153, T1154, T1155, T1156 (round 2 tasks). Read each raising report first.",
+   "files": "the files each row names: taxonomy and tagger, taste profile, place linking, the Intelligence API, the MCP server, the AI page",
+   "gate": "None (rows that need the owner stay open with a reason).",
+   "done": "Every row in the group is closed, or open with a one-line reason in the report; counts before and after; checks green.",
+   "model": "opus",
+   "extra": "Sweep rules: you work through the register rows named in the scope (grep `Execution/_OPEN.md` for `| T<n>-` with `| next task |`). For each row: do it when the container allows and it stays inside the files the row names; then move the row, with Status `closed by T1215`, from `Execution/_OPEN.md` to `Execution/_OPEN-CLOSED.md` in a commit of its own (rows are never deleted). A row you cannot do here (needs the box, a live service, a host the proxy blocks, or an owner decision) stays open: list it in the report with a one-line reason, and if it is really an owner step change its Owner to `user` and add it to the report's Owner steps. A row that is no longer true (already fixed by a later task) is closed with the proof in the report. No new features beyond what the rows ask; anything new becomes a new row `T1215-x`. Report the count before and after: open rows in your group, closed, still open, moved to user."
+  },
+  {
+   "s": 132,
+   "task": "T1216",
+   "item": "register follow-up (validation)",
+   "branch": "p15-s132-sweep-validation",
+   "slug": "sweep-validation",
+   "owns": "the open next-task rows of T1187, T1188, T1189, T1190, T1191, T1192, T1193, T1194, T1195, T1196",
+   "reads": "Execution/P15/T1187-validation-method.md and the layer reports T1188 to T1196",
+   "scope": "Round 2 follow-up sweep, validation: the open `next task` rows raised by T1187, T1188, T1189, T1190, T1191, T1192, T1193, T1194, T1195, T1196 (round 2 tasks). Read each raising report first.",
+   "files": "the files each row names under `scripts/validation/`, `pipeline/judge/` and `data/reports/validation/`; no layer writer changes",
+   "gate": "None (rows that need the owner stay open with a reason).",
+   "done": "Every row in the group is closed, or open with a one-line reason in the report; counts before and after; checks green.",
+   "model": "opus",
+   "extra": "Sweep rules: you work through the register rows named in the scope (grep `Execution/_OPEN.md` for `| T<n>-` with `| next task |`). For each row: do it when the container allows and it stays inside the files the row names; then move the row, with Status `closed by T1216`, from `Execution/_OPEN.md` to `Execution/_OPEN-CLOSED.md` in a commit of its own (rows are never deleted). A row you cannot do here (needs the box, a live service, a host the proxy blocks, or an owner decision) stays open: list it in the report with a one-line reason, and if it is really an owner step change its Owner to `user` and add it to the report's Owner steps. A row that is no longer true (already fixed by a later task) is closed with the proof in the report. No new features beyond what the rows ask; anything new becomes a new row `T1216-x`. Report the count before and after: open rows in your group, closed, still open, moved to user."
+  }
+ ],
+ "round": 3,
+ "integration": "p15-round3"
+}

@@ -4,7 +4,7 @@ D=/tmp/claude-0/-home-user-carta-travel-app/74433359-2b2b-5d09-87bb-ede55d4217b4
 cd /home/user/carta-travel-app
 b=$1
 base=$(git merge-base HEAD origin/$b)
-git merge --no-ff --no-edit origin/$b -m "Merge $b into p15-round2" >/dev/null 2>&1
+git merge --no-ff --no-edit origin/$b -m "Merge $b into $(git branch --show-current)" >/dev/null 2>&1
 conf=$(git diff --name-only --diff-filter=U)
 for f in $conf; do
   case $f in
@@ -15,7 +15,7 @@ done
 if [ -n "$regen" ]; then python3 -I scripts/docs/build_reference.py >/dev/null 2>&1; python3 -I scripts/docs/build_lineage.py >/dev/null 2>&1; git add docs/reference docs/architecture/lineage.md; fi
 left=$(git diff --name-only --diff-filter=U)
 if [ -n "$left" ]; then echo "CONFLICTS LEFT: $left"; exit 1; fi
-if [ -f .git/MERGE_HEAD ]; then git commit -q -m "Merge $b into p15-round2"; fi
+if [ -f .git/MERGE_HEAD ]; then git commit -q -m "Merge $b into $(git branch --show-current)"; fi
 # ROADMAP rows the branch changed: restore the branch's version of each row id
 python3 - "$base" "origin/$b" <<'PY'
 import subprocess, sys, re
@@ -69,6 +69,18 @@ for l,i in zip(lines,ids):
 if dup: open('ROADMAP.md','w').write('\n'.join(out)+'\n')
 print('doubled roadmap ids fixed:', sorted(dup) if dup else 'none')
 PY
+# rows closed by a round 3 task (T1197 and up) that a merge brought back into _OPEN.md: remove them again
+python3 - <<'PY'
+import re
+closed={}
+for l in open('Execution/_OPEN-CLOSED.md'):
+    m=re.match(r'^\| ([^|]+?) \|.*closed by T(\d+)', l)
+    if m and int(m.group(2))>=1197: closed[m.group(1).strip()]=1
+lines=open('Execution/_OPEN.md').read().split('\n')
+keep=[l for l in lines if not (l.startswith('| ') and l.split('|')[1].strip() in closed)]
+if len(keep)!=len(lines):
+    open('Execution/_OPEN.md','w').write('\n'.join(keep)); print('removed reopened round 3 rows:', len(lines)-len(keep))
+PY
 # doubled register ids
 python3 - <<'PY'
 import collections
@@ -77,5 +89,5 @@ d=[k for k,c in collections.Counter(ids).items() if c>1 and k not in ('ID',)]
 print('doubled _OPEN ids:', d[:20] if d else 'none')
 PY
 git show origin/claude/relaxed-dirac-l8enoy:Execution/P15/_run50/check_closed.py > $D/check_closed.py 2>/dev/null; python3 $D/check_closed.py
-if ! git diff --quiet; then git add -A ROADMAP.md && git commit -q --amend --no-edit && echo "amended merge with roadmap fix"; fi
+if ! git diff --quiet; then git add -A ROADMAP.md Execution/_OPEN.md && git commit -q --amend --no-edit && echo "amended merge with roadmap fix"; fi
 git log -1 --oneline

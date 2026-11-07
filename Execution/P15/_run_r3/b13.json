@@ -1,0 +1,82 @@
+{
+ "batch": 13,
+ "rows": [
+  {
+   "s": 113,
+   "task": "T1197",
+   "item": "D16",
+   "branch": "p15-s113-link-health",
+   "slug": "link-health",
+   "owns": "the weekly link and image checker",
+   "reads": "ROADMAP D16 and the D16 to D22 note, Execution/P15/T1172-affiliate-links.md (partner links), T1142-quality-engine-2.md (D2 rules, admin Data health), T1187-validation-method.md",
+   "scope": "Link and page health (ROADMAP D16): a weekly job that checks every outbound link (official sites, booking and partner links, source links) and every image URL in the shipped data, politely (HEAD first, rate limited, a clear user agent naming Carta without personal data, robots respected), records status and redirects, and lists broken ones in the admin Data health panel with a fix-or-drop action and a D2 rule (share of broken links). Proven on fixtures and a small sample of what the proxy lets through; the full run is a box task (owner step).",
+   "files": "`pipeline/link_health.py` (or a folder) and its `run_pipeline.py` task (before photo_sources), its D2 rule in `scripts/quality/rules.yaml`, the admin Data health view and hook, `continent-app/src/i18n/*.js` (new `admin.links.*` keys in all six), tests",
+   "gate": "None (the full run on the box is an owner step).",
+   "done": "The checker runs on fixtures and a sample, results feed the admin list and a D2 rule, the weekly task is registered.",
+   "model": "opus",
+   "extra": ""
+  },
+  {
+   "s": 114,
+   "task": "T1198",
+   "item": "D17",
+   "branch": "p15-s114-photo-correctness",
+   "slug": "photo-correctness",
+   "owns": "the hero photo check",
+   "reads": "ROADMAP D17 and the note (T1077 found wrong hero photos), Execution/P15/T1105 first load (photo ladder), T1188-llm-judge.md (judge backends), T1127 imagery gaps, docs on photos (grep MAP.md)",
+   "scope": "Photo correctness (ROADMAP D17): a sampled check per run of hero photos against the place they front (wrong town, a map, a logo, an interior, a group photo), using cheap signals first (Commons categories, file names, EXIF and caption text, image dimensions) and a vision check through the AI gateway only where those are unsure (Gemini per the E7 config, prompt in the registry, never the Claude API), flagged photos replaced by the next candidate in the existing photo ladder, and the flag rate tracked as a D2 rule. Build and test on fixtures; the model run is an owner step if no key is reachable here.",
+   "files": "`pipeline/photos/` (a new check module and its task), the photo ladder only where a replacement is chosen, a prompt under `prompts/`, its D2 rule, tests",
+   "gate": "None (model runs needing a key are owner steps).",
+   "done": "The check flags seeded wrong photos in tests, replacements come from the ladder, the rate is a D2 rule.",
+   "model": "opus",
+   "extra": ""
+  },
+  {
+   "s": 115,
+   "task": "T1199",
+   "item": "D19",
+   "branch": "p15-s115-entry-rules",
+   "slug": "entry-rules",
+   "owns": "entry rules and official advice data and its page block",
+   "reads": "ROADMAP D19 and the note, docs/legal/ (the licence and copy rules), the country page area in MAP.md, PRODUCT.md, the carta-design skill",
+   "scope": "Entry rules and official advice (ROADMAP D19): research subagent first on official sources whose terms allow reuse (EU Entry/Exit System and ETIAS pages, national foreign ministry advice that is openly licensed, for example GOV.UK under OGL); a pipeline layer per country and traveller nationality group (EU/EEA, UK, US and other visa-free, visa required) with the requirement in short neutral words, the source link and the date checked, never paraphrasing legal rules beyond a short pointer; a block on the country page that says \"Check before you go\" with the source and date. Keep `_src` and `_asof` (T1143).",
+   "files": "`pipeline/entry_rules*` and its task, a small wire file or a key block (contract updated if needed), the country page block, `continent-app/src/i18n/*.js` (new `entry.*` keys in all six), tests",
+   "gate": "None (the refresh against live sources is an owner run where hosts are blocked).",
+   "done": "Entry data for every country with sources and dates, shown on the country page at phone and desktop, contract and checks green.",
+   "model": "opus",
+   "extra": ""
+  },
+  {
+   "s": 116,
+   "task": "T1200",
+   "item": "D20",
+   "branch": "p15-s116-heat-fire",
+   "slug": "heat-fire",
+   "owns": "heat and fire risk by month",
+   "reads": "ROADMAP D20 and the note, the climate layer (grep docs/HANDBOOK.md for climate and best months), Execution/P15/T1194-climate-validation.md",
+   "scope": "Heat and fire risk by month (ROADMAP D20): from the open climate data already in the climate layer, mark the months with extreme heat (a threshold on daily highs, justified and in config) and wildfire risk (an open fire weather index or seasonal danger source whose terms allow it, research first) per place, and stop \"best months\" from recommending them for families or anyone who said they avoid heat; a short honest note on the month strip. Keep `_src` and `_asof`.",
+   "files": "the climate pipeline step (a new heat and fire module), the best-months logic in the app (one rule, behind config), the month strip note, `continent-app/src/i18n/*.js` (new `heat.*` keys in all six), config keys, tests",
+   "gate": "None.",
+   "done": "Heat and fire months marked per place on fixtures and the shipped data the container has, best months respect them, the note shows, checks green.",
+   "model": "sonnet",
+   "extra": ""
+  },
+  {
+   "s": 117,
+   "task": "T1201",
+   "item": "register follow-up (trails)",
+   "branch": "p15-s117-sweep-trails",
+   "slug": "sweep-trails",
+   "owns": "the open next-task rows of T1179, T1181, T1182, T1183, T1184, T1185, T1186",
+   "reads": "Execution/P15/T1179-trail-summaries.md, T1181-trails-external.md, T1182-trails-lab-box.md, T1183-trail-continuity.md, T1184-multi-stage-treks.md, T1185-way-back.md, T1186-mountains-lakes.md",
+   "scope": "Round 2 follow-up sweep, trails: the open `next task` rows raised by T1179, T1181, T1182, T1183, T1184, T1185, T1186 (round 2 tasks). Read each raising report first.",
+   "files": "the files each row names, mostly `pipeline/trails/`, `pipeline/mountains/`, `pipeline/lakes/` and the trail page components; no wire rebuild (box)",
+   "gate": "None (rows that need the owner stay open with a reason).",
+   "done": "Every row in the group is closed, or open with a one-line reason in the report; counts before and after; checks green.",
+   "model": "opus",
+   "extra": "Sweep rules: you work through the register rows named in the scope (grep `Execution/_OPEN.md` for `| T<n>-` with `| next task |`). For each row: do it when the container allows and it stays inside the files the row names; then move the row, with Status `closed by T1201`, from `Execution/_OPEN.md` to `Execution/_OPEN-CLOSED.md` in a commit of its own (rows are never deleted). A row you cannot do here (needs the box, a live service, a host the proxy blocks, or an owner decision) stays open: list it in the report with a one-line reason, and if it is really an owner step change its Owner to `user` and add it to the report's Owner steps. A row that is no longer true (already fixed by a later task) is closed with the proof in the report. No new features beyond what the rows ask; anything new becomes a new row `T1201-x`. Report the count before and after: open rows in your group, closed, still open, moved to user."
+  }
+ ],
+ "round": 3,
+ "integration": "p15-round3"
+}
