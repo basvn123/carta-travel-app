@@ -17,6 +17,11 @@
  *   - the lift against the catalogue, smoothed so one or two items cannot
  *     swing it: lift = ((E_t + ALPHA * p_t) / (E + ALPHA)) / p_t, where p_t is
  *     the share of catalogue places carrying t;
+ *   - ROLL-UP (T1215, T1152-e): an item also lends ROLLUP_SHARE (0.5) of its
+ *     weight to each parent of its nodes, compounding per level up (the
+ *     facet root never scores); the catalogue base rate rolls up the same
+ *     way; a rejected node never lifts its parents; a parent's items say
+ *     through which child they came;
  *   - a node becomes a chip when lift >= 1.5, E_t >= 2 and it rests on at
  *     least 3 distinct items (2 when one of them is a trip).
  * VALIDATION: an accepted chip stays shown while any evidence remains; a
@@ -38,6 +43,8 @@ export const SHOWN_MAX = 12;
 export const PER_FACET = 2;
 export const REJECT_WEIGHT = -3;
 export const ACCEPT_WEIGHT = 1;
+/** The share of a child's evidence its parent takes, per level up (T1215). */
+export const ROLLUP_SHARE = 0.5;
 const DAY_MS = 86400000;
 const FACETS = ['activity', 'setting', 'vibe', 'traveller', 'practical'];
 
@@ -86,15 +93,55 @@ function ancestors(id) {
 export function baseRates(destinations) {
   const list = Object.values(destinations || {});
   const counts = new Map();
-  for (const d of list) for (const n of nodesOfDestination(d)) counts.set(n, (counts.get(n) || 0) + 1);
+  const rolledSum = new Map();
+  for (const d of list) {
+    const direct = nodesOfDestination(d);
+    for (const n of direct) counts.set(n, (counts.get(n) || 0) + 1);
+    // The catalogue rolls up the same way the evidence does (T1215), so a
+    // parent's lift compares like with like.
+    for (const [n, x] of rollUp(direct.map((m) => [m, 1]))) rolledSum.set(n, (rolledSum.get(n) || 0) + x.w);
+  }
   const total = list.length || 1;
   const rates = new Map();
   for (const [n, c] of counts) rates.set(n, c / total);
-  return { rates, total };
+  const rolled = new Map();
+  for (const [n, c] of rolledSum) rolled.set(n, c / total);
+  return { rates, rolled, total };
 }
 
-/** The base rate of a node; one place in the catalogue when none carries it (a filter-only node). */
-const rateOf = (base, id) => base.rates.get(id) || 1 / (base.total + 1);
+/**
+ * The weight each node gets from one item's own nodes, with the roll-up
+ * (T1215, T1152-e): a node keeps its weight, each ancestor below the facet
+ * root takes ROLLUP_SHARE of it per level up, and a node met twice keeps
+ * the larger weight. A rejected node never lifts what is above it, and the
+ * climb stops at a rejected ancestor too. `pairs` is [[node, weight]].
+ */
+function rollUp(pairs, rejected = null) {
+  const out = new Map();
+  const put = (n, w, via) => {
+    const had = out.get(n);
+    if (!had || w > had.w) out.set(n, { w, via });
+  };
+  for (const [n, w] of pairs) put(n, w, null);
+  for (const [n, w] of pairs) {
+    if (rejected?.has(n)) continue;
+    let cur = n;
+    let share = w;
+    for (;;) {
+      const p = TAXONOMY.nodes[cur]?.parent;
+      if (!p || !TAXONOMY.nodes[p] || TAXONOMY.nodes[p].level === 0) break;
+      share *= ROLLUP_SHARE;
+      put(p, share, n);
+      if (rejected?.has(p)) break;
+      cur = p;
+    }
+  }
+  for (const n of [...out.keys()]) if (!isNode(n)) out.delete(n);
+  return out;
+}
+
+/** The base rate of a node (rolled up); one place in the catalogue when none carries it (a filter-only node). */
+const rateOf = (base, id) => (base.rolled || base.rates).get(id) || 1 / (base.total + 1);
 
 /**
  * The evidence items from what the traveller made. Each item:
@@ -143,18 +190,25 @@ const weightOf = (item, now) => {
   return w * 0.5 ** (age / HALF_LIFE_DAYS[item.kind]);
 };
 
-/** Score every node the items reach. Returns Map(node -> { node, facet, e, lift, items[] }). */
-export function scoreNodes(items, base, { now = Date.now() } = {}) {
+/**
+ * Score every node the items reach, their own and, rolled up, their parents.
+ * Returns Map(node -> { node, facet, e, lift, items[], via }), where `via`
+ * maps an item key to the child node it came up through (absent when the
+ * item carries the node itself). `verdicts` keeps a rejected node from
+ * lifting its parents.
+ */
+export function scoreNodes(items, base, { now = Date.now(), verdicts = {} } = {}) {
+  const rejected = new Set(Object.keys(verdicts).filter((k) => verdicts[k]?.v === 'reject'));
   const per = new Map();
   let E = 0;
   for (const it of items) {
     const w = weightOf(it, now);
     E += w;
-    for (const n of it.nodes) {
-      if (!isNode(n)) continue;
-      const row = per.get(n) || { node: n, facet: nodeFacet(n), e: 0, items: [] };
-      row.e += w;
+    for (const [n, x] of rollUp(it.nodes.map((m) => [m, w]), rejected)) {
+      const row = per.get(n) || { node: n, facet: nodeFacet(n), e: 0, items: [], via: {} };
+      row.e += x.w;
       row.items.push(it);
+      if (x.via) row.via[it.key] = x.via;
       per.set(n, row);
     }
   }
@@ -173,15 +227,18 @@ export function clears(row, factor = 1) {
   return row.lift >= MIN_LIFT && row.e >= MIN_EVIDENCE * factor && row.items.length >= need * factor;
 }
 
-/** The evidence of one chip, counted by kind, with up to three names (trips first). */
+/**
+ * The evidence of one chip, counted by kind, with up to three names (trips
+ * first), and `all`: every item behind it in the same order, each
+ * { key, kind, name, via } (T1215, T1152-e), for the chip opened up.
+ */
 export function evidenceOf(row) {
   const by = { save: 0, trip: 0, filter: 0 };
   for (const i of row.items) by[i.kind] += 1;
-  const names = uniq(
-    [...row.items].sort((a, b) => (WEIGHT[b.kind] - WEIGHT[a.kind]) || ((b.at || 0) - (a.at || 0)))
-      .map((i) => i.name).filter(Boolean),
-  );
-  return { saves: by.save, trips: by.trip, filters: by.filter, names: names.slice(0, 3), more: Math.max(0, names.length - 3) };
+  const sorted = [...row.items].sort((a, b) => (WEIGHT[b.kind] - WEIGHT[a.kind]) || ((b.at || 0) - (a.at || 0)));
+  const names = uniq(sorted.map((i) => i.name).filter(Boolean));
+  const all = sorted.map((i) => ({ key: i.key, kind: i.kind, name: i.name || '', via: row.via?.[i.key] || null }));
+  return { saves: by.save, trips: by.trip, filters: by.filter, names: names.slice(0, 3), more: Math.max(0, names.length - 3), all };
 }
 
 /**
@@ -191,7 +248,7 @@ export function evidenceOf(row) {
  * Ties break on the node id, so the order is stable between loads.
  */
 export function buildProfile({ items, base, verdicts = {}, now = Date.now(), all = false }) {
-  const scored = scoreNodes(items, base, { now });
+  const scored = scoreNodes(items, base, { now, verdicts });
   const rejected = new Set(Object.keys(verdicts).filter((k) => verdicts[k]?.v === 'reject'));
   const candidates = [];
   const hidden = [];
@@ -206,7 +263,7 @@ export function buildProfile({ items, base, verdicts = {}, now = Date.now(), all
   // traveller can always take a rejection back.
   for (const node of rejected) {
     if (!scored.has(node) && isNode(node)) {
-      hidden.push({ node, facet: nodeFacet(node), e: 0, lift: 0, items: [], verdict: 'reject', evidence: { saves: 0, trips: 0, filters: 0, names: [], more: 0 } });
+      hidden.push({ node, facet: nodeFacet(node), e: 0, lift: 0, items: [], verdict: 'reject', evidence: { saves: 0, trips: 0, filters: 0, names: [], more: 0, all: [] } });
     }
   }
   // A node and its own ancestor on the same evidence say the same thing:

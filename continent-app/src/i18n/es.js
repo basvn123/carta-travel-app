@@ -9683,6 +9683,13 @@ export const es = {
   "taste.profile.facet.vibe": "Ambiente",
   "taste.profile.facet.traveller": "Quién",
   "taste.profile.facet.practical": "Práctico",
+  "taste.profile.open": "Ver los {n}",
+  "taste.profile.openHide": "Ocultar la lista",
+  "taste.profile.listAria": "En qué se basa {label}",
+  "taste.profile.kindTrip": "Viaje",
+  "taste.profile.kindSave": "Guardado",
+  "taste.profile.kindFilter": "Filtro",
+  "taste.profile.via": "a través de {label}",
   // T1170 (I8): machine-drafted, awaiting native review (docs/i18n/review.md)
   "waitlist.title": "Apúntate a la lista de Carta",
   "waitlist.lead": "Acceso anticipado a las funciones de planificación y, de vez en cuando, los lugares con mejor relación calidad-precio de Europa. Un correo corto al mes, como mucho.",

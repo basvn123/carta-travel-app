@@ -9683,6 +9683,13 @@ export const de = {
   "taste.profile.facet.vibe": "Stimmung",
   "taste.profile.facet.traveller": "Wer",
   "taste.profile.facet.practical": "Praktisch",
+  "taste.profile.open": "Alle {n} ansehen",
+  "taste.profile.openHide": "Liste ausblenden",
+  "taste.profile.listAria": "Worauf {label} beruht",
+  "taste.profile.kindTrip": "Reise",
+  "taste.profile.kindSave": "Gemerkt",
+  "taste.profile.kindFilter": "Filter",
+  "taste.profile.via": "über {label}",
   // T1170 (I8): machine-drafted, awaiting native review (docs/i18n/review.md)
   "waitlist.title": "Hol dir die Carta-Liste",
   "waitlist.lead": "Früher Zugang zu Planungsfunktionen und ab und zu die besten Orte Europas fürs Geld. Höchstens eine kurze Mail im Monat.",

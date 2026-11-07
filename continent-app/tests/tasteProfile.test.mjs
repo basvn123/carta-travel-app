@@ -36,7 +36,10 @@ test('three saved beach places make a beach chip with its evidence; one lake doe
   const beach = prof.shown.find((c) => c.node === 'set.beach');
   assert.ok(beach, 'beach shown');
   assert.equal(beach.facet, 'setting');
-  assert.deepEqual(beach.evidence, { saves: 3, trips: 0, filters: 0, names: ['Nice', 'Faro', 'Split'], more: 0 });
+  const { all, ...counted } = beach.evidence;
+  assert.deepEqual(counted, { saves: 3, trips: 0, filters: 0, names: ['Nice', 'Faro', 'Split'], more: 0 });
+  // Opened up, the chip lists every item behind it, each carrying the node itself (T1152-e).
+  assert.deepEqual(all.map((i) => [i.kind, i.name, i.via]).sort(), [['save', 'Faro', null], ['save', 'Nice', null], ['save', 'Split', null]]);
   assert.ok(beach.lift >= P.MIN_LIFT);
   assert.ok(!prof.shown.some((c) => c.node === 'set.lake'), 'one lake is below the bar');
 });
@@ -58,6 +61,34 @@ test('a trip weighs 3 and two items with a trip clear the bar; old items fade', 
   const old = P.evidenceItems({ saves, trips: [{ ...trips[0], at: NOW - 4 * 365 * 86400000 }], destinations: DEST });
   const faded = P.scoreNodes(old, base, { now: NOW }).get('set.lake');
   assert.ok(faded.e < 1.5, `four years old weighs ${faded.e}`);
+});
+
+test('roll-up: two beaches and two fjords make a Coast chip no child earns alone; a rejected child never lifts it', () => {
+  const D2 = {
+    B1: { id: 'B1', city: 'Beach One', categories: ['beach'] }, B2: { id: 'B2', city: 'Beach Two', categories: ['beach'] },
+    F1: { id: 'F1', city: 'Fjord One', categories: ['fjord'] }, F2: { id: 'F2', city: 'Fjord Two', categories: ['fjord'] },
+    ...Object.fromEntries(Array.from({ length: 16 }, (_, i) => [`C${i}`, { id: `C${i}`, city: `Town ${i}`, categories: ['city'] }])),
+  };
+  const b2 = P.baseRates(D2);
+  // The catalogue rolls up too: 4 coastal places at half weight over 20.
+  assert.equal(b2.rolled.get('set.coast'), (4 * P.ROLLUP_SHARE) / 20);
+  assert.equal(b2.rates.get('set.coast'), undefined, 'the direct rates are unchanged (why.js reads them)');
+  const sv = (id) => ({ key: `dest:${id}`, kind: 'dest', id, name: D2[id].city });
+  const items = P.evidenceItems({ saves: ['B1', 'B2', 'F1', 'F2'].map(sv), destinations: D2 });
+  const scored = P.scoreNodes(items, b2, { now: NOW });
+  const coast = scored.get('set.coast');
+  assert.equal(coast.e, 4 * P.ROLLUP_SHARE);
+  assert.deepEqual(coast.via, { 'save:dest:B1': 'set.beach', 'save:dest:B2': 'set.beach', 'save:dest:F1': 'set.fjord', 'save:dest:F2': 'set.fjord' });
+  assert.ok(!scored.has('setting'), 'the facet root never scores');
+  const prof = P.buildProfile({ items, base: b2, now: NOW });
+  assert.deepEqual(prof.shown.map((c) => c.node), ['set.coast']);
+  assert.deepEqual(prof.shown[0].evidence.all.map((i) => [i.name, i.via]),
+    [['Beach One', 'set.beach'], ['Beach Two', 'set.beach'], ['Fjord One', 'set.fjord'], ['Fjord Two', 'set.fjord']]);
+  // Not me to fjords: they lend Coast nothing, so Coast falls under the bar.
+  const rej = P.buildProfile({ items, base: b2, now: NOW, verdicts: { 'set.fjord': { v: 'reject', at: NOW } } });
+  assert.ok(!rej.shown.some((c) => c.node === 'set.coast'));
+  const coastRej = P.scoreNodes(items, b2, { now: NOW, verdicts: { 'set.fjord': { v: 'reject', at: NOW } } }).get('set.coast');
+  assert.deepEqual([coastRej.e, coastRej.items.length], [2 * P.ROLLUP_SHARE, 2]);
 });
 
 test('filters count as evidence at half a save', () => {
