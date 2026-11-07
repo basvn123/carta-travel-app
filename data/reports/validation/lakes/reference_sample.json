@@ -1,0 +1,1625 @@
+{
+"source": "EEA WISE bathing water register, Lake sites, 2% per country, minimum 3, by sha256 (rows copied unchanged; EEA content, attribute the European Environment Agency)",
+"sites": [
+{
+"bwid": "AL110",
+"name": "POGRADEC",
+"iso2": "AL",
+"type": "Lake",
+"lat": 40.9078,
+"lon": 20.6507,
+"q": "Excellent",
+"q1": "Good"
+},
+{
+"bwid": "AL108",
+"name": "LIN",
+"iso2": "AL",
+"type": "Lake",
+"lat": 41.0519,
+"lon": 20.6463,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "AL112",
+"name": "POGRADEC",
+"iso2": "AL",
+"type": "Lake",
+"lat": 40.54573,
+"lon": 20.40247,
+"q": "Poor",
+"q1": "Poor"
+},
+{
+"bwid": "AT1051051100150010",
+"name": "NATUBADESEE KÖNIGSDORF",
+"iso2": "AT",
+"type": "Lake",
+"lat": 47.0083,
+"lon": 16.1633,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "AT3230003300100020",
+"name": "FUSCHLSEE, HOF",
+"iso2": "AT",
+"type": "Lake",
+"lat": 47.8129,
+"lon": 13.253,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "AT3350003100200020",
+"name": "REINTALER SEE, CAMPINGPLATZ",
+"iso2": "AT",
+"type": "Lake",
+"lat": 47.4625,
+"lon": 11.9053,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "AT1240008800070010",
+"name": "BADETEICH, ALLENTSTEIG",
+"iso2": "AT",
+"type": "Lake",
+"lat": 48.6933,
+"lon": 15.3293,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "AT1260008400100010",
+"name": "BADETEICH, GERASDORF",
+"iso2": "AT",
+"type": "Lake",
+"lat": 48.3034,
+"lon": 16.4605,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "AT3350002500090010",
+"name": "BERGLSTEINER SEE, WEST",
+"iso2": "AT",
+"type": "Lake",
+"lat": 47.4728,
+"lon": 11.9122,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "BEVL_BW_MEC01",
+"name": "MECHELEN DE NEKKER (GROTE VIJVER)",
+"iso2": "BE",
+"type": "Lake",
+"lat": 51.02374,
+"lon": 4.50536,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "BEWAL_BW_HN_E03",
+"name": "LE GRAND LARGE À NIMY",
+"iso2": "BE",
+"type": "Lake",
+"lat": 50.46915,
+"lon": 3.94055,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "BEVL_BW_LIL01",
+"name": "LILLE LILSE BERGEN (GROOT)",
+"iso2": "BE",
+"type": "Lake",
+"lat": 51.28261,
+"lon": 4.84244,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "BG4251606567009001",
+"name": "ЯЗОВИР КЪРДЖАЛИ-ПЛАЖ 1",
+"iso2": "BG",
+"type": "Lake",
+"lat": 41.6408,
+"lon": 25.3219,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "BG4251615000009002",
+"name": "ЯЗОВИР КЪРДЖАЛИ-ПЛАЖ 2",
+"iso2": "BG",
+"type": "Lake",
+"lat": 41.6468,
+"lon": 25.3062,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "BG4251615268009003",
+"name": "ЯЗОВИР СТУДЕН КЛАДЕНЕЦ",
+"iso2": "BG",
+"type": "Lake",
+"lat": 41.6558,
+"lon": 25.5608,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "CH17042",
+"name": "SCHWIMMBAD LIDO ZUERICHSEE",
+"iso2": "CH",
+"type": "Lake",
+"lat": 47.22177,
+"lon": 8.82392,
+"q": "Not classified",
+"q1": "Not classified"
+},
+{
+"bwid": "CH20006",
+"name": "STRANDBAD GUETTINGEN",
+"iso2": "CH",
+"type": "Lake",
+"lat": 47.6136,
+"lon": 9.2915,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "CH21001",
+"name": "LAGHETTO DI ASTANO",
+"iso2": "CH",
+"type": "Lake",
+"lat": 46.0128,
+"lon": 8.807,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "CZKO620301",
+"name": "VN BRNĚNSKÁ PŘEHRADA - RAKOVEC",
+"iso2": "CZ",
+"type": "Lake",
+"lat": 49.2285,
+"lon": 16.5102,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "CZKO320801",
+"name": "VN HRACHOLUSKY - NA RADOSTI",
+"iso2": "CZ",
+"type": "Lake",
+"lat": 49.7955,
+"lon": 13.1394,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "CZKO810605",
+"name": "VN ŽERMANICE - DOLNÍ DOMASLAVICE",
+"iso2": "CZ",
+"type": "Lake",
+"lat": 49.7205,
+"lon": 18.4687,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBW_PR_0141",
+"name": "KONSTANZ BODENSEE THERME",
+"iso2": "DE",
+"type": "Lake",
+"lat": 47.6643,
+"lon": 9.2104,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DESH_PR_0300",
+"name": "KLUETHSEE QUAAL",
+"iso2": "DE",
+"type": "Lake",
+"lat": 53.9624,
+"lon": 10.3537,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBY_PR_OAL_0144",
+"name": "FORGGENSEE RIEDEN AF BADEPLATZ DIETRINGEN",
+"iso2": "DE",
+"type": "Lake",
+"lat": 47.6361,
+"lon": 10.7386,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBW_PR_0259",
+"name": "RUST BAGGERSEE ALLMENDSEE",
+"iso2": "DE",
+"type": "Lake",
+"lat": 48.2735,
+"lon": 7.7198,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "DENI_PR_TK25_3513_01",
+"name": "ALFSEE DUBBELAU SEE",
+"iso2": "DE",
+"type": "Lake",
+"lat": 52.4892,
+"lon": 7.9887,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBY_PR_FRG_0378",
+"name": "SEE RIEDELSBACH RIEDELSBACH",
+"iso2": "DE",
+"type": "Lake",
+"lat": 48.7487,
+"lon": 13.77902,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBB_PR_0149",
+"name": "WALDSEE TIER UND FREITZEITPARK",
+"iso2": "DE",
+"type": "Lake",
+"lat": 52.7474,
+"lon": 13.1588,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBB_PR_0247",
+"name": "WOLLETZSEE ANGERMUENDE STRANDBAD",
+"iso2": "DE",
+"type": "Lake",
+"lat": 53.0235,
+"lon": 13.9471,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBW_PR_0191",
+"name": "BAD WURZACH LANGWEIHER BAIERZ",
+"iso2": "DE",
+"type": "Lake",
+"lat": 47.9154,
+"lon": 9.9613,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEHE_PR_0005",
+"name": "GROSSER WOOG",
+"iso2": "DE",
+"type": "Lake",
+"lat": 49.8731,
+"lon": 8.6683,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBW_PR_0227",
+"name": "RULFINGEN SUEDSEE III",
+"iso2": "DE",
+"type": "Lake",
+"lat": 48.0321,
+"lon": 9.2835,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBB_PR_0206",
+"name": "MELLENSEE MELLENSEE STRANDBAD",
+"iso2": "DE",
+"type": "Lake",
+"lat": 52.1795,
+"lon": 13.4139,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBY_PR_PAN_0369",
+"name": "WALDSEE KIRCHDORF AINN",
+"iso2": "DE",
+"type": "Lake",
+"lat": 48.24496,
+"lon": 13.00196,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBW_PR_0316",
+"name": "OFFENBURG BURGERWALDSEE",
+"iso2": "DE",
+"type": "Lake",
+"lat": 48.4598,
+"lon": 7.9097,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DENW_PR_0040",
+"name": "GLOERTALSPERRE NOERDLICHE BADEZONE",
+"iso2": "DE",
+"type": "Lake",
+"lat": 51.2419,
+"lon": 7.4965,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DENI_PR_TK25_4328_02",
+"name": "WIESENBEKER TEICH",
+"iso2": "DE",
+"type": "Lake",
+"lat": 51.6187,
+"lon": 10.4899,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEMV_PR_2_0502",
+"name": "MUEHLENSEE ANKERSHAGEN",
+"iso2": "DE",
+"type": "Lake",
+"lat": 53.4686,
+"lon": 12.9358,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEST_PR_0066",
+"name": "GROSSER LAUSIGER TEICH",
+"iso2": "DE",
+"type": "Lake",
+"lat": 51.6863,
+"lon": 12.799,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DENI_PR_TK25_3025_03",
+"name": "SUEDSEEKAMP WIETZENDORF",
+"iso2": "DE",
+"type": "Lake",
+"lat": 52.9342,
+"lon": 9.9644,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEST_PR_0039",
+"name": "BARLEBER SEE I",
+"iso2": "DE",
+"type": "Lake",
+"lat": 52.2208,
+"lon": 11.6576,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DENI_PR_TK25_2922_01",
+"name": "BULLENSEE",
+"iso2": "DE",
+"type": "Lake",
+"lat": 53.0583,
+"lon": 9.4175,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBY_PR_LIF_0412",
+"name": "BADESEE RUDUFER MICHELAU",
+"iso2": "DE",
+"type": "Lake",
+"lat": 50.1611,
+"lon": 11.1328,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEHH_PR_5900_102515001",
+"name": "SOMMERBAD OSTENDE",
+"iso2": "DE",
+"type": "Lake",
+"lat": 53.5906,
+"lon": 10.1179,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBW_PR_0297",
+"name": "OPFINGEN GROSSER OPFINGER SEE",
+"iso2": "DE",
+"type": "Lake",
+"lat": 48.0023,
+"lon": 7.7544,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DERP_PR_0052",
+"name": "BAGGERSEE NEUBURG",
+"iso2": "DE",
+"type": "Lake",
+"lat": 48.9922,
+"lon": 8.2299,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DENI_PR_TK25_2518_01",
+"name": "SILBERSEE WEHDEL",
+"iso2": "DE",
+"type": "Lake",
+"lat": 53.4903,
+"lon": 8.81,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBY_PR_LL_0214",
+"name": "AMMERSEE ECHING AAMMERSEE ECHING FREIZEITGELAENDE WESTUFER",
+"iso2": "DE",
+"type": "Lake",
+"lat": 48.0692,
+"lon": 11.1103,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEST_PR_0056",
+"name": "BADESEE KLIETZ",
+"iso2": "DE",
+"type": "Lake",
+"lat": 52.6643,
+"lon": 12.0644,
+"q": "Not classified",
+"q1": "Poor"
+},
+{
+"bwid": "DENI_PR_TK25_2712_01",
+"name": "BADESEE GROSSSANDER",
+"iso2": "DE",
+"type": "Lake",
+"lat": 53.2936,
+"lon": 7.8267,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBW_PR_0072",
+"name": "OBERSULMETINGEN SURFSEE",
+"iso2": "DE",
+"type": "Lake",
+"lat": 48.2143,
+"lon": 9.8464,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBB_PR_0190",
+"name": "DEULOWITZER SEE ATTERWASCH",
+"iso2": "DE",
+"type": "Lake",
+"lat": 51.923,
+"lon": 14.6477,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DENW_PR_0030",
+"name": "FREIBAD EINRUHR RURTALSP SCHWIMMER",
+"iso2": "DE",
+"type": "Lake",
+"lat": 50.5864,
+"lon": 6.3808,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBB_PR_0010",
+"name": "PARSTEINER SEE PARSTEIN CP",
+"iso2": "DE",
+"type": "Lake",
+"lat": 52.9209,
+"lon": 14.0266,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBY_PR_RO_0404",
+"name": "CHIEMSEE PRIEN BADEPLATZ SCHOELLKOPF",
+"iso2": "DE",
+"type": "Lake",
+"lat": 47.8361,
+"lon": 12.3746,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DENW_PR_0008",
+"name": "BADESEE EFFELD AM STRAND",
+"iso2": "DE",
+"type": "Lake",
+"lat": 51.1309,
+"lon": 6.0933,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBY_PR_GAP_0193",
+"name": "BARMSEE KRUEN",
+"iso2": "DE",
+"type": "Lake",
+"lat": 47.5025,
+"lon": 11.2444,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBW_PR_0289",
+"name": "BRAEUNLINGEN KIRNBERGSEE",
+"iso2": "DE",
+"type": "Lake",
+"lat": 47.927,
+"lon": 8.3681,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DEBB_PR_0067",
+"name": "TEUPITZER SEE TEUPITZ",
+"iso2": "DE",
+"type": "Lake",
+"lat": 52.1303,
+"lon": 13.6063,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW1068",
+"name": "KARL SØ, VINDBJERGVEJ",
+"iso2": "DK",
+"type": "Lake",
+"lat": 56.01131,
+"lon": 9.54658,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW1596",
+"name": "NORS SØ",
+"iso2": "DK",
+"type": "Lake",
+"lat": 57.02889,
+"lon": 8.59417,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "DKBW1012",
+"name": "SJØRUP SØ",
+"iso2": "DK",
+"type": "Lake",
+"lat": 56.86988,
+"lon": 9.39718,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "EE00101001NIKER",
+"name": "NIKERJÄRV",
+"iso2": "EE",
+"type": "Lake",
+"lat": 59.2735,
+"lon": 25.6292,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "EE00201007VAINJARV",
+"name": "VÄINJÄRV",
+"iso2": "EE",
+"type": "Lake",
+"lat": 58.9413,
+"lon": 26.0894,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "EE00201011MATSIMAE",
+"name": "MATSIMÄE JÄRV",
+"iso2": "EE",
+"type": "Lake",
+"lat": 59.0611,
+"lon": 25.5132,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ELBW069216020101",
+"name": "LIMNI VOULIAGMENIS",
+"iso2": "EL",
+"type": "Lake",
+"lat": 37.8074,
+"lon": 23.7857,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES513C2152039",
+"name": "EMBALSE SANT ANTONI TALARN PM1",
+"iso2": "ES",
+"type": "Lake",
+"lat": 42.1869,
+"lon": 0.9229,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES424C2112421",
+"name": "EMBALSE ENTREPE?AS PAREJA 02 PM1",
+"iso2": "ES",
+"type": "Lake",
+"lat": 40.5572,
+"lon": -2.6657,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "ES419C0852199",
+"name": "LAGO SANABRIA GALENDE PM4",
+"iso2": "ES",
+"type": "Lake",
+"lat": 42.1143,
+"lon": -6.7241,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FI115600001",
+"name": "KALLIOJARVI",
+"iso2": "FI",
+"type": "Lake",
+"lat": 60.8006,
+"lon": 25.6652,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FI119270003",
+"name": "VARIKKAA",
+"iso2": "FI",
+"type": "Lake",
+"lat": 60.3719,
+"lon": 24.2356,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FI1C4286003",
+"name": "KOIVUSAAREN UIMARANTA",
+"iso2": "FI",
+"type": "Lake",
+"lat": 60.7561,
+"lon": 26.7859,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FI181505003",
+"name": "SAARI HUNTTIJARVI",
+"iso2": "FI",
+"type": "Lake",
+"lat": 60.7419,
+"lon": 25.4348,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FI142301001",
+"name": "PITKAMO",
+"iso2": "FI",
+"type": "Lake",
+"lat": 62.584,
+"lon": 22.4089,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRI3217330D017550",
+"name": "LE GRAND BLEU",
+"iso2": "FR",
+"type": "Lake",
+"lat": 45.75712,
+"lon": -0.94125,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRK1463124D063100",
+"name": "BOIRE DE COURNON",
+"iso2": "FR",
+"type": "Lake",
+"lat": 45.74394,
+"lon": 3.21701,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRI1124043D024010",
+"name": "CAMPING LE MOULINAL",
+"iso2": "FR",
+"type": "Lake",
+"lat": 44.6024,
+"lon": 0.8726,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "FRK2773320D073230",
+"name": "PLAN D'EAU DES OUDINS",
+"iso2": "FR",
+"type": "Lake",
+"lat": 45.25462,
+"lon": 6.3878,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRI2387009D087003",
+"name": "NERGOUT",
+"iso2": "FR",
+"type": "Lake",
+"lat": 45.78768,
+"lon": 1.8813,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRB0645101D045010",
+"name": "ETANG DE LA VALLEE",
+"iso2": "FR",
+"type": "Lake",
+"lat": 47.96003,
+"lon": 2.28298,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRK2773327D073070",
+"name": "PLAN D'EAU L'ETANG BLEU",
+"iso2": "FR",
+"type": "Lake",
+"lat": 45.83129,
+"lon": 5.79982,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRK2874013D074045",
+"name": "ANTHY SECHEX",
+"iso2": "FR",
+"type": "Lake",
+"lat": 46.3516,
+"lon": 6.40466,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRL0205164D005780",
+"name": "LES EYGOIRES - CAMPING",
+"iso2": "FR",
+"type": "Lake",
+"lat": 44.5207,
+"lon": 6.38437,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRH0229277D029022",
+"name": "DRENNEC (OUEST)",
+"iso2": "FR",
+"type": "Lake",
+"lat": 48.3914,
+"lon": -4.01766,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRF3488196D088105",
+"name": "RAMBERCHAMP-KATTENDYCKE",
+"iso2": "FR",
+"type": "Lake",
+"lat": 48.06674,
+"lon": 6.85275,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRK2874172D074130",
+"name": "MAXILLY-SUR-LEMAN PETITE RIVE",
+"iso2": "FR",
+"type": "Lake",
+"lat": 46.40382,
+"lon": 6.6198,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRF1167028D067020",
+"name": "BAIGNADE MUNICIPALE BENFELD",
+"iso2": "FR",
+"type": "Lake",
+"lat": 48.36509,
+"lon": 7.60955,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRK2874163D074041",
+"name": "MARGENCEL REDON",
+"iso2": "FR",
+"type": "Lake",
+"lat": 46.35023,
+"lon": 6.40079,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRK1463338D063170",
+"name": "PLAN D'EAU DE ST ELOY LES MINES",
+"iso2": "FR",
+"type": "Lake",
+"lat": 46.15623,
+"lon": 2.83375,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRK2874275D074260",
+"name": "TALLOIRES MUNICIPALE",
+"iso2": "FR",
+"type": "Lake",
+"lat": 45.83779,
+"lon": 6.21169,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "FRK2874281D074090",
+"name": "THONON PINEDE",
+"iso2": "FR",
+"type": "Lake",
+"lat": 46.39125,
+"lon": 6.48277,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWI-INLAND_TU-14",
+"name": "Jarun, Otok Trešnjevka",
+"iso2": "HR",
+"type": "Lake",
+"lat": 45.78131,
+"lon": 15.91859,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "HRBWI-INLAND_TU-09",
+"name": "Jarun, Malo jezero 3",
+"iso2": "HR",
+"type": "Lake",
+"lat": 45.78051,
+"lon": 15.93547,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HRBWI-INLAND_60002COK1",
+"name": "jezero Bajer - Čoka",
+"iso2": "HR",
+"type": "Lake",
+"lat": 45.31252,
+"lon": 14.71654,
+"q": "Excellent",
+"q1": "Good"
+},
+{
+"bwid": "HUBW_01569",
+"name": "BALATON SIOFOK HOTEL MOLO",
+"iso2": "HU",
+"type": "Lake",
+"lat": 46.9114,
+"lon": 18.0401,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HUBW_01990",
+"name": "BALATON TIHANY HOTEL PANORAMA",
+"iso2": "HU",
+"type": "Lake",
+"lat": 46.925,
+"lon": 17.8662,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HUBW_00610",
+"name": "SZIKSOSFURDO NATURISTA STRAND ES KEMPING VIZTERULETE",
+"iso2": "HU",
+"type": "Lake",
+"lat": 46.26766,
+"lon": 20.01495,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "HUBW_00806",
+"name": "GYOR PUSPOKERDEI HOLT-DUNA ARANYPART II.",
+"iso2": "HU",
+"type": "Lake",
+"lat": 47.69655,
+"lon": 17.62431,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "HUBW_01548",
+"name": "BALATON FONYOD PANORAMA STRAND",
+"iso2": "HU",
+"type": "Lake",
+"lat": 46.7523,
+"lon": 17.5569,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IESHBWL25_191A_0100",
+"name": "BATHING PLACE AT PORTUMNA",
+"iso2": "IE",
+"type": "Lake",
+"lat": 53.08216,
+"lon": -8.21041,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IEEABWL07_274_0100",
+"name": "THE CUT, LOUGH LENE",
+"iso2": "IE",
+"type": "Lake",
+"lat": 53.65943,
+"lon": -7.19581,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IESHBWL27_72_0100",
+"name": "BALLYALLIA LAKE, ENNIS",
+"iso2": "IE",
+"type": "Lake",
+"lat": 52.87509,
+"lon": -8.97123,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT001001050005",
+"name": "ZONA LIDO",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.3198,
+"lon": 7.9006,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "IT041022124003",
+"name": "SPIAGGIA TEMPESTA",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.838,
+"lon": 10.8588,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT041022222001",
+"name": "SPIAGGIA NORD",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.9512,
+"lon": 11.0205,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT004022246001",
+"name": "LAGO RONCONE",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.9853,
+"lon": 10.6748,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT001003062004",
+"name": "LA ROTTA",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.725,
+"lon": 8.5836,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "IT003017134001",
+"name": "LOCALITA' LINGUE",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.6625,
+"lon": 9.9618,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT001103049002",
+"name": "SOTTO CAMOGNO",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.9843,
+"lon": 8.641,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT041022034001",
+"name": "LIDO DI CALDONAZZO",
+"iso2": "IT",
+"type": "Lake",
+"lat": 46.0062,
+"lon": 11.262,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT012057050005",
+"name": "FOSSO DELLE FOCHE",
+"iso2": "IT",
+"type": "Lake",
+"lat": 42.2442,
+"lon": 13.0965,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT003016205002",
+"name": "CIRCOLO NAUTICO",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.7686,
+"lon": 9.9289,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT003017089003",
+"name": "COLA",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.8121,
+"lon": 10.7946,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT001096080005",
+"name": "CAMPEGGIO HAWAY",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.4059,
+"lon": 8.0324,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT012056047003",
+"name": "FOSSO IL FIUME",
+"iso2": "IT",
+"type": "Lake",
+"lat": 42.6453,
+"lon": 11.904,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "IT001103033004",
+"name": "PANIZZA",
+"iso2": "IT",
+"type": "Lake",
+"lat": 45.9656,
+"lon": 8.6241,
+"q": "Sufficient",
+"q1": "Excellent"
+},
+{
+"bwid": "LT006717941040040",
+"name": "ARIMAICIU",
+"iso2": "LT",
+"type": "Lake",
+"lat": 55.7784,
+"lon": 23.6552,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LT006547314030090",
+"name": "BRIDVAISIO",
+"iso2": "LT",
+"type": "Lake",
+"lat": 55.5929,
+"lon": 23.2103,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LT005730142050014",
+"name": "ROKISKIO",
+"iso2": "LT",
+"type": "Lake",
+"lat": 55.9568,
+"lon": 25.6022,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LU600005008000000015",
+"name": "LAC DE LA HAUTE SURE-FUUSSEFELD",
+"iso2": "LU",
+"type": "Lake",
+"lat": 49.9025,
+"lon": 5.8689,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LU600009000000000003",
+"name": "LAC D'ECHTERNACH - PONTON GRANDE ÎLE",
+"iso2": "LU",
+"type": "Lake",
+"lat": 49.8,
+"lon": 6.41429,
+"q": "Excellent",
+"q1": "Good"
+},
+{
+"bwid": "LU600008006000000009",
+"name": "ETANGS REMERSCHEN-ZONE 3",
+"iso2": "LU",
+"type": "Lake",
+"lat": 49.4914,
+"lon": 6.362,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LV00766020101",
+"name": "LIMBAŽU LIELEZERA PELDVIETA",
+"iso2": "LV",
+"type": "Lake",
+"lat": 57.5024,
+"lon": 24.7037,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LV00505000001",
+"name": "LIELAIS STROPU EZERS",
+"iso2": "LV",
+"type": "Lake",
+"lat": 55.9032,
+"lon": 26.5896,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "LV00384060001",
+"name": "CIECERES EZERS",
+"iso2": "LV",
+"type": "Lake",
+"lat": 56.6783,
+"lon": 22.5625,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "NLBW02_9013",
+"name": "GRUTTE WIELEN, LEEUWARDEN",
+"iso2": "NL",
+"type": "Lake",
+"lat": 53.21894,
+"lon": 5.8697,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "NLBW12_187201",
+"name": "'T PETJE",
+"iso2": "NL",
+"type": "Lake",
+"lat": 52.73898,
+"lon": 4.83975,
+"q": "Poor",
+"q1": "Poor"
+},
+{
+"bwid": "NLBW27_245610",
+"name": "ZUIDERPLAS (BAD)",
+"iso2": "NL",
+"type": "Lake",
+"lat": 51.67392,
+"lon": 5.31859,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "NLBW92_OUDPL",
+"name": "DE OUDE POL",
+"iso2": "NL",
+"type": "Lake",
+"lat": 52.39251,
+"lon": 5.72595,
+"q": "Excellent",
+"q1": "Not classified"
+},
+{
+"bwid": "NLBW13_ROP20802",
+"name": "VEERPLAS NOORDZIJDE",
+"iso2": "NL",
+"type": "Lake",
+"lat": 52.38737,
+"lon": 4.67441,
+"q": "Sufficient",
+"q1": "Good"
+},
+{
+"bwid": "NLBW13_RO875",
+"name": "KAAGEILAND",
+"iso2": "NL",
+"type": "Lake",
+"lat": 52.21604,
+"lon": 4.55765,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "NLBW59_5QMP01",
+"name": "MILLIGERPLAS",
+"iso2": "NL",
+"type": "Lake",
+"lat": 52.54573,
+"lon": 6.05742,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "NLBW11_HBP013",
+"name": "ZANDSTRAND, OUDERKERKERPLAS",
+"iso2": "NL",
+"type": "Lake",
+"lat": 52.29457,
+"lon": 4.92914,
+"q": "Sufficient",
+"q1": "Sufficient"
+},
+{
+"bwid": "NLBW37_26CN-091-01",
+"name": "LUMIÈRESTRAND, WEERWATER",
+"iso2": "NL",
+"type": "Lake",
+"lat": 52.36195,
+"lon": 5.2344,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "NLBW43_225100",
+"name": "BUSSLOO DE FLIERTKAMP",
+"iso2": "NL",
+"type": "Lake",
+"lat": 52.20195,
+"lon": 6.12086,
+"q": "Excellent",
+"q1": "Not classified"
+},
+{
+"bwid": "NLBW44_85060",
+"name": "GROTE RIETPLAS - PARELSTRAND",
+"iso2": "NL",
+"type": "Lake",
+"lat": 52.73591,
+"lon": 6.90546,
+"q": "Good",
+"q1": "Excellent"
+},
+{
+"bwid": "NLBW34_2008",
+"name": "LAUWERSMEER, STRAND ZEEAREND",
+"iso2": "NL",
+"type": "Lake",
+"lat": 53.39754,
+"lon": 6.22265,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "PL4110101130000057",
+"name": "KĄPIELISKO PRZY JEZIORZE KARCZEWNIK",
+"iso2": "PL",
+"type": "Lake",
+"lat": 52.97389,
+"lon": 16.90944,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PL2110612512000021",
+"name": "Kąpielisko w Strefie rekreacji w Januszowicach",
+"iso2": "PL",
+"type": "Lake",
+"lat": 50.25793,
+"lon": 20.07816,
+"q": "Good",
+"q1": "Not classified"
+},
+{
+"bwid": "PL3300406226000022",
+"name": "Cedzyna Zachód",
+"iso2": "PL",
+"type": "Lake",
+"lat": 50.87222,
+"lon": 20.72556,
+"q": "Not classified",
+"q1": "Not classified"
+},
+{
+"bwid": "PL4110104330000058",
+"name": "KĄPIELISKO PRZY JEZIORZE MARGONIŃSKIM W MARGONINIE",
+"iso2": "PL",
+"type": "Lake",
+"lat": 52.96813,
+"lon": 17.08457,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PL5110105202000040",
+"name": "Kąpielisko Błękitka",
+"iso2": "PL",
+"type": "Lake",
+"lat": 51.31988,
+"lon": 15.43497,
+"q": "Not classified",
+"q1": "Not classified"
+},
+{
+"bwid": "PL4142305230000039",
+"name": "POWIDZ DZIKA PLAŻA",
+"iso2": "PL",
+"type": "Lake",
+"lat": 52.4086,
+"lon": 17.9121,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PL6120601204000036",
+"name": "Kąpielisko Gminny Ośrodek Sportów Wodnych w Białym Borze",
+"iso2": "PL",
+"type": "Lake",
+"lat": 53.42881,
+"lon": 18.76347,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PL6320403222000099",
+"name": "KĄPIELISKO GMINNE W KOLBUDACH PRZY UL. A. WAŻNEGO 3",
+"iso2": "PL",
+"type": "Lake",
+"lat": 54.27444,
+"lon": 18.48023,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PL4210202332000002",
+"name": "PLAŻA MIEJSKA",
+"iso2": "PL",
+"type": "Lake",
+"lat": 53.15982,
+"lon": 15.42663,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "PL4310602508000030A",
+"name": "PLAŻA SOLECKO",
+"iso2": "PL",
+"type": "Lake",
+"lat": 52.75611,
+"lon": 15.73333,
+"q": "Not classified",
+"q1": "Not classified"
+},
+{
+"bwid": "PTCN7P",
+"name": "PRAIA DE ORIOLA",
+"iso2": "PT",
+"type": "Lake",
+"lat": 38.31445,
+"lon": -7.8624,
+"q": "Excellent",
+"q1": "Not classified"
+},
+{
+"bwid": "PTCK8M",
+"name": "BITETOS",
+"iso2": "PT",
+"type": "Lake",
+"lat": 41.0721,
+"lon": -8.26047,
+"q": "Poor",
+"q1": "Sufficient"
+},
+{
+"bwid": "PTCT7W",
+"name": "CASTANHEIRA OU LAGO AZUL",
+"iso2": "PT",
+"type": "Lake",
+"lat": 39.67582,
+"lon": -8.23071,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "RO2250008200330001",
+"name": "TULCEA LAC CIUPERCA",
+"iso2": "RO",
+"type": "Lake",
+"lat": 45.1817,
+"lon": 28.7819,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SE0910680000003506",
+"name": "AXAMOBADET",
+"iso2": "SE",
+"type": "Lake",
+"lat": 57.777,
+"lon": 14.0657,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SE0110180000001840",
+"name": "Maltesholmsbadet, Brygga",
+"iso2": "SE",
+"type": "Lake",
+"lat": 59.3562,
+"lon": 17.8394,
+"q": "Good",
+"q1": "Good"
+},
+{
+"bwid": "SE0622082000002417",
+"name": "LJUSTERNBADET",
+"iso2": "SE",
+"type": "Lake",
+"lat": 60.3352,
+"lon": 15.738,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SE0110180000001847",
+"name": "Solviksbadet, strandbad, Mälaren",
+"iso2": "SE",
+"type": "Lake",
+"lat": 59.3147,
+"lon": 17.9669,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SE0220461000001069",
+"name": "KLÄMMINGSBERG KLÄMMINGEN",
+"iso2": "SE",
+"type": "Lake",
+"lat": 59.0825,
+"lon": 17.3112,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SI0094410200K63010",
+"name": "KOPALIŠČE ŠOBČEV BAJER",
+"iso2": "SI",
+"type": "Lake",
+"lat": 46.3536,
+"lon": 14.1506,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SI0094400300K65010",
+"name": "NARAVNO KOPALIŠČE HOTEL VILA BLED",
+"iso2": "SI",
+"type": "Lake",
+"lat": 46.36,
+"lon": 14.0953,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SI0094400300K66010",
+"name": "GRAJSKO KOPALIŠČE",
+"iso2": "SI",
+"type": "Lake",
+"lat": 46.3689,
+"lon": 14.1022,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SKREK042",
+"name": "ZLATÉ PIESKY - MÓLO",
+"iso2": "SK",
+"type": "Lake",
+"lat": 48.1877,
+"lon": 17.1899,
+"q": "Not classified",
+"q1": null
+},
+{
+"bwid": "SKREK036",
+"name": "VAJNORSKÉ JAZERO",
+"iso2": "SK",
+"type": "Lake",
+"lat": 48.1926,
+"lon": 17.2103,
+"q": "Excellent",
+"q1": "Excellent"
+},
+{
+"bwid": "SKREK023",
+"name": "ZEMPLÍNSKA ŠÍRAVA - BIELA HORA",
+"iso2": "SK",
+"type": "Lake",
+"lat": 48.7794,
+"lon": 21.9556,
+"q": "Excellent",
+"q1": "Excellent"
+}
+]
+}

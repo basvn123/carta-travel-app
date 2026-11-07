@@ -2080,3 +2080,11 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1171-b | T1171 | The Pass moment sends no paywall event, so the beta cannot count how often it was seen, opened or put off; add a reason for it to paywallEvents.js and the check in migration 022 (with the admin funnel) | next task | open |  |
 | T1171-c | T1171 | "Not now" on the Pass moment is kept per device (localStorage), not carried to the account on sign in, so a second device shows the card again | next task | open |  |
 | T1171-d | T1171 | The free list says "{n} Carta bot day plans to start with" from TIERS.free.aiPlans even after an account used them; once the moment is on, show the plans left (entitlement.plansLeft) for a signed in traveller | next task | open |  |
+| T1192-a | T1192 | Mountains layer has only a 21-summit seed: export Wikidata (and OSM, national lists), take a baseline, then make coverage and fact.height hard checks | user | open |  |
+| T1192-b | T1192 | 16 designated lakes reviewed as real holes (Malaren, Oostvoornse Meer, Zuiderplas, Lankower See, Saadjarve and more) have no Carta row; add them at the lake harvest | next task | open |  |
+| T1192-c | T1192 | Tsjukemar (NL): register says Poor, Carta prints Sufficient and swim yes; find the join or season cause in enrich_lakes.join_bathing and fix | next task | open |  |
+| T1192-d | T1192 | Wrong joins: Bruges canal sites to the Lake of Love, Tarbja Tehisjarv to Paide Tehisjarv; add a name guard to the first-pass join | next task | open |  |
+| T1192-e | T1192 | Lake class is the best of the sites on the lake; the page should name the site and say other beaches differ (Ouderkerkerplas, Beetzsee, Lipno) | next task | open |  |
+| T1192-f | T1192 | Kebnekaise row sits 3 km from the summit (Wikidata massif coordinate); check the other mountains with a position over 1 km on the owner's run | next task | open |  |
+| T1192-g | T1192 | National lake CSVs (France, Sweden, Finland) for the lakes layer; check each licence | user | open |  |
+| T1192-h | T1192 | Rerun the lakes layer on the box after the T1186-a water fill and take a new baseline if the move is intended | user | open |  |
