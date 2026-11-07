@@ -190,32 +190,6 @@
   list-style: none;
 }
 @media (min-width: 600px) { .ct { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-.ct-tile { display: flex; min-width: 0; }
-.ct-hit {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 2px;
-  width: 100%;
-  min-height: 84px;
-  padding: var(--space-3);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-control);
-  background: var(--surface-sunken);
-  color: var(--text);
-  font: inherit;
-  text-align: left;
-}
-button.ct-hit { cursor: pointer; }
-button.ct-hit:hover { background: var(--surface-hover); border-color: var(--border); }
-button.ct-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.ct-label { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
-.ct-label svg { flex: none; color: var(--text-3); }
-.ct-fig { margin-top: var(--space-1); font-size: var(--text-lead); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
-.ct-none { font-size: var(--text-label); font-weight: 500; color: var(--text-3); }
-/* T839: the flights tile shows the airlines' marks instead of a sub-line. */
-.ct-marks { display: inline-flex; align-items: center; gap: var(--space-1); margin-top: var(--space-1); }
-.ct-tile.is-empty .ct-label svg { opacity: 0.6; }
 
 /* ---- The route: one grammar for every row ---- */
 /* The line through the markers, under the centre of a 40 px marker. */
@@ -502,11 +476,11 @@ body:has(.tpg-dock) .bottom-nav { border-top-color: transparent; box-shadow: non
    each line ends in a quiet Change that goes where the line is set. */
 .plan-costbar.is-groups { display: flex; gap: 1px; height: 8px; margin: var(--space-2) 0 var(--space-3); border-radius: 4px; overflow: hidden; background: var(--surface); }
 .plan-costbar.is-groups > span { display: block; height: 100%; min-width: 4px; }
-.plan-costbar.is-groups > .is-travel, .is-travel > .plan-total-group-h .plan-total-dot, .ct-tile.is-travel .ct-dot { background: var(--cost-travel); }
-.plan-costbar.is-groups > .is-around, .is-around > .plan-total-group-h .plan-total-dot, .ct-tile.is-around .ct-dot { background: var(--cost-around); }
-.plan-costbar.is-groups > .is-stay, .is-stay > .plan-total-group-h .plan-total-dot, .ct-tile.is-stay .ct-dot { background: var(--cost-stay); }
-.plan-costbar.is-groups > .is-food, .is-food > .plan-total-group-h .plan-total-dot, .ct-tile.is-food .ct-dot { background: var(--cost-food); }
-.plan-total-dot, .ct-dot { display: inline-block; width: 8px; height: 8px; flex: none; border-radius: var(--radius-pill); }
+.plan-costbar.is-groups > .is-travel, .is-travel > .plan-total-group-h .plan-total-dot { background: var(--cost-travel); }
+.plan-costbar.is-groups > .is-around, .is-around > .plan-total-group-h .plan-total-dot { background: var(--cost-around); }
+.plan-costbar.is-groups > .is-stay, .is-stay > .plan-total-group-h .plan-total-dot { background: var(--cost-stay); }
+.plan-costbar.is-groups > .is-food, .is-food > .plan-total-group-h .plan-total-dot { background: var(--cost-food); }
+.plan-total-dot { display: inline-block; width: 8px; height: 8px; flex: none; border-radius: var(--radius-pill); }
 .plan-total-group { border-top: 1px solid var(--border-soft); }
 .plan-total-group-h { margin: 0; }
 .plan-total-group-btn {

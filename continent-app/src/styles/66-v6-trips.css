@@ -418,10 +418,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ── A receipt figure settles in place (LifestyleSlider SettledEur): the
-   box is the figure's own, the dip is scripted by figureChange.js ─────── */
-.ls-fig { display: inline-block; font-variant-numeric: tabular-nums; }
-
 /* ── Spend the accent once (brief V4.3) ──────────────────────────────────
    The fold header icons on the journey page read in ink (rule R6); the
    shared .dsec rules stay as they are for the other pages. The climb
@@ -429,46 +425,10 @@
    --accent. */
 /* The fold icons and the title hover are the shared .dsec rules since T411. */
 
-/* ── One selected day across the week (brief V4.1) ──────────────────────
-   The day in view on the track: its effort bar is the one --accent item of
-   the week shape, its number an --ink-fill pill (rule "Selected state"),
-   and the climb profile carries one --accent marker that slides to its
-   column (a move between two positions: --dur-2, --ease-in-out). */
-.jweek-col.is-on .jweek-bar { background: var(--accent); }
-.jweek-bar { transition: background-color var(--dur-1) var(--ease-out); }
-.jweek-picks { margin-top: var(--space-1); }
-.jweek-pick {
-  min-width: 0;
-  min-height: var(--tap);
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--ink-soft);
-  font-family: var(--mono);
-  font-size: var(--text-caption);
-  font-variant-numeric: tabular-nums;
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.jweek-pick.is-on { background: var(--select-bg); color: var(--select-ink); }
-.jweek-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-@media (hover: hover) {
-  .jweek-pick:not(.is-on):hover { background: var(--paper-dim); color: var(--ink); }
-}
-@media (pointer: fine) {
-  .jweek-pick { min-height: 32px; }
-}
-
 /* ── A new length fades the days in (brief V4.5) ─────────────────────── */
 @keyframes jpage-days-in {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .jweek-bar,
-  .jweek-pick { transition: none; }
 }
 
 /* ==========================================================================
@@ -507,25 +467,6 @@
     font-size: var(--text-label);
     line-height: 1.2;
     text-align: left;
-  }
-}
-
-/* ── The bed chips on a phone (brief V5.4): a one-night chip is one column
-   wide (about 40 px), so its name read "La..." and "R...". On a phone the
-   beds list one under another with the night and the place in full, the
-   text the chip already carries for a screen reader. ──────────────────── */
-@media (max-width: 599px) {
-  .jpage .jweek-bed .jweek-bed-where {
-    position: static;
-    width: auto;
-    height: auto;
-    margin: 0;
-    overflow: visible;
-    clip-path: none;
-    white-space: normal;
-    font-size: 12.5px;
-    line-height: 1.35;
-    color: var(--ink);
   }
 }
 

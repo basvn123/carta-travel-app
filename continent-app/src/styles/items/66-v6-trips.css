@@ -52,18 +52,6 @@
 .jpage .jstrip-word:has(.mono) { text-transform: none; }
 .jpage .rfig-week .tpage-elev-area { fill: var(--rule-soft); }
 .jpage .rfig-week .tpage-elev-line { stroke: var(--ink); }
-@media (max-width: 599px) {
-  .jpage .jweek-beds {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .jpage .jweek-bed {
-    min-height: 32px;
-    padding-block: var(--space-1);
-  }
-  .jpage .jweek-bed:not(.is-out) .jweek-bed-name { display: none; }
-}
 @media print {
   body:has(.jpage),
   :has(.jpage) {
@@ -91,8 +79,6 @@
   .jpage .dtrack-bar,
   .jpage .dtrack-dots,
   .jpage .tl-seg,
-  .jpage .ls-slider-input,
-  .jpage .jweek-picks,
   .jpage .jpage-exits { display: none; }
   .jpage .jpage-book-list li { break-inside: avoid; }
   .jpage .dsec-head,

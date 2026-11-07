@@ -89,8 +89,7 @@
    10.5 and 11 px in Explore's shared rules. */
 .destp .xp-wday-name,
 .destp .xp-wday-lo,
-.destp .xp-wday-rain,
-.destp .destp-crowd-year {
+.destp .xp-wday-rain {
   font-family: var(--font);
   font-size: var(--text-caption);
   font-variant-numeric: tabular-nums;

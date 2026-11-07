@@ -68,17 +68,3 @@
   line-height: 1.45;
   color: var(--ink-soft);
 }
-
-/* A figure's sentence (T158): the number stays where it is, in mono; the
-   meaning sits next to it in sans. It also appears inside a mono cell, so it
-   sets its own face. */
-.numsent {
-  display: block;
-  margin: var(--space-1) 0 0;
-  font-family: var(--ui);
-  font-size: var(--text-label);
-  font-weight: 400;
-  font-variant-numeric: normal;
-  line-height: 1.45;
-  color: var(--ink-soft);
-}
