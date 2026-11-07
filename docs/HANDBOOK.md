@@ -2597,7 +2597,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **How it works.**
 - `src/i18n/index.jsx`: flat key to string catalogs with `{var}` interpolation. English is the source of truth. A missing key falls back to English, then to the key itself.
-- First visit is always English (browser language is not matched). The choice is stored at `continent.lang.v1`.
+- First visit (T1170): `detectBrowserLang` in `src/i18n/detect.js` picks the first language in `navigator.languages` that Carta ships, else English. A picker choice is stored at `continent.lang.v1` and wins from then on.
 - Non-English catalogs load lazily per language. English is split at build time (`scripts/i18n/enSplit.mjs`) into keys the first paint needs and a lazy rest chunk; `check-en-split.mjs` checks the split.
 - What is not translated: POI names, pipeline descriptions, taglines and guides (English editorial data), and city or country names (used as data keys).
 - Dash stripping: `stripDashes` in `src/lib/format.js` turns em and en dashes into "to" between money figures, a hyphen in number ranges and tight word joins, and a comma in prose. It is used in 17 source files, and Ask Carta's verifier applies it to model text. The pipeline's Ask index removes them too (`_DASH` in ask_index_layer.py).
@@ -2607,7 +2607,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Where it lives.** `continent-app/src/i18n/`, `continent-app/scripts/i18n/`, `continent-app/src/lib/format.js`. Docs: `archive/docs-2026-11/SEO.md` (hreflang across six languages).
 
-**Limits.** The five non-English catalogs are about 600 lines shorter than en.js, so some strings fall back to English. Not found in code: an automated key parity test across all six catalogs.
+**Limits.** Since T1170 every catalogue has every English key (`tests/i18nParity.test.mjs` fails on a gap), but the 2026-11-07 additions are machine drafts awaiting native review (`docs/i18n/review.md`, T1170-a). Place intros stay English (T1170-d); no display currency choice (T1170-b).
 
 ### Admin panel, moderation and telemetry
 
