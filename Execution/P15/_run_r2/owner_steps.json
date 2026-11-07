@@ -1101,5 +1101,179 @@
    "Afterwards grep trails_ ~/carta/logs/pipeline_run.log for minutes and skips",
    "If the box swaps hard, lower TRAILSLAB_MEM_LIMIT or rescale to a CAX21"
   ]
+ },
+ {
+  "id": "T1175-a",
+  "title": "Turn on the trip receipt share",
+  "why": "The button is built but hidden behind a flag until someone has seen the image on real devices.",
+  "where": "continent-app/src/lib/share/flag.js",
+  "how": [
+   "Open My trips with ?receipt=1 on a phone and a desktop",
+   "Open a saved trip's menu and choose Share the receipt",
+   "Check the figures against the trip page, then share or save once",
+   "If it reads right, set the default in shareReceiptOn to on (a next task can do the edit)"
+  ]
+ },
+ {
+  "id": "T1175-b",
+  "title": "Make the real cheapest week calendars",
+  "why": "The stays wire with the month curves lives on the data host and the owner box, not in the cloud container.",
+  "where": "scripts/share/share_assets.mjs",
+  "how": [
+   "On the box, copy the stays files (data/stays-live/v1/{cc}.json, or stays/v1) into one folder",
+   "Run node scripts/share/share_assets.mjs --stays that-folder --png",
+   "Look at scripts/share/out/calendar/*.png and pick the places to share"
+  ]
+ },
+ {
+  "id": "T1175-c",
+  "title": "Clear the credit line before publishing",
+  "why": "The map and calendars quote aggregates of owner-run list price samples, whose terms are not settled (T1130-c).",
+  "where": "docs/tos/data_licenses.md",
+  "how": [
+   "Read the credit line printed on map_100.png",
+   "Decide whether \"Carta's own samples of list prices\" may be published and whether a source must be named",
+   "Note the answer in the register"
+  ]
+ },
+ {
+  "id": "T1176-a",
+  "title": "Confirm gem identity provenance",
+  "why": "An ODbL-only name or coordinate would break the CC BY promise.",
+  "where": "scripts/open_data/DATASHEET.md, Known gaps",
+  "how": [
+   "Check how gem names and lat/lon were sourced (GeoNames match vs OpenStreetMap)",
+   "If OSM only, drop those columns for those rows in `FIELDS`",
+   "Rerun the tests"
+  ]
+ },
+ {
+  "id": "T1176-b",
+  "title": "Build and publish the dataset",
+  "why": "Publishing is the owner's.",
+  "where": "scripts/open_data/README.md",
+  "how": [
+   "Run `python scripts/open_data/export_open_dataset.py` on the box",
+   "Read the output",
+   "Create a public GitHub repo and upload `scripts/open_data/out/`, README.md, DATASHEET.md"
+  ]
+ },
+ {
+  "id": "T1176-c",
+  "title": "Post the Show HN",
+  "why": "Only once the free part needs no signup.",
+  "where": "Execution/P15/T1176-show-hn-draft.md",
+  "how": [
+   "Confirm the free part has no signup",
+   "Fill the repo link",
+   "Post the draft"
+  ]
+ },
+ {
+  "id": "T1178-d",
+  "title": "Run the monthly draft on the box",
+  "why": "The draft needs a current wire and a pull request each month.",
+  "where": "run_pipeline.py task blog_drafts, content/blog/README.md",
+  "how": [
+   "On the box run `python run_pipeline.py --only blog_drafts` after the monthly data run",
+   "Open a pull request with the new `content/blog/` files (a scheduled Claude Code routine can do this)",
+   "Add `--prose` to the task cmd if you want the Gemini opening"
+  ]
+ },
+ {
+  "id": "T1178-e",
+  "title": "Approve the first post",
+  "why": "Publishing is yours and the sample uses a wire dated 2026-06-07.",
+  "where": "content/blog/where-to-go-in-december-2026.md",
+  "how": [
+   "Regenerate the December draft on a fresh wire",
+   "Read and edit it",
+   "Set `status: published`",
+   "Run `python scripts/blog/check_draft.py`"
+  ]
+ },
+ {
+  "id": "T1191-c",
+  "title": "Decide two proposed appeal changes",
+  "why": "The 30-gap review found two villages scored on sights outside them, and scores are never hand-edited without you.",
+  "where": "`data/reports/validation/ratings/gap_verdicts.json`",
+  "how": [
+   "Open the rows Dannewerk and Bleggio Superiore in `data/reports/validation/ratings/gap_verdicts.json`",
+   "Check the Danevirke and Rango (Borghi piu belli) pages",
+   "Accept or reject 6.2 and 6.1 in `app_data/rubric_appeal.json` via the next rating task"
+  ]
+ },
+ {
+  "id": "T1191-g",
+  "title": "Fetch the Wikivoyage status tiers",
+  "why": "Turns the yes/no Wikivoyage reference into a four-tier one, the best quality signal the research found.",
+  "where": "`scripts/validation/layer_ratings.py`",
+  "how": [
+   "On your box run `python -I scripts/validation/layer_ratings.py fetch-wikivoyage`",
+   "Then `python -I scripts/validation/runner.py ratings --write`",
+   "Commit `data/reports/validation/ratings/sources/wikivoyage_status.json` and the new result"
+  ]
+ },
+ {
+  "id": "T1191-h",
+  "title": "Add tourism board and best-of lists and Eurostat nights",
+  "why": "The brief's extra references; the cloud cannot reach them.",
+  "where": "`data/reports/validation/ratings/sources/README.md`",
+  "how": [
+   "Write one JSON per list (GNTB Top 100, European Best Destinations, others whose terms allow it) in `data/reports/validation/ratings/sources/lists/`, names, ranks and pages only",
+   "Save Eurostat city nights as `sources/eurostat_nights.json` keyed by place id",
+   "Rerun the ratings layer with `--write`"
+  ]
+ },
+ {
+  "id": "T1191-j",
+  "title": "Decide on catalogue rows for listed places",
+  "why": "Lonely Planet names Skanor-Falsterbo and Tipperary, and Tripadvisor and Lonely Planet name Sicily, Sardinia and the Veneto; Carta has no row for any of them.",
+  "where": "`Execution/P15/T1191-ratings-validation.md`",
+  "how": [
+   "Decide which (if any) get a row",
+   "File it as a catalogue task"
+  ]
+ },
+ {
+  "id": "T1191-l",
+  "title": "Check the reference licences",
+  "why": "The UNESCO and Tripadvisor terms limit republication, and T760's Tripadvisor file stores names and ranks.",
+  "where": "`data/rating/external/tripadvisor.json`",
+  "how": [
+   "Read UNESCO FAQ 126 and the Tripadvisor terms",
+   "Decide whether `data/rating/external/tripadvisor.json` stays in git or becomes a local-only input"
+  ]
+ },
+ {
+  "id": "T1192-a",
+  "title": "Mountains reference export and baseline",
+  "why": "The layer only has a 21-summit seed; the real check needs Wikidata heights and prominence plus national lists.",
+  "where": "`scripts/validation/layer_mountains.py`, docs/HANDBOOK.md (External validation)",
+  "how": [
+   "Run the Wikidata SPARQL (P31 mountain/peak in Europe with P2044, P2660, P625, by country batches under 60 s) to `data/reports/validation/mountains/wikidata_CC.csv` (columns id,name,lat,lon,cc,ele,prom,route,source)",
+   "Optionally add DoBIH and swisstopo CSVs as `national_*.csv`",
+   "Run `python -I scripts/validation/runner.py mountains --write --write-baseline`, then flip coverage and fact.height to hard in `layer_mountains.py` and add the fact.prom and agreement_tau checks"
+  ]
+ },
+ {
+  "id": "T1192-h",
+  "title": "Rerun lakes on the box after the water fill",
+  "why": "The T1186-a fill should lift water class and known swim rules; the baseline here is the pre-fill state.",
+  "where": "`scripts/validation/layer_lakes.py`",
+  "how": [
+   "After `fill_water.py --apply` run `python -I scripts/validation/runner.py lakes --write`",
+   "If coverage or class agreement moved on purpose rerun with `--write-baseline` and say why in a report"
+  ]
+ },
+ {
+  "id": "T1192-g",
+  "title": "National lake lists",
+  "why": "Fresher and extra sites beyond the EEA, and the only partly independent class check.",
+  "where": "`scripts/validation/layer_lakes.py`",
+  "how": [
+   "Drop CSVs (id,name,lat,lon,cc,class) into `data/reports/validation/lakes/national/` from France data.gouv (check each dataset's licence), SYKE, HaV",
+   "Rerun the lakes layer"
+  ]
  }
 ]
