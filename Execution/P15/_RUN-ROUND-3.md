@@ -16,16 +16,16 @@ Rules: as in round 2's "Batch schedule" (`Execution/P15/_RUN-ROUND-2.md`): a bat
 | 120 | T1204 | D22 | p15-s120-trip-footprint | done | yes | 1 |
 | 121 | T1205 | I17 | p15-s121-price-alerts | done | yes | 4 |
 | 122 | T1206 | register follow-up (AI and Ask) | p15-s122-sweep-ai | done | yes | 3 |
-| 123 | T1207 | A2 | p15-s123-pipeline-structure | started | | |
-| 124 | T1208 | G9 | p15-s124-trust-visible | started | | |
-| 125 | T1209 | G14 | p15-s125-home-page | started | | |
-| 126 | T1210 | register follow-up (product and growth) | p15-s126-sweep-product | started | | |
-| 127 | T1211 | register follow-up (ops and security) | p15-s127-sweep-ops-security | started | | |
-| 128 | T1212 | I12 | p15-s128-language-urls | planned | | |
-| 129 | T1213 | I16 | p15-s129-data-access-ladder | planned | | |
-| 130 | T1214 | register follow-up (data quality and catalogue) | p15-s130-sweep-data-quality | planned | | |
-| 131 | T1215 | register follow-up (intelligence) | p15-s131-sweep-intelligence | planned | | |
-| 132 | T1216 | register follow-up (validation) | p15-s132-sweep-validation | planned | | |
+| 123 | T1207 | A2 | p15-s123-pipeline-structure | done | yes | 1 |
+| 124 | T1208 | G9 | p15-s124-trust-visible | done | yes | 1 |
+| 125 | T1209 | G14 | p15-s125-home-page | done | yes | 2 |
+| 126 | T1210 | register follow-up (product and growth) | p15-s126-sweep-product | done | yes | 0 |
+| 127 | T1211 | register follow-up (ops and security) | p15-s127-sweep-ops-security | done | yes | 3 |
+| 128 | T1212 | I12 | p15-s128-language-urls | started | | |
+| 129 | T1213 | I16 | p15-s129-data-access-ladder | started | | |
+| 130 | T1214 | register follow-up (data quality and catalogue) | p15-s130-sweep-data-quality | started | | |
+| 131 | T1215 | register follow-up (intelligence) | p15-s131-sweep-intelligence | started | | |
+| 132 | T1216 | register follow-up (validation) | p15-s132-sweep-validation | started | | |
 | 133 | T1217 | register follow-up (docs) | p15-s133-sweep-docs | planned | | |
 
 Merge notes:
@@ -34,3 +34,4 @@ Merge notes:
 - 12:05 Batch 14 sessions: S118 (session_0156MmZ4qLfiqCij5T1Lmc6V), S119 (session_0156MmZ5Mj2yGsxBoAhn1fs1), S120 (session_0156MmZ4W1q5GEHhtHC6xqKH), S121 (session_0156MmZ3hXqSpsLVQogxWmKk, migration 073 if needed), S122 (session_0156MmZ3jSC88uYecGySYamf).
 - 13:50 Batch 14 merged: S120 (trip footprint: CO2e beside the price per way and per leg from published factors), S119 (accessibility facts from OSM wheelchair tags, shown only when mapped), S118 (open months for places, huts, lifts and ferries from OSM; the plan flow skips closed places), S121 (price alerts behind a flag: save on the price card, double opt-in, one-click unsubscribe, weekly check task, migration 073 with a down file), S122 (AI and Ask sweep). Fixes at merge: the task table again (seasons and price_alerts; merged with explicit separators and checked by loading the module); 073's two tables had no retention line in ARTICLE30 section 2a, so the privacy harness failed one check (lines added from the migration's own rules: 69 of 69); S118's and S119's OSM harvesters were missing from the licence registry (RUNS entries, ledger rows, storable verdicts and app credit added, ledger regenerated); D22 doubled once (fixed by the helper). Local Postgres 16 with 065 to 073: RLS 937 of 937, admin harnesses 17 of 17. npm test 1975: 1963 pass, 0 fail; full pytest 1104 pass; CSP 0 violations; prompt registry OK with 21 prompts (the trips-golden eval needs jsonschema, which the prompts workflow installs). Batch 15 started (A2 is the only pipeline writer).
 - 13:14 Batch 15 sessions: S123 (session_0156MmZ2UeQf9gLvVkYofjc5, the only pipeline writer), S124 (session_0156MmZ5WBXYJUwcBRTBWzDx), S125 (session_0156MmZ4pHRZjBL6RmpoW4xy, home behind a flag until T1111-a), S126 (session_0156MmZ2ZV8BJU4bzEkSA7o3), S127 (session_0156MmZ6s1BQqxajAByBi8MR).
+- 14:16 Batch 15 merged: S123 (A2: the task table split into pipeline/tasks/<domain>.py, run_pipeline.py 3,573 to 1,195 lines, 17 scripts grouped in audit/, blog/, pois/; 91 tasks, order unchanged), S124 (G9: why this place chips and refreshed price dates on cards), S125 (G14: the new home behind HOME_G14, off until T1111-a), S126 (product sweep), S127 (ops and security sweep: SSRF address check in parse-booking, security events from withCors, Deno auth tests in CI). Checks green (npm test, pytest 1114, CSP 0 violations over 42 loads, dupkeys none); generated reference and lineage regenerated (3e71cbfa07). 7 new owner steps added to the owner walkthrough (https://claude.ai/artifact/H7jPaBEnmubjpxpUdPboja). Batch 16 sessions: S128 (session_0156MmZ4bH5Spga2jfXx9dmA, the only router editor), S129 (session_0156MmZ5mbU1PFue98XGH7R2), S130 (session_0156MmZ7AJzLyPrY5wLBV4sa), S131 (session_0156MmZ6A3qaDvb2Tg4XYQYF), S132 (session_0156MmZ3BNdZzjZKpTeU2mZe).
