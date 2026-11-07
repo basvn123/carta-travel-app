@@ -19,6 +19,7 @@
 import React, {
   createContext, useContext, useMemo, useState, useCallback, useEffect,
 } from 'react';
+import { detectBrowserLang } from './detect.js';
 import { setActiveLocale } from '../lib/localeState.js';
 import { enEager, enWhole } from 'virtual:carta-en';
 
@@ -101,11 +102,9 @@ function initialLang() {
     const stored = localStorage.getItem(LANG_KEY);
     if (stored && isLang(stored)) return stored;
   } catch { /* storage unavailable */ }
-  // First visit: default to English. (We used to auto-match the browser
-  // language, but the app's editorial data is English-first, so English is the
-  // intended default; a visitor can still switch via the language picker, and
-  // that choice is honored above on the next visit.)
-  return 'en';
+  // First visit (T1170, I8): the first browser language we ship, else English.
+  // A choice made in the picker is stored above and wins from then on.
+  return detectBrowserLang();
 }
 
 const interpolate = (msg, vars) => (vars
