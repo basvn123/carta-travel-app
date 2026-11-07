@@ -2309,6 +2309,11 @@ export const de = {
   "trails.kind_beach": "Strand",
   "trails.kind_hut": "Berghutte",
   "trails.kind_spring": "Quelle",
+  "trails.kind_rock": "Felsen",
+  "trails.kind_ridge": "Grat",
+  "trails.kind_saddle": "Sattel",
+  "trails.kind_cape": "Kap",
+  "trails.kind_bay": "Bucht",
   "trails.whySummits": "{n} benannte Gipfel unterwegs, der hochste {name} auf {m} m",
   "trails.whySummitsPlain": "{n} benannte Gipfel unterwegs",
   "trails.whySummit": "Fuhrt uber {name}, {m} m",
@@ -2537,6 +2542,9 @@ export const de = {
   //    line joins them straight (pipeline/trails/splice.py) --
   "trails.sBridge": "Eine kurze Lucke im erfassten Weg, etwa {m} m, hier gerade uberbruckt.",
   "trails.sBridges": "{n} kurze Lucken im erfassten Weg, zusammen {m} m, hier gerade uberbruckt.",
+  "trails.sBridgeRouted": "Eine Lucke im erfassten Weg, etwa {m} m, hier uber erfasste Pfade verbunden.",
+  "trails.sBridgesRouted": "{n} Lucken im erfassten Weg, zusammen {m} m, hier uber erfasste Pfade verbunden.",
+  "trails.sBridgesMixed": "{n} Lucken im erfassten Weg, zusammen {m} m, hier verbunden: {r} uber erfasste Pfade, die anderen gerade.",
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
@@ -3786,6 +3794,8 @@ export const de = {
   "trek.up": "{m} Hm bergauf",
   "trek.days": "Etwa {n} Tage zu Fuß",
   "trek.thisStage": "Dies ist Etappe {i}",
+  "trek.thisStageOf": "Dies ist Etappe {i} von {of}",
+  "trek.stagesOf": "{n} von {of} Etappen veröffentlicht",
   "trek.here": "diese Etappe",
   "trek.listLabel": "Etappen von {name}",
   "trek.openWhole": "Die ganze Route öffnen",

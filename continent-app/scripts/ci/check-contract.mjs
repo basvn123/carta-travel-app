@@ -567,6 +567,7 @@ if (seed && seed in PAYLOAD_SEEDS) {
       'trek-order': { DE: { treks: [trek({ stages: [{ id: 1, i: 2, km: 8 }, { id: 2, i: 1, km: 8 }] })], trips: [] } },
       'trek-total': { DE: { treks: [trek({ km: 30 })], trips: rows } },
       'trek-no-asof': { DE: { treks: [trek({ _asof: undefined })], trips: rows } },
+      'trek-of-too-small': { DE: { treks: [trek({ of: 1 })], trips: rows } },
       'trek-dangling-row': { DE: { treks: [], trips: rows } },
       'trek-no-backlink': { DE: { treks: [trek()], trips: [{ id: 1 }, rows[1]] } },
     };

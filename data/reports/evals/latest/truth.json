@@ -1,0 +1,156 @@
+{
+ "schema": "carta-eval/1",
+ "eval": "truth",
+ "title": "Truth set",
+ "kind": "data",
+ "at": "2026-11-07T11:09:53.365Z",
+ "git": "d85cbd728a",
+ "status": "pass",
+ "gated": false,
+ "headline": {
+  "key": "accuracy",
+  "value": 0.9556,
+  "label": "answered truth-set rows the data gets right",
+  "higher_is_better": true
+ },
+ "metrics": {
+  "accuracy": 0.9556,
+  "scored_rows": 90,
+  "right_rows": 86,
+  "stale_rows": 0,
+  "sheet_rows": 762,
+  "answered_share": 0.1181,
+  "rows.verified": 0,
+  "rows.seeded": 90,
+  "rows.unverified": 637,
+  "rows.unverifiable": 0,
+  "rows.skip": 35,
+  "field.place.country.accuracy": 1,
+  "field.place.country.n": 67,
+  "field.trail.ascent_m.accuracy": 0.6,
+  "field.trail.ascent_m.n": 5,
+  "field.trail.distance_km.accuracy": 0.8182,
+  "field.trail.distance_km.n": 11,
+  "field.trail.loop.accuracy": 1,
+  "field.trail.loop.n": 7,
+  "kind.place.accuracy": 1,
+  "kind.place.n": 67,
+  "kind.place.accuracy_weighted": 1,
+  "kind.trail.accuracy": 0.8261,
+  "kind.trail.n": 23,
+  "kind.trail.accuracy_weighted": 0.804,
+  "status.seeded.accuracy": 0.9556,
+  "status.seeded.n": 90,
+  "verified_share": 0,
+  "ci95.low": 0.8912,
+  "ci95.high": 0.9826,
+  "text.sample": 50,
+  "text.human_labels": 0,
+  "text.judge_verdicts": 50,
+  "text.kappa.judge_vs_human": null,
+  "text.planted_caught.judge": 1,
+  "text.planted_caught.human": null,
+  "text.shipped_supported.judge": 0.3333,
+  "text.shipped_supported.human": null
+ },
+ "gate": {
+  "ok": true,
+  "rule": "accuracy at or above the lower 95 percent Wilson bound of the baseline; gated from 80 percent verified",
+  "tolerance": null,
+  "baseline": "baseline 0.9556 on 90 rows (2026-06-07T13:21:17.357184+00:00)",
+  "failures": [
+   {
+    "key": "trail:64188.distance_km",
+    "was": null,
+    "now": null,
+    "why": "wrong: 16.6 vs 15 (off 1.6, allowed 1.5)"
+   },
+   {
+    "key": "trail:195651.ascent_m",
+    "was": null,
+    "now": null,
+    "why": "wrong: 566 vs 450 (off 116, allowed 67.5)"
+   },
+   {
+    "key": "trail:74625.ascent_m",
+    "was": null,
+    "now": null,
+    "why": "wrong: 227 vs 305 (off 78, allowed 60)"
+   },
+   {
+    "key": "trail:9022.distance_km",
+    "was": null,
+    "now": null,
+    "why": "wrong: 8.2 vs 9.19 (off 0.99, allowed 0.919)"
+   }
+  ]
+ },
+ "cases": {
+  "n": 90,
+  "passed": 86
+ },
+ "judge": {
+  "backend": "session",
+  "model": "session judge (blind subagent, rubric only)",
+  "file": "/home/user/carta-travel-app/evals/truth/judge/judgments/session-2026-11-06-rubric1.json",
+  "rubric_sha": "e3997722b64c",
+  "n": 50,
+  "use": "uncalibrated",
+  "agreement": {
+   "judge_vs_human": {
+    "n": 0,
+    "missing": 50,
+    "po": null,
+    "pe": null,
+    "kappa": null,
+    "se": null,
+    "ci95": null,
+    "band": null,
+    "table": {}
+   },
+   "rules_vs_human": {
+    "n": 0,
+    "missing": 0,
+    "po": null,
+    "pe": null,
+    "kappa": null,
+    "se": null,
+    "ci95": null,
+    "band": null,
+    "table": {},
+    "note": "no rule rater in the text check; the planted key is a recall check (text.planted_caught)"
+   },
+   "judge_vs_rules": {
+    "n": 0,
+    "missing": 0,
+    "po": null,
+    "pe": null,
+    "kappa": null,
+    "se": null,
+    "ci95": null,
+    "band": null,
+    "table": {},
+    "note": "no rule rater in the text check; the planted key is a recall check (text.planted_caught)"
+   }
+  }
+ },
+ "inputs": {
+  "sample": "truth-sample/1",
+  "seed": "carta-truth-2026-11",
+  "items": 150,
+  "by_kind": {
+   "place": 100,
+   "trail": 25,
+   "beach": 13,
+   "lake": 12
+  },
+  "wire_generated_at": "2026-06-07T13:21:17.357184+00:00",
+  "labels_by": null,
+  "seconds": 1
+ },
+ "notes": [
+  "no row verified by hand yet: the score is on seeded answers only (owner step, evals/truth/GUIDE.md)",
+  "advisory until 80 percent of the sheet is verified (now 0 percent)",
+  "no hand labels for the text check yet (evals/truth/judge/labels.json): judge against human kappa is an owner step"
+ ]
+}

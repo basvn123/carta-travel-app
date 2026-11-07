@@ -2318,6 +2318,11 @@ export const nl = {
   "trails.kind_beach": "Strand",
   "trails.kind_hut": "Berghut",
   "trails.kind_spring": "Bron",
+  "trails.kind_rock": "Rots",
+  "trails.kind_ridge": "Bergkam",
+  "trails.kind_saddle": "Bergpas",
+  "trails.kind_cape": "Kaap",
+  "trails.kind_bay": "Baai",
   "trails.whySummits": "{n} toppen met een naam onderweg, de hoogste {name} op {m} m",
   "trails.whySummitsPlain": "{n} toppen met een naam onderweg",
   "trails.whySummit": "Gaat over {name}, {m} m",
@@ -2546,6 +2551,9 @@ export const nl = {
   //    line joins them straight (pipeline/trails/splice.py) --
   "trails.sBridge": "Een korte onderbreking in de gekarteerde route, ongeveer {m} m, hier rechtdoor verbonden.",
   "trails.sBridges": "{n} korte onderbrekingen in de gekarteerde route, samen {m} m, hier rechtdoor verbonden.",
+  "trails.sBridgeRouted": "Een onderbreking in de gekarteerde route, ongeveer {m} m, hier verbonden over gekarteerde paden.",
+  "trails.sBridgesRouted": "{n} onderbrekingen in de gekarteerde route, samen {m} m, hier verbonden over gekarteerde paden.",
+  "trails.sBridgesMixed": "{n} onderbrekingen in de gekarteerde route, samen {m} m, hier verbonden: {r} over gekarteerde paden, de andere rechtdoor.",
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
@@ -3795,6 +3803,8 @@ export const nl = {
   "trek.up": "{m} m klimmen",
   "trek.days": "Ongeveer {n} dagen te voet",
   "trek.thisStage": "Dit is etappe {i}",
+  "trek.thisStageOf": "Dit is etappe {i} van {of}",
+  "trek.stagesOf": "{n} van {of} etappes gepubliceerd",
   "trek.here": "deze etappe",
   "trek.listLabel": "Etappes van {name}",
   "trek.openWhole": "Open de hele route",

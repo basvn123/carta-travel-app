@@ -2022,6 +2022,25 @@ TASKS = [
                  "against Dutch walks. Exports straight after, since the wire "
                  "order is the rating order the app renders."),
     },
+    {
+        # T1201 (row T1179-b): the T1179 summaries rebuilt from the wire the
+        # export just wrote, so data/trails/summaries.json never lags the
+        # wire (the staleness of row T1179-e). Reads the wire only, no lab.
+        # How the summaries then reach travellers waits on the owner's choice
+        # (row T1179-a): English `summary` on the wire, or `parts` through t().
+        "key": "trails_summaries",
+        "title": "Trails: fact-checked summaries for the top band (T1179)",
+        "cadence": "after",
+        "after": ["trails_rate"],
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [[PY, "pipeline/trails/summaries.py"]],
+        "note": ("templates over the wire's own facts, each checked before it "
+                 "is written (summaries.check: closed vocabulary, figures from "
+                 "the facts, house rules); writes data/trails/summaries.json and "
+                 "data/reports/trails_summaries.json, which the D2 text checks "
+                 "re-read (scripts/quality/rules.yaml text_checks)."),
+    },
 
     # ---- cycling layer (pipeline/cycling, same lab): soft + guarded ---- #
     #
@@ -3472,6 +3491,17 @@ def main():
     # history line, 90-day trend and the admin Data health snapshot.
     if run_cmd([sys.executable, "-I", str(ROOT / "scripts" / "quality" / "engine.py"), "--write"]) != 0:
         failed.append("quality")
+
+    # Evals (F6, T1201 from row T1181-j): every offline eval through the one
+    # runner, results to data/reports/evals/ (or CARTA_EVAL_OUT) and the
+    # dashboard docs/reference/evals.md. A gated eval that fails is a soft
+    # failure: it is reported with the run but never holds the ship back,
+    # since the evals read what this run already shipped.
+    # The Python evals run on this interpreter (the box venv), not on PATH's.
+    os.environ.setdefault("CARTA_PYTHON", sys.executable)
+    if run_cmd([node_exe(), "scripts/eval/run.mjs", "--check", "--write", "--dashboard"],
+               cwd=CONTINENT) != 0:
+        soft_failed.append("evals")
 
     # Report the run to admin_health, whether it succeeded or not: a run that
     # failed is exactly the case the admin panel most needs to show as stale,

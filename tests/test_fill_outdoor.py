@@ -103,3 +103,40 @@ def test_route_up_fill_and_apply(tmp_path):
     assert fr.apply(fills, tmp_path) == 1
     out = json.loads((tmp_path / "AT.json").read_text())["mountains"]
     assert out[0]["routeUp"]["kind"] == "path" and "routeUp" not in out[1]
+
+
+# --- T1201 (T1186-c): the route up from a Geofabrik extract ---------------
+
+OSM_XML = """<?xml version='1.0' encoding='UTF-8'?>
+<osm version="0.6" generator="test">
+ <node id="1" version="1" lat="47.0000" lon="11.0000"/>
+ <node id="2" version="1" lat="47.0010" lon="11.0010"/>
+ <node id="3" version="1" lat="47.0030" lon="11.0000"/>
+ <node id="4" version="1" lat="47.0060" lon="11.0000"/>
+ <node id="5" version="1" lat="47.0500" lon="11.0500"/>
+ <node id="6" version="1" lat="47.0510" lon="11.0510"/>
+ <way id="10" version="1"><nd ref="1"/><nd ref="2"/>
+  <tag k="highway" v="path"/><tag k="sac_scale" v="mountain_hiking"/><tag k="name" v="Gipfelweg"/></way>
+ <way id="11" version="1"><nd ref="3"/><nd ref="4"/><tag k="highway" v="track"/></way>
+ <way id="12" version="1"><nd ref="5"/><nd ref="6"/><tag k="highway" v="path"/></way>
+ <way id="13" version="1"><nd ref="1"/><nd ref="3"/><tag k="highway" v="primary"/></way>
+ <relation id="100" version="1"><member type="way" ref="10" role=""/>
+  <tag k="type" v="route"/><tag k="route" v="hiking"/></relation>
+</osm>
+"""
+
+
+def test_extract_sweep_finds_the_ways_near_each_summit(tmp_path):
+    pbf = tmp_path / "x.osm"
+    pbf.write_text(OSM_XML)
+    got = fr.harvest_extract([pbf], [("at-a", 47.0, 11.0), ("at-b", 46.0, 10.0)])
+    assert set(got) == {"at-a"}
+    ids = sorted(w["id"] for w in got["at-a"])
+    assert ids == [10, 11]                       # the far path and the road stay out
+    path = next(w for w in got["at-a"] if w["id"] == 10)
+    assert path["hiking"] is True and path["tags"]["sac_scale"] == "mountain_hiking"
+    rows = [{"id": "at-a", "lat": 47.0, "lon": 11.0}]
+    fills, st = fr.fill(_wire(tmp_path, "mountains", rows), got, asof="2026-11-07")
+    b = fills["at-a"]
+    assert b["kind"] == "marked" and b["near_m"] == 0 and b["sac"] == "mountain_hiking"
+    assert b["names"] == ["Gipfelweg"] and st["with_route_after"] == 1

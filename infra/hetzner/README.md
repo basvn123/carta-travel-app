@@ -357,6 +357,22 @@ argument spawn.sh passes:
 The Supabase dump is not touched by either: it holds personal data and stays
 encrypted to the owner key only, from the box's run_pipeline.sh.
 
+### The box lab instead of the worker (T1182, T1201)
+
+The lab can also live on this box, on a Hetzner Volume, with its curator
+review app (`tools/trailslab/box/`, procedure in its README, "Enable it on
+the box"). One switch in `~/.config/carta/env` turns that on:
+`CARTA_TRAILSLAB_HOME=box`, with the `TRAILSLAB_*` lines that
+`tools/trailslab/box/lab.env.example` lists (`lab.sh env` prints them with a
+fresh password). In box mode the `trails_*` tasks of `run_pipeline.py` run
+here against the box lab, and the `trailslab_worker` task stands down, since
+a worker would restore an R2 dump that misses the box lab's reviews (row
+T1182-c). The box lab is then the only live copy, and `archive/db/` expires
+after 30 days, so `carta-trailslab-push.timer` (installed by
+`cron/install.sh`) runs `cax11/trailslab_push_due.sh` every Tuesday 02:30:
+`lab.sh push` when the last push is `CARTA_TRAILSLAB_PUSH_DAYS` (blank = 21)
+days old or more, a logged skip outside box mode.
+
 ## What comes next
 
 T048 left the monthly and quarterly tiers unscheduled once the Windows task is

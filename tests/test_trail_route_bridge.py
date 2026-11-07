@@ -226,3 +226,38 @@ def test_summary_counts_every_route_once():
     assert s["repaired_by_country"] == {"IE": 1}
     assert sum(s["refused"].values()) + s["repaired"] == s["candidates"]
     json.dumps(s)
+
+
+# --- T1201: the per-bridge figures survive, and reach the wire ------------
+
+def test_plan_keeps_each_bridge_and_its_climb():
+    # T1183-b and T1183-c: `bridges` is the count, so the list rides apart.
+    parts = [part(0, 10000), part(10600, 20000), part(21200, 30000)]
+    plan, why, _ = rb.plan_route(parts, 30000, router_of(factor=1.3))
+    assert why is None and plan["bridges"] == 2
+    assert len(plan["bridge_list"]) == 2
+    assert all(b["mode"] == "routed" for b in plan["bridge_list"])
+    assert plan["bridge_ascend_m"] == sum(b["ascend_m"] for b in plan["bridge_list"])
+    assert plan["max_bridge_m"] == max(b["bridge_m"] for b in plan["bridge_list"])
+
+
+def test_export_ships_routed_bridges():
+    import export_wire
+    info = {"method": "routed-bridge", "bridges": 2, "bridged_m": 900.0,
+            "routed": 1, "max_bridge_m": 600.0,
+            "bridge_list": [{"bridge_m": 600.0, "mode": "routed"},
+                            {"bridge_m": 300.0, "mode": "straight"}]}
+    assert export_wire.bridges_of(info) == {
+        "n": 2, "max_m": 600.0, "total_m": 900.0, "routed": 1}
+    straight = {"method": "straight-splice", "bridges": 1,
+                "max_bridge_m": 40, "total_bridge_m": 40}
+    assert export_wire.bridges_of(straight) == {"n": 1, "max_m": 40, "total_m": 40}
+    assert export_wire.bridges_of({"method": "routed-bridge", "bridges": 0}) is None
+
+
+def test_ascent_sync_adds_the_bridge_climb_once():
+    import splice
+    sql = splice.SYNC_ASCENT_SQL
+    assert "'routed-bridge'" in sql and "bridge_ascend_m" in sql
+    # the mark that keeps a rerun from adding the climb twice
+    assert "? 'bridge_ascend_m'" in sql

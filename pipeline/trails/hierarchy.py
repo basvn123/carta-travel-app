@@ -609,6 +609,11 @@ def classify_graph(graph, log):
             kids = stage_children.get(stage_of, [])
             index = kids.index(cid) + 1 if cid in kids else None
         count = len(stage_children.get(cid, [])) if is_parent else None
+        if count is None and cls == "stage" and stage_of is not None:
+            # T1201 (row T1184-e): a stage carries how many stages its
+            # superroute lists, so the wire's h.n says "stage 5 of 12" even
+            # where only some of the twelve are published.
+            count = len(stage_children.get(stage_of, [])) or None
         out[cid] = {"cls": cls, "src": src, "stage_of": stage_of,
                     "index": index, "count": count, "why": why}
 

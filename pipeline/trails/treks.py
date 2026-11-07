@@ -77,6 +77,7 @@ MAX_STAGES = 120          # Sormlandsleden maps 100+ stages; a node network more
 MAX_JUMP_KM = 40.0        # per missing stage between consecutive endpoints
 TOUCH_KM = 3.0            # two stages "share an end" within this
 LOOP_KM = 0.5             # a stage whose own ends are this close is a loop
+CHAIN_KM = 0.2            # T1201: stage ends this close chain (the third order)
 SRC = "osm"               # pipeline/config/sources.yaml id
 
 REFUSALS = ("single_stage", "order_conflict", "loop_network", "not_one_path",
@@ -258,6 +259,12 @@ def _order(members):
         sorts.append(("position", sorted(rows, key=lambda m: pos[m["id"]])))
     if all(n is not None for n in by_num) and len(set(by_num)) == len(by_num):
         sorts.append(("name", sorted(rows, key=lambda m: num[m["id"]])))
+    # T1201 (row T1184-b): the third order, by chaining stage ends, as
+    # Waymarked Trails joins a route's members when their order is no help.
+    # Tried last, and only when the ends chain into one unique path.
+    chained = _chain(rows, pos, num)
+    if chained:
+        sorts.append(("chain", chained))
     if not sorts:
         return [], dropped, "order_conflict"
     candidates = []
@@ -270,6 +277,72 @@ def _order(members):
                  for i, m in enumerate(ordered)}
         candidates.append((ordered, label, how))
     return candidates, dropped, None
+
+
+def _chain(rows, pos=None, num=None):
+    """The rows in walking order by their ends alone, or None.
+
+    Two stages are neighbours when an end of one lies within CHAIN_KM of an
+    end of the other. Accepted only when that makes one unique path: every
+    stage has at most two neighbours, exactly two stages have one, the
+    neighbours form a single chain through every stage, and each middle stage
+    meets its two neighbours at its two different ends. Direction: the way
+    more superroute positions, else more name numbers, rise; else the end
+    whose stage has the lower id."""
+    pos, num = pos or {}, num or {}
+    if len(rows) < MIN_STAGES:
+        return None
+    ends = {}
+    for m in rows:
+        e = endpoints(m.get("geometry"))
+        if not e or km_between(*e) <= LOOP_KM:
+            return None
+        ends[m["id"]] = e
+    ids = [m["id"] for m in rows]
+    nbr = {i: [] for i in ids}
+    for x in range(len(ids)):
+        for y in range(x + 1, len(ids)):
+            a, b = ids[x], ids[y]
+            if min(km_between(p, q) for p in ends[a] for q in ends[b]) <= CHAIN_KM:
+                nbr[a].append(b)
+                nbr[b].append(a)
+    if any(len(v) > 2 for v in nbr.values()):
+        return None
+    tips = [i for i in ids if len(nbr[i]) == 1]
+    if len(tips) != 2:
+        return None
+    path, prev = [tips[0]], None
+    while len(path) <= len(ids):
+        nxt = [j for j in nbr[path[-1]] if j != prev]
+        if not nxt:
+            break
+        prev = path[-1]
+        path.append(nxt[0])
+    if len(path) != len(ids) or len(set(path)) != len(ids):
+        return None
+
+    def end_toward(i, j):
+        return min(range(2), key=lambda k: min(km_between(ends[i][k], q) for q in ends[j]))
+
+    for k in range(1, len(path) - 1):
+        if end_toward(path[k], path[k - 1]) == end_toward(path[k], path[k + 1]):
+            return None
+    # A ring has no first stage: refuse when the two free ends meet.
+    head = ends[path[0]][1 - end_toward(path[0], path[1])]
+    tail = ends[path[-1]][1 - end_toward(path[-1], path[-2])]
+    if km_between(head, tail) <= CHAIN_KM:
+        return None
+
+    def rises(key):
+        vals = [key.get(i) for i in path]
+        pairs = [(a, b) for a, b in pairwise(vals) if a is not None and b is not None]
+        return sum(1 for a, b in pairs if b > a) - sum(1 for a, b in pairs if b < a)
+
+    lean = rises(pos) or rises(num)
+    if lean < 0 or (lean == 0 and path[-1] < path[0]):
+        path.reverse()
+    by_id = {m["id"]: m for m in rows}
+    return [by_id[i] for i in path]
 
 
 def _continuity(ordered, label):
@@ -428,6 +501,11 @@ def build(rows, parent_osm=None, registry=None, asof=None):
             "min": m.get("duration_min"),
         } for m in ordered]
         km = sum(s["km"] or 0 for s in stages)
+        # T1201 (row T1184-e): how many stages the whole path has, from the
+        # superroute's member count hierarchy.py puts on each stage (`h.n`);
+        # kept only when it can be true of the numbers shown.
+        whole = max(((m.get("h") or {}).get("n") or 0 for m in ordered), default=0)
+        of = whole if whole >= len(stages) and whole >= max(s["i"] for s in stages) else None
         trek = {
             "id": tid,
             "name": names.wire_name(name, cc),
@@ -436,6 +514,7 @@ def build(rows, parent_osm=None, registry=None, asof=None):
             "how": src,
             "order": order_how,
             "n": len(stages),
+            **({"of": of} if of else {}),
             "km": round(km, 1),
             "up": sum(m.get("ascent_m") or 0 for m in ordered),
             "down": sum(m.get("descent_m") or 0 for m in ordered),

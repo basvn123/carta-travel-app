@@ -310,6 +310,13 @@ def grade_of(row):
 # about the length of a car park; curate.py's is_loop uses a looser 250 m
 # because it answers a different question (can I leave the car here).
 CLOSE_M = 100.0
+# T1201 (T1184-d, T1181-g): a roundtrip=yes tag lifts a route to a loop only
+# while its merged line's ends are within this distance. Further apart, the
+# tag is a mapping error on an A to B stage (all of the BergeSeen Trail is
+# tagged so, with ends 5 to 16 km apart) and the line wins. 1 km is the same
+# bound the trail page has used since T430 to refuse a loop whose ends lie
+# apart; curate.TAG_LOOP_MAX_M holds the same number for is_loop.
+TAG_LOOP_MAX_M = 1000.0
 # Buffer around the outbound half, in metres, and the share of the inbound
 # half that has to fall inside it.
 RETRACE_BUFFER_M = 15.0
@@ -383,7 +390,7 @@ def route_type_of(rec):
         # into two rings. More crossings than that is a network, not a shape
         # with a name, and stays a loop.
         return ("figure8" if int(rec["pieces"]) == 2 else "loop"), "geometry", parts
-    if closed or tagged:
+    if closed or (tagged and gap <= TAG_LOOP_MAX_M):
         return "loop", ("tagged" if tagged and not closed else "geometry"), parts
     return "point", "geometry", parts
 
@@ -410,6 +417,9 @@ HIGHLIGHT_CODE = {
     # glacier and spring have no chip of their own: a glacier reads as a
     # summit day and a spring is a convenience, not a reason.
     "glacier": "summit",
+    # T1201 (T1181-f): the landform kinds scenic.py added.
+    "rock": "gorge", "ridge": "summit", "saddle": "summit",
+    "cape": "coast", "bay": "coast",
 }
 
 # Only what the route genuinely TOUCHES earns a code. scenic.py stores both

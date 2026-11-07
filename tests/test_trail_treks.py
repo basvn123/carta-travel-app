@@ -177,3 +177,81 @@ def test_export_files_the_treks_with_their_first_stage(wire, built):
         {"id": 2, "stage_of": None, "parent_refs": [30, 40]},
         {"id": 3, "parent_refs": []},
     ]) == {1: 10, 2: 30}
+
+
+# --- T1201 (T1184-b): the third order, by chaining stage ends --------------
+
+def _stage(i, a, b, of="Kette Weg", pos=None):
+    return {"id": i, "name": f"Abschnitt ohne Nummer {i}", "country": "DE",
+            "category": "hike", "distance_m": 10000, "ascent_m": 100,
+            "h": {"cls": "stage", "of": of, "i": pos},
+            "geometry": {"type": "LineString", "coordinates": [a, b]}}
+
+
+P = [[10.0, 50.0], [10.1, 50.0], [10.2, 50.0], [10.3, 50.0], [10.4, 50.0]]
+
+
+def test_chain_orders_stages_with_no_usable_numbers():
+    # member positions repeat (no position order), names carry no numbers,
+    # and two stages are drawn backwards: the ends still make one path.
+    rows = [_stage(3, P[2], P[3], pos=1), _stage(1, P[1], P[0], pos=1),
+            _stage(4, P[4], P[3], pos=1), _stage(2, P[1], P[2], pos=1)]
+    got = treks._chain(rows)
+    assert [m["id"] for m in got] in ([1, 2, 3, 4], [4, 3, 2, 1])
+    trek_list, refs, report = treks.build(rows)
+    assert len(trek_list) == 1 and trek_list[0]["order"] == "chain"
+    assert [s["id"] for s in trek_list[0]["stages"]] == [1, 2, 3, 4]
+
+
+def test_chain_follows_rising_positions():
+    rows = [_stage(1, P[0], P[1], pos=9), _stage(2, P[1], P[2], pos=3),
+            _stage(3, P[2], P[3], pos=1)]
+    assert [m["id"] for m in treks._chain(rows, {1: 9, 2: 3, 3: 1})] == [3, 2, 1]
+
+
+def test_chain_refuses_a_gap_a_branch_or_a_loop():
+    gap = [_stage(1, P[0], P[1]), _stage(2, P[2], P[3])]          # two pieces
+    assert treks._chain(gap) is None
+    branch = [_stage(1, P[0], P[1]), _stage(2, P[1], P[2]),
+              _stage(3, P[1], [10.1, 50.1])]                        # three meet
+    assert treks._chain(branch) is None
+    loop = [_stage(1, P[0], P[1]), _stage(2, P[1], [10.0, 50.0001])]
+    assert treks._chain(loop) is None
+
+
+def test_chain_settles_a_position_conflict_when_the_ends_touch():
+    # Two stages that both claim member position 1 (the fixture's Doppelweg
+    # case) are a conflict only while their ends do not meet; touching, the
+    # third order puts them in a line.
+    rows = [_stage(1, P[0], P[1], of="Doppel", pos=1), _stage(2, P[1], P[2], of="Doppel", pos=1)]
+    trek_list, _, report = treks.build(rows)
+    assert len(trek_list) == 1 and trek_list[0]["order"] == "chain"
+    apart = [_stage(1, P[0], P[1], of="Doppel", pos=1), _stage(2, P[2], P[3], of="Doppel", pos=1)]
+    assert treks.build(apart)[2]["refused"]["order_conflict"] == 1
+
+
+def test_trek_says_how_many_stages_the_whole_path_has():
+    # T1201 (T1184-e): hierarchy.py puts the superroute's stage count on each
+    # stage (`h.n`); the trek keeps it when it is at least what is shown.
+    rows = [_stage(1, P[0], P[1], pos=1), _stage(2, P[1], P[2], pos=2)]
+    for r in rows:
+        r["h"]["n"] = 7
+    t = treks.build(rows)[0][0]
+    assert t["n"] == 2 and t["of"] == 7
+    for r in rows:
+        r["h"]["n"] = 1
+    assert "of" not in treks.build(rows)[0][0]
+
+
+def test_hierarchy_gives_a_stage_its_superroute_count():
+    import hierarchy
+    g = {1: {"country": "AT", "in_store": True, "parents": [], "children": [2, 3, 4],
+             "name": "BergeSeen Trail", "type": "superroute",
+             "rmembers": [(2, ""), (3, ""), (4, "")]}}
+    for i in (2, 3, 4):
+        g[i] = {"country": "AT", "in_store": True, "parents": [1], "children": [],
+                "name": f"BergeSeen Trail 0{i - 1}", "type": "route", "rmembers": []}
+    out = hierarchy.classify_graph(g, [])[0]
+    assert out[1]["count"] == 3
+    assert [out[i]["count"] for i in (2, 3, 4)] == [3, 3, 3]
+    assert [out[i]["index"] for i in (2, 3, 4)] == [1, 2, 3]

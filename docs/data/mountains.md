@@ -94,3 +94,8 @@ T1186 (ROADMAP D24, D7). Rows with no `routes` (1,868 of 2,143 on 2026-11-07;
 `kind` marked, path, track or none, `near_m`, `sac` as tagged, `ways`, `names`,
 `_src`, `_asof`. It states what is mapped, never that a route is safe. Run
 (box, Overpass paced): `python pipeline/mountains/fill_route_up.py --harvest --apply`.
+The batch route (T1201, row T1186-c) reads Geofabrik extracts with osmium
+instead, one pass per country and no rate limit: `--extract <country>.osm.pbf`
+(repeatable) sweeps every foot way and track within 600 m of each summit with
+no route, and marks a way that is a member of a `route=hiking` relation, so a
+summit can read `kind: marked`. Then `--apply` as before.

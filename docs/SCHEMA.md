@@ -1372,6 +1372,7 @@ a derived parking row this way). Read `typeof access === "object"`.
 | | `access` | shared shape, from the start point, parking within 400 m | parking derived, transit placeholder | 964 |
 | | `dogs` | `"yes"\|"leash"\|"no"` | `cache/outdoor/trails.json` | placeholder (0) |
 | | `permit` | short plain English sentence | `cache/outdoor/trails.json` | placeholder (0) |
+| | `bridges` | `{n, max_m, total_m, routed?}` | `trip_repairs.repair_info`: `straight-splice` (splice.py, straight connectors) or `routed-bridge` (route_bridge.py, T1183; `routed` = how many of the `n` breaks follow mapped paths, the rest are straight); `export_wire.bridges_of` (T1201) | derived, only on repaired rows |
 | | `huts[].season`, `huts[].booking` | `[fromMonth, toMonth]`, `true\|false`, merged into the existing `huts[]` by folded hut name | `cache/outdoor/trails.json` `huts: {name: {...}}` | placeholder (0) |
 | beaches, `beaches/{CC}.json` rows (`beaches` and `listed`) | `sea_temp` | 12 numbers, monthly mean sea surface temperature, C | the row's `sst`, else `cache/sea_temp_beaches.json` (T641 NASA MUR harvest, `pipeline/harvest_sea_temp.py`, not on disk in this checkout), else placeholder; written by `export_beaches.v2_fields` (T1097) | 0 until the box harvest runs (T1097-a) |
 | | `access` | shared shape, parking within 500 m of the beach point | parking derived, transit placeholder | 522 |
@@ -1444,6 +1445,7 @@ Country file `trails/{CC}.json`, key `treks` (absent when none is filed there):
 | `how` | strings | evidence used: `superroute`, `name`, `registry` |
 | `order` | `position` or `name` | what set the order: the superroute member position, else the numbers in the names (the first that passes the line check) |
 | `n` | integer, 2 or more | published stages |
+| `of` | integer, optional (T1201) | stages the whole path has: the superroute's member count, which `hierarchy.py` writes on each stage row as `h.n`; present only when at least `n` and at least the highest stage number shown |
 | `km`, `up`, `down`, `min` | numbers | sums over the published stages (km, metres up, metres down, minutes) |
 | `days` | integer | one per stage, or the stage's own `f.d` when it is a multi-day walk |
 | `stages` | `[{id, i, name, cc, km, up, min}]` | the published stages in walking order; `i` is the stage number shown (the name's own, else the position) |

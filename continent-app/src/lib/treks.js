@@ -32,6 +32,8 @@ export function trekTotals(trek) {
     : stages.reduce((a, s) => a + (Number.isFinite(s.up) ? s.up : 0), 0);
   return {
     n: stages.length,
+    // T1201 (T1184-e): the whole path's stage count, when the wire knows it.
+    of: Number.isInteger(trek?.of) && trek.of > stages.length ? trek.of : null,
     km: Math.round(km),
     up: Math.round(up),
     days: Number.isFinite(trek?.days) && trek.days >= stages.length ? trek.days : stages.length,

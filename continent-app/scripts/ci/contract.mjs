@@ -287,6 +287,11 @@ export function validateTrailTreks(files) {
         problems.push(`${where} km ${t.km} is not the sum of its stages (${sum.toFixed(1)})`);
       }
       if (t.n !== st.length) problems.push(`${where} n ${t.n} but ${st.length} stages`);
+      // T1201 (T1184-e): the whole path's stage count, when the superroute gives it.
+      if (t.of !== undefined) {
+        const top = st.reduce((a, x) => Math.max(a, Number(x.i) || 0), 0);
+        if (!Number.isInteger(t.of) || t.of < st.length || t.of < top) problems.push(`${where} of ${t.of} is under its published stages`);
+      }
       if (!String(t._src || '').trim() || !ISO_DAY.test(String(t._asof || ''))) {
         problems.push(`${where} misses _src or _asof`);
       }

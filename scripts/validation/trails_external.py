@@ -84,6 +84,9 @@ BAND_ORDER = ["exceptional", "excellent", "very_good", "good", "pleasant",
 TOP_CUT = 8.3            # lowest v5 score in the top band on the wire
 NEAR_M = 1500.0          # start or end of a row near the trail's start
 TREK_MAX_KM = 400        # curate.TREK_MAX_M, the longest single record
+LINE_NEAR_M = 600.0      # T1201: a day walk's start this close to a longer row's line
+LONGER_FACTOR = 2.0      # that row at least twice the walk's length
+LONGER_MIN_KM = 15.0     # or, for a walk with no length, at least this long
 GAPS_N = 30
 GAPS_MISSING = 20        # of the 30: the largest coverage gaps
 GAPS_LOW = GAPS_N - GAPS_MISSING   # and the largest ranking gaps
@@ -198,6 +201,35 @@ def dist_m(lat1, lon1, lat2, lon2):
     return 6371000.0 * 2 * math.asin(min(1.0, math.sqrt(a)))
 
 
+def line_of(geometry):
+    """[(lat, lon)] of every vertex of a (Multi)LineString, parts in order."""
+    if not geometry:
+        return []
+    coords = geometry.get("coordinates") or []
+    if geometry.get("type") == "LineString":
+        coords = [coords]
+    return [(c[1], c[0]) for part in coords if part for c in part]
+
+
+def line_near_m(lat, lon, line):
+    """Shortest distance in metres from a point to a polyline, on a local
+    flat projection (fine at the few kilometres this is asked about)."""
+    if not line:
+        return math.inf
+    kx = 111320.0 * math.cos(math.radians(lat))
+    ky = 110540.0
+    pts = [((b - lon) * kx, (a - lat) * ky) for a, b in line]
+    if len(pts) == 1:
+        return math.hypot(*pts[0])
+    best = math.inf
+    for (x1, y1), (x2, y2) in zip(pts, pts[1:]):
+        dx, dy = x2 - x1, y2 - y1
+        L = dx * dx + dy * dy
+        t = 0.0 if L == 0 else max(0.0, min(1.0, -(x1 * dx + y1 * dy) / L))
+        best = min(best, math.hypot(x1 + t * dx, y1 + t * dy))
+    return best
+
+
 def ends_of(geometry):
     """[(lat, lon)] of the first and last point of a (Multi)LineString."""
     if not geometry:
@@ -258,6 +290,7 @@ def load_carta(wire_dir=WIRE_DIR, details=True):
                     "name": r.get("name"), "tier": tier, "keys": keys,
                     "osm": r.get("osm"), "wikidata": None,
                     "ends": ends_of(r.get("geometry")),
+                    "line": line_of(r.get("geometry")),
                     "km": round((r.get("distance_m") or 0) / 1000, 1),
                     "score": v.get("score"), "band": band_of(r),
                     "rank": v.get("rank"),
@@ -272,6 +305,14 @@ def load_carta(wire_dir=WIRE_DIR, details=True):
             for k in ("name:en", "official_name", "alt_name"):
                 row["keys"] |= keys_of(tags.get(k))
             row["parts"] = d.get("rating_parts")
+            # T1201 (T1181-k): the named sights on the line, so a famous day
+            # walk is found on a longer row only when that row names its
+            # landmark (Durdle Door on the England Coast Path).
+            sights = set()
+            for h in (d.get("highlights") or []) + (d.get("passes") or []):
+                if isinstance(h, dict):
+                    sights |= keys_of(h.get("name"))
+            row["sights"] = sights
     return rows, generated_at
 
 
@@ -296,6 +337,7 @@ def load_registry(registry=REGISTRY, coverage=COVERAGE):
             "pageviews": wp.get("pageviews_avg"),
             "fame": r.get("fame_score"),
             "reason": reason.get(r["id"]),
+            "lat": r.get("lat"), "lon": r.get("lon"),
         })
     return out
 
@@ -394,11 +436,44 @@ def match_ref(ref, idx, reg):
                             direction_conflict(k, rk) for k in keys for rk in r["keys"]
                             if content_words(k) & content_words(rk)):
                         found[r["id"]] = (r, "near start")
+    # T1201 (T1181-k): a famous day walk on a longer published row (Lulworth
+    # Cove to Durdle Door on the England Coast Path). Only when nothing else
+    # matched, only for day walks, and only rows at least LONGER_FACTOR times
+    # the walk whose line passes within LINE_NEAR_M of its start. The starts
+    # are recalled to two decimals (about 0.5 km), hence the radius. When the
+    # registry places the walk's landmark (the summit, the lake, the arch),
+    # the row must pass that too, and the row must name one of the walk's
+    # words among its own sights: a lakeside path that starts where the
+    # Helvellyn walk starts does not climb Helvellyn.
+    if not found and ref.get("kind") == "day" and start.get("lat") is not None \
+            and start.get("lon") is not None:
+        words_all = set()
+        for k in keys:
+            words_all |= content_words(k)
+        mark = next(((h["lat"], h["lon"]) for h in hits[:1]
+                     if h.get("lat") is not None and h.get("lon") is not None), None)
+        need_km = LONGER_FACTOR * (ref.get("length_km") or LONGER_MIN_KM / LONGER_FACTOR)
+        for cc in ccs:
+            for r in idx.by_cc.get(cc, []):
+                if (r["km"] or 0) < need_km or not r.get("line"):
+                    continue
+                if SIDE_RE.search(fold(r["name"] or "")):
+                    continue
+                if line_near_m(start["lat"], start["lon"], r["line"]) > LINE_NEAR_M:
+                    continue
+                if mark and line_near_m(mark[0], mark[1], r["line"]) > LINE_NEAR_M:
+                    continue
+                rs = set()
+                for k in r.get("sights") or ():
+                    rs |= content_words(k)
+                if not words_all & rs:
+                    continue
+                found[r["id"]] = (r, "on a longer route")
     return list(found.values()), hits
 
 
 METHOD_RANK = {"osm id": 0, "wikidata id": 0, "name exact": 0, "name": 1,
-               "near start": 2, "side trail": 3}
+               "near start": 2, "on a longer route": 3, "side trail": 4}
 
 
 def score_key(r):

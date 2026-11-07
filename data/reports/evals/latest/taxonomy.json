@@ -1,0 +1,56 @@
+{
+ "schema": "carta-eval/1",
+ "eval": "taxonomy",
+ "title": "Taxonomy tagging (P@5, F1)",
+ "kind": "classification",
+ "at": "2026-11-07T11:09:41.863Z",
+ "git": "d85cbd728a",
+ "status": "pass",
+ "gated": true,
+ "headline": {
+  "key": "rp_at_5",
+  "value": 0.4333,
+  "label": "R-precision at 5 (P@5 capped at the gold count)",
+  "higher_is_better": true
+ },
+ "metrics": {
+  "p_at_5": 0.4133,
+  "rp_at_5": 0.4333,
+  "r_at_10": 0.444,
+  "mrr": 0.8095,
+  "micro_precision": 0.4239,
+  "micro_recall": 0.4382,
+  "micro_f1": 0.4309,
+  "macro_f1": 0.3385,
+  "lenient_micro_f1": 0.5435,
+  "ece": 0.271,
+  "facet_f1.setting": 0.4737,
+  "facet_f1.activity": 0.4118,
+  "facet_f1.vibe": 0.2963,
+  "facet_f1.traveller": 0.3333,
+  "n_items": 15,
+  "n_gold_labels": 89,
+  "cost_eur_per_1000": 0,
+  "taxonomy.nodes": 268,
+  "taxonomy.six_language_labels": 103
+ },
+ "gate": {
+  "ok": true,
+  "rule": "taxonomy and mapping valid, every gold label a taxonomy id, at least one item scored (scores not gated yet)",
+  "tolerance": null,
+  "baseline": null,
+  "failures": []
+ },
+ "cases": null,
+ "judge": null,
+ "inputs": {
+  "taxonomy_version": "1.0.0",
+  "gold": "continent-app/scripts/eval/taxonomy/seed-gold.csv",
+  "predictions": "baseline",
+  "seconds": 3.5
+ },
+ "notes": [
+  "Scored on the 15-item seed set (seed-gold.csv, labelled by the T1149 session): the eval runs, the numbers mean nothing until the owner fills gold.csv (400 rows, T1149-a).",
+  "Predictions: baseline: today's tags mapped (pipeline/taxonomy/mapping.yaml), every prediction counts as chosen."
+ ]
+}

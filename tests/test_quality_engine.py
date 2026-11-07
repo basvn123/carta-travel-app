@@ -173,3 +173,60 @@ def test_link_rule_thresholds_are_validated(eng, tmp_path):
     bad.write_text("version: 1\nlinks: {id: x, max_broken_share: 0.5, hard_broken_share: 0.1, min_checked: 1}\nrules: []\n")
     with pytest.raises(ValueError, match="max_broken_share"):
         eng.load_rules(bad)
+
+
+# --- T1201 (T1179-c): text checks on the trail summaries -------------------
+
+PUBLIC = ROOT / "continent-app" / "public"
+
+
+def _summaries(tmp: Path, items: dict) -> Path:
+    p = tmp / "summaries.json"
+    p.write_text(json.dumps({"items": items}))
+    return p
+
+
+TEXT_CHECKS = [
+    {"id": "t.dash", "source": "trails_summaries", "check": "dash", "kind": "hard"},
+    {"id": "t.banned", "source": "trails_summaries", "check": "banned", "kind": "hard"},
+    {"id": "t.facts", "source": "trails_summaries", "check": "facts", "kind": "soft"},
+    {"id": "t.length", "source": "trails_summaries", "check": "length", "kind": "soft"},
+]
+
+
+@pytest.mark.skipif(not (PUBLIC / "trails" / "AT.json").is_file(), reason="needs the trail wire")
+def test_text_gate_rechecks_summaries_against_the_wire(eng, tmp_path):
+    good = ("Stage 15 of the BergeSeen Trail. A 16.4 km walk with 985 m of climbing, "
+            "about 7 h 50 min of walking.")
+    p = _summaries(tmp_path, {"20050": {"cc": "AT", "text": good}})
+    assert eng.text_gate(TEXT_CHECKS, PUBLIC, p) == ([], [])
+    dashed = good.replace("Trail. A", "Trail — a")
+    fails, warns = eng.text_gate(TEXT_CHECKS, PUBLIC, _summaries(tmp_path, {"20050": {"cc": "AT", "text": dashed}}))
+    assert [f["id"] for f in fails] == ["t.dash"]
+    wrong = good.replace("985 m", "1,985 m")
+    fails, warns = eng.text_gate(TEXT_CHECKS, PUBLIC, _summaries(tmp_path, {"20050": {"cc": "AT", "text": wrong}}))
+    assert not fails and [w["id"] for w in warns] == ["t.facts"]
+
+
+def test_text_gate_on_a_walk_not_on_the_wire(eng, tmp_path):
+    p = _summaries(tmp_path, {"1": {"cc": "ZZ", "text": "Too short – really."}})
+    fails, warns = eng.text_gate(TEXT_CHECKS, tmp_path, p)
+    assert [f["id"] for f in fails] == ["t.dash"]
+    assert {w["id"] for w in warns} == {"t.length", "trails_summaries.stale"}
+    assert eng.text_gate(TEXT_CHECKS, tmp_path, tmp_path / "missing.json") == ([], [])
+    assert eng.text_gate([], tmp_path, p) == ([], [])
+
+
+def test_text_checks_are_validated(eng, tmp_path):
+    p = soft_rules(eng, tmp_path)
+    d = yaml.safe_load(p.read_text())
+    d["text_checks"] = [{"id": "x", "source": "nope", "check": "dash", "kind": "hard"}]
+    p.write_text(yaml.safe_dump(d))
+    with pytest.raises(ValueError):
+        eng.load_rules(p)
+
+
+def test_repo_rules_name_the_summary_checks(eng):
+    cfg = eng.load_rules()
+    kinds = {c["check"]: c["kind"] for c in cfg["texts"]}
+    assert kinds == {"dash": "hard", "banned": "hard", "facts": "soft", "length": "soft"}

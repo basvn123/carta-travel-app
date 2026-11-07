@@ -8,10 +8,15 @@ How the evals work is in the "Evals" section of `docs/HANDBOOK.md`.
 
 | Eval | Status | Gated | Headline | Latest | Trend (oldest to newest, last 20 runs) | Runs | Last run |
 |---|---|---|---|---|---|---|---|
-| Ask retrieval and grounding (`ask`) | pass | yes | nDCG@10, rules path | 60.0% | one run so far  | 1 | 2026-11-06 16:01 UTC, `6d5a0ebd7` |
-| Trail summaries fact check (`trail-summaries`) | pass | yes | summaries that pass every check | 100.0% | one run so far  | 1 | 2026-11-06 16:01 UTC, `6d5a0ebd7` |
-| Data quality gate (`data-quality`) | pass | yes | quality rules met | 100.0% | one run so far  | 1 | 2026-11-06 16:01 UTC, `6d5a0ebd7` |
-| Plan-day plans and judge (`plan-day`) | pass | no | plans meeting every rule (reference planner) | 100.0% | one run so far  | 1 | 2026-11-06 16:01 UTC, `6d5a0ebd7` |
+| Ask retrieval and grounding (`ask`) | pass | yes | nDCG@10, rules path | 60.0% | ██ (60.0% to 60.0%) | 2 | 2026-11-07 11:09 UTC, `d85cbd728a` |
+| Trail summaries fact check (`trail-summaries`) | pass | yes | summaries that pass every check | 100.0% | ██ (100.0% to 100.0%) | 2 | 2026-11-07 11:09 UTC, `d85cbd728a` |
+| Data quality gate (`data-quality`) | pass | yes | quality rules met | 100.0% | ██ (100.0% to 100.0%) | 2 | 2026-11-07 11:09 UTC, `d85cbd728a` |
+| Plan-day plans and judge (`plan-day`) | pass | no | plans meeting every rule (reference planner) | 100.0% | ██ (100.0% to 100.0%) | 2 | 2026-11-07 11:09 UTC, `d85cbd728a` |
+| Taxonomy tagging (P@5, F1) (`taxonomy`) | pass | yes | R-precision at 5 (P@5 capped at the gold count) | 43.3% | one run so far  | 1 | 2026-11-07 11:09 UTC, `d85cbd728a` |
+| Trails external check (`trails-external`) | pass | yes | reference trails Carta publishes | 55.7% | one run so far  | 1 | 2026-11-07 11:09 UTC, `d85cbd728a` |
+| Truth set (`truth`) | pass | no | answered truth-set rows the data gets right | 95.6% | one run so far  | 1 | 2026-11-07 11:09 UTC, `d85cbd728a` |
+| Place linking (MRR, accuracy@1) (`linking`) | pass | yes | accuracy@1 of the place linker on 300 messy mentions | 99.3% | one run so far  | 1 | 2026-11-07 11:09 UTC, `d85cbd728a` |
+| Ask the docs (recall, grounding, abstention) (`ask-docs`) | pass | yes | recall@5 of the right doc on 48 doc questions | 97.9% | one run so far  | 1 | 2026-11-07 11:09 UTC, `d85cbd728a` |
 
 ## Ask retrieval and grounding
 
@@ -33,20 +38,20 @@ Cases: 193 of 200 pass.
 | retrievers.rules.grounding | 0.9956 |
 | retrievers.rules.checks | 689 |
 | retrievers.bm25.cases | 142 |
-| retrievers.bm25.recall@5 | 0.5694 |
-| retrievers.bm25.hit@5 | 0.8873 |
-| retrievers.bm25.recall@10 | 0.5686 |
-| retrievers.bm25.hit@10 | 0.9085 |
-| retrievers.bm25.mrr | 0.8017 |
-| retrievers.bm25.ndcg@10 | 0.596 |
-| retrievers.bm25.list.recall@5 | 0.3074 |
-| retrievers.bm25.list.hit@5 | 0.4859 |
-| retrievers.bm25.list.recall@10 | 0.3233 |
-| retrievers.bm25.list.hit@10 | 0.5775 |
-| retrievers.bm25.list.mrr | 0.3603 |
-| retrievers.bm25.list.ndcg@10 | 0.3026 |
+| retrievers.bm25.recall@5 | 0.5849 |
+| retrievers.bm25.hit@5 | 0.9155 |
+| retrievers.bm25.recall@10 | 0.576 |
+| retrievers.bm25.hit@10 | 0.9225 |
+| retrievers.bm25.mrr | 0.838 |
+| retrievers.bm25.ndcg@10 | 0.6109 |
+| retrievers.bm25.list.recall@5 | 0.3951 |
+| retrievers.bm25.list.hit@5 | 0.6972 |
+| retrievers.bm25.list.recall@10 | 0.4132 |
+| retrievers.bm25.list.hit@10 | 0.7394 |
+| retrievers.bm25.list.mrr | 0.5024 |
+| retrievers.bm25.list.ndcg@10 | 0.4044 |
 
-Note: not built here: dense, hybrid
+Note: not built here: dense, hybrid, sparse
 
 ## Trail summaries fact check
 
@@ -77,19 +82,25 @@ Cases: 75 of 75 pass.
 | rules_met | 1 |
 | rules | 75 |
 | failures | 0 |
-| warnings | 0 |
-| core.score | 0.7047 |
-| flights.score | 0.5762 |
-| prices.score | 0.7285 |
-| rating.score | 0.8037 |
-| climate.score | 0.6413 |
-| place.score | 0.583 |
-| imagery.score | 0.7422 |
-| trails.score | 0.8139 |
+| warnings | 3 |
+| core.score | 0.7043 |
+| flights.score | 0.5758 |
+| prices.score | 0.7281 |
+| rating.score | 0.8034 |
+| climate.score | 0.6409 |
+| place.score | 0.5826 |
+| imagery.score | 0.7418 |
+| trails.score | 0.8107 |
 | beaches.score | 0.9684 |
 | lakes.score | 0.9893 |
 | mountains.score | 0.9999 |
 | cycling.score | 0.9716 |
+
+Note: warn [soft] validation.cycling.fact.length: no baseline value for this metric (validation 2026-11-07)
+
+Note: warn [soft] validation.cycling.fact.geometry: no baseline value for this metric (validation 2026-11-07)
+
+Note: warn [soft] validation.cycling.error_mdape: no baseline value for this metric (validation 2026-11-07)
 
 ## Plan-day plans and judge
 
@@ -125,3 +136,186 @@ Judge: session, session judge (Claude Code subagent, blind to the key), rubric `
 | judge vs rule checks | 40 | 0.95 | 0.898 | 0.7601 to 1 | almost perfect |
 
 Note: no hand labels yet (plan-day/labels.json): judge against human kappa is an owner step
+
+## Taxonomy tagging (P@5, F1)
+
+Gate: taxonomy and mapping valid, every gold label a taxonomy id, at least one item scored (scores not gated yet). Result: **ok**.
+
+| Metric | Value |
+|---|---|
+| p_at_5 | 0.4133 |
+| rp_at_5 | 0.4333 |
+| r_at_10 | 0.444 |
+| mrr | 0.8095 |
+| micro_precision | 0.4239 |
+| micro_recall | 0.4382 |
+| micro_f1 | 0.4309 |
+| macro_f1 | 0.3385 |
+| lenient_micro_f1 | 0.5435 |
+| ece | 0.271 |
+| facet_f1.setting | 0.4737 |
+| facet_f1.activity | 0.4118 |
+| facet_f1.vibe | 0.2963 |
+| facet_f1.traveller | 0.3333 |
+| n_items | 15 |
+| n_gold_labels | 89 |
+| cost_eur_per_1000 | 0 |
+| taxonomy.nodes | 268 |
+| taxonomy.six_language_labels | 103 |
+
+Note: Scored on the 15-item seed set (seed-gold.csv, labelled by the T1149 session): the eval runs, the numbers mean nothing until the owner fills gold.csv (400 rows, T1149-a).
+
+Note: Predictions: baseline: today's tags mapped (pipeline/taxonomy/mapping.yaml), every prediction counts as chosen.
+
+## Trails external check
+
+Gate: coverage and the top-band share of the reference trails at or above the baseline, tolerance 0, against baseline of the wire 2026-09-13T19:17:15+00:00, reference 08dd8590d3af. Result: **ok**.
+
+Cases: 157 of 282 pass.
+
+| Metric | Value |
+|---|---|
+| coverage | 0.5567 |
+| top_share | 0.3475 |
+| top_share_of_matched | 0.6242 |
+| reference_trails | 282 |
+| matched | 157 |
+| in_top | 98 |
+| label.lqt.coverage | 0.5455 |
+| label.lqt.top_share | 0.2727 |
+| label.quality_label.coverage | 0.7222 |
+| label.quality_label.top_share | 0.5556 |
+| label.wikipedia_list.coverage | 0.6885 |
+| label.wikipedia_list.top_share | 0.4344 |
+| label.national_trail.coverage | 0.4853 |
+| label.national_trail.top_share | 0.3235 |
+| label.famous_day.coverage | 0.4151 |
+| label.famous_day.top_share | 0.2075 |
+| cause.rated_low | 59 |
+| cause.not_in_registry | 58 |
+| cause.failed_continuity | 33 |
+| cause.no_osm_data | 13 |
+| cause.too_long | 8 |
+| cause.unresolved_seed | 6 |
+| cause.unplaced | 4 |
+| cause.way_only_not_derived | 2 |
+
+## Truth set
+
+Gate: accuracy at or above the lower 95 percent Wilson bound of the baseline; gated from 80 percent verified, against baseline 0.9556 on 90 rows (2026-06-07T13:21:17.357184+00:00). Result: **ok**.
+
+Cases: 86 of 90 pass.
+
+| Failure | Why |
+|---|---|
+| trail:64188.distance_km | wrong: 16.6 vs 15 (off 1.6, allowed 1.5) |
+| trail:195651.ascent_m | wrong: 566 vs 450 (off 116, allowed 67.5) |
+| trail:74625.ascent_m | wrong: 227 vs 305 (off 78, allowed 60) |
+| trail:9022.distance_km | wrong: 8.2 vs 9.19 (off 0.99, allowed 0.919) |
+
+| Metric | Value |
+|---|---|
+| accuracy | 0.9556 |
+| scored_rows | 90 |
+| right_rows | 86 |
+| stale_rows | 0 |
+| sheet_rows | 762 |
+| answered_share | 0.1181 |
+| rows.verified | 0 |
+| rows.seeded | 90 |
+| rows.unverified | 637 |
+| rows.unverifiable | 0 |
+| rows.skip | 35 |
+| field.place.country.accuracy | 1 |
+| field.place.country.n | 67 |
+| field.trail.ascent_m.accuracy | 0.6 |
+| field.trail.ascent_m.n | 5 |
+| field.trail.distance_km.accuracy | 0.8182 |
+| field.trail.distance_km.n | 11 |
+| field.trail.loop.accuracy | 1 |
+| field.trail.loop.n | 7 |
+| kind.place.accuracy | 1 |
+| kind.place.n | 67 |
+| kind.place.accuracy_weighted | 1 |
+| kind.trail.accuracy | 0.8261 |
+| kind.trail.n | 23 |
+
+Judge: session, session judge (blind subagent, rubric only), rubric `e3997722b64c`, 50 plans in the calibration sample. Use of the judge at this agreement: **uncalibrated** (gate at kappa 0.61 or more, advisory from 0.41).
+
+| Agreement (Cohen's kappa) | Pairs | Observed agreement | Kappa | 95% interval | Band |
+|---|---|---|---|---|---|
+| judge vs human labels | 0 | n/a | n/a | n/a | n/a |
+| rule checks vs human labels | 0 | n/a | n/a | n/a | no rule rater in the text check; the planted key is a recall check (text.planted_caught) |
+| judge vs rule checks | 0 | n/a | n/a | n/a | no rule rater in the text check; the planted key is a recall check (text.planted_caught) |
+
+Note: no row verified by hand yet: the score is on seeded answers only (owner step, evals/truth/GUIDE.md)
+
+Note: advisory until 80 percent of the sheet is verified (now 0 percent)
+
+Note: no hand labels for the text check yet (evals/truth/judge/labels.json): judge against human kappa is an owner step
+
+## Place linking (MRR, accuracy@1)
+
+Gate: after MRR and accuracy@1 not below the baseline, after MRR not below today's search, tolerance 0.02, against scripts/eval/linking/baseline.json. Result: **ok**.
+
+Cases: 298 of 300 pass.
+
+| Metric | Value |
+|---|---|
+| all.before.mrr | 0.556 |
+| all.before.acc1 | 0.543 |
+| all.before.acc3 | 0.57 |
+| all.after.mrr | 0.997 |
+| all.after.acc1 | 0.993 |
+| all.after.acc3 | 1 |
+| all.after_noctx.mrr | 0.983 |
+| all.after_noctx.acc1 | 0.967 |
+| all.after_noctx.acc3 | 1 |
+| dev.before.mrr | 0.61 |
+| dev.before.acc1 | 0.593 |
+| dev.before.acc3 | 0.627 |
+| dev.after.mrr | 1 |
+| dev.after.acc1 | 1 |
+| dev.after.acc3 | 1 |
+| dev.after_noctx.mrr | 0.983 |
+| dev.after_noctx.acc1 | 0.967 |
+| dev.after_noctx.acc3 | 1 |
+| test.before.mrr | 0.502 |
+| test.before.acc1 | 0.493 |
+| test.before.acc3 | 0.513 |
+| test.after.mrr | 0.993 |
+| test.after.acc1 | 0.987 |
+| test.after.acc3 | 1 |
+
+Note: Before (today's Explore search): MRR 0.556, accuracy@1 0.543. After: MRR 0.997, accuracy@1 0.993 (0.967 without context).
+
+Note: The set was written by the session that built the linker (T1153): read the after numbers as an upper bound until real search and parse-booking logs are labelled (T1153-c).
+
+## Ask the docs (recall, grounding, abstention)
+
+Gate: recall@5 0.85, abstention 0.8 and grounding 1 at least, no metric more than 2 points under the baseline, tolerance 0.02, against scripts/eval/ask-docs/baseline.json. Result: **ok**.
+
+Cases: 54 of 56 pass.
+
+| Metric | Value |
+|---|---|
+| n | 56 |
+| answerable | 48 |
+| unanswerable | 8 |
+| passages | 3711 |
+| recall1 | 0.833 |
+| recall3 | 0.917 |
+| recall5 | 0.979 |
+| mrr | 0.891 |
+| section5 | 0.896 |
+| answered | 0.958 |
+| cited_gold | 0.854 |
+| nl_recall5 | 1 |
+| abstain | 0.875 |
+| grounded | 1 |
+| latency_ms.p50 | 2.15 |
+| latency_ms.p95 | 3.06 |
+
+Note: Misses: d31. Answered an unanswerable question: u03.
+
+Note: The question set was written by the session that built the feature (T1168): read recall as an upper bound until real questions are logged (T1168-d).

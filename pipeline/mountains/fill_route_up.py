@@ -24,6 +24,7 @@ the wire credits "OpenStreetMap contributors". Nothing here claims a safe
 route: `kind` says what is mapped, sac is shown as tagged.
 
     python pipeline/mountains/fill_route_up.py --harvest --apply   # network
+    python pipeline/mountains/fill_route_up.py --extract data/raw/geofabrik/austria-latest.osm.pbf --apply
     python pipeline/mountains/fill_route_up.py --dry-run           # numbers
 """
 from __future__ import annotations
@@ -132,6 +133,72 @@ def harvest(wire: Path = WIRE, refresh: bool = False) -> dict:
     return cache
 
 
+def summits_without_route(wire: Path = WIRE) -> list:
+    """[(id, lat, lon)] of every wire row with no relation route."""
+    return [(r["id"], r["lat"], r["lon"]) for p in wire_files(wire)
+            for r in rows_of(json.loads(p.read_text(encoding="utf-8")))
+            if not r.get("routes") and r.get("lat") is not None and r.get("lon") is not None]
+
+
+GRID_DEG = 0.01       # summit grid cell, about 1.1 km north to south
+
+
+def harvest_extract(pbf_paths, summits, search_m: int = SEARCH_M) -> dict:
+    """{summit id: [way element]} from Geofabrik extracts (T1201, row T1186-c).
+
+    The batch route the T1186 research named: no rate limit, one pass per
+    country instead of one Overpass query per summit. Pass 1 collects the way
+    members of route=hiking relations; pass 2 reads every foot way and track
+    with node locations and keeps it for each summit it comes within
+    `search_m` of. The elements have the Overpass shape route_up() reads
+    (`tags`, `geometry` of {lat, lon}), plus `hiking` when the way is a
+    hiking relation member, so a summit's way can read `marked`."""
+    import osmium
+    grid = {}
+    for sid, lat, lon in summits:
+        grid.setdefault((int(math.floor(lat / GRID_DEG)), int(math.floor(lon / GRID_DEG))),
+                        []).append((sid, lat, lon))
+    reach_lat = int(math.ceil(search_m / 111000.0 / GRID_DEG))
+    out = {}
+    for pbf in pbf_paths:
+        hiking = set()
+        for rel in osmium.FileProcessor(str(pbf), osmium.osm.RELATION):
+            if rel.tags.get("route") == "hiking":
+                hiking.update(m.ref for m in rel.members if m.type == "w")
+        fp = osmium.FileProcessor(str(pbf), osmium.osm.NODE | osmium.osm.WAY).with_locations()
+        for obj in fp:
+            if not obj.is_way():
+                continue
+            hw = obj.tags.get("highway")
+            if hw not in FOOT and hw != "track":
+                continue
+            geom = []
+            for n in obj.nodes:
+                if n.location.valid():
+                    geom.append({"lat": n.location.lat, "lon": n.location.lon})
+            if not geom:
+                continue
+            near = {}
+            for g in geom:
+                ci, cj = int(math.floor(g["lat"] / GRID_DEG)), int(math.floor(g["lon"] / GRID_DEG))
+                reach_lon = int(math.ceil(reach_lat / max(0.2, math.cos(math.radians(g["lat"])))))
+                for di in range(-reach_lat, reach_lat + 1):
+                    for dj in range(-reach_lon, reach_lon + 1):
+                        for sid, lat, lon in grid.get((ci + di, cj + dj), ()):
+                            near[sid] = (lat, lon)
+            if not near:
+                continue
+            tags = {k: obj.tags.get(k) for k in ("highway", "sac_scale", "name")
+                    if obj.tags.get(k)}
+            el = {"type": "way", "id": obj.id, "tags": tags, "geometry": geom}
+            if obj.id in hiking:
+                el["hiking"] = True
+            for sid, (lat, lon) in near.items():
+                if point_to_line_m(lat, lon, geom) <= search_m:
+                    out.setdefault(sid, []).append(el)
+    return out
+
+
 def fill(wire: Path = WIRE, ways_by_id: dict | None = None, asof=None) -> tuple:
     """(fills, stats). Pure. 'with route' counts a relation route or a
     routeUp of kind marked or path."""
@@ -145,8 +212,11 @@ def fill(wire: Path = WIRE, ways_by_id: dict | None = None, asof=None) -> tuple:
             st["with_route_before"] += has
             if not has and r["id"] in ways_by_id:
                 st["swept"] += 1
-                fills[r["id"]] = b = route_up(r["lat"], r["lon"], ways_by_id[r["id"]],
-                                              asof=asof)
+                ways = ways_by_id[r["id"]]
+                # T1201: an extract sweep marks hiking relation members.
+                marked = frozenset(w.get("id") for w in ways if w.get("hiking"))
+                fills[r["id"]] = b = route_up(r["lat"], r["lon"], ways,
+                                              hiking_ids=marked, asof=asof)
                 has = b["kind"] in ("marked", "path")
             st["with_route_after"] += has
     return fills, st
@@ -172,11 +242,21 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--wire", default=str(WIRE))
     ap.add_argument("--harvest", action="store_true")
+    ap.add_argument("--extract", action="append", default=[],
+                    help="a Geofabrik .osm.pbf to sweep instead of Overpass "
+                         "(repeatable; T1201, the batch route)")
     ap.add_argument("--apply", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
     wire = Path(a.wire)
-    if a.harvest and not a.dry_run:
+    if a.extract and not a.dry_run:
+        cache = json.loads(WAYS.read_text(encoding="utf-8")) if WAYS.exists() else {}
+        found = harvest_extract([Path(x) for x in a.extract], summits_without_route(wire))
+        cache.update({str(k): v for k, v in found.items()})
+        WAYS.parent.mkdir(parents=True, exist_ok=True)
+        WAYS.write_text(json.dumps(cache), encoding="utf-8")
+        print(f"extract sweep: {len(found)} summits with a way within {SEARCH_M} m")
+    elif a.harvest and not a.dry_run:
         harvest(wire)
     try:
         ways = json.loads(WAYS.read_text(encoding="utf-8"))

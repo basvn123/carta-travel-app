@@ -2309,6 +2309,11 @@ export const fr = {
   "trails.kind_beach": "Plage",
   "trails.kind_hut": "Refuge",
   "trails.kind_spring": "Source",
+  "trails.kind_rock": "Rocher",
+  "trails.kind_ridge": "Arete",
+  "trails.kind_saddle": "Col",
+  "trails.kind_cape": "Cap",
+  "trails.kind_bay": "Baie",
   "trails.whySummits": "{n} sommets nommes en chemin, le plus haut {name} a {m} m",
   "trails.whySummitsPlain": "{n} sommets nommes en chemin",
   "trails.whySummit": "Passe par {name}, {m} m",
@@ -2537,6 +2542,9 @@ export const fr = {
   //    line joins them straight (pipeline/trails/splice.py) --
   "trails.sBridge": "Une courte rupture dans l'itineraire cartographie, environ {m} m, reliee ici en ligne droite.",
   "trails.sBridges": "{n} courtes ruptures dans l'itineraire cartographie, {m} m au total, reliees ici en ligne droite.",
+  "trails.sBridgeRouted": "Une rupture dans l'itineraire cartographie, environ {m} m, reliee ici par des sentiers cartographies.",
+  "trails.sBridgesRouted": "{n} ruptures dans l'itineraire cartographie, {m} m au total, reliees ici par des sentiers cartographies.",
+  "trails.sBridgesMixed": "{n} ruptures dans l'itineraire cartographie, {m} m au total, reliees ici : {r} par des sentiers cartographies, les autres en ligne droite.",
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
@@ -3786,6 +3794,8 @@ export const fr = {
   "trek.up": "{m} m de montée",
   "trek.days": "Environ {n} jours à pied",
   "trek.thisStage": "Ceci est l'étape {i}",
+  "trek.thisStageOf": "Ceci est l'étape {i} sur {of}",
+  "trek.stagesOf": "{n} étapes publiées sur {of}",
   "trek.here": "cette étape",
   "trek.listLabel": "Étapes de {name}",
   "trek.openWhole": "Ouvrir l'itinéraire complet",

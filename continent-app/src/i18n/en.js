@@ -3140,6 +3140,11 @@ export const en = {
   "trails.kind_beach": "Beach",
   "trails.kind_hut": "Mountain hut",
   "trails.kind_spring": "Spring",
+  "trails.kind_rock": "Rock",
+  "trails.kind_ridge": "Ridge",
+  "trails.kind_saddle": "Mountain pass",
+  "trails.kind_cape": "Headland",
+  "trails.kind_bay": "Bay",
   "trails.whySummits": "{n} named summits on the way, the highest {name} at {m} m",
   "trails.whySummitsPlain": "{n} named summits on the way",
   "trails.whySummit": "Goes over {name}, {m} m",
@@ -3368,6 +3373,9 @@ export const en = {
   //    line joins them straight (pipeline/trails/splice.py) --
   "trails.sBridge": "One short break in the mapped route, about {m} m, joined in a straight line here.",
   "trails.sBridges": "{n} short breaks in the mapped route, {m} m in total, joined in straight lines here.",
+  "trails.sBridgeRouted": "One break in the mapped route, about {m} m, joined here along mapped paths.",
+  "trails.sBridgesRouted": "{n} breaks in the mapped route, {m} m in total, joined here along mapped paths.",
+  "trails.sBridgesMixed": "{n} breaks in the mapped route, {m} m in total, joined here: {r} along mapped paths, the others in straight lines.",
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────
@@ -4714,6 +4722,8 @@ export const en = {
   "trek.up": "{m} m up",
   "trek.days": "About {n} days on foot",
   "trek.thisStage": "This is stage {i}",
+  "trek.thisStageOf": "This is stage {i} of {of}",
+  "trek.stagesOf": "{n} of {of} stages published",
   "trek.here": "this stage",
   "trek.listLabel": "Stages of {name}",
   "trek.openWhole": "Open the whole route",

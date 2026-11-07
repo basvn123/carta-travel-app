@@ -11,25 +11,25 @@
  "wire_rows": 17455,
  "summary": {
   "n": 282,
-  "matched": 149,
-  "in_top": 93,
-  "coverage": 0.5284,
-  "top_share": 0.3298,
+  "matched": 157,
+  "in_top": 98,
+  "coverage": 0.5567,
+  "top_share": 0.3475,
   "top_share_of_matched": 0.6242,
   "bands": {
-   "good": 8,
-   "missing": 133,
-   "exceptional": 46,
-   "excellent": 47,
-   "very_good": 37,
+   "good": 9,
+   "missing": 125,
+   "exceptional": 49,
+   "excellent": 49,
+   "very_good": 39,
    "pleasant": 7,
    "below_pleasant": 4
   },
   "causes": {
-   "not_in_registry": 65,
-   "rated_low": 56,
+   "rated_low": 59,
+   "not_in_registry": 58,
    "failed_continuity": 33,
-   "no_osm_data": 14,
+   "no_osm_data": 13,
    "too_long": 8,
    "unresolved_seed": 6,
    "unplaced": 4,
@@ -59,8 +59,8 @@
    },
    "famous_day": {
     "n": 106,
-    "matched": 36,
-    "in_top": 17
+    "matched": 44,
+    "in_top": 22
    }
   },
   "by_kind": {
@@ -71,8 +71,8 @@
    },
    "day": {
     "n": 105,
-    "matched": 35,
-    "in_top": 16
+    "matched": 43,
+    "in_top": 21
    }
   },
   "by_country": {
@@ -118,13 +118,13 @@
    },
    "CZ": {
     "n": 6,
-    "matched": 3,
-    "in_top": 3
+    "matched": 4,
+    "in_top": 4
    },
    "DE": {
     "n": 35,
-    "matched": 23,
-    "in_top": 19
+    "matched": 24,
+    "in_top": 20
    },
    "DK": {
     "n": 4,
@@ -138,8 +138,8 @@
    },
    "ES": {
     "n": 23,
-    "matched": 18,
-    "in_top": 13
+    "matched": 19,
+    "in_top": 14
    },
    "FI": {
     "n": 6,
@@ -153,13 +153,13 @@
    },
    "FR": {
     "n": 29,
-    "matched": 22,
+    "matched": 23,
     "in_top": 16
    },
    "GB": {
     "n": 75,
-    "matched": 34,
-    "in_top": 14
+    "matched": 36,
+    "in_top": 15
    },
    "GR": {
     "n": 9,
@@ -168,7 +168,7 @@
    },
    "HR": {
     "n": 4,
-    "matched": 3,
+    "matched": 4,
     "in_top": 2
    },
    "HU": {
@@ -188,8 +188,8 @@
    },
    "IT": {
     "n": 25,
-    "matched": 17,
-    "in_top": 12
+    "matched": 18,
+    "in_top": 13
    },
    "LI": {
     "n": 1,
@@ -300,10 +300,10 @@
    "at": "2026-09-13T19:17:15+00:00",
    "reference_sha": "08dd8590d3af",
    "n": 282,
-   "matched": 149,
-   "in_top": 93,
-   "coverage": 0.5284,
-   "top_share": 0.3298
+   "matched": 157,
+   "in_top": 98,
+   "coverage": 0.5567,
+   "top_share": 0.3475
   },
   "rule": "coverage and top_share at or above the baseline"
  },
@@ -757,37 +757,6 @@
    "gap": 4.2
   },
   {
-   "id": "lago-di-braies-loop",
-   "name": "Lago di Braies loop",
-   "countries": [
-    "IT"
-   ],
-   "kind": "day",
-   "labels": [
-    "famous_day"
-   ],
-   "length_km": 4,
-   "status": "missing",
-   "methods": {},
-   "n_rows": 0,
-   "side_trails": 0,
-   "registry": {
-    "id": "it-lago-di-braies",
-    "name": "lago di Braies",
-    "wikidata": "Q445369",
-    "osm": null,
-    "pageviews": 245,
-    "fame": 0.5074,
-    "reason": "no_osm_data"
-   },
-   "best": null,
-   "in_top": false,
-   "weight": 4.09,
-   "cause_code": "no_osm_data",
-   "cause": "nothing in OSM to build from",
-   "gap": 4.09
-  },
-  {
    "id": "giewont",
    "name": "Giewont",
    "countries": [
@@ -925,6 +894,30 @@
     "wikipedia_list"
    ],
    "length_km": 330,
+   "status": "missing",
+   "methods": {},
+   "n_rows": 0,
+   "side_trails": 0,
+   "registry": null,
+   "best": null,
+   "in_top": false,
+   "weight": 4.0,
+   "cause_code": "not_in_registry",
+   "cause": "not in the famous registry under this name: no Wikidata, OSM fame tag or Waymarked route found by the harvest",
+   "gap": 4.0
+  },
+  {
+   "id": "royal-canal-way",
+   "name": "Royal Canal Way",
+   "countries": [
+    "IE"
+   ],
+   "kind": "multi-day",
+   "labels": [
+    "national_trail",
+    "wikipedia_list"
+   ],
+   "length_km": 144,
    "status": "missing",
    "methods": {},
    "n_rows": 0,
@@ -5876,8 +5869,8 @@
    "status": "matched",
    "methods": {
     "wikidata id": 3,
-    "name": 2,
-    "name exact": 5
+    "name exact": 5,
+    "name": 2
    },
    "n_rows": 10,
    "side_trails": 0,
@@ -6521,8 +6514,8 @@
    "methods": {
     "wikidata id": 5,
     "name exact": 11,
-    "side trail": 2,
-    "name": 1
+    "name": 1,
+    "side trail": 2
    },
    "n_rows": 19,
    "side_trails": 2,
@@ -6606,8 +6599,8 @@
    "status": "matched",
    "methods": {
     "wikidata id": 2,
-    "side trail": 1,
-    "name exact": 1
+    "name exact": 1,
+    "side trail": 1
    },
    "n_rows": 4,
    "side_trails": 1,
@@ -7053,8 +7046,8 @@
      "method": "name exact"
     },
     {
-     "id": 27306,
-     "name": "GR 5 - Variante Belfort",
+     "id": 98274,
+     "name": "E2 West Sectie GR 565 Sniederspad",
      "band": "very_good",
      "score": 8.2,
      "method": "name exact"
@@ -7562,8 +7555,8 @@
    "methods": {
     "osm id": 1,
     "wikidata id": 6,
-    "name": 60,
-    "name exact": 3
+    "name exact": 3,
+    "name": 60
    },
    "n_rows": 70,
    "side_trails": 0,
@@ -7602,15 +7595,15 @@
      "method": "osm id"
     },
     {
-     "id": 7724,
-     "name": "Via Alpina",
+     "id": 21176,
+     "name": "Via Alpina Stage 26: Silianer Hütte - Drei-Zinnen-Hütte / Rifugio Locatelli",
      "band": "exceptional",
      "score": 9.6,
      "method": "name exact"
     },
     {
-     "id": 21176,
-     "name": "Via Alpina Stage 26: Silianer Hütte - Drei-Zinnen-Hütte / Rifugio Locatelli",
+     "id": 7724,
+     "name": "Via Alpina",
      "band": "exceptional",
      "score": 9.6,
      "method": "name exact"
@@ -9921,18 +9914,18 @@
      "method": "name"
     },
     {
-     "id": 66940,
-     "name": "Nacionalni park Sjeverni Velebit II - Rožanski kukovi",
-     "band": "excellent",
-     "score": 8.5,
-     "method": "name"
-    },
-    {
      "id": 67813,
      "name": "Бела стаза",
      "band": "excellent",
      "score": 8.5,
      "method": "name exact"
+    },
+    {
+     "id": 66940,
+     "name": "Nacionalni park Sjeverni Velebit II - Rožanski kukovi",
+     "band": "excellent",
+     "score": 8.5,
+     "method": "name"
     },
     {
      "id": 66945,
@@ -10624,16 +10617,35 @@
     "famous_day"
    ],
    "length_km": null,
-   "status": "missing",
-   "methods": {},
-   "n_rows": 0,
+   "status": "matched",
+   "methods": {
+    "on a longer route": 1
+   },
+   "n_rows": 1,
    "side_trails": 0,
    "registry": null,
-   "best": null,
+   "best": {
+    "id": 188342,
+    "name": "King Charles III England Coast Path: Shoreham to Eastbourne",
+    "cc": "GB",
+    "tier": "rated",
+    "score": 8.0,
+    "band": "very_good",
+    "km": 53.3
+   },
    "in_top": false,
+   "rows": [
+    {
+     "id": 188342,
+     "name": "King Charles III England Coast Path: Shoreham to Eastbourne",
+     "band": "very_good",
+     "score": 8.0,
+     "method": "on a longer route"
+    }
+   ],
    "weight": 2.5,
-   "cause_code": "not_in_registry",
-   "cause": "not in the famous registry under this name: no Wikidata, OSM fame tag or Waymarked route found by the harvest"
+   "cause_code": "rated_low",
+   "cause": "v5 8.0 (very_good); weakest parts: shape 0.02, photos 0.45"
   },
   {
    "id": "durdle-door-lulworth",
@@ -10646,16 +10658,35 @@
     "famous_day"
    ],
    "length_km": 3,
-   "status": "missing",
-   "methods": {},
-   "n_rows": 0,
+   "status": "matched",
+   "methods": {
+    "on a longer route": 1
+   },
+   "n_rows": 1,
    "side_trails": 0,
    "registry": null,
-   "best": null,
-   "in_top": false,
+   "best": {
+    "id": 186725,
+    "name": "King Charles III England Coast Path: Portland to Lulworth",
+    "cc": "GB",
+    "tier": "rated",
+    "score": 8.9,
+    "band": "excellent",
+    "km": 31.8
+   },
+   "in_top": true,
+   "rows": [
+    {
+     "id": 186725,
+     "name": "King Charles III England Coast Path: Portland to Lulworth",
+     "band": "excellent",
+     "score": 8.9,
+     "method": "on a longer route"
+    }
+   ],
    "weight": 2.5,
-   "cause_code": "not_in_registry",
-   "cause": "not in the famous registry under this name: no Wikidata, OSM fame tag or Waymarked route found by the harvest"
+   "cause_code": null,
+   "cause": null
   },
   {
    "id": "malham-cove",
@@ -11921,16 +11952,35 @@
     "famous_day"
    ],
    "length_km": null,
-   "status": "missing",
-   "methods": {},
-   "n_rows": 0,
+   "status": "matched",
+   "methods": {
+    "on a longer route": 1
+   },
+   "n_rows": 1,
    "side_trails": 0,
    "registry": null,
-   "best": null,
-   "in_top": false,
+   "best": {
+    "id": 102744,
+    "name": "Malerweg",
+    "cc": "DE",
+    "tier": "rated",
+    "score": 9.6,
+    "band": "exceptional",
+    "km": 116.9
+   },
+   "in_top": true,
+   "rows": [
+    {
+     "id": 102744,
+     "name": "Malerweg",
+     "band": "exceptional",
+     "score": 9.6,
+     "method": "on a longer route"
+    }
+   ],
    "weight": 2.5,
-   "cause_code": "not_in_registry",
-   "cause": "not in the famous registry under this name: no Wikidata, OSM fame tag or Waymarked route found by the harvest"
+   "cause_code": null,
+   "cause": null
   },
   {
    "id": "breitachklamm",
@@ -12158,9 +12208,11 @@
     "famous_day"
    ],
    "length_km": 4,
-   "status": "missing",
-   "methods": {},
-   "n_rows": 0,
+   "status": "matched",
+   "methods": {
+    "on a longer route": 1
+   },
+   "n_rows": 1,
    "side_trails": 0,
    "registry": {
     "id": "it-lago-di-braies",
@@ -12171,11 +12223,28 @@
     "fame": 0.5074,
     "reason": "no_osm_data"
    },
-   "best": null,
-   "in_top": false,
+   "best": {
+    "id": 190557,
+    "name": "Alta via n. 1 delle Dolomiti - Dolomiten-Höhenweg Nr. 1",
+    "cc": "IT",
+    "tier": "rated",
+    "score": 9.6,
+    "band": "exceptional",
+    "km": 117.9
+   },
+   "in_top": true,
+   "rows": [
+    {
+     "id": 190557,
+     "name": "Alta via n. 1 delle Dolomiti - Dolomiten-Höhenweg Nr. 1",
+     "band": "exceptional",
+     "score": 9.6,
+     "method": "on a longer route"
+    }
+   ],
    "weight": 4.09,
-   "cause_code": "no_osm_data",
-   "cause": "nothing in OSM to build from"
+   "cause_code": null,
+   "cause": null
   },
   {
    "id": "seceda-ridge",
@@ -12325,16 +12394,35 @@
     "famous_day"
    ],
    "length_km": null,
-   "status": "missing",
-   "methods": {},
-   "n_rows": 0,
+   "status": "matched",
+   "methods": {
+    "on a longer route": 1
+   },
+   "n_rows": 1,
    "side_trails": 0,
    "registry": null,
-   "best": null,
+   "best": {
+    "id": 30488,
+    "name": "GR 51",
+    "cc": "FR",
+    "tier": "rated",
+    "score": 7.2,
+    "band": "good",
+    "km": 86.7
+   },
    "in_top": false,
+   "rows": [
+    {
+     "id": 30488,
+     "name": "GR 51",
+     "band": "good",
+     "score": 7.2,
+     "method": "on a longer route"
+    }
+   ],
    "weight": 2.5,
-   "cause_code": "not_in_registry",
-   "cause": "not in the famous registry under this name: no Wikidata, OSM fame tag or Waymarked route found by the harvest"
+   "cause_code": "rated_low",
+   "cause": "v5 7.2 (good); weakest parts: shape 0.01, scenery 0.09"
   },
   {
    "id": "etretat-cliffs",
@@ -12615,16 +12703,42 @@
     "famous_day"
    ],
    "length_km": null,
-   "status": "missing",
-   "methods": {},
-   "n_rows": 0,
+   "status": "matched",
+   "methods": {
+    "on a longer route": 2
+   },
+   "n_rows": 2,
    "side_trails": 0,
    "registry": null,
-   "best": null,
-   "in_top": false,
+   "best": {
+    "id": 176209,
+    "name": "Portal de Montserrat",
+    "cc": "ES",
+    "tier": "rated",
+    "score": 9.7,
+    "band": "exceptional",
+    "km": 22.7
+   },
+   "in_top": true,
+   "rows": [
+    {
+     "id": 176209,
+     "name": "Portal de Montserrat",
+     "band": "exceptional",
+     "score": 9.7,
+     "method": "on a longer route"
+    },
+    {
+     "id": 181850,
+     "name": "Sender del Mil·lenari de Montserrat",
+     "band": "exceptional",
+     "score": 9.7,
+     "method": "on a longer route"
+    }
+   ],
    "weight": 2.5,
-   "cause_code": "not_in_registry",
-   "cause": "not in the famous registry under this name: no Wikidata, OSM fame tag or Waymarked route found by the harvest"
+   "cause_code": null,
+   "cause": null
   },
   {
    "id": "lagos-de-covadonga",
@@ -13005,16 +13119,35 @@
     "famous_day"
    ],
    "length_km": null,
-   "status": "missing",
-   "methods": {},
-   "n_rows": 0,
+   "status": "matched",
+   "methods": {
+    "on a longer route": 1
+   },
+   "n_rows": 1,
    "side_trails": 0,
    "registry": null,
-   "best": null,
-   "in_top": false,
+   "best": {
+    "id": 107929,
+    "name": "Czesko–polski szlak im. Pavla Hečka",
+    "cc": "CZ",
+    "tier": "rated",
+    "score": 8.9,
+    "band": "excellent",
+    "km": 34.1
+   },
+   "in_top": true,
+   "rows": [
+    {
+     "id": 107929,
+     "name": "Czesko–polski szlak im. Pavla Hečka",
+     "band": "excellent",
+     "score": 8.9,
+     "method": "on a longer route"
+    }
+   ],
    "weight": 2.5,
-   "cause_code": "not_in_registry",
-   "cause": "not in the famous registry under this name: no Wikidata, OSM fame tag or Waymarked route found by the harvest"
+   "cause_code": null,
+   "cause": null
   },
   {
    "id": "seven-rila-lakes",
@@ -13136,16 +13269,35 @@
     "famous_day"
    ],
    "length_km": null,
-   "status": "missing",
-   "methods": {},
-   "n_rows": 0,
+   "status": "matched",
+   "methods": {
+    "on a longer route": 1
+   },
+   "n_rows": 1,
    "side_trails": 0,
    "registry": null,
-   "best": null,
+   "best": {
+    "id": 67074,
+    "name": "Nacionalni park Plitvička jezera",
+    "cc": "HR",
+    "tier": "rated",
+    "score": 8.2,
+    "band": "very_good",
+    "km": 33.1
+   },
    "in_top": false,
+   "rows": [
+    {
+     "id": 67074,
+     "name": "Nacionalni park Plitvička jezera",
+     "band": "very_good",
+     "score": 8.2,
+     "method": "on a longer route"
+    }
+   ],
    "weight": 2.5,
-   "cause_code": "not_in_registry",
-   "cause": "not in the famous registry under this name: no Wikidata, OSM fame tag or Waymarked route found by the harvest"
+   "cause_code": "rated_low",
+   "cause": "v5 8.2 (very_good); weakest parts: surface 0.06, shape 0.31"
   },
   {
    "id": "vintgar-gorge",

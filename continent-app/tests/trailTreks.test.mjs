@@ -53,10 +53,18 @@ test("a cross-border stage reads the trek from the file that holds it", () => {
 
 test("the totals are the record's, and the gap is kept", () => {
   assert.deepEqual(trekTotals(WERDENFELS),
-    { n: 5, km: 40, up: 2000, days: 5, noKm: 0, missing: [5] });
+    { n: 5, of: null, km: 40, up: 2000, days: 5, noKm: 0, missing: [5] });
 });
 
 test("totals fall back to the stages and never count fewer days than stages", () => {
   const t = { stages: [{ id: 1, km: 7.6, up: 300 }, { id: 2, up: 100 }], days: 1 };
-  assert.deepEqual(trekTotals(t), { n: 2, km: 8, up: 400, days: 2, noKm: 1, missing: [] });
+  assert.deepEqual(trekTotals(t), { n: 2, of: null, km: 8, up: 400, days: 2, noKm: 1, missing: [] });
+});
+
+// T1201 (T1184-e): the whole path's stage count, only when it is more than
+// the published stages (the shape gained `of`, so the two totals above name it).
+test("T1201: the whole path's stage count reaches the totals", () => {
+  assert.equal(trekTotals({ ...WERDENFELS, of: 12 }).of, 12);
+  assert.equal(trekTotals({ ...WERDENFELS, of: 5 }).of, null);
+  assert.equal(trekTotals({ ...WERDENFELS, of: "12" }).of, null);
 });

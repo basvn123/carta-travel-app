@@ -15,7 +15,8 @@ Others are whole stages missing (Offa's Dyke Path, one 189 km break) and
 must stay out.
 
 This step routes each remaining break with BRouter (tools/brouter, the stock
-`hiking-mountain` profile; research in Execution/P15/T1183-trail-continuity.md)
+`hiking-mountain` profile, as the house `carta-hiking` since T1201; research in
+Execution/P15/T1183-trail-continuity.md)
 and publishes the route only when EVERY break closes within the limits below.
 A route that fails any limit is left exactly as it was, and the reason is
 kept: in validation_runs (check_name `route_bridge`) and in the run report
@@ -92,7 +93,11 @@ HERE = Path(__file__).resolve().parent
 REPORT = ROOT / "data" / "reports" / "trails_route_bridge.json"
 
 BROUTER_URL = "http://127.0.0.1:17777/brouter"
-PROFILE = "hiking-mountain"
+# T1201 (T1183-e): the house profile, stock hiking-mountain with
+# hiking_routes_preference 0.5 instead of 0.2, so bridges keep to waymarked
+# ways (tools/brouter/profiles/carta-hiking.brf). --profile hiking-mountain
+# runs the stock one.
+PROFILE = "carta-hiking"
 EARTH_RADIUS_M = 6371008.8
 
 # --- The limits (see the module docstring for the reasoning) ---------------
@@ -404,7 +409,14 @@ def plan_route(coord_parts, length_m, router):
     # be a jump the checks above missed).
     if not keeps_order(line, oriented) or max_step_m(line) > SPLICE_M + 1e-6:
         return None, "not_continuous", detail
-    plan = {"line": line, "bridges": bridges, **detail,
+    # T1201 (T1183-b, T1183-c): `bridges` in detail is the count, so the
+    # per-bridge figures ride as `bridge_list`, and the routed climb is
+    # summed for splice.py --sync-only to add to the stated ascent.
+    plan = {"line": line, **detail, "bridge_list": bridges,
+            "bridge_ascend_m": round(sum(br.get("ascend_m") or 0
+                                         for br in bridges), 1),
+            "max_bridge_m": round(max((br["bridge_m"] for br in bridges),
+                                      default=0.0), 1),
             "routed": sum(1 for br in bridges if br["mode"] == "routed"),
             "original_m": round(own_len, 1),
             "repaired_m": round(line_m(line), 1)}

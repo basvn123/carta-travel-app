@@ -323,6 +323,11 @@ export function trailReasons(reasons, t, limit = 6, trip = null) {
     if ((code === 'summit' || code === 'summits') && Number.isFinite(Number(r.ele))
       && Number.isFinite(top) && Number(r.ele) > top + 60) continue;
     if (code === 'loop' && trip && trip.is_loop === false) continue;
+    // T1201 (T1181-g): the route type wins over the loop flag, which is also
+    // true on an out and back (Old Man of Storr) and on near loops typed as
+    // one way (Quiraing), so the reason would contradict the shape fact.
+    const shape = trip?.f?.rt;
+    if (code === 'loop' && shape && shape !== 'loop' && shape !== 'figure8') continue;
     const text = reasonText(r, t);
     if (!text || seen.has(text)) continue;
     seen.add(text);
@@ -338,6 +343,13 @@ const TEMPLATE_MARKS = [
   /derived from|based on the distance and ascent|from the distance and ascent/i,
   /sightseeing stops|one day city sightseeing walk/i,
   /covers a distance of|spanning [\d.]+ km|covering [\d.]+ km/i,
+  // T1201 (T1179-f): the rest of the retired describe.py leads ("Based on
+  // its distance and ascent", "is a 9.3 km walking route in IS. This easy
+  // path features 68 m of ascent"), the same marks as export_wire.RETIRED_LEAD.
+  /based on its distance|waymarked hiking path|walking route measuring/i,
+  /is an? (?:[\d.]+ km )?(?:walking|hiking) (?:route|path|trail)/i,
+  /this (?:easy|moderate|difficult|hard|challenging) (?:path|trail|route|walk)/i,
+  /features \d+ m of ascent/i,
 ];
 
 /** True when the description is the pipeline's composed boilerplate. */
@@ -466,10 +478,19 @@ export function trailStory(tr, detail = null, { t, loop = null, nearby = null } 
     // were joined in a straight line rather than mapped
     // (pipeline/trails/splice.py), and a walker following it on the ground
     // should know which claim is which.
+    // T1201 (T1183-b): a routed repair (route_bridge.py) joins breaks along
+    // mapped paths, so `routed` of the `n` bridges are not straight lines.
     const bridges = detail?.bridges;
     if (bridges?.n) {
-      add('bridges', 'route', t(bridges.n > 1 ? 'trails.sBridges' : 'trails.sBridge', {
+      const routed = Number(bridges.routed) || 0;
+      const key = routed <= 0
+        ? (bridges.n > 1 ? 'trails.sBridges' : 'trails.sBridge')
+        : routed >= bridges.n
+          ? (bridges.n > 1 ? 'trails.sBridgesRouted' : 'trails.sBridgeRouted')
+          : 'trails.sBridgesMixed';
+      add('bridges', 'route', t(key, {
         n: bridges.n,
+        r: routed,
         m: Math.round(bridges.total_m ?? 0),
       }));
     }
