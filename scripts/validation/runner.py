@@ -41,6 +41,7 @@ tolerance (inside the interval it warns).
     python -I scripts/validation/runner.py trails --check        # exit 1 when a hard check fails
     python -I scripts/validation/runner.py trails --write-baseline   # move the baseline, deliberately
     python -I scripts/validation/runner.py trails --share 0.5 --min-per-country 3
+    python -I scripts/validation/runner.py beaches --write --gaps-only   # keep only the gap items
 
 `scripts/quality/engine.py` calls gate_from_disk() so a failed hard check of
 a layer's latest result fails the D2 quality run. No network, no model.
@@ -393,6 +394,20 @@ def write(result, valid_dir: Path = VALID_DIR, snapshot: Path | None = SNAPSHOT)
     return path, card
 
 
+def keep_gap_results(result):
+    """Drop per-item results that are not among the gaps (T1216, T1189-g).
+
+    Metrics, by_country, the gate and the gaps are computed before this, so
+    the scorecard, the trend and the D2 gate read the same numbers; only the
+    item list shrinks (the beaches result was 4.3 MB for 14,861 items).
+    """
+    ids = {g.get("id") for g in result.get("gaps") or []}
+    kept = [r for r in result.get("results") or [] if r.get("id") in ids]
+    result["results_dropped"] = len(result.get("results") or []) - len(kept)
+    result["results"] = kept
+    return result
+
+
 def write_baseline(result, valid_dir: Path = VALID_DIR):
     base = {"layer": result["layer"], "date": result["date"], "reference": result["reference"],
             "sample": result["sample"],
@@ -415,6 +430,8 @@ def main(argv=None):
     ap.add_argument("--write-baseline", action="store_true")
     ap.add_argument("--check", action="store_true")
     ap.add_argument("--no-snapshot", action="store_true")
+    ap.add_argument("--gaps-only", action="store_true",
+                    help="keep per-item results only for the gaps (smaller dated file)")
     a = ap.parse_args(argv)
     mod = plugin(a.layer)
     out = Path(a.out)
@@ -422,6 +439,8 @@ def main(argv=None):
     min_per = a.min_per_country if a.min_per_country is not None else getattr(mod, "MIN_PER_COUNTRY", 5)
     now = datetime.fromisoformat(a.now.replace("Z", "+00:00")) if a.now else None
     res = run(mod, {}, share, min_per, a.salt, load_json(out / a.layer / "baseline.json"), now)
+    if a.gaps_only:
+        keep_gap_results(res)
     if a.write_baseline:
         write_baseline(res, out)
         res["gate"] = evaluate_gate(res["metrics"], res["checks"], load_json(out / a.layer / "baseline.json"),

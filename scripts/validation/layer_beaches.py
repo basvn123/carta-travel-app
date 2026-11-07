@@ -91,12 +91,26 @@ _STOP = {"beach", "playa", "plage", "spiaggia", "praia", "strand", "plaza", "pla
          "de", "da", "di", "del", "della", "des", "du", "la", "le", "el", "il", "lo", "los", "las",
          "the", "of", "bw", "zone", "baignade", "badestelle", "bathing", "water", "site",
          "lido", "bay", "cala", "baia", "bucht", "strandbad", "see", "lake", "lac", "lago",
-         "nord", "sud", "north", "south", "east", "west", "est", "ouest", "centro", "centre"}
+         "plazh", "nord", "sud", "north", "south", "east", "west", "est", "ouest", "centro", "centre"}
+# T1216 (T1189-g): the BG register names its sites in Cyrillic, which the
+# [a-z0-9] word test dropped whole (Shkorpilovtsi). Bulgaria's official
+# Streamlined System (Transliteration Act 2009), the one its road signs and
+# Wikidata labels use; other Cyrillic letters fall back to their common Latin.
+_CYR = dict(zip("абвгдежзийклмнопрстуфхцчшщъьюяёэыєіїґ",
+                ["a", "b", "v", "g", "d", "e", "zh", "z", "i", "y", "k", "l", "m", "n", "o", "p",
+                 "r", "s", "t", "u", "f", "h", "ts", "ch", "sh", "sht", "a", "y", "yu", "ya",
+                 "yo", "e", "y", "ye", "i", "yi", "g"]))
+
+
+def translit(name):
+    return "".join(_CYR.get(c, _CYR.get(c.lower(), c)) for c in name or "")
+
+
 _SAMPLE_POINT = re.compile(r"\s+(?:pm|pt|p)\s*\d{1,2}\s*$", re.IGNORECASE)
 
 
 def tokens(name):
-    s = unicodedata.normalize("NFKD", _SAMPLE_POINT.sub("", name or ""))
+    s = unicodedata.normalize("NFKD", translit(_SAMPLE_POINT.sub("", name or "")))
     s = "".join(c for c in s if not unicodedata.combining(c)).lower()
     return {t for t in re.findall(r"[a-z0-9]+", s) if len(t) > 2 and t not in _STOP and not t.isdigit()}
 
