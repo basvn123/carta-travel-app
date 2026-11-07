@@ -149,7 +149,7 @@ test('the why.place keys are in all six languages with the same placeholders', a
     for (const k of keys) {
       assert.ok(m[k], `${langs[i]} ${k}`);
       assert.equal(holes(m[k]), holes(mods[0][k]), `${langs[i]} ${k} placeholders`);
-      assert.ok(!/[–—]/.test(m[k]), `${langs[i]} ${k} has a dash`);
+      assert.ok(!/[\u2013\u2014]/.test(m[k]), `${langs[i]} ${k} has a dash`);
     }
   }
 });
