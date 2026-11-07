@@ -404,7 +404,14 @@ def plan_route(coord_parts, length_m, router):
     # be a jump the checks above missed).
     if not keeps_order(line, oriented) or max_step_m(line) > SPLICE_M + 1e-6:
         return None, "not_continuous", detail
-    plan = {"line": line, "bridges": bridges, **detail,
+    # T1201 (T1183-b, T1183-c): `bridges` in detail is the count, so the
+    # per-bridge figures ride as `bridge_list`, and the routed climb is
+    # summed for splice.py --sync-only to add to the stated ascent.
+    plan = {"line": line, **detail, "bridge_list": bridges,
+            "bridge_ascend_m": round(sum(br.get("ascend_m") or 0
+                                         for br in bridges), 1),
+            "max_bridge_m": round(max((br["bridge_m"] for br in bridges),
+                                      default=0.0), 1),
             "routed": sum(1 for br in bridges if br["mode"] == "routed"),
             "original_m": round(own_len, 1),
             "repaired_m": round(line_m(line), 1)}

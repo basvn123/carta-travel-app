@@ -426,10 +426,38 @@ SYNC_SQL = """
 """
 
 
+# T1201 (T1183-c): a routed bridge (route_bridge.py) walks real ground, so
+# its climb counts. elevation.py samples the original relation and never sees
+# it; this adds repair_info.bridge_ascend_m to ascent_m once, and marks the
+# elevation record so a rerun adds nothing. elevation.py writes a fresh
+# record (no mark) whenever it rewrites ascent_m, so the two stay in step.
+# Descent and duration are not adjusted (BRouter reports the climb only).
+SYNC_ASCENT_SQL = """
+    UPDATE trips t
+       SET ascent_m = COALESCE(t.ascent_m, 0)
+                      + round((r.repair_info->>'bridge_ascend_m')::numeric),
+           elevation = COALESCE(t.elevation, '{}'::jsonb)
+                       || jsonb_build_object('bridge_ascend_m',
+                              (r.repair_info->>'bridge_ascend_m')::numeric)
+      FROM trip_repairs r
+     WHERE r.trip_id = t.id
+       AND r.repaired
+       AND r.repair_info->>'method' = 'routed-bridge'
+       AND (r.repair_info->>'bridge_ascend_m')::numeric >= 1
+       AND r.repair_info->>'source_geom_md5'
+           = md5(ST_AsBinary(ST_Force2D(t.geom)))
+       AND t.ascent_m IS NOT NULL
+       AND NOT (COALESCE(t.elevation, '{}'::jsonb) ? 'bridge_ascend_m')
+"""
+
+
 def sync_distances(conn):
+    """Distance for every repair, plus the routed bridges' climb (T1201).
+    Returns the number of distances synced."""
     with conn.cursor() as cur:
         cur.execute(SYNC_SQL)
         n = cur.rowcount
+        cur.execute(SYNC_ASCENT_SQL)
     conn.commit()
     return n
 

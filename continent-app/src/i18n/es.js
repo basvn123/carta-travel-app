@@ -2537,6 +2537,9 @@ export const es = {
   //    line joins them straight (pipeline/trails/splice.py) --
   "trails.sBridge": "Una interrupcion corta en la ruta cartografiada, unos {m} m, unida aqui en linea recta.",
   "trails.sBridges": "{n} interrupciones cortas en la ruta cartografiada, {m} m en total, unidas aqui en linea recta.",
+  "trails.sBridgeRouted": "Una interrupcion en la ruta cartografiada, unos {m} m, unida aqui por senderos cartografiados.",
+  "trails.sBridgesRouted": "{n} interrupciones en la ruta cartografiada, {m} m en total, unidas aqui por senderos cartografiados.",
+  "trails.sBridgesMixed": "{n} interrupciones en la ruta cartografiada, {m} m en total, unidas aqui: {r} por senderos cartografiados, las demas en linea recta.",
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────

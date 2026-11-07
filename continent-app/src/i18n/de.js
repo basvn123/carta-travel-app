@@ -2537,6 +2537,9 @@ export const de = {
   //    line joins them straight (pipeline/trails/splice.py) --
   "trails.sBridge": "Eine kurze Lucke im erfassten Weg, etwa {m} m, hier gerade uberbruckt.",
   "trails.sBridges": "{n} kurze Lucken im erfassten Weg, zusammen {m} m, hier gerade uberbruckt.",
+  "trails.sBridgeRouted": "Eine Lucke im erfassten Weg, etwa {m} m, hier uber erfasste Pfade verbunden.",
+  "trails.sBridgesRouted": "{n} Lucken im erfassten Weg, zusammen {m} m, hier uber erfasste Pfade verbunden.",
+  "trails.sBridgesMixed": "{n} Lucken im erfassten Weg, zusammen {m} m, hier verbunden: {r} uber erfasste Pfade, die anderen gerade.",
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────

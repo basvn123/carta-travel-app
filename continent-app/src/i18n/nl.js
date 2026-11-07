@@ -2546,6 +2546,9 @@ export const nl = {
   //    line joins them straight (pipeline/trails/splice.py) --
   "trails.sBridge": "Een korte onderbreking in de gekarteerde route, ongeveer {m} m, hier rechtdoor verbonden.",
   "trails.sBridges": "{n} korte onderbrekingen in de gekarteerde route, samen {m} m, hier rechtdoor verbonden.",
+  "trails.sBridgeRouted": "Een onderbreking in de gekarteerde route, ongeveer {m} m, hier verbonden over gekarteerde paden.",
+  "trails.sBridgesRouted": "{n} onderbrekingen in de gekarteerde route, samen {m} m, hier verbonden over gekarteerde paden.",
+  "trails.sBridgesMixed": "{n} onderbrekingen in de gekarteerde route, samen {m} m, hier verbonden: {r} over gekarteerde paden, de andere rechtdoor.",
 
   /* BEACH-KEYS-START */
   // ── Beaches: the published beach layer (pipeline/beaches) ─────────

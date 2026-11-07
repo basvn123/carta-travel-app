@@ -1372,6 +1372,7 @@ a derived parking row this way). Read `typeof access === "object"`.
 | | `access` | shared shape, from the start point, parking within 400 m | parking derived, transit placeholder | 964 |
 | | `dogs` | `"yes"\|"leash"\|"no"` | `cache/outdoor/trails.json` | placeholder (0) |
 | | `permit` | short plain English sentence | `cache/outdoor/trails.json` | placeholder (0) |
+| | `bridges` | `{n, max_m, total_m, routed?}` | `trip_repairs.repair_info`: `straight-splice` (splice.py, straight connectors) or `routed-bridge` (route_bridge.py, T1183; `routed` = how many of the `n` breaks follow mapped paths, the rest are straight); `export_wire.bridges_of` (T1201) | derived, only on repaired rows |
 | | `huts[].season`, `huts[].booking` | `[fromMonth, toMonth]`, `true\|false`, merged into the existing `huts[]` by folded hut name | `cache/outdoor/trails.json` `huts: {name: {...}}` | placeholder (0) |
 | beaches, `beaches/{CC}.json` rows (`beaches` and `listed`) | `sea_temp` | 12 numbers, monthly mean sea surface temperature, C | the row's `sst`, else `cache/sea_temp_beaches.json` (T641 NASA MUR harvest, `pipeline/harvest_sea_temp.py`, not on disk in this checkout), else placeholder; written by `export_beaches.v2_fields` (T1097) | 0 until the box harvest runs (T1097-a) |
 | | `access` | shared shape, parking within 500 m of the beach point | parking derived, transit placeholder | 522 |

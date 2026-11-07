@@ -145,3 +145,15 @@ test("T1201: the loop reason follows the route type, not the loop flag", () => {
   assert.equal(says({ is_loop: true, f: {} }), true);
   assert.equal(says({ is_loop: false }), false);
 });
+
+// T1201 (T1183-b): routed bridges get their own sentence, straight ones keep
+// theirs, and a mix says how many were routed.
+test("T1201: routed bridges are told apart from straight connectors", () => {
+  const keyOf = (bridges) => (JSON.stringify(trailStory({ id: 1, category: "hike" }, { bridges }, { t }))
+    .match(/trails\.sBridge\w*/) || [])[0];
+  assert.equal(keyOf({ n: 2, total_m: 90 }), "trails.sBridges");
+  assert.equal(keyOf({ n: 1, total_m: 40 }), "trails.sBridge");
+  assert.equal(keyOf({ n: 2, total_m: 900, routed: 2 }), "trails.sBridgesRouted");
+  assert.equal(keyOf({ n: 1, total_m: 600, routed: 1 }), "trails.sBridgeRouted");
+  assert.equal(keyOf({ n: 3, total_m: 900, routed: 1 }), "trails.sBridgesMixed");
+});

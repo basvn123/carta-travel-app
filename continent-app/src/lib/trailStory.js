@@ -471,10 +471,19 @@ export function trailStory(tr, detail = null, { t, loop = null, nearby = null } 
     // were joined in a straight line rather than mapped
     // (pipeline/trails/splice.py), and a walker following it on the ground
     // should know which claim is which.
+    // T1201 (T1183-b): a routed repair (route_bridge.py) joins breaks along
+    // mapped paths, so `routed` of the `n` bridges are not straight lines.
     const bridges = detail?.bridges;
     if (bridges?.n) {
-      add('bridges', 'route', t(bridges.n > 1 ? 'trails.sBridges' : 'trails.sBridge', {
+      const routed = Number(bridges.routed) || 0;
+      const key = routed <= 0
+        ? (bridges.n > 1 ? 'trails.sBridges' : 'trails.sBridge')
+        : routed >= bridges.n
+          ? (bridges.n > 1 ? 'trails.sBridgesRouted' : 'trails.sBridgeRouted')
+          : 'trails.sBridgesMixed';
+      add('bridges', 'route', t(key, {
         n: bridges.n,
+        r: routed,
         m: Math.round(bridges.total_m ?? 0),
       }));
     }
