@@ -1,0 +1,61 @@
+/* Why this place (T1208, ROADMAP G9). Imported by browse/WhyChips.jsx, so it
+   rides with the cards and the place page. Scoped under .why.
+   Chips are lagoon, the "fits" colour of the palette (carta-design 4): text
+   --lagoon-700 on a lagoon-50 ground (6.4:1). A "likely" chip says so in
+   words, and wears a dashed edge as a second cue, never colour alone. */
+
+.why.why-chips {
+  display: flex; flex-wrap: wrap; gap: var(--space-1);
+  min-width: 0;
+}
+.why .why-chip {
+  display: inline-flex; align-items: center;
+  max-width: 100%;
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  background: var(--lagoon-50);
+  color: var(--lagoon-700);
+  border: 1px solid color-mix(in srgb, var(--lagoon-600) 28%, transparent);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  line-height: 18px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.why .why-chip.is-likely { border-style: dashed; }
+
+/* The place page section: one row per reason, its confidence on the right,
+   then the traveller's evidence and the place's evidence. */
+.why.why-place .why-group { display: grid; gap: var(--space-2); }
+.why.why-place .why-group + .why-group { margin-top: var(--space-4); }
+.why .why-sub {
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--text-2);
+}
+.why .why-list {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; gap: var(--space-2);
+}
+@media (min-width: 700px) { .why .why-list { grid-template-columns: 1fr 1fr; } }
+.why .why-row {
+  display: grid; gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--lagoon-50) 80%, var(--surface));
+  border-left: 3px solid var(--lagoon-600);
+  min-width: 0;
+}
+.why .why-row.is-likely { border-left-style: dashed; }
+.why .why-row-top { display: flex; align-items: baseline; gap: var(--space-2); justify-content: space-between; }
+.why .why-row-name { font-weight: 700; color: var(--text); font-size: var(--text-body); }
+.why .why-conf { font-size: var(--text-caption); color: var(--lagoon-700); font-weight: 600; white-space: nowrap; }
+.why .why-row-ev { font-size: var(--text-caption); color: var(--text-2); overflow-wrap: anywhere; }
+.why .why-row-ev.why-you { color: var(--text); }
+
+/* The refreshed date under the day price. */
+.why.why-asof {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-caption);
+  color: var(--text-2);
+}

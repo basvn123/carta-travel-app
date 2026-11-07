@@ -22,6 +22,7 @@ import { usePaywall } from '../hooks/usePaywall.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import { MatchLine } from './WhyItMatches.jsx';
+import { WhyPlace, PricesRefreshed } from './WhyChips.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
 import { DestPriceCard } from './DestPriceCard.jsx';
 import { PageBar } from './PageBar.jsx';
@@ -684,6 +685,8 @@ export function DestinationPage({
                     </div>
                   )}
                   <KeyFacts cells={keyFacts} className="pt-facts" />
+                  {/* T1208 (G9): why this place, with evidence and confidence in words. */}
+                  <WhyPlace destination={destination} />
                   <DestOverview p={p} />
                   {/* Friends here (T466, T929), right after Good to know: the
                       approved place for it, where the decision is made. */}
@@ -692,6 +695,7 @@ export function DestinationPage({
                   {!wide && priceCard && waysInCard && (
                     <PSection id="pt-cost" title={t('destx.dayCosts')} className="pt-inlinecost">
                       {priceCard}
+                      <PricesRefreshed record={destination} />
                     </PSection>
                   )}
                   <DestSee p={p} />
@@ -707,7 +711,7 @@ export function DestinationPage({
                 </>
               )}
             </div>
-            {settled && wide && <aside className="pt-side" aria-label={t('destx.dayCosts')}>{priceCard}</aside>}
+            {settled && wide && <aside className="pt-side" aria-label={t('destx.dayCosts')}>{priceCard}<PricesRefreshed record={destination} /></aside>}
           </div>
         </div>
       </div>
