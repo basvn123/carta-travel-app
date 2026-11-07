@@ -10259,4 +10259,21 @@ export const de = {
   // T1169 (I7): installable app, offline line. Machine draft, pending native review.
   "pwa.offline.saved": "Du bist offline. Hier gespeicherte Reisen öffnen sich weiter; Preise und dein Konto warten auf das Netz.",
   "pwa.offline.empty": "Du bist offline. Gespeicherte Reisen öffnen sich hier, sobald du sie einmal mit Verbindung geöffnet hast.",
+  // T1175 (K7): the shareable trip receipt image.
+  "share.receiptMenu": "Beleg teilen",
+  "share.receiptTitle": "Der Beleg deiner Reise",
+  "share.receiptShare": "Teilen",
+  "share.receiptSave": "Bild speichern",
+  "share.receiptMaking": "Der Beleg wird gezeichnet",
+  "share.receiptFailed": "Dieses Gerät konnte das Bild nicht zeichnen.",
+  "share.receiptAlt": "{title}: {price} für {n} Nächte",
+  "share.receiptHint": "Ein Bild davon, was diese Reise kostet, zum Senden oder Posten. Es zeigt keine Namen und keine Buchungen.",
+  "share.receiptKicker": "Meine Reise, berechnet von Carta",
+  "share.receiptParty1": "1 Person",
+  "share.receiptPartyN": "{n} Personen",
+  "share.receiptTotal1": "Gesamt für eine Person",
+  "share.receiptTotalN": "Gesamt für {n} Personen",
+  "share.receiptPerDay": "{price} pro Person und Tag",
+  "share.receiptNote": "Schätzung von Carta am {date}. Betten und Essen sind Schätzungen von Carta aus Stichproben von Listenpreisen; eine Flugzeile ist der Preis, den Google Flights zeigte.",
+  "share.receiptBrand": "Geplant mit Carta, carta-europetravel.com",
 };
