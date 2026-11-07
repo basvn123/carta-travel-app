@@ -2150,3 +2150,12 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1206-i | T1206 | 7 registry prompts still have no run.mjs eval (intros, parking, lexicon, judge-text, blog-intro, backtranslate, photo-check); the pipeline injection attacks use hard-coded system strings, not the registry prompts | next task | open |  |
 | T1206-j | T1206 | aiEvents.mjs and ai_models.json price gemini-flash-latest differently (0.30 and 2.50 against 0.75 and 3.75 USD per million tokens); make one table the source (with T1139-f) | next task | open |  |
 | T1206-k | T1206 | Wire aiGuard.houseStyleIssues into the model output path once a written rule says what a banned word does (drop the field, re-ask or rewrite); split from T1137-b | next task | open |  |
+| T1207-a | T1207 | Make pipeline/ a regular package (pipeline/core/ for the shared libraries, every script run with python -m) as A-R1's research recommends; changes every invocation and about 300 import sites, so it is its own task | next task | open | 6 |
+| T1207-b | T1207 | Group the image scripts in pipeline/images/ (harvest_images, harvest_image_licenses, enrich_images_commons, enrich_images_web, apply_image_dims), one commit, references and ledger updated | next task | open | 1 |
+| T1207-c | T1207 | Group pipeline/climate/ and pipeline/prices/ (lists in the T1207 report), one commit per folder, references and ledger updated | next task | open | 2 |
+| T1207-d | T1207 | Group pipeline/transport/ and pipeline/destinfo/ (lists in the T1207 report), one commit per folder | next task | open | 3 |
+| T1207-e | T1207 | Group pipeline/guide/, pipeline/search/ and pipeline/places/ (lists in the T1207 report), one commit per folder | next task | open | 4 |
+| T1207-f | T1207 | Group pipeline/rating/ last (17 scripts, the most imported; list in the T1207 report) | next task | open | 5 |
+| T1207-g | T1207 | ROADMAP A2 names a pyproject.toml with ruff and mypy scoped to the new packages; not in the S123 brief, so not added | next task | open |  |
+| T1207-h | T1207 | test_rating_inputs::test_beauty_v2_reads_no_register and test_rating_stability::test_adding_places_moves_nobody_else fail on p15-round3 in a cloud checkout (missing data files); give them a fixture or quarantine them with a reason | next task | open |  |
+| T1207-i | T1207 | Check the laptop's gitignored logs/run_*.cmd for the 17 moved script paths (owner step in the T1207 report) | user | open |  |
