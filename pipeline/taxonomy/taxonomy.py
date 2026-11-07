@@ -26,7 +26,7 @@ ROOT = HERE.parents[1]
 TAXONOMY = HERE / "carta_taxonomy.yaml"
 MAPPING = HERE / "mapping.yaml"
 LANGS = ("en", "de", "fr", "es", "it", "nl")
-APPLIES = ("place", "trail", "beach", "lake", "mountain")
+APPLIES = ("place", "trail", "beach", "lake", "mountain", "journey")  # journey: T1215, row T1149-e
 SOURCES = ("text", "data", "both")
 ID_RE = re.compile(r"^(activity|setting|vibe|traveller|practical|(act|set|vibe|trav|prac)\.[a-z0-9]+(-[a-z0-9]+)*)$")
 DASHES = (chr(0x2013), chr(0x2014))  # en and em dash
@@ -174,6 +174,15 @@ def _app(public: str) -> dict:
     return {x["id"]: x for x in d} if isinstance(d, list) else d
 
 
+@lru_cache(maxsize=512)
+def _journey(public: str, jid: str) -> dict:
+    p = Path(public) / "journeys" / "journey" / f"{jid}.json"
+    if not p.exists():
+        return {}
+    with open(p, encoding="utf-8") as f:
+        return json.load(f)
+
+
 @lru_cache(maxsize=4)
 def _guided(public: str) -> dict:
     p = Path(public) / "search" / "guided.json"
@@ -198,6 +207,11 @@ def old_tags(layer: str, item_id: str, country: str, public: Path | str | None =
             out.append(("place.class", d["place"]["class"]))
         out += [("place.designations", x.get("kind")) for x in d.get("designations") or []]
         out += [("vibes", v) for v, s in ((_guided(pub).get(item_id) or {}).get("v") or {}).items() if (s or 0) >= VIBE_MIN]
+        return out
+    if layer == "journey":
+        j = _journey(pub, item_id)
+        if j.get("tripTypeSlug"):
+            out.append(("journey.types", j["tripTypeSlug"]))
         return out
     folder, key, fields = {
         "trail": ("trails", "trips", ()),

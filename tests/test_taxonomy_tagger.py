@@ -209,6 +209,28 @@ def test_other_languages_match_only_their_own_labels():
         tg.words(lab) == tg.words(de) or tuple(tg.words(lab)) in tg.phrase_index_lang("de")[0]
 
 
+def test_journey_layer_tags_from_text(corpus):
+    """T1149-e: journeys are tagged from their text, opt-in, with their trip type as the mapped tag."""
+    jd = corpus.public / "journeys" / "journey"
+    jd.mkdir(parents=True)
+    j = {"id": "at-hiking-x", "title": "Glacier walks of **Tyrol**", "countryCode": "AT", "tripTypeSlug": "hiking",
+         "summary": "A week of hut to hut trekking below the glaciers.", "itinerary": [{"day": 1, "title": "Up to the mountain hut"}],
+         "tags": ["via-ferrata", "tyrol"]}
+    (jd / "at-hiking-x.json").write_text(json.dumps(j), encoding="utf-8")
+    assert [i["layer"] for i in corpus.items()] == ["place", "trail"], "not in the default layers"
+    it = next(corpus.items((tg.JOURNEY,)))
+    assert it == {"item_id": "at-hiking-x", "layer": "journey", "country": "AT", "kind": "hiking", "name": j["title"]}
+    ps = corpus.passages(it)
+    assert ps[0] == {"field": "lead", "src": "title", "text": "Glacier walks of Tyrol"}
+    assert {p["src"] for p in ps} == {"title", "summary", "itinerary.title", "tags"}
+    assert set(tg.eligible("journey")) >= set(tg.eligible("place")) | set(tg.eligible("trail"))
+    assert ("journey.types", "hiking") in tax.old_tags("journey", "at-hiking-x", "AT", corpus.public)
+    res = tg.run([it], corpus, log=None)
+    t = by_tag(res["items"]["journey:at-hiking-x"]["tags"])
+    assert "mapped" in t["act.hiking"]["by"]
+    assert t["set.glacier"]["score"] >= tg.USES["profile"] and "act.via-ferrata" in t
+
+
 def test_seed_items_from_the_shipped_data():
     items = tg.eval_items("seed")
     assert len(items) == 15

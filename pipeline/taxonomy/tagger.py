@@ -37,6 +37,13 @@ The method, ESCO style extreme multi-label tagging in four steps:
    selected node are kept with `implied: true` (the gold rule is "the most
    specific node only").
 
+Journeys (T1215, row T1149-e) are an opt-in sixth layer, `--layers journey`
+(not in --all, so the Intelligence API's tag file and /similar keep the five
+catalogue layers): the curated journeys (journeys/journey/<id>.json) are read
+from their title, hook, summary, day titles and free-text tags, and their
+trip type is the mapped tag. A node applies to a journey when its applies_to
+names journey, place or trail (JOURNEY_FROM).
+
 Nodes with source "data" (trail grade, Blue Flag) are set by rule from a data
 field: they come only from the mapped tags, at score 1, `by: ["rule"]`.
 
@@ -68,6 +75,9 @@ TAGGER_VERSION = 1
 PUBLIC = tx.default_public()   # CARTA_PUBLIC, else continent-app/public (T1154-d)
 OUT = ROOT / "cache" / "taxonomy" / "tags.json"
 LAYERS = ("place", "trail", "beach", "lake", "mountain")
+JOURNEY = "journey"
+ALL_LAYERS = LAYERS + (JOURNEY,)
+JOURNEY_FROM = ("journey", "place", "trail")   # a journey holds what its places and trails hold
 
 CANDIDATES = 25
 RRF_K = 60
@@ -146,7 +156,8 @@ def node_table() -> dict[str, dict]:
 
 
 def eligible(layer: str) -> list[str]:
-    return [i for i, n in node_table().items() if layer in (n.get("applies_to") or [])]
+    want = set(JOURNEY_FROM) if layer == JOURNEY else {layer}
+    return [i for i, n in node_table().items() if want & set(n.get("applies_to") or [])]
 
 
 @lru_cache(maxsize=1)
@@ -247,6 +258,16 @@ class Corpus:
         d = data.get("destinations") or {}
         self.dests = {x["id"]: x for x in d} if isinstance(d, list) else d
         self._layer: dict[str, dict] = {}
+        self._journeys: dict[str, dict] | None = None
+
+    def journeys(self) -> dict[str, dict]:
+        if self._journeys is None:
+            self._journeys = {}
+            for f in sorted((self.public / "journeys" / "journey").glob("*.json")):
+                j = _jload(f) or {}
+                if j.get("id"):
+                    self._journeys[str(j["id"])] = j
+        return self._journeys
 
     def trip_detail(self, rid: str) -> dict:
         """A trail's detail file, read only for the item being tagged."""
@@ -270,7 +291,11 @@ class Corpus:
 
     def items(self, layers=LAYERS):
         for layer in layers:
-            if layer == "place":
+            if layer == JOURNEY:
+                for jid, j in sorted(self.journeys().items()):
+                    yield {"item_id": jid, "layer": JOURNEY, "country": j.get("countryCode") or "",
+                           "kind": j.get("tripTypeSlug") or "", "name": j.get("title") or jid}
+            elif layer == "place":
                 for did, d in sorted(self.dests.items()):
                     yield {"item_id": did, "layer": "place", "country": d.get("iso2") or "",
                            "kind": (d.get("place") or {}).get("class") or "", "name": d.get("city") or did}
@@ -288,6 +313,20 @@ class Corpus:
                 out.append({"field": field, "src": src, "text": s})
 
         layer, iid = it["layer"], it["item_id"]
+        if layer == JOURNEY:
+            j = self.journeys().get(str(iid)) or {}
+            def unmd(t):
+                return re.sub(r"\*\*|__", "", str(t or ""))
+            if j.get("title"):
+                out.append({"field": "lead", "src": "title", "text": unmd(j["title"])})
+            add("lead", "hook", unmd(j.get("hook")))
+            add("lead", "summary", unmd(j.get("summary")))
+            for d in (j.get("itinerary") or [])[:21]:
+                if d.get("title"):
+                    out.append({"field": "body", "src": "itinerary.title", "text": unmd(d["title"])})
+            for t in j.get("tags") or []:
+                out.append({"field": "list", "src": "tags", "text": str(t).replace("-", " ")})
+            return out
         if layer == "place":
             d = self.dests.get(iid) or {}
             dz = self.dossier(iid)
@@ -549,7 +588,7 @@ def pick(items: list[dict], per_layer: int) -> list[dict]:
     for it in items:
         by[it["layer"]].append(it)
     out = []
-    for layer in LAYERS:
+    for layer in ALL_LAYERS:
         xs = sorted(by.get(layer, []), key=lambda i: hashlib.sha1(f"{layer}:{i['item_id']}".encode()).hexdigest())
         out += xs[:per_layer]
     return out
@@ -613,7 +652,7 @@ def main(argv=None) -> int:
     g.add_argument("--all", action="store_true", help="every place, trail, beach, lake and mountain")
     g.add_argument("--sample", type=int, metavar="N", help="N items per layer, deterministic")
     g.add_argument("--items", choices=("seed", "gold"), help="the eval's seed or gold items")
-    ap.add_argument("--layers", default=",".join(LAYERS))
+    ap.add_argument("--layers", default=",".join(LAYERS), help=f"comma list of {', '.join(ALL_LAYERS)} (journey is opt-in)")
     ap.add_argument("--public", default=str(PUBLIC))
     ap.add_argument("--out", default=None, help=f"tag file (default {OUT.relative_to(ROOT)}; sample runs: tags-sample.json)")
     ap.add_argument("--eval-out", default=None, help="also write the eval predictions file here")
@@ -622,7 +661,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
 
     corpus = Corpus(Path(a.public))
-    layers = tuple(x for x in a.layers.split(",") if x in LAYERS)
+    layers = tuple(x for x in a.layers.split(",") if x in ALL_LAYERS)
     if a.items:
         items = [i for i in eval_items(a.items) if i["layer"] in layers]
     else:
