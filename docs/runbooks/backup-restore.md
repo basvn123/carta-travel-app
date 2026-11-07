@@ -61,6 +61,10 @@ It refuses a target whose host is the live project or the host in `SUPABASE_DB_U
 
 Measured in the container on 2026-11-06 against a local Postgres 16 with all migrations: 69 tables, 108 seeded rows, 87 KB dump, fetch 0.11 s, decrypt 0.03 s, restore 0.73 s, verify 1.68 s, total 2.55 s. The live project is larger, so expect more; the live number is the owner's.
 
+## Rebuild the schema from the repo (no dump)
+
+The public schema rebuilds from the repo alone, in this order: `ops/supabase_local_stub.sql` (only on a plain Postgres, never on Supabase), `supabase/schema.sql` (the base tables `saved_trips` and `user_settings`, which no migration creates), then every `supabase/migrations/NNN_*.sql` that does not end in `_down.sql`, in name order. `tests/test_backup_restore.py` does exactly this and fails if any migration or its self-test fails (T1211, row T1159-d). It is the schema only: the data comes from a dump.
+
 ## Weekly dump on the box
 
 Runs on its own with the weekly run (`carta-weekly.timer`, Mondays 09:00 Brussels). It is skipped, with a log line, if any of these is missing: `pg_dump` 17 or newer, `gpg`, `CARTA_BACKUP_KEY`, that key in the box's keyring (`gpg --import carta-backups.pub.asc`), or `SUPABASE_DB_URL` (the Supabase session pooler string). Check it:

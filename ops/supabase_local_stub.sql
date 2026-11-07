@@ -8,12 +8,17 @@ do $$ begin
 end $$;
 create schema if not exists auth;
 create table if not exists auth.users (id uuid primary key default gen_random_uuid(), email text, raw_user_meta_data jsonb default '{}'::jsonb);
+-- uid() and role() read the legacy per-claim setting first and then the
+-- request.jwt.claims JSON, as Supabase's own definitions do (T1211, T1159-d:
+-- 048's self-test signs in through request.jwt.claims).
 create or replace function auth.uid() returns uuid language sql stable as
-  $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+  $$ select coalesce(nullif(current_setting('request.jwt.claim.sub', true), ''),
+                     (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub'))::uuid $$;
 create or replace function auth.jwt() returns jsonb language sql stable as
   $$ select coalesce(nullif(current_setting('request.jwt.claims', true), '')::jsonb, '{}'::jsonb) $$;
 create or replace function auth.role() returns text language sql stable as
-  $$ select coalesce(nullif(current_setting('request.jwt.claim.role', true), ''), 'anon') $$;
+  $$ select coalesce(nullif(current_setting('request.jwt.claim.role', true), ''),
+                     (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'role'), 'anon') $$;
 
 -- Supabase hands the three API roles everything in public by default; RLS is
 -- what limits them. Several migrations self-test that grant.
