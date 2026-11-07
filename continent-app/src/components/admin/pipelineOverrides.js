@@ -4,9 +4,9 @@
 // writes anywhere: the admin downloads the layer file or copies the pull
 // request text, and the change lands through git like any other.
 
-export const LAYERS = ['dest', 'beach', 'lake', 'mountain'];
+export const LAYERS = ['dest', 'beach', 'lake', 'mountain', 'trail', 'cycle'];
 
-export const LAYER_LABEL = { dest: 'Places', beach: 'Beaches', lake: 'Lakes', mountain: 'Mountains' };
+export const LAYER_LABEL = { dest: 'Places', beach: 'Beaches', lake: 'Lakes', mountain: 'Mountains', trail: 'Trails', cycle: 'Cycle routes' };
 
 // Fields worth suggesting per layer; any dotted path the record carries works.
 export const FIELD_HINTS = {
@@ -14,6 +14,8 @@ export const FIELD_HINTS = {
   beach: ['name', 'why', 'images', 'tags'],
   lake: ['name', 'why', 'images', 'tags'],
   mountain: ['name', 'why', 'images', 'ele'],
+  trail: ['name', 'summary', 'img', 'description_md'],
+  cycle: ['name', 'why', 'img'],
 };
 
 export const VALUE_KINDS = ['text', 'number', 'yes or no', 'JSON'];

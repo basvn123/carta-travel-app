@@ -12,6 +12,8 @@ them and writes each patch into the pipeline's output for that layer:
     beach     continent-app/public/beaches/*.json
     lake      continent-app/public/lakes/*.json
     mountain  continent-app/public/mountains/*.json
+    trail     continent-app/public/trails/*.json and trails/trip/{id}.json
+    cycle     continent-app/public/cycling/*.json
 
 WHY LAST. A layer task rewrites its output from its sources and knows nothing
 about the corrections. `run_pipeline.py` calls this step after the task loop
@@ -25,8 +27,11 @@ merges it at load, without a deploy. This file is the durable path: the
 correction goes through a pull request and lands in the shipped data itself.
 The layer names and the keying by wire id are the same, so a live patch that
 should be permanent is promoted by copying it here and clearing the live row.
-Trails are not a layer here yet: the trail pipeline has its own curation
-(`pipeline/trails/curate.py`) and is out of this task's scope (T1173-b).
+Trails and cycle routes are layers here since T1214 (register row T1173-b): a
+trail entry patches the walk in its country file and, where the field exists
+there, in its detail file trails/trip/{id}.json, so a text fix survives every
+trails_* rerun. `pipeline/trails/curate.py` stays the place for rules that
+pick or drop walks; this file is for one item's text or photo.
 
 ONE ENTRY.
 
@@ -49,6 +54,8 @@ USAGE.
     python pipeline/apply_overrides.py              apply, print a summary
     python pipeline/apply_overrides.py --check      validate the files only
     python pipeline/apply_overrides.py --snapshot   also write the admin snapshot
+    --layers dest                                   only these layers (run_pipeline.py,
+                                                    before the tasks that read the master)
     --root DIR                                      another tree (tests, worktrees)
 
 Exit 0 when every file is valid (orphans included), 2 when a file is invalid.
@@ -71,9 +78,14 @@ else:                                  # imported as pipeline.apply_overrides
 
 ROOT = Path(os.environ.get("CARTA_REPO_ROOT") or Path(__file__).resolve().parents[1])
 
-LAYERS = ("dest", "beach", "lake", "mountain")
-# Layer folder under continent-app/public and the list key in each file.
-LAYER_DIRS = {"beach": "beaches", "lake": "lakes", "mountain": "mountains"}
+LAYERS = ("dest", "beach", "lake", "mountain", "trail", "cycle")
+# Layer folder under continent-app/public, the list keys of its country files,
+# and the folder of one-file-per-item detail records where the layer has one.
+LAYER_DIRS = {"beach": "beaches", "lake": "lakes", "mountain": "mountains",
+              "trail": "trails", "cycle": "cycling"}
+LIST_KEYS = {"beach": ("beaches",), "lake": ("lakes",), "mountain": ("mountains",),
+             "trail": ("trips", "listed"), "cycle": ("routes", "listed", "tours")}
+DETAIL_DIRS = {"trail": "trip"}
 
 OVERRIDES_DIR = Path("data") / "overrides"
 MASTER = Path("app_data") / "app_data.json"
@@ -303,7 +315,7 @@ def _apply_layer_files(root, layer, entries, *, write):
     if not folder.is_dir():
         return [{"id": e["id"], "status": "no_output", "file": str(PUBLIC / LAYER_DIRS[layer])}
                 for e in entries]
-    list_key = LAYER_DIRS[layer]
+    list_keys = LIST_KEYS[layer]
     state = {e["id"]: {"primary": None, "copies": 0, "outcomes": {}} for e in entries}
     for f in sorted(folder.glob("*.json")):
         doc = json.loads(f.read_text(encoding="utf-8"))
@@ -314,7 +326,7 @@ def _apply_layer_files(root, layer, entries, *, write):
         for e in entries:
             s = state[e["id"]]
             if primary_file:
-                for rec in (r for r in (doc.get(list_key) or []) if isinstance(r, dict)
+                for rec in (r for k in list_keys for r in (doc.get(k) or []) if isinstance(r, dict)
                             and str(r.get("id")) == e["id"]):
                     out = patch_record(rec, e["patch"])
                     s["primary"] = str(f.relative_to(Path(root)))
@@ -329,6 +341,20 @@ def _apply_layer_files(root, layer, entries, *, write):
         if changed and write:
             # Served files are compact, as the layer exporters write them.
             atomic_write_json(f, doc, indent=None, separators=(",", ":"))
+    detail = DETAIL_DIRS.get(layer)
+    if detail:
+        # The detail file is a second copy of the record with more fields: it
+        # gets the fields it already carries (T1214, from T1173-b).
+        for e in entries:
+            f = folder / detail / f"{e['id']}.json"
+            if not f.is_file():
+                continue
+            doc = json.loads(f.read_text(encoding="utf-8"))
+            out = patch_record(doc, e["patch"], create_leaf=False)
+            if "set" in out.values():
+                state[e["id"]]["copies"] += 1
+                if write:
+                    atomic_write_json(f, doc, indent=None, separators=(",", ":"))
     results = []
     for e in entries:
         s = state[e["id"]]
@@ -343,14 +369,15 @@ def _apply_layer_files(root, layer, entries, *, write):
     return results
 
 
-def apply_all(root=ROOT, *, write=True):
-    """Check every file, then apply every layer. Returns {layer: [result]}.
+def apply_all(root=ROOT, *, write=True, layers=None):
+    """Check every file, then apply every layer (or only ``layers``).
+    Returns {layer: [result]}.
 
     Raises OverrideError before writing anything when any file is invalid.
     """
     all_entries = load_all(root)
     out = {}
-    for layer in LAYERS:
+    for layer in layers or LAYERS:
         entries = all_entries[layer]
         if layer == "dest":
             out[layer] = _apply_dest(root, entries, write=write)
@@ -426,14 +453,20 @@ def main(argv=None):
     ap.add_argument("--root", default=str(ROOT))
     ap.add_argument("--check", action="store_true", help="validate the files only")
     ap.add_argument("--snapshot", action="store_true", help="write the admin snapshot")
+    ap.add_argument("--layers", help="apply only these layers, comma separated (run_pipeline.py "
+                    "applies dest before the tasks that read the master, T1214)")
     args = ap.parse_args(argv)
+    layers = [x.strip() for x in args.layers.split(",") if x.strip()] if args.layers else None
+    if layers and any(x not in LAYERS for x in layers):
+        print(f"--layers must name layers of {', '.join(LAYERS)}", file=sys.stderr)
+        return 2
     root = Path(args.root)
     try:
         if args.check:
             entries = load_all(root)
             print(f"overrides OK: {sum(len(v) for v in entries.values())} entries in {len(LAYERS)} layers")
             return 0
-        results = apply_all(root)
+        results = apply_all(root, layers=layers)
     except OverrideError as e:
         print(f"overrides REFUSED, nothing applied:\n{e}", file=sys.stderr)
         return 2

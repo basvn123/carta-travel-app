@@ -1,0 +1,6 @@
+{
+ "layer": "trail",
+ "version": 1,
+ "about": "Hand corrections to the trail layer, applied last in every pipeline run by pipeline/apply_overrides.py. Every entry carries id, patch, who, when, why and source. How to write one: docs/runbooks/content-ops.md.",
+ "overrides": []
+}

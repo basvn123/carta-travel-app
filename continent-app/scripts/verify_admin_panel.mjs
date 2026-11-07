@@ -1712,7 +1712,7 @@ try {
   await page.locator('[data-overrides="panel"]').waitFor({ timeout: WAIT });
   {
     const tiles = await page.locator('[data-overrides="panel"] [data-count]').count();
-    if (tiles < 6) fail(`the overrides panel shows ${tiles} count tiles, not 6 (four layers, review due, live)`);
+    if (tiles < 8) fail(`the overrides panel shows ${tiles} count tiles, not 8 (six layers, review due, live)`);
     const listed = await page.locator('[data-overrides="list"], [data-overrides="empty"]').count();
     if (listed !== 1) fail('the overrides panel shows neither the list nor its empty state');
     if (await page.locator('[data-draft="incomplete"]').count() !== 1) fail('an empty draft is not marked incomplete');
