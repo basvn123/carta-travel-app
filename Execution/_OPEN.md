@@ -2080,3 +2080,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1171-b | T1171 | The Pass moment sends no paywall event, so the beta cannot count how often it was seen, opened or put off; add a reason for it to paywallEvents.js and the check in migration 022 (with the admin funnel) | next task | open |  |
 | T1171-c | T1171 | "Not now" on the Pass moment is kept per device (localStorage), not carried to the account on sign in, so a second device shows the card again | next task | open |  |
 | T1171-d | T1171 | The free list says "{n} Carta bot day plans to start with" from TIERS.free.aiPlans even after an account used them; once the moment is on, show the plans left (entitlement.plansLeft) for a signed in traveller | next task | open |  |
+| T1178-a | T1178 | Serve the blog on deploy: copy continent-app/dist-blog into dist in build-pages.mjs (static files, not in _routes.json), add sitemap-blog-en.xml to the sitemap index in prerender/sitemap.mjs, and run the build in the deploy (shared files, outside this task's scope) | next task | open |  |
+| T1178-b | T1178 | Add a visible link to /blog/ (footer or home) once the first post is published; shared components were not touched | next task | open |  |
+| T1178-c | T1178 | Other post types (cheapest week, what changed, new on Carta, seasonal rankings, how we measure) and the Dutch blog (I8) are not built; part 2 | next task | open |  |
+| T1178-d | T1178 | The pipeline task needs a current app_data.json on the box and a scheduled pull request routine (K14 step 3); not set up | user | open |  |
+| T1178-e | T1178 | Owner approval of the sample December 2026 draft, then set status published; wire vintage is 2026-06-07 so a fresh wire should be used first | user | open |  |

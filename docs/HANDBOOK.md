@@ -3036,3 +3036,17 @@ Reading every feature against its code turned up places where the docs, the comm
 | Which Supabase migrations are live (022, 027, 029, 031, 044, 055 to 058 and others) cannot be read from the code | Platform, Planning | ROADMAP A3, H6 |
 | Wire dates: trips 2026-09-15, journeys 2026-10-15, with no refresh schedule in code; image audit counts from 2026-08-26, trail counts from 2026-09-13 | Planning, Outdoors | ROADMAP D2 (freshness rules) |
 | Own AVIF and WebP image copies are built but not live; production still links photos from Wikimedia | Outdoors, Image ladder | T1045-h |
+
+### Data blog
+
+**What it does.** A blog at `/blog/` with monthly posts built from Carta's own data, starting with "Where to go in <month>". Posts are drafted by a script, checked by a script and published only by the owner.
+
+**How it works.**
+1. `pipeline/blog_drafts.py` picks places for the month: in their best months (`climate.best`), or, when fewer than 30 places qualify (`MIN_SEASON`, winter), the top tenth for comfort; crowd tier 0 or 1 that month (`MAX_TIER`); rating 7.0 or more (`MIN_RATING`). It ranks by an indicative day for one person (half a `hotel3` room plus one cheap and one mid-range meal), lowest first, ten places (`LIST_N`), two a country (`PER_COUNTRY`).
+2. It writes `content/blog/<slug>.md` (status draft, template prose) and `content/blog/data/<slug>.json` (rows, counts, chart, the snapshot cited and its hash). `--prose` sends only the opening paragraph through the gateway (feature `blog_intro`, prompt `blog-intro`); the paragraph may contain only numbers from the data file.
+3. `scripts/blog/check_draft.py` refuses: a number not in the data file, a table cell that differs, a hash or snapshot mismatch (and with `--wire`, a row that differs from the wire), dashes, banned words, superlatives, an image without an allowed licence, credit and alt text, fewer than 5 rows of data, or a repeated question (same slug or 70 percent of the same words).
+4. `continent-app/scripts/blog/build.mjs` renders published posts to static pages with BlogPosting and breadcrumb JSON-LD, canonical, Open Graph, an RSS feed and `sitemap-blog-en.xml`. Drafts never reach the feed or sitemap.
+
+**Data behind it.** `continent-app/public/app_data.json` (climate, crowding, rating, accommodation, costs).
+
+**Where it lives.** `pipeline/blog_drafts.py`, `scripts/blog/check_draft.py`, `continent-app/scripts/blog/build.mjs`, `continent-app/src/blog/`, `content/blog/`, `prompts/blog-intro/`. Tests: `tests/test_blog_drafts.py`, `continent-app/tests/blog.test.mjs`, `continent-app/scripts/verify_blog.mjs`.

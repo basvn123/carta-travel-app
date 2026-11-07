@@ -109,6 +109,7 @@ const doc = ({ title, description, canonical, noindex, graph, body, card = SITE_
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${esc(canonical)}">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 ${noindex ? '<meta name="robots" content="noindex,follow">\n' : ''}<link rel="alternate" type="application/rss+xml" title="Carta blog" href="${ORIGIN}/blog/rss.xml">
 <meta property="og:type" content="${type}">
 <meta property="og:url" content="${esc(canonical)}">
