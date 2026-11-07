@@ -1762,7 +1762,7 @@
      "pipeline/ask_index_layer.py"
     ],
     [
-     "/opt/node22/bin/node",
+     "<NODE>",
      "continent-app/scripts/build-ask-bm25.mjs"
     ]
    ],
