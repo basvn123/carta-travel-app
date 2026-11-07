@@ -24,6 +24,7 @@ import { searchDay } from '../../shared/flightSearch.mjs';
 import { flattenRoutes, jobsForMinute, nextPause, DORMANT_AFTER, FAR_WEEKS } from './plan.mjs';
 import { ingestFound, ingestRows, tokenOk } from './ingest.mjs';
 import { buildFile, buildIndex, logoSource, nextBatch, routeMoves, ROUTE_MOVE } from './publish.mjs';
+import { ladderOn } from '../../shared/ladder.mjs';
 
 const ROUTES_KEY = 'data/flights/_routes.json';
 const FILE_PREFIX = 'data/flights/';
@@ -71,6 +72,7 @@ async function pool(items, size, fn, stop) {
 }
 
 export async function sweepMinute(env, now = Date.now()) {
+  if (ladderOn(env, 'stopGoogleFlights')) return { stopped: true }; // T1213: data access ladder, off by default
   const pausedUntil = Number(await state(env, 'pause_until')) || 0;
   if (pausedUntil > now) return { paused: true };
 

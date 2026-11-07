@@ -293,6 +293,8 @@ async def run(a):
 
 
 def main():
+    from ladder import refuse_if_stopped  # T1213: off unless the owner sets it
+    refuse_if_stopped("LADDER_STOP_BOOKING_SCRAPE", "scrape_booking")
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", required=True, help="run tag YYYY-MM, e.g. 2027-03")
     ap.add_argument("--only", default="")

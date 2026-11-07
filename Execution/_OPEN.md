@@ -2162,3 +2162,12 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1211-i | T1211 | Dependency coverage: the Edge Functions import npm:@supabase/supabase-js@2 and npm:stripe@17 by major range with no lockfile or audit, services/mcp is not in dependabot.yml, and no container base image is scanned (docs/security/dependency-remediation.md) | next task | open |  |
 | T1211-j | T1211 | /api/ask/answer shares the RL_ASK binding (60 a minute) with /api/ask, so its tighter 8 a minute limit only holds inside one isolate; give it its own namespace (docs/security/resource-heavy-features.md) | next task | open |  |
 | T1211-k | T1211 | Harden the parsers the upload control rests on (T1164-l decision): GPX read with no DTD or entities and with size and point limits, and a fuzz test of the JPEG and PNG segment walker in stripImageMeta.js | next task | open |  |
+| T1213-a | T1213 | Read the official scraping, caching and storage clauses of the partner terms (research could not fetch them) | user | open |  |
+| T1213-b | T1213 | Confirm the 80 percent Aviasales coverage threshold after the P1 run | next task | open |  |
+| T1213-c | T1213 | Show the I16 unlock numbers in the admin view (T1109-b) and add access-ladder.json to config_reference.py | next task | open |  |
+| T1213-d | T1213 | Add the stop flag to the late sweep on the Hetzner box | user | open |  |
+| T1213-e | T1213 | Run full CI checks (npm test, lint, full pytest, docs checks) on the merged branch | next task | open |  |
+| T1213-f | T1213 | Travelpayouts Data API signup and token for the P1 coverage run | user | open |  |
+| T1213-g | T1213 | Set LADDER_STOP_GOOGLE_FLIGHTS=1 before the first paid sale | user | open |  |
+| T1213-h | T1213 | Review decision I-g before the Booking.com affiliate application | user | open |  |
+| T1213-i | T1213 | Partner applications at the milestones in docs/data/access-ladder.md | user | open |  |

@@ -177,6 +177,8 @@ async def run(a):
 
 
 def main():
+    from ladder import refuse_if_stopped  # T1213: off unless the owner sets it
+    refuse_if_stopped("LADDER_STOP_HOSTELWORLD_SCRAPE", "scrape_hostelworld")
     ap = argparse.ArgumentParser()
     ap.add_argument("--run", required=True)
     ap.add_argument("--only", default="")
