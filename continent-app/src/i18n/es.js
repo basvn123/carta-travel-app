@@ -10244,4 +10244,7 @@ export const es = {
   "partner.orderP": "Los enlaces se ordenan según lo que te ayuda, nunca según lo que gana Carta. Un vendedor que no paga va donde mejor encaja.",
   "partner.countH": "Sin cookies, sin rastreadores",
   "partner.countP": "Los enlaces de socios son enlaces normales. Carta no carga ningún script de socio ni crea cookies. Suma una marca anónima a un contador diario por socio, sin dispositivo, sin cuenta y sin hora. El vendedor crea sus propias cookies cuando ya estás en su sitio.",
+  // T1169 (I7): installable app, offline line. Machine draft, pending native review.
+  "pwa.offline.saved": "Estás sin conexión. Los viajes guardados aquí siguen abriéndose; los precios y tu cuenta esperan a la red.",
+  "pwa.offline.empty": "Estás sin conexión. Los viajes guardados se abren aquí una vez que los hayas abierto con conexión.",
 };

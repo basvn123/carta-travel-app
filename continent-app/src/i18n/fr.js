@@ -10244,4 +10244,7 @@ export const fr = {
   "partner.orderP": "Les liens sont ordonnés selon ce qui vous aide, jamais selon ce que Carta gagne. Un vendeur qui ne paie rien est placé là où il convient le mieux.",
   "partner.countH": "Pas de cookies, pas de traqueurs",
   "partner.countP": "Les liens partenaires sont de simples liens. Carta ne charge aucun script partenaire et ne dépose aucun cookie. Il ajoute un seul comptage anonyme à un compteur quotidien par partenaire, sans appareil, sans compte, sans heure. Le vendeur dépose ses propres cookies une fois que vous êtes sur son site.",
+  // T1169 (I7): installable app, offline line. Machine draft, pending native review.
+  "pwa.offline.saved": "Vous êtes hors ligne. Les voyages gardés ici s'ouvrent encore ; les prix et votre compte attendent le réseau.",
+  "pwa.offline.empty": "Vous êtes hors ligne. Les voyages gardés s'ouvrent ici une fois ouverts avec une connexion.",
 };

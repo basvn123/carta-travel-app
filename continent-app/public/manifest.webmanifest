@@ -2,6 +2,8 @@
   "name": "Carta, Europe Travel",
   "short_name": "Carta",
   "description": "Find affordable European getaways ranked by real total trip cost: flights, driving, stay and lifestyle.",
+  "lang": "en",
+  "dir": "ltr",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -39,5 +41,6 @@
       "sizes": "512x512",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "prefer_related_applications": false
 }

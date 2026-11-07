@@ -10244,4 +10244,7 @@ export const it = {
   "partner.orderP": "I link sono ordinati in base a ciò che ti aiuta, mai a ciò che guadagna Carta. Un venditore che non paga sta dove si adatta meglio.",
   "partner.countH": "Niente cookie, niente tracker",
   "partner.countP": "I link partner sono link normali. Carta non carica script di partner e non imposta cookie. Aggiunge un solo conteggio anonimo a un contatore giornaliero per partner, senza dispositivo, account o orario. Il venditore imposta i propri cookie quando sei sul suo sito.",
+  // T1169 (I7): installable app, offline line. Machine draft, pending native review.
+  "pwa.offline.saved": "Sei offline. I viaggi salvati qui si aprono ancora; i prezzi e il tuo account aspettano la rete.",
+  "pwa.offline.empty": "Sei offline. I viaggi salvati si aprono qui dopo averli aperti una volta con la connessione.",
 };

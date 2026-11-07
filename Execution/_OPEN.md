@@ -2069,3 +2069,10 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1172-c | T1172 | Stay links (Booking.com, Airbnb, Hostelworld), Skyscanner and Trainline are undecorated; when joined, add a builder and its ClickOf to partnerOf | next task | open |  |
 | T1172-d | T1172 | Exported PDF partner links carry no mark or disclosure line; add one to the PDF footer | next task | open |  |
 | T1172-e | T1172 | pytest does not collect in the cloud container (pipeline/trails/smoke_test.py, missing deps); run the Python suite where the deps exist | next task | open |  |
+| T1169-a | T1169 | Account trips (trip_plans on Supabase) do not open offline: the worker never stores account answers by rule, so offline reading needs a device mirror of the signed-in traveller's trips in the app, not in the worker | next task | open |  |
+| T1169-b | T1169 | The installed app is untested on a real iPhone and Android phone: install from the hint, offline reopen of a kept trip, update after a deploy (CACHE_VERSION carta-v8); see the owner step in Execution/P15/T1169-pwa.md | user | open |  |
+| T1169-c | T1169 | Store apps (Play, App Store) wait for the I-R3 route decision (stay a PWA, Capacitor or native); store masters already exist in continent-app/brand/store/ | user | open |  |
+| T1169-d | T1169 | The worker reads its precache list from the built index.html and the entry script; a list written by scripts/build-pages.mjs from Vite's .vite/manifest.json (the research pick) is sturdier against a change in how the entry names its chunks | next task | open |  |
+| T1169-e | T1169 | pwa.offline.saved and pwa.offline.empty are machine drafts in de, fr, es and it (nl written by hand); native review with the I8 language pass | next task | open |  |
+| T1169-f | T1169 | scripts/verify_pwa.mjs is not in any CI workflow yet; add it beside verify_csp.mjs once that job runs a browser on the fast build | next task | open |  |
+| T1169-g | T1169 | The manifest has no screenshots or shortcuts, so Android shows the plain install sheet, not the richer one; add two phone screenshots and a My trips shortcut once the screens settle | next task | open |  |

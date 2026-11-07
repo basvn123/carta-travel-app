@@ -10244,4 +10244,7 @@ export const de = {
   "partner.orderP": "Links stehen in der Reihenfolge, die dir hilft, nie nach dem, was Carta verdient. Ein Anbieter, der nichts zahlt, steht dort, wo er am besten passt.",
   "partner.countH": "Keine Cookies, keine Tracker",
   "partner.countP": "Partnerlinks sind gewöhnliche Links. Carta lädt kein Partner-Skript und setzt kein Cookie. Es zählt pro Partner einen anonymen Strich auf einem Tageszähler, ohne Gerät, Konto oder Uhrzeit. Der Anbieter setzt eigene Cookies, sobald du auf seiner Seite bist.",
+  // T1169 (I7): installable app, offline line. Machine draft, pending native review.
+  "pwa.offline.saved": "Du bist offline. Hier gespeicherte Reisen öffnen sich weiter; Preise und dein Konto warten auf das Netz.",
+  "pwa.offline.empty": "Du bist offline. Gespeicherte Reisen öffnen sich hier, sobald du sie einmal mit Verbindung geöffnet hast.",
 };

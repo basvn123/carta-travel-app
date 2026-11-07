@@ -10244,4 +10244,7 @@ export const nl = {
   "partner.orderP": "Links staan in de volgorde die jou helpt, nooit in de volgorde van wat Carta verdient. Een verkoper die niets betaalt staat waar het het best past.",
   "partner.countH": "Geen cookies, geen trackers",
   "partner.countP": "Partnerlinks zijn gewone links. Carta laadt geen partnerscript en zet geen cookie. Er komt één anonieme tik bij op een dagteller per partner, zonder toestel, account of tijdstip. De verkoper zet zijn eigen cookies zodra je op zijn site bent.",
+  // T1169 (I7): installable app, offline line. Machine draft, pending native review.
+  "pwa.offline.saved": "Je bent offline. Bewaarde reizen openen nog; prijzen en je account wachten op het netwerk.",
+  "pwa.offline.empty": "Je bent offline. Bewaarde reizen openen hier zodra je ze eens met verbinding hebt geopend.",
 };

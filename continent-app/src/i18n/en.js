@@ -10330,4 +10330,7 @@ export const en = {
   "partner.orderP": "Links are ordered by what helps you, never by what pays Carta. A seller that pays nothing sits where it fits best.",
   "partner.countH": "No cookies, no trackers",
   "partner.countP": "Partner links are plain links. Carta loads no partner script and sets no cookie. It adds one anonymous tick to a daily counter per partner, with no device, no account and no time of day. The seller sets its own cookies once you are on its site.",
+  // T1169 (I7): installable app, offline line.
+  "pwa.offline.saved": "You are offline. Trips kept here still open; prices and your account wait for the network.",
+  "pwa.offline.empty": "You are offline. Saved trips open here once you have opened them with a connection.",
 };
