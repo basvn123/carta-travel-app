@@ -10,7 +10,7 @@
  * English is the source. The nl, de, fr, es and it strings were drafted in
  * the T1212 session, not by a native speaker: they ship, but the pages that
  * carry them stay noindex until langs.mjs REVIEWED names the language and
- * kind (owner step T1212-a). docs/i18n/review.md lists the review.
+ * kind (owner step T1212-a). This file is the list to review.
  *
  * Kept out of src/i18n on purpose: the app never shows these strings, and the
  * prerender must not grow the app's catalogues.
