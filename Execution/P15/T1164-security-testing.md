@@ -50,7 +50,7 @@ docker run --rm --network host -v "$PWD/zap:/zap/wrk:rw" zaproxy/zap-stable@sha2
   zap-baseline.py -t http://127.0.0.1:8788/ -c rules.tsv -I -j -J zap.json -r zap.html -w zap.md
 # then the Gate step on zap/zap.json (exit 0), and again on a copy with one alert set to High (exit 1)
 npm test
-python -m pytest tests -q -rs (quarantine deselected)
+python -m pytest tests -q -rs (quarantine deselected): 804 passed, 2 failed on LFS pointers, 9 skipped
 ```
 
 The ASVS table was generated from the official 5.0.0 CSV with a throwaway script (requirement text shortened to its first sentence) plus one hand-written verdict per requirement; the script is not committed.
@@ -79,6 +79,7 @@ None. The preview job needs no secret. The local job strips the Workers AI bindi
 | `docker pull ghcr.io/zaproxy/zaproxy:stable` refused | The proxy blocks the ghcr blob host; the Docker daemon was also not running | Started `dockerd`; pulled `zaproxy/zap-stable` from Docker Hub and pinned that digest in the workflow |
 | `wrangler pages dev` stopped at start | The Workers AI binding needs a remote session and a token | The local job runs from a temporary `wrangler.toml` without `[ai]`; Ask answer refuses with `no_ai`, which does not matter for a header scan |
 | Gate step heredoc on a plain `run:` line | YAML folds a plain multi-line scalar into one line | Switched to `run: |` before the first commit; the steps were then run as parsed from the YAML |
+| Full pytest in this container: 804 passed, 2 failed, 9 skipped (`test_rating_inputs::test_beauty_v2_reads_no_register`, `test_rating_stability::test_adding_places_moves_nobody_else`) | Both read `app_data` files that are Git LFS pointers here (LFS objects not pulled in the cloud checkout); this task changes no Python | None needed from this task; CI checks out with its own LFS setting |
 | Three ASVS verdicts claimed more than the code shows | Written from memory: `eqeqeq` (no such lint rule), repeated query keys (first value wins), `no-store` on Edge JSON (only some answers) | Reworded before commit; each checked by grep |
 
 ## Screens checked
