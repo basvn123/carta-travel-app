@@ -1567,5 +1567,158 @@
    "Pick per input: volume (size it) or worker",
    "Tell the next session, which then writes T1182-c"
   ]
+ },
+ {
+  "id": "T1202-a",
+  "title": "Run the seasons harvest on the box",
+  "why": "Until it runs no place carries open months, so the strip shows no closures and the plan flow can still suggest a shut island or hut.",
+  "where": "run_pipeline.py task seasons, docs/HANDBOOK.md \"Seasons and closures (D18)\"",
+  "how": [
+   "Check the extracts are on disk with python pipeline/beaches/osm_extract.py --list",
+   "Run python run_pipeline.py seasons (or python pipeline/harvest_seasons.py --countries AT,CH,IT,HR,GR first to try a few)",
+   "Note the printed blocks, with_open and by_conf counts in the report",
+   "Cd continent-app and npm run data",
+   "Open two islands and one hut place in the app and check the strip",
+   "Commit continent-app/public/app_data.json"
+  ]
+ },
+ {
+  "id": "T1203-a",
+  "title": "Run the accessibility harvest",
+  "why": "The card shows nowhere until OSM tags are harvested.",
+  "where": "pipeline/harvest_access.py, run_pipeline.py task access_facts",
+  "how": [
+   "On the box run `python run_pipeline.py access_facts` (about 150 Overpass queries)",
+   "Check the printed count of destinations with accessibility facts",
+   "Publish the destinfo files the way parking is published (push-data)"
+  ]
+ },
+ {
+  "id": "T1203-b",
+  "title": "Look at the Access card on a real place",
+  "why": "A screen change was only checked on fixtures.",
+  "where": "continent-app/src/browse/DestPractical.jsx",
+  "how": [
+   "After the run open two places with tags and one without at 390 and 1280 px",
+   "The card must be absent for the untagged one"
+  ]
+ },
+ {
+  "id": "T1204-a",
+  "title": "Verify footprint factors",
+  "why": "The numbers were read from secondary mirrors, not the DESNZ workbook.",
+  "where": "continent-app/config/pricing.json",
+  "how": [
+   "Open the latest DESNZ conversion factors workbook",
+   "Compare flight short and long haul economy, national rail, coach, average petrol car and ferry with `footprint.factors`",
+   "Correct the values and the source year"
+  ]
+ },
+ {
+  "id": "T1205-a",
+  "title": "Paste migration 073",
+  "why": "The price alert tables, their RLS and the save, opt-in and check functions do not exist until then.",
+  "where": "supabase/migrations/073_price_alerts.sql",
+  "how": [
+   "Open the Supabase SQL editor",
+   "Paste supabase/migrations/073_price_alerts.sql after 072",
+   "Look for \"price alerts self-check passed\""
+  ]
+ },
+ {
+  "id": "T1205-b",
+  "title": "Set the price alert secrets and deploy the function",
+  "why": "Without them the function answers \"off\" and the box checks nothing.",
+  "where": "supabase/functions/price-alerts/README.md",
+  "how": [
+   "In Resend confirm the sender alerts@carta-europetravel.com is on the verified domain and that a send accepts custom List-Unsubscribe headers",
+   "Run supabase secrets set PRICE_ALERTS_FROM, PRICE_ALERTS_LINK_SECRET and PRICE_ALERTS_BOX_SECRET (two different openssl rand -hex 32 values)",
+   "Supabase functions deploy price-alerts --no-verify-jwt",
+   "Add PRICE_ALERTS_URL and PRICE_ALERTS_BOX_SECRET to ~/.config/carta/env on the box"
+  ]
+ },
+ {
+  "id": "T1205-c",
+  "title": "Turn price alerts on after a test",
+  "why": "Both flags are off, so no traveller sees the control and no email is sent.",
+  "where": "docs/HANDBOOK.md \"Price alerts (double opt-in)\"",
+  "how": [
+   "Build a preview with VITE_PRICE_ALERTS=1 and set PRICE_ALERTS_ENABLED=1",
+   "Save an alert on a place with your own account, click the confirmation email, run python pipeline/price_alerts.py --dry-run then without it on the box",
+   "When happy, build production with VITE_PRICE_ALERTS=1"
+  ]
+ },
+ {
+  "id": "T1205-g",
+  "title": "Decide on the older price-drop email",
+  "why": "The T944 notify email on saved places (060) and I17 alerts both mail about cheaper places, which may double up.",
+  "where": "supabase/functions/notify/README.md",
+  "how": [
+   "Keep both, or retire the price-drop switch in Account once alerts are live and say so in a task"
+  ]
+ },
+ {
+  "id": "T1206-d",
+  "title": "First Gemini batch run",
+  "why": "Half-price batch jobs depend on a verified request shape.",
+  "where": "pipeline/ai_gateway.py, Execution/P15/T1206-sweep-ai.md",
+  "how": [
+   "Set GEMINI_API_KEY on the box",
+   "Run a 3-item `Gateway(\"intros\").batch(...)` with `models=[\"gemini-3.5-flash-lite\"]`",
+   "Compare the answers and events with a normal call"
+  ]
+ },
+ {
+  "id": "T1206-e",
+  "title": "Live red team with the new attacks",
+  "why": "Suggest-city and the pipeline jobs are not yet attacked live.",
+  "where": "continent-app/scripts/ai/redteam_live.mjs",
+  "how": [
+   "`node continent-app/scripts/ai/redteam_live.mjs --dry-run` to see the 75 requests",
+   "Run it without the flag against the deployed functions with the keys set",
+   "File any attack that passes"
+  ]
+ },
+ {
+  "id": "T1206-f",
+  "title": "Record plan-day plans per provider",
+  "why": "The plan-day eval can only score the reference planner until real plans are recorded.",
+  "where": "continent-app/scripts/eval/plan-day/record.mjs",
+  "how": [
+   "`supabase functions serve plan-day` with AI_PLAN_DAY_PROVIDER set",
+   "`node continent-app/scripts/eval/plan-day/record.mjs --out <file>`",
+   "`node continent-app/scripts/eval/run.mjs plan-day --plans <file>`"
+  ]
+ },
+ {
+  "id": "T1135-f",
+  "title": "llama-bench on the box",
+  "why": "The box CPU speeds are inferred, not measured.",
+  "where": "continent-app/config/ai_models.json",
+  "how": [
+   "Run llama-bench with Qwen3-30B-A3B Q4_K_M on the CAX41",
+   "Put the numbers in ai_models.json box_cpu (with T1138-a)"
+  ]
+ },
+ {
+  "id": "T1141-g",
+  "title": "BM25 over highlights on the box",
+  "why": "The highlight source gave 0 passages in this checkout.",
+  "where": "pipeline/ask_index_layer.py",
+  "how": [
+   "After T1141-b, count highlight passages in the rebuilt index",
+   "Run the Ask eval with sparse on"
+  ]
+ },
+ {
+  "id": "T1168-d",
+  "title": "Real questions for Ask the docs",
+  "why": "The question set was written by its builder.",
+  "where": "continent-app/scripts/eval/ask-docs/",
+  "how": [
+   "Write or collect 30 real questions about the docs",
+   "Replace continent-app/scripts/eval/ask-docs set",
+   "Measure Material's built-in search on the same set"
+  ]
  }
 ]
