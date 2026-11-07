@@ -59,8 +59,9 @@ def test_cyrillic_register_names_are_transliterated():
     """T1216 (T1189-g): BG names in Cyrillic pass the name test."""
     assert lb.tokens("ШКОРПИЛОВЦИ-ЦЕНТРАЛЕН ПЛАЖ") == {"shkorpilovtsi", "tsentralen"}
     assert lb.names_agree("ШКОРПИЛОВЦИ-ЦЕНТРАЛЕН ПЛАЖ", "Shkorpilovtsi Beach")
-    assert lb.tokens("Слънчев бряг") == {"slanchev", "bryag"}
-    assert not lb.names_agree("Слънчев бряг", "Golden Sands")
+    assert lb.tokens("Слънчев бряг", "BG") == {"slanchev", "bryag"}
+    assert not lb.names_agree("Слънчев бряг", "Golden Sands", "BG")
+    assert lb.tokens("Παραλία Μύρτου", "GR") == {"paralia", "myrtou"}
 
 
 def test_gaps_only_keeps_metrics_and_drops_other_items():
