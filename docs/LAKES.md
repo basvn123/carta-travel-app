@@ -48,6 +48,18 @@ in place the wire is reproducible, and `generated_at` is the only clock read.
 Needs network and the owner box for a cold run. Large inputs (`cache/lakes/`,
 the Geofabrik extracts) are not in this checkout.
 
+## Filling the water class and the swim flags (`pipeline/lakes/fill_water.py`)
+
+T1186 (ROADMAP D24, D7). Lakes with no `water` block and lakes with swim rule
+`unknown` (2,676 wire rows: 895 with water, 256 unknown on 2026-11-07) get a
+second pass: a wider EEA match that needs a shared name word, optional national
+CSVs in `cache/lakes/national_water/<CC>.csv`, and an Overpass tag sweep
+(`--harvest-osm`). Rules: an existing verdict never changes; an EEA site gives
+`yes` (`limited` if its class is Poor); `no` only from an explicit OSM
+`swimming=no` or `bathing=no`; no evidence stays `unknown`. Blocks carry `_src`
+and `_asof`. Run: `python pipeline/harvest_bathing_water.py --refresh`, then
+`python pipeline/lakes/fill_water.py --harvest-osm --apply` (box).
+
 ## The index (`pipeline/lakes/lake_index.py`)
 
 `MODEL_VERSION = "lake_index_v2"`. `score_lake` computes eight components, each
