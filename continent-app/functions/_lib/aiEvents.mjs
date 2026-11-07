@@ -33,8 +33,12 @@ export function promptOf(feature) {
 
 /**
  * Price estimates, USD per million tokens (in, out). NOT verified against the
- * providers' pages (T1139 research was blocked): treat cost as an estimate,
- * the paid tier equivalent even where the free tier bills nothing. Edit here.
+ * providers' pages: the T1139 research and the T1206 retry were both blocked
+ * (ai.google.dev and developers.cloudflare.com are outside the session's
+ * network). Treat cost as an estimate, the paid tier equivalent even where
+ * the free tier bills nothing. Edit here. continent-app/config/ai_models.json
+ * (E-R3 prices, also unverified) prices the -latest aliases differently;
+ * register row T1139-f holds the reconciliation.
  */
 export const PRICE_USD_PER_M = {
   'gemini-flash-lite-latest': { in: 0.10, out: 0.40 },
@@ -66,15 +70,18 @@ export function estimateCostUsd({ provider, model, tokensIn, tokensOut, neurons 
 /**
  * The event for one call. result is what callModel returned; promptChars the
  * size (never the text) of what was sent; neurons the model's Neuron price.
+ * outputChars, when the provider reports no usage (a stream), is the size of
+ * the answer, so tokens_out and the cost are estimated instead of left out.
  */
-export function buildAiEvent({ feature, cfg, result, promptChars = 0, latencyMs = 0, queryHash = null, neurons = null }) {
+export function buildAiEvent({ feature, cfg, result, promptChars = 0, latencyMs = 0, queryHash = null, neurons = null, outputChars = null }) {
   const ok = !!result?.ok;
   const model = result?.model || cfg?.models?.[0] || 'none';
   const provider = result?.provider || cfg?.provider || '';
   const u = result?.usage;
   const estimated = !u;
   const tokensIn = u ? u.in || 0 : estTokens(promptChars);
-  const tokensOut = u ? u.out || 0 : null; // a stream reports no count
+  // A stream reports no count: estimated from the answer's size when the caller knows it.
+  const tokensOut = u ? u.out || 0 : outputChars != null ? estTokens(outputChars) : null;
   const refused = !ok && ['config', 'no_ai', 'too_big', 'unsafe'].includes(result?.code);
   const pr = promptOf(feature);
   return {
@@ -93,6 +100,26 @@ export function buildAiEvent({ feature, cfg, result, promptChars = 0, latencyMs 
     attempts: Array.isArray(result?.attempts) ? result.attempts.length : 0,
     fell_back: ok && !!result.fellBack,
     query_hash: queryHash || null,
+  };
+}
+
+/**
+ * An event built before a streamed answer was read, completed once the
+ * stream has ended (T1206, register row T1139-f): tokens_out from the
+ * provider's usage when the stream carried one, else estimated from the
+ * characters streamed, and the cost recomputed so it covers the answer.
+ * A failed or refused call is returned unchanged.
+ */
+export function withStreamOutput(ev, { usage = null, outputChars = 0, neurons = null } = {}) {
+  if (!ev || (ev.outcome !== 'ok' && ev.outcome !== 'fallback')) return ev;
+  const tokensIn = usage?.in ?? ev.tokens_in;
+  const tokensOut = usage?.out ?? estTokens(outputChars);
+  return {
+    ...ev,
+    tokens_in: tokensIn,
+    tokens_out: tokensOut,
+    tokens_estimated: !usage,
+    cost_usd: estimateCostUsd({ provider: ev.provider, model: ev.model, tokensIn, tokensOut, neurons }),
   };
 }
 

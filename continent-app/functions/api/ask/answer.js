@@ -14,7 +14,8 @@
  * Free, and kept free:
  *   - A daily Neurons counter in KV (binding ASK). Before a call the worst
  *     case is added to the day's count; past CAP the answer is `429 cap` and
- *     the app keeps its facts answer. Without the ASK binding the Function
+ *     the app keeps its facts answer. When every model fails the booking is
+ *     handed back. Without the ASK binding the Function
  *     refuses to call the model at all (503 nocap), so an account on Workers
  *     Paid can never be billed for overage by a missing counter.
  *   - The same pack answered once is cached in KV for a week, so a popular
@@ -135,6 +136,12 @@ export async function onRequestPost({ request, env, waitUntil }) {
     stream: true, temperature: 0.2, maxOutputTokens: MAX_ANSWER_TOKENS,
   });
   // Every model's budget spent reads as the cap (the app keeps its facts answer).
+  // No model wrote anything, so the booking is handed back (T1206, T1137-f):
+  // a run of failures must not eat the day's Neurons.
+  if (!ai.ok) {
+    const now = Number(await env.ASK.get(counter)) || 0;
+    await env.ASK.put(counter, String(Math.max(0, now - worst)), { expirationTtl: 2 * 86400 });
+  }
   if (!ai.ok) return fail(ai.status, ai.code === 'global_cap' ? 'cap' : ai.code === 'no_ai' || ai.code === 'config' ? 'off' : 'model');
   const stream = ai.stream;
   const model = { id: ai.model, ...neuronPrice(ai.model) };

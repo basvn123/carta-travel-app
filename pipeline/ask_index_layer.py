@@ -55,6 +55,7 @@ Usage, from the repo root:
 
 import argparse
 import base64
+import hashlib
 import json
 import re
 import sys
@@ -261,6 +262,19 @@ def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", s).strip("-")[:60] or "x"
 
 
+def name_id(s):
+    """A stable id for a name: its slug, or for a name with no Latin letters
+    ("Бургаски солници") a short hash of it, so two such names never share
+    the id "x" (T1206, T1141-e)."""
+    sl = slug(s)
+    if sl != "x" or guided.fold(s).strip() in ("", "x"):
+        return sl
+    return "x-" + hashlib.sha1(s.strip().encode("utf-8")).hexdigest()[:8]
+
+
+COUNTRY_FILE = re.compile(r"^[A-Z]{2}$")
+
+
 def nice_list(xs):
     xs = [x for x in xs if x]
     if len(xs) <= 1:
@@ -286,6 +300,7 @@ class Ctx:
     def __init__(self, public):
         self.public = Path(public)
         data = jload(self.public / "app_data.json") or {}
+        self.meta = data.get("meta") or {}
         dests = data.get("destinations") or {}
         if isinstance(dests, list):
             dests = {d["id"]: d for d in dests}
@@ -323,7 +338,11 @@ class Ctx:
         return best
 
     def layer_rows(self, folder, key):
+        # Country files only (T1206, T1141-e): top.json repeats rows of the
+        # country files under cc "top", and index.json is the folder's list.
         for f in sorted((self.public / folder).glob("*.json")):
+            if not COUNTRY_FILE.match(f.stem):
+                continue
             j = jload(f)
             if not j:
                 print(f"  skipped unreadable {folder}/{f.name}")
@@ -399,12 +418,15 @@ def src_sight(ctx):
             if not name:
                 continue
             key = guided.fold(name)
-            if key in held or key in seen or key == guided.fold(city):
+            # One sight per id: "Pont Vieux" and "Pont-Vieux" are the same
+            # bridge and the first spelling is kept (T1141-e).
+            rid = name_id(name)
+            if key in held or key in seen or rid in seen or key == guided.fold(city):
                 continue
-            seen.add(key)
+            seen.update((key, rid))
             kind = it.get("kind") or "Sight"
             text = clip([f"{name}, a {kind.lower()} in {city}, {country}."])
-            yield row("sight", f"{did}/{slug(name)}", did, text, cc=d.get("iso2"), kind=kind,
+            yield row("sight", f"{did}/{rid}", did, text, cc=d.get("iso2"), kind=kind,
                       m=ctx.best(did), tags=[kind.lower()], ref={"type": "dest", "id": did}, name=name)
 
 
@@ -577,16 +599,19 @@ def collect(ctx, only=None):
         if only and src not in only:
             continue
         t0 = time.time()
-        rows, embeds, seen = [], [], set()
+        rows, embeds, seen, dup = [], [], set(), 0
         for r, e in fn(ctx):
+            # A guard only: the adapters write unique ids (T1141-e).
             if r[0] in seen:
+                dup += 1
                 continue
             seen.add(r[0])
             rows.append(r)
             embeds.append(e)
         if rows:
             out[src] = (rows, embeds)
-            print(f"  {src:9} {len(rows):6} passages ({time.time() - t0:.1f} s)")
+            print(f"  {src:9} {len(rows):6} passages ({time.time() - t0:.1f} s)"
+                  + (f", {dup} repeated ids dropped" if dup else ""))
         else:
             print(f"  {src:9}      0 passages, skipped")
     return out
@@ -847,6 +872,12 @@ def write_bin(path, arr):
     tmp.replace(path)
 
 
+def catalogue_stamp(ctx):
+    """The app_data.json the index read: its generated_at and schema version."""
+    return {"file": "app_data.json", "generated_at": ctx.meta.get("generated_at"),
+            "schema_version": ctx.meta.get("schema_version")}
+
+
 def build(ctx, out_dir):
     from model2vec import StaticModel
 
@@ -868,6 +899,9 @@ def build(ctx, out_dir):
 
     manifest = {"version": VERSION, "model": MODEL, "dims": D,
                 "built": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "sources": {},
+                # The catalogue this index was read from, for the staleness check
+                # (continent-app/scripts/check-ask-index.mjs, T1141-d).
+                "catalogue": catalogue_stamp(ctx),
                 "model_files": {"vocab": "model/vocab.json", "emb": "model/emb.i8", "scale": "model/scale.f32"},
                 "bm25": {"file": "bm25.json", "fields": ["name", "tags", "text"],
                          "boost": {"name": 3, "tags": 2, "text": 1}, "sources": None}}

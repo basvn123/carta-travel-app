@@ -32,7 +32,7 @@
    "currency": "USD",
    "extra_out_tokens": 0,
    "residency": "global (Gemini API)",
-   "note": "batch mode is half price; the gateway has no batch-mode call yet"
+   "note": "batch mode is half price; pipeline/ai_gateway.py Gateway.batch() can send it (T1206), coded against a fake transport and not yet run live; no job uses it"
   },
   "gemini-3.6-flash": {
    "label": "Gemini 3.6 Flash, thinking, intro price",

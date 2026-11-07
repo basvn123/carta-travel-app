@@ -3,8 +3,8 @@
  "eval": "linking",
  "title": "Place linking (MRR, accuracy@1)",
  "kind": "retrieval",
- "at": "2026-11-07T11:09:55.525Z",
- "git": "d85cbd728a",
+ "at": "2026-11-07T12:22:12.399Z",
+ "git": "1a63861c64",
  "status": "pass",
  "gated": true,
  "headline": {
@@ -91,8 +91,8 @@
   "confidence.did_you_mean": 21,
   "confidence.did_you_mean_has_gold": 1,
   "confidence.no_answer": 0,
-  "latency_ms.p50": 0.61,
-  "latency_ms.p95": 1.539,
+  "latency_ms.p50": 0.794,
+  "latency_ms.p95": 2.141,
   "aliases": 7369
  },
  "gate": {
@@ -111,7 +111,7 @@
   "set": "scripts/eval/linking/set.json",
   "n": 300,
   "seed_drop": false,
-  "seconds": 2.2
+  "seconds": 2.6
  },
  "notes": [
   "Before (today's Explore search): MRR 0.556, accuracy@1 0.543. After: MRR 0.997, accuracy@1 0.993 (0.967 without context).",

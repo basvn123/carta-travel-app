@@ -1,0 +1,49 @@
+{
+ "schema": "carta-eval/1",
+ "eval": "parse-booking",
+ "title": "Parse-booking fields on synthetic documents",
+ "kind": "extraction",
+ "at": "2026-11-07T12:22:19.011Z",
+ "git": "1a63861c64",
+ "status": "pass",
+ "gated": true,
+ "headline": {
+  "key": "field_accuracy",
+  "value": 1,
+  "label": "booking fields right (reference answers)",
+  "higher_is_better": true
+ },
+ "metrics": {
+  "field_accuracy": 1,
+  "activity_recall": 1,
+  "activity_day_accuracy": 1,
+  "invented": 0,
+  "invented_links": 0,
+  "repaired_fields": 1,
+  "prompt_check_fails": 0,
+  "docs": 10,
+  "gold_fields": 64
+ },
+ "gate": {
+  "ok": true,
+  "rule": "every prompt check, booking field accuracy 0.9 or more, no invented link",
+  "tolerance": null,
+  "baseline": null,
+  "failures": []
+ },
+ "cases": {
+  "n": 10,
+  "passed": 10
+ },
+ "judge": null,
+ "inputs": {
+  "set": "continent-app/scripts/eval/parse-booking/set.json",
+  "version": 1,
+  "answers": "continent-app/scripts/eval/parse-booking/answers.json",
+  "model": "reference (hand-written)",
+  "seconds": 0
+ },
+ "notes": [
+  "Reference answers: this checks the prompt and the shipped path, not a model. Record live answers and pass --answers to score one."
+ ]
+}

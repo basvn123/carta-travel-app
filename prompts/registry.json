@@ -8,19 +8,19 @@
       "format": "registry",
       "sha256": "5bfe68273fb940d6a583c9d4260aaae17d870db76b3bc8410a048b99c7c3c195",
       "runtime": "bundle",
-      "eval": null,
-      "guard": "evals/injection/attacks.json through the ai-guard workflow (continent-app/tests/aiGuard.test.mjs, aiGateway.test.mjs)",
+      "eval": "injection",
+      "guard": null,
       "callers": [
         "supabase/functions/_shared/aiGuard.mjs",
         "continent-app/functions/_lib/aiGuard.js"
       ],
       "lastScore": {
         "version": 1,
-        "eval": null,
-        "status": "unguarded",
-        "key": null,
-        "value": null,
-        "at": "2026-11-06T17:23:54.987Z"
+        "eval": "injection",
+        "status": "pass",
+        "key": "blocked_share",
+        "value": 1,
+        "at": "2026-11-07T12:18:00.406Z"
       }
     },
     "ask": {
@@ -66,23 +66,23 @@
       }
     },
     "suggest-city": {
-      "version": 1,
-      "file": "prompts/suggest-city/v1.md",
+      "version": 2,
+      "file": "prompts/suggest-city/v2.md",
       "format": "registry",
-      "sha256": "f380c4ff577b9f7e14eb302695f1f1258fdd8593aea670229784ff667c7b1056",
+      "sha256": "c8733978d2c877ab6706dce55016141d33e9592eadddef5a25eeec63fcb85151",
       "runtime": "bundle",
-      "eval": null,
-      "guard": "evals/injection/attacks.json through the ai-guard workflow (continent-app/tests/aiGuard.test.mjs, aiGateway.test.mjs)",
+      "eval": "suggest-city",
+      "guard": null,
       "callers": [
         "supabase/functions/suggest-city/prompt.mjs"
       ],
       "lastScore": {
-        "version": 1,
-        "eval": null,
-        "status": "unguarded",
-        "key": null,
-        "value": null,
-        "at": "2026-11-06T17:24:05.204Z"
+        "version": 2,
+        "eval": "suggest-city",
+        "status": "pass",
+        "key": "rules_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:00.618Z"
       }
     },
     "parse-booking": {
@@ -91,18 +91,18 @@
       "format": "registry",
       "sha256": "1a9b1fc3dcd1fad88a8891410c1b48f76f54af2d788e6a011fe3d1ea4040a64f",
       "runtime": "bundle",
-      "eval": null,
-      "guard": "evals/injection/attacks.json through the ai-guard workflow (continent-app/tests/aiGuard.test.mjs, aiGateway.test.mjs)",
+      "eval": "parse-booking",
+      "guard": null,
       "callers": [
         "supabase/functions/parse-booking/prompt.mjs"
       ],
       "lastScore": {
         "version": 1,
-        "eval": null,
-        "status": "unguarded",
-        "key": null,
-        "value": null,
-        "at": "2026-11-06T17:24:05.261Z"
+        "eval": "parse-booking",
+        "status": "pass",
+        "key": "field_accuracy",
+        "value": 1,
+        "at": "2026-11-07T12:18:00.523Z"
       }
     },
     "eval-judge": {
@@ -187,24 +187,24 @@
       }
     },
     "trips-shared": {
-      "version": 1,
-      "file": "prompts/trips-shared/v1.md",
+      "version": 2,
+      "file": "prompts/trips-shared/v2.md",
       "format": "registry",
-      "sha256": "ab7632224724aaa5dfe5cfd6a5340b67fcd050878fc8a1b3563fd72d0c4723ba",
+      "sha256": "8efadf3fad9d3ad2da7fe1a45c4546a483f4f047eee4f3f2bd9e1437e59b7312",
       "runtime": "python",
-      "eval": null,
-      "guard": "the golden set (Trips/carta-unified/carta-unified/pipeline/golden_set.py, golden-set.yml)",
+      "eval": "trips-golden",
+      "guard": null,
       "callers": [
         "Trips/carta-unified/carta-unified/pipeline/generate_trip.py",
         "Trips/carta-unified/carta-unified/pipeline/backfill_modules.py"
       ],
       "lastScore": {
-        "version": 1,
-        "eval": null,
-        "status": "unguarded",
-        "key": null,
-        "value": null,
-        "at": "2026-11-06T17:24:05.666Z"
+        "version": 2,
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:17:57.428Z"
       }
     },
     "trips-skeleton": {
@@ -213,18 +213,18 @@
       "format": "trips-header",
       "sha256": "9ac418ce2895af08a570a5c5fa837c5b46752e243f13fe3ad36cf3e15faeb891",
       "runtime": "python",
-      "eval": null,
-      "guard": "the golden set (Trips/carta-unified/carta-unified/pipeline/golden_set.py, golden-set.yml)",
+      "eval": "trips-golden",
+      "guard": null,
       "callers": [
         "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
       ],
       "lastScore": {
         "version": 1,
-        "eval": null,
-        "status": "unguarded",
-        "key": null,
-        "value": null,
-        "at": "2026-11-06T17:24:05.722Z"
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:03.620Z"
       }
     },
     "trips-prose": {
@@ -233,18 +233,18 @@
       "format": "trips-header",
       "sha256": "b2590bb9de9ea5b2e8292d2b8557de2d30e8274dc1c79e09ea9aea367d59f6ae",
       "runtime": "python",
-      "eval": null,
-      "guard": "the golden set (Trips/carta-unified/carta-unified/pipeline/golden_set.py, golden-set.yml)",
+      "eval": "trips-golden",
+      "guard": null,
       "callers": [
         "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
       ],
       "lastScore": {
         "version": 1,
-        "eval": null,
-        "status": "unguarded",
-        "key": null,
-        "value": null,
-        "at": "2026-11-06T17:24:05.772Z"
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:06.033Z"
       }
     },
     "trips-numbers": {
@@ -253,18 +253,18 @@
       "format": "trips-header",
       "sha256": "d1840cd5c51878d13db5214445310f333063773182f4fdf3b119ab9d54eb3af9",
       "runtime": "python",
-      "eval": null,
-      "guard": "the golden set (Trips/carta-unified/carta-unified/pipeline/golden_set.py, golden-set.yml)",
+      "eval": "trips-golden",
+      "guard": null,
       "callers": [
         "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
       ],
       "lastScore": {
         "version": 3,
-        "eval": null,
-        "status": "unguarded",
-        "key": null,
-        "value": null,
-        "at": "2026-11-06T17:24:05.819Z"
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:08.845Z"
       }
     },
     "trips-critic": {
@@ -273,18 +273,18 @@
       "format": "trips-header",
       "sha256": "e121fd49ba3dea350569e7aa4f96205a32e1540c141f2c551bd8d73a63a8d657",
       "runtime": "python",
-      "eval": null,
-      "guard": "the golden set (Trips/carta-unified/carta-unified/pipeline/golden_set.py, golden-set.yml)",
+      "eval": "trips-golden",
+      "guard": null,
       "callers": [
         "Trips/carta-unified/carta-unified/pipeline/generate_trip.py"
       ],
       "lastScore": {
         "version": 1,
-        "eval": null,
-        "status": "unguarded",
-        "key": null,
-        "value": null,
-        "at": "2026-11-06T17:24:05.870Z"
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:11.937Z"
       }
     },
     "trips-packing": {
@@ -293,18 +293,18 @@
       "format": "trips-header",
       "sha256": "32864461b7149e1bf6ea94f9974ae43dfd8ee3651f2e0f15eabcc96f38ce0e9d",
       "runtime": "python",
-      "eval": null,
-      "guard": "tests/test_backfill_modules.py",
+      "eval": "trips-golden",
+      "guard": null,
       "callers": [
         "Trips/carta-unified/carta-unified/pipeline/backfill_modules.py"
       ],
       "lastScore": {
         "version": 1,
-        "eval": null,
-        "status": "unguarded",
-        "key": null,
-        "value": null,
-        "at": "2026-11-06T17:24:05.921Z"
+        "eval": "trips-golden",
+        "status": "pass",
+        "key": "parts_pass",
+        "value": 1,
+        "at": "2026-11-07T12:18:14.590Z"
       }
     },
     "tag-verify": {

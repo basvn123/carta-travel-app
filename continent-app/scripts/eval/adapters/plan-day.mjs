@@ -108,6 +108,9 @@ export async function run({ plans = null, judgments = null } = {}) {
       model: judged?.model ?? null,
       file: judged?.file ?? null,
       rubric_sha: rubricSha(),
+      // The rubric the verdicts were made on (T1206, register row T1140-d): the
+      // registry's record refuses a judge score when it is not rubric_sha.
+      verdicts_rubric_sha: judged?.rubric_sha ?? null,
       n: sample.plans.length,
       use: judgeUse(k.kappa),
       agreement: { judge_vs_human: k, rules_vs_human: cal.rules_vs_human, judge_vs_rules: cal.judge_vs_rules },

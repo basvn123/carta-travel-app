@@ -112,3 +112,38 @@ def test_trips_lines_are_byte_identical():
     recs = [{"packingNotes": ["Bring **sun cream**", 3], "whatCouldGoWrong": ["Ferries strike in _August_"]},
             {"packingNotes": [], "whatCouldGoWrong": []}]
     assert [backfill_modules.previous_block(r) for r in recs] == GOLDEN["trips.previous"]
+
+
+# The response schemas the Trips generator sends, hashed with sorted keys before
+# their five field descriptions moved to trips-shared v2 (T1206, register row
+# T1140-c; computed from the code at the commit before the move). The model gets
+# the same schemas, so the golden set needed no rebaseline. Sorted keys: the
+# Gemini dialect's key order varies between runs (string hashing), its content
+# does not.
+TRIPS_SCHEMA_SHA = {
+    1: ("4b0b7ab3a2bd5a86a4226c871a9f224a64da4ac46cb1fa35c6c2b59fee11bc01",
+        "777fc05e93697ff7bc0028a9116ad7a2c152c1fe2e739c175c78a58934a6c84c"),
+    2: ("4f6da2cae63065afde2e0b260b61f95ae22a0cedb99c4302143754b76761b633",
+        "dc0357f8e0a48c364d9d721c720c4b70b7cbe25d81d1b144a2ae4f25ef8167ac"),
+    3: ("5df0d36e50a4c19bde7416cfc52a9a9b725f94887e9f1ffaef9358d81b3e05e8",
+        "9a6f851e6d519e2ba324c6ba473da1c04c07dd91bc5d2cd8b5fb6c93d12378a1"),
+    4: ("fad8f15e65f89aae0a6c5887f55d7bb0b98e9c66c1ac70efffc42405dd49b705",
+        "d46abede8c247c41ba974e7306580fd2908bc5e75075c9793186055aef7ab509"),
+}
+
+
+def test_trips_schemas_are_byte_identical():
+    import hashlib
+
+    import generate_trip
+    sha = lambda o: hashlib.sha256(json.dumps(o, sort_keys=True).encode()).hexdigest()  # noqa: E731
+    for n, (plain, gemini) in TRIPS_SCHEMA_SHA.items():
+        assert sha(generate_trip.pass_schema(n)) == plain, f"pass {n} schema"
+        assert sha(generate_trip.pass_gemini_schema(n)) == gemini, f"pass {n} Gemini schema"
+
+
+def test_trips_schema_descriptions_come_from_the_registry():
+    import generate_trip
+    shared = R.prompt("trips-shared")
+    assert generate_trip.pass_schema(1)["properties"]["nameSlug"]["description"] == shared.text("schema.nameSlug")
+    assert generate_trip.pass_schema(4)["properties"]["checks"]["description"] == shared.text("schema.critic.checks")

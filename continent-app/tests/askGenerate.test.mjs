@@ -128,6 +128,22 @@ test("answers, caches, settles the count, and stops at the cap", async () => {
   assert.equal(calls.length, 1);
 });
 
+test("every model failing hands the booked Neurons back (T1137-f)", async () => {
+  const calls = [];
+  const ASK = fakeKV();
+  const env = { AI: { run: async (id) => { calls.push(id); throw new Error("capacity"); } }, ASK };
+  const before = 120;
+  const today = `n:${new Date().toISOString().slice(0, 10)}`;
+  ASK.m.set(today, String(before));
+  for (let i = 0; i < 3; i++) {
+    const r = await call(env, { ...wirePack(PACK), question: `porto or lisbon, try ${i}` });
+    assert.notEqual(r.res.status, 200);
+    assert.match(r.text, /event: error/);
+  }
+  assert.ok(calls.length >= 3, "the models were tried");
+  assert.equal(Number(ASK.m.get(today)), before, "the day's count is where it was");
+});
+
 test("writeAnswer streams only checked sentences from the server", async () => {
   const calls = [];
   const env = { AI: fakeAI("Lisbon gets 31 mm of rain in May [2]. Seville is hot [1]. Porto costs ~€101 est. a person a day [1]. Both score 9.1 [1][2].", calls), ASK: fakeKV() };
@@ -251,4 +267,24 @@ test("budget verdicts and when notes are written by code", async () => {
   const w = comparisonNotes({ type: "when", when: { months }, picks: [{ dest: { city: "Hallstatt", crowding: { tier: 3 } } }] });
   assert.match(w[0], /driest month is February, 69 mm/);
   assert.match(w[1], /does not know its least crowded month/);
+});
+
+test("the cheapest months and the car fact reach the notes, ahead of the cap (T1136-d)", async () => {
+  const { comparisonNotes, buildPack, MAX_NOTES } = await import("../src/lib/ask/context.js");
+  const months = Array.from({ length: 12 }, (_, i) => ({ m: i + 1, high: 10 + i, rain: 100 - i }));
+  const dest = { id: "DBV", city: "Dubrovnik", country: "Croatia", crowding: { tier: 3 } };
+  const when = { type: "when", when: { months, best: [5, 6], cheapest: [1, 2] }, picks: [{ id: "DBV", dest, why: [] }] };
+  assert.ok(comparisonNotes(when).includes("Beds in Dubrovnik are cheapest in January, February."));
+  assert.match(comparisonNotes({ ...when, when: { months, best: [], cheapest: null } }).join(" "), /does not know its cheapest month/);
+  // The twelve month rows of the answer table no longer push it out.
+  const answer = { lead: "The best months for Dubrovnik are May, June.", notes: ["Beds are cheapest in January, February."], picks: [],
+    table: { rows: months.map((m) => [`M${m.m}`, `${m.high}°`, `${m.rain} mm`, ""]) } };
+  const pack = buildPack({ question: "when is the cheapest time for dubrovnik", lang: "en", facts: when, answer });
+  assert.ok(pack.notes.length <= MAX_NOTES);
+  assert.ok(pack.notes.some((n) => /cheapest in January, February/.test(n.text)));
+  const about = (lt) => comparisonNotes({ type: "about", picks: [{ id: "x", dest: { city: "Interlaken", local_transport: lt }, why: [] }] });
+  assert.deepEqual(about({ car_needed: false, transit_quality: "good", reason: "Rail hub between the lakes." }),
+    ["You do not need a car in Interlaken: public transport is good; Rail hub between the lakes."]);
+  assert.match(about({ car_needed: true })[0], /^You need a car to get around Interlaken/);
+  assert.match(about(undefined)[0], /does not know whether you need a car/);
 });

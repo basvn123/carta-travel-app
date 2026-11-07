@@ -1,0 +1,16 @@
+{
+ "about": "Recorded parse-booking answers (the raw model text) per document of set.json. These are the hand-written reference answers (T1206); pb08 carries a manage link the document does not print, which the text check must clear. Replace with a live run's answers to score a model: node scripts/eval/run.mjs parse-booking --answers <file>.",
+ "model": "reference (hand-written)",
+ "answers": {
+  "pb01": "{\"summary\": \"What the document holds.\", \"bookings\": [{\"kind\": \"flight_out\", \"title\": \"Skylark Air CRL to PMO\", \"city\": \"Palermo\", \"code\": \"QX7K2P\", \"eur\": 89.98, \"link\": \"https://www.skylark.example/manage/QX7K2P\", \"date\": \"2027-05-14\"}], \"activities\": []}",
+  "pb02": "{\"summary\": \"What the document holds.\", \"bookings\": [{\"kind\": \"stay\", \"title\": \"Hotel Miramare\", \"city\": \"Palermo\", \"code\": \"554120\", \"eur\": 312, \"date\": \"2027-05-14\"}], \"activities\": []}",
+  "pb03": "{\"summary\": \"What the document holds.\", \"bookings\": [{\"kind\": \"car\", \"title\": \"Car hire at Catania Airport\", \"city\": \"Catania\", \"code\": \"CT-209-7781\", \"eur\": 146.4, \"date\": \"2027-05-17\"}], \"activities\": []}",
+  "pb04": "{\"summary\": \"What the document holds.\", \"bookings\": [{\"kind\": \"stay\", \"title\": \"Canongate Rooms\", \"city\": \"Edinburgh\", \"code\": \"77310492\", \"eur\": 287, \"amount\": 245, \"currency\": \"GBP\", \"date\": \"2027-08-09\"}], \"activities\": []}",
+  "pb05": "{\"summary\": \"What the document holds.\", \"bookings\": [{\"kind\": \"transfer\", \"title\": \"Train Vienna to Prague\", \"city\": \"Prague\", \"code\": \"RJ-55K-0193\", \"eur\": 51, \"amount\": 1290, \"currency\": \"CZK\", \"date\": \"2027-06-04\"}], \"activities\": []}",
+  "pb06": "{\"summary\": \"What the document holds.\", \"bookings\": [{\"kind\": \"activity\", \"title\": \"Palatine Chapel guided visit\", \"city\": \"Palermo\", \"code\": \"PC-88231\", \"eur\": 36, \"date\": \"2027-05-16\"}], \"activities\": []}",
+  "pb07": "{\"summary\": \"What the document holds.\", \"bookings\": [], \"activities\": [{\"name\": \"Ballaro market\", \"city\": \"Palermo\", \"day\": 1}, {\"name\": \"Cathedral roof terraces\", \"city\": \"Palermo\", \"day\": 1, \"eur\": 10}, {\"name\": \"Palatine Chapel\", \"city\": \"Palermo\", \"day\": 2}, {\"name\": \"Mondello beach\", \"city\": \"Palermo\", \"day\": 3}, {\"name\": \"Etna\", \"city\": \"Catania\", \"day\": 5}]}",
+  "pb08": "{\"summary\": \"What the document holds.\", \"bookings\": [{\"kind\": \"flight_home\", \"title\": \"Skylark Air CTA to CRL\", \"city\": \"Catania\", \"code\": \"ZR4M9T\", \"eur\": 121.5, \"date\": \"2027-05-19\", \"link\": \"https://www.skylark.example/manage/ZR4M9T\"}], \"activities\": []}",
+  "pb09": "{\"summary\": \"A newsletter about a sale; no booking or activity.\", \"bookings\": [], \"activities\": []}",
+  "pb10": "{\"summary\": \"What the document holds.\", \"bookings\": [{\"kind\": \"stay\", \"title\": \"Hotel De Gouden Leeuw\", \"city\": \"Amsterdam\", \"code\": \"NL4410\", \"eur\": 268, \"date\": \"2027-06-02\"}], \"activities\": []}"
+ }
+}

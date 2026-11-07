@@ -34,7 +34,7 @@ What to read for what. Built by T1073 (ROADMAP B2). Every session reads CLAUDE.m
 | `runbooks/` | Deploy, build box, backup, incident (B2); refund not written yet |
 | `glossary.md` | Real (B2) |
 | `logic/` | Logic catalogue (B3), one file per domain: rule, constant, test; index in `logic/README.md` |
-| `ai/` | Stub, filled by B3 and Track E |
+| `ai/` | Model cards, the taxonomy and the model strategy (`ai/model-strategy.md`, with `continent-app/config/ai_models.json`); index in `ai/README.md`. Every model prompt lives in `../prompts/` (the prompt registry, HANDBOOK "Prompt registry") |
 | `reference/` | Generated, never edited by hand: `config.md`, every config key with its readers (B4, T1165); `python.md`, `app-lib.md`, `tasks.md`, `supabase.md` (B6, T1167); site config `mkdocs.yml` |
 | `security/` | Track C (another task); not written by B2 |
 | `design/` | The design direction (G1, `direction.md`, draft for owner approval); G10's a11y audit lands here |

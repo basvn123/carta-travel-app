@@ -35,6 +35,12 @@ rejects anonymous callers anyway, but the gateway check is a free first wall.
 | `GEMINI_MODEL` | `gemini-flash-latest` | Pin the model tried FIRST if the alias moves under you. The default fallbacks stay behind it. |
 | `GEMINI_MODELS` | (unset) | Comma separated chain that replaces the default outright, e.g. `gemini-3.5-flash-lite,gemini-3.1-flash-lite`. Max 6. |
 | `AI_GLOBAL_DAILY_CAP` | `200` | Generations across all users per day, the abuse backstop. The 200 default applies only when the secret is unset; setting it high effectively removes the backstop. |
+| `AI_PLAN_DAY_PROVIDER` | `gemini` | The model provider (T1137 gateway, `_shared/aiModels.mjs`): `gemini`, `workers-ai` or `openai`. A switch changes which model answers travellers: the owner's call, with an eval run (`docs/ai/model-strategy.md`). |
+| `AI_PLAN_DAY_MODELS` | the provider's default chain | Comma separated chain for this function only, first model first, max 6. |
+| `AI_PLAN_DAY_BASE_URL` | (unset) | Provider `openai` only: the OpenAI-compatible server. `AI_OPENAI_BASE_URL` is the fallback for every function. |
+| `AI_OPENAI_API_KEY` | (unset) | Provider `openai` only: its key (a secret, see `docs/security/SECRETS.md`). |
+| `CF_ACCOUNT_ID`, `CF_AI_TOKEN` | (unset) | Provider `workers-ai` only: the account and an API token scoped to Workers AI (secrets). |
+| `AI_TRACE_LANGFUSE` (+ `LANGFUSE_HOST`, `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`) | off | `on` sends each call's metadata (no prompt or answer text) to Langfuse on the build box (T1139). |
 
 Per-user caps are rows in `public.plan_tiers` (migration 007), not env vars.
 The old `AI_USER_DAILY_CAP` secret is dead: no function reads it.

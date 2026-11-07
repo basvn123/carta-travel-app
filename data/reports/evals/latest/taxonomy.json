@@ -3,8 +3,8 @@
  "eval": "taxonomy",
  "title": "Taxonomy tagging (P@5, F1)",
  "kind": "classification",
- "at": "2026-11-07T11:09:41.863Z",
- "git": "d85cbd728a",
+ "at": "2026-11-07T12:21:54.590Z",
+ "git": "1a63861c64",
  "status": "pass",
  "gated": true,
  "headline": {
@@ -47,7 +47,7 @@
   "taxonomy_version": "1.0.0",
   "gold": "continent-app/scripts/eval/taxonomy/seed-gold.csv",
   "predictions": "baseline",
-  "seconds": 3.5
+  "seconds": 4.1
  },
  "notes": [
   "Scored on the 15-item seed set (seed-gold.csv, labelled by the T1149 session): the eval runs, the numbers mean nothing until the owner fills gold.csv (400 rows, T1149-a).",

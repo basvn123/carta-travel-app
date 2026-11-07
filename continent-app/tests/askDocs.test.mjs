@@ -44,7 +44,7 @@ test('groundingCheck: catches a missing mark, a bad mark and an invented number'
   assert.equal(core.groundingCheck({ abstained: false, text: 'It keeps 30 copies. [1]', citations: c }).ok, false);
 });
 
-test('the docs site copy of the core is the script (run: cp scripts/docs/ask_docs_core.js docs/assets/ask-docs/core.js)', () => {
+test('the docs site copy of the core is the script (run: node scripts/docs/ask_docs.mjs build, which copies it)', () => {
   const a = readFileSync(new URL('../../scripts/docs/ask_docs_core.js', import.meta.url), 'utf8');
   const b = readFileSync(new URL('../../docs/assets/ask-docs/core.js', import.meta.url), 'utf8');
   assert.equal(a, b);

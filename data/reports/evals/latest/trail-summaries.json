@@ -3,8 +3,8 @@
  "eval": "trail-summaries",
  "title": "Trail summaries fact check",
  "kind": "text-check",
- "at": "2026-11-07T11:09:31.845Z",
- "git": "d85cbd728a",
+ "at": "2026-11-07T12:21:42.365Z",
+ "git": "1a63861c64",
  "status": "pass",
  "gated": true,
  "headline": {
@@ -46,7 +46,7 @@
   "scope": "top band (v5 exceptional, excellent)",
   "wire": "continent-app/public/trails",
   "wire_generated_at": "2026-09-13T19:17:15+00:00",
-  "seconds": 2.5
+  "seconds": 2.8
  },
  "notes": []
 }

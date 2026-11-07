@@ -36,6 +36,10 @@ Keep it true: a task that adds, renames or moves a secret updates its row in the
 | `INGEST_TOKEN` / `CARTA_SWEEP_INGEST_TOKEN` | flight-sweep Worker | Worker secret; Hetzner box `.env` | `workers/flight-sweep` ingest, the late sweep | High: lets someone write fares | Not recorded |
 | `HTTPS_PROXY` / `HTTP_PROXY` | Proxy provider | Worker and box env | flight sweep | High if the URL holds a password | Not recorded |
 | `GEMINI_API_KEY` | Google AI | Supabase secret; GitHub secret; Hetzner box; laptop `.env`; `supabase/.env.local` | `plan-day`, `parse-booking`, `suggest-city`, golden-set workflow, pipeline | High: billed usage. In five places, the widest spread | Not recorded |
+| `AI_OPENAI_API_KEY` | An OpenAI-compatible model API (Scaleway, OVHcloud, Mistral) | Supabase secret or Pages secret, only when a feature is switched to provider `openai`; Hetzner box `.env` for a pipeline job on it | `aiModels.mjs` (Edge Functions, Ask) and `pipeline/ai_gateway.py`, provider `openai` | High: billed usage. Not set today (no feature uses the provider) | Not set |
+| `CF_ACCOUNT_ID`, `CF_AI_TOKEN` | Cloudflare Workers AI (REST) | Supabase secret, only when an Edge Function feature is switched to provider `workers-ai`; Hetzner box `.env` for a pipeline job | `aiModels.mjs` outside a Worker (Ask on Pages uses the `AI` binding and needs neither), `pipeline/ai_gateway.py` | High: the token spends Neurons on the account. Scope it to Workers AI only. Not set today | Not set |
+| `AI_EVENTS_SALT` | Carta (a random 32 character string the owner makes) | Pages secret | Ask (`/api/ask/answer`) salts the question hash in `ai_model_events` with it | Medium: with the salt, a guessed question can be matched to its hash; without it the hash is not reversible | Not set yet (T1139-b) |
+| `LANGFUSE_HOST`, `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` | Langfuse on the build box (optional) | Supabase secret and Pages secret, only with `AI_TRACE_LANGFUSE=on` | `aiEvents.mjs` (metadata only, no prompt or answer text) | Medium: write access to the trace store | Not set |
 | `RESEND_API_KEY`, `NOTIFY_SECRET` | Resend email | Supabase secret | `notify` (price-drop email) | High: mail sent as Carta | Not set yet (T944-b) |
 | `WAITLIST_SECRET`, `WAITLIST_FROM` (and the same `RESEND_API_KEY`) | Carta (a long random string the owner makes); Resend | Supabase Edge Function secrets | `waitlist` signs the confirm and unsubscribe links with it and sends the confirmation mail from `WAITLIST_FROM` | High: whoever holds the secret can confirm or unsubscribe any address; the key sends mail as Carta | Not set yet (T1110-b) |
 | `UPLOADS_SCAN_SECRET` | Carta (a long random string the owner makes) | Supabase Edge Function secret | `upload-scan` checks it against the `x-uploads-secret` header of every call | High: whoever holds it can trigger scan and purge runs (the function only scans pending uploads and deletes queued files; it publishes nothing) | Not set yet (061 not applied, T1070-a) |
@@ -48,6 +52,20 @@ Keep it true: a task that adds, renames or moves a secret updates its row in the
 | `CARTA_SEARCH_KEY` (+ `CARTA_SEARCH_CX`) | Web search provider | Hetzner box `.env` | pipeline research tasks | High: billed | Not recorded |
 | `SUPABASE_ANON_KEY`, `VITE_SUPABASE_ANON_KEY`, `VITE_SUPABASE_URL` | Supabase | Pages build env; GitHub secret; app `.env` | the browser app | Public by design (row policies guard the data) | n/a |
 | `VITE_TP_MARKER`, `VITE_OMIO_TRACKING_LINK`, `VITE_VIATOR_PID`, `VITE_GYG_PARTNER_ID`, `VITE_SKYSCANNER_PARTNER_ID` | Affiliates | Pages build env | the browser app | Public affiliate ids | n/a |
+
+**AI gateway settings (T1137, T1139).** Every model call reads its provider and chain from config, so a switch is a setting, not a code change. These are not secrets, but they live beside the keys (Supabase secrets for the Edge Functions, Pages env for Ask, the box `.env` for the pipeline), and changing one changes which model answers travellers: a provider or model switch is the owner's call with an eval run (`docs/ai/model-strategy.md`). `<FEATURE>` is the feature name in upper case with `-` as `_`: `PLAN_DAY`, `SUGGEST_CITY`, `PARSE_BOOKING`, `ASK`, `EVAL_JUDGE` (Edge Functions and Ask, `aiModels.mjs`) and `INTROS`, `PARKING`, `TRIPS`, `LEXICON`, `TAGGING`, `SUMMARIES`, `BLOG` (pipeline, `pipeline/ai_gateway.py`).
+
+| Name | Meaning |
+|---|---|
+| `AI_<FEATURE>_PROVIDER` | `gemini`, `workers-ai` or `openai` (the pipeline adds `ollama` and `box`). Unset: the feature's default. |
+| `AI_<FEATURE>_MODELS` | Comma separated model chain, first model first, at most 6. |
+| `AI_<FEATURE>_BASE_URL` | The server for provider `openai` (and `ollama`, `box` in the pipeline). `AI_OPENAI_BASE_URL` is the fallback for every feature. |
+| `GEMINI_MODELS`, `GEMINI_MODEL` | The older Gemini overrides: replace the chain, or put one model first. |
+| `AI_BOX_BASE_URL`, `AI_BOX_EVAL_RUN` | Pipeline only: the llama.cpp server on the box, and `1` to let an eval run use it before the job passed. |
+| `AI_EVENTS_JSONL` | Pipeline only: a file the gateway appends one event line per call to. |
+| `AI_TRACE_LANGFUSE` | `on` turns the Langfuse export on (with the three `LANGFUSE_*` keys above). |
+
+A value naming the Claude API (`anthropic`, `claude`) is refused as a config error.
 
 **Rotating the upload scan secret (T1081).** `UPLOADS_SCAN_SECRET` and the vault secret `uploads_scan_secret` hold one value and must change together, or every scheduled run is refused with 401 and uploads wait in pending. Make a new long random string, then in one sitting: set it as the Edge Function secret (Dashboard, Edge Functions, Secrets, or `supabase secrets set`), then update the vault row (`select vault.update_secret(id, '<new>') from vault.secrets where name = 'uploads_scan_secret'` in the SQL editor), then confirm the next quarter-hour run answers 200 in the function logs. A run that falls between the two steps fails once and is retried by the next. Rotate on any suspected exposure and at least yearly; `uploads_scan_url` changes only if the project or the function name does. The setup order is `Execution/P15/_OPEN-uploads.md`.
 

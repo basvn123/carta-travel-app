@@ -93,3 +93,16 @@ test("held-out set: question type and slots", { skip: !HAVE && "public/app_data.
   assert.ok(r.typeAcc >= 0.85, `type accuracy ${r.summary}`);
   assert.ok(r.slotAcc >= 0.8, `slot accuracy ${r.summary}`);
 });
+
+// T1141-i: Dutch "meer" is a lake, German "Meer" the sea; one word is one reading.
+test("a lake read from \"meer\" is not also the sea", { skip: !HAVE && "public/app_data.json not on this machine" }, () => {
+  const c = ctx();
+  const now = new Date("2026-11-06T12:00:00");
+  const read = (q, lang) => parseIntent(q, { vocab: buildAskVocab({ ...c, lang }), lang, now }).facets;
+  const nl = read("rustig dorp aan een meer", "nl");
+  assert.equal(nl.vibe, "lake");
+  assert.ok(!nl.nb?.includes("beach"), `nb ${JSON.stringify(nl.nb)}`);
+  assert.equal(read("Strandurlaub am Meer in Portugal", "de").vibe, "beach");
+  // Two words, two readings: the sea beside a lake still asks for both.
+  assert.deepEqual(read("lake town near the beach", "en").nb, ["lake"]);
+});

@@ -194,11 +194,12 @@ Deno.serve(withCors(async (req) => {
   }
 
   // ---- the one AI call ----
+  // One nonce per call: the data blocks in the prompt and the security rules share it (T1206).
+  const nonce = makeNonce();
   const prompt = buildPrompt({
     stayLabel: stay ? 'their stay' : 'the area', focus, interests, freeText, lang, candidates,
-    groundedFormat: useGrounding,
+    groundedFormat: useGrounding, nonce,
   });
-  const nonce = makeNonce();
   const security = systemRules(nonce);
   if (prompt.length > LIMITS.cityPromptChars) return await failed(400, { code: 'too_big' });
   const ai = await callModel({

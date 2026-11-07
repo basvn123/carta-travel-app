@@ -4,6 +4,7 @@ import {
   adminEdgeErrors, adminHealth, adminLaunchMetrics, adminListContentReports, adminOssThreshold,
   adminParseFailures, adminPaywallFunnel, adminPipelineHealth, adminStats,
 } from '../../auth/admin.js';
+import { useAiCalls } from './useAiCalls.js';
 
 // Everything the Overview tab shows except the margin, which has its own
 // month argument, and the audit strip. Fetched once at unlock.
@@ -29,6 +30,8 @@ export function useOverview(unlocked) {
   // DSA notices still marked new, so the Reports tab can carry a count
   // without being opened (T068-b). Only the count; the queue loads on its tab.
   const [newReports, setNewReports] = useState(null);
+  // Model calls by week (E4, T1139). null before migration 071 is pasted.
+  const aiCalls = useAiCalls(unlocked);
 
   useEffect(() => {
     if (!unlocked) return;
@@ -58,7 +61,7 @@ export function useOverview(unlocked) {
 
   return {
     stats, health, analytics, funnel, modelReport, cacheReport, aiUsage,
-    pipelineHealth, edgeErrors, parseFailures, oss, launch, channels, funnelWeekly, newReports,
+    pipelineHealth, edgeErrors, parseFailures, oss, launch, channels, funnelWeekly, newReports, aiCalls,
     refreshStats, refreshAnalytics,
   };
 }

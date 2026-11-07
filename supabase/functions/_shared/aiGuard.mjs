@@ -16,12 +16,15 @@
  *           scrubData drops the sentences that carry it; dataBlock fences
  *           what is left between per-call random markers the data cannot
  *           close; SYSTEM_RULES go in the system slot, where nothing in the
- *           data may override them.
+ *           data may override them. scrubPii takes e-mail addresses, phone
+ *           numbers, IBANs and card numbers out of traveller text (T1206).
  *   Output  Every model answer passes a shape check (rejected when the
  *           shape is wrong, repaired when only a field is) and a text check:
  *           URLs, markup, e-mail addresses and phone numbers are stripped;
  *           a prompt leak, the canary, chat-template tokens or an echoed
- *           injection empties the field (or ends an Ask stream).
+ *           injection empties the field (or ends an Ask stream). Em and
+ *           en dashes become house style (fixDashes); houseStyleIssues
+ *           reports banned words (T1206).
  *   Limits  LIMITS caps what one call may send and take back.
  *
  * What it does not do: decide whether a fact is true (verify.js and agree.js
@@ -122,9 +125,40 @@ export function scanInjection(text) {
   return { hit: rules.length > 0, rules };
 }
 
-/** Sentences (and lines) of a text, keeping their end marks. */
-function sentencesOf(text) {
-  return String(text).match(/[^.!?\n]+(?:[.!?]+|\n|$)|[.!?\n]+/g) || [];
+/**
+ * Sentences (and lines) of a text, keeping their end marks. A sentence ends
+ * at . ! or ? followed by white space or the end, or at a line break; the
+ * dot inside a domain, a path or a number ("evil.example/collect", "2.30")
+ * does not end one, so an injected URL is scrubbed with the rest of its
+ * sentence (T1206, register row T1137-d, attack city-04).
+ */
+export function sentencesOf(text) {
+  const s = String(text);
+  const out = [];
+  const END = /[.!?]+(?=\s|$)|\n/g;
+  let from = 0;
+  for (let m = END.exec(s); m; m = END.exec(s)) {
+    const to = m.index + m[0].length;
+    out.push(s.slice(from, to));
+    from = to;
+  }
+  if (from < s.length) out.push(s.slice(from));
+  return out;
+}
+
+/** Pieces of a sentence cut at every . ! or ?, the dot of a domain included. */
+const piecesOf = (s) => String(s).match(/[^.!?\n]+(?:[.!?]+|\n|$)|[.!?\n]+/g) || [];
+
+/** The longest head of a hit sentence that does not hit, ending at a space; '' when there is none. */
+function cleanHead(sentence) {
+  let head = '';
+  for (const piece of piecesOf(sentence)) {
+    if (scanInjection(head + piece).hit) break;
+    head += piece;
+  }
+  if (head.length === sentence.length) return '';
+  const cut = head.search(/\s\S*$/);
+  return (cut >= 0 ? head.slice(0, cut) : '').trim();
 }
 
 /**
@@ -141,8 +175,15 @@ export function scrubData(text, max = Infinity) {
   const kept = [];
   for (const s of sentencesOf(raw)) {
     const r = scanInjection(s);
-    if (r.hit) { removed += 1; r.rules.forEach((x) => rules.add(x)); continue; }
-    kept.push(s);
+    if (!r.hit) { kept.push(s); continue; }
+    removed += 1;
+    r.rules.forEach((x) => rules.add(x));
+    // Text with no sentence ends (a booking pasted on one line) is one long
+    // "sentence": keep its clean head, never its tail. The head is the
+    // longest run of pieces (cut at any . ! ?) that does not hit, cut back
+    // to the last space so no half URL or word is left.
+    const head = cleanHead(s);
+    if (head) kept.push(`${head} `);
   }
   let out = kept.join('').replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
   // A rule that only matched across two sentences: drop it all rather than guess.
@@ -181,6 +222,83 @@ const MARKUP_RE = /<(script|style|iframe|object)\b[\s\S]*?(?:<\/\1\s*>|$)|<\/?[a
 const EMAIL_RE = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
 const PHONE_RE = /(?:\+|\b00)\d{1,3}(?:[\s.()-]*\d){6,}/g;
 const HIJACK_RE = /\bpwned\b|\bhacked\b|\bi (have been|was|am) (hacked|pwned|jailbroken|freed)\b|\bdeveloper mode (is )?(enabled|on|active)\b|\bdan mode\b|\bas an ai (language )?model\b|\bmy (system )?(prompt|instructions) (is|are|say|says)\b|\bi (will|shall|must) (now )?ignore\b/;
+
+/* ---- input: personal data (T1206, ROADMAP E3 "PII scrub") ---- */
+
+const IBAN_RE = /\b[A-Z]{2}\d{2}(?: ?[A-Z0-9]{4}){2,7}(?: ?[A-Z0-9]{1,4})?\b/g;
+const CARD_RE = /\b[3-6]\d{2,3}(?:[ -]?\d{3,4}){2,4}\b/g;
+
+/** A payment card number: 15 or 16 digits that pass the Luhn check. */
+function isCard(m) {
+  const d = m.replace(/\D/g, '');
+  if (d.length < 15 || d.length > 16) return false;
+  let sum = 0;
+  for (let i = 0; i < d.length; i++) {
+    let x = Number(d[d.length - 1 - i]);
+    if (i % 2) { x *= 2; if (x > 9) x -= 9; }
+    sum += x;
+  }
+  return sum % 10 === 0;
+}
+
+/** An IBAN: country, check digits and account that pass the mod 97 check. */
+function isIban(m) {
+  const c = m.replace(/ /g, '');
+  if (c.length < 15 || c.length > 34) return false;
+  const n = (c.slice(4) + c.slice(0, 4)).replace(/[A-Z]/g, (ch) => String(ch.charCodeAt(0) - 55));
+  let r = 0;
+  for (const ch of n) r = (r * 10 + Number(ch)) % 97;
+  return r === 1;
+}
+
+/**
+ * Traveller text with the personal data a model never needs taken out:
+ * e-mail addresses, international phone numbers (+ or 00), IBANs and payment
+ * card numbers become a bracketed word. Booking codes, dates, times and
+ * prices are left alone (a card needs 15 or 16 digits that pass Luhn, an
+ * IBAN its mod 97 check). Names are not found: a name is not a pattern.
+ * Returns { text, pii }, pii the kinds found.
+ */
+export function scrubPii(text) {
+  const found = new Set();
+  const out = String(text ?? '')
+    .replace(EMAIL_RE, () => { found.add('email'); return '[email]'; })
+    .replace(IBAN_RE, (m) => (isIban(m) ? (found.add('iban'), '[iban]') : m))
+    .replace(CARD_RE, (m) => (isCard(m) ? (found.add('card'), '[card]') : m))
+    .replace(PHONE_RE, () => { found.add('phone'); return '[phone]'; });
+  return { text: out, pii: [...found] };
+}
+
+/* ---- output: house style (T1206, ROADMAP E3 "banned terms and no dashes") ---- */
+
+/**
+ * Em and en dashes out, the way the app's stripDashes does it
+ * (continent-app/src/lib/format.js, PRODUCT.md): a range between figures
+ * becomes "to" or a hyphen, a tight join a hyphen, a spaced dash a comma.
+ */
+export function fixDashes(text) {
+  return String(text ?? '')
+    .replace(/(\d)\s*[\u2014\u2013]\s*([€$£]\s?\d)/g, '$1 to $2')
+    .replace(/(\d)\s*[\u2014\u2013]\s*(\d)/g, '$1-$2')
+    .replace(/(\w)[\u2014\u2013](\w)/g, '$1-$2')
+    .replace(/\s*[\u2014\u2013]\s*/g, ', ');
+}
+
+/** PRODUCT.md's banned words. */
+export const BANNED_TERMS = ['seamless', 'unlock', 'effortless', 'elevate', 'leverage', 'empower', 'curated', 'simply', 'just', 'easy'];
+const BANNED_RE = new RegExp(`\\b(${BANNED_TERMS.join('|')})\\b`, 'gi');
+
+/**
+ * The house-style faults of a model text: { dashes, banned }, banned the
+ * banned words it uses (lower case, once each). Reported, not repaired:
+ * what to do with a banned word (drop the field, ask again, rewrite) is a
+ * product call that is still open (register row from T1206).
+ */
+export function houseStyleIssues(text) {
+  const s = String(text ?? '');
+  const banned = [...new Set((s.match(BANNED_RE) || []).map((w) => w.toLowerCase()))];
+  return { dashes: (s.match(/[\u2014\u2013]/g) || []).length, banned };
+}
 
 const words = (s) => foldForScan(s).replace(/[^\p{L}\p{N} ]+/gu, ' ').split(' ').filter(Boolean);
 /** Six-word runs of the system text: any of them in an answer is a prompt leak. */
@@ -231,9 +349,12 @@ const SEVERE = new Set(['leak', 'canary', 'template', 'hijack', 'injection']);
 export function repairText(text, { max = 400, shingles = null } = {}) {
   const raw = stripInvisible(text);
   const r = scanOutput(raw, { shingles });
-  if (r.ok) return { text: raw.slice(0, max), issues: [] };
   if (r.severe) return { text: '', issues: r.issues };
-  const out = raw
+  // House style (PRODUCT.md): no em or en dash in anything a traveller reads.
+  const dashed = fixDashes(raw);
+  const dashIssue = dashed !== raw ? ['dash'] : [];
+  if (r.ok) return { text: dashed.slice(0, max), issues: dashIssue };
+  const out = dashed
     .replace(MD_LINK_RE, ' ')
     .replace(MARKUP_RE, ' ')
     .replace(URL_RE, ' ')
@@ -242,7 +363,7 @@ export function repairText(text, { max = 400, shingles = null } = {}) {
     .replace(/\s+([,.;:!?])/g, '$1')
     .replace(/\s{2,}/g, ' ')
     .trim();
-  return { text: out.slice(0, max), issues: r.issues };
+  return { text: out.slice(0, max), issues: [...r.issues, ...dashIssue] };
 }
 
 /* ---- Ask: the streamed answer ---- */
@@ -270,7 +391,7 @@ export function makeStreamGuard({ systemText = '', maxChars = LIMITS.askOutputCh
     if (!r.ok) { state.dropped += 1; state.issues.push(...r.issues); return ''; }
     if (sent + chunk.length > maxChars) { state.cut = true; return ''; }
     sent += chunk.length;
-    return chunk;
+    return fixDashes(chunk);
   };
   const take = (chunk) => {
     if (held) {
@@ -337,19 +458,22 @@ const STOP_OPTIONAL = { id: 'string', isEvent: 'boolean', lat: 'number', lon: 'n
 
 /**
  * plan-day's traveller and client-sent fields, scrubbed before the cache key
- * and the prompt. A field that was only an injection becomes empty; a
+ * and the prompt (injections out, then personal data: scrubPii). A field that was only an injection becomes empty; a
  * candidate whose name is one is dropped (its description is just cleared).
  * @template {{ name: string }} M
  * @template {{ name: string, kind?: string, desc?: string }} C
  * @param {{ city?: string, country?: string, freeText?: string, refine?: string, prevStops?: string[], mustInclude?: M[], candidates?: C[] }} p
- * @returns {{ badDest: boolean, freeText: string, refine: string, prevStops: string[], mustInclude: M[], candidates: C[], flags: string[] }}
+ * @returns {{ badDest: boolean, freeText: string, refine: string, prevStops: string[], mustInclude: M[], candidates: C[], flags: string[], pii: string[] }}
  */
 export function guardPlanInput({ city = '', country = '', freeText = '', refine = '', prevStops = [], mustInclude = [], candidates = [] }) {
   const flags = [];
+  const pii = new Set();
   const scrub = (field, v, max) => {
     const r = scrubData(v, max);
     if (r.hit) flags.push(field);
-    return r.text;
+    const p = scrubPii(r.text);
+    p.pii.forEach((k) => pii.add(k));
+    return p.text;
   };
   const badDest = scanInjection(city).hit || scanInjection(country).hit;
   if (badDest) flags.push('dest');
@@ -363,7 +487,7 @@ export function guardPlanInput({ city = '', country = '', freeText = '', refine 
       .filter((c) => { const h = scanInjection(c.name).hit || scanInjection(c.kind).hit; if (h) flags.push('candidate'); return !h; })
       .map((c) => (c.desc && scanInjection(c.desc).hit ? (flags.push('candidateDesc'), { ...c, desc: '' }) : c)),
   };
-  return { ...out, flags: [...new Set(flags)] };
+  return { ...out, flags: [...new Set(flags)], pii: [...pii] };
 }
 
 /**
@@ -439,24 +563,28 @@ export function guardPlanPayload(payload) {
 /* ---- parse-booking ---- */
 
 /**
- * The booking texts and trip context, scrubbed before the cache key and the prompt.
+ * The booking texts and trip context, scrubbed before the cache key and the
+ * prompt (injections out, then personal data: scrubPii).
  * @template {{ stops: { city: string, country?: string }[] }} T
  * @param {{ texts?: string[], context?: T }} p
- * @returns {{ texts: string[], context: T, flags: string[] }}
+ * @returns {{ texts: string[], context: T, flags: string[], pii: string[] }}
  */
 export function guardBookingInput({ texts = [], context = /** @type {any} */ ({ stops: [] }) }) {
   const flags = [];
+  const pii = new Set();
   const out = texts.map((t) => {
     const r = scrubData(t);
     if (r.hit) flags.push(...r.rules);
-    return r.text;
+    const p = scrubPii(r.text);
+    p.pii.forEach((k) => pii.add(k));
+    return p.text;
   });
   const stops = (context.stops || []).filter((s) => {
     const h = scanInjection(s.city).hit || scanInjection(s.country).hit;
     if (h) flags.push('context');
     return !h;
   });
-  return { texts: out, context: { ...context, stops }, flags: [...new Set(flags)] };
+  return { texts: out, context: { ...context, stops }, flags: [...new Set(flags)], pii: [...pii] };
 }
 
 const squash = (s) => String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -516,18 +644,19 @@ export function guardBookingPayload(payload) {
  * country or a tag is an injection is dropped.
  * @template {{ name: string, country?: string, tags?: string[] }} C
  * @param {{ freeText?: string, candidates?: C[] }} p
- * @returns {{ freeText: string, candidates: C[], flags: string[] }}
+ * @returns {{ freeText: string, candidates: C[], flags: string[], pii: string[] }}
  */
 export function guardCityInput({ freeText = '', candidates = [] }) {
   const flags = [];
   const r = scrubData(freeText, LIMITS.planFreeText);
   if (r.hit) flags.push('freeText');
+  const p = scrubPii(r.text);
   const kept = candidates.filter((c) => {
     const h = [c.name, c.country, ...(c.tags || [])].some((t) => scanInjection(t).hit);
     if (h) flags.push('candidate');
     return !h;
   });
-  return { freeText: r.text, candidates: kept, flags: [...new Set(flags)] };
+  return { freeText: p.text, candidates: kept, flags: [...new Set(flags)], pii: p.pii };
 }
 
 /**

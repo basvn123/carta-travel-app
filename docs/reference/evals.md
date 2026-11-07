@@ -8,42 +8,46 @@ How the evals work is in the "Evals" section of `docs/HANDBOOK.md`.
 
 | Eval | Status | Gated | Headline | Latest | Trend (oldest to newest, last 20 runs) | Runs | Last run |
 |---|---|---|---|---|---|---|---|
-| Ask retrieval and grounding (`ask`) | pass | yes | nDCG@10, rules path | 60.0% | ██ (60.0% to 60.0%) | 2 | 2026-11-07 11:09 UTC, `d85cbd728a` |
-| Trail summaries fact check (`trail-summaries`) | pass | yes | summaries that pass every check | 100.0% | ██ (100.0% to 100.0%) | 2 | 2026-11-07 11:09 UTC, `d85cbd728a` |
-| Data quality gate (`data-quality`) | pass | yes | quality rules met | 100.0% | ██ (100.0% to 100.0%) | 2 | 2026-11-07 11:09 UTC, `d85cbd728a` |
-| Plan-day plans and judge (`plan-day`) | pass | no | plans meeting every rule (reference planner) | 100.0% | ██ (100.0% to 100.0%) | 2 | 2026-11-07 11:09 UTC, `d85cbd728a` |
-| Taxonomy tagging (P@5, F1) (`taxonomy`) | pass | yes | R-precision at 5 (P@5 capped at the gold count) | 43.3% | one run so far  | 1 | 2026-11-07 11:09 UTC, `d85cbd728a` |
-| Trails external check (`trails-external`) | pass | yes | reference trails Carta publishes | 55.7% | one run so far  | 1 | 2026-11-07 11:09 UTC, `d85cbd728a` |
-| Truth set (`truth`) | pass | no | answered truth-set rows the data gets right | 95.6% | one run so far  | 1 | 2026-11-07 11:09 UTC, `d85cbd728a` |
-| Place linking (MRR, accuracy@1) (`linking`) | pass | yes | accuracy@1 of the place linker on 300 messy mentions | 99.3% | one run so far  | 1 | 2026-11-07 11:09 UTC, `d85cbd728a` |
-| Ask the docs (recall, grounding, abstention) (`ask-docs`) | pass | yes | recall@5 of the right doc on 48 doc questions | 97.9% | one run so far  | 1 | 2026-11-07 11:09 UTC, `d85cbd728a` |
+| Ask retrieval and grounding (`ask`) | pass | yes | nDCG@10, rules path | 60.3% | ▁▁█ (60.0% to 60.3%) | 3 | 2026-11-07 12:21 UTC, `1a63861c64` |
+| Trail summaries fact check (`trail-summaries`) | pass | yes | summaries that pass every check | 100.0% | ███ (100.0% to 100.0%) | 3 | 2026-11-07 12:21 UTC, `1a63861c64` |
+| Data quality gate (`data-quality`) | pass | yes | quality rules met | 100.0% | ███ (100.0% to 100.0%) | 3 | 2026-11-07 12:21 UTC, `1a63861c64` |
+| Plan-day plans and judge (`plan-day`) | pass | no | plans meeting every rule (reference planner) | 100.0% | ███ (100.0% to 100.0%) | 3 | 2026-11-07 12:21 UTC, `1a63861c64` |
+| Taxonomy tagging (P@5, F1) (`taxonomy`) | pass | yes | R-precision at 5 (P@5 capped at the gold count) | 43.3% | ██ (43.3% to 43.3%) | 2 | 2026-11-07 12:21 UTC, `1a63861c64` |
+| Trails external check (`trails-external`) | pass | yes | reference trails Carta publishes | 55.7% | ██ (55.7% to 55.7%) | 2 | 2026-11-07 12:22 UTC, `1a63861c64` |
+| Truth set (`truth`) | pass | no | answered truth-set rows the data gets right | 95.6% | ██ (95.6% to 95.6%) | 2 | 2026-11-07 12:22 UTC, `1a63861c64` |
+| Place linking (MRR, accuracy@1) (`linking`) | pass | yes | accuracy@1 of the place linker on 300 messy mentions | 99.3% | ██ (99.3% to 99.3%) | 2 | 2026-11-07 12:22 UTC, `1a63861c64` |
+| Ask the docs (recall, grounding, abstention) (`ask-docs`) | pass | yes | recall@5 of the right doc on 48 doc questions | 97.9% | ██ (97.9% to 97.9%) | 2 | 2026-11-07 12:22 UTC, `1a63861c64` |
+| Prompt injection set (attacks blocked) (`injection`) | pass | yes | attacks blocked (75 recorded attacks, 5 surfaces) | 100.0% | one run so far  | 1 | 2026-11-07 12:22 UTC, `1a63861c64` |
+| Trips generator golden set and self-tests (offline) (`trips-golden`) | pass | yes | offline Trips checks that pass (two self-tests, the baseline stamp) | 100.0% | one run so far  | 1 | 2026-11-07 12:22 UTC, `1a63861c64` |
+| Parse-booking fields on synthetic documents (`parse-booking`) | pass | yes | booking fields right (reference answers) | 100.0% | one run so far  | 1 | 2026-11-07 12:22 UTC, `1a63861c64` |
+| Suggest-city rules and wish fit on fixture decks (`suggest-city`) | pass | yes | cases meeting every rule (reference answers) | 100.0% | one run so far  | 1 | 2026-11-07 12:22 UTC, `1a63861c64` |
 
 ## Ask retrieval and grounding
 
-Gate: every gated number within the tolerance of scripts/eval/ask-baseline.json, tolerance 0.02, against continent-app/scripts/eval/ask-baseline.json (blessed 2026-11-06). Result: **ok**.
+Gate: every gated number within the tolerance of scripts/eval/ask-baseline.json, tolerance 0.02, against continent-app/scripts/eval/ask-baseline.json (blessed 2026-11-07). Result: **ok**.
 
-Cases: 193 of 200 pass.
+Cases: 200 of 200 pass.
 
 | Metric | Value |
 |---|---|
 | n | 200 |
 | retrievers.rules.cases | 142 |
-| retrievers.rules.recall@5 | 0.5789 |
+| retrievers.rules.recall@5 | 0.5803 |
 | retrievers.rules.hit@5 | 0.9155 |
-| retrievers.rules.recall@10 | 0.5682 |
+| retrievers.rules.recall@10 | 0.5717 |
 | retrievers.rules.hit@10 | 0.9296 |
 | retrievers.rules.mrr | 0.8282 |
-| retrievers.rules.ndcg@10 | 0.6003 |
+| retrievers.rules.ndcg@10 | 0.6026 |
 | retrievers.rules.list | n/a |
-| retrievers.rules.grounding | 0.9956 |
+| retrievers.rules.grounding | 0.9985 |
 | retrievers.rules.checks | 689 |
 | retrievers.bm25.cases | 142 |
-| retrievers.bm25.recall@5 | 0.5849 |
+| retrievers.bm25.recall@5 | 0.5877 |
 | retrievers.bm25.hit@5 | 0.9155 |
-| retrievers.bm25.recall@10 | 0.576 |
+| retrievers.bm25.recall@10 | 0.5807 |
 | retrievers.bm25.hit@10 | 0.9225 |
 | retrievers.bm25.mrr | 0.838 |
-| retrievers.bm25.ndcg@10 | 0.6109 |
+| retrievers.bm25.ndcg@10 | 0.6141 |
 | retrievers.bm25.list.recall@5 | 0.3951 |
 | retrievers.bm25.list.hit@5 | 0.6972 |
 | retrievers.bm25.list.recall@10 | 0.4132 |
@@ -302,7 +306,7 @@ Cases: 54 of 56 pass.
 | n | 56 |
 | answerable | 48 |
 | unanswerable | 8 |
-| passages | 3711 |
+| passages | 3766 |
 | recall1 | 0.833 |
 | recall3 | 0.917 |
 | recall5 | 0.979 |
@@ -313,9 +317,93 @@ Cases: 54 of 56 pass.
 | nl_recall5 | 1 |
 | abstain | 0.875 |
 | grounded | 1 |
-| latency_ms.p50 | 2.15 |
-| latency_ms.p95 | 3.06 |
+| latency_ms.p50 | 2.203 |
+| latency_ms.p95 | 5.258 |
 
 Note: Misses: d31. Answered an unanswerable question: u03.
 
 Note: The question set was written by the session that built the feature (T1168): read recall as an upper bound until real questions are logged (T1168-d).
+
+## Prompt injection set (attacks blocked)
+
+Gate: every attack blocked and every other guard test passing, tolerance 0. Result: **ok**.
+
+Cases: 75 of 75 pass.
+
+| Metric | Value |
+|---|---|
+| blocked_share | 1 |
+| attacks | 75 |
+| blocked | 75 |
+| other_tests | 59 |
+| surface.ask.n | 22 |
+| surface.ask.blocked | 1 |
+| surface.plan-day.n | 15 |
+| surface.plan-day.blocked | 1 |
+| surface.parse-booking.n | 13 |
+| surface.parse-booking.blocked | 1 |
+| surface.suggest-city.n | 14 |
+| surface.suggest-city.blocked | 1 |
+| surface.pipeline.n | 11 |
+| surface.pipeline.blocked | 1 |
+
+Note: Scored against recorded worst-case outputs; the live red-team pass (scripts/ai/redteam_live.mjs) is an owner step.
+
+## Trips generator golden set and self-tests (offline)
+
+Gate: both self-tests pass and the stamp matches the baseline (or there is none yet), against Trips/carta-unified/carta-unified/golden/baseline.json. Result: **ok**.
+
+Cases: 3 of 3 pass.
+
+| Metric | Value |
+|---|---|
+| parts_pass | 1 |
+| golden_self_test.ok | 1 |
+| backfill_self_test.ok | 1 |
+| golden_check.ok | 1 |
+| baseline.present | 0 |
+| generate_self_test.ok | 0 |
+| generate_self_test.fails | 5 |
+
+Note: No golden baseline yet (golden/baseline.json): the first live run and bless is an owner step (needs a Gemini key).
+
+Note: Advisory, not gated: generate_trip.py self-test fails 5 check(s): model field photos is asked of no pass; model field highlights is asked of no pass; model field dayPlaces is asked of no pass; model field visits is asked of no pass; model field sample is asked of no pass
+
+## Parse-booking fields on synthetic documents
+
+Gate: every prompt check, booking field accuracy 0.9 or more, no invented link. Result: **ok**.
+
+Cases: 10 of 10 pass.
+
+| Metric | Value |
+|---|---|
+| field_accuracy | 1 |
+| activity_recall | 1 |
+| activity_day_accuracy | 1 |
+| invented | 0 |
+| invented_links | 0 |
+| repaired_fields | 1 |
+| prompt_check_fails | 0 |
+| docs | 10 |
+| gold_fields | 64 |
+
+Note: Reference answers: this checks the prompt and the shipped path, not a model. Record live answers and pass --answers to score one.
+
+## Suggest-city rules and wish fit on fixture decks
+
+Gate: every prompt and rule check on every case, wish precision 0.5 or more. Result: **ok**.
+
+Cases: 6 of 6 pass.
+
+| Metric | Value |
+|---|---|
+| rules_pass | 1 |
+| precision_good | 1 |
+| avoid_share | 0 |
+| top_fits | 1 |
+| dropped | 3 |
+| repaired | 1 |
+| prompt_check_fails | 0 |
+| cases | 6 |
+
+Note: Reference answers: this checks the prompt and the shipped path, not a model. Record live answers and pass --answers to score one.

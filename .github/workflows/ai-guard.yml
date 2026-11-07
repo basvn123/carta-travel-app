@@ -12,6 +12,9 @@ name: ai-guard
 #                                             attacks, the grep for direct provider calls,
 #                                             and the Python scanner's parity with aiGuard
 #   - tests/test_ai_gateway.py                pipeline/ai_gateway.py and the pipeline attacks
+#   - continent-app/scripts/ai/test_edge_exec.mjs  the real index.ts of plan-day, suggest-city
+#                                             and parse-booking against a stub Supabase and a
+#                                             stub Gemini: quota, fall-over, cache, events (T1206)
 #
 # The same node tests also run in ci.yml's `npm test` on every push, so a
 # direct provider call added anywhere fails CI even where this job's paths
@@ -31,6 +34,7 @@ on:
       - "continent-app/tests/aiGuard.test.mjs"
       - "continent-app/tests/aiGateway.test.mjs"
       - "tests/test_ai_gateway.py"
+      - "continent-app/scripts/ai/test_edge_exec.mjs"
       - ".github/workflows/ai-guard.yml"
   pull_request:
     paths:
@@ -46,6 +50,7 @@ on:
       - "continent-app/tests/aiGuard.test.mjs"
       - "continent-app/tests/aiGateway.test.mjs"
       - "tests/test_ai_gateway.py"
+      - "continent-app/scripts/ai/test_edge_exec.mjs"
       - ".github/workflows/ai-guard.yml"
   workflow_dispatch:
 
@@ -79,5 +84,8 @@ jobs:
       - name: Injection set, guard and gateway (node)
         working-directory: continent-app
         run: node --test --test-concurrency=1 tests/aiGuard.test.mjs tests/aiGateway.test.mjs
+      - name: Edge Functions executed against stubs (node)
+        working-directory: continent-app
+        run: node scripts/ai/test_edge_exec.mjs
       - name: Pipeline gateway and the pipeline attacks (python)
         run: python -m pytest tests/test_ai_gateway.py -q

@@ -92,11 +92,11 @@ export const planDay = {
   },
 };
 
-/** @type {Prompt} suggest-city v1 */
+/** @type {Prompt} suggest-city v2 */
 export const suggestCity = {
   id: "suggest-city",
-  version: 1,
-  sha256: "f380c4ff577b9f7e14eb302695f1f1258fdd8593aea670229784ff667c7b1056",
+  version: 2,
+  sha256: "c8733978d2c877ab6706dce55016141d33e9592eadddef5a25eeec63fcb85151",
   f: {
     "intro": "You are Carta's destination scout: given what a traveller wants, suggest up to 5 great towns or cities for a day trip from {{stayLabel}}.",
     "candidatesHeader": "CANDIDATES (JSON, real destinations Carta already has day-planning data for; id, name, country, distance in km from the stay, traveller rating 0-10 when known, descriptive tags):",
@@ -107,7 +107,7 @@ export const suggestCity = {
     "focus.nature": "- They lean toward nature: parks, water, viewpoints, green space over indoor city sights.",
     "focus.city": "- They lean toward the built city: streets, squares, architecture, museums.",
     "interests": "- What they care about most: {{interests}}.",
-    "wish": "- Their own wish, treat as the main brief: \"{{wish}}\".",
+    "wish": "- Their own wish (the WISH data block below), treat as the main brief:\n{{wishBlock}}",
     "noWish": "- No specific wish given beyond the mood above: pick well-rounded, strong fits.",
     "language": "- Write \"why\" and \"country\" in {{lang}}. Keep \"why\" to one short, concrete sentence.",
     "noDashes": "- Never use em dashes or en dashes in any text.",
