@@ -16,7 +16,7 @@ None chosen as a new tool, library, service or data source. Each method was alre
 
 ## Rows, one by one
 
-Group before: 43 open rows from T1179, T1181 to T1186 (30 `next task`, 13 `user`). After: 21 open (8 `next task`, 13 + 2 = 15 `user`), plus 3 new T1201 rows.
+Group before: 43 open rows from T1179, T1181 to T1186 (30 `next task`, 13 `user`). After: 23 open (8 `next task`, 13 + 2 = 15 `user`), plus 3 new T1201 rows.
 
 | Row | Outcome | What was done, or why it stays |
 |---|---|---|
@@ -89,7 +89,7 @@ New environment names, no values: `CARTA_TRAILSLAB_PUSH_DAYS` (blank = 21) and t
 
 | Metric | Before | After | Delta |
 |---|---|---|---|
-| Group rows open (T1179, T1181 to T1186) | 43 (30 next task, 13 user) | 21 (8 next task, 15 user) + 3 new T1201 rows | 20 closed, 2 moved to user |
+| Group rows open (T1179, T1181 to T1186) | 43 (30 next task, 13 user) | 23 (8 next task, 15 user) + 3 new T1201 rows | 20 closed, 2 moved to user |
 | Wire rows called a loop with ends more than 1 km apart (shipped wire) | 296 (`is_loop`), 295 (`f.rt` loop) | the trail page reads them as one way now; the pipeline writes them false at the next curate and attributes run | |
 | Walk summaries the export ships that are retired describe.py leads | 244 of 244 (41 with "easy") | 0 (`wire_summary` on the same rows) | -244 |
 | Lake highlights with a fountain, basin, harbour or pool name (name sample) | 790 of 10,090 | at the next scenic sweep (T1201-b) | |
