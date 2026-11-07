@@ -167,3 +167,41 @@ def test_t1181_seeds_are_new_ascii_and_placed():
             assert n.isascii(), n
             assert fr.SEEDS[cc].count(n) == 1, (cc, n)
             assert fr.squash(fr.base_name(n)) not in blind, (cc, n)
+
+
+# --- T1201 (T1181-k): a day walk on a longer published row ----------------
+
+def test_line_near_is_metres_to_the_segment():
+    ln = [(50.0, 0.0), (50.0, 0.1)]                 # about 7.2 km east-west
+    assert te.line_near_m(50.0, 0.05, ln) < 1
+    assert 1050 < te.line_near_m(50.01, 0.05, ln) < 1170   # 0.01 deg north
+    assert te.line_near_m(50.0, 0.0, []) == float("inf")
+
+
+def test_day_walk_found_on_a_longer_row_that_names_it(tmp_path):
+    wire = tmp_path / "trails"
+    (wire / "trip").mkdir(parents=True)
+    coast = row(10, "Coast Path: Portland to Lulworth", "GB", "excellent", 8.6,
+                line(50.60, -2.30, 50.62, -2.20), distance_m=30000)
+    lake = row(11, "Lakeside Way", "GB", "exceptional", 9.1,
+               line(54.50, -2.95, 54.50, -2.85), distance_m=30000)
+    (wire / "GB.json").write_text(json.dumps({"generated_at": "x", "trips": [coast, lake]}))
+    (wire / "trip" / "10.json").write_text(json.dumps({"highlights": [{"name": "Durdle Door"}]}))
+    (wire / "trip" / "11.json").write_text(json.dumps({"highlights": [{"name": "Aira Force"}]}))
+    refs = {"sources": [], "trails": [
+        {"id": "dd", "name": "Lulworth Cove to Durdle Door", "countries": ["GB"], "kind": "day",
+         "length_km": 3, "start": {"lat": 50.61, "lon": -2.25}},
+        {"id": "hv", "name": "Helvellyn via Striding Edge", "countries": ["GB"], "kind": "day",
+         "length_km": 13, "start": {"lat": 54.50, "lon": -2.90}},
+    ]}
+    (tmp_path / "ref.json").write_text(json.dumps(refs))
+    (tmp_path / "reg.json").write_text(json.dumps({"rows": []}))
+    (tmp_path / "cov.json").write_text(json.dumps({"rows": []}))
+    p = te.run(tmp_path / "ref.json", wire, tmp_path / "reg.json", tmp_path / "cov.json",
+               tmp_path / "base.json")
+    res = by_id(p)
+    assert res["dd"]["status"] == "matched"
+    assert res["dd"]["methods"] == {"on a longer route": 1}
+    assert res["dd"]["in_top"] is True
+    # the lakeside row passes the Helvellyn start but names no Helvellyn sight
+    assert res["hv"]["status"] == "missing"
