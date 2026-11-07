@@ -58,6 +58,13 @@ on:
       - "continent-app/tests/wire-contract.test.mjs"
       - "tests/test_wire_contract.py"
       - "tests/fixtures/wire_contract_cases.json"
+      # T1214 (T1143-f): the source registry writes the schema's source-id
+      # enum and docs/data/sources.md, so a registry-only change runs here too.
+      - "pipeline/config/sources.yaml"
+      - "pipeline/provenance.py"
+      - "pipeline/provenance_sources.py"
+      - "docs/data/sources.md"
+      - "tests/test_provenance.py"
       - ".github/workflows/schema-contract.yml"
   pull_request:
     paths:
@@ -79,6 +86,13 @@ on:
       - "continent-app/tests/wire-contract.test.mjs"
       - "tests/test_wire_contract.py"
       - "tests/fixtures/wire_contract_cases.json"
+      # T1214 (T1143-f): the source registry writes the schema's source-id
+      # enum and docs/data/sources.md, so a registry-only change runs here too.
+      - "pipeline/config/sources.yaml"
+      - "pipeline/provenance.py"
+      - "pipeline/provenance_sources.py"
+      - "docs/data/sources.md"
+      - "tests/test_provenance.py"
       - ".github/workflows/schema-contract.yml"
   workflow_dispatch:
 
@@ -137,8 +151,8 @@ jobs:
             /continent-app/scripts/ci/
             /continent-app/scripts/sync-data.mjs
             /continent-app/tests/wire-contract.test.mjs
-            /pipeline/wire_contract.py
-            /pipeline/pipeline_io.py
+            /pipeline/
+            /tests/test_provenance.py
             /tests/conftest.py
             /tests/needs_master.txt
             /tests/test_wire_contract.py
@@ -187,6 +201,11 @@ jobs:
           python-version: "3.12"
       - name: Pipeline write guard rejects the seeded bad values (pytest)
         working-directory: .
-        run: pip install pytest && python -m pytest tests/test_wire_contract.py -q
+        run: pip install pytest pyyaml && python -m pytest tests/test_wire_contract.py -q
+      # T1214 (T1143-f): the registry, its generated doc and the schema enum agree,
+      # and the provenance stamps hold on the wire (tests/test_provenance.py).
+      - name: Source registry and provenance (pytest)
+        working-directory: .
+        run: python -I pipeline/provenance_sources.py --check && python -m pytest tests/test_provenance.py -q
       - name: App validator rejects the same seeded bad values (node --test)
         run: node --test tests/wire-contract.test.mjs
