@@ -1,7 +1,9 @@
 // The four tools (ROADMAP F7). Pure functions: (data, input) -> plain object.
-// All read-only. Prices come from the app's own engine (lib/price/priceDay),
-// so a figure here is the figure Explore shows for the same question.
+// All read-only. Prices come from the app's own engine (lib/price/priceDay
+// for a place, lib/price/trip.js quoteTrip for a trip), so a figure here is
+// the figure Explore and the planner show for the same question.
 import { priceDay, priceRequest } from '../../../continent-app/src/lib/price/index.js';
+import { quoteTrip } from '../../../continent-app/src/lib/price/trip.js';
 import { safeText } from './text.js';
 
 export const STAY_TIERS = ['dorm', 'private', 'room', 'home', 'hotel2', 'hotel3', 'hotel4', 'hotel5'];
@@ -24,12 +26,6 @@ function card(d) {
     rating: d.rating?.score ?? null,
     blurb: safeText(d.blurb, 160),
   };
-}
-
-function requestFor({ adults = 2, children = 0, stay = 'home', nights = 1 }) {
-  const seats = adults + children;
-  const req = priceRequest({ choices: { group_size: seats, children, stay_tier: stay } });
-  return { req: { ...req, nights }, seats };
 }
 
 /** search_places: text, country, category and tier filters, best rated first. */
@@ -91,37 +87,137 @@ export function placeFacts(data, { id }) {
   };
 }
 
+export const LEG_PREFS = ['auto', 'public', 'car'];
+export const LEG_MODES = ['train', 'bus', 'car', 'ferry', 'fly'];
+// The parts of quoteTrip that are the way there and home. Without a
+// `flights` input they are left out of the total and listed as excluded.
+const GETTING_THERE = ['travel', 'flights', 'airport', 'transfers', 'drive'];
+const STAY_PARTS = ['beds', 'days', 'between', 'car', 'daytrips'];
+const IATA = /^[A-Z]{3}$/;
+
 /**
- * price_trip: stays only (bed, food and the engine's other day lines). Flights
- * and ground legs are NOT included; the result says so. total = dayEur x seats
- * x nights per stop, the engine's own identity.
+ * The planner state quoteTrip prices for a price_trip input. Exported so the
+ * parity test prices the very same state with the app's own function.
+ *   flights.out_eur / back_eur   fares the caller already has, whole party,
+ *                                each way (the app's typed fare, ownFlight)
+ *   flights.from                 a home airport: Carta's swept fare from
+ *                                <data>/flights/<IATA>.json for a direction
+ *                                with no typed fare (needs `start`)
  */
-export function priceTrip(data, { stops, adults = 2, children = 0, stay = 'home' }) {
-  const { destinations } = data.catalogue();
-  if (!Array.isArray(stops) || !stops.length) throw new ToolError('stops must list at least one place.');
-  const parts = [];
-  let total = 0;
-  const missing = [];
-  for (const s of stops) {
-    const d = destinations[s.id];
-    if (!d) throw new ToolError(`Unknown place id: ${s.id}. Use search_places to find ids.`);
-    const { req, seats } = requestFor({ adults, children, stay, nights: s.nights });
-    const row = priceDay(d, req, destinations);
-    if (!row || row.dayEur == null) { missing.push(s.id); continue; }
-    const t = r2(row.dayEur * seats * s.nights);
-    total += t;
-    parts.push({ id: d.id, name: safeText(d.city, 80), nights: s.nights, day_eur_per_person: r2(row.dayEur), total_eur: t });
+export function tripStateFor(input, flightFile = null) {
+  const { stops, adults = 2, children = 0, stay = 'home', start = '', legs_by = 'auto', leg_modes = [], flights = null } = input;
+  const state = {
+    stops: stops.map((s) => ({ destinationId: s.id, nights: s.nights })),
+    tripStart: start || '',
+    groupSize: adults,
+    children,
+    stayTier: stay,
+    transportPref: legs_by,
+    legModes: Object.fromEntries((leg_modes || []).map((m, i) => [i, m]).filter(([, m]) => m)),
+  };
+  const meta = {};
+  const flightsBy = {};
+  if (flights) {
+    const out = Number(flights.out_eur) || 0;
+    const back = Number(flights.back_eur) || 0;
+    if (out > 0 || back > 0) {
+      // A direction left blank is still Carta's to price (quoteTrip ownOut/ownBack).
+      state.ownFlight = { mode: 'fly', costOut: out, costBack: back, costTotal: out + back };
+    }
+    if (flights.from) {
+      const from = String(flights.from).toUpperCase();
+      state.anchorOrigin = from;
+      meta.selected_origin = from;
+      if (flightFile) flightsBy[from] = flightFile;
+    }
   }
-  const nights = stops.reduce((a, s) => a + s.nights, 0);
+  return { state, data: { meta, flightsBy } };
+}
+
+const legLine = (stopDetails, l, i) => {
+  const from = stopDetails[i]?.destinationId;
+  const to = stopDetails[i + 1]?.destinationId;
+  if (!l || l.no_road || !l.mode) return { from, to, priced: false, mode: null, hours: null, total_eur: 0 };
+  return { from, to, priced: true, mode: l.mode, hours: r2(l.hours), total_eur: r2(l.ground_total || 0), own: !!l.own };
+};
+
+const flightSide = (s) => (s ? {
+  date: s.date, from: s.from, to: s.to, airline: safeText(s.airline, 60), dep: s.dep || null, arr: s.arr || null,
+  stops: s.stops ?? null, source: s.source || null, total_eur: s.cost ? r2(s.cost.total) : null,
+} : null);
+
+/**
+ * price_trip: the whole trip through the app's own trip price (quoteTrip,
+ * lib/price/trip.js), so a figure here is the planner's figure for the same
+ * question. Always: beds and days at each stop (at the stop's own dates when
+ * `start` is given, else the year average) and the legs between stops. With a
+ * `flights` input also the way there and home: typed fares, Carta's swept
+ * fare from a home airport, and the transfers the engine adds for them.
+ */
+export function priceTrip(data, input) {
+  const { destinations, meta } = data.catalogue();
+  const { stops, stay = 'home', start = null, legs_by = 'auto', flights = null } = input || {};
+  if (!Array.isArray(stops) || !stops.length) throw new ToolError('stops must list at least one place.');
+  for (const s of stops) {
+    if (!destinations[s.id]) throw new ToolError(`Unknown place id: ${s.id}. Use search_places to find ids.`);
+  }
+  if (flights?.from && !IATA.test(String(flights.from).toUpperCase())) throw new ToolError('flights.from must be a three-letter airport code.');
+  const from = flights?.from ? String(flights.from).toUpperCase() : null;
+  const file = from && data.flights ? data.flights(from) : null;
+  const { state, data: extra } = tripStateFor(input, file);
+  const q = quoteTrip(state, {
+    data: { destinations, meta: { car_model: meta?.car_model, ...extra.meta }, flightsBy: extra.flightsBy },
+  });
+
+  const withFlights = !!flights;
+  const keys = withFlights ? [...STAY_PARTS, ...GETTING_THERE] : STAY_PARTS;
+  const parts = Object.fromEntries(keys.map((k) => [k, r2(q.parts[k] || 0)]));
+  const total = r2(keys.reduce((a, k) => a + (q.parts[k] || 0), 0));
+
+  const stopRows = [];
+  const missing = [];
+  q.stopDetails.forEach((s, i) => {
+    const c = q.stayCosts[i];
+    if (!c) { missing.push(s.destinationId); return; }
+    stopRows.push({
+      id: s.destinationId, name: safeText(s.dest?.city, 80), nights: s.nights,
+      arrive: s.arriveDate || null, depart: s.departDate || null,
+      beds_eur: r2(c.accomTotal), days_eur: r2(c.groundTotal), total_eur: r2(c.total),
+    });
+  });
+
+  const cf = q.cartaFlight;
+  const typed = (d) => (state.ownFlight?.[d === 'out' ? 'costOut' : 'costBack'] || 0) > 0;
+  const flightOut = withFlights ? {
+    from,
+    typed_eur: { out: r2(state.ownFlight?.costOut || 0), back: r2(state.ownFlight?.costBack || 0) },
+    carta: cf ? { out: flightSide(cf.out), back: flightSide(cf.back) } : null,
+    swept_file: from ? Boolean(file) : null,
+    transfers_eur: parts.transfers,
+    total_eur: r2(GETTING_THERE.reduce((a, k) => a + (q.parts[k] || 0), 0)),
+  } : null;
+  const unpricedFlights = withFlights ? ['out', 'back'].filter((d) => !typed(d) && !cf?.[d]?.cost) : [];
+
   return {
     currency: 'EUR',
-    party: { adults, children, stay },
-    nights,
-    stops: parts,
+    party: { adults: q.party.adults, children: q.party.children, stay },
+    start: start || null,
+    nights: q.plannedNights,
+    stops: stopRows,
     unpriced_stops: missing,
-    total_eur: r2(total),
-    includes: 'bed, food and the engine day lines for each stop, for the whole party',
-    excludes: 'flights, trains and other legs between stops, activities, car hire unless chosen in the app',
+    legs: q.legs.map((l, i) => legLine(q.stopDetails, l, i)),
+    legs_by,
+    flights: flightOut,
+    unpriced_flights: unpricedFlights,
+    parts,
+    total_eur: total,
+    per_person_eur: r2(total / Math.max(1, q.groupSize)),
+    includes: withFlights
+      ? 'beds and days at each stop, the legs between stops, and the way there and home (typed fares, Carta flights from the home airport, transfers), for the whole party'
+      : 'beds and days at each stop and the legs between stops, for the whole party',
+    excludes: withFlights
+      ? 'activities and tickets; a flight direction listed in unpriced_flights'
+      : 'flights and the way there and home (pass flights to include them), activities and tickets',
   };
 }
 

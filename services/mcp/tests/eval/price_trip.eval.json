@@ -1,0 +1,35 @@
+{
+  "about": "price_trip eval (T1215, row T1155-c). Expected figures on the fixture wire data (tests/fixtures, schema 19), in EUR for the whole party. Each case was priced once with the app's quoteTrip and checked by hand against its parts: beds and days per stop are the engine's day row times seats times nights (the same figure the stays-only tool gave before T1215, 2096.01 and 1373.76), legs are the engine's hop option for the chosen mode, typed fares are added as given. A change in the engine or the fixture that moves a figure fails price_trip.eval.test.mjs; update a figure only with the reason in the commit message. Tolerance 0.01.",
+  "cases": [
+    {
+      "name": "two Belgian towns, two adults, hotel3, year average",
+      "input": { "stops": [{ "id": "gem:bruges", "nights": 3 }, { "id": "gem:ghent", "nights": 2 }], "adults": 2, "stay": "hotel3" },
+      "expect": { "total_eur": 1388.16, "parts": { "beds": 700, "days": 673.76, "between": 14.4, "car": 0 }, "legs": [["train", 14.4]], "stops_total": [872.76, 501] }
+    },
+    {
+      "name": "same trip with typed fares there and home",
+      "input": { "stops": [{ "id": "gem:bruges", "nights": 3 }, { "id": "gem:ghent", "nights": 2 }], "adults": 2, "stay": "hotel3", "start": "2027-05-10", "flights": { "out_eur": 180, "back_eur": 210 } },
+      "expect": { "total_eur": 1778.16, "parts": { "beds": 700, "days": 673.76, "between": 14.4, "travel": 390, "flights": 0, "transfers": 0 }, "legs": [["train", 14.4]], "stops_total": [872.76, 501] }
+    },
+    {
+      "name": "Bruges then Madrid with a child, hotel3",
+      "input": { "stops": [{ "id": "gem:bruges", "nights": 3 }, { "id": "MAD", "nights": 2 }], "adults": 2, "children": 1, "stay": "hotel3" },
+      "expect": { "total_eur": 2334.43, "parts": { "beds": 1295.97, "days": 800.04, "between": 238.42 }, "legs": [["car", 238.42]], "stops_total": [1453.77, 642.24] }
+    },
+    {
+      "name": "Spain solo in dorms by public transport",
+      "input": { "stops": [{ "id": "BCN", "nights": 2 }, { "id": "MAD", "nights": 2 }, { "id": "gem:ronda", "nights": 2 }], "adults": 1, "stay": "dorm", "legs_by": "public" },
+      "expect": { "total_eur": 770.51, "parts": { "beds": 410.4, "days": 284.12, "between": 75.99 }, "legs": [["train", 40.92], ["train", 35.07]] }
+    },
+    {
+      "name": "Barcelona to Madrid, the bus chosen for the hop",
+      "input": { "stops": [{ "id": "BCN", "nights": 2 }, { "id": "MAD", "nights": 2 }], "adults": 2, "stay": "private", "leg_modes": ["bus"] },
+      "expect": { "total_eur": 927.67, "parts": { "beds": 464, "days": 397.88, "between": 65.79 }, "legs": [["bus", 65.79]] }
+    },
+    {
+      "name": "Barcelona to Madrid with a hire car",
+      "input": { "stops": [{ "id": "BCN", "nights": 2 }, { "id": "MAD", "nights": 2 }], "adults": 2, "stay": "private", "legs_by": "car", "start": "2027-06-01" },
+      "expect": { "total_eur": 1091.76, "parts": { "beds": 464, "days": 397.88, "between": 91.88, "car": 138 }, "legs": [["car", 91.88]] }
+    }
+  ]
+}

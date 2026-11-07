@@ -6,6 +6,8 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { DAY_STYLES } from './dayDraft.js';
 import { stopPhaseLabels } from './daySchedule.js';
 import { AiPlanRoute } from './AiPlanRoute.jsx';
+import { AiMark } from '../components/AiMark.jsx';
+import { planAnswerText } from '../lib/aiReport.js';
 import { useToday, addDays, laterISO } from '../lib/dates.js';
 import {
   SparkIcon, CastleIcon, MuseumIcon, TreeIcon, DiningIcon, CameraIcon,
@@ -315,6 +317,13 @@ export function AiDayPlanModal({
                 Above them, the same day drawn as a route, because "is this one
                 walk or three?" is not a question a list can answer. */}
             <AiPlanRoute stops={result.stops} phases={stopPhases} />
+            {/* T1215: the summary and each stop's reason are the model's words. */}
+            <AiMark report={{
+              feature: 'plan',
+              question: [city, answers.freeText].filter(Boolean).join(': '),
+              answer: planAnswerText(result),
+              model: result.meta?.model || null,
+            }} />
             <p className="ai-plan-note">
               {t('ai.totalsSteps', {
                 n: result.stops?.length ?? 0,
