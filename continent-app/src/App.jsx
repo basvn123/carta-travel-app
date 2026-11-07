@@ -18,6 +18,14 @@ import Logo from './components/Logo.jsx';
 // visit paints, and a lazy chunk cost that paint about 1.8 s on a slow
 // phone (React suspends and renders the shell twice; T462 report).
 import { HomePage } from './browse/home/HomePage.jsx';
+// T1209 (G14): the new home, behind its flag (off until T1111-a); its own chunk.
+import { homeVariant } from './browse/home/homeVariant.js';
+const HomeG14 = React.lazy(() => import('./browse/home/HomeG14.jsx'));
+const homeVariantNow = () => {
+  let store = null;
+  try { store = window.sessionStorage; } catch { store = null; }
+  return homeVariant(window.location.search, store);
+};
 
 
 
@@ -1631,6 +1639,18 @@ function TravelApp() {
       {activeTab === 'home' && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
           <SectionBoundary name="home">
+          {homeVariantNow() === 'g14' ? (
+            <Suspense fallback={<TabFallback />}>
+              <HomeG14
+                data={data}
+                choices={choices}
+                pageOver={!!selectedDest || savedTripsOpen || accountOpen || !!countryPage || !!pendingRegion}
+                onNavigate={goTo}
+                onOpenDest={openDetail}
+                onOpenJourney={openJourneyPage}
+              />
+            </Suspense>
+          ) : (
           <HomePage
             data={data}
             indices={exploreIndices}
@@ -1641,6 +1661,7 @@ function TravelApp() {
             onOpenDest={openDetail}
             onOpenTrips={openSaved}
           />
+          )}
           </SectionBoundary>
         </div>
       )}
