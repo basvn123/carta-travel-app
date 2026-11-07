@@ -22,7 +22,12 @@ export const TAXONOMY = Object.freeze({
   "act.adventure": {
    "facet": "activity",
    "label": {
-    "en": "Adventure sports"
+    "de": "Abenteuersport",
+    "en": "Adventure sports",
+    "es": "Deportes de aventura",
+    "fr": "Sports d'aventure",
+    "it": "Sport d'avventura",
+    "nl": "Avontuurlijke sporten"
    },
    "level": 1,
    "parent": "activity"
@@ -30,7 +35,12 @@ export const TAXONOMY = Object.freeze({
   "act.architecture": {
    "facet": "activity",
    "label": {
-    "en": "Architecture"
+    "de": "Architektur",
+    "en": "Architecture",
+    "es": "Arquitectura",
+    "fr": "Architecture",
+    "it": "Architettura",
+    "nl": "Architectuur"
    },
    "level": 2,
    "parent": "act.sightseeing"
@@ -51,7 +61,12 @@ export const TAXONOMY = Object.freeze({
   "act.beer": {
    "facet": "activity",
    "label": {
-    "en": "Beer and breweries"
+    "de": "Bier und Brauereien",
+    "en": "Beer and breweries",
+    "es": "Cerveza y cervecerías",
+    "fr": "Bière et brasseries",
+    "it": "Birra e birrifici",
+    "nl": "Bier en brouwerijen"
    },
    "level": 2,
    "parent": "act.food"
@@ -59,7 +74,12 @@ export const TAXONOMY = Object.freeze({
   "act.boat-trips": {
    "facet": "activity",
    "label": {
-    "en": "Boat trips"
+    "de": "Bootsausflüge",
+    "en": "Boat trips",
+    "es": "Excursiones en barco",
+    "fr": "Excursions en bateau",
+    "it": "Gite in barca",
+    "nl": "Boottochten"
    },
    "level": 2,
    "parent": "act.water"
@@ -67,7 +87,12 @@ export const TAXONOMY = Object.freeze({
   "act.casino": {
    "facet": "activity",
    "label": {
-    "en": "Casino"
+    "de": "Casino",
+    "en": "Casino",
+    "es": "Casino",
+    "fr": "Casino",
+    "it": "Casinò",
+    "nl": "Casino"
    },
    "level": 2,
    "parent": "act.nightlife"
@@ -75,7 +100,12 @@ export const TAXONOMY = Object.freeze({
   "act.clubbing": {
    "facet": "activity",
    "label": {
-    "en": "Clubs and parties"
+    "de": "Clubs und Partys",
+    "en": "Clubs and parties",
+    "es": "Discotecas y fiesta",
+    "fr": "Clubs et fêtes",
+    "it": "Club e feste",
+    "nl": "Clubs en feesten"
    },
    "level": 2,
    "parent": "act.nightlife"
@@ -83,7 +113,12 @@ export const TAXONOMY = Object.freeze({
   "act.crafts": {
    "facet": "activity",
    "label": {
-    "en": "Local crafts"
+    "de": "Lokales Handwerk",
+    "en": "Local crafts",
+    "es": "Artesanía local",
+    "fr": "Artisanat local",
+    "it": "Artigianato locale",
+    "nl": "Lokaal ambacht"
    },
    "level": 2,
    "parent": "act.shopping"
@@ -117,7 +152,12 @@ export const TAXONOMY = Object.freeze({
   "act.fashion": {
    "facet": "activity",
    "label": {
-    "en": "Fashion and design"
+    "de": "Mode und Design",
+    "en": "Fashion and design",
+    "es": "Moda y diseño",
+    "fr": "Mode et design",
+    "it": "Moda e design",
+    "nl": "Mode en design"
    },
    "level": 2,
    "parent": "act.shopping"
@@ -151,7 +191,12 @@ export const TAXONOMY = Object.freeze({
   "act.literary": {
    "facet": "activity",
    "label": {
-    "en": "Literary and film places"
+    "de": "Orte aus Literatur und Film",
+    "en": "Literary and film places",
+    "es": "Lugares de libros y cine",
+    "fr": "Lieux de littérature et de cinéma",
+    "it": "Luoghi di libri e film",
+    "nl": "Plekken uit boeken en films"
    },
    "level": 2,
    "parent": "act.sightseeing"
@@ -159,7 +204,12 @@ export const TAXONOMY = Object.freeze({
   "act.live-music": {
    "facet": "activity",
    "label": {
-    "en": "Live music"
+    "de": "Livemusik",
+    "en": "Live music",
+    "es": "Música en directo",
+    "fr": "Musique live",
+    "it": "Musica dal vivo",
+    "nl": "Livemuziek"
    },
    "level": 2,
    "parent": "act.nightlife"
@@ -180,7 +230,12 @@ export const TAXONOMY = Object.freeze({
   "act.northern-lights": {
    "facet": "activity",
    "label": {
-    "en": "Northern lights"
+    "de": "Nordlichter",
+    "en": "Northern lights",
+    "es": "Auroras boreales",
+    "fr": "Aurores boréales",
+    "it": "Aurora boreale",
+    "nl": "Noorderlicht"
    },
    "level": 2,
    "parent": "act.winter"
@@ -188,7 +243,12 @@ export const TAXONOMY = Object.freeze({
   "act.performing-arts": {
    "facet": "activity",
    "label": {
-    "en": "Theatre, opera and concerts"
+    "de": "Theater, Oper und Konzerte",
+    "en": "Theatre, opera and concerts",
+    "es": "Teatro, ópera y conciertos",
+    "fr": "Théâtre, opéra et concerts",
+    "it": "Teatro, opera e concerti",
+    "nl": "Theater, opera en concerten"
    },
    "level": 2,
    "parent": "act.sightseeing"
@@ -196,7 +256,12 @@ export const TAXONOMY = Object.freeze({
   "act.sailing": {
    "facet": "activity",
    "label": {
-    "en": "Sailing"
+    "de": "Segeln",
+    "en": "Sailing",
+    "es": "Vela",
+    "fr": "Voile",
+    "it": "Vela",
+    "nl": "Zeilen"
    },
    "level": 2,
    "parent": "act.water"
@@ -204,7 +269,12 @@ export const TAXONOMY = Object.freeze({
   "act.shopping": {
    "facet": "activity",
    "label": {
-    "en": "Shopping"
+    "de": "Shopping",
+    "en": "Shopping",
+    "es": "Compras",
+    "fr": "Shopping",
+    "it": "Shopping",
+    "nl": "Winkelen"
    },
    "level": 1,
    "parent": "activity"
@@ -212,7 +282,12 @@ export const TAXONOMY = Object.freeze({
   "act.sightseeing": {
    "facet": "activity",
    "label": {
-    "en": "Sightseeing and culture"
+    "de": "Sightseeing und Kultur",
+    "en": "Sightseeing and culture",
+    "es": "Turismo y cultura",
+    "fr": "Visites et culture",
+    "it": "Visite e cultura",
+    "nl": "Bezienswaardigheden en cultuur"
    },
    "level": 1,
    "parent": "activity"
@@ -246,7 +321,12 @@ export const TAXONOMY = Object.freeze({
   "act.tax-free": {
    "facet": "activity",
    "label": {
-    "en": "Tax-free shopping"
+    "de": "Steuerfrei einkaufen",
+    "en": "Tax-free shopping",
+    "es": "Compras sin impuestos",
+    "fr": "Shopping détaxé",
+    "it": "Shopping tax free",
+    "nl": "Belastingvrij winkelen"
    },
    "level": 2,
    "parent": "act.shopping"
@@ -293,7 +373,12 @@ export const TAXONOMY = Object.freeze({
   "act.wine": {
    "facet": "activity",
    "label": {
-    "en": "Wine and vineyards"
+    "de": "Wein und Weinberge",
+    "en": "Wine and vineyards",
+    "es": "Vino y viñedos",
+    "fr": "Vins et vignobles",
+    "it": "Vino e vigneti",
+    "nl": "Wijn en wijngaarden"
    },
    "level": 2,
    "parent": "act.food"
@@ -314,7 +399,12 @@ export const TAXONOMY = Object.freeze({
   "activity": {
    "facet": "activity",
    "label": {
-    "en": "Activity"
+    "de": "Aktivität",
+    "en": "Activity",
+    "es": "Actividad",
+    "fr": "Activité",
+    "it": "Attività",
+    "nl": "Activiteit"
    },
    "level": 0,
    "parent": null
@@ -322,7 +412,12 @@ export const TAXONOMY = Object.freeze({
   "prac.access": {
    "facet": "practical",
    "label": {
-    "en": "Getting there and around"
+    "de": "Anreise und Mobilität",
+    "en": "Getting there and around",
+    "es": "Cómo llegar y moverse",
+    "fr": "Accès et déplacements",
+    "it": "Come arrivare e muoversi",
+    "nl": "Bereikbaarheid"
    },
    "level": 1,
    "parent": "practical"
@@ -330,7 +425,12 @@ export const TAXONOMY = Object.freeze({
   "prac.affordable": {
    "facet": "practical",
    "label": {
-    "en": "Affordable"
+    "de": "Günstig",
+    "en": "Affordable",
+    "es": "Asequible",
+    "fr": "Abordable",
+    "it": "Economico",
+    "nl": "Betaalbaar"
    },
    "level": 2,
    "parent": "prac.cost"
@@ -338,7 +438,12 @@ export const TAXONOMY = Object.freeze({
   "prac.autumn-colours": {
    "facet": "practical",
    "label": {
-    "en": "Autumn colours"
+    "de": "Herbstfarben",
+    "en": "Autumn colours",
+    "es": "Colores de otoño",
+    "fr": "Couleurs d'automne",
+    "it": "Colori d'autunno",
+    "nl": "Herfstkleuren"
    },
    "level": 2,
    "parent": "prac.season"
@@ -346,7 +451,12 @@ export const TAXONOMY = Object.freeze({
   "prac.car-free": {
    "facet": "practical",
    "label": {
-    "en": "Easy without a car"
+    "de": "Gut ohne Auto",
+    "en": "Easy without a car",
+    "es": "Fácil sin coche",
+    "fr": "Facile sans voiture",
+    "it": "Facile senza auto",
+    "nl": "Makkelijk zonder auto"
    },
    "level": 2,
    "parent": "prac.access"
@@ -354,7 +464,12 @@ export const TAXONOMY = Object.freeze({
   "prac.cost": {
    "facet": "practical",
    "label": {
-    "en": "Cost"
+    "de": "Kosten",
+    "en": "Cost",
+    "es": "Coste",
+    "fr": "Coût",
+    "it": "Costo",
+    "nl": "Kosten"
    },
    "level": 1,
    "parent": "practical"
@@ -375,7 +490,12 @@ export const TAXONOMY = Object.freeze({
   "prac.season": {
    "facet": "practical",
    "label": {
-    "en": "Season"
+    "de": "Reisezeit",
+    "en": "Season",
+    "es": "Temporada",
+    "fr": "Saison",
+    "it": "Stagione",
+    "nl": "Seizoen"
    },
    "level": 1,
    "parent": "practical"
@@ -383,7 +503,12 @@ export const TAXONOMY = Object.freeze({
   "prac.summer-only": {
    "facet": "practical",
    "label": {
-    "en": "Summer only"
+    "de": "Nur im Sommer",
+    "en": "Summer only",
+    "es": "Solo en verano",
+    "fr": "Été uniquement",
+    "it": "Solo d'estate",
+    "nl": "Alleen in de zomer"
    },
    "level": 2,
    "parent": "prac.season"
@@ -391,7 +516,12 @@ export const TAXONOMY = Object.freeze({
   "practical": {
    "facet": "practical",
    "label": {
-    "en": "Practical"
+    "de": "Praktisches",
+    "en": "Practical",
+    "es": "Información práctica",
+    "fr": "Infos pratiques",
+    "it": "Info pratiche",
+    "nl": "Praktisch"
    },
    "level": 0,
    "parent": null
@@ -399,7 +529,12 @@ export const TAXONOMY = Object.freeze({
   "set.alpine": {
    "facet": "setting",
    "label": {
-    "en": "High mountains"
+    "de": "Hochgebirge",
+    "en": "High mountains",
+    "es": "Alta montaña",
+    "fr": "Haute montagne",
+    "it": "Alta montagna",
+    "nl": "Hooggebergte"
    },
    "level": 2,
    "parent": "set.mountains"
@@ -407,7 +542,12 @@ export const TAXONOMY = Object.freeze({
   "set.ancient": {
    "facet": "setting",
    "label": {
-    "en": "Ancient sites"
+    "de": "Antike Stätten",
+    "en": "Ancient sites",
+    "es": "Yacimientos antiguos",
+    "fr": "Sites antiques",
+    "it": "Siti antichi",
+    "nl": "Antieke vindplaatsen"
    },
    "level": 2,
    "parent": "set.heritage"
@@ -415,7 +555,12 @@ export const TAXONOMY = Object.freeze({
   "set.ancient-greek": {
    "facet": "setting",
    "label": {
-    "en": "Ancient Greek"
+    "de": "Antikes Griechenland",
+    "en": "Ancient Greek",
+    "es": "Grecia antigua",
+    "fr": "Grèce antique",
+    "it": "Antica Grecia",
+    "nl": "Oud-Grieks"
    },
    "level": 3,
    "parent": "set.ancient"
@@ -423,7 +568,12 @@ export const TAXONOMY = Object.freeze({
   "set.archipelago": {
    "facet": "setting",
    "label": {
-    "en": "Archipelago"
+    "de": "Inselgruppe",
+    "en": "Archipelago",
+    "es": "Archipiélago",
+    "fr": "Archipel",
+    "it": "Arcipelago",
+    "nl": "Archipel"
    },
    "level": 2,
    "parent": "set.island"
@@ -431,7 +581,12 @@ export const TAXONOMY = Object.freeze({
   "set.arctic": {
    "facet": "setting",
    "label": {
-    "en": "Arctic and tundra"
+    "de": "Arktis und Tundra",
+    "en": "Arctic and tundra",
+    "es": "Ártico y tundra",
+    "fr": "Arctique et toundra",
+    "it": "Artico e tundra",
+    "nl": "Arctisch gebied en toendra"
    },
    "level": 2,
    "parent": "set.green"
@@ -439,7 +594,12 @@ export const TAXONOMY = Object.freeze({
   "set.art-nouveau": {
    "facet": "setting",
    "label": {
-    "en": "Art nouveau"
+    "de": "Jugendstil",
+    "en": "Art nouveau",
+    "es": "Art nouveau",
+    "fr": "Art nouveau",
+    "it": "Liberty e Art nouveau",
+    "nl": "Art nouveau"
    },
    "level": 3,
    "parent": "set.periods"
@@ -447,7 +607,12 @@ export const TAXONOMY = Object.freeze({
   "set.baroque": {
    "facet": "setting",
    "label": {
-    "en": "Baroque"
+    "de": "Barock",
+    "en": "Baroque",
+    "es": "Barroco",
+    "fr": "Baroque",
+    "it": "Barocco",
+    "nl": "Barok"
    },
    "level": 3,
    "parent": "set.periods"
@@ -455,7 +620,12 @@ export const TAXONOMY = Object.freeze({
   "set.bay": {
    "facet": "setting",
    "label": {
-    "en": "Bay"
+    "de": "Bucht",
+    "en": "Bay",
+    "es": "Bahía",
+    "fr": "Baie",
+    "it": "Baia",
+    "nl": "Baai"
    },
    "level": 2,
    "parent": "set.coast"
@@ -502,7 +672,12 @@ export const TAXONOMY = Object.freeze({
   "set.bridges": {
    "facet": "setting",
    "label": {
-    "en": "Bridges"
+    "de": "Brücken",
+    "en": "Bridges",
+    "es": "Puentes",
+    "fr": "Ponts",
+    "it": "Ponti",
+    "nl": "Bruggen"
    },
    "level": 2,
    "parent": "set.heritage"
@@ -510,7 +685,12 @@ export const TAXONOMY = Object.freeze({
   "set.byzantine": {
    "facet": "setting",
    "label": {
-    "en": "Byzantine"
+    "de": "Byzantinisch",
+    "en": "Byzantine",
+    "es": "Bizantino",
+    "fr": "Byzantin",
+    "it": "Bizantino",
+    "nl": "Byzantijns"
    },
    "level": 3,
    "parent": "set.periods"
@@ -518,7 +698,12 @@ export const TAXONOMY = Object.freeze({
   "set.canals": {
    "facet": "setting",
    "label": {
-    "en": "Canals"
+    "de": "Kanäle",
+    "en": "Canals",
+    "es": "Canales",
+    "fr": "Canaux",
+    "it": "Canali",
+    "nl": "Grachten"
    },
    "level": 3,
    "parent": "set.river"
@@ -539,7 +724,12 @@ export const TAXONOMY = Object.freeze({
   "set.cathedral": {
    "facet": "setting",
    "label": {
-    "en": "Cathedral"
+    "de": "Kathedrale",
+    "en": "Cathedral",
+    "es": "Catedral",
+    "fr": "Cathédrale",
+    "it": "Cattedrale",
+    "nl": "Kathedraal"
    },
    "level": 3,
    "parent": "set.religious"
@@ -586,7 +776,12 @@ export const TAXONOMY = Object.freeze({
   "set.countryside": {
    "facet": "setting",
    "label": {
-    "en": "Countryside"
+    "de": "Ländliche Gegend",
+    "en": "Countryside",
+    "es": "Campo",
+    "fr": "Campagne",
+    "it": "Campagna",
+    "nl": "Platteland"
    },
    "level": 2,
    "parent": "set.green"
@@ -594,7 +789,12 @@ export const TAXONOMY = Object.freeze({
   "set.fjord": {
    "facet": "setting",
    "label": {
-    "en": "Fjord"
+    "de": "Fjord",
+    "en": "Fjord",
+    "es": "Fiordo",
+    "fr": "Fjord",
+    "it": "Fiordo",
+    "nl": "Fjord"
    },
    "level": 2,
    "parent": "set.coast"
@@ -602,7 +802,12 @@ export const TAXONOMY = Object.freeze({
   "set.flower-fields": {
    "facet": "setting",
    "label": {
-    "en": "Flower fields"
+    "de": "Blumenfelder",
+    "en": "Flower fields",
+    "es": "Campos de flores",
+    "fr": "Champs de fleurs",
+    "it": "Campi fioriti",
+    "nl": "Bloemenvelden"
    },
    "level": 3,
    "parent": "set.countryside"
@@ -610,7 +815,12 @@ export const TAXONOMY = Object.freeze({
   "set.fortress": {
    "facet": "setting",
    "label": {
-    "en": "Fortress"
+    "de": "Festung",
+    "en": "Fortress",
+    "es": "Fortaleza",
+    "fr": "Forteresse",
+    "it": "Fortezza",
+    "nl": "Vesting"
    },
    "level": 3,
    "parent": "set.castle"
@@ -618,7 +828,12 @@ export const TAXONOMY = Object.freeze({
   "set.freshwater": {
    "facet": "setting",
    "label": {
-    "en": "Lakes and rivers"
+    "de": "Seen und Flüsse",
+    "en": "Lakes and rivers",
+    "es": "Lagos y ríos",
+    "fr": "Lacs et rivières",
+    "it": "Laghi e fiumi",
+    "nl": "Meren en rivieren"
    },
    "level": 1,
    "parent": "setting"
@@ -626,7 +841,12 @@ export const TAXONOMY = Object.freeze({
   "set.georgian": {
    "facet": "setting",
    "label": {
-    "en": "Georgian and Victorian"
+    "de": "Georgianisch und viktorianisch",
+    "en": "Georgian and Victorian",
+    "es": "Georgiano y victoriano",
+    "fr": "Géorgien et victorien",
+    "it": "Georgiano e vittoriano",
+    "nl": "Georgiaans en victoriaans"
    },
    "level": 3,
    "parent": "set.periods"
@@ -660,7 +880,12 @@ export const TAXONOMY = Object.freeze({
   "set.gothic": {
    "facet": "setting",
    "label": {
-    "en": "Gothic"
+    "de": "Gotisch",
+    "en": "Gothic",
+    "es": "Gótico",
+    "fr": "Gothique",
+    "it": "Gotico",
+    "nl": "Gotisch"
    },
    "level": 3,
    "parent": "set.periods"
@@ -681,7 +906,12 @@ export const TAXONOMY = Object.freeze({
   "set.hanseatic": {
    "facet": "setting",
    "label": {
-    "en": "Hanseatic"
+    "de": "Hanse",
+    "en": "Hanseatic",
+    "es": "Hanseático",
+    "fr": "Hanséatique",
+    "it": "Anseatico",
+    "nl": "Hanze"
    },
    "level": 3,
    "parent": "set.periods"
@@ -689,7 +919,12 @@ export const TAXONOMY = Object.freeze({
   "set.harbour": {
    "facet": "setting",
    "label": {
-    "en": "Harbour and fishing port"
+    "de": "Hafen und Fischerhafen",
+    "en": "Harbour and fishing port",
+    "es": "Puerto y puerto pesquero",
+    "fr": "Port et port de pêche",
+    "it": "Porto e porto peschereccio",
+    "nl": "Haven en vissershaven"
    },
    "level": 2,
    "parent": "set.coast"
@@ -710,7 +945,12 @@ export const TAXONOMY = Object.freeze({
   "set.imperial": {
    "facet": "setting",
    "label": {
-    "en": "Imperial"
+    "de": "Kaiserlich",
+    "en": "Imperial",
+    "es": "Imperial",
+    "fr": "Impérial",
+    "it": "Imperiale",
+    "nl": "Keizerlijk"
    },
    "level": 3,
    "parent": "set.periods"
@@ -757,7 +997,12 @@ export const TAXONOMY = Object.freeze({
   "set.landmarks": {
    "facet": "setting",
    "label": {
-    "en": "Landmarks"
+    "de": "Wahrzeichen",
+    "en": "Landmarks",
+    "es": "Monumentos",
+    "fr": "Monuments",
+    "it": "Monumenti",
+    "nl": "Monumenten"
    },
    "level": 2,
    "parent": "set.heritage"
@@ -765,7 +1010,12 @@ export const TAXONOMY = Object.freeze({
   "set.medieval": {
    "facet": "setting",
    "label": {
-    "en": "Medieval"
+    "de": "Mittelalterlich",
+    "en": "Medieval",
+    "es": "Medieval",
+    "fr": "Médiéval",
+    "it": "Medievale",
+    "nl": "Middeleeuws"
    },
    "level": 3,
    "parent": "set.periods"
@@ -773,7 +1023,12 @@ export const TAXONOMY = Object.freeze({
   "set.memorial": {
    "facet": "setting",
    "label": {
-    "en": "Memorials and war history"
+    "de": "Gedenkstätten und Kriegsgeschichte",
+    "en": "Memorials and war history",
+    "es": "Memoriales e historia de la guerra",
+    "fr": "Mémoriaux et histoire militaire",
+    "it": "Memoriali e storia della guerra",
+    "nl": "Gedenkplaatsen en oorlogsgeschiedenis"
    },
    "level": 2,
    "parent": "set.heritage"
@@ -781,7 +1036,12 @@ export const TAXONOMY = Object.freeze({
   "set.modern-architecture": {
    "facet": "setting",
    "label": {
-    "en": "Modern architecture"
+    "de": "Moderne Architektur",
+    "en": "Modern architecture",
+    "es": "Arquitectura moderna",
+    "fr": "Architecture moderne",
+    "it": "Architettura moderna",
+    "nl": "Moderne architectuur"
    },
    "level": 2,
    "parent": "set.urban"
@@ -802,7 +1062,12 @@ export const TAXONOMY = Object.freeze({
   "set.moor": {
    "facet": "setting",
    "label": {
-    "en": "Moor and bog"
+    "de": "Moor und Heide",
+    "en": "Moor and bog",
+    "es": "Páramos y turberas",
+    "fr": "Landes et tourbières",
+    "it": "Brughiera e torbiere",
+    "nl": "Heide en veen"
    },
    "level": 2,
    "parent": "set.green"
@@ -810,7 +1075,12 @@ export const TAXONOMY = Object.freeze({
   "set.mosque": {
    "facet": "setting",
    "label": {
-    "en": "Mosque"
+    "de": "Moschee",
+    "en": "Mosque",
+    "es": "Mezquita",
+    "fr": "Mosquée",
+    "it": "Moschea",
+    "nl": "Moskee"
    },
    "level": 3,
    "parent": "set.religious"
@@ -857,7 +1127,12 @@ export const TAXONOMY = Object.freeze({
   "set.ottoman": {
    "facet": "setting",
    "label": {
-    "en": "Ottoman"
+    "de": "Osmanisch",
+    "en": "Ottoman",
+    "es": "Otomano",
+    "fr": "Ottoman",
+    "it": "Ottomano",
+    "nl": "Ottomaans"
    },
    "level": 3,
    "parent": "set.periods"
@@ -865,7 +1140,12 @@ export const TAXONOMY = Object.freeze({
   "set.palace": {
    "facet": "setting",
    "label": {
-    "en": "Palace"
+    "de": "Palast",
+    "en": "Palace",
+    "es": "Palacio",
+    "fr": "Palais",
+    "it": "Palazzo",
+    "nl": "Paleis"
    },
    "level": 3,
    "parent": "set.castle"
@@ -873,7 +1153,12 @@ export const TAXONOMY = Object.freeze({
   "set.peninsula": {
    "facet": "setting",
    "label": {
-    "en": "Peninsula"
+    "de": "Halbinsel",
+    "en": "Peninsula",
+    "es": "Península",
+    "fr": "Péninsule",
+    "it": "Penisola",
+    "nl": "Schiereiland"
    },
    "level": 2,
    "parent": "set.coast"
@@ -881,7 +1166,12 @@ export const TAXONOMY = Object.freeze({
   "set.periods": {
    "facet": "setting",
    "label": {
-    "en": "Historic styles"
+    "de": "Historische Stile",
+    "en": "Historic styles",
+    "es": "Estilos históricos",
+    "fr": "Styles historiques",
+    "it": "Stili storici",
+    "nl": "Historische stijlen"
    },
    "level": 2,
    "parent": "set.heritage"
@@ -889,7 +1179,12 @@ export const TAXONOMY = Object.freeze({
   "set.protected-area": {
    "facet": "setting",
    "label": {
-    "en": "Protected nature"
+    "de": "Geschützte Natur",
+    "en": "Protected nature",
+    "es": "Naturaleza protegida",
+    "fr": "Nature protégée",
+    "it": "Natura protetta",
+    "nl": "Beschermde natuur"
    },
    "level": 2,
    "parent": "set.green"
@@ -897,7 +1192,12 @@ export const TAXONOMY = Object.freeze({
   "set.religious": {
    "facet": "setting",
    "label": {
-    "en": "Religious buildings"
+    "de": "Sakralbauten",
+    "en": "Religious buildings",
+    "es": "Edificios religiosos",
+    "fr": "Édifices religieux",
+    "it": "Edifici religiosi",
+    "nl": "Religieuze gebouwen"
    },
    "level": 2,
    "parent": "set.heritage"
@@ -905,7 +1205,12 @@ export const TAXONOMY = Object.freeze({
   "set.renaissance": {
    "facet": "setting",
    "label": {
-    "en": "Renaissance"
+    "de": "Renaissance",
+    "en": "Renaissance",
+    "es": "Renacimiento",
+    "fr": "Renaissance",
+    "it": "Rinascimento",
+    "nl": "Renaissance"
    },
    "level": 3,
    "parent": "set.periods"
@@ -939,7 +1244,12 @@ export const TAXONOMY = Object.freeze({
   "set.roman": {
    "facet": "setting",
    "label": {
-    "en": "Roman remains"
+    "de": "Römische Überreste",
+    "en": "Roman remains",
+    "es": "Restos romanos",
+    "fr": "Vestiges romains",
+    "it": "Resti romani",
+    "nl": "Romeinse overblijfselen"
    },
    "level": 3,
    "parent": "set.ancient"
@@ -973,7 +1283,12 @@ export const TAXONOMY = Object.freeze({
   "set.spa-town": {
    "facet": "setting",
    "label": {
-    "en": "Spa town"
+    "de": "Kurort",
+    "en": "Spa town",
+    "es": "Ciudad balneario",
+    "fr": "Ville thermale",
+    "it": "Città termale",
+    "nl": "Kuurstad"
    },
    "level": 2,
    "parent": "set.urban"
@@ -981,7 +1296,12 @@ export const TAXONOMY = Object.freeze({
   "set.squares": {
    "facet": "setting",
    "label": {
-    "en": "Squares"
+    "de": "Plätze",
+    "en": "Squares",
+    "es": "Plazas",
+    "fr": "Places",
+    "it": "Piazze",
+    "nl": "Pleinen"
    },
    "level": 3,
    "parent": "set.old-town"
@@ -989,7 +1309,12 @@ export const TAXONOMY = Object.freeze({
   "set.tidal-island": {
    "facet": "setting",
    "label": {
-    "en": "Tidal island"
+    "de": "Gezeiteninsel",
+    "en": "Tidal island",
+    "es": "Isla de marea",
+    "fr": "Île de marée",
+    "it": "Isola di marea",
+    "nl": "Getijdeneiland"
    },
    "level": 2,
    "parent": "set.island"
@@ -1010,7 +1335,12 @@ export const TAXONOMY = Object.freeze({
   "set.university-town": {
    "facet": "setting",
    "label": {
-    "en": "University town"
+    "de": "Universitätsstadt",
+    "en": "University town",
+    "es": "Ciudad universitaria",
+    "fr": "Ville universitaire",
+    "it": "Città universitaria",
+    "nl": "Universiteitsstad"
    },
    "level": 2,
    "parent": "set.urban"
@@ -1018,7 +1348,12 @@ export const TAXONOMY = Object.freeze({
   "set.urban": {
    "facet": "setting",
    "label": {
-    "en": "Towns and cities"
+    "de": "Städte und Orte",
+    "en": "Towns and cities",
+    "es": "Pueblos y ciudades",
+    "fr": "Villes et bourgs",
+    "it": "Città e paesi",
+    "nl": "Steden en dorpen"
    },
    "level": 1,
    "parent": "setting"
@@ -1026,7 +1361,12 @@ export const TAXONOMY = Object.freeze({
   "set.valley": {
    "facet": "setting",
    "label": {
-    "en": "Valley"
+    "de": "Tal",
+    "en": "Valley",
+    "es": "Valle",
+    "fr": "Vallée",
+    "it": "Valle",
+    "nl": "Dal"
    },
    "level": 2,
    "parent": "set.green"
@@ -1034,7 +1374,12 @@ export const TAXONOMY = Object.freeze({
   "set.venetian": {
    "facet": "setting",
    "label": {
-    "en": "Venetian"
+    "de": "Venezianisch",
+    "en": "Venetian",
+    "es": "Veneciano",
+    "fr": "Vénitien",
+    "it": "Veneziano",
+    "nl": "Venetiaans"
    },
    "level": 3,
    "parent": "set.periods"
@@ -1042,7 +1387,12 @@ export const TAXONOMY = Object.freeze({
   "set.vernacular": {
    "facet": "setting",
    "label": {
-    "en": "Traditional houses"
+    "de": "Traditionelle Häuser",
+    "en": "Traditional houses",
+    "es": "Casas tradicionales",
+    "fr": "Maisons traditionnelles",
+    "it": "Case tradizionali",
+    "nl": "Traditionele huizen"
    },
    "level": 2,
    "parent": "set.heritage"
@@ -1050,7 +1400,12 @@ export const TAXONOMY = Object.freeze({
   "set.viking": {
    "facet": "setting",
    "label": {
-    "en": "Viking and Norse"
+    "de": "Wikinger und Nordisch",
+    "en": "Viking and Norse",
+    "es": "Vikingo y nórdico",
+    "fr": "Viking et nordique",
+    "it": "Vichingo e norreno",
+    "nl": "Vikingen en Noormannen"
    },
    "level": 3,
    "parent": "set.periods"
@@ -1071,7 +1426,12 @@ export const TAXONOMY = Object.freeze({
   "set.vineyards": {
    "facet": "setting",
    "label": {
-    "en": "Vineyards"
+    "de": "Weinberge",
+    "en": "Vineyards",
+    "es": "Viñedos",
+    "fr": "Vignobles",
+    "it": "Vigneti",
+    "nl": "Wijngaarden"
    },
    "level": 3,
    "parent": "set.countryside"
@@ -1092,7 +1452,12 @@ export const TAXONOMY = Object.freeze({
   "set.walled-town": {
    "facet": "setting",
    "label": {
-    "en": "Walled town"
+    "de": "Ummauerte Stadt",
+    "en": "Walled town",
+    "es": "Ciudad amurallada",
+    "fr": "Ville fortifiée",
+    "it": "Città murata",
+    "nl": "Ommuurde stad"
    },
    "level": 3,
    "parent": "set.old-town"
@@ -1113,7 +1478,12 @@ export const TAXONOMY = Object.freeze({
   "set.wilderness": {
    "facet": "setting",
    "label": {
-    "en": "Wilderness"
+    "de": "Wildnis",
+    "en": "Wilderness",
+    "es": "Naturaleza salvaje",
+    "fr": "Nature sauvage",
+    "it": "Natura selvaggia",
+    "nl": "Wildernis"
    },
    "level": 2,
    "parent": "set.green"
@@ -1121,7 +1491,12 @@ export const TAXONOMY = Object.freeze({
   "set.windmills": {
    "facet": "setting",
    "label": {
-    "en": "Windmills"
+    "de": "Windmühlen",
+    "en": "Windmills",
+    "es": "Molinos de viento",
+    "fr": "Moulins à vent",
+    "it": "Mulini a vento",
+    "nl": "Windmolens"
    },
    "level": 2,
    "parent": "set.heritage"
@@ -1129,7 +1504,12 @@ export const TAXONOMY = Object.freeze({
   "setting": {
    "facet": "setting",
    "label": {
-    "en": "Setting"
+    "de": "Umgebung",
+    "en": "Setting",
+    "es": "Entorno",
+    "fr": "Cadre",
+    "it": "Ambiente",
+    "nl": "Omgeving"
    },
    "level": 0,
    "parent": null
@@ -1150,7 +1530,12 @@ export const TAXONOMY = Object.freeze({
   "trav.first-timer": {
    "facet": "traveller",
    "label": {
-    "en": "First visit to Europe"
+    "de": "Erster Europabesuch",
+    "en": "First visit to Europe",
+    "es": "Primera visita a Europa",
+    "fr": "Premier voyage en Europe",
+    "it": "Prima volta in Europa",
+    "nl": "Eerste keer Europa"
    },
    "level": 2,
    "parent": "trav.style"
@@ -1158,7 +1543,12 @@ export const TAXONOMY = Object.freeze({
   "trav.luxury": {
    "facet": "traveller",
    "label": {
-    "en": "Luxury"
+    "de": "Luxus",
+    "en": "Luxury",
+    "es": "Lujo",
+    "fr": "Luxe",
+    "it": "Lusso",
+    "nl": "Luxe"
    },
    "level": 2,
    "parent": "trav.style"
@@ -1166,7 +1556,12 @@ export const TAXONOMY = Object.freeze({
   "trav.style": {
    "facet": "traveller",
    "label": {
-    "en": "Travel style"
+    "de": "Reisestil",
+    "en": "Travel style",
+    "es": "Estilo de viaje",
+    "fr": "Style de voyage",
+    "it": "Stile di viaggio",
+    "nl": "Reisstijl"
    },
    "level": 1,
    "parent": "traveller"
@@ -1174,7 +1569,12 @@ export const TAXONOMY = Object.freeze({
   "trav.who": {
    "facet": "traveller",
    "label": {
-    "en": "Who it suits"
+    "de": "Für wen",
+    "en": "Who it suits",
+    "es": "Para quién",
+    "fr": "Pour qui",
+    "it": "Per chi",
+    "nl": "Voor wie"
    },
    "level": 1,
    "parent": "traveller"
@@ -1182,7 +1582,12 @@ export const TAXONOMY = Object.freeze({
   "traveller": {
    "facet": "traveller",
    "label": {
-    "en": "Traveller"
+    "de": "Reisende",
+    "en": "Traveller",
+    "es": "Viajeros",
+    "fr": "Voyageurs",
+    "it": "Viaggiatori",
+    "nl": "Reizigers"
    },
    "level": 0,
    "parent": null
@@ -1190,7 +1595,12 @@ export const TAXONOMY = Object.freeze({
   "vibe": {
    "facet": "vibe",
    "label": {
-    "en": "Vibe"
+    "de": "Stimmung",
+    "en": "Vibe",
+    "es": "Ambiente",
+    "fr": "Ambiance",
+    "it": "Sensazioni",
+    "nl": "Sfeer"
    },
    "level": 0,
    "parent": null
@@ -1211,7 +1621,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.atmosphere": {
    "facet": "vibe",
    "label": {
-    "en": "Atmosphere"
+    "de": "Atmosphäre",
+    "en": "Atmosphere",
+    "es": "Atmósfera",
+    "fr": "Atmosphère",
+    "it": "Atmosfera",
+    "nl": "Atmosfeer"
    },
    "level": 1,
    "parent": "vibe"
@@ -1219,7 +1634,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.authentic": {
    "facet": "vibe",
    "label": {
-    "en": "Authentic and traditional"
+    "de": "Authentisch und traditionell",
+    "en": "Authentic and traditional",
+    "es": "Auténtico y tradicional",
+    "fr": "Authentique et traditionnel",
+    "it": "Autentico e tradizionale",
+    "nl": "Authentiek en traditioneel"
    },
    "level": 2,
    "parent": "vibe.atmosphere"
@@ -1227,7 +1647,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.bohemian": {
    "facet": "vibe",
    "label": {
-    "en": "Creative and bohemian"
+    "de": "Kreativ und alternativ",
+    "en": "Creative and bohemian",
+    "es": "Creativo y bohemio",
+    "fr": "Créatif et bohème",
+    "it": "Creativo e bohémien",
+    "nl": "Creatief en alternatief"
    },
    "level": 2,
    "parent": "vibe.atmosphere"
@@ -1235,7 +1660,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.dramatic": {
    "facet": "vibe",
    "label": {
-    "en": "Dramatic landscape"
+    "de": "Dramatische Landschaft",
+    "en": "Dramatic landscape",
+    "es": "Paisaje espectacular",
+    "fr": "Paysage spectaculaire",
+    "it": "Paesaggio spettacolare",
+    "nl": "Indrukwekkend landschap"
    },
    "level": 2,
    "parent": "vibe.scenery"
@@ -1243,7 +1673,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.elegant": {
    "facet": "vibe",
    "label": {
-    "en": "Elegant"
+    "de": "Elegant",
+    "en": "Elegant",
+    "es": "Elegante",
+    "fr": "Élégant",
+    "it": "Elegante",
+    "nl": "Elegant"
    },
    "level": 2,
    "parent": "vibe.atmosphere"
@@ -1251,7 +1686,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.fairytale": {
    "facet": "vibe",
    "label": {
-    "en": "Fairytale"
+    "de": "Märchenhaft",
+    "en": "Fairytale",
+    "es": "De cuento",
+    "fr": "Féerique",
+    "it": "Da fiaba",
+    "nl": "Sprookjesachtig"
    },
    "level": 2,
    "parent": "vibe.atmosphere"
@@ -1259,7 +1699,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.fame": {
    "facet": "vibe",
    "label": {
-    "en": "Fame"
+    "de": "Bekanntheit",
+    "en": "Fame",
+    "es": "Fama",
+    "fr": "Notoriété",
+    "it": "Notorietà",
+    "nl": "Bekendheid"
    },
    "level": 1,
    "parent": "vibe"
@@ -1280,7 +1725,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.iconic": {
    "facet": "vibe",
    "label": {
-    "en": "Iconic"
+    "de": "Ikonisch",
+    "en": "Iconic",
+    "es": "Icónico",
+    "fr": "Incontournable",
+    "it": "Iconico",
+    "nl": "Iconisch"
    },
    "level": 2,
    "parent": "vibe.fame"
@@ -1288,7 +1738,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.pace": {
    "facet": "vibe",
    "label": {
-    "en": "Pace"
+    "de": "Tempo",
+    "en": "Pace",
+    "es": "Ritmo",
+    "fr": "Rythme",
+    "it": "Ritmo",
+    "nl": "Tempo"
    },
    "level": 1,
    "parent": "vibe"
@@ -1309,7 +1764,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.quirky": {
    "facet": "vibe",
    "label": {
-    "en": "Curious and quirky"
+    "de": "Kurios und schräg",
+    "en": "Curious and quirky",
+    "es": "Curioso y peculiar",
+    "fr": "Insolite et décalé",
+    "it": "Curioso e stravagante",
+    "nl": "Curieus en eigenzinnig"
    },
    "level": 2,
    "parent": "vibe.atmosphere"
@@ -1317,7 +1777,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.remote": {
    "facet": "vibe",
    "label": {
-    "en": "Remote"
+    "de": "Abgelegen",
+    "en": "Remote",
+    "es": "Remoto",
+    "fr": "Isolé",
+    "it": "Remoto",
+    "nl": "Afgelegen"
    },
    "level": 2,
    "parent": "vibe.scenery"
@@ -1338,7 +1803,12 @@ export const TAXONOMY = Object.freeze({
   "vibe.scenery": {
    "facet": "vibe",
    "label": {
-    "en": "Scenery"
+    "de": "Landschaft",
+    "en": "Scenery",
+    "es": "Paisaje",
+    "fr": "Paysage",
+    "it": "Paesaggio",
+    "nl": "Landschap"
    },
    "level": 1,
    "parent": "vibe"
@@ -1859,5 +2329,5 @@ export const TAXONOMY = Object.freeze({
    ]
   }
  },
- "version": "1.0.0"
+ "version": "1.1.0"
 });

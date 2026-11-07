@@ -11,10 +11,11 @@
 #   id                    stable code `<facet prefix>.<slug>`; never reused, never renamed (deprecate instead)
 #   facet, level          facet root id; 0 for a root, 1 a group, 2 a tag, 3 a narrower tag
 #   parent, children      the broader node and the narrower nodes (children are kept in step by the test)
-#   label                 the preferred label in en, de, fr, es, it, nl; null where the app has no label yet
-#   label_source          where the six labels come from (an app i18n key, guided.json, or authored English)
+#   label                 the preferred label in en, de, fr, es, it, nl (all six filled since 1.1.0)
+#   label_source          where the six labels come from (an app i18n key, guided.json, or authored English translated in T1215)
 #   definition            one sentence: what the tag means (the labeller and the tagger read this)
-#   synonyms              alternative labels, English for now (ESCO altLabel)
+#   synonyms              alternative labels per language (ESCO altLabel): en always, de, fr, es, it, nl
+#                         optional; the tagger and lexical_index match the en list only
 #   not_to_be_confused_with  sibling or near nodes a labeller mixes up with this one (scope note)
 #   applies_to            which items can carry it: place, trail, beach, lake, mountain
 #   source                text: inferred from passages by the tagger; data: set from a data field
@@ -22,8 +23,8 @@
 #   deprecated            optional; true keeps the id resolvable for old data
 
 schema: carta-taxonomy/1
-version: 1.0.0
-released: '2026-11-06'
+version: 1.1.0
+released: '2026-11-07'
 task: T1149
 languages: [en, de, fr, es, it, nl]
 facets:
@@ -38,8 +39,8 @@ nodes:
   level: 0
   parent: null
   children: [act.sightseeing, act.hiking, act.cycling, act.water, act.winter, act.adventure, act.food, act.wellness, act.nightlife, act.shopping, act.family-fun, act.nature-watching, act.touring]
-  label: {en: Activity, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Activity, de: Aktivität, fr: Activité, es: Actividad, it: Attività, nl: Activiteit}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: What a traveller does there.
   synonyms:
     en: []
@@ -51,8 +52,8 @@ nodes:
   level: 0
   parent: null
   children: [set.coast, set.island, set.mountains, set.freshwater, set.green, set.urban, set.heritage]
-  label: {en: Setting, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Setting, de: Umgebung, fr: Cadre, es: Entorno, it: Ambiente, nl: Omgeving}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: The landscape, water, built fabric and heritage a traveller is in.
   synonyms:
     en: []
@@ -64,8 +65,8 @@ nodes:
   level: 0
   parent: null
   children: [vibe.atmosphere, vibe.scenery, vibe.pace, vibe.fame]
-  label: {en: Vibe, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Vibe, de: Stimmung, fr: Ambiance, es: Ambiente, it: Sensazioni, nl: Sfeer}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: How the place or walk feels.
   synonyms:
     en: []
@@ -77,8 +78,8 @@ nodes:
   level: 0
   parent: null
   children: [trav.who, trav.style]
-  label: {en: Traveller, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Traveller, de: Reisende, fr: Voyageurs, es: Viajeros, it: Viaggiatori, nl: Reizigers}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Who it suits and in what style of travel.
   synonyms:
     en: []
@@ -90,8 +91,8 @@ nodes:
   level: 0
   parent: null
   children: [prac.access, prac.accessibility, prac.season, prac.cost, prac.difficulty, prac.route-shape, prac.facilities]
-  label: {en: Practical, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Practical, de: Praktisches, fr: Infos pratiques, es: Información práctica, it: Info pratiche, nl: Praktisch}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Access, season, cost, difficulty and facilities.
   synonyms:
     en: []
@@ -103,11 +104,16 @@ nodes:
   level: 1
   parent: activity
   children: [act.museums, act.art, act.architecture, act.performing-arts, act.festivals, act.literary, act.pilgrimage, act.viewpoints]
-  label: {en: Sightseeing and culture, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Sightseeing and culture, de: Sightseeing und Kultur, fr: Visites et culture, es: Turismo y cultura, it: Visite e cultura, nl: Bezienswaardigheden en cultuur}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Looking at buildings, collections, art and performances made by people.
   synonyms:
     en: [culture, sights]
+    de: [Sehenswürdigkeiten, Kultur]
+    fr: [culture, monuments]
+    es: [cultura, monumentos]
+    it: [cultura, monumenti]
+    nl: [cultuur, bezienswaardigheden]
   not_to_be_confused_with: [set.heritage]
   applies_to: [place]
   source: text
@@ -116,11 +122,16 @@ nodes:
   level: 2
   parent: act.sightseeing
   children: []
-  label: {en: Museums, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Museums, de: Museen, fr: Musées, es: Museos, it: Musei, nl: Musea}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: One or more museums worth planning time for.
   synonyms:
     en: [museum, collections]
+    de: [Museum, Ausstellung]
+    fr: [musée, exposition]
+    es: [museo, exposición]
+    it: [museo, mostra]
+    nl: [museum, tentoonstelling]
   not_to_be_confused_with: [act.art]
   applies_to: [place]
   source: text
@@ -134,6 +145,11 @@ nodes:
   definition: 'Known for art: galleries, painters who lived there, an art scene.'
   synonyms:
     en: [art city, galleries, painters]
+    de: [Galerie, Kunststadt]
+    fr: [galerie, 'ville d''art']
+    es: [galería, pintores]
+    it: [galleria, 'città d''arte']
+    nl: [galerie, kunststad]
   not_to_be_confused_with: [act.museums]
   applies_to: [place]
   source: text
@@ -142,11 +158,16 @@ nodes:
   level: 3
   parent: act.art
   children: []
-  label: {en: Street art, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Street art, de: Street-Art, fr: Street art, es: Arte urbano, it: Street art, nl: Street art}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Murals and street art worth walking for.
   synonyms:
     en: [murals, graffiti]
+    de: [Wandmalerei, Graffiti]
+    fr: [fresques, graffiti]
+    es: [murales, grafiti]
+    it: [murales, graffiti]
+    nl: [muurschilderingen, graffiti]
   not_to_be_confused_with: []
   applies_to: [place]
   source: text
@@ -155,11 +176,16 @@ nodes:
   level: 2
   parent: act.sightseeing
   children: []
-  label: {en: Architecture, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Architecture, de: Architektur, fr: Architecture, es: Arquitectura, it: Architettura, nl: Architectuur}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Buildings a visitor comes for as architecture, old or new.
   synonyms:
     en: [design, buildings]
+    de: [Bauwerke]
+    fr: [bâtiments]
+    es: [edificios]
+    it: [edifici]
+    nl: [gebouwen]
   not_to_be_confused_with: [set.modern-architecture]
   applies_to: [place]
   source: text
@@ -168,11 +194,16 @@ nodes:
   level: 2
   parent: act.sightseeing
   children: []
-  label: {en: 'Theatre, opera and concerts', de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: 'Theatre, opera and concerts', de: 'Theater, Oper und Konzerte', fr: 'Théâtre, opéra et concerts', es: 'Teatro, ópera y conciertos', it: 'Teatro, opera e concerti', nl: 'Theater, opera en concerten'}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: 'Performances: theatre, opera, classical music, ballet.'
   synonyms:
     en: [opera, theatre, concerts, music]
+    de: [Oper, Theater, Konzert]
+    fr: [opéra, théâtre, concert]
+    es: [ópera, teatro, concierto]
+    it: [opera, teatro, concerto]
+    nl: [opera, theater, concert]
   not_to_be_confused_with: [act.live-music]
   applies_to: [place]
   source: text
@@ -186,6 +217,11 @@ nodes:
   definition: A festival, carnival or event people travel for.
   synonyms:
     en: [carnival, events, fiesta]
+    de: [Fest, Karneval, Fasching]
+    fr: [fête, carnaval]
+    es: [fiesta, feria, carnaval]
+    it: [sagra, festa, carnevale]
+    nl: [feest, carnaval, kermis]
   not_to_be_confused_with: [act.performing-arts]
   applies_to: [place]
   source: text
@@ -194,8 +230,8 @@ nodes:
   level: 2
   parent: act.sightseeing
   children: []
-  label: {en: Literary and film places, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Literary and film places, de: Orte aus Literatur und Film, fr: Lieux de littérature et de cinéma, es: Lugares de libros y cine, it: Luoghi di libri e film, nl: Plekken uit boeken en films}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Places tied to writers, books or films.
   synonyms:
     en: [literature, writers, film locations]
@@ -212,6 +248,11 @@ nodes:
   definition: A pilgrimage destination or a pilgrim route.
   synonyms:
     en: [camino, pilgrim route, holy site]
+    de: [Jakobsweg, Wallfahrt]
+    fr: [pèlerinage, chemin de Compostelle]
+    es: [Camino de Santiago, peregrinación]
+    it: [pellegrinaggio, via Francigena, santuario]
+    nl: [pelgrimstocht, bedevaart]
   not_to_be_confused_with: [set.religious]
   applies_to: [place, trail]
   source: text
@@ -225,6 +266,11 @@ nodes:
   definition: A place to stand and look at a view, built or natural.
   synonyms:
     en: [lookout, panorama, belvedere]
+    de: [Aussicht, Panorama]
+    fr: [belvédère, panorama]
+    es: [mirador, vistas]
+    it: [belvedere, panorama]
+    nl: [uitkijkpunt, uitzicht]
   not_to_be_confused_with: [vibe.views]
   applies_to: [place, trail, lake, mountain]
   source: text
@@ -238,6 +284,11 @@ nodes:
   definition: Walking on paths through landscape, from strolls to treks.
   synonyms:
     en: [walking, trekking, rambling]
+    de: [Wanderung, Bergwandern]
+    fr: [rando, marche]
+    es: [senderismo, caminata]
+    it: [trekking, sentiero]
+    nl: [wandeling, hiken]
   not_to_be_confused_with: [act.trail-running]
   applies_to: [place, trail, lake, mountain]
   source: text
@@ -246,11 +297,16 @@ nodes:
   level: 2
   parent: act.hiking
   children: []
-  label: {en: Easy walks, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Easy walks, de: Leichte Spaziergänge, fr: Balades faciles, es: Paseos fáciles, it: Passeggiate facili, nl: Makkelijke wandelingen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Short, gentle walks anyone can do.
   synonyms:
     en: [stroll, promenade, gentle walk]
+    de: [Spaziergang, Promenade]
+    fr: [balade, promenade]
+    es: [paseo]
+    it: [passeggiata]
+    nl: [wandelingetje, ommetje]
   not_to_be_confused_with: [act.day-hike]
   applies_to: [place, trail, beach, lake]
   source: text
@@ -259,11 +315,16 @@ nodes:
   level: 2
   parent: act.hiking
   children: []
-  label: {en: Day hikes, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Day hikes, de: Tageswanderungen, fr: Randonnées à la journée, es: Rutas de un día, it: Escursioni in giornata, nl: Dagwandelingen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A walk of a few hours to a day on marked paths.
   synonyms:
     en: [day walk]
+    de: [Tagestour]
+    fr: [rando à la journée]
+    es: [excursión de un día]
+    it: [gita in giornata]
+    nl: [dagtocht]
   not_to_be_confused_with: [act.easy-walk]
   applies_to: [place, trail]
   source: text
@@ -272,11 +333,16 @@ nodes:
   level: 2
   parent: act.hiking
   children: []
-  label: {en: Summit hikes, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Summit hikes, de: Gipfelwanderungen, fr: Randonnées vers un sommet, es: Rutas a cumbres, it: Escursioni in vetta, nl: Toppentochten}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A walk whose goal is a summit.
   synonyms:
     en: [peak bagging, summit walk]
+    de: [Gipfeltour]
+    fr: [ascension]
+    es: [ascensión]
+    it: [salita in vetta]
+    nl: [beklimming]
   not_to_be_confused_with: [act.mountaineering]
   applies_to: [trail, mountain]
   source: text
@@ -285,11 +351,16 @@ nodes:
   level: 2
   parent: act.hiking
   children: []
-  label: {en: Coastal walks, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Coastal walks, de: Küstenwanderungen, fr: Randonnées côtières, es: Rutas costeras, it: Passeggiate costiere, nl: Kustwandelingen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A walk along the sea, on cliffs or beaches.
   synonyms:
     en: [coast path, cliff walk]
+    de: [Küstenweg]
+    fr: [sentier du littoral, sentier des douaniers]
+    es: [camino de ronda, sendero costero]
+    it: [sentiero costiero]
+    nl: [kustpad]
   not_to_be_confused_with: [set.cliffs]
   applies_to: [place, trail, beach]
   source: text
@@ -298,11 +369,16 @@ nodes:
   level: 2
   parent: act.hiking
   children: [act.hut-to-hut]
-  label: {en: Long distance trails, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Long distance trails, de: Fernwanderwege, fr: Grandes randonnées, es: Senderos de gran recorrido, it: Sentieri di lunga percorrenza, nl: Langeafstandswandelpaden}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A trail walked over several days, stage by stage.
   synonyms:
     en: [thru-hike, long-distance path, GR route]
+    de: [Fernwanderweg, Weitwanderweg]
+    fr: [GR, grande randonnée]
+    es: [GR, gran recorrido]
+    it: [alta via, cammino]
+    nl: [LAW, langeafstandswandeling]
   not_to_be_confused_with: [act.hut-to-hut]
   applies_to: [place, trail]
   source: text
@@ -311,11 +387,16 @@ nodes:
   level: 3
   parent: act.long-distance-walk
   children: []
-  label: {en: Hut to hut trekking, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Hut to hut trekking, de: Hüttentouren, fr: Trek de refuge en refuge, es: Travesías de refugio en refugio, it: Trekking di rifugio in rifugio, nl: Huttentochten}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Several days in the mountains, sleeping in huts.
   synonyms:
     en: [haute route, refuge trek]
+    de: [Hüttenwanderung]
+    fr: [tour en refuges]
+    es: [travesía de refugios]
+    it: [giro dei rifugi, alta via]
+    nl: [huttentocht]
   not_to_be_confused_with: [set.mountain-hut]
   applies_to: [place, trail, mountain]
   source: text
@@ -350,11 +431,16 @@ nodes:
   level: 2
   parent: act.hiking
   children: []
-  label: {en: Mountaineering, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Mountaineering, de: Bergsteigen, fr: Alpinisme, es: Alpinismo, it: Alpinismo, nl: Bergbeklimmen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Alpine climbing on rock, snow or glacier with gear.
   synonyms:
     en: [alpinism, alpine climbing]
+    de: [Hochtour]
+    fr: [course en montagne]
+    es: [montañismo]
+    it: [alpinismo]
+    nl: [alpinisme]
   not_to_be_confused_with: [act.summit-hike]
   applies_to: [trail, mountain]
   source: text
@@ -368,6 +454,11 @@ nodes:
   definition: Riding a bike for the ride itself.
   synonyms:
     en: [biking, bike touring]
+    de: [Fahrrad, Radeln]
+    fr: [cyclisme, vélo]
+    es: [bici]
+    it: [bici]
+    nl: [fiets]
   not_to_be_confused_with: []
   applies_to: [place, trail]
   source: text
@@ -376,11 +467,16 @@ nodes:
   level: 2
   parent: act.cycling
   children: [act.long-distance-cycling]
-  label: {en: Bike touring, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Bike touring, de: Radtouren, fr: Cyclotourisme, es: Cicloturismo, it: Cicloturismo, nl: Fietstochten}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Riding paved or easy routes, often between towns.
   synonyms:
     en: [road cycling, cycle touring]
+    de: [Radreise]
+    fr: [randonnée à vélo]
+    es: [ruta en bici]
+    it: [giro in bici]
+    nl: [fietsvakantie]
   not_to_be_confused_with: [act.gravel]
   applies_to: [place, trail]
   source: text
@@ -389,11 +485,16 @@ nodes:
   level: 3
   parent: act.bike-touring
   children: []
-  label: {en: Long distance cycle routes, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Long distance cycle routes, de: Radfernwege, fr: Véloroutes, es: Rutas ciclistas de larga distancia, it: Ciclovie di lunga percorrenza, nl: Lange-afstandsfietsroutes}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A long route such as a EuroVelo ridden over days.
   synonyms:
     en: [eurovelo, cycle path]
+    de: [Fernradweg, Radweg]
+    fr: [véloroute, voie verte]
+    es: [vía verde, EuroVelo]
+    it: [ciclovia, EuroVelo]
+    nl: [LF-route, fietsroute]
   not_to_be_confused_with: []
   applies_to: [place, trail]
   source: text
@@ -402,8 +503,8 @@ nodes:
   level: 2
   parent: act.cycling
   children: []
-  label: {en: Gravel riding, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Gravel riding, de: Gravelbiken, fr: Gravel, es: Gravel, it: Gravel, nl: Gravelfietsen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Riding unpaved roads and tracks on a gravel bike.
   synonyms:
     en: [gravel bike]
@@ -415,11 +516,16 @@ nodes:
   level: 2
   parent: act.cycling
   children: []
-  label: {en: Mountain biking, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Mountain biking, de: Mountainbiken, fr: VTT, es: Bicicleta de montaña, it: Mountain bike, nl: Mountainbiken}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Riding rough trails on a mountain bike.
   synonyms:
     en: [MTB, bike park, enduro]
+    de: [MTB, Bikepark]
+    fr: [vélo tout terrain, bike park]
+    es: [BTT, MTB]
+    it: [MTB, bike park]
+    nl: [MTB, ATB]
   not_to_be_confused_with: [act.gravel]
   applies_to: [place, trail]
   source: text
@@ -441,11 +547,16 @@ nodes:
   level: 2
   parent: act.water
   children: []
-  label: {en: Sea swimming, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Sea swimming, de: Baden im Meer, fr: Baignade en mer, es: Baño en el mar, it: Bagno al mare, nl: Zwemmen in zee}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Swimming in the sea.
   synonyms:
     en: [bathing, swim in the sea]
+    de: [Baden, Schwimmen im Meer]
+    fr: [baignade]
+    es: [bañarse]
+    it: [fare il bagno]
+    nl: [zwemmen, pootjebaden]
   not_to_be_confused_with: [act.lake-swimming]
   applies_to: [place, beach]
   source: text
@@ -454,11 +565,16 @@ nodes:
   level: 2
   parent: act.water
   children: []
-  label: {en: Lake swimming, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Lake swimming, de: Baden im See, fr: Baignade en lac, es: Baño en lagos, it: Bagno al lago, nl: Zwemmen in meren}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Swimming in a lake.
   synonyms:
     en: [lido, bathing lake]
+    de: [Badesee, Strandbad]
+    fr: [baignade en lac]
+    es: [baño]
+    it: [lido]
+    nl: [zwemmeer]
   not_to_be_confused_with: [act.sea-swimming]
   applies_to: [place, lake]
   source: text
@@ -467,11 +583,16 @@ nodes:
   level: 2
   parent: act.water
   children: []
-  label: {en: River and wild swimming, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: River and wild swimming, de: Baden in Fluss und Natur, fr: Baignade en rivière et sauvage, es: Baño en ríos y aguas naturales, it: Bagno in fiume e in natura, nl: Zwemmen in rivieren en natuurwater}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Swimming in rivers, pools and unguarded water.
   synonyms:
     en: [wild swim, river swim]
+    de: [Naturbad, Flussbad]
+    fr: [baignade en rivière]
+    es: [poza, piscina natural]
+    it: [bagno nel fiume]
+    nl: [wildzwemmen]
   not_to_be_confused_with: [act.lake-swimming]
   applies_to: [place, lake]
   source: text
@@ -493,11 +614,16 @@ nodes:
   level: 3
   parent: act.surfing
   children: []
-  label: {en: Kitesurfing and windsurfing, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Kitesurfing and windsurfing, de: Kite- und Windsurfen, fr: Kitesurf et planche à voile, es: Kitesurf y windsurf, it: Kitesurf e windsurf, nl: Kite- en windsurfen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: 'Wind sports on a board: kite or sail.'
   synonyms:
     en: [windsurf, kite]
+    de: [Windsurfen]
+    fr: [planche à voile, kite]
+    es: [windsurf]
+    it: [windsurf]
+    nl: [windsurfen, kiten]
   not_to_be_confused_with: [act.sailing]
   applies_to: [place, beach, lake]
   source: text
@@ -519,8 +645,8 @@ nodes:
   level: 3
   parent: act.diving
   children: []
-  label: {en: Snorkelling, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Snorkelling, de: Schnorcheln, fr: Snorkeling, es: Esnorquel, it: Snorkeling, nl: Snorkelen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Swimming with a mask over clear water.
   synonyms:
     en: [snorkel]
@@ -532,11 +658,16 @@ nodes:
   level: 2
   parent: act.water
   children: []
-  label: {en: Sailing, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Sailing, de: Segeln, fr: Voile, es: Vela, it: Vela, nl: Zeilen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Sailing yachts or dinghies.
   synonyms:
     en: [yachting, regatta]
+    de: [Segeltörn]
+    fr: [navigation]
+    es: [navegar]
+    it: [barca a vela]
+    nl: [zeilboot]
   not_to_be_confused_with: [act.boat-trips]
   applies_to: [place, lake]
   source: text
@@ -545,11 +676,16 @@ nodes:
   level: 2
   parent: act.water
   children: []
-  label: {en: Kayaking and paddling, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Kayaking and paddling, de: Kajak und Paddeln, fr: Kayak et pagaie, es: Kayak y pádel, it: Kayak e canoa, nl: Kajakken en peddelen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Kayak, canoe or paddleboard.
   synonyms:
     en: [canoe, SUP, kayak]
+    de: [Kanu, Kajak, Stand-up-Paddling]
+    fr: [canoë, kayak, paddle]
+    es: [canoa, kayak, paddle surf]
+    it: [canoa, kayak, SUP]
+    nl: [kano, kajak, suppen]
   not_to_be_confused_with: [act.rafting]
   applies_to: [place, beach, lake]
   source: text
@@ -558,11 +694,16 @@ nodes:
   level: 2
   parent: act.water
   children: []
-  label: {en: Rafting and canyoning, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Rafting and canyoning, de: Rafting und Canyoning, fr: Rafting et canyoning, es: Rafting y barranquismo, it: Rafting e torrentismo, nl: Raften en canyoning}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Descending wild rivers or canyons.
   synonyms:
     en: [white water, canyoning]
+    de: [Wildwasser, Canyoning]
+    fr: [eaux vives, canyoning]
+    es: [aguas bravas, barranquismo]
+    it: [torrentismo, acque bianche]
+    nl: [wildwatervaren]
   not_to_be_confused_with: [act.paddling]
   applies_to: [place]
   source: text
@@ -571,11 +712,16 @@ nodes:
   level: 2
   parent: act.water
   children: []
-  label: {en: Boat trips, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Boat trips, de: Bootsausflüge, fr: Excursions en bateau, es: Excursiones en barco, it: Gite in barca, nl: Boottochten}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Excursions and ferries on sea, lake or river.
   synonyms:
     en: [ferry, cruise, boat tour]
+    de: [Schiffsfahrt, Fähre, Bootstour]
+    fr: [croisière, ferry, bateau]
+    es: [paseo en barco, ferry]
+    it: [traghetto, battello]
+    nl: [rondvaart, veerboot]
   not_to_be_confused_with: [act.sailing]
   applies_to: [place, beach, lake]
   source: text
@@ -584,11 +730,16 @@ nodes:
   level: 2
   parent: act.water
   children: []
-  label: {en: Fishing, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Fishing, de: Angeln, fr: Pêche, es: Pesca, it: Pesca, nl: Vissen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Angling or a fishing tradition visitors see.
   synonyms:
     en: [angling]
+    de: [Fischen]
+    fr: [pêche à la ligne]
+    es: [pesca deportiva]
+    it: [pesca sportiva]
+    nl: [hengelen]
   not_to_be_confused_with: []
   applies_to: [place, lake]
   source: text
@@ -628,6 +779,11 @@ nodes:
   definition: Lifts and pistes for skiing or snowboarding.
   synonyms:
     en: [ski, snowboard, pistes]
+    de: [Skifahren, Piste, Snowboard]
+    fr: [pistes, snowboard]
+    es: [pistas, snowboard]
+    it: [piste, snowboard]
+    nl: [wintersport, piste]
   not_to_be_confused_with: [act.ski-touring]
   applies_to: [place, mountain]
   source: text
@@ -636,11 +792,16 @@ nodes:
   level: 2
   parent: act.winter
   children: []
-  label: {en: Ski touring and cross-country, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Ski touring and cross-country, de: Skitouren und Langlauf, fr: Ski de randonnée et de fond, es: Esquí de travesía y de fondo, it: Scialpinismo e sci di fondo, nl: Toerskiën en langlaufen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: 'Skiing off the lifts: touring, cross-country, Nordic.'
   synonyms:
     en: [langlauf, nordic skiing, skinning]
+    de: [Langlauf, Skitour]
+    fr: [ski de fond, ski nordique]
+    es: [esquí de fondo]
+    it: [sci di fondo, sci alpinismo]
+    nl: [langlaufen, langlauf]
   not_to_be_confused_with: [act.skiing]
   applies_to: [place, mountain]
   source: text
@@ -649,11 +810,16 @@ nodes:
   level: 2
   parent: act.winter
   children: []
-  label: {en: Snowshoeing and winter walks, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Snowshoeing and winter walks, de: Schneeschuh- und Winterwandern, fr: 'Raquettes et balades d''hiver', es: Raquetas y paseos de invierno, it: 'Ciaspole e passeggiate d''inverno', nl: Sneeuwschoen- en winterwandelen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Walking on snow.
   synonyms:
     en: [snowshoe]
+    de: [Schneeschuhwandern, Winterwanderung]
+    fr: [raquettes à neige]
+    es: [raquetas de nieve]
+    it: [ciaspolata]
+    nl: [sneeuwschoenwandelen]
   not_to_be_confused_with: [act.ski-touring]
   applies_to: [place, trail]
   source: text
@@ -662,11 +828,16 @@ nodes:
   level: 2
   parent: act.winter
   children: []
-  label: {en: Northern lights, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Northern lights, de: Nordlichter, fr: Aurores boréales, es: Auroras boreales, it: Aurora boreale, nl: Noorderlicht}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A good place to see the aurora.
   synonyms:
     en: [aurora borealis]
+    de: [Polarlicht, Aurora]
+    fr: [aurore boréale]
+    es: [aurora boreal]
+    it: [aurora boreale]
+    nl: [poollicht]
   not_to_be_confused_with: [act.stargazing]
   applies_to: [place]
   source: text
@@ -675,8 +846,8 @@ nodes:
   level: 1
   parent: activity
   children: [act.climbing, act.caving, act.paragliding, act.horse-riding, act.golf]
-  label: {en: Adventure sports, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Adventure sports, de: Abenteuersport, fr: 'Sports d''aventure', es: Deportes de aventura, it: 'Sport d''avventura', nl: Avontuurlijke sporten}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Sports with some thrill or technique.
   synonyms:
     en: [adrenaline, outdoor sports]
@@ -693,6 +864,11 @@ nodes:
   definition: Rock climbing and bouldering.
   synonyms:
     en: [bouldering, crag]
+    de: [Bouldern, Klettergarten]
+    fr: [bloc, falaise]
+    es: [búlder, escalada deportiva]
+    it: [boulder, falesia]
+    nl: [boulderen]
   not_to_be_confused_with: [act.via-ferrata]
   applies_to: [place, mountain]
   source: text
@@ -701,11 +877,16 @@ nodes:
   level: 2
   parent: act.adventure
   children: []
-  label: {en: Caves and caving, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Caves and caving, de: Höhlen und Höhlentouren, fr: Grottes et spéléologie, es: Cuevas y espeleología, it: Grotte e speleologia, nl: Grotten en speleologie}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Visiting or exploring caves.
   synonyms:
     en: [grotto, speleology, show cave]
+    de: [Tropfsteinhöhle, Schauhöhle]
+    fr: [grotte, gouffre]
+    es: [cueva, gruta]
+    it: [grotta]
+    nl: [grot, druipsteengrot]
   not_to_be_confused_with: [set.sea-cave]
   applies_to: [place, trail, mountain]
   source: text
@@ -714,11 +895,16 @@ nodes:
   level: 2
   parent: act.adventure
   children: []
-  label: {en: Paragliding, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Paragliding, de: Gleitschirmfliegen, fr: Parapente, es: Parapente, it: Parapendio, nl: Paragliden}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Flying from a hill under a canopy.
   synonyms:
     en: [hang gliding]
+    de: [Paragliding, Drachenfliegen]
+    fr: [deltaplane]
+    es: [ala delta]
+    it: [deltaplano]
+    nl: [deltavliegen]
   not_to_be_confused_with: []
   applies_to: [place, mountain]
   source: text
@@ -727,11 +913,16 @@ nodes:
   level: 2
   parent: act.adventure
   children: []
-  label: {en: Horse riding, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Horse riding, de: Reiten, fr: Équitation, es: Equitación, it: Equitazione, nl: Paardrijden}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Riding horses.
   synonyms:
     en: [equestrian, pony trekking]
+    de: [Ausritt]
+    fr: [balade à cheval]
+    es: [paseo a caballo]
+    it: [passeggiata a cavallo]
+    nl: [paardrijden, huifkar]
   not_to_be_confused_with: []
   applies_to: [place]
   source: text
@@ -740,8 +931,8 @@ nodes:
   level: 2
   parent: act.adventure
   children: []
-  label: {en: Golf, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Golf, de: Golf, fr: Golf, es: Golf, it: Golf, nl: Golf}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Golf courses people travel for.
   synonyms:
     en: [golf course]
@@ -758,6 +949,11 @@ nodes:
   definition: Eating and drinking as a reason to come.
   synonyms:
     en: [gastronomy, culinary, foodie]
+    de: [Kulinarik, Gastronomie]
+    fr: [gastronomie]
+    es: [gastronomía]
+    it: [enogastronomia]
+    nl: [culinair, lekker eten]
   not_to_be_confused_with: []
   applies_to: [place]
   source: text
@@ -766,11 +962,16 @@ nodes:
   level: 2
   parent: act.food
   children: []
-  label: {en: Local cuisine, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Local cuisine, de: Regionale Küche, fr: Cuisine locale, es: Cocina local, it: Cucina locale, nl: Lokale keuken}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Dishes and cooking of the region.
   synonyms:
     en: [regional food, traditional dishes]
+    de: [regionale Spezialitäten]
+    fr: [spécialités locales, terroir]
+    es: [comida típica, platos típicos]
+    it: [piatti tipici, cucina tipica]
+    nl: [streekgerechten, lokale gerechten]
   not_to_be_confused_with: [act.fine-dining]
   applies_to: [place]
   source: text
@@ -779,11 +980,16 @@ nodes:
   level: 2
   parent: act.food
   children: []
-  label: {en: Wine and vineyards, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Wine and vineyards, de: Wein und Weinberge, fr: Vins et vignobles, es: Vino y viñedos, it: Vino e vigneti, nl: Wijn en wijngaarden}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Wine tasting, cellars and vineyards.
   synonyms:
     en: [wine tasting, winery, cellar door]
+    de: [Weinprobe, Weingut]
+    fr: [dégustation, domaine, cave]
+    es: [bodega, cata de vinos]
+    it: [cantina, degustazione]
+    nl: [wijnproeverij, wijngaard]
   not_to_be_confused_with: [set.vineyards]
   applies_to: [place]
   source: text
@@ -792,11 +998,16 @@ nodes:
   level: 2
   parent: act.food
   children: []
-  label: {en: Beer and breweries, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Beer and breweries, de: Bier und Brauereien, fr: Bière et brasseries, es: Cerveza y cervecerías, it: Birra e birrifici, nl: Bier en brouwerijen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Breweries, beer halls and a beer culture.
   synonyms:
     en: [brewery, beer hall]
+    de: [Brauerei, Biergarten, Bierhalle]
+    fr: [brasserie]
+    es: [cervecería]
+    it: [birrificio]
+    nl: [brouwerij, biercafé]
   not_to_be_confused_with: [act.bars]
   applies_to: [place]
   source: text
@@ -810,6 +1021,11 @@ nodes:
   definition: Food or general markets worth a visit.
   synonyms:
     en: [market hall, farmers market]
+    de: [Markthalle, Wochenmarkt]
+    fr: [halles, marché couvert]
+    es: [mercado de abastos]
+    it: [mercato coperto]
+    nl: [markthal, weekmarkt]
   not_to_be_confused_with: [act.shopping]
   applies_to: [place]
   source: text
@@ -818,11 +1034,16 @@ nodes:
   level: 2
   parent: act.food
   children: []
-  label: {en: Fine dining, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Fine dining, de: Gehobene Küche, fr: Gastronomie, es: Alta cocina, it: Alta cucina, nl: Fine dining}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Starred or notable restaurants.
   synonyms:
     en: [michelin, gourmet]
+    de: [Sternerestaurant, Gourmet]
+    fr: [étoilé, gastronomique]
+    es: [estrella Michelin]
+    it: [stellato]
+    nl: [sterrenrestaurant]
   not_to_be_confused_with: [act.local-cuisine]
   applies_to: [place]
   source: text
@@ -831,11 +1052,16 @@ nodes:
   level: 2
   parent: act.food
   children: []
-  label: {en: Cafes and coffee, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Cafes and coffee, de: Cafés und Kaffee, fr: Cafés, es: Cafés, it: Caffè, nl: Cafés en koffie}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A cafe or coffee culture.
   synonyms:
     en: [coffee houses, pastry]
+    de: [Kaffeehaus, Konditorei]
+    fr: [café, pâtisserie]
+    es: [cafetería, pastelería]
+    it: [bar, pasticceria]
+    nl: [koffiehuis, terras]
   not_to_be_confused_with: [act.bars]
   applies_to: [place]
   source: text
@@ -844,8 +1070,8 @@ nodes:
   level: 2
   parent: act.food
   children: []
-  label: {en: Foraging, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Foraging, de: Sammeln in der Natur, fr: Cueillette sauvage, es: Recolección silvestre, it: Raccolta spontanea, nl: Wildplukken}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Gathering wild food.
   synonyms:
     en: [mushrooms, wild food]
@@ -862,6 +1088,11 @@ nodes:
   definition: Rest and care of the body.
   synonyms:
     en: [spa, relaxation]
+    de: [Erholung]
+    fr: [détente]
+    es: [relax]
+    it: [relax]
+    nl: [ontspanning]
   not_to_be_confused_with: [vibe.slow]
   applies_to: [place, lake]
   source: text
@@ -875,6 +1106,11 @@ nodes:
   definition: Hot springs, thermal baths and spas.
   synonyms:
     en: [spa town, therme, hammam]
+    de: [Therme, Thermalbad, Kurbad]
+    fr: [thermes, bains]
+    es: [termas, balneario]
+    it: [terme]
+    nl: [thermen, thermaalbad]
   not_to_be_confused_with: [set.hot-spring]
   applies_to: [place, lake]
   source: text
@@ -883,11 +1119,16 @@ nodes:
   level: 2
   parent: act.wellness
   children: []
-  label: {en: Sauna, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Sauna, de: Sauna, fr: Sauna, es: Sauna, it: Sauna, nl: Sauna}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Sauna culture.
   synonyms:
     en: [sauna]
+    de: [Saunalandschaft]
+    fr: [bain de vapeur]
+    es: [baño de vapor]
+    it: [bagno turco]
+    nl: [saunacomplex]
   not_to_be_confused_with: [act.thermal-baths]
   applies_to: [place, lake]
   source: text
@@ -901,6 +1142,11 @@ nodes:
   definition: Going out after dark.
   synonyms:
     en: [nights out, going out]
+    de: [Ausgehen]
+    fr: [sorties]
+    es: [salir de fiesta, marcha]
+    it: [movida]
+    nl: [uitgaan]
   not_to_be_confused_with: [vibe.lively]
   applies_to: [place]
   source: text
@@ -909,11 +1155,16 @@ nodes:
   level: 2
   parent: act.nightlife
   children: []
-  label: {en: Bars and pubs, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Bars and pubs, de: Bars und Kneipen, fr: Bars et pubs, es: Bares y pubs, it: Bar e pub, nl: Bars en kroegen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Bars, pubs and wine bars.
   synonyms:
     en: [pub, tapas bar, aperitivo]
+    de: [Kneipe, Weinbar]
+    fr: [bar à vin, pub]
+    es: [bar de tapas, taberna]
+    it: [aperitivo, enoteca]
+    nl: [kroeg, café]
   not_to_be_confused_with: [act.beer]
   applies_to: [place]
   source: text
@@ -922,11 +1173,16 @@ nodes:
   level: 2
   parent: act.nightlife
   children: []
-  label: {en: Clubs and parties, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Clubs and parties, de: Clubs und Partys, fr: Clubs et fêtes, es: Discotecas y fiesta, it: Club e feste, nl: Clubs en feesten}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Dancing, clubs and party scenes.
   synonyms:
     en: [party, club, rave]
+    de: [Club, Disco, Party]
+    fr: [boîte de nuit, soirée]
+    es: [discoteca, fiesta]
+    it: [discoteca]
+    nl: [club, feest]
   not_to_be_confused_with: [act.live-music]
   applies_to: [place]
   source: text
@@ -935,11 +1191,16 @@ nodes:
   level: 2
   parent: act.nightlife
   children: []
-  label: {en: Live music, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Live music, de: Livemusik, fr: Musique live, es: Música en directo, it: Musica dal vivo, nl: Livemuziek}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Bands, folk music and music venues.
   synonyms:
     en: [gigs, folk music, jazz]
+    de: [Konzert, Volksmusik]
+    fr: [concert, musique folk]
+    es: [concierto, música en vivo]
+    it: [concerto]
+    nl: [optreden, concert]
   not_to_be_confused_with: [act.performing-arts]
   applies_to: [place]
   source: text
@@ -948,8 +1209,8 @@ nodes:
   level: 2
   parent: act.nightlife
   children: []
-  label: {en: Casino, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Casino, de: Casino, fr: Casino, es: Casino, it: Casinò, nl: Casino}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A casino people visit.
   synonyms:
     en: [gambling]
@@ -961,11 +1222,16 @@ nodes:
   level: 1
   parent: activity
   children: [act.crafts, act.fashion, act.tax-free]
-  label: {en: Shopping, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Shopping, de: Shopping, fr: Shopping, es: Compras, it: Shopping, nl: Winkelen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Shopping as a reason to come.
   synonyms:
     en: [shops, boutiques]
+    de: [Einkaufen, Läden]
+    fr: [boutiques, magasins]
+    es: [tiendas]
+    it: [negozi]
+    nl: [winkels]
   not_to_be_confused_with: [act.markets]
   applies_to: [place]
   source: text
@@ -974,11 +1240,16 @@ nodes:
   level: 2
   parent: act.shopping
   children: []
-  label: {en: Local crafts, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Local crafts, de: Lokales Handwerk, fr: Artisanat local, es: Artesanía local, it: Artigianato locale, nl: Lokaal ambacht}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: 'Crafts made there: pottery, lace, glass.'
   synonyms:
     en: [handicraft, pottery, lace]
+    de: [Kunsthandwerk, Töpferei]
+    fr: [poterie, dentelle]
+    es: [cerámica, encaje]
+    it: [ceramica, merletto]
+    nl: [aardewerk, kant]
   not_to_be_confused_with: []
   applies_to: [place]
   source: text
@@ -987,8 +1258,8 @@ nodes:
   level: 2
   parent: act.shopping
   children: []
-  label: {en: Fashion and design, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Fashion and design, de: Mode und Design, fr: Mode et design, es: Moda y diseño, it: Moda e design, nl: Mode en design}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Fashion and design shopping.
   synonyms:
     en: [boutiques, design shops]
@@ -1000,11 +1271,16 @@ nodes:
   level: 2
   parent: act.shopping
   children: []
-  label: {en: Tax-free shopping, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Tax-free shopping, de: Steuerfrei einkaufen, fr: Shopping détaxé, es: Compras sin impuestos, it: Shopping tax free, nl: Belastingvrij winkelen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A duty-free or low tax shopping area.
   synonyms:
     en: [duty-free]
+    de: [zollfrei]
+    fr: [hors taxes]
+    es: [libre de impuestos]
+    it: [duty free]
+    nl: [taxfree]
   not_to_be_confused_with: [prac.affordable]
   applies_to: [place]
   source: text
@@ -1013,11 +1289,16 @@ nodes:
   level: 1
   parent: activity
   children: [act.theme-park, act.zoo, act.aquarium]
-  label: {en: Family attractions, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Family attractions, de: Familienattraktionen, fr: Sorties en famille, es: Atracciones familiares, it: Attrazioni per famiglie, nl: Familieattracties}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Attractions built for children.
   synonyms:
     en: [kids, family days out]
+    de: [Kinder, Familienausflug]
+    fr: [enfants, en famille]
+    es: [niños, en familia]
+    it: [bambini, in famiglia]
+    nl: [kinderen, gezinsuitje]
   not_to_be_confused_with: [trav.families]
   applies_to: [place]
   source: text
@@ -1031,6 +1312,11 @@ nodes:
   definition: Rides and a themed park.
   synonyms:
     en: [amusement park]
+    de: [Vergnügungspark]
+    fr: [parc de loisirs]
+    es: [parque temático]
+    it: [parco a tema]
+    nl: [attractiepark]
   not_to_be_confused_with: [act.water-park]
   applies_to: [place]
   source: text
@@ -1044,6 +1330,11 @@ nodes:
   definition: A zoo or animal park.
   synonyms:
     en: [animal park, safari park]
+    de: [Tierpark, Wildpark]
+    fr: [parc animalier]
+    es: [parque zoológico]
+    it: [parco faunistico]
+    nl: [dierenpark]
   not_to_be_confused_with: [act.wildlife]
   applies_to: [place]
   source: text
@@ -1065,8 +1356,8 @@ nodes:
   level: 1
   parent: activity
   children: [act.wildlife, act.stargazing, act.photography]
-  label: {en: Wildlife and sky, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Wildlife and sky, de: Tiere und Sternenhimmel, fr: Faune et ciel étoilé, es: Fauna y cielo, it: Fauna e cielo, nl: Dieren en sterrenhemel}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Watching animals, birds and the night sky.
   synonyms:
     en: [nature watching]
@@ -1078,11 +1369,16 @@ nodes:
   level: 2
   parent: act.nature-watching
   children: [act.birdwatching]
-  label: {en: Wildlife, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Wildlife, de: Wildtiere, fr: Faune sauvage, es: Fauna salvaje, it: Fauna selvatica, nl: Wilde dieren}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Seeing wild animals in the wild.
   synonyms:
     en: [whales, turtles, deer]
+    de: [Tierbeobachtung]
+    fr: [animaux sauvages]
+    es: [animales salvajes, avistamiento de cetáceos]
+    it: [animali selvatici]
+    nl: [dieren spotten]
   not_to_be_confused_with: [act.zoo]
   applies_to: [place, trail, beach, lake, mountain]
   source: text
@@ -1091,11 +1387,16 @@ nodes:
   level: 3
   parent: act.wildlife
   children: []
-  label: {en: Birdwatching, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Birdwatching, de: Vogelbeobachtung, fr: Observation des oiseaux, es: Observación de aves, it: Birdwatching, nl: Vogels kijken}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Watching birds.
   synonyms:
     en: [birding]
+    de: [Vögel beobachten]
+    fr: [ornithologie]
+    es: [aves, ornitología]
+    it: [osservazione degli uccelli]
+    nl: [vogelspotten]
   not_to_be_confused_with: []
   applies_to: [place, trail, lake]
   source: text
@@ -1104,11 +1405,16 @@ nodes:
   level: 2
   parent: act.nature-watching
   children: []
-  label: {en: Stargazing and dark skies, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Stargazing and dark skies, de: Sterne beobachten, fr: Observation des étoiles, es: Observación de estrellas, it: Osservazione delle stelle, nl: Sterrenkijken}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Dark skies and observatories.
   synonyms:
     en: [dark sky, observatory, astronomy]
+    de: [Sternwarte, Sternenpark]
+    fr: [observatoire, ciel étoilé]
+    es: [observatorio, cielo oscuro]
+    it: [osservatorio, cielo stellato]
+    nl: [sterrenwacht, donkere hemel]
   not_to_be_confused_with: [act.northern-lights]
   applies_to: [place, mountain]
   source: text
@@ -1117,8 +1423,8 @@ nodes:
   level: 2
   parent: act.nature-watching
   children: []
-  label: {en: Photography, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Photography, de: Fotografie, fr: Photographie, es: Fotografía, it: Fotografia, nl: Fotografie}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A place photographers come for.
   synonyms:
     en: [photo spot]
@@ -1130,8 +1436,8 @@ nodes:
   level: 1
   parent: activity
   children: [act.road-trip, act.rail-journey, act.island-hopping, act.lift-rides]
-  label: {en: Touring, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Touring, de: Unterwegs, fr: Itinérance, es: De ruta, it: In viaggio, nl: Onderweg}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Travel itself as the activity.
   synonyms:
     en: [journey]
@@ -1148,6 +1454,11 @@ nodes:
   definition: Driving from place to place for the drive.
   synonyms:
     en: [driving holiday, scenic drive]
+    de: [Autoreise]
+    fr: [voyage en voiture]
+    es: [viaje en coche, ruta en coche]
+    it: [on the road]
+    nl: [autovakantie]
   not_to_be_confused_with: [act.scenic-drive]
   applies_to: [place]
   source: text
@@ -1156,11 +1467,16 @@ nodes:
   level: 3
   parent: act.road-trip
   children: []
-  label: {en: Scenic drives and passes, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Scenic drives and passes, de: Panoramastraßen und Pässe, fr: Routes panoramiques et cols, es: Carreteras panorámicas y puertos, it: Strade panoramiche e passi, nl: Panoramawegen en bergpassen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: 'A road worth driving: a pass, a coast road.'
   synonyms:
     en: [mountain pass, coast road]
+    de: [Passstraße, Panoramastraße]
+    fr: [col, route panoramique]
+    es: [puerto de montaña]
+    it: [passo, strada panoramica]
+    nl: [bergpas, toeristische route]
   not_to_be_confused_with: [prac.road-to-top]
   applies_to: [place, mountain]
   source: text
@@ -1174,6 +1490,11 @@ nodes:
   definition: Travelling by train as part of the trip.
   synonyms:
     en: [scenic railway, train trip]
+    de: [Zugreise, Panoramabahn]
+    fr: [train panoramique]
+    es: [tren turístico]
+    it: [treno panoramico]
+    nl: [treinreis]
   not_to_be_confused_with: [prac.rail-access]
   applies_to: [place]
   source: text
@@ -1200,6 +1521,11 @@ nodes:
   definition: A cable car, funicular or rack railway ridden for the ride.
   synonyms:
     en: [gondola, funicular, rack railway]
+    de: [Gondel, Standseilbahn, Zahnradbahn]
+    fr: [télécabine, funiculaire]
+    es: [funicular, telecabina]
+    it: [cabinovia, funicolare]
+    nl: [gondel, kabelbaan]
   not_to_be_confused_with: [prac.lift-access]
   applies_to: [place, mountain]
   source: text
@@ -1213,6 +1539,11 @@ nodes:
   definition: Next to the sea.
   synonyms:
     en: [seaside, shore, coastline]
+    de: [Meer, Küste]
+    fr: [littoral, bord de mer]
+    es: [litoral]
+    it: [litorale, mare]
+    nl: [zee, kust]
   not_to_be_confused_with: [set.lake]
   applies_to: [place, trail, beach]
   source: text
@@ -1226,6 +1557,11 @@ nodes:
   definition: A beach on the sea.
   synonyms:
     en: [strand, plage, playa]
+    de: [Strand]
+    fr: [plage]
+    es: [playa]
+    it: [spiaggia, lido]
+    nl: [strand]
   not_to_be_confused_with: [set.lake]
   applies_to: [place, beach]
   source: text
@@ -1234,11 +1570,16 @@ nodes:
   level: 3
   parent: set.beach
   children: []
-  label: {en: Sandy beach, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Sandy beach, de: Sandstrand, fr: Plage de sable, es: Playa de arena, it: Spiaggia di sabbia, nl: Zandstrand}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A beach of sand.
   synonyms:
     en: [sand]
+    de: [Sand]
+    fr: [sable]
+    es: [arena]
+    it: [sabbia]
+    nl: [zand]
   not_to_be_confused_with: [set.dunes]
   applies_to: [beach]
   source: data
@@ -1247,11 +1588,16 @@ nodes:
   level: 3
   parent: set.beach
   children: []
-  label: {en: Pebble or rock beach, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Pebble or rock beach, de: Kiesel- oder Felsstrand, fr: Plage de galets ou de rochers, es: Playa de cantos o rocas, it: Spiaggia di ciottoli o scogli, nl: Kiezel- of rotsstrand}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A beach of pebbles, gravel, shingle or rock.
   synonyms:
     en: [shingle, stony beach]
+    de: [Kiesstrand]
+    fr: [galets]
+    es: [playa de piedras, cantos rodados]
+    it: [ciottoli, scogli]
+    nl: [kiezelstrand]
   not_to_be_confused_with: [set.sandy-beach]
   applies_to: [beach]
   source: data
@@ -1265,6 +1611,11 @@ nodes:
   definition: A small beach in a bay between rocks.
   synonyms:
     en: [pocket beach, calanque, cala]
+    de: [Bucht]
+    fr: [crique, calanque]
+    es: [cala]
+    it: [caletta, cala]
+    nl: [baaitje]
   not_to_be_confused_with: [set.bay]
   applies_to: [beach]
   source: both
@@ -1299,11 +1650,16 @@ nodes:
   level: 2
   parent: set.coast
   children: []
-  label: {en: Bay, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Bay, de: Bucht, fr: Baie, es: Bahía, it: Baia, nl: Baai}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A sheltered bay.
   synonyms:
     en: [gulf, inlet]
+    de: [Meeresbucht]
+    fr: [golfe, anse]
+    es: [golfo, ensenada]
+    it: [golfo, insenatura]
+    nl: [inham]
   not_to_be_confused_with: [set.cove]
   applies_to: [place, beach]
   source: text
@@ -1317,6 +1673,11 @@ nodes:
   definition: High rock walls, mostly over the sea.
   synonyms:
     en: [sea cliffs, bluffs]
+    de: [Steilküste]
+    fr: [falaise]
+    es: [acantilado]
+    it: [scogliera]
+    nl: [rotskust]
   not_to_be_confused_with: [set.gorge]
   applies_to: [place, trail, beach, lake, mountain]
   source: text
@@ -1330,6 +1691,11 @@ nodes:
   definition: Sand dunes.
   synonyms:
     en: [dune landscape]
+    de: [Dünenlandschaft]
+    fr: [dune]
+    es: [duna]
+    it: [duna]
+    nl: [duinlandschap]
   not_to_be_confused_with: [set.sandy-beach]
   applies_to: [place, trail, beach]
   source: text
@@ -1390,8 +1756,8 @@ nodes:
   level: 2
   parent: set.coast
   children: []
-  label: {en: Fjord, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Fjord, de: Fjord, fr: Fjord, es: Fiordo, it: Fiordo, nl: Fjord}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A long, deep sea inlet between steep mountains.
   synonyms:
     en: [fjord, sea loch]
@@ -1403,11 +1769,16 @@ nodes:
   level: 2
   parent: set.coast
   children: []
-  label: {en: Harbour and fishing port, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Harbour and fishing port, de: Hafen und Fischerhafen, fr: Port et port de pêche, es: Puerto y puerto pesquero, it: Porto e porto peschereccio, nl: Haven en vissershaven}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A working or old harbour.
   synonyms:
     en: [port, marina, fishing village]
+    de: [Fischerdorf, Jachthafen]
+    fr: [port de plaisance, village de pêcheurs]
+    es: [puerto deportivo, pueblo pesquero]
+    it: [porticciolo, borgo di pescatori]
+    nl: [jachthaven, vissersdorp]
   not_to_be_confused_with: [set.seaside-town]
   applies_to: [place]
   source: text
@@ -1416,11 +1787,16 @@ nodes:
   level: 2
   parent: set.coast
   children: []
-  label: {en: Peninsula, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Peninsula, de: Halbinsel, fr: Péninsule, es: Península, it: Penisola, nl: Schiereiland}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A place on a peninsula.
   synonyms:
     en: [headland, cape]
+    de: [Landzunge, Kap]
+    fr: [cap, 'presqu''île']
+    es: [cabo]
+    it: [capo, promontorio]
+    nl: [kaap]
   not_to_be_confused_with: [set.island]
   applies_to: [place]
   source: text
@@ -1434,6 +1810,11 @@ nodes:
   definition: On an island.
   synonyms:
     en: [isle]
+    de: [Insel]
+    fr: [île]
+    es: [isla]
+    it: [isola]
+    nl: [eiland]
   not_to_be_confused_with: [set.peninsula]
   applies_to: [place, beach, lake, mountain]
   source: text
@@ -1442,11 +1823,16 @@ nodes:
   level: 2
   parent: set.island
   children: []
-  label: {en: Archipelago, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Archipelago, de: Inselgruppe, fr: Archipel, es: Archipiélago, it: Arcipelago, nl: Archipel}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A group of islands.
   synonyms:
     en: [islands]
+    de: [Archipel, Inseln]
+    fr: [îles]
+    es: [islas]
+    it: [isole]
+    nl: [eilanden]
   not_to_be_confused_with: []
   applies_to: [place]
   source: text
@@ -1455,8 +1841,8 @@ nodes:
   level: 2
   parent: set.island
   children: []
-  label: {en: Tidal island, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Tidal island, de: Gezeiteninsel, fr: Île de marée, es: Isla de marea, it: Isola di marea, nl: Getijdeneiland}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: An island reached on foot at low tide.
   synonyms:
     en: [causeway]
@@ -1473,6 +1859,11 @@ nodes:
   definition: In or under mountains.
   synonyms:
     en: [mountain, highlands]
+    de: [Gebirge]
+    fr: [montagne]
+    es: [sierra]
+    it: [monti]
+    nl: [gebergte]
   not_to_be_confused_with: [set.hills]
   applies_to: [place, trail, lake, mountain]
   source: text
@@ -1481,11 +1872,16 @@ nodes:
   level: 2
   parent: set.mountains
   children: []
-  label: {en: High mountains, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: High mountains, de: Hochgebirge, fr: Haute montagne, es: Alta montaña, it: Alta montagna, nl: Hooggebergte}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: High mountains above the tree line.
   synonyms:
     en: [alps, alpine, high peaks]
+    de: [Alpen, Hochalpin]
+    fr: [Alpes, haute altitude]
+    es: [alta montaña, Alpes]
+    it: [Alpi, alta quota]
+    nl: [Alpen, hooggebergte]
   not_to_be_confused_with: [set.hills]
   applies_to: [place, trail, lake, mountain]
   source: text
@@ -1499,6 +1895,11 @@ nodes:
   definition: A named summit.
   synonyms:
     en: [peak, top, mountain top]
+    de: [Gipfel]
+    fr: [sommet]
+    es: [cumbre, cima, pico]
+    it: [vetta, cima]
+    nl: [top, bergtop]
   not_to_be_confused_with: [act.summit-hike]
   applies_to: [trail, mountain]
   source: text
@@ -1512,6 +1913,11 @@ nodes:
   definition: A glacier or ice field.
   synonyms:
     en: [ice, ice field]
+    de: [Gletscher]
+    fr: [glacier]
+    es: [glaciar]
+    it: [ghiacciaio]
+    nl: [gletsjer]
   not_to_be_confused_with: [set.mountain-lake]
   applies_to: [place, trail, lake, mountain]
   source: text
@@ -1525,6 +1931,11 @@ nodes:
   definition: A volcano, active or not, or volcanic land.
   synonyms:
     en: [volcanic, crater, lava]
+    de: [Vulkan]
+    fr: [volcan]
+    es: [volcán]
+    it: [vulcano]
+    nl: [vulkaan]
   not_to_be_confused_with: [set.crater-lake]
   applies_to: [place, trail, mountain]
   source: text
@@ -1533,11 +1944,16 @@ nodes:
   level: 2
   parent: set.mountains
   children: []
-  label: {en: Ridge and massif, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Ridge and massif, de: Grat und Massiv, fr: Crête et massif, es: Cresta y macizo, it: Cresta e massiccio, nl: Bergkam en massief}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A ridge, massif or plateau.
   synonyms:
     en: [plateau, massif, arete]
+    de: [Bergkamm, Hochebene]
+    fr: [plateau]
+    es: [meseta, sierra]
+    it: [altopiano]
+    nl: [hoogvlakte]
   not_to_be_confused_with: [set.peak]
   applies_to: [trail, mountain]
   source: text
@@ -1551,6 +1967,11 @@ nodes:
   definition: Rolling hills, not high mountains.
   synonyms:
     en: [uplands, downs]
+    de: [Hügelland]
+    fr: [collines]
+    es: [colinas]
+    it: [colline]
+    nl: [heuvels]
   not_to_be_confused_with: [set.alpine]
   applies_to: [place, trail, mountain]
   source: text
@@ -1564,6 +1985,11 @@ nodes:
   definition: A staffed or open hut.
   synonyms:
     en: [refuge, rifugio, bothy]
+    de: [Berghütte, Alm]
+    fr: [refuge]
+    es: [refugio]
+    it: [rifugio, malga]
+    nl: [berghut]
   not_to_be_confused_with: [act.hut-to-hut]
   applies_to: [trail, mountain]
   source: text
@@ -1572,11 +1998,16 @@ nodes:
   level: 2
   parent: set.mountains
   children: []
-  label: {en: Ski resort, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Ski resort, de: Skiort, fr: Station de ski, es: Estación de esquí, it: Stazione sciistica, nl: Skidorp}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A town built around skiing.
   synonyms:
     en: [ski village, ski station]
+    de: [Skigebiet, Wintersportort]
+    fr: ['station de sports d''hiver']
+    es: [pistas de esquí]
+    it: [comprensorio sciistico]
+    nl: [wintersportplaats, skigebied]
   not_to_be_confused_with: [act.skiing]
   applies_to: [place]
   source: text
@@ -1585,8 +2016,8 @@ nodes:
   level: 1
   parent: setting
   children: [set.lake, set.river, set.waterfall, set.gorge, set.hot-spring, set.spring]
-  label: {en: Lakes and rivers, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Lakes and rivers, de: Seen und Flüsse, fr: Lacs et rivières, es: Lagos y ríos, it: Laghi e fiumi, nl: Meren en rivieren}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Next to fresh water.
   synonyms:
     en: [inland water]
@@ -1603,6 +2034,11 @@ nodes:
   definition: On or by a lake.
   synonyms:
     en: [lakeside, loch, lac, see]
+    de: [See]
+    fr: [lac]
+    es: [lago]
+    it: [lago]
+    nl: [meer]
   not_to_be_confused_with: [set.lagoon]
   applies_to: [place, trail, lake]
   source: text
@@ -1616,6 +2052,11 @@ nodes:
   definition: A lake in the mountains, often small and cold.
   synonyms:
     en: [tarn, alpine lake]
+    de: [Bergsee]
+    fr: [lac de montagne]
+    es: [lago de montaña, ibón]
+    it: [lago alpino]
+    nl: [bergmeer]
   not_to_be_confused_with: [set.crater-lake]
   applies_to: [trail, lake]
   source: both
@@ -1642,6 +2083,11 @@ nodes:
   definition: A lake made by a dam.
   synonyms:
     en: [dam lake]
+    de: [Stausee]
+    fr: [lac de barrage]
+    es: [embalse, pantano]
+    it: [lago artificiale, bacino]
+    nl: [stuwmeer]
   not_to_be_confused_with: []
   applies_to: [trail, lake]
   source: both
@@ -1668,6 +2114,11 @@ nodes:
   definition: On a river worth being by.
   synonyms:
     en: [riverside, river valley]
+    de: [Fluss]
+    fr: [rivière, fleuve]
+    es: [río]
+    it: [fiume]
+    nl: [rivier]
   not_to_be_confused_with: [set.canals]
   applies_to: [place, trail, lake]
   source: text
@@ -1676,11 +2127,16 @@ nodes:
   level: 3
   parent: set.river
   children: []
-  label: {en: Canals, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Canals, de: Kanäle, fr: Canaux, es: Canales, it: Canali, nl: Grachten}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A town of canals.
   synonyms:
     en: [canal, waterways]
+    de: [Grachten]
+    fr: [canal]
+    es: [canal]
+    it: [canale]
+    nl: [gracht, kanaal]
   not_to_be_confused_with: [set.river]
   applies_to: [place]
   source: text
@@ -1694,6 +2150,11 @@ nodes:
   definition: A waterfall.
   synonyms:
     en: [falls, cascade]
+    de: [Wasserfall]
+    fr: [cascade, 'chute d''eau']
+    es: [cascada, salto]
+    it: [cascata]
+    nl: [waterval]
   not_to_be_confused_with: [set.gorge]
   applies_to: [place, trail, lake, mountain]
   source: text
@@ -1707,6 +2168,11 @@ nodes:
   definition: A narrow valley with steep walls.
   synonyms:
     en: [canyon, ravine]
+    de: [Schlucht, Klamm]
+    fr: [gorges, canyon]
+    es: [desfiladero, garganta, cañón]
+    it: [gola, forra]
+    nl: [kloof]
   not_to_be_confused_with: [set.valley]
   applies_to: [place, trail, mountain]
   source: text
@@ -1720,6 +2186,11 @@ nodes:
   definition: Water that comes up warm.
   synonyms:
     en: [thermal spring, geyser]
+    de: [heiße Quelle]
+    fr: [source chaude]
+    es: [aguas termales]
+    it: [sorgente termale]
+    nl: [warmwaterbron]
   not_to_be_confused_with: [act.thermal-baths]
   applies_to: [place, trail, lake]
   source: text
@@ -1759,6 +2230,11 @@ nodes:
   definition: Woods and forest.
   synonyms:
     en: [woodland, woods]
+    de: [Wald]
+    fr: [forêt, bois]
+    es: [bosque]
+    it: [bosco, foresta]
+    nl: [bos]
   not_to_be_confused_with: []
   applies_to: [place, trail, lake]
   source: text
@@ -1767,11 +2243,16 @@ nodes:
   level: 2
   parent: set.green
   children: [set.vineyards, set.flower-fields]
-  label: {en: Countryside, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Countryside, de: Ländliche Gegend, fr: Campagne, es: Campo, it: Campagna, nl: Platteland}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Farmland, fields and small roads.
   synonyms:
     en: [rural, farmland]
+    de: [Land, ländlich]
+    fr: [rural]
+    es: [rural]
+    it: [rurale]
+    nl: [landelijk]
   not_to_be_confused_with: [set.wilderness]
   applies_to: [place, trail]
   source: text
@@ -1780,11 +2261,16 @@ nodes:
   level: 3
   parent: set.countryside
   children: []
-  label: {en: Vineyards, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Vineyards, de: Weinberge, fr: Vignobles, es: Viñedos, it: Vigneti, nl: Wijngaarden}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Vineyards in the landscape.
   synonyms:
     en: [wine country, terraces]
+    de: [Weinlandschaft]
+    fr: [vignes, coteaux]
+    es: [viñas]
+    it: [vigne, colline del vino]
+    nl: [wijnstreek]
   not_to_be_confused_with: [act.wine]
   applies_to: [place, trail]
   source: text
@@ -1793,11 +2279,16 @@ nodes:
   level: 3
   parent: set.countryside
   children: []
-  label: {en: Flower fields, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Flower fields, de: Blumenfelder, fr: Champs de fleurs, es: Campos de flores, it: Campi fioriti, nl: Bloemenvelden}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Lavender, tulips or other fields in bloom.
   synonyms:
     en: [lavender, tulips]
+    de: [Lavendel, Tulpen]
+    fr: [lavande, tulipes]
+    es: [lavanda, tulipanes]
+    it: [lavanda, tulipani]
+    nl: [bollenvelden, tulpen, lavendel]
   not_to_be_confused_with: []
   applies_to: [place, trail]
   source: text
@@ -1806,11 +2297,16 @@ nodes:
   level: 2
   parent: set.green
   children: []
-  label: {en: Valley, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Valley, de: Tal, fr: Vallée, es: Valle, it: Valle, nl: Dal}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A valley.
   synonyms:
     en: [dale, glen]
+    de: [Talschaft]
+    fr: [val]
+    es: [valle]
+    it: [val]
+    nl: [vallei]
   not_to_be_confused_with: [set.gorge]
   applies_to: [place, trail]
   source: text
@@ -1819,11 +2315,16 @@ nodes:
   level: 2
   parent: set.green
   children: []
-  label: {en: Wilderness, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Wilderness, de: Wildnis, fr: Nature sauvage, es: Naturaleza salvaje, it: Natura selvaggia, nl: Wildernis}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Land with almost nothing built on it.
   synonyms:
     en: [wild land, backcountry]
+    de: [unberührte Natur]
+    fr: [nature vierge]
+    es: [naturaleza virgen]
+    it: [natura incontaminata]
+    nl: [ongerepte natuur]
   not_to_be_confused_with: [vibe.remote]
   applies_to: [place, trail, mountain]
   source: text
@@ -1832,11 +2333,16 @@ nodes:
   level: 2
   parent: set.green
   children: []
-  label: {en: Moor and bog, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Moor and bog, de: Moor und Heide, fr: Landes et tourbières, es: Páramos y turberas, it: Brughiera e torbiere, nl: Heide en veen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Moorland, heath and bog.
   synonyms:
     en: [heath, bog, fen]
+    de: [Heide, Hochmoor]
+    fr: [lande, tourbière]
+    es: [brezal, turbera]
+    it: [brughiera, torbiera]
+    nl: [hei, hoogveen]
   not_to_be_confused_with: []
   applies_to: [place, trail]
   source: text
@@ -1845,11 +2351,16 @@ nodes:
   level: 2
   parent: set.green
   children: []
-  label: {en: Arctic and tundra, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Arctic and tundra, de: Arktis und Tundra, fr: Arctique et toundra, es: Ártico y tundra, it: Artico e tundra, nl: Arctisch gebied en toendra}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: North of the Arctic circle or on tundra.
   synonyms:
     en: [lapland, tundra, polar]
+    de: [Lappland, Polarkreis]
+    fr: [Laponie, cercle polaire]
+    es: [Laponia, círculo polar]
+    it: [Lapponia, circolo polare]
+    nl: [Lapland, poolcirkel]
   not_to_be_confused_with: [act.northern-lights]
   applies_to: [place]
   source: text
@@ -1876,6 +2387,11 @@ nodes:
   definition: A cave.
   synonyms:
     en: [grotto]
+    de: [Höhle]
+    fr: [grotte]
+    es: [cueva, gruta]
+    it: [grotta]
+    nl: [grot]
   not_to_be_confused_with: [act.caving]
   applies_to: [place, trail, mountain]
   source: text
@@ -1889,6 +2405,11 @@ nodes:
   definition: Parks and gardens.
   synonyms:
     en: [garden, botanical garden]
+    de: [Garten, Schlosspark]
+    fr: [jardin, parc]
+    es: [jardín, parque]
+    it: [giardino, parco]
+    nl: [tuin, stadspark]
   not_to_be_confused_with: [set.protected-area]
   applies_to: [place, trail]
   source: text
@@ -1897,11 +2418,16 @@ nodes:
   level: 2
   parent: set.green
   children: [set.national-park, set.nature-reserve, set.natura2000]
-  label: {en: Protected nature, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Protected nature, de: Geschützte Natur, fr: Nature protégée, es: Naturaleza protegida, it: Natura protetta, nl: Beschermde natuur}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: 'A protected area: park, reserve or Natura 2000.'
   synonyms:
     en: [protected area, reserve]
+    de: [Schutzgebiet, Naturpark]
+    fr: [parc naturel régional]
+    es: [espacio protegido, parque natural]
+    it: [area protetta, parco regionale]
+    nl: [natuurgebied, natuurpark]
   not_to_be_confused_with: [set.parks]
   applies_to: [place, trail, beach, lake, mountain]
   source: both
@@ -1915,6 +2441,11 @@ nodes:
   definition: Inside or next to a national park.
   synonyms:
     en: [nationalpark, parc national]
+    de: [Nationalpark]
+    fr: [parc national]
+    es: [parque nacional]
+    it: [parco nazionale]
+    nl: [nationaal park]
   not_to_be_confused_with: []
   applies_to: [place, trail, beach, lake, mountain]
   source: both
@@ -1928,6 +2459,11 @@ nodes:
   definition: A nature reserve.
   synonyms:
     en: [reserve]
+    de: [Naturschutzgebiet]
+    fr: [réserve naturelle]
+    es: [reserva natural]
+    it: [riserva naturale]
+    nl: [natuurreservaat]
   not_to_be_confused_with: []
   applies_to: [place, trail, beach, lake, mountain]
   source: both
@@ -1949,8 +2485,8 @@ nodes:
   level: 1
   parent: setting
   children: [set.big-city, set.small-town, set.village, set.old-town, set.university-town, set.spa-town, set.market-town, set.modern-architecture]
-  label: {en: Towns and cities, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Towns and cities, de: Städte und Orte, fr: Villes et bourgs, es: Pueblos y ciudades, it: Città e paesi, nl: Steden en dorpen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: The built place itself.
   synonyms:
     en: [urban]
@@ -1967,6 +2503,11 @@ nodes:
   definition: A city with city life.
   synonyms:
     en: [city break, metropolis]
+    de: [Großstadt, Städtereise]
+    fr: [grande ville, city break]
+    es: [gran ciudad, escapada urbana]
+    it: [grande città]
+    nl: [stedentrip, grote stad]
   not_to_be_confused_with: [set.capital]
   applies_to: [place]
   source: both
@@ -1975,11 +2516,16 @@ nodes:
   level: 3
   parent: set.big-city
   children: []
-  label: {en: Capital city, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Capital city, de: Hauptstadt, fr: Capitale, es: Capital, it: Capitale, nl: Hoofdstad}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A national or regional capital.
   synonyms:
     en: [capital]
+    de: [Hauptstadt]
+    fr: [capitale]
+    es: [capital]
+    it: [capitale]
+    nl: [hoofdstad]
   not_to_be_confused_with: []
   applies_to: [place]
   source: text
@@ -1993,6 +2539,11 @@ nodes:
   definition: A small town.
   synonyms:
     en: [town]
+    de: [Kleinstadt, Städtchen]
+    fr: [petite ville, bourg]
+    es: [pueblo, villa]
+    it: [cittadina, borgo]
+    nl: [stadje]
   not_to_be_confused_with: [set.village]
   applies_to: [place]
   source: both
@@ -2006,6 +2557,11 @@ nodes:
   definition: A village.
   synonyms:
     en: [hamlet]
+    de: [Dorf]
+    fr: [village]
+    es: [aldea, pueblo]
+    it: [paese, borgo, frazione]
+    nl: [dorp, gehucht]
   not_to_be_confused_with: [set.small-town]
   applies_to: [place]
   source: both
@@ -2019,6 +2575,11 @@ nodes:
   definition: A historic centre with old streets and squares.
   synonyms:
     en: [historic centre, altstadt, centro storico]
+    de: [Altstadt]
+    fr: [vieille ville, centre historique]
+    es: [casco antiguo, casco histórico]
+    it: [centro storico]
+    nl: [oude binnenstad, historisch centrum]
   not_to_be_confused_with: [set.medieval]
   applies_to: [place]
   source: text
@@ -2027,11 +2588,16 @@ nodes:
   level: 3
   parent: set.old-town
   children: []
-  label: {en: Walled town, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Walled town, de: Ummauerte Stadt, fr: Ville fortifiée, es: Ciudad amurallada, it: Città murata, nl: Ommuurde stad}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A town inside its walls.
   synonyms:
     en: [walled city, ramparts]
+    de: [Stadtmauer]
+    fr: [remparts, cité]
+    es: [murallas]
+    it: [mura]
+    nl: [stadsmuur, vestingstad]
   not_to_be_confused_with: [set.fortress]
   applies_to: [place]
   source: text
@@ -2040,11 +2606,16 @@ nodes:
   level: 3
   parent: set.old-town
   children: []
-  label: {en: Squares, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Squares, de: Plätze, fr: Places, es: Plazas, it: Piazze, nl: Pleinen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Squares and piazzas to sit in.
   synonyms:
     en: [piazza, plaza]
+    de: [Marktplatz]
+    fr: [place]
+    es: [plaza mayor]
+    it: [piazza]
+    nl: [plein, markt]
   not_to_be_confused_with: []
   applies_to: [place]
   source: text
@@ -2053,8 +2624,8 @@ nodes:
   level: 2
   parent: set.urban
   children: []
-  label: {en: University town, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: University town, de: Universitätsstadt, fr: Ville universitaire, es: Ciudad universitaria, it: Città universitaria, nl: Universiteitsstad}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A town shaped by a university.
   synonyms:
     en: [student town]
@@ -2066,11 +2637,16 @@ nodes:
   level: 2
   parent: set.urban
   children: []
-  label: {en: Spa town, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Spa town, de: Kurort, fr: Ville thermale, es: Ciudad balneario, it: Città termale, nl: Kuurstad}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A town built around its springs and baths.
   synonyms:
     en: [bad, terme, kurort]
+    de: [Bad, Kurort]
+    fr: [station thermale]
+    es: [balneario]
+    it: [terme]
+    nl: [kuuroord, badplaats]
   not_to_be_confused_with: [act.thermal-baths]
   applies_to: [place]
   source: both
@@ -2079,8 +2655,8 @@ nodes:
   level: 2
   parent: set.urban
   children: []
-  label: {en: Market town, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Market town, de: Marktstadt, fr: Bourg de marché, es: Villa de mercado, it: Borgo di mercato, nl: Marktstad}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A town with a market tradition.
   synonyms:
     en: []
@@ -2092,8 +2668,8 @@ nodes:
   level: 2
   parent: set.urban
   children: []
-  label: {en: Modern architecture, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Modern architecture, de: Moderne Architektur, fr: Architecture moderne, es: Arquitectura moderna, it: Architettura moderna, nl: Moderne architectuur}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Modern buildings worth seeing.
   synonyms:
     en: [contemporary architecture]
@@ -2123,6 +2699,11 @@ nodes:
   definition: On or in a UNESCO World Heritage site.
   synonyms:
     en: [world heritage]
+    de: [Welterbe]
+    fr: [patrimoine mondial]
+    es: [Patrimonio de la Humanidad]
+    it: ['patrimonio dell''umanità']
+    nl: [werelderfgoed]
   not_to_be_confused_with: [vibe.iconic]
   applies_to: [place, trail, beach, lake, mountain]
   source: data
@@ -2131,11 +2712,16 @@ nodes:
   level: 2
   parent: set.heritage
   children: []
-  label: {en: Landmarks, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Landmarks, de: Wahrzeichen, fr: Monuments, es: Monumentos, it: Monumenti, nl: Monumenten}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A famous building or monument.
   synonyms:
     en: [landmark, monument]
+    de: [Denkmal, Bauwerk]
+    fr: [monument]
+    es: [monumento]
+    it: [monumento]
+    nl: [monument]
   not_to_be_confused_with: [vibe.iconic]
   applies_to: [place]
   source: text
@@ -2149,6 +2735,11 @@ nodes:
   definition: A castle.
   synonyms:
     en: [burg, chateau, schloss]
+    de: [Burg, Schloss]
+    fr: [château, château fort]
+    es: [castillo]
+    it: [castello, rocca]
+    nl: [kasteel, burcht]
   not_to_be_confused_with: [set.palace]
   applies_to: [place, trail, lake, mountain]
   source: text
@@ -2157,11 +2748,16 @@ nodes:
   level: 3
   parent: set.castle
   children: []
-  label: {en: Fortress, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Fortress, de: Festung, fr: Forteresse, es: Fortaleza, it: Fortezza, nl: Vesting}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A fortress, citadel or city walls.
   synonyms:
     en: [citadel, fort, ramparts]
+    de: [Zitadelle, Burg]
+    fr: [citadelle, fort]
+    es: [ciudadela, alcazaba]
+    it: [rocca, cittadella]
+    nl: [citadel, fort]
   not_to_be_confused_with: [set.walled-town]
   applies_to: [place, trail]
   source: text
@@ -2170,11 +2766,16 @@ nodes:
   level: 3
   parent: set.castle
   children: []
-  label: {en: Palace, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Palace, de: Palast, fr: Palais, es: Palacio, it: Palazzo, nl: Paleis}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A palace or grand residence.
   synonyms:
     en: [residence, villa]
+    de: [Schloss, Residenz]
+    fr: [château, palais]
+    es: [palacio real]
+    it: [reggia, villa]
+    nl: [paleis]
   not_to_be_confused_with: [set.castle]
   applies_to: [place]
   source: text
@@ -2183,11 +2784,16 @@ nodes:
   level: 2
   parent: set.heritage
   children: [set.cathedral, set.church, set.monastery, set.mosque, set.synagogue]
-  label: {en: Religious buildings, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Religious buildings, de: Sakralbauten, fr: Édifices religieux, es: Edificios religiosos, it: Edifici religiosi, nl: Religieuze gebouwen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Churches, monasteries and other houses of worship.
   synonyms:
     en: [sacred sites]
+    de: [Kirche, Kloster]
+    fr: [églises, lieux saints]
+    es: [iglesias, santuario]
+    it: [chiese, santuario]
+    nl: [kerken]
   not_to_be_confused_with: [act.pilgrimage]
   applies_to: [place, trail]
   source: text
@@ -2196,11 +2802,16 @@ nodes:
   level: 3
   parent: set.religious
   children: []
-  label: {en: Cathedral, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Cathedral, de: Kathedrale, fr: Cathédrale, es: Catedral, it: Cattedrale, nl: Kathedraal}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A cathedral or basilica.
   synonyms:
     en: [basilica, duomo, dom]
+    de: [Dom, Münster, Basilika]
+    fr: [basilique]
+    es: [basílica, seo]
+    it: [duomo, basilica]
+    nl: [dom, basiliek]
   not_to_be_confused_with: [set.church]
   applies_to: [place]
   source: text
@@ -2209,11 +2820,16 @@ nodes:
   level: 3
   parent: set.religious
   children: []
-  label: {en: Church, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Church, de: Kirche, fr: Église, es: Iglesia, it: Chiesa, nl: Kerk}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A church or chapel worth seeing.
   synonyms:
     en: [chapel]
+    de: [Kapelle]
+    fr: [chapelle]
+    es: [ermita, capilla]
+    it: [cappella, pieve]
+    nl: [kapel]
   not_to_be_confused_with: [set.cathedral]
   applies_to: [place, trail]
   source: text
@@ -2227,6 +2843,11 @@ nodes:
   definition: A monastery, abbey or convent.
   synonyms:
     en: [abbey, convent, hermitage]
+    de: [Kloster, Abtei, Stift]
+    fr: [abbaye, monastère]
+    es: [monasterio, convento]
+    it: [abbazia, convento, eremo]
+    nl: [klooster, abdij]
   not_to_be_confused_with: [set.church]
   applies_to: [place, trail]
   source: text
@@ -2235,8 +2856,8 @@ nodes:
   level: 3
   parent: set.religious
   children: []
-  label: {en: Mosque, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Mosque, de: Moschee, fr: Mosquée, es: Mezquita, it: Moschea, nl: Moskee}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A mosque.
   synonyms:
     en: []
@@ -2248,11 +2869,16 @@ nodes:
   level: 3
   parent: set.religious
   children: []
-  label: {en: Synagogue, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Synagogue, de: Synagoge, fr: Synagogue, es: Sinagoga, it: Sinagoga, nl: Synagoge}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A synagogue or Jewish quarter.
   synonyms:
     en: [jewish quarter]
+    de: [jüdisches Viertel]
+    fr: [quartier juif]
+    es: [judería]
+    it: [ghetto ebraico]
+    nl: [joodse wijk]
   not_to_be_confused_with: []
   applies_to: [place]
   source: text
@@ -2261,11 +2887,16 @@ nodes:
   level: 2
   parent: set.heritage
   children: [set.roman, set.ancient-greek, set.prehistoric]
-  label: {en: Ancient sites, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Ancient sites, de: Antike Stätten, fr: Sites antiques, es: Yacimientos antiguos, it: Siti antichi, nl: Antieke vindplaatsen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Remains from before the Middle Ages.
   synonyms:
     en: [antiquity, archaeology]
+    de: [Antike, Ausgrabungen]
+    fr: [antiquité, fouilles]
+    es: [arqueología, yacimiento]
+    it: [scavi, area archeologica]
+    nl: [oudheid, opgravingen]
   not_to_be_confused_with: [set.ruins]
   applies_to: [place, trail]
   source: text
@@ -2274,11 +2905,16 @@ nodes:
   level: 3
   parent: set.ancient
   children: []
-  label: {en: Roman remains, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Roman remains, de: Römische Überreste, fr: Vestiges romains, es: Restos romanos, it: Resti romani, nl: Romeinse overblijfselen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Roman towns, theatres, aqueducts and roads.
   synonyms:
     en: [amphitheatre, aqueduct]
+    de: [Römer, Amphitheater, Aquädukt]
+    fr: [amphithéâtre, aqueduc]
+    es: [anfiteatro, acueducto]
+    it: [anfiteatro, acquedotto]
+    nl: [amfitheater, aquaduct]
   not_to_be_confused_with: [set.ancient-greek]
   applies_to: [place, trail]
   source: text
@@ -2287,8 +2923,8 @@ nodes:
   level: 3
   parent: set.ancient
   children: []
-  label: {en: Ancient Greek, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Ancient Greek, de: Antikes Griechenland, fr: Grèce antique, es: Grecia antigua, it: Antica Grecia, nl: Oud-Grieks}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Ancient Greek temples, theatres and sites.
   synonyms:
     en: [oracle, temple, acropolis]
@@ -2300,11 +2936,16 @@ nodes:
   level: 3
   parent: set.ancient
   children: []
-  label: {en: Prehistoric, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Prehistoric, de: Prähistorisch, fr: Préhistorique, es: Prehistórico, it: Preistorico, nl: Prehistorisch}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Megaliths, cave art and older remains.
   synonyms:
     en: [megaliths, neolithic, stone circle]
+    de: [Megalithen, Hünengrab]
+    fr: [mégalithes, dolmen, menhir]
+    es: [dolmen, megalitos]
+    it: [nuraghe, dolmen]
+    nl: [hunebed, megalieten]
   not_to_be_confused_with: []
   applies_to: [place, trail]
   source: text
@@ -2318,6 +2959,11 @@ nodes:
   definition: Ruins of any age.
   synonyms:
     en: [remains]
+    de: [Ruine]
+    fr: [ruines, vestiges]
+    es: [ruinas]
+    it: [rovine, ruderi]
+    nl: [ruïne]
   not_to_be_confused_with: [set.ancient]
   applies_to: [place, trail]
   source: text
@@ -2326,8 +2972,8 @@ nodes:
   level: 2
   parent: set.heritage
   children: [set.medieval, set.gothic, set.renaissance, set.baroque, set.byzantine, set.ottoman, set.venetian, set.art-nouveau, set.georgian, set.viking, set.hanseatic, set.imperial]
-  label: {en: Historic styles, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Historic styles, de: Historische Stile, fr: Styles historiques, es: Estilos históricos, it: Stili storici, nl: Historische stijlen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: The period or style a place is known for.
   synonyms:
     en: [era, style]
@@ -2339,11 +2985,16 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Medieval, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Medieval, de: Mittelalterlich, fr: Médiéval, es: Medieval, it: Medievale, nl: Middeleeuws}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Medieval streets and buildings.
   synonyms:
     en: [middle ages]
+    de: [Mittelalter]
+    fr: [Moyen Âge]
+    es: [Edad Media]
+    it: [Medioevo]
+    nl: [middeleeuwen]
   not_to_be_confused_with: [set.old-town]
   applies_to: [place]
   source: text
@@ -2352,8 +3003,8 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Gothic, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Gothic, de: Gotisch, fr: Gothique, es: Gótico, it: Gotico, nl: Gotisch}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Gothic architecture.
   synonyms:
     en: []
@@ -2365,8 +3016,8 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Renaissance, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Renaissance, de: Renaissance, fr: Renaissance, es: Renacimiento, it: Rinascimento, nl: Renaissance}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Renaissance architecture and art.
   synonyms:
     en: []
@@ -2378,8 +3029,8 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Baroque, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Baroque, de: Barock, fr: Baroque, es: Barroco, it: Barocco, nl: Barok}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Baroque architecture.
   synonyms:
     en: [rococo]
@@ -2391,8 +3042,8 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Byzantine, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Byzantine, de: Byzantinisch, fr: Byzantin, es: Bizantino, it: Bizantino, nl: Byzantijns}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Byzantine churches and mosaics.
   synonyms:
     en: [mosaics]
@@ -2404,8 +3055,8 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Ottoman, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Ottoman, de: Osmanisch, fr: Ottoman, es: Otomano, it: Ottomano, nl: Ottomaans}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Ottoman towns and buildings.
   synonyms:
     en: []
@@ -2417,8 +3068,8 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Venetian, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Venetian, de: Venezianisch, fr: Vénitien, es: Veneciano, it: Veneziano, nl: Venetiaans}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Venetian rule and buildings around the Adriatic and Aegean.
   synonyms:
     en: []
@@ -2430,11 +3081,16 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Art nouveau, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Art nouveau, de: Jugendstil, fr: Art nouveau, es: Art nouveau, it: Liberty e Art nouveau, nl: Art nouveau}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Art nouveau and Jugendstil buildings.
   synonyms:
     en: [jugendstil, modernisme, secession]
+    de: [Secession]
+    fr: [Belle Époque]
+    es: [modernismo]
+    it: [Liberty]
+    nl: [jugendstil]
   not_to_be_confused_with: [set.modern-architecture]
   applies_to: [place]
   source: text
@@ -2443,8 +3099,8 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Georgian and Victorian, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Georgian and Victorian, de: Georgianisch und viktorianisch, fr: Géorgien et victorien, es: Georgiano y victoriano, it: Georgiano e vittoriano, nl: Georgiaans en victoriaans}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Georgian and Victorian British towns.
   synonyms:
     en: [regency, victorian]
@@ -2456,8 +3112,8 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Viking and Norse, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Viking and Norse, de: Wikinger und Nordisch, fr: Viking et nordique, es: Vikingo y nórdico, it: Vichingo e norreno, nl: Vikingen en Noormannen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Viking and Norse history.
   synonyms:
     en: [norse]
@@ -2469,11 +3125,16 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Hanseatic, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Hanseatic, de: Hanse, fr: Hanséatique, es: Hanseático, it: Anseatico, nl: Hanze}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Hanseatic merchant towns.
   synonyms:
     en: [hansa]
+    de: [Hansestadt]
+    fr: [Hanse]
+    es: [Liga Hanseática]
+    it: [Lega anseatica]
+    nl: [Hanzestad]
   not_to_be_confused_with: []
   applies_to: [place]
   source: text
@@ -2482,11 +3143,16 @@ nodes:
   level: 3
   parent: set.periods
   children: []
-  label: {en: Imperial, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Imperial, de: Kaiserlich, fr: Impérial, es: Imperial, it: Imperiale, nl: Keizerlijk}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Grand imperial capitals and buildings.
   synonyms:
     en: [habsburg, grand]
+    de: [Habsburger, Kaiserstadt]
+    fr: [Habsbourg]
+    es: [Habsburgo]
+    it: [Asburgo]
+    nl: [Habsburgers]
   not_to_be_confused_with: [vibe.elegant]
   applies_to: [place]
   source: text
@@ -2495,8 +3161,8 @@ nodes:
   level: 2
   parent: set.heritage
   children: []
-  label: {en: Bridges, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Bridges, de: Brücken, fr: Ponts, es: Puentes, it: Ponti, nl: Bruggen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A bridge worth seeing.
   synonyms:
     en: [bridge]
@@ -2508,11 +3174,16 @@ nodes:
   level: 2
   parent: set.heritage
   children: []
-  label: {en: Towers, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Towers, de: Türme, fr: Tours, es: Torres, it: Torri, nl: Torens}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Towers and belfries.
   synonyms:
     en: [belfry, tower]
+    de: [Turm, Glockenturm]
+    fr: [beffroi, tour]
+    es: [torre, campanario]
+    it: [torre, campanile]
+    nl: [belfort, toren]
   not_to_be_confused_with: []
   applies_to: [place, trail]
   source: text
@@ -2526,6 +3197,11 @@ nodes:
   definition: A lighthouse.
   synonyms:
     en: []
+    de: [Leuchtturm]
+    fr: [phare]
+    es: [faro]
+    it: [faro]
+    nl: [vuurtoren]
   not_to_be_confused_with: []
   applies_to: [place, trail, beach]
   source: text
@@ -2534,11 +3210,16 @@ nodes:
   level: 2
   parent: set.heritage
   children: []
-  label: {en: Memorials and war history, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Memorials and war history, de: Gedenkstätten und Kriegsgeschichte, fr: Mémoriaux et histoire militaire, es: Memoriales e historia de la guerra, it: Memoriali e storia della guerra, nl: Gedenkplaatsen en oorlogsgeschiedenis}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Memorials and places of war history.
   synonyms:
     en: [war memorial, battlefield]
+    de: [Gedenkstätte, Schlachtfeld]
+    fr: [mémorial, champ de bataille]
+    es: [memorial, campo de batalla]
+    it: [sacrario, campo di battaglia]
+    nl: [oorlogsmonument, slagveld]
   not_to_be_confused_with: []
   applies_to: [place, trail]
   source: text
@@ -2547,11 +3228,16 @@ nodes:
   level: 2
   parent: set.heritage
   children: []
-  label: {en: Windmills, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Windmills, de: Windmühlen, fr: Moulins à vent, es: Molinos de viento, it: Mulini a vento, nl: Windmolens}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Windmills.
   synonyms:
     en: []
+    de: [Windmühle]
+    fr: [moulin]
+    es: [molino]
+    it: [mulino]
+    nl: [molen]
   not_to_be_confused_with: []
   applies_to: [place]
   source: text
@@ -2560,11 +3246,16 @@ nodes:
   level: 2
   parent: set.heritage
   children: []
-  label: {en: Traditional houses, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Traditional houses, de: Traditionelle Häuser, fr: Maisons traditionnelles, es: Casas tradicionales, it: Case tradizionali, nl: Traditionele huizen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: 'Typical local houses: trulli, whitewashed, red cottages.'
   synonyms:
     en: [whitewashed houses, trulli, stone houses]
+    de: [Fachwerk, Bauernhaus]
+    fr: [maisons blanches, colombages]
+    es: [casas blancas, pueblo blanco]
+    it: [trulli, case in pietra]
+    nl: [vakwerk, boerderij]
   not_to_be_confused_with: [vibe.authentic]
   applies_to: [place]
   source: text
@@ -2573,11 +3264,16 @@ nodes:
   level: 2
   parent: set.heritage
   children: []
-  label: {en: Industrial heritage, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Industrial heritage, de: Industriekultur, fr: Patrimoine industriel, es: Patrimonio industrial, it: Patrimonio industriale, nl: Industrieel erfgoed}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Mines, factories and old industry.
   synonyms:
     en: [mining, industrial]
+    de: [Bergwerk, Zeche]
+    fr: [mine, patrimoine minier]
+    es: [minas]
+    it: [miniera]
+    nl: [mijn]
   not_to_be_confused_with: []
   applies_to: [place, trail]
   source: text
@@ -2586,8 +3282,8 @@ nodes:
   level: 1
   parent: vibe
   children: [vibe.quiet, vibe.lively, vibe.romantic, vibe.fairytale, vibe.authentic, vibe.elegant, vibe.bohemian, vibe.quirky]
-  label: {en: Atmosphere, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Atmosphere, de: Atmosphäre, fr: Atmosphère, es: Atmósfera, it: Atmosfera, nl: Atmosfeer}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: The mood of the place.
   synonyms:
     en: [mood]
@@ -2604,6 +3300,11 @@ nodes:
   definition: Calm, with few people.
   synonyms:
     en: [peaceful, tranquil]
+    de: [ruhig, friedlich]
+    fr: [calme, paisible]
+    es: [tranquilo]
+    it: [tranquillo]
+    nl: [rustig]
   not_to_be_confused_with: [vibe.remote]
   applies_to: [place, trail, beach, lake, mountain]
   source: both
@@ -2612,11 +3313,16 @@ nodes:
   level: 2
   parent: vibe.atmosphere
   children: []
-  label: {en: Lively, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Lively, de: Lebhaft, fr: Animé, es: Animado, it: Vivace, nl: Levendig}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Busy streets, people, things going on.
   synonyms:
     en: [buzzing, vibrant]
+    de: [belebt, quirlig]
+    fr: [vivant]
+    es: [con ambiente, bullicioso]
+    it: [animato]
+    nl: [bruisend, gezellig druk]
   not_to_be_confused_with: [act.nightlife]
   applies_to: [place]
   source: text
@@ -2630,6 +3336,11 @@ nodes:
   definition: Made for couples.
   synonyms:
     en: [for couples]
+    de: [romantisch]
+    fr: [romantique]
+    es: [romántico]
+    it: [romantico]
+    nl: [romantisch]
   not_to_be_confused_with: [trav.couples]
   applies_to: [place, beach, lake]
   source: text
@@ -2638,11 +3349,16 @@ nodes:
   level: 2
   parent: vibe.atmosphere
   children: []
-  label: {en: Fairytale, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Fairytale, de: Märchenhaft, fr: Féerique, es: De cuento, it: Da fiaba, nl: Sprookjesachtig}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Looks like a storybook.
   synonyms:
     en: [picture-perfect, storybook]
+    de: [wie im Bilderbuch]
+    fr: [de conte de fées]
+    es: [de cuento de hadas]
+    it: [fiabesco]
+    nl: [als een sprookje]
   not_to_be_confused_with: [vibe.photogenic]
   applies_to: [place]
   source: text
@@ -2651,11 +3367,16 @@ nodes:
   level: 2
   parent: vibe.atmosphere
   children: []
-  label: {en: Authentic and traditional, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Authentic and traditional, de: Authentisch und traditionell, fr: Authentique et traditionnel, es: Auténtico y tradicional, it: Autentico e tradizionale, nl: Authentiek en traditioneel}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Local life and traditions, not built for visitors.
   synonyms:
     en: [traditional, unspoilt]
+    de: [ursprünglich, typisch]
+    fr: [typique, préservé]
+    es: [típico, auténtico]
+    it: [genuino, tipico]
+    nl: [authentiek, onbedorven]
   not_to_be_confused_with: [vibe.hidden-gem]
   applies_to: [place]
   source: text
@@ -2664,8 +3385,8 @@ nodes:
   level: 2
   parent: vibe.atmosphere
   children: []
-  label: {en: Elegant, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Elegant, de: Elegant, fr: Élégant, es: Elegante, it: Elegante, nl: Elegant}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Grand, refined, stylish.
   synonyms:
     en: [grand, refined, chic]
@@ -2677,8 +3398,8 @@ nodes:
   level: 2
   parent: vibe.atmosphere
   children: []
-  label: {en: Creative and bohemian, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Creative and bohemian, de: Kreativ und alternativ, fr: Créatif et bohème, es: Creativo y bohemio, it: Creativo e bohémien, nl: Creatief en alternatief}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Artists, students and an alternative scene.
   synonyms:
     en: [artsy, alternative]
@@ -2690,8 +3411,8 @@ nodes:
   level: 2
   parent: vibe.atmosphere
   children: []
-  label: {en: Curious and quirky, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Curious and quirky, de: Kurios und schräg, fr: Insolite et décalé, es: Curioso y peculiar, it: Curioso e stravagante, nl: Curieus en eigenzinnig}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Odd, surprising things to see.
   synonyms:
     en: [curiosity, odd]
@@ -2703,8 +3424,8 @@ nodes:
   level: 1
   parent: vibe
   children: [vibe.views, vibe.dramatic, vibe.photogenic, vibe.colourful, vibe.remote]
-  label: {en: Scenery, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Scenery, de: Landschaft, fr: Paysage, es: Paisaje, it: Paesaggio, nl: Landschap}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: How the landscape looks.
   synonyms:
     en: [landscape]
@@ -2721,6 +3442,11 @@ nodes:
   definition: Wide views over land or water.
   synonyms:
     en: [panorama, vistas]
+    de: [Aussicht, Ausblick]
+    fr: [vue]
+    es: [vistas]
+    it: [vista]
+    nl: [uitzicht]
   not_to_be_confused_with: [act.viewpoints]
   applies_to: [place, trail, lake, mountain]
   source: text
@@ -2729,11 +3455,16 @@ nodes:
   level: 2
   parent: vibe.scenery
   children: []
-  label: {en: Dramatic landscape, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Dramatic landscape, de: Dramatische Landschaft, fr: Paysage spectaculaire, es: Paisaje espectacular, it: Paesaggio spettacolare, nl: Indrukwekkend landschap}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Steep, wild, striking landscape.
   synonyms:
     en: [spectacular, rugged]
+    de: [spektakulär, wild]
+    fr: [grandiose, sauvage]
+    es: [espectacular, abrupto]
+    it: [spettacolare, selvaggio]
+    nl: [ruig, spectaculair]
   not_to_be_confused_with: [vibe.views]
   applies_to: [place, trail, beach, lake, mountain]
   source: text
@@ -2742,11 +3473,16 @@ nodes:
   level: 2
   parent: vibe.scenery
   children: []
-  label: {en: Photogenic, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Photogenic, de: Fotogen, fr: Photogénique, es: Fotogénico, it: Fotogenico, nl: Fotogeniek}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Looks good in photos.
   synonyms:
     en: [instagrammable, picturesque]
+    de: [malerisch]
+    fr: [pittoresque]
+    es: [pintoresco]
+    it: [pittoresco]
+    nl: [schilderachtig]
   not_to_be_confused_with: [vibe.fairytale]
   applies_to: [place, trail, beach, lake, mountain]
   source: text
@@ -2755,8 +3491,8 @@ nodes:
   level: 2
   parent: vibe.scenery
   children: []
-  label: {en: Colourful, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Colourful, de: Farbenfroh, fr: Coloré, es: Colorido, it: Colorato, nl: Kleurrijk}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Colourful houses or landscapes.
   synonyms:
     en: [pastel, painted houses]
@@ -2768,11 +3504,16 @@ nodes:
   level: 2
   parent: vibe.scenery
   children: []
-  label: {en: Remote, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Remote, de: Abgelegen, fr: Isolé, es: Remoto, it: Remoto, nl: Afgelegen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Far from everything.
   synonyms:
     en: [isolated, secluded, end of the road]
+    de: [einsam, entlegen]
+    fr: [reculé, bout du monde]
+    es: [aislado, apartado]
+    it: [isolato, sperduto]
+    nl: [afgelegen, eenzaam]
   not_to_be_confused_with: [vibe.quiet]
   applies_to: [place, trail, beach, lake, mountain]
   source: both
@@ -2781,8 +3522,8 @@ nodes:
   level: 1
   parent: vibe
   children: [vibe.slow, vibe.adventurous]
-  label: {en: Pace, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Pace, de: Tempo, fr: Rythme, es: Ritmo, it: Ritmo, nl: Tempo}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: How fast the days go.
   synonyms:
     en: [rhythm]
@@ -2794,11 +3535,16 @@ nodes:
   level: 2
   parent: vibe.pace
   children: []
-  label: {en: Slow travel, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Slow travel, de: Entschleunigt reisen, fr: Voyage lent, es: Viaje lento, it: Viaggio lento, nl: Slow travel}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Made for staying put and slowing down.
   synonyms:
     en: [relaxing, unwind]
+    de: [Entschleunigung]
+    fr: [slow tourisme]
+    es: [turismo lento]
+    it: [turismo lento]
+    nl: [onthaasten]
   not_to_be_confused_with: [act.wellness]
   applies_to: [place, trail]
   source: text
@@ -2820,8 +3566,8 @@ nodes:
   level: 1
   parent: vibe
   children: [vibe.iconic, vibe.hidden-gem]
-  label: {en: Fame, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Fame, de: Bekanntheit, fr: Notoriété, es: Fama, it: Notorietà, nl: Bekendheid}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: How well known it is.
   synonyms:
     en: []
@@ -2833,11 +3579,16 @@ nodes:
   level: 2
   parent: vibe.fame
   children: []
-  label: {en: Iconic, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Iconic, de: Ikonisch, fr: Incontournable, es: Icónico, it: Iconico, nl: Iconisch}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: World famous, on everyone's list.
   synonyms:
     en: [must-see, famous, bucket list]
+    de: [berühmt, Muss]
+    fr: [célèbre, à voir absolument]
+    es: [imprescindible, famoso]
+    it: [imperdibile, famoso]
+    nl: [beroemd, must-see]
   not_to_be_confused_with: [set.landmarks]
   applies_to: [place, trail, beach, lake, mountain]
   source: both
@@ -2851,6 +3602,11 @@ nodes:
   definition: Good and not well known.
   synonyms:
     en: [off the beaten track, undiscovered]
+    de: [Geheimtipp]
+    fr: [pépite, hors des sentiers battus]
+    es: [joya escondida]
+    it: [gioiello nascosto, fuori dai circuiti]
+    nl: [verborgen parel, onontdekt]
   not_to_be_confused_with: [vibe.remote]
   applies_to: [place, trail, beach, lake, mountain]
   source: both
@@ -2859,8 +3615,8 @@ nodes:
   level: 1
   parent: traveller
   children: [trav.families, trav.couples, trav.solo, trav.friends]
-  label: {en: Who it suits, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Who it suits, de: Für wen, fr: Pour qui, es: Para quién, it: Per chi, nl: Voor wie}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: The group it suits.
   synonyms:
     en: []
@@ -2877,6 +3633,11 @@ nodes:
   definition: Easy and fun with children.
   synonyms:
     en: [kids, family friendly]
+    de: [kinderfreundlich]
+    fr: [en famille]
+    es: [con niños]
+    it: [con bambini]
+    nl: [kindvriendelijk]
   not_to_be_confused_with: [act.family-fun]
   applies_to: [place, trail, beach, lake, mountain]
   source: text
@@ -2885,11 +3646,16 @@ nodes:
   level: 2
   parent: trav.who
   children: []
-  label: {en: Couples, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Couples, de: Paare, fr: Couples, es: Parejas, it: Coppie, nl: Stellen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Made for two.
   synonyms:
     en: [honeymoon]
+    de: [Flitterwochen]
+    fr: [lune de miel]
+    es: [luna de miel]
+    it: [luna di miele]
+    nl: [huwelijksreis]
   not_to_be_confused_with: [vibe.romantic]
   applies_to: [place]
   source: text
@@ -2898,8 +3664,8 @@ nodes:
   level: 2
   parent: trav.who
   children: []
-  label: {en: Solo travellers, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Solo travellers, de: Alleinreisende, fr: Voyageurs solo, es: Viajeros solos, it: Viaggiatori solitari, nl: Soloreizigers}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Easy and social alone.
   synonyms:
     en: [solo]
@@ -2911,11 +3677,16 @@ nodes:
   level: 2
   parent: trav.who
   children: []
-  label: {en: Groups of friends, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Groups of friends, de: Freundesgruppen, fr: Entre amis, es: Grupos de amigos, it: Gruppi di amici, nl: Vriendengroepen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Fun in a group.
   synonyms:
     en: [group trip, stag, hen]
+    de: [Junggesellenabschied]
+    fr: [enterrement de vie de garçon]
+    es: [despedida de soltero]
+    it: [addio al celibato]
+    nl: [vrijgezellenfeest]
   not_to_be_confused_with: [act.clubbing]
   applies_to: [place]
   source: text
@@ -2924,8 +3695,8 @@ nodes:
   level: 1
   parent: traveller
   children: [trav.backpacker, trav.luxury, trav.first-timer, trav.beginner-outdoors, trav.experienced-outdoors, trav.naturist]
-  label: {en: Travel style, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Travel style, de: Reisestil, fr: Style de voyage, es: Estilo de viaje, it: Stile di viaggio, nl: Reisstijl}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: How someone travels.
   synonyms:
     en: []
@@ -2942,6 +3713,11 @@ nodes:
   definition: Hostels, buses and a small budget.
   synonyms:
     en: [backpacker, hostel]
+    de: [Rucksackreise]
+    fr: [routard]
+    es: [mochilero]
+    it: [zaino in spalla]
+    nl: [rugzaktoerist]
   not_to_be_confused_with: [prac.affordable]
   applies_to: [place]
   source: text
@@ -2950,8 +3726,8 @@ nodes:
   level: 2
   parent: trav.style
   children: []
-  label: {en: Luxury, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Luxury, de: Luxus, fr: Luxe, es: Lujo, it: Lusso, nl: Luxe}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Top hotels and a big budget.
   synonyms:
     en: [upscale, five star]
@@ -2963,8 +3739,8 @@ nodes:
   level: 2
   parent: trav.style
   children: []
-  label: {en: First visit to Europe, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: First visit to Europe, de: Erster Europabesuch, fr: Premier voyage en Europe, es: Primera visita a Europa, it: Prima volta in Europa, nl: Eerste keer Europa}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A classic first stop.
   synonyms:
     en: [classic, first trip]
@@ -2989,8 +3765,8 @@ nodes:
   level: 2
   parent: trav.style
   children: []
-  label: {en: Experienced outdoors, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Experienced outdoors, de: Erfahrene Outdoorfans, fr: Aventuriers confirmés, es: Expertos en naturaleza, it: Esperti di outdoor, nl: Ervaren buitensporters}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Needs experience, fitness or gear.
   synonyms:
     en: [expert, seasoned]
@@ -3007,6 +3783,11 @@ nodes:
   definition: A beach where naturism is the custom.
   synonyms:
     en: [nudist, naturism, FKK]
+    de: [FKK]
+    fr: [naturisme]
+    es: [nudismo]
+    it: [naturismo]
+    nl: [naturisme]
   not_to_be_confused_with: []
   applies_to: [beach]
   source: data
@@ -3015,8 +3796,8 @@ nodes:
   level: 1
   parent: practical
   children: [prac.car-free, prac.car-needed, prac.rail-access, prac.boat-only, prac.walk-in, prac.lift-access, prac.road-to-top, prac.steps]
-  label: {en: Getting there and around, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Getting there and around, de: Anreise und Mobilität, fr: Accès et déplacements, es: Cómo llegar y moverse, it: Come arrivare e muoversi, nl: Bereikbaarheid}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: How to reach it.
   synonyms:
     en: [access]
@@ -3028,11 +3809,16 @@ nodes:
   level: 2
   parent: prac.access
   children: []
-  label: {en: Easy without a car, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Easy without a car, de: Gut ohne Auto, fr: Facile sans voiture, es: Fácil sin coche, it: Facile senza auto, nl: Makkelijk zonder auto}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Reached and enjoyed by public transport or on foot.
   synonyms:
     en: [car-free, public transport]
+    de: [autofrei, ÖPNV]
+    fr: [sans voiture, transports en commun]
+    es: [transporte público]
+    it: [trasporti pubblici]
+    nl: [autovrij, openbaar vervoer]
   not_to_be_confused_with: [prac.car-needed]
   applies_to: [place, trail, beach, lake, mountain]
   source: both
@@ -3041,8 +3827,8 @@ nodes:
   level: 2
   parent: prac.access
   children: []
-  label: {en: Car needed, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Car needed, de: Auto nötig, fr: Voiture nécessaire, es: Coche necesario, it: 'Serve l''auto', nl: Auto nodig}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Hard without a car.
   synonyms:
     en: []
@@ -3054,11 +3840,16 @@ nodes:
   level: 2
   parent: prac.access
   children: []
-  label: {en: On the railway, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: On the railway, de: Mit der Bahn erreichbar, fr: Accessible en train, es: Accesible en tren, it: Raggiungibile in treno, nl: Met de trein bereikbaar}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A station in or near it.
   synonyms:
     en: [train station]
+    de: [Bahnhof]
+    fr: [gare]
+    es: [estación de tren]
+    it: [stazione]
+    nl: [station]
   not_to_be_confused_with: [act.rail-journey]
   applies_to: [place, trail]
   source: data
@@ -3093,11 +3884,16 @@ nodes:
   level: 2
   parent: prac.access
   children: []
-  label: {en: Lift up, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Lift up, de: Bergbahn nach oben, fr: Remontée mécanique, es: Subida en remonte, it: Salita in funivia, nl: Met de lift omhoog}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: A lift or cable car goes up.
   synonyms:
     en: [cable car up, gondola]
+    de: [Seilbahn, Gondel]
+    fr: [téléphérique, télécabine]
+    es: [teleférico]
+    it: [funivia, seggiovia]
+    nl: [kabelbaan, gondel]
   not_to_be_confused_with: [act.lift-rides]
   applies_to: [place, mountain]
   source: data
@@ -3132,8 +3928,8 @@ nodes:
   level: 1
   parent: practical
   children: [prac.wheelchair, prac.pushchair, prac.dogs]
-  label: {en: Accessibility, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Accessibility, de: Barrierefreiheit, fr: Accessibilité, es: Accesibilidad, it: Accessibilità, nl: Toegankelijkheid}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Who can get around.
   synonyms:
     en: []
@@ -3150,6 +3946,11 @@ nodes:
   definition: Usable by wheelchair.
   synonyms:
     en: [step-free, accessible]
+    de: [rollstuhlgerecht, barrierefrei]
+    fr: [accessible PMR]
+    es: [accesible]
+    it: [accessibile]
+    nl: [rolstoeltoegankelijk]
   not_to_be_confused_with: [prac.pushchair]
   applies_to: [place, trail, beach, lake]
   source: data
@@ -3163,6 +3964,11 @@ nodes:
   definition: Usable with a pushchair.
   synonyms:
     en: [stroller, buggy]
+    de: [Kinderwagen]
+    fr: [poussette]
+    es: [carrito de bebé]
+    it: [passeggino]
+    nl: [kinderwagen, buggy]
   not_to_be_confused_with: [prac.wheelchair]
   applies_to: [place, trail, beach, lake]
   source: data
@@ -3176,6 +3982,11 @@ nodes:
   definition: Dogs welcome.
   synonyms:
     en: [dog friendly]
+    de: [hundefreundlich]
+    fr: [chiens acceptés]
+    es: [se admiten perros]
+    it: [cani ammessi]
+    nl: [honden toegestaan]
   not_to_be_confused_with: []
   applies_to: [trail, beach]
   source: data
@@ -3184,8 +3995,8 @@ nodes:
   level: 1
   parent: practical
   children: [prac.summer-only, prac.good-in-winter, prac.warm-winter, prac.autumn-colours]
-  label: {en: Season, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Season, de: Reisezeit, fr: Saison, es: Temporada, it: Stagione, nl: Seizoen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: When to go.
   synonyms:
     en: []
@@ -3197,8 +4008,8 @@ nodes:
   level: 2
   parent: prac.season
   children: []
-  label: {en: Summer only, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Summer only, de: Nur im Sommer, fr: Été uniquement, es: Solo en verano, it: 'Solo d''estate', nl: Alleen in de zomer}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Closed or empty outside summer.
   synonyms:
     en: [seasonal]
@@ -3223,8 +4034,8 @@ nodes:
   level: 2
   parent: prac.season
   children: []
-  label: {en: Warm in winter, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Warm in winter, de: Warm im Winter, fr: Doux en hiver, es: Cálido en invierno, it: Mite in inverno, nl: Warm in de winter}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Mild sunny winters.
   synonyms:
     en: [winter sun]
@@ -3236,11 +4047,16 @@ nodes:
   level: 2
   parent: prac.season
   children: []
-  label: {en: Autumn colours, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Autumn colours, de: Herbstfarben, fr: 'Couleurs d''automne', es: Colores de otoño, it: 'Colori d''autunno', nl: Herfstkleuren}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Autumn leaves worth coming for.
   synonyms:
     en: [fall foliage]
+    de: [Herbstlaub]
+    fr: ['feuillage d''automne']
+    es: [follaje de otoño]
+    it: [foliage]
+    nl: [herfstbladeren]
   not_to_be_confused_with: []
   applies_to: [place, trail]
   source: text
@@ -3249,8 +4065,8 @@ nodes:
   level: 1
   parent: practical
   children: [prac.affordable, prac.expensive]
-  label: {en: Cost, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Cost, de: Kosten, fr: Coût, es: Coste, it: Costo, nl: Kosten}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: What it costs. Set from the price engine, not from text.
   synonyms:
     en: []
@@ -3262,11 +4078,16 @@ nodes:
   level: 2
   parent: prac.cost
   children: []
-  label: {en: Affordable, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Affordable, de: Günstig, fr: Abordable, es: Asequible, it: Economico, nl: Betaalbaar}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Cheaper than its peers.
   synonyms:
     en: [cheap, budget]
+    de: [günstig, preiswert]
+    fr: [pas cher]
+    es: [barato]
+    it: [economico]
+    nl: [goedkoop]
   not_to_be_confused_with: [trav.backpacker]
   applies_to: [place]
   source: data
@@ -3275,11 +4096,16 @@ nodes:
   level: 2
   parent: prac.cost
   children: []
-  label: {en: Expensive, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Expensive, de: Teuer, fr: Cher, es: Caro, it: Costoso, nl: Duur}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Dearer than its peers.
   synonyms:
     en: [pricey]
+    de: [teuer]
+    fr: [cher]
+    es: [caro]
+    it: [caro]
+    nl: [duur]
   not_to_be_confused_with: [trav.luxury]
   applies_to: [place]
   source: data
@@ -3366,8 +4192,8 @@ nodes:
   level: 1
   parent: practical
   children: [prac.loop, prac.point-to-point, prac.out-and-back]
-  label: {en: Route shape, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Route shape, de: Routenform, fr: 'Type d''itinéraire', es: Tipo de ruta, it: Tipo di percorso, nl: Routevorm}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: The shape of the walk.
   synonyms:
     en: []
@@ -3379,11 +4205,16 @@ nodes:
   level: 2
   parent: prac.route-shape
   children: []
-  label: {en: Loop, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Loop, de: Rundweg, fr: Boucle, es: Circular, it: Anello, nl: Rondje}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Ends where it starts.
   synonyms:
     en: [circular walk, round walk]
+    de: [Rundtour]
+    fr: [circuit]
+    es: [ruta circular]
+    it: [giro ad anello]
+    nl: [rondwandeling, rondroute]
   not_to_be_confused_with: [prac.out-and-back]
   applies_to: [trail]
   source: data
@@ -3392,8 +4223,8 @@ nodes:
   level: 2
   parent: prac.route-shape
   children: []
-  label: {en: Point to point, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Point to point, de: Einfache Strecke, fr: Aller simple, es: Solo ida, it: Solo andata, nl: Enkele reis}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Ends somewhere else.
   synonyms:
     en: [linear, one way]
@@ -3405,8 +4236,8 @@ nodes:
   level: 2
   parent: prac.route-shape
   children: []
-  label: {en: Out and back, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Out and back, de: Hin und zurück, fr: Aller-retour, es: Ida y vuelta, it: Andata e ritorno, nl: Heen en terug}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: Goes out and returns the same way.
   synonyms:
     en: [there and back]
@@ -3418,8 +4249,8 @@ nodes:
   level: 1
   parent: practical
   children: [prac.lifeguard, prac.blue-flag, prac.water-excellent, prac.lido, prac.summit-food, prac.shallow, prac.undeveloped]
-  label: {en: Facilities, de: null, fr: null, es: null, it: null, nl: null}
-  label_source: authored (English only)
+  label: {en: Facilities, de: Ausstattung, fr: Équipements, es: Instalaciones, it: Servizi, nl: Voorzieningen}
+  label_source: authored (en); de, fr, es, it, nl translated by T1215, not yet checked by a native speaker
   definition: What is on site.
   synonyms:
     en: [services]
@@ -3449,6 +4280,11 @@ nodes:
   definition: Holds a Blue Flag.
   synonyms:
     en: []
+    de: [Blaue Flagge]
+    fr: [Pavillon bleu]
+    es: [Bandera Azul]
+    it: [Bandiera Blu]
+    nl: [Blauwe Vlag]
   not_to_be_confused_with: [prac.water-excellent]
   applies_to: [beach]
   source: data
@@ -3475,6 +4311,11 @@ nodes:
   definition: A lido or official bathing place.
   synonyms:
     en: [bathing place, strandbad]
+    de: [Strandbad, Freibad]
+    fr: [plage aménagée]
+    es: [zona de baño]
+    it: [lido, stabilimento]
+    nl: [zwemplek]
   not_to_be_confused_with: [prac.water-excellent]
   applies_to: [lake]
   source: data
