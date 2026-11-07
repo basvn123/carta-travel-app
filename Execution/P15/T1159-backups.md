@@ -60,6 +60,8 @@ None. The job reads `SUPABASE_DB_URL` and `CARTA_BACKUP_KEY`, already named in `
 | Backup died silently after "wrote" | a stand-in `rclone lsf` parsed its arguments wrongly and `set -e` plus `pipefail` ended the script | Fixed the stand-in; the script now treats an empty size as a `fail` with a message |
 | Restore from a public-only dump logs FK errors | `auth.users` is not in the dump, so FKs to it cannot be added | Documented as expected; the drill judges by `problems` and counts |
 
+Test runs before the last push: full pytest 797 passed, 2 failed (the two T1107 lists, data missing in the container); `npm test` 1712 passed, 1 failed (`recommendLevers.test.mjs` "flight lever re-orders", app code this task did not touch, likely the container lacking `public/` data; not investigated).
+
 ## Screens checked
 
 None (no traveller-facing change).
