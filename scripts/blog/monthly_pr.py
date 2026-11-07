@@ -87,7 +87,7 @@ def run(repo, month, remote="origin", push=False, log=print):
     git(repo, "checkout", "-B", branch)
     try:
         git(repo, "add", "--", PATHS)
-        git(repo, "commit", "-q", "-m", f"Blog drafts for {month}\n\nWritten by pipeline/blog_drafts.py, checked by scripts/blog/check_draft.py. All drafts: status draft; publishing is the owner's.")
+        git(repo, "commit", "-q", "-m", f"Blog drafts for {month}\n\nWritten by pipeline/blog/blog_drafts.py, checked by scripts/blog/check_draft.py. All drafts: status draft; publishing is the owner's.")
         git(repo, "push", "-u", remote, branch)
     finally:
         git(repo, "checkout", "-q", start, check=False)

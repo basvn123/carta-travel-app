@@ -203,7 +203,7 @@ def check_wire(data, wire_path, blog_dir=None):
         wire = json.load(fh)
     if wire["meta"]["generated_at"] != data["source"]["generated_at"]:
         return [f"snapshot: the wire is {wire['meta']['generated_at']}, the draft cites {data['source']['generated_at']}; regenerate"]
-    sys.path.insert(0, os.path.join(ROOT, "pipeline"))
+    sys.path.insert(0, os.path.join(ROOT, "pipeline", "blog"))
     import blog_drafts  # noqa: PLC0415
     typ = data.get("type", "where-to-go")
     for r in data["rows"]:

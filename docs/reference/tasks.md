@@ -1440,12 +1440,12 @@ Data blog: next month's 'Where to go in <month>' draft (K14, T1178)
 - Cadence: monthly
 - Writes: neither the master nor the wire directly
 - Command revision: `T1178`
-- Note: pipeline/blog_drafts.py reads continent-app/public/app_data.json and writes content/blog/<slug>.md (status: draft) plus content/blog/data/<slug>.json, then runs scripts/blog/check_draft.py on it and fails when the check refuses. Never publishes: the owner reads the draft in a pull request and changes status to published. Add --prose to the cmd for a Gemini opening paragraph (prompt blog-intro). Docs: content/blog/README.md, HANDBOOK 'Data blog'.
-- Reads and runs: `pipeline/blog_drafts.py`
+- Note: pipeline/blog/blog_drafts.py reads continent-app/public/app_data.json and writes content/blog/<slug>.md (status: draft) plus content/blog/data/<slug>.json, then runs scripts/blog/check_draft.py on it and fails when the check refuses. Never publishes: the owner reads the draft in a pull request and changes status to published. Add --prose to the cmd for a Gemini opening paragraph (prompt blog-intro). Docs: content/blog/README.md, HANDBOOK 'Data blog'.
+- Reads and runs: `pipeline/blog/blog_drafts.py`
 - Commands:
 
 ```
-python pipeline/blog_drafts.py
+python pipeline/blog/blog_drafts.py
 ```
 
 ### <a id="blog_pr"></a>`blog_pr`

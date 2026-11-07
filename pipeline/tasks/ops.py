@@ -13,8 +13,8 @@ TASKS = [
         "writes_app_data": False,
         "soft": True,
         "rev": "T1178",
-        "cmds": [[PY, "pipeline/blog_drafts.py"]],
-        "note": ("pipeline/blog_drafts.py reads continent-app/public/app_data.json and "
+        "cmds": [[PY, "pipeline/blog/blog_drafts.py"]],
+        "note": ("pipeline/blog/blog_drafts.py reads continent-app/public/app_data.json and "
                  "writes content/blog/<slug>.md (status: draft) plus content/blog/data/"
                  "<slug>.json, then runs scripts/blog/check_draft.py on it and fails "
                  "when the check refuses. Never publishes: the owner reads the draft in a "

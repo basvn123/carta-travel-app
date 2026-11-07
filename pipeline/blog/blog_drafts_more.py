@@ -2,7 +2,7 @@
 
 Tier: Scheduled
 
-Part 2 of the data blog. `pipeline/blog_drafts.py` calls `run()` here after the
+Part 2 of the data blog. `pipeline/blog/blog_drafts.py` calls `run()` here after the
 monthly "Where to go" draft. Each type writes the same pair of files as part 1
 (`content/blog/<slug>.md` with `status: draft`, `content/blog/data/<slug>.json`)
 and is refused or passed by `scripts/blog/check_draft.py`. Nothing is published.

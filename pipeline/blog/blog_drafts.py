@@ -31,15 +31,15 @@ registry id `blog-intro`, Gemini by default, never the Claude API) and must
 pass `guard_prose`: only numbers present in the draft's data, no banned words,
 no dashes, 400 characters at most. On any refusal the template sentence stays.
 
-Part 2 (T1174): `pipeline/blog_drafts_more.py` adds what-changed, new-on-carta and
+Part 2 (T1174): `pipeline/blog/blog_drafts_more.py` adds what-changed, new-on-carta and
 cheapest-week (needs `--fares`), and writes a price snapshot each run so the next
 month can compare. `--types` picks a subset; the default is all four.
 
 Usage, from the repo root:
-    python pipeline/blog_drafts.py                     # next month, written to content/blog
-    python pipeline/blog_drafts.py --month 12 --year 2026
-    python pipeline/blog_drafts.py --month 12 --year 2026 --prose
-    python pipeline/blog_drafts.py --wire path/to/app_data.json --out-dir /tmp/x --dry-run
+    python pipeline/blog/blog_drafts.py                     # next month, written to content/blog
+    python pipeline/blog/blog_drafts.py --month 12 --year 2026
+    python pipeline/blog/blog_drafts.py --month 12 --year 2026 --prose
+    python pipeline/blog/blog_drafts.py --wire path/to/app_data.json --out-dir /tmp/x --dry-run
 """
 from __future__ import annotations
 
@@ -52,7 +52,8 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(HERE)
+ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, os.path.dirname(HERE))  # pipeline/: ai_gateway, env_local, prompt_registry (T1207)
 sys.path.insert(0, HERE)
 sys.path.insert(0, os.path.join(ROOT, "scripts", "blog"))
 
@@ -327,7 +328,7 @@ def main(argv=None):
     ap.add_argument("--types", default="all",
                     help="comma list of where-to-go, what-changed, new-on-carta, cheapest-week; default all")
     ap.add_argument("--fares", action="append", default=[],
-                    help="fares file for a cheapest-week post (repeatable; see pipeline/blog_drafts_more.py)")
+                    help="fares file for a cheapest-week post (repeatable; see pipeline/blog/blog_drafts_more.py)")
     args = ap.parse_args(argv)
     if not 1 <= args.month <= 12:
         raise SystemExit("blog_drafts: --month must be 1 to 12")

@@ -8,6 +8,7 @@ import pytest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "pipeline"))
+sys.path.insert(0, os.path.join(ROOT, "pipeline", "blog"))
 sys.path.insert(0, os.path.join(ROOT, "scripts", "blog"))
 import blog_drafts  # noqa: E402
 import blog_drafts_more as more  # noqa: E402

@@ -723,7 +723,7 @@ Tier: Library
 | def | `compute_beauty(dest)` | Return the `beauty` block for one destination record (no gems yet - gems are assigned dataset-wide by assign_gems once all scores are known). Beauty v2 (T756) when config beauty.live is on, else v1 below. |
 | def | `assign_gems(beauty_blocks, frozen=None)` | Map score01 -> 1..5 gems by quantile so the catalogue spreads well. Mutates each block's `gems`, returns the cutoff list (stored in meta). |
 
-## `pipeline/blog_drafts.py`
+## `pipeline/blog/blog_drafts.py`
 
 Data blog drafts: "Where to go in <month>" (ROADMAP K14, T1178).
 
@@ -743,7 +743,7 @@ Data blog drafts: "Where to go in <month>" (ROADMAP K14, T1178).
 | def | `next_month(today=None)` |  |
 | def | `main(argv=None)` |  |
 
-## `pipeline/blog_drafts_more.py`
+## `pipeline/blog/blog_drafts_more.py`
 
 More data blog post types: what changed, new on Carta, lowest fare week (ROADMAP K14, T1174).
 

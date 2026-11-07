@@ -377,7 +377,7 @@
       "eval": null,
       "guard": "the job's own output checks (blog_drafts.guard_prose), scripts/blog/check_draft.py and tests/test_blog_drafts.py",
       "callers": [
-        "pipeline/blog_drafts.py"
+        "pipeline/blog/blog_drafts.py"
       ],
       "lastScore": {
         "version": 1,
