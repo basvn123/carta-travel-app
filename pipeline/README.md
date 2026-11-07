@@ -43,6 +43,29 @@ Superseded
   not run correctly from inside `archive/` in the CURRENT tree, because the
   files it reads have moved on; that is intentional, it is retired.
 
+## Layout (ROADMAP A2, T1207)
+
+Scripts are grouped by domain, and the file name keeps its stage prefix
+(`harvest_`, `apply_`, `enrich_`, `audit_`), so `pipeline/**/harvest_*.py`
+still finds every harvester. The decision and its research are in
+`Execution/P15/T1207-pipeline-structure.md` (A-R1).
+
+- `pipeline/tasks/`: the task table `run_pipeline.py` runs, one module per
+  domain, in the `DOMAINS` order of `pipeline/tasks/__init__.py`.
+- Domain folders: `audit/` (audits and checks), `blog/` (the data blog),
+  `pois/` (POI harvests and clean-up), plus the older layer folders
+  (`beaches/`, `lakes/`, `trails/` and the rest).
+- The shared libraries (`pipeline_io`, `rating_config`, `pricing_config`,
+  `provenance`, `wire_contract`, `ai_gateway`, `prompt_registry`,
+  `env_local` and the other modules many scripts import) stay at the top of
+  `pipeline/` for now. A script in a domain folder puts `pipeline/` on
+  `sys.path` (`Path(__file__).resolve().parents[1]`) to import them, as the
+  layer folders already did.
+- The flat files that are left move folder by folder in later tasks, in the
+  order the register rows `T1207-*` give. A `harvest_*.py` that moves into a
+  new folder also adds that folder to `GROUPED_HARVEST_DIRS` in
+  `src/ingestion/core/registry.py`, and the ledger is regenerated.
+
 ## How a new script gets its tier
 
 Ask two questions in order.
@@ -85,7 +108,7 @@ concurrency lockfile (`logs/pipeline.lock`) and state file
 ## Scheduled
 
 Every Scheduled script, grouped by the run_pipeline.py task key that owns
-it. See `run_pipeline.py`'s own docstring and task table for what each key
+it. See `run_pipeline.py`'s own docstring and the task table in `pipeline/tasks/` (one module per domain, T1207) for what each key
 does and how often it runs; this list exists so a reader can find which
 script belongs to which task without grepping the 2,672-line file.
 

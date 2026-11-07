@@ -49,7 +49,7 @@ Watch out:
 
 ## Pipeline
 
-`python run_pipeline.py <task>` from the repo root; the `TASKS` list is near line 1200 of `run_pipeline.py`. The ones touched most:
+`python run_pipeline.py <task>` from the repo root; the `TASKS` table is `pipeline/tasks/<domain>.py`, joined in `DOMAINS` order (`pipeline/tasks/__init__.py`, T1207). The ones touched most:
 
 | Task | Does |
 |---|---|
