@@ -326,6 +326,27 @@
         "value": 0.4333,
         "at": "2026-11-06T19:48:29.348Z"
       }
+    },
+    "ask-docs": {
+      "version": 1,
+      "file": "prompts/ask-docs/v1.md",
+      "format": "registry",
+      "sha256": "430c2f7d826be2e58648ddbedf541d79a1a069eca2031b267e9c161d9ff6eb06",
+      "runtime": "node",
+      "eval": "ask-docs",
+      "scoreKey": "recall5",
+      "guard": null,
+      "callers": [
+        "scripts/docs/ask_docs.mjs"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": "ask-docs",
+        "status": "pass",
+        "key": "recall5",
+        "value": 0.979,
+        "at": "2026-11-07T01:13:02.045Z"
+      }
     }
   }
 }

@@ -2026,3 +2026,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1161-g | T1161 | infra/hetzner/README.md ("Why --no-promote", "The laptop's trails_rate task still promotes") and pipeline/README.md still describe the laptop-only steps; update them to T1161 | next task | open |  |
 | T1161-h | T1161 | Once T1161-a to T1161-e are done, move T439-b, T532-b, T647-f, T647-b and T288-b to _OPEN-CLOSED.md as closed by T1161 (this brief allowed appending only) | next task | open |  |
 | T1161-i | T1161 | run_pipeline.sh --dry-run also rewrites data/derived/freshness_report.json (tracked); add it to the scratch-path fix of T1107-e | next task | open |  |
+| T1168-a | T1168 | The docs workflow must run `node scripts/docs/ask_docs.mjs build` before `mkdocs build`, else the Ask box has no index on the site (index.js is generated, git-ignored) | user | open |  |
+| T1168-b | T1168 | Dense half of Ask the docs (model2vec potion + RRF with BM25) not built: container has no model; adopt only if the eval gains | user | open |  |
+| T1168-c | T1168 | `ask_docs.mjs --model` (Workers AI via the gateway) never run live; needs CF credentials | user | open |  |
+| T1168-d | T1168 | The ask-docs question set was written by its builder; replace with real questions and measure Material's built in search on the same set | next task | open |  |
+| T1168-e | T1168 | `docs/assets/ask-docs/core.js` is a copy of `scripts/docs/ask_docs_core.js` (a test guards it); have the docs build copy it instead, and refresh `docs/reference/evals.md` with `run.mjs --write --dashboard` on the box so it lists ask-docs | next task | open |  |

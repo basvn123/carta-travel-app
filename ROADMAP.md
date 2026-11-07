@@ -372,7 +372,7 @@ Plus: runbooks (how to operate), a glossary (every Carta term), and research not
 | B5 | Data lineage and diagrams | Per field: source, task, file; Mermaid diagrams of the pipeline and the request paths, generated | M | P3 | done (T1166; lineage for 76 wire fields and 7 request path diagrams in docs/architecture/, check `scripts/docs/build_lineage.py --check`; CI wiring T1166-a) |
 | B6 | Generated reference and docs site | pdoc, TypeDoc, task catalogue, OpenAPI, SQL tables; MkDocs site with search on private Cloudflare Pages | M | P4 | partly done (T1167: generators, site, CI; OpenAPI waits for F5, deploy is an owner step) |
 | B7 | Keep it true: drift checks and the task loop | Drift check per area, executable examples, link check, docstring floor, `carta-docs` skill and Stop hook, CLAUDE.md step | M | P3 | in progress (T1134: scripts/docs/drift.py in CI checks logic constants, values and tests, the SCHEMA.md table and entry points; per-area History check, examples, links, docstrings, skill and hook still to do) |
-| B8 | Ask the docs | Search box on the docs site answers from the docs with citations (if B-R4 says go) | M | After | todo |
+| B8 | Ask the docs | Search box on the docs site answers from the docs with citations (if B-R4 says go) | M | After | done (T1168, extractive BM25; dense and CI index step open) |
 
 ### Item details
 

@@ -1,0 +1,16 @@
+{
+ "n": 56,
+ "answerable": 48,
+ "unanswerable": 8,
+ "passages": 3615,
+ "recall1": 0.833,
+ "recall3": 0.917,
+ "recall5": 0.979,
+ "mrr": 0.891,
+ "section5": 0.896,
+ "answered": 0.958,
+ "cited_gold": 0.854,
+ "nl_recall5": 1,
+ "abstain": 0.875,
+ "grounded": 1
+}
