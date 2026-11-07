@@ -17,6 +17,9 @@ on:
       - "run_pipeline.py"
       - "docs/tos/data_licenses.md"
       - "tests/test_data_licences.py"
+      - "pipeline/config/sources.yaml"
+      - "scripts/open_data/**"
+      - "tests/test_open_dataset.py"
       - ".github/workflows/data-licences.yml"
   pull_request:
     paths:
@@ -25,6 +28,9 @@ on:
       - "run_pipeline.py"
       - "docs/tos/data_licenses.md"
       - "tests/test_data_licences.py"
+      - "pipeline/config/sources.yaml"
+      - "scripts/open_data/**"
+      - "tests/test_open_dataset.py"
       - ".github/workflows/data-licences.yml"
 
 permissions:
@@ -40,8 +46,13 @@ jobs:
           python-version: "3.11"
       # Only what importing the collector modules needs; the full
       # requirements.txt pulls geopandas and rasterio for nothing here.
-      - run: pip install requests beautifulsoup4 lxml python-dotenv pytest
+      - run: pip install requests beautifulsoup4 lxml python-dotenv pytest pyyaml
       - name: Registry validates and the ledger is current
         run: python -m src.ingestion.core.ledger --check
       - name: Ledger rules (a collector or harvester without a row fails)
         run: pytest tests/test_data_licences.py -q
+      - name: Open dataset export (T1176, no non-open field may slip in)
+        run: |
+          python scripts/open_data/export_open_dataset.py --check
+          python scripts/open_data/export_open_dataset.py --datasheet --check
+          pytest tests/test_open_dataset.py -q

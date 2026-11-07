@@ -1214,7 +1214,7 @@ docs/
 | K5 | Data stories | Europe Cost Index 2027 with a methodology page and a local angle per country; Sunshine Saturday release on Sat 2 Jan 2027; a June "quiet clean beaches" ranking | M | P2, P4 | in progress (T1130: basket script, Dutch and English drafts, method note; publishing is an owner step, T1130-a) |
 | K6 | Community presence | Regular, useful answers with real numbers in 3 or 4 communities; occasional data posts with no link; mods contacted first | S, ongoing | P2 onwards | todo |
 | K7 | Shareable assets | "Europe on 100 EUR a day" map, "cheapest week" calendar per place, shareable trip receipt image | M | P3 | todo |
-| K8 | Open dataset and Show HN | A CC-BY subset (licences checked) on GitHub with a write-up; Show HN once the free part needs no signup | S | P3 | todo |
+| K8 | Open dataset and Show HN | A CC-BY subset (licences checked) on GitHub with a write-up; Show HN once the free part needs no signup | S | P3 | doing: code half done (T1176), owner publishes |
 | K9 | Beta programme | Closed beta of 50 from the waitlist (P3), open beta in March for summer planners (P4); feedback loop into the register; testimonials collected with consent | M | P3 to P4 | todo |
 | K10 | Press kit and list | A press page (facts, screenshots, methodology, contact); a list of about 40 BE, NL and UK travel and data journalists and newsletters | S | P2 to P3 | built T1131 (owner fills founder line, names and addresses) |
 | K11 | Launch campaign | Product Hunt on 4 May, waitlist email, courtesy notes to the credited bodies (`archive/docs-2026-11/LAUNCH-OUTREACH-DRAFTS.md`), community posts, mid-May beach ranking; a two-week plan with owners per thread | M | P5 | todo |
