@@ -42,6 +42,7 @@ import '../styles/96-search-dock.css';
  *
  *   onSearch({ kind, q })   App moves to the kind's view with the text
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const DOCK_KINDS = [
   { key: 'places', labelKey: 'places.catPlaces', Icon: CompassIcon },
   { key: 'trails', labelKey: 'places.catTrails', Icon: BootIcon },

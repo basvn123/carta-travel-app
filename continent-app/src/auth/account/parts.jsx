@@ -11,6 +11,7 @@ import { Button } from '../../components/ui/index.js';
  */
 
 /** A plain left click, the one a link may turn into an in-app step. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function plainClick(e) {
   return e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
 }
@@ -81,6 +82,7 @@ export function Group({ id, title, children, className = '' }) {
 }
 
 /** A whole-word list of values, "Trips, countries, tips". */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function listValue(words, lang) {
   const list = words.filter(Boolean);
   if (!list.length) return '';
@@ -88,6 +90,7 @@ export function listValue(words, lang) {
 }
 
 /** A date as "12 Mar 2027" in the reader's language. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function fmtDate(iso, locale) {
   if (!iso) return '';
   try {

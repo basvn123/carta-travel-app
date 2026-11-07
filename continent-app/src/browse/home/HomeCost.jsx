@@ -11,6 +11,7 @@ export const STORY_NIGHTS = 7;
 /** The story's week, a person: the place's own day price (bed, food and
  *  drink) at the traveller's Lifestyle and the sweep's return flight from
  *  their home airport, or null when the place has no price. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useStoryWeek(rows, flightFor) {
   return React.useMemo(() => {
     const cost = placeDay(rows, STORY_PLACE);
@@ -22,6 +23,7 @@ export function useStoryWeek(rows, flightFor) {
 
 /** Fill a translated sentence around one accented value: the accent travels
  *  as a placeholder so each language keeps its own word order. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function accented(t, key, vars, accentKey, accent) {
   const MARK = '\u0001';
   const [a, b = ''] = t(key, { ...vars, [accentKey]: MARK }).split(MARK);

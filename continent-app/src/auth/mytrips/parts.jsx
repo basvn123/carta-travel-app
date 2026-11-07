@@ -161,6 +161,7 @@ export function TripPrice({ figure, className = '' }) {
 }
 
 /** How far off a trip is, from myTrips.whenParts(): "In 21 days", "Underway now". */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function whenText(t, when) {
   if (!when) return '';
   return when.n == null ? t(when.key) : t(when.key, { n: when.n });

@@ -18,6 +18,7 @@ import { SparkIcon } from './Icons.jsx';
  *   freeLeft  how many free changes remain, when free
  *   inline  render as running text (inside a button) rather than a chip
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useCredit() {
   const paywall = usePaywall();
   const e = paywall.entitlement || {};
@@ -38,6 +39,7 @@ export function useCredit() {
   };
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function creditText(t, c, { free = false, freeLeft = 0 } = {}) {
   if (free) return t('credit.freeChange', { n: freeLeft });
   if (!c.signedIn) return t('credit.guest', { n: TIERS.free.aiPlans });

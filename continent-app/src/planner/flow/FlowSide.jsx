@@ -17,9 +17,11 @@ import { personaFit, personaMatches, picksOf } from '../../lib/recommend/persona
  * The persona screen reports its picks before Continue through
  * PersonaDraft, so the count moves on every tick.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const PersonaDraft = createContext(null);
 
 /** The places that fit the persona answer, the best three with the pick each fits most. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function usePersonaFit(spec) {
   const ctx = useFirstRun();
   const destinations = ctx?.data?.destinations;

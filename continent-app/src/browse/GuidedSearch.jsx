@@ -39,6 +39,7 @@ import {
 
 const SLOTS = ['what', 'where', 'when', 'budget', 'extras'];
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const VIBE_ICONS = {
   quiet: LeafIcon, oldtown: TownIcon, food: DiningIcon, romantic: HeartIcon, family: FamilyIcon,
   beach: BeachIcon, island: PalmIcon, mountain: MountainIcon, hiking: BootIcon, lake: LakeIcon,
@@ -49,6 +50,7 @@ export const VIBE_ICONS = {
 const AREA_GROUPS = [['mountains', 'gs.areaMountains'], ['coast', 'gs.areaCoast'], ['region', 'gs.areaRegion']];
 
 /** The question as short labels, in slot order. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function facetLabels(f, labels, nearRow, t) {
   const out = [];
   if (f.vibe) out.push(labels.vibe(f.vibe));

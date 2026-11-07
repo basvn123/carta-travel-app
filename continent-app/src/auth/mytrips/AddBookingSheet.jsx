@@ -16,6 +16,7 @@ const ICON = { stay: BedIcon, activity: TicketIcon };
 
 /** The fields the reader may have got wrong, so the traveller checks them:
  *  anything it did not find, and a price it converted from another currency. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function unsureFields(b) {
   const out = [];
   if (!b.date) out.push('date');
@@ -27,6 +28,7 @@ export function unsureFields(b) {
 }
 
 /** The trip whose dates hold a booking's day (a day either side for a flight). */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function tripForDate(plans, iso) {
   if (!iso) return null;
   return plans.find((p) => p.start && p.end && iso >= p.start && iso <= p.end)

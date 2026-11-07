@@ -11,12 +11,14 @@ import { voteState, memberOf, canRemoveItem } from '../../lib/sharedListModel.js
 import { CardMenu, Faces } from './parts.jsx';
 
 /** Two letters for a face: the first of the first two words. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function initialsOf(name = '') {
   const w = String(name).replace(/^@/, '').trim().split(/\s+/).filter(Boolean);
   return (w.length > 1 ? w[0][0] + w[1][0] : (w[0] || '').slice(0, 2)).toUpperCase();
 }
 
 /** People in the one shape Faces draws. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const facesOf = (people = []) => people.map((p) => ({ id: p.userId, name: p.name, initials: p.emoji || initialsOf(p.name) }));
 
 /** The name a member goes by on a row: "You" for the viewer. */

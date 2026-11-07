@@ -38,6 +38,7 @@ const enListeners = new Set();
 let enRest = null;
 
 /** Called by the rest chunk as it evaluates. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function addEnglish(strings) {
   Object.assign(en, strings);
   enDone = true;
@@ -83,6 +84,7 @@ const isLang = (code) => code === 'en' || Object.hasOwn(LOADERS, code);
 /** Languages offered in the picker. `flag` is an ISO2 country code for
  *  CountryFlag (the app's SVG flags, no emoji). Labels are endonyms so
  *  everyone can find their own language regardless of the active one. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const LANGUAGES = [
   { code: 'en', flag: 'GB', label: 'English', bcp47: 'en-GB' },
   { code: 'nl', flag: 'NL', label: 'Nederlands', bcp47: 'nl-NL' },
@@ -115,6 +117,7 @@ const I18nContext = createContext(null);
 /** Translate without the provider: for the crash screen, which sits above it.
  *  Uses the language stored on the device when its catalogue was loaded this
  *  session, and English otherwise, so it never waits on a download. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function tOutsideProvider(key, vars) {
   const catalog = CATALOGS[initialLang()] || en;
   return interpolate(catalog[key] ?? english(key), vars);
@@ -186,6 +189,7 @@ export function I18nProvider({ children }) {
 }
 
 /** { lang, setLang, t, languages }, t(key, vars) with {var} interpolation. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useI18n() {
   const ctx = useContext(I18nContext);
   if (!ctx) {

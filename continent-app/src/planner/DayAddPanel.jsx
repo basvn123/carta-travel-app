@@ -26,6 +26,7 @@ const PAGE = 12;
 /** The sentence a card gets to say what a place is. The catalogue description
  *  when there is one, trimmed on a word boundary; otherwise the honest short
  *  version, which is its kind and whether it is one of the town's best. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function placeBlurb(item, t) {
   const desc = (item.desc || '').trim();
   if (desc) {

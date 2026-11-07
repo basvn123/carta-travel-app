@@ -11,11 +11,13 @@ import { useI18n } from '../i18n/index.jsx';
  * `line` gives the sentence that says it comes with a later data update, for
  * a section that has nothing else to show. Never a blank or a lone dash.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function notYet(t, line = false) {
   return t(line ? 'data.notYetLine' : 'data.notYet');
 }
 
 /** The value when it is there, else the short placeholder. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function orNotYet(t, value) {
   return value == null || value === '' || (typeof value === 'number' && !Number.isFinite(value))
     ? notYet(t)

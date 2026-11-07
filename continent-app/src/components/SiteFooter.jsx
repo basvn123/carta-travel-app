@@ -15,6 +15,7 @@ import '../styles/82-site-footer.css';
  * ?legal= addresses (LegalFromUrl) and load as their own page.
  */
 let navigate = null;
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function setFooterNavigate(fn) { navigate = fn; }
 
 function FooterLink({ href, to, opts, children, external }) {

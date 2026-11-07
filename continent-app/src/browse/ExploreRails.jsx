@@ -44,6 +44,7 @@ const CAP = 12;
 
 // Round-robin by country, so a rail of 292 gems does not open on ten
 // Italian tiles: take each country's best in turn until the cap.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function interleaveByCountry(rows) {
   const byCountry = new Map();
   for (const p of rows) {

@@ -15,9 +15,9 @@ Where each part of Carta lives. Find the area, open the files named, stop.
 | Area | App code | Pipeline / backend | Handbook | Latest |
 |---|---|---|---|---|
 | Home | app/src/browse/home/HomePage.jsx, app/src/browse/home/HomeHero.jsx, app/src/lib/homeVisit.js | | Discover | T998, T988 |
-| Explore (map, cards, filters, rails) | app/src/browse/ExploreTab.jsx, app/src/browse/ExploreMap.jsx, app/src/browse/ExploreCards.jsx, app/src/browse/ExploreRails.jsx | pipeline/explore_overlay.py, pipeline/guided_search_layer.py | Discover | T980-T983, T968 |
+| Explore (map, cards, filters, rails) | app/src/browse/ExploreTab.jsx and its parts in app/src/browse/explore/, app/src/browse/DestinationsTab.jsx (the category lists) and its parts in app/src/browse/destinations/, app/src/browse/ExploreMap.jsx, app/src/browse/ExploreCards.jsx, app/src/browse/ExploreRails.jsx | pipeline/explore_overlay.py, pipeline/guided_search_layer.py | Discover | T980-T983, T968 |
 | Place page and PDF | app/src/browse/DestinationPage.jsx, app/src/browse/PlaceOverview.jsx, app/src/lib/dossier.js, app/src/lib/destinationPdf.js | pipeline/dossier/build_dossier.py, pipeline/place_layer.py | Discover | T1019, T1022 |
-| Trip library, journeys, trip finder | app/src/browse/JourneyPage.jsx, app/src/browse/TripPage.jsx (a library trip), app/src/lib/journeys.js, app/src/lib/trips.js, app/src/planner/finder/TripsForYou.jsx, app/src/planner/finder/TripPage.jsx (one found trip) | pipeline/trips/, pipeline/journeys/build_wire.py | Planning | T1030, T879-T884 |
+| Trip library, journeys, trip finder | app/src/browse/JourneyPage.jsx, app/src/browse/TripPage.jsx (a library trip), app/src/lib/journeys.js, app/src/lib/trips.js, app/src/planner/finder/TripsForYou.jsx, app/src/planner/finder/FoundTripPage.jsx (one found trip) | pipeline/trips/, pipeline/journeys/build_wire.py | Planning | T1030, T879-T884 |
 | Plan flow and wizard | app/src/planner/flow/PlanFlow.jsx, app/src/planner/flow/PlanHome.jsx, app/src/planner/wizard/, app/src/planner/GuidedTripWizard.jsx | | Planning | T1002, T989-T991 |
 | Trip page (the traveller's planned trip) | app/src/planner/TripPlannerTab.jsx, app/src/planner/TripSummary.jsx, app/src/planner/trip/ | | Planning | T1017, T1001-T1016 |
 | Day planner and plan-day AI | app/src/planner/DayPlannerTab.jsx, app/src/planner/days/, app/src/planner/aiDayPlan.js, app/src/planner/dayPlanStore.js | supabase/functions/plan-day/, supabase/functions/suggest-city/ | Planning | T1015-T1016, T895-T900 |
@@ -30,7 +30,7 @@ Where each part of Carta lives. Find the area, open the files named, stop.
 | Ratings and For you | app/src/lib/rating.js, app/config/rating.json, app/src/browse/RatingSheet.jsx, app/src/lib/recommend/rank.js | pipeline/rating_layer.py, pipeline/rating_config.py, pipeline/place_taste_profile.py, reports/rating_reference_v5.json (frozen calibration) | Scores | T879-T884, T785-T791 |
 | Trails, cycling, routes | app/src/browse/TrailPage.jsx, app/src/browse/CyclePage.jsx, app/src/lib/trails.js, app/src/lib/cycling.js | pipeline/trails/, pipeline/cycling/, tools/trailslab/ | Outdoors (rating in Scores) | T918-T922 |
 | Beaches, lakes, mountains, nature | app/src/browse/BeachPage.jsx, app/src/browse/LakePage.jsx, app/src/browse/MountainPage.jsx, app/src/browse/OutdoorParts.jsx | pipeline/beaches/, pipeline/lakes/, pipeline/mountains/, pipeline/outdoor/derive_outdoor_pages.py | Outdoors; docs/LAKES.md (read by pipeline/lakes/check_doc.py) | T1031-T1033, T918-T922 |
-| Climate, crowds, seasons | app/src/browse/ClimateStrip.jsx, app/src/browse/CrowdCalendar.jsx, app/src/lib/crowdMonth.js, app/src/lib/when.js | pipeline/apply_climate.py, pipeline/harvest_tourism_density.py, pipeline/harvest_uk_crowds.py, pipeline/harvest_sea_temp.py | Scores | T1098, T1022, T667 |
+| Climate, crowds, seasons | app/src/browse/ClimateStrip.jsx, app/src/lib/crowdMonth.js, app/src/lib/when.js | pipeline/apply_climate.py, pipeline/harvest_tourism_density.py, pipeline/harvest_uk_crowds.py, pipeline/harvest_sea_temp.py | Scores | T1098, T1022, T667 |
 | Regions, countries, coverage | app/src/browse/RegionPage.jsx, app/src/browse/CountryPage.jsx, app/src/lib/regions.js | pipeline/regions/ (coverage.py writes the coverage contract, coverage_gate.py is the CI gate; see T1051-b), pipeline/intake/ | Discover; docs/REGIONS.md (read by app/scripts/verify_regions.mjs) | T450, T456 |
 | Images and photos | app/src/components/HeroImage.jsx, app/src/lib/imageLadder.js, app/src/browse/PhotoGallery.jsx | pipeline/photos/, pipeline/images/ | Outdoors | T620-T623 |
 | Languages (6) | app/src/i18n/index.jsx and en, de, fr, es, it, nl .js (grep, never read whole), app/scripts/i18n/ | | Platform | T158 |
@@ -42,7 +42,8 @@ Where each part of Carta lives. Find the area, open the files named, stop.
 | Tests and checks | app/tests/ (`*.test.mjs` unit, `*.spec.mjs` browser), app/scripts/ (`verify_*.mjs`), .github/workflows/ | tests/ (`test_*.py`) | Platform | |
 
 Watch out:
-- Two files are called `TripPage.jsx`: `app/src/browse/TripPage.jsx` is a ready-made library trip, and `app/src/planner/finder/TripPage.jsx` is the trip finder's page for one found trip. The traveller's own planned trip is `TripPlannerTab.jsx` with `TripSummary.jsx`.
+- `app/src/browse/TripPage.jsx` is a ready-made library trip; the trip finder's page for one found trip is `app/src/planner/finder/FoundTripPage.jsx` (renamed from a second `TripPage.jsx` by T1163). The traveller's own planned trip is `TripPlannerTab.jsx` with `TripSummary.jsx`.
+- `app/src/App.jsx` is the shell; its overlays (`AppOverlays.jsx`), lazy screens, openers and settings value live in `app/src/shell/` (T1163).
 - The root `src/` is Python (`src/ingestion`, `src/estimation`), not app code.
 
 ## Pipeline

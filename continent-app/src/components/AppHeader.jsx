@@ -11,6 +11,7 @@ import { useTogether, waitingCount } from '../together/useTogether.js';
    Account the icon at the far right; neither is a tab, and the pass is not in
    the bar (T473). BottomNav draws the same list with Account as a fourth
    slot. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const PLACE_ITEMS = [
   { key: 'explore', labelKey: 'nav.explore', Icon: CompassIcon },
   { key: 'plan', labelKey: 'nav.plan', Icon: RouteIcon },
@@ -78,6 +79,7 @@ export function NavDot({ on }) {
 }
 
 /** Who is signed in, as the one letter the avatar disc carries. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function accountInitial(user) {
   const fullName = user?.user_metadata?.full_name?.trim();
   return (fullName || user?.email || '?')[0].toUpperCase();

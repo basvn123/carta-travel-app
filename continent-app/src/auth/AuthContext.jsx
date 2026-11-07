@@ -25,6 +25,7 @@ function initialUrlAuthType() {
  * present we assume there IS a password, because hiding the current-password
  * field on a guess would remove the check this whole flow exists to add.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function hasPasswordIdentity(user) {
   if (!user) return false;
   const ids = user.identities;
@@ -374,6 +375,7 @@ export function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');

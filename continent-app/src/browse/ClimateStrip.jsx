@@ -15,6 +15,7 @@ import { comfortTier } from '../lib/whenGuide.js';
  * [t_high, t_low, precip_mm, comfort] tuples, best = best-month numbers.
  */
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTHS_INITIAL = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
@@ -29,6 +30,7 @@ const COMFORT = 3;
 // language (T502: ranges use the word "to", never a hyphen). Pass the
 // component's t; outside one the stored language is used. Month names come
 // from Intl in that language (T507: they were English in all six).
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function fmtMonthRanges(nums, t = tOutsideProvider) {
   if (!nums || !nums.length) return '';
   const sorted = [...nums].sort((a, b) => a - b);

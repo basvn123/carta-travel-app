@@ -25,6 +25,7 @@ import {
 const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
 
 /** "1 of 16 by height in Triglav Group, 1 of 16 by prominence", or ''. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function rangeRankLine(mountain, t) {
   const parts = rangeRankParts(mountain?.rangeRank);
   const range = mountain?.range;
@@ -36,6 +37,7 @@ export function rangeRankLine(mountain, t) {
 }
 
 /** The slope on the gentlest side as { title, text, warn }, or null. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function slopeFact(mountain, t) {
   const slope = isNum(mountain?.slopeDeg) ? mountain.slopeDeg : null;
   const state = slopeState(slope);
@@ -48,6 +50,7 @@ export function slopeFact(mountain, t) {
 }
 
 /** The lift's ticket and hours as one line, or ''. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function liftFareLine(mountain, t) {
   const lift = mountain?.lift || null;
   const fare = doPriceOf(lift?.fare, 'lift');
@@ -58,6 +61,7 @@ export function liftFareLine(mountain, t) {
 }
 
 /** The huts on the flanks (OSM), each with what is known of it. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function flankHuts(mountain, t, lang) {
   const nf = (n) => n.toLocaleString(lang);
   return (Array.isArray(mountain?.huts) ? mountain.huts : []).map(hutParts).filter(Boolean).map((h) => ({

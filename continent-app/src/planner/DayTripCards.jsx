@@ -27,6 +27,7 @@ import { Card, Button } from '../components/ui/index.js';
  */
 
 /** Nights a stop covers, at least one: arrive 12 Oct, depart 14 Oct is 2. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function stopNights(st) {
   const from = st.arrive_date;
   const to = st.depart_date;
@@ -40,6 +41,7 @@ export function stopNights(st) {
  * sort last and render muted, because a trip you cannot travel any more is
  * still worth reopening but is never the answer to "plan a day".
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function tripStatus(p, today = todayISO()) {
   const from = p.start_date;
   const to = p.end_date || p.start_date;
@@ -51,6 +53,7 @@ export function tripStatus(p, today = todayISO()) {
 }
 
 /** Trips first by how soon they are, past ones last, in their own order. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function sortTripsByStatus(plans, today = todayISO()) {
   const rank = { now: 0, soon: 1, none: 2, past: 3 };
   return [...plans].sort((a, b) => {
@@ -63,6 +66,7 @@ export function sortTripsByStatus(plans, today = todayISO()) {
 }
 
 /** True when a trip is running now or starts within the week. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function hasImminentTrip(plans, today = todayISO()) {
   return plans.some((p) => {
     const s = tripStatus(p, today);
@@ -80,6 +84,7 @@ function statusText(status, t) {
 }
 
 /** A trip with no name of its own is called by its towns, never "Untitled". */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function tripName(plan, t) {
   if (plan.label) return plan.label;
   const towns = [...new Set((plan.stops || []).map((st) => cityLabel(st.city || '')).filter(Boolean))];

@@ -11,6 +11,7 @@ import { formatEst } from '../lib/money.js';
 // Presentational pieces of the guided trip wizard (a nights helper + the city
 // row and its bits), lifted out of GuidedTripWizard. Prop-driven, no closure.
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function suggestedNights(dest) {
   const score = dest?.rating?.score ?? dest?.beauty?.score ?? 0;
   const pois = dest?.activities?.items?.length || 0;

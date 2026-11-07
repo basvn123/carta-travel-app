@@ -9,6 +9,7 @@ import { Face } from '../auth/FriendFaces.jsx';
 /** Four quiet tones for faces, picked from the person's id so one friend
  *  always wears the same one. You are always the brown. */
 const TONES = 4;
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function toneOf(id, me) {
   if (id && me && id === me) return 'tg-tone-you';
   let h = 0;
@@ -32,6 +33,7 @@ export function ToneFaces({ people = [], me, size = 'sm', max = 4 }) {
 
 /** "22 to 24 Nov", "28 Nov to 2 Dec": short months, the word for the joiner
  *  from the catalogue (no en dash, PRODUCT.md). */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function fmtShort(startIso, endIso, lang, joiner = 'to') {
   if (!startIso) return '';
   const s = new Date(`${startIso}T12:00:00Z`);
@@ -56,12 +58,14 @@ export function Block({ id, title, action = null, children, className = '' }) {
 }
 
 /** The person's name as Carta shows it: what they chose, else the handle. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function nameOf(p) {
   if (!p) return '';
   return (p.displayName || p.name || '').trim() || (p.handle ? `@${p.handle}` : '');
 }
 
 /** The first word of a name, for "Sam went" on a card. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function firstName(name) {
   const n = String(name || '').replace(/^@/, '').trim();
   return n.split(/\s+/)[0] || n;
