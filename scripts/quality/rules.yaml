@@ -111,3 +111,18 @@ rules:
   - {id: cycling.paved, layer: cycling, field: paved, level: must_have, kind: soft, min: 0.97}  # 99.9%
   - {id: cycling.safe, layer: cycling, field: safe, level: must_have, kind: soft, min: 0.98}  # 100.0%
   - {id: cycling.rg, layer: cycling, field: rg, level: must_have, kind: soft, min: 0.98}  # 100.0%
+
+# Text checks (T1201, register row T1179-c): generated texts on disk,
+# re-checked with the check() that wrote them (scripts/quality/engine.py
+# text_gate). source trails_summaries is data/trails/summaries.json (T1179)
+# against the trail wire in --public. check is one family of reasons:
+# dash (dashes, list separators), banned (banned words), facts (a word,
+# figure, month or claim the walk's facts do not hold), length.
+# facts is soft until T1179-b runs the summaries step in the same pipeline run
+# as the export: until then a trails rebuild makes the committed file stale
+# (T1179-e) and every moved figure would fail the run.
+text_checks:
+  - {id: trails_summaries.dash, source: trails_summaries, check: dash, kind: hard}
+  - {id: trails_summaries.banned, source: trails_summaries, check: banned, kind: hard}
+  - {id: trails_summaries.facts, source: trails_summaries, check: facts, kind: soft}
+  - {id: trails_summaries.length, source: trails_summaries, check: length, kind: soft}

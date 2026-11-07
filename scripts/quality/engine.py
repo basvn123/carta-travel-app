@@ -10,6 +10,10 @@ A run fails (exit 1) when
 - a hard rule's field is under its floor (`min`), or
 - a hard check of a layer's latest external validation result (D23,
   scripts/validation/runner.py gate_from_disk) fails against its baseline.
+- a hard text check (rules.yaml `text_checks`, T1201 from T1179-c) finds a
+  shipped generated text that breaks the house rules: today the trail
+  summaries in data/trails/summaries.json, re-checked with the same
+  pipeline/trails/summaries.py check() that wrote them.
 A soft rule under its floor only warns. A scorecard field with no rule, or a
 rule for a field the scorecard does not measure, is a configuration error
 (exit 2) so the rules cannot fall behind the layers.
@@ -38,6 +42,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 RULES = HERE / "rules.yaml"
 APP_SNAPSHOT = ROOT / "continent-app" / "src" / "admin" / "dataHealth.json"
+SUMMARIES = ROOT / "data" / "trails" / "summaries.json"
 VALIDATION = Path(os.environ.get("CARTA_VALIDATION_DIR") or ROOT / "data" / "reports" / "validation")
 PANEL_VERSION = 1
 LEVELS, KINDS = {"must_see", "must_have"}, {"hard", "soft"}
@@ -87,9 +92,113 @@ def load_rules(path: Path = RULES) -> dict:
             errors.append(f"{rid}: min must be a share between 0 and 1")
     if errors:
         raise ValueError("rules.yaml: " + "; ".join(errors))
+    texts = d.get("text_checks") or []
+    for c in texts:
+        if c.get("kind") not in KINDS:
+            errors.append(f"{c.get('id')}: kind must be one of {sorted(KINDS)}")
+        if c.get("source") not in TEXT_SOURCES:
+            errors.append(f"{c.get('id')}: source must be one of {sorted(TEXT_SOURCES)}")
+        if c.get("check") not in TEXT_CHECKS:
+            errors.append(f"{c.get('id')}: check must be one of {sorted(TEXT_CHECKS)}")
+    if errors:
+        raise ValueError("rules.yaml: " + "; ".join(errors))
     gate = d.get("gate") or {}
-    return {"rules": rules, "drop_points": float(gate.get("must_see_drop_points", 2)),
+    return {"rules": rules, "texts": texts,
+            "drop_points": float(gate.get("must_see_drop_points", 2)),
             "trend_days": int(gate.get("trend_days", 90))}
+
+
+# --- Text checks (T1201, register row T1179-c) -------------------------------
+# A generated text is checked when it is written; this re-checks what is on
+# disk, so an edited file or a changed template cannot ship unnoticed. Each
+# check sorts the reasons summaries.check() gives into one family:
+#   dash     a dash or a list separator           (house rule)
+#   banned   a banned word or superlative          (house rule)
+#   facts    a word, figure, month or claim the walk's own facts do not hold
+#   length   outside summaries.MIN_CHARS to MAX_CHARS
+TEXT_SOURCES = {"trails_summaries"}
+TEXT_CHECKS = {"dash", "banned", "facts", "length"}
+
+
+def _summaries_module():
+    if "trail_summaries" in sys.modules:
+        return sys.modules["trail_summaries"]
+    path = ROOT / "pipeline" / "trails" / "summaries.py"
+    sys.path.insert(0, str(path.parent))
+    spec = importlib.util.spec_from_file_location("trail_summaries", path)
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules["trail_summaries"] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def text_family(reason: str) -> str:
+    if reason in ("dash", "separator"):
+        return "dash"
+    if reason.startswith("banned word"):
+        return "banned"
+    if reason.startswith("length"):
+        return "length"
+    return "facts"
+
+
+def trail_summary_findings(items: dict, wire_dir: Path, sm=None) -> dict:
+    """{family: [(id, reason)]} over the summaries file's items, plus
+    `not_on_wire`: ids whose walk is not on this wire (the file is older than
+    the wire; T1179-e reruns it), checked for dash and length only."""
+    sm = sm or _summaries_module()
+    rows = {}
+    for cc in sorted({(v or {}).get("cc") for v in items.values()} - {None}):
+        try:
+            blob = json.loads((wire_dir / f"{cc}.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        for r in (blob.get("trips") or []) + (blob.get("listed") or []):
+            rows[str(r.get("id"))] = r
+    out = {f: [] for f in TEXT_CHECKS}
+    out["not_on_wire"] = []
+    for tid, item in items.items():
+        text = (item or {}).get("text") or ""
+        row = rows.get(str(tid))
+        if row is None:
+            out["not_on_wire"].append((tid, "walk not on this wire"))
+            reasons = (["dash"] if sm.DASH_RE.search(text) else []) + (
+                ["separator"] if sm.SEPARATOR_RE.search(text) else []) + (
+                [f"length {len(text)}"] if not sm.MIN_CHARS <= len(text) <= sm.MAX_CHARS else [])
+        else:
+            reasons = sm.check(text, sm.facts_of(row, sm.load_detail(wire_dir, row)))
+        for b in reasons:
+            out[text_family(b)].append((tid, b))
+    return out
+
+
+def text_gate(checks: list[dict], public: Path, summaries: Path | None) -> tuple[list, list]:
+    """Failures and warnings of the rules.yaml text checks."""
+    if not checks or summaries is None or not summaries.is_file():
+        return [], []
+    try:
+        items = (json.loads(summaries.read_text(encoding="utf-8")) or {}).get("items") or {}
+    except ValueError:
+        items = None
+    failures, warnings = [], []
+    if items is None:
+        for c in checks:
+            (failures if c["kind"] == "hard" else warnings).append(
+                {"id": c["id"], "kind": c["kind"], "why": f"{summaries.name} does not parse"})
+        return failures, warnings
+    found = trail_summary_findings(items, public / "trails")
+    for c in checks:
+        bad = found.get(c["check"]) or []
+        if bad:
+            eg = "; ".join(f"{i}: {r}" for i, r in bad[:3])
+            (failures if c["kind"] == "hard" else warnings).append(
+                {"id": c["id"], "kind": c["kind"],
+                 "why": f"{len(bad)} of {len(items)} summaries ({eg})"})
+    if found["not_on_wire"] and checks:
+        warnings.append({"id": "trails_summaries.stale", "kind": "soft",
+                         "why": f"{len(found['not_on_wire'])} of {len(items)} summaries name a walk not on this wire "
+                                "(rerun pipeline/trails/summaries.py, T1179-e)"})
+    return failures, warnings
 
 
 def measured_fields() -> set[tuple[str, str]]:
@@ -206,7 +315,8 @@ def panel(card: dict, result: dict, points: list[dict], days: int, baseline_at: 
 
 def run(public: Path, now: datetime | None, out: Path, rules_path: Path = RULES,
         write: bool = False, snapshot: Path | None = APP_SNAPSHOT,
-        validation: Path | None = VALIDATION) -> tuple[int, dict]:
+        validation: Path | None = VALIDATION,
+        summaries: Path | None = SUMMARIES) -> tuple[int, dict]:
     cfg = load_rules(rules_path)
     problems = coverage_problems(cfg["rules"])
     if problems:
@@ -218,6 +328,9 @@ def run(public: Path, now: datetime | None, out: Path, rules_path: Path = RULES,
     vfail, vwarn = _validation_gate(validation)
     result["failures"] += vfail
     result["warnings"] += vwarn
+    tfail, twarn = text_gate(cfg.get("texts") or [], public, summaries)
+    result["failures"] += tfail
+    result["warnings"] += twarn
     result["ok"] = not result["failures"]
     card["gate"] = {"ok": result["ok"], "failures": len(result["failures"]),
                     "warnings": len(result["warnings"]), "baseline_at": prev_at}
