@@ -9,8 +9,8 @@ This patches each airport's `categories` from `airport_categories.py` (curated
 where known, ["city"] otherwise) so the filter surfaces them. Gems are left
 untouched - they already carry hand-written tags.
 
-Idempotent: re-running just refreshes the values. Also unions any newly used
-tags into meta.categories so the controlled vocab stays complete.
+Idempotent: re-running just refreshes the values. Also sets meta.categories
+to the tags in use, so the controlled vocab matches the data.
 
 Usage:
     python apply_airport_categories.py                 # patches the default targets
@@ -61,9 +61,9 @@ def patch(path: Path) -> None:
 
     # Keep the controlled vocab complete (display only; the frontend filter has
     # its own kind->tag map in trip_kinds.js).
-    vocab = set(meta.get("categories") or [])
-    vocab.update(used_tags)
-    meta["categories"] = sorted(vocab)
+    # Exactly the categories in use, not a union with the old list (T1215,
+    # row T1149-i); atomic_write_json does the same on every write.
+    meta["categories"] = sorted(used_tags)
 
     atomic_write_json(path, data, indent=1, ensure_ascii=False)
     n = len(data.get("destinations", {}))
