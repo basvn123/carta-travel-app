@@ -299,6 +299,29 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 **Left open.** The scrubber is pattern based (same limit as section 12). A future remote (HTTP) mode would need auth, rate limits and its own review before it ships; none exists. Traveller trips are deliberately out of scope until a per-user auth design exists.
 
+## 14. Carta Intelligence API (T1154, F5)
+
+**Data flow.** `services/intelligence/` is a FastAPI service for the build box (section 9), run in Docker from `compose.yaml` and bound to 127.0.0.1:8090. The pipeline on the box calls it in batch. It reads the shipped wire files (`continent-app/public`, mounted read-only) and the tag file `cache/taxonomy/tags.json` (read-only), imports the F1 tagger and taxonomy (`pipeline/taxonomy/`), and runs the F4 linker and F3 taste profile in one Node child process (`bridge/bridge.mjs`, newline-delimited JSON over stdin and stdout, no port). It calls no model and no network: the tagger's Gemini verifier is not reachable from the API.
+
+**Assets.** The catalogue (public). `/profile` bodies: a traveller's saves, trips, filters and verdicts when a caller sends them; held only for the request, never stored, never logged. The API keys (only SHA-256 hashes are in `.env`).
+
+**Trust boundaries.** Caller to API (keyed); API to the Node child (same container, trusted code, untrusted request data passed as JSON); mounted data to the engines (our own build output).
+
+**Controls.**
+
+| Risk | Control | Test |
+|---|---|---|
+| Unauthenticated use | Every route but `/healthz` needs a key (`X-API-Key` or bearer); keys stored as SHA-256 hashes, compared with `hmac.compare_digest` over every stored hash; 401 says nothing more; no key configured, no start (fail closed) | `test_auth_ratelimit.py` (every route, five bad headers, fail closed) |
+| Abuse and unbounded consumption (OWASP API4) | Token bucket per key (burst 30, 120 per minute by default, per-key rate), 429 with `Retry-After`; batches capped at 100 items, strings and lists capped in the Pydantic models, unknown fields refused (422); bridge call timeout 10 s kills the child; container 1 GB and 2 CPUs | `test_auth_ratelimit.py`, the 422 cases in the contract tests, `test_ops.py` (timeout) |
+| Exposure | Bound to 127.0.0.1 on the box; no route on Cloudflare or Supabase; Swagger at `/docs` serves only the schema | compose file |
+| Personal data in logs | Bodies are never logged; logs carry request id, key id, route, status and time; the request id from the caller is sanitised | `test_ops.py` (a trip name never reaches the log) |
+| Write or side effect | No route writes; the API holds no database or secret beyond key hashes; read-only root filesystem, data mounted read-only, uid 10001, all capabilities dropped, `no-new-privileges` | `test_ops.py` static check, compose file |
+| Code injection through the bridge | The child runs only the functions in its table (`ping`, `link`, `profile`); arguments are JSON data, never code; stdout carries the protocol only | `test_ops.py`, unknown function error in the bridge |
+| Claude API | None; no Anthropic SDK; runtime AI stays on Gemini through the gateway and the API calls no model | `test_ops.py` static grep |
+| Dependency supply chain | Five runtime libraries pinned (`requirements.txt`); Node binary copied from the official image; `intelligence.yml` CI | CI |
+
+**Left open.** The rate limit lives in memory (a restart refills it; more than one worker would split it). No TLS: the API is for localhost only; anything beyond the box needs a reverse proxy with TLS and a review first. No pip-audit in `intelligence.yml` yet (T1154-e). Keys have no expiry; rotation is an edit of `.env` and a restart.
+
 ---
 
 ## Top gaps, ranked

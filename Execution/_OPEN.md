@@ -1981,3 +1981,10 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1185-b | T1185 | `transit_stops` holds rail, coach stations, ferries and bus stops, but no timetable: public transport minutes need an open GTFS feed per country (licence review) and an offline pass | next task | open |  |
 | T1185-c | T1185 | Taxi factors (1.3, 50 km/h) come from a vendor blog and OSRM defaults; replace with a local OSRM or Valhalla road time per trail end on the box | next task | open |  |
 | T1185-d | T1185 | `is_loop` is true on many A to B walks, so the page's shape line and "plan the way back" copy still call them loops; the way back block ignores the flag | next task | open |  |
+| T1154-a | T1154 | The Intelligence API is not running on the box: make a key, write services/intelligence/.env, run the full tagger, start compose (owner step in the T1154 report) | user | open | 1 |
+| T1154-b | T1154 | No pipeline job calls the Intelligence API yet; the roadmap's "pipeline calls it in batch" needs a first caller (for example taxonomy tags or parse-booking place linking in batch) | next task | open | 2 |
+| T1154-c | T1154 | /similar is checked only against the 15 seed labels written by a session (nearest 0.213 vs random 0.053 gold Jaccard); score it on the owner's 400 labels once gold.csv is filled (T1149) | next task | open | |
+| T1154-d | T1154 | The tagger's mapped tags always read continent-app/public under the repo root (pipeline/taxonomy/taxonomy.py), so CARTA_PUBLIC moves only the Corpus; make taxonomy.py take the data root too | next task | open | |
+| T1154-e | T1154 | intelligence.yml has no pip-audit and the image is pinned by tag, not digest; add both with the C6 supply-chain jobs | next task | open | |
+| T1154-f | T1154 | The rate limit lives in memory with one worker; a second worker or a public route would need a shared store (Redis) and TLS first | next task | open | |
+| T1154-g | T1154 | MAP.md has no row or line for services/intelligence/; add it with the next MAP edit | next task | open | |

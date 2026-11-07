@@ -123,6 +123,7 @@ Written 2026-11-04 (T1045) from the code, config and migrations on `main` at com
    - [Hand corrections (pipeline overrides)](#hand-corrections-pipeline-overrides)
    - [Evals (one runner, one results format)](#evals-one-runner-one-results-format)
    - [Travel taxonomy and tagging](#travel-taxonomy-and-tagging)
+   - [Carta Intelligence API](#carta-intelligence-api)
    - [Truth set (hand-verified answers, scored per release)](#truth-set-hand-verified-answers-scored-per-release)
    - [Deploy (Cloudflare Pages, R2, prerender, SEO)](#deploy-cloudflare-pages-r2-prerender-seo)
    - [The build box (Hetzner scheduled runs)](#the-build-box-hetzner-scheduled-runs)
@@ -2946,6 +2947,18 @@ Built in T1155 (ROADMAP F7). `services/mcp/` is a local stdio server for MCP cli
 - `list_trips`: library trips from `journeys/journey/*.json` filtered by country code, trip type and maximum days; returns days, best months and the trip's own budget range. Saved traveller trips are not reachable.
 - Output: every free-text field goes through `safeText` (`src/text.js`, which runs aiGuard `scrubData` and caps length). Library: `@modelcontextprotocol/sdk` 1.32.2 (pinned) and zod.
 - Run `cd services/mcp && npm test`; CI is `.github/workflows/mcp.yml`. Threat model: section 13.
+
+### Carta Intelligence API
+
+Built in T1154 (ROADMAP F5). `services/intelligence/` serves the intelligence code as one internal HTTP API for the build box's batch jobs, without copying it: the F1 tagger and taxonomy are imported from `pipeline/taxonomy/`, and the F4 linker and F3 taste profile run in one long-lived Node child (`bridge/bridge.mjs`) that imports `continent-app/src/lib/linking/linker.js` and `src/lib/taste/profile.js`. FastAPI 0.162, Pydantic 2, uvicorn with one worker. OpenAPI: `services/intelligence/openapi.json`, rendered in `docs/reference/openapi.md`.
+
+- `POST /tag`: up to 100 items, each a catalogue item (`layer`, `id`) or free text (`name`, `text`; the name and the first `FREE_TEXT_LEAD` = 2 sentences weigh as a lead, the rest as body). Returns `tagger.tag_item`'s tags with score, `by`, `uses`, `implied` and evidence; `use` keeps the tags at that use's threshold (`USES` in `tagger.py`: filter 0.75, profile 0.6, search 0.45) or `all`. An unknown id gives `found: false`.
+- `GET /taxonomy` (optionally `?facet=`) and `GET /taxonomy/{id}`: the YAML as served.
+- `POST /link`: up to 100 mentions with optional context (`country`, `airport`, `lat`, `lon`) through `linkPlace`; `limit` 1 to 10 candidates, `confident`, `linked`, `did_you_mean` as the linker returns them.
+- `POST /similar`: an item (`layer`, `id`) or a list of taxonomy ids; TF-IDF weighted cosine over the tag file's tags at or over the search threshold (`MIN_SCORE`), weight = score x (log(N/df) + 1), `PARENT_SHARE` = 0.5 of each tag's weight also counted for its parent, implied ancestors skipped; `k` up to 50, filter by `layers` or a shortlist `among`; each neighbour names up to three shared tags. The index is `INTEL_TAGS_PATH`, by default `cache/taxonomy/tags.json` (the full tagger run), else `tags-sample.json`; an item not in it is tagged on the fly.
+- `POST /profile`: saves, trips, filters and verdicts in the app's shapes, against the whole catalogue's base rates; returns shown, held and hidden chips with evidence, `tasteWeights` and `profileSnapshot`. Nothing is stored.
+- Auth: `X-API-Key` or `Authorization: Bearer`; `INTEL_API_KEYS` holds `id:sha256[:per-minute]`; no key, no start. Rate limit: token bucket per key, `INTEL_BURST` 30, `INTEL_RATE_PER_MIN` 120 (or the key's own), 429 with `Retry-After`. Logs: JSON lines with request id, key id, route, status and milliseconds, never bodies. Metrics at `/metrics` (`intel_*`). Node down: `/link` and `/profile` answer 503, the rest keep working; the next call restarts it.
+- Run: `docker compose -f services/intelligence/compose.yaml up -d --build` on the box (README "Run on the box"). Tests: `python -m pytest services/intelligence/tests`, each endpoint against its eval set (taxonomy seed set through the eval runner, the 300 linking mentions, `evals/profile.json`, the similar check on the seed labels); CI `.github/workflows/intelligence.yml`. Threat model: section 14.
 
 ---
 
