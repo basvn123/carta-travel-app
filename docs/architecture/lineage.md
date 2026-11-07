@@ -19,7 +19,7 @@ that destructures a record is missed. Request paths are in [request-paths.md](re
 | ...written only or partly by a script no task schedules | 20 |
 | ...with no writer left in the repo | 2 |
 | run_pipeline.py tasks | 92 |
-| ...that write a wire field or a wire file | 45 |
+| ...that write a wire field or a wire file | 46 |
 | Wire files and folders | 28 |
 
 ## The trunk
@@ -616,6 +616,19 @@ flowchart LR
   C1 --> W0
 ```
 
+### `access_facts` (quarterly)
+
+```mermaid
+flowchart LR
+  T_access_facts["access_facts"]
+  C0["pipeline/harvest_access.py"]
+  T_access_facts --> C0
+  C1["pipeline/export_destinfo.py"]
+  C0 --> C1
+  W0["destinfo/ (R2)"]
+  C1 --> W0
+```
+
 ### `activities` (backfill)
 
 ```mermaid
@@ -943,7 +956,7 @@ flowchart LR
 
 These feed caches, reports or other tasks (their output reaches the wire through a task above, or not at all).
 
-`ingestion`, `demand_events`, `coverage`, `register_intake`, `audit`, `routes_attach`, `trails_ingest`, `trails_elevation`, `trails_validate`, `trails_popularity`, `trails_registry`, `trails_splice`, `trails_route_bridge`, `trails_regionize`, `trails_derive_routes`, `trails_hierarchy`, `trails_curate`, `trails_forests`, `trails_scenic`, `trails_images`, `trails_way_tags`, `trails_attributes`, `trails_summaries`, `cycling_harvest`, `cycling_enrich`, `cycling_photos`, `cycling_bridge`, `unesco`, `image_audit`, `access_facts`, `must_descs`, `poi_images`, `sea_temp`, `heat_fire`, `dest_overlays`, `poi_fees`, `place_intros`, `place_gallery`, `field_stubs_report`, `taxonomy_tags`, `intel_tags`, `blog_drafts`, `blog_pr`, `link_health`, `photo_check`, `price_alerts`, `photo_sources`
+`ingestion`, `demand_events`, `coverage`, `register_intake`, `audit`, `routes_attach`, `trails_ingest`, `trails_elevation`, `trails_validate`, `trails_popularity`, `trails_registry`, `trails_splice`, `trails_route_bridge`, `trails_regionize`, `trails_derive_routes`, `trails_hierarchy`, `trails_curate`, `trails_forests`, `trails_scenic`, `trails_images`, `trails_way_tags`, `trails_attributes`, `trails_summaries`, `cycling_harvest`, `cycling_enrich`, `cycling_photos`, `cycling_bridge`, `unesco`, `image_audit`, `must_descs`, `poi_images`, `sea_temp`, `heat_fire`, `dest_overlays`, `poi_fees`, `place_intros`, `place_gallery`, `field_stubs_report`, `taxonomy_tags`, `intel_tags`, `blog_drafts`, `blog_pr`, `link_health`, `photo_check`, `price_alerts`, `photo_sources`
 
 ## Wire files beside the contract
 
@@ -959,7 +972,7 @@ The contract covers `app_data.json`. The other folders the app fetches, with the
 | `country_insights.json` | `sync` | `continent-app/scripts/sync-data.mjs` | Pages | `src/lib/appData.js`, `src/hooks/useCountryInsights.js` | per-country intel, copied from app_data/country_insights.json |
 | `entry_rules.json` | `entry_rules` | `pipeline/entry_rules.py` | Pages | `src/lib/entryRules.js`, `scripts/ci/check-contract.mjs` | entry rules per country and traveller group, with source and date checked (T1199, D19) |
 | `dossier/` | `dossier` | `pipeline/dossier/build_dossier.py` | R2 | `src/lib/dossier.js` | the per-place contract for the place page and the PDF |
-| `destinfo/` | `events`, `parking`, `dossier` | `pipeline/export_destinfo.py` | R2 | `src/lib/destInfo.js` | events, parking and practical facts per place (loader exists, no screen calls it today) |
+| `destinfo/` | `events`, `parking`, `dossier`, `access_facts` | `pipeline/export_destinfo.py` | R2 | `src/lib/destInfo.js`, `src/browse/DestPractical.jsx` | events, parking, practical and accessibility facts per place (the place page's Practical Access card reads it through useDestInfo, T1203) |
 | `trips/` | `trips` | `pipeline/trips/build_trips.py` | R2 | `src/lib/trips.js` | ready-made 2 to 14 day trips |
 | `journeys/` | `manual` | `pipeline/journeys/build_wire.py` | R2 | `src/lib/journeys.js` | library journeys |
 | `trails/` | `trails_rate`, `trails_fields`, `trailslab_worker`, `rating_v5_profile`, `outdoor_pages` | `pipeline/trails/export_wire.py` | R2 | `src/lib/trails.js` | rated trails per country and their pages |
