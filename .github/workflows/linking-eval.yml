@@ -54,8 +54,6 @@ jobs:
     defaults:
       run:
         working-directory: continent-app
-    env:
-      CARTA_EVAL_OUT: ${{ runner.temp }}/linking-eval
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -76,6 +74,8 @@ jobs:
           cache: npm
           cache-dependency-path: continent-app/package-lock.json
       - name: Self-test (a seeded drop must fail the gate)
+        env:
+          CARTA_EVAL_OUT: ${{ runner.temp }}/linking-eval
         run: |
           set +e
           node scripts/eval/run.mjs linking --seed-drop --check | tee "$RUNNER_TEMP/seeded.log"
@@ -85,6 +85,8 @@ jobs:
             exit 1
           fi
       - name: Score and gate
+        env:
+          CARTA_EVAL_OUT: ${{ runner.temp }}/linking-eval
         run: node scripts/eval/run.mjs linking --check --write
       - run: npm ci
       - name: Unit tests (linker, search adapter, Ask and parse-booking hooks)
