@@ -41,6 +41,7 @@ import {
   sanitizeFiles, sanitizeTripContext, sanitizeParsed, cacheKeyInput,
   safeFetchUrl, htmlToText,
 } from './logic.mjs';
+import { fetchPublic } from './fetchGuard.mjs';
 import { consume, logCapRejection, refund } from '../_shared/passes.mjs';
 // The prompt and the response schema, from the prompt registry (T1140, E5).
 import { LANG_NAMES, RESPONSE_SCHEMA, buildPrompt } from './prompt.mjs';
@@ -121,27 +122,21 @@ Deno.serve(withCors(async (req) => {
   let urlText = '';
   if (url) {
     try {
-      // Redirects are followed by hand so every hop re-passes safeFetchUrl:
-      // with `redirect: 'follow'` a public host answering
-      // `302 Location: http://169.254.169.254/...` would be fetched blind.
-      let target: string = url;
-      let resp!: Response;
-      for (let hop = 0; hop < 4; hop++) {
-        resp = await fetch(target, {
-          headers: { 'User-Agent': 'CartaTravel/1.0 (booking import)', Accept: 'text/html, application/pdf, text/plain' },
-          signal: AbortSignal.timeout(12_000),
-          redirect: 'manual',
-        });
-        const loc = resp.headers.get('location');
-        if (resp.status >= 300 && resp.status < 400 && loc) {
-          resp.body?.cancel();
-          const next = safeFetchUrl(new URL(loc, target).href);
-          if (!next) return json(400, { code: 'url_unreachable' });
-          target = next;
-          continue;
-        }
-        break;
-      }
+      // Every hop is checked by name AND by resolved address, redirects are
+      // followed by hand (at most MAX_REDIRECTS) and each Location runs the
+      // whole check again: see fetchGuard.mjs (T1211, T1164-m). Residual
+      // risk: fetch() does its own DNS lookup after ours and Deno cannot pin
+      // it to the checked address, so a near-zero-TTL rebinding name still
+      // has a small time-of-check to time-of-use window.
+      const got = await fetchPublic(url, {
+        fetch,
+        resolveDns: (host: string, type: 'A' | 'AAAA') =>
+          Deno.resolveDns(host, type, { signal: AbortSignal.timeout(5_000) }),
+        headers: { 'User-Agent': 'CartaTravel/1.0 (booking import)', Accept: 'text/html, application/pdf, text/plain' },
+        timeoutMs: 12_000,
+      });
+      if (!got.response) return json(400, { code: 'url_unreachable' });
+      const resp: Response = got.response;
       if (!resp.ok) return json(400, { code: 'url_unreachable', status: resp.status });
       const ctype = (resp.headers.get('content-type') || '').toLowerCase();
       const buf = new Uint8Array(await resp.arrayBuffer());

@@ -10,14 +10,14 @@ How to read a row: "Met" cites the control and, where one exists, the test that 
 
 | | Count |
 |---|---|
-| Met | 158 |
+| Met | 160 |
 | N/A | 45 |
-| Gap | 50 |
+| Gap | 48 |
 | Total | 253 |
 
 | Chapter | Met | N/A | Gap |
 |---|---|---|---|
-| V1 Encoding and Sanitization | 16 | 10 | 1 |
+| V1 Encoding and Sanitization | 17 | 10 | 0 |
 | V2 Validation and Business Logic | 10 | 0 | 1 |
 | V3 Web Frontend Security | 14 | 4 | 1 |
 | V4 API and Web Service | 4 | 4 | 2 |
@@ -31,7 +31,7 @@ How to read a row: "Met" cites the control and, where one exists, the test that 
 | V12 Secure Communication | 8 | 1 | 0 |
 | V13 Configuration | 8 | 0 | 5 |
 | V14 Data Protection | 6 | 0 | 3 |
-| V15 Secure Coding and Architecture | 9 | 0 | 4 |
+| V15 Secure Coding and Architecture | 10 | 0 | 3 |
 | V16 Security Logging and Error Handling | 9 | 0 | 7 |
 | V17 WebRTC | 0 | 7 | 0 |
 
@@ -56,8 +56,9 @@ Gaps by register row (the reasoning is in the T1164 report; rows not starting T1
 | T1164-i | V16.2.1, V16.3.1, V16.3.2, V16.3.3, V16.4.3 |
 | T1164-j | V6.5.5, V7.1.1, V7.3.1, V7.3.2, V7.5.2, V10.4.8 |
 | T1164-l | V5.4.3 |
-| T1164-m | V1.3.6, V13.2.4, V13.2.5, V15.3.2 |
+| T1164-m | closed by T1211 (V1.3.6, V15.3.2 met) |
 | T1164-n | V4.3.1, V4.3.2 |
+| T1211-a | V13.2.4, V13.2.5 |
 
 Re-walk this list when a chapter's code changes (new auth path, new upload type, new function), and in full before ROADMAP C11 (the external check). The auth tests behind many rows run in `npm test` (`continent-app/tests/edgeAuth.test.mjs`, `pagesAuth.test.mjs`); the header rows are checked by the ZAP baseline (`.github/workflows/zap.yml`).
 
@@ -81,7 +82,7 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 | V1.3.3 | 2 | Data being passed to a potentially dangerous context is sanitized beforehand to enforce safety measures, such as only allowing characters which are safe for... | Met | Model input is scrubbed and fenced by the AI guard (`_shared/aiGuard.mjs`, T1117) before it reaches Gemini; suggest-city is the exception (row T1117-c). |
 | V1.3.4 | 2 | User-supplied Scalable Vector Graphics (SVG) scriptable content is validated or sanitized to contain only tags and attributes (such as draw graphics) that ar... | Met | Uploads accept only image/jpeg, image/png and application/gpx+xml (bucket `allowed_mime_types`, migration 061); no SVG. |
 | V1.3.5 | 2 | The application sanitizes or disables user-supplied scriptable or expression template language content, such as Markdown, CSS or XSL stylesheets, BBCode, or... | Met | No traveller-supplied Markdown, CSS or template is rendered; the Markdown libraries are used only in admin views over internal data. |
-| V1.3.6 | 2 | The application protects against Server-side Request Forgery (SSRF) attacks, by validating untrusted data against an allowlist of protocols, domains, paths a... | Gap (T1164-m) | parse-booking fetches a user-given URL; `safeFetchUrl()` blocks private hosts by name, not by resolved address (DNS rebinding). |
+| V1.3.6 | 2 | The application protects against Server-side Request Forgery (SSRF) attacks, by validating untrusted data against an allowlist of protocols, domains, paths a... | Met (T1211) | parse-booking checks every hop of a user-given URL by name and by resolved address (A and AAAA; refused if any address is non-public or nothing resolves) in `parse-booking/fetchGuard.mjs`; `continent-app/tests/parseBookingSsrf.test.mjs`. Residual: fetch does its own DNS lookup after the check (TOCTOU), see T1211-a. |
 | V1.3.7 | 2 | The application protects against template injection attacks by not allowing templates to be built based on untrusted input. | Met | Prompts are fixed templates with fenced data (`prompt.mjs`, `aiGuard`); no server-side template engine takes user input. |
 | V1.3.8 | 2 | The application appropriately sanitizes untrusted input before use in Java Naming and Directory Interface (JNDI) queries and that JNDI is configured securely... | N/A | No JNDI. |
 | V1.3.9 | 2 | The application sanitizes content before it is sent to memcache to prevent injection attacks. | N/A | No memcache. |
@@ -324,8 +325,8 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 | V13.2.1 | 2 | Communications between backend application components that don't support the application's standard user session mechanism, including APIs, middleware, and d... | Met | Machine callers use secrets compared in constant time (`x-notify-secret`, `x-uploads-secret`, ingest token) or Stripe signatures (`edgeAuth.test.mjs`). |
 | V13.2.2 | 2 | Communications between backend application components, including local or operating system services, APIs, middleware, and data layers, are performed with ac... | Gap (T1164-c) | Edge Functions and the Pages AI event sink use the service role key, which bypasses every policy, where a narrower role would do. |
 | V13.2.3 | 2 | If a credential has to be used for service authentication, the credential being used by the consumer is not a default credential (e.g., root/root or admin/ad... | Met | No default credentials. |
-| V13.2.4 | 2 | An allowlist is used to define the external resources or systems with which the application is permitted to communicate (e.g., for outbound requests, data lo... | Gap (T1164-m) | The browser is held to a CSP connect-src allow-list, but parse-booking may fetch any public URL. |
-| V13.2.5 | 2 | The web or application server is configured with an allowlist of resources or systems to which the server can send requests or load data or files from. | Gap (T1164-m) | As V13.2.4. |
+| V13.2.4 | 2 | An allowlist is used to define the external resources or systems with which the application is permitted to communicate (e.g., for outbound requests, data lo... | Gap (T1211-a) | The browser is held to a CSP connect-src allow-list, but parse-booking may fetch any public URL (private addresses are refused since T1211). |
+| V13.2.5 | 2 | The web or application server is configured with an allowlist of resources or systems to which the server can send requests or load data or files from. | Gap (T1211-a) | As V13.2.4. |
 | V13.3.1 | 2 | A secrets management solution, such as a key vault, is used to securely create, store, control access to, and destroy backend secrets. | Gap (T1059-c) | Supabase and Cloudflare secret stores hold the runtime keys, but the build box keeps its secrets in one `.env` with no manager (threat model gap 14). |
 | V13.3.2 | 2 | Access to secret assets adheres to the principle of least privilege. | Gap (T1164-c) | As V13.2.2. |
 | V13.4.1 | 1 | The application is deployed either without any source control metadata, including the .git or .svn folders, or in a way that these folders are inaccessible b... | Met | Only `dist/` is deployed; no `.git` in the build output. |
@@ -359,7 +360,7 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 | V15.2.2 | 2 | The application has implemented defenses against loss of availability due to functionality which is time-consuming or resource-demanding, based on the docume... | Met | AI caps and quotas, per-address limits, upstream timeouts, edge cache on flights and forecast. |
 | V15.2.3 | 2 | The production environment only includes functionality that is required for the application to function, and does not expose extraneous functionality such as... | Met | Test seams off in production (`VITE_E2E_SEAMS=`), no dev servers deployed. |
 | V15.3.1 | 1 | The application only returns the required subset of fields from a data object. | Met | Functions answer explicit fields (`json(200, { url })`, the flight shape); PostgREST selects name columns. |
-| V15.3.2 | 2 | Where the application backend makes calls to external URLs, it is configured to not follow redirects unless it is intended functionality. | Gap (T1164-m) | parse-booking follows redirects of a user URL; each hop needs the private-host check (part of the SSRF row). |
+| V15.3.2 | 2 | Where the application backend makes calls to external URLs, it is configured to not follow redirects unless it is intended functionality. | Met (T1211) | parse-booking follows at most 3 redirects by hand (`redirect: 'manual'`) and runs the full name and address check on every Location; `parseBookingSsrf.test.mjs`. |
 | V15.3.3 | 2 | The application has countermeasures to protect against mass assignment attacks by limiting allowed fields per controller and action, e.g., it is not possible... | Met | Edge Functions read named fields only (`body.action`, `body.tier`), never spread a body into a write (`edgeAuth.test.mjs` sends extra user ids that never reach a call). |
 | V15.3.4 | 2 | All proxying and middleware components transfer the user's original IP address correctly using trusted data fields that cannot be manipulated by the end user... | Met | As V4.1.3. |
 | V15.3.5 | 2 | The application explicitly ensures that variables are of the correct type and performs strict equality and comparator operations. | Met | Strict equality and explicit `String()` / `Number()` coercion in the validators and Edge Functions (by convention: ESLint has no `eqeqeq` rule). |
