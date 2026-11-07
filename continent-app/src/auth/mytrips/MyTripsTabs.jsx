@@ -13,6 +13,7 @@ import { JoinsLine } from '../../together/signals.jsx';
 import { FaceStack } from '../FriendFaces.jsx';
 
 /** A plain click stays in the app; a modified click opens the address. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function door(go) {
   return (e) => {
     if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -53,6 +54,7 @@ export function Empty({ title, line, action, icon = null, tone = 'umber' }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const MT_TABS = ['trips', 'saved', 'europe'];
 
 /**

@@ -67,6 +67,7 @@ function peopleOf(g, ids) {
 }
 
 /** What a group needs from you right now, for the hub's To answer. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function groupWaits(s) {
   return s.groups.filter((g) => g.myStatus === 'invited'
     || (g.myStatus === 'joined' && !g.bookedPlanId

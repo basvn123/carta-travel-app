@@ -34,6 +34,7 @@ const MODE_WORDS = [
 ];
 
 /** The bases in order: consecutive nights in one place are one stop. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function routeStops(places) {
   const out = [];
   for (const p of places || []) {

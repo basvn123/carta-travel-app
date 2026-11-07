@@ -34,6 +34,7 @@ const LEG_MODES = Object.keys(LEG_ICON);
  * link { href, label } and the paid field. Pure but for the PaidField
  * elements it builds.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function bookRows({
   tripStart, tripEnd, stopDetails, stayCosts = [], stayTier = 'home', priced, flight = null, ownFlight = null,
   party, booked = null, book = null,

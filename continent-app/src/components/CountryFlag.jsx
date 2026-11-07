@@ -132,6 +132,7 @@ const FLAGS = {
 };
 
 // Country display name (as stored on destinations / trip stops) -> ISO2.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const COUNTRY_ISO2 = {
   Albania: 'AL', Andorra: 'AD', Austria: 'AT', 'Bosnia and Herzegovina': 'BA',
   Belgium: 'BE', Bulgaria: 'BG', Switzerland: 'CH', Cyprus: 'CY', Czechia: 'CZ',

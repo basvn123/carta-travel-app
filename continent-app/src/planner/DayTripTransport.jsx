@@ -7,6 +7,7 @@ import { fmtDur } from './dayFormat.js';
 
 // The three inter-city day-trip modes and their glyphs/labels. Exported because
 // the main day-plan view also reads MODE_META to label committed legs.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const MODE_META = {
   train: { Icon: TrainIcon, labelKey: 'day.modeTrain' },
   bus: { Icon: BusIcon, labelKey: 'day.modeBus' },

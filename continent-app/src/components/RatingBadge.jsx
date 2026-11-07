@@ -23,6 +23,7 @@ import NotYet from './NotYet.jsx';
  */
 
 /** The `rt-n` class the star colour reads: the band's ink step, 0 to 3. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function tierClass(rating) {
   return `rt-${inkStep(bandOf(rating))}`;
 }

@@ -24,6 +24,7 @@ import '../styles/88-place-template.css';
 
 const WIDE = '(min-width: 1024px)';
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useWide() {
   const [wide, setWide] = React.useState(
     () => typeof window !== 'undefined' && !!window.matchMedia?.(WIDE).matches,
@@ -39,6 +40,7 @@ export function useWide() {
 }
 
 /** Scroll the page's scroller so `id` starts just under the jump bar. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function scrollToSection(scrollEl, id) {
   const root = scrollEl;
   const el = root?.querySelector?.(`#${CSS.escape ? CSS.escape(id) : id}`);

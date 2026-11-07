@@ -69,6 +69,7 @@ function Foot({ onContinue, disabled = false, label }) {
 const KIND_ICONS = { solo: 'PersonIcon', couple: 'HeartIcon', friends: 'FriendsIcon', family: 'FamilyIcon', group: 'FriendsIcon' };
 
 /** The Who rows' options (T764: shared with the taste profile's first question). */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function partyKindOptions(t) {
   return Object.keys(PARTY_KINDS).map((k) => ({ value: k, icon: KIND_ICONS[k], label: t(`pf.who.${k}`) }));
 }

@@ -24,6 +24,7 @@ import { isWalkable } from '../lib/dayRoute.js';
  * Escape hands focus back to the button that opened it, so a keyboard or a
  * screen reader never loses its place.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useDismiss(open, close) {
   const ref = useRef(null);
   useEffect(() => {
@@ -589,6 +590,7 @@ export function DayPlanPanel({
  */
 const UNDO_MS = 6000;
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useUndo() {
   const [pending, setPending] = useState(null);
   const ref = useRef(null);

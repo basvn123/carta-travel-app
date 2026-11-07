@@ -22,6 +22,7 @@ const EVENT = 'carta:taste-open';
 const TasteSheet = React.lazy(() => import('./TasteSheet.jsx').then((m) => ({ default: m.TasteSheet })));
 
 /** Opens the one TasteSheet; focus returns to `opener` when it closes. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function openTasteSheet(opener = null) {
   if (typeof window === 'undefined') return;
   window.dispatchEvent(new CustomEvent(EVENT, { detail: { opener } }));

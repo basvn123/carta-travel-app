@@ -39,6 +39,7 @@ window.addEventListener('vite:preloadError', (event) => {
 
 // ?styleguide opens the design system page (T424, roadmap 1.2) instead of the
 // app: lazy, with its own stylesheet, so the app's first paint carries none of it.
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 const StyleGuide = lazy(() => import('./styleguide/StyleGuide.jsx'));
 const showStyleGuide = new URLSearchParams(window.location.search).has('styleguide');
 

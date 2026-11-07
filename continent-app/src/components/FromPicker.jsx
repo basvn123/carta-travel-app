@@ -393,6 +393,7 @@ export function FromCountryPanel({ data, current, onPick, resume = false }) {
 }
 
 /** The From value as a traveller reads it: the town, never a code. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function fromName(s) {
   if (s?.fromPlace?.name) return s.fromPlace.name;
   const o = s?.data?.meta?.origins?.[s?.origin];
@@ -400,6 +401,7 @@ export function fromName(s) {
 }
 
 /** The current From as a point, for the panel's tick. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function fromPoint(s) {
   if (s?.fromPlace && Number.isFinite(s.fromPlace.lat)) return s.fromPlace;
   const o = s?.data?.meta?.origins?.[s?.origin];

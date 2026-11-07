@@ -26,6 +26,7 @@ import {
  * one, a basemap tile centred on the feature where it does not.
  */
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const LAYER_ICON = {
   trails: BootIcon, cycling: BikeIcon, mountains: MountainIcon,
   lakes: LakeIcon, beaches: BeachIcon,
@@ -78,6 +79,7 @@ function rowMeta(row, layer, t) {
   return bits;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function summaryOf(around, t) {
   if (!around?.counts) return '';
   return LAYER_ORDER

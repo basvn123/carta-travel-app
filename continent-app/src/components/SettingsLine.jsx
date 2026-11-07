@@ -52,9 +52,11 @@ import { rule } from '../lib/price/config.js';
  * (styles in 60-v6-shell.css and 77-settings-v2.css).
  */
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const SettingsContext = createContext(null);
 
 /** Every global input and its setter, or null outside the app shell. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useSettings() {
   return useContext(SettingsContext);
 }
@@ -64,21 +66,25 @@ export function useSettings() {
  * they picked, or null while the dates are Carta's or any time: a month fact
  * is shown only when the traveller has a month (carta-design "Month").
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useTravelMonth() {
   return useContext(SettingsContext)?.travelMonth ?? null;
 }
 
 /** T649: the traveller's whole "when" (lib/when.js): exact, month or any. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useWhen() {
   return useContext(SettingsContext)?.when ?? ANY_WHEN;
 }
 const ANY_WHEN = { kind: 'any', month: null, months: [] };
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const SETTINGS_PARTS = ['origin', 'dates', 'party', 'lifestyle', 'countries', 'way'];
 const MAX_NIGHTS = 30;
 // T691: one cap for every screen (config/pricing.json party.limits).
 const { max_seats: MAX_PARTY, max_babies: MAX_BABIES } = rule('party.limits');
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const WAY_ICONS = { any: MapPinIcon, plane: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon };
 
 /**
@@ -168,6 +174,7 @@ function Part({
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useShortDate() {
   const { lang, languages } = useI18n();
   const bcp47 = languages.find((l) => l.code === lang)?.bcp47 || 'en-GB';
@@ -179,12 +186,14 @@ export function useShortDate() {
   }, [bcp47]);
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function addDaysISO(iso, n) {
   const d = new Date(`${iso}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + n);
   return d.toISOString().slice(0, 10);
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function nightsBetween(a, b) {
   if (!a || !b) return 0;
   const ms = Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`);
@@ -208,6 +217,7 @@ function nextMonths(today = new Date()) {
  *  the one price request (lib/price/). Carta's own suggested dates are not
  *  the traveller's, so the prices are the year's average and the value reads
  *  "Any time"; the Explore month filter, while on, names its month. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function whenValue(t, s, shortDate, { nightsToo = true } = {}) {
   const nights = nightsBetween(s.departDate, s.returnDate);
   const w = s.priceRequest?.when || null;

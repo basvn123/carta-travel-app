@@ -237,6 +237,7 @@ export function DayTipsBody({
 }
 
 /** How many tips there are, for the kit tile. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function tipsCount({ intel, walks = [], countryRec }) {
   return (intel ? intel.areas.length : 0) + walks.length + (countryRec ? 1 : 0);
 }

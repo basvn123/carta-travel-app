@@ -34,6 +34,7 @@ export const START_KEY = 'carta.exploreStart.v1';
 const WIDE = '(min-width: 1024px)';
 
 /** 'home' (the T585 dialog), 'taste' (straight to the four questions) or null (no dialog). */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function startMode({ tasteEmpty = true } = {}) {
   if (typeof window === 'undefined') return null;
   try {
@@ -49,10 +50,12 @@ export function startMode({ tasteEmpty = true } = {}) {
   }
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function shouldOpenStart(opts) {
   return startMode(opts) != null;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function markStartSeen() {
   try { window.localStorage.setItem(START_KEY, '1'); } catch { /* storage unavailable */ }
 }

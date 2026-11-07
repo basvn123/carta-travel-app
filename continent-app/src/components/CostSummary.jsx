@@ -21,6 +21,7 @@ import { formatEst, formatMoney } from '../lib/money.js';
  * median repairing a broken harvest). The figure then carries the estimate
  * mark, never only a colour.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function isNational(cost) {
   if (!cost || cost.dayEur == null) return false;
   return cost.stayLevel !== 'city' || cost.foodLevel !== 'city';

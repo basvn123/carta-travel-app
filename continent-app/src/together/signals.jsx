@@ -18,11 +18,13 @@ import { ToneFace, ToneFaces, fmtShort, firstName, Block } from './parts.jsx';
  */
 
 /** Ask App to open the day planner for a city and a day. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function planDayTogether(destId, date) {
   window.dispatchEvent(new CustomEvent('carta:plan-day', { detail: { destId, date } }));
 }
 
 /** Plans that meet for the signed-in account, Hide applied. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useOverlaps(s) {
   return useMemo(() => {
     if (!s.signedIn) return [];
@@ -43,6 +45,7 @@ const todayIso = () => new Date().toISOString().slice(0, 10);
 
 /** Who went to a place (a shown trip there that has ended), who goes, and
  *  who saved it, with the tip where shared. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useFriendsAt(destId) {
   const s = useTogether();
   return useMemo(() => {

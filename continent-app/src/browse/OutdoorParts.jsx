@@ -54,6 +54,7 @@ import '../styles/89-outdoor-page.css';
  */
 
 /** The model the PDF prints: what this page shows (T430's rule). */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function outdoorPdfModel({ name, hook = null, facts = [], why = [], before = [], sources = [], extra = null, t }) {
   return {
     name,
@@ -72,6 +73,7 @@ export function outdoorPdfModel({ name, hook = null, facts = [], why = [], befor
 
 /** A route's name without the OSM route number in brackets: "Mount Korab
  *  (9/1)" reads "Mount Korab", and the number moves to a badge. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function plainName(name, ref = null) {
   const s = String(name || '').trim();
   const m = s.match(/^(.*\S)\s*\(([^()]*)\)$/);
@@ -85,6 +87,7 @@ export function plainName(name, ref = null) {
 const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 
 /** A month as 1 to 12, from a number or a code ("jun", "June"); null else. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function monthIndex(v) {
   if (typeof v === 'number') return v >= 1 && v <= 12 ? Math.round(v) : null;
   const n = MONTH_CODES.indexOf(String(v || '').slice(0, 3).toLowerCase()) + 1;
@@ -92,6 +95,7 @@ export function monthIndex(v) {
 }
 
 /** Month names in the reader's language: short(m) and letter(i0). */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useMonthWords() {
   const { lang } = useI18n();
   return React.useMemo(() => {
@@ -117,6 +121,7 @@ const TRANSIT_ICONS = { bus: BusIcon, train: TrainIcon, tram: TrainIcon, ferry: 
  * how far from the place, free or its price a day) and up to three stops
  * (bus, train, tram or ferry, how far on foot). Absent data, no rows.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function accessRows(access, t, lang) {
   if (!access) return [];
   const dist = (m) => (m >= 1000
@@ -146,6 +151,7 @@ export function accessRows(access, t, lang) {
 }
 
 /** The place's point with the hand-off to the traveller's maps app. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function pointRow(lat, lon, t, href) {
   if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
   return {
@@ -452,6 +458,7 @@ export function HeightProfile({ elevation, plain = false, ...rest }) {
 /* ── Before you go ──────────────────────────────────────────────────── */
 
 /** SAC scale tag (OSM) to its T step. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const SAC_STEP = {
   hiking: 1, mountain_hiking: 2, demanding_mountain_hiking: 3,
   alpine_hiking: 4, demanding_alpine_hiking: 5, difficult_alpine_hiking: 6,

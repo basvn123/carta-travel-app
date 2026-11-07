@@ -47,6 +47,7 @@ import { E2E_SEAMS } from '../lib/e2eSeams.js';
 // Gates asked only when a metered allowance is spent or nearly spent.
 const QUOTA_REASONS = new Set(['plans', 'ground', 'plansLow']);
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const GATES = {
   // Hard gates: the traveller pressed something that needs a pass. Every PDF
   // is one (T488-a: the trip, the day, the destination and every item page
@@ -319,6 +320,7 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
  * throwing, so a component rendered in isolation (a test, a storybook page,
  * the shared-trip view) is never gated by accident.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function usePaywall() {
   const ctx = useContext(PaywallContext);
   return ctx || FALLBACK;

@@ -18,6 +18,7 @@ import { LazyMotion, MotionConfig, domAnimation, m, useInView } from 'motion/rea
  * chunk alone, so Motion never sits in the first load.
  */
 
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const SPRING = {
   quick: { type: 'spring', visualDuration: 0.2, bounce: 0 },
   surface: { type: 'spring', visualDuration: 0.32, bounce: 0 },

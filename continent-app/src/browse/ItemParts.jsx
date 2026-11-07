@@ -26,6 +26,7 @@ import { natureRankLine, natureFacts } from '../lib/rating.js';
  * Every icon is a line icon from Icons.jsx in --text-2, decorative and
  * hidden from screen readers: the words carry the meaning.
  */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const ITEM_ICONS = {
   alert: AlertIcon, mountain: MountainIcon, cloud: CloudIcon, compass: CompassIcon, snow: SnowIcon,
   clock: ClockIcon, storm: StormIcon, swim: SwimIcon, ferry: FerryIcon, boot: BootIcon,

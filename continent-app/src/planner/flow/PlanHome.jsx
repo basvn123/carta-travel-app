@@ -178,6 +178,7 @@ function todayISO() {
 }
 
 /** A trip's place on the home (T903): past, upcoming (dated) or planning. */
+// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function tripState(trip, today = todayISO()) {
   const end = trip.end || trip.start;
   if (end && end < today) return 'past';
