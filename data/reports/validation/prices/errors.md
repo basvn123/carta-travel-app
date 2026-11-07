@@ -1,4 +1,4 @@
-# Prices against Eurostat price levels (2026-06-07)
+# Prices against Eurostat price levels (2026-11-07)
 
 Ratio = Carta's relative level / Eurostat's (both pivoted to the EU27 countries both sides have); 1.00 agrees. Median ratio per country and group, `*` where every item is built from the index itself (not counted in the facts).
 

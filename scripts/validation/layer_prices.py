@@ -260,7 +260,9 @@ def match(refs, carta):
                    "anchor": None if item.startswith("bed.") else carta["anchor"].get(cc)}
             ok = bool(v and piv_ref and piv_car)
             indep = independent(item, cc, carta)
-            res["flags"] = {"matched": ok, "independent": indep if ok else None}
+            # A country Carta does not cover at all (TR) is out of scope, not a miss.
+            in_scope = cc in carta["values"]
+            res["flags"] = {"matched": ok if in_scope else None, "independent": indep if ok else None}
             res["facts"], res["rank"], res["error"] = {"level": None}, None, None
             if ok:
                 ref_ix = 100 * r["pli"] / piv_ref
@@ -276,7 +278,7 @@ def match(refs, carta):
                     res["error"] = (round(ref_ix, 2), round(car_ix, 2))
                 res["note"] = cause(res)
             else:
-                res["note"] = "no_carta_price" if not v else "no_pivot"
+                res["note"] = ("not_in_catalogue" if not in_scope else "no_carta_price" if not v else "no_pivot")
             out.append(res)
     return out
 

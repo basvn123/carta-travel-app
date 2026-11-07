@@ -1,0 +1,8567 @@
+{
+ "schema": "carta-validation/2",
+ "layer": "prices",
+ "generated_at": "2026-11-07T01:15:28Z",
+ "date": "2026-11-07",
+ "reference": {
+  "path": "data/reports/validation/prices/reference_pli.json",
+  "source": "Eurostat prc_ppp_ind, na_item PLI_EU27_2020 (EU27_2020 = 100)",
+  "licence": "CC BY 4.0 (Eurostat reuse policy)",
+  "harvested": "2026-10-22",
+  "n": 418
+ },
+ "carta": {
+  "app_generated_at": "2026-06-07T13:21:17.357184+00:00",
+  "places": 3868,
+  "food_asof": "2026-09"
+ },
+ "sample": {
+  "sampled": false,
+  "share": 1.0,
+  "min_per_country": 5,
+  "salt": "d23",
+  "n": 418,
+  "population": 418,
+  "countries": 38
+ },
+ "metrics": {
+  "independent": {
+   "value": 0.7759,
+   "k": 315,
+   "n": 406,
+   "low": 0.7328,
+   "high": 0.8137
+  },
+  "coverage": {
+   "value": 0.9975,
+   "k": 406,
+   "n": 407,
+   "low": 0.9862,
+   "high": 0.9996
+  },
+  "fact.level": {
+   "value": 0.746,
+   "k": 235,
+   "n": 315,
+   "low": 0.6952,
+   "high": 0.7909
+  },
+  "fact_share": {
+   "value": 0.746,
+   "k": 235,
+   "n": 315,
+   "low": 0.6952,
+   "high": 0.7909
+  },
+  "agreement_tau": {
+   "value": 0.5755,
+   "n": 315
+  },
+  "agreement_rho": {
+   "value": 0.7571,
+   "n": 315
+  },
+  "error_mae": {
+   "value": 19.322,
+   "n": 315
+  },
+  "error_mdape": {
+   "value": 0.1418,
+   "n": 315
+  }
+ },
+ "by_country": {
+  "AL": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "AT": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "BA": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "BE": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "BG": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "CH": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "CY": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "CZ": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "DE": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "DK": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "EE": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "ES": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "FI": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "FR": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "GB": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "GR": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "HR": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "HU": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "IE": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "IS": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "IT": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "LT": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "LU": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 10,
+   "coverage": 0.9091
+  },
+  "LV": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "ME": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "MK": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "MT": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "NL": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "NO": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "PL": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "PT": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "RO": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "RS": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "SE": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "SI": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "SK": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  },
+  "TR": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 0,
+   "coverage": 0.0
+  },
+  "XK": {
+   "population": 11,
+   "sampled": 11,
+   "matched": 11,
+   "coverage": 1.0
+  }
+ },
+ "checks": [
+  {
+   "metric": "coverage",
+   "kind": "hard",
+   "direction": "higher",
+   "tolerance_points": 0
+  },
+  {
+   "metric": "fact.level",
+   "kind": "soft",
+   "direction": "higher",
+   "tolerance_points": 5,
+   "min_n": 30
+  },
+  {
+   "metric": "agreement_tau",
+   "kind": "soft",
+   "direction": "higher",
+   "tolerance_points": 5,
+   "min_n": 30
+  },
+  {
+   "metric": "error_mdape",
+   "kind": "soft",
+   "direction": "lower",
+   "tolerance_points": 3,
+   "min_n": 30
+  }
+ ],
+ "gate": {
+  "ok": true,
+  "failures": [],
+  "warnings": [],
+  "checks": [
+   {
+    "metric": "coverage",
+    "kind": "hard",
+    "now": 0.9975,
+    "baseline": 0.9975,
+    "tolerance_points": 0,
+    "status": "pass"
+   },
+   {
+    "metric": "fact.level",
+    "kind": "soft",
+    "now": 0.746,
+    "baseline": 0.746,
+    "tolerance_points": 5,
+    "status": "pass"
+   },
+   {
+    "metric": "agreement_tau",
+    "kind": "soft",
+    "now": 0.5755,
+    "baseline": 0.5755,
+    "tolerance_points": 5,
+    "status": "pass"
+   },
+   {
+    "metric": "error_mdape",
+    "kind": "soft",
+    "now": 0.1418,
+    "baseline": 0.1418,
+    "tolerance_points": 3,
+    "status": "pass"
+   }
+  ]
+ },
+ "gaps": [
+  {
+   "id": "CY:bed.private",
+   "country": "CY",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 93.3,
+   "carta_index": 280.3,
+   "base_index": null,
+   "ratio": 3.0045,
+   "carta_eur": 253.0,
+   "n_places": 9,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "AT:bed.private",
+   "country": "AT",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 115.3,
+   "carta_index": 275.3,
+   "base_index": null,
+   "ratio": 2.3877,
+   "carta_eur": 248.5,
+   "n_places": 34,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "EE:bed.private",
+   "country": "EE",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 103.0,
+   "carta_index": 46.5,
+   "base_index": null,
+   "ratio": 0.4516,
+   "carta_eur": 42.0,
+   "n_places": 7,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "BG:bed.private",
+   "country": "BG",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 55.8,
+   "carta_index": 121.9,
+   "base_index": null,
+   "ratio": 2.1854,
+   "carta_eur": 110.0,
+   "n_places": 27,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "RS:bed.home",
+   "country": "RS",
+   "item": "bed.home",
+   "group": "bed",
+   "ref_index": 70.8,
+   "carta_index": 34.0,
+   "base_index": null,
+   "ratio": 0.4803,
+   "carta_eur": 42.0,
+   "n_places": 21,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "RS:bed.private",
+   "country": "RS",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 71.5,
+   "carta_index": 34.3,
+   "base_index": null,
+   "ratio": 0.4804,
+   "carta_eur": 31.0,
+   "n_places": 9,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "HU:bed.private",
+   "country": "HU",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 75.3,
+   "carta_index": 152.9,
+   "base_index": null,
+   "ratio": 2.0314,
+   "carta_eur": 138.0,
+   "n_places": 40,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "SK:drink_out_eur",
+   "country": "SK",
+   "item": "drink_out_eur",
+   "group": "drink",
+   "ref_index": 94.8,
+   "carta_index": 47.9,
+   "base_index": 49.0,
+   "ratio": 0.505,
+   "carta_eur": 1.91,
+   "n_places": 28,
+   "anchor": "measured",
+   "independent": true,
+   "cause_code": "measured_basket_differs"
+  },
+  {
+   "id": "IE:bed.private",
+   "country": "IE",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 135.5,
+   "carta_index": 69.8,
+   "base_index": null,
+   "ratio": 0.515,
+   "carta_eur": 63.0,
+   "n_places": 13,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "BA:bed.private",
+   "country": "BA",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 78.2,
+   "carta_index": 41.0,
+   "base_index": null,
+   "ratio": 0.5242,
+   "carta_eur": 37.0,
+   "n_places": 8,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "IT:coffee_eur",
+   "country": "IT",
+   "item": "coffee_eur",
+   "group": "eat",
+   "ref_index": 111.0,
+   "carta_index": 58.3,
+   "base_index": 59.0,
+   "ratio": 0.525,
+   "carta_eur": 1.69,
+   "n_places": 651,
+   "anchor": "measured",
+   "independent": true,
+   "cause_code": "measured_basket_differs"
+  },
+  {
+   "id": "ME:bed.private",
+   "country": "ME",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 68.7,
+   "carta_index": 36.6,
+   "base_index": null,
+   "ratio": 0.5325,
+   "carta_eur": 33.0,
+   "n_places": 10,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "BA:bed.home",
+   "country": "BA",
+   "item": "bed.home",
+   "group": "bed",
+   "ref_index": 77.5,
+   "carta_index": 42.9,
+   "base_index": null,
+   "ratio": 0.5541,
+   "carta_eur": 53.0,
+   "n_places": 14,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "BE:bed.private",
+   "country": "BE",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 130.2,
+   "carta_index": 76.4,
+   "base_index": null,
+   "ratio": 0.5872,
+   "carta_eur": 69.0,
+   "n_places": 23,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "PL:bed.dorm",
+   "country": "PL",
+   "item": "bed.dorm",
+   "group": "bed",
+   "ref_index": 95.2,
+   "carta_index": 56.1,
+   "base_index": null,
+   "ratio": 0.5893,
+   "carta_eur": 16.0,
+   "n_places": 33,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "GB:bed.home",
+   "country": "GB",
+   "item": "bed.home",
+   "group": "bed",
+   "ref_index": 108.1,
+   "carta_index": 182.2,
+   "base_index": null,
+   "ratio": 1.6857,
+   "carta_eur": 225.0,
+   "n_places": 469,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "IS:bed.dorm",
+   "country": "IS",
+   "item": "bed.dorm",
+   "group": "bed",
+   "ref_index": 173.7,
+   "carta_index": 291.0,
+   "base_index": null,
+   "ratio": 1.6755,
+   "carta_eur": 83.0,
+   "n_places": 6,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "LU:bed.dorm",
+   "country": "LU",
+   "item": "bed.dorm",
+   "group": "bed",
+   "ref_index": 128.3,
+   "carta_index": 213.9,
+   "base_index": null,
+   "ratio": 1.6668,
+   "carta_eur": 61.0,
+   "n_places": 4,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "SK:meal_cheap_eur",
+   "country": "SK",
+   "item": "meal_cheap_eur",
+   "group": "eat",
+   "ref_index": 94.8,
+   "carta_index": 57.2,
+   "base_index": 59.0,
+   "ratio": 0.6033,
+   "carta_eur": 7.6,
+   "n_places": 28,
+   "anchor": "measured",
+   "independent": true,
+   "cause_code": "measured_basket_differs"
+  },
+  {
+   "id": "AL:fastfood_eur",
+   "country": "AL",
+   "item": "fastfood_eur",
+   "group": "eat",
+   "ref_index": 54.3,
+   "carta_index": 89.7,
+   "base_index": 89.7,
+   "ratio": 1.6513,
+   "carta_eur": 8.4,
+   "n_places": 21,
+   "anchor": "measured",
+   "independent": true,
+   "cause_code": "measured_basket_differs"
+  },
+  {
+   "id": "MT:bed.dorm",
+   "country": "MT",
+   "item": "bed.dorm",
+   "group": "bed",
+   "ref_index": 92.1,
+   "carta_index": 150.8,
+   "base_index": null,
+   "ratio": 1.6372,
+   "carta_eur": 43.0,
+   "n_places": 4,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "EE:bed.hotel3",
+   "country": "EE",
+   "item": "bed.hotel3",
+   "group": "bed",
+   "ref_index": 102.1,
+   "carta_index": 63.1,
+   "base_index": null,
+   "ratio": 0.6181,
+   "carta_eur": 62.5,
+   "n_places": 6,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "SK:cocktail_eur",
+   "country": "SK",
+   "item": "cocktail_eur",
+   "group": "drink",
+   "ref_index": 94.8,
+   "carta_index": 58.8,
+   "base_index": 60.9,
+   "ratio": 0.6207,
+   "carta_eur": 5.7,
+   "n_places": 28,
+   "anchor": "measured",
+   "independent": true,
+   "cause_code": "measured_basket_differs"
+  },
+  {
+   "id": "HR:bed.private",
+   "country": "HR",
+   "item": "bed.private",
+   "group": "bed",
+   "ref_index": 100.0,
+   "carta_index": 159.5,
+   "base_index": null,
+   "ratio": 1.5954,
+   "carta_eur": 144.0,
+   "n_places": 26,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "NO:drink_out_eur",
+   "country": "NO",
+   "item": "drink_out_eur",
+   "group": "drink",
+   "ref_index": 145.4,
+   "carta_index": 230.1,
+   "base_index": 235.5,
+   "ratio": 1.5829,
+   "carta_eur": 9.18,
+   "n_places": 55,
+   "anchor": "measured",
+   "independent": true,
+   "cause_code": "measured_basket_differs"
+  },
+  {
+   "id": "MT:bed.home",
+   "country": "MT",
+   "item": "bed.home",
+   "group": "bed",
+   "ref_index": 92.1,
+   "carta_index": 145.8,
+   "base_index": null,
+   "ratio": 1.5827,
+   "carta_eur": 180.0,
+   "n_places": 8,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "BA:bed.dorm",
+   "country": "BA",
+   "item": "bed.dorm",
+   "group": "bed",
+   "ref_index": 77.5,
+   "carta_index": 49.1,
+   "base_index": null,
+   "ratio": 0.6338,
+   "carta_eur": 14.0,
+   "n_places": 4,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "AT:bed.dorm",
+   "country": "AT",
+   "item": "bed.dorm",
+   "group": "bed",
+   "ref_index": 114.2,
+   "carta_index": 178.8,
+   "base_index": null,
+   "ratio": 1.5658,
+   "carta_eur": 51.0,
+   "n_places": 17,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "LV:bed.hotel3",
+   "country": "LV",
+   "item": "bed.hotel3",
+   "group": "bed",
+   "ref_index": 94.4,
+   "carta_index": 60.6,
+   "base_index": null,
+   "ratio": 0.6417,
+   "carta_eur": 60.0,
+   "n_places": 7,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_few_places"
+  },
+  {
+   "id": "PT:bed.home",
+   "country": "PT",
+   "item": "bed.home",
+   "group": "bed",
+   "ref_index": 78.4,
+   "carta_index": 120.7,
+   "base_index": null,
+   "ratio": 1.5392,
+   "carta_eur": 149.0,
+   "n_places": 102,
+   "anchor": null,
+   "independent": true,
+   "cause_code": "bed_tourist_mix_or_proxy"
+  }
+ ],
+ "results": [
+  {
+   "id": "AL:meal_mid_eur",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    54.3,
+    67.9
+   ],
+   "error": [
+    54.3,
+    67.9
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "AT:meal_mid_eur",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BA:meal_mid_eur",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BE:meal_mid_eur",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.95,
+    135.97
+   ],
+   "error": [
+    128.95,
+    135.97
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BG:meal_mid_eur",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "CH:meal_mid_eur",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    177.33,
+    178.53
+   ],
+   "error": [
+    177.33,
+    178.53
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CY:meal_mid_eur",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "CZ:meal_mid_eur",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "DE:meal_mid_eur",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    116.38,
+    110.98
+   ],
+   "error": [
+    116.38,
+    110.98
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:meal_mid_eur",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "EE:meal_mid_eur",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "ES:meal_mid_eur",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    87.11,
+    85.13
+   ],
+   "error": [
+    87.11,
+    85.13
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FI:meal_mid_eur",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "FR:meal_mid_eur",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    114.2,
+    97.88
+   ],
+   "error": [
+    114.2,
+    97.88
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GB:meal_mid_eur",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    108.08,
+    132.69
+   ],
+   "error": [
+    108.08,
+    132.69
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "GR:meal_mid_eur",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.7,
+    82.72
+   ],
+   "error": [
+    89.7,
+    82.72
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "HR:meal_mid_eur",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "HU:meal_mid_eur",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    74.54,
+    84.1
+   ],
+   "error": [
+    74.54,
+    84.1
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IE:meal_mid_eur",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    134.24,
+    128.21
+   ],
+   "error": [
+    134.24,
+    128.21
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IS:meal_mid_eur",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    173.69,
+    164.74
+   ],
+   "error": [
+    173.69,
+    164.74
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IT:meal_mid_eur",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    110.99,
+    116.15
+   ],
+   "error": [
+    110.99,
+    116.15
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LT:meal_mid_eur",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.39,
+    100.98
+   ],
+   "error": [
+    89.39,
+    100.98
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LU:meal_mid_eur",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.32,
+    149.92
+   ],
+   "error": [
+    128.32,
+    149.92
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LV:meal_mid_eur",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.37,
+    99.95
+   ],
+   "error": [
+    94.37,
+    99.95
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "ME:meal_mid_eur",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MK:meal_mid_eur",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MT:meal_mid_eur",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    92.09,
+    136.48
+   ],
+   "error": [
+    92.09,
+    136.48
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "NL:meal_mid_eur",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    129.36,
+    135.79
+   ],
+   "error": [
+    129.36,
+    135.79
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:meal_mid_eur",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    145.35,
+    143.72
+   ],
+   "error": [
+    145.35,
+    143.72
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PL:meal_mid_eur",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    95.2,
+    76.0
+   ],
+   "error": [
+    95.2,
+    76.0
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "PT:meal_mid_eur",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    78.39,
+    78.58
+   ],
+   "error": [
+    78.39,
+    78.58
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RO:meal_mid_eur",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    71.12,
+    64.11
+   ],
+   "error": [
+    71.12,
+    64.11
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RS:meal_mid_eur",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "SE:meal_mid_eur",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    121.16,
+    121.66
+   ],
+   "error": [
+    121.16,
+    121.66
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SI:meal_mid_eur",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    93.54,
+    83.41
+   ],
+   "error": [
+    93.54,
+    83.41
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SK:meal_mid_eur",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    94.79,
+    73.07
+   ],
+   "error": [
+    94.79,
+    73.07
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "TR:meal_mid_eur",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:meal_mid_eur",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "AL:meal_cheap_eur",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    54.3,
+    62.46
+   ],
+   "error": [
+    54.3,
+    62.46
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "AT:meal_cheap_eur",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BA:meal_cheap_eur",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BE:meal_cheap_eur",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.95,
+    148.61
+   ],
+   "error": [
+    128.95,
+    148.61
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BG:meal_cheap_eur",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "city_anchor_pull"
+  },
+  {
+   "id": "CH:meal_cheap_eur",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    177.33,
+    194.89
+   ],
+   "error": [
+    177.33,
+    194.89
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CY:meal_cheap_eur",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "CZ:meal_cheap_eur",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "DE:meal_cheap_eur",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    116.38,
+    110.61
+   ],
+   "error": [
+    116.38,
+    110.61
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:meal_cheap_eur",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "EE:meal_cheap_eur",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "ES:meal_cheap_eur",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    87.11,
+    111.37
+   ],
+   "error": [
+    87.11,
+    111.37
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "FI:meal_cheap_eur",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "FR:meal_cheap_eur",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    114.2,
+    106.85
+   ],
+   "error": [
+    114.2,
+    106.85
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GB:meal_cheap_eur",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    108.08,
+    142.97
+   ],
+   "error": [
+    108.08,
+    142.97
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "GR:meal_cheap_eur",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    89.7,
+    108.36
+   ],
+   "error": [
+    89.7,
+    108.36
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "HR:meal_cheap_eur",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "HU:meal_cheap_eur",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    74.54,
+    78.26
+   ],
+   "error": [
+    74.54,
+    78.26
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IE:meal_cheap_eur",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    134.24,
+    133.19
+   ],
+   "error": [
+    134.24,
+    133.19
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IS:meal_cheap_eur",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    173.69,
+    179.84
+   ],
+   "error": [
+    173.69,
+    179.84
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IT:meal_cheap_eur",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    110.99,
+    123.41
+   ],
+   "error": [
+    110.99,
+    123.41
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LT:meal_cheap_eur",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.39,
+    88.04
+   ],
+   "error": [
+    89.39,
+    88.04
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LU:meal_cheap_eur",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    128.32,
+    160.28
+   ],
+   "error": [
+    128.32,
+    160.28
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "LV:meal_cheap_eur",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.37,
+    91.05
+   ],
+   "error": [
+    94.37,
+    91.05
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "ME:meal_cheap_eur",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MK:meal_cheap_eur",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MT:meal_cheap_eur",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    92.09,
+    118.89
+   ],
+   "error": [
+    92.09,
+    118.89
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "NL:meal_cheap_eur",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    129.36,
+    148.24
+   ],
+   "error": [
+    129.36,
+    148.24
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:meal_cheap_eur",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    145.35,
+    139.21
+   ],
+   "error": [
+    145.35,
+    139.21
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PL:meal_cheap_eur",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    95.2,
+    66.22
+   ],
+   "error": [
+    95.2,
+    66.22
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "PT:meal_cheap_eur",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    78.39,
+    91.8
+   ],
+   "error": [
+    78.39,
+    91.8
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RO:meal_cheap_eur",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    71.12,
+    69.98
+   ],
+   "error": [
+    71.12,
+    69.98
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RS:meal_cheap_eur",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "SE:meal_cheap_eur",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    121.16,
+    96.32
+   ],
+   "error": [
+    121.16,
+    96.32
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "SI:meal_cheap_eur",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    93.54,
+    87.66
+   ],
+   "error": [
+    93.54,
+    87.66
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SK:meal_cheap_eur",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    94.79,
+    57.19
+   ],
+   "error": [
+    94.79,
+    57.19
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "TR:meal_cheap_eur",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:meal_cheap_eur",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "AL:drink_out_eur",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    54.3,
+    54.64
+   ],
+   "error": [
+    54.3,
+    54.64
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "AT:drink_out_eur",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BA:drink_out_eur",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BE:drink_out_eur",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.95,
+    121.17
+   ],
+   "error": [
+    128.95,
+    121.17
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BG:drink_out_eur",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "CH:drink_out_eur",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    177.33,
+    186.71
+   ],
+   "error": [
+    177.33,
+    186.71
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CY:drink_out_eur",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "CZ:drink_out_eur",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "DE:drink_out_eur",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    116.38,
+    110.77
+   ],
+   "error": [
+    116.38,
+    110.77
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:drink_out_eur",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "EE:drink_out_eur",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "ES:drink_out_eur",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    87.11,
+    74.18
+   ],
+   "error": [
+    87.11,
+    74.18
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FI:drink_out_eur",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "FR:drink_out_eur",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    114.2,
+    143.1
+   ],
+   "error": [
+    114.2,
+    143.1
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "GB:drink_out_eur",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    108.08,
+    148.62
+   ],
+   "error": [
+    108.08,
+    148.62
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "GR:drink_out_eur",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    89.7,
+    115.29
+   ],
+   "error": [
+    89.7,
+    115.29
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "HR:drink_out_eur",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "HU:drink_out_eur",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    74.54,
+    58.65
+   ],
+   "error": [
+    74.54,
+    58.65
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IE:drink_out_eur",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    134.24,
+    140.1
+   ],
+   "error": [
+    134.24,
+    140.1
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IS:drink_out_eur",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    173.69,
+    257.14
+   ],
+   "error": [
+    173.69,
+    257.14
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "IT:drink_out_eur",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    110.99,
+    120.55
+   ],
+   "error": [
+    110.99,
+    120.55
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LT:drink_out_eur",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    89.39,
+    122.43
+   ],
+   "error": [
+    89.39,
+    122.43
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "LU:drink_out_eur",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.32,
+    121.05
+   ],
+   "error": [
+    128.32,
+    121.05
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LV:drink_out_eur",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.37,
+    113.78
+   ],
+   "error": [
+    94.37,
+    113.78
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "ME:drink_out_eur",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MK:drink_out_eur",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MT:drink_out_eur",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    92.09,
+    105.76
+   ],
+   "error": [
+    92.09,
+    105.76
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NL:drink_out_eur",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    129.36,
+    148.12
+   ],
+   "error": [
+    129.36,
+    148.12
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:drink_out_eur",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    145.35,
+    230.07
+   ],
+   "error": [
+    145.35,
+    230.07
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "PL:drink_out_eur",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    95.2,
+    83.08
+   ],
+   "error": [
+    95.2,
+    83.08
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PT:drink_out_eur",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    78.39,
+    63.41
+   ],
+   "error": [
+    78.39,
+    63.41
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RO:drink_out_eur",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    71.12,
+    48.87
+   ],
+   "error": [
+    71.12,
+    48.87
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "RS:drink_out_eur",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "SE:drink_out_eur",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    121.16,
+    174.68
+   ],
+   "error": [
+    121.16,
+    174.68
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "SI:drink_out_eur",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    93.54,
+    72.81
+   ],
+   "error": [
+    93.54,
+    72.81
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SK:drink_out_eur",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    94.79,
+    47.87
+   ],
+   "error": [
+    94.79,
+    47.87
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "TR:drink_out_eur",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:drink_out_eur",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "AL:bed.hotel3",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    54.3,
+    55.01
+   ],
+   "error": [
+    54.3,
+    55.01
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "AT:bed.hotel3",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    114.2,
+    163.01
+   ],
+   "error": [
+    114.2,
+    163.01
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "BA:bed.hotel3",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    77.45,
+    60.56
+   ],
+   "error": [
+    77.45,
+    60.56
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BE:bed.hotel3",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.95,
+    130.21
+   ],
+   "error": [
+    128.95,
+    130.21
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BG:bed.hotel3",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    55.23,
+    74.69
+   ],
+   "error": [
+    55.23,
+    74.69
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "CH:bed.hotel3",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    177.33,
+    206.92
+   ],
+   "error": [
+    177.33,
+    206.92
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CY:bed.hotel3",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    92.4,
+    102.95
+   ],
+   "error": [
+    92.4,
+    102.95
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CZ:bed.hotel3",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    76.93,
+    87.81
+   ],
+   "error": [
+    76.93,
+    87.81
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DE:bed.hotel3",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    116.38,
+    123.14
+   ],
+   "error": [
+    116.38,
+    123.14
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:bed.hotel3",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    153.24,
+    157.46
+   ],
+   "error": [
+    153.24,
+    157.46
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "EE:bed.hotel3",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    102.06,
+    63.09
+   ],
+   "error": [
+    102.06,
+    63.09
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "ES:bed.hotel3",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    87.11,
+    85.8
+   ],
+   "error": [
+    87.11,
+    85.8
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FI:bed.hotel3",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    131.65,
+    105.98
+   ],
+   "error": [
+    131.65,
+    105.98
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FR:bed.hotel3",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    114.2,
+    105.98
+   ],
+   "error": [
+    114.2,
+    105.98
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GB:bed.hotel3",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    108.08,
+    119.1
+   ],
+   "error": [
+    108.08,
+    119.1
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GR:bed.hotel3",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.7,
+    98.41
+   ],
+   "error": [
+    89.7,
+    98.41
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "HR:bed.hotel3",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    99.05,
+    101.95
+   ],
+   "error": [
+    99.05,
+    101.95
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "HU:bed.hotel3",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    74.54,
+    90.84
+   ],
+   "error": [
+    74.54,
+    90.84
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IE:bed.hotel3",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    134.24,
+    152.41
+   ],
+   "error": [
+    134.24,
+    152.41
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IS:bed.hotel3",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    173.69,
+    197.83
+   ],
+   "error": [
+    173.69,
+    197.83
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IT:bed.hotel3",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    110.99,
+    113.05
+   ],
+   "error": [
+    110.99,
+    113.05
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LT:bed.hotel3",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.39,
+    77.22
+   ],
+   "error": [
+    89.39,
+    77.22
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LU:bed.hotel3",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.32,
+    122.64
+   ],
+   "error": [
+    128.32,
+    122.64
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LV:bed.hotel3",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    94.37,
+    60.56
+   ],
+   "error": [
+    94.37,
+    60.56
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "ME:bed.hotel3",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    68.0,
+    73.68
+   ],
+   "error": [
+    68.0,
+    73.68
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "MK:bed.hotel3",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    51.39,
+    44.41
+   ],
+   "error": [
+    51.39,
+    44.41
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "MT:bed.hotel3",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    92.09,
+    109.52
+   ],
+   "error": [
+    92.09,
+    109.52
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NL:bed.hotel3",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    129.36,
+    135.76
+   ],
+   "error": [
+    129.36,
+    135.76
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:bed.hotel3",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    145.35,
+    145.85
+   ],
+   "error": [
+    145.35,
+    145.85
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PL:bed.hotel3",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    95.2,
+    83.78
+   ],
+   "error": [
+    95.2,
+    83.78
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PT:bed.hotel3",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    78.39,
+    83.78
+   ],
+   "error": [
+    78.39,
+    83.78
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RO:bed.hotel3",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    71.12,
+    52.49
+   ],
+   "error": [
+    71.12,
+    52.49
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RS:bed.hotel3",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    70.81,
+    60.56
+   ],
+   "error": [
+    70.81,
+    60.56
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SE:bed.hotel3",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    121.16,
+    115.07
+   ],
+   "error": [
+    121.16,
+    115.07
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SI:bed.hotel3",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    93.54,
+    116.08
+   ],
+   "error": [
+    93.54,
+    116.08
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SK:bed.hotel3",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.79,
+    89.83
+   ],
+   "error": [
+    94.79,
+    89.83
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "TR:bed.hotel3",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:bed.hotel3",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    53.05,
+    47.44
+   ],
+   "error": [
+    53.05,
+    47.44
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "AL:bed.home",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    54.3,
+    45.35
+   ],
+   "error": [
+    54.3,
+    45.35
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "AT:bed.home",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    114.2,
+    152.64
+   ],
+   "error": [
+    114.2,
+    152.64
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "BA:bed.home",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    77.45,
+    42.92
+   ],
+   "error": [
+    77.45,
+    42.92
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "BE:bed.home",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.95,
+    135.23
+   ],
+   "error": [
+    128.95,
+    135.23
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BG:bed.home",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    55.23,
+    69.64
+   ],
+   "error": [
+    55.23,
+    69.64
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CH:bed.home",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    177.33,
+    230.78
+   ],
+   "error": [
+    177.33,
+    230.78
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "CY:bed.home",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    92.4,
+    103.65
+   ],
+   "error": [
+    92.4,
+    103.65
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CZ:bed.home",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    76.93,
+    77.74
+   ],
+   "error": [
+    76.93,
+    77.74
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DE:bed.home",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    116.38,
+    106.89
+   ],
+   "error": [
+    116.38,
+    106.89
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:bed.home",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    153.24,
+    118.22
+   ],
+   "error": [
+    153.24,
+    118.22
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "EE:bed.home",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    102.06,
+    72.07
+   ],
+   "error": [
+    102.06,
+    72.07
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "ES:bed.home",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    87.11,
+    130.37
+   ],
+   "error": [
+    87.11,
+    130.37
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "FI:bed.home",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    131.65,
+    102.84
+   ],
+   "error": [
+    131.65,
+    102.84
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FR:bed.home",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    114.2,
+    98.79
+   ],
+   "error": [
+    114.2,
+    98.79
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GB:bed.home",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    108.08,
+    182.19
+   ],
+   "error": [
+    108.08,
+    182.19
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "GR:bed.home",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.7,
+    93.93
+   ],
+   "error": [
+    89.7,
+    93.93
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "HR:bed.home",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    99.05,
+    100.0
+   ],
+   "error": [
+    99.05,
+    100.0
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "HU:bed.home",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    74.54,
+    78.55
+   ],
+   "error": [
+    74.54,
+    78.55
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IE:bed.home",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    134.24,
+    189.48
+   ],
+   "error": [
+    134.24,
+    189.48
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "IS:bed.home",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    173.69,
+    211.34
+   ],
+   "error": [
+    173.69,
+    211.34
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IT:bed.home",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    110.99,
+    101.62
+   ],
+   "error": [
+    110.99,
+    101.62
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LT:bed.home",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.39,
+    73.69
+   ],
+   "error": [
+    89.39,
+    73.69
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LU:bed.home",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.32,
+    142.11
+   ],
+   "error": [
+    128.32,
+    142.11
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LV:bed.home",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.37,
+    74.5
+   ],
+   "error": [
+    94.37,
+    74.5
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "ME:bed.home",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    68.0,
+    63.16
+   ],
+   "error": [
+    68.0,
+    63.16
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "MK:bed.home",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    51.39,
+    41.3
+   ],
+   "error": [
+    51.39,
+    41.3
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "MT:bed.home",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    92.09,
+    145.75
+   ],
+   "error": [
+    92.09,
+    145.75
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "NL:bed.home",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    129.36,
+    153.85
+   ],
+   "error": [
+    129.36,
+    153.85
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:bed.home",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    145.35,
+    136.85
+   ],
+   "error": [
+    145.35,
+    136.85
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PL:bed.home",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    95.2,
+    64.78
+   ],
+   "error": [
+    95.2,
+    64.78
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "PT:bed.home",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    78.39,
+    120.65
+   ],
+   "error": [
+    78.39,
+    120.65
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "RO:bed.home",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    71.12,
+    46.97
+   ],
+   "error": [
+    71.12,
+    46.97
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "RS:bed.home",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    70.81,
+    34.01
+   ],
+   "error": [
+    70.81,
+    34.01
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "SE:bed.home",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    121.16,
+    102.03
+   ],
+   "error": [
+    121.16,
+    102.03
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SI:bed.home",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    93.54,
+    103.24
+   ],
+   "error": [
+    93.54,
+    103.24
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SK:bed.home",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.79,
+    74.5
+   ],
+   "error": [
+    94.79,
+    74.5
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "TR:bed.home",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:bed.home",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    53.05,
+    38.46
+   ],
+   "error": [
+    53.05,
+    38.46
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "AL:bed.dorm",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    54.3,
+    49.09
+   ],
+   "error": [
+    54.3,
+    49.09
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "AT:bed.dorm",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    114.2,
+    178.82
+   ],
+   "error": [
+    114.2,
+    178.82
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "BA:bed.dorm",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    77.45,
+    49.09
+   ],
+   "error": [
+    77.45,
+    49.09
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "BE:bed.dorm",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.95,
+    105.19
+   ],
+   "error": [
+    128.95,
+    105.19
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BG:bed.dorm",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    55.23,
+    47.34
+   ],
+   "error": [
+    55.23,
+    47.34
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CH:bed.dorm",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    177.33,
+    206.88
+   ],
+   "error": [
+    177.33,
+    206.88
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CY:bed.dorm",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    92.4,
+    115.71
+   ],
+   "error": [
+    92.4,
+    115.71
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CZ:bed.dorm",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    76.93,
+    101.68
+   ],
+   "error": [
+    76.93,
+    101.68
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "DE:bed.dorm",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    116.38,
+    133.24
+   ],
+   "error": [
+    116.38,
+    133.24
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:bed.dorm",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    153.24,
+    159.54
+   ],
+   "error": [
+    153.24,
+    159.54
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "EE:bed.dorm",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    102.06,
+    70.13
+   ],
+   "error": [
+    102.06,
+    70.13
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "ES:bed.dorm",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    87.11,
+    101.68
+   ],
+   "error": [
+    87.11,
+    101.68
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FI:bed.dorm",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    131.65,
+    112.2
+   ],
+   "error": [
+    131.65,
+    112.2
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FR:bed.dorm",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    114.2,
+    129.74
+   ],
+   "error": [
+    114.2,
+    129.74
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GB:bed.dorm",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    108.08,
+    110.45
+   ],
+   "error": [
+    108.08,
+    110.45
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GR:bed.dorm",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.7,
+    82.4
+   ],
+   "error": [
+    89.7,
+    82.4
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "HR:bed.dorm",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    99.05,
+    94.67
+   ],
+   "error": [
+    99.05,
+    94.67
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "HU:bed.dorm",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    74.54,
+    91.17
+   ],
+   "error": [
+    74.54,
+    91.17
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IE:bed.dorm",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    134.24,
+    108.7
+   ],
+   "error": [
+    134.24,
+    108.7
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IS:bed.dorm",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    173.69,
+    291.03
+   ],
+   "error": [
+    173.69,
+    291.03
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "IT:bed.dorm",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    110.99,
+    94.67
+   ],
+   "error": [
+    110.99,
+    94.67
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LT:bed.dorm",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.39,
+    70.13
+   ],
+   "error": [
+    89.39,
+    70.13
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LU:bed.dorm",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    128.32,
+    213.89
+   ],
+   "error": [
+    128.32,
+    213.89
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "LV:bed.dorm",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.37,
+    66.62
+   ],
+   "error": [
+    94.37,
+    66.62
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "ME:bed.dorm",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    68.0,
+    70.13
+   ],
+   "error": [
+    68.0,
+    70.13
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "MK:bed.dorm",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    51.39,
+    35.06
+   ],
+   "error": [
+    51.39,
+    35.06
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "MT:bed.dorm",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    92.09,
+    150.77
+   ],
+   "error": [
+    92.09,
+    150.77
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "NL:bed.dorm",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    129.36,
+    138.5
+   ],
+   "error": [
+    129.36,
+    138.5
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:bed.dorm",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    145.35,
+    154.28
+   ],
+   "error": [
+    145.35,
+    154.28
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PL:bed.dorm",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    95.2,
+    56.1
+   ],
+   "error": [
+    95.2,
+    56.1
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "PT:bed.dorm",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    78.39,
+    91.17
+   ],
+   "error": [
+    78.39,
+    91.17
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RO:bed.dorm",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    71.12,
+    63.11
+   ],
+   "error": [
+    71.12,
+    63.11
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RS:bed.dorm",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    70.81,
+    52.6
+   ],
+   "error": [
+    70.81,
+    52.6
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SE:bed.dorm",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    121.16,
+    103.44
+   ],
+   "error": [
+    121.16,
+    103.44
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SI:bed.dorm",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    93.54,
+    105.19
+   ],
+   "error": [
+    93.54,
+    105.19
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SK:bed.dorm",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.79,
+    80.65
+   ],
+   "error": [
+    94.79,
+    80.65
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "TR:bed.dorm",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:bed.dorm",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    53.05,
+    59.61
+   ],
+   "error": [
+    53.05,
+    59.61
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "AL:grocery_day_eur",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    97.85,
+    71.22
+   ],
+   "error": [
+    97.85,
+    71.22
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "AT:grocery_day_eur",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BA:grocery_day_eur",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BE:grocery_day_eur",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    104.29,
+    108.93
+   ],
+   "error": [
+    104.29,
+    108.93
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BG:grocery_day_eur",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "CH:grocery_day_eur",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    159.71,
+    160.88
+   ],
+   "error": [
+    159.71,
+    160.88
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CY:grocery_day_eur",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "CZ:grocery_day_eur",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "DE:grocery_day_eur",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    102.01,
+    116.47
+   ],
+   "error": [
+    102.01,
+    116.47
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:grocery_day_eur",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "EE:grocery_day_eur",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "ES:grocery_day_eur",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    93.78,
+    96.36
+   ],
+   "error": [
+    93.78,
+    96.36
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FI:grocery_day_eur",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "FR:grocery_day_eur",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    110.54,
+    108.09
+   ],
+   "error": [
+    110.54,
+    108.09
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GB:grocery_day_eur",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    88.53,
+    100.55
+   ],
+   "error": [
+    88.53,
+    100.55
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GR:grocery_day_eur",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    104.19,
+    94.69
+   ],
+   "error": [
+    104.19,
+    94.69
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "HR:grocery_day_eur",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "HU:grocery_day_eur",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    93.09,
+    81.28
+   ],
+   "error": [
+    93.09,
+    81.28
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IE:grocery_day_eur",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    110.93,
+    117.31
+   ],
+   "error": [
+    110.93,
+    117.31
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IS:grocery_day_eur",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    145.03,
+    125.69
+   ],
+   "error": [
+    145.03,
+    125.69
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IT:grocery_day_eur",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    103.1,
+    110.61
+   ],
+   "error": [
+    103.1,
+    110.61
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LT:grocery_day_eur",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    98.54,
+    92.17
+   ],
+   "error": [
+    98.54,
+    92.17
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LU:grocery_day_eur",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    124.61,
+    131.55
+   ],
+   "error": [
+    124.61,
+    131.55
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LV:grocery_day_eur",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    102.21,
+    96.36
+   ],
+   "error": [
+    102.21,
+    96.36
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "ME:grocery_day_eur",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MK:grocery_day_eur",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MT:grocery_day_eur",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    109.94,
+    102.23
+   ],
+   "error": [
+    109.94,
+    102.23
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NL:grocery_day_eur",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    96.16,
+    114.8
+   ],
+   "error": [
+    96.16,
+    114.8
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:grocery_day_eur",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    129.47,
+    150.83
+   ],
+   "error": [
+    129.47,
+    150.83
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PL:grocery_day_eur",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    84.86,
+    75.41
+   ],
+   "error": [
+    84.86,
+    75.41
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PT:grocery_day_eur",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    99.73,
+    96.78
+   ],
+   "error": [
+    99.73,
+    96.78
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RO:grocery_day_eur",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    73.95,
+    72.9
+   ],
+   "error": [
+    73.95,
+    72.9
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RS:grocery_day_eur",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "SE:grocery_day_eur",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    105.78,
+    101.39
+   ],
+   "error": [
+    105.78,
+    101.39
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SI:grocery_day_eur",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    98.44,
+    102.23
+   ],
+   "error": [
+    98.44,
+    102.23
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SK:grocery_day_eur",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    82.18,
+    89.24
+   ],
+   "error": [
+    82.18,
+    89.24
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "TR:grocery_day_eur",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:grocery_day_eur",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "AL:cocktail_eur",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    54.3,
+    77.42
+   ],
+   "error": [
+    54.3,
+    77.42
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "AT:cocktail_eur",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BA:cocktail_eur",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BE:cocktail_eur",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.95,
+    109.94
+   ],
+   "error": [
+    128.95,
+    109.94
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BG:cocktail_eur",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "city_anchor_pull"
+  },
+  {
+   "id": "CH:cocktail_eur",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    177.33,
+    153.81
+   ],
+   "error": [
+    177.33,
+    153.81
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CY:cocktail_eur",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "CZ:cocktail_eur",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "DE:cocktail_eur",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    116.38,
+    97.03
+   ],
+   "error": [
+    116.38,
+    97.03
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:cocktail_eur",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "EE:cocktail_eur",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "ES:cocktail_eur",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    87.11,
+    85.68
+   ],
+   "error": [
+    87.11,
+    85.68
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FI:cocktail_eur",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "FR:cocktail_eur",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    114.2,
+    117.68
+   ],
+   "error": [
+    114.2,
+    117.68
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GB:cocktail_eur",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    108.08,
+    146.58
+   ],
+   "error": [
+    108.08,
+    146.58
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "GR:cocktail_eur",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    89.7,
+    118.71
+   ],
+   "error": [
+    89.7,
+    118.71
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "HR:cocktail_eur",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "HU:cocktail_eur",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    74.54,
+    57.81
+   ],
+   "error": [
+    74.54,
+    57.81
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IE:cocktail_eur",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    134.24,
+    138.33
+   ],
+   "error": [
+    134.24,
+    138.33
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IS:cocktail_eur",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    173.69,
+    253.94
+   ],
+   "error": [
+    173.69,
+    253.94
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "IT:cocktail_eur",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    110.99,
+    118.71
+   ],
+   "error": [
+    110.99,
+    118.71
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LT:cocktail_eur",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    89.39,
+    116.13
+   ],
+   "error": [
+    89.39,
+    116.13
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "LU:cocktail_eur",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.32,
+    119.75
+   ],
+   "error": [
+    128.32,
+    119.75
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LV:cocktail_eur",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.37,
+    100.13
+   ],
+   "error": [
+    94.37,
+    100.13
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "ME:cocktail_eur",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "model_drift"
+  },
+  {
+   "id": "MK:cocktail_eur",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "model_drift"
+  },
+  {
+   "id": "MT:cocktail_eur",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    92.09,
+    104.26
+   ],
+   "error": [
+    92.09,
+    104.26
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NL:cocktail_eur",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    129.36,
+    121.81
+   ],
+   "error": [
+    129.36,
+    121.81
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:cocktail_eur",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    145.35,
+    216.78
+   ],
+   "error": [
+    145.35,
+    216.78
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "PL:cocktail_eur",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    95.2,
+    82.07
+   ],
+   "error": [
+    95.2,
+    82.07
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PT:cocktail_eur",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    78.39,
+    75.36
+   ],
+   "error": [
+    78.39,
+    75.36
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RO:cocktail_eur",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    71.12,
+    69.16
+   ],
+   "error": [
+    71.12,
+    69.16
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RS:cocktail_eur",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "SE:cocktail_eur",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    121.16,
+    164.13
+   ],
+   "error": [
+    121.16,
+    164.13
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "SI:cocktail_eur",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    93.54,
+    96.0
+   ],
+   "error": [
+    93.54,
+    96.0
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SK:cocktail_eur",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    94.79,
+    58.84
+   ],
+   "error": [
+    94.79,
+    58.84
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "TR:cocktail_eur",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:cocktail_eur",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "model_drift"
+  },
+  {
+   "id": "AL:fastfood_eur",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    54.3,
+    89.66
+   ],
+   "error": [
+    54.3,
+    89.66
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "AT:fastfood_eur",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BA:fastfood_eur",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BE:fastfood_eur",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.95,
+    112.08
+   ],
+   "error": [
+    128.95,
+    112.08
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BG:fastfood_eur",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "city_anchor_pull"
+  },
+  {
+   "id": "CH:fastfood_eur",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    177.33,
+    165.45
+   ],
+   "error": [
+    177.33,
+    165.45
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CY:fastfood_eur",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "CZ:fastfood_eur",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "DE:fastfood_eur",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    116.38,
+    116.35
+   ],
+   "error": [
+    116.38,
+    116.35
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:fastfood_eur",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "EE:fastfood_eur",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "ES:fastfood_eur",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    87.11,
+    106.74
+   ],
+   "error": [
+    87.11,
+    106.74
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "FI:fastfood_eur",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "FR:fastfood_eur",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    114.2,
+    127.02
+   ],
+   "error": [
+    114.2,
+    127.02
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GB:fastfood_eur",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    108.08,
+    101.4
+   ],
+   "error": [
+    108.08,
+    101.4
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GR:fastfood_eur",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.7,
+    100.34
+   ],
+   "error": [
+    89.7,
+    100.34
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "HR:fastfood_eur",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "HU:fastfood_eur",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    74.54,
+    86.46
+   ],
+   "error": [
+    74.54,
+    86.46
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IE:fastfood_eur",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    134.24,
+    113.15
+   ],
+   "error": [
+    134.24,
+    113.15
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IS:fastfood_eur",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    173.69,
+    203.88
+   ],
+   "error": [
+    173.69,
+    203.88
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IT:fastfood_eur",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    110.99,
+    105.67
+   ],
+   "error": [
+    110.99,
+    105.67
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LT:fastfood_eur",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    89.39,
+    74.72
+   ],
+   "error": [
+    89.39,
+    74.72
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LU:fastfood_eur",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.32,
+    139.83
+   ],
+   "error": [
+    128.32,
+    139.83
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LV:fastfood_eur",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.37,
+    75.79
+   ],
+   "error": [
+    94.37,
+    75.79
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "ME:fastfood_eur",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MK:fastfood_eur",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MT:fastfood_eur",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    92.09,
+    113.15
+   ],
+   "error": [
+    92.09,
+    113.15
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "NL:fastfood_eur",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    129.36,
+    133.43
+   ],
+   "error": [
+    129.36,
+    133.43
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:fastfood_eur",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    145.35,
+    137.7
+   ],
+   "error": [
+    145.35,
+    137.7
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PL:fastfood_eur",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    95.2,
+    84.86
+   ],
+   "error": [
+    95.2,
+    84.86
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PT:fastfood_eur",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    78.39,
+    91.8
+   ],
+   "error": [
+    78.39,
+    91.8
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RO:fastfood_eur",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    71.12,
+    70.45
+   ],
+   "error": [
+    71.12,
+    70.45
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RS:fastfood_eur",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "city_anchor_pull"
+  },
+  {
+   "id": "SE:fastfood_eur",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    121.16,
+    104.61
+   ],
+   "error": [
+    121.16,
+    104.61
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SI:fastfood_eur",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    93.54,
+    85.39
+   ],
+   "error": [
+    93.54,
+    85.39
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SK:fastfood_eur",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.79,
+    85.39
+   ],
+   "error": [
+    94.79,
+    85.39
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "TR:fastfood_eur",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:fastfood_eur",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "AL:coffee_eur",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    54.3,
+    59.99
+   ],
+   "error": [
+    54.3,
+    59.99
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "AT:coffee_eur",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BA:coffee_eur",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "BE:coffee_eur",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.95,
+    125.84
+   ],
+   "error": [
+    128.95,
+    125.84
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "BG:coffee_eur",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "city_anchor_pull"
+  },
+  {
+   "id": "CH:coffee_eur",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    177.33,
+    180.32
+   ],
+   "error": [
+    177.33,
+    180.32
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CY:coffee_eur",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "CZ:coffee_eur",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "DE:coffee_eur",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    116.38,
+    122.22
+   ],
+   "error": [
+    116.38,
+    122.22
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:coffee_eur",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "EE:coffee_eur",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "ES:coffee_eur",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    87.11,
+    72.06
+   ],
+   "error": [
+    87.11,
+    72.06
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FI:coffee_eur",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "FR:coffee_eur",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    114.2,
+    112.74
+   ],
+   "error": [
+    114.2,
+    112.74
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GB:coffee_eur",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    108.08,
+    146.18
+   ],
+   "error": [
+    108.08,
+    146.18
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "GR:coffee_eur",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    89.7,
+    114.81
+   ],
+   "error": [
+    89.7,
+    114.81
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "HR:coffee_eur",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "HU:coffee_eur",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    74.54,
+    77.92
+   ],
+   "error": [
+    74.54,
+    77.92
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IE:coffee_eur",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    134.24,
+    125.5
+   ],
+   "error": [
+    134.24,
+    125.5
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IS:coffee_eur",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    173.69,
+    182.38
+   ],
+   "error": [
+    173.69,
+    182.38
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IT:coffee_eur",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    110.99,
+    58.27
+   ],
+   "error": [
+    110.99,
+    58.27
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "LT:coffee_eur",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    89.39,
+    109.12
+   ],
+   "error": [
+    89.39,
+    109.12
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "LU:coffee_eur",
+   "country": "LU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    128.32,
+    125.15
+   ],
+   "error": [
+    128.32,
+    125.15
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LV:coffee_eur",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.37,
+    100.67
+   ],
+   "error": [
+    94.37,
+    100.67
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "ME:coffee_eur",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MK:coffee_eur",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "MT:coffee_eur",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    92.09,
+    89.64
+   ],
+   "error": [
+    92.09,
+    89.64
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NL:coffee_eur",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    129.36,
+    126.88
+   ],
+   "error": [
+    129.36,
+    126.88
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:coffee_eur",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    145.35,
+    150.67
+   ],
+   "error": [
+    145.35,
+    150.67
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PL:coffee_eur",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    95.2,
+    107.74
+   ],
+   "error": [
+    95.2,
+    107.74
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PT:coffee_eur",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    78.39,
+    64.82
+   ],
+   "error": [
+    78.39,
+    64.82
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RO:coffee_eur",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    71.12,
+    84.81
+   ],
+   "error": [
+    71.12,
+    84.81
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RS:coffee_eur",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "SE:coffee_eur",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    121.16,
+    141.36
+   ],
+   "error": [
+    121.16,
+    141.36
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SI:coffee_eur",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    93.54,
+    72.4
+   ],
+   "error": [
+    93.54,
+    72.4
+   ],
+   "note": "measured_basket_differs"
+  },
+  {
+   "id": "SK:coffee_eur",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.79,
+    84.12
+   ],
+   "error": [
+    94.79,
+    84.12
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "TR:coffee_eur",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:coffee_eur",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": false
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "agrees"
+  },
+  {
+   "id": "AL:bed.private",
+   "country": "AL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    54.82,
+    37.67
+   ],
+   "error": [
+    54.82,
+    37.67
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "AT:bed.private",
+   "country": "AT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    115.3,
+    275.31
+   ],
+   "error": [
+    115.3,
+    275.31
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "BA:bed.private",
+   "country": "BA",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    78.2,
+    40.99
+   ],
+   "error": [
+    78.2,
+    40.99
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "BE:bed.private",
+   "country": "BE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    130.19,
+    76.44
+   ],
+   "error": [
+    130.19,
+    76.44
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "BG:bed.private",
+   "country": "BG",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    55.77,
+    121.87
+   ],
+   "error": [
+    55.77,
+    121.87
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "CH:bed.private",
+   "country": "CH",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    179.04,
+    132.39
+   ],
+   "error": [
+    179.04,
+    132.39
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "CY:bed.private",
+   "country": "CY",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    93.29,
+    280.3
+   ],
+   "error": [
+    93.29,
+    280.3
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "CZ:bed.private",
+   "country": "CZ",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    77.67,
+    80.32
+   ],
+   "error": [
+    77.67,
+    80.32
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DE:bed.private",
+   "country": "DE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    117.51,
+    100.82
+   ],
+   "error": [
+    117.51,
+    100.82
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "DK:bed.private",
+   "country": "DK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    154.72,
+    122.98
+   ],
+   "error": [
+    154.72,
+    122.98
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "EE:bed.private",
+   "country": "EE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    103.04,
+    46.53
+   ],
+   "error": [
+    103.04,
+    46.53
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "ES:bed.private",
+   "country": "ES",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    87.95,
+    110.79
+   ],
+   "error": [
+    87.95,
+    110.79
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "FI:bed.private",
+   "country": "FI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    132.91,
+    87.52
+   ],
+   "error": [
+    132.91,
+    87.52
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "FR:bed.private",
+   "country": "FR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    115.3,
+    99.71
+   ],
+   "error": [
+    115.3,
+    99.71
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GB:bed.private",
+   "country": "GB",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    109.12,
+    125.19
+   ],
+   "error": [
+    109.12,
+    125.19
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "GR:bed.private",
+   "country": "GR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    90.57,
+    108.57
+   ],
+   "error": [
+    90.57,
+    108.57
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "HR:bed.private",
+   "country": "HR",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    100.0,
+    159.54
+   ],
+   "error": [
+    100.0,
+    159.54
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "HU:bed.private",
+   "country": "HU",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    75.26,
+    152.89
+   ],
+   "error": [
+    75.26,
+    152.89
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "IE:bed.private",
+   "country": "IE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    135.54,
+    69.8
+   ],
+   "error": [
+    135.54,
+    69.8
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "IS:bed.private",
+   "country": "IS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    175.37,
+    146.24
+   ],
+   "error": [
+    175.37,
+    146.24
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "IT:bed.private",
+   "country": "IT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    112.06,
+    113.56
+   ],
+   "error": [
+    112.06,
+    113.56
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LT:bed.private",
+   "country": "LT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    90.25,
+    88.63
+   ],
+   "error": [
+    90.25,
+    88.63
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "LU:bed.private",
+   "country": "LU",
+   "flags": {
+    "matched": false,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "no_carta_price"
+  },
+  {
+   "id": "LV:bed.private",
+   "country": "LV",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    95.28,
+    66.47
+   ],
+   "error": [
+    95.28,
+    66.47
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "ME:bed.private",
+   "country": "ME",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    68.66,
+    36.56
+   ],
+   "error": [
+    68.66,
+    36.56
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "MK:bed.private",
+   "country": "MK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    51.89,
+    33.79
+   ],
+   "error": [
+    51.89,
+    33.79
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "MT:bed.private",
+   "country": "MT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    92.98,
+    132.95
+   ],
+   "error": [
+    92.98,
+    132.95
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "NL:bed.private",
+   "country": "NL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    130.61,
+    115.78
+   ],
+   "error": [
+    130.61,
+    115.78
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "NO:bed.private",
+   "country": "NO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    146.75,
+    168.95
+   ],
+   "error": [
+    146.75,
+    168.95
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "PL:bed.private",
+   "country": "PL",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    96.12,
+    66.47
+   ],
+   "error": [
+    96.12,
+    66.47
+   ],
+   "note": "bed_tourist_mix_or_proxy"
+  },
+  {
+   "id": "PT:bed.private",
+   "country": "PT",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    79.14,
+    68.69
+   ],
+   "error": [
+    79.14,
+    68.69
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RO:bed.private",
+   "country": "RO",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    71.8,
+    58.72
+   ],
+   "error": [
+    71.8,
+    58.72
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "RS:bed.private",
+   "country": "RS",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": false
+   },
+   "rank": [
+    71.49,
+    34.34
+   ],
+   "error": [
+    71.49,
+    34.34
+   ],
+   "note": "bed_few_places"
+  },
+  {
+   "id": "SE:bed.private",
+   "country": "SE",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    122.33,
+    108.02
+   ],
+   "error": [
+    122.33,
+    108.02
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SI:bed.private",
+   "country": "SI",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    94.44,
+    68.69
+   ],
+   "error": [
+    94.44,
+    68.69
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "SK:bed.private",
+   "country": "SK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    95.7,
+    81.98
+   ],
+   "error": [
+    95.7,
+    81.98
+   ],
+   "note": "agrees"
+  },
+  {
+   "id": "TR:bed.private",
+   "country": "TR",
+   "flags": {
+    "matched": null,
+    "independent": null
+   },
+   "facts": {
+    "level": null
+   },
+   "rank": null,
+   "error": null,
+   "note": "not_in_catalogue"
+  },
+  {
+   "id": "XK:bed.private",
+   "country": "XK",
+   "flags": {
+    "matched": true,
+    "independent": true
+   },
+   "facts": {
+    "level": true
+   },
+   "rank": [
+    53.56,
+    40.44
+   ],
+   "error": [
+    53.56,
+    40.44
+   ],
+   "note": "agrees"
+  }
+ ]
+}
