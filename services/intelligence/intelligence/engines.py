@@ -1,8 +1,9 @@
 """The Python engines: the F1 tagger and taxonomy (imported, not copied) and
 the similarity index over the tagger's tags.
 
-The tagger reads the shipped wires (continent-app/public) through its own
-Corpus; the taxonomy is pipeline/taxonomy/carta_taxonomy.yaml.
+The tagger reads the shipped wires (CARTA_PUBLIC, default continent-app/public)
+through its own Corpus, and today's mapped tags from the same root (T1154-d);
+the taxonomy is pipeline/taxonomy/carta_taxonomy.yaml.
 """
 from __future__ import annotations
 
@@ -81,17 +82,16 @@ class Tagger:
         if it is None:
             return None
         ps = self.corpus.passages(it)
-        return it, tagger.tag_item(it, ps), len(ps)
+        return it, tagger.tag_item(it, ps, public=self.public), len(ps)
 
-    @staticmethod
-    def tag_text(layer: str, name: str, text: str) -> tuple[list[dict], int]:
+    def tag_text(self, layer: str, name: str, text: str) -> tuple[list[dict], int]:
         """Free text read like a catalogue blurb: the name and the first FREE_TEXT_LEAD
         sentences are the lead, the rest the body."""
         ps = [{"field": "lead", "src": "name", "text": name}] if name else []
         ps += [{"field": "lead" if k < FREE_TEXT_LEAD else "body", "src": "text", "text": s}
                for k, s in enumerate(tagger.sentences(text))]
         it = {"item_id": "_text", "layer": layer, "country": "", "kind": "", "name": name or ""}
-        return tagger.tag_item(it, ps), len(ps)
+        return tagger.tag_item(it, ps, public=self.public), len(ps)
 
 
 # ---------------------------------------------------------------- similarity

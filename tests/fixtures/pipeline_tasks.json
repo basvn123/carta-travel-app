@@ -1,5 +1,5 @@
 {
- "count": 91,
+ "count": 92,
  "aliases": {
   "poi_enrich": [
    "poi_images",
@@ -1718,6 +1718,26 @@
     ]
    ],
    "note": "T1150 (F1). Phrase, mapped-tag and BM25 candidates fused by rank, a noisy-OR score with evidence per tag and a threshold per use. Reads only the shipped wires; no model call by default (the verifier is --verify, the bi-encoder --dense, both owner runs). Not the wire: wiring is a later task."
+  },
+  {
+   "key": "intel_tags",
+   "title": "Intelligence API batch: /tag on the seed items and a sample -> cache/taxonomy/intel-tags.json",
+   "cadence": "after",
+   "after": [
+    "taxonomy_tags"
+   ],
+   "writes_app_data": false,
+   "writes_wire": false,
+   "soft": true,
+   "guard": "<fn guard_intel_url>",
+   "cmds": [
+    [
+     "<PY>",
+     "pipeline/intel_client.py",
+     "tag"
+    ]
+   ],
+   "note": "T1215 (T1154-b, F5): the first pipeline caller of the Intelligence API. Batch POST /tag (100 items a request, Retry-After honoured) with INTEL_URL and INTEL_API_KEY from the environment, and a parity report against the local tag file: under 1.0 means the service runs other code or data. Skips without INTEL_URL."
   },
   {
    "key": "guided_search",

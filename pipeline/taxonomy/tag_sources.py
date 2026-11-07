@@ -9,7 +9,13 @@ defined only in code counts 0.
 Out of scope on purpose (see docs/ai/taxonomy.md, "What the mapping covers"):
 the 1,057 free-text journey tags (editorial keywords, reported as a coverage
 share by `journey_tag_coverage()`, not gated), numeric bands (distance,
-ascent, elevation), hazards, services and the trail detail files.
+ascent, elevation), hazards and services.
+
+The trail detail files (trails/trip/<id>.json highlights[].kind, 17,670
+files) are covered through the code that writes the kinds: pipeline/trails/
+scenic.py KINDS, read without importing it (T1215, row T1149-h). Reading the
+files themselves takes seconds per run; the test checks a sample of them
+against KINDS so a kind written outside it still fails.
 """
 from __future__ import annotations
 
@@ -139,6 +145,8 @@ def collect() -> dict[str, dict[str, int]]:
         for f, c in acc.items():
             out[f"{layer[:-1] if layer != 'beaches' else 'beach'}.{f}"] = dict(c)
 
+    out["trail.detail_highlights"] = {k: 0 for k in _py_const(ROOT / "pipeline" / "trails" / "scenic.py", "KINDS")}
+
     bikes = Counter()
     for p in _country_files("cycling"):
         for r in _json(p).get("routes") or []:
@@ -146,6 +154,19 @@ def collect() -> dict[str, dict[str, int]]:
                 bikes[r["bike"]] += 1
     out["cycling.bike"] = dict(bikes)
     return out
+
+
+def detail_highlight_kinds(every: int = 1) -> dict[str, int]:
+    """Kinds in the trail detail files, counted (every Nth file; 1 reads all 17,670, a few seconds)."""
+    c = Counter()
+    for k, p in enumerate(sorted((PUB / "trails" / "trip").glob("*.json"))):
+        if k % every:
+            continue
+        try:
+            c.update(h.get("kind") for h in _json(p).get("highlights") or [] if h.get("kind"))
+        except (ValueError, OSError):
+            continue
+    return dict(c)
 
 
 def journey_tags() -> dict[str, int]:

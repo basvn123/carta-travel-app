@@ -12,6 +12,7 @@ is called anywhere in this module.
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from collections import Counter
@@ -25,10 +26,15 @@ ROOT = HERE.parents[1]
 TAXONOMY = HERE / "carta_taxonomy.yaml"
 MAPPING = HERE / "mapping.yaml"
 LANGS = ("en", "de", "fr", "es", "it", "nl")
-APPLIES = ("place", "trail", "beach", "lake", "mountain")
+APPLIES = ("place", "trail", "beach", "lake", "mountain", "journey")  # journey: T1215, row T1149-e
 SOURCES = ("text", "data", "both")
 ID_RE = re.compile(r"^(activity|setting|vibe|traveller|practical|(act|set|vibe|trav|prac)\.[a-z0-9]+(-[a-z0-9]+)*)$")
 DASHES = (chr(0x2013), chr(0x2014))  # en and em dash
+
+
+def default_public() -> Path:
+    """The shipped data root: CARTA_PUBLIC when set, else continent-app/public under the repo (T1154-d)."""
+    return Path(os.environ.get("CARTA_PUBLIC") or ROOT / "continent-app" / "public")
 
 
 @lru_cache(maxsize=1)
@@ -156,41 +162,67 @@ def map_value(source: str, value) -> list[str]:
 
 # ---- the baseline: today's tags, mapped ----
 
+def _root(public) -> str:
+    return str(Path(public) if public else default_public())
+
+
 @lru_cache(maxsize=256)
-def _country_rows(folder: str, key: str, cc: str) -> list[dict]:
-    p = ROOT / "continent-app" / "public" / folder / f"{cc}.json"
+def _country_rows(folder: str, key: str, cc: str, public: str) -> list[dict]:
+    p = Path(public) / folder / f"{cc}.json"
     if not p.exists():
         return []
     with open(p, encoding="utf-8") as f:
         return json.load(f).get(key) or []
 
 
-@lru_cache(maxsize=1)
-def _app():
-    with open(ROOT / "continent-app" / "public" / "app_data.json", encoding="utf-8") as f:
-        return json.load(f)["destinations"]
+@lru_cache(maxsize=4)
+def _app(public: str) -> dict:
+    p = Path(public) / "app_data.json"
+    if not p.exists():
+        return {}
+    with open(p, encoding="utf-8") as f:
+        d = json.load(f).get("destinations") or {}
+    return {x["id"]: x for x in d} if isinstance(d, list) else d
 
 
-@lru_cache(maxsize=1)
-def _guided():
-    with open(ROOT / "continent-app" / "public" / "search" / "guided.json", encoding="utf-8") as f:
+@lru_cache(maxsize=512)
+def _journey(public: str, jid: str) -> dict:
+    p = Path(public) / "journeys" / "journey" / f"{jid}.json"
+    if not p.exists():
+        return {}
+    with open(p, encoding="utf-8") as f:
+        return json.load(f)
+
+
+@lru_cache(maxsize=4)
+def _guided(public: str) -> dict:
+    p = Path(public) / "search" / "guided.json"
+    if not p.exists():
+        return {}
+    with open(p, encoding="utf-8") as f:
         return json.load(f).get("d", {})
 
 
 VIBE_MIN = 50  # a vibe score at or over this counts as the place holding the vibe (0 to 100)
 
 
-def old_tags(layer: str, item_id: str, country: str) -> list[tuple[str, str]]:
-    """(source, value) pairs Carta holds today for one item."""
+def old_tags(layer: str, item_id: str, country: str, public: Path | str | None = None) -> list[tuple[str, str]]:
+    """(source, value) pairs Carta holds today for one item, read from `public` (default: default_public())."""
     out: list[tuple[str, str]] = []
+    pub = _root(public)
     if layer == "place":
-        d = _app().get(item_id) or {}
+        d = _app(pub).get(item_id) or {}
         out += [("place.categories", c) for c in d.get("categories") or []]
         out += [("place.tags", t) for t in d.get("tags") or []]
         if (d.get("place") or {}).get("class"):
             out.append(("place.class", d["place"]["class"]))
         out += [("place.designations", x.get("kind")) for x in d.get("designations") or []]
-        out += [("vibes", v) for v, s in ((_guided().get(item_id) or {}).get("v") or {}).items() if (s or 0) >= VIBE_MIN]
+        out += [("vibes", v) for v, s in ((_guided(pub).get(item_id) or {}).get("v") or {}).items() if (s or 0) >= VIBE_MIN]
+        return out
+    if layer == "journey":
+        j = _journey(pub, item_id)
+        if j.get("tripTypeSlug"):
+            out.append(("journey.types", j["tripTypeSlug"]))
         return out
     folder, key, fields = {
         "trail": ("trails", "trips", ()),
@@ -198,7 +230,7 @@ def old_tags(layer: str, item_id: str, country: str) -> list[tuple[str, str]]:
         "lake": ("lakes", "lakes", ("tags", "bestFor", "kind")),
         "mountain": ("mountains", "mountains", ("tags", "bestFor", "kind", "acc")),
     }[layer]
-    row = next((r for r in _country_rows(folder, key, country) if str(r.get("id")) == str(item_id)), None)
+    row = next((r for r in _country_rows(folder, key, country, pub) if str(r.get("id")) == str(item_id)), None)
     if not row:
         return out
     if layer == "trail":
@@ -219,11 +251,11 @@ def old_tags(layer: str, item_id: str, country: str) -> list[tuple[str, str]]:
     return out
 
 
-def baseline_predictions(items: list[dict]) -> dict[str, list[dict]]:
+def baseline_predictions(items: list[dict], public: Path | str | None = None) -> dict[str, list[dict]]:
     """{item_id: [{tag, score}]}, best first. Score = share of the item's old tags that point at the node."""
     out = {}
     for it in items:
-        pairs = old_tags(it["layer"], it["item_id"], it["country"])
+        pairs = old_tags(it["layer"], it["item_id"], it["country"], public)
         c = Counter()
         for src, v in pairs:
             for t in map_value(src, v):
