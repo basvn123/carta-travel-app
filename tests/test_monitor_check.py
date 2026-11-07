@@ -164,5 +164,36 @@ class MonitorTests(unittest.TestCase):
         self.assertEqual(self.stub.posted[0]["failures"][0]["check"], "http:app")
 
 
+class BackupFreshnessTests(unittest.TestCase):
+    """T1159-c (T1211): a stopped nightly backup turns the monitor red."""
+    NOW = datetime(2026, 11, 7, 12, 0, tzinfo=timezone.utc)
+    CFG = {"max_age_hours": 36}
+
+    def doc(self, at, status="ok"):
+        return {"status": status, "file": "supabase-nightly-x.dump.gpg", "bytes": 4096, "at": at}
+
+    def test_fresh_backup_passes(self):
+        [(_, ok, _d)] = check.evaluate_backup(self.doc("20261107T030000Z"), self.CFG, self.NOW)
+        self.assertTrue(ok)
+
+    def test_old_backup_fails(self):
+        [(_, ok, d)] = check.evaluate_backup(self.doc("20261105T030000Z"), self.CFG, self.NOW)
+        self.assertFalse(ok)
+        self.assertIn("57 hours", d)
+
+    def test_failed_or_junk_status_fails(self):
+        self.assertFalse(check.evaluate_backup(self.doc("20261107T030000Z", "failed"), self.CFG, self.NOW)[0][1])
+        self.assertFalse(check.evaluate_backup(None, self.CFG, self.NOW)[0][1])
+        self.assertFalse(check.evaluate_backup(self.doc("yesterday"), self.CFG, self.NOW)[0][1])
+
+    def test_off_by_default_is_a_skip(self):
+        self.assertIsNone(check.check_backup({"enabled": False})[0][1])
+        self.assertIsNone(check.check_backup(None)[0][1])
+
+    def test_unreadable_url_fails(self):
+        [(_, ok, _d)] = check.check_backup({"enabled": True, "url": "http://127.0.0.1:9/backup.json"})
+        self.assertFalse(ok)
+
+
 if __name__ == "__main__":
     unittest.main()
