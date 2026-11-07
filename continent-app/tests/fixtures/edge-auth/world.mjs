@@ -3,7 +3,12 @@
 // under Node with `Deno.serve` captured. Node 22 strips the TypeScript types.
 import { register } from 'node:module';
 
-register(new URL('./loader.mjs', import.meta.url));
+// Under the real Deno runtime (T1211, row T1164-k: `deno test` with
+// tests/fixtures/edge-auth/deno.json) the import map does the loader's job and
+// Deno.serve and Deno.env.get are patched in place; under Node the loader maps
+// the npm: specifiers and a stand-in Deno object is installed.
+const REAL_DENO = typeof globalThis.Deno?.version?.deno === 'string';
+if (!REAL_DENO) register(new URL('./loader.mjs', import.meta.url));
 
 export const JWT_SECRET = 'test-jwt-secret-not-a-real-one-0123456789';
 export const ENV = {
@@ -38,14 +43,17 @@ export function resetWorld() {
 const handlers = {};
 let loading = null;
 
-globalThis.Deno = {
-  serve(a, b) {
-    const h = typeof a === 'function' ? a : b;
-    handlers[loading] = h;
-    return { finished: Promise.resolve(), shutdown: async () => {} };
-  },
-  env: { get: (k) => globalThis.__edgeAuth?.env[k] },
-};
+function serve(a, b) {
+  const h = typeof a === 'function' ? a : b;
+  handlers[loading] = h;
+  return { finished: Promise.resolve(), shutdown: async () => {} };
+}
+if (REAL_DENO) {
+  globalThis.Deno.serve = serve;
+  globalThis.Deno.env.get = (k) => globalThis.__edgeAuth?.env[k];
+} else {
+  globalThis.Deno = { serve, env: { get: (k) => globalThis.__edgeAuth?.env[k] } };
+}
 
 // Outbound calls (Gemini, Resend, a scanner) never leave the process.
 globalThis.fetch = async (input, init = {}) => {
