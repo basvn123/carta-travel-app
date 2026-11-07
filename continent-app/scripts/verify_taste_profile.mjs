@@ -56,6 +56,20 @@ async function run(width, height, label) {
   if (n) ok(`every chip has evidence and 44 px Yes and No (first: "${(await chips.first().locator('.tp-ev').innerText()).replace(/\n/g, ' / ')}")`);
   if (SHOTS) await page.locator('[data-taste-profile]').screenshot({ path: `${SHOTS}/taste-${label}.png` });
 
+  // T1215 (T1152-e): a chip opens to list every item behind it, and closes again.
+  if (n) {
+    const toggle = chips.first().locator('.tp-all-toggle');
+    const box = await toggle.boundingBox();
+    if (!box || box.height < 44) fail(`${label}: the see-all toggle is ${box?.width}x${box?.height}`);
+    await toggle.click();
+    const listId = await toggle.getAttribute('aria-controls');
+    const rows = await page.locator(`#${listId} .tp-all-row`).count();
+    if ((await toggle.getAttribute('aria-expanded')) !== 'true' || rows < 1) fail(`${label}: opening the first chip listed ${rows} items`);
+    else ok(`the first chip opens to ${rows} items (${(await page.locator(`#${listId}`).innerText()).replace(/\n/g, ' / ')})`);
+    await toggle.click();
+    if (await page.locator(`#${listId}`).count()) fail(`${label}: the item list did not close`);
+  }
+
   if (n >= 2) {
     const first = await chips.nth(0).getAttribute('data-node');
     const second = await chips.nth(1).getAttribute('data-node');

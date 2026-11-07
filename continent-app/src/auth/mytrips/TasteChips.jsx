@@ -46,6 +46,46 @@ function EvidenceLine({ ev }) {
   );
 }
 
+const KIND_KEY = { trip: 'taste.profile.kindTrip', save: 'taste.profile.kindSave', filter: 'taste.profile.kindFilter' };
+
+/**
+ * Every item behind a chip (T1215, T1152-e): a disclosure under the
+ * evidence line, each item with its kind and, when it reached the chip
+ * through a narrower interest (the roll-up), that interest's name.
+ */
+function EvidenceAll({ node, label, ev, locale }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const all = ev.all || [];
+  if (!all.length) return null;
+  const listId = `tp-all-${node.replace(/[^a-z0-9-]/gi, '-')}`;
+  return (
+    <div className="tp-all">
+      <Button
+        variant="quiet"
+        size="sm"
+        className="tp-all-toggle"
+        aria-expanded={open}
+        aria-controls={listId}
+        onClick={() => setOpen((v) => !v)}
+      >
+        {open ? t('taste.profile.openHide') : t('taste.profile.open', { n: all.length })}
+      </Button>
+      {open && (
+        <ul className="tp-all-list" id={listId} aria-label={t('taste.profile.listAria', { label })}>
+          {all.map((i) => (
+            <li key={i.key} className="tp-all-row" data-kind={i.kind}>
+              <span className="tp-all-kind">{t(KIND_KEY[i.kind])}</span>
+              <span className="tp-all-name">{i.name || t('taste.profile.evFilter')}</span>
+              {i.via && <span className="tp-all-via">{t('taste.profile.via', { label: nodeLabel(i.via, locale) })}</span>}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export function TasteChipsView({ profile, locale, onVerdict, onShowMore, all, onClear, canClear = false }) {
   const { t } = useI18n();
   const [hiddenOpen, setHiddenOpen] = useState(false);
@@ -75,6 +115,7 @@ export function TasteChipsView({ profile, locale, onVerdict, onShowMore, all, on
                           <span className="tp-facet">{t(`taste.profile.facet.${c.facet}`)}</span>
                         </p>
                         <EvidenceLine ev={c.evidence} />
+                        <EvidenceAll node={c.node} label={label} ev={c.evidence} locale={locale} />
                       </div>
                       <div className="tp-acts" role="group" aria-label={t('taste.profile.askAria', { label })}>
                         <Button

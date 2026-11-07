@@ -60,6 +60,10 @@ export function clearVerdicts(storage, now = Date.now()) {
   return st;
 }
 
+/** The verdicts as a stable key: node and verdict, sorted, no times. */
+export const verdictsKey = (verdicts) => Object.keys(verdicts || {}).sort()
+  .map((n) => `${n}:${verdicts[n]?.v}`).join(',');
+
 function browserStorage() {
   try { return typeof window !== 'undefined' ? window.localStorage : null; } catch { return null; }
 }

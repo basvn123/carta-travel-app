@@ -9751,6 +9751,13 @@ export const nl = {
   "taste.profile.facet.vibe": "Sfeer",
   "taste.profile.facet.traveller": "Wie",
   "taste.profile.facet.practical": "Praktisch",
+  "taste.profile.open": "Alle {n} bekijken",
+  "taste.profile.openHide": "Lijst verbergen",
+  "taste.profile.listAria": "Waar {label} op rust",
+  "taste.profile.kindTrip": "Reis",
+  "taste.profile.kindSave": "Bewaard",
+  "taste.profile.kindFilter": "Filter",
+  "taste.profile.via": "via {label}",
   // T1170 (I8): machine-drafted, awaiting native review (docs/i18n/review.md)
   "itin.groundLinkTo": "Naar {airport}: {service} vanaf {hub}, ongeveer {min} min",
   "itin.groundLinkFrom": "Vanaf {airport}: {service} naar {hub}, ongeveer {min} min",

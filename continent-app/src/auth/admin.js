@@ -128,6 +128,14 @@ export const adminFunnelWeekly = (weeks = 8) =>
   call('admin_funnel_weekly', { p_weeks: weeks });
 
 /**
+ * Taste chip acceptance per week (F3, T1152-d; pending migration 072,
+ * taste_profile). Per-day counts of shown, accept and reject by facet and
+ * position bucket, with no identifier.
+ */
+export const adminTasteWeekly = (weeks = 8) =>
+  call('admin_taste_weekly', { p_weeks: weeks });
+
+/**
  * The ai_plan_cache hit rate (migration 029). One row per plan-day lookup,
  * hit or miss, so the rate is a division rather than a guess.
  *

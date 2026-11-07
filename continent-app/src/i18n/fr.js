@@ -9683,6 +9683,13 @@ export const fr = {
   "taste.profile.facet.vibe": "Ambiance",
   "taste.profile.facet.traveller": "Qui",
   "taste.profile.facet.practical": "Pratique",
+  "taste.profile.open": "Voir les {n}",
+  "taste.profile.openHide": "Masquer la liste",
+  "taste.profile.listAria": "Ce sur quoi repose {label}",
+  "taste.profile.kindTrip": "Voyage",
+  "taste.profile.kindSave": "Enregistré",
+  "taste.profile.kindFilter": "Filtre",
+  "taste.profile.via": "via {label}",
   // T1170 (I8): machine-drafted, awaiting native review (docs/i18n/review.md)
   "waitlist.title": "Recevez la liste Carta",
   "waitlist.lead": "Accès anticipé aux fonctions de planification et, de temps en temps, aux meilleurs endroits d'Europe pour le prix. Un court e-mail par mois, au plus.",
