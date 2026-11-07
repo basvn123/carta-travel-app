@@ -58,6 +58,7 @@ approval, row T319-a).
 | 13d | Taste chip counts | None identifiable | One integer per day per event (chip shown, accepted, rejected), taxonomy facet and position bucket; no account, node, place, trip, time, page, referrer or device, no cookie or local identifier | Know how often the taste profile is right (acceptance rate) | Not personal data (same basis as rows 13 to 13c, T1152) | `taste_counts`, `taste_daily_total` (072) | Not limited |
 | 14 | Feedback | Anyone who writes | Message, kind, optional reply email, app context, account id | Answer and fix | Legitimate interest, 6(1)(f) | `feedback` (017) | 2 years (069 sweep). Deleted with the account (069 erase trigger): the text and reply address are the traveller's |
 | 15 | Content reports (DSA notices) | Reporters and guide owners | Reason text, optional contact email, reporter id, salted sha256 of the reporter's address, the reported guide and its owner | Notice and action under the DSA | Legal obligation, 6(1)(c) (DSA Art. 16) | `content_reports` (037) | 12 months after the decision (`moderation_retention_purge`, 051, also run by the 069 sweep). On the reporter's account deletion the reporter id is set to null and 069 clears the contact address and name; the reason and decision stay as the DSA record |
+| 15b | AI answer reports | Anyone who taps Report on an Ask answer or a day plan | Feature, reason, the question and the answer as shown, app language, model, optional note, salted sha256 of the address (rate limit only); no account id or email | Find wrong AI answers and add them to the eval sets | Legitimate interest, 6(1)(f) | `ai_reports` (074) | 180 days (`ai_reports_prune`) |
 | 16 | Statements of reasons and complaints | Guide owners | The statement, the owner's complaint, the decision | DSA Art. 17 and 20 | Legal obligation, 6(1)(c) | `moderation_statements` (039) | 3 years after the statement or its complaint decision (051 purge, also run by the 069 sweep); owner id set to null on deletion |
 | 17 | Admin audit trail | Admins and the accounts they act on | Admin id, action, target account, before and after values | Accountability for admin actions | Legitimate interest, 6(1)(f) | `admin_audit_log` (014, 033, 062, 064) | 3 years (069 sweep). On the target's account deletion the email and handle are removed from the detail; the action, reason and opaque account id stay for accountability, Art. 17(3)(e) |
 | 18 | Location lookup | Visitors | A coordinate, only when the traveller presses "use my location" | Name the place | Consent, 6(1)(a) (the browser's own prompt) | Sent to Nominatim; not stored (privacy policy) | Not stored |
@@ -76,7 +77,7 @@ Every table, personal or not, has its retention line in section 2a.
 
 ## 2a. Retention, table by table
 
-Every table in `public` after 072, in the order `\dt` lists them. "Cascade"
+Every table in `public` after 074, in the order `\dt` lists them. "Cascade"
 means the rows go when the account is deleted (`delete_user()`, 005, or
 `admin_delete_user`, 064), through `on delete cascade`. "Sweep" means
 `privacy_retention_sweep()` (069), which pg_cron runs daily at 03:23 UTC once
@@ -95,6 +96,8 @@ legal review (T1118-a); each is one constant in 069.
 | `ai_model_events` | 028, 071 | Yes on plan and ground rows; call rows (071) carry no user id | Plan and ground rows 180 days (069 sweep); call rows 30 days (071 `ai_events_prune`, pg_cron `carta_ai_events_prune`) | Sweep, cascade, prune |
 | `ai_plan_cache` | 006 | Possibly (booking references), not linked to a person | 7 days | Sweep |
 | `ai_plan_usage` | 006 | Yes | Until the account is deleted | Cascade |
+| `ai_report_salt` | 074 | No (a secret) | Not limited | None needed |
+| `ai_reports` | 074 | Possibly (free text the traveller typed in a question or note); no account id, email or raw address, only a salted hash of it | 180 days | Writer prune (`ai_reports_prune` on each report) and pg_cron `carta_ai_reports_prune` |
 | `ai_usage` | 007 | Yes | Until the account is deleted | Cascade |
 | `ai_usage_days` | 044 | Yes | Until the account is deleted | Cascade |
 | `ask_chats` | 054 | Yes | Until the account is deleted, tombstones included | Cascade |
