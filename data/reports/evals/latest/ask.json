@@ -3,8 +3,8 @@
  "eval": "ask",
  "title": "Ask retrieval and grounding",
  "kind": "retrieval",
- "at": "2026-11-06T16:01:23.714Z",
- "git": "6d5a0ebd7",
+ "at": "2026-11-07T11:09:29.326Z",
+ "git": "d85cbd728a",
  "status": "pass",
  "gated": true,
  "headline": {
@@ -26,18 +26,18 @@
   "retrievers.rules.grounding": 0.9956,
   "retrievers.rules.checks": 689,
   "retrievers.bm25.cases": 142,
-  "retrievers.bm25.recall@5": 0.5694,
-  "retrievers.bm25.hit@5": 0.8873,
-  "retrievers.bm25.recall@10": 0.5686,
-  "retrievers.bm25.hit@10": 0.9085,
-  "retrievers.bm25.mrr": 0.8017,
-  "retrievers.bm25.ndcg@10": 0.596,
-  "retrievers.bm25.list.recall@5": 0.3074,
-  "retrievers.bm25.list.hit@5": 0.4859,
-  "retrievers.bm25.list.recall@10": 0.3233,
-  "retrievers.bm25.list.hit@10": 0.5775,
-  "retrievers.bm25.list.mrr": 0.3603,
-  "retrievers.bm25.list.ndcg@10": 0.3026,
+  "retrievers.bm25.recall@5": 0.5849,
+  "retrievers.bm25.hit@5": 0.9155,
+  "retrievers.bm25.recall@10": 0.576,
+  "retrievers.bm25.hit@10": 0.9225,
+  "retrievers.bm25.mrr": 0.838,
+  "retrievers.bm25.ndcg@10": 0.6109,
+  "retrievers.bm25.list.recall@5": 0.3951,
+  "retrievers.bm25.list.hit@5": 0.6972,
+  "retrievers.bm25.list.recall@10": 0.4132,
+  "retrievers.bm25.list.hit@10": 0.7394,
+  "retrievers.bm25.list.mrr": 0.5024,
+  "retrievers.bm25.list.ndcg@10": 0.4044,
   "retrievers.bm25.grounding": 0.9956,
   "retrievers.bm25.checks": 689,
   "abstain.cases": 30,
@@ -67,12 +67,13 @@
   "bm25": "rebuilt",
   "skipped_retrievers": [
    "dense",
-   "hybrid"
+   "hybrid",
+   "sparse"
   ],
   "seed_drop": false,
-  "seconds": 5.3
+  "seconds": 3.9
  },
  "notes": [
-  "not built here: dense, hybrid"
+  "not built here: dense, hybrid, sparse"
  ]
 }

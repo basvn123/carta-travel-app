@@ -3405,6 +3405,17 @@ def main():
     if run_cmd([sys.executable, "-I", str(ROOT / "scripts" / "quality" / "engine.py"), "--write"]) != 0:
         failed.append("quality")
 
+    # Evals (F6, T1201 from row T1181-j): every offline eval through the one
+    # runner, results to data/reports/evals/ (or CARTA_EVAL_OUT) and the
+    # dashboard docs/reference/evals.md. A gated eval that fails is a soft
+    # failure: it is reported with the run but never holds the ship back,
+    # since the evals read what this run already shipped.
+    # The Python evals run on this interpreter (the box venv), not on PATH's.
+    os.environ.setdefault("CARTA_PYTHON", sys.executable)
+    if run_cmd([node_exe(), "scripts/eval/run.mjs", "--check", "--write", "--dashboard"],
+               cwd=CONTINENT) != 0:
+        soft_failed.append("evals")
+
     # Report the run to admin_health, whether it succeeded or not: a run that
     # failed is exactly the case the admin panel most needs to show as stale,
     # not a run to hide because it went badly. Only a plan with nothing due
