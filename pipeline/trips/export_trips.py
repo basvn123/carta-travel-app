@@ -83,7 +83,7 @@ GALLERY_MAX = 5
 def load_hero_flags():
     """Destinations whose own hero photograph the audit does not trust.
 
-    pipeline/audit_hero_images.py writes data/reports/hero_images_audit.json
+    pipeline/audit/audit_hero_images.py writes data/reports/hero_images_audit.json
     with a reason per flagged destination (map, emblem, tiny, historical,
     portrait, collage, svg, off_subject, far_coord). A trip should not lead
     with any of them, and it never has to: it has other stops and every stop

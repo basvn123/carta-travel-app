@@ -6,7 +6,7 @@ import { linkEntry } from './linkFix.js';
 import { Button } from '../ui/Button.jsx';
 
 // Link and page health (ROADMAP D16, T1197): the weekly check of every
-// outbound link and image URL (pipeline/link_health.py). Broken links are
+// outbound link and image URL (pipeline/audit/link_health.py). Broken links are
 // listed with the item that carries them and a fix-or-drop action that drafts
 // a hand correction through the I13 override flow. Owner-only and English-only,
 // like DataHealth. Nothing is fetched: this is the build's snapshot.
@@ -54,7 +54,7 @@ export function LinkHealth({ data = snapshot, existing = overrides.overrides || 
       <section data-links="empty">
         <h2 className="adminpage-h2">Link health</h2>
         <p className="adminpage-muted">
-          No link check yet. The weekly task link_health (python pipeline/link_health.py run) writes one;
+          No link check yet. The weekly task link_health (python pipeline/audit/link_health.py run) writes one;
           the next build shows the broken links here.
         </p>
       </section>

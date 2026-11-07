@@ -19,7 +19,7 @@
  * edit there is erased by the next export:
  *   pipeline/trails/export_wire.py
  *
- * The reject vocabulary is READ OUT of pipeline/audit_hero_images.py at run
+ * The reject vocabulary is READ OUT of pipeline/audit/audit_hero_images.py at run
  * time, for the reason audit-trip-heroes.mjs gives: that file owns the
  * question "is this Commons file a photograph of a place", it is tuned
  * against files the pipeline genuinely mis-picked, and a second weaker copy
@@ -52,7 +52,7 @@ const ROOT = path.resolve(APP, '..');
 const TRAILS_DIR = path.join(APP, 'public', 'trails');
 const CAT_CACHE = path.join(ROOT, 'cache', 'trails', 'photo_categories.json');
 const META_CACHE = path.join(ROOT, 'cache', 'hero_image_meta.json');
-const AUDIT_PY = path.join(ROOT, 'pipeline', 'audit_hero_images.py');
+const AUDIT_PY = path.join(ROOT, 'pipeline', 'audit', 'audit_hero_images.py');
 
 const REPORT = path.join(ROOT, 'data', 'reports', 'trail_photos_audit.json');
 const PATCH = path.join(ROOT, 'data', 'reports', 'trail_photo_patch.json');
@@ -80,7 +80,7 @@ const MAX_AR = 3.6;
 // ── the shared reject vocabulary ────────────────────────────────────────────
 
 /**
- * Lift the pattern lists out of pipeline/audit_hero_images.py.
+ * Lift the pattern lists out of pipeline/audit/audit_hero_images.py.
  *
  * Python and JS regex agree on everything these patterns use (literal
  * alternation, \b, \w, character classes); the one dialect difference that

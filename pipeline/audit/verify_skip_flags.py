@@ -16,8 +16,8 @@ RAISE (so any fetch attempted with every skip flag on is itself a failure),
 runs the enrich or harvest with every skip flag on, and asserts that every
 previously cached key survives the rewrite.
 
-    python pipeline/verify_skip_flags.py              # every layer
-    python pipeline/verify_skip_flags.py --layer lakes
+    python pipeline/audit/verify_skip_flags.py              # every layer
+    python pipeline/audit/verify_skip_flags.py --layer lakes
 
 Each layer runs in its own subprocess: lakes and mountains load the beach
 client module under a shared name (carta_open_sources) and repoint its
@@ -40,7 +40,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 # Smallest countries with both a raw and a rich cache, so a check costs
 # milliseconds and the temp copy stays tiny.

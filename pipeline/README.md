@@ -172,7 +172,7 @@ the index, not the whole story.
 | `apply_image_dims.py` | `python pipeline/apply_image_dims.py` | hero image files | `app_data/app_data.json` image dimensions | Re-run after a hero image harvest or swap so crop math stays correct. |
 | `apply_new_gems.py` | `python pipeline/apply_new_gems.py <spec.json>` | a spec file from `promote_place_candidates.py` | `app_data/app_data.json` (new destinations) | The last, deliberately manual step of the coverage loop; adding a destination is an editorial act, never scheduled. |
 | `apply_toll_layer.py` | `python pipeline/apply_toll_layer.py` | `toll_layer.py` rate tables | `app_data/app_data.json` driving_toll | Re-run after a toll/vignette rate table update. |
-| `audit_gaps.py` | `python pipeline/audit_gaps.py` | `app_data/app_data.json` | stdout report only | Read the printed counts to see where fields are missing across the catalogue. |
+| `audit_gaps.py` | `python pipeline/audit/audit_gaps.py` | `app_data/app_data.json` | stdout report only | Read the printed counts to see where fields are missing across the catalogue. |
 | `backfill_landmarks.py` | `python pipeline/backfill_landmarks.py apply` | Wikidata sitelink boxes | `app_data/app_data.json` items_full (adds missing famous sights) | Run after a catalogue expansion so world-famous but out-of-radius sights are not missing. |
 | `cycling/_truncate_lc.py` | `python pipeline/cycling/_truncate_lc.py --yes` | trailslab Postgres `cycle_landcover` table | truncates that table | A destructive DB maintenance script; run only when the landcover cache needs a full rebuild. Does nothing on import, and without `--yes` only prints what it would do (T260). |
 | `cycling/build_cycling.py` | `python pipeline/cycling/build_cycling.py` | everything the nine cycling stages read | `public/cycling/*` | Convenience wrapper for a full local rebuild; the same nine stages are individually Scheduled. Use for dev/test, not for the live schedule. |
@@ -217,7 +217,7 @@ the index, not the whole story.
 | `trails/quality_report.py` | see archive/docs-2026-11/TRAILS.md | | | |
 | `trails/repair.py` | see archive/docs-2026-11/TRAILS.md | | | |
 | `trails/smoke_test.py` | see archive/docs-2026-11/TRAILS.md | | | |
-| `verify_skip_flags.py` | `python pipeline/verify_skip_flags.py [--layer beaches\|lakes\|mountains\|trips]` | a copied small-country cache | pass/fail per layer | Run after touching any layer's skip-flag logic (`--no-images`, `--seed-only`, etc.) to confirm a skipped run never writes a thinner cache than it started with. |
+| `verify_skip_flags.py` | `python pipeline/audit/verify_skip_flags.py [--layer beaches\|lakes\|mountains\|trips]` | a copied small-country cache | pass/fail per layer | Run after touching any layer's skip-flag logic (`--no-images`, `--seed-only`, etc.) to confirm a skipped run never writes a thinner cache than it started with. |
 
 ## One-shot (pipeline/oneoff/)
 

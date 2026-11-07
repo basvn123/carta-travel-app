@@ -257,7 +257,7 @@ blocks:
   accommodation:   {src: stays_scrape,   writers: [pipeline/stays/apply_stays.py]}
   local_transport: {src: osm,            writers: [pipeline/apply_car_layer.py, pipeline/apply_airport_anchors.py]}
   beauty:          {src: carta_beauty,   writers: [pipeline/apply_beauty_layer.py]}
-  image:           {src: commons,        writers: [pipeline/harvest_images.py, pipeline/audit_hero_images.py]}
+  image:           {src: commons,        writers: [pipeline/harvest_images.py, pipeline/audit/audit_hero_images.py]}
   activities:      {src: poi_mix,        writers: [pipeline/harvest_activities.py, pipeline/harvest_pois_overture.py, pipeline/score_significance.py]}
   rating:          {src: carta_rating,   writers: [pipeline/apply_rating_layer.py]}
   taste:           {src: carta_taste,    writers: [pipeline/place_taste_profile.py]}

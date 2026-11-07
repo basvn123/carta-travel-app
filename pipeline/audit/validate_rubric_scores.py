@@ -34,7 +34,7 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 CARDS = ROOT / "data" / "rating" / "fact_cards"
 SCORES = ROOT / "data" / "rating" / "rubric_scores"
 HIDDEN = ROOT / "data" / "rating" / "hidden" / "scorer_hidden.jsonl"

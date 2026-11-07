@@ -214,11 +214,11 @@ Data-quality audit scorecard (read-only)
 - Cadence: monthly
 - Writes: neither the master nor the wire directly
 - Note: coords/dupes/rate-inflation/coverage report -> logs/audit_quality_report.json; never blocks, but read it after any POI-layer change.
-- Reads and runs: `pipeline/audit_quality.py`
+- Reads and runs: `pipeline/audit/audit_quality.py`
 - Commands:
 
 ```
-python pipeline/audit_quality.py
+python pipeline/audit/audit_quality.py
 ```
 
 ### <a id="bathing_water"></a>`bathing_water`
@@ -910,13 +910,13 @@ Hero image audit: flag maps/emblems/thumbnails, swap in photographs
 - Wire fields it owns (1): `destinations.*.image`
 - Code: dry run `hero_audit_dry`
 - Note: every new destination arrives with whatever Wikipedia leads its article with, which for a small town is often a locator map or a coat of arms. Monthly because it only has work to do after a catalogue expansion. Writes the same cache/wiki_images.json as `images`, so it MUST run after it. Review data/reports/hero_images_contact_sheet.html before shipping: the swaps are automatic, the taste is not. Then, against a served build: node scripts/verify_hero_images.mjs - it samples the audited heroes and loads each one, which is how the spliced tracking-param thumb URLs were caught.
-- Reads and runs: `pipeline/audit_hero_images.py`
+- Reads and runs: `pipeline/audit/audit_hero_images.py`
 - Commands:
 
 ```
-python pipeline/audit_hero_images.py check
-python pipeline/audit_hero_images.py fix
-python pipeline/audit_hero_images.py patch
+python pipeline/audit/audit_hero_images.py check
+python pipeline/audit/audit_hero_images.py fix
+python pipeline/audit/audit_hero_images.py patch
 ```
 
 ### <a id="image_audit"></a>`image_audit`
@@ -1471,12 +1471,12 @@ Link and page health: every outbound link and image URL, politely (D16, T1197)
 - Writes: neither the master nor the wire directly
 - Expected hours of a warm run: 2
 - Command revision: `T1197`
-- Note: pipeline/link_health.py collects the links in the shipped wires and checks them with HEAD (GET headers only when HEAD is refused), robots.txt respected, a gap per host, a user agent naming Carta. It resumes: the state is logs/status/links/results.json, a 120 minute budget a week (pipeline/config/link_health.yaml), so the ~80k image URLs are covered over several weeks. Writes continent-app/src/admin/linkHealth.json for the admin Data health tab; the D2 gate reads its broken share (scripts/quality/rules.yaml `links`). HANDBOOK 'Link and page health'.
-- Reads and runs: `pipeline/link_health.py`
+- Note: pipeline/audit/link_health.py collects the links in the shipped wires and checks them with HEAD (GET headers only when HEAD is refused), robots.txt respected, a gap per host, a user agent naming Carta. It resumes: the state is logs/status/links/results.json, a 120 minute budget a week (pipeline/config/link_health.yaml), so the ~80k image URLs are covered over several weeks. Writes continent-app/src/admin/linkHealth.json for the admin Data health tab; the D2 gate reads its broken share (scripts/quality/rules.yaml `links`). HANDBOOK 'Link and page health'.
+- Reads and runs: `pipeline/audit/link_health.py`
 - Commands:
 
 ```
-python pipeline/link_health.py run
+python pipeline/audit/link_health.py run
 ```
 
 ### <a id="photo_check"></a>`photo_check`

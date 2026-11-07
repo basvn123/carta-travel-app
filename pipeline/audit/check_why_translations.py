@@ -22,7 +22,7 @@ import json
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 DIR = ROOT / "data" / "rating" / "translate"
 OUT = ROOT / "app_data" / "curated_why_i18n.json"
 N_SHARDS = 4

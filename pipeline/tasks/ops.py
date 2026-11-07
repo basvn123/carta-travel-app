@@ -45,8 +45,8 @@ TASKS = [
         "soft": True,
         "rev": "T1197",
         "est_h": 2,
-        "cmds": [[PY, "pipeline/link_health.py", "run"]],
-        "note": ("pipeline/link_health.py collects the links in the shipped wires and "
+        "cmds": [[PY, "pipeline/audit/link_health.py", "run"]],
+        "note": ("pipeline/audit/link_health.py collects the links in the shipped wires and "
                  "checks them with HEAD (GET headers only when HEAD is refused), robots.txt "
                  "respected, a gap per host, a user agent naming Carta. It resumes: the "
                  "state is logs/status/links/results.json, a 120 minute budget a week "

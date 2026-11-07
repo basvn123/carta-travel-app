@@ -132,7 +132,7 @@
    "cmds": [
     [
      "<PY>",
-     "pipeline/audit_quality.py"
+     "pipeline/audit/audit_quality.py"
     ]
    ],
    "note": "coords/dupes/rate-inflation/coverage report -> logs/audit_quality_report.json; never blocks, but read it after any POI-layer change."
@@ -1012,17 +1012,17 @@
    "cmds": [
     [
      "<PY>",
-     "pipeline/audit_hero_images.py",
+     "pipeline/audit/audit_hero_images.py",
      "check"
     ],
     [
      "<PY>",
-     "pipeline/audit_hero_images.py",
+     "pipeline/audit/audit_hero_images.py",
      "fix"
     ],
     [
      "<PY>",
-     "pipeline/audit_hero_images.py",
+     "pipeline/audit/audit_hero_images.py",
      "patch"
     ]
    ],
@@ -1813,11 +1813,11 @@
    "cmds": [
     [
      "<PY>",
-     "pipeline/link_health.py",
+     "pipeline/audit/link_health.py",
      "run"
     ]
    ],
-   "note": "pipeline/link_health.py collects the links in the shipped wires and checks them with HEAD (GET headers only when HEAD is refused), robots.txt respected, a gap per host, a user agent naming Carta. It resumes: the state is logs/status/links/results.json, a 120 minute budget a week (pipeline/config/link_health.yaml), so the ~80k image URLs are covered over several weeks. Writes continent-app/src/admin/linkHealth.json for the admin Data health tab; the D2 gate reads its broken share (scripts/quality/rules.yaml `links`). HANDBOOK 'Link and page health'."
+   "note": "pipeline/audit/link_health.py collects the links in the shipped wires and checks them with HEAD (GET headers only when HEAD is refused), robots.txt respected, a gap per host, a user agent naming Carta. It resumes: the state is logs/status/links/results.json, a 120 minute budget a week (pipeline/config/link_health.yaml), so the ~80k image URLs are covered over several weeks. Writes continent-app/src/admin/linkHealth.json for the admin Data health tab; the D2 gate reads its broken share (scripts/quality/rules.yaml `links`). HANDBOOK 'Link and page health'."
   },
   {
    "key": "photo_check",

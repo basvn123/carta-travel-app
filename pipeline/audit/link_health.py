@@ -24,9 +24,9 @@ A link is `broken` after `strikes` failed checks in a row; one failure is
 `unsure`. The state is resumable: a result younger than `recheck_days` is
 not fetched again, and the run stops at its time budget.
 
-    python pipeline/link_health.py run [--limit N] [--budget-min M] [--kind image,source]
-    python pipeline/link_health.py report            # rebuild the admin snapshot from the state
-    python pipeline/link_health.py collect           # count the links, fetch nothing
+    python pipeline/audit/link_health.py run [--limit N] [--budget-min M] [--kind image,source]
+    python pipeline/audit/link_health.py report            # rebuild the admin snapshot from the state
+    python pipeline/audit/link_health.py collect           # count the links, fetch nothing
 
 State: CARTA_LINKS_OUT or logs/status/links/results.json (the box's git reset
 leaves logs/). Snapshot: continent-app/src/admin/linkHealth.json.
@@ -47,7 +47,7 @@ from urllib.parse import urljoin, urlsplit
 
 import yaml
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "pipeline" / "config" / "link_health.yaml"
 STATE_DIR = Path(os.environ.get("CARTA_LINKS_OUT") or ROOT / "logs" / "status" / "links")
 SNAPSHOT = ROOT / "continent-app" / "src" / "admin" / "linkHealth.json"

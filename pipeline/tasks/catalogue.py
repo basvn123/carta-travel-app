@@ -227,7 +227,7 @@ TASKS = [
         "cadence": "monthly",
         "writes_app_data": False,
         "soft": True,
-        "cmds": [[PY, "pipeline/audit_quality.py"]],
+        "cmds": [[PY, "pipeline/audit/audit_quality.py"]],
         "note": ("coords/dupes/rate-inflation/coverage report -> "
                  "logs/audit_quality_report.json; never blocks, but read it "
                  "after any POI-layer change."),

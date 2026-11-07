@@ -1,4 +1,4 @@
-# Link and page health (ROADMAP D16, T1197). Read by pipeline/link_health.py.
+# Link and page health (ROADMAP D16, T1197). Read by pipeline/audit/link_health.py.
 #
 # user_agent  names Carta and a contact page, no personal data.
 # per_host_delay_s  minimum seconds between two requests to one host.

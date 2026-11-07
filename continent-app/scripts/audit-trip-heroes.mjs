@@ -14,7 +14,7 @@
  *   pipeline/trips/export_trips.py        (trips, via hero_of)
  *   pipeline/journeys/build_wire.py       (journeys, via pick_hero)
  *
- * Why this does not carry its own reject vocabulary. pipeline/audit_hero_images.py
+ * Why this does not carry its own reject vocabulary. pipeline/audit/audit_hero_images.py
  * already owns the question "is this Commons file a photograph of a place",
  * and its answer is tuned against files this pipeline genuinely mis-picked
  * (the category pass alone distinguishes "Maps of Italy" from "Buildings with
@@ -49,7 +49,7 @@ const JOURNEYS_DIR = path.join(APP, 'public', 'journeys', 'journey');
 const DOSSIER_DIR = path.join(APP, 'public', 'dossier');
 const META_CACHE = path.join(ROOT, 'cache', 'hero_image_meta.json');
 const JOURNEY_CACHE = path.join(ROOT, 'cache', 'journey_images.json');
-const AUDIT_PY = path.join(ROOT, 'pipeline', 'audit_hero_images.py');
+const AUDIT_PY = path.join(ROOT, 'pipeline', 'audit', 'audit_hero_images.py');
 
 const REPORT = path.join(ROOT, 'reports', 'trip_heroes_audit.json');
 const PATCH = path.join(ROOT, 'data', 'reports', 'trip_hero_patch.json');
@@ -83,7 +83,7 @@ const MIN_LONG_EDGE = 800;
 // ── the shared reject vocabulary ────────────────────────────────────────────
 
 /**
- * Lift the pattern lists out of pipeline/audit_hero_images.py.
+ * Lift the pattern lists out of pipeline/audit/audit_hero_images.py.
  *
  * Python regex and JS regex agree on everything these patterns use (literal
  * alternation, \b, \w, character classes), so the source strings port as-is;
@@ -416,7 +416,7 @@ function plausibleCountry(cand, trip, meta) {
 function main() {
   const writePatch = process.argv.includes('--write-patch');
 
-  console.log('Reading the reject vocabulary from pipeline/audit_hero_images.py');
+  console.log('Reading the reject vocabulary from pipeline/audit/audit_hero_images.py');
   const vocab = loadRejectVocabulary();
   console.log(`  ${vocab.count} pattern groups, plus historical, off-subject and safe hints`);
 

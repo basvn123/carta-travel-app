@@ -279,7 +279,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Decides: how a rubric score is placed, and when a scoring shard must be redone.
 - Rule: four hand-scored anchor places per class and band (96 anchors, plus 36 calibration places in the Good, Pleasant and under-6.0 range) place a rubric score: band test first, then position inside the band. A shard fails when its five hidden controls lean one way by more than 0.5 on average (signed); the mean absolute gap of 0.5 is held only on all controls pooled.
 - Constant: `anchors`, `calibration` in `continent-app/config/rating_anchors.json`
-- Constant: `CONTROL_MAX_GAP` / `CONTROL_MAX_BIAS` in `pipeline/validate_rubric_scores.py:54` = 0.5 / 0.5
+- Constant: `CONTROL_MAX_GAP` / `CONTROL_MAX_BIAS` in `pipeline/audit/validate_rubric_scores.py:54` = 0.5 / 0.5
 - Test: no test
 
 ## Rules with no test
@@ -292,4 +292,4 @@ RATING-001, RATING-002, RATING-003, RATING-004, RATING-008, RATING-009, RATING-0
 |---|---|---|
 | Place rating step 2 and 4 read as either-or: an estimate is read off its anchor curve; Q is read through the class curve | An estimate goes through both: the anchor curve, then the golden guard, then the v5 class curve, which runs over every place | `pipeline/rating_layer.py:873` and `:916` |
 | Golden pair guard: the estimated score is clamped to 0.1 below the hand-scored winner | The clamp applies to any winner with an appeal (rubric too) and runs before the class curve, so the final gap is not guaranteed to be 0.1 | `pipeline/rating_layer.py:899` |
-| Appeal step 3: rubric scores of the hidden controls must sit within 0.5 of the hand scores on average, else the shard is rescored | Per shard only the signed mean lean is held at 0.5; the 0.5 mean absolute gap is held on all controls pooled (`--all`), and some shards carry an accepted lean | `pipeline/validate_rubric_scores.py:54` |
+| Appeal step 3: rubric scores of the hidden controls must sit within 0.5 of the hand scores on average, else the shard is rescored | Per shard only the signed mean lean is held at 0.5; the 0.5 mean absolute gap is held on all controls pooled (`--all`), and some shards carry an accepted lean | `pipeline/audit/validate_rubric_scores.py:54` |

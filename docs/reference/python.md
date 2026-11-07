@@ -318,7 +318,7 @@ Ask Carta lexicon (T552): the reviewed words Ask reads beside the guided search'
 | def | `ollama_candidates(app: Path, model: str, host: str) -> dict` |  |
 | def | `main() -> None` |  |
 
-## `pipeline/audit_gaps.py`
+## `pipeline/audit/audit_gaps.py`
 
 Audit app_data.json for missing pieces across all destinations.
 
@@ -328,7 +328,7 @@ Audit app_data.json for missing pieces across all destinations.
 | def | `n_items_full(dd)` |  |
 | def | `n_items(dd)` |  |
 
-## `pipeline/audit_hero_images.py`
+## `pipeline/audit/audit_hero_images.py`
 
 Tier: Scheduled (run_pipeline task hero_audit)
 
@@ -357,7 +357,7 @@ Tier: Scheduled (run_pipeline task hero_audit)
 | def | `sheet(report=None)` | A local page that puts every swap side by side, old on the left, new on the right. Written to disk rather than published, because the photos load from upload.wikimedia.org and any hosted page worth its salt blocks that. |
 | def | `main()` |  |
 
-## `pipeline/audit_quality.py`
+## `pipeline/audit/audit_quality.py`
 
 audit_quality.py - data-quality audit of the destination/POI master.
 
@@ -370,6 +370,85 @@ audit_quality.py - data-quality audit of the destination/POI master.
 | def | `is_bad_num(v)` |  |
 | def | `dest_centre(d)` |  |
 | def | `audit(dests, top_n)` |  |
+| def | `main()` |  |
+
+## `pipeline/audit/check_why_translations.py`
+
+Check and merge the translations of the hand-scored reasons (T758).
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `check(shard)` |  |
+| def | `main()` |  |
+
+## `pipeline/audit/external_check.py`
+
+External check of the v5 ratings (T760, the plan's gate 6; closes the review step of T469-d).
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `ranks(values)` | Average ranks, 1 = smallest; ties share their mean rank. |
+| def | `spearman(xs, ys)` |  |
+| def | `list_points(rows)` | {id: points} from a ranked list: an entry earns (size + 1 - rank) / size of its list, so the top of a 25-place list earns 1 and an unranked entry earns half; a place named in several lists or years adds up. |
+| def | `load_list(name)` |  |
+| def | `main()` |  |
+
+## `pipeline/audit/link_health.py`
+
+Link and page health (ROADMAP D16, T1197).
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `load_config(path: Path=CONFIG) -> dict` |  |
+| def | `kind_of(url: str) -> str` |  |
+| def | `collect(cfg: dict, root: Path=ROOT) -> dict[str, dict]` | url -> {kind, n, where: [{file, layer, id, path}] (first 3)}. |
+| class | `Polite` | Per-host pacing and a robots.txt cache. `session` is any object with head/get like requests.Session; `sleep` and `clock` are injected in tests. |
+| method | `Polite.wait(self, host)` |  |
+| method | `Polite.allowed(self, url)` |  |
+| method | `Polite.check(self, url) -> dict` | One URL -> {status, final, chain, err, retry_after}. Redirects are followed by hand so every hop is paced, robots-checked and recorded. |
+| def | `classify(res: dict) -> str` |  |
+| def | `merge(prev: dict \| None, res: dict, now: str, strikes: int) -> dict` | The state row after one more check. `gone` counts a strike; the row is `broken` once strikes in a row reach the limit, `unsure` before. |
+| def | `load_state(path: Path) -> dict` |  |
+| def | `save_state(path: Path, links: dict)` |  |
+| def | `due(found: dict, state: dict, cfg: dict, now: datetime, kinds=None) -> list[str]` | Never-checked first (partner, official and source links before the ~80k image URLs, so a short budget covers what matters), then the oldest results older than recheck_days. Unsure ones come back on the next run. |
+| def | `run(cfg, found, state, polite, now: datetime, limit=None, budget_min=None, kinds=None, clock=time.monotonic, save=None) -> dict` |  |
+| def | `snapshot(found: dict, state: dict, now: str, cfg: dict) -> dict` |  |
+| def | `write_snapshot(snap: dict, path: Path=SNAPSHOT)` |  |
+| def | `main(argv=None) -> int` |  |
+
+## `pipeline/audit/validate_rubric_scores.py`
+
+Validate rating v5 rubric scores, and merge the passing shards (T758).
+
+| Kind | Name | Summary |
+|---|---|---|
+| def | `band_of(appeal)` |  |
+| def | `name(shard)` | shard_03, or handcheck for the blind hand-score sample. |
+| def | `card_ids(shard)` |  |
+| def | `merge_parts(shard)` | Join data/rating/rubric_scores/shard_XX/part_*.json into shard_XX.json in card order. A scorer writes its shard in parts of about 40. |
+| def | `check_row(r)` | Problems with one score row, as strings. |
+| def | `check_shard(shard, schema_only)` | (problems, rows, control summary or None). |
+| def | `summary(rows)` |  |
+| def | `write_merged(all_rows)` | Every rubric score except the hidden controls (hand scores win, and the controls are hand-scored) into app_data/rubric_appeal.json. |
+| def | `main()` |  |
+
+## `pipeline/audit/verify_skip_flags.py`
+
+A skip flag controls the network, never the data.
+
+| Kind | Name | Summary |
+|---|---|---|
+| class | `EmptyIndex` | Stands in for the bathing / protected / dest NearIndex joins. |
+| method | `EmptyIndex.nearest(self, lat, lon, max_km, where=None)` |  |
+| method | `EmptyIndex.within(self, lat, lon, max_km, where=None)` |  |
+| def | `tripwire(*args, **kwargs)` |  |
+| def | `load(path)` |  |
+| def | `copy_caches(layer, tmp, names)` |  |
+| def | `assert_rows_survive(label, before, after, key, fields)` | Every row cached before must still be there, its skipped-source fields intact. `fields` lists only what the SKIP FLAGS govern: a field a run always refetches (mountain facts, say) has no flag to test. |
+| def | `check_beaches()` |  |
+| def | `check_lakes()` |  |
+| def | `check_mountains()` |  |
+| def | `check_trips()` |  |
 | def | `main()` |  |
 
 ## `pipeline/backfill_landmarks.py`
@@ -760,15 +839,6 @@ catalogue_gaps.py - D15 part 1: work D6's place gaps into a review list.
 | def | `md_escape(s)` |  |
 | def | `render(res)` | README plus one sheet per country, as {filename: text}. |
 | def | `main(argv=None)` |  |
-
-## `pipeline/check_why_translations.py`
-
-Check and merge the translations of the hand-scored reasons (T758).
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `check(shard)` |  |
-| def | `main()` |  |
 
 ## `pipeline/country_context_layer.py`
 
@@ -1591,18 +1661,6 @@ Ship the per-destination info layer: cache -> public/destinfo/{CC}.json.
 | def | `slim_parking(rec)` |  |
 | def | `pick_access(feats, asof)` | The shipped accessibility row (D21) from a destination's raw tagged features, or None when nothing is tagged. Facts only where mappers tagged them: absent means "not mapped", never "not accessible". `_src` and `_asof` stay on the row so the |
 | def | `slim_event(e)` |  |
-| def | `main()` |  |
-
-## `pipeline/external_check.py`
-
-External check of the v5 ratings (T760, the plan's gate 6; closes the review step of T469-d).
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `ranks(values)` | Average ranks, 1 = smallest; ties share their mean rank. |
-| def | `spearman(xs, ys)` |  |
-| def | `list_points(rows)` | {id: points} from a ranked list: an entry earns (size + 1 - rank) / size of its list, so the top of a 25-place list earns 1 and an unranked entry earns half; a place named in several lists or years adds up. |
-| def | `load_list(name)` |  |
 | def | `main()` |  |
 
 ## `pipeline/facts/parking_fold.py`
@@ -2733,29 +2791,6 @@ The curated seed: the water bodies a European traveller has actually heard of.
 
 The lake layer's polite clients, which are the beach layer's polite clients.
 
-
-## `pipeline/link_health.py`
-
-Link and page health (ROADMAP D16, T1197).
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `load_config(path: Path=CONFIG) -> dict` |  |
-| def | `kind_of(url: str) -> str` |  |
-| def | `collect(cfg: dict, root: Path=ROOT) -> dict[str, dict]` | url -> {kind, n, where: [{file, layer, id, path}] (first 3)}. |
-| class | `Polite` | Per-host pacing and a robots.txt cache. `session` is any object with head/get like requests.Session; `sleep` and `clock` are injected in tests. |
-| method | `Polite.wait(self, host)` |  |
-| method | `Polite.allowed(self, url)` |  |
-| method | `Polite.check(self, url) -> dict` | One URL -> {status, final, chain, err, retry_after}. Redirects are followed by hand so every hop is paced, robots-checked and recorded. |
-| def | `classify(res: dict) -> str` |  |
-| def | `merge(prev: dict \| None, res: dict, now: str, strikes: int) -> dict` | The state row after one more check. `gone` counts a strike; the row is `broken` once strikes in a row reach the limit, `unsure` before. |
-| def | `load_state(path: Path) -> dict` |  |
-| def | `save_state(path: Path, links: dict)` |  |
-| def | `due(found: dict, state: dict, cfg: dict, now: datetime, kinds=None) -> list[str]` | Never-checked first (partner, official and source links before the ~80k image URLs, so a short budget covers what matters), then the oldest results older than recheck_days. Unsure ones come back on the next run. |
-| def | `run(cfg, found, state, polite, now: datetime, limit=None, budget_min=None, kinds=None, clock=time.monotonic, save=None) -> dict` |  |
-| def | `snapshot(found: dict, state: dict, now: str, cfg: dict) -> dict` |  |
-| def | `write_snapshot(snap: dict, path: Path=SNAPSHOT)` |  |
-| def | `main(argv=None) -> int` |  |
 
 ## `pipeline/member_layer.py`
 
@@ -5930,41 +5965,6 @@ Check every composed trip before it is allowed anywhere near the app.
 | def | `check_cost(trip, cat)` |  |
 | def | `soft_checks(trip, cat, ctx)` | Warnings, and the quality multiplier they add up to. |
 | def | `validate(trips, cat, ctx)` | Split composed trips into what ships and what does not, with reasons. |
-| def | `main()` |  |
-
-## `pipeline/validate_rubric_scores.py`
-
-Validate rating v5 rubric scores, and merge the passing shards (T758).
-
-| Kind | Name | Summary |
-|---|---|---|
-| def | `band_of(appeal)` |  |
-| def | `name(shard)` | shard_03, or handcheck for the blind hand-score sample. |
-| def | `card_ids(shard)` |  |
-| def | `merge_parts(shard)` | Join data/rating/rubric_scores/shard_XX/part_*.json into shard_XX.json in card order. A scorer writes its shard in parts of about 40. |
-| def | `check_row(r)` | Problems with one score row, as strings. |
-| def | `check_shard(shard, schema_only)` | (problems, rows, control summary or None). |
-| def | `summary(rows)` |  |
-| def | `write_merged(all_rows)` | Every rubric score except the hidden controls (hand scores win, and the controls are hand-scored) into app_data/rubric_appeal.json. |
-| def | `main()` |  |
-
-## `pipeline/verify_skip_flags.py`
-
-A skip flag controls the network, never the data.
-
-| Kind | Name | Summary |
-|---|---|---|
-| class | `EmptyIndex` | Stands in for the bathing / protected / dest NearIndex joins. |
-| method | `EmptyIndex.nearest(self, lat, lon, max_km, where=None)` |  |
-| method | `EmptyIndex.within(self, lat, lon, max_km, where=None)` |  |
-| def | `tripwire(*args, **kwargs)` |  |
-| def | `load(path)` |  |
-| def | `copy_caches(layer, tmp, names)` |  |
-| def | `assert_rows_survive(label, before, after, key, fields)` | Every row cached before must still be there, its skipped-source fields intact. `fields` lists only what the SKIP FLAGS govern: a field a run always refetches (mountain facts, say) has no flag to test. |
-| def | `check_beaches()` |  |
-| def | `check_lakes()` |  |
-| def | `check_mountains()` |  |
-| def | `check_trips()` |  |
 | def | `main()` |  |
 
 ## `pipeline/wire_contract.py`

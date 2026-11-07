@@ -12,7 +12,7 @@ def hero_audit_dry(ctx):
     no cache. `check` is network-heavy the first time only; the Commons
     metadata it reads is cached per file title."""
     log("  dry-run probe: classifying heroes, replacing nothing")
-    return run_cmd([PY, "pipeline/audit_hero_images.py", "check"]) == 0
+    return run_cmd([PY, "pipeline/audit/audit_hero_images.py", "check"]) == 0
 
 
 # How many destinations may lack a resolvable Wikipedia article before the fame
@@ -29,9 +29,9 @@ TASKS = [
         "writes_app_data": True,
         "soft": True,
         "cmds": [
-            [PY, "pipeline/audit_hero_images.py", "check"],
-            [PY, "pipeline/audit_hero_images.py", "fix"],
-            [PY, "pipeline/audit_hero_images.py", "patch"],
+            [PY, "pipeline/audit/audit_hero_images.py", "check"],
+            [PY, "pipeline/audit/audit_hero_images.py", "fix"],
+            [PY, "pipeline/audit/audit_hero_images.py", "patch"],
         ],
         "dry_run": hero_audit_dry,
         "note": ("every new destination arrives with whatever Wikipedia leads its "
