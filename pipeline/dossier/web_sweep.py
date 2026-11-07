@@ -53,7 +53,7 @@ import urllib.request
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (  # noqa: E402
     BLOCKED_DOMAINS, DCACHE, PUB, atomic_write_json, dossier_file_base, fold,
-    is_blocked, load_json, norm_name, registrable,
+    is_blocked, load_activities_full, load_json, norm_name, registrable,
 )
 from derive_do import usable_name  # noqa: E402
 
@@ -302,7 +302,7 @@ def main():
 
     app = load_json(os.path.join(PUB, "app_data.json")) or {}
     dests = app.get("destinations", {})
-    acts = load_json(os.path.join(PUB, "activities_full.json"), {}) or {}
+    acts = load_activities_full()  # T1219: from the master, see common.py
     dossier_dir = os.path.join(PUB, "dossier")
 
     os.makedirs(RESEARCH_DIR, exist_ok=True)

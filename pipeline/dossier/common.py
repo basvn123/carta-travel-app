@@ -70,6 +70,32 @@ def load_json(path, default=None):
         return default
 
 
+MASTER_APP_DATA = os.path.join(ROOT, "app_data", "app_data.json")
+LEGACY_ACTIVITIES = os.path.join(PUB, "activities_full.json")
+
+
+def load_activities_full() -> dict:
+    """Every destination's full POI list, {dest_id: [items]} (T1219).
+
+    The app's sync-data.mjs used to write the combined
+    public/activities_full.json; it now deletes it and ships per-destination
+    shards (public/poi/) without the `rate` field. The dossier ranks on
+    `rate`, so it reads the same lists where sync-data cuts them from: the
+    master app_data/app_data.json, destinations[id].activities.items_full.
+    A leftover combined file still wins, so an older checkout keeps working.
+    Neither on disk returns {}; the caller decides what that means."""
+    legacy = load_json(LEGACY_ACTIVITIES)
+    if isinstance(legacy, dict) and legacy:
+        return legacy
+    master = load_json(MASTER_APP_DATA) or {}
+    acts = {}
+    for did, d in (master.get("destinations") or {}).items():
+        items = ((d or {}).get("activities") or {}).get("items_full")
+        if items:
+            acts[did] = items
+    return acts
+
+
 def atomic_write_json(path, data, indent=None):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     fd, tmp = tempfile.mkstemp(dir=os.path.dirname(path), suffix=".tmp")
