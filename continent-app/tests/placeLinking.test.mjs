@@ -12,6 +12,7 @@ import { soundKey } from '../src/lib/linking/fold.js';
 import { linkSearchHits, linkerFor } from '../src/lib/linking/search.js';
 import { locationMatch } from '../src/hooks/useDestinationSearch.js';
 import { buildAskVocab, parseIntent, linkUnknownPlace } from '../src/lib/ask/intent.js';
+import { linkBookingPlace, linkBookingPlaces, sanitizeTripContext } from '../../supabase/functions/parse-booking/logic.mjs';
 import { runLinkingEval, gate, BASELINE_PATH } from '../scripts/eval/linking/eval.mjs';
 
 const APP = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -183,4 +184,26 @@ test('Ask: an unknown place word links through the place linker, only when one i
     parseIntent('when to visit lisbon', { vocab: plain, lang: 'en', now }).places);
   assert.equal(linkUnknownPlace(['ab'], link), null);
   assert.equal(linkUnknownPlace([], link), null);
+});
+
+// T1215 (row T1153-e): parse-booking links each booking's place, with the trip's countries as context.
+test('parse-booking: a booking links its catalogue place, and nothing without the linker', () => {
+  const linking = { linker: L, linkPlace };
+  const ctx = sanitizeTripContext({ stops: [{ city: 'Visby', country: 'Sweden', nights: 3 }, { city: 'Stockholm', country: 'SE', nights: 2 }] });
+  // The city field first, the title when the city is empty.
+  assert.equal(linkBookingPlace({ title: 'Hotel Ibis Lisboa Centro', city: '' }, ctx, linking).id, 'LIS');
+  assert.equal(linkBookingPlace({ title: 'Ryanair FR123', city: 'Dubrovnk' }, ctx, linking).id, 'DBV');
+  // The stops' countries decide a near twin: Faro on a Swedish trip is Fårö.
+  assert.equal(linkBookingPlace({ title: 'Cottage', city: 'Faro' }, ctx, linking).id, 'gem:faro-gotland');
+  assert.equal(linkBookingPlace({ title: 'Cottage', city: 'Faro' }, sanitizeTripContext({ stops: [{ city: 'Lagos', country: 'Portugal' }] }), linking).id, 'FAO');
+  // Not confident, no data, no booking: no place, and the rest of the booking is untouched.
+  assert.equal(linkBookingPlace({ title: 'Booking 123', city: '' }, ctx, linking), null);
+  assert.equal(linkBookingPlace({ title: 'Cottage', city: 'Faro' }, ctx, null), null);
+  const out = linkBookingPlaces([{ title: 'Flight to BCN', city: 'Barcelona', code: 'X1' }, { title: 'Stay', city: '' }], ctx, linking);
+  assert.deepEqual(out.map((b) => b.placeId), ['BCN', null]);
+  assert.equal(out[0].code, 'X1');
+  assert.deepEqual(linkBookingPlaces([{ title: 'A', city: 'Rome' }], ctx, null), [{ title: 'A', city: 'Rome', placeId: null }]);
+  // What a Deno function could load (the search index and lexicon, not app_data) links too.
+  const slim = { linker: makeLinker({ searchIndex: inputs.searchIndex, lexicon: inputs.lexicon }), linkPlace };
+  assert.equal(linkBookingPlace({ title: 'Hotel', city: 'Lissabon' }, ctx, slim).id, 'LIS');
 });

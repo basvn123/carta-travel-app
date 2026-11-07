@@ -74,6 +74,18 @@ or model switch changes which model reads travellers' bookings: the owner's
 call, with an eval run (`docs/ai/model-strategy.md`). The keys are listed in
 `docs/security/SECRETS.md`.
 
+## Place linking (T1215, not wired yet)
+
+`logic.mjs` has `linkBookingPlaces(bookings, context, linking)`: each
+booking gets a `placeId` from the shared place linker
+(`continent-app/src/lib/linking/linker.js`), with the trip stops' countries
+as context, or `null` when nothing links with confidence or `linking` is
+null. `index.ts` does not call it yet: that needs the owner to choose how
+the function loads the linker code (a relative import from `continent-app/`,
+or a copy under `_shared/`) and its alias data (`search_index.json` and
+`search/ask/lexicon.json`, about 315 KB, fetched once per cold start; the
+16 MB `app_data.json` is not needed). Tests: `continent-app/tests/placeLinking.test.mjs`.
+
 ## Tests
 
 Pure logic lives in `logic.mjs`, imported by both Deno and
