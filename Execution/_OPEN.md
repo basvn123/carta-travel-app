@@ -1809,7 +1809,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1181-e | T1181 | Decide whether the v5 shape term (0 for one-way) and per-km scenery should hold long certified trails below the top band (Lechweg LQT 7.5, Peddars Way 7.0, Thames Path 7.7) | user | open |  |
 | T1181-i | T1181 | Run trails_registry and coverage_report on the box so the 34 new famous_registry seeds (SEEDS_T1181) resolve, then rerun the trails external check | user | open |  |
 | T1173-d | T1173 | continent-app/scripts/verify_admin_panel.mjs has no step for the Overrides tab; add one and run it where data.carta-europetravel.com is reachable (the cloud container cannot load the app, see T1142-e) | next task | open |  |
-| T1173-e | T1173 | admin.nav.overrides is in en.js only; nl, de, fr, es and it fall back to English, as admin.nav.health does | next task | open |  |
 | T1173-f | T1173 | Decide which live content_overrides rows (Content tab) should be promoted into data/overrides/ and cleared live; needs a read of the live table | user | open |  |
 | T1173-g | T1173 | The Overrides tab reads a build-time snapshot; on the box the weekly git reset puts the committed snapshot back before each build (same as T1142-d), so outcomes from the box run are not shown until the snapshot is fetched at run time | next task | open |  |
 | T1173-h | T1173 | The Overrides tab does not flag entries past review_by, and does not show the live content_overrides rows next to the file entries | next task | open |  |
