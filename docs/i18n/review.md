@@ -110,7 +110,7 @@ Same key list for every language; the Dutch list is shorter because it already h
 
 ## Known issues found while drafting
 
-- `day.place`, `day.poiDepthNote` and `day.townDepthNote` in en.js are cut off mid-string (looks like a past extraction accident); the translations follow the fragments. Fix the English first, then redo these three (row T1170-c).
+- Resolved (T1210): `day.place`, `day.poiDepthNote` and `day.townDepthNote` were cut-off fragments with no code reference; the three dead keys were removed from all six catalogues.
 - Italian `notfor.*` uses some masculine forms ("sei venuto", "abituato"); an Italian reader should neutralise them.
 - Registers: nl je, de du, fr vous (the existing fr.js mixes tu on the home page and vous in the wizard and trip; the owner picks one), es tu, it tu, matching each catalogue's existing wizard strings.
 
@@ -146,4 +146,3 @@ Every drafted string above (3,187: nl 583, de 651, fr 651, es 651, it 651) went 
 - de `notfor.mtnExposure`: "unheimlich" (eerie) for "uneasy".
 - fr `admin.banCancel` "Pas finalement" for "Never mind"; fr `notfor.tripMoves` "détestez" (hate) for "dislike".
 - es and it `trip.practicalParkFree`, `trip.practicalParkRide`: "a {dist}" for "{dist} out".
-- `day.place`, `day.poiDepthNote`, `day.townDepthNote` in every language: the English is cut off (T1170-c), so the drafts are cut off too.

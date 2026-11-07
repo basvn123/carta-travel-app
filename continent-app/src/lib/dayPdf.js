@@ -48,6 +48,7 @@ export async function downloadDayPdf({
   const kit = await createPdf({
     footerLabel: `Carta, ${name}`,
     pageLabel: (n, of) => t('pdf.page', { n, of }),
+    partnerNote: t('partner.pdfNote'),
   });
   const { C } = kit;
   const photos = [];

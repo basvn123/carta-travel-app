@@ -95,6 +95,7 @@ export async function downloadDestinationPdf({
   const kit = await createPdf({
     footerLabel: `Carta, ${city}. ${T('pdf.pricesOn', { date: dateLong })}`,
     pageLabel: (n, of) => t('pdf.page', { n, of }),
+    partnerNote: t('partner.pdfNote'),
   });
   const { C, doc } = kit;
 

@@ -34,6 +34,7 @@ export async function downloadTripPdf(trip, ctx = {}) {
   const kit = await createPdf({
     footerLabel: `Carta, ${name}. ${T('pdf.pricesOn', { date: dateLong })}`,
     pageLabel: (n, of) => t('pdf.page', { n, of }),
+    partnerNote: t('partner.pdfNote'),
   });
   const { C, doc } = kit;
   const photos = (m.photos || []).filter((p) => p && p.url);

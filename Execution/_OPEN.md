@@ -2008,7 +2008,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1163-h | T1163 | no-unused-vars cannot see a destructured prop used only as a JSX tag (TitleTag in OverviewHero and ExploreToolbar); fix in eslint.config.js (argsIgnorePattern or jsx-uses-vars) | next task | open |  |
 | T1170-a | T1170 | Native review of the machine-drafted nl, de, fr, es, it strings listed in docs/i18n/review.md (about 3,200 strings, admin.* last) | user | open |  |
 | T1170-b | T1170 | Display currency choice (P-40) not built: it touches the price formatting lib, outside T1170's files | next task | open |  |
-| T1170-c | T1170 | en.js `day.place`, `day.poiDepthNote`, `day.townDepthNote` are cut off mid-string; fix the English, then retranslate the three in all five | next task | open |  |
 | T1170-d | T1170 | I8 rest: place intros are English only and need the other five languages | next task | open |  |
 | T1170-e | T1170 | French register is mixed (tu on home, vous elsewhere); owner picks one, then align fr.js | user | open |  |
 | T1182-a | T1182 | Enable the trails lab on the box: an 80 GB volume at /mnt/trailslab, 2 GB swap, docker.io, docker-compose-v2 and postgresql-client-18, the lab.sh env block, lab.sh check, up, restore, status, then the review units; the first lab.sh up is also the first run of the multi-arch image on arm64 (T324-a) (procedure: tools/trailslab/box/README.md, "Enable it on the box") | user | open | after T1161-d |
@@ -2018,7 +2017,6 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1172-a | T1172 | Register the affiliate programmes and set the four partner ids; until then partner links stay plain (owner step) | user | open |  |
 | T1172-b | T1172 | Approve the partner disclosure wording against the I-R5 legal checklist and PRODUCT.md (I-e) | user | open |  |
 | T1172-c | T1172 | Stay links (Booking.com, Airbnb, Hostelworld), Skyscanner and Trainline are undecorated; when joined, add a builder and its ClickOf to partnerOf | next task | open |  |
-| T1172-d | T1172 | Exported PDF partner links carry no mark or disclosure line; add one to the PDF footer | next task | open |  |
 | T1172-e | T1172 | pytest does not collect in the cloud container (pipeline/trails/smoke_test.py, missing deps); run the Python suite where the deps exist | next task | open |  |
 | T1169-a | T1169 | Account trips (trip_plans on Supabase) do not open offline: the worker never stores account answers by rule, so offline reading needs a device mirror of the signed-in traveller's trips in the app, not in the worker | next task | open |  |
 | T1169-b | T1169 | The installed app is untested on a real iPhone and Android phone: install from the hint, offline reopen of a kept trip, update after a deploy (CACHE_VERSION carta-v8); see the owner step in Execution/P15/T1169-pwa.md | user | open |  |
