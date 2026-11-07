@@ -9578,4 +9578,7 @@ export const it = {
   "taste.profile.facet.vibe": "Atmosfera",
   "taste.profile.facet.traveller": "Chi",
   "taste.profile.facet.practical": "Pratico",
+  // T1169 (I7): installable app, offline line. Machine draft, pending native review.
+  "pwa.offline.saved": "Sei offline. I viaggi salvati qui si aprono ancora; i prezzi e il tuo account aspettano la rete.",
+  "pwa.offline.empty": "Sei offline. I viaggi salvati si aprono qui dopo averli aperti una volta con la connessione.",
 };

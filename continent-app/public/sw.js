@@ -24,7 +24,11 @@
 // v7: the boot index and the per-country files replaced app_data.json (T054),
 // and the bump is what evicts the ~13 MB app_data.json cached under v6, which
 // nothing requests any more.
-const CACHE_VERSION = 'carta-v7';
+// v8 (T1169, ROADMAP I7): install precaches the entry files index.html names,
+// the page hands over what it already loaded, and /api/* plus any request that
+// carries a credential are never cached. The bump drops /api answers that the
+// old catch-all had kept.
+const CACHE_VERSION = 'carta-v8';
 
 // The data host the shards move to (CARTA_CLOUD_ARCHITECTURE.md 5.2, T054).
 // Its objects sit under /data/ in the bucket; the prefix is stripped before
@@ -49,12 +53,100 @@ const DATA_ORIGINS = ['https://data.carta-europetravel.com'];
 const LAYER_WIRE =
   /^\/(trips|beaches|lakes|mountains|trails|cycling)\/[^/]+\.json$/;
 const FAMILY_WIRE = /^\/cycling\/family\/[^/]+\.json$/;
-const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/favicon.svg'];
+const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/favicon.svg', '/icon-192.png'];
+
+// Never cached, whatever the rules below say (T1169): the same-origin API
+// (flights, forecast, ask; functions/api) answers per request and per person,
+// and the account lives on the Supabase origin, which the cross-origin pass
+// through below already leaves alone. A request that carries a credential
+// header is never cached on any host.
+const NEVER = /^\/(api|functions|auth)(\/|$)/;
+function carriesCredential(request) {
+  const h = request.headers;
+  return h.has('authorization') || h.has('apikey') || h.has('x-client-info');
+}
+
+// The files index.html names: the entry script, its modulepreloads, the
+// stylesheets, the boot index and the font. The first visit loads them
+// before this worker controls the page, so without this the app was only
+// offline after a second visit. Read from the built page itself, so no build
+// step has to write a list.
+const ENTRY_REF = /(?:src|href)="(\/(?:assets\/[^"]+|fonts\/[^"]+|boot\.json))"/g;
+function entryUrls(html) {
+  const out = new Set();
+  for (const m of String(html).matchAll(ENTRY_REF)) out.add(m[1]);
+  return [...out];
+}
+
+async function precache() {
+  const cache = await caches.open(CACHE_VERSION);
+  await cache.addAll(SHELL);
+  const page = await cache.match('/index.html');
+  if (!page) return;
+  const urls = entryUrls(await page.text());
+  // One by one, so a single missing file (a font left out of a fast build)
+  // cannot fail the install and leave the app with no worker at all.
+  await Promise.all(urls.map((u) => cache.add(u).catch(() => {})));
+}
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_VERSION).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting())
-  );
+  event.waitUntil(precache().then(() => self.skipWaiting()));
+});
+
+// The page posts { type: 'carta:warm', urls } once the worker is ready: the
+// files it fetched before the worker took over (the boot index, the region
+// shards, a saved trip's detail file). Each one, and each lazy chunk below,
+// passes cacheable() first, so the API and the account stay out.
+function cacheable(href, origin) {
+  let url;
+  try { url = new URL(href, origin); } catch { return false; }
+  const sameOrigin = url.origin === origin;
+  if (!sameOrigin && !DATA_ORIGINS.includes(url.origin)) return false;
+  const path = sameOrigin ? url.pathname : url.pathname.replace(/^\/data(?=\/)/, '');
+  if (sameOrigin && NEVER.test(path)) return false;
+  if (path === '/activities_full.json' || path === '/sw.js') return false;
+  return true;
+}
+
+// The lazy screens (My trips, the trip page, the planners) are chunks the
+// entry script imports by name. They are fetched once, in the background
+// after the first visit, so a saved trip opens offline even when its screen
+// was never opened online. About 4.6 MB raw, 1.4 MB on the wire (T1169);
+// the language bundles are not named this way and stay on demand.
+const CHUNK_REF = /["'`]\/?(assets\/[A-Za-z0-9_.-]+\.(?:js|mjs|css))["'`]/g;
+function chunkUrls(js) {
+  const out = new Set();
+  for (const m of String(js).matchAll(CHUNK_REF)) out.add('/' + m[1]);
+  return [...out];
+}
+
+async function lazyChunks(cache) {
+  const page = await cache.match('/index.html');
+  if (!page) return [];
+  const entry = (await page.text()).match(/<script[^>]*type="module"[^>]*src="(\/assets\/[^"]+)"/);
+  if (!entry) return [];
+  const js = await cache.match(entry[1]);
+  return js ? chunkUrls(await js.text()) : [];
+}
+
+async function warm(urls) {
+  const cache = await caches.open(CACHE_VERSION);
+  const all = [...new Set([...urls, ...(await lazyChunks(cache))])]
+    .slice(0, 600)
+    .filter((u) => cacheable(u, self.location.origin));
+  for (const u of all) {
+    if (await cache.match(u)) continue;
+    try {
+      const fresh = await fetch(u, { credentials: 'same-origin' });
+      if (fresh && fresh.ok) await cache.put(u, fresh);
+    } catch { /* offline or gone: the next live request fills it */ }
+  }
+}
+
+self.addEventListener('message', (event) => {
+  const data = event.data || {};
+  if (data.type !== 'carta:warm' || !Array.isArray(data.urls)) return;
+  event.waitUntil(warm(data.urls.slice(0, 400)));
 });
 
 self.addEventListener('activate', (event) => {
@@ -131,12 +223,14 @@ async function staleWhileRevalidate(request) {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
+  if (carriesCredential(request)) return;
 
   const url = new URL(request.url);
   const sameOrigin = url.origin === self.location.origin;
   const dataHost = DATA_ORIGINS.includes(url.origin);
   if (!sameOrigin && !dataHost) return; // let cross-origin (fonts, tiles) pass through
   const path = dataHost ? url.pathname.replace(/^\/data(?=\/)/, '') : url.pathname;
+  if (sameOrigin && NEVER.test(path)) return; // the API: network only, never stored
 
   if (sameOrigin && request.mode === 'navigate') {
     event.respondWith(networkFirst(request).catch(() => caches.match('/index.html')));

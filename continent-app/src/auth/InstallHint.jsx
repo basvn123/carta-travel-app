@@ -13,6 +13,11 @@ import { CloseIcon } from '../components/Icons.jsx';
  * button explains in place because iOS has no prompt to call. Dismissed once,
  * it never returns. Never a modal, never on the first run, never a banner
  * over content: it is an ordinary row under the tabs.
+ *
+ * Offline (T1169, ROADMAP I7), the same row says so instead, on any screen
+ * size: the trips kept here still open, the prices and the account wait for
+ * the network. It is a status line, not dismissable, and goes when the
+ * network is back.
  */
 const DISMISS_KEY = 'carta.installHintDismissed.v1';
 
@@ -56,11 +61,24 @@ if (typeof window !== 'undefined') {
   });
 }
 
+function useOnline() {
+  const [online, setOnline] = useState(() => (typeof navigator === 'undefined' ? true : navigator.onLine !== false));
+  useEffect(() => {
+    const on = () => setOnline(true);
+    const off = () => setOnline(false);
+    window.addEventListener('online', on);
+    window.addEventListener('offline', off);
+    return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
+  }, []);
+  return online;
+}
+
 export function InstallHint({ hasSavedTrip }) {
   const { t } = useI18n();
   const [dismissed, setDismissed] = useState(() => safeGet(DISMISS_KEY) === '1');
   const [deferred, setDeferred] = useState(kept);
   const [showHow, setShowHow] = useState(false);
+  const online = useOnline();
 
   useEffect(() => {
     const onChange = (e) => { setDeferred(e); if (!e) setDismissed(true); };
@@ -68,6 +86,13 @@ export function InstallHint({ hasSavedTrip }) {
     return () => { listeners.delete(onChange); };
   }, []);
 
+  if (!online) {
+    return (
+      <div className="install-hint" role="status" data-testid="pwa-offline">
+        <p className="install-hint-text">{hasSavedTrip ? t('pwa.offline.saved') : t('pwa.offline.empty')}</p>
+      </div>
+    );
+  }
   if (dismissed || !hasSavedTrip || isStandalone() || !isPhoneBrowser()) return null;
   const ios = isIosSafari();
   if (!deferred && !ios) return null;

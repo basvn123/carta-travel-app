@@ -9646,4 +9646,7 @@ export const nl = {
   "taste.profile.facet.vibe": "Sfeer",
   "taste.profile.facet.traveller": "Wie",
   "taste.profile.facet.practical": "Praktisch",
+  // T1169 (I7): installable app, offline line. Machine draft, pending native review.
+  "pwa.offline.saved": "Je bent offline. Bewaarde reizen openen nog; prijzen en je account wachten op het netwerk.",
+  "pwa.offline.empty": "Je bent offline. Bewaarde reizen openen hier zodra je ze eens met verbinding hebt geopend.",
 };

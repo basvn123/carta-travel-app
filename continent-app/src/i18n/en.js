@@ -10316,4 +10316,7 @@ export const en = {
   "taste.profile.facet.vibe": "Vibe",
   "taste.profile.facet.traveller": "Who",
   "taste.profile.facet.practical": "Practical",
+  // T1169 (I7): installable app, offline line.
+  "pwa.offline.saved": "You are offline. Trips kept here still open; prices and your account wait for the network.",
+  "pwa.offline.empty": "You are offline. Saved trips open here once you have opened them with a connection.",
 };
