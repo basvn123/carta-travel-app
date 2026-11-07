@@ -36,6 +36,11 @@ Subcommands:
     pick-dumps --crypt worker-key|plain
                           read `rclone lsjson -R` of archive/db/ on stdin,
                           print the trailslab dump keys newest first
+    rows-check --ref TREE --promoted FILE [--base DIR]
+                          the row rule of a promote run (T1161): no live trails
+                          row may go, and every new row id must be in FILE (the
+                          ids that were approved before the export); exit 1
+                          otherwise
 
 Environment (the orchestrator's secrets file, infra/hetzner/cax11/env.example):
     CARTA_TRAILSLAB_WORKER=1      the switch; anything else skips the task
@@ -44,6 +49,9 @@ Environment (the orchestrator's secrets file, infra/hetzner/cax11/env.example):
     CARTA_BACKUP_KEY              the owner's backup key, public half in the keyring
     HCLOUD_TOKEN, RCLONE_CONFIG_R2_*  as for every spawn.sh run
     CARTA_TRAILSLAB_EVERY_DAYS, CARTA_TRAILSLAB_KEEPALIVE_DAYS  see above
+    CARTA_TRAILSLAB_PROMOTE=1     pass `promote` to the job: approved trips are
+                                  moved to published and may join the wire
+                                  (T1161, ROADMAP H10); blank keeps --no-promote
 
 Standard library only. ASCII clean, no em dashes, per project convention.
 """
@@ -94,6 +102,58 @@ def env_int(name, default):
 def crypt_mode():
     m = (os.environ.get("CARTA_TRAILSLAB_DUMP_CRYPT") or "worker-key").strip()
     return m if m in ("worker-key", "plain") else "worker-key"
+
+
+def promote_mode():
+    return (os.environ.get("CARTA_TRAILSLAB_PROMOTE") or "").strip() == "1"
+
+
+def _difficulty_gate():
+    """pipeline/trails/difficulty_gate.py as a module, for its row readers."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "difficulty_gate", REPO / "pipeline" / "trails" / "difficulty_gate.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def judge_rows(prev_ids, new_ids, approved):
+    """(fails, info) for a promote run: lost rows fail, new rows must be
+    approved ids. prev_ids, new_ids, approved: sets of str."""
+    fails, info = [], []
+    lost, gained = prev_ids - new_ids, new_ids - prev_ids
+    if lost:
+        fails.append(f"{len(lost)} live row(s) gone, e.g. {', '.join(sorted(lost)[:5])}")
+    stray = gained - approved
+    if stray:
+        fails.append(f"{len(stray)} new row(s) that were not approved, e.g. {', '.join(sorted(stray)[:5])}")
+    info.append(f"rows {len(prev_ids)} -> {len(new_ids)}: {len(gained)} promoted onto the wire, "
+                f"{len(approved)} approved before the export")
+    return fails, info
+
+
+def cmd_rows_check(a):
+    dg = _difficulty_gate()
+    new = dg.load_new(a.base)
+    prev = dg.load_prev(a.ref)
+    if not new or prev is None:
+        print(f"[rows-check] cannot read the rows (new under {a.base}: {bool(new)}, prev at {a.ref}: {prev is not None})")
+        return 1
+    try:
+        approved = {ln.strip() for ln in Path(a.promoted).read_text(encoding="utf-8").splitlines() if ln.strip()}
+    except OSError as e:
+        print(f"[rows-check] cannot read {a.promoted}: {e}")
+        return 1
+    prev_ids = {i for r in prev.values() for i in r}
+    new_ids = {i for r in new.values() for i in r}
+    fails, info = judge_rows(prev_ids, new_ids, approved)
+    for line in info:
+        print("  info:", line)
+    for line in fails:
+        print("  FAIL:", line)
+    print(f"[rows-check] {'FAILED: keep the previous wire' if fails else 'passed'}")
+    return 1 if fails else 0
 
 
 def run(argv, dry, capture=False, check=False, **kw):
@@ -349,9 +409,11 @@ def safe_extract(tgz, dest):
         tar.extractall(dest, filter="data")
 
 
-def gate_layer(layer, staging, dry):
+def gate_layer(layer, staging, dry, approved_file=None):
     """gate.py (and for trails the difficulty gate) on the staged files,
-    against this box's working tree as it is now."""
+    against this box's working tree as it is now. approved_file: a promote
+    run's reports/approved_before.txt (T1161); the row set may then grow by
+    those ids only."""
     rel, _subs = LAYERS[layer]
     if dry:
         run([sys.executable, "pipeline/field_stubs/gate.py", "--layer", layer,
@@ -360,7 +422,12 @@ def gate_layer(layer, staging, dry):
     tree = build_tree(REPO, [rel])
     cmds = [[sys.executable, "pipeline/field_stubs/gate.py", "--layer", layer,
              "--base", str(staging), "--ref", tree, "--verbose"]]
-    if layer == "trails":
+    if layer == "trails" and approved_file:
+        cmds.append([sys.executable, "pipeline/trails/difficulty_gate.py",
+                     "--base", str(staging), "--ref", tree, "--allow-row-change"])
+        cmds.append([sys.executable, str(Path(__file__).resolve()), "rows-check",
+                     "--base", str(staging), "--ref", tree, "--promoted", str(approved_file)])
+    elif layer == "trails":
         cmds.append([sys.executable, "pipeline/trails/difficulty_gate.py",
                      "--base", str(staging), "--ref", tree])
     for c in cmds:
@@ -452,6 +519,8 @@ def cmd_run(a):
     if dry:
         spawn.append("--dry-run")
     spawn += ["trailslab", crypt_mode()]
+    if promote_mode():
+        spawn.append("promote")
     if a.countries:
         spawn.append(a.countries)
     env = dict(os.environ)
@@ -499,7 +568,13 @@ def cmd_run(a):
             safe_extract(tgz, staging)
         else:
             say(f"(dry run) would extract {tgz} into {staging}")
-        if not gate_layer(layer, staging, dry):
+        approved_file = None
+        if man.get("promote") == "1" or (dry and promote_mode()):
+            approved_file = local / "out" / "reports" / "approved_before.txt"
+            if not dry and not approved_file.exists():
+                problems.append(f"{layer}: a promote run without reports/approved_before.txt; previous wire kept")
+                continue
+        if not gate_layer(layer, staging, dry, approved_file if layer == "trails" else None):
             problems.append(f"{layer}: gate failed against this box's wire; previous wire kept")
             continue
         if a.no_install:
@@ -563,6 +638,11 @@ def main():
     p = sub.add_parser("pick-dumps")
     p.add_argument("--crypt", choices=("worker-key", "plain"), default="worker-key")
     p.set_defaults(fn=cmd_pick)
+    rc = sub.add_parser("rows-check")
+    rc.add_argument("--ref", required=True, help="git tree-ish holding the previous wire")
+    rc.add_argument("--base", default=str(REPO), help="root to read the NEW files from")
+    rc.add_argument("--promoted", required=True, help="file of approved trip ids, one per line")
+    rc.set_defaults(fn=cmd_rows_check)
     a = ap.parse_args()
     return a.fn(a)
 

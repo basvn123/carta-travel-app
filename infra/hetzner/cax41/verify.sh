@@ -261,6 +261,19 @@ if grep -q 'way_tags.py --refresh --countries CH' "$tj" && grep -q 'transit_stop
 else
   fail "trailslab job commands"; tail -n 5 "$tj" | sed 's/^/      /'
 fi
+# T1161 (H10): with `promote` the approved ids are listed first, the export
+# promotes, and the row rule is rows-check instead of the fixed row set.
+tp="$T/job-trailslab-promote.txt"
+CARTA_JOB_DRY_RUN=1 CARTA_IN="$T/in" CARTA_OUT="$T/out" CARTA_WORK="$T/work" CARTA_REPO="$REPO" \
+  bash "$JOBS/trailslab.sh" worker-key promote CH > "$tp" 2>&1
+rc=$?
+if [ "$rc" -eq 0 ] && grep -q "approved_before.txt" "$tp" && ! grep -q 'export_wire.py --no-promote' "$tp" \
+   && grep -q 'difficulty_gate.py --ref .* --allow-row-change' "$tp" && grep -q 'trailslab_worker.py rows-check' "$tp" \
+   && [ "$(at 'approved_before.txt' "$tp")" -lt "$(at 'export_wire.py' "$tp")" ]; then
+  pass "trailslab promote: approved ids listed before the export, export promotes, rows-check gates the row set"
+else
+  fail "trailslab promote commands (exit $rc)"; tail -n 5 "$tp" | sed 's/^/      /'
+fi
 CARTA_DRY_RUN=1 CARTA_WORKER_ROOT="$T/w" bash "$JOBS/worker.sh" trailslab 20260101t000000z-test > "$T/worker5.txt" 2>&1
 rc=$?
 if [ "$rc" -eq 0 ] && grep -q 'postgresql-client-18' "$T/worker5.txt" && grep -q 'docker.io' "$T/worker5.txt" \

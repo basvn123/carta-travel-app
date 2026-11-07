@@ -1,0 +1,7 @@
+# The stays scrape on a Linux host (T1161, ROADMAP H10): infra/hetzner/cax11/
+# stays_scrape.sh installs this into the venv before a scrape night. Not part
+# of requirements.txt: only the scrape needs a browser, and the browser itself
+# (Chromium, about 400 MB) comes from `python -m playwright install chromium`.
+# The laptop installs playwright unpinned (scripts/stays_scrape.bat); this pin
+# is the box's. httpx is in requirements.txt already.
+playwright==1.63.0

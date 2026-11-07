@@ -5,6 +5,7 @@
 #   spawn.sh trailslab                    worker-key mode, every country with trips
 #   spawn.sh trailslab plain              the dump is read and written unencrypted
 #   spawn.sh trailslab worker-key CH,LI   two countries only (a test run)
+#   spawn.sh trailslab worker-key promote also move approved trips to published
 #
 # Runs on an x86 worker (jobs.tsv server_type cpx42): the laptop's lab, which
 # made the dump, runs the amd64-only pgrouting/pgrouting:17-3.5-3.7 image, and
@@ -43,10 +44,15 @@
 #   8. out/MANIFEST.txt says what is in out/ and what passed; the orchestrator
 #               (infra/hetzner/cax41/trailslab_worker.py) reads only that
 #
-# --no-promote: the worker never moves an approved trip to published. That is
-# the human review step's to take, on the laptop or by hand; here it would
-# change the row set the difficulty gate holds fixed (17,619 rows when T642
-# measured it) and write a publish decision nobody made into the dump.
+# --no-promote by default: the worker never moves an approved trip to
+# published unless the orchestrator passes `promote` (CARTA_TRAILSLAB_PROMOTE=1
+# on the box, T1161, ROADMAP H10). Approved means a curator cleared the trip;
+# promotion is the step that ships it, which until T1161 only the laptop's
+# trails_rate task took. With `promote` the job writes the approved ids to
+# reports/approved_before.txt before the export, runs export_wire.py without
+# --no-promote, and the difficulty gate's fixed row set is replaced by
+# `trailslab_worker.py rows-check`: no live row may go, and every new row must
+# be one of those approved ids. Anything else fails the gate as before.
 #
 # Inputs (worker.sh mirrors archive/inputs/trailslab/support/ into CARTA_IN):
 #   support/nuts3_2021.geojson   the LFS file export_wire.py files rows by
@@ -67,12 +73,13 @@ BUCKET="${CARTA_R2_BUCKET:-carta}"
 PY="$CARTA_PY"
 REPO="$CARTA_REPO"
 
-CRYPT=worker-key; ONLY=""
+CRYPT=worker-key; ONLY=""; PROMOTE=0
 for a in "$@"; do
   case "$a" in
     plain|worker-key) CRYPT="$a" ;;
+    promote) PROMOTE=1 ;;
     *) if [[ "$a" =~ ^[A-Z]{2}(,[A-Z]{2})*$ ]]; then ONLY="$a"
-       else jlog "unknown argument '$a' (plain, worker-key or a CC,CC list)"; exit 2; fi ;;
+       else jlog "unknown argument '$a' (plain, worker-key, promote or a CC,CC list)"; exit 2; fi ;;
   esac
 done
 
@@ -103,7 +110,7 @@ x mkdir -p "$LOGD" "$CARTA_OUT/db" "$CARTA_OUT/wires" "$CARTA_WORK" "$INGEST_DAT
 if [ "$DRY" != "1" ]; then
   printf 'step\tcountry\texit_code\tseconds\tstarted_at\n' > "$STEPS"
   printf 'country\tslug\tsource\textract_date\treplication_timestamp\tbytes\tmd5\tway_tags_rc\ttransit_rc\tseconds\n' > "$EXTRACTS"
-  printf 'run=%s\ncrypt=%s\nimage=%s\narch=%s\n' "${CARTA_RUN_ID:-}" "$CRYPT" "$IMAGE" "$ARCH" > "$MANIFEST"
+  printf 'run=%s\ncrypt=%s\nimage=%s\narch=%s\npromote=%s\n' "${CARTA_RUN_ID:-}" "$CRYPT" "$IMAGE" "$ARCH" "$PROMOTE" > "$MANIFEST"
 fi
 manifest() { [ "$DRY" = "1" ] && { echo "+ MANIFEST $1=$2"; return 0; }; printf '%s=%s\n' "$1" "$2" >> "$MANIFEST"; }
 
@@ -333,7 +340,12 @@ export_layer() {  # layer, then the export command
   step "export_$layer" "" "$@" || { manifest "$layer" export-failed; return 0; }
   local ok=1
   step "gate_$layer" "" "$PY" pipeline/field_stubs/gate.py --layer "$layer" --ref "$PREV_TREE" --verbose || ok=0
-  if [ "$layer" = "trails" ]; then
+  if [ "$layer" = "trails" ] && [ "$PROMOTE" = "1" ]; then
+    # T1161: the grade rule still binds; the row set may grow by approved ids only.
+    step difficulty_gate "" "$PY" pipeline/trails/difficulty_gate.py --ref "$PREV_TREE" --allow-row-change || ok=0
+    step rows_check "" "$PY" infra/hetzner/cax41/trailslab_worker.py rows-check --ref "$PREV_TREE" \
+      --promoted "$REPORTS/approved_before.txt" || ok=0
+  elif [ "$layer" = "trails" ]; then
     step difficulty_gate "" "$PY" pipeline/trails/difficulty_gate.py --ref "$PREV_TREE" || ok=0
   fi
   if [ "$ok" -eq 1 ]; then
@@ -344,7 +356,26 @@ export_layer() {  # layer, then the export command
     manifest "$layer" gate-failed
   fi
 }
-export_layer trails "$PY" pipeline/trails/export_wire.py --no-promote --countries "$CCS"
+if [ "$PROMOTE" = "1" ]; then
+  # The ids a curator approved, before the export moves any of them.
+  if [ "$DRY" = "1" ]; then
+    echo "+ psql: select id from trips where status = 'approved' > reports/approved_before.txt"
+  else
+    psql "${PGC[@]}" -tAc "select id from trips where status = 'approved' order by id" > "$REPORTS/approved_before.txt" \
+      || { jlog "could not list the approved trips; exporting with --no-promote"; PROMOTE=0; }
+  fi
+fi
+if [ "$PROMOTE" = "1" ]; then
+  PROM_T0="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  export_layer trails "$PY" pipeline/trails/export_wire.py --countries "$CCS"
+  if [ "$DRY" != "1" ]; then
+    n_prom="$(psql "${PGC[@]}" -tAc "select count(*) from trip_reviews where action = 'publish' and reviewer = 'pipeline:trails_export' and created_at >= '$PROM_T0'" 2>/dev/null || echo '?')"
+    jlog "promotion: $(wc -l < "$REPORTS/approved_before.txt") approved before the export, $n_prom moved to published"
+    manifest promoted "$n_prom"
+  fi
+else
+  export_layer trails "$PY" pipeline/trails/export_wire.py --no-promote --countries "$CCS"
+fi
 export_layer cycling "$PY" pipeline/cycling/export_cycling.py
 
 # --- 7. the dump back -------------------------------------------------------------------------
