@@ -2127,3 +2127,7 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1194-c | T1194 | Eurostat tour_occ_nim export missing; crowds layer has no real run | user | open |  |
 | T1194-d | T1194 | The 30 largest gaps per layer need a verdict (gap_reviews.json) and fixes at the cause | next task | open |  |
 | T1194-e | T1194 | Wire lacks climate.elev; rebuild so the elevation guard works | user | open |  |
+| T1174-a | T1174 | The cheapest-week type needs a fares file from the flight sweep export (`content/blog/data/inputs/fares-<airport>-<window>.json`, format in content/blog/README.md); no exporter exists yet, so the type is tested on fixtures only | next task | open |  |
+| T1174-b | T1174 | The monthly `blog_pr` routine is a dry run until the owner sets `CARTA_BLOG_PR=1` on the box and the box has a git push credential for `blog-drafts-*` branches; see the owner steps in the report | user | open |  |
+| T1174-c | T1174 | What changed and New on Carta have no real draft: only one snapshot (wire 2026-06-07) exists, committed in this task; the first real posts come from the next monthly run on a newer wire | next task | open |  |
+| T1174-d | T1174 | Seasonal rankings, how we measure and the Dutch blog (I8) from the K14 list are still not built (T1178-c stays open for them) | next task | open |  |
