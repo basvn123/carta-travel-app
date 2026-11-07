@@ -40,6 +40,10 @@ jobs:
         run: npm run lint
       - name: Unit tests
         run: npm test
+      # T1158-b (T1211): the k6 scripts sit outside the app's test glob; this
+      # smoke test checks they load and hold their p95 budgets.
+      - name: Load script smoke test
+        run: node --test ../tests/load/smoke.test.mjs
       - name: Fast build (publicDir off, see scripts/vite.fast.mjs)
         env:
           FAST_OUT: ../.fastbuild
