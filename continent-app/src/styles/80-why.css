@@ -2,7 +2,8 @@
    rides with the cards and the place page. Scoped under .why.
    Chips are lagoon, the "fits" colour of the palette (carta-design 4): text
    --lagoon-700 on a lagoon-50 ground (6.4:1). A "likely" chip says so in
-   words, and wears a dashed edge as a second cue, never colour alone. */
+   words; on a card its pill also wears a dashed edge. Colour never carries
+   the confidence alone. */
 
 .why.why-chips {
   display: flex; flex-wrap: wrap; gap: var(--space-1);
@@ -12,7 +13,7 @@
   display: inline-flex; align-items: center;
   max-width: 100%;
   padding: 2px var(--space-2);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--lagoon-50);
   color: var(--lagoon-700);
   border: 1px solid color-mix(in srgb, var(--lagoon-600) 28%, transparent);
@@ -46,7 +47,6 @@
   border-left: 3px solid var(--lagoon-600);
   min-width: 0;
 }
-.why .why-row.is-likely { border-left-style: dashed; }
 .why .why-row-top { display: flex; align-items: baseline; gap: var(--space-2); justify-content: space-between; }
 .why .why-row-name { font-weight: 700; color: var(--text); font-size: var(--text-body); }
 .why .why-conf { font-size: var(--text-caption); color: var(--lagoon-700); font-weight: 600; white-space: nowrap; }

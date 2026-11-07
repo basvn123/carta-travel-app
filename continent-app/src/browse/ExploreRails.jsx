@@ -12,6 +12,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { DayPrice, SaveButton } from './ExploreCards.jsx';
 import { PriceNotes } from '../components/PriceNotes.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
+import { WhyChips } from './WhyChips.jsx';
 import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 
 /**
@@ -136,10 +137,14 @@ function PlaceStoryCard({ p, railKey, month, monthShort, onSelect, fav, onToggle
         openShared(e.currentTarget.closest('.card'), p.id, () => onSelect(p.id));
       }}
       meta={(
-        <span className="xstory-meta">
-          <CountryFlag country={p.iso2} size={12} />
-          <span>{countryName(p.iso2, p.country)}</span>
-        </span>
+        <>
+          <span className="xstory-meta">
+            <CountryFlag country={p.iso2} size={12} />
+            <span>{countryName(p.iso2, p.country)}</span>
+          </span>
+          {/* T1208 (G9): why it fits this traveller, only with evidence on both sides. */}
+          <WhyChips place={p} className="xstory-why" />
+        </>
       )}
       price={<><DayPrice cost={p.cost} t={t} /><PriceNotes row={p.cost} className="xprice-notes" /><FriendCardLine destId={p.id} /></>}
     />

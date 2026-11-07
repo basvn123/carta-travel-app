@@ -1,7 +1,6 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useTasteVerdicts } from '../lib/taste/store.js';
-import { travellerNodes, whyChips, knownFor, whyLabel } from '../lib/why.js';
 import { asOfFor, formatDay, isStale } from '../lib/asOf.js';
 import { useTaste } from './WhyItMatches.jsx';
 import { PSection } from './PageTemplate.jsx';
@@ -21,27 +20,50 @@ import '../styles/80-why.css';
  *                                    day price, from the blocks' `_asof`
  *
  * The rules (what counts as evidence, the two confidence words, the dates)
- * live in lib/why.js and lib/asOf.js. Chips are text inside the card's link,
+ * live in lib/why.js and lib/asOf.js. lib/why.js carries the taxonomy map
+ * (about 10 KB gzip), so it loads on demand: a card asks for it only when
+ * the traveller has a Yes or a picked like, the place page always. Chips are text inside the card's link,
  * never a second control in it. Scoped CSS: styles/80-why.css (.why).
  */
 
+// lib/why.js, loaded once on demand and shared by every chip.
+let whyMod = null;
+let whyLoad = null;
+function useWhyModule(wanted) {
+  const [mod, setMod] = React.useState(whyMod);
+  React.useEffect(() => {
+    if (!wanted || whyMod) return undefined;
+    let live = true;
+    whyLoad = whyLoad || import('../lib/why.js');
+    whyLoad.then((m) => { whyMod = m; if (live) setMod(m); }, () => { whyLoad = null; });
+    return () => { live = false; };
+  }, [wanted]);
+  return mod || whyMod;
+}
+
 /** The traveller's side, live: Yes and Not me in "Your taste" plus the picked likes. */
-function useTraveller() {
+function useTraveller(always = false) {
   const { verdicts } = useTasteVerdicts();
   const taste = useTaste();
   const likes = taste?.likes;
-  return React.useMemo(() => travellerNodes({ verdicts, likes }), [verdicts, likes]);
+  const hasYes = (likes?.length || 0) > 0 || Object.values(verdicts || {}).some((x) => x?.v === 'accept');
+  const why = useWhyModule(always || hasYes);
+  const traveller = React.useMemo(
+    () => (why ? why.travellerNodes({ verdicts, likes }) : null),
+    [why, verdicts, likes],
+  );
+  return { why, traveller };
 }
 
 /** The chip's words: the node, with "(likely)" under the strong bar. */
-function chipText(c, t, lang) {
-  const label = whyLabel(c.node, lang);
+function chipText(why, c, t, lang) {
+  const label = why.whyLabel(c.node, lang);
   return c.conf === 'likely' ? t('why.place.chipLikely', { label }) : label;
 }
 
 /** The traveller's evidence in words. */
-function youText(you, t, lang) {
-  if (you.kind === 'accepted') return t('why.place.youYes', { node: whyLabel(you.node, lang) });
+function youText(why, you, t, lang) {
+  if (you.kind === 'accepted') return t('why.place.youYes', { node: why.whyLabel(you.node, lang) });
   return t('why.place.youLike', { like: t(`pf.like.${you.like}`) });
 }
 
@@ -55,10 +77,10 @@ function placeText(tag, t, lang) {
 /** Up to two chips on a card; nothing without evidence. */
 export function WhyChips({ place, className = '' }) {
   const { t, lang } = useI18n();
-  const traveller = useTraveller();
-  const chips = React.useMemo(() => whyChips(place, traveller), [place, traveller]);
+  const { why, traveller } = useTraveller();
+  const chips = React.useMemo(() => (why && traveller ? why.whyChips(place, traveller) : []), [why, place, traveller]);
   if (!chips.length) return null;
-  const words = chips.map((c) => chipText(c, t, lang));
+  const words = chips.map((c) => chipText(why, c, t, lang));
   return (
     <span className={`why why-chips ${className}`.trim()} data-why={chips.map((c) => c.node).join(' ')}>
       <span className="sr-only">{t('why.place.cardAria', { list: words.join(', ') })}</span>
@@ -69,14 +91,14 @@ export function WhyChips({ place, className = '' }) {
   );
 }
 
-function WhyRow({ tag, you, t, lang }) {
+function WhyRow({ why, tag, you, t, lang }) {
   return (
     <li className={`why-row is-${tag.conf}`} data-node={tag.node}>
       <span className="why-row-top">
-        <span className="why-row-name">{whyLabel(tag.node, lang)}</span>
+        <span className="why-row-name">{why.whyLabel(tag.node, lang)}</span>
         <span className="why-conf">{t(`why.place.conf.${tag.conf}`)}</span>
       </span>
-      {you && <span className="why-row-ev why-you">{youText(you, t, lang)}</span>}
+      {you && <span className="why-row-ev why-you">{youText(why, you, t, lang)}</span>}
       <span className="why-row-ev">{placeText(tag, t, lang)}</span>
     </li>
   );
@@ -85,11 +107,14 @@ function WhyRow({ tag, you, t, lang }) {
 /** The place page's section: the reasons for this traveller, then what it is known for. */
 export function WhyPlace({ destination, tagged = null }) {
   const { t, lang } = useI18n();
-  const traveller = useTraveller();
-  const chips = React.useMemo(() => whyChips(destination, traveller, { tagged, max: 4 }), [destination, traveller, tagged]);
+  const { why, traveller } = useTraveller(true);
+  const chips = React.useMemo(
+    () => (why && traveller ? why.whyChips(destination, traveller, { tagged, max: 4 }) : []),
+    [why, destination, traveller, tagged],
+  );
   const known = React.useMemo(
-    () => knownFor(destination, { tagged, skip: chips.map((c) => c.node), no: traveller.no }),
-    [destination, tagged, chips, traveller],
+    () => (why ? why.knownFor(destination, { tagged, skip: chips.map((c) => c.node), no: traveller?.no }) : []),
+    [why, destination, tagged, chips, traveller],
   );
   if (!chips.length && !known.length) return null;
   return (
@@ -98,7 +123,7 @@ export function WhyPlace({ destination, tagged = null }) {
         <div className="why-group">
           <h3 className="why-sub">{t('why.place.forYou')}</h3>
           <ul className="why-list">
-            {chips.map((c) => <WhyRow key={c.node} tag={c} you={c.you} t={t} lang={lang} />)}
+            {chips.map((c) => <WhyRow key={c.node} why={why} tag={c} you={c.you} t={t} lang={lang} />)}
           </ul>
         </div>
       )}
@@ -106,7 +131,7 @@ export function WhyPlace({ destination, tagged = null }) {
         <div className="why-group">
           <h3 className="why-sub">{t('why.place.known')}</h3>
           <ul className="why-list">
-            {known.map((c) => <WhyRow key={c.node} tag={c} t={t} lang={lang} />)}
+            {known.map((c) => <WhyRow key={c.node} why={why} tag={c} t={t} lang={lang} />)}
           </ul>
         </div>
       )}
