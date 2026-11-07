@@ -40,20 +40,53 @@ export function tickTaste(event, { node, facet, bucket }) {
   return true;
 }
 
-/** Shape admin_taste_weekly for display: per week, accepted, rejected, shown and the two rates. Pure. */
+/**
+ * A rate is only shown on enough counts (T1215, T1152-d): the acceptance on
+ * at least MIN_DECISIONS decisions (accept + reject), the decision rate on
+ * at least MIN_DECISIONS chips shown. Under that the cell keeps its counts
+ * and says "too few" (rate null): three yeses of four is not 75 percent of
+ * anything yet.
+ */
+export const MIN_DECISIONS = 10;
+export const TASTE_BUCKETS = [1, 2, 3];
+
+/** One cell from counter rows: the counts and the two rates, each null under the bar. Pure. */
+export function tasteCell(rows = []) {
+  const sum = (ev) => rows.filter((r) => r.event === ev).reduce((a, r) => a + (Number(r.n) || 0), 0);
+  const accept = sum('accept');
+  const reject = sum('reject');
+  const shown = sum('shown');
+  const decisions = accept + reject;
+  return {
+    accept, reject, shown, decisions,
+    acceptance: decisions >= MIN_DECISIONS ? accept / decisions : null,
+    decision: shown >= MIN_DECISIONS ? decisions / shown : null,
+  };
+}
+
+/** Shape admin_taste_weekly for display: per week, newest first, the counts and the two rates. Pure. */
 export function tasteWeeksView(report) {
   if (!report || report.error || !Array.isArray(report.weeks)) return null;
-  return report.weeks.map((w) => {
-    const sum = (ev) => (w.rows || []).filter((r) => r.event === ev).reduce((a, r) => a + (Number(r.n) || 0), 0);
-    const accept = sum('accept');
-    const reject = sum('reject');
-    const shown = sum('shown');
-    return {
-      week: w.week, accept, reject, shown,
-      acceptance: accept + reject > 0 ? accept / (accept + reject) : null,
-      decision: shown > 0 ? (accept + reject) / shown : null,
-    };
-  }).sort((a, b) => (a.week < b.week ? 1 : -1));
+  return report.weeks.map((w) => ({ week: w.week, ...tasteCell(w.rows || []) }))
+    .sort((a, b) => (a.week < b.week ? 1 : -1));
+}
+
+/**
+ * The admin card's whole window (T1215, T1152-d): the total, then split by
+ * position bucket (1: places 1 to 3, 2: 4 to 6, 3: 7 on) and by facet, and
+ * the weeks (tasteWeeksView). null when the report is missing or refused.
+ */
+export function tasteWindowView(report) {
+  const weeks = tasteWeeksView(report);
+  if (!weeks) return null;
+  const rows = report.weeks.flatMap((w) => w.rows || []);
+  return {
+    since: report.since || null,
+    total: tasteCell(rows),
+    byBucket: TASTE_BUCKETS.map((bucket) => ({ bucket, ...tasteCell(rows.filter((r) => Number(r.pos) === bucket)) })),
+    byFacet: TASTE_FACETS.map((facet) => ({ facet, ...tasteCell(rows.filter((r) => r.facet === facet)) })),
+    weeks,
+  };
 }
 
 /** Test seams. */

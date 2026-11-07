@@ -185,8 +185,9 @@ test('the counter sends event, facet and bucket only; shown once per chip per lo
   assert.deepEqual(sent, [{ p_event: 'shown', p_facet: 'setting', p_pos: 1 }, { p_event: 'accept', p_facet: 'setting', p_pos: 1 }]);
   assert.deepEqual([P.positionBucket(0), P.positionBucket(4), P.positionBucket(9)], [1, 2, 3]);
   const view = C.tasteWeeksView({ weeks: [{ week: '2026-11-02', rows: [
-    { event: 'shown', facet: 'setting', pos: 1, n: 10 }, { event: 'accept', facet: 'setting', pos: 1, n: 3 }, { event: 'reject', facet: 'vibe', pos: 2, n: 1 }] }] });
-  assert.deepEqual(view[0], { week: '2026-11-02', accept: 3, reject: 1, shown: 10, acceptance: 0.75, decision: 0.4 });
+    { event: 'shown', facet: 'setting', pos: 1, n: 40 }, { event: 'accept', facet: 'setting', pos: 1, n: 9 }, { event: 'reject', facet: 'vibe', pos: 2, n: 3 }] }] });
+  // T1215 (T1152-d): the decisions are counted beside the rates; tests/tasteAdmin.test.mjs has the bar.
+  assert.deepEqual(view[0], { week: '2026-11-02', accept: 9, reject: 3, shown: 40, decisions: 12, acceptance: 0.75, decision: 0.3 });
   C.resetTasteCountsForTests();
 });
 
