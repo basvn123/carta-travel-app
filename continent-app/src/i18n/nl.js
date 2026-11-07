@@ -11,7 +11,7 @@ export const nl = {
   "alerts.saved": "Alert bewaard. We mailen je één keer wanneer het totaal daalt met {pct}.",
   "alerts.confirmSent": "Kijk in je inbox: tik op de link in onze e-mail om prijsalerts aan te zetten.",
   "alerts.confirmPending": "Alert bewaard. Tik op de link in onze eerdere e-mail om prijsalerts aan te zetten.",
-  "alerts.active": "Prijsalert aan: we mailen je één keer wanneer het totaal daalt met {pct}.",
+  "alerts.active": "Bewaard: we mailen je één keer wanneer het totaal daalt met {pct}.",
   "alerts.remove": "Alert verwijderen",
   "alerts.removed": "Alert verwijderd.",
   "alerts.error": "Dat lukte niet. Probeer het later opnieuw.",

@@ -11,7 +11,7 @@ export const it = {
   "alerts.saved": "Avviso salvato. Ti scriviamo una volta quando il totale scende del {pct}.",
   "alerts.confirmSent": "Controlla la posta: tocca il link nella nostra email per attivare gli avvisi di prezzo.",
   "alerts.confirmPending": "Avviso salvato. Tocca il link nella nostra email precedente per attivare gli avvisi di prezzo.",
-  "alerts.active": "Avviso di prezzo attivo: ti scriviamo una volta quando il totale scende del {pct}.",
+  "alerts.active": "Salvato: ti scriviamo una volta quando il totale scende del {pct}.",
   "alerts.remove": "Rimuovi avviso",
   "alerts.removed": "Avviso rimosso.",
   "alerts.error": "Non ha funzionato. Riprova più tardi.",

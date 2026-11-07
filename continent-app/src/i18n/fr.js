@@ -11,7 +11,7 @@ export const fr = {
   "alerts.saved": "Alerte enregistrée. Nous vous écrivons une fois quand le total baisse de {pct}.",
   "alerts.confirmSent": "Consultez votre boîte : touchez le lien de notre e-mail pour activer les alertes de prix.",
   "alerts.confirmPending": "Alerte enregistrée. Touchez le lien de notre e-mail précédent pour activer les alertes de prix.",
-  "alerts.active": "Alerte de prix active : nous vous écrivons une fois quand le total baisse de {pct}.",
+  "alerts.active": "Enregistrée : nous vous écrivons une fois quand le total baisse de {pct}.",
   "alerts.remove": "Supprimer l'alerte",
   "alerts.removed": "Alerte supprimée.",
   "alerts.error": "Cela n'a pas fonctionné. Réessayez plus tard.",

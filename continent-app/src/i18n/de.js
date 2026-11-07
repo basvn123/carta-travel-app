@@ -11,7 +11,7 @@ export const de = {
   "alerts.saved": "Alarm gespeichert. Wir schreiben dir einmal, wenn die Summe um {pct} fällt.",
   "alerts.confirmSent": "Schau in dein Postfach: Tippe auf den Link in unserer E-Mail, um Preisalarme einzuschalten.",
   "alerts.confirmPending": "Alarm gespeichert. Tippe auf den Link in unserer früheren E-Mail, um Preisalarme einzuschalten.",
-  "alerts.active": "Preisalarm an: Wir schreiben dir einmal, wenn die Summe um {pct} fällt.",
+  "alerts.active": "Gespeichert: Wir schreiben dir einmal, wenn die Summe um {pct} fällt.",
   "alerts.remove": "Alarm entfernen",
   "alerts.removed": "Alarm entfernt.",
   "alerts.error": "Das hat nicht geklappt. Versuch es später noch einmal.",

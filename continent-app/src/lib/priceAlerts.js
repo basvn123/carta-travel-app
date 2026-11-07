@@ -15,7 +15,8 @@
  * to mail the one confirmation link. No alert email goes out before the click.
  *
  * Behind a flag: the control shows only when the build sets
- * VITE_PRICE_ALERTS=1 (or the ?pricealerts seam in a test), and the function
+ * VITE_PRICE_ALERTS=1 (or the ?pricealerts seam in a dev or seams build;
+ * ?pricealerts=mock keeps alerts in memory), and the function
  * sends nothing until PRICE_ALERTS_ENABLED=1 on the server.
  *
  * Every call answers and never throws:
@@ -34,10 +35,20 @@ const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const IATA = /^[A-Z]{3}$/;
 const ID = /^[A-Za-z0-9_-]{1,40}$/;
 
+// The headless seams (lib/e2eSeams.js, read inline so the node tests load
+// this file): ?pricealerts shows the control in a dev or seams build, and
+// ?pricealerts=mock also keeps the alerts in memory for a signed-out page.
+const SEAMS = (() => {
+  try { return !!(import.meta.env?.DEV || import.meta.env?.VITE_E2E_SEAMS === '1'); } catch { return false; }
+})();
+const SEAM = SEAMS && typeof location !== 'undefined' ? new URLSearchParams(location.search).get('pricealerts') : null;
+export const ALERTS_MOCK = SEAM === 'mock';
+const mockStore = [];
+let mockConfirmed = false;
+
 export function alertsOn() {
   try {
-    if (import.meta.env?.VITE_PRICE_ALERTS === '1') return true;
-    return typeof location !== 'undefined' && new URLSearchParams(location.search).has('pricealerts');
+    return import.meta.env?.VITE_PRICE_ALERTS === '1' || SEAM !== null;
   } catch {
     return false;
   }
@@ -81,6 +92,7 @@ async function client(opts) {
 
 /** The account's alerts, newest first. */
 export async function listAlerts(userId, opts = {}) {
+  if (ALERTS_MOCK && !opts.supabase) return { state: 'ok', alerts: mockStore.slice() };
   if (!userId) return { state: 'error' };
   const supabase = await client(opts);
   if (!supabase) return { state: 'error' };
@@ -103,6 +115,14 @@ export async function listAlerts(userId, opts = {}) {
  */
 export async function saveAlert({ kind = 'place', ref, label, spec, share = DEFAULT_SHARE, lang = 'en' }, opts = {}) {
   if (!spec || !ref || !label || !SHARES.includes(share)) return { state: 'error' };
+  if (ALERTS_MOCK && !opts.supabase) {
+    const i = mockStore.findIndex((a) => a.kind === kind && a.ref === ref);
+    if (i >= 0) mockStore.splice(i, 1);
+    mockStore.unshift({ id: `mock-${ref}`, kind, ref, label, drop_share: share, fired_at: null });
+    const confirmed = mockConfirmed;
+    mockConfirmed = true;
+    return { state: 'ok', id: `mock-${ref}`, confirmed, mailed: !confirmed };
+  }
   const supabase = await client(opts);
   if (!supabase) return { state: 'error' };
   try {
@@ -125,6 +145,11 @@ export async function saveAlert({ kind = 'place', ref, label, spec, share = DEFA
 
 export async function deleteAlert(id, opts = {}) {
   if (!id) return { state: 'error' };
+  if (ALERTS_MOCK && !opts.supabase) {
+    const i = mockStore.findIndex((a) => a.id === id);
+    if (i >= 0) mockStore.splice(i, 1);
+    return { state: 'ok' };
+  }
   const supabase = await client(opts);
   if (!supabase) return { state: 'error' };
   try {

@@ -3,7 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { Button, Segmented } from './ui/index.js';
 import {
-  alertsOn, listAlerts, saveAlert, deleteAlert, SHARES, DEFAULT_SHARE,
+  alertsOn, listAlerts, saveAlert, deleteAlert, SHARES, DEFAULT_SHARE, ALERTS_MOCK,
 } from '../lib/priceAlerts.js';
 import '../styles/97-price-alert.css';
 
@@ -26,7 +26,8 @@ import '../styles/97-price-alert.css';
 export function PriceAlertControl({ refId, label, spec, kind = 'place' }) {
   const { t, lang } = useI18n();
   const { user } = useAuth();
-  const on = alertsOn() && !!user?.id && !!spec;
+  const userId = user?.id || (ALERTS_MOCK ? 'mock' : null);
+  const on = alertsOn() && !!userId && !!spec;
   const uid = React.useId();
   const [state, setState] = React.useState('idle'); // idle | open | busy | missing
   const [existing, setExisting] = React.useState(null);
@@ -37,7 +38,7 @@ export function PriceAlertControl({ refId, label, spec, kind = 'place' }) {
   React.useEffect(() => {
     if (!on) return undefined;
     let live = true;
-    listAlerts(user.id).then((res) => {
+    listAlerts(userId).then((res) => {
       if (!live) return;
       if (res.state === 'missing') { setState('missing'); return; }
       if (res.state === 'ok') {
@@ -45,7 +46,7 @@ export function PriceAlertControl({ refId, label, spec, kind = 'place' }) {
       }
     });
     return () => { live = false; };
-  }, [on, user?.id, kind, refId]);
+  }, [on, userId, kind, refId]);
 
   if (!on || state === 'missing') return null;
 

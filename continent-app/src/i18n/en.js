@@ -15,7 +15,7 @@ export const en = {
   "alerts.saved": "Alert saved. We email you once when the total falls by {pct}.",
   "alerts.confirmSent": "Check your inbox: tap the link in our email to turn price alerts on.",
   "alerts.confirmPending": "Alert saved. Tap the link in our earlier email to turn price alerts on.",
-  "alerts.active": "Price alert on: we email you once when the total falls by {pct}.",
+  "alerts.active": "Saved: we email you once when the total falls by {pct}.",
   "alerts.remove": "Remove alert",
   "alerts.removed": "Alert removed.",
   "alerts.error": "That did not work. Try again later.",

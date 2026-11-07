@@ -11,7 +11,7 @@ export const es = {
   "alerts.saved": "Alerta guardada. Te escribimos una vez cuando el total baje un {pct}.",
   "alerts.confirmSent": "Revisa tu bandeja: toca el enlace de nuestro correo para activar las alertas de precio.",
   "alerts.confirmPending": "Alerta guardada. Toca el enlace de nuestro correo anterior para activar las alertas de precio.",
-  "alerts.active": "Alerta de precio activa: te escribimos una vez cuando el total baje un {pct}.",
+  "alerts.active": "Guardada: te escribimos una vez cuando el total baje un {pct}.",
   "alerts.remove": "Quitar alerta",
   "alerts.removed": "Alerta quitada.",
   "alerts.error": "No ha funcionado. Inténtalo más tarde.",
