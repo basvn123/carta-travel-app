@@ -81,11 +81,25 @@ function baseInput(extra = {}) {
   });
   return {
     data, countryInsights: pub("country_insights.json").countries, layerIndexes: {}, settings,
-    origin: { iata: "BRU", lat: 50.85, lon: 4.35, name: "Brussels" }, flights, today: "2026-10-28", ...extra,
+    origin: { iata: "BRU", lat: 50.85, lon: 4.35, name: "Brussels" }, flights, today: TODAY, ...extra,
   };
 }
 
-test("on the catalogue: the food lever prices what a fresh build at that Lifestyle prices", { skip: !hasData }, () => {
+// T1220: the fixture's fares were swept on TODAY, but pickLeg's age check
+// (flights.js maxAgeMs) reads the real clock, not input.today. Ten days later
+// every fare counted as stale, the flight lever had nothing to move, and this
+// file failed on the calendar alone (first on 2026-11-07). The catalogue tests
+// run with the clock held at the day the fixture claims.
+const TODAY = "2026-10-28";
+function atFixtureDay(fn) {
+  return () => {
+    const realNow = Date.now;
+    Date.now = () => Date.parse(`${TODAY}T12:00:00Z`);
+    try { return fn(); } finally { Date.now = realNow; }
+  };
+}
+
+test("on the catalogue: the food lever prices what a fresh build at that Lifestyle prices", { skip: !hasData }, atFixtureDay(() => {
   const input = baseInput();
   for (const [lever, preset] of Object.entries(LEVERS.food.values)) {
     const levered = findTrips(input, { levers: { food: lever } });
@@ -101,9 +115,9 @@ test("on the catalogue: the food lever prices what a fresh build at that Lifesty
     }
     assert.ok(n >= 10, `${lever}: compared ${n} trips`);
   }
-});
+}));
 
-test("on the catalogue: the flight lever re-orders under rule (a) and changes no price", { skip: !hasData }, () => {
+test("on the catalogue: the flight lever re-orders under rule (a) and changes no price", { skip: !hasData }, atFixtureDay(() => {
   const input = baseInput();
   const plain = findTrips(input);
   const byId = new Map(plain.map((t) => [t.id, t.total.perPerson]));
@@ -114,13 +128,13 @@ test("on the catalogue: the flight lever re-orders under rule (a) and changes no
     orders.add(got.map((t) => t.id).join());
   }
   assert.ok(orders.size >= 3, `the flight lever moves the order (${orders.size} distinct orders)`);
-});
+}));
 
-test("on the catalogue: the same answers and levers give the same order", { skip: !hasData }, () => {
+test("on the catalogue: the same answers and levers give the same order", { skip: !hasData }, atFixtureDay(() => {
   const levers = { flight: "times", food: "cook", bases: "several" };
   const a = findTrips(baseInput(), { levers }).map((t) => t.id);
   const b = findTrips(baseInput(), { levers: { ...levers } }).map((t) => t.id);
   assert.deepEqual(a, b);
   assert.ok(a.length > 0);
   assert.equal(RECOMMEND.budget.sinkPer100 * 5, FLIGHT_PULL);
-});
+}));
