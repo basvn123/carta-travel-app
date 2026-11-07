@@ -148,19 +148,6 @@
 }
 /* A chip in the sheet carries the same count its twin in the toolbar does,
    so the two rows say the same thing about the same filter. */
-/* The country filter, as a button + anchored panel (CountryPicker) rather
-   than a native <select>: a native select hands its open list to the OS to
-   place, which is why it used to land flush against the viewport edge
-   instead of under the pill. .country-picker is just the positioning root;
-   .places-country still carries the pill's own look so every existing size
-   rule (side panel, mobile stack, toolbar) keeps applying unchanged. */
-.country-picker { position: relative; display: inline-flex; min-width: 0; }
-.country-picker-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.country-picker .origin-btn-caret { font-size: var(--text-micro); }
 /* Left-anchored, unlike origin's right-anchored pop: the country pill sits
    left of the toolbar, not at its right edge. Desktop/tablet only - the
    phone breakpoint below pins .origin-pop (which this also is) to the
@@ -264,7 +251,6 @@
   .places-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .places-list > .places-empty,
-.places-list > .places-credit,
 .places-list > .places-sentinel { grid-column: 1 / -1; }
 
 /* ── Photo cards: every list entry is an image with its facts laid over a
@@ -465,12 +451,9 @@
   .places-nearclear:hover { text-decoration: underline; }
 }
 
-.places-credit { margin: 14px 0 0; font-size: var(--text-micro); color: var(--ink-mute); }
-
 @media (max-width: 768px) {
   .places-wrap { padding: 8px 16px calc(32px + env(safe-area-inset-bottom, 0px)); }
   .places-search { flex: 1 1 100%; max-width: none; }
-  .country-picker { flex: 1 1 130px; max-width: none; }
 }
 @media (max-width: 480px) {
   /* Stacked: every control takes the full width, the origin pill included, so
@@ -480,11 +463,6 @@
      basis is a height, so the search wrapper inherited its 240px basis as a
      240px tall box with the input floating in the middle of it. */
   .places-search { flex: none; width: 100%; min-width: 0; }
-  /* min-width: 0 is what lets the two share a row. A <select>'s automatic
-     minimum size is the width of its longest option ("Bosnia and
-     Herzegovina"), so below about 390px it stopped fitting beside Filters and
-     took a band of its own. */
-  .country-picker { max-width: none; flex: 1 1 130px; min-width: 0; }
   /* The departure and the stay tier share one row rather than taking a
      full-width band each: they are both statements about what the prices
      below assume, and stacking them cost the card 46px on the width where
@@ -549,41 +527,6 @@
   color: var(--ink-soft);
 }
 .notfor-line + .notfor-line { margin-top: 6px; }
-
-/* ── What is there. A run of facts is a list with hairlines, not cards. ── */
-.bpage-fact {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  padding: 9px 0;
-  border-top: 1px solid var(--rule-soft);
-}
-.bpage-fact dt {
-  flex: none;
-  width: 132px;
-  font-size: 12.5px;
-  color: var(--ink-mute);
-}
-.bpage-fact dd {
-  flex: 1;
-  min-width: 0;
-  margin: 0;
-  font-size: 13.5px;
-  color: var(--ink);
-}
-.bpage-fact dd.mono {
-  font-family: var(--mono);
-  font-variant-numeric: tabular-nums;
-}
-.bpage-fact.bpage-fact-empty dd {
-  color: var(--ink-mute);
-}
-.bpage-fact dd small {
-  display: block;
-  margin-top: 2px;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
 
 /* The data sheet (T175): the first three rows are what this trip type leads
    with, so they carry weight; the strip row needs the full width. */
@@ -673,38 +616,6 @@
 @media (max-width: 420px) {
   .mstrip-cell { height: 26px; font-size: var(--text-micro); }
 }
-
-/* ── Difficulty as five segments, and the gateway as airport rows. Carta-design
-      has no rule for a meter; these are small, flat and use the existing ink
-      and rule tokens, with no colour coding of the level. ── */
-.fmeter-row { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
-.fmeter-segs { display: inline-flex; gap: 3px; }
-.fmeter-seg {
-  width: 18px;
-  height: 8px;
-  border-radius: 2px;
-  background: var(--rule-soft);
-}
-.fmeter-seg.is-on { background: var(--select-bg); }
-.fmeter-text { font-size: var(--text-label); color: var(--ink); }
-.fmeter-panel { flex-basis: 100%; }
-.fgate { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 4px 8px; }
-.fgate-rows { flex: 1; min-width: 0; margin: 0; padding: 0; list-style: none; }
-.fgate-row {
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
-  column-gap: 8px;
-  padding: 2px 0;
-  font-size: 13.5px;
-}
-.fgate-code { font-size: 12.5px; color: var(--ink); }
-.fgate-name { color: var(--ink); }
-.fgate-detail {
-  grid-column: 2;
-  font-size: 11.5px;
-  color: var(--ink-mute);
-}
-.fgate .mstrip-panel { flex-basis: 100%; }
 
 /* ── The score, shown as its parts. The number is only worth as much as the
       reader's ability to check it. ── */

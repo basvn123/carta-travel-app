@@ -69,10 +69,6 @@
 /* "Add children" is a secondary button in words (--ui), not a mono accent
    link: mono is for measured facts, the accent for the step's one primary. */
 
-/* The answered quiz as one line (brief item 8). */
-.wq-summary-text small { font-size: var(--text-caption); color: var(--ink-soft); }
-.wq-summary-text b { font-size: var(--text-body); font-weight: 600; color: var(--ink); line-height: 1.4; }
-
 /* The planned view's footer is one row (brief item 7): Plan your days, Save
    trip and More. More opens a menu with menu semantics; Start over in it is
    --danger text and still confirms. */

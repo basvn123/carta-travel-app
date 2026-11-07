@@ -97,8 +97,6 @@
    `.guide-section + .guide-section` rule never fires between them and the next
    heading landed on the answer above it. */
 .wq-done + .guide-section { margin-top: var(--space-5); }
-.wq-cols-1 { grid-template-columns: 1fr; }
-.wq-cols-2 { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); }
 
 .wq-chip {
   display: flex;
@@ -114,11 +112,6 @@
   color: var(--ink);
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-/* One selected state (T398, rule "Selected state"): ink fill, never the
-   accent tint. */
-.wq-chip-text b { font-size: 13.5px; font-weight: 600; }
-.wq-chip-text small { font-size: var(--text-caption); color: var(--ink-soft); }
-.wq-chip.on .wq-chip-text small { color: var(--on-fill); }
 
 /* An answered question, collapsed to its answer. It stays a button, so
    changing your mind is one tap rather than a walk back through the quiz. */
@@ -137,12 +130,6 @@
   cursor: pointer;
   color: var(--ink);
 }
-.wq-done-text small {
-  font-family: var(--ui);
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-}
-.wq-done-text b { font-size: 13.5px; font-weight: 550; }
 
 .wq-next {
   margin-top: var(--space-3);
@@ -251,9 +238,7 @@
 
 @media (max-width: 768px) {
   .guide-section + .guide-section { margin-top: var(--space-6); }
-  .wq-cols-2 { grid-template-columns: repeat(2, 1fr); }
   .wq-chip { padding: 8px 10px; }
-  .wq-chip-text b { font-size: 12.5px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
