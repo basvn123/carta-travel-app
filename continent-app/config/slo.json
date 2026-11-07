@@ -1,0 +1,29 @@
+{
+  "_about": "Service level objectives (ROADMAP H8, T1160). One entry per SLO: what is measured, the target, the window and the source that supplies the numbers. src/lib/slo.js turns a snapshot of those sources into error budgets; the admin SLO panel shows them. Edit targets here, not in the code. docs/runbooks/slo.md explains each choice.",
+  "version": 1,
+  "window_days": 30,
+  "burn": {
+    "_note": "Status from the share of the error budget left: ok above warn_below, warn between 0 and warn_below, breached at 0 or less.",
+    "warn_below": 0.25
+  },
+  "sources": {
+    "uptime": "GitHub Actions runs of .github/workflows/uptime.yml (scripts/monitor/check.py, every 15 minutes): a green run is a good minute-slot, a red one a bad slot.",
+    "error_tracking": "Sentry EU events (T1120) for errors, Cloudflare Pages Functions analytics for request counts.",
+    "ai_model_events": "Supabase table ai_model_events kind 'call' (migration 071, T1139): outcome and latency_ms per gateway call.",
+    "freshness": "scripts/freshness_report.py output (T1099), one row per wire with over_cadence."
+  },
+  "slos": [
+    {"id": "uptime", "label": "Uptime (app, data host, Supabase probe)", "kind": "ratio", "source": "uptime", "target": 0.995, "unit": "runs"},
+    {"id": "error-ask", "label": "Ask error rate (/api/ask)", "kind": "ratio", "source": "error_tracking", "target": 0.99, "unit": "requests"},
+    {"id": "error-flights", "label": "Flights error rate (/api/flights)", "kind": "ratio", "source": "error_tracking", "target": 0.99, "unit": "requests"},
+    {"id": "error-stays", "label": "Stays error rate", "kind": "ratio", "source": "error_tracking", "target": 0.99, "unit": "requests"},
+    {"id": "error-plan-day", "label": "plan-day error rate (Edge Function)", "kind": "ratio", "source": "ai_model_events", "feature": "plan-day", "target": 0.97, "unit": "calls"},
+    {"id": "error-parse-booking", "label": "parse-booking error rate (Edge Function)", "kind": "ratio", "source": "ai_model_events", "feature": "parse-booking", "target": 0.97, "unit": "calls"},
+    {"id": "p95-ask", "label": "Ask p95 latency", "kind": "latency", "source": "ai_model_events", "feature": "ask", "threshold_ms": 8000, "quantile": 0.95, "unit": "calls"},
+    {"id": "p95-flights", "label": "Flights p95 latency", "kind": "latency", "source": "error_tracking", "threshold_ms": 4000, "quantile": 0.95, "unit": "requests"},
+    {"id": "p95-stays", "label": "Stays p95 latency", "kind": "latency", "source": "error_tracking", "threshold_ms": 4000, "quantile": 0.95, "unit": "requests"},
+    {"id": "p95-plan-day", "label": "plan-day p95 latency", "kind": "latency", "source": "ai_model_events", "feature": "plan-day", "threshold_ms": 20000, "quantile": 0.95, "unit": "calls"},
+    {"id": "p95-parse-booking", "label": "parse-booking p95 latency", "kind": "latency", "source": "ai_model_events", "feature": "parse-booking", "threshold_ms": 10000, "quantile": 0.95, "unit": "calls"},
+    {"id": "freshness", "label": "Data freshness (wires inside their cadence)", "kind": "ratio", "source": "freshness", "target": 0.9, "unit": "wires"}
+  ]
+}

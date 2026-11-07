@@ -1992,3 +1992,8 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1186-b | T1186 | Run fill_route_up.py --harvest --apply on the box and record the routes count | user | open | |
 | T1186-c | T1186 | Replace the Overpass-per-summit route sweep with osmium filtering of the Geofabrik extracts for a full batch | next task | open | |
 | T1186-d | T1186 | Export and the app do not read routeUp or the new water/swim `_src`/`_asof` fields yet; wire them into export_peaks.py and MountainPage after the run | next task | open | after T1186-b |
+| T1160-a | T1160 | Mount the SLO panel (`SloPanel.jsx`) as an Admin section: add `slo` to `SECTIONS` in AdminPage.jsx and `admin.nav.slo` in all six languages | next task | open | |
+| T1160-b | T1160 | Write the SLO collector that fetches uptime runs, Sentry and function stats, `ai_model_events` and the freshness report into `src/admin/sloSnapshot.json`; needs the owner's keys | user | open | |
+| T1160-c | T1160 | Run the incident drill on the live stack and add the timings to `docs/runbooks/drill-log.md` | user | open | |
+| T1160-d | T1160 | Review the SLO targets in `config/slo.json` after a month of real snapshots; close ROADMAP H-R1 | next task | open | |
+| T1160-e | T1160 | `scripts/docs/config_reference.py` does not list `config/slo.json`; add it so `docs/reference/config.md` covers it | next task | open | |

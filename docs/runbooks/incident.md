@@ -75,3 +75,11 @@ Add one admin note on any affected user, switch the site notice off, and if a fi
 ## Not covered here
 
 A leaked secret and a data breach are not covered. Secrets and rotation: [../security/SECRETS.md](../security/SECRETS.md) and `Execution/P15/_OPEN-secrets-rotation.md`. Refunds: [refund.md](refund.md).
+
+## Drill
+
+Practise before it is real. Targets and error budgets are in [slo.md](slo.md).
+
+Local (any time, nothing leaves the machine): `python -I ops/drill/drill.py --out docs/runbooks/drill-log.md`. It serves a copy of the wire indexes, truncates the trails index (a bad data push), runs `scripts/monitor/check.py` against it, delivers the alert to a local pager, restores the last good file and checks the monitor is green again. Each run is written to `docs/runbooks/drill-log.md`.
+
+Live (owner, about 30 minutes, once a quarter): (1) pick a quiet hour; (2) in a scratch R2 prefix or with `ALERT_WEBHOOK_URL` pointed at a test topic, run `scripts/monitor/check.py` with a `targets.json` copy whose floor for one layer is above the real count; (3) note the time to see the alert on your phone; (4) practise the notice: `node scripts/status_notice.mjs "Drill, ignore" --until <ISO time>`, upload, see the line in the app, then clear it; (5) add the timings to `drill-log.md`. Never break production data for a drill.
