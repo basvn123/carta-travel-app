@@ -284,12 +284,24 @@ def harvester_scripts(root: Path = ROOT) -> list[str]:
     return sorted(p.relative_to(root).as_posix() for p in top + stays)
 
 
+def _task_source(root):
+    """pipeline/tasks/source.py loaded by path: the task table is split over
+    pipeline/tasks/<domain>.py since T1207 (ROADMAP A2)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "carta_task_source", Path(root) / "pipeline" / "tasks" / "source.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def pipeline_tasks(root: Path = ROOT) -> dict[str, dict]:
     """run_pipeline.py's task table, read by regex (key, cadence, soft), so
     the RUNS copy of a cadence is checked against the driver that owns it.
-    run_pipeline.py is never imported: importing it runs environment setup."""
+    The table is pipeline/tasks/<domain>.py since T1207; it is never imported:
+    importing run_pipeline.py runs environment setup."""
     import re
-    src = (root / "run_pipeline.py").read_text(encoding="utf-8")
+    src = _task_source(root).task_text(root)
     tasks = {}
     for m in re.finditer(r'\{\s*\n\s*"key":\s*"([^"]+)"', src):
         depth, start = 0, m.start()

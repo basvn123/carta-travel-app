@@ -32,6 +32,18 @@ STAYS_SH = ROOT / "infra" / "hetzner" / "cax11" / "stays_scrape.sh"
 BASH = shutil.which("bash")
 
 
+def _load_task_source():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("carta_task_source_t1161",
+                                                  ROOT / "pipeline" / "tasks" / "source.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+TASK_SOURCE = _load_task_source()
+
+
 def _load_worker():
     import importlib.util
     spec = importlib.util.spec_from_file_location("trailslab_worker_t1161", WORKER)
@@ -96,7 +108,7 @@ def test_worker_job_passes_promote_only_when_switched_on():
 # guided search and the Ask index on the box
 # --------------------------------------------------------------------------- #
 def _tasks():
-    tree = ast.parse((ROOT / "run_pipeline.py").read_text(encoding="utf-8"))
+    tree = TASK_SOURCE.task_tree(ROOT)  # the table is pipeline/tasks/*.py (T1207)
     out = {}
     for node in ast.walk(tree):
         if isinstance(node, ast.Dict):
@@ -113,7 +125,7 @@ def test_guided_search_and_ask_index_are_box_tasks():
         assert key in t, key
         assert t[key]["cadence"].value == "after"
         assert "guard" in t[key] and t[key]["soft"].value is True
-    src = (ROOT / "run_pipeline.py").read_text(encoding="utf-8")
+    src = TASK_SOURCE.task_text(ROOT)
     assert '"guard": guard_guided_search' in src
     assert "GUIDED_PY = os.environ.get(\"CARTA_GUIDED_PY\") or PY" in src
 
