@@ -2828,6 +2828,25 @@ TASKS = [
                  "pushes main. Docs: content/blog/README.md."),
     },
     {
+        "key": "photo_check",
+        "title": "Photo correctness: a weekly sample of heroes checked against their place (D17)",
+        "cadence": "after",
+        "after": ["dossier", "beaches", "lakes", "mountains"],
+        "writes_app_data": False,
+        "soft": True,
+        "rev": "T1198",
+        "cmds": [[PY, "pipeline/photos/correctness.py", "--fetch-meta", "--vision", "gemini", "--validate"]],
+        "note": ("T1198. About 500 heroes a run (pipeline/photos/correctness.json), "
+                 "cheap signals first (file name, Commons categories, MIME, size, "
+                 "published coordinate), Gemini through the gateway only for the "
+                 "unsure (skipped without GEMINI_API_KEY). Report at "
+                 "data/reports/photo_check/<date>.json with each flagged hero's "
+                 "ladder replacement; nothing in the wires changes without --apply. "
+                 "The flag rate is the D2 rule through the D23 runner layer photos, "
+                 "gated once its baseline is written (T1198-b). Docs: HANDBOOK "
+                 "'Photo correctness'."),
+    },
+    {
         "key": "photo_sources",
         # T269-b. Last in the table on purpose: it reads the wires the layer
         # exports above have just written, so it must follow every one of them.

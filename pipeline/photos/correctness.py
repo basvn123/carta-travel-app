@@ -54,6 +54,7 @@ Usage, from the repo root:
     python pipeline/photos/correctness.py --vision-prompts DIR  # write the tier 2 prompts for a session judge
     python pipeline/photos/correctness.py --all --layers dest   # every row, not a sample
     python pipeline/photos/correctness.py --apply               # also write the replacements into the wires
+    python pipeline/photos/correctness.py --validate            # also the D23 result (once a baseline exists)
 
 Writes data/reports/photo_check/<date>.json (schema carta-photo-check/1).
 --apply reorders the shipped ladders in place (see apply_layer_row and
@@ -804,6 +805,8 @@ def main(argv=None):
     ap.add_argument("--vision", default="none", help="none | session:FILE | gemini")
     ap.add_argument("--vision-prompts", default=None, help="write tier 2 prompts for a session judge to DIR")
     ap.add_argument("--apply", action="store_true", help="write the replacements into the wires")
+    ap.add_argument("--validate", action="store_true",
+                    help="also write the D23 runner result (layer photos) once its baseline exists")
     ap.add_argument("--out", default=str(REPORTS))
     ap.add_argument("--now", default=None)
     a = ap.parse_args(argv)
@@ -831,7 +834,25 @@ def main(argv=None):
           f"{t['unsure']} unsure, {t['replaced']} replaced from the ladder; tier 2: {why}; report {path}")
     if a.vision_prompts:
         print(f"photo_check: {write_prompts(rep, a.vision_prompts)} prompts written to {a.vision_prompts}")
+    if a.validate:
+        return validate(path)
     return 0
+
+
+def validate(report_path, valid_dir=None):
+    """The D2 rule's input: the D23 runner's `photos` result for this report.
+    Written only once the owner has set the baseline (register row T1198-b):
+    a hard check with no baseline fails by design, and that must not fail a
+    pipeline run before anyone has looked at the first report."""
+    import subprocess
+    valid_dir = Path(valid_dir or os.environ.get("CARTA_VALIDATION_DIR") or ROOT / "data" / "reports" / "validation")
+    if not (valid_dir / "photos" / "baseline.json").is_file():
+        print(f"photo_check: no D23 baseline at {valid_dir / 'photos' / 'baseline.json'} yet; "
+              "the flag rate is not gated until the owner writes it (T1198-b)")
+        return 0
+    env = dict(os.environ, CARTA_PHOTO_CHECK=str(report_path))
+    return subprocess.run([sys.executable, "-I", str(ROOT / "scripts" / "validation" / "runner.py"), "photos",
+                           "--write", "--out", str(valid_dir)], env=env).returncode
 
 
 if __name__ == "__main__":

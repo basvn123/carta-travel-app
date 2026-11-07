@@ -71,7 +71,8 @@ LAYERS = {"trails": "layer_trails", "beaches": "layer_beaches",
           "mountains": "layer_mountains",
           "ratings": "layer_ratings", "cycling": "layer_cycling",
           "climate": "layer_climate", "sea": "layer_sea", "crowds": "layer_crowds",
-          "trips": "layer_trips"}
+          "trips": "layer_trips",
+          "photos": "layer_photos"}
 Z95 = 1.96
 TREND_POINTS = 24
 
