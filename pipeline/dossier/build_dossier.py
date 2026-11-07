@@ -57,7 +57,8 @@ from common import (  # noqa: E402
     PUB, CACHE, DCACHE, REPORTS, GridIndex, TaslStore, atomic_write_json,
     bearing8, commons_filename, dossier_file_base, file_page_url,
     direct_commons_url, filepath_thumb, haversine_km, image_ok,
-    is_self_reference, licence_verdict, load_json, name_matches, name_tokens,
+    is_self_reference, licence_verdict, load_activities_full, load_json,
+    name_matches, name_tokens,
     nav_links, norm_name, usable_desc, sanitize_strings, slugify, thumb_at,
 )
 from derive_do import derive  # noqa: E402
@@ -1483,7 +1484,7 @@ def load_context():
     print("loading wires...")
     app = load_json(os.path.join(PUB, "app_data.json"))
     dests = app["destinations"]
-    acts = load_json(os.path.join(PUB, "activities_full.json"), {})
+    acts = load_activities_full()  # T1219: from the master, see common.py
     wv = load_json(os.path.join(CACHE, "wikivoyage.json"), {})
     city_intros = load_json(os.path.join(DCACHE, "city_intros.json"), {}) or {}
     llm_intros = load_json(os.path.join(DCACHE, "intros_llm.json"), {}) or {}

@@ -40,8 +40,13 @@ import {
 } from './logic.mjs';
 import { consume, logCapRejection, refund } from '../_shared/passes.mjs';
 
+import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
+
+// The largest body this function reads (T1079): refused with 413 beyond it.
+const MAX_BODY = 9000000;
+
+// Allow-Origin is set per request by withCors (an allow-list, not `*`; T1079).
 const CORS = {
-  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
@@ -142,8 +147,7 @@ function decodeTextFile(b64: string): string {
   }
 }
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
+Deno.serve(withCors(async (req) => {
   if (req.method !== 'POST') return json(405, { code: 'method' });
 
   const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY') || '';
@@ -164,7 +168,7 @@ Deno.serve(async (req) => {
   if (!user) return json(401, { code: 'auth' });
 
   let body: Record<string, unknown>;
-  try { body = await req.json(); } catch { return json(400, { code: 'bad_json' }); }
+  try { body = await readJson(req, MAX_BODY); } catch (e) { const p = bodyProblem(e); return json(p.status, { code: p.code }); }
 
   // ---- request validation (whitelist everything) ----
   const files = sanitizeFiles(body.files);
@@ -354,4 +358,4 @@ Deno.serve(async (req) => {
     ...payload,
     pass: { tier: quota.tier, plansLeft: quota.left ?? null },
   });
-});
+}, { methods: 'POST, OPTIONS', extraOrigins: () => Deno.env.get('ALLOWED_ORIGINS') || '' }));

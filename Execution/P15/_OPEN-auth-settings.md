@@ -39,3 +39,40 @@ Project: `ntssxktaduxzpsmejwyv`. Menu names are the Dashboard's as of 2026-11; i
 9. **Report back.** The before and after value of each setting goes into the report of the next security task (C3 close-out), so the threat model can turn "not verified" into "verified".
 
 When steps 2 to 7 are done, row T1071-a can close.
+
+## Values found on 2026-11-07 (owner screenshots of the Dashboard)
+
+Read from the Dashboard on 2026-11-07, two days after T1084 applied steps 2 to 7 from the procedure's values without reading them back. This table is that read-back (row T1084-c). "Not seen" means no screenshot covered it yet; for those, T1084's report says the owner applied the procedure's value.
+
+| Step | Setting | Value found | Target | Verdict |
+|---|---|---|---|---|
+| 2 | TOTP (App Authenticator) | Enabled | Enabled | ok |
+| 2 | Maximum MFA factors per user | 10 | 10 | ok |
+| 2 | SMS MFA (phone factors) | Disabled, greyed: Pro plan only | not needed | ok |
+| 2 | Owner TOTP factor enrolled in Carta | not seen; T1084 saw the step-up accept the code | enrolled | ok per T1084 |
+| 3 | Migration 062 pasted | not seen; done per T1084 | `admin audit self-check passed` | ok per T1084 |
+| 4 | Allow new users to sign up | on | on | ok |
+| 4 | Allow manual linking | off in the screenshot, then turned on by the owner the same day (T946-a) | on, for Connect Google | ok |
+| 4 | Allow anonymous sign-ins | off | off | ok |
+| 4 | Confirm email | on | on | ok |
+| 4 | Secure email change, secure password change | not seen | on, on | open |
+| 4 | Minimum password length, requirements | not seen | 12, none | open |
+| 4 | Leaked password check | not seen | on (Pro), else recorded | open |
+| 4 | Email OTP expiration | not seen | 3600 or less (owner checklist step asks 600) | open |
+| 5 | Sign-ups and sign-ins | 20 per 5 min | 20 | ok |
+| 5 | Token verifications | 15 per 5 min | 15 | ok |
+| 5 | Token refreshes | 150 per 5 min | 150 | ok |
+| 5 | Emails sent | 30 per hour, field editable, so custom SMTP is set | 30 with custom SMTP | ok |
+| 5 | Minimum interval per user (custom SMTP) | 60 s | not specified | recorded |
+| 5 | SMS, anonymous, Web3 limits | 30, 30 per h, 30 per 5 min, greyed | not used | recorded |
+| 5 | IP address forwarding | off | not specified | recorded |
+| 6 | Access token expiry | 3600 s | 3600 | ok |
+| 6 | Detect and revoke compromised refresh tokens | on | on | ok |
+| 6 | Refresh token reuse interval | 10 s | 10 | ok |
+| 6 | Enforce single session per user | off, greyed | not specified | recorded |
+| 6 | Time-box user sessions | 0 (never), greyed: Pro plan only | 90 days if available | not available on Free |
+| 6 | Inactivity timeout | 0 (never), greyed: Pro plan only | 30 days if available | not available on Free |
+| 7 | Site URL and redirect URLs | not seen | the five origins above | open |
+| 8 | MFA on the Supabase account | not seen | on | open |
+
+Free plan limits: session time-box, inactivity timeout, SMS MFA and (likely) the leaked password check need Pro. Recorded as reasons to upgrade before launch, not as failures.

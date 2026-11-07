@@ -21,6 +21,7 @@ export function useErrText() {
     if (code === 'required_public') return t('admin.errRequiredPublic');
     if (code === 'bad_note') return t('admin.errNote');
     if (code === 'bad_reason') return t('admin.errReason');
+    if (code === 'reason_required') return t('admin.errReasonRequired');
     // not_found is not mapped here: admin_get_user answers it for a deleted
     // account too, so the takedown hook words its own (useUnpublishGuide).
     // A Postgres error carries its own message, and on this screen the person

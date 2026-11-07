@@ -35,8 +35,13 @@ import {
   unsubPage, unsubPatch, unsubUrl, verifyUnsub,
 } from './logic.mjs';
 
+import { withCors, readJson, bodyProblem, secretMatches } from '../_shared/http.mjs';
+
+// The largest body this function reads (T1079): refused with 413 beyond it.
+const MAX_BODY = 65536;
+
+// Allow-Origin is set per request by withCors (an allow-list, not `*`; T1079).
 const CORS = {
-  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 };
@@ -149,8 +154,7 @@ async function runUnsubscribe(url: URL, db: Db, secret: string, appUrl: string) 
   return html(error ? 500 : 200, unsubPage(lang, !error, appUrl));
 }
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
+Deno.serve(withCors(async (req) => {
   const secret = env('NOTIFY_SECRET');
   const appUrl = (env('APP_URL') || 'https://www.carta-europetravel.com').replace(/\/+$/, '');
   const base = `${env('SUPABASE_URL').replace(/\/+$/, '')}/functions/v1/notify`;
@@ -170,12 +174,12 @@ Deno.serve(async (req) => {
   if (!env('RESEND_API_KEY') || !env('NOTIFY_FROM') || !secret) return json(200, { sent: 0, code: 'not_configured' });
 
   let body: Record<string, unknown>;
-  try { body = await req.json(); } catch { return json(400, { code: 'bad_json' }); }
+  try { body = await readJson(req, MAX_BODY); } catch (e) { const p = bodyProblem(e); return json(p.status, { code: p.code }); }
 
   if (body.job === 'reminders') {
-    if (req.headers.get('x-notify-secret') !== secret) return json(401, { code: 'auth' });
+    if (!(await secretMatches(req.headers.get('x-notify-secret') || '', secret))) return json(401, { code: 'auth' });
     return json(200, await runReminders(db, base, secret, appUrl));
   }
   if (body.kind === 'price') return runPrice(req, body, db, base, secret, appUrl);
   return json(400, { code: 'bad_request' });
-});
+}, { methods: 'GET, POST, OPTIONS', extraOrigins: () => Deno.env.get('ALLOWED_ORIGINS') || '' }));

@@ -138,6 +138,45 @@ grant usage on schema public to anon, authenticated, service_role;
 alter default privileges in schema public grant all on tables to anon, authenticated, service_role;
 alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
 alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
+
+-- Supabase Storage, as far as a policy or a definer function sees it (T1070, copied by T1082):
+-- the two tables, foldername(), RLS on objects and the API roles' grants.
+create schema if not exists storage;
+create table if not exists storage.buckets (
+  id                 text primary key,
+  name               text not null,
+  owner              uuid,
+  public             boolean default false,
+  file_size_limit    bigint,
+  allowed_mime_types text[],
+  created_at         timestamptz default now(),
+  updated_at         timestamptz default now()
+);
+create table if not exists storage.objects (
+  id         uuid primary key default gen_random_uuid(),
+  bucket_id  text references storage.buckets (id),
+  name       text,
+  owner      uuid,
+  metadata   jsonb,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique (bucket_id, name)
+);
+alter table storage.objects enable row level security;
+create or replace function storage.foldername(name text)
+returns text[]
+language plpgsql
+immutable
+as $fn$
+declare
+  _parts text[];
+begin
+  select string_to_array(name, '/') into _parts;
+  return _parts[1:array_length(_parts, 1) - 1];
+end
+$fn$;
+grant usage on schema storage to anon, authenticated, service_role;
+grant all on storage.objects, storage.buckets to anon, authenticated, service_role;
 `;
 
 const ADMIN = '00000000-0000-0000-0000-00000000ad01';
@@ -166,7 +205,12 @@ async function runTests(bin) {
     writeFileSync(stubFile, STUBS, 'utf8');
     psql(bin, TEST_DB, ['-f', stubFile]);
 
-    const files = readdirSync(migrations).filter((f) => /^\d{3}_.+\.sql$/.test(f)).sort();
+    // supabase/schema.sql is the base before 002 (saved_trips, user_settings);
+    // 056 joins user_settings. The NNN_name_down.sql files undo their migration
+    // and are skipped (T1070 did this for the CI suites; T1082 here).
+    const base = resolve(migrations, '../schema.sql');
+    if (existsSync(base)) psql(bin, TEST_DB, ['-f', base]);
+    const files = readdirSync(migrations).filter((f) => /^\d{3}_.+\.sql$/.test(f) && !/_down\.sql$/.test(f)).sort();
     check('045_admin_followups.sql is in the migration directory', files.includes('045_admin_followups.sql'));
     check('044 is present too, so 045 is tested next to it', files.some((f) => f.startsWith('044_')));
     console.log(`  Applying ${files.length} migrations in filename order:`);

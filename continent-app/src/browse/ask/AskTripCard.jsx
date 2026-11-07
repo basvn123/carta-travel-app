@@ -6,8 +6,6 @@ import { cheapestReturn, roundTripNear, legCost } from '../../lib/flights/flight
 import { destAnchor } from '../../lib/origins.js';
 import { fetchDestPois } from '../../lib/appData.js';
 import { RouteArrow } from './marks.jsx';
-import { loadStays, useStaysVersion } from '../../lib/staysData.js';
-import { quoteStay, tripRequest } from '../../lib/price/index.js';
 
 /**
  * The trip around an answer's first place (T571): the flight there and back
@@ -71,28 +69,6 @@ export function AskTripCard({ t, lang, pick, month = null, trip, primary, onOpen
     : null;
   const cost = dest.cost || {};
 
-  // T576: the bed for the trip's own nights (the flight's, else the
-  // traveller's dates), at tonight's prices where Carta can ask for them
-  // (/api/stays, T540): the same live reprice the place's own card uses.
-  const full = trip.destinations?.[id] || null;
-  const stayFrom = flight?.out.date || trip.depart || null;
-  const stayTo = flight?.back.date || trip.back || null;
-  const stayNights = stayFrom && stayTo
-    ? Math.max(1, Math.round((Date.parse(stayTo) - Date.parse(stayFrom)) / 86400000)) : 0;
-  const party = trip.party || 2;
-  const staysVersion = useStaysVersion();
-  React.useEffect(() => { if (full?.iso2) loadStays(full.iso2); }, [full?.iso2]);
-  // T702 (plan F6): the bed is the engine's, at the trip's party and dates.
-  const bed = React.useMemo(
-    () => (full && stayNights
-      ? quoteStay(full, stayNights, stayFrom, tripRequest({ groupSize: party, stayTier: trip.stayTier }), trip.destinations)
-      : null),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- the version says a stay landed
-    [full, trip.stayTier, party, stayNights, stayFrom, trip.destinations, staysVersion],
-  );
-  const bedLine = bed?.day?.lines?.find((l) => l.key === 'bed');
-  const liveBed = bedLine?.quality === 'live' && bedLine.eur > 0 ? bedLine.eur : null;
-
   return (
     <section className="ac-trip" aria-label={t('askChat.trip.title', { place: dest.city })}>
       <details className="ac-trip-sec ac-trip-flight">
@@ -132,11 +108,9 @@ export function AskTripCard({ t, lang, pick, month = null, trip, primary, onOpen
         <div className="ac-trip-route">
           <span className="ac-trip-h">{t('askChat.trip.stay')}</span>
           <span className="ac-trip-sub">
-            {liveBed != null
-              ? <>{t('askChat.trip.bedFrom')} <Money value={liveBed} /> {t('askChat.trip.aNight')}</>
-              : cost.stayEur != null
-                ? <>{t('askChat.trip.bedFrom')} <Money value={cost.stayEur} est /> {t('askChat.trip.aNight')}</>
-                : t('askChat.trip.stayNone')}
+            {cost.stayEur != null
+              ? <>{t('askChat.trip.bedFrom')} <Money value={cost.stayEur} est /> {t('askChat.trip.aNight')}</>
+              : t('askChat.trip.stayNone')}
             {cost.foodEur != null && <>, {t('askChat.trip.food')} <Money value={cost.foodEur} est /> {t('askChat.trip.aDay')}</>}
           </span>
         </div>
