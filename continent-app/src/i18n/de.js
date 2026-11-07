@@ -9934,6 +9934,7 @@ export const de = {
   "admin.nav.audit": "Audit",
   "admin.nav.prices": "Preise",
   "admin.nav.health": "Datenzustand",
+  "admin.nav.slo": "Servicelevel",
   "admin.nav.overrides": "Overrides",
   "admin.pricesHint": "Woher jeder Preis stammt, für die aktuellen Auswahlen in der App: jede Zeile der Preis-Engine mit Status, Qualität, Basis und Quelle, und jede Regel aus config/pricing.json mit ihrem Prüfdatum. Reisende sehen nur den Betrag.",
   "admin.pricesFind": "Ortsname oder ID",

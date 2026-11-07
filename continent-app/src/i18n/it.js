@@ -9934,6 +9934,7 @@ export const it = {
   "admin.nav.audit": "Controllo",
   "admin.nav.prices": "Prezzi",
   "admin.nav.health": "Stato dei dati",
+  "admin.nav.slo": "Livelli di servizio",
   "admin.nav.overrides": "Override",
   "admin.pricesHint": "Da dove viene ogni prezzo, per le scelte attuali nell'app: ogni riga del motore dei prezzi con stato, qualità, base e fonte, e ogni regola di config/pricing.json con la sua data di revisione. I viaggiatori vedono solo l'importo.",
   "admin.pricesFind": "Nome o id del luogo",

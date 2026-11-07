@@ -8,6 +8,7 @@ The config files are the ones the app and the pipeline tune Carta with:
     continent-app/config/rating_anchors.json  the hand-scored rubric anchors
     continent-app/config/recommend.json       the trip finder's numbers
     continent-app/config/slots.json           the price lines of a found trip
+    continent-app/config/slo.json             the service level objectives
     scripts/quality/rules.yaml                the data quality gate of a run
 
 The pipeline has no config file of its own: pipeline/pricing_config.py and
@@ -66,6 +67,7 @@ SOURCES = [
     ("continent-app/config/rating_anchors.json", ("rating_anchors.json",), ()),
     ("continent-app/config/recommend.json", ("recommend.json",), ()),
     ("continent-app/config/slots.json", ("slots.json",), ("slots",)),
+    ("continent-app/config/slo.json", ("slo.json",), ("slos",)),
     ("scripts/quality/rules.yaml", ("rules.yaml",), ("rules",)),
 ]
 NOTES = {"continent-app/config/rating_anchors.json": {"created", "task", "rule", "shortfalls"}}
@@ -490,6 +492,13 @@ SECTION_EFFECT = {
     "slots.json": {
         "version": "None directly: the version of the slot list.",
         "slots": "One price line on a found trip's receipt and cost bar, and whether question 7 offers it.",
+    },
+    "slo.json": {
+        "version": "None directly: the version of the SLO file.",
+        "window_days": "The days of history each error budget is counted over in the admin SLO panel.",
+        "burn": "When an SLO in the admin SLO panel shows as budget low.",
+        "sources": "None directly: where each SLO's numbers come from, in words.",
+        "slos": "One SLO in the admin SLO panel: its target or latency threshold and its error budget.",
     },
     "rules.yaml": {
         "version": "None directly: the version of the rule file.",
