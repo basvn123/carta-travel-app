@@ -2886,6 +2886,8 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Where it lives.** `infra/hetzner/README.md`, `infra/hetzner/cax11/` (provision.sh, cloud-init.yaml, run_pipeline.sh, weekly.sh, verify.sh, verify_tasks.sh, weekly_tasks.txt), `infra/hetzner/cax41/`, `infra/hetzner/cron/`, `infra/hetzner/jobs/`, `scripts/stays_scrape_task.ps1`, `run_pipeline.bat`. Owner steps: `Execution/P3/_OPEN-hetzner.md`.
 
+**Database backups (T1159, H5).** `carta-backup.timer` (01:30 Brussels daily) runs `ops/backup_nightly.sh`: gpg-encrypted `pg_dump -Fc` of Supabase `public` to `r2:carta/archive/db/supabase-nightly/`, 30 days retention (`CARTA_BACKUP_RETENTION_DAYS`, plus the `archive/db/` lifecycle rule). `ops/restore_drill.sh` restores the newest one into a scratch Postgres and times it. Runbook: `docs/runbooks/backup-restore.md`.
+
 **Limits.** Hetzner backups are off; the box holds nothing not in git or R2. An IPv6-only box cannot work (README section). The raw mirror writes about 5.3 GB against a 40 GB disk.
 
 ### CI and checks
