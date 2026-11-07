@@ -60,7 +60,7 @@ def test_compose_override_validates_and_keeps_the_lab_on_loopback():
 def test_compose_override_needs_a_password_and_a_data_dir():
     text = (BOX / "docker-compose.box.yml").read_text(encoding="utf-8")
     assert "${TRAILSLAB_PASSWORD:?" in text and "${TRAILSLAB_DATA_DIR:?" in text
-    assert "—" not in text and "–" not in text
+    assert chr(0x2014) not in text and chr(0x2013) not in text
 
 
 @pytest.mark.skipif(not BASH, reason="bash missing")
