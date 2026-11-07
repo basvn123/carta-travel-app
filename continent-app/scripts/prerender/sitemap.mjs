@@ -19,7 +19,9 @@
  * What goes in. A manifest page is listed only when it is indexable, is its
  * own canonical (variants and duplicates point elsewhere and stay out) and,
  * for the six catalogue kinds, met the page floor when the build ran
- * (floor.mjs). English only: hreflang wave one. lastmod is the record's own
+ * (floor.mjs). A language page (T1212) is listed under its own language,
+ * sitemap-{type}-{lang}.xml, only when it is indexable: langs.mjs keeps every
+ * language page noindex until its native review. lastmod is the record's own
  * generated_at (the data vintage), never the build time; a page without one
  * gets no lastmod rather than a made-up date.
  *
@@ -48,6 +50,11 @@ export const GROUP_OF = Object.freeze({
   // destination pages they sit under.
   days: 'countries', cost: 'costs',
 });
+/** The select() key of a group in a language: bare for English. */
+export const groupKey = (g, lang) => (!lang || lang === 'en' ? g : `${g}|${lang}`);
+
+/** English first, then the five language prefixes (T1212). */
+export const SITEMAP_LANGS = Object.freeze(['en', 'nl', 'de', 'fr', 'es', 'it']);
 const GROUP_ORDER = ['site', 'countries', 'destinations', 'costs', 'trails', 'cycling', 'beaches', 'lakes', 'mountains', 'trips', 'journeys'];
 
 /** Pages that are not in the manifest: the home page and the T318 explainer. */
@@ -65,19 +72,25 @@ const day = (iso) => (iso ? String(iso).slice(0, 10) : null);
 export function select(pages) {
   const groups = new Map();
   const out = { total: pages.length, listed: 0, excluded: {} };
-  const skip = (kind, why) => {
+  // A language page is counted as kind:lang (dest:nl), so _sitemap.json shows
+  // how many wait for their review apart from the English pages.
+  const skip = (kind0, why, p) => {
+    const kind = p?.lang && p.lang !== 'en' ? `${kind0}:${p.lang}` : kind0;
     out.excluded[kind] ||= {};
     out.excluded[kind][why] = (out.excluded[kind][why] || 0) + 1;
   };
   for (const p of pages) {
-    if ((p.canonical || p.path) !== p.path) { skip(p.kind, 'canonical is another page'); continue; }
-    if (p.floor && !p.floor.ok) { skip(p.kind, 'below the page floor'); continue; }
-    if (p.bar && !p.bar.ok) { skip(p.kind, 'below the quality bar'); continue; }
-    if (!p.indexable) { skip(p.kind, 'noindex'); continue; }
+    if ((p.canonical || p.path) !== p.path) { skip(p.kind, 'canonical is another page', p); continue; }
+    if (p.floor && !p.floor.ok) { skip(p.kind, 'below the page floor', p); continue; }
+    if (p.bar && !p.bar.ok) { skip(p.kind, 'below the quality bar', p); continue; }
+    if (!p.indexable) { skip(p.kind, 'noindex', p); continue; }
     const g = GROUP_OF[p.kind];
-    if (!g) { skip(p.kind, 'no sitemap group'); continue; }
-    if (!groups.has(g)) groups.set(g, []);
-    groups.get(g).push({ path: p.path, lastmod: day(p.lastmod), kind: p.kind });
+    if (!g) { skip(p.kind, 'no sitemap group', p); continue; }
+    // T1212: one file per type and language. English keeps its bare group key
+    // (and its file names); another language is keyed `group|lang`.
+    const gk = groupKey(g, p.lang);
+    if (!groups.has(gk)) groups.set(gk, []);
+    groups.get(gk).push({ path: p.path, lastmod: day(p.lastmod), kind: p.kind });
     out.listed += 1;
   }
   return { groups, summary: out };
@@ -118,15 +131,15 @@ export function writeSitemaps(manifest, buildDir, { coverageDate = null } = {}) 
   summary.listed += groups.get('site').length;
 
   const files = [];
-  for (const g of GROUP_ORDER) {
-    const entries = (groups.get(g) || []).sort((a, b) => a.path.localeCompare(b.path));
+  for (const lang of SITEMAP_LANGS) for (const g of GROUP_ORDER) {
+    const entries = (groups.get(groupKey(g, lang)) || []).sort((a, b) => a.path.localeCompare(b.path));
     if (!entries.length) continue;
     chunk(entries).forEach((part, i) => {
-      const name = `sitemap-${g}-en${i ? `-${i + 1}` : ''}.xml`;
+      const name = `sitemap-${g}-${lang}${i ? `-${i + 1}` : ''}.xml`;
       const xml = urlset(part);
       fs.writeFileSync(path.join(dir, name), xml, 'utf8');
       const lastmods = part.map((e) => e.lastmod).filter(Boolean).sort();
-      files.push({ name, group: g, urls: part.length, bytes: Buffer.byteLength(xml), lastmod: lastmods.at(-1) || null });
+      files.push({ name, group: g, lang, urls: part.length, bytes: Buffer.byteLength(xml), lastmod: lastmods.at(-1) || null });
     });
   }
   const index = ['<?xml version="1.0" encoding="UTF-8"?>', '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'];
@@ -140,9 +153,10 @@ export function writeSitemaps(manifest, buildDir, { coverageDate = null } = {}) 
 
   // The page floor, counted. `floored` is judged from the build's own page
   // models; `listed_rows` (rows with no page) comes from the wire in pass one.
+  // Counted over the English pages: a language page shares its record's floor and bar.
   const floored = {};
   for (const p of manifest.pages) {
-    if (!p.floor) continue;
+    if (!p.floor || (p.lang && p.lang !== 'en')) continue;
     const k = (floored[p.kind] ||= { pages: 0, ok: 0, title: 0, coords: 0, image: 0, facts: 0, imageOnlyMiss: 0 });
     k.pages += 1;
     for (const c of ['title', 'coords', 'image', 'facts']) if (p.floor[c]) k[c] += 1;
@@ -153,7 +167,7 @@ export function writeSitemaps(manifest, buildDir, { coverageDate = null } = {}) 
   // The quality bar (quality.mjs, T1076), counted per kind and per test.
   const barred = {};
   for (const p of manifest.pages) {
-    if (!p.bar) continue;
+    if (!p.bar || (p.lang && p.lang !== 'en')) continue;
     const k = (barred[p.kind] ||= { pages: 0, ok: 0, failing: {} });
     k.pages += 1;
     if (p.bar.ok) k.ok += 1;

@@ -183,9 +183,15 @@ if (trail) {
   const r4 = await call(trail.path, { env: { PRERENDER: bucket, ASSETS: noCsp } });
   ok(r4.headers.get('x-from') === 'next', 'a shell without a CSP was served from');
 }
-for (const p of ['/spain/trails/999999999-nope', '/guides/abc', '/spain/no-such-town/cost', '/spain/9-days', '/spain/4-days/under-5', '/nl/spain', '/trips/AT.json', '/Spain', '/x']) {
+for (const p of ['/spain/trails/999999999-nope', '/guides/abc', '/spain/no-such-town/cost', '/spain/9-days', '/spain/4-days/under-5', '/trips/AT.json', '/Spain', '/x']) {
   const r = await call(p);
   ok(r.headers.get('x-from') === 'next', `Function: ${p} should fall through, got ${r.status}`);
+}
+// T1212: a language address with no stored page gets the app shell from the
+// deploy (Pages applies no _redirects to a Function's routes), never a 404.
+for (const p of ['/nl/spain', '/de/', '/fr/spain/trails/999999999-nope', '/it/spain/no-such-town']) {
+  const r = await call(p);
+  ok(r.status === 200 && r.headers.get('x-from') !== 'next' && (await r.text()).includes('<div id="root">'), `Function: ${p} should answer the app shell, got ${r.status}`);
 }
 ok((await call('/spain', { method: 'POST' })).headers.get('x-from') === 'next', 'POST not handed on');
 ok(cardKey('/og/p/en/austria.png') === 'og/en/austria.png' && cardKey('/og/site.png') === null && cardKey('/og/p/../x.png') === null, 'cardKey');
@@ -205,7 +211,7 @@ if (ok(fs.existsSync(path.join(SM, 'sitemap.xml')), 'sitemaps/sitemap.xml missin
   let urls = 0;
   for (const loc of named) {
     const name = loc.slice(WWW.length + 1);
-    ok(loc.startsWith(WWW + '/sitemap-') && /^sitemap-[a-z]+-en(-[0-9]+)?\.xml$/.test(name), `index loc not a sitemap file: ${loc}`);
+    ok(loc.startsWith(WWW + '/sitemap-') && /^sitemap-[a-z]+-(?:en|nl|de|fr|es|it)(-[0-9]+)?\.xml$/.test(name), `index loc not a sitemap file: ${loc}`);
     const f = path.join(SM, name);
     if (!ok(fs.existsSync(f), `${name}: listed in the index but missing`)) continue;
     const xml = fs.readFileSync(f, 'utf8');

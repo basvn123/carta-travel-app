@@ -30,7 +30,7 @@
  * Function refuses to serve the page rather than serve it unprotected.
  */
 import {
-  prerenderKey, cardKey, sitemapKey, spliceShell, pageIsNoindex,
+  prerenderKey, cardKey, sitemapKey, spliceShell, pageIsNoindex, isLangShellPath,
 } from '../src/lib/prerenderShell.js';
 import { withTracking } from './_lib/track.js';
 
@@ -83,7 +83,12 @@ async function handle(context) {
   // favicon probe); never a page.
   if (/\.[a-z0-9]{1,8}$/i.test(url.pathname)) return next();
   const key = prerenderKey(url.pathname);
-  if (!key || !env.PRERENDER) return next();
+  // T1212: _redirects does not reach a Function's routes, so a language
+  // address with no stored page gets the app shell here (it reads the prefix).
+  const fallback = () => (isLangShellPath(url.pathname) && env.ASSETS
+    ? env.ASSETS.fetch(new Request(new URL('/', url), { method: request.method, headers: request.headers }))
+    : next());
+  if (!key || !env.PRERENDER) return fallback();
 
   let page;
   let shellRes;
@@ -92,7 +97,7 @@ async function handle(context) {
       env.PRERENDER.get(key),
       env.ASSETS.fetch(new Request(new URL('/', url), { headers: { accept: 'text/html' } })),
     ]);
-    if (!obj || !shell.ok) return next();
+    if (!obj || !shell.ok) return fallback();
     page = await obj.text();
     shellRes = shell;
   } catch {

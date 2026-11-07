@@ -20,6 +20,7 @@ import React, {
   createContext, useContext, useMemo, useState, useCallback, useEffect,
 } from 'react';
 import { detectBrowserLang } from './detect.js';
+import { langFromPath, withLang } from '../lib/langPath.js';
 import { setActiveLocale } from '../lib/localeState.js';
 import { enEager, enWhole } from 'virtual:carta-en';
 
@@ -98,6 +99,13 @@ export const LANGUAGES = [
 const LANG_KEY = 'continent.lang.v1';
 
 function initialLang() {
+  // T1212 (I12): a language prefix in the address (/nl/...) names the
+  // language of this visit and wins over a stored or detected one, so a link
+  // shared in Dutch opens in Dutch. The root (English) says nothing.
+  try {
+    const fromPath = typeof window !== 'undefined' ? langFromPath(window.location.pathname) : null;
+    if (fromPath && isLang(fromPath)) return fromPath;
+  } catch { /* no address */ }
   try {
     const stored = localStorage.getItem(LANG_KEY);
     if (stored && isLang(stored)) return stored;
@@ -161,6 +169,19 @@ export function I18nProvider({ children }) {
     loadEnglishRest();
     return () => { enListeners.delete(done); };
   }, []);
+
+  // T1212 (I12): the address and the document follow the language. The
+  // prefix is written with replaceState (a language change is not a step
+  // Back should undo); query and hash are kept as they are.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try { document.documentElement.lang = lang; } catch { /* no document */ }
+    try {
+      const { pathname, search, hash } = window.location;
+      const next = withLang(pathname, lang);
+      if (next !== pathname) window.history.replaceState(window.history.state, '', `${next}${search}${hash}`);
+    } catch { /* sandboxed */ }
+  }, [lang]);
 
   const setLang = useCallback((code) => {
     if (!isLang(code)) return;

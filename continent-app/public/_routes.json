@@ -92,7 +92,12 @@
     "/og/p/*",
     "/sitemap.xml",
     "/sitemap-*",
-    "/api/*"
+    "/api/*",
+    "/nl/*",
+    "/de/*",
+    "/fr/*",
+    "/es/*",
+    "/it/*"
   ],
   "exclude": []
 }
