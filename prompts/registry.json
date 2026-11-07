@@ -407,6 +407,26 @@
         "value": null,
         "at": "2026-11-07T04:34:10.024Z"
       }
+    },
+    "photo-check": {
+      "version": 1,
+      "file": "prompts/photo-check/v1.md",
+      "format": "registry",
+      "sha256": "aeee9dfff0c34a16e2eae04bbc39093aab78ee9a5dd87df6559caf1ba6ef1442",
+      "runtime": "python",
+      "eval": null,
+      "guard": "tests/test_photo_correctness.py (answer shape, confidence floor, a strong tier 1 flag stands); a labelled eval is register row T1198-c",
+      "callers": [
+        "pipeline/photos/correctness.py"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-07T10:58:11.658Z"
+      }
     }
   }
 }
