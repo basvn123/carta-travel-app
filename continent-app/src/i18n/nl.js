@@ -1,5 +1,21 @@
 ﻿/** Nederlands. Zie en.js voor de volledige sleutel-lijst (Engels is de bron). */
 export const nl = {
+  // T1205 (I17): price alerts, the destination page's save-alert control.
+  "alerts.cta": "Mail me als dit goedkoper wordt",
+  "alerts.title": "Prijsalert",
+  "alerts.lead": "We controleren na elke prijsupdate en mailen je één keer wanneer het totaal voor deze data, reizigers en dit verblijf daalt met:",
+  "alerts.shareLabel": "Daalt met",
+  "alerts.consent": "Mail me één prijsalert over deze plek. Ik kan me afmelden in elke e-mail.",
+  "alerts.save": "Alert bewaren",
+  "alerts.cancel": "Annuleren",
+  "alerts.saved": "Alert bewaard. We mailen je één keer wanneer het totaal daalt met {pct}.",
+  "alerts.confirmSent": "Kijk in je inbox: tik op de link in onze e-mail om prijsalerts aan te zetten.",
+  "alerts.confirmPending": "Alert bewaard. Tik op de link in onze eerdere e-mail om prijsalerts aan te zetten.",
+  "alerts.active": "Bewaard: we mailen je één keer wanneer het totaal daalt met {pct}.",
+  "alerts.remove": "Alert verwijderen",
+  "alerts.removed": "Alert verwijderd.",
+  "alerts.error": "Dat lukte niet. Probeer het later opnieuw.",
+  "alerts.note": "Het totaal is een schatting van Carta op basis van prijzen voor verblijf en vluchten, geen boekingsofferte.",
   'shell.tagline': 'Europa in kaart',
   'shell.failedToLoad': 'Laden mislukt: {error}',
   'toast.emailConfirmed': 'E-mail bevestigd. Welkom bij Carta.',

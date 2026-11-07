@@ -1100,7 +1100,7 @@ docs/
 | I14 | Where the paywall meets the journey | One designed moment and copy for the Pass (what is free, when the offer shows, what it unlocks), tested in the closed beta; no dead ends | S | P3 | built behind a flag (T1171); beta test is the owner's (T1171-a) |
 | I15 | Affiliate links done right | `rel="sponsored noopener"` on every partner link; a small "partner link" mark and a disclosure page; links only after Carta's own figure, one door per cost line, never sorted by commission; cookieless click counting; no partner scripts (so no cookie banner); PRODUCT.md wording decided (I-e); checked against the I-R5 legal checklist | S | P3 | code done (T1172); affiliate ids and the I-R5 check are owner steps |
 | I16 | Data access ladder | Each commercial data source has a written legal route, the milestone that unlocks the next step (users or bookings), and a date; Google Flights scraping stopped before the first paid sale; the bed decision (I-g) reviewed before the Booking.com affiliate application; milestones tracked in admin (K12) | M | P1 to P4, then ongoing | todo |
-| I17 | Price alerts | A traveller can save a place or trip and get one email when its total drops by a set share; built on the stays and flights data already refreshed, through the email route of I6 | M | P3 | todo (accepted by the owner 2026-11-07; round 3) |
+| I17 | Price alerts | A traveller can save a place or trip and get one email when its total drops by a set share; built on the stays and flights data already refreshed, through the email route of I6 | M | P3 | code done (T1205, 2026-11-07): place alerts behind a flag; the 073 paste, the secrets, the deploy and the trip-level control are open (T1205-a to T1205-f) |
 
 ### Item details
 

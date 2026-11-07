@@ -606,6 +606,26 @@ const FIXTURES = [
     ownerWrites: false,
   },
   {
+    // 073 (T1205): saved through price_alert_save only; the owner reads and deletes.
+    table: 'price_alerts',
+    seed: [{ as: 'victim', sql: `select public.price_alert_save('place', 'dest:LIS', 'Lisbon', '{"stops":[{"id":"LIS","cc":"PT","nights":3}],"month":5,"adults":2,"bed":"hotel3"}'::jsonb, 0.10, 'nl', 'alerts-v1')` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `drop_share = 0.20`,
+    forge: `insert into public.price_alerts (user_id, kind, ref, label, spec, drop_share, expires_at) values ('${VICTIM}', 'place', 'dest:BCN', 'Forged', '{"stops":[]}', 0.05, now() + interval '1 day')`,
+    reads: 'private',
+    ownerWrites: false,
+  },
+  {
+    // 073 (T1205): the double opt-in, written by definer functions only; the owner reads.
+    table: 'price_alert_consent',
+    seed: [{ as: 'db', sql: `insert into public.price_alert_consent (user_id, lang) values ('${VICTIM}', 'nl') on conflict (user_id) do nothing` }],
+    mine: `user_id = '${VICTIM}'`,
+    mutate: `confirmed_at = now()`,
+    forge: `insert into public.price_alert_consent (user_id, confirmed_at) values ('${VICTIM}', now()) on conflict (user_id) do update set confirmed_at = now()`,
+    reads: 'private',
+    ownerWrites: false,
+  },
+  {
     // 056: the owner, or an accepted friend (asserted in section 4), reads it.
     table: 'friend_visibility',
     seed: [{ as: 'victim', sql: `insert into public.friend_visibility (user_id, show_saves) values ('${VICTIM}', true)` }],
@@ -1176,6 +1196,85 @@ function runTests(bin) {
       const write = runAs(who, `insert into public.waitlist_signups (email) values ('${who}@example.com')`);
       check(`waitlist_signups: ${who} cannot insert directly`, !write.ok, describe(write));
       for (const fn of [`waitlist_join('${who}@example.com', 'en', 'home')`, 'waitlist_audience()', `waitlist_confirm('${who}@example.com')`, `waitlist_unsubscribe('${who}@example.com')`, 'waitlist_purge(30)']) {
+        const call = runAs(who, `select * from public.${fn}`);
+        check(`${who} cannot call ${fn.split('(')[0]}`, denied(call), describe(call));
+      }
+    }
+
+    // 073 (T1205): price alerts. The traveller saves through
+    // price_alert_save; the box and the price-alerts function reach the rest
+    // as the service role. No email before the opt-in click, one email per
+    // alert, and none after an unsubscribe.
+    console.log('');
+    console.log('  Price alerts: double opt-in, one email per alert, unsubscribe (073):');
+    const paSvc = (sql) => runAs('service', sql);
+    const paLast = (r) => r.out.split('\n').pop();
+    const paLISBON = `'{"stops":[{"id":"LIS","cc":"PT","nights":3}],"month":5,"adults":2,"bed":"hotel3"}'::jsonb`;
+    const paAlertId = scalar(bin, TEST_DB, `select id from public.price_alerts where user_id = '${VICTIM}' and ref = 'dest:LIS'`);
+    check('the fixture saved the victim\'s alert unarmed', /^[0-9a-f-]{36}$/.test(paAlertId)
+      && scalar(bin, TEST_DB, `select (baseline_eur is null and fired_at is null)::text from public.price_alerts where id = '${paAlertId}'`) === 'true');
+    const paResave = runAs('victim', `select public.price_alert_save('place', 'dest:LIS', 'Lisbon', ${paLISBON}, 0.10, 'nl', 'alerts-v1')::text`);
+    check('saving the same alert again answers unconfirmed and keeps one row', paResave.ok && /"confirmed": false/.test(paResave.out)
+      && scalar(bin, TEST_DB, `select count(*) from public.price_alerts where user_id = '${VICTIM}'`) === '1', describe(paResave));
+    const paBadShare = runAs('victim', `select public.price_alert_save('place', 'dest:OPO', 'Porto', ${paLISBON}, 0.15)`);
+    check('a share other than 5, 10 or 20 percent is refused', !paBadShare.ok, describe(paBadShare));
+    const paNoStops = runAs('victim', `select public.price_alert_save('place', 'dest:OPO', 'Porto', '{"stops":[]}'::jsonb, 0.10)`);
+    check('an alert with no stop is refused', !paNoStops.ok, describe(paNoStops));
+    const paStarted = runAs('victim', `select public.price_alert_save('trip', 'trip:x1', 'Old trip', '{"stops":[{"id":"LIS","cc":"PT","nights":2}],"start":"2020-01-01"}'::jsonb, 0.10)`);
+    check('a trip that has started is refused', !paStarted.ok, describe(paStarted));
+    const paAnonSave = runAs('anon', `select public.price_alert_save('place', 'dest:OPO', 'Porto', ${paLISBON}, 0.10)`);
+    check('a signed-out visitor cannot save an alert', !paAnonSave.ok, describe(paAnonSave));
+    const paDated = runAs('plain', `select public.price_alert_save('trip', 'trip:p1', 'Spring', ('{"stops":[{"id":"LIS","cc":"PT","nights":2}],"start":"' || (current_date + 30)::text || '"}')::jsonb, 0.05)`);
+    check('a dated alert expires on its first travel date', paDated.ok && scalar(bin, TEST_DB,
+      `select (expires_at::date = current_date + 30)::text from public.price_alerts where user_id = '${PLAIN}' and ref = 'trip:p1'`) === 'true', describe(paDated));
+    psql(bin, TEST_DB, ['-c', `insert into public.price_alerts (user_id, kind, ref, label, spec, drop_share, expires_at)
+      select '${PLAIN}', 'place', 'dest:C' || g, 'Cap', '{"stops":[{"id":"X"}]}', 0.10, now() + interval '9 days' from generate_series(1, 19) g`]);
+    const paCapped = runAs('plain', `select public.price_alert_save('place', 'dest:ONEMORE', 'One more', ${paLISBON}, 0.10)`);
+    check('the 21st open alert of one account is refused', !paCapped.ok && /at most 20/.test(paCapped.err || ''), describe(paCapped));
+    const paRecap = runAs('plain', `select public.price_alert_save('place', 'dest:C1', 'Cap', ${paLISBON}, 0.20)`);
+    check('while saving one of the 20 again still goes through', paRecap.ok, describe(paRecap));
+    psql(bin, TEST_DB, ['-c', `delete from public.price_alerts where user_id = '${PLAIN}'`]);
+
+    const paOpen0 = paSvc('select count(*) from public.price_alerts_open()');
+    check('before the opt-in click the box is given no alert to price', paOpen0.ok && paLast(paOpen0) === '0', describe(paOpen0));
+    check('nor can a check arm it', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 900)`)) === 'gone');
+    check('and price_alert_mail yields no address', paLast(paSvc(`select count(*) from public.price_alert_mail('${paAlertId}')`)) === '0');
+    check('the opt-in mail is claimed once', paLast(paSvc(`select public.price_alert_optin_claim('${VICTIM}')`)) === 'send');
+    check('a second request within ten minutes waits', paLast(paSvc(`select public.price_alert_optin_claim('${VICTIM}')`)) === 'wait');
+    paSvc(`select public.price_alert_optin_unclaim('${VICTIM}')`);
+    check('a failed send releases the claim', paLast(paSvc(`select public.price_alert_optin_claim('${VICTIM}')`)) === 'send');
+    check('an unknown account has nothing to confirm', paLast(paSvc(`select public.price_alert_optin_claim('00000000-0000-0000-0000-00000000c0ff')`)) === 'none');
+    check('the confirmation link records the consent', paLast(paSvc(`select public.price_alert_confirm('${VICTIM}')`)) === 't');
+    check('and the next opt-in request is told "already"', paLast(paSvc(`select public.price_alert_optin_claim('${VICTIM}')`)) === 'already');
+    const paOpen1 = paSvc('select id from public.price_alerts_open()');
+    check('after the click the box is given the alert', paOpen1.ok && paLast(paOpen1) === paAlertId, describe(paOpen1));
+    check('the first check arms it with the baseline', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 900)`)) === 'armed'
+      && scalar(bin, TEST_DB, `select baseline_eur from public.price_alerts where id = '${paAlertId}'`) === '900');
+    check('a drop smaller than the share holds', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 811)`)) === 'hold');
+    check('a drop of the share fires', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 810)`)) === 'fire');
+    check('and only once: the next check finds it gone', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 700)`)) === 'gone');
+    const paMail = paSvc(`select email || '/' || lang || '/' || baseline_eur || '/' || fired_eur from public.price_alert_mail('${paAlertId}')`);
+    check('the email gets the address, language and both totals', paLast(paMail) === 'victim@example.test/nl/900/810' || /\/nl\/900\/810$/.test(paLast(paMail)), describe(paMail));
+    check('a fired alert is not given to the box again', paLast(paSvc('select count(*) from public.price_alerts_open()')) === '0');
+    paSvc(`select public.price_alert_release('${paAlertId}')`);
+    check('a failed send releases the alert for the next run', paLast(paSvc('select count(*) from public.price_alerts_open()')) === '1');
+    check('a bad total is refused', !paSvc(`select public.price_alert_record('${paAlertId}', 0)`).ok);
+    check('the unsubscribe link is recorded', paLast(paSvc(`select public.price_alert_unsubscribe('${VICTIM}')`)) === 't');
+    check('after it no alert is priced and no email is addressed', paLast(paSvc('select count(*) from public.price_alerts_open()')) === '0'
+      && paLast(paSvc(`select count(*) from public.price_alert_mail('${paAlertId}')`)) === '0'
+      && paLast(paSvc(`select public.price_alert_record('${paAlertId}', 500)`)) === 'gone');
+    check('an old confirmation link cannot undo the unsubscribe', paLast(paSvc(`select public.price_alert_confirm('${VICTIM}')`)) === 'f');
+    const paAgain = runAs('victim', `select public.price_alert_save('place', 'dest:LIS', 'Lisbon', ${paLISBON}, 0.10, 'nl', 'alerts-v1')::text`);
+    check('saving again after an unsubscribe asks for consent anew', paAgain.ok && /"confirmed": false/.test(paAgain.out)
+      && scalar(bin, TEST_DB, `select (confirmed_at is null and unsubscribed_at is null)::text from public.price_alert_consent where user_id = '${VICTIM}'`) === 'true', describe(paAgain));
+    psql(bin, TEST_DB, ['-c', `update public.price_alerts set expires_at = now() - interval '40 days' where id = '${paAlertId}'`]);
+    check('the purge deletes an alert 30 days past expiry', paLast(paSvc('select public.price_alert_purge()')) === '1');
+    // Put the victim's alert back for the export and the later sections.
+    runAs('victim', `select public.price_alert_save('place', 'dest:LIS', 'Lisbon', ${paLISBON}, 0.10, 'nl', 'alerts-v1')`);
+    for (const who of ['victim', 'plain', 'anon']) {
+      for (const fn of ['price_alerts_open()', `price_alert_record('${paAlertId}', 1)`, `price_alert_confirm('${VICTIM}')`,
+        `price_alert_unsubscribe('${VICTIM}')`, `price_alert_optin_claim('${VICTIM}')`, `price_alert_mail('${paAlertId}')`,
+        `price_alert_release('${paAlertId}')`, 'price_alert_purge()']) {
         const call = runAs(who, `select * from public.${fn}`);
         check(`${who} cannot call ${fn.split('(')[0]}`, denied(call), describe(call));
       }
