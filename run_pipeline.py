@@ -2915,6 +2915,25 @@ TASKS = [
                  "Docs: HANDBOOK 'Entry rules'."),
     },
     {
+        "key": "price_alerts",
+        "title": "Price alerts: price every open alert, report the totals; the function mails a drop (I17, T1205)",
+        "cadence": "weekly",
+        "writes_app_data": False,
+        "soft": True,
+        "rev": "T1205",
+        "guard": guard_reachable("data host", "data.carta-europetravel.com"),
+        "cmds": [[PY, "pipeline/price_alerts.py"]],
+        "note": ("after the stays refresh in the table, so a monthly run prices the new "
+                 "stays wire; weekly for the flight fares the sweep keeps current. Reads "
+                 "cache/stays/out/v1 (else the live stays copy) and flights/{IATA}.json on "
+                 "the data host; asks the price-alerts Edge Function for the open alerts and "
+                 "posts whole-euro totals back with PRICE_ALERTS_BOX_SECRET (never the "
+                 "service role key). The function sets the baseline on the first check and "
+                 "mails once when a total falls by the alert's share. Without "
+                 "PRICE_ALERTS_URL and PRICE_ALERTS_BOX_SECRET it checks nothing and exits 0. "
+                 "Docs: HANDBOOK 'Price alerts'."),
+    },
+    {
         "key": "photo_sources",
         # T269-b. Last in the table on purpose: it reads the wires the layer
         # exports above have just written, so it must follow every one of them.

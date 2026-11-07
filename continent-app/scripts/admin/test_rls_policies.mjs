@@ -1214,14 +1214,14 @@ function runTests(bin) {
     check('the fixture saved the victim\'s alert unarmed', /^[0-9a-f-]{36}$/.test(paAlertId)
       && scalar(bin, TEST_DB, `select (baseline_eur is null and fired_at is null)::text from public.price_alerts where id = '${paAlertId}'`) === 'true');
     const paResave = runAs('victim', `select public.price_alert_save('place', 'dest:LIS', 'Lisbon', ${paLISBON}, 0.10, 'nl', 'alerts-v1')::text`);
-    check('saving the same alert paAgain answers unconfirmed and keeps one row', paResave.ok && /"confirmed": false/.test(paResave.out)
+    check('saving the same alert again answers unconfirmed and keeps one row', paResave.ok && /"confirmed": false/.test(paResave.out)
       && scalar(bin, TEST_DB, `select count(*) from public.price_alerts where user_id = '${VICTIM}'`) === '1', describe(paResave));
     const paBadShare = runAs('victim', `select public.price_alert_save('place', 'dest:OPO', 'Porto', ${paLISBON}, 0.15)`);
     check('a share other than 5, 10 or 20 percent is refused', !paBadShare.ok, describe(paBadShare));
     const paNoStops = runAs('victim', `select public.price_alert_save('place', 'dest:OPO', 'Porto', '{"stops":[]}'::jsonb, 0.10)`);
     check('an alert with no stop is refused', !paNoStops.ok, describe(paNoStops));
     const paStarted = runAs('victim', `select public.price_alert_save('trip', 'trip:x1', 'Old trip', '{"stops":[{"id":"LIS","cc":"PT","nights":2}],"start":"2020-01-01"}'::jsonb, 0.10)`);
-    check('a trip that has paStarted is refused', !paStarted.ok, describe(paStarted));
+    check('a trip that has started is refused', !paStarted.ok, describe(paStarted));
     const paAnonSave = runAs('anon', `select public.price_alert_save('place', 'dest:OPO', 'Porto', ${paLISBON}, 0.10)`);
     check('a signed-out visitor cannot save an alert', !paAnonSave.ok, describe(paAnonSave));
     const paDated = runAs('plain', `select public.price_alert_save('trip', 'trip:p1', 'Spring', ('{"stops":[{"id":"LIS","cc":"PT","nights":2}],"start":"' || (current_date + 30)::text || '"}')::jsonb, 0.05)`);
@@ -1232,7 +1232,7 @@ function runTests(bin) {
     const paCapped = runAs('plain', `select public.price_alert_save('place', 'dest:ONEMORE', 'One more', ${paLISBON}, 0.10)`);
     check('the 21st open alert of one account is refused', !paCapped.ok && /at most 20/.test(paCapped.err || ''), describe(paCapped));
     const paRecap = runAs('plain', `select public.price_alert_save('place', 'dest:C1', 'Cap', ${paLISBON}, 0.20)`);
-    check('while saving one of the 20 paAgain still goes through', paRecap.ok, describe(paRecap));
+    check('while saving one of the 20 again still goes through', paRecap.ok, describe(paRecap));
     psql(bin, TEST_DB, ['-c', `delete from public.price_alerts where user_id = '${PLAIN}'`]);
 
     const paOpen0 = paSvc('select count(*) from public.price_alerts_open()');
@@ -1255,7 +1255,7 @@ function runTests(bin) {
     check('and only once: the next check finds it gone', paLast(paSvc(`select public.price_alert_record('${paAlertId}', 700)`)) === 'gone');
     const paMail = paSvc(`select email || '/' || lang || '/' || baseline_eur || '/' || fired_eur from public.price_alert_mail('${paAlertId}')`);
     check('the email gets the address, language and both totals', paLast(paMail) === 'victim@example.test/nl/900/810' || /\/nl\/900\/810$/.test(paLast(paMail)), describe(paMail));
-    check('a fired alert is not given to the box paAgain', paLast(paSvc('select count(*) from public.price_alerts_open()')) === '0');
+    check('a fired alert is not given to the box again', paLast(paSvc('select count(*) from public.price_alerts_open()')) === '0');
     paSvc(`select public.price_alert_release('${paAlertId}')`);
     check('a failed send releases the alert for the next run', paLast(paSvc('select count(*) from public.price_alerts_open()')) === '1');
     check('a bad total is refused', !paSvc(`select public.price_alert_record('${paAlertId}', 0)`).ok);
@@ -1265,7 +1265,7 @@ function runTests(bin) {
       && paLast(paSvc(`select public.price_alert_record('${paAlertId}', 500)`)) === 'gone');
     check('an old confirmation link cannot undo the unsubscribe', paLast(paSvc(`select public.price_alert_confirm('${VICTIM}')`)) === 'f');
     const paAgain = runAs('victim', `select public.price_alert_save('place', 'dest:LIS', 'Lisbon', ${paLISBON}, 0.10, 'nl', 'alerts-v1')::text`);
-    check('saving paAgain after an unsubscribe asks for consent anew', paAgain.ok && /"confirmed": false/.test(paAgain.out)
+    check('saving again after an unsubscribe asks for consent anew', paAgain.ok && /"confirmed": false/.test(paAgain.out)
       && scalar(bin, TEST_DB, `select (confirmed_at is null and unsubscribed_at is null)::text from public.price_alert_consent where user_id = '${VICTIM}'`) === 'true', describe(paAgain));
     psql(bin, TEST_DB, ['-c', `update public.price_alerts set expires_at = now() - interval '40 days' where id = '${paAlertId}'`]);
     check('the purge deletes an alert 30 days past expiry', paLast(paSvc('select public.price_alert_purge()')) === '1');
