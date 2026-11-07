@@ -1988,3 +1988,9 @@ One row per open item, appended when a task writes its report (CLAUDE.md, "The r
 | T1154-e | T1154 | intelligence.yml has no pip-audit and the image is pinned by tag, not digest; add both with the C6 supply-chain jobs | next task | open | |
 | T1154-f | T1154 | The rate limit lives in memory with one worker; a second worker or a public route would need a shared store (Redis) and TLS first | next task | open | |
 | T1154-g | T1154 | MAP.md has no row or line for services/intelligence/; add it with the next MAP edit | next task | open | |
+| T1162-a | T1162 | Delete the stale continent-app/.git on the laptop (no remote, master at T915); ship.mjs and worktree.mjs warn while it exists (procedure: Execution/P15/T1162-scripted-ship.md, Owner steps) | user | open | |
+| T1162-b | T1162 | Run scripts/worktree.mjs add and remove once on Windows with --link-node-modules and check the main node_modules keeps its entries; the tests proved it with a Linux symlink only | user | open | |
+| T1162-c | T1162 | Ship the next deploy with node scripts/ship.mjs (dry run first, then --live, --from after a fix) and report any step that differs on the laptop | user | open | |
+| T1162-d | T1162 | CLAUDE.md's Deploy line still lists six commands by hand; point it at scripts/ship.mjs and name scripts/worktree.mjs under Disk and worktrees (CLAUDE.md was outside T1162's files) | next task | open | |
+| T1162-e | T1162 | The heredoc cluster (44 What broke entries) needs a written CLAUDE.md rule (files via Write or Python, never a Bash heredoc), not a script | next task | open | |
+| T1162-f | T1162 | PYTHONUTF8=1 is not yet set by pipeline/*.ps1, scripts/stays_scrape_task.ps1 or infra/hetzner/cax11/run_pipeline.sh (S77's files this batch); the risk is on Windows | next task | open | |
