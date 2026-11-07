@@ -1,0 +1,48 @@
+{
+ "schema": "carta-eval/1",
+ "eval": "suggest-city",
+ "title": "Suggest-city rules and wish fit on fixture decks",
+ "kind": "llm-plan",
+ "at": "2026-11-07T12:22:19.027Z",
+ "git": "1a63861c64",
+ "status": "pass",
+ "gated": true,
+ "headline": {
+  "key": "rules_pass",
+  "value": 1,
+  "label": "cases meeting every rule (reference answers)",
+  "higher_is_better": true
+ },
+ "metrics": {
+  "rules_pass": 1,
+  "precision_good": 1,
+  "avoid_share": 0,
+  "top_fits": 1,
+  "dropped": 3,
+  "repaired": 1,
+  "prompt_check_fails": 0,
+  "cases": 6
+ },
+ "gate": {
+  "ok": true,
+  "rule": "every prompt and rule check on every case, wish precision 0.5 or more",
+  "tolerance": null,
+  "baseline": null,
+  "failures": []
+ },
+ "cases": {
+  "n": 6,
+  "passed": 6
+ },
+ "judge": null,
+ "inputs": {
+  "set": "continent-app/scripts/eval/suggest-city/set.json",
+  "version": 1,
+  "answers": "continent-app/scripts/eval/suggest-city/answers.json",
+  "model": "reference (hand-written)",
+  "seconds": 0
+ },
+ "notes": [
+  "Reference answers: this checks the prompt and the shipped path, not a model. Record live answers and pass --answers to score one."
+ ]
+}

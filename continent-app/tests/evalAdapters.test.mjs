@@ -137,6 +137,6 @@ test('suggest-city: the rule checks catch a duplicate, a far discovery and a das
   const ok = (sugs) => Object.fromEntries(city.checkSuggestions(c, cands, sugs).map(([k, v]) => [k, v]));
   assert.equal(ok([{ id: 'a', inCatalog: true, why: 'Fine.' }, { id: 'a', inCatalog: true, why: 'Again.' }]).no_duplicate, false);
   assert.equal(ok([{ id: null, name: 'Ohrid', inCatalog: false, lat: 41.12, lon: 20.8, why: 'Far.' }]).near_stay, false);
-  assert.equal(ok([{ id: 'a', inCatalog: true, why: 'Lakes — and hills.' }]).why_clean, false);
+  assert.equal(ok([{ id: 'a', inCatalog: true, why: 'Lakes \u2014 and hills.' }]).why_clean, false);
   assert.equal(ok([]).count, false);
 });

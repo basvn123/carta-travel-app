@@ -278,10 +278,10 @@ export function scrubPii(text) {
  */
 export function fixDashes(text) {
   return String(text ?? '')
-    .replace(/(\d)\s*[—–]\s*([€$£]\s?\d)/g, '$1 to $2')
-    .replace(/(\d)\s*[—–]\s*(\d)/g, '$1-$2')
-    .replace(/(\w)[—–](\w)/g, '$1-$2')
-    .replace(/\s*[—–]\s*/g, ', ');
+    .replace(/(\d)\s*[\u2014\u2013]\s*([€$£]\s?\d)/g, '$1 to $2')
+    .replace(/(\d)\s*[\u2014\u2013]\s*(\d)/g, '$1-$2')
+    .replace(/(\w)[\u2014\u2013](\w)/g, '$1-$2')
+    .replace(/\s*[\u2014\u2013]\s*/g, ', ');
 }
 
 /** PRODUCT.md's banned words. */
@@ -297,7 +297,7 @@ const BANNED_RE = new RegExp(`\\b(${BANNED_TERMS.join('|')})\\b`, 'gi');
 export function houseStyleIssues(text) {
   const s = String(text ?? '');
   const banned = [...new Set((s.match(BANNED_RE) || []).map((w) => w.toLowerCase()))];
-  return { dashes: (s.match(/[—–]/g) || []).length, banned };
+  return { dashes: (s.match(/[\u2014\u2013]/g) || []).length, banned };
 }
 
 const words = (s) => foldForScan(s).replace(/[^\p{L}\p{N} ]+/gu, ' ').split(' ').filter(Boolean);

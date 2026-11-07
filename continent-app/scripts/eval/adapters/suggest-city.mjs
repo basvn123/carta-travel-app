@@ -46,7 +46,7 @@ export function checkSuggestions(c, candidates, suggestions) {
   const seen = new Set();
   const dup = suggestions.some((s) => s.id && (seen.has(s.id) || !seen.add(s.id)));
   const far = suggestions.filter((s) => !s.inCatalog && !(Number.isFinite(s.lat) && haversineKm(c.stay.lat, c.stay.lon, s.lat, s.lon) <= MAX_KM));
-  const badWhy = suggestions.filter((s) => !s.why || s.why.length > 200 || /[–—]/.test(s.why) || scanOutput(s.why).issues.some((i) => ['url', 'markup', 'email', 'phone'].includes(i)));
+  const badWhy = suggestions.filter((s) => !s.why || s.why.length > 200 || /[\u2013\u2014]/.test(s.why) || scanOutput(s.why).issues.some((i) => ['url', 'markup', 'email', 'phone'].includes(i)));
   return [
     ['count', suggestions.length >= 1 && suggestions.length <= 5, `${suggestions.length} suggestions`],
     ['real_candidates', suggestions.every((s) => !s.inCatalog || ids.has(s.id)), 'an inCatalog suggestion is not in the deck'],

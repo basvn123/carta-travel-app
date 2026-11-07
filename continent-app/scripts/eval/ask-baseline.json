@@ -1,28 +1,28 @@
 {
-  "blessed": "2026-11-07",
+  "blessed": "2026-11-06",
   "tolerance": 0.02,
   "n": 200,
   "retrievers": {
     "rules": {
       "cases": 142,
-      "recall@5": 0.5803,
+      "recall@5": 0.5789,
       "hit@5": 0.9155,
-      "recall@10": 0.5717,
+      "recall@10": 0.5682,
       "hit@10": 0.9296,
       "mrr": 0.8282,
-      "ndcg@10": 0.6026,
+      "ndcg@10": 0.6003,
       "list": null,
-      "grounding": 0.9985,
+      "grounding": 0.9956,
       "checks": 689
     },
     "bm25": {
       "cases": 142,
-      "recall@5": 0.5877,
+      "recall@5": 0.5849,
       "hit@5": 0.9155,
-      "recall@10": 0.5807,
+      "recall@10": 0.576,
       "hit@10": 0.9225,
       "mrr": 0.838,
-      "ndcg@10": 0.6141,
+      "ndcg@10": 0.6109,
       "list": {
         "recall@5": 0.3951,
         "hit@5": 0.6972,
@@ -31,18 +31,18 @@
         "mrr": 0.5024,
         "ndcg@10": 0.4044
       },
-      "grounding": 0.9985,
+      "grounding": 0.9956,
       "checks": 689
     }
   },
   "abstain": {
     "cases": 30,
-    "caught": 30,
-    "falseAlarm": 0,
-    "correct": 1,
-    "recall": 1
+    "caught": 25,
+    "falseAlarm": 2,
+    "correct": 0.965,
+    "recall": 0.8333
   },
-  "grounding": 0.9985,
+  "grounding": 0.9956,
   "set": {
     "version": 1,
     "cases": 200

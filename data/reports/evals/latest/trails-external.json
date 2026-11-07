@@ -3,8 +3,8 @@
  "eval": "trails-external",
  "title": "Trails external check",
  "kind": "data",
- "at": "2026-11-07T11:09:52.353Z",
- "git": "d85cbd728a",
+ "at": "2026-11-07T12:22:08.581Z",
+ "git": "1a63861c64",
  "status": "pass",
  "gated": true,
  "headline": {
@@ -58,7 +58,7 @@
   "wire": "continent-app/public/trails",
   "wire_generated_at": "2026-09-13T19:17:15+00:00",
   "wire_rows": 17455,
-  "seconds": 10.5
+  "seconds": 14
  },
  "notes": []
 }

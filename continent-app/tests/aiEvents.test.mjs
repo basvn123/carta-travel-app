@@ -10,7 +10,7 @@ import { createServer } from 'vite';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { callModel } from '../functions/_lib/aiModels.js';
-import { buildAiEvent, hashQuery, langfuseBody, langfuseOn, writeEvent, estimateCostUsd } from '../functions/_lib/aiEvents.mjs';
+import { buildAiEvent, hashQuery, langfuseBody, langfuseOn, writeEvent, estimateCostUsd, withStreamOutput } from '../functions/_lib/aiEvents.mjs';
 import { aiCallsView } from '../src/lib/aiCalls.js';
 
 const root = new URL('../../', import.meta.url);
@@ -194,4 +194,26 @@ test('the Overview tab mounts the weekly model-call card, fetched once at unlock
   assert.match(overview, /<AiCalls report=\{aiCalls\} t=\{t\} \/>/);
   assert.match(hook, /const aiCalls = useAiCalls\(unlocked\)/);
   assert.match(hook, /newReports, aiCalls,/);
+});
+
+test('a streamed answer gets its output tokens and cost once the stream ends (T1206, T1139-f)', () => {
+  const neurons = { in: 4625, out: 30475 };
+  const cfg = { models: ['@cf/qwen/qwen3-30b-a3b-fp8'], provider: 'workers-ai' };
+  const result = { ok: true, model: '@cf/qwen/qwen3-30b-a3b-fp8', provider: 'workers-ai', attempts: [1] };
+  const before = buildAiEvent({ feature: 'ask', cfg, result, promptChars: 4000, neurons });
+  assert.equal(before.tokens_out, null);
+  const inputOnly = before.cost_usd;
+  // From the characters streamed: 1,200 chars is 300 tokens, estimated.
+  const est = withStreamOutput(before, { outputChars: 1200, neurons });
+  assert.equal(est.tokens_out, 300);
+  assert.equal(est.tokens_estimated, true);
+  assert.equal(est.cost_usd, estimateCostUsd({ provider: 'workers-ai', model: result.model, tokensIn: 1000, tokensOut: 300, neurons }));
+  assert.ok(est.cost_usd > inputOnly);
+  // The provider's own usage, when the stream carried it, wins.
+  const real = withStreamOutput(before, { usage: { in: 900, out: 250 }, outputChars: 1200, neurons });
+  assert.deepEqual([real.tokens_in, real.tokens_out, real.tokens_estimated], [900, 250, false]);
+  // buildAiEvent takes the size directly too; a failed call is left alone.
+  assert.equal(buildAiEvent({ feature: 'ask', cfg, result, promptChars: 4000, neurons, outputChars: 1200 }).tokens_out, 300);
+  const failed = buildAiEvent({ feature: 'ask', cfg, result: { ok: false, code: 'ai_error', attempts: [1] }, promptChars: 4000 });
+  assert.equal(withStreamOutput(failed, { outputChars: 1200 }), failed);
 });

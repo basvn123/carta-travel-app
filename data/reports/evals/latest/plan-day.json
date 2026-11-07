@@ -3,8 +3,8 @@
  "eval": "plan-day",
  "title": "Plan-day plans and judge",
  "kind": "llm-plan",
- "at": "2026-11-07T11:09:38.322Z",
- "git": "d85cbd728a",
+ "at": "2026-11-07T12:21:50.528Z",
+ "git": "1a63861c64",
  "status": "pass",
  "gated": false,
  "headline": {
@@ -47,6 +47,7 @@
   "model": "session judge (Claude Code subagent, blind to the key)",
   "file": "continent-app/scripts/eval/plan-day/judgments/session-2026-11-06-rubric2.json",
   "rubric_sha": "dd1b55440404",
+  "verdicts_rubric_sha": "dd1b55440404",
   "n": 40,
   "use": "uncalibrated",
   "agreement": {
@@ -96,7 +97,7 @@
   "set": 1,
   "planner": "reference",
   "labels_by": null,
-  "seconds": 0.1
+  "seconds": 0
  },
  "notes": [
   "no hand labels yet (plan-day/labels.json): judge against human kappa is an owner step"
