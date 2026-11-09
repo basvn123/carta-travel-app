@@ -41,6 +41,7 @@ import csv
 import gzip
 import io
 import json
+import os
 import re
 import subprocess
 import sys
@@ -269,11 +270,37 @@ def main(argv):
     log(f"{n} routes from {len(routes)} airports -> {OUT.relative_to(ROOT)}, {AIRPORTS_OUT.name}")
 
     if "--upload" in argv:
-        subprocess.run(["npx", "wrangler", "r2", "object", "put", R2_KEY, "--file", str(OUT),
+        upload(OUT)
+    return 0
+
+
+def rclone_r2():
+    """True when rclone has an `r2` remote: the box defines it through the
+    RCLONE_CONFIG_R2_* variables of its secrets file, the laptop through
+    rclone.conf (T1221)."""
+    if os.environ.get("RCLONE_CONFIG_R2_TYPE"):
+        return True
+    try:
+        out = subprocess.run(["rclone", "listremotes"], capture_output=True, text=True, timeout=30)
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    return out.returncode == 0 and "r2:" in out.stdout.split()
+
+
+def upload(path):
+    """Put the route list on R2. rclone first: it uses the R2 S3 keys the box
+    already writes its backups and archive with. The box's CLOUDFLARE_API_TOKEN
+    is a Pages deploy token without R2 object write, so wrangler answered 403
+    there and failed the monthly run before its ship (T1221). wrangler stays
+    the fallback for a machine without an rclone r2 remote."""
+    if rclone_r2():
+        subprocess.run(["rclone", "copyto", str(path), f"r2:{R2_KEY}", "--s3-no-check-bucket",
+                        "--header-upload", "Content-Type: application/json"], check=True)
+    else:
+        subprocess.run(["npx", "wrangler", "r2", "object", "put", R2_KEY, "--file", str(path),
                         "--content-type", "application/json", "--remote"],
                        cwd=ROOT / "continent-app", check=True, shell=sys.platform == "win32")
-        log(f"uploaded to r2://{R2_KEY}")
-    return 0
+    log(f"uploaded to r2://{R2_KEY}")
 
 
 if __name__ == "__main__":
