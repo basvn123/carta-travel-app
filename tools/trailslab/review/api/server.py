@@ -33,6 +33,7 @@ from pathlib import Path
 
 from fastapi import Body, FastAPI, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
+import psycopg
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
@@ -93,8 +94,31 @@ def assert_local_db(allow_remote=False):
             "--allow-remote-db if you really mean it.")
 
 
+# Everything RUNTIME_MIGRATIONS creates. Checked first, because "ADD COLUMN IF
+# NOT EXISTS" and "CREATE INDEX IF NOT EXISTS" still take their table lock
+# before they look: ACCESS EXCLUSIVE on trips, SHARE on validation_runs. On the
+# box the lab is shared with the pipeline (T1182), so a start during a trails
+# run queued behind a long query and stalled every later query on trips
+# (T1222). The catalogue reads below take no table lock.
+MIGRATED_SQL = """
+SELECT (SELECT count(*) FROM information_schema.columns
+         WHERE table_schema = current_schema() AND table_name = 'trips'
+           AND column_name IN ('description_md', 'described_at')) = 2
+   AND to_regclass('trip_reviews') IS NOT NULL
+   AND to_regclass('trip_reviews_trip_idx') IS NOT NULL
+   AND to_regclass('validation_runs_latest_idx') IS NOT NULL
+"""
+# When a migration is still needed, give up on a busy lock rather than queue.
+MIGRATION_LOCK_TIMEOUT = "5s"
+
+
 def apply_migrations():
     with connect() as conn:
+        with conn.cursor() as cur:
+            cur.execute(MIGRATED_SQL)
+            if cur.fetchone()[0]:
+                return
+            cur.execute(f"SET lock_timeout = '{MIGRATION_LOCK_TIMEOUT}'")
         for name in RUNTIME_MIGRATIONS:
             sql = (INITDB / name).read_text(encoding="utf-8")
             with conn.cursor() as cur:
@@ -575,7 +599,13 @@ def main():
     if args.reviewer:
         os.environ["TRAILSLAB_REVIEWER"] = args.reviewer
         REVIEWER = args.reviewer
-    apply_migrations()
+    try:
+        apply_migrations()
+    except psycopg.errors.LockNotAvailable:
+        raise SystemExit(
+            "refusing to start: the review tables need a migration and the lab "
+            "is busy (a trails run holds trips or validation_runs). Start the "
+            "review app again once the run is done.")
     cfg = settings()
     print(f"[review] db {cfg['user']}@{cfg['host']}:{cfg['port']}/{cfg['dbname']}")
     print(f"[review] reviewer {REVIEWER}")
