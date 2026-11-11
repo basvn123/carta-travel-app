@@ -69,20 +69,32 @@ walk went from 1,079 km to 1,589 km. Two short routes becoming one longer one
 reads as a count decrease and is more walk published, so count the kilometres
 before believing a regression here.
 
+Memory (T1223): every walkable way of a country is held while it clusters,
+and Spain (2.9 million ways) took 3.35 GB on the 4 GB box until the kernel
+killed the quarterly run. The ways now live in way_store.py's compact arrays,
+node locations load in passes that keep osmium's id bitmap under
+CARTA_DERIVE_IDSET_MB, and each country runs in its own child process, so the
+memory one country took is given back before the next and an out-of-memory
+kill costs one country, not the sweep. Each child prints its peak memory.
+
 Usage, from the repo root (DB up: cd tools/trailslab && docker compose up -d):
     python pipeline/trails/derive_routes.py                  # every country
     python pipeline/trails/derive_routes.py --resume         # after a crash
+    python pipeline/trails/derive_routes.py --fresh-days 14  # skip recent ones
     python pipeline/trails/derive_routes.py --countries MD,XK,MK,MT,AL --dry-run
     python pipeline/trails/derive_routes.py --countries FR --dry-run --verbose
 """
 
 import argparse
 import json
+import os
+import subprocess
 import sys
+import tempfile
 import time
 from array import array
 from collections import Counter, defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import numpy as np
@@ -100,8 +112,23 @@ from names import base_name, squash  # noqa: E402
 from schema import ensure  # noqa: E402
 from ingest_osm_routes import (  # noqa: E402
     COUNTRIES, EARTH_RADIUS_M, assemble_ordered, cached_extract,
-    load_locations, part_geometry, stitch_segments,
+    part_geometry, stitch_segments,
 )
+from way_store import (  # noqa: E402
+    IDSET_BUDGET_MB, EndIndex, PerTagSet, WayFloats, WayStoreBuilder,
+    load_aligned_locations, mem_available_mb, peak_rss_mb,
+)
+
+# The preflight (T1223): a country whose extract would need more memory than
+# the machine has left is skipped with a message, not started and killed.
+# MB of peak memory per MB of .osm.pbf, measured with the compact store
+# (T1223): Slovenia 616 MB for 314 MB, Albania 559 MB for 54 MB, Liechtenstein
+# 459 MB for 4 MB, so about 0.5 above a fixed base; 0.6 leaves a margin.
+# Override with the environment once the box prints its own figures.
+MB_PER_EXTRACT_MB = float(os.environ.get("CARTA_DERIVE_MB_PER_EXTRACT_MB",
+                                         "0.6"))
+# Interpreter, numpy, scipy and osmium, plus one location pass's id bitmap.
+BASE_MB = 100.0 + IDSET_BUDGET_MB
 
 SCHEMA_SQL = ROOT / "tools" / "trailslab" / "initdb" / "07_filters.sql"
 # Which countries this sweep has already finished. A 44-country run is hours;
@@ -278,9 +305,14 @@ def has_trail_evidence(cluster_rec, ways):
 # ---------------------------------------------------------------------------
 
 class WalkWays:
-    """Every walkable way in the extract, with its tags and node refs."""
+    """Every walkable way in the extract, with its tags and node refs.
+
+    `nodes` and `tags` are way_store's compact mappings (T1223): read them
+    like dicts by way id, in scan order; the tag mappings are shared between
+    ways and read-only."""
 
     def __init__(self):
+        self.index = None
         self.nodes = {}
         self.tags = {}
         # Ways that are a bridge or a tunnel. Not in KEEP_WAY_TAGS, because
@@ -299,7 +331,7 @@ def scan_ways(pbf_path, verbose=False):
     Two claims, one pass: KeyFilter("highway") runs in C++ and the value test
     is cheap, so this reads a national extract in a minute or two. Only the
     ways that clear the highway test are held in memory."""
-    out = WalkWays()
+    build = WayStoreBuilder()
     fp = osmium.FileProcessor(str(pbf_path), osmium.osm.WAY) \
         .with_filter(osmium.filter.KeyFilter("highway"))
     seen = 0
@@ -308,15 +340,17 @@ def scan_ways(pbf_path, verbose=False):
         if tags.get("highway") not in WALK_HIGHWAYS:
             continue
         seen += 1
-        refs = np.fromiter((n.ref for n in way.nodes), dtype=np.int64)
+        refs = [n.ref for n in way.nodes]
         if len(refs) < 2:
             continue
-        out.nodes[way.id] = refs
-        out.tags[way.id] = {k: tags[k] for k in KEEP_WAY_TAGS if k in tags}
+        build.add(way.id, refs,
+                  {k: tags[k] for k in KEEP_WAY_TAGS if k in tags})
         if tags.get("bridge", "no") != "no" or tags.get("tunnel", "no") != "no":
-            out.structure.add(way.id)
+            build.structure.add(way.id)
+    out = build.finish(WalkWays())
     if verbose:
-        print(f"    {seen:,} walkable way(s), {len(out.nodes):,} usable")
+        print(f"    {seen:,} walkable way(s), {len(out.nodes):,} usable, "
+              f"{len(out.tags.sets):,} distinct tag set(s)")
     return out
 
 
@@ -431,6 +465,10 @@ def near_endpoints(ways, locator, verbose=False):
 # trail folded differently here than in the registry that is supposed to
 # match it. One definition now, in names.py.
 fold_name = squash
+
+# Marks a way with no name in the per-tag-set base-name key, so that mapping
+# holds only named ways, as the dict it replaced did.
+_NO_NAME = object()
 
 
 def _grow(seed, key, ways, lengths, ends, named, used, rule,
@@ -575,18 +613,20 @@ def cluster(ways, lengths, near=None, can_ship=None, verbose=False):
     Everything every pass produces still has to assemble into ONE continuous
     line to be staged, which is the gate that keeps a city's pavement network
     out: a branching blob comes back as a dozen segments and is dropped."""
-    ends = defaultdict(list)
-    for wid, refs in ways.nodes.items():
-        ends[int(refs[0])].append(wid)
-        ends[int(refs[-1])].append(wid)
+    # The endpoint graph, and the two name keys, are per way over every
+    # walkable way of the country. Held as way_store's arrays and per-tag-set
+    # values (T1223); they read exactly as the dicts they replace.
+    ends = EndIndex(ways.nodes)
 
-    named = {wid: fold_name(t.get("name")) for wid, t in ways.tags.items()}
+    named = PerTagSet(ways.tags, lambda t: fold_name(t.get("name")))
     # The key each pass chains on, per way. A way with no key for a pass can
     # neither seed it nor join it.
-    fame_key, base_key = fame_keys(ways), {}
-    for wid, t in ways.tags.items():
-        if t.get("name"):
-            base_key[wid] = squash(base_name(t["name"])) or None
+    fame_key = fame_keys(ways)
+    base_key = PerTagSet(
+        ways.tags,
+        lambda t: (squash(base_name(t["name"])) or None) if t.get("name")
+        else _NO_NAME,
+        skip=_NO_NAME)
     keys = {"fame": fame_key, "base-name": base_key,
             "same-name": named, "any-named": named}
 
@@ -1107,6 +1147,12 @@ def run_country(conn, slug, cc, args, expected_km=None):
 
     records, counts = derive_extract(pbf, cc, expected_km=expected_km,
                                      limit=args.limit, label=slug)
+    peak = peak_rss_mb()
+    if peak:
+        # The preflight's calibration: peak memory against extract size.
+        size_mb = pbf.stat().st_size / 1e6
+        print(f"[{slug}] peak memory {peak:,.0f} MB for a {size_mb:,.0f} MB "
+              f"extract ({peak / max(size_mb, 1):.2f} MB per MB)", flush=True)
     for r in records:
         r["raw_tags"] = Jsonb(r["raw_tags"])
         r["gap_info"] = Jsonb(r["gap_info"])
@@ -1152,23 +1198,25 @@ def derive_extract(pbf, cc, expected_km=None, limit=0, label=None):
         return [], counts
 
     t0 = time.time()
-    node_ids = np.unique(np.concatenate(list(ways.nodes.values())))
-    locator = load_locations(pbf, node_ids)
-    print(f"[{label}] {len(locator.ids):,}/{len(node_ids):,} node location(s) "
-          f"({time.time() - t0:.0f}s)", flush=True)
+    node_ids = ways.nodes.node_ids
+    locator, passes = load_aligned_locations(pbf, node_ids)
+    print(f"[{label}] {locator.n_found:,}/{len(node_ids):,} node location(s) "
+          f"({time.time() - t0:.0f}s, {passes} pass(es))", flush=True)
 
-    lengths = {}
-    for wid, refs in ways.nodes.items():
-        ok, xs, ys = locator.coords_for(refs)
+    # Same formula, same float operations, as the dict it replaced: only the
+    # storage moved (a float64 per way in scan order).
+    length_arr = np.zeros(len(ways), dtype=np.float64)
+    for p in range(len(ways)):
+        ok, xs, ys = locator.coords_at(ways.nodes.positions(p))
         if ok.sum() < 2:
-            lengths[wid] = 0.0
             continue
         lon, lat = xs[ok] / 1e7, ys[ok] / 1e7
         lam, phi = np.radians(lon), np.radians(lat)
         h = (np.sin(np.diff(phi) / 2) ** 2
              + np.cos(phi[:-1]) * np.cos(phi[1:]) * np.sin(np.diff(lam) / 2) ** 2)
-        lengths[wid] = float(2 * EARTH_RADIUS_M
-                             * np.sum(np.arcsin(np.sqrt(np.clip(h, 0, 1)))))
+        length_arr[p] = float(2 * EARTH_RADIUS_M
+                              * np.sum(np.arcsin(np.sqrt(np.clip(h, 0, 1)))))
+    lengths = WayFloats(ways.index, length_arr)
 
     pairs, near = near_endpoints(ways, locator, verbose=True)
     expected_km = expected_km or {}
@@ -1265,6 +1313,23 @@ def main():
                          "country 38 must not restart from zero")
     ap.add_argument("--force", action="store_true",
                     help="ignore the progress file and re-run every country")
+    ap.add_argument("--fresh-days", type=float, default=0.0,
+                    help="skip a country the progress file says finished "
+                         "less than this many days ago. The pipeline task "
+                         "passes 14: a rerun after a crash picks up where it "
+                         "stopped, and a quarter later every country runs "
+                         "again (T1223)")
+    ap.add_argument("--in-process", action="store_true",
+                    help="run every country in this process. The default "
+                         "runs each in a child process, so the memory one "
+                         "country took is given back before the next and an "
+                         "out-of-memory kill costs that country, not the "
+                         "sweep (T1223)")
+    ap.add_argument("--no-preflight", action="store_true",
+                    help="start a country even when its extract looks too "
+                         "big for the memory this machine has left")
+    # Internal: a child writes its counts here for the parent to add up.
+    ap.add_argument("--counts-out", help=argparse.SUPPRESS)
     args = ap.parse_args()
 
     by_iso = defaultdict(list)
@@ -1280,33 +1345,14 @@ def main():
                    default=0)
     wanted.sort(key=extract_size)
 
-    done = {} if args.force else load_progress()
-    expected_km = load_expected_km()
-    if expected_km:
-        print(f"{len(expected_km):,} published length(s) from the registry, "
-              f"for the fame-pass cross-check")
-
-    totals = Counter()
-    with connect() as conn:
-        ensure(conn, SCHEMA_SQL, verbose=True)
-        for cc in wanted:
-            if args.resume and cc in done:
-                print(f"[{cc}] done {done[cc].get('done_at')}, skipping")
-                totals["skipped"] += 1
-                continue
-            got = Counter()
-            for slug in by_iso.get(cc, []):
-                try:
-                    got += run_country(conn, slug, cc, args, expected_km)
-                except Exception as exc:
-                    print(f"[{slug}] FAILED: {type(exc).__name__}: {exc}")
-                    got["failed"] += 1
-            totals += got
-            if not args.dry_run and not got["failed"]:
-                done[cc] = {"done_at": datetime.now(timezone.utc)
-                            .replace(microsecond=0).isoformat(),
-                            "counts": dict(got)}
-                save_progress(done)
+    if args.in_process:
+        totals = run_in_process(args, wanted, by_iso)
+    else:
+        totals = run_children(args, wanted, extract_size)
+    if args.counts_out:
+        Path(args.counts_out).write_text(json.dumps(dict(totals)),
+                                         encoding="utf-8")
+        return 1 if totals["failed"] else 0
 
     print("\n" + "=" * 58)
     print(f"{totals['built']:,} derived route(s) staged, "
@@ -1323,7 +1369,138 @@ def main():
           f"{BRIDGE_MAX_TOTAL_M:.0f} m of drawn line, "
           f"{totals['length_mismatch']:,} disagreeing with the length "
           f"Wikidata publishes")
-    return 1 if totals["failed"] else 0
+    if totals["skipped"] or totals["too_big"] or totals["failed"]:
+        print(f"not run: {totals['skipped']:,} finished recently, "
+              f"{totals['too_big']:,} too big for this machine's memory, "
+              f"{totals['failed']:,} failed")
+    # A country left out for memory is a soft failure: the task shows it in
+    # the run log instead of the sweep looking complete.
+    return 1 if totals["failed"] or totals["too_big"] else 0
+
+
+def skip_reason(cc, args, done):
+    """Why this country is not run now, or None."""
+    if args.force or cc not in done:
+        return None
+    when = done[cc].get("done_at")
+    if args.resume:
+        return f"done {when}"
+    if args.fresh_days > 0 and when:
+        try:
+            at = datetime.fromisoformat(when)
+        except ValueError:
+            return None
+        if datetime.now(timezone.utc) - at < timedelta(days=args.fresh_days):
+            return f"done {when}, under {args.fresh_days:g} day(s) ago"
+    return None
+
+
+def record_done(cc, got):
+    """Add one finished country to the progress file. Read fresh each time:
+    in a sweep the parent and its children share the file."""
+    done = load_progress()
+    done[cc] = {"done_at": datetime.now(timezone.utc)
+                .replace(microsecond=0).isoformat(),
+                "counts": dict(got)}
+    save_progress(done)
+
+
+def run_in_process(args, wanted, by_iso):
+    done = load_progress()
+    expected_km = load_expected_km()
+    if expected_km and not args.counts_out:
+        print(f"{len(expected_km):,} published length(s) from the registry, "
+              f"for the fame-pass cross-check")
+    totals = Counter()
+    with connect() as conn:
+        ensure(conn, SCHEMA_SQL, verbose=not args.counts_out)
+        for cc in wanted:
+            why = skip_reason(cc, args, done)
+            if why:
+                print(f"[{cc}] {why}, skipping")
+                totals["skipped"] += 1
+                continue
+            got = Counter()
+            for slug in by_iso.get(cc, []):
+                try:
+                    got += run_country(conn, slug, cc, args, expected_km)
+                except Exception as exc:
+                    print(f"[{slug}] FAILED: {type(exc).__name__}: {exc}")
+                    got["failed"] += 1
+            totals += got
+            if not args.dry_run and not got["failed"]:
+                record_done(cc, got)
+    return totals
+
+
+def too_big(cc, size_bytes):
+    """A message when this extract will not fit in the memory left, else
+    None. Linux only (reads /proc/meminfo); elsewhere every country runs."""
+    avail = mem_available_mb()
+    if avail is None or not size_bytes:
+        return None
+    need = BASE_MB + MB_PER_EXTRACT_MB * size_bytes / 1e6
+    if need <= avail:
+        return None
+    return (f"[{cc}] not started: its {size_bytes / 1e6:,.0f} MB extract needs "
+            f"about {need:,.0f} MB and this machine has {avail:,.0f} MB of "
+            f"memory and swap left (CARTA_DERIVE_MB_PER_EXTRACT_MB="
+            f"{MB_PER_EXTRACT_MB:g}); run it on a bigger machine or with "
+            f"--no-preflight")
+
+
+def run_children(args, wanted, extract_size):
+    """One child process per country (T1223)."""
+    done = load_progress()
+    expected = load_expected_km()
+    if expected:
+        print(f"{len(expected):,} published length(s) from the registry, "
+              f"for the fame-pass cross-check")
+    totals = Counter()
+    base = [sys.executable, str(Path(__file__).resolve()), "--in-process",
+            "--force"]
+    if args.dry_run:
+        base.append("--dry-run")
+    if args.verbose:
+        base.append("--verbose")
+    if args.limit:
+        base += ["--limit", str(args.limit)]
+    for cc in wanted:
+        why = skip_reason(cc, args, done)
+        if why:
+            print(f"[{cc}] {why}, skipping", flush=True)
+            totals["skipped"] += 1
+            continue
+        msg = None if args.no_preflight else too_big(cc, extract_size(cc))
+        if msg:
+            print(msg, flush=True)
+            totals["too_big"] += 1
+            continue
+        fd, counts_path = tempfile.mkstemp(prefix=f"derive_{cc}_",
+                                           suffix=".json")
+        os.close(fd)
+        try:
+            rc = subprocess.run(base + ["--countries", cc,
+                                        "--counts-out", counts_path]).returncode
+            try:
+                got = Counter(json.loads(
+                    Path(counts_path).read_text(encoding="utf-8") or "{}"))
+            except (ValueError, OSError):
+                got = Counter()
+        finally:
+            try:
+                os.unlink(counts_path)
+            except OSError:
+                pass
+        if rc != 0 and not got["failed"]:
+            # Killed before it could write its counts: on Linux a negative
+            # code is the signal, and SIGKILL (-9) is the out-of-memory killer.
+            hint = (" (killed by signal %d; -9 is most likely the "
+                    "out-of-memory killer)" % -rc) if rc < 0 else ""
+            print(f"[{cc}] FAILED: child exited {rc}{hint}", flush=True)
+            got["failed"] += 1
+        totals += got
+    return totals
 
 
 if __name__ == "__main__":
