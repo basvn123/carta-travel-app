@@ -583,7 +583,9 @@
    "cmds": [
     [
      "<PY>",
-     "pipeline/trails/derive_routes.py"
+     "pipeline/trails/derive_routes.py",
+     "--fresh-days",
+     "14"
     ]
    ],
    "note": "five countries have paths on the ground and almost no type=route relations, so the relation ingest reads almost nothing there and Moldova published 3 walks. This clusters connected named or graded paths out of the same Geofabrik extracts and stages them as needs_review with derived_route = true, to face the same continuity gate and the same quotas as everything else. Quarterly, because it reads the extracts the ingest downloads; a derived route that overlaps a real relation is rejected, so this stops finding new work as those countries start mapping routes."

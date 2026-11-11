@@ -222,7 +222,10 @@ TASKS = [
         "writes_app_data": False,
         "soft": True,
         "guard": guard_trailslab_up,
-        "cmds": [[PY, "pipeline/trails/derive_routes.py"]],
+        # --fresh-days 14 (T1223): a rerun after a crash skips the countries
+        # it already finished; a quarter later they all run again. Each
+        # country runs in its own child process and prints its peak memory.
+        "cmds": [[PY, "pipeline/trails/derive_routes.py", "--fresh-days", "14"]],
         "note": ("five countries have paths on the ground and almost no "
                  "type=route relations, so the relation ingest reads almost "
                  "nothing there and Moldova published 3 walks. This clusters "
