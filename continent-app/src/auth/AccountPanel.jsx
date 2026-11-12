@@ -125,7 +125,8 @@ function FieldLabel({ htmlFor, children, mark }) {
  * What the new password still needs, ticked off as it is typed.
  *
  * Two readings of the same secret, kept side by side on purpose. The checklist
- * is the floor the form enforces and it is learnable: four rules, each either
+ * is the floor the form enforces and it is learnable: two rules (length, and
+ * no word from the account or Carta's name; T1164-f), each either
  * met or not. The meter underneath is the honest measurement, and it is what
  * tells somebody that a four-word phrase clearing every rule is far better
  * than an eight-character mangle that also clears them. Neither is enough on
@@ -135,16 +136,14 @@ function FieldLabel({ htmlFor, children, mark }) {
  * It renders nothing until there is something to check, so the closed form is
  * three fields and a button rather than a page of conditions.
  */
-function PasswordChecklist({ password }) {
+function PasswordChecklist({ password, context }) {
   const { t } = useI18n();
   const strength = useMemo(() => passwordStrength(password), [password]);
-  const rules = useMemo(() => checkPasswordRules(password), [password]);
+  const rules = checkPasswordRules(password, context);
   if (!password) return null;
   const labels = {
     len: t('account.reqLength', { n: MIN_PASSWORD_LENGTH }),
-    upper: t('account.reqUpper'),
-    number: t('account.reqNumber'),
-    symbol: t('account.reqSymbol'),
+    context: t('account.reqContext'),
   };
   return (
     <div className="pw-gauge">
@@ -416,7 +415,9 @@ export function AccountPanel({
   // Live state of the form, the same booleans the checklist draws and the
   // submit button gates on. One source, so the button can never be pressable
   // over a rule the list is still showing as unmet.
-  const pwRulesMet = passwordMeetsRules(newPassword);
+  // The context words (T1164-f): the password may not contain the name or the e-mail's local part.
+  const pwContext = { name: storedName, email: storedEmail };
+  const pwRulesMet = passwordMeetsRules(newPassword, pwContext);
   const pwMatches = !!confirmPassword && newPassword === confirmPassword;
   const pwReady = (!hasPassword || !!currentPassword) && pwRulesMet && pwMatches;
 
@@ -1156,7 +1157,7 @@ export function AccountPanel({
                   placeholder={t('account.newPasswordPlaceholder', { n: MIN_PASSWORD_LENGTH })}
                   required
                   error={pwFieldError.next || ''}
-                  hint={newPassword ? <PasswordChecklist password={newPassword} /> : null}
+                  hint={newPassword ? <PasswordChecklist password={newPassword} context={pwContext} /> : null}
                 />
                 <PasswordField
                   id="acct-confirm-pw"

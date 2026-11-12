@@ -825,6 +825,7 @@ export const en = {
   "auth.errNetwork": "No connection. Check it and try again.",
   "auth.errPasswordMismatch": "Passwords don't match.",
   "auth.errPasswordShort": "Password must be at least {n} characters.",
+  "auth.errPasswordContext": "Choose a password without “Carta”, your name or the first part of your e-mail address.",
   "auth.forgotPassword": "Forgot password?",
   "auth.fullName": "Full name",
   "auth.fullNamePlaceholder": "Jane Doe",
@@ -2582,9 +2583,7 @@ export const en = {
   "saved.crewRemove": "Take {name} off this trip",
 
   // change password: the checklist, the sweep of other devices, the reset step
-  "account.reqUpper": "One capital letter",
-  "account.reqNumber": "One number",
-  "account.reqSymbol": "One symbol, such as ! or #",
+  "account.reqContext": "No “Carta”, your name or your e-mail name",
   "account.errPasswordRules": "Your new password does not meet every rule below yet.",
   "account.signOutOthers": "Sign out of every other device",
   "account.passwordUpdatedOthers": "Password updated. Every other device has been signed out.",

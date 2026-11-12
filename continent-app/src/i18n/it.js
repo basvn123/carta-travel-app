@@ -775,6 +775,7 @@ export const it = {
   "auth.errNetwork": "Nessuna connessione. Controllala e riprova.",
   "auth.errPasswordMismatch": "Le password non corrispondono.",
   "auth.errPasswordShort": "La password deve avere almeno {n} caratteri.",
+  "auth.errPasswordContext": "Scegli una password senza «Carta», il tuo nome o la prima parte del tuo indirizzo e-mail.",
   "auth.forgotPassword": "Password dimenticata?",
   "auth.fullName": "Nome completo",
   "auth.fullNamePlaceholder": "Mario Rossi",
@@ -2171,9 +2172,7 @@ export const it = {
   "saved.crewRemove": "Togli {name} da questo viaggio",
 
   // cambia password: la lista, la disconnessione degli altri dispositivi, il link
-  "account.reqUpper": "Una maiuscola",
-  "account.reqNumber": "Un numero",
-  "account.reqSymbol": "Un simbolo, come ! o #",
+  "account.reqContext": "Niente «Carta», il tuo nome o il nome della tua e-mail",
   "account.errPasswordRules": "La nuova password non rispetta ancora tutte le regole qui sotto.",
   "account.signOutOthers": "Esci da tutti gli altri dispositivi",
   "account.passwordUpdatedOthers": "Password aggiornata. Tutti gli altri dispositivi sono stati disconnessi.",
