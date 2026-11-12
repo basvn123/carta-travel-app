@@ -76,6 +76,7 @@ import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[2]
 LEDGER = ROOT / "cache" / "photos" / "takedowns.json"
@@ -120,14 +121,22 @@ def save_ledger(rows):
     tmp.replace(LEDGER)
 
 
+def _norm(text):
+    """One form for needles and wire strings. Wire URLs carry Commons titles
+    percent-encoded with underscores ("Colotois_pennaria_%282%29.jpg") while
+    a title is usually typed with spaces and brackets, so a plain substring
+    test missed the T449 moth: decode, lower-case, spaces to underscores."""
+    return unquote(str(text or "")).lower().replace(" ", "_")
+
+
 def is_taken_down(text, ledger=None):
     """For the layers' image passes: does any ledger needle match this
     candidate's title or URL? Cheap, case-insensitive substring."""
-    lowered = str(text or "").lower()
+    lowered = _norm(text)
     if not lowered:
         return False
     for row in (ledger if ledger is not None else load_ledger()):
-        if row["needle"].lower() in lowered:
+        if _norm(row["needle"]) in lowered:
             return True
     return False
 
@@ -135,7 +144,7 @@ def is_taken_down(text, ledger=None):
 def _matches(record, needles):
     for value in record.values():
         if isinstance(value, str):
-            lowered = value.lower()
+            lowered = _norm(value)
             if any(n in lowered for n in needles):
                 return True
     return False
@@ -165,7 +174,7 @@ def _scrub_node(node, needles, hits):
 def scrub(needles=None):
     """Apply the ledger (or an explicit needle list) to every wire file.
     Returns {path: n_removed}; files without a hit are not rewritten."""
-    needles = [n.lower() for n in
+    needles = [_norm(n) for n in
                (needles or [r["needle"] for r in load_ledger()])]
     if not needles:
         print("ledger empty, nothing to scrub")
@@ -180,7 +189,7 @@ def scrub(needles=None):
                 text = path.read_text(encoding="utf-8")
             except OSError:
                 continue
-            lowered = text.lower()
+            lowered = _norm(text)
             if not any(n in lowered for n in needles):
                 continue
             data = json.loads(text)
