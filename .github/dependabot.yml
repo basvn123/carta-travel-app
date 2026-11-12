@@ -4,6 +4,13 @@
 # each is reviewed alone (maplibre-gl 6 and jspdf 4 are tracked as C6 tasks).
 # The Workers under continent-app/workers have no package.json of their own, so
 # they are covered by the continent-app entry.
+# Owner sweep 2026-11-12: packages that must move together (react with
+# react-dom and the types, eslint with @eslint/js, vite with its React plugin)
+# get a major-only group listed before the minor-patch group, so their next
+# major arrives as one coherent PR (a lone react-dom 19 or @eslint/js 10 PR
+# fails npm ci on the peer range). numpy, rasterio and geopandas are held at
+# the line that still runs on Python 3.11 with numpy 1.x until the numpy 2 /
+# Python 3.12 move (ROADMAP C6); a group bump that needs them cannot resolve.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -13,6 +20,15 @@ updates:
       day: monday
     open-pull-requests-limit: 3
     groups:
+      react-major:
+        patterns: [react, react-dom, "@types/react", "@types/react-dom"]
+        update-types: [major]
+      eslint-major:
+        patterns: [eslint, "@eslint/js"]
+        update-types: [major]
+      vite-major:
+        patterns: [vite, "@vitejs/plugin-react"]
+        update-types: [major]
       npm-minor-patch:
         update-types: [minor, patch]
     labels: [dependencies]
@@ -24,6 +40,12 @@ updates:
       day: monday
     open-pull-requests-limit: 2
     groups:
+      trailslab-react-major:
+        patterns: [react, react-dom]
+        update-types: [major]
+      trailslab-vite-major:
+        patterns: [vite, "@vitejs/plugin-react"]
+        update-types: [major]
       trailslab-minor-patch:
         update-types: [minor, patch]
     labels: [dependencies]
@@ -37,6 +59,13 @@ updates:
     groups:
       pip-minor-patch:
         update-types: [minor, patch]
+    ignore:
+      - dependency-name: numpy
+        versions: [">=2"]
+      - dependency-name: rasterio
+        versions: [">=1.5"]
+      - dependency-name: geopandas
+        versions: [">=1.2"]
     labels: [dependencies]
 
   - package-ecosystem: pip

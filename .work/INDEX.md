@@ -4,6 +4,7 @@ Every L1 and L2 run in this project, newest first. Each line links to its full r
 
 Format: `date · level · playbook · title: one-line result → report path`
 
+- 2026-11-12 · L2 · deep-task · Owner sweep, security lane (C2, C5, C6, N3): Dependabot alerts and fixes on, owner rotation and MFA recorded, PR #25 merged, 4 Dependabot PRs closed, 5 stale branches archived and deleted; Actions secrets and workflow fixes handed on → `.work/2026-11-12-owner-security/report.md`
 - 2026-11-12 · L1 · deep-task · Branch cleanup: T1223 from origin/main merged into the crew layout, merged branches and worktrees removed, the 3 unrun planned tasks recorded in ROADMAP D15, F2, G5, session numbers replaced by task IDs → `.work/2026-11-12-branch-cleanup/report.md`
 - 2026-11-11 · pre-crew · T1223 Derived routes fit the 4 GB box (D24, H9): way store, per-country child processes, peak memory down 56 to 72 percent → `.work/2026-11-11-derive-routes-memory/report.md`
 - 2026-11-11 · L2 · deep-task · Crew alignment: repo moved to the crew layout (CLAUDE.md, project map, decisions, lessons, owner steps), Execution/ and archive/ retired into git history → `.work/2026-11-11-crew-alignment/report.md`
