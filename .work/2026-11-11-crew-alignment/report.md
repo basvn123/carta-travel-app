@@ -61,6 +61,8 @@ Commit `p15-crew-alignment` (1,063 files: 858 deleted, 165 edited, 25 moved, 15 
 | `continent-app/scripts/verify_*.mjs` (5) | Screenshot paths moved to `.work/shots/` | Old folder gone |
 | `pipeline/README.md` | Retirement policy: delete, git keeps it | No `archive/` folder |
 
+After the merge, the main checkout still held never-tracked leftovers under `Execution/` (task screenshots and walk logs, for example `Execution/P15/T1024-shots/first-1440.png`) and `archive/execution-queue/logs/`. They totalled 59 MB, all screenshots and logs the old rules called throwaway, and were deleted. The worktree `C:/Users/Gebruiker/Documents/Portfolio/wt/crew-alignment` was removed with `node scripts/worktree.mjs remove`; `continent-app/node_modules` was kept intact.
+
 Outside the repo: `~/.claude/projects/c--Users-Gebruiker-Documents-Portfolio-Travel-App/memory/MEMORY.md` trimmed from 4,078 to 598 bytes; 35 superseded memory files moved to `memory/archive/` (not deleted).
 
 ## How it fits together
