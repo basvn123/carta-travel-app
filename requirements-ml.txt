@@ -10,7 +10,7 @@
 #   # half 2, guided search, into its own venv (CPU torch first, as on the box):
 #   python -m venv ~/venv-guided
 #   ~/venv-guided/bin/python -m pip install -r infra/hetzner/jobs/requirements-torch-cpu.txt
-#   ~/venv-guided/bin/python -m pip install sentence-transformers==3.3.1 "huggingface-hub>=0.34,<1.0" -c constraints.txt
+#   ~/venv-guided/bin/python -m pip install sentence-transformers==5.6.0 "huggingface-hub>=0.34,<1.0" -c constraints.txt
 #   # then run guided_search with CARTA_GUIDED_PY=~/venv-guided/bin/python
 #
 # On Windows the venv python is ~/venv-guided/Scripts/python.exe. The box
@@ -21,7 +21,7 @@
 # thenlper/gte-small (MIT licence), run on the CPU. Pulls in torch,
 # transformers and tokenizers; numpy and scikit-learn stay at the
 # constraints.txt pins.
-sentence-transformers==3.3.1
+sentence-transformers==5.6.0
 huggingface-hub>=0.34,<1.0
 
 # pipeline/ask_index_layer.py (T551), half 1: the Ask Carta index, embedded
