@@ -8,7 +8,6 @@ Rows: 81. Register rows point back here.
 
 ## Steps
 
-0. **crew-a** (first, 2026-11-11): Push the history tag so `git show archive/execution-2026-11-11:...` works in every clone and cloud session: `git push origin archive/execution-2026-11-11`. Until then the same commands work with the commit hash `2a2379d44e` in place of the tag name. Why: `docs/decisions/0002-run-history-in-work-index.md`.
 1. **T557-b** (register order: 1): Review the CSP change: script-src gains 'wasm-unsafe-eval' for WebLLM (public/_headers; vercel.json rollback host unchanged)
 2. **T033-b** (register order: 2): Dashboard Tax: Belgian origin address, Belgium-only registration, threshold monitoring on with a read email
 3. **T532-b** (register order: 2): Register the laptop task (powershell -ExecutionPolicy Bypass -File scripts\stays_scrape_task.ps1) and set the five RCLONE_CONFIG_R2_* variables so the March and September scrape uploads its journal

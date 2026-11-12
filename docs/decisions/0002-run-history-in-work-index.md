@@ -24,7 +24,7 @@ We chose **option 3**:
 
 ## Consequences
 - Good: one history, readable from any session; the working tree lost 534 files and about 1.5 MB of text sessions used to grep.
-- Bad: reading an old report takes a `git show`. The tag must be pushed (`git push origin archive/execution-2026-11-11`) for other clones to use the tag name.
+- Bad: reading an old report takes a `git show`. The tag was pushed to GitHub on 2026-11-12, so every clone can use it.
 
 ## How we'll know it works
 A question like "what did T1162 change?" is answered from `.work/INDEX.md` plus one `git show`.
