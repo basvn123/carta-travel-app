@@ -15,3 +15,9 @@ Rows: 6.
 4. **T272-b: store developer accounts, only when you choose to build store apps.** Apple Developer Program (99 USD a year) and a Google Play developer account (business, after the T014 company exists). Building iOS from Windows needs a cloud Mac build (for example EAS Build). T247 and T248 start after these.
 5. **T475-a: two affiliate programmes.** Sign up for Flix on Awin and Trainline on Partnerize, as the Carta business. It worked when each shows "approved" and gives a tracking id; tell a session the ids and it adds the links next to Omio (roadmap 4.23).
 6. **T1060-c: claim the social handles** once the name is decided: @cartatravel on X and TikTok (looked free), and check Instagram while signed in. Use the shared owner e-mail and turn on two-step login on each at once.
+
+## Moved from unsorted.md (owner sweep 2026-11-12)
+
+| ID | Item | Order |
+|---|---|---|
+| T1120-a | Create the Sentry EU (or GlitchTip) project, turn on "Prevent storing of IP addresses", sign the DPA, copy the DSN (report T1120) |  |

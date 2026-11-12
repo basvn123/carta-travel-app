@@ -64,3 +64,10 @@ The sweep could not apply migrations or write secrets: the session's permission 
      supabase db query --linked "select source_header, created_at from public.content_reports order by created_at desc limit 1"
      ```
      `source_header` must be `cf-connecting-ip`. That also closes T068-c.
+
+## Moved from unsorted.md (owner sweep 2026-11-12)
+
+| ID | Item | Order |
+|---|---|---|
+| T1110-b | Set the secrets `RESEND_API_KEY`, `WAITLIST_FROM`, `WAITLIST_SECRET`, verify the sending domain in Resend, deploy `waitlist` with `--no-verify-jwt` | 2 |
+| T1205-b | The price-alerts Edge Function is not deployed and its secrets (PRICE_ALERTS_FROM, PRICE_ALERTS_LINK_SECRET, PRICE_ALERTS_BOX_SECRET) and the box env (PRICE_ALERTS_URL) are not set; the Resend custom-header support was read from search snippets only | 2 |

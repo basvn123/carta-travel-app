@@ -51,3 +51,12 @@ Checked against the live account and rewritten by the owner sweep of 2026-11-12 
 - **T1039-a**: The outdoor pages' When to go keeps its own month strip; a shared OutdoorWhen on the place page's when-* design (snow/storm for peaks, water temperature for lakes/beaches) needs its own design call (report T1038-T1039)
 - **T632-h**: GPX for trip pages: only straight lines between stops exist; a waypoint GPX is a product call
 - **T233-c** (register order: 3): After upload, verify a 206 byte range with CORS from the www origin (curl in the report), then set `VITE_TERRAIN_PMTILES_URL` in the production build. The Range CORS rule it needs is live since 2026-11-12 (T233-b).
+
+## Moved from unsorted.md (owner sweep 2026-11-12)
+
+| ID | Item | Order |
+|---|---|---|
+| T1120-b | Add the exact ingest host to connect-src in public/_headers, set VITE_ERROR_DSN and the SENTRY_DSN Pages secret, redeploy |  |
+| T1167-a | Create the private Cloudflare Pages project `carta-docs` behind Cloudflare Access and deploy the built site (`.docs-site`) to it; the decision on site visibility is T1045-i |  |
+| T1171-a | The Pass moment is built behind PASS_MOMENT (off); the closed beta tests it with ?pm=on and the owner decides whether to set the flag true (procedure in docs/design/pass-moment.md, Turning it on) |  |
+| T1176-c | Post the Show HN draft (`report T1176`) only once the free part of Carta needs no signup |  |

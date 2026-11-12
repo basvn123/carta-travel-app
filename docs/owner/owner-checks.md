@@ -40,3 +40,54 @@ Rows: 25 steps, covering 32 of the original rows.
 23. **T335-c** Maintenance screen and announcement bar. Run locally with `?paymock` and a maintenance flag, and look at both at 375 and 1440 px. Done when both show, read correctly, and cover nothing they should not.
 24. **T430-a** With network access, at 375 and 1440 px, open Lake Bled (`#lake=si-lake-bled-Q648902&lc=SI`) and Rome (`#dest=FCO`): swipe the gallery and a rail of tiles, open the 3D terrain view, and export the PDF. Done when every photo loads and the PDF carries photographs. On the same walk, look at the credit fold ("Where this comes from") on a destination with routes; T313-a never saw it in a browser.
 25. **T168-b** The 20 px pack icons (`src/components/PackIcons.jsx`, shown by `PackGrid.jsx` on a trip page's packing list, e.g. `#journey=es-pilgrim-camino-sarria-santiago`). Look at each icon at 20 px and at 4x zoom. Done when every icon reads at 20 px with no clipped strokes; list the bad ones as `icon name: problem`.
+
+## Moved from unsorted.md (owner sweep 2026-11-12)
+
+| ID | Item | Order |
+|---|---|---|
+| T1071-d | The admin MFA gate and the trail page upload door were not seen in the browser (both need a signed-in account); look at them at 375 and 1440 and run scripts/verify_admin_panel.mjs after T1071-a | after T1071-a |
+| T1086-c | Re-verify the Stripe, Supabase Admin and Cloudflare dashboard steps in docs/runbooks/refund.md and incident.md sections 4 and 5 (only repo objects were checked); also settle whether year-plan renewals need their own refund rows and a refund column on pass_grants |  |
+| T1092-b | After T1092-a, look at the Trails card and trail page on a phone and at desktop width (Veluwe Zwerfpad reads Long, an E-path stage shows Also called); the cloud container could not load app data |  |
+| T1093-b | After T1093-a, read the photo coverage per country from the rebuilt wire (before: DE 4.3, GB 11.8, IT 9.9, FR 16.1 percent), run `node scripts/ci/check-contract.mjs` (it must say the photographs carry an allowed licence and a name) and look at one credited trail page on a phone | after T1093-a |
+| T1100-c | Look at the place page trip card on a real phone with a fare in the sweep (Bergen and Taormina from Brussels open on the plane; Annecy without a fare opens on the car with the why caption) |  |
+| T1102-b | Look at the rail tile and the trail page on a real phone with photographs loaded (this container had no network, so images were blank) |  |
+| T1103-e | Real-person usability test of the 5-screen plan flow with one first-time traveller on a phone (report T1103) |  |
+| T1104-b | The real two-device check of account sync (keep and bookmark signed out on a phone, sign in, see them on a laptop, remove on one and see it go on the other, switch account on the phone), after T1104-a and a deploy | after T1104-a |
+| T1106-a | Run the seeded-error browser spec and look at `?seedError=explore` in `npm run dev` with real app data (the cloud container has none) |  |
+| T1110-c | Sign up with a real address on a preview, confirm from the mail, unsubscribe from the mail, and look at the form on a phone and a desktop | 3 |
+| T1111-c | Run G-R1 to G-R3 (benchmark, premium feel, user struggles); the direction was written without them and is revised where they disagree (report T1111) |  |
+| T1120-c | Throw one probe error on the preview, confirm one scrubbed event, then test the VITE_ERROR_TRACKING=off kill switch |  |
+| T1105-b | After going live, look on a real phone at Explore rails and a destination page: sharpness at the new `STORY_SIZES` 64vw, AVIF served from cdn.carta-europetravel.com, credits under the gallery | 2 |
+| T1129-b | Look at the admin Overview Funnel card on a real project after the paste, and hit each step once |  |
+| T1131-a | Write the founder line in `PRESS_FOUNDER_LINE` (`continent-app/src/lib/press.js`); the press kit shows a visible placeholder until then |  |
+| T1123-b | G4's scope should come from the G-R3 interviews and unmoderated test, which have not run; T1123 worked from the audit and the T1103 usability note (report T1123) |  |
+| T1123-d | Look on a real phone at the reload fixes: reload on a setup question and on the priced trips, then Back to the trip home and "See your priced trips" (report T1123) |  |
+| T1124-c | Look at the app with system reduced motion on, on a real phone (sheets, tabs, map camera, home film) |  |
+| T1122-c | Look at the umber variant on a real phone (iOS Safari, Android Chrome) with the dark system setting and reduced motion on (report T1122) |  |
+| T1128-a | Screen-reader pass on a real phone (VoiceOver on iPhone, TalkBack on Android) over Home, Explore list and map, a place, trail and beach page, the Plan wizard, the trip page and Account; axe cannot judge what is heard (carries T190-f) |  |
+| T1136-g | The 142 place labels were written by one session from general knowledge of Europe and checked only against the catalogue's ids; an owner read of scripts/eval/ask-set.json (places per question) would make the recall numbers more trustworthy |  |
+| T1145-e | Review the D6 expectation blend (population 0.25, area 0.25, nights 0.5) and gap thresholds before D15 adds places on them; six country gaps are not robust to the blend | 0 |
+| T1148-a | Hand-label the 40 plans of `continent-app/scripts/eval/plan-day/labels.json` (pass or fail each, without opening sample-key.json), then run `run.mjs plan-day --write --dashboard`: until then the plan-day judge has no kappa against a human and may not gate ([report](P15/T1148-eval-platform.md)) | 1 |
+| T1149-a | Review the taxonomy v1 node list and the 20 "not a concept" decisions in pipeline/taxonomy/mapping.yaml before labelling, so the labels are made against an agreed vocabulary (docs/ai/taxonomy.md) | 1 |
+| T1143-g | sources.yaml uses LicenseRef ids for UNESCO, Numbeo, the stays scrape, Commons (per file) and US Gov data, and the ledger marks some of them "verify"; confirm each against the ledger row before the licences are shown to travellers |  |
+| T1146-a | Review the D15 add list per country in docs/data/catalogue-gaps/ (142 adds, 440 stretch below the 0.40 floor, 3 merge reviews); D15 part 2 applies only what is approved | 1 |
+| T1144-a | The truth set sheet (evals/truth/sheet.csv, 762 rows) is not verified by hand: the score rests on 90 seeded rows that share the data's own sources; verify the rows (evals/truth/GUIDE.md) and move the baseline | 1 |
+| T1144-b | The text judge has no kappa against a human: label the 50 texts in evals/truth/judge/labels.json, then read the kappa in the truth eval | 2 |
+| T1152-b | The taste verdict sync is proven against a stubbed account only; check it on two devices once 072 is live and deployed (report T1152, Owner steps) | after T1152-a |
+| T1153-c | The 300-mention linking set was written by the session that built the linker, so MRR 0.997 is an upper bound; label 300 real mentions from search logs, parse-booking titles and Ask, then re-bless scripts/eval/linking/baseline.json |  |
+| T1158-a | Run the k6 scripts: first locally against `wrangler pages dev` (to record local p95) and then against the Pages preview (`docs/runbooks/load-tests.md`), and paste the p95 numbers in a report |  |
+| T1160-c | Run the incident drill on the live stack and add the timings to `docs/runbooks/drill-log.md` |  |
+| T1190-a | Owner step: check the 48-row price hand sample by hand and run prices_sample; until then no check sees absolute euros (report T1190) |  |
+| T1190-c | Owner step: enter about 20 published fare examples in fare_examples.csv, copy the sweep files to cache/flights_wire and run prices_fares; swept fares have no outside check |  |
+| T1169-b | The installed app is untested on a real iPhone and Android phone: install from the hint, offline reopen of a kept trip, update after a deploy (CACHE_VERSION carta-v8); see the owner step in report T1169 |  |
+| T1192-g | National lake CSVs (France, Sweden, Finland) for the lakes layer; check each licence |  |
+| T1191-h | The tourism board and best-of lists and the Eurostat city nights are not compiled (network); add them under data/reports/validation/ratings/sources/ and rerun the ratings layer |  |
+| T1191-l | UNESCO and Tripadvisor terms limit republication and data/rating/external/tripadvisor.json stores names and ranks; the owner decides whether it stays in git |  |
+| T1175-a | The trip receipt share (My trips menu) is behind the flag ?receipt=1; look at the image on a real phone and desktop, then flip the default in continent-app/src/lib/share/flag.js; see report T1175 |  |
+| T1178-e | Owner approval of the sample December 2026 draft, then set status published; wire vintage is 2026-06-07 so a fresh wire should be used first |  |
+| T1193-c | Owner step: supply official tracks (`geom/EV6-AT.geojson` etc.) from open sources (France data.gouv Licence Ouverte, UK NCN, Swiss opendata) for the geometry fact; EuroVelo GPX is personal use, keep it out of git |  |
+| T1193-f | National networks (D-Netz, Sustrans NCN, SchweizMobil, Bicitalia) not loaded: `national.csv` loader is built and tested, data is an owner step after terms are read |  |
+| T1194-b | Copernicus sea temperature CSV not exported and T1097-a not run; sea layer has no real run |  |
+| T1200-a | Fire months use a dry-heat proxy until the owner supplies cache/fire_fwi.json from the CEMS fire danger reanalysis (licence wording unverified) |  |
+| T1198-f | Review the 42 heroes flagged on the whole list (Starmer portrait on Tiverton, Hythe, Rothwell; Flag of Europe on Eu; a grizzly on Fur) and approve or refuse the 12 ladder replacements before any --apply | 3 |
+| T1209-b | Look at the G14 home (?home=g14) on a real phone on a preview: the doors, the example card, the share button, and how quick it feels (INP is only meaningful there) | 2 |

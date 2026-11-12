@@ -16,3 +16,14 @@ Owner sweep 2026-11-12: every other step was decided, done or found obsolete by 
 4. **T605-c**: In the Claude desktop app open Help, Troubleshooting, Review Pinned Git Origins and confirm the Carta repository's origin. Done when a session worktree can merge main's `.claude/skills/carta-design` without a pinned-origin warning.
 5. **T033-d**: Handed to the supabase lane (2026-11-12): in Stripe test mode, check that a German and a Belgian address both show the Belgian rate (amount_tax 121 on 699). Waits on T033-a and T033-b.
 6. **T068-c**: Handed to the supabase lane (2026-11-12): after the first real content report, run `select source_header, count(*) from public.content_reports group by 1`; if any row says x-forwarded-for, open a ROADMAP C-track fix so report_guide takes the last trusted entry.
+
+## Moved from unsorted.md (owner sweep 2026-11-12)
+
+| ID | Item | Order |
+|---|---|---|
+| T1131-b | Fill the journalist list: names and public editorial addresses per `docs/marketing/journalist-list.md`, grow it to about 40 rows (UK outlets later) and keep the filled copy out of the repo |  |
+| T1135-h | Ask's free Workers AI Neurons cover about 560 answers a day (about 2,800 MAU); past that switch on the Workers paid plan or Ask answers with facts only |  |
+| T1168-d | The ask-docs question set was written by its builder; replace with real questions and measure Material's built in search on the same set |  |
+| T1172-a | Register the affiliate programmes and set the four partner ids; until then partner links stay plain (owner step) |  |
+| T1213-f | Travelpayouts Data API signup and token for the P1 coverage run |  |
+| T1213-i | Partner applications at the milestones in docs/data/access-ladder.md |  |

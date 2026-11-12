@@ -18,3 +18,9 @@ Rows: 5.
 3. **I8-fr** French: a native French reader. Register is vous (decided 2026-11-12). Also check that "Demander à Carta" works as the name of the Ask button.
 4. **I8-es** Spanish: a native Spanish reader. Register is tú.
 5. **I8-it** Italian: a native Italian reader. Register is tu. Also check the gender-neutral `notfor.*` lines that were rewritten on 2026-11-12.
+
+## Moved from unsorted.md (owner sweep 2026-11-12)
+
+| ID | Item | Order |
+|---|---|---|
+| T1131-c | Review the Dutch press strings (`press.*`, `support.pressLink` in nl.js); de, es, fr, it fall back to English. Replace the screenshot slot (`PRESS_SCREENSHOT`, today the site OG image) with a real product screenshot |  |

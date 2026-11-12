@@ -25,3 +25,20 @@ Everything that costs money goes to the back, after all free work (owner instruc
 ## Paid data sources
 
 15. T1112-a: Aviasales route coverage, after the Travelpayouts sign-up (T1213-f): set `AVIASALES_TOKEN`, then the probe (free, about 2.8 h).
+
+## Moved from unsorted.md (owner sweep 2026-11-12)
+
+| ID | Item | Order |
+|---|---|---|
+| T152-a | 236 of the 253 catalogue trips are over a word cap (41 summaries, 943 day blocks, 334 pro tips); bringing them within needs a model rewrite of the prose, which is a paid Gemini run and stage 3 of _OPEN-MASTER.md is not done, so the done condition "every trip within the caps" holds for generated trips only | LAST (paid, see docs/owner/paid-runs.md); after stage 3 |
+| T1112-a | Run the Aviasales coverage probe with the owner token and the sweep export; steps in the report (D14) |  |
+| T1105-a | Self-hosted first paint is built but ships not live: derive the `dest` and `dossier` layers to R2, then re-run `pipeline/photos/hero_ladder.py --manifests` so `continent-app/src/lib/heroLadder.json` says live; see the T1105 report's owner steps | 1 |
+| T1148-e | Run the Gemini judge (`node scripts/eval/plan-day/judge.mjs --backend gemini`, a model outside plan-day's chain) on the pipeline key; the key is not in the cloud container, so only the session judge has verdicts | 3 |
+| T1138-e | Ask quality for Gemini Flash-Lite and OVHcloud Mistral Small 3.2 is an owner run (ask-eval-live.mjs needs wrangler pages dev and a key); also rerun Qwen3, whose 88.7 percent is from T563 on 2026-10-22 |  |
+| T1144-c | Run the truth text judge once on Gemini through the gateway (judge.mjs --backend gemini) to compare it with the blind session judge | 3 |
+| T1150-a | The tagger's verifier (Gateway feature tagging, Gemini) has never run: run it on the 400 gold items, score it against the lexical run, and only then on the full corpus; the container has no key | 1 |
+| T1188-b | The Gemini judge has never run (no key in the cloud container): run it on the D4 sample through the gateway, check that `gemini-pro-latest` resolves (else set AI_JUDGE_MODELS), and calibrate it ([report](P15/T1188-llm-judge.md)) | 2 |
+| T1196-f | Cross-check with a second model family: run the Gemini judge (and a Gemini blind back-translation) on data/reports/validation/texts/items.json and the 2,056 flagged strings; the session judges share the drafting model's family |  |
+| T1198-d | One photo check vision run with GEMINI_API_KEY to confirm calls, answers and cost; the research could not reach Google's price page | 2 |
+| T1206-d | First live run of Gateway.batch (Gemini Batch Mode) on the pipeline key; the request shape is coded from memory because the docs host was blocked |  |
+| T1206-f | Record plan-day plans per provider with continent-app/scripts/eval/plan-day/record.mjs against a local supabase functions serve plan-day, then score them with run.mjs plan-day --plans |  |
