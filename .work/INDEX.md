@@ -4,6 +4,7 @@ Every L1 and L2 run in this project, newest first. Each line links to its full r
 
 Format: `date · level · playbook · title: one-line result → report path`
 
+- 2026-11-12 · L2 · deep-task · Owner sweep, decisions lane: 269 owner steps closed or rewritten (166 decided, 31 already done, 23 done, 19 obsolete, 22 human, 8 handoff); ROADMAP section 19 decided, launch runway dated (records 0009, 0010), Terms and Privacy rewritten, product-decisions 147 to 6 and legal 26 to 3 steps → `.work/2026-11-12-owner-decisions/report.md`
 - 2026-11-12 · L1 · deep-task · Branch cleanup: T1223 from origin/main merged into the crew layout, merged branches and worktrees removed, the 3 unrun planned tasks recorded in ROADMAP D15, F2, G5, session numbers replaced by task IDs → `.work/2026-11-12-branch-cleanup/report.md`
 - 2026-11-11 · pre-crew · T1223 Derived routes fit the 4 GB box (D24, H9): way store, per-country child processes, peak memory down 56 to 72 percent → `.work/2026-11-11-derive-routes-memory/report.md`
 - 2026-11-11 · L2 · deep-task · Crew alignment: repo moved to the crew layout (CLAUDE.md, project map, decisions, lessons, owner steps), Execution/ and archive/ retired into git history → `.work/2026-11-11-crew-alignment/report.md`

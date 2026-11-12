@@ -9,12 +9,12 @@ How to use it:
 
 | File | What it covers | Steps |
 |---|---|---|
-| `docs/owner/product-decisions.md` | product and design calls only the owner can make | 147 |
+| `docs/owner/product-decisions.md` | product and design calls only the owner can make | 6 |
 | `docs/owner/owner-checks.md` | other checks and clean-ups | 81 |
 | `docs/owner/cloudflare.md` | Pages, R2, Workers, email routing | 46 |
 | `docs/owner/translation-review.md` | native-reader review of the six languages | 46 |
 | `docs/owner/data-and-pipeline-runs.md` | pipeline and data runs that wait on the owner | 40 |
-| `docs/owner/legal.md` | legal, tax and brand | 26 |
+| `docs/owner/legal.md` | legal, tax and brand | 3 |
 | `docs/owner/hetzner-box.md` | the Hetzner box and workers | 20 |
 | `docs/owner/supabase-migrations.md` | SQL pastes, Edge Functions and secrets | 12 |
 | `docs/owner/stripe.md` | Stripe prices, keys, webhook, test purchases | 11 |
@@ -32,4 +32,4 @@ How to use it:
 | `docs/owner/paid-runs.md` | paid runs, last in the order | procedure |
 | `docs/owner/unsorted.md` | owner steps no procedure covered yet | 302 |
 
-Counts are from 2026-11-11, when these files moved here from `Execution/`.
+Counts are from 2026-11-11, when these files moved here from `Execution/`; product-decisions and legal were updated by the 2026-11-12 owner sweep.
