@@ -2,7 +2,7 @@
 
 Owner-only rows from the old register (`the retired register`, retired 2026-11-11) that no procedure file covered. Each row is one action only the owner can take. Move a row into the right procedure file when you group it, and delete it here when it is done. The ID names the old task; its report is found through `.work/INDEX.md`.
 
-Owner sweep 2026-11-12 (unsorted lane, report `.work/2026-11-12-owner-unsorted/report.md`): 30 rows were closed or decided and removed. Every row left here is handed to the lane that owns its system and has a target file (`move_to` in that run's `ledger.json`); the orchestrator moves them after the merge, which empties this file.
+Owner sweep 2026-11-12 (unsorted lane, report `.work/2026-11-12-owner-unsorted/report.md`): 28 rows were closed or decided and removed; T1118-b and T1190-h are decided and keep only their human part. Every other row left here is handed to the lane that owns its system. Each row has a target file (`move_to` in that run's `ledger.json`); the orchestrator moves them after the merge, which empties this file.
 
 | ID | Item | Order |
 |---|---|---|
