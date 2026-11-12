@@ -60,3 +60,18 @@ test('every key the cookies page lists under "your things" is covered', () => {
   }
   assert.ok(DEVICE_THING_KEYS.length >= listed.length - 2);
 });
+
+// T1054-b: deleting the account clears this device's copy without asking,
+// once the server delete has succeeded (a failed delete keeps everything).
+test('deleteAccount clears this device\'s things after the account is gone', () => {
+  const src = readFileSync(new URL('../src/auth/AuthContext.jsx', import.meta.url), 'utf8');
+  const start = src.indexOf('const deleteAccount = useCallback(');
+  assert.ok(start > 0, 'deleteAccount not found');
+  const body = src.slice(start, src.indexOf('}, []);', start));
+  const rpc = body.indexOf("rpc('delete_user')");
+  const thrown = body.indexOf('if (error) throw error;');
+  const clear = body.indexOf('clearDeviceThings()');
+  assert.ok(rpc > 0 && thrown > rpc, 'the delete RPC and its error check come first');
+  assert.ok(clear > thrown, 'clearDeviceThings() runs only after a successful delete');
+  assert.doesNotMatch(body, /clearDevice\s*[=:]/, 'deletion does not make clearing optional');
+});

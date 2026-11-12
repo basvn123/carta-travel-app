@@ -277,11 +277,14 @@ export function AuthProvider({ children }) {
   // DEFINER Postgres function `delete_user()` removes the auth user and every
   // row they own (see supabase/migrations/005_delete_user.sql). The anon
   // client can't delete auth users itself, so the RPC is the whole mechanism.
+  // Unlike sign-out, nothing is asked: a deleted account leaves no copy of
+  // its trips and plans on this device either (owner decision T1054-b).
   const deleteAccount = useCallback(async () => {
     const supabase = await getSupabase();
     const { error } = await supabase.rpc('delete_user');
     if (error) throw error;
     await supabase.auth.signOut();
+    clearDeviceThings();
   }, []);
 
   /**

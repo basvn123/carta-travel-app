@@ -1350,7 +1350,6 @@ export function AccountPanel({
         setSaid={setPlanSaid}
         onGoCancel={() => go('cancel')}
         onChangePlan={() => paywall.openPrices('browse')}
-        onPricingPage={paywall.openPricingPage}
       />
     );
   }
