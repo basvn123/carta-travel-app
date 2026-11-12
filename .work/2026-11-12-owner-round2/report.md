@@ -52,19 +52,87 @@ Nothing else live changed: no migration, secret, function deploy, box command or
 
 | File | Change | Why |
 |---|---|---|
-| `continent-app/src/i18n/{en,nl,fr,de,es,it}.js` | Year Pass copy: no renewal, no cancel; 15+ cancel/renew keys and `home.login` removed | I-f, decision 0010 |
-| `supabase/functions/checkout/index.ts`, `stripe-webhook/index.ts`, `_shared/passes.mjs`; `supabase/functions/billing/` and `src/lib/billing.js` deleted | payment mode for both tiers; webhook grants on `checkout.session.completed` only; waiver text per 0010 | I-f, I2 |
-| `supabase/migrations/075_year_pass_one_off{,_down}.sql`, `supabase/diagnostics/075_year_pass_one_off_test.sql` | `pass_can_buy` without the subscribed refusal | I-f |
-| `continent-app/src/auth/*`, `pass/PricingPage.jsx`, `components/{PassModal,CreditChip,AnnouncementBar}.jsx`, `hooks/useEntitlement.js`, `lib/{pricing,passMoments,urlState}.js`, `styles/91-account.css`, tests and `verify_paywall*.mjs` | cancel/resume UI gone, Year Pass naming; `groundLeft` | I-f, H14 |
-| `continent-app/src/planner/CartaChatPlanner.jsx` | events switch shows `ai.eventsNeedPass` with `openPasses('ground')` for a free account | H14 |
-| `docs/logic/plan-day.md`, `docs/logic/quotas-paywall.md` | PLANDAY-023, QUOTA-014 describe the bot | drift |
-| `continent-app/src/styles/61-v6-home.css`, `browse/home/HomePage.jsx`, `HomeHero.jsx`, `scripts/verify_home.mjs`, `DESIGN.md` | one brand bar at every width; check at 375 | G14 |
-| `pipeline/stays/{build_stays,apply_stays,common}.py`, `tests/test_stays_manifest_schema.py` | manifest stamps `SCHEMA_VERSION` | stays schema |
-| `continent-app/config/pricing.json`, `tests/footprint.test.mjs` | DESNZ 2026 train 31, car 162 | D22, T1204-a |
+| `continent-app/src/i18n/en.js` | Year Pass copy: no renewal or cancel; cancel/renew keys and `home.login` removed | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/i18n/nl.js` | same keys in Dutch; "abonnement" becomes "pass" | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/i18n/fr.js` | same keys in French | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/i18n/de.js` | same keys in German | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/i18n/es.js` | same keys in Spanish | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/i18n/it.js` | same keys in Italian | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `supabase/functions/checkout/index.ts` | payment mode for both tiers | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `supabase/functions/stripe-webhook/index.ts` | grants on `checkout.session.completed` only; subscription and invoice branches removed | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `supabase/functions/_shared/passes.mjs` | `waiverText` per 0010 (pro-rata withdrawal, no lost right) | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `supabase/functions/billing/index.ts` | deleted (cancel, resume, portal) | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/lib/billing.js` | deleted (app side of the billing function) | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `supabase/migrations/075_year_pass_one_off.sql` | `pass_can_buy` without the subscribed refusal | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `supabase/migrations/075_year_pass_one_off_down.sql` | down migration | schema changes carry a down file |
+| `supabase/diagnostics/075_year_pass_one_off_test.sql` | check for 075 after it is applied | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/auth/AccountPanel.jsx` | cancel/resume rows removed | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/auth/account/PlanView.jsx` | plan view shows "runs until", no renew or cancel | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/auth/account/accountMock.js` | mock without subscription state | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/styles/91-account.css` | cancel-row styles removed | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/pass/PricingPage.jsx` | Year Pass naming and price note | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/components/PassModal.jsx` | no subscribed state; Year Pass wording | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/components/AnnouncementBar.jsx` | no renewal notice | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/components/CreditChip.jsx` | reads `paid` and `groundLeft` | H14 ground offer |
+| `continent-app/src/hooks/useEntitlement.js` | no subscription fields; exposes what `groundLeft` needs | I-f, H14 |
+| `continent-app/src/lib/pricing.js` | Year Pass is one-off in the price model | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/lib/passMoments.js` | moments without the renew/cancel cases | I-f, H14 |
+| `continent-app/src/lib/urlState.js` | billing return state removed | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/browse/home/HomePlans.jsx` | Year Pass naming on the home plans | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/src/planner/CartaChatPlanner.jsx` | events switch shows `ai.eventsNeedPass` with `openPasses('ground')` for a free account | H14: the ground gate had no caller |
+| `continent-app/scripts/verify_paywall.mjs` | no cancel/renew checks | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/scripts/verify_paywall_funnel.mjs` | recognises `.openPasses('...')` callers | H14 |
+| `continent-app/scripts/verify_account_panel.mjs` | no cancel-row selectors | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/tests/passSubscription.test.mjs` | tests the one-off checkout and grant | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/tests/edgeAuth.test.mjs` | billing function removed from the auth matrix | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `continent-app/tests/edgeHttp.test.mjs` | billing function removed from the HTTP matrix | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `docs/logic/plan-day.md` | PLANDAY-023 describes the bot | drift: AiDayPlanModal.jsx was deleted (T1163-b) |
+| `docs/logic/quotas-paywall.md` | QUOTA-014 describes the bot | same |
+| `continent-app/src/styles/61-v6-home.css` | `.hv-top` gone; film header rules at every width; account disc on the film | G14 phone double header |
+| `continent-app/src/browse/home/HomePage.jsx` | dead `.hv-top` JSX and imports removed | G14 |
+| `continent-app/src/browse/home/HomeHero.jsx` | unused `children` slot removed | G14 |
+| `continent-app/scripts/verify_home.mjs` | 375 viewport, header check on phones, one-brand check | G14 |
+| `DESIGN.md` | header-on-film text | G14 |
+| `pipeline/stays/build_stays.py` | manifest stamps `SCHEMA_VERSION` (20), not 18 | stays schema follow-up |
+| `pipeline/stays/apply_stays.py` | "v18" docstrings fixed | same |
+| `pipeline/stays/common.py` | "v18" docstrings fixed | same |
+| `tests/test_stays_manifest_schema.py` | fails on a hard-coded schema | same |
+| `continent-app/config/pricing.json` | DESNZ 2026: train 31, car 162 g | D22, T1204-a |
+| `continent-app/tests/footprint.test.mjs` | new factors | D22 |
 | `continent-app/tests/fixtures/ask-golden.json` | quiet-lake case | E6, T1101-a |
-| `docs/owner/*.md` (16 files) | closed steps out, `unsorted.md` emptied, new rows T222-f, T1205-c, T1117-b; one-off pass docs; webhook 503 plain; README recount | A3 |
-| `ROADMAP.md`, `docs/HANDBOOK.md`, `PRODUCT.md`, `docs/project-map.md`, `docs/architecture/README.md`, `docs/security/threat-model.md`, `docs/reference/*.md` | status and notes, same-commit rule | above |
+| `docs/owner/unsorted.md` | emptied | A3, round-2 brief |
+| `docs/owner/README.md` | counts recounted from the files | A3 |
+| `docs/owner/cloudflare.md` | closed steps out of part 5; after-ship checks added to step 6 | A3 |
+| `docs/owner/owner-checks.md` | closed steps out, T1071-d + T1084-b merged, renumbered | A3 |
+| `docs/owner/paid-runs.md` | T154-a in step 3; T1117-b/T1206-e row | A3 |
+| `docs/owner/product-decisions.md` | T068-c duplicate out | A3 |
+| `docs/owner/legal.md` | T333-f moved to ROADMAP I1 | A3 |
+| `docs/owner/accounts-and-signups.md` | what a session does after T213-e and T216-a | A3 |
+| `docs/owner/scraper-health.md` | T714-b decided line | A3 |
+| `docs/owner/search-console.md` | T222-f row | A3 |
+| `docs/owner/translation-review.md` | how-to steps for T1215-d and T1212-a; I8-nl list | A3 |
+| `docs/owner/supabase-migrations.md` | step 1 covers 075 and the function deploys; T1110-b/T1205-b merged; T1205-c row | A3, I-f |
+| `docs/owner/stripe.md` | one-off pass; webhook 503 said plainly with a curl check; T461-e dropped | I-f, I2 |
+| `docs/owner/pass-subscription.md` | rewritten for the one-off passes | I-f |
+| `docs/owner/uploads.md` | T333-b done, T333-f pointer | A3 |
+| `docs/owner/web-hardening.md` | steps point to cloudflare.md (one copy) | A3 |
+| `docs/owner/hetzner-box.md` | duplicate T1086-a row removed | A3 |
+| `ROADMAP.md` | I-f, H14, G14, D22, E6 status; round-2 notes on 20 items | same-commit rule, decision 0003 |
+| `docs/HANDBOOK.md` | pass, checkout, paywall, home and footprint sections | same-commit rule |
+| `PRODUCT.md` | Year Pass wording | Year Pass is one payment that never renews (I-f, decision 0010) |
+| `docs/project-map.md` | `billing.js` entry removed | file deleted |
+| `docs/architecture/README.md` | billing function removed | same |
+| `docs/security/threat-model.md` | billing function removed from the surface | same |
+| `docs/reference/app-lib.md` | regenerated | generated reference follows the code |
+| `docs/reference/python.md` | regenerated | same |
+| `docs/reference/supabase.md` | regenerated | same |
 | `docs/lessons.md` | CRLF worktree lesson | lessons |
+| `.work/INDEX.md` | run line | run history |
+| `docs/reference/openapi.md` | touched by the reference regeneration; no net change committed | same |
+| `docs/reference/tasks.md` | touched by the reference regeneration; no net change committed | same |
+| `docs/security/SECRETS.md` | touched by Builder A; no net change committed | billing secrets check |
+| `docs/SCHEMA.md` | wire table rewritten by `wire-table.mjs --write`; line endings only, no content change | the drift flag was CRLF only |
+| `supabase/diagnostics/.044_pass_functions.sql` | Builder A scratch extract of the 044 pass functions, used to write 075; not committed (git ignores it) | reference while writing 075 |
 
 ## How it was checked
 `checks.md`: lint 0 errors; ruff clean; targeted node tests 104/104 (judge); stays and footprint tests pass; drift has no logic findings; G14 rendered at 375 and 1440 with the main checkout's data; live checks in `checks-live.md`.
