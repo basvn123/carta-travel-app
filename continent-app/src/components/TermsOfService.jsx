@@ -14,18 +14,26 @@ import { LegalDoc } from './LegalDoc.jsx';
  *
  * What these terms have to carry, and why (T013, Legal.md item 2):
  *
- *  - What a pass buys and does not. The Trip Pass is a one-off payment for a
- *    fixed number of days; the yearly plan is a subscription that renews
- *    until cancelled (T460, checkout/index.ts).
- *  - The 14-day right of withdrawal and the express waiver for a pass that
- *    starts at once. The waiver itself is collected as a checkbox on the
- *    Stripe Checkout page (consent_collection in the checkout function); the
- *    section here is what that checkbox refers to.
+ *  - What a pass buys and does not. Both passes are one-off payments for a
+ *    fixed number of days; the Year Pass is a 12-month pass that ends by
+ *    itself and never renews (ROADMAP I-f, decision 0007, row T460-b).
+ *  - The 14-day right of withdrawal. A pass is a digital service in the
+ *    sense of Directive 2011/83/EU Art 2(16) (it lets the traveller create,
+ *    store and share data online; compare CJEU C-641/19 PE Digital), not
+ *    digital content under Art 16(m). So the request to start at once does
+ *    not end the right: a withdrawal within 14 days pays for the days used
+ *    (Art 14(3): proportionate to the agreed price; C-641/19; read
+ *    C-234/25 before T227), and the right ends only once the pass has
+ *    fully run (Art 16(a)). Self-review T032-e,
+ *    2026-11-12. The request to start is a checkbox on the Stripe Checkout
+ *    page (consent_collection in the checkout function).
  *  - The estimates paragraph. Every figure is a modelled or measured estimate
  *    with provenance, and no operator's live prices are republished. This is
- *    the closed Ryanair decision written down where it belongs. Since T273
- *    (owner decision 2026-10-02) Carta prices no flights: the only flight
- *    figure in a total is the one the traveller typed (T319 wording).
+ *    the closed Ryanair decision written down where it belongs. Since
+ *    T511 to T519 (2026-10-21) a flight shows the price Google Flights
+ *    showed when checked, labelled as such and not an offer (wording
+ *    self-reviewed against Directive 2005/29/EC Art 6 and 7, T519-a,
+ *    2026-11-12).
  *  - That Carta is not a travel agent and sells no travel.
  *  - Liability limits that stay inside what Belgian consumer law allows.
  *  - Belgian law, Belgian courts, the Belgian consumer mediation service.
@@ -38,19 +46,19 @@ import { LegalDoc } from './LegalDoc.jsx';
  * The legal identity of the provider lives in Imprint.jsx (T015 fills it in),
  * so these terms point there rather than repeating placeholders.
  *
- * LEGAL REVIEW PENDING (owner step T365-c in docs/owner/; first raised as step J4 of the
- * retired owner runbook). The section "Public guides: the content rule" is a draft
- * written by T365 on 2026-10-07 from the owner's decision on T070-c: the
- * terms carry a content rule that a moderator can cite as the contractual
- * ground of a takedown, apart from the legal ground (DSA Article 17(3)(d)
- * and (e)). Its seven items are the only values migration 051 accepts as a
- * 'terms' ground ('c1' to 'c7', in this order); the owner's statement shows
- * their titles through the moderation.rule.* keys in the six catalogues.
- * Renumbering or rewording an item here means changing those keys, and
- * removing one means a migration. Someone qualified should read the section
- * before the first takedown that cites it; until then it is not reviewed.
+ * SELF-REVIEWED 2026-11-12 (row T365-c, ROADMAP I1: no lawyer, decision 0007).
+ * The section "Public guides: the content rule" was checked against the
+ * Digital Services Act: Art 14(1) (restrictions, human review and the
+ * complaint route stated in plain words), Art 16(2)(d) (the report form's
+ * good-faith line, guides.reportGoodFaith), Art 17 (statement of reasons
+ * naming the item) and Art 20 and 21 (six months to contest, out-of-court
+ * body). No wording change was needed. Its seven items are the only values
+ * migration 051 accepts as a 'terms' ground ('c1' to 'c7', in this order);
+ * the owner's statement shows their titles through the moderation.rule.*
+ * keys in the six catalogues. Renumbering or rewording an item here means
+ * changing those keys, and removing one means a migration.
  */
-const UPDATED = '16 October 2026';
+const UPDATED = '12 November 2026';
 
 export function TermsOfService({ onClose }) {
   // A dialog for the keyboard and a screen reader too (T186): focus moves in,
@@ -172,16 +180,14 @@ export function TermsOfService({ onClose }) {
 
           <h3>What a pass buys</h3>
           <p>
-            There are two ways to buy access to Carta's paid features. The Trip
-            Pass is a fixed number of days, bought once: it starts the moment
-            your payment completes and ends on its own on the last day, with no
-            renewal and no recurring charge. The yearly plan is a subscription:
-            it starts the moment your first payment completes, runs for a year,
-            and renews for another year at the same price on each anniversary
-            until you cancel it. The two differ otherwise only in how long they
-            run and in their fair-use ceilings. When a pass or plan ends, your
-            trips and plans stay saved and readable; only the paid actions stop
-            until you buy again.
+            There are two passes for Carta's paid features, and both are
+            bought once. The Trip Pass runs for a fixed number of days and the
+            Year Pass for twelve months. Each starts the moment your payment
+            completes and ends on its own on its last day: neither renews, and
+            nothing is ever charged again after the one payment. The two
+            differ only in how long they run and in their fair-use ceilings.
+            When a pass ends, your trips and plans stay saved and readable;
+            only the paid actions stop until you buy again.
           </p>
           <p>
             The paid features, at the date above, are: Carta bot day plans up
@@ -224,51 +230,67 @@ export function TermsOfService({ onClose }) {
             no pass is granted.
           </p>
           <p>
-            For the yearly plan, the same card is charged the yearly price on
-            each renewal date, and Stripe emails a receipt each time. If we ever
-            change the yearly price, we tell you by email at least 30 days
-            before the renewal it applies to, and you can cancel before then.
+            If we change a price, the new price applies only to passes bought
+            after the change. A pass you hold keeps the price you paid.
           </p>
 
-          <h3>Cancelling the yearly plan</h3>
+          <h3>Passes do not renew</h3>
           <p>
-            You can cancel the yearly plan at any time, online, from your
-            Account page ("Cancel yearly plan"), without giving a reason. The
-            plan then runs to the end of the year you have paid for and is not
-            renewed; nothing more is charged. Until that day you can take the
-            cancellation back from the same page. You can also manage your card
-            and download invoices there through Stripe's billing page.
+            No pass renews, so there is nothing to cancel and no charge
+            follows the one you made. You can buy a new pass whenever you
+            like.
           </p>
 
-          <h3>Your right to withdraw, and why checkout asks you to waive it</h3>
+          <h3>Your right to withdraw</h3>
           <p>
             Under EU consumer law (Directive 2011/83/EU, carried into Belgian
-            law in Book VI of the Code of Economic Law) you may withdraw from a
-            distance purchase within 14 days without giving a reason. A pass is
-            digital content supplied online, and the law lets that right end
-            early when you expressly ask for the content to be supplied at once
-            and acknowledge that you lose the right by doing so.
+            law in Book VI of the Code of Economic Law) you may withdraw from
+            a pass within 14 days of the day you bought it, without giving a
+            reason. A pass gives you access to an online service, so the law
+            treats it as a digital service.
           </p>
           <p>
             A pass is useful only if it starts straight away, so the Stripe
-            checkout page asks you to tick a box confirming exactly that: you
-            want your pass or plan to begin as soon as payment completes, and
-            you understand that your 14-day right of withdrawal ends when it
-            does. For the yearly plan the same box also states that the plan
-            renews every year until you cancel.
-            You cannot buy a pass without ticking it. If you would rather keep
-            the full 14 days, do not buy; the free features remain available
-            and nothing is lost.
+            checkout page asks you to tick a box asking us to start your pass
+            as soon as payment completes. Starting at once does not take your
+            right away. If you withdraw within the 14 days, we refund what you
+            paid minus the share for the days your pass ran until you told us,
+            counted day by day over the full length of the pass. If the pass
+            has already run its full length, the right has ended, because the
+            service has been supplied in full.
+          </p>
+          <p>
+            The Trip Pass runs 60 days and the Year Pass 365. Example: a
+            Trip Pass (EUR 6.99) withdrawn after 3 days is refunded EUR 6.99
+            x 57/60 = EUR 6.64.
+          </p>
+          <p>
+            To withdraw, tell us clearly before the 14 days are over, for
+            example by email from the address on your account to the address
+            under Contact. You may use this model form, but you do not have
+            to:
+          </p>
+          <p className="legal-form">
+            To: the provider named in the Imprint, {CONTACT}<br />
+            I hereby give notice that I withdraw from my contract for the provision of the following service: [Trip Pass or Year Pass]<br />
+            Bought on: [date]<br />
+            Name: [your name]<br />
+            Address: [your address]<br />
+            Date: [date]
+          </p>
+          <p>
+            We refund without undue delay and at the latest 14 days after your
+            message reaches us, through Stripe to the payment method you used,
+            at no cost to you.
           </p>
 
           <h3>Refunds</h3>
           <p>
-            Beyond your legal rights we refund in three cases. First, if you
-            ask within 14 days of buying and you have used no Carta bot plan,
-            no live search and no export on that pass, we refund the whole
-            amount, no questions asked; the same holds for a yearly renewal you
-            ask about within 14 days of it, if you have used nothing since it
-            was charged. Second, if the paid features are
+            Beyond your right to withdraw we refund in three cases. First, if
+            you ask within 14 days of buying and you have used no Carta bot
+            plan, no live search and no export on that pass, we refund the
+            whole amount, not only the unused share. Second, if the paid
+            features are
             unavailable through our fault for a substantial part of your pass,
             we extend the pass by the days lost or, if you prefer, refund the
             unused share. Third, if we withdraw or materially reduce a paid
@@ -278,8 +300,8 @@ export function TermsOfService({ onClose }) {
             Ask by email at the address below, from the address on your
             account. Refunds go back through Stripe to the payment method you
             used and usually arrive within ten working days. Outside these
-            cases a pass that has started is not refunded, which is what the
-            checkout waiver means. Nothing here reduces the rights you have
+            cases and your right to withdraw, a pass is not refunded. Nothing
+            here reduces the rights you have
             under Belgian law if the digital content we supply does not
             conform to what was agreed (Book VI, Title 4, Chapter 1/1 of the
             Code of Economic Law).
@@ -375,15 +397,23 @@ export function TermsOfService({ onClose }) {
             and a pass already running stays under the terms it was bought
             under.
           </p>
+          <p>
+            The changes of 12 November 2026 to uploads apply from the date in
+            the notice email; the other changes apply to purchases made after
+            that date.
+          </p>
 
           {/* T333: the licence an upload needs (destinations spec 2.8, rows
               T206-b and T141). Transferable and sublicensable are the two
               words a grant usually forgets; the credit promise replaces a
               moral-rights waiver, which is void in France, Germany, Spain
-              and Italy. The OpenStreetMap paragraph and the indemnity wait
-              on the owner's legal review (step J4, row T333-b). If this
-              section changes, change UPLOAD_TERMS_VERSION in
-              community/uploads.js too. */}
+              and Italy. Self-reviewed 2026-11-12 (rows T333-b and T206-c):
+              the consumer indemnity is gone (Directive 93/13/EEC Art 3 and
+              Annex; Code of Economic Law Art VI.82), the licence ends on
+              removal instead of claiming to be irrevocable, and the
+              OpenStreetMap paragraph names the grant the OSMF Contributor
+              Terms clause 2 needs. If this section changes, change
+              UPLOAD_TERMS_VERSION in community/uploads.js too. */}
           <h3>Photos and tracks you share</h3>
           <p>
             You may send Carta a photo or a GPS track of a place in the app.
@@ -393,14 +423,16 @@ export function TermsOfService({ onClose }) {
           </p>
           <p>
             You keep the copyright in what you share. By sending it you give
-            Carta a worldwide, non-exclusive, royalty-free, perpetual and
-            irrevocable licence to store, copy, adapt (crop, resize,
-            re-encode), publish and display it, in the app and wherever Carta
-            appears. Carta may pass this licence on to others (sublicense it),
-            and may transfer it, for example to whoever takes Carta over. We
-            still remove an upload from Carta when you ask, or when you delete
-            your account; the licence is irrevocable so that what was rightly
-            done under it before then stays lawful.
+            Carta a worldwide, non-exclusive, royalty-free licence to store,
+            copy, adapt (crop, resize, re-encode), publish and display it, in
+            the app and wherever Carta appears. Carta may pass this licence on
+            to others (sublicense it), and may transfer it, for example to
+            whoever takes Carta over. The licence lasts as long as the upload
+            is on Carta. When you ask us to remove an upload, or delete your
+            account, we take it off Carta and the licence ends; what was
+            lawfully done under it before then stays lawful, such as a copy
+            someone made under a Creative Commons licence you chose, or a
+            track you allowed us to give to OpenStreetMap.
           </p>
           <p>
             We credit you, by the name you give with the upload, wherever
@@ -418,18 +450,23 @@ export function TermsOfService({ onClose }) {
             licence to Carta above and does not replace it.
           </p>
           <p>
-            For a track there is a separate box: OpenStreetMap may use this
-            track under its contributor terms. Neither Creative Commons licence
-            allows that by itself. Leave the box unticked and we do not offer
-            your track to OpenStreetMap.
+            For a track there is a separate box. Ticking it allows Carta to
+            give the track to OpenStreetMap, whose foundation (the
+            OpenStreetMap Foundation) may then use it under the OpenStreetMap
+            Contributor Terms. Those terms let it use the track for any
+            purpose, commercial ones included, for good and without a way to
+            take it back, and publish map data drawn from it under the Open
+            Database License. Neither Creative Commons licence allows that by
+            itself. Leave the box unticked and we do not offer your track to
+            OpenStreetMap. Once a track has been given to OpenStreetMap,
+            removing it from Carta does not remove it there.
           </p>
           <p>
             You promise that the upload is your own work or that you have the
             right to share it on these terms, that anyone who can be
             recognised in a photo agreed to it, and that it breaks no law. If
-            somebody makes a claim against Carta because one of those promises
-            was not true, you will cover Carta's reasonable cost of that
-            claim, as far as the law allows this to be asked of a consumer.
+            one of those promises turns out not to be true, we may remove the
+            upload, and you are responsible for it as the law provides.
           </p>
           <p>
             Before an upload leaves your device the app removes the place,
@@ -492,7 +529,8 @@ export function TermsOfService({ onClose }) {
             Questions about these terms, refund requests and notices go to
             {' '}<a href={`mailto:${CONTACT}`}>{CONTACT}</a>. You will get an
             answer within 30 days, and for a refund request usually within a
-            few working days.
+            few working days; a notice of withdrawal is refunded within 14
+            days of reaching us.
           </p>
     </LegalDoc>
   );

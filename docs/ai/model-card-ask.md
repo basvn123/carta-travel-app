@@ -63,7 +63,7 @@ The question (200 characters at most) and up to 14 notes go to Cloudflare Worker
 
 ## EU AI Act reading (team view, not legal advice)
 
-A chatbot a person talks to: the transparency duty of Article 50 applies (the person must know it is AI and AI-written text should be identifiable). Not an Annex III high-risk use. Carta is a deployer of general-purpose models; the model makers hold the provider duties. A visible "written by AI" label on each written answer is not built yet (T1156-c). A lawyer's read is an owner step (T1156-a).
+A chatbot a person talks to: the transparency duty of Article 50 applies (Art 50(1): the person must know it is AI; Art 50(2): generated text must be marked, in a machine-readable way, as AI-generated). Not an Annex III high-risk use. Carta develops Ask and puts it into service under its own name, so Carta is the provider of this AI system (Art 3(3)) and also its deployer; the makers of the general-purpose models (Alibaba Cloud for Qwen, Meta for Llama) carry the separate model duties of Chapter V. The visible "Written by AI" line is built (`AiMark.jsx`, T1215); the machine-readable mark is a follow-up in ROADMAP F8, due before the public opening. Self-reviewed against Regulation (EU) 2024/1689 on 2026-11-12 (T1156-a).
 
 ## Report a problem
 

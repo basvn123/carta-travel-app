@@ -10,17 +10,26 @@ import { LegalDoc } from './LegalDoc.jsx';
  *
  * Content is deliberately plain English and factual about what the app
  * actually does; update it whenever a new data flow ships. The record of
- * processing behind it is docs/ARTICLE30.md in the root repo (T319): a
+ * processing behind it is docs/legal/ARTICLE30.md (T319, T1118): a
  * change here that adds a table, a recipient or a retention period changes
  * that record too.
  */
-const UPDATED = '3 October 2026';
+const UPDATED = '12 November 2026';
 
 export function PrivacyPolicy({ onClose }) {
   // A dialog for the keyboard and a screen reader too (T186): focus moves in,
   // Tab stays inside, Escape closes it and focus goes back to the opener.
   return (
     <LegalDoc id="legal-privacy" title="Privacy policy" updated={UPDATED} onClose={onClose}>
+          <h3>Who is responsible</h3>
+          <p>
+            The controller of your personal data is the person or company
+            named in the Imprint, which gives the name and address. Write to
+            {' '}<a href={`mailto:${CONTACT}`}>{CONTACT}</a> about anything in
+            this policy. Carta has no data protection officer, because the law
+            does not require one for a service of this size and kind.
+          </p>
+
           <h3>What Carta collects</h3>
           <p>
             Without an account, your trips, day plans and preferences stay on
@@ -28,11 +37,20 @@ export function PrivacyPolicy({ onClose }) {
           </p>
           <p>
             With an account, Carta stores your email address, the name and
-            profile you enter, the trips and day plans you save, the people you
-            share them with or plan them with, your friends, any pass you buy,
-            how many AI requests you have used, and any feedback or guide report
-            you send. No advertising identifiers, no tracking pixels, no sale of
-            data to anyone.
+            profile you enter, the trips and day plans you save, the people
+            you share them with or plan them with, your friends, any pass you
+            buy, how many AI requests you have used, your Ask Carta questions
+            and answers, the photos and tracks you upload, your email choices
+            and price alerts, and any feedback or guide report you send. No
+            advertising identifiers, no tracking pixels, no sale of data to
+            anyone. You need an email address to have an account; the map,
+            the destination pages and one trip work without one.
+          </p>
+          <p>
+            Signed in, your Ask Carta conversations are kept in your account
+            so you can return to them on another device. They are part of the
+            file you can download under "Your rights", and they are deleted
+            with your account.
           </p>
 
           <h3>Services the app talks to</h3>
@@ -90,6 +108,21 @@ export function PrivacyPolicy({ onClose }) {
             Google does not use what you send to train its models.
           </p>
           <p>
+            Ask Carta answers in two steps. Code first builds an answer from
+            Carta's own data. A model may then write a few sentences: your
+            question and up to 14 short notes from Carta's data are sent to
+            Cloudflare Workers AI, which runs the open models named on the
+            "How Carta uses AI" page on Cloudflare's network. Carta does not
+            add your account or email address to that request. Cloudflare may
+            process it outside the European Economic Area, under its Data
+            Processing Addendum with the EU-US Data Privacy Framework and
+            Standard Contractual Clauses, and Cloudflare does not use it to
+            train models. The same question with the same notes is answered
+            from a cache for seven days, with no account attached. If you
+            switch on the on-device model, your question does not leave your
+            device.
+          </p>
+          <p>
             When an AI request fails, Carta keeps a record of it so outages can
             be found and fixed: the function that failed, the error code, the
             HTTP status and your account, for 90 days. A screen that crashes is
@@ -116,15 +149,35 @@ export function PrivacyPolicy({ onClose }) {
             attached, so they are not personal data.
           </p>
 
+          <p>
+            Emails from Carta are sent through Resend, an email delivery
+            service that sends them on Carta's behalf from the United States.
+            Carta emails you only in these cases: the confirmation link when
+            you join the waitlist or the newsletter, the newsletter once you
+            have confirmed, the trip reminders and price-drop emails you
+            switch on in your account, and a price alert you saved and
+            confirmed. Each rests on your consent (Article 6(1)(a)); every
+            such email has an unsubscribe link, and unsubscribing withdraws
+            your consent. Resend receives your address and the text of the
+            email, under its Data Processing Addendum and the EU Standard
+            Contractual Clauses. An address that joins the waitlist but is
+            never confirmed is deleted after 30 days; a confirmed address is
+            kept until you unsubscribe, and after that only so that we never
+            mail it again (our legitimate interest, Article 6(1)(f)).
+          </p>
+
           <h3>Retention and deletion</h3>
           <p>
             Account data is kept until you delete it. You can delete your account
             and everything stored with it at any time from the Account panel
-            ("Delete my account"); deletion is immediate and irreversible. A few
-            records stay without anything that links them to you: pass offer
-            events, AI failure records, and feedback or guide reports you sent.
-            Feedback and reports keep their text and any reply address you typed
-            into them; write to us to have those removed too. Local
+            ("Delete my account"); deletion is immediate and irreversible. A
+            few records stay without anything that links them to you: the
+            record of a pass purchase (what was bought, when, the price, the
+            VAT and the billing country), which tax law makes us keep for
+            several years (up to ten); pass offer events; AI
+            failure records; and guide reports you filed, without your contact
+            details. Your feedback is deleted with your account (if any is
+            left after the deletion, write to us and we delete it by hand). Local
             data on your device is removed by clearing the site data in your
             browser. You can also revoke consent or request deletion by mail:
             {' '}<a href={`mailto:${CONTACT}`}>{CONTACT}</a>.
@@ -174,6 +227,31 @@ export function PrivacyPolicy({ onClose }) {
                 <td>Address geocoding when you request it</td>
                 <td>Consent (Article 6(1)(a))</td>
               </tr>
+              <tr>
+                <td>Your Ask Carta questions and saved chats</td>
+                <td>Answering your question; keeping your chats in your account</td>
+                <td>Contract (Article 6(1)(b))</td>
+              </tr>
+              <tr>
+                <td>Waitlist, newsletter, trip reminders, price drops and price alerts</td>
+                <td>Sending the emails you asked for</td>
+                <td>Consent (Article 6(1)(a))</td>
+              </tr>
+              <tr>
+                <td>Photos and tracks you upload</td>
+                <td>Reviewing and showing them</td>
+                <td>Contract (Article 6(1)(b))</td>
+              </tr>
+              <tr>
+                <td>Guide reports and statements of reasons</td>
+                <td>Handling notices about public guides</td>
+                <td>Legal obligation (Article 6(1)(c), Digital Services Act)</td>
+              </tr>
+              <tr>
+                <td>Feedback and AI answer reports</td>
+                <td>Answering you; fixing wrong answers</td>
+                <td>Legitimate interest (Article 6(1)(f)): replying to you and fixing wrong answers</td>
+              </tr>
             </tbody>
           </table>
 
@@ -204,7 +282,15 @@ export function PrivacyPolicy({ onClose }) {
             you filed, any moderation statement about your guides, and what an
             admin did to your account.
             Write to the address above for anything else and you will get an
-            answer within 30 days.
+            answer within one month. You can also ask us to restrict
+            processing, object to processing that rests on our legitimate
+            interest, and receive the data you gave us in a machine-readable
+            file (the download above). If you think we handle your data
+            wrongly, you may complain to the Belgian Data Protection Authority
+            (Gegevensbeschermingsautoriteit / Autorite de protection des
+            donnees, Drukpersstraat 35, 1000 Brussels,
+            gegevensbeschermingsautoriteit.be) or to the data protection
+            authority of the EU country where you live.
           </p>
     </LegalDoc>
   );
