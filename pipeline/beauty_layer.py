@@ -384,7 +384,7 @@ def _urban_component(dest_id):
 # on the shipped catalogue it fails two gates the rating must keep - beauty
 # vs log population +0.152 (gate 0.12: urban at 0.35 favours large places)
 # and the tier-3 population (30, gate 35 to 70) - plus one golden pair, so it
-# waits for an owner decision (Execution/_OPEN.md T756-a). compute_beauty()
+# waits for an owner decision (row T756-a). compute_beauty()
 # below stays v1 until then; compute_beauty_v2() is what the decision turns on.
 # ---------------------------------------------------------------------------
 BEAUTY_LIVE = cfg("beauty.live")

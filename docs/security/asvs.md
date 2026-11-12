@@ -1,8 +1,8 @@
 # ASVS 5.0.0 Level 2 checklist
 
-ROADMAP C10, task T1164 (2026-11-07). Every OWASP ASVS 5.0.0 requirement in force at Level 2 (253: the 70 Level 1 and 183 Level 2 ones), walked against the code on branch `p15-round2` and marked **Met**, **N/A** or **Gap**. Every gap names its register row in `Execution/_OPEN.md`.
+ROADMAP C10, task T1164 (2026-11-07). Every OWASP ASVS 5.0.0 requirement in force at Level 2 (253: the 70 Level 1 and 183 Level 2 ones), walked against the code on branch `p15-round2` and marked **Met**, **N/A** or **Gap**. Every gap names its register row in `docs/owner/`.
 
-Why 5.0.0 at L2: 5.0.0 (May 2025) is the current OWASP release, and its chapters on self-contained tokens (V9) and OAuth (V10) fit Supabase JWT auth better than 4.0.3. Level 2 is the level ROADMAP C10 and research item C-R2 name for an app that holds accounts and payments. The research is in `Execution/P15/T1164-security-testing.md`.
+Why 5.0.0 at L2: 5.0.0 (May 2025) is the current OWASP release, and its chapters on self-contained tokens (V9) and OAuth (V10) fit Supabase JWT auth better than 4.0.3. Level 2 is the level ROADMAP C10 and research item C-R2 name for an app that holds accounts and payments. The research is in `T1164`.
 
 How to read a row: "Met" cites the control and, where one exists, the test that proves it. "Met" on a platform control (Supabase Auth, Cloudflare) means Carta relies on the platform and does not override it; where the platform value is a Dashboard setting nobody has verified, the row is a Gap instead. Requirement text is shortened to its first sentence; the full text is in the OWASP CSV (CC BY-SA 4.0): https://github.com/OWASP/ASVS/tree/master/5.0. Cite a row as `v5.0.0-V6.2.1`.
 
@@ -166,10 +166,10 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 
 | ID | L | Requirement | Status | Evidence |
 |---|---|---|---|---|
-| V6.1.1 | 1 | Application documentation defines how controls such as rate limiting, anti-automation, and adaptive response, are used to defend against attacks such as cred... | Met | Rate limits and anti-automation are documented (threat model sections 2, 4, 6; T1157; `_OPEN-auth-settings.md`). |
+| V6.1.1 | 1 | Application documentation defines how controls such as rate limiting, anti-automation, and adaptive response, are used to defend against attacks such as cred... | Met | Rate limits and anti-automation are documented (threat model sections 2, 4, 6; T1157; `docs/owner/auth-settings.md`). |
 | V6.1.2 | 2 | A list of context-specific words is documented in order to prevent their use in passwords. | Gap (T1164-f) | No context-specific word list (Carta, the traveller name, the e-mail) is documented or checked. |
 | V6.1.3 | 2 | Verify that, if the application includes multiple authentication pathways, these are all documented together with the security controls and authentication st... | Met | Three pathways (password, magic link, Google) documented with their controls in the threat model section 4. |
-| V6.2.1 | 1 | User set passwords are at least 8 characters in length although a minimum of 15 characters is strongly recommended. | Gap (T1071-a) | The app asks for 8 (`MIN_PASSWORD_LENGTH`), but the server floor is a Dashboard setting: 6 in local `config.toml`, 12 wanted (`_OPEN-auth-settings.md`), live not verified. |
+| V6.2.1 | 1 | User set passwords are at least 8 characters in length although a minimum of 15 characters is strongly recommended. | Gap (T1071-a) | The app asks for 8 (`MIN_PASSWORD_LENGTH`), but the server floor is a Dashboard setting: 6 in local `config.toml`, 12 wanted (`docs/owner/auth-settings.md`), live not verified. |
 | V6.2.2 | 1 | Users can change their password. | Met | Account panel, Sign-in and security (`AccountPanel.jsx`). |
 | V6.2.3 | 1 | Password change functionality requires the user's current and new password. | Gap (T1071-a) | The form asks for the current password (`reauthenticate`), but the server only enforces it with "Secure password change" on, a Dashboard step. |
 | V6.2.4 | 1 | Passwords submitted during account registration or password change are checked against an available set of, at least, the top 3000 passwords which match the... | Gap (T1071-a) | Leaked-password protection is a Dashboard setting, not verified. |
@@ -261,7 +261,7 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 | V10.3.2 | 2 | The resource server enforces authorization decisions based on claims from the access token that define delegated authorization. | Met | Decisions use the `sub` claim through RLS and `auth.uid()`. |
 | V10.3.3 | 2 | If an access control decision requires identifying a unique user from an access token (JWT or related token introspection response), the resource server iden... | Met | `sub` (user.id) only, never e-mail (`edgeAuth.test.mjs`). |
 | V10.3.4 | 2 | Verify that, if the resource server requires specific authentication strength, methods, or recentness, it verifies that the presented access token satisfies... | Met | As V6.8.4 (`aal2`). |
-| V10.4.1 | 1 | The authorization server validates redirect URIs based on a client-specific allowlist of pre-registered URIs using exact string comparison. | N/A | Carta is not an authorization server (Supabase Auth is; its redirect allow-list is a Dashboard setting in `_OPEN-auth-settings.md`). |
+| V10.4.1 | 1 | The authorization server validates redirect URIs based on a client-specific allowlist of pre-registered URIs using exact string comparison. | N/A | Carta is not an authorization server (Supabase Auth is; its redirect allow-list is a Dashboard setting in `docs/owner/auth-settings.md`). |
 | V10.4.2 | 1 | Verify that, if the authorization server returns the authorization code in the authorization response, it can be used only once for a token request. | N/A | As V10.4.1. |
 | V10.4.3 | 1 | The authorization code is short-lived. | N/A | As V10.4.1. |
 | V10.4.4 | 1 | For a given client, the authorization server only allows the usage of grants that this client needs to use. | Gap (T1164-g) | Supabase is the server, but Carta's client uses the implicit (token) grant ASVS rules out. |

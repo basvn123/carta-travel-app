@@ -12,7 +12,7 @@
  * client and the session the traveller already has. No cookie, no local
  * storage, no device or session id, no page path, no URL they pasted, no
  * document content, no error text. That is why it needs no consent banner
- * where a Sentry SDK would (see Execution/P4/T071-error-telemetry.md).
+ * where a Sentry SDK would (see T071).
  *
  * FIRE AND FORGET. Never awaited, never throws. Until 040 is pasted the RPC
  * answers "function not found" and that answer is dropped here, so the

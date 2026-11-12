@@ -3,7 +3,7 @@
 # spawn.sh already deletes its own worker on every exit path and sweeps after
 # each run; this timer covers what spawn.sh cannot, such as the orchestrator
 # rebooting (the Sunday window, T048) or spawn.sh being killed with SIGKILL.
-# Installed by hand, see Execution/P3/_OPEN-hetzner.md step 17.
+# Installed by hand, see docs/owner/hetzner-box.md step 17.
 [Unit]
 Description=Carta: delete stray CAX41 workers (T047)
 Wants=network-online.target

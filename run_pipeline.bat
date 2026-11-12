@@ -15,7 +15,7 @@ REM orchestrator, run by carta-weekly.timer (infra/hetzner/cron/) in the same
 REM Monday 09:00 slot. This file and the Windows task stay the live schedule
 REM until the owner disables TravelAppFareRefresh, which happens only after the
 REM box's wire has passed compare_wire.py against a laptop build
-REM (Execution/P3/_OPEN-hetzner.md). Re-enable it with:
+REM (docs/owner/hetzner-box.md). Re-enable it with:
 REM   schtasks /Change /TN TravelAppFareRefresh /ENABLE
 cd /d "%~dp0"
 if not exist "logs" mkdir "logs"

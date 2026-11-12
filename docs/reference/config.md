@@ -405,7 +405,7 @@ The pipeline has no config file of its own: `pipeline/pricing_config.py` and `pi
 
 ## Dead keys
 
-Keys no code line and no test reads (the docs scripts do not count). They are kept, not deleted: each has a register row in `Execution/_OPEN.md` for a task to wire it or remove it.
+Keys no code line and no test reads (the docs scripts do not count). They are kept, not deleted: each has a register row in `docs/owner/` for a task to wire it or remove it.
 
 | File | Key | Tests that name it |
 |---|---|---|

@@ -35,20 +35,18 @@ One-shot, done, kept for provenance
   expected to run it again as a routine task).
 
 Superseded
-: replaced by something else, and moved to `archive/` with a row in
-  `archive/README.md` naming the replacement and the reason. A Superseded
-  script's own path resolution (`Path(__file__).resolve().parents[N]`) is
-  preserved across the move, so if it is ever run again by hand from a
-  clone of that old commit, it still finds the repo root correctly. It will
-  not run correctly from inside `archive/` in the CURRENT tree, because the
-  files it reads have moved on; that is intentional, it is retired.
+: replaced by something else, and deleted. Git history keeps it: the
+  commit that deletes it names the replacement and the reason. Code retired
+  before 2026-11-11 sat in a root `archive/` folder, which is now in the tag
+  `archive/execution-2026-11-11` (open a file with
+  `git show archive/execution-2026-11-11:archive/<path>`).
 
 ## Layout (ROADMAP A2, T1207)
 
 Scripts are grouped by domain, and the file name keeps its stage prefix
 (`harvest_`, `apply_`, `enrich_`, `audit_`), so `pipeline/**/harvest_*.py`
 still finds every harvester. The decision and its research are in
-`Execution/P15/T1207-pipeline-structure.md` (A-R1).
+`T1207` (A-R1).
 
 - `pipeline/tasks/`: the task table `run_pipeline.py` runs, one module per
   domain, in the `DOMAINS` order of `pipeline/tasks/__init__.py`.
@@ -218,7 +216,7 @@ the index, not the whole story.
 | `lakes/rebuild_v2.py` | `python pipeline/lakes/rebuild_v2.py` | per-country OSM sweep + Commons | drives the lakes v2 harvest/enrich chain | Convenience driver for a full local rebuild across all countries; the individual lake stages are Scheduled. |
 | `member_layer.py` | `python pipeline/member_layer.py` | Wikidata, area-type destinations | `app_data/app_data.json` members[] | Re-run after adding an area-type (Amalfi Coast, Lake Como, ...) destination so its member villages become searchable. |
 | `merge_curation.py` | `python pipeline/merge_curation.py` | `scratchpad/curation_*.json` hand-curated files, Wikipedia geosearch | `cache/activities.json` | Run after an agent produces curated POI JSON for sparse destinations, before the next `harvest_activities` patch. |
-| `photos/contact_sheet.py` | `python pipeline/photos/contact_sheet.py <layer>` | a layer's rich photo cache | a numbered contact-sheet image + index | Feeds a human labelling pass; see archive/docs-2026-11/PHOTOS.md. |
+| `photos/contact_sheet.py` | `python pipeline/photos/contact_sheet.py <layer>` | a layer's rich photo cache | a numbered contact-sheet image + index | Feeds a human labelling pass; see archive/execution-2026-11-11:archive/docs-2026-11/PHOTOS.md. |
 | `photos/evalset.py` | `python pipeline/photos/evalset.py` | published heroes across layers | a ~800-image labelled set manifest | Builds the set any new photo-engine threshold must be measured against. |
 | `photos/export_poi_credits.py` | `python pipeline/photos/export_poi_credits.py` | `cache/poi_image_licenses.json` | `continent-app/public/*` POI credit ledger | Run after a licence harvest so POI thumbnails carry visible attribution. |
 | `photos/fill_authors.py` | `python pipeline/photos/fill_authors.py` | Commons Artist/Attribution/Credit fields | fills missing author credit in published layers | Run when a licence audit finds photographs with a licence but no named author. |
@@ -233,13 +231,13 @@ the index, not the whole story.
 | `rating_shadow_report.py` | `python pipeline/rating_shadow_report.py` | `app_data/curated_appeal.json`, independent signals | `app_data/rating_review_queue.json` | A human review queue for curator/data disagreements; never auto-corrects. |
 | `search_index_layer.py` | `python pipeline/search_index_layer.py` | destination names | `continent-app/public/search_index.json` | Run whenever destination names change (a catalogue expansion, a rename); nothing schedules this, and a stale index means new places are unsearchable. |
 | `guided_search_layer.py` | `python pipeline/guided_search_layer.py` | the catalogue, the beach, lake, mountain and trail wires | `continent-app/public/search/guided.json` | The guided search (T439): named areas, distances to the nearest beach, trail, lake and peak, and vibe scores from category facts plus a local gte-small embedding. Runs on the box with `CARTA_BOX_ML=all` in its own venv (`~/venv-guided`, CPU torch, T1161) or on the laptop; install the guided-search half of `requirements-ml.txt` as its header says (the file has two halves that cannot share one environment); embeddings are cached in `cache/guided/vibes.npz` (ignored, derived), so a rerun after an ingest embeds only new or changed places. Run after every catalogue ingest; a place missing here has no vibe in search. The run ends with the golden set (hits in the top 10). |
-| `trails/compose_citytrips.py` | see archive/docs-2026-11/TRAILS.md | | | |
-| `trails/crosscheck_portals.py` | see archive/docs-2026-11/TRAILS.md | | | |
-| `trails/elevation_validate.py` | see archive/docs-2026-11/TRAILS.md | | | |
-| `trails/market_demand.py` | see archive/docs-2026-11/TRAILS.md | | | |
-| `trails/quality_report.py` | see archive/docs-2026-11/TRAILS.md | | | |
-| `trails/repair.py` | see archive/docs-2026-11/TRAILS.md | | | |
-| `trails/smoke_test.py` | see archive/docs-2026-11/TRAILS.md | | | |
+| `trails/compose_citytrips.py` | see archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md | | | |
+| `trails/crosscheck_portals.py` | see archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md | | | |
+| `trails/elevation_validate.py` | see archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md | | | |
+| `trails/market_demand.py` | see archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md | | | |
+| `trails/quality_report.py` | see archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md | | | |
+| `trails/repair.py` | see archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md | | | |
+| `trails/smoke_test.py` | see archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md | | | |
 | `verify_skip_flags.py` | `python pipeline/audit/verify_skip_flags.py [--layer beaches\|lakes\|mountains\|trips]` | a copied small-country cache | pass/fail per layer | Run after touching any layer's skip-flag logic (`--no-images`, `--seed-only`, etc.) to confirm a skipped run never writes a thinner cache than it started with. |
 
 ## One-shot (pipeline/oneoff/)
@@ -251,7 +249,7 @@ replaced them, and they are not Manual, because nobody is meant to reach for
 them as a routine tool. They stay for provenance: if a future audit asks how
 a specific batch of destinations entered the catalogue, the script that did
 it is still readable. See the inventory in
-`Execution/P1/T028-classify-pipeline-scripts.md` for the full list with a
+`T028` for the full list with a
 one-line purpose per file.
 
 ## Layer READMEs
@@ -260,6 +258,6 @@ one-line purpose per file.
 `ingest_candidates.py`, `osm_settlement_scan.py`), which have no dedicated
 doc under `docs/`.
 
-For trails and photos, `archive/docs-2026-11/TRAILS.md` and `archive/docs-2026-11/PHOTOS.md` already explain
+For trails and photos, `archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md` and `archive/execution-2026-11-11:archive/docs-2026-11/PHOTOS.md` already explain
 the Manual tools in depth (review UIs, labelling workflow, the coverage and
 quality reports); this index links to them rather than duplicating.

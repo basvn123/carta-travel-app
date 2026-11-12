@@ -2,7 +2,7 @@
  * dataHost.js, where each data file the app fetches is served from.
  *
  * The wire is split by access pattern (CARTA_CLOUD_ARCHITECTURE.md 5.2,
- * Execution/P3/T054-wire-shards-to-r2.md):
+ * T054):
  *
  *   boot index      /boot.json on the app host (Pages). id, lat, lon,
  *                   country, flags and rating band per destination, plus the

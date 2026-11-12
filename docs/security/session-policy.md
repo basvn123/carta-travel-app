@@ -21,9 +21,9 @@ A session is an access token (a signed JWT, short lived) plus a refresh token (s
 
 | Limit | Value | Kind | Notes |
 |---|---|---|---|
-| Access token lifetime | 3600 s (1 hour) in `supabase/config.toml` `jwt_expiry`; the live value is in Project Settings, JWT Keys | Dashboard, not verified | `_OPEN-auth-settings.md` step 6 says keep it at 3600: migration 062's admin check reads the token's `aal` claim, so a longer token is a longer admin |
+| Access token lifetime | 3600 s (1 hour) in `supabase/config.toml` `jwt_expiry`; the live value is in Project Settings, JWT Keys | Dashboard, not verified | `docs/owner/auth-settings.md` step 6 says keep it at 3600: migration 062's admin check reads the token's `aal` claim, so a longer token is a longer admin |
 | Refresh token rotation | On, reuse interval 10 s, in `config.toml` | Dashboard, not verified | Reuse of a spent refresh token after 10 s revokes the session family (Supabase reuse detection) |
-| Inactivity timeout | **None set.** `[auth.sessions] inactivity_timeout` is commented out in `config.toml` | Dashboard, owner decision **T1164-j** | Proposed: 30 days (`_OPEN-auth-settings.md` step 6). May need the Pro plan |
+| Inactivity timeout | **None set.** `[auth.sessions] inactivity_timeout` is commented out in `config.toml` | Dashboard, owner decision **T1164-j** | Proposed: 30 days (`docs/owner/auth-settings.md` step 6). May need the Pro plan |
 | Absolute lifetime (time-box) | **None set.** `timebox` is commented out | Dashboard, owner decision **T1164-j** | Proposed: 90 days. May need the Pro plan |
 | Email OTP and magic link lifetime | 3600 s in `config.toml` `otp_expiry` | Dashboard, owner decision **T1164-j** | Proposed: 600 s (ASVS V6.5.5) |
 | Admin second factor | Once per session: a TOTP code lifts the session to `aal2`, which admin reads and writes require | Code: `supabase/migrations/062_admin_audit.sql`, `continent-app/src/components/admin/useMfa.js` | Lasts as long as the access token carries `aal2` |
@@ -50,7 +50,7 @@ A revoked refresh token cannot mint a new access token, but an access token alre
 
 ## 4. Re-authentication
 
-Sensitive actions ask for the current password again before they run, even inside a live session (`continent-app/src/auth/AccountPanel.jsx`, `reauthenticate`): changing the password, downloading all data, deleting the account. Admin pages need `aal2` (section 2). Supabase's own "Secure password change" setting is a Dashboard value (`_OPEN-auth-settings.md` step 4, row T1071-a).
+Sensitive actions ask for the current password again before they run, even inside a live session (`continent-app/src/auth/AccountPanel.jsx`, `reauthenticate`): changing the password, downloading all data, deleting the account. Admin pages need `aal2` (section 2). Supabase's own "Secure password change" setting is a Dashboard value (`docs/owner/auth-settings.md` step 4, row T1071-a).
 
 ## 5. Known gaps
 

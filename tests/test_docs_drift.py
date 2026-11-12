@@ -131,8 +131,9 @@ def test_entry_point_missing_path_fails(tmp_path):
     root = make_tree(tmp_path)
     (root / "scripts" / "docs").mkdir(parents=True)
     shutil.copy(ROOT / "scripts/docs/check_entry_points.py", root / "scripts/docs/check_entry_points.py")
-    (root / "CLAUDE.md").write_text("Read `MAP.md`.\n", encoding="utf-8")
-    (root / "MAP.md").write_text("Code in `pipeline/gone_module.py`.\n", encoding="utf-8")
+    (root / "CLAUDE.md").write_text("Read `docs/project-map.md`.\n", encoding="utf-8")
+    (root / "docs").mkdir(exist_ok=True)
+    (root / "docs" / "project-map.md").write_text("Code in `pipeline/gone_module.py`.\n", encoding="utf-8")
     r = drift(root, "--only", "entry")
     assert r.returncode == 1
     assert "gone_module.py" in r.stdout

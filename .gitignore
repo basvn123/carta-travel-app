@@ -220,17 +220,14 @@ cache/guided/*
 # Stay-price layer state and builds (T531): journal, pools, downloads. Lives in R2 stays/state on Actions.
 cache/stays/
 
-# T1034 (2026-11-03): keep the repo small.
-# Screenshots stay on disk for the end check and are never committed; the
-# report names the screens checked instead. Old shots are in git under the
-# tag archive/execution-full-2026-11-03.
-Execution/**/*.png
-Execution/**/*.jpg
-Execution/**/*.jpeg
-Execution/**/*.webp
-Execution/**/*.gif
-# T1128: the shots folder as a whole (audit JSON and logs land there too).
-Execution/P*/T*-shots/
+# crew run folders (docs/decisions/0002): working files stay local; the run
+# history and each run's report are committed. Screenshots go in the run
+# folder and are never committed.
+.work/*
+!.work/INDEX.md
+!.work/*/
+.work/*/*
+!.work/*/report.md
 .pytest_cache/
 .wrangler/
 .claude/worktrees/

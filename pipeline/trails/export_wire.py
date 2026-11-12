@@ -1419,7 +1419,7 @@ def main():
           f"{' (' + ', '.join(countries) + ')' if countries else ''}: "
           f"{len(already)} already published, {len(fresh)} newly approved")
     if no_summary:
-        # Not a warning any more. describe.py is retired (docs/TRAILS.md,
+        # Not a warning any more. describe.py is retired (archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md,
         # "Two debts, closed"): the page composes from structured fields, and
         # the three things the prose knew are wire fields now. A trip with no
         # description_md is the normal case, and pointing at a retired script

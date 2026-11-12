@@ -4,7 +4,7 @@
 spawn.sh calls `cost.py price` for every ledger row, `cost.py plan` for the
 planned cost it prints before a create, and `cost.py mtd` prints the
 month-to-date total from the ledger it appends to. Task reports:
-Execution/P3/T047-on-demand-cax41.md, and T647 for the per-job server type.
+T047, and T647 for the per-job server type.
 
     python3 infra/hetzner/cax41/cost.py price --seconds 21600 --ipv4 1
     python3 infra/hetzner/cax41/cost.py price --seconds 18000 --type cpx42

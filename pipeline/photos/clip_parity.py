@@ -1,7 +1,7 @@
 """Does CLIP on this machine embed like the laptop did? (T047-g, T006)
 
 Tier: Manual (run once on a new architecture before its first promoted
-clip_sweep; see docs/PHOTOS.md, "Moving the photo caches to the CAX41")
+clip_sweep; see archive/execution-2026-11-11:archive/docs-2026-11/PHOTOS.md, "Moving the photo caches to the CAX41")
 
 Every cached embedding under cache/photos/emb was computed on the x86
 laptop. A clip_sweep on the arm64 CAX41 reuses those vectors for every

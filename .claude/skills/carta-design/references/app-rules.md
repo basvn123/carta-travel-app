@@ -612,7 +612,7 @@ never moves. Every transition has a
 `prefersReducedMotion()` or `durationMs()` in `src/lib/motion.js`.
 
 The home page exception v2 (T462, owner 2026-10-17: "allow it"; widened by the owner on 2026-10-23 when
-the page was rebuilt from scratch, T606, decisions D2 to D6 in `Execution/P15/T605-home-research.md`).
+the page was rebuilt from scratch, T606, decisions D2 to D6 in `T605`).
 The home page (`src/browse/home/`) is the one surface that persuades rather than operates, so it may move
 on its own, within these limits (values and tokens in DESIGN.md "Home page exception v2"):
 

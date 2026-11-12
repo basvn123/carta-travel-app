@@ -3,7 +3,7 @@
  * T1175 (ROADMAP K7): rasterise the share SVGs to PNG.
  *
  * Uses the Playwright Chromium the repo already has (continent-app's
- * devDependency; no new package, research in Execution/P15/T1175-shareable-assets.md).
+ * devDependency; no new package, research in T1175).
  * The app's own Figtree (continent-app/public/fonts, OFL) is inlined as a data
  * URL, so the PNG sets the type the app sets and nothing is fetched.
  *

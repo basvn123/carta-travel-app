@@ -3,7 +3,7 @@
  * build-pages.mjs, the production build: the split build Cloudflare Pages
  * serves, then the Pages limit gate on what it produced.
  *
- * Task: Execution/P1/T295-ci-pages-gate.md
+ * Task: T295
  *
  *   npm run build:pages
  *

@@ -3,8 +3,8 @@
 
 Everything is driven by manifest.yml. Reference:
 additional docs/Carta/Plan/Architecture/CARTA_CLOUD_ARCHITECTURE.md section 6.3.
-Task report: Execution/P3/T045-archive-to-r2.md. Needs the bucket "carta" to
-exist (T044, see Execution/_OPEN.md T044-a to T044-c) and, for the derived-cache
+Task report: T045. Needs the bucket "carta" to
+exist (T044, rows T044-a to T044-c, now closed) and, for the derived-cache
 classes, the tarballs pack.py writes.
 
 Two tools, each for what only it can do:

@@ -33,7 +33,7 @@ later is one adapter and one line in the registry; nothing else changes.
 Model: minishlab/potion-multilingual-128M (distilled from BAAI/bge-m3, 256
 dims), chosen by `--bakeoff` against potion-base-8M and potion-retrieval-32M
 on GOLDEN (pipeline/guided_search_layer.py) plus the 30 multilingual
-questions in MULTI below (Execution/P11/T551-notes.md has the table). The
+questions in MULTI below (T551 has the table). The
 shipped copy keeps only the tokens the corpus and a six-language travel word
 list use, plus every single character of the Latin, Greek and Cyrillic
 scripts, so an unknown word still splits into pieces the model knows. The JS

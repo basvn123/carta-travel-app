@@ -1,6 +1,6 @@
 # Beaches data layer
 
-Written by T1085 (ROADMAP B2) from the code in `pipeline/beaches/`, not from the retired `archive/docs-2026-11/BEACHES.md`. Constants are named so a reader can grep them. Anything not checked is marked "not verified". Rules for the traveller are in `docs/HANDBOOK.md` section "Beaches"; the area doc is `docs/areas/outdoors.md`.
+Written by T1085 (ROADMAP B2) from the code in `pipeline/beaches/`, not from the retired `archive/execution-2026-11-11:archive/docs-2026-11/BEACHES.md`. Constants are named so a reader can grep them. Anything not checked is marked "not verified". Rules for the traveller are in `docs/HANDBOOK.md` section "Beaches"; the area doc is `docs/project-map.md`.
 
 ## What the layer is
 

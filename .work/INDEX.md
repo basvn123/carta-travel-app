@@ -1,0 +1,791 @@
+# Run history
+
+Every L1 and L2 run in this project, newest first. Each line links to its full report.
+
+Format: `date · level · playbook · title: one-line result → report path`
+
+- 2026-11-11 · L2 · deep-task · Crew alignment: repo moved to the crew layout (CLAUDE.md, project map, decisions, lessons, owner steps), Execution/ and archive/ retired into git history → `.work/2026-11-11-crew-alignment/report.md`
+
+## Before crew (T001 to T1222)
+
+Tasks from the old `Execution/` system, one line each with the command that prints the full report. P0 to P13 reports are under the tag `archive/execution-full-2026-11-03` (commit `12faba94`); P15 reports and the digests under `archive/execution-2026-11-11` (commit `2a2379d44e`). Why: `docs/decisions/0002-run-history-in-work-index.md`.
+
+- 2026-11-10 · pre-crew · T1222 box checklist audit, and a review API that no longer locks the lab → `git show archive/execution-2026-11-11:"Execution/P15/T1222-box-checklist-review-api.md"`
+- 2026-11-09 · pre-crew · T1221 the flight route list uploads with rclone on the box → `git show archive/execution-2026-11-11:"Execution/P15/T1221-routes-upload-rclone.md"`
+- 2026-11-07 · pre-crew · T1220 the flight lever test holds the clock at its fixture's day (ROADMAP H14) → `git show archive/execution-2026-11-11:"Execution/P15/T1220-lever-test-clock.md"`
+- 2026-11-07 · pre-crew · T1219 the dossier reads its things to do from the master, so it runs again (ROADMAP A3, explore data fill) → `git show archive/execution-2026-11-11:"Execution/P15/T1219-dossier-reads-master-activities.md"`
+- 2026-11-07 · pre-crew · T1218 manual identity linking on, and the Auth settings read back (ROADMAP C3; closes T946-a) → `git show archive/execution-2026-11-11:"Execution/P15/T1218-manual-linking-and-auth-readback.md"`
+- 2026-11-07 · pre-crew · T1217 Register follow-up sweep, docs (ROADMAP register follow-up (docs), round 3 session S133) → `git show archive/execution-2026-11-11:"Execution/P15/T1217-sweep-docs.md"`
+- 2026-11-07 · pre-crew · T1216 Register follow-up sweep, validation → `git show archive/execution-2026-11-11:"Execution/P15/T1216-sweep-validation.md"`
+- 2026-11-07 · pre-crew · T1215 Register follow-up sweep, intelligence (ROADMAP register follow-up (intelligence), round 3 session S131, batch 16) → `git show archive/execution-2026-11-11:"Execution/P15/T1215-sweep-intelligence.md"`
+- 2026-11-07 · pre-crew · T1214 register follow-up sweep, data quality and catalogue → `git show archive/execution-2026-11-11:"Execution/P15/T1214-sweep-data-quality.md"`
+- 2026-11-07 · pre-crew · T1213 Data access ladder → `git show archive/execution-2026-11-11:"Execution/P15/T1213-data-access-ladder.md"`
+- 2026-11-07 · pre-crew · T1212 Language in the URL, language pages, hreflang and the sitemap per language (ROADMAP I12, session S128) → `git show archive/execution-2026-11-11:"Execution/P15/T1212-language-urls.md"`
+- 2026-11-07 · pre-crew · T1211 register follow-up sweep, ops and security → `git show archive/execution-2026-11-11:"Execution/P15/T1211-sweep-ops-security.md"`
+- 2026-11-07 · pre-crew · T1210 Register follow-up sweep, product and growth → `git show archive/execution-2026-11-11:"Execution/P15/T1210-sweep-product.md"`
+- 2026-11-07 · pre-crew · T1209 Home page G14, behind a flag (S125, ROADMAP G14) → `git show archive/execution-2026-11-11:"Execution/P15/T1209-home-page.md"`
+- 2026-11-07 · pre-crew · T1208 Trust made visible (ROADMAP G9, round 3 session S124) → `git show archive/execution-2026-11-11:"Execution/P15/T1208-trust-visible.md"`
+- 2026-11-07 · pre-crew · T1207 Pipeline structure (ROADMAP A2) → `git show archive/execution-2026-11-11:"Execution/P15/T1207-pipeline-structure.md"`
+- 2026-11-07 · pre-crew · T1206 Register follow-up sweep, AI and Ask → `git show archive/execution-2026-11-11:"Execution/P15/T1206-sweep-ai.md"`
+- 2026-11-07 · pre-crew · T1205 Price alerts (ROADMAP I17) → `git show archive/execution-2026-11-11:"Execution/P15/T1205-price-alerts.md"`
+- 2026-11-07 · pre-crew · T1204 Trip footprint (ROADMAP D22) → `git show archive/execution-2026-11-11:"Execution/P15/T1204-trip-footprint.md"`
+- 2026-11-07 · pre-crew · T1203 Accessibility facts (ROADMAP D21, session S119) → `git show archive/execution-2026-11-11:"Execution/P15/T1203-accessibility-facts.md"`
+- 2026-11-07 · pre-crew · T1202 Seasons and closures (ROADMAP D18) → `git show archive/execution-2026-11-11:"Execution/P15/T1202-seasons-closures.md"`
+- 2026-11-07 · pre-crew · T1201 Register follow-up sweep, trails → `git show archive/execution-2026-11-11:"Execution/P15/T1201-sweep-trails.md"`
+- 2026-11-07 · pre-crew · T1200 Heat and fire months per place (D20) → `git show archive/execution-2026-11-11:"Execution/P15/T1200-heat-fire.md"`
+- 2026-11-07 · pre-crew · T1199 Entry rules and official advice on the country page → `git show archive/execution-2026-11-11:"Execution/P15/T1199-entry-rules.md"`
+- 2026-11-07 · pre-crew · T1198 Photo correctness, heroes checked against their place (ROADMAP D17) → `git show archive/execution-2026-11-11:"Execution/P15/T1198-photo-correctness.md"`
+- 2026-11-07 · pre-crew · T1197 Link and page health → `git show archive/execution-2026-11-11:"Execution/P15/T1197-link-health.md"`
+- 2026-11-07 · pre-crew · T1196 Texts and translations validation (ROADMAP D23, Texts row; I8) → `git show archive/execution-2026-11-11:"Execution/P15/T1196-texts-validation.md"`
+- 2026-11-07 · pre-crew · T1195 Trips validation, every leg against official timetables (ROADMAP D23, Trips row) → `git show archive/execution-2026-11-11:"Execution/P15/T1195-trips-validation.md"`
+- 2026-11-07 · pre-crew · T1194 Climate, sea temperature and crowds validation layers (D23) → `git show archive/execution-2026-11-11:"Execution/P15/T1194-climate-validation.md"`
+- 2026-11-07 · pre-crew · T1193 Cycling external validation (D23) → `git show archive/execution-2026-11-11:"Execution/P15/T1193-cycling-validation.md"`
+- 2026-11-07 · pre-crew · T1192 Lakes and mountains validation layers → `git show archive/execution-2026-11-11:"Execution/P15/T1192-lakes-mountains-validation.md"`
+- 2026-11-07 · pre-crew · T1191 Place ratings on the D23 validation runner → `git show archive/execution-2026-11-11:"Execution/P15/T1191-ratings-validation.md"`
+- 2026-11-07 · pre-crew · T1190 Prices validation on the D23 runner → `git show archive/execution-2026-11-11:"Execution/P15/T1190-prices-validation.md"`
+- 2026-11-07 · pre-crew · T1188 The LLM judge for text and facts (ROADMAP D23, D4) → `git show archive/execution-2026-11-11:"Execution/P15/T1188-llm-judge.md"`
+- 2026-11-07 · pre-crew · T1186 mountains route up and lakes water class filled (S102) → `git show archive/execution-2026-11-11:"Execution/P15/T1186-mountains-lakes.md"`
+- 2026-11-07 · pre-crew · T1185 The way back for one-way walks → `git show archive/execution-2026-11-11:"Execution/P15/T1185-way-back.md"`
+- 2026-11-07 · pre-crew · T1182 the trails lab on the box → `git show archive/execution-2026-11-11:"Execution/P15/T1182-trails-lab-box.md"`
+- 2026-11-07 · pre-crew · T1178 Data blog, part 1 (K14, S94) → `git show archive/execution-2026-11-11:"Execution/P15/T1178-data-blog-1.md"`
+- 2026-11-07 · pre-crew · T1176 Open dataset export (ROADMAP K8) → `git show archive/execution-2026-11-11:"Execution/P15/T1176-open-dataset.md"`
+- 2026-11-07 · pre-crew · T1175 Shareable assets, the 100 a day map, the cheapest week and the trip receipt (K7, S91) → `git show archive/execution-2026-11-11:"Execution/P15/T1175-shareable-assets.md"`
+- 2026-11-07 · pre-crew · T1174 Data blog, part 2 (K14, S90) → `git show archive/execution-2026-11-11:"Execution/P15/T1174-data-blog-2.md"`
+- 2026-11-07 · pre-crew · T1172 Affiliate links done right → `git show archive/execution-2026-11-11:"Execution/P15/T1172-affiliate-links.md"`
+- 2026-11-07 · pre-crew · T1171 Where the paywall meets the journey (ROADMAP I14, session S87) → `git show archive/execution-2026-11-11:"Execution/P15/T1171-paywall-moment.md"`
+- 2026-11-07 · pre-crew · T1170 Six complete languages, code half (ROADMAP I8) → `git show archive/execution-2026-11-11:"Execution/P15/T1170-six-languages.md"`
+- 2026-11-07 · pre-crew · T1169 Installable app, offline shell and kept trip (ROADMAP I7, PWA part) → `git show archive/execution-2026-11-11:"Execution/P15/T1169-pwa.md"`
+- 2026-11-07 · pre-crew · T1168 Ask the docs (ROADMAP B8, with research B-R4, round 2 session S84) → `git show archive/execution-2026-11-11:"Execution/P15/T1168-ask-the-docs.md"`
+- 2026-11-07 · pre-crew · T1164 Security testing (ZAP baseline, auth tests, ASVS L2 walk) → `git show archive/execution-2026-11-11:"Execution/P15/T1164-security-testing.md"`
+- 2026-11-07 · pre-crew · T1163 code health, the six largest app files split (ROADMAP H14) → `git show archive/execution-2026-11-11:"Execution/P15/T1163-code-health.md"`
+- 2026-11-07 · pre-crew · T1162 One scripted ship and a stable toolbox → `git show archive/execution-2026-11-11:"Execution/P15/T1162-scripted-ship.md"`
+- 2026-11-07 · pre-crew · T1161 no laptop-only steps → `git show archive/execution-2026-11-11:"Execution/P15/T1161-no-laptop-steps.md"`
+- 2026-11-07 · pre-crew · T1160 SLOs, error budgets and an incident drill (S76, ROADMAP H8) → `git show archive/execution-2026-11-11:"Execution/P15/T1160-slos.md"`
+- 2026-11-07 · pre-crew · T1154 Intelligence API (ROADMAP F5) → `git show archive/execution-2026-11-11:"Execution/P15/T1154-intelligence-api.md"`
+- 2026-11-06 · pre-crew · T1189 Beaches external validation (D23) → `git show archive/execution-2026-11-11:"Execution/P15/T1189-beaches-validation.md"`
+- 2026-11-06 · pre-crew · T1187 External validation method and scorecard → `git show archive/execution-2026-11-11:"Execution/P15/T1187-validation-method.md"`
+- 2026-11-06 · pre-crew · T1184 Multi-stage treks as one parent record with ordered stages → `git show archive/execution-2026-11-11:"Execution/P15/T1184-multi-stage-treks.md"`
+- 2026-11-06 · pre-crew · T1183 Routed continuity repair for broken trails (D24) → `git show archive/execution-2026-11-11:"Execution/P15/T1183-trail-continuity.md"`
+- 2026-11-06 · pre-crew · T1181 Trails external check and the trail validation gate (D24, D23) → `git show archive/execution-2026-11-11:"Execution/P15/T1181-trails-external.md"`
+- 2026-11-06 · pre-crew · T1180 Downhill relief, read uphill (D24, round 2 S96) → `git show archive/execution-2026-11-11:"Execution/P15/T1180-downhill-relief.md"`
+- 2026-11-06 · pre-crew · T1179 Trail summaries for the top band (D24) → `git show archive/execution-2026-11-11:"Execution/P15/T1179-trail-summaries.md"`
+- 2026-11-06 · pre-crew · T1173 Content operations, runbook, pipeline overrides and the admin Overrides tab (ROADMAP I13, round 2 session S89) → `git show archive/execution-2026-11-11:"Execution/P15/T1173-content-ops.md"`
+- 2026-11-06 · pre-crew · T1167 Generated reference and docs site (ROADMAP B6) → `git show archive/execution-2026-11-11:"Execution/P15/T1167-docs-site.md"`
+- 2026-11-06 · pre-crew · T1166 data lineage and request path diagrams (ROADMAP B5, session S82) → `git show archive/execution-2026-11-11:"Execution/P15/T1166-data-lineage.md"`
+- 2026-11-06 · pre-crew · T1165 Config reference, generated (ROADMAP B4, round 2 session S81) → `git show archive/execution-2026-11-11:"Execution/P15/T1165-config-reference.md"`
+- 2026-11-06 · pre-crew · T1159 Nightly backups and the restore drill → `git show archive/execution-2026-11-11:"Execution/P15/T1159-backups.md"`
+- 2026-11-06 · pre-crew · T1158 Load tests (k6) → `git show archive/execution-2026-11-11:"Execution/P15/T1158-load-tests.md"`
+- 2026-11-06 · pre-crew · T1157 Durable rate limiting (ROADMAP H3) → `git show archive/execution-2026-11-11:"Execution/P15/T1157-durable-rate-limit.md"`
+- 2026-11-06 · pre-crew · T1156 Responsible AI, the public AI page and model cards (ROADMAP F8, round 2 session S72) → `git show archive/execution-2026-11-11:"Execution/P15/T1156-responsible-ai.md"`
+- 2026-11-06 · pre-crew · T1155 Carta MCP server (ROADMAP F7) → `git show archive/execution-2026-11-11:"Execution/P15/T1155-mcp-server.md"`
+- 2026-11-06 · pre-crew · T1153 Place linking, one function for search, Ask and parse-booking (ROADMAP F4, round 2 session S69) → `git show archive/execution-2026-11-11:"Execution/P15/T1153-place-linking.md"`
+- 2026-11-06 · pre-crew · T1152 Taste profile with validation (ROADMAP F3, round 2 session S68) → `git show archive/execution-2026-11-11:"Execution/P15/T1152-taste-profile.md"`
+- 2026-11-06 · pre-crew · T1150 Travel taxonomy, part 2: the tagger (ROADMAP F1, round 2 session S66) → `git show archive/execution-2026-11-11:"Execution/P15/T1150-taxonomy-2.md"`
+- 2026-11-06 · pre-crew · T1149 Travel taxonomy, part 1: the taxonomy, its mapping, the label set and the eval (ROADMAP F1, round 2 session S65) → `git show archive/execution-2026-11-11:"Execution/P15/T1149-taxonomy-1.md"`
+- 2026-11-06 · pre-crew · T1148 Eval platform, one runner and one results format (ROADMAP F6, round 2 session S64) → `git show archive/execution-2026-11-11:"Execution/P15/T1148-eval-platform.md"`
+- 2026-11-06 · pre-crew · T1146 Catalogue gaps, part 1 (ROADMAP D15, round 2 session S62) → `git show archive/execution-2026-11-11:"Execution/P15/T1146-catalogue-gaps-1.md"`
+- 2026-11-06 · pre-crew · T1145 Coverage fairness (ROADMAP D6, round 2 session S61) → `git show archive/execution-2026-11-11:"Execution/P15/T1145-coverage-fairness.md"`
+- 2026-11-06 · pre-crew · T1144 Truth set, hand-verified answers scored per release (ROADMAP D4, round 2 session S60) → `git show archive/execution-2026-11-11:"Execution/P15/T1144-truth-set.md"`
+- 2026-11-06 · pre-crew · T1143 provenance and freshness per field (ROADMAP D3, round 2 session S59) → `git show archive/execution-2026-11-11:"Execution/P15/T1143-provenance.md"`
+- 2026-11-06 · pre-crew · T1142 Quality engine part 2, rules, run gate and the Data health panel (ROADMAP D2, session S58) → `git show archive/execution-2026-11-11:"Execution/P15/T1142-quality-engine-2.md"`
+- 2026-11-06 · pre-crew · T1141 Ask retrieval upgrades, measured on E1 (ROADMAP E2 with research E-R2, round 2 session S57) → `git show archive/execution-2026-11-11:"Execution/P15/T1141-retrieval.md"`
+- 2026-11-06 · pre-crew · T1140 the prompt registry (ROADMAP E5, round 2 session S56) → `git show archive/execution-2026-11-11:"Execution/P15/T1140-prompt-registry.md"`
+- 2026-11-06 · pre-crew · T1139 LLM observability (ROADMAP E4) → `git show archive/execution-2026-11-11:"Execution/P15/T1139-llm-observability.md"`
+- 2026-11-06 · pre-crew · T1138 Model strategy, cost and quality per AI feature, the box behind an eval gate (ROADMAP E7, round 2 session S54) → `git show archive/execution-2026-11-11:"Execution/P15/T1138-model-strategy.md"`
+- 2026-11-06 · pre-crew · T1137 one model gateway for every AI call (ROADMAP E3, round 2 session S53) → `git show archive/execution-2026-11-11:"Execution/P15/T1137-ai-gateway.md"`
+- 2026-11-06 · pre-crew · T1136 Ask eval gate (ROADMAP E1, round 2 session S52) → `git show archive/execution-2026-11-11:"Execution/P15/T1136-ask-eval-gate.md"`
+- 2026-11-06 · pre-crew · T1135 model and hosting research per AI feature (E-R3) → `git show archive/execution-2026-11-11:"Execution/P15/T1135-model-research.md"`
+- 2026-11-06 · pre-crew · T1134 Docs drift check and the first data quality scorecard (ROADMAP B7, D2, session S50) → `git show archive/execution-2026-11-11:"Execution/P15/T1134-drift-scorecard.md"`
+- 2026-11-06 · pre-crew · T1133 one machine-readable data contract (ROADMAP D1, session S49) → `git show archive/execution-2026-11-11:"Execution/P15/T1133-data-contract.md"`
+- 2026-11-06 · pre-crew · T1132 Logic catalogue, first pass over eight domains (ROADMAP B3, session S48) → `git show archive/execution-2026-11-11:"Execution/P15/T1132-logic-catalogue.md"`
+- 2026-11-06 · pre-crew · T1131 Press kit page and journalist list (K10) → `git show archive/execution-2026-11-11:"Execution/P15/T1131-press-kit.md"`
+- 2026-11-06 · pre-crew · T1130 Data stories, the yearly basket per country (K5, S46) → `git show archive/execution-2026-11-11:"Execution/P15/T1130-data-stories.md"`
+- 2026-11-06 · pre-crew · T1129 Product analytics without cookies or identifiers (I11) → `git show archive/execution-2026-11-11:"Execution/P15/T1129-product-analytics.md"`
+- 2026-11-06 · pre-crew · T1128 Accessibility audit of the surfaces (ROADMAP G10, session S44) → `git show archive/execution-2026-11-11:"Execution/P15/T1128-accessibility.md"`
+- 2026-11-06 · pre-crew · T1127 Imagery gaps (G8, session 43) → `git show archive/execution-2026-11-11:"Execution/P15/T1127-imagery-gaps.md"`
+- 2026-11-06 · pre-crew · T1126 Breakpoints and CSS consolidation (G7, S42) → `git show archive/execution-2026-11-11:"Execution/P15/T1126-css-consolidation.md"`
+- 2026-11-06 · pre-crew · T1125 Type and radius debt (G6) → `git show archive/execution-2026-11-11:"Execution/P15/T1125-type-radius.md"`
+- 2026-11-06 · pre-crew · T1124 Motion tokens and one reduced-motion path (G5, ungated half) → `git show archive/execution-2026-11-11:"Execution/P15/T1124-motion-tokens.md"`
+- 2026-11-06 · pre-crew · T1123 Core flow fixes (ROADMAP G4, session S39) → `git show archive/execution-2026-11-11:"Execution/P15/T1123-core-flow-fixes.md"`
+- 2026-11-06 · pre-crew · T1122 The umber cost card as signature (flagged variant) → `git show archive/execution-2026-11-11:"Execution/P15/T1122-cost-card.md"`
+- 2026-11-06 · pre-crew · T1121 shared parts that exist once → `git show archive/execution-2026-11-11:"Execution/P15/T1121-shared-parts.md"`
+- 2026-11-06 · pre-crew · T1120 Error tracking with a privacy-safe setup (S36, ROADMAP H2) → `git show archive/execution-2026-11-11:"Execution/P15/T1120-error-tracking.md"`
+- 2026-11-06 · pre-crew · T1119 Static analysis in CI (C7) → `git show archive/execution-2026-11-11:"Execution/P15/T1119-static-analysis.md"`
+- 2026-11-06 · pre-crew · T1118 Privacy and GDPR: Article 30 current, retention sweep, export and delete end to end → `git show archive/execution-2026-11-11:"Execution/P15/T1118-privacy-gdpr.md"`
+- 2026-11-06 · pre-crew · T1117 AI security for Ask, plan-day and parse-booking (ROADMAP C8, with E3) → `git show archive/execution-2026-11-11:"Execution/P15/T1117-ai-security.md"`
+- 2026-11-06 · pre-crew · T1116 register rule, four dry runs (ROADMAP A3, row T1083-a) → `git show archive/execution-2026-11-11:"Execution/P15/T1116-register-rule.md"`
+- 2026-11-06 · pre-crew · T1115 Local transport fares, ungated preparation (D10, row T1075-b) → `git show archive/execution-2026-11-11:"Execution/P15/T1115-local-fares-prep.md"`
+- 2026-11-06 · pre-crew · T1114 The thin-bed and not-yet notes on every price screen (ROADMAP D10, row T1075-c) → `git show archive/execution-2026-11-11:"Execution/P15/T1114-not-yet-notes.md"`
+- 2026-11-06 · pre-crew · T1113 SEO quality bar for every page kind, trip canonicals, trail prose (K2, session S29) → `git show archive/execution-2026-11-11:"Execution/P15/T1113-seo-bar.md"`
+- 2026-11-06 · pre-crew · T1112 Aviasales Data API coverage probe → `git show archive/execution-2026-11-11:"Execution/P15/T1112-aviasales-probe.md"`
+- 2026-11-06 · pre-crew · T1111 design direction for owner approval → `git show archive/execution-2026-11-11:"Execution/P15/T1111-design-direction.md"`
+- 2026-11-06 · pre-crew · T1110 Waitlist and newsletter capture with double opt-in (S26, ROADMAP K3) → `git show archive/execution-2026-11-11:"Execution/P15/T1110-waitlist.md"`
+- 2026-11-06 · pre-crew · T1109 Cookieless channel counts (K12) → `git show archive/execution-2026-11-11:"Execution/P15/T1109-channel-counts.md"`
+- 2026-11-06 · pre-crew · T1108 Support and trust pages (ROADMAP I9) → `git show archive/execution-2026-11-11:"Execution/P15/T1108-support-pages.md"`
+- 2026-11-06 · pre-crew · T1107 every pipeline task on a box schedule → `git show archive/execution-2026-11-11:"Execution/P15/T1107-box-schedule.md"`
+- 2026-11-06 · pre-crew · T1106 Errors that stay local (S22, ROADMAP H13) → `git show archive/execution-2026-11-11:"Execution/P15/T1106-error-boundaries.md"`
+- 2026-11-06 · pre-crew · T1105 First paint prefers the self-hosted image copies → `git show archive/execution-2026-11-11:"Execution/P15/T1105-first-load.md"`
+- 2026-11-06 · pre-crew · T1104 Accounts that keep your work (account sync) → `git show archive/execution-2026-11-11:"Execution/P15/T1104-account-sync.md"`
+- 2026-11-06 · pre-crew · T1103 A shorter plan flow (ROADMAP G12, session S19) → `git show archive/execution-2026-11-11:"Execution/P15/T1103-plan-flow-short.md"`
+- 2026-11-06 · pre-crew · T1102 Trail cards and trail links (G13) → `git show archive/execution-2026-11-11:"Execution/P15/T1102-trail-cards.md"`
+- 2026-11-06 · pre-crew · T1101 Ask answers and cards agree (E6, S17) → `git show archive/execution-2026-11-11:"Execution/P15/T1101-ask-cards-agree.md"`
+- 2026-11-06 · pre-crew · T1100 Getting there mode choice (ROADMAP D13, audit P-31) → `git show archive/execution-2026-11-11:"Execution/P15/T1100-getting-there.md"`
+- 2026-11-06 · pre-crew · T1099 Wire freshness and stamps (D12, S15) → `git show archive/execution-2026-11-11:"Execution/P15/T1099-freshness.md"`
+- 2026-11-06 · pre-crew · T1098 UK crowds by month (D11) → `git show archive/execution-2026-11-11:"Execution/P15/T1098-uk-crowds.md"`
+- 2026-11-06 · pre-crew · T1097 Sea temperature chain ready (D8) → `git show archive/execution-2026-11-11:"Execution/P15/T1097-sea-temp.md"`
+- 2026-11-06 · pre-crew · T1096 Gallery pass and POI descriptions for GB, RO, FR and IT (D9) → `git show archive/execution-2026-11-11:"Execution/P15/T1096-galleries-poi.md"`
+- 2026-11-06 · pre-crew · T1095 Grounded place intros for FR, RS and IT (D9) → `git show archive/execution-2026-11-11:"Execution/P15/T1095-place-intros.md"`
+- 2026-11-06 · pre-crew · T1094 recover the walks lost in the trail build (D7) → `git show archive/execution-2026-11-11:"Execution/P15/T1094-recover-walks.md"`
+- 2026-11-06 · pre-crew · T1093 Trail photos with a licence on every image (D7, K2, row T1076-c) → `git show archive/execution-2026-11-11:"Execution/P15/T1093-trail-photos.md"`
+- 2026-11-06 · pre-crew · T1089 Verify harness refresh (A3, row T1083-a) → `git show archive/execution-2026-11-11:"Execution/P15/T1089-verify-harness-refresh.md"`
+- 2026-11-05 · pre-crew · T1092 Trail display names and per-day difficulty → `git show archive/execution-2026-11-11:"Execution/P15/T1092-trail-names.md"`
+- 2026-11-05 · pre-crew · T1091 Attribution ledger audit (I3, row T1084-a) → `git show archive/execution-2026-11-11:"Execution/P15/T1091-attribution-ledger.md"`
+- 2026-11-05 · pre-crew · T1090 CSP without style-src 'unsafe-inline', and the CSP gate in CI → `git show archive/execution-2026-11-11:"Execution/P15/T1090-csp-no-inline-style.md"`
+- 2026-11-05 · pre-crew · T1088 Supply chain gates (ROADMAP C6) → `git show archive/execution-2026-11-11:"Execution/P15/T1088-supply-chain-gates.md"`
+- 2026-11-05 · pre-crew · T1087 Admin harnesses to migration 064, in CI, and a definer search_path test → `git show archive/execution-2026-11-11:"Execution/P15/T1087-admin-harness-ci.md"`
+- 2026-11-05 · pre-crew · T1086 backup, refund and incident runbooks → `git show archive/execution-2026-11-11:"Execution/P15/T1086-runbooks.md"`
+- 2026-11-05 · pre-crew · T1085 Docs truth (ROADMAP B2, row T1073-a) → `git show archive/execution-2026-11-11:"Execution/P15/T1085-docs-truth.md"`
+- 2026-11-05 · pre-crew · T1084 Supabase Auth settings and admin MFA applied (ROADMAP C3, closes T1071-a) → `git show archive/execution-2026-11-11:"Execution/P15/T1084-auth-settings-close.md"`
+- 2026-11-05 · pre-crew · T1084 licence registry current, two CI failures on PR #10 → `git show archive/execution-2026-11-11:"Execution/P15/T1084-licence-registry.md"`
+- 2026-11-05 · pre-crew · T1083 register triage, second pass (ROADMAP A3, row T1072-a) → `git show archive/execution-2026-11-11:"Execution/P15/T1083-register-triage.md"`
+- 2026-11-05 · pre-crew · T1082 Live-stays leftovers and admin test scripts → `git show archive/execution-2026-11-11:"Execution/P15/T1082-cleanup.md"`
+- 2026-11-05 · pre-crew · T1081 a required reason on ban, delete and set tier; the upload scan secrets on record → `git show archive/execution-2026-11-11:"Execution/P15/T1081-admin-reasons.md"`
+- 2026-11-05 · pre-crew · T1080 Supply chain (ROADMAP C6) → `git show archive/execution-2026-11-11:"Execution/P15/T1080-supply-chain.md"`
+- 2026-11-05 · pre-crew · T1079 Web and API hardening (ROADMAP C5) → `git show archive/execution-2026-11-11:"Execution/P15/T1079-web-hardening.md"`
+- 2026-11-05 · pre-crew · T1078 row policy coverage for every table, signed-out reads that answer, no service key in the bundle (ROADMAP C4) → `git show archive/execution-2026-11-11:"Execution/P15/T1078-rls-coverage.md"`
+- 2026-11-05 · pre-crew · T1078 to T1083: security batch → `git show archive/execution-2026-11-11:"Execution/P15/T1078-T1083-security-batch.md"`
+- 2026-11-05 · pre-crew · T1077 trip heroes over the 1600px floor (T230-a) → `git show archive/execution-2026-11-11:"Execution/P15/T1077-trip-heroes.md"`
+- 2026-11-05 · pre-crew · T1076 SEO plumbing and the page quality gate (K2) → `git show archive/execution-2026-11-11:"Execution/P15/T1076-seo-plumbing.md"`
+- 2026-11-05 · pre-crew · T1075 Prices completed, the part that is not owner-gated (ROADMAP D10) → `git show archive/execution-2026-11-11:"Execution/P15/T1075-prices-honest.md"`
+- 2026-11-05 · pre-crew · T1074 Scraper and source health (ROADMAP D5) → `git show archive/execution-2026-11-11:"Execution/P15/T1074-scraper-health.md"`
+- 2026-11-05 · pre-crew · T1073 Docs tree and area docs (ROADMAP B2) → `git show archive/execution-2026-11-11:"Execution/P15/T1073-docs-tree.md"`
+- 2026-11-05 · pre-crew · T1072 register triage (ROADMAP A3) → `git show archive/execution-2026-11-11:"Execution/P15/T1072-register-triage.md"`
+- 2026-11-05 · pre-crew · T1071 auth and access, the code half (ROADMAP C3) → `git show archive/execution-2026-11-11:"Execution/P15/T1071-auth-access.md"`
+- 2026-11-05 · pre-crew · T1070 the upload path's server half (register row T333-a) → `git show archive/execution-2026-11-11:"Execution/P15/T1070-upload-migration.md"`
+- 2026-11-05 · pre-crew · T1069 threat model (ROADMAP C1) → `git show archive/execution-2026-11-11:"Execution/P15/T1069-threat-model.md"`
+- 2026-11-05 · pre-crew · T1068 quarantine fixes (T1057-a, ROADMAP H1) → `git show archive/execution-2026-11-11:"Execution/P15/T1068-quarantine-fixes.md"`
+- 2026-11-05 · pre-crew · T1068 to T1076: P1 batch → `git show archive/execution-2026-11-11:"Execution/P15/T1068-T1076-p1-batch.md"`
+- 2026-11-05 · pre-crew · T1062 to T1066: copy and focus fixes, jspdf 4, maplibre 6 → `git show archive/execution-2026-11-11:"Execution/P15/T1062-T1066-copy-focus-upgrades.md"`
+- 2026-11-05 · pre-crew · T1061 CI green on GitHub → `git show archive/execution-2026-11-11:"Execution/P15/T1061-ci-green.md"`
+- 2026-11-05 · pre-crew · T1053-T1060 P0 batch (Fix now, CI, secrets, positioning) → `git show archive/execution-2026-11-11:"Execution/P15/T1053-T1060-p0-batch.md"`
+- 2026-11-04 · pre-crew · T1052 Data access ladder and the bed-price decision → `git show archive/execution-2026-11-11:"Execution/P15/T1052-data-access-ladder.md"`
+- 2026-11-04 · pre-crew · T1050-T1051 Docs start over and lean Claude context → `git show archive/execution-2026-11-11:"Execution/P15/T1050-T1051-docs-start-over-and-claude-context.md"`
+- 2026-11-04 · pre-crew · T1049 Fast track and lean Claude context → `git show archive/execution-2026-11-11:"Execution/P15/T1049-fast-track-and-claude-context.md"`
+- 2026-11-04 · pre-crew · T1048 Late registration, no accountant, no lawyer → `git show archive/execution-2026-11-11:"Execution/P15/T1048-late-registration-diy.md"`
+- 2026-11-04 · pre-crew · T1047 Launch plan in quality-first phases, marketing and affiliates → `git show archive/execution-2026-11-11:"Execution/P15/T1047-launch-plan-phases.md"`
+- 2026-11-04 · pre-crew · T1046 Full app audit, November 2026 → `git show archive/execution-2026-11-11:"Execution/P15/T1046-full-app-audit.md"`
+- 2026-11-04 · pre-crew · T1045 Carta Handbook and the roadmap to production → `git show archive/execution-2026-11-11:"Execution/P15/T1045-handbook-and-roadmap.md"`
+- 2026-11-04 · pre-crew · T1044 Plan home head and Up next, refined → `git show archive/execution-2026-11-11:"Execution/P15/T1044-plan-home-head.md"`
+- 2026-11-04 · pre-crew · T1043 the flight-sweep Worker at half speed from 22:00 to 05:00 UTC → `git show archive/execution-2026-11-11:"Execution/P15/T1043-sweep-night-half.md"`
+- 2026-11-04 · pre-crew · T1042 the deploy's prune no longer deletes the flight sweep's files → `git show archive/execution-2026-11-11:"Execution/P15/T1042-prune-keep-flights.md"`
+- 2026-11-04 · pre-crew · T1041 one desktop width system for every tab → `git show archive/execution-2026-11-11:"Execution/P15/T1041-desktop-widths.md"`
+- 2026-11-03 · pre-crew · T1040 commit, merge, push and deploy everything → `git show archive/execution-2026-11-11:"Execution/P0/T1040-ship-all.md"`
+- 2026-11-03 · pre-crew · T1038-T1039 Explore's outdoor tabs tidied; the outdoor pages follow the place page → `git show archive/execution-2026-11-11:"Execution/P15/T1038-T1039-explore-tabs-outdoor-pages.md"`
+- 2026-11-03 · pre-crew · T1037 page bars on the page's ground; Plan's inner screens without the app head → `git show archive/execution-2026-11-11:"Execution/P15/T1037-page-bars.md"`
+- 2026-11-03 · pre-crew · T1036 Day trips as the Explore rail of photo cards → `git show archive/execution-2026-11-11:"Execution/P15/T1036-day-trips.md"`
+- 2026-11-03 · pre-crew · T1035 Around as kind tiles, each opening its own page → `git show archive/execution-2026-11-11:"Execution/P15/T1035-near-pages.md"`
+- 2026-11-03 · pre-crew · T1034 free the disk and slim the repo for fewer tokens per session → `git show archive/execution-2026-11-11:"Execution/P0/T1034-repo-slim.md"`
+- 2026-11-03 · pre-crew · T1033 Around as one block of kind tabs, how far, and the Explore rail → `git show archive/execution-2026-11-11:"Execution/P15/T1033-around-tabs.md"`
+- 2026-11-03 · pre-crew · T1032 What to see and Best things to do as photo cards; a photo map → `git show archive/execution-2026-11-11:"Execution/P15/T1032-see-cards-map.md"`
+- 2026-11-03 · pre-crew · T1031 to T1032: the beach step can no longer hold a Monday run for days → `git show archive/execution-full-2026-11-03:"Execution/P3/T1031-T1032-beach-step-cap.md"`
+- 2026-11-03 · pre-crew · T1031 the rating sheet in plain words; no park-and-ride subline → `git show archive/execution-2026-11-11:"Execution/P15/T1031-rating-sheet-plain.md"`
+- 2026-11-03 · pre-crew · T1031 to T1032: the beach step can no longer hold a Monday run for days → `git show archive/execution-2026-11-11:"Execution/P3/T1031-T1032-beach-step-cap.md"`
+- 2026-11-03 · pre-crew · T1029-T1030 why a place rates what it rates; What to bring and Where to park → `git show archive/execution-2026-11-11:"Execution/P15/T1029-T1030-rating-before-you-go.md"`
+- 2026-11-03 · pre-crew · T1028 Practical as one card system → `git show archive/execution-2026-11-11:"Execution/P15/T1028-practical-one-system.md"`
+- 2026-11-03 · pre-crew · T1027 the place page's Practical section as swipe cards → `git show archive/execution-2026-11-11:"Execution/P15/T1027-practical-cards.md"`
+- 2026-11-03 · pre-crew · T1026 the place page's price card becomes one interactive trip card → `git show archive/execution-2026-11-11:"Execution/P15/T1026-trip-card.md"`
+- 2026-11-03 · pre-crew · T1025 the place page head, full-width photos and the tabs on the first screen → `git show archive/execution-2026-11-11:"Execution/P15/T1025-place-head-compact.md"`
+- 2026-11-03 · pre-crew · T1024 the top of the place page, redesigned → `git show archive/execution-2026-11-11:"Execution/P15/T1024-place-head.md"`
+- 2026-11-03 · pre-crew · T1023 wider page margins, prices on the stay bars, no stay sublines → `git show archive/execution-2026-11-11:"Execution/P15/T1023-margins-stay-labels.md"`
+- 2026-11-03 · pre-crew · T1022 When to go and Where to stay, redesigned on the scrape → `git show archive/execution-2026-11-11:"Execution/P15/T1022-when-stay.md"`
+- 2026-11-03 · pre-crew · T1021 stay prices come from the Booking and Hostelworld scrape alone → `git show archive/execution-2026-11-11:"Execution/P15/T1021-stays-scrape-only.md"`
+- 2026-11-03 · pre-crew · T1020 the price card's flights drop the source line → `git show archive/execution-2026-11-11:"Execution/P15/T1020-flights-note-off.md"`
+- 2026-11-03 · pre-crew · T1019 the place page's price card in the plan tab's language → `git show archive/execution-2026-11-11:"Execution/P15/T1019-dest-price-card.md"`
+- 2026-11-02 · pre-crew · T1030 one Carta's own trips, Plan's page → `git show archive/execution-2026-11-11:"Execution/P15/T1030-one-carta-trips.md"`
+- 2026-11-02 · pre-crew · T1018 Eat and drink shows how pricey eating out is here, not seven prices to the cent → `git show archive/execution-2026-11-11:"Execution/P15/T1018-price-feel.md"`
+- 2026-11-02 · pre-crew · T1017 the days prompt's ways by name only → `git show archive/execution-2026-11-11:"Execution/P15/T1017-days-prompt-names.md"`
+- 2026-11-02 · pre-crew · T1016 two lines off the Notes tab → `git show archive/execution-2026-11-11:"Execution/P15/T1016-notes-lines.md"`
+- 2026-11-02 · pre-crew · T1015 the Notes tab works, as notes and documents → `git show archive/execution-2026-11-11:"Execution/P15/T1015-notes-tab.md"`
+- 2026-11-02 · pre-crew · T1014 Export & share on the page ground → `git show archive/execution-2026-11-11:"Execution/P15/T1014-export-flat.md"`
+- 2026-11-02 · pre-crew · T1013 Export & share structured, the Costs receipt aligned → `git show archive/execution-2026-11-11:"Execution/P15/T1013-export-grid-receipt.md"`
+- 2026-11-02 · pre-crew · T1012 between-stop chips, a quieter Export & share, prices forward, group expenses out → `git show archive/execution-2026-11-11:"Execution/P15/T1012-chips-export-prices-expenses.md"`
+- 2026-11-02 · pre-crew · T1011 the dock, the trip kit, Export & share and Before you go → `git show archive/execution-2026-11-11:"Execution/P15/T1011-dock-kit-export-before.md"`
+- 2026-11-02 · pre-crew · T1010 the Itinerary's lodging and hop, tightened → `git show archive/execution-2026-11-11:"Execution/P15/T1010-lodging-hop.md"`
+- 2026-11-02 · pre-crew · T1009 the Itinerary labelled, after a research round → `git show archive/execution-2026-11-11:"Execution/P15/T1009-itinerary-labelled.md"`
+- 2026-11-02 · pre-crew · T1008 the Itinerary, compact → `git show archive/execution-2026-11-11:"Execution/P15/T1008-compact-itinerary.md"`
+- 2026-11-02 · pre-crew · T1007 the Itinerary and Costs tabs in the Overview's language → `git show archive/execution-2026-11-11:"Execution/P15/T1007-itinerary-costs-tabs.md"`
+- 2026-11-02 · pre-crew · T1006 a more compact route, and the price change as a mark → `git show archive/execution-2026-11-11:"Execution/P15/T1006-compact-route-delta.md"`
+- 2026-11-02 · pre-crew · T1005 the trip drawn on Europe, and Your route as a journey → `git show archive/execution-2026-11-11:"Execution/P15/T1005-trip-map-journey.md"`
+- 2026-11-02 · pre-crew · T1004 a more compact cost card, and Previous and Next on the passes → `git show archive/execution-2026-11-11:"Execution/P15/T1004-compact-cost-swipe.md"`
+- 2026-11-02 · pre-crew · T1003 Still to book as passes, and a new What it costs card → `git show archive/execution-2026-11-11:"Execution/P15/T1003-trip-page-passes-cost-card.md"`
+- 2026-11-02 · pre-crew · T1002 Carta's own trips door, whole photographs and its own width → `git show archive/execution-2026-11-11:"Execution/P15/T1002-door-fit.md"`
+- 2026-11-02 · pre-crew · T1001 New trip without a tile, and a trip bar that never cuts a value → `git show archive/execution-2026-11-11:"Execution/P15/T1001-new-trip-trip-bar.md"`
+- 2026-11-02 · pre-crew · T1000 a tab open across a deploy reloads instead of crashing → `git show archive/execution-2026-11-11:"Execution/P15/T1000-stale-tab-reload.md"`
+- 2026-11-02 · pre-crew · T999 one ground, no seams, and the Plan home's two tiles → `git show archive/execution-2026-11-11:"Execution/P15/T999-one-ground-tiles.md"`
+- 2026-11-02 · pre-crew · T998 design-lint on the Plan home and TripArt → `git show archive/execution-2026-11-11:"Execution/P15/T998-design-lint-plan-home.md"`
+- 2026-11-02 · pre-crew · T992 to T996: the box keeps its disk, its packages and its code current, and deploys itself → `git show archive/execution-full-2026-11-03:"Execution/P3/T992-T996-box-autonomy.md"`
+- 2026-11-01 · pre-crew · T989 to T991: Plan, My trips and Together, cleaner → `git show archive/execution-2026-11-11:"Execution/P15/T989-T991-plan-mytrips-together.md"`
+- 2026-11-01 · pre-crew · T988 the Plan home with trips, cleaner → `git show archive/execution-2026-11-11:"Execution/P15/T988-plan-home-clean.md"`
+- 2026-11-01 · pre-crew · T987 Together, tidier for an account with little in it → `git show archive/execution-2026-11-11:"Execution/P15/T987-together-tidy.md"`
+- 2026-11-01 · pre-crew · T986 Together, cleaner and built like the proposal → `git show archive/execution-2026-11-11:"Execution/P15/T986-together-clean.md"`
+- 2026-11-01 · pre-crew · T985 migrations 052 to 060 live → `git show archive/execution-2026-11-11:"Execution/P15/T985-migrations-052-060-live.md"`
+- 2026-11-01 · pre-crew · T984 an empty Past trips is one add tile → `git show archive/execution-2026-11-11:"Execution/P15/T984-past-trips-empty.md"`
+- 2026-11-01 · pre-crew · T980-T983 the phone header on My trips, an empty Trips tab, and a tighter Explore → `git show archive/execution-2026-11-11:"Execution/P15/T980-T983-header-explore-compact.md"`
+- 2026-11-01 · pre-crew · T971-T973 My trips follow-up: tidy, tap to mark, DESIGN.md → `git show archive/execution-2026-11-11:"Execution/P15/T971-T973-my-trips-map-follow-up.md"`
+- 2026-11-01 · pre-crew · T968 compact rails on a phone → `git show archive/execution-2026-11-11:"Execution/P15/T968-compact-rails.md"`
+- 2026-11-01 · pre-crew · T968-T970 My trips, cleaned up, with the dock and a real map of Europe → `git show archive/execution-2026-11-11:"Execution/P15/T968-T970-my-trips-clean.md"`
+- 2026-11-01 · pre-crew · T967 Carta's own trips, owner polish → `git show archive/execution-2026-11-11:"Execution/P15/T967-own-trips-polish.md"`
+- 2026-10-31 · pre-crew · T960 to T966: the phone search dock, Carta's own trips, outdoor tabs on the dock → `git show archive/execution-2026-11-11:"Execution/P15/T960-T966-search-dock.md"`
+- 2026-10-31 · pre-crew · T955 to T959: the home page polish (proof, tour, clips, Try it, plans) → `git show archive/execution-2026-11-11:"Execution/P15/T955-T959-home-polish.md"`
+- 2026-10-31 · pre-crew · T954 deploy main (home page v3) to Cloudflare Pages → `git show archive/execution-2026-11-11:"Execution/P15/T954-deploy-home-v3.md"`
+- 2026-10-31 · pre-crew · T948 to T953: the home page, three acts with Motion → `git show archive/execution-2026-11-11:"Execution/P15/T948-T953-home-v3.md"`
+- 2026-10-31 · pre-crew · T937 to T947: the owner's decisions, built → `git show archive/execution-2026-11-11:"Execution/P15/T937-T947-owner-decisions.md"`
+- 2026-10-31 · pre-crew · T933 to T936: Account rebuilt as one hub → `git show archive/execution-2026-11-11:"Execution/P15/T933-T936-account.md"`
+- 2026-10-31 · pre-crew · T928 to T932: Together, the friends layer → `git show archive/execution-2026-11-11:"Execution/P15/T928-T932-together.md"`
+- 2026-10-31 · pre-crew · T923 to T927: My trips, rebuilt as the next trip, Saved lists and Your Europe → `git show archive/execution-2026-11-11:"Execution/P15/T923-T927-my-trips.md"`
+- 2026-10-31 · pre-crew · T918 to T922: the five outdoor pages on the place template, and their data → `git show archive/execution-2026-11-11:"Execution/P15/T918-T922-outdoor-pages.md"`
+- 2026-10-30 · pre-crew · T915-T917 the flight sweep's blind spot, January and February sooner, a faster box fill → `git show archive/execution-full-2026-11-03:"Execution/P11/T915-T917-sweep-gaps.md"`
+- 2026-10-30 · pre-crew · T911 to T914: place and trip pages on one template, the new data, the PDF guides → `git show archive/execution-2026-11-11:"Execution/P15/T911-T914-place-pages.md"`
+- 2026-10-30 · pre-crew · T906 to T910: Explore, one search field and rows that read at a glance → `git show archive/execution-2026-11-11:"Execution/P15/T906-T910-explore-refined.md"`
+- 2026-10-30 · pre-crew · T905 the phone header with the logo and Account, three places below → `git show archive/execution-2026-11-11:"Execution/P15/T905-phone-header.md"`
+- 2026-10-30 · pre-crew · T901 to T904: the Plan home and Carta's own trips → `git show archive/execution-2026-11-11:"Execution/P15/T901-T904-plan-home.md"`
+- 2026-10-30 · pre-crew · T895 to T900: plan your days, the Carta bot as a chat, all days and one day → `git show archive/execution-2026-11-11:"Execution/P15/T895-T900-plan-days.md"`
+- 2026-10-30 · pre-crew · T891 to T894: the plan flow studio and the ten travellers → `git show archive/execution-2026-11-11:"Execution/P15/T891-T894-plan-flow-studio.md"`
+- 2026-10-30 · pre-crew · T885 to T890: the trip page v5, one calm page → `git show archive/execution-2026-11-11:"Execution/P15/T885-T890-trip-page-v5.md"`
+- 2026-10-30 · pre-crew · T879 to T884: Trips for you v2, the free direction → `git show archive/execution-2026-11-11:"Execution/P15/T879-T884-trips-for-you-v2.md"`
+- 2026-10-30 · pre-crew · T878 the persona question redesigned under the owner's design freedom, ten personas, deployed → `git show archive/execution-2026-11-11:"Execution/P15/T878-persona-design-freedom.md"`
+- 2026-10-30 · pre-crew · T877 the traveller persona in Help me choose and in the trip finder's scoring, deployed → `git show archive/execution-2026-11-11:"Execution/P15/T877-traveller-persona.md"`
+- 2026-10-30 · pre-crew · T876 plan flow walk fixes with the owner, deployed → `git show archive/execution-2026-11-11:"Execution/P15/T876-plan-flow-walk.md"`
+- 2026-10-30 · pre-crew · T875 plan flow v3 merged, pushed and deployed → `git show archive/execution-2026-11-11:"Execution/P15/T875-deploy-plan-flow-v3.md"`
+- 2026-10-30 · pre-crew · T874 plan flow v3 Batch G, end to end → `git show archive/execution-2026-11-11:"Execution/P15/T874-plan-flow-v3-end-to-end.md"`
+- 2026-10-30 · pre-crew · T870 to T873: plan flow v3 Batch F, the trip page and after the pick → `git show archive/execution-2026-11-11:"Execution/P15/T870-T873-plan-flow-v3-trip-page.md"`
+- 2026-10-30 · pre-crew · T867 to T869: plan flow v3 Batch E, searching and results → `git show archive/execution-2026-11-11:"Execution/P15/T867-T869-plan-flow-v3-results.md"`
+- 2026-10-30 · pre-crew · T863 to T866: plan flow v3 Batch D, how much Carta plans → `git show archive/execution-2026-11-11:"Execution/P15/T863-T866-plan-flow-v3-doors.md"`
+- 2026-10-30 · pre-crew · T860 to T862: plan flow v3 Batch C, leaving from and stays → `git show archive/execution-2026-11-11:"Execution/P15/T860-T862-plan-flow-v3-from-stay.md"`
+- 2026-10-30 · pre-crew · T857 to T859: plan flow v3 Batch B, Tell Carta → `git show archive/execution-2026-11-11:"Execution/P15/T857-T859-plan-flow-v3-tell.md"`
+- 2026-10-30 · pre-crew · T855 to T856: plan flow v3 Batch A, carry every answer → `git show archive/execution-2026-11-11:"Execution/P15/T855-T856-plan-flow-v3-answers.md"`
+- 2026-10-29 · pre-crew · T854 trip page v4 pushed and deployed → `git show archive/execution-2026-11-11:"Execution/P15/T854-deploy-trip-page-v4.md"`
+- 2026-10-29 · pre-crew · T853 keep the CSS route split proven for the trip page v4 deploy → `git show archive/execution-2026-11-11:"Execution/P15/T853-css-routes-hold-v4.md"`
+- 2026-10-29 · pre-crew · T852 merge trip page v4 (Batches A to D), no deploy → `git show archive/execution-2026-11-11:"Execution/P15/T852-merge-trip-page-v4.md"`
+- 2026-10-29 · pre-crew · T849 to T851: trip page v4 Batch D, the Days tab → `git show archive/execution-2026-11-11:"Execution/P15/T849-T851-trip-page-v4-d.md"`
+- 2026-10-29 · pre-crew · T848 the Costs head is the total for the party only → `git show archive/execution-2026-11-11:"Execution/P15/T848-costs-head-total-only.md"`
+- 2026-10-29 · pre-crew · T845 to T847: trip page v4 Batch C, Costs, budget and Share → `git show archive/execution-2026-11-11:"Execution/P15/T845-T847-trip-page-v4-c.md"`
+- 2026-10-29 · pre-crew · T844 no "Google Flights, checked" line on the trip page's flight cards → `git show archive/execution-2026-11-11:"Execution/P15/T844-route-flight-checked-line.md"`
+- 2026-10-29 · pre-crew · T840 to T843: trip page v4 Batch B, the route you can reshape → `git show archive/execution-2026-11-11:"Execution/P15/T840-T843-trip-page-v4-b.md"`
+- 2026-10-29 · pre-crew · T835 to T839: trip page v4 Batch A, edit in place with no edit mode → `git show archive/execution-2026-11-11:"Execution/P15/T835-T839-trip-page-v4-a.md"`
+- 2026-10-29 · pre-crew · T834 trip page v4 board → `git show archive/execution-2026-11-11:"Execution/P15/T834-trip-page-v4-board.md"`
+- 2026-10-29 · pre-crew · T833 trip page v3 (T819 to T832) merged, pushed and deployed → `git show archive/execution-2026-11-11:"Execution/P15/T833-merge-push-deploy-trip-page-v3.md"`
+- 2026-10-29 · pre-crew · T832 remove the old half-screen edit workspace → `git show archive/execution-2026-11-11:"Execution/P15/T832-remove-old-edit-workspace.md"`
+- 2026-10-29 · pre-crew · T827 to T831: the five open items of the trip page v3 batch → `git show archive/execution-2026-11-11:"Execution/P15/T827-T831-trip-page-v3-fixes.md"`
+- 2026-10-29 · pre-crew · T819 to T826: one trip page in tabs, Edit trip on one edge, Carta plans every day, Carta's trips like Explore, Trips for you like Booking → `git show archive/execution-2026-11-11:"Execution/P15/T819-T826-trip-page-v3.md"`
+- 2026-10-29 · pre-crew · T818 the trip finder's totals equal the planner's, to the cent → `git show archive/execution-2026-11-11:"Execution/P15/T818-finder-total-to-the-cent.md"`
+- 2026-10-29 · pre-crew · T816 and T817: Review's total equals the planned trip's, and the summary's airline names → `git show archive/execution-2026-11-11:"Execution/P15/T816-T817-review-total-airline-names.md"`
+- 2026-10-29 · pre-crew · T809 to T815: the Plan flow after Help me choose, made clean (batch Plan flow v2) → `git show archive/execution-2026-11-11:"Execution/P15/T809-T815-plan-flow-v2.md"`
+- 2026-10-29 · pre-crew · T806 to T808: keep, watch and decide together (batch TF4) → `git show archive/execution-2026-11-11:"Execution/P15/T806-T808-trip-finder-keep-watch-together.md"`
+- 2026-10-29 · pre-crew · T802 to T803: compare and levers on Trips for you (batch TF3) → `git show archive/execution-2026-11-11:"Execution/P15/T802-T803-trip-finder-compare-levers.md"`
+- 2026-10-28 · pre-crew · T804 to T805: flight prices out to the end of August (batch SW2) → `git show archive/execution-2026-11-11:"Execution/P11/T804-T805-flights-to-august.md"`
+- 2026-10-28 · pre-crew · T798 flight fares 6 to 9 months out, from the Hetzner box → `git show archive/execution-full-2026-11-03:"Execution/P11/T798-late-flights.md"`
+- 2026-10-28 · pre-crew · T797 to T801: the trip finder screens (batch TF2) → `git show archive/execution-2026-11-11:"Execution/P15/T797-T801-trip-finder-screens.md"`
+- 2026-10-28 · pre-crew · T792 to T796: the trip finder engine (batch TF1) → `git show archive/execution-2026-11-11:"Execution/P15/T792-T796-trip-finder-engine.md"`
+- 2026-10-28 · pre-crew · T785 to T791: rating v5 finished (the open items of R4) → `git show archive/execution-full-2026-11-03:"Execution/P7/T785-T791-rating-v5-finish.md"`
+- 2026-10-28 · pre-crew · T784 the rating chain runs without the trails lab → `git show archive/execution-full-2026-11-03:"Execution/P7/T784-nature-lab-cache.md"`
+- 2026-10-28 · pre-crew · T782 rating v5 merged (R1 to R4) and the shared master re-scored → `git show archive/execution-full-2026-11-03:"Execution/P7/T782-rating-v5-merge.md"`
+- 2026-10-28 · pre-crew · T763 to T766: rating v5 on every screen (batch R4) → `git show archive/execution-full-2026-11-03:"Execution/P7/T763-T766-rating-v5-screens.md"`
+- 2026-10-28 · pre-crew · T761-T762 rating v5 batch R3, nature on the ladder, POI labels and the place taste profile → `git show archive/execution-full-2026-11-03:"Execution/P7/T761-T762-rating-v5-profile.md"`
+- 2026-10-27 · pre-crew · T781 owner review of rating v5 batch R2 applied → `git show archive/execution-full-2026-11-03:"Execution/P7/T781-rating-v5-review-applied.md"`
+- 2026-10-27 · pre-crew · T780 the flight sweep down to what the app needs → `git show archive/execution-full-2026-11-03:"Execution/P11/T780-sweep-gentle.md"`
+- 2026-10-27 · pre-crew · T757-T760 rating v5 batch R2, scoring → `git show archive/execution-full-2026-11-03:"Execution/P7/T757-T760-rating-v5-scoring.md"`
+- 2026-10-27 · pre-crew · T754-T756 rating v5 batch R1, foundation → `git show archive/execution-full-2026-11-03:"Execution/P7/T754-T756-rating-v5-foundation.md"`
+- 2026-10-27 · pre-crew · T753 What kind of trip takes several answers, and the budget is one figure for the whole trip → `git show archive/execution-2026-11-11:"Execution/P15/T753-plan-shape-budget.md"`
+- 2026-10-27 · pre-crew · T752 Plan your route, the country picker in Explore's language, and one page for Carta's own trips → `git show archive/execution-2026-11-11:"Execution/P15/T752-plan-route-doors-carta-trips.md"`
+- 2026-10-27 · pre-crew · T751 Who can see it as three chips, the invite sentence removed, and an empty route that does not look like loading → `git show archive/execution-2026-11-11:"Execution/P15/T751-plan-visibility-empty-route.md"`
+- 2026-10-27 · pre-crew · T750 "How do you like to travel?" holds the whole Lifestyle, compact on a phone → `git show archive/execution-2026-11-11:"Execution/P15/T750-plan-lifestyle-step.md"`
+- 2026-10-27 · pre-crew · T749 "What have you booked already?" gets its plane icon and loses "Carta plans around it" → `git show archive/execution-2026-11-11:"Execution/P15/T749-plan-booked-step.md"`
+- 2026-10-27 · pre-crew · T748 the planner steps lose the map, and the first step its booking sentence → `git show archive/execution-2026-11-11:"Execution/P15/T748-plan-steps-no-map.md"`
+- 2026-10-27 · pre-crew · T747 the Plan opening's way to Carta's own trips: a fan of trip photographs, the mark and one button → `git show archive/execution-2026-11-11:"Execution/P15/T747-plan-opening-carta-trips.md"`
+- 2026-10-27 · pre-crew · T746 the Plan opening's two actions lead, and one planned day plays on one photograph → `git show archive/execution-2026-11-11:"Execution/P15/T746-plan-opening-play-a-day.md"`
+- 2026-10-27 · pre-crew · T745 the Plan opening's photographs become three planned weeks in season, and a new headline → `git show archive/execution-2026-11-11:"Execution/P15/T745-plan-opening-weeks.md"`
+- 2026-10-27 · pre-crew · T744 the Plan opening on one screen, in the app's face, with photographs and one price → `git show archive/execution-2026-11-11:"Execution/P15/T744-plan-opening-one-screen.md"`
+- 2026-10-27 · pre-crew · T743 the Plan opening, a page on warm paper with the planned trips to start from → `git show archive/execution-2026-11-11:"Execution/P15/T743-plan-opening.md"`
+- 2026-10-27 · pre-crew · T742 the stays journal reaches R2 through wrangler → `git show archive/execution-full-2026-11-03:"Execution/P11/T742-stays-upload-wrangler.md"`
+- 2026-10-27 · pre-crew · T741 the stays scrapers write their log in UTF-8 → `git show archive/execution-full-2026-11-03:"Execution/P11/T741-scrape-utf8.md"`
+- 2026-10-27 · pre-crew · T740 the first Monday box run read, and its two failures fixed → `git show archive/execution-2026-11-11:"Execution/P15/T740-box-run-1-airport-gate-sea-temp.md"`
+- 2026-10-26 · pre-crew · T739 the flight sweep publishes through a queue → `git show archive/execution-full-2026-11-03:"Execution/P11/T739-sweep-publish-queue.md"`
+- 2026-10-25 · pre-crew · T738 every open branch looked at; the planner rebuild merged, pushed and deployed → `git show archive/execution-2026-11-11:"Execution/P15/T738-merge-push-deploy-planner.md"`
+- 2026-10-24 · pre-crew · T737 price engine PB5 merged into the planner branch → `git show archive/execution-2026-11-11:"Execution/P15/T737-planner-merge-pb5.md"`
+- 2026-10-24 · pre-crew · T736 price engine PB3 merged into the planner branch → `git show archive/execution-2026-11-11:"Execution/P15/T736-planner-merge-pb3.md"`
+- 2026-10-24 · pre-crew · T731 to T735: the planner's open calls decided, and the branch made ready to merge → `git show archive/execution-2026-11-11:"Execution/P15/T731-T735-planner-finalize.md"`
+- 2026-10-24 · pre-crew · T699 to T713: price engine PB3, the price in the right place (F5) and the trip price from the engine (F6) → `git show archive/execution-2026-11-11:"Execution/P15/T699-T713-price-pb3-place-trip.md"`
+- 2026-10-24 · pre-crew · T689 to T698: price engine PB2, one configuration (F3) and what the price says (F4) → `git show archive/execution-2026-11-11:"Execution/P15/T689-T698-price-pb2-config-display.md"`
+- 2026-10-24 · pre-crew · T679 the stays scrapers survive bad pages, and each site runs on its own → `git show archive/execution-full-2026-11-03:"Execution/P11/T679-scrape-robust.md"`
+- 2026-10-24 · pre-crew · T678 the V2 price scan under a path with a space → `git show archive/execution-2026-11-11:"Execution/P15/T678-v2-scan-path.md"`
+- 2026-10-24 · pre-crew · T668 to T677: the day planner, and the trip planner's open rows (batch 2 of the planner rebuild) → `git show archive/execution-2026-11-11:"Execution/P15/T668-T677-day-planner.md"`
+- 2026-10-24 · pre-crew · T667 the settings line's When says what the prices are for → `git show archive/execution-2026-11-11:"Execution/P15/T667-when-says-any-time.md"`
+- 2026-10-24 · pre-crew · T661 to T666: price engine PB1, baseline (F1) and one engine for the day price (F2) → `git show archive/execution-2026-11-11:"Execution/P15/T661-T666-price-pb1-engine.md"`
+- 2026-10-24 · pre-crew · T653 to T660: the trip planner flow (batch 1 of the planner rebuild) → `git show archive/execution-2026-11-11:"Execution/P15/T653-T660-trip-planner-flow.md"`
+- 2026-10-24 · pre-crew · T649 to T652: Explore step 4, dynamic key stats → `git show archive/execution-2026-11-11:"Execution/P15/T649-T652-key-stats-dynamic.md"`
+- 2026-10-23 · pre-crew · T643 to T646: price engine F0, the scrape gate → `git show archive/execution-full-2026-11-03:"Execution/P11/T643-T646-price-f0-scrape-gate.md"`
+- 2026-10-23 · pre-crew · T640 to T648: Explore data fill, step 2 (set up for the Monday box run) → `git show archive/execution-2026-11-11:"Execution/P15/T640-T648-explore-data-fill.md"`
+- 2026-10-23 · pre-crew · T634 Booking scrape runs headed in an off-screen window → `git show archive/execution-full-2026-11-03:"Execution/P11/T634-booking-offscreen.md"`
+- 2026-10-23 · pre-crew · T633 Booking scrape retries a dropped search once before it stops → `git show archive/execution-full-2026-11-03:"Execution/P11/T633-booking-retry.md"`
+- 2026-10-23 · pre-crew · T630 to T632: Explore detail sheets, step 1, completeness of information → `git show archive/execution-2026-11-11:"Execution/P15/T630-T632-explore-completeness.md"`
+- 2026-10-23 · pre-crew · T624 Booking stay scrape reads prices and stars again → `git show archive/execution-full-2026-11-03:"Execution/P11/T624-booking-headed.md"`
+- 2026-10-23 · pre-crew · T623 merge the open branches and close T621-a, T621-b and T621-c → `git show archive/execution-2026-11-11:"Execution/P15/T623-merge-and-hero-fixes.md"`
+- 2026-10-23 · pre-crew · T622 Explore head refinements (owner review 2026-10-23) → `git show archive/execution-2026-11-11:"Execution/P15/T622-explore-head-refinements.md"`
+- 2026-10-23 · pre-crew · T621 the home film runs the full width under a transparent header → `git show archive/execution-2026-11-11:"Execution/P15/T621-home-hero-header.md"`
+- 2026-10-23 · pre-crew · T620 the home hero film fills the first screen → `git show archive/execution-2026-11-11:"Execution/P15/T620-home-hero-full.md"`
+- 2026-10-23 · pre-crew · T619 css-routes --check passes again → `git show archive/execution-2026-11-11:"Execution/P15/T619-css-routes-hold.md"`
+- 2026-10-23 · pre-crew · T618 the hero film plays licensed clips, then the home page ships → `git show archive/execution-2026-11-11:"Execution/P15/T618-home-film-clips.md"`
+- 2026-10-23 · pre-crew · T617 the ingestion collectors can run again → `git show archive/execution-full-2026-11-03:"Execution/P3/T617-ingestion-run-shadow.md"`
+- 2026-10-23 · pre-crew · T606 to T610: the home page, rebuilt from scratch → `git show archive/execution-2026-11-11:"Execution/P15/T606-T610-home-v2.md"`
+- 2026-10-23 · pre-crew · T605 Home page research, references measured and today's page critiqued → `git show archive/execution-2026-11-11:"Execution/P15/T605-home-research.md"`
+- 2026-10-22 · pre-crew · T601 to T604: Explore v8 (owner review of v7, 2026-10-22) → `git show archive/execution-full-2026-11-03:"Execution/P11/T601-T604-explore-v8.md"`
+- 2026-10-22 · pre-crew · T595 to T600: Explore v7 (owner review of v6, 2026-10-22) → `git show archive/execution-full-2026-11-03:"Execution/P11/T595-T600-explore-v7.md"`
+- 2026-10-22 · pre-crew · T584 to T594: Explore v6 (owner request 2026-10-22, reference board) → `git show archive/execution-full-2026-11-03:"Execution/P11/T584-T594-explore-v6.md"`
+- 2026-10-22 · pre-crew · T577 to T583: Explore tidy (owner request 2026-10-22, "/impeccable") → `git show archive/execution-full-2026-11-03:"Execution/P11/T577-T583-explore-tidy.md"`
+- 2026-10-22 · pre-crew · T572-T576 Ask Carta follow-ups, filter safety, one chat everywhere, chats in the account, live beds → `git show archive/execution-full-2026-11-03:"Execution/P11/T572-T576-ask-chat-2.md"`
+- 2026-10-22 · pre-crew · T570-T571 Ask Carta as a chat (the Kayak structure), and answers that guide the trip → `git show archive/execution-full-2026-11-03:"Execution/P11/T570-T571-ask-chat.md"`
+- 2026-10-22 · pre-crew · T569 Ask Carta's typed suggestions, the rules changed for them, and the written answer on localhost → `git show archive/execution-full-2026-11-03:"Execution/P11/T569-ask-motion.md"`
+- 2026-10-22 · pre-crew · T568 Ask Carta as a question bar in Explore's main panel → `git show archive/execution-full-2026-11-03:"Execution/P11/T568-ask-bar.md"`
+- 2026-10-22 · pre-crew · T567 the trip planner's bed-line rule back in the main sheet → `git show archive/execution-full-2026-11-03:"Execution/P11/T567-css-routes-tripplanner.md"`
+- 2026-10-22 · pre-crew · T563 to T566: Ask Carta, the four unverified items, checked with the owner → `git show archive/execution-full-2026-11-03:"Execution/P11/T563-T566-ask-carta-verify.md"`
+- 2026-10-22 · pre-crew · T559 to T562: live bed prices, the four follow-ups → `git show archive/execution-full-2026-11-03:"Execution/P11/T559-T562-live-stays-follow-ups.md"`
+- 2026-10-22 · pre-crew · T550 to T558: Ask Carta, a free RAG search on open models → `git show archive/execution-full-2026-11-03:"Execution/P11/T550-T558-ask-carta.md"`
+- 2026-10-22 · pre-crew · T539 to T540: a lean scrape, and live bed prices for the traveller's own nights → `git show archive/execution-full-2026-11-03:"Execution/P11/T539-T540-lean-scrape-live-stays.md"`
+- 2026-10-22 · pre-crew · T538 the last cost figures on the shared line → `git show archive/execution-full-2026-11-03:"Execution/P11/T538-cost-figures-rest.md"`
+- 2026-10-22 · pre-crew · T537 cost sections, one clean line everywhere → `git show archive/execution-full-2026-11-03:"Execution/P11/T537-cost-sections.md"`
+- 2026-10-21 · pre-crew · T530 to T536: bed prices for every bed type and month, merged with live flights and food → `git show archive/execution-full-2026-11-03:"Execution/P11/T530-T536-stay-prices.md"`
+- 2026-10-21 · pre-crew · T513 Food and drink prices for every destination: plan (T513 to T515) → `git show archive/execution-full-2026-11-03:"Execution/P11/T513-T515-food-prices-PLAN.md"`
+- 2026-10-21 · pre-crew · T513 to T515: food and drink prices for every destination → `git show archive/execution-full-2026-11-03:"Execution/P11/T513-T515-food-prices.md"`
+- 2026-10-21 · pre-crew · T511 to T519: live flight prices (batch report) → `git show archive/execution-full-2026-11-03:"Execution/P11/T511-T519-live-flights.md"`
+- 2026-10-21 · pre-crew · T510 the old logo back, and the browser tab reads Carta → `git show archive/execution-full-2026-11-03:"Execution/P11/T510-old-logo.md"`
+- 2026-10-21 · pre-crew · T503 to T509: W45 batch (My trips and account, Explore map and list, positioning, budget search, follow-ups, retired fare text, owner calls) → `git show archive/execution-full-2026-11-03:"Execution/P11/T503-T509-w45-batch.md"`
+- 2026-10-21 · pre-crew · T496 to T502: the approved designs built (shell, pass, Explore, destination page, trip and day planner) → `git show archive/execution-full-2026-11-03:"Execution/P11/T496-T502-build-batch.md"`
+- 2026-10-21 · pre-crew · T495 designs approved, roadmap brought up to date, decision sheet → `git show archive/execution-full-2026-11-03:"Execution/P11/T495-designs-approved-roadmap.md"`
+- 2026-10-21 · pre-crew · T493 T483 to T487 follow-ups, and the deploy → `git show archive/execution-full-2026-11-03:"Execution/P11/T493-t483-t487-followups-deploy.md"`
+- 2026-10-21 · pre-crew · T484 to T494: design batch (roadmap 1.3, 1.3a to 1.3d, 1.4, 1.15) and the fixes it found → `git show archive/execution-full-2026-11-03:"Execution/P11/T484-T494-design-batch.md"`
+- 2026-10-21 · pre-crew · T483, T486, T487 forecast proxy, one price sentence, Google Maps day link → `git show archive/execution-full-2026-11-03:"Execution/P11/T483-T487-forecast-price-sentence-gmaps.md"`
+- 2026-10-21 · pre-crew · T478 to T482: the four T474 follow-ups, and batch mode → `git show archive/execution-full-2026-11-03:"Execution/P11/T478-T482-t474-followups.md"`
+- 2026-10-21 · pre-crew · T477 the parallel T470 and T471 renumbered to T475 and T476 and merged → `git show archive/execution-full-2026-11-03:"Execution/P11/T477-renumber-t470-branch.md"`
+- 2026-10-21 · pre-crew · T474 Roadmap 1.2 finished, the T435 rest list built → `git show archive/execution-full-2026-11-03:"Execution/P11/T474-design-system-finish.md"`
+- 2026-10-20 · pre-crew · T476 owner calls on T475 recorded → `git show archive/execution-full-2026-11-03:"Execution/P11/T476-owner-calls-t475.md"`
+- 2026-10-20 · pre-crew · T475 total budget, transit, day planner and group choice, audited and written into the roadmap → `git show archive/execution-full-2026-11-03:"Execution/P11/T475-budget-transit-share-roadmap.md"`
+- 2026-10-20 · pre-crew · T473 owner calls on the T472 navigation plan applied → `git show archive/execution-full-2026-11-03:"Execution/P11/T473-owner-calls-t472.md"`
+- 2026-10-20 · pre-crew · T472 navigation, pass and price display, audited and written into the roadmap → `git show archive/execution-full-2026-11-03:"Execution/P11/T472-nav-pass-price-roadmap.md"`
+- 2026-10-20 · pre-crew · T471 cost and logistics, audited and written into the roadmap → `git show archive/execution-full-2026-11-03:"Execution/P11/T471-cost-logistics-roadmap.md"`
+- 2026-10-20 · pre-crew · T470 owner calls on the T469 season plan applied → `git show archive/execution-full-2026-11-03:"Execution/P11/T470-seasonal-owner-calls.md"`
+- 2026-10-20 · pre-crew · T469 seasonal truth, audited and written into the roadmap → `git show archive/execution-full-2026-11-03:"Execution/P11/T469-seasonal-truth-roadmap.md"`
+- 2026-10-17 · pre-crew · T468 Roadmap 1.9, the phone problems → `git show archive/execution-full-2026-11-03:"Execution/P11/T468-phone-fixes.md"`
+- 2026-10-17 · pre-crew · T467 My trips, the Visited figures → `git show archive/execution-full-2026-11-03:"Execution/P11/T467-mytrips-record.md"`
+- 2026-10-17 · pre-crew · T466 Friends, on the kit and across the app → `git show archive/execution-full-2026-11-03:"Execution/P11/T466-friends-2.md"`
+- 2026-10-17 · pre-crew · T465 The plan chooser, two tiles → `git show archive/execution-full-2026-11-03:"Execution/P11/T465-plan-chooser.md"`
+- 2026-10-17 · pre-crew · T464 The home page, phone first → `git show archive/execution-full-2026-11-03:"Execution/P11/T464-home-page-3.md"`
+- 2026-10-17 · pre-crew · T463 The home page, told in the app's own screens → `git show archive/execution-full-2026-11-03:"Execution/P11/T463-home-page-2.md"`
+- 2026-10-17 · pre-crew · T462 The home page, rebuilt (plan any trip, with honest prices) → `git show archive/execution-full-2026-11-03:"Execution/P11/T462-home-page.md"`
+- 2026-10-17 · pre-crew · T435 The finish review over the whole app → `git show archive/execution-full-2026-11-03:"Execution/P11/T435-finish-review.md"`
+- 2026-10-16 · pre-crew · T461 Account, help and the legal pages → `git show archive/execution-full-2026-11-03:"Execution/P11/T461-account-help.md"`
+- 2026-10-16 · pre-crew · T461 Assessment A (design review): Account area, AFTER → `git show archive/execution-full-2026-11-03:"Execution/P11/T461-critique/assessment-a-after.md"`
+- 2026-10-16 · pre-crew · T461 Assessment A (design review): Account area, BEFORE → `git show archive/execution-full-2026-11-03:"Execution/P11/T461-critique/assessment-a-before.md"`
+- 2026-10-16 · pre-crew · T461 critique, Assessment B (after): detector and evidence → `git show archive/execution-full-2026-11-03:"Execution/P11/T461-critique/assessment-b-after.md"`
+- 2026-10-16 · pre-crew · T461 critique, Assessment B (before): detector and evidence → `git show archive/execution-full-2026-11-03:"Execution/P11/T461-critique/assessment-b-before.md"`
+- 2026-10-16 · pre-crew · T461 Account: technical audit, after the rebuild → `git show archive/execution-full-2026-11-03:"Execution/P11/T461-critique/audit-after.md"`
+- 2026-10-16 · pre-crew · T461 Account: technical audit, before the rebuild → `git show archive/execution-full-2026-11-03:"Execution/P11/T461-critique/audit-before.md"`
+- 2026-10-16 · pre-crew · T460 critique, after (2026-10-16) → `git show archive/execution-full-2026-11-03:"Execution/P11/T460-critique/after.md"`
+- 2026-10-16 · pre-crew · T460 critique, Assessment B (after): detector and evidence → `git show archive/execution-full-2026-11-03:"Execution/P11/T460-critique/assessment-b-after.md"`
+- 2026-10-16 · pre-crew · T460 critique, Assessment B (before): detector and evidence → `git show archive/execution-full-2026-11-03:"Execution/P11/T460-critique/assessment-b-before.md"`
+- 2026-10-16 · pre-crew · T460 audit (after): the pass panel → `git show archive/execution-full-2026-11-03:"Execution/P11/T460-critique/audit-after.md"`
+- 2026-10-16 · pre-crew · T460 audit (before): the pass panel → `git show archive/execution-full-2026-11-03:"Execution/P11/T460-critique/audit-before.md"`
+- 2026-10-16 · pre-crew · T460 critique, before (2026-10-16) → `git show archive/execution-full-2026-11-03:"Execution/P11/T460-critique/before.md"`
+- 2026-10-16 · pre-crew · T460 Pass and billing, the yearly plan and the 60-day Trip Pass → `git show archive/execution-full-2026-11-03:"Execution/P11/T460-pass-billing.md"`
+- 2026-10-16 · pre-crew · T459 critique, after (2026-10-16) → `git show archive/execution-full-2026-11-03:"Execution/P11/T459-critique/after.md"`
+- 2026-10-16 · pre-crew · T459 critique, before (2026-10-16) → `git show archive/execution-full-2026-11-03:"Execution/P11/T459-critique/before.md"`
+- 2026-10-16 · pre-crew · T459 Day planner, second pass → `git show archive/execution-full-2026-11-03:"Execution/P11/T459-day-planner-2.md"`
+- 2026-10-16 · pre-crew · T458 trip planner, second pass after the owner's walk → `git show archive/execution-full-2026-11-03:"Execution/P11/T458-trip-planner-2.md"`
+- 2026-10-16 · pre-crew · T457 Destinations lined up with Explore → `git show archive/execution-full-2026-11-03:"Execution/P11/T457-destinations-align.md"`
+- 2026-10-16 · pre-crew · T434 critique, after (2026-10-16) → `git show archive/execution-full-2026-11-03:"Execution/P11/T434-critique/after.md"`
+- 2026-10-16 · pre-crew · T434 critique, Assessment A after the rebuild (design review) → `git show archive/execution-full-2026-11-03:"Execution/P11/T434-critique/assessment-a-after.md"`
+- 2026-10-16 · pre-crew · T434 critique, Assessment B (after): detector and browser evidence → `git show archive/execution-full-2026-11-03:"Execution/P11/T434-critique/assessment-b-after.md"`
+- 2026-10-16 · pre-crew · T434 critique, Assessment B (before): detector and browser evidence → `git show archive/execution-full-2026-11-03:"Execution/P11/T434-critique/assessment-b-before.md"`
+- 2026-10-16 · pre-crew · T434 My trips: technical audit, after the rebuild → `git show archive/execution-full-2026-11-03:"Execution/P11/T434-critique/audit-after.md"`
+- 2026-10-16 · pre-crew · T434 My trips: technical audit, before the rebuild → `git show archive/execution-full-2026-11-03:"Execution/P11/T434-critique/audit-before.md"`
+- 2026-10-16 · pre-crew · T434 critique, before (2026-10-16) → `git show archive/execution-full-2026-11-03:"Execution/P11/T434-critique/before.md"`
+- 2026-10-16 · pre-crew · T434 My trips, rebuilt → `git show archive/execution-full-2026-11-03:"Execution/P11/T434-my-trips.md"`
+- 2026-10-16 · pre-crew · T433 critique, after (2026-10-16) → `git show archive/execution-full-2026-11-03:"Execution/P11/T433-critique/after.md"`
+- 2026-10-16 · pre-crew · T433 critique, before (2026-10-16) → `git show archive/execution-full-2026-11-03:"Execution/P11/T433-critique/before.md"`
+- 2026-10-16 · pre-crew · T433 Day planner rebuilt (flow, Carta's questions, builder, planned day, checked routes) → `git show archive/execution-full-2026-11-03:"Execution/P11/T433-day-planner.md"`
+- 2026-10-16 · pre-crew · T432 Critique 1, trip planner after the T432 build (2026-10-16) → `git show archive/execution-full-2026-11-03:"Execution/P11/T432-critique/2026-10-16T08-00-20Z__src-planner.md"`
+- 2026-10-16 · pre-crew · T432 Critique 2, trip planner after the fix batch (2026-10-16) → `git show archive/execution-full-2026-11-03:"Execution/P11/T432-critique/2026-10-16T08-25-46Z__src-planner.md"`
+- 2026-10-16 · pre-crew · T432 Trip planner redesign (wizard, review, planned trip) → `git show archive/execution-full-2026-11-03:"Execution/P11/T432-trip-planner.md"`
+- 2026-10-15 · pre-crew · T456 Places said from our own spine → `git show archive/execution-full-2026-11-03:"Execution/P11/T456-place-truth.md"`
+- 2026-10-15 · pre-crew · T455 What a cycling card may claim → `git show archive/execution-full-2026-11-03:"Execution/P11/T455-cycling-truth.md"`
+- 2026-10-15 · pre-crew · T454 Honest lift claims on mountains → `git show archive/execution-full-2026-11-03:"Execution/P11/T454-mountain-lifts.md"`
+- 2026-10-15 · pre-crew · T453 Trails opens on walks → `git show archive/execution-full-2026-11-03:"Execution/P11/T453-trails-opening.md"`
+- 2026-10-15 · pre-crew · T452 The Destinations lists as compact rows → `git show archive/execution-full-2026-11-03:"Execution/P11/T452-destinations-rows.md"`
+- 2026-10-15 · pre-crew · T451 The Destinations impeccable check → `git show archive/execution-full-2026-11-03:"Execution/P11/T451-destinations-check.md"`
+- 2026-10-15 · pre-crew · T450 The country and region pages on the kit → `git show archive/execution-full-2026-11-03:"Execution/P11/T450-country-region-pages.md"`
+- 2026-10-15 · pre-crew · T431 Design Health Score (trip page and trips list, before T431) → `git show archive/execution-full-2026-11-03:"Execution/P11/T430-critique/2026-10-15T11-30-51Z__continent-app-src-browse-journeypage-jsx.md"`
+- 2026-10-15 · pre-crew · T431 Design Health Score (trip page and trips list, after T431) → `git show archive/execution-full-2026-11-03:"Execution/P11/T430-critique/2026-10-15T13-29-20Z__continent-app-src-browse-journeypage-jsx.md"`
+- 2026-10-15 · pre-crew · T431 ID → `git show archive/execution-full-2026-11-03:"Execution/P11/T431-trips.md"`
+- 2026-10-15 · pre-crew · T430 Design Health Score (outdoor item pages, before T430) → `git show archive/execution-full-2026-11-03:"Execution/P11/T430-critique/2026-10-15T11-30-51Z__continent-app-src-browse-detailskeleton-jsx.md"`
+- 2026-10-15 · pre-crew · T430 Design Health Score (item pages, after T430) → `git show archive/execution-full-2026-11-03:"Execution/P11/T430-critique/2026-10-15T13-29-20Z__continent-app-src-browse-detailskeleton-jsx.md"`
+- 2026-10-15 · pre-crew · T430 ID → `git show archive/execution-full-2026-11-03:"Execution/P11/T430-item-pages.md"`
+- 2026-10-15 · pre-crew · T428 The Destinations tab, rebuilt on the kit in Explore's grammar → `git show archive/execution-full-2026-11-03:"Execution/P11/T428-destinations-tab.md"`
+- 2026-10-14 · pre-crew · T449 Country galleries, section photographs, and the moth → `git show archive/execution-full-2026-11-03:"Execution/P11/T449-country-photos.md"`
+- 2026-10-14 · pre-crew · T448 Trip styles in plain words, people in the photographs, the library rebuilt → `git show archive/execution-full-2026-11-03:"Execution/P11/T448-trip-styles.md"`
+- 2026-10-14 · pre-crew · T447 Every Score star filled; owner answers to the destination page calls → `git show archive/execution-full-2026-11-03:"Execution/P11/T447-score-star.md"`
+- 2026-10-14 · pre-crew · T446 The destination page through impeccable: critique, fixes, re-critique → `git show archive/execution-full-2026-11-03:"Execution/P11/T446-destination-impeccable.md"`
+- 2026-10-14 · pre-crew · T445 Deploy the Explore redesign (data, preview, production) → `git show archive/execution-full-2026-11-03:"Execution/P11/T445-deploy-explore.md"`
+- 2026-10-14 · pre-crew · T444 The full Explore check, and its fixes (Explore redesign, check after step 7) → `git show archive/execution-full-2026-11-03:"Execution/P11/T444-explore-check.md"`
+- 2026-10-14 · pre-crew · T442 The guided search (Explore redesign, step 7 of 9) → `git show archive/execution-full-2026-11-03:"Execution/P11/T442-guided-search.md"`
+- 2026-10-14 · pre-crew · T441 Explore map: fast, clear, prices from the first view (Explore redesign, step 6 of 9) → `git show archive/execution-full-2026-11-03:"Execution/P11/T441-explore-map.md"`
+- 2026-10-14 · pre-crew · T429 The destination page, open and visual, with one price → `git show archive/execution-full-2026-11-03:"Execution/P11/T429-destination-page.md"`
+- 2026-10-13 · pre-crew · T462 critique: the home page BEFORE the rebuild → `git show archive/execution-full-2026-11-03:"Execution/P11/T462-critique/before.md"`
+- 2026-10-13 · pre-crew · T440 Explore part 2: the filter rail on the kit, and the settings line as a booking bar (Explore redesign, step 5 of 9) → `git show archive/execution-full-2026-11-03:"Execution/P11/T440-explore-filters-bar.md"`
+- 2026-10-13 · pre-crew · T439 guided search data, precomputed and free (Explore redesign, step 3 of 9) → `git show archive/execution-full-2026-11-03:"Execution/P11/T439-guided-search-data.md"`
+- 2026-10-13 · pre-crew · T438 the brown palette, the rules that go with it, and checks that work (Explore redesign, step 2 of 9) → `git show archive/execution-full-2026-11-03:"Execution/P11/T438-brown-palette.md"`
+- 2026-10-13 · pre-crew · T437 the Score, Switch and Tile in the kit (Explore redesign, step 1 of 9) → `git show archive/execution-full-2026-11-03:"Execution/P11/T437-kit-score-switch-tile.md"`
+- 2026-10-13 · pre-crew · T436 the owner's calls on roadmap 1.2, applied → `git show archive/execution-full-2026-11-03:"Execution/P11/T436-owner-calls-lagoon.md"`
+- 2026-10-13 · pre-crew · T427 Explore, part 1: layout, cards, sections, no clutter (Explore redesign, step 4 of 9) → `git show archive/execution-full-2026-11-03:"Execution/P11/T427-explore-layout.md"`
+- 2026-10-13 · pre-crew · T426 the app shell on the Lagoon kit (roadmap 1.2 migration, surface 1 of 9) → `git show archive/execution-full-2026-11-03:"Execution/P11/T426-shell-migration.md"`
+- 2026-10-13 · pre-crew · T425 design docs from the built system, and the migration lint (roadmap 1.2) → `git show archive/execution-full-2026-11-03:"Execution/P11/T425-design-docs-lint.md"`
+- 2026-10-13 · pre-crew · T424 the style guide page (roadmap 1.2) → `git show archive/execution-full-2026-11-03:"Execution/P11/T424-styleguide.md"`
+- 2026-10-13 · pre-crew · T423 one money formatter (roadmap 1.2) → `git show archive/execution-full-2026-11-03:"Execution/P11/T423-money.md"`
+- 2026-10-13 · pre-crew · T422 the component kit and the one selected state (roadmap 1.2) → `git show archive/execution-full-2026-11-03:"Execution/P11/T422-ui-kit.md"`
+- 2026-10-13 · pre-crew · T421 Lagoon tokens, the whole app re-skinned (roadmap 1.2) → `git show archive/execution-full-2026-11-03:"Execution/P11/T421-lagoon-tokens.md"`
+- 2026-10-13 · pre-crew · T420 PRODUCT.md brought to impeccable's product record (init) → `git show archive/execution-full-2026-11-03:"Execution/P11/T420-product-init.md"`
+- 2026-10-13 · pre-crew · T419 the new visual direction (roadmap 1.2) → `git show archive/execution-full-2026-11-03:"Execution/P11/T419-design-direction.md"`
+- 2026-10-13 · pre-crew · T418 design baseline, audit and critique (roadmap 1.2) → `git show archive/execution-full-2026-11-03:"Execution/P11/T418-design-baseline-audit.md"`
+- 2026-10-13 · pre-crew · T417 design system plan (roadmap 1.2) → `git show archive/execution-full-2026-11-03:"Execution/P11/T417-design-system-plan.md"`
+- 2026-10-13 · pre-crew · T412 release: the full check, the before and after gallery, the preview deploy → `git show archive/execution-full-2026-11-03:"Execution/P10/T412-v6-release.md"`
+- 2026-10-13 · pre-crew · T411 one traveller, one trip, the consistency pass across every surface → `git show archive/execution-full-2026-11-03:"Execution/P10/T411-v6-consistency.md"`
+- 2026-10-09 · pre-crew · T416 Execution Report: T416 → `git show archive/execution-full-2026-11-03:"Execution/P2/T416-global-cap-proof.md"`
+- 2026-10-09 · pre-crew · T410 V5 harden, adapt and polish for My trips, account, sharing, passes, guides and admin → `git show archive/execution-full-2026-11-03:"Execution/P10/T410-v6-v5-account.md"`
+- 2026-10-09 · pre-crew · T409 V5 harden, adapt and polish, Day planner → `git show archive/execution-full-2026-11-03:"Execution/P10/T409-v6-v5-dayplanner.md"`
+- 2026-10-09 · pre-crew · T408 harden, adapt and polish: Trip planner (design wave V5) → `git show archive/execution-full-2026-11-03:"Execution/P10/T408-v6-v5-tripplanner.md"`
+- 2026-10-09 · pre-crew · T407 design wave V5, Trips (harden, adapt and polish) → `git show archive/execution-full-2026-11-03:"Execution/P10/T407-v6-v5-trips.md"`
+- 2026-10-09 · pre-crew · T406 harden, adapt and polish the outdoor detail pages (design wave V5) → `git show archive/execution-full-2026-11-03:"Execution/P10/T406-v6-v5-outdoor.md"`
+- 2026-10-09 · pre-crew · T405 harden, adapt and polish the Destination (town) page (design wave V5) → `git show archive/execution-full-2026-11-03:"Execution/P10/T405-v6-v5-destination.md"`
+- 2026-10-09 · pre-crew · T404 harden, adapt and polish: Destinations browse → `git show archive/execution-full-2026-11-03:"Execution/P10/T404-v6-v5-destinations.md"`
+- 2026-10-09 · pre-crew · T402 harden, adapt and polish, the landing page and the first run (design wave V5) → `git show archive/execution-full-2026-11-03:"Execution/P10/T402-v6-v5-landing.md"`
+- 2026-10-09 · pre-crew · T401 shell V5, harden, adapt and polish → `git show archive/execution-full-2026-11-03:"Execution/P10/T401-v6-v5-shell.md"`
+- 2026-10-08 · pre-crew · T415 Execution Report: T415 → `git show archive/execution-full-2026-11-03:"Execution/P2/T415-plan-day-time-budget.md"`
+- 2026-10-08 · pre-crew · T403 harden, adapt and polish: Explore (the map tab) → `git show archive/execution-full-2026-11-03:"Execution/P10/T403-v6-v5-explore.md"`
+- 2026-10-08 · pre-crew · T400 V4 visual and dynamic for My trips, account, sharing, passes, guides and admin → `git show archive/execution-full-2026-11-03:"Execution/P10/T400-v6-v4-account.md"`
+- 2026-10-08 · pre-crew · T399 V4 visual and dynamic, Day planner → `git show archive/execution-full-2026-11-03:"Execution/P10/T399-v6-v4-dayplanner.md"`
+- 2026-10-08 · pre-crew · T398 visual and dynamic: Trip planner (design wave V4) → `git show archive/execution-full-2026-11-03:"Execution/P10/T398-v6-v4-tripplanner.md"`
+- 2026-10-08 · pre-crew · T397 design wave V4, Trips (visual and dynamic) → `git show archive/execution-full-2026-11-03:"Execution/P10/T397-v6-v4-trips.md"`
+- 2026-10-08 · pre-crew · T396 visual and dynamic on the outdoor detail pages (design wave V4) → `git show archive/execution-full-2026-11-03:"Execution/P10/T396-v6-v4-outdoor.md"`
+- 2026-10-08 · pre-crew · T395 visual and dynamic on the Destination (town) page (design wave V4) → `git show archive/execution-full-2026-11-03:"Execution/P10/T395-v6-v4-destination.md"`
+- 2026-10-08 · pre-crew · T394 visual and dynamic: Destinations browse → `git show archive/execution-full-2026-11-03:"Execution/P10/T394-v6-v4-destinations.md"`
+- 2026-10-08 · pre-crew · T393 visual and dynamic: Explore (the map tab) → `git show archive/execution-full-2026-11-03:"Execution/P10/T393-v6-v4-explore.md"`
+- 2026-10-08 · pre-crew · T392 visual and dynamic, the landing page and the first run (design wave V4) → `git show archive/execution-full-2026-11-03:"Execution/P10/T392-v6-v4-landing.md"`
+- 2026-10-08 · pre-crew · T391 shell V4, visual and dynamic → `git show archive/execution-full-2026-11-03:"Execution/P10/T391-v6-v4-shell.md"`
+- 2026-10-08 · pre-crew · T390 V3 structure, information and flow for My trips, account, sharing, passes, guides and admin → `git show archive/execution-full-2026-11-03:"Execution/P10/T390-v6-v3-account.md"`
+- 2026-10-08 · pre-crew · T389 V3 structure, information and flow, Day planner → `git show archive/execution-full-2026-11-03:"Execution/P10/T389-v6-v3-dayplanner.md"`
+- 2026-10-08 · pre-crew · T388 structure, information and flow: Trip planner (design wave V3) → `git show archive/execution-full-2026-11-03:"Execution/P10/T388-v6-v3-tripplanner.md"`
+- 2026-10-08 · pre-crew · T387 design wave V3, Trips (structure, information and flow) → `git show archive/execution-full-2026-11-03:"Execution/P10/T387-v6-v3-trips.md"`
+- 2026-10-08 · pre-crew · T386 structure, information and flow on the outdoor detail pages (design wave V3) → `git show archive/execution-full-2026-11-03:"Execution/P10/T386-v6-v3-outdoor.md"`
+- 2026-10-08 · pre-crew · T385 structure, information and flow on the Destination (town) page (design wave V3) → `git show archive/execution-full-2026-11-03:"Execution/P10/T385-v6-v3-destination.md"`
+- 2026-10-08 · pre-crew · T384 structure, information and flow: Destinations browse → `git show archive/execution-full-2026-11-03:"Execution/P10/T384-v6-v3-destinations.md"`
+- 2026-10-08 · pre-crew · T383 structure, information and flow: Explore (the map tab) → `git show archive/execution-full-2026-11-03:"Execution/P10/T383-v6-v3-explore.md"`
+- 2026-10-08 · pre-crew · T382 structure, information and flow, the landing page and the first run (design wave V3) → `git show archive/execution-full-2026-11-03:"Execution/P10/T382-v6-v3-landing.md"`
+- 2026-10-08 · pre-crew · T381 shell V3, structure, information and flow → `git show archive/execution-full-2026-11-03:"Execution/P10/T381-v6-v3-shell.md"`
+- 2026-10-08 · pre-crew · T380 design direction v6, the new rules, motion tokens and file ownership → `git show archive/execution-full-2026-11-03:"Execution/P11/T380-v6-direction.md"`
+- 2026-10-08 · pre-crew · T379 design brief for My trips, account, sharing, passes, guides and admin → `git show archive/execution-full-2026-11-03:"Execution/P10/T379-v6-brief-account.md"`
+- 2026-10-08 · pre-crew · T378 design brief for the Day planner → `git show archive/execution-full-2026-11-03:"Execution/P10/T378-v6-brief-dayplanner.md"`
+- 2026-10-08 · pre-crew · T377 design brief, Trip planner → `git show archive/execution-full-2026-11-03:"Execution/P10/T377-v6-brief-tripplanner.md"`
+- 2026-10-08 · pre-crew · T376 design brief, Trips (the journeys library and the trip page) → `git show archive/execution-full-2026-11-03:"Execution/P10/T376-v6-brief-trips.md"`
+- 2026-10-08 · pre-crew · T375 design brief, outdoor detail pages → `git show archive/execution-full-2026-11-03:"Execution/P10/T375-v6-brief-outdoor.md"`
+- 2026-10-08 · pre-crew · T374 design brief for the destination (town) page → `git show archive/execution-full-2026-11-03:"Execution/P10/T374-v6-brief-destination.md"`
+- 2026-10-08 · pre-crew · T373 design brief, Destinations browse → `git show archive/execution-full-2026-11-03:"Execution/P10/T373-v6-brief-destinations.md"`
+- 2026-10-08 · pre-crew · T372 design brief, Explore (the map tab) → `git show archive/execution-full-2026-11-03:"Execution/P10/T372-v6-brief-explore.md"`
+- 2026-10-08 · pre-crew · T370 design brief, app shell, navigation and shared components → `git show archive/execution-full-2026-11-03:"Execution/P10/T370-v6-brief-shell.md"`
+- 2026-10-07 · pre-crew · T714 to T716: price engine PB5, local transport (F8), activities (F9) and data quality (F10); PB4 blocked → `git show archive/execution-2026-11-11:"Execution/P15/T714-T716-price-pb5-transport-activities-quality.md"`
+- 2026-10-07 · pre-crew · T414 the design waves check the phone first, on emulated devices → `git show archive/execution-full-2026-11-03:"Execution/P0/T414-design-waves-phone-first.md"`
+- 2026-10-07 · pre-crew · T413 Execution Report: T413 → `git show archive/execution-full-2026-11-03:"Execution/P11/T413-blocks-c-d-e-live.md"`
+- 2026-10-07 · pre-crew · T371 design brief, landing page and first run → `git show archive/execution-full-2026-11-03:"Execution/P10/T371-v6-brief-landing.md"`
+- 2026-10-07 · pre-crew · T369 the impeccable skill and the design waves V1 to V6 → `git show archive/execution-full-2026-11-03:"Execution/P0/T369-impeccable-design-waves.md"`
+- 2026-10-07 · pre-crew · T368 Execution Report: T368 → `git show archive/execution-full-2026-11-03:"Execution/P10/T368-owner-copy-calls.md"`
+- 2026-10-07 · pre-crew · T367 the empty states from the approved onboarding document → `git show archive/execution-full-2026-11-03:"Execution/P10/T367-empty-states.md"`
+- 2026-10-07 · pre-crew · T366 housekeeping the owner approved → `git show archive/execution-full-2026-11-03:"Execution/P3/T366-owner-housekeeping.md"`
+- 2026-10-07 · pre-crew · T365 Execution Report: T365 → `git show archive/execution-full-2026-11-03:"Execution/P4/T365-moderation-admin-decisions-051.md"`
+- 2026-10-07 · pre-crew · T364 Execution Report: T364 → `git show archive/execution-full-2026-11-03:"Execution/P10/T364-owner-ui-calls.md"`
+- 2026-10-07 · pre-crew · T363 Execution Report: T363 → `git show archive/execution-full-2026-11-03:"Execution/P10/T363-contrast-tokens.md"`
+- 2026-10-07 · pre-crew · T362 Execution Report: T362 → `git show archive/execution-full-2026-11-03:"Execution/P11/T362-owner-decisions-applied.md"`
+- 2026-10-07 · pre-crew · T333 the photo and track upload path, with the legal shape → `git show archive/execution-full-2026-11-03:"Execution/P8/T333-upload-path.md"`
+- 2026-10-07 · pre-crew · T326 the feedback front door → `git show archive/execution-full-2026-11-03:"Execution/P12/T326-feedback-front-door.md"`
+- 2026-10-07 · pre-crew · T209 The landing page → `git show archive/execution-full-2026-11-03:"Execution/P12/T209-landing-page.md"`
+- 2026-10-07 · pre-crew · T194 The home page → `git show archive/execution-full-2026-11-03:"Execution/P12/T194-home-page.md"`
+- 2026-10-07 · pre-crew · T188 cost band and trip length filters → `git show archive/execution-full-2026-11-03:"Execution/P10/T188-cost-and-length-filters.md"`
+- 2026-10-07 · pre-crew · T179 5.1, one card with five fillings → `git show archive/execution-full-2026-11-03:"Execution/P10/T179-destination-card-and-grid.md"`
+- 2026-10-07 · pre-crew · T173 E2 + M6: The lifestyle slider, and the trade-off in words → `git show archive/execution-full-2026-11-03:"Execution/P10/T173-lifestyle-slider.md"`
+- 2026-10-07 · pre-crew · T172 Cost breakdown as one stacked bar → `git show archive/execution-full-2026-11-03:"Execution/P10/T172-cost-stacked-bar.md"`
+- 2026-10-07 · pre-crew · T167 Advisory sections become swipeable flashcards → `git show archive/execution-full-2026-11-03:"Execution/P10/T167-advisory-flashcards.md"`
+- 2026-10-07 · pre-crew · T165 Sticky section rail → `git show archive/execution-full-2026-11-03:"Execution/P10/T165-sticky-section-rail.md"`
+- 2026-10-07 · pre-crew · T162 Day by day becomes a horizontal day track → `git show archive/execution-full-2026-11-03:"Execution/P10/T162-day-carousel.md"`
+- 2026-10-07 · pre-crew · T158 Translate every number into a sentence a person would say → `git show archive/execution-full-2026-11-03:"Execution/P10/T158-number-translations.md"`
+- 2026-10-07 · pre-crew · T156 One InfoDot and one glossary for the whole product → `git show archive/execution-full-2026-11-03:"Execution/P10/T156-infodot-and-glossary.md"`
+- 2026-10-07 · pre-crew · T124 the honest stub and the not_applicable empty state → `git show archive/execution-full-2026-11-03:"Execution/P7/T124-honest-stubs-and-empty-states.md"`
+- 2026-10-07 · pre-crew · T101 I2, break the seven-day assumption → `git show archive/execution-full-2026-11-03:"Execution/P6/T101-trip-lengths.md"`
+- 2026-10-07 · pre-crew · T100 I3, a party-size control, and two people no longer assumed silently → `git show archive/execution-full-2026-11-03:"Execution/P6/T100-party-size.md"`
+- 2026-10-07 · pre-crew · T099 I1, price the trip on the trip page → `git show archive/execution-full-2026-11-03:"Execution/P6/T099-price-the-trip.md"`
+- 2026-10-07 · pre-crew · T093 J4+J5: the three accuracy signals come from one model → `git show archive/execution-full-2026-11-03:"Execution/P5/T093-j4-accuracy-signals.md"`
+- 2026-10-07 · pre-crew · T089 A5: tags, basecamps and snapshot, surfaced or stripped → `git show archive/execution-full-2026-11-03:"Execution/P5/T089-a5-orphan-fields.md"`
+- 2026-10-06 · pre-crew · T336 Launch outreach drafts → `git show archive/execution-full-2026-11-03:"Execution/P12/T336-launch-outreach-drafts.md"`
+- 2026-10-06 · pre-crew · T235 Uptime and error alerting → `git show archive/execution-full-2026-11-03:"Execution/P13/T235-uptime-and-alerting.md"`
+- 2026-10-06 · pre-crew · T233 Mirror the Mapterhorn terrain tiles to your own R2 → `git show archive/execution-full-2026-11-03:"Execution/P13/T233-mirror-terrain-tiles.md"`
+- 2026-10-06 · pre-crew · T231 Performance and accessibility gate → `git show archive/execution-full-2026-11-03:"Execution/P13/T231-performance-accessibility-gate.md"`
+- 2026-10-06 · pre-crew · T230 Data and coverage gate → `git show archive/execution-full-2026-11-03:"Execution/P13/T230-data-coverage-gate.md"`
+- 2026-10-06 · pre-crew · T227 Legal gate → `git show archive/execution-full-2026-11-03:"Execution/P13/T227-legal-gate.md"`
+- 2026-10-06 · pre-crew · T186 G4 + 5.7: The quality floor, and respect the design system → `git show archive/execution-full-2026-11-03:"Execution/P10/T186-quality-floor-and-accessibility.md"`
+- 2026-10-06 · pre-crew · T183 5.3, the section opening screens → `git show archive/execution-full-2026-11-03:"Execution/P10/T183-section-opening-screens.md"`
+- 2026-10-04 · pre-crew · T193 Explore tab, Trip Planner and Day Planner passes → `git show archive/execution-full-2026-11-03:"Execution/P10/T193-explore-planner-passes.md"`
+- 2026-10-04 · pre-crew · T182 Derived modules that turn a listing into an instrument → `git show archive/execution-full-2026-11-03:"Execution/P10/T182-derived-modules.md"`
+- 2026-10-04 · pre-crew · T181 5.5, the signature visuals, one instrument family → `git show archive/execution-full-2026-11-03:"Execution/P10/T181-signature-visuals.md"`
+- 2026-10-04 · pre-crew · T180 5.4, the shared detail-page skeleton → `git show archive/execution-full-2026-11-03:"Execution/P10/T180-detail-page-skeleton.md"`
+- 2026-10-03 · pre-crew · T361 Booking windows for the 66 trips that had none → `git show archive/execution-full-2026-11-03:"Execution/P9/T361-booking-windows.md"`
+- 2026-10-03 · pre-crew · T360 Execution Report: T360 → `git show archive/execution-full-2026-11-03:"Execution/P11/T360-owner-design-calls.md"`
+- 2026-10-03 · pre-crew · T335 one shared Button, after the tokens → `git show archive/execution-full-2026-11-03:"Execution/P11/T335-shared-button.md"`
+- 2026-10-03 · pre-crew · T332 Journey data fixes the validator found → `git show archive/execution-full-2026-11-03:"Execution/P9/T332-journey-data-fixes.md"`
+- 2026-10-03 · pre-crew · T327 fact store follow-ups, written as the input T147 builds on → `git show archive/execution-full-2026-11-03:"Execution/P9/T327-fact-store-followups.md"`
+- 2026-10-03 · pre-crew · T325 Execution Report → `git show archive/execution-full-2026-11-03:"Execution/P11/T325-carta-design-skill-body.md"`
+- 2026-10-03 · pre-crew · T324 box readiness code before stage 7 → `git show archive/execution-full-2026-11-03:"Execution/P3/T324-box-readiness-code.md"`
+- 2026-10-03 · pre-crew · T323 Edge Function follow-ups → `git show archive/execution-full-2026-11-03:"Execution/P2/T323-edge-function-followups.md"`
+- 2026-10-03 · pre-crew · T322 Why registry routes and ranges are missing from the trails wire → `git show archive/execution-full-2026-11-03:"Execution/P7/T322-wire-gaps.md"`
+- 2026-10-03 · pre-crew · T321 the rating distribution contract fails on main → `git show archive/execution-full-2026-11-03:"Execution/P7/T321-rating-distribution.md"`
+- 2026-10-03 · pre-crew · T320 CI and queue hygiene → `git show archive/execution-full-2026-11-03:"Execution/P1/T320-ci-queue-hygiene.md"`
+- 2026-10-03 · pre-crew · T319 legal and privacy copy matches the code → `git show archive/execution-full-2026-11-03:"Execution/P1/T319-legal-copy-matches-code.md"`
+- 2026-10-03 · pre-crew · T318 The Where the numbers come from explainer page → `git show archive/execution-full-2026-11-03:"Execution/P12/T318-numbers-explainer.md"`
+- 2026-10-03 · pre-crew · T317 Pages and R2 hygiene: a real 404, a prune that sees removed prefixes, a safe restore note → `git show archive/execution-full-2026-11-03:"Execution/P1/T317-pages-r2-hygiene.md"`
+- 2026-10-03 · pre-crew · T316 the status surface on the data host → `git show archive/execution-full-2026-11-03:"Execution/P12/T316-status-surface.md"`
+- 2026-10-03 · pre-crew · T315 migration 048, launch metrics and the full GDPR export → `git show archive/execution-full-2026-11-03:"Execution/P4/T315-migration-048-launch-metrics-full-export.md"`
+- 2026-10-03 · pre-crew · T314 payments follow-ups without a migration → `git show archive/execution-full-2026-11-03:"Execution/P2/T314-payments-followups.md"`
+- 2026-10-03 · pre-crew · T312 Exhaustive-deps disable audit, the rest of src → `git show archive/execution-full-2026-11-03:"Execution/P10/T312-hook-disable-audit-2.md"`
+- 2026-10-03 · pre-crew · T311 Pipeline code fixes, no runs → `git show archive/execution-full-2026-11-03:"Execution/P7/T311-pipeline-code-fixes.md"`
+- 2026-10-03 · pre-crew · T299 The orchestrator box can be x86, and gets an IPv4 by default → `git show archive/execution-full-2026-11-03:"Execution/P3/T299-x86-orchestrator.md"`
+- 2026-10-03 · pre-crew · T271 D4 speed: first paint from the rank tier, the destination page CLS, the trip page INP → `git show archive/execution-full-2026-11-03:"Execution/P3/T271-d4-speed.md"`
+- 2026-10-03 · pre-crew · T225 Receipt-based editorial and internal linking → `git show archive/execution-full-2026-11-03:"Execution/P12/T225-receipt-editorial.md"`
+- 2026-10-03 · pre-crew · T224 Destination cost pages and country/trip-length pages → `git show archive/execution-full-2026-11-03:"Execution/P12/T224-cost-and-country-pages.md"`
+- 2026-10-03 · pre-crew · T223 The destination URL structure → `git show archive/execution-full-2026-11-03:"Execution/P12/T223-url-structure.md"`
+- 2026-10-03 · pre-crew · T222 Generate the sitemap from app data → `git show archive/execution-full-2026-11-03:"Execution/P12/T222-sitemap.md"`
+- 2026-10-03 · pre-crew · T221 Static prerendering → `git show archive/execution-full-2026-11-03:"Execution/P12/T221-static-prerendering.md"`
+- 2026-10-03 · pre-crew · T212 Brand assets: OG images, favicon, app icon, social cards → `git show archive/execution-full-2026-11-03:"Execution/P12/T212-brand-assets.md"`
+- 2026-10-03 · pre-crew · T200 Measure Core Web Vitals on the three heaviest pages → `git show archive/execution-full-2026-11-03:"Execution/P11/T200-core-web-vitals.md"`
+- 2026-10-03 · pre-crew · T199 Self-host fonts and take the React 19 / Tailwind v4 wins → `git show archive/execution-full-2026-11-03:"Execution/P11/T199-fonts-and-runtime-performance.md"`
+- 2026-10-03 · pre-crew · T191 Shared design tokens, and modularise styles.css → `git show archive/execution-full-2026-11-03:"Execution/P10/T191-design-tokens-and-css-modules.md"`
+- 2026-10-03 · pre-crew · T190 Keyboard and map accessibility → `git show archive/execution-full-2026-11-03:"Execution/P10/T190-keyboard-and-map-accessibility.md"`
+- 2026-10-03 · pre-crew · T189 Loading and error states across every surface → `git show archive/execution-full-2026-11-03:"Execution/P10/T189-loading-and-error-states.md"`
+- 2026-10-03 · pre-crew · T185 G2 + G3: Shared element transitions, skeletons never spinners → `git show archive/execution-full-2026-11-03:"Execution/P10/T185-transitions-and-skeletons.md"`
+- 2026-10-03 · pre-crew · T184 Visible feedback inside 100 ms, on touch, before data → `git show archive/execution-full-2026-11-03:"Execution/P10/T184-touch-feedback.md"`
+- 2026-10-03 · pre-crew · T175 E5: A type-specific data sheet that reorders itself → `git show archive/execution-full-2026-11-03:"Execution/P10/T175-type-specific-data-sheet.md"`
+- 2026-10-03 · pre-crew · T174 Elevation profile and surface mix → `git show archive/execution-full-2026-11-03:"Execution/P10/T174-elevation-and-surface.md"`
+- 2026-10-03 · pre-crew · T171 M7 + M8 + M10, one sentence, three ways out, and the human evidence → `git show archive/execution-full-2026-11-03:"Execution/P10/T171-hook-exits-evidence.md"`
+- 2026-10-03 · pre-crew · T170 The shape of the week, day zero, and the weather fallback → `git show archive/execution-full-2026-11-03:"Execution/P10/T170-week-shape-and-fallbacks.md"`
+- 2026-10-03 · pre-crew · T169 Booking order, bookingWindows as a ticked checklist → `git show archive/execution-full-2026-11-03:"Execution/P10/T169-booking-order.md"`
+- 2026-10-03 · pre-crew · T168 What to pack becomes an icon grid → `git show archive/execution-full-2026-11-03:"Execution/P10/T168-packing-icon-grid.md"`
+- 2026-10-03 · pre-crew · T166 Execution Report: T166 → `git show archive/execution-full-2026-11-03:"Execution/P10/T166-one-primary-action.md"`
+- 2026-10-03 · pre-crew · T164 Collapse every long section, with a one-line preview → `git show archive/execution-full-2026-11-03:"Execution/P10/T164-collapsed-sections.md"`
+- 2026-10-03 · pre-crew · T163 Day detail opens in place → `git show archive/execution-full-2026-11-03:"Execution/P10/T163-day-detail-in-place.md"`
+- 2026-10-03 · pre-crew · T161 Suitability strip pinned under the hero → `git show archive/execution-full-2026-11-03:"Execution/P10/T161-suitability-strip.md"`
+- 2026-10-03 · pre-crew · T160 the honest coverage and provenance footers → `git show archive/execution-full-2026-11-03:"Execution/P10/T160-honest-footers.md"`
+- 2026-10-03 · pre-crew · T159 Who this is not for, on every page type → `git show archive/execution-full-2026-11-03:"Execution/P10/T159-who-this-is-not-for.md"`
+- 2026-10-03 · pre-crew · T155 D2: Expand the catalogue, batched by region → `git show archive/execution-full-2026-11-03:"Execution/P9/T155-catalogue-expansion.md"`
+- 2026-10-03 · pre-crew · T154 K7: Spend the human review budget on flags only → `git show archive/execution-full-2026-11-03:"Execution/P9/T154-flag-only-review.md"`
+- 2026-10-03 · pre-crew · T153 K8: Keep a golden set and re-run it on every prompt change → `git show archive/execution-full-2026-11-03:"Execution/P9/T153-golden-set.md"`
+- 2026-10-03 · pre-crew · T152 D4: Cap the prose and let the structure carry the load → `git show archive/execution-full-2026-11-03:"Execution/P9/T152-prose-caps.md"`
+- 2026-10-03 · pre-crew · T151 D3: Fill the type-specific data sheet, one trip type at a time → `git show archive/execution-full-2026-11-03:"Execution/P9/T151-type-specific-fields.md"`
+- 2026-10-03 · pre-crew · T150 K10 + D1: Start the backfill with packing and risk modules → `git show archive/execution-full-2026-11-03:"Execution/P9/T150-packing-and-risk-backfill.md"`
+- 2026-10-03 · pre-crew · T146 K3: Every number carries its own confidence, and the page shows it → `git show archive/execution-full-2026-11-03:"Execution/P9/T146-per-field-confidence.md"`
+- 2026-10-03 · pre-crew · T145 K4: Run a separate adversarial critic with no memory of the writing → `git show archive/execution-full-2026-11-03:"Execution/P9/T145-adversarial-critic.md"`
+- 2026-10-03 · pre-crew · T144 K2: Split generation into three passes with different jobs → `git show archive/execution-full-2026-11-03:"Execution/P9/T144-three-pass-generation.md"`
+- 2026-10-03 · pre-crew · T143 K1: Generate into a JSON Schema, never into prose → `git show archive/execution-full-2026-11-03:"Execution/P9/T143-generation-schema.md"`
+- 2026-10-03 · pre-crew · T142 Embed webcams live, never store the frames → `git show archive/execution-full-2026-11-03:"Execution/P8/T142-webcam-embeds.md"`
+- 2026-10-03 · pre-crew · T112 coverage dashboard and gate → `git show archive/execution-full-2026-11-03:"Execution/P7/T112-coverage-dashboard-and-gate.md"`
+- 2026-10-03 · pre-crew · T103 I5, a price-by-month row under the weather row → `git show archive/execution-full-2026-11-03:"Execution/P6/T103-price-by-month.md"`
+- 2026-10-03 · pre-crew · T102 I4, show the rail alternative → `git show archive/execution-full-2026-11-03:"Execution/P6/T102-rail-alternative.md"`
+- 2026-10-03 · pre-crew · T098 Show city versus country provenance, and name sources in product copy → `git show archive/execution-full-2026-11-03:"Execution/P5/T098-provenance-and-sources-in-copy.md"`
+- 2026-10-03 · pre-crew · T097 Publish the accuracy figure in the product → `git show archive/execution-full-2026-11-03:"Execution/P5/T097-publish-accuracy-figure.md"`
+- 2026-10-03 · pre-crew · T091 J2, 26 hero images are reused across 53 trips → `git show archive/execution-full-2026-11-03:"Execution/P5/T091-j2-duplicate-heroes.md"`
+- 2026-10-03 · pre-crew · T090 J1, fix the trips geolocated to the wrong place → `git show archive/execution-full-2026-11-03:"Execution/P5/T090-j1-geolocation.md"`
+- 2026-10-03 · pre-crew · T082 Schema contract in CI, frontend to backend → `git show archive/execution-full-2026-11-03:"Execution/P4/T082-schema-contract-ci.md"`
+- 2026-10-02 · pre-crew · T313 credit strings into Where this comes from, and the lint parser → `git show archive/execution-full-2026-11-03:"Execution/P10/T313-credit-footer.md"`
+- 2026-10-02 · pre-crew · T310 registry follow-ups → `git show archive/execution-full-2026-11-03:"Execution/P4/T310-registry-followups.md"`
+- 2026-10-02 · pre-crew · T300 fact-check every report, consolidate the open items, table the next waves → `git show archive/execution-full-2026-11-03:"Execution/P0/T300-factcheck-and-open-consolidation.md"`
+- 2026-10-02 · pre-crew · T298 Stage 7 is ready to run, and the laptop schedule is off → `git show archive/execution-full-2026-11-03:"Execution/P3/T298-box-readiness.md"`
+- 2026-10-02 · pre-crew · T297 Revert T292: the generated app data goes back into the root repository → `git show archive/execution-full-2026-11-03:"Execution/P1/T297-retrack-public-data.md"`
+- 2026-10-02 · pre-crew · T296 Pages previews have one fixed origin the data host admits → `git show archive/execution-full-2026-11-03:"Execution/P1/T296-pages-preview-cors.md"`
+- 2026-10-02 · pre-crew · T295 The production build has one command, and ci ends with it → `git show archive/execution-full-2026-11-03:"Execution/P1/T295-ci-pages-gate.md"`
+- 2026-10-02 · pre-crew · T294 _redirects says what Pages really does, and the Pages config files stay LF → `git show archive/execution-full-2026-11-03:"Execution/P1/T294-pages-config-hygiene.md"`
+- 2026-10-02 · pre-crew · T293 carta-europetravel.com is served by Cloudflare Pages → `git show archive/execution-full-2026-11-03:"Execution/P1/T293-pages-cutover.md"`
+- 2026-10-02 · pre-crew · T292 The root repository stops tracking the generated app data → `git show archive/execution-full-2026-11-03:"Execution/P1/T292-untrack-public-data.md"`
+- 2026-10-02 · pre-crew · T291 Production reads its data from R2 → `git show archive/execution-full-2026-11-03:"Execution/P3/T291-cutover-live.md"`
+- 2026-10-02 · pre-crew · T290 The data host is in the CSP, the app data is on R2, and the cutover route is open → `git show archive/execution-full-2026-11-03:"Execution/P3/T290-csp-data-host.md"`
+- 2026-10-02 · pre-crew · T289 push-data.mjs passes its rclone arguments intact on Windows → `git show archive/execution-full-2026-11-03:"Execution/P3/T289-push-data-windows-args.md"`
+- 2026-10-02 · pre-crew · T288 The R2 bucket, the cold archive and the first database dumps are live → `git show archive/execution-full-2026-11-03:"Execution/P3/T288-archive-live.md"`
+- 2026-10-02 · pre-crew · T287 shared MonthStrip on the lake and mountain pages → `git show archive/execution-full-2026-11-03:"Execution/P7/T287-layer-month-strip.md"`
+- 2026-10-02 · pre-crew · T286 One climb and one difficulty, from source to screen → `git show archive/execution-full-2026-11-03:"Execution/P7/T286-trail-climb-consistency.md"`
+- 2026-10-02 · pre-crew · T285 the docs catch up → `git show archive/execution-full-2026-11-03:"Execution/P11/T285-docs-catch-up.md"`
+- 2026-10-02 · pre-crew · T284 migration 047, three small schema fixes → `git show archive/execution-full-2026-11-03:"Execution/P4/T284-migration-047-small-schema-fixes.md"`
+- 2026-10-02 · pre-crew · T283 Audit the exhaustive-deps disable comments in the planner → `git show archive/execution-full-2026-11-03:"Execution/P10/T283-hook-disable-audit.md"`
+- 2026-10-02 · pre-crew · T282 app hygiene → `git show archive/execution-full-2026-11-03:"Execution/P10/T282-app-hygiene.md"`
+- 2026-10-02 · pre-crew · T281 Harness repairs, round two → `git show archive/execution-full-2026-11-03:"Execution/P4/T281-harness-repairs-2.md"`
+- 2026-10-02 · pre-crew · T280 The trails export applies the credit gate → `git show archive/execution-full-2026-11-03:"Execution/P3/T280-trails-credit-gate.md"`
+- 2026-10-02 · pre-crew · T279 verify_fare_provenance rewritten for no flight prices → `git show archive/execution-full-2026-11-03:"Execution/P4/T279-fare-provenance-harness.md"`
+- 2026-10-02 · pre-crew · T278 Typed fares price the airport transfer; route rows drop the snapshot carrier → `git show archive/execution-full-2026-11-03:"Execution/P3/T278-typed-fare-transfers.md"`
+- 2026-10-02 · pre-crew · T277 PRODUCT.md and ESTIMATION.md catch up with the owner decisions → `git show archive/execution-full-2026-11-03:"Execution/P11/T277-product-md-decisions.md"`
+- 2026-10-02 · pre-crew · T276 Remove the Travelpayouts Drive script and its CSP hosts → `git show archive/execution-full-2026-11-03:"Execution/P1/T276-remove-travelpayouts-drive.md"`
+- 2026-10-02 · pre-crew · T275 Owner decisions of 2026-10-02 (second round) and the corrected paste list → `git show archive/execution-full-2026-11-03:"Execution/P12/T275-owner-decisions-2026-10-02b.md"`
+- 2026-10-02 · pre-crew · T274 Migration 046 fixes the co-planner invite in 020 → `git show archive/execution-full-2026-11-03:"Execution/P4/T274-coplanner-invite-fix.md"`
+- 2026-10-02 · pre-crew · T273 No flight figure of Carta's on any screen → `git show archive/execution-full-2026-11-03:"Execution/P3/T273-no-flight-estimates.md"`
+- 2026-10-02 · pre-crew · T272 Owner decisions of 2026-10-02 → `git show archive/execution-full-2026-11-03:"Execution/P12/T272-owner-decisions-2026-10-02.md"`
+- 2026-10-02 · pre-crew · T270 admin UI follow-ups → `git show archive/execution-full-2026-11-03:"Execution/P4/T270-admin-ui-followups.md"`
+- 2026-10-02 · pre-crew · T269 D5a: the photo pipeline before stage 8 → `git show archive/execution-full-2026-11-03:"Execution/P3/T269-d5a-photo-pipeline.md"`
+- 2026-10-02 · pre-crew · T268 · admin follow-ups, database side → `git show archive/execution-full-2026-11-03:"Execution/P4/T268-admin-followups-db.md"`
+- 2026-10-02 · pre-crew · T267 frozen fares and housekeeping → `git show archive/execution-full-2026-11-03:"Execution/P3/T267-frozen-fares-housekeeping.md"`
+- 2026-10-02 · pre-crew · T266 Harness repairs (stage 9, group D3) → `git show archive/execution-full-2026-11-03:"Execution/P4/T266-harness-repairs.md"`
+- 2026-10-02 · pre-crew · T265 payments and quota, SQL and functions → `git show archive/execution-full-2026-11-03:"Execution/P2/T265-payments-quota.md"`
+- 2026-10-02 · pre-crew · T246 Mobile strategy: stay a PWA, do not wrap → `git show archive/execution-2026-11-11:"Execution/P15/T246-mobile-strategy-decision.md"`
+- 2026-10-02 · pre-crew · T226 Content type and platforms → `git show archive/execution-full-2026-11-03:"Execution/P12/T226-content-strategy.md"`
+- 2026-10-02 · pre-crew · T220 Launch runway calendar → `git show archive/execution-full-2026-11-03:"Execution/P12/T220-launch-runway.md"`
+- 2026-10-02 · pre-crew · T219 feedback loop from users into the backlog → `git show archive/execution-full-2026-11-03:"Execution/P12/T219-user-feedback-loop.md"`
+- 2026-10-02 · pre-crew · T218 incident runbook and a status surface → `git show archive/execution-full-2026-11-03:"Execution/P12/T218-incident-runbook.md"`
+- 2026-10-02 · pre-crew · T217 refund standard operating procedure → `git show archive/execution-full-2026-11-03:"Execution/P12/T217-refund-sop.md"`
+- 2026-10-02 · pre-crew · T216 support inbox and response commitment → `git show archive/execution-full-2026-11-03:"Execution/P12/T216-support-inbox.md"`
+- 2026-10-02 · pre-crew · T215 launch metrics → `git show archive/execution-full-2026-11-03:"Execution/P12/T215-launch-metrics.md"`
+- 2026-10-02 · pre-crew · T214 Decide the analytics stack, knowing what it costs you legally → `git show archive/execution-full-2026-11-03:"Execution/P12/T214-analytics-decision.md"`
+- 2026-10-02 · pre-crew · T213 Email and lifecycle → `git show archive/execution-full-2026-11-03:"Execution/P12/T213-email-lifecycle.md"`
+- 2026-10-02 · pre-crew · T211 First-run onboarding and the empty states → `git show archive/execution-full-2026-11-03:"Execution/P12/T211-onboarding-and-empty-states.md"`
+- 2026-10-02 · pre-crew · T208 Press, partnerships and the open-data angle → `git show archive/execution-full-2026-11-03:"Execution/P12/T208-press-and-partnerships.md"`
+- 2026-10-02 · pre-crew · T207 Launch channels and the launch day plan → `git show archive/execution-full-2026-11-03:"Execution/P12/T207-launch-channels.md"`
+- 2026-10-02 · pre-crew · T206 Community credibility: the outdoor route → `git show archive/execution-full-2026-11-03:"Execution/P12/T206-community-credibility.md"`
+- 2026-10-02 · pre-crew · T205 The programmatic SEO plan → `git show archive/execution-full-2026-11-03:"Execution/P12/T205-programmatic-seo.md"`
+- 2026-10-02 · pre-crew · T204 · The acquisition constraint, written down once → `git show archive/execution-full-2026-11-03:"Execution/P12/T204-acquisition-constraint.md"`
+- 2026-10-02 · pre-crew · T203 The audience order → `git show archive/execution-full-2026-11-03:"Execution/P12/T203-audience-order.md"`
+- 2026-10-02 · pre-crew · T202 Competitive positioning against the four categories → `git show archive/execution-full-2026-11-03:"Execution/P12/T202-competitive-positioning.md"`
+- 2026-10-02 · pre-crew · T201 Positioning, in one sentence and one paragraph → `git show archive/execution-full-2026-11-03:"Execution/P12/T201-positioning.md"`
+- 2026-10-02 · pre-crew · T198 Decide the typography conflict, explicitly → `git show archive/execution-full-2026-11-03:"Execution/P11/T198-typography-decision.md"`
+- 2026-10-02 · pre-crew · T197 Curate components by role, not by library → `git show archive/execution-full-2026-11-03:"Execution/P11/T197-component-curation.md"`
+- 2026-10-02 · pre-crew · T196 Put a generic-pattern detector in CI → `git show archive/execution-full-2026-11-03:"Execution/P11/T196-design-lint-in-ci.md"`
+- 2026-10-02 · pre-crew · T192 Hook dependencies and memoisation thrashing → `git show archive/execution-full-2026-11-03:"Execution/P10/T192-hook-dependencies.md"`
+- 2026-10-02 · pre-crew · T187 Design the first-run trip result → `git show archive/execution-full-2026-11-03:"Execution/P10/T187-first-run-result.md"`
+- 2026-10-02 · pre-crew · T177 Routing integration: komoot embed or own GPX → `git show archive/execution-full-2026-11-03:"Execution/P10/T177-routing-integration-decision.md"`
+- 2026-10-02 · pre-crew · T176 Free GPX on every route, never paywalled → `git show archive/execution-full-2026-11-03:"Execution/P10/T176-free-gpx.md"`
+- 2026-10-02 · pre-crew · T157 · Banned surface terms lint → `git show archive/execution-full-2026-11-03:"Execution/P10/T157-banned-surface-terms.md"`
+- 2026-10-02 · pre-crew · T132 Execution Report: T132 → `git show archive/execution-full-2026-11-03:"Execution/P8/T132-sentinel-licence-check.md"`
+- 2026-10-02 · pre-crew · T130 Execution Report: T130 → `git show archive/execution-full-2026-11-03:"Execution/P8/T130-excluded-imagery-sources.md"`
+- 2026-10-02 · pre-crew · T126 Image brief and vision-scoring prompt → `git show archive/execution-full-2026-11-03:"Execution/P8/T126-image-brief.md"`
+- 2026-10-02 · pre-crew · T121 Node networks are not routes: decision record → `git show archive/execution-full-2026-11-03:"Execution/P7/T121-node-networks-decision.md"`
+- 2026-10-02 · pre-crew · T113 Famous-trail registry: the Waymarked diff and the per-GMBA gap → `git show archive/execution-full-2026-11-03:"Execution/P7/T113-famous-trail-registry.md"`
+- 2026-10-02 · pre-crew · T111 coverage contract: country floors and reason codes → `git show archive/execution-full-2026-11-03:"Execution/P7/T111-coverage-contract.md"`
+- 2026-10-02 · pre-crew · T094 J6, J7, J8, bold, coverage honesty and the age of the numbers → `git show archive/execution-full-2026-11-03:"Execution/P5/T094-j6-j7-j8-presentation-honesty.md"`
+- 2026-10-02 · pre-crew · T092 J3 glance table → `git show archive/execution-full-2026-11-03:"Execution/P5/T092-j3-glance-table.md"`
+- 2026-10-02 · pre-crew · T088 A3 difficulty meter → `git show archive/execution-full-2026-11-03:"Execution/P5/T088-a3-difficulty-meter.md"`
+- 2026-10-02 · pre-crew · T087 A2 month strip → `git show archive/execution-full-2026-11-03:"Execution/P5/T087-a2-month-strip.md"`
+- 2026-10-02 · pre-crew · T086 A4, stop rendering two empty sections on 60% of trips → `git show archive/execution-full-2026-11-03:"Execution/P5/T086-a4-empty-sections.md"`
+- 2026-10-02 · pre-crew · T085 A1 number ranges → `git show archive/execution-full-2026-11-03:"Execution/P5/T085-a1-number-ranges.md"`
+- 2026-10-01 · pre-crew · T264 rewrite_intros.py and parking_check.py run on Gemini only → `git show archive/execution-full-2026-11-03:"Execution/P2/T264-remove-anthropic-provider.md"`
+- 2026-10-01 · pre-crew · T263 the box provisions itself fully, and the reboot window waits for spawns → `git show archive/execution-full-2026-11-03:"Execution/P3/T263-box-provisioning.md"`
+- 2026-10-01 · pre-crew · T262 the box publishes its data to R2 and remembers its runs → `git show archive/execution-full-2026-11-03:"Execution/P3/T262-box-publishes-to-r2.md"`
+- 2026-10-01 · pre-crew · T261 run_pipeline.py fails loudly, in order, and keeps backfill manual → `git show archive/execution-full-2026-11-03:"Execution/P1/T261-pipeline-unattended-fixes.md"`
+- 2026-10-01 · pre-crew · T260 _truncate_lc.py no longer truncates on import → `git show archive/execution-full-2026-11-03:"Execution/P1/T260-truncate-lc-guard.md"`
+- 2026-10-01 · pre-crew · T259 Gemini billing attached, budget set, key rotated → `git show archive/execution-full-2026-11-03:"Execution/P2/T259-gemini-billing-proof.md"`
+- 2026-10-01 · pre-crew · T258 Every task branch merged into main, in both repositories → `git show archive/execution-full-2026-11-03:"Execution/P4/T258-session-a-merge.md"`
+- 2026-10-01 · pre-crew · T257 provision.sh writes its R2 objects to the real bucket → `git show archive/execution-full-2026-11-03:"Execution/P4/T257-r2-provision-remote.md"`
+- 2026-10-01 · pre-crew · T256 Every flight price reads as an estimate → `git show archive/execution-full-2026-11-03:"Execution/P4/T256-flight-prices-as-estimates.md"`
+- 2026-10-01 · pre-crew · T255 Every fare harvest leaves the weekly schedule → `git show archive/execution-full-2026-11-03:"Execution/P4/T255-retire-fare-harvests.md"`
+- 2026-10-01 · pre-crew · T254 The admin page steps a session up to aal2 before ban and delete → `git show archive/execution-full-2026-11-03:"Execution/P4/T254-admin-mfa-step-up.md"`
+- 2026-10-01 · pre-crew · T253 Migration 018 applies on a fresh Postgres → `git show archive/execution-full-2026-11-03:"Execution/P4/T253-migration-018-regex-bound.md"`
+- 2026-10-01 · pre-crew · T252 gc and LFS prune, no history rewrite → `git show archive/execution-full-2026-11-03:"Execution/P1/T252-git-gc-and-lfs-prune.md"`
+- 2026-10-01 · pre-crew · T195 Write PRODUCT.md and DESIGN.md as the durable context → `git show archive/execution-full-2026-11-03:"Execution/P11/T195-product-and-design-context.md"`
+- 2026-10-01 · pre-crew · T108 Fix the five user-visible trail data bugs → `git show archive/execution-full-2026-11-03:"Execution/P7/T108-trail-data-bugs.md"`
+- 2026-10-01 · pre-crew · T107 Apply the title ladder across all five sections → `git show archive/execution-full-2026-11-03:"Execution/P7/T107-title-ladder.md"`
+- 2026-10-01 · pre-crew · T096 Ground-cost benchmark → `git show archive/execution-full-2026-11-03:"Execution/P5/T096-ground-cost-benchmark.md"`
+- 2026-10-01 · pre-crew · T084 Write the mechanical trip validator and put it in CI → `git show archive/execution-full-2026-11-03:"Execution/P5/T084-trip-validator.md"`
+- 2026-10-01 · pre-crew · T083 Row policy tests and a recorded crash on the ErrorBoundary → `git show archive/execution-full-2026-11-03:"Execution/P4/T083-rls-tests-and-errorboundary.md"`
+- 2026-10-01 · pre-crew · T078 Registry and licence unification → `git show archive/execution-full-2026-11-03:"Execution/P4/T078-registry-licence-unification.md"`
+- 2026-09-29 · pre-crew · T077 Automated RPC security tests → `git show archive/execution-full-2026-11-03:"Execution/P4/T077-pgtap-rpc-security-tests.md"`
+- 2026-09-28 · pre-crew · T076 JSON diff viewer for overrides → `git show archive/execution-full-2026-11-03:"Execution/P4/T076-override-diff-viewer.md"`
+- 2026-09-28 · pre-crew · T075 Add orphan patch detection → `git show archive/execution-full-2026-11-03:"Execution/P4/T075-orphan-patch-detection.md"`
+- 2026-09-28 · pre-crew · T074 Add a review lifecycle and expiry to content_overrides → `git show archive/execution-full-2026-11-03:"Execution/P4/T074-override-review-lifecycle.md"`
+- 2026-09-28 · pre-crew · T073 Build the parse-failure queue → `git show archive/execution-full-2026-11-03:"Execution/P4/T073-parse-failure-queue.md"`
+- 2026-09-28 · pre-crew · T072 Pipeline health metrics on admin_health() → `git show archive/execution-full-2026-11-03:"Execution/P4/T072-pipeline-health-metrics.md"`
+- 2026-09-28 · pre-crew · T071 Edge error telemetry through a first-party RPC → `git show archive/execution-full-2026-11-03:"Execution/P4/T071-error-telemetry.md"`
+- 2026-09-28 · pre-crew · T070 Statement of reasons and an internal complaints route → `git show archive/execution-full-2026-11-03:"Execution/P4/T070-statement-of-reasons.md"`
+- 2026-09-28 · pre-crew · T069 Takedown RPC that unpublishes without deleting → `git show archive/execution-full-2026-11-03:"Execution/P4/T069-takedown-rpc.md"`
+- 2026-09-28 · pre-crew · T068 Electronic notice mechanism (content_reports and report_guide) → `git show archive/execution-full-2026-11-03:"Execution/P4/T068-dsa-notice-and-action.md"`
+- 2026-09-28 · pre-crew · T067 Public guides index (read model) → `git show archive/execution-full-2026-11-03:"Execution/P4/T067-public-guides-index.md"`
+- 2026-09-28 · pre-crew · T066 Scope site_config visibility with a public flag → `git show archive/execution-full-2026-11-03:"Execution/P4/T066-config-visibility-scoping.md"`
+- 2026-09-28 · pre-crew · T065 Elevate guard tiers on the three live-effect RPCs → `git show archive/execution-full-2026-11-03:"Execution/P4/T065-guard-tier-elevation.md"`
+- 2026-09-28 · pre-crew · T064 Make the audit log hold rollback state → `git show archive/execution-full-2026-11-03:"Execution/P4/T064-audit-log-rollback.md"`
+- 2026-09-28 · pre-crew · T063 Enforce MFA (AAL2) on destructive admin actions → `git show archive/execution-full-2026-11-03:"Execution/P4/T063-mfa-on-destructive-actions.md"`
+- 2026-09-28 · pre-crew · T062 Commit the stranded app-repo work and scope the queue runner's orphan killer → `git show archive/execution-full-2026-11-03:"Execution/P3/T062b-uncommitted-work-and-queue-runner.md"`
+- 2026-09-28 · pre-crew · T062 Split AdminPage.jsx into domain modules → `git show archive/execution-full-2026-11-03:"Execution/P4/T062-admin-component-split.md"`
+- 2026-09-28 · pre-crew · T061 Measure mobile first paint and map tiles per session → `git show archive/execution-full-2026-11-03:"Execution/P3/T061-mobile-paint-and-tiles.md"`
+- 2026-09-28 · pre-crew · T060 Reduce the POI payload and lazy-load map layers → `git show archive/execution-full-2026-11-03:"Execution/P3/T060-reduce-poi-payload.md"`
+- 2026-09-28 · pre-crew · T059 Shard app data by region and viewport → `git show archive/execution-full-2026-11-03:"Execution/P3/T059-shard-by-region-viewport.md"`
+- 2026-09-28 · pre-crew · T058 DECIDE the flight-cost input structure → `git show archive/execution-full-2026-11-03:"Execution/P3/T058-flight-cost-input-decision.md"`
+- 2026-09-28 · pre-crew · T057 Remove obsolete fare metadata from the payload → `git show archive/execution-full-2026-11-03:"Execution/P3/T057-remove-obsolete-fare-metadata.md"`
+- 2026-09-28 · pre-crew · T056 Remove fare runtime reads → `git show archive/execution-full-2026-11-03:"Execution/P3/T056-remove-fare-runtime-reads.md"`
+- 2026-09-28 · pre-crew · T055 Re-measure and close the phase → `git show archive/execution-full-2026-11-03:"Execution/P3/T055-post-migration-measurement.md"`
+- 2026-09-28 · pre-crew · T054 Split the wire by access pattern and move shards to R2 → `git show archive/execution-full-2026-11-03:"Execution/P3/T054-wire-shards-to-r2.md"`
+- 2026-09-28 · pre-crew · T053 Tighten the CSP once Wikimedia hosts are unused → `git show archive/execution-full-2026-11-03:"Execution/P3/T053-csp-tighten.md"`
+- 2026-09-28 · pre-crew · T052 Switch the layer pages to picture and srcset, behind a flag → `git show archive/execution-full-2026-11-03:"Execution/P3/T052-picture-srcset-rollout.md"`
+- 2026-09-27 · pre-crew · T051 Keep attribution attached to the pixels → `git show archive/execution-full-2026-11-03:"Execution/P3/T051-attribution-follows-pixels.md"`
+- 2026-09-27 · pre-crew · T050 Extend takedown.py to reach R2 in the same change → `git show archive/execution-full-2026-11-03:"Execution/P3/T050-takedown-reaches-r2.md"`
+- 2026-09-27 · pre-crew · T049 Build derive.py: content-addressed AVIF and WebP ladder → `git show archive/execution-full-2026-11-03:"Execution/P3/T049-image-derivative-ladder.md"`
+- 2026-09-27 · pre-crew · T048 Port the Windows Scheduled Task to cron, task by task → `git show archive/execution-full-2026-11-03:"Execution/P3/T048-pipeline-cron-migration.md"`
+- 2026-09-27 · pre-crew · T047 Build the on-demand CAX41 spawn-and-destroy flow → `git show archive/execution-full-2026-11-03:"Execution/P3/T047-on-demand-cax41.md"`
+- 2026-09-27 · pre-crew · T046 Provision the always-on CAX11 orchestrator → `git show archive/execution-full-2026-11-03:"Execution/P3/T046-cax11-orchestrator.md"`
+- 2026-09-27 · pre-crew · T045 Move the cold archive to R2 and stop the laptop being the system of record → `git show archive/execution-full-2026-11-03:"Execution/P3/T045-archive-to-r2.md"`
+- 2026-09-27 · pre-crew · T044 Create the R2 bucket, four prefixes, two custom domains → `git show archive/execution-full-2026-11-03:"Execution/P3/T044-r2-bucket-and-domains.md"`
+- 2026-09-24 · pre-crew · T043 The margin dashboard → `git show archive/execution-full-2026-11-03:"Execution/P2/T043-margin-dashboard.md"`
+- 2026-09-24 · pre-crew · T042 AI usage rollup RPC and admin view → `git show archive/execution-full-2026-11-03:"Execution/P2/T042-ai-usage-telemetry.md"`
+- 2026-09-24 · pre-crew · T041 Design per-fact grounding (Lever 1), design now, build in P9 → `git show archive/execution-full-2026-11-03:"Execution/P2/T041-per-fact-grounding-design.md"`
+- 2026-09-24 · pre-crew · T040 Trim the plan-day prompt, not the output (Lever 3) → `git show archive/execution-full-2026-11-03:"Execution/P2/T040-prompt-token-trim.md"`
+- 2026-09-24 · pre-crew · T039 Normalise the ai_plan_cache key → `git show archive/execution-full-2026-11-03:"Execution/P2/T039-cache-key-normalisation.md"`
+- 2026-09-24 · pre-crew · T038 Log the model fallback chain → `git show archive/execution-full-2026-11-03:"Execution/P2/T038-model-fallback-logging.md"`
+- 2026-09-24 · pre-crew · T037 Verify ai_consume, ai_refund and the grounded counter → `git show archive/execution-full-2026-11-03:"Execution/P2/T037-ai-quota-enforcement-tests.md"`
+- 2026-09-24 · pre-crew · T036 Set hard budget caps and alerts in Google Cloud → `git show archive/execution-full-2026-11-03:"Execution/P2/T036-gemini-budget-caps.md"`
+- 2026-09-24 · pre-crew · T035 Attach billing to the Gemini project and prove the posture → `git show archive/execution-full-2026-11-03:"Execution/P2/T035-gemini-billing-posture.md"`
+- 2026-09-24 · pre-crew · T034 Instrument the paywall funnel before launch, not after → `git show archive/execution-full-2026-11-03:"Execution/P2/T034-paywall-funnel-instrumentation.md"`
+- 2026-09-24 · pre-crew · T033 Confirm Stripe Tax and set an OSS threshold monitor → `git show archive/execution-full-2026-11-03:"Execution/P2/T033-stripe-tax-and-oss.md"`
+- 2026-09-24 · pre-crew · T032 Wire the 14-day withdrawal waiver into checkout → `git show archive/execution-full-2026-11-03:"Execution/P2/T032-withdrawal-waiver.md"`
+- 2026-09-24 · pre-crew · T031 End-to-end purchase test in test mode, both tiers → `git show archive/execution-full-2026-11-03:"Execution/P2/T031-stripe-purchase-e2e.md"`
+- 2026-09-24 · pre-crew · T030 Audit Stripe Price objects against plan_tiers → `git show archive/execution-full-2026-11-03:"Execution/P2/T030-stripe-price-audit.md"`
+- 2026-09-24 · pre-crew · T029 Audit run_pipeline.py and expand the CI gates → `git show archive/execution-full-2026-11-03:"Execution/P1/T029-pipeline-audit-and-ci.md"`
+- 2026-09-23 · pre-crew · T028 Classify pipeline scripts into three tiers → `git show archive/execution-full-2026-11-03:"Execution/P1/T028-classify-pipeline-scripts.md"`
+- 2026-09-23 · pre-crew · T027 Delete orphaned frontend components, keep the URL logic → `git show archive/execution-full-2026-11-03:"Execution/P1/T027-orphaned-components.md"`
+- 2026-09-23 · pre-crew · T026 Reclaim .git via history rewrite, gated → `git show archive/execution-full-2026-11-03:"Execution/P1/T026-git-history-rewrite.md"`
+- 2026-09-23 · pre-crew · T025 Untrack generated build artifacts from git → `git show archive/execution-full-2026-11-03:"Execution/P1/T025-untrack-build-artifacts.md"`
+- 2026-09-23 · pre-crew · T024 Move off Vercel Hobby to Cloudflare Pages → `git show archive/execution-full-2026-11-03:"Execution/P1/T024-cloudflare-pages-migration.md"`
+- 2026-09-23 · pre-crew · T023 , Reclaim tens of GB locally, for free → `git show archive/execution-full-2026-11-03:"Execution/P1/T023-local-disk-reclaim.md"`
+- 2026-09-23 · pre-crew · T022 EUIPO search and the Article 30 record → `git show archive/execution-full-2026-11-03:"Execution/P1/T022-trademark-and-article-30.md"`
+- 2026-09-23 · pre-crew · T021 Close the remaining licence ledger rows → `git show archive/execution-full-2026-11-03:"Execution/P1/T021-licence-ledger-close.md"`
+- 2026-09-23 · pre-crew · T020 GDPR Article 20 data export → `git show archive/execution-full-2026-11-03:"Execution/P1/T020-gdpr-data-export.md"`
+- 2026-09-23 · pre-crew · T019 Execution Report → `git show archive/execution-full-2026-11-03:"Execution/P1/T019-map-attribution.md"`
+- 2026-09-23 · pre-crew · T018 Confirm vendor DPAs, especially Gemini → `git show archive/execution-full-2026-11-03:"Execution/P1/T018-vendor-dpas.md"`
+- 2026-09-23 · pre-crew · T017 Add the lawful-basis table and retention periods to the privacy policy → `git show archive/execution-full-2026-11-03:"Execution/P1/T017-lawful-basis-and-retention.md"`
+- 2026-09-23 · pre-crew · T013 Draft and publish the Terms of Service → `git show archive/execution-full-2026-11-03:"Execution/P1/T013-terms-of-service.md"`
+- 2026-09-23 · pre-crew · T012 Publish the statutory Imprint → `git show archive/execution-full-2026-11-03:"Execution/P1/T012-imprint.md"`
+- 2026-09-23 · pre-crew · T011 Performance and cost baseline → `git show archive/execution-full-2026-11-03:"Execution/P0/T011-performance-and-cost-baseline.md"`
+- 2026-09-22 · pre-crew · T010 Storable-copy licence audit → `git show archive/execution-full-2026-11-03:"Execution/P0/T010-storable-copy-licence-audit.md"`
+- 2026-09-22 · pre-crew · T009 Count files in continent-app/public against the 20,000 Pages ceiling → `git show archive/execution-full-2026-11-03:"Execution/P0/T009-pages-file-count.md"`
+- 2026-09-22 · pre-crew · T008 AVIF size measurement → `git show archive/execution-full-2026-11-03:"Execution/P0/T008-avif-size-measurement.md"`
+- 2026-09-22 · pre-crew · T007 Image corpus count → `git show archive/execution-full-2026-11-03:"Execution/P0/T007-image-corpus-count.md"`
+- 2026-09-22 · pre-crew · T006 arm64 coverage audit → `git show archive/execution-full-2026-11-03:"Execution/P0/T006-arm64-coverage-audit.md"`
+- 2026-09-22 · pre-crew · T005 , Master snapshot preservation → `git show archive/execution-full-2026-11-03:"Execution/P0/T005-master-snapshot-preservation.md"`
+- 2026-09-22 · pre-crew · T004 , Encrypted Supabase backup → `git show archive/execution-full-2026-11-03:"Execution/P0/T004-database-backup.md"`
+- 2026-09-22 · pre-crew · T003 Tag and baseline the current production state → `git show archive/execution-full-2026-11-03:"Execution/P0/T003-git-baseline.md"`
+- 2026-09-22 · pre-crew · T002 Write CLAUDE.md working rules for the plan → `git show archive/execution-full-2026-11-03:"Execution/P0/T002-claude-code-working-rules.md"`
+- 2026-09-22 · pre-crew · T001 Create the Execution folder structure → `git show archive/execution-full-2026-11-03:"Execution/P0/T001-report-convention.md"`
+- undated · pre-crew · T1176 T1176-show-hn-draft → `git show archive/execution-2026-11-11:"Execution/P15/T1176-show-hn-draft.md"`
+- undated · pre-crew · T557 T557 notes: Ask Carta on device (WebGPU, WebLLM) → `git show archive/execution-full-2026-11-03:"Execution/P11/T557-notes.md"`
+- undated · pre-crew · T551 T551 notes: the Ask Carta retrieval index (for the T550-T558 batch report) → `git show archive/execution-full-2026-11-03:"Execution/P11/T551-notes.md"`
+- undated · pre-crew · T462 T462 critique: the home page AFTER the rebuild, reviewer A → `git show archive/execution-full-2026-11-03:"Execution/P11/T462-critique/after-a.md"`
+- undated · pre-crew · T462 T462 critique: the home page AFTER the rebuild, reviewer B (technical) → `git show archive/execution-full-2026-11-03:"Execution/P11/T462-critique/after-b.md"`
+- undated · pre-crew · T462 T462 critique: confirming round after the fix batch → `git show archive/execution-full-2026-11-03:"Execution/P11/T462-critique/after-confirm.md"`
+- undated · pre-crew · T461 T461 critique, after: Account, help and legal pages → `git show archive/execution-full-2026-11-03:"Execution/P11/T461-critique/after.md"`
+- undated · pre-crew · T461 T461 critique, before: Account, help and legal pages → `git show archive/execution-full-2026-11-03:"Execution/P11/T461-critique/before.md"`
+- undated · pre-crew · T460 T460 Assessment A (design review): the pass panel, AFTER → `git show archive/execution-full-2026-11-03:"Execution/P11/T460-critique/assessment-a-after.md"`
+- undated · pre-crew · T460 T460 Assessment A (design review): the pass panel, BEFORE → `git show archive/execution-full-2026-11-03:"Execution/P11/T460-critique/assessment-a-before.md"`
+- undated · pre-crew · T434 T434 critique, Assessment A (design review), My trips before state → `git show archive/execution-full-2026-11-03:"Execution/P11/T434-critique/assessment-a-before.md"`

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * ship.mjs, the deploy as one script that stops on the first failed step
- * (ROADMAP H11, audit P-18, task Execution/P15/T1162-scripted-ship.md).
+ * (ROADMAP H11, audit P-18, task T1162).
  *
  *   node scripts/ship.mjs                    dry run (the default): preflight, then
  *                                            the fast build and the css-routes proof

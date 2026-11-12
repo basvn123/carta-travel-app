@@ -1,6 +1,6 @@
 # Accessibility audit (ROADMAP G10)
 
-The standing record of Carta's WCAG 2.2 AA audit. The full task report with every node is `Execution/P15/T1128-accessibility.md`; this page keeps the method, the current result and what is left.
+The standing record of Carta's WCAG 2.2 AA audit. The full task report with every node is `T1128`; this page keeps the method, the current result and what is left.
 
 ## Method
 

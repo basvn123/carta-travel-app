@@ -1,19 +1,21 @@
-"""Fail when CLAUDE.md or MAP.md names a path that does not exist (ROADMAP A4, T1051).
+"""Fail when an entry-point doc names a path that does not exist (ROADMAP A4).
 
-Every Claude session reads these two files first and follows their pointers,
-so a dead pointer costs every session. Run from anywhere:
+Every Claude session starts at CLAUDE.md and docs/project-map.md and follows
+their pointers, so a dead pointer costs every session. Run from anywhere:
 
     python -I scripts/docs/check_entry_points.py
 
 Rules:
-- In MAP.md, every repo path in the "Product areas" table and in backticks is
+- In docs/project-map.md, every repo path in a table row or in backticks is
   checked. `app/` means `continent-app/`.
-- In CLAUDE.md, every path in backticks is checked.
-- A path may resolve from the repo root or from `continent-app/` (CLAUDE.md
-  gives deploy commands from inside the app).
+- In CLAUDE.md and docs/lessons.md, every path in backticks is checked.
+- A path may resolve from the repo root or from `continent-app/` (deploy
+  commands are given from inside the app).
 - Placeholders (`{n}`, `*`, `<...>`), absolute paths, URLs and throwaway build
-  output are skipped. A path written to say it does not exist is listed in
-  INTENTIONALLY_ABSENT.
+  output are skipped. A path written to say it does not exist, or a git tag
+  name, is listed in INTENTIONALLY_ABSENT.
+- An entry file that is missing is skipped, but at least one path must be
+  checked, so an empty run cannot pass.
 Exit 0 when all paths exist, 1 otherwise (each missing path is printed).
 """
 from __future__ import annotations
@@ -25,22 +27,28 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 APP = ROOT / "continent-app"
 
+# (file, also check table rows): the docs every session is pointed at first.
+ENTRY_FILES = (("CLAUDE.md", False), ("docs/project-map.md", True), ("docs/lessons.md", False))
+
 PREFIXES = ("app/", "continent-app/", "pipeline/", "supabase/", "infra/", "scripts/",
-            "tools/", "reports/", "src/", "docs/", "Execution/", "tests/", ".github/",
-            "archive/", "cache/", "public/", "logs/", "data/", "config/", "functions/",
-            "workers/")
-ROOT_FILES = {"CLAUDE.md", "MAP.md", "ROADMAP.md", "PRODUCT.md", "DESIGN.md", "README.md",
-              "run_pipeline.py", "run_pipeline.bat", "requirements.txt", "requirements-ml.txt"}
+            "tools/", "reports/", "src/", "docs/", "tests/", ".github/", ".claude/", ".work/",
+            "cache/", "public/", "logs/", "data/", "config/", "functions/", "workers/",
+            "services/", "prompts/", "evals/", "ops/", "content/", "app_data/", "Trips/")
+ROOT_FILES = {"CLAUDE.md", "ROADMAP.md", "PRODUCT.md", "DESIGN.md", "README.md",
+              "run_pipeline.py", "run_pipeline.bat", "requirements.txt", "requirements-ml.txt",
+              "requirements-docs.txt", "constraints.txt", "mkdocs.yml"}
 # Throwaway build output and per-session folders: allowed to be missing.
 # Also paths that live only on the owner's laptop, never in git, so a fresh
 # checkout (CI) lacks them: the stale nested repo and the scheduler's logs
-# folder (T1061).
+# folder (T1061), and run folders, which are local.
 MAY_BE_ABSENT = {"dist/", "dist-data/", ".fastbuild/", "../.fastbuild", "node_modules/",
-                 "continent-app/.git", "logs/", "logs/pipeline_state.json"}
+                 "continent-app/.git", "logs/", "logs/pipeline_state.json", ".work/.active", "data/raw",
+                 "cache/", "tools/trailslab/", "tools/brouter/"}
 # Named on purpose to say they do not exist, or names that are git tags, not paths.
-INTENTIONALLY_ABSENT = {"pipeline/schema.py", "archive/execution-full-2026-11-03"}
+INTENTIONALLY_ABSENT = {"pipeline/schema.py", "archive/execution-full-2026-11-03",
+                        "archive/execution-2026-11-11"}
 
-PATH_RE = re.compile(r"(?<![\w./-])((?:%s)[A-Za-z0-9_./{}*<>-]*|[A-Za-z0-9_.-]+\.(?:md|py|bat|txt))"
+PATH_RE = re.compile(r"(?<![\w./-])((?:%s)[A-Za-z0-9_./{}*<>-]*|[A-Za-z0-9_.-]+\.(?:md|py|bat|txt|yml))"
                      % "|".join(re.escape(p) for p in PREFIXES))
 
 
@@ -67,33 +75,36 @@ def exists(p: str) -> bool:
     return (ROOT / rel).exists() or (APP / rel).exists()
 
 
-def map_text() -> str:
-    text = (ROOT / "MAP.md").read_text(encoding="utf-8")
-    rows = [l for l in text.splitlines() if l.startswith("|")]
+def entry_text(path: Path, rows: bool) -> str:
+    text = path.read_text(encoding="utf-8")
     ticks = re.findall(r"`([^`]+)`", text)
-    return "\n".join(rows + ticks)
-
-
-def claude_text() -> str:
-    text = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
-    return "\n".join(re.findall(r"`([^`]+)`", text))
+    table = [line for line in text.splitlines() if line.startswith("|")] if rows else []
+    return "\n".join(table + ticks)
 
 
 def main() -> int:
     missing = []
     checked = 0
-    for name, text in (("MAP.md", map_text()), ("CLAUDE.md", claude_text())):
-        for p in sorted(candidates(text)):
+    names = []
+    for name, rows in ENTRY_FILES:
+        path = ROOT / name
+        if not path.exists():
+            continue
+        names.append(name)
+        for p in sorted(candidates(entry_text(path, rows))):
             checked += 1
             if not exists(p):
                 missing.append(f"{name}: {p}")
+    if checked == 0:
+        print("Entry points: no path checked; is CLAUDE.md or docs/project-map.md missing?")
+        return 1
     if missing:
         print("Entry points name paths that do not exist:")
         for m in missing:
             print("  " + m)
         print(f"{len(missing)} missing of {checked} checked.")
         return 1
-    print(f"Entry points OK: {checked} paths checked in MAP.md and CLAUDE.md.")
+    print(f"Entry points OK: {checked} paths checked in {', '.join(names)}.")
     return 0
 
 

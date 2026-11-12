@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Verify the weekly cadence on the CAX11 one task at a time (T048).
-# Task report: Execution/P3/T048-pipeline-cron-migration.md. The steps and the
+# Task report: T048. The steps and the
 # reason for their order are in weekly_tasks.txt next to this file.
 #
 # For one step it runs, from the repo root and inside the venv:
@@ -69,7 +69,7 @@ cmd_next() {
   while read -r s; do
     if [ "$(record_status "$s")" != "passed" ]; then echo "$s"; return 0; fi
   done < <(steps)
-  echo "all steps passed; next is the first full run (Execution/P3/_OPEN-hetzner.md)"
+  echo "all steps passed; next is the first full run (docs/owner/hetzner-box.md)"
 }
 
 marker_check() {

@@ -16,4 +16,4 @@ Ratings, beauty, taste, activities, prices, accommodation, transport, tolls, ima
 
 ## Publishing (owner steps)
 
-Nothing is published by CI. The owner reviews the output, creates the GitHub repo, uploads the files and posts. The Show HN draft is `Execution/P15/T1176-show-hn-draft.md`; post it only once the free part needs no signup.
+Nothing is published by CI. The owner reviews the output, creates the GitHub repo, uploads the files and posts. The Show HN draft is `T1176`; post it only once the free part needs no signup.

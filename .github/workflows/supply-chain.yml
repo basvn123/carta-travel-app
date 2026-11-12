@@ -6,7 +6,7 @@ name: supply-chain
 # - OSV-Scanner reads both lockfiles and every requirements file.
 # - SBOMs (CycloneDX) are built on tags, releases and manual runs only.
 # Actions are pinned to commit SHAs (tag in the comment beside each).
-# Baseline on 2026-11-05 is in Execution/P15/T1080-supply-chain.md.
+# Baseline on 2026-11-05 is in T1080.
 
 on:
   pull_request:

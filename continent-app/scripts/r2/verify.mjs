@@ -2,7 +2,7 @@
 // Verify the two R2 custom domains resolve and serve the expected object with
 // the expected Cache-Control. Exits non-zero if either check fails.
 //
-// Task: Execution/P3/T044-r2-bucket-and-domains.md
+// Task: T044
 // Run from continent-app/: node scripts/r2/verify.mjs
 //
 // This script needs no credentials. It only makes plain HTTPS requests to the

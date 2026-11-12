@@ -1,6 +1,6 @@
 # The trips layer (composed itineraries)
 
-Written for T1085 (ROADMAP B2) from `pipeline/trips/` and the wire in `continent-app/public/trips/`. The retired `archive/docs-2026-11/trips_layer.md` was not used as a source. Model version `MODEL_VERSION` = `trips_v1` (`pipeline/trips/trip_sources.py`).
+Written for T1085 (ROADMAP B2) from `pipeline/trips/` and the wire in `continent-app/public/trips/`. The retired `archive/execution-2026-11-11:archive/docs-2026-11/trips_layer.md` was not used as a source. Model version `MODEL_VERSION` = `trips_v1` (`pipeline/trips/trip_sources.py`).
 
 ## Not the journeys layer
 
@@ -65,7 +65,7 @@ Notable constants: `MIN_HIGHLIGHTS_PER_STOP` 3, `MAX_CHAIN_LEG_MIN` 300, `MAX_LO
 
 A card carries `id`, `rg` (region id), `cc`, `countries`, `abroad`, `archetype`, `scale`, `pace`, `days`, `nights`, `score`, `quality`, `themes`, `season`, `seasonBasis`, `transport`, `lat`, `lon`, `km`, `cities`, `outs`, `img`, `sights`, `why`, `warned`, `cost`, `follows`, `detail`. A full export (no `--countries`) deletes country files and `trip/` before rewriting, so a country that no longer qualifies loses its file. Hero choice (`hero_of`) goes in route order, skips destinations flagged in `data/reports/hero_images_audit.json`, and applies per trip overrides from `data/reports/trip_hero_patch.json`.
 
-Readers: `continent-app/src/lib/trips.js` (loader), `continent-app/scripts/verify_trips.mjs` (headless check), `continent-app/scripts/audit-trip-heroes.mjs`. Area doc: `docs/areas/trip-library.md`.
+Readers: `continent-app/src/lib/trips.js` (loader), `continent-app/scripts/verify_trips.mjs` (headless check), `continent-app/scripts/audit-trip-heroes.mjs`. Area doc: `docs/project-map.md`.
 
 ## State of the local wire
 

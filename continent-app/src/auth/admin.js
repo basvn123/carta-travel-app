@@ -194,7 +194,7 @@ export const adminAiUsage = (days = 30) =>
  * from a ledger with holes in it is a floor and not the answer.
  *
  * The Overview's OssThreshold card reads this (T270); the query is documented
- * in Execution/P2/T033-stripe-tax-and-oss.md.
+ * in T033.
  */
 export const adminOssThreshold = () => call('admin_oss_threshold');
 
@@ -382,7 +382,7 @@ export const adminListOverrides = (layer = null) =>
  *
  * The pipeline writes one row to pipeline_runs at the end of every run,
  * through a direct PostgREST insert with the service role key, from
- * wherever it happens to run (a laptop today; see Execution/P4/
+ * wherever it happens to run (a laptop today; see .work/INDEX.md
  * T072-pipeline-health-metrics.md for why this does not assume Hetzner).
  * This RPC only reads the most recent row.
  *

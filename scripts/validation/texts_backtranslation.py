@@ -20,7 +20,7 @@ one goes through four steps, so the native review starts with the worst:
    holds when its checks pass and the judge marks it supported, or, unflagged
    and not in the control, when its round trip passes.
 
-Research and reasons: Execution/P15/T1196-texts-validation.md.
+Research and reasons: T1196.
 
     python -I scripts/validation/texts_backtranslation.py keys          # once: the drafted keys from the T1170 commit
     python -I scripts/validation/texts_backtranslation.py prompts --out DIR

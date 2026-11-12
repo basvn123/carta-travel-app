@@ -4,8 +4,8 @@
 # the row names another, e.g. the x86 CPX42 the trailslab job needs.
 # CARTA_CLOUD_ARCHITECTURE.md section 6.2: "create -> cloud-init pulls the repo
 # and the inputs from R2 -> run -> push artifacts to R2 -> delete".
-# Task report: Execution/P3/T047-on-demand-cax41.md. Owner procedure:
-# Execution/P3/_OPEN-hetzner.md, steps 17 onward.
+# Task report: T047. Owner procedure:
+# docs/owner/hetzner-box.md, steps 17 onward.
 #
 # Runs on the CAX11 orchestrator, which has hcloud, rclone, python3 and the
 # secrets file (HCLOUD_TOKEN, RCLONE_CONFIG_R2_*). Runs on the laptop too with

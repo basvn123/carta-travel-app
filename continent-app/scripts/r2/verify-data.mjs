@@ -2,7 +2,7 @@
 /**
  * verify-data.mjs, prove the data host serves the staged tree correctly.
  *
- * Task: Execution/P3/T054-wire-shards-to-r2.md
+ * Task: T054
  * Run from continent-app/ with the staged tree in dist-data/:
  *
  *   node scripts/r2/verify-data.mjs                 sample every entry on the live host

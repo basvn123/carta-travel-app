@@ -8,7 +8,7 @@
  *        candidates: [{ id, name, score, sim, alias, kind, label }],
  *        didYouMean: [{ id, name, score }], confident, iata }
  *
- * How (Execution/P15/T1153-place-linking.md, research section):
+ * How (T1153, research section):
  *  1. Clean the mention: fold, drop booking and trip words, read IATA codes
  *     and a country name written in it.
  *  2. Candidates: exact alias keys over every window of up to four words,

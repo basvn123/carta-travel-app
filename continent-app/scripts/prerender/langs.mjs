@@ -12,7 +12,7 @@
  * REVIEWED names its language and kind: the chrome (strings.mjs) and the lead
  * sentences (the app catalogues, T1170) are machine-drafted until a native
  * speaker has read them, and Google's scaled-content policy treats unreviewed
- * automated translation as thin (research in Execution/P15/T1212). Until then
+ * automated translation as thin (research in T1212). Until then
  * a language page ships noindex,follow, carries no hreflang, stays out of the
  * sitemap, and its English page does not name it as an alternate (an hreflang
  * set only lists indexable pages). Adding a kind to REVIEWED is the switch

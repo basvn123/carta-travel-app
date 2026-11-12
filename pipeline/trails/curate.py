@@ -68,7 +68,7 @@ Curating 15,000 routes by hand was never going to happen, and shipping 545 was
 the alternative.
 
 THE PUBLISH THRESHOLD IS NOT A NUMBER, and this is the place it is written
-down (ROUTES.md R5 asked for it here and in docs/TRAILS.md). Nothing in this
+down (ROUTES.md R5 asked for it here and in archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md). Nothing in this
 layer publishes because it scored above a line. A route publishes when it
 
   1. passes the HARD gates, each of which is a fact about the route rather

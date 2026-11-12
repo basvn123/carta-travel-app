@@ -4,7 +4,7 @@
  * Every key block of a destination carries `_asof`, the YYYY-MM-DD date its
  * pipeline layer last built it (T1143, lib/provenance.js). It is the build
  * date, not the source's own vintage (T1143-d), so the words say "refreshed",
- * never "checked" or "as of": research in Execution/P15/T1208-trust-visible.md.
+ * never "checked" or "as of": research in T1208.
  *
  * A figure made of several blocks (a day price is food and the bed) is as old
  * as its oldest block. Past STALE_DAYS for its kind the screen adds a quiet

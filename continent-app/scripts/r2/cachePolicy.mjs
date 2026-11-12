@@ -1,7 +1,7 @@
 /**
  * cachePolicy.mjs, the Cache-Control each data-host entry is uploaded with.
  *
- * Task: Execution/P3/T054-wire-shards-to-r2.md
+ * Task: T054
  *
  * R2 serves whatever Cache-Control an object was written with; it has no
  * _headers file. So the policy is read from public/_headers, the file Pages

@@ -10,7 +10,7 @@ replace v4's highlights and Blue Flag beach.
 - the POI rate quota holds (12% at rate 3)
 
 Depth and beauty v2 are not live yet (config depth.live, beauty.live; see
-Execution/_OPEN.md T756-a), so these run on the shadow computation that the
+row T756-a), so these run on the shadow computation that the
 switch would turn on.
 
 Runs under pytest, or standalone: python tests/test_rating_inputs.py

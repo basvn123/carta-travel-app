@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The Linux successor of run_pipeline.bat (T048). One scheduled pipeline run on
 # the Carta orchestrator, the Hetzner CAX11 of infra/hetzner/cax11.
-# Task report: Execution/P3/T048-pipeline-cron-migration.md.
+# Task report: T048.
 #
 # weekly.sh calls this from the systemd timer; the owner can run it by hand.
 # What it does, in order, and why each step sits here rather than in

@@ -1,6 +1,6 @@
 # Cross-layer joins (`nb`)
 
-Written for T1085 (ROADMAP B2) from `pipeline/joins/neighbours.py` (397 lines, the only file in `pipeline/joins/`) and its readers in `continent-app/src/`. The retired `archive/docs-2026-11/JOINS.md` was not used as a source.
+Written for T1085 (ROADMAP B2) from `pipeline/joins/neighbours.py` (397 lines, the only file in `pipeline/joins/`) and its readers in `continent-app/src/`. The retired `archive/execution-2026-11-11:archive/docs-2026-11/JOINS.md` was not used as a source.
 
 ## What it does
 

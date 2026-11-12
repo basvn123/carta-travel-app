@@ -11,7 +11,7 @@ Fails when the docs no longer say what the code does.
 | `logic` | A constant named in `docs/logic/*.md` (`- Constant:` lines) no longer exists in the file the entry names, or the entry gives a plain value (`= 7`, `= 0.6`, `= [5, 6]`, `= "priority"`) and the code or config holds another. Config keys such as `request.default_nights` are read from the JSON (`rules[key].value` in `pricing.json`, nested keys elsewhere). Line numbers are not checked. |
 | `tests` | A test named in `docs/logic/*.md` (`` `path` :: "name" ``) is no longer in that file, or the file is gone. |
 | `schema` | `docs/SCHEMA.md`'s wire table and `docs/wire.schema.json` disagree (runs `continent-app/scripts/ci/wire-table.mjs`; needs node). |
-| `entry` | `CLAUDE.md` or `MAP.md` names a path that does not exist (runs `scripts/docs/check_entry_points.py`). |
+| `entry` | `CLAUDE.md`, `docs/project-map.md` or `docs/lessons.md` names a path that does not exist (runs `scripts/docs/check_entry_points.py`). |
 
 ```
 python -I scripts/docs/drift.py                      # all four; exit 1 on new drift

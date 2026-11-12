@@ -3,7 +3,7 @@
 # Linux twin of scripts/stays_scrape.bat, so the March and September scrape
 # (T532) does not need the owner's laptop.
 #
-# Where it runs, by site (research and decision: Execution/P15/T1161-no-laptop-steps.md):
+# Where it runs, by site (research and decision: T1161):
 #   hostelworld  the build box. One plain browser tab, headless, as on the
 #                laptop. Whether Hostelworld serves a datacenter address is not
 #                proven yet: the owner's first test is a one-town run (--only).

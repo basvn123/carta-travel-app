@@ -21,7 +21,7 @@ const HomeStory = React.lazy(() => import('./HomeStory.jsx'));
  * The home page, rebuilt from scratch (T606 batch, owner 2026-10-23: "throw
  * away everything existing on the main page and start from scratch"; the plan
  * is the claude.ai artifact 2Jbd2LipGXYFMryXLzf6VW, the research and the
- * owner's twelve decisions are Execution/P15/T605-home-research.md).
+ * owner's twelve decisions are T605).
  *
  * It says one thing, "A cheap flight is not a cheap trip", and then shows it:
  *

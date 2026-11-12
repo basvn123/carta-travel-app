@@ -16,7 +16,7 @@ must stay out.
 
 This step routes each remaining break with BRouter (tools/brouter, the stock
 `hiking-mountain` profile, as the house `carta-hiking` since T1201; research in
-Execution/P15/T1183-trail-continuity.md)
+T1183)
 and publishes the route only when EVERY break closes within the limits below.
 A route that fails any limit is left exactly as it was, and the reason is
 kept: in validation_runs (check_name `route_bridge`) and in the run report

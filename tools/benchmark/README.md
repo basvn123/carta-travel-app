@@ -2,7 +2,7 @@
 
 Scores the cost engine's bed and food figures against data it never read,
 and writes an accuracy figure with a confidence interval. Built by T096; the
-report in `Execution/P5/T096-ground-cost-benchmark.md` explains the design
+report in `T096` explains the design
 choices and what the first run found.
 
 ## What it compares

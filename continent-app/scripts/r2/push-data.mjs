@@ -2,7 +2,7 @@
 /**
  * push-data.mjs, upload the staged data tree to R2 under data/.
  *
- * Task: Execution/P3/T054-wire-shards-to-r2.md
+ * Task: T054
  * Run from continent-app/ after a build with VITE_DATA_BASE set, which leaves
  * the tree in dist-data/ (scripts/r2/stage-data.mjs):
  *

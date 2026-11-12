@@ -1,5 +1,5 @@
 {
- "_note": "Synthetic card texts in the shape CARDS_JS returns, built from the journal's price_text values (T1074). No page was saved by the scraper; replace with a real capture from the box when one exists (Execution/P15/_OPEN-scraper-health.md).",
+ "_note": "Synthetic card texts in the shape CARDS_JS returns, built from the journal's price_text values (T1074). No page was saved by the scraper; replace with a real capture from the box when one exists (docs/owner/scraper-health.md).",
  "cards": [
   {
    "href": "/hostels/p/287532/example-hostel/",

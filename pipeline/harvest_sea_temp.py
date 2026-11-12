@@ -1,6 +1,6 @@
 """Monthly water temperature per beach and per coastal destination.
 
-Tier: On demand (T641; the full run is T640's, see Execution/P15)
+Tier: On demand (T641; the full run is T640's, see .work/INDEX.md)
 
 Source: NASA JPL MUR SST v4.1 (GHRSST Level 4, 0.01 degree), the monthly mean
 product served by NOAA CoastWatch ERDDAP (dataset jplMURSST41mday). Public

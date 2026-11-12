@@ -24,7 +24,7 @@
  * It does not touch the database. The funnel's actual numbers (shown counts
  * matching generated traffic, conversion rates, the live-versus-local state
  * of migration 022) were checked by hand against a local Supabase stack for
- * T034 and are written up in Execution/P2/T034-paywall-funnel-instrumentation.md,
+ * T034 and are written up in T034,
  * because a script here has no database to query against in CI and nothing
  * currently runs this in CI regardless (see CLAUDE.md: tests are not wired to
  * CI). What this script can check without a database, it checks on every run.

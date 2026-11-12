@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Offline checks for the on-demand CAX41 flow (T047). Runs on the laptop in Git
 # Bash or on any Linux shell; needs no token, no Hetzner account and no R2.
-# Task report: Execution/P3/T047-on-demand-cax41.md.
+# Task report: T047.
 #
 #   bash infra/hetzner/cax41/verify.sh
 #

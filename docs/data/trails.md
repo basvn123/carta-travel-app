@@ -1,6 +1,6 @@
 # Trails and cycling data layer
 
-Written by T1085 (ROADMAP B2) from the code, not from the retired docs in `archive/docs-2026-11/`. Every number below names the constant or key behind it. Where the code could not be checked here the line says "not verified". The product rules are in `docs/HANDBOOK.md` (sections "Trails: finding and choosing walks", "Trail rating (0 to 10)", "Trail difficulty", "Cycling routes and the cycle page"); this file is the data-side map. Area doc: `docs/areas/trails-cycling.md`.
+Written by T1085 (ROADMAP B2) from the code, not from the retired docs in `archive/execution-2026-11-11:archive/docs-2026-11/`. Every number below names the constant or key behind it. Where the code could not be checked here the line says "not verified". The product rules are in `docs/HANDBOOK.md` (sections "Trails: finding and choosing walks", "Trail rating (0 to 10)", "Trail difficulty", "Cycling routes and the cycle page"); this file is the data-side map. Area doc: `docs/project-map.md`.
 
 ## What the layer is
 
@@ -17,7 +17,7 @@ The lab is the store of record. The app ships static JSON written by the export 
 - The Geofabrik extracts under data/raw/geofabrik (multi-GB, quarterly download by `pipeline/trails/ingest_osm_routes.py`). `trails_fields` needs at least 20 of them (`guard_trailslab_extracts`).
 - Copernicus GLO-30 tiles (`BUCKET_DEFAULT` in `pipeline/trails/elevation.py`, data/raw/dem on disk, `--evict-gb 4` bounds it), Overpass (`scenic.py`), Wikimedia Commons (`trail_images.py`, `cycle_images.py`).
 - Local routers for repair: Valhalla (`tools/trailslab/valhalla/prepare.py`, one country at a time, `pipeline/trails/repair.py`) and BRouter (`tools/brouter/prepare.py`, port 17777, `pipeline/cycling/bridge_gaps.py`, guard `guard_brouter_up`).
-- On the build box the same work runs through `infra/hetzner/cax41/trailslab_worker.py` (task `trailslab_worker`, weekly cadence, spawns only when the last good run is 28 days old; needs `CARTA_TRAILSLAB_WORKER=1`, `HCLOUD_TOKEN`, R2 and a worker key). Owner steps: `Execution/P15/_OPEN-explore-data-runs.md`.
+- On the build box the same work runs through `infra/hetzner/cax41/trailslab_worker.py` (task `trailslab_worker`, weekly cadence, spawns only when the last good run is 28 days old; needs `CARTA_TRAILSLAB_WORKER=1`, `HCLOUD_TOKEN`, R2 and a worker key). Owner steps: `docs/owner/explore-data-runs.md`.
 - State of this checkout (2026-11-05): no data/raw and no cache/regions directory; `cache/` holds only trail fame inputs (`cache/trail_pageviews.json`, `cache/trails_osm_fame.json`, `cache/trails_wikidata_famous.json`, `cache/trail_wikivoyage.json`). No lab, so none of the chains below can be re-run here. Only `pipeline/trails/export_stubs.py` and `pipeline/trails/difficulty_gate.py` read wire files and the registry without the lab.
 
 ## The trails chain, in order

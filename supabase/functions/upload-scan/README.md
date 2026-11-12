@@ -8,7 +8,7 @@ No AI is called. Nothing is public until an admin publishes.
 
 ## Deploy (owner)
 
-The full ordered procedure is `Execution/P15/_OPEN-uploads.md`. In short:
+The full ordered procedure is `docs/owner/uploads.md`. In short:
 
 ```
 supabase secrets set UPLOADS_SCAN_SECRET=<a long random string>

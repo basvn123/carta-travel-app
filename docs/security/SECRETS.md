@@ -1,6 +1,6 @@
 # Secrets and owner accounts
 
-Every secret Carta depends on, where it lives, what reads it and what a leak would cost. Names and places only: no value is ever written here, in a report or in chat. Built by T1059 (ROADMAP C2) on 2026-11-05 from the code, the workflows and the example env files. The owner's rotation and MFA steps are in `Execution/P15/_OPEN-secrets-rotation.md`.
+Every secret Carta depends on, where it lives, what reads it and what a leak would cost. Names and places only: no value is ever written here, in a report or in chat. Built by T1059 (ROADMAP C2) on 2026-11-05 from the code, the workflows and the example env files. The owner's rotation and MFA steps are in `docs/owner/secrets-rotation.md`.
 
 Keep it true: a task that adds, renames or moves a secret updates its row in the same commit.
 
@@ -72,7 +72,7 @@ Keep it true: a task that adds, renames or moves a secret updates its row in the
 
 A value naming the Claude API (`anthropic`, `claude`) is refused as a config error.
 
-**Rotating the upload scan secret (T1081).** `UPLOADS_SCAN_SECRET` and the vault secret `uploads_scan_secret` hold one value and must change together, or every scheduled run is refused with 401 and uploads wait in pending. Make a new long random string, then in one sitting: set it as the Edge Function secret (Dashboard, Edge Functions, Secrets, or `supabase secrets set`), then update the vault row (`select vault.update_secret(id, '<new>') from vault.secrets where name = 'uploads_scan_secret'` in the SQL editor), then confirm the next quarter-hour run answers 200 in the function logs. A run that falls between the two steps fails once and is retried by the next. Rotate on any suspected exposure and at least yearly; `uploads_scan_url` changes only if the project or the function name does. The setup order is `Execution/P15/_OPEN-uploads.md`.
+**Rotating the upload scan secret (T1081).** `UPLOADS_SCAN_SECRET` and the vault secret `uploads_scan_secret` hold one value and must change together, or every scheduled run is refused with 401 and uploads wait in pending. Make a new long random string, then in one sitting: set it as the Edge Function secret (Dashboard, Edge Functions, Secrets, or `supabase secrets set`), then update the vault row (`select vault.update_secret(id, '<new>') from vault.secrets where name = 'uploads_scan_secret'` in the SQL editor), then confirm the next quarter-hour run answers 200 in the function logs. A run that falls between the two steps fails once and is retried by the next. Rotate on any suspected exposure and at least yearly; `uploads_scan_url` changes only if the project or the function name does. The setup order is `docs/owner/uploads.md`.
 
 ## Data source keys (pipeline)
 

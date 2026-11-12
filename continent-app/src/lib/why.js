@@ -13,7 +13,7 @@
  * No evidence, no chip. A node the traveller said Not me to (or anything
  * under it) never shows. Confidence is said in words, never as a percent:
  * the tagger's score is not a calibrated probability (research in
- * Execution/P15/T1208-trust-visible.md).
+ * T1208).
  *
  *   score >= STRONG (0.75, the tagger's filter threshold)   'strong'
  *   score >= LIKELY (0.6, the tagger's profile threshold)   'likely'

@@ -2,7 +2,7 @@
 # The worker side of an on-demand CAX41 run (T047). The worker's cloud-init
 # (infra/hetzner/cax41/cloud-init.yaml) installs rclone, makes a sparse clone
 # and then runs this script once. It never runs on the orchestrator.
-# Task report: Execution/P3/T047-on-demand-cax41.md.
+# Task report: T047.
 #
 #   worker.sh <job> <run_id> [job args...]
 #

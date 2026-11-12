@@ -18,7 +18,7 @@ from pipeline.tasks.outdoor import guard_beaches, guard_mountains
 TASKS = [
     # ---- explore data fill (T640 to T642): the box runs these through --also ---- #
     # List order is run order, and it is the order of
-    # Execution/P15/_OPEN-explore-data-runs.md: transit lines and the car rule,
+    # docs/owner/explore-data-runs.md: transit lines and the car rule,
     # airports (reads the GTFS feeds transit_lines fetched), sea temperature
     # (read by climate_daily and beach_context), climate, the three nature
     # layers, the destination overlays the dossier reads, then the dossier.

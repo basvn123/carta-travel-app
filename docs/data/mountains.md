@@ -1,6 +1,6 @@
 # Mountains data layer
 
-Written by T1085 (ROADMAP B2) from the code in `pipeline/mountains/`, not from the retired `archive/docs-2026-11/MOUNTAINS.md`. Constants are named so they can be grepped. Anything not checked is marked "not verified". Rules for the traveller: `docs/HANDBOOK.md` section "Mountains and peaks". Area doc: `docs/areas/outdoors.md`.
+Written by T1085 (ROADMAP B2) from the code in `pipeline/mountains/`, not from the retired `archive/execution-2026-11-11:archive/docs-2026-11/MOUNTAINS.md`. Constants are named so they can be grepped. Anything not checked is marked "not verified". Rules for the traveller: `docs/HANDBOOK.md` section "Mountains and peaks". Area doc: `docs/project-map.md`.
 
 ## What the layer is
 

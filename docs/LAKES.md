@@ -173,7 +173,7 @@ card thumbnail. Place lines come from the spine via
   anything in `pipeline/lakes`.
 - `node continent-app/scripts/verify_lakes.mjs` against the wire.
 - App side: `continent-app/src/lib/lakeStory.js` (sentences) and the Lakes
-  category screens, documented in `docs/areas/outdoors.md`.
+  category screens, documented in `docs/project-map.md`.
 
 ## Not verified here
 

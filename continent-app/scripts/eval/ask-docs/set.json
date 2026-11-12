@@ -297,8 +297,8 @@
    "lang": "en",
    "answerable": true,
    "gold": {
-    "path": "areas/flights.md",
-    "anchor": ""
+    "path": "HANDBOOK.md",
+    "anchor": "flights-and-fares-in-the-app-swept-and-live"
    }
   },
   {
@@ -307,8 +307,8 @@
    "lang": "en",
    "answerable": true,
    "gold": {
-    "path": "areas/stays.md",
-    "anchor": ""
+    "path": "HANDBOOK.md",
+    "anchor": "stays-the-booking-and-hostelworld-scrape"
    }
   },
   {
@@ -317,8 +317,8 @@
    "lang": "en",
    "answerable": true,
    "gold": {
-    "path": "areas/pass-paywall.md",
-    "anchor": ""
+    "path": "HANDBOOK.md",
+    "anchor": "the-pass-paywall-and-stripe-checkout"
    }
   },
   {

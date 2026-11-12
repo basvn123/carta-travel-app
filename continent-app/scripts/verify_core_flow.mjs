@@ -9,8 +9,8 @@
 //
 // Build (fast build) and serve it with the data, then
 //   node scripts/verify_core_flow.mjs <shotdir> [width] [base]
-// e.g. node ../Execution/P15/T840-T843-walk/serve-a.mjs ../.fastbuild public 5871
-//      PW_CHROMIUM=/opt/pw-browsers/chromium node scripts/verify_core_flow.mjs ../Execution/P15/T1123-shots 390 http://localhost:5871
+// e.g. node scripts/serve_static.mjs ../.fastbuild public 5871
+//      PW_CHROMIUM=/opt/pw-browsers/chromium node scripts/verify_core_flow.mjs ../.work/shots/T1123 390 http://localhost:5871
 //      (add --skip-setup-reload on a base build to reach checks 3 to 5)
 // Exits 1 on a failed check. Screenshots go to the shot folder (gitignored).
 import fs from 'node:fs';

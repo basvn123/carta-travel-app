@@ -28,7 +28,7 @@ export function checkStaleNestedGit(repoRoot = REPO_ROOT) {
   return {
     level: 'warn',
     msg: 'stale continent-app/.git exists (no remote, stuck at T915): commit app work in the root repo only; '
-      + 'the owner removes it (Execution/P15/T1162-scripted-ship.md, owner step T1162-a)',
+      + 'the owner removes it (T1162, owner step T1162-a)',
   };
 }
 

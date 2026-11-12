@@ -4,7 +4,7 @@
 // old fare logic in T511.)
 //
 // The pipeline runs on the owner's laptop today, not on a server anyone else
-// watches (Execution/P3, T046 to T048, moved the Hetzner infra code but not
+// watches (.work/INDEX.md, T046 to T048, moved the Hetzner infra code but not
 // the run itself). This card is why that stops mattering silently: a run
 // that failed, or a run that never happened this week, now shows on a
 // screen someone actually opens instead of scrolling past in a terminal.

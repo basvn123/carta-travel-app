@@ -5,7 +5,7 @@
 # once done it only logs that. infra/hetzner/cron/install.sh installs it.
 # T915-T917: before the late fill it runs the gap search and the January and
 # February fill, each once (workers/late-sweep/run.mjs --fill).
-# Task reports: Execution/P11/T819-late-fill.md, Execution/P11/T915-T917-sweep-gaps.md.
+# Task reports: T819, T915-T917.
 [Unit]
 Description=Carta flight sweep, late tier one-time fill (T819)
 Wants=network-online.target

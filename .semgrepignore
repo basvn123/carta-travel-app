@@ -4,10 +4,8 @@ dist/
 dist-data/
 .fastbuild/
 node_modules/
-archive/
 cache/
 continent-app/public/
-Execution/
 tools/
 .claude/
 Trips/

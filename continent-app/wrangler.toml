@@ -13,7 +13,7 @@
 # paths in public/_routes.json reach it; everything else stays pure static
 # serving, as before.
 #
-# See Execution/P1/T024-cloudflare-pages-migration.md for the cut-over runbook,
+# See T024 for the cut-over runbook,
 # including the DNS steps, which cannot be done from this file.
 
 name = "carta-app"

@@ -1,6 +1,6 @@
 # Runbook: refund
 
-Owner and only decider: Bas. Rewritten by T1086 (ROADMAP B2) from `archive/docs-2026-11/REFUND_SOP.md` (T217), checked against the migrations, `supabase/functions/stripe-webhook/index.ts`, `continent-app/src/lib/pricing.js` and the Refunds section of `continent-app/src/components/TermsOfService.jsx`. If that Terms section changes, this page changes with it. Dashboard clicks (Stripe, Supabase, Admin panel) were not re-verified; the SQL objects and files were.
+Owner and only decider: Bas. Rewritten by T1086 (ROADMAP B2) from `archive/execution-2026-11-11:archive/docs-2026-11/REFUND_SOP.md` (T217), checked against the migrations, `supabase/functions/stripe-webhook/index.ts`, `continent-app/src/lib/pricing.js` and the Refunds section of `continent-app/src/components/TermsOfService.jsx`. If that Terms section changes, this page changes with it. Dashboard clicks (Stripe, Supabase, Admin panel) were not re-verified; the SQL objects and files were.
 
 ## What the code does and does not do
 

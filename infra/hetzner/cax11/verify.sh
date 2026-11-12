@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Check a provisioned Carta orchestrator from the laptop, over SSH.
-# Task report: Execution/P3/T046-cax11-orchestrator.md.
+# Task report: T046.
 #
 # Usage:
 #   bash infra/hetzner/cax11/verify.sh <host>

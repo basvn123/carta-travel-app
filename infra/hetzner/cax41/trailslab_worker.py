@@ -263,7 +263,7 @@ def why_not():
     """None when the task can run, else the reason it skips."""
     if os.environ.get("CARTA_TRAILSLAB_WORKER") != "1":
         return ("CARTA_TRAILSLAB_WORKER is not 1: the trailslab worker is off "
-                "(owner steps: Execution/P15/_OPEN-explore-data-runs.md, T647)")
+                "(owner steps: docs/owner/explore-data-runs.md, T647)")
     if os.name == "nt":
         return "this is a Windows machine; the worker is spawned from the orchestrator"
     if not os.environ.get("HCLOUD_TOKEN"):

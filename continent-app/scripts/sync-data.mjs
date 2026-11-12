@@ -344,7 +344,7 @@ console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations
 // file per language, so the main wire carries English only (rating.why). The
 // hand reasons (curated_why_i18n.json) win over the rubric's
 // (rubric_appeal.json), as they do for the English one. T762 measured inline
-// against lazy; the numbers are in Execution/P7/T761-T762-rating-v5-profile.md.
+// against lazy; the numbers are in T761-T762.
 {
   const WHY_LANGS = ['nl', 'de', 'fr', 'es', 'it'];
   {
@@ -374,7 +374,7 @@ console.log(`[sync-data] core dataset -> public/app_data.json (${n} destinations
 }
 
 // The boot index and the per-country records (CARTA_CLOUD_ARCHITECTURE.md
-// 5.2, Execution/P3/T054-wire-shards-to-r2.md). The core above grows by
+// 5.2, T054). The core above grows by
 // ~3.2 KB per destination, ~80 MB at the 25,000 the price map targets, and
 // the app used to download all of it as one file before its first paint.
 // The boot index keeps only what places a destination on the map; the rest

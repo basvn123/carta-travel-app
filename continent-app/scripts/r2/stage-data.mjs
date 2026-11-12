@@ -3,7 +3,7 @@
  * stage-data.mjs, the postbuild step that splits dist/ into what Pages serves
  * and what R2 serves (CARTA_CLOUD_ARCHITECTURE.md 5.2).
  *
- * Task: Execution/P3/T054-wire-shards-to-r2.md
+ * Task: T054
  * Runs automatically after `npm run build` (the postbuild hook). By hand:
  *   node scripts/r2/stage-data.mjs [--dist dist] [--out dist-data]
  *
