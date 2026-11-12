@@ -112,12 +112,12 @@ Same key list for every language; the Dutch list is shorter because it already h
 
 - Resolved (T1210): `day.place`, `day.poiDepthNote` and `day.townDepthNote` were cut-off fragments with no code reference; the three dead keys were removed from all six catalogues.
 - Resolved (owner sweep 2026-11-12): the three Italian `notfor.*` strings with masculine forms (`lakeSwimNo`, `lakeCurrent`, `trailGrade`) were rewritten gender-neutral.
-- Registers: nl je, de du, fr vous, es tu, it tu. Decided in the owner sweep of 2026-11-12: French is vous everywhere (907 strings already were); the 103 tu strings (home, wizard, ask, travel, trip, chat) were rewritten. Exception: example queries the traveller types to Carta (`ask.placeholderPlan`, `ask.ex.plan`, `askChat.fu.plan`, `dayws.botPlan`, `bot.s.plan`) stay in the traveller's own voice.
+- Registers: nl je, de du, fr vous, es tu, it tu. Decided in the owner sweep of 2026-11-12: French is vous everywhere (907 strings already were); the 104 tu strings (home, wizard, ask, travel, trip, chat) were rewritten. Exception: the example queries typed to Carta (`ask.placeholderPlan`, `ask.ex.plan`, `askChat.fu.plan`, `dayws.botPlan`, `bot.s.plan`) keep the tu imperative a person uses when typing.
 
 ## Owner sweep audit (2026-11-12)
 
-A scripted audit of all six catalogues (10,219 keys each; scripts in the run folder `.work/2026-11-12-owner-review/`) found no missing keys, no empty strings and no English left in a translation outside loanwords (Trail running, Road trip, Power bank). It fixed:
-- **Stripped diacritics:** 774 strings had been written without accents or ß ("etapes", "Fuhrt uber", "Strasse", "mas", "piu"): de 127, es 220, fr 346, it 67, nl 14. Only the diacritics changed, nothing else in the wording.
+A scripted audit of all six catalogues (10,219 keys each: key parity, placeholders, empty values, English function words, strings identical to English, accent-stripped words checked against the accented forms the same catalogue uses) found no missing keys, no empty strings and no English left in a translation outside loanwords (Trail running, Road trip, Power bank). It fixed:
+- **Stripped diacritics:** 837 strings had been written without accents, ß or the opening ¿ ("etapes", "Fuhrt uber", "Strasse", "dia", "piu"): de 127, es 283, fr 346, it 67, nl 14. Only the diacritics changed, nothing else in the wording. The scan works by word lists, so a native reader may still find a few.
 - **The shortlist word:** one word per language for the starred list (de Merkliste, es favoritos, fr favoris, it preferiti, nl favorieten); before, es, fr, it and nl mixed "preselección/présélection/shortlist/verlanglijst/lijstje" (T411-n).
 - **Every row in "Fix these first" below**, and the borderline rows marked fixed there.
 - Kept on purpose: `open.trail.sub` and `cov.reason.wayOnly` drop their `{country}` / `{things}` placeholder because the English country or noun cannot be inflected in the sentence ("in der Schweiz", "au Portugal"); short Intl month names stay lowercase with a period, as each locale writes them (T507-e).
