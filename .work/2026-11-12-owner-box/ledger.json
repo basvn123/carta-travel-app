@@ -185,7 +185,7 @@
  {
   "id": "T1130-f",
   "outcome": "obsolete",
-  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP H9/I16)",
+  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP I16)",
   "also_in": [
    "docs/owner/unsorted.md"
   ]
@@ -482,7 +482,7 @@
  {
   "id": "T1175-b",
   "outcome": "obsolete",
-  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP H9/I16)",
+  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP I16)",
   "also_in": [
    "docs/owner/unsorted.md"
   ]
@@ -779,7 +779,7 @@
  {
   "id": "T103-a",
   "outcome": "obsolete",
-  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP H9/I16)",
+  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP I16)",
   "also_in": [
    "docs/owner/owner-checks.md"
   ]
@@ -1066,7 +1066,7 @@
  {
   "id": "T645-a",
   "outcome": "obsolete",
-  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP H9/I16)",
+  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP I16)",
   "also_in": [
    "docs/owner/unsorted.md"
   ]

@@ -1,6 +1,6 @@
 # Explore data fill: what the Monday run on the Hetzner box does (T640)
 
-This replaces the draft hand-run procedure of phase A. The owner decided (2026-10-23) that no step of the batch is run by hand: every step is a registered task in `run_pipeline.py`, and the weekly run on the Hetzner box (`carta-weekly.timer`, Monday 09:00 Europe/Brussels) runs them by itself by itself. The first runs were 2026-10-26 and later Mondays; the schedule tiers of T1107 run the same tasks.
+This replaces the draft hand-run procedure of phase A. The owner decided (2026-10-23) that no step of the batch is run by hand: every step is a registered task in `run_pipeline.py`, and the weekly run on the Hetzner box (`carta-weekly.timer`, Monday 09:00 Europe/Brussels) runs them by itself. The first runs were 2026-10-26 and later Mondays; the schedule tiers of T1107 run the same tasks.
 
 ## How the box selects the batch
 

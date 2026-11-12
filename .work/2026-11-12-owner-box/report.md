@@ -8,7 +8,7 @@ Status: done (one judge loop; fixes applied, see "Verification").
 
 ## What changed
 
-All 162 steps in the box slice of the owner walkthrough, plus every step in the six box-owned owner files (196 ids in all), were checked against the live Hetzner box, R2, the flight-sweep Worker and the repo. Each one has an outcome in `ledger.json` (not committed, run folder).
+All 162 steps in the box slice of the owner walkthrough, plus every step in the six box-owned owner files (196 ids in all), were checked against the live Hetzner box, R2, the flight-sweep Worker and the repo. Each one has an outcome in `ledger.json` (committed in the run folder).
 
 | Outcome | Count |
 |---|---|
@@ -100,6 +100,8 @@ Not touched: `carta-catchup-3` (running the quarterly chain since 2026-11-11), t
   - two dangling references in `explore-data-runs.md` removed
   - the prune decision recorded in the HANDBOOK
   - the `SCHEMA` line added to `checks.md`
+
+- Judge 2 (`judgement-2.md`) found nine of ten fixed; its remaining fixes (T1182-b and T280-a named in H9; T645-a, T103-a, T1175-b, T1130-f named in I16; a doubled phrase; the stays-box count; the Postgres start wait; these numbers) were applied without a third judge loop, since they are wording only. Criterion 3 stays at 4 by its own account: the takedown `add` ran while the catch-up held the lock; it changed no wire file and deleted no object, and that is accepted here.
 
 ## How to undo
 
