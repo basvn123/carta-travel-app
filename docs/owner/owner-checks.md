@@ -36,7 +36,7 @@ Rows: 25 steps, covering 32 of the original rows.
 
 ## Checks Claude can do but the 2026-11-12 sweep did not reach
 
-22. **T286-e** Destination PDF guide. Run locally with `?paymock`, download the guide for a place near trails (Valbona Valley), and read the "around" rows.
-23. **T335-c** Maintenance screen and announcement bar. Run locally with `?paymock` and a maintenance flag, and look at both at 375 and 1440 px.
+22. **T286-e** Destination PDF guide. Run locally with `?paymock`, download the guide for a place near trails (Valbona Valley), and read the "around" rows. Done when every around row names a real nearby place with a believable distance.
+23. **T335-c** Maintenance screen and announcement bar. Run locally with `?paymock` and a maintenance flag, and look at both at 375 and 1440 px. Done when both show, read correctly, and cover nothing they should not.
 24. **T430-a** With network access, at 375 and 1440 px, open Lake Bled (`#lake=si-lake-bled-Q648902&lc=SI`) and Rome (`#dest=FCO`): swipe the gallery and a rail of tiles, open the 3D terrain view, and export the PDF. Done when every photo loads and the PDF carries photographs. On the same walk, look at the credit fold ("Where this comes from") on a destination with routes; T313-a never saw it in a browser.
 25. **T168-b** The 20 px pack icons (`src/components/PackIcons.jsx`, shown by `PackGrid.jsx` on a trip page's packing list, e.g. `#journey=es-pilgrim-camino-sarria-santiago`). Look at each icon at 20 px and at 4x zoom. Done when every icon reads at 20 px with no clipped strokes; list the bad ones as `icon name: problem`.

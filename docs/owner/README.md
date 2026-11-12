@@ -32,4 +32,4 @@ How to use it:
 | `docs/owner/paid-runs.md` | paid runs, last in the order | procedure |
 | `docs/owner/unsorted.md` | owner steps no procedure covered yet | 302 |
 
-Counts are from 2026-11-11, when these files moved here from `Execution/`.
+Counts are from 2026-11-11, when these files moved here from `Execution/`; owner-checks and translation-review were recounted on 2026-11-12 (owner sweep).

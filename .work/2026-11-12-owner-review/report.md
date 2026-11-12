@@ -71,7 +71,7 @@ Most "human" entries are walkthrough rows in other lanes' files: real phones, go
 
 ## What we did
 1. **Translations (I8).** Audited all six catalogues (10,219 keys each). No keys are missing, no strings are empty, and no English is left in a translation apart from loanwords. Fixed:
-   - 837 strings that had lost their accents, ß or the opening ¿ (de 127, es 283, fr 346, it 67, nl 14). Each change was checked to touch the diacritics only. The judge found two verb slips in the accent pass, both fixed: fr `ai.lead` "composé" became "compose", and `beach.whyWaterUnknownNoSource` "ne publié" became "ne publie". It also found 63 more Spanish values, now fixed. The scan works from word lists, so a native reader may still find a few.
+   - 905 strings that had lost their accents, umlauts, ß or the opening ¿ (de 168, es 295, fr 361, it 67, nl 14). A new test, `continent-app/tests/i18nAccents.test.mjs`, keeps the common stripped words out. Each change was checked to touch the diacritics only. The judge found two verb slips in the accent pass, both fixed: fr `ai.lead` "composé" became "compose", and `beach.whyWaterUnknownNoSource` "ne publié" became "ne publie". It also found 63 more Spanish values, now fixed. The scan works from word lists, so a native reader may still find a few.
    - French register: decided vous everywhere and rewrote 104 tu strings. Typed example queries stay in the traveller's own voice.
    - One shortlist word per language (T411-n).
    - Every "Fix these first" and borderline row of `docs/i18n/review.md`, and the gender-neutral Italian `notfor.*` lines.
@@ -157,20 +157,23 @@ The full run on this Windows machine had 49 failures; the judge's runs ran in pa
 - **7 files pass alone**: dataHealth, linkHealth, passMoment, pipelineOverrides, priceNotes, slo, sectionBoundary. They failed only under load.
 - **askDocs failed because of this branch.** My `docs/i18n/review.md` text pushed `runbooks/refund.md` to rank 2 for one question (recall@1 0.792, base 0.813, baseline 0.833, tolerance 0.02). The text is reworded, and the gate passes again at 0.813, the same as base (checked with `runAskDocsEval({docsDir})` on `git archive b6a5237190 docs`). Other lanes' docs edits can move this number too, so rerun it after the merge.
 - **Not from this branch.** This branch touches none of these files' inputs:
-  - cspHashes, pagesAuth, motion-tokens and sharedParts: a Windows path bug (`scandir 'C:\C:\...'`).
+  - cspHashes, pagesAuth and sharedParts: a Windows path bug (`scandir 'C:\C:\...'`).
+  - motion-tokens: design-lint flags `money-literal` in comments of files this branch does not touch.
+  - worktree: a Windows 8.3 short-name mismatch (`GEBRUI~1` against `Gebruiker`).
+  - wireSplit: load only; it passes alone.
   - pressKit and promptRegistry: CRLF checkout.
   - taxonomyEval: the Python `yaml` module is missing.
   - aiGateway: the Python attack-set scan.
   - wire-contract: the SCHEMA.md drift, which predates this branch.
   - placeLinking: built from the worktree's untracked `public/app_data.json`.
   - aiEvents, costCardUmber, rankTier, seasonStrip and shareAssets: Vite transport and DOM timeouts.
-- CI on Linux is the authority. See the CI line in the final hand-back.
+- **CI on Linux is the authority, and it is green on this branch:** `ci` run 43261994544 (app lint, tests, fast build, ruff, pytest, docs checks) and `ask-eval` run 43261994671 both passed. So the local failures above are Windows-only. That includes the SCHEMA.md drift, which CI's docs check does not report.
 
 ## Open issues
 - **Claude-doable steps not reached** (kept with exact steps):
   - owner-checks: T286-e, T335-c, T430-a, T168-b.
   - unsorted, now handoffs: T1176-a, T1181-a, T1199-a, T1204-a, T1189-j, T1197-b, T1194-a and T1194-c.
-  - Walkthrough rows, recorded as `human` with "not reached": T1114-a, T1117-b, T1125-a, T1164-a, T1203-b, T1206-e, T405-c and T695-b.
+  - Walkthrough rows, now `handoff` to the orchestrator as not reached: T1114-a, T1117-b, T1125-a, T1164-a, T1203-b, T1206-e, T405-c and T695-b.
 - **No `checks.md`:** the live-check results are in the ledger evidence and in this report, not in a separate file.
 - **Most `verify_*.mjs` scripts did not run cleanly here.** Each has its own CLI, and the Vite dev server re-optimises dependencies mid-run ("504 Outdated Optimize Dep"). A shared runner that warms the server, or a stable preview build with the data, would make these checks usable by sessions.
 - **The other lanes must delete these rows from their own files:** the walkthrough rows in other lanes' files that are now covered or obsolete, listed as `handoff_to` in `ledger.json`. The unsorted lane holds the translation rows (now the I8 steps), the T431 audit rows and the live checks done here.
