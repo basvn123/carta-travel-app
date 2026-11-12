@@ -49,7 +49,7 @@ supabase db query "select id, email from auth.users where email = 'YOUR_TEST_EMA
 ```
 
 The database must already hold migration 044 (`044_payments_quota.sql`), pasted
-in the stage 10.2 order of `Execution/_OPEN-MASTER.md`: after 025, 026, 027 and
+in the stage 10.2 order of `the retired master procedure (git show archive/execution-2026-11-11:archive/plans/_OPEN-MASTER.md)`: after 025, 026, 027 and
 031, and before the two function deploys below. Without it the checkout function
 cannot call `pass_can_buy` and answers 503 `quota_check` on every buyable tier,
 and the webhook calls a twelve-argument `grant_pass` that does not exist. Check it

@@ -13,7 +13,7 @@ const base = process.argv[2] || 'http://localhost:5199/';
 const id = process.argv[3] || '20040';
 const cc = process.argv[4] || 'AT';
 const wire = process.env.TREK_WIRE;
-const shots = '../Execution/P15/T1184-shots';
+const shots = '../.work/shots/T1184';
 if (!wire || !fs.existsSync(path.join(wire, `${cc}.json`))) {
   console.error('TREK_WIRE must name a folder holding the stamped country files');
   process.exit(2);

@@ -3,7 +3,7 @@
 
 Reference: additional docs/Carta/Plan/Architecture/CARTA_CLOUD_ARCHITECTURE.md
 section 6.3 ("Tar the embedding cache before uploading") and section 7b
-("Object count, not byte count"). Task report: Execution/P3/T045-archive-to-r2.md.
+("Object count, not byte count"). Task report: T045.
 
 Why one tarball per layer, and not one per file or one for everything:
 

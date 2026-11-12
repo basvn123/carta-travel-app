@@ -35,7 +35,7 @@ of collectors, one of harvesters, with cadence, task, failure mode and the
 ledger rows that govern each). `python -m src.ingestion.run_all --list` prints
 the live list. Regenerate the ledger with
 `python -m src.ingestion.core.ledger --write`; CI runs `--check` and fails on a
-stale ledger (T078, Execution/P4/T078-registry-licence-unification.md).
+stale ledger (T078, T078).
 
 Adding a source: write the collector, then add its row to the registry. A
 collector without a registry row is refused at import.

@@ -11,7 +11,7 @@ ROADMAP research item C-R4 was never written, so the choice is made here. Semgre
 Carta-specific: `service_role` in `continent-app/src`, any Claude API import or `api.anthropic.com` (CLAUDE.md rule), SECURITY DEFINER SQL without a pinned `search_path`, grants of write or all privileges to `anon`/`public`, `EXECUTE` of concatenated SQL.
 General: `eval`/`new Function`, string timers, `innerHTML`/`insertAdjacentHTML`/`dangerouslySetInnerHTML` with non-literals, shell `exec`, disabled TLS verification, SQL from template strings or f-strings, `shell=True`, unsafe deserialisation, `requests` without a timeout, md5/sha1.
 
-Not scanned (`.semgrepignore`): `node_modules`, builds, `archive/`, `cache/`, `public/`, `tools/`, `Execution/`, generated `*.bundle.mjs`, `.claude/`, and the stale `Trips/` copy.
+Not scanned (`.semgrepignore`): `node_modules`, builds, `cache/`, `public/`, `tools/`, generated `*.bundle.mjs`, `.claude/`, and the stale `Trips/` copy.
 
 ## The baseline
 

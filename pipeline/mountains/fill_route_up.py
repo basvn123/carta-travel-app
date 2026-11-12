@@ -17,7 +17,7 @@ OSM path, not a relation. This step reads OSM ways near the summit
     names     up to three way names
     _src      "osm"      _asof  ISO date of the run
 
-Source choice (Execution/P15/T1186-mountains-lakes.md): Geofabrik extracts
+Source choice (T1186): Geofabrik extracts
 filtered with osmium are the batch route; Overpass per summit is the paced
 fallback used here, through the lake layer's polite client. Both are ODbL, so
 the wire credits "OpenStreetMap contributors". Nothing here claims a safe

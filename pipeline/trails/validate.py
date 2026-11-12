@@ -319,7 +319,7 @@ def difficulty_check(trip, cfg):
 # at all (no object metadata), and member way count measures how finely the
 # ways were split, not how mature the route is. A 3 km path mapped as one way
 # and the same path mapped as forty are the same walk. Recorded in
-# docs/TRAILS.md rather than scored here.
+# archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md rather than scored here.
 RICHNESS_TAGS = ("surface", "sac_scale", "operator", "website", "description")
 RICHNESS_MAX = 20.0
 

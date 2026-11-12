@@ -78,7 +78,7 @@ const ENV = (import.meta && import.meta.env) || {};
  *               around the origin; the Explore map then fetches countries
  *               as they come on screen, and a screen that ranks the whole
  *               of Europe asks for the rest when it is shown
- * See catalogue.js and Execution/P3/T059-shard-by-region-viewport.md.
+ * See catalogue.js and T059.
  */
 export const CATALOGUE_MODE = ENV.VITE_CATALOGUE === 'viewport' ? 'viewport' : 'all';
 

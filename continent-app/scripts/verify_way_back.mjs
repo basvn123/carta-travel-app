@@ -12,7 +12,7 @@ const base = process.argv[2] || 'http://localhost:5199/';
 const id = process.argv[3] || '20050';
 const cc = process.argv[4] || 'AT';
 const wire = process.env.WB_WIRE;
-const shots = '../Execution/P15/T1185-shots';
+const shots = '../.work/shots/T1185';
 if (!wire || !fs.existsSync(path.join(wire, `${cc}.json`))) { console.error('WB_WIRE must name the stamped folder'); process.exit(2); }
 fs.mkdirSync(shots, { recursive: true });
 const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});

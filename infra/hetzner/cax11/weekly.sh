@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The weekly job of the Carta orchestrator (T046 placeholder, made real by T048).
-# Task reports: Execution/P3/T046-cax11-orchestrator.md and
-# Execution/P3/T048-pipeline-cron-migration.md.
+# Task reports: T046 and
+# T048.
 #
 # Run by carta-weekly.service, which carta-weekly.timer starts every Monday at
 # 09:00 Europe/Brussels, the slot of the laptop's Windows Scheduled Task

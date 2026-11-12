@@ -3,9 +3,9 @@
 # (Ampere arm64, 2 vCPU, 4 GB) by default or an x86 type such as the CX23
 # (2 vCPU, 4 GB, 40 GB) with CARTA_SERVER_TYPE, Ubuntu 24.04, first boot
 # driven by cloud-init.yaml next to this file, which installs the arm64 or
-# amd64 builds to match. Task reports: Execution/P3/T046-cax11-orchestrator.md
-# and Execution/P3/T299-x86-orchestrator.md. Owner procedure: stage 7 of
-# Execution/_OPEN-MASTER.md.
+# amd64 builds to match. Task reports: T046
+# and T299. Owner procedure: stage 7 of
+# the retired master procedure (git show archive/execution-2026-11-11:archive/plans/_OPEN-MASTER.md).
 #
 # Idempotent. Each resource is looked up by name first and created only when
 # absent, so a second run after a partial failure picks up where it stopped
@@ -205,7 +205,7 @@ fi
 
 cat <<EOF
 
-Next steps (stage 7 of Execution/_OPEN-MASTER.md has the full procedure):
+Next steps (stage 7 of the retired master procedure (git show archive/execution-2026-11-11:archive/plans/_OPEN-MASTER.md) has the full procedure):
   1. Wait for first boot to finish, about 5 to 10 minutes:
        ssh -i $KEY_FILE carta@$ADDR 'cloud-init status --wait; tail -n 20 /var/log/carta-bootstrap.log'
      If a bootstrap step failed, fix the cause and run: sudo carta-bootstrap

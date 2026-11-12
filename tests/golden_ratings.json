@@ -1317,5 +1317,5 @@
       }
     ]
   },
-  "v5_rule": "T759 (formula v5): at least 95% of all pairs pass (the plan's gate 2). The 80 pairs added in T759 (village against city, area against town, same class across countries) were written without seeing any score; the owner checks them (Execution/_OPEN.md)."
+  "v5_rule": "T759 (formula v5): at least 95% of all pairs pass (the plan's gate 2). The 80 pairs added in T759 (village against city, area against town, same class across countries) were written without seeing any score; the owner checks them (docs/owner/)."
 }

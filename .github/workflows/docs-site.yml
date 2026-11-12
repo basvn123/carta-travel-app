@@ -2,7 +2,7 @@ name: docs-site
 
 # ROADMAP B6 (T1167). Regenerates docs/reference/, then builds the MkDocs
 # Material site with full-text search. The private deploy to the Cloudflare
-# Pages project carta-docs is an owner step (Execution/P15/T1167-docs-site.md);
+# Pages project carta-docs is an owner step (T1167);
 # this job builds and uploads the site as an artifact, it never deploys.
 on:
   push:

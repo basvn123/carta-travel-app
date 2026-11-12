@@ -1,6 +1,6 @@
 # Runbook: backup and restore
 
-Written by T1085 (ROADMAP B2) from the code: `ops/backup_supabase.sh`, `ops/restore_supabase.sh`, `infra/hetzner/cax11/run_pipeline.sh`, `pipeline/archive/manifest.yml`, `pipeline/archive/push.py`, `infra/hetzner/README.md`. The old `archive/docs-2026-11/BACKUP.md` was distrusted and not copied. Names and places only, never a secret value (see [../security/SECRETS.md](../security/SECRETS.md)).
+Written by T1085 (ROADMAP B2) from the code: `ops/backup_supabase.sh`, `ops/restore_supabase.sh`, `infra/hetzner/cax11/run_pipeline.sh`, `pipeline/archive/manifest.yml`, `pipeline/archive/push.py`, `infra/hetzner/README.md`. The old `archive/execution-2026-11-11:archive/docs-2026-11/BACKUP.md` was distrusted and not copied. Names and places only, never a secret value (see [../security/SECRETS.md](../security/SECRETS.md)).
 
 ## What exists, in one table
 
@@ -65,7 +65,7 @@ Pipeline master and caches:
 - Snapshots and dumps are never pulled automatically (`pipeline/archive/push.py` `pull_entry`). Restore a snapshot on purpose: `rclone copyto r2:carta/archive/snapshots/<file> app_data/app_data.json`, after saving the current file.
 - Lifecycle rules are set only by `python pipeline/archive/push.py --lifecycle` (needs `CLOUDFLARE_API_TOKEN` and the account id). Whether it has been run on the live bucket is not verified here; `npx wrangler r2 bucket lifecycle list carta` shows it.
 
-The detailed history of the archive build is in `Execution/P3/_DIGEST.md` (entry T045).
+The detailed history of the archive build is in `.work/INDEX.md` (entry T045).
 
 ## Undo
 

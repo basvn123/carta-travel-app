@@ -1,7 +1,7 @@
 # Carta weekly pipeline run on the orchestrator (T048). Replaces the T046
 # placeholder unit of the same name that cloud-init.yaml writes at first boot;
 # infra/hetzner/cron/install.sh copies this over it.
-# Task report: Execution/P3/T048-pipeline-cron-migration.md.
+# Task report: T048.
 [Unit]
 Description=Carta weekly pipeline run (run_pipeline.py weekly cadence, T048)
 Documentation=file:///home/carta/carta/docs/PIPELINE.md

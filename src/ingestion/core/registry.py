@@ -533,7 +533,7 @@ national portal rows were updated 2026-08-07 when the first
 mountains layers (sections above) that replaced it, and nothing under
 `continent-app/src` ever read `public/features/`, so the repo was carrying
 this section's obligations for a surface that never rendered. The code moved
-to `archive/pipeline_features`, the `features` task left `run_pipeline.py`,
+to `archive/execution-2026-11-11:archive/pipeline_features`, the `features` task left `run_pipeline.py`,
 and `public/features/` is deleted from the tree. The table below is kept as
 the record of what the wire carried while it existed; every obligation in it
 ended with the publication. Two of its rows have since been overtaken and are
@@ -2782,7 +2782,7 @@ SOURCES = (
         licence="Per file, unchanged from the original: CC BY-SA, CC BY, CC0, public domain, GFDL; NC, ND and unlicensed files are refused before storage (`derive.storable`)",
         attribution="Yes, per file, exactly as the original",
         share_alike="Per file (the copy only)",
-        attributed="The gate: `credit.owes_credit` refuses a file owing a name it lacks before any object is written, and the manifest carries `[licence, author]` per entry plus the Commons and Geograph page templates, so the credit travels with the pixels and is never looked up from Wikimedia at render time. `src/lib/imageCredit.js` `creditFromManifest` turns a CDN URL plus the manifest into author, licence, licence link and page. Proven offline by `pipeline/photos/verify_attribution_cdn.py`; live check pending (Execution/P3/_OPEN-hetzner.md step 28). Account > Data sources carries a \"Carta image copies\" row. Not live until T052 serves the ladder",
+        attributed="The gate: `credit.owes_credit` refuses a file owing a name it lacks before any object is written, and the manifest carries `[licence, author]` per entry plus the Commons and Geograph page templates, so the credit travels with the pixels and is never looked up from Wikimedia at render time. `src/lib/imageCredit.js` `creditFromManifest` turns a CDN URL plus the manifest into author, licence, licence link and page. Proven offline by `pipeline/photos/verify_attribution_cdn.py`; live check pending (docs/owner/hetzner-box.md step 28). Account > Data sources carries a \"Carta image copies\" row. Not live until T052 serves the ladder",
     ),
     Source(
         key="waymarked_trails_route_list",

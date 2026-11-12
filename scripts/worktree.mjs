@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * worktree.mjs, task worktrees made and removed safely on Windows and Linux
- * (ROADMAP H11, audit P-19, task Execution/P15/T1162-scripted-ship.md).
+ * (ROADMAP H11, audit P-19, task T1162).
  *
  *   node scripts/worktree.mjs add <slug> [--branch <b>] [--base <ref>] [--link-node-modules]
  *   node scripts/worktree.mjs remove <slug|path> [--force]

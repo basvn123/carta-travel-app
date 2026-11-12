@@ -42,7 +42,7 @@ Three parts, all offline apart from one `node` process:
 What this is NOT: a live check. No R2 credential exists on the laptop this
 was written on, so "served from R2" is simulated by a manifest plus
 cdn_url() (and, with --run, by the local img/ tree a run writes before it
-would upload). The live check is Execution/P3/_OPEN-hetzner.md step 28.
+would upload). The live check is docs/owner/hetzner-box.md step 28.
 
     python pipeline/photos/verify_attribution_cdn.py
     python pipeline/photos/verify_attribution_cdn.py --run <derive out dir>

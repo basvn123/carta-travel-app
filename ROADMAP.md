@@ -6,7 +6,7 @@ This file is the plan of record. It replaces `Roadmap/Carta roadmap.md` (Dutch, 
 
 Three things carry the most weight: **documentation** (every piece of logic written down and kept true), **security** (designed in, tested, never an afterthought) and **UI** (researched, tested with people, measured). The goal is a full-time product, not only a finished app, so Track I covers the business around it: onboarding, accounts, retention, money, support, growth and operations.
 
-The full audit of the app as it is today, with every pain point, its evidence and its severity, is [docs/AUDIT-2026-11.md](docs/AUDIT-2026-11.md). Each pain point (`P-01` to `P-59`) is carried by an item below.
+The full audit of the app as it is today, with every pain point, its evidence and its severity, is [docs/research/2026-11-audit.md](docs/research/2026-11-audit.md). Each pain point (`P-01` to `P-59`) is carried by an item below.
 
 ---
 
@@ -15,9 +15,9 @@ The full audit of the app as it is today, with every pain point, its evidence an
 - **Fix now** (section 3) comes first: production breakage, security exposure and spinning jobs found by the audit. Items `N1` to `N8`, all this week or next.
 - **Phases** (section 4) set the order of work: P0 to P5, each with a quality gate. Tracks say what; phases say when.
 - **Eleven tracks**, A to K. Each track has the same six parts: Goal, Exit criteria, Research, Items, Item details, Depends on.
-- **Pain point IDs** (`P-21`) point into [docs/AUDIT-2026-11.md](docs/AUDIT-2026-11.md).
+- **Pain point IDs** (`P-21`) point into [docs/research/2026-11-audit.md](docs/research/2026-11-audit.md).
 - **Item IDs**: build items are `B3`, `C7` and so on. Research items are `B-R1`, `C-R2` and so on.
-- **Build items** are done in Claude Code sessions. A session takes real task numbers (`T1045` onwards, CLAUDE.md "Task numbers") and names the item ID in its report.
+- **Build items** are done in Claude Code sessions. A session runs as a crew run (`.work/<date>-<slug>/`, `docs/decisions/0001-adopt-crew.md`) and names the item ID in its report. Task numbers `T001` to `T1222` are the history before crew.
 - **Research items are yours.** Each has a question, starting points, a timebox and an output. The output is a note in `docs/research/` (template in section 2) that ends in a decision. A build item that depends on research waits until that decision is written. Claude can gather sources or summarise for you, but you make the call.
 - **Size**: **S** is one session, **M** is a batch of 2 to 4 tasks, **L** is a phase of its own. Research timeboxes are in days.
 - **Weeks** are ISO weeks. 2026 W45 starts Mon 2 Nov. W1 to W19 are 2027.
@@ -263,24 +263,24 @@ The order of work is the phase plan in section 4. Every item's **Phase** column 
 |---|---|---|---|---|---|
 | A1 | Top-level layout | Root and `continent-app/` root clean, MAP updated, tests and dry run pass (T1050: docs and stray folders archived; live code folders moved to A2; `Trips/` waits on A-a) | M | P0 | done |
 | A2 | Pipeline structure | `run_pipeline.py` split by domain, flat files grouped, ruff on touched files | L | P4 | in progress (T1207: table split, audit, blog and pois grouped; rest in T1207-b to f) |
-| A3 | Register triage | Under 250 open rows, owner rows in one procedure per system | M | P1 | in progress (T1072: 1,603 to 1,423 rows; T1072-a) |
-| A4 | Claude context, lean and exact | Memory index under 5 KB with stale memories merged or removed; CLAUDE.md and MAP.md corrected and only pointing at files that exist; one entry path (CLAUDE.md, then MAP.md, then the handbook section, then the file); skills folder trimmed; a check that fails when MAP or CLAUDE names a missing path (T1051: memory index 15 KB to 3.7 KB, CLAUDE and MAP corrected, `scripts/docs/check_entry_points.py` plus the `entry-points` workflow; skills kept, since the project impeccable skill is the one in use; `continent-app/.git` removal stays an owner step, T1040-d) | S | P0 | done |
+| A3 | Register triage | Under 250 open rows, owner rows in one procedure per system | M | P1 | done (2026-11-11, crew alignment: the register is retired; 766 owner rows live in `docs/owner/`, the 1,340 engineering rows stay in git history; `docs/decisions/0003-open-items-owner-steps-and-roadmap.md`) |
+| A4 | Claude context, lean and exact | Memory index under 5 KB with stale memories merged or removed; CLAUDE.md and MAP.md corrected and only pointing at files that exist; one entry path (CLAUDE.md, then MAP.md, then the handbook section, then the file); skills folder trimmed; a check that fails when MAP or CLAUDE names a missing path (T1051: memory index 15 KB to 3.7 KB, CLAUDE and MAP corrected, `scripts/docs/check_entry_points.py` plus the `entry-points` workflow; skills kept, since the project impeccable skill is the one in use; `continent-app/.git` removal stays an owner step, T1040-d. 2026-11-11, crew alignment: MAP.md folded into `docs/project-map.md`, CLAUDE.md rewritten in the crew shape, `docs/decisions/` and `docs/lessons.md` added, the check now covers CLAUDE.md, the project map and the lessons; `docs/decisions/0004-lean-always-loaded-context.md`) | S | P0 | done |
 
 ### Item details
 
 **A1. Top-level layout**
 
 ```
-README.md  CLAUDE.md  MAP.md  PRODUCT.md  DESIGN.md  ROADMAP.md  SECURITY.md
+README.md  CLAUDE.md  PRODUCT.md  DESIGN.md  ROADMAP.md
 continent-app/      the app
 pipeline/           all Python pipeline code (src/ingestion moves in)
 supabase/  infra/   backend and build box (ops/*.sh moves to infra/backup/)
 services/           FastAPI and MCP services (Track F)
 evals/              golden sets, runners, results
-docs/               see B2
-Execution/          task reports and register
+docs/               see B2 and docs/project-map.md
+.work/              crew run reports and INDEX.md (history of every task)
 data/ app_data/ cache/ tools/   data and tools, never deleted
-archive/            retired code and plans
+(archive/ and Execution/ retired 2026-11-11, in git history)
 ```
 
 | Action | Paths |
@@ -1104,7 +1104,7 @@ docs/
 
 ### Item details
 
-**I1.** All owner work, without an accountant or lawyer, by your choice. The procedure lives once in `Execution/P15/_OPEN-business-launch.md` (created under A3).
+**I1.** All owner work, without an accountant or lawyer, by your choice. The procedure is not written yet; it goes in `docs/owner/` when I1 starts (the register file planned under A3 never existed).
 
 - **Why week 13.** Building, a free beta, the waitlist and opening affiliate accounts need no registration. Taking money does: a paid Pass, or affiliate commission paid out to you. Registering in week 13 leaves about two weeks for the business number, VAT status and Stripe's verification, and two weeks of buffer before the 4 May launch. Confirm in I-R4 exactly where Belgian rules draw the line.
 - **Simplifications that keep you out of the hard legal areas.** Each one replaces a question the register had parked for a lawyer:
@@ -1117,7 +1117,7 @@ docs/
 - **What you accept.** Without a professional review, a mistake is yours to find and fix. Every legal text lists its official sources, and section 19 records the decision, so the choice is visible. If revenue grows, a one-off review later stays an option.
 - **Register rows this retires.** T015 and T033-g (the accountant's VAT answer) are replaced by I-R4. The lawyer-review rows are replaced by I-R5 and the checklist. Close them in A3 with this reason.
 
-**I2.** Follows `Execution/P2/_OPEN-stripe-launch.md` and `Execution/P11/_OPEN-pass-subscription.md`. Test from the installed app on a real phone (T246-c).
+**I2.** Follows `docs/owner/stripe.md` and `docs/owner/pass-subscription.md`. Test from the installed app on a real phone (T246-c).
 
 **I3.** The highest business risk after I1. For each source: terms read, risk written, decision recorded as an ADR.
 
@@ -1186,7 +1186,7 @@ docs/
 
 **Goal.** People who would love Carta find it, try it and tell others, without paid ads. Every campaign points at pages and flows that already pass the marketing surface gate (section 4).
 
-**The constraint.** A visitor is worth about 0.17 EUR (`archive/docs-2026-11/GTM-ACQUISITION-CONSTRAINT.md`), so paid search, paid social, influencer fees and sponsorships are out. The budget is engineering and writing time. Carta's edge is data nobody else publishes: real daily costs for 3,868 places, 17,619 rated trails, bathing water and crowds by month.
+**The constraint.** A visitor is worth about 0.17 EUR (`archive/execution-2026-11-11:archive/docs-2026-11/GTM-ACQUISITION-CONSTRAINT.md`), so paid search, paid social, influencer fees and sponsorships are out. The budget is engineering and writing time. Carta's edge is data nobody else publishes: real daily costs for 3,868 places, 17,619 rated trails, bathing water and crowds by month.
 
 **Exit criteria.**
 - Search Console shows the indexable page sets growing and "discovered, not indexed" under 30%.
@@ -1217,7 +1217,7 @@ docs/
 | K8 | Open dataset and Show HN | A CC-BY subset (licences checked) on GitHub with a write-up; Show HN once the free part needs no signup | S | P3 | doing: code half done (T1176), owner publishes |
 | K9 | Beta programme | Closed beta of 50 from the waitlist (P3), open beta in March for summer planners (P4); feedback loop into the register; testimonials collected with consent | M | P3 to P4 | todo |
 | K10 | Press kit and list | A press page (facts, screenshots, methodology, contact); a list of about 40 BE, NL and UK travel and data journalists and newsletters | S | P2 to P3 | built T1131 (owner fills founder line, names and addresses) |
-| K11 | Launch campaign | Product Hunt on 4 May, waitlist email, courtesy notes to the credited bodies (`archive/docs-2026-11/LAUNCH-OUTREACH-DRAFTS.md`), community posts, mid-May beach ranking; a two-week plan with owners per thread | M | P5 | todo |
+| K11 | Launch campaign | Product Hunt on 4 May, waitlist email, courtesy notes to the credited bodies (`archive/execution-2026-11-11:archive/docs-2026-11/LAUNCH-OUTREACH-DRAFTS.md`), community posts, mid-May beach ranking; a two-week plan with owners per thread | M | P5 | todo |
 | K12 | Marketing measurement | Cookieless channel counts (UTM to the existing counters), Search Console per page type, waitlist and referral funnel, one weekly marketing number in admin; the I16 unlock numbers (monthly users, affiliate clicks and bookings per partner) | S | P0 to P1 | partly done (T1109: channel counts built, migration pending) |
 | K13 | The creative slot | One experiment every two weeks from P2, picked from K-R3's shortlist; each written up in one paragraph (idea, what it took, what it did) | S each | P2 onwards | todo |
 | K14 | Automated data blog | A blog at `/blog/` whose posts are drafted automatically each month from Carta's own data, checked by script for honest numbers and copy rules, approved by the owner, and published with the deploy; RSS, sitemap and structured data | M | P2 to P3 | part 1 built (T1178, 2026-11-07): drafts task, check script, pages, RSS, sitemap file; part 2 built (T1174, 2026-11-07): what changed, new on Carta and lowest fare week types, snapshots, monthly `blog_pr` routine (dry run until the owner sets `CARTA_BLOG_PR=1`); December 2026 draft ready for the owner, nothing published; wiring into deploy open (T1178-a), fares export and Dutch open (T1174-a, T1178-c) |

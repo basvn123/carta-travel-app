@@ -1,6 +1,6 @@
 # Runbook: backup and restore
 
-Owner and only operator: Bas. Nightly job and drill script added by T1159 (ROADMAP H5); proven only against a local Postgres 16 with the migrations applied, never against the live project. Rewritten by T1086 (ROADMAP B2) from `ops/backup_supabase.sh`, `ops/restore_supabase.sh`, `infra/hetzner/cax11/run_pipeline.sh`, `pipeline/archive/push.py` and `pipeline/archive/manifest.yml`, with the retired `archive/docs-2026-11/BACKUP.md` as a guide only. Every command below was checked to exist in the repo on 2026-11-05. None was run: this session had no Supabase, R2 or box access.
+Owner and only operator: Bas. Nightly job and drill script added by T1159 (ROADMAP H5); proven only against a local Postgres 16 with the migrations applied, never against the live project. Rewritten by T1086 (ROADMAP B2) from `ops/backup_supabase.sh`, `ops/restore_supabase.sh`, `infra/hetzner/cax11/run_pipeline.sh`, `pipeline/archive/push.py` and `pipeline/archive/manifest.yml`, with the retired `archive/execution-2026-11-11:archive/docs-2026-11/BACKUP.md` as a guide only. Every command below was checked to exist in the repo on 2026-11-05. None was run: this session had no Supabase, R2 or box access.
 
 What is backed up, and why it matters: everything a traveller saved (profiles, trips, shares, passes, entitlements, `pass_grants`) lives only in the Supabase project `ntssxktaduxzpsmejwyv`. It cannot be rebuilt from the pipeline. Pipeline data can: the master and caches are in R2 (`r2:carta/archive/`, see [build-box.md](build-box.md)).
 
@@ -114,7 +114,7 @@ Never run `pg_restore --clean` or `--clean --if-exists` against a live database 
 
 ## Trailslab dump
 
-The lab database is on the owner's laptop or the trailslab worker. The box skips its dump unless the lab is on the box. The dump in R2 expires after 30 days; the open decision is T288-b in `Execution/_OPEN.md` and `Execution/P15/_OPEN-hetzner-box.md`.
+The lab database is on the owner's laptop or the trailslab worker. The box skips its dump unless the lab is on the box. The dump in R2 expires after 30 days; the open decision is T288-b in `docs/owner/` and `docs/owner/hetzner-box.md`.
 
 ## What the traveller sees
 

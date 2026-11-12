@@ -830,7 +830,7 @@
       ],
       "artifact": "app_data/app_data.json (master)",
       "writers": [],
-      "note": "On 43 places of the 2026-07c gem batch; the harvest that wrote it is retired (archive/harvest_osm_wikidata.py), so it is carried forward in the master."
+      "note": "On 43 places of the 2026-07c gem batch; the harvest that wrote it is retired (archive/execution-2026-11-11:archive/harvest_osm_wikidata.py), so it is carried forward in the master."
     },
     "destinations.*.anchor_estimated": {
       "source": "nearest served airport within 50 km (auto-anchor)",

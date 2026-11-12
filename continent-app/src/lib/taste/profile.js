@@ -7,7 +7,7 @@
  * with the evidence behind it, so the traveller can say yes or no to it.
  * Pure: every input is an argument, so the node test runs it on fixtures.
  *
- * SCORING (research in Execution/P15/T1152-taste-profile.md):
+ * SCORING (research in T1152):
  *   - every evidence item (a saved place, a trip, a filter) carries the nodes
  *     its tags map to (taxonomyMap.js, from pipeline/taxonomy/mapping.yaml);
  *   - an item weighs W[kind] times 0.5^(age / half life): a trip 3, a saved

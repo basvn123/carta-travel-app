@@ -85,7 +85,7 @@ NATURAL FEATURES: RETIRED
 The `features` task (pipeline/features -> public/features) was retired
 2026-09-02 per brief 08. Its wire predated the beaches and mountains layers
 that replaced it and no app surface ever read it. Code lives under
-archive/pipeline_features; the beaches/lakes/mountains tasks are the layer now.
+archive/execution-2026-11-11:archive/pipeline_features; the beaches/lakes/mountains tasks are the layer now.
 
 USAGE
 -----
@@ -237,7 +237,7 @@ def report_pipeline_run(ran, skipped, failed, soft_failed, dests):
     """Write one row to public.pipeline_runs so the admin panel can show when
     the catalogue was last built, how big each layer is, and from wherever this run happened to execute
     (a laptop today, a Hetzner box once P3 finishes moving it there: see
-    Execution/P3, T046 to T048, which shipped the infra code but did not move
+    .work/INDEX.md, T046 to T048, which shipped the infra code but did not move
     the run itself). Same shape as heartbeat(): no env vars, no-op; a failure
     to reach Supabase is logged and never breaks or fails the pipeline run,
     because telemetry about a run must never be the reason the run reports
@@ -534,7 +534,7 @@ def print_freshness_summary(report):
 # --------------------------------------------------------------------------- #
 
 
-# --- The photo engine's rescore hold, both directions (docs/PHOTOS.md, T047) --
+# --- The photo engine's rescore hold, both directions (archive/execution-2026-11-11:archive/docs-2026-11/PHOTOS.md, T047) --
 # "Rescore runs AFTER a layer rebuild, never beside one." A rebuild regenerates
 # the rows a rescore annotates, and both write cache/<layer>/rich_*.json, so
 # whichever writes a country last silently drops the other's fields. Two files

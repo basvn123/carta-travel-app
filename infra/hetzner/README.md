@@ -7,9 +7,9 @@ arm64 box that is always on and does the scheduling, the network-bound
 harvesting and the publishing, and a large arm64 box that exists only for the
 hours a heavy build needs it. Both exist as code; neither has been created
 yet. The always-on box was written in T046
-(`Execution/P3/T046-cax11-orchestrator.md`) and its schedule in T048, the
-on-demand box in T047 (`Execution/P3/T047-on-demand-cax41.md`). The owner's
-steps to bring them up are in `Execution/P3/_OPEN-hetzner.md`.
+(`T046`) and its schedule in T048, the
+on-demand box in T047 (`T047`). The owner's
+steps to bring them up are in `docs/owner/hetzner-box.md`.
 
 ## The always-on orchestrator, cax11/
 
@@ -56,7 +56,7 @@ does not stop the others, so after fixing a cause (a network problem, a
 missing branch) the fix is `sudo carta-bootstrap` rather than rebuilding the
 server. The script lives in `cloud-init.yaml`, so a box keeps the version it
 was provisioned with: a box made before T263 lacks the PGDG client and
-`npm ci`, and `Execution/_OPEN-MASTER.md` 7.10 has the hand commands.
+`npm ci`, and `the retired master procedure (git show archive/execution-2026-11-11:archive/plans/_OPEN-MASTER.md)` 7.10 has the hand commands.
 
 The venv is installed from the repo-root `requirements.txt` with `-c
 constraints.txt`, the laptop's pinned versions, and stamped with the hash
@@ -403,5 +403,5 @@ The derive stage (`pipeline/photos/derive.py`, migration step 4) replaced the
 a separate package; without it libvips reads AVIF but cannot write it) and
 then pyvips 3.2.0, an sdist that binds the system library (T006). The job's
 first step is `derive.py selfcheck`, which fails the run with exit 6 when
-either format cannot be written. Owner steps: Execution/P3/_OPEN-hetzner.md
+either format cannot be written. Owner steps: docs/owner/hetzner-box.md
 step 22 onward.

@@ -2,7 +2,7 @@
 # Install the real weekly schedule on the Carta orchestrator (T048). The last
 # owner step of the port: run it only after every step in
 # infra/hetzner/cax11/weekly_tasks.txt has passed verify_tasks.sh and the wire
-# comparison has passed (Execution/P3/_OPEN-hetzner.md).
+# comparison has passed (docs/owner/hetzner-box.md).
 #
 #   sudo bash /home/carta/carta/infra/hetzner/cron/install.sh             install and enable
 #   sudo bash /home/carta/carta/infra/hetzner/cron/install.sh --dry-run   print, change nothing

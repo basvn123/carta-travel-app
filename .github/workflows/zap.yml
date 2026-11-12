@@ -18,7 +18,7 @@ name: zap
 # The gate is by risk, not by ZAP's exit code: zap-baseline.py rule levels are
 # per plugin, so the job reads the JSON report and fails when any alert has
 # riskcode 3 (High). Mediums and Lows are listed in the job summary and the
-# report artifact, and each one is a register row in Execution/_OPEN.md.
+# report artifact, and each one is a register row in docs/owner/.
 # Exit code 3 (ZAP itself failed) and 1 (a rule marked FAIL in
 # .zap/rules.tsv) also fail the job.
 #

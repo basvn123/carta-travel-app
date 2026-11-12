@@ -20,7 +20,7 @@ Where the codes come from. The country's zone (Schengen, EU outside
 Schengen, the open-border micro states, the UK, the Western Balkans and
 Moldova, the Faroe Islands) fixes the codes per group, from the official
 pages in SOURCES. The research behind the table is in
-Execution/P15/T1199-entry-rules.md. RULES_CHECKED is the date the table was
+T1199. RULES_CHECKED is the date the table was
 last checked against those pages; a person moves it after checking again.
 
 Official advice. Each country also links the GOV.UK foreign travel advice

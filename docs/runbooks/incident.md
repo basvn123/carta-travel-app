@@ -1,6 +1,6 @@
 # Runbook: incident
 
-Owner and only responder: Bas. Condensed from `archive/docs-2026-11/INCIDENT_RUNBOOK.md` (T218, 2026-10-02) and checked where cheap against the code on 2026-11-05 (T1073). Dashboard locations and alert setups from that file are marked "not re-verified". Architecture: [../architecture/README.md](../architecture/README.md).
+Owner and only responder: Bas. Condensed from `archive/execution-2026-11-11:archive/docs-2026-11/INCIDENT_RUNBOOK.md` (T218, 2026-10-02) and checked where cheap against the code on 2026-11-05 (T1073). Dashboard locations and alert setups from that file are marked "not re-verified". Architecture: [../architecture/README.md](../architecture/README.md).
 
 The rule for every incident: say what is broken, in plain words, where the traveller meets it. Never let a failure look like a working answer.
 
@@ -74,7 +74,7 @@ Add one admin note on any affected user, switch the site notice off, and if a fi
 
 ## Not covered here
 
-A leaked secret and a data breach are not covered. Secrets and rotation: [../security/SECRETS.md](../security/SECRETS.md) and `Execution/P15/_OPEN-secrets-rotation.md`. Refunds: [refund.md](refund.md).
+A leaked secret and a data breach are not covered. Secrets and rotation: [../security/SECRETS.md](../security/SECRETS.md) and `docs/owner/secrets-rotation.md`. Refunds: [refund.md](refund.md).
 
 ## Drill
 

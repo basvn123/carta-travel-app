@@ -1,6 +1,6 @@
 # Photos: sourcing, licences, heroes, dimensions, credits
 
-Written by T1085 (ROADMAP B2) from the code, not from `archive/docs-2026-11/PHOTOS.md` (distrusted; used for structure only). Every number below names the constant behind it. Rules in prose and screens are in the handbook sections [Licensed photo sources and credits](../HANDBOOK.md#licensed-photo-sources-and-credits), [Hero image choice](../HANDBOOK.md#hero-image-choice) and [Image ladder (sized copies)](../HANDBOOK.md#image-ladder-sized-copies); this file is the data view.
+Written by T1085 (ROADMAP B2) from the code, not from `archive/execution-2026-11-11:archive/docs-2026-11/PHOTOS.md` (distrusted; used for structure only). Every number below names the constant behind it. Rules in prose and screens are in the handbook sections [Licensed photo sources and credits](../HANDBOOK.md#licensed-photo-sources-and-credits), [Hero image choice](../HANDBOOK.md#hero-image-choice) and [Image ladder (sized copies)](../HANDBOOK.md#image-ladder-sized-copies); this file is the data view.
 
 ## 1. Where photos come from
 

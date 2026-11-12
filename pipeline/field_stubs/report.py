@@ -26,7 +26,7 @@ and one function per row named by "stub" that returns None and writes
 nothing. This report lists them all, writing data/reports/field_stubs.md and
 data/reports/field_stubs.json, and checks every named stub exists. The list
 is the to-do list for the next data update; the coverage percentages per
-field live in the batch report (Execution/P15/T630-T632-explore-completeness.md).
+field live in the batch report (T630-T632).
 """
 from __future__ import annotations
 

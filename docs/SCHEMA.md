@@ -33,7 +33,7 @@ no rental is added.
 the app reads it via `runtime_pricing.js`. Cost data originally came from
 notebook `03_costs` (Numbeo anchors + Eurostat PLI) and accommodation from
 `03b_accommodation` (Inside Airbnb anchors + Eurostat PLI); those v1 notebooks
-are archived in `archive/notebooks/`. Since schema v18 (T530-T536) the live
+are archived in `archive/execution-2026-11-11:archive/notebooks/`. Since schema v18 (T530-T536) the live
 accommodation path is `pipeline/stays/` (see "Schema v18" below).
 
 ## app_data.json
@@ -270,7 +270,7 @@ accommodation path is `pipeline/stays/` (see "Schema v18" below).
 - **Total** = flights + accommodation + on-the-ground. The map shows this; the
   detail panel breaks it down; Skyscanner verifies the flight.
 
-## Flight data provenance (legacy notebook 02_flights, now archive/notebooks/, + fix_data.py)
+## Flight data provenance (legacy notebook 02_flights, now archive/execution-2026-11-11:archive/notebooks/, + fix_data.py)
 
 - The Ryanair harvest (`02_flights`) stored the **cheapest fare per calendar
   month** per route (~4 anchor dates). `fix_data.py` then **densifies** this into
@@ -331,7 +331,7 @@ no keys). `price = country base x local tilt`.
   blocks. A curated place always has a tourism driver, so it is never `country` here
   and is never bumped twice.
 
-## Cost data provenance (legacy notebook 03_costs, now archive/notebooks/)
+## Cost data provenance (legacy notebook 03_costs, now archive/execution-2026-11-11:archive/notebooks/)
 
 - Real **Numbeo** euro prices for **23 anchor countries + 22 cities** (June 2026,
   cached in `cache/numbeo_raw.json`), covering 6 dining/drink items per location.
@@ -350,7 +350,7 @@ no keys). `price = country base x local tilt`.
   them from `pli_scaled` to `numbeo_direct`. Czechia had been the most off (cheap
   meal +49%, beer +35%). 37 long-tail locations remain `pli_scaled`.
 
-## Accommodation provenance (legacy notebook 03b_accommodation, now archive/notebooks/)
+## Accommodation provenance (legacy notebook 03b_accommodation, now archive/execution-2026-11-11:archive/notebooks/)
 
 - Real **Inside Airbnb** listing-level medians (CC-BY 4.0, captured June 2026) for
   ~30 European cities, filtered to entire homes and capacity-matched, then divided
@@ -1277,7 +1277,7 @@ same numbers.
 `scripts/sync-data.mjs` from `app_data/curated_why_i18n.json` and
 `app_data/rubric_appeal.json`. They are separate files so the main wire does
 not grow by five languages (T762 measured both options; the numbers are in
-`Execution/P7/T761-T762-rating-v5-profile.md`).
+`T761-T762`).
 
 ### On a nature row (`public/{trails,beaches,lakes,mountains,cycling}/*.json`)
 

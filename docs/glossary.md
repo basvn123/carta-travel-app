@@ -7,7 +7,7 @@ Carta words, one line each, with the place in the code or docs that grounds it. 
 | Term | Meaning | Grounded in |
 |---|---|---|
 | Pipeline | The Python tasks that harvest sources and write the data. Run as `python run_pipeline.py <task>`. | `run_pipeline.py`, `pipeline/` |
-| Task | One named step of the pipeline (`fame`, `trips`, `dossier`...); listed with cadence by `python run_pipeline.py --list`. | `run_pipeline.py` (`TASKS`), MAP.md "Pipeline" |
+| Task | One named step of the pipeline (`fame`, `trips`, `dossier`...); listed with cadence by `python run_pipeline.py --list`. | `run_pipeline.py` (`TASKS`), docs/project-map.md "Pipeline" |
 | Cadence | How often a task is due: the driver is "resumable, cadence-aware"; `--max-cadence weekly` runs only weekly tier tasks. | `run_pipeline.py` header |
 | Master | The one dataset the pipeline writes, `app_data/app_data.json`, with `meta.schema_version` 19. | `docs/SCHEMA.md`, handbook "The data wire" |
 | Layer | A pipeline step's contribution to the master or its own wire folder, usually `pipeline/<name>_layer.py` (rating layer, place layer, ask index layer); also the numbered `Schema vN` sections of SCHEMA.md. | `pipeline/`, `docs/SCHEMA.md` |
@@ -67,7 +67,7 @@ Carta words, one line each, with the place in the code or docs that grounds it. 
 | Finder, Trips for you | The trip finder that ranks ready-made trips. | `app/src/planner/finder/TripsForYou.jsx` |
 | Journeys | Carta's own hand written week-long trips in 15 styles. | `pipeline/journeys/build_wire.py`, handbook "Carta's own trips" |
 | Trips layer | About four thousand generated 2 to 14 day trips, each checked before it ships. | `pipeline/trips/`, handbook "Ready-made composed trips" |
-| Trip page | The traveller's own planned trip (not `app/src/browse/TripPage.jsx`, which is a library trip). | MAP.md "Watch out" |
+| Trip page | The traveller's own planned trip (not `app/src/browse/TripPage.jsx`, which is a library trip). | docs/project-map.md "Watch out" |
 | Day planner, plan-day | Day by day planning; `plan-day` is the Gemini Edge Function behind the AI day plan. | `app/src/planner/DayPlannerTab.jsx`, `supabase/functions/plan-day/` |
 | Magic import | Reading a pasted booking into a trip (`parse-booking`). | `supabase/functions/parse-booking/` |
 | Together | Shared trips, friends, votes, split costs. | handbook "Together, sharing and collaborative trips" |
@@ -85,9 +85,9 @@ Carta words, one line each, with the place in the code or docs that grounds it. 
 
 | Term | Meaning | Grounded in |
 |---|---|---|
-| Task number (`T1073`) | The ID of one unit of work; reports live in `Execution/P{n}/`. | CLAUDE.md |
-| Register | `Execution/_OPEN.md`, one row per open item. | CLAUDE.md |
-| Digest | `Execution/P{n}/_DIGEST.md`, one file per finished phase. | CLAUDE.md |
+| Task number (`T1073`) | The ID of one unit of work before crew (T001 to T1222); each has a line in `.work/INDEX.md`. | `docs/decisions/0002-run-history-in-work-index.md` |
+| Run | One crew task, from brief to report, in its own `.work/<date>-<slug>/` folder; its `report.md` is committed. | `docs/decisions/0001-adopt-crew.md` |
+| Owner step | An action only the owner can take (Dashboard, secret, SQL paste, decision), kept in `docs/owner/`. | `docs/decisions/0003-open-items-owner-steps-and-roadmap.md` |
 | Roadmap item (`B2`) | An item of the plan of record, `ROADMAP.md`. | CLAUDE.md |
 | Fast build | The 10 second Vite build used for checks (`scripts/vite.fast.mjs`). | CLAUDE.md |
-| Handbook | `docs/HANDBOOK.md`, every feature and how it works. | `docs/README.md` |
+| Handbook | `docs/HANDBOOK.md`, every feature and how it works. | `docs/project-map.md` |

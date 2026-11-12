@@ -1,7 +1,7 @@
 # Record of processing activities (GDPR Article 30)
 
 Draft for the owner to check and sign. Written 2026-10-03 by T319 from the
-repository, replacing the draft in `Execution/P1/T022-trademark-and-article-30.md`,
+repository, replacing the draft in `T022`,
 which was wrong in six places (listed at the end). This is documentation, not
 legal advice.
 
@@ -16,7 +16,7 @@ plain drafts for the owner's legal review (register row T1118-a).
 Every fact below cites the file it comes from. The record describes the system
 as written in `supabase/migrations/` (002 to 069) and `supabase/functions/`.
 Several of those migrations are not yet pasted into the live project
-(`archive/plans/_OPEN-MASTER.md` stage 2.2 says "Nothing has been pasted" for 022,
+(`archive/execution-2026-11-11:archive/plans/_OPEN-MASTER.md` stage 2.2 says "Nothing has been pasted" for 022,
 024, 032 to 043, 045, 047 and 048; stage 3 holds 028 to 031; stage 10 holds
 021, 025 to 027 and 044). A table whose migration is not pasted holds no data
 yet; its row here describes what it will hold once it is.

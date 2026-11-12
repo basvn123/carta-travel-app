@@ -59,7 +59,7 @@ flowchart LR
 | Workers | `flight-sweep` (Cloudflare Worker with its own `wrangler.toml` and `schema.sql`) and the `late-sweep` script run by a systemd unit on the box. | `continent-app/workers/` |
 | Supabase | Postgres with row level security, auth, and Edge Functions. Edge Functions: `plan-day`, `suggest-city`, `parse-booking` (Gemini), `checkout`, `stripe-webhook`, `billing`, `notify`. Migrations are in `supabase/migrations/`. | `supabase/` |
 | Gemini | The model behind the three AI Edge Functions, under per-user and global daily caps. Never the Claude API (CLAUDE.md). | `supabase/functions/plan-day/`, `suggest-city/`, `parse-booking/` |
-| Stripe | Pass checkout and webhook. Test mode until the owner steps in `Execution/P2/_OPEN-stripe-launch.md`. | `supabase/functions/checkout/`, `stripe-webhook/` |
+| Stripe | Pass checkout and webhook. Test mode until the owner steps in `docs/owner/stripe.md`. | `supabase/functions/checkout/`, `stripe-webhook/` |
 | Hetzner build box | An always-on small server (CAX11, or CX23 when ARM is out of stock) runs the weekly pipeline from a systemd timer and pushes data to R2; a larger CAX41 exists only for heavy jobs. | `infra/hetzner/` |
 | CI | 13 GitHub workflows (`ci.yml` plus path-triggered checks and `uptime.yml`, a 15 minute monitor). | `.github/workflows/` |
 
@@ -73,6 +73,6 @@ flowchart LR
 
 ## Not verified here
 
-Whether the Hetzner boxes run in production today: the handbook describes the schedule and `infra/hetzner/README.md` says both boxes existed "as code" when it was written; the register (`Execution/P3/_OPEN-hetzner.md`) holds the owner steps. DNS and Cloudflare dashboard settings are not in git.
+Whether the Hetzner boxes run in production today: the handbook describes the schedule and `infra/hetzner/README.md` says both boxes existed "as code" when it was written; the register (`docs/owner/hetzner-box.md`) holds the owner steps. DNS and Cloudflare dashboard settings are not in git.
 
 See also: [../runbooks/README.md](../runbooks/README.md), [../data/README.md](../data/README.md), [../security/](../security/) (threat model, Track C), [../HANDBOOK.md](../HANDBOOK.md).

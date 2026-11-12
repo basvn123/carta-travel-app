@@ -4,7 +4,7 @@
 # or an x86 type such as the CPX22 (T299), Ubuntu 24.04. carta-bootstrap
 # reads the architecture from dpkg and installs the matching builds. The always-on box of CARTA_CLOUD_ARCHITECTURE.md section 6.2:
 # cron, run_pipeline.py orchestration, the collectors, the fare harvests and
-# publishing to R2. Task report: Execution/P3/T046-cax11-orchestrator.md.
+# publishing to R2. Task report: T046.
 #
 # Do not pass this file to Hetzner by hand. provision.sh renders the three
 # @@...@@ placeholders below (SSH public key, repo URL, branch) into a temp
@@ -29,7 +29,7 @@
 # its secrets are filled and its tasks verified on the box. The real units
 # (CARTA_PIPELINE_ENABLED=1, the 48 hour timeout, no boot run, the Sunday
 # reboot window) come from infra/hetzner/cron/install.sh, the last owner step
-# (Execution/_OPEN-MASTER.md 7.9).
+# (the retired master procedure (git show archive/execution-2026-11-11:archive/plans/_OPEN-MASTER.md) 7.9).
 
 timezone: Europe/Brussels
 disable_root: true

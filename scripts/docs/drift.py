@@ -11,7 +11,8 @@ Four checks, each one a way the docs drifted before:
            that file.
 3. schema  docs/SCHEMA.md's wire table matches docs/wire.schema.json (reuses
            continent-app/scripts/ci/wire-table.mjs; needs node).
-4. entry   CLAUDE.md and MAP.md name only existing paths (reuses
+4. entry   CLAUDE.md, docs/project-map.md and docs/lessons.md name only
+           existing paths (reuses
            scripts/docs/check_entry_points.py).
 
 Known drift on 2026-11-06 is listed in scripts/docs/drift_baseline.json so the
@@ -447,7 +448,7 @@ def check_entry(t: Tally):
     if r.returncode != 0:
         for line in r.stdout.splitlines():
             line = line.strip()
-            if line.startswith(("CLAUDE.md", "MAP.md")) or "missing" in line.lower():
+            if line.startswith(("CLAUDE.md", "docs/project-map.md", "docs/lessons.md")) or "missing" in line.lower():
                 t.findings.append(Finding("entry", "ENTRY", line))
         if not any(f.check == "entry" for f in t.findings):
             t.findings.append(Finding("entry", "ENTRY", (r.stdout + r.stderr).strip()[:300]))

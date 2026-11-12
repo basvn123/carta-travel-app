@@ -117,7 +117,7 @@ TASKS = [
     # fields did not know, and attributes.py now promotes all three into the
     # wire as fields (waymark_ref, passes, publisher). Keeping the task alive
     # would have meant a monthly job spending free-tier quota for three
-    # strings. See docs/TRAILS.md, "Two debts, closed".
+    # strings. See archive/execution-2026-11-11:archive/docs-2026-11/TRAILS.md, "Two debts, closed".
     {
         "key": "trails_popularity",
         "title": "Trails: popularity + curation shortlists (data/reports/trails_seed)",

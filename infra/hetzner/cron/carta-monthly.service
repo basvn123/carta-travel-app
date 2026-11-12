@@ -3,7 +3,7 @@
 # run_pipeline.sh with --max-cadence monthly, which runs every task of this tier
 # and the faster ones that are due. infra/hetzner/cron/schedule.py is the table;
 # tests/test_box_schedule.py keeps this file in step with it.
-# Task report: Execution/P15/T1107-box-schedule.md.
+# Task report: T1107.
 [Unit]
 Description=Carta monthly pipeline run (run_pipeline.py --max-cadence monthly, T1107)
 Documentation=file:///home/carta/carta/docs/runbooks/build-box.md

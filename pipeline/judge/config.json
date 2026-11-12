@@ -1,5 +1,5 @@
 {
- "about": "The D23 text judge (T1188): the threshold rule and the backends. A judge's verdicts count only when its calibration against human labels passes every rule under `threshold`; otherwise the runner keeps them out of the gate (the text layer's `supported` share is None, so the check warns). Research and reasons: Execution/P15/T1188-llm-judge.md.",
+ "about": "The D23 text judge (T1188): the threshold rule and the backends. A judge's verdicts count only when its calibration against human labels passes every rule under `threshold`; otherwise the runner keeps them out of the gate (the text layer's `supported` share is None, so the check warns). Research and reasons: T1188.",
  "prompt": "judge-text",
  "threshold": {
   "kappa_min": 0.7,

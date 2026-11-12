@@ -201,4 +201,4 @@ row beyond 100 km never sits under a "near you" header. Other exports: `loadRegi
 
 The spine, opportunity file and region page screens were not rebuilt in this
 session (no `cache/regions/`, no network). Region page UI rules belong to
-`docs/areas/regions.md`.
+`docs/project-map.md`.

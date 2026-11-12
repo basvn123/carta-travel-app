@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Compare two Carta wire builds by shape, not by content.
 
-Task report: Execution/P3/T048-pipeline-cron-migration.md. Written for the
+Task report: T048. Written for the
 move of the weekly pipeline from the laptop to the Linux orchestrator: the done
 condition is a wire built on the CAX11 that is "identical in shape" to the
 laptop's. Prices, dates and ratings will differ between two runs a week apart,

@@ -60,7 +60,7 @@ Two modes, two tempers. The home page is **Persuade**: film, big type, signature
 
 ## 6. Before and after, from today's dev server
 
-Screenshots taken on 2026-11-06 with `npm run dev` at 390 x 844 and 1440 x 900, saved in `Execution/P15/T1111-shots/` (gitignored, not committed). The container could not reach Wikimedia, so place photos show as grey tiles; that is the network, not the app, though it previews what a slow image load looks like (P-38).
+Screenshots taken on 2026-11-06 with `npm run dev` at 390 x 844 and 1440 x 900, saved in `.work/shots/T1111/` (gitignored, not committed). The container could not reach Wikimedia, so place photos show as grey tiles; that is the network, not the app, though it previews what a slow image load looks like (P-38).
 
 1. **Place page, Rome (`place-desk.png`, `place-tcard-phone.png`).** Before: the trip card is already umber with a soft gradient, a €2,355 total for two, way-there rows with Fastest and Cheapest, stay chips and the lines; the selected "Overview" tab beside it is an ink filled pill. After: the same card becomes the one cost card, gains the three colour cost bar under the total and a foot strip with one action; the tab takes the umber tint.
 2. **Explore, phone (`explore-phone.png`).** Before: rails of large photo cards with the Score and "€138 a person a day" in ink, grey tiles where photos have not arrived. After: unchanged structure and ink price line; mist skeletons sized to the photo, and walks without a photo show a brand map thumbnail.

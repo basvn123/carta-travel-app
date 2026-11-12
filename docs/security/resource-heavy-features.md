@@ -39,7 +39,7 @@ Per-user tier caps and the global cap are in the database, so a change is an `up
 
 | Feature | Limit | Where |
 |---|---|---|
-| Sign-ups and sign-ins | 30 per 5 minutes per IP in `supabase/config.toml`; live value is a Dashboard setting, proposal 20 | `_OPEN-auth-settings.md` step 5 (T1071-a) |
+| Sign-ups and sign-ins | 30 per 5 minutes per IP in `supabase/config.toml`; live value is a Dashboard setting, proposal 20 | `docs/owner/auth-settings.md` step 5 (T1071-a) |
 | OTP and magic-link checks | 30 per 5 minutes per IP (`config.toml`); proposal 15 | Same |
 | Token refreshes | 150 per 5 minutes per IP | Same |
 | Auth emails | 2 an hour on the built-in sender; custom SMTP needed for launch | Same |

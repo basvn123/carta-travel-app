@@ -5,7 +5,7 @@
  * Pure functions, shared by scripts/sync-data.mjs (which splits the core
  * wire at build time) and src/lib/appData.js (which merges it in the
  * browser), so the two halves can never drift. See dataHost.js for where
- * each half is served from and Execution/P3/T054-wire-shards-to-r2.md for
+ * each half is served from and T054 for
  * why.
  *
  * The boot index, /boot.json:

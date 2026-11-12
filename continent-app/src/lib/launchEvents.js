@@ -6,7 +6,7 @@
  * is a tick on a per-day counter on the server. There is no event row, no
  * device id, no session id, no page path and no time of day, so the counter
  * cannot be turned into a trail of what one person did. That is the T214
- * decision (Execution/P12/T214-analytics-decision.md): first-party RPCs only,
+ * decision (T214): first-party RPCs only,
  * nothing stored on the device, no script, so no consent banner.
  *
  * FIRE AND FORGET, ALWAYS. Every call resolves, none throws, none is awaited.

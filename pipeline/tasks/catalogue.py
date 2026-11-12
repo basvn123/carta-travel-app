@@ -159,7 +159,7 @@ TASKS = [
             [PY, "pipeline/harvest_place_signals.py"],
             [PY, "pipeline/score_place_candidates.py"],
         ],
-        "note": ("docs/COVERAGE.md. Rebuilds data/reports/coverage/ (one ranked "
+        "note": ("docs/data/coverage.md. Rebuilds data/reports/coverage/ (one ranked "
                  "review sheet per country) and coverage_gaps.json. READ-ONLY "
                  "with respect to the catalogue: it proposes, a human disposes. "
                  "Promotion is deliberately NOT scheduled - "
@@ -185,7 +185,7 @@ TASKS = [
             [PY, "pipeline/score_significance.py", "apply"],
             [PY, "pipeline/apply_rating_layer.py"],
         ],
-        "note": ("the 2026-08 open-signal rate engine (docs/QUALITY_UPGRADE_PLAN.md): "
+        "note": ("the 2026-08 open-signal rate engine (archive/execution-2026-11-11:archive/docs-2026-11/QUALITY_UPGRADE_PLAN.md): "
                  "pageviews + Wikidata sitelinks/heritage + Wikivoyage See/Do "
                  "listings -> composite score -> local-quota rate 0-3. All "
                  "harvests resumable + cache-only; score_significance apply "

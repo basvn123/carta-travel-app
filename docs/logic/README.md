@@ -1,6 +1,6 @@
 # Logic catalogue
 
-ROADMAP item B3. Every rule the code applies that a traveller would notice (a formula, weight, threshold, band, sort order, fallback, cap, cache time, eligibility rule) has one entry here: what it decides, the constant or config key with its file and value, and the test that pins it, or "no test". Written from the code on 2026-11-06 (T1132); where the HANDBOOK and the code disagreed, the code was written down and the disagreement is listed at the end of each file and in `Execution/_OPEN.md`.
+ROADMAP item B3. Every rule the code applies that a traveller would notice (a formula, weight, threshold, band, sort order, fallback, cap, cache time, eligibility rule) has one entry here: what it decides, the constant or config key with its file and value, and the test that pins it, or "no test". Written from the code on 2026-11-06 (T1132); where the HANDBOOK and the code disagreed, the code was written down and the disagreement is listed at the end of each file and in `docs/owner/`.
 
 | File | Prefix | Covers | Rules | No test |
 |---|---|---|---|---|

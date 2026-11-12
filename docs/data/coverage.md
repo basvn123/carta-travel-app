@@ -1,6 +1,6 @@
 # Coverage: the audit, the country contract and the CI gate
 
-Written for T1085 (ROADMAP B2) from `pipeline/regions/coverage.py`, `pipeline/regions/coverage_gate.py`, `pipeline/regions/quotas.py` and `.github/workflows/coverage-contract.yml`. The retired `archive/docs-2026-11/COVERAGE.md` was not used as a source.
+Written for T1085 (ROADMAP B2) from `pipeline/regions/coverage.py`, `pipeline/regions/coverage_gate.py`, `pipeline/regions/quotas.py` and `.github/workflows/coverage-contract.yml`. The retired `archive/execution-2026-11-11:archive/docs-2026-11/COVERAGE.md` was not used as a source.
 
 ## Two things share the word "coverage"
 
@@ -96,4 +96,4 @@ Workflow `.github/workflows/coverage-contract.yml` runs on push to `main` and on
 
 ## Who reads it
 
-`continent-app/src/lib/coverageCases.js` reads `coverage.contract.countries[cc][layer].code` to pick the sentence for an empty or thin page; `continent-app/src/lib/regions.js` and `continent-app/src/lib/footers.js` also load `coverage.json`. Region pages come from `pipeline/regions/export_regions.py` (see `docs/areas/regions.md`).
+`continent-app/src/lib/coverageCases.js` reads `coverage.contract.countries[cc][layer].code` to pick the sentence for an empty or thin page; `continent-app/src/lib/regions.js` and `continent-app/src/lib/footers.js` also load `coverage.json`. Region pages come from `pipeline/regions/export_regions.py` (see `docs/project-map.md`).

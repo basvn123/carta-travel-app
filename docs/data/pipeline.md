@@ -1,6 +1,6 @@
 # The data pipeline
 
-Written for T1085 (ROADMAP B2) from the code, not from the retired `archive/docs-2026-11/PIPELINE.md`. Source of truth: `run_pipeline.py` (the CLI, planner and runner) and `pipeline/tasks/` (the `TASKS` table, one module per domain since T1207, ROADMAP A2). Where the code could not settle a point, it says "not verified".
+Written for T1085 (ROADMAP B2) from the code, not from the retired `archive/execution-2026-11-11:archive/docs-2026-11/PIPELINE.md`. Source of truth: `run_pipeline.py` (the CLI, planner and runner) and `pipeline/tasks/` (the `TASKS` table, one module per domain since T1207, ROADMAP A2). Where the code could not settle a point, it says "not verified".
 
 ## What it is
 
@@ -79,7 +79,7 @@ A non-soft failure stops the loop ("stopping before ship to avoid shipping half 
 
 ## Ship step
 
-After the loop, if tasks ran, none failed, and at least one had `writes_app_data` or `writes_wire`: `--ship build` runs `npm run build` in `continent-app/`, `--ship data` runs `node scripts/sync-data.mjs`. A failed ship adds `ship` to `failed`. Deploy to Cloudflare is not in `run_pipeline.py`; see `docs/areas/deploy.md`.
+After the loop, if tasks ran, none failed, and at least one had `writes_app_data` or `writes_wire`: `--ship build` runs `npm run build` in `continent-app/`, `--ship data` runs `node scripts/sync-data.mjs`. A failed ship adds `ship` to `failed`. Deploy to Cloudflare is not in `run_pipeline.py`; see `docs/project-map.md`.
 
 ## Inputs and outputs
 
@@ -104,7 +104,7 @@ After the loop, if tasks ran, none failed, and at least one had `writes_app_data
 | Hetzner always-on box (`infra/hetzner/cax11/`) | `carta-weekly.timer` (Monday 09:00 `Europe/Brussels`, `Persistent=true`) starts `carta-weekly.service`, which runs `weekly.sh` then `run_pipeline.sh` | In production (owner confirmed). Unit file sets `TimeoutStartSec=48h` |
 | Hetzner on-demand box (`infra/hetzner/cax41/`) | Task `trailslab_worker` runs `infra/hetzner/cax41/trailslab_worker.py run` | In production (owner confirmed); guarded by `trailslab_worker.py check` (needs the switch, `HCLOUD_TOKEN`, R2, worker key) |
 
-`run_pipeline.sh` wraps the driver: flock `logs/carta-run.lock`, secrets via `load-env.sh`, venv resync, R2 pull of the master and state when missing, the run, database dumps, R2 push of the master and state after a good run, then `push-data.mjs --live` when `VITE_DATA_BASE` is set, and an optional deploy with `CARTA_DEPLOY=1`. Its env keys: `CARTA_MAX_CADENCE` (default `weekly`, or `all`), `CARTA_EXTRA_TASKS` (passed as `--also`), `CARTA_MAX_HOURS` (16 when extras are set), `CARTA_SHIP`. The values set on the production box live in its secrets file and are not verified here; `infra/hetzner/cax11/env.example` leaves both blank. With a weekly ceiling, monthly and quarterly tasks (`trips`, `regions`, `coverage`) only run when named in `CARTA_EXTRA_TASKS` or by hand. See also `docs/areas/build-box.md`.
+`run_pipeline.sh` wraps the driver: flock `logs/carta-run.lock`, secrets via `load-env.sh`, venv resync, R2 pull of the master and state when missing, the run, database dumps, R2 push of the master and state after a good run, then `push-data.mjs --live` when `VITE_DATA_BASE` is set, and an optional deploy with `CARTA_DEPLOY=1`. Its env keys: `CARTA_MAX_CADENCE` (default `weekly`, or `all`), `CARTA_EXTRA_TASKS` (passed as `--also`), `CARTA_MAX_HOURS` (16 when extras are set), `CARTA_SHIP`. The values set on the production box live in its secrets file and are not verified here; `infra/hetzner/cax11/env.example` leaves both blank. With a weekly ceiling, monthly and quarterly tasks (`trips`, `regions`, `coverage`) only run when named in `CARTA_EXTRA_TASKS` or by hand. See also `docs/project-map.md`.
 
 ## Gotchas
 

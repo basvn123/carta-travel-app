@@ -3,7 +3,7 @@
 # and a Cache-Control smoke test on the img/ and data/ prefixes.
 #
 # Reference: additional docs/Carta/Plan/Architecture/CARTA_CLOUD_ARCHITECTURE.md
-# sections 3, 5.2, 8.2 step 2. Task: Execution/P3/T044-r2-bucket-and-domains.md.
+# sections 3, 5.2, 8.2 step 2. Task: T044.
 #
 # This script needs two things that do not exist in this environment yet:
 #   CLOUDFLARE_API_TOKEN   an API token, R2 Storage: Edit at minimum (see below)

@@ -26,7 +26,7 @@
 //      ErrorBoundary call the count in 1 would be 0, and the run fails there.
 //
 // The database side (040 refuses fn 'app' until its two closed lists are
-// widened) is in Execution/P4/T083-rls-tests-and-errorboundary.md and
+// widened) is in T083 and
 // register row T083-b; this spec proves what the browser sends.
 
 import { chromium } from 'playwright';

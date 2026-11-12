@@ -7,7 +7,7 @@
     {"name": "supabase-auth", "url": "https://ntssxktaduxzpsmejwyv.supabase.co/auth/v1/health", "expect_status": [200, 401], "apikey_env": "SUPABASE_ANON_KEY", "enabled": true, "_note": "401 without a key still proves the project answers. With SUPABASE_ANON_KEY set it expects 200."}
   ],
   "wire_layers": {
-    "_note": "Row count floors for the published wire, read from the data host. Floors are about 80 percent of the figures in Execution/P4/T072-pipeline-health-metrics.md (beaches 2746, lakes 1681, mountains 740, trails 17619, cycling 506).",
+    "_note": "Row count floors for the published wire, read from the data host. Floors are about 80 percent of the figures in T072 (beaches 2746, lakes 1681, mountains 740, trails 17619, cycling 506).",
     "base": "https://data.carta-europetravel.com/data",
     "layers": {
       "beaches": {"path": "beaches/index.json", "field": "n_beaches", "floor": 2200},

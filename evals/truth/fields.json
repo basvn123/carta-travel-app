@@ -1,6 +1,6 @@
 {
  "version": "truth-fields/1",
- "note": "T1144, ROADMAP D4. What each field of the truth set means, the rule that compares the shipped value with the verified answer (evals/run_truth.py compare()) and the tolerance. Tolerances follow the research in Execution/P15/T1144-truth-set.md.",
+ "note": "T1144, ROADMAP D4. What each field of the truth set means, the rule that compares the shipped value with the verified answer (evals/run_truth.py compare()) and the tolerance. Tolerances follow the research in T1144.",
  "fields": {
   "place": {
    "country": {"compare": "exact", "means": "ISO 3166 alpha-2 code of the country the place is in", "answer": "two letters, e.g. NL", "where": "any map; Wikipedia infobox"},

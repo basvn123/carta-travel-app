@@ -66,7 +66,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 | T | Path traversal into the prerender bucket | L | L | Keys are built by `prerenderKey()` in `src/lib/prerenderShell.js`; the bucket has no public domain | not verified by a test |
 | I | A prerendered page served without the CSP | L | M | `[[path]].js` refuses to serve a shell without a `Content-Security-Policy` | not verified by a test |
 
-**Gap.** Closed by T1079: every `/api/*` query string goes through a strict validator in `functions/_lib/guard.js` (lat and lon as plain decimals, real calendar dates, bounded Ask lists), every route answers 405 to other methods, every refusal is `{"error": code}`. Still open: the durable limit needs the `RATE_LIMIT` binding (`Execution/P15/_OPEN-web-hardening.md`); no test of the CSP refusal in `[[path]].js`.
+**Gap.** Closed by T1079: every `/api/*` query string goes through a strict validator in `functions/_lib/guard.js` (lat and lon as plain decimals, real calendar dates, bounded Ask lists), every route answers 405 to other methods, every refusal is `{"error": code}`. Still open: the durable limit needs the `RATE_LIMIT` binding (`docs/owner/web-hardening.md`); no test of the CSP refusal in `[[path]].js`.
 
 ## 3. R2 data host
 
@@ -79,7 +79,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 | STRIDE | Threat | L | I | Current control | Test |
 |---|---|---|---|---|---|
 | T | Someone with an R2 write key replaces or deletes the shipped data | M | H | Keys only in env files; `--prune` is a separate explicit step | none yet |
-| T | The leaked `carta-r2-admin` token (2026-10-02, T291-b) is used | M | H | None until the owner rolls it | `Execution/P15/_OPEN-secrets-rotation.md` (owner) |
+| T | The leaked `carta-r2-admin` token (2026-10-02, T291-b) is used | M | H | None until the owner rolls it | `docs/owner/secrets-rotation.md` (owner) |
 | I | Data meant to be private is pushed to the public bucket | L | M | The bucket only holds the public wire; no account data is written by the pipeline | not verified by a test |
 | D | Hotlinking or egress abuse | L | L | CORS limits browsers to the Carta origins; R2 egress is free | n/a |
 
@@ -102,7 +102,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 | D | Brute force of sign-in or OTP | M | M | Supabase auth rate limits; live values not verified (local defaults: 30 sign-ins per 5 minutes per IP) | none yet |
 | E | Refresh token replay | L | M | Rotation on with a 10 second reuse window in `config.toml`; live value not verified | none yet |
 
-**Gap.** Every auth setting that matters lives in the Dashboard and none was verifiable here: email confirmation, password length and classes, leaked-password check, rate limits, JWT expiry, refresh rotation, MFA enrolment for the owner. This is ROADMAP C3; T1071 lists the owner steps with values in `Execution/P15/_OPEN-auth-settings.md` (T1071-a). No CAPTCHA on sign-up (T1071-c).
+**Gap.** Every auth setting that matters lives in the Dashboard and none was verifiable here: email confirmation, password length and classes, leaked-password check, rate limits, JWT expiry, refresh rotation, MFA enrolment for the owner. This is ROADMAP C3; T1071 lists the owner steps with values in `docs/owner/auth-settings.md` (T1071-a). No CAPTCHA on sign-up (T1071-c).
 
 ## 5. Supabase database and row level security
 
@@ -122,7 +122,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 **Verified state on 2026-11-05 (local Postgres 18, this task).** Both security workflows were red before this batch for a reason unrelated to policies: their loaders applied every `NNN_*.sql`, so from 055 on each `_down.sql` ran straight after its migration, and 056 then failed on `user_settings`, which only `supabase/schema.sql` creates. With the loaders corrected (skip `_down`, apply `schema.sql` first; the fix is committed by T1070), the admin surface passes 211 of 211 and the row policy suite passes 413 of 415. The two failures are real coverage debt: 19 tables from `schema.sql` and 052 to 060 have no isolation fixture (`ask_chats`, `email_log`, `email_prefs`, `friend_visibility`, seven `group_trip_*`, `pay_links`, `saved_trips`, four `shared_list*`, `trip_join_requests`, `user_settings`), and 28 policies on the group and shared-list tables call `group_role`, `group_all_joined` or `shared_list_role`, which `anon` cannot execute, so a signed-out read answers 42501 instead of an empty set. Neither is a leak (the refusals are refusals); both are unproven isolation.
 
-**Closed by T1078 (2026-11-05).** The 17 remaining tables have fixtures (T1070-c), so all 34 tables with policies are proven: a second signed-in user and a signed-out visitor cannot read, change, delete or forge the victim's rows, and the friend, co-member and requester admissions are asserted. Migration 063 lets `anon` execute `group_role`, `shared_list_role` and `group_all_joined` (the first two answer null without a caller; the third now checks the caller's own role in the group first, which also closes a membership oracle any signed-in account had), so the 28 helper calls in 26 policies on 11 tables no longer fault and signed-out reads return nothing (T1070-d). 063 is written, not applied (owner step 9 in `Execution/P15/_OPEN-supabase-migrations.md`).
+**Closed by T1078 (2026-11-05).** The 17 remaining tables have fixtures (T1070-c), so all 34 tables with policies are proven: a second signed-in user and a signed-out visitor cannot read, change, delete or forge the victim's rows, and the friend, co-member and requester admissions are asserted. Migration 063 lets `anon` execute `group_role`, `shared_list_role` and `group_all_joined` (the first two answer null without a caller; the third now checks the caller's own role in the group first, which also closes a membership oracle any signed-in account had), so the 28 helper calls in 26 policies on 11 tables no longer fault and signed-out reads return nothing (T1070-d). 063 is written, not applied (owner step 9 in `docs/owner/supabase-migrations.md`).
 
 **Gap.** Definer functions outside `admin_*` are not checked for a pinned `search_path` by any test (C4). The upload tables and bucket (061, T1070) are covered by the row policy suite, Storage policies included.
 
@@ -165,7 +165,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 ## 8. The upload path (T333, server half T1070)
 
-**Data flow.** The trail page form (`continent-app/src/community/UploadForm.jsx`) strips a photo's metadata or trims a track's ends on the device (`src/lib/stripImageMeta.js`, `src/lib/gpxPrivacy.js`), then `submitUpload` in `src/community/uploads.js` calls `begin_upload`, uploads into the private bucket `user-uploads` at the path it was given, and calls `finish_upload`. Every 15 minutes `supabase/functions/upload-scan` sweeps, deletes queued files through the Storage API and re-runs the privacy pass on pending uploads. An admin publishes, declines or removes with `admin_decide_upload`. All of it is in `supabase/migrations/061_user_uploads.sql`, written by T1070 and not yet applied live (`Execution/P15/_OPEN-uploads.md`).
+**Data flow.** The trail page form (`continent-app/src/community/UploadForm.jsx`) strips a photo's metadata or trims a track's ends on the device (`src/lib/stripImageMeta.js`, `src/lib/gpxPrivacy.js`), then `submitUpload` in `src/community/uploads.js` calls `begin_upload`, uploads into the private bucket `user-uploads` at the path it was given, and calls `finish_upload`. Every 15 minutes `supabase/functions/upload-scan` sweeps, deletes queued files through the Storage API and re-runs the privacy pass on pending uploads. An admin publishes, declines or removes with `admin_decide_upload`. All of it is in `supabase/migrations/061_user_uploads.sql`, written by T1070 and not yet applied live (`docs/owner/uploads.md`).
 
 **Assets.** The uploader's location and identity (home address at a track's ends, EXIF GPS); third parties in a photo; Carta's liability for what it publishes; storage cost.
 
@@ -330,11 +330,11 @@ Ranked by likelihood times impact, then by how cheaply the next step closes it.
 
 | Rank | Gap | Surface | L | I | ROADMAP item | Next step |
 |---|---|---|---|---|---|---|
-| 1 | Leaked `carta-r2-admin` token not rolled | R2, Pages | M | H | C2 | Owner rolls it (`_OPEN-secrets-rotation.md`) |
-| 2 | Auth Dashboard settings unverified (confirmation, password rules, leaked-password check, rate limits, owner MFA) | Supabase Auth | M | H | C3 | Owner steps in `_OPEN-auth-settings.md` (T1071) |
+| 1 | Leaked `carta-r2-admin` token not rolled | R2, Pages | M | H | C2 | Owner rolls it (`docs/owner/secrets-rotation.md`) |
+| 2 | Auth Dashboard settings unverified (confirmation, password rules, leaked-password check, rate limits, owner MFA) | Supabase Auth | M | H | C3 | Owner steps in `docs/owner/auth-settings.md` (T1071) |
 | 3 | Admin reads and live writes accept an `aal1` session | Admin | L | H | C3 | 062 written and tested (T1071); owner enrols TOTP and applies (T1071-a) |
 | 4 | ~~19 tables without an isolation fixture; 28 policies uncallable by `anon`~~ Closed by T1078 (fixtures for all 34 tables; 063 written, owner applies) | Database | M | H | C4 | Done in code; owner pastes 063 |
-| 5 | Upload path server half written but not applied (061, `upload-scan`) | Uploads | H once live | H | T333-a (C4) | Owner applies (`_OPEN-uploads.md`, T1070-a) |
+| 5 | Upload path server half written but not applied (061, `upload-scan`) | Uploads | H once live | H | T333-a (C4) | Owner applies (`docs/owner/uploads.md`, T1070-a) |
 | 6 | Dependency audit, SHA-pinned actions, Dependabot | CI, app | M | H | C6 | Done in T1080: `supply-chain.yml`, pins, `.github/dependabot.yml`; pip-audit and OSV are report-only until the baseline is cleared |
 | 7 | Stripe webhook signature check has no test | Stripe | M | H | C5 | Static order test done (T1079); a live wrong-signature probe goes to C10 |
 | 8 | Uptime job holds the service role key | GitHub | M | H | C2 | Switch to the anon key if the probe allows |

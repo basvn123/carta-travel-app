@@ -2,7 +2,7 @@
 # Shared helpers for the on-demand CAX41 jobs (T047). Source this, do not run
 # it. Used by infra/hetzner/cax41/spawn.sh on the orchestrator, by worker.sh on
 # the worker and by every job script, so the jobs table is parsed in one place.
-# Task report: Execution/P3/T047-on-demand-cax41.md.
+# Task report: T047.
 
 CARTA_JOBS_DIR="${CARTA_JOBS_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
 CARTA_JOBS_TSV="${CARTA_JOBS_TSV:-$CARTA_JOBS_DIR/jobs.tsv}"

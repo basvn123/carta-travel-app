@@ -7,8 +7,8 @@
 //
 // Build (fast build) and serve it with the data, then
 //   node scripts/verify_plan_short.mjs <shotdir> [width] [base] [--expect]
-// e.g. node ../Execution/P15/T840-T843-walk/serve-a.mjs ../.fastbuild public 5871
-//      node scripts/verify_plan_short.mjs ../Execution/P15/T1103-shots 390 http://localhost:5871 --expect
+// e.g. node scripts/serve_static.mjs ../.fastbuild public 5871
+//      node scripts/verify_plan_short.mjs ../.work/shots/T1103 390 http://localhost:5871 --expect
 // Prints one JSON line (screens, taps, titles) and exits 1 on a failed check.
 // Screenshots go to the shot folder (gitignored), never into the repo.
 import fs from 'node:fs';

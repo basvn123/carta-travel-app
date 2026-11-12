@@ -131,7 +131,7 @@ jobs:
         run: |
           args=$(grep -v '^#' tests/quarantine.txt | grep . | sed 's/^/--deselect /')
           python -m pytest tests -q -rs $args
-      - name: Entry points in CLAUDE.md and MAP.md exist
+      - name: Entry points in CLAUDE.md and docs/project-map.md exist
         run: python -I scripts/docs/check_entry_points.py
       # B7 (T1134): the docs still say what the code does. Constants and tests
       # named in docs/logic/, SCHEMA.md against docs/wire.schema.json, and the

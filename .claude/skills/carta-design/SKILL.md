@@ -152,7 +152,7 @@ The app is shown by **real recordings of the app**, never mock-ups. `continent-a
 3. **Measure before.** Record section heights at 1440 and 390 on live production.
 4. **Build** with impeccable's craft floor in mind, Motion for movement, tokens for every value.
 5. **Check once, batched.** Use the dev server at 1440 x 900 and 390 x 844, with screenshots only where the look is the point. Data from the production host is blocked by CORS on localhost: mirror the few files needed into a scratch `public/_tmp/` folder, rewrite their URLs with an init script, then delete it. Run `impeccable detect`, `npx eslint` on the touched files and `npm test`.
-6. **Report.** Follow CLAUDE.md: task numbers, one commit per task, the report with before and after heights, and register rows for anything open.
+6. **Report.** Follow the crew run report (`crew:document-run`): name the screens checked at both widths, the before and after heights, and what departed from the defaults; owner-only follow-ups go into `docs/owner/`, engineering ones into the matching `ROADMAP.md` item.
 
 ## 11. Never
 

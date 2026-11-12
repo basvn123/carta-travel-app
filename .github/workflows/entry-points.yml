@@ -1,21 +1,23 @@
 name: entry-points
 
-# Every Claude session starts at CLAUDE.md and MAP.md and follows their
-# pointers. This job fails when either names a path that does not exist
-# (ROADMAP A4, T1051).
+# Every Claude session starts at CLAUDE.md and docs/project-map.md and
+# follows their pointers. This job fails when one names a path that does not
+# exist (ROADMAP A4).
 
 on:
   push:
     branches: [main]
     paths:
       - "CLAUDE.md"
-      - "MAP.md"
+      - "docs/project-map.md"
+      - "docs/lessons.md"
       - "scripts/docs/check_entry_points.py"
       - ".github/workflows/entry-points.yml"
   pull_request:
     paths:
       - "CLAUDE.md"
-      - "MAP.md"
+      - "docs/project-map.md"
+      - "docs/lessons.md"
       - "scripts/docs/check_entry_points.py"
 
 permissions:

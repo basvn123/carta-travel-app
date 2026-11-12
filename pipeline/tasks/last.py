@@ -63,7 +63,7 @@ TASKS = [
                  "CARTA_TRAILSLAB_WORKER=1, HCLOUD_TOKEN, R2 and the worker key "
                  "are all in place. The trails_* tasks above still skip here "
                  "(no lab on this box). Owner steps: "
-                 "Execution/P15/_OPEN-explore-data-runs.md, T647."),
+                 "docs/owner/explore-data-runs.md, T647."),
     },
 ]
 

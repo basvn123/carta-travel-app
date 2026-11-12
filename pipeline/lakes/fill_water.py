@@ -6,7 +6,7 @@ Two gaps on the lake wire: lakes with no `water` block (no EEA bathing site
 matched inside enrich_lakes.join_bathing's radius) and lakes whose swim rule is
 `unknown`. This step closes what the evidence allows and nothing else.
 
-Sources, in order of trust (comparison in Execution/P15/T1186-mountains-lakes.md):
+Sources, in order of trust (comparison in T1186):
 
     eea       EEA WISE bathing sites (cache/eea_bathing_water.json, written by
               pipeline/harvest_bathing_water.py). Second pass here: a wider

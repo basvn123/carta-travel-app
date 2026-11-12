@@ -1,4 +1,4 @@
-# Carta Intelligence API (T1154, ROADMAP F5). Pinned; research and licences in Execution/P15/T1154-intelligence-api.md.
+# Carta Intelligence API (T1154, ROADMAP F5). Pinned; research and licences in T1154.
 fastapi==0.162.0          # MIT
 uvicorn==0.54.0           # BSD-3-Clause
 pydantic==2.13.5          # MIT (the version FastAPI 0.162 resolved here)

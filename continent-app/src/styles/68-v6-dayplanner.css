@@ -20,7 +20,7 @@
    block from 24-destination-workspace.css and the D6 builder block from
    26-shortlist-extras.css. Nothing in 25-46 or 60-67 styles these classes,
    so loading them last changes no cascade (computed styles compared before
-   and after the move, see Execution/P10/T389-v6-v3-dayplanner.md).
+   and after the move, see T389).
    ========================================================================== */
 
 /* ═════════ Day workspace: map on top, three tabs under it ═════════

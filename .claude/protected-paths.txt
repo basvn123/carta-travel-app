@@ -1,0 +1,29 @@
+# Files and folders agents may not edit without asking the owner first.
+# One pattern per line, relative to the project root. # starts a comment.
+# Without "/": matches a name at any depth. With "/": matches from the root.
+# A protected folder protects everything inside it. The crew guard_edits hook
+# blocks edits here; its check on shell commands is a best effort.
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Shipped data and images (hours to rebuild, read by the live site)
+continent-app/public/
+
+# Pipeline inputs and routing tools (hours to rebuild)
+cache/
+tools/trailslab/
+tools/brouter/
+
+# Frozen calibration and the coverage gate's contract
+reports/rating_reference_v5.json
+reports/coverage_contract.json
+
+# Windows Task Scheduler runners and pipeline state
+logs/
+
+# CI workflows: a change reaches every push
+.github/workflows/*

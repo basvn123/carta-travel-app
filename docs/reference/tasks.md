@@ -148,7 +148,7 @@ Coverage gaps: what Europe has that the catalogue does not
 
 - Cadence: quarterly
 - Writes: neither the master nor the wire directly
-- Note: docs/COVERAGE.md. Rebuilds data/reports/coverage/ (one ranked review sheet per country) and coverage_gaps.json. READ-ONLY with respect to the catalogue: it proposes, a human disposes. Promotion is deliberately NOT scheduled - promote_place_candidates writes a spec file and apply_new_gems inserts it, both run by hand, because adding destinations is an editorial act and a cron job should never make one. Quarterly because the gazetteer and the registers move slowly; the expensive part is the ~70 MB candidate rebuild (~75 s, no network) plus one Wikidata pass.
+- Note: docs/data/coverage.md. Rebuilds data/reports/coverage/ (one ranked review sheet per country) and coverage_gaps.json. READ-ONLY with respect to the catalogue: it proposes, a human disposes. Promotion is deliberately NOT scheduled - promote_place_candidates writes a spec file and apply_new_gems inserts it, both run by hand, because adding destinations is an editorial act and a cron job should never make one. Quarterly because the gazetteer and the registers move slowly; the expensive part is the ~70 MB candidate rebuild (~75 s, no network) plus one Wikidata pass.
 - Reads and runs: `pipeline/build_place_candidates.py`, `pipeline/harvest_place_signals.py`, `pipeline/score_place_candidates.py`
 - Commands:
 
@@ -165,7 +165,7 @@ POI significance: signals -> dedupe -> gated re-tier -> rating
 - Cadence: monthly
 - Writes: the master `app_data.json`
 - Wire fields it owns (6): `destinations.*.activities`, `destinations.*.gateway_of`, `destinations.*.gateways`, `destinations.*.rating`, `meta.generated_at`, `meta.rating_model`
-- Note: the 2026-08 open-signal rate engine (docs/QUALITY_UPGRADE_PLAN.md): pageviews + Wikidata sitelinks/heritage + Wikivoyage See/Do listings -> composite score -> local-quota rate 0-3. All harvests resumable + cache-only; score_significance apply REFUSES to write when the anchor validation gate fails (logs/significance_report.json). apply_rating_layer last: the dest rating's things component saturates on the new rates.
+- Note: the 2026-08 open-signal rate engine (archive/execution-2026-11-11:archive/docs-2026-11/QUALITY_UPGRADE_PLAN.md): pageviews + Wikidata sitelinks/heritage + Wikivoyage See/Do listings -> composite score -> local-quota rate 0-3. All harvests resumable + cache-only; score_significance apply REFUSES to write when the anchor validation gate fails (logs/significance_report.json). apply_rating_layer last: the dest rating's things component saturates on the new rates.
 - Reads and runs: `pipeline/harvest_pageviews.py`, `pipeline/pois/harvest_poi_wikidata.py`, `pipeline/harvest_wikivoyage_listings.py`, `pipeline/pois/dedupe_pois.py`, `pipeline/pois/normalize_poi_kinds.py`, `pipeline/score_significance.py`, `pipeline/apply_rating_layer.py`
 - Commands:
 
@@ -1583,7 +1583,7 @@ Trails lab on an on-demand x86 worker: way tags, transit stops, trails + cycling
 - Writes: the wire files in `continent-app/public/`
 - Wire files: `trails/`
 - Code: guard `lambda ctx: _trailslab_worker_guard(ctx)`, dry run `lambda ctx: _trailslab_worker_dry(ctx)`
-- Note: infra/hetzner/cax41/trailslab_worker.py: spawn.sh trailslab (CPX42, about 5 h, ceiling 10 h, about EUR 0.65 at the planning rate), then the wires that passed gate.py and difficulty_gate.py on the worker AND again here against this box's wire go into continent-app/public/trails and /cycling, so this run's ship publishes them, and the fresh dump moves to archive/db/trailslab/. Skips with the reason unless CARTA_TRAILSLAB_WORKER=1, HCLOUD_TOKEN, R2 and the worker key are all in place. The trails_* tasks above still skip here (no lab on this box). Owner steps: Execution/P15/_OPEN-explore-data-runs.md, T647.
+- Note: infra/hetzner/cax41/trailslab_worker.py: spawn.sh trailslab (CPX42, about 5 h, ceiling 10 h, about EUR 0.65 at the planning rate), then the wires that passed gate.py and difficulty_gate.py on the worker AND again here against this box's wire go into continent-app/public/trails and /cycling, so this run's ship publishes them, and the fresh dump moves to archive/db/trailslab/. Skips with the reason unless CARTA_TRAILSLAB_WORKER=1, HCLOUD_TOKEN, R2 and the worker key are all in place. The trails_* tasks above still skip here (no lab on this box). Owner steps: docs/owner/explore-data-runs.md, T647.
 - Reads and runs: `infra/hetzner/cax41/trailslab_worker.py`
 - Commands:
 

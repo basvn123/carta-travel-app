@@ -1,6 +1,6 @@
 # Ratings layer: extra references (T1191, ROADMAP D23)
 
-Files the ratings layer (`scripts/validation/layer_ratings.py`) reads when they exist. All are filled on a box with network (owner steps in `Execution/P15/T1191-ratings-validation.md`).
+Files the ratings layer (`scripts/validation/layer_ratings.py`) reads when they exist. All are filled on a box with network (owner steps in `T1191`).
 
 - `wikivoyage_status.json`: `{place id: "outline" | "usable" | "guide" | "star"}`. Written by `python -I scripts/validation/layer_ratings.py fetch-wikivoyage`.
 - `eurostat_nights.json`: `{place id: nights spent per year}` from Eurostat `urb_ctour` (cities) for the metro and city rows. Attribution: Eurostat.

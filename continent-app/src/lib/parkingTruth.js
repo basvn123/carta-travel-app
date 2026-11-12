@@ -2,7 +2,7 @@
  * parkingTruth.js: the parking facts a place page may show (T1030).
  *
  * The owner's rule: parking data must be valid, or it does not show. A fact
- * check (Execution/P15/T1029-T1030-rating-before-you-go.md) found the raw
+ * check (T1029-T1030) found the raw
  * dossier block wrong in predictable ways, so this keeps only what held up:
  *
  *   restricted   the web check's zone flag, when it says there is one. Its

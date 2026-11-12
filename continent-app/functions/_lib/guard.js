@@ -13,7 +13,7 @@
  * edge location. (2) Always, a per-isolate sliding window in memory, which
  * only slows a burst on one isolate (it resets with the isolate). Without the
  * binding the Function still works, with the weaker layer only; adding the
- * binding is an owner step (Execution/P15/_OPEN-web-hardening.md).
+ * binding is an owner step (docs/owner/web-hardening.md).
  */
 
 const BASE_HEADERS = {

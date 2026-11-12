@@ -50,7 +50,7 @@ it (see reports/rating_audit_v3_baseline.json):
          "Worth the journey" means the continent's icons; the band keeps a
          recalibration from silently inflating or emptying the top shelf.
   T759 (formula v5, rating v5 batch R2) changes three gates, each for a
-  reason given here and in Execution/P7/T757-T760-rating-v5-scoring.md:
+  reason given here and in T757-T760:
   3. The SD gap compares hand scores with rubric scores ON THE SAME PLACES
      (the blind hand check of T758, 157 hand-scored places scored again by
      the rubric), per class, and asserts the worst class. The gate exists to

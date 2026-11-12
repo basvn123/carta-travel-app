@@ -144,7 +144,7 @@ TASKS = [
     # on 2026-09-02 per brief 08: the wire predated the beaches and mountains
     # layers that replaced it and nothing under continent-app/src ever read
     # it, while it carried live attribution obligations (data_licenses.md S8).
-    # Code is preserved under archive/pipeline_features.
+    # Code is preserved under archive/execution-2026-11-11:archive/pipeline_features.
     #
     # bathing_water sits BEFORE beaches and lakes (T261): both guards
     # refuse to run without cache/eea_bathing_water.json, which this task

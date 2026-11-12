@@ -6,7 +6,7 @@ import { chromium } from 'playwright';
 const base = process.argv[2] || 'http://localhost:5199/';
 const id = process.argv[3] || '20050';
 const cc = process.argv[4] || 'AT';
-const shots = '../Execution/P15/T1102-shots';
+const shots = '../.work/shots/T1102';
 const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {});
 let bad = 0;
 const ok = (c, m) => { console.log(`${c ? 'ok  ' : 'FAIL'} ${m}`); if (!c) bad++; };

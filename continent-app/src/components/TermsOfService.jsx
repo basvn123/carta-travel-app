@@ -38,8 +38,8 @@ import { LegalDoc } from './LegalDoc.jsx';
  * The legal identity of the provider lives in Imprint.jsx (T015 fills it in),
  * so these terms point there rather than repeating placeholders.
  *
- * LEGAL REVIEW PENDING (owner step J4 of Execution/_OWNER-RUNBOOK.md, register
- * row T365-c). The section "Public guides: the content rule" is a draft
+ * LEGAL REVIEW PENDING (owner step T365-c in docs/owner/; first raised as step J4 of the
+ * retired owner runbook). The section "Public guides: the content rule" is a draft
  * written by T365 on 2026-10-07 from the owner's decision on T070-c: the
  * terms carry a content rule that a moderator can cite as the contractual
  * ground of a takedown, apart from the legal ground (DSA Article 17(3)(d)

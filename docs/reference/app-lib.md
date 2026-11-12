@@ -114,20 +114,6 @@ appData.js, data-file loading, shared across the app. The main dataset download 
 | function | `fetchCountryInsights` | Per-country travel insights (country name -> record). Cached; {} on failure. |
 | function | `fetchDestPoiMap` | POI lists for MANY destinations, as the `{ destId: items }` map the day planner reads. Backed by the same per-destination shards and the same cache as fetchDestPois, so a town fetched for the picker is not fetched again for the explore map. |
 
-## `src/lib/asOf.js`
-
-asOf.js, the "refreshed on" date of a figure (T1208, ROADMAP G9). Every key block of a destination carries `_asof`, the YYYY-MM-DD date its pipeline layer last built it (T1143, lib/provenance.js). It is the build date, not the source's own vintage (T1143-d), so the words say "refreshed", never "chec
-
-| Kind | Name | Summary |
-|---|---|---|
-| const | `STALE_DAYS` |  |
-| const | `BLOCKS` | The blocks behind each kind of figure on the place page. |
-| function | `parseDay` | A YYYY-MM-DD string as a UTC midnight Date, or null. |
-| function | `asOfFor` | The oldest `_asof` among the record's stamped blocks of one kind, or null. |
-| function | `ageDays` | Whole days from `iso` to `now` (ms), or null. |
-| function | `isStale` | True when a figure of `kind` dated `iso` is past its limit. |
-| function | `formatDay` | "7 Jun 2026" in the reader's locale (Intl, UTC so no day shifts), or ''. |
-
 ## `src/lib/ask/agree.js`
 
 Ask Carta, stage 6b: the written answer and the cards agree (T1101, E6). Live failure (audit P-35): "quiet lake with good walks in June under 120 a day" wrote Castel di Tora and showed Esztergom. verify.js keeps a sentence to the notes; this keeps it to the cards the traveller sees: - a sentence nam
@@ -335,6 +321,35 @@ Ask Carta, stage 6: the check every written sentence passes before it shows (T55
 | function | `makeChecker` | The checker for one pack. pack context.js buildPack() knownPlaces every catalogue city name ([name]), to catch a place the notes never mention |
 | function | `verifyAnswer` | The whole written answer checked: the sentences that pass, the ones that did not (for the report and tests), and whether to withdraw it. |
 
+## `src/lib/asOf.js`
+
+asOf.js, the "refreshed on" date of a figure (T1208, ROADMAP G9). Every key block of a destination carries `_asof`, the YYYY-MM-DD date its pipeline layer last built it (T1143, lib/provenance.js). It is the build date, not the source's own vintage (T1143-d), so the words say "refreshed", never "chec
+
+| Kind | Name | Summary |
+|---|---|---|
+| const | `STALE_DAYS` |  |
+| const | `BLOCKS` | The blocks behind each kind of figure on the place page. |
+| function | `parseDay` | A YYYY-MM-DD string as a UTC midnight Date, or null. |
+| function | `asOfFor` | The oldest `_asof` among the record's stamped blocks of one kind, or null. |
+| function | `ageDays` | Whole days from `iso` to `now` (ms), or null. |
+| function | `isStale` | True when a figure of `kind` dated `iso` is past its limit. |
+| function | `formatDay` | "7 Jun 2026" in the reader's locale (Intl, UTC so no day shifts), or ''. |
+
+## `src/lib/beaches.js`
+
+beaches.js, the published beach layer: the coves, calas and strands that came out of pipeline/beaches with a score, a reason list and photographs. Two artifacts, written by pipeline/beaches/export_beaches.py: beaches/index.json which countries have published beaches, how many, the best score in each
+
+| Kind | Name | Summary |
+|---|---|---|
+| function | `loadBeachIndex` | Which countries have beaches, best first. This is the answer to "only show me countries that have a beach": the index is written by the export gate, so a country is in it exactly when at least one of its beaches cleared the score, the photo |
+| function | `loadTopBeaches` | The best beaches in Europe, best first, with a per country cap so the list is a tour of the continent rather than a page of Greek islands. This is what the tab opens on, and it is its own file for a reason: ranking the whole continent clien |
+| function | `loadBeaches` | Every published beach in one country, best first. Null when there is no file to read, which for this layer means "no beaches here". |
+| function | `loadListedBeaches` | The LISTED beaches of one country: verified to exist, named, deduped and in region, but not scored. Its own function reading its own array, rather than a flag on loadBeaches, because that is the guarantee the tier model rests on. A screen h |
+| function | `loadBeachesFor` | The beaches of several countries at once, flattened and re-ranked. Used by the all-Europe view, which is what the tab opens on. |
+| function | `readBeachFromUrl` |  |
+| function | `beachShareUrl` | The link that reopens one beach, for the share sheet. |
+| function | `useBeaches` | The published beaches of a country, or null while loading. |
+
 ## `src/lib/beachStory.js`
 
 beachStory.js, the beach explained to a traveller rather than to a scorer. pipeline/beaches ships every beach with a `why` array of reason codes, not with prose: [{k: 'cliffs'}, {k: 'waterExcellent'}, {k: 'boatOnly'}, {k: 'nationalPark', name: 'Parco Nazionale del Gennargentu'}] and this file turns 
@@ -356,21 +371,6 @@ beachStory.js, the beach explained to a traveller rather than to a scorer. pipel
 | function | `applyBeachFacets` | Rows that satisfy every group with a selection (OR inside a group). |
 | function | `beachFacetCounts` | How many rows each chip would leave, counted inside the pool the OTHER groups already narrowed and IGNORING its own group's other chips. That is what lets a chip carry a number that is true of what tapping it would do, and what keeps the nu |
 | function | `beachHighlights` |  |
-
-## `src/lib/beaches.js`
-
-beaches.js, the published beach layer: the coves, calas and strands that came out of pipeline/beaches with a score, a reason list and photographs. Two artifacts, written by pipeline/beaches/export_beaches.py: beaches/index.json which countries have published beaches, how many, the best score in each
-
-| Kind | Name | Summary |
-|---|---|---|
-| function | `loadBeachIndex` | Which countries have beaches, best first. This is the answer to "only show me countries that have a beach": the index is written by the export gate, so a country is in it exactly when at least one of its beaches cleared the score, the photo |
-| function | `loadTopBeaches` | The best beaches in Europe, best first, with a per country cap so the list is a tour of the continent rather than a page of Greek islands. This is what the tab opens on, and it is its own file for a reason: ranking the whole continent clien |
-| function | `loadBeaches` | Every published beach in one country, best first. Null when there is no file to read, which for this layer means "no beaches here". |
-| function | `loadListedBeaches` | The LISTED beaches of one country: verified to exist, named, deduped and in region, but not scored. Its own function reading its own array, rather than a flag on loadBeaches, because that is the guarantee the tier model rests on. A screen h |
-| function | `loadBeachesFor` | The beaches of several countries at once, flattened and re-ranked. Used by the all-Europe view, which is what the tab opens on. |
-| function | `readBeachFromUrl` |  |
-| function | `beachShareUrl` | The link that reopens one beach, for the share sheet. |
-| function | `useBeaches` | The published beaches of a country, or null while loading. |
 
 ## `src/lib/beforeGo.js`
 
@@ -773,7 +773,7 @@ cycling.js, the published cycling layer: signed cycle routes and the multi-day t
 
 ## `src/lib/dataHost.js`
 
-dataHost.js, where each data file the app fetches is served from. The wire is split by access pattern (CARTA_CLOUD_ARCHITECTURE.md 5.2, Execution/P3/T054-wire-shards-to-r2.md): boot index /boot.json on the app host (Pages). id, lat, lon, country, flags and rating band per destination, plus the datas
+dataHost.js, where each data file the app fetches is served from. The wire is split by access pattern (CARTA_CLOUD_ARCHITECTURE.md 5.2, T054): boot index /boot.json on the app host (Pages). id, lat, lon, country, flags and rating band per destination, plus the dataset meta. Small, and the only data 
 
 | Kind | Name | Summary |
 |---|---|---|
@@ -916,6 +916,14 @@ derivedModules.js, the derived modules of the beach, lake and mountain pages (T1
 | function | `wayUpSummary` | `liftWord` is mountainStory.js liftLabel and `gradeWord` its difficultyLabel, passed in so this file stays free of the story module. |
 | function | `shoreSummary` |  |
 
+## `src/lib/destinationPdf.js`
+
+destinationPdf.js, the place guide: the Download PDF of a destination. Renders from the SAME dossier contract the full-screen page reads (public/dossier/{id}.json), so the PDF cannot drift from the app: one contract, two renderers. Since T914 it is drawn with the kit every other Carta PDF uses (pdfK
+
+| Kind | Name | Summary |
+|---|---|---|
+| function | `downloadDestinationPdf` |  |
+
 ## `src/lib/destInfo.js`
 
 destInfo.js, the lazy per-destination info layer: parking and events. One file per country under /destinfo/{CC}.json, written by pipeline/export_destinfo.py from the OSM parking harvest and the Wikidata events harvest. Fetched the first time a destination of that country is opened, cached for the se
@@ -943,14 +951,6 @@ The pure half of the destination page's tabs and Overview (T499, roadmap 1.4, Ro
 | function | `emptyOutdoorKinds` | The outdoor kinds with nothing in any reading: they get no chip, and are named together in one sentence ("No trail, peak, lake or beach within 20 km of Zungoli."). |
 | function | `kindsList` | The noun list for that sentence, in the language's own "or" list. |
 | function | `pdfOutdoorRows` |  |
-
-## `src/lib/destinationPdf.js`
-
-destinationPdf.js, the place guide: the Download PDF of a destination. Renders from the SAME dossier contract the full-screen page reads (public/dossier/{id}.json), so the PDF cannot drift from the app: one contract, two renderers. Since T914 it is drawn with the kit every other Carta PDF uses (pdfK
-
-| Kind | Name | Summary |
-|---|---|---|
-| function | `downloadDestinationPdf` |  |
 
 ## `src/lib/detailSkeleton.js`
 
@@ -1186,15 +1186,6 @@ Loading the sweep's flight files and the airline index (T517). The files live on
 | function | `loadAirlines` | code -> { name, logo } for every airline the sweep has seen ({} until it loads). |
 | function | `loadSweptOrigins` | T860: the home airports the sweep publishes a file for, IATA -> priced days ({} until it loads, null when the index cannot be read). An airport missing here has no prices yet. |
 
-## `src/lib/flights/flightText.js`
-
-Words for a flight shared by its screens (T1019, from components/flights Flights.jsx): its stops and when its price was checked.
-
-| Kind | Name | Summary |
-|---|---|---|
-| const | `stopsText` | "Direct", "1 stop", "2 stops"; empty when the stops are unknown. |
-| function | `checkedLabel` | "Google Flights, checked 14:05" today, "checked 31 Oct 2026" before. |
-
 ## `src/lib/flights/flights.js`
 
 Flight prices for a trip, from the sweep's file or a live search (T517). Two sources, one shape: - the sweep's file for the home airport (data/flights/{IATA}.json, see workers/flight-sweep/src/publish.mjs): the cheapest flight per route and day, both directions, checked at most a few hours ago for t
@@ -1218,6 +1209,15 @@ Flight prices for a trip, from the sweep's file or a live search (T517). Two sou
 | function | `nextMonth` |  |
 | function | `sweptNear` | The swept flight nearest a wanted day, at most `spread` days either side (the sweep checks every other day for two weeks, then one day a week on a weekday that moves by one each week, so a wanted day is never more than four days from a chec |
 | function | `roundTripNear` | A return flight for screens that price a stay at the app's dates (the destination page, trip styles, curated weeks, city cards): out near `outDate`, home near `backDate`, from the home airport's swept file. Returns { out, back, fare, bags, |
+
+## `src/lib/flights/flightText.js`
+
+Words for a flight shared by its screens (T1019, from components/flights Flights.jsx): its stops and when its price was checked.
+
+| Kind | Name | Summary |
+|---|---|---|
+| const | `stopsText` | "Direct", "1 stop", "2 stops"; empty when the stops are unknown. |
+| function | `checkedLabel` | "Google Flights, checked 14:05" today, "checked 31 Oct 2026" before. |
 
 ## `src/lib/flights/useAirlines.js`
 
@@ -1550,30 +1550,6 @@ One photograph shape for every item page (T430). The layers arrived with four: b
 | function | `toPhoto` |  |
 | function | `toPhotos` | A list of layer images as gallery photos, vetoed and de-duplicated. |
 
-## `src/lib/journeySaves.js`
-
-Carta's own trips a traveller saved (T824): the bookmark on each card of Carta's trips page. Ids only, kept on this device with a change event so every card and the Saved filter move together. Light on purpose: no engine, no flight files.
-
-| Kind | Name | Summary |
-|---|---|---|
-| const | `SAVES_KEY` |  |
-| function | `savedJourneys` |  |
-| function | `isSavedJourney` |  |
-| function | `toggleSavedJourney` |  |
-| function | `useSavedJourneys` | The saved ids, kept current. |
-
-## `src/lib/journeyTrips.js`
-
-journeyTrips.js (T669): the curated journeys library (258 weeks, lib journeys.js) offered as ready trips in the trip planner, beside the pipeline's trips layer (lib/trips.js). A journey names its places in words ("Makarska", "Brela") and its gateway airport by code; the planner works in catalogue de
-
-| Kind | Name | Summary |
-|---|---|---|
-| const | `JOURNEY_PREFIX` | The prefix that tells a journey's card id from a trips-layer id. |
-| const | `isJourneyId` |  |
-| function | `buildCityIndex` | "IT\\|florence" -> the best rated catalogue id of that town in that country. Built once per catalogue. |
-| function | `journeyToTripCard` | A journey's library card as a ready-trip card the planner's Trips step can rank and draw: the towns it visits that the catalogue knows (the gateway when none of them is), its length, its photograph and its line. Null when no stop can be res |
-| function | `journeyStops` | A journey's detail file as the planner's stops: its base towns in order, each with the nights its itinerary sleeps there (an itinerary day's sleepRef names the base by position, from 1), the trip's nights shared evenly when the itinerary do |
-
 ## `src/lib/journeys.js`
 
 journeys.js, the curated trip library: 253 editorial week-long trips in ten styles (cycling, trail running, city, cozy towns, road trips, hiking, culinary, winter sports, nature escapes, water sports), written by hand and unified by the Trips/carta-unified pipeline. Three artifacts, written by pipel
@@ -1620,6 +1596,30 @@ journeys.js, the curated trip library: 253 editorial week-long trips in ten styl
 | function | `tripPhoto` | A trip photograph in the gallery's shape, or null. |
 | function | `tripGallery` | Every photograph a trip carries, once each: the hero, its gallery, its highlights and its days, in that order. |
 
+## `src/lib/journeySaves.js`
+
+Carta's own trips a traveller saved (T824): the bookmark on each card of Carta's trips page. Ids only, kept on this device with a change event so every card and the Saved filter move together. Light on purpose: no engine, no flight files.
+
+| Kind | Name | Summary |
+|---|---|---|
+| const | `SAVES_KEY` |  |
+| function | `savedJourneys` |  |
+| function | `isSavedJourney` |  |
+| function | `toggleSavedJourney` |  |
+| function | `useSavedJourneys` | The saved ids, kept current. |
+
+## `src/lib/journeyTrips.js`
+
+journeyTrips.js (T669): the curated journeys library (258 weeks, lib journeys.js) offered as ready trips in the trip planner, beside the pipeline's trips layer (lib/trips.js). A journey names its places in words ("Makarska", "Brela") and its gateway airport by code; the planner works in catalogue de
+
+| Kind | Name | Summary |
+|---|---|---|
+| const | `JOURNEY_PREFIX` | The prefix that tells a journey's card id from a trips-layer id. |
+| const | `isJourneyId` |  |
+| function | `buildCityIndex` | "IT\\|florence" -> the best rated catalogue id of that town in that country. Built once per catalogue. |
+| function | `journeyToTripCard` | A journey's library card as a ready-trip card the planner's Trips step can rank and draw: the towns it visits that the catalogue knows (the gateway when none of them is), its length, its photograph and its line. Null when no stop can be res |
+| function | `journeyStops` | A journey's detail file as the planner's stops: its base towns in order, each with the nights its itinerary sleeps there (an itinerary day's sleepRef names the base by position, from 1), the trip's nights shared evenly when the itinerary do |
+
 ## `src/lib/kmlExport.js`
 
 kmlExport.js, hand a whole trip to Google Maps with everything we know. A plain Google Maps directions link can only carry 9 waypoints (3 on mobile browsers) and no names, notes or days. A KML file has no such limits: every stop keeps its name, photo, description, visit time and links, days become f
@@ -1638,6 +1638,21 @@ knownFor.js, one short, human line per destination: what the place is actually k
 |---|---|---|
 | function | `knownFor` | The short "what is this place known for" line for a destination. The ladder, best first: 1. the hand-written line (260 destinations) 2. a pipeline blurb that actually says something specific 3. the named sights, composed (lib/placeStory.js) |
 | function | `knownForFacts` | Structured facts for the info popovers: label/value rows, only real data. |
+
+## `src/lib/lakes.js`
+
+lakes.js, the published lake layer: the lakes, reservoirs, lagoons, tarns and crater lakes that came out of pipeline/lakes with a score, three sub scores, a swimming verdict, a reason list and photographs. Three artifacts, written by pipeline/lakes/export_lakes.py: lakes/index.json which countries h
+
+| Kind | Name | Summary |
+|---|---|---|
+| function | `loadLakeIndex` | Which countries have lakes, most first. The index is written by the export gate, so a country is in it exactly when at least one of its water bodies cleared the score, the photographs and the name. `absent` says why the others are not: "not |
+| function | `loadTopLakes` | The best water bodies in Europe, best first, with a per country cap so the list is a tour of the continent rather than a page of Alpine lakes. Its own file for the same reason the beach layer's is: ranking the whole continent client side wo |
+| function | `loadLakes` | Every published water body in one country, best first. Null when there is no file to read, which for this layer means "no lakes here". |
+| function | `loadListedLakes` | The LISTED water bodies of one country: verified to exist, named, deduped, in region, and carrying no score at all. Its own function rather than a second field on loadLakes, because the master spec's rule is that a screen has to OPT IN to s |
+| function | `loadLakesFor` | The lakes of several countries at once, flattened and re-ranked. |
+| function | `readLakeFromUrl` |  |
+| function | `lakeShareUrl` | The link that reopens one lake, for the share sheet. |
+| function | `useLakes` | The published lakes of a country, or null while loading. |
 
 ## `src/lib/lakeStory.js`
 
@@ -1667,21 +1682,6 @@ lakeStory.js, the lake explained to a traveller rather than to a scorer. pipelin
 | function | `applyLakeFacets` | Rows that satisfy every group with a selection (OR inside a group). |
 | function | `lakeFacetCounts` | How many rows each chip would leave, counted inside the pool the OTHER groups already narrowed and IGNORING its own group's other chips. That is what lets a chip carry its own number, grey itself out instead of leading to an empty list, and |
 | function | `lakeHighlights` |  |
-
-## `src/lib/lakes.js`
-
-lakes.js, the published lake layer: the lakes, reservoirs, lagoons, tarns and crater lakes that came out of pipeline/lakes with a score, three sub scores, a swimming verdict, a reason list and photographs. Three artifacts, written by pipeline/lakes/export_lakes.py: lakes/index.json which countries h
-
-| Kind | Name | Summary |
-|---|---|---|
-| function | `loadLakeIndex` | Which countries have lakes, most first. The index is written by the export gate, so a country is in it exactly when at least one of its water bodies cleared the score, the photographs and the name. `absent` says why the others are not: "not |
-| function | `loadTopLakes` | The best water bodies in Europe, best first, with a per country cap so the list is a tour of the continent rather than a page of Alpine lakes. Its own file for the same reason the beach layer's is: ranking the whole continent client side wo |
-| function | `loadLakes` | Every published water body in one country, best first. Null when there is no file to read, which for this layer means "no lakes here". |
-| function | `loadListedLakes` | The LISTED water bodies of one country: verified to exist, named, deduped, in region, and carrying no score at all. Its own function rather than a second field on loadLakes, because the master spec's rule is that a screen has to OPT IN to s |
-| function | `loadLakesFor` | The lakes of several countries at once, flattened and re-ranked. |
-| function | `readLakeFromUrl` |  |
-| function | `lakeShareUrl` | The link that reopens one lake, for the share sheet. |
-| function | `useLakes` | The published lakes of a country, or null while loading. |
 
 ## `src/lib/langPath.js`
 
@@ -1789,14 +1789,6 @@ The place linker as the Explore search box's matcher (T1153, ROADMAP F4), behind
 | function | `linkerFor` | One linker per loaded index; built on the first query. The catalogue in memory grows as Explore loads it, so the linker is rebuilt only when the number of places changes, not on every new object. |
 | function | `linkSearchHits` |  |
 
-## `src/lib/localIntel.js`
-
-localIntel.js, hand-curated "where it's actually nicest" guides for destinations whose geography a POI list alone can't explain. A rating tells you Bellagio is good; it doesn't tell you the whole lake clusters around the mid-lake "Golden Triangle" and that the ferry IS the sight. Keyed by lowercase 
-
-| Kind | Name | Summary |
-|---|---|---|
-| function | `localIntelFor` | The curated local guide for a city, or null. Case-insensitive. |
-
 ## `src/lib/localeState.js`
 
 The active BCP-47 locale, held in plain JS (no React, no JSX) so build-time node scripts and non-component libs (format.js) can read it without pulling in the i18n provider. The provider (src/i18n/index.jsx) is the only writer.
@@ -1805,6 +1797,14 @@ The active BCP-47 locale, held in plain JS (no React, no JSX) so build-time node
 |---|---|---|
 | function | `setActiveLocale` |  |
 | function | `activeLocale` |  |
+
+## `src/lib/localIntel.js`
+
+localIntel.js, hand-curated "where it's actually nicest" guides for destinations whose geography a POI list alone can't explain. A rating tells you Bellagio is good; it doesn't tell you the whole lake clusters around the mid-lake "Golden Triangle" and that the ferry IS the sight. Keyed by lowercase 
+
+| Kind | Name | Summary |
+|---|---|---|
+| function | `localIntelFor` | The curated local guide for a city, or null. Case-insensitive. |
 
 ## `src/lib/mapDrawerState.js`
 
@@ -1910,6 +1910,21 @@ _No header comment._
 | function | `useDialogExit` | A dialog whose open state lives in its caller leaves before it goes (T401, row T391-e). The dialog calls close() for every way out (the close, the scrim, Escape through its focus trap); close() sets `leaving` so the dialog's own class can r |
 | function | `useNavMarker` | The active-section marker (T391, rule R5 and the selected-state rule): one --ink-fill pill per navigation row that slides between items by transform instead of jumping. It is placed from the measured item marked active (`itemSelector`), so |
 
+## `src/lib/mountains.js`
+
+mountains.js, the published mountain layer: the summits, volcanoes, ridges, plateaus, sea cliffs and lowland high points that came out of pipeline/mountains with a score, three sub scores, a way up, a reason list and a gallery of photographs. Three artifacts, written by pipeline/mountains/export_pea
+
+| Kind | Name | Summary |
+|---|---|---|
+| function | `loadMountainIndex` | Which countries have mountains, most first. The index is written by the export gate, so a country is in it exactly when at least one of its summits cleared the score, the photographs and the name. `absent` says why the others are not. Every |
+| function | `loadTopMountains` | The best mountains in Europe, best first, with a per country cap so the list is a tour of the continent rather than a page of Alpine four thousanders. Its own file for the same reason the beach and lake layers have one: ranking the whole co |
+| function | `loadMountains` | Every published mountain in one country, best first. Null when there is no file to read, which for this layer means "nothing published here yet". |
+| function | `loadListedMountains` | The LISTED mountains of one country: verified to exist, named, deduped, in region, and carrying no score at all. Its own function rather than a second field on loadMountains, because the master spec's rule is that a screen has to OPT IN to |
+| function | `loadMountainsFor` | The mountains of several countries at once, flattened and re-ranked. |
+| function | `readMountainFromUrl` |  |
+| function | `mountainShareUrl` | The link that reopens one mountain, for the share sheet. |
+| function | `useMountains` | The published mountains of a country, or null while loading. |
+
 ## `src/lib/mountainStory.js`
 
 mountainStory.js, the mountain explained to a traveller rather than to a scorer. pipeline/mountains ships every summit with a `why` array of reason codes, not with prose: [{k: 'kindPeak'}, {k: 'height', m: 2970}, {k: 'lift', kind: 'cableCar', src: 'osm', name: 'Schilthornbahn'}, {k: 'glacier'}, {k: 
@@ -1944,21 +1959,6 @@ mountainStory.js, the mountain explained to a traveller rather than to a scorer.
 | function | `mountainFacetCounts` | How many rows each chip would leave, counted inside the pool the OTHER groups already narrowed and IGNORING its own group's other chips. That is what lets a chip carry its own number, grey itself out instead of leading to an empty list, and |
 | function | `floorNote` | The one line a country whose floor could not be reached earns, composed from the code index.json ships rather than stored as prose. Brief 05's lead: the layer is honest about the floor internally and invisible about it to a reader, who just |
 | function | `mountainHighlights` |  |
-
-## `src/lib/mountains.js`
-
-mountains.js, the published mountain layer: the summits, volcanoes, ridges, plateaus, sea cliffs and lowland high points that came out of pipeline/mountains with a score, three sub scores, a way up, a reason list and a gallery of photographs. Three artifacts, written by pipeline/mountains/export_pea
-
-| Kind | Name | Summary |
-|---|---|---|
-| function | `loadMountainIndex` | Which countries have mountains, most first. The index is written by the export gate, so a country is in it exactly when at least one of its summits cleared the score, the photographs and the name. `absent` says why the others are not. Every |
-| function | `loadTopMountains` | The best mountains in Europe, best first, with a per country cap so the list is a tour of the continent rather than a page of Alpine four thousanders. Its own file for the same reason the beach and lake layers have one: ranking the whole co |
-| function | `loadMountains` | Every published mountain in one country, best first. Null when there is no file to read, which for this layer means "nothing published here yet". |
-| function | `loadListedMountains` | The LISTED mountains of one country: verified to exist, named, deduped, in region, and carrying no score at all. Its own function rather than a second field on loadMountains, because the master spec's rule is that a screen has to OPT IN to |
-| function | `loadMountainsFor` | The mountains of several countries at once, flattened and re-ranked. |
-| function | `readMountainFromUrl` |  |
-| function | `mountainShareUrl` | The link that reopens one mountain, for the share sheet. |
-| function | `useMountains` | The published mountains of a country, or null while loading. |
 
 ## `src/lib/myTrips.js`
 
@@ -2146,7 +2146,7 @@ packing.js, "what to bring" for a destination, derived instead of asserted. Ever
 
 ## `src/lib/parkingTruth.js`
 
-parkingTruth.js: the parking facts a place page may show (T1030). The owner's rule: parking data must be valid, or it does not show. A fact check (Execution/P15/T1029-T1030-rating-before-you-go.md) found the raw dossier block wrong in predictable ways, so this keeps only what held up: restricted the
+parkingTruth.js: the parking facts a place page may show (T1030). The owner's rule: parking data must be valid, or it does not show. A fact check (T1029-T1030) found the raw dossier block wrong in predictable ways, so this keeps only what held up: restricted the web check's zone flag, when it says t
 
 | Kind | Name | Summary |
 |---|---|---|
@@ -3212,22 +3212,6 @@ The shareable trip receipt image (T1175, ROADMAP K7). A saved trip, priced the w
 | function | `receiptOps` | The drawing. `t` is the i18n function, `money` formats whole euros (formatMoney), `dateText(start, end)` words the dates, `pricedOn` is the day the trip was priced, already worded. |
 | function | `checkReceipt` | The numbers check for one receipt: [] when it passes. |
 
-## `src/lib/shareLink.js`
-
-shareLink.js, a trip plan as a URL anyone can open. The whole draft (stops, nights, dates, party, transport choices) is small, so it travels inside the link itself: JSON, deflate-compressed where the browser supports CompressionStream, then base64url in the URL hash. No backend, no expiry, and nothi
-
-| Kind | Name | Summary |
-|---|---|---|
-| function | `encodeTripShare` | The draft as a hash payload ("1.<b64>" compressed, "0.<b64>" plain). |
-| function | `buildTripShareUrl` | The full shareable URL for a trip draft, or null when it cannot be built. |
-| function | `decodeTripShare` | Decode a raw hash payload back into a safe draft; null on any failure. |
-| function | `readTripShareFromUrl` |  |
-| function | `encodeDayShare` |  |
-| function | `buildDayShareUrl` |  |
-| function | `sanitizeDayShare` | Whitelist + clamp a decoded day plan; null when unusable. Exported for tests. |
-| function | `decodeDayShare` |  |
-| function | `readDayShareFromUrl` |  |
-
 ## `src/lib/sharedElement.js`
 
 Shared element transition: a card's photograph grows into the header photograph of the page it opens (G2). It rides on the View Transitions API, so where that is missing, or the traveller asked for reduced motion, the page simply opens as it always did. Two halves. openShared() runs at the click: it
@@ -3254,6 +3238,22 @@ sharedListModel.js, the pure part of shared Saved lists (T941, migration 059): t
 | function | `canRemoveItem` | What you may do to an item: the owner and the person who added it remove. |
 | function | `friendsToAdd` | The accepted friends the owner can still add: not yet in the list. |
 | function | `sharedKeys` | The keys of every item in every shared list, for resolving their photos. |
+
+## `src/lib/shareLink.js`
+
+shareLink.js, a trip plan as a URL anyone can open. The whole draft (stops, nights, dates, party, transport choices) is small, so it travels inside the link itself: JSON, deflate-compressed where the browser supports CompressionStream, then base64url in the URL hash. No backend, no expiry, and nothi
+
+| Kind | Name | Summary |
+|---|---|---|
+| function | `encodeTripShare` | The draft as a hash payload ("1.<b64>" compressed, "0.<b64>" plain). |
+| function | `buildTripShareUrl` | The full shareable URL for a trip draft, or null when it cannot be built. |
+| function | `decodeTripShare` | Decode a raw hash payload back into a safe draft; null on any failure. |
+| function | `readTripShareFromUrl` |  |
+| function | `encodeDayShare` |  |
+| function | `buildDayShareUrl` |  |
+| function | `sanitizeDayShare` | Whitelist + clamp a decoded day plan; null when unusable. Exported for tests. |
+| function | `decodeDayShare` |  |
+| function | `readDayShareFromUrl` |  |
 
 ## `src/lib/signature.js`
 
@@ -3689,6 +3689,22 @@ The licensed feature photographs of one country, for trail cards that have no ph
 | function | `loadTrailPhotoPool` |  |
 | function | `useTrailPhotoPool` | The pool for `cc`, empty until it has loaded (and when `enabled` is false). |
 
+## `src/lib/trails.js`
+
+trails.js, the published trails layer: hikes, daytrips and city trips that came out of the content lab (tools/trailslab) through human approval. Two artifacts, written by pipeline/trails/export_wire.py: trails/{CC}.json every published trip in that country, each with a simplified line, its metrics a
+
+| Kind | Name | Summary |
+|---|---|---|
+| function | `loadTrailsIndex` | Which countries have published trips, with per-category counts. Resolves null before the first export has ever run. |
+| function | `loadTrails` | Every published RATED trip in one country. Resolves an empty array for a country with nothing published, null when there is no file to read at all. Rated only, deliberately: this is what every existing caller means by "the trails of this co |
+| function | `loadTopTrails` | The Europe-wide walks the Trails section opens on (T453): each country's best rated walks with a photograph, and its best in each rail's cut (pipeline/trails/export_top.py). The same trip objects the country files carry, so a tile opens the |
+| function | `loadListedTrails` | The `listed` tier of one country: routes verified to exist, named, deduped and in region, and deliberately NOT scored. They exist so a region page in Moldova or Kosovo is not empty. The wire omits the rating key entirely rather than nulling |
+| function | `loadTrailFacets` | The per-country facet counts the export shipped, or null. How many rows in this country can answer each filter value, counted by the pipeline over the rows it wrote. The app uses them to grey out a chip that would lead to an empty list befo |
+| function | `loadTreks` | The multi-stage treks one country file holds (T1184, ROADMAP D24): one record per trek with its published stages in order and the totals (pipeline/trails/treks.py). A trek is filed in the country of its first stage, and every stage row carr |
+| function | `loadTrail` | One trip in full, for the detail view: full-resolution geometry, the whole description, the elevation profile and the stops. |
+| function | `readTrailFromUrl` |  |
+| function | `useTrails` | The published trips for a country, or null while loading. |
+
 ## `src/lib/trailShape.js`
 
 trailShape.js, the walk drawn as itself. A third of the walks in the wire ship without a photograph, and the two honest answers to that are somebody else's picture (the nearest town's hero, which trailCards.js borrows and labels) or the walk's own shape. This file is the second one, for the walks wi
@@ -3720,22 +3736,6 @@ trailStory.js, the trail explained to a walker rather than to a database. The la
 | function | `trailReasons` | The "why this one" lines for a trail, from the wire's reason codes. reasons comes from the detail file when it has arrived and from the card otherwise, so the section is populated on the first frame and simply grows. |
 | function | `looksTemplated` | True when the description is the pipeline's composed boilerplate. |
 | function | `trailStory` | The "what to expect" lines, in reading order. tr the card record from the country wire detail the full record, once it has arrived (null before that) opts { t, loop, nearby: { city, km } \\| null } returns { points: [{ key, icon, text }], pr |
-
-## `src/lib/trails.js`
-
-trails.js, the published trails layer: hikes, daytrips and city trips that came out of the content lab (tools/trailslab) through human approval. Two artifacts, written by pipeline/trails/export_wire.py: trails/{CC}.json every published trip in that country, each with a simplified line, its metrics a
-
-| Kind | Name | Summary |
-|---|---|---|
-| function | `loadTrailsIndex` | Which countries have published trips, with per-category counts. Resolves null before the first export has ever run. |
-| function | `loadTrails` | Every published RATED trip in one country. Resolves an empty array for a country with nothing published, null when there is no file to read at all. Rated only, deliberately: this is what every existing caller means by "the trails of this co |
-| function | `loadTopTrails` | The Europe-wide walks the Trails section opens on (T453): each country's best rated walks with a photograph, and its best in each rail's cut (pipeline/trails/export_top.py). The same trip objects the country files carry, so a tile opens the |
-| function | `loadListedTrails` | The `listed` tier of one country: routes verified to exist, named, deduped and in region, and deliberately NOT scored. They exist so a region page in Moldova or Kosovo is not empty. The wire omits the rating key entirely rather than nulling |
-| function | `loadTrailFacets` | The per-country facet counts the export shipped, or null. How many rows in this country can answer each filter value, counted by the pipeline over the rows it wrote. The app uses them to grey out a chip that would lead to an empty list befo |
-| function | `loadTreks` | The multi-stage treks one country file holds (T1184, ROADMAP D24): one record per trek with its published stages in order and the totals (pipeline/trails/treks.py). A trek is filed in the country of its first stage, and every stage row carr |
-| function | `loadTrail` | One trip in full, for the detail view: full-resolution geometry, the whole description, the elevation profile and the stops. |
-| function | `readTrailFromUrl` |  |
-| function | `useTrails` | The published trips for a country, or null while loading. |
 
 ## `src/lib/transport.js`
 
@@ -3803,6 +3803,31 @@ treks.js, the pure half of the multi-stage trek record (T1184, ROADMAP D24): whi
 | function | `trekCountry` | Which country file holds a row's trek: the stage's own pointer, else the row's country (a published parent row is filed with its first stage). |
 | function | `trekOfRow` | The trek a row belongs to, as a stage (`row.trek.id`) or as the trek's own published parent row (`trek.row`), or null. |
 | function | `trekTotals` | The numbers a trek block prints, from the trek record alone: published stages, kilometres, metres up, days, and the stage numbers missing. A stage with no distance is counted as a stage and not as kilometres, and the line says how many were |
+
+## `src/lib/trip_kinds.js`
+
+Trip-kind chips (filter UI) → underlying category tags from the data A destination matches a kind if any of its `categories` overlap the kind's mapped list. This keeps the app filter compatible whether the data is the mock (city-level controlled vocab) or the real v3 pipeline (~70-tag vocab).
+
+| Kind | Name | Summary |
+|---|---|---|
+| const | `TRIP_KIND_MAP` | Trip-kind chips (filter UI) → underlying category tags from the data A destination matches a kind if any of its `categories` overlap the kind's mapped list. This keeps the app filter compatible whether the data is the mock (city-level contr |
+| const | `TRIP_KINDS` | Display labels (in chip order) |
+| function | `matchesAnyKind` | True if a destination's categories include any tag mapped from any active kind. |
+| function | `kindsForDest` | The trip-kinds a destination offers, as {key, label} in TRIP_KINDS order. Same vocabulary the filter chips use, so what you filter on is what you see. |
+
+## `src/lib/trip_planner_pricing.js`
+
+trip_planner_pricing.js Multi-stop trip pricing, built on top of runtime_pricing.js's single-destination data: 1. combineTripLegs - fly into one destination, out of another: which airports the round flight uses and the transfers from them. No fare (T511: fares removed; T517 adds flights back). 2. in
+
+| Kind | Name | Summary |
+|---|---|---|
+| function | `combineTripLegs` | The round flight's airports for flying into `destA` and out of `destB`, read off each destination's air route (origins.js), plus the transfers between those airports and the stops. Carries no fare (T511: fares removed; T517 adds flights bac |
+| function | `ownFlightTransfers` | The airport side of a flight the traveller booked themselves (T278). Carta does not price their seat, but the trip still lands somewhere and ends somewhere: `inDest` is the airport they fly into (the wizard's arrival, else the routed flight |
+| function | `flightReasonLabel` | The traveller-facing explanation for a non-combinable flight result, or a sensible default. Pass `flight.reason` from combineTripLegs. |
+| function | `interCityGroundEstimate` | Estimated cost/time to get from `destA` to `destB` overland (train/bus/ rideshare), not a live fare, since no free universal pricing API for intercity ground transport exists. Uses the same road-detour-factor approach as the app's existing |
+| function | `gemScore` | A "how special is this place" score in roughly a 0-16 range, tuned to lift the genuinely beautiful, characterful spots that a plain beauty.score buries. beauty.score alone is dominated by beach/nature/iconic components, so a charming UNESCO |
+| function | `suggestNextStops` | Candidate next stops for a multi-city itinerary currently ending at `fromDest`, ranked to put the most beautiful, characterful places first. Reachability: a good next stop is either (a) drivable/train-able overland from the current stop (a |
+| function | `pickLegMode` | The mode Carta picks for a stop-to-stop leg nobody has chosen yet, shared by the wizard's estimate and the planner (T388): the car when the trip drives, trains and buses when the traveller asked for public transport, and the leg engine's ow |
 
 ## `src/lib/tripBalance.js`
 
@@ -3933,6 +3958,27 @@ tripPrice.js (T431, T474): what a written week costs at the traveller's Lifestyl
 | function | `tripPrice` | The week at the choices: { rows {slot: eur\\|null}, perPerson, perDay, party, fare, carta, total, est }. perPerson is the sum of the lines when every line has a figure, else the authored total at the spend share. total is perPerson times the |
 | function | `includedRows` | What the figure covers and what it leaves out, as IncludedList rows before translation: { key, in, labelKey, params }. A trip's own included[] and notIncluded[] strings win; otherwise the budget's lines say what is in, and travel to the sta |
 
+## `src/lib/trips.js`
+
+trips.js, the published trip layer: ready-made itineraries of two to fourteen days, composed and checked by pipeline/trips. A trip here is not a suggestion, it is a plan that passed ten checks. Every stop is a place the catalogue already prices and rates, every leg is a train, coach or drive the app
+
+| Kind | Name | Summary |
+|---|---|---|
+| function | `loadTripIndex` | Which countries have trips, best first. `days` per country is the list of durations actually published there, which is what lets the day picker grey out a length rather than offering it and returning nothing. |
+| function | `loadTopTrips` | The best trips in Europe, best first. Its own file so the opening page does not have to fetch forty three countries to rank anything. |
+| function | `loadTrips` | Every published trip touching one country, best first, or null. |
+| function | `loadTripsFor` | Several countries at once, de-duplicated by id and re-ranked. A trip that visits two of the chosen countries appears once. |
+| function | `loadTrip` | One trip in full. Null when the file is absent, which after a re-export means the trip no longer passes its checks. |
+| function | `daysFit` | How well a published trip answers "I have N days". Exact is exact. One day either way is a real answer too, because a seven day trip is a perfectly good eight day trip with a slow morning in it, and refusing to say so leaves a traveller sta |
+| function | `tripSights` | The sights worth naming on a trip card, minus the ones that only repeat a stop. The published sight list is drawn from the destinations on the route, so a city sometimes appears as its own landmark: the Bruges-and-Paris card read "Madonna o |
+| const | `ARCHETYPES` |  |
+| function | `rankTrips` | Rank a set of trip cards for one search. Exact day matches always sort above near ones, because a person who asked for five days is not looking for a six day trip until they have seen the five day ones. Under that it is the score, which alr |
+| function | `groupTripVariants` | Collapse the same route at different lengths into one card. The published set composes a route at every day count it works at, so "Bruges and Paris" comes back at five, six and seven days: three cards, one photograph, one ordered list of ci |
+| function | `availableDays` | Which day counts this set of trips can actually answer. |
+| function | `readTripFromUrl` |  |
+| function | `tripShareUrl` | The link that reopens one trip, for the share sheet. |
+| function | `useTrips` | The published trips of a country, or null while loading. |
+
 ## `src/lib/tripStory.js`
 
 tripStory.js, a composed itinerary explained to a traveller rather than to a scorer. pipeline/trips ships every trip with reason codes, never prose: why: [{k:'oneBed', city:'Salzburg', n:2}, {k:'unesco', n:3}, {k:'railOnly'}, {k:'namedRoute', name:'Brenner Pass'}, {k:'season', months:[5,6,7,8,9]}] w
@@ -3984,52 +4030,6 @@ tripTotal.js, the one price of a planned trip (T432). The wizard's running estim
 | re-export | `normalizeTransferMode` |  |
 | re-export | `paidEur` |  |
 | re-export | `tripStopDetails` |  |
-
-## `src/lib/trip_kinds.js`
-
-Trip-kind chips (filter UI) → underlying category tags from the data A destination matches a kind if any of its `categories` overlap the kind's mapped list. This keeps the app filter compatible whether the data is the mock (city-level controlled vocab) or the real v3 pipeline (~70-tag vocab).
-
-| Kind | Name | Summary |
-|---|---|---|
-| const | `TRIP_KIND_MAP` | Trip-kind chips (filter UI) → underlying category tags from the data A destination matches a kind if any of its `categories` overlap the kind's mapped list. This keeps the app filter compatible whether the data is the mock (city-level contr |
-| const | `TRIP_KINDS` | Display labels (in chip order) |
-| function | `matchesAnyKind` | True if a destination's categories include any tag mapped from any active kind. |
-| function | `kindsForDest` | The trip-kinds a destination offers, as {key, label} in TRIP_KINDS order. Same vocabulary the filter chips use, so what you filter on is what you see. |
-
-## `src/lib/trip_planner_pricing.js`
-
-trip_planner_pricing.js Multi-stop trip pricing, built on top of runtime_pricing.js's single-destination data: 1. combineTripLegs - fly into one destination, out of another: which airports the round flight uses and the transfers from them. No fare (T511: fares removed; T517 adds flights back). 2. in
-
-| Kind | Name | Summary |
-|---|---|---|
-| function | `combineTripLegs` | The round flight's airports for flying into `destA` and out of `destB`, read off each destination's air route (origins.js), plus the transfers between those airports and the stops. Carries no fare (T511: fares removed; T517 adds flights bac |
-| function | `ownFlightTransfers` | The airport side of a flight the traveller booked themselves (T278). Carta does not price their seat, but the trip still lands somewhere and ends somewhere: `inDest` is the airport they fly into (the wizard's arrival, else the routed flight |
-| function | `flightReasonLabel` | The traveller-facing explanation for a non-combinable flight result, or a sensible default. Pass `flight.reason` from combineTripLegs. |
-| function | `interCityGroundEstimate` | Estimated cost/time to get from `destA` to `destB` overland (train/bus/ rideshare), not a live fare, since no free universal pricing API for intercity ground transport exists. Uses the same road-detour-factor approach as the app's existing |
-| function | `gemScore` | A "how special is this place" score in roughly a 0-16 range, tuned to lift the genuinely beautiful, characterful spots that a plain beauty.score buries. beauty.score alone is dominated by beach/nature/iconic components, so a charming UNESCO |
-| function | `suggestNextStops` | Candidate next stops for a multi-city itinerary currently ending at `fromDest`, ranked to put the most beautiful, characterful places first. Reachability: a good next stop is either (a) drivable/train-able overland from the current stop (a |
-| function | `pickLegMode` | The mode Carta picks for a stop-to-stop leg nobody has chosen yet, shared by the wizard's estimate and the planner (T388): the car when the trip drives, trains and buses when the traveller asked for public transport, and the leg engine's ow |
-
-## `src/lib/trips.js`
-
-trips.js, the published trip layer: ready-made itineraries of two to fourteen days, composed and checked by pipeline/trips. A trip here is not a suggestion, it is a plan that passed ten checks. Every stop is a place the catalogue already prices and rates, every leg is a train, coach or drive the app
-
-| Kind | Name | Summary |
-|---|---|---|
-| function | `loadTripIndex` | Which countries have trips, best first. `days` per country is the list of durations actually published there, which is what lets the day picker grey out a length rather than offering it and returning nothing. |
-| function | `loadTopTrips` | The best trips in Europe, best first. Its own file so the opening page does not have to fetch forty three countries to rank anything. |
-| function | `loadTrips` | Every published trip touching one country, best first, or null. |
-| function | `loadTripsFor` | Several countries at once, de-duplicated by id and re-ranked. A trip that visits two of the chosen countries appears once. |
-| function | `loadTrip` | One trip in full. Null when the file is absent, which after a re-export means the trip no longer passes its checks. |
-| function | `daysFit` | How well a published trip answers "I have N days". Exact is exact. One day either way is a real answer too, because a seven day trip is a perfectly good eight day trip with a slow morning in it, and refusing to say so leaves a traveller sta |
-| function | `tripSights` | The sights worth naming on a trip card, minus the ones that only repeat a stop. The published sight list is drawn from the destinations on the route, so a city sometimes appears as its own landmark: the Bruges-and-Paris card read "Madonna o |
-| const | `ARCHETYPES` |  |
-| function | `rankTrips` | Rank a set of trip cards for one search. Exact day matches always sort above near ones, because a person who asked for five days is not looking for a six day trip until they have seen the five day ones. Under that it is the score, which alr |
-| function | `groupTripVariants` | Collapse the same route at different lengths into one card. The published set composes a route at every day count it works at, so "Bruges and Paris" comes back at five, six and seven days: three cards, one photograph, one ordered list of ci |
-| function | `availableDays` | Which day counts this set of trips can actually answer. |
-| function | `readTripFromUrl` |  |
-| function | `tripShareUrl` | The link that reopens one trip, for the share sheet. |
-| function | `useTrips` | The published trips of a country, or null while loading. |
 
 ## `src/lib/urlScheme.js`
 
