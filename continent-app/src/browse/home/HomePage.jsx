@@ -1,11 +1,8 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import Logo from '../../components/Logo.jsx';
-import { Button } from '../../components/ui/index.js';
 import { SiteFooter } from '../../components/SiteFooter.jsx';
 import WaitlistForm from '../../components/WaitlistForm.jsx';
 import { useSettings } from '../../components/SettingsLine.jsx';
-import { useAuth } from '../../auth/AuthContext.jsx';
 import { cheapestReturnAnyMonth } from '../../lib/flights/flights.js';
 import { destAnchor } from '../../lib/origins.js';
 import { tabHref } from '../../lib/urlState.js';
@@ -67,7 +64,6 @@ export function HomePage({
 }) {
   const { t, lang } = useI18n();
   const settings = useSettings();
-  const { user } = useAuth();
   const destinations = data?.destinations || null;
   const rows = React.useMemo(() => searchRows(destinations, indices), [destinations, indices]);
   const wide = useMedia('(min-width: 900px)');
@@ -98,7 +94,6 @@ export function HomePage({
     trips: { label: t('home.ctaTrips'), href: tabHref('trips'), go: door(onOpenTrips) },
     together: { label: t('home.tDoorTogether'), href: tabHref('together'), go: door(() => onNavigate('together')) },
   };
-  const login = () => onNavigate('account');
   const close = useReveal();
 
   // T621: while the film is under the app header, the header lies on it
@@ -133,14 +128,7 @@ export function HomePage({
 
   return (
     <div className="hv-page" ref={pageRef}>
-      <HomeHero onSearch={onSearch} titleAs={pageOver ? 'div' : 'h1'} flightFor={flightFor} origin={origin}>
-        <div className="hv-top">
-          <a className="hv-top-brand" href="?tab=home" aria-label="Carta"><Logo size={28} /><span>Carta</span></a>
-          {!user && (
-            <Button variant="quiet" size="sm" className="hv-top-login" onClick={login}>{t('home.login')}</Button>
-          )}
-        </div>
-      </HomeHero>
+      <HomeHero onSearch={onSearch} titleAs={pageOver ? 'div' : 'h1'} flightFor={flightFor} origin={origin} />
       <React.Suspense fallback={<div className="hm-wait" />}>
         <HomeStory rows={rows} places={destinations} place={place?.city || null} flightFor={flightFor} origin={origin}
           lang={lang} doors={doors} wide={wide} onSearch={onSearch}

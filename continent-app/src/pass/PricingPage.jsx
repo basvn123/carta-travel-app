@@ -8,10 +8,9 @@ import { PageBar } from '../browse/PageBar.jsx';
 import { Button } from '../components/ui/index.js';
 import { CheckIcon, PlusIcon } from '../components/Icons.jsx';
 import { TermsOfService } from '../components/TermsOfService.jsx';
-import { TIERS, formatPrice, monthlyCents, isRecurring } from '../lib/pricing.js';
+import { TIERS, formatPrice, monthlyCents } from '../lib/pricing.js';
 import { FAIL_KEY, PENDING_PASS_KEY } from '../lib/passMoments.js';
 import { startCheckout } from '../lib/checkout.js';
-import { resumeYearly } from '../lib/billing.js';
 import { CONTACT } from '../lib/contact.js';
 import '../styles/72-pricing.css';
 
@@ -23,10 +22,11 @@ import '../styles/72-pricing.css';
  *
  *   head      the page heading and the one sentence about what is free
  *   compare   two columns, Free and "A Trip Pass adds", one bordered object
- *   plans     the Trip Pass and the yearly plan, each with its one button;
+ *   plans     the Trip Pass and the Year Pass, each with its one button;
  *             the Trip Pass leads and carries the page's one primary
- *             (T488-g), the yearly plan its secondary
- *   questions what happens after 60 days, do I need an account, cancelling,
+ *             (T488-g), the Year Pass its secondary. Both are paid once and
+ *             neither renews (decision 0010, ROADMAP I-f).
+ *   questions what happens after 60 days, do I need an account, renewal,
  *             a refund, and finding a pass bought on another device
  *
  * Every figure comes from lib/pricing.js through formatPrice (cents, the
@@ -65,9 +65,6 @@ export default function PricingPage({ onBack = null, backLabel = '' }) {
   const e = paywall.entitlement;
   const signedIn = paywall.signedIn;
   const current = signedIn ? (e.tier || 'free') : 'free';
-  const sub = e.subscription;
-  const subscribed = current === 'year' && sub?.live && !sub?.cancelling;
-  const cancelling = !!(sub?.live && sub?.cancelling);
 
   const [busy, setBusy] = useState('');
   const [fail, setFail] = useState({ tier: '', code: '' });
@@ -103,10 +100,8 @@ export default function PricingPage({ onBack = null, backLabel = '' }) {
   // What the traveller holds now, in one line, as Account and the sheet say it.
   const holding = !signedIn || !e.known ? ''
     : current === 'trip' && e.expiresAt ? t('pass.holdTrip', { date: fmtDate(e.expiresAt) })
-      : subscribed && sub.renewsAt ? t('pass.holdYear', { date: fmtDate(sub.renewsAt) })
-        : cancelling ? t('pass.cancellingNote', { date: fmtDate(sub.renewsAt || e.expiresAt) })
-          : current === 'year' && e.expiresAt ? t('pass.holdYearEnds', { date: fmtDate(e.expiresAt) })
-            : '';
+      : current === 'year' && e.expiresAt ? t('pass.holdYear', { date: fmtDate(e.expiresAt) })
+        : '';
 
   const buy = async (tier) => {
     setFail({ tier: '', code: '' });
@@ -119,15 +114,6 @@ export default function PricingPage({ onBack = null, backLabel = '' }) {
     const res = await startCheckout(tier, 'pricing');
     // A good answer leaves the page for Stripe; only a failure comes back.
     if (!res.ok) { setFail({ tier, code: res.code || 'stripe_error' }); setBusy(''); }
-  };
-
-  const resume = async () => {
-    setFail({ tier: '', code: '' });
-    setBusy('year');
-    const res = await resumeYearly();
-    setBusy('');
-    if (!res.ok) { setFail({ tier: 'year', code: res.code || 'stripe_error' }); return; }
-    e.refresh?.();
   };
 
   const recheck = async () => {
@@ -151,40 +137,36 @@ export default function PricingPage({ onBack = null, backLabel = '' }) {
 
   const plan = (id) => {
     const tier = TIERS[id];
-    const recurring = isRecurring(id);
+    const yearly = id === 'year';
     const failed = fail.tier === id && fail.code;
-    // A running yearly plan is the end of the road: nothing to buy here.
-    const action = subscribed ? null
-      : id === 'year' && cancelling ? (
-        <Button variant="secondary" block loading={busy === 'year'} onClick={resume}>{t('pass.resume')}</Button>
-      ) : (
-        <Button variant={id === 'trip' ? 'primary' : 'secondary'} block loading={busy === id}
-          disabled={!!busy && busy !== id} onClick={() => buy(id)}>
-          {label(id)}
-        </Button>
-      );
+    const action = (
+      <Button variant={id === 'trip' ? 'primary' : 'secondary'} block loading={busy === id}
+        disabled={!!busy && busy !== id} onClick={() => buy(id)}>
+        {label(id)}
+      </Button>
+    );
     return (
       <article className={`prc-plan${id === 'trip' ? ' is-lead' : ''}`} key={id} aria-labelledby={`prc-plan-${id}`}>
         <h3 className="prc-plan-name" id={`prc-plan-${id}`}>{t(tier.labelKey)}</h3>
         <p className="prc-plan-price">
           <span className="prc-plan-fig">{price(id)}</span>
-          <span className="prc-plan-per">{t(recurring ? 'pass.perYearRenews' : 'pass.perOnce')}</span>
+          <span className="prc-plan-per">{t('pass.perOnce')}</span>
         </p>
         <p className="prc-plan-note">
-          {recurring
-            ? t('pass.yearNote', { month: formatPrice(monthlyCents(id), locale) })
+          {yearly
+            ? t('pass.yearNote', { n: tier.periodDays, month: formatPrice(monthlyCents(id), locale) })
             : t('pass.tripNote', { n: tier.periodDays })}
         </p>
         <p className="prc-plan-blurb">{t(tier.blurbKey)}</p>
         <ul className="prc-plan-lines">
-          <li>{t(recurring ? 'pass.addPlansYear' : 'pass.addPlansTrip', { n: tier.aiPlans })}</li>
+          <li>{t(yearly ? 'pass.addPlansYear' : 'pass.addPlansTrip', { n: tier.aiPlans })}</li>
           <li>{t('pass.addSearches', { n: tier.grounded })}</li>
-          {recurring && current === 'trip' && <li>{t('pass.carryOver')}</li>}
+          {yearly && current === 'trip' && <li>{t('pass.carryOver')}</li>}
         </ul>
         <div className="prc-plan-act">
           {action}
           {failed && <p className="prc-error" role="alert">{t(FAIL_KEY[fail.code] || 'pass.errGeneric')}</p>}
-          <p className="prc-legal">{t(recurring ? 'pass.legalYear' : 'pass.legalTrip', { price: price('year') })}</p>
+          <p className="prc-legal">{t(yearly ? 'pass.legalYear' : 'pass.legalTrip')}</p>
         </div>
       </article>
     );

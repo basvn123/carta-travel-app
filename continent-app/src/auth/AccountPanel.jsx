@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
@@ -18,7 +18,6 @@ import { TermsOfService } from '../components/TermsOfService.jsx';
 import { CookiesPage } from '../components/CookiesPage.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { TIERS } from '../lib/pricing.js';
-import { openBillingPortal, cancelYearly, resumeYearly } from '../lib/billing.js';
 import {
   MIN_PASSWORD_LENGTH, passwordStrength, checkPasswordRules, passwordMeetsRules,
 } from '../lib/passwordStrength.js';
@@ -31,7 +30,7 @@ import { PasswordField } from './PasswordField.jsx';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
 import { FaqView } from './account/FaqView.jsx';
 import { FeedbackView } from './account/FeedbackView.jsx';
-import { PlanView, CancelView } from './account/PlanView.jsx';
+import { PlanView } from './account/PlanView.jsx';
 import { Button, Chip } from '../components/ui/index.js';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { GoogleButton } from './GoogleButton.jsx';
@@ -187,7 +186,7 @@ const VIEW_ALIAS = { yourdata: 'data', friends: 'together' };
 const GUEST_VIEWS = new Set(['home', 'travel', 'prefs', 'help', 'faq', 'feedback']);
 // What each view returns to: the rail marks its parent, and on a desktop a
 // view under a section carries a back link to it.
-const PARENT = { cancel: 'plan', ai: 'data', faq: 'help', feedback: 'help', profile: 'home' };
+const PARENT = { ai: 'data', faq: 'help', feedback: 'help', profile: 'home' };
 const normalView = (v) => VIEW_ALIAS[v] || v || 'home';
 
 export function AccountPanel({
@@ -209,7 +208,7 @@ export function AccountPanel({
   // One ai_status read for the whole app, owned by PaywallProvider, so the
   // balance shown here cannot disagree with the balance a gate enforced.
   const paywall = usePaywall();
-  const [mockEnt, setMockEnt] = useState(() => (mockUser ? mockEntitlement() : null));
+  const [mockEnt] = useState(() => (mockUser ? mockEntitlement() : null));
   const entitlement = mockEnt || paywall.entitlement;
   // Whether the staff door shows at all. A hint, not a gate: every admin RPC
   // re-checks membership on the server.
@@ -598,19 +597,8 @@ export function AccountPanel({
           return;
         }
       }
-      // T936: a yearly plan that would renew is cancelled first, so the
-      // card is never charged for an account that is gone (delete_user()
-      // erases the rows but not the Stripe subscription). If that fails,
-      // nothing is deleted and the traveller is told.
-      const sub = entitlement.subscription;
-      if (sub?.live && !sub.cancelling) {
-        const res = await planActions.cancel();
-        if (!res?.ok) {
-          setDeleteError(t('account.planFailed'));
-          setDeleteBusy(false);
-          return;
-        }
-      }
+      // No pass renews (decision 0010), so nothing in Stripe needs ending
+      // before the rows go (T936 cancelled the old yearly subscription here).
       await deleteAccount();
       onClose();
     } catch (err) {
@@ -685,14 +673,11 @@ export function AccountPanel({
     }
   };
 
-  // The plan in one line: its name and when it renews or ends.
+  // The plan in one line: its name and when it ends.
   const tierKey = !signedIn ? 'free' : (TIERS[entitlement.tier] ? entitlement.tier : 'free');
-  const sub = entitlement.subscription;
   const planWhen = !signedIn || !entitlement.known ? ''
-    : tierKey === 'year' && sub?.live && !sub.cancelling ? t('account.planRenews', { date: fmtDate(sub.renewsAt || entitlement.expiresAt, locale) })
-      : tierKey === 'year' && sub?.cancelling ? t('account.planEnds', { date: fmtDate(sub.renewsAt || entitlement.expiresAt, locale) })
-        : tierKey !== 'free' && entitlement.expiresAt ? t('ac.until', { date: fmtDate(entitlement.expiresAt, locale) })
-          : '';
+    : tierKey !== 'free' && entitlement.expiresAt ? t('ac.until', { date: fmtDate(entitlement.expiresAt, locale) })
+      : '';
   const plansLine = signedIn && entitlement.known && entitlement.plansCap > 0
     ? t('ac.leftOf', { left: entitlement.plansLeft, cap: entitlement.plansCap }) : '';
 
@@ -721,20 +706,6 @@ export function AccountPanel({
   const railOn = PARENT[view] === 'home' ? 'home' : (PARENT[view] || view);
   const titleOf = (v) => (v === 'home' ? t('account.tag') : SECTIONS.find((x) => x.v === v)?.label || t('account.tag'));
 
-  // The plan's controls: lib/billing.js, or the seam's stand-ins, which
-  // change the fixture the way the webhook would change the row.
-  const [planSaid, setPlanSaid] = useState('');
-  const keepPlan = useCallback(() => setView('plan'), []);
-  const mockSub = (patch) => {
-    setMockEnt((m) => ({ ...m, subscription: { ...m.subscription, ...patch } }));
-    return Promise.resolve({ ok: true, mock: true });
-  };
-  const planActions = mockEnt ? {
-    cancel: () => mockSub({ cancelling: true }),
-    resume: () => mockSub({ cancelling: false }),
-    portal: () => Promise.resolve({ ok: true, mock: true }),
-  } : { cancel: cancelYearly, resume: resumeYearly, portal: openBillingPortal };
-
   // Signing out keeps Account open on its signed-out Overview. It first asks
   // whether this device's copy of the traveller's trips goes too (T1054, P-09):
   // right on a shared phone, a loss on their own, so it is their call.
@@ -760,7 +731,7 @@ export function AccountPanel({
   };
   // What deleting does to the pass, said inside the delete confirm.
   const passNote = !entitlement.known ? ''
-    : entitlement.tier === 'year' && sub?.live && !sub.cancelling ? t('ac.deleteEndsYear')
+    : entitlement.tier === 'year' ? t('ac.deleteEndsYear')
       : entitlement.tier === 'trip' ? t('ac.deleteEndsTrip') : '';
 
   const railLink = (v, Icon, label) => (
@@ -1285,8 +1256,7 @@ export function AccountPanel({
                 <>
                   <p className="account-danger-text">{t('account.deleteHint')}</p>
                   {/* Deleting the account also ends what the pass would do
-                      next: a yearly plan is cancelled first (handleDeleteAccount),
-                      a Trip Pass simply ends with the account. */}
+                      next: either pass ends with the account; neither renews. */}
                   {passNote && <p className="account-danger-text">{passNote}</p>}
                   {hasPassword ? (
                     <PasswordField
@@ -1346,23 +1316,7 @@ export function AccountPanel({
       <PlanView
         head={head(t('ac.plan'))}
         entitlement={entitlement}
-        actions={planActions}
-        said={planSaid}
-        setSaid={setPlanSaid}
-        onGoCancel={() => go('cancel')}
         onChangePlan={() => paywall.openPrices('browse')}
-      />
-    );
-  }
-
-  if (view === 'cancel' && signedIn) {
-    pane = (
-      <CancelView
-        head={head(t('account.planCancel'))}
-        entitlement={entitlement}
-        actions={planActions}
-        onKeep={keepPlan}
-        onDone={(line) => { setPlanSaid(line); go('plan'); }}
       />
     );
   }

@@ -44,7 +44,6 @@ const TOKENS = {
 
 // The user-facing functions and a body that would get past validation.
 const USER_FNS = {
-  billing: { action: 'cancel' },
   checkout: { tier: 'trip' },
   notify: { kind: 'price', items: [] },
   'parse-booking': { text: 'Booking ref ABC123, BRU to BCN on 2026-12-01' },
@@ -86,29 +85,6 @@ for (const [fn, body] of Object.entries(USER_FNS)) {
 
 // ---------------------------------------------------------------- wrong user
 
-test('billing: a subscription id that belongs to another account is refused (not_yours) and not changed', async () => {
-  const handler = await loadEdge('billing');
-  const w = world();
-  w.tables.entitlements = { data: { stripe_customer_id: 'cus_alice', subscription_id: 'sub_bob' }, error: null };
-  w.stripe['subscriptions.retrieve'] = { id: 'sub_bob', metadata: { user_id: BOB } };
-  const res = await handler(post({ action: 'cancel', user_id: BOB }, { Authorization: `Bearer ${userToken(ALICE)}` }));
-  assert.equal(res.status, 403);
-  assert.deepEqual(await res.json(), { code: 'not_yours' });
-  assert.ok(!w.log.some((e) => e.stripe === 'subscriptions.update'), 'the subscription was changed');
-  assert.ok(!w.log.some((e) => e.rpc === 'set_subscription_state'), 'the state was written');
-});
-
-test('billing: the entitlement read is keyed by the token user, never by a user id in the body', async () => {
-  const handler = await loadEdge('billing');
-  const w = world();
-  w.tables.entitlements = { data: null, error: null };
-  await handler(post({ action: 'portal', user_id: BOB, p_user: BOB }, { Authorization: `Bearer ${userToken(ALICE)}` }));
-  const read = w.log.find((e) => e.table === 'entitlements');
-  assert.ok(read, 'no entitlement read');
-  assert.equal(read.role, 'service');
-  assert.deepEqual(read.ops.find((o) => o[0] === 'eq'), ['eq', 'user_id', ALICE]);
-});
-
 test('checkout: the pass is checked and sold to the token user, whatever user the body names', async () => {
   const handler = await loadEdge('checkout');
   const w = world();
@@ -124,6 +100,37 @@ test('checkout: the pass is checked and sold to the token user, whatever user th
   assert.equal(create.args[0].client_reference_id, ALICE);
   assert.equal(create.args[0].metadata.user_id, ALICE);
   assert.ok(!JSON.stringify(w.log).includes(BOB), 'the body user id reached a call');
+});
+
+test('checkout: the Year Pass is a one-off payment, never a subscription (decision 0010, ROADMAP I-f)', async () => {
+  const handler = await loadEdge('checkout');
+  const w = world();
+  w.env.CHECKOUT_TERMS_URL = 'https://www.carta-europetravel.com/?legal=terms';
+  w.rpc.pass_can_buy = { data: { ok: true }, error: null };
+  w.tables.entitlements = { data: null, error: null };
+  w.stripe['checkout.sessions.create'] = { url: 'https://checkout.stripe.test/s' };
+  const res = await handler(post({ tier: 'year' }, { Authorization: `Bearer ${userToken(ALICE)}` }));
+  assert.equal(res.status, 200, await res.clone().text());
+  const s = w.log.find((e) => e.stripe === 'checkout.sessions.create').args[0];
+  assert.equal(s.mode, 'payment');
+  assert.equal(s.subscription_data, undefined);
+  assert.deepEqual(s.line_items, [{ price: ENV.STRIPE_PRICE_YEAR, quantity: 1 }]);
+  assert.equal(s.payment_intent_data.metadata.tier, 'year');
+  const waiver = s.custom_text.terms_of_service_acceptance.message;
+  assert.match(waiver, /within 14 days/);
+  assert.doesNotMatch(waiver, /lose|renew|cancel/i);
+});
+
+test('checkout: a leftover "subscribed" answer is no longer a sale-specific refusal', async () => {
+  // 075 drops the reason; a database still on 053 answers it with ok false,
+  // which now reads as the generic horizon refusal rather than charging.
+  const handler = await loadEdge('checkout');
+  const w = world();
+  w.rpc.pass_can_buy = { data: { ok: false, reason: 'subscribed' }, error: null };
+  const res = await handler(post({ tier: 'year' }, { Authorization: `Bearer ${userToken(ALICE)}` }));
+  assert.equal(res.status, 409);
+  assert.equal((await res.json()).code, 'pass_max');
+  assert.ok(!w.log.some((e) => e.stripe === 'checkout.sessions.create'), 'a session was opened');
 });
 
 test('notify: an unsubscribe link signed for one user does not unsubscribe another', async () => {
@@ -207,6 +214,18 @@ test('stripe-webhook: a correctly signed event is accepted (the refusals are the
   assert.equal(res.status, 200);
 });
 
+test('stripe-webhook: a subscription or invoice event grants nothing (no pass renews, decision 0010)', async () => {
+  const handler = await loadEdge('stripe-webhook');
+  for (const type of ['invoice.paid', 'customer.subscription.updated']) {
+    const w = world();
+    const ev = JSON.stringify({ id: 'evt_s', type, data: { object: { id: 'in_1', status: 'paid', metadata: { user_id: ALICE, tier: 'year' } } } });
+    const res = await handler(post(ev, { 'stripe-signature': stripeSignature(ev, ENV.STRIPE_WEBHOOK_SECRET, nowS()) }));
+    assert.equal(res.status, 200, type);
+    assert.equal((await res.json()).ignored, type);
+    assert.ok(!w.log.some((e) => e.rpc), `${type} reached the database`);
+  }
+});
+
 // ------------------------------------------------------ admin without MFA
 
 test('admin without MFA: an admin claim in the token buys nothing at the Edge (no function has an admin path)', async () => {
@@ -221,13 +240,19 @@ test('admin without MFA: an admin claim in the token buys nothing at the Edge (n
     try { src = readFileSync(new URL(`${name}/index.ts`, dir), 'utf8'); } catch { continue; }
     assert.ok(!/app_metadata|\baal\b|is_admin|admin_guard|role\s*===?\s*['"]admin/.test(src), `${name} reads an admin or aal claim`);
   }
-  const handler = await loadEdge('billing');
+  // The billing function's ownership check this used to drive went with the
+  // subscription (ROADMAP I-f); checkout keys the sale on the token user.
+  const handler = await loadEdge('checkout');
   const w = world();
-  w.tables.entitlements = { data: { stripe_customer_id: 'cus_alice', subscription_id: 'sub_bob' }, error: null };
-  w.stripe['subscriptions.retrieve'] = { id: 'sub_bob', metadata: { user_id: BOB } };
+  w.env.STRIPE_PRICE_TRIP = 'price_trip';
+  w.rpc.pass_can_buy = { data: { ok: true }, error: null };
+  w.tables.entitlements = { data: null, error: null };
+  w.stripe['checkout.sessions.create'] = { url: 'https://checkout.stripe.test/s' };
   const admin = userToken(ALICE, { aal: 'aal1', app_metadata: { role: 'admin', is_admin: true } });
-  const res = await handler(post({ action: 'cancel' }, { Authorization: `Bearer ${admin}` }));
-  assert.equal(res.status, 403, 'an admin claim overrode the ownership check');
+  const res = await handler(post({ tier: 'trip', user_id: BOB }, { Authorization: `Bearer ${admin}` }));
+  assert.equal(res.status, 200);
+  const s = w.log.find((e) => e.stripe === 'checkout.sessions.create').args[0];
+  assert.equal(s.client_reference_id, ALICE, 'an admin claim let the body name another buyer');
 });
 
 test('admin without MFA: the database guard still demands aal2 (the migration the CI harness proves)', () => {

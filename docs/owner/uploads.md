@@ -1,8 +1,8 @@
 # Owner procedure: switch on the upload path (T1070, rows T333-a and T1070-a)
 
 Uploads must not go public before two things are done:
-- the legal check of the upload Terms section and the OSM tick (T333-b, owner step J4);
-- the 30-day notice of the Terms change (T333-f).
+- the legal check of the upload Terms section and the OSM tick (T333-b): done 2026-11-12 by the decisions lane (Terms "Photos and tracks you share" fixed against OSMF Contributor Terms clauses 2 and 3);
+- the 30-day notice of the Terms change (T333-f): Claude sends it once Resend sends (`docs/owner/accounts-and-signups.md` step 1, ROADMAP I1).
 
 Already done, checked live on 2026-11-12:
 - 060 and 061 are applied.

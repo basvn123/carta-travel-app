@@ -767,6 +767,17 @@ export function CartaChatPlanner({
                     checked={!!answers.events}
                     onChange={() => toggleFlag('events')}
                   />
+                  {/* H14: plan-day skips live search for a free traveller
+                      (meta.groundingSkipped), so the switch says it before the
+                      run instead of failing silently. Only the free tier: the
+                      line says "comes with a pass", wrong for a pass holder. */}
+                  {answers.events && credit.signedIn && credit.known && !credit.paid
+                    && credit.groundLeft === 0 && !BOT_MOCK && (
+                    <p className="daychat-hint">
+                      {t('ai.eventsNeedPass')}{' '}
+                      <Button variant="quiet" size="sm" onClick={() => credit.openPasses('ground')}>{t('pass.seePasses')}</Button>
+                    </p>
+                  )}
                 </div>
                 <Field
                   as="textarea"

@@ -301,9 +301,8 @@ try {
   // passes"; the feature ticks and the price moved out, because the pass
   // modal states them in the same plain numbers and the hub is the
   // traveller's settings first. This block asserted three ticks and a price.
-  // T461: the card is "Your plan": the tier, the balance and one door; for
-  // a yearly subscriber it also carries Manage payment and Cancel yearly plan
-  // (the latter checked by verify_paywall's subscriber walk).
+  // T461: the card is "Your plan": the tier, the balance and one door. No
+  // pass renews (ROADMAP I-f), so there is no cancel or payment control.
   console.log('2. plan');
   const passCard = page.locator('.acct-plan');
   if (!(await passCard.count())) fail('no Your plan card on the hub');
@@ -747,60 +746,33 @@ try {
   ok('focus stays in the legal dialog; Escape clears the FAQ search first');
   await goHome(page);
 
-  // ---- 9c. A yearly subscriber cancels online (BGB 312k, T460-e) and keeps
-  //          the plan again. The entitlement row and the billing function are
-  //          stubbed; the panel's own markup and focus are what is checked.
-  console.log('9c. yearly subscriber');
-  const sub = { subscription_id: 'sub_1', subscription_status: 'active', cancel_at_period_end: false, renews_at: '2027-10-03T10:00:00Z' };
-  const billingCalls = [];
+  // ---- 9c. A Year Pass holder (ROADMAP I-f, decision 0010): one payment
+  //          that runs to its end date. No renewal date, no Cancel, no
+  //          billing function; the plan says when it ends.
+  console.log('9c. Year Pass holder');
   const ctxY = await browser.newContext({ viewport: { width: 1360, height: 950 } });
   await ctxY.addInitScript(seedSession(PROJECT_REF, USER));
   const pageY = await ctxY.newPage();
   await stubSupabase(pageY, state);
+  const billingCalls = [];
+  await pageY.route('**/functions/v1/billing*', (route) => { billingCalls.push(1); return route.abort(); });
   await pageY.route('**/rest/v1/rpc/ai_status*', (route) => route.fulfill({
     status: 200, contentType: 'application/json',
     body: JSON.stringify({
-      tier: 'year', expiresAt: sub.renews_at, resetsAt: null,
+      tier: 'year', expiresAt: '2027-10-03T10:00:00Z', resetsAt: null,
       plansUsed: 3, plansCap: 300, plansLeft: 297, groundUsed: 0, groundCap: 120, groundLeft: 120,
     }),
   }));
-  await pageY.route('**/rest/v1/entitlements*', (route) => route.fulfill({
-    status: 200, contentType: 'application/json', body: JSON.stringify(sub),
-  }));
-  await pageY.route('**/functions/v1/billing*', async (route) => {
-    const body = JSON.parse(route.request().postData() || '{}');
-    billingCalls.push(body.action);
-    if (body.action === 'cancel') sub.cancel_at_period_end = true;
-    if (body.action === 'resume') sub.cancel_at_period_end = false;
-    return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ ok: true }) });
-  });
   await pageY.goto(`${BASE}/?o=CRL`);
   await pageY.locator('.account-door').first().waitFor({ timeout: 120000 });
   await openPanel(pageY);
   const planY = pageY.locator('.acct-plan');
-  await planY.locator('button', { hasText: 'Cancel yearly plan' }).waitFor({ timeout: 15000 });
-  if (!/Renews/.test(await planY.innerText())) fail('the yearly plan does not say when it renews');
-  if (!(await planY.locator('button', { hasText: 'Manage payment' }).count())) fail('no route to the billing page');
-  await planY.locator('button', { hasText: 'Cancel yearly plan' }).click();
-  const focusedText = () => pageY.evaluate(() => document.activeElement?.textContent?.trim() || document.activeElement?.tagName);
-  if (await focusedText() !== 'Keep it') fail(`the confirm opened with focus on "${await focusedText()}", not the safe choice`);
-  if (!/runs until/.test(await planY.innerText())) fail('the confirm does not say when the plan ends');
-  await pageY.keyboard.press('Escape');
-  await pageY.waitForTimeout(200);
-  if (!(await pageY.locator('.account-panel').count())) fail('Escape in the confirm closed Account');
-  if (await focusedText() !== 'Cancel yearly plan') fail(`Escape left focus on "${await focusedText()}"`);
-  await planY.locator('button', { hasText: 'Cancel yearly plan' }).click();
-  await planY.locator('button', { hasText: /^Cancel plan$/ }).click();
-  await planY.locator('.acct-status', { hasText: 'Cancelled' }).waitFor({ timeout: 10000 });
-  if (!billingCalls.includes('cancel')) fail('cancelling never reached the billing function');
-  if (await pageY.evaluate(() => document.activeElement?.id) !== 'acct-plan-title') fail('focus was dropped after cancelling');
-  await planY.locator('button', { hasText: 'Keep my yearly plan' }).waitFor({ timeout: 10000 });
-  if (!/Ends/.test(await planY.innerText())) fail('a cancelled plan does not say when it ends');
-  await planY.locator('button', { hasText: 'Keep my yearly plan' }).click();
-  await planY.locator('.acct-status', { hasText: 'Kept' }).waitFor({ timeout: 10000 });
-  await planY.locator('button', { hasText: 'Cancel yearly plan' }).waitFor({ timeout: 10000 });
-  ok(`subscriber: renews date, cancel confirmed in place, announced and focused, resumed (${billingCalls.join(', ')})`);
-  await pageY.screenshot({ path: `${SHOTS}/account-plan-yearly.png` });
+  await planY.waitFor({ timeout: 15000 });
+  const planText = await planY.innerText();
+  if (/Renews|Cancel yearly plan|Manage payment|Keep my yearly plan/.test(planText)) fail('the Year Pass still shows renewal or cancel controls');
+  if (!/Year Pass/.test(planText)) fail('the plan does not name the Year Pass');
+  if (billingCalls.length) fail('the panel still calls the billing function');
+  ok('Year Pass holder: no renewal, no cancel, no billing call');
   await ctxY.close();
 
   // ---- 10. A Google-only account has no password. Every password control

@@ -32,7 +32,7 @@ import { useAutoAdvance, useInView, usePageVisible, useReducedMotion } from './u
  * Props
  *   onSearch   ({ question } | { open: true }) hands the question to Explore
  */
-export function HomeHero({ onSearch, titleAs = 'h1', flightFor, origin, children }) {
+export function HomeHero({ onSearch, titleAs = 'h1', flightFor, origin }) {
   const { t, lang } = useI18n();
   const Title = titleAs;
   const [shot, setShot] = React.useState(0);
@@ -48,7 +48,6 @@ export function HomeHero({ onSearch, titleAs = 'h1', flightFor, origin, children
     <section className="hv-hero" aria-labelledby="hv-title">
       <div className="hv-hero-stage">
         <HomeFilm onShot={setShot} />
-        {children}
         <div className="hv-hero-copy">
           <Title id="hv-title" className="hv-slogan" aria-label={t('home.title')}>
             {[...lead.map((w) => [w, false]), ...accent.map((w) => [w, true])].map(([w, em], i) => (

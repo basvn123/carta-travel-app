@@ -1,4 +1,4 @@
-"""Shared helpers for the stay-price layer (schema v18, T530-T536).
+"""Shared helpers for the stay-price layer (since schema v18, T530-T536).
 
 Every script in pipeline/stays/ is run by path (``python pipeline/stays/x.py``)
 and imports this module through the sys.path line at its top, the same way the

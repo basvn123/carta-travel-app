@@ -301,8 +301,6 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
   transform-origin: left center;
   transition: transform var(--dur-2) var(--ease-out);
 }
-.ac-said { margin: 0; font-size: var(--text-body); color: var(--text); }
-.ac-said:empty { display: none; }
 .ac-plan-acts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .ac-plans { display: grid; gap: var(--space-3); }
 @media (min-width: 700px) { .ac-plans { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
@@ -326,10 +324,6 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .ac-pc li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: var(--space-2); align-items: start; }
 .ac-pc li svg { color: var(--text-2); margin-top: 1px; }
 .ac-pc .btn { justify-self: start; margin-top: var(--space-1); }
-.ac-cancel { margin: 0; display: grid; gap: var(--space-3); }
-.ac-cancel div { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--text-lead); }
-.ac-cancel dt { color: var(--text-2); }
-.ac-cancel dd { margin: 0; font-weight: 700; font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) { .ac-meter-bar > span { transition: none; } }
 
 /* Your data (T936): what Carta keeps, as figures. */

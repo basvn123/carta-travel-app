@@ -2,7 +2,7 @@
 
 What is left here needs a person, or a system that one lane of the owner sweep did not own. On 2026-11-12 the owner sweep went through all 81 rows. It closed 49 of them as done, decided, already done or obsolete; `.work/2026-11-12-owner-review/report.md` names each one with its reason, and the engineering follow-ups moved into their ROADMAP items. When a step is done, delete it here (docs/decisions/0003-open-items-owner-steps-and-roadmap.md).
 
-Rows: 25 steps, covering 32 of the original rows.
+Rows: 60 steps (14 numbered, 46 in the table), recounted by owner sweep round 2 on 2026-11-12.
 
 ## Steps only you can do
 
@@ -17,36 +17,19 @@ Rows: 25 steps, covering 32 of the original rows.
 9. **T150-d** Read the generated notes, after the paid sidecar run (`docs/owner/paid-runs.md`). Read 20 packing and risk notes, risks first. Look for places or rules that do not exist, and set `reviewedAt` on each note you read. Done when 20 notes carry `reviewedAt` and every invented fact is fixed or reported.
 10. **T154-c** Confidence notes. 130 curated trips (northern-baltics 30, western-central 100) have no `sources.confidenceNotes`. Read each trip's sources and write one line on how sure the figures are. A session can draft them for you to correct.
 
-## Waiting on a data run (the box lane runs it; delete the step when the run has shipped)
-
-11. **T102-b** (also closes T175-a and T151-a) Rebuild `public/journeys` with `build_wire.py`, with fetching on (T090-a). The 61 capital-pinned trips then get their rail lines, the data sheet shows the T151 numbers, and the owner sweep's trip fixes (T151-g, T431) reach the app.
-12. **T169-a / T170-a / T170-b / T174-b / T174-c** The trip authoring pass. Write booking windows for 66 trips, a bad-weather fallback for every outdoor day, arrival, departure and sleeping facts (with new schema slots), descent on every moving day, and a surface and traffic-free split for every cycling trip. This is one owner-started generation run, followed by a spot check.
-13. **T179-d** Fill beach length (288 rows), beach orientation (168) and lake area (39).
-14. **T103-a** More measured monthly stay curves. Only 54 destinations have one, so only 50 of 253 trips get a price row.
-15. **T154-a** After the first measured run, tune `ESTIMATE_MIN_EUR` (150) and the estimate wording against the share of figures a person changed, together with the critic hit rate from T145-a.
-16. **T645-b** After the first box publish of stays, check the live stays wire's Chamonix prices (it showed 439 a dorm bed and 471 a private room, against 44 and 92 in the new build).
-
 ## For the orchestrator or another lane (Claude can do these; they touch shared or owned systems)
 
-17. **T252-a** (orchestrator, only when no other session is active) In the main checkout, expire every reflog except `refs/stash`, one ref at a time (not `--all`, which drops the stash), then run `git gc --prune=now`.
-18. **T1040-d** (orchestrator) Delete the stale nested repo `continent-app/.git` in the main checkout. Bundle it outside the tree first if disk allows.
-19. **T1040-e / T1034-f** (orchestrator, then security) Tag `explore-v4` and `p0-next-steps-docs` as `archive/*`, delete them locally, then run `git push origin --delete explore-v4`. `p11-flights-to-august` is already gone.
-20. **T235-a** (supabase, then security; two values from you) Once migration 041 is live, set the Actions secrets `CARTA_SUPABASE_URL` and `SUPABASE_ANON_KEY` from `continent-app/.env`. You supply `CARTA_SUPABASE_SERVICE_KEY` and `ALERT_WEBHOOK_URL` (a Slack hook or an ntfy topic URL).
-21. **T887-b** (after the next ship) On a live trip page, note the total, tap "Add a hire car, +€…", and check that the total grows by exactly that amount.
-
-## Checks Claude can do but the 2026-11-12 sweep did not reach
-
-22. **T286-e** Destination PDF guide. Run locally with `?paymock`, download the guide for a place near trails (Valbona Valley), and read the "around" rows. Done when every around row names a real nearby place with a believable distance.
-23. **T335-c** Maintenance screen and announcement bar. Run locally with `?paymock` and a maintenance flag, and look at both at 375 and 1440 px. Done when both show, read correctly, and cover nothing they should not.
-24. **T430-a** With network access, at 375 and 1440 px, open Lake Bled (`#lake=si-lake-bled-Q648902&lc=SI`) and Rome (`#dest=FCO`): swipe the gallery and a rail of tiles, open the 3D terrain view, and export the PDF. Done when every photo loads and the PDF carries photographs. On the same walk, look at the credit fold ("Where this comes from") on a destination with routes; T313-a never saw it in a browser.
-25. **T168-b** The 20 px pack icons (`src/components/PackIcons.jsx`, shown by `PackGrid.jsx` on a trip page's packing list, e.g. `#journey=es-pilgrim-camino-sarria-santiago`). Look at each icon at 20 px and at 4x zoom. Done when every icon reads at 20 px with no clipped strokes; list the bad ones as `icon name: problem`.
+11. **T252-a** (orchestrator, only when no other session is active) In the main checkout, expire every reflog except `refs/stash`, one ref at a time (not `--all`, which drops the stash), then run `git gc --prune=now`.
+12. **T1040-d / T1162-a** (orchestrator) Delete the stale nested repo `continent-app/.git` in the main checkout. Bundle it outside the tree first if disk allows.
+13. **T235-a** (supabase, then security; two values from you) Once migration 041 is live, set the Actions secrets `CARTA_SUPABASE_URL` and `SUPABASE_ANON_KEY` from `continent-app/.env`. You supply `CARTA_SUPABASE_SERVICE_KEY` and `ALERT_WEBHOOK_URL` (a Slack hook or an ntfy topic URL).
+14. **T887-b** (after the next ship) On a live trip page, note the total, tap "Add a hire car, +€…", and check that the total grows by exactly that amount.
 
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 
 | ID | Item | Order |
 |---|---|---|
-| T1071-d | The admin MFA gate and the trail page upload door were not seen in the browser (both need a signed-in account); look at them at 375 and 1440 and run scripts/verify_admin_panel.mjs after T1071-a | after T1071-a |
-| T1086-c | Re-verify the Stripe, Supabase Admin and Cloudflare dashboard steps in docs/runbooks/refund.md and incident.md sections 4 and 5 (only repo objects were checked); also settle whether year-plan renewals need their own refund rows and a refund column on pass_grants |  |
+| T1071-d / T1084-b | After the ship that carries the T1071 MFA step-up: open `/admin` signed in as the owner, enter the code from your authenticator app, and see the panels load (not `mfa_required`); then open a trail page signed in and see the upload door; both at 375 and 1440 px. Then tell a session to run `node continent-app/scripts/verify_admin_panel.mjs`. | after the ship |
+| T1086-c | Re-verify the Stripe, Supabase Admin and Cloudflare dashboard steps in docs/runbooks/refund.md and incident.md sections 4 and 5 (only repo objects were checked) (no pass renews since decision 0010, so no renewal refund rows are needed) |  |
 | T1092-b | After T1092-a, look at the Trails card and trail page on a phone and at desktop width (Veluwe Zwerfpad reads Long, an E-path stage shows Also called); the cloud container could not load app data |  |
 | T1093-b | After T1093-a, read the photo coverage per country from the rebuilt wire (before: DE 4.3, GB 11.8, IT 9.9, FR 16.1 percent), run `node scripts/ci/check-contract.mjs` (it must say the photographs carry an allowed licence and a name) and look at one credited trail page on a phone | after T1093-a |
 | T1100-c | Look at the place page trip card on a real phone with a fare in the sweep (Bergen and Taormina from Brussels open on the plane; Annecy without a fare opens on the car with the why caption) |  |

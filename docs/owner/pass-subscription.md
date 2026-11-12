@@ -10,14 +10,14 @@ Until the steps below are done, nothing breaks. Buying the yearly plan answers "
 
 ## Steps (Stripe login needed)
 
-1. **The recurring yearly Price.**
+1. **The one-time Year Pass Price** (the Year Pass is paid once and never renews, ROADMAP I-f).
    - In Stripe, open Products, then the Year Pass product (or a new "Carta yearly plan").
-   - Add price: EUR 14.99, Recurring, yearly, tax behaviour **inclusive**.
+   - Add price: EUR 14.99, One-time, tax behaviour **inclusive**.
    - Then set it as the yearly secret:
      ```
-     supabase secrets set STRIPE_PRICE_YEAR=price_... BILLING_RETURN_URL=https://carta-europetravel.com/?billing=back
+     supabase secrets set STRIPE_PRICE_YEAR=price_...
      ```
-     It must be the recurring Price. Stripe refuses a subscription on a one-off Price.
+     It must be a one-time Price. Stripe refuses a payment-mode checkout on a recurring Price.
 2. **Customer Portal.** Stripe, Settings, Billing, Customer portal:
    - allow cancelling at the end of the billing period;
    - allow updating the payment method;

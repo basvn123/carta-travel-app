@@ -9,29 +9,27 @@ How to use it:
 
 | File | What it covers | Steps |
 |---|---|---|
-| `docs/owner/product-decisions.md` | product and design calls only the owner can make | 6 |
-| `docs/owner/owner-checks.md` | other checks and clean-ups | 25 |
-| `docs/owner/cloudflare.md` | Pages, R2, Workers, email routing | 33 (owner sweep 2026-11-12) |
-| `docs/owner/translation-review.md` | native-reader review of the six languages | 5 |
-| `docs/owner/data-and-pipeline-runs.md` | phone, people and drive checks left from the data runs | 4 |
-| `docs/owner/legal.md` | legal, tax and brand | 3 |
+| `docs/owner/product-decisions.md` | product and design calls only the owner can make | 11 |
+| `docs/owner/owner-checks.md` | other checks and clean-ups | 60 |
+| `docs/owner/cloudflare.md` | Pages, R2, Workers, email routing | 21 |
+| `docs/owner/translation-review.md` | native-reader review of the six languages | 6 |
+| `docs/owner/data-and-pipeline-runs.md` | phone, people and drive checks left from the data runs | 6 |
+| `docs/owner/legal.md` | legal, tax and brand | 4 |
 | `docs/owner/hetzner-box.md` | the Hetzner box and workers | 4 |
-| `docs/owner/supabase-migrations.md` | migrations, Edge Functions and secrets | 4 |
+| `docs/owner/supabase-migrations.md` | migrations, Edge Functions and secrets | 5 (step 1 applies 063 to 075) |
 | `docs/owner/stripe.md` | Stripe prices, keys, webhook, test purchases, legal review | 5 |
-| `docs/owner/accounts-and-signups.md` | accounts, mailboxes and programme sign-ups | 6 |
-| `docs/owner/google-and-search.md` | Google, Gemini billing, Search Console | 1 (owner sweep 2026-11-12) |
+| `docs/owner/accounts-and-signups.md` | accounts, mailboxes and programme sign-ups | 7 |
+| `docs/owner/google-and-search.md` | Google, Gemini billing, Search Console | 1 |
 | `docs/owner/auth-settings.md` | Supabase Auth settings and admin MFA | procedure |
 | `docs/owner/secrets-rotation.md` | secrets rotation and MFA | procedure |
 | `docs/owner/web-hardening.md` | web and API hardening | procedure |
-| `docs/owner/search-console.md` | Google Search Console setup | procedure |
+| `docs/owner/search-console.md` | Google Search Console setup | procedure, 1 step |
 | `docs/owner/scraper-health.md` | scraper health on the box (no steps left) | procedure |
 | `docs/owner/stays-box.md` | the monthly stay-price rebuild on the box | 1 |
 | `docs/owner/explore-data-runs.md` | what the Monday explore data run does (no steps left) | procedure |
 | `docs/owner/uploads.md` | switching on the upload path | procedure |
 | `docs/owner/pass-subscription.md` | switching on the 12-month pass and the Trip Pass | procedure |
-| `docs/owner/paid-runs.md` | paid runs, last in the order | procedure |
-| `docs/owner/unsorted.md` | owner steps no procedure covered yet; each is handed to a lane and moves to its file after the 2026-11-12 sweep | 274 |
+| `docs/owner/paid-runs.md` | paid runs, last in the order | procedure, 28 runs |
+| `docs/owner/unsorted.md` | owner steps no procedure covers yet (emptied by round 2 of the 2026-11-12 sweep) | 0 |
 
-Counts are from 2026-11-11, when these files moved here from `Execution/`; the box files were recounted in the owner sweep of 2026-11-12.
-Counts are from 2026-11-11, when these files moved here from `Execution/`; product-decisions and legal were updated by the 2026-11-12 owner sweep.
-Counts are from 2026-11-11, when these files moved here from `Execution/`; owner-checks and translation-review were recounted on 2026-11-12 (owner sweep).
+Counts were recounted from the files by owner sweep round 2 on 2026-11-12 (`.work/2026-11-12-owner-round2/report.md`): a count is the numbered steps, step bullets and table rows in the file.

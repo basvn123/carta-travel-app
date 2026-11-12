@@ -6,7 +6,7 @@ Everything that costs money goes to the back, after all free work (owner instruc
 
 1. Only if the golden set runs from CI: the `GEMINI_API_KEY` repository secret (T153-b, free; the security lane sets it with `gh secret set`).
 2. T144-a with T145-a: `python pipeline/generate_trip.py` on three to five briefs; read `cost` and the critique files.
-3. Claude, no spend: from those numbers, decide whether the critic gets its own model (`--critic-model`, T145-b).
+3. Claude, no spend: from those numbers, decide whether the critic gets its own model (`--critic-model`, T145-b), and tune `ESTIMATE_MIN_EUR` (150) and the estimate wording against the share of figures a person changed (T154-a).
 4. T153-a: `python pipeline/golden_set.py run --live` (about 40 calls), then `bless`, commit `golden/baseline.json`, and drop `--allow-missing-baseline` from `.github/workflows/golden-set.yml`.
 5. T323-b: count `groundingMetadata.webSearchQueries` over about 30 real grounded plan-day calls.
 6. T150-a, then T150-d: `python -X utf8 pipeline/backfill_modules.py run --limit 5`, then the rest with `--max-usd` (estimate USD 1.5 to 3.4); Claude then reads a sample (T150-d).
@@ -41,4 +41,5 @@ Everything that costs money goes to the back, after all free work (owner instruc
 | T1196-f | Cross-check with a second model family: run the Gemini judge (and a Gemini blind back-translation) on data/reports/validation/texts/items.json and the 2,056 flagged strings; the session judges share the drafting model's family |  |
 | T1198-d | One photo check vision run with GEMINI_API_KEY to confirm calls, answers and cost; the research could not reach Google's price page | 2 |
 | T1206-d | First live run of Gateway.batch (Gemini Batch Mode) on the pipeline key; the request shape is coded from memory because the docs host was blocked |  |
+| T1117-b / T1206-e | Live red team: say go and Claude runs `node continent-app/scripts/ai/redteam_live.mjs` (with the suggest-city and pipeline attacks of T1206) against the live site with a throwaway test account, deleted afterwards. Cost: about 45 Gemini calls, a few cents. Done when `evals/injection/recorded-live-<date>.json` is committed and every attack that got through is in the attack set | after the next ship |
 | T1206-f | Record plan-day plans per provider with continent-app/scripts/eval/plan-day/record.mjs against a local supabase functions serve plan-day, then score them with run.mjs plan-day --plans |  |

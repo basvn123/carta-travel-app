@@ -46,7 +46,6 @@ export const FAIL_KEY = {
   bad_tier: 'pass.errGeneric',
   stripe_error: 'pass.errGeneric',
   pass_max: 'pass.errMax',
-  subscribed: 'pass.errSubscribed',
   quota_check: 'pass.errUnavailable',
   network: 'pass.errNetwork',
 };

@@ -1,6 +1,6 @@
 # Quotas, Pass and paywall logic (QUOTA)
 
-What a traveller may use for free, what a Trip Pass or the yearly plan adds, how the AI allowance is counted, refused and refunded on the server, when the app asks for a Pass, and how a purchase becomes an entitlement. Main code: `supabase/migrations/007_passes.sql`, `021_free_tier_once.sql`, `044_payments_quota.sql`, `053_pass_subscriptions.sql`, `supabase/functions/_shared/passes.mjs`, `supabase/functions/checkout/`, `supabase/functions/stripe-webhook/`, `supabase/functions/billing/`, `continent-app/src/hooks/usePaywall.jsx`, `continent-app/src/lib/pricing.js`, `continent-app/src/lib/passMoments.js`, `continent-app/src/lib/billing.js`, `continent-app/src/components/PassModal.jsx`, `continent-app/src/pass/PricingPage.jsx`. HANDBOOK pointer: "### The Pass, paywall and Stripe checkout" (docs/HANDBOOK.md), with "### AI day plan (plan-day)" step 4 and "### My trips (saving and storage)". Last verified against the code: 2026-11-06 (T1132).
+What a traveller may use for free, what a Trip Pass or the Year Pass adds, how the AI allowance is counted, refused and refunded on the server, when the app asks for a Pass, and how a purchase becomes an entitlement. Main code: `supabase/migrations/007_passes.sql`, `021_free_tier_once.sql`, `044_payments_quota.sql`, `053_pass_subscriptions.sql`, `supabase/functions/_shared/passes.mjs`, `supabase/functions/checkout/`, `supabase/functions/stripe-webhook/`, `supabase/functions/billing/`, `continent-app/src/hooks/usePaywall.jsx`, `continent-app/src/lib/pricing.js`, `continent-app/src/lib/passMoments.js`, `continent-app/src/lib/billing.js`, `continent-app/src/components/PassModal.jsx`, `continent-app/src/pass/PricingPage.jsx`. HANDBOOK pointer: "### The Pass, paywall and Stripe checkout" (docs/HANDBOOK.md), with "### AI day plan (plan-day)" step 4 and "### My trips (saving and storage)". Last verified against the code: 2026-11-06 (T1132).
 
 IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags in code and `scripts/docs/logic_check.py` are the second half of ROADMAP B3 and not yet done. Line numbers are as of 2026-11-06 and will drift; the constant name is the stable handle.
 
@@ -10,12 +10,12 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 
 ### QUOTA-001 Tiers and what each allows
 - Decides: how many AI plans and live searches a traveller has, for how long, at what price.
-- Rule: free: 2 AI plans, 0 grounded, never refills; Trip Pass: EUR 6.99 one-off, 60 plans, 40 grounded, 60 days; yearly plan: EUR 14.99 renewing, 300 plans, 120 grounded, 365 days. `plan_tiers` is what the server enforces; `pricing.js` `TIERS` is the display copy and must match it.
+- Rule: free: 2 AI plans, 0 grounded, never refills; Trip Pass: EUR 6.99 one-off, 60 plans, 40 grounded, 60 days; Year Pass: EUR 14.99 one-off, 300 plans, 120 grounded, 365 days. Neither pass renews (decision 0010, ROADMAP I-f). `plan_tiers` is what the server enforces; `pricing.js` `TIERS` is the display copy and must match it.
 - Constant: `plan_tiers` insert in `supabase/migrations/007_passes.sql:74` to `:76`; free pinned to 2 in `021_free_tier_once.sql:134` and `044_payments_quota.sql:139`; trip 60 days in `053_pass_subscriptions.sql:60`
 - Constant: `TIERS` in `continent-app/src/lib/pricing.js:83`
 - Test: `continent-app/scripts/verify_plan_tiers.mjs` (static check: pricing.js against the migrations, free row must be 2)
 - Test: `continent-app/scripts/ai/test_global_cap.mjs` :: "free tier allowance is 2 after 021"
-- Test: `continent-app/tests/passSubscription.test.mjs` :: "the client mirror: 60-day Trip Pass, a renewing yearly plan"
+- Test: `continent-app/tests/passSubscription.test.mjs` :: "the client mirror: 60-day Trip Pass, 365-day Year Pass, neither recurring"
 
 ### QUOTA-002 The free allowance is once per account
 - Decides: that the 2 free plans never come back, also after a Pass ends.
@@ -97,8 +97,8 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 
 ### QUOTA-014 When the allowance offers appear
 - Decides: where a traveller is told plans or searches are running out.
-- Rule: the credit chip reads "out" at 0 plans left and opens `plansLow`; the Carta bot opens `plans` when the traveller is out. No screen offers `ground` since the AI plan sheet went (ROADMAP H14).
-- Constant: `continent-app/src/components/CreditChip.jsx:35` to `:37` (the plan sheet's two links lived in `AiDayPlanModal.jsx`, unmounted since the Carta bot and deleted with T1163-b, 2026-11-12)
+- Rule: the credit chip reads "out" at 0 plans left and opens `plansLow`; the Carta bot opens `plans` before it generates when the traveller is out, and after a `user_cap` failure; the day bot opens `plans` after `user_cap`. The Carta bot's events switch, when ticked by a signed-in traveller on the free tier with 0 live searches, says live search needs a pass (`ai.eventsNeedPass`) with a link that opens `ground` (ROADMAP H14), because plan-day skips grounding for them (`meta.groundingSkipped`).
+- Constant: `continent-app/src/components/CreditChip.jsx:40` to `:42`; `continent-app/src/planner/CartaChatPlanner.jsx:515`, `:530`, `:778`, `:819`; `continent-app/src/planner/days/DayBotChat.jsx:150`
 - Test: no test
 
 ### QUOTA-015 Pass running out
@@ -115,7 +115,7 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 
 ### QUOTA-017 Which plan the sheet opens on
 - Decides: the plan pre-selected in the Pass sheet.
-- Rule: a plan the guest chose before signing in wins; a paid moment or `browse` opens on the Trip Pass; a soft offer opens on the yearly plan, except `expiring` for a Trip Pass holder, which opens on the Trip Pass. The "recommended" mark shows only on soft offers.
+- Rule: a plan the guest chose before signing in wins; a paid moment or `browse` opens on the Trip Pass; a soft offer opens on the Year Pass, except `expiring` for a Trip Pass holder, which opens on the Trip Pass. The "recommended" mark shows only on soft offers.
 - Constant: `initialPick` in `continent-app/src/lib/passMoments.js:31`; `SOFT` in `passMoments.js:22`
 - Test: `continent-app/tests/passMoments.test.mjs` :: "a paid moment opens on the Trip Pass (T488-g)"
 - Test: `continent-app/tests/passMoments.test.mjs` :: "an offer nobody asked for keeps the yearly plan, a Trip Pass running out is offered days"
@@ -128,29 +128,30 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 
 ### QUOTA-019 Prices as shown
 - Decides: the small figures beside the price.
-- Rule: the yearly plan shows a month as round(1499 / 12) cents; the yearly plan equals floor(year / trip) + 1 Trip Passes; prices in the active locale with cents.
-- Constant: `monthlyCents` in `continent-app/src/lib/pricing.js:171`; `yearPassTripsEquivalent` in `pricing.js:154`
-- Test: `continent-app/tests/passSubscription.test.mjs` :: "the client mirror: 60-day Trip Pass, a renewing yearly plan"
+- Rule: the Year Pass shows a month as round(1499 / 12) cents (only a pass of 365 days or more has a monthly figure); the Year Pass equals floor(year / trip) + 1 Trip Passes; prices in the active locale with cents.
+- Constant: `monthlyCents` in `continent-app/src/lib/pricing.js:168`; `yearPassTripsEquivalent` in `pricing.js:154`
+- Test: `continent-app/tests/passSubscription.test.mjs` :: "the client mirror: 60-day Trip Pass, 365-day Year Pass, neither recurring"
 
 ### QUOTA-020 Checkout session
 - Decides: what Stripe charges and how the session behaves.
-- Rule: the browser sends only a tier and the gate reason; the amount comes from the Stripe Price in `STRIPE_PRICE_TRIP` or `STRIPE_PRICE_YEAR`; Trip Pass is mode `payment`, yearly plan `subscription`; automatic tax with a required billing address; the session expires after 30 minutes; a past customer id is reused; a reason that is not 1 to 32 letters is sent blank.
-- Constant: `checkoutModeFor` and `stripePriceFor` in `supabase/functions/_shared/passes.mjs:170` and `:64`; `supabase/functions/checkout/index.ts:103` to `:169`
-- Test: `continent-app/tests/passSubscription.test.mjs` :: "the yearly plan is a subscription, the Trip Pass a payment"
+- Rule: the browser sends only a tier and the gate reason; the amount comes from the Stripe Price in `STRIPE_PRICE_TRIP` or `STRIPE_PRICE_YEAR`, both one-time Prices; both passes are mode `payment` (no pass renews, ROADMAP I-f); automatic tax with a required billing address; the session expires after 30 minutes; a past customer id is reused; a reason that is not 1 to 32 letters is sent blank.
+- Constant: `checkoutModeFor` and `stripePriceFor` in `supabase/functions/_shared/passes.mjs:170` and `:64`; `supabase/functions/checkout/index.ts:102` to `:161`
+- Test: `continent-app/tests/passSubscription.test.mjs` :: "both passes are a one-off payment"
+- Test: `continent-app/tests/edgeAuth.test.mjs` :: "checkout: the Year Pass is a one-off payment, never a subscription (decision 0010, ROADMAP I-f)"
 
-### QUOTA-021 Withdrawal waiver
+### QUOTA-021 Request to start
 - Decides: whether the buyer must tick the immediate-start checkbox.
-- Rule: only when `CHECKOUT_TERMS_URL` is set, Stripe requires the terms checkbox with Carta's text: start now and lose the 14-day EU right of withdrawal; the yearly text adds that it renews until cancelled in Account.
-- Constant: `waiverText` in `supabase/functions/_shared/passes.mjs:175`; `supabase/functions/checkout/index.ts:135` to `:141`
-- Test: `continent-app/tests/passSubscription.test.mjs` :: "the waiver names the renewal and where to cancel"
+- Rule: only when `CHECKOUT_TERMS_URL` is set, Stripe requires the terms checkbox with Carta's text, one for both passes: start the pass now; a withdrawal within 14 days pays for the days the pass has run; the right ends once the pass has been fully supplied (decision 0010). It never says the buyer loses the right or that a pass renews.
+- Constant: `waiverText` in `supabase/functions/_shared/passes.mjs:181`; `supabase/functions/checkout/index.ts:132` to `:138`
+- Test: `continent-app/tests/passSubscription.test.mjs` :: "the request to start keeps the 14-day right and names no renewal"
 
 ### QUOTA-022 When a purchase is refused before payment
-- Decides: that nobody pays for days they cannot get or for a second yearly plan.
-- Rule: a yearly plan is refused while one is `active`, `trialing` or `past_due`, cancelled or not (409 `subscribed`); any pass is refused when the current expiry is within one day of the 3-year horizon (409 `pass_max`); a purchase that would cross it is allowed and marked capped.
-- Constant: `pass_can_buy` in `supabase/migrations/053_pass_subscriptions.sql:121` (statuses `:145`, horizon `:153`); `pass_horizon_days` in `044_payments_quota.sql:309` = 1095; `supabase/functions/checkout/index.ts:115` to `:123`
+- Decides: that nobody pays for days they cannot get.
+- Rule: any pass is refused when the current expiry is within one day of the 3-year horizon (409 `pass_max`); a purchase that would cross it is allowed and marked capped. A Year Pass holder may buy another Year Pass, which stacks like a Trip Pass (migration 075 dropped 053's `subscribed` refusal).
+- Constant: `pass_can_buy` in `supabase/migrations/075_year_pass_one_off.sql:40` (horizon `:65`); `pass_horizon_days` in `044_payments_quota.sql:309` = 1095; `supabase/functions/checkout/index.ts:114` to `:120`
 - Test: `continent-app/scripts/ai/test_passes.mjs` :: "horizon: a pass at the horizon cannot be bought for"
 - Test: `continent-app/scripts/ai/test_passes.mjs` :: "horizon: and pass_can_buy says it will be capped"
-- Test: `supabase/diagnostics/053_pass_subscriptions_test.sql` :: "T053 scenario passed"
+- Test: `supabase/diagnostics/075_year_pass_one_off_test.sql` :: "T075 scenario passed"
 
 ### QUOTA-023 Granting and stacking a pass
 - Decides: what a purchase does to an existing pass.
@@ -161,23 +162,19 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 - Test: `continent-app/scripts/ai/test_passes.mjs` :: "replay: the same session id is a no-op"
 - Test: `continent-app/scripts/ai/test_passes.mjs` :: "horizon: the grant is clamped to the horizon"
 
-### QUOTA-024 A year per paid invoice
-- Decides: when the yearly plan's allowance renews.
-- Rule: an invoice grants only when paid with `billing_reason` `subscription_create` or `subscription_cycle` and the subscription names a user and the year tier; the invoice id is the idempotency key; a renewal is recorded with reason `renewal`.
-- Constant: `grantFromInvoice` in `supabase/functions/_shared/passes.mjs:194`
-- Test: `continent-app/tests/passSubscription.test.mjs` :: "a paid first invoice grants a year, keyed on the invoice"
-- Test: `continent-app/tests/passSubscription.test.mjs` :: "a renewal grants with reason \"renewal\"; other invoices grant nothing"
+### QUOTA-024 A year per paid invoice (retired)
+- Decides: nothing any more.
+- Rule: retired 2026-11-12 with the yearly subscription (decision 0010, ROADMAP I-f): no pass renews, so there is no invoice grant, subscription state or cancel flow. The `entitlements.subscription_*` columns and `set_subscription_state` from 053 stay unused.
+- Test: no test
 
-### QUOTA-025 Subscription state
-- Decides: whether the Account says "Renews" or "Ends" and whether the plan counts as live.
-- Rule: subscription events write id, status, cancel-at-period-end and period end through `set_subscription_state` (id must look like `sub_` plus 6 or more characters); the app treats `active`, `trialing` and `past_due` as live.
-- Constant: `stateFromSubscription` in `supabase/functions/_shared/passes.mjs`; `set_subscription_state` in `supabase/migrations/053_pass_subscriptions.sql`; `LIVE` in `continent-app/src/hooks/useEntitlement.js:35`
-- Test: `continent-app/tests/passSubscription.test.mjs` :: "the subscription state maps onto set_subscription_state"
+### QUOTA-025 Subscription state (retired)
+- Decides: nothing any more.
+- Rule: retired 2026-11-12 with the yearly subscription (decision 0010, ROADMAP I-f): no pass renews, so there is no invoice grant, subscription state or cancel flow. The `entitlements.subscription_*` columns and `set_subscription_state` from 053 stay unused.
+- Test: no test
 
-### QUOTA-026 Cancelling and resuming
-- Decides: what the yearly plan's Account controls do.
-- Rule: `portal` needs a Stripe customer; `cancel` and `resume` set `cancel_at_period_end` on the traveller's own subscription only (403 `not_yours` otherwise); a cancelled plan runs to the end of the paid year.
-- Constant: `supabase/functions/billing/index.ts:59` to `:93`; `continent-app/src/lib/billing.js`
+### QUOTA-026 Cancelling and resuming (retired)
+- Decides: nothing any more.
+- Rule: retired 2026-11-12 with the yearly subscription (decision 0010, ROADMAP I-f): no pass renews, so there is no invoice grant, subscription state or cancel flow. The `entitlements.subscription_*` columns and `set_subscription_state` from 053 stay unused.
 - Test: no test
 
 ### QUOTA-027 Webhook trust
@@ -212,7 +209,7 @@ QUOTA-008, QUOTA-009, QUOTA-010, QUOTA-011, QUOTA-012, QUOTA-013, QUOTA-014, QUO
 
 | HANDBOOK says | Code does | Where |
 |---|---|---|
-| Soft gates are "shown at most once a session ... snoozed 30 days per reason" | `nudge`, the only function that reads the session flag and the snooze, is called nowhere; `plansLow` and `expiring` open through `require` and `openPrices`, so neither limit applies | `continent-app/src/hooks/usePaywall.jsx:232`; callers `CreditChip.jsx:37`, `AnnouncementBar.jsx:116` (`AiDayPlanModal.jsx` was deleted with T1163-b; it was unmounted already) |
+| Soft gates are "shown at most once a session ... snoozed 30 days per reason" | `nudge`, the only function that reads the session flag and the snooze, is called nowhere; `plansLow` and `expiring` open through `require` and `openPrices`, so neither limit applies | `continent-app/src/hooks/usePaywall.jsx:232`; callers `CreditChip.jsx:37`, `AnnouncementBar.jsx:116` (the AI plan sheet was deleted with T1163-b; it was unmounted already) |
 | Soft gates are "never for a payer" | `plansLow` opens for a payer once the allowance is known, and `expiring` opens for a payer from the banner | `continent-app/src/hooks/usePaywall.jsx:220`, `:252` |
 | "The plan-day function also has a shared daily ceiling" | The same ceiling and counter cover plan-day, suggest-city and parse-booking, both kinds together | `supabase/functions/suggest-city/index.ts:152`, `parse-booking/index.ts:161`, `044_payments_quota.sql:218` |
 | Pass table: one AI plan and grounded searches as separate counts | A grounded plan-day call spends one `plan` and one `ground` unit; a grounded suggest-city spends only `ground` | `supabase/functions/plan-day/index.ts:524`, `suggest-city/index.ts:205` |

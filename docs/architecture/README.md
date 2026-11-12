@@ -24,7 +24,7 @@ flowchart LR
   end
   subgraph Supa["Supabase"]
     DB["Postgres + auth + RLS"]
-    EF["Edge Functions: plan-day, suggest-city, parse-booking, checkout, stripe-webhook, billing, notify"]
+    EF["Edge Functions: plan-day, suggest-city, parse-booking, checkout, stripe-webhook, notify"]
   end
   GEM["Gemini"]
   STR["Stripe"]
@@ -57,7 +57,7 @@ flowchart LR
 | Pages Functions | One catch-all Function serves about 32,000 prerendered pages from a private R2 bucket (only paths in `public/_routes.json` reach it); `api/` Functions serve Ask answers (Workers AI, KV counter), live flights, live stays and the forecast. | `continent-app/functions/` |
 | R2 data host | Public read bucket behind `data.carta-europetravel.com`; the `R2_TIER` list in `continent-app/src/lib/dataHost.js` says which folders live there. Images are on `cdn.carta-europetravel.com` (per the handbook and the archived incident runbook; not re-verified here). | `continent-app/scripts/r2/`, `continent-app/src/lib/dataHost.js` |
 | Workers | `flight-sweep` (Cloudflare Worker with its own `wrangler.toml` and `schema.sql`) and the `late-sweep` script run by a systemd unit on the box. | `continent-app/workers/` |
-| Supabase | Postgres with row level security, auth, and Edge Functions. Edge Functions: `plan-day`, `suggest-city`, `parse-booking` (Gemini), `checkout`, `stripe-webhook`, `billing`, `notify`. Migrations are in `supabase/migrations/`. | `supabase/` |
+| Supabase | Postgres with row level security, auth, and Edge Functions. Edge Functions: `plan-day`, `suggest-city`, `parse-booking` (Gemini), `checkout`, `stripe-webhook`, `notify`. Migrations are in `supabase/migrations/`. | `supabase/` |
 | Gemini | The model behind the three AI Edge Functions, under per-user and global daily caps. Never the Claude API (CLAUDE.md). | `supabase/functions/plan-day/`, `suggest-city/`, `parse-booking/` |
 | Stripe | Pass checkout and webhook. Test mode until the owner steps in `docs/owner/stripe.md`. | `supabase/functions/checkout/`, `stripe-webhook/` |
 | Hetzner build box | An always-on small server (CAX11, or CX23 when ARM is out of stock) runs the weekly pipeline from a systemd timer and pushes data to R2; a larger CAX41 exists only for heavy jobs. | `infra/hetzner/` |

@@ -26,32 +26,7 @@ const GUEST = {
   groundLeft: 0,
   loading: false,
   known: false,
-  // The yearly plan (T460, migration 053): null when there is none, or on a
-  // project without 053, where the extra read fails quietly.
-  subscription: null,
 };
-
-// An incomplete first payment is not a plan yet: the panel must still sell it.
-const LIVE = new Set(['active', 'trialing', 'past_due']);
-
-/** The yearly plan's state off the traveller's own entitlement row. */
-async function readSubscription(userId) {
-  try {
-    const supabase = await getSupabase();
-    const { data, error } = await supabase
-      .from('entitlements')
-      .select('subscription_id, subscription_status, cancel_at_period_end, renews_at')
-      .eq('user_id', userId)
-      .maybeSingle();
-    if (error || !data?.subscription_id) return null;
-    return {
-      status: data.subscription_status || '',
-      live: LIVE.has(data.subscription_status || ''),
-      cancelling: !!data.cancel_at_period_end,
-      renewsAt: data.renews_at || null,
-    };
-  } catch { return null; }
-}
 
 export function useEntitlement() {
   const { user } = useAuth();
@@ -66,10 +41,7 @@ export function useEntitlement() {
     setState((s) => ({ ...s, loading: true }));
     try {
       const supabase = await getSupabase();
-      const [{ data, error }, subscription] = await Promise.all([
-        supabase.rpc('ai_status', { p_user: user.id }),
-        readSubscription(user.id),
-      ]);
+      const { data, error } = await supabase.rpc('ai_status', { p_user: user.id });
       if (id !== reqId.current) return;
       if (error || !data || data.error) {
         setState({ ...GUEST, loading: false });
@@ -87,7 +59,6 @@ export function useEntitlement() {
         groundLeft: data.groundLeft ?? 0,
         loading: false,
         known: true,
-        subscription,
       });
     } catch {
       if (id === reqId.current) setState({ ...GUEST, loading: false });

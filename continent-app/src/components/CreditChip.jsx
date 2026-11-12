@@ -31,6 +31,10 @@ export function useCredit() {
     known,
     left,
     cap,
+    // Live searches (the `ground` gate, ROADMAP H14): plan-day skips them for
+    // the free tier and at 0 left, so the bot says so before it runs.
+    groundLeft: known ? Math.max(0, e.groundLeft ?? 0) : null,
+    paid: known && (e.tier || 'free') !== 'free',
     // Out of plans only when the balance is actually known: a failed read is
     // "unknown", and the server decides.
     out: signedIn && known && left === 0,

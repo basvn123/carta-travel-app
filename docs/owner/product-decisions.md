@@ -4,7 +4,7 @@ Each row asks for a call, a confirmation or an approval. Answer in chat with the
 
 Steps are the open register rows with Owner `user` that belong to this system, in register order: the Order column first, then task number. A row's own wording says what it waits on ("after", "before"); that is repeated beside the step. Nothing here is new: each step is a row, and the task report named in the row has the detail. When a step is done, delete it here (docs/decisions/0003-open-items-owner-steps-and-roadmap.md).
 
-Rows: 6. Register rows point back here.
+Rows: 11 (5 numbered, 6 in the table), recounted by owner sweep round 2 on 2026-11-12.
 
 Owner sweep 2026-11-12: every other step was decided, done or found obsolete by the decisions lane; `.work/2026-11-12-owner-decisions/report.md` lists each with its outcome.
 
@@ -15,7 +15,6 @@ Owner sweep 2026-11-12: every other step was decided, done or found obsolete by 
 3. **T300-s**: After the supabase lane has applied migrations 040 and 041, sign in as owner (with your second factor), open Admin, Overview, and check that the pipeline health card and the AI failures card show figures or an honest empty state, not an error. Tell a session what you saw.
 4. **T605-c**: In the Claude desktop app open Help, Troubleshooting, Review Pinned Git Origins and confirm the Carta repository's origin. Done when a session worktree can merge main's `.claude/skills/carta-design` without a pinned-origin warning.
 5. **T033-d**: Handed to the supabase lane (2026-11-12): in Stripe test mode, check that a German and a Belgian address both show the Belgian rate (amount_tax 121 on 699). Waits on T033-a and T033-b.
-6. **T068-c**: Handed to the supabase lane (2026-11-12): after the first real content report, run `select source_header, count(*) from public.content_reports group by 1`; if any row says x-forwarded-for, open a ROADMAP C-track fix so report_guide takes the last trusted entry.
 
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 

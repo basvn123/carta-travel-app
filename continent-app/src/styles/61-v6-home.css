@@ -60,8 +60,8 @@
 /* ── The hero ─────────────────────────────────────────────────────────── */
 
 /* The film fills the first screen from edge to edge (T620 and T621, owner
-   2026-10-23, after Mindtrip and Komoot): on a wider screen it starts under
-   the app header, which lies on it (see "The header on the film"). Its
+   2026-10-23, after Mindtrip and Komoot): it starts under the app header,
+   which lies on it at every width (see "The header on the film"). Its
    height is the page's own visible height (the page is the size container).
    One even tint lies over the whole film, never a gradient, and the words
    stand on it in white. */
@@ -107,38 +107,41 @@
   animation: hv-push calc(var(--dur-film) + var(--dur-film-fade)) linear both;
 }
 
-/* The phone's own top line, on the film's top edge: the mark and Log in.
-   The desktop has the app header for both. */
-.hv-top {
-  position: absolute;
-  z-index: 3;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--gutter);
-  background: var(--home-film-bar); /* the same flat bar as the desktop header on the film (T623) */
+/* The header on the film (T621; G14 at every width). HomePage sets
+   data-home-film on the root: "under" while the film is under the app
+   header, "past" once it has scrolled by. The page then starts at the
+   window's top, and under the film the header is transparent and white, its
+   own tokens turned white so the mark, the tabs and the account disc follow.
+   It holds no menu, so nothing white lands on white. G14 (2026-11-12): the
+   phone's own top line on the film went; since T960/T980 the shell header
+   carries the brand and the account door on a phone too, so one bar lies on
+   the film at every width, never two. */
+:root[data-home-film] .hv-page { top: 0; }
+:root[data-home-film] .top-bar {
+  transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
+}
+:root[data-home-film="under"] .top-bar {
+  /* One flat bar of ink behind the header (T623, register T621-a): with
+     the film's tint under it the white labels measure at least 4.9:1 on
+     the brightest tenth of every clip's sky, 5.6 to 7.8:1 at the median. */
+  background: var(--home-film-bar);
+  border-bottom-color: transparent;
   --text: var(--home-ink-on-deep);
+  --text-2: var(--home-ink-on-deep);
   --border: color-mix(in srgb, var(--home-ink-on-deep) 45%, transparent);
+  --surface-sunken: color-mix(in srgb, var(--home-ink-on-deep) 18%, transparent);
+  --focus: var(--home-ink-on-deep); /* the ring on the film is white */
+  /* T1128: a hairline and a tight layer in full ink keep the white labels at 4.5:1 or
+     more against their own shadow, so they hold before the film has
+     loaded (or when it never does) and not only on the film's tint. */
+  --hv-label-shadow: 0 0 1px var(--neutral-900), 0 1px 2px var(--neutral-900),
+    0 0 16px color-mix(in srgb, var(--neutral-900) 40%, transparent);
+  text-shadow: var(--hv-label-shadow);
 }
-.hv-top-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  color: inherit;
-  font-size: var(--text-title);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  text-decoration: none;
-}
-.hv-top-brand:focus-visible,
-.hv-top-login:focus-visible { outline: 2px solid var(--home-ink-on-deep); outline-offset: 2px; }
-.hv-page .hv-top-login { min-height: var(--tap); color: inherit; }
-.hv-page .hv-top-login:hover { background: color-mix(in srgb, var(--home-ink-on-deep) 16%, transparent); }
+/* The phone header paints the account disc white (96-search-dock.css, T960);
+   its white icon would vanish on it, so on the film it takes the bar's
+   sunken white like the desktop's. */
+:root[data-home-film="under"] .top-bar .account-door-disc { background: var(--surface-sunken); box-shadow: none; }
 
 .hv-hero-copy {
   position: relative;
@@ -345,40 +348,11 @@
 /* ── Wider screens ────────────────────────────────────────────────────── */
 
 @media (min-width: 769px) {
-  .hv-top { display: none; }
   .hv-wrap { padding: 0 var(--page-gutter) var(--space-8); }  /* T1041: on the header's line */
   .hv-hero-copy { padding: 0 var(--space-6) clamp(var(--space-7), 11cqh, 136px); gap: var(--space-5); }
   .hv-sub { font-size: var(--text-title); line-height: 1.45; }
   .hv-acts { max-width: 640px; }
 
-  /* The header on the film (T621). HomePage sets data-home-film on the root:
-     "under" while the film is under the app header, "past" once it has
-     scrolled by. The page then starts at the window's top, and under the
-     film the header is transparent and white, its own tokens turned white
-     so the mark, the tabs and the account disc follow. It holds no menu, so
-     nothing white lands on white. */
-  :root[data-home-film] .hv-page { top: 0; }
-  :root[data-home-film] .top-bar {
-    transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
-  }
-  :root[data-home-film="under"] .top-bar {
-    /* One flat bar of ink behind the header (T623, register T621-a): with
-       the film's tint under it the white labels measure at least 4.9:1 on
-       the brightest tenth of every clip's sky, 5.6 to 7.8:1 at the median. */
-    background: var(--home-film-bar);
-    border-bottom-color: transparent;
-    --text: var(--home-ink-on-deep);
-    --text-2: var(--home-ink-on-deep);
-    --border: color-mix(in srgb, var(--home-ink-on-deep) 45%, transparent);
-    --surface-sunken: color-mix(in srgb, var(--home-ink-on-deep) 18%, transparent);
-    --focus: var(--home-ink-on-deep); /* the ring on the film is white */
-    /* T1128: a hairline and a tight layer in full ink keep the white labels at 4.5:1 or
-       more against their own shadow, so they hold before the film has
-       loaded (or when it never does) and not only on the film's tint. */
-    --hv-label-shadow: 0 0 1px var(--neutral-900), 0 1px 2px var(--neutral-900),
-      0 0 16px color-mix(in srgb, var(--neutral-900) 40%, transparent);
-    text-shadow: var(--hv-label-shadow);
-  }
   .hv-plan-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hv-plan { padding: var(--space-6) var(--space-5) var(--space-5) 0; }
   .hv-plan + .hv-plan { border-top: 0; border-left: 1px solid var(--border); padding-left: var(--space-5); }

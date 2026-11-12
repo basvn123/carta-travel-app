@@ -111,8 +111,9 @@ for (const lang of LOCALES) {
 // T460: the consent itself is the required tick box on Stripe's page (the
 // checkout function's consent_collection, with waiverText from
 // _shared/passes.mjs), shown before any card is typed. The panel states the
-// same fact in its one line of small print, once per plan: the yearly line
-// also names the renewal. Every locale keeps the digits, so "14" is a
+// same fact in its one line of small print, once per plan. No pass renews
+// (decision 0010, ROADMAP I-f), and the request to start keeps the 14-day
+// right rather than ending it. Every locale keeps the digits, so "14" is a
 // language-independent check.
 for (const lang of LOCALES) {
   const src = read(`i18n/${lang}.js`);
@@ -128,8 +129,11 @@ for (const lang of LOCALES) {
   }
 }
 const sharedPasses = readFileSync(join(process.env.CARTA_REPO_ROOT || join(SRC, '..', '..'), 'supabase', 'functions', '_shared', 'passes.mjs'), 'utf8');
-if (!sharedPasses.includes('14-day right of withdrawal') || !sharedPasses.includes('renews every')) {
-  note('_shared/passes.mjs: the checkout waiver text no longer names the 14 days or the yearly renewal.');
+{
+  const fn = sharedPasses.slice(sharedPasses.indexOf('export function waiverText'));
+  const body = fn.slice(0, fn.indexOf('\n}'));
+  if (!body.includes('within 14 days')) note('_shared/passes.mjs: the request to start no longer names the 14 days.');
+  if (/lose|renew/i.test(body)) note('_shared/passes.mjs: the request to start says the buyer loses the right or that a pass renews.');
 }
 
 // --- 5. Duplicate keys, which silently take the last value -------------------

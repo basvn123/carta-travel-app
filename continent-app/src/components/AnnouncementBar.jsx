@@ -89,8 +89,6 @@ export function PassExpiryBanner() {
 
   if (!entitlement?.known) return null;
   if (entitlement.tier === 'free' || !entitlement.expiresAt) return null;
-  // A yearly plan that renews by itself is not running out (T460).
-  if (entitlement.subscription?.live && !entitlement.subscription.cancelling) return null;
   if (dismissed === entitlement.expiresAt) return null;
 
   const left = daysLeft(entitlement.expiresAt);

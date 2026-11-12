@@ -16,17 +16,12 @@
  *   supabase functions deploy stripe-webhook --no-verify-jwt
  * The Stripe signature is what authenticates the caller instead.
  *
- * THE YEARLY PLAN (T460, migration 053). The yearly plan is a Stripe
- * subscription. Its checkout.session.completed grants nothing: every paid
- * invoice does, through invoice.paid, with the invoice id as the idempotency
- * key, so the first year and each renewal take the same path. The first
- * invoice reads the waiver consent, the country and the gate reason off the
- * checkout session that created the subscription. customer.subscription.*
- * events keep entitlements.subscription_* in step (set_subscription_state),
- * which is what the Account panel shows ("Renews 3 Oct 2027", "Ends ...").
- * Events to enable on the endpoint: checkout.session.completed, invoice.paid,
- * customer.subscription.created, customer.subscription.updated,
- * customer.subscription.deleted.
+ * BOTH PASSES ARE ONE PAYMENT (decision 0010, ROADMAP I-f). The Trip Pass
+ * and the Year Pass are each a payment-mode Checkout session, granted here
+ * off checkout.session.completed; grant_pass adds the tier's period_days
+ * (60 or 365). Nothing renews, so the subscription and invoice.paid branches
+ * T460 added are gone (migration 075). Event to enable on the endpoint:
+ * checkout.session.completed; any other event is acknowledged and ignored.
  *
  * Secrets: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, CHECKOUT_TERMS_URL.
  * CHECKOUT_TERMS_URL is read here only to record WHICH terms the buyer
@@ -57,7 +52,7 @@
  */
 import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
-import { PAID_TIERS, grantFromInvoice, stateFromSubscription } from '../_shared/passes.mjs';
+import { PAID_TIERS } from '../_shared/passes.mjs';
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') return new Response('method', { status: 405 });
@@ -86,94 +81,15 @@ Deno.serve(async (req) => {
   }
 
   const service = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'));
-  const ok = (body: unknown) => new Response(JSON.stringify(body), { status: 200, headers: { 'Content-Type': 'application/json' } });
-  const idOf = (v: unknown) => (typeof v === 'string' ? v : (v as { id?: string } | null)?.id || '');
 
-  // ── The yearly plan's state: created, updated (cancelled at period end,
-  // resumed, past due), deleted. Written as it is; it grants nothing. ──
-  if (event.type === 'customer.subscription.created'
-    || event.type === 'customer.subscription.updated'
-    || event.type === 'customer.subscription.deleted') {
-    const args = stateFromSubscription(event.data.object);
-    if (!args.p_user) return ok({ received: true, ignored: 'no user on the subscription' });
-    const { error } = await service.rpc('set_subscription_state', args);
-    if (error) {
-      console.error('stripe-webhook: state failed', error.message);
-      return new Response('state failed', { status: 500 });
-    }
-    return ok({ received: true, state: args.p_status, cancelAtPeriodEnd: args.p_cancel_at_period_end });
-  }
-
-  // ── A paid invoice of the yearly plan grants a year. ──
-  if (event.type === 'invoice.paid') {
-    const invoice = event.data.object as Stripe.Invoice & Record<string, any>;
-    const subId = idOf(invoice.subscription) || idOf(invoice.parent?.subscription_details?.subscription);
-    if (!subId) return ok({ received: true, ignored: 'not a subscription invoice' });
-    let sub: Stripe.Subscription;
-    try { sub = await stripe.subscriptions.retrieve(subId); } catch (err) {
-      console.error('stripe-webhook: subscription read failed', (err as Error).message);
-      return new Response('subscription read failed', { status: 500 });
-    }
-    const g = grantFromInvoice(invoice, sub);
-    if (!g.grant) return ok({ received: true, ignored: g.why });
-    // The first year: the consent, the country and the gate live on the
-    // checkout session that opened the subscription. A failed read grants
-    // anyway, with nothing on file, as the one-off path does.
-    let consentTos: string | null = null;
-    let buyerCountry = g.args.p_buyer_country;
-    if (g.first) {
-      try {
-        const list = await stripe.checkout.sessions.list({ subscription: subId, limit: 1 });
-        const cs = list.data[0];
-        consentTos = cs?.consent?.terms_of_service || null;
-        buyerCountry = buyerCountry || cs?.customer_details?.address?.country || null;
-      } catch { /* grant anyway */ }
-    }
-    const { data, error } = await service.rpc('grant_pass', {
-      ...g.args,
-      p_buyer_country: buyerCountry,
-      p_consent_tos: consentTos,
-      p_consent_terms_url: consentTos ? (env('CHECKOUT_TERMS_URL') || null) : null,
-    });
-    // 500 so Stripe retries: the customer paid and holds no year yet.
-    if (error) {
-      console.error('stripe-webhook: grant failed', error.message);
-      return new Response('grant failed', { status: 500 });
-    }
-    await service.rpc('set_subscription_state', stateFromSubscription(sub));
-    return ok({ received: true, granted: data });
-  }
-
-  // Anything else is acknowledged and ignored, so Stripe stops retrying it.
+  // Any other event is acknowledged and ignored, so Stripe stops retrying it.
+  // Only checkout.session.completed grants since no pass renews (decision
+  // 0010); a subscription or invoice event left enabled lands here.
   if (event.type !== 'checkout.session.completed') {
     return new Response(JSON.stringify({ received: true, ignored: event.type }), { status: 200 });
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
-
-  // The yearly plan's session grants nothing: its first invoice does (above).
-  // Its state is written now, so Account shows the plan before the invoice
-  // event arrives.
-  if (session.mode === 'subscription') {
-    // The first year may already be granted (invoice.paid can arrive
-    // first) with no consent on file: write it onto that grant now.
-    const firstInvoice = idOf(session.invoice);
-    const tos = session.consent?.terms_of_service || '';
-    if (firstInvoice && (tos === 'accepted' || tos === 'declined')) {
-      await service.from('pass_grants')
-        .update({ consent_tos: tos, consent_at: new Date().toISOString(), consent_terms_url: env('CHECKOUT_TERMS_URL') || null })
-        .eq('session_id', firstInvoice)
-        .is('consent_tos', null);
-    }
-    const subId = idOf(session.subscription);
-    if (subId) {
-      try {
-        const sub = await stripe.subscriptions.retrieve(subId);
-        await service.rpc('set_subscription_state', stateFromSubscription(sub));
-      } catch { /* the subscription events will write it */ }
-    }
-    return ok({ received: true, subscription: subId || null });
-  }
 
   // Only a session that is actually paid grants anything. An async payment
   // method can complete the session while payment is still pending, and
@@ -190,14 +106,15 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ received: true, error: 'missing user or tier' }), { status: 200 });
   }
 
-  // THE WITHDRAWAL WAIVER (T032). A pass starts the moment payment lands, so
-  // the 14-day right of withdrawal under Article 16(m) of the Consumer Rights
-  // Directive only ends if the buyer expressly asked for immediate supply and
-  // acknowledged the loss. Stripe collects that as the required checkbox set
-  // up in the checkout function, and reports the answer here as
-  // consent.terms_of_service = 'accepted'. Consent that is collected and not
-  // stored is consent we cannot produce, and a sale we cannot produce it for
-  // is refundable for 14 days, so it is recorded against the grant.
+  // THE REQUEST TO START (T032, decision 0010). A pass is a digital service
+  // that starts the moment payment lands. A buyer who withdraws within 14
+  // days pays for the days used only if they expressly asked for it to start
+  // inside that period (Consumer Rights Directive Art 7(3), 14(3)). Stripe
+  // collects that as the required checkbox set up in the checkout function,
+  // and reports the answer here as consent.terms_of_service = 'accepted'.
+  // A request that is collected and not stored is one we cannot produce, and
+  // without it a withdrawal owes a full refund, so it is recorded against
+  // the grant.
   //
   // The Session object carried on checkout.session.completed includes
   // `consent` inline, so no retrieve is needed in the normal case. The

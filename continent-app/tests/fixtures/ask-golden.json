@@ -34,6 +34,7 @@
     { "q": "small villages in provence in june", "lang": "en", "type": "find", "facets": { "vibe": "village", "area": "provence", "month": 6 } },
     { "q": "great wine and no crowds", "lang": "en", "type": "find", "facets": { "vibe": "food", "quiet": true } },
     { "q": "easy walks with kids by a lake", "lang": "en", "type": "find", "facets": { "vibe": "lake" } },
+    { "q": "quiet lake with good walks in June under 120 a day", "lang": "en", "type": "find", "facets": { "quiet": true, "vibe": "hiking", "nb": ["lake"], "month": 6 }, "budget": { "perDay": 120 }, "expectAny": ["gem:castel-di-tora", "gem:esztergom", "OHD", "SPU"] },
     { "q": "places with thermal baths", "lang": "en", "type": "find", "facets": { "vibe": "spa" } },
     { "q": "hidden gem in the apennines", "lang": "en", "type": "find", "facets": { "area": "apennines" } },
     { "q": "historic centre in poland", "lang": "en", "type": "find", "facets": { "vibe": "oldtown", "country": "PL" }, "expectAny": ["KRK"] },

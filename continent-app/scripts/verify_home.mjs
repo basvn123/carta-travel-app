@@ -1,9 +1,9 @@
 /**
  * The home page v2 (T606 batch, rebuilt from scratch; src/browse/home/).
  *
- * It drives a cold first visit (fresh browser storage) on a phone (390 x 844,
- * touch) and a desktop (1440 x 800), and checks what the T606 rebuild
- * promises:
+ * It drives a cold first visit (fresh browser storage) on two phones (390 x 844
+ * and 375 x 812, touch) and a desktop (1440 x 800), and checks what the T606
+ * rebuild promises:
  *
  *   home      a first visit with no link opens the home page
  *   h1        exactly one visible h1, the slogan
@@ -13,8 +13,11 @@
  *             (T620, T621), the slogan, the line and Ask Carta stand on it
  *             under one tint, and nothing else sits on it or under it (no
  *             pill, no bars, no pause, no credit line)
- *   header    (desktop) the app header is white on a see-through ink bar on
- *             the film (T623) and the usual bar once the film has scrolled by
+ *   header    the app header is white on a see-through ink bar on the film
+ *             (T623; on phones too since G14) and the usual bar once the
+ *             film has scrolled by
+ *   onebar    exactly one visible brand on the first screen (G14: the
+ *             phone once showed the shell header and the film's own bar)
  *   film      a clip plays and the film moves on to the next shot by itself
  *   week      the week card shows one total and its lines; another place
  *             changes the total in place
@@ -44,7 +47,7 @@
  * whose predev rewrites public/):
  *   npx vite --port 5202 --strictPort
  *   node scripts/verify_home.mjs --port=5202
- * Options: --vp=mobile,desktop  --skip=lang,reduced  --timeout=240 (seconds
+ * Options: --vp=mobile,small,desktop  --skip=lang,reduced  --timeout=240 (seconds
  * to wait for the page on a cold dev server). Exit code 1 when a check fails.
  */
 import { chromium } from 'playwright';
@@ -58,6 +61,8 @@ const WAIT = Number(argv.timeout || 240) * 1000;
 const SKIP = new Set(String(argv.skip || '').split(',').filter(Boolean));
 const VIEWPORTS = [
   { key: 'mobile', viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 },
+  // G14: the double header showed at 375, the narrowest common phone.
+  { key: 'small', viewport: { width: 375, height: 812 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 },
   { key: 'desktop', viewport: { width: 1440, height: 800 }, isMobile: false, hasTouch: false, deviceScaleFactor: 1 },
 ].filter((v) => !argv.vp || String(argv.vp).split(',').includes(v.key));
 const BANNED = ['seamless', 'unlock', 'effortless', 'elevate', 'leverage', 'empower', 'curated', 'simply', 'just', 'easy'];
@@ -156,9 +161,11 @@ async function run(browser, vp) {
   check(k, 'hero', hero.wGap <= 1 && hero.winGap <= 1 && hero.hShare >= 0.95 && hero.spill === 0 && !hero.cut && hero.words && hero.extras === 0 && /^(rgba?|color)\(/.test(hero.tint),
     `gap to page ${hero.wGap}px, to window ${hero.winGap}px, ${Math.round(hero.hShare * 100)}% of the page box, words on film ${hero.words}, ${hero.spill} spilling, placeholder cut ${hero.cut}, ${hero.extras} extras, tint ${hero.tint}`);
 
-  // The header on the film (T621, wider screens): transparent and white over
-  // the film, the usual bar once the film has scrolled by.
-  if (!vp.isMobile) {
+  // The header on the film (T621; every width since G14): transparent and
+  // white over the film, the usual bar once the film has scrolled by. The
+  // ink is read from the brand's name, which a phone shows too (it has no
+  // nav items there).
+  {
     const bar = (pos) => page.evaluate(async (y) => {
       const box = document.querySelector('.hv-page');
       box.scrollTo(0, y === 'past' ? document.querySelector('.hv-hero-stage').offsetHeight + 40 : 0);
@@ -166,7 +173,7 @@ async function run(browser, vp) {
       const tb = document.querySelector('.top-bar');
       const cs = getComputedStyle(tb);
       return { state: document.documentElement.dataset.homeFilm, bg: cs.backgroundColor,
-        ink: getComputedStyle(tb.querySelector('.header-nav-item')).color,
+        ink: getComputedStyle(tb.querySelector('.app-header-brand .brand-name')).color,
         overlap: Math.round(document.querySelector('.hv-hero-stage').getBoundingClientRect().top) };
     }, pos);
     const under = await bar('top');
@@ -179,6 +186,11 @@ async function run(browser, vp) {
       && past.state === 'past' && alpha(past.bg) === 1,
       `top: ${under.state}, ${under.bg}, ink ${under.ink}, film at ${under.overlap}px; past: ${past.state}, ${past.bg}`);
   }
+
+  // One brand on the first screen (G14), whichever bar carries it.
+  const brands = await page.evaluate(() => [...document.querySelectorAll('.app-header-brand, .hv-top-brand')]
+    .filter((e) => { const b = e.getBoundingClientRect(); return b.height > 0 && b.bottom > 0 && getComputedStyle(e).visibility !== 'hidden'; }).length);
+  check(k, 'onebar', brands === 1, `${brands} visible brand bars`);
 
   // The film: a clip playing, and the next shot by itself, with no control.
   await page.waitForFunction(() => {

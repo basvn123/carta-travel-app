@@ -4,7 +4,7 @@ import { Button, Chip } from '../../components/ui/index.js';
 import { CheckIcon } from '../../components/Icons.jsx';
 import { usePaywall } from '../../hooks/usePaywall.jsx';
 import { formatMoney } from '../../lib/money.js';
-import { TIERS, TIER_ORDER, formatPrice, isRecurring, monthlyCents } from '../../lib/pricing.js';
+import { TIERS, TIER_ORDER, formatPrice, monthlyCents } from '../../lib/pricing.js';
 import { useReveal } from './useHome.js';
 
 /**
@@ -24,10 +24,11 @@ export function HomePlans() {
     trip: [t('pass.addPlansTrip', { n: TIERS.trip.aiPlans }), t('pass.addExports'), t('pass.addTrips'), t('pass.addImport')],
     year: ['home.year1', 'home.year2'].map((k) => t(k)),
   };
-  const per = (tier) => (tier.priceCents ? t(isRecurring(tier.id) ? 'pass.perYearRenews' : 'pass.perOnce') : null);
+  // Both passes are paid once (decision 0010, ROADMAP I-f).
+  const per = (tier) => (tier.priceCents ? t('pass.perOnce') : null);
   const note = (tier) => {
     if (tier.id === 'trip') return t('pass.tripNote', { n: tier.periodDays });
-    if (isRecurring(tier.id)) return t('pass.yearNote', { month: formatPrice(monthlyCents(tier.id)) });
+    if (tier.id === 'year') return t('pass.yearNote', { n: tier.periodDays, month: formatPrice(monthlyCents(tier.id)) });
     return null;
   };
   return (
@@ -38,7 +39,7 @@ export function HomePlans() {
           const tier = TIERS[id];
           const p = per(tier);
           const n = note(tier);
-          const list = lists[id === 'trip' ? 'trip' : isRecurring(id) ? 'year' : 'free'];
+          const list = lists[id] || lists.free;
           return (
             <li key={id} className={`hv-plan${tier.featured ? ' is-featured' : ''}`}>
               <span className="hv-plan-top">

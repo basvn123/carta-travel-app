@@ -19,7 +19,7 @@ Decided by the owner sweep on 2026-11-12 (these are no longer steps):
 
 1. **Prices (T030-a, T033-a).** Stripe, test mode, Products.
    - Create or find the Trip Pass Price: EUR 6.99, one-time. Write down its `price_...` id.
-   - The yearly plan is in `docs/owner/pass-subscription.md`, step 1.
+   - The Year Pass Price: EUR 14.99, one-time (not recurring); see `docs/owner/pass-subscription.md`, step 1.
    - Tax behaviour must be **inclusive** on both. If it is exclusive, the unit economics are off by EUR 1.21 a sale.
 2. **Terms URL, then keys (T032-a, T030-b).** Do them in this order: setting the terms secret before the Dashboard field makes every checkout answer 502.
    1. Stripe, Settings, Public details: set Terms of service to `https://carta-europetravel.com/?legal=terms`.
