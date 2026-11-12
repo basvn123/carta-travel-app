@@ -7,7 +7,7 @@ Project Carta, `ntssxktaduxzpsmejwyv` only (never Horizon-App or the inactive pr
 - **Live:** migrations 001 to 062. 063, 064, 065, 066, 067, 069, 070, 071, 072, 073 and 074 are **not** applied (there is no 068).
 - **Deployed:** all ten Edge Functions from `main` as of 2026-11-12. These five run without the JWT check: stripe-webhook, notify, price-alerts, waitlist, upload-scan. Each was smoke-tested.
   - The AI trio answers 401 without a signed-in user.
-  - Without their provider keys, the others answer "not configured" and send nothing: billing, checkout, stripe-webhook, notify, price-alerts, waitlist, upload-scan.
+  - Without their provider keys, the others answer "not configured" and send nothing: billing (removed from the code by round 2; deleted with the next deploy, step 1), checkout, stripe-webhook, notify, price-alerts, waitlist, upload-scan.
 - **Secrets set:** the Supabase defaults, `GEMINI_API_KEY` and `AI_ENABLE_CITY_GROUNDING`. No Stripe or Resend key. No shared secret for notify, upload-scan, waitlist or price alerts.
 - **Vault:** empty. So 060's reminder job and 061's upload scan are not scheduled.
 - **Checked live:** every SECURITY DEFINER function in `public` pins its `search_path` (121 of 121).
