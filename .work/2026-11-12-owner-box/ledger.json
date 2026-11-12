@@ -1,0 +1,1351 @@
+[
+ {
+  "id": "devserver",
+  "outcome": "obsolete",
+  "evidence": "a dev server is per session; npm run dev resyncs data on start, nothing for the owner to do"
+ },
+ {
+  "id": "N1",
+  "outcome": "done",
+  "evidence": "laptop: CartaStaysBooking, CartaStaysHostelworld, CartaFlightsAll, CartaFlightsNow disabled 2026-11-12 (Disable-ScheduledTask); .env has no VITE_E2E_SEAMS",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1074-c",
+  "outcome": "decided",
+  "evidence": "stays_health.py exists; no mail relay on the box",
+  "decision": "report through the box run status, no mail command (ROADMAP I16)"
+ },
+ {
+  "id": "T1074-a",
+  "outcome": "decided",
+  "evidence": "a headed scrape of one list page; scrape months are March and September",
+  "decision": "Claude captures the fixture at the March 2027 box scrape (ROADMAP I16)"
+ },
+ {
+  "id": "T1086-a",
+  "outcome": "human",
+  "evidence": "laptop gpg has no secret key; the backups are encrypted to the owner's key only",
+  "file": "docs/owner/hetzner-box.md"
+ },
+ {
+  "id": "T1086-b",
+  "outcome": "already-done",
+  "evidence": "box: carta-backup.timer ran 2026-11-12 01:32; r2:carta/archive/db/supabase-nightly/ holds the 2026-11-12 dump, sha256 and counts; status/backup.json status ok"
+ },
+ {
+  "id": "T1092-a",
+  "outcome": "obsolete",
+  "evidence": "`trails_attributes`, `trails_rate` are `after` tasks of the quarterly chain (box-state:39-40) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1085-c",
+  "outcome": "already-done",
+  "evidence": "box: carta-backup.timer ran 2026-11-12 01:32; r2:carta/archive/db/supabase-nightly/ holds the 2026-11-12 dump, sha256 and counts; status/backup.json status ok"
+ },
+ {
+  "id": "T1093-a",
+  "outcome": "obsolete",
+  "evidence": "`trails_images` after-task (`pipeline/tasks/trails.py:323`) harvests Commons photos in the quarterly chain (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1095-a",
+  "outcome": "obsolete",
+  "evidence": "`place_intros` quarterly rev (box-state:76) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1095-b",
+  "outcome": "obsolete",
+  "evidence": "`dossier` monthly rev (box-state:79); prerender count belongs to the prerender build (deploy lane) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1098-a",
+  "outcome": "obsolete",
+  "evidence": "box has no cache/uk_crowds_nights.csv or ITL1 outlines, so crowding_uk was a no-op; building the inputs is Claude's (ROADMAP D11)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1098-b",
+  "outcome": "obsolete",
+  "evidence": "box has no cache/uk_crowds_nights.csv or ITL1 outlines, so crowding_uk was a no-op; building the inputs is Claude's (ROADMAP D11)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1098-c",
+  "outcome": "obsolete",
+  "evidence": "box has no cache/uk_crowds_nights.csv or ITL1 outlines, so crowding_uk was a no-op; building the inputs is Claude's (ROADMAP D11)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1100-a",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1101-a",
+  "outcome": "handoff",
+  "evidence": "needs a current preview deploy to run the live Ask eval against",
+  "handoff_to": "deploy",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1094-a",
+  "outcome": "obsolete",
+  "evidence": "`trails_registry`, `trails_splice` done 11-10; derive_routes, hierarchy, curate, elevation, regionize, rate are quarterly/after (box-state:25-40) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1096-a",
+  "outcome": "obsolete",
+  "evidence": "`place_gallery` quarterly rev (box-state:77) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1096-b",
+  "outcome": "obsolete",
+  "evidence": "`poi_descriptions` quarterly rev (box-state:78) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1097-a",
+  "outcome": "obsolete",
+  "evidence": "`sea_temp` quarterly due, `beach_context` rev (box-state:65,68); `climate_daily` done 11-02 (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1089-f",
+  "outcome": "handoff",
+  "evidence": "needs a signed-in test account (Supabase); then Claude runs the verify_*.mjs scripts",
+  "handoff_to": "supabase",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1099-a",
+  "outcome": "obsolete",
+  "evidence": "trips, regions, joins done 11-09 (box-state:14-17); coverage due in quarterly (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1112-a",
+  "outcome": "human",
+  "evidence": "needs the owner's Travelpayouts sign-up (T1213-f)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1105-a",
+  "outcome": "human",
+  "evidence": "r2:carta/img/manifest/ is empty: no Carta photo copies exist until the paid T049 conversion runs",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1130-b",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1130-f",
+  "outcome": "obsolete",
+  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP H9/I16)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1127-a",
+  "outcome": "obsolete",
+  "evidence": "`trails_images` (see T1093-a) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1127-b",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1134-b",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1180-a",
+  "outcome": "obsolete",
+  "evidence": "`trails_rate` after-task, `rating_v5_profile` weekly rev (box-state:40,74) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1136-a",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1179-e",
+  "outcome": "obsolete",
+  "evidence": "`trails_summaries` after-task follows trails_rate (box-state:41) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1148-b",
+  "outcome": "decided",
+  "evidence": "box: 3.8 GB RAM shared by the pipeline and the trails lab",
+  "decision": "defer: no room on the 4 GB box (ROADMAP E7)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1148-e",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1141-b",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1181-i",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1187-h",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1138-a",
+  "outcome": "decided",
+  "evidence": "box: 3.8 GB RAM shared by the pipeline and the trails lab",
+  "decision": "defer: no room on the 4 GB box (ROADMAP E7)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1138-e",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1146-e",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1144-c",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1183-a",
+  "outcome": "obsolete",
+  "evidence": "`trails_route_bridge` after-task follows trails_splice (box-state:30); splice done 11-10 (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1150-a",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1150-b",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1184-a",
+  "outcome": "obsolete",
+  "evidence": "`trails_rate` exports treks (box-state:40) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1189-h",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1189-i",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1154-a",
+  "outcome": "obsolete",
+  "evidence": "the Intelligence API is not switched on: no RAM to spare; listed in ROADMAP H10",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1159-a",
+  "outcome": "already-done",
+  "evidence": "box: carta-backup.timer ran 2026-11-12 01:32; r2:carta/archive/db/supabase-nightly/ holds the 2026-11-12 dump, sha256 and counts; status/backup.json status ok",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1185-a",
+  "outcome": "obsolete",
+  "evidence": "`trails_rate` runs export (box-state:40); lab on box, pgRouting 3.8.0 (T1222) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1160-b",
+  "outcome": "handoff",
+  "evidence": "needs new tokens (GitHub push credential, SLO sources) on the box",
+  "handoff_to": "security",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1161-d",
+  "outcome": "already-done",
+  "evidence": "carta-trailslab-push.timer puts the dump in R2 weekly (last 2026-11-10)"
+ },
+ {
+  "id": "T1161-a",
+  "outcome": "decided",
+  "evidence": "box CARTA_BOX_ML unset (ask); 5.3 GB free of 38 GB",
+  "decision": "keep `ask` until the box has 8 GB free: the guided venv adds about 1 GB and a quarterly run needs about 2.5 GB headroom (ROADMAP H10)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1161-b",
+  "outcome": "done",
+  "evidence": "box env CARTA_STAYS_SCRAPE=1 added 2026-11-12 (backup env.bak-2026-11-12-owner-box); dry run says month 11 is not a scrape month; the upload waits on T1021-a",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1162-a",
+  "outcome": "handoff",
+  "evidence": "acts on the main checkout or its disk (4.3 GB free), which lanes must not touch",
+  "handoff_to": "orchestrator",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1162-b",
+  "outcome": "already-done",
+  "evidence": "worktree add/remove with `--link-node-modules` is the daily workflow (`docs/lessons.md:11`; this run is in `wt/owner-box`) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1186-a",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1186-b",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1168-c",
+  "outcome": "handoff",
+  "evidence": "needs a Cloudflare Workers AI token",
+  "handoff_to": "deploy",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1188-b",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1190-b",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1182-a",
+  "outcome": "already-done",
+  "evidence": "trailslab-db container healthy on the box; review API and UI units running (T1222)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1182-b",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9 (memory during the catch-up: 3.8 GB, 2.4 GB available, swap 0.5 GB used on 2026-11-12)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1175-b",
+  "outcome": "obsolete",
+  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP H9/I16)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1178-d",
+  "outcome": "obsolete",
+  "evidence": "row says superseded by T1174-b; `blog_drafts` monthly rev, `blog_pr` after (box-state:85-86) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1191-g",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1192-a",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1192-h",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1174-b",
+  "outcome": "handoff",
+  "evidence": "needs new tokens (GitHub push credential, SLO sources) on the box",
+  "handoff_to": "security",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1194-e",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1195-a",
+  "outcome": "decided",
+  "evidence": "licence unclear for IT, CZ, PL, NL, DK feeds",
+  "decision": "check against the DE and CH feeds only; the rest wait on licences",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1195-b",
+  "outcome": "decided",
+  "evidence": "a car OSRM for Europe needs far more RAM than the box or laptop has",
+  "decision": "defer; 1,021 car legs block nothing",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1196-f",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1197-a",
+  "outcome": "already-done",
+  "evidence": "link_health weekly, last success 2026-11-10 on the box",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1198-b",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1198-d",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1199-b",
+  "outcome": "obsolete",
+  "evidence": "`entry_rules` monthly rev (box-state:89); next monthly Sat 2026-12-05 03:00 (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1200-b",
+  "outcome": "obsolete",
+  "evidence": "`heat_fire` quarterly rev (box-state:67) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1201-b",
+  "outcome": "obsolete",
+  "evidence": "all five tasks in quarterly chain (box-state:33-40) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1181-b",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1202-a",
+  "outcome": "obsolete",
+  "evidence": "`seasons` quarterly rev (box-state:90) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1203-a",
+  "outcome": "obsolete",
+  "evidence": "`access_facts` quarterly, DUE yes (box-state:57); ROADMAP D21 \"Overpass run is an owner step\" (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1206-d",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1206-f",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T1135-f",
+  "outcome": "obsolete",
+  "evidence": "row says same as T1138-a (`docs/owner/unsorted.md:126,167`) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1141-g",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1021-a",
+  "outcome": "human",
+  "evidence": "box and laptop R2 key refused on carta-stays-state (403 on rclone lsf, 2026-11-12); a Cloudflare token scope change",
+  "file": "docs/owner/stays-box.md"
+ },
+ {
+  "id": "T1040-d",
+  "outcome": "obsolete",
+  "evidence": "duplicate of T1162-a (row text) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T1046-a",
+  "outcome": "done",
+  "evidence": "laptop: CartaStaysBooking, CartaStaysHostelworld, CartaFlightsAll, CartaFlightsNow disabled 2026-11-12 (Disable-ScheduledTask); .env has no VITE_E2E_SEAMS",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1180-b",
+  "outcome": "obsolete",
+  "evidence": "`trails_summaries` after `trails_rate`, DUE no only because chain not reached (box-state:41); output `data/trails/summaries.json` (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1197-e",
+  "outcome": "already-done",
+  "evidence": "link_health weekly, last success 2026-11-10 on the box",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T045-e",
+  "outcome": "obsolete",
+  "evidence": "after the owner's restore drill passes, Claude clears the laptop copies (ROADMAP H5)"
+ },
+ {
+  "id": "T047-a",
+  "outcome": "human",
+  "evidence": "Hetzner console login to create the API token; box HCLOUD_TOKEN is empty",
+  "file": "docs/owner/hetzner-box.md"
+ },
+ {
+  "id": "T047-b",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Hetzner helper servers, needs HCLOUD_TOKEN first)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T047-c",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Hetzner helper servers, needs HCLOUD_TOKEN first)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T047-d",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Hetzner helper servers, needs HCLOUD_TOKEN first)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T049-a",
+  "outcome": "obsolete",
+  "evidence": "folded into the T049 conversion chain in paid-runs.md; the dry run there checks the inputs",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T049-b",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Hetzner helper servers, needs HCLOUD_TOKEN first)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T049-c",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Hetzner helper servers, needs HCLOUD_TOKEN first)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T049-d",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Hetzner helper servers, needs HCLOUD_TOKEN first)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T050-a",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Hetzner helper servers, needs HCLOUD_TOKEN first)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T051-a",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Hetzner helper servers, needs HCLOUD_TOKEN first)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T093-a",
+  "outcome": "obsolete",
+  "evidence": "the `trips` monthly task rebuilds the journey wire on the box (last success 2026-11-09)"
+ },
+ {
+  "id": "T102-b",
+  "outcome": "obsolete",
+  "evidence": "the `trips` monthly task rebuilds the journey wire on the box (last success 2026-11-09)",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T103-a",
+  "outcome": "obsolete",
+  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP H9/I16)",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T112-a",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T112-c",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9"
+ },
+ {
+  "id": "T124-a",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T144-a",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T150-a",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T152-a",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T153-a",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T155-a",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T155-c",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Gemini)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T160-a",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T175-a",
+  "outcome": "obsolete",
+  "evidence": "the `trips` monthly task rebuilds the journey wire on the box (last success 2026-11-09)",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T179-d",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T182-a",
+  "outcome": "obsolete",
+  "evidence": "a code change, not an owner step: moved to ROADMAP D7"
+ },
+ {
+  "id": "T182-b",
+  "outcome": "obsolete",
+  "evidence": "a code change, not an owner step: moved to ROADMAP D7"
+ },
+ {
+  "id": "T182-c",
+  "outcome": "obsolete",
+  "evidence": "a code change, not an owner step: moved to ROADMAP D7"
+ },
+ {
+  "id": "T183-a",
+  "outcome": "already-done",
+  "evidence": "https://data.carta-europetravel.com/data/trails/top.json answers 200"
+ },
+ {
+  "id": "T211-c",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9"
+ },
+ {
+  "id": "T233-a",
+  "outcome": "decided",
+  "evidence": "optional; 355.6 GB planet file, no launch need",
+  "decision": "skip for now",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T252-a",
+  "outcome": "handoff",
+  "evidence": "acts on the main checkout or its disk (4.3 GB free), which lanes must not touch",
+  "handoff_to": "orchestrator",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T269-a",
+  "outcome": "obsolete",
+  "evidence": "`photo_sources` after-task, DUE yes (box-state:92) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T269-d",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Hetzner helper servers, needs HCLOUD_TOKEN first)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T269-e",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command (Hetzner helper servers, needs HCLOUD_TOKEN first)",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T280-a",
+  "outcome": "obsolete",
+  "evidence": "the trails export with its credit gate runs in the quarterly chain on the box; not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9"
+ },
+ {
+  "id": "T288-b",
+  "outcome": "already-done",
+  "evidence": "r2:carta/archive/db/trailslab/trailslab-2026-11-10.dump.gpg (4.9 GB, owner+worker keys); carta-trailslab-push.timer weekly, last ok 2026-11-10"
+ },
+ {
+  "id": "T311-d",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9"
+ },
+ {
+  "id": "T311-g",
+  "outcome": "human",
+  "evidence": "needs the D: drive attached",
+  "file": "docs/owner/data-and-pipeline-runs.md"
+ },
+ {
+  "id": "T322-a",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9"
+ },
+ {
+  "id": "T322-b",
+  "outcome": "decided",
+  "evidence": "depends on T322-a counts",
+  "decision": "keep the national-trek pass off unless the dry run shows the extra routes are walks (check in ROADMAP H9)"
+ },
+ {
+  "id": "T324-a",
+  "outcome": "already-done",
+  "evidence": "trailslab-db container healthy on the box; review API and UI units running (T1222)"
+ },
+ {
+  "id": "T324-c",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9"
+ },
+ {
+  "id": "T332-c",
+  "outcome": "decided",
+  "evidence": "only matters before a re-seed; no re-seed planned",
+  "decision": "regenerate the seed only when a re-seed is planned"
+ },
+ {
+  "id": "T367-a",
+  "outcome": "obsolete",
+  "evidence": "`joins` after-task LAST 2026-11-09 (box-state:16) runs `neighbours.py` (`pipeline/tasks/outdoor.py:332`) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T373-f",
+  "outcome": "obsolete",
+  "evidence": "a code change, not an owner step: moved to ROADMAP D7"
+ },
+ {
+  "id": "T384-a",
+  "outcome": "already-done",
+  "evidence": "row evidence: 2026-11-03 tests, build, deploy ran from it (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T394-b",
+  "outcome": "obsolete",
+  "evidence": "a code change, not an owner step: moved to ROADMAP D7"
+ },
+ {
+  "id": "T394-g",
+  "outcome": "handoff",
+  "evidence": "acts on the main checkout or its disk (4.3 GB free), which lanes must not touch",
+  "handoff_to": "orchestrator",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T433-b",
+  "outcome": "decided",
+  "evidence": "0 of 3,865 POI shards carry opening hours",
+  "decision": "yes, harvest OSM opening_hours per POI (free); code in ROADMAP D18"
+ },
+ {
+  "id": "T449-a",
+  "outcome": "obsolete",
+  "evidence": "ledger row on the box and matcher fixed (commit 39851a93d0), but the moth is still on the live trails wire (BE.json, top.json): the trails export does not read the ledger; Claude's scrub-and-push after the catch-up is in ROADMAP D24"
+ },
+ {
+  "id": "T511-a",
+  "outcome": "already-done",
+  "evidence": "rclone size r2:carta/data/fares/: 0 objects",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T512-b",
+  "outcome": "human",
+  "evidence": "C:\\c holds 47 stray files (107 MB); Claude's delete was blocked by the harness (top-level system path)",
+  "file": "docs/owner/hetzner-box.md"
+ },
+ {
+  "id": "T532-b",
+  "outcome": "obsolete",
+  "evidence": "scrape moved to box (`carta-stays-scrape.timer`, ROADMAP H10 T1161) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T551-a",
+  "outcome": "obsolete",
+  "evidence": "ask_index runs on the box after dossier (model2vec installed by CARTA_BOX_ML=ask)",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T552-a",
+  "outcome": "decided",
+  "evidence": "optional; Ollama not installed, laptop disk 4.3 GB free",
+  "decision": "skip"
+ },
+ {
+  "id": "T640-f",
+  "outcome": "obsolete",
+  "evidence": "the laptop no longer rebuilds data; the box builds and pushes the caches"
+ },
+ {
+  "id": "T645-a",
+  "outcome": "obsolete",
+  "evidence": "waits on the stays build (T1021-a); Claude runs and reads it once the bucket opens (docs/owner/stays-box.md, ROADMAP H9/I16)",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T647-a",
+  "outcome": "obsolete",
+  "evidence": "the trails lab runs on the box (T1182, CARTA_TRAILSLAB_HOME=box, trailslab-db up, pgRouting 3.8.0), so the x86 worker is not needed"
+ },
+ {
+  "id": "T647-b",
+  "outcome": "already-done",
+  "evidence": "r2:carta/archive/db/trailslab/trailslab-2026-11-10.dump.gpg (4.9 GB, owner+worker keys); carta-trailslab-push.timer weekly, last ok 2026-11-10"
+ },
+ {
+  "id": "T647-d",
+  "outcome": "obsolete",
+  "evidence": "the trails lab runs on the box (T1182, CARTA_TRAILSLAB_HOME=box, trailslab-db up, pgRouting 3.8.0), so the x86 worker is not needed"
+ },
+ {
+  "id": "T784-a",
+  "outcome": "obsolete",
+  "evidence": "the trails lab runs on the box (T1182, CARTA_TRAILSLAB_HOME=box, trailslab-db up, pgRouting 3.8.0), so the x86 worker is not needed",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T805-a",
+  "outcome": "already-done",
+  "evidence": "flight-sweep /status 2026-11-12: lateFares 150,323; carta-late-sweep.service active, jobs ok every 4 min"
+ },
+ {
+  "id": "T877-e",
+  "outcome": "handoff",
+  "evidence": "acts on the main checkout or its disk (4.3 GB free), which lanes must not touch",
+  "handoff_to": "orchestrator",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T915-a",
+  "outcome": "already-done",
+  "evidence": "box on carta-run at 151fa7424c (T1223 merge of main); flight-sweep /status found 241; only docs-only crew commits are newer"
+ },
+ {
+  "id": "T995-c",
+  "outcome": "already-done",
+  "evidence": "`continent-app/.env` has no VITE_E2E_SEAMS line (grep, main checkout) (explorer, repo evidence)",
+  "also_in": [
+   "docs/owner/cloudflare.md"
+  ]
+ },
+ {
+  "id": "T1207-i",
+  "outcome": "obsolete",
+  "evidence": "the laptop scheduled tasks those logs/run_*.cmd files serve are disabled (2026-11-12); the box runs the scrapes",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1211-c",
+  "outcome": "already-done",
+  "evidence": "scripts/monitor/targets.json backup.enabled true, max_age_hours 36; status/backup.json answers 200 ok"
+ },
+ {
+  "id": "T1216-c",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1214-d",
+  "outcome": "obsolete",
+  "evidence": "not an owner step any more: the box schedule (T1107) runs the task; Claude's post-run check is in ROADMAP H9",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T994-a",
+  "outcome": "already-done",
+  "evidence": "box on carta-run at 151fa7424c (T1223 merge of main); flight-sweep /status found 241; only docs-only crew commits are newer"
+ },
+ {
+  "id": "T995-a",
+  "outcome": "already-done",
+  "evidence": "box env: CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID set, CARTA_DEPLOY=1"
+ },
+ {
+  "id": "T640-c",
+  "outcome": "obsolete",
+  "evidence": "box env VITE_DATA_BASE=https://data.carta-europetravel.com/data: box runs publish to the data host, no copy-back into git"
+ },
+ {
+  "id": "T1056-b",
+  "outcome": "decided",
+  "evidence": "push-data.mjs --prune is an rclone sync delete; unattended it could remove a layer a box build lacks",
+  "decision": "keep the box prune list-only (no --yes): stale R2 objects cost cents, a wrong unattended delete takes a live layer down; ship.mjs prunes with a person at the terminal"
+ },
+ {
+  "id": "T055-b",
+  "outcome": "human",
+  "evidence": "needs the Hetzner and Cloudflare billing logins",
+  "file": "docs/owner/hetzner-box.md"
+ },
+ {
+  "id": "T1054-a",
+  "outcome": "human",
+  "evidence": "needs a real phone",
+  "file": "docs/owner/data-and-pipeline-runs.md"
+ },
+ {
+  "id": "T187-b",
+  "outcome": "human",
+  "evidence": "needs five people who have never seen the product",
+  "file": "docs/owner/data-and-pipeline-runs.md"
+ },
+ {
+  "id": "T405-c",
+  "outcome": "human",
+  "evidence": "needs an entitled (paid) account in the built app",
+  "file": "docs/owner/data-and-pipeline-runs.md"
+ },
+ {
+  "id": "T433-o",
+  "outcome": "decided",
+  "evidence": "a Europe car router does not fit the 4 GB box",
+  "decision": "stay on FOSSGIS OSRM with per-route caching; pick a hosted router from H4 load numbers before launch (ROADMAP H4)"
+ },
+ {
+  "id": "T471-d",
+  "outcome": "decided",
+  "evidence": "owner postponed MOTIS on 2026-10-21; the 4 GB box has no room",
+  "decision": "keep postponed (ROADMAP H10)"
+ },
+ {
+  "id": "T475-e",
+  "outcome": "decided",
+  "evidence": "owner postponed MOTIS on 2026-10-21; the 4 GB box has no room",
+  "decision": "keep postponed (ROADMAP H10)"
+ },
+ {
+  "id": "T072-a",
+  "outcome": "already-done",
+  "evidence": "box env CARTA_SUPABASE_URL and CARTA_SUPABASE_SERVICE_KEY set"
+ },
+ {
+  "id": "T096-a",
+  "outcome": "obsolete",
+  "evidence": "the stay hold-out widens from the box journal once stays builds; Claude's, ROADMAP D10"
+ },
+ {
+  "id": "T040-b",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T145-b",
+  "outcome": "obsolete",
+  "evidence": "Claude's step with no spend, kept in paid-runs.md only for the order"
+ },
+ {
+  "id": "T153-b",
+  "outcome": "handoff",
+  "evidence": "a repository secret, free (gh secret set GEMINI_API_KEY), only if the golden set runs from CI",
+  "handoff_to": "security"
+ },
+ {
+  "id": "T323-b",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T145-a",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T150-d",
+  "outcome": "obsolete",
+  "evidence": "Claude's step with no spend, kept in paid-runs.md only for the order",
+  "also_in": [
+   "docs/owner/owner-checks.md"
+  ]
+ },
+ {
+  "id": "T152-b",
+  "outcome": "human",
+  "evidence": "spends money; kept as one capped command",
+  "file": "docs/owner/paid-runs.md"
+ },
+ {
+  "id": "T155-b",
+  "outcome": "obsolete",
+  "evidence": "Claude's step with no spend, kept in paid-runs.md only for the order",
+  "also_in": [
+   "docs/owner/product-decisions.md"
+  ]
+ },
+ {
+  "id": "T384-h",
+  "outcome": "obsolete",
+  "evidence": "a code change, not an owner step: moved to ROADMAP D7"
+ },
+ {
+  "id": "T456-e",
+  "outcome": "obsolete",
+  "evidence": "a code change, not an owner step: moved to ROADMAP D7"
+ },
+ {
+  "id": "T630-l",
+  "outcome": "handoff",
+  "evidence": "a design-batch call, not a box step",
+  "handoff_to": "decisions"
+ },
+ {
+  "id": "T695-b",
+  "outcome": "handoff",
+  "evidence": "a design-batch call, not a box step",
+  "handoff_to": "decisions"
+ },
+ {
+  "id": "T660-c",
+  "outcome": "handoff",
+  "evidence": "a research-gap placement decision, not a box step",
+  "handoff_to": "decisions"
+ },
+ {
+  "id": "T1057-c",
+  "outcome": "handoff",
+  "evidence": "GitHub branch protection",
+  "handoff_to": "security"
+ },
+ {
+  "id": "T714-b",
+  "outcome": "handoff",
+  "evidence": "the fare-source choice is a product decision listed in docs/owner/unsorted.md",
+  "handoff_to": "decisions",
+  "also_in": [
+   "docs/owner/unsorted.md"
+  ]
+ },
+ {
+  "id": "T1075",
+  "outcome": "decided",
+  "evidence": "needs the real fixture first",
+  "decision": "Claude runs missing_beds.py at the March 2027 box scrape (ROADMAP I16)"
+ },
+ {
+  "id": "T1159-b",
+  "outcome": "obsolete",
+  "evidence": "engineering follow-up from 2026-11-14: retire the weekly dump in run_pipeline.sh (ROADMAP H5)"
+ },
+ {
+  "id": "explore-data-runs:1-7",
+  "outcome": "already-done",
+  "evidence": "merged, box on main, CARTA_EXTRA_TASKS set, caches in R2, runs since 2026-10-26; wires publish to the data host"
+ },
+ {
+  "id": "stays-box:1",
+  "outcome": "already-done",
+  "evidence": "box on carta-run at the T1223 merge"
+ },
+ {
+  "id": "stays-box:3-4",
+  "outcome": "obsolete",
+  "evidence": "`stays` is a monthly task in carta-monthly; Claude runs the first build once T1021-a opens the bucket"
+ },
+ {
+  "id": "stays-box:5",
+  "outcome": "obsolete",
+  "evidence": "clean-up folded into T1021-a (bucket) and the security lane (GitHub secrets)"
+ }
+]

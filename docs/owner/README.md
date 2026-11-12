@@ -15,7 +15,7 @@ How to use it:
 | `docs/owner/translation-review.md` | native-reader review of the six languages | 46 |
 | `docs/owner/data-and-pipeline-runs.md` | phone, people and drive checks left from the data runs | 4 |
 | `docs/owner/legal.md` | legal, tax and brand | 26 |
-| `docs/owner/hetzner-box.md` | the Hetzner box and workers | 5 |
+| `docs/owner/hetzner-box.md` | the Hetzner box and workers | 4 |
 | `docs/owner/supabase-migrations.md` | SQL pastes, Edge Functions and secrets | 12 |
 | `docs/owner/stripe.md` | Stripe prices, keys, webhook, test purchases | 11 |
 | `docs/owner/accounts-and-signups.md` | accounts, mailboxes and programme sign-ups | 6 |

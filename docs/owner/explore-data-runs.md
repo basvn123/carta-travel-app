@@ -1,6 +1,6 @@
 # Explore data fill: what the Monday run on the Hetzner box does (T640)
 
-This replaces the draft hand-run procedure of phase A. The owner decided (2026-10-23) that no step of the batch is run by hand: every step is a registered task in `run_pipeline.py`, and the weekly run on the Hetzner box (`carta-weekly.timer`, Monday 09:00 Europe/Brussels) runs them by itself once the owner steps further down are done. The first runs were 2026-10-26 and later Mondays; the schedule tiers of T1107 run the same tasks.
+This replaces the draft hand-run procedure of phase A. The owner decided (2026-10-23) that no step of the batch is run by hand: every step is a registered task in `run_pipeline.py`, and the weekly run on the Hetzner box (`carta-weekly.timer`, Monday 09:00 Europe/Brussels) runs them by itself by itself. The first runs were 2026-10-26 and later Mondays; the schedule tiers of T1107 run the same tasks.
 
 ## How the box selects the batch
 
@@ -47,7 +47,7 @@ Warm estimates with the 16 h budget, counted from the end of the weekly core (in
 ### What a skip on the box means
 
 - `trails_fields`: the trails lab (decision D5). It runs through the trails lab worker of task T647 (its section follows when it lands), or on the owner's laptop with `python run_pipeline.py --only trails_fields`. Rows T630-a (SAC filter and badges) depends on it; T630-b (cycling `rt`) was already exported in phase A (`090b6bd61`).
-- A network guard that says no (an IPv4-only source seen from an IPv6-only box, a source down for the day): the task waits a week. The dry run in step 6 shows the guards that read files; the network guards are only probed by a real run.
+- A network guard that says no (an IPv4-only source seen from an IPv6-only box, a source down for the day): the task waits a week. `weekly.sh --dry-run` shows the guards that read files; the network guards are only probed by a real run.
 - `poi_fees` on a box that has never shipped: no POI shards yet. The first ship writes them; the task runs the week after.
 
 ## Owner steps

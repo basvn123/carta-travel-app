@@ -4,14 +4,14 @@ Everything that costs money goes to the back, after all free work (owner instruc
 
 ## Gemini runs (pipeline key; the trip scripts live in `Trips/carta-unified/carta-unified/pipeline/` and run from that folder)
 
-1. T153-b: only if the golden set runs from CI, add the `GEMINI_API_KEY` repository secret (costs nothing by itself).
+1. Only if the golden set runs from CI: the `GEMINI_API_KEY` repository secret (T153-b, free; the security lane sets it with `gh secret set`).
 2. T144-a with T145-a: `python pipeline/generate_trip.py` on three to five briefs; read `cost` and the critique files.
-3. T145-b: from those numbers, decide whether the critic gets its own model (`--critic-model`). A decision, no spend.
+3. Claude, no spend: from those numbers, decide whether the critic gets its own model (`--critic-model`, T145-b).
 4. T153-a: `python pipeline/golden_set.py run --live` (about 40 calls), then `bless`, commit `golden/baseline.json`, and drop `--allow-missing-baseline` from `.github/workflows/golden-set.yml`.
 5. T323-b: count `groundingMetadata.webSearchQueries` over about 30 real grounded plan-day calls.
-6. T150-a, then T150-d: `python -X utf8 pipeline/backfill_modules.py run --limit 5`, then the rest with `--max-usd` (estimate USD 1.5 to 3.4), then read a sample.
+6. T150-a, then T150-d: `python -X utf8 pipeline/backfill_modules.py run --limit 5`, then the rest with `--max-usd` (estimate USD 1.5 to 3.4); Claude then reads a sample (T150-d).
 7. T152-a, then T152-b: rewrite the 236 over-cap catalogue trips under the word caps.
-8. T155-a, then T155-c: per batch `python pipeline/expand_catalogue.py run expansion/<batch>.json --live --max-usd <cap> --limit 3`, then the review queue, promote, join and the journey wire (estimate EUR 15 to 27 for wave 1). T155-b (reading the 60 briefs) is free and comes first.
+8. T155-a, then T155-c: per batch `python pipeline/expand_catalogue.py run expansion/<batch>.json --live --max-usd <cap> --limit 3`, then the review queue, promote, join and the journey wire (estimate EUR 15 to 27 for wave 1). Claude reads and edits the 60 wave-1 briefs first (T155-b, free).
 9. T040-b: the 20 real plans side by side with `PROMPT_TRIM` unset and false.
 10. The LLM judges, each once, a few cents: T1148-e (plan-day judge), T1144-c (text judge), T1188-b (text checker, then calibrate), T1196-f (translation verdicts), T1198-d (photo check with images), T1150-a (tagger verifier on the gold items), T1206-d (batch mode once), T1206-f (day plans from each provider; needs each provider's key), T1138-e (Flash-Lite and Mistral Small; Mistral needs an account).
 
