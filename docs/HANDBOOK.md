@@ -232,7 +232,7 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 
 **Where it lives.** continent-app/src/lib/when.js, continent-app/src/components/SettingsLine.jsx, continent-app/src/browse/ExploreTab.jsx, continent-app/src/lib/crowdMonth.js.
 
-**Limits.** With default dates the place price card prices the year's cheapest flight (January) while the dates pill shows other dates (register T1019-a, owner decision).
+**Limits.** With default dates the place price card prices the year's cheapest flight (January) while the dates pill shows other dates (T1019-a, decided 2026-11-12 by the owner: keep the year's cheapest and change the pill to say so; the build is open in ROADMAP G3).
 
 ### From town
 
@@ -301,11 +301,11 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 **Limits.**
 - The intro exists in English only (register T1024-a).
 - Intro length: only the top 300 places of FR, RS and IT get the longer grounded body; every other place keeps the 700 character Wikivoyage body (register T1095-c). The page credits the first grounding source only (register T1095-d).
-- Two sources of visit hours disagree on some places, for example Rome (register T1024-d).
+- Two sources of visit hours disagree on some places, for example Rome; the owner ruled place.visit_h wins (T1024-d, 2026-11-12), the fix is open under ROADMAP D2.
 - No highlight ships its `fact` line; things to do often have no photo of their own (registers T1032-a, T1032-b).
 - About 22 percent of walk rows carry a photo, so most walk and ride tiles show a map (register T1033-a).
 - A kind's page ("Walks near Geneva") has no address of its own (register T1035-a).
-- Train, bus and car lines in the price card are estimates with nothing saying so (register T1026-b, owner decision).
+- Train, bus and car lines in the price card are estimates with nothing saying so (owner 2026-11-12: left as is, like every estimate, T1026-b).
 
 ### Place photos
 
@@ -909,7 +909,7 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 
 **Where it lives.** `pipeline/harvest_tourism_density.py`, `pipeline/harvest_uk_crowds.py`, `continent-app/src/lib/crowdMonth.js`, `continent-app/src/browse/DestinationPage.jsx` (the facts row).
 
-**Limits.** The doc comment of the deleted `CrowdCalendar.jsx` said 54% of the catalogue, including all of the UK, has no crowding measurement; the UK stays that way until the owner runs the T1098 loader (524 of 526 GB places had no monthly crowds at the 2026-11-04 audit). The monthly shape is regional (NUTS 2 or country), not per place. Guided search's Not crowded filter keeps only tier 1 and drops Quiet places (T475-f). Layer rows (beaches, walks) carry no crowding (T181-c, T183-c).
+**Limits.** The doc comment of the deleted `CrowdCalendar.jsx` said 54% of the catalogue, including all of the UK, has no crowding measurement; the UK stays that way until the owner runs the T1098 loader (524 of 526 GB places had no monthly crowds at the 2026-11-04 audit). The monthly shape is regional (NUTS 2 or country), not per place. Guided search's Not crowded filter keeps only tier 1 and drops Quiet places (T475-f). Layer rows (beaches, walks) carry no crowding (T181-c, T183-c). The owner decided on 2026-11-12 that beaches show no crowding row: no open source measures it, and a proxy estimate cannot be validated (T181-c).
 
 ---
 
@@ -1045,7 +1045,7 @@ Worked example at the catalogue's frozen median prices (`bands.ref_prices`: dinn
 
 **Where it lives.** `continent-app/src/lib/runtime_pricing.js` (`groundSpendPerPerson`), `continent-app/src/lib/costIndex.js` (`foodPerDay`), `continent-app/src/lib/price/priceDay.js` (`foodBreakdown`).
 
-**Limits.** No food season: the owner decided there is no seasonal ground cost (T103-c), which the plan's F10 contradicts (T716-b, open for the owner). The trip page receipt follows the stay but not the eating preset in one older path (T173-c).
+**Limits.** No food season: the owner decided there is no seasonal ground cost (T103-c), confirmed again on 2026-11-12 over the plan's F10 (T716-b). The trip page receipt follows the stay but not the eating preset in one older path (T173-c).
 
 ---
 
@@ -1079,7 +1079,7 @@ Worked example: an entire place for two, annual price EUR 90 a night, 7 nights, 
 
 **Where it lives.** `continent-app/src/lib/stayPrice.js` (`bedPrice`, `tiersAt`, `monthRates`, `cheapestMonths`, `seasonCurve`), `continent-app/src/lib/costIndex.js` (`stayAtTier`, `countryStayMedians`, `costRow`).
 
-**Limits.** The scrape prices an entire place for two only, so groups book several two person places. 173,754 Booking hotel rows have no star class and price no tier (T1021-c). 515 places have no scrape (T1021-d). Peak windows are Carta estimates; the pipeline measures single days (T690-c). Hostelworld prices may leave out city tax (T643-c).
+**Limits.** The scrape prices an entire place for two only, so groups book several two person places. 173,754 Booking hotel rows have no star class and price no tier; the owner chose to leave them out (2026-11-12, T1021-c). 515 places have no scrape (T1021-d). Peak windows are Carta estimates; the pipeline measures single days (T690-c). Hostelworld prices may leave out city tax (T643-c).
 
 ---
 
@@ -1399,7 +1399,7 @@ Worked example: an airport 100 road km away, 2 adults, 7 nights. Car: 0.1397 per
 
 **Where it lives.** `continent-app/src/lib/airportReach.js`, `continent-app/src/lib/price/trip.js`.
 
-**Limits.** All figures are estimates made without the owner (T860-a): straight line times 1.3 at 85 km/h, parking EUR 12 a day.
+**Limits.** All figures are estimates, kept by decision on 2026-11-12 (T860-a): straight line times 1.3 at 85 km/h, parking EUR 12 a day.
 
 ---
 
@@ -1441,7 +1441,7 @@ Worked example: Brussels to Annecy (566 km), no fare. Train EUR 180 return, 7.0 
 
 **Where it lives.** `continent-app/src/lib/wayChoice.js`, `src/lib/travelWay.js` (`wayFor`), `src/browse/placeWays.js` (`waysThere`), `src/lib/price/compose.js`, `src/browse/DestPriceCard.jsx`; check `scripts/way_choice_pairs.mjs`, tests `tests/wayChoice.test.mjs`.
 
-**Limits.** The 50-pair check (5 homes x 10 places) ran on fixture fares, a distance stand-in; the run on the real sweep is an owner step (T1100-a). The values in `way.choice` are estimates, not measured (T1100-b). Local clock times make a flight across a time zone read an hour off.
+**Limits.** The 50-pair check (5 homes x 10 places) ran on fixture fares, a distance stand-in; the run on the real sweep is an owner step (T1100-a). The values in `way.choice` are estimates, kept by decision on 2026-11-12 until the T1100-a run says otherwise (T1100-b). Local clock times make a flight across a time zone read an hour off.
 
 ---
 
@@ -1516,7 +1516,7 @@ Worked example: Italy, 7 days in July, 2 people: 52 x 1.25 = 65 a day, x 7 = 455
 
 **Where it lives.** `continent-app/src/lib/price/car.js`, `continent-app/src/lib/price/trip.js`, `continent-app/src/lib/price/compose.js`.
 
-**Limits.** The owner has not confirmed the car reading (T702-a). Several screens still read `car_needed` directly (T650-d).
+**Limits.** Owner confirmed the car reading on 2026-11-12 (T702-a). Several screens still read `car_needed` directly (T650-d).
 
 ---
 
@@ -1672,7 +1672,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 **Where it lives.** App: `continent-app/src/planner/flow/` (`PlanFlow.jsx`, `PlanHome.jsx`, `QuestionScreen.jsx`, `setupScreens.jsx`, `questions.js`, `flowGraph.js`, `tellChips.js`, `tripSettings.js`), `continent-app/src/planner/GuidedTripWizard.jsx`, `continent-app/src/planner/wizard/`, `continent-app/src/lib/plan/parseTrip.js`, `continent-app/src/lib/cartaRoute.js`, `continent-app/src/planner/tripsStore.js`. Latest: `T1103`, `T1044-plan-home-head.md`, `T1002-door-fit.md`.
 
 **Limits.**
-- The wizard clamps a stop's nights to 21 while a trip may have 60 (row T812-b).
+- A stop takes up to 60 nights in the wizard, StepStay's stepper and the booking import alike (`MAX_TRIP_NIGHTS` from `lib/tripDates.js`, owner T812-b, 2026-11-12). A long stop is priced night by night with no long-stay discount; discounts wait on T173-d (T101-b).
 - One month starts on three different days across Explore, the wizard and the finder (row T815-a); the minimum trip date also differs (row T815-c).
 - An account trip opened from Plan home while signed out opens empty (row T809-b).
 - Saving without an account keeps one trip while the home lists many (row T809-c).
@@ -2601,6 +2601,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 - Accounts that keep your work (T1104, ROADMAP I5): kept trips (`carta.keptTrips.v1`), bookmarked Carta trips (`carta.savedJourneys.v1`), trips in progress (`carta.trips.v1`) and the device trip (`carta.deviceTrip.v1`) sync through `auth/accountSync.js` to table `account_things` (migration 065), one row per thing with `deleted_at` as a tombstone. `AuthContext` loads the module only once someone is signed in and calls `bindAccountSync`: one sync at sign-in, then again 2 seconds (`DEBOUNCE_MS`) after a local change and when the tab comes back into view. The merge rule, per thing: on this device only and never synced, moved to the account; in the account only, brought here; on both and different, the newer change wins (the thing's own time, `keptAt`, `updatedAt` or `savedAt`; a change without its own time counts as now); removed here since the last sync, a tombstone, unless the account copy changed later; a tombstone over a copy this device changed later loses. A signed-out device's work is added to the account, never replaced. The trip open in the planner is never overwritten (the newer copy arrives once another trip is open), and the one device trip slot keeps its own trip (an empty slot takes the account's newest). The state `carta.accountSync.v1` remembers which account the device last synced with: signing in as another account removes the previous account's things from the device (the open trip's planner keys too) and does not copy them into the new one, while work made signed out since moves to the new one. Without the table (PGRST205, 42P01) or after 3 failures in a row (`MAX_FAILURES`) the sync turns off for the visit and the things stay on the device. Each sync dispatches `carta:account-sync` with `{ moved, movedByKind, pulled, pushed, removed, dropped }`. Data export adds the rows as `accountThings` (tombstones left out).
 - Data export calls the `export_user_data` RPC and downloads one indented JSON file; deletion calls `delete_user`, which cascades through what the account owns. Privacy and GDPR (T1118, ROADMAP C9, migration 069): the export is schema 4, schema 3's keys (048, 051, kept as the uncallable `export_user_data_v3`) plus `settings`, `savedTrips`, `askChats`, `accountThings`, `emailPrefs`, `emailLog`, `uploads`, `groupTrips`, `sharedLists`, `friendVisibility`, `joinRequests`, `coplanLinks` and `waitlist` (the sign-up with the account's own address); other travellers' ids (`ids` in 069, `split_among` included) are stripped. On schema 4 the app no longer reads `ask_chats` and `account_things` itself. A `before delete` trigger on `auth.users` (`privacy_erase_account`, covers `admin_delete_user` too) deletes the waitlist row with the account's address and the traveller's feedback, clears contact address and name on reports they filed, and removes email and handle from audit rows about them; the audit row's opaque account id stays. `privacy_retention_sweep()` (service role, pg_cron `carta_privacy_retention` daily 03:23 UTC) deletes `ai_plan_cache` after 7 days, `coplan_link_attempts` 7, `parse_failures` 30, `edge_errors` 90, `ai_model_events` 180 (plan and ground rows; call rows are pruned after 30 days by 071's `ai_events_prune`), `ai_cache_events`, `ai_cap_events` and `email_log` 400, `feedback` 2 years, `admin_audit_log` 3 years, `guide_views` before yesterday, and runs 022's paywall prune (180 days), 066's waitlist purge (unconfirmed after 30 days) and 051's moderation purge. Every table's line is in `docs/legal/ARTICLE30.md` section 2a. The Account panel's data group has a "What we keep, and for how long" row that opens the plain version (`account.keep*` keys). Proved by `scripts/admin/test_privacy_gdpr.mjs` (catalogue against section 2a, export, delete with a control, sweep, down file).
 - Sign out asks first whether this device's copy of the traveller's things goes too (T1054, audit P-09): "Sign out and remove", "Sign out, keep them here" or Cancel. Remove clears every key the cookies page lists under "your things" (trips, drafts, day plans, bookings, lists, crew, Ask chats) from local and session storage, deletes the `carta-files` database and reloads; settings and one-off notes stay. The list is `DEVICE_THING_KEYS` in `lib/deviceData.js`, tied to the cookies page by `tests/deviceData.test.mjs`. It asks rather than always clearing because device trips (`carta.trips.v1`) are not all in the account.
+- Deleting the account (`deleteAccount` in `auth/AuthContext.jsx`) signs out and then clears the same device keys with `clearDeviceThings()`, without asking: a deleted account leaves no copy of its trips and plans on the device (owner T1054-b, 2026-11-12; `tests/deviceData.test.mjs`).
 - Opt-in emails (trip reminders, price drops on saved places) are off by default and stored in `email_prefs`; the `notify` Edge Function sends them through Resend.
 
 **Data behind it.** Supabase `auth.users`, `saved_trips` and `user_settings` (`supabase/schema.sql`), `trip_plans`, `trip_plan_stops`, `day_plans` (migrations 002 to 004), `profiles` (010), `user_achievements` (013), export RPC (024, widened in 048), `email_prefs` (060), `account_things` (065: kinds `kept`, `journey`, `trip`, `device_trip`; owner-only RLS, no anon grant; at most 1000 rows per account and 256 KB per body).
@@ -2731,6 +2732,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 - **Withdrawal waiver:** Stripe shows a required checkbox with Carta's text (`waiverText`): the buyer asks for immediate start and accepts losing the 14-day EU right of withdrawal. This only runs when `CHECKOUT_TERMS_URL` is set.
 - **Webhook** (`stripe-webhook`): grants a pass through `grant_pass`; for the yearly plan, every paid invoice with `billing_reason` `subscription_create` or `subscription_cycle` grants a year, keyed on the invoice id so replays do nothing (`grantFromInvoice`). Subscription state goes to `entitlements` via `set_subscription_state`. The `billing` function and Stripe's Customer Portal handle cancelling.
 - The gate reason (letters only, up to 32) rides in session metadata for the paywall funnel.
+- **The way to the pricing page:** the pass sheet's quiet "See all prices" link (`PassModal.jsx`, `pass.seeAll`). Account's Your plan (`auth/account/PlanView.jsx`) carries no such link since 2026-11-12 (owner T503-g); the page at `/pricing` itself stays.
 - **The Pass moment (T1171, I14, flag off):** one inline card on the trip page under the route, once the trip is priced, for a traveller who does not pay: what stays free, what a Trip Pass adds (price and days from `TIERS.trip`), "See the Trip Pass" (`openPrices('browse')`) and "Not now" (hidden 14 days, `LATER_DAYS`; gone after two, `LATER_MAX`; `carta.pm.later.v1`). Never a dialog. Off until the closed beta: `PASS_MOMENT` in `src/pass/passMoment.js`, preview `?pm=on`. Design note `docs/design/pass-moment.md`; walk `scripts/verify_paywall.mjs --dom`.
 
 **Data behind it.** `plan_tiers`, `entitlements`, `pass_grants`, `ai_usage` (007), free tier once (021), `paywall_events` (022, 027), withdrawal waiver (025), OSS threshold (026), payments quota (044), subscriptions (053).

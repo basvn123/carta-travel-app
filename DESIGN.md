@@ -632,7 +632,7 @@ One anatomy for every object Carta lists (a place, a trail, a beach, a trip, a s
 - **Shadow Strategy:** none at rest; a card is a bordered object (see Elevation & Depth).
 - **Border:** `1px solid var(--border)`; hover on an interactive card shifts to `--neutral-300`; selected takes a `--select-border` edge and a 1 px inset outline of the same brown.
 - **Row layout (the default):** a 72 px photo with `--radius-control` corners at the start, then title (`--text-lead` at 600, one line, ellipsis), meta (`--text-label` in `--text-3`) and the figures line (price at `--text-body` 600, then rating). Padding 8 px, 12 px on the right.
-- **Tile layout:** a 4:3 photo on top clipped to the card's corners, then the body with 12 px top and 16 px side padding; actions float in the photo's top right corner as photo-tone icon buttons.
+- **Tile layout:** a 4:3 photo on top clipped to the card's corners, then the body with 12 px top and 16 px side padding; actions float in the photo's top right corner as photo-tone icon buttons. A rail tile's title takes at most two lines and always reserves two, so every tile in a rail is one height; the full name stays in its accessible name (owner T457-g, 2026-11-12, refining T430; built under ROADMAP G2).
 - **Opening:** the whole card opens its page through one real link or button on the title, stretched over the card; actions such as the save heart sit above the stretch as their own controls. No nested interactive elements. Focus draws the ring around the whole card.
 - **Price slot:** always a `<Money>`.
 - **Not for:** a card inside a card; a bento grid of facts; text on a photograph.
@@ -675,7 +675,9 @@ Every euro the traveller reads goes through one formatter, `src/lib/money.js` (`
 
 ### Navigation
 
-The phone has a white bottom tab bar (`--bottom-nav-h`) of four `--tap-main` slots (Explore, Plan, My trips, Account) with the active icon and label in brown; from 769 px the header carries the logo (the way Home), the three places left after it and the account icon far right (T496). Navigation between pages is links with history and addressable detail pages, never in-page tabs (T380).
+The phone has a white bottom tab bar (`--bottom-nav-h`) of four `--tap-main` slots (Explore, Plan, My trips, Account) with the active icon and label in brown; the other slots are `--ink-soft`, labels in sentence case in Figtree (T186, owner T186-e, 2026-11-12: the old red inactive labels measured 2.52:1); from 769 px the header carries the logo (the way Home), the three places left after it and the account icon far right (T496). Navigation between pages is links with history and addressable detail pages, never in-page tabs (T380).
+
+The trip and day planners are fixed-height workspaces with no site footer; the footer ends every other tab (owner T594-a, 2026-11-12).
 
 **The page bar (T474).** Every full-screen page (destination, item, trip, journey and region) wears one bar, `src/browse/PageBar.jsx` with `.ipage-bar` in `70-item-pages.css`: a quiet back button that names the list it returns to on a phone and a desktop alike (never a bare arrow on one size and a cross on the other), the page's name once its heading has scrolled away, then save and share as icon buttons. It sits on `--surface` with a `--border-soft` hairline, 52 px tall plus the notch inset (content-box, so the inset adds height instead of eating it). A list item that opens a page is a real `<a href>` to the page's address; a plain click opens it in place, a modifier click is the browser's.
 

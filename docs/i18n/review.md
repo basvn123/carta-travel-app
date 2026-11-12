@@ -112,7 +112,7 @@ Same key list for every language; the Dutch list is shorter because it already h
 
 - Resolved (T1210): `day.place`, `day.poiDepthNote` and `day.townDepthNote` were cut-off fragments with no code reference; the three dead keys were removed from all six catalogues.
 - Italian `notfor.*` uses some masculine forms ("sei venuto", "abituato"); an Italian reader should neutralise them.
-- Registers: nl je, de du, fr vous (the existing fr.js mixes tu on the home page and vous in the wizard and trip; the owner picks one), es tu, it tu, matching each catalogue's existing wizard strings.
+- Registers: nl je, de du, fr vous (owner decision T1170-e, 2026-11-12; the tu strings on the home page are converted, ROADMAP I8), es tu, it tu, matching each catalogue's existing wizard strings.
 
 ## Back-translation check (T1196, provisional)
 

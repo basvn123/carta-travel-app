@@ -31,6 +31,6 @@ The rules that failed, and the fix pattern for each:
 ## Still open
 
 - Screen-reader pass on a real phone: T1128-a (owner).
-- Pause for the home film and tour, WCAG 2.2.2: T1128-b (owner decision).
+- Pause for the home film and tour, WCAG 2.2.2: T1128-b (decided 2026-11-12: a text Pause button on the v3 film and tour, built only if v3 stays live; G14 has no film or tour, T1209-a).
 - Screens not yet in the script (day workspace, journey, cycling, lake, mountain, region, Together, DateField): T1128-c.
-- Wizard country map keyboard layer: T1128-d (owner decision). Explore rails Tab cost: T1128-e. A CI workflow for the script: T1128-f. Ask Carta rows: T1128-g.
+- Wizard country map: the country card grid is the keyboard path; no keyboard layer on the map (T1128-d, decided 2026-11-12). Explore rails Tab cost: T1128-e. A CI workflow for the script: T1128-f. Ask Carta rows: T1128-g.
