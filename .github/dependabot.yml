@@ -26,6 +26,9 @@ updates:
       eslint-major:
         patterns: [eslint, "@eslint/js"]
         update-types: [major]
+      vite-major:
+        patterns: [vite, "@vitejs/plugin-react"]
+        update-types: [major]
       npm-minor-patch:
         update-types: [minor, patch]
     labels: [dependencies]
