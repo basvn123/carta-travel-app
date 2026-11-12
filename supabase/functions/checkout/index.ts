@@ -1,14 +1,11 @@
 /**
  * checkout, the Edge Function that opens a Stripe Checkout session for a pass.
  *
- * TWO KINDS OF SALE (T460, owner decision 2026-10-16). The Trip Pass is a
- * ONE-OFF payment (mode 'payment', 60 days since migration 053). The yearly
- * plan is a SUBSCRIPTION (mode 'subscription') that renews every year at the
- * same price until the traveller cancels, which they can do at any time in
- * Account (the billing function, and Stripe's Customer Portal). The renewal
- * is said three times before anyone pays: on the plan card, in the panel's
- * one line of small print, and in the waiver checkbox Stripe shows. Each paid
- * invoice of the subscription is granted by the webhook (invoice.paid).
+ * ONE KIND OF SALE (decision 0010, ROADMAP I-f). Both passes are a ONE-OFF
+ * payment (mode 'payment'): the Trip Pass runs 60 days, the Year Pass 365,
+ * and neither renews. The webhook grants either off checkout.session.completed.
+ * T460 had sold the Year Pass as a subscription; that went before any live
+ * sale, with the billing function and the cancel screens (migration 075).
  *
  * The price is NEVER read from the client. The browser sends a tier id and
  * nothing else; the amount comes from the Stripe Price object named by
@@ -22,14 +19,15 @@
  * launch sits. Leaving automatic tax on from day one costs 0.5% per
  * transaction and means the threshold being crossed is not an incident.
  *
- * WITHDRAWAL WAIVER (T013). A pass is digital content that starts the moment
- * payment lands, so under the Consumer Rights Directive (Art 16(m), Belgian
- * Code of Economic Law Book VI) the 14-day right of withdrawal only ends if
- * the buyer expressly asks for immediate supply and acknowledges the loss.
- * Without that acknowledgement every pass is refundable for 14 days. Stripe
- * Checkout collects it as a required checkbox (consent_collection), and the
- * checkbox text is ours (custom_text.terms_of_service_acceptance), so the
- * traveller ticks the waiver itself and not a generic "I agree".
+ * THE REQUEST TO START (T013, decision 0010). A pass is a digital service
+ * that starts the moment payment lands. Under the Consumer Rights Directive
+ * (Art 7(3), 14(3), 16(a)) the buyer must expressly ask for it to start
+ * inside the 14 days; they keep the right to withdraw and pay for the days
+ * used, until the pass has been fully supplied. Without that request a
+ * withdrawal owes nothing for the days used. Stripe Checkout collects it as
+ * a required checkbox (consent_collection), and the checkbox text is ours
+ * (custom_text.terms_of_service_acceptance, waiverText in _shared/passes.mjs),
+ * so the traveller ticks the request itself and not a generic "I agree".
  *
  * Stripe renders that checkbox only when a Terms of Service URL is set in the
  * Dashboard (Settings > Business > Public details), and REJECTS the session
@@ -53,9 +51,10 @@
  * runs on the service role; a database that lacks it answers 503 so the
  * deploy order (paste 044 first) fails loudly rather than charging blind.
  *
- * STRIPE_PRICE_YEAR must name a RECURRING yearly Price (EUR 14.99, tax
- * behaviour inclusive) since T460; a one-off Price there makes Stripe refuse
- * the subscription session, which the modal reports as "could not open".
+ * STRIPE_PRICE_YEAR must name a ONE-TIME Price (EUR 14.99, tax behaviour
+ * inclusive), like STRIPE_PRICE_TRIP. A recurring Price there (the T460
+ * set-up) makes Stripe refuse the payment-mode session, which the modal
+ * reports as "could not open".
  *
  * Secrets: STRIPE_SECRET_KEY, STRIPE_PRICE_TRIP, STRIPE_PRICE_YEAR,
  * CHECKOUT_SUCCESS_URL, CHECKOUT_CANCEL_URL, CHECKOUT_TERMS_URL,
@@ -117,8 +116,6 @@ Deno.serve(withCors(async (req) => {
   });
   if (canErr) return json(503, { code: 'quota_check' });
   if (can && can.reason === 'bad_tier') return json(400, { code: 'bad_tier' });
-  // A live yearly plan renews by itself: a second one would charge twice.
-  if (can && can.reason === 'subscribed') return json(409, { code: 'subscribed', renewsAt: can.renewsAt || null });
   if (!can || can.ok !== true) {
     return json(409, { code: 'pass_max', expiresAt: can?.expiresAt || null });
   }
@@ -139,14 +136,9 @@ Deno.serve(withCors(async (req) => {
       terms_of_service_acceptance: { message: waiverText(tier, termsUrl) },
     },
   } : {};
-  const mode = checkoutModeFor(tier) as 'payment' | 'subscription';
+  // 'payment' for every tier: no pass renews (decision 0010).
+  const mode = checkoutModeFor(tier) as 'payment';
   const meta = { user_id: user.id, tier, reason };
-  // A subscription carries the user on the subscription itself, which is
-  // where every later renewal invoice finds it; payment_intent_data is not
-  // allowed in subscription mode.
-  const byMode = mode === 'subscription'
-    ? { subscription_data: { metadata: meta } }
-    : { payment_intent_data: { metadata: meta } };
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -157,7 +149,7 @@ Deno.serve(withCors(async (req) => {
       // metadata is dropped by an intermediary.
       client_reference_id: user.id,
       metadata: meta,
-      ...byMode,
+      payment_intent_data: { metadata: meta },
       ...(customer ? { customer } : { customer_email: user.email || undefined }),
       automatic_tax: { enabled: true },
       // Required for automatic_tax to resolve a rate for digital goods: the

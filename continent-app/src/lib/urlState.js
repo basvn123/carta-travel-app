@@ -71,7 +71,7 @@ export const EXPLORE_CATS = Object.freeze(['trips', 'trails', 'beaches', 'lakes'
  *  section, plus the views under them). `yourdata` is the old address of
  *  `data` and `friends` opens Together; both still open. */
 export const ACCOUNT_VIEWS = Object.freeze([
-  'home', 'travel', 'plan', 'cancel', 'prefs', 'together', 'security', 'data', 'ai', 'help',
+  'home', 'travel', 'plan', 'prefs', 'together', 'security', 'data', 'ai', 'help',
   'profile', 'yourdata', 'friends', 'faq', 'feedback',
 ]);
 /** The Together sub-screens an address may name (`tv=`, T928); `tg=` is the

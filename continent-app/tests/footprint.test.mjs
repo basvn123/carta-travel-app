@@ -15,12 +15,12 @@ test("a long flight past the band uses the long-haul factor", () => {
   near(legKg("plane", 5000), 5000 * 1.08 * 117 / 1000); // 631.8 kg
 });
 test("train and coach per passenger-km", () => {
-  near(legKg("train", 400), 14); // 400 x 35 g
+  near(legKg("train", 400), 12.4); // 400 x 31 g
   near(legKg("bus", 400), 15.6); // 400 x 39 g
 });
 test("a car is shared by the party, capped at five seats", () => {
-  near(legKg("car", 500, { seats: 2 }), 500 * 170 / 2 / 1000); // 42.5
-  near(legKg("car", 500, { seats: 9 }), 500 * 170 / 5 / 1000); // 17
+  near(legKg("car", 500, { seats: 2 }), 500 * 162 / 2 / 1000); // 40.5
+  near(legKg("car", 500, { seats: 9 }), 500 * 162 / 5 / 1000); // 16.2
 });
 test("no factor or no distance is null, never a guess", () => {
   assert.equal(legKg("walk", 10), null);
@@ -30,15 +30,15 @@ test("no factor or no distance is null, never a guess", () => {
 });
 test("a trip adds its legs and counts what it skipped", () => {
   const r = tripKg([{ mode: "fly", km: 1000 }, { mode: "train", km: 400 }, { mode: "walk", km: 5 }, { mode: "fly", km: null }]);
-  near(r.kg, 136.08 + 14);
+  near(r.kg, 136.08 + 12.4);
   assert.equal(r.counted, 2);
   assert.equal(r.skipped, 2);
-  near(r.byMode.train, 14);
+  near(r.byMode.train, 12.4);
 });
 test("a return journey: flights use the line, ground ways the detour", () => {
   near(returnKg("plane", 1000), 2 * 136.08);
-  near(returnKg("train", 400), 2 * 400 * 1.3 * 35 / 1000); // 36.4
-  near(oneWayKg("train", 400, { routeKm: 450 }), 450 * 35 / 1000);
+  near(returnKg("train", 400), 2 * 400 * 1.3 * 31 / 1000); // 32.24
+  near(oneWayKg("train", 400, { routeKm: 450 }), 450 * 31 / 1000);
   assert.equal(returnKg("plane", null), null);
 });
 test("kgText rounds to whole kilograms", () => {

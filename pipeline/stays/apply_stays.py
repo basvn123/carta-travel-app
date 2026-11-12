@@ -1,4 +1,4 @@
-"""Write the stays build into app_data and bake the fallback wire (schema v18).
+"""Write the stays build into app_data and bake the fallback wire (layer since schema v18).
 
   dest.accommodation   becomes the compact block every first paint needs:
                        {beds (annual medians, EUR), q, captured, supply}; a

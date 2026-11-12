@@ -57,7 +57,7 @@ export const MOCK_FACTS = Object.freeze({
 export function mockEntitlement(kind = ACCOUNT_MOCK) {
   const base = {
     loading: false, known: true, refresh: () => {},
-    groundUsed: 0, groundCap: 0, groundLeft: 0, subscription: null,
+    groundUsed: 0, groundCap: 0, groundLeft: 0,
   };
   if (kind === 'free') {
     return { ...base, tier: 'free', expiresAt: null, resetsAt: null, plansUsed: 1, plansCap: 2, plansLeft: 1 };
@@ -68,10 +68,9 @@ export function mockEntitlement(kind = ACCOUNT_MOCK) {
       plansUsed: 12, plansCap: 60, plansLeft: 48, groundUsed: 3, groundCap: 40, groundLeft: 37,
     };
   }
-  const renews = inDays(134);
+  const ends = inDays(134);
   return {
-    ...base, tier: 'year', expiresAt: renews, resetsAt: renews,
+    ...base, tier: 'year', expiresAt: ends, resetsAt: ends,
     plansUsed: 42, plansCap: 300, plansLeft: 258, groundUsed: 7, groundCap: 120, groundLeft: 113,
-    subscription: { status: 'active', live: true, cancelling: false, renewsAt: renews },
   };
 }

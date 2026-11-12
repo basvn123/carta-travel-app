@@ -10,9 +10,3 @@ Rows: 4.
 2. **T047-a: give the box a Hetzner API token.** Hetzner Cloud console, project Carta, Security, API tokens, Generate, Read and Write, name `carta-box`. On the box: `nano ~/.config/carta/env`, set `HCLOUD_TOKEN=<the token>`, save. Done when `bash ~/carta/infra/hetzner/cax41/verify.sh` ends "0 failed". This only unlocks the paid helper-server runs in `paid-runs.md`; nothing else needs it.
 3. **T055-b: check the first real invoices.** Hetzner and Cloudflare billing pages: enter the first real monthly totals into `public.infra_ledger` as `actual` (the admin page or ask Claude with the two numbers) and compare with section 7 of the cloud architecture doc. The box is a CAX11 with a 38 GB disk.
 4. **T512-b: delete the stray `C:\c` folder (laptop).** A path bug in an old test run wrote 47 files (107 MB: Eurostat downloads, a route file, old temp folders) under `C:\c`. Nothing reads it; Claude is not allowed to delete a top-level folder on C:. In PowerShell: `Remove-Item -Recurse -Force C:\c`. Done when `Test-Path C:\c` prints False.
-
-## Moved from unsorted.md (owner sweep 2026-11-12)
-
-| ID | Item | Order |
-|---|---|---|
-| T1086-a | Dry-run the backup and restore runbook on the owner's laptop: take one hand dump, restore it with ops/restore_supabase.sh, and stream-check the newest supabase dump in R2; nothing in it has been run against a live service |  |

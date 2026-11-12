@@ -152,7 +152,7 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 7. The tour (`HomeTour`): five chapters as tabs (Ask, Explore, Plan, My trips, Together), each with a screen recording. It plays through once while in view; a tap on a tab takes over and loops that clip; after one round it rests on the first chapter.
 8. Try it (`HomeTry`): the film's places sorted by day price, 5 on wide screens and 4 on a phone. The slider runs from the cheapest minus 10 euros to the dearest plus 20, rounded to 5. It starts at the third cheapest. Places under the budget are lit; the cheapest that fits is marked best value. The section hides when fewer than 3 places have a price. The foot opens Explore with that budget as a filter.
 9. Plans (`HomePlans`): the three tiers from `TIERS` and `TIER_ORDER` (billing), with prices and a short list each.
-10. While the film sits under the top bar, the bar turns transparent (root attribute `data-home-film="under"`).
+10. While the film sits under the top bar, the bar turns transparent (root attribute `data-home-film="under"`). That holds at every width: since G14 (2026-11-12) the phone has no second bar of its own on the film, so the one brand and the account disc sit in the shell's top bar, and the film starts at the top of the window. `scripts/verify_home.mjs` checks one visible brand at 390, 375 and 1440 px (`onebar`).
 
 **Data behind it.** The catalogue (`public/boot.json`, `public/dest/{cc}.json`), the day prices from the price engine (`lib/price/`, `config/pricing.json`), and the flight sweep fares (`data/flights/` on R2, written by the flight-sweep Worker). Clips and posters are static files under `public/home/`. No pipeline task builds the home page itself.
 
@@ -197,7 +197,7 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 - For you stays off as a default until the persona gate passes (`_for_you_default` note in `config/rating.json`).
 - Guided facets (vibe, area, near) hold the list empty until the guided data has loaded.
 - A lite record (before the country shards arrive) lacks the sights line in the preview and map tip (register T271-a).
-- Several DOM check scripts still expect the old phone top line (register T961-b).
+- Several DOM check scripts still expect the old phone top line (register T961-b). `scripts/verify_home.mjs` still waits for the week section T953 removed (`.hv-week`), so it stops before its checks; its `header` and `onebar` checks were checked by hand on 2026-11-12 (G14).
 
 ### Search dock
 
@@ -1409,17 +1409,17 @@ Worked example: an airport 100 road km away, 2 adults, 7 nights. Car: 0.1397 per
 
 **How it works.** `lib/footprint/footprint.js`, factors in `footprint.factors`:
 1. Flight: straight line x `flight_uplift` 1.08 x `flight_short_g_pkm` 126 (up to `short_haul_max_km` 3700) or `flight_long_g_pkm` 117 g per passenger-km.
-2. Train `train_g_pkm` 35, coach `coach_g_pkm` 39, ferry `ferry_g_pkm` 113 g per passenger-km, on the route km (a published leg's km, else the straight line x `ground_detour` 1.3).
-3. Car: `car_g_km` 170 g per car-km, shared by the party (at most 5 seats).
+2. Train `train_g_pkm` 31, coach `coach_g_pkm` 39, ferry `ferry_g_pkm` 113 g per passenger-km, on the route km (a published leg's km, else the straight line x `ground_detour` 1.3).
+3. Car: `car_g_km` 162 g per car-km, shared by the party (at most 5 seats).
 4. A return journey doubles the one way. A mode or distance with no factor shows nothing, never a guess.
 
-Worked example: 1000 km flight one way = 1000 x 1.08 x 126 / 1000 = 136.08 kg; return 272 kg. 400 km by train = 400 x 35 / 1000 = 14 kg.
+Worked example: 1000 km flight one way = 1000 x 1.08 x 126 / 1000 = 136.08 kg; return 272 kg. 400 km by train = 400 x 31 / 1000 = 12.4 kg.
 
-**Data behind it.** UK DESNZ/DEFRA conversion factors (Open Government Licence v3.0), 2025/2026 editions, radiative forcing included for flights. UK averages are a proxy for Europe; European rail is often lower.
+**Data behind it.** UK DESNZ/DEFRA conversion factors (Open Government Licence v3.0), 2026 edition, radiative forcing included for flights. UK averages are a proxy for Europe; European rail is often lower.
 
 **Where it lives.** `continent-app/src/lib/footprint/footprint.js`, `src/browse/DestPriceCard.jsx`, `src/planner/TravelLegsSection.jsx`; test `tests/footprint.test.mjs`.
 
-**Limits.** The factor values came from secondary mirrors because the build container could not open gov.uk; checking them against the workbook is an owner step (T1204-a). Not counted: the airport transfer, hotel, activities.
+**Limits.** Every factor was checked against the DESNZ 2026 flat file on 2026-11-12 (T1204-a: train 35 to 31 and car 170 to 162, which had been 2025 values); recheck with each June edition. Not counted: the airport transfer, hotel, activities.
 
 ---
 
@@ -1749,7 +1749,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 5. Cache: `ai_plan_cache`, SHA-256 of the request (model chain, place, month, date, answers, trimmed deck, refine, profile, days), key version `CACHE_KEY_VERSION = 6`, valid 7 days. A hit still costs a unit. Hits and misses go to `ai_cache_events`.
 6. Model: Gemini `generateContent` with structured output (`RESPONSE_SCHEMA`: summary, stops with id, name, arrive, dwellMin, why, inCatalog, isEvent). Temperature 0.25 (0.45 for a refine), `maxOutputTokens: 8192`. Chain `GEMINI_CHAIN` in `supabase/functions/_shared/aiModels.mjs` (re-exported as `DEFAULT_MODEL_CHAIN`): `gemini-flash-lite-latest`, `gemini-3.5-flash-lite`, `gemini-flash-latest`, `gemini-3.1-flash-lite`, overridable by `GEMINI_MODEL` and `GEMINI_MODELS`, or by `AI_PLAN_DAY_PROVIDER` and `AI_PLAN_DAY_MODELS` (T1137). The call goes through `aiModels.callModel`: 429 or 404 falls over, a 5xx is retried once and then falls over, a timeout falls over, within one budget of 80 s (first try 40 s, later 25 s, minimum 8 s). See the AI gateway bullet under platform.
 7. Prompt rules: every stop must be a candidate id; minimise backtracking; summer heat puts indoor stops between 13:00 and 16:00; large groups (5+) walk about 20 percent slower; profile lines are added only for answers given; named places must all appear; output in the traveller's language with no em or en dashes. Prompt version is not labelled beyond the cache key version.
-8. Events: with "events" ticked and a `ground` unit left, Google Search grounding runs and up to 2 festivals or markets come back, listed beside the day as "confirm this year's dates", never routed. Free tier has 0 grounded units; `AI_ENABLE_GROUNDING=false` turns it off.
+8. Events: with "events" ticked and a `ground` unit left, Google Search grounding runs and up to 2 festivals or markets come back, listed beside the day as "confirm this year's dates", never routed. Free tier has 0 grounded units, so the function skips grounding and says why in `meta.groundingSkipped` (`tier` or `cap`); the Carta bot says it before the run instead: with the switch ticked by a signed-in free traveller at 0 searches, `ai.eventsNeedPass` and a See passes link that opens the `ground` gate (`CartaChatPlanner.jsx`, `useCredit` `groundLeft` and `paid`; ROADMAP H14). `AI_ENABLE_GROUNDING=false` turns it off.
 9. Validation (`sanitizeAiStops`): a stop must reference a real id from the trimmed deck (name and coordinates come from Carta, not the model); duplicates and fake ids are dropped; at most `10 x days` stops (max 40). Non-catalogue stops are never routed. Fewer than 2 stops returns `ai_bad_output`.
 10. Re-timing (`scheduleDay`, one day only): order kept unless 2-opt is over 12 percent and 400 m shorter; walking budget `DEFAULT_MAX_WALK_KM = 12` or the traveller's own; a leg over `MAX_LEG_KM = 6.5` or a stop past the budget is dropped (`farDropped`); lunch 75 minutes after 12:30. Several days are split and routed by the app (`daySpread.js`). Fewer than 2 timed stops returns `too_few`.
 11. Failure: any failure after quota refunds the unit. The client maps every code (`no_auth_config`, `auth`, `user_cap`, `global_cap`, `no_ai`, `too_few`, `ai_busy`, `ai_error`, `ai_timeout`, `ai_bad_output`, `network`) to the built-in deterministic planner.
@@ -2716,7 +2716,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 ### The Pass, paywall and Stripe checkout
 
-**What it does.** Most of Carta is free. A Pass unlocks exports (PDFs, calendar and map files), imports, more than one saved trip, and more AI day plans with live (grounded) search. There are two paid options: a one-off Trip Pass and a yearly plan that renews until cancelled.
+**What it does.** Most of Carta is free. A Pass unlocks exports (PDFs, calendar and map files), imports, more than one saved trip, and more AI day plans with live (grounded) search. There are two paid options, both one payment that never renews: the Trip Pass (60 days) and the Year Pass (12 months) (decision 0010, ROADMAP I-f).
 
 **How it works.**
 - **Tiers** (`public.plan_tiers`, mirrored for display in `src/lib/pricing.js` `TIERS`):
@@ -2725,24 +2725,25 @@ This section covers the parts of Carta that sit around the travel content: the A
   |---|---|---|---|---|
   | free | 0 | 2, once for the life of the account (migration 021) | 0 | never refills |
   | trip | 699 cents (EUR 6.99), one-off | 60 | 40 | 60 days (migration 053) |
-  | year | 1499 cents (EUR 14.99), renews yearly | 300 | 120 | 365 days |
+  | year | 1499 cents (EUR 14.99), one-off (Year Pass) | 300 | 120 | 365 days |
 
 - Server is the authority: quotas are enforced by the `ai_consume` RPC (`supabase/functions/_shared/passes.mjs` `consume`); a failed AI call refunds the unit (`refund`). The plan-day function also has a shared daily ceiling, `AI_GLOBAL_DAILY_CAP` (default 200). Refusals are logged to `ai_cap_events` without a user id.
 - **usePaywall** (`hooks/usePaywall.jsx`) is the one client gate. Hard gates (always open the Pass panel): `export`, `exportCal`, `exportMap`, `import`, `save`, `plans`, `ground`, `browse`. Soft gates (offers): `plansLow`, `expiring`, shown at most once a session (`carta.paywall.softShown.v1`), snoozed 30 days per reason (`SNOOZE_DAYS`), never for a payer.
-- **Checkout** (`supabase/functions/checkout/index.ts`): the browser sends only a tier id; the amount comes from the Stripe Price named by `STRIPE_PRICE_TRIP` or `STRIPE_PRICE_YEAR`. Trip Pass uses mode `payment`, the yearly plan mode `subscription` (`checkoutModeFor`). `automatic_tax` is on. Before opening a session, `pass_can_buy` refuses a purchase that would not extend the pass, and refuses a second yearly plan (reason `subscribed`).
-- **Withdrawal waiver:** Stripe shows a required checkbox with Carta's text (`waiverText`): the buyer asks for immediate start and accepts losing the 14-day EU right of withdrawal. This only runs when `CHECKOUT_TERMS_URL` is set.
-- **Webhook** (`stripe-webhook`): grants a pass through `grant_pass`; for the yearly plan, every paid invoice with `billing_reason` `subscription_create` or `subscription_cycle` grants a year, keyed on the invoice id so replays do nothing (`grantFromInvoice`). Subscription state goes to `entitlements` via `set_subscription_state`. The `billing` function and Stripe's Customer Portal handle cancelling.
+- **Checkout** (`supabase/functions/checkout/index.ts`): the browser sends only a tier id; the amount comes from the Stripe Price named by `STRIPE_PRICE_TRIP` or `STRIPE_PRICE_YEAR`. Both passes use mode `payment` (`checkoutModeFor`, `RECURRING_TIERS` is empty); `STRIPE_PRICE_YEAR` must be a one-time Price. `automatic_tax` is on. Before opening a session, `pass_can_buy` refuses a purchase that would not extend the pass (`pass_max`); a Year Pass holder may buy another, which stacks (migration 075 dropped 053's `subscribed` refusal).
+- **Request to start:** Stripe shows a required checkbox with Carta's text (`waiverText`, one text for both passes): the buyer asks for the pass to start at once; a withdrawal within 14 days pays for the days the pass has run, and the right ends once the pass has been fully supplied (decision 0010). It never says the buyer loses the right. This only runs when `CHECKOUT_TERMS_URL` is set.
+- **Webhook** (`stripe-webhook`): grants either pass off `checkout.session.completed` through `grant_pass`, keyed on the session id so replays do nothing; any other event is acknowledged and ignored. Nothing renews, so there is no cancel or resume: the T460 invoice grant, subscription state and `billing` function are gone (ROADMAP I-f); the `entitlements.subscription_*` columns from 053 stay unused. Account's Your plan shows the pass, its end date and the allowances, with no Cancel.
 - The gate reason (letters only, up to 32) rides in session metadata for the paywall funnel.
 - **The way to the pricing page:** the pass sheet's quiet "See all prices" link (`PassModal.jsx`, `pass.seeAll`). Account's Your plan (`auth/account/PlanView.jsx`) carries no such link since 2026-11-12 (owner T503-g); the page at `/pricing` itself stays.
 - **The Pass moment (T1171, I14, flag off):** one inline card on the trip page under the route, once the trip is priced, for a traveller who does not pay: what stays free, what a Trip Pass adds (price and days from `TIERS.trip`), "See the Trip Pass" (`openPrices('browse')`) and "Not now" (hidden 14 days, `LATER_DAYS`; gone after two, `LATER_MAX`; `carta.pm.later.v1`). Never a dialog. Off until the closed beta: `PASS_MOMENT` in `src/pass/passMoment.js`, preview `?pm=on`. Design note `docs/design/pass-moment.md`; walk `scripts/verify_paywall.mjs --dom`.
 
-**Data behind it.** `plan_tiers`, `entitlements`, `pass_grants`, `ai_usage` (007), free tier once (021), `paywall_events` (022, 027), withdrawal waiver (025), OSS threshold (026), payments quota (044), subscriptions (053).
+**Data behind it.** `plan_tiers`, `entitlements`, `pass_grants`, `ai_usage` (007), free tier once (021), `paywall_events` (022, 027), withdrawal waiver (025), OSS threshold (026), payments quota (044), the 60-day Trip Pass (053), the Year Pass one-off (075, which drops 053's `subscribed` refusal).
 
-**Where it lives.** App: `continent-app/src/pass/PricingPage.jsx`, `continent-app/src/components/PassModal.jsx`, `continent-app/src/hooks/usePaywall.jsx`, `continent-app/src/hooks/useEntitlement.js`, `continent-app/src/lib/pricing.js`, `continent-app/src/lib/billing.js`, `continent-app/src/lib/passMoments.js`, `continent-app/src/pass/PassMoment.jsx`, `continent-app/src/pass/passMoment.js`. Backend: `supabase/functions/checkout/`, `supabase/functions/stripe-webhook/`, `supabase/functions/billing/`, `supabase/functions/_shared/passes.mjs`. Docs: `archive/execution-2026-11-11:archive/docs-2026-11/REFUND_SOP.md`, `docs/owner/stripe.md`, `docs/owner/pass-subscription.md`.
+**Where it lives.** App: `continent-app/src/pass/PricingPage.jsx`, `continent-app/src/components/PassModal.jsx`, `continent-app/src/hooks/usePaywall.jsx`, `continent-app/src/hooks/useEntitlement.js`, `continent-app/src/lib/pricing.js`, `continent-app/src/lib/passMoments.js`, `continent-app/src/pass/PassMoment.jsx`, `continent-app/src/pass/passMoment.js`. Backend: `supabase/functions/checkout/`, `supabase/functions/stripe-webhook/`, `supabase/functions/_shared/passes.mjs`. Docs: `archive/execution-2026-11-11:archive/docs-2026-11/REFUND_SOP.md`, `docs/owner/stripe.md`, `docs/owner/pass-subscription.md`.
 
 **Limits.**
 - Stripe is not live: Prices, secrets, the Terms URL, the webhook deploy and a real test purchase are open owner steps (T030-a, T030-b, T032-a, T032-c), and 044 must be pasted before the function deploys (T265-a).
 - Migration 022 (paywall events) was never applied, so the funnel cannot run live (T034-a).
+- The purchase confirmation email (Art 8(7)) with the request to start, the 14-day right, the pro-rata rule and the model form is not built yet; it blocks live sales (T228, ROADMAP I-f). Migration 075 and the checkout, stripe-webhook deploys (and `supabase functions delete billing`) are owner steps.
 - Checkout from an installed home-screen app is untested on real phones (T246-c).
 - Client gates are bypassable by design; only AI spend is enforced server side.
 

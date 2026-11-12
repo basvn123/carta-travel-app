@@ -1378,18 +1378,18 @@
         "flight_long_g_pkm": 117,
         "short_haul_max_km": 3700,
         "flight_uplift": 1.08,
-        "train_g_pkm": 35,
+        "train_g_pkm": 31,
         "coach_g_pkm": 39,
-        "car_g_km": 170,
+        "car_g_km": 162,
         "ferry_g_pkm": 113,
         "ground_detour": 1.3,
         "method_url": "https://www.gov.uk/government/collections/government-conversion-factors-for-company-reporting"
       },
       "unit": "g CO2e per passenger-km (car: per car-km, shared by the party), km, share of distance",
       "kind": "estimate",
-      "source": "T1204 (D22) UK DESNZ/DEFRA greenhouse gas conversion factors for company reporting, 2025/2026 editions, Open Government Licence v3.0: economy flight with radiative forcing and without well-to-tank (short haul up to 3700 km, long haul above), national rail, coach, average petrol car per km, ferry average passenger; flight distance is the great circle plus flight_uplift (8 percent). Figures came from secondary mirrors because the container could not open gov.uk: check them against the workbook (row T1204-a). UK averages are a proxy for Europe; European rail is often lower; ground_detour 1.3 turns a straight line into road or rail km where the route length is not known",
-      "date": "2026-11-07",
-      "review": "2027-05-07",
+      "source": "T1204 (D22) UK DESNZ/DEFRA greenhouse gas conversion factors for company reporting, 2026 edition (published 2026-06-11), Open Government Licence v3.0: economy flight with radiative forcing and without well-to-tank (short haul up to 3700 km, long haul above), national rail, coach, average petrol car per km, ferry average passenger; flight distance is the great circle plus flight_uplift (8 percent). Every figure checked against the DESNZ 2026 flat file on 2026-11-12 (T1204-a): short haul 125.76, long haul 117.04, national rail 30.92, coach 39.48, average petrol car 161.52 per km, ferry 112.70; train and car had been 2025 values (35, 170). UK averages are a proxy for Europe; European rail is often lower; ground_detour 1.3 turns a straight line into road or rail km where the route length is not known",
+      "date": "2026-11-12",
+      "review": "2027-05-12",
       "test": "tests/footprint.test.mjs"
     }
   }

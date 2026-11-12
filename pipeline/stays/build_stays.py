@@ -1,4 +1,4 @@
-"""Build the stays wire (schema v18) from the Booking + Hostelworld scrape alone.
+"""Build the stays wire (layer since schema v18) from the Booking + Hostelworld scrape alone.
 
 T1021 (owner 2026-11-03): the scrape journal is the single source of truth.
 The laptop scrapes (Booking turns away datacenter addresses) and uploads
@@ -52,6 +52,7 @@ from booking.page import per_ok  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from pricing_config import rule  # noqa: E402
+from provenance import SCHEMA_VERSION  # noqa: E402  the manifest says the contract it was built under
 
 # T693: the model and gate numbers come from continent-app/config/pricing.json
 # (stays.model, gate.stays), the file the app reads too.
@@ -526,7 +527,7 @@ def main():
     write_report(fails, notes, rep, where)
     levels, cc_cov = summarise(records, iso_of)
     manifest = {
-        "v": 1, "schema": 18, "built": now_iso(), "n": len(records),
+        "v": 1, "schema": SCHEMA_VERSION, "built": now_iso(), "n": len(records),
         "coverage": coverage(records),
         "sources": {s: sum(1 for o in obs if o["src"] == s) for s in SOURCES},
         "contract": stats,

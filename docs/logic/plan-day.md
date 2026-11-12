@@ -169,8 +169,8 @@ The allowance itself (tiers, `ai_consume`, the shared daily ceiling, refunds in 
 
 ### PLANDAY-023 What the app does with a failure
 - Decides: whether the traveller sees "try again", the Pass, or the built-in planner.
-- Rule: `ai_busy`, `ai_timeout`, `ai_error`, `network` and `ai_bad_output` offer a retry; only `user_cap` offers the Pass (`global_cap` is Carta's own ceiling); an answer without stops is `ai_bad_output`; every failure is reported to the edge error log first.
-- Constant: `RETRYABLE` in `continent-app/src/planner/days/AutoPlanBar.jsx:12`, `continent-app/src/planner/days/DayBotChat.jsx:30` (the old `AiDayPlanModal.jsx` copy was deleted with T1163-b); `aiDayPlan.js:132`
+- Rule: in the day bot and Let Carta plan them, `ai_busy`, `ai_timeout`, `ai_error`, `network` and `ai_bad_output` offer a retry; in the Carta bot every code but `auth`, `user_cap` and `no_ai` offers a retry, and `auth` asks to sign in; only `user_cap` offers the Pass (`global_cap` is Carta's own ceiling); every failure also offers to plan by hand; an answer without stops is `ai_bad_output`; every failure is reported to the edge error log first. The AI plan sheet that held a third copy was deleted with T1163-b.
+- Constant: `RETRYABLE` in `continent-app/src/planner/days/AutoPlanBar.jsx:12`, `continent-app/src/planner/days/DayBotChat.jsx:32`; `CHAT_FAIL_KEY` in `continent-app/src/planner/CartaChatPlanner.jsx:203`; `aiDayPlan.js:132`
 - Test: no test
 
 ### PLANDAY-024 Let Carta plan them

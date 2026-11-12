@@ -18,6 +18,12 @@ Only the owner can do these steps: they need the Google account that will own th
 5. **Bing (T205-f):** sign in to Bing Webmaster Tools with a Microsoft account, choose "Import from Google Search Console" (it copies the verified property and the sitemap). Bing works without IndexNow. IndexNow would also need a key file in `continent-app/public/` (a protected path) and a submit step after each prerender push; neither exists yet (ROADMAP K2), so there is nothing for you to do for it now.
 6. **Field Core Web Vitals (T200-g):** a month after launch traffic starts, open Experience, Core Web Vitals; write the mobile and desktop Poor/Needs improvement/Good URL counts into the weekly log.
 
+## Steps from the register
+
+| ID | Item | Order |
+|---|---|---|
+| T222-f | After step 2, write two dates as the first line of `docs/owner/search-console-log.md`: the day you submitted the sitemap, and the first day Pages shows prerendered pages as Indexed. The launch lead for later page batches is set from these dates | after step 2 |
+
 ## Weekly review (every Monday, 15 minutes)
 
 Write one line per week in `docs/owner/search-console-log.md` (create it on the first week): date, then the six numbers below.

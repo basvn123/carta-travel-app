@@ -109,8 +109,8 @@ export const TIERS = {
     aiPlans: 300,
     grounded: 120,
     periodDays: 365,
-    // Renews every year until cancelled (Stripe subscription, migration 053).
-    recurring: true,
+    // Paid once and never renews, like the Trip Pass (decision 0010, ROADMAP
+    // I-f). The subscription it was sold as under T460 is gone (migration 075).
     labelKey: 'pass.yearName',
     blurbKey: 'pass.yearBlurb',
     featured: true,
@@ -158,19 +158,16 @@ export function yearPassTripsEquivalent() {
   return Math.floor(year / trip) + 1;
 }
 
-/** True for a plan that renews by itself (the yearly plan). */
-export function isRecurring(tier) {
-  return !!TIERS[tier]?.recurring;
-}
-
 /**
- * What a recurring plan comes to a month, in cents, for the small line beside
- * its price ("about EUR 1.25 a month"). Never shown instead of the billed
- * amount: the panel prints the yearly figure large and this one small.
+ * What a pass of a year comes to a month, in cents, for the small line beside
+ * its price ("about EUR 1.25 a month"). Never shown instead of the paid
+ * amount: the panel prints the one payment large and this one small. Only a
+ * pass of 365 days or more has one; a month of a 60-day pass is not a figure
+ * anybody compares.
  */
 export function monthlyCents(tier) {
   const t = TIERS[tier];
-  if (!t?.recurring || !t.periodDays) return null;
+  if (!t?.periodDays || t.periodDays < 365) return null;
   return Math.round(t.priceCents / 12);
 }
 

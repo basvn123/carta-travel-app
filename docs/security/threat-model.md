@@ -128,7 +128,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 
 ## 6. Supabase Edge Functions (`supabase/functions/`)
 
-**Data flow.** `plan-day`, `suggest-city` and `parse-booking` take the user JWT, check it with `auth.getUser()`, spend AI quota through `_shared/passes.mjs` (`consume`, `refund` RPCs) and call Gemini with `GEMINI_API_KEY`. `checkout` and `billing` take the user JWT and call Stripe with `STRIPE_SECRET_KEY`. `stripe-webhook` (deployed `--no-verify-jwt`) checks the Stripe signature. `notify` (deployed `--no-verify-jwt`) takes the cron call with `x-notify-secret` and the unsubscribe link with an HMAC token. All use `SUPABASE_SERVICE_ROLE_KEY` for their writes.
+**Data flow.** `plan-day`, `suggest-city` and `parse-booking` take the user JWT, check it with `auth.getUser()`, spend AI quota through `_shared/passes.mjs` (`consume`, `refund` RPCs) and call Gemini with `GEMINI_API_KEY`. `checkout` takes the user JWT and call Stripe with `STRIPE_SECRET_KEY`. `stripe-webhook` (deployed `--no-verify-jwt`) checks the Stripe signature. `notify` (deployed `--no-verify-jwt`) takes the cron call with `x-notify-secret` and the unsubscribe link with an HMAC token. All use `SUPABASE_SERVICE_ROLE_KEY` for their writes.
 
 **Assets.** The Gemini bill; the service role key (bypasses every policy); user content sent to Google (`parse-booking` fetches a booking URL).
 

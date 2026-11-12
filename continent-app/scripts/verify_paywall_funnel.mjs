@@ -104,10 +104,14 @@ for (const f of files) {
   }
   // onOpenPass(reason) call sites (DayBotChat) resolve to require() one hop
   // away in the component that mounts it; matched separately so 'plans' is
-  // not flagged as unreachable. 'ground' lost its only caller when
-  // AiDayPlanModal went (unmounted since the Carta bot, deleted with T1163-b):
-  // a real finding, recorded in ROADMAP H14.
+  // not flagged as unreachable.
   for (const m of src.matchAll(/onOpenPass\('([^']+)'\)/g)) {
+    called.add(m[1]);
+  }
+  // useCredit's openPasses(reason) is paywall.require(reason) one hop away:
+  // the Carta bot's `credit.openPasses('plans')` and, since ROADMAP H14,
+  // `credit.openPasses('ground')` under its events switch.
+  for (const m of src.matchAll(/\.openPasses\('([^']+)'\)/g)) {
     called.add(m[1]);
   }
   // A default reason, such as CreditChip's `openPasses: (why = 'plansLow') =>

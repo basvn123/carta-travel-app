@@ -98,7 +98,7 @@ test('secretMatches is true only for the exact secret', async () => {
 
 const dir = new URL('../../supabase/functions/', import.meta.url);
 const src = (n) => fs.readFileSync(new URL(`${n}/index.ts`, dir), 'utf8');
-const WRAPPED = ['billing', 'checkout', 'notify', 'parse-booking', 'plan-day', 'suggest-city'];
+const WRAPPED = ['checkout', 'notify', 'parse-booking', 'plan-day', 'suggest-city'];
 
 test('every browser-facing function wraps its handler in withCors and reads a capped body', () => {
   for (const n of WRAPPED) {
@@ -120,7 +120,7 @@ test('no function puts an upstream or database message in a response', () => {
 });
 
 test('the functions that need a signed-in traveller resolve the JWT before any work', () => {
-  for (const n of ['billing', 'checkout', 'parse-booking', 'plan-day', 'suggest-city']) {
+  for (const n of ['checkout', 'parse-booking', 'plan-day', 'suggest-city']) {
     const s = src(n);
     const auth = s.indexOf('auth.getUser()');
     assert.ok(auth > 0, `${n} never checks the user`);

@@ -7,7 +7,7 @@ Project Carta, `ntssxktaduxzpsmejwyv` only (never Horizon-App or the inactive pr
 - **Live:** migrations 001 to 062. 063, 064, 065, 066, 067, 069, 070, 071, 072, 073 and 074 are **not** applied (there is no 068).
 - **Deployed:** all ten Edge Functions from `main` as of 2026-11-12. These five run without the JWT check: stripe-webhook, notify, price-alerts, waitlist, upload-scan. Each was smoke-tested.
   - The AI trio answers 401 without a signed-in user.
-  - Without their provider keys, the others answer "not configured" and send nothing: billing, checkout, stripe-webhook, notify, price-alerts, waitlist, upload-scan.
+  - Without their provider keys, the others answer "not configured" and send nothing: billing (removed from the code by round 2; deleted with the next deploy, step 1), checkout, stripe-webhook, notify, price-alerts, waitlist, upload-scan.
 - **Secrets set:** the Supabase defaults, `GEMINI_API_KEY` and `AI_ENABLE_CITY_GROUNDING`. No Stripe or Resend key. No shared secret for notify, upload-scan, waitlist or price alerts.
 - **Vault:** empty. So 060's reminder job and 061's upload scan are not scheduled.
 - **Checked live:** every SECURITY DEFINER function in `public` pins its `search_path` (121 of 121).
@@ -16,16 +16,17 @@ The sweep could not apply migrations or write secrets: the session's permission 
 
 ## Steps
 
-1. **Apply 063 to 074, in order, in one sitting with the app deploy (rows T1078-a, T1081-a, T1104-a, T1110-a, T1109-a, T1118-c, T1129-a, T1139-a, T1152-a, T1205-a, T1215-b).**
+1. **Apply 063 to 075, in order, in one sitting with the app deploy (rows T1078-a, T1081-a, T1104-a, T1110-a, T1109-a, T1118-c, T1129-a, T1139-a, T1152-a, T1205-a, T1215-b; 075 is the one-off Year Pass of owner sweep round 2, ROADMAP I-f).**
    - From the repo root, with the CLI linked to Carta (`supabase link --project-ref ntssxktaduxzpsmejwyv`), run one file at a time. Stop at the first error:
      ```
-     for n in 063 064 065 066 067 069 070 071 072 073 074; do
+     for n in 063 064 065 066 067 069 070 071 072 073 074 075; do
        f=$(ls supabase/migrations/${n}_*.sql | grep -v _down) && echo "$f" && supabase db query --linked -f "$f" || break
      done
      ```
      Every file raises an exception on failure, so no error means it applied. Pasting any file twice is safe. Each has a `_down.sql` beside it.
    - **064** drops the old two-argument admin calls. Ship the app from `main` the same day: until both are live, suspend, delete and set tier on the admin page answer PGRST202 and change nothing.
    - **069** starts the daily retention job `carta_privacy_retention` at 03:23 UTC. Its first run deletes rows past their retention period, and that is one-way. Take a data dump first: `supabase db dump --linked --data-only -f <outside the repo>` (needs Docker running).
+   - **075** drops the "already subscribed" refusal from `pass_can_buy` (no pass renews, decision 0010); its check is `supabase/diagnostics/075_year_pass_one_off_test.sql`. In the same sitting deploy the one-off checkout and webhook and remove the old billing function: `supabase functions deploy checkout`, `supabase functions deploy stripe-webhook --no-verify-jwt`, `supabase functions delete billing`.
    - Check:
      ```
      supabase db query --linked "select jobname from cron.job order by 1"
@@ -67,7 +68,8 @@ The sweep could not apply migrations or write secrets: the session's permission 
 
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 
+T1110-b and T1205-b were merged into steps 2 and 3 by owner sweep round 2.
+
 | ID | Item | Order |
 |---|---|---|
-| T1110-b | Set the secrets `RESEND_API_KEY`, `WAITLIST_FROM`, `WAITLIST_SECRET`, verify the sending domain in Resend, deploy `waitlist` with `--no-verify-jwt` | 2 |
-| T1205-b | The price-alerts Edge Function is not deployed and its secrets (PRICE_ALERTS_FROM, PRICE_ALERTS_LINK_SECRET, PRICE_ALERTS_BOX_SECRET) and the box env (PRICE_ALERTS_URL) are not set; the Resend custom-header support was read from search snippets only | 2 |
+| T1205-c | After step 1 (073), step 2 (`PRICE_ALERTS_BOX_SECRET`) and step 3 (Resend): a session turns price alerts on for a preview. Sign in with your own account, open a place, press Price alert, open the confirmation mail and click the link. It worked when the place shows the alert as active. Tell a session "T1205-c done" and it switches the flags on for everyone (`PRICE_ALERTS_ENABLED=1`, `VITE_PRICE_ALERTS=1`). | after steps 1 to 3 |
