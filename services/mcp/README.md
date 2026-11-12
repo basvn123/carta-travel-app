@@ -1,6 +1,9 @@
 # Carta MCP server (ROADMAP F7, T1155)
 
 Four read-only tools over the shipped wire data, for any MCP client.
+Owner decisions (2026-11-12): public data only, no saved traveller trips
+(T1155-a); it ships from a repo checkout with `continent-app` installed, with
+no package and no remote HTTP mode (T1155-b).
 Handbook: `docs/HANDBOOK.md`, "Carta MCP server". Threat model: section 13.
 
 | Tool | Does |

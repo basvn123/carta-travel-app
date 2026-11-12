@@ -2,9 +2,10 @@
 
 Owner-only rows from the old register (`the retired register`, retired 2026-11-11) that no procedure file covered. Each row is one action only the owner can take. Move a row into the right procedure file when you group it, and delete it here when it is done. The ID names the old task; its report is found through `.work/INDEX.md`.
 
+Owner sweep 2026-11-12 (unsorted lane, report `.work/2026-11-12-owner-unsorted/report.md`): 28 rows were closed or decided and removed; T1118-b and T1190-h are decided and keep only their human part. Every other row left here is handed to the lane that owns its system. Each row has a target file (`move_to` in that run's `ledger.json`); the orchestrator moves them after the merge, which empties this file.
+
 | ID | Item | Order |
 |---|---|---|
-| T063-b | Owner enrols a TOTP factor on the owner account through the T063-a flow and confirms TOTP is enabled in the project Auth settings | 2 |
 | T221-a | The prerendered pages are built but not live: create the carta-prerender bucket, build with VITE_PATH_URLS=1 (T223-c), build and verify the pages (with --cards for the share cards, about two hours), push data then pages, deploy preview then production and check with curl, then prune; exact commands in report T221, Owner procedure | after the T221 merge |
 | T222-c | The sitemap URLs are absolute https://www.carta-europetravel.com/ and the Function serves /sitemap.xml and /sitemap-*.xml from the carta-prerender bucket; after T221-a, curl -sI https://www.carta-europetravel.com/sitemap.xml must show 200 and application/xml (the placeholder answers if the bucket holds no index), then submit it in Search Console (T205-f) | after T221-a |
 | T222-d | The page floor needs a licensed image and no trail or cycling route has one on the wire (3,554 of 17,619 rated trails have a photo URL with no licence, 0 of 506 rated cycling routes have an image), so all 17,619 trail pages and 501 cycling pages are written noindex and none is in the sitemap; decide before the T221-a upload whether to resolve photo licences into the wire (pipeline task) or to waive the image criterion for route kinds, then rebuild; the first option keeps SEO.md as written, the second needs an edit to it and to floor.mjs | before T221-a |
@@ -16,19 +17,16 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T530-b | Licence posture: Booking.com and Hostelworld terms restrict commercial scraping (owner states permission, 2026-10-21) and Xotelo publishes no terms; only medians are published; keep the permission on file or drop the scrape |  |
 | T643-a | The B4 verdict (Hostelworld privates are per person, doubled into a room) rests on one signal, private / dorm 1.14, because the list ignores the guest count; check one hostel's booking page by hand before the first publish (scripts/hw_unit_sample.py, cache/stays/hw_unit_sample.md) | 1 |
 | T645-a | The first real publish after F0: build from the R2 state on Actions (the laptop's journal.sqlite has 1,327 Xotelo rows and fails the gate with 6,832 lines), then review cache/stays/gate_report.md and list right moves in pipeline/stays/gate_explain.json before apply_stays | 2 |
-| T689-a | The prerendered cost pages and the OG card still print source lines ("Measured in this town", "National basket"); keep them for search pages or remove them under plan rule 2 |  |
 | T714-b | No place has a local transport fare (0 of 3,868): choose a fare source (operator fare pages, a licensed dataset) and write the pipeline layer for local_transport.fare on the box; the engine prices it as soon as it exists |  |
-| T714-c | B9 says the homepage may promise local transport now, but no place has a fare yet; the homepage and the day sentence keep "a bed plus food and drink" until fares exist | after T714-b |
 | T738-a | Five stale branches are not merged: p0-next-steps-docs (deletes live docs such as _OPEN-MASTER.md and the P2/P3/P9 procedures), explore-v4 and three claude/* cloud branches of 2026-09-04 (superseded); delete them, or name what to keep |  |
 | T1046-a | Pause the hourly CartaStaysBooking and CartaStaysHostelworld tasks (0 prices every hour since Oct 30), remove CartaFlightsAll and CartaFlightsNow, drop VITE_E2E_SEAMS=1 from continent-app/.env (ROADMAP N1) | 1 |
 | T1071-d | The admin MFA gate and the trail page upload door were not seen in the browser (both need a signed-in account); look at them at 375 and 1440 and run scripts/verify_admin_panel.mjs after T1071-a | after T1071-a |
-| T1073-e | Confirm whether the Hetzner boxes run in production today, then correct docs/runbooks/build-box.md and docs/areas/build-box.md |  |
 | T1075-b | Local transport fare table for 741 places: choose the fare source (T714-b), then write the layer; D10 fare half not built |  |
 | T1075-d | Decide one rule for not-yet slots on the destination page: the 2026-10-30 rule hides them, D10 asks to show them; the price card now shows a Local transport Not yet measured row |  |
 | T1076-b | Only 337 of 3,868 places clear the quality bar (research expected about 1,800; 3,224 without the 120 word intro test); decide the threshold before the next prerender upload, or lift intros through D9 | 1 |
 | T1076-f | After the next prerender upload confirm a thin place and a trail send noindex,follow in the head and the x-robots-tag header, and that sitemap-destinations holds the expected count | after T1076-b |
 | T1080-a | Enable Dependabot alerts and security updates, and set the Actions default token to read-only, in GitHub repository settings |  |
-| T1084-b | Migration 062 is live but the deployed app has no MFA step-up, so the live admin page answers mfa_required until the P1 batch (T1071 gate) is deployed; deploy when ready, then close T1071-d on it |  |
+| T1084-b | After the live ship that carries the T1071 MFA step-up: open /admin signed in as the owner, pass the TOTP step and see the panels load instead of mfa_required (closes with T1071-d). | |
 | T1086-a | Dry-run the backup and restore runbook on the owner's laptop: take one hand dump, restore it with ops/restore_supabase.sh, and stream-check the newest supabase dump in R2; nothing in it has been run against a live service |  |
 | T1086-c | Re-verify the Stripe, Supabase Admin and Cloudflare dashboard steps in docs/runbooks/refund.md and incident.md sections 4 and 5 (only repo objects were checked); also settle whether year-plan renewals need their own refund rows and a refund column on pass_grants |  |
 | T1087-b | Make admin-harnesses, admin-rpc-security and rls-policies required status checks on main, so a red harness blocks a merge (GitHub settings, owner only) |  |
@@ -37,7 +35,6 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1092-a | Rebuild the trails wire on the box (trails_attributes, then trails_rate which exports; difficulty_gate must pass) and push the data, so the per-day difficulty, f.d, wire_name and src_name reach travellers; steps in report T1092 |  |
 | T1092-b | After T1092-a, look at the Trails card and trail page on a phone and at desktop width (Veluwe Zwerfpad reads Long, an E-path stage shows Also called); the cloud container could not load app data |  |
 | T1088-a | Watch the first GitHub run of supply-chain.yml now that pip-audit, OSV-Scanner and npm audit are gates (OSV and api.osv.dev were unreachable from the build container); fix a failing step or its lockfile args. Continues T1080-c |  |
-| T1088-d | Re-sync the Hetzner box venv and the laptop to the new constraints.txt (lxml 4.9.4 to 6.1.0, geopandas 1.0.1 to 1.1.2, requests, urllib3 and others) and run one weekly pipeline to confirm output is unchanged; pytest passed on Python 3.12 but no pipeline run was possible here |  |
 | T1093-a | Run the trail photo harvest on the trails lab box (DE, IT, GB, FR worst first), then rebuild the trails wire so every card photo carries lic, by, licUrl and page; the container cannot reach Commons or the lab (procedure: report T1093, Owner steps) | after T1092-a |
 | T1093-b | After T1093-a, read the photo coverage per country from the rebuilt wire (before: DE 4.3, GB 11.8, IT 9.9, FR 16.1 percent), run `node scripts/ci/check-contract.mjs` (it must say the photographs carry an allowed licence and a name) and look at one credited trail page on a phone | after T1093-a |
 | T1095-a | Run the real intro harvest (needs Wikipedia and Wikivoyage, not reachable from the cloud box): `python pipeline/dossier/harvest_place_intros.py`, then read the report and spot-check rejected rows | 1 |
@@ -64,7 +61,6 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1104-b | The real two-device check of account sync (keep and bookmark signed out on a phone, sign in, see them on a laptop, remove on one and see it go on the other, switch account on the phone), after T1104-a and a deploy | after T1104-a |
 | T1106-a | Run the seeded-error browser spec and look at `?seedError=explore` in `npm run dev` with real app data (the cloud container has none) |  |
 | T1099-a | Refresh the stale wires on the box (app_data 151 days, destinfo 71, trails 53, trips 52, region 50, coverage, joins, reach) so each is inside its cadence |  |
-| T1099-b | Run `scripts/freshness_report.py --out` after each box run and push `freshness_wires.json` to R2 next to the data (H9 schedule) |  |
 | T1099-d | Decide the cadence per wire; 35/45/90 days in `WIRES` are placeholders |  |
 | T1108-a | Give the dedicated support address (and set up the mailbox with SPF, DKIM, DMARC): `SUPPORT_EMAIL` in `continent-app/src/lib/contact.js` is a placeholder equal to the general address |  |
 | T1108-b | Review the Dutch support strings (`support.*`, `footer.support` in nl.js); the Dutch is a draft, and de, es, fr, it fall back to English |  |
@@ -84,7 +80,7 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1117-a | The AI guard (plan-day, parse-booking, /api/ask/answer) is code only: deploy both Edge Functions and the Pages build so travellers get it | 1 |
 | T1117-b | The 50-attack set runs on stubbed model outputs; run `continent-app/scripts/ai/redteam_live.mjs` against a preview with a test account to record real Gemini and Workers AI outputs, and add any attack that got through | 2 |
 | T1118-a | Legal review of docs/legal/ARTICLE30.md as brought current (section 2a retention lines, rows 20 to 24, Resend) and of the six-language "What we keep" and delete strings; the day counts in 069 are drafts |  |
-| T1118-b | Decide how long the anonymised pass_grants VAT and waiver record is kept, then add that line to privacy_retention_sweep (069) and section 2a |  |
+| T1118-b | Ask the accountant to confirm the Belgian VAT record period for pass_grants (draft: 10 years after the end of the year of sale); tell a session the answer so it writes the sweep line. | |
 | T1118-c | Paste 069 (after 067 and 068) in the Supabase SQL editor, enable pg_cron so carta_privacy_retention runs daily, then run a real export and a throwaway-account delete on production | 1 |
 | T1118-d | Read and accept Resend's DPA, record its version and transfer basis in ARTICLE30.md section 3 |  |
 | T1119-b | Make the `static-analysis / semgrep` check required on `main` in GitHub branch protection so a red gate blocks merging |  |
@@ -104,7 +100,6 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1131-a | Write the founder line in `PRESS_FOUNDER_LINE` (`continent-app/src/lib/press.js`); the press kit shows a visible placeholder until then |  |
 | T1131-b | Fill the journalist list: names and public editorial addresses per `docs/marketing/journalist-list.md`, grow it to about 40 rows (UK outlets later) and keep the filled copy out of the repo |  |
 | T1131-c | Review the Dutch press strings (`press.*`, `support.pressLink` in nl.js); de, es, fr, it fall back to English. Replace the screenshot slot (`PRESS_SCREENSHOT`, today the site OG image) with a real product screenshot |  |
-| T1133-a | Run one wire-writing layer and `npm run data` on the build box with the T1133 write guard on, to prove the owner's full master and wire pass `docs/wire.schema.json` (checked here only on the shipped wire; the master is not in the cloud checkout) | 1 |
 | T1127-a | Trail photos: 2,886 walks (16%) still show the route glyph and 14,065 have no photo of their own; run the Commons trail-photo harvest (`pipeline/trails/trail_images.py`, wider radius and Wikipedia article images) |  |
 | T1127-b | 27 gem destinations (Sadali, Estaing, Sudbury and others) have no licensed hero; harvest Commons geosearch for them, then re-run `hero_ladder.py` |  |
 | T1125-a | Look at Explore, Plan, Help and the press kit with data loaded at phone and desktop width; the type and radius token swap was not seen in a browser (report T1125) |  |
@@ -122,18 +117,14 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1128-b | The home film and the home tour move by themselves with no pause control, which WCAG 2.2.2 (Level A) does not allow for motion over 5 s; decide on a small pause control or stopping after 5 s (carries T620-a, T956-a) |  |
 | T1128-d | The wizard's country picker map is pointer only; the card grid beside it is the keyboard path; decide whether the map needs its own keyboard layer (carries T190-d) |  |
 | T1128-h | Look at the home header on the real film at 1280 px: its labels now carry a hairline ink shadow so they hold 4.5:1 without the film (the container could not load the film or photos) |  |
-| T1135-d | Decide whether booking documents must be processed in the EU (C9, ARTICLE30); if yes parse-booking moves to Gemini on Vertex AI EU or an EU vision model that passes E1 |  |
 | T1135-f | CAX41 CPU speed is inferred from Ampere A1 figures; run llama-bench with Qwen3-30B-A3B Q4_K_M on the box before moving batch jobs |  |
-| T1135-g | Moving plan-day or suggest-city off Gemini at the E-R3 trigger is an owner decision, with CLAUDE.md updated in the same change |  |
 | T1135-h | Ask's free Workers AI Neurons cover about 560 answers a day (about 2,800 MAU); past that switch on the Workers paid plan or Ask answers with facts only |  |
 | T1135-i | At about 10,000 MAU grounded searches pass 80 percent of Gemini's free 5,000 a month; review the grounded allowance per tier in plan_tiers against USD 14 per 1,000 searches |  |
 | T1136-a | The Ask eval gate scores dense and hybrid only where public/search/ask/ is built (not in git, not in CI); run `node scripts/eval/ask-eval.mjs --bless` in the main checkout with the index built and commit the baseline, or the gate never guards the dense half |  |
 | T1136-g | The 142 place labels were written by one session from general knowledge of Europe and checked only against the catalogue's ids; an owner read of scripts/eval/ask-set.json (places per question) would make the recall numbers more trustworthy |  |
 | T1142-c | Confirm the must_see and must_have split and the floors in scripts/quality/rules.yaml (carries T1134-g: tags, wikidata, transfer must_have at floor 0) |  |
 | T1142-d | The Data health panel imports its snapshot at build time and the box's reset restores the committed one; decide a run-time path for panel.json (R2 status/ or a box commit) and fetch it |  |
-| T1142-f | On the box set CARTA_QUALITY_OUT=logs/status/quality and seed it from data/reports/quality/, so the quality history and drop baseline survive weekly.sh's git reset |  |
 | T1145-e | Review the D6 expectation blend (population 0.25, area 0.25, nights 0.5) and gap thresholds before D15 adds places on them; six country gaps are not robust to the blend | 0 |
-| T1179-a | Decide how trail summaries reach travellers: the English `summary` key on the wire (the trail page and planner then print English in every language) or the app renders `parts` through t() in six languages; data/trails/summaries.json holds both |  |
 | T1179-e | After the trails rebuild (T1092-a, T1094-a) rerun `python pipeline/trails/summaries.py` and commit the output: the top band, names and grades move with the rebuild, and test_trail_summaries.py fails on a stale file | 1 |
 | T1180-a | Re-rate the trails on the box with the lab up so the relief fix reaches the wire: `python run_pipeline.py --only trails_rate`, then `--only rating_v5_profile`, then `python pipeline/nature_tiers.py --check` (wire matches frozen True; never `--recalibrate`); about 265 of the 503 downhill walks move up a band (report T1180) | 1 |
 | T1180-b | After T1180-a about 37 walks enter the top band T1179 summarised, so rerun `python pipeline/trails/summaries.py` and its test and commit the output (with T1179-e); not rerun now because summaries read the wire, which only moves after the re-rate | 2 |
@@ -152,11 +143,7 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1181-i | Run trails_registry and coverage_report on the box so the 34 new famous_registry seeds (SEEDS_T1181) resolve, then rerun the trails external check |  |
 | T1173-f | Decide which live content_overrides rows (Content tab) should be promoted into data/overrides/ and cleared live; needs a read of the live table |  |
 | T1173-g | The Overrides tab reads a build-time snapshot; on the box the weekly git reset puts the committed snapshot back before each build (same as T1142-d), so outcomes from the box run are not shown until the snapshot is fetched at run time; the owner's T1142-d decision (R2 status/ or a box commit) settles both (T1214) |  |
-| T1173-i | ROADMAP I13 asks for an admin editor that writes; this task drafts only (no database writes, no migration). A writing path (for example a GitHub pull request opened from the admin page, or a staging table the pipeline reads) is a product decision |  |
 | T1140-a | Deploy plan-day, suggest-city, parse-booking and the Pages build with the prompt registry (prompts.js, prompt.mjs); the prompts are byte-identical, so it can ride on T1137-a's deploy |  |
-| T1155-a | Saved traveller trips are not reachable from the MCP server; offering them needs a per-user auth design (token, scopes, RLS) and a threat model review |  |
-| T1155-b | The server runs only from a repo checkout with `continent-app` installed (it imports the price engine); packaging it or a remote HTTP mode is a decision, and a remote mode needs auth and rate limits first |  |
-| T1155-d | Owner step: try the server in a real MCP client (see the report's owner steps) |  |
 | T1167-a | Create the private Cloudflare Pages project `carta-docs` behind Cloudflare Access and deploy the built site (`.docs-site`) to it; the decision on site visibility is T1045-i |  |
 | T1187-h | Run the first trails validation on the box after the next trails export and commit data/reports/validation/ (owner steps in report T1187) |  |
 | T1156-a | Owner: a lawyer reads the public AI page and the EU AI Act sections of the model cards (the Article 50 reading, "not high-risk", provider versus deployer duties) before launch sign-off J1 |  |
@@ -166,7 +153,6 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1143-g | sources.yaml uses LicenseRef ids for UNESCO, Numbeo, the stays scrape, Commons (per file) and US Gov data, and the ledger marks some of them "verify"; confirm each against the ledger row before the licences are shown to travellers |  |
 | T1138-a | Box CPU runs: llama-bench Qwen3-30B-A3B Q4_K_M on the CAX41 (replaces the inferred speeds in ai_models.json box_cpu, with T1135-f) and each batch job's eval on the box; a job that passes goes into BOX_PASSED and box_passed in one commit | 1 |
 | T1138-e | Ask quality for Gemini Flash-Lite and OVHcloud Mistral Small 3.2 is an owner run (ask-eval-live.mjs needs wrangler pages dev and a key); also rerun Qwen3, whose 88.7 percent is from T563 on 2026-10-22 |  |
-| T1138-h | Owner decision on the live features with the T1138 numbers (no move today; Ask stays on Workers AI, the rest on Gemini) and on the switch trigger values in ai_models.json switch.triggers |  |
 | T1146-a | Review the D15 add list per country in docs/data/catalogue-gaps/ (142 adds, 440 stretch below the 0.40 floor, 3 merge reviews); D15 part 2 applies only what is approved | 1 |
 | T1146-e | cache/place_signals.json measures Wikipedia attention for 4,083 of 90,393 candidates; run harvest_place_signals.py with a wider --undesignated-top on the box, rebuild candidates and rerun catalogue_gaps.py |  |
 | T1139-a | Paste migration 071 (ai_model_events call rows, admin_ai_calls_weekly, 30 day prune); until then no event is stored and the panel is empty; steps in the T1139 report |  |
@@ -175,7 +161,6 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1144-a | The truth set sheet (evals/truth/sheet.csv, 762 rows) is not verified by hand: the score rests on 90 seeded rows that share the data's own sources; verify the rows (evals/truth/GUIDE.md) and move the baseline | 1 |
 | T1144-b | The text judge has no kappa against a human: label the 50 texts in evals/truth/judge/labels.json, then read the kappa in the truth eval | 2 |
 | T1144-c | Run the truth text judge once on Gemini through the gateway (judge.mjs --backend gemini) to compare it with the blind session judge | 3 |
-| T1144-e | The blind session judge found 0 of 15 shipped place blurbs supported by the Wikivoyage text they cite (guide.url): decide whether blurbs must cite the source that backs them or be rewritten from it |  |
 | T1183-a | Run the routed continuity repair (route_bridge.py) on the box per country with BRouter tiles staged, compare against the expected counts in the report, then curate, coverage and trails_external; see report T1183 | 1 |
 | T1183-d | Relations with parts out of order AND a real break are refused as gap_too_long since route_bridge keeps relation order; a reorder-then-route pass needs an owner rule on what keeping the order allows |  |
 | T1189-d | 76 matched beaches print a class that differs from the register because several register sites lie on one beach; decide whether the page shows the worst reading or each site |  |
@@ -190,12 +175,9 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1152-f | Legal read of the cookieless taste counter under EDPB Guidelines 2/2023 (ePrivacy 5(3) can cover a ping without cookies) together with the other counters, ARTICLE30 row 13d (report T1152, Owner steps) |  |
 | T1153-a | The place linker answers the Explore search only behind ?link=1; turning it on for everyone is a product call after the owner tries it (flip the default in continent-app/src/lib/linking/flag.js) |  |
 | T1153-c | The 300-mention linking set was written by the session that built the linker, so MRR 0.997 is an upper bound; label 300 real mentions from search logs, parse-booking titles and Ask, then re-bless scripts/eval/linking/baseline.json |  |
-| T1153-e | parse-booking does not call linkPlace yet: link each booking's place in supabase/functions/parse-booking/logic.mjs (linker.js runs in Deno as is) with the trip stops' countries as context |  |
 | T1157-a | Create the rate limit namespaces in Cloudflare (RL_ASK, RL_FLIGHTS, RL_STAYS, RL_FORECAST in wrangler.toml), confirm Pages accepts `[[ratelimits]]` on the first preview deploy, else add one WAF rate rule |  |
-| T1157-c | Edge Functions have per-user ai_consume caps in the database (durable) but no per-address limit; Supabase has no Cloudflare binding, so it needs a database counter or the WAF in front, an owner decision |  |
 | T1158-a | Run the k6 scripts: first locally against `wrangler pages dev` (to record local p95) and then against the Pages preview (`docs/runbooks/load-tests.md`), and paste the p95 numbers in a report |  |
 | T1159-a | Run the live drill: install the backup timer on the box, run it once, then `ops/restore_drill.sh --latest` on the laptop and write the total seconds in the runbook; nothing here ran against Supabase or R2 |  |
-| T1159-e | auth.users, Storage objects and Edge Function secrets are still in no backup (public schema only); decide if a users export is needed for a full-project rebuild |  |
 | T1185-a | Run the trails export on the box so `wb` reaches the wire (needs the lab with `transit_stops`); until then pages with no record say "we do not know" |  |
 | T1154-a | The Intelligence API is not running on the box: make a key, write services/intelligence/.env, run the full tagger, start compose (owner step in the T1154 report) | 1 |
 | T1186-a | Run fill_water.py on the box (EEA cache, OSM swim tag sweep, --apply) and record the water class and unknown swim counts; optionally drop national CSVs in cache/lakes/national_water/ |  |
@@ -207,9 +189,6 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1162-c | Ship the next deploy with node scripts/ship.mjs (dry run first, then --live, --from after a fix) and report any step that differs on the laptop |  |
 | T1164-a | Run the ZAP baseline against the real preview deploy (Actions, zap, job preview) after each preview deploy and record the result; only the local fast-build preview was scanned so far (0 High) |  |
 | T1164-b | Live auth probes of the deployed Edge Functions (no token, expired, forged, anon key, wrong-signature stripe-webhook); the CI tests run the real handlers with stubs, the deployed gateway and Supabase Auth were never probed (also closes T1079-f) |  |
-| T1164-f | Password and MFA policy decision: drop the upper-case, digit and symbol rules of the change-password form (ASVS V6.2.5), add a context word list (Carta, the name, the e-mail; V6.1.2, V6.2.11), and decide whether travellers get optional TOTP (L2 V6.3.3) |  |
-| T1164-j | Session lifetimes in the Supabase Dashboard: inactivity timeout, time-boxed sessions (absolute limit), e-mail OTP and magic-link expiry 600 s instead of 3600 s; and accept or solve that travellers cannot list their sessions (ASVS V7.3.1, V7.3.2, V6.5.5, V7.5.2) |  |
-| T1164-n | The Supabase project exposes graphql_public (pg_graphql, introspection on) though the app uses no GraphQL; remove it from the exposed schemas or drop the extension, after checking nothing uses it (ASVS V4.3.1, V4.3.2) |  |
 | T1161-a | Set CARTA_BOX_ML=all on the box and check the first ask_index and guided_search runs there (RAM, minutes, golden set); neither has run on the box yet (report T1161, owner steps) | 2 |
 | T1161-b | Switch on the box stays scrape for Hostelworld: R2 write on carta-stays-state for the box token, playwright install-deps, install.sh, a one-town test, then CARTA_STAYS_SCRAPE=1 before March (report T1161) | 3 |
 | T1161-c | Decide where Booking scrapes (home device recommended, residential proxy the alternative) and install stays_scrape.sh there; Booking turns away the box's datacenter address (report T1161, Research) | 4 |
@@ -217,18 +196,16 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1190-a | Owner step: check the 48-row price hand sample by hand and run prices_sample; until then no check sees absolute euros (report T1190) |  |
 | T1190-b | Owner step: download prc_ppp_ind A011101 and A011102 (and 2025) and refresh reference_pli.json; beds are checked against restaurants and hotels together today |  |
 | T1190-c | Owner step: enter about 20 published fare examples in fare_examples.csv, copy the sweep files to cache/flights_wire and run prices_fares; swept fares have no outside check |  |
-| T1190-h | Numbeo's terms forbid reuse without a licence, yet cache/costs.json and meta.cost_validation cite Numbeo anchors for the June 2026 baskets; owner to decide license or replace |  |
+| T1190-h | Contact Numbeo for a data licence covering the cost anchors (cache/costs.json, meta.cost_validation); sign and pay; record the licence in docs/tos/data_licenses.md. | |
 | T1188-a | The text judge does not count: its only labels are seeded (T1144's blind session verdicts plus the planted key, two model raters); label the 50 texts (T1144-b) and run `python -I scripts/validation/judge.py calibrate --write` to see whether the session judge passes the threshold rule ([report](P15/T1188-llm-judge.md)) | 1 |
 | T1188-b | The Gemini judge has never run (no key in the cloud container): run it on the D4 sample through the gateway, check that `gemini-pro-latest` resolves (else set AI_JUDGE_MODELS), and calibrate it ([report](P15/T1188-llm-judge.md)) | 2 |
 | T1168-a | The docs workflow must run `node scripts/docs/ask_docs.mjs build` before `mkdocs build`, else the Ask box has no index on the site (index.js is generated, git-ignored) |  |
 | T1168-b | Dense half of Ask the docs (model2vec potion + RRF with BM25) not built: container has no model; adopt only if the eval gains |  |
 | T1168-c | `ask_docs.mjs --model` (Workers AI via the gateway) never run live; needs CF credentials |  |
 | T1168-d | The ask-docs question set was written by its builder; replace with real questions and measure Material's built in search on the same set |  |
-| T1163-b | Seven files knip flags are kept because checks load them: AiDayPlanModal and AiPlanRoute (unmounted, read by verify_day_dates and the AI proposal harness), admin AiCalls, useAiCalls, SloPanel, useSloSnapshot (tested, never mounted), lib/accuracy.js (explainer); decide mount or delete |  |
 | T1170-a | Native review of the machine-drafted nl, de, fr, es, it strings listed in docs/i18n/review.md (about 3,200 strings, admin.* last) |  |
 | T1170-e | French register is mixed (tu on home, vous elsewhere); owner picks one, then align fr.js |  |
 | T1182-b | After the first monthly run with the box lab up, record free -m and the run minutes of the trails_* tasks, and lower TRAILSLAB_MEM_LIMIT or move the lab to a CAX21 if the box swaps hard; the 1.5 GB cap and the tuning are planning figures, not measured on the box | after T1182-a |
-| T1182-d | Box mode passes the lab guard for all 22 lab-guarded tasks, but 14 of them name further inputs (Geofabrik extracts, Copernicus DEM tiles, BRouter tiles, Overpass, Commons); decide which of those inputs live on the lab volume and which tasks stay with the worker |  |
 | T1172-a | Register the affiliate programmes and set the four partner ids; until then partner links stay plain (owner step) |  |
 | T1172-b | Approve the partner disclosure wording against the I-R5 legal checklist and PRODUCT.md (I-e) |  |
 | T1169-b | The installed app is untested on a real iPhone and Android phone: install from the hint, offline reopen of a kept trip, update after a deploy (CACHE_VERSION carta-v8); see the owner step in report T1169 |  |
@@ -274,7 +251,6 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1198-f | Review the 42 heroes flagged on the whole list (Starmer portrait on Tiverton, Hythe, Rothwell; Flag of Europe on Eu; a grizzly on Fur) and approve or refuse the 12 ladder replacements before any --apply | 3 |
 | T1199-a | Check the entry rules table in pipeline/entry_rules.py against the live official pages (travel-europe.europa.eu EES and ETIAS, Your Europe, EUR-Lex 2018/1806, GOV.UK ETA and entry requirements), which this session could not open, then move RULES_CHECKED to that day (owner steps in report T1199) |  |
 | T1199-b | Run the entry_rules task on the box (python run_pipeline.py entry_rules, or python pipeline/entry_rules.py --refresh) so each country's advice carries the GOV.UK page's own update date; the Content API fields public_updated_at and details.parts are tested on a fixture only | after T1199-a |
-| T1199-e | Check before you go shows all four traveller groups (about 600 px on a phone); decide whether Carta asks for or remembers the traveller's passport and shows only that line, which needs a stored preference |  |
 | T1201-b | Run the trails chain on the box (hierarchy, curate, scenic, attributes, rate with export, summaries) so the T1201 fixes reach the wire, and record their numbers; see report T1201, Owner steps | after T1182-a |
 | T1204-a | Check the footprint factors in pricing.json `footprint.factors` against the DESNZ workbook (the container could not open gov.uk; values came from secondary mirrors, coach 28 vs 39 and the petrol car row unconfirmed) |  |
 | T1203-a | D21: run `python run_pipeline.py access_facts` on the box (Overpass is unreachable from the build container) and ship destinfo; record how many destinations get an `access` row |  |
@@ -291,13 +267,11 @@ Owner-only rows from the old register (`the retired register`, retired 2026-11-1
 | T1208-g | The nl, de, fr, es and it `why.place.*` strings (14 each) were written by a session; a native read is needed (report T1208, Owner steps) |  |
 | T1209-a | The G14 home is built behind HOME_G14 (off): after T1111-a, compare ?home=g14 with ?home=v3 and flip the flag in continent-app/src/browse/home/homeVariant.js or keep v3 (report T1209) | 1 |
 | T1209-b | Look at the G14 home (?home=g14) on a real phone on a preview: the doors, the example card, the share button, and how quick it feels (INP is only meaningful there) | 2 |
-| T1211-a | parse-booking may still fetch any public host (ASVS V13.2.4, V13.2.5 want an outbound allowlist), and fetch does its own DNS lookup after the T1211 address check (TOCTOU rebinding window Deno cannot pin): decide whether link import keeps an open-internet exception or goes through an egress proxy that checks the connected address |  |
 | T1211-b | Before the next deploy of parse-booking, confirm the Supabase Edge runtime allows Deno.resolveDns (one link import on the preview project); without it the new check fails closed and every URL import answers url_unreachable |  |
 | T1213-a | Read the official scraping, caching and storage clauses of the partner terms (research could not fetch them) |  |
 | T1213-d | Add the stop flag to the late sweep on the Hetzner box |  |
 | T1213-f | Travelpayouts Data API signup and token for the P1 coverage run |  |
 | T1213-g | Set LADDER_STOP_GOOGLE_FLIGHTS=1 before the first paid sale |  |
-| T1213-h | Review decision I-g before the Booking.com affiliate application |  |
 | T1213-i | Partner applications at the milestones in docs/data/access-ladder.md |  |
 | T1216-c | Rerun the ratings layer on the box with the real World Heritage cache (`runner.py ratings --write`) now that serial sites count at every component, and move the fact.unesco_join baseline once on purpose (75.6% to about 57% in the container, a wider reference, not a regression) ([report](P15/T1216-sweep-validation.md)) |  |
 | T1214-d | The crowding fix (own-country NUTS 3 region first, 10 border places moved, 11 proxies labelled) reaches the wire only after the box reruns the crowding task |  |

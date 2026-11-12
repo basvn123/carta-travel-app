@@ -30,6 +30,6 @@ How to use it:
 | `docs/owner/uploads.md` | switching on the upload path | procedure |
 | `docs/owner/pass-subscription.md` | switching on the 12-month pass and the Trip Pass | procedure |
 | `docs/owner/paid-runs.md` | paid runs, last in the order | procedure |
-| `docs/owner/unsorted.md` | owner steps no procedure covered yet | 302 |
+| `docs/owner/unsorted.md` | owner steps no procedure covered yet; each is handed to a lane and moves to its file after the 2026-11-12 sweep | 274 |
 
 Counts are from 2026-11-11, when these files moved here from `Execution/`; the box files were recounted in the owner sweep of 2026-11-12.

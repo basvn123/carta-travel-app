@@ -32,10 +32,10 @@ Every summary passes check() before it is written:
                stop at the end, MIN_CHARS to MAX_CHARS characters.
 
 A row that fails is not written; the report says why. The output is a
-sidecar (data/trails/summaries.json) and does not touch the wire: the app
-shows `summary` as English prose on the trail page and in the planner, so
-putting it on the wire is a traveller facing change with an i18n decision
-behind it (T1179-a). Each summary also carries `parts`, the clause codes and
+sidecar (data/trails/summaries.json). Since owner decision T1179-a
+(2026-11-12) the trails export ships its English `text` as the row's
+`summary` when the lead's km, climb and minutes still match the row
+(export_wire.wire_summary), so the app prints it in every language. Each summary also carries `parts`, the clause codes and
 their values, so the app can render the same sentences through t() in all
 six languages instead of shipping the English.
 

@@ -775,6 +775,7 @@ export const de = {
   "auth.errNetwork": "Keine Verbindung. Prüfe sie und versuche es erneut.",
   "auth.errPasswordMismatch": "Die Passwörter stimmen nicht überein.",
   "auth.errPasswordShort": "Das Passwort muss mindestens {n} Zeichen haben.",
+  "auth.errPasswordContext": "Wähle ein Passwort ohne „Carta“, deinen Namen oder den ersten Teil deiner E-Mail-Adresse.",
   "auth.forgotPassword": "Passwort vergessen?",
   "auth.fullName": "Vollständiger Name",
   "auth.fullNamePlaceholder": "Max Mustermann",
@@ -2171,9 +2172,7 @@ export const de = {
   "saved.crewRemove": "{name} von dieser Reise nehmen",
 
   // Passwort ändern: die Checkliste, andere Geräte abmelden, der Reset-Schritt
-  "account.reqUpper": "Ein Großbuchstabe",
-  "account.reqNumber": "Eine Ziffer",
-  "account.reqSymbol": "Ein Zeichen, etwa ! oder #",
+  "account.reqContext": "Kein „Carta“, dein Name oder dein E-Mail-Name",
   "account.errPasswordRules": "Dein neues Passwort erfüllt noch nicht alle Regeln unten.",
   "account.signOutOthers": "Auf allen anderen Geräten abmelden",
   "account.passwordUpdatedOthers": "Passwort geändert. Alle anderen Geräte wurden abgemeldet.",

@@ -97,8 +97,8 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 
 ### QUOTA-014 When the allowance offers appear
 - Decides: where a traveller is told plans or searches are running out.
-- Rule: the AI plan sheet links to a Pass when exactly 1 plan is left (`plansLow`) and when events are ticked with 0 grounded units (`ground`); the credit chip reads "out" at 0 plans left and opens `plansLow`.
-- Constant: `continent-app/src/planner/AiDayPlanModal.jsx:260` and `:289`; `continent-app/src/components/CreditChip.jsx:35` to `:37`
+- Rule: the credit chip reads "out" at 0 plans left and opens `plansLow`; the Carta bot opens `plans` when the traveller is out. No screen offers `ground` since the AI plan sheet went (ROADMAP H14).
+- Constant: `continent-app/src/components/CreditChip.jsx:35` to `:37` (the plan sheet's two links lived in `AiDayPlanModal.jsx`, unmounted since the Carta bot and deleted with T1163-b, 2026-11-12)
 - Test: no test
 
 ### QUOTA-015 Pass running out
@@ -212,7 +212,7 @@ QUOTA-008, QUOTA-009, QUOTA-010, QUOTA-011, QUOTA-012, QUOTA-013, QUOTA-014, QUO
 
 | HANDBOOK says | Code does | Where |
 |---|---|---|
-| Soft gates are "shown at most once a session ... snoozed 30 days per reason" | `nudge`, the only function that reads the session flag and the snooze, is called nowhere; `plansLow` and `expiring` open through `require` and `openPrices`, so neither limit applies | `continent-app/src/hooks/usePaywall.jsx:232`; callers `CreditChip.jsx:37`, `AiDayPlanModal.jsx:290`, `AnnouncementBar.jsx:116` |
+| Soft gates are "shown at most once a session ... snoozed 30 days per reason" | `nudge`, the only function that reads the session flag and the snooze, is called nowhere; `plansLow` and `expiring` open through `require` and `openPrices`, so neither limit applies | `continent-app/src/hooks/usePaywall.jsx:232`; callers `CreditChip.jsx:37`, `AnnouncementBar.jsx:116` (`AiDayPlanModal.jsx` was deleted with T1163-b; it was unmounted already) |
 | Soft gates are "never for a payer" | `plansLow` opens for a payer once the allowance is known, and `expiring` opens for a payer from the banner | `continent-app/src/hooks/usePaywall.jsx:220`, `:252` |
 | "The plan-day function also has a shared daily ceiling" | The same ceiling and counter cover plan-day, suggest-city and parse-booking, both kinds together | `supabase/functions/suggest-city/index.ts:152`, `parse-booking/index.ts:161`, `044_payments_quota.sql:218` |
 | Pass table: one AI plan and grounded searches as separate counts | A grounded plan-day call spends one `plan` and one `ground` unit; a grounded suggest-city spends only `ground` | `supabase/functions/plan-day/index.ts:524`, `suggest-city/index.ts:205` |

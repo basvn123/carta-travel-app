@@ -61,34 +61,52 @@ export function passwordStrength(pw) {
 export const MIN_PASSWORD_LENGTH = 8;
 
 /**
- * The composition rules the change-password form checks off as you type.
+ * The rules the password forms check (owner decision T1164-f, 2026-11-12;
+ * ASVS 5.0 V6.2.5, V6.1.2, V6.2.11).
  *
- * These are a floor, not the measurement. The entropy score above is still the
- * honest signal, and it is worth saying plainly that composition rules are a
- * weaker tool than length: NIST SP 800-63B advises against imposing them
- * precisely because they push people towards Password1! rather than towards a
- * long phrase. They are here because the product asked for a visible, learnable
- * checklist, and a checklist people can satisfy deliberately beats a bar that
- * moves for reasons they cannot see. The meter stays alongside it, so a
- * four-word passphrase that clears every rule still reads as strong and a
- * rule-clearing eight-character mangle still reads as weak.
- *
- * "Symbol" is anything that is not a letter or a digit, which counts a space
- * and keeps accented letters on the letter side of the line.
+ * No composition rules: "one capital, one digit, one symbol" pushes people to
+ * Password1! rather than to a long phrase, and NIST SP 800-63B and ASVS both
+ * advise against them. What is left is the length floor and one context
+ * check: the password may not contain a word anyone who knows the account
+ * would try first, that is "carta", a part of the traveller's name or the
+ * part of the e-mail address before the @. The entropy meter above stays
+ * beside the checklist as the honest measurement.
  */
+export const CONTEXT_WORDS = ['carta'];
+
+// Lower case, accents off, so "Émile" in a name also catches "emile123".
+const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+/**
+ * The words a password may not contain, for this account: the fixed list plus
+ * each name part and each part of the e-mail's local part (split on . _ - +)
+ * of four characters or more. Shorter parts ("al", "ann") would refuse far too
+ * many good passwords ("planning") for no gain.
+ */
+export function contextWords({ name = '', email = '' } = {}) {
+  const local = fold(email).split('@')[0] || '';
+  const parts = [...fold(name).split(/[^\p{L}\p{N}]+/u), local, ...local.split(/[._+-]+/)];
+  return [...new Set([...CONTEXT_WORDS, ...parts.filter((w) => w.length >= 4)])];
+}
+
+/** The first context word the password contains, or null. */
+export function passwordContextWord(pw, ctx = {}) {
+  const p = fold(pw);
+  if (!p) return null;
+  return contextWords(ctx).find((w) => p.includes(w)) || null;
+}
+
 export const PASSWORD_RULES = [
   { key: 'len', test: (pw) => pw.length >= MIN_PASSWORD_LENGTH },
-  { key: 'upper', test: (pw) => /[A-Z]/.test(pw) },
-  { key: 'number', test: (pw) => /[0-9]/.test(pw) },
-  { key: 'symbol', test: (pw) => /[^\p{L}\p{N}]/u.test(pw) },
+  { key: 'context', test: (pw, ctx) => !passwordContextWord(pw, ctx) },
 ];
 
 /** Each rule with whether this password meets it, in checklist order. */
-export function checkPasswordRules(pw) {
-  return PASSWORD_RULES.map((r) => ({ key: r.key, met: r.test(pw || '') }));
+export function checkPasswordRules(pw, ctx = {}) {
+  return PASSWORD_RULES.map((r) => ({ key: r.key, met: r.test(pw || '', ctx) }));
 }
 
-/** Every rule met. What the submit button gates on. */
-export function passwordMeetsRules(pw) {
-  return PASSWORD_RULES.every((r) => r.test(pw || ''));
+/** Every rule met. What the submit buttons gate on. */
+export function passwordMeetsRules(pw, ctx = {}) {
+  return PASSWORD_RULES.every((r) => r.test(pw || '', ctx));
 }

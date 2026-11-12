@@ -5,7 +5,8 @@ ROADMAP E7, task T1138 (2026-11-06). Applies the E-R3 research (`docs/research/E
 ## Rules
 
 - Never the Claude API or an Anthropic SDK (CLAUDE.md). The gateways refuse any provider, model or URL naming it.
-- No live traveller feature (Ask, plan-day, suggest-city, parse-booking) moves off Gemini or Workers AI without the owner's decision (T1135-g). This task moves none.
+- Live traveller features stay where they are today: Ask on Workers AI, plan-day, suggest-city and parse-booking on Gemini Flash-Lite, with the switch triggers below as set (owner decision T1138-h, 2026-11-12).
+- When a plan-day or suggest-city trigger is reached, that feature moves to the best open model that passes its eval, with CLAUDE.md and `docs/decisions/0005-runtime-ai-on-gemini.md` changed in the same commit (owner decision T1135-g, 2026-11-12). Until then nothing moves.
 - A pipeline batch job may run on the box's CPU only after it passes its eval there. The gateway enforces it: `pipeline/ai_gateway.py` refuses provider `box` for a job not listed in `BOX_PASSED` (`box_not_passed`), except for the eval run itself (`AI_BOX_EVAL_RUN=1`).
 - A self-hosted model always keeps a managed model, then a no-model answer, behind it.
 

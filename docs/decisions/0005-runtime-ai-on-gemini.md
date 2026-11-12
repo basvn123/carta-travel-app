@@ -20,5 +20,8 @@ We chose **option 2**. Runtime AI runs on Gemini through `supabase/functions/pla
 - Good: a predictable cost; one runtime AI provider to secure.
 - Bad: Claude-only capabilities are not available at runtime.
 
+## Later
+- 2026-11-12 (owner decisions T1135-g and T1138-h): nothing moves today. When a plan-day or suggest-city switch trigger in `continent-app/config/ai_models.json` is reached, that feature moves to the best open model that passes its eval; that change updates this record and CLAUDE.md in the same commit. The Claude API ban stays either way.
+
 ## How we'll know it works
 A grep for `anthropic` in `pipeline/`, `continent-app/` and `supabase/` finds nothing but this rule.

@@ -383,6 +383,11 @@ after 30 days, so `carta-trailslab-push.timer` (installed by
 `lab.sh push` when the last push is `CARTA_TRAILSLAB_PUSH_DAYS` (blank = 21)
 days old or more, a logged skip outside box mode.
 
+Inputs: every input the lab-guarded tasks name (Geofabrik extracts, Copernicus
+DEM tiles, BRouter tiles, the Overpass and Commons caches) lives on the lab
+volume, so no `trails_*` task waits on the worker (owner decision T1182-d,
+2026-11-12). Size the volume for them.
+
 ## What comes next
 
 T048 left the monthly and quarterly tiers unscheduled once the Windows task is

@@ -604,40 +604,9 @@ const r2 = (v) => Math.round(v * 100) / 100;
 /** A whole-euro figure, with a tilde when the bed in it is not measured in or near the town. */
 const approx = (v, measured) => `${measured ? '' : '~'}${eur0(v)}`;
 
-const monthYear = (iso) => {
-  if (!iso) return null;
-  const d = new Date(`${String(iso).slice(0, 7)}-15T12:00:00Z`);
-  return Number.isNaN(d.getTime()) ? null
-    : new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(d);
-};
-
 // Who the bed prices come from (schema v18, T534), said the same way on every
 // page that prints one.
 const BED_CREDIT = 'Bed prices from TripAdvisor via Xotelo, Inside Airbnb and sampled Booking.com and Hostelworld lists';
-
-/**
- * Where the bed figure came from, in the receipt's own words (T098, T534):
- * measured in the town (with the month it was checked), borrowed from a named
- * town nearby, or estimated from similar towns in the country.
- */
-export function bedSource(cost) {
-  if (!cost || cost.stayEur == null) return null;
-  const when = monthYear(cost.captured);
-  if (cost.stayLevel === 'city') {
-    return `Bed: measured here from dated hotel, hostel and Airbnb prices${when ? `, checked ${when}` : ''}.`;
-  }
-  if (cost.stayLevel === 'region' && cost.source) {
-    return `Bed: priced from ${clean(cost.source)}${cost.stayKm != null ? `, ${n0(cost.stayKm)} km away` : ''}.`;
-  }
-  return 'Bed: estimated from similar towns in the country.';
-}
-
-/** Where the food figure came from (T098). */
-export function foodSource(cost) {
-  if (!cost || cost.foodEur == null) return null;
-  if (cost.foodLevel === 'city') return t('cost.foodCity');
-  return String(cost.foodBasis || '').startsWith('pli_scaled') ? t('cost.foodScaled') : t('cost.foodCountry');
-}
 
 /**
  * A week for one person as receipt lines: the bed for seven nights, then the
@@ -759,7 +728,8 @@ export function costPage(dos, ctx) {
         ],
       },
     ],
-    coverage: [bedSource(cost), foodSource(cost)].filter(Boolean).join(' '),
+    // No bed and food source line (owner decision T689-a): the credits below name the sources.
+    coverage: null,
     credits: [BED_CREDIT, 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled"],
     crumbs: [home, countryCrumb(cc), destCrumb({ name, slug: dos.slug })],
     boot: `#dest=${encodeURIComponent(dos.id)}`,
@@ -853,7 +823,7 @@ export function daysPage(cc, n, band, ctx) {
         ],
       },
     ],
-    coverage: `${n0(measured)} of these ${n0(rows.length)} bed prices are measured in the town itself; the other ${n0(rows.length - measured)} come from a town nearby or from similar towns in the country and carry a tilde. Food is priced from Numbeo, at the town's own rates where it measures them and at country rates elsewhere.`,
+    coverage: rows.length > measured ? 'A price with a tilde is an estimate.' : null,
     credits: [BED_CREDIT, 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled"],
     crumbs: band ? [home, countryCrumb(cc), { name: `${n} days`, path: paths.days(cc, n) }] : [home, countryCrumb(cc)],
     boot: null,
@@ -942,7 +912,6 @@ export function receiptPage(plan, ctx) {
     : `The cheapest stop for a day is ${cheapest.d.name}, at about ${eur0(cheapest.cost.dayEur)}.`;
   const others = ctx.receiptsOf(cc).filter((p) => p.trip.id !== trip.id).slice(0, 6);
   const week = ctx.daysOf(cc).filter((e) => e.days === RECEIPT_DAYS && !e.band);
-  const provenance = stops.map((s) => `${s.d.name}. ${[bedSource(s.cost), foodSource(s.cost)].filter(Boolean).join(' ')}`).join(' ');
   return {
     kind: 'receipt',
     path: plan.path,
@@ -978,7 +947,7 @@ export function receiptPage(plan, ctx) {
       },
       others.length ? { h2: `More weeks priced in ${where}`, links: others.map(receiptLink) } : null,
     ],
-    coverage: provenance,
+    coverage: stops.some((s) => s.d.hasCost && !s.d.measured) ? 'A price with a tilde is an estimate.' : null,
     credits: [BED_CREDIT, 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled", 'trip composed by Carta from its own destination catalogue'],
     crumbs: [home, countryCrumb(cc), sectionCrumb(cc, 'trips'), { name: names, path: paths.trip(trip.id) }],
     boot: null,

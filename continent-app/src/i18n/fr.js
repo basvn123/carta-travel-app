@@ -775,6 +775,7 @@ export const fr = {
   "auth.errNetwork": "Pas de connexion. Vérifiez-la et réessayez.",
   "auth.errPasswordMismatch": "Les mots de passe ne correspondent pas.",
   "auth.errPasswordShort": "Le mot de passe doit contenir au moins {n} caractères.",
+  "auth.errPasswordContext": "Choisissez un mot de passe sans « Carta », votre nom ni la première partie de votre adresse e-mail.",
   "auth.forgotPassword": "Mot de passe oublié ?",
   "auth.fullName": "Nom complet",
   "auth.fullNamePlaceholder": "Jeanne Dupont",
@@ -2171,9 +2172,7 @@ export const fr = {
   "saved.crewRemove": "Retirer {name} de ce voyage",
 
   // changer le mot de passe : la liste, la déconnexion des autres appareils, le lien
-  "account.reqUpper": "Une majuscule",
-  "account.reqNumber": "Un chiffre",
-  "account.reqSymbol": "Un symbole, comme ! ou #",
+  "account.reqContext": "Ni « Carta », ni votre nom, ni le nom de votre e-mail",
   "account.errPasswordRules": "Votre nouveau mot de passe ne remplit pas encore toutes les règles ci-dessous.",
   "account.signOutOthers": "Déconnecter tous les autres appareils",
   "account.passwordUpdatedOthers": "Mot de passe mis à jour. Tous les autres appareils sont déconnectés.",

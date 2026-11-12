@@ -49,7 +49,7 @@ Gaps by register row (the reasoning is in the T1164 report; rows not starting T1
 | T1120-d | V16.3.4 |
 | T1157-a | V2.4.1 |
 | T1164-c | V13.2.2, V13.3.2 |
-| T1164-f | V6.1.2, V6.2.5, V6.2.11, V6.3.3 |
+| T1164-f | V6.2.11 (partial, client side only), V6.3.3 (V6.1.2, V6.2.5 met 2026-11-12) |
 | T1164-g | V6.6.2, V10.1.2, V10.2.1, V10.4.4, V10.4.6 |
 | T1164-i | V16.2.1, V16.3.1, V16.3.2, V16.3.3, V16.4.3 |
 | T1164-j | V6.5.5, V7.1.1, V7.3.1, V7.3.2, V7.5.2, V10.4.8 |
@@ -167,23 +167,23 @@ Re-walk this list when a chapter's code changes (new auth path, new upload type,
 | ID | L | Requirement | Status | Evidence |
 |---|---|---|---|---|
 | V6.1.1 | 1 | Application documentation defines how controls such as rate limiting, anti-automation, and adaptive response, are used to defend against attacks such as cred... | Met | Rate limits and anti-automation are documented (threat model sections 2, 4, 6; T1157; `docs/owner/auth-settings.md`). |
-| V6.1.2 | 2 | A list of context-specific words is documented in order to prevent their use in passwords. | Gap (T1164-f) | No context-specific word list (Carta, the traveller name, the e-mail) is documented or checked. |
+| V6.1.2 | 2 | A list of context-specific words is documented in order to prevent their use in passwords. | Met (T1164-f) | The list is `CONTEXT_WORDS` ("carta") plus each name part and each e-mail local part of four characters or more (`contextWords` in `src/lib/passwordStrength.js`). |
 | V6.1.3 | 2 | Verify that, if the application includes multiple authentication pathways, these are all documented together with the security controls and authentication st... | Met | Three pathways (password, magic link, Google) documented with their controls in the threat model section 4. |
 | V6.2.1 | 1 | User set passwords are at least 8 characters in length although a minimum of 15 characters is strongly recommended. | Gap (T1071-a) | The app asks for 8 (`MIN_PASSWORD_LENGTH`), but the server floor is a Dashboard setting: 6 in local `config.toml`, 12 wanted (`docs/owner/auth-settings.md`), live not verified. |
 | V6.2.2 | 1 | Users can change their password. | Met | Account panel, Sign-in and security (`AccountPanel.jsx`). |
 | V6.2.3 | 1 | Password change functionality requires the user's current and new password. | Gap (T1071-a) | The form asks for the current password (`reauthenticate`), but the server only enforces it with "Secure password change" on, a Dashboard step. |
 | V6.2.4 | 1 | Passwords submitted during account registration or password change are checked against an available set of, at least, the top 3000 passwords which match the... | Gap (T1071-a) | Leaked-password protection is a Dashboard setting, not verified. |
-| V6.2.5 | 1 | Passwords of any composition can be used, without rules limiting the type of characters permitted. | Gap (T1164-f) | The change-password form demands an upper-case letter, a digit and a symbol (`PASSWORD_RULES` in `src/lib/passwordStrength.js`); ASVS forbids composition rules. |
+| V6.2.5 | 1 | Passwords of any composition can be used, without rules limiting the type of characters permitted. | Met (T1164-f) | No composition rules since 2026-11-12: `PASSWORD_RULES` in `src/lib/passwordStrength.js` is the length floor and the context check only (owner decision T1164-f). |
 | V6.2.6 | 1 | Password input fields use type=password to mask the entry. | Met | Every password field is `type="password"` (9 fields). |
 | V6.2.7 | 1 | "paste" functionality, browser password helpers, and external password managers are permitted. | Met | No paste blocking; `autocomplete` set so managers work. |
 | V6.2.8 | 1 | The application verifies the user's password exactly as received from the user, without any modifications such as truncation or case transformation. | Met | The password is sent as typed (no trim or case change); Supabase Auth hashes it with bcrypt. |
 | V6.2.9 | 2 | Passwords of at least 64 characters are permitted. | Met | Supabase Auth accepts up to 72 characters (bcrypt). |
 | V6.2.10 | 2 | A user's password stays valid until it is discovered to be compromised or the user rotates it. | Met | No forced rotation. |
-| V6.2.11 | 2 | The documented list of context specific words is used to prevent easy to guess passwords being created. | Gap (T1164-f) | As V6.1.2. |
+| V6.2.11 | 2 | The documented list of context specific words is used to prevent easy to guess passwords being created. | Partial (T1164-f) | Sign-up (`AuthModal.jsx`), reset (`ResetPasswordScreen.jsx`) and change password (`AccountPanel.jsx`) refuse a password that contains a context word (`tests/passwordRules.test.mjs`), but only in the app: Supabase Auth itself accepts any password over its length floor, so a direct `auth/v1/signup` call skips the check. Server side check (a password hook) is the ROADMAP C3 follow-up. |
 | V6.2.12 | 2 | Passwords submitted during account registration or password changes are checked against a set of breached passwords. | Gap (T1071-a) | As V6.2.4. |
 | V6.3.1 | 1 | Controls to prevent attacks such as credential stuffing and password brute force are implemented according to the application's security documentation. | Gap (T1071-a, T1071-c) | Supabase Auth rate limits are live Dashboard values, not verified; no CAPTCHA. |
 | V6.3.2 | 1 | Default user accounts (e.g., "root", "admin", or "sa") are not present in the application or are disabled. | Met | No default accounts; admins are explicit rows in `admin_users`. |
-| V6.3.3 | 2 | Either a multi-factor authentication mechanism or a combination of single-factor authentication mechanisms, must be used in order to access the application. | Gap (T1164-f) | MFA (TOTP) exists for the admin only; travellers sign in with one factor. L2 asks for MFA for every account. |
+| V6.3.3 | 2 | Either a multi-factor authentication mechanism or a combination of single-factor authentication mechanisms, must be used in order to access the application. | Gap (T1164-f) | MFA (TOTP) exists for the admin only; travellers sign in with one factor. L2 asks for MFA for every account. Owner decision T1164-f (2026-11-12): optional TOTP for travellers, not built yet (ROADMAP C3); optional MFA alone does not make this row Met. |
 | V6.3.4 | 2 | Verify that, if the application includes multiple authentication pathways, there are no undocumented pathways and that security controls and authentication s... | Met | Anonymous sign-in is off (`enable_anonymous_sign_ins = false`); no undocumented pathway. |
 | V6.4.1 | 1 | System generated initial passwords or activation codes are securely randomly generated, follow the existing password policy, and expire after a short period... | Met | Magic links and reset links are generated by Supabase Auth (CSPRNG) and expire. |
 | V6.4.2 | 1 | Password hints or knowledge-based authentication (so-called "secret questions") are not present. | Met | No hints or secret questions. |

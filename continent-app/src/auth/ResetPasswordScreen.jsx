@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Logo from '../components/Logo.jsx';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
-import { MIN_PASSWORD_LENGTH } from '../lib/passwordStrength.js';
+import { MIN_PASSWORD_LENGTH, passwordContextWord } from '../lib/passwordStrength.js';
 import { useI18n } from '../i18n/index.jsx';
 import { PasswordField } from './PasswordField.jsx';
 
@@ -12,7 +12,7 @@ import { PasswordField } from './PasswordField.jsx';
  * user sets a new password or bails out.
  */
 export function ResetPasswordScreen() {
-  const { updatePassword, exitRecoveryMode } = useAuth();
+  const { updatePassword, exitRecoveryMode, user } = useAuth();
   const { t } = useI18n();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,6 +27,7 @@ export function ResetPasswordScreen() {
     // "forgot your password" link lands, so a shorter minimum here would just
     // be a way around the one there.
     if (password.length < MIN_PASSWORD_LENGTH) { setError(t('auth.errPasswordShort', { n: MIN_PASSWORD_LENGTH })); return; }
+    if (passwordContextWord(password, { name: user?.user_metadata?.full_name, email: user?.email })) { setError(t('auth.errPasswordContext')); return; }
     if (password !== confirmPassword) { setError(t('auth.errPasswordMismatch')); return; }
 
     setLoading(true);

@@ -775,6 +775,7 @@ export const es = {
   "auth.errNetwork": "Sin conexión. Compruébala e inténtalo de nuevo.",
   "auth.errPasswordMismatch": "Las contraseñas no coinciden.",
   "auth.errPasswordShort": "La contraseña debe tener al menos {n} caracteres.",
+  "auth.errPasswordContext": "Elige una contraseña sin «Carta», tu nombre ni la primera parte de tu dirección de correo.",
   "auth.forgotPassword": "¿Has olvidado tu contraseña?",
   "auth.fullName": "Nombre completo",
   "auth.fullNamePlaceholder": "Ana Pérez",
@@ -2171,9 +2172,7 @@ export const es = {
   "saved.crewRemove": "Quitar a {name} de este viaje",
 
   // cambiar la contraseña: la lista, cerrar sesión en otros dispositivos, el enlace
-  "account.reqUpper": "Una mayúscula",
-  "account.reqNumber": "Un número",
-  "account.reqSymbol": "Un símbolo, como ! o #",
+  "account.reqContext": "Sin «Carta», tu nombre ni el nombre de tu correo",
   "account.errPasswordRules": "Tu nueva contraseña todavía no cumple todas las reglas de abajo.",
   "account.signOutOthers": "Cerrar sesión en los demás dispositivos",
   "account.passwordUpdatedOthers": "Contraseña actualizada. Se ha cerrado la sesión en los demás dispositivos.",

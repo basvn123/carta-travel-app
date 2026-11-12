@@ -25,7 +25,7 @@ Terms checked: **2026-11-07** by a research subagent. Its limit: the official ho
 
 1. P1: measure Aviasales coverage on the 10,094 routes; switch fares route by route where covered.
 2. Before the first paid sale: set `LADDER_STOP_GOOGLE_FLIGHTS=1` on the sweep Worker (and stop the late sweep box).
-3. Before the Booking.com affiliate application (P4): review decision I-g; set `LADDER_STOP_BOOKING_SCRAPE=1` if moving to option C.
+3. Before the Booking.com affiliate application (P4): review decision I-g; set `LADDER_STOP_BOOKING_SCRAPE=1` if moving to option C. Reviewed 2026-11-12 (owner, T1213-h): option A stays, keep scraping Booking.com and Hostelworld, flagged as a known risk.
 4. About 50,000 monthly users: apply for the Flight Search API.
 5. Steady Booking and Hostelworld clicks: apply or approach with the numbers.
 

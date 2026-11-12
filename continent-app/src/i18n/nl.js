@@ -784,6 +784,7 @@ export const nl = {
   "auth.errNetwork": "Geen verbinding. Controleer die en probeer het opnieuw.",
   "auth.errPasswordMismatch": "Wachtwoorden komen niet overeen.",
   "auth.errPasswordShort": "Wachtwoord moet minstens {n} tekens bevatten.",
+  "auth.errPasswordContext": "Kies een wachtwoord zonder “Carta”, je naam of het eerste deel van je e-mailadres.",
   "auth.forgotPassword": "Wachtwoord vergeten?",
   "auth.fullName": "Volledige naam",
   "auth.fullNamePlaceholder": "Jan Jansen",
@@ -2180,9 +2181,7 @@ export const nl = {
   "saved.crewRemove": "Haal {name} van deze reis",
 
   // wachtwoord wijzigen: de checklist, andere apparaten uitloggen, de herstelstap
-  "account.reqUpper": "Een hoofdletter",
-  "account.reqNumber": "Een cijfer",
-  "account.reqSymbol": "Een teken, zoals ! of #",
+  "account.reqContext": "Geen “Carta”, je naam of je e-mailnaam",
   "account.errPasswordRules": "Je nieuwe wachtwoord voldoet nog niet aan alle regels hieronder.",
   "account.signOutOthers": "Log uit op alle andere apparaten",
   "account.passwordUpdatedOthers": "Wachtwoord gewijzigd. Alle andere apparaten zijn uitgelogd.",
