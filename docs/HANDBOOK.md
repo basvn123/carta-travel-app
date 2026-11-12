@@ -2363,6 +2363,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
    - `lib/imageCredit.js` `creditFor()` handles Commons (via `public/poi_credits.json`, loaded on demand), Geograph and CDN copies (via `img/manifest/<layer>.json`). With no manifest it returns nothing and never guesses.
 6. **Takedown** (`photos/takedown.py`).
    - Steps, in order: a ledger entry, a wire scrub, deletion of the 5 R2 copies, a Cloudflare cache purge, then a manifest rewrite. Each step reports ok, failed or skipped.
+   - A needle and every wire string are compared after percent-decoding, lower-casing and spaces to underscores, so a typed title ("Colotois pennaria (2).jpg") matches the encoded URL the wire carries (`%282%29`). Before the owner sweep of 2026-11-12 it did not, and the T449 moth stayed on trail 86628.
    - `derive.py` refuses to run if the ledger has fewer rows than the last manifest recorded.
 7. **Home film.** The home film uses Pexels clips. Their licence needs no credit, so none is shown (T621). The source of each clip is kept in `src/lib/homeDemo.js`.
 
