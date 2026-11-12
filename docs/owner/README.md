@@ -10,7 +10,7 @@ How to use it:
 | File | What it covers | Steps |
 |---|---|---|
 | `docs/owner/product-decisions.md` | product and design calls only the owner can make | 147 |
-| `docs/owner/owner-checks.md` | other checks and clean-ups | 81 |
+| `docs/owner/owner-checks.md` | other checks and clean-ups | 25 |
 | `docs/owner/cloudflare.md` | Pages, R2, Workers, email routing | 46 |
 | `docs/owner/translation-review.md` | native-reader review of the six languages | 5 |
 | `docs/owner/data-and-pipeline-runs.md` | pipeline and data runs that wait on the owner | 40 |
