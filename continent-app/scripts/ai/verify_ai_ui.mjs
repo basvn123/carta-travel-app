@@ -1,9 +1,8 @@
-// Headless verify for the AI day planner UI. Two scenarios against a running
-// `vite preview` (default http://localhost:$CARTA_PORT or 4173):
+// Headless verify for the AI day planner UI against a running
+// `vite preview` (default http://localhost:$CARTA_PORT or 4173). The old
+// scenario A drove AiDayPlanModal, which was deleted with T1163-b (it had not
+// been mounted since the Carta bot replaced it):
 //
-//   A. fresh day: the empty day's "Ask Carta" button opens the modal; as a guest
-//      the sign-in note + built-in-planner fallback shows, and using it
-//      actually drafts the day (numbered pins + timeline appear).
 //   B. applied AI schedule (injected into localStorage the way applyAiResult
 //      writes it): the schedule card renders in the rail and the external
 //      discovery shows as a violet spark pin on the map.
@@ -101,43 +100,6 @@ const check = (name, cond) => {
 
 const browser = await chromium.launch();
 
-/* ---- A: fresh day, modal, guest fallback ---- */
-{
-  const page = await boot(browser, { viewport: { width: 1440, height: 900 }, withAiState: false });
-  await page.screenshot({ path: `${SHOTS}/a1-day-empty.png` });
-  const aiBtn = page.locator('.dayp-empty .dayp-cta').first();
-  check('A: Ask Carta leads the empty day', await aiBtn.isVisible().catch(() => false));
-  // The route picker is gone: no second "ready-made route" call to action.
-  check('A: ready-made route picker removed',
-    (await page.getByRole('button', { name: /ready-made route/i }).count()) === 0);
-  await aiBtn.click();
-  await page.waitForTimeout(600);
-  check('A: modal opens', await page.locator('.ai-plan-card').isVisible().catch(() => false));
-  check('A: guest sees sign-in note', await page.locator('.ai-plan-note-warn').isVisible().catch(() => false));
-  // The two facts that reshape a day now live in the form.
-  check('A: date field present, prefilled',
-    (await page.locator('.ai-plan-date').inputValue().catch(() => '')) === '2026-08-04');
-  check('A: people stepper present', await page.locator('.ai-plan-people').isVisible().catch(() => false));
-  check('A: events toggle present',
-    (await page.getByText(/festivals and events/i).count()) >= 1);
-  await page.screenshot({ path: `${SHOTS}/a2-modal.png` });
-  // Bump the party size and tick events, so the screenshot shows a filled form.
-  await page.locator('.ai-plan-people button').last().click().catch(() => {});
-  await page.locator('.ai-plan-toggles input[type=checkbox]').last().check().catch(() => {});
-  await page.waitForTimeout(400);
-  check('A: events note appears when ticked',
-    (await page.getByText(/cannot see live listings/i).count()) >= 1);
-  await page.screenshot({ path: `${SHOTS}/a2b-modal-filled.png` });
-  await page.getByRole('button', { name: /built-in planner/i }).first().click();
-  await page.waitForTimeout(4000); // fallback draft fetches activities_full
-  // The workspace opens on today's plan, so the route list is right there.
-  await page.waitForTimeout(800);
-  const stops = await page.locator('.dayr-list').count();
-  check('A: fallback drafted the day (route list present)', stops > 0);
-  await page.screenshot({ path: `${SHOTS}/a3-fallback-applied.png` });
-  await page.close();
-}
-
 /* ---- B: applied AI schedule + discovery pin, desktop ---- */
 {
   const page = await boot(browser, { viewport: { width: 1440, height: 900 }, withAiState: true });
@@ -153,7 +115,7 @@ const browser = await chromium.launch();
   await page.close();
 }
 
-/* ---- C: mobile (390x844): applied state + modal ---- */
+/* ---- C: mobile (390x844): applied state + the Carta bot ---- */
 {
   const page = await boot(browser, { viewport: { width: 390, height: 844 }, withAiState: true });
   check('C: mobile discovery pin on map', (await page.locator('.dem-pin.ai-disc').count()) >= 1);
@@ -164,10 +126,9 @@ const browser = await chromium.launch();
   const fab = page.locator('.dayws-bot-fab').first();
   if (await fab.isVisible().catch(() => false)) {
     await fab.click();
-    await page.locator('.dayws-bot-item').first().click();
     await page.waitForTimeout(600);
-    check('C: mobile modal opens and fits', await page.locator('.ai-plan-card').isVisible().catch(() => false));
-    await page.screenshot({ path: `${SHOTS}/c2-modal-mobile.png` });
+    check('C: mobile Carta bot opens', (await page.locator('.dayws-bot-item').count()) >= 1);
+    await page.screenshot({ path: `${SHOTS}/c2-bot-mobile.png` });
   } else {
     check('C: mobile Carta bot reachable', false);
   }

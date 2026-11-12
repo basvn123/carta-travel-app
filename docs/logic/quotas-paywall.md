@@ -98,7 +98,7 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 ### QUOTA-014 When the allowance offers appear
 - Decides: where a traveller is told plans or searches are running out.
 - Rule: the AI plan sheet links to a Pass when exactly 1 plan is left (`plansLow`) and when events are ticked with 0 grounded units (`ground`); the credit chip reads "out" at 0 plans left and opens `plansLow`.
-- Constant: `continent-app/src/planner/AiDayPlanModal.jsx:260` and `:289`; `continent-app/src/components/CreditChip.jsx:35` to `:37`
+- Constant: `continent-app/src/components/CreditChip.jsx:35` to `:37` (the plan sheet's two links lived in `AiDayPlanModal.jsx`, unmounted since the Carta bot and deleted with T1163-b, 2026-11-12)
 - Test: no test
 
 ### QUOTA-015 Pass running out

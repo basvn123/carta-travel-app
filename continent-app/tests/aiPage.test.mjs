@@ -65,7 +65,6 @@ test('T1215: the page names the AI label and the Report button as live, not plan
   // The label and the button exist where the page says they are.
   assert.match(read('src/browse/AskSearchFull.jsx'), /<AiMark /);
   assert.match(read('src/browse/ask/AskTurn.jsx'), /<AiMark /);
-  assert.match(read('src/planner/AiDayPlanModal.jsx'), /<AiMark report=/);
   assert.match(read('src/planner/days/DayBotChat.jsx'), /<AiMark report=/);
   assert.match(read('src/planner/DayPlanPanel.jsx'), /<AiMark /);
   assert.match(read('src/planner/TownPickerStep.jsx'), /<AiMark /);

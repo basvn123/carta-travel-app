@@ -335,46 +335,6 @@ try {
     await ctx.close();
   }
 
-  // ---- 5. The AI dialog's own date box carries the same bound -------------
-  {
-    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
-    const page = await ctx.newPage();
-    await seed(page);
-    await page.goto(`${BASE}/?tab=day&o=CRL`);
-    await page.locator('.day-stay-input').waitFor({ timeout: 120000 });
-    // The dialog lives behind a built plan, so rather than drive the whole
-    // flow to reach it, the check is on the markup the build emits: the one
-    // native date input in the planner must ship a min.
-    const src = await page.evaluate(async () => {
-      const mods = [...document.querySelectorAll('script[type="module"], link[rel="modulepreload"]')]
-        .map((n) => n.src || n.href).filter(Boolean);
-      const hits = [];
-      // T1089: a dev server serves the modal as its own module; a preview
-      // build holds it in a chunk reached through the entry's preloads.
-      try {
-        const dev = await fetch('/src/planner/AiDayPlanModal.jsx');
-        if (dev.ok) { const t = await dev.text(); if (t.includes('ai-plan-date')) hits.push(t); }
-      } catch { /* not a dev server */ }
-      for (const u of mods) {
-        const txt = await (await fetch(u)).text();
-        if (txt.includes('ai-plan-date')) hits.push(txt);
-      }
-      return hits;
-    });
-    if (!src.length) fail('could not find the built chunk holding the AI date input');
-    else {
-      // In the built output the input is a createElement call; the min prop
-      // has to be in the same object as the ai-plan-date class.
-      const near = src.some((txt) => {
-        const i = txt.indexOf('ai-plan-date');
-        return i >= 0 && /\bmin:/.test(txt.slice(Math.max(0, i - 400), i + 400));
-      });
-      if (!near) fail('the AI dialog\'s date input ships without a min bound');
-      else ok('the AI dialog\'s date input carries a min bound');
-    }
-    await ctx.close();
-  }
-
   await browser.close();
 } finally {
   if (srv) srv.kill();
