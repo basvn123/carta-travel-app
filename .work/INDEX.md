@@ -4,6 +4,7 @@ Every L1 and L2 run in this project, newest first. Each line links to its full r
 
 Format: `date · level · playbook · title: one-line result → report path`
 
+- 2026-11-11 · pre-crew · T1223 Derived routes fit the 4 GB box (D24, H9): way store, per-country child processes, peak memory down 56 to 72 percent → `.work/2026-11-11-derive-routes-memory/report.md`
 - 2026-11-11 · L2 · deep-task · Crew alignment: repo moved to the crew layout (CLAUDE.md, project map, decisions, lessons, owner steps), Execution/ and archive/ retired into git history → `.work/2026-11-11-crew-alignment/report.md`
 
 ## Before crew (T001 to T1222)

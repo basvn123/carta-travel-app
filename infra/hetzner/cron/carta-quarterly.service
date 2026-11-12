@@ -27,3 +27,8 @@ TimeoutStopSec=5min
 Nice=5
 IOSchedulingClass=best-effort
 IOSchedulingPriority=6
+# T1223: an out-of-memory kill takes the task process that ran out, not
+# the whole run. With the default (stop) the 2026-11-11 catch-up ended
+# when trails_derive_routes, a soft task, ran out of memory on Spain;
+# run_pipeline.py counts the killed task as a soft failure and goes on.
+OOMPolicy=continue

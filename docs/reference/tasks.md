@@ -583,7 +583,7 @@ Trails: routes built from way-level paths (MD, XK, MK, MT, AL)
 - Commands:
 
 ```
-python pipeline/trails/derive_routes.py
+python pipeline/trails/derive_routes.py --fresh-days 14
 ```
 
 ### <a id="trails_hierarchy"></a>`trails_hierarchy`
