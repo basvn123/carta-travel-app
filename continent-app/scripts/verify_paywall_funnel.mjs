@@ -102,10 +102,17 @@ for (const f of files) {
   for (const m of src.matchAll(/paywall\.(?:require|nudge)\('([^']+)'\)/g)) {
     called.add(m[1]);
   }
-  // onOpenPass(reason) call sites (AiDayPlanModal) resolve to require() one
-  // hop away in the component that mounts it; matched separately so 'plans',
-  // 'ground' and 'plansLow' are not flagged as unreachable.
+  // onOpenPass(reason) call sites (DayBotChat) resolve to require() one hop
+  // away in the component that mounts it; matched separately so 'plans' is
+  // not flagged as unreachable. 'ground' lost its only caller when
+  // AiDayPlanModal went (unmounted since the Carta bot, deleted with T1163-b):
+  // a real finding, recorded in ROADMAP H14.
   for (const m of src.matchAll(/onOpenPass\('([^']+)'\)/g)) {
+    called.add(m[1]);
+  }
+  // A default reason, such as CreditChip's `openPasses: (why = 'plansLow') =>
+  // paywall.require(why)`, is a call site too.
+  for (const m of src.matchAll(/\(\s*\w+\s*=\s*'([^']+)'\s*\)\s*=>\s*paywall\.(?:require|nudge)\(/g)) {
     called.add(m[1]);
   }
   // openPrices(reason) opens the modal for somebody who already pays, which

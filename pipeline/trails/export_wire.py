@@ -558,24 +558,53 @@ _t1179 = None
 
 
 def t1179_summaries():
-    """{trail id as str: English text}, read once; empty when the file is absent."""
+    """{trail id as str: (English text, lead part)}, read once; empty when the
+    file is absent."""
     global _t1179
     if _t1179 is None:
         try:
             items = json.loads(SUMMARIES.read_text(encoding="utf-8")).get("items") or {}
         except (OSError, ValueError):
             items = {}
-        _t1179 = {str(k): v["text"] for k, v in items.items() if isinstance(v, dict) and v.get("text")}
+        _t1179 = {}
+        for k, v in items.items():
+            if isinstance(v, dict) and v.get("text"):
+                lead = next((p for p in v.get("parts") or [] if p.get("c") == "lead"), {})
+                _t1179[str(k)] = (v["text"], lead)
     return _t1179
+
+
+def _km_text(distance_m):
+    """The figure summaries.py prints: 16419 -> "16.4", 5000 -> "5"."""
+    return f"{float(distance_m) / 1000:.1f}".removesuffix(".0")
+
+
+def summary_still_true(t, lead):
+    """Whether a T1179 summary's numbers still match the row being exported.
+    The sidecar is built from the previous wire, so a trail whose length,
+    climb or walking time moved since then must not ship the old figures
+    (honest numbers): the export falls back to the lead instead."""
+    if not lead or "km" not in lead:
+        return False
+    if not t.get("distance_m") or _km_text(t["distance_m"]) != str(lead["km"]):
+        return False
+    if lead.get("minutes") is not None:
+        if not t.get("duration_min") or int(round(float(t["duration_min"]))) != int(lead["minutes"]):
+            return False
+    if lead.get("climb_m") is not None:
+        up = t.get("ascent_m")
+        if up is None or abs(float(up) - float(lead["climb_m"])) > max(10.0, 0.02 * float(lead["climb_m"])):
+            return False
+    return True
 
 
 def wire_summary(t):
     """The `summary` a country row carries: the T1179 summary when the trail
-    has one, else the lead, except a retired describe.py lead on a walk, which
-    ships as None (T1201)."""
+    has one and its numbers still match the row, else the lead, except a
+    retired describe.py lead on a walk, which ships as None (T1201)."""
     own = t1179_summaries().get(str(t.get("id")))
-    if own:
-        return own
+    if own and summary_still_true(t, own[1]):
+        return own[0]
     lead = summary_of(t.get("description"))
     if lead and t.get("category") != "citytrip" and RETIRED_LEAD.search(lead):
         return None

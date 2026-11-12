@@ -19,7 +19,8 @@ test('context words: Carta, name parts and the e-mail local part, accents and ca
   const ctx = { name: 'Émile De Vries', email: 'emile.vries+trips@example.org' };
   const words = contextWords(ctx);
   for (const w of ['carta', 'emile', 'vries', 'trips']) assert.ok(words.includes(w), w);
-  assert.ok(!words.includes('de'), 'parts under three characters are not context words');
+  assert.ok(!words.includes('de'), 'parts under four characters are not context words');
+  assert.equal(passwordMeetsRules('planning a long walk', { name: 'Ann Vos', email: 'ann@example.org' }), true);
   assert.equal(passwordContextWord('MyCARTAtrip2026', ctx), 'carta');
   assert.equal(passwordContextWord('hello-Emile-1999', ctx), 'emile');
   assert.equal(passwordMeetsRules('vriesvries123', ctx), false);

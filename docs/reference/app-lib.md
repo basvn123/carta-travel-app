@@ -2197,7 +2197,7 @@ passwordStrength.js, how good is this password, measured rather than judged. The
 | function | `passwordStrength` | { bits, level, score } for the meter. The thresholds follow the usual reading of NIST SP 800-63B: under 36 bits is guessable offline in minutes, 60 bits is a reasonable floor for an account holding personal data. |
 | const | `MIN_PASSWORD_LENGTH` | The floor the form enforces. Eight, per current guidance, not six. |
 | const | `CONTEXT_WORDS` | The rules the password forms check (owner decision T1164-f, 2026-11-12; ASVS 5.0 V6.2.5, V6.1.2, V6.2.11). No composition rules: "one capital, one digit, one symbol" pushes people to Password1! rather than to a long phrase, and NIST SP 800- |
-| function | `contextWords` | The words a password may not contain, for this account: the fixed list plus each name part and each part of the e-mail's local part (split on . _ - +) of three characters or more. Shorter parts ("al", "jo") would refuse far too many good pa |
+| function | `contextWords` | The words a password may not contain, for this account: the fixed list plus each name part and each part of the e-mail's local part (split on . _ - +) of four characters or more. Shorter parts ("al", "ann") would refuse far too many good pa |
 | function | `passwordContextWord` | The first context word the password contains, or null. |
 | const | `PASSWORD_RULES` |  |
 | function | `checkPasswordRules` | Each rule with whether this password meets it, in checklist order. |

@@ -80,13 +80,13 @@ const fold = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toL
 /**
  * The words a password may not contain, for this account: the fixed list plus
  * each name part and each part of the e-mail's local part (split on . _ - +)
- * of three characters or more. Shorter parts ("al", "jo") would refuse far too
- * many good passwords for no gain.
+ * of four characters or more. Shorter parts ("al", "ann") would refuse far too
+ * many good passwords ("planning") for no gain.
  */
 export function contextWords({ name = '', email = '' } = {}) {
   const local = fold(email).split('@')[0] || '';
   const parts = [...fold(name).split(/[^\p{L}\p{N}]+/u), local, ...local.split(/[._+-]+/)];
-  return [...new Set([...CONTEXT_WORDS, ...parts.filter((w) => w.length >= 3)])];
+  return [...new Set([...CONTEXT_WORDS, ...parts.filter((w) => w.length >= 4)])];
 }
 
 /** The first context word the password contains, or null. */
