@@ -15,7 +15,7 @@ Only the owner can do these steps: they need the Google account that will own th
    A type file with no indexable pages is not written (trails, until the photo licence lands, see the T1076 report), so Search Console shows fewer children than this list.
 3. In Sitemaps, open each child file once so Search Console reports indexation per page type. In Pages, filter by sitemap to read one type at a time.
 4. Spot check with URL Inspection on three live pages: one place (`/<country>/<town>`), one country hub, one thin page. Expect: the place and the hub are "URL is on Google" or "Discovered"; the thin page shows "Excluded by noindex tag" and is not in the sitemap.
-5. **Bing (T205-f):** sign in to Bing Webmaster Tools with a Microsoft account, choose "Import from Google Search Console" (it copies the verified property and the sitemap). IndexNow needs a key file at the site root, which lives in the protected `continent-app/public/`: ask a session to add it (`public/<key>.txt` holding the key) and ship, then nothing more is needed from you.
+5. **Bing (T205-f):** sign in to Bing Webmaster Tools with a Microsoft account, choose "Import from Google Search Console" (it copies the verified property and the sitemap). Bing works without IndexNow. IndexNow would also need a key file in `continent-app/public/` (a protected path) and a submit step after each prerender push; neither exists yet (ROADMAP K2), so there is nothing for you to do for it now.
 6. **Field Core Web Vitals (T200-g):** a month after launch traffic starts, open Experience, Core Web Vitals; write the mobile and desktop Poor/Needs improvement/Good URL counts into the weekly log.
 
 ## Weekly review (every Monday, 15 minutes)

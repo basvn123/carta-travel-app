@@ -30,7 +30,9 @@ export function nightsSql(since) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(since)) throw new Error(`--since wants YYYY-MM-DD, got ${since}`);
   const minute = Math.floor(Date.parse(`${since}T00:00:00Z`) / 60000);
   const hour = "CAST(strftime('%H', minute * 60, 'unixepoch') AS INT)";
-  return `SELECT date(minute * 60, 'unixepoch') AS d, `
+  // Shifted two hours so one night (22:00 to 05:00) falls on one date, the
+  // morning's; the day part (05:00 to 22:00) keeps its own date.
+  return `SELECT date(minute * 60 + 7200, 'unixepoch') AS d, `
     + `CASE WHEN ${hour} >= ${NIGHT_FROM} OR ${hour} < ${NIGHT_TO} THEN 'night' ELSE 'day' END AS part, `
     + 'count(*) AS minutes, sum(jobs) AS jobs, round(avg(jobs), 1) AS per_min, sum(blocked) AS blocked '
     + `FROM runs WHERE minute >= ${minute} GROUP BY d, part ORDER BY d, part`;

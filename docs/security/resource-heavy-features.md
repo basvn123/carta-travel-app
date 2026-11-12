@@ -16,7 +16,7 @@ Limits are per caller address (`cf-connecting-ip`). Each route has two layers (`
 | `/api/forecast` | MET Norway weather API, whose terms ask for polite use | `RL_FORECAST`, 60 a minute | 60 a minute | Edge cache 30 minutes per cell; altitude stepped so the cache key cannot widen |
 | `/api/stays` (not built) | | `RL_STAYS`, 20 a minute, declared ahead | | |
 
-The bindings only count once the owner has created the namespaces (row T1157-a). Until then only the per-isolate window works, which resets with the isolate.
+Pages refuses rate limit bindings (`[[ratelimits]]` made `wrangler pages deploy` fail; removed from `wrangler.toml` on 2026-11-12, owner sweep), so on Pages only the per-isolate window works, which resets with the isolate. The durable layer is a Cloudflare WAF rate limiting rule on `/api/` (owner step T1079-a in `docs/owner/cloudflare.md`).
 
 ## 2. Supabase Edge Functions (`supabase/functions/`)
 
@@ -71,7 +71,7 @@ Systemd units carry `Nice=` and some a `MemoryMax=512M` (`infra/hetzner/cron/`),
 
 ## 6. Gaps
 
-- The per-address bindings are not live until T1157-a is done; a spread of isolates can each allow their own window.
+- Until the WAF rule of T1079-a exists, a spread of isolates can each allow their own window; Pages cannot hold the per-address bindings.
 - `/api/ask/answer` shares the `RL_ASK` binding with `/api/ask`, so its binding limit is 60 a minute, not the 8 its own window allows. The Neurons cap still bounds the cost.
 - No Edge Function has a per-address limit of its own; signed-out abuse of `waitlist` and the unsubscribe doors is bounded only by the per-address mail throttle and Supabase's platform limits.
 - The live Auth rate limits are not read from the Dashboard yet (T1071-a).
