@@ -111,8 +111,16 @@ Same key list for every language; the Dutch list is shorter because it already h
 ## Known issues found while drafting
 
 - Resolved (T1210): `day.place`, `day.poiDepthNote` and `day.townDepthNote` were cut-off fragments with no code reference; the three dead keys were removed from all six catalogues.
-- Italian `notfor.*` uses some masculine forms ("sei venuto", "abituato"); an Italian reader should neutralise them.
-- Registers: nl je, de du, fr vous (owner decision T1170-e, 2026-11-12; the tu strings on the home page are converted, ROADMAP I8), es tu, it tu, matching each catalogue's existing wizard strings.
+- Resolved (owner sweep 2026-11-12): the three Italian `notfor.*` strings with masculine forms (`lakeSwimNo`, `lakeCurrent`, `trailGrade`) were rewritten gender-neutral.
+- Registers: nl je, de du, fr vous, es tu, it tu. Decided in the owner sweep of 2026-11-12: French is vous everywhere (907 strings already were); the 104 tu strings (home, wizard, ask, travel, trip, chat) were rewritten. Exception: the example queries typed to Carta (`ask.placeholderPlan`, `ask.ex.plan`, `askChat.fu.plan`, `dayws.botPlan`, `bot.s.plan`) keep the tu imperative a person uses when typing.
+
+## Owner sweep audit (2026-11-12)
+
+A scripted audit of all six catalogues (10,219 keys each: key parity, placeholders, empty values, English function words, strings identical to English, accent-stripped words checked against the accented forms the same catalogue uses) found no missing keys, no empty strings and no English left in a translation outside loanwords (Trail running, Road trip, Power bank). It fixed:
+- **Stripped diacritics:** 1,013 strings had been written without accents, umlauts, ß or the opening ¿ ("etapes", "Fuhrt uber", "Strasse", "dia", "piu"): de 208, es 295, fr 393, it 103, nl 14. Only the diacritics changed, nothing else in the wording. The scans work from word lists. Three judge sweeps found more each time (63, then 68, then 108), all fixed, so expect a native reader to find some more; `continent-app/tests/i18nAccents.test.mjs` keeps the common stripped words from coming back.
+- **The shortlist word:** one word per language for the starred list (de Merkliste, es favoritos, fr favoris, it preferiti, nl favorieten); before, es, fr, it and nl mixed "preselección/présélection/shortlist/verlanglijst/lijstje" (T411-n).
+- **Every row in "Fix these first" below**, and the borderline rows marked fixed there.
+- Kept on purpose: `open.trail.sub` and `cov.reason.wayOnly` drop their `{country}` / `{things}` placeholder because the English country or noun cannot be inflected in the sentence ("in der Schweiz", "au Portugal"); short Intl month names stay lowercase with a period, as each locale writes them (T507-e).
 
 ## Back-translation check (T1196, provisional)
 
@@ -126,23 +134,10 @@ Every drafted string above (3,187: nl 583, de 651, fr 651, es 651, it 651) went 
 | es | 649 of 651 | 243 of 243 | 84.4 |
 | it | 649 of 651 | 242 of 243 | 82.5 |
 
-### Fix these first (they fail)
+### Fix these first (all fixed in the owner sweep, 2026-11-12)
 
-- nl `notfor.mtnExposure`: "een lange val" is a fall, not a drop beside the path ("steile afgrond naast het pad").
-- nl `trip.practicalParkRide`: "verderop" loses "out of the centre".
-- nl `admin.reviewLate`, `admin.reviewLateOne`, `admin.reviewLateToday`: "verschuldigd" means owed; "due for review" is meant.
-- de `crash.card`: "Karte" reads as map; a UI card is meant ("Diese Kachel" or "Dieser Bereich").
-- fr `trip.timedLabel`: "À chronométrer" (time it with a stopwatch) for "Worth timing".
-- es `admin.colTarget`: "Destino" reads as a travel destination; the target of an admin action is meant ("Objeto").
-- es `admin.fGroundUsed`: "con datos en directo" adds a claim; "grounded" searches are meant.
-- it `trip.practicalAirport`: "dal centro" reverses the direction of "to the middle of".
-- it `admin.colTarget`: "Destinatario" is a recipient, not a target ("Oggetto").
+nl `notfor.mtnExposure` (steile afgrond), nl `trip.practicalParkRide` (buiten het centrum), nl `admin.reviewLate*` (moest herzien worden), de `crash.card` (Dieser Bereich), fr `trip.timedLabel` (Le bon moment compte), es `admin.colTarget` (Objeto), es `admin.fGroundUsed` (búsquedas fundamentadas), it `trip.practicalAirport` (per il centro), it `admin.colTarget` (Oggetto).
 
-### Borderline (the judges passed them; a native reader should decide)
+### Borderline (all settled in the owner sweep, 2026-11-12)
 
-- de `admin.fGroundUsed` "Live-Suchen", it `trip.timedLabel` "Da programmare", de `trip.timedLabel` "Mit gutem Timing" (all for "Worth timing" or "Grounded searches").
-- nl and de `trip.dayChipDrive` "met de auto" and "mit dem Auto" for "by road".
-- nl `admin.attnOverdue` and related: "verlopen" leans towards "expired".
-- de `notfor.mtnExposure`: "unheimlich" (eerie) for "uneasy".
-- fr `admin.banCancel` "Pas finalement" for "Never mind"; fr `notfor.tripMoves` "détestez" (hate) for "dislike".
-- es and it `trip.practicalParkFree`, `trip.practicalParkRide`: "a {dist}" for "{dist} out".
+de `admin.fGroundUsed` (Suchen mit Quellenbindung), it and de `trip.timedLabel` (Conta il momento giusto, Lohnt gutes Timing), nl and de `trip.dayChipDrive` (over de weg, auf der Straße), nl `admin.attnOverdue` (Achterstallige), de `notfor.mtnExposure` (unwohl), fr `admin.banCancel` (Annuler), fr `notfor.tripMoves` (n'aimez pas), es and it `trip.practicalPark*` (a {dist} del centro / dal centro).

@@ -118,7 +118,7 @@
     "Duration": "7 days",
     "Best Period": "Early July – late September",
     "Budget Tier": "€€",
-    "Total Distance / Terrain": "approx. 60–68 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
+    "Total Distance / Terrain": "approx. 93 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
     "Getting There": "Fly to Innsbruck (INN), then IVB regional bus 4166 up the Stubaital to Neustift (about 40 minutes)",
     "Who It Suits": "Fit hikers with hut experience and no fear of exposed, cable-secured ground; not a first alpine trek"
   },
@@ -256,11 +256,11 @@
   ],
   "typeSpecific": {
     "raw": {
-      "Total Distance / Terrain": "approx. 60–68 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
+      "Total Distance / Terrain": "approx. 93 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
       "Who It Suits": "Fit hikers with hut experience and no fear of exposed, cable-secured ground; not a first alpine trek"
     },
-    "surface": "approx. 60–68 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
-    "distanceKm": 60,
+    "surface": "approx. 93 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
+    "distanceKm": 93,
     "elevationM": null,
     "verticalM": 5600,
     "technicalRating": null,

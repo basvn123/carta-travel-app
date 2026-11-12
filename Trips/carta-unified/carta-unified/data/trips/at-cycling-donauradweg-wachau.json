@@ -120,7 +120,7 @@
     "Duration": "7 days",
     "Best Period": "May, June, September, October",
     "Budget Tier": "€€",
-    "Total Distance / Terrain": "330–370 km, roughly 1,100 m cumulative gain; ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
+    "Total Distance / Terrain": "330–370 km, roughly 1,700 m cumulative gain with the side trips in the day lines (about 1,100 m on the river path alone); ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
     "Getting There": "Fly to Vienna (VIE), CAT or S7 to Wien Mitte, then ÖBB westbound to Passau Hbf (approx 3h30, one change at Linz). Return from Krems or Tulln on the Franz-Josefs-Bahn",
     "Who It Suits": "First-time tourers, families with teenagers, anyone who wants distance without climbing"
   },
@@ -268,13 +268,13 @@
   ],
   "typeSpecific": {
     "raw": {
-      "Total Distance / Terrain": "330–370 km, roughly 1,100 m cumulative gain; ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
+      "Total Distance / Terrain": "330–370 km, roughly 1,700 m cumulative gain with the side trips in the day lines (about 1,100 m on the river path alone); ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
       "Who It Suits": "First-time tourers, families with teenagers, anyone who wants distance without climbing"
     },
-    "surface": "330–370 km, roughly 1,100 m cumulative gain; ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
+    "surface": "330–370 km, roughly 1,700 m cumulative gain with the side trips in the day lines (about 1,100 m on the river path alone); ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
     "distanceKm": 330,
     "elevationM": null,
-    "verticalM": 1100,
+    "verticalM": 1700,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

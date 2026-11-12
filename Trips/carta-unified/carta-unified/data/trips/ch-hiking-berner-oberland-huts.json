@@ -118,7 +118,7 @@
     "Duration": "7 days",
     "Best Period": "Mid-July to late September",
     "Budget Tier": "€€€",
-    "Total Distance / Terrain": "approx. 75–85 km, 5,800–6,400 m combined ascent; white-red-white T3 throughout, one cable-secured step near Hohtürli",
+    "Total Distance / Terrain": "approx. 89 km, about 3,550 m combined ascent (lift-assisted sections not counted); white-red-white T3 throughout, one cable-secured step near Hohtürli",
     "Getting There": "Fly to Zürich (ZRH), train to Spiez, change for Kandersteg (about 2h total)",
     "Who It Suits": "Fit hut-to-hut hikers comfortable with a steep cable-assisted pass and consecutive long days"
   },
@@ -256,13 +256,13 @@
   ],
   "typeSpecific": {
     "raw": {
-      "Total Distance / Terrain": "approx. 75–85 km, 5,800–6,400 m combined ascent; white-red-white T3 throughout, one cable-secured step near Hohtürli",
+      "Total Distance / Terrain": "approx. 89 km, about 3,550 m combined ascent (lift-assisted sections not counted); white-red-white T3 throughout, one cable-secured step near Hohtürli",
       "Who It Suits": "Fit hut-to-hut hikers comfortable with a steep cable-assisted pass and consecutive long days"
     },
-    "surface": "approx. 75–85 km, 5,800–6,400 m combined ascent; white-red-white T3 throughout, one cable-secured step near Hohtürli",
-    "distanceKm": 75,
+    "surface": "approx. 89 km, about 3,550 m combined ascent (lift-assisted sections not counted); white-red-white T3 throughout, one cable-secured step near Hohtürli",
+    "distanceKm": 89,
     "elevationM": null,
-    "verticalM": 5800,
+    "verticalM": 3550,
     "technicalRating": null,
     "transitPass": null,
     "hutBooking": null,

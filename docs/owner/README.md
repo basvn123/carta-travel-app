@@ -10,9 +10,9 @@ How to use it:
 | File | What it covers | Steps |
 |---|---|---|
 | `docs/owner/product-decisions.md` | product and design calls only the owner can make | 6 |
-| `docs/owner/owner-checks.md` | other checks and clean-ups | 81 |
+| `docs/owner/owner-checks.md` | other checks and clean-ups | 25 |
 | `docs/owner/cloudflare.md` | Pages, R2, Workers, email routing | 33 (owner sweep 2026-11-12) |
-| `docs/owner/translation-review.md` | native-reader review of the six languages | 46 |
+| `docs/owner/translation-review.md` | native-reader review of the six languages | 5 |
 | `docs/owner/data-and-pipeline-runs.md` | phone, people and drive checks left from the data runs | 4 |
 | `docs/owner/legal.md` | legal, tax and brand | 3 |
 | `docs/owner/hetzner-box.md` | the Hetzner box and workers | 4 |
@@ -34,3 +34,4 @@ How to use it:
 
 Counts are from 2026-11-11, when these files moved here from `Execution/`; the box files were recounted in the owner sweep of 2026-11-12.
 Counts are from 2026-11-11, when these files moved here from `Execution/`; product-decisions and legal were updated by the 2026-11-12 owner sweep.
+Counts are from 2026-11-11, when these files moved here from `Execution/`; owner-checks and translation-review were recounted on 2026-11-12 (owner sweep).

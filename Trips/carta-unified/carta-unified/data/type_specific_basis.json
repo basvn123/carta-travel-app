@@ -8,9 +8,9 @@
         "text": "330–370 km"
       },
       "verticalM": {
-        "value": 1100,
+        "value": 1700,
         "basis": "stated",
-        "text": " 1,100 m cumulative gain"
+        "text": " 1,700 m cumulative gain"
       }
     },
     "be-cycling-flemish-ardennes-bergs": {
@@ -1098,9 +1098,9 @@
     },
     "at-hiking-berliner-hoehenweg": {
       "distanceKm": {
-        "value": 55,
+        "value": 83,
         "basis": "stated",
-        "text": "55–65 km"
+        "text": "83 km"
       },
       "verticalM": {
         "value": 5200,
@@ -1110,9 +1110,9 @@
     },
     "at-hiking-stubai-hoehenweg": {
       "distanceKm": {
-        "value": 60,
+        "value": 93,
         "basis": "stated",
-        "text": "60–68 km"
+        "text": "93 km"
       },
       "verticalM": {
         "value": 5600,
@@ -1158,14 +1158,14 @@
     },
     "ch-hiking-berner-oberland-huts": {
       "distanceKm": {
-        "value": 75,
+        "value": 89,
         "basis": "stated",
-        "text": "75–85 km"
+        "text": "89 km"
       },
       "verticalM": {
-        "value": 5800,
+        "value": 3550,
         "basis": "stated",
-        "text": " 5,800–6,400 m combined ascent"
+        "text": " 3,550 m combined ascent"
       }
     },
     "ch-hiking-walkers-haute-route-valais": {

@@ -1,18 +1,18 @@
 ev,name,total_km,countries,verified
-EV1,Atlantic Coast Route,11000,NO;GB;IE;FR;ES;PT,no
-EV2,Capitals Route,5500,IE;GB;NL;DE;PL,no
-EV3,Pilgrims Route,5100,NO;SE;DK;DE;BE;FR;ES,no
-EV4,Central Europe Route,4000,FR;BE;DE;PL,no
-EV5,Via Romea Francigena,3900,GB;FR;BE;LU;DE;CH;IT,no
-EV6,Rivers Route,3650,FR;CH;DE;AT;SK;HU;HR;RS;RO;BG,no
-EV7,Sun Route,7400,NO;SE;DK;DE;CZ;AT;IT;MT,no
-EV8,Mediterranean Route,5900,ES;FR;IT;SI;HR;ME;AL;GR;CY,no
-EV9,Amber Route,1930,PL;CZ;AT;SI;HR,no
-EV10,Baltic Sea Cycle Route,9000,DK;SE;FI;EE;LV;LT;PL;DE,no
-EV11,East Europe Route,6000,NO;FI;EE;LV;LT;PL;SK;HU;RS;MK;GR,no
-EV12,North Sea Cycle Route,6000,GB;NO;SE;DK;DE;NL;BE;FR,no
-EV13,Iron Curtain Trail,10400,NO;FI;EE;LV;LT;PL;DE;CZ;AT;SK;HU;SI;HR;RS;RO;BG;MK;GR,no
-EV14,Waters of Central Europe,1135,AT;HU;SI;HR,no
-EV15,Rhine Cycle Route,1230,CH;FR;DE;NL,no
-EV17,Rhone Cycle Route,1115,CH;FR,no
-EV19,Meuse Cycle Route,1050,FR;BE;NL,no
+EV1,Atlantic Coast Route,11200,NO;GB;IE;FR;ES;PT,yes
+EV2,Capitals Route,4800,IE;GB;NL;DE;PL;BY;RU,yes
+EV3,Pilgrims Route,5600,NO;SE;DK;DE;BE;FR;ES,yes
+EV4,Central Europe Route,5050,FR;BE;NL;DE;CZ;PL;UA,yes
+EV5,Via Romea (Francigena),3300,GB;FR;BE;LU;DE;CH;IT,yes
+EV6,Atlantic – Black Sea,4700,FR;CH;DE;AT;SK;HU;HR;RS;RO;BG,yes
+EV7,Sun Route,7650,NO;FI;SE;DK;DE;CZ;AT;IT;MT,yes
+EV8,Mediterranean Route,7450,ES;FR;IT;SI;HR;ME;AL;GR;TR;CY,yes
+EV9,Baltic – Adriatic,2050,PL;CZ;AT;SI;IT;HR,yes
+EV10,Baltic Sea Cycle Route,8800,SE;FI;RU;EE;LV;LT;PL;DE;DK,yes
+EV11,East Europe Route,6950,NO;FI;EE;LV;LT;PL;SK;HU;RS;MK;GR,yes
+EV12,North Sea Cycle Route,6750,NO;SE;DK;DE;NL;BE;FR;GB,yes
+EV13,Iron Curtain Trail,10650,NO;FI;RU;EE;LV;LT;PL;DE;CZ;AT;SK;HU;SI;HR;RS;RO;BG;MK;GR;TR,yes
+EV14,Waters of Central Europe,1150,AT;HU,yes
+EV15,Rhine Cycle Route,1450,CH;LI;AT;DE;FR;NL,no
+EV17,Rhone Cycle Route,1250,CH;FR,no
+EV19,Meuse Cycle Route,1050,FR;BE;NL,yes

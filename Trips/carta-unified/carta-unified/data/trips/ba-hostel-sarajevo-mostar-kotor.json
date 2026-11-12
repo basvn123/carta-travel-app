@@ -115,7 +115,7 @@
     "balkans",
     "budget"
   ],
-  "summary": "Three of the best value old towns in Europe, joined by one of its most beautiful train rides. The week starts in **Sarajevo**, where Ottoman lanes meet Austro-Hungarian avenues, rides the Neretva canyon line to **Mostar** and its rebuilt **Stari Most**, then crosses to Montenegro for the walled town of **Kotor** at the head of its fjord-like bay. Every night is a social hostel with a dorm bed under €20.",
+  "summary": "Three of the best value old towns in Europe, joined by one of its most beautiful train rides. The week starts in **Sarajevo**, where Ottoman lanes meet Austro-Hungarian avenues, rides the Neretva canyon line to **Mostar** and its rebuilt **Stari Most**, then crosses to Montenegro for the walled town of **Kotor** at the head of its fjord-like bay. Every night is a social hostel with a dorm bed from about €15 to €28.",
   "summaryGenerated": false,
   "hook": "Three old towns, one canyon train and six nights in dorms for under €150.",
   "snapshot": null,
@@ -183,7 +183,7 @@
     {
       "day": 3,
       "title": "The Neretva canyon train to Mostar",
-      "morning": "The 07:15 train to Mostar takes about two hours through the Neretva canyon, the most scenic line in the Balkans. Tickets about €10 at the station.",
+      "morning": "The 07:15 train to Mostar takes about two hours through the Neretva canyon, the most scenic line in the Balkans. Tickets about €7 (14 KM) at the station; a second train leaves in the late afternoon.",
       "afternoon": "Walk the old town to **Stari Most** and watch the divers, who jump 21 m into the river once the hat has collected enough.",
       "evening": "Sunset from the **Kriva Ćuprija**, the small crooked bridge, and dinner on a terrace over the river.",
       "dayStats": "Train 2 h, city walking 6 km",
@@ -373,8 +373,8 @@
     "other": []
   },
   "proTips": [
-    "Take the Sarajevo to Mostar train, not the bus: same price, half the bends and the canyon views.",
-    "Climb Kotor's walls before 08:00; the ticket booth opens later and the steps are in shade.",
+    "Take the Sarajevo to Mostar train, not the bus: about €7, half the bends and the canyon views.",
+    "Climb Kotor's walls early, when the steps are still in shade.",
     "Pay for Blagaj and Kravica through the hostel; the shared minibus is cheaper than two buses and a taxi."
   ],
   "typeSpecific": {
@@ -403,7 +403,7 @@
   ],
   "whatCouldGoWrong": [
     "The Mostar train can be replaced by a bus at short notice; check the station board the day before.",
-    "The border at Debeli Brijeg can add an hour on summer weekends."
+    "The Bosnia and Herzegovina to Montenegro border can add an hour on summer weekends."
   ],
   "sources": {
     "verified": null,
@@ -439,7 +439,7 @@
     },
     {
       "title": "The canyon train",
-      "line": "Two hours along the emerald Neretva for about €10.",
+      "line": "Two hours along the emerald Neretva for about €7.",
       "photo": {
         "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/1280px-Stari_Most_viewed_from_North.jpg",
         "w": 1280,
