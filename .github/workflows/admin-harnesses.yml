@@ -33,14 +33,6 @@ on:
       - "continent-app/src/lib/supabaseClient.js"
       - ".github/workflows/admin-harnesses.yml"
   pull_request:
-    paths:
-      - "supabase/migrations/**"
-      - "supabase/schema.sql"
-      - "continent-app/scripts/admin/**"
-      - "docs/legal/ARTICLE30.md"
-      - "continent-app/src/planner/**"
-      - "continent-app/src/lib/supabaseClient.js"
-      - ".github/workflows/admin-harnesses.yml"
 
 permissions:
   contents: read

@@ -27,11 +27,6 @@ on:
       - "continent-app/scripts/admin/test_rls_policies.mjs"
       - ".github/workflows/rls-policies.yml"
   pull_request:
-    paths:
-      - "supabase/migrations/**"
-      - "supabase/schema.sql"
-      - "continent-app/scripts/admin/test_rls_policies.mjs"
-      - ".github/workflows/rls-policies.yml"
 
 permissions:
   contents: read

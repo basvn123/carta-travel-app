@@ -20,7 +20,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install Semgrep (pinned)
-        run: pip install semgrep==1.184.0
+        run: pip install semgrep==1.184.0 pytest
       - name: Self-test the gate
         run: python -m pytest tests/test_semgrep_gate.py -q
       - name: Scan and compare with the baseline
