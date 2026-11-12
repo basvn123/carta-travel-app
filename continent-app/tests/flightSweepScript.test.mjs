@@ -9,6 +9,8 @@ test('the night window is the T1043 half-speed window, 22:00 to 05:00 UTC', () =
   assert.equal(NIGHT_TO, 5);
   const sql = nightsSql('2026-11-05');
   assert.match(sql, />= 22 OR .* < 5 THEN 'night'/);
+  // One night (22:00 to 05:00) groups under one date: the date is shifted 2 hours.
+  assert.match(sql, /date\(minute \* 60 \+ 7200, 'unixepoch'\) AS d/);
   assert.match(sql, new RegExp(`minute >= ${Date.parse('2026-11-05T00:00:00Z') / 60000}\\b`));
 });
 
