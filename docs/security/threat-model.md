@@ -102,7 +102,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 | D | Brute force of sign-in or OTP | M | M | Supabase auth rate limits; live values not verified (local defaults: 30 sign-ins per 5 minutes per IP) | none yet |
 | E | Refresh token replay | L | M | Rotation on with a 10 second reuse window in `config.toml`; live value not verified | none yet |
 
-**Gap.** Every auth setting that matters lives in the Dashboard and none was verifiable here: email confirmation, password length and classes, leaked-password check, rate limits, JWT expiry, refresh rotation, MFA enrolment for the owner. This is ROADMAP C3; T1071 lists the owner steps with values in `docs/owner/auth-settings.md` (T1071-a). No CAPTCHA on sign-up (T1071-c).
+**Gap.** The auth settings were read back through the Management API on 2026-11-12 and match the targets (`docs/owner/auth-settings.md`). Still open: the leaked-password check and session time-box and inactivity timeout need the Pro plan (the project is on Free until launch), and MFA on the Supabase account itself is unverified (owner step). No CAPTCHA on sign-up (T1071-c).
 
 ## 5. Supabase database and row level security
 
@@ -235,7 +235,7 @@ Trust boundaries crossed by every request: the public internet to Cloudflare's e
 | D | A scripted admin floods writes | L | M | Rate budget in `admin_guard` (60 a minute, 10 destructive, 20 live) | `admin-rpc-security.yml` section 7 |
 | E | SQL pasted in the Dashboard with a typo or the wrong file | M | H | Self-check blocks in each migration; owner procedures | none |
 
-**Gap.** 062 is written, not applied (T1071-a; the owner enrols TOTP first). A refusal at the guard leaves no audit row (the guard is STABLE); admin reads are not logged by design (the rate budget counts rows). Ban, delete and set tier record a reason once 064 is pasted (written and tested by T1081, owner step T1081-a). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
+**Gap.** 062 is live (checked 2026-11-12). A refusal at the guard leaves no audit row (the guard is STABLE); admin reads are not logged by design (the rate budget counts rows). Ban, delete and set tier record a reason once 064 is pasted (written and tested by T1081, owner step T1081-a). The Supabase Dashboard account itself is the stronger admin surface and needs MFA (C2 owner step).
 
 ## 12. AI: Ask, plan-day and parse-booking (T1117, C8)
 
@@ -332,7 +332,7 @@ Ranked by likelihood times impact, then by how cheaply the next step closes it.
 |---|---|---|---|---|---|---|
 | 1 | Leaked `carta-r2-admin` token not rolled | R2, Pages | M | H | C2 | Owner rolls it (`docs/owner/secrets-rotation.md`) |
 | 2 | Auth Dashboard settings unverified (confirmation, password rules, leaked-password check, rate limits, owner MFA) | Supabase Auth | M | H | C3 | Owner steps in `docs/owner/auth-settings.md` (T1071) |
-| 3 | Admin reads and live writes accept an `aal1` session | Admin | L | H | C3 | 062 written and tested (T1071); owner enrols TOTP and applies (T1071-a) |
+| 3 | Admin reads and live writes accept an `aal1` session | Admin | L | H | C3 | closed: 062 live and the owner's TOTP factor enrolled (checked 2026-11-12) |
 | 4 | ~~19 tables without an isolation fixture; 28 policies uncallable by `anon`~~ Closed by T1078 (fixtures for all 34 tables; 063 written, owner applies) | Database | M | H | C4 | Done in code; owner pastes 063 |
 | 5 | Upload path server half written but not applied (061, `upload-scan`) | Uploads | H once live | H | T333-a (C4) | Owner applies (`docs/owner/uploads.md`, T1070-a) |
 | 6 | Dependency audit, SHA-pinned actions, Dependabot | CI, app | M | H | C6 | Done in T1080: `supply-chain.yml`, pins, `.github/dependabot.yml`; pip-audit and OSV are report-only until the baseline is cleared |

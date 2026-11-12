@@ -2609,7 +2609,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Limits.**
 - Google sign-in needs the provider enabled in the Supabase dashboard (code comment in AuthContext.jsx).
-- Emails send nothing until the owner sets `RESEND_API_KEY`, `NOTIFY_FROM` and `NOTIFY_SECRET` and deploys `notify` (T944-b), and until 060's cron job is confirmed (T985-a).
+- `notify` is deployed (2026-11-12) but sends nothing (`not_configured`) until `RESEND_API_KEY`, `NOTIFY_FROM` and `NOTIFY_SECRET` are set, and 060's cron job `carta_notify_reminders` is not scheduled until the Vault secrets `notify_url` and `notify_secret` exist and 060 is run again (`docs/owner/supabase-migrations.md`, steps 2 and 3).
 - Register row T077-b lists several migrations (021, 022, 024 to 027, 029 to 043) as recorded unapplied, so the live project may not match every migration.
 - Account sync needs migration 065 pasted (T1104-a); until then it turns itself off at the first read. A trips list or Plan home already on screen shows pulled trips at its next render: `tripsStore` has no outside change signal, and the open planner is not told when another account's open trip is removed (T1104-c). There is no traveller-facing "3 trips moved" notice yet, only the event (T1104-d).
 
@@ -2703,13 +2703,13 @@ This section covers the parts of Carta that sit around the travel content: the A
 - Planning together and a second share link are free (usePaywall.jsx comment, T488-b).
 - **Who sees what is tested:** every table above has an isolation fixture in `continent-app/scripts/admin/test_rls_policies.mjs` (`rls-policies.yml`): a stranger and a signed-out visitor read, change, delete and forge nothing, an accepted friend reads the sharing switches, a joined co-member reads the group's options, votes and ledger but never another member's maximum, and a list member reads the list (T1078). The group and list policies ask one helper each, `group_role` and `shared_list_role`; since 063 `anon` may execute both (they answer null without a signed-in caller), so a signed-out read returns no rows instead of a permission error, and `group_all_joined` answers false unless the caller is the owner or a joined member of that group.
 
-**Data behind it.** Migrations 009, 010, 011, 012, 019, 020, 023, 046, 052, 055 to 059 and 063 (055 to 059 and 063 have down migrations). 052 to 060 were applied live by T985; 063 is written, not applied (T1078-a).
+**Data behind it.** Migrations 009, 010, 011, 012, 019, 020, 023, 046, 052, 055 to 059 and 063 (055 to 059 and 063 have down migrations). 052 to 060 were applied live by T985; 063 is written, not applied (T1078-a, `docs/owner/supabase-migrations.md` step 1).
 
 **Where it lives.** `continent-app/src/together/` (TogetherPage.jsx, useTogether.js, GroupTrips.jsx, SettleUp.jsx, AskJoin.jsx, Privacy.jsx, settle.js, overlaps.js), `continent-app/src/auth/` (friends.js, coplanners.js, groupTrips.js, joinRequests.js, groupExpenses.js, sharedLists.js, tripShares.js, friendVisibility.js, profiles.js, SharedTripView.jsx, TripSharePanel.jsx), `continent-app/src/lib/shareLink.js`.
 
 **Limits.**
 - Shared day planning is not built; co-planners get the itinerary only (020 comment).
-- Together emails are not queued until 060's cron job is confirmed (T985-a).
+- Together emails are not queued until 060's cron job is scheduled (checked 2026-11-12: it is not; `docs/owner/supabase-migrations.md` step 2).
 - `friendsMock.js` provides a mock mode (`IS_FRIENDS_MOCK`) for previews. Not found in code: a cap on group size.
 
 ### The Pass, paywall and Stripe checkout
@@ -2790,7 +2790,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 **Limits.**
 - Several admin migrations are recorded as unapplied: 022, 027, 029, 031 and others (T034-a, T039-d, T043-a, T077-b); their cards show nothing until pasted. Whether 041 is live is unconfirmed (T235-h).
 - `prune_paywall_events` (180 days) is called by nothing (T319-b).
-- 062 (MFA on every admin RPC, audit target and reason) is not applied live until the owner enrols a TOTP factor and pastes it (`docs/owner/auth-settings.md`). 064 (reasons for ban, delete and set tier) is written, not applied (T1081-a); until then those three rows carry no reason.
+- 062 (MFA on every admin RPC, audit target and reason) is live (checked 2026-11-12). 064 (reasons for ban, delete and set tier) is written, not applied (T1081-a); until then those three rows carry no reason.
 - Ask Carta failures are not written to `edge_errors` (the table only accepts the three Supabase functions).
 
 ### Photo and track uploads
@@ -2811,7 +2811,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 **Where it lives.** `continent-app/src/community/uploads.js`, `continent-app/src/community/UploadForm.jsx`, `continent-app/src/lib/stripImageMeta.js`, `continent-app/src/lib/gpxPrivacy.js`, `supabase/migrations/061_user_uploads.sql`, `supabase/functions/upload-scan/`. Latest report: `T1070`.
 
 **Limits.**
-- 061 and `upload-scan` are not applied or deployed until the owner does it (`docs/owner/uploads.md`); until then a send answers "did not send, nothing was stored".
+- 061 is live and `upload-scan` is deployed (2026-11-12), but the scan answers `not_configured` and is not scheduled until `UPLOADS_SCAN_SECRET` and its two Vault secrets are set (`docs/owner/uploads.md`); uploads stay pending until then.
 - Published uploads are not shown on pages yet and the admin page has no review list (T333-c); `list_published_uploads` and `admin_list_uploads` are ready for it.
 - Only the trail page has the door (T333-d). The legal wording waits on the J4 review (T333-b).
 

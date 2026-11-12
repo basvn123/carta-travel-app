@@ -16,8 +16,8 @@ How to use it:
 | `docs/owner/data-and-pipeline-runs.md` | pipeline and data runs that wait on the owner | 40 |
 | `docs/owner/legal.md` | legal, tax and brand | 26 |
 | `docs/owner/hetzner-box.md` | the Hetzner box and workers | 20 |
-| `docs/owner/supabase-migrations.md` | SQL pastes, Edge Functions and secrets | 12 |
-| `docs/owner/stripe.md` | Stripe prices, keys, webhook, test purchases | 11 |
+| `docs/owner/supabase-migrations.md` | migrations, Edge Functions and secrets | 4 |
+| `docs/owner/stripe.md` | Stripe prices, keys, webhook, test purchases, legal review | 5 |
 | `docs/owner/accounts-and-signups.md` | accounts, mailboxes and programme sign-ups | 6 |
 | `docs/owner/google-and-search.md` | Google, Gemini billing, Search Console | 3 |
 | `docs/owner/auth-settings.md` | Supabase Auth settings and admin MFA | procedure |

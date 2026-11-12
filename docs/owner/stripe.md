@@ -1,21 +1,47 @@
-# Owner procedure: Stripe (T1072, ROADMAP A3)
+# Owner procedure: Stripe (ROADMAP A3, I2)
 
-Everything that needs the Stripe Dashboard or a Stripe-backed purchase. Test mode first; live mode only at launch (ROADMAP I2).
+Everything that needs the Stripe Dashboard or a real purchase. Use test mode first. Go to live mode only at launch (I2). When a step is done, delete it here.
 
-Steps are the open register rows with Owner `user` that belong to this system, in register order: the Order column first, then task number. A row's own wording says what it waits on ("after", "before"); that is repeated beside the step. Nothing here is new: each step is a row, and the task report named in the row has the detail. When a step is done, delete it here (docs/decisions/0003-open-items-owner-steps-and-roadmap.md).
+State on 2026-11-12:
+- checkout, stripe-webhook and billing are deployed. stripe-webhook runs without the JWT check.
+- With no Stripe key, they answer `503 no_stripe` or "not configured" and charge nothing.
+- Migration 053 is live: the Trip Pass is 60 days on the server and the subscription columns exist.
+- No Stripe key is on this machine, so every step below needs your Stripe login.
 
-Rows: 11. Register rows point back here.
+Decided by the owner sweep on 2026-11-12 (these are no longer steps):
+- **T460-d:** keep the yearly plan at EUR 14.99 and the live-search ceilings at 40 (Trip Pass) and 120 (year).
+  - EUR 14.99 is the owner's own T460 decision of 2026-10-16.
+  - The ceilings are sized by the cost-floor arithmetic in `continent-app/src/lib/pricing.js`: a fully used year costs about EUR 9.00 against about EUR 11.90 net. The older 10 and 30 came before that sizing.
+  - A plan that pays off from the third trip is normal for a yearly plan.
+- **T461-e:** confirm a yearly cancellation in text form (BGB 312k(4)) with Stripe's own email first (step 5). If Stripe sends no cancellation confirmation, the billing function sends one through Resend. That is engineering work under ROADMAP I2.
 
 ## Steps
 
-1. **T030-a** (register order: 1): Verify or create the two Stripe Prices: 699 and 1499 EUR, one_time, eur, note the ids and the mode; attach Dashboard screenshots
-2. **T033-a** (register order: 1): Confirm tax_behavior is inclusive on both Prices; exclusive makes section 3.1 of the unit economics wrong by 1.21 a sale
-3. **T032-a** (register order: 2): Fill the Stripe Dashboard Terms of service URL, then set CHECKOUT_TERMS_URL; the secret before the field makes every checkout 502
-4. **T030-b** (register order: 4): Set STRIPE_SECRET_KEY, STRIPE_PRICE_TRIP, STRIPE_PRICE_YEAR as Supabase secrets, then deploy checkout and stripe-webhook (webhook with --no-verify-jwt)
-5. **T032-c** (register order: 6): Confirm on a real purchase that the Stripe page shows Carta's waiver wording and pass_grants reads consent accepted
-6. **T037-b** (register order: 9): The live refund path has never been checked against the deployed functions; force a plan-day failure after quota is spent on a test account and confirm ai_usage returns to its prior value. Pairs with T036-b, which covers the live 429
-7. **T213-c**: Stripe Dashboard, live mode: confirm customer receipt emails are on and the invoice footer carries the imprint address and VAT line, so Carta needs no receipt template of its own
-8. **T217-a** (register order: after T031-a): Test docs/REFUND_SOP.md once against a real refund of a T031-a test purchase, following it literally, and correct any step the Dashboard contradicts (Stripe Tax reversal, fee kept)
-9. **T460-b** (register order: before T460-a goes live): Legal review of the yearly plan before it sells: tacit yearly renewal (DE 309 Nr. 9, NL 6:236 j), the FR renewal reminder, a 312k cancel button behind sign-in, the waiver sharing Stripe's terms tick box, the confirmation recording the waiver, the 30-day price notice the terms now promise
-10. **T460-d**: Price calls: the yearly plan at EUR 14.99 pays off only from a third trip (two Trip Passes EUR 13.98), EUR 12.99 would make it the plain deal; live-search ceilings still 40 and 120 against T041-a's 10 and 30 (T148)
-11. **T461-e** (register order: with T460-b): BGB 312k(4) text-form confirmation of a yearly cancellation: switch on Stripe's cancellation email or have the billing function send one
+1. **Prices (T030-a, T033-a).** Stripe, test mode, Products.
+   - Create or find the Trip Pass Price: EUR 6.99, one-time. Write down its `price_...` id.
+   - The yearly plan is in `docs/owner/pass-subscription.md`, step 1.
+   - Tax behaviour must be **inclusive** on both. If it is exclusive, the unit economics are off by EUR 1.21 a sale.
+2. **Terms URL, then keys (T032-a, T030-b).** Do them in this order: setting the terms secret before the Dashboard field makes every checkout answer 502.
+   1. Stripe, Settings, Public details: set Terms of service to `https://carta-europetravel.com/?legal=terms`.
+   2. Set the keys. Get the webhook secret from Developers, Webhooks, Add endpoint, URL `https://ntssxktaduxzpsmejwyv.supabase.co/functions/v1/stripe-webhook`, event `checkout.session.completed`, then copy the signing secret.
+      ```
+      supabase secrets set STRIPE_SECRET_KEY=sk_test_... STRIPE_PRICE_TRIP=price_... STRIPE_WEBHOOK_SECRET=whsec_... CHECKOUT_TERMS_URL=https://carta-europetravel.com/?legal=terms
+      ```
+   - It worked when Buy on the site opens Stripe's page instead of "not switched on yet".
+3. **Test purchases (T031-a, T032-c, T037-b, T217-a).** Use fresh test accounts, never the owner's.
+   - Follow `supabase/functions/checkout/test_purchase_e2e.md`.
+   - Check that Stripe's page shows Carta's waiver wording and that `pass_grants` reads consent accepted.
+   - Use up a test account's AI quota, force one plan-day failure, and check that `ai_usage` goes back to its prior value.
+   - Refund one test purchase by following `docs/REFUND_SOP.md` word for word. Correct any step the Dashboard contradicts.
+4. **Legal review before the yearly plan sells (T460-b).** A lawyer or legal service checks these points:
+   - tacit yearly renewal (DE 309 Nr. 9, NL 6:236 j);
+   - the French renewal reminder;
+   - the 312k cancel button behind sign-in;
+   - the waiver sharing Stripe's terms tick box;
+   - the confirmation recording the waiver;
+   - the 30-day price notice.
+5. **Live-mode emails at launch (T213-c, T461-e).** Stripe, live mode, Settings, Customer emails.
+   - Turn on receipts.
+   - Turn on emails about cancelled subscriptions, if the option exists.
+   - Put the imprint address and the VAT line in the invoice footer.
+   - Tell a session whether a cancellation email exists, so T461-e's fallback is built or dropped.

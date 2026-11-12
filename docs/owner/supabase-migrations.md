@@ -1,22 +1,66 @@
-# Owner procedure: Supabase: SQL pastes, Edge Functions and secrets (T1072, ROADMAP A3)
+# Owner procedure: Supabase: migrations, Edge Functions and secrets (ROADMAP A3, C4)
 
-Pastes in the SQL editor, Edge Function deploys and secrets for project ntssxktaduxzpsmejwyv. Migrations 013 to 060 are live (T985); run the liveness query before any paste list.
+Project Carta, `ntssxktaduxzpsmejwyv` only (never Horizon-App or the inactive project). When a step is done, delete it here (`docs/decisions/0003-open-items-owner-steps-and-roadmap.md`).
 
-Steps are the open register rows with Owner `user` that belong to this system, in register order: the Order column first, then task number. A row's own wording says what it waits on ("after", "before"); that is repeated beside the step. Nothing here is new: each step is a row, and the task report named in the row has the detail. When a step is done, delete it here (docs/decisions/0003-open-items-owner-steps-and-roadmap.md).
+## State on 2026-11-12 (owner sweep, supabase lane)
 
-Rows: 12. Register rows point back here.
+- **Live:** migrations 001 to 062. 063, 064, 065, 066, 067, 069, 070, 071, 072, 073 and 074 are **not** applied (there is no 068).
+- **Deployed:** all ten Edge Functions from `main` as of 2026-11-12. These five run without the JWT check: stripe-webhook, notify, price-alerts, waitlist, upload-scan. Each was smoke-tested.
+  - The AI trio answers 401 without a signed-in user.
+  - Without their provider keys, the others answer "not configured" and send nothing: billing, checkout, stripe-webhook, notify, price-alerts, waitlist, upload-scan.
+- **Secrets set:** the Supabase defaults, `GEMINI_API_KEY` and `AI_ENABLE_CITY_GROUNDING`. No Stripe or Resend key. No shared secret for notify, upload-scan, waitlist or price alerts.
+- **Vault:** empty. So 060's reminder job and 061's upload scan are not scheduled.
+- **Checked live:** every SECURITY DEFINER function in `public` pins its `search_path` (121 of 121).
+
+The sweep could not apply migrations or write secrets: the session's permission guard refuses production DB and secret-store writes. So step 1 is one run for whoever holds that permission, a Claude session the owner allows or the owner.
 
 ## Steps
 
-1. **T031-a** (register order: 6): Make the real test purchases per supabase/functions/checkout/test_purchase_e2e.md on fresh accounts, never the owner account
-2. **T041-b** (register order: 12): Before the cron block in migration 030 runs on the live project: enable pg_cron and pg_net under Database, Extensions, and create the vault secrets refresh_facts_url and refresh_facts_key; without them the block silently schedules nothing and the store never refreshes
-3. **T042-c** (register order: 17): The daily percentages assume a global cap of 200 because AI_GLOBAL_DAILY_CAP lives in the Edge Function environment where SQL cannot read it; if the live secret is ever changed, set the site_config key ai_global_daily_cap to match or every percentage in the section goes quietly wrong
-4. **T069-b** (register order: after T069-a): 038 re-creates 020's guard_coplanner_write with a takedown exception; if 020 is ever pasted after 038 its old guard comes back and every takedown fails with "the plan is still public after the update", so paste 038 again after any re-paste of 020
-5. **T070-b** (register order: after T070-a): 039 re-creates the takedown body, the report list and the co-planner guard; paste 039 again after any later re-paste of 038, 037 or 020, or reversals fail loudly and the report list loses its decision fields
-6. **T281-b** (register order: after the stage 2 pastes): The statement of reasons has been run through the real RPC only at database level (test_statement_of_reasons.mjs, 132 of 132 on a throwaway cluster); the browser path through a real signed-in session is still ?savedmock only, because it needs migrations 036 and 039 live
-7. **T326-c** (register order: after 047): Send one real report after migration 047 and confirm the row has kind data and the report key; then press Open in Content on it
-8. **T823-a**: Walk "Let Carta plan them" once with a real signed-in account on the live plan-day function (only the ?aiplanmock seam was walked); a 7-day trip now spends up to 7 AI plans
-9. **T946-a**: Turn on manual identity linking in Supabase so Connect Google works (report T937-T947)
-10. **T985-a** (register order: before T944-b): Confirm 060 scheduled its cron job: if its paste printed the pg_cron, pg_net or Vault notice, enable pg_cron and pg_net, add Vault secrets notify_url and notify_secret, and paste 060 again; until then no Together email is queued (report T985)
-11. **T1078-a** (register order: after 061 and 062, T1070-a and T1071-a): Paste supabase/migrations/063_signed_out_policy_helpers.sql in the SQL editor and look for "signed-out policy helpers self-check passed"; pasting twice is safe, and the way back is 063_signed_out_policy_helpers_down.sql. It must follow 061 and 062 (report T1078)
-12. **T1081-a** (register order: after T1078-a, so after 061, 062 and 063): Paste supabase/migrations/064_admin_action_reasons.sql and look for "admin action reasons self-check passed"; pasting twice is safe, and the way back is 064_admin_action_reasons_down.sql. Deploy the T1081 app in the same sitting: until both are live, ban, delete and set tier answer PGRST202 and change nothing (report T1081)
+1. **Apply 063 to 074, in order, in one sitting with the app deploy (rows T1078-a, T1081-a, T1104-a, T1110-a, T1109-a, T1118-c, T1129-a, T1139-a, T1152-a, T1205-a, T1215-b).**
+   - From the repo root, with the CLI linked to Carta (`supabase link --project-ref ntssxktaduxzpsmejwyv`), run one file at a time. Stop at the first error:
+     ```
+     for n in 063 064 065 066 067 069 070 071 072 073 074; do
+       f=$(ls supabase/migrations/${n}_*.sql | grep -v _down) && echo "$f" && supabase db query --linked -f "$f" || break
+     done
+     ```
+     Every file raises an exception on failure, so no error means it applied. Pasting any file twice is safe. Each has a `_down.sql` beside it.
+   - **064** drops the old two-argument admin calls. Ship the app from `main` the same day: until both are live, suspend, delete and set tier on the admin page answer PGRST202 and change nothing.
+   - **069** starts the daily retention job `carta_privacy_retention` at 03:23 UTC. Its first run deletes rows past their retention period, and that is one-way. Take a data dump first: `supabase db dump --linked --data-only -f <outside the repo>` (needs Docker running).
+   - Check:
+     ```
+     supabase db query --linked "select jobname from cron.job order by 1"
+     ```
+     It should list `carta_privacy_retention` (069), `carta_ai_events_prune` (071) and `carta_ai_reports_prune` (074), next to the two that were already there.
+2. **Shared secrets and the two cron jobs (rows T985-a, T1070-a step 5, T944-b part, T1110-b part, T1205-b part).**
+   - Make four random values with `openssl rand -hex 32`. Keep them in the password manager, never in chat or git.
+   - Set them:
+     ```
+     supabase secrets set NOTIFY_SECRET=<a> UPLOADS_SCAN_SECRET=<b> WAITLIST_SECRET=<c> PRICE_ALERTS_LINK_SECRET=<d>
+     supabase db query --linked "select vault.create_secret('https://ntssxktaduxzpsmejwyv.supabase.co/functions/v1/notify','notify_url'); select vault.create_secret('<a>','notify_secret'); select vault.create_secret('https://ntssxktaduxzpsmejwyv.supabase.co/functions/v1/upload-scan','uploads_scan_url'); select vault.create_secret('<b>','uploads_scan_secret');"
+     awk '/^do \$cron\$/,/^\$cron\$;/' supabase/migrations/060_email_prefs.sql > /tmp/cron060.sql && supabase db query --linked -f /tmp/cron060.sql
+     awk '/^do \$cron\$/,/^\$cron\$;/' supabase/migrations/061_user_uploads.sql > /tmp/cron061.sql && supabase db query --linked -f /tmp/cron061.sql
+     ```
+     Run only these schedule blocks, **never the whole of 060 or 061 again**. 061 re-creates the upload read policy without the MFA check that 062 added, and later migrations changed functions that 060 also defines.
+   - Check:
+     ```
+     supabase db query --linked "select jobname, schedule from cron.job where jobname in ('carta_notify_reminders','carta_uploads_scan')"
+     ```
+     It answers two rows: `41 7 * * *`, and the upload scan every 15 minutes.
+   - `PRICE_ALERTS_BOX_SECRET` is a fifth value. It goes into Supabase and onto the box at the same time, with `PRICE_ALERTS_URL`. See `supabase/functions/price-alerts/README.md`.
+3. **Resend: switch on Carta's mail (rows T944-b, T1110-b, T1205-b).** This needs the Resend login.
+   - In Resend, under Domains, check that `carta-europetravel.com` is Verified. Auth already sends through `smtp.resend.com`, so it probably is.
+   - Under API keys, create a key with sending access.
+   - Set it with the senders:
+     ```
+     supabase secrets set RESEND_API_KEY=<key> NOTIFY_FROM="Carta <trips@carta-europetravel.com>" WAITLIST_FROM="Carta <hello@carta-europetravel.com>" PRICE_ALERTS_FROM="Carta <alerts@carta-europetravel.com>"
+     ```
+   - Price alerts stay off until `supabase secrets set PRICE_ALERTS_ENABLED=1`. Set it once the box has its secret.
+   - Check: `curl -s -X POST https://ntssxktaduxzpsmejwyv.supabase.co/functions/v1/waitlist -H 'Content-Type: application/json' -d '{}'` no longer answers `"code":"unavailable"`.
+4. **Signed-in walks on the live site (rows T823-a, T281-b, T326-c).** They need a real account and inbox.
+   - **T823-a:** On a test account (not the owner's), use "Let Carta plan them" once. A 7-day trip spends up to 7 AI plans.
+   - **T281-b:** As admin, take a test guide down with a statement of reasons. Reverse it.
+   - **T326-c:** Send one real content report. Then run the next query and check the row exists. Press Open in Content on it.
+     ```
+     supabase db query --linked "select source_header, created_at from public.content_reports order by created_at desc limit 1"
+     ```
+     `source_header` must be `cf-connecting-ip`. That also closes T068-c.
