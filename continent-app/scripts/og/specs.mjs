@@ -66,11 +66,8 @@ export function destinationSpec(key, dest, all = null) {
   seedStays();
   const cost = priceDay({ ...dest, id: dest.id || key }, DEFAULT_PRICE_REQUEST, all);
   if (!cost || cost.dayEur == null) return null;
-  const city = cost.stayLevel === 'city';
-  const stayNote = city ? 'Measured in this town'
-    : cost.stayLevel === 'region' && cost.source ? `Priced from ${cost.source}`
-      : 'Estimated from similar towns';
-  const foodNote = cost.foodLevel === 'city' ? 'Priced at this town’s own rates' : 'National basket';
+  // No source line under each row (owner decision T689-a, 2026-11-12: removed
+  // everywhere, as in the app); the credits live on the page, not the card.
   const months = cheapestStayMonths(dest);
   const rating = dest.rating?.score;
   return {
@@ -81,8 +78,8 @@ export function destinationSpec(key, dest, all = null) {
     panel: {
       head: 'One person, one day',
       rows: [
-        { label: 'Bed', value: eurDay(cost.stayEur), note: stayNote },
-        { label: 'Food', value: eurDay(cost.foodEur), note: foodNote },
+        { label: 'Bed', value: eurDay(cost.stayEur) },
+        { label: 'Food', value: eurDay(cost.foodEur) },
       ],
       total: { label: 'A day here', value: eurDay(cost.dayEur), unit: 'a day' },
     },
