@@ -109,7 +109,6 @@ The per-step record is `ledger.json` in this run folder (local, not tracked: dec
 | `docs/brand/POSITIONING.md` | I-e wording; trademark kept, class 39 word plus logo (T1060-a) |
 | `docs/brand/data-stories/method.md` | No Booking-derived prices in stories (T1130-c) |
 | `docs/data/access-ladder.md` | Partner terms findings: Hostelworld 3.1(h) and 6.1(c), Booking A15.2 (T1213-a) |
-| `docs/tos/data_licenses.md` | Price images and stories use licensed or Carta-measured prices only (T1175-c); Ferryhopper and OpenSky dropped, Numbeo to be replaced (T300-e) |
 | `pipeline/transit/feeds.json` | Swiss timetable and Delcomar licences checked against their publishers' terms (T641-a) |
 | `docs/owner/product-decisions.md`, `docs/owner/legal.md`, `docs/owner/README.md` | 147 to 6 and 26 to 3 steps, counts and footer |
 | `.work/INDEX.md` | Run line |
@@ -139,7 +138,7 @@ None. This lane changed no live system (Supabase, Cloudflare, GitHub settings, t
 - `npm test` (continent-app, sparse worktree): about 35 failures. None names or imports a file this run changed. They come from the missing `public/`, the missing Python `yaml`, the worktree short-path test, CRLF checkouts and the design-lint baseline in untouched files.
 - Targeted tests pass: deviceData, importStays, passSubscription, aiPage and i18nParity. `npm run lint`: 0 errors.
 - Docs checks: 4 entry points missing, all `continent-app/public` (sparse worktree). drift.py adds the `docs/SCHEMA.md` wire table, which this run did not touch.
-- CI on the pushed branch is the clean gate; the result is in the Follow-ups section.
+- CI on the pushed branch (run 43254745893): app, evals, edge-deno and csp green; python failed once because `docs/tos/data_licenses.md` is generated from the registry and had a hand-written line (T1175-c). The line was reverted (the rule stands in ROADMAP K7 and `docs/brand/data-stories/method.md`); `tests/test_data_licences.py` passes locally and the re-run is the final gate.
 - Judge 1: FAIL on criteria 5 and 7. Fixes 1 to 3 were applied:
   - The I2 gate now names the renewing-plan strings.
   - The Privacy deletion line is now true.
