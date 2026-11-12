@@ -517,7 +517,7 @@
       "status": "owner_run",
       "value": null,
       "eval": "taxonomy",
-      "command": "the S66 tagger with AI_TAGGING_PROVIDER=gemini AI_TAGGING_MODELS=gemini-3.5-flash-lite writes predictions.json; node continent-app/scripts/eval/run.mjs taxonomy --predictions predictions.json",
+      "command": "the T1150 tagger with AI_TAGGING_PROVIDER=gemini AI_TAGGING_MODELS=gemini-3.5-flash-lite writes predictions.json; node continent-app/scripts/eval/run.mjs taxonomy --predictions predictions.json",
       "blocked_by": "T1150-a (first verifier run; the tagger exists)"
      },
      "cost_eur_per_1000_calls": 0.17
@@ -528,7 +528,7 @@
       "status": "owner_run",
       "value": null,
       "eval": "taxonomy",
-      "command": "the S66 tagger with AI_TAGGING_PROVIDER=workers-ai; then run.mjs taxonomy --predictions",
+      "command": "the T1150 tagger with AI_TAGGING_PROVIDER=workers-ai; then run.mjs taxonomy --predictions",
       "blocked_by": "T1150-a (first verifier run; the tagger exists)"
      },
      "cost_eur_per_1000_calls": 0.05
@@ -539,7 +539,7 @@
       "status": "owner_run",
       "value": null,
       "eval": "taxonomy",
-      "command": "on the box: llama-server -m Qwen3-30B-A3B-Q4_K_M.gguf --port 8080 -np 2 -c 16384; then the S66 tagger with AI_TAGGING_PROVIDER=box AI_BOX_EVAL_RUN=1; node continent-app/scripts/eval/run.mjs taxonomy --predictions predictions.json",
+      "command": "on the box: llama-server -m Qwen3-30B-A3B-Q4_K_M.gguf --port 8080 -np 2 -c 16384; then the T1150 tagger with AI_TAGGING_PROVIDER=box AI_BOX_EVAL_RUN=1; node continent-app/scripts/eval/run.mjs taxonomy --predictions predictions.json",
       "blocked_by": "T1150-a (first verifier run; the tagger exists)"
      },
      "cost_eur_per_1000_calls": 0.04

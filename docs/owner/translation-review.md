@@ -22,7 +22,7 @@ Rows: 46. Register rows point back here.
 12. **T385-e**: Native review of the 22 new dest.* strings T385 wrote in de, es, fr, it and nl (src/i18n/*.js, the block headed T385)
 13. **T386-b**: Native review of the 30 new outdoor strings (29 detail.* keys and cycle.surfacePavedRough) in de, es, fr, it and nl, written by T386
 14. **T387-e**: Native review of the 183 new trips strings in de, es, fr, it and nl written by T387 (journey.*, 140 of them journey.pack.*, and five itin.*), and of the reworded journey.composedSub and journey.diffEasy (Gentle instead of the banned Easy)
-15. **T388-b**: Native review of the 42 trip planner strings T388 added in de, es, fr, it and nl (wizard, ready, match, brief, quiz and the planner's trip keys; list in Execution/P10/T388-v6-v3-tripplanner.md)
+15. **T388-b**: Native review of the 42 trip planner strings T388 added in de, es, fr, it and nl (wizard, ready, match, brief, quiz and the planner's trip keys; list in report T388)
 16. **T389-c**: Native read of the day planner strings T389 wrote in de, es, fr, it and nl: the 59 keys added after dayws.tabFiles (exports, day switcher, toolbar, builder reach and tray) plus dayws.modeReady, dayws.modeCustom, dayws.readyAsk and day.copied
 17. **T390-k**: Native review of the strings T390 wrote in de, es, fr, it and nl: saved.costDay, costFromDay, costNational, shareTrip, friendsShared1, friendsSharedN, friendsOpen, favKindJourney, pastAddDetails, pastAddDetailsSub, title; share.revokeAsk, revokeKeep, revokeGo, publicAsk, publicKeep, publicGo, visPrivateSub; account.menuSecurity, tripSettings, passLoading, menuData, feedbackSend, feedbackNote, faq13A; pass.featPlan...
 18. **T391-c**: Native review of the five new lifestyle.* strings (done, tradeLessIn, tradeMoreIn, tradeLessMedian, tradeMoreMedian) and the changed nav.saved in de, es, fr, it and nl, written by T391
@@ -30,7 +30,7 @@ Rows: 46. Register rows point back here.
 20. **T393-e**: Native review of the de, es, fr, it and nl strings for explore.bestMonths and rail.position, written by T393
 21. **T394-e**: Native review of the six new Destinations strings in de, es, fr, it and nl (places.monthSwim, places.monthCold, places.stripTrail, places.stripCycle, places.stripLake, places.stripMtn), written by T394
 22. **T395-e**: Native review of the reworded dest.climateKey in de, es, fr, it and nl (src/i18n/*.js)
-23. **T396-a**: Native review of the 11 new detail.* strings (map loading, photo track position, Previous and Next, track and credit sentences, section rail labels) in de, es, fr, it and nl, written by T396; see Execution/P10/T396-v6-v4-outdoor.md
+23. **T396-a**: Native review of the 11 new detail.* strings (map loading, photo track position, Previous and Next, track and credit sentences, section rail labels) in de, es, fr, it and nl, written by T396; see report T396
 24. **T397-f**: Native review of the two trips strings T397 added in de, es, fr, it and nl (journey.weekPickAria, journey.weekPickDay)
 25. **T398-b**: Native review of the 6 trip planner strings T398 added in de, es, fr, it and nl (trip.dayByDay, trip.inclTrain, trip.inclBus, trip.inclFerry, trip.inclCar, trip.oneMoreNight)
 26. **T400-i**: Native review of the 13 strings T400 wrote in de, es, fr, it and nl: saved.undoRemoved, undo, pastBarLabel, pastBarHint, pastPhotoPos, pastPhotosLabel; pass.compareTitle, comparePrice, comparePlans, compareSearches, compareLasts, compareDays, compareForever

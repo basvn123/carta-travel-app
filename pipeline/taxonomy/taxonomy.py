@@ -6,7 +6,7 @@
 `baseline_predictions(items)` is the "today's tags" baseline the eval scores
 (continent-app/scripts/eval/adapters/taxonomy.mjs): for each item it maps the
 tags Carta already holds through mapping.yaml and ranks the nodes by how many
-old tags point at them. It is the number the S66 tagger has to beat. No model
+old tags point at them. It is the number the T1150 tagger has to beat. No model
 is called anywhere in this module.
 """
 from __future__ import annotations

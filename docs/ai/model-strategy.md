@@ -11,7 +11,7 @@ ROADMAP E7, task T1138 (2026-11-06). Applies the E-R3 research (`docs/research/E
 
 ## How a cost is worked out
 
-Per 1,000 calls, in EUR: (input tokens x input price + (output tokens + extra output tokens) x output price) / 1,000. USD at 0.87 EUR. Thinking models add 2,000 output tokens a call. Tokens per call are E-R3's estimates from the prompts until E4 telemetry (`ai_model_events`, S55) gives real counts (T1135-c).
+Per 1,000 calls, in EUR: (input tokens x input price + (output tokens + extra output tokens) x output price) / 1,000. USD at 0.87 EUR. Thinking models add 2,000 output tokens a call. Tokens per call are E-R3's estimates from the prompts until E4 telemetry (`ai_model_events`, T1139) gives real counts (T1135-c).
 
 The box: CPU seconds per call = input / (420 x 1.6) + output / (20 x 1.6), from E-R3's Ampere llama.cpp figures (420 tokens a second prompt, 20 generation, two parallel slots at 1.6 times one), at the CAX41's hourly price (EUR 31.49 a month over 730 hours). Not measured on the box yet (T1135-f): the first box run replaces these speeds.
 
@@ -90,14 +90,14 @@ Choice: Move to the box once an intros eval exists and the box scores within 2 p
 
 ### tagging (batch)
 
-Today: none F1 tagger (S66). Tokens per call: 600 in, 80 out. Eval: F1 taxonomy eval (run.mjs taxonomy --predictions; micro F1 and R-precision at 5). Personal data: none (public catalogue).
+Today: none F1 tagger (T1150). Tokens per call: 600 in, 80 out. Eval: F1 taxonomy eval (run.mjs taxonomy --predictions; micro F1 and R-precision at 5). Personal data: none (public catalogue).
 
 | Option | EUR per 1,000 calls | Quality | Status |
 |---|---|---|---|
 | No model (code: facts answer, reference planner, templates, today's tags) | 0.00 | 43.1 percent micro F1 (today's tags mapped) (F1 taxonomy, 15-item seed set (the numbers mean little until gold.csv is filled, T1149-a); this task, 2026-11-06) | measured |
-| Gemini 3.5 Flash-Lite, batch mode | 0.17 | not measured | owner run, blocked by S66 tagger |
-| Workers AI Qwen3-30B-A3B | 0.05 | not measured | owner run, blocked by S66 tagger |
-| Box CPU, llama.cpp Qwen3-30B-A3B Q4_K_M | 0.04 | not measured | owner run, blocked by S66 tagger |
+| Gemini 3.5 Flash-Lite, batch mode | 0.17 | not measured | owner run, blocked by T1150 tagger |
+| Workers AI Qwen3-30B-A3B | 0.05 | not measured | owner run, blocked by T1150 tagger |
+| Box CPU, llama.cpp Qwen3-30B-A3B Q4_K_M | 0.04 | not measured | owner run, blocked by T1150 tagger |
 
 Choice: Build the tagger on the box from the start (E-R3: about 19 CPU hours for 20,000 items); Gemini batch mode is the fallback.
 

@@ -8,7 +8,7 @@ Rows: 20. Register rows point back here.
 
 ## Steps
 
-1. **T915-a** (register order: 1): Run scratchpad run-t915.sh: deploy the flight-sweep Worker (found routes, /extra, /have), then move the box to origin/main and reinstall, which restarts the sweep and the fill (Execution/P11/T915-T917-sweep-gaps.md)
+1. **T915-a** (register order: 1): Run scratchpad run-t915.sh: deploy the flight-sweep Worker (found routes, /extra, /have), then move the box to origin/main and reinstall, which restarts the sweep and the fill (report T915-T917)
 2. **T994-a** (register order: 1): Move the box to main once by hand after run 2 has finished and this batch is on origin main (`git -C ~/carta fetch --depth 1 origin main && git -C ~/carta reset --hard FETCH_HEAD`), so the self-updating weekly.sh is in place before Mon 2026-11-09 09:00
 3. **T475-e** (register order: 2): Owner call: Hetzner capacity for self-hosted MOTIS next to the data lane, after roadmap 3.11 measures the memory for Italy (owner 21 October: postponed)
 4. **T995-a** (register order: 2): Create a Cloudflare API token with Account, Cloudflare Pages, Edit, then set CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID and CARTA_DEPLOY=1 in the box's ~/.config/carta/env; until then the box deploys nothing
@@ -26,5 +26,5 @@ Rows: 20. Register rows point back here.
 16. **T449-a**: Trail 86628 (Promenade du Lac de Nisramont, BE) still shows a moth until the trail wire is re-exported with the drop list (export_wire.py on trailslab, then the R2 push), or run python pipeline/photos/takedown.py add "2018-11-04_Colotois_pennaria_(2).jpg"
 17. **T471-d**: Owner call: run a self-hosted MOTIS (train and bus timetables, Transitous itself is non-commercial only) on the Hetzner box for roadmap 2.16, starting with Italy, Austria and Switzerland (owner 21 October: postponed)
 18. **T640-f**: beaches-cache and mountains-cache are now pushed from the box; pull them on the laptop before any local rebuild
-19. **T805-a**: Late tier to week 45: merge app p11-flights-to-august and deploy Pages, no Worker redeploy, then on the box check CARTA_SWEEP_INGEST_TOKEN matches the Worker's INGEST_TOKEN, pull, run infra/hetzner/cron/install.sh (restarts carta-late-sweep.service), and watch /status lateFares grow about 6,500 a day; it is 0 today, so T798's late tier has not run yet (Execution/P11/T804-T805-flights-to-august.md)
+19. **T805-a**: Late tier to week 45: merge app p11-flights-to-august and deploy Pages, no Worker redeploy, then on the box check CARTA_SWEEP_INGEST_TOKEN matches the Worker's INGEST_TOKEN, pull, run infra/hetzner/cron/install.sh (restarts carta-late-sweep.service), and watch /status lateFares grow about 6,500 a day; it is 0 today, so T798's late tier has not run yet (report T804-T805)
 20. **T1056-b**: The Hetzner box's unattended prune (infra/hetzner/cax11/run_pipeline.sh, push-data.mjs --live --prune) now stops after listing the names, since it has no terminal; add --yes there if the box should keep pruning by itself

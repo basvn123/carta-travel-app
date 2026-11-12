@@ -20,7 +20,7 @@
  *   --json         print the results as JSON instead of the table
  *
  * Evals (adapters in scripts/eval/adapters/):
- *   ask              S52's Ask eval (T1136), its runEval and gate unchanged
+ *   ask              the Ask eval (T1136), its runEval and gate unchanged
  *   trail-summaries  the trail summaries fact check (T1179), Python
  *   data-quality     the data quality gate (T1142) as a data eval, Python
  *   plan-day         plan-day rule checks and the judge calibration (kappa)
@@ -35,7 +35,7 @@
  *   suggest-city     suggest-city on fixture decks, recorded answers, rule checks (T1206)
  * No eval calls a model. The plan-day judge is its own optional step
  * (scripts/eval/plan-day/judge.mjs). The Claude API is never used.
- * S52's own entry point, scripts/eval/ask-eval.mjs, keeps working as before.
+ * T1136's own entry point, scripts/eval/ask-eval.mjs, keeps working as before.
  */
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';

@@ -160,7 +160,7 @@ The CPU hours assume two parallel llama.cpp slots at 1.6 times one stream's spee
 
 ## 7. Quality, licence and data residency per option
 
-The quality column is an expectation from model class and features, not a measurement: the E1 eval (S52) does not exist yet. E7 (S54) fills it with E1 and F6 scores (T1135-b).
+The quality column is an expectation from model class and features, not a measurement: the E1 eval (T1136) does not exist yet. E7 (T1138) fills it with E1 and F6 scores (T1135-b).
 
 | Option | Expected quality for Carta | Structured JSON | PDF and images | Dutch and English | Licence | EU data residency |
 |---|---|---|---|---|---|---|

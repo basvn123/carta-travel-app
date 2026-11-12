@@ -16,7 +16,7 @@ Only the owner can do these steps: they need the Google account that will own th
 
 ## Weekly review (every Monday, 15 minutes)
 
-Write one line per week in `Execution/P15/_SEARCH-CONSOLE-LOG.md` (create it on the first week): date, then the six numbers below.
+Write one line per week in `docs/owner/search-console-log.md` (create it on the first week): date, then the six numbers below.
 
 1. **Pages report**, total **Indexed** and total **Not indexed**.
 2. In Not indexed, the count under **Discovered, currently not indexed** and under **Crawled, currently not indexed**.

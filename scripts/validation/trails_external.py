@@ -505,7 +505,7 @@ def auto_cause(ref, res):
     if res["status"] == "missing":
         if (ref.get("length_km") or 0) > TREK_MAX_KM:
             return ("too_long", (f"longer than the {TREK_MAX_KM} km single-record cap "
-                                 "(curate.TREK_MAX_M); needs one parent record with stages (D24, S100)"))
+                                 "(curate.TREK_MAX_M); needs one parent record with stages (D24, T1184)"))
         side = (f"; only {res['side_trails']} side loops or link paths named after it are published"
                 if res.get("side_trails") else "")
         if hit and hit.get("reason"):

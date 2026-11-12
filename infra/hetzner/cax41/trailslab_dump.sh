@@ -4,7 +4,7 @@
 # The trailslab worker job (jobs/trailslab.sh, T647) restores the newest dump
 # in archive/db/ and writes a fresh one back, so the lab lives in R2 between
 # runs. This script is the same round trip for a person or a box with a lab of
-# its own (the laptop today, the lab move of S98 later):
+# its own (the laptop today, the lab move of T1182 later):
 #
 #   trailslab_dump.sh push    [--dry-run] [--crypt worker-key|plain]
 #       pg_dump -Fc of the running lab, read back with pg_restore -l, encrypted

@@ -2,7 +2,7 @@
 #
 # What it is: the one vocabulary for what a place, trail, beach, lake or
 # mountain offers, in five facets (activity, setting, vibe, traveller,
-# practical) and three levels below the facet root. It replaces, after S66
+# practical) and three levels below the facet root. It replaces, after T1150
 # (T1150) tags the catalogue, the hand-built gem categories, the 20 vibe
 # scores and the 12 taste keys; pipeline/taxonomy/mapping.yaml translates
 # every tag in use today.

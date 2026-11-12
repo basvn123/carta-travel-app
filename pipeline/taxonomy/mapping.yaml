@@ -8,7 +8,7 @@
 #   value: []           and the value is listed under `not_a_concept` with a
 #                       reason: a region name, a size class or a ranking word
 #                       that the taxonomy deliberately does not hold.
-# The mapping is a translation table for S66 (T1150), not a tagging: an old
+# The mapping is a translation table for T1150, not a tagging: an old
 # tag is weak evidence, never the final tag.
 schema: carta-taxonomy-mapping/1
 taxonomy_version: 1.0.0

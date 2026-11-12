@@ -15,7 +15,7 @@ the same on every machine):
   trip_text           the curated journey `summary` against the journey's own
                       verified-sources note and its own data (itinerary,
                       season, budget, difficulty). The outside check of the
-                      journey data itself is the trips layer (S111).
+                      journey data itself is the trips layer (T1195).
 
 The 50 D4 calibration texts are left out, so the run never judges its own
 calibration set.

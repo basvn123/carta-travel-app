@@ -1,6 +1,6 @@
 # Carta travel taxonomy
 
-ROADMAP F1, part 1 (T1149). The taxonomy, its mapping from today's tags, the hand-label set and the eval. Tagging the catalogue is part 2 (S66, T1150) on the build box.
+ROADMAP F1, part 1 (T1149). The taxonomy, its mapping from today's tags, the hand-label set and the eval. Tagging the catalogue is part 2 (T1150) on the build box.
 
 | What | Where |
 |---|---|
@@ -18,7 +18,7 @@ ROADMAP F1, part 1 (T1149). The taxonomy, its mapping from today's tags, the han
 
 ## Why `pipeline/taxonomy/`
 
-The ROADMAP F1 text names `pipeline/taxonomy/carta_taxonomy.yaml`, and the first reader is the pipeline: S66's tagger runs as a pipeline batch job, and the mapping test reads pipeline constants (`VIBES`, `LIKES`, `THEME_ORDER`). `data/` holds generated reports and curation inputs, not code-adjacent vocabularies. The eval keeps its gold set next to the other eval sets in `continent-app/scripts/eval/`, as plan-day does.
+The ROADMAP F1 text names `pipeline/taxonomy/carta_taxonomy.yaml`, and the first reader is the pipeline: T1150's tagger runs as a pipeline batch job, and the mapping test reads pipeline constants (`VIBES`, `LIKES`, `THEME_ORDER`). `data/` holds generated reports and curation inputs, not code-adjacent vocabularies. The eval keeps its gold set next to the other eval sets in `continent-app/scripts/eval/`, as plan-day does.
 
 ## Shape
 
@@ -55,7 +55,7 @@ Synonyms: `synonyms` is a map from language to a list (`en` always, `de`, `fr`, 
 
 520 values map to one or more nodes. 20 are declared "not a concept" with a reason: 14 region names among the categories (geography is the region filter), the place class `area`, the persona `mix`, the place tag `longest`, and three trail and lake warnings (`roadWalk`, `waymarked`, `privateShore`) that stay facts on the record.
 
-Not in the test, on purpose: the 1,057 free-text journey tags (editorial keywords, one or two uses each; 124 of them, 23 percent of uses, match a node label or synonym word for word, `taxonomy.free_tag_coverage()`; S66 tags the journeys from their text instead, T1149-d), the trail detail files' highlight kinds (the same concepts as the trail highlights), hazards, services and numeric bands.
+Not in the test, on purpose: the 1,057 free-text journey tags (editorial keywords, one or two uses each; 124 of them, 23 percent of uses, match a node label or synonym word for word, `taxonomy.free_tag_coverage()`; T1150 tags the journeys from their text instead, T1149-d), the trail detail files' highlight kinds (the same concepts as the trail highlights), hazards, services and numeric bands.
 
 The mapping is a translation table, not a tagging. An old tag is weak evidence: `gem:hallstatt` carries `fairytale`, which maps to `vibe.fairytale`, but whether Hallstatt is fairytale is the tagger's and the labeller's call.
 
@@ -64,7 +64,7 @@ The mapping is a translation table, not a tagging. An old tag is weak evidence: 
 `node continent-app/scripts/eval/run.mjs taxonomy [--predictions <file>] [--write --dashboard]`, the fifth eval in the T1148 runner, kind `classification`.
 
 - Gold: `gold.csv` once the owner has labelled rows; until then the 15-item `seed-gold.csv`, labelled by this session to prove the eval runs. Seed numbers say nothing about quality.
-- Predictions: a file from the tagger, `{ name, threshold, cost_eur_per_1000, items: { item_id: [{ tag, score }] } }`, best first; by default the today's-tags baseline (every old tag mapped, ranked by how many old tags agree). The baseline is the number S66 has to beat.
+- Predictions: a file from the tagger, `{ name, threshold, cost_eur_per_1000, items: { item_id: [{ tag, score }] } }`, best first; by default the today's-tags baseline (every old tag mapped, ranked by how many old tags agree). The baseline is the number T1150 has to beat.
 - Scope: nodes with `source: data` are left out of gold and predictions; a rule sets them.
 - Ranking metrics on the ranked list: P@5, R-precision at 5 (hits in the top 5 over the smaller of 5 and the gold count, the metric of TechWolf's ESCO extraction work; the headline), recall at 10 (the bi-encoder's top 25 is the verifier's ceiling, recall at 10 says how much of the gold is near the top), MRR.
 - Set metrics after the tagger's threshold: micro precision, recall and F1, macro F1 over the gold tags, F1 per facet, and a lenient micro F1 that counts one step up or down the tree as a hit.

@@ -1,6 +1,6 @@
 /*
  * Adapter: the Ask eval (T1136, ROADMAP E1) in the shared results format.
- * It calls S52's runEval and gate unchanged, so every score and the gate
+ * It calls T1136's runEval and gate unchanged, so every score and the gate
  * verdict are exactly those of `node scripts/eval/ask-eval.mjs --check`.
  */
 import { readFileSync } from 'node:fs';

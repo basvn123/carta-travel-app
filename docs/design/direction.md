@@ -1,6 +1,6 @@
 # Carta design direction
 
-Status: **draft for owner approval** (T1111, roadmap G1, 2026-11-06). Until the owner signs it off, nothing here binds; G3 (S38) and G5 (S40) wait on that sign-off. Once approved, the carta-design skill takes over its decisions (row T1111-b) and stays the top design source, as CLAUDE.md says.
+Status: **draft for owner approval** (T1111, roadmap G1, 2026-11-06). Until the owner signs it off, nothing here binds; G3 (T1122) and G5 (T1124) wait on that sign-off. Once approved, the carta-design skill takes over its decisions (row T1111-b) and stays the top design source, as CLAUDE.md says.
 
 Built from: the carta-design skill, the impeccable skill, `PRODUCT.md`, `DESIGN.md` (Overview, Named Rules, Typography, Elevation, Shapes, Motion, Home page v3), `docs/research/2026-11-launch-plan-research.md` and the G rows of `docs/AUDIT-2026-11.md`. The user research G-R1 to G-R3 has not run yet; where it later disagrees with this page, the research wins and this page is revised.
 
@@ -52,11 +52,11 @@ Two modes, two tempers. The home page is **Persuade**: film, big type, signature
 
 | Item | Session | What it takes from this page |
 |---|---|---|
-| G2 Shared parts | S37 (T1121) | `PlaceHead`, `PhotoCarousel`, `Chip` tones (rank, UNESCO), `Button href` built to section 3's radii and depth, so G3 and G8 drop into them |
-| G3 Umber cost card | S38 (T1122) | The card spec in section 3, one component in four places, arc retired (closes T1026-c), figures on `--text-amount` / `--text-total` with tabular numbers |
-| G5 Motion | S40 (T1124) | The shared kit, the settle versus count-up split, the card-to-place photo move, reduced motion end states, INP measured before and after |
-| G6 Type and radius | S41 (T1125) | The scale and the three radii in section 3; legacy aliases removed |
-| G8 Imagery | S43 (T1127) | Photos first, styled map thumbnails second, mist skeletons; never a grey tile |
+| G2 Shared parts | T1121 | `PlaceHead`, `PhotoCarousel`, `Chip` tones (rank, UNESCO), `Button href` built to section 3's radii and depth, so G3 and G8 drop into them |
+| G3 Umber cost card | T1122 | The card spec in section 3, one component in four places, arc retired (closes T1026-c), figures on `--text-amount` / `--text-total` with tabular numbers |
+| G5 Motion | T1124 | The shared kit, the settle versus count-up split, the card-to-place photo move, reduced motion end states, INP measured before and after |
+| G6 Type and radius | T1125 | The scale and the three radii in section 3; legacy aliases removed |
+| G8 Imagery | T1127 | Photos first, styled map thumbnails second, mist skeletons; never a grey tile |
 
 ## 6. Before and after, from today's dev server
 

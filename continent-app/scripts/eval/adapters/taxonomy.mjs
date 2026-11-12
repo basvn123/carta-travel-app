@@ -5,7 +5,7 @@
  * (docs/ai/taxonomy-labelling-guide.md). Until it holds labels the eval scores
  * the 15-item seed set, seed-gold.csv, which the T1149 session labelled to
  * prove the eval runs; its numbers say nothing about quality.
- * Predictions: --predictions <file> (the S66 tagger's output, format below),
+ * Predictions: --predictions <file> (the T1150 tagger's output, format below),
  * or by default the "today's tags" baseline: every tag Carta already holds,
  * mapped through pipeline/taxonomy/mapping.yaml (pipeline/taxonomy/taxonomy.py).
  *
@@ -15,7 +15,7 @@
  * Scope: nodes with source "data" are left out of gold and predictions (set by rule, not tagged).
  * The gate: every gold label is a taxonomy id, the taxonomy and mapping are
  * valid, and the eval runs. The scores are not gated: there is no owner gold
- * yet and no tagger. S66 sets the score gate once both exist (T1149-c).
+ * yet and no tagger. T1150 sets the score gate once both exist (T1149-c).
  * No model is called.
  */
 import { readFileSync } from 'node:fs';

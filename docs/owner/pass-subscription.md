@@ -1,6 +1,6 @@
 # The yearly plan and the 60-day Trip Pass: switching them on
 
-Written by T460 (2026-10-16). These are the owner's steps, in order. Register rows T460-a to T460-d point here. Stripe has never been live (see `Execution/_OWNER-RUNBOOK.md`, Block J): these steps slot into that block, so do Block J's earlier steps (keys, the one-off Trip Pass Price, the webhook endpoint, migrations up to 044) first.
+Written by T460 (2026-10-16). These are the owner's steps, in order. Register rows T460-a to T460-d point here. Stripe has never been live (see `the retired owner runbook (archive/execution-2026-11-11:Execution/_OWNER-RUNBOOK.md)`, Block J): these steps slot into that block, so do Block J's earlier steps (keys, the one-off Trip Pass Price, the webhook endpoint, migrations up to 044) first.
 
 Until every step is done, nothing breaks:
 - The panel shows the yearly plan.
