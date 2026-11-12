@@ -44,8 +44,36 @@
    "at": "continent-app/src/map/TripMap.jsx:875",
    "count": 1
   },
+  "carta-dom-inner-html|docs/assets/ask-docs/widget.js|2d43712c4edf": {
+   "at": "docs/assets/ask-docs/widget.js:29",
+   "count": 1
+  },
+  "carta-dom-inner-html|docs/assets/ask-docs/widget.js|6dd684d81b62": {
+   "at": "docs/assets/ask-docs/widget.js:26",
+   "count": 1
+  },
   "carta-js-exec-shell|continent-app/workers/shared/build-fli.mjs|0c6b1876916f": {
    "at": "continent-app/workers/shared/build-fli.mjs:11",
+   "count": 1
+  },
+  "carta-no-claude-api-js|continent-app/tests/aiGateway.test.mjs|0764c3d6a5d4": {
+   "at": "continent-app/tests/aiGateway.test.mjs:169",
+   "count": 1
+  },
+  "carta-no-claude-api-js|continent-app/tests/aiGateway.test.mjs|6355360a4a68": {
+   "at": "continent-app/tests/aiGateway.test.mjs:95",
+   "count": 1
+  },
+  "carta-no-claude-api-py|tests/test_ai_gateway.py|35c4a693ccab": {
+   "at": "tests/test_ai_gateway.py:93",
+   "count": 1
+  },
+  "carta-py-eval-exec|scripts/prompts/capture_golden.py|474d7cbb63ba": {
+   "at": "scripts/prompts/capture_golden.py:104",
+   "count": 1
+  },
+  "carta-py-eval-exec|scripts/prompts/capture_golden.py|fa6145c23273": {
+   "at": "scripts/prompts/capture_golden.py:103",
    "count": 1
   },
   "carta-py-sql-fstring|pipeline/cycling/landcover.py|63387abc27b8": {
@@ -53,15 +81,15 @@
    "count": 1
   },
   "carta-py-sql-fstring|pipeline/pois/harvest_pois_overture.py|1a8c048b46b4": {
-   "at": "pipeline/pois/harvest_pois_overture.py:136",
+   "at": "pipeline/pois/harvest_pois_overture.py:138",
    "count": 1
   },
   "carta-py-sql-fstring|pipeline/pois/harvest_pois_overture.py|331bd24ca919": {
-   "at": "pipeline/pois/harvest_pois_overture.py:145",
+   "at": "pipeline/pois/harvest_pois_overture.py:147",
    "count": 1
   },
   "carta-py-sql-fstring|pipeline/pois/harvest_pois_overture.py|c64c66cd9d39": {
-   "at": "pipeline/pois/harvest_pois_overture.py:124",
+   "at": "pipeline/pois/harvest_pois_overture.py:126",
    "count": 1
   },
   "carta-py-sql-fstring|pipeline/stays/build_stays.py|2e635b2c8ead": {
@@ -80,8 +108,16 @@
    "at": "pipeline/trails/crosscheck_portals.py:278",
    "count": 1
   },
+  "carta-py-weak-hash|pipeline/archive/harvest_hostelworld.py|56db27d8f4ef": {
+   "at": "pipeline/archive/harvest_hostelworld.py:118",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/ask_index_layer.py|c17ccf2335f0": {
+   "at": "pipeline/ask_index_layer.py:272",
+   "count": 1
+  },
   "carta-py-weak-hash|pipeline/dossier/common.py|9784daf0e481": {
-   "at": "pipeline/dossier/common.py:311",
+   "at": "pipeline/dossier/common.py:337",
    "count": 1
   },
   "carta-py-weak-hash|pipeline/guided_search_layer.py|b1331f1a535f": {
@@ -94,6 +130,10 @@
   },
   "carta-py-weak-hash|pipeline/photos/aesthetics.py|2e0693c66c40": {
    "at": "pipeline/photos/aesthetics.py:179",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/photos/correctness.py|0311861a412b": {
+   "at": "pipeline/photos/correctness.py:797",
    "count": 1
   },
   "carta-py-weak-hash|pipeline/photos/derive.py|47d3b8d7940e": {
@@ -109,11 +149,27 @@
    "count": 1
   },
   "carta-py-weak-hash|pipeline/photos/takedown.py|23fc7253789d": {
-   "at": "pipeline/photos/takedown.py:329",
+   "at": "pipeline/photos/takedown.py:338",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/taxonomy/build_label_template.py|e668aa28d903": {
+   "at": "pipeline/taxonomy/build_label_template.py:44",
+   "count": 1
+  },
+  "carta-py-weak-hash|pipeline/taxonomy/tagger.py|9371ca3d031c": {
+   "at": "pipeline/taxonomy/tagger.py:592",
    "count": 1
   },
   "carta-py-weak-hash|scripts/ci/semgrep_gate.py|57e4f92232ff": {
    "at": "scripts/ci/semgrep_gate.py:62",
+   "count": 1
+  },
+  "carta-py-weak-hash|scripts/validation/texts_backtranslation.py|3604b55a83ac": {
+   "at": "scripts/validation/texts_backtranslation.py:65",
+   "count": 1
+  },
+  "carta-py-weak-hash|scripts/validation/texts_sample.py|3604b55a83ac": {
+   "at": "scripts/validation/texts_sample.py:61",
    "count": 1
   }
  },
@@ -121,6 +177,9 @@
   "carta-dom-inner-html": "Noise. Every baselined hit assigns a module-level constant (SVG icon strings, static pin markup) or markup whose dynamic parts go through esc() (DestMap.jsx). No traveller or third-party text reaches innerHTML. A new hit still fails so a reviewer looks.",
   "carta-js-exec-shell": "Noise. build-fli.mjs is a build script that runs a fixed npx esbuild command.",
   "carta-py-sql-fstring": "Noise. Local DuckDB/SQLite pipeline code on the build box; interpolated parts are constants, column names from our own schema or table names from sqlite_master, never user input. T1119-a asks for a parameterised rewrite where cheap.",
-  "carta-py-weak-hash": "Noise. md5/sha1 used for cache keys, photo dedupe and content ids, not for security."
+  "carta-py-weak-hash": "Noise. md5/sha1 used for cache keys, photo dedupe and content ids, not for security.",
+  "carta-no-claude-api-js": "Test files that assert the gateway refuses an Anthropic SDK or api.anthropic.com (decision 0005); nothing ships to the app.",
+  "carta-no-claude-api-py": "Test file that asserts the pipeline gateway refuses an Anthropic SDK or api.anthropic.com (decision 0005); nothing ships.",
+  "carta-py-eval-exec": "scripts/prompts/capture_golden.py evaluates a retry expression it reads from the repo own source to capture golden prompts; a dev tool on trusted input, never run on user data."
  }
 }

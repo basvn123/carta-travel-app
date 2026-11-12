@@ -9,3 +9,5 @@ continent-app/public/
 tools/
 .claude/
 Trips/
+# Local runner logs and scripts (untracked, protected; CI never sees them)
+logs/
