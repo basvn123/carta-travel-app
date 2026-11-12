@@ -16,16 +16,17 @@ The sweep could not apply migrations or write secrets: the session's permission 
 
 ## Steps
 
-1. **Apply 063 to 074, in order, in one sitting with the app deploy (rows T1078-a, T1081-a, T1104-a, T1110-a, T1109-a, T1118-c, T1129-a, T1139-a, T1152-a, T1205-a, T1215-b).**
+1. **Apply 063 to 075, in order, in one sitting with the app deploy (rows T1078-a, T1081-a, T1104-a, T1110-a, T1109-a, T1118-c, T1129-a, T1139-a, T1152-a, T1205-a, T1215-b; 075 is the one-off Year Pass of owner sweep round 2, ROADMAP I-f).**
    - From the repo root, with the CLI linked to Carta (`supabase link --project-ref ntssxktaduxzpsmejwyv`), run one file at a time. Stop at the first error:
      ```
-     for n in 063 064 065 066 067 069 070 071 072 073 074; do
+     for n in 063 064 065 066 067 069 070 071 072 073 074 075; do
        f=$(ls supabase/migrations/${n}_*.sql | grep -v _down) && echo "$f" && supabase db query --linked -f "$f" || break
      done
      ```
      Every file raises an exception on failure, so no error means it applied. Pasting any file twice is safe. Each has a `_down.sql` beside it.
    - **064** drops the old two-argument admin calls. Ship the app from `main` the same day: until both are live, suspend, delete and set tier on the admin page answer PGRST202 and change nothing.
    - **069** starts the daily retention job `carta_privacy_retention` at 03:23 UTC. Its first run deletes rows past their retention period, and that is one-way. Take a data dump first: `supabase db dump --linked --data-only -f <outside the repo>` (needs Docker running).
+   - **075** drops the "already subscribed" refusal from `pass_can_buy` (no pass renews, decision 0010); its check is `supabase/diagnostics/075_year_pass_one_off_test.sql`. In the same sitting deploy the one-off checkout and webhook and remove the old billing function: `supabase functions deploy checkout`, `supabase functions deploy stripe-webhook --no-verify-jwt`, `supabase functions delete billing`.
    - Check:
      ```
      supabase db query --linked "select jobname from cron.job order by 1"
