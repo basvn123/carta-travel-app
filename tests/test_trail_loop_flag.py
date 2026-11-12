@@ -72,6 +72,16 @@ def test_retired_lead_is_not_shipped():
     assert export_wire.wire_summary({"description": None, "category": "hike"}) is None
 
 
+def test_t1179_summary_wins_on_the_wire(monkeypatch):
+    # Owner decision T1179-a: the English T1179 text ships as `summary`.
+    import export_wire
+    monkeypatch.setattr(export_wire, "_t1179", {"42": "A 12.0 km walk with 300 m of climbing."})
+    assert export_wire.wire_summary({"id": 42, "description": None, "category": "hike"}) == \
+        "A 12.0 km walk with 300 m of climbing."
+    city = "A one day city sightseeing walk past 6 sightseeing stops."
+    assert export_wire.wire_summary({"id": 7, "description": city, "category": "citytrip"}) == city
+
+
 # --- T1201 (T1179-d, T1181-f): what a highlight is ------------------------
 
 def test_only_a_lake_is_a_lake():

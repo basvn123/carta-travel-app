@@ -2009,7 +2009,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 **Where it lives.** `pipeline/trails/summaries.py`. Tests: `tests/test_trail_summaries.py`, whose last test rebuilds every committed summary from the wire and checks it again.
 
-**Limits.** The summaries are a sidecar and are not on the wire: the app prints a row's `summary` as English prose on the trail page and in the planner, so shipping them needs the i18n choice in T1179-a. Since T1201 the runner rebuilds them as task `trails_summaries`, right after `trails_rate` exports the wire, and the D2 gate re-checks the file (`text_checks`, see "Data quality gate"); the export no longer ships the retired describe.py lead as a walk's `summary` (`export_wire.wire_summary`). A sight's kind is the OSM tag's, so a fountain tagged as water reads "the lake" (T1179-d). On the wire of 2026-09-13 the top band is 2,089 rows, not the 2,348 in ROADMAP D24.
+**Limits.** The summaries ship as English: owner decision T1179-a (2026-11-12) puts each summary's `text` on the wire as the row's `summary` (`export_wire.wire_summary` reads `data/trails/summaries.json` and prefers it to the lead), so the trail page and the planner print English in every language until the app renders `parts` through t(). The export reads the file the previous run wrote, so a new top-band trail gets its summary one run later. Since T1201 the runner rebuilds them as task `trails_summaries`, right after `trails_rate` exports the wire, and the D2 gate re-checks the file (`text_checks`, see "Data quality gate"); the export no longer ships the retired describe.py lead as a walk's `summary` (`export_wire.wire_summary`). A sight's kind is the OSM tag's, so a fountain tagged as water reads "the lake" (T1179-d). On the wire of 2026-09-13 the top band is 2,089 rows, not the 2,348 in ROADMAP D24.
 
 ### Trails external check
 
@@ -3063,7 +3063,7 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Where it lives.** `evals/run_truth.py`, `evals/truth/` (`build_sample.py`, `fields.json`, `sample.json`, `sheet.csv`, `baseline.json`, `GUIDE.md`, `judge/`). Tests: `tests/test_truth_set.py`, `continent-app/tests/truthEval.test.mjs`.
 
-**Limits.** No row is verified by hand yet: the first score (86 of 90 seeded rows) rests on seeds, which share the data's own sources (T1144-a). The first blind session judge caught all 20 planted faults but found none of 15 shipped place blurbs supported by the Wikivoyage intro they cite and 10 of 15 trail summaries supported, so the judge has no kappa against a human yet (T1144-b). Register rows `T1144-a` and on.
+**Limits.** No row is verified by hand yet: the first score (86 of 90 seeded rows) rests on seeds, which share the data's own sources (T1144-a). The first blind session judge caught all 20 planted faults but found none of 15 shipped place blurbs supported by the Wikivoyage intro next to them and 10 of 15 trail summaries supported, so the judge has no kappa against a human yet (T1144-b). Owner decision T1144-e (2026-11-12): a blurb cites no source; `guide.url` is the credit for the guide text, so a blurb is checked against the place's Wikipedia page or another reliable source (`evals/truth/fields.json`, `GUIDE.md`). Register rows `T1144-a` and on.
 
 ### Deploy (Cloudflare Pages, R2, prerender, SEO)
 

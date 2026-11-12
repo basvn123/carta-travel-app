@@ -548,9 +548,34 @@ RETIRED_LEAD = re.compile(
     re.I)
 
 
+# The T1179 summaries of the top band (data/trails/summaries.json, built by
+# pipeline/trails/summaries.py from the wire's own facts). Owner decision
+# T1179-a (2026-11-12): ship the English `text` as the row's `summary`, so the
+# trail page and the planner print it in every language until the app renders
+# `parts` through t().
+SUMMARIES = ROOT / "data" / "trails" / "summaries.json"
+_t1179 = None
+
+
+def t1179_summaries():
+    """{trail id as str: English text}, read once; empty when the file is absent."""
+    global _t1179
+    if _t1179 is None:
+        try:
+            items = json.loads(SUMMARIES.read_text(encoding="utf-8")).get("items") or {}
+        except (OSError, ValueError):
+            items = {}
+        _t1179 = {str(k): v["text"] for k, v in items.items() if isinstance(v, dict) and v.get("text")}
+    return _t1179
+
+
 def wire_summary(t):
-    """The `summary` a country row carries: the lead, except a retired
-    describe.py lead on a walk, which ships as None (T1201)."""
+    """The `summary` a country row carries: the T1179 summary when the trail
+    has one, else the lead, except a retired describe.py lead on a walk, which
+    ships as None (T1201)."""
+    own = t1179_summaries().get(str(t.get("id")))
+    if own:
+        return own
     lead = summary_of(t.get("description"))
     if lead and t.get("category") != "citytrip" and RETIRED_LEAD.search(lead):
         return None

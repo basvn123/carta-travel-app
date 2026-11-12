@@ -11,7 +11,7 @@ Two dump routes exist. Know which file you hold, because they decrypt differentl
 | Hand dump | `ops/backup_supabase.sh`, on the laptop, before each hand-pasted migration | A passphrase (`CARTA_BACKUP_PASSPHRASE`, symmetric AES256) | `~/carta-backups/carta-<UTC stamp>.dump.gpg` plus `.sha256` | The same passphrase; `ops/restore_supabase.sh` does it |
 | Weekly dump | The build box, inside `infra/hetzner/cax11/run_pipeline.sh` ("weekly database dumps"), when `SUPABASE_DB_URL` and `CARTA_BACKUP_KEY` are set in `~/.config/carta/env` | The owner's GPG public key; the box never holds the secret half | `supabase-<date>.dump.gpg` in `$CARTA_ARCHIVE_OUT/dumps` (default `~/archive-out/dumps`), pushed to `r2:carta/archive/db/supabase/` | The owner's GPG secret key. `ops/restore_supabase.sh` cannot read these (it only knows the passphrase) |
 
-Both are `pg_dump --format=custom` of the `public` schema only. `auth.users`, Supabase Storage, Edge Function code and project secrets are not in either. Functions are in `supabase/functions/` in git; secrets are listed by name in [../security/SECRETS.md](../security/SECRETS.md).
+Both are `pg_dump --format=custom` of the `public` schema only. `auth.users`, Supabase Storage, Edge Function code and project secrets are not in either. Owner decision T1159-e (2026-11-12): add an encrypted export of `auth` and Storage to the nightly backup; not built yet (ROADMAP H5). Functions are in `supabase/functions/` in git; secrets are listed by name in [../security/SECRETS.md](../security/SECRETS.md).
 
 ## Take a hand dump (before every pasted migration)
 

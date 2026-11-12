@@ -7,7 +7,7 @@
    "coords": {"compare": "coords", "tolerance": {"m": 2000}, "means": "the centre of the town or city (its main square, old town or town hall), not the airport", "answer": "lat, lon in decimal degrees, e.g. 52.0116, 4.3571", "where": "OpenStreetMap or Wikipedia coordinates"},
    "population": {"compare": "number", "tolerance": {"rel": 0.15}, "means": "residents of the town or municipality the place is named after, latest census or estimate", "answer": "a whole number, e.g. 95060", "where": "Wikipedia infobox or the national statistics office"},
    "image_depicts": {"compare": "yes", "means": "the cover photo shows this place (not another town, not a generic view)", "answer": "yes or no", "where": "open current_value (the photo URL)"},
-   "blurb": {"compare": "verdict", "means": "the one-line blurb is supported by the cited Wikivoyage text (guide.url) or by well-known facts on the place's Wikipedia page", "answer": "supported, unsupported or contradicted", "where": "the source_url of the row"}
+   "blurb": {"compare": "verdict", "means": "the one-line blurb is supported by well-known facts on the place's Wikipedia page or another reliable source; a blurb cites no source, and guide.url is the credit for the Wikivoyage guide text, not for the blurb (owner decision T1144-e)", "answer": "supported, unsupported or contradicted", "where": "the place's Wikipedia page (source_url is the Wikivoyage guide, a starting point only)"}
   },
   "trail": {
    "distance_km": {"compare": "number", "tolerance": {"rel": 0.1, "abs": 0.5}, "means": "length of the walk as Carta presents it (one way for a point to point, round for a loop)", "answer": "km, e.g. 16.4", "where": "the OSM relation (distance tag) or the operator's page"},

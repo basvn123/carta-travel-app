@@ -6,7 +6,7 @@
  "doc": "docs/ai/model-strategy.md",
  "rules": [
   "Never the Claude API or an Anthropic SDK (CLAUDE.md).",
-  "Live traveller features move off Gemini or Workers AI only by an owner decision (T1135-g).",
+  "Live traveller features stay where they are today: Ask on Workers AI, the rest on Gemini Flash-Lite, with the triggers below (owner decision T1138-h, 2026-11-12). When a plan-day or suggest-city trigger is reached, that feature moves to the best open model that passes its eval, and CLAUDE.md and decision 0005 change in the same commit (owner decision T1135-g, 2026-11-12).",
   "A batch job selects the box only after it passes its eval there (pipeline/ai_gateway.py BOX_PASSED)."
  ],
  "fx_eur_per_usd": 0.87,

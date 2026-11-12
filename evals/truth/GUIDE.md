@@ -33,7 +33,7 @@ You fill one file: `sheet.csv`. It opens in Excel, LibreOffice or Google Sheets 
 | place | `coords` | `lat, lon`, `52.0116, 4.3571` | within 2 km of the town centre | OpenStreetMap (right click, "Show address"), Wikipedia |
 | place | `population` | whole number | within 15 percent | Wikipedia infobox, national statistics |
 | place | `image_depicts` | `yes` or `no` | `yes` | open the photo URL in `current_value` |
-| place | `blurb` | `supported`, `unsupported` or `contradicted` | `supported` | the cited Wikivoyage page in `source_url` (rules below) |
+| place | `blurb` | `supported`, `unsupported` or `contradicted` | `supported` | the place's Wikipedia page or another reliable source; the blurb cites no source (owner decision T1144-e, 2026-11-12), so the Wikivoyage page in `source_url` is a starting point only (rules below) |
 | trail | `distance_km` | km, `16.4` | within 10 percent or 0.5 km | the OSM relation in `source_url`, the operator's page |
 | trail | `ascent_m` | metres | within 15 percent or 60 m | operator's page, OSM `ascent` tag |
 | trail | `loop` | `yes` or `no` | equal | the OSM relation's map |

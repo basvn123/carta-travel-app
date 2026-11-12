@@ -4,9 +4,12 @@ with the source it cites, for the judge (pipeline/judge, prompt judge-text).
 Strata (kind, then country inside the kind, seeded by a hash so the draw is
 the same on every machine):
 
-  place_blurb         app_data.json `blurb` against the Wikivoyage text it
-                      cites (`guide.text`, `guide.url`). Blurbs with no cited
-                      text are counted, not judged (nothing to judge against).
+  place_blurb         app_data.json `blurb` against the place's Wikivoyage
+                      text (`guide.text`, `guide.url`). Since owner decision
+                      T1144-e (2026-11-12) a blurb cites no source: guide.url
+                      credits the guide text, so "unsupported" here means
+                      "not in the guide", not a broken citation. Blurbs with
+                      no guide text are counted, not judged.
   trail_summary/wire  the `summary` the trail wire ships today, against the
                       trail's OSM tags and Carta's measured numbers.
   trail_summary/t1179 the T1179 summaries (data/trails/summaries.json, not on
