@@ -9,7 +9,8 @@ Keep it true: a task that adds, renames or moves a secret updates its row in the
 - Names were read from `.github/workflows/*.yml` (`secrets.*`), `supabase/functions/` (`Deno.env.get`), `continent-app/functions/` and `continent-app/workers/` (`env.*`), the `wrangler.toml` files, `infra/hetzner/cax11/env.example` and the key names (never values) in the untracked `.env` files.
 - The tracked example files (`.env.example`, `continent-app/.env.example`, `infra/hetzner/cax11/env.example`) carry no values: no line has a value of 12 characters or more.
 - All of git history was searched for secret-shaped strings (Supabase secret keys, GitHub tokens, Google AI keys, Stripe live, test and webhook keys, Resend keys, Kaggle tokens, AWS keys, private keys). Nothing matched.
-- The one known leak is not in git: the `carta-r2-admin` Cloudflare token was pasted into a session on 2026-10-02 (T291-b, audit P-07). It has not been rolled yet.
+- The one known leak is not in git: the `carta-r2-admin` Cloudflare token was pasted into a session on 2026-10-02 (T291-b, audit P-07). The owner rolled it and checked the audit log (T1059-a, ticked in the owner walkthrough; recorded 2026-11-12).
+- 2026-11-12 (owner sweep): GitHub secret scanning had two open alerts, both `whsec_test` placeholders in old `Execution/` reports (T031, T252, T320), never a Stripe secret. Both closed as test value and false positive.
 
 ## Blast radius levels
 
@@ -23,19 +24,19 @@ Keep it true: a task that adds, renames or moves a secret updates its row in the
 | Name | Service | Lives in | Read by | Radius | Last rotated |
 |---|---|---|---|---|---|
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase | Supabase (set automatically for Edge Functions) | Edge Functions `plan-day`, `parse-booking`, `suggest-city`, `checkout`, `stripe-webhook`, `billing`, `notify` | Critical: bypasses every row policy | Never (project key) |
-| `CARTA_SUPABASE_SERVICE_KEY` | Supabase (same key) | GitHub secret; Hetzner box `.env` | `uptime.yml` (every run); the box's pipeline publish | Critical. Check that the uptime probe needs the service key at all; the anon key may do | Never |
-| `SUPABASE_DB_URL` | Supabase Postgres | Hetzner box `.env` | backups (`ops/`), the box | Critical: database password inside the URL | Not recorded |
+| `CARTA_SUPABASE_SERVICE_KEY` | Supabase (same key) | Hetzner box `.env`. Not in GitHub (2026-11-12: no Actions secret is set) | the box's pipeline publish; `uptime.yml` reads it if set | Critical. The anon key cannot do the uptime pipeline check (`pipeline_runs` is readable by service_role only, migration 041), so the plan is a narrow read path instead of this key in GitHub (ROADMAP C6 follow-up) | Never |
+| `SUPABASE_DB_URL` | Supabase Postgres | Hetzner box `.env` | backups (`ops/`), the box | Critical: database password inside the URL | Rolled by the owner (T1059-c; date not recorded) |
 | `CARTA_BACKUP_KEY` | Backups | Hetzner box `.env` | the encrypted archive | Critical: decrypts the backups | Not recorded |
 | `STRIPE_SECRET_KEY` | Stripe | Supabase secret | `checkout`, `billing`, `stripe-webhook` | Critical once live (test mode today) | Not recorded |
 | `STRIPE_WEBHOOK_SECRET` | Stripe | Supabase secret | `stripe-webhook` (signature check) | Critical once live: forged payments grant passes | Not recorded |
 | `STRIPE_PRICE_TRIP`, `STRIPE_PRICE_YEAR` | Stripe | Supabase secret | `checkout` | Public ids, not secret | n/a |
-| `carta-r2-admin` token | Cloudflare R2 | Owner's Cloudflare account; used by hand | deploys, CORS (`push-data.mjs --cors`) | Critical: write and delete on the data bucket | **Leaked 2026-10-02, not rolled (T291-b)** |
-| `RCLONE_CONFIG_R2_ACCESS_KEY_ID`, `RCLONE_CONFIG_R2_SECRET_ACCESS_KEY` | Cloudflare R2 (S3 API) | Hetzner box `.env`; owner's shell when deploying | `push-data.mjs`, the box publish | Critical: write and delete on `carta/data/` | Not recorded |
+| `carta-r2-admin` token | Cloudflare R2 | Owner's Cloudflare account; used by hand | deploys, CORS (`push-data.mjs --cors`) | Critical: write and delete on the data bucket | Leaked 2026-10-02; rolled by the owner (T1059-a) |
+| `RCLONE_CONFIG_R2_ACCESS_KEY_ID`, `RCLONE_CONFIG_R2_SECRET_ACCESS_KEY` | Cloudflare R2 (S3 API) | Hetzner box `.env`; owner's shell when deploying | `push-data.mjs`, the box publish | Critical: write and delete on `carta/data/` | Rolled by the owner (T1059-c; date not recorded) |
 | `CARTA_WORKER_R2_ACCESS_KEY_ID`, `CARTA_WORKER_R2_SECRET_ACCESS_KEY` | Cloudflare R2 | Hetzner box `.env` | the trails worker | High | Not recorded |
-| `CLOUDFLARE_API_TOKEN` (+ `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`) | Cloudflare | Hetzner box `.env`; owner's shell | `wrangler pages deploy`, purge scripts | Critical: can replace the live site | Not recorded |
-| `INGEST_TOKEN` / `CARTA_SWEEP_INGEST_TOKEN` | flight-sweep Worker | Worker secret; Hetzner box `.env` | `workers/flight-sweep` ingest, the late sweep | High: lets someone write fares | Not recorded |
-| `HTTPS_PROXY` / `HTTP_PROXY` | Proxy provider | Worker and box env | flight sweep | High if the URL holds a password | Not recorded |
-| `GEMINI_API_KEY` | Google AI | Supabase secret; GitHub secret; Hetzner box; laptop `.env`; `supabase/.env.local` | `plan-day`, `parse-booking`, `suggest-city`, golden-set workflow, pipeline | High: billed usage. In five places, the widest spread | Not recorded |
+| `CLOUDFLARE_API_TOKEN` (+ `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ZONE_ID`) | Cloudflare | Hetzner box `.env`; owner's shell | `wrangler pages deploy`, purge scripts | Critical: can replace the live site | Rolled by the owner (T1059-c; date not recorded) |
+| `INGEST_TOKEN` / `CARTA_SWEEP_INGEST_TOKEN` | flight-sweep Worker | Worker secret; Hetzner box `.env` | `workers/flight-sweep` ingest, the late sweep | High: lets someone write fares | Rolled by the owner (T1059-d; date not recorded) |
+| `HTTPS_PROXY` / `HTTP_PROXY` | Proxy provider | Worker and box env | flight sweep | High if the URL holds a password | Rolled by the owner (T1059-d; date not recorded) |
+| `GEMINI_API_KEY` | Google AI | Two keys since T1059-d: production in the Supabase secret; pipeline and CI in the Hetzner box, laptop `.env` and `supabase/.env.local`. The GitHub secret is not set yet (T153-b) | `plan-day`, `parse-booking`, `suggest-city`, golden-set workflow, pipeline | High: billed usage | Split and rolled by the owner (T1059-d; date not recorded). Laptop key answered 200 on 2026-11-12 |
 | `AI_OPENAI_API_KEY` | An OpenAI-compatible model API (Scaleway, OVHcloud, Mistral) | Supabase secret or Pages secret, only when a feature is switched to provider `openai`; Hetzner box `.env` for a pipeline job on it | `aiModels.mjs` (Edge Functions, Ask) and `pipeline/ai_gateway.py`, provider `openai` | High: billed usage. Not set today (no feature uses the provider) | Not set |
 | `CF_ACCOUNT_ID`, `CF_AI_TOKEN` | Cloudflare Workers AI (REST) | Supabase secret, only when an Edge Function feature is switched to provider `workers-ai`; Hetzner box `.env` for a pipeline job | `aiModels.mjs` outside a Worker (Ask on Pages uses the `AI` binding and needs neither), `pipeline/ai_gateway.py` | High: the token spends Neurons on the account. Scope it to Workers AI only. Not set today | Not set |
 | `AI_EVENTS_SALT` | Carta (a random 32 character string the owner makes) | Pages secret | Ask (`/api/ask/answer`) salts the question hash in `ai_model_events` with it | Medium: with the salt, a guessed question can be matched to its hash; without it the hash is not reversible | Not set yet (T1139-b) |
@@ -50,12 +51,12 @@ Keep it true: a task that adds, renames or moves a secret updates its row in the
 | `UPLOADS_SCAN_SECRET` | Carta (a long random string the owner makes) | Supabase Edge Function secret | `upload-scan` checks it against the `x-uploads-secret` header of every call | High: whoever holds it can trigger scan and purge runs (the function only scans pending uploads and deletes queued files; it publishes nothing) | Not set yet (061 not applied, T1070-a) |
 | Vault `uploads_scan_secret` | Carta (the same value as `UPLOADS_SCAN_SECRET`) | Supabase Vault (`vault.secrets`) | 061's pg_cron job `carta_uploads_scan`, which sends it as `x-uploads-secret` every 15 minutes | High: as above | Not set yet (T1070-a) |
 | Vault `uploads_scan_url` | Carta | Supabase Vault | the same cron job: the `upload-scan` function URL it posts to | Low: an address, not a credential (kept in the vault so the SQL carries no project URL) | Not set yet (T1070-a) |
-| `ALERT_WEBHOOK_URL` | Alerting | GitHub secret | the uptime workflow | Low: someone could post fake alerts | Not recorded |
+| `ALERT_WEBHOOK_URL` | Alerting | GitHub secret, not set (optional: GitHub already emails on a failed run) | the uptime workflow | Low: someone could post fake alerts | n/a |
 | `CARTA_HEARTBEAT_URL` | Uptime ping | Hetzner box `.env` | the box | Low | Not recorded |
-| `HCLOUD_TOKEN` | Hetzner Cloud | Hetzner box `.env` | box scripts | Critical: can delete or rebuild the server | Not recorded |
+| `HCLOUD_TOKEN` | Hetzner Cloud | Hetzner box `.env` | box scripts | Critical: can delete or rebuild the server | Rolled by the owner (T1059-c; date not recorded) |
 | `CARTA_TRAILSLAB_DUMP_CRYPT`, `CARTA_WORKER_GPG_KEY_FILE` | Trails worker | Hetzner box | trails dump encryption | High | Not recorded |
 | `CARTA_SEARCH_KEY` (+ `CARTA_SEARCH_CX`) | Web search provider | Hetzner box `.env` | pipeline research tasks | High: billed | Not recorded |
-| `SUPABASE_ANON_KEY`, `VITE_SUPABASE_ANON_KEY`, `VITE_SUPABASE_URL` | Supabase | Pages build env; GitHub secret; app `.env` | the browser app | Public by design (row policies guard the data) | n/a |
+| `SUPABASE_ANON_KEY`, `VITE_SUPABASE_ANON_KEY`, `VITE_SUPABASE_URL` | Supabase | Pages build env; app `.env`; GitHub secret `SUPABASE_ANON_KEY` not set yet (T235-a) | the browser app; `uptime.yml` | Public by design (row policies guard the data) | n/a |
 | `VITE_TP_MARKER`, `VITE_OMIO_TRACKING_LINK`, `VITE_VIATOR_PID`, `VITE_GYG_PARTNER_ID`, `VITE_SKYSCANNER_PARTNER_ID` | Affiliates | Pages build env | the browser app | Public affiliate ids | n/a |
 
 **AI gateway settings (T1137, T1139).** Every model call reads its provider and chain from config, so a switch is a setting, not a code change. These are not secrets, but they live beside the keys (Supabase secrets for the Edge Functions, Pages env for Ask, the box `.env` for the pipeline), and changing one changes which model answers travellers: a provider or model switch is the owner's call with an eval run (`docs/ai/model-strategy.md`). `<FEATURE>` is the feature name in upper case with `-` as `_`: `PLAN_DAY`, `SUGGEST_CITY`, `PARSE_BOOKING`, `ASK`, `EVAL_JUDGE` (Edge Functions and Ask, `aiModels.mjs`) and `INTROS`, `PARKING`, `TRIPS`, `LEXICON`, `TAGGING`, `SUMMARIES`, `BLOG` (pipeline, `pipeline/ai_gateway.py`).
@@ -78,7 +79,7 @@ A value naming the Claude API (`anthropic`, `claude`) is refused as a config err
 
 Low radius: free or registration-only keys for open data. They live in the laptop `.env` and the Hetzner box `.env`; `src/ingestion/CREDENTIALS.md` says how to get each one.
 
-`KAGGLE_API_TOKEN` (`KAGGLE_USERNAME`, `KAGGLE_KEY`), `TRAFIKLAB_GTFS_SWEDEN_KEY`, `TRAFIKLAB_NETEX_SWEDEN_KEY`, `TRAFIKLAB_GTFS_REGIONAL_KEY`, `MOBILITYDATA_AT_USER`, `MOBILITYDATA_AT_PASSWORD`, `OTD_SWISS_TOKEN`, `NDOV_USER`, `NDOV_PASS`, `OPENSKY_CLIENT_ID`, `OPENSKY_CLIENT_SECRET`, `OPENSKY_USER`, `OPENSKY_PASS`, `DELIJN_API_KEY`, `BELGIUM_OPENDATA_KEY`, `OPENTRIPMAP_KEY`, `GITHUB_TOKEN` (rate limits only; give it no scopes), `LITEAPI_KEY`, `HW_CONSUMER_KEY`, `HW_CONSUMER_SECRET`.
+`KAGGLE_API_TOKEN` (`KAGGLE_USERNAME`, `KAGGLE_KEY`), `TRAFIKLAB_GTFS_SWEDEN_KEY`, `TRAFIKLAB_NETEX_SWEDEN_KEY`, `TRAFIKLAB_GTFS_REGIONAL_KEY`, `MOBILITYDATA_AT_USER`, `MOBILITYDATA_AT_PASSWORD`, `OTD_SWISS_TOKEN`, `NDOV_USER`, `NDOV_PASS`, `OPENSKY_CLIENT_ID`, `OPENSKY_CLIENT_SECRET`, `OPENSKY_USER`, `OPENSKY_PASS`, `DELIJN_API_KEY`, `BELGIUM_OPENDATA_KEY`, `OPENTRIPMAP_KEY`, `GITHUB_TOKEN` (rate limits only; give it no scopes. 2026-11-12: the laptop one is a fine-grained token that gets 403 on Actions secrets, hooks, Actions settings and e-mails, so it is narrow), `LITEAPI_KEY`, `HW_CONSUMER_KEY`, `HW_CONSUMER_SECRET`.
 
 `TRAVELPAYOUTS_TOKEN` is higher: it is the affiliate account behind the fare data and future commission (ROADMAP I16).
 
@@ -97,10 +98,13 @@ Every account below can reach production. Each needs MFA with an authenticator a
 | Hetzner | the build box | Required | Offline |
 | Domain registrar (carta-europetravel.com) | DNS delegation | Required, with transfer lock on | Offline |
 | Resend | email sending | Required | Offline |
-| Travelpayouts and affiliate programmes | commission payouts | Where offered | Offline |
+| Travelpayouts and affiliate programmes | commission payouts | Where offered (Travelpayouts offers none, owner 2026-11) | Offline |
+
+The owner turned MFA on for every account above that offers it (T1059-b, ticked in the owner walkthrough; recorded 2026-11-12).
 
 ## Guards in place
 
 - `secret-scan.yml` fails a push to `main` (and any pull request) when the tree holds a privileged-key shape: Supabase secret keys, service-role JWTs, GitHub tokens, Google AI keys, Stripe live and webhook keys, Kaggle tokens, AWS keys, private keys. It also scans the built bundle.
 - Not covered by the scan, because the keys have no fixed shape: Cloudflare and R2 tokens, Resend keys (`re_`), proxy URLs. They stay out of the repo by living only in env files that git ignores.
 - `.gitignore` keeps `.env` and `.env.local` out of git; only the `.example` files are tracked.
+- GitHub (2026-11-12): secret scanning and push protection on; Dependabot alerts and Dependabot security updates on; the workflow token is read-only by default. Non-provider patterns and validity checks are not offered on this plan.
