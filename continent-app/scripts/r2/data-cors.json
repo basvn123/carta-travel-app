@@ -11,9 +11,23 @@
           "http://localhost:5173",
           "http://localhost:4173"
         ],
-        "methods": ["GET", "HEAD"]
+        "methods": [
+          "GET",
+          "HEAD"
+        ],
+        "headers": [
+          "Range",
+          "If-Match",
+          "If-None-Match"
+        ]
       },
-      "maxAgeSeconds": 86400
+      "maxAgeSeconds": 86400,
+      "exposeHeaders": [
+        "ETag",
+        "Content-Range",
+        "Content-Length",
+        "Accept-Ranges"
+      ]
     }
   ]
 }

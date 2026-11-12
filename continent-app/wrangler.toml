@@ -34,41 +34,16 @@ compatibility_flags = ["nodejs_compat"]
 binding = "PRERENDER"
 bucket_name = "carta-prerender"
 
-# Durable per-address limits (T1157, ROADMAP H3). Workers Rate Limiting
-# bindings: the count is shared by every isolate in one Cloudflare location
-# (it is per location and eventually consistent, so it caps cost, not exact
-# totals). functions/_lib/guard.js overLimit asks the endpoint's binding and
-# falls back to the in-memory window when a binding is absent, so local dev and
-# tests need none. Pages support for this entry must be confirmed on the first
-# deploy (owner step T1157-a); /api/stays has no Function yet, its binding is
-# declared for when it lands. namespace_id is a unique number per binding.
-[[ratelimits]]
-name = "RL_ASK"
-namespace_id = "1001"
-  [ratelimits.simple]
-  limit = 60
-  period = 60
-
-[[ratelimits]]
-name = "RL_FLIGHTS"
-namespace_id = "1002"
-  [ratelimits.simple]
-  limit = 20
-  period = 60
-
-[[ratelimits]]
-name = "RL_STAYS"
-namespace_id = "1003"
-  [ratelimits.simple]
-  limit = 20
-  period = 60
-
-[[ratelimits]]
-name = "RL_FORECAST"
-namespace_id = "1004"
-  [ratelimits.simple]
-  limit = 60
-  period = 60
+# Durable per-address limits (T1157, ROADMAP H3): no binding here. Pages does
+# not accept `[[ratelimits]]` (Workers only): on 2026-11-12 `wrangler pages
+# deploy` 4.160 refused this whole file with 'Configuration file for Pages
+# projects does not support "ratelimits"' (owner step T1157-a, owner sweep).
+# The durable layer is a Cloudflare WAF rate limiting rule on /api/ in front of
+# the Functions instead (docs/owner/cloudflare.md, T1079-a), which also keeps
+# refused calls off the Functions request quota. functions/_lib/guard.js
+# overLimit still asks for RL_ASK, RL_FLIGHTS, RL_STAYS and RL_FORECAST and
+# falls back to its in-memory window when they are absent, as they now are.
+# scripts/ship.mjs preflight fails on any key Pages refuses.
 
 # Build settings, for reference when configuring the Pages project. Pages runs
 # these from its own dashboard or from `wrangler pages deploy`; they are recorded

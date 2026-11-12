@@ -6,7 +6,7 @@ Terms checked: **2026-11-07** by a research subagent. Its limit: the official ho
 
 | Source | Today | Legal route | Unlocks when | Flag (default off) | Code path |
 |---|---|---|---|---|---|
-| Flight fares | Scraped from Google Flights | Aviasales Data API (Travelpayouts), free token, cached fares, meant for content pages | Signup now. Coverage threshold 80% of routes (starting value, confirm after the P1 run) | `LADDER_STOP_GOOGLE_FLIGHTS` | `sweepMinute` in the flight sweep Worker returns without searching |
+| Flight fares | Scraped from Google Flights | Aviasales Data API (Travelpayouts), free token, cached fares, meant for content pages | Signup now. Coverage threshold 80% of routes (starting value, confirm after the P1 run) | `LADDER_STOP_GOOGLE_FLIGHTS` | `sweepMinute` in the flight sweep Worker returns without searching; `workers/late-sweep/run.mjs` idles (T1213-d) |
 | Live flight search | Not available | Travelpayouts Flight Search API | About 50,000 monthly active users, by application | `LADDER_LIVE_FLIGHT_SEARCH` | Reserved, no code path |
 | Bed prices | Owner-run Booking.com sample, twice a year (decision I-g, option A) | Booking.com Demand API, Managed Affiliate Partners only | Contract and account manager; no published volume | `LADDER_STOP_BOOKING_SCRAPE` | `scrape_booking.py` refuses to run |
 | Hostel prices | Owner-run Hostelworld sample | Affiliate programme on Partnerize; no public API found | Approval of the campaign; direct partnership once there are numbers | `LADDER_STOP_HOSTELWORLD_SCRAPE` | `scrape_hostelworld.py` refuses to run |
@@ -24,7 +24,7 @@ Terms checked: **2026-11-07** by a research subagent. Its limit: the official ho
 ## The steps
 
 1. P1: measure Aviasales coverage on the 10,094 routes; switch fares route by route where covered.
-2. Before the first paid sale: set `LADDER_STOP_GOOGLE_FLIGHTS=1` on the sweep Worker (and stop the late sweep box).
+2. Before the first paid sale: set `LADDER_STOP_GOOGLE_FLIGHTS=1` on the sweep Worker (`npx wrangler secret put LADDER_STOP_GOOGLE_FLIGHTS` in `continent-app/workers/flight-sweep`, value 1) and in the box env for the late sweep (`infra/hetzner/cax11` env, then restart `carta-late-sweep.service`); both read the same flag (T1213-d).
 3. Before the Booking.com affiliate application (P4): review decision I-g; set `LADDER_STOP_BOOKING_SCRAPE=1` if moving to option C.
 4. About 50,000 monthly users: apply for the Flight Search API.
 5. Steady Booking and Hostelworld clicks: apply or approach with the numbers.

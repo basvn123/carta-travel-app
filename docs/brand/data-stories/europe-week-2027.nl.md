@@ -55,4 +55,4 @@ Eén persoon, zeven nachten, twee mensen die een volledig appartement delen, de 
 
 ---
 
-*Eigenaar: kies de kop, voeg een citaat toe, en de Carta-link en de releasedatum vóór verzending. Controleer de cijfers die dag met een nieuwe `--check`.*
+*Beslist in de owner sweep van 12 november 2026 (T1130-a): de kop hierboven blijft, de link is https://www.carta-europetravel.com, en de lijst van media staat in de Engelse versie. Nog voor de eigenaar: één citaat in je eigen woorden, de releasedatum, en die dag een nieuwe `--check`.*

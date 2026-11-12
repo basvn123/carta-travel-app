@@ -11,7 +11,7 @@ How to use it:
 |---|---|---|
 | `docs/owner/product-decisions.md` | product and design calls only the owner can make | 147 |
 | `docs/owner/owner-checks.md` | other checks and clean-ups | 81 |
-| `docs/owner/cloudflare.md` | Pages, R2, Workers, email routing | 46 |
+| `docs/owner/cloudflare.md` | Pages, R2, Workers, email routing | 33 (owner sweep 2026-11-12) |
 | `docs/owner/translation-review.md` | native-reader review of the six languages | 46 |
 | `docs/owner/data-and-pipeline-runs.md` | pipeline and data runs that wait on the owner | 40 |
 | `docs/owner/legal.md` | legal, tax and brand | 26 |
@@ -19,7 +19,7 @@ How to use it:
 | `docs/owner/supabase-migrations.md` | SQL pastes, Edge Functions and secrets | 12 |
 | `docs/owner/stripe.md` | Stripe prices, keys, webhook, test purchases | 11 |
 | `docs/owner/accounts-and-signups.md` | accounts, mailboxes and programme sign-ups | 6 |
-| `docs/owner/google-and-search.md` | Google, Gemini billing, Search Console | 3 |
+| `docs/owner/google-and-search.md` | Google, Gemini billing, Search Console | 1 (owner sweep 2026-11-12) |
 | `docs/owner/auth-settings.md` | Supabase Auth settings and admin MFA | procedure |
 | `docs/owner/secrets-rotation.md` | secrets rotation and MFA | procedure |
 | `docs/owner/web-hardening.md` | web and API hardening | procedure |

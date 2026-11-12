@@ -3,7 +3,28 @@
 // command reaches the build, R2 or Cloudflare.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { runShip, shipSteps, commandLine, preflight } from '../../scripts/ship.mjs';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { runShip, shipSteps, commandLine, preflight, tomlTopKeys, checkPagesConfig } from '../../scripts/ship.mjs';
+
+test('preflight refuses wrangler.toml keys that Pages rejects (H3, owner sweep 2026-11-12)', () => {
+  const keys = tomlTopKeys('name = "x"\n# c = 1\n[[r2_buckets]]\nbinding = "B"\n[[ratelimits]]\nname = "RL"\n  [ratelimits.simple]\n  limit = 1\n[ai]\nbinding = "AI"\n');
+  assert.deepEqual([...keys].sort(), ['ai', 'name', 'r2_buckets', 'ratelimits']);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ship-'));
+  fs.mkdirSync(path.join(dir, 'continent-app'));
+  const toml = path.join(dir, 'continent-app', 'wrangler.toml');
+  fs.writeFileSync(toml, 'name = "carta-app"\n[[ratelimits]]\nname = "RL_ASK"\n');
+  assert.equal(checkPagesConfig(dir).level, 'fail');
+  assert.match(checkPagesConfig(dir).msg, /ratelimits/);
+  fs.writeFileSync(toml, 'name = "carta-app"\npages_build_output_dir = "dist"\n[[kv_namespaces]]\nid = "1"\n');
+  assert.equal(checkPagesConfig(dir).level, 'ok');
+  fs.rmSync(dir, { recursive: true, force: true });
+});
+
+test('the real continent-app/wrangler.toml passes the Pages key check', () => {
+  assert.equal(checkPagesConfig().level, 'ok', checkPagesConfig().msg);
+});
 
 const OK = [{ level: 'ok', msg: 'fake preflight' }];
 const quiet = () => {};
