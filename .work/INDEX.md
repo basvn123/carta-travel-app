@@ -4,6 +4,7 @@ Every L1 and L2 run in this project, newest first. Each line links to its full r
 
 Format: `date · level · playbook · title: one-line result → report path`
 
+- 2026-11-12 · L2 · deep-task · Owner sweep (orchestrator): 7 parallel lanes plus round 2 checked the 792-step walkthrough; 499+ steps closed, migrations 063 to 075 applied, site shipped, walkthrough down to 171 owner steps in 54 sessions → `.work/2026-11-12-owner-sweep/report.md`
 - 2026-11-12 · L2 · deep-task · Owner sweep, round 2 (I-f, H14, G14, A3): 115 leftover owner ids closed or placed, unsorted.md emptied, 38 duplicates removed, README recounted; Year Pass made a one-off payment (six-language copy, checkout, webhook, migration 075), bot offers the Pass for events, phone home one brand bar, stays schema 20; migrations 063-075, deploys and ship handed to the orchestrator → `.work/2026-11-12-owner-round2/report.md`
 - 2026-11-12 · L2 · deep-task · Owner sweep, security lane (C2, C5, C6, N3): Dependabot alerts and fixes on, owner rotation and MFA recorded, PR #25 merged, 4 Dependabot PRs closed, 5 stale branches archived and deleted; Actions secrets and workflow fixes handed on → `.work/2026-11-12-owner-security/report.md`
 - 2026-11-12 · L2 · deep-task · Owner sweep, supabase lane: 10 Edge Functions deployed and smoke-tested, Auth read back, 4 decisions, owner files cut to open steps; migrations 063-074 and shared secrets handed off (permission guard) → `.work/2026-11-12-owner-supabase/report.md`
