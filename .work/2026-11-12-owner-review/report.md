@@ -154,7 +154,7 @@ None. Every live action was a read-only GET, or a probe that should be refused: 
 
 ### Checks addendum: npm test failures, file by file
 The full run on this Windows machine had 49 failures; the judge's runs ran in parallel. Each failing file was rerun alone:
-- **6 files pass alone**: dataHealth, linkHealth, passMoment, pipelineOverrides, priceNotes, slo, sectionBoundary. They failed only under load.
+- **7 files pass alone**: dataHealth, linkHealth, passMoment, pipelineOverrides, priceNotes, slo, sectionBoundary. They failed only under load.
 - **askDocs failed because of this branch.** My `docs/i18n/review.md` text pushed `runbooks/refund.md` to rank 2 for one question (recall@1 0.792, base 0.813, baseline 0.833, tolerance 0.02). The text is reworded, and the gate passes again at 0.813, the same as base (checked with `runAskDocsEval({docsDir})` on `git archive b6a5237190 docs`). Other lanes' docs edits can move this number too, so rerun it after the merge.
 - **Not from this branch.** This branch touches none of these files' inputs:
   - cspHashes, pagesAuth, motion-tokens and sharedParts: a Windows path bug (`scandir 'C:\C:\...'`).
