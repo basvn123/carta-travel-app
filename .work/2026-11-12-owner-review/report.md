@@ -71,7 +71,7 @@ Most "human" entries are walkthrough rows in other lanes' files: real phones, go
 
 ## What we did
 1. **Translations (I8).** Audited all six catalogues (10,219 keys each). No keys are missing, no strings are empty, and no English is left in a translation apart from loanwords. Fixed:
-   - 905 strings that had lost their accents, umlauts, ß or the opening ¿ (de 168, es 295, fr 361, it 67, nl 14). A new test, `continent-app/tests/i18nAccents.test.mjs`, keeps the common stripped words out. Each change was checked to touch the diacritics only. The judge found two verb slips in the accent pass, both fixed: fr `ai.lead` "composé" became "compose", and `beach.whyWaterUnknownNoSource` "ne publié" became "ne publie". It also found 63 more Spanish values, now fixed. The scan works from word lists, so a native reader may still find a few.
+   - 1,013 strings that had lost their accents, umlauts, ß or the opening ¿ (de 208, es 295, fr 393, it 103, nl 14). A new test, `continent-app/tests/i18nAccents.test.mjs`, keeps the common stripped words out. Each change was checked to touch the diacritics only. The judge found two verb slips in the accent pass, both fixed: fr `ai.lead` "composé" became "compose", and `beach.whyWaterUnknownNoSource` "ne publié" became "ne publie". It also found 63 more Spanish values, now fixed. The scans work from word lists. Each judge sweep found more: 63, then 68, then 108, all fixed. Expect a native reader to find some more.
    - French register: decided vous everywhere and rewrote 104 tu strings. Typed example queries stay in the traveller's own voice.
    - One shortlist word per language (T411-n).
    - Every "Fix these first" and borderline row of `docs/i18n/review.md`, and the gender-neutral Italian `notfor.*` lines.
@@ -168,6 +168,12 @@ The full run on this Windows machine had 49 failures; the judge's runs ran in pa
   - placeLinking: built from the worktree's untracked `public/app_data.json`.
   - aiEvents, costCardUmber, rankTier, seasonStrip and shareAssets: Vite transport and DOM timeouts.
 - **CI on Linux is the authority, and it is green on this branch:** `ci` run 43261994544 (app lint, tests, fast build, ruff, pytest, docs checks) and `ask-eval` run 43261994671 both passed. So the local failures above are Windows-only. That includes the SCHEMA.md drift, which CI's docs check does not report.
+
+## Verification (three fresh judges)
+- **Round 1:** FAIL, 3.2. Spanish accents incomplete, two French verb slips, `npm test` not run, ledger outcomes, closed rows not named, owner steps not exact. All fixed.
+- **Round 2:** narrow FAIL, 3.86. 25 more stripped es/fr values. Fixed, plus 41 German umlaut transliterations and the guard test `tests/i18nAccents.test.mjs`.
+- **Round 3:** narrow FAIL, 4.00 weighted, but translations still scored 3. A deeper sweep found 108 more (fr 34, it 33, de 40). After this last allowed loop, all were fixed from the judge's key list, and the guard test was extended to those families; it then caught 3 more Italian values, also fixed.
+- No fourth judge ran, per the playbook's three-loop limit. What is still below the bar: translation completeness may be below 4 until a native read (the I8 steps). Every other criterion scored 4 or 5 in round 3. Judgements: `judgement-1.md` to `judgement-3.md` in the run folder.
 
 ## Open issues
 - **Claude-doable steps not reached** (kept with exact steps):

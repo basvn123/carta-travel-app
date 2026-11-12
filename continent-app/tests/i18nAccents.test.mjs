@@ -1,4 +1,4 @@
-/* Owner sweep 2026-11-12 (ROADMAP I8): 905 translated strings had been written
+/* Owner sweep 2026-11-12 (ROADMAP I8): 1,013 translated strings had been written
  * without their accents ("etapes", "Fuhrt uber", "dia", "piu"). These are the
  * stripped words that kept coming back; each pattern only matches a spelling
  * that is wrong in that language, so a hit is always a missing accent. */
@@ -6,10 +6,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 const STRIPPED = {
-  fr: /(^|[^\p{L}'’])((?<!y )a (pied|moins de|l'est|l'ouest|l'aller)|jusqu'a|etapes?|deja|meme|apres|tres|ete verifie|itineraire|randonnees?)(?=$|[^\p{L}])/u,
+  fr: /(^|[^\p{L}'’])((?<!y )a (pied|moins de|l'est|l'ouest|l'aller)|jusqu'a|etapes?|deja|meme|apres|tres|ete verifie|itineraire|randonnees?|amenagee|matinee|Jour \{d\},? (sortie )?a|\d+ a \d+)(?=$|[^\p{L}])|(?<!y )a \{(city|km|place|name|email|source)\}/u,
   es: /(^|[^\p{L}])(Dia|dia|dias|Aqui|aqui|tambien|despues|sesion|Federacion|continuacion)(?=$|[^\p{L}])/u,
-  it: /(^|[^\p{L}])(piu|gia|citta|perche|cosi|attivita|qualita)(?=$|[^\p{L}])/u,
-  de: /(^|[^\p{L}])(fuer|ueber|Ueber|Fuhrt|fuehrt|Strasse|Strassen|Straende|zuruck|naechste|Hohle|Kuste|veroeffentlicht)(?=$|[^\p{L}])/u,
+  it: /(^|[^\p{L}])(piu|gia|citta|perche|cosi|attivita|qualita|[cC]'e)(?=$|[^\p{L}])|\} e (un|una)|^E (un|una)|non e/u,
+  de: /(^|[^\p{L}])(fuer|ueber|Ueber|Fuhrt|fuehrt|Strasse|Strassen|Straende|zuruck|naechste|Kuste|veroeffentlicht|Kueste|Kuesten\w*|Hoehenmeter|\w*qualitaet|Laenge|Naehe|noetig|geprueft|Gepruefte|Ausflugen)(?=$|[^\p{L}])/u,
 };
 
 for (const [code, re] of Object.entries(STRIPPED)) {
