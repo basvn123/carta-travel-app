@@ -138,7 +138,7 @@ None. This lane changed no live system (Supabase, Cloudflare, GitHub settings, t
 - `npm test` (continent-app, sparse worktree): about 35 failures. None names or imports a file this run changed. They come from the missing `public/`, the missing Python `yaml`, the worktree short-path test, CRLF checkouts and the design-lint baseline in untouched files.
 - Targeted tests pass: deviceData, importStays, passSubscription, aiPage and i18nParity. `npm run lint`: 0 errors.
 - Docs checks: 4 entry points missing, all `continent-app/public` (sparse worktree). drift.py adds the `docs/SCHEMA.md` wire table, which this run did not touch.
-- CI on the pushed branch (run 43254745893): app, evals, edge-deno and csp green; python failed once because `docs/tos/data_licenses.md` is generated from the registry and had a hand-written line (T1175-c). The line was reverted (the rule stands in ROADMAP K7 and `docs/brand/data-stories/method.md`); `tests/test_data_licences.py` passes locally and the re-run is the final gate.
+- CI on the pushed branch (run 43254745893): app, evals, edge-deno and csp green; python failed once because `docs/tos/data_licenses.md` is generated from the registry and had a hand-written line (T1175-c). The line was reverted (the rule stands in ROADMAP K7 and `docs/brand/data-stories/method.md`); the re-run (43256346126) is green on every job: app, python, evals, edge-deno, csp. This answers judge fix 4: the local failures are the sparse worktree, not this change.
 - Judge 1: FAIL on criteria 5 and 7. Fixes 1 to 3 were applied:
   - The I2 gate now names the renewing-plan strings.
   - The Privacy deletion line is now true.
