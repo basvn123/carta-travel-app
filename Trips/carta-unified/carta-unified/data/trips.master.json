@@ -209,7 +209,7 @@
         "Duration": "7 days",
         "Best Period": "May, June, September, October",
         "Budget Tier": "€€",
-        "Total Distance / Terrain": "330–370 km, roughly 1,100 m cumulative gain; ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
+        "Total Distance / Terrain": "330–370 km, roughly 1,700 m cumulative gain with the side trips in the day lines (about 1,100 m on the river path alone); ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
         "Getting There": "Fly to Vienna (VIE), CAT or S7 to Wien Mitte, then ÖBB westbound to Passau Hbf (approx 3h30, one change at Linz). Return from Krems or Tulln on the Franz-Josefs-Bahn",
         "Who It Suits": "First-time tourers, families with teenagers, anyone who wants distance without climbing"
       },
@@ -357,13 +357,13 @@
       ],
       "typeSpecific": {
         "raw": {
-          "Total Distance / Terrain": "330–370 km, roughly 1,100 m cumulative gain; ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
+          "Total Distance / Terrain": "330–370 km, roughly 1,700 m cumulative gain with the side trips in the day lines (about 1,100 m on the river path alone); ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
           "Who It Suits": "First-time tourers, families with teenagers, anyone who wants distance without climbing"
         },
-        "surface": "330–370 km, roughly 1,100 m cumulative gain; ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
+        "surface": "330–370 km, roughly 1,700 m cumulative gain with the side trips in the day lines (about 1,100 m on the river path alone); ~95% asphalt, short crushed-limestone sections in the Strudengau and on the Wachau south bank",
         "distanceKm": 330,
         "elevationM": null,
-        "verticalM": 1100,
+        "verticalM": 1700,
         "technicalRating": null,
         "transitPass": null,
         "hutBooking": null,
@@ -39223,7 +39223,7 @@
         "Duration": "7 days",
         "Best Period": "Mid-July – late September",
         "Budget Tier": "€€",
-        "Total Distance / Terrain": "approx. 55–65 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
+        "Total Distance / Terrain": "approx. 83 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
         "Getting There": "Fly to Innsbruck (INN), then rail to Jenbach and the Zillertalbahn to Mayrhofen (about 1.5 hours total)",
         "Who It Suits": "Experienced hut hikers comfortable with fixed cable and glacier-adjacent exposure; not a beginner's first hut trip"
       },
@@ -39365,11 +39365,11 @@
       ],
       "typeSpecific": {
         "raw": {
-          "Total Distance / Terrain": "approx. 55–65 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
+          "Total Distance / Terrain": "approx. 83 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
           "Who It Suits": "Experienced hut hikers comfortable with fixed cable and glacier-adjacent exposure; not a beginner's first hut trip"
         },
-        "surface": "approx. 55–65 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
-        "distanceKm": 55,
+        "surface": "approx. 83 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
+        "distanceKm": 83,
         "elevationM": null,
         "verticalM": 5200,
         "technicalRating": null,
@@ -39538,7 +39538,7 @@
         "Duration": "7 days",
         "Best Period": "Early July – late September",
         "Budget Tier": "€€",
-        "Total Distance / Terrain": "approx. 60–68 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
+        "Total Distance / Terrain": "approx. 93 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
         "Getting There": "Fly to Innsbruck (INN), then IVB regional bus 4166 up the Stubaital to Neustift (about 40 minutes)",
         "Who It Suits": "Fit hikers with hut experience and no fear of exposed, cable-secured ground; not a first alpine trek"
       },
@@ -39676,11 +39676,11 @@
       ],
       "typeSpecific": {
         "raw": {
-          "Total Distance / Terrain": "approx. 60–68 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
+          "Total Distance / Terrain": "approx. 93 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
           "Who It Suits": "Fit hikers with hut experience and no fear of exposed, cable-secured ground; not a first alpine trek"
         },
-        "surface": "approx. 60–68 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
-        "distanceKm": 60,
+        "surface": "approx. 93 km, 5,600 m ascent / 5,600 m descent; high alpine path on scree, slab and moraine, T3 with T4 sections",
+        "distanceKm": 93,
         "elevationM": null,
         "verticalM": 5600,
         "technicalRating": null,
@@ -40731,7 +40731,7 @@
         "Duration": "7 days",
         "Best Period": "Mid-July to late September",
         "Budget Tier": "€€€",
-        "Total Distance / Terrain": "approx. 75–85 km, 5,800–6,400 m combined ascent; white-red-white T3 throughout, one cable-secured step near Hohtürli",
+        "Total Distance / Terrain": "approx. 89 km, about 3,550 m combined ascent (lift-assisted sections not counted); white-red-white T3 throughout, one cable-secured step near Hohtürli",
         "Getting There": "Fly to Zürich (ZRH), train to Spiez, change for Kandersteg (about 2h total)",
         "Who It Suits": "Fit hut-to-hut hikers comfortable with a steep cable-assisted pass and consecutive long days"
       },
@@ -40869,13 +40869,13 @@
       ],
       "typeSpecific": {
         "raw": {
-          "Total Distance / Terrain": "approx. 75–85 km, 5,800–6,400 m combined ascent; white-red-white T3 throughout, one cable-secured step near Hohtürli",
+          "Total Distance / Terrain": "approx. 89 km, about 3,550 m combined ascent (lift-assisted sections not counted); white-red-white T3 throughout, one cable-secured step near Hohtürli",
           "Who It Suits": "Fit hut-to-hut hikers comfortable with a steep cable-assisted pass and consecutive long days"
         },
-        "surface": "approx. 75–85 km, 5,800–6,400 m combined ascent; white-red-white T3 throughout, one cable-secured step near Hohtürli",
-        "distanceKm": 75,
+        "surface": "approx. 89 km, about 3,550 m combined ascent (lift-assisted sections not counted); white-red-white T3 throughout, one cable-secured step near Hohtürli",
+        "distanceKm": 89,
         "elevationM": null,
-        "verticalM": 5800,
+        "verticalM": 3550,
         "technicalRating": null,
         "transitPass": null,
         "hutBooking": null,
@@ -75930,7 +75930,7 @@
         "balkans",
         "budget"
       ],
-      "summary": "Three of the best value old towns in Europe, joined by one of its most beautiful train rides. The week starts in **Sarajevo**, where Ottoman lanes meet Austro-Hungarian avenues, rides the Neretva canyon line to **Mostar** and its rebuilt **Stari Most**, then crosses to Montenegro for the walled town of **Kotor** at the head of its fjord-like bay. Every night is a social hostel with a dorm bed under €20.",
+      "summary": "Three of the best value old towns in Europe, joined by one of its most beautiful train rides. The week starts in **Sarajevo**, where Ottoman lanes meet Austro-Hungarian avenues, rides the Neretva canyon line to **Mostar** and its rebuilt **Stari Most**, then crosses to Montenegro for the walled town of **Kotor** at the head of its fjord-like bay. Every night is a social hostel with a dorm bed from about €15 to €28.",
       "summaryGenerated": false,
       "hook": "Three old towns, one canyon train and six nights in dorms for under €150.",
       "snapshot": null,
@@ -75998,7 +75998,7 @@
         {
           "day": 3,
           "title": "The Neretva canyon train to Mostar",
-          "morning": "The 07:15 train to Mostar takes about two hours through the Neretva canyon, the most scenic line in the Balkans. Tickets about €10 at the station.",
+          "morning": "The 07:15 train to Mostar takes about two hours through the Neretva canyon, the most scenic line in the Balkans. Tickets about €7 (14 KM) at the station; a second train leaves in the late afternoon.",
           "afternoon": "Walk the old town to **Stari Most** and watch the divers, who jump 21 m into the river once the hat has collected enough.",
           "evening": "Sunset from the **Kriva Ćuprija**, the small crooked bridge, and dinner on a terrace over the river.",
           "dayStats": "Train 2 h, city walking 6 km",
@@ -76188,8 +76188,8 @@
         "other": []
       },
       "proTips": [
-        "Take the Sarajevo to Mostar train, not the bus: same price, half the bends and the canyon views.",
-        "Climb Kotor's walls before 08:00; the ticket booth opens later and the steps are in shade.",
+        "Take the Sarajevo to Mostar train, not the bus: about €7, half the bends and the canyon views.",
+        "Climb Kotor's walls early, when the steps are still in shade.",
         "Pay for Blagaj and Kravica through the hostel; the shared minibus is cheaper than two buses and a taxi."
       ],
       "typeSpecific": {
@@ -76218,7 +76218,7 @@
       ],
       "whatCouldGoWrong": [
         "The Mostar train can be replaced by a bus at short notice; check the station board the day before.",
-        "The border at Debeli Brijeg can add an hour on summer weekends."
+        "The Bosnia and Herzegovina to Montenegro border can add an hour on summer weekends."
       ],
       "sources": {
         "verified": null,
@@ -76254,7 +76254,7 @@
         },
         {
           "title": "The canyon train",
-          "line": "Two hours along the emerald Neretva for about €10.",
+          "line": "Two hours along the emerald Neretva for about €7.",
           "photo": {
             "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Stari_Most_viewed_from_North.jpg/1280px-Stari_Most_viewed_from_North.jpg",
             "w": 1280,
@@ -76615,9 +76615,9 @@
         {
           "day": 4,
           "title": "Boat day to Zlatni Rat on Brač",
-          "morning": "Summer excursion boats leave Makarska harbour for **Bol** on Brač, about 1 h, around €35 an adult and half for children.",
+          "morning": "Summer excursion boats leave Makarska harbour for **Bol** on Brač, about 1 h, around €50 an adult with lunch, less for children.",
           "afternoon": "**Zlatni Rat**, the horn-shaped spit that moves with the wind, and warm shallow water on both sides.",
-          "evening": "Boat back at about 17:00; early night.",
+          "evening": "Boat back at about 16:00; early night.",
           "dayStats": "Boat 1 h each way",
           "stats": {
             "mode": "ferry",
@@ -76645,7 +76645,7 @@
         {
           "day": 5,
           "title": "Biokovo Skywalk",
-          "morning": "Shuttle up the **Biokovo** nature park road to the glass **Skywalk** at 1,228 m, booked the day before. Park ticket about €20 to €30 an adult in season.",
+          "morning": "Tour or taxi up the **Biokovo** nature park road to the glass **Skywalk** at 1,228 m; entry is capped, so book ahead. Park ticket about €15 an adult from June to September.",
           "afternoon": "Back down for a lazy afternoon on **Nugal** beach, or the town beach with small children.",
           "evening": "Ice cream and the evening promenade.",
           "dayStats": "Shuttle up 1,228 m, beach afternoon",
@@ -77116,7 +77116,7 @@
         {
           "day": 2,
           "title": "Prague Castle and Petřín",
-          "morning": "**Prague Castle** grounds and St Vitus nave are free to walk; the combined ticket is optional.",
+          "morning": "**Prague Castle** grounds and the west end of the St Vitus nave are free; the rest of the cathedral needs the circuit ticket.",
           "afternoon": "Down through the gardens to **Petřín** hill and its mirror maze, then the river.",
           "evening": "Jazz in a cellar, or the **Dancing House** terrace at sunset.",
           "dayStats": "City walking, about 10 km, 130 m up",
@@ -77206,8 +77206,8 @@
         {
           "day": 5,
           "title": "Bratislava on the way",
-          "morning": "Regional train to **Bratislava** in about 1 h, around €12 return-free single.",
-          "afternoon": "**Bratislava Castle**, the old town and the UFO bridge over the Danube; leave bags in station lockers.",
+          "morning": "Regional train to **Bratislava** in about 1 h, about €13 single.",
+          "afternoon": "**Bratislava Castle**, the old town and the UFO bridge over the Danube; leave bags with a luggage storage service near the station.",
           "evening": "Evening train on to **Budapest**, about 2 h 30 min, from €15.",
           "dayStats": "Trains 1 h and 2 h 30 min",
           "stats": {
@@ -77236,7 +77236,7 @@
         {
           "day": 6,
           "title": "Budapest baths and bridges",
-          "morning": "**Széchenyi** thermal baths in the city park, about €30 for the day.",
+          "morning": "**Széchenyi** thermal baths in the city park, about €30 for the day; no children under 14 since August 2025.",
           "afternoon": "**Heroes' Square** and **Andrássy út** back to the **Parliament** on the river.",
           "evening": "Ruin bars of the Jewish quarter.",
           "dayStats": "City walking, about 9 km",
@@ -77336,12 +77336,12 @@
         "other": []
       },
       "proTips": [
-        "Use the station lockers in Bratislava hlavná stanica so the stopover costs nothing but time.",
+        "Leave bags with a luggage storage service near Bratislava hlavná stanica; the station lockers have been reported out of action.",
         "Buy the Vienna 24 or 48 hour transport ticket only if you plan more than four rides a day."
       ],
       "typeSpecific": {
         "raw": {
-          "Who It Suits": "First trips by train, couples, friends, families with older children"
+          "Who It Suits": "First trips by train, couples, friends, families with teenagers"
         },
         "surface": null,
         "distanceKm": 590,
@@ -77639,7 +77639,7 @@
       ],
       "summary": "The last 100 km of the Camino Francés, the minimum that earns the **Compostela**. Five days on oak-lined lanes and stone villages from **Sarria**, through **Portomarín** on its reservoir, octopus in **Melide** and eucalyptus woods, to the **Cathedral of Santiago** and the pilgrims' Mass. Beds are €10 to €20 a night and dinner is a three-course menú for €13.",
       "summaryGenerated": false,
-      "hook": "111 km in five days, beds from €10 a night, and the Compostela at the end.",
+      "hook": "115 km in five days, beds from €10 a night, and the Compostela at the end.",
       "snapshot": null,
       "itinerary": [
         {
@@ -78242,7 +78242,7 @@
         {
           "day": 1,
           "title": "Athens and the Acropolis",
-          "morning": "Metro from the airport to the centre, 40 minutes. Afternoon at the **Acropolis**, about €20.",
+          "morning": "Metro from the airport to the centre, 40 minutes. Afternoon at the **Acropolis**, €30.",
           "afternoon": "Plaka and Anafiotika's island lanes under the rock.",
           "evening": "Sunset from the Areopagus hill, free, then souvlaki.",
           "dayStats": "City walking, about 7 km",
@@ -78272,10 +78272,10 @@
         {
           "day": 2,
           "title": "Ferry to Paros",
-          "morning": "Morning ferry from **Piraeus** to **Paros**, 3 to 4 hours on a conventional boat, from €40 on deck.",
+          "morning": "Morning ferry from **Piraeus** to **Paros**, about 4 hours on a conventional boat, from about €40 on deck.",
           "afternoon": "Settle in **Parikia** and visit the **Panagia Ekatontapyliani**, the church of a hundred doors.",
           "evening": "Sunset on the windmill quay, drinks by the old harbour.",
-          "dayStats": "Ferry 3 h 30 min, 170 km",
+          "dayStats": "Ferry about 4 h, 170 km",
           "stats": {
             "mode": "ferry",
             "distanceKm": 170,
@@ -78283,8 +78283,8 @@
             "descentM": null,
             "highM": null,
             "timeMin": {
-              "low": 210,
-              "high": 210
+              "low": 240,
+              "high": 240
             }
           },
           "sleep": "Studio in Parikia",
@@ -78362,10 +78362,10 @@
         {
           "day": 5,
           "title": "Hop to Naxos",
-          "morning": "Ferry from Parikia to **Naxos** in about 45 minutes, from €10.",
+          "morning": "Ferry from Parikia to **Naxos** in about 50 minutes, about €15.",
           "afternoon": "Old town lanes up to the Venetian castle.",
           "evening": "The marble **Portara** at sunset, the gate of an unfinished temple of Apollo.",
-          "dayStats": "Ferry 45 min, 40 km",
+          "dayStats": "Ferry 50 min, 40 km",
           "stats": {
             "mode": "ferry",
             "distanceKm": 40,
@@ -78422,7 +78422,7 @@
         {
           "day": 7,
           "title": "Back to Athens",
-          "morning": "Ferry from Naxos to **Piraeus**, about 5 hours, or a 40 minute flight from Naxos airport.",
+          "morning": "Ferry from Naxos to **Piraeus**, 5 to 6 hours, or a 40 minute flight from Naxos airport.",
           "afternoon": "Metro to the airport.",
           "evening": null,
           "dayStats": "Ferry 5 h, 190 km",

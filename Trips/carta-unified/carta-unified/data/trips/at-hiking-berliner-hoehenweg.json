@@ -118,7 +118,7 @@
     "Duration": "7 days",
     "Best Period": "Mid-July – late September",
     "Budget Tier": "€€",
-    "Total Distance / Terrain": "approx. 55–65 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
+    "Total Distance / Terrain": "approx. 83 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
     "Getting There": "Fly to Innsbruck (INN), then rail to Jenbach and the Zillertalbahn to Mayrhofen (about 1.5 hours total)",
     "Who It Suits": "Experienced hut hikers comfortable with fixed cable and glacier-adjacent exposure; not a beginner's first hut trip"
   },
@@ -260,11 +260,11 @@
   ],
   "typeSpecific": {
     "raw": {
-      "Total Distance / Terrain": "approx. 55–65 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
+      "Total Distance / Terrain": "approx. 83 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
       "Who It Suits": "Experienced hut hikers comfortable with fixed cable and glacier-adjacent exposure; not a beginner's first hut trip"
     },
-    "surface": "approx. 55–65 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
-    "distanceKm": 55,
+    "surface": "approx. 83 km, 5,200 m ascent / 5,200 m descent; glacier-moraine paths, cable-secured rock steps, T3–T4",
+    "distanceKm": 83,
     "elevationM": null,
     "verticalM": 5200,
     "technicalRating": null,

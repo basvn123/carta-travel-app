@@ -167,7 +167,7 @@
     {
       "day": 2,
       "title": "Prague Castle and Petřín",
-      "morning": "**Prague Castle** grounds and St Vitus nave are free to walk; the combined ticket is optional.",
+      "morning": "**Prague Castle** grounds and the west end of the St Vitus nave are free; the rest of the cathedral needs the circuit ticket.",
       "afternoon": "Down through the gardens to **Petřín** hill and its mirror maze, then the river.",
       "evening": "Jazz in a cellar, or the **Dancing House** terrace at sunset.",
       "dayStats": "City walking, about 10 km, 130 m up",
@@ -257,8 +257,8 @@
     {
       "day": 5,
       "title": "Bratislava on the way",
-      "morning": "Regional train to **Bratislava** in about 1 h, around €12 return-free single.",
-      "afternoon": "**Bratislava Castle**, the old town and the UFO bridge over the Danube; leave bags in station lockers.",
+      "morning": "Regional train to **Bratislava** in about 1 h, about €13 single.",
+      "afternoon": "**Bratislava Castle**, the old town and the UFO bridge over the Danube; leave bags with a luggage storage service near the station.",
       "evening": "Evening train on to **Budapest**, about 2 h 30 min, from €15.",
       "dayStats": "Trains 1 h and 2 h 30 min",
       "stats": {
@@ -287,7 +287,7 @@
     {
       "day": 6,
       "title": "Budapest baths and bridges",
-      "morning": "**Széchenyi** thermal baths in the city park, about €30 for the day.",
+      "morning": "**Széchenyi** thermal baths in the city park, about €30 for the day; no children under 14 since August 2025.",
       "afternoon": "**Heroes' Square** and **Andrássy út** back to the **Parliament** on the river.",
       "evening": "Ruin bars of the Jewish quarter.",
       "dayStats": "City walking, about 9 km",
@@ -387,12 +387,12 @@
     "other": []
   },
   "proTips": [
-    "Use the station lockers in Bratislava hlavná stanica so the stopover costs nothing but time.",
+    "Leave bags with a luggage storage service near Bratislava hlavná stanica; the station lockers have been reported out of action.",
     "Buy the Vienna 24 or 48 hour transport ticket only if you plan more than four rides a day."
   ],
   "typeSpecific": {
     "raw": {
-      "Who It Suits": "First trips by train, couples, friends, families with older children"
+      "Who It Suits": "First trips by train, couples, friends, families with teenagers"
     },
     "surface": null,
     "distanceKm": 590,
