@@ -55,7 +55,7 @@ Sent to Google per request: the deck (ids, names, categories, ratings, coordinat
 
 ## EU AI Act reading (team view, not legal advice)
 
-Not high-risk (a leisure suggestion with no legal or similar effect on a person). A traveller knows they asked an AI to plan; the plan summary does not yet say which lines the model wrote (T1156-c). Google carries the provider duties for the model.
+Not high-risk (a leisure suggestion with no legal or similar effect on a person; not in Annex III). Article 50 applies: the summary and stop reasons carry the visible "Written by AI" line (`AiMark.jsx`, T1215); the machine-readable mark of Art 50(2) is a follow-up in ROADMAP F8, due before the public opening. Carta is the provider of this AI system (Art 3(3)); Google carries the general-purpose model duties for Gemini (Chapter V). Self-reviewed against Regulation (EU) 2024/1689 on 2026-11-12 (T1156-a).
 
 ## Report a problem
 

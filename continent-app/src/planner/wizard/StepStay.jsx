@@ -18,6 +18,7 @@ import { IconButton } from '../../components/ui/index.js';
 import { plannerStore } from '../plannerStore.js';
 import { suggestedNights, Flag, CityThumb, StayRow } from '../GuidedTripWizardParts.jsx';
 import { nightsText } from './wizardSteps.js';
+import { MAX_TRIP_NIGHTS } from '../../lib/tripDates.js';
 import { useI18n } from '../../i18n/index.jsx';
 
 const CITIES_PREVIEW = 8;
@@ -384,7 +385,7 @@ export function StepStay({
                   tone="surface"
                   className="wiz-icon-main"
                   label={t('wizard.moreNights')}
-                  disabled={(nights[focusedId] || 0) >= 21}
+                  disabled={(nights[focusedId] || 0) >= MAX_TRIP_NIGHTS}
                   onClick={() => setCityNights(focusedId, (nights[focusedId] || 0) + 1)}
                 >
                   <PlusIcon size={20} />

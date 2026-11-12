@@ -144,6 +144,8 @@ Config: `switch.triggers` in `continent-app/config/ai_models.json`. Each trigger
 | gemini-price | all Gemini | any price change, or a `-latest` alias moving to a new model | recompute this table | next task |
 | quality-drop | any | eval headline more than 2 points under its recorded score, over 7 days | move the feature back one step (previous model, then the no-model answer) and open a register row | next task |
 
+Grounded allowance check (T1135-i, 2026-11-12): fully used, a Trip Pass costs 60 x 0.01 + 40 x 0.05 = EUR 2.60 against about EUR 5.40 net, a Year Pass 300 x 0.01 + 120 x 0.05 = EUR 9.00 against about EUR 11.90 net. Both keep a margin at paid search rates, so the plan_tiers allowances stay; recheck if Google changes the per-search price. Not in this floor: parse-booking, suggest-city, Ask above the free quota, refunds and disputes; they are measured in the closed beta. The founding yearly price (K-b) is set before 16 February 2027 from that measured use, with at least EUR 2.00 net margin over the worst case.
+
 Review: monthly, the first Monday, against E4 telemetry and K12 users. Update the tokens, prices and scores in the config, rerun `python -m pytest tests/test_ai_model_strategy.py -q`, and regenerate this page.
 
 ## Moving a batch job to the box

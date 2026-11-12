@@ -4,6 +4,7 @@ import { plannerStore } from '../plannerStore.js';
 import { arrivalFromImports, staysFromImports, nearestStop } from '../flow/importStays.js';
 import { tripDaysBetween } from '../../lib/runtime_pricing.js';
 import { monthOptions } from '../../lib/wizardFlights.js';
+import { MAX_TRIP_NIGHTS } from '../../lib/tripDates.js';
 
 export function useWizardSelection({
   allCountries, arrivalId, countries, dateMax, dateMin, dateMode, destinations, endDate,
@@ -41,7 +42,7 @@ export function useWizardSelection({
     // for the nights until they go home.
     if (!rows.length && s.kind === 'now') {
       const here = nearestStop(s.now, destinations);
-      if (here) rows = [{ id: here, nights: Math.min(21, s.when.nights || 1), eur: 0 }];
+      if (here) rows = [{ id: here, nights: Math.min(MAX_TRIP_NIGHTS, s.when.nights || 1), eur: 0 }];
     }
     if (!rows.length) return;
     setOrder(rows.map((r) => r.id));

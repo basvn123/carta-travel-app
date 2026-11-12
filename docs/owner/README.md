@@ -9,12 +9,12 @@ How to use it:
 
 | File | What it covers | Steps |
 |---|---|---|
-| `docs/owner/product-decisions.md` | product and design calls only the owner can make | 147 |
+| `docs/owner/product-decisions.md` | product and design calls only the owner can make | 6 |
 | `docs/owner/owner-checks.md` | other checks and clean-ups | 81 |
 | `docs/owner/cloudflare.md` | Pages, R2, Workers, email routing | 33 (owner sweep 2026-11-12) |
 | `docs/owner/translation-review.md` | native-reader review of the six languages | 46 |
 | `docs/owner/data-and-pipeline-runs.md` | phone, people and drive checks left from the data runs | 4 |
-| `docs/owner/legal.md` | legal, tax and brand | 26 |
+| `docs/owner/legal.md` | legal, tax and brand | 3 |
 | `docs/owner/hetzner-box.md` | the Hetzner box and workers | 4 |
 | `docs/owner/supabase-migrations.md` | migrations, Edge Functions and secrets | 4 |
 | `docs/owner/stripe.md` | Stripe prices, keys, webhook, test purchases, legal review | 5 |
@@ -33,3 +33,4 @@ How to use it:
 | `docs/owner/unsorted.md` | owner steps no procedure covered yet; each is handed to a lane and moves to its file after the 2026-11-12 sweep | 274 |
 
 Counts are from 2026-11-11, when these files moved here from `Execution/`; the box files were recounted in the owner sweep of 2026-11-12.
+Counts are from 2026-11-11, when these files moved here from `Execution/`; product-decisions and legal were updated by the 2026-11-12 owner sweep.

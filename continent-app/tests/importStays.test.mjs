@@ -28,6 +28,19 @@ test("no dates: an even share of the trip's nights; one town twice is one stop",
   assert.deepEqual(rows, [{ id: "far", nights: 6, eur: 100 }]);
 });
 
+// T812-b: one stop may hold as many nights as a whole trip (MAX_TRIP_NIGHTS,
+// 60), not the wizard's old 21.
+test("a long stay keeps its nights up to 60, and no more", () => {
+  const month = staysFromImports([
+    { kind: "stay", city: "Lisbon", date: "2027-05-01" },
+    { kind: "stay", city: "Porto", date: "2027-06-10" },
+  ], destinations, { end: "2027-06-12", nights: 42 });
+  assert.deepEqual(month.map((r) => r.nights), [40, 2]);
+  const long = staysFromImports([{ kind: "stay", city: "Faro", date: "2027-01-01" }],
+    destinations, { end: "2027-04-01" });
+  assert.equal(long[0].nights, 60);
+});
+
 test("a town the catalogue lacks is left out, not guessed", () => {
   assert.deepEqual(staysFromImports([{ kind: "stay", city: "Atlantis", date: "2027-05-10" }], destinations, {}), []);
   assert.deepEqual(staysFromImports(null, destinations), []);

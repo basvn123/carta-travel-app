@@ -26,3 +26,7 @@ We chose **option 2**:
 
 ## How we'll know it works
 No live Stripe key is set before registration; no task proposes hiring professionals.
+
+## Later decisions
+- [0009](0009-launch-plan-fast-track.md) (2026-11-12): the fast track is the plan; registration about Mon 2027-02-22.
+- [0010](0010-legal-posture-diy.md) (2026-11-12): a Claude session's self-review against the official texts takes the place of a lawyer's check; the legal choices this decision leaves to the owner are written down there.

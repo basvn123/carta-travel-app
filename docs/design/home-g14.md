@@ -1,6 +1,6 @@
 # Home page G14, design note
 
-Status: built behind the `HOME_G14` flag (off), T1209, ROADMAP G14. Follows the design direction draft `docs/design/direction.md` (not approved yet, row T1111-a). Preview with `?home=g14`.
+Status: built behind the `HOME_G14` flag (off), T1209, ROADMAP G14. Follows the design direction draft `docs/design/direction.md` (approved 2026-11-12, row T1111-a). Preview with `?home=g14`.
 
 ## What it is
 

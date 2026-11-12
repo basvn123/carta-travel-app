@@ -78,7 +78,8 @@ by city and each day hour by hour, and marks every estimate as an estimate. Cart
 guidance and no GPS, the traveller's maps app takes them there. For the flight it shows Google Flights'
 price, with the airline, the times and when it was checked, so the flight, the bed and the days add up to one
 total; a fare the traveller types in replaces it. The flight price is never presented as Carta's own. It
-takes no booking and no commission; it hands the traveller to the operator.
+takes no booking and never ranks by what it earns; some links pay Carta a small fee at no cost to the
+traveller (I-e, 2026-11-12). It hands the traveller to the operator.
 
 The audience counts money: students, young workers, families on one income, retirees, and hikers first
 at launch. The only real asset is trust in the numbers.
@@ -395,11 +396,16 @@ in the kit. Two screens can never write the same figure two ways.
   have changed".
   The airline mark is the airline's own logo in a white square, never recoloured, tinted or redrawn. A
   fare the traveller typed in replaces it and is labelled as theirs. A swept price older than its sweep
-  cycle is not shown (5 days for the next two weeks, 16 days beyond, T780; config `flights.max_age_days`). Bag fees (10 kg cabin, 20 kg
+  cycle is not shown (5 days for the next two weeks, 16 days beyond, 32 days past day 181, T780, T798; config `flights.max_age_days`). Bag fees (10 kg cabin, 20 kg
   checked) are Carta's estimates; the traveller's bag is priced on every flight (T691).
+  The one exception to "One amount and its unit" (owner tick T882-b, 2026-11-12, built under ROADMAP
+  D10): a far-ahead date with no swept fare shows a typical fare, the median of the route's swept fares,
+  labelled "Typical for this route, not for your dates" next to the amount and on the receipt line; it is
+  never presented as a fare found for those dates and never counted in "Fits" without its label.
   Cents on receipts, whole euros on cards, like every other figure.
 - **One day-cost basis.** The traveller's Lifestyle prices the day everywhere: the card, the pin and the
-  page show the same figure (owner decision 2026-10-13, T374-d).
+  page show the same figure (owner decision 2026-10-13, T374-d). A saved trip keeps the stay and
+  Lifestyle it was saved with; the app-wide settings apply to new and unsaved trips (owner T703-a, 2026-11-12).
 
 ## Layout, spacing and shape
 
@@ -542,7 +548,7 @@ reasoning in `docs/design-v6/DIRECTION.md` part 9), restated in Lagoon terms and
 
 **Plan cards.** Equal weight; the recommended plan is marked with a brown border and a "Recommended" chip and keeps the same ground. Never dim the free plan. State limits as plain numbers.
 
-**My trips, Account and the pass screens (T503).** A trip on My trips carries one price: what it costs a person a day, in whole euros (owner 1.8); the party's total belongs to the receipt in Plan. A trip kept without an account says where it is ("Saved on this device") in one 13 px `--text-2` line under its card, with "Sign in" as a quiet small button, offered only as the way to have it on a second device, never as a condition. The Visited band carries the countries (the figure, the flags, Edit or Add in the same cell, the names as a list for screen readers); there is no second list of countries, and with nothing on the record the band is that one cell and its Add, never a row of zeros. "See all prices" is a quiet link (13 px 600 `--action`, underlined, `--tap` high) to `/pricing` at the foot of Account's Your plan and of the pass sheet, never a second primary; following it from the sheet closes the sheet first. Where the numbers come from (`/about/numbers`) is a link row in Account's help menu and desktop rail; the method and the counts live on that page and nowhere else. The pass price itself stays in cents, the amount charged.
+**My trips, Account and the pass screens (T503).** A trip on My trips carries one price: what it costs a person a day, in whole euros (owner 1.8); the party's total belongs to the receipt in Plan. A trip kept without an account says where it is ("Saved on this device") in one 13 px `--text-2` line under its card, with "Sign in" as a quiet small button, offered only as the way to have it on a second device, never as a condition. The Visited band carries the countries (the figure, the flags, Edit or Add in the same cell, the names as a list for screen readers); there is no second list of countries, and with nothing on the record the band is that one cell and its Add, never a row of zeros. "See all prices" is a quiet link (13 px 600 `--action`, underlined, `--tap` high) to `/pricing` at the foot of the pass sheet (Account's Your plan dropped it, owner tick T503-g, 2026-11-12; the pricing page stays), never a second primary; following it from the sheet closes the sheet first. Where the numbers come from (`/about/numbers`) is a link row in Account's help menu and desktop rail; the method and the counts live on that page and nowhere else. The pass price itself stays in cents, the amount charged.
 
 **Suitability strip (retired 2026-10-15, T431).** The three-cell band under a trip hero is gone: the trip page carries a fact band (days, distance, climb, highest point, where you sleep, start) and the difficulty as a status chip in the head (five squares filled `--text` to the level, outlined `--text-3` beyond, plus the word, with an InfoDot). The five squares stay the one difficulty drawing everywhere.
 
@@ -708,7 +714,7 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 - A hand-over names the thing and the app: "Open Day 2 in Google Maps", "Open this ride in Google Maps".
   Never "Navigate", "Start route" or "Directions", because Carta does not navigate.
 - Honest in the product's own voice. A flight price is never presented as Carta's own estimate (the
-  checked line is optional since T840); a fare the traveller typed is labelled as theirs. When the AI is off, say it is off. An empty result says so in one line.
+  checked line is optional since T840); the typical fare of T882-b is labelled as typical for the route, never as a fare for your dates; a fare the traveller typed is labelled as theirs. When the AI is off, say it is off. An empty result says so in one line.
 - Strings go through i18n keys in all six languages, never concatenation; test labels at the longest
   translation (usually German).
 

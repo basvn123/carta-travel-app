@@ -1,6 +1,6 @@
 # Carta design direction
 
-Status: **draft for owner approval** (T1111, roadmap G1, 2026-11-06). Until the owner signs it off, nothing here binds; G3 (T1122) and G5 (T1124) wait on that sign-off. Once approved, the carta-design skill takes over its decisions (row T1111-b) and stays the top design source, as CLAUDE.md says.
+Status: **approved** 2026-11-12 (row T1111-a, decided under the owner's 2026-11-12 instruction that Claude makes the open design calls), with (a), (b) and (c) of section 7 answered yes. The carta-design skill takes over its decisions in row T1111-b and stays the top design source, as CLAUDE.md says.
 
 Built from: the carta-design skill, the impeccable skill, `PRODUCT.md`, `DESIGN.md` (Overview, Named Rules, Typography, Elevation, Shapes, Motion, Home page v3), `docs/research/2026-11-launch-plan-research.md` and the G rows of `docs/AUDIT-2026-11.md`. The user research G-R1 to G-R3 has not run yet; where it later disagrees with this page, the research wins and this page is revised.
 
@@ -69,3 +69,5 @@ Screenshots taken on 2026-11-06 with `npm run dev` at 390 x 844 and 1440 x 900, 
 ## 7. Sign-off
 
 The owner approves this page, or tells Claude what to change. Open decisions for that review: (a) the plan tab follows the place page's trip card (T1026-c, this page says yes); (b) count-up only on the home page, settle everywhere else; (c) the 28 px stage radius on the app's cost card.
+
+Answered 2026-11-12: (a) yes, (b) yes, (c) yes. Note on (b): the G14 home (`docs/design/home-g14.md`) has no count-up, so once G14 replaces v3 (T1209-a) the count-up lives nowhere until a home moment earns it again; settle stays the rule everywhere else.

@@ -3,8 +3,7 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
 import { CheckIcon } from '../../components/Icons.jsx';
 import { TIERS, TIER_ORDER, formatPrice } from '../../lib/pricing.js';
-import { tabHref } from '../../lib/urlState.js';
-import { fmtDate, plainClick } from './parts.jsx';
+import { fmtDate } from './parts.jsx';
 
 /**
  * Plan (T935, the owner-approved spec): the plan held, its price and when it
@@ -53,7 +52,7 @@ const FEATURES = {
   ],
 };
 
-export function PlanView({ head, entitlement: e, actions, said, setSaid, onGoCancel, onChangePlan, onPricingPage }) {
+export function PlanView({ head, entitlement: e, actions, said, setSaid, onGoCancel, onChangePlan }) {
   const { t, lang, languages } = useI18n();
   const locale = (languages.find((l) => l.code === lang) || languages[0]).bcp47;
   const [busy, setBusy] = useState('');
@@ -146,15 +145,6 @@ export function PlanView({ head, entitlement: e, actions, said, setSaid, onGoCan
             );
           })}
         </div>
-        {onPricingPage && (
-          <a
-            className="acct-plan-all"
-            href={tabHref('pricing')}
-            onClick={(ev) => { if (!plainClick(ev)) return; ev.preventDefault(); onPricingPage(); }}
-          >
-            {t('pass.seeAll')}
-          </a>
-        )}
       </section>
     </>
   );

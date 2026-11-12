@@ -1091,11 +1091,9 @@ function TravelApp() {
     goToTab('day');
   }, [goToTab]);
 
-  // The drive start's setter went with the Destinations props that carried
-  // it and that nothing read (T381, brief V3-10). choices.drive_home stays:
-  // the URL key `dh` still restores it, and whether car trips come back
-  // through the settings line or the path is removed is the owner's call
-  // (register row T370-c).
+  // choices.drive_home is set by setFrom above (the From picker in the
+  // settings line, T577); the URL key `dh` restores it. T370-c closed
+  // 2026-11-12.
 
   // Where you sleep, set from the trip page's Lifestyle slider (T173). The
   // same field the Lifestyle panel's tiles write, so the two never disagree.

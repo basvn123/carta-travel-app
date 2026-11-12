@@ -14,6 +14,7 @@
  */
 import { cityKeyName } from '../../lib/placeName.js';
 import { haversineKm } from '../../lib/nearby.js';
+import { MAX_TRIP_NIGHTS } from '../../lib/tripDates.js';
 
 const norm = (s) => cityKeyName(String(s || '')).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 
@@ -50,11 +51,11 @@ export function staysFromImports(imports, destinations, when = {}) {
   stays.forEach((s, i) => {
     const nextDate = stays[i + 1]?.date || when.end || '';
     const gap = s.date && nextDate ? daysBetween(s.date, nextDate) : 0;
-    const nights = Math.max(1, Math.min(21, gap > 0 ? gap : share));
+    const nights = Math.max(1, Math.min(MAX_TRIP_NIGHTS, gap > 0 ? gap : share));
     const same = rows.find((r) => r.id === s.id);
     const eur = Number(s.eur) > 0 ? Math.round(Number(s.eur)) : 0;
     if (same) {
-      same.nights = Math.min(21, same.nights + nights);
+      same.nights = Math.min(MAX_TRIP_NIGHTS, same.nights + nights);
       same.eur += eur;
     } else {
       rows.push({ id: s.id, nights, eur });

@@ -28,6 +28,7 @@ import { haversineKm } from '../lib/runtime_pricing.js';
 import { duplicateHeroes } from '../lib/heroImage.js';
 import { pickWithDupes } from '../lib/countryCovers.js';
 import { fmtDate, addDays, laterISO, useToday, planningHorizon } from '../lib/dates.js';
+import { MAX_TRIP_NIGHTS } from '../lib/tripDates.js';
 import { useCountryInsights } from '../hooks/useCountryInsights.js';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
@@ -597,7 +598,7 @@ export function GuidedTripWizard({
   const [autoNightIds, setAutoNightIds] = useState(() => new Set());
 
   const setCityNights = (id, n) => {
-    const v = Math.max(0, Math.min(21, n));
+    const v = Math.max(0, Math.min(MAX_TRIP_NIGHTS, n));
     setAutoNightIds((prev) => {
       if (!prev.has(id)) return prev;
       const next = new Set(prev);
@@ -627,7 +628,7 @@ export function GuidedTripWizard({
     let extra = pool - base * autoIds.length;
     const next = { ...nightsMap };
     for (const x of autoIds) {
-      next[x] = Math.max(1, Math.min(21, base + (extra > 0 ? 1 : 0)));
+      next[x] = Math.max(1, Math.min(MAX_TRIP_NIGHTS, base + (extra > 0 ? 1 : 0)));
       if (extra > 0) extra -= 1;
     }
     return next;

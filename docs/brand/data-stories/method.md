@@ -65,3 +65,7 @@ node scripts/stories/basket_per_country.mjs --check   # exit 1 if they no longer
 ```
 
 No network. The output has no timestamp, so the same data gives the same files.
+
+## Source terms (T1130-c, 2026-11-12)
+
+No. Booking.com's customer terms A15.2 forbid robot access and scraping whether or not the use is commercial, A15.3 blocks automated price gathering and A18.3 reserves an injunction. So a published story does not quote bed prices from Carta's Booking.com sample; the bed figure waits for a licensed source (ROADMAP I16), or the story ships without it.

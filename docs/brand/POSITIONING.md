@@ -99,6 +99,6 @@ Press kit shot list, to take after the P1 visual work (phone 390 px and desktop 
 ## Decisions for the owner
 
 - **K-a:** launch market and language (recommended A).
-- **Name:** run the three register searches above; keep Carta (class 39, word plus logo) or switch before any spend.
+- **Name:** decided 2026-11-12 (owner tick T1060-a): keep Carta; file class 39 as word plus logo before any brand spend, after a TMview check on the day of filing.
 - **Handles:** claim @cartatravel (or the chosen name) on Instagram, TikTok and X; that needs your own accounts.
 - **K-b:** waitlist reward (the roadmap's default: a free Trip Pass at 3 referrals, the founding yearly price at 10), unchanged by this draft.
