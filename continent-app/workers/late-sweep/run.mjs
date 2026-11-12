@@ -56,6 +56,7 @@ import {
   slotsAt, FAR_CYCLE, LATE_CYCLE, SLOTS_PER_DAY,
 } from '../flight-sweep/src/plan.mjs';
 import { airportCountries, gapPairs, AIRPORTS_CSV } from './gaps.mjs';
+import { ladderOn } from '../shared/ladder.mjs';
 
 const ROUTES_URL = process.env.CARTA_ROUTES_URL
   || 'https://data.carta-europetravel.com/data/flights/_routes.json';
@@ -191,6 +192,15 @@ async function main() {
     for (let m = now; m < now + LATE_CYCLE; m++) n += lateJobsForMinute(list, m * 60000).length;
     console.log(`${list.length} routes, ${n} searches a 4-week cycle, about ${Math.round(n / 672)} an hour`);
     return;
+  }
+  // T1213-d (ROADMAP I16): the same stop switch as the sweep Worker. With
+  // LADDER_STOP_GOOGLE_FLIGHTS=1 in the box env no Google Flights search runs.
+  // The fill exits; the cycle idles instead of exiting, because its unit has
+  // Restart=always and an exit would restart it every minute.
+  if (ladderOn(process.env, 'stopGoogleFlights')) {
+    log('late-sweep: stopped by LADDER_STOP_GOOGLE_FLIGHTS=1, no searches');
+    if (process.argv.includes('--fill')) return;
+    for (;;) await sleep(3600000);
   }
   if (!TOKEN) throw new Error('CARTA_SWEEP_INGEST_TOKEN is not set');
   if (process.argv.includes('--fill')) return fill();

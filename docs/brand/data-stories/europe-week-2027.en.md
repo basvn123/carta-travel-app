@@ -55,4 +55,4 @@ One person, seven nights, two people sharing an entire apartment, eating out mos
 
 ---
 
-*Owner: pick the headline, add a quote, and add the Carta link and the release date before sending. Check the numbers against a fresh `--check` run that day.*
+*Decided in the owner sweep of 2026-11-12 (T1130-a, ROADMAP K5): the headline is the one above, because the launch market is Belgium and the Netherlands (owner decision T1060-b) and "cheaper than at home" is the local angle a Belgian desk can run. The link is https://www.carta-europetravel.com. Send the Dutch version first, to Belgian outlets: VRT NWS (economie/consument), HLN and Het Nieuwsblad (reizen), De Standaard and De Tijd (consument), Knack, and the travel trade site Travel Magazine; then the Netherlands with the "Nederland: duurder dan België" angle swapped to the lead: NU.nl, AD (reizen), de Volkskrant, Reisreporter. English goes only to EU-wide data desks after the Dutch run. Still the owner's: a one-sentence quote in your own words, the release date, and a fresh `--check` run that day.*

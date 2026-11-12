@@ -72,10 +72,49 @@ export function shipSteps({ repoRoot = REPO_ROOT, fastOut } = {}) {
   ];
 }
 
+/**
+ * The top-level keys `wrangler pages deploy` accepts in wrangler.toml
+ * (wrangler 4.160, supportedPagesConfigFields). Any other key makes the Pages
+ * deploy refuse the whole file before uploading: on 2026-11-12 the T1157
+ * `[[ratelimits]]` tables did exactly that, and the dry run could not see it
+ * because it never calls Wrangler (owner sweep, deploy lane, H3).
+ */
+export const PAGES_CONFIG_KEYS = new Set([
+  'pages_build_output_dir', 'name', 'compatibility_date', 'compatibility_flags', 'send_metrics',
+  'no_bundle', 'limits', 'placement', 'vars', 'durable_objects', 'kv_namespaces', 'queues',
+  'r2_buckets', 'd1_databases', 'vectorize', 'hyperdrive', 'services', 'analytics_engine_datasets',
+  'ai', 'version_metadata', 'dev', 'mtls_certificates', 'browser', 'upload_source_maps', 'env',
+]);
+
+/** Top-level keys of a TOML text: bare keys before the first table, then each table's head. */
+export function tomlTopKeys(text) {
+  const keys = new Set();
+  let inTable = false;
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    const table = line.match(/^\[\[?\s*([A-Za-z0-9_-]+)/);
+    if (table) { keys.add(table[1]); inTable = true; continue; }
+    const bare = line.match(/^([A-Za-z0-9_-]+)\s*=/);
+    if (bare && !inTable) keys.add(bare[1]);
+  }
+  return keys;
+}
+
+/** A key Pages rejects fails the ship in both modes: the deploy step would refuse it anyway. */
+export function checkPagesConfig(repoRoot = REPO_ROOT) {
+  const file = path.join(repoRoot, 'continent-app', 'wrangler.toml');
+  if (!fs.existsSync(file)) return { level: 'ok', msg: 'no continent-app/wrangler.toml' };
+  const bad = [...tomlTopKeys(fs.readFileSync(file, 'utf8'))].filter((k) => !PAGES_CONFIG_KEYS.has(k));
+  return bad.length
+    ? { level: 'fail', msg: `continent-app/wrangler.toml has keys Pages refuses: ${bad.join(', ')}` }
+    : { level: 'ok', msg: 'wrangler.toml keys all accepted by Pages' };
+}
+
 /** The checks before any step. Returns [{ level, msg }]. */
 export function preflight({ repoRoot = REPO_ROOT, live = false, needBytes = LIVE_DISK_BYTES } = {}) {
   const soft = live ? 'fail' : 'warn';
-  const out = [checkStaleNestedGit(repoRoot)];
+  const out = [checkStaleNestedGit(repoRoot), checkPagesConfig(repoRoot)];
   const nm = path.join(repoRoot, 'continent-app', 'node_modules');
   out.push(fs.existsSync(nm)
     ? { level: 'ok', msg: 'continent-app/node_modules present' }

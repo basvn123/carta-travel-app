@@ -34,6 +34,17 @@ test('all flags are off by default and only "1" turns one on', () => {
   assert.equal(ladderOn({}, 'nope'), false);
 });
 
+test('the box late sweep honours the same Google Flights stop switch (T1213-d)', async () => {
+  // run.mjs starts its loop on import, so the guard is checked in the source:
+  // it must sit before the first search, the fill and the cycle alike.
+  const { readFileSync } = await import('node:fs');
+  const src = readFileSync(new URL('../workers/late-sweep/run.mjs', import.meta.url), 'utf8');
+  const guard = src.indexOf("ladderOn(process.env, 'stopGoogleFlights')");
+  assert.ok(guard > 0, 'late-sweep checks LADDER_STOP_GOOGLE_FLIGHTS');
+  assert.ok(guard < src.indexOf("if (process.argv.includes('--fill')) return fill();"), 'before the fill');
+  assert.ok(guard < src.indexOf('const s = readState();'), 'before the cycle');
+});
+
 test('the sweep stops when the Google Flights flag is on, before touching the database', async () => {
   const env = { LADDER_STOP_GOOGLE_FLIGHTS: '1' };
   assert.deepEqual(await sweepMinute(env, Date.now()), { stopped: true });

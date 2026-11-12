@@ -17,7 +17,7 @@
       "route": "Aviasales Data API via Travelpayouts",
       "unlock": { "metric": "aviasales_coverage_pct", "threshold": 80, "note": "switch per route where covered; the 80 is a starting value to confirm after the P1 run" },
       "must_stop_before": "the first paid sale",
-      "flag": { "env": "LADDER_STOP_GOOGLE_FLIGHTS", "effect": "the sweep Worker runs no Google Flights search" }
+      "flag": { "env": "LADDER_STOP_GOOGLE_FLIGHTS", "effect": "the sweep Worker and the box late sweep run no Google Flights search" }
     },
     {
       "id": "flights_live_search",
