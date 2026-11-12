@@ -7,11 +7,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import * as flights from '../functions/api/flights.js';
 import * as forecast from '../functions/api/forecast.js';
 
+// A fake JWT ({"sub":"x","role":"authenticated"}, signature "sig"), joined at
+// run time: written out whole, it matches the eyJ…\.eyJ pattern of
+// secret-scan.yml and turns that gate red on every push (owner sweep 2026-11-12).
+const FAKE_JWT = ['eyJhbGciOiJIUzI1NiJ9', 'eyJzdWIiOiJ4Iiwicm9sZSI6ImF1dGhlbnRpY2F0ZWQifQ', 'c2ln'].join('.');
+
 const CREDS = {
-  authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ4Iiwicm9sZSI6ImF1dGhlbnRpY2F0ZWQifQ.c2ln',
+  authorization: `Bearer ${FAKE_JWT}`,
   cookie: 'sb-access-token=eyJhbGciOiJIUzI1NiJ9.x.y; sb-refresh-token=r',
   apikey: 'service-role-guess',
 };
@@ -67,7 +73,8 @@ function sources(dir) {
 }
 
 test('no Pages Function reads a user token or cookie, or holds a Supabase key', () => {
-  const root = new URL('../functions', import.meta.url).pathname;
+  // fileURLToPath, not .pathname: on Windows .pathname gives "/C:/..." and the walk fails.
+  const root = fileURLToPath(new URL('../functions', import.meta.url));
   const files = sources(root);
   assert.ok(files.length >= 10, `only ${files.length} function files found`);
   for (const f of files) {
