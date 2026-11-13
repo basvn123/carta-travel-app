@@ -73,7 +73,7 @@ Runs on its own with the weekly run (`carta-weekly.timer`, Mondays 09:00 Brussel
 grep -i dump ~/logs/weekly.log | tail
 ```
 
-A line `dump supabase skipped: ...` means no backup was made that week. The same run pushes the file with `python pipeline/archive/push.py --only supabase-dump --dump-dir <that dumps folder>`. R2 keeps `archive/db/` for 30 days only (the lifecycle rule from `push.py --lifecycle`), so at most about four weekly dumps exist.
+A line `dump supabase skipped: ...` means no backup was made that week. The same run pushes the file with `python pipeline/archive/push.py --only supabase-dump --dump-dir <that dumps folder>`. R2 keeps `archive/db/` for 30 days only (the lifecycle rule from `push.py --lifecycle`), so at most about four weekly dumps exist. After a successful push the box deletes its local copies of that kind (`dump supabase: pushed; local copies deleted` in the log): R2 is the only copy of a weekly dump, and the box's dumps folder is `CARTA_DUMP_DIR` (the lab volume, `/mnt/trailslab/dumps`, since 2026-11-13).
 
 List what is in R2 (needs the `R2` rclone remote variables from `infra/hetzner/cax11/env.example`):
 

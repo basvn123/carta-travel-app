@@ -94,6 +94,20 @@ if [ "${CARTA_AUTO_UPDATE:-1}" = "1" ]; then
   else
     printf '%s code update FAILED; running %s as it is\n' "$(date -Is)" "$before" >> "$LOG_DIR/weekly.log"
   fi
+  # Each shallow fetch leaves the replaced commits' objects behind, and the
+  # repo tracks about 48,000 wire files: .git reached 2.5 GB on the 38 GB disk
+  # by 2026-11-13 (1.3 GB after a prune). The box never needs history, so
+  # prune once .git passes 2 GB. Under the run lock, before the run.
+  local git_kb
+  git_kb="$(du -sk "$repo/.git" 2>/dev/null | cut -f1)"
+  if [ "${git_kb:-0}" -gt 2097152 ]; then
+    if git -C "$repo" reflog expire --expire=now --all && git -C "$repo" gc --prune=now --quiet; then
+      printf '%s git prune: .git %s KB -> %s KB\n' "$(date -Is)" "$git_kb" \
+        "$(du -sk "$repo/.git" 2>/dev/null | cut -f1)" >> "$LOG_DIR/weekly.log"
+    else
+      printf '%s git prune FAILED; .git stays at %s KB\n' "$(date -Is)" "$git_kb" >> "$LOG_DIR/weekly.log"
+    fi
+  fi
 fi
 
 bash "$HERE/run_pipeline.sh" "$@"

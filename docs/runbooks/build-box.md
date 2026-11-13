@@ -89,6 +89,8 @@ Undo: `lab.sh push` first if reviews were made on the box, then `lab.sh down`, b
 
 `carta-weekly.timer` (and the monthly and quarterly timers the same way) starts `weekly.sh`, which takes the run lock and runs `run_pipeline.sh` only when `CARTA_PIPELINE_ENABLED=1`: venv re-sync, pull of the master from R2, `run_pipeline.py` up to the `CARTA_TIER` ceiling, encrypted dumps, pushes, upload to R2. With `CARTA_DEPLOY=1` it deploys `dist/` to Pages after a data publish (handbook; T992 to T996).
 
+Disk (root disk 38 GB; 2026-11-13 it filled and stopped the app build): the dumps go to `CARTA_DUMP_DIR=/mnt/trailslab/dumps` on the lab volume and are deleted locally once pushed; `weekly.sh` prunes `.git` past 2 GB; raw mirrors keep one dated folder per source (T992). A build needs about 2 GB for `dist/` and `dist-data/`. Check: `df -h / /mnt/trailslab`, `du -sh ~/archive-out ~/carta/data/raw ~/carta/.git`.
+
 Check it: `tail -n 20 ~/logs/weekly.log` on the box. Exit codes, from `infra/hetzner/cax11/weekly.sh` and `infra/hetzner/cax11/run_pipeline.sh`: 1 a task failed, 2 the run refused (a guard, or a bad argument or `CARTA_MAX_CADENCE`), 3 the pipeline was fine but an archive, publish or deploy step failed, 4 the venv could not sync, 5 no venv, no repo or `npm ci` failed, 75 a run was already going (the `flock` lock). On any non-zero exit `weekly.sh` pings `CARTA_HEARTBEAT_URL/fail` when that variable is set.
 
 ## Rerun by hand

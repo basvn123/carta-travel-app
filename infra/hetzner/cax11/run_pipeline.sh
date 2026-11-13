@@ -155,7 +155,9 @@ echo "============================================================"
 # Defaults after load-env.sh, never before: env.example ships these names blank,
 # and load-env.sh unsets every blank, which would erase a default set earlier.
 export CARTA_ARCHIVE_OUT="${CARTA_ARCHIVE_OUT:-$HOME/archive-out}"
-DUMP_DIR="$CARTA_ARCHIVE_OUT/dumps"
+# CARTA_DUMP_DIR puts the encrypted dumps on another disk: a trailslab dump is
+# about 5 GB, and the box's root disk is 38 GB (the lab volume has room).
+DUMP_DIR="${CARTA_DUMP_DIR:-$CARTA_ARCHIVE_OUT/dumps}"
 
 # --- T640: extra tasks above the ceiling and the caches they need ------------
 # CARTA_EXTRA_TASKS is passed to run_pipeline.py as --also. Each task names the
@@ -524,7 +526,16 @@ if r2_configured || [ $DRY_RUN -eq 1 ]; then
   done
   for d in "${DUMPS_MADE[@]}"; do
     if "$PY" pipeline/archive/push.py --only "$d-dump" --dump-dir "$DUMP_DIR" "${ARCHIVE_DRY[@]}"; then
-      find "$DUMP_DIR" -name "$d-*.dump.gpg" -mtime +8 -delete 2>/dev/null
+      # push.py has just copied every local $d dump to R2 (it stops at the
+      # first failed copy), and R2 keeps archive/db/ for 30 days, so the local
+      # copies only cost disk. Eight days of them (two 5 GB trailslab dumps)
+      # filled the root disk on 2026-11-13 and stopped the app build.
+      if [ $DRY_RUN -eq 1 ]; then
+        say "dump $d: pushed; a real run would delete the local copies"
+      else
+        find "$DUMP_DIR" -maxdepth 1 -name "$d-*.dump.gpg" -delete 2>/dev/null
+        say "dump $d: pushed; local copies deleted (R2 keeps 30 days)"
+      fi
     else
       archive_fail "push $d-dump"
     fi
