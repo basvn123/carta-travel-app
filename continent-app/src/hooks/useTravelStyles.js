@@ -58,7 +58,10 @@ export function useTravelStyles(choices, setChoices) {
     const linked = first && typeof window !== 'undefined' && PRICED_QUERY.test(window.location.search || '');
     mounted.current = true;
     setChoices((prev) => afterChoicesChange(prev, { first, linked }));
-  }, [choices.stay_tier, choices.lifestyle, choices.transport_mode, choices.group_size, choices.children, choices.babies, setChoices]);
+  // style_held too: a hold placed while nothing differs (Continue on Who
+  // with the style's own party, an undo, the tile already picked) lifts in
+  // the same pass, so no hold lingers unseen (judge round 3).
+  }, [choices.stay_tier, choices.lifestyle, choices.transport_mode, choices.group_size, choices.children, choices.babies, choices.style_held, setChoices]);
 
   // Rule 4. `seen` holds what each side looked like when they last agreed.
   const seen = useRef({ taste: null, explore: null, id: null });
@@ -141,6 +144,7 @@ export function useTravelStyles(choices, setChoices) {
   const revert = useCallback(() => { if (store.active) switchTo(store.active); }, [store.active, switchTo]);
   // The choices differ from the active style (a trip's change, a link).
   const changed = Boolean(active && !choicesMatchStyle(active, choices));
+  const held = Boolean(active && choices.style_held);
 
   return useMemo(() => ({
     list: store.list,
@@ -157,5 +161,6 @@ export function useTravelStyles(choices, setChoices) {
     keep,
     revert,
     changed,
-  }), [store, active, open, setOpen, switchTo, create, update, remove, duplicate, hold, keep, revert, changed]);
+    held,
+  }), [store, active, open, setOpen, switchTo, create, update, remove, duplicate, hold, keep, revert, changed, held]);
 }

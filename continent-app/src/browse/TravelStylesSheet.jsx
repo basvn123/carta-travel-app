@@ -259,11 +259,11 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
           {/* The Lifestyle panel edits the live choices; while they are held
               for a trip they do not reach the style, so the row waits for
               Back (the banner above) rather than edit the wrong thing. */}
-          <Field title={t('styles.bedTable')} note={ts.changed ? t('styles.bedHeld', { name: styleName(t, s) }) : ''}>
+          <Field title={t('styles.bedTable')} note={ts.changed || ts.held ? t('styles.bedHeld', { name: styleName(t, s) }) : ''}>
             <Button
               variant="secondary"
               block
-              disabled={ts.changed}
+              disabled={ts.changed || ts.held}
               className="tstyle-row"
               iconEnd={<ChevronRightIcon size={16} />}
               // One dialog at a time: the Lifestyle panel replaces this sheet.
@@ -405,7 +405,7 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
             />
             {anyFigure && <p className="tstyle-note">{t('styles.dayFigNote')}</p>}
             {!ts.activeId && <p className="tstyle-note">{t('styles.noneActive')}</p>}
-            {ts.changed && s && (
+            {(ts.changed || ts.held) && s && (
               <div className="tstyle-held" role="status">
                 <p className="tstyle-note">{t('styles.heldNote', { name: styleName(t, s) })}</p>
                 <div className="tstyle-held-actions">

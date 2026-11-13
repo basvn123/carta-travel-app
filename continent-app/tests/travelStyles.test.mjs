@@ -421,3 +421,25 @@ test('the bag survives every hand-over: finder answer key, card, trip page, shar
   const bad = await decodeTripShare(await encodeTripShare({ stops: [{ destinationId: 'PRN_a', nights: 2 }], baggage: 'trunk' }));
   assert.equal(bad.baggage, 'priority', 'an unknown bag falls back to the planner default');
 });
+
+test('a hold placed while nothing differs lifts at once; later edits reach the style', async () => {
+  const { afterChoicesChange, holdChoices } = await import('../src/lib/travelStyles.js');
+  const fam = styleFromTemplate('family');
+  const base = { ...choicesFromStyle(fam), travel_styles: addStyle(normalizeStyles(null), fam) };
+  // Continue on Who with the style's own party: hold, no change.
+  const lifted = afterChoicesChange(holdChoices(base));
+  assert.equal(lifted.style_held, false);
+  // So a Lifestyle panel edit afterwards is the style's own again.
+  const edited = afterChoicesChange({ ...lifted, stay_tier: 'hotel4' });
+  assert.equal(normalizeStyles(edited.travel_styles).list[0].stay, 'hotel4');
+});
+
+test('signing in keeps every priced choice of a held trip', async () => {
+  const { mergeAccountChoices } = await import('../src/lib/taste.js');
+  const fam = styleFromTemplate('family');
+  const st = addStyle(normalizeStyles(null), fam);
+  const local = { travel_styles: st, group_size: 3, children: 0, stay_tier: 'hotel4', transport_mode: 'train', style_held: true };
+  const out = mergeAccountChoices(local, { travel_styles: st, ...choicesFromStyle(fam) });
+  for (const k of ['group_size', 'children', 'stay_tier', 'transport_mode']) assert.equal(out[k], local[k], k);
+  assert.equal(out.style_held, true);
+});
