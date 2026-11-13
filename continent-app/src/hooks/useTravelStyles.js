@@ -5,6 +5,10 @@ import {
 } from '../lib/travelStyles.js';
 import { normalizeTaste } from '../lib/taste.js';
 
+/** The query keys that carry a priced choice (lib/urlState.js: party g, gc,
+ *  gb; stay st; Lifestyle ls; way t). */
+const PRICED_QUERY = /[?&](g|gc|gb|st|ls|t)=/;
+
 /** The styles this device kept, read once at start (the URL mirror does not
  *  carry them; the account sync carries them inside `choices`). */
 export function loadStoredStyles() {
@@ -51,14 +55,19 @@ export function useTravelStyles(choices, setChoices) {
   useEffect(() => {
     // Read now: React may run the updater after this effect has returned.
     const first = !mounted.current;
+    const linked = first && typeof window !== 'undefined' && PRICED_QUERY.test(window.location.search || '');
     mounted.current = true;
     setChoices((prev) => {
       const st = normalizeStyles(prev.travel_styles);
       const a = activeStyle(st);
       if (!a || prev.style_held) return prev;
       if (first) {
-        // First run: the choices were read at load, not edited.
-        return choicesMatchStyle(a, prev) ? prev : { ...prev, style_held: true };
+        // First run: the choices were read at load, not edited. An address
+        // that names none of them (the home page, a tab link) brought only
+        // defaults, so the style sets them; one that names them (a shared
+        // link, this device's own reload) is kept and holds the style.
+        if (choicesMatchStyle(a, prev)) return prev;
+        return linked ? { ...prev, style_held: true } : { ...prev, ...choicesFromStyle(a) };
       }
       const next = styleFromChoices(a, prev);
       if (next === a) return prev;

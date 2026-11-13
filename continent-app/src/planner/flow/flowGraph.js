@@ -41,7 +41,10 @@ export const NOW_SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'nowWher
 export const GUIDE = ['g:persona', 'g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:around', 'g:avoid', 'g:budget', 'g:pick', 'g:how', 'g:trips'];
 /** The help-me-choose screen that answers rather than asks (T797). */
 export const TRIPS_SCREEN = 'g:trips';
-export const RHYTHM_SCREENS = ['r:mornings', 'r:pace', 'r:detail', 'r:goal', 'r:food', 'r:around'];
+// Getting around is asked once (g:around) and the day goal is read from the
+// Plan your days moods (tripSettings aroundOf, goalOfGoals): neither is a
+// days question of its own any more.
+export const RHYTHM_SCREENS = ['r:mornings', 'r:pace', 'r:detail', 'r:food'];
 /** T863: the four doors (how much Carta plans), the trip settings' TRIP_DOORS. */
 export const DOORS = ['guide', 'flight', 'know', 'booked'];
 

@@ -49,6 +49,20 @@
 .style-door-kicker { font-size: var(--text-micro, 11px); font-weight: 500; color: var(--text-2); }
 .style-door-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .style-door.is-changed .style-door-kicker { color: var(--action); font-weight: 600; }
+/* Changed for now, visible at every width (the kicker hides on a phone; the
+   door's accessible name says it in words). */
+.style-door .tstyle-disc { position: relative; }
+.style-door.is-changed .tstyle-disc::after {
+  content: '';
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--action);
+  border: 2px solid var(--surface);
+}
 .tstyle-held { display: grid; gap: var(--space-2); margin-top: var(--space-2); }
 .tstyle-held-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .style-door.is-empty .tstyle-disc { color: var(--action); background: var(--action-tint); }

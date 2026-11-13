@@ -314,3 +314,32 @@ test('the bag goes from the finder to the trip page and moves the flight fee', a
   const lowCost = Object.keys(BAG_FEES)[0];
   assert.ok(bagFee(lowCost, 'checked_20kg').eur > bagFee(lowCost, 'priority_10kg').eur);
 });
+
+test('who comes alone moves the countries: a family lifts the calm one', async () => {
+  const { matchCountries } = await import('../src/lib/countryMatch.js');
+  const { quizAnswers } = await import('../src/planner/flow/tripSettings.js');
+  // Two old-town countries alike in all but one thing: AA is crowded, BB
+  // calm (countryMatch's family type wants a base and crowding tier 2 or
+  // less; no beach or lake tag, so only that rule can tell them apart).
+  const place = (iso2, i, tier) => [`${iso2}${i}`, {
+    city: `${iso2} town ${i}`, country: iso2, iso2, lat: 45, lon: 10, categories: ['historic'],
+    rating: { score: 7 }, image: { url: 'https://x/y.jpg' }, place: { base: 0.6 }, crowding: { tier },
+  }];
+  const destinations = Object.fromEntries([
+    ...Array.from({ length: 20 }, (_, i) => place('AA', i, 3)),
+    ...Array.from({ length: 20 }, (_, i) => place('BB', i, 1)),
+  ]);
+  const answersFor = (kind, adults, kids) => quizAnswers(normalizeSettings({
+    ...defaultSettings(), party: { kind, adults, kids, kidAges: [], babies: 0, slowWalkers: false },
+    guide: { ...defaultSettings().guide, likes: ['culture'] },
+  }));
+  const lead = (answers) => {
+    const out = matchCountries({ destinations, answers, topN: 5 });
+    const by = Object.fromEntries(out.map((r) => [r.iso2, r.score]));
+    return { first: out[0]?.iso2, diff: (by.BB ?? 0) - (by.AA ?? 0) };
+  };
+  const couple = lead(answersFor('couple', 2, 0));
+  const family = lead(answersFor('family', 2, 2));
+  assert.equal(family.first, 'BB', 'the calm country leads for a family');
+  assert.ok(family.diff > couple.diff, `the party alone widens the lead (${couple.diff} to ${family.diff})`);
+});
