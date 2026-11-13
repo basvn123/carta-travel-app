@@ -22,3 +22,4 @@ Things learned in Carta that every future run should know. Claude reads this at 
 - 2026-09-01 · A count joined across layers reports our coverage, not the world; word it as an offer, not a claim · ("3 trails nearby" means "3 we publish")
 - 2026-09-23 · Measure git history size with `git verify-pack -v`, not `objectsize:disk` · (it under-reported by half and nearly justified a history rewrite)
 - 2026-11-11 · Before deleting a folder, grep code, CI, tests and generated docs for its path, and look for live helpers inside it · (`serve-a.mjs`, a server the verify scripts use, lived inside `Execution/`)
+- 2026-11-13 · When a network source "refuses", test it from the box per address family (`curl -4` / `curl -6`, its status page) before blaming the source; give connect its own short timeout and bench a host nothing answers on · (one dropped IPv6 address under a 300 s urllib timeout stalled a box run for 48 hours, H9)

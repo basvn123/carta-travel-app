@@ -30,6 +30,9 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "pipeline" / "beaches"))
+import sources  # noqa: E402  (the shared transport: short connect, dead-host bench)
+
 CACHE = ROOT / "cache" / "lake_outlines.json"
 WIRE = ROOT / "continent-app" / "public" / "lakes"
 UA = {"User-Agent": "CartaTravelApp/1.0 (portfolio project; data@carta-europetravel.com)"}
@@ -84,9 +87,11 @@ def near(outline, lat, lon):
 def _overpass(query):
     last = None
     for ep in ENDPOINTS:
+        if sources.benched_until(urllib.parse.urlparse(ep).hostname) > 0:
+            continue  # refusing us right now: no request, no sleep (H9)
         try:
             req = urllib.request.Request(ep, data=urllib.parse.urlencode({"data": query}).encode(), headers=UA)
-            with urllib.request.urlopen(req, timeout=180) as r:
+            with sources.urlopen(req, timeout=180) as r:
                 return json.loads(r.read().decode("utf-8"))
         except Exception as e:  # noqa: BLE001
             last = e

@@ -33,8 +33,10 @@ fallback mirrors are for.
 ASCII clean, no em dashes, per project convention.
 """
 
+import http.client
 import json
 import os
+import socket
 import threading
 import time
 import urllib.error
@@ -105,6 +107,114 @@ def _host(url):
     return urllib.parse.urlparse(url).netloc
 
 
+# ---------------------------------------------------------------------------
+# Transport: a short connect, a memory of dead addresses, a bench for dead hosts
+# ---------------------------------------------------------------------------
+# 2026-11-13 (ROADMAP H9): the build box's two IPv4 addresses are refused by
+# overpass-api.de and one of its two IPv6 addresses drops the box's SYNs, while
+# the other IPv6 address answers. urllib gives connect and read ONE timeout, so
+# every request waited up to the full read timeout (300 s for Overpass) on the
+# silent address before trying the next, and nothing remembered it: the lakes
+# harvest spent 48 hours on 45 of 94 batches, adding load to the hosts that had
+# blocked the box. Now each address gets CONNECT_TIMEOUT to accept, an address
+# that failed is tried last for the rest of the process, and a host where no
+# address connected BENCH_AFTER times in a row is benched for BENCH_SECONDS:
+# requests to it fail at once, so a harvest ends and resumes on the next run
+# instead of hammering a host that refuses it. Reads keep their long timeout.
+CONNECT_TIMEOUT = float(os.environ.get("CARTA_CONNECT_TIMEOUT") or 12)
+BENCH_AFTER = 2
+BENCH_SECONDS = float(os.environ.get("CARTA_BENCH_SECONDS") or 1800)
+_bad_addr = {}      # (host, address) -> monotonic time of its last failure
+_host_fails = {}    # host -> connects in a row where no address accepted
+_benched = {}       # host -> monotonic time it may be tried again
+_net_lock = threading.Lock()
+
+
+class HostBenched(urllib.error.URLError):
+    """No address of this host accepted a connection lately; not tried now.
+    A URLError, so a caller that already retries URLErrors moves on to its
+    next mirror without new code."""
+
+
+def benched_until(host):
+    """Seconds until a benched host is tried again, or 0."""
+    with _net_lock:
+        left = _benched.get(host, 0.0) - time.monotonic()
+    return max(0.0, left)
+
+
+def _connect(address, timeout=socket._GLOBAL_DEFAULT_TIMEOUT, source_address=None):
+    """socket.create_connection with the rules above."""
+    host, port = address[0], address[1]
+    left = benched_until(host)
+    if left > 0:
+        raise HostBenched(f"{host} benched for {left:.0f}s more: no address accepted a connection")
+    infos = socket.getaddrinfo(host, port, type=socket.SOCK_STREAM)
+    with _net_lock:
+        # Never-failed addresses first, then the one that failed longest ago.
+        infos.sort(key=lambda i: _bad_addr.get((host, i[4][:2]), 0.0))
+    last = None
+    for family, socktype, proto, _, sockaddr in infos:
+        sock = socket.socket(family, socktype, proto)
+        try:
+            sock.settimeout(CONNECT_TIMEOUT)
+            if source_address:
+                sock.bind(source_address)
+            sock.connect(sockaddr)
+        except OSError as exc:
+            last = exc
+            sock.close()
+            with _net_lock:
+                _bad_addr[(host, sockaddr[:2])] = time.monotonic()
+            continue
+        sock.settimeout(socket.getdefaulttimeout() if timeout is socket._GLOBAL_DEFAULT_TIMEOUT else timeout)
+        with _net_lock:
+            _bad_addr.pop((host, sockaddr[:2]), None)
+            _host_fails[host] = 0
+        return sock
+    with _net_lock:
+        _host_fails[host] = _host_fails.get(host, 0) + 1
+        if _host_fails[host] >= BENCH_AFTER:
+            _benched[host] = time.monotonic() + BENCH_SECONDS
+            _host_fails[host] = 0
+    raise last or OSError(f"no address for {host}")
+
+
+class _HTTPConnection(http.client.HTTPConnection):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._create_connection = _connect
+
+
+class _HTTPSConnection(http.client.HTTPSConnection):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._create_connection = _connect
+
+
+class _HTTPHandler(urllib.request.HTTPHandler):
+    def http_open(self, req):
+        return self.do_open(_HTTPConnection, req)
+
+
+class _HTTPSHandler(urllib.request.HTTPSHandler):
+    def https_open(self, req):
+        kwargs = {"context": self._context}
+        # Python 3.11 keeps check_hostname on the handler; 3.12 folded it into the context.
+        if getattr(self, "_check_hostname", None) is not None:
+            kwargs["check_hostname"] = self._check_hostname
+        return self.do_open(_HTTPSConnection, req, **kwargs)
+
+
+_OPENER = urllib.request.build_opener(_HTTPHandler(), _HTTPSHandler())
+
+
+def urlopen(req, timeout):
+    """urllib.request.urlopen with the transport rules above; for the
+    harvesters that keep their own retry loop."""
+    return _OPENER.open(req, timeout=timeout)
+
+
 def _wait(url):
     host = _host(url)
     gap = MIN_INTERVAL.get(host, DEFAULT_INTERVAL)
@@ -128,12 +238,16 @@ def request(url, *, data=None, headers=None, timeout=90, tries=4,
         body = urllib.parse.urlencode(body).encode("utf-8")
         head.setdefault("Content-Type", "application/x-www-form-urlencoded")
     last = None
+    host = urllib.parse.urlparse(url).hostname or ""
     for attempt in range(tries):
+        if benched_until(host) > 0:
+            # No sleep and no retry: the bench says the host refuses us now.
+            raise SourceError(f"{url} -> {host} benched ({last or 'no address accepted a connection'})")
         _wait(url)
         req = urllib.request.Request(url, data=body, headers=head,
                                      method="POST" if body else "GET")
         try:
-            with urllib.request.urlopen(req, timeout=timeout) as r:
+            with urlopen(req, timeout=timeout) as r:
                 return r.read()
         except urllib.error.HTTPError as exc:
             last = f"HTTP {exc.code}"

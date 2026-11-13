@@ -33,7 +33,9 @@ import urllib.request
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent / "beaches"))
 from pipeline_io import atomic_write_json, load_json
+import sources  # noqa: E402  (the shared transport: short connect, dead-host bench)
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -61,9 +63,11 @@ def overpass(query):
     body = urllib.parse.urlencode({"data": query}).encode()
     for attempt in range(6):
         ep = ENDPOINTS[attempt % len(ENDPOINTS)]
+        if sources.benched_until(urllib.parse.urlparse(ep).hostname) > 0:
+            continue  # refusing us right now: no request, no sleep (H9)
         try:
             req = urllib.request.Request(ep, data=body, headers=UA)
-            with urllib.request.urlopen(req, timeout=240) as r:
+            with sources.urlopen(req, timeout=240) as r:
                 return json.loads(r.read().decode("utf-8")).get("elements", [])
         except urllib.error.HTTPError as e:
             wait = 20 * (attempt + 1) if e.code in (429, 502, 503, 504) else 10
