@@ -56,7 +56,11 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
   const fromStyle = (id) => s.answered.includes(id) && s.sources?.[id] === 'style';
   const budget = s.guide.budget;
   const budgetText = budget.eur > 0
-    ? t(budget.kind === 'total' ? 'styles.budgetTotal' : 'styles.budgetDay', { price: formatMoney(budget.per === 'group' && budget.groupEur ? budget.groupEur : budget.eur) })
+    // Who the figure is for, said in words (honest numbers): the group's own
+    // total as typed, else a person's, for the trip or a day.
+    ? (budget.per === 'group' && budget.groupEur
+      ? t('styles.budgetGroup', { price: formatMoney(budget.groupEur) })
+      : t(budget.kind === 'total' ? 'styles.budgetPerson' : 'styles.budgetDay', { price: formatMoney(budget.eur) }))
     : '';
 
   const groups = [

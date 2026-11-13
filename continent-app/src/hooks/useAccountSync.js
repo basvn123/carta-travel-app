@@ -6,6 +6,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { mergeVisitedCountries, useVisitedCountries } from '../lib/visitedCountries.js';
 import { mergeSavedListsIntoDevice, useSavedLists } from '../lib/savedLists.js';
 import { mergeAccountChoices, mergeTaste, tasteNeedsWriteBack } from '../lib/taste.js';
+import { mergeStyles } from '../lib/travelStyles.js';
 
 /** Keeps a signed-in user's filter/lifestyle preferences synced with their
  *  account: pulls saved settings once right after login (never when a shared
@@ -76,7 +77,13 @@ export function useAccountSync({
       fetchUserSettings(user.id).then((settings) => {
         const accountTaste = settings?.choices?.taste;
         const localTaste = choicesRef.current?.taste;
-        setChoices((prev) => ({ ...prev, taste: mergeTaste(prev.taste, accountTaste) }));
+        // The travel styles are the traveller's too: merged by id, so the
+        // push that follows never drops the account's other styles.
+        setChoices((prev) => ({
+          ...prev,
+          taste: mergeTaste(prev.taste, accountTaste),
+          ...(settings?.choices?.travel_styles ? { travel_styles: { ...mergeStyles(prev.travel_styles, settings.choices.travel_styles), active: prev.travel_styles?.active ?? '' } } : {}),
+        }));
         if (tasteNeedsWriteBack(localTaste, accountTaste)) setWriteBack((n) => n + 1);
       }).catch(() => {}).finally(() => { hydratedRef.current = true; });
       return;

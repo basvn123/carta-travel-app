@@ -420,12 +420,14 @@ export function quizAnswers(s, spend = 'standard') {
  * How the traveller gets around on the days. Two questions used to ask it
  * (the guide's "How will you get around there?" and the day rhythm's "How do
  * you get around?", with different answers); the guide's is now the one asked
- * and the rhythm's stays only as a hand-set override from older trips.
+ * and the rhythm's stays only as a fallback for older trips.
  */
 const AROUND_TO_RHYTHM = { public: 'transit', taxi: 'taxi', car: 'car', mix: 'transit' };
 const STEPS_BY_AROUND = { walk: 15000, transit: 10000, taxi: 5000, car: 5000 };
 export function aroundOf(s) {
-  return s.rhythm?.around || AROUND_TO_RHYTHM[s.guide?.around] || '';
+  // The guide's answer wins: it is the one still asked and shown. An older
+  // trip's own day answer counts only while the guide has none.
+  return AROUND_TO_RHYTHM[s.guide?.around] || s.rhythm?.around || '';
 }
 
 /** The one day goal the older single question gave, read from the moods the

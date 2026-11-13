@@ -121,7 +121,8 @@ function groundLine(day, nights, people) {
  * before, rather than a receipt with a hole in it).
  *
  *   opts.from, opts.to         ISO dates, to > from
- *   opts.people                the adults (choices.group_size)
+ *   opts.people                the adults (choices.group_size minus
+ *                              choices.children: group_size counts every seat)
  *   opts.children              children 3 to 11 (R4): a seat, a bed and the
  *                              child shares of meals and fares
  *   opts.stayTier             choices.stay_tier

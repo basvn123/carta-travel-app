@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  STYLES_KEY, activeStyle, addStyle, choicesFromStyle, choicesMatchStyle, duplicateStyle, exploreFromTaste, normalizeStyles,
+  STYLES_KEY, activeStyle, addStyle, choicesFromStyle, choicesMatchStyle, duplicateStyle, exploreFromTaste, isForeignLink, normalizeStyles, styleWithTaste,
   removeStyle, setActive, styleFromChoices, styleFromTemplate, tasteFromStyle, tasteMatchesStyle, updateStyle,
 } from '../lib/travelStyles.js';
 import { normalizeTaste } from '../lib/taste.js';
 
-/** The query keys that carry a priced choice (lib/urlState.js: party g, gc,
- *  gb; stay st; Lifestyle ls; way t). */
-const PRICED_URL_KEYS = /[?&](g|gc|gb|st|ls|t)=/;
+/** lib/urlState.js's localStorage mirror of the address it last wrote. */
+const URL_MIRROR_KEY = 'continent.state.v1';
 
 /** The styles this device kept, read once at start (the URL mirror does not
  *  carry them; the account sync carries them inside `choices`). */
@@ -53,7 +52,9 @@ export function useTravelStyles(choices, setChoices) {
   useEffect(() => {
     if (!mounted.current) {
       mounted.current = true;
-      const linked = typeof window !== 'undefined' && PRICED_URL_KEYS.test(window.location.search || '');
+      let mirror = '';
+      try { mirror = window.localStorage.getItem(URL_MIRROR_KEY) || ''; } catch { /* private mode */ }
+      const linked = typeof window !== 'undefined' && isForeignLink(window.location.search, mirror);
       setChoices((prev) => {
         const st = normalizeStyles(prev.travel_styles);
         const a = activeStyle(st);
@@ -123,7 +124,9 @@ export function useTravelStyles(choices, setChoices) {
   /** A new style from a template ('' for "from how I travel now"), made active. */
   const create = useCallback((templateId) => {
     setChoices((prev) => {
-      const s = templateId ? styleFromTemplate(templateId, prev) : styleFromChoices({ tone: 'umber' }, prev);
+      const s = templateId
+        ? styleWithTaste(styleFromTemplate(templateId, prev), prev.taste)
+        : styleWithTaste(styleFromChoices({ tone: 'umber' }, prev), prev.taste, { all: true });
       const st = addStyle(normalizeStyles(prev.travel_styles), s);
       const made = st.list.find((x) => x.id === st.active);
       return made ? { ...prev, ...choicesFromStyle(made), travel_styles: st } : prev;
@@ -131,7 +134,16 @@ export function useTravelStyles(choices, setChoices) {
   }, [setChoices]);
 
   const update = useCallback((id, patch) => write((st) => updateStyle(st, id, patch)), [write]);
-  const remove = useCallback((id) => write((st) => removeStyle(st, id)), [write]);
+  // Deleting the active style moves to another one, and that one's stay
+  // half must price the app in the same update (review finding 1).
+  const remove = useCallback((id) => {
+    setChoices((prev) => {
+      const before = normalizeStyles(prev.travel_styles);
+      const st = removeStyle(before, id);
+      const next = before.active === id ? activeStyle(st) : null;
+      return next ? { ...prev, ...choicesFromStyle(next), travel_styles: st } : { ...prev, travel_styles: st };
+    });
+  }, [setChoices]);
   const duplicate = useCallback((id, name) => write((st) => duplicateStyle(st, id, name)), [write]);
 
   return useMemo(() => ({

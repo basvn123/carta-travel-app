@@ -98,7 +98,9 @@ export const TEMPLATES = {
     nameKey: 'styles.t.family', tone: 'sea',
     who: { kind: 'family', adults: 2, kids: 2, babies: 0, slowWalkers: false },
     stay: 'home', table: 'Family', way: 'any', priority: 'balance',
-    explore: { shapes: ['one'], personas: ['slow', 'coast'], likes: [], avoid: ['transfers', 'heat'], around: 'car', size: 'mix', quiet: 'quiet' },
+    // Getting around is "a mix", not a car: 'car' prices a hire for every
+    // trip the finder builds, a choice the traveller makes, not a template.
+    explore: { shapes: ['one'], personas: ['slow', 'coast'], likes: [], avoid: ['transfers', 'heat'], around: 'mix', size: 'mix', quiet: 'quiet' },
     days: { mornings: 'onthego', pace: 'slow' },
   },
   group: {
@@ -217,8 +219,8 @@ export function styleFromTemplate(templateId, choices = {}) {
 }
 
 /** The party kind the head counts read as, for a style made from choices. */
-export function kindOfCounts(adults, kids) {
-  if (kids > 0) return 'family';
+export function kindOfCounts(adults, kids, babies = 0) {
+  if (kids > 0 || babies > 0) return 'family';
   if (adults <= 1) return 'solo';
   if (adults === 2) return 'couple';
   return adults <= 5 ? 'friends' : 'group';
@@ -238,8 +240,9 @@ export function styleFromChoices(style, choices = {}) {
   const base = normalizeStyle(style) || normalizeStyle({});
   // The kind stays the traveller's word ("friends" for three) while it still
   // fits the counts; a family with no children left is no longer a family.
-  const kindFits = (k) => (k === 'family' ? kids > 0 : k === 'solo' ? adults === 1 && kids === 0 : kids === 0 || k === 'group');
-  const kind = kindFits(base.who.kind) ? base.who.kind : kindOfCounts(adults, kids);
+  const young = kids + babies;
+  const kindFits = (k) => (k === 'family' ? young > 0 : k === 'solo' ? adults === 1 && young === 0 : young === 0 || k === 'group');
+  const kind = kindFits(base.who.kind) ? base.who.kind : kindOfCounts(adults, kids, babies);
   const next = normalizeStyle({
     ...base,
     who: { ...base.who, kind, adults, kids, babies },
@@ -353,6 +356,54 @@ export function exploreFromTaste(style, taste) {
       around: taste.noCar === true && !['public', 'taxi'].includes(s.explore.around) ? 'public' : s.explore.around,
     },
   });
+}
+
+/**
+ * A new style that keeps what the taste profile already knew (review
+ * finding 3: a style made active rewrites the taste, so a template with no
+ * likes used to wipe the traveller's). `all` (the "How I travel now" style)
+ * takes every taste answer; a template keeps its own place facets and takes
+ * the likes when it has none.
+ */
+export function styleWithTaste(style, taste, { all = false } = {}) {
+  const s = normalizeStyle(style);
+  if (!s || !taste) return s;
+  if (all) return exploreFromTaste(s, taste);
+  const likes = s.explore.likes.length ? s.explore.likes : (Array.isArray(taste.likes) ? taste.likes : []);
+  return normalizeStyle({ ...s, explore: { ...s.explore, likes } });
+}
+
+/** The query keys that carry a priced choice or the taste (lib/urlState.js:
+ *  party g, gc, gb; stay st; Lifestyle ls; way t; taste ty). */
+export const PRICED_KEYS = ['g', 'gc', 'gb', 'st', 'ls', 't', 'ty'];
+
+/**
+ * Whether the address is someone else's link (review finding 2): it names
+ * priced keys and they differ from what this device last wrote (`mirror`,
+ * the localStorage copy of the query lib/urlState.js keeps). The app writes
+ * those keys into its own address, so a reload or a bookmark of this
+ * device's own state is not a link, and the style may set the choices.
+ */
+export function isForeignLink(search, mirror) {
+  const a = new URLSearchParams(search || '');
+  if (!PRICED_KEYS.some((k) => a.has(k))) return false;
+  const b = new URLSearchParams(mirror || '');
+  return PRICED_KEYS.some((k) => (a.get(k) || '') !== (b.get(k) || ''));
+}
+
+/**
+ * The account's styles merged with this device's (review finding 4): the
+ * lists are joined by id (the account's copy wins for an id both hold, up to
+ * MAX_STYLES), and the account's active style stays active when it has one.
+ */
+export function mergeStyles(local, incoming) {
+  const a = normalizeStyles(local);
+  if (!incoming || !Array.isArray(incoming.list)) return a;
+  const b = normalizeStyles(incoming);
+  const byId = new Map(a.list.map((s) => [s.id, s]));
+  for (const s of b.list) byId.set(s.id, s);
+  const list = [...b.list, ...a.list.filter((s) => !b.list.some((x) => x.id === s.id))].map((s) => byId.get(s.id));
+  return normalizeStyles({ list, active: b.active || a.active });
 }
 
 /** Whether the taste already says what the style says (no write needed). */

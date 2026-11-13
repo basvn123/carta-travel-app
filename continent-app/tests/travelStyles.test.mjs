@@ -96,7 +96,7 @@ test('a new trip starts from the style, marked as the style\'s', () => {
   assert.equal(s.priority, 'balance');
   assert.deepEqual(s.guide.shapes, ['one']);
   assert.deepEqual(s.guide.personas, ['slow', 'coast']);
-  assert.equal(s.guide.around, 'car');
+  assert.equal(s.guide.around, 'mix', 'no template assumes a hire car');
   assert.equal(s.rhythm.pace, 'slow');
   for (const id of ['who', 'priority', 'g:shape', 'g:persona', 'g:avoid', 'g:around', 'r:mornings', 'r:pace']) {
     assert.ok(s.answered.includes(id), id);
@@ -166,13 +166,16 @@ test('a trip\'s explore answers go back into the style', () => {
 
 test('getting around is one answer: the guide\'s drives the day steps', () => {
   const s = newTripSettings(family());
-  assert.equal(aroundOf(s), 'car');
-  assert.equal(dayPrefs(s).steps, 5000);
-  const walkers = normalizeSettings({ ...s, guide: { ...s.guide, around: 'public' } });
-  assert.equal(dayPrefs(walkers).steps, 10000);
-  // An older trip's own day answer still wins.
+  assert.equal(aroundOf(s), 'transit');
+  assert.equal(dayPrefs(s).steps, 10000);
+  const drivers = normalizeSettings({ ...s, guide: { ...s.guide, around: 'car' } });
+  assert.equal(dayPrefs(drivers).steps, 5000);
+  // The guide's answer wins over an older trip's hidden day answer...
   const old = normalizeSettings({ ...s, rhythm: { ...s.rhythm, around: 'walk' } });
-  assert.equal(dayPrefs(old).steps, 15000);
+  assert.equal(dayPrefs(old).steps, 10000);
+  // ...which counts only while the guide has none.
+  const legacy = normalizeSettings({ ...old, guide: { ...old.guide, around: '' } });
+  assert.equal(dayPrefs(legacy).steps, 15000);
 });
 
 test('the Plan your days moods give the AI day plan its vibe', () => {
@@ -218,4 +221,60 @@ test('the style and the taste profile are one thing', async () => {
   assert.equal(back.explore.size, 'village');
   assert.equal(back.explore.quiet, '');
   assert.ok(!tasteMatchesStyle(solo, { ...taste, likes: ['hiking'] }));
+});
+
+test('review fixes: links, account merge, taste kept, babies', async () => {
+  const { isForeignLink, mergeStyles, styleWithTaste, kindOfCounts } = await import('../src/lib/travelStyles.js');
+  const { mergeAccountChoices } = await import('../src/lib/taste.js');
+  // The app's own address is not a link; someone else's is.
+  const own = 'd=2026-12-12&g=4&gc=2&ls=2%2C4&ty=p%3Dfamily';
+  assert.equal(isForeignLink(`?tab=plan&${own}`, own), false);
+  assert.equal(isForeignLink('?tab=plan', own), false, 'no priced key: not a link');
+  assert.equal(isForeignLink('?g=2&ls=2%2C4&gc=2&ty=p%3Dfamily', own), true);
+  assert.equal(isForeignLink('?g=4&gc=2&ls=2%2C4&ty=p%3Dsolo', own), true, 'the taste counts');
+  // Account merge keeps this device's styles and the account's active one.
+  const mine = addStyle(normalizeStyles(null), styleFromTemplate('solo'));
+  const theirs = addStyle(normalizeStyles(null), styleFromTemplate('family'));
+  const merged = mergeStyles(mine, theirs);
+  assert.equal(merged.list.length, 2);
+  assert.equal(merged.active, theirs.active);
+  // ...and the merged active style prices the app, not the account's old choices.
+  const out = mergeAccountChoices(
+    { travel_styles: mine, group_size: 1, children: 0, stay_tier: 'private' },
+    { travel_styles: theirs, group_size: 2, children: 0, stay_tier: 'hotel5' },
+  );
+  assert.equal(out.group_size, 4);
+  assert.equal(out.children, 2);
+  assert.equal(out.stay_tier, 'home');
+  // A new style keeps what the taste knew.
+  const taste = { likes: ['hiking', 'lakes'], size: 'village', quiet: 'quiet', noCar: true };
+  const tpl = styleWithTaste(styleFromTemplate('couple'), taste);
+  assert.deepEqual(tpl.explore.likes, ['hiking', 'lakes']);
+  assert.equal(tpl.explore.size, 'town', 'a template keeps its own place facets');
+  const now = styleWithTaste(styleFromTemplate('couple'), taste, { all: true });
+  assert.equal(now.explore.size, 'village');
+  // A baby makes a family.
+  assert.equal(kindOfCounts(2, 0, 1), 'family');
+  const c = styleFromTemplate('couple');
+  assert.equal(styleFromChoices(c, { ...choicesFromStyle(c), babies: 1 }).who.kind, 'family');
+});
+
+test('the address drops children and babies set back to 0', async () => {
+  const store = {};
+  let url = '/?g=4&gc=2&gb=1&df=m&cn=1&xk=keep';
+  globalThis.window = {
+    location: { get search() { return url.slice(url.indexOf('?')); }, pathname: '/', hash: '' },
+    history: { state: null, replaceState: (_s, _t, u) => { url = u; } },
+    localStorage: { setItem: (k, v) => { store[k] = v; }, getItem: (k) => store[k] ?? null },
+  };
+  try {
+    const { persistState } = await import('../src/lib/urlState.js');
+    persistState({ choices: { group_size: 2, children: 0, babies: 0 } });
+    const q = new URLSearchParams(url.slice(url.indexOf('?')));
+    assert.equal(q.get('g'), '2');
+    for (const k of ['gc', 'gb', 'df', 'cn']) assert.equal(q.get(k), null, k);
+    assert.equal(q.get('xk'), 'keep', 'a foreign key still stands');
+  } finally {
+    delete globalThis.window;
+  }
 });

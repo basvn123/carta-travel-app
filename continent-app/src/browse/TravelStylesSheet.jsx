@@ -54,11 +54,16 @@ export function StylePicker({ list, activeId, onPick, label, extra = null, compa
     const i = list.findIndex((s) => s.id === activeId);
     const dir = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1;
     const next = list[(i + dir + list.length) % list.length];
+    // The group itself, read now: React clears currentTarget after the event.
+    const root = e.currentTarget;
     if (next) {
       onPick(next.id);
-      requestAnimationFrame(() => e.currentTarget.querySelector(`[data-sid="${next.id}"]`)?.focus());
+      requestAnimationFrame(() => root.querySelector(`[data-sid="${next.id}"]`)?.focus());
     }
   };
+  // With no card matching (a trip whose style was deleted) the first card
+  // takes the tab stop, so the group is never out of the keyboard's reach.
+  const anyOn = list.some((s) => s.id === activeId);
   return (
     <div className={`tstyle-cards${compact ? ' is-compact' : ''}`} role="radiogroup" aria-label={label} onKeyDown={onKeyDown}>
       {list.map((s) => {
@@ -70,7 +75,7 @@ export function StylePicker({ list, activeId, onPick, label, extra = null, compa
             variant="quiet"
             role="radio"
             aria-checked={on}
-            tabIndex={on || (!activeId && s === list[0]) ? 0 : -1}
+            tabIndex={on || (!anyOn && s === list[0]) ? 0 : -1}
             data-sid={s.id}
             className={`tstyle-card tone-${s.tone}${on ? ' is-on' : ''}`}
             onClick={() => onPick(s.id)}
@@ -143,8 +148,10 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
   if (!ts) return null;
   const s = ts.active;
   const full = ts.list.length >= MAX_STYLES;
+  // With no styles left (the last one deleted) the templates show again.
+  const showTemplates = adding || !ts.list.length;
 
-  const newCard = !adding && !full ? (
+  const newCard = !showTemplates && !full ? (
     <Button variant="quiet" className="tstyle-card is-new" onClick={() => setAdding(true)}>
       <span className="tstyle-disc" aria-hidden="true"><PlusIcon size={20} /></span>
       <span className="tstyle-card-text"><span className="tstyle-card-name">{t('styles.new')}</span></span>
@@ -374,9 +381,9 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
             {full && <p className="tstyle-note">{t('styles.max', { n: MAX_STYLES })}</p>}
           </div>
         )}
-        {adding ? templates : editor}
+        {showTemplates ? templates : editor}
         <div className="tstyle-foot">
-          {s && !adding && (
+          {s && !showTemplates && (
             <div className="tstyle-foot-actions">
               {!full && (
                 <Button variant="quiet" size="sm" iconStart={<CopyIcon size={16} />} onClick={() => ts.duplicate(s.id, t('styles.copyOf', { name: styleName(t, s) }).slice(0, 40))}>

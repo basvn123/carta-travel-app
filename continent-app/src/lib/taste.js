@@ -12,6 +12,7 @@
  * writing and merging only, so the sign-in merge is unit-tested.
  */
 import { LIKES, PARTY_KINDS } from '../planner/flow/tripSettings.js';
+import { activeStyle, choicesFromStyle, mergeStyles } from './travelStyles.js';
 
 export const MAX_LIKES = 3;
 /** Where do you like to stay: big cities, towns, villages and countryside, a mix. */
@@ -128,6 +129,15 @@ export function mergeTaste(local, account) {
 export function mergeAccountChoices(local, incoming) {
   const out = { ...(local || {}), ...(incoming || {}) };
   out.taste = mergeTaste(local?.taste, incoming?.taste);
+  // The travel styles (lib/travelStyles.js) merge by id, so styles made on
+  // this device before signing in survive; the merged active style then
+  // sets the priced choices, so an older account copy of the party, bed or
+  // Lifestyle cannot be written into it.
+  if (local?.travel_styles || incoming?.travel_styles) {
+    out.travel_styles = mergeStyles(local?.travel_styles, incoming?.travel_styles);
+    const a = activeStyle(out.travel_styles);
+    if (a) Object.assign(out, choicesFromStyle(a));
+  }
   return out;
 }
 

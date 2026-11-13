@@ -419,7 +419,11 @@ export function loadInitialState() {
 
 
 // Every key encodeState can write; persistState replaces exactly these.
-const OWN_KEYS = ['ah', 'b', 'big', 'cat', 'cc', 'cf', 'd', 'dest', 'dh', 'fav', 'favonly', 'feat', 'g', 'gem', 'ls', 'mode', 'o', 'oa', 'pm', 'pr', 'pv', 'px', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'ty', 'un'];
+// gc, gb, df and cn are written only when not the default, so they must be
+// owned too: otherwise children set back to 0 left gc=2 standing in the
+// address and a reload brought the children back (travel styles review,
+// 2026-11-13).
+const OWN_KEYS = ['ah', 'b', 'big', 'cat', 'cc', 'cf', 'cn', 'd', 'dest', 'df', 'dh', 'fav', 'favonly', 'feat', 'g', 'gb', 'gc', 'gem', 'ls', 'mode', 'o', 'oa', 'pm', 'pr', 'pv', 'px', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'ty', 'un'];
 
 /** Push the encoded state into the URL (replaceState) and the localStorage mirror.
  *
