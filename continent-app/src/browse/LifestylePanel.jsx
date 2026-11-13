@@ -148,15 +148,17 @@ export function LifestylePanel({ choices, setChoices, onClose, data, side = 'lef
   const ls = choices.lifestyle || {};
   const cadence = ls.cadence || 'week';
 
-  const setLs = (patch) => setChoices({ ...choices, lifestyle: { ...ls, ...patch } });
-  const setProfile = (name) => setChoices({ ...choices, lifestyle: { ...PROFILES[name] } });
-  const setCadence = (c) => setChoices({ ...choices, lifestyle: toCadence(ls, c) });
-  const setTier = (tier) => setChoices({ ...choices, stay_tier: tier });
+  // Updaters on the latest choices, not this render's copy: an update queued
+  // in the same batch (a travel style switch or hold) must not be undone.
+  const setLs = (patch) => setChoices((prev) => ({ ...prev, lifestyle: { ...(prev.lifestyle || {}), ...patch } }));
+  const setProfile = (name) => setChoices((prev) => ({ ...prev, lifestyle: { ...PROFILES[name] } }));
+  const setCadence = (c) => setChoices((prev) => ({ ...prev, lifestyle: toCadence(prev.lifestyle || {}, c) }));
+  const setTier = (tier) => setChoices((prev) => ({ ...prev, stay_tier: tier }));
   const active = matchProfile(ls);
   // Getting there: the same choices.transport_mode the settings line steps
   // through (T597), so there is one setting and two doors to it.
   const wayNow = TRAVEL_MODES.includes(choices.transport_mode) ? choices.transport_mode : 'any';
-  const setWayMode = (m) => setChoices({ ...choices, transport_mode: m });
+  const setWayMode = (m) => setChoices((prev) => ({ ...prev, transport_mode: m }));
 
   // Only the tiers this dataset measured (apply_stay_tiers.py writes
   // meta.stays.tiers); 'home' is always there. With nothing measured
