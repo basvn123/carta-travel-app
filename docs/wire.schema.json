@@ -316,8 +316,8 @@
           "type": "array",
           "minItems": 1,
           "maxItems": 4,
-          "x-presence": "some",
-          "description": "T642 (T651): up to four airports within 110 km of the place, each with the straight and road distance, whether Ryanair flies there, the transfer options (`options`: mode, minutes, source; a road estimate, or a GTFS train) and the best of them (`transfer_min`, `transfer_mode`, `transfer_source`, null when no option is known). Written by the `airports` task (`apply_airport_anchors.py --airports-only`), read by the place page's nearest airport fact (`airportPick.js`)",
+          "x-presence": "pending",
+          "description": "T642 (T651), pending until the committed wire carries it (the box master does since 2026-11-10): up to four airports within 110 km of the place, each with the straight and road distance, whether Ryanair flies there, the transfer options (`options`: mode, minutes, source; a road estimate, or a GTFS train) and the best of them (`transfer_min`, `transfer_mode`, `transfer_source`, null when no option is known). Written by the `airports` task (`apply_airport_anchors.py --airports-only`), read by the place page's nearest airport fact (`airportPick.js`)",
           "items": {
             "type": "object",
             "additionalProperties": false,
