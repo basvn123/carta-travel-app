@@ -5526,3 +5526,4 @@ color: var(--ink-soft);
 }
 .pdh-foot { display: flex; justify-content: flex-end; gap: var(--space-2); }
 .pfh .pfh-next-media { transition: transform var(--dur-4) var(--ease-out); }
+.cintel-chip.budget-very_high { background: var(--action-tint); color: var(--action); }

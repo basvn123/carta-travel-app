@@ -11,6 +11,10 @@ import { QuestionBody } from './QuestionScreen.jsx';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { normalizeSettings } from './tripSettings.js';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
+import { StylePicker, styleName } from '../../browse/TravelStylesSheet.jsx';
+import { switchTripStyle } from './styleSeed.js';
+import { explorePatchFromSettings, normalizeStyle } from '../../lib/travelStyles.js';
+import { formatMoney } from '../../lib/money.js';
 
 /**
  * Trip settings (T655), behind the gear on the planner's map: every answer
@@ -42,6 +46,19 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
   const w = whenText(t, s.when, months, bcp47);
   const booked = Object.entries(s.booked).filter(([, on]) => on).map(([k]) => k);
 
+  // The travel style this trip was started from, and whether the trip's own
+  // explore answers have since moved away from it (then they can be kept in
+  // the style, for the next trip).
+  const ts = app?.travelStyles;
+  const tripStyle = ts?.list?.find((x) => x.id === s.style) || null;
+  const drifted = tripStyle && JSON.stringify(normalizeStyle({ ...tripStyle, ...explorePatchFromSettings(s, tripStyle) }).explore)
+    !== JSON.stringify(tripStyle.explore);
+  const fromStyle = (id) => s.answered.includes(id) && s.sources?.[id] === 'style';
+  const budget = s.guide.budget;
+  const budgetText = budget.eur > 0
+    ? t(budget.kind === 'total' ? 'styles.budgetTotal' : 'styles.budgetDay', { price: formatMoney(budget.per === 'group' && budget.groupEur ? budget.groupEur : budget.eur) })
+    : '';
+
   const groups = [
     {
       key: 'basics',
@@ -62,17 +79,24 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
       key: 'guide',
       title: t('pf.set.guide'),
       rows: [
-        { id: 'g:shape', label: t('pf.set.shape'), value: optLabel('g:shape', s.guide.shape) },
+        { id: 'g:persona', label: t('styles.persona'), value: (s.guide.personas || []).map((v) => t(`pf.persona.${v}`)).join(', ') },
+        // T753 left one shape behind: several picked read as their list.
+        { id: 'g:shape', label: t('pf.set.shape'), value: many('g:shape', s.guide.shapes) },
         { id: 'g:likes', label: t('pf.set.likes'), value: many('g:likes', s.guide.likes) },
+        { id: 'g:around', label: t('styles.around'), value: optLabel('g:around', s.guide.around) },
         { id: 'g:weather', label: t('pf.set.weather'), value: optLabel('g:weather', s.guide.weather) },
         { id: 'g:reach', label: t('pf.set.reach'), value: optLabel('g:reach', s.guide.reach) },
         { id: 'g:avoid', label: t('pf.set.avoid'), value: many('g:avoid', s.guide.avoid) },
+        { id: 'g:budget', label: t('styles.budget'), value: budgetText },
       ],
     },
     {
       key: 'days',
       title: t('pf.set.days'),
-      rows: ['r:mornings', 'r:pace', 'r:detail', 'r:goal', 'r:food', 'r:around'].map((id) => ({
+      // Getting around is asked once, in the guide (g:around); the one goal
+      // gave way to the moods of Plan your days (tripSettings aroundOf,
+      // goalOfGoals), so neither is a second row here.
+      rows: ['r:mornings', 'r:pace', 'r:detail', 'r:food'].map((id) => ({
         id,
         label: t(`pf.set.${id.slice(2)}`),
         value: optLabel(id, s.rhythm[QUESTIONS[id].key]),
@@ -136,6 +160,30 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
             </>
           )}
         </div>
+        {ts?.list?.length > 0 && (
+          <section className="pf-set-group pf-style" aria-labelledby="pf-set-style">
+            <h3 className="pf-label" id="pf-set-style">{t('styles.tripStyle')}</h3>
+            <StylePicker
+              compact
+              list={ts.list}
+              activeId={s.style}
+              label={t('styles.tripStyle')}
+              onPick={(id) => {
+                const st = ts.list.find((x) => x.id === id);
+                if (!st || id === s.style) return;
+                const next = switchTripStyle(s, st);
+                ts.switchTo(id);
+                save(next);
+                setNotice(onSaved ? onSaved(normalizeSettings(next), s) || null : null);
+              }}
+            />
+            {drifted && (
+              <Button variant="secondary" size="sm" onClick={() => ts.update(tripStyle.id, explorePatchFromSettings(s, tripStyle))}>
+                {t('styles.keep', { name: styleName(t, tripStyle) })}
+              </Button>
+            )}
+          </section>
+        )}
         {groups.map((g) => (
           <section className="pf-set-group" key={g.key} aria-labelledby={`pf-set-${g.key}`}>
             <h3 className="pf-label" id={`pf-set-${g.key}`}>{g.title}</h3>
@@ -147,6 +195,7 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
                     <span className="pf-set-text">
                       <span className="pf-set-label">{r.label}</span>
                       <span className={`pf-set-value${r.value ? '' : ' is-empty'}`}>{r.value || t('pf.set.notSet')}</span>
+                      {fromStyle(r.id) && tripStyle && <span className="pf-style-tag">{t('styles.fromStyle', { name: styleName(t, tripStyle) })}</span>}
                     </span>
                   </Button>
                 </li>

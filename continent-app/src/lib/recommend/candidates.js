@@ -27,7 +27,8 @@
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { matchCountries } from '../countryMatch.js';
 import { forYou, qualityOf } from '../match.js';
-import { personaOf, personaPool, personaReach, personaShapes, weighs } from './persona.js';
+import { personaOf, personaPool, personaReach, personaShapes, personaTypes, weighs } from './persona.js';
+import { avoidsHeat, noCar as guideNoCar } from './prefs.js';
 import { isGateway } from '../rating.js';
 import { pickAirport } from '../airportPick.js';
 import { destAnchor } from '../origins.js';
@@ -185,8 +186,7 @@ export function placesNear(ids, n, shape, destinations, reach = null) {
  * the shapes, the pricing, the taste and the getting-around slot ask.
  */
 export function wantsNoCar(settings) {
-  const around = settings.guide.around;
-  return settings.guide.avoid.includes('car') || around === 'public' || around === 'taxi';
+  return guideNoCar(settings.guide);
 }
 
 /** How the trip gets there and around, from its shape, the reach answer
@@ -201,7 +201,10 @@ export function transportFor(shape, settings) {
   // public transport and taxis price none (taxi fares are not measured, so
   // the public transport figure stands in and the slot says so).
   if (!noCar && (settings.guide.around === 'car' || settings.booked?.car)) return 'car';
-  if (noCar) return 'auto';
+  // No car: every hop and day trip by public transport, so the engine
+  // never picks a fuel-split car hop for a party that has no car (r4 price
+  // audit: 'auto' let a car hop win for three or four people).
+  if (noCar) return 'public';
   return shape === 'road' ? 'car' : 'auto';
 }
 
@@ -306,7 +309,7 @@ export function tasteFor(settings, saved = null) {
 export function buildCandidates(input) {
   const { data, countryInsights = null, layerIndexes = {}, settings, taste = null, origin = null, flights = null, getting = null, today } = input;
   const destinations = data?.destinations || {};
-  const answers = broadWhenUnasked(quizAnswers(settings, spendFor(settings)), settings);
+  const answers = answersFor(settings);
   const fixedMonth = setupMonth(settings, today);
   const matched = matchCountries({
     destinations,
@@ -369,7 +372,7 @@ export function buildCandidates(input) {
   let poolFor = null;
   if (weighs(persona)) {
     const t = tasteFor(settings, taste);
-    const avoidHeat = settings.guide.avoid.includes('heat');
+    const avoidHeat = avoidsHeat(settings.guide);
     poolFor = (iso2) => personaPool(persona, iso2, destinations, {
       month: fixedMonth,
       keyOf: (d) => forYou(d, t, fixedMonth, { avoidHeat }),
@@ -418,7 +421,23 @@ export const BROAD_TYPES = Object.freeze(['city', 'culture', 'food']);
 
 export function broadWhenUnasked(answers, settings) {
   if (answers.types.length || settings?.answered?.includes('g:likes')) return answers;
-  return { ...answers, types: [...BROAD_TYPES] };
+  // The persona says what kind of places the traveller is after (config
+  // persona.types), so a coast persona is matched on the coast and not on
+  // the broad city break; with no persona, the broad types.
+  const own = personaTypes(personaOf(settings?.guide));
+  return { ...answers, types: own ? own.slice(0, BROAD_TYPES.length) : [...BROAD_TYPES] };
+}
+
+/**
+ * The Help me choose answers the country match ranks by: quizAnswers, with
+ * the persona's shapes standing in for an unanswered What kind of trip (so
+ * the pace term reads the persona too, as the shapes built already do) and
+ * the likes as broadWhenUnasked fills them.
+ */
+export function answersFor(settings) {
+  const own = settings.guide.shapes.length ? null : personaShapes(personaOf(settings.guide));
+  const s = own ? { ...settings, guide: { ...settings.guide, shapes: own } } : settings;
+  return broadWhenUnasked(quizAnswers(s, spendFor(settings)), settings);
 }
 
 /**

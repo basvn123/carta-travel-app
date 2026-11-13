@@ -102,7 +102,11 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
             baggage_per_direction_eur:
               j.meta.baggage_options?.[baggageKey]?.per_direction_eur ?? prev.baggage_per_direction_eur,
             transport_mode: init.transport_mode ?? prev.transport_mode,
-            lifestyle: { ...prev.lifestyle, ...(def?.lifestyle || {}), ...(init.lifestyle || {}) },
+            // An active travel style already set the Lifestyle (hooks/
+            // useTravelStyles.js); the data's default must not undo it.
+            lifestyle: prev.travel_styles?.active && !init.lifestyle
+              ? prev.lifestyle
+              : { ...prev.lifestyle, ...(def?.lifestyle || {}), ...(init.lifestyle || {}) },
             // v18 (T534): Airbnb's fee constants travel as meta.stays.fees.
             accommodation_model: j.meta.stays?.fees ?? j.meta.accommodation_model ?? prev.accommodation_model,
             car_model: j.meta.car_model ?? prev.car_model,

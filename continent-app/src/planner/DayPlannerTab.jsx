@@ -60,7 +60,7 @@ import {
 } from './dayPlanStore.js';
 import { loadTripDraft } from './tripDraftStore.js';
 import { plannerStore } from './plannerStore.js';
-import { fromDraft, dayAiPreset, dayPrefs, flightRanking } from './flow/tripSettings.js';
+import { aroundOf, fromDraft, dayAiPreset, dayPrefs, flightRanking } from './flow/tripSettings.js';
 
 const OPEN_DAY_KEY = 'carta.dayOpen.v1'; // T507: the day open when the page was left
 import {
@@ -583,10 +583,11 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     if (quiz.pace === 'moving') out.steps = 20000;
     // T658: the day rhythm asked after the trip was planned wins over the
     // guesses above: the traveller said it in so many words.
-    const rhythm = fromDraft(st).rhythm;
+    const tripSet = fromDraft(st);
+    const rhythm = tripSet.rhythm;
     const start = { early: 'early', onthego: 'normal', slow: 'late' }[rhythm.mornings];
     if (start) out.start = start;
-    const steps = rhythm.steps || { walk: 15000, transit: 10000, taxi: 5000, car: 5000 }[rhythm.around];
+    const steps = rhythm.steps || { walk: 15000, transit: 10000, taxi: 5000, car: 5000 }[aroundOf(tripSet)];
     if (steps) out.steps = steps;
     const food = { street: 'quick', local: 'sit', fine: 'sit', cook: 'picnic' }[rhythm.food];
     if (food) out.food = food;

@@ -26,7 +26,7 @@
 import { costContext, costRow } from '../costIndex.js';
 import { groundSpendPerPerson } from '../runtime_pricing.js';
 import { foodShare, ticketShare } from '../party.js';
-import { DEFAULT_PRICE_REQUEST, costChoices, seatsOf } from './request.js';
+import { DEFAULT_PRICE_REQUEST, carSeatsOf, costChoices, seatsOf } from './request.js';
 import { carHire } from './car.js';
 import { rule } from './config.js';
 
@@ -56,7 +56,9 @@ function hireStart(req) {
 
 function carLine(iso2, req, chosen, st) {
   const seats = seatsOf(req);
-  const hire = iso2 ? carHire(iso2, req.nights, hireStart(req), seats) : null;
+  // R4: cars are counted over every car seat, babies too, as quoteTrip's hire
+  // counts them; the cost is still shared over the paying seats.
+  const hire = iso2 ? carHire(iso2, req.nights, hireStart(req), carSeatsOf(req)) : null;
   const eur = hire ? num(hire.eur_total / seats / req.nights) : null;
   return {
     key: 'car', status: st('car', 'not_included'), eur,
@@ -87,10 +89,16 @@ function transportLine(dest, req, st) {
     return { key: 'transport', status: st('transport', 'not_included'), eur: null, quality: 'missing', basis: null, provenance: null };
   }
   const share = ticketShare({ ...req.group, seats: seatsOf(req) });
+  // R4: a party that hires a car drives itself around, so bus and metro
+  // fares would count getting around twice. The figure stays for the opened
+  // price; only the status says it is not in the day. The trip adds the
+  // car's own local cost instead (parking and driving, quoteTrip carLocal).
+  const status = req.hire ? 'not_included' : 'included';
   return {
-    key: 'transport', status: st('transport', 'included'), eur: num(adult * share),
+    key: 'transport', status: st('transport', status), eur: num(adult * share),
     quality: fare.quality === 'measured' ? 'measured' : 'modelled',
-    basis: { rides, ride_eur: fare.ride_eur ?? null, day_pass_eur: fare.day_pass_eur ?? null, share, capped: pass != null && byRide != null && pass < byRide },
+    basis: { rides, ride_eur: fare.ride_eur ?? null, day_pass_eur: fare.day_pass_eur ?? null, share, capped: pass != null && byRide != null && pass < byRide,
+      ...(req.hire ? { reason: 'hire' } : {}) },
     provenance: { source: fare.source || null, date: fare.date || null },
   };
 }

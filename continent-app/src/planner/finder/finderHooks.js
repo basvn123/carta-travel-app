@@ -143,7 +143,7 @@ export function useTripFinder(settings) {
   const stayTier = choices.stay_tier || null;
   // The answer set this run is for; a new one restarts the stages.
   const answers = answersOf(settings);
-  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, origin?.iata, stayTier, lifestyle, taste,
+  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, origin?.iata, stayTier, lifestyle, taste, choices.baggage_key,
     (data?.meta?.home_airports || []).map((a) => a.iata), verdictKey]),
   [settings, origin, stayTier, lifestyle, taste, data, verdictKey]); // eslint-disable-line react-hooks/exhaustive-deps -- answers is settings without old levers
 
@@ -162,6 +162,8 @@ export function useTripFinder(settings) {
         const input = {
           data, countryInsights, layerIndexes, settings: answers, taste, origin, flights,
           lifestyle, stayTier, today: todayISO(),
+          // The traveller's bag prices the flight (lib/recommend/trips.js).
+          baggage: choices.baggage_key || null,
         };
         // The taxonomy only loads when the traveller gave a verdict.
         const tasteLean = await tasteLeanFor(verdicts);
@@ -223,7 +225,7 @@ export function useDoorRun(settings, kind) {
   const stayTier = choices.stay_tier || null;
   const [run, setRun] = useState({ key: null, stages: { flights: false, priced: false }, result: undefined, error: null });
   const key = JSON.stringify([kind, settings.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, origin?.iata,
-    stayTier, lifestyle, (data?.meta?.home_airports || []).map((a) => a.iata), Object.keys(data?.flightsBy || {})]);
+    stayTier, lifestyle, choices.baggage_key, (data?.meta?.home_airports || []).map((a) => a.iata), Object.keys(data?.flightsBy || {})]);
   useEffect(() => {
     if (!data?.destinations || countryInsights == null) return undefined;
     let alive = true;
@@ -238,7 +240,7 @@ export function useDoorRun(settings, kind) {
         setRun((r) => ({ ...r, stages: { ...r.stages, flights: true } }));
         await nextFrame();
         if (!alive) return;
-        const input = { data, countryInsights, layerIndexes, settings: answersOf(settings), taste, origin, flights, lifestyle, stayTier, today: todayISO() };
+        const input = { data, countryInsights, layerIndexes, settings: answersOf(settings), taste, origin, flights, lifestyle, stayTier, baggage: choices.baggage_key || null, today: todayISO() };
         const result = kind === 'flight' ? flightRows(input) : knowTrip(input);
         setRun((r) => ({ ...r, result, stages: { flights: true, priced: true } }));
       } catch (error) {

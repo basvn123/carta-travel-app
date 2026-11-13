@@ -10,7 +10,7 @@ import { formatEst } from '../../lib/money.js';
 import { addDays, fmtDate } from '../../lib/dates.js';
 import { cityLabel } from '../../lib/placeName.js';
 import { usePlannerStore } from '../plannerStore.js';
-import { fromDraft } from '../flow/tripSettings.js';
+import { fromDraft, goalOfGoals } from '../flow/tripSettings.js';
 import { plainRow, buildIdeaSections, poiRowsFor, savedKeys, toggleSaved, placeIdea, dayOfIdea } from './dayIdeas.js';
 import { costOverview } from './tripCost.js';
 import { useStopIdeas } from './useStopIdeas.js';
@@ -80,7 +80,7 @@ export function TripDaysOverview({
     dossier: raw.dossier,
     town: dest ? { id: destId, lat: stay?.lat, lon: stay?.lon, km: 0 } : null,
     dates: stopDates,
-    goal: settings.rhythm.goal,
+    goal: settings.rhythm.goal || goalOfGoals(settings.rhythm.goals),
     party: { kids: settings.party.kids, slowWalkers: settings.party.slowWalkers },
   })), [raw, pois, dest, destId, stay?.lat, stay?.lon, stopDates, settings]);
   const kept = savedKeys(prefs, destId);

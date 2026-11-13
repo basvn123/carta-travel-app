@@ -51,6 +51,10 @@ export const DEFAULT_PRICE_REQUEST = Object.freeze({
   stay: 'home',
   lifestyle: Object.freeze({ ...DEFAULT_LIFESTYLE }),
   transport: 'any',
+  // R4: true only when a planned trip HIRES a car there (planner transport
+  // 'car'). Explore's transport 'car' is driving one's own car there, so it
+  // cannot stand for "has a car at the stop"; this flag does.
+  hire: false,
   origin: null,
   driveHome: null,
   baggage: rule('request.default_bag'),
@@ -132,11 +136,16 @@ export function atDates(req, start, end) {
 /** Seats: adults plus children (babies sit on a lap). */
 export const seatsOf = (req) => Math.max(1, (req?.group?.adults || 0) + (req?.group?.children || 0));
 
+/** Car seats: everyone, babies too. A baby has no plane seat but rides in
+ *  its own car seat, which takes one of the car's places (R4: the trip hire
+ *  and the day's car line count cars the same way). */
+export const carSeatsOf = (req) => seatsOf(req) + Math.max(0, req?.group?.babies || 0);
+
 /** A stable key for the request, for memo and cache keys. */
 export function requestKey(req) {
   const r = req || DEFAULT_PRICE_REQUEST;
   return JSON.stringify([r.when.kind, r.when.start, r.when.end, r.when.month, r.nights,
-    r.group.adults, r.group.children, r.group.babies, r.stay, r.lifestyle, r.transport,
+    r.group.adults, r.group.children, r.group.babies, r.stay, r.lifestyle, r.transport, !!r.hire,
     r.excluded, r.activities, r.subArea]);
 }
 

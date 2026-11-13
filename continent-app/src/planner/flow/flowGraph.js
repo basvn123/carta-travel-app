@@ -165,10 +165,35 @@ export function fullFlow(s, door = 'know') {
  * back and on walks the questions in order. `stop` ends the walk early (the
  * create screen, the trips) even when it carries an answer.
  */
-export function continueTo(list, id, s, stop = null) {
+export function continueTo(list, id, s, stop = null, skip = ['words']) {
   let k = nextScreen(list, id);
-  while (k && k !== stop && s.answered.includes(k) && s.sources?.[k] === 'words') k = nextScreen(list, k);
+  while (k && k !== stop && givenBy(s, k, skip)) k = nextScreen(list, k);
   return k;
+}
+
+/** Whether question `id` was answered by one of `from` ('words', 'style'). */
+export function givenBy(s, id, from) {
+  return s.answered.includes(id) && from.includes(s.sources?.[id]);
+}
+
+/**
+ * The help-me-choose walk passes over what the traveller's travel style
+ * answered (lib/travelStyles.js) as well as Tell Carta's words: the style is
+ * their own earlier answer, shown on the trip's settings and one tap from
+ * changing there. The Who screen of the setup is not passed over: it is
+ * where the style is chosen for this trip.
+ */
+export const GUIDE_SKIP = ['words', 'style'];
+
+/** The first guide screen still open for this trip (the trips when none is). */
+export function firstOpenGuide(s) {
+  const list = guideScreens(s);
+  return list.find((id) => id === TRIPS_SCREEN || !givenBy(s, id, GUIDE_SKIP)) || TRIPS_SCREEN;
+}
+
+/** The guide questions still open (not given by words or the style). */
+export function openGuideQuestions(s) {
+  return guideQuestions(s).filter((id) => !givenBy(s, id, GUIDE_SKIP));
 }
 
 /** The screen after `id` in `list`, or null at the end. */

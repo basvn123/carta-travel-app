@@ -465,7 +465,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     ? quoteTrip({ ...tripState, liveFlights }, { data, countryInsights })
     : pricedSwept), [liveFlights, pricedSwept, tripState, data, countryInsights]);
   const {
-    flight, legs, anchorLegs, flightTransfer, driveLegs, carRental, vignettes, stayCosts,
+    flight, legs, anchorLegs, flightTransfer, driveLegs, carRental, carLocal, vignettes, stayCosts,
     grandTotal, tripHasCar,
   } = priced;
   // T943: the bed a person a night the planner prices each stop at now, so
@@ -759,7 +759,9 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop, swapStop, setStopStay, setStopDayTrips,
     optimizeRoute, clearPlan, loadFromWizard,
     nextStopSuggestions, flight, legs, anchorLegs, flightTransfer, driveLegs, stayCosts, planBeds, grandTotal, dayPlan,
-    vignettes, tripHasCar,
+    // Parking and driving around with the hire (quoteTrip carLocal), its own
+    // row so the rows add up to the car part of the total.
+    vignettes, carLocal, tripHasCar,
     baggage, setBaggage,
     flightHours, setFlightHours,
     // T840: the trip's flight preferences, a picked flight each way, and the

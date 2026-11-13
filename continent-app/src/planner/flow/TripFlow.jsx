@@ -15,7 +15,7 @@ import { groupsOf, stepAnswer } from './stepText.js';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { selectionOfPlan } from '../../lib/plan/doors.js';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
-import { TRIPS_SCREEN, continueTo, engineScreens, guideQuestions, guideScreens, hasDoors, prevScreen, progressOf } from './flowGraph.js';
+import { GUIDE_SKIP, TRIPS_SCREEN, continueTo, engineScreens, firstOpenGuide, guideQuestions, guideScreens, hasDoors, openGuideQuestions, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
 import { takePlan } from '../../lib/recommend/keptStore.js';
 import { clearQuickStart, peekQuickStart } from './quickStart.js';
@@ -213,8 +213,8 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
     if (returnTo) { setReturnTo(null); setPhase(returnTo); return; }
     // How do you want to plan: the flights first opens their screen.
     if (id === 'g:how') { setDoor(s.door || 'guide'); setPhase(s.door === 'flight' ? 'ff' : TRIPS_SCREEN); return; }
-    // Skip only what the Tell sentence answered (never the trips).
-    const k = continueTo(guideScreens(s), id, s, TRIPS_SCREEN);
+    // Skip what the Tell sentence or the travel style answered (never the trips).
+    const k = continueTo(guideScreens(s), id, s, TRIPS_SCREEN, GUIDE_SKIP);
     setPhase(k || TRIPS_SCREEN);
   };
   /** Reopen one question from the trips, and come back to them after it. */
@@ -223,7 +223,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   // opening already asked, so Start planning goes straight into the
   // help-me-choose questions; the last of them (g:how) asks whole trip or
   // flights first.
-  const start = () => { setDoor('guide'); setWalked(true); setReturnTo(null); setPhase(guide[0]); };
+  const start = () => { setDoor('guide'); setWalked(true); setReturnTo(null); setPhase(firstOpenGuide(settings) || guide[0]); };
 
   if (phase === 'engine') {
     const d = hasDoors(settings) ? door : 'know';
@@ -283,7 +283,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
           // T1103: straight from the short setup there is no question
           // behind the trips yet; back is the trip's own page.
           onBack={() => setPhase(walked ? questions[questions.length - 1] : 'home')}
-          refine={walked ? null : <RefineCard count={questions.length} onFit={start} onSleep={() => reopen('sleep')} />}
+          refine={walked ? null : <RefineCard count={openGuideQuestions(settings).length || questions.length} onFit={start} onSleep={() => reopen('sleep')} />}
           headEnd={bar}
           onWiden={reopen}
           edits={finderEdits}

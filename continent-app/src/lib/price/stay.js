@@ -10,7 +10,7 @@ import { addDays } from '../dates.js';
 import { round2 } from '../math.js';
 import { rule } from './config.js';
 import { DEFAULT_PRICE_REQUEST, atDates, seatsOf } from './request.js';
-import { priceDay } from './priceDay.js';
+import { priceDay, priceDays } from './priceDay.js';
 
 const MAX_SEATS = rule('party.limits').max_seats;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, Math.round(Number(v) || 0)));
@@ -34,8 +34,29 @@ export function tripRequest(state = {}) {
     stay: state.stayTier || DEFAULT_PRICE_REQUEST.stay,
     lifestyle: state.lifestyle || DEFAULT_LIFESTYLE,
     transport: TRANSPORT[state.transportPref] || 'any',
+    // R4: only a hire puts a car at the stops for the request ('owncar' maps
+    // to transport 'car' too, but that car is priced as the drive there).
+    hire: state.transportPref === 'car',
     baggage: state.baggage || DEFAULT_PRICE_REQUEST.baggage,
   };
+}
+
+/**
+ * The nights a stay filter prices a candidate stop at (R4): the stop's own
+ * nights once the traveller has given it some, else the screen's fallback.
+ * An entire place's fees spread over the real stay, so the filter's figure
+ * is the one the planned stop (quoteStay) will show.
+ */
+export function stopNightsFor(nightsById, id, fallback) {
+  const n = Math.round(Number(nightsById?.[id]) || 0);
+  return n > 0 ? n : fallback;
+}
+
+/** Every destination's day price for a stay of `nights` from `start` (or
+ *  undated): the catalogue priced once for one stay length. */
+export function priceDaysAtNights(destinations, req, start, nights) {
+  const r = start ? atDates(req, start, addDays(start, nights)) : { ...req, nights };
+  return priceDays(destinations, r);
 }
 
 /**

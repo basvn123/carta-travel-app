@@ -449,6 +449,24 @@
       "review": "2027-04-24",
       "test": "tests/priceTransport.test.mjs"
     },
+    "car.local": {
+      "value": {
+        "parking_eur_per_night": {
+          "metro": 25,
+          "city": 15,
+          "town": 8,
+          "village": 0,
+          "area": 0
+        },
+        "km_per_day": 40
+      },
+      "unit": "EUR per car per night by place class; km per car per day",
+      "kind": "estimate",
+      "source": "Carta estimate (R4), kept at the low end on purpose: overnight parking is the cheaper of a hotel's car park and a public garage or resident-visitor zone; big-city centre garages run EUR 25-45 a 24 h (Paris, Amsterdam, Rome, Barcelona operator price lists 2026), mid-size cities EUR 10-20, towns EUR 5-10, villages and rural areas mostly free. 40 km a day is a short drive out and back from a base; fuel is that distance at car.model consumption and car.fuel_by_country",
+      "date": "2026-11-12",
+      "review": "2027-05-12",
+      "test": "tests/priceLifestyleFixes.test.mjs"
+    },
     "ground.transfer_public": {
       "value": {
         "per_km_eur": 0.15,

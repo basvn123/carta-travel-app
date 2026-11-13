@@ -135,7 +135,7 @@ export const PRINT_CSS = `
 /** Printable HTML for the trip, opened in a new window for print-to-PDF.
  *  The cost table reads chronologically: getting there, each stop (with the
  *  leg to the next one), getting home, then the round-trip items. */
-export function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfer = null, legs = [], anchorLegs = null, driveLegs = null, stayCosts = [], carRental, vignettes = null, tripHasCar = false, grandTotal, groupSize, extras = null, bookingRows = [], cartaFlight = null, airlines = null }) {
+export function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flightTransfer = null, legs = [], anchorLegs = null, driveLegs = null, stayCosts = [], carRental, carLocal = null, vignettes = null, tripHasCar = false, grandTotal, groupSize, extras = null, bookingRows = [], cartaFlight = null, airlines = null }) {
   const first = stopDetails[0];
   const last = stopDetails[stopDetails.length - 1];
   const rows = [];
@@ -194,6 +194,7 @@ export function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flight
   // traveller booked (T278), at the mode they picked, as the total does.
   if ((flight?.combinable || flight?.own) && flight.ground_total > 0) rows.push(`<tr><td>Airport transfers</td><td>${esc(eurExact(flightTransfer ? flightTransfer.ground_total : flight.ground_total))}</td></tr>`);
   if (carRental) rows.push(`<tr><td>Rental car, ${carRental.days} days${carRental.cars > 1 ? `, ${carRental.cars} cars` : ''}</td><td>${esc(eurExact(carRental.eur_total))}</td></tr>`);
+  if (carLocal?.eur_total > 0) rows.push(`<tr><td>Parking and driving around</td><td>${esc(eurExact(carLocal.eur_total))}</td></tr>`);
   if (vignettes) rows.push(`<tr><td>Motorway vignettes (${esc(vignettes.items.map((v) => v.iso2).join(', '))})</td><td>${esc(eurExact(vignettes.eur_total))}</td></tr>`);
 
   // Booking records worth printing: any element with a tick, a confirmation

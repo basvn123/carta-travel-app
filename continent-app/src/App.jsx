@@ -91,6 +91,8 @@ import { useAccountSync } from './hooks/useAccountSync.js';
 import { useUrlSync } from './hooks/useUrlSync.js';
 import { useKeyboardOpen } from './hooks/useKeyboardOpen.js';
 import { usePanelState } from './hooks/usePanelState.js';
+import { loadStoredStyles, useTravelStyles } from './hooks/useTravelStyles.js';
+import { TravelStylesSheet } from './browse/TravelStylesSheet.jsx';
 import { useFilterState } from './hooks/useFilterState.js';
 import { useReach } from './lib/reach.js';
 import { resolveWhen, whenMonth, xmFromSearch } from './lib/when.js';
@@ -608,7 +610,11 @@ function TravelApp() {
     price_excluded: Array.isArray(init.price_excluded) ? init.price_excluded : [],
     // T764: the taste profile (lib/taste.js); null answers are "No preference".
     taste: normalizeTaste(init.taste),
+    // The traveller's named travel styles (lib/travelStyles.js): kept in
+    // choices so the account sync carries them, read from this device first.
+    travel_styles: loadStoredStyles(),
   });
+  const travelStyles = useTravelStyles(choices, setChoices);
 
   // Shortlist (favorites) + list controls, also persisted in the URL.
   //
@@ -1349,6 +1355,9 @@ function TravelApp() {
     setFrom, setOrigin, setParty, setPartyParts, setPriceExcluded, setPriceView, setReturnDate,
     setTransportMode, sweptOrigins, travelMonth, when,
   });
+  // The travel styles ride on the same context, so the header door, the
+  // planner's Who screen and the trip settings read one store.
+  const settingsValue = useMemo(() => ({ ...settings, travelStyles, openLifestyle }), [settings, travelStyles, openLifestyle]);
 
   // Which parts of the settings line each tab shows. Explore and Destinations
   // price from every input. The Trip planner keeps its own origin, dates and
@@ -1478,7 +1487,7 @@ function TravelApp() {
       onOpenPricing={() => goToTab('pricing')}
     >
     <FirstRunContext.Provider value={firstRun}>
-    <SettingsContext.Provider value={settings}>
+    <SettingsContext.Provider value={settingsValue}>
     <div className="app" onClick={() => setSelectedId(null)}>
       {/* The one way past the chrome for a keyboard (T496, 1.3a): first in
           the tab order, out of sight until it has focus. */}
@@ -1642,6 +1651,12 @@ function TravelApp() {
             leaving={lifestyleSheet.leaving}
           />
         </div>
+      )}
+
+      {/* Travel styles: every tab's header door opens it over whatever is on
+          screen, like Lifestyle. */}
+      {travelStyles.open && (
+        <TravelStylesSheet onClose={() => travelStyles.setOpen(false)} openLifestyle={openLifestyle} initialHalf={travelStyles.open} />
       )}
 
       {/* The home page (T462, which replaced the T209 landing receipt): what

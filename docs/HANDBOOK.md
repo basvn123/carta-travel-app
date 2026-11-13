@@ -807,8 +807,10 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 3. Explore "For you" (`forYou`, `sortForYou`): `Q + lambda x (F - 0.5)`, with `lambda` = 2, so the match moves a place by at most one point. Q is the month score if present, else the score. Unscored places keep their quality order below. With no taste the sort is the rating order.
 4. `for_you_default` = false: For you is a sort the traveller picks, never the default, and the "Picked for you" rail stays off until persona gate 7 passes.
 5. Trips for you (`recommend/rank.js rankTrips`, `config/recommend.json`):
-   - Answers = F mixed with the persona fit P: `0.75 x F + 0.25 x P` (`persona_w` 0.25).
-   - `blend = 0.6 x answers + 0.4 x quality / 10` (`answers_w`, `quality_w`); either side alone when the other is missing.
+   - Answers = F mixed with the persona fit P: `0.75 x F + 0.25 x P` (`persona_w` 0.25). With a persona and no F, F counts as 0.5, so the persona keeps its quarter.
+   - `blend = 0.6 x answers + 0.4 x quality / 10` (`answers_w`, `quality_w`); either side alone when the other is missing. Quality is the places' month score only (the country match score is on another scale).
+   - Shape: a trip of a shape the traveller asked for gains `shapeStep` = 0.04; of several asked, the one the persona lists first gains the full step and the others half. Unasked, the persona's first shape gains 0.04 and its other shapes 0.02 (`shapeNudge`).
+   - What matters most: price lifts the cheaper trips (whole trip a person), comfort the flights with fewer stops then shorter door to door; the first gains `priorityPull / 2` = 0.03, the last loses as much; balance moves nothing (`priorityPull`).
    - Budget sink: minus `0.3 x (euros over budget) / 100` points out of 10 (`sinkPer100`), divided by 10 on the 0 to 1 scale.
    - Flight lever: trips sorted by the chosen flight preference sink by up to 1.5 points (`FLIGHT_PULL = 5 x 0.3`); ties share; trips with no flight facts sit in the middle.
    - A trip qualifies when its strongest chosen like reads at least 0.5 (`mainLikeMin`) where measured and no hard conflict (`car`) stands.
@@ -1192,7 +1194,7 @@ Worked example: bed 50.86, food 53.58, 7 nights, 2 people, a swept return of EUR
    - `transfers`: runway to bed and back, plus a named arrival to the first stop
    - `drive`: your own car there and home (half the round trip each way)
    - `between`: travel between stops
-   - `car`: hire car plus vignettes
+   - `car`: hire car, its parking and local driving (R4), plus vignettes
    - `daytrips`: there and back for each day trip
    - `beds`, `days`
 4. `grandTotal` = sum of parts; `perPerson` = grandTotal / (adults + children).
@@ -1509,6 +1511,7 @@ Worked example: 600 km straight, 2 people, flat toll, fuel 1.81. Road 780 km, ro
 2. Season: x `rental_seasonality[month]` of the start date (January 0.85 up to July and August 1.25); no date gives 1.
 3. total = rate x days x cars; 7 days or more take 15% off (`rental_weekly_discount_pct`).
 4. In the planner the hire is added only when transport is car hire; on Places only when the plane trip lands at a place with `car_needed`. Never in the day price.
+5. With a hire the planner also adds parking and local driving (R4, `carLocalCost`, `car.local`), per car and per stop night: parking by place class (metro 25, city 15, town 8, village and area 0 EUR a night) and 40 km a day at the car's consumption and the country's fuel price. The stops' bus and metro fares leave the days (the request's `hire` flag; your own car on Explore or `owncar` is not a hire). Cars count babies (a car seat) in the hire and in the day's car line alike.
 
 Worked example: Italy, 7 days in July, 2 people: 52 x 1.25 = 65 a day, x 7 = 455, minus 15% = 386.75 for one car.
 
@@ -1622,10 +1625,13 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
    - gateway: the airport of the first place with a swept fare from the origin (`nearKm: 150`, `nearMax: 3`)
    - dates: the setup dates, else `nights: 7` starting on a Saturday (`startWeekday: 6`) in the best month for the weather answer (warm 27 C, mild 21 C, snow 3 C day highs), looking 12 months ahead
    - named places: when the traveller named towns or countries, only those are used
-3. Pricing (`lib/recommend/trips.js`): each candidate is priced in full by one `quoteTrip` call, the same engine the planner uses, and cut into the slots of `config/slots.json`: flight, stay (private, home or hotel3 by the priority answer), food (cook, mix, out), local (public or car), activities (status `notYet`, never in a sum). The total is the sum of slots that have a figure. Trip ids are a stable hash of country, places, gateway, nights and month, so the same answers give the same trips.
+   - countries: with the likes unanswered, the persona's trip types (`persona.types`, e.g. coast: beach, islands) rank the countries, else city, culture and food; with the shapes unanswered, the persona's shapes set the pace; a family keeps its family type with three likes (the third like gives way)
+3. Pricing (`lib/recommend/trips.js`): each candidate is priced in full by one `quoteTrip` call, the same engine the planner uses, and cut into the slots of `config/slots.json`: flight, stay (private, home or hotel3 by the priority answer), food (cook, mix, out), local (public or car), activities (status `notYet`, never in a sum). The flight carries the traveller's bag when the caller passes `baggage` (`choices.baggage_key`), else the cabin bag. The total is the sum of slots that have a figure. Trip ids are a stable hash of country, places, gateway, nights and month, so the same answers give the same trips.
 4. Ranking (`lib/recommend/rank.js`):
    - fit first: a trip qualifies when its strongest chosen like reads at least `mainLikeMin = 0.5` and there is no hard conflict (`hardConflicts: ["car"]`)
-   - score = blend of answers and quality: `answers_w 0.6` x answers + `quality_w 0.4` x (place month score / 10); answers mixes the fit F with the persona fit P at `persona_w 0.25`
+   - score = blend of answers and quality: `answers_w 0.6` x answers + `quality_w 0.4` x (place month score / 10); answers mixes the fit F with the persona fit P at `persona_w 0.25` (F counts as 0.5 when missing)
+   - stay or move: the asked shape (or the persona's, when unasked) adds `shapeStep 0.04`; the priority price or comfort adds up to 0.03 to the cheapest or quickest trip and takes as much from the last (see "Personal match and For you")
+   - one rule each (`lib/recommend/prefs.js`): heat is avoided when said or when the weather answer is mild; no car is "avoid a car" or getting around by public transport or taxis, and a no-car trip is priced with `transport: 'public'`, so no hop or day trip goes by car
    - budget sink: `sinkPer100 = 0.3` points (of 10) for each 100 euros over the typed budget
    - the match badge is round(score x 100), capped at 99, shown only while it reads at least `show_min = 0.55` (`config/rating.json`)
 5. Personas (`lib/recommend/persona.js`): ten ids (cities, hubtrips, outside, towns, coast, nature, hidden, slow, lively, mix), up to three picks, one may be "most you". Each place gets a persona fit from its features; `weight = 3` moves a place by up to 1.5 points.
@@ -1647,6 +1653,24 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 - Someone opening a shared shortlist cannot keep its trips (row T808-b).
 - The compare table's match, day highs and crowds rows were never seen filled in a browser (row T802-b).
 
+### Travel styles
+
+**What it does.** A travel style is one named way of travelling that the traveller keeps and switches between, for each kind of company: "With the kids", "On my own", "The two of us". Each style holds two parts. How you stay: who comes, where you sleep, how you eat and drink, how you get there and what matters most; every price in the app follows it. How you explore: one base or on the move, how you like to travel (the personas), what you are up for, what to avoid, how you get around there, the kind of place, lively or quiet, when the day starts and the pace; new trips start from it and the trips Carta finds are ordered by it. One style is active at a time; the header shows it on every tab and a tap opens Travel styles.
+
+**How it works.**
+1. Model (`lib/travelStyles.js`): `{ id, name, nameKey, tone, who, stay, lifestyle, way, priority, explore: { shapes, personas, likes, avoid, around, size, quiet }, days: { mornings, pace } }`, at most `MAX_STYLES = 6`, stored in `choices.travel_styles` (`{ list, active }`) so the account sync carries it, and mirrored in localStorage `carta.travelStyles.v1`. Five templates (on my own, the two of us, with friends, with the kids, a big group) start from the Lifestyle panel's own tiers and presets; "How I travel now" copies the live choices.
+2. One truth for the priced half (`hooks/useTravelStyles.js`): the active style's stay half is the app's `choices` (`group_size`, `children`, `babies`, `stay_tier`, `lifestyle`, `transport_mode`). An edit anywhere (the Lifestyle panel, the settings line, the planner's Way) is written into the active style; switching writes the style's values into the choices in the same update, so every price reprices once. The bed and the table are still set in the one Lifestyle panel; the styles sheet opens it.
+3. Load: on a bookmark or tab link that names no priced key the style sets the choices; a shared link that names them (`g`, `gc`, `gb`, `st`, `ls`, `t`) keeps the link's choices and marks no style active (active `''`), so neither overwrites the other. Loading a saved trip does the same. The data's default Lifestyle does not override an active style (`useAppData.js`).
+4. The taste profile is the explore half (`tasteFromStyle`, `exploreFromTaste`): who comes, the likes, the kind of place, lively or quiet and no car (getting around by public transport or taxi) are written into `choices.taste`, which Explore's For you and the trip finder's taste nudge read. A taste edited on its own (the first-run questions) is written back into the style. Every "Your travel style" door opens Travel styles on its explore part.
+5. New trips (`planner/flow/styleSeed.js`): Plan home's New trip starts the trip settings from the active style; each answer it gives carries `sources[id] = 'style'` (who, sleep, priority, persona, shape, likes, avoid, getting around, mornings, pace). Words and screens beat the style: Tell Carta's sentence replaces a style answer, a screen answer is never touched. The Who screen shows the styles; picking one there (`switchTripStyle`) drops the old style's answers, fills the new ones and makes it the app's active style. The help-me-choose walk skips style answers (`flowGraph.js` `GUIDE_SKIP`, `firstOpenGuide`), so "Fit these to me" asks only what a style cannot know (weather, how far, budget, what Carta picks).
+6. Trip settings (`TripSettingsSheet.jsx`): the trip's style on top (switching re-seeds this trip only through `onSaved`), a "From {style}" tag on each answer the style gave, and "Keep these answers in {style}" when the trip's explore answers moved away from the style.
+
+**Where it lives.** App: `continent-app/src/lib/travelStyles.js`, `continent-app/src/hooks/useTravelStyles.js`, `continent-app/src/browse/TravelStylesSheet.jsx`, `continent-app/src/components/StyleDoor.jsx`, `continent-app/src/planner/flow/styleSeed.js`, `continent-app/src/styles/79-travel-styles.css`. Tests: `continent-app/tests/travelStyles.test.mjs`.
+
+**Limits.**
+- A shared trip's co-planners each see their own active style in the header; the trip itself keeps the answers it was planned with.
+- The styles sheet states no euro figure per style yet; a day figure per style from `lib/costIndex.js` is the next step (ROADMAP G12).
+
 ### Plan home and the plan flow
 
 **What it does.** Plan's first page shows "New trip", a door to Carta's own trips, the next upcoming trip ("Up next" with a countdown and nights), and the traveller's trips grouped as upcoming, planning and past. Starting a trip (T1103, G12) opens four one-question screens: a free "Tell Carta" sentence, who goes, when and from where. The trip is then made and opens straight on its priced trips; everything else (what is booked, where to sleep, priority, the way there, the airports, and the help-me-choose questions) refines those trips from there.
@@ -1654,10 +1678,10 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 **How it works.**
 1. Home (`PlanHome.jsx`): a trip is "past" when its end is before today, "upcoming" when it has a start date, else "planning" (`tripState`). Drafts with nothing in them can be cleared in one step. The Carta's own trips door shows a fan of style photos with the month's style in the middle (`SEASON` map, for example July and August water sports). Kept trips with a price drop link to My trips.
 2. Tell Carta (`lib/plan/parseTrip.js`): the sentence is read on the device with no model and no network. It reads places from the catalogue, month or dates, nights, adults, children and babies, likes, origin, budget (a person or the group, the trip or a day), what is booked, stay type and way of travel, in 6 languages. Each answer keeps `from: 'words'`; a screen answer always wins over the words (`tellChips.js`). Files dropped here go to parse-booking.
-3. First run (T1103, `flowGraph.js` `FIRST_SETUP`, `firstSetup`): a new trip asks tell, who, when, from. Start planning goes straight to Tell; the "what do you want to plan" sheet shows only while a device trip is under way today (`tripUnderWay`). After From the trip is made with its defaults (no name, cover or buddies; all in the trip settings gear) and `quickStart.js` marks it, so `TripFlow` opens on the priced trips with no Create screen, no trip home and no questions. The trips show a refine card (`RefineCard.jsx`): "Where you sleep" (the sleep screen, back to the trips) and "Fit these to me" (the help-me-choose questions; back on the first returns to the trips). With "What are you up for" never asked the finder ranks by `BROAD_TYPES` (city, culture, food) in `lib/recommend/candidates.js` `broadWhenUnasked`; no like is written or shown. Measured with `scripts/verify_plan_short.mjs`: 23 screens and 31 taps to the first priced trip before, 5 and 6 after.
+3. First run (T1103, `flowGraph.js` `FIRST_SETUP`, `firstSetup`): a new trip asks tell, who, when, from. Start planning goes straight to Tell; the "what do you want to plan" sheet shows only while a device trip is under way today (`tripUnderWay`). After From the trip is made with its defaults (no name, cover or buddies; all in the trip settings gear) and `quickStart.js` marks it, so `TripFlow` opens on the priced trips with no Create screen, no trip home and no questions. The trips show a refine card (`RefineCard.jsx`): "Where you sleep" (the sleep screen, back to the trips) and "Fit these to me" (the help-me-choose questions; back on the first returns to the trips). With "What are you up for" never asked the finder ranks by the persona's types (`persona.types`), else by `BROAD_TYPES` (city, culture, food), in `lib/recommend/candidates.js` `broadWhenUnasked`; no like is written or shown. Measured with `scripts/verify_plan_short.mjs`: 23 screens and 31 taps to the first priced trip before, 5 and 6 after.
    Where the traveller stands survives a reload (T1123, G4, `flowMemory.js`, session storage keyed by the device trip id): PlanFlow's setup question (not the opening, whose Start planning would begin another trip) and TripFlow's phase (the priced trips above all, never the planning engine). A trip from the short setup keeps that mark, so Back from the trips lands on the trip home whose main button reads "See your priced trips" and opens them again, instead of walking the ten questions. When on set dates with none picked says why Continue waits (`pf.when.needDates`), and the refine card says how many questions "Fit these to me" asks (`pf.refine.count`). Checked by `tests/flowMemory.test.mjs` and `scripts/verify_core_flow.mjs`.
 4. Full setup order (`flowGraph.js` `SETUP`, still the trip settings' list and a trip under way's run): tell, booked, who, sleep, priority, when, from, way, airports. When drops out when bookings fix the dates; from and way drop out when flights are booked; airports is asked only when the way there may fly. A trip already under way uses `NOW_SETUP` (where now, until when) and keeps its Create screen.
-5. Continue always goes to the next screen; it only skips a screen the words answered and the traveller has not seen.
+5. Continue always goes to the next screen; it only skips a screen the words answered and the traveller has not seen. The help-me-choose walk also skips the answers the travel style gave (see Travel styles). Getting around is asked once, in the guide (`g:around`); the day rhythm's own getting-around and single goal are no longer separate rows in the trip settings (`tripSettings.js` `aroundOf`, `goalOfGoals`).
 6. Create (a trip under way, or the trip settings), then four doors (`TRIP_DOORS`): guide (Help me choose, the trip finder), flight (find my flight first), know (I know where), booked. With stays booked the flow goes straight to the stays.
 7. Planning steps (`wizard/wizardSteps.js`), prefixed `p:`: plain path Where, then Stay or Trips, then Getting there, then Finish. Travel booked adds From; beds booked puts Your stays in place of Where; travel and beds booked drops Getting there.
 8. Where: pick countries and places, or a link to Google Flights Explore from the departure airport.
@@ -1678,7 +1702,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 - Saving without an account keeps one trip while the home lists many (row T809-c).
 - The wizard's header comment still describes a Ryanair fare map; the live fare source is the flight sweep.
 - "Add a past trip" now sits only in My trips for most travellers (it lived on the trip-kind sheet, now shown only while a trip is under way) (row T1103-c).
-- The help-me-choose walk that refines the trips is still ten questions (row T1103-d).
+- The help-me-choose walk that refines the trips is still ten questions for a trip with no travel style (row T1103-d); with one it asks only what a style cannot answer.
 
 ### The traveller's trip page
 

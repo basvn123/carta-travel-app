@@ -1,0 +1,197 @@
+/*
+ * Travel styles (lib/travelStyles.js): the header door on every tab, the
+ * sheet it opens, and the style cards the planner's Who screen reuses.
+ * A colour world per style from the carta-design tones (tokens only), so a
+ * style is known by its colour before its name is read; selected is the
+ * one selected state (the light tint plus a tick ring), never colour alone.
+ */
+
+/* ---- Tones: --ts-ink (glyph), --ts-ground (disc), --ts-line (ring) ---- */
+.tone-sun    { --ts-ink: var(--sun-800);    --ts-ground: var(--sun-100);    --ts-line: var(--sun-400); }
+.tone-lagoon { --ts-ink: var(--lagoon-700); --ts-ground: var(--lagoon-100); --ts-line: var(--lagoon-600); }
+.tone-umber  { --ts-ink: var(--umber-700);  --ts-ground: var(--umber-100);  --ts-line: var(--umber-600); }
+.tone-sea    { --ts-ink: var(--lagoon-800); --ts-ground: var(--lagoon-50);  --ts-line: var(--lagoon-700); }
+.tone-mist   { --ts-ink: var(--umber-800);  --ts-ground: var(--umber-50);   --ts-line: var(--umber-500); }
+
+.tstyle-disc {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: var(--ts-ink, var(--text));
+  background: var(--ts-ground, var(--surface-sunken));
+}
+
+/* ---- The header door: a pill with the style's disc and its name ---- */
+.style-door {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap, 44px);
+  max-width: 220px;
+  padding: 4px 14px 4px 4px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label, 14px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+.style-door:hover { background: var(--surface-hover); border-color: var(--ts-line, var(--border)); }
+.style-door:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.style-door .tstyle-disc { width: 32px; height: 32px; }
+.style-door-text { display: grid; min-width: 0; line-height: 1.15; text-align: left; }
+.style-door-kicker { font-size: var(--text-micro, 11px); font-weight: 500; color: var(--text-2); }
+.style-door-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.style-door.is-empty .tstyle-disc { color: var(--action); background: var(--action-tint); }
+@media (max-width: 560px) {
+  .style-door { max-width: 132px; padding-right: 10px; }
+  .style-door-kicker { display: none; }
+}
+
+/* ---- The sheet ---- */
+.tstyle { display: grid; gap: var(--space-5); }
+/* Grid items take their content's width by default; the card row scrolls
+   inside its own box instead of widening the sheet past a phone. */
+.tstyle > *, .tstyle-editor > *, .tstyle-half > *, .tstyle-field > * { min-width: 0; }
+
+/* The cards and the door are kit buttons (.btn); the label span is the row. */
+.btn.tstyle-card, .btn.tstyle-tpl, .btn.style-door { justify-content: flex-start; height: auto; }
+.tstyle-card > .btn-label, .tstyle-tpl > .btn-label, .style-door > .btn-label {
+  display: flex;
+  align-items: center;
+  gap: inherit;
+  min-width: 0;
+  white-space: normal;
+}
+.tstyle-label {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-caption, 12px);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.tstyle-lead, .tstyle-note, .tstyle-field-note {
+  margin: 0;
+  font-size: var(--text-caption, 13px);
+  color: var(--text-2);
+  text-wrap: pretty;
+}
+
+.tstyle-cards {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding: 2px 2px 6px;
+  margin: -2px -2px 0;
+  scrollbar-width: thin;
+}
+.tstyle-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 0 0 auto;
+  min-width: 168px;
+  max-width: 232px;
+  min-height: 64px;
+  padding: 10px 14px 10px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), box-shadow var(--dur-1) var(--ease-out);
+}
+.tstyle-card:hover { background: var(--surface-hover); }
+.tstyle-card:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tstyle-card.is-on {
+  border-width: 1px;
+  border-color: var(--ts-line);
+  background: color-mix(in srgb, var(--ts-ground) 55%, var(--surface));
+}
+.tstyle-card.is-on .tstyle-disc { background: var(--ts-line); color: var(--surface); }
+.tstyle-card.is-new { border-style: dashed; color: var(--text-2); min-width: 132px; }
+.tstyle-card-text { display: grid; gap: 2px; min-width: 0; }
+.tstyle-card-name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tstyle-card-sum {
+  font-size: var(--text-caption, 12px);
+  color: var(--text-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.tstyle-cards.is-compact .tstyle-card { min-width: 0; min-height: 52px; }
+
+.tstyle-templates { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); }
+.tstyle-tpl {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap, 44px);
+  padding: 4px 14px 4px 4px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tstyle-tpl:hover { border-color: var(--ts-line); background: color-mix(in srgb, var(--ts-ground) 40%, var(--surface)); }
+.tstyle-tpl:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.tstyle-tpl .tstyle-disc { width: 32px; height: 32px; }
+
+.tstyle-editor { display: grid; gap: var(--space-4); }
+.tstyle-namerow { display: grid; gap: 4px; }
+.tstyle-name { width: 100%; }
+.tstyle-half { display: grid; gap: var(--space-4); }
+.tstyle-field { display: grid; gap: var(--space-2); }
+.tstyle-field-title { margin: 0; font-size: var(--text-body, 15px); font-weight: 700; }
+.tstyle-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tstyle-row { justify-content: space-between; text-align: left; }
+.tstyle-row-text { display: grid; gap: 2px; }
+.tstyle-row-sub { font-size: var(--text-caption, 12px); font-weight: 500; color: var(--text-2); }
+
+/* The foot strip of the Carta card: actions left, the one primary right. */
+.tstyle-foot {
+  position: sticky;
+  bottom: calc(-1 * var(--space-4));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin: 0 calc(-1 * var(--space-4)) calc(-1 * var(--space-4));
+  padding: var(--space-3) var(--space-4);
+  background: color-mix(in srgb, var(--umber-100) 55%, var(--surface));
+}
+.tstyle-foot-actions { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.tstyle-foot > .btn:last-child { margin-left: auto; }
+.tstyle-danger { color: var(--danger, var(--text)); }
+@media (max-width: 560px) {
+  .tstyle-foot { flex-wrap: wrap; }
+  .tstyle-foot > .btn:last-child { width: 100%; }
+}
+
+/* ---- The planner: the style a trip was started from ---- */
+.pf-style { display: grid; gap: var(--space-2); margin-bottom: var(--space-4); }
+.pf-style-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-micro, 11px);
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .style-door, .tstyle-card, .tstyle-tpl { transition: none; }
+}

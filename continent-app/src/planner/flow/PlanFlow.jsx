@@ -8,6 +8,8 @@ import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { QUESTIONS } from './questions.js';
 import { firstSetup, tripUnderWay, continueTo, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings } from './tripSettings.js';
+import { newTripSettings } from './styleSeed.js';
+import { useSettings } from '../../components/SettingsLine.jsx';
 import { markQuickStart } from './quickStart.js';
 import { recallPlace, rememberPlace } from './flowMemory.js';
 import { todayISO } from '../../lib/dates.js';
@@ -49,6 +51,7 @@ export function PlanFlow({
   const bcp47 = useBcp47();
   const [trips, removePlan] = useHomeTrips(destinations);
   const [settings, save] = useTripSettings();
+  const app = useSettings();
   // T1123 (G4): a reload in the middle of the setup comes back to the same
   // question (the answers were never lost, only the screen), not to the
   // opening, whose Start planning would begin another trip.
@@ -139,6 +142,11 @@ export function PlanFlow({
             // always, so an open draft too empty to be listed (answers with
             // no trip made yet) never hands its old answers to the new plan.
             tripsStore.startNew();
+            // The traveller's travel style answers what it can (who, what
+            // matters most, how they explore), so the planner asks only the
+            // rest; the Who screen shows the style and can swap it.
+            const style = app?.travelStyles?.active;
+            if (style) save(newTripSettings(style));
             setKind('new');
             // T1103 (G12, P-33): the choice between a new trip and the one
             // under way is asked only when a trip is under way today.

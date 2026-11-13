@@ -41,7 +41,7 @@ export function answerKey(input) {
   const s = input.settings;
   return stableHash(JSON.stringify([
     s.guide, s.when, s.party, s.priority, input.origin?.iata || null, input.origin?.lat ?? null, input.origin?.lon ?? null,
-    input.lifestyle || null, input.stayTier || null, input.ownFlight || null, input.flights?.checked || null,
+    input.lifestyle || null, input.stayTier || null, input.baggage || null, input.ownFlight || null, input.flights?.checked || null,
     input.taste || null, Boolean(input.countryInsights),
     // T861: the home airports in reach and when each one's file was checked.
     homeAirportsOf(input).map((a) => `${a.iata}:${input.data?.flightsBy?.[a.iata]?.checked || ''}`),
@@ -77,6 +77,10 @@ function plannerState(c, input) {
     carHome: c.transport === 'owncar' && input.origin?.lat != null
       ? { name: input.origin.name || '', lat: input.origin.lat, lon: input.origin.lon } : null,
     stops: c.places.map((p) => ({ destinationId: p.id, nights: p.nights })),
+    // The traveller's own bag (choices.baggage_key) when the caller passes
+    // it; wizardPlannerState falls back to the planner's cabin bag, so the
+    // finder's flight is priced with the bag Explore and the place page use.
+    baggage: input.baggage || null,
   };
   return { ...wizardPlannerState(handOver, { lifestyle: input.lifestyle || null }), flightRank: flightRanking(s).sort };
 }
@@ -205,7 +209,7 @@ const MEMO_SIZE = 8;
 /**
  * Every priced trip for one answer set, in candidate order (rank.js
  * orders them). input: the candidates' input (candidates.js) plus
- * { lifestyle, stayTier, ownFlight }; `registry` ({ rows, adapters })
+ * { lifestyle, stayTier, ownFlight, baggage (choices.baggage_key) }; `registry` ({ rows, adapters })
  * replaces config/slots.json for a test.
  */
 export function buildTrips(input, registry = null) {

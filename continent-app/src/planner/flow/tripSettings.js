@@ -136,10 +136,15 @@ export function defaultSettings() {
     sources: {},
     // T863: the door this trip was planned through ('' until one is chosen).
     door: '',
+    // The travel style this trip was started from (lib/travelStyles.js), or
+    // '' for a trip planned before styles. Its answers carry sources 'style'.
+    style: '',
   };
 }
 
-const SOURCES = ['words', 'screen'];
+// 'style': given by the traveller's active travel style when the trip was
+// started (lib/travelStyles.js seedTripSettings), passed over like 'words'.
+const SOURCES = ['words', 'screen', 'style'];
 const PLACE_KINDS = ['country', 'place'];
 /** A named place made safe, or null. */
 function namedPlace(p) {
@@ -270,6 +275,7 @@ export function normalizeSettings(raw) {
       ? Object.fromEntries(Object.entries(raw.sources).filter(([k, v]) => typeof k === 'string' && SOURCES.includes(v)))
       : {},
     door: oneOf(raw.door, TRIP_DOORS, ''),
+    style: typeof raw.style === 'string' ? raw.style.slice(0, 24) : '',
   };
 }
 
@@ -374,10 +380,16 @@ export function flightRanking(s) {
  *  standard or luxury; spendFor(s) reads it from what matters most. */
 export function quizAnswers(s, spend = 'standard') {
   const g = s.guide;
-  const types = [...g.likes];
+  // A family keeps its family type: the match takes three types, so with
+  // three likes the third like gives way rather than the children.
+  const family = s.party.kind === 'family' && !g.likes.includes('family');
+  const types = g.likes.slice(0, family ? 2 : g.likes.length);
+  if (family) types.push('family');
   if (g.weather === 'snow' && !types.includes('ski')) types.push('ski');
-  if (s.party.kind === 'family' && !types.includes('family')) types.push('family');
-  const around = g.reach === 'overland' ? 'trainonly' : (g.avoid.includes('car') ? 'flytrain' : 'any');
+  // No car is one rule with the trip finder's (recommend/prefs.js noCar):
+  // getting around by public transport or taxis is no car too.
+  const noCar = g.avoid.includes('car') || g.around === 'public' || g.around === 'taxi';
+  const around = g.reach === 'overland' ? 'trainonly' : (noCar ? 'flytrain' : 'any');
   // Any moving shape means moving; only one place means a base; otherwise
   // a few stops (T753: the shapes are several now).
   const shapes = g.shapes || [];
@@ -387,7 +399,7 @@ export function quizAnswers(s, spend = 'standard') {
   const avoid = [];
   if (g.avoid.includes('crowds')) avoid.push('crowds');
   if (g.avoid.includes('heat') || g.weather === 'mild') avoid.push('heat');
-  if (g.avoid.includes('car')) avoid.push('car');
+  if (noCar) avoid.push('car');
   if (g.avoid.includes('transfers')) avoid.push('longdays');
   // The Where quiz folds into its summary and shows its matches only when
   // every one of its questions has an answer. A question this flow did not
@@ -404,13 +416,37 @@ export function quizAnswers(s, spend = 'standard') {
   };
 }
 
+/**
+ * How the traveller gets around on the days. Two questions used to ask it
+ * (the guide's "How will you get around there?" and the day rhythm's "How do
+ * you get around?", with different answers); the guide's is now the one asked
+ * and the rhythm's stays only as a hand-set override from older trips.
+ */
+const AROUND_TO_RHYTHM = { public: 'transit', taxi: 'taxi', car: 'car', mix: 'transit' };
+const STEPS_BY_AROUND = { walk: 15000, transit: 10000, taxi: 5000, car: 5000 };
+export function aroundOf(s) {
+  return s.rhythm?.around || AROUND_TO_RHYTHM[s.guide?.around] || '';
+}
+
+/** The one day goal the older single question gave, read from the moods the
+ *  Plan your days screen now asks (it marked r:goal answered but wrote only
+ *  goals, so the AI day plan's vibe fell back to a mix). */
+export function goalOfGoals(goals = []) {
+  if (!goals?.length) return '';
+  const g = goals[0];
+  if (g === 'museums' || g === 'sights') return 'culture';
+  if (g === 'nature' || g === 'beach') return g === 'beach' ? 'relax' : 'outdoors';
+  if (g === 'food') return 'food';
+  return '';
+}
+
 /** The day rhythm as the day planner's prefs. Unanswered stays undefined so
  *  the day planner keeps its own default. */
 export function dayPrefs(s) {
   const r = s.rhythm;
   const startMin = { early: 8 * 60, onthego: 9 * 60 + 30, slow: 11 * 60 }[r.mornings];
   const pace = { packed: 'packed', balanced: 'balanced', slow: 'relaxed' }[r.pace];
-  const steps = r.steps || ({ walk: 15000, transit: 10000, taxi: 5000, car: 5000 }[r.around]);
+  const steps = r.steps || STEPS_BY_AROUND[aroundOf(s)];
   return {
     dayStartMin: startMin,
     pace,
@@ -514,7 +550,7 @@ export function dayAiPreset(s) {
   const r = s.rhythm;
   const companions = { solo: 'solo', couple: 'partner', friends: 'friends', family: 'family', group: 'group' }[s.party.kind] || null;
   const startTime = { early: '08:00', onthego: '09:30', slow: '11:00' }[r.mornings] || null;
-  const steps = r.steps || ({ walk: 15000, transit: 10000, taxi: 5000, car: 5000 }[r.around]) || null;
+  const steps = r.steps || STEPS_BY_AROUND[aroundOf(s)] || null;
   const food = { street: 'quick', local: 'sit', fine: 'sit', cook: 'picnic' }[r.food] || null;
   // T896: the goals picked on Plan your days are the plan-day moods
   // themselves (up to three); the older one goal still maps.
@@ -526,7 +562,7 @@ export function dayAiPreset(s) {
   // spend go to the planner as words; events turn its events search on.
   const asks = [keep.includes('rest') && 'Leave a rest after lunch.', keep.includes('cheap') && 'Keep the day cheap: free sights and simple food.'].filter(Boolean);
   return {
-    vibe: { culture: 'culture', outdoors: 'active', food: 'foodie' }[r.goal] || 'mix',
+    vibe: { culture: 'culture', outdoors: 'active', food: 'foodie' }[r.goal || goalOfGoals(r.goals)] || 'mix',
     pace: { packed: 'packed', balanced: 'balanced', slow: 'relaxed' }[r.pace] || 'balanced',
     autoRun: Boolean(r.pace && (r.goal || r.goals?.length)),
     freeText: asks.join(' '),

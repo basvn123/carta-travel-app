@@ -13,7 +13,8 @@
  *     beds, meals and fares (T579-a);
  *   - the default bag is the configured one (request.default_bag);
  *   - the car hire is the engine's car (lib/price/car.js) and only when the
- *     traveller hires one (transport 'car').
+ *     traveller hires one (transport 'car'); R4 adds its parking and local
+ *     driving (carLocal) and drops the stops' bus and metro fares.
  *
  * `quoteTrip(state, ctx)` takes the planner's own state (the shape
  * useTripPlanner holds and persists) and returns every priced part of the
@@ -30,7 +31,7 @@ import { addDays } from '../dates.js';
 import { round2 } from '../math.js';
 import { ticketShare, BABY_LAP_FEE_LEG } from '../party.js';
 import { rule } from './config.js';
-import { carHire, carModelOf } from './car.js';
+import { carHire, carLocalCost, carModelOf } from './car.js';
 import { tripRequest, quoteStay } from './stay.js';
 
 const CAR = rule('car.model');   // T691: the one car model's fallbacks
@@ -510,6 +511,10 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   const carRental = transportPref === 'car' && stopDetails.length
     ? carHire(first.dest?.iso2, Math.max(1, plannedNights), tripStart || first.arriveDate, seats, engineCar)
     : null;
+  // R4: a hired car also parks every night and drives a little around each
+  // base; without it the trip dropped bus fares (tripRequest hire) and put
+  // nothing in their place. Same cars as the hire.
+  const carLocal = carRental ? carLocalCost(stopDetails, carRental.cars, engineCar) : null;
 
   let vignettes = null;
   const prices = carModel?.toll_model?.vignettes_eur;
@@ -576,7 +581,8 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     // Driving there and home in their own car, when they have not typed it.
     drive: round2((ownOut ? 0 : (driveLegs?.out?.ground_total || 0)) + (ownBack ? 0 : (driveLegs?.home?.ground_total || 0))),
     between: round2(legs.reduce((n, l) => n + (l?.ground_total || 0), 0)),
-    car: round2((carRental?.eur_total || 0) + (vignettes?.eur_total || 0)),
+    // The hire, its parking and local driving (R4), and vignettes.
+    car: round2((carRental?.eur_total || 0) + (carLocal?.eur_total || 0) + (vignettes?.eur_total || 0)),
     daytrips: round2(dayTrips.reduce((n, d) => n + (d.eur_total || 0), 0)),
     beds: round2(stayCosts.reduce((n, s) => n + (s?.accomTotal || 0), 0)),
     days: round2(stayCosts.reduce((n, s) => n + (s?.groundTotal || 0), 0)),
@@ -595,7 +601,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
 
   return {
     stopDetails, plannedNights, windowNights: tripDaysBetween(state?.tripStart, state?.tripEnd),
-    routedFlight, flight, cartaFlight, legs, anchorLegs, flightTransfer, driveLegs, carRental, vignettes,
+    routedFlight, flight, cartaFlight, legs, anchorLegs, flightTransfer, driveLegs, carRental, carLocal, vignettes,
     stayCosts, tripHasCar, groupSize, parts, grandTotal, travelSplit, dayTrips,
     party: { adults, children, babies, head: groupSize, seats, weight },
     request,

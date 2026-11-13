@@ -2,7 +2,7 @@
 
 Where everything in Carta lives and how the parts work together. Find the part, open the files named, stop. Keep this true: update it in the same change that moves, adds or removes a part. `scripts/docs/check_entry_points.py` fails CI when a path here does not exist.
 
-_Last updated: 2026-11-11_
+_Last updated: 2026-11-13_
 
 ## In one paragraph
 Carta is a Europe trip planner for independent travellers. A Python data pipeline at the repo root (`run_pipeline.py`, `pipeline/`) harvests, rates and prices places, trails, beaches, lakes, mountains, stays and flights, and writes versioned "wire" JSON into `continent-app/public/`. The Vite + React app in `continent-app/` reads that wire, adds live prices and AI (Gemini, through Supabase Edge Functions and Cloudflare Pages Functions), and ships to Cloudflare Pages with the data on R2. A Hetzner box runs the scheduled pipeline and scrapes.
@@ -56,6 +56,7 @@ App paths start with `app/`, meaning `continent-app/`. The Handbook column names
 | Explore (map, cards, filters, rails) | app/src/browse/ExploreTab.jsx, app/src/browse/explore/, app/src/browse/DestinationsTab.jsx, app/src/browse/destinations/, app/src/browse/ExploreMap.jsx, app/src/browse/ExploreCards.jsx, app/src/browse/ExploreRails.jsx | pipeline/explore_overlay.py, pipeline/guided_search_layer.py | Discover |
 | Place page and PDF | app/src/browse/DestinationPage.jsx, app/src/browse/PlaceOverview.jsx, app/src/lib/dossier.js, app/src/lib/destinationPdf.js | pipeline/dossier/build_dossier.py, pipeline/place_layer.py | Discover |
 | Trip library, journeys, trip finder | app/src/browse/JourneyPage.jsx, app/src/browse/TripPage.jsx (a library trip), app/src/lib/journeys.js, app/src/lib/trips.js, app/src/planner/finder/TripsForYou.jsx, app/src/planner/finder/FoundTripPage.jsx (one found trip) | pipeline/trips/, pipeline/journeys/build_wire.py | Planning |
+| Travel styles (named ways of travelling, header door on every tab) | app/src/lib/travelStyles.js, app/src/hooks/useTravelStyles.js, app/src/browse/TravelStylesSheet.jsx, app/src/components/StyleDoor.jsx, app/src/planner/flow/styleSeed.js | | Planning |
 | Plan flow and wizard | app/src/planner/flow/PlanFlow.jsx, app/src/planner/flow/PlanHome.jsx, app/src/planner/wizard/, app/src/planner/GuidedTripWizard.jsx | | Planning |
 | Trip page (the traveller's planned trip) | app/src/planner/TripPlannerTab.jsx, app/src/planner/TripSummary.jsx, app/src/planner/trip/ | | Planning |
 | Day planner and plan-day AI | app/src/planner/DayPlannerTab.jsx, app/src/planner/days/, app/src/planner/aiDayPlan.js, app/src/planner/dayPlanStore.js | supabase/functions/plan-day/, supabase/functions/suggest-city/ | Planning |

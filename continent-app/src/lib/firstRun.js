@@ -16,14 +16,17 @@
  *           flight (owner decision 2026-10-02, T272, T273), so no fare table
  *           is read here at all.
  *
- * Local transport, entry tickets and insurance are not priced by the engine,
- * so they are not lines; the receipt names them in its exclusions sentence.
+ *   transport  local fares, once the place has one (the engine's transport
+ *           line, T714; R4 brought it in so the receipt matches quoteNights).
+ *
+ * Entry tickets and insurance are not priced by the engine, so they are not
+ * lines; the receipt names them in its exclusions sentence.
  *
  * Every figure keeps its cents. A line whose figure stands in from a national
  * basket is an estimate and says so; a total that holds an estimate is one.
  */
 import { offeredStayTiers, tripDaysBetween } from './runtime_pricing.js';
-import { atDates, priceDay, tripRequest } from './price/index.js';
+import { atDates, priceDay, seatsOf, tripRequest } from './price/index.js';
 import { round2 } from './math.js';
 import { addDays } from './dates.js';
 
@@ -118,8 +121,10 @@ function groundLine(day, nights, people) {
  * before, rather than a receipt with a hole in it).
  *
  *   opts.from, opts.to         ISO dates, to > from
- *   opts.people                the party size (choices.group_size)
- *   opts.stayTier              choices.stay_tier
+ *   opts.people                the adults (choices.group_size)
+ *   opts.children              children 3 to 11 (R4): a seat, a bed and the
+ *                              child shares of meals and fares
+ *   opts.stayTier             choices.stay_tier
  *   opts.lifestyle             choices.lifestyle
  *   opts.destinations          the catalogue, for the engine's country repair
  *   opts.ownFare               { costTotal, airline, origin } the traveller typed
@@ -128,12 +133,17 @@ export function priceReceipt(dest, opts = {}) {
   const { from, to } = opts;
   if (!dest || !from || !to || to <= from) return null;
   const nights = Math.max(1, tripDaysBetween(from, to));
-  const people = Math.max(1, Math.round(opts.people || 1));
-  const req = atDates(tripRequest({ groupSize: people, stayTier: opts.stayTier, lifestyle: opts.lifestyle }), from, to);
+  const adults = Math.max(1, Math.round(opts.people || 1));
+  const children = Math.max(0, Math.round(opts.children || 0));
+  const req = atDates(tripRequest({ groupSize: adults, children, stayTier: opts.stayTier, lifestyle: opts.lifestyle }), from, to);
+  // Every line is a seat's figure (children already at their shares), so
+  // the totals multiply by the seats, as quoteStay does.
+  const people = seatsOf(req);
   const day = priceDay(dest, req, opts.destinations || null);
   if (day?.stayEur == null || !(day.foodEur > 0)) return null;
   const stay = stayLine(day, nights, people);
   const ground = groundLine(day, nights, people);
+  const fares = day.lines.find((l) => l.key === 'transport' && l.status === 'included' && l.eur != null);
 
   const lines = [];
   const fareEur = Number(opts.ownFare?.costTotal);
@@ -149,6 +159,7 @@ export function priceReceipt(dest, opts = {}) {
   // The order the trip happens in, the planner receipt's order: the flight
   // out, the bed, the days.
   lines.push(stay, ground);
+  if (fares) lines.push({ key: 'transport', eur: round2(fares.eur * nights * people), est: fares.quality !== 'measured' });
 
   const total = round2(lines.reduce((s, l) => s + l.eur, 0));
   return {

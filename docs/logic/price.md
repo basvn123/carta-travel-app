@@ -141,12 +141,14 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### PRICE-017 Local transport a day
 - Decides: getting around town joins the day price once a place has a fare.
-- Rule: only euro fares count. Adult day = min(ride_eur x rides, day_pass_eur), either alone when only one exists; rides a day by place class metro 3, city 2, town 1, village 1, area 1 (unknown class as town). A seat pays adult day x ticket share. No fare: eur null, quality missing, status not_included, so the day is bed and food.
+- Rule: only euro fares count. Adult day = min(ride_eur x rides, day_pass_eur), either alone when only one exists; rides a day by place class metro 3, city 2, town 1, village 1, area 1 (unknown class as town). A seat pays adult day x ticket share. No fare: eur null, quality missing, status not_included, so the day is bed and food. A trip that hires a car (request `hire`, set by `tripRequest` for transport `car` only; Explore's transport `car` and the planner's `owncar` are not a hire) keeps the figure but marks the line not_included with basis reason `hire`: the car gets the party around, and PRICE-033 adds its parking and driving instead.
 - Constant: `transport.rides_per_day` in `continent-app/config/pricing.json:362` = { metro: 3, city: 2, town: 1, village: 1, area: 1 }
 - Constant: `transportLine` in `continent-app/src/lib/price/priceDay.js:78`
 - Test: `continent-app/tests/priceTransport.test.mjs` :: "without a fare the line is missing and the day is bed and food (rule 8)"
 - Test: `continent-app/tests/priceTransport.test.mjs` :: "with a fare the day holds it: rides by kind of place, capped by a day pass"
 - Test: `continent-app/tests/priceTransport.test.mjs` :: "children ride at their ticket share"
+- Test: `continent-app/tests/priceLifestyleFixes.test.mjs` :: "a hire-car trip drops the local fares: its days fall by exactly the transport line"
+- Test: `continent-app/tests/priceLifestyleFixes.test.mjs` :: "Explore's transport 'car' (one's own car there) keeps the local fares"
 
 ### PRICE-018 The five price bands
 - Decides: the word beside a price (Very cheap, Cheap, Mid-priced, Pricey, Very pricey) and the map colour.
@@ -274,24 +276,28 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### PRICE-033 Car hire
 - Decides: what a hire car adds to a trip.
-- Rule: rate a car a day = `car.rental_by_country[iso2]` else 39, times the start month's seasonality (no date: 1); total = rate x days x cars, cars = ceil(party / 4); 7 days or more take 15% off. The day price carries it a person a day but never includes it (PRICE-015); the planner adds it only for transport car hire (days = max(1, planned nights), cars count babies); Places adds it to a plane trip only where `car_needed`.
+- Rule: rate a car a day = `car.rental_by_country[iso2]` else 39, times the start month's seasonality (no date: 1); total = rate x days x cars, cars = ceil(party / 4); 7 days or more take 15% off. Cars count every car seat, babies too (`carSeatsOf`: a baby rides in its own car seat), the same in the day's car line and the trip hire, so 4 adults and a baby are 2 cars in both; the cost a person is shared over the paying seats. The day price carries it a person a day but never includes it (PRICE-015); the planner adds it only for transport car hire (days = max(1, planned nights)); Places adds it to a plane trip only where `car_needed`. With a hire the planner also adds, per car and per stop night (`carLocalCost`, part `car`): parking by the stop's place class (metro 25, city 15, town 8, village 0, area 0 EUR a night; unknown class as town) and 40 km of local driving a day at `car.model` consumption and the stop country's `car.fuel_by_country` price. Both are low-end estimates on purpose (see the rule's source). The stops' local fares leave the days (PRICE-017).
 - Constant: `car.model` in `continent-app/config/pricing.json:395` = { rental_eur_per_day_default: 39, rental_weekly_discount_pct: 15, car_capacity: 4, rental_seasonality: Jan 0.85, Feb 0.85, Mar 0.9, Apr 0.95, May 1.05, Jun 1.15, Jul 1.25, Aug 1.25, Sep 1.1, Oct 0.98, Nov 0.88, Dec 0.9 }
 - Constant: `car.rental_by_country` in `continent-app/config/pricing.json:1237`
-- Constant: `rentalEstimate`, `carHire` in `continent-app/src/lib/price/car.js:27`; `needHire` in `continent-app/src/lib/price/compose.js:24`
+- Constant: `car.local` in `continent-app/config/pricing.json:452` = { parking_eur_per_night: { metro: 25, city: 15, town: 8, village: 0, area: 0 }, km_per_day: 40 }
+- Constant: `rentalEstimate`, `carHire`, `carLocalCost` in `continent-app/src/lib/price/car.js:27`; `needHire` in `continent-app/src/lib/price/compose.js:24`; `carSeatsOf` in `continent-app/src/lib/price/request.js:142`
 - Test: `continent-app/tests/priceTrip.test.mjs` :: "V6 (car): a hire for seven is two cars, and the car is in the trip only when hired"
 - Test: `continent-app/tests/priceEngine.test.mjs` :: "V6 (car): a bigger party never pays more a head for the car, unless it fills another car"
+- Test: `continent-app/tests/priceLifestyleFixes.test.mjs` :: "a hire adds parking by place class and a short daily drive, per car, to the car part"
+- Test: `continent-app/tests/priceLifestyleFixes.test.mjs` :: "cars are counted the same in the trip hire and the day's car line: a baby takes a car seat"
 
 ### PRICE-034 The trip total
 - Decides: the planner's grand total and its per-person figure.
-- Rule: parts, each rounded to cents: travel (what was typed for there and home), flights (Carta's legs not typed, bags and lap fees in), airport (home to the airport and back, only when a leg is priced or typed), transfers (runway to bed and back plus a named arrival), drive (own car, legs not typed), between (stop to stop), car (hire plus vignettes), daytrips, beds, days. grandTotal = sum of parts; perPerson = grandTotal / (adults + children). The trip keeps its own price request (`tripRequest`) so a saved trip prices again for the question it was planned with.
+- Rule: parts, each rounded to cents: travel (what was typed for there and home), flights (Carta's legs not typed, bags and lap fees in), airport (home to the airport and back, only when a leg is priced or typed), transfers (runway to bed and back plus a named arrival), drive (own car, legs not typed), between (stop to stop), car (hire, its parking and local driving, plus vignettes), daytrips, beds, days. grandTotal = sum of parts; perPerson = grandTotal / (adults + children). The trip keeps its own price request (`tripRequest`) so a saved trip prices again for the question it was planned with.
 - Constant: `quoteTrip` in `continent-app/src/lib/price/trip.js:129`; `parts`, `grandTotal` at `:560`, `:584`; `tripRequest` in `continent-app/src/lib/price/stay.js:27`
 - Test: `continent-app/tests/tripTotal.test.mjs` :: "the receipt lines always add up to the total, across the budget matrix"
 - Test: `continent-app/tests/priceTrip.test.mjs` :: "a saved trip keeps its own request"
 
 ### PRICE-035 A stop in a trip
 - Decides: a stop costs what the place page says for the same question, times the seats and nights.
-- Rule: each stop is the day price at the stop's own arrival and departure dates: accomTotal = bed x nights x seats, groundTotal = (food + included local transport) x nights x seats. A 0-night pass-through stop costs nothing. A stop's own stay tier prices only that stop's beds. A bed typed as paid replaces Carta's bed for that stop and keeps the days.
-- Constant: `quoteStay` in `continent-app/src/lib/price/stay.js:51`; `stayCosts` in `continent-app/src/lib/price/trip.js`
+- Rule: each stop is the day price at the stop's own arrival and departure dates: accomTotal = bed x nights x seats, groundTotal = (food + included local transport) x nights x seats. A 0-night pass-through stop costs nothing. A stop's own stay tier prices only that stop's beds. A bed typed as paid replaces Carta's bed for that stop and keeps the days. The wizard's stay filter prices a city's night at that city's own nights once it has some (`stopNightsFor`, `priceDaysAtNights`), else at 2 nights, so the filter and the planned stop agree.
+- Constant: `quoteStay` in `continent-app/src/lib/price/stay.js:72`; `stayCosts` in `continent-app/src/lib/price/trip.js`; `stopNightsFor`, `priceDaysAtNights` in `continent-app/src/lib/price/stay.js:50`
+- Test: `continent-app/tests/priceLifestyleFixes.test.mjs` :: "the stay filter prices a stop at its own nights, the planned stop's figure"
 - Test: `continent-app/tests/priceTrip.test.mjs` :: "V1 (trip): a stop costs the destination page's day, times the nights and the seats"
 - Test: `continent-app/tests/priceTrip.test.mjs` :: "a pass-through stop costs nothing"
 - Test: `continent-app/tests/stayPerStop.test.mjs` :: "a stop's own stay type prices that stop's beds only"

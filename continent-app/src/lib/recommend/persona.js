@@ -290,6 +290,14 @@ export function personaShapes(persona) {
   return out.length ? out : null;
 }
 
+/** The trip types the picks stand for (config persona.types), their union
+ *  with the most you first, or null. Read only when the likes are unanswered
+ *  (candidates.js broadWhenUnasked), so the persona can pick the countries. */
+export function personaTypes(persona) {
+  const out = [...new Set(picksOf(persona).flatMap((x) => PERSONA.types?.[x.id] || []))];
+  return out.length ? out : null;
+}
+
 /** The picks' own reach between a trip's places ({ maxKm, minKm }), or null:
  *  the first pick that has one. */
 export function personaReach(persona) {

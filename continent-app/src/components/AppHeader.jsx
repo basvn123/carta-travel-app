@@ -5,6 +5,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
 import { PersonIcon, CompassIcon, RouteIcon, BookmarkIcon, TogetherIcon } from './Icons.jsx';
 import { useTogether, waitingCount } from '../together/useTogether.js';
+import { StyleDoor } from './StyleDoor.jsx';
 
 /* The three places (T496, roadmap 1.3a and 1.15; owner T485-b): Explore,
    Plan and My trips, in this order on both widths. Home is the logo and
@@ -194,6 +195,8 @@ export function AppHeader({
             The slot collapses when empty (:empty), so every other place
             leaves no hole in the row. */}
         <div className="header-search-slot" id="header-search-slot" />
+        {/* The travel style, on every tab (lib/travelStyles.js). */}
+        <StyleDoor />
         <TogetherDoor current={place === 'together'} onNavigate={onNavigate} />
         <AccountLink user={user} current={place === 'account'} onNavigate={onNavigate} />
       </div>

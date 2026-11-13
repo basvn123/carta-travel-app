@@ -44,6 +44,44 @@ export function rentalEstimate(carModel, iso2, days, startDate, groupSize = 1) {
 export const carModelOf = (data) => data?.meta?.car_model || ENGINE_CAR_MODEL;
 
 /**
+ * What a hired car costs at the stops (R4), beyond the hire: a night's
+ * parking by the stop's place class (unknown as a town) and a short daily
+ * drive (car.local km_per_day) at the car model's consumption and the stop
+ * country's fuel price, each per car. The figures are deliberately low (see
+ * the rule's source): parking is often free outside cities, and an estimate
+ * that adds money should not be the reason a trip looks dear.
+ *
+ *   stops  [{ nights, dest }] (quoteTrip's stopDetails)
+ *   -> { parking_eur, fuel_eur, km, eur_total, cars, stops: [{ id, nights, parking_eur, fuel_eur }] }
+ */
+export function carLocalCost(stops, cars, model = ENGINE_CAR_MODEL) {
+  const { parking_eur_per_night: park, km_per_day: km } = rule('car.local');
+  const fuelBy = model?.fuel_price_by_iso2 || ENGINE_CAR_MODEL.fuel_price_by_iso2;
+  const litres = (model?.consumption_l_per_100km ?? CAR.consumption_l_per_100km) / 100;
+  const n = Math.max(1, cars || 1);
+  const rows = [];
+  for (const s of stops || []) {
+    const nights = Math.max(0, Math.round(s?.nights || 0));
+    if (!nights || !s?.dest) continue;
+    const perNight = park[s.dest.place?.class] ?? park.town;
+    const fuel = fuelBy?.[s.dest.iso2] ?? model?.fuel_price_eur_per_l ?? CAR.fuel_price_eur_per_l;
+    rows.push({
+      id: s.destinationId ?? s.dest.id ?? null,
+      nights,
+      parking_eur: round2(perNight * nights * n),
+      fuel_eur: round2(km * litres * fuel * nights * n),
+    });
+  }
+  const parking = round2(rows.reduce((t, r) => t + r.parking_eur, 0));
+  const fuelEur = round2(rows.reduce((t, r) => t + r.fuel_eur, 0));
+  return {
+    parking_eur: parking, fuel_eur: fuelEur,
+    km: km * rows.reduce((t, r) => t + r.nights, 0) * n,
+    eur_total: round2(parking + fuelEur), cars: n, stops: rows,
+  };
+}
+
+/**
  * Hire for the party: { eur_total, eur_per_day, days, cars } or null.
  * `start` is a 'YYYY-MM-DD' (its month sets the season) or null.
  */

@@ -1,6 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { tripRequest, atDates, priceDays } from '../../lib/price/index.js';
-import { addDays } from '../../lib/dates.js';
+import { tripRequest, priceDays, priceDaysAtNights, stopNightsFor } from '../../lib/price/index.js';
 import { isGateway } from '../../lib/rating.js';
 import { usePlannerStore } from '../plannerStore.js';
 import { flightRanking, fromDraft } from '../flow/tripSettings.js';
@@ -29,18 +28,34 @@ export function useWizardPricing({
     [adults, kids, babies, effectiveStayTier, dailyLifestyle],
   );
   // The per-night stay price for the WHOLE group at a candidate city: the
-  // engine's bed at a 2-night stay from the start date (so one-off fees
-  // amortize), priced once for the catalogue per request.
-  const nightBeds = useMemo(() => {
-    const start = startDate || null;
-    const req = start ? atDates(wizardRequest, start, addDays(start, 2)) : { ...wizardRequest, nights: 2 };
-    return priceDays(destinations, req);
-  }, [destinations, wizardRequest, startDate]);
+  // engine's bed from the start date, priced once for the catalogue per
+  // stay length. R4: a city the traveller has given nights is priced at
+  // those nights, so the filter shows what the planned stop will cost (an
+  // entire place's fees spread over the real stay); a city without nights
+  // yet keeps the 2-night basis (the shortest stop the wizard suggests).
+  const nightBeds = useMemo(
+    () => priceDaysAtNights(destinations, wizardRequest, startDate || null, 2),
+    [destinations, wizardRequest, startDate],
+  );
+  // Only the distinct stay lengths in use are priced, and only again when
+  // that set changes, not on every nights tap that keeps it.
+  const nightsKey = useMemo(
+    () => [...new Set(Object.values(nights || {}).map((n) => Math.round(Number(n) || 0)).filter((n) => n > 0 && n !== 2))].sort((a, b) => a - b).join(','),
+    [nights],
+  );
+  const stopBeds = useMemo(() => {
+    const out = new Map();
+    for (const n of nightsKey ? nightsKey.split(',').map(Number) : []) {
+      out.set(n, priceDaysAtNights(destinations, wizardRequest, startDate || null, n));
+    }
+    return out;
+  }, [destinations, wizardRequest, startDate, nightsKey]);
   // A callback so the memos that call it can name it as a dependency.
   const nightlyFor = useCallback((id) => {
-    const bed = nightBeds.get(id)?.stayEur;
+    const n = stopNightsFor(nights, id, 2);
+    const bed = (stopBeds.get(n) || nightBeds).get(id)?.stayEur;
     return bed > 0 ? Math.round(bed * groupSize) : null;
-  }, [nightBeds, groupSize]);
+  }, [nightBeds, stopBeds, nights, groupSize]);
   const passesStayFilters = useCallback((id, dest) => {
     // T755: an airport of a multi-airport city is never a stay of its own.
     if (isGateway(dest)) return false;

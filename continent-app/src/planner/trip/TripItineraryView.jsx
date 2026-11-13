@@ -51,6 +51,7 @@ export function TripItineraryView({
               stayCosts={tp.stayCosts}
               carRental={tp.carRental}
               vignettes={tp.vignettes}
+              carLocal={tp.carLocal}
               tripHasCar={tp.tripHasCar}
               activeStopIndex={selectedStop}
               onSelectStop={setSelectedStop}

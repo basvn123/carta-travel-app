@@ -539,7 +539,7 @@ function StopNights({ i, s, stopDetails, edit }) {
 export function TripItinerary({
   dayPlan, stopDetails, grandTotal, groupSize, flight, label = '',
   legs = [], setLegMode = null, anchorLegs = null, flightTransfer = null,
-  driveLegs = null, stayCosts = [], carRental = null, vignettes = null,
+  driveLegs = null, stayCosts = [], carRental = null, vignettes = null, carLocal = null,
   tripHasCar = false,
   setTransferMode = null,
   activeStopIndex, onSelectStop, onPlanDay, isDayPlanned = null,
@@ -634,7 +634,7 @@ export function TripItinerary({
   const airlines = useAirlines();
   const flightWaiting = useFlightWaiting(cartaFlight?.queries);
   const exportPayload = {
-    label, stopDetails, dayPlan, flight, flightTransfer, legs, anchorLegs, stayCosts, carRental, vignettes,
+    label, stopDetails, dayPlan, flight, flightTransfer, legs, anchorLegs, stayCosts, carRental, carLocal, vignettes,
     tripHasCar, driveLegs, grandTotal, groupSize,
     // Carta's flight each way and the airline names it is written with (T518).
     cartaFlight: priced?.cartaFlight || null, airlines,
@@ -1174,6 +1174,9 @@ export function TripItinerary({
               <dl className="itin-extras costrows">
                 {carRental && (
                   <CostRow kind="car" label={t('itin.rentalCar')} value={<Money value={carRental.eur_total} est precision="cents" />} />
+                )}
+                {carLocal?.eur_total > 0 && (
+                  <CostRow kind="car" label={t('itin.carLocal')} value={<Money value={carLocal.eur_total} est precision="cents" />} />
                 )}
                 {vignettes && (
                   <CostRow kind="there" label={t('itin.vignettes')} value={<Money value={vignettes.eur_total} est precision="cents" />} />

@@ -7,7 +7,6 @@
   .cintel-head:hover { background: var(--paper); }
 }
 .cintel-country { font-weight: 600; font-size: 14px; color: var(--ink); }
-.cintel-chip.budget-very_high { background: var(--accent-bg); color: var(--accent); }
 .cintel-caret { font-family: var(--mono); color: var(--ink-mute); font-size: 14px; margin-left: 4px; }
 .cintel-row { display: flex; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--paper-dim); }
 .cintel-row:last-child { border-bottom: 0; }

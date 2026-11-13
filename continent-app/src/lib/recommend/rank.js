@@ -14,7 +14,9 @@
  *               fit F with the persona's fit P) lead and the places' quality
  *               follows, config rank.blend; trips over the typed budget sink
  *               by budget.sinkPer100 points (of 10) a hundred euros over.
- *               The match badge is the same number, so the sort follows it
+ *               The match badge is the same number, so the sort follows it.
+ *               The shape asked for (or the persona's) and what matters
+ *               most (price, comfort) nudge it (shapeNudge, priorityPull)
  *
  * The match shows on Help me choose even while persona gate 7 fails
  * (owner, 2026-10-28), while the fit reads match.show_min or more; Explore
@@ -28,7 +30,8 @@ import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
 import { MATCH } from '../match.js';
 import { flightLeverKeys } from './adapters/flight.js';
-import { personaOf, picksOf, personaReason, tripPersona } from './persona.js';
+import { personaOf, picksOf, personaReason, tripPersona, personaShapes } from './persona.js';
+import { avoidsHeat } from './prefs.js';
 
 export const RANK = Object.freeze(RECOMMEND.rank);
 export const LEVERS = Object.freeze(RECOMMEND.levers);
@@ -38,10 +41,13 @@ const BLEND = RANK.blend;
  * The trip's blended score in 0..1 before the budget and the flight lever:
  * the answers (F, mixed with the persona's P when there is one) weighed
  * against the places' quality (Q, on the 0..10 rating scale). Either side
- * alone when the other is missing; null when both are.
+ * alone when the other is missing; null when both are. With a persona and
+ * no fit F (no likes measured), F counts as neutral (0.5): the persona keeps
+ * its own share of the answers instead of all of it, so a missing fit never
+ * multiplies the persona's weight by four (r3 ranking audit).
  */
 export function blendOf(F, P, Q) {
-  const answers = F == null ? P : P == null ? F : (1 - BLEND.persona_w) * F + BLEND.persona_w * P;
+  const answers = P == null ? F : (1 - BLEND.persona_w) * (F ?? 0.5) + BLEND.persona_w * P;
   const quality = Q == null ? null : Q / 10;
   if (answers == null) return quality;
   if (quality == null) return answers;
@@ -115,10 +121,12 @@ const levered = new WeakMap();
  */
 export const FLIGHT_PULL = 5 * RECOMMEND.budget.sinkPer100;
 
-export function flightPull(trips, lever) {
-  const out = new Map();
-  if (!lever || !LEVERS.flight.values[lever] || trips.length < 2) return out;
-  const keys = flightLeverKeys(trips, lever);
+/**
+ * Where each trip with a key stands in the keys' order, as a share of the
+ * way from first (0) to last (1); equal keys share a place, and one known
+ * trip alone stands in the middle. Trips with no key are left out.
+ */
+function placeShares(trips, keys) {
   const cmp = (a, b) => {
     for (let i = 0; i < Math.max(a.length, b.length); i++) {
       if (a[i] !== b[i]) return (a[i] ?? Infinity) < (b[i] ?? Infinity) ? -1 : 1;
@@ -126,17 +134,81 @@ export function flightPull(trips, lever) {
     return 0;
   };
   const known = trips.filter((t) => keys.get(t.id)).sort((a, b) => cmp(keys.get(a.id), keys.get(b.id)));
-  const last = trips.length - 1;
+  const out = new Map();
   for (let i = 0; i < known.length;) {
     let j = i;
     while (j + 1 < known.length && cmp(keys.get(known[i].id), keys.get(known[j + 1].id)) === 0) j++;
-    // Spread the known trips over the whole list's places, ties sharing one.
-    const place = known.length > 1 ? (((i + j) / 2) / (known.length - 1)) * last : last / 2;
-    for (let k = i; k <= j; k++) out.set(known[k].id, (FLIGHT_PULL * place) / last);
+    const share = known.length > 1 ? ((i + j) / 2) / (known.length - 1) : 0.5;
+    for (let k = i; k <= j; k++) out.set(known[k].id, share);
     i = j + 1;
   }
-  for (const t of trips) if (!out.has(t.id)) out.set(t.id, FLIGHT_PULL / 2);
   return out;
+}
+
+export function flightPull(trips, lever) {
+  const out = new Map();
+  if (!lever || !LEVERS.flight.values[lever] || trips.length < 2) return out;
+  // The known trips spread over the whole list's places, ties sharing one.
+  const shares = placeShares(trips, flightLeverKeys(trips, lever));
+  for (const t of trips) out.set(t.id, FLIGHT_PULL * (shares.get(t.id) ?? 0.5));
+  return out;
+}
+
+/**
+ * What matters most (settings.priority) orders the trips too, not only the
+ * flights inside them (r3 ranking audit: price and comfort gave the same
+ * order). Price: the cheaper trip a person, whole trip, rises. Comfort: the
+ * flight with fewer stops, then the shorter door to door (the quickest
+ * flight lever's keys), rises. Balance, or fewer than two trips with the
+ * fact: nothing. The move is centred, at most rank.priorityPull / 2 either
+ * way, so the first rises as much as the last sinks and a trip with no fact
+ * stays where it was. A flight lever already set wins over comfort.
+ * Returns Map id -> score shift.
+ */
+export function priorityPull(trips, settings, levers = null) {
+  const out = new Map();
+  let keys = null;
+  if (settings.priority === 'price') {
+    keys = new Map(trips.map((t) => [t.id, Number.isFinite(t.total?.perPerson) ? [t.total.perPerson] : null]));
+  } else if (settings.priority === 'comfort' && !levers?.flight) {
+    keys = flightLeverKeys(trips, 'quickest');
+  }
+  if (!keys) return out;
+  const shares = placeShares(trips, keys);
+  if (shares.size < 2) return out;
+  for (const [id, share] of shares) out.set(id, RANK.priorityPull * (0.5 - share));
+  return out;
+}
+
+/**
+ * Stay in one place or move around (owner, r3 ranking audit): a trip whose
+ * shape the traveller asked for (What kind of trip) rises by rank.shapeStep;
+ * of several asked for, the one the persona puts first takes the full step
+ * and the others half. With that unanswered the persona's shapes speak
+ * instead (config persona.shapes): its first shape the full step, its
+ * others half. Shapes
+ * this batch builds as a few towns (several countries, one way) count as
+ * towns. Zero when neither is known, and for a shape not asked for, so the
+ * one-place trips added when too few were built never outrank the asked
+ * shape on a near tie.
+ */
+export function shapeNudge(trip, settings) {
+  const stated = settings.guide.shapes || [];
+  const fallback = RECOMMEND.candidates.fallbackShapes;
+  const shape = trip.shape || ((trip.places || []).length > 1 ? 'towns' : 'one');
+  const own = personaShapes(personaOf(settings.guide));
+  if (stated.length) {
+    const want = stated.map((s) => fallback[s] || s);
+    if (!want.includes(shape)) return 0;
+    // Several shapes asked for: the persona says which of them comes first
+    // (its earliest shape among them the full step, the others half); with
+    // no persona, or none of them the persona's, every one the full step.
+    const r = (x) => (own && own.includes(x) ? own.indexOf(x) : Infinity);
+    return r(shape) === Math.min(...want.map(r)) ? RANK.shapeStep : RANK.shapeStep / 2;
+  }
+  if (!own) return 0;
+  const at = own.indexOf(shape);
+  return at < 0 ? 0 : at === 0 ? RANK.shapeStep : RANK.shapeStep / 2;
 }
 
 /**
@@ -174,7 +246,7 @@ function fitOf(trip, taste, destinations, settings) {
   const base = trip.base || trip;
   let info = fits.get(base);
   if (!info) {
-    info = tripFit(base, taste, destinations, { avoidHeat: settings.guide.avoid.includes('heat') || settings.guide.weather === 'mild' });
+    info = tripFit(base, taste, destinations, { avoidHeat: avoidsHeat(settings.guide) });
     fits.set(base, info);
   }
   return info;
@@ -199,6 +271,7 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
   const destinations = data?.destinations || {};
   const levered = applyLevers(trips.map((x) => ({ ...x, base: x.base || x })), levers);
   const pull = flightPull(levered, levers?.flight);
+  const priority = priorityPull(levered, settings, levers);
   const ranked = levered.map((trip) => {
     const info = fitOf(trip, t, destinations, settings);
     const budget = budgetRuler(trip, settings);
@@ -209,9 +282,10 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
     const persona = personaOf(settings.guide);
     const p = tripPersona(trip, persona, destinations);
     const said = personaReason(trip, persona, destinations);
-    const quality = info.Q ?? trip.signals?.countryScore ?? null;
-    const score = (blendOf(info.F, p, quality) ?? 0) - sink / 10 - (pull.get(trip.id) || 0) / 10
-      + tasteNudge(trip, tasteLean, destinations);
+    // Q only: the country match's score is on its own scale, not the 0..10
+    // rating, so it is no stand-in for the places' quality.
+    const score = (blendOf(info.F, p, info.Q ?? null) ?? 0) - sink / 10 - (pull.get(trip.id) || 0) / 10
+      + tasteNudge(trip, tasteLean, destinations) + shapeNudge(trip, settings) + (priority.get(trip.id) || 0);
     // T1021: the shown match keeps show_min too, not only the fit behind it: a
     // budget sink could pull a fitting trip's figure under it.
     const shown = matchPct(score);

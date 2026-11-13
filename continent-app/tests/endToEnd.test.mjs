@@ -127,7 +127,8 @@ test("plan flow walk: getting around moves the pricing and the scoring", async (
   // Public transport and taxis: no car anywhere, car-needing places marked down.
   for (const v of ["public", "taxi"]) {
     assert.ok(wantsNoCar(around(v)), v);
-    assert.equal(transportFor("road", around(v)), "auto", `${v}: a road trip is not priced with a car`);
+    // r4 price audit: 'public', not 'auto', so no hop is ever priced by car.
+    assert.equal(transportFor("road", around(v)), "public", `${v}: a road trip is not priced with a car`);
     assert.equal(tasteFor(around(v)).noCar, true, `${v}: the taste says no car`);
     assert.ok(!shapesFor(around(v, { guide: { shapes: ["road", "towns"] } })).shapes.includes("road"), `${v}: no road trip`);
   }

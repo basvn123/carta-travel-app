@@ -9,5 +9,5 @@ export {
   priceRequest, requestKey, costChoices, flightWindow, seatsOf, atDates,
 } from './request.js';
 export { priceDay, priceDays, foodBreakdown } from './priceDay.js';
-export { tripRequest, quoteStay } from './stay.js';
+export { tripRequest, quoteStay, stopNightsFor, priceDaysAtNights } from './stay.js';
 export { carHire, carModelOf, ENGINE_CAR_MODEL } from './car.js';

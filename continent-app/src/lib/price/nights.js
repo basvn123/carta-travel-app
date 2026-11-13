@@ -2,8 +2,10 @@
  * The destination page's price card, as arithmetic (T429, owner decision
  * 2026-10-13: one cost truth). In the engine since T702 (plan F6, was
  * lib/destPrice.js priceFromIndex): `quoteNights` multiplies the engine's
- * day row by the nights and the party, every included line once, so a car
- * the traveller travels with is in the total as it is in the day.
+ * day row by the nights and the party, every included line once, so the
+ * total holds exactly what the day holds. The day never includes the car
+ * (priceDay carLine is not_included: a hire is a trip choice quoteTrip
+ * adds), so the car line here only counts if a caller marks it included.
  *
  * The page prices a stay on the SAME basis as the Explore card and the map
  * pin: the computeCosts row at the traveller's Lifestyle (lib/costIndex.js),

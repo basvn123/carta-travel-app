@@ -161,7 +161,7 @@ export const MAX_TRIP_TYPES = 3;
 export const SPEND_CHOICES = [
   { key: 'budget', style: 'budget', levels: ['budget', 'cheap', 'low'] },
   { key: 'standard', style: 'standard', levels: ['mid', 'moderate', 'medium'] },
-  { key: 'luxury', style: 'luxury', levels: ['high', 'expensive', 'pricey'] },
+  { key: 'luxury', style: 'luxury', levels: ['high', 'very_high', 'expensive', 'pricey'] },
 ];
 
 export const GETTING_AROUND = ['flytrain', 'car', 'trainonly', 'any'];

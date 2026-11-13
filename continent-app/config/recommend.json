@@ -21,8 +21,10 @@
     "tmaxByWeather": { "warm": 27, "mild": 21, "snow": 3 }
   },
   "rank": {
-    "_blend": "Trips for you only (owner, 2026-10-30, T884): the order and the match badge are one number, blend = answers x answers_w + quality / 10 x quality_w, where answers is the trip's fit F mixed with its persona fit P (persona_w of it, when a persona is chosen) and quality the places' month score. The budget sink and the flight lever move it by their points / 10. The badge shows round(blend x 100), capped at 99, while F reads at least match.show_min. Explore's For you keeps Q + lambda (F - 0.5).",
+    "_blend": "Trips for you only (owner, 2026-10-30, T884): the order and the match badge are one number, blend = answers x answers_w + quality / 10 x quality_w, where answers is the trip's fit F mixed with its persona fit P (persona_w of it, when a persona is chosen) and quality the places' month score. The budget sink and the flight lever move it by their points / 10. The badge shows round(blend x 100), capped at 99, while F reads at least match.show_min. Explore's For you keeps Q + lambda (F - 0.5). With a persona and no fit F, F counts as 0.5. shapeStep: a trip of a shape the traveller asked for (of several, the persona's earliest the full step and the rest half; unasked, the persona's first shape, its other shapes half) rises by this much of the blend. priorityPull: what matters most orders the trips, price by the whole trip's price a person and comfort by the flight's stops then door to door, the first rising by half of this and the last sinking by half; balance moves nothing.",
     "blend": { "answers_w": 0.6, "quality_w": 0.4, "persona_w": 0.25 },
+    "shapeStep": 0.04,
+    "priorityPull": 0.06,
     "fitFirst": true,
     "mainLikeMin": 0.5,
     "hardConflicts": ["car"]
@@ -48,7 +50,7 @@
   },
   "kept": { "dropMin": 10 },
   "persona": {
-    "_about": "How the traveller likes to travel (owner, 2026-10-30): ten personas, up to three chosen in Help me choose (g:persona), one maybe marked most you (T891). Each place gets a persona fit P in 0..1 from its own features (lib/recommend/persona.js), weighted per persona below; with several picks a place's P is the best of them, each times its weight (1 for the one most you, or every pick when none is marked; otherW for the rest); the trip finder adds weight x (P - 0.5) to the country's place pool key and to each trip's score, so the persona moves a place by up to weight / 2 points. The trip finder only: the rating and Explore never read it. hubKm: a metro within the first figure counts fully as near, past the second not at all. around: good places (score at least aroundMin) within aroundKm, full at aroundCap. reasonMin: a trip names its persona from this fit, and reasonFacts are the facts each reason needs (a place count, a feature value) before it is said. shapes: the shapes a persona builds when What kind of trip has no answer. towns: a persona's own reach between a trip's places. The question shows each persona as a photograph of a place that fits it, its name and one line in the traveller's words (owner, plan flow studio 2026-10-30, T892).",
+    "_about": "How the traveller likes to travel (owner, 2026-10-30): ten personas, up to three chosen in Help me choose (g:persona), one maybe marked most you (T891). Each place gets a persona fit P in 0..1 from its own features (lib/recommend/persona.js), weighted per persona below; with several picks a place's P is the best of them, each times its weight (1 for the one most you, or every pick when none is marked; otherW for the rest); the trip finder adds weight x (P - 0.5) to the country's place pool key and to each trip's score, so the persona moves a place by up to weight / 2 points. The trip finder only: the rating and Explore never read it. hubKm: a metro within the first figure counts fully as near, past the second not at all. around: good places (score at least aroundMin) within aroundKm, full at aroundCap. reasonMin: a trip names its persona from this fit, and reasonFacts are the facts each reason needs (a place count, a feature value) before it is said. shapes: the shapes a persona builds when What kind of trip has no answer. towns: a persona's own reach between a trip's places. types: the trip types the country match ranks by when What are you up for has no answer (their union, the most you first, at most three), in place of the broad city, culture and food. The question shows each persona as a photograph of a place that fits it, its name and one line in the traveller's words (owner, plan flow studio 2026-10-30, T892).",
     "ids": ["cities", "hubtrips", "outside", "towns", "coast", "nature", "hidden", "slow", "lively", "mix"],
     "weight": 3,
     "minScore": 6.5,
@@ -76,6 +78,7 @@
       "lively": { "nightlife": 0.5, "big": 0.35, "culture": 0.15 }
     },
     "shapes": { "cities": ["towns", "one"], "hubtrips": ["one"], "outside": ["one", "towns"], "towns": ["towns", "road"], "coast": ["one", "towns"], "nature": ["one", "road"], "hidden": ["towns", "one"], "slow": ["one"], "lively": ["one", "towns"] },
-    "towns": { "cities": { "maxKm": 350, "minKm": 60 } }
+    "towns": { "cities": { "maxKm": 350, "minKm": 60 } },
+    "types": { "coast": ["beach", "islands"], "nature": ["hiking", "lakes"], "outside": ["hiking", "lakes"], "cities": ["city", "culture"], "lively": ["nightlife", "food"], "hidden": ["hidden"], "towns": ["culture", "food"], "slow": ["food", "wellness"], "hubtrips": ["city", "culture"] }
   }
 }

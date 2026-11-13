@@ -6,6 +6,8 @@ import { Button } from '../components/ui/index.js';
 import { durationMs } from '../lib/motion.js';
 import { ChevronRightIcon, SparkIcon } from '../components/Icons.jsx';
 import '../styles/84-explore-overview.css';
+import { useSettings } from '../components/SettingsLine.jsx';
+import { styleName } from './TravelStylesSheet.jsx';
 
 /*
  * The doors to "Your travel style" (T947, the owner: "make sure across the
@@ -28,12 +30,20 @@ export function openTasteSheet(opener = null) {
   window.dispatchEvent(new CustomEvent(EVENT, { detail: { opener } }));
 }
 
-/** Mounted once in App, inside the choices context the sheet writes to. */
+/** Mounted once in App, inside the choices context the sheet writes to.
+ *  Since the travel styles (lib/travelStyles.js, 2026-11-12) the taste is the
+ *  active style's explore half, so every door opens Travel styles on that
+ *  half; the four-question sheet stays only where no styles exist (a host
+ *  outside the app shell). */
 export function TasteSheetHost() {
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
+  const ts = useSettings()?.travelStyles;
+  const tsRef = React.useRef(ts);
+  tsRef.current = ts;
   React.useEffect(() => {
     const on = (e) => {
+      if (tsRef.current) { tsRef.current.setOpen('explore'); return; }
       const el = e.detail?.opener || (typeof document !== 'undefined' ? document.activeElement : null);
       anchorRef.current = el && el !== document.body ? el : null;
       setOpen(true);
@@ -61,8 +71,9 @@ export function TasteSheetHost() {
 export function TasteRow({ className = '', before }) {
   const { t } = useI18n();
   const firstRun = useFirstRun();
+  const style = useSettings()?.travelStyles?.active;
   if (!firstRun?.setChoices) return null;
-  const value = tasteListText(firstRun.choices?.taste, t);
+  const value = style ? styleName(t, style) : tasteListText(firstRun.choices?.taste, t);
   return (
     <Button
       variant="quiet"

@@ -174,7 +174,8 @@ export function useAccountSync({
       destinationId: selectedId,
       city: destination.city,
       country: destination.country,
-      departDate, returnDate, choices,
+      // The travel styles are the traveller's, not this trip's.
+      departDate, returnDate, choices: { ...choices, travel_styles: undefined },
     });
   }, [user, selectedId, departDate, returnDate, choices, setAuthModalOpen]);
 
@@ -182,7 +183,15 @@ export function useAccountSync({
     setSelectedId(trip.destination_id);
     if (trip.depart_date) setDepartDate(trip.depart_date);
     if (trip.return_date) setReturnDate(trip.return_date);
-    if (trip.choices) setChoices((prev) => ({ ...prev, ...trip.choices }));
+    // A saved trip's choices replace the live ones, so no travel style is
+    // active after it (lib/travelStyles.js: '' is "no style"); otherwise the
+    // style would quietly take the trip's bed and party as its own.
+    if (trip.choices) {
+      setChoices((prev) => {
+        const { travel_styles: _drop, ...rest } = trip.choices;
+        return { ...prev, ...rest, travel_styles: prev.travel_styles ? { ...prev.travel_styles, active: '' } : prev.travel_styles };
+      });
+    }
     setAccountOpen(false);
   }, [setSelectedId, setDepartDate, setReturnDate, setChoices, setAccountOpen]);
 

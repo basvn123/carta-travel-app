@@ -32,6 +32,8 @@ import { LifestyleStep } from './LifestyleStep.jsx';
 import { StayTypes } from './StayTypes.jsx';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { PartyEditor } from '../PartyEditor.jsx';
+import { StylePicker } from '../../browse/TravelStylesSheet.jsx';
+import { switchTripStyle } from './styleSeed.js';
 import { answer, markAnswered, normalizeSettings, personasOfRaw, withPartyKind, PARTY_KINDS, WAYS } from './tripSettings.js';
 import { MAX_TRIP_NIGHTS, addDaysUTC, nightsBetween, windowFromStart } from '../../lib/tripDates.js';
 
@@ -84,8 +86,26 @@ export function WhoScreen({ settings, commit, doneLabel }) {
     syncParty(app, p);
     commit(answer(s, 'who', {}));
   };
+  // Who comes decides the travel style (owner, 2026-11-12: "dependent on who
+  // you travel with, you choose a trip setting"): a style picked here fills
+  // this trip's party and every answer the style holds, and becomes the
+  // app's active style, so the prices behind the planner follow it too.
+  const ts = app?.travelStyles;
+  const pickStyle = (id) => {
+    const st = ts.list.find((x) => x.id === id);
+    if (!st) return;
+    ts.switchTo(id);
+    setS((cur) => switchTripStyle(cur, st));
+  };
   return (
     <>
+      {ts?.list?.length > 0 && (
+        <div className="pf-style">
+          <p className="pf-label">{t('styles.as')}</p>
+          <StylePicker compact list={ts.list} activeId={s.style || ts.activeId} onPick={pickStyle} label={t('styles.as')} />
+          <p className="pf-note">{t('styles.whoNote')}</p>
+        </div>
+      )}
       <ChoiceRows
         label={t('pf.q.who')}
         options={partyKindOptions(t)}
