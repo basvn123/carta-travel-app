@@ -10459,6 +10459,8 @@ export const nl = {
   "styles.budget": "Budget",
   "styles.budgetPerson": "{price} per persoon in totaal",
   "styles.budgetGroup": "{price} voor de groep",
+  "styles.dayFig": "{price} per dag",
+  "styles.dayFigNote": "Een dag is het bed en eten van één persoon op de middelste plek in Europa, geprijsd per stijl. Vluchten en vervoer ter plekke komen erbij.",
   "itin.carLocal": "Parkeren en rondrijden",
   "styles.budgetDay": "{price} per persoon per dag",
 };

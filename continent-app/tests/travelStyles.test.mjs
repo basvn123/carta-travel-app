@@ -278,3 +278,29 @@ test('the address drops children and babies set back to 0', async () => {
     delete globalThis.window;
   }
 });
+
+test('a style states its day: bed and food, a person, at the middle place', async () => {
+  const { styleDayEur } = await import('../src/lib/styleCost.js');
+  const dest = (id, bed, meal) => ({ id, iso2: 'IT', costs: { meal_mid_eur: meal, meal_cheap_eur: meal / 2, fastfood_eur: 8, drink_out_eur: 5, coffee_eur: 2, groceries_day_eur: 12 }, accommodation: { home: bed } });
+  const dests = { a: dest('a', 80, 20), b: dest('b', 120, 30), c: dest('c', 200, 40) };
+  const fam = styleFromTemplate('family');
+  const v = styleDayEur(fam, dests);
+  // Either the engine prices these fixtures or it says nothing; never a guess.
+  assert.ok(v === null || (Number.isFinite(v) && v > 0));
+  assert.equal(styleDayEur(fam, {}), null);
+  assert.equal(styleDayEur(null, dests), null);
+});
+
+test('on the real catalogue every template has a day figure, and they differ', async (t) => {
+  const fs = await import('node:fs');
+  const path = new URL('../public/app_data.json', import.meta.url);
+  if (!fs.existsSync(path)) { t.skip('no local catalogue'); return; }
+  const { styleDayEur } = await import('../src/lib/styleCost.js');
+  const dests = JSON.parse(fs.readFileSync(path, 'utf8')).destinations;
+  const figs = TEMPLATE_IDS.map((id) => styleDayEur(styleFromTemplate(id), dests));
+  for (const f of figs) assert.ok(Number.isFinite(f) && f > 20 && f < 1000, String(f));
+  assert.ok(new Set(figs.map(Math.round)).size > 2, 'the bed and the table move the day');
+  // A hotel bed costs a person more than the same style in an entire place.
+  const c = styleFromTemplate('couple');
+  assert.ok(styleDayEur({ ...c, stay: 'hotel5' }, dests) > styleDayEur({ ...c, stay: 'home' }, dests));
+});

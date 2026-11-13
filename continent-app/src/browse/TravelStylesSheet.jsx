@@ -1,4 +1,4 @@
-import React, { useId, useState } from 'react';
+import React, { useId, useMemo, useState } from 'react';
 import { SheetShell } from './SheetShell.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
@@ -8,6 +8,8 @@ import {
   CheckIcon, ChevronRightIcon, CopyIcon, FamilyIcon, FriendsIcon, HeartIcon, PersonIcon, PlusIcon, SparkIcon, TrashIcon,
 } from '../components/Icons.jsx';
 import { partyText } from '../lib/party.js';
+import { formatMoney } from '../lib/money.js';
+import { styleDayEur } from '../lib/styleCost.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { QUESTIONS } from '../planner/flow/questions.js';
 import { TRAVEL_MODES } from '../lib/travelWay.js';
@@ -46,7 +48,7 @@ function optLabel(t, qid, value) {
  * One card per style, the active one ticked: a radio group, so arrows move
  * between styles and a tap switches every price at once.
  */
-export function StylePicker({ list, activeId, onPick, label, extra = null, compact = false }) {
+export function StylePicker({ list, activeId, onPick, label, extra = null, compact = false, figures = null }) {
   const { t } = useI18n();
   const onKeyDown = (e) => {
     if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) return;
@@ -84,6 +86,9 @@ export function StylePicker({ list, activeId, onPick, label, extra = null, compa
             <span className="tstyle-card-text">
               <span className="tstyle-card-name">{styleName(t, s)}</span>
               {!compact && <span className="tstyle-card-sum">{styleSummary(t, s)}</span>}
+              {!compact && figures?.get(s.id) != null && (
+                <span className="tstyle-card-fig">{t('styles.dayFig', { price: formatMoney(figures.get(s.id), { precision: 'whole' }) })}</span>
+              )}
             </span>
           </Button>
         );
@@ -145,9 +150,20 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
   const [half, setHalf] = useState(initialHalf === 'explore' ? 'explore' : 'stay');
   const [adding, setAdding] = useState(!ts?.list?.length);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  // What each style costs: a person's bed and food for a day at the middle
+  // place (lib/styleCost.js), so a switch is made knowing its price. Keyed on
+  // what prices a style, so editing a name or a like does not reprice.
+  const destinations = app?.data?.destinations || null;
+  const priceKey = (ts?.list || []).map((x) => JSON.stringify([x.id, x.who, x.stay, x.lifestyle])).join('|');
+  const figures = useMemo(() => {
+    const m = new Map();
+    for (const x of ts?.list || []) m.set(x.id, styleDayEur(x, destinations));
+    return m;
+  }, [priceKey, destinations]); // eslint-disable-line react-hooks/exhaustive-deps -- priceKey stands for the list's priced parts
   if (!ts) return null;
   const s = ts.active;
   const full = ts.list.length >= MAX_STYLES;
+  const anyFigure = [...figures.values()].some((v) => v != null);
   // With no styles left (the last one deleted) the templates show again.
   const showTemplates = adding || !ts.list.length;
 
@@ -376,7 +392,9 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
               onPick={(id) => { ts.switchTo(id); setAdding(false); setConfirmDelete(false); }}
               label={t('styles.as')}
               extra={newCard}
+              figures={figures}
             />
+            {anyFigure && <p className="tstyle-note">{t('styles.dayFigNote')}</p>}
             {!ts.activeId && <p className="tstyle-note">{t('styles.noneActive')}</p>}
             {full && <p className="tstyle-note">{t('styles.max', { n: MAX_STYLES })}</p>}
           </div>

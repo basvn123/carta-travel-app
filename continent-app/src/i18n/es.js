@@ -10459,6 +10459,8 @@ export const es = {
   "styles.budget": "Presupuesto",
   "styles.budgetPerson": "{price} por persona en total",
   "styles.budgetGroup": "{price} para el grupo",
+  "styles.dayFig": "{price} al día",
+  "styles.dayFigNote": "Un día es la cama y la comida de una persona en el lugar mediano de Europa, calculado para cada estilo. Vuelos y transporte aparte.",
   "itin.carLocal": "Aparcamiento y trayectos allí",
   "styles.budgetDay": "{price} por persona al día",
 };

@@ -10459,6 +10459,8 @@ export const de = {
   "styles.budget": "Budget",
   "styles.budgetPerson": "{price} pro Person insgesamt",
   "styles.budgetGroup": "{price} für die Gruppe",
+  "styles.dayFig": "{price} pro Tag",
+  "styles.dayFigNote": "Ein Tag ist Bett und Essen einer Person am mittleren Ort in Europa, für jeden Stil berechnet. Flüge und Fahrten vor Ort kommen dazu.",
   "itin.carLocal": "Parken und Fahrten vor Ort",
   "styles.budgetDay": "{price} pro Person und Tag",
 };

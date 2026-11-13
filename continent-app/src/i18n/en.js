@@ -10545,6 +10545,8 @@ export const en = {
   "styles.budget": "Budget",
   "styles.budgetPerson": "{price} a person in all",
   "styles.budgetGroup": "{price} for the group",
+  "styles.dayFig": "{price} a day",
+  "styles.dayFigNote": "A day is one person's bed and food at the middle place in Europe, priced at each style. Flights and getting around come on top.",
   "itin.carLocal": "Parking and driving around",
   "styles.budgetDay": "{price} a person a day",
 };

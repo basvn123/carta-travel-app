@@ -10459,6 +10459,8 @@ export const fr = {
   "styles.budget": "Budget",
   "styles.budgetPerson": "{price} par personne au total",
   "styles.budgetGroup": "{price} pour le groupe",
+  "styles.dayFig": "{price} par jour",
+  "styles.dayFigNote": "Une journée, c'est le lit et les repas d'une personne au lieu médian d'Europe, calculés pour chaque style. Vols et déplacements en plus.",
   "itin.carLocal": "Stationnement et trajets sur place",
   "styles.budgetDay": "{price} par personne et par jour",
 };
