@@ -422,6 +422,25 @@ def to_detail(trip, flags=frozenset(), overrides=None):
 
 # ----------------------------------------------------------------- the export
 
+# A full export that would keep less than this share of the trips already on
+# the wire refuses before it deletes a file. On 2026-11-13 the box composed 0
+# trips (the model read a bed price field the master no longer has) and the
+# export emptied the wire; only a stopped run kept it from production. The
+# trips task is soft, so a refusal leaves the shipped files and the run goes on.
+MIN_KEEP_SHARE = 0.5
+
+
+def shrink_refusal(n_new, wire_dir=None, min_share=MIN_KEEP_SHARE):
+    """A message when n_new trips would replace far more on the wire, else None."""
+    old = load_json((wire_dir or WIRE_DIR) / "index.json") or {}
+    n_old = old.get("n_trips") or 0
+    if n_old and n_new < n_old * min_share:
+        return ("refusing to publish %s trips over the %s on the wire (below %d%%); "
+                "nothing written. Find why the composer lost them, or rerun with "
+                "--allow-shrink when the cut is intended" % (n_new, n_old, round(min_share * 100)))
+    return None
+
+
 def export(trips, dropped, stats, *, dry_run=False, only=None):
     flags = load_hero_flags()
     overrides = load_hero_overrides()
@@ -519,6 +538,8 @@ def main():
     ap.add_argument("--source", default=str(TRIP_CACHE / "composed.json"))
     ap.add_argument("--countries", help="only publish these, leave the rest alone")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--allow-shrink", action="store_true",
+                    help="publish even when it keeps under half the trips on the wire")
     args = ap.parse_args()
 
     payload = load_json(args.source)
@@ -546,6 +567,11 @@ def main():
         if t["id"] not in kept_ids:
             per_cc_dropped[t["cc"]] += 1
     stats = {cc: {"dropped": n} for cc, n in per_cc_dropped.items()}
+
+    if not only and not args.dry_run and not args.allow_shrink:
+        refusal = shrink_refusal(len(kept))
+        if refusal:
+            raise SystemExit(refusal)
 
     index, top = export(kept, dropped, stats, dry_run=args.dry_run, only=only)
     print("published %s trips across %s countries, %s in the Europe list"

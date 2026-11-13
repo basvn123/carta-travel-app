@@ -271,9 +271,13 @@ def soft_checks(trip, cat, ctx):
     spread = [s["walk_km"] for s in trip["stops"] if s.get("walk_km")]
     if spread and max(spread) > 4.0:
         warned.append("sights_are_spread_out")
+    # `q` == measured is the stays layer's town-level price; the v17
+    # `price_source` is gone from the master (apply_stays.py).
+    def _measured(acc):
+        return (acc.get("q") == "measured"
+                or str(acc.get("price_source") or "").startswith("inside_airbnb_city"))
     measured = sum(1 for s in trip["stops"]
-                   if ((cat.get(s["dest"]) or {}).get("accommodation") or {})
-                   .get("price_source", "").startswith("inside_airbnb_city"))
+                   if _measured((cat.get(s["dest"]) or {}).get("accommodation") or {}))
     if not measured:
         warned.append("stay_prices_are_country_level")
     crowded = [s for s in trip["stops"]

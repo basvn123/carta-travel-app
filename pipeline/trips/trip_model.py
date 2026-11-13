@@ -495,6 +495,39 @@ def max_base_days(dest):
     return MAX_BASE_DAYS_BY_CLASS.get(dest.get("place_class"), 3)
 
 
+# One person's share of a mid-range night, tried in this order: half a three
+# star room (the anchor blog_drafts.day_eur uses), half a private, B&B or
+# other hotel room, half a home for two, then a dorm bed.
+_HALF_ROOM_TIERS = ("hotel3", "private", "bnb_room", "hotel2", "hotel4")
+
+
+def per_person_night(dest):
+    """One person's share of a mid-range night in EUR, or None.
+
+    The master carries bed prices as `accommodation.beds` (one figure per stay
+    tier, per room or per bed). apply_stays.py removed the old flat
+    `per_person_night_eur`, and while this model still read it every place
+    failed can_be_base: the trips run of 2026-11-13 composed 0 trips and the
+    export emptied the wire. The old field still wins when a record has it.
+    """
+    acc = dest.get("accommodation") or {}
+    legacy = acc.get("per_person_night_eur")
+    if isinstance(legacy, (int, float)) and legacy > 0:
+        return float(legacy)
+    beds = acc.get("beds") or {}
+    for tier in _HALF_ROOM_TIERS:
+        v = beds.get(tier)
+        if isinstance(v, (int, float)) and v > 0:
+            return round(v / 2, 2)
+    home = (beds.get("bnb_home") or {}).get("2")
+    if isinstance(home, (int, float)) and home > 0:
+        return round(home / 2, 2)
+    dorm = beds.get("dorm")
+    if isinstance(dorm, (int, float)) and dorm > 0:
+        return float(dorm)
+    return None
+
+
 def can_be_base(dest):
     """Somewhere with beds, sights and a name on a station board.
 
@@ -505,8 +538,7 @@ def can_be_base(dest):
     offered a mountain pass as a base. A named settlement with people living
     in it is what separates the two.
     """
-    acc = dest.get("accommodation") or {}
-    if not acc.get("per_person_night_eur"):
+    if not per_person_night(dest):
         return False
     pop = dest.get("pop")
     cls = dest.get("place_class")
@@ -555,10 +587,12 @@ def base_score(dest, ctx):
     score += min(0.8, weight * 0.4)
 
     # Somewhere to sleep, measured rather than borrowed from the country.
+    # `q` is the stays layer's own word for that (measured, nearby, modelled);
+    # the v17 `price_source` it replaces is gone from the master.
     acc = dest.get("accommodation") or {}
-    if acc.get("price_source", "").startswith("inside_airbnb_city"):
+    if acc.get("q") == "measured" or str(acc.get("price_source") or "").startswith("inside_airbnb_city"):
         score += 0.3
-    elif not acc.get("per_person_night_eur"):
+    elif not per_person_night(dest):
         score -= 0.6
 
     # Do people go? Eurostat nights for the region, as corroboration only: a
@@ -897,8 +931,7 @@ def walkability(pois):
 
 def nightly_eur(dest, group=2):
     """Whole-group nightly stay estimate, the same anchors the receipt uses."""
-    acc = dest.get("accommodation") or {}
-    pp = acc.get("per_person_night_eur")
+    pp = per_person_night(dest)
     if not pp:
         return None
     return round(pp * max(1, group), 2)

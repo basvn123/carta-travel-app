@@ -46,7 +46,8 @@ for did, dd in dests.items():
         miss["no_beauty"].append(did)
     if not (dd.get("costs") and dd["costs"].get("meal_mid_eur")):
         miss["no_costs"].append(did)
-    if not (dd.get("accommodation") and dd["accommodation"].get("per_person_night_eur")):
+    acc = dd.get("accommodation") or {}
+    if not (acc.get("beds") or acc.get("per_person_night_eur")):
         miss["no_accommodation"].append(did)
     if not (dd.get("categories")):
         miss["no_categories"].append(did)
