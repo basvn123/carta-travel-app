@@ -72,6 +72,8 @@ export function selectionOfPlan(plan, { label = '' } = {}) {
     flightPicks: flights?.out || flights?.back ? { out: flights.out || null, back: flights.back || null } : null,
     stayTier: plan.stayTier || null,
     lifestyle: plan.lifestyle || null,
+    // The bag the finder priced the flight with, so the trip page keeps it.
+    baggage: plan.baggage || null,
   };
 }
 

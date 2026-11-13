@@ -19,17 +19,19 @@ export function StyleDoor() {
   const s = ts.active;
   const Ico = s ? styleIcon(s) : SparkIcon;
   const name = s ? styleName(t, s) : t('styles.choose');
+  // Changed for now (a trip's party, a link): said in words, not colour alone.
+  const changed = Boolean(s && ts.changed);
   return (
     <Button
       variant="quiet"
-      className={`style-door${s ? ` tone-${s.tone}` : ' is-empty'}`}
-      aria-label={s ? t('styles.doorAria', { name }) : t('styles.choose')}
+      className={`style-door${s ? ` tone-${s.tone}` : ' is-empty'}${changed ? ' is-changed' : ''}`}
+      aria-label={s ? t(changed ? 'styles.doorAriaChanged' : 'styles.doorAria', { name }) : t('styles.choose')}
       aria-haspopup="dialog"
       onClick={() => ts.setOpen(true)}
     >
       <span className="tstyle-disc" aria-hidden="true"><Ico size={18} /></span>
       <span className="style-door-text" aria-hidden="true">
-        <span className="style-door-kicker">{t('styles.kicker')}</span>
+        <span className="style-door-kicker">{t(changed ? 'styles.kickerChanged' : 'styles.kicker')}</span>
         <span className="style-door-name">{name}</span>
       </span>
     </Button>

@@ -128,6 +128,8 @@ export function mergeTaste(local, account) {
  */
 export function mergeAccountChoices(local, incoming) {
   const out = { ...(local || {}), ...(incoming || {}) };
+  // A hold is this device's state of the moment, never the account's.
+  out.style_held = Boolean(local?.style_held);
   out.taste = mergeTaste(local?.taste, incoming?.taste);
   // The travel styles (lib/travelStyles.js) merge by id, so styles made on
   // this device before signing in survive; the merged active style then
@@ -136,7 +138,7 @@ export function mergeAccountChoices(local, incoming) {
   if (local?.travel_styles || incoming?.travel_styles) {
     out.travel_styles = mergeStyles(local?.travel_styles, incoming?.travel_styles);
     const a = activeStyle(out.travel_styles);
-    if (a) Object.assign(out, choicesFromStyle(a));
+    if (a) Object.assign(out, choicesFromStyle(a), { style_held: false });
   }
   return out;
 }

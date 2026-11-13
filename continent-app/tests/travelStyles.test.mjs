@@ -224,14 +224,8 @@ test('the style and the taste profile are one thing', async () => {
 });
 
 test('review fixes: links, account merge, taste kept, babies', async () => {
-  const { isForeignLink, mergeStyles, styleWithTaste, kindOfCounts } = await import('../src/lib/travelStyles.js');
+  const { mergeStyles, styleWithTaste, kindOfCounts } = await import('../src/lib/travelStyles.js');
   const { mergeAccountChoices } = await import('../src/lib/taste.js');
-  // The app's own address is not a link; someone else's is.
-  const own = 'd=2026-12-12&g=4&gc=2&ls=2%2C4&ty=p%3Dfamily';
-  assert.equal(isForeignLink(`?tab=plan&${own}`, own), false);
-  assert.equal(isForeignLink('?tab=plan', own), false, 'no priced key: not a link');
-  assert.equal(isForeignLink('?g=2&ls=2%2C4&gc=2&ty=p%3Dfamily', own), true);
-  assert.equal(isForeignLink('?g=4&gc=2&ls=2%2C4&ty=p%3Dsolo', own), true, 'the taste counts');
   // Account merge keeps this device's styles and the account's active one.
   const mine = addStyle(normalizeStyles(null), styleFromTemplate('solo'));
   const theirs = addStyle(normalizeStyles(null), styleFromTemplate('family'));
@@ -246,6 +240,10 @@ test('review fixes: links, account merge, taste kept, babies', async () => {
   assert.equal(out.group_size, 4);
   assert.equal(out.children, 2);
   assert.equal(out.stay_tier, 'home');
+  assert.equal(out.style_held, false, 'the merged style prices the app, not held');
+  // A hold is this device's moment, never carried in from the account.
+  const held = mergeAccountChoices({ style_held: false }, { style_held: true, group_size: 3 });
+  assert.equal(held.style_held, false);
   // A new style keeps what the taste knew.
   const taste = { likes: ['hiking', 'lakes'], size: 'village', quiet: 'quiet', noCar: true };
   const tpl = styleWithTaste(styleFromTemplate('couple'), taste);
@@ -280,7 +278,7 @@ test('the address drops children and babies set back to 0', async () => {
 });
 
 test('a style states its day: bed and food, a person, at the middle place', async () => {
-  const { styleDayEur } = await import('../src/lib/styleCost.js');
+  const { styleDayEur } = await import('../src/lib/price/styleDay.js');
   const dest = (id, bed, meal) => ({ id, iso2: 'IT', costs: { meal_mid_eur: meal, meal_cheap_eur: meal / 2, fastfood_eur: 8, drink_out_eur: 5, coffee_eur: 2, groceries_day_eur: 12 }, accommodation: { home: bed } });
   const dests = { a: dest('a', 80, 20), b: dest('b', 120, 30), c: dest('c', 200, 40) };
   const fam = styleFromTemplate('family');
@@ -295,7 +293,7 @@ test('on the real catalogue every template has a day figure, and they differ', a
   const fs = await import('node:fs');
   const path = new URL('../public/app_data.json', import.meta.url);
   if (!fs.existsSync(path)) { t.skip('no local catalogue'); return; }
-  const { styleDayEur } = await import('../src/lib/styleCost.js');
+  const { styleDayEur } = await import('../src/lib/price/styleDay.js');
   const dests = JSON.parse(fs.readFileSync(path, 'utf8')).destinations;
   const figs = TEMPLATE_IDS.map((id) => styleDayEur(styleFromTemplate(id), dests));
   for (const f of figs) assert.ok(Number.isFinite(f) && f > 20 && f < 1000, String(f));
@@ -303,4 +301,16 @@ test('on the real catalogue every template has a day figure, and they differ', a
   // A hotel bed costs a person more than the same style in an entire place.
   const c = styleFromTemplate('couple');
   assert.ok(styleDayEur({ ...c, stay: 'hotel5' }, dests) > styleDayEur({ ...c, stay: 'home' }, dests));
+});
+
+test('the bag goes from the finder to the trip page and moves the flight fee', async () => {
+  const { selectionOfPlan } = await import('../src/lib/plan/doors.js');
+  const { bagFee } = await import('../src/lib/flights/bagFees.js');
+  const { BAG_FEES } = await import('../src/lib/flights/bagFees.js');
+  const plan = { order: ['a'], nights: { a: 3 }, party: { adults: 2 }, baggage: 'checked_20kg' };
+  assert.equal(selectionOfPlan(plan).baggage, 'checked_20kg', 'the hand-over keeps the bag');
+  assert.equal(selectionOfPlan({ ...plan, baggage: undefined }).baggage, null, 'no bag: the planner default applies');
+  // A low-cost airline charges more for a hold bag than for the cabin bag.
+  const lowCost = Object.keys(BAG_FEES)[0];
+  assert.ok(bagFee(lowCost, 'checked_20kg').eur > bagFee(lowCost, 'priority_10kg').eur);
 });

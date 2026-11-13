@@ -6,7 +6,7 @@ import { paidEur, PLANNER_BAG } from '../../lib/tripTotal.js';
 export function useWizardHandOver({
   adults, arrivalId, babies, booked, destinations, effectiveStayTier, includedIds, kids, nights,
   orderedIncludedIds, originPlace, ownCarChosen, ownStays, pace, readyTrip, selectedCountries,
-  t, travelLegs, travelValues, tripStartDate,
+  t, travelLegs, travelValues, tripStartDate, bag = null,
 }) {
   // The trip the wizard will hand over, as a value (T432). The running
   // estimate prices exactly this through lib/tripTotal.js, the planned trip
@@ -59,7 +59,7 @@ export function useWizardHandOver({
       // Driving there means driving between the stops too.
       transport: ownCarChosen ? 'owncar' : 'auto',
       pace,
-      baggage: PLANNER_BAG,
+      baggage: bag || PLANNER_BAG,
       anchorId: booked.travel && !ownCarChosen ? arrivalId : null,
       anchorOrigin: null,
       returnAnchorId: null,
@@ -84,6 +84,6 @@ export function useWizardHandOver({
     };
   }, [readyTrip, includedIds, orderedIncludedIds, nights, tripStartDate, destinations,
     selectedCountries, travelValues, travelLegs, ownStays, adults, kids, babies, effectiveStayTier, ownCarChosen,
-    pace, booked.travel, arrivalId, originPlace, t]);
+    pace, booked.travel, arrivalId, originPlace, t, bag]);
   return { handOver };
 }

@@ -15,6 +15,9 @@ function addDaysISO(iso, n) {
 
 /** People: adults, children, babies. */
 export function syncParty(app, party) {
+  // A trip's party is the trip's: the travel style is held, not rewritten
+  // (hooks/useTravelStyles.js rule 1).
+  app?.travelStyles?.hold?.();
   app?.setPartyParts?.({ adults: party.adults, children: party.kids, babies: party.babies });
 }
 

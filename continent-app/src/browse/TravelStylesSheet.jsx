@@ -9,7 +9,7 @@ import {
 } from '../components/Icons.jsx';
 import { partyText } from '../lib/party.js';
 import { formatMoney } from '../lib/money.js';
-import { styleDayEur } from '../lib/styleCost.js';
+import { styleDayEur } from '../lib/price/styleDay.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
 import { QUESTIONS } from '../planner/flow/questions.js';
 import { TRAVEL_MODES } from '../lib/travelWay.js';
@@ -151,7 +151,7 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
   const [adding, setAdding] = useState(!ts?.list?.length);
   const [confirmDelete, setConfirmDelete] = useState(false);
   // What each style costs: a person's bed and food for a day at the middle
-  // place (lib/styleCost.js), so a switch is made knowing its price. Keyed on
+  // place (lib/price/styleDay.js), so a switch is made knowing its price. Keyed on
   // what prices a style, so editing a name or a like does not reprice.
   const destinations = app?.data?.destinations || null;
   const priceKey = (ts?.list || []).map((x) => JSON.stringify([x.id, x.who, x.stay, x.lifestyle])).join('|');
@@ -248,7 +248,12 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
             <PartyEditor
               compact
               value={{ adults: s.who.adults, children: s.who.kids, babies: s.who.babies }}
-              onChange={(v) => app.setPartyParts?.(v)}
+              // An edit here is the style's own: written into the style
+              // and the prices, held or not.
+              onChange={(v) => {
+                ts.update(s.id, { who: { ...s.who, adults: v.adults, kids: v.children, babies: v.babies } });
+                app.setPartyParts?.(v);
+              }}
             />
           </Field>
           <Field title={t('styles.bedTable')}>
@@ -272,7 +277,7 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
               values={TRAVEL_MODES}
               picked={[s.way]}
               labelOf={(v) => t(`way.${v}`)}
-              onChange={([v]) => app.setTransportMode?.(v || 'any')}
+              onChange={([v]) => { ts.update(s.id, { way: v || 'any' }); app.setTransportMode?.(v || 'any'); }}
             />
           </Field>
           <Field title={t('styles.priority')} note={t('styles.priorityNote')}>
@@ -396,6 +401,15 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
             />
             {anyFigure && <p className="tstyle-note">{t('styles.dayFigNote')}</p>}
             {!ts.activeId && <p className="tstyle-note">{t('styles.noneActive')}</p>}
+            {ts.changed && s && (
+              <div className="tstyle-held" role="status">
+                <p className="tstyle-note">{t('styles.heldNote', { name: styleName(t, s) })}</p>
+                <div className="tstyle-held-actions">
+                  <Button variant="secondary" size="sm" onClick={ts.keep}>{t('styles.keepStay', { name: styleName(t, s) })}</Button>
+                  <Button variant="quiet" size="sm" onClick={ts.revert}>{t('styles.back', { name: styleName(t, s) })}</Button>
+                </div>
+              </div>
+            )}
             {full && <p className="tstyle-note">{t('styles.max', { n: MAX_STYLES })}</p>}
           </div>
         )}

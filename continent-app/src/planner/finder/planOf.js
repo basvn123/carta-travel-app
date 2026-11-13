@@ -90,6 +90,8 @@ export function planOf(trip) {
     stayTier: stay?.pick?.id || st.stayTier || null,
     lifestyle: foodOpt && PROFILES[foodOpt.lifestyle] ? PROFILES[foodOpt.lifestyle] : (st.lifestyle || null),
     flightRank: st.flightRank || 'price',
+    // The bag the card's flight was priced with (lib/recommend/trips.js).
+    baggage: st.baggage || null,
     liveFlights: liveFlightsOf(trip),
     flights: flightsOf(trip),
     // The traveller's own lines, asked in their step (question 7).

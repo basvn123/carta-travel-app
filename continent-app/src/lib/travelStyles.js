@@ -373,24 +373,6 @@ export function styleWithTaste(style, taste, { all = false } = {}) {
   return normalizeStyle({ ...s, explore: { ...s.explore, likes } });
 }
 
-/** The query keys that carry a priced choice or the taste (lib/urlState.js:
- *  party g, gc, gb; stay st; Lifestyle ls; way t; taste ty). */
-export const PRICED_KEYS = ['g', 'gc', 'gb', 'st', 'ls', 't', 'ty'];
-
-/**
- * Whether the address is someone else's link (review finding 2): it names
- * priced keys and they differ from what this device last wrote (`mirror`,
- * the localStorage copy of the query lib/urlState.js keeps). The app writes
- * those keys into its own address, so a reload or a bookmark of this
- * device's own state is not a link, and the style may set the choices.
- */
-export function isForeignLink(search, mirror) {
-  const a = new URLSearchParams(search || '');
-  if (!PRICED_KEYS.some((k) => a.has(k))) return false;
-  const b = new URLSearchParams(mirror || '');
-  return PRICED_KEYS.some((k) => (a.get(k) || '') !== (b.get(k) || ''));
-}
-
 /**
  * The account's styles merged with this device's (review finding 4): the
  * lists are joined by id (the account's copy wins for an id both hold, up to

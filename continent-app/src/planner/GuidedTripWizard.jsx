@@ -53,6 +53,7 @@ import { useWizardTravel } from './wizard/useWizardTravel.js';
 import { useWizardSelection } from './wizard/useWizardSelection.js';
 import { useWizardDraftSync } from './wizard/useWizardDraftSync.js';
 import { wizardRecapChips } from './wizard/wizardRecapChips.js';
+import { useFirstRun } from '../lib/firstRunContext.js';
 
 // Shared empty catalogue for before the data lands: a fresh `{}` per render
 // would invalidate the dozen memos below that read destinations (T192).
@@ -755,7 +756,11 @@ export function GuidedTripWizard({
   };
 
 
+  // The traveller's bag (choices.baggage_key), so the hand-over prices the
+  // flight with it, as the trip finder and Explore do (travel styles judge).
+  const appBag = useFirstRun()?.choices?.baggage_key || null;
   const { handOver } = useWizardHandOver({
+    bag: appBag,
     adults, arrivalId, babies, booked, destinations, effectiveStayTier, includedIds, kids,
     nights, orderedIncludedIds, originPlace, ownCarChosen, ownStays, pace, readyTrip,
     selectedCountries, t, travelLegs, travelValues, tripStartDate,

@@ -190,13 +190,13 @@ export function useAccountSync({
     setSelectedId(trip.destination_id);
     if (trip.depart_date) setDepartDate(trip.depart_date);
     if (trip.return_date) setReturnDate(trip.return_date);
-    // A saved trip's choices replace the live ones, so no travel style is
-    // active after it (lib/travelStyles.js: '' is "no style"); otherwise the
-    // style would quietly take the trip's bed and party as its own.
+    // A saved trip's choices replace the live ones and hold the travel style
+    // (hooks/useTravelStyles.js rule 1), so the style never quietly takes the
+    // trip's bed and party as its own; the header then says "changed".
     if (trip.choices) {
       setChoices((prev) => {
         const { travel_styles: _drop, ...rest } = trip.choices;
-        return { ...prev, ...rest, travel_styles: prev.travel_styles ? { ...prev.travel_styles, active: '' } : prev.travel_styles };
+        return { ...prev, ...rest, style_held: Boolean(prev.travel_styles?.active) };
       });
     }
     setAccountOpen(false);

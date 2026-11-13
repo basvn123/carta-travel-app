@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  STYLES_KEY, activeStyle, addStyle, choicesFromStyle, choicesMatchStyle, duplicateStyle, exploreFromTaste, isForeignLink, normalizeStyles, styleWithTaste,
+  STYLES_KEY, activeStyle, addStyle, choicesFromStyle, choicesMatchStyle, duplicateStyle, exploreFromTaste, normalizeStyles, styleWithTaste,
   removeStyle, setActive, styleFromChoices, styleFromTemplate, tasteFromStyle, tasteMatchesStyle, updateStyle,
 } from '../lib/travelStyles.js';
 import { normalizeTaste } from '../lib/taste.js';
-
-/** lib/urlState.js's localStorage mirror of the address it last wrote. */
-const URL_MIRROR_KEY = 'continent.state.v1';
 
 /** The styles this device kept, read once at start (the URL mirror does not
  *  carry them; the account sync carries them inside `choices`). */
@@ -21,14 +18,21 @@ export function loadStoredStyles() {
 
 /**
  * The traveller's travel styles (lib/travelStyles.js), kept in
- * `choices.travel_styles`. Three rules live here:
+ * `choices.travel_styles`. The rules that live here:
  *
- *  1. The active style follows the app's choices: a bed changed in the
- *     Lifestyle panel, a head count on the settings line or the way there on
- *     the planner is written into the active style, so there is one truth
- *     and no "save to style" step for the stay half.
+ *  1. The active style follows the app's own choices: a bed changed in the
+ *     Lifestyle panel or a head count on the settings line is written into
+ *     the active style, so there is no "save to style" step for them.
+ *     Except while the style is held (`choices.style_held`): a change made
+ *     for one trip (the planner's Who, Tell Carta's words, the way there of
+ *     a trip, the trip page's party) holds the style instead, so the trip's
+ *     party never becomes the style's. The header then says "changed" and
+ *     the sheet offers Keep (write the changes into the style) and Back
+ *     (the style's own values). A load whose choices differ from the active
+ *     style (a shared link, a bookmark, a saved trip, a sign-in) holds it
+ *     too, so a load never overwrites a style or the choices.
  *  2. Switching a style writes its stay half into the choices in the same
- *     update, so rule 1 sees nothing to follow and every price reprices once.
+ *     update and lifts the hold, so every price reprices once.
  *  3. The styles are mirrored to localStorage on every change.
  *  4. The taste profile (lib/taste.js, what Explore's "For you" reads) is the
  *     active style's explore half: a style edit or switch rewrites the taste,
@@ -43,31 +47,19 @@ export function useTravelStyles(choices, setChoices) {
   const setOpen = useCallback((v) => setOpenRaw(v === true ? 'stay' : v || false), []);
 
   // Rule 1. Keyed on the priced choices only, not on the whole object.
-  // On the first run the choices were read at load, not edited: when the
-  // address named none of the priced keys (a bookmark, a tab link) the style
-  // is the truth and sets them; when a shared link named them, the link's
-  // choices stand and no style is marked active, so neither overwrites the
-  // other (lib/travelStyles.js: active '' is "no style").
   const mounted = useRef(false);
   useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      let mirror = '';
-      try { mirror = window.localStorage.getItem(URL_MIRROR_KEY) || ''; } catch { /* private mode */ }
-      const linked = typeof window !== 'undefined' && isForeignLink(window.location.search, mirror);
-      setChoices((prev) => {
-        const st = normalizeStyles(prev.travel_styles);
-        const a = activeStyle(st);
-        if (!a || choicesMatchStyle(a, prev)) return prev;
-        if (linked) return { ...prev, travel_styles: { ...st, active: '' } };
-        return { ...prev, ...choicesFromStyle(a) };
-      });
-      return;
-    }
+    // Read now: React may run the updater after this effect has returned.
+    const first = !mounted.current;
+    mounted.current = true;
     setChoices((prev) => {
       const st = normalizeStyles(prev.travel_styles);
       const a = activeStyle(st);
-      if (!a) return prev;
+      if (!a || prev.style_held) return prev;
+      if (first) {
+        // First run: the choices were read at load, not edited.
+        return choicesMatchStyle(a, prev) ? prev : { ...prev, style_held: true };
+      }
       const next = styleFromChoices(a, prev);
       if (next === a) return prev;
       return { ...prev, travel_styles: updateStyle(st, a.id, next) };
@@ -117,7 +109,7 @@ export function useTravelStyles(choices, setChoices) {
     setChoices((prev) => {
       const st = setActive(normalizeStyles(prev.travel_styles), id);
       const s = st.list.find((x) => x.id === id);
-      return s ? { ...prev, ...choicesFromStyle(s), travel_styles: st } : prev;
+      return s ? { ...prev, ...choicesFromStyle(s), travel_styles: st, style_held: false } : prev;
     });
   }, [setChoices]);
 
@@ -129,7 +121,7 @@ export function useTravelStyles(choices, setChoices) {
         : styleWithTaste(styleFromChoices({ tone: 'umber' }, prev), prev.taste, { all: true });
       const st = addStyle(normalizeStyles(prev.travel_styles), s);
       const made = st.list.find((x) => x.id === st.active);
-      return made ? { ...prev, ...choicesFromStyle(made), travel_styles: st } : prev;
+      return made ? { ...prev, ...choicesFromStyle(made), travel_styles: st, style_held: false } : prev;
     });
   }, [setChoices]);
 
@@ -141,10 +133,29 @@ export function useTravelStyles(choices, setChoices) {
       const before = normalizeStyles(prev.travel_styles);
       const st = removeStyle(before, id);
       const next = before.active === id ? activeStyle(st) : null;
-      return next ? { ...prev, ...choicesFromStyle(next), travel_styles: st } : { ...prev, travel_styles: st };
+      return next ? { ...prev, ...choicesFromStyle(next), travel_styles: st, style_held: false } : { ...prev, travel_styles: st };
     });
   }, [setChoices]);
   const duplicate = useCallback((id, name) => write((st) => duplicateStyle(st, id, name)), [write]);
+
+  /** A change for one trip: the style is held, not rewritten (rule 1).
+   *  Call it before the change; both updates land in one render. */
+  const hold = useCallback(() => {
+    setChoices((prev) => (prev.style_held || !activeStyle(normalizeStyles(prev.travel_styles)) ? prev : { ...prev, style_held: true }));
+  }, [setChoices]);
+  /** The held changes written into the active style, and the hold lifted. */
+  const keep = useCallback(() => {
+    setChoices((prev) => {
+      const st = normalizeStyles(prev.travel_styles);
+      const a = activeStyle(st);
+      if (!a) return { ...prev, style_held: false };
+      return { ...prev, travel_styles: updateStyle(st, a.id, styleFromChoices(a, prev)), style_held: false };
+    });
+  }, [setChoices]);
+  /** Back to the active style's own values (the hold lifted). */
+  const revert = useCallback(() => { if (store.active) switchTo(store.active); }, [store.active, switchTo]);
+  // The choices differ from the active style (a trip's change, a link).
+  const changed = Boolean(active && !choicesMatchStyle(active, choices));
 
   return useMemo(() => ({
     list: store.list,
@@ -157,5 +168,9 @@ export function useTravelStyles(choices, setChoices) {
     update,
     remove,
     duplicate,
-  }), [store, active, open, setOpen, switchTo, create, update, remove, duplicate]);
+    hold,
+    keep,
+    revert,
+    changed,
+  }), [store, active, open, setOpen, switchTo, create, update, remove, duplicate, hold, keep, revert, changed]);
 }

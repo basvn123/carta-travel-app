@@ -338,7 +338,8 @@ export function WayScreen({ settings, commit, doneLabel }) {
   const go = () => {
     // A coach said in the words stays a coach while the row is the train's.
     const keep = picked === 'train' && app?.transportMode === 'bus';
-    if (!keep) app?.setTransportMode?.(picked);
+    // The way there of this trip holds the travel style (rule 1).
+    if (!keep) { app?.travelStyles?.hold?.(); app?.setTransportMode?.(picked); }
     commit(answer(settings, 'way', { way: picked }));
   };
   return (

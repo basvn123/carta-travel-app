@@ -171,6 +171,8 @@ function TellBody({ settings, commit }) {
   /** The words' stay and way, written app-wide (they are the app's own choices). */
   const writeChoices = (choices) => {
     if (!ctx?.setChoices || !Object.keys(choices).length) return;
+    // The words' bed and way are this trip's: the travel style is held.
+    app?.travelStyles?.hold?.();
     ctx.setChoices((prev) => ({ ...prev, ...choices }));
   };
 
