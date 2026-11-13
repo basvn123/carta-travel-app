@@ -1086,7 +1086,7 @@ Airports within reach per destination, per-mode transfer (T642)
 
 - Cadence: quarterly
 - Writes: the master `app_data.json`
-- Wire fields it owns (4): `destinations.*.anchor_airport`, `destinations.*.anchor_estimated`, `destinations.*.no_ryanair_route`, `destinations.*.transfer`
+- Wire fields it owns (5): `destinations.*.airports`, `destinations.*.anchor_airport`, `destinations.*.anchor_estimated`, `destinations.*.no_ryanair_route`, `destinations.*.transfer`
 - Expected hours of a warm run: 0.1
 - Command revision: `T642`
 - Code: guard `guard_files(('app_data/app_data.json', 1, 'pull master-curre`
