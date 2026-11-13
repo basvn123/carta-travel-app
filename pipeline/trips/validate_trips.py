@@ -39,8 +39,12 @@ from trip_sources import fold, haversine_km, load_catalogue, load_json  # noqa: 
 
 # Photographs are only ever stored from hosts whose licence the pipeline can
 # check. Anything else is a link we cannot stand behind, so it does not ship.
+# thumb.wikimedia.org serves the same Commons files (a Wikidata P18 link
+# redirects there) and the production img-src allows it; without it 644 trips
+# whose highlights carry such a photo were dropped on 2026-11-13.
 ALLOWED_IMAGE_HOSTS = {
     "upload.wikimedia.org", "commons.wikimedia.org", "images.wikimedia.org",
+    "thumb.wikimedia.org",
 }
 
 DAY_LENGTH_H = M.DAY_LENGTH_H
