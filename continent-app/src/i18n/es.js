@@ -10466,6 +10466,7 @@ export const es = {
   "styles.back": "Volver a {name}",
   "styles.kickerChanged": "Cambiado por ahora",
   "styles.doorAriaChanged": "Estilo de viaje: {name}, cambiado por ahora. Cambiar",
+  "styles.bedHeld": "Vuelve primero a {name} para cambiar la cama y la comida.",
   "itin.carLocal": "Aparcamiento y trayectos allí",
   "styles.budgetDay": "{price} por persona al día",
 };

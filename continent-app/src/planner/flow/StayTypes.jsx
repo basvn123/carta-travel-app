@@ -5,6 +5,7 @@ import { offeredStayTiers } from '../../lib/runtime_pricing.js';
 import { HOTEL_GRADES, offeredStayTypes, stayTypeOf, tierForType } from '../../lib/sleepGroups.js';
 import { Segmented, Tile, TileGroup } from '../../components/ui/index.js';
 import { BunkIcon, HomeIcon, HotelIcon } from '../../components/Icons.jsx';
+import { useSettings } from '../../components/SettingsLine.jsx';
 
 const TYPE_ICONS = { apartment: HomeIcon, hotel: HotelIcon, hostel: BunkIcon };
 
@@ -23,7 +24,10 @@ export function StayTypes() {
   const { t } = useI18n();
   const ctx = useFirstRun();
   const meta = ctx?.data?.meta;
-  const setChoices = ctx?.setChoices;
+  // The planner's bed and table are this trip's: the travel style is held,
+  // not rewritten (hooks/useTravelStyles.js), as the trip's party is.
+  const styles = useSettings()?.travelStyles;
+  const setChoices = ctx?.setChoices && ((fn) => { styles?.hold?.(); ctx.setChoices(fn); });
   const stayTier = ctx?.choices?.stay_tier || 'home';
   const types = useMemo(() => offeredStayTypes(offeredStayTiers(meta)).filter((ty) => PLAN_TYPES.has(ty.key)), [meta]);
   const active = stayTypeOf(stayTier);

@@ -319,6 +319,54 @@ export const activeStyle = (store) => {
   return st.list.find((s) => s.id === st.active) || null;
 };
 
+// ---- The choices and the active style (hooks/useTravelStyles.js) ----
+//
+// Pure steps over the whole `choices` object, so the rules are tested here
+// and the hook only wires them to React. `style_held` marks choices that
+// differ from the active style on purpose (a change made for one trip, a
+// link): the style is not rewritten from them.
+
+/** Rule 1: the choices moved. `first` is the load, `linked` whether the
+ *  address named priced keys. Returns `prev` itself when nothing changes. */
+export function afterChoicesChange(prev, { first = false, linked = false } = {}) {
+  const st = normalizeStyles(prev.travel_styles);
+  const a = activeStyle(st);
+  if (!a) return prev;
+  const same = choicesMatchStyle(a, prev);
+  if (prev.style_held) {
+    // A hold ends by itself once the choices are the style's again (the
+    // trip's party set back), so no hold lingers unseen.
+    return same ? { ...prev, style_held: false } : prev;
+  }
+  if (same) return prev;
+  // The load: an address with no priced keys brought only defaults, so the
+  // style sets them; one with them (a link, this device's reload) is kept
+  // and holds the style.
+  if (first) return linked ? { ...prev, style_held: true } : { ...prev, ...choicesFromStyle(a) };
+  const next = styleFromChoices(a, prev);
+  return next === a ? prev : { ...prev, travel_styles: updateStyle(st, a.id, next) };
+}
+
+/** A change made for one trip is coming: hold the style (no-op without one). */
+export function holdChoices(prev) {
+  return prev.style_held || !activeStyle(normalizeStyles(prev.travel_styles)) ? prev : { ...prev, style_held: true };
+}
+
+/** Keep: the held choices written into the active style, the hold lifted. */
+export function keepChoices(prev) {
+  const st = normalizeStyles(prev.travel_styles);
+  const a = activeStyle(st);
+  if (!a) return { ...prev, style_held: false };
+  return { ...prev, travel_styles: updateStyle(st, a.id, styleFromChoices(a, prev)), style_held: false };
+}
+
+/** Switch (and Back): the style's stay half priced, the hold lifted. */
+export function switchChoices(prev, id) {
+  const st = setActive(normalizeStyles(prev.travel_styles), id);
+  const s = st.list.find((x) => x.id === id);
+  return s ? { ...prev, ...choicesFromStyle(s), travel_styles: st, style_held: false } : prev;
+}
+
 // ---- The taste profile (lib/taste.js), one thing with the style ----
 
 /**

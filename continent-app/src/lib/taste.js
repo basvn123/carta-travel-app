@@ -138,7 +138,10 @@ export function mergeAccountChoices(local, incoming) {
   if (local?.travel_styles || incoming?.travel_styles) {
     out.travel_styles = mergeStyles(local?.travel_styles, incoming?.travel_styles);
     const a = activeStyle(out.travel_styles);
-    if (a) Object.assign(out, choicesFromStyle(a), { style_held: false });
+    // Unless this device holds the style for a trip: the trip's party, bed,
+    // Lifestyle and way stay this device's, the hold with them.
+    if (a && !local?.style_held) Object.assign(out, choicesFromStyle(a), { style_held: false });
+    else if (a) for (const k of Object.keys(choicesFromStyle(a))) if (k in local) out[k] = local[k];
   }
   return out;
 }

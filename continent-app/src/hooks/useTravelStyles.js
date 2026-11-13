@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  STYLES_KEY, activeStyle, addStyle, choicesFromStyle, choicesMatchStyle, duplicateStyle, exploreFromTaste, normalizeStyles, styleWithTaste,
-  removeStyle, setActive, styleFromChoices, styleFromTemplate, tasteFromStyle, tasteMatchesStyle, updateStyle,
+  STYLES_KEY, activeStyle, addStyle, afterChoicesChange, holdChoices, keepChoices, switchChoices, choicesFromStyle, choicesMatchStyle, duplicateStyle, exploreFromTaste, normalizeStyles, styleWithTaste,
+  removeStyle, styleFromChoices, styleFromTemplate, tasteFromStyle, tasteMatchesStyle, updateStyle,
 } from '../lib/travelStyles.js';
 import { normalizeTaste } from '../lib/taste.js';
 
@@ -57,22 +57,7 @@ export function useTravelStyles(choices, setChoices) {
     const first = !mounted.current;
     const linked = first && typeof window !== 'undefined' && PRICED_QUERY.test(window.location.search || '');
     mounted.current = true;
-    setChoices((prev) => {
-      const st = normalizeStyles(prev.travel_styles);
-      const a = activeStyle(st);
-      if (!a || prev.style_held) return prev;
-      if (first) {
-        // First run: the choices were read at load, not edited. An address
-        // that names none of them (the home page, a tab link) brought only
-        // defaults, so the style sets them; one that names them (a shared
-        // link, this device's own reload) is kept and holds the style.
-        if (choicesMatchStyle(a, prev)) return prev;
-        return linked ? { ...prev, style_held: true } : { ...prev, ...choicesFromStyle(a) };
-      }
-      const next = styleFromChoices(a, prev);
-      if (next === a) return prev;
-      return { ...prev, travel_styles: updateStyle(st, a.id, next) };
-    });
+    setChoices((prev) => afterChoicesChange(prev, { first, linked }));
   }, [choices.stay_tier, choices.lifestyle, choices.transport_mode, choices.group_size, choices.children, choices.babies, setChoices]);
 
   // Rule 4. `seen` holds what each side looked like when they last agreed.
@@ -115,11 +100,7 @@ export function useTravelStyles(choices, setChoices) {
 
   // Rule 2.
   const switchTo = useCallback((id) => {
-    setChoices((prev) => {
-      const st = setActive(normalizeStyles(prev.travel_styles), id);
-      const s = st.list.find((x) => x.id === id);
-      return s ? { ...prev, ...choicesFromStyle(s), travel_styles: st, style_held: false } : prev;
-    });
+    setChoices((prev) => switchChoices(prev, id));
   }, [setChoices]);
 
   /** A new style from a template ('' for "from how I travel now"), made active. */
@@ -150,16 +131,11 @@ export function useTravelStyles(choices, setChoices) {
   /** A change for one trip: the style is held, not rewritten (rule 1).
    *  Call it before the change; both updates land in one render. */
   const hold = useCallback(() => {
-    setChoices((prev) => (prev.style_held || !activeStyle(normalizeStyles(prev.travel_styles)) ? prev : { ...prev, style_held: true }));
+    setChoices(holdChoices);
   }, [setChoices]);
   /** The held changes written into the active style, and the hold lifted. */
   const keep = useCallback(() => {
-    setChoices((prev) => {
-      const st = normalizeStyles(prev.travel_styles);
-      const a = activeStyle(st);
-      if (!a) return { ...prev, style_held: false };
-      return { ...prev, travel_styles: updateStyle(st, a.id, styleFromChoices(a, prev)), style_held: false };
-    });
+    setChoices(keepChoices);
   }, [setChoices]);
   /** Back to the active style's own values (the hold lifted). */
   const revert = useCallback(() => { if (store.active) switchTo(store.active); }, [store.active, switchTo]);

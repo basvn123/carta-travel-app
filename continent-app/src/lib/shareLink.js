@@ -173,7 +173,9 @@ function sanitizeShared(d) {
     babies: clampInt(d.babies, 0, LIMITS.max_babies, 0),
     transportPref: oneOf(d.transportPref, ['auto', 'car', 'owncar', 'public'], 'auto'),
     pace: oneOf(d.pace, ['relaxed', 'balanced', 'packed'], 'balanced'),
-    baggage: oneOf(d.baggage, ['cabin', 'priority', 'checked'], PLANNER_BAG),
+    // The planner's short keys and the app's own (meta.baggage_options), since
+    // a trip from the finder carries the traveller's bag (choices.baggage_key).
+    baggage: oneOf(d.baggage, ['cabin', 'priority', 'checked', 'small', 'priority_10kg', 'checked_20kg'], PLANNER_BAG),
     anchorId: strOrNull(d.anchorId),
     anchorOrigin: strOrNull(d.anchorOrigin),
     returnAnchorId: strOrNull(d.returnAnchorId),

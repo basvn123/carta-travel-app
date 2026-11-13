@@ -10466,6 +10466,7 @@ export const de = {
   "styles.back": "Zurück zu {name}",
   "styles.kickerChanged": "Gerade geändert",
   "styles.doorAriaChanged": "Reisestil: {name}, gerade geändert. Ändern",
+  "styles.bedHeld": "Geh zuerst zurück zu {name}, um Bett und Essen zu ändern.",
   "itin.carLocal": "Parken und Fahrten vor Ort",
   "styles.budgetDay": "{price} pro Person und Tag",
 };

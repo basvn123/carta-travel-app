@@ -382,6 +382,20 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Constant: `FOOD_JUMP`, `FOOD_TOLERANCE`, `food_gate` in `pipeline/apply_food_prices.py:92`, `:93`, `:580`
 - Test: `tests/test_price_gates.py` :: "test_food_basket_jump_is_blocked_unless_explained"
 
+### PRICE-046 What a travel style costs
+- Decides: the day figure on each travel style card.
+- Rule: a person's bed plus food for one day (no flight, no getting around) at the style's party, stay tier and Lifestyle, from the engine's day prices over the whole catalogue; the median over every place with both lines priced; null when none.
+- Constant: `styleDayEur` in `continent-app/src/lib/price/styleDay.js:15`
+- Test: `continent-app/tests/travelStyles.test.mjs` :: "a style states its day: bed and food, a person, at the middle place"
+- Test: `continent-app/tests/travelStyles.test.mjs` :: "on the real catalogue every template has a day figure, and they differ"
+
+### PRICE-047 The traveller's bag, end to end
+- Decides: which bag a flight is priced with from the trip finder to the trip page and a shared link.
+- Rule: the finder prices `choices.baggage_key` and keeps it in its answer key; the card's planner state, the hand-over and a shared link carry it; both the planner's short keys (cabin, priority, checked) and the app's own (small, priority_10kg, checked_20kg) are kept, and the fee reads either through one tier; an unknown key falls back to the planner's default.
+- Constant: `bagTier` in `continent-app/src/lib/flights/bagFees.js:33`
+- Constant: `sanitizeShared` baggage in `continent-app/src/lib/shareLink.js:178`
+- Test: `continent-app/tests/travelStyles.test.mjs` :: "the bag survives every hand-over: finder answer key, card, trip page, share link"
+
 ## Rules with no test
 
 PRICE-018, PRICE-032

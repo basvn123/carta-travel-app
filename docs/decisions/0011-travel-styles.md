@@ -16,7 +16,7 @@ How a traveller stays (party, bed, eating and drinking, way there) lived in app-
 3. Named travel styles, one active, behind a door in the header of every tab.
 
 ## Decision
-We chose **option 3**. A style bundles how you stay and how you explore. The active style's stay half is the priced `choices` itself (one truth); its explore half seeds every new trip (answers marked `'style'`, beaten by words and screens) and is the taste profile. The Lifestyle panel stays the one place to set the bed and the table. A shared link that names priced choices, or a loaded saved trip, wins over the style and leaves no style active rather than overwriting it.
+We chose **option 3**. A style bundles how you stay and how you explore. The active style's stay half sets the priced `choices`, and app-wide edits are written back into it; its explore half seeds every new trip (answers marked `'style'`, beaten by words and screens) and is the taste profile. The Lifestyle panel stays the one place to set the bed and the table. A change made for one trip (its party, bed or way there), a shared link that names priced choices, or a loaded saved trip holds the style instead (`choices.style_held`): the prices follow the trip or the link, the saved style stays as it was, and the header says "Changed for now" with Keep and Back, so neither ever overwrites the other. Each style card states its day (bed and food, a person, at the middle place) from the price engine.
 
 ## Consequences
 - Good: the planner asks only what a style cannot know; every tab shows how prices are set; Explore's For you, the trip finder and every price read the same answers.

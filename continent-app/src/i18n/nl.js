@@ -10466,6 +10466,7 @@ export const nl = {
   "styles.back": "Terug naar {name}",
   "styles.kickerChanged": "Nu aangepast",
   "styles.doorAriaChanged": "Reisstijl: {name}, nu aangepast. Wijzigen",
+  "styles.bedHeld": "Ga eerst terug naar {name} om het bed en eten te wijzigen.",
   "itin.carLocal": "Parkeren en rondrijden",
   "styles.budgetDay": "{price} per persoon per dag",
 };

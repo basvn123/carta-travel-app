@@ -343,3 +343,81 @@ test('who comes alone moves the countries: a family lifts the calm one', async (
   assert.equal(family.first, 'BB', 'the calm country leads for a family');
   assert.ok(family.diff > couple.diff, `the party alone widens the lead (${couple.diff} to ${family.diff})`);
 });
+
+test('a change for one trip holds the style; Keep and Back lift the hold', async () => {
+  const { afterChoicesChange, holdChoices, keepChoices, switchChoices } = await import('../src/lib/travelStyles.js');
+  const fam = styleFromTemplate('family');
+  const base = { ...choicesFromStyle(fam), travel_styles: addStyle(normalizeStyles(null), fam) };
+  const styleOf = (c) => normalizeStyles(c.travel_styles).list[0];
+  // The planner's Who: hold, then the trip's party (3 adults, no children).
+  let c = { ...holdChoices(base), group_size: 3, children: 0 };
+  c = afterChoicesChange(c);
+  assert.equal(c.style_held, true);
+  assert.equal(styleOf(c).who.kids, 2, 'the style keeps its party');
+  assert.equal(styleOf(c).who.adults, 2);
+  // An app-wide edit while held is not written into the style either.
+  c = afterChoicesChange({ ...c, stay_tier: 'hotel4' });
+  assert.equal(styleOf(c).stay, 'home');
+  // Back: the style's own values, no hold.
+  const back = switchChoices(c, fam.id);
+  assert.equal(back.group_size, 4);
+  assert.equal(back.stay_tier, 'home');
+  assert.equal(back.style_held, false);
+  // Keep: the trip's values written into the style, no hold.
+  const kept = keepChoices(c);
+  assert.equal(styleOf(kept).who.adults, 3);
+  assert.equal(styleOf(kept).stay, 'hotel4');
+  assert.equal(kept.style_held, false);
+  // A hold ends by itself once the choices are the style's again.
+  const undone = afterChoicesChange({ ...c, group_size: 4, children: 2, stay_tier: 'home' });
+  assert.equal(undone.style_held, false);
+  // Without a hold an app-wide edit is the style's own.
+  const free = afterChoicesChange({ ...base, stay_tier: 'hotel3' });
+  assert.equal(styleOf(free).stay, 'hotel3');
+  // Holding with nothing active is a no-op.
+  const none = { group_size: 2 };
+  assert.equal(holdChoices(none), none);
+});
+
+test('the load: no priced keys lets the style set the choices; a link holds it', async () => {
+  const { afterChoicesChange } = await import('../src/lib/travelStyles.js');
+  const fam = styleFromTemplate('family');
+  const loaded = { group_size: 2, children: 0, babies: 0, stay_tier: 'home', lifestyle: fam.lifestyle, transport_mode: 'any', travel_styles: addStyle(normalizeStyles(null), fam) };
+  const bare = afterChoicesChange(loaded, { first: true, linked: false });
+  assert.equal(bare.group_size, 4);
+  assert.equal(bare.children, 2);
+  const link = afterChoicesChange(loaded, { first: true, linked: true });
+  assert.equal(link.group_size, 2, 'the link keeps its party');
+  assert.equal(link.style_held, true);
+  assert.equal(normalizeStyles(link.travel_styles).list[0].who.kids, 2, 'and the style keeps its own');
+});
+
+test('signing in keeps a held trip and its hold', async () => {
+  const { mergeAccountChoices } = await import('../src/lib/taste.js');
+  const fam = styleFromTemplate('family');
+  const st = addStyle(normalizeStyles(null), fam);
+  const out = mergeAccountChoices({ travel_styles: st, group_size: 3, children: 0, style_held: true }, { travel_styles: st, group_size: 4, children: 2 });
+  assert.equal(out.style_held, true);
+  assert.equal(out.children, 0, 'the account does not undo the trip\'s party');
+});
+
+test('the bag survives every hand-over: finder answer key, card, trip page, share link', async () => {
+  const { planOf } = await import('../src/planner/finder/planOf.js');
+  const { answerKey } = await import('../src/lib/recommend/trips.js');
+  const { selectionOfPlan } = await import('../src/lib/plan/doors.js');
+  const { encodeTripShare, decodeTripShare } = await import('../src/lib/shareLink.js');
+  // The finder reprices when the bag changes (it is part of its answer key).
+  assert.notEqual(answerKey({ baggage: 'checked_20kg', settings: {} }), answerKey({ baggage: 'priority_10kg', settings: {} }));
+  // A finder card's planner state carries the bag to the trip page.
+  const trip = { id: 'x', state: { baggage: 'checked_20kg', stops: [{ destinationId: 'a', nights: 3 }] }, slots: [], party: { adults: 2 }, dates: {}, places: [{ id: 'a', nights: 3 }] };
+  const plan = planOf(trip);
+  assert.equal(plan.baggage, 'checked_20kg');
+  assert.equal(selectionOfPlan({ ...plan, order: ['a'], nights: { a: 3 } }).baggage, 'checked_20kg');
+  // A shared trip opens with the same bag, short or long key.
+  for (const bag of ['checked_20kg', 'priority_10kg', 'checked', 'small']) {
+    const out = await decodeTripShare(await encodeTripShare({ stops: [{ destinationId: 'PRN_a', nights: 2 }], baggage: bag }));
+    assert.equal(out.baggage, bag);
+  }
+  const bad = await decodeTripShare(await encodeTripShare({ stops: [{ destinationId: 'PRN_a', nights: 2 }], baggage: 'trunk' }));
+  assert.equal(bad.baggage, 'priority', 'an unknown bag falls back to the planner default');
+});

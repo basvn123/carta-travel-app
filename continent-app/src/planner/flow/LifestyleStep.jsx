@@ -11,6 +11,7 @@ import { Stepper } from '../../components/FilterControls.jsx';
 import { Button, Segmented, Tile, TileGroup } from '../../components/ui/index.js';
 import { ChevronDownIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { TasteRow } from '../../browse/TasteDoor.jsx';
+import { useSettings } from '../../components/SettingsLine.jsx';
 
 // The seven counts in the order the Lifestyle panel shows them; coffee is a
 // day count whatever the cadence.
@@ -38,7 +39,10 @@ export function LifestyleStep() {
   const { t } = useI18n();
   const ctx = useFirstRun();
   const choices = ctx?.choices || {};
-  const setChoices = ctx?.setChoices;
+  // The planner's bed and table are this trip's: the travel style is held,
+  // not rewritten (hooks/useTravelStyles.js), as the trip's party is.
+  const styles = useSettings()?.travelStyles;
+  const setChoices = ctx?.setChoices && ((fn) => { styles?.hold?.(); ctx.setChoices(fn); });
   const [tuning, setTuning] = useState(false);
   if (!setChoices) return null;
 

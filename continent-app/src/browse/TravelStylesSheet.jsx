@@ -256,10 +256,14 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
               }}
             />
           </Field>
-          <Field title={t('styles.bedTable')}>
+          {/* The Lifestyle panel edits the live choices; while they are held
+              for a trip they do not reach the style, so the row waits for
+              Back (the banner above) rather than edit the wrong thing. */}
+          <Field title={t('styles.bedTable')} note={ts.changed ? t('styles.bedHeld', { name: styleName(t, s) }) : ''}>
             <Button
               variant="secondary"
               block
+              disabled={ts.changed}
               className="tstyle-row"
               iconEnd={<ChevronRightIcon size={16} />}
               // One dialog at a time: the Lifestyle panel replaces this sheet.

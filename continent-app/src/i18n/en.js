@@ -10552,6 +10552,7 @@ export const en = {
   "styles.back": "Back to {name}",
   "styles.kickerChanged": "Changed for now",
   "styles.doorAriaChanged": "Travel style: {name}, changed for now. Change",
+  "styles.bedHeld": "Back to {name} first to change its bed and table.",
   "itin.carLocal": "Parking and driving around",
   "styles.budgetDay": "{price} a person a day",
 };

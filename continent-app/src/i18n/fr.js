@@ -10466,6 +10466,7 @@ export const fr = {
   "styles.back": "Revenir à {name}",
   "styles.kickerChanged": "Modifié pour l'instant",
   "styles.doorAriaChanged": "Style de voyage : {name}, modifié pour l'instant. Modifier",
+  "styles.bedHeld": "Revenez d'abord à {name} pour changer le lit et les repas.",
   "itin.carLocal": "Stationnement et trajets sur place",
   "styles.budgetDay": "{price} par personne et par jour",
 };

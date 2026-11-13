@@ -5,6 +5,7 @@ import { offeredStayTiers, DEFAULT_LIFESTYLE } from '../lib/runtime_pricing.js';
 import { offeredSleepGroups, optionsFor, sleepGroupOf, tierForGroup } from '../lib/sleepGroups.js';
 import { PROFILES, PROFILE_ICONS, PROFILE_LABEL_KEYS, SLEEP_ICONS, matchProfile } from '../browse/LifestylePanel.jsx';
 import { Segmented, Tile, TileGroup } from '../components/ui/index.js';
+import { useSettings } from '../components/SettingsLine.jsx';
 
 /**
  * The Lifestyle panel's two answers, embedded in the trip planner's Who step
@@ -18,7 +19,10 @@ export function LifestyleChoices() {
   const { t } = useI18n();
   const ctx = useFirstRun();
   const choices = ctx?.choices || {};
-  const setChoices = ctx?.setChoices;
+  // The planner's bed and table are this trip's: the travel style is held,
+  // not rewritten (hooks/useTravelStyles.js), as the trip's party is.
+  const styles = useSettings()?.travelStyles;
+  const setChoices = ctx?.setChoices && ((fn) => { styles?.hold?.(); ctx.setChoices(fn); });
   const tiers = useMemo(() => offeredStayTiers(ctx?.data?.meta), [ctx?.data?.meta]);
   const groups = useMemo(() => offeredSleepGroups(tiers), [tiers]);
   const stayTier = choices.stay_tier || 'home';

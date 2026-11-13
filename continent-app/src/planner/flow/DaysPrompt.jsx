@@ -47,7 +47,14 @@ export function DaysPrompt({ onClose, onPlan }) {
     let next = { ...settings, daysHow: how };
     if (how === 'carta') {
       next = { ...next, rhythm: { ...settings.rhythm, goals, pace, mornings, keep } };
-      for (const id of ['r:pace', 'r:mornings', 'r:goal']) next = markAnswered(next, id);
+      // An answer the travel style gave and left as it was stays the style's,
+      // so switching the trip's style later still moves it; one the
+      // traveller changed here is theirs.
+      const kept = { 'r:pace': pace === settings.rhythm.pace, 'r:mornings': mornings === settings.rhythm.mornings };
+      for (const id of ['r:pace', 'r:mornings', 'r:goal']) {
+        if (kept[id] && settings.sources?.[id] === 'style') continue;
+        next = markAnswered(next, id);
+      }
     }
     save(normalizeSettings(next));
     onPlan(how);
