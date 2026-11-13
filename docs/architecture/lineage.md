@@ -10,9 +10,9 @@ that destructures a record is missed. Request paths are in [request-paths.md](re
 
 | What | Count |
 |---|---|
-| Wire fields in `docs/wire.schema.json` | 77 |
-| ...with a lineage row | 77 |
-| ...read by the app (pattern search found a reader) | 47 |
+| Wire fields in `docs/wire.schema.json` | 78 |
+| ...with a lineage row | 78 |
+| ...read by the app (pattern search found a reader) | 48 |
 | ...named in app code but no `rec.field` read (destructured or a string key) | 4 |
 | ...no reader found (shipped, not shown) | 26 |
 | ...written only or partly by a legacy step | 29 |
@@ -61,7 +61,7 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `meta.start_date` | Ryanair fare window of the first harvest (legacy notebook 02_flights) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | `src/lib/dates.js`, `src/planner/GuidedTripWizard.jsx` (2 files) |
 | `meta.end_date` | Ryanair fare window of the first harvest (legacy notebook 02_flights) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | `src/lib/dates.js`, `src/planner/GuidedTripWizard.jsx` (2 files) |
 | `meta.defaults` | Carta constants (group size, trip length, baggage, lifestyle) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | `src/hooks/useAppData.js`, `src/planner/finder/finderHooks.js`, `src/lib/wizardTransit.js` (6 files) |
-| `meta.baggage_options` | Ryanair published bag fees (first harvest) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | `src/hooks/useAppData.js`, `src/lib/flights/bagFees.js` (2 files) |
+| `meta.baggage_options` | Ryanair published bag fees (first harvest) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | `src/hooks/useAppData.js`, `src/lib/flights/bagFees.js`, `src/lib/shareLink.js` (3 files) |
 | `meta.generated_at` | build clock | `fame`, `poi_significance` | app_data/app_data.json (master) | `pipeline/apply_rating_layer.py` | boot.json (meta) | name only: `src/components/admin/DataHealth.jsx`, `src/components/admin/LinkHealth.jsx`, `src/components/admin/PipelineOverrides.jsx` |
 | `meta.origins` | Eurostat avia_par routes (T512): every European airport with a scheduled route | `flight_routes`, `sync` | data/flights/_airports.json | `continent-app/scripts/sync-data.mjs` | boot.json (meta) | `src/lib/origins.js`, `src/components/OriginPicker.jsx`, `src/components/FromPicker.jsx` (18 files) |
 | `meta.home_city` | Carta constant (Brussels, the first home) | `legacy` | app_data/app_data.json (master) | `pipeline/gen_mock_data.py` | boot.json (meta) | none found |
@@ -89,18 +89,19 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `meta.place_model` | GeoNames population, POI mix, place class rules | `fame` | app_data/app_data.json (master) | `pipeline/apply_place_layer.py` | boot.json (meta) | none found |
 | `meta.rating_model` | the rating layer and continent-app/config/rating.json | `fame`, `poi_significance` | app_data/app_data.json (master) | `pipeline/apply_rating_layer.py` | boot.json (meta) | none found |
 | `meta.tourist_premium_model` | Eurostat nights per NUTS3 against the country base | `tourist_premium` | app_data/app_data.json (master) | `pipeline/apply_tourist_premium.py` | boot.json (meta) | none found |
-| `destinations.*.id` | Carta catalogue (IATA code or gem:slug) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (id) | `src/auth/SavedTripsPanel.jsx`, `src/browse/DestinationPage.jsx`, `src/planner/finder/finderText.js` (226 files) |
+| `destinations.*.id` | Carta catalogue (IATA code or gem:slug) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (id) | `src/auth/SavedTripsPanel.jsx`, `src/browse/DestinationPage.jsx`, `src/planner/finder/finderText.js` (230 files) |
 | `destinations.*.tier` | Carta catalogue (airport, gem, longtail) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (f (flag AIRPORT)), dest/_rank.json, dest/{cc}.json | `src/browse/ExploreMap.jsx`, `src/lib/linking/aliases.js`, `src/components/admin/UsersList.jsx` (28 files) |
 | `destinations.*.iata` | Ryanair airport list, then the catalogue | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | dest/_rank.json, dest/{cc}.json | `src/lib/airportReach.js`, `src/components/AirportReach.jsx`, `src/planner/wizard/OriginCard.jsx` (23 files) |
 | `destinations.*.city` | Carta catalogue (display name) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | dest/_rank.json, dest/{cc}.json | `src/planner/TripItinerary.jsx`, `src/auth/PastTripForm.jsx`, `src/lib/tripExport.js` (157 files) |
 | `destinations.*.country` | Carta catalogue | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | dest/_rank.json, dest/{cc}.json | `src/planner/wizard/StepWhere.jsx`, `src/components/FromPicker.jsx`, `src/planner/DayPlannerTab.jsx` (109 files) |
-| `destinations.*.iso2` | Carta catalogue (ISO 3166 code) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py`, `pipeline/gen_mock_data.py` | boot.json (cc) | `src/browse/DestinationPage.jsx`, `src/components/FromPicker.jsx`, `src/lib/price/trip.js` (89 files) |
-| `destinations.*.lat` | Wikipedia coordinates or the GeoNames gazetteer | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (lat) | `src/planner/dayDraft.js`, `src/lib/cityResearch.js`, `src/planner/DayPlannerTab.jsx` (116 files) |
-| `destinations.*.lon` | Wikipedia coordinates or the GeoNames gazetteer | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (lon) | `src/lib/cityResearch.js`, `src/planner/dayDraft.js`, `src/browse/DestMap.jsx` (109 files) |
+| `destinations.*.iso2` | Carta catalogue (ISO 3166 code) | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py`, `pipeline/gen_mock_data.py` | boot.json (cc) | `src/browse/DestinationPage.jsx`, `src/components/FromPicker.jsx`, `src/lib/price/trip.js` (90 files) |
+| `destinations.*.lat` | Wikipedia coordinates or the GeoNames gazetteer | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (lat) | `src/planner/dayDraft.js`, `src/lib/cityResearch.js`, `src/planner/DayPlannerTab.jsx` (115 files) |
+| `destinations.*.lon` | Wikipedia coordinates or the GeoNames gazetteer | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | boot.json (lon) | `src/lib/cityResearch.js`, `src/planner/dayDraft.js`, `src/browse/DestMap.jsx` (108 files) |
 | `destinations.*.categories` | Carta taxonomy plus hand overrides | `legacy`, `manual` | pipeline/gem_category_overrides.py | `pipeline/oneoff/add_famous_small_gems.py`, `pipeline/apply_gem_categories.py` | boot.json (f (flag UNESCO)), dest/_rank.json, dest/{cc}.json | `src/hooks/useDestinationSearch.js`, `src/lib/countryMatch.js`, `src/hooks/useExploreCatalog.js` (16 files) |
 | `destinations.*.tags` | Carta catalogue | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py` | dest/_rank.json, dest/{cc}.json | `src/lib/taste/profile.js`, `src/lib/beachStory.js`, `src/lib/countryMatch.js` (3 files) |
 | `destinations.*.blurb` | hand-written or Wikipedia lead, per catalogue batch | `legacy`, `manual` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py`, `pipeline/promote_place_candidates.py` | dest/_rank.json, dest/{cc}.json | `src/lib/ask/compose.js`, `src/lib/knownFor.js`, `src/lib/ask/context.js` (8 files) |
 | `destinations.*.no_ryanair_route` | Ryanair route list and the drive radius | `airports`, `legacy` | app_data/app_data.json (master) | `pipeline/apply_airport_anchors.py`, `pipeline/oneoff/add_famous_small_gems.py` | dest/_rank.json, dest/{cc}.json | name only: `src/lib/cityResearch.js` |
+| `destinations.*.airports` | the catalogue's airport rows (tier airport, with an IATA code); road estimate and GTFS train times from pipeline/airport_access.py | `airports` | app_data/app_data.json (master) | `pipeline/apply_airport_anchors.py` | dest/{cc}.json | `src/browse/DestinationPage.jsx` (1 files) |
 | `destinations.*.anchor_airport` | nearest served airport within 50 km | `airports`, `legacy` | app_data/app_data.json (master) | `pipeline/apply_airport_anchors.py`, `pipeline/oneoff/add_famous_small_gems.py` | dest/_rank.json, dest/{cc}.json | `src/planner/TripItinerary.jsx`, `src/hooks/useDestinationSearch.js`, `src/lib/linking/aliases.js` (8 files) |
 | `destinations.*.costs` | Open Prices, Eurostat HICP and PLI, Numbeo anchors; tourist premium from Eurostat nights | `food`, `tourist_premium` | cache/food_price_inputs.json | `pipeline/apply_food_prices.py`, `pipeline/apply_tourist_premium.py` | dest/_rank.json, dest/{cc}.json | `src/browse/DestFood.jsx`, `src/lib/costIndex.js`, `src/lib/budgetSearch.js` (9 files) |
 | `destinations.*.accommodation` | Booking and Hostelworld scrape journal (T1021) | `manual` | cache/stays build (pipeline/stays/common.py OUT) | `pipeline/stays/apply_stays.py` | dest/_rank.json, dest/{cc}.json | `src/lib/stayPrice.js`, `src/browse/DestinationPage.jsx`, `src/lib/budgetSearch.js` (11 files) |
@@ -114,7 +115,7 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `destinations.*.gateway_of` | multi-airport city table (T755) | `fame`, `poi_significance` | app_data/app_data.json (master) | `pipeline/rating_layer.py` | boot.json (f (flag GATEWAY)), dest/_rank.json, dest/{cc}.json | `src/lib/linking/aliases.js`, `src/lib/rating.js`, `src/lib/recommend/persona.js` (8 files) |
 | `destinations.*.transfer` | road distance to the anchor airport (about 0.15 EUR per km) | `legacy`, `airports` | app_data/app_data.json (master) | `pipeline/oneoff/add_famous_small_gems.py`, `pipeline/apply_airport_anchors.py` | dest/_rank.json, dest/{cc}.json | `src/lib/origins.js`, `src/lib/recommend/candidates.js`, `src/lib/wayChoice.js` (3 files) |
 | `destinations.*.climate` | NASA POWER, Open-Meteo, sea temperature | `climate`, `climate_daily` | cache/climate.json | `pipeline/apply_climate.py` | dest/_rank.json, dest/{cc}.json | `src/browse/DestWhen.jsx`, `src/lib/ask/rank.js`, `src/lib/packing.js` (21 files) |
-| `destinations.*.place` | GeoNames population, POI mix, place class rules | `fame` | app_data/app_data.json (master) | `pipeline/apply_place_layer.py` | dest/_rank.json, dest/{cc}.json | `src/lib/destinationPdf.js`, `src/lib/countryMatch.js`, `src/lib/taxonomy.js` (22 files) |
+| `destinations.*.place` | GeoNames population, POI mix, place class rules | `fame` | app_data/app_data.json (master) | `pipeline/apply_place_layer.py` | dest/_rank.json, dest/{cc}.json | `src/lib/destinationPdf.js`, `src/lib/countryMatch.js`, `src/lib/taxonomy.js` (23 files) |
 | `destinations.*.country_rank` | rating.score within the country | `country_context` | app_data/app_data.json (master) | `pipeline/country_context_layer.py` | dest/_rank.json, dest/{cc}.json | `src/browse/CountryPage.jsx`, `src/hooks/useExploreCatalog.js`, `src/hooks/usePlaceRows.js` (3 files) |
 | `destinations.*.country_n` | rating.score within the country | `country_context` | app_data/app_data.json (master) | `pipeline/country_context_layer.py` | dest/_rank.json, dest/{cc}.json | `src/hooks/useExploreCatalog.js` (1 files) |
 | `destinations.*.country_percentile` | rating.score within the country | `country_context` | app_data/app_data.json (master) | `pipeline/country_context_layer.py` | dest/{cc}.json | none found |
@@ -128,7 +129,7 @@ found and the name is specific (an underscore, or eight letters and not a common
 | `destinations.*.geonames` | GeoNames cities dump | `geonames` | cache/geonames | `pipeline/harvest_geonames.py` | dest/{cc}.json | `src/lib/knownFor.js`, `src/lib/cityResearch.js`, `src/lib/linking/aliases.js` (3 files) |
 | `destinations.*.designations` | UNESCO, EDEN, Plus Beaux Villages and other registers (Wikidata) | `fame` | app_data/app_data.json (master) | `pipeline/apply_designations.py` | dest/{cc}.json | `src/browse/DestinationPage.jsx` (1 files) |
 | `destinations.*.nature` | OSM protected areas (Overpass) | `nature` | cache/osm_protected_areas.json | `pipeline/harvest_protected_areas_osm.py` | dest/{cc}.json | `src/lib/knownFor.js`, `src/lib/packing.js`, `src/planner/aiCitySuggest.js` (3 files) |
-| `destinations.*.guide` | Wikivoyage lead and link (CC BY-SA) | `guide` | cache/wikivoyage.json | `pipeline/apply_wikivoyage.py` | dest/{cc}.json | `src/browse/DestinationPage.jsx`, `src/planner/flow/tellChips.js` (2 files) |
+| `destinations.*.guide` | Wikivoyage lead and link (CC BY-SA) | `guide` | cache/wikivoyage.json | `pipeline/apply_wikivoyage.py` | dest/{cc}.json | `src/browse/DestinationPage.jsx`, `src/planner/flow/styleSeed.js`, `src/planner/flow/tellChips.js` (3 files) |
 | `destinations.*.members` | Wikidata landmarks and GeoNames towns grouped under a place | `manual` | cache/wikidata_landmarks.json | `pipeline/member_layer.py` | dest/{cc}.json | `src/browse/DestinationPage.jsx`, `src/lib/linking/search.js`, `src/together/groupBand.js` (3 files) |
 | `destinations.*.wikidata` | Wikidata Special:EntityData (CC0) | `legacy` | app_data/app_data.json (master) | none in the repo | dest/{cc}.json | name only: `src/browse/BeachPage.jsx`, `src/browse/LakePage.jsx`, `src/browse/MountainPage.jsx` |
 | `destinations.*.season` | OSM opening_hours and seasonal tags (Geofabrik extracts) | `seasons` | cache/dest_seasons.json | `pipeline/harvest_seasons.py` | dest/_rank.json, dest/{cc}.json | `src/browse/SectionOpening.jsx`, `src/browse/DestWhen.jsx`, `src/lib/runtime_pricing.js` (4 files) |
@@ -141,6 +142,7 @@ Notes:
 - `meta.stays`: The stays task publishes stays-live to R2 only; baking a build into the master is apply_stays.py by hand.
 - `meta.flight_model`: Recorded by the retired fix_data.py step of legacy notebook 02_flights (docs/SCHEMA.md, Flight data provenance); no script in the repo writes the block today, it is carried forward in the master. The app prices flights from the T511 to T518 route and fare files instead.
 - `destinations.*.id`: New places: coverage proposes, promote_place_candidates.py writes a spec, apply_new_gems.py inserts it by hand (an editorial act, never scheduled).
+- `destinations.*.airports`: T642 (T651): up to four airports per place; presence pending until the committed wire carries it (2026-11-13).
 - `destinations.*.accommodation`: Schema v18. The monthly stays task refreshes only the R2 stays-live wire; the compact block in the master moves when apply_stays.py is run by hand.
 - `destinations.*.image`: sync-data.mjs strips image.hires on the wire.
 - `destinations.*.activities`: sync-data.mjs moves activities.items_full to public/poi/{shard}.json.
@@ -716,12 +718,14 @@ flowchart LR
   M --> S
   F0["dest.no_ryanair_route"]
   S --> F0
-  F1["dest.anchor_airport"]
+  F1["dest.airports"]
   S --> F1
-  F2["dest.transfer"]
+  F2["dest.anchor_airport"]
   S --> F2
-  F3["dest.anchor_estimated"]
+  F3["dest.transfer"]
   S --> F3
+  F4["dest.anchor_estimated"]
+  S --> F4
 ```
 
 ### `climate_daily` (quarterly)

@@ -496,6 +496,17 @@
         "pipeline/oneoff/add_famous_small_gems.py"
       ]
     },
+    "destinations.*.airports": {
+      "source": "the catalogue's airport rows (tier airport, with an IATA code); road estimate and GTFS train times from pipeline/airport_access.py",
+      "tasks": [
+        "airports"
+      ],
+      "artifact": "app_data/app_data.json (master)",
+      "writers": [
+        "pipeline/apply_airport_anchors.py"
+      ],
+      "note": "T642 (T651): up to four airports per place; presence pending until the committed wire carries it (2026-11-13)."
+    },
     "destinations.*.anchor_airport": {
       "source": "nearest served airport within 50 km",
       "tasks": [
