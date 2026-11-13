@@ -312,6 +312,92 @@
           "x-presence": "every",
           "description": "app_data.json block"
         },
+        "airports": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "x-presence": "some",
+          "description": "T642 (T651): up to four airports within 110 km of the place, each with the straight and road distance, whether Ryanair flies there, the transfer options (`options`: mode, minutes, source; a road estimate, or a GTFS train) and the best of them (`transfer_min`, `transfer_mode`, `transfer_source`, null when no option is known). Written by the `airports` task (`apply_airport_anchors.py --airports-only`), read by the place page's nearest airport fact (`airportPick.js`)",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "iata",
+              "straight_km",
+              "road_km",
+              "ryanair",
+              "options",
+              "transfer_min",
+              "transfer_mode",
+              "transfer_source"
+            ],
+            "properties": {
+              "iata": {
+                "type": "string",
+                "pattern": "^[A-Z]{3}$"
+              },
+              "straight_km": {
+                "type": "number",
+                "minimum": 0
+              },
+              "road_km": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "ryanair": {
+                "type": "boolean"
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "mode",
+                    "minutes",
+                    "source"
+                  ],
+                  "properties": {
+                    "mode": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minutes": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "source": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              },
+              "transfer_min": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 0
+              },
+              "transfer_mode": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "transfer_source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
         "anchor_airport": {
           "type": [
             "string",

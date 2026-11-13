@@ -247,7 +247,9 @@ function unstamped(value) {
   return out;
 }
 
-function projectField(value, how) {
+// Exported for sync-data.mjs's round-trip proof, which must expect exactly
+// what the tier stores (no provenance stamps) rather than a copy of this rule.
+export function projectField(value, how) {
   if (value == null || typeof value !== 'object' || Array.isArray(value)) return value;
   if (how === true) return unstamped(value);
   if (how.map) return how.map(unstamped(value));

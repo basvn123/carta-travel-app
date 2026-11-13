@@ -38,7 +38,7 @@ import { existsSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'node
 import { stripDashes } from '../src/lib/format.js';
 import { shardName } from '../src/lib/poiShard.js';
 import {
-  splitCatalogue, mergeCatalogue, buildRankTier, decodeRankTier, RANK_PATH, RANK_FIELDS,
+  splitCatalogue, mergeCatalogue, buildRankTier, decodeRankTier, RANK_PATH, RANK_FIELDS, projectField,
 } from '../src/lib/bootIndex.js';
 import { assertWire } from './ci/contract.mjs';
 import { createHash } from 'node:crypto';
@@ -444,12 +444,10 @@ function writeSplit(core) {
     if (!b) { rankBad += 1; continue; }
     for (const [f, how] of Object.entries(RANK_FIELDS)) {
       if (!(f in a)) { if (f in b) rankBad += 1; continue; }
-      const full = a[f];
-      // T765: a field with a `map` (the compact taste) ships what map returns.
-      const exp = how === true || full == null || typeof full !== 'object' || Array.isArray(full)
-        ? full
-        : how.map ? how.map(full) : Object.fromEntries(Object.entries(full).filter(([k]) => (!how.pick || how.pick.includes(k))
-          && (!how.omit || !how.omit.includes(k))));
+      // The tier's own projection: pick, omit, a `map` (T765, the compact
+      // taste) and no provenance stamps (T1143). A copy of that rule here
+      // missed the stamps and refused every schema-20 master (2026-11-13).
+      const exp = projectField(a[f], how);
       if (JSON.stringify(exp) !== JSON.stringify(b[f])) rankBad += 1;
     }
   }

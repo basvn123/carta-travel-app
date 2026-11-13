@@ -1029,6 +1029,7 @@ here yet.
 | `tags` | destination | every | app_data.json block |
 | `blurb` | destination | every | app_data.json block |
 | `no_ryanair_route` | destination | every | app_data.json block |
+| `airports` | destination | some | T642 (T651): up to four airports within 110 km of the place, each with the straight and road distance, whether Ryanair flies there, the transfer options (`options`: mode, minutes, source; a road estimate, or a GTFS train) and the best of them (`transfer_min`, `transfer_mode`, `transfer_source`, null when no option is known). Written by the `airports` task (`apply_airport_anchors.py --airports-only`), read by the place page's nearest airport fact (`airportPick.js`) |
 | `anchor_airport` | destination | every | app_data.json block |
 | `costs` | destination | every | app_data.json block |
 | `accommodation` | destination | some | app_data.json block; Schema v18. `some` until ROADMAP D10 fills bed prices for the 515 places that lack them (T1057); then back to `every` |
