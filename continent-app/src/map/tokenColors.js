@@ -43,6 +43,13 @@ export const TOKEN_COLOURS = {
   // T430: the PDF kit's warning and tick colours (lib/pdfKit.js).
   '--amber-ink': '#a8400f',
   '--status-success': '#10b981',
+  // The house map (house style 2026-11, src/map/houseBasemap.js).
+  '--map-land': '#f8f9f5',
+  '--map-water': '#d3dfe2',
+  '--map-border': '#d7dcd3',
+  '--map-route': '#8c5a2b',
+  '--plate': '#1e2421',
+  '--action': '#8c5a2b',
 };
 
 /**
@@ -53,9 +60,9 @@ export const TOKEN_COLOURS = {
  * and retires the ramp (T364-b).
  */
 export const MAP_ONLY_COLOURS = {
-  tier2: '#5c6873',
-  tier1: '#959a9c',
-  tier0: '#c5cac8',
+  tier2: '#59625c',
+  tier1: '#8f978f',
+  tier0: '#b4bcb3',
 };
 
 /**

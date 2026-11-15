@@ -54,6 +54,7 @@ import {
   OutdoorPage, PSection, StayLine, RouteBlock, HeightProfile, GradeCard, CheckRows,
   SafetyBlock, AlongCards, OtherNearby, OxLinkButton, SAC_STEP, plainName, outdoorPdfModel,
 } from './OutdoorParts.jsx';
+import { houseBasemap } from '../map/houseBasemap.js';
 
 /**
  * The trail page: a published hike or city day as a page of its own, opened
@@ -394,6 +395,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       dragRotate: false,
       touchPitch: false,
     });
+    houseBasemap(map);
     // Two fingers pan, a pinch zooms, no Ctrl (T430, lib/mapGestures.js).
     map._gestures = installMapGestures(map);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');

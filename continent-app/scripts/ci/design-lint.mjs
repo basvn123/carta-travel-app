@@ -5,7 +5,6 @@
  *
  * Rules (each one is a line or block check, no browser needed):
  *   hex-literal      a hex colour in a stylesheet outside the :root block
- *   gradient         any linear/radial/conic gradient in a stylesheet
  *   shadow-literal   a box-shadow or text-shadow that is not a --shadow token
  *   outline-none     a rule that removes the outline and sets no border-color
  *                    or box-shadow to replace it
@@ -151,7 +150,9 @@ function scanFile(abs, rel) {
     const tok = inRoot && l.match(/(?:^|[{;])\s*--([\w-]+)\s*:\s*([^;}]*)/);
     if (tok && !/^(display|ui|mono|plate-face)$/.test(tok[1]) && FACE_VALUE.test(tok[2])) add('font-literal', i, '--' + tok[1]);
     if (!inRoot && /#[0-9a-fA-F]{3,8}\b/.test(l.replace(/url\([^)]*\)/g, ''))) add('hex-literal', i);
-    if (/-gradient\s*\(/.test(l)) add('gradient', i);
+    // The gradient rule was dropped (G11, T998-a, 2026-11-12; house style 2026-11):
+    // contrast is measured by axe and token-contrast.mjs, and the house style
+    // draws its graphics as SVG, not as gradient fills.
     if (!inRoot) {
       const fs_ = l.match(/(?:^|[{;\s])font-size\s*:\s*([^;}]*)/);
       if (fs_ && /\d/.test(fs_[1]) && !/^\s*var\(\s*--text-/.test(fs_[1])) add('font-size-literal', i, fs_[1].trim().slice(0, 30));
@@ -248,7 +249,7 @@ function selfTest() {
   const empty = path.join(fx, 'empty-baseline.json');
   const bad = check(path.join(fx, 'bad'), empty);
   const rules = new Set(bad.fresh.map((v) => v.rule));
-  const want = ['hex-literal', 'gradient', 'shadow-literal', 'outline-none', 'em-dash', 'middot', 'banned-word', 'motion-effect', 'font-literal', 'js-hex-literal', 'token-mirror-drift', 'font-size-literal', 'radius-literal', 'legacy-token', 'money-literal', 'raw-button', 'z-index-literal', 'motion-literal'];
+  const want = ['hex-literal', 'shadow-literal', 'outline-none', 'em-dash', 'middot', 'banned-word', 'motion-effect', 'font-literal', 'js-hex-literal', 'token-mirror-drift', 'font-size-literal', 'radius-literal', 'legacy-token', 'money-literal', 'raw-button', 'z-index-literal', 'motion-literal'];
   const missing = want.filter((r) => !rules.has(r));
   const good = check(path.join(fx, 'good'), empty);
   let ok = true;

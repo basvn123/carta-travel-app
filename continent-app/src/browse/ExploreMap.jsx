@@ -16,6 +16,7 @@ import { countryName } from '../lib/countryName.js';
 import { drawerVisiblePx } from '../lib/mapDrawerState.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { useDayView } from '../hooks/useDayView.js';
+import { houseBasemap } from '../map/houseBasemap.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -536,6 +537,7 @@ export function ExploreMap({
       minZoom: 2.5,
       attributionControl: { compact: true },
     });
+    houseBasemap(map);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     mapRef.current = map;
     // A verify seam: scripts/verify_map_size_cards.mjs moves the camera to an

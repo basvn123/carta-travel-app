@@ -6,6 +6,7 @@ import { hasLngLat, declutterPins } from './coords.js';
 import { tokenColour } from './tokenColors.js';
 import { useI18n } from '../i18n/index.jsx';
 import { durationMs } from '../lib/motion.js';
+import { houseBasemap } from './houseBasemap.js';
 
 /* The route reveal (T398, DIRECTION 2.3 "Route reveal"): the first part of
    the lines, `frac` of their total length, in drawing order, so the route
@@ -306,6 +307,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       cooperativeGestures,
       ...(mapLocale ? { locale: mapLocale } : {}),
     });
+    houseBasemap(map);
     if (zoomControls) {
       map.addControl(new maplibregl.NavigationControl({ showCompass: false, showZoom: true }), 'top-right');
     }

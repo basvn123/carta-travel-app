@@ -4,6 +4,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { installMapGestures } from '../lib/mapGestures.js';
 import { tokenColour as token } from '../map/tokenColors.js';
 import { MapShell } from './MapShell.jsx';
+import { houseBasemap } from '../map/houseBasemap.js';
 
 /**
  * Where each night of a trip is (T431): one numbered pin a night, joined in
@@ -54,6 +55,7 @@ export default function TripDayMap({ places, sel = null, onPick, label, relief =
       dragRotate: false,
       touchPitch: false,
     });
+    houseBasemap(map);
     mapRef.current = map;
     map._gestures = installMapGestures(map);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');

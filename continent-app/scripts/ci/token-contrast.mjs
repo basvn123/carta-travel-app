@@ -74,6 +74,21 @@ const PAIRS = [
   ['--gem-ink', '--gem-bg', 4.5, 'hidden gem badge'],
   ['--on-fill', '--kind-metro', 4.5, 'label on the metro kind fill'],
   ['--on-fill', '--kind-city', 4.5, 'label on the city kind fill'],
+  // The house style (G1, 2026-11): plates, the formation, selected rows, the relief band, the map.
+  ['--on-plate', '--plate', 4.5, 'text on a plate and the Score'],
+  ['--on-plate-2', '--plate', 4.5, 'second line on a plate'],
+  ['--wagon-bed-ink', '--wagon-bed', 4.5, 'bed wagon figure'],
+  ['--wagon-food-ink', '--wagon-food', 4.5, 'food wagon figure'],
+  ['--wagon-go-ink', '--surface', 4.5, 'getting there wagon figure'],
+  ['--text', '--select-row', 4.5, 'text on a selected row'],
+  ['--action-hover', '--surface-page', 4.5, 'quiet button and See all'],
+  ['--action-hover', '--surface', 4.5, 'quiet button on paper'],
+  ['--text', '--relief-ground', 4.5, 'a relief height tag ground'],
+  ['--text-2', '--relief-ground', 4.5, 'text on the flat side of a relief band'],
+  ['--text', '--map-land', 4.5, 'map label on land'],
+  ['--text', '--map-water', 4.5, 'map label on water'],
+  ['--text', '--world-water', 4.5, 'text near a missing-photo tile'],
+  ['--action-text', '--danger', 4.5, 'label on a destructive fill'],
 ];
 
 // Non-text marks against what they sit on, at the 3:1 floor (T438).
@@ -85,6 +100,18 @@ const MARKS = [
   ['--rate', '--surface', 'rating star on a card'],
   ['--text-3', '--surface', 'switch track, off'],
   ['--action', '--surface', 'switch track, on'],
+  // The house style: control edges, the formation's edges, the kinds, the focus on a plate.
+  ['--edge', '--surface', 'control edge on paper'],
+  ['--edge', '--surface-page', 'control edge on the ground'],
+  ['--wagon-go-edge', '--surface', 'getting there wagon edge'],
+  ['--wagon-none-edge', '--surface', 'Not yet wagon dashed edge'],
+  ['--kind-trails', '--surface-sunken', 'trails mark on the band'],
+  ['--kind-beaches', '--surface-sunken', 'beaches mark on the band'],
+  ['--kind-lakes', '--surface-sunken', 'lakes mark on the band'],
+  ['--kind-mountains', '--surface-sunken', 'mountains mark on the band'],
+  ['--kind-cycling', '--surface-sunken', 'cycling mark on the band'],
+  ['--focus-on-dark', '--plate', 'focus ring on a plate'],
+  ['--map-route', '--map-land', 'route on map land'],
   // T845: the four cost groups' colours, on the cost bar and as dots.
   ['--cost-travel', '--surface', 'flights on the cost bar'],
   ['--cost-around', '--surface', 'getting around on the cost bar'],

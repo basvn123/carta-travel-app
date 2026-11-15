@@ -7,6 +7,7 @@ import { keyablePin, nameMarker } from '../map/pinKeys.js';
 import { TOKEN_COLOURS as TC } from '../map/tokenColors.js';
 import { durationMs } from '../lib/motion.js';
 import { installMapGestures } from '../lib/mapGestures.js';
+import { houseBasemap } from '../map/houseBasemap.js';
 
 
 /**
@@ -213,6 +214,7 @@ const DestMap = React.forwardRef(function DestMap({
       dragRotate: false,
       touchPitch: false,
     });
+    houseBasemap(map);
     mapRef.current = map;
     // Two fingers pan, a pinch or a mouse wheel zooms, and on a phone the
     // map stays still under a scrolling thumb (T430, lib/mapGestures.js).

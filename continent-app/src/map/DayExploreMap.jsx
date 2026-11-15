@@ -4,6 +4,7 @@ import maplibregl from './maplibre.js';
 import { keyablePin, clearKeyablePin, nameMarker, revealOnFocus } from './pinKeys.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { hasLngLat, finitePts, declutterPins } from './coords.js';
+import { houseBasemap } from './houseBasemap.js';
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
@@ -57,6 +58,7 @@ export function DayExploreMap({ stay, markers = [], onFocus, onStayClick, stayFo
       zoom: hasLngLat(stay) ? 10.3 : 4,
       attributionControl: { compact: true },
     });
+    houseBasemap(map);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     map.on('load', () => { readyRef.current = true; mapRef.current._build?.(); });
     map.on('error', () => { if (!readyRef.current) setFailed(true); });

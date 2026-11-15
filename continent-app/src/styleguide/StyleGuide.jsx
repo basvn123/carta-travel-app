@@ -1,78 +1,82 @@
 /*
- * The style guide (T424, roadmap 1.2): the one place that shows every part of
- * the design system with a live example and when to use it.
+ * The style guide (/?styleguide; T424, rebuilt for the house style 2026-11,
+ * G1). One page that shows every token with its contrast, the type at the
+ * three angles, every kit part in its states, the house parts, the relief
+ * drawn from a real place's dossier, and live interaction demos. It is the
+ * visual index of DESIGN.md; when the two disagree, the tokens in
+ * src/styles/01-tokens.css win and both are fixed.
  *
- * Opened at ?styleguide, instead of the app (src/main.jsx), lazy-loaded with
- * its own stylesheet so nothing here ships in the app's first paint. It is a
- * working page for the owner and for every session that builds a screen:
- * built from the real kit (src/components/ui) and the real tokens, never a
- * picture of them, so it cannot drift from what ships. Hidden from navigation
- * and marked noindex.
- *
- * Copy on this page is reference prose for the team, in English; the kit's
- * own labels and every figure go through i18n and money.js, so the language
- * switch at the top previews them in all six languages.
+ * Developer page: English only, not linked from the app.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { useI18n, LANGUAGES } from '../i18n/index.jsx';
 import {
-  Button, IconButton, Chip, ChipGroup, Segmented, Tabs, Card, Field, Icon, Money, MoneyUnit, Switch, Tile, TileGroup,
-  PlaceHead, PlaceTag, CarouselArrows, SlotText,
+  Button, IconButton, Chip, ChipGroup, Segmented, Tabs, Field, Switch, CostRow, CostSum, Money,
+  Blaze, Plate, ScorePlate, Formation, Rail, RailCard, StateBlock, Skeleton, NotYet, WorldTile, Figure, ReliefBand,
 } from '../components/ui/index.js';
-import { SLOT } from '../lib/slot.js';
-import '../styles/88-place-template.css';
-import * as Icons from '../components/Icons.jsx';
-import { RatingBadge, ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
+import { CountryFlag } from '../components/CountryFlag.jsx';
 import { formatMoney } from '../lib/money.js';
-import { thumbAt } from '../lib/heroImage.js';
+import { dataUrl } from '../lib/dataHost.js';
+import { hapticsAvailable, hapticsOn } from '../lib/haptics.js';
+import { SPRING } from '../lib/motionTokens.js';
 import './styleguide.css';
 
 const SECTIONS = [
-  ['colour', 'Colour'], ['type', 'Type'], ['space', 'Space and shape'], ['buttons', 'Buttons'],
-  ['chips', 'Chips and filters'], ['toggles', 'Switches and tiles'], ['switches', 'Segmented and tabs'],
-  ['score', 'Score'], ['cards', 'Cards'],
-  ['fields', 'Fields'], ['icons', 'Icons'], ['money', 'Prices'], ['parts', 'Page parts'], ['rules', 'Rules'],
+  ['idea', 'The idea'], ['colour', 'Colour'], ['type', 'Type'], ['shape', 'Shape and depth'],
+  ['kit', 'Kit'], ['house', 'House parts'], ['relief', 'Background'], ['states', 'States'],
+  ['motion', 'Interaction'], ['icons', 'Icons'],
 ];
 
-const ROLES = [
-  ['--surface-page', 'The ground behind everything', 'Never a card fill'],
-  ['--surface', 'Cards, sheets, bars', 'Never the page ground'],
-  ['--surface-sunken', 'Input fills, quiet bands, a segmented track', 'Never a selected state'],
-  ['--text', 'Body text and headings', 'Never on a brown fill'],
-  ['--text-2', 'Secondary text', 'Never for a heading'],
-  ['--text-3', 'Metadata at 11 to 14 px', 'Never body copy'],
-  ['--border', 'Card and input edges, dividers', 'Never as a second elevation on a shadowed object'],
-  ['--action', 'The one primary button, links, the live route', 'Never decoration, never a rating'],
-  ['--select-bg', 'The selected state, with --select-ink text and a mark', 'Never a dark fill'],
-  ['--best', 'Best value: a marker or fill with --text on it', 'Never text, never anything else'],
-  ['--rate', 'Ratings, a measure', 'Never an action'],
-  ['--gem-ink', 'Hidden gems', 'Never anything else'],
-  ['--danger', 'Destructive actions only', 'Never a warning or decoration'],
+// [token, role, the ground it is read on]
+const SWATCHES = [
+  ['--surface-page', 'Ground: stone', null],
+  ['--surface-sunken', 'Band', null],
+  ['--surface', 'Paper', null],
+  ['--text', 'Ink, text 1', '--surface-page'],
+  ['--text-2', 'Ink 2', '--surface-page'],
+  ['--text-3', 'Ink 3, 13 px and up', '--surface-page'],
+  ['--border', 'Rule, hairlines', null],
+  ['--edge', 'Edge, control borders (a mark)', '--surface'],
+  ['--umber-600', 'The paint: action, selected, blaze, route', '--surface-page'],
+  ['--umber-700', 'Brown text, pressed, focus', '--surface-page'],
+  ['--umber-800', 'Text on the beige', '--umber-100'],
+  ['--umber-100', 'Beige: tints, food wagon, selected', null],
+  ['--umber-200', 'Beige 2: second line on a plate', '--plate'],
+  ['--umber-50', 'Selected row', null],
+  ['--plate', 'Plate: Score and signpost', null],
+  ['--danger', 'Danger, always with words', '--surface-page'],
+  ['--kind-trails', 'Trails (with pictogram and word)', '--surface-sunken'],
+  ['--kind-beaches', 'Beaches', '--surface-sunken'],
+  ['--kind-lakes', 'Lakes', '--surface-sunken'],
+  ['--kind-mountains', 'Mountains', '--surface-sunken'],
+  ['--kind-cycling', 'Cycling', '--surface-sunken'],
+  ['--map-land', 'Map land', null],
+  ['--map-water', 'Map water', null],
 ];
-const PRIMITIVES = ['--neutral-0', '--neutral-25', '--neutral-50', '--neutral-100', '--neutral-150', '--neutral-200',
-  '--neutral-300', '--neutral-600', '--neutral-700', '--neutral-800', '--neutral-900', '--umber-50', '--umber-100',
-  '--umber-200', '--umber-300', '--umber-500', '--umber-600', '--umber-700', '--umber-800', '--sun-100',
-  '--sun-400', '--sun-800'];
+
 const TYPE = [
-  ['--text-display', 'Display', 'Destination names on a hero', 700],
-  ['--text-headline', 'Headline', 'Page titles', 700],
-  ['--text-title', 'Title', 'Card and section titles', 600],
-  ['--text-lead', 'Lead', 'Row titles, lead text, phone primary buttons', 600],
-  ['--text-body', 'Body', 'Body copy and list rows', 400],
-  ['--text-label', 'Label', 'Labels, chips, secondary buttons', 500],
-  ['--text-caption', 'Caption', 'Metadata; the floor for a figure or a rating', 400],
-  ['--text-micro', 'Micro', 'The floor for any functional text', 600],
-];
-const PLACES = [
-  { city: 'Kotor', country: 'Montenegro', day: 65, bed: 24, url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg/960px-20090719_Crkva_Gospa_od_Zdravlja_Kotor_Bay_Montenegro.jpg', rating: { score: 9.1 } },
-  { city: 'Hallstatt', country: 'Austria', day: 113, bed: 58, url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Hallstatt_-_Zentrum_.JPG/960px-Hallstatt_-_Zentrum_.JPG', rating: { score: 8.9 } },
-  { city: 'Plovdiv', country: 'Bulgaria', day: 49, bed: 18, est: true, url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/%D0%9F%D0%BB%D0%BE%D0%B2%D0%B4%D0%B8%D0%B2.jpg/960px-%D0%9F%D0%BB%D0%BE%D0%B2%D0%B4%D0%B8%D0%B2.jpg', rating: { score: 6.9 } },
+  ['--text-display', 800, 'A total figure', 'tabular'],
+  ['--text-headline', 800, 'Page title'],
+  ['--text-title', 800, 'Section'],
+  ['--text-plate', 700, 'Banská Štiavnica', 'plate'],
+  ['--text-figure', 800, 'Row figure', 'tabular'],
+  ['--text-lead', 400, 'Reading text and fields, 16 px so a phone never zooms.'],
+  ['--text-body', 600, 'Interface text: rows, controls, lists'],
+  ['--text-label', 600, 'Label'],
+  ['--text-micro', 600, 'Micro, the floor: 12 px'],
 ];
 
+const RADII = ['--radius-sm', '--radius-control', '--radius-panel', '--radius-card', '--radius-pill'];
+
+function hexOf(v) {
+  const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(v.trim());
+  if (!m) return null;
+  let h = m[1];
+  if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+  return `#${h.toLowerCase()}`;
+}
 function lum(hex) {
-  const h = hex.replace('#', '').trim();
-  const f = h.length === 3 ? h.split('').map((c) => c + c).join('') : h;
-  const [r, g, b] = [0, 2, 4].map((i) => parseInt(f.slice(i, i + 2), 16) / 255)
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(hex.slice(1 + i, 3 + i), 16) / 255)
     .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
@@ -97,337 +101,245 @@ function Section({ id, title, lead, children }) {
   );
 }
 
-function Use({ yes, no }) {
+function Demo({ title, children, note }) {
   return (
-    <dl className="sg-use">
-      <div><dt>Use for</dt><dd>{yes}</dd></div>
-      {no && <div><dt>Not for</dt><dd>{no}</dd></div>}
-    </dl>
+    <div className="sg-demo">
+      <h3>{title}</h3>
+      <div className="sg-demo-body">{children}</div>
+      {note && <p className="sg-note">{note}</p>}
+    </div>
   );
 }
 
-function Photo({ url, alt }) {
-  return <img src={thumbAt(url, 500)} alt={alt} loading="lazy" decoding="async" />;
-}
-
 export default function StyleGuide() {
-  const { t, lang, setLang } = useI18n();
-  const roleNames = useMemo(() => [...ROLES.map((r) => r[0]), '--select-ink', '--action-text'], []);
-  const tokens = useTokens(roleNames);
-  const prims = useTokens(PRIMITIVES);
-  const [filters, setFilters] = useState({ hiking: true, beaches: false, under60: false });
-  const [month, setMonth] = useState('oct');
-  const [view, setView] = useState('list');
+  const names = useMemo(() => [...new Set(SWATCHES.flatMap(([t, , on]) => [t, on].filter(Boolean)).concat(RADII))], []);
+  const tokens = useTokens(names);
+  const [chips, setChips] = useState(['city']);
+  const [unit, setUnit] = useState('pp');
   const [tab, setTab] = useState('overview');
-  const [saved, setSaved] = useState(true);
-  const [email, setEmail] = useState('');
-  const [gems, setGems] = useState(true);
-  const [noCar, setNoCar] = useState(false);
-  const [kinds, setKinds] = useState({ city: true, beach: false, mountains: false, nature: false });
+  const [alert, setAlert] = useState(true);
+  const [leg, setLeg] = useState('train');
+  const [people, setPeople] = useState(2);
+  const [mountains, setMountains] = useState(null);
+  const [field, setField] = useState('');
 
   useEffect(() => {
-    document.title = 'Design system | Carta';
-    const m = document.createElement('meta');
-    m.name = 'robots'; m.content = 'noindex';
-    document.head.appendChild(m);
-    return () => m.remove();
+    let live = true;
+    // A real place's peaks (Aosta's dossier): the relief is drawn only from real ground.
+    fetch(dataUrl('/dossier/gem-aosta.json'))
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (live) setMountains(d?.nearby?.mountains || []); })
+      .catch(() => { if (live) setMountains([]); });
+    return () => { live = false; };
   }, []);
 
-  const pair = (fg, bg) => (tokens[fg] && tokens[bg] ? ratio(tokens[fg], tokens[bg]).toFixed(1) : '');
+  const toggleChip = (v) => setChips((c) => (c.includes(v) ? c.filter((x) => x !== v) : [...c, v]));
+  const perPerson = 1667.5;
+  const total = perPerson * people;
 
   return (
     <div className="sg">
       <header className="sg-top">
         <div className="sg-top-inner">
-          <div className="sg-brand">
-            <span className="sg-mark" aria-hidden="true"><Icons.CompassIcon size={20} /></span>
-            <span>Carta</span>
-          </div>
-          <Segmented
-            label="Preview language"
-            size="sm"
-            value={lang}
-            onChange={setLang}
-            options={LANGUAGES.map((l) => ({ value: l.code, label: l.code.toUpperCase() }))}
-          />
+          <span className="sg-brand"><Blaze /> House style</span>
+          <span className="sg-tag">Style guide</span>
         </div>
       </header>
-
       <div className="sg-layout">
         <nav className="sg-nav" aria-label="Sections">
           {SECTIONS.map(([id, label]) => <a key={id} href={`#${id}`}>{label}</a>)}
         </nav>
-
-        <main className="sg-main">
+        <main className="sg-main" id="main">
           <div className="sg-hero">
-            <h1>Carta design system</h1>
-            <p>A calm, photo-first travel app in the manner of Airbnb, Polarsteps and Wanderlog, with one honest price line under every photo. Every part below is the live component and the live token; change the language at the top to see labels and prices in all six.</p>
+            <h1>The furniture of a footpath, made for prices</h1>
+            <p className="sg-lead">Stone ground, green-black ink, umber as the paint you put on the path when you choose. The blaze marks what is chosen or here; the plate holds a place, a time on foot and euros as one unit; the relief is drawn only from a place's real peaks. Full rules in DESIGN.md.</p>
           </div>
 
-          <Section id="colour" title="Colour" lead="Components read roles, never raw values. White surfaces on a warm light grey, blue-grey ink that is never black, one warm brown for actions and selection: two base colours.">
-            <div className="sg-swatches">
-              {ROLES.map(([name, yes, no]) => (
-                <div className="sg-swatch" key={name}>
-                  <span className="sg-chip" style={{ background: `var(${name})` }} />
-                  <div className="sg-swatch-body">
-                    <code>{name}</code>
-                    <span className="sg-hex">{tokens[name]}</span>
-                    <p>{yes}</p>
-                    <p className="sg-no">{no}</p>
-                  </div>
+          <Section id="idea" title="The idea" lead="Three signature parts, each with one job. Nothing decorates.">
+            <div className="sg-row">
+              <Demo title="Blaze" note="Chosen or here only: the current tab, the chosen pin, a sheet grip, the wordmark slot, the relief cut.">
+                <Blaze size="sm" /><Blaze /><Blaze size="lg" /><Blaze size="lg" state="rest" /><Blaze size="lg" state="blank" />
+              </Demo>
+              <Demo title="Plate" note="Place, leg, total and mark. Never an ordinary card.">
+                <div className="sg-stack">
+                  <Plate name="Aosta" sub="Italy" fig={<Money value={133} />} figSub="a day" />
+                  <Plate variant="mark" fig={<Money value={133} />} />
                 </div>
-              ))}
+              </Demo>
             </div>
-            <h3>Pairs that carry text</h3>
-            <div className="sg-pairs">
-              {[['--text', '--surface-page'], ['--text-3', '--surface-sunken'], ['--action-text', '--action'], ['--select-ink', '--select-bg'], ['--text', '--best']].map(([fg, bg]) => (
-                <div key={fg + bg} className="sg-pair" style={{ background: `var(${bg})`, color: `var(${fg})` }}>
-                  <b>Aa {pair(fg, bg)}:1</b>
-                  <span>{fg} on {bg}</span>
+          </Section>
+
+          <Section id="colour" title="Colour" lead="Contrast is measured live on the ground each colour is read on. Text pairs pass 4.5, marks 3.">
+            <ul className="sg-swatches">
+              {SWATCHES.map(([t, role, on]) => {
+                const hex = hexOf(tokens[t] || '');
+                const bg = on ? hexOf(tokens[on] || '') : null;
+                const r = hex && bg ? ratio(hex, bg) : null;
+                return (
+                  <li key={t} className="sg-swatch">
+                    <span className="sg-chip-col" style={{ background: `var(${t})` }} aria-hidden="true" />
+                    <span className="sg-sw-text">
+                      <code>{t}</code>
+                      <span>{role}</span>
+                      <span className="sg-sw-meta">{hex || tokens[t]}{r ? `, ${r.toFixed(2)} on ${on}` : ''}</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </Section>
+
+          <Section id="type" title="Type" lead="Overpass for every word and figure, tabular figures on. Sofia Sans Extra Condensed only for plate names. Titles grow at 769 and 1024 px.">
+            <ul className="sg-type">
+              {TYPE.map(([t, w, text, mode]) => (
+                <li key={t}>
+                  <code>{t}</code>
+                  <span className={mode === 'plate' ? 'sg-plate-face' : undefined}
+                    style={{ fontSize: `var(${t})`, fontWeight: w }}>
+                    {mode === 'tabular' ? formatMoney(3335) : text}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            <p className="sg-note">Glyph check: Český Krumlov, Banská Štiavnica, Übernachtung, Piñón, Łódź, Győr.</p>
+          </Section>
+
+          <Section id="shape" title="Shape and depth" lead="One radius scale, rounder than a ruler. Panels lie flat on a hairline; only what floats casts a shadow.">
+            <div className="sg-row">
+              {RADII.map((r) => (
+                <div key={r} className="sg-radius" style={{ borderRadius: `var(${r})` }}><code>{r}</code><span>{tokens[r]}</span></div>
+              ))}
+              <div className="sg-float"><code>--elev-2</code><span>Sheets, menus, toasts</span></div>
+            </div>
+          </Section>
+
+          <Section id="kit" title="Kit" lead="Every control from src/components/ui. One selected state: the beige wash, brown text, a brown edge and a mark.">
+            <div className="sg-grid">
+              <Demo title="Buttons">
+                <Button variant="primary">Plan a trip here</Button>
+                <Button>Change</Button>
+                <Button variant="quiet">See all</Button>
+                <Button variant="primary" iconStart={<span className="ai-tag">AI</span>}>Ask</Button>
+                <Button disabled>Not now</Button>
+              </Demo>
+              <Demo title="Icon buttons">
+                <IconButton label="Back" tone="surface"><HouseIcon.back size={20} /></IconButton>
+                <IconButton label="Share"><HouseIcon.share size={20} /></IconButton>
+                <IconButton label="Save" pressed><HouseIcon.cairn size={20} /></IconButton>
+              </Demo>
+              <Demo title="Chips" note="Select: the fill, then the tick springs in. A haptic tick on a touch commit.">
+                <ChipGroup label="Kind of place">
+                  {['city', 'beach', 'nature', 'mountains'].map((k) => (
+                    <Chip key={k} selected={chips.includes(k)} onClick={() => toggleChip(k)}>{k[0].toUpperCase() + k.slice(1)}</Chip>
+                  ))}
+                </ChipGroup>
+              </Demo>
+              <Demo title="Segmented" note="44 px high on touch; the chosen segment takes the paint.">
+                <Segmented label="Prices for" value={unit} onChange={setUnit}
+                  options={[{ value: 'pp', label: 'Per person' }, { value: 'group', label: 'Whole group' }]} />
+              </Demo>
+              <Demo title="Tabs" note="The umber paint bar strokes in under the chosen tab.">
+                <Tabs label="Trip" value={tab} onChange={setTab}
+                  tabs={[{ id: 'overview', label: 'Overview' }, { id: 'itinerary', label: 'Itinerary' }, { id: 'costs', label: 'Costs' }, { id: 'days', label: 'Days' }]} />
+              </Demo>
+              <Demo title="Switch">
+                <Switch label="Price alert" checked={alert} onChange={setAlert} />
+              </Demo>
+              <Demo title="Field">
+                <Field label="What you paid" hint="In euros" value={field} onChange={(e) => setField(e.target.value)}
+                  error={field && Number.isNaN(Number(field)) ? 'Type the fare you paid, in euros.' : undefined} />
+              </Demo>
+              <Demo title="Receipt" note="Dotted leaders on a wide receipt; the total is the engine's own, with a Rounding line where whole euros do not add up.">
+                <dl className="costrows has-leaders">
+                  <CostRow kind="flight" label="Getting there" value={<Money value={211} />} />
+                  <CostRow kind="bed" label="Stay, 7 nights" value={<Money value={2199} />} />
+                  <CostRow kind="food" label="Food and drink" value={<Money value={924} />} />
+                  <CostRow label="Local transport" value={<NotYet />} />
+                  <CostRow label="Rounding" value={<Money value={1} />} />
+                  <CostSum label="Total, 2 people" value={<Money value={3335} />} />
+                </dl>
+              </Demo>
+            </div>
+          </Section>
+
+          <Section id="house" title="House parts" lead="The formation is the price row of every list and card. The day figure is always the loudest thing in it.">
+            <div className="sg-grid">
+              <Demo title="Formation" note="Getting there outlined, the bed solid umber, food beige, then the day. Not yet is dashed and outside the sum.">
+                <div className="sg-stack">
+                  <Formation go={{ mode: 'car', amount: 118 }} bed={68} food={65} day={133} dayLabel="A day" />
+                  <Formation go={{ mode: 'flight', amount: 120 }} bed={96} food={50} day={145} dayLabel="A day" />
+                  <Formation go={{ mode: 'train', amount: null }} bed={44} food={32} day={76} dayLabel="A day" />
+                  <Formation go={{ mode: 'car', amount: 118 }} bed={68} food={65} day={133} size="lg" weighted dayLabel="A day" />
                 </div>
-              ))}
-            </div>
-            <h3>Primitives</h3>
-            <div className="sg-ramp">
-              {PRIMITIVES.map((n) => (
-                <div key={n} className="sg-ramp-cell">
-                  <span style={{ background: `var(${n})` }} />
-                  <code>{n.replace('--', '')}</code>
-                  <small>{prims[n]}</small>
+              </Demo>
+              <Demo title="Plates">
+                <div className="sg-stack">
+                  <Plate lead={<Blaze size="sm" />} name="Sentier des Alpages" fig="6 h 39" figSub="on foot" />
+                  <Plate variant="leg" as="button" checked={leg === 'train'} onClick={() => setLeg('train')} name="Train" sub="Fastest, 9 h 12" fig={<Money value={211} />} />
+                  <Plate variant="leg" as="button" checked={leg === 'bus'} onClick={() => setLeg('bus')} name="Bus" sub="Cheapest, 13 h 05" fig={<Money value={148} />} />
+                  <Plate variant="total" name="Total, 2 people" fig={<Figure value={total} mine delta />} />
+                  <span className="sg-row"><ScorePlate value={9.7} label="Score" /><ScorePlate value={8.2} label="Score" size="lg" /></span>
                 </div>
+              </Demo>
+            </div>
+            <Rail title="Hiking bases" onSeeAll={() => {}}>
+              {[['Aosta', 'IT', 'Italy', 9.4, { mode: 'car', amount: 118 }, 68, 65, 133],
+                ['Hallstatt', 'AT', 'Austria', 9.6, { mode: 'car', amount: 138 }, 109, 64, 172],
+                ['Moustiers-Sainte-Marie', 'FR', 'France', 9.4, { mode: 'flight', amount: 120 }, 96, 50, 145],
+                ['Piran', 'SI', 'Slovenia', 9.1, { mode: 'bus', amount: null }, 79, 59, 138]].map(([n, cc, c, s, go, bed, food, day], i) => (
+                <RailCard key={n} href="#house" name={n} score={s} scoreLabel="Score"
+                  world={['rock', 'water', 'lowland', 'water'][i]}
+                  where={<><CountryFlag country={cc} size={14} /> {c}</>}
+                  gem={i === 2 ? 'Hidden gem' : null}
+                  formation={<Formation go={go} bed={bed} food={food} day={day} weighted dayLabel="A day" />}
+                  action={<IconButton label={`Save ${n}`} tone="photo"><HouseIcon.cairn size={20} /></IconButton>} />
               ))}
+            </Rail>
+          </Section>
+
+          <Section id="relief" title="Background" lead="The relief: contours drawn only from the place's real peaks in its dossier, after a hard umber cut. Text stays on the flat side; every relief prints a real height; no peak, no relief.">
+            {mountains === null ? <Skeleton h={160} /> : (
+              <ReliefBand mountains={mountains} seed="gem-aosta" cut="45%" className="sg-relief">
+                <h3 className="sg-relief-title">Around Aosta</h3>
+                <p className="sg-note">Peaks from the dossier: {mountains.length ? mountains.slice(0, 3).map((m) => m.name).join(', ') : 'none, so no relief'}.</p>
+              </ReliefBand>
+            )}
+            <ReliefBand mountains={[]} seed="none" className="sg-relief">
+              <h3 className="sg-relief-title">A place without peaks</h3>
+              <p className="sg-note">No relief, by rule: the band stays flat.</p>
+            </ReliefBand>
+          </Section>
+
+          <Section id="states" title="States" lead="One way to say loading, empty, error and a missing figure, everywhere.">
+            <div className="sg-grid">
+              <Demo title="Loading"><StateBlock kind="loading" /><Skeleton w="70%" h={18} /><Skeleton w="45%" h={14} /></Demo>
+              <Demo title="Empty"><StateBlock kind="empty" title="No place fits" action={<Button variant="quiet">Clear all</Button>} /></Demo>
+              <Demo title="Error"><StateBlock kind="error" title="The prices did not load" text="Check the connection and try again." action={<Button>Try again</Button>} /></Demo>
+              <Demo title="Not yet and a missing photo"><p>Local transport <NotYet /></p><span className="sg-world"><WorldTile world="water" /></span></Demo>
             </div>
           </Section>
 
-          <Section id="type" title="Type" lead="One family, Figtree, for everything. Figures are tabular across the app, so prices line up and settle in place. Nothing functional under 11 px, no figure or rating under 12 px.">
-            <div className="sg-type">
-              {TYPE.map(([tok, name, use, w]) => (
-                <div className="sg-type-row" key={tok}>
-                  <div className="sg-type-meta"><b>{name}</b><code>{tok}</code><small>{use}</small></div>
-                  <div className="sg-type-sample" style={{ fontSize: `var(${tok})`, fontWeight: w }}>
-                    {tok === '--text-display' || tok === '--text-headline' ? 'Walk from a town' : 'Kotor, Bay of Kotor, 3 nights from 14 Oct'}
-                  </div>
-                </div>
-              ))}
+          <Section id="motion" title="Interaction" lead="Painted and placed. Overshoot only on the control the finger touched; figures roll only when you changed them; reduced motion shows the end state.">
+            <div className="sg-grid">
+              <Demo title="Figure that answers you" note="Demo figures. Change the people: the total rolls once and a delta note shows. A figure nobody touched never moves.">
+                <Segmented label="People" value={String(people)} onChange={(v) => setPeople(Number(v))}
+                  options={[1, 2, 3, 4].map((n) => ({ value: String(n), label: String(n) }))} />
+                <span className="sg-big"><Figure value={total} mine delta /></span>
+              </Demo>
+              <Demo title="Springs" note="Generated into CSS linear() by scripts/ci/spring-easings.mjs.">
+                <ul className="sg-springs">
+                  {Object.entries(SPRING).map(([k, v]) => <li key={k}><code>{k}</code> {v.visualDuration ? `${v.visualDuration * 1000} ms, bounce ${v.bounce}` : `stiffness ${v.stiffness}, damping ${v.damping}`}</li>)}
+                </ul>
+              </Demo>
+              <Demo title="Haptics" note="Tick on a value, confirm on a kept thing, warn on a failure; touch commits only.">
+                <p>{hapticsAvailable() ? `This device can vibrate; haptics are ${hapticsOn() ? 'on' : 'off'}.` : 'This device has no haptic route, so Settings shows no switch.'}</p>
+              </Demo>
             </div>
           </Section>
 
-          <Section id="space" title="Space and shape" lead="A 4 px spacing grid; four corner radii; elevation declared once per object, a border or a shadow, never both.">
-            <div className="sg-space">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                <div key={n} className="sg-space-row"><code>--space-{n}</code><span style={{ width: `var(--space-${n})` }} /></div>
-              ))}
-            </div>
-            <div className="sg-shapes">
-              {[['--radius-sm', 'Small marks'], ['--radius-control', 'Buttons, inputs'], ['--radius-card', 'Cards, photos'], ['--radius-sheet', 'Sheets, dialogs'], ['--radius-pill', 'Chips, round icons']].map(([r, u]) => (
-                <div key={r} className="sg-shape"><span style={{ borderRadius: `var(${r})` }} /><code>{r}</code><small>{u}</small></div>
-              ))}
-            </div>
-            <div className="sg-shapes">
-              {[['--elev-1', 'A resting card without a border'], ['--elev-2', 'A popover, a sticky bar'], ['--elev-3', 'A sheet or a dialog']].map(([e, u]) => (
-                <div key={e} className="sg-shape"><span className="sg-elev" style={{ boxShadow: `var(${e})` }} /><code>{e}</code><small>{u}</small></div>
-              ))}
-            </div>
-          </Section>
-
-          <Section id="buttons" title="Buttons" lead="Four kinds and one icon button. Verb first, sentence case, no full stop. One primary per view.">
-            <div className="sg-demo">
-              <Button variant="primary">Plan a trip here</Button>
-              <Button>Save trip</Button>
-              <Button variant="quiet">See all</Button>
-              <Button variant="danger">Delete account</Button>
-            </div>
-            <div className="sg-demo">
-              <Button variant="primary" disabled>Next: Where</Button>
-              <Button disabled>Back</Button>
-              <Button variant="primary" loading>Plan your days</Button>
-              <Button size="sm" iconStart={<Icons.FilterIcon size={16} />}>Filters</Button>
-            </div>
-            <Use yes="Primary: the one action that moves the traveller on. Secondary: every other action. Quiet: an offer inside a bar, a row or a card. Danger: something is erased." no="Two primaries in a view; a dark-filled button; a link that only navigates (use a link)." />
-            <div className="sg-demo">
-              <IconButton label="Close"><Icons.CloseIcon size={18} /></IconButton>
-              <IconButton label="Filters" tone="surface"><Icons.FilterIcon size={18} /></IconButton>
-              <IconButton label="Save" tone="photo" pressed={saved} onClick={() => setSaved((s) => !s)}><Icons.BookmarkIcon size={18} /></IconButton>
-            </div>
-            <div className="sg-demo">
-              <Button href="https://www.google.com/travel/flights" external size="sm" iconAfter={<Icons.ExternalIcon size={13} />}>Book</Button>
-              <Button href="?tab=explore" variant="primary">See places</Button>
-            </div>
-            <Use yes="Button href (T1121): a link that looks like a button, for a step that leaves the page or opens a booking site. external opens a new tab." no="A hand-written <a className=&quot;btn&quot;>; a button that only navigates inside a sentence (use a plain link)." />
-            <Use yes="IconButton: a control whose icon is universally read (close, filters, save). Always a 44 px box and a label." no="An action whose meaning needs a word; use a Button with an icon." />
-          </Section>
-
-          <Section id="chips" title="Chips and filters" lead="One chip in four kinds. Selected takes the light tint and a tick, so the state never rests on colour alone.">
-            <div className="sg-demo">
-              {[['hiking', 'Hiking'], ['beaches', 'Beaches'], ['under60', `Under ${formatMoney(60)} a day`]].map(([k, l]) => (
-                <Chip key={k} selected={filters[k]} onClick={() => setFilters((f) => ({ ...f, [k]: !f[k] }))}>{l}</Chip>
-              ))}
-            </div>
-            <ChipGroup label="Month">
-              {[['sep', 'Sep'], ['oct', 'Oct'], ['nov', 'Nov'], ['any', 'Any month']].map(([k, l]) => (
-                <Chip key={k} kind="choice" selected={month === k} onClick={() => setMonth(k)}>{l}</Chip>
-              ))}
-            </ChipGroup>
-            <div className="sg-demo">
-              <Chip kind="count">3</Chip>
-              <Chip kind="status">UNESCO World Heritage</Chip>
-              <Chip kind="status" tone="best">Best value</Chip>
-              <Chip kind="status" tone="gem">Hidden gem</Chip>
-              <Chip kind="status" tone="rate">Exceptional</Chip>
-              <Chip kind="status" tone="positive">Open now</Chip>
-              <Chip kind="status" tone="danger">Closed</Chip>
-            </div>
-            <Use yes="Filter: narrows a list, many can be on. Choice: one of a short set. Count: a figure beside a label. Status: a label on an object, each tone for its one job." no="Navigation between pages; more than one line of chips without a 'More' sheet." />
-          </Section>
-
-          <Section id="toggles" title="Switches and tiles" lead="A switch applies a setting at once; tiles show a short set the eye finds by shape. Both take the one selected state.">
-            <div className="sg-fields">
-              <Switch label="Hidden gems" checked={gems} onChange={setGems} />
-              <Switch label="No car needed" hint="Walkable, with good local transport" checked={noCar} onChange={setNoCar} />
-              <Switch label="Unavailable" checked={false} disabled />
-            </div>
-            <TileGroup label="Trip type" columns={2} className="sg-tiles-demo">
-              {[['city', 'City', Icons.CityIcon], ['beach', 'Beach', Icons.BeachIcon], ['mountains', 'Mountains', Icons.MountainIcon], ['nature', 'Nature', Icons.TreeIcon]].map(([k, l, I]) => (
-                <Tile key={k} icon={<I size={24} />} selected={kinds[k]} onClick={() => setKinds((v) => ({ ...v, [k]: !v[k] }))}>{l}</Tile>
-              ))}
-            </TileGroup>
-            <Use yes="Switch: an on or off filter or setting that applies at once. Tile: a short set of kinds (trip types, sections), two or three across, all the same size." no="A setting that waits for Save (a checkbox in a form); a long list (chips or a select)." />
-          </Section>
-
-          <Section id="switches" title="Segmented and tabs">
-            <div className="sg-demo">
-              <Segmented label="View" value={view} onChange={setView} options={[{ value: 'list', label: 'List', icon: <Icons.ListDayIcon size={16} /> }, { value: 'map', label: 'Map', icon: <Icons.MapPinIcon size={16} /> }]} />
-            </div>
-            <Use yes="Segmented: two to four views of the same thing (List and Map, Overview and Day by day). The chosen one is lifted, white on the track." no="More than four options; filters (use chips)." />
-            <Tabs label="Trip" value={tab} onChange={setTab} tabs={[{ id: 'overview', label: 'Overview' }, { id: 'days', label: 'Day by day', count: 7 }, { id: 'costs', label: 'Costs' }]} />
-            <Use yes="Tabs: sections of one page that swap in place, underlined in brown." no="Moving between pages or tabs of the app (use links)." />
-          </Section>
-
-          <Section id="score" title="Score" lead="A drawn star and the figure in ink, never a filled chip, so a rating never reads as a button. The star is filled from Excellent up and outlined below; a page head may add the band word.">
-            <div className="sg-demo">
-              {[[9.8, 3], [8.1, 2], [7.2, 1], [6.1, 0]].map(([n, tier]) => <ScoreChip key={n} rating={{ score: n, tier }} size="sm" />)}
-            </div>
-            <div className="sg-demo">
-              <ScoreChip rating={{ score: 9.8, tier: 3 }} size="lg" band />
-              <ScoreChip rating={{ score: 8.1, tier: 2 }} size="lg" band />
-              <HiddenGemTag />
-            </div>
-            <Use yes="Every rating on a card, row, pin or page, at 12 px or more. The band word on a page head or preview." no="A coloured fill behind the figure; the score over a photograph." />
-          </Section>
-
-          <Section id="cards" title="Cards" lead="One anatomy for every object: media, title, meta, price, rating, actions. Compact rows are the default on Explore and Destinations; photo tiles are for rails and the home page.">
-            <div className="sg-rows">
-              {PLACES.map((p) => (
-                <Card
-                  key={p.city}
-                  layout="row"
-                  media={<Photo url={p.url} alt="" />}
-                  title={p.city}
-                  onOpen={() => {}}
-                  meta={p.country}
-                  price={<><Money value={p.day} est={p.est} /> <span className="sg-unit">{t('cost.perDay')}</span></>}
-                  rating={<RatingBadge rating={p.rating} size="sm" showGem={false} />}
-                  actions={<IconButton label="Save"><Icons.BookmarkIcon size={18} /></IconButton>}
-                />
-              ))}
-            </div>
-            <div className="sg-tiles">
-              {PLACES.map((p) => (
-                <Card
-                  key={p.city}
-                  layout="tile"
-                  media={<Photo url={p.url} alt={p.city} />}
-                  title={p.city}
-                  onOpen={() => {}}
-                  meta={p.country}
-                  price={<><Money value={p.day} /> <span className="sg-unit">{t('cost.perDay')}</span></>}
-                  rating={<RatingBadge rating={p.rating} size="sm" showGem={false} />}
-                  actions={<IconButton label="Save" tone="photo"><Icons.BookmarkIcon size={18} /></IconButton>}
-                />
-              ))}
-            </div>
-            <Use yes="Row: any list where places are compared. Tile: a rail or the home page, where the photo should sell the place." no="A card inside a card; a bento grid of facts; text on a photograph." />
-          </Section>
-
-          <Section id="fields" title="Fields" lead="Every field has a visible label. Help and errors sit under the field and are read with it.">
-            <div className="sg-fields">
-              <Field label="Email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} hint="We send the receipt here." />
-              <Field as="select" label="Lifestyle" defaultValue="entire"><option value="dorm">Hostel bed</option><option value="private">Private room</option><option value="entire">Entire place</option></Field>
-              <Field label="Trip name" defaultValue="" error="Give the trip a name so you can find it later." />
-              <Field as="textarea" label="Notes" hint="Only you see these." />
-            </div>
-            <Use yes="Any input the traveller types or picks into." no="A placeholder as the only name of a field." />
-          </Section>
-
-          <Section id="icons" title="Icons" lead="Drawn line icons, 1.5 stroke, three sizes: 16 px in chips and inline, 20 px in buttons and rows, 24 px in empty states.">
-            <div className="sg-icon-sizes">
-              {['sm', 'md', 'lg'].map((s) => <span key={s}><Icon as={Icons.MapPinIcon} size={s} /><code>{s}</code></span>)}
-            </div>
-            <div className="sg-icons">
-              {Object.entries(Icons).filter(([n, C]) => /Icon$/.test(n) && typeof C === 'function').map(([n, C]) => (
-                <div key={n} className="sg-icon">{React.createElement(C, { size: 20 })}<small>{n.replace(/Icon$/, '')}</small></div>
-              ))}
-            </div>
-          </Section>
-
-          <Section id="money" title="Prices" lead="Every euro comes from one formatter. Whole euros where places are compared; cents on receipts and totals; the symbol where the reader's language puts it; an estimate is always a tilde and the estimate word.">
-            <table className="sg-table">
-              <thead><tr><th>Context</th><th>Current language</th><th>Rule</th></tr></thead>
-              <tbody>
-                <tr><td>Card, pin, list, filter</td><td><Money value={1268.4} /></td><td>Whole euros</td></tr>
-                <tr><td>Receipt, total, ledger, pass</td><td><Money value={1268.4} precision="cents" /></td><td>Cents</td></tr>
-                <tr><td>Estimate</td><td><Money value={556.48} precision="cents" est /></td><td>Tilde joined, the estimate word after</td></tr>
-                <tr><td>Range</td><td><Money low={40} high={60} /></td><td>The language's own range word</td></tr>
-                <tr><td>Per person</td><td><Money value={278.24} precision="cents" /> {t('money.perPerson')}</td><td>One phrase per language</td></tr>
-                <tr><td>No figure</td><td><Money value={null} /></td><td>Words, never a blank or a dash</td></tr>
-              </tbody>
-            </table>
-            <table className="sg-table">
-              <thead><tr><th>Language</th><th>Card</th><th>Receipt</th></tr></thead>
-              <tbody>
-                {LANGUAGES.map((l) => (
-                  <tr key={l.code}>
-                    <td>{l.label}</td>
-                    <td className="money">{formatMoney(1268.4, { locale: l.bcp47 })}</td>
-                    <td className="money">{formatMoney(99.54, { precision: 'cents', locale: l.bcp47 })}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <Use yes="<Money> in JSX, formatMoney() in a string; i18n templates take a formatted {price}." no="A euro sign in a template; toFixed on a price; a rounded figure on a receipt." />
-          </Section>
-
-          <Section id="parts" title="Page parts" lead="Parts every place-like page shares, built once (T1121). Each keeps its page's class names, so a page looks as it did; change the part, and every page follows.">
-            <div className="sg-demo" style={{ display: 'block' }}>
-              <PlaceHead title="Rome" where="Italy" iso2="IT"
-                score={<span className="pt-score"><ScoreChip rating={{ score: 8.6, tier: 2 }} size="lg" band /></span>}
-                tags={[<PlaceTag key="r">Top of Italy</PlaceTag>, <PlaceTag key="u" tone="unesco">UNESCO</PlaceTag>]} />
-            </div>
-            <Use yes="PlaceHead: the head of the place page, the outdoor pages and the journey page (name, where, Score, standing tags). PlaceTag: a rank or UNESCO tag in it." no="Writing the pt-head markup on a new page." />
-            <div className="sg-demo">
-              <span>
-                <MoneyUnit value={87} unit={t('money.perPerson')} unitClassName="sg-unit" />
-              </span>
-              <span><SlotText text={t('rail.factFrom', { price: SLOT })}><Money value={42} est /></SlotText></span>
-            </div>
-            <Use yes="MoneyUnit: a figure and its unit. SlotText: a translated sentence with a Money in its slot, so the figure stays a figure in every language." no="Splitting a catalogue string by hand around a price." />
-            <div className="sg-demo">
-              <span style={{ position: 'relative', display: 'inline-flex', gap: 8 }}>
-                <CarouselArrows className="sg-arrow" index={0} count={3} onStep={() => {}} />
-              </span>
-            </div>
-            <Use yes="CarouselArrows: the previous and next pair of every carousel and rail, with the carousel's own class for placement. DialogSheet: the short centred sheet (your flight, why it rates). PriceDock: the fixed price bar under 1024 px." no="A swipe as the only way through; an arrow without a label." />
-          </Section>
-
-          <Section id="rules" title="Rules">
-            <ul className="sg-rules">
-              <li>One selected state: the light brown tint, a brown label and a mark. Never a dark fill.</li>
-              <li>One primary button per view. Brown means it acts, is live or is selected.</li>
-              <li>Two base colours: blue-grey ink and one brown. A rating is an ink figure with a brown star; sun yellow marks best value; red is destruction.</li>
-              <li>Photos lead; text never sits on a photograph; a caption sits under it.</li>
-              <li>Every control is 44 px on touch; focus is a 2 px brown ring.</li>
-              <li>Motion uses the four duration tokens, moves transform and opacity, and stops under reduced motion.</li>
-              <li>No em or en dashes, no middots, sentence case, verb-first labels.</li>
+          <Section id="icons" title="Icons" lead="24 px grid, 1.75 stroke, square caps, mitred joins. No sparkle for AI, no globe for countries.">
+            <ul className="sg-icons">
+              {Object.entries(HouseIcon).map(([k, G]) => <li key={k}><G size={24} /><code>{k}</code></li>)}
             </ul>
           </Section>
         </main>

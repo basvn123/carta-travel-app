@@ -7,6 +7,7 @@ import { cityLabel } from '../../lib/placeName.js';
 import { tokenColour } from '../../map/tokenColors.js';
 import { fallbackSrc } from '../../lib/heroImage.js';
 import { shortDuration, thereMinutes, tripPhotos } from './finderText.js';
+import { houseBasemap } from '../../map/houseBasemap.js';
 
 /**
  * Trips for you on a map (T868; T883, the owner's free direction
@@ -86,6 +87,7 @@ export default function TripsMap({ trips, destinations, pickedId, cheapestId = n
         dragRotate: false,
         touchPitch: false,
       });
+      houseBasemap(map);
     } catch {
       setFailed(true);
       return undefined;
@@ -257,6 +259,7 @@ export function RouteMap({ trip, destinations, label }) {
         touchPitch: false,
         scrollZoom: false,
       });
+      houseBasemap(map);
     } catch {
       setFailed(true);
       return undefined;

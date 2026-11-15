@@ -356,7 +356,9 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
    blaze on top; contours never under text, figures, fields or focus. */
 .relief-band { position: relative; isolation: isolate; }
 .relief-band .relief-flat { position: relative; z-index: 2; }
-.relief-band.has-relief .relief-flat { max-width: var(--relief-cut, 55%); }
+/* The clear zone: the flat side ends a gutter before the cut, whatever the
+   band's own padding (scripts/verify_relief.mjs checks it). */
+.relief-band.has-relief .relief-flat { max-width: calc(var(--relief-cut, 55%) - var(--space-6)); }
 .relief-zone {
   position: absolute;
   top: 0;
@@ -368,7 +370,7 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
   background: var(--relief-ground);
   border-radius: 0 var(--radius-card) var(--radius-card) 0;
 }
-.relief-cut { position: absolute; left: 0; top: 0; bottom: 0; width: var(--stroke-route); background: var(--action); z-index: 3; }
+.relief-cut { position: absolute; left: 0; top: 0; bottom: 0; width: var(--stroke-edge); background: var(--action); z-index: 3; }
 .relief-zone .relief-cut-blaze { position: absolute; left: 0; top: 10px; z-index: 4; translate: -50% 0; }
 .relief { position: absolute; inset: 0; overflow: hidden; pointer-events: none; contain: paint; animation: hs-fade-in var(--dur-4) var(--ease-out); }
 .relief svg { position: absolute; inset: 0; width: 100%; height: 100%; }

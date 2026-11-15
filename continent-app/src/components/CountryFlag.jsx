@@ -108,7 +108,10 @@ const FLAGS = {
   SI: { kind: 'emblem', field: null, draw: (k) => (
     <g key={k}><rect width="60" height="13.3" fill="#fff" /><rect y="13.3" width="60" height="13.3" fill="#005ce5" />
     <rect y="26.6" width="60" height="13.4" fill="#ed1c24" />
-    <path d="M14 8 L19 16 L9 16 Z" fill="#005ce5" stroke="#fff" strokeWidth="1" /></g>
+    {/* The shield drawn large enough to survive at 15 px (house style, must-fix 13:
+        without it the tricolour reads as Russia's): blue, red edge, the white peak. */}
+    <path d="M10 5 h16 v12 q0 8 -8 12 q-8 -4 -8 -12 Z" fill="#005ce5" stroke="#ed1c24" strokeWidth="1.6" />
+    <path d="M12 21 L18 12 L24 21 Z" fill="#fff" /></g>
   ) },
   SK: { kind: 'emblem', field: null, draw: (k) => (
     <g key={k}><rect width="60" height="13.3" fill="#fff" /><rect y="13.3" width="60" height="13.3" fill="#0b4ea2" />

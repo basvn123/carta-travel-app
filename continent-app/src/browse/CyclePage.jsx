@@ -45,6 +45,7 @@ import {
   OtherNearby, OxLinkButton, outdoorPdfModel,
 } from './OutdoorParts.jsx';
 import { scrollToSection } from './PageTemplate.jsx';
+import { houseBasemap } from '../map/houseBasemap.js';
 
 /**
  * The cycling page: one route, or one tour composed over routes.
@@ -125,6 +126,7 @@ function useRouteMap(mapEl, geometry, bbox, onPick = null) {
       dragRotate: false,
       touchPitch: false,
     });
+    houseBasemap(map);
     // Two fingers pan, a pinch zooms, no Ctrl (T430, lib/mapGestures.js).
     map._gestures = installMapGestures(map);
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
