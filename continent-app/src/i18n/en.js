@@ -8406,7 +8406,7 @@ export const en = {
   "ac.travellers": "Travellers",
   "ac.stay": "Stay",
   "ac.currency": "Currency",
-  "ac.currencyEur": "Euro",
+  "ac.currencyEur": "Euro",
   "settings.haptics": "Vibrate on tap",
   "ac.google": "Google",
   "ac.connected": "Connected",

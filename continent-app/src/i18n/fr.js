@@ -7773,7 +7773,7 @@ export const fr = {
   "ac.travellers": "Voyageurs",
   "ac.stay": "Logement",
   "ac.currency": "Devise",
-  "ac.currencyEur": "Euro",
+  "ac.currencyEur": "Euro",
   "settings.haptics": "Vibrer au toucher",
   "ac.google": "Google",
   "ac.connected": "Connecté",

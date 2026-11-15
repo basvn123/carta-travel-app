@@ -7773,7 +7773,7 @@ export const es = {
   "ac.travellers": "Viajeros",
   "ac.stay": "Alojamiento",
   "ac.currency": "Moneda",
-  "ac.currencyEur": "Euro",
+  "ac.currencyEur": "Euro",
   "settings.haptics": "Vibrar al tocar",
   "ac.google": "Google",
   "ac.connected": "Conectado",

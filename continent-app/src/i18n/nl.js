@@ -7784,7 +7784,7 @@ export const nl = {
   "ac.travellers": "Reizigers",
   "ac.stay": "Verblijf",
   "ac.currency": "Valuta",
-  "ac.currencyEur": "Euro",
+  "ac.currencyEur": "Euro",
   "settings.haptics": "Trillen bij tikken",
   "ac.google": "Google",
   "ac.connected": "Gekoppeld",
