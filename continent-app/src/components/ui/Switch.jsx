@@ -10,6 +10,7 @@
  * A setting that waits for a Save is a checkbox in a form, not this.
  */
 import React from 'react';
+import { haptic } from '../../lib/haptics.js';
 
 export function Switch({ label, checked = false, onChange, hint, disabled = false, className = '', id }) {
   return (
@@ -20,7 +21,7 @@ export function Switch({ label, checked = false, onChange, hint, disabled = fals
       aria-checked={!!checked}
       disabled={disabled}
       className={['ui-switch', checked && 'is-on', className].filter(Boolean).join(' ')}
-      onClick={() => onChange?.(!checked)}
+      onClick={() => { onChange?.(!checked); haptic('tick'); }}
     >
       <span className="ui-switch-text">
         <span className="ui-switch-label">{label}</span>

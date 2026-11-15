@@ -1,23 +1,17 @@
-// Touch feedback helpers (T184, G1). The visual change itself is CSS
-// (:active rules in styles/02-base.css). Two things CSS cannot do:
+// Touch feedback (T184, G1; house style 2026-11). The visual change itself is
+// CSS (the Press primitive in styles/02-base.css). One thing CSS cannot do:
+// iOS Safari only applies :active to elements when some touchstart listener
+// exists on the page, so a passive no-op on the document turns it on.
 //
-// 1. iOS Safari only applies :active to elements when some touchstart listener
-//    exists on the page. A passive no-op on the document turns it on everywhere.
-// 2. A haptic tick on touch for controls that flip a state (a fold, a switch, a
-//    toggle chip). navigator.vibrate exists on Android Chrome and is absent on
-//    iOS, where the guard makes this a no-op. It is skipped when the traveller
-//    asks for reduced motion.
+// It used to vibrate on pointerdown over [aria-expanded], [aria-pressed] and
+// switches. That fired before the browser knew the touch was a tap, so a
+// scroll that started on a chip buzzed, and a fold (navigation, not a value)
+// buzzed too. Haptics now come from src/lib/haptics.js, on the commit, from
+// the kit components only.
+import { installHaptics } from './haptics.js';
+
 export function installTouchFeedback() {
   if (typeof document === 'undefined') return;
   document.addEventListener('touchstart', () => {}, { passive: true });
-  const canBuzz = typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function';
-  if (!canBuzz) return;
-  let calm = false;
-  try { calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { /* no matchMedia */ }
-  if (calm) return;
-  document.addEventListener('pointerdown', (e) => {
-    if (e.pointerType !== 'touch') return;
-    const t = e.target instanceof Element ? e.target.closest('[aria-expanded], [aria-pressed], [role="switch"]') : null;
-    if (t && !t.disabled) { try { navigator.vibrate(8); } catch { /* blocked */ } }
-  }, { passive: true });
+  installHaptics();
 }

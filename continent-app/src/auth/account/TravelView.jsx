@@ -14,6 +14,7 @@ import { Group, Row } from './parts.jsx';
 import { useTravelValues } from './travelValues.js';
 import { openTasteSheet } from '../../browse/TasteDoor.jsx';
 import { EMAILS_OFF, loadEmailPrefs, saveEmailPrefs } from './emailPrefs.js';
+import { HapticsSetting } from '../../components/HapticsSetting.jsx';
 
 
 // Well-known catalogue places, in order, for the price proof when the
@@ -165,6 +166,7 @@ export function PrefsView({ head, userId = null }) {
           </div>
         )}
         <Row icon={ReceiptIcon} label={t('ac.currency')} value={t('ac.currencyEur')} />
+        <HapticsSetting className="ac-haptics" />
       </Group>
       {userId && <EmailsGroup userId={userId} />}
     </>

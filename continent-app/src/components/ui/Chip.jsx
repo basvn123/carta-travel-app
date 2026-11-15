@@ -15,6 +15,7 @@
  * label is sentence case and short.
  */
 import React from 'react';
+import { haptic } from '../../lib/haptics.js';
 
 function Tick() {
   return (
@@ -28,14 +29,14 @@ function Tick() {
 const TONES = ['neutral', 'best', 'gem', 'rate', 'positive', 'danger'];
 
 export const Chip = React.forwardRef(function Chip(
-  { kind = 'filter', selected = false, tone = 'neutral', icon = null, className = '', children, ...rest },
+  { kind = 'filter', selected = false, tone = 'neutral', icon = null, className = '', children, onClick, ...rest },
   ref
 ) {
   if (kind === 'count' || kind === 'status') {
     const t = TONES.includes(tone) ? tone : 'neutral';
     const cls = ['ui-chip', `ui-chip-${kind}`, kind === 'status' && `ui-chip-tone-${t}`, className].filter(Boolean).join(' ');
     return (
-      <span ref={ref} className={cls} {...rest}>
+      <span ref={ref} className={cls} onClick={onClick} {...rest}>
         {icon && <span className="ui-chip-icon" aria-hidden="true">{icon}</span>}
         {children}
       </span>
@@ -47,7 +48,10 @@ export const Chip = React.forwardRef(function Chip(
     ? { role: 'radio', 'aria-checked': !!selected, tabIndex: selected ? 0 : -1 }
     : { 'aria-pressed': !!selected };
   return (
-    <button ref={ref} type="button" className={cls} {...a11y} {...rest}>
+    // The Select primitive: the fill and the tick mark come from 04-ui.css;
+    // a touch commit gets one haptic tick after the handler set the state.
+    <button ref={ref} type="button" className={cls} {...a11y} {...rest}
+      onClick={onClick ? (e) => { onClick(e); haptic('tick'); } : undefined}>
       {selected ? <Tick /> : icon && <span className="ui-chip-icon" aria-hidden="true">{icon}</span>}
       <span className="ui-chip-label">{children}</span>
     </button>

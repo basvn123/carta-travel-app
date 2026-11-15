@@ -6,6 +6,8 @@ decided-by: Bas
 
 # 0006 · Design rules are defaults; the owner's taste binds
 
+> Superseded in part by [0012](0012-house-style.md) (2026-11-15): its look rules (Figtree, the old grounds and cards, the taste notes about type and white boxes) are replaced by the house style. Its honesty and accessibility rules stand.
+
 ## Context
 The carta-design skill started as a strict two-colour, no-gradient, quiet-motion system. On 2026-10-30 (T878) the owner rejected two careful, rule-abiding designs as flat ("more modern, add more design, visually top notch") and asked for more freedom. Over many reviews (T743 to T1044) the same taste notes came back, and ignoring them cost a redo round each time.
 

@@ -11,6 +11,7 @@
  *     options={[{ value: 'list', label: 'List', icon: <ListIcon /> }, ...]} />
  */
 import React, { useRef } from 'react';
+import { haptic } from '../../lib/haptics.js';
 
 export function Segmented({ label, options, value, onChange, size = 'md', block = false, className = '' }) {
   const ref = useRef(null);
@@ -38,7 +39,7 @@ export function Segmented({ label, options, value, onChange, size = 'md', block 
             tabIndex={on ? 0 : -1}
             disabled={o.disabled}
             className={`seg-item${on ? ' is-selected' : ''}`}
-            onClick={() => onChange?.(o.value)}
+            onClick={() => { onChange?.(o.value); if (!on) haptic('tick'); }}
           >
             {o.icon && <span className="seg-icon" aria-hidden="true">{o.icon}</span>}
             <span>{o.label}</span>
