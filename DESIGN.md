@@ -1,26 +1,19 @@
 ---
-name: Carta
-description: A calm travel app for budget Europe where photos sell the place and one honest price line sits under every photo, in two base colours, blue-grey ink and one warm brown.
+name: House style
+description: The furniture of a European footpath, made for prices. A pale stone ground, green-black ink and umber brown as the paint of choice and action, with the blaze, the signpost plate, the relief drawn from real peaks and the price formation as its signature parts.
 colors:
   neutral-0: "#ffffff"
-  neutral-25: "#fbfbfa"
-  neutral-50: "#f6f5f2"
-  neutral-100: "#efeeea"
-  neutral-150: "#e9eae7"
-  neutral-200: "#dcdfdd"
-  neutral-300: "#c5cac8"
-  neutral-600: "#5c6873"
-  neutral-700: "#44515c"
-  neutral-800: "#2e3a44"
-  neutral-900: "#1f2a33"
-  lagoon-50: "#eef7f7"
-  lagoon-100: "#dff0f1"
-  lagoon-200: "#bfe0e2"
-  lagoon-300: "#8cc6ca"
-  lagoon-600: "#0b7480"
-  lagoon-700: "#0a6670"
-  lagoon-800: "#08575f"
-  lagoon-900: "#07454b"
+  neutral-25: "#f7f8f5"
+  neutral-50: "#eef0ea"
+  neutral-100: "#e3e7df"
+  neutral-150: "#dde2da"
+  neutral-200: "#cfd5cc"
+  neutral-300: "#b4bcb3"
+  neutral-500: "#7a847d"
+  neutral-600: "#59625c"
+  neutral-700: "#465049"
+  neutral-800: "#2c3530"
+  neutral-900: "#1e2421"
   umber-50: "#faf6f1"
   umber-100: "#f6e7d3"
   umber-200: "#e7d3bc"
@@ -32,100 +25,126 @@ colors:
   sun-100: "#fdf1d8"
   sun-400: "#f2b33d"
   sun-800: "#7a5000"
-  surface-page: "#f6f5f2"
+  surface-page: "#eef0ea"
   surface: "#ffffff"
-  surface-sunken: "#efeeea"
-  surface-hover: "#eeede9"
-  text: "#1f2a33"
-  text-2: "#44515c"
-  text-3: "#5c6873"
-  border: "#dcdfdd"
-  border-soft: "#e9eae7"
+  surface-sunken: "#e3e7df"
+  surface-hover: "#e6e9e2"
+  text: "#1e2421"
+  text-2: "#465049"
+  text-3: "#59625c"
+  border: "#cfd5cc"
+  border-soft: "#dde2da"
+  edge: "#7a847d"
   action: "#8c5a2b"
   action-hover: "#744820"
   action-press: "#5a3716"
   action-text: "#ffffff"
   action-tint: "#f6e7d3"
   select-bg: "#f6e7d3"
-  select-ink: "#744820"
+  select-ink: "#5a3716"
   select-border: "#8c5a2b"
-  focus: "#8c5a2b"
+  select-row: "#faf6f1"
+  focus: "#744820"
+  focus-on-dark: "#ffffff"
+  plate: "#1e2421"
+  plate-hover: "#2c3530"
+  on-plate: "#ffffff"
+  on-plate-2: "#e7d3bc"
+  wagon-go-edge: "#8c5a2b"
+  wagon-go-ink: "#5a3716"
+  wagon-bed: "#8c5a2b"
+  wagon-bed-ink: "#ffffff"
+  wagon-food: "#f6e7d3"
+  wagon-food-edge: "#a8733f"
+  wagon-food-ink: "#5a3716"
+  wagon-none-edge: "#7a847d"
+  kind-places: "#8c5a2b"
+  kind-trails: "#2f7a45"
+  kind-beaches: "#0e7c86"
+  kind-lakes: "#2b5fa8"
+  kind-mountains: "#6248a8"
+  kind-cycling: "#b02a63"
+  world-water: "#d3dfe2"
+  world-lowland: "#dce5d4"
+  world-rock: "#e3ddd3"
+  map-land: "#f8f9f5"
+  map-water: "#d3dfe2"
+  map-border: "#d7dcd3"
+  map-route: "#8c5a2b"
   best: "#f2b33d"
   best-bg: "#fdefc0"
-  best-ink: "#1f2a33"
-  rate: "#744820"
-  rate-soft: "#5c6873"
-  rate-bg: "#efeeea"
-  gem-ink: "#744820"
-  gem-bg: "#efeeea"
-  amber-ink: "#a8400f"
-  green: "#4a6a3a"
-  good-ink: "#16794f"
-  trail-bg: "#e8f0e6"
-  danger: "#b3372a"
-  danger-dark: "#96291e"
+  danger: "#a12a1c"
+  danger-dark: "#86200f"
   danger-bg: "#f6dcd8"
+  green: "#3f6332"
+  good-ink: "#16794f"
+  amber-ink: "#a8400f"
+  gem-ink: "#744820"
+  rate: "#744820"
   status-success: "#10b981"
 typography:
   display:
-    fontFamily: "Figtree, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
     fontSize: "40px"
-    fontWeight: 700
-    lineHeight: 1.2
-    fontFeature: "tnum"
+    fontWeight: 800
+    lineHeight: 1.1
+    fontFeature: "tnum, lnum"
+    letterSpacing: "-0.02em"
   headline:
-    fontFamily: "Figtree, system-ui, -apple-system, Segoe UI, sans-serif"
-    fontSize: "28px"
-    fontWeight: 700
+    fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "24px"
+    fontWeight: 800
     lineHeight: 1.2
-    fontFeature: "tnum"
+    fontFeature: "tnum, lnum"
+    letterSpacing: "-0.018em"
   title:
-    fontFamily: "Figtree, system-ui, -apple-system, Segoe UI, sans-serif"
-    fontSize: "20px"
-    fontWeight: 600
+    fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "19px"
+    fontWeight: 800
     lineHeight: 1.2
-    fontFeature: "tnum"
+    fontFeature: "tnum, lnum"
+  plate:
+    fontFamily: "Sofia Sans Extra Condensed, Overpass, sans-serif"
+    fontSize: "21px"
+    fontWeight: 700
+    lineHeight: 1.05
+    fontFeature: "tnum, lnum"
+  figure:
+    fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "18px"
+    fontWeight: 800
+    lineHeight: 1
+    fontFeature: "tnum, lnum"
   lead:
-    fontFamily: "Figtree, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
     fontSize: "16px"
-    fontWeight: 600
-    lineHeight: 1.2
-    fontFeature: "tnum"
-  body:
-    fontFamily: "Figtree, system-ui, -apple-system, Segoe UI, sans-serif"
-    fontSize: "14px"
     fontWeight: 400
     lineHeight: 1.5
-    fontFeature: "tnum"
-  label:
-    fontFamily: "Figtree, system-ui, -apple-system, Segoe UI, sans-serif"
-    fontSize: "13px"
-    fontWeight: 500
-    lineHeight: 1.35
-    fontFeature: "tnum"
-  caption:
-    fontFamily: "Figtree, system-ui, -apple-system, Segoe UI, sans-serif"
-    fontSize: "12px"
+    fontFeature: "tnum, lnum"
+  body:
+    fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "14px"
     fontWeight: 400
     lineHeight: 1.35
-    fontFeature: "tnum"
-  micro:
-    fontFamily: "Figtree, system-ui, -apple-system, Segoe UI, sans-serif"
-    fontSize: "11px"
+    fontFeature: "tnum, lnum"
+  label:
+    fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "13px"
     fontWeight: 600
     lineHeight: 1.35
-    fontFeature: "tnum"
-  plan-hero:
-    fontFamily: "Figtree, system-ui, -apple-system, Segoe UI, sans-serif"
-    fontSize: "clamp(32px, 3.9vw, 56px)"
-    fontWeight: 700
-    lineHeight: 1.08
-    letterSpacing: "-0.025em"
+    fontFeature: "tnum, lnum"
+  micro:
+    fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "12px"
+    fontWeight: 600
+    lineHeight: 1.35
+    fontFeature: "tnum, lnum"
 rounded:
   sm: "6px"
-  control: "10px"
+  control: "8px"
+  panel: "12px"
   card: "16px"
-  sheet: "20px"
+  sheet: "12px"
   pill: "999px"
 spacing:
   "1": "4px"
@@ -136,14 +155,16 @@ spacing:
   "6": "32px"
   "7": "40px"
   "8": "56px"
+  "9": "64px"
   gutter: "16px"
   tap: "44px"
+  tap-main: "48px"
 components:
   button-primary:
     backgroundColor: "{colors.action}"
     textColor: "{colors.action-text}"
     rounded: "{rounded.control}"
-    padding: "0 24px"
+    padding: "0 16px"
     height: "44px"
   button-primary-hover:
     backgroundColor: "{colors.action-hover}"
@@ -153,712 +174,376 @@ components:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
     rounded: "{rounded.control}"
-    padding: "0 24px"
-    height: "44px"
-  button-secondary-hover:
-    backgroundColor: "{colors.surface-hover}"
-  button-quiet:
-    textColor: "{colors.action}"
-    rounded: "{rounded.control}"
-    padding: "0 24px"
-    height: "44px"
-  button-quiet-hover:
-    backgroundColor: "{colors.action-tint}"
-  button-danger:
-    backgroundColor: "{colors.danger}"
-    textColor: "{colors.action-text}"
-    rounded: "{rounded.control}"
-    height: "44px"
-  button-danger-hover:
-    backgroundColor: "{colors.danger-dark}"
-  button-disabled:
-    backgroundColor: "{colors.surface-sunken}"
-    textColor: "{colors.text-3}"
-  button-sm:
-    padding: "0 12px"
-    height: "32px"
-  icon-button:
-    textColor: "{colors.text-2}"
-    rounded: "{rounded.pill}"
-    size: "44px"
-  icon-button-surface:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.text}"
-    rounded: "{rounded.pill}"
-    size: "44px"
-  icon-button-pressed:
-    backgroundColor: "{colors.select-bg}"
-    textColor: "{colors.select-ink}"
-  chip-filter:
-    backgroundColor: "{colors.surface}"
-    textColor: "{colors.text}"
-    typography: "{typography.label}"
-    rounded: "{rounded.pill}"
-    padding: "0 12px"
-    height: "32px"
-  chip-filter-selected:
-    backgroundColor: "{colors.select-bg}"
-    textColor: "{colors.select-ink}"
-  chip-count:
-    backgroundColor: "{colors.surface-sunken}"
-    textColor: "{colors.text-2}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.pill}"
-    height: "20px"
-  chip-status-best:
-    backgroundColor: "{colors.best}"
-    textColor: "{colors.text}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.sm}"
-    height: "24px"
-  chip-status-gem:
-    backgroundColor: "{colors.gem-bg}"
-    textColor: "{colors.gem-ink}"
-    rounded: "{rounded.sm}"
-    height: "24px"
-  chip-status-rate:
-    backgroundColor: "{colors.rate-bg}"
-    textColor: "{colors.rate}"
-    rounded: "{rounded.sm}"
-    height: "24px"
-  segmented-track:
-    backgroundColor: "{colors.surface-sunken}"
-    rounded: "{rounded.control}"
-    padding: "3px"
-  segmented-item:
-    textColor: "{colors.text-2}"
-    typography: "{typography.label}"
     padding: "0 16px"
-    height: "38px"
-  segmented-item-selected:
+    height: "44px"
+  button-quiet:
+    textColor: "{colors.action-hover}"
+    rounded: "{rounded.control}"
+    height: "44px"
+  chip:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
-  tab:
-    textColor: "{colors.text-2}"
-    typography: "{typography.body}"
+    rounded: "{rounded.pill}"
+    padding: "0 14px"
+    height: "36px"
+  chip-selected:
+    backgroundColor: "{colors.select-bg}"
+    textColor: "{colors.select-ink}"
+  segmented-selected:
+    backgroundColor: "{colors.action}"
+    textColor: "{colors.action-text}"
+    rounded: "{rounded.pill}"
     height: "44px"
-  tab-selected:
+  field:
+    backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
-  card-row:
+    rounded: "{rounded.control}"
+    height: "44px"
+  plate:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.on-plate}"
+    rounded: "{rounded.sm}"
+    padding: "6px 26px 6px 12px"
+    height: "52px"
+  plate-mark:
+    backgroundColor: "{colors.action}"
+    textColor: "{colors.action-text}"
+    rounded: "{rounded.sm}"
+    height: "28px"
+  score-plate:
+    backgroundColor: "{colors.plate}"
+    textColor: "{colors.on-plate}"
+    rounded: "{rounded.sm}"
+    height: "24px"
+  wagon-go:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.wagon-go-ink}"
+    rounded: "{rounded.pill}"
+    height: "24px"
+  wagon-bed:
+    backgroundColor: "{colors.wagon-bed}"
+    textColor: "{colors.wagon-bed-ink}"
+    rounded: "{rounded.pill}"
+    height: "24px"
+  wagon-food:
+    backgroundColor: "{colors.wagon-food}"
+    textColor: "{colors.wagon-food-ink}"
+    rounded: "{rounded.pill}"
+    height: "24px"
+  card:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
     rounded: "{rounded.card}"
-    padding: "8px 12px 8px 8px"
-  card-row-media:
-    rounded: "{rounded.control}"
-    size: "72px"
-  card-tile:
-    backgroundColor: "{colors.surface}"
-    rounded: "{rounded.card}"
-  field-input:
+  sheet:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
-    typography: "{typography.lead}"
-    rounded: "{rounded.control}"
-    padding: "0 12px"
-    height: "44px"
-  field-input-disabled:
-    backgroundColor: "{colors.surface-sunken}"
-    textColor: "{colors.text-3}"
+    rounded: "{rounded.panel}"
 ---
 
-# Design System: Carta
+# Design system: the house style
 
-This is the design system for Carta: the exact values the shipped app runs on, with the one job each value has. Read it after PRODUCT.md and before writing any CSS, JSX, HTML, email or image for Carta. Treat every value here as a rule, not a suggestion. If a design needs something this file does not define, that is a task to raise, not a value to invent.
+Read `PRODUCT.md` first (who the app is for, the voice, the vocabulary, the number rules). This file is the look: everything a session needs to make on-style work for any screen without this run's context. The tokens in `continent-app/src/styles/01-tokens.css` are the source of truth; this file records them. A token change updates this file in the same commit. Decision record: `docs/decisions/0012-house-style.md`. General craft practice for any visual task: `docs/design/craft-guide.md`. The live index of every part: `/?styleguide`.
 
-The source of truth is the `:root` block of `continent-app/src/styles/01-tokens.css`. This file is a record of it, kept in step by hand; when the two disagree, that file is what ships and this file is wrong. The frontmatter above is the machine-readable copy of the same values. `src/styles.css` is only the entry point that imports the domain files in `src/styles/`, in a fixed order (T191). Never hardcode a hex, a font name or a pixel spacing in a component: reference the custom property.
+The file is name-free: it says "the app".
 
-## Overview
+## The idea
 
-**Creative North Star: "Lagoon", in brown**
+**The furniture of a European footpath, made for prices.** A walker reads a waymark painted on a rock, a signpost with a place, a time on foot and a distance, and the shape of the ground around them. The app gives prices the same furniture:
 
-Carta is a travel app you want to open: photos sell the place, and one calm price line sits under every photo, marked as an estimate where it is one. The look is "Lagoon" (T419, owner decision 2026-10-13): the category standard of Airbnb, Polarsteps and Wanderlog, executed at their craft level rather than reinvented. White surfaces sit on a warm light grey; ink is a blue-grey that is never black; one warm brown (umber) carries every action and every selection, so the app has two base colours, the ink and the brown (owner decision 2026-10-13, T438, which replaced the lagoon teal); sun yellow marks best value and nothing else; one friendly typeface, Figtree, sets everything, figures included, with tabular numerals.
+- **The blaze**: a white halo with a square umber paint stripe and a short ink heel. It means "chosen" or "here", nothing else.
+- **The signpost plate**: a dark ink plate with one pointed end that holds a place, a time on foot and euros as one unit, read the same way everywhere.
+- **The relief**: illuminated contours drawn only from a place's real peaks, always printing a real height. It is honest by construction: no peak in the data, no relief.
+- **The formation**: the price row, where getting there, the bed and food couple like wagons in front of the day figure.
 
-The density is a working app, not a brochure. A filtered or searched list on Explore and Destinations is compact rows, about ten to a phone screen, each a small rounded photo, a name, the Score and a price line such as "€49 a day". Sections (rails) and the home page use large photo tiles, where inspiration leads. Pages say less: no catalogue counts, no method or coverage sentences beside a figure (owner, 2026-10-13). Depth is quiet: objects at rest carry a hairline border, and only what floats (a sheet, a popover, a control over a photograph) takes a soft ink shadow.
+The ground is a pale lichen stone, the ink is green-black and never #000, and **umber brown is the paint you put on the path when you choose**: the action, the selected thing, the blaze, the route, the chosen pin. Beige (umber 100 and 200) is for tints, the food wagon and quiet surfaces. The one choice that only makes sense for this product: minutes on foot and euros are one unit on one object.
 
-The world refuses two things, both confirmed by the owner in the direction contract (`continent-app/.impeccable/surfaces/continent-app.md`): the brochure hero with text laid over a photograph, and the dark instrument look of black slabs and dark selected states.
-
-**Key Characteristics:**
-- Photography leads; text never sits on a photograph.
-- Two base colours: blue-grey ink and one brown for everything that acts or is selected, as a light tint plus brown text, never a dark slab.
-- A rating is the Score: a brown star and an ink figure, never a filled chip.
-- Every colour outside the neutrals and the brown has exactly one job.
-- One typeface, tabular figures everywhere, so prices line up and settle in place.
-- Borders at rest, shadows only on what floats.
-- Every control is 44 px on touch, with a 2 px brown focus ring.
-
-**Design freedom (owner, 2026-10-30, T878).** The characteristics above and the "only for" columns below describe the default system, not a cage. Where a screen needs more to be modern and visually top notch, it may add colour worlds, gradients, illustration and diagrams, richer motion and new screen-scoped tokens; a new value used across screens still lands in `01-tokens.css` and here. Contrast, 44 px touch targets, reduced motion, honest numbers and the copy rules still bind. The carta-design skill's "Owner decision 2026-10-30: design freedom" holds the details; the persona question (`g:persona`, a colour world per persona) is the first screen built this way.
-
-T425 rewrote the carta-design skill for Lagoon (closes register row T419-c): this file holds the values, the skill holds the judgement on top of them. If the two ever disagree on a value, the stylesheet ships, this file records it, and the skill is the one to fix.
+With the logo hidden, a screen is still this product: blaze, plate, relief and formation carry it.
 
 ## Where to adjust the style
 
-For the owner fine-tuning by hand. Change a value in one place and every screen that reads it follows.
-
-**Which file holds what.** All paths are inside `continent-app/`.
-
-| What you want to change | File | What is in it |
+| To change | Edit | Then |
 |---|---|---|
-| A colour, a font size, a radius, a shadow, a spacing step, a motion speed | `src/styles/01-tokens.css` | The `:root` block, in three layers: primitives (raw scales such as `--umber-600`), roles (what a value is for, such as `--action`), and the scales (`--text-*`, `--radius-*`, `--elev-*`, `--space-*`, `--dur-*`). Change a role to repoint one job; change a primitive to shift every role that reads it. The legacy names at the bottom are aliases; do not edit them, edit the role they point to. |
-| Page defaults: body text, focus ring, press feedback, reduced motion | `src/styles/02-base.css` | The reset, the body face and tabular figures, text selection colour, the touch press shade, the focus floor and the motion floor. |
-| Buttons | `src/styles/03-button.css` | Every variant and size of the shared Button. |
-| Icon buttons, chips, segmented controls, tabs, cards, fields, icons, prices | `src/styles/04-ui.css` | One block per component, in that order, with a reduced-motion block at the end. |
-| The typeface | `index.html` and `public/fonts/` | The two Figtree `@font-face` rules (latin and latin-ext, variable 300 to 900) and the self-hosted `.woff2` files. Changing the face also means changing `--ui` in `01-tokens.css`. |
-| A rule only the trip and day planners, or the admin page, render | `src/styles/planners/` and `src/styles/admin/` | The rules of a domain file that only that route renders (T474, CSS per route), so they load with the route's chunk and not before the first paint. Each part keeps its domain file's name; the rest of the domain stays in `src/styles/`. A rule lives in one of the two, so edit it where it is. `scripts/css-routes.mjs --check dist/assets` proves on a build that every rule here is still route-only and that nothing later in the cascade could override it. |
-| One screen's own layout | `src/styles/10-*.css` to `src/styles/69-*.css` | Older per-screen files. They still carry px literals and legacy token names, and the migration (T426 onward) moves them onto roles and scales file by file. Adjust a screen here only until its file is migrated; never copy a value from these files into new work. |
+| A colour, a radius, a size, a duration | `continent-app/src/styles/01-tokens.css` | Mirror map colours in `src/map/tokenColors.js` (the lint fails on drift); run `node scripts/ci/token-contrast.mjs`; update this file |
+| A spring | `continent-app/src/lib/motionTokens.js` | `node scripts/ci/spring-easings.mjs` and paste its lines into the tokens |
+| A kit control | `continent-app/src/components/ui/` and `src/styles/03-button.css`, `04-ui.css` | Its demo in `src/styleguide/StyleGuide.jsx` |
+| A house part (blaze, plate, formation, rail, relief, states, figure) | `src/components/ui/` and `src/styles/05-house.css` | Its demo; `node scripts/verify_relief.mjs` for the relief |
+| The shell (header, nav, page frame) | `src/components/AppHeader.jsx`, `BottomNav.jsx`, `src/styles/10-shell.css`, the house block at the end of `60-v6-shell.css` | Check 390, 820, 1180, 1440 |
+| An icon | `src/components/HouseIcons.jsx` | Same grid rules (below) |
+| The typefaces | `src/assets/fonts/`, `src/styles/00-fonts.css`, `--ui` and `--plate-face` | The preload in `index.html`, `tests/pwa.test.mjs`, `docs/tos/fonts.md` |
 
-**Preview live.** In `continent-app/`, run `npm run dev` and open `/?styleguide` on the dev server. The style guide (`src/styleguide/StyleGuide.jsx`) is built from the real kit and the real tokens, so a change in `01-tokens.css` shows there at once: every colour role with its contrast, the type ramp, spacing and corners, every component with when to use it and when not, and the price formats in all six languages through the language switch at the top. Then look at the real screens the change touches.
+## Colour
 
-**Checks after a change.** Run these from `continent-app/`:
+All values in hex in one `:root` block (several readers parse hex only). Ratios are WCAG 2 on the ground each colour is read on; `scripts/ci/token-contrast.mjs` checks 45 text pairs (4.5 floor) and 22 marks (3 floor).
 
-1. `node scripts/ci/token-contrast.mjs` checks every text and fill pair the product uses (31) against the 4.5:1 floor, the non-text marks (focus ring, selected edge, rating star, switch track) against 3:1, and the colour distance that keeps warning, best value and quiet tints apart from the brown (T438). It must report 0 under the floor.
-2. `node scripts/ci/design-lint.mjs` flags hex colours outside `:root`, gradients, shadow and font literals, removed outlines, em dashes, middots, banned words, and the migration rules (legacy token names, px font sizes and radii, euro literals). It must report no new violations in the files you touched; the baseline is not a place to add them.
-3. If you changed a colour that a map or a PDF draws, update the token mirror `src/map/tokenColors.js` to the same value under the same token name. MapLibre cannot read a CSS custom property, so this file is the one JavaScript copy, and the design lint's `token-mirror-drift` rule fails when it disagrees with `01-tokens.css`.
-4. Update this file in the same commit (CLAUDE.md): the frontmatter value and any prose that names the token, plus the sync line under History.
+### Ground and ink
 
-## Colors
+| Token | Hex | Job | Contrast |
+|---|---|---|---|
+| `--surface-page` (`--neutral-50`) | `#eef0ea` | Stone: the page ground behind everything | |
+| `--surface-sunken` (`--neutral-100`) | `#e3e7df` | Band: quiet bands, sticky heads, input wells, the relief field | |
+| `--surface` (`--neutral-0`) | `#ffffff` | Paper: sheets, cards, fields, the cost post, bars | |
+| `--surface-hover` | `#e6e9e2` | Hover on a quiet surface | |
+| `--text` (`--neutral-900`) | `#1e2421` | Ink: all main text | 13.76 on stone, 15.80 on paper |
+| `--text-2` (`--neutral-700`) | `#465049` | Second text, every 12 px line | 7.30 on stone |
+| `--text-3` (`--neutral-600`) | `#59625c` | Third text, 13 px and up only | 5.50 on stone, 5.04 on band |
+| `--border` (`--neutral-200`) | `#cfd5cc` | Hairlines; never the only boundary of a control | |
+| `--border-soft` (`--neutral-150`) | `#dde2da` | Soft hairlines inside a panel | |
+| `--edge` (`--neutral-500`) | `#7a847d` | Control edges (chips, fields, switches, segments): a mark, never text | 3.37 on stone, 3.87 on paper |
 
-A warm light grey ground under white surfaces, and two base colours: blue-grey ink and one warm brown for action and selection, plus a few single-job accents.
+### The paint: umber
 
-Tokens come in three layers. **Primitives** (`--neutral-*`, `--umber-*`, `--sun-*`, and the retired `--lagoon-*`, values in the frontmatter) are the raw scales, and components never read them. **Roles** say what a value is for, and every new or touched rule reads a role. **Legacy names** are every name the stylesheet used before T421, each an alias of a role, so the whole app re-skinned from the token file alone. The app is single-theme: there are no `prefers-color-scheme` or `data-theme` blocks. Ratios are WCAG 2 contrast, and `scripts/ci/token-contrast.mjs` checks every pair the product uses (31 text pairs at 4.5:1, 7 marks at 3:1, 6 colour distances).
+| Token | Hex | Job | Contrast |
+|---|---|---|---|
+| `--umber-600` = `--action`, `--select-border`, `--map-route`, `--wagon-bed` | `#8c5a2b` | The paint: the one primary action, the selected edge, the blaze stripe, the route, the chosen pin, the bed wagon, the chosen segment | 5.06 on stone, 5.81 on paper; white on it 5.81 |
+| `--umber-700` = `--action-hover`, `--focus`, `--rate` | `#744820` | Brown text (quiet buttons, See all), hover on the action, the focus ring | 6.80 on stone |
+| `--umber-800` = `--action-press`, `--select-ink`, `--wagon-food-ink` | `#5a3716` | Pressed action, text on the beige | 8.68 on umber 100 |
+| `--umber-500` = `--wagon-food-edge` | `#a8733f` | A mark only (the food wagon's edge) | |
+| `--umber-300` | `#d4b48f` | Decorative only | |
+| `--umber-200` = `--on-plate-2` | `#e7d3bc` | Beige 2: the second line on a dark plate | 11.4 on the plate |
+| `--umber-100` = `--select-bg`, `--action-tint`, `--wagon-food` | `#f6e7d3` | Beige: the selected wash, the food wagon, tags | |
+| `--umber-50` = `--select-row` | `#faf6f1` | A selected row in a list | |
 
-### Primary
+The umber stays by owner rule (2026-11-13). Never invent a second accent: umber is the only paint.
 
-- **Umber** (`--action`, resolves to `--umber-600` `#8c5a2b`): the one primary button of a view, links, the live route, focus rings (`--focus`). White on it 5.8:1; as text 5.8:1 on a card, 5.3:1 on the page. It replaced the lagoon teal on 2026-10-13 (T438, owner decision: two base colours).
-- **Deep Umber** (`--action-hover`, `--action-press`, resolving to `--umber-700`, `--umber-800`): hover and press fills of `--action`, never a resting colour.
-- **Umber Mist** (`--action-tint`, resolves to `--umber-100` `#f6e7d3`): a light brown ground behind brown text (4.8:1), such as the hover of a quiet button. It sits 9.9 delta E from the sunken grey, so a selected item never looks like a quiet band.
-- **The selected state** (`--select-bg`, `--select-ink`, `--select-border`, resolving to `--umber-100`, `--umber-700`, `--umber-600`): tint, brown label (6.4:1), brown edge. The one way anything shows it is chosen.
+### Plates and parts
 
-### Secondary
-
-- **Sun Yellow** (`--best`, `--best-bg`, `--best-ink`, resolving to `--sun-400`, `#fdefc0`, `--text`): best value only. A marker or fill with `--text` on it (7.9:1). Best value as text is ink beside the marker (T438: the old dark yellow text sat on top of the brown). Yellow itself is never text.
-
-### Tertiary
-
-These are measures and semantics, each with one job.
-
-- **The rating star** (`--rate`, resolves to `--umber-700`): the star of the Score (T437), 7.8:1 on a card. A rating is never a filled chip, so the star cannot read as a button. `--rate-soft` (`--text-3`) and `--rate-bg` (`--surface-sunken`) became neutral in T438, so the old ochre tints (tips bands, festival tags, the travel-day number) no longer look selected.
-- **The gem mark** (`--gem-ink`, `--gem-bg`, resolving to `--umber-700`, `--surface-sunken`): a small diamond and the words "Hidden gem", 6.7:1. Plum retired in T438.
-- **Rust** (`--amber-ink` and its siblings, `#a8400f`): warning text, 6.2:1 on a card. Retuned from amber in T438 so a warning never reads as the brown.
-- **Moss** (`--green`): good news in data, always with a word. Never chrome, never a button. The positive status chip is `--text` on `--surface-sunken` with a 6 px `--status-success` dot (owner, 2026-10-13: status, not green).
-- **Brick** (`--danger`, `--danger-dark`, `--danger-bg`): destructive actions only. Red means one thing: this erases something.
-- **Signal Green** (`--status-success`): indicator dots and ticks. Never text.
-
-### Neutral
-
-| Role | Resolves to | Only for |
+| Token | Value | Job |
 |---|---|---|
-| `--surface-page` | `--neutral-50` | The ground behind everything. Never a card fill |
-| `--surface` | `--neutral-0` | Cards, sheets, bars. The only pure white |
-| `--surface-sunken` | `--neutral-100` | Input fills, quiet bands, a segmented track. Never a selected state |
-| `--surface-hover` | its own value | Hover on a quiet surface |
-| `--text` | `--neutral-900` | Body text and headings, 13.4:1 on the page |
-| `--text-2` | `--neutral-700` | Secondary text, 7.5:1. Never a heading |
-| `--text-3` | `--neutral-600` | Metadata at 11 to 14 px, never body copy; 5.2:1 on the page, 4.9:1 on a sunken band |
-| `--border` | `--neutral-200` | Card and input borders, dividers |
-| `--border-soft` | `--neutral-150` | Hairlines inside an object |
+| `--plate` | `#1e2421` | The signpost plate and the Score plate |
+| `--plate-hover` | `#2c3530` | A plate under the pointer |
+| `--on-plate` | `#ffffff` | Text on a plate (15.80) |
+| `--focus-on-dark` | `#ffffff` | The focus ring on a plate |
+| `--wagon-go-edge`, `--wagon-go-ink` | umber 600, umber 800 | Getting there: an outlined pill (ink 10.54 on paper) |
+| `--wagon-none-edge` | `#7a847d` | "Not yet": a dashed edge |
+| `--world-water`, `--world-lowland`, `--world-rock` | `#d3dfe2`, `#dce5d4`, `#e3ddd3` | The missing-photo tile |
+| `--relief-lit`, `--relief-shade`, `--relief-ground` | white 95 %, ink 20 %, band | The relief |
+| `--map-land`, `--map-water`, `--map-border`, `--map-route` | `#f8f9f5`, `#d3dfe2`, `#d7dcd3`, umber 600 | The map (mirrored in `src/map/tokenColors.js`) |
 
-`--neutral-300` is the hover edge of a bordered control and the scrollbar thumb.
+### Kinds
 
-### Legacy names (aliases, retiring)
+Kinds of place have their own paint, for the kind's pictogram mark, swatch and tab underline only, **always with the pictogram and the word**, never body text, never colour alone: places umber 600, trails `#2f7a45`, beaches `#0e7c86`, lakes `#2b5fa8`, mountains `#6248a8`, cycling `#b02a63` (`--kind-*`; each 3:1 or more on the band).
 
-`--paper` is `--surface-page`, `--paper-dim` is `--surface-sunken`, `--bg-card` is `--surface`, `--on-fill` is `--action-text`, `--ink` is `--text`, `--ink-soft` is `--text-2`, `--ink-mute` is `--text-3`, `--rule` is `--border`, `--rule-soft` is `--border-soft`, `--accent` is `--action`, `--accent-bg` is `--action-tint`, `--accent-hover` is `--action-hover`, `--accent-press` and `--accent-press-alt` are `--action-press`, `--accent-soft` is `--umber-300`, `--accent-wash`, `--accent-wash-alt` and `--wash` are `--umber-50`, `--paper-hover` is `--surface-hover`, `--paper-lift` is `--neutral-25`, `--shadow-1` and `--shadow-card` are `--elev-1`, `--shadow-2` is `--elev-2`, and `--display`, `--mono` and `--font` resolve to `--ui`.
+### Status and the rest
 
-`--ink-fill` is `--umber-800`: the deep brown fill under white labels (10.7:1) that older surfaces still use as their selected state. T422 built the kit on the `--select-*` tint; the migration moves the remaining surfaces onto the kit, and `--ink-fill` retires with them. New code never uses it. Data drawings (bars, strips, pins, month cells) and toasts keep `--ink`.
+`--danger` `#a12a1c` (6.43 on stone) for destructive actions and errors, always with words. `--best` sun yellow marks best value as a fill or marker, never text. The domain colours under "Domain colours" in the token file are single-job (water quality, climate, crowds, cost-bar groups); do not use them as general colours. Legacy names (`--paper`, `--ink`, `--accent`, `--rule` and the rest) are aliases re-pointed at the roles; new rules read roles (the lint flags legacy names outside the token file).
 
-### Domain colours
+### Colour rules
 
-Unchanged by T421, from T191. Single-purpose indicator and tint colours for one feature each (water quality, trails, crowding, AI stops, warnings). A component never takes one as a general-purpose colour.
+- Umber is the paint of choice and action. A screen has one primary action in solid umber.
+- Selected looks one way everywhere: the beige wash, umber 800 text, an umber edge, plus a mark (the tick, the paint bar, the thumb, the blaze). Never a dark slab, never colour alone.
+- Text never sits on a photo and never on the relief's contours. Where a control must sit on a photo it is a paper disc.
+- No gradients for decoration, no glassmorphism, no glow.
+- Single light theme. `theme-color` is the stone ground.
 
-**Good, nature and trail greens. Indicators and small text, never fills for actions**
+## Type
 
-| Token | Value | Only for |
+**Overpass** (SIL OFL 1.1) sets every word and figure, variable 100 to 900, with `font-variant-numeric: tabular-nums lining-nums` set on `body`: every price, time and count lines up in columns (checked in the font file: all ten digits share one advance under `tnum`). **Sofia Sans Extra Condensed** (SIL OFL 1.1) sets plate names and the wordmark slot only, 19 px and up. Both are self-hosted woff2 (latin and latin-ext) from `src/assets/fonts/`, Overpass latin preloaded. Glyphs checked: Č, Š, ť, ü, ñ, œ, Ž, ł, ő, Ě, €.
+
+| Token | Phone | Tablet 769 up | Desktop 1024 up | Weight | Use |
+|---|---|---|---|---|---|
+| `--text-display` | 40 | 48 | 54 | 800, -0.02em | A total figure |
+| `--text-headline` | 24 | 30 | 36 | 800, -0.018em | A page title |
+| `--text-title` | 19 | 21 | 22 | 800 | A section |
+| `--text-plate` | 21 | 22 | 22 | 700, plate face | A plate name |
+| `--text-figure` | 18 | 18 | 19 | 800 | A row's day figure |
+| `--text-lead` | 16 / 1.5 | same | same | 400 | Reading text, fields (16 px so iOS never zooms) |
+| `--text-body` | 14 / 1.35 | same | same | 400 to 700 | Interface text: rows, controls, lists |
+| `--text-label` | 13 | same | same | 600 | Labels |
+| `--text-micro`, `--text-caption` | 12 | same | same | 600 | The floor: nothing under 12 px |
+
+Rules: sentence case, no uppercase transforms, no eyebrow kicker above headings. Headings balance (`text-wrap: balance`). Plate names wrap with `overflow-wrap: anywhere; hyphens: auto` and the document `lang`; a total's label never hyphenates. Row names and countries truncate with an ellipsis only as a last resort. The figure is always the loudest thing in its row or card.
+
+## Space, grid and the three angles
+
+Spacing on a 4 px grid: `--space-1` 4, `--space-2` 8, `--space-3` 12, `--space-4` 16, `--space-5` 24, `--space-6` 32, `--space-7` 40, `--space-8` 56, `--space-9` 64. Page gutter `--page-gutter`: 16 on a phone, 24 from 769, 32 from 1024, 48 from 1440. Page caps: `--w-browse` 1440, `--w-detail` 1240, `--w-hub` 1120, `--w-form` 720, `--w-read` 720. Every grid track is `minmax(0, …)`. Targets: `--tap` 44 px floor, `--tap-main` 48 for a place's main action and the bottom nav.
+
+Every screen is designed at three angles, each its own layout:
+
+| Angle | Widths | Shell | Layout rules |
+|---|---|---|---|
+| Phone | to 768 (390 x 844 the reference, 360 the floor) | Slim header row (wordmark, travel style as its icon, Together, account) and a bottom nav of three (Explore, Plan, My trips) | One column; lists dense (about 8 to 10 rows in the first view); the main action in a sticky bottom bar where a page has one |
+| Tablet | 769 to 1279 (820 x 1180 portrait, 1180 x 820 landscape) | One header row; the three places stack icon over word; the travel style door shows its icon | Two panes where the content allows (list plus map, content plus a sticky cost post); never a stretched phone, never a cramped desktop; toolbars wrap or move extras into a More menu, nothing is cut |
+| Desktop | 1280 and up (1440 x 900 the reference, 1920 checked) | One header row; places with icon and word; the door with its label | Content caps above; the price and its action in the first view; filters as a rail beside lists |
+
+Breakpoints come from the scale in `scripts/ci/css-breakpoints.mjs` (360, 380, 420, 430, 480, 600, 700, 768, 1024, 1100, 1200, 1240, 1280, 1440, 1600, 1800; max-width as boundary minus 1 for 600, 1024, 1280). A width sweep (360, 390, 600, 768, 820, 1024, 1180, 1280, 1440, 1920) must show no horizontal scroll and no overflowing element. Touch and pointer both work; hover is never the only way to anything.
+
+## Shape and depth
+
+One radius scale, rounder than a ruler:
+
+| Token | Value | For |
 |---|---|---|
-| `--good-ink` | `#16794f` | text-safe green for open-now, verified and good-deal text |
-| `--good-ink-soft` | `#2c7d54` | a step lighter than --good-ink, trip budget done state |
-| `--good-ink-alt` | `#2e7d4f` | extras delta under budget |
-| `--good-mid` | `#3a9d6b` | icons and borders for a great tier |
-| `--good-vivid` | `#2e9e5b` | swim and way-in indicators, good water |
-| `--leaf-ink` | `#2c6a1f` | add stamps and positive chips |
-| `--trail-ink` | `#3d6b42` | trail and park text |
-| `--trail-pin` | `#3d7a4e` | trail and nature map pins |
-| `--trail-bg` | `#e8f0e6` | trail and park card fill |
-| `--trail-rule` | `#d2e0cf` | trail and park card border |
-| `--trail-bg-alt` | `#e8f3e6` | a second trail tint |
-| `--trail-rule-alt` | `#c5dfbe` | a second trail border |
-| `--event-ink` | `#1f6b41` | AI event tag and pin |
-| `--event-bg` | `#e2f0e6` | AI event tag fill |
-| `--climate-good` | `#6b9e3f` | climate band, good month |
-| `--budget-low-bg` | `#e4edda` | budget band, low |
-| `--budget-low-rule` | `#c3d2ba` | budget band, low border |
-| `--water-good-bg` | `#ddeedd` | day extras water quality, good |
-| `--water-good-ink` | `#2c6136` | day extras water quality, good text |
+| `--radius-sm` | 6 px | A plate's square end, a tag, the Score plate |
+| `--radius-control` | 8 px | Buttons, fields, the search, menus, toasts |
+| `--radius-panel` (`--radius-sheet`) | 12 px | Panels, sheets, booking cards, the map frame |
+| `--radius-card` | 16 px | Photos and cards |
+| `--radius-pill` | 999 px | Chips, wagons, segmented controls, round icon buttons |
 
-**Water and sky blues**
+The signpost plate keeps its pointed end (`--plate-tip` 14 px) with softly rounded other corners; the blaze keeps its square stripe. Strokes: `--stroke-hair` 1, `--stroke-edge` 1.5 (control edges), `--stroke-route` 3 (the route, the paint bar), `--stroke-focus` 3 (focus ring, 2 px offset).
 
-| Token | Value | Only for |
+**Depth, one rule:** only what floats over the page casts a shadow (`--elev-2`: sheets, menus, popovers, toasts, the action bar; `--elev-3` for a dialog). Cards and panels lie flat on a hairline (`--elev-1` is that hairline as a ring). No coloured top or side border on a panel (a side stripe is a template tell): mark a panel with a plate or a hairline.
+
+## Background graphics: the relief
+
+The one background graphic. Rulebook:
+
+1. **Only from real ground.** A relief is drawn from the peaks with a height in the place's own dossier (`nearby.mountains[]`: name, km, bearing, `elev_m`; `src/lib/relief.js`, `reliefPeaks()`). No peak, no relief: the band stays flat. Prices are never drawn as terrain.
+2. **Prints a real height.** Every relief shows at least one height tag ("Grand Combin 4,309 m") on a paper tag (contrast 15.8).
+3. **Where:** the place page's "Around" band, the trip header (from the trip's places), print and share covers. **Not** on Explore or in any list header (lists stay dense), not behind figures, rows, fields, focus rings or map labels. At most two per screen.
+4. **Clear zone:** text sits only on the flat side, which ends a gutter (`--space-6`) before the cut. The zone starts at a thin umber cut (`--stroke-edge`) with a blaze on top; contours never run under text.
+5. **Contrast budget:** lit lines white at 95 %, shade lines ink at 20 %, on the band; decorative only (`aria-hidden`).
+6. **Light from the north-west**, east-west at true scale, north-south squeezed to the band.
+7. **Motion:** never animated, except one fade (`--dur-4`) when the data behind it changes. Under reduced motion it appears at once.
+8. **Forced colours:** dropped.
+9. **The missing photo** is a world tint (`--world-water`, `--world-lowland`, `--world-rock`) with a resting blaze (`WorldTile`), never a stock picture.
+
+Check: `node scripts/verify_relief.mjs --port <port> --pages "/?styleguide,<your page>"` fails on a relief without a printed height, text in the zone, or a tag or flat-side text under 4.5.
+
+Use: `<ReliefBand mountains={dossier.nearby.mountains} seed={place.id} cut="55%">…flat-side text…</ReliefBand>`.
+
+## Signature components
+
+All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05-house.css` with the `hs-` prefix.
+
+**Blaze** (`<Blaze size="sm|md|lg|xl" state="painted|rest|blank" kind=…/>`). 16 x 10, 24 x 14, 40 x 22, 72 x 40. Only where it means chosen or here: the wordmark slot, the current nav place, the chosen map pin, a sheet grip, the relief cut, the empty-state mark. Not on section headings, bullets, plates, ordinary pins or panels.
+
+**Plate** (`<Plate variant="place|leg|total|mark" …/>`). Place: ink plate, pointed end, name in the plate face, a second line in beige, the figure right in Overpass 800. Leg: paper inside a 1.5 px edge; as a radio (`checked`) it takes the umber edge and the umber 50 fill. Total: label above a 40 to 54 px figure (the engine's own total). Mark: the small umber plate for "you chose this" (a chosen row's price, the chosen pin). Price bands ("€100 to €149", count on the tip) are place plates and appear only when the traveller sorts by cheapest day. Never use a plate as an ordinary card. One total plate per screen.
+
+**Score plate** (`<ScorePlate value={9.7} label="Score" />`). Ink, white figure out of 10, right after the place name. No stars, no coloured scores.
+
+**Formation** (`<Formation go={{mode, amount}} bed food day weighted? size="lg"? />`). The price row of every row and card: getting there as an outlined umber pill with its mode icon (a return fare, outside the day; the outlined pill means "outside the day figure" and nothing else, so a cost inside a total is never outlined), the bed as a solid umber wagon, food and drink as a beige wagon, coupled with 2 px gaps, then the day figure, always the loudest. A part without a figure is a dashed "Not yet" wagon outside the sum; a place without a split shows the day only. Wagons are content-sized in rows; `weighted` sizes them by their euros on cards and the cost post. Heights 24 (rows, cards), 36 (`size="lg"`, cost posts). The component formats, never sums.
+
+**Rail and RailCard**. Head: title left, "See all" in umber 700 and two round outlined arrow buttons right (from 1024 px; touch scrolls). Cards: 4:3 photo at 16 px corners, the name with its Score plate, flag and country (and the Hidden gem diamond in umber 700), the weighted formation; a paper save disc over the photo. Four across from 1024, about two at tablet, 76 % on a phone.
+
+**List row** (built by the explore lane from these parts). One grid per container width. Under 600 px: two lines (name and Score, then the day; flag and country, then the formation), a 44 px photo, about 8 rows above the bar at 390 x 844. From 600: one line, the formation in its own column. Selected: the umber 50 wash and the umber price mark, never a side stripe. The unit is said once in the column head ("A day, a person").
+
+**Receipt** (`CostRow`, `CostSum`, `.costrows.has-leaders`). The label reaches its figure along a dotted leader on wide receipts; the total is the engine's own total; a "Rounding" line where printed lines do not add up; parts without a price as "Not yet", outside the sum.
+
+**Journey line** (trip page, built by the trip lane): stops as umber pills as long as their nights, legs as a 2 px ink line (dashed for flights) with a mode icon, home ends as ink discs.
+
+**States** (`StateBlock`, `Skeleton`, `NotYet`, `WorldTile`). Loading: three blazes painting, announced politely, plus still bands the size of what comes. Empty: a dashed blaze, the name of the space and the action ("No place fits", Clear all). Error: one sentence of what happened and what to do, an action, no apology. Missing figure: "Not yet", out of every sum.
+
+**Figure** (`<Figure value precision mine delta />`). See "Numbers that move honestly".
+
+## The kit
+
+`src/components/ui/`: `Button` (primary umber, default paper with a 1.5 px ink edge, quiet umber text, danger; 44 px), `IconButton` (round 44 px; `surface` with an edge, `photo` a paper disc), `Chip` and `ChipGroup` (pills, 1.5 px edge, selected wash with a tick that springs in), `Segmented` (a pill; the chosen segment takes the paint; 44 px on touch), `Tabs` (the umber 3 px paint bar strokes in under the chosen tab), `Switch` (umber when on, the thumb springs), `Field` (8 px, 1.5 px edge, 16 px text, the error under it), `Card`, `Tile`, `ChoiceRows`, `CostRow`, `Money` (every euro through `formatMoney()`), `DialogSheet`, `CarouselArrows`, `StepRail`. The Ask button carries a boxed "AI" tag (`.ai-tag`), never a sparkle. A screen that needs a variant the kit lacks files a foundation request; it never restyles a kit class locally.
+
+## Icons
+
+`src/components/HouseIcons.jsx`, through the `Icon` wrapper (`<Icon as={HouseIcon.signpost} />`): a 24 px grid, 1.75 stroke, square caps, mitred joins, currentColor, decorative (the control carries the name). The set includes signpost (Explore), route (Plan), cairn of four flat stones (save, My trips), pack (travel style), rings (Together), borders (countries, no globe), car, train, bus, ferry, flight, bed, food, walk, the kinds and the standard actions. No sparkle for AI, no compass rose, no plane with a dashed trail, no emoji. Older glyphs in `Icons.jsx` stay until lanes replace them; new work uses the house set.
+
+## Photography
+
+Licensed photos only, each with author and licence (credits under the gallery and in "Sources and photo credits"). Corners `--radius-card`. Text never on a photo: titles and prices sit under it; a control on a photo is a paper disc. Missing photo: the world tile. The one exception, a photo header that must carry its title, uses `.hs-photo-scrim` (ink 55 % under the bottom 45 %, white text 7:1 or more).
+
+## Interaction
+
+Character: **painted and placed**. Rules:
+
+1. Respond in the next frame: the state first, motion second.
+2. Motion says what changed and where it went; if it explains nothing, drop it.
+3. **Overshoot only on the control the finger touched** (the tick spring, about 5 %; the Add icon may pop about 13 %). Figures, plates, the chosen pin, surfaces and pages settle without overshoot.
+4. One signature moment per screen at most.
+5. Interruptible: transitions and springs, not keyframes (except the refused-submit shake).
+6. Never blocks input; a view transition lasts at most `--dur-3`.
+7. Figures move only when the traveller has changed them a moment before.
+8. Haptics only on a touch commit.
+9. The more often, the smaller.
+10. Reduced motion shows the end state at once (`02-base.css` zeroes every duration); haptics have their own setting.
+
+### Tokens
+
+| Token | Value | For |
 |---|---|---|
-| `--water-clear` | `#1f8fb0` | excellent bathing water, clear sea blue |
-| `--water-pin` | `#2a8fbd` | beach pins and chips |
-| `--lake-ink` | `#2a6f9e` | lake pin name |
-| `--water-link` | `#2b6f9e` | blue text inside water facts |
-| `--swim-ink` | `#2c6376` | swim type text |
-| `--swim-bg` | `#e2eef2` | swim type fill |
-| `--swim-rule` | `#cbdfe6` | swim type border |
-| `--rain-ink` | `#4a70a8` | rain figure in a weather day |
-| `--climate-poor` | `#9bb0bd` | climate band, poor month |
-| `--water-excellent-bg` | `#d8ecf5` | day extras water quality, excellent |
-| `--water-excellent-ink` | `#11607f` | day extras water quality, excellent text |
+| `--dur-press` | 80 ms (`--ease-out`) | The finger lands: `--press-scale` 0.97 (0.92 small icons, 0.985 cards and rows), `--press-shade` 0.78 |
+| `--dur-tick`, `--ease-tick` | 300 ms, spring 180 ms visual, bounce 0.3 | The release, a switch thumb, a check mark, a segment |
+| `--dur-pop`, `--ease-pop` | 550 ms, spring 260 ms, bounce 0.45 | The Add icon only |
+| `--dur-settle`, `--ease-settle` | 400 ms, spring 200 ms, no bounce | Figures rolling, plates arriving, the chosen pin, rows gliding, the nav marker |
+| `--dur-paint` | 220 ms | A blaze stripe or the tab paint bar stroking in |
+| `--dur-couple` | 420 ms | A wagon coupling into the formation (add a cost part) |
+| `--dur-sheet`, `--ease-sheet` | 420 ms, `cubic-bezier(0.32, 0.72, 0, 1)` | A sheet rising |
+| `--dur-1` to `--dur-4` | 120, 200, 320, 480 ms | Colour changes, routine changes, surfaces, one authored movement |
+| `--dur-note` | 4000 ms | A delta note ("+€328") |
 
-**Cautions: amber, orange and red-brown. Warnings that are not destructive (`--danger` is the destructive one)**
+The linear() easings are generated from `src/lib/motionTokens.js` (`SPRING`: tick, pop, settle, surface, route, reveal, fling) by `scripts/ci/spring-easings.mjs`, so CSS and Motion move alike.
 
-| Token | Value | Only for |
+### Primitives
+
+| Primitive | Response | Haptic |
 |---|---|---|
-| `--warn-ink` | `#b3402a` | over budget, no fare, cautions |
-| `--warn-vivid` | `#cc4433` | poor water and swim-stop indicator |
-| `--amber` | `#c68a12` | sufficient water, hazard rules, amber indicator |
-| `--amber-ink` | `#a8400f` | warning note text (rust since T438) |
-| `--amber-ink-alt` | `#a8400f` | warning text beside the rating family |
-| `--amber-ink-deep` | `#9c3d12` | deepest warning text |
-| `--amber-warm` | `#a8400f` | warm warning text (was 4.25:1, under the floor) |
-| `--beach-ink` | `#c48a2a` | beach pin name |
-| `--amber-bg` | `#fdf3e2` | warning note fill |
-| `--amber-bg-alt` | `#fcf2dd` | a second warning tint |
-| `--amber-rule` | `#efd9a3` | warning border |
-| `--rate-rule` | `#e0cba4` | rating band border |
-| `--crowd-hot` | `#d06a2a` | crowded indicator |
-| `--orange` | `#d35a26` | orange fill |
-| `--experience-ink` | `#9a3a2a` | experience type text |
-| `--experience-rule` | `#eec7bb` | experience type border |
-| `--danger-bg` | `#f6dcd8` | poor water fill; the danger status chip |
-
-**Violet and slate. Single-use domain colours**
-
-| Token | Value | Only for |
-|---|---|---|
-| `--ai-violet` | `#5b3fa8` | AI-planned stops |
-| `--ai-violet-bg` | `#eee7fb` | AI chip fill |
-| `--mountain-ink` | `#6b5b95` | mountains pin name |
-| `--slate-ink` | `#55606f` | unknown or neutral swim and way label |
-| `--slate-pin` | `#5b6472` | town pin |
-| `--crowd-mid` | `#6b7280` | moderate crowd indicator |
-| `--slate-mute` | `#6f7688` | map popup subtitle |
-| `--mask-solid` | `#000` | the opaque stop of a mask-image gradient |
+| Press | shrink and shade on `--dur-press`, spring back on the tick (02-base.css) | none |
+| Select | fill over `--dur-1`, the mark springs in (tick, paint bar, blaze stripe) | tick |
+| Toggle | the switch thumb springs; pressed it stretches from its resting side | tick |
+| Add / save | the icon swaps outline to filled on the pop; a toast with Undo | confirm |
+| Remove | fade over `--dur-1`, neighbours settle; Undo toast 6 s or more | tick |
+| Reveal | opacity and 4 px over `--dur-2`; popovers scale from 0.96 | none |
+| Count | only the changed figure rolls (`Figure`), others dip once together | on the stepper, never on the figure |
+| Reflow | staying rows glide on settle, entering fade; only up to 24 rows, no per-row stagger | none |
+| Sheet | rises on the sheet curve; drag 1 to 1, closes past 30 % or a fling | optional tick at the close threshold |
+| Route | tab change: the new view fades and rises 8 px; a drill-in shares the photo | none |
+| Error | the field group shakes once, the message appears, focus moves | warn |
 
-### Card taxonomy
+Signature moments: Explore, a chosen pin and its row paint and the price settles into an umber plate; place, a getting-there option is chosen and the total rolls; trip, the hire car couples into the formation and the total rolls with its delta note.
 
-Place kind is an ink-density ramp, not a rainbow: `--text` mixed over `--surface-page` at 100, 78, 62, 45 and 50 per cent, so the hierarchy reads as weight and survives greyscale and colour-blind viewing.
+### Haptics
 
-| Token | Value | Only for |
-|---|---|---|
-| `--kind-metro` | `#1f2a33` | Metro |
-| `--kind-city` | `#4f575d` | City |
-| `--kind-town` | `#71777c` | Town |
-| `--kind-village` | `#959a9c` | Village |
-| `--kind-area` | `#8b9093` | Area |
+`src/lib/haptics.js`: `haptic('tick' | 'confirm' | 'warn')`, Android `navigator.vibrate` (10 ms; 10, 60, 14; 20, 80, 20), a Capacitor build's Haptics plugin, iOS Safari's switch tick where it still plays. Only after a touch (never mouse, pen or keyboard), at most one per 50 ms, only on a commit: never on pointerdown, navigation, opening a sheet, scroll, load or a timer. The kit's Chip, Segmented and Switch call it; screens never call `navigator.vibrate` (a test checks). The traveller's "Vibrate on tap" switch (Settings, shown only where a route exists) wins; with no choice it is on, except under reduced motion.
 
-### Cost groups
+### Numbers that move honestly
 
-Owner decision 2026-10-29 (T845): the four cost groups each have their own colour, so a total reads at a glance. They appear on the cost bar's segments and as a dot before a group's name (the Costs tab's groups, the overview's tiles), never on text, a fill behind text, an action or anything else.
+A figure animates only within a second of the traveller's own change, only the figure that change moved, once, from the side it moved to, with a delta note; a figure nobody touched never moves under the reader's eye (refreshes, a co-planner's edit, first paint). Many figures at once share one dip. Screen readers hear the new value once, politely. Prices swap in place; list order changes only from the traveller's own sort or filter.
 
-| Token | Value | Only for |
-|---|---|---|
-| `--cost-travel` | `var(--lagoon-600)` (`#0b7480`) | Flights, or driving there and home |
-| `--cost-around` | `#4e69a8` | Getting around (transfers, between stops, car, day trips) |
-| `--cost-stay` | `#8a4f7d` | Stay |
-| `--cost-food` | `#6c8636` | Food and drink |
-| `--verdict-3` | `var(--rate)` | Filled verdict ribbon |
-| `--verdict-2` | `var(--rate)` | Outline verdict ribbon |
-| `--verdict-1` | `var(--ink-mute)` | Text-only verdict |
+### What never animates
 
-### Named Rules
+A price the traveller did not change, list order while reading, anything at first paint, the map camera on its own, the relief (beyond its one fade), hover beyond a colour change, focus rings, loops other than a real loading indicator, blur, confetti, sparkles, sound.
 
-**The Two Colours Rule.** Ink carries the text and the drawings; brown means it acts, is live or is selected. Nothing decorative and no status is ever brown; the rating star and the gem diamond are the two small marks it lends out.
+## Shell
 
-**The One Job Rule.** Sun yellow is best value, red destruction, rust a warning. A colour borrowed for a second job stops meaning the first.
+The header lies on the stone ground with one hairline. The wordmark slot is a blaze and the name in the plate face; it takes any name. The current place is marked by the umber paint bar under it (tablet and desktop) or a blaze over its icon (phone bottom nav); both glide on the nav marker (`useNavMarker`) with the settle spring. On a phone the row always fits at 360: the travel style door shows its pack icon (its name is in its accessible name), then Together and account. Navigation is a real link; Together and account are round doors.
 
-**The No Slab Rule.** A selected state is the light brown tint with a brown label and a mark (a tick, an underline, a lifted thumb). Never a dark fill, so the app never reads as black.
+## Map
 
-## Typography
+The app's own MapLibre maps on the CARTO Voyager style, repainted by `src/map/houseBasemap.js` (land `--map-land`, water `--map-water`, borders `--map-border`); routes in umber on a white halo (dotted for flights); pins: ordinary ones an ink head on a post with a paper price plate, clusters "+n"; the chosen pin the umber plate with the blaze, settling without overshoot; labels measured after the fonts load and never covering a post or another label. The pin drop plays only when the traveller opens the map. Never a drawn coast: the outline is the app's (`public/europe_map.json`, Natural Earth).
 
-**Display Font:** Figtree (with system-ui, -apple-system, Segoe UI, sans-serif)
-**Body Font:** Figtree, the same family
-**Label/Mono Font:** none. Figures use Figtree with tabular numerals.
+## Print and share
 
-**Character:** One friendly, warm sans for everything, in the manner of the Airbnb reference; the most compact of the three faces tried (Figtree, Manrope, Onest) for the compact rows the owner chose, with real tabular figures.
+Print and share follow the same tokens: the cover with the total plate, a relief where the trip's places have peaks, the journey line, the receipt with leaders and Rounding. Until the brand-surfaces lane moves them, the PDF and share images use Figtree from `public/fonts` (`docs/tos/fonts.md`).
 
-Figtree is variable (weights 300 to 900), latin and latin-ext, self-hosted in `continent-app/public/fonts` and declared in `continent-app/index.html`; nothing loads from a Google host. `--ui` is the one face declaration; `--font` is the name new rules use, and `--display` and `--mono` alias it. Decision T421, replacing T198's Fraunces, Plus Jakarta Sans and JetBrains Mono.
+## Do and don't
 
-`body` sets `font-variant-numeric: tabular-nums`, so every price, date, time and distance lines up in columns and settles in place. A separate monospaced face for figures is retired (owner decision 2026-10-13, PRODUCT.md "Numbers"). Measured facts are told apart by their position and their unit, not by a costume face.
+Do:
+- Use the roles and the kit; one primary umber action per screen.
+- Make the figure the loudest thing in its row; say the unit once.
+- Mark selected with the wash, umber text, an edge and a mark.
+- Draw the relief only from real peaks, with a printed height.
+- Check 390, 820, 1180 and 1440 and a width sweep before you ship.
+- Keep every function: restyle, never remove.
 
-### Hierarchy
+Don't:
+- No text on photos or contours; no side stripes or coloured top borders on panels.
+- No blaze as decoration; no plate as an ordinary card.
+- No overshoot on figures, plates, pins or surfaces; no stagger on rows; no animation at first paint.
+- No new hex outside the token file (the map mirror and flags excepted); no literal durations or easings; no font other than the two faces.
+- No made-up figure: a missing one is "Not yet".
 
-Sizes are the `--text-*` tokens in the frontmatter; leading is `--leading-tight` (1.2) for headings, `--leading-ui` (1.35) for controls and `--leading-body` (1.5) for prose.
+## The AI-slop catalogue (never)
 
-- **Display** (`--text-display`, 700): destination names on a hero.
-- **Headline** (`--text-headline`, 700): page titles.
-- **Title** (`--text-title`, 600): card and section titles.
-- **Lead** (`--text-lead`, 600): row titles, lead text, primary buttons on a phone, the value in a field.
-- **Body** (`--text-body`, 400): body copy and list rows. Prose caps at `--measure` (68ch).
-- **Label** (`--text-label`, 500; 600 on a selected chip or a field label): labels, chips, secondary buttons.
-- **Caption** (`--text-caption`, 400): metadata; the floor for a figure or a rating.
-- **Micro** (`--text-micro`, 600): the floor for any functional text: badges, counts, captions on a pin.
+Purple-blue gradients, glassmorphism and blurred blobs, a centred hero with two buttons, three identical feature cards, bento grids for their own sake, gradient text, a sparkle icon for AI, an eyebrow kicker above every heading, card inside card inside card, one big radius everywhere, a cream ground with a serif display and terracotta accent, dark neon "tech" looks, stock 3D or people at laptops, emoji icons, fake logo strips, filler copy; and for travel: a dotted world map, a plane with a dashed trail, a globe icon, polaroid stacks, handwritten "wanderlust", passport stamps as wallpaper, a compass rose logo. The old look (warm grey ground, white rounded cards, a booking-site structure) is retired too.
 
-### Named Rules
+## Before you ship (pre-ship checklist)
 
-**The Floor Rule.** Nothing functional is set under 11 px, and no figure or rating under 12 px. T421 raised every rule that was under 10 px; the older per-screen files still hold px sizes from 10 px up, which the migration moves onto the scale.
-
-**The Tabular Rule.** Every column of figures uses tabular numerals in the one family. A figure that changes updates in place, never with a count-up.
-
-## Layout
-
-A 4 px spacing grid (`--space-1` to `--space-8` in the frontmatter); T421 moved `--space-5` and `--space-6` onto it (they were 22 and 30 px). `--gutter` is the 16 px side margin. The scale is for new and touched rules; the older stylesheets still carry px literals, which the migration retires.
-
-`--tap-main` (48 px, T496, owner T485-a) is the height of the phone bottom nav slots and of each place's one primary action (Plan a trip, Add to day, the drawer handle). `--tap` (44 px) is the floor a finger needs. Icon-only controls get it as a minimum box even where the glyph inside is 15 px (WCAG 2.5.5). Nothing interactive is smaller on touch. Under `@media (pointer: fine)` a compact control, such as the small Button or a chip, may be 32 px high (T362).
-
-| Token | Value | Only for |
-|---|---|---|
-| `--filter-h` | `132px` | Height of the filter bar on the map tab |
-| `--panel-w` | `440px` | Width of the desktop detail panel |
-| `--w-browse` | `1440px` | Content cap of a browse page: Explore and its category tabs, My trips, the Plan opening and library, the home page body, the footer (T1041) |
-| `--w-detail` | `1240px` | Content cap of one place or one trip: the place page, item, library-trip and region pages, the trip page, a day-wizard step with its summary (T1041) |
-| `--w-hub` | `1120px` | Content cap of a hub: Account, Together, Pricing (T1041) |
-| `--w-form` | `720px` | One question's column in a form (T1041) |
-| `--w-aside` | `360px` | The summary card beside a step (T1041) |
-| `--page-gutter` | `16px`, then `24px` from 769, `32px` from 1024, `48px` from 1440 | The side margin of a page; a capped page's max-width is its cap plus two gutters (T1041) |
-| `--page-inset` | `max(--page-gutter, (100vw - --w-browse) / 2)` | The side padding of the header, the settings line, a page bar and a browse page, so all four share one left edge at every width (T1041, keeps T427) |
-| `--bottom-nav-h` | `calc(64px + env(safe-area-inset-bottom, 0px))` | Height of the four-slot phone bottom nav including the home-indicator inset (T494, T496), so nothing above it adds the inset again; set to `0px` where the nav is hidden |
-| `--drawer-strip` | `72px` | The collapsed strip of the phone MapDrawer, which always carries the amount (T500) |
-
-Layers, low to high (T474): `--z-base` 0; `--z-sticky` 10, a bar that sticks inside a scroll view; `--z-float` 12, lists and panels floating over the map; `--z-popover` 20, menus, tips and suggestions over those; `--z-header` 25, the app header and top bar; `--z-tray` 30, the open filter tray and a page's own toast; `--z-overlay` 40, drawers, phone panels, the calendar and their scrims; `--z-nav` 50, the bottom nav, the site banner and the plan chooser; `--z-shell` 55, shell panels over the nav (account, the phone header, the destination panel); `--z-modal` 60, dialogs, sheets and full overlays; `--z-toast` 80, a confirmation over a dialog; `--z-menu` 90, phone popovers, and dropdown menus and the loading screen at +10; `--z-page` 200, full-screen pages and what opens over them; `--z-top` 1000, the definition popover and the guides panel; `--z-max` 9999, the crash screen. Inside the map's own layer, `--z-pin-selected` 50 and `--z-pin-hover` 100 lift a price pin. Every z-index of 10 or more reads one of these, or a step inside its band written `calc(var(--z-band) + n)` (a destination page is `calc(var(--z-page) + 40)`); 1 to 9 is stacking inside one component and stays a number. The values are the ones the app shipped with, so the ladder names the order rather than changing it, and the design lint's `z-index-literal` rule keeps it that way. Each page caps its content at its kind's width (`--w-browse`, `--w-detail`, `--w-hub`) and centres it; a map surface has no cap (T1041; was one 1180 px cap that half the tabs had left).
-
-Breakpoints (T380, design direction v6): the small floor is 360 px with no horizontal scroll; below 769 px is the phone (bottom nav, sheets, one column); from 769 px the header carries the tabs; from 1024 px map and list sit side by side, highlighting each other, and a detail page may run two columns. On a desktop the Explore map view gives the map the rest of the screen under the category row and one row of back, chips and tools; the map runs from gutter to gutter (T1041, after Google Explore and Airbnb).
-
-**The Compact Default Rule.** Lists where places are compared default to compact rows (about ten to a phone screen); large photo tiles belong to rails and the home page.
-
-## Elevation & Depth
-
-A hybrid that leans flat. Objects at rest are drawn with a border; a shadow appears only on what floats over other content: a sheet, a dialog, a popover, a sticky bar over content, an icon button over a photograph, and the lifted thumb of a segmented control. All three shadows are ink (`#1f2a33`) at low alpha. No gradient exists in the product.
-
-### Shadow Vocabulary
-
-- **Resting lift** (`--elev-1`: `0 1px 2px rgba(31, 42, 51, 0.06), 0 2px 8px rgba(31, 42, 51, 0.05)`): a resting object that has no border, such as an icon button on a photo or the selected segment.
-- **Raised** (`--elev-2`: `0 4px 12px rgba(31, 42, 51, 0.10), 0 12px 28px rgba(31, 42, 51, 0.08)`): a popover, a sticky bar over content.
-- **Overlay** (`--elev-3`: `0 12px 32px rgba(31, 42, 51, 0.16), 0 2px 6px rgba(31, 42, 51, 0.08)`): a sheet or a dialog.
-
-A modal dialog sits over a scrim of `--ink` at 28 per cent (T362).
-
-### Named Rules
-
-**The Border Or Shadow Rule.** Elevation is declared once per object: a border or a shadow, never both.
-
-## Shapes
-
-Gently rounded and consistent by size of object: the larger the object, the softer the corner.
-
-- **Small marks** (`--radius-sm`, 6 px): status chips, inline marks, a focus ring around a tab.
-- **Controls** (`--radius-control`, 10 px): buttons, inputs, selects, the segmented track, the photo inside a compact row.
-- **Cards and photos** (`--radius-card`, 16 px): cards and photographs.
-- **Sheets** (`--radius-sheet`, 20 px): sheets and dialogs.
-- **Pills** (`--radius-pill`, 999 px): filter and choice chips, count chips, round icon buttons, spinners.
-
-Borders are `1px solid var(--border)` on anything a user can type into or click and `var(--border-soft)` for hairlines inside an object. Lists get hairlines, objects get borders. A tile card clips its photo to the card's corner; the photo itself has no radius of its own there.
-
-## Components
-
-The shared kit lives in `continent-app/src/components/ui/` (exported from `index.js`) with its styles in `src/styles/03-button.css` and `src/styles/04-ui.css`, on roles and scales only. The style guide at `/?styleguide` shows each with a live example. New screens build from the kit; a one-off control that duplicates a kit component is a defect. Labels are passed in by the caller, who owns the i18n key.
-
-Shared across the kit: focus is `outline: 2px solid var(--focus); outline-offset: 2px` on `:focus-visible`; hover rules sit inside `@media (hover: hover)` so a touch never sticks a hover state; colour changes take `--dur-1` with `--ease-out`; the press shade and compression come from `02-base.css` for every control; disabled reads as unavailable (`--surface-sunken`, `--text-3`, `cursor: not-allowed`), never as a quieter live control.
-
-### Buttons
-
-Calm and solid: a 10 px corner, a 600 weight label, and a fill only when the button is the one thing the view is for.
-
-- **Shape:** gently rounded (`--radius-control`, 10 px), at least `--tap` high, `--space-5` side padding, `--text-body` at 600, an 8 px gap to an icon.
-- **Primary:** `--action` fill, `--action-text` label. The one action of a view; one per view.
-- **Secondary (the default):** `--surface` with a `--border` edge, `--text` label. Every action that is not the one.
-- **Quiet** (`ghost` is an alias): no fill, brown label; an offer inside a bar or a row.
-- **Danger:** `--danger` fill, white label. Erases something, nothing else.
-- **Hover / Press:** primary darkens to `--action-hover`, then `--action-press` while pressed; secondary shifts to `--surface-hover` with a `--neutral-300` edge; quiet takes the `--action-tint` ground; danger darkens to `--danger-dark`.
-- **Sizes:** `md` (default, `--tap` high) and `sm` (inline in a bar: 32 px on a fine pointer, `--tap` on touch, `--text-label`, `--space-3` padding). `block` fills the container width.
-- **Loading:** keeps its width, hides the label in place, shows an 18 px spinner, sets `aria-busy` and blocks clicks. Under reduced motion the spinner stops and dims.
-- **Icons:** `iconStart` and `iconEnd` sit beside the label and are hidden from assistive tech.
-- **Copy:** verb first, sentence case, no full stop.
-- **Not for:** a control whose only content is an icon (use IconButton); a toggle between views (use Segmented); a filter (use a Chip).
-
-### Icon buttons
-
-- **Shape:** always a `--tap` (44 px) round box, even with a 16 px glyph. The label is required: it becomes the accessible name and the tooltip.
-- **Tones:** `plain` (no fill, icon in `--text-2`; bars and rows; the default), `surface` (a round `--surface` disc with a `--border` edge; over a map or on a sheet), `photo` (a round `--surface` disc with `--elev-1` and no border; over a photograph).
-- **Hover:** `--surface-hover` behind the icon, which turns `--text`.
-- **Pressed:** pass `pressed` for a toggle such as the save heart: it sets `aria-pressed` and the selected tint (`--select-bg` with `--select-ink`).
-- **Not for:** an action whose meaning an icon cannot carry alone; use a Button with an icon and a label.
-
-### Chips
-
-One chip in four kinds. Selected takes the light tint and a tick, so the state never rests on colour alone.
-
-- **Filter:** a toggle that narrows a list; a button with `aria-pressed`. `--surface` with a `--border` edge, pill corners, `--text-label` at 500, 32 px high on a fine pointer and `--tap` on touch. Selected: `--select-bg`, `--select-border` edge, `--select-ink` label at 600, and a 14 px tick that replaces the icon.
-- **Choice:** one of a set, inside a ChipGroup (`role="radiogroup"`; arrow keys move the choice, only the chosen chip is in the tab order). Same look as filter.
-- **Count:** a figure beside a label ("Filters 3"); not interactive. A 20 px pill on `--surface-sunken`, `--text-caption` at 600 in `--text-2`.
-- **Status:** a label on an object; not interactive. 24 px, `--radius-sm`, `--text-caption` at 600, in one tone: `neutral` (`--surface-sunken`, `--text-2`), `best` (`--best` with `--text`), `gem` (`--gem-bg`, `--gem-ink`), `rate` (`--rate-bg`, `--rate`), `positive` (`--surface-sunken`, `--text`, a 6 px `--status-success` dot, always with its word), `danger` (`--danger-bg`, `--danger`).
-- **When to use:** filters and refine rows; a short set of choices (more than four options also lands here rather than in Segmented); labels on objects.
-- **Not for:** an action (use a Button); a selected state painted dark; a status tone used outside its one job.
-
-### Segmented
-
-Two to four exclusive views of one thing (List and Map, Overview and Day by day, I know my dates and I'm flexible).
-
-- **Style:** a `--surface-sunken` track with 3 px padding and `--radius-control` corners; segments in `--text-2`, `--text-label` at 600, 38 px high (30 px in `sm`), with an optional icon.
-- **Selected:** a raised white thumb (`--surface`, `--elev-1`) with the label in `--text`. Lifted, never painted dark.
-- **Behaviour:** `role="radiogroup"` with `role="radio"` segments; arrow keys move the choice; only the chosen segment is in the tab order. `block` stretches the segments to fill the width.
-- **Not for:** more than four options or filters (use chips).
-
-### Tabs
-
-Sections of one page that swap in place.
-
-- **Style:** a row of labels on a `--border` hairline, `--space-5` apart, each `--tap` high, `--text-body` at 600. Unselected labels are `--text-2`; hover turns them `--text`.
-- **Selected:** `--text` with a 2 px `--action` underline that grows from the centre (`scaleX`, `--dur-2`). An optional count follows the label in `--text-3`.
-- **Behaviour:** `role="tablist"` with `role="tab"`; arrow keys move, Home and End jump; the caller renders the panel and may pass its id for `aria-controls`.
-- **Not for:** moving between pages or tabs of the app, which are links with history.
-
-### Cards / Containers
-
-One anatomy for every object Carta lists (a place, a trail, a beach, a trip, a saved item). Slots in fixed order: media, title, meta, price, rating, actions.
-
-- **Corner Style:** softly rounded (`--radius-card`, 16 px).
-- **Background:** `--surface` with `--text`.
-- **Shadow Strategy:** none at rest; a card is a bordered object (see Elevation & Depth).
-- **Border:** `1px solid var(--border)`; hover on an interactive card shifts to `--neutral-300`; selected takes a `--select-border` edge and a 1 px inset outline of the same brown.
-- **Row layout (the default):** a 72 px photo with `--radius-control` corners at the start, then title (`--text-lead` at 600, one line, ellipsis), meta (`--text-label` in `--text-3`) and the figures line (price at `--text-body` 600, then rating). Padding 8 px, 12 px on the right.
-- **Tile layout:** a 4:3 photo on top clipped to the card's corners, then the body with 12 px top and 16 px side padding; actions float in the photo's top right corner as photo-tone icon buttons. A rail tile's title takes at most two lines and always reserves two, so every tile in a rail is one height; the full name stays in its accessible name (owner T457-g, 2026-11-12, refining T430; built under ROADMAP G2).
-- **Opening:** the whole card opens its page through one real link or button on the title, stretched over the card; actions such as the save heart sit above the stretch as their own controls. No nested interactive elements. Focus draws the ring around the whole card.
-- **Price slot:** always a `<Money>`.
-- **Not for:** a card inside a card; a bento grid of facts; text on a photograph.
-
-**Priced trip card (T798, rebuilt by T869, owner's layout A 2026-10-29).** Trips for you lists priced trips, not countries, and its card carries the trip's total for the group, the one exception to "Cost on cards" (a day price a person). Top to bottom: one photo (3:2, `--radius-card`, the first place's catalogue photo, else the country's best known one, else the flag-and-name placeholder) with the match pill ("90% match", only from `match.show_min` up) and the save heart on it; under it on the sheet's white, with no box, the trip's name (its places joined the way the language joins a list), which is a link to the trip's page and stretches over the card, with a 44 px More menu beside it (Compare, a tick up to four, and Skip for these answers); one line of icon facts (country with its flag, nights, bases); the strongest reason and the catch as one line of two sentences (the catch in `--text`); the total for the group in whole euros through `formatMoney` ("€1,983 for 2, all in", "for 2, without the flight", "for you" alone); a trip over the budget says so once, in its catch or in one quiet line in `--amber-ink`. A ticked trip shows "In your comparison" and the selected edge round its photo. No cost bar, no three figures, no budget badge, no button on the card. The gallery is one card on a phone, two from 600 px and three from 1024 px, the sheet full width from 769 px, six at a time. Styles in `src/styles/87-trip-finder.css`. No new token.
-
-**A finder trip's page (T870, T871).** The card opens a page, not a dialog, at its own address (`#tf=<trip id>`, one history step, kept across a reload): a back control naming Trips for you; the gallery across the width with each photo's place, author and licence on the caption line; the head (name as the h1, country, when, nights, bases, match); then, in a 1180 px column, who the trip is for (one paragraph from a template over the trip's facts, `whoFor.js`), the fact band (door to door, the weather and the sea that month, crowds, getting around, the airport; label over value, a missing fact left out), the route on a map with numbered ink stops and a dashed ink line that is not the measured path, what you would do, why it fits and the catch side by side, and up to three alternatives as cards. The price card is the page's one bordered object: the group total, the cost bar in the four cost-group colours with a matching dot before each line's name, the four lines (a line with choices opens its picker in the page), save and the one primary, Plan this trip; a sticky side column from 1024 px, after the fact band on a phone.
-
-### Inputs / Fields
-
-Every input the traveller types or picks into.
-
-- **Style:** a visible label above (`--text-label` at 600), then the control: `--surface`, `1px solid var(--border)`, `--radius-control`, `--tap` high, `--space-3` side padding, the value in `--text-lead` (16 px, which also stops phone browsers zooming). Placeholders are `--text-3`. A textarea starts at 96 px, `--leading-body`, resizable vertically. A select draws its own chevron in `--text-2`.
-- **Hover:** the edge shifts to `--neutral-300`.
-- **Focus:** the 2 px `--focus` ring at a 1 px offset, and the edge turns `--action`.
-- **Error / Disabled:** an error turns the edge `--danger`, sets `aria-invalid`, and shows one sentence under the field in `--danger` at `--text-caption` 600 that says what happened and what to do. Help text sits under the field in `--text-3` at `--text-caption`. Both are tied to the control with `aria-describedby`. Disabled is `--surface-sunken` with `--text-3`.
-- **Rule:** the label is required and always present. `hideLabel` keeps it for assistive tech on a search box whose purpose the icon and context make plain. A placeholder is optional (owner 2026-10-22, T569): an empty field may stay empty, and a placeholder, when there is one, is never the name of a field. Ask Carta's chat field has none; while empty it types its suggested questions (see Ask Carta exception).
-
-### Icons
-
-Drawn line icons from `src/components/Icons.jsx` (1.5 stroke, `currentColor`), wrapped by Icon in three sizes: `sm` 16 px inside chips and inline with 13 to 14 px text; `md` 20 px in buttons, rows and the tab bar (the default); `lg` 24 px in empty states and the hero of a sheet. Decorative by default (hidden from assistive tech, since the control around it carries the name); pass `label` when the icon alone carries meaning. SVG only; no icon fonts, no glyph characters as icons.
-
-### Money
-
-Every euro the traveller reads goes through one formatter, `src/lib/money.js` (`formatMoney`, `formatApprox`, `formatEst`, `formatMoneyRange`) on `Intl.NumberFormat`, or the `<Money>` component in JSX, so two screens can never write the same figure two ways (T423, PRODUCT.md "Numbers", owner decisions 2026-10-13).
-
-- **Whole euros in comparison contexts:** cards, pins, lists, rails, filters and chips, where many places are compared at once ("€87"). This is the one owner-approved rounding.
-- **Cents on receipts and totals:** receipts, totals, ledgers, pass prices and exports (`precision="cents"`, "€87.40"). A rounded figure on a receipt is a defect.
-- **Locale placement:** the reader's language decides where the symbol goes and how digits group ("€1,268" in English, "1.268 €" in German). It defaults to the app language.
-- **Estimates:** written like any figure, `€87` (owner, 2026-10-24, price plan rule 2; before, `~€87`). Whether a figure is measured, live or estimated is stored by the price engine and shown only in the admin Prices view. `<Money est>` and `formatEst()` stay for their callers and draw the plain figure.
-- **Per unit (T474):** one phrase per unit and one order when two apply: "a person a day" ("per persoon per dag", "pro Person und Tag", "par personne et par jour", "por persona y día", "a persona al giorno"), "a person" for a person's share (never "each"), "a day", "a night", "a car". The unit is its own i18n phrase or part of the template, never a suffix glued to a figure.
-- **Ranges:** the language's own range word between two formatted figures ("€40 to €60"; "tot", "bis", "à", "a", "a" in Dutch, German, French, Spanish and Italian). No dash between figures.
-- **Missing values:** words, never a blank, a dash or "€NaN": `<Money>` prints `money.onRequest` ("Price on request") in `--text-3` at 500.
-- **Fields with no data yet (T630 to T632, owner decision 2026-10-23):** on the Explore detail sheets (trail, cycle route, peak, lake, beach, and the destination sheet's Around, When to go and Practical tabs and its export section) every field of the explore-completeness spec keeps its slot. A slot without a value shows the one shared placeholder, `components/NotYet.jsx` (`data.notYet` "Not available yet" in a cell, `data.notYetLine` in a section), in `--ink-soft` (`.not-yet` in `src/styles/45-empty-states.css`). For these fields this overrides "a missing fact is left out" and "Say less". No new token.
-- **No euro sign in i18n:** strings never carry a euro sign; a template takes a formatted figure (`{price}`, `{eur}`) from the formatter. Per person is one phrase per language (`money.perPerson`).
-- **Typesetting:** `.money` is tabular and never wraps inside the figure.
-- **The opened price (T695):** the amount on a card and on the destination header is a button (`.pitems-trigger`, a dotted `--border` underline, `--focus` ring) that opens the InfoDot popover with the items in the price, each a kit Switch with its amount; an item without data shows `NotYet`, with no switch. Styles in `86-price-items.css`.
-- **Per person or the whole group (T694):** a Segmented control under People in the settings line; every day figure, pin, filter stop and chip shows the same factor.
-- **Not for:** `toFixed` on a price, a euro literal in a template, string concatenation of a symbol.
-
-### Navigation
-
-The phone has a white bottom tab bar (`--bottom-nav-h`) of four `--tap-main` slots (Explore, Plan, My trips, Account) with the active icon and label in brown; the other slots are `--ink-soft`, labels in sentence case in Figtree (T186, owner T186-e, 2026-11-12: the old red inactive labels measured 2.52:1); from 769 px the header carries the logo (the way Home), the three places left after it and the account icon far right (T496). Navigation between pages is links with history and addressable detail pages, never in-page tabs (T380).
-
-The trip and day planners are fixed-height workspaces with no site footer; the footer ends every other tab (owner T594-a, 2026-11-12).
-
-**The page bar (T474).** Every full-screen page (destination, item, trip, journey and region) wears one bar, `src/browse/PageBar.jsx` with `.ipage-bar` in `70-item-pages.css`: a quiet back button that names the list it returns to on a phone and a desktop alike (never a bare arrow on one size and a cross on the other), the page's name once its heading has scrolled away, then save and share as icon buttons. It sits on `--surface` with a `--border-soft` hairline, 52 px tall plus the notch inset (content-box, so the inset adds height instead of eating it). A list item that opens a page is a real `<a href>` to the page's address; a plain click opens it in place, a modifier click is the browser's.
-
-**Arrival focus (T474).** One rule, `src/hooks/usePageArrival.js`: opened by pointer, touch or a link the app booted on, focus goes to the page's h1 (tabindex -1, no ring); from the keyboard, to the first control in the page bar. `useFocusTrap` then traps Tab and Escape and hands focus back on close.
-
-### Motion
-
-Added by T380 (design direction v6, `docs/design-v6/DIRECTION.md` part 2). Every transition and animation reads these tokens; JavaScript reads them through `durationMs()` in `src/lib/motion.js`. They are motion, so they sit outside the frontmatter schema.
-
-| Token | Value | Only for |
-|---|---|---|
-| `--dur-1` | `120ms` | Immediate feedback: a press, a chip toggling, a hover tint |
-| `--dur-2` | `200ms` | A routine state change: a fold, a figure settling in place, a chip entering, a row sliding to its place, a tab's content arriving, a tab underline; every exit |
-| `--dur-3` | `320ms` | A surface arriving: a sheet, a dialog, a popover, a shared element becoming its page, the grid to map crossfade |
-| `--dur-4` | `480ms` | One authored movement over distance: the map camera, one leg of the route reveal (the whole reveal is capped at 900 ms) |
-| `--ease-out` | `cubic-bezier(0.16, 1, 0.3, 1)` | Arrivals and settles |
-| `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | Movement between two on-screen positions: a reorder, the active marker sliding, a scrub marker |
-| `--dur-spin` | `800ms` | One turn of a spinner (T1124) |
-| `--dur-blink` | `1000ms` | A blinking cursor or dot (T1124) |
-| `--dur-dots` | `1200ms` | A typing-dots or pulse cycle (T1124) |
-| `--dur-breathe` | `1600ms` | A breathing skeleton or a sheen sweep (T1124) |
-| `--dur-pulse` | `2000ms` | A slow attention pulse (T1124) |
-| `--dur-loop` | `2800ms` | A looping diagram step (T1124) |
-| `--dur-drift` | `24000ms` | Ambient background drift (T1124) |
-
-The ambient loops never carry an entrance or a state change. T1124 moved every literal duration and easing in the stylesheets onto these tokens (243 literals before, 1 after; the one left is the cost card's 900 ms ring in `92-cost-card.css`, owned by the cost card task). Literals were rounded to the nearest token: up to 160 ms to `--dur-1`, up to 260 to `--dur-2`, up to 400 to `--dur-3`, up to 600 to `--dur-4`; `ease` and `ease-in-out` became `--ease-in-out`, `ease-out` and the near-identical Carta cubic-beziers became `--ease-out`. `linear`, `0s` and the reduced-motion floor's `0.01ms` stay literal, and so does any `*-delay` (a stagger is arithmetic). `motion-literal` in `scripts/ci/design-lint.mjs` fails a new literal. Scripts scroll through `scrollBehavior()` in `src/lib/motion.js`, never `behavior: 'smooth'`.
-
-No overshoot, bounce or elastic curve exists. Durations and easings come from these tokens, never a literal. Routine motion animates `transform` and `opacity`; a press, hover or selection may also animate `background-color`, `border-color` and `color` at `--dur-1`; a reveal may animate `clip-path`, `mask-position` or `stroke-dashoffset`. Nothing animates `width`, `height`, `top`, `left`, margins, padding, `grid-template-*`, `box-shadow`, `filter` or `backdrop-filter`; `transition: all` is never written. A figure that changes updates in place with one opacity dip (`settleFigure()` in `src/lib/figureChange.js`), never a count-up. Nothing moves because the page scrolled. The press shade (opacity 0.78, `scale: 0.98`, `--dur-1`) comes from `02-base.css`. The reduced-motion floor in `02-base.css` zeroes every duration, and every rule carries its own `prefers-reduced-motion: reduce` branch as well.
-
-### Home page exception v2 (T606)
-
-The home page (`src/browse/home/`, styles in `src/styles/61-v6-home.css`) persuades rather than operates, so it is the one surface that may move on its own and put a label on a photograph (owner, 2026-10-17, "allow it"). The owner widened it on 2026-10-23, when the page was rebuilt from scratch (decisions D2 to D6 in `T605`), after six reference sites were measured: none of them pins or scrubs with the scroll, all of them animate transform and opacity only, and what makes them feel alive is film, large type and slower timing.
-
-- **The hero film fills the first screen** (D3, D4; T620, owner 2026-10-23 after Mindtrip and Komoot). The film takes the home page's whole visible box and the window's whole width, with no inset and no corners at any width (T621); on a wider screen the page starts at the window's top and the app header lies on the film (below). Its height is the page box (`100cqh`, the page is the size container). The home page shows no scrollbar (`scrollbar-width: none`), so no scrollbar column stands beside the film; the wheel, the keys and a finger still scroll it. It shows one catalogue place after another, each for `--dur-film` with a `--dur-film-fade` crossfade, as one continuous cut: no progress bars, no pills, no control on it. A shot is a licensed clip (T618: five Pexels clips, 11 s H.264 at 1280 by 720 with a WebP poster, `public/home/film/`); a shot without one falls back to a photograph pushed in slowly. It runs only while on screen with the tab visible; under reduced motion the first shot's poster stands still. The owner chose no pause control (T620; it leaves WCAG 2.2.2 open, register T620-a). The clips carry no credit on the page (owner, T621; the Pexels License asks for none); title, author and licence stay in `src/lib/homeDemo.js` as provenance.
-- **The header on the film** (T621, T623; every width since G14). While the film is under the app header, HomePage sets `data-home-film="under"` on the root and the header lies on the film as one flat bar of `--home-film-bar` (`--neutral-900` at 30 percent, no rule, no gradient), its own tokens turned white (`--text`, `--text-2`, `--border`, `--focus`, `--surface-sunken` at 18 percent white for hover), with the words' soft shadow under its labels. Scrolled past the film, or with a page over the home page, it is `past` and the usual bar comes back in `--dur-2`. The header holds no menu, so nothing white lands on a white surface. Measured on the sky band of the five clips, white on the bar and the film's tint is at least 4.9:1 on the brightest tenth of the pixels and 5.6 to 7.8:1 at the median (T623; without the bar, T621, it was 3.8 to 6.9:1 at the median). On a phone the same shell bar lies on the film, with the mark and the account disc (G14, 2026-11-12: the home page's own top line with Log in is gone, so one brand shows); the disc takes the bar's sunken white there, since the phone header paints it white.
-- **Ask Carta on the film** (T621, T623). One white field, its "Ask Carta" (with the spark) the page's one primary. From 769 px the button sits inside the field's pill; on a phone the field takes the whole width and the button stands under it at full width, so the whole placeholder shows in every language.
-- **The words on the film** (T620, replacing D2). One even tint, `--home-film-tint` (`--neutral-900` at 40 percent, never a gradient), lies over the whole film, and the slogan, one line of what Carta does and Ask Carta's field (its "Ask Carta" button, with the spark, is the page's one primary; T621 took "Plan a trip" off the film) stand on it, centred, in `--home-ink-on-deep`, with a soft shadow under the words only (2 px at 45 percent and 24 px at 35 percent of `--neutral-900`). Measured on all five clips where the words sit: white on the tinted film is at least 5.7:1 at the median and 3.4:1 on the brightest tenth of the pixels. The slogan is `--text-hero` (Figtree 700, `--tracking-hero`, `--leading-hero`), the one place this size and tracking appear; slogan, line and actions rise once on load in `--dur-reveal`. On a phone the mark and Log in stand on the film's top edge in the same white.
-- **Recorded app clips** (D4). The story is five panels on the home grounds, each playing a screen recording of the running app (`scripts/record_home_clips.mjs`, `public/home/clips/<lang>/`, H.264, 780 by 1688) in a phone frame: the app through real links, never a coded copy, so every price in a clip is one the app showed. A clip plays only while its panel is on screen and the tab visible, one at a time; when it ends the next chapter comes; a tab picked by hand stops that. Under reduced motion the clip shows its first frame and a play control.
-- **Tabs that move on by themselves** (D4). The "Who it is for" tabs advance every `--dur-advance` with a 1 px `--text-3` line filling under the row, only while on screen; the first touch, click or focus stops them for good. The question in each tab types itself out (Ask Carta's typing, T569); under reduced motion it is there at once.
-- **The route drawing** (D4). The story's trip drawn on Slovenia's outline, framed on its towns: the line (`--action`, the live route) draws itself once in `--dur-draw` by `stroke-dashoffset`, each town's pill arrives as the line passes it, the total last. It is geometry at the towns' own coordinates and claims nothing about the road.
-- **Section grounds** (D5). The story's panels and the voices panel lie on `--home-ground-mist`, `-lake`, `-deep`, `-clay` and `-sea`, which point at existing umber and lagoon primitives, so the page adds no colour. No two panels in a row share a ground. On clay and sea only `--text` and `--text-2` are text; a door there is a white secondary button.
-- **Sections arrive once** on entering the viewport (opacity and a 32 px rise, `--dur-reveal`, `--ease-out`), below the first viewport only and never before the observer exists, with a scroll check behind the observer so a long jump never leaves a section waiting. Under reduced motion nothing waits.
-- **A label or a price on a photograph** only inside a solid `--surface` pill with `--elev-1` (the route card's towns and total); never a gradient or a sentence on a photo. The one tint and the one block of words on a photograph are the hero film's (T620).
-
-The home tokens, read by `61-v6-home.css` alone:
-
-| Token | Value | Only for |
-|---|---|---|
-| `--text-hero` | `clamp(44px, 6.8vw, 112px)` | The slogan |
-| `--text-showcase` | `clamp(32px, 4.6vw, 64px)` | A home section's title, the chapter titles, the week total |
-| `--tracking-hero`, `--leading-hero` | `-0.035em`, `0.98` | The slogan |
-| `--radius-stage` | `28px` | The film stage, the panels, the week card, the route card, the promise cards |
-| `--home-ground-mist`, `-lake`, `-deep`, `-clay`, `-sea` | `--umber-100`, `--lagoon-100`, `--umber-800`, `--umber-200`, `--lagoon-200` | Panel grounds (ratios beside the tokens) |
-| `--home-ink-on-deep` | `--surface` | Text on the deep umber panel, 10.5:1, and the words on the hero film |
-| `--home-film-tint` | `--neutral-900` at 40 percent (`color-mix`) | The one even tint over the hero film (T620) |
-| `--home-film-bar` | `--neutral-900` at 30 percent (`color-mix`) | The flat bar behind the app header on the hero film, at every width (T623, G14) |
-| `--dur-film`, `--dur-film-fade` | `9000ms`, `1200ms` | One shot of the film, the crossfade between shots |
-| `--dur-reveal` | `640ms` | A home section or the slogan arriving once |
-| `--dur-draw` | `1600ms` | The route line drawing itself (the one movement past the 900 ms route reveal cap) |
-| `--dur-advance` | `7000ms` | A home tab moving on by itself |
-
-Everything else in this file still binds the home page: transform and opacity (plus `stroke-dashoffset`, `clip-path` and a panel's `background-color`), no overshoot, no parallax, nothing tied to the scroll position, no count-up, one primary, `--tap` targets, no catalogue counts. No other surface takes this exception.
-
-### Home page exception v3 (T948 to T953)
-
-The owner rebuilt the home page on 2026-10-31 around one story in three acts (the cheap flight, the real cost, everything Carta does) and chose Motion (`motion/react`) for it. Where v3 and v2 differ, v3 holds; the hero film, its tint and the header on the film stay as v2 says.
-
-- **Motion, in one kit.** Everything under the hero moves through `src/browse/home/motionKit.jsx`, in a lazy chunk, so Motion never sits in the first load. Springs have no bounce: `quick` 0.2 s for a settling figure, `surface` 0.32 s for a line or a card, `reveal` 0.64 s for a heading or a section. Only transform and opacity move; `MotionConfig reducedMotion="user"` and the sheets' resting states keep the page complete without motion.
-- **Things arrive once.** A heading's words lift out of their own line box 40 ms apart, the first time it is in view; blocks rise 32 px. Nothing is scrubbed, pinned by script or zoomed: the receipt and the tour's screen hold with CSS `position: sticky` while their chapters pass.
-- **The slogan** lifts word by word in CSS (it is in the first load), its accent in `--sun-400` on the tinted film.
-- **The boarding pass** under Ask Carta shows the sweep's return flight from the home airport to the place on the film, two lines and a stub; with no flight it is not shown.
-- **The real cost** lies on `--home-ground-deep`, its rounded top rising over the film. A cost chapter is led by its amount in `--text-amount`, `--sun-400` on the umber; the receipt takes a line as each chapter reaches the middle of the view, and its total settles (never counts up). On a phone a running total holds to the panel's bottom edge.
-- **The proof** is two bars on one scale: the flight alone, then the flight, the bed and the days (`--sun-400`, `--action`, `--lagoon-600`), growing from the left once. It needs a flight, so without one it is not shown.
-- **The tour** shows the app in recordings inside a clean rounded screen (no phone body), one clip playing at a time. A chapter names its new recording and an older one, and plays the first that exists.
-- **Icons** on the home page are Phosphor duotone in `currentColor`, the brown on `--umber-100` discs.
-
-| Token | Value | Only for |
-|---|---|---|
-| `--text-amount` | `clamp(64px, 9vw, 128px)` | A cost chapter's amount |
-| `--text-total` | `clamp(40px, 5vw, 64px)` | The proof's whole-trip figure |
-| `--text-feature` | `clamp(28px, 3.4vw, 48px)` | A tour chapter's title |
-
-The week card, the voices, the five story panels, the route drawing and the Why cards of v2 are gone, and with them the uses of `--dur-draw` and `--dur-advance` on the home page.
-
-### Plan opening exception (T743 to T747)
-
-Owner 2026-10-27: the first page of the Plan place is a page of its own, not a sheet over a map, and it fits one screen with no scroll at every size from 360 by 640 up. Its point is two actions: Start planning and Carta's own trips. It may do four things no other surface does:
-
-- **The app's own ground.** `--plan-ground` is `--surface-page` since T999 (owner, 2026-11-02: the bar and the page one colour, no seam with the other places). It was `--umber-50`, `#faf6f1`, from T743.
-- **One larger headline in two colours.** Figtree 700 at `--text-plan-hero` with `--tracking-plan`, the face of every tab; the second half, "at a price you know", is `--action`.
-- **Two tall actions.** 56 px, `--text-lead` 700, `--radius-card`: Start planning in `--action` with `--elev-1`, Carta's own trips on `--action-tint` in `--select-ink` with a calendar glyph. Stacked full width on a phone, side by side from 769 px.
-- **Carta's own recommended trips** (T747, replacing T746's played day). A white card (`--elev-1`, `--elev-2` on hover) at the bottom of a phone, or centred on the right from 1024 px: a fan of five trip-style photographs from the journeys index (the month's style in the middle), each framed in 3 px of `--surface` with `--elev-2`, turned 5 degrees a step; under it Carta's mark, "Carta's own recommended trips" and one `--action` pill, "See the trips". The whole card is one link to the planned trips; it names no single trip and plays nothing. Each photograph is a share of the card's width (27 per cent on a phone, 21 from 1024 px), so the fan always fits. The fan opens once from a stack (`--dur-4`, 50 ms apart) and spreads a little on hover. The headline and the two actions sit centred in the room the card leaves.
-
-No eyebrow, no watermark; the mark appears once, on the card. No other surface takes this exception.
-
-The steps after it (T748, owner 2026-10-27) stand on the same `--plan-ground`, with no map behind them: straight on the paper on a phone, on a white `--surface` card (`--radius-sheet`, `--elev-2`, 520 px, 640 px for a list of places) centred on the page from 769 px. The settings button sits on its own row above the step on a phone and in the page's top right corner from 769 px.
-
-### Ask Carta exception (T569)
-
-Owner 2026-10-22: "I like some animation." Ask Carta is a chat (T570, `src/browse/ask/`, `76-ask-chat.css`): one "Ask Carta" button (header on desktop, beside Filters on a phone) opens a panel docked right under the settings line on desktop (the list makes room, `--chat-w` 420 px) and a full-screen sheet on a phone. It may move on its own, and nothing else outside the home page may loop:
-
-- **Typed suggestions.** While the chat's field is empty it types its suggested questions out one at a time in `--text-3`, holds each about 1.8 s, erases it and types the next, in a loop. A drawn 2 px `--text-3` caret blinks (1 s, stepped) only while the field has no focus. It stops on a typed letter, pauses while the tab is hidden or the field is out of view, is `aria-hidden`, and does not run at all under reduced motion.
-- **The work as steps.** While an answer is made, its real stages show as a list; done steps take a `--text-3` tick, the working one an 8 px `--action` dot pulsing (opacity and scale, 1.2 s), because it is live. Each step fades in at `--dur-2`.
-- **Typing, then the words** (T583). A typing bubble (three 6 px `--text-3` dots pulsing in turn, 1.2 s) lasts the real wait, at least 750 ms; past 2.5 s the steps replace it, never both. The answer then appears word by word, about 30 ms a word and under 1.5 s in all. Under reduced motion, or for a chat reopened from the list, the text shows at once.
-- **Arrivals.** The panel slides in once at `--dur-3`; a question, the trip card and the suggestions fade in at `--dur-2`, suggestions staggered by at most 120 ms.
-
-### Your Europe atlas (T970, T972)
-
-Owner 2026-11-01: "the cleanest, nicest looking map you can find". Your Europe draws Europe as a map, not as tiles (`YourEurope.jsx`, `.mt-atlas` and `.mt-eumap-*` in `70-mytrips.css`). The geometry is `public/europe_map.json`: Natural Earth 1:50m, Lambert azimuthal equal-area at 52N 10E (the EU's EPSG:3035 framing), already projected to SVG paths by `pipeline/oneoff/build_europe_map.py`.
-
-- **One white card, the map edge to edge.** The sea is the card (`--surface`). There is no blue water, no graticule and no coastline stroke.
-- **Land in two greys.** Land round Europe is `--neutral-100`. The 43 catalogue countries not yet visited are `--neutral-200`. Borders are 1 px gaps in `--surface` (non-scaling). There are no labels.
-- **Three states, one colour.** Been is filled in `--select-border`. The next trip is a 45° hatch of `--select-border` on `--select-bg`. A saved country gets a `--select-border` dot at its label point. The countries under 3,000 km² (AD, FO, LI, LU, MC, MT, SM) are also drawn as a 7-unit dot in their state's colour, so they can be seen and tapped.
-- **The count leads.** A 56 px `--select-border` figure with tabular numerals, then "of 43 countries in Europe" and the share of their land. The share is honest only because the projection is equal-area, so keep the projection if the map changes. Mark a country is a pencil icon button in the head row, and the legend under the map is one line.
-- **A tap names the country.** A floating pill (`--surface`, `--shadow-1`, 44 px) shows the flag, the name and either the state or a small `--select-bg` action, Been here or Remove (T972). A country a finished trip put on the record has no action.
-- **Accessibility.** The map is one `role="img"` with a count label. The keyboard route to marking a country is the Mark a country sheet.
-
-### Interaction
-
-Focus: `outline: 2px solid var(--focus); outline-offset: 2px` on `:focus-visible` (the focus floor in `02-base.css` reads it since T426). Brown, so focus never reads as an error. The browser's own surfaces take the palette too: text selection is `--select-bg`, the caret and native checkboxes and radios are `--action`, scrollbars are `--neutral-300`. Inputs may add `border-color: var(--action)` to the ring but never ship `outline: none` without a replacement.
-
-### Product rules for components
-
-These are owner decisions about specific surfaces. They still hold; where a value has moved with Lagoon, the current value is given.
-
-**Suitability strip (T360, accepted on owner instruction 2026-10-03).** A strip under a trip hero is a solid `--surface-page` band at full opacity, flush against the bottom edge of the hero, with a `--border` edge and square corners where it meets the photo. No alpha, no gradient, no text over the photograph. It holds exactly three cells in fixed order: difficulty, style, total cost. Difficulty is five small squares, filled `--text` up to the level and outlined `--text-3` beyond it (never `--rate` or `--action`), plus the level as a word. Style is one or two words from the trip's tags. Total cost is a `<Money>` in tabular figures (it was the mono face before T421). A missing value shows a placeholder word ("Unrated", "Mixed", "Price on request") so every trip shows three cells. It stays one row of three on a phone. Built as `.jstrip` in `src/styles/25-feature-pages.css`; no new token.
-
-**Secondary chrome (T360).** The "Get a pass" chip in the desktop bar is transparent with a `--border` edge and `--radius-sm` corners. The phone's round plus button is `--surface` with a `--border` edge, pill corners and a `--tap` or larger target (the IconButton `surface` tone). Neither is `--action` filled, which leaves the brown fill for each page's one primary action.
-
-**Rules decided by the owner on 2026-10-07 (T362).** The InfoDot, the day track, flashcards, the sticky section rail, the one Lifestyle control, the cost bar above a receipt, no bento grid, a scrim behind every modal dialog, and the install hint. The full text of each is in the carta-design skill under Components. None adds a token: the cost bar uses the `--kind-*` ink ramp, and the scrim is `--ink` at 28 per cent as `.lifestyle-scrim` draws it.
-
-**Colours in JavaScript (T362, T364).** Where a colour must live in JavaScript (MapLibre paint properties cannot read a CSS custom property), it lives in one token-mirror module, `src/map/tokenColors.js`, that copies each value from `01-tokens.css` under the token's name. Since T421 each value there is the end of the alias chain, and the lint follows it. No other JavaScript file holds a hex. The design lint checks it: rule `js-hex-literal` flags a hex in any other JavaScript file (flag and brand artwork excepted; the print exports and PDF colours sit in the lint baseline until they are migrated), and rule `token-mirror-drift` fails when a mirrored value no longer matches `01-tokens.css`. Map-only colours with no token (the three lower Explore tier steps) are listed apart in the same module.
-
-**Rules decided by T380 (design direction v6, 2026-10-08, under the owner's delegation of 2026-10-07).** From the 96 "Needs a rule" proposals of the ten surface briefs, 94 were accepted (6 as amended) and 2 rejected; the table with every decision and reason is `docs/design-v6/DIRECTION.md` part 9. The accepted rules, in full in the carta-design skill under Components and Interaction: the caption band (text never on a photograph), the one selected state (now the `--select-*` tint, see Colors; it was `--ink-fill` until T422), accent marks only on what acts or is live, the count chip (now the kit's count Chip on `--surface-sunken` at `--text-caption`; it was `--mono` 11 px before T422), the one close control, the dialog family (dialog, sheet, popover), navigation as links with history and addressable detail pages, the settings line, the bottom slot, undo instead of confirm, the "More" menu, cost on cards and pages from one cost index, the priced list, the budget ceiling, the month, the data drawings family (month strip, thin bar, profile, gauge, squares, receipt, timetable row), the receipt extended (trip receipt, day receipt, ranges, a live fragment, a receipt as shared element), the detail page grammar (key facts band, before you go, hand-off band, five rows, hairline folds, utility row, two columns from 1024 px), map and list in sync, rails and cuts, filter chips and the refine row, the day list and day switcher, the photo track, status not green, the small text rules, derived copy that stays silent, the comparison table, the focal card, remembered state and the still loading block.
-
-## Do's and Don'ts
-
-### Do:
-- **Do** read a role (`--action`, `--surface`, `--text-3`) in every new or touched rule, and build from the kit in `src/components/ui/`.
-- **Do** keep one primary Button per view; everything else is secondary or quiet.
-- **Do** show selection as `--select-bg` with `--select-ink` and a mark: a tick on a chip, an underline on a tab, a lifted thumb on a segment.
-- **Do** put a caption under a photograph, never on it (the home page's solid pill labels and its hero film's words under one tint are the exceptions, see Motion).
-- **Do** give every control a 44 px (`--tap`) target on touch and the 2 px `--focus` ring on `:focus-visible`.
-- **Do** print every euro through `formatMoney()` or `<Money>`: whole euros where places are compared, cents on receipts and totals, an estimate like any figure.
-- **Do** declare elevation once: a `--border` at rest, or an `--elev-*` shadow on what floats.
-- **Do** take every duration and easing from the motion tokens and give every transition a reduced-motion branch.
-
-### Don't:
-- **Don't** paint a selected state as a dark fill; the dark slab is the look Lagoon refused.
-- **Don't** use brown for anything that does not act, is not live or is not selected (beyond the rating star and the gem diamond), or sun yellow, rust or red outside their one job.
-- **Don't** fill a rating chip, show a catalogue count as page furniture, or put a method or coverage sentence beside a figure.
-- **Don't** set sun yellow as text; best value as text is ink beside the marker.
-- **Don't** add a gradient, a second typeface, a monospaced face for figures, or a hex outside `01-tokens.css` and the token mirror.
-- **Don't** set functional text under 11 px, or a figure or rating under 12 px.
-- **Don't** give one object both a border and a shadow.
-- **Don't** write a euro sign into an i18n string, call `toFixed` on a price, or round a figure on a receipt.
-- **Don't** use a placeholder as the only name of a field.
-- **Don't** write em dashes, en dashes, middots or bullet characters as separators in any copy.
-
-### Before you ship
-
-Read the diff and answer these seven questions, from the carta-design skill.
-
-1. Any hex value outside `src/styles/01-tokens.css`? (`node scripts/ci/design-lint.mjs` checks this.)
-2. Any gradient, any colour not in this file, any saturated hue beside `--action` outside its one job (sun for best value, rust for warnings, red for destruction)?
-3. Is brown used only for what acts, is live or is selected (plus the rating star and the gem diamond), sun yellow only for best value, `--danger` only for destruction?
-4. Is any rating under 12 px, any functional text under 11 px, or any column of figures without tabular numerals?
-5. More than one primary button in a view?
-6. Does every headline contain a verb or a number (or name a browse section), is there no catalogue count or method line that could go, and is the diff free of em dashes and the banned words?
-7. Remove one thing. There is almost always one decoration that is carrying nothing.
+1. One job and one main action, obvious in 5 seconds at 390 and 1440?
+2. Every function the screen had is still there and works the same?
+3. No redundant text: no unit sentences or sublines the context gives?
+4. Tokens and kit only; `node scripts/ci/design-lint.mjs` shows no new violation in touched files?
+5. `node scripts/ci/token-contrast.mjs` 0 under the floor; axe serious and critical 0?
+6. Phone, tablet and desktop each deliberate (390, 820, 1180, 1440 shots), and the width sweep clean?
+7. Every selection, toggle, add, save, step and screen change answers from the interaction system; reduced motion shows the end state?
+8. Every euro through `formatMoney()`; a missing figure "Not yet", out of every sum; the total the engine's own?
+9. Six languages fit (German for length); no dashes, middots or banned words?
+10. Relief, if any, from real peaks with a height (`verify_relief.mjs`)?
 
 ## History
 
-Retired decisions, kept so the record reads in order. None of these is a rule any more.
-
-**Contrast tokens, darkened (T363, owner decision 2026-10-07 in T362; the values were replaced by Lagoon in T421 and every pair now passes).** Three pairs failed the 4.5:1 floor that PRODUCT.md promises: `--ink-mute` on `--paper` (3.51:1), `--accent` as text on `--paper` (3.40:1) and `--on-fill` on `--accent` (3.67:1). The owner chose to darken the tokens, same hue: `--ink-mute` became `#646978` and `--accent` `#ce3823`, with the hover fills `--accent-hover` `#b7321f`, `--accent-press` `#8e3615` and `--accent-press-alt` `#923b16`. Two pairs still fell short (`--accent` on `--accent-bg` 3.83:1, on `--paper-dim` 4.22:1; register row T363-a); Lagoon's `--action` on `--action-tint` at 4.7:1 closed them.
-
-**The terracotta world (T198 to T420).** Cream paper, Fraunces display, Plus Jakarta Sans text and JetBrains Mono figures, with a terracotta accent. T421 replaced it with Lagoon. The "Accent states and tints" table this file carried until 2026-10-13 (`--accent-hover` `#b7321f`, `--accent-press` `#8e3615`, `--accent-press-alt` `#923b16`, `--accent-wash` `#f6ede0`, `--accent-wash-alt` `#fdf6f0`) and the old values of `--wash` (`#f6f3ee`), `--paper-hover` (`#efe9db`) and `--paper-lift` (`#fdfbf5`) were that world's; those names are now aliases, listed under Colors.
-
-**Lagoon teal (T421 to T437).** One deep lagoon teal (`--lagoon-600` `#0b7480`) carried every action and selection, ratings were filled ochre chips (`#8f5a0c`), gems plum (`#7a4a6f`), warnings amber (`#8a5a18`). On 2026-10-13 the owner asked for two base colours (T438): the teal became umber, ratings became the Score (T437), gems joined the brown, warnings turned rust. The `--lagoon-*` primitives stay defined until no rule reads them.
-
-**Selection as a dark fill (T380 to T422).** The one selected state was `--ink-fill`, first a slate slab, then deep teal under white labels in T421. T422 moved the kit onto the `--select-*` tint; older surfaces keep `--ink-fill` until the migration reaches them.
-
-**Last synced with `src/styles/01-tokens.css`:** 2026-11-02 (T999: `--plan-ground` is `--surface-page`). Before that 2026-10-27 (T744: `--serif` removed, `--text-plan-hero` and `--tracking-plan` retuned for Figtree 700; T743 before it: the Plan opening tokens `--plan-ground`, `--text-plan-hero` and `--tracking-plan`, read by `86-plan-flow.css` alone). Before that 2026-10-23 (T623: `--home-film-bar` added). Before that 2026-10-23 (T620: `--home-film-tint` added, `--dur-drift` removed with the price pills). Before that 2026-10-23 (T606: the home tokens, `--text-hero`, `--text-showcase`, `--tracking-hero`, `--leading-hero`, `--radius-stage`, the five `--home-ground-*`, `--home-ink-on-deep` and the six home motion durations, read by `61-v6-home.css` alone). Before that 2026-10-20 (T474: the z-index ladder, `--z-float` to `--z-max` and the two pin layers, values unchanged; `--z-map-ui` and `--z-sheet` retired unused, `--z-nav` moved to 50 and `--z-toast` to 80, where those layers sat). Before that 2026-10-13 (T438: the umber ramp, the roles on it, rate, gem, best and warning retuned; before that T421 to T424, Lagoon: primitives, roles, legacy aliases, Figtree, the type, radius, elevation and layer scales; the kit in `03-button.css` and `04-ui.css`; the money formatter; the style guide; restructured into the DESIGN.md format with frontmatter). Before that 2026-10-08 (T380, the six motion tokens), 2026-10-07 (T363) and 2026-10-03 (T191).
+- 2026-11-15: the house style (decision 0012): Waymark in Line's colours, rounder, replacing the Lagoon look (T421 to T1126; the previous text of this file is in git history).

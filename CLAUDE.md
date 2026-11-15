@@ -42,9 +42,9 @@ CI: `.github/workflows/ci.yml` runs on every push (app lint, tests, fast build; 
 
 ## Design
 - Read `PRODUCT.md` before any screen or string. Grep `DESIGN.md`; never read `continent-app/src/i18n/en.js`, `continent-app/src/styles.css` or a wire file whole.
-- `continent-app/src/styles.css` `:root` is the token source of truth; `DESIGN.md` records it. A token change updates `DESIGN.md` in the same commit.
-- The carta-design skill wins over every other design source. Its look rules are defaults, not bans; accessibility, honest numbers, the copy rules and licensed photography always bind. Answer its seven questions before shipping a visual change. See `docs/decisions/0006-design-rules-are-defaults.md`.
-- For anything a traveller sees, look at every touched screen at phone and desktop width (`npm run dev`). Prefer the DOM checks in `continent-app/scripts/verify_*.mjs` over screenshots. Screenshots go in the run folder and are never committed.
+- `continent-app/src/styles/01-tokens.css` `:root` is the token source of truth; `DESIGN.md` records it. A token change updates `DESIGN.md` in the same commit.
+- The carta-design skill (the house style, `docs/decisions/0012-house-style.md`) wins over every other design source. Accessibility, honest numbers, the copy rules, licensed photography and every function kept always bind. Answer its pre-ship questions before shipping a visual change. General practice for any visual task: `docs/design/craft-guide.md`.
+- For anything a traveller sees, look at every touched screen at three angles: phone (390), tablet (820 and 1180) and desktop (1440), plus a width sweep. Prefer the DOM checks in `continent-app/scripts/verify_*.mjs` over screenshots. Screenshots go in the run folder and are never committed.
 
 ## Project overrides for crew
 - Run reports are committed: `.work/<run>/report.md` and `.work/INDEX.md` are tracked, the rest of a run folder is not. Cloud sessions share only git. See `docs/decisions/0002-run-history-in-work-index.md`.

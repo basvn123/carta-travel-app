@@ -18,7 +18,6 @@ The install hint is one line with a secondary "Add to home screen" in My trips, 
 
 ## Icons
 
-Decorative icons are `aria-hidden`. The airline mark is the airline's own logo, never recoloured, tinted or redrawn (see shared-product-rules.md, Flights). No 3D or glossy icons.
 
 ## The numbers explainer
 

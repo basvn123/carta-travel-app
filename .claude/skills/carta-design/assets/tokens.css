@@ -1,99 +1,422 @@
-/* Carta design tokens. A copy of the :root block of continent-app/src/styles.css as of
-   2026-10-03 (T325). styles.css is the source of truth and DESIGN.md is its record; when
-   they disagree with this file, this file is wrong. The app already has these, so do not paste
-   them into it. This file lets a sketch or an email template start from the real values.
-   Fonts are self-hosted in continent-app/public/fonts and declared in index.html; nothing
-   loads from a Google host. */
+/* The house style's design tokens (decision 0012, 2026-11-15): a copy of the :root
+   block of continent-app/src/styles/01-tokens.css. The app file is the source of
+   truth and DESIGN.md its record; when they disagree with this copy, this copy is
+   wrong. The app already has these, so do not paste them into it. This file lets a
+   sketch, a prototype or an email template start from the real values. The faces
+   (Overpass, Sofia Sans Extra Condensed) are self-hosted in
+   continent-app/src/assets/fonts; nothing loads from a Google host. */
 
 :root {
-  /* Palette - warm alabaster canvas, deep slate ink, terracotta accent */
-  --paper:        #f8f6f0;
-  --paper-dim:    #efece2;
-  --ink:          #0f172a;
-  --ink-soft:     #414b5e;
-  --ink-mute:     #646978;       /* 5.07:1 on --paper (T363) */
-  /* The fill behind an ACTIVE control. One step off --ink, which is body text
-     and reads as pure black when a whole button is painted with it. Still
-     11:1 against --paper, so white labels stay well past AA. */
-  --ink-fill:     #2b3446;
-  --rule:         #ccc7b8;
-  --rule-soft:    #e2ded1;       /* hairlines inside a card, where --rule is too loud */
-  --accent:       #ce3823;       /* terracotta: actions, alerts, the live route; 4.61:1 on --paper, 4.98:1 under white (T363) */
-  --accent-soft:  #e97f6b;
-  --accent-bg:    #f7dcd4;
-  /* Ratings are a MEASURE, not a warning. On the accent they read as errors
-     ("Rome 9.5" in a saturated red bubble), and they competed with the buttons
-     and route pins that do need to shout. Deep ochre: warm like a seal on a
-     map, and dark enough to pass AA both as a fill (paper text on --rate,
-     5.3:1) and as text (--rate on --rate-bg, 4.7:1; --rate-soft on paper,
-     4.8:1), which the amber a rating chip wants to be does not. */
-  --rate:         #8f5a0c;
-  --rate-soft:    #946313;
-  --rate-bg:      #f6e6cb;
-  --green:        #4a6a3a;       /* text-safe green for "good deal" copy */
-  /* Destructive only, never decoration. Terracotta is the app's action colour
-     and cannot also mean "this erases everything", so deleting an account gets
-     a colour nothing else in the product uses. Both directions clear AA on
-     paper (5.6:1 as text) and as a fill (6.0:1 with white on it). */
-  --danger:       #b3372a;
-  --danger-dark:  #96291e;
-  --status-success: #10b981;     /* indicator-only green: compliance ticks, open-now dots */
-  --bg-card:      #ffffff;
-  --shadow-1:     0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.04);
-  --shadow-2:     0 4px 16px rgba(15, 23, 42, 0.10), 0 12px 32px rgba(15, 23, 42, 0.08);
-  --shadow-card:  0 4px 20px rgba(15, 23, 42, 0.06);
+  /* ---- 1. Primitives ---------------------------------------------------- */
 
-  /* Card taxonomy (PLAN.md C2). KIND is an ink-density ramp, not a rainbow:
-     the hierarchy reads as weight, so it survives greyscale and colour-blind
-     viewing. Values are ink mixed over paper at 100/78/62/45/50%. VERDICT
-     stays on the rating's ochre seal (--rate) - ratings are a measure here,
-     never the terracotta action colour. GEM gets its own quiet teal, the one
-     hue nothing else in the product uses, so "the world hasn't noticed" and
-     "worth the journey" can never be confused. The app is deliberately
-     single-theme (no prefers-color-scheme / data-theme blocks exist), so
-     these live only in this :root like every other token. */
-  --kind-metro:   #0f172a;
-  --kind-city:    #424856;
-  --kind-town:    #686c75;
-  --kind-village: #8f9297;
-  --kind-area:    #84868d;
-  --verdict-3:    var(--rate);       /* filled ribbon */
-  --verdict-2:    var(--rate);       /* outline ribbon */
-  --verdict-1:    var(--ink-mute);   /* text only */
-  --gem-ink:      #2c6e63;
-  --gem-bg:       #d9eae5;
+  /* Stone and ink (from Line): a pale lichen ground, cool enough that the
+     umber reads warm; ink green-black. The neutral-* names stay because 34
+     files read them directly; they now hold the house greys. */
+  --neutral-0:    #ffffff;   /* paper: sheets, fields, cards, the cost post */
+  --neutral-25:   #f7f8f5;   /* a lifted stone */
+  --neutral-50:   #eef0ea;   /* stone: the page ground */
+  --neutral-100:  #e3e7df;   /* band: quiet bands, sticky heads, the relief field */
+  --neutral-150:  #dde2da;   /* the soft hairline */
+  --neutral-200:  #cfd5cc;   /* rule: hairlines, never the only boundary */
+  --neutral-300:  #b4bcb3;   /* a hovered edge */
+  --neutral-500:  #7a847d;   /* edge: control borders, a mark never text; 3.37 on stone, 3.87 on paper */
+  --neutral-600:  #59625c;   /* ink 3: 5.50 on stone, 6.31 on paper, 5.04 on band */
+  --neutral-700:  #465049;   /* ink 2: 7.30 on stone, 8.38 on paper */
+  --neutral-800:  #2c3530;   /* a dark plate under the pointer */
+  --neutral-900:  #1e2421;   /* ink: 13.76 on stone, 15.80 on paper */
 
-  /* Spacing scale (P4.3). The stylesheet grew with hand-tuned px literals and
-     no rhythm, which is why the phone wastes a screen before the first card.
-     New and touched rules take these; nothing is rewritten wholesale. */
+  /* Lagoon teal, retired as the action in T438. Kept only for the readers
+     that still name it (the home grounds, the cost card test, share art). */
+  --lagoon-50:    #eef7f7;
+  --lagoon-100:   #dff0f1;
+  --lagoon-200:   #bfe0e2;
+  --lagoon-300:   #8cc6ca;
+  --lagoon-600:   #0b7480;
+  --lagoon-700:   #0a6670;
+  --lagoon-800:   #08575f;
+  --lagoon-900:   #07454b;
+
+  /* Umber: the paint (owner, 2026-10-13, T438; kept by owner rule
+     2026-11-13). 600 is the action, the selected thing, the blaze, the route
+     and the chosen pin: 5.06 on stone, 5.81 on paper, white on it 5.81.
+     700 is brown text, the pressed action and the focus ring: 6.80 on
+     stone. 100 and 200 are the beige: tints, the food wagon, selected rows. */
+  --umber-50:     #faf6f1;
+  --umber-100:    #f6e7d3;
+  --umber-200:    #e7d3bc;
+  --umber-300:    #d4b48f;
+  --umber-500:    #a8733f;
+  --umber-600:    #8c5a2b;
+  --umber-700:    #744820;
+  --umber-800:    #5a3716;
+
+  /* Sun yellow: best value, as a fill or a marker. Never text. */
+  --sun-400:      #f2b33d;
+  --sun-100:      #fdf1d8;
+  --sun-800:      #7a5000;
+
+  /* Kinds (from Line): a kind's pictogram mark, swatch and tab underline
+     only, always with its pictogram and its word, never body text. Each is
+     3:1 or more on the band. */
+  --kind-paint-trails:    #2f7a45;
+  --kind-paint-beaches:   #0e7c86;
+  --kind-paint-lakes:     #2b5fa8;
+  --kind-paint-mountains: #6248a8;
+  --kind-paint-cycling:   #b02a63;
+
+  /* ---- 2. Roles ---------------------------------------------------------- */
+
+  --surface-page:    var(--neutral-50);   /* stone, the ground behind everything */
+  --surface:         var(--neutral-0);    /* paper: sheets, cards, fields, bars */
+  --surface-sunken:  var(--neutral-100);  /* band: quiet bands and input wells */
+  --surface-hover:   #e6e9e2;             /* hover on a quiet surface */
+  --text:            var(--neutral-900);  /* 13.76 on stone, 15.80 on paper */
+  --text-2:          var(--neutral-700);  /* 7.30 on stone, 6.70 on band */
+  --text-3:          var(--neutral-600);  /* 13 px and up: 5.50 on stone, 5.04 on band */
+  --border:          var(--neutral-200);
+  --border-soft:     var(--neutral-150);
+  --edge:            var(--neutral-500);  /* control edges (chips, fields, switches): a mark, 3:1 */
+
+  --action:          var(--umber-600);    /* the paint: buttons, links, chosen; white on it 5.81 */
+  --action-hover:    var(--umber-700);
+  --action-press:    var(--umber-800);
+  --action-text:     var(--neutral-0);    /* label on an --action fill */
+  --action-tint:     var(--umber-100);    /* --action as text on it 4.80 */
+
+  /* The one selected state (DESIGN.md "Selected"): the beige wash, brown
+     text, a brown edge, plus a mark (the blaze, a tick, the paint bar).
+     Never a dark slab, never colour alone. */
+  --select-bg:       var(--umber-100);
+  --select-ink:      var(--umber-800);    /* 8.68 on --select-bg */
+  --select-border:   var(--umber-600);
+  --select-row:      var(--umber-50);     /* a selected row in a list */
+
+  --focus:           var(--umber-700);    /* 3 px ring, 2 px offset; 6.80 on stone */
+  --focus-on-dark:   var(--neutral-0);    /* the ring on a dark plate */
+  --best:            var(--sun-400);      /* best value marker; --text on it 7.9 */
+  --best-bg:         #fdefc0;
+  --best-ink:        var(--text);
+
+  /* ---- 3. House parts ---------------------------------------------------- */
+
+  /* The plate (DESIGN.md "Signature components"): the Score and the
+     signpost plate are dark ink with paper text; the second line beige. */
+  --plate:           var(--neutral-900);
+  --plate-hover:     var(--neutral-800);
+  --on-plate:        var(--neutral-0);    /* 15.80 on the plate */
+  --on-plate-2:      var(--umber-200);    /* 11.4 on the plate */
+
+  /* The formation (the price row): getting there an outlined umber pill,
+     the bed a solid umber wagon, food and drink a beige wagon, then the day
+     figure in ink, always the loudest. Not yet: a dashed edge, outside the
+     sum. */
+  --wagon-go-edge:   var(--umber-600);
+  --wagon-go-ink:    var(--umber-800);    /* 10.54 on paper */
+  --wagon-bed:       var(--umber-600);
+  --wagon-bed-ink:   var(--neutral-0);    /* 5.81 */
+  --wagon-food:      var(--umber-100);
+  --wagon-food-edge: var(--umber-500);
+  --wagon-food-ink:  var(--umber-800);    /* 8.68 */
+  --wagon-none-edge: var(--neutral-500);
+
+  /* Kinds as roles; places take the paint. */
+  --kind-places:     var(--umber-600);
+  --kind-trails:     var(--kind-paint-trails);
+  --kind-beaches:    var(--kind-paint-beaches);
+  --kind-lakes:      var(--kind-paint-lakes);
+  --kind-mountains:  var(--kind-paint-mountains);
+  --kind-cycling:    var(--kind-paint-cycling);
+
+  /* Worlds: flat tints for a missing photo (with a blaze on it). */
+  --world-water:     #d3dfe2;
+  --world-lowland:   #dce5d4;
+  --world-rock:      #e3ddd3;
+
+  /* The relief (DESIGN.md "Background graphics"): lit and shaded contours,
+     decorative only, never behind text; the zone sits on the band. */
+  --relief-lit:      rgba(255, 255, 255, 0.95);
+  --relief-shade:    rgba(30, 36, 33, 0.20);
+  --relief-ground:   var(--neutral-100);
+
+  /* The map (mirrored in src/map/tokenColors.js). */
+  --map-land:        #f8f9f5;
+  --map-water:       #d3dfe2;
+  --map-border:      #d7dcd3;
+  --map-route:       var(--umber-600);
+
+  /* Type: Overpass for every word and figure (tabular figures on); Sofia
+     Sans Extra Condensed only for plate names (19 px and up). Nothing under
+     12 px. The page title, section and total figure grow at tablet and
+     desktop (set after :root). */
+  --ui:              'Overpass', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font:            var(--ui);
+  --plate-face:      'Sofia Sans Extra Condensed', 'Overpass', sans-serif;
+  --text-micro:      12px;
+  --text-caption:    12px;
+  --text-label:      13px;
+  --text-body:       14px;    /* interface text: rows, controls, lists */
+  --text-lead:       16px;    /* reading text and fields (no zoom on iOS) */
+  --text-title:      19px;    /* a section */
+  --text-headline:   24px;    /* a page title: 24, 30, 36 */
+  --text-display:    40px;    /* a total figure: 40, 48, 54 */
+  --text-figure:     18px;    /* a row's day figure */
+  --text-plate:      21px;    /* a plate name */
+  --leading-tight:   1.2;
+  --leading-ui:      1.35;
+  --leading-body:    1.5;
+  --tracking-title:  -0.018em;
+  --measure:         68ch;
+
+  /* Corners (owner 2026-11-15: rounder than Waymark). One scale: */
+  --radius-sm:       6px;     /* a plate's square end, a tag */
+  --radius-control:  8px;     /* buttons, fields, the search, menus, toasts */
+  --radius-panel:    12px;    /* panels, sheets, booking cards, the map frame */
+  --radius-card:     16px;    /* photos and cards */
+  --radius-sheet:    12px;
+  --radius-pill:     999px;   /* chips, wagons, segmented controls, round icon buttons */
+
+  /* Strokes */
+  --stroke-hair:     1px;
+  --stroke-edge:     1.5px;
+  --stroke-route:    3px;
+  --stroke-focus:    3px;
+  --plate-tip:       14px;    /* the signpost plate's pointed end */
+
+  /* Depth: one rule. Only what floats over the page casts a shadow (sheets,
+     menus, popovers, toasts, the action bar). Cards and panels lie flat on a
+     hairline. --elev-1 is that hairline as a ring, so old cards that relied
+     on a shadow keep an edge. */
+  --elev-1:          0 0 0 1px rgba(30, 36, 33, 0.07);
+  --elev-2:          0 0 0 1px rgba(30, 36, 33, 0.06), 0 12px 32px -8px rgba(30, 36, 33, 0.24);
+  --elev-3:          0 0 0 1px rgba(30, 36, 33, 0.06), 0 18px 48px -12px rgba(30, 36, 33, 0.32);
+  --scrim:           rgba(30, 36, 33, 0.42);
+
+  /* Layers, low to high (T474). Every z-index of 10 or more reads one of
+     these, or calc(var(--z-band) + n); 1 to 9 stays a number. */
+  --z-base:          0;
+  --z-sticky:        10;
+  --z-float:         12;
+  --z-popover:       20;
+  --z-header:        25;
+  --z-tray:          30;
+  --z-overlay:       40;
+  --z-nav:           50;
+  --z-shell:         55;
+  --z-modal:         60;
+  --z-toast:         80;
+  --z-menu:          90;
+  --z-page:          200;
+  --z-top:           1000;
+  --z-max:           9999;
+  --z-pin-selected:  50;
+  --z-pin-hover:     100;
+
+  /* Spacing on a 4 px grid. */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
-  --space-5: 22px;
-  --space-6: 30px;
+  --space-5: 24px;
+  --space-6: 32px;
   --space-7: 40px;
   --space-8: 56px;
-  /* The floor a finger needs. Icon-only controls get this as a minimum box
-     even where the glyph inside is 15px (WCAG 2.5.5). */
+  --space-9: 64px;
+  --gutter:  16px;
   --tap: 44px;
   --tap-main: 48px;
 
-  /* Type */
-  --display:      'Fraunces', 'Iowan Old Style', Georgia, serif;
-  --ui:           'Plus Jakarta Sans', 'Inter Tight', system-ui, -apple-system, sans-serif;
-  --mono:         'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  /* ---- 4. Legacy names, re-pointed (retired as lanes rebuild screens) ---- */
 
-  /* Layout */
+  --paper:        var(--surface-page);
+  --paper-dim:    var(--surface-sunken);
+  --bg-card:      var(--surface);
+  --on-fill:      var(--action-text);
+  --ink:          var(--text);
+  --ink-soft:     var(--text-2);
+  --ink-mute:     var(--text-3);
+  --ink-fill:     var(--umber-800);   /* legacy selected fill; white on it 10.5 */
+  --rule:         var(--border);
+  --rule-soft:    var(--border-soft);
+  --accent:       var(--action);
+  --accent-soft:  var(--umber-300);
+  --accent-bg:    var(--action-tint);
+  --accent-hover:     var(--action-hover);
+  --accent-press:     var(--action-press);
+  --accent-press-alt: var(--action-press);
+  --accent-wash:      var(--umber-50);
+  --accent-wash-alt:  var(--umber-50);
+  --paper-hover:  var(--surface-hover);
+  --paper-lift:   var(--neutral-25);
+  --wash:         var(--umber-50);
+  --shadow-1:     var(--elev-1);
+  --shadow-2:     var(--elev-2);
+  --shadow-card:  var(--elev-1);
+  --display:      var(--font);
+  --mono:         var(--font);
+
+  /* Ratings: the Score is a dark ink plate in the house style; the legacy
+     names keep the star and figure readable where a screen still draws
+     them as text. --rate on paper 7.8. */
+  --rate:         var(--umber-700);
+  --rate-soft:    var(--text-3);
+  --rate-bg:      var(--surface-sunken);
+  --green:        #3f6332;       /* good news text: 6.28 on stone */
+  --danger:       #a12a1c;       /* destructive, always with words: 6.43 on stone */
+  --danger-dark:  #86200f;
+  --status-success: #10b981;     /* indicator only */
+
+  --kind-metro:   #1e2421;
+  --kind-city:    #4a534d;
+  --kind-town:    #6c756f;
+  --kind-village: #8f978f;
+  --kind-area:    #868f88;
+  /* The four cost groups (T845): one colour each on the cost bar. */
+  --cost-travel:  var(--lagoon-600);
+  --cost-around:  #4e69a8;
+  --cost-stay:    #8a4f7d;
+  --cost-food:    #6c8636;
+  --verdict-3:    var(--rate);
+  --verdict-2:    var(--rate);
+  --verdict-1:    var(--ink-mute);
+  --gem-ink:      var(--umber-700);
+  --gem-bg:       var(--surface-sunken);
+
+  /* ---- Domain colours (T191): one feature each, never general purpose --- */
+  --good-ink:           #16794f;
+  --good-ink-soft:      #2c7d54;
+  --good-ink-alt:       #2e7d4f;
+  --good-mid:           #3a9d6b;
+  --good-vivid:         #2e9e5b;
+  --leaf-ink:           #2c6a1f;
+  --trail-ink:          #2f6a3c;
+  --trail-pin:          #2f7a45;
+  --trail-bg:           #e6efe3;
+  --trail-rule:         #cfdfcb;
+  --trail-bg-alt:       #e6f1e3;
+  --trail-rule-alt:     #c5dfbe;
+  --event-ink:          #1f6b41;
+  --event-bg:           #e2f0e6;
+  --climate-good:       #6b9e3f;
+  --budget-low-bg:      #e4edda;
+  --budget-low-rule:    #c3d2ba;
+  --water-good-bg:      #ddeedd;
+  --water-good-ink:     #2c6136;
+  --water-clear:        #1f8fb0;
+  --water-pin:          #0e7c86;
+  --lake-ink:           #2b5fa8;
+  --water-link:         #2b5fa8;
+  --swim-ink:           #2c6376;
+  --swim-bg:            #e2eef2;
+  --swim-rule:          #cbdfe6;
+  --rain-ink:           #4a70a8;
+  --climate-poor:       #9bb0bd;
+  --water-excellent-bg: #d8ecf5;
+  --water-excellent-ink:#11607f;
+  --warn-ink:           #b3402a;
+  --warn-vivid:         #cc4433;
+  --amber:              #c68a12;
+  --amber-ink:          #a8400f;   /* warning text, 6.2 on paper */
+  --amber-ink-alt:      #a8400f;
+  --amber-ink-deep:     #9c3d12;
+  --amber-warm:         #a8400f;
+  --beach-ink:          #0e7c86;
+  --amber-bg:           #fdf3e2;
+  --amber-bg-alt:       #fcf2dd;
+  --amber-rule:         #efd9a3;
+  --rate-rule:          #e0cba4;
+  --crowd-hot:          #d06a2a;
+  --orange:             #d35a26;
+  --experience-ink:     #9a3a2a;
+  --experience-rule:    #eec7bb;
+  --danger-bg:          #f6dcd8;
+  --ai-violet:          #5b3fa8;
+  --ai-violet-bg:       #eee7fb;
+  --mountain-ink:       #6248a8;
+  --slate-ink:          #55606f;
+  --slate-pin:          #59625c;
+  --crowd-mid:          #6b7280;
+  --slate-mute:         #6c756f;
+  --mask-solid:         #000;      /* the opaque stop of a mask-image gradient */
+
+  /* Layout: page widths (T1041), gutters, the bars. */
   --filter-h:     132px;
   --panel-w:      440px;
+  --w-browse:     1440px;
+  --w-detail:     1240px;
+  --w-hub:        1120px;
+  --w-form:       720px;
+  --w-aside:      360px;
+  --w-read:       720px;     /* a column of reading text */
+  --page-gutter:  var(--gutter);
+  --page-inset:   max(var(--page-gutter), calc((100vw - var(--w-browse)) / 2));
+  --header-h:     64px;
   --bottom-nav-h: calc(64px + env(safe-area-inset-bottom, 0px));
   --drawer-strip: 72px;
-}
 
-/* Focus: every interactive element, unless it swaps in a border-color change. */
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* Motion (DESIGN.md "Interaction"): one vocabulary. --dur-1 to --dur-4 and
+     the two cubic easings stay for the rules that read them. The spring
+     easings are generated from src/lib/motionTokens.js by
+     scripts/ci/spring-easings.mjs; never edit them by hand. Overshoot
+     (--ease-tick, --ease-pop) only on the control the finger touched;
+     figures, plates, pins and surfaces settle without it. */
+  --dur-1:        120ms;
+  --dur-2:        200ms;
+  --dur-3:        320ms;
+  --dur-4:        480ms;
+  --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-in:      cubic-bezier(0.5, 0, 0.75, 0);
+  --dur-press:    80ms;      /* the finger lands */
+  --dur-paint:    220ms;     /* a blaze stripe or a tab's paint bar */
+  --dur-couple:   420ms;     /* a wagon couples into the formation */
+  --dur-sheet:    420ms;     /* a sheet rises */
+  --ease-sheet:   cubic-bezier(0.32, 0.72, 0, 1);
+  --dur-note:     4000ms;    /* a delta note ("up €42") stays */
+  --dur-tick: 300ms;
+  --ease-tick: linear(0, 0.2921, 0.7046, 0.9515, 1.0381, 1.0422, 1.0232, 1.0072, 0.9997, 1);
+  --dur-pop: 550ms;
+  --ease-pop: linear(0, 0.1639, 0.4885, 0.7967, 1.0067, 1.1073, 1.125, 1.0971, 1.0551, 1.0184, 0.9951, 0.9852, 0.9847, 0.9889, 0.9942, 0.9985, 1.001, 1);
+  --dur-settle: 400ms;
+  --ease-settle: linear(0, 0.2175, 0.5207, 0.7361, 0.8631, 0.9317, 0.9668, 0.9842, 0.9926, 0.9966, 0.9984, 0.9993, 1);
+  --press-scale:    0.97;    /* buttons, chips, switches, segments */
+  --press-scale-sm: 0.92;    /* icon-only controls up to 48 px */
+  --press-scale-lg: 0.985;   /* cards and rows: larger things move less */
+  --press-shade:    0.78;
+  /* Ambient loops (T1124): spinners, skeletons. Never an entrance. */
+  --dur-spin:     800ms;
+  --dur-blink:    1000ms;
+  --dur-dots:     1200ms;
+  --dur-breathe:  1600ms;
+  --dur-pulse:    2000ms;
+  --dur-loop:     2800ms;
+  --dur-drift:    24000ms;
 
-@media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; animation: none !important; }
+  /* The home page (T606, DESIGN.md "Home page"): read only by the home
+     stylesheets; the home lane rebuilds them in the house style. */
+  --text-hero:        clamp(44px, 6.8vw, 112px);
+  --text-showcase:    clamp(32px, 4.6vw, 64px);
+  --tracking-hero:    -0.035em;
+  --leading-hero:     0.98;
+  --radius-stage:     16px;
+  --text-amount:      clamp(64px, 9vw, 128px);
+  --text-total:       clamp(40px, 5vw, 64px);
+  --text-feature:     clamp(28px, 3.4vw, 48px);
+  --home-ground-mist: var(--umber-100);
+  --home-ground-deep: var(--umber-800);
+  --home-ground-lake: var(--world-water);
+  --home-ground-clay: var(--umber-200);
+  --home-ground-sea:  var(--world-water);
+  --home-ink-on-deep: var(--surface);
+  --home-film-bar:    color-mix(in srgb, var(--neutral-900) 30%, transparent);
+  --home-film-tint:   color-mix(in srgb, var(--neutral-900) 40%, transparent);
+  --dur-film:         9000ms;
+  --dur-film-fade:    1200ms;
+  --dur-reveal:       640ms;
+  --dur-draw:         1600ms;
+  --dur-advance:      7000ms;
+
+  /* The Plan opening (T743): read only by 86-plan-flow.css. */
+  --plan-ground:      var(--surface-page);
+  --text-plan-hero:   clamp(32px, 3.9vw, 56px);
+  --tracking-plan:    -0.025em;
 }
