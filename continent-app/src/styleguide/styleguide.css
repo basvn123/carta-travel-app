@@ -80,3 +80,5 @@ html:has(.sg), html:has(.sg) body, html:has(.sg) #root { height: auto; overflow:
 .sg-icons { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: var(--space-2); margin-top: var(--space-4); list-style: none; }
 .sg-icons li { display: grid; justify-items: center; gap: var(--space-1); padding: var(--space-3) var(--space-1); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-control); background: var(--surface); font-size: var(--text-micro); }
 .sg-icons code { color: var(--text-2); }
+.sg-stops { display: grid; gap: var(--space-1); list-style: none; flex: 1 1 100%; }
+.sg-stops li { display: flex; align-items: center; justify-content: space-between; }

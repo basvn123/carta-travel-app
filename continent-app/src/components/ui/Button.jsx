@@ -32,6 +32,7 @@
  * first, sentence case, no terminal punctuation.
  */
 import React from 'react';
+import { haptic as buzz } from '../../lib/haptics.js';
 
 const VARIANTS = ['primary', 'secondary', 'quiet', 'danger'];
 const SIZES = ['md', 'sm'];
@@ -40,19 +41,22 @@ export const Button = React.forwardRef(function Button(
   {
     variant = 'secondary', size = 'md', type = 'button', loading = false, block = false,
     iconStart = null, iconEnd = null, className = '', disabled, onClick, children,
-    href = null, external = false, rel, iconAfter = null, ...rest
+    href = null, external = false, rel, iconAfter = null, haptic = null, ...rest
   },
   ref
 ) {
   const v = variant === 'ghost' ? 'quiet' : VARIANTS.includes(variant) ? variant : 'secondary';
   const s = SIZES.includes(size) ? size : 'md';
+  // A commit button (save, add, submit) passes haptic="confirm" (or "tick",
+  // "warn"): one haptic after its handler, on a touch only (lib/haptics.js).
+  const press = haptic && onClick ? (e) => { onClick(e); buzz(haptic); } : onClick;
   const cls = ['btn', `btn-${v}`, s === 'sm' && 'btn-sm', block && 'btn-block', loading && 'is-loading', className]
     .filter(Boolean).join(' ');
   if (href != null) {
     return (
       <a ref={ref} className={cls} href={href}
         {...(external ? { target: '_blank', rel: rel || 'noopener noreferrer' } : rel ? { rel } : {})}
-        onClick={onClick} {...rest}>
+        onClick={press} {...rest}>
         {iconStart && <span className="btn-icon" aria-hidden="true">{iconStart}</span>}
         <span className="btn-label">{children}</span>
         {iconEnd && <span className="btn-icon" aria-hidden="true">{iconEnd}</span>}
@@ -67,7 +71,7 @@ export const Button = React.forwardRef(function Button(
       className={cls}
       disabled={disabled}
       aria-busy={loading || undefined}
-      onClick={loading ? (e) => e.preventDefault() : onClick}
+      onClick={loading ? (e) => e.preventDefault() : press}
       {...rest}
     >
       {iconStart && <span className="btn-icon" aria-hidden="true">{iconStart}</span>}

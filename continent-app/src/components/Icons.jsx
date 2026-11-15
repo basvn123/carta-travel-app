@@ -345,9 +345,11 @@ export function GlobeIcon({ size = 20, className = '' }) {
       className={className}
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18" />
-      <path d="M12 3c2.7 2.4 4 5.4 4 9s-1.3 6.6-4 9c-2.7-2.4-4-5.4-4-9s1.3-6.6 4-9Z" />
+      {/* House style (DESIGN.md "Icons"): no globe for countries and languages;
+          the borders glyph, a folded map with dashed borders. */}
+      <path d="M3 4.5l6 2 6-2 6 2v13l-6-2-6 2-6-2z" />
+      <path d="M9 6.5v13" strokeDasharray="2 2.5" />
+      <path d="M15 4.5v13" strokeDasharray="2 2.5" />
     </svg>
   );
 }
@@ -526,8 +528,11 @@ export function CheckIcon({ size = 15, className = '', labelled = false }) {
 export function SparkIcon({ size = 14, className = '', labelled = false }) {
   return (
     <Glyph size={size} className={className} labelled={labelled} label="Suggestion">
-      <path d="M12 3.5c.7 3.6 2.6 5.7 6.5 6.5-3.9.8-5.8 2.9-6.5 6.5-.7-3.6-2.6-5.7-6.5-6.5 3.9-.8 5.8-2.9 6.5-6.5Z" />
-      <path d="M18.5 15.5c.3 1.6 1.1 2.5 2.8 2.8-1.7.3-2.5 1.2-2.8 2.8-.3-1.6-1.1-2.5-2.8-2.8 1.7-.3 2.5-1.2 2.8-2.8Z" />
+      {/* House style: no sparkle for AI. The boxed "AI" mark, drawn as strokes
+          so it scales with the icon and inherits the colour. */}
+      <rect x="2.75" y="6" width="18.5" height="12" rx="2" />
+      <path d="M7 15l2.5-6 2.5 6M7.9 13h3.2" />
+      <path d="M16 9v6" />
     </Glyph>
   );
 }

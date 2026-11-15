@@ -461,6 +461,10 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
   animation: hs-fade-in var(--dur-2) var(--ease-out);
 }
 
+/* ---- A switch as a Settings row (HapticsSetting) --------------------- */
+.hs-setting-row { gap: var(--space-3); }
+.hs-setting-row .hs-setting-switch { flex: 1; min-width: 0; min-height: var(--tap); padding: 0; }
+
 /* ---- Toast and sheet grip --------------------------------------------- */
 .hs-toast {
   display: flex;
@@ -497,7 +501,35 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
   pointer-events: none;
 }
 
+/* ---- The interaction primitives as classes (DESIGN.md "Primitives") ----
+   For screens that do not use Motion. Each is one class added at the moment
+   of the traveller's own act; reduced motion shows the end state (below).
+     .hs-pop      the Add icon: outline to filled, from 0.6 on the pop spring
+     .hs-leave    a removed item fades (then remove it from the DOM)
+     .hs-reveal   a fold, an inline message, a popover arriving
+     .hs-sheet-in / .hs-sheet-out   a phone sheet rising and leaving
+     .hs-dialog-in   a desktop dialog: scale 0.97 to 1
+     .hs-route-in a pushed view: 24 px from the side, with opacity
+     .hs-shake    a refused submit: the field group shakes once */
+.hs-pop { animation: hs-pop var(--dur-pop) var(--ease-pop) both; }
+@keyframes hs-pop { from { scale: 0.6; } to { scale: 1; } }
+.hs-leave { animation: hs-leave var(--dur-1) var(--ease-in) both; }
+@keyframes hs-leave { to { opacity: 0; scale: 0.98; } }
+.hs-reveal { animation: hs-reveal var(--dur-2) var(--ease-out) both; }
+@keyframes hs-reveal { from { opacity: 0; translate: 0 -4px; } to { opacity: 1; translate: 0 0; } }
+.hs-sheet-in { animation: hs-sheet-in var(--dur-sheet) var(--ease-sheet) both; }
+.hs-sheet-out { animation: hs-sheet-out var(--dur-2) var(--ease-in) both; }
+@keyframes hs-sheet-in { from { translate: 0 100%; } to { translate: 0 0; } }
+@keyframes hs-sheet-out { to { translate: 0 100%; } }
+.hs-dialog-in { animation: hs-dialog-in var(--dur-2) var(--ease-out) both; }
+@keyframes hs-dialog-in { from { opacity: 0; scale: 0.97; } to { opacity: 1; scale: 1; } }
+.hs-route-in { animation: hs-route-in var(--dur-2) var(--ease-out) both; }
+@keyframes hs-route-in { from { opacity: 0; translate: 24px 0; } to { opacity: 1; translate: 0 0; } }
+.hs-shake { animation: hs-shake var(--dur-3) var(--ease-out); }
+@keyframes hs-shake { 20% { translate: -6px 0; } 40% { translate: 5px 0; } 60% { translate: -3px 0; } 80% { translate: 2px 0; } to { translate: 0 0; } }
+
 @media (prefers-reduced-motion: reduce) {
+  .hs-pop, .hs-leave, .hs-reveal, .hs-sheet-in, .hs-sheet-out, .hs-dialog-in, .hs-route-in, .hs-shake,
   .hs-paint::before, .hs-blaze.hs-paint::before, .hs-plate.hs-settle-in, .hs-wagon.hs-couple-in,
   .hs-wagon.hs-couple-out, .relief, .hs-fig.hs-roll, .hs-fig.hs-dip, .hs-delta, .hs-toast,
   .hs-wait .hs-blaze::before, .hs-skeleton { animation: none; }

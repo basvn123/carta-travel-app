@@ -1,9 +1,11 @@
 /* The component kit (T422; house style 2026-11, DESIGN.md "Kit"): IconButton,
    Chip, Segmented, Tabs, Card, Field, Icon, Money, CostRow, Switch, Tile.
    Styles for src/components/ui/. Roles and scales only (01-tokens.css).
-   One selected state everywhere: the beige wash (--select-bg), brown text,
-   a brown edge, plus a mark (a tick, the paint bar, the umber thumb), never
-   a dark slab and never colour alone. Colour changes take --dur-1; the
+   Selected follows one rule per kind of choice (DESIGN.md "Selected"): an
+   item chosen among many (chip, row, card, leg plate) takes the beige wash,
+   umber 800 text, an umber edge and a mark (the tick, the blaze); the one
+   option of a single control (a segmented control, a tab) takes the paint
+   (the umber thumb, the paint bar). Never a dark slab, never colour alone. Colour changes take --dur-1; the
    thing the finger touched springs on --ease-tick; reduced motion at the
    end of the file. The signature parts (blaze, plate, formation, rail
    card, relief, states) are in 05-house.css. */

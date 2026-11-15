@@ -1271,12 +1271,14 @@
 /* The picked pin: the one selected state on the map, the light tint with
    the brown edge (the dot under it carries the brown ring, ExploreMap.jsx).
    The cheapest keeps its sun marker; picked wins when they are one place. */
+/* House style (decision 0012): the chosen pin is the umber mark, paper
+   figure (5.81), settling without overshoot. */
 .explore-shell .xmap-kpin.is-label.is-picked {
   z-index: 4;
-  border-color: var(--select-border);
-  background: var(--select-bg);
-  color: var(--select-ink);
-  outline: 1px solid var(--select-border);
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--action-text);
+  outline: 2px solid var(--surface);
 }
 
 /* The picked place on a desktop map: the same overview the list row draws,

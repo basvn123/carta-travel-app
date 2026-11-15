@@ -1180,9 +1180,15 @@ html.kbd-open .settings-done { display: none; }
 /* On the home film the header's words are white (61-v6-home.css sets the
    ink to paper); the travel style door's umber label would sit brown on a
    dark photo, so on the film it takes the paper ink too. */
-:root[data-home-film="under"] .top-bar .style-door { background: var(--plate); border-color: var(--plate); text-shadow: none; }
-:root[data-home-film="under"] .top-bar .style-door .style-door-name,
-:root[data-home-film="under"] .top-bar .style-door .style-door-kicker { color: var(--on-plate); }
+/* Where the words are hidden (to 1279 px) the door is its icon alone: paper
+   ink on the film, no tile. From 1280 the words show, on an ink pill. */
+:root[data-home-film="under"] .top-bar .style-door .tstyle-disc { background: none; color: var(--home-ink-on-deep); }
+@media (min-width: 1280px) {
+  :root[data-home-film="under"] .top-bar .style-door { background: var(--plate); border-color: var(--plate); text-shadow: none; }
+  :root[data-home-film="under"] .top-bar .style-door .style-door-name,
+  :root[data-home-film="under"] .top-bar .style-door .style-door-kicker,
+  :root[data-home-film="under"] .top-bar .style-door .tstyle-disc { color: var(--on-plate); }
+}
 @media (prefers-reduced-motion: reduce) {
   .header-nav .nav-marker[data-slide="true"], .bottom-nav .nav-marker[data-slide="true"] { transition: none; }
 }

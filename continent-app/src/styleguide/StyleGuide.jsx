@@ -122,6 +122,10 @@ export default function StyleGuide() {
   const [people, setPeople] = useState(2);
   const [mountains, setMountains] = useState(null);
   const [field, setField] = useState('');
+  const [saved, setSaved] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [stops, setStops] = useState(['Bled', 'Bohinj', 'Ljubljana']);
+  const [shake, setShake] = useState(0);
 
   useEffect(() => {
     let live = true;
@@ -330,6 +334,22 @@ export default function StyleGuide() {
                 <ul className="sg-springs">
                   {Object.entries(SPRING).map(([k, v]) => <li key={k}><code>{k}</code> {v.visualDuration ? `${v.visualDuration * 1000} ms, bounce ${v.bounce}` : `stiffness ${v.stiffness}, damping ${v.damping}`}</li>)}
                 </ul>
+              </Demo>
+              <Demo title="Primitives" note="Save pops the icon (confirm), a fold reveals, a refused field shakes (warn); a removed row takes .hs-leave before it goes. Reduced motion shows each end state.">
+                <IconButton label={saved ? 'Saved' : 'Save'} pressed={saved} tone="surface"
+                  onClick={() => setSaved((v) => !v)}>
+                  <span key={String(saved)} className={saved ? 'hs-pop' : undefined}><HouseIcon.cairn size={20} /></span>
+                </IconButton>
+                <Button onClick={() => setOpen((v) => !v)} aria-expanded={open}>{open ? 'Hide' : 'Why this one'}</Button>
+                {open && <p className="hs-reveal sg-note">Revealed over --dur-2, 4 px.</p>}
+                <ul className="sg-stops">
+                  {stops.map((n) => (
+                    <li key={n}>{n} <Button variant="quiet" size="sm" onClick={() => setStops((l) => l.filter((x) => x !== n))}>Remove</Button></li>
+                  ))}
+                </ul>
+                <span key={shake} className={shake ? 'hs-shake' : undefined}>
+                  <Button haptic="warn" onClick={() => setShake((n) => n + 1)}>Refuse</Button>
+                </span>
               </Demo>
               <Demo title="Haptics" note="Tick on a value, confirm on a kept thing, warn on a failure; touch commits only.">
                 <p>{hapticsAvailable() ? `This device can vibrate; haptics are ${hapticsOn() ? 'on' : 'off'}.` : 'This device has no haptic route, so Settings shows no switch.'}</p>

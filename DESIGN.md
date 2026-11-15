@@ -330,7 +330,7 @@ Kinds of place have their own paint, for the kind's pictogram mark, swatch and t
 ### Colour rules
 
 - Umber is the paint of choice and action. A screen has one primary action in solid umber.
-- Selected looks one way everywhere: the beige wash, umber 800 text, an umber edge, plus a mark (the tick, the paint bar, the thumb, the blaze). Never a dark slab, never colour alone.
+- **Selected**, one rule per kind of choice: an item chosen among many (a chip, a row, a card, a leg plate, a day) takes the beige wash, umber 800 text, an umber edge and a mark (the tick, the blaze); the one option of a single control (a segmented control's segment, a tab) takes the paint (the umber thumb with paper text, the umber paint bar). The chosen map pin is the umber mark. Never a dark slab (no ink-filled pills for a selected tab), never colour alone.
 - Text never sits on a photo and never on the relief's contours. Where a control must sit on a photo it is a paper disc.
 - No gradients for decoration, no glassmorphism, no glow.
 - Single light theme. `theme-color` is the stone ground.
@@ -483,6 +483,8 @@ The linear() easings are generated from `src/lib/motionTokens.js` (`SPRING`: tic
 | Sheet | rises on the sheet curve; drag 1 to 1, closes past 30 % or a fling | optional tick at the close threshold |
 | Route | tab change: the new view fades and rises 8 px; a drill-in shares the photo | none |
 | Error | the field group shakes once, the message appears, focus moves | warn |
+
+For screens without Motion the primitives exist as classes in `05-house.css`, each added at the moment of the traveller's own act and flat under reduced motion: `.hs-pop` (the Add icon), `.hs-leave` (a removed item, then remove it), `.hs-reveal` (a fold, an inline message, a popover), `.hs-sheet-in` and `.hs-sheet-out`, `.hs-dialog-in`, `.hs-route-in` (a pushed view), `.hs-shake` (a refused submit), `.hs-settle-in` (a plate arriving), `.hs-couple-in` and `.hs-couple-out` (a wagon), `.hs-paint` (a blaze stripe). `Button` takes `haptic="confirm"` for a commit (save, add, submit). The style guide shows each live.
 
 Signature moments: Explore, a chosen pin and its row paint and the price settles into an umber plate; place, a getting-there option is chosen and the total rolls; trip, the hire car couples into the formation and the total rolls with its delta note.
 
