@@ -1,7 +1,7 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useSettings } from './SettingsLine.jsx';
-import { SparkIcon } from './Icons.jsx';
+import { HouseIcon } from './HouseIcons.jsx';
 import { Button } from './ui/index.js';
 import { styleIcon, styleName } from '../browse/TravelStylesSheet.jsx';
 
@@ -17,7 +17,8 @@ export function StyleDoor() {
   const ts = app?.travelStyles;
   if (!ts) return null;
   const s = ts.active;
-  const Ico = s ? styleIcon(s) : SparkIcon;
+  // No sparkle (house style): an empty door shows the pack.
+  const Ico = s ? styleIcon(s) : HouseIcon.pack;
   const name = s ? styleName(t, s) : t('styles.choose');
   // Changed for now (a trip's party, a link): said in words, not colour alone.
   const changed = Boolean(s && ts.changed);

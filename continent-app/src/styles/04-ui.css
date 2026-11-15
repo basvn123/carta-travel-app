@@ -1,9 +1,12 @@
-/* The component kit (T422, roadmap 1.2): IconButton, Chip, Segmented, Tabs,
-   Card, Field and Icon. Styles for src/components/ui/. Roles and scales only
-   (01-tokens.css). One selected state everywhere: the --select-* tint with a
-   teal label, plus a mark (a tick, an underline, a lifted thumb), never a dark
-   fill. Motion is --dur-1 colour changes and --dur-2 transform; every
-   transition has a reduced-motion branch at the end of the file. */
+/* The component kit (T422; house style 2026-11, DESIGN.md "Kit"): IconButton,
+   Chip, Segmented, Tabs, Card, Field, Icon, Money, CostRow, Switch, Tile.
+   Styles for src/components/ui/. Roles and scales only (01-tokens.css).
+   One selected state everywhere: the beige wash (--select-bg), brown text,
+   a brown edge, plus a mark (a tick, the paint bar, the umber thumb), never
+   a dark slab and never colour alone. Colour changes take --dur-1; the
+   thing the finger touched springs on --ease-tick; reduced motion at the
+   end of the file. The signature parts (blaze, plate, formation, rail
+   card, relief, states) are in 05-house.css. */
 
 /* ---- IconButton --------------------------------------------------------- */
 .icon-btn {
@@ -24,9 +27,14 @@
 @media (hover: hover) {
   .icon-btn:hover { background: var(--surface-hover); color: var(--text); }
 }
-.icon-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.icon-btn-surface { background: var(--surface); border-color: var(--border); color: var(--text); }
-.icon-btn-photo { background: var(--surface); color: var(--text); box-shadow: var(--elev-1); }
+.icon-btn:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.icon-btn:active:not(:disabled) { scale: var(--press-scale-sm); }
+.icon-btn-surface { background: var(--surface); border: var(--stroke-edge) solid var(--edge); color: var(--text); }
+@media (hover: hover) {
+  .icon-btn-surface:hover { border-color: var(--text); background: var(--surface); }
+}
+/* On a photo: a paper disc, never text on the photo itself. */
+.icon-btn-photo { background: var(--surface); color: var(--text); box-shadow: var(--elev-2); }
 .icon-btn.is-pressed { background: var(--select-bg); color: var(--select-ink); }
 .icon-btn:disabled { color: var(--text-3); cursor: not-allowed; }
 
@@ -38,36 +46,39 @@
   flex: none;
   font-family: var(--font);
   font-size: var(--text-label);
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1;
   white-space: nowrap;
 }
 .ui-chip-filter,
 .ui-chip-choice {
-  min-height: 32px;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border);
+  min-height: 36px;
+  padding: 0 14px;
+  border: var(--stroke-edge) solid var(--edge);
   border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
 }
 @media (pointer: coarse) {
   .ui-chip-filter, .ui-chip-choice { min-height: var(--tap); }
 }
 @media (hover: hover) {
-  .ui-chip-filter:hover, .ui-chip-choice:hover { border-color: var(--neutral-300); }
+  .ui-chip-filter:hover, .ui-chip-choice:hover { border-color: var(--text); }
 }
 .ui-chip-filter:focus-visible,
-.ui-chip-choice:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ui-chip-choice:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .ui-chip.is-selected {
   background: var(--select-bg);
   border-color: var(--select-border);
   color: var(--select-ink);
-  font-weight: 600;
+  font-weight: 700;
 }
-.ui-chip-tick { flex: none; margin-left: -2px; }
+/* The Select primitive's mark: the tick arrives on the tick spring. */
+.ui-chip-tick { flex: none; margin-left: -2px; animation: ui-mark-in var(--dur-tick) var(--ease-tick) both; }
+@keyframes ui-mark-in { from { scale: 0.5; opacity: 0; } to { scale: 1; opacity: 1; } }
 .ui-chip-icon { display: inline-flex; color: var(--text-2); }
 .ui-chip:disabled { color: var(--text-3); background: var(--surface-sunken); cursor: not-allowed; }
 .ui-chip-group { display: flex; flex-wrap: wrap; gap: var(--space-2); }
@@ -86,7 +97,7 @@
 .ui-chip-status {
   height: 24px;
   padding: 0 var(--space-2);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   font-size: var(--text-caption);
   font-weight: 600;
 }
@@ -102,10 +113,11 @@
 /* ---- Segmented ---------------------------------------------------------- */
 .seg {
   display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  border-radius: var(--radius-control);
-  background: var(--surface-sunken);
+  gap: 0;
+  padding: 2px;
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
 }
 .seg-block { display: flex; width: 100%; }
 .seg-block .seg-item { flex: 1; }
@@ -114,28 +126,29 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 38px;
-  padding: 0 var(--space-4);
+  min-height: 40px;
+  padding: 0 14px;
   border: 0;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: none;
   color: var(--text-2);
   font-family: var(--font);
   font-size: var(--text-label);
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+  transition: background-color var(--dur-2) var(--ease-out), color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
 }
-.seg-sm .seg-item { min-height: 30px; padding: 0 var(--space-3); }
+.seg-sm .seg-item { min-height: 32px; padding: 0 var(--space-3); }
 @media (pointer: coarse) {
   .seg-item, .seg-sm .seg-item { min-height: var(--tap); }
 }
 @media (hover: hover) {
   .seg-item:hover:not(.is-selected) { color: var(--text); }
 }
-.seg-item.is-selected { background: var(--surface); color: var(--text); box-shadow: var(--elev-1); }
-.seg-item:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+/* The chosen segment takes the paint (the thumb), white label. */
+.seg-item.is-selected { background: var(--action); color: var(--action-text); }
+.seg-item:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .seg-item:disabled { color: var(--text-3); cursor: not-allowed; }
 .seg-icon { display: inline-flex; }
 
@@ -168,18 +181,19 @@
   content: '';
   position: absolute;
   left: 0; right: 0; bottom: -1px;
-  height: 2px;
-  border-radius: 2px;
+  height: var(--stroke-route);
+  border-radius: 0;
   background: var(--action);
   transform: scaleX(0);
-  transition: transform var(--dur-2) var(--ease-out);
+  transform-origin: left center;
+  transition: transform var(--dur-paint) var(--ease-out);
 }
 @media (hover: hover) {
   .ui-tab:hover { color: var(--text); }
 }
 .ui-tab.is-selected { color: var(--text); }
 .ui-tab.is-selected::after { transform: scaleX(1); }
-.ui-tab:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.ui-tab:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
 .ui-tab-count { color: var(--text-3); font-weight: 500; }
 
 /* ---- Card --------------------------------------------------------------- */
@@ -187,7 +201,7 @@
   position: relative;
   display: flex;
   gap: var(--space-3);
-  border: 1px solid var(--border);
+  border: var(--stroke-hair) solid var(--border);
   border-radius: var(--radius-card);
   background: var(--surface);
   color: var(--text);
@@ -197,6 +211,7 @@
 .card-row .card-media { width: 72px; height: 72px; }
 .card-tile { flex-direction: column; gap: 0; overflow: hidden; }
 .card-tile .card-media { aspect-ratio: 4 / 3; border-radius: 0; }
+/* A row's photo is a small rounded square; a tile's photo fills its top. */
 .card-tile .card-body { padding: var(--space-3) var(--space-4) var(--space-4); }
 .card-media {
   flex: none;
@@ -226,19 +241,19 @@
 /* Doubled class: the global rule's :is() list carries input[type=checkbox],
    one element more specific than a plain class chain. */
 .card.is-interactive .card-open.card-open:active { scale: none; opacity: 1; }
-.card.is-interactive:has(.card-open:active) { scale: 0.99; transition-duration: var(--dur-1); }
+.card.is-interactive:has(.card-open:active) { scale: var(--press-scale-lg); transition-duration: var(--dur-press); }
 @media (prefers-reduced-motion: reduce) {
   .card.is-interactive:has(.card-open:active) { scale: none; }
 }
 .card-open:focus-visible { outline: 2px solid transparent; } /* the card draws the ring; forced colours still show this one */
-.card.is-interactive:has(.card-open:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+.card.is-interactive:has(.card-open:focus-visible) { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 @media (hover: hover) {
-  .card.is-interactive:hover { border-color: var(--neutral-300); }
+  .card.is-interactive:hover { border-color: var(--edge); }
 }
-.card.is-selected { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
+.card.is-selected { border-color: var(--select-border); background: var(--select-row); outline: 1px solid var(--select-border); outline-offset: -2px; }
 .card-meta { color: var(--text-3); font-size: var(--text-label); }
 .card-figures { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); margin-top: 2px; }
-.card-price { font-size: var(--text-body); font-weight: 600; }
+.card-price { font-size: var(--text-figure); font-weight: 800; }
 .card-actions { position: relative; z-index: 1; display: flex; align-items: center; gap: var(--space-1); flex: none; }
 .card-tile .card-actions { position: absolute; top: var(--space-2); right: var(--space-2); }
 
@@ -251,7 +266,7 @@
   width: 100%;
   min-height: var(--tap);
   padding: 0 var(--space-3);
-  border: 1px solid var(--border);
+  border: var(--stroke-edge) solid var(--edge);
   border-radius: var(--radius-control);
   background: var(--surface);
   color: var(--text);
@@ -274,9 +289,9 @@
 }
 .field-control :is(input, select, textarea)::placeholder { color: var(--text-3); }
 @media (hover: hover) {
-  .field-control :is(input, select, textarea):hover { border-color: var(--neutral-300); }
+  .field-control :is(input, select, textarea):hover { border-color: var(--text); }
 }
-.field-control :is(input, select, textarea):focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; border-color: var(--action); }
+.field-control :is(input, select, textarea):focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 1px; border-color: var(--action); }
 .field-control :is(input, select, textarea):disabled { background: var(--surface-sunken); color: var(--text-3); }
 .field-hint { margin: 0; font-size: var(--text-caption); color: var(--text-3); }
 .field.has-error .field-control :is(input, select, textarea) { border-color: var(--danger); }
@@ -359,9 +374,11 @@
 }
 /* The label sits on the big figure's baseline, not on the per-person line under it. */
 .costsum { border-top: 2px solid var(--text); align-items: baseline; }
+/* Ledger leaders: on a wide receipt the label reaches its figure along a dotted line. */
+.costrows.has-leaders .costrow dt::after { content: ''; flex: 1; align-self: flex-end; min-width: var(--space-4); margin: 0 0 5px var(--space-2); border-bottom: 2px dotted var(--border); }
 .costsum .costrow-label { font-weight: 600; }
 .costsum dd { flex-direction: column; align-items: flex-end; gap: 2px; }
-.costsum-fig { font-size: var(--text-title); font-weight: 700; line-height: var(--leading-tight); }
+.costsum-fig { font-size: var(--text-title); font-weight: 800; line-height: var(--leading-tight); }
 /* The estimate word stays a caption beside the big figure, never title-sized. */
 .costsum-fig .money-est { font-size: var(--text-label); font-weight: 500; }
 .costsum-each { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
@@ -369,7 +386,8 @@
 /* ---- Reduced motion ----------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   .icon-btn, .ui-chip-filter, .ui-chip-choice, .seg-item, .ui-tab, .ui-tab::after, .card,
-  .field-control :is(input, select, textarea) { transition: none; }
+  .field-control :is(input, select, textarea), .ui-switch-thumb { transition: none; }
+  .ui-chip-tick { animation: none; }
 }
 
 /* ---- Switch (T437) ------------------------------------------------------ */
@@ -402,7 +420,7 @@
   flex: none;
   width: 40px;
   height: 24px;
-  border: 1.5px solid var(--text-3);
+  border: var(--stroke-edge) solid var(--edge);
   border-radius: var(--radius-pill);
   background: var(--surface);
   transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
@@ -416,7 +434,7 @@
   margin-top: -6.5px;
   border-radius: var(--radius-pill);
   background: var(--text-3);
-  transition: transform var(--dur-2) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+  transition: transform var(--dur-tick) var(--ease-tick), background-color var(--dur-1) var(--ease-out);
 }
 .ui-switch.is-on .ui-switch-track { border-color: var(--action); background: var(--action); }
 .ui-switch.is-on .ui-switch-thumb { background: var(--action-text); transform: translateX(16px) scale(1.25); }
@@ -424,7 +442,9 @@
   .ui-switch:hover:not(:disabled) .ui-switch-track { border-color: var(--text-2); }
   .ui-switch.is-on:hover:not(:disabled) .ui-switch-track { border-color: var(--action-hover); background: var(--action-hover); }
 }
-.ui-switch:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.ui-switch:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+/* The Toggle primitive: the pressed thumb stretches from its resting side. */
+.ui-switch:active:not(:disabled) .ui-switch-thumb { scale: 1.15 1; }
 .ui-switch:disabled { color: var(--text-3); cursor: not-allowed; }
 .ui-switch:disabled .ui-switch-track { border-color: var(--border); background: var(--surface-sunken); }
 .ui-switch:disabled .ui-switch-thumb { background: var(--border); }

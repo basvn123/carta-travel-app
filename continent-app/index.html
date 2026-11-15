@@ -40,13 +40,15 @@
          lets it download with the HTML instead of waiting for the JS bundle to
          boot. The country files it names are fetched by src/lib/appData.js. -->
     <link rel="preload" href="/boot.json" as="fetch" crossorigin="anonymous" />
-    <!-- Fonts are self-hosted (T199). Since T421 (Lagoon) one family, Figtree,
-         carries every role (--ui, --display, --mono all resolve to it in
-         01-tokens.css), figures set tabular. Variable woff2, latin and latin-ext
-         only; nothing loads from Google's font hosts. The latin file is
-         preloaded because every first paint uses it. The @font-face rules are
-         in src/styles/00-fonts.css (T1090): no inline style, for the CSP. -->
-    <link rel="preload" href="/fonts/Figtree-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Fonts are self-hosted (T199; house style 2026-11, G1). Overpass
+         carries every word and figure (--ui, --display, --mono in
+         01-tokens.css), figures set tabular; Sofia Sans Extra Condensed sets
+         plate names only. Variable woff2, latin and latin-ext, in
+         src/assets/fonts so Vite hashes them and rewrites this href. Nothing
+         loads from Google's font hosts. The Overpass latin file is preloaded
+         because every first paint uses it. The @font-face rules are in
+         src/styles/00-fonts.css (T1090): no inline style, for the CSP. -->
+    <link rel="preload" href="/src/assets/fonts/Overpass-latin.woff2" as="font" type="font/woff2" crossorigin />
   </head>
   <body>
     <div id="root"></div>

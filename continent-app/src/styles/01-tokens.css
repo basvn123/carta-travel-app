@@ -4,53 +4,55 @@
    phones), 480, 600, 700, 768, 1024, 1100, 1200, 1240, 1280, 1440, 1600, 1800.
    Write max-width as boundary minus 1 for 600, 1024 and 1280 (599, 1023, 1279),
    min-width as the boundary, and keep the old 768 pair (max-width 768,
-   min-width 769). 700, 1100, 1200 and 1240 stay because JSX matchMedia calls use
-   the same numbers; they fold into 768 and 1024 when the JS moves with them. */
+   min-width 769). The three angles of the house style: phone up to 768,
+   tablet 769 to 1279 (portrait 820, landscape 1180), desktop 1280 and up. */
 /* ==========================================================================
-   Carta, Europe Travel: design tokens (T421 Lagoon structure; the teal became
-   one warm brown, umber, on 2026-10-13 in T438)
+   Design tokens: the house style (G1, 2026-11-15, decision 0012, DESIGN.md).
 
-   A top-tier travel app in the manner of Airbnb, Polarsteps and Wanderlog:
-   photography first, white surfaces on a warm light grey, and two base
-   colours: a blue-grey ink that is never black, and one warm brown for
-   actions and selection. Sun yellow marks best value only. One friendly
-   typeface (Figtree) sets everything, figures included, with tabular numerals.
+   Waymark in Line's colours, rounder. The furniture of a European footpath,
+   made for prices: a pale lichen-stone ground, ink that is green-black and
+   never #000, and the umber brown as the PAINT you put on the path when you
+   choose: the action, the selected thing, the blaze, the route, the chosen
+   pin. Beige (umber 100 and 200) for tints, the food wagon and quiet
+   surfaces. The Score and the signpost plate are dark ink plates.
+   Overpass sets every word and figure with tabular figures; Sofia Sans
+   Extra Condensed sets plate names only.
 
-   Three layers, read top to bottom:
-     1. Primitives  the raw scales. Components never read these.
+   Layers, read top to bottom:
+     1. Primitives  the raw scales (hex only: several readers parse hex).
      2. Roles       what a value is for. New and touched rules read these.
-     3. Legacy      every name the stylesheet used before T421, aliased to a
-                    role, so the whole app re-skins from this file alone. The
-                    migration (T426 onward) retires them file by file.
-   Ratios beside a pair are WCAG 2 contrast; scripts/ci/token-contrast.mjs
-   checks every pair the product uses as text or fill.
+     3. House parts the signature components' own roles (plate, formation,
+                    kinds, relief, map), the scales and the motion system.
+     4. Legacy      every name the stylesheet used before, re-pointed at the
+                    roles, so screens not yet rebuilt wear the house style.
+   Ratios beside a pair are WCAG 2 contrast on the new ground;
+   scripts/ci/token-contrast.mjs checks every pair the product uses.
 
-   Write STANDARD properties only; the build (Lightning CSS, targets in
-   vite.config.js) generates vendor prefixes. Hand-writing a -webkit- twin
-   next to the standard property is actively harmful here: given both,
-   Lightning CSS collapsed the pair down to the -webkit- spelling alone, and
-   Chromium dropped -webkit-backdrop-filter years ago, so every blurred
-   surface in the app shipped with no blur while dev looked correct.
+   One :root block (token-contrast.mjs and the mirror check read the first
+   one only). Write STANDARD properties only; Lightning CSS adds prefixes.
    ========================================================================== */
 
 :root {
   /* ---- 1. Primitives ---------------------------------------------------- */
 
-  /* Neutrals: a warm light grey family, ink a blue-grey (never #000). */
-  --neutral-0:    #ffffff;
-  --neutral-25:   #fbfbfa;
-  --neutral-50:   #f6f5f2;
-  --neutral-100:  #efeeea;
-  --neutral-150:  #e9eae7;
-  --neutral-200:  #dcdfdd;
-  --neutral-300:  #c5cac8;
-  --neutral-600:  #5c6873;
-  --neutral-700:  #44515c;
-  --neutral-800:  #2e3a44;
-  --neutral-900:  #1f2a33;
+  /* Stone and ink (from Line): a pale lichen ground, cool enough that the
+     umber reads warm; ink green-black. The neutral-* names stay because 34
+     files read them directly; they now hold the house greys. */
+  --neutral-0:    #ffffff;   /* paper: sheets, fields, cards, the cost post */
+  --neutral-25:   #f7f8f5;   /* a lifted stone */
+  --neutral-50:   #eef0ea;   /* stone: the page ground */
+  --neutral-100:  #e3e7df;   /* band: quiet bands, sticky heads, the relief field */
+  --neutral-150:  #dde2da;   /* the soft hairline */
+  --neutral-200:  #cfd5cc;   /* rule: hairlines, never the only boundary */
+  --neutral-300:  #b4bcb3;   /* a hovered edge */
+  --neutral-500:  #7a847d;   /* edge: control borders, a mark never text; 3.37 on stone, 3.87 on paper */
+  --neutral-600:  #59625c;   /* ink 3: 5.50 on stone, 6.31 on paper, 5.04 on band */
+  --neutral-700:  #465049;   /* ink 2: 7.30 on stone, 8.38 on paper */
+  --neutral-800:  #2c3530;   /* a dark plate under the pointer */
+  --neutral-900:  #1e2421;   /* ink: 13.76 on stone, 15.80 on paper */
 
-  /* Lagoon teal, the action colour T421 to T437. No role reads it since T438;
-     kept until the lint shows no direct reads, then deleted. */
+  /* Lagoon teal, retired as the action in T438. Kept only for the readers
+     that still name it (the home grounds, the cost card test, share art). */
   --lagoon-50:    #eef7f7;
   --lagoon-100:   #dff0f1;
   --lagoon-200:   #bfe0e2;
@@ -60,11 +62,11 @@
   --lagoon-800:   #08575f;
   --lagoon-900:   #07454b;
 
-  /* Umber: the one warm brown (owner decision 2026-10-13, T438). 600 is the
-     action colour: white on it 5.8:1, 600 on its 100 tint 4.8:1, 700 on
-     the tint 6.4:1. 100 sits 9.9 delta E from the sunken grey, so a
-     selected item never looks like a quiet band. With the blue-grey ink it is one of the app's two base
-     colours. */
+  /* Umber: the paint (owner, 2026-10-13, T438; kept by owner rule
+     2026-11-13). 600 is the action, the selected thing, the blaze, the route
+     and the chosen pin: 5.06 on stone, 5.81 on paper, white on it 5.81.
+     700 is brown text, the pressed action and the focus ring: 6.80 on
+     stone. 100 and 200 are the beige: tints, the food wagon, selected rows. */
   --umber-50:     #faf6f1;
   --umber-100:    #f6e7d3;
   --umber-200:    #e7d3bc;
@@ -79,95 +81,163 @@
   --sun-100:      #fdf1d8;
   --sun-800:      #7a5000;
 
+  /* Kinds (from Line): a kind's pictogram mark, swatch and tab underline
+     only, always with its pictogram and its word, never body text. Each is
+     3:1 or more on the band. */
+  --kind-paint-trails:    #2f7a45;
+  --kind-paint-beaches:   #0e7c86;
+  --kind-paint-lakes:     #2b5fa8;
+  --kind-paint-mountains: #6248a8;
+  --kind-paint-cycling:   #b02a63;
+
   /* ---- 2. Roles ---------------------------------------------------------- */
 
-  --surface-page:    var(--neutral-50);   /* the ground behind everything */
-  --surface:         var(--neutral-0);    /* cards, sheets, bars */
-  --surface-sunken:  var(--neutral-100);  /* input fills, quiet bands */
-  --surface-hover:   #eeede9;             /* hover on a quiet surface */
-  --text:            var(--neutral-900);  /* 13.4:1 on --surface-page */
-  --text-2:          var(--neutral-700);  /* 7.5:1 on --surface-page */
-  --text-3:          var(--neutral-600);  /* metadata, 5.2:1 on --surface-page, 4.9:1 on --surface-sunken */
+  --surface-page:    var(--neutral-50);   /* stone, the ground behind everything */
+  --surface:         var(--neutral-0);    /* paper: sheets, cards, fields, bars */
+  --surface-sunken:  var(--neutral-100);  /* band: quiet bands and input wells */
+  --surface-hover:   #e6e9e2;             /* hover on a quiet surface */
+  --text:            var(--neutral-900);  /* 13.76 on stone, 15.80 on paper */
+  --text-2:          var(--neutral-700);  /* 7.30 on stone, 6.70 on band */
+  --text-3:          var(--neutral-600);  /* 13 px and up: 5.50 on stone, 5.04 on band */
   --border:          var(--neutral-200);
   --border-soft:     var(--neutral-150);
+  --edge:            var(--neutral-500);  /* control edges (chips, fields, switches): a mark, 3:1 */
 
-  --action:          var(--umber-600);    /* primary buttons, links, focus; white on it 5.8:1 */
+  --action:          var(--umber-600);    /* the paint: buttons, links, chosen; white on it 5.81 */
   --action-hover:    var(--umber-700);
   --action-press:    var(--umber-800);
   --action-text:     var(--neutral-0);    /* label on an --action fill */
-  --action-tint:     var(--umber-100);    /* --action as text on it 4.8:1 */
+  --action-tint:     var(--umber-100);    /* --action as text on it 4.80 */
 
-  /* The one selected state: a light tint, brown text, a brown edge. Never
-     a dark slab. Surfaces not yet on the kit still read the legacy
-     --ink-fill below as a deep brown fill. */
+  /* The one selected state (DESIGN.md "Selected"): the beige wash, brown
+     text, a brown edge, plus a mark (the blaze, a tick, the paint bar).
+     Never a dark slab, never colour alone. */
   --select-bg:       var(--umber-100);
-  --select-ink:      var(--umber-700);    /* 6.4:1 on --select-bg */
+  --select-ink:      var(--umber-800);    /* 8.68 on --select-bg */
   --select-border:   var(--umber-600);
+  --select-row:      var(--umber-50);     /* a selected row in a list */
 
-  --focus:           var(--umber-600);
-  --best:            var(--sun-400);      /* best value marker; --text on it 7.9:1 */
-  --best-bg:         #fdefc0;             /* clearly yellow, apart from the brown tint (T438) */
-  /* Best value as text is ink beside the sun marker (T438): a dark yellow
-     text sat on top of the brown. */
+  --focus:           var(--umber-700);    /* 3 px ring, 2 px offset; 6.80 on stone */
+  --focus-on-dark:   var(--neutral-0);    /* the ring on a dark plate */
+  --best:            var(--sun-400);      /* best value marker; --text on it 7.9 */
+  --best-bg:         #fdefc0;
   --best-ink:        var(--text);
 
-  /* ---- Scales ------------------------------------------------------------ */
+  /* ---- 3. House parts ---------------------------------------------------- */
 
-  /* Type: one family, figures tabular. Eight steps; nothing functional under
-     11 px, no figure or rating under 12 px. */
-  --ui:              'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font:            var(--ui);         /* the name new rules use */
-  --text-micro:      11px;
+  /* The plate (DESIGN.md "Signature components"): the Score and the
+     signpost plate are dark ink with paper text; the second line beige. */
+  --plate:           var(--neutral-900);
+  --plate-hover:     var(--neutral-800);
+  --on-plate:        var(--neutral-0);    /* 15.80 on the plate */
+  --on-plate-2:      var(--umber-200);    /* 11.4 on the plate */
+
+  /* The formation (the price row): getting there an outlined umber pill,
+     the bed a solid umber wagon, food and drink a beige wagon, then the day
+     figure in ink, always the loudest. Not yet: a dashed edge, outside the
+     sum. */
+  --wagon-go-edge:   var(--umber-600);
+  --wagon-go-ink:    var(--umber-800);    /* 10.54 on paper */
+  --wagon-bed:       var(--umber-600);
+  --wagon-bed-ink:   var(--neutral-0);    /* 5.81 */
+  --wagon-food:      var(--umber-100);
+  --wagon-food-edge: var(--umber-500);
+  --wagon-food-ink:  var(--umber-800);    /* 8.68 */
+  --wagon-none-edge: var(--neutral-500);
+
+  /* Kinds as roles; places take the paint. */
+  --kind-places:     var(--umber-600);
+  --kind-trails:     var(--kind-paint-trails);
+  --kind-beaches:    var(--kind-paint-beaches);
+  --kind-lakes:      var(--kind-paint-lakes);
+  --kind-mountains:  var(--kind-paint-mountains);
+  --kind-cycling:    var(--kind-paint-cycling);
+
+  /* Worlds: flat tints for a missing photo (with a blaze on it). */
+  --world-water:     #d3dfe2;
+  --world-lowland:   #dce5d4;
+  --world-rock:      #e3ddd3;
+
+  /* The relief (DESIGN.md "Background graphics"): lit and shaded contours,
+     decorative only, never behind text; the zone sits on the band. */
+  --relief-lit:      rgba(255, 255, 255, 0.95);
+  --relief-shade:    rgba(30, 36, 33, 0.20);
+  --relief-ground:   var(--neutral-100);
+
+  /* The map (mirrored in src/map/tokenColors.js). */
+  --map-land:        #f8f9f5;
+  --map-water:       #d3dfe2;
+  --map-border:      #d7dcd3;
+  --map-route:       var(--umber-600);
+
+  /* Type: Overpass for every word and figure (tabular figures on); Sofia
+     Sans Extra Condensed only for plate names (19 px and up). Nothing under
+     12 px. The page title, section and total figure grow at tablet and
+     desktop (set after :root). */
+  --ui:              'Overpass', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font:            var(--ui);
+  --plate-face:      'Sofia Sans Extra Condensed', 'Overpass', sans-serif;
+  --text-micro:      12px;
   --text-caption:    12px;
   --text-label:      13px;
-  --text-body:       14px;
-  --text-lead:       16px;
-  --text-title:      20px;
-  --text-headline:   28px;
-  --text-display:    40px;
+  --text-body:       14px;    /* interface text: rows, controls, lists */
+  --text-lead:       16px;    /* reading text and fields (no zoom on iOS) */
+  --text-title:      19px;    /* a section */
+  --text-headline:   24px;    /* a page title: 24, 30, 36 */
+  --text-display:    40px;    /* a total figure: 40, 48, 54 */
+  --text-figure:     18px;    /* a row's day figure */
+  --text-plate:      21px;    /* a plate name */
   --leading-tight:   1.2;
   --leading-ui:      1.35;
   --leading-body:    1.5;
+  --tracking-title:  -0.018em;
   --measure:         68ch;
 
-  /* Corners: controls, cards and photos, sheets, pills and round icons. */
-  --radius-sm:       6px;
-  --radius-control:  10px;
-  --radius-card:     16px;
-  --radius-sheet:    20px;
-  --radius-pill:     999px;
+  /* Corners (owner 2026-11-15: rounder than Waymark). One scale: */
+  --radius-sm:       6px;     /* a plate's square end, a tag */
+  --radius-control:  8px;     /* buttons, fields, the search, menus, toasts */
+  --radius-panel:    12px;    /* panels, sheets, booking cards, the map frame */
+  --radius-card:     16px;    /* photos and cards */
+  --radius-sheet:    12px;
+  --radius-pill:     999px;   /* chips, wagons, segmented controls, round icon buttons */
 
-  /* Elevation: declared once per object, a border or a shadow, never both. */
-  --elev-1:          0 1px 2px rgba(31, 42, 51, 0.06), 0 2px 8px rgba(31, 42, 51, 0.05);
-  --elev-2:          0 4px 12px rgba(31, 42, 51, 0.10), 0 12px 28px rgba(31, 42, 51, 0.08);
-  --elev-3:          0 12px 32px rgba(31, 42, 51, 0.16), 0 2px 6px rgba(31, 42, 51, 0.08);
+  /* Strokes */
+  --stroke-hair:     1px;
+  --stroke-edge:     1.5px;
+  --stroke-route:    3px;
+  --stroke-focus:    3px;
+  --plate-tip:       14px;    /* the signpost plate's pointed end */
+
+  /* Depth: one rule. Only what floats over the page casts a shadow (sheets,
+     menus, popovers, toasts, the action bar). Cards and panels lie flat on a
+     hairline. --elev-1 is that hairline as a ring, so old cards that relied
+     on a shadow keep an edge. */
+  --elev-1:          0 0 0 1px rgba(30, 36, 33, 0.07);
+  --elev-2:          0 0 0 1px rgba(30, 36, 33, 0.06), 0 12px 32px -8px rgba(30, 36, 33, 0.24);
+  --elev-3:          0 0 0 1px rgba(30, 36, 33, 0.06), 0 18px 48px -12px rgba(30, 36, 33, 0.32);
+  --scrim:           rgba(30, 36, 33, 0.42);
 
   /* Layers, low to high (T474). Every z-index of 10 or more reads one of
-     these, or one plus a small step inside its band written as
-     calc(var(--z-band) + n); 1 to 9 is stacking inside one component and
-     stays a number. The values are the ones the app shipped with, so the
-     ladder names the order rather than changing it. */
+     these, or calc(var(--z-band) + n); 1 to 9 stays a number. */
   --z-base:          0;
-  --z-sticky:        10;   /* a bar that sticks inside a scroll view */
-  --z-float:         12;   /* lists and panels floating over the map (+2 to +6) */
-  --z-popover:       20;   /* menus, tips and suggestions over those */
-  --z-header:        25;   /* the app header and top bar (+1 while a tool row pops) */
-  --z-tray:          30;   /* the open filter tray, a page's own toast */
-  --z-overlay:       40;   /* drawers, phone panels, the calendar and their scrims (+1) */
-  --z-nav:           50;   /* the bottom nav, the site banner, the plan chooser (-1, +1) */
-  --z-shell:         55;   /* shell panels over the nav: account, phone header, dest panel (+1 to +4) */
-  --z-modal:         60;   /* dialogs, sheets, full overlays (+1, +2) */
-  --z-toast:         80;   /* a confirmation toast over a dialog */
-  --z-menu:          90;   /* phone popovers (90); dropdown menus, the loading screen (+10) */
-  --z-page:          200;  /* full-screen pages and what opens over them (+10 to +200) */
-  --z-top:           1000; /* the definition popover (+0), the guides panel (+200) */
-  --z-max:           9999; /* the crash screen, above everything */
-  /* Inside the map's own layer: the selected and the hovered price pin. */
+  --z-sticky:        10;
+  --z-float:         12;
+  --z-popover:       20;
+  --z-header:        25;
+  --z-tray:          30;
+  --z-overlay:       40;
+  --z-nav:           50;
+  --z-shell:         55;
+  --z-modal:         60;
+  --z-toast:         80;
+  --z-menu:          90;
+  --z-page:          200;
+  --z-top:           1000;
+  --z-max:           9999;
   --z-pin-selected:  50;
   --z-pin-hover:     100;
 
-  /* Spacing on a 4 px grid. --space-5 and --space-6 moved onto the grid
-     (were 22 and 30 px). */
+  /* Spacing on a 4 px grid. */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -176,15 +246,12 @@
   --space-6: 32px;
   --space-7: 40px;
   --space-8: 56px;
+  --space-9: 64px;
   --gutter:  16px;
-  /* The floor a finger needs. Icon-only controls get this as a minimum box
-     even where the glyph inside is 15px (WCAG 2.5.5). */
   --tap: 44px;
-  /* Each place's one primary action and the phone's bottom-nav slots (T496,
-     owner decision T472-f). --tap stays the floor for everything else. */
   --tap-main: 48px;
 
-  /* ---- 3. Legacy names, aliased (retired by the migration) -------------- */
+  /* ---- 4. Legacy names, re-pointed (retired as lanes rebuild screens) ---- */
 
   --paper:        var(--surface-page);
   --paper-dim:    var(--surface-sunken);
@@ -193,9 +260,7 @@
   --ink:          var(--text);
   --ink-soft:     var(--text-2);
   --ink-mute:     var(--text-3);
-  /* Selection before T422 on surfaces not yet migrated: a deep brown fill
-     under white labels (10.7:1). The migration retires it. */
-  --ink-fill:     var(--umber-800);
+  --ink-fill:     var(--umber-800);   /* legacy selected fill; white on it 10.5 */
   --rule:         var(--border);
   --rule-soft:    var(--border-soft);
   --accent:       var(--action);
@@ -213,162 +278,137 @@
   --shadow-2:     var(--elev-2);
   --shadow-card:  var(--elev-1);
   --display:      var(--font);
-  --mono:         var(--font);     /* figures use the one family, tabular (PRODUCT.md, T420) */
+  --mono:         var(--font);
 
-  /* Ratings are a MEASURE (T437, T438): the Score draws a star in --rate and
-     the figure in ink, never a filled chip, so the brown star cannot read as
-     a button. The old ochre tints become neutral: --rate-bg the sunken
-     ground and --rate-soft the metadata grey (it is read as text, 5.2:1 on
-     the page), so a tips band or a festival tag no longer looks selected.
-     --rate on --surface 7.8:1. */
+  /* Ratings: the Score is a dark ink plate in the house style; the legacy
+     names keep the star and figure readable where a screen still draws
+     them as text. --rate on paper 7.8. */
   --rate:         var(--umber-700);
   --rate-soft:    var(--text-3);
   --rate-bg:      var(--surface-sunken);
-  --green:        #4a6a3a;       /* text-safe green for "good deal" copy */
-  /* Destructive only, never decoration. Now that the action is teal, red
-     means one thing: this erases something. */
-  --danger:       #b3372a;
-  --danger-dark:  #96291e;
-  --status-success: #10b981;     /* indicator-only green: compliance ticks, open-now dots */
+  --green:        #3f6332;       /* good news text: 6.28 on stone */
+  --danger:       #a12a1c;       /* destructive, always with words: 6.43 on stone */
+  --danger-dark:  #86200f;
+  --status-success: #10b981;     /* indicator only */
 
-  /* Card taxonomy. KIND is an ink-density ramp, not a rainbow: ink mixed over
-     the page at 100/78/62/45/50%, so the hierarchy survives greyscale. */
-  --kind-metro:   #1f2a33;
-  --kind-city:    #4f575d;
-  --kind-town:    #71777c;
-  --kind-village: #959a9c;
-  --kind-area:    #8b9093;
-  /* The four cost groups (T845, owner decision 2026-10-29: "the colours
-     must be distinct"): one colour each for Flights, Getting around, Stay
-     and Food and drink, on the cost bar's segments and a dot before each
-     group's name. Clear of the action brown, best value's yellow and the
-     danger red; each 3:1 or more on --surface. Nothing else uses them. */
-  --cost-travel:  var(--lagoon-600); /* #0b7480 flights, or driving */
-  --cost-around:  #4e69a8;           /* getting around */
-  --cost-stay:    #8a4f7d;           /* where you sleep */
-  --cost-food:    #6c8636;           /* food and drink */
-  --verdict-3:    var(--rate);       /* filled ribbon */
-  --verdict-2:    var(--rate);       /* outline ribbon */
-  --verdict-1:    var(--ink-mute);   /* text only */
-  /* Hidden gems join the brown family (T438): the diamond and the word in
-     umber 700 on a neutral ground, never a tinted chip that reads selected.
-     --gem-ink on --gem-bg 7.0:1. */
+  --kind-metro:   #1e2421;
+  --kind-city:    #4a534d;
+  --kind-town:    #6c756f;
+  --kind-village: #8f978f;
+  --kind-area:    #868f88;
+  /* The four cost groups (T845): one colour each on the cost bar. */
+  --cost-travel:  var(--lagoon-600);
+  --cost-around:  #4e69a8;
+  --cost-stay:    #8a4f7d;
+  --cost-food:    #6c8636;
+  --verdict-3:    var(--rate);
+  --verdict-2:    var(--rate);
+  --verdict-1:    var(--ink-mute);
   --gem-ink:      var(--umber-700);
   --gem-bg:       var(--surface-sunken);
 
   /* ---- Domain colours (T191): one feature each, never general purpose --- */
-
-  /* Good, nature and trail greens. Indicators and small text, never fills for actions. */
-  --good-ink:           #16794f;   /* text-safe green for open-now, verified and good-deal text */
-  --good-ink-soft:      #2c7d54;   /* a step lighter than --good-ink, trip budget done state */
-  --good-ink-alt:       #2e7d4f;   /* extras delta under budget */
-  --good-mid:           #3a9d6b;   /* icons and borders for a great tier */
-  --good-vivid:         #2e9e5b;   /* swim and way-in indicators, good water */
-  --leaf-ink:           #2c6a1f;   /* add stamps and positive chips */
-  --trail-ink:          #3d6b42;   /* trail and park text */
-  --trail-pin:          #3d7a4e;   /* trail and nature map pins */
-  --trail-bg:           #e8f0e6;   /* trail and park card fill */
-  --trail-rule:         #d2e0cf;   /* trail and park card border */
-  --trail-bg-alt:       #e8f3e6;   /* a second trail tint */
-  --trail-rule-alt:     #c5dfbe;   /* a second trail border */
-  --event-ink:          #1f6b41;   /* AI event tag and pin */
-  --event-bg:           #e2f0e6;   /* AI event tag fill */
-  --climate-good:       #6b9e3f;   /* climate band, good month */
-  --budget-low-bg:      #e4edda;   /* budget band, low */
-  --budget-low-rule:    #c3d2ba;   /* budget band, low border */
-  --water-good-bg:      #ddeedd;   /* day extras water quality, good */
-  --water-good-ink:     #2c6136;   /* day extras water quality, good text */
-
-  /* Water and sky blues. */
-  --water-clear:        #1f8fb0;   /* excellent bathing water, clear sea blue */
-  --water-pin:          #2a8fbd;   /* beach pins and chips */
-  --lake-ink:           #2a6f9e;   /* lake pin name */
-  --water-link:         #2b6f9e;   /* blue text inside water facts */
-  --swim-ink:           #2c6376;   /* swim type text */
-  --swim-bg:            #e2eef2;   /* swim type fill */
-  --swim-rule:          #cbdfe6;   /* swim type border */
-  --rain-ink:           #4a70a8;   /* rain figure in a weather day */
-  --climate-poor:       #9bb0bd;   /* climate band, poor month */
-  --water-excellent-bg: #d8ecf5;   /* day extras water quality, excellent */
-  --water-excellent-ink:#11607f;   /* day extras water quality, excellent text */
-
-  /* Cautions: amber, orange and red-brown. Warnings that are not destructive (--danger is the destructive one). */
-  --warn-ink:           #b3402a;   /* over budget, no fare, cautions */
-  --warn-vivid:         #cc4433;   /* poor water and swim-stop indicator */
-  --amber:              #c68a12;   /* sufficient water, hazard rules, amber indicator */
-  /* Warning text is rust (T438): the old amber inks sat on the brown. */
-  --amber-ink:          #a8400f;   /* warning note text, 6.2:1 on --surface */
-  --amber-ink-alt:      #a8400f;   /* amber text beside the rating family */
-  --amber-ink-deep:     #9c3d12;   /* deepest warning text, 6.8:1 */
-  --amber-warm:         #a8400f;   /* warm warning text (was 4.25:1, under the floor) */
-  --beach-ink:          #c48a2a;   /* beach pin name */
-  --amber-bg:           #fdf3e2;   /* warning note fill */
-  --amber-bg-alt:       #fcf2dd;   /* a second warning tint */
-  --amber-rule:         #efd9a3;   /* warning border */
-  --rate-rule:          #e0cba4;   /* rating band border */
-  --crowd-hot:          #d06a2a;   /* crowded indicator */
-  --orange:             #d35a26;   /* orange fill */
-  --experience-ink:     #9a3a2a;   /* experience type text */
-  --experience-rule:    #eec7bb;   /* experience type border */
-  --danger-bg:          #f6dcd8;   /* poor water fill */
-
-  /* Violet, slate and surface tints. Single-use domain colours. */
-  --ai-violet:          #5b3fa8;   /* AI-planned stops */
-  --ai-violet-bg:       #eee7fb;   /* AI chip fill */
-  --mountain-ink:       #6b5b95;   /* mountains pin name */
-  --slate-ink:          #55606f;   /* unknown or neutral swim and way label */
-  --slate-pin:          #5b6472;   /* town pin */
-  --crowd-mid:          #6b7280;   /* moderate crowd indicator */
-  --slate-mute:         #6f7688;   /* map popup subtitle */
+  --good-ink:           #16794f;
+  --good-ink-soft:      #2c7d54;
+  --good-ink-alt:       #2e7d4f;
+  --good-mid:           #3a9d6b;
+  --good-vivid:         #2e9e5b;
+  --leaf-ink:           #2c6a1f;
+  --trail-ink:          #2f6a3c;
+  --trail-pin:          #2f7a45;
+  --trail-bg:           #e6efe3;
+  --trail-rule:         #cfdfcb;
+  --trail-bg-alt:       #e6f1e3;
+  --trail-rule-alt:     #c5dfbe;
+  --event-ink:          #1f6b41;
+  --event-bg:           #e2f0e6;
+  --climate-good:       #6b9e3f;
+  --budget-low-bg:      #e4edda;
+  --budget-low-rule:    #c3d2ba;
+  --water-good-bg:      #ddeedd;
+  --water-good-ink:     #2c6136;
+  --water-clear:        #1f8fb0;
+  --water-pin:          #0e7c86;
+  --lake-ink:           #2b5fa8;
+  --water-link:         #2b5fa8;
+  --swim-ink:           #2c6376;
+  --swim-bg:            #e2eef2;
+  --swim-rule:          #cbdfe6;
+  --rain-ink:           #4a70a8;
+  --climate-poor:       #9bb0bd;
+  --water-excellent-bg: #d8ecf5;
+  --water-excellent-ink:#11607f;
+  --warn-ink:           #b3402a;
+  --warn-vivid:         #cc4433;
+  --amber:              #c68a12;
+  --amber-ink:          #a8400f;   /* warning text, 6.2 on paper */
+  --amber-ink-alt:      #a8400f;
+  --amber-ink-deep:     #9c3d12;
+  --amber-warm:         #a8400f;
+  --beach-ink:          #0e7c86;
+  --amber-bg:           #fdf3e2;
+  --amber-bg-alt:       #fcf2dd;
+  --amber-rule:         #efd9a3;
+  --rate-rule:          #e0cba4;
+  --crowd-hot:          #d06a2a;
+  --orange:             #d35a26;
+  --experience-ink:     #9a3a2a;
+  --experience-rule:    #eec7bb;
+  --danger-bg:          #f6dcd8;
+  --ai-violet:          #5b3fa8;
+  --ai-violet-bg:       #eee7fb;
+  --mountain-ink:       #6248a8;
+  --slate-ink:          #55606f;
+  --slate-pin:          #59625c;
+  --crowd-mid:          #6b7280;
+  --slate-mute:         #6c756f;
   --mask-solid:         #000;      /* the opaque stop of a mask-image gradient */
 
-  /* Layout */
+  /* Layout: page widths (T1041), gutters, the bars. */
   --filter-h:     132px;
   --panel-w:      440px;
-  /* Page widths (T1041): one cap per kind of page, measured against Airbnb,
-     Booking, Wanderlog and Google Explore. The cap is the content box; the
-     page adds --page-gutter on each side, so its max-width is
-     calc(var(--w-...) + 2 * var(--page-gutter)). Browse is a grid of places
-     or trips, Detail one place or one trip with its sticky price column,
-     Hub a set of settings cards, Form one question's column and Aside the
-     summary card beside it. A map surface has no cap: its list keeps
-     --panel-w and the map takes the rest. */
   --w-browse:     1440px;
   --w-detail:     1240px;
   --w-hub:        1120px;
   --w-form:       720px;
   --w-aside:      360px;
-  /* The side margin of a page: --gutter on a phone, then 24, 32 and 48 px
-     from 769, 1024 and 1440 px (Airbnb's steps), set after :root. */
+  --w-read:       720px;     /* a column of reading text */
   --page-gutter:  var(--gutter);
-  /* The header's, the settings line's and a browse page's side padding:
-     the gutter, or on a screen wider than the browse cap, whatever centres
-     that cap. 100vw rather than 100% so a scroller's bar never moves the
-     left edge, which every tab shares (T427). */
   --page-inset:   max(var(--page-gutter), calc((100vw - var(--w-browse)) / 2));
-  /* The phone bar, 64 px, plus the home-indicator inset, so the bar keeps
-     --tap-main for its slots on a notched phone and everything above it
-     clears the bar (T496, 1.3a). */
+  --header-h:     64px;
   --bottom-nav-h: calc(64px + env(safe-area-inset-bottom, 0px));
-  /* The planners' map drawer at rest: the strip that always shows the
-     amount (T500, owner T490-h). src/lib/mapDrawerState.js mirrors it. */
   --drawer-strip: 72px;
 
-  /* Motion (T380, design direction v6, docs/design-v6/DIRECTION.md part 2).
-     Four durations and two easings; every transition and animation reads
-     these, and JavaScript reads them through durationMs() in src/lib/motion.js.
-     --dur-1 immediate feedback, --dur-2 a routine state change, --dur-3 a
-     surface arriving, --dur-4 one authored movement over distance. Exits take
-     --dur-2 with --ease-in-out. No overshoot or elastic curve exists. The
-     reduced-motion floor in 02-base.css still zeroes all of them. */
+  /* Motion (DESIGN.md "Interaction"): one vocabulary. --dur-1 to --dur-4 and
+     the two cubic easings stay for the rules that read them. The spring
+     easings are generated from src/lib/motionTokens.js by
+     scripts/ci/spring-easings.mjs; never edit them by hand. Overshoot
+     (--ease-tick, --ease-pop) only on the control the finger touched;
+     figures, plates, pins and surfaces settle without it. */
   --dur-1:        120ms;
   --dur-2:        200ms;
   --dur-3:        320ms;
   --dur-4:        480ms;
   --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out:  cubic-bezier(0.65, 0, 0.35, 1);
-  /* Ambient loops (T1124): spinners, breathing skeletons, pulses. Never an
-     entrance or a state change; a loop plays once under reduced motion. */
+  --ease-in:      cubic-bezier(0.5, 0, 0.75, 0);
+  --dur-press:    80ms;      /* the finger lands */
+  --dur-paint:    220ms;     /* a blaze stripe or a tab's paint bar */
+  --dur-couple:   420ms;     /* a wagon couples into the formation */
+  --dur-sheet:    420ms;     /* a sheet rises */
+  --ease-sheet:   cubic-bezier(0.32, 0.72, 0, 1);
+  --dur-note:     4000ms;    /* a delta note ("up €42") stays */
+  --dur-tick: 300ms;
+  --ease-tick: linear(0, 0.2921, 0.7046, 0.9515, 1.0381, 1.0422, 1.0232, 1.0072, 0.9997, 1);
+  --dur-pop: 550ms;
+  --ease-pop: linear(0, 0.1639, 0.4885, 0.7967, 1.0067, 1.1073, 1.125, 1.0971, 1.0551, 1.0184, 0.9951, 0.9852, 0.9847, 0.9889, 0.9942, 0.9985, 1.001, 1);
+  --dur-settle: 400ms;
+  --ease-settle: linear(0, 0.2175, 0.5207, 0.7361, 0.8631, 0.9317, 0.9668, 0.9842, 0.9926, 0.9966, 0.9984, 0.9993, 1);
+  --press-scale:    0.97;    /* buttons, chips, switches, segments */
+  --press-scale-sm: 0.92;    /* icon-only controls up to 48 px */
+  --press-scale-lg: 0.985;   /* cards and rows: larger things move less */
+  --press-shade:    0.78;
+  /* Ambient loops (T1124): spinners, skeletons. Never an entrance. */
   --dur-spin:     800ms;
   --dur-blink:    1000ms;
   --dur-dots:     1200ms;
@@ -377,44 +417,37 @@
   --dur-loop:     2800ms;
   --dur-drift:    24000ms;
 
-  /* The home page (T606, owner decisions D4 to D6 of 2026-10-23, DESIGN.md
-     "Home page exception v2"). Read only by src/styles/61-v6-home.css; no
-     other surface takes them. The grounds point at existing primitives, so
-     the home page adds no colour, only places where the brown family and
-     the retired lagoon teal may lie flat behind a section. */
-  --text-hero:        clamp(44px, 6.8vw, 112px); /* the slogan, Figtree 700 */
-  --text-showcase:    clamp(32px, 4.6vw, 64px);  /* a home section's title */
+  /* The home page (T606, DESIGN.md "Home page"): read only by the home
+     stylesheets; the home lane rebuilds them in the house style. */
+  --text-hero:        clamp(44px, 6.8vw, 112px);
+  --text-showcase:    clamp(32px, 4.6vw, 64px);
   --tracking-hero:    -0.035em;
   --leading-hero:     0.98;
-  --radius-stage:     28px;                      /* the film and the panels */
-  --text-amount:      clamp(64px, 9vw, 128px);   /* a cost chapter's amount (T950) */
-  --text-total:       clamp(40px, 5vw, 64px);    /* the proof's whole-trip figure (T951) */
-  --text-feature:     clamp(28px, 3.4vw, 48px);  /* a tour chapter's title (T952) */
-  --home-ground-mist: var(--umber-100);          /* --text 12.0:1, --text-2 6.7:1 */
-  --home-ground-deep: var(--umber-800);          /* --surface 10.5:1 on it */
-  --home-ground-lake: var(--lagoon-100);         /* --text 12.4:1, --text-2 6.9:1 */
-  --home-ground-clay: var(--umber-200);          /* --text 10.0:1, --text-2 5.6:1; no --text-3 or --action text */
-  --home-ground-sea:  var(--lagoon-200);         /* --text 10.4:1, --text-2 5.8:1; no --text-3 or --action text */
+  --radius-stage:     16px;
+  --text-amount:      clamp(64px, 9vw, 128px);
+  --text-total:       clamp(40px, 5vw, 64px);
+  --text-feature:     clamp(28px, 3.4vw, 48px);
+  --home-ground-mist: var(--umber-100);
+  --home-ground-deep: var(--umber-800);
+  --home-ground-lake: var(--world-water);
+  --home-ground-clay: var(--umber-200);
+  --home-ground-sea:  var(--world-water);
   --home-ink-on-deep: var(--surface);
-  --home-film-bar:    color-mix(in srgb, var(--neutral-900) 30%, transparent); /* the flat bar behind the app header on the hero film (T623): white labels >= 4.9:1 on the brightest tenth of every clip's sky */
-  --home-film-tint:   color-mix(in srgb, var(--neutral-900) 40%, transparent); /* one even tint over the hero film (T620): white on it measured >= 5.7:1 median, >= 3.4:1 on the brightest tenth, on all five clips */
-  --dur-film:         9000ms;                    /* one clip or still of the hero film */
-  --dur-film-fade:    1200ms;                    /* the crossfade between two of them */
-  --dur-reveal:       640ms;                     /* a home section arriving once */
-  --dur-draw:         1600ms;                    /* the route card's line drawing itself */
-  --dur-advance:      7000ms;                    /* a home tab moving on by itself */
+  --home-film-bar:    color-mix(in srgb, var(--neutral-900) 30%, transparent);
+  --home-film-tint:   color-mix(in srgb, var(--neutral-900) 40%, transparent);
+  --dur-film:         9000ms;
+  --dur-film-fade:    1200ms;
+  --dur-reveal:       640ms;
+  --dur-draw:         1600ms;
+  --dur-advance:      7000ms;
 
-  /* The Plan opening (T743, T744, owner 2026-10-27): the first page of the
-     Plan place, one screen on warm paper, the headline in the app's face.
-     Read only by src/styles/86-plan-flow.css; no other surface takes them.
-     The ground is an existing primitive: --text 13.6:1, --text-2 7.6:1,
-     --text-3 5.3:1, --action 5.4:1 on it. */
-  --plan-ground:      var(--surface-page);  /* T999: the app's ground; was --umber-50 */
-  --text-plan-hero:   clamp(32px, 3.9vw, 56px);  /* the headline, Figtree 700 */
+  /* The Plan opening (T743): read only by 86-plan-flow.css. */
+  --plan-ground:      var(--surface-page);
+  --text-plan-hero:   clamp(32px, 3.9vw, 56px);
   --tracking-plan:    -0.025em;
 }
 
-/* The page gutter's steps (T1041). */
-@media (min-width: 769px)  { :root { --page-gutter: var(--space-5); } }
-@media (min-width: 1024px) { :root { --page-gutter: var(--space-6); } }
+/* The three angles (DESIGN.md "Layout"): gutters and the type that grows. */
+@media (min-width: 769px)  { :root { --page-gutter: var(--space-5); --text-headline: 30px; --text-title: 21px; --text-display: 48px; --text-plate: 22px; } }
+@media (min-width: 1024px) { :root { --page-gutter: var(--space-6); --text-headline: 36px; --text-title: 22px; --text-display: 54px; --text-figure: 19px; } }
 @media (min-width: 1440px) { :root { --page-gutter: 48px; } }

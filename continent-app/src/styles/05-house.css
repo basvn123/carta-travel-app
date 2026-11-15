@@ -1,0 +1,503 @@
+/* The house parts (G1, house style 2026-11, DESIGN.md "Signature
+   components"): the blaze, the plate (place, leg, total, mark), the Score
+   plate, the formation (the price row), the rail and its cards, the relief
+   band, the missing-photo world tile, the state blocks (loading, empty,
+   error, Not yet), the delta note and the rolling figure, the toast and the
+   sheet grip. Components in src/components/ui/ (Blaze, Plate, ScorePlate,
+   Formation, Rail, RailCard, ReliefBand, WorldTile, StateBlock, Figure).
+   Every class is prefixed hs- so it never collides with a screen's own.
+   Roles and scales only (01-tokens.css); reduced motion at the end. */
+
+/* ---- The blaze: a white halo, a square umber stripe, an ink heel -------- */
+/* Means "chosen" or "here" only: the current tab, the chosen pin, the sheet
+   grip, the wordmark slot, the relief cut. Never decoration. */
+.hs-blaze {
+  --bw: 24px;
+  --bh: 14px;
+  --paint: var(--action);
+  position: relative;
+  display: inline-block;
+  flex: none;
+  vertical-align: middle;
+  width: var(--bw);
+  height: var(--bh);
+  border-radius: calc(var(--radius-sm) / 3);
+  background: var(--neutral-0);
+  outline: 1px solid rgba(30, 36, 33, 0.38);
+  outline-offset: -1px;
+}
+.hs-blaze::before {
+  content: '';
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  top: 20%;
+  height: 36%;
+  background: var(--paint);
+  transform-origin: left center;
+  transition: opacity var(--dur-1) var(--ease-out);
+}
+.hs-blaze::after {
+  content: '';
+  position: absolute;
+  right: 14%;
+  width: 34%;
+  bottom: 14%;
+  height: max(1.5px, 11%);
+  background: var(--text);
+}
+.hs-blaze.blaze-sm { --bw: 16px; --bh: 10px; }
+.hs-blaze.blaze-lg { --bw: 40px; --bh: 22px; }
+.hs-blaze.blaze-xl { --bw: 72px; --bh: 40px; }
+.hs-blaze.is-rest::before { opacity: 0.25; }
+.hs-blaze.is-blank::before { background: none; border-top: 2px dashed var(--paint); height: 0; top: 34%; }
+.hs-blaze[data-kind="trails"] { --paint: var(--kind-trails); }
+.hs-blaze[data-kind="beaches"] { --paint: var(--kind-beaches); }
+.hs-blaze[data-kind="lakes"] { --paint: var(--kind-lakes); }
+.hs-blaze[data-kind="mountains"] { --paint: var(--kind-mountains); }
+.hs-blaze[data-kind="cycling"] { --paint: var(--kind-cycling); }
+/* The Select primitive's paint stroke: the stripe paints left to right. */
+.hs-paint::before,
+.hs-blaze.hs-paint::before { animation: hs-paint-x var(--dur-paint) var(--ease-out) both; }
+@keyframes hs-paint-x { from { scale: 0 1; } to { scale: 1 1; } }
+
+/* ---- The plate --------------------------------------------------------- */
+/* One component, four variants (Plate.jsx):
+     place  ink plate with a pointed end: a place, a walk, a stop, a band
+     leg    outlined plate: a leg, a getting-there option; checked = umber
+     total  ink plate, label above a big figure: the total
+     mark   small umber plate: only "you chose this" (a chosen row's price)
+   The square end is softly rounded; the pointed end keeps its point. */
+.hs-plate {
+  --tip: var(--plate-tip);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--space-3);
+  min-height: 52px;
+  padding: 6px calc(var(--tip) + 12px) 6px 12px;
+  border: 0;
+  background: none;
+  color: var(--on-plate);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+}
+.hs-plate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--radius-sm);
+  background: var(--plate);
+  clip-path: polygon(0 0, calc(100% - var(--tip)) 0, 100% 50%, calc(100% - var(--tip)) 100%, 0 100%);
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.hs-plate.no-lead { grid-template-columns: minmax(0, 1fr) auto; }
+button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
+@media (hover: hover) {
+  a.hs-plate:hover::before, button.hs-plate:hover:not(:disabled)::before { background: var(--plate-hover); }
+}
+.hs-plate:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.hs-plate-name {
+  display: block;
+  font-family: var(--plate-face);
+  font-size: var(--text-plate);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.005em;
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.hs-plate-sub {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: var(--leading-ui);
+  color: var(--on-plate-2);
+}
+.hs-plate-fig {
+  text-align: right;
+  font-size: var(--text-figure);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+.hs-plate-fig small {
+  display: block;
+  margin-top: 3px;
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--on-plate-2);
+}
+.hs-plate .hs-blaze { outline-color: transparent; }
+/* leg: outlined, paper inside; checked takes the umber edge and the wash. */
+.hs-plate.is-leg { color: var(--text); min-height: 48px; }
+.hs-plate.is-leg::before { background: var(--edge); }
+.hs-plate.is-leg::after {
+  content: '';
+  position: absolute;
+  inset: 1.5px;
+  z-index: -1;
+  border-radius: calc(var(--radius-sm) * 0.8);
+  background: var(--surface);
+  clip-path: polygon(0 0, calc(100% - var(--tip) + 0.6px) 0, 100% 50%, calc(100% - var(--tip) + 0.6px) 100%, 0 100%);
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.hs-plate.is-leg .hs-plate-name { font-family: var(--font); font-size: var(--text-body); line-height: 1.25; }
+.hs-plate.is-leg .hs-plate-sub,
+.hs-plate.is-leg .hs-plate-fig small { color: var(--text-2); }
+@media (hover: hover) {
+  a.hs-plate.is-leg:hover::before, button.hs-plate.is-leg:hover::before { background: var(--text); }
+}
+.hs-plate.is-leg[aria-checked="true"]::before,
+.hs-plate.is-leg[aria-pressed="true"]::before { background: var(--select-border); }
+.hs-plate.is-leg[aria-checked="true"]::after,
+.hs-plate.is-leg[aria-pressed="true"]::after { inset: 2.5px; background: var(--select-row); }
+/* total: label above a 40 to 54 px figure; the label never hyphenates. */
+.hs-plate.is-total { grid-template-columns: minmax(0, 1fr); row-gap: 6px; min-height: 84px; padding: 12px calc(var(--tip) + 16px) 12px 16px; }
+.hs-plate.is-total .hs-plate-name { hyphens: manual; overflow-wrap: normal; font-size: var(--text-title); }
+.hs-plate.is-total .hs-plate-fig { text-align: left; font-size: var(--text-display); letter-spacing: -0.02em; }
+/* mark: the small umber plate for "you chose this". */
+.hs-plate.is-mark {
+  --tip: 9px;
+  display: inline-grid;
+  grid-template-columns: auto;
+  min-height: 28px;
+  padding: 3px calc(var(--tip) + 7px) 2px 8px;
+  color: var(--action-text);
+  font-size: var(--text-figure);
+  font-weight: 800;
+  line-height: 1;
+}
+.hs-plate.is-mark::before { background: var(--action); }
+/* A plate that arrives settles from above; no overshoot (must-fix 10). */
+.hs-plate.hs-settle-in { animation: hs-settle-in var(--dur-settle) var(--ease-settle) both; transform-origin: 6px 0; }
+@keyframes hs-settle-in { from { translate: 0 -4px; rotate: -2deg; opacity: 0; } to { translate: 0 0; rotate: 0deg; opacity: 1; } }
+
+/* ---- The Score plate: a small dark plate with the figure -------------- */
+.hs-score {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  min-width: 36px;
+  height: 24px;
+  padding: 1px 6px 0;
+  border-radius: var(--radius-sm);
+  background: var(--plate);
+  color: var(--on-plate);
+  font-size: var(--text-label);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.hs-score.is-lg { height: 30px; min-width: 44px; font-size: var(--text-lead); }
+
+/* ---- The formation: the price row ------------------------------------- */
+/* Getting there an outlined umber pill with its mode icon, the bed a solid
+   umber wagon, food and drink a beige wagon, then the day figure, which is
+   always the loudest thing in the row. A part with no figure is a dashed
+   "Not yet" wagon outside the sum. */
+.hs-formation {
+  --wh: 24px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.hs-formation-train { display: flex; gap: 2px; flex: 1 1 auto; min-width: 0; }
+.hs-wagon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: var(--wh);
+  padding: 1px 9px 0;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-micro);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+.hs-wagon svg { width: 13px; height: 13px; flex: none; margin-top: -1px; }
+.hs-wagon.is-go { flex: none; background: var(--surface); color: var(--wagon-go-ink); outline: var(--stroke-edge) solid var(--wagon-go-edge); outline-offset: calc(var(--stroke-edge) * -1); }
+/* Wagons are content-sized in rows (the day figure stays loudest); only a
+   card or a cost post weights them by their euros (.is-weighted). */
+.hs-formation-train .hs-wagon { flex: none; }
+.hs-formation.is-weighted .hs-formation-train .hs-wagon { flex: var(--ww, 1) 1 0; min-width: max-content; }
+.hs-formation-train .hs-wagon + .hs-wagon { border-top-left-radius: calc(var(--radius-sm) * 0.66); border-bottom-left-radius: calc(var(--radius-sm) * 0.66); }
+.hs-formation-train .hs-wagon:not(:last-child) { border-top-right-radius: calc(var(--radius-sm) * 0.66); border-bottom-right-radius: calc(var(--radius-sm) * 0.66); }
+.hs-wagon.is-bed { background: var(--wagon-bed); color: var(--wagon-bed-ink); }
+.hs-wagon.is-food { background: var(--wagon-food); color: var(--wagon-food-ink); outline: 1px solid var(--wagon-food-edge); outline-offset: -1px; }
+.hs-wagon.is-extra { background: var(--umber-800); color: var(--action-text); }
+.hs-wagon.is-none { flex: none; background: transparent; color: var(--text-2); outline: var(--stroke-edge) dashed var(--wagon-none-edge); outline-offset: -1.5px; }
+.hs-formation-day {
+  flex: none;
+  margin-left: auto;
+  padding-left: 4px;
+  font-size: var(--text-figure);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--text);
+}
+.hs-formation.is-lg { --wh: 36px; }
+.hs-formation.is-lg .hs-wagon { font-size: var(--text-body); padding: 1px 12px 0; gap: 6px; }
+.hs-formation.is-lg .hs-wagon svg { width: 16px; height: 16px; }
+.hs-formation.is-lg .hs-formation-day { font-size: var(--text-title); }
+/* The wagon coupling (Add and Remove of a cost part): it rolls in from the
+   right and couples; leaving, it uncouples and fades. */
+.hs-wagon.hs-couple-in { animation: hs-couple-in var(--dur-couple) var(--ease-settle) both; }
+.hs-wagon.hs-couple-out { animation: hs-couple-out var(--dur-2) var(--ease-in) both; }
+@keyframes hs-couple-in { from { translate: 24px 0; opacity: 0; } 70% { opacity: 1; } to { translate: 0 0; opacity: 1; } }
+@keyframes hs-couple-out { to { translate: 16px 0; opacity: 0; } }
+
+/* ---- The rail and its cards ------------------------------------------- */
+.hs-rail-head { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+.hs-rail-head h2 { margin-right: auto; min-width: 0; font-size: var(--text-title); font-weight: 800; }
+.hs-see-all {
+  flex: none;
+  min-height: var(--tap);
+  padding: 0 6px;
+  border-radius: var(--radius-control);
+  color: var(--action-hover);
+  font-size: var(--text-body);
+  font-weight: 700;
+  text-decoration: none;
+}
+@media (hover: hover) {
+  .hs-see-all:hover { text-decoration: underline; text-underline-offset: 3px; }
+}
+.hs-rail-arrows { display: none; gap: var(--space-2); }
+.hs-round {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+}
+@media (hover: hover) {
+  .hs-round:hover:not(:disabled) { border-color: var(--text); }
+}
+.hs-round:disabled { opacity: 0.38; cursor: default; }
+.hs-round .is-flipped { scale: -1 1; }
+.hs-rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 76%;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  margin: 0 calc(var(--page-gutter) * -1);
+  padding: 2px var(--page-gutter) 4px;
+  scroll-padding: 0 var(--page-gutter);
+}
+.hs-rail::-webkit-scrollbar { display: none; }
+@media (min-width: 600px) { .hs-rail { grid-auto-columns: calc((100% - var(--space-3)) / 2.15); } }
+@media (min-width: 1024px) {
+  .hs-rail-arrows { display: flex; }
+  .hs-rail { grid-auto-columns: calc((100% - 3 * var(--space-5)) / 4); gap: var(--space-5); margin: 0; padding: 2px 0 4px; scroll-padding: 0; }
+}
+.hs-rcard { position: relative; min-width: 0; scroll-snap-align: start; }
+.hs-rcard-link { display: grid; gap: 6px; color: inherit; text-decoration: none; }
+.hs-rcard-photo {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--world-rock);
+}
+.hs-rcard-photo img { display: block; width: 100%; height: 100%; object-fit: cover; transition: scale var(--dur-3) var(--ease-out); }
+@media (hover: hover) {
+  .hs-rcard-link:hover .hs-rcard-photo img { scale: 1.03; }
+}
+.hs-rcard-link:focus-visible { outline-color: transparent; } /* the photo draws the ring */
+.hs-rcard-link:focus-visible .hs-rcard-photo { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.hs-rcard-head { display: flex; align-items: center; gap: var(--space-2); margin-top: 4px; }
+.hs-rcard-name {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-lead);
+  font-weight: 700;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hs-rcard-where {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.hs-gem { display: inline-flex; align-items: center; gap: 5px; margin-left: 4px; color: var(--umber-700); font-weight: 700; white-space: nowrap; }
+.hs-gem::before { content: ''; width: 7px; height: 7px; background: currentColor; rotate: 45deg; }
+.hs-rcard .hs-formation { margin-top: 2px; }
+.hs-rcard-save { position: absolute; top: var(--space-2); right: var(--space-2); }
+
+/* ---- The relief band (ui/Relief.jsx) ---------------------------------- */
+/* Text on the flat side only; the zone starts at a hard umber cut with a
+   blaze on top; contours never under text, figures, fields or focus. */
+.relief-band { position: relative; isolation: isolate; }
+.relief-band .relief-flat { position: relative; z-index: 2; }
+.relief-band.has-relief .relief-flat { max-width: var(--relief-cut, 55%); }
+.relief-zone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: var(--relief-cut, 55%);
+  z-index: 1;
+  overflow: hidden;
+  background: var(--relief-ground);
+  border-radius: 0 var(--radius-card) var(--radius-card) 0;
+}
+.relief-cut { position: absolute; left: 0; top: 0; bottom: 0; width: var(--stroke-route); background: var(--action); z-index: 3; }
+.relief-zone .relief-cut-blaze { position: absolute; left: 0; top: 10px; z-index: 4; translate: -50% 0; }
+.relief { position: absolute; inset: 0; overflow: hidden; pointer-events: none; contain: paint; animation: hs-fade-in var(--dur-4) var(--ease-out); }
+.relief svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.relief .relief-lit { stroke: var(--relief-lit); fill: none; stroke-width: 1.15; }
+.relief .relief-shade { stroke: var(--relief-shade); fill: none; stroke-width: 1; }
+.relief .relief-faint { stroke-opacity: 0.55; }
+.relief .relief-index { stroke-width: 1.8; }
+.relief-spot {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  translate: -50% -100%;
+  padding: 3px 6px 2px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-micro);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.relief-tri { width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 6px solid currentColor; }
+@keyframes hs-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@media (forced-colors: active) { .relief, .relief-zone { display: none; } }
+
+/* ---- The missing photo: the world tint with a blaze, like a mark on a rock */
+.hs-world {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 48px;
+  border-radius: inherit;
+  background: var(--world-rock);
+}
+.hs-world[data-world="water"] { background: var(--world-water); }
+.hs-world[data-world="lowland"] { background: var(--world-lowland); }
+
+/* ---- State blocks: loading, empty, error, Not yet ---------------------- */
+.hs-state {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-3);
+  max-width: var(--w-read);
+  padding: var(--space-5) 0;
+}
+.hs-state.is-center { justify-items: center; text-align: center; margin: 0 auto; }
+.hs-state-title { font-size: var(--text-title); font-weight: 800; line-height: var(--leading-tight); }
+.hs-state-text { color: var(--text-2); font-size: var(--text-body); line-height: var(--leading-body); }
+.hs-state.is-error .hs-state-title { color: var(--danger); }
+.hs-notyet { color: var(--text-2); font-weight: 700; }
+/* Loading: a still band that breathes, the size of what is coming. */
+.hs-skeleton {
+  display: block;
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+  animation: hs-breathe var(--dur-breathe) var(--ease-in-out) infinite alternate;
+}
+@keyframes hs-breathe { from { opacity: 1; } to { opacity: 0.55; } }
+.hs-wait { display: inline-flex; gap: 4px; }
+.hs-wait .hs-blaze::before { animation: hs-paint-x var(--dur-4) var(--ease-out) infinite alternate; }
+.hs-wait .hs-blaze:nth-child(2)::before { animation-delay: 160ms; }
+.hs-wait .hs-blaze:nth-child(3)::before { animation-delay: 320ms; }
+
+/* ---- Figures that move honestly (ui/Figure.jsx) ------------------------ */
+/* Only the figure the traveller changed rolls its changed digits; the rest
+   dip once together. Never under the reader's eye otherwise. */
+.hs-fig { font-variant-numeric: tabular-nums lining-nums; white-space: nowrap; }
+.hs-fig.hs-roll { display: inline-block; animation: hs-roll var(--dur-settle) var(--ease-settle); }
+.hs-fig.hs-roll.is-down { animation-name: hs-roll-down; }
+@keyframes hs-roll { from { translate: 0 0.6em; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+@keyframes hs-roll-down { from { translate: 0 -0.6em; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+.hs-fig.hs-dip { animation: hs-dip var(--dur-2) var(--ease-out); }
+@keyframes hs-dip { 40% { opacity: 0.35; } to { opacity: 1; } }
+.hs-delta {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+  background: var(--select-bg);
+  color: var(--select-ink);
+  font-size: var(--text-micro);
+  font-weight: 800;
+  line-height: 1.3;
+  white-space: nowrap;
+  animation: hs-fade-in var(--dur-2) var(--ease-out);
+}
+
+/* ---- Toast and sheet grip --------------------------------------------- */
+.hs-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 52px;
+  padding: 4px 6px 4px 14px;
+  border-radius: var(--radius-control);
+  background: var(--plate);
+  color: var(--on-plate);
+  box-shadow: var(--elev-2);
+  font-size: var(--text-body);
+  font-weight: 600;
+  animation: hs-toast-in var(--dur-3) var(--ease-sheet) both;
+}
+@keyframes hs-toast-in { from { translate: 0 120%; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+.hs-grip { display: grid; place-items: center; height: 24px; touch-action: none; }
+.hs-grip::before { content: ''; width: 40px; height: 5px; border-radius: var(--radius-pill); background: var(--border); }
+
+/* ---- Text on photos: never. Where a control must sit on a photo it is a
+   paper disc (.icon-btn-photo); a caption goes under the photo. The one
+   measured scrim, for a photo header that must carry its title (and only
+   then): ink at 55 % under the bottom third gives white text 7:1 or more on
+   any photo. */
+.hs-photo-scrim { position: relative; }
+.hs-photo-scrim::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 45%;
+  background: rgba(30, 36, 33, 0.55);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hs-paint::before, .hs-blaze.hs-paint::before, .hs-plate.hs-settle-in, .hs-wagon.hs-couple-in,
+  .hs-wagon.hs-couple-out, .relief, .hs-fig.hs-roll, .hs-fig.hs-dip, .hs-delta, .hs-toast,
+  .hs-wait .hs-blaze::before, .hs-skeleton { animation: none; }
+  .hs-rcard-photo img { transition: none; }
+}

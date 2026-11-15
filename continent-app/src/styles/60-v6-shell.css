@@ -1068,3 +1068,115 @@ html.kbd-open .settings-done { display: none; }
   .app-header .app-header-brand .brand-name { font-size: var(--text-title); }
   .app-header .app-header-account { height: auto; min-height: 0; margin-left: auto; }
 }
+
+/* ==========================================================================
+   The house shell (G1, house style 2026-11, DESIGN.md "Shell and the three
+   angles"). The chrome lies on the stone ground with one hairline; the
+   wordmark slot is a blaze and the name in the plate face; the place you
+   are in is marked by the umber paint bar under it (desktop and tablet) or
+   a blaze over its icon (phone), both gliding on the nav marker. Each angle
+   is its own layout:
+     phone   to 768    a slim row (wordmark, travel style as an icon, rings,
+                       account) and the bottom nav of three
+     tablet  769-1279  one row; the three places stack icon over word in
+                       short columns, the travel style shows its icon only
+     desktop 1280 up   one row; places with icon and word, the travel style
+                       door with its label
+   ========================================================================== */
+.top-bar { background: var(--surface-page); border-bottom: var(--stroke-hair) solid var(--border); }
+.app-header .app-header-brand { gap: 10px; text-decoration: none; }
+.app-header .app-header-brand .hs-blaze.brand-mark { width: var(--bw); height: var(--bh); }
+.app-header-brand .brand-name {
+  font-family: var(--plate-face);
+  font-size: var(--text-headline);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+.header-nav-item { color: var(--text-2); font-weight: 700; border-radius: var(--radius-control); }
+.header-nav-item.active,
+.header-nav-item.active:hover { background: none; color: var(--text); }
+@media (hover: hover) {
+  .header-nav-item:hover { background: var(--surface-hover); color: var(--text); }
+}
+/* The marker is the paint bar now: transparent box, a 3 px umber bar at
+   its foot, gliding (and stretching) to the chosen place. */
+.header-nav .nav-marker { background: none; border-radius: 0; }
+.header-nav .nav-marker::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -9px;
+  height: var(--stroke-route);
+  background: var(--action);
+}
+.header-nav .nav-marker[data-slide="true"] { transition: transform var(--dur-3) var(--ease-settle), width var(--dur-3) var(--ease-settle); }
+/* The bottom nav: the marker is a blaze over the chosen icon. */
+.bottom-nav { background: var(--surface); border-top: var(--stroke-hair) solid var(--border); }
+.bottom-nav .nav-marker { background: none; border-radius: 0; }
+.bottom-nav .nav-marker::after {
+  content: '';
+  position: absolute;
+  right: 6px;
+  top: -4px;
+  width: 16px;
+  height: 10px;
+  border-radius: calc(var(--radius-sm) / 3);
+  background: var(--neutral-0);
+  outline: 1px solid rgba(30, 36, 33, 0.38);
+  outline-offset: -1px;
+}
+.bottom-nav .nav-marker::before {
+  content: '';
+  position: absolute;
+  right: 8px;
+  top: -2px;
+  width: 12px;
+  height: 4px;
+  z-index: 1;
+  background: var(--action);
+}
+.bottom-nav .nav-marker[data-slide="true"] { transition: transform var(--dur-3) var(--ease-settle); }
+.bottom-nav-item { color: var(--text-2); }
+.bottom-nav-item.active,
+.bottom-nav-item.active .bottom-nav-icon { color: var(--text); }
+.bottom-nav-item.active .bottom-nav-label { color: var(--text); font-weight: 800; }
+.bottom-nav-label { font-size: var(--text-caption); }
+/* Account and Together doors: plain ink icons; the chosen one takes the wash. */
+.account-door.on { background: var(--select-bg); color: var(--select-ink); }
+
+/* Phone: one slim row that always fits (the travel style door is its icon;
+   its name is in its accessible name, so nothing is cut). */
+@media (max-width: 768px) {
+  .app-header { background: var(--surface-page); border-bottom: var(--stroke-hair) solid var(--border); gap: var(--space-2); }
+  .app-header .app-header-brand .brand-name { font-size: var(--text-headline); }
+  .app-header .app-header-account { gap: 0; flex: none; }
+  .app-header .style-door { min-width: var(--tap); padding: 0; border-color: transparent; background: none; }
+  .app-header .style-door .style-door-text { display: none; }
+  .app-header .style-door .tstyle-disc { width: var(--tap); height: var(--tap); background: none; }
+}
+@media (max-width: 360px) {
+  .app-header .app-header-brand .brand-name { font-size: var(--text-title); }
+}
+
+/* Tablet: places stack icon over word; the door shows its icon only. */
+@media (min-width: 769px) and (max-width: 1279px) {
+  .app-header { gap: var(--space-4); padding: 0 var(--page-gutter); min-height: var(--header-h); }
+  .header-nav { gap: var(--space-1); }
+  .header-nav .header-nav-item { flex-direction: column; gap: 2px; min-height: 56px; padding: 6px 12px; }
+  .header-nav .header-nav-label { display: inline; font-size: var(--text-caption); }
+  .header-nav .nav-marker::after { bottom: -4px; }
+  .app-header .style-door .style-door-text { display: none; }
+  .app-header .style-door { padding: 0 var(--space-1); }
+  .app-header .app-header-brand .brand-name { display: inline; font-size: var(--text-title); }
+}
+/* Desktop: icon and word in one line, the door with its label. */
+@media (min-width: 1280px) {
+  .app-header { padding: 0 var(--page-inset); min-height: var(--header-h); }
+  .header-nav { gap: var(--space-2); margin-left: var(--space-5); }
+  .header-nav .header-nav-item { min-height: var(--tap); padding: 8px 12px; font-size: var(--text-body); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header-nav .nav-marker[data-slide="true"], .bottom-nav .nav-marker[data-slide="true"] { transition: none; }
+}

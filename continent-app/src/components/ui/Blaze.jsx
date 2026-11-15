@@ -18,7 +18,7 @@
 import React from 'react';
 
 export function Blaze({ size = 'md', state = 'painted', kind, className = '' }) {
-  const cls = ['blaze', `blaze-${size}`, state !== 'painted' ? `is-${state}` : '', className]
+  const cls = ['hs-blaze', `blaze-${size}`, state !== 'painted' ? `is-${state}` : '', className]
     .filter(Boolean).join(' ');
   return <span className={cls} data-kind={kind || undefined} aria-hidden="true" />;
 }

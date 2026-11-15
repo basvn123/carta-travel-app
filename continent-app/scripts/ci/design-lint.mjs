@@ -83,7 +83,7 @@ const BANNED_WORDS = ['seamless', 'seamlessly', 'unlock', 'effortless', 'effortl
 const bannedRe = new RegExp(`\\b(${BANNED_WORDS.join('|')})\\b`, 'i');
 
 // T198: the only legal values of a font-family declaration outside :root.
-const FONT_TOKENS = /^(inherit|var\(\s*--(display|ui|mono|font)\s*\))$/;  // --font: T421 Lagoon
+const FONT_TOKENS = /^(inherit|var\(\s*--(display|ui|mono|font|plate-face)\s*\))$/;  // --font: T421 Lagoon; --plate-face: house style plate names (G1)
 // T364: the one file that may hold a hex in JavaScript, and the artwork that
 // is not a design token (flags are country artwork, the Google mark is a brand).
 const MIRROR_FILE = 'src/map/tokenColors.js';
@@ -149,7 +149,7 @@ function scanFile(abs, rel) {
     if (/^\s*:root\b[^{]*\{/.test(l) && rootDepth < 0) rootDepth = depth;
     const inRoot = rootDepth >= 0;
     const tok = inRoot && l.match(/(?:^|[{;])\s*--([\w-]+)\s*:\s*([^;}]*)/);
-    if (tok && !/^(display|ui|mono)$/.test(tok[1]) && FACE_VALUE.test(tok[2])) add('font-literal', i, '--' + tok[1]);
+    if (tok && !/^(display|ui|mono|plate-face)$/.test(tok[1]) && FACE_VALUE.test(tok[2])) add('font-literal', i, '--' + tok[1]);
     if (!inRoot && /#[0-9a-fA-F]{3,8}\b/.test(l.replace(/url\([^)]*\)/g, ''))) add('hex-literal', i);
     if (/-gradient\s*\(/.test(l)) add('gradient', i);
     if (!inRoot) {

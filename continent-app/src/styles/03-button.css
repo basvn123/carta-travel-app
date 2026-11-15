@@ -1,8 +1,12 @@
-/* Button (T335, Lagoon in T422). Styles for src/components/ui/Button.jsx.
-   Roles only (01-tokens.css): the fill of the one primary is --action, a
-   destructive fill is --danger, everything else is --surface with a --border
-   edge. No hex, no gradient, no shadow. Transitions are colour only at
-   --dur-1; the press shade and compression come from 02-base.css. */
+/* Button (T335; house style 2026-11, DESIGN.md "Kit"). Styles for
+   src/components/ui/Button.jsx. Roles only (01-tokens.css):
+     primary   the umber paint, white label: the one main action of a screen
+     default   paper with a 1.5 px ink edge: every other action
+     quiet     no box, umber text: inline and secondary actions
+     danger    the danger red, white label, always with words
+   Corners --radius-control (8 px). No gradient, no shadow. The press comes
+   from 02-base.css (in on --dur-press, out on the tick spring); colour
+   changes take --dur-1. */
 .btn {
   position: relative;
   display: inline-flex;
@@ -10,32 +14,33 @@
   justify-content: center;
   gap: var(--space-2);
   min-height: var(--tap);
-  padding: 0 var(--space-5);
-  border: 1px solid var(--border);
+  max-width: 100%;
+  padding: 0 var(--space-4);
+  border: var(--stroke-edge) solid var(--text);
   border-radius: var(--radius-control);
   background: var(--surface);
   color: var(--text);
   font-family: var(--font);
   font-size: var(--text-body);
-  font-weight: 600;
+  font-weight: 700;
   line-height: var(--leading-tight);
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick), opacity var(--dur-1) var(--ease-out);
 }
 .btn-block { display: flex; width: 100%; }
 .btn-icon { display: inline-flex; flex: none; }
 @media (hover: hover) {
-  .btn:hover { border-color: var(--neutral-300); background: var(--surface-hover); }
+  .btn:hover { background: var(--surface-hover); }
 }
-.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.btn:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 
-/* Disabled reads as unavailable, never as a quieter live button: a sunken
-   ground, metadata ink, no fill of any action colour. */
+/* Disabled reads as unavailable, never as a quieter live button. */
 .btn:disabled,
 .btn[aria-disabled="true"] {
   background: var(--surface-sunken);
-  border-color: var(--border-soft);
+  border-color: var(--border);
   color: var(--text-3);
   cursor: not-allowed;
 }
@@ -46,7 +51,7 @@
 }
 .btn-primary:active:not(:disabled) { background: var(--action-press); border-color: var(--action-press); }
 
-.btn-quiet { background: none; border-color: transparent; color: var(--action); }
+.btn-quiet { background: none; border-color: transparent; color: var(--action-hover); padding: 0 var(--space-3); }
 @media (hover: hover) {
   .btn-quiet:hover { background: var(--action-tint); border-color: transparent; }
 }
@@ -79,6 +84,21 @@
   animation: btn-spin var(--dur-spin) linear infinite;
 }
 @keyframes btn-spin { to { transform: rotate(360deg); } }
+
+/* The AI tag on Ask (DESIGN.md "Icons": no sparkle for AI): a boxed "AI"
+   in the label's colour. */
+.ai-tag {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 16px;
+  padding: 0 3px;
+  border: var(--stroke-edge) solid currentColor;
+  border-radius: calc(var(--radius-sm) / 2);
+  font-size: var(--text-micro);
+  font-weight: 800;
+  line-height: 1;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .btn { transition: none; }

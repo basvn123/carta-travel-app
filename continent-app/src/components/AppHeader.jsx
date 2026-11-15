@@ -1,9 +1,10 @@
 import React, { useRef } from 'react';
 import { useNavMarker } from '../lib/motion.js';
-import Logo from './Logo.jsx';
+import { Blaze } from './ui/Blaze.jsx';
+import { HouseIcon } from './HouseIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
-import { PersonIcon, CompassIcon, RouteIcon, BookmarkIcon, TogetherIcon } from './Icons.jsx';
+import { PersonIcon, TogetherIcon } from './Icons.jsx';
 import { useTogether, waitingCount } from '../together/useTogether.js';
 import { StyleDoor } from './StyleDoor.jsx';
 
@@ -14,9 +15,10 @@ import { StyleDoor } from './StyleDoor.jsx';
    slot. */
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const PLACE_ITEMS = [
-  { key: 'explore', labelKey: 'nav.explore', Icon: CompassIcon },
-  { key: 'plan', labelKey: 'nav.plan', Icon: RouteIcon },
-  { key: 'trips', labelKey: 'nav.myTrips', Icon: BookmarkIcon },
+  // House icons (house style 2026-11): the signpost, the route, the cairn.
+  { key: 'explore', labelKey: 'nav.explore', Icon: HouseIcon.signpost },
+  { key: 'plan', labelKey: 'nav.plan', Icon: HouseIcon.route },
+  { key: 'trips', labelKey: 'nav.myTrips', Icon: HouseIcon.cairn },
 ];
 
 /**
@@ -165,7 +167,9 @@ export function AppHeader({
         title={t('nav.brandTitle')}
         aria-label={t('nav.brandTitle')}
       >
-        <Logo size={36} className="brand-mark" />
+        {/* The wordmark slot (house style): a blaze and the name in the
+            plate face. It takes any name; nothing else depends on it. */}
+        <Blaze size="md" className="brand-mark" />
         <span className="brand-name">Carta</span>
       </SectionLink>
 

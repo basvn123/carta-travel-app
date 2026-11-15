@@ -22,3 +22,11 @@ export { Recap } from './Recap.jsx';
 export { PlaceHead, PlaceTag } from './PlaceHead.jsx';
 export { CarouselArrows } from './CarouselArrows.jsx';
 export { DialogSheet } from './DialogSheet.jsx';
+// The house parts (house style 2026-11, 05-house.css).
+export { Blaze } from './Blaze.jsx';
+export { Plate, ScorePlate } from './Plate.jsx';
+export { Formation } from './Formation.jsx';
+export { Rail, RailCard } from './Rail.jsx';
+export { StateBlock, Skeleton, NotYet, WorldTile } from './StateBlock.jsx';
+export { Figure } from './Figure.jsx';
+export { Relief, ReliefBand } from './Relief.jsx';

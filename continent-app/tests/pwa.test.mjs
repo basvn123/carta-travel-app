@@ -52,10 +52,10 @@ test('a live /api request and a credentialed request get no respondWith', () => 
 test('install precaches every entry file index.html names', () => {
   const { entryUrls, CACHE_VERSION } = loadWorker();
   assert.notEqual(CACHE_VERSION, 'carta-v7');
-  const html = '<link rel="preload" href="/boot.json" as="fetch"><link rel="preload" href="/fonts/Figtree-latin.woff2">'
+  const html = '<link rel="preload" href="/boot.json" as="fetch"><link rel="preload" href="/assets/Overpass-latin-q8.woff2">'
     + '<script type="module" crossorigin src="/assets/index-u.js"></script><link rel="modulepreload" crossorigin href="/assets/react-B.js">'
     + '<link rel="stylesheet" crossorigin href="/assets/index-C.css"><link rel="canonical" href="https://www.carta-europetravel.com/">';
-  assert.deepEqual([...entryUrls(html)].sort(), ['/assets/index-C.css', '/assets/index-u.js', '/assets/react-B.js', '/boot.json', '/fonts/Figtree-latin.woff2']);
+  assert.deepEqual([...entryUrls(html)].sort(), ['/assets/Overpass-latin-q8.woff2', '/assets/index-C.css', '/assets/index-u.js', '/assets/react-B.js', '/boot.json']);
 });
 
 test('the warm list keeps same-origin and data-host files, never the API', () => {

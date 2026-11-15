@@ -20,11 +20,15 @@ body {
   text-rendering: optimizeLegibility;
   /* T421 (Lagoon): one family for prose and figures, so every number lines
      up in columns and settles in place without a separate mono face. */
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums lining-nums;
+  font-optical-sizing: auto;
   caret-color: var(--action);
   accent-color: var(--action);
   scrollbar-color: var(--neutral-300) transparent;
 }
+
+/* Headings in the house face: tight, never uppercase (DESIGN.md "Type"). */
+h1, h2, h3 { letter-spacing: var(--tracking-title); text-wrap: balance; }
 
 /* The browser's own surfaces carry the palette too (T421). */
 ::selection {
@@ -59,9 +63,21 @@ input, select {
 :is(button, a[href], summary, label, [role="button"], [role="tab"], [role="switch"],
     [role="checkbox"], [role="radio"], [tabindex="0"], input[type="checkbox"],
     input[type="radio"]):active:not(:disabled):not([aria-disabled="true"]) {
-  opacity: 0.78;
-  scale: 0.98;
-  transition-duration: var(--dur-1);
+  /* The Press primitive (house style, DESIGN.md "Interaction"): in over
+     --dur-press, out on the tick spring (the release springs back past 1
+     by 4 percent, only on the control the finger touched). */
+  opacity: var(--press-shade);
+  scale: var(--press-scale);
+  transition-duration: var(--dur-press);
+  transition-timing-function: var(--ease-out);
+}
+/* The release, at zero specificity: a control with no transition of its own
+   springs back on the tick spring; any component's own transition wins. */
+:where(button, a[href], summary, [role="button"], [role="tab"], [role="switch"],
+    [role="checkbox"], [role="radio"]):where(:not(:active)) {
+  transition: scale var(--dur-tick) var(--ease-tick), opacity var(--dur-1) var(--ease-out),
+    background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out),
+    color var(--dur-1) var(--ease-out);
 }
 @media (prefers-reduced-motion: reduce) {
   :is(button, a[href], summary, label, [role="button"], [role="tab"], [role="switch"],
@@ -83,8 +99,22 @@ input, select {
    :focus-visible rule (an inset ring, an ink ring on an accent fill, an
    input's accent border) still wins. */
 :where(a[href], button, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 2px solid var(--focus);
+  outline: var(--stroke-focus) solid var(--focus);
   outline-offset: 2px;
+}
+
+/* The hidden switch whose own toggle iOS answers with its system tick
+   (src/lib/haptics.js): out of view, out of the tab order and the
+   accessibility tree. A class, never an inline style (the CSP). */
+.haptic-switch {
+  position: fixed;
+  left: -200px;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* The motion floor (T186). DESIGN.md asks every transition and animation for

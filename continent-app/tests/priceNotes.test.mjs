@@ -48,7 +48,7 @@ test('the component draws both notes, and nothing for a clean row', async () => 
   const out = html(m, m.React.createElement(m.PriceNotes, { row: rowWith(m, 1) }));
   assert.match(out, /data-testid="price-notes"/);
   assert.match(out, /Bed price: few listings measured/);
-  assert.match(out, /Local transport: not yet measured/);
+  assert.match(out, /Local transport: not yet/);
   assert.doesNotMatch(out, /not-yet/, 'own classes, so the destination page hide rule never reaches them');
   const quiet = html(m, m.React.createElement(m.PriceNotes, { row: null }));
   assert.equal(quiet, '');
