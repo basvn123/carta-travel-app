@@ -26,12 +26,13 @@ export function StyleDoor() {
     <Button
       variant="quiet"
       className={`style-door${s ? ` tone-${s.tone}` : ' is-empty'}${changed ? ' is-changed' : ''}`}
-      aria-label={s ? t(changed ? 'styles.doorAriaChanged' : 'styles.doorAria', { name }) : t('styles.choose')}
+      // The name is the visible words (WCAG 2.5.3, label in name): the kicker
+      // and the style; on a phone they are visually hidden, not removed.
       aria-haspopup="dialog"
       onClick={() => ts.setOpen(true)}
     >
       <span className="tstyle-disc" aria-hidden="true"><Ico size={18} /></span>
-      <span className="style-door-text" aria-hidden="true">
+      <span className="style-door-text">
         <span className="style-door-kicker">{t(changed ? 'styles.kickerChanged' : 'styles.kicker')}</span>
         <span className="style-door-name">{name}</span>
       </span>

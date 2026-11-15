@@ -1153,7 +1153,7 @@ html.kbd-open .settings-done { display: none; }
   .app-header .app-header-brand .brand-name { font-size: var(--text-headline); }
   .app-header .app-header-account { gap: 0; flex: none; }
   .app-header .style-door { min-width: var(--tap); padding: 0; border-color: transparent; background: none; }
-  .app-header .style-door .style-door-text { display: none; }
+  .app-header .style-door .style-door-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .app-header .style-door .tstyle-disc { width: var(--tap); height: var(--tap); background: none; }
 }
 @media (max-width: 360px) {
@@ -1167,7 +1167,7 @@ html.kbd-open .settings-done { display: none; }
   .header-nav .header-nav-item { flex-direction: column; gap: 2px; min-height: 56px; padding: 6px 12px; }
   .header-nav .header-nav-label { display: inline; font-size: var(--text-caption); }
   .header-nav .nav-marker::after { bottom: -4px; }
-  .app-header .style-door .style-door-text { display: none; }
+  .app-header .style-door .style-door-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .app-header .style-door { padding: 0 var(--space-1); }
   .app-header .app-header-brand .brand-name { display: inline; font-size: var(--text-title); }
 }
@@ -1177,6 +1177,12 @@ html.kbd-open .settings-done { display: none; }
   .header-nav { gap: var(--space-2); margin-left: var(--space-5); }
   .header-nav .header-nav-item { min-height: var(--tap); padding: 8px 12px; font-size: var(--text-body); }
 }
+/* On the home film the header's words are white (61-v6-home.css sets the
+   ink to paper); the travel style door's umber label would sit brown on a
+   dark photo, so on the film it takes the paper ink too. */
+:root[data-home-film="under"] .top-bar .style-door { background: var(--plate); border-color: var(--plate); text-shadow: none; }
+:root[data-home-film="under"] .top-bar .style-door .style-door-name,
+:root[data-home-film="under"] .top-bar .style-door .style-door-kicker { color: var(--on-plate); }
 @media (prefers-reduced-motion: reduce) {
   .header-nav .nav-marker[data-slide="true"], .bottom-nav .nav-marker[data-slide="true"] { transition: none; }
 }
