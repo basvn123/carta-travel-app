@@ -669,7 +669,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 
 /* The card itself sits flat inside the post: the umber ground of .ccard
    (the trip page's card) is not this card's. */
-.ccard.tcard {
+.tcard {
   display: grid;
   gap: 0;
   padding: 0;
@@ -679,7 +679,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   box-shadow: none;
   color: var(--text);
 }
-.ccard.tcard ::selection { background: var(--select-bg); color: var(--select-ink); }
+.tcard ::selection { background: var(--select-bg); color: var(--select-ink); }
 
 .tcard-band { display: grid; gap: var(--space-4); min-width: 0; }
 .dpc-inputs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
@@ -794,8 +794,14 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .tcard-line-btn small { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-caption); color: var(--select-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--umber-300); }
 @media (hover: hover) { .tcard-line-btn:hover small { text-decoration-color: currentColor; } }
 .tcard-line-btn:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
-@media (pointer: coarse) { .tcard-line-btn { min-height: var(--tap); align-items: center; } }
-.tcard-thin { display: block; font-size: var(--text-caption); font-weight: 500; color: var(--text-2); text-align: right; }
+.tcard-line-btn { position: relative; }
+/* A 44 px target on touch without growing the row: the hit area reaches
+   past the text. */
+@media (pointer: coarse) { .tcard-line-btn::before { content: ''; position: absolute; inset: -10px -6px; } }
+/* The figure and a thin-data note stack on the right, so the label keeps
+   its line. */
+.tcard-lines .costrow dd { flex-direction: column; align-items: flex-end; gap: 2px; }
+.tcard-thin { display: block; max-width: 14ch; font-size: var(--text-caption); font-weight: 500; line-height: var(--leading-ui); color: var(--text-2); text-align: right; white-space: normal; }
 .tcard-line.is-rounding dd { font-weight: 500; color: var(--text-2); }
 .tcard-flights { margin-top: var(--space-1); }
 
@@ -822,7 +828,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
    and the plate on the left, the ways, the stay and the receipt on the
    right, so the width works and the page is not a stretched phone. */
 @media (min-width: 769px) and (max-width: 1023px) {
-  .pt-inlinecost .ccard.tcard { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); column-gap: var(--space-6); align-items: start; }
+  .pt-inlinecost .tcard { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); column-gap: var(--space-6); align-items: start; }
   .pt-inlinecost .tcard-band, .pt-inlinecost .tcard-sheet { grid-column: 1; }
   .pt-inlinecost .tcard-body { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; padding: 0 0 0 var(--space-6); border-top: 0; border-left: 1px solid var(--border-soft); }
 }
@@ -1059,7 +1065,8 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .spot-media { position: relative; aspect-ratio: 4 / 3; background: var(--umber-100); overflow: hidden; }
 .spot-media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease-out); }
 @media (hover: hover) { .spot:hover .spot-media img { transform: scale(1.04); } }
-.spot-ph { display: grid; place-items: center; width: 100%; height: 100%; color: var(--umber-700); background: linear-gradient(160deg, var(--umber-100), color-mix(in srgb, var(--umber-200) 70%, var(--umber-100))); }
+/* A sight with no photo: the world tint (DESIGN.md "The missing photo"). */
+.spot-ph { display: grid; place-items: center; width: 100%; height: 100%; color: var(--text-3); background: var(--world-lowland); }
 .spot-n {
   position: absolute;
   top: var(--space-2);
@@ -1149,39 +1156,55 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
    icon in a frosted disc, the name and count in white at the foot. */
 .ar-tiles { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; padding: 0; }
 @media (min-width: 700px) { .ar-tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); } }
+/* The relief from the place's own peaks (DESIGN.md "Background graphics"):
+   a band of the ground around it with the real heights on paper tags; no
+   text of ours sits on it (the flat side is empty, cut at the left edge). */
+.pt-relief { height: 136px; border-radius: var(--radius-card); overflow: hidden; }
+.pt-relief .relief-zone { border-radius: var(--radius-card); }
+.pt-relief .relief-cut-blaze { translate: 4px 0; }
+@media (min-width: 700px) { .pt-relief { height: 168px; } }
+
+/* G1 (house style): the photo above, the kind and its count under it on
+   the page's ground (text never on a photo); a tile with no photo shows the
+   world tint in the photo's place. */
 .ar-tile {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
   width: 100%;
-  aspect-ratio: 4 / 3;
-  padding: var(--space-3);
-  overflow: hidden;
+  min-height: var(--tap);
+  padding: 0;
   border: 0;
   border-radius: var(--radius-card);
-  background: linear-gradient(160deg, var(--umber-600), var(--umber-800));
-  color: #fff;
+  background: none;
+  color: var(--text);
   font: inherit;
   text-align: left;
   cursor: pointer;
-  box-shadow: var(--elev-1);
-  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
 }
-.ar-tile > img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease-out); }
-.ar-tile.has-photo::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(20, 12, 4, 0.08) 30%, rgba(20, 12, 4, 0.72)); }
-.ar-tile-ico { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(6px); }
-.ar-tile-txt { display: grid; gap: 0; padding-right: 28px; }
-.ar-tile-txt b { font-size: var(--text-lead); font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3); }
-.ar-tile-txt small { font-size: var(--text-label); font-weight: 600; opacity: 0.9; font-variant-numeric: tabular-nums; }
-.ar-tile-go { position: absolute; right: var(--space-3); bottom: var(--space-3); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--umber-800); }
+.ar-tile > img, .ar-tile:not(.has-photo)::before {
+  grid-column: 1 / -1;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  height: auto;
+  border-radius: var(--radius-card);
+  object-fit: cover;
+  background: var(--surface-sunken);
+}
+.ar-tile:not(.has-photo)::before { content: ""; background: var(--world-lowland); }
+.ar-tile-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--select-bg); color: var(--select-ink); }
+.ar-tile-txt { display: grid; gap: 0; min-width: 0; }
+.ar-tile-txt b { font-size: var(--text-body); font-weight: 800; line-height: 1.2; }
+.ar-tile-txt small { font-size: var(--text-label); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ar-tile-go { display: grid; place-items: center; width: 32px; height: 32px; border: var(--stroke-edge) solid var(--edge); border-radius: 50%; background: var(--surface); color: var(--text); transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out); }
 @media (hover: hover) {
-  .ar-tile:hover { transform: translateY(-2px); box-shadow: var(--elev-2); }
-  .ar-tile:hover > img { transform: scale(1.05); }
+  .ar-tile:hover .ar-tile-go { border-color: var(--action); color: var(--action); }
+  .ar-tile:hover .ar-tile-txt b { text-decoration: underline; text-underline-offset: 3px; }
 }
-.ar-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) { .ar-tile, .ar-tile > img { transition: none; } .ar-tile:hover { transform: none; } }
+.ar-tile:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .ar-tile-go { transition: none; } }
 
 /* ── A kind's own page (NearPage): over the place page in its frame ── */
 .destp.near-page { z-index: calc(var(--z-page) + 45); }

@@ -1,7 +1,8 @@
 import React from 'react';
 import { partnerLinkProps } from '../lib/partnerLink.js';
 import { PartnerMark } from '../components/PartnerMark.jsx';
-import { Button, Chip, ChipGroup } from '../components/ui/index.js';
+import { Button, Chip, ChipGroup, ReliefBand } from '../components/ui/index.js';
+import { reliefPeaks } from '../lib/relief.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { ArrowRightIcon, BusIcon, CalendarIcon, CarIcon, CompassIcon, ExternalIcon, MapPinIcon, SparkIcon, TrainIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
@@ -315,7 +316,11 @@ function DayTrips({ trips, city, t, onSelect, onOpenItin }) {
  * (lib/destOverview.js AROUND_KINDS).
  */
 export function DestAround({ p }) {
-  const { t, city, cats, members, memberFocus, onOpenFeature, onSelect, onOpenItin } = p;
+  const { t, city, cats, members, memberFocus, onOpenFeature, onSelect, onOpenItin, d, destination } = p;
+  // G1 (house style, DESIGN.md "Background graphics"): the relief only from
+  // this place's own peaks with a height in its dossier; none, no relief.
+  const mountains = d?.nearby?.mountains;
+  const hasRelief = reliefPeaks(mountains).length > 0;
   const [openKey, setOpenKey] = React.useState(null);
   const trips = cats.find((c) => c.key === 'trips');
   const all = cats.filter((c) => c.key !== 'trips' && c.count > 0);
@@ -323,6 +328,7 @@ export function DestAround({ p }) {
   if (!trips?.count && !all.length && !members?.length) return null;
   return (
     <PSection id="pt-around" title={t('dest.aroundTitle', { city })}>
+      {hasRelief && <ReliefBand mountains={mountains} seed={destination?.id || city} cut="0%" className="pt-relief" />}
       {all.length > 0 && (
         <ul className="ar-tiles" aria-label={t('dest.aroundChipsAria', { city })}>
           {all.map((c) => {

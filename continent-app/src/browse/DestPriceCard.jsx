@@ -306,7 +306,7 @@ export function DestPriceCard({
 
   return (
     <div className="dpc-wrap">
-      <section className="ccard tcard" aria-labelledby={`${uid}-h`}>
+      <section className="tcard" aria-labelledby={`${uid}-h`}>
         <h3 className="sr-only" id={`${uid}-h`}>{t('dest.priceTitle', { nights: nightsText, city })}</h3>
 
         {/* The band (G1, house style): the inputs, then the day a person as
