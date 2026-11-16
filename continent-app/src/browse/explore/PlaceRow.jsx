@@ -93,6 +93,9 @@ export const PlaceRow = React.memo(function PlaceRow({
           <span className="xrow-name">{p.city}</span>
           <PlaceScore rating={score} />
           <BandWord rating={score} className="xrow-band" />
+          {/* The water mark rides with the name (as the judged prototype
+              had it), so the country line keeps its room. */}
+          {swimRelevant(p) && <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />}
         </span>
         <span className="xrow-line2">
           <CountryFlag country={p.iso2} size={12} />
@@ -103,7 +106,6 @@ export const PlaceRow = React.memo(function PlaceRow({
             {where !== country && <span className="xrow-where-short" aria-hidden="true">{country}</span>}
           </span>
           {p.rating?.hidden_gem && <span className="hs-gem xrow-gem">{t('common.hiddenGem')}</span>}
-          {swimRelevant(p) && <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />}
         </span>
         {reason && <span className="xrow-why">{reason}</span>}
         <span className="xrow-fit">

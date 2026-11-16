@@ -334,6 +334,11 @@ try {
   await viewToggle.click();
   await page.waitForTimeout(4000);
   check('map view splits the feed', await page.locator('.xcontent--split').count() === 1);
+  await page.waitForTimeout(1500);
+  // House style 2026-11: a row's country is never cut (the water mark rides
+  // with the name, the docked column stacks the parts under it).
+  check('map column: no country is cut', await page.evaluate(() => [...document.querySelectorAll('.mpp-rows .xrow-country')]
+    .every((e) => e.scrollWidth <= e.clientWidth + 1)));
   check('the map canvas is up', await page.locator('.xcontent-map .maplibregl-canvas').count() === 1);
   check('the list stays beside the map', await page.locator('.xcontent--split .xrows .xrow').first().isVisible());
   check('on the map the toggle offers the list', (await viewToggle.innerText()).trim() === 'List');
@@ -436,6 +441,10 @@ try {
   await showAll(page);
   const cards = await page.locator('.xrow').count();
   check('phone shows cards', cards >= 12, `${cards} cards`);
+  // House style 2026-11: a row's country is never cut (the water mark rides
+  // with the name, the docked column stacks the parts under it).
+  check('phone: no country is cut', await page.evaluate(() => [...document.querySelectorAll('.xrows--ledger .xrow-country')].slice(0, 12)
+    .every((e) => e.scrollWidth <= e.clientWidth + 1)));
   const gridBox = await page.locator('.xrows').boundingBox();
   check('no horizontal scroll', !!gridBox && gridBox.width > 0 && gridBox.width <= 390, `grid ${Math.round(gridBox?.width || 0)}px`);
 

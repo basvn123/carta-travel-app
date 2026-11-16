@@ -56,7 +56,9 @@ function useRouteIn(ref, view) {
     el.classList.remove('hs-route-in');
     void el.offsetWidth;
     el.classList.add('hs-route-in');
-    const done = () => el.classList.remove('hs-route-in');
+    // Only the content's own animation ends the route class; a child's pop
+    // or settle bubbling up must not cut it short.
+    const done = (e) => { if (e.target === el) el.classList.remove('hs-route-in'); else el.addEventListener('animationend', done, { once: true }); };
     el.addEventListener('animationend', done, { once: true });
     return () => el.removeEventListener('animationend', done);
   }, [ref, view]);

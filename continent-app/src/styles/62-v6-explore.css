@@ -460,6 +460,10 @@
   color: var(--text-2);
 }
 .xlist-unit { margin-left: auto; text-align: right; }
+/* The unit ends over the figures, not over the save column. */
+.xrows--ledger ~ .xlist-head,
+.xlist-head:has(+ .xrows--ledger),
+.xlist-head:has(+ .mpp-rows) { padding-right: calc(var(--tap) + var(--space-1)); }
 .xrow-hs {
   position: relative;
   display: flex;
@@ -528,8 +532,8 @@
 .xrow-hs .xrow-country { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 /* The flag and the water mark never shrink; the words give way. */
 .xrow-hs .xrow-line2 > .country-flag,
-.xrow-hs .xrow-line2 > .water-badge,
-.xrow-hs .xrow-line2 > .xrow-gem { flex: none; }
+.xrow-hs .xrow-line2 > .xrow-gem,
+.xrow-hs .xrow-line1 > .water-badge { flex: none; }
 /* A narrow list shows the country; the region with it is read, not drawn. */
 .xrow-hs .xrow-country:has(.xrow-where-short) .xrow-where-full {
   position: absolute;
@@ -586,17 +590,18 @@
 .xsave[aria-pressed="true"] { color: var(--action); }
 .xsave[aria-pressed="true"] .hs-icon-cairn .stone { fill: currentColor; }
 
-/* A list under 340 px (the map's docked column at 769 to 1199): the parts
-   take their own line, so the country stays readable beside the flag. */
-@container xlist (max-width: 339px) {
-  .xrow-hs .xrow-hit {
+/* The map's docked column on a tablet or desktop (340 to 420 px): the parts
+   take their own line, so the country stays readable beside the flag. The
+   phone list (about 358 px) keeps its two lines and its 8 rows. */
+@container xlist (max-width: 599px) {
+  .mpp--float .xrow-hs .xrow-hit {
     grid-template-areas:
       "media l1 l1 day"
       "media l2 l2 l2"
       "media parts parts parts"
       "media fit fit fit";
   }
-  .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
+  .mpp--float .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
 }
 
 /* A list of 600 px and more: one line a place, the parts in their own
