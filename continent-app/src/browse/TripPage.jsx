@@ -1064,12 +1064,12 @@ export function TripPage({
               <p className="itin-post-fig"><b>{perDayText}</b><span>{t('trip.factPerDay')}</span></p>
             )}
             {primaryAction ? (
-              <Button variant="primary" className="itin-use" iconStart={<CheckIcon size={16} />}
+              <Button variant="primary" className="itin-post-use" iconStart={<CheckIcon size={16} />}
                 onClick={() => primaryAction.onClick(detail || card)}>
                 {primaryAction.label}
               </Button>
             ) : (
-              <Button variant="primary" className="itin-use" iconStart={<PlusIcon size={16} />}
+              <Button variant="primary" className="itin-post-use" iconStart={<PlusIcon size={16} />}
                 onClick={() => onOpenInPlanner(detail || card)}>
                 {t('trip.openInPlanner')}
               </Button>
