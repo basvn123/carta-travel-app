@@ -3778,6 +3778,7 @@ export const nl = {
   "mtn.rankHeight": "{rank} van {n} qua hoogte in {range}",
   "mtn.rankProm": "{rank} van {n} qua prominentie",
   // lane:plan (house style 2026-11): this lane adds its new keys directly under this line
+  "pf.home.tripsTitle": "Je reizen",
   "mtn.slope": "Helling aan de zachtste kant",
   "mtn.slopeDeg": "{deg} graden",
   "mtn.slopeWarn": "Steiler dan {deg} graden: reken op klauteren of erger. Check de omstandigheden ter plekke.",
@@ -9263,7 +9264,7 @@ export const nl = {
   "tf.card.over": "{eur} boven budget",
   "tf.card.bases": "{n} uitvalsbases",
   "tf.card.base1": "1 uitvalsbasis",
-  "tf.card.best": "Beste prijs",
+  "tf.card.best": "Goedkoopst",
   "tf.card.top": "Beste keuze voor jou",
   "tf.card.ppAll": "{eur} p.p., alles inbegrepen",
   "tf.card.ppPartial": "{eur} p.p., zonder de vlucht",

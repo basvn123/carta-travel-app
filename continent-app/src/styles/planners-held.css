@@ -1956,7 +1956,7 @@
   position: relative;
   min-height: 100%;
 }
-.pf-bar {
+.pf-stage > .pf-bar {
   display: flex;
   justify-content: flex-end;
   gap: var(--space-2);
@@ -1970,7 +1970,7 @@
     align-items: center;
     padding: var(--space-7) var(--space-5) var(--space-8);
   }
-  .pf-bar {
+  .pf-stage > .pf-bar {
     position: absolute;
     top: var(--space-4);
     right: var(--space-4);

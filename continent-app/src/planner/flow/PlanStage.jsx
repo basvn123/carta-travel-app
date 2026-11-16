@@ -1,5 +1,5 @@
-import React from 'react';
-import { IconButton } from '../../components/ui/index.js';
+import React, { useEffect } from 'react';
+import { Blaze, IconButton } from '../../components/ui/index.js';
 import { ArrowLeftIcon, CloseIcon } from '../../components/Icons.jsx';
 
 /**
@@ -42,7 +42,13 @@ export function PlanStage({ bar = null, wide = false, rail = null, side = null, 
  * close would stand, so it lines up with the back control (owner, plan flow
  * walk) instead of floating in a bar above the step.
  */
+// House style (plan lane): the blaze paints onto the mark asked now only
+// after the traveller's own step, never at the flow's first paint.
+let headSeen = false;
+
 export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '', marks = null, end = null }) {
+  const paint = headSeen;
+  useEffect(() => { headSeen = true; }, []);
   return (
     <div className="pf-head">
       <span className="pf-head-side">
@@ -57,6 +63,7 @@ export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '
           <span className="pf-marks" aria-hidden="true">
             {marks.map((m) => (
               <span key={m.key} className={`pf-mark${m.now ? ' is-now' : m.done ? ' is-done' : ''}`}>
+                {m.now && <Blaze size="sm" className={paint ? 'hs-paint' : ''} />}
                 {m.done && !m.now && (
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
                     strokeLinecap="round" strokeLinejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
@@ -65,7 +72,7 @@ export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '
             ))}
           </span>
         )}
-        {position}
+        <span className="pf-pos-text">{position}</span>
       </span>
       <span className="pf-head-side is-end">
         {end}

@@ -618,9 +618,10 @@
 
 .pf-step > .pf-title {
   margin: var(--space-1) 0 0;
-  text-align: center;
-  font-size: var(--text-title);
-  font-weight: 700;
+  text-align: left;
+  font-size: var(--text-headline);
+  font-weight: 800;
+  letter-spacing: -0.018em;
   line-height: var(--leading-tight);
   color: var(--text);
   text-wrap: balance;
@@ -1015,19 +1016,27 @@
    selected tint for each one answered (by the words or a screen), the brown
    ring on the one asked now, so a skipped question shows as done rather
    than the count jumping. */
-.pf-marks { display: flex; justify-content: center; gap: var(--space-1); margin: 0 0 var(--space-1); padding: 0; list-style: none; }
+/* House style (plan lane): the marks are the phone's path. A done step is
+   an umber disc with its tick, the one asked now carries the blaze, the
+   rest wait as rings; a hairline joins them. The "x of n" text stays,
+   small, beside the path on a phone; where the trail pane shows (769 px
+   up) the path and the text step back, the trail says it once. */
+.pf-marks { position: relative; display: flex; justify-content: center; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-1); padding: 0; list-style: none; }
+.pf-marks::before { content: ""; position: absolute; left: var(--space-2); right: var(--space-2); top: 50%; height: var(--stroke-hair); background: var(--border); }
 .pf-mark {
+  position: relative;
   display: grid;
   place-items: center;
-  width: 16px;
-  height: 16px;
-  border: 1px solid var(--border);
+  width: 14px;
+  height: 14px;
+  border: var(--stroke-edge) solid var(--edge);
   border-radius: var(--radius-pill);
   background: var(--surface);
-  color: var(--select-ink);
+  color: var(--surface);
 }
-.pf-mark.is-done { border-color: var(--select-border); background: var(--select-bg); }
-.pf-mark.is-now { border: 2px solid var(--select-border); }
+.pf-mark.is-done { border-color: var(--action); background: var(--action); }
+.pf-mark.is-now { width: auto; height: auto; border: 0; background: none; }
+.pf-head-pos .pf-pos-text { display: block; margin-top: var(--space-1); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) {
   .pf-read-chips > li { animation: none; }
 }
@@ -1071,49 +1080,88 @@
    large: the line icon over one title, left aligned, the tick in the corner
    (the one selected state). Two across on every width. ---- */
 
-/* ---- The studio (T893, the owner's plan flow studio board 2026-10-30) ----
-   From 1100 px a question stands in the middle of three columns: the step
-   list on the left (named groups, a tick and the answer under each step
-   done), the question on its white card, wider than the 520 px sheet, and
-   Your trip so far on the right (T894). The two side columns are white
-   bands the height of the page, their contents held in view while the
-   question scrolls. Below 1100 px the stage is the sheet as before. */
+/* ---- The trail (house style, plan lane 2026-11; was the T893 studio) ----
+   From 769 px a question stands beside its trail: the steps on the stone
+   ground as waymarks on one line, the answer under each one walked, the one
+   asked now on the selected row with the blaze. The question is a paper
+   pane, flat on a hairline, its reading column capped at --w-read, its
+   Continue pinned at the foot. Your trip so far (FlowSide) joins as a third
+   column from 1100 px, as before; below that it stays the fold over the
+   question. From 1280 px the column centres in its pane. */
 .pf-rail, .pf-side { display: none; }
-@media (min-width: 1100px) {
+.pf-stage { --pf-trail-w: 232px; }
+@media (min-width: 769px) {
   .pf-stage.is-studio {
     display: grid;
-    grid-template-columns: 248px minmax(0, 1fr) 340px;
-    align-items: start;
+    grid-template-columns: var(--pf-trail-w) minmax(0, 1fr);
+    align-items: stretch;
     min-height: 100%;
     padding: 0;
   }
-  .pf-stage.is-studio > .pf-rail,
-  .pf-stage.is-studio > .pf-side {
-    display: block;
-    align-self: stretch;
-    min-width: 0;
-    background: var(--surface);
-  }
-  .pf-stage.is-studio > .pf-rail { grid-column: 1; grid-row: 1; border-right: 1px solid var(--border-soft); }
-  .pf-stage.is-studio > .pf-side { grid-column: 3; grid-row: 1; border-left: 1px solid var(--border-soft); }
+  .pf-stage.is-studio > .pf-rail { display: block; grid-column: 1; grid-row: 1; min-width: 0; background: none; }
   .pf-stage.is-studio > .pf-sheet {
+    display: flex;
+    flex-direction: column;
     grid-column: 2;
     grid-row: 1;
-    justify-self: center;
-    width: min(820px, calc(100% - 2 * var(--space-6)));
-    margin: var(--space-6) 0 var(--space-8);
-    padding: var(--space-5) var(--space-6) var(--space-6);
+    width: auto;
+    min-width: 0;
+    min-height: 100%;
+    margin: 0;
+    padding: var(--space-6) var(--space-6) 0;
+    border-left: var(--stroke-hair) solid var(--border);
+    border-radius: 0;
+    background: var(--surface);
+    box-shadow: none;
   }
-  /* The persona's wide card (is-wide, 640 px) takes the studio's width too. */
-  .pf-stage.is-studio.is-wide > .pf-sheet { width: min(820px, calc(100% - 2 * var(--space-6))); }
-  .pf-stage.is-studio > .pf-bar { right: calc(340px + var(--space-4)); }
-  /* The list says where you are; the marks over the head would say it twice. */
-  .pf-stage.is-studio .pf-marks { display: none; }
+  .pf-stage.is-studio.is-wide > .pf-sheet { width: auto; }
+  .pf-stage.is-studio > .pf-sheet > .pf-step { flex: 1 0 auto; width: min(100%, var(--w-read)); }
+  .pf-stage.is-studio.is-wide > .pf-sheet > .pf-step { width: min(100%, var(--w-detail)); }
+  .pf-stage.is-studio > .pf-bar { right: var(--space-4); }
+  .pf-stage.is-studio .pf-marks,
+  .pf-stage.is-studio .pf-head-pos .pf-pos-text { display: none; }
+  .pf-stage.is-studio .pf-step > .pf-title { font-size: var(--text-headline); }
 }
-/* No side column (the setup questions): the question takes its room. */
+@media (min-width: 1024px) { .pf-stage { --pf-trail-w: 272px; } }
+/* The calendar keeps a hand's width in the wide pane. */
+@media (min-width: 1024px) { .pf-stage.is-studio .pf-step .cal-inline { max-width: 560px; } }
 @media (min-width: 1100px) {
-  .pf-stage.is-studio:not(:has(> .pf-side)) { grid-template-columns: 248px minmax(0, 1fr); }
+  .pf-stage.is-studio:has(> .pf-side) { grid-template-columns: var(--pf-trail-w) minmax(0, 1fr) 320px; }
+  .pf-stage.is-studio > .pf-side { display: block; grid-column: 3; grid-row: 1; align-self: stretch; min-width: 0; border-left: var(--stroke-hair) solid var(--border); background: var(--surface-page); }
 }
+@media (min-width: 1280px) {
+  .pf-stage { --pf-trail-w: 296px; }
+  .pf-stage.is-studio > .pf-sheet { align-items: center; padding-inline: var(--space-7); }
+}
+
+/* The pinned Continue: under 769 px every step's foot sits above the bottom
+   nav (the .pf box scrolls); from 769 px the question pane's foot sits at
+   the bottom of the pane. A foot inside a popover stays where it is. */
+@media (max-width: 768px) {
+  .pf-step .pf-foot {
+    position: sticky;
+    bottom: 0;
+    z-index: var(--z-sticky);
+    margin: var(--space-3) calc(-1 * var(--gutter)) 0;
+    padding: var(--space-3) var(--gutter) max(var(--space-3), env(safe-area-inset-bottom));
+    border-top: var(--stroke-hair) solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--elev-2);
+  }
+}
+@media (min-width: 769px) {
+  .pf-stage.is-studio .pf-step .pf-foot {
+    position: sticky;
+    bottom: 0;
+    z-index: var(--z-sticky);
+    margin-top: auto;
+    padding: var(--space-4) 0 var(--space-5);
+    border-top: var(--stroke-hair) solid var(--border);
+    background: var(--surface);
+  }
+}
+.pf-read-pop .pf-foot,
+.pf-step .pf-foot .pf-foot { position: static; margin: var(--space-3) 0 0; padding: 0; border: 0; box-shadow: none; background: none; }
 
 .pf-rail-in {
   position: sticky;
@@ -1127,8 +1175,11 @@
   scrollbar-width: thin;
 }
 .pf-rail-g { display: flex; flex-direction: column; gap: 2px; }
-.pf-rail-h { margin: 0; padding: 0 var(--space-3) var(--space-1); font-size: var(--text-caption); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-3); }
-.pf-rail-list { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.pf-rail-h { margin: 0; padding: 0 var(--space-3) var(--space-2); font-size: var(--text-label); font-weight: 700; color: var(--text-2); }
+.pf-rail-list { position: relative; display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+/* The path: one hairline through the waymarks, from the first to the last. */
+.pf-rail-list::before { content: ""; position: absolute; top: var(--space-5); bottom: var(--space-5); left: calc(var(--space-3) + 11px); width: var(--stroke-edge); background: var(--border); }
+.pf-rail-list > li { position: relative; }
 .btn.pf-rail-step {
   display: flex;
   width: 100%;
@@ -1143,25 +1194,27 @@
 }
 .pf-rail-step .btn-label { display: grid; grid-template-columns: 22px minmax(0, 1fr); align-items: start; gap: var(--space-3); width: 100%; min-width: 0; }
 .btn.pf-rail-step:disabled { opacity: 1; color: var(--text-3); cursor: default; }
-.btn.pf-rail-step.is-now { background: var(--action-tint); color: var(--text); }
+.btn.pf-rail-step.is-now { background: var(--select-row); color: var(--select-ink); }
+.btn.pf-rail-step.is-now .pf-rail-name { font-weight: 800; }
 .btn.pf-rail-step:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .pf-rail-dot {
   display: grid;
   place-items: center;
   width: 22px;
   height: 22px;
-  border: 1.5px solid var(--border);
+  border: var(--stroke-edge) solid var(--edge);
+  color: var(--text-3);
   border-radius: var(--radius-pill);
   background: var(--surface);
   font-size: var(--text-caption);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
-.pf-rail-step.is-done .pf-rail-dot { border-color: transparent; background: var(--action-tint); color: var(--select-ink); }
-.pf-rail-step.is-now .pf-rail-dot { border-color: var(--select-border); background: var(--select-border); color: var(--surface); }
+.pf-rail-step.is-done .pf-rail-dot { border-color: var(--action); background: var(--action); color: var(--surface); }
+.pf-rail-step.is-now .pf-rail-dot { border-color: transparent; background: none; }
 .pf-rail-txt { display: flex; flex-direction: column; min-width: 0; }
 .pf-rail-name { font-size: var(--text-label); font-weight: 600; line-height: var(--leading-ui); }
-.pf-rail-ans { overflow: hidden; font-size: var(--text-caption); font-weight: 400; line-height: var(--leading-ui); color: var(--text-3); white-space: nowrap; text-overflow: ellipsis; }
+.pf-rail-ans { overflow: hidden; font-size: var(--text-caption); font-weight: 400; line-height: var(--leading-ui); color: var(--text-2); white-space: nowrap; text-overflow: ellipsis; }
 @media (hover: hover) {
   .btn.pf-rail-step:not(:disabled):not(.is-now):hover { background: var(--surface-hover); color: var(--text); }
 }

@@ -387,8 +387,8 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
     return (
       <div className="pfh">
         <header className="pfh-head">
-          {/* T989 (owner): no visible title; the page's name stays for screen readers. */}
-          <Title className="pf-title sr-only" tabIndex={-1}>{t('pf.home.yourTrips')}</Title>
+          {/* House style (plan lane): the page shows its name again (T989 had hidden it). */}
+          <Title className="pf-title pfh-title" tabIndex={-1}>{t('pf.home.tripsTitle')}</Title>
           <Button variant="quiet" className="pfh-new" onClick={onStart}
             iconStart={<span className="pfh-new-plus"><PlusIcon size={20} /></span>}>
             {t('pf.home.newTrip')}

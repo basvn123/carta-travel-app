@@ -4695,6 +4695,7 @@ export const en = {
   "mtn.rankHeight": "{rank} of {n} by height in {range}",
   "mtn.rankProm": "{rank} of {n} by prominence",
   // lane:plan (house style 2026-11): this lane adds its new keys directly under this line
+  "pf.home.tripsTitle": "Your trips",
   "mtn.slope": "Slope on the gentlest side",
   "mtn.slopeDeg": "{deg} degrees",
   "mtn.slopeWarn": "Steeper than {deg} degrees: expect scrambling or worse. Check conditions locally.",
@@ -9879,7 +9880,7 @@ export const en = {
   "tf.card.over": "{eur} over budget",
   "tf.card.bases": "{n} bases",
   "tf.card.base1": "1 base",
-  "tf.card.best": "Best price",
+  "tf.card.best": "Cheapest",
   "tf.card.top": "Best pick for you",
   "tf.card.ppAll": "{eur} a person, all in",
   "tf.card.ppPartial": "{eur} a person, without the flight",

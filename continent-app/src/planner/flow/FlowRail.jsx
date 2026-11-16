@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../../components/ui/index.js';
+import { Blaze, Button } from '../../components/ui/index.js';
 import { CheckIcon } from '../../components/Icons.jsx';
 
 /**
@@ -28,7 +28,7 @@ export function FlowRail({ groups, label }) {
                   disabled={!it.onClick && !it.now}
                   onClick={it.onClick || undefined}
                 >
-                  <span className="pf-rail-dot" aria-hidden="true">{it.done && !it.now ? <CheckIcon size={12} /> : it.n}</span>
+                  <span className="pf-rail-dot" aria-hidden="true">{it.now ? <Blaze size="sm" /> : it.done ? <CheckIcon size={12} /> : it.n}</span>
                   <span className="pf-rail-txt">
                     <span className="pf-rail-name">{it.label}</span>
                     {it.answer && <span className="pf-rail-ans">{it.answer}</span>}

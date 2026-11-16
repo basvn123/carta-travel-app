@@ -3769,6 +3769,7 @@ export const fr = {
   "mtn.rankHeight": "{rank} sur {n} par altitude dans {range}",
   "mtn.rankProm": "{rank} sur {n} par proéminence",
   // lane:plan (house style 2026-11): this lane adds its new keys directly under this line
+  "pf.home.tripsTitle": "Vos voyages",
   "mtn.slope": "Pente du versant le plus doux",
   "mtn.slopeDeg": "{deg} degrés",
   "mtn.slopeWarn": "Plus raide que {deg} degrés : prévoyez de la grimpe ou pire. Vérifiez les conditions sur place.",
@@ -9252,7 +9253,7 @@ export const fr = {
   "tf.card.over": "{eur} au-dessus du budget",
   "tf.card.bases": "{n} étapes",
   "tf.card.base1": "1 étape",
-  "tf.card.best": "Meilleur prix",
+  "tf.card.best": "Le moins cher",
   "tf.card.top": "Le meilleur choix pour vous",
   "tf.card.ppAll": "{eur} par personne, tout compris",
   "tf.card.ppPartial": "{eur} par personne, sans le vol",

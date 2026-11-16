@@ -205,3 +205,16 @@
 .ctc-days { font-weight: 600; }
 .ctc-price { margin-top: 2px; }
 @media (min-width: 600px) { .ctc-name { font-size: var(--text-lead); } }
+
+/* House style (plan lane 2026-11): Your trips shows its name, a page title
+   over the two doors (New trip, Ready-made trips). */
+.pfh .pfh-head .pfh-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.018em;
+  color: var(--text);
+  text-wrap: balance;
+}
