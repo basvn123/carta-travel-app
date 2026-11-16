@@ -126,6 +126,7 @@ export default function StyleGuide() {
   const [open, setOpen] = useState(false);
   const [stops, setStops] = useState(['Bled', 'Bohinj', 'Ljubljana']);
   const [shake, setShake] = useState(0);
+  const [leaving, setLeaving] = useState(null);
 
   useEffect(() => {
     let live = true;
@@ -335,7 +336,7 @@ export default function StyleGuide() {
                   {Object.entries(SPRING).map(([k, v]) => <li key={k}><code>{k}</code> {v.visualDuration ? `${v.visualDuration * 1000} ms, bounce ${v.bounce}` : `stiffness ${v.stiffness}, damping ${v.damping}`}</li>)}
                 </ul>
               </Demo>
-              <Demo title="Primitives" note="Save pops the icon (confirm), a fold reveals, a refused field shakes (warn); a removed row takes .hs-leave before it goes. Reduced motion shows each end state.">
+              <Demo title="Primitives" note="Save pops the icon (confirm), a fold reveals, a refused field shakes (warn); a removed stop fades with .hs-leave, then goes. Reduced motion shows each end state.">
                 <IconButton label={saved ? 'Saved' : 'Save'} pressed={saved} tone="surface"
                   onClick={() => setSaved((v) => !v)}>
                   <span key={String(saved)} className={saved ? 'hs-pop' : undefined}><HouseIcon.cairn size={20} /></span>
@@ -344,7 +345,10 @@ export default function StyleGuide() {
                 {open && <p className="hs-reveal sg-note">Revealed over --dur-2, 4 px.</p>}
                 <ul className="sg-stops">
                   {stops.map((n) => (
-                    <li key={n}>{n} <Button variant="quiet" size="sm" onClick={() => setStops((l) => l.filter((x) => x !== n))}>Remove</Button></li>
+                    <li key={n} className={leaving === n ? 'hs-leave' : undefined}
+                      onAnimationEnd={() => { if (leaving === n) { setStops((l) => l.filter((x) => x !== n)); setLeaving(null); } }}>
+                      {n} <Button variant="quiet" size="sm" onClick={() => setLeaving(n)}>Remove</Button>
+                    </li>
                   ))}
                 </ul>
                 <span key={shake} className={shake ? 'hs-shake' : undefined}>

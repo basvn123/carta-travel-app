@@ -46,7 +46,8 @@ await page.waitForTimeout(3500);
 // button on the full accent; friends folded to its icon.
 const barBg = await bg(page, '.top-bar');
 // T502: --surface-page is #f6f5f2 since the Lagoon tokens (DESIGN.md).
-check('top bar sits on the page ground', barBg === 'rgb(246, 245, 242)', barBg);
+// House style (2026-11): the ground is stone, #eef0ea.
+check('top bar sits on the page ground', barBg === 'rgb(238, 240, 234)', barBg);
 check('a header tab is active', await page.locator('.header-nav-item.active').count() === 1);
 // The pass button checks went with the button (T496-T501: no pass in the header).
 check('friends label folded to the icon',

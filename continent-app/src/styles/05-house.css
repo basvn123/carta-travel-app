@@ -531,7 +531,9 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 @keyframes hs-shake { 20% { translate: -6px 0; } 40% { translate: 5px 0; } 60% { translate: -3px 0; } 80% { translate: 2px 0; } to { translate: 0 0; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .hs-pop, .hs-leave, .hs-reveal, .hs-sheet-in, .hs-sheet-out, .hs-dialog-in, .hs-route-in, .hs-shake,
+  /* Exits (.hs-leave, .hs-sheet-out) are not listed: the floor in
+     02-base.css runs them in 0.01 ms, so they land on their end state. */
+  .hs-pop, .hs-reveal, .hs-sheet-in, .hs-dialog-in, .hs-route-in, .hs-shake,
   .hs-paint::before, .hs-blaze.hs-paint::before, .hs-plate.hs-settle-in, .hs-wagon.hs-couple-in,
   .hs-wagon.hs-couple-out, .relief, .hs-fig.hs-roll, .hs-fig.hs-dip, .hs-delta, .hs-toast,
   .hs-wait .hs-blaze::before, .hs-skeleton { animation: none; }

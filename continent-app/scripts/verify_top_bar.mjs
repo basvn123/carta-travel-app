@@ -41,7 +41,9 @@ const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 
 // The emrldtp loader is an accepted risk that always fails offline; its fetch
 // noise is not a regression signal for this bar.
-const NOISE = /ERR_FAILED|config is not valid|ERR_TUNNEL|ERR_CONNECTION|Failed to load resource/;
+// A local server cannot fetch the live data host (its CORS answers the site's
+// own origin only); that is the environment, not the app.
+const NOISE = /ERR_FAILED|config is not valid|ERR_TUNNEL|ERR_CONNECTION|Failed to load resource|blocked by CORS policy/;
 
 const boot = async (viewport, tag) => {
   const page = await browser.newPage({ viewport });
