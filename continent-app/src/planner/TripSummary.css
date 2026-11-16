@@ -43,62 +43,111 @@
 .tpg-top .ts-back.btn { margin-left: calc(-1 * var(--space-2)); }
 .tpg-bar { display: flex; gap: var(--space-2); flex: none; }
 
-/* T885: the head. One photo carries the trip's name, its places and where it
-   stands, over an ink fade (the owner's free direction, carta-design "Trips
-   for you v2"); without a photo the same head stands on the page. */
-.tpg-head { position: relative; display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
-.tpg-head.has-photo { justify-content: flex-end; aspect-ratio: 16 / 11; padding: var(--space-4); border-radius: var(--radius-sheet); overflow: hidden; background: var(--surface-sunken); color: var(--surface); }
-@media (min-width: 600px) { .tpg-head.has-photo { aspect-ratio: 21 / 9; } }
-@media (min-width: 1024px) { .tpg-head.has-photo { aspect-ratio: auto; height: clamp(260px, 26vw, 360px); padding: var(--space-5); } }
-.tpg-photo-img, .tpg-head.has-photo > .hero-blank { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; }
-.tpg-head.has-photo::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 65%;
-  background: linear-gradient(to top, color-mix(in srgb, var(--text) 84%, transparent), transparent);
-  pointer-events: none;
+/* House style (G1, 2026-11, the trip lane): the head. The name, its places
+   and where it stands sit on the page; the photo beside them from 769 px
+   and above them on a phone, never under text (DESIGN.md "Photography").
+   Without a photo the same block stands alone. */
+.tpg-head { display: grid; gap: var(--space-3); min-width: 0; }
+.tpg-head.has-photo { grid-template-areas: "photo" "ov"; }
+.tpg-ov { grid-area: ov; display: grid; justify-items: start; align-content: center; gap: var(--space-1); min-width: 0; }
+.tpg-photo { grid-area: photo; position: relative; overflow: hidden; aspect-ratio: 5 / 2; border-radius: var(--radius-card); background: var(--surface-sunken); }
+.tpg-photo-img, .tpg-photo > .hero-blank { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; }
+@media (min-width: 769px) {
+  .tpg-head.has-photo { grid-template-columns: minmax(0, 1fr) minmax(0, 18rem); grid-template-areas: "ov photo"; align-items: center; gap: var(--space-6); }
+  .tpg-photo { aspect-ratio: 3 / 2; }
 }
-.tpg-pills { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; }
-.tpg-head.has-photo .tpg-pills { position: absolute; top: var(--space-3); left: var(--space-3); right: var(--space-3); }
-.tpg-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px var(--space-3); border-radius: var(--radius-pill); background: var(--surface); box-shadow: var(--elev-1); color: var(--text); font-size: var(--text-caption); font-weight: 700; }
-.tpg-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
-.tpg-pill.is-some .tpg-pill-dot { background: var(--umber-500); }
-.tpg-ov { position: relative; z-index: 1; display: grid; gap: 4px; min-width: 0; }
-.tpg-name-row { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+@media (min-width: 1280px) { .tpg-head.has-photo { grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); } }
+.tpg-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-1) 0 0; }
+.tpg-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 28px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  font-size: var(--text-label);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+/* Booked: an empty ring, filled with the paint once one part is booked
+   (the words carry it too; colour is never alone). */
+.tpg-pill-dot { width: 8px; height: 8px; border: var(--stroke-edge) solid var(--edge); border-radius: var(--radius-pill); }
+.tpg-pill.is-some .tpg-pill-dot { border-color: var(--action); background: var(--action); }
+.tpg-name-row { display: flex; align-items: center; gap: var(--space-1); min-width: 0; }
 .tpg-name {
   margin: 0;
   font-size: var(--text-headline);
   font-weight: 800;
   line-height: var(--leading-tight);
   letter-spacing: -0.02em;
-  color: inherit;
+  color: var(--text);
   text-wrap: balance;
   overflow-wrap: anywhere;
 }
-@media (min-width: 769px) { .tpg-name { font-size: var(--text-display); } }
-.tpg-head.has-photo .tpg-name:focus-visible { outline: 2px solid var(--surface); outline-offset: 2px; }
+.tpg-name:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
 .tpg-where.btn {
   justify-self: start;
   height: auto;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-2);
   min-height: 32px;
-  padding: 0;
+  margin-left: calc(-1 * var(--space-1));
+  padding: 0 var(--space-1);
   border: 0;
   background: none;
-  color: inherit;
+  color: var(--text-2);
   font: inherit;
   font-size: var(--text-label);
+  font-weight: 600;
   cursor: pointer;
-  opacity: .94;
 }
 .tpg-where.btn:hover { background: none; }
 .tpg-where .btn-label { display: contents; }
-.tpg-where:hover span { text-decoration: underline; text-underline-offset: 3px; }
-.tpg-where:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: var(--radius-sm); }
+@media (hover: hover) { .tpg-where:hover span { color: var(--text); text-decoration: underline; text-underline-offset: 3px; } }
+.tpg-where:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
 @media (pointer: coarse) { .tpg-where.btn { min-height: var(--tap); } }
+
+/* The journey line (DESIGN.md "Journey line", built by this lane): the trip
+   on one line. Stops are umber pills as long as their nights, legs a short
+   ink line with the mode's icon (dashed for a flight), home ends ink discs,
+   the nights at the end. Static and always the width of the page: a pill
+   shrinks to its number, its name comes back where it has room. */
+.tpg-line { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+.tpg-line-row { display: flex; flex: 1 1 auto; align-items: center; min-width: 0; margin: 0; padding: 0; list-style: none; }
+.tpg-line-home { flex: none; width: 12px; height: 12px; border-radius: var(--radius-pill); background: var(--plate); }
+.tpg-line-leg { position: relative; display: grid; flex: 0 0 var(--space-6); place-items: center; height: 24px; }
+.tpg-line-leg::before { content: ''; position: absolute; inset: 50% 0 auto; border-top: 2px solid var(--text); }
+.tpg-line-leg.is-flight::before { border-top-style: dashed; }
+.tpg-line-mode { position: relative; display: grid; place-items: center; width: 20px; height: 20px; border-radius: var(--radius-pill); border: var(--stroke-edge) solid var(--edge); background: var(--surface); color: var(--text); }
+.tpg-line-stop { flex: var(--n, 1) 1 0; min-width: 24px; container-type: inline-size; }
+.tpg-line-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  height: 28px;
+  padding: 0 var(--space-2);
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--action);
+  color: var(--action-text);
+  font-size: var(--text-label);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+.tpg-line-no { font-variant-numeric: tabular-nums; }
+.tpg-line-name { display: none; overflow: hidden; text-overflow: ellipsis; }
+@container (min-width: 88px) {
+  .tpg-line-pill { justify-content: flex-start; padding: 0 var(--space-3); }
+  .tpg-line-name { display: block; }
+}
+.tpg-line-sum { flex: none; margin: 0; font-size: var(--text-label); font-weight: 700; color: var(--text-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+@media (max-width: 419px) { .tpg-line-leg { flex-basis: var(--space-5); } .tpg-line-mode { width: 16px; height: 16px; } .tpg-line-mode svg { width: 10px; height: 10px; } }
 
 /* The trip bar (T885): every input of the price, label over value, a pencil
    each; two by two on a phone, one row from 600 px. */
@@ -160,7 +209,7 @@
   }
 }
 
-/* ---- The body: one column, then the side column from 1024 px ---- */
+/* ---- The body: one column, the side column from 1024 px ---- */
 .tpg-body { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
 .tpg-main { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
 .tpg-side { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
@@ -168,17 +217,28 @@
 @media (min-width: 1024px) {
   .tpg-body {
     display: grid;
-    grid-template-columns: minmax(0, 7fr) minmax(320px, 5fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 22rem);
     align-items: start;
     gap: var(--space-6);
   }
-  .tpg-side { position: sticky; top: var(--space-4); }
 }
+@media (min-width: 1280px) { .tpg-body { grid-template-columns: minmax(0, 1fr) minmax(0, 24rem); gap: var(--space-7); } }
 
 .tpg-h { margin: 0 0 var(--space-3); font-size: var(--text-lead); font-weight: 700; color: var(--text); }
 
-/* ---- The cost band (direction 2: what it costs comes first) ---- */
+/* ---- The Overview: the cost post, what is still to book, the route ---- */
 .tpg-overview { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
+/* A tablet (769 to 1023 px) is its own layout: the route in the left column,
+   the cost post standing beside it in the right one, in view while the route
+   scrolls when the screen is tall enough to hold it. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .tpg-overview { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 19rem); align-items: start; column-gap: var(--space-5); row-gap: var(--space-6); }
+  .tpg-overview > * { grid-column: 1; min-width: 0; }
+  .tpg-overview > .tpg-post { grid-column: 2; grid-row: 1 / span 8; }
+}
+@media (min-width: 769px) and (max-width: 1023px) and (min-height: 900px) {
+  .tpg-overview > .tpg-post { position: sticky; top: var(--space-4); }
+}
 
 /* The four tiles (concept C): 4 across, 2 by 2 on a phone. */
 .ct {
@@ -249,11 +309,13 @@
 /* The way back from the full trip page to its summary (T814). */
 .trip-topcard .trip-topcard-back.btn { margin: 0 0 var(--space-1) calc(-1 * var(--space-2)); }
 
-/* ---- T829: the total and the next step in view on a phone and a tablet ----
+/* ---- T829: the next step in view on a phone and a tablet ----
    Fixed over the bottom nav (its height includes the home-bar inset), the
    page's gutter on both sides, under every sheet and the message slot. The
-   page keeps room under its last line for it. */
+   page keeps room under its last line for it, and a focused control is never
+   left under it (scroll padding). */
 .tpg.has-dock { padding-bottom: calc(var(--space-8) + 72px); }
+.pf.is-trip-page:has(.tpg-dock) { scroll-padding-bottom: calc(var(--tap) + 2 * var(--space-2) + var(--space-5)); }
 .tpg-dock {
   position: fixed;
   left: 0;
@@ -273,9 +335,11 @@
   box-shadow: none;
 }
 body:has(.tpg-dock) .bottom-nav { border-top-color: transparent; box-shadow: none; }
-.tpg-dock .btn { box-shadow: var(--elev-1); }
+.tpg-dock .btn { box-shadow: var(--elev-2); }
 .tpg-dock-change.btn { flex: none; }
 .tpg-dock-go.btn { flex: 1; }
+/* A tablet keeps the two at their own width, at the reading hand's side. */
+@media (min-width: 769px) { .tpg-dock { justify-content: flex-end; } .tpg-dock-go.btn { flex: none; min-width: 14rem; } }
 
 /* ---- The name as a field (T830; T836 renames in place) ---- */
 .tpg-name-input {
@@ -626,52 +690,53 @@ body:has(.tpg-dock) .bottom-nav { border-top-color: transparent; box-shadow: non
 /* ---- T887: the route carries its bookings; what is still to book ---- */
 .ts-node-fig { display: grid; justify-items: end; align-content: start; }
 .ts-node-fig small { font-size: var(--text-caption); font-weight: 500; color: var(--text-3); }
-/* ---- Still to book as passes (T1003) ----
-   One pass per part not yet booked, swiped side by side. A boarding pass's
-   anatomy: the carrier and the date, the two ends large, the way between
-   them as a dashed line, then a perforation and the figure with Book. The
-   segments above are the booked count and the pager in one. */
+/* ---- Still to book (T1003), in the house style ----
+   One paper panel per part not yet booked, swiped side by side: the carrier
+   or the bed and the date, the two ends large joined by a plain hairline,
+   then the figure and Book. No ticket drawing (no perforation, no plane on a
+   dashed line). The segments above are the count and the pager in one: the
+   booked ones filled in ink, the one in view painted. */
 .tbp { display: grid; gap: var(--space-2); min-width: 0; }
-.tbp-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
+.tbp-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); flex-wrap: wrap; }
 .tbp-h { margin: 0; font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; }
-.tbp-n { margin-left: auto; font-size: var(--text-label); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.tbp-n { margin-left: auto; font-size: var(--text-label); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
 /* T1004: Previous and Next for a mouse or a trackpad; a finger swipes. */
 .tbp-steps { display: none; gap: var(--space-1); align-self: center; }
 @media (hover: hover) and (pointer: fine) { .tbp-steps { display: inline-flex; } }
 .tbp-prev { transform: rotate(180deg); }
-.tbp-pager { display: flex; gap: 4px; }
+.tbp-pager { display: flex; gap: var(--space-1); }
 .tbp-seg {
   flex: 1;
   min-width: 0;
-  height: 22px;
-  padding: 8px 0;
+  height: 24px;
+  padding: 9px 0;
   border: 0;
   background: var(--border) content-box;
   border-radius: var(--radius-pill);
   cursor: pointer;
-  transition: background-color var(--dur-3) var(--ease-out);
+  transition: background-color var(--dur-paint) var(--ease-out);
 }
 span.tbp-seg { cursor: default; }
-.tbp-seg.is-booked { background-color: var(--lagoon-600); }
-.tbp-seg.is-at { background-color: var(--umber-600); }
-.tbp-seg:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.tbp-seg.is-booked { background-color: var(--text-2); }
+.tbp-seg.is-at { background-color: var(--action); }
+.tbp-seg:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 1px; }
 .tbp-track {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 88%;
+  grid-auto-columns: 84%;
   gap: var(--space-3);
-  margin: 0 -6px;
-  padding: 4px 6px 14px;
+  margin: 0 calc(-1 * var(--space-2));
+  padding: var(--space-1) var(--space-2) var(--space-3);
   list-style: none;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: 6px;
+  scroll-padding-inline: var(--space-2);
   scrollbar-width: none;
 }
 .tbp-track::-webkit-scrollbar { display: none; }
 .tbp-track:has(> :only-child) { grid-auto-columns: 100%; }
-@media (min-width: 600px) { .tbp-track { grid-auto-columns: minmax(300px, calc(50% - var(--space-2))); } }
+@media (min-width: 600px) { .tbp-track { grid-auto-columns: minmax(17rem, calc(50% - var(--space-2))); } }
 .tbp-card { display: flex; min-width: 0; scroll-snap-align: start; }
 .tbp-pass {
   position: relative;
@@ -679,47 +744,31 @@ span.tbp-seg { cursor: default; }
   grid-template-rows: auto 1fr auto;
   gap: var(--space-3);
   width: 100%;
-  padding: var(--space-4) var(--space-4) var(--space-3);
-  overflow: hidden;
-  border-radius: var(--radius-card);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-panel);
   background: var(--surface);
   box-shadow: var(--elev-1);
 }
 .tbp-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-width: 0; }
-.tbp-brand { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-label); font-weight: 600; color: var(--text); }
+.tbp-brand { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-label); font-weight: 700; color: var(--text); }
 .tbp-brand-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tbp-glyph { display: grid; flex: none; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--umber-100); color: var(--umber-700); }
+.tbp-glyph { display: grid; flex: none; place-items: center; width: 20px; height: 20px; color: var(--umber-700); }
 .tbp-when { flex: none; font-size: var(--text-label); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
 .tbp-place { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; line-height: var(--leading-tight); }
-.tbp-ends { display: grid; grid-template-columns: auto minmax(40px, 1fr) auto; align-items: center; gap: var(--space-3); }
+.tbp-ends { display: grid; grid-template-columns: auto minmax(var(--space-5), 1fr) auto; align-items: center; gap: var(--space-3); }
 .tbp-end { display: grid; gap: 2px; min-width: 0; }
 .tbp-end.is-to { text-align: right; }
 .tbp-code { font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.02em; line-height: 1; color: var(--text); }
-.tbp-time { font-size: var(--text-body); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.tbp-time { font-size: var(--text-label); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
 .tbp-town { font-size: var(--text-lead); font-weight: 700; line-height: var(--leading-tight); overflow-wrap: anywhere; }
-.tbp-k { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.tbp-k { font-size: var(--text-micro); font-weight: 600; color: var(--text-3); }
 .tbp-date { font-size: var(--text-body); font-weight: 700; font-variant-numeric: tabular-nums; }
-/* The way between the two ends: a dashed rule, its mode in the middle. */
-.tbp-line { position: relative; display: grid; place-items: center; height: 28px; color: var(--umber-700); }
-.tbp-line::before { content: ''; position: absolute; inset: 50% 0 auto; border-top: 2px dashed var(--umber-200); }
-.tbp-line svg { position: relative; box-sizing: content-box; padding: 6px; border-radius: 50%; background: var(--umber-100); }
-.tbp-line.is-quiet::before { border-top-style: solid; border-top-width: 1px; border-color: var(--border); }
-/* The perforation: a dashed rule notched at both edges. */
-.tbp-foot { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-3); border-top: 2px dashed var(--border-soft); }
-.tbp-foot::before, .tbp-foot::after {
-  content: '';
-  position: absolute;
-  top: -9px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--surface-page);
-}
-.tbp-foot::before { left: calc(-1 * var(--space-4) - 8px); }
-.tbp-foot::after { right: calc(-1 * var(--space-4) - 8px); }
+/* The way between the two ends: one plain hairline. */
+.tbp-line { position: relative; height: var(--stroke-hair); background: var(--border); }
+.tbp-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-3); border-top: var(--stroke-hair) solid var(--border-soft); }
 .tbp-fig { display: inline-flex; align-items: baseline; gap: var(--space-1); font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.tbp-fig small { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); letter-spacing: 0; }
-.tbp-book.btn { flex: none; min-width: 96px; text-decoration: none; }
+.tbp-fig small { font-size: var(--text-micro); font-weight: 600; color: var(--text-2); letter-spacing: 0; }
+.tbp-book.btn { flex: none; min-width: 6rem; text-decoration: none; }
 @media (prefers-reduced-motion: reduce) { .tbp-seg { transition: none; } }
 
 /* ---- Change your trip (T888): one sheet for every input of the price ---- */
@@ -864,70 +913,100 @@ span.tbp-seg { cursor: default; }
 .tt-swatch { display: inline-block; width: 22px; height: 0; margin-right: 2px; border-top: 2px dashed var(--umber-700); }
 .tt-swatch.is-ground { border-top: 3px solid var(--lagoon-600); border-radius: 2px; }
 
-/* ---- Your route as a journey (T1005) ----
-   A rail of day stamps on the left, the trip's parts beside them as cards in
-   the passes' family: the airline and Change flight, the two airports large
-   with their times; the stay's photograph, nights and bed, check-in and out;
-   a hop's two towns. One foot each: where it stands, the link out, what was
-   paid, the figure. */
-.jr { position: relative; display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
-.jr::before { content: ''; position: absolute; top: 24px; bottom: 24px; left: 21px; width: 2px; border-radius: 1px; background: var(--border); }
-.jr-step { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: var(--space-3); align-items: start; }
-.jr-stamp {
-  position: relative;
-  z-index: 1;
+/* ---- Your route as a footpath (T1005; house style, the trip lane) ----
+   Three columns per step: the day stamp (a waymark post), the path with its
+   node, then the part. The path is drawn per step so each stretch takes its
+   kind: beside a stay the umber route (3 px), under a flight a dashed ink
+   line, under a hop or a drive a solid ink line. A stay is a signpost plate
+   (the town, its dates and nights, the figure), a flight, a drive or a hop
+   a leg plate; where it stands and Book sit in a quiet row under it. The
+   path keeps a clear column of its own, so it is a route, never a stripe on
+   a panel. */
+.tpg .jr { position: relative; display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.tpg .jr-step { --jr-stamp: 36px; --jr-node: 24px; --jr-gap: var(--space-2); position: relative; display: grid; grid-template-columns: var(--jr-stamp) var(--jr-node) minmax(0, 1fr); column-gap: var(--jr-gap); align-items: start; }
+@media (min-width: 420px) { .tpg .jr-step { --jr-stamp: 44px; --jr-node: 28px; --jr-gap: var(--space-3); } }
+.tpg .jr-step::before {
+  content: '';
+  position: absolute;
+  top: var(--space-5);
+  bottom: calc(-1 * var(--space-3) - var(--space-5));
+  left: calc(var(--jr-stamp) + var(--jr-gap) + var(--jr-node) / 2 - 1px);
+  width: 0;
+  border-left: 2px solid var(--text);
+}
+.tpg .jr-step.is-stay::before { left: calc(var(--jr-stamp) + var(--jr-gap) + var(--jr-node) / 2 - 1.5px); border-left: var(--stroke-route) solid var(--map-route); }
+.tpg .jr-step.is-way::before { border-left-style: dashed; }
+.tpg .jr-step.is-car::before { border-left: 2px dotted var(--wagon-none-edge); }
+.tpg .jr-step.is-home.is-end::before { display: none; }
+.tpg .jr-stamp {
+  grid-column: 1;
   display: grid;
   justify-items: center;
   gap: 1px;
-  padding: var(--space-1) 0;
-  margin-top: var(--space-2);
-  background: var(--surface-page);
+  padding-top: var(--space-2);
   line-height: 1;
   text-align: center;
 }
-.jr-stamp-wd, .jr-stamp-m { font-size: var(--text-micro); font-weight: 700; color: var(--text-3); }
-.jr-stamp-d { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; color: var(--text); font-variant-numeric: tabular-nums; }
-.jr-stamp.is-empty { justify-self: center; width: 10px; height: 10px; margin-top: var(--space-5); padding: 0; border-radius: 50%; background: var(--border); }
-.jr-card {
+.tpg .jr-stamp-wd, .tpg .jr-stamp-m { font-size: var(--text-micro); font-weight: 700; color: var(--text-2); }
+.tpg .jr-stamp-d { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; color: var(--text); font-variant-numeric: tabular-nums; }
+.tpg .jr-stamp.is-empty { visibility: hidden; }
+/* The node on the path: a stay's number on the umber paint (the same number
+   as its pill on the journey line), a leg's mode on paper, home in ink. */
+.tpg .jr-node {
+  position: relative;
+  z-index: 1;
+  grid-column: 2;
+  justify-self: center;
   display: grid;
-  gap: var(--space-2);
-  min-width: 0;
-  padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-card);
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-top: var(--space-3);
+  border-radius: var(--radius-pill);
+  border: var(--stroke-edge) solid var(--edge);
   background: var(--surface);
-  box-shadow: var(--elev-1);
+  outline: 3px solid var(--surface-page);
+  color: var(--text);
 }
-.jr-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-width: 0; }
-.jr-glyph { display: grid; flex: none; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--umber-100); color: var(--umber-700); }
-.jr-step.is-home .jr-stamp.is-empty { margin-top: 19px; background: var(--text); }
-.jr-change.btn { flex: none; white-space: nowrap; }
-.jr-town { font-size: var(--text-lead); font-weight: 700; line-height: var(--leading-tight); overflow-wrap: anywhere; }
-.jr-k { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
-.jr-date { font-size: var(--text-body); font-weight: 700; font-variant-numeric: tabular-nums; }
-.jr-stay { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
-.jr-photo { flex: none; width: 40px; height: 40px; overflow: hidden; border-radius: var(--radius-control); background: var(--surface-sunken); }
-.jr-photo-img, .jr-photo .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
-.jr-city { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.02em; line-height: var(--leading-tight); }
-.jr-none { margin: 0; color: var(--text-3); }
-.jr-foot {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: var(--space-3);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--border-soft);
-}
-.jr-status { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); min-width: 0; }
-.jr-fig { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.01em; text-align: right; font-variant-numeric: tabular-nums; }
-.jr-fig small { margin-left: var(--space-1); font-size: var(--text-caption); font-weight: 500; color: var(--text-3); letter-spacing: 0; }
-.jr-home { display: flex; align-items: center; gap: var(--space-2); min-height: 48px; margin-top: var(--space-1); }
-.jr-home-mark { display: grid; flex: none; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--text); color: var(--surface); }
-.jr-home-name { font-size: var(--text-lead); font-weight: 700; }
-.jr-card.is-tip { background: var(--umber-50); box-shadow: none; border: 1px solid var(--umber-100); }
-@media (min-width: 600px) {
-  .jr-step { grid-template-columns: 56px minmax(0, 1fr); gap: var(--space-4); }
-  .jr::before { left: 27px; }
-}
+.tpg .jr-node.is-stay { margin-top: 14px; border-color: var(--action); background: var(--action); color: var(--action-text); font-size: var(--text-micro); font-weight: 800; font-variant-numeric: tabular-nums; }
+.tpg .jr-node.is-home { width: 14px; height: 14px; margin-top: 17px; border-color: var(--plate); background: var(--plate); }
+.tpg .jr-node.is-tip { border-style: dashed; border-color: var(--wagon-none-edge); color: var(--text-2); }
+.tpg .jr-card { grid-column: 3; display: grid; gap: var(--space-1); min-width: 0; max-width: 38rem; }
+.tpg .jr-plate.hs-plate { width: 100%; }
+.tpg .jr-plate .hs-plate-lead { display: grid; place-items: center; color: var(--text-2); }
+.tpg .jr-photo { display: block; flex: none; width: 40px; height: 40px; overflow: hidden; border-radius: var(--radius-sm); background: var(--surface-sunken); }
+.tpg .jr-photo-img, .tpg .jr-photo .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tpg .jr-city { overflow-wrap: anywhere; }
+/* A flight's plate: the two ends on one line, joined by a plain hairline. */
+.tpg .jr-ends { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); min-width: 0; }
+.tpg .jr-end { display: inline-flex; align-items: baseline; gap: var(--space-1); }
+.tpg .jr-code { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
+.tpg .jr-time { font-size: var(--text-label); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.tpg .jr-ends .jr-line::before { content: none; }
+.tpg .jr-ends .jr-line { display: block; min-height: 0; flex: 1 1 var(--space-4); min-width: var(--space-3); max-width: var(--space-8); height: 0; align-self: center; border-top: var(--stroke-hair) solid var(--border); }
+/* The quiet row under a plate: the carrier, where it stands, Book. */
+.tpg .jr-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); min-height: var(--tap); padding: 0 var(--space-1); }
+.tpg .jr-foot:not(:has(> *:not(:empty))) { display: none; }
+.tpg .jr-brand { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); min-width: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.tpg .jr-brand .flt-mark { flex: none; }
+.tpg .jr-glyph { display: grid; flex: none; place-items: center; color: var(--text-2); }
+.tpg .jr-name { color: var(--text); font-weight: 700; }
+.tpg .jr-line-note { color: var(--text-3); font-weight: 500; }
+.tpg .jr-change.btn { flex: none; white-space: nowrap; }
+.tpg .jr-status { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); min-width: 0; }
+.tpg .jr-status:empty { display: none; }
+.tpg .jr-book.btn { margin-left: auto; }
+.tpg .jr-home { grid-column: 3; display: flex; align-items: center; gap: var(--space-2); min-height: 48px; }
+.tpg .jr-home-mark { display: grid; flex: none; place-items: center; color: var(--text-2); }
+.tpg .jr-home-name { font-size: var(--text-body); font-weight: 700; color: var(--text); }
+/* The car advice: a branch off the path, words and one action, no box. */
+.tpg .jr-card.is-tip { gap: var(--space-2); padding: var(--space-2) 0; }
+.tpg .jr-card.is-tip .jr-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.tpg .jr-card.is-tip .jr-brand { color: var(--text); }
+.tpg .jr-brand-text { display: grid; gap: 2px; }
+.tpg .jr-card.is-tip .jr-glyph { display: none; }
+.tpg .jr-card.is-tip .jr-meta { font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
+
 /* T1006: Your route's head carries the one Add what you paid. */
 .tpg-route-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-2); }
 .tpg-route-top .tpg-h { margin: 0; }
@@ -943,8 +1022,8 @@ span.tbp-seg { cursor: default; }
   font-weight: 700;
   white-space: nowrap;
 }
-.tpf-delta-pill.is-up { background: #fbe3d8; color: #8f3a17; }
-.tpf-delta-pill.is-down { background: var(--lagoon-100); color: var(--lagoon-800); }
+.tpf-delta-pill.is-up { background: var(--danger-bg); color: var(--danger); }
+.tpf-delta-pill.is-down { background: var(--select-bg); color: var(--select-ink); }
 
 
 /* ---- The Itinerary and Costs tabs in the Overview's language (T1007) ----
@@ -1557,3 +1636,124 @@ span.tbp-seg { cursor: default; }
 .tnt-quiet { display: flex; align-items: flex-start; gap: var(--space-2); margin: 0; font-size: var(--text-caption); line-height: 1.45; color: var(--text-2); }
 .tnt-quiet svg { flex: none; margin-top: 2px; color: var(--umber-600); }
 .tnt-problem { margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); background: #fbe3d8; color: #8f3a17; font-size: var(--text-label); }
+
+/* ==== House style (G1, 2026-11): the trip lane's layer ==== */
+/* Rules here restyle shared parts on the trip page only (every selector is
+   scoped under .tpg or a trip-only class), so the place page and the saved
+   trip page that share .ccard, .jr and .itin keep their own look. */
+
+/* ---- The trip bar: one paper bar, label over value, the pencil a quiet cue */
+.tpg-tripbar { border-radius: var(--radius-panel); }
+.tpg-cell-k { font-size: var(--text-micro); font-weight: 600; color: var(--text-2); }
+.tpg-cell-v { font-size: var(--text-body); font-weight: 700; }
+.tpg-cell:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -3px; }
+
+/* ---- Tabs: the kit's paint bar, on the page's own hairline ---- */
+.tpg-tabs { border-bottom: var(--stroke-hair) solid var(--border-soft); }
+
+/* ---- Section heads ---- */
+.tpg-h { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.01em; }
+
+/* ---- The cost post (CostCard, the arc card that ships) ----
+   Paper on a hairline, no gradient, no umber slab: the total is the screen's
+   one ink total plate, its unit the plate's label; under it the train of the
+   trip's four parts, the budget as one line, the four rows with their house
+   icons, the notes, then the two quiet doors. */
+.tpg .ccard:not(.is-umber) {
+  --ccard-ink: var(--text);
+  --ccard-ink-2: var(--text-2);
+  --ccard-line: var(--border-soft);
+  gap: var(--space-3);
+  padding: var(--space-4);
+  overflow: visible;
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+}
+@media (min-width: 1024px) { .tpg .tpg-side .ccard:not(.is-umber) { padding: var(--space-5); } }
+.tpg .ccard:not(.is-umber) ::selection { background: var(--select-bg); color: var(--select-ink); }
+.tpg .ccard:not(.is-umber) .ccard-h { font-size: var(--text-body); font-weight: 800; color: var(--text); }
+.tpg .ccard:not(.is-umber) .seg.ccard-per { background: var(--surface); border-color: var(--edge); }
+.tpg .ccard:not(.is-umber) .ccard-per .seg-item { color: var(--text-2); }
+.tpg .ccard:not(.is-umber) .ccard-per .seg-item.is-selected { background: var(--action); color: var(--action-text); box-shadow: none; }
+.tpg .ccard:not(.is-umber) .ccard-per .seg-item:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+/* The total plate: the engine's own total, the loudest figure on the page. */
+.tpg .ccard-total.hs-plate { min-height: 88px; }
+.tpg .ccard-total .ccard-unit { font-family: var(--font); font-size: var(--text-label); font-weight: 600; color: var(--on-plate-2); }
+.tpg .ccard-total .ccard-n { display: inline-flex; align-items: baseline; gap: var(--space-2); font-size: inherit; font-weight: inherit; letter-spacing: inherit; color: var(--on-plate); }
+.tpg .ccard-total .hs-delta { font-size: var(--text-label); }
+/* The train: the four parts coupled, as long as their shares; a part with
+   no figure yet is the dashed wagon set apart after it. */
+.tpg .ccard-train { display: flex; align-items: center; gap: var(--space-2); width: 100%; max-width: none; height: auto; }
+.tpg .ccard-train-run { display: flex; flex: 1 1 auto; gap: 2px; min-width: 0; }
+.tpg .ccard-wagon.hs-wagon { --wh: 32px; flex: var(--ww, 1) 1 0; min-width: 36px; padding: 0 var(--space-2); }
+.tpg .ccard-train-run .ccard-wagon + .ccard-wagon { border-top-left-radius: var(--radius-sm); border-bottom-left-radius: var(--radius-sm); }
+.tpg .ccard-train-run .ccard-wagon:not(:last-child) { border-top-right-radius: var(--radius-sm); border-bottom-right-radius: var(--radius-sm); }
+.tpg .ccard-wagon.is-travel { background: var(--surface-sunken); color: var(--umber-800); }
+.tpg .ccard-wagon.is-around { background: var(--umber-200); color: var(--umber-800); }
+.tpg .ccard-wagon.is-stay { background: var(--wagon-bed); color: var(--wagon-bed-ink); }
+.tpg .ccard-wagon.is-food { background: var(--wagon-food); color: var(--wagon-food-ink); outline: var(--stroke-hair) solid var(--wagon-food-edge); outline-offset: -1px; }
+.tpg .ccard-wagon.is-none { flex: none; min-width: 0; gap: var(--space-1); font-size: var(--text-micro); }
+.tpg .ccard-wagon svg { width: 16px; height: 16px; }
+/* The budget: one line under the train, the bar shown. */
+.tpg .ccard:not(.is-umber) .ccard-budget { justify-items: stretch; }
+.tpg .ccard:not(.is-umber) .tpbud.is-compact { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--space-1) var(--space-3); text-align: left; }
+.tpg .ccard:not(.is-umber) .tpbud.is-compact .tpbud-bar { display: block; grid-column: 1 / -1; height: 6px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.tpg .ccard:not(.is-umber) .tpbud-bar > span { border-radius: var(--radius-pill); background: var(--action); }
+.tpg .ccard:not(.is-umber) .tpbud-bar > span.is-over { background: var(--danger); }
+.tpg .ccard:not(.is-umber) .tpbud.is-compact .tpbud-line { justify-content: flex-start; margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.tpg .ccard:not(.is-umber) .tpbud-gap { padding: 0; border-radius: 0; background: none; color: var(--text); font-weight: 800; }
+.tpg .ccard:not(.is-umber) .tpbud-gap.is-over { background: none; color: var(--danger); }
+.tpg .ccard:not(.is-umber) .tpbud.is-compact > .tpbud-edit.btn { justify-self: end; color: var(--umber-700); text-decoration: none; }
+.tpg .ccard:not(.is-umber) .tpbud.is-compact:not(:has(.tpbud-bar)) > .tpbud-edit.btn { grid-column: 1 / -1; justify-self: start; margin-left: calc(-1 * var(--space-2)); }
+.tpg .ccard:not(.is-umber) .tpbud-form { grid-column: 1 / -1; padding: var(--space-3) 0 0; border-radius: 0; background: none; }
+/* The four rows: the house icon in umber, no coloured disc. */
+.tpg .ccard:not(.is-umber) .ccard-rows { border-top: var(--stroke-hair) solid var(--border-soft); }
+.tpg .ccard:not(.is-umber) .ccard-ico { width: 24px; height: 24px; background: none; color: var(--umber-700); }
+.tpg .ccard:not(.is-umber) .ccard-ico.is-marks .flt-mark { box-shadow: var(--elev-1); }
+.tpg .ccard:not(.is-umber) .ccard-label { font-weight: 700; color: var(--text); }
+.tpg .ccard:not(.is-umber) .ccard-fig { font-size: var(--text-figure); color: var(--text); }
+.tpg .ccard:not(.is-umber) .ccard-hit:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -3px; }
+@media (hover: hover) { .tpg .ccard:not(.is-umber) button.ccard-hit:hover { background: var(--surface-hover); } }
+.tpg .ccard:not(.is-umber) .ccard-foot .btn { color: var(--umber-700); }
+@media (hover: hover) { .tpg .ccard:not(.is-umber) .ccard-foot .btn:hover { background: var(--surface-hover); color: var(--umber-800); } }
+.tpg .ccard:not(.is-umber) .ccard-foot .btn:focus-visible { outline: var(--stroke-focus) solid var(--focus); }
+.tpg .ccard:not(.is-umber) .ccard-notes { color: var(--text-2); }
+
+/* ---- The tools and the top row ---- */
+.tpg-tools { grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); }
+.tpg-tools .tpg-tool.btn { min-height: var(--tap-main); }
+.tpg-bar .tpg-plan.btn { white-space: nowrap; }
+
+/* ---- The trip drawn on Europe (TripTrace) in the map's own colours ----
+   Land and water as every map of the app, the trip's countries in beige,
+   the route in umber on a white halo, dotted where it flies. No plane at the
+   middle of a flight (the house never draws a plane on a dashed trail). */
+.tt-map { background: var(--map-water); box-shadow: var(--elev-1); }
+.tt-context { fill: var(--map-land); }
+.tt-land { fill: var(--map-land); stroke: var(--map-border); stroke-width: 0.75; }
+.tt-land.is-trip { fill: var(--umber-100); }
+.tt-fly { stroke: var(--map-route); stroke-width: 2.5; stroke-dasharray: 1 6; stroke-linecap: round; }
+.tt-ground { stroke: var(--map-route); stroke-width: var(--stroke-route); }
+.tt-plane { display: none; }
+.tt-air { border-color: var(--map-route); }
+.tt-dot { background: var(--action); color: var(--action-text); outline: 3px solid var(--surface); box-shadow: var(--elev-1); }
+.tt-pin.is-home .tt-dot { background: var(--plate); }
+.tt-label { background: var(--surface); box-shadow: var(--elev-1); }
+.tt-key-item svg { color: var(--text-2); }
+.tt-swatch { border-top: 2.5px dotted var(--map-route); }
+.tt-swatch.is-ground { border-top: var(--stroke-route) solid var(--map-route); }
+
+/* ---- Change your trip: setting rows, the date shifts as leg-plate radios */
+.tpx-opts { gap: 0; }
+.tpx-opt.btn { grid-template-columns: 24px minmax(0, 1fr) auto; min-height: 56px; padding: var(--space-2) var(--space-1); border: 0; border-bottom: var(--stroke-hair) solid var(--border-soft); border-radius: 0; }
+.tpx-opts > li:last-child .tpx-opt.btn { border-bottom: 0; }
+.tpx-ic { width: 24px; height: 24px; border-radius: 0; background: none; color: var(--umber-700); }
+.tpx-txt b { font-weight: 700; }
+.tpx-impact { border-radius: var(--radius-panel); }
+.tpx-day.btn { border-radius: var(--radius-control); }
+/* the chosen day: the kit's select border, set above */
+
+/* ---- Share this trip: two setting rows under the choice and Copy link ---- */
+.tpsh-row.btn { border-radius: 0; }

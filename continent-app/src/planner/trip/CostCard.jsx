@@ -1,6 +1,7 @@
-import React, { useEffect, useId, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Money, Segmented } from '../../components/ui/index.js';
+import { Button, Figure, Money, Plate, Segmented } from '../../components/ui/index.js';
+import { HouseIcon } from '../../components/HouseIcons.jsx';
 import NotYet from '../../components/NotYet.jsx';
 import { PriceNotes } from '../../components/PriceNotes.jsx';
 import { BedIcon, CarIcon, ChevronRightIcon, DiningIcon, PencilIcon, RouteIcon } from '../../components/Icons.jsx';
@@ -9,7 +10,7 @@ import { AirlineMark } from '../../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { costTiles } from '../../lib/price/tiles.js';
 import { formatMoney } from '../../lib/money.js';
-import { CostArc, CostRow } from '../../components/CostCardKit.jsx';
+import { CostRow } from '../../components/CostCardKit.jsx';
 import { barSegments, costCardVariant, SHARE_MIN } from './costCardVariant.js';
 
 const LABEL = { travel: 'tp.tile.flights', around: 'tp.tile.around', stay: 'tp.tile.stay', food: 'tp.tile.food' };
@@ -53,6 +54,54 @@ export function CostBar({ tiles, lang = 'en' }) {
   );
 }
 
+const TRAIN_ICON = { travel: HouseIcon.flight, around: HouseIcon.route, stay: HouseIcon.bed, food: HouseIcon.food };
+
+/**
+ * The cost post's train (house style 2026-11, the trip lane; replaces the
+ * T1003 half arc in the card that ships): the trip's four parts coupled like
+ * wagons, each as long as its share of the total, each with its icon, no
+ * figure (the rows under it carry every figure; the arc had none either).
+ * Every part is inside the total, so none is outlined (DESIGN.md: the
+ * outlined pill means "outside the day figure" and nothing else). A part
+ * without a figure yet is the dashed "Not yet" wagon, set apart after the
+ * train; a part that is not needed draws nothing. The class `ccard-arc`
+ * stays on it: it is still the card's drawing of its parts.
+ * A wagon that arrives right after the traveller's own act couples in
+ * (`hs-couple-in`); one that arrives any other way just appears.
+ */
+function CostTrain({ tiles, mine = false }) {
+  const { t } = useI18n();
+  const seen = useRef(null);
+  const shown = tiles.filter((x) => !x.missing && !x.empty && x.eur > 0);
+  const missing = tiles.filter((x) => x.missing);
+  const before = seen.current;
+  seen.current = new Set(shown.map((x) => x.key));
+  return (
+    <div className="ccard-arc ccard-train" aria-hidden="true">
+      <span className="ccard-train-run">
+        {shown.map((x) => {
+          const Glyph = x.key === 'travel' && x.driving ? HouseIcon.car : TRAIN_ICON[x.key];
+          const fresh = mine && before && !before.has(x.key);
+          return (
+            <span key={x.key} className={`hs-wagon ccard-wagon is-${x.key}${fresh ? ' hs-couple-in' : ''}`} style={{ '--ww': Math.max(1, Math.round(x.eur)) }}>
+              {Glyph && <Glyph size={16} />}
+            </span>
+          );
+        })}
+      </span>
+      {missing.map((x) => {
+        const Glyph = TRAIN_ICON[x.key];
+        return (
+          <span key={x.key} className="hs-wagon is-none ccard-wagon">
+            {Glyph && <Glyph size={16} />}
+            <span>{t('price.notMeasured')}</span>
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
 /**
  * What the trip costs (T1003, owner 2026-11-02: "fully redesign it: too busy,
  * no white card, another visual than the two line bars, Carta colours,
@@ -84,10 +133,13 @@ export function CostBar({ tiles, lang = 'en' }) {
  *   lifestyle      { bed, vibe } from useLifestyleParts()
  *   onLifestyle    opens the Lifestyle panel
  *   onChangeFlight(dir)  opens the flight sheet
+ *   mine           the traveller changed something a moment ago (house
+ *                  style): the total rolls with its delta note; otherwise
+ *                  a new total swaps in place without motion
  */
 export function CostCard({
   priced, people = 1, per = 'group', onPer, budget = null, onOpen = null, onAll = null, onAddPaid = null, aroundNote = '',
-  lifestyle = null, onLifestyle = null, onChangeFlight = null,
+  lifestyle = null, onLifestyle = null, onChangeFlight = null, mine = false,
 }) {
   const { t, lang } = useI18n();
   const [variant] = useState(readVariant);
@@ -98,7 +150,6 @@ export function CostCard({
   const shown = per === 'person' ? priced?.perPerson : total;
   const div = per === 'person' ? Math.max(1, people) : 1;
   const tiles = costTiles(priced);
-  const parts = tiles.filter((x) => !x.missing && !x.empty);
   const money = (v) => formatMoney(v, { precision: 'whole', locale: lang });
 
   const cf = priced?.cartaFlight || {};
@@ -205,14 +256,21 @@ export function CostCard({
         )}
       </div>
 
-      <CostArc parts={parts}>
-        <p className="ccard-sum">
+      {/* House style: the total is the screen's one total plate, its unit
+          the plate's label; the train of its four parts under it. */}
+      <Plate
+        variant="total"
+        className="ccard-total"
+        name={<span className="ccard-unit">{unit}</span>}
+        fig={(
           <span className="ccard-n" data-total={Number.isFinite(total) ? String(total) : ''}>
-            {Number.isFinite(shown) ? <Money value={shown} est precision="cents" /> : <NotYet />}
+            {Number.isFinite(shown)
+              ? <Figure value={shown} precision="cents" mine={mine} still={!mine} delta={mine} label={unit} />
+              : <NotYet />}
           </span>
-          <span className="ccard-unit">{unit}</span>
-        </p>
-      </CostArc>
+        )}
+      />
+      {tiles.length > 0 && <CostTrain tiles={tiles} mine={mine} />}
 
       {budget && <div className="ccard-budget">{budget}</div>}
 

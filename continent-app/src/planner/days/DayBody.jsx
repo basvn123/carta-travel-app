@@ -179,27 +179,31 @@ export function DayBody({
             onDetail={setDetail}
           />
 
-          <DayKit tools={kitTools} />
+          {/* House style (G1): the day's kit, its town and its exports;
+              a column of their own beside the list on a tablet. */}
+          <div className="dayws-aside">
+            <DayKit tools={kitTools} />
 
-          {/* T898: the town's guide is about the town, not the day: one
-              closed block after the day, without the empty questions. */}
-          {stop?.dest && (
-            <DayTownGuide
-              dest={stop.dest}
-              destId={stop.destination_id}
-              month={dayMonth}
-              folded
+            {/* T898: the town's guide is about the town, not the day: one
+                closed block after the day, without the empty questions. */}
+            {stop?.dest && (
+              <DayTownGuide
+                dest={stop.dest}
+                destId={stop.destination_id}
+                month={dayMonth}
+                folded
+              />
+            )}
+
+            <DayExports
+              onPdf={downloadPdf}
+              onShareLink={shareDayLink}
+              onShareText={shareDay}
+              onIcs={downloadIcsFile}
+              onKml={downloadKmlFile}
+              note={shareState === 'copied' ? t('day.copied') : shareState === 'linked' ? t('dayws.linkCopied') : ''}
             />
-          )}
-
-          <DayExports
-            onPdf={downloadPdf}
-            onShareLink={shareDayLink}
-            onShareText={shareDay}
-            onIcs={downloadIcsFile}
-            onKml={downloadKmlFile}
-            note={shareState === 'copied' ? t('day.copied') : shareState === 'linked' ? t('dayws.linkCopied') : ''}
-          />
+          </div>
         </>
       )}
     </>

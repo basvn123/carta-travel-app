@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Money } from '../components/ui/index.js';
+import { Button, Money, Plate } from '../components/ui/index.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { ReceiptCard } from '../components/ReceiptCard.jsx';
 import { PriceNotes } from '../components/PriceNotes.jsx';
@@ -111,13 +111,16 @@ export function DayCostBar({ dayCost, dayNumber, trip = null, onOpen, onOpenTrip
 
 export function DayStrip({ title, sub, dayCost, onOpen, dayNumber }) {
   const { t, lang } = useI18n();
+  // House style (G1): the strip is the day's signpost plate, the place and
+  // the day, its stops and hours and the day's figure as one unit; the
+  // figure stays the button that opens the receipt.
   return (
-    <div className="day-strip">
-      <span className="day-strip-text">
-        <b className="day-strip-title">{title}</b>
-        {sub && <span className="day-strip-sub">{sub}</span>}
-      </span>
-      {dayCost && (
+    <Plate
+      as="div"
+      className="day-strip-plate"
+      name={<b className="day-strip-title">{title}</b>}
+      sub={sub ? <span className="day-strip-sub">{sub}</span> : null}
+      fig={dayCost ? (
         <Button
           variant="quiet"
           className="day-strip-cost"
@@ -132,8 +135,8 @@ export function DayStrip({ title, sub, dayCost, onOpen, dayNumber }) {
         >
           <DayFigure dayCost={dayCost} t={t} />
         </Button>
-      )}
-    </div>
+      ) : null}
+    />
   );
 }
 

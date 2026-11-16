@@ -951,13 +951,12 @@
 .dayws-titlebar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .dayws-titlebar .dayws-title { min-width: 0; }
 
-/* The drawer's strip: the day and its figure, a tap from the receipt. */
-.day-strip { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-width: 0; padding-left: var(--space-4); }
+/* The drawer's strip: the day and its figure, a tap from the receipt; since
+   the house style a signpost plate (planner/days/DayHouse.css). */
 .day-strip-title,
 .day-strip-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .day-strip-title { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
 .day-strip-sub { font-size: var(--text-caption); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.day-strip .dcb-fig { align-items: flex-end; text-align: right; }
 
 /* The cost bar at the foot of the day (desktop): the trip first inside a
    trip (owner T492-f), then the day; each part opens what it holds. */
