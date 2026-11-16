@@ -76,6 +76,10 @@ write_files:
       RCLONE_CONFIG_R2_ENDPOINT='@@R2_ENDPOINT@@'
       RCLONE_CONFIG_R2_ACCESS_KEY_ID='@@R2_ACCESS_KEY_ID@@'
       RCLONE_CONFIG_R2_SECRET_ACCESS_KEY='@@R2_SECRET_ACCESS_KEY@@'
+      # The R2 token may read and write objects but not create buckets; without
+      # this every upload first tries CreateBucket and gets 403 (2026-11-16,
+      # T047-b). The orchestrator's env file sets the same.
+      RCLONE_CONFIG_R2_NO_CHECK_BUCKET='true'
       # Empty unless spawn.sh ran with CARTA_WORKER_SELF_DELETE=1.
       CARTA_WORKER_HCLOUD_TOKEN='@@CARTA_WORKER_HCLOUD_TOKEN@@'
       # T647. Empty unless the job's needs include gpg (trailslab) and the
@@ -92,7 +96,7 @@ write_files:
       # https://downloads.rclone.org/v1.75.1/SHA256SUMS
       # CARTA_ prefixed on purpose: this file is sourced under set -a, and
       # rclone reads every exported RCLONE_<FLAG> as that flag, so an
-      # exported CARTA_RCLONE_VERSION became --version=1.75.1 and every rclone
+      # exported RCLONE_VERSION became --version=1.75.1 and every rclone
       # call on the worker died (2026-11-16, T047-b). Only RCLONE_CONFIG_*
       # (the R2 remote) may be exported here.
       CARTA_RCLONE_VERSION='1.75.1'
