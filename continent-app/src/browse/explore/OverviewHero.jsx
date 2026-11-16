@@ -1,6 +1,7 @@
 import React from 'react';
 import { openAskChat } from '../ask/askChatStore.js';
-import { SparkIcon, SearchIcon, FilterIcon, BookmarkIcon, DiamondIcon, TrainIcon, PersonIcon, PiggyIcon, SunIcon, StarIcon, BootIcon, BeachIcon } from '../../components/Icons.jsx';
+import { SparkIcon, DiamondIcon } from '../../components/Icons.jsx';
+import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
 import { PriceViewSwitch } from '../../components/PriceViewSwitch.jsx';
 
@@ -57,7 +58,7 @@ export function OverviewHero({
               its label, with no placeholder. */}
           <div className="xov-field">
             <div className="xov-seg xov-seg-where">
-              <SearchIcon size={20} className="xov-where-icon" />
+              <HouseIcon.search size={20} className="xov-where-icon" />
               <label className="xov-seg-cap" htmlFor={whereId}>{t('explore.askOrSearch')}</label>
               {/* A blank placeholder, only so CSS can tell an empty field
                   (:placeholder-shown) and rest the label where the value goes. */}
@@ -66,7 +67,7 @@ export function OverviewHero({
                 onChange={(e) => setWhere(e.target.value)} />
             </div>
             <Button type="submit" variant="secondary" className="xov-go"
-              iconStart={<SearchIcon size={18} />}>
+              iconStart={<HouseIcon.search size={18} />}>
               <span className="xov-go-word">{t('explore.heroSearch')}</span>
             </Button>
           </div>
@@ -86,7 +87,7 @@ export function OverviewHero({
               and Show all places (each rail has See all) left the row. */}
           <Button ref={filtersRef} variant="secondary" size="sm"
             className={`xquick-chip xquick-filters${filtersOn ? ' is-on' : ''}`}
-            iconStart={<FilterIcon size={16} />} aria-expanded={filtersOn}
+            iconStart={<HouseIcon.filter size={18} />} aria-expanded={filtersOn}
             onClick={onAllFilters}>
             {t('places.allFilters')}
             {filterCount > 0 && <Chip kind="count" className="xfilters-n">{filterCount}</Chip>}
@@ -118,6 +119,6 @@ function isQuestion(q) {
 
 /** The quick chips' icons: the same line icons the filter pane uses. */
 const QUICK_ICONS = {
-  saved: BookmarkIcon, gems: DiamondIcon, nocar: TrainIcon, quiet: PersonIcon,
-  cost: PiggyIcon, now: SunIcon, top: StarIcon, hiking: BootIcon, beach: BeachIcon,
+  saved: HouseIcon.cairn, gems: DiamondIcon, nocar: HouseIcon.train, quiet: HouseIcon.people,
+  cost: HouseIcon.gauge, now: HouseIcon.sun, top: HouseIcon.star, hiking: HouseIcon.trails, beach: HouseIcon.beaches,
 };

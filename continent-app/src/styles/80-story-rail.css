@@ -265,8 +265,21 @@
   .storyr .storyr-card:hover .card-media img { scale: 1.03; }
 }
 .storyr .storyr-card .card-title { font-weight: 700; }
-.storyr .storyr-card .card-figures { align-items: center; gap: var(--space-2); }
-.storyr .storyr-card .card-rating { line-height: 1; }
+.storyr .storyr-card .card-figures { display: contents; }
+/* One rail card grammar with Explore's: the Score plate beside the name,
+   the meta line under it, the figures last. */
+.storyr .storyr-card .card-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "title rating" "meta meta" "price price";
+  align-items: start;
+  column-gap: var(--space-2);
+  row-gap: var(--space-1);
+}
+.storyr .storyr-card .card-title { grid-area: title; min-width: 0; }
+.storyr .storyr-card .card-meta { grid-area: meta; }
+.storyr .storyr-card .card-price { grid-area: price; }
+.storyr .storyr-card .card-rating { grid-area: rating; margin: 0; line-height: 1; }
 /* The Score as the house plate: ink, the figure in paper, no star. */
 .storyr .storyr-score .score-chip {
   min-width: 36px;

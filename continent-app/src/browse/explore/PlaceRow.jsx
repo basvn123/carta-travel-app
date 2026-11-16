@@ -3,6 +3,7 @@ import { WaterQualityBadge, swimRelevant } from '../../components/WaterQualityBa
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { regionLine, tripDates } from '../../lib/placeOverview.js';
+import { countryName } from '../../lib/countryName.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { useDayView } from '../../hooks/useDayView.js';
 import { useI18n } from '../../i18n/index.jsx';
@@ -60,6 +61,7 @@ export const PlaceRow = React.memo(function PlaceRow({
   rootRef = null, rootProps = null, hitProps = null, children = null,
 }) {
   const where = regionLine(p, region, t);
+  const country = countryName(p.iso2, p.country);
   const score = rating || p.rating;
   const figRef = React.useRef(null);
   useSettledFigure(figRef, p.cost?.dayEur ?? null);
@@ -94,7 +96,12 @@ export const PlaceRow = React.memo(function PlaceRow({
         </span>
         <span className="xrow-line2">
           <CountryFlag country={p.iso2} size={12} />
-          <span className="xrow-country">{where}</span>
+          {/* A narrow list (a phone, the map's column) shows the country;
+              a wide one, and every screen reader, the region with it. */}
+          <span className="xrow-country">
+            <span className="xrow-where-full">{where}</span>
+            {where !== country && <span className="xrow-where-short" aria-hidden="true">{country}</span>}
+          </span>
           {p.rating?.hidden_gem && <span className="hs-gem xrow-gem">{t('common.hiddenGem')}</span>}
           {swimRelevant(p) && <WaterQualityBadge bathing={p.bathing_water} t={t} showLabel={false} />}
         </span>

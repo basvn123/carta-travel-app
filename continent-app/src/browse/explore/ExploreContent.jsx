@@ -1,5 +1,6 @@
 import React from 'react';
 import { LoadingBlock } from '../../components/StateBlocks.jsx';
+import { prefersReducedMotion } from '../../lib/motion.js';
 import { ExploreMap, DRAWER_MAX } from './exploreMapLazy.js';
 import { MapPlacePanel } from '../MapPlacePanel.jsx';
 import { MapDrawer } from '../../components/MapDrawer.jsx';
@@ -8,6 +9,58 @@ import { EmptyResult } from '../EmptyResult.jsx';
 import { Blaze, Button } from '../../components/ui/index.js';
 import { ExploreCard } from './ExploreCard.jsx';
 import { ListHead } from './PlaceRow.jsx';
+
+// The List or Map switch is a route change (DESIGN.md "Route"): the content
+// rises in once on the traveller's own switch, never at first paint, and the
+// map stays mounted (T441), so the class is added, not a remount.
+// Reflow (DESIGN.md "Primitives"): after the traveller's own sort or
+// filter, rows that stay glide from where they were on the settle curve and
+// rows that arrive fade in. Only while 24 rows or fewer are on screen, no
+// per-row stagger, nothing at first paint, nothing under reduced motion.
+// Positions are read from offsetTop, so a scroll between renders never
+// reads as a move.
+const GLIDE_MAX = 24;
+function useReflowGlide(ref, ids) {
+  const prev = React.useRef(null);
+  const key = ids.join('|');
+  React.useLayoutEffect(() => {
+    const list = ref?.current?.querySelector('.xrows--ledger');
+    if (!list) return;
+    const rows = [...list.children].filter((el) => el.dataset && el.dataset.id);
+    const now = new Map(rows.map((el) => [el.dataset.id, el.offsetTop]));
+    const before = prev.current;
+    prev.current = now;
+    if (!before || prefersReducedMotion() || typeof rows[0]?.animate !== 'function') return;
+    const vh = window.innerHeight;
+    const seen = rows.filter((el) => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < vh; });
+    if (!seen.length || seen.length > GLIDE_MAX) return;
+    const css = getComputedStyle(document.documentElement);
+    const settle = { duration: parseFloat(css.getPropertyValue('--dur-settle')) || 400, easing: css.getPropertyValue('--ease-settle').trim() || 'ease-out' };
+    const fade = { duration: parseFloat(css.getPropertyValue('--dur-2')) || 200, easing: 'ease-out' };
+    for (const el of seen) {
+      const was = before.get(el.dataset.id);
+      if (was == null) { el.animate([{ opacity: 0 }, { opacity: 1 }], fade); continue; }
+      const dy = was - now.get(el.dataset.id);
+      if (Math.abs(dy) >= 1) el.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], settle);
+    }
+  }, [ref, key]);
+}
+
+function useRouteIn(ref, view) {
+  const last = React.useRef(view);
+  React.useEffect(() => {
+    if (last.current === view) return undefined;
+    last.current = view;
+    const el = ref?.current;
+    if (!el) return undefined;
+    el.classList.remove('hs-route-in');
+    void el.offsetWidth;
+    el.classList.add('hs-route-in');
+    const done = () => el.classList.remove('hs-route-in');
+    el.addEventListener('animationend', done, { once: true });
+    return () => el.removeEventListener('animationend', done);
+  }, [ref, view]);
+}
 
 export function ExploreContent({
   allRows, anyActive, cardLinkId, chips, contentRef, costIndex, drawer, dxf, emptyLine, favSet,
@@ -18,6 +71,8 @@ export function ExploreContent({
   setCardLinkId, setDrawer, setLocationQuery, setPickedId, setShowFavOnly, setView, showFavOnly,
   shownRows, t, taxRows, view, viewSwitch, viewportMode, visible, xf,
 }) {
+  useRouteIn(contentRef, view);
+  useReflowGlide(contentRef, listed.map((p) => p.id));
   return (
     <div className={`xcontent ${view === 'map' ? 'xcontent--split' : ''}`.trim()} ref={contentRef}
       style={mapTop != null ? { '--xmap-top': `${mapTop}px` } : undefined}>
@@ -86,6 +141,8 @@ export function ExploreContent({
             no longer carries its own block or list. */}
         {/* The rails' doors, Show all places and the map toggle moved to
             the head block (T595); the rails draw no doors of their own. */}
+        {/* The rails' figures are a day, a person: said once, over them. */}
+        {railsIdle && rails.some((r) => r.rows.length >= 4) && <ListHead t={t} />}
         {railsIdle && (
           <ExploreRails rails={rails} onSelect={openPlace} t={t}
             favorites={favSet} onToggleFav={onToggleFav}

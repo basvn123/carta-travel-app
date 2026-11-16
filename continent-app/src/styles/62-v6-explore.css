@@ -526,6 +526,19 @@
   color: var(--text-2);
 }
 .xrow-hs .xrow-country { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The flag and the water mark never shrink; the words give way. */
+.xrow-hs .xrow-line2 > .country-flag,
+.xrow-hs .xrow-line2 > .water-badge,
+.xrow-hs .xrow-line2 > .xrow-gem { flex: none; }
+/* A narrow list shows the country; the region with it is read, not drawn. */
+.xrow-hs .xrow-country:has(.xrow-where-short) .xrow-where-full {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .xrow-hs .xrow-gem { margin-left: 0; font-size: var(--text-label); }
 .xrow-hs .xrow-hit .xrow-why { display: none; grid-area: why; min-width: 0; font-size: var(--text-label); color: var(--text-2); line-height: var(--leading-ui); }
 .xrow-hs .xrow-fit { grid-area: fit; margin-top: var(--space-1); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); min-width: 0; font-size: var(--text-label); color: var(--text-2); }
@@ -562,11 +575,29 @@
 .xrow-hs.is-selected .hs-formation-day .pitems-trigger { color: inherit; }
 
 .explore-shell .xempty-mark { display: block; margin: var(--space-6) 0 var(--space-3); }
+.explore-shell .xcontent-main > .xlist-head:has(+ .xrails) { margin-bottom: var(--space-4); }
+@media (max-width: 768px) {
+  /* Room under the last row for the floating Map pill. */
+  .explore-shell .xcontent-main { padding-bottom: calc(var(--tap) + var(--space-7)); }
+}
 
 /* Save (ExploreCards.jsx SaveButton): the cairn, its stones filled in umber
    once saved; it pops on the traveller's own press only (.hs-pop). */
 .xsave[aria-pressed="true"] { color: var(--action); }
 .xsave[aria-pressed="true"] .hs-icon-cairn .stone { fill: currentColor; }
+
+/* A list under 340 px (the map's docked column at 769 to 1199): the parts
+   take their own line, so the country stays readable beside the flag. */
+@container xlist (max-width: 339px) {
+  .xrow-hs .xrow-hit {
+    grid-template-areas:
+      "media l1 l1 day"
+      "media l2 l2 l2"
+      "media parts parts parts"
+      "media fit fit fit";
+  }
+  .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
+}
 
 /* A list of 600 px and more: one line a place, the parts in their own
    column before the figure. */
@@ -582,6 +613,8 @@
   }
   .xrow-hs .xrow-media { width: 56px; height: 56px; }
   .xrow-hs .xform-parts { --wh: 24px; gap: 4px; margin-top: 0; }
+  .xrow-hs .xrow-country:has(.xrow-where-short) .xrow-where-full { position: static; width: auto; height: auto; overflow: visible; clip-path: none; }
+  .xrow-hs .xrow-where-short { display: none; }
   .xrow-hs .xform-parts .hs-wagon { padding-inline: 9px; gap: 4px; }
   .xrow-hs .xform-parts .hs-wagon svg { width: 13px; height: 13px; }
   .xrow-hs .xrow-hit { row-gap: var(--space-1); }
