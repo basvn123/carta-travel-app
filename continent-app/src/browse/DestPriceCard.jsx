@@ -8,7 +8,10 @@ import { quoteNights } from '../lib/price/nights.js';
 import { priceNotes } from '../lib/price/notes.js';
 import { NotMeasuredValue, ThinBedNote } from '../components/PriceNotes.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
-import { Button, Money, Segmented } from '../components/ui/index.js';
+import {
+  Button, Money, Segmented, Plate, Formation, Figure, CostRow, CostSum, Chip, ChipGroup,
+} from '../components/ui/index.js';
+import { haptic } from '../lib/haptics.js';
 import { formatMoney } from '../lib/money.js';
 import { doPriceOf } from '../lib/price/doPrice.js';
 import { Switch } from '../components/ui/Switch.jsx';
@@ -102,6 +105,9 @@ export function DestPriceCard({
   const [flightsOpen, setFlightsOpen] = React.useState(false);
   const [modePick, setModePick] = React.useState(null);
   const datesBtnRef = React.useRef(null);
+  // G1 (house style): when the traveller last changed an input here, so the
+  // total rolls only after their own act, never on a data refresh.
+  const actAt = React.useRef(0);
   React.useEffect(() => {
     if (!openSignal) return;
     setPickEnd('start');
@@ -198,7 +204,7 @@ export function DestPriceCard({
   const profileKey = matchProfile(choices?.lifestyle || {});
   const vibe = profileKey ? t(PROFILE_LABEL_KEYS[profileKey]) : t('lifestyle.custom');
 
-  const acted = () => markFirstResultSeen();
+  const acted = () => { actAt.current = Date.now(); markFirstResultSeen(); };
   // A pick on the leaving end moves the stay and keeps its length, then hands
   // the next pick to the return; a pick on the return end sets it, unless it
   // lands on or before the leaving day, which then moves instead (the
@@ -269,13 +275,38 @@ export function DestPriceCard({
   const lineSub = (l) => (l.key === 'stay' ? t(`stay.${tier}`) : l.key === 'ground' ? vibe : '');
   const opensLifestyle = (l) => onOpenLifestyle && (l.key === 'stay' || l.key === 'ground');
 
+  // G1 (house style): the receipt's lines print in whole euros; when they
+  // do not add up to the engine's own total, a Rounding line says by how
+  // much (decision 0012, must-fix 3). Display only: the total is never changed.
+  const printedSum = price.lines.reduce((sum, l) => sum + Math.round(l.eur), 0);
+  const rounding = Math.round(price.total) - printedSum;
+  const lineKind = (l) => (l.key === 'flight' ? 'flight' : l.key === 'way' ? (l.mode === 'plane' ? 'flight' : l.mode)
+    : l.key === 'stay' ? 'bed' : l.key === 'ground' ? 'food' : l.key === 'car' ? 'car'
+      : l.key === 'transport' ? 'local' : 'tickets');
+  const mine = Date.now() - actAt.current < 1500;
+  // Ways as a radio group: arrow keys move the pick, as a native radio does.
+  const onWayKey = (e) => {
+    const keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
+    if (!keys.includes(e.key)) return;
+    const items = [...e.currentTarget.querySelectorAll('[role="radio"]')];
+    const i = items.indexOf(document.activeElement);
+    if (i < 0) return;
+    e.preventDefault();
+    const n = items.length;
+    const j = e.key === 'Home' ? 0 : e.key === 'End' ? n - 1
+      : (i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1) + n) % n;
+    items[j].focus();
+    items[j].click();
+  };
+
   return (
     <div className="dpc-wrap">
-      <section className="ccard tcard" aria-labelledby={`${uid}-h`}>
+      <section className="tcard" aria-labelledby={`${uid}-h`}>
         <h3 className="sr-only" id={`${uid}-h`}>{t('dest.priceTitle', { nights: nightsText, city })}</h3>
 
-        {/* The band: the inputs, then the trip's total for the party (the
-            research's one anchor), then a person and a day under it. */}
+        {/* The band (G1, house style): the inputs, then the day a person as
+            the loudest figure with its split as the formation, then the stay
+            for the party on one signpost plate, then the page's primary. */}
         <div className="tcard-band">
           <div className="dpc-inputs" role="group" aria-label={t('receipt.stripAria')}>
             <button type="button" className={pill(datesOpen)} ref={datesBtnRef}
@@ -289,21 +320,45 @@ export function DestPriceCard({
               <PersonIcon size={16} />{peopleText}
             </button>
           </div>
-          <p className="tcard-total" ref={linesRef}>
-            <Money value={price.total} />
-            <span>{t('tc.forParty', { people: peopleText, nights: nightsText })}</span>
-          </p>
-          <p className="tcard-each" ref={dayRef}>
-            {price.each != null && <span>{t('tc.each', { price: money(price.each) })}</span>}
-            <PriceItems cost={costRow} way={carta?.perSeat > 0 ? { mode: 'plane', perPerson: carta.perSeat } : null}>
-              <Money value={view.day(price.dayEur)} />
-            </PriceItems>
-            <span>{view.unit}</span>
-          </p>
+          <div className="tcard-dayrow">
+            <p className="tcard-each" ref={dayRef}>
+              <PriceItems cost={costRow} way={carta?.perSeat > 0 ? { mode: 'plane', perPerson: carta.perSeat } : null}>
+                <Money value={view.day(price.dayEur)} />
+              </PriceItems>
+              <span className="tcard-unit">{view.unit}</span>
+            </p>
+            {(Number.isFinite(costRow?.stayEur) || Number.isFinite(costRow?.foodEur)) && (
+              <Formation className="tcard-split" weighted
+                bed={Number.isFinite(costRow?.stayEur) ? view.day(costRow.stayEur) : undefined}
+                food={Number.isFinite(costRow?.foodEur) ? view.day(costRow.foodEur) : undefined}
+                day={view.day(price.dayEur)} />
+            )}
+          </div>
+          <div className="tcard-total" ref={linesRef}>
+            <Plate
+              name={t('place.tripName', { nights: nightsText, people: peopleText })}
+              sub={price.each != null ? t('tc.each', { price: money(price.each) }) : null}
+              fig={<Figure value={price.total} mine={mine} still={!mine} delta label={t('place.total')} className="money" />}
+            />
+          </div>
+          {/* The page's one primary (hidden below 1024 px, where the foot bar
+              carries it), and one day as a quiet link under it. */}
+          {(onPlanTrip || onPlanDay) && (
+            <div className="tcard-go">
+              {onPlanTrip && (
+                <Button variant="primary" block className="destp-plan-btn" iconStart={<RouteIcon size={18} />} onClick={onPlanTrip}>
+                  {t('dest.planTrip')}
+                </Button>
+              )}
+              {onPlanDay && (
+                <Button variant="quiet" size="sm" className="tcard-day" onClick={onPlanDay}>{t('destx.planOneDay')}</Button>
+              )}
+            </div>
+          )}
         </div>
 
         {datesOpen && (
-          <div className="dpc-sheet dprice-dates tcard-sheet" id={`${uid}-dates`}>
+          <div className="dpc-sheet dprice-dates tcard-sheet hs-reveal" id={`${uid}-dates`}>
             <Segmented
               block
               className="dprice-ends"
@@ -342,7 +397,7 @@ export function DestPriceCard({
           </div>
         )}
         {partyOpen && (
-          <div className="dpc-party tcard-sheet" id={`${uid}-party`}>
+          <div className="dpc-party tcard-sheet hs-reveal" id={`${uid}-party`}>
             <span className="pt-field-label">{t('settings.party')}</span>
             <Stepper value={people} min={1} max={MAX_PARTY} onChange={setPeople}
               ariaLabel={t('settings.partyAria', { n: people })}
@@ -352,34 +407,44 @@ export function DestPriceCard({
 
         <div className="tcard-body">
           {/* Getting there (T1026): every way that prices, one to pick; the
-              pick is the way there in the total. */}
+              pick is the way there in the total. Leg plates (G1); the unit
+              is said once, in the head. */}
           {rows.length > 0 && (
             <div className="tcard-part">
-              <h4 className="tcard-h">{ways?.from ? t('destx.gettingFrom', { place: ways.from }) : t('detail.gettingThere')}</h4>
-              <div className="tcard-ways" role="radiogroup" aria-label={t('detail.gettingThere')}>
-                {rows.map((w) => {
+              <h4 className="tcard-h" id={`${uid}-ways`}>
+                <span>{ways?.from ? t('destx.gettingFrom', { place: ways.from }) : t('detail.gettingThere')}</span>
+                <span className="tcard-h-unit">{t('place.wayUnit')}</span>
+              </h4>
+              <div className="tcard-ways" role="radiogroup" aria-labelledby={`${uid}-ways`} onKeyDown={onWayKey}>
+                {rows.map((w, i) => {
                   const Icon = WAY_ICONS[w.mode] || RouteIcon;
                   const on = w.mode === mode;
+                  const fp = fpText(w);
+                  const stop = on || (!pickedWay && i === 0);
                   return (
-                    <button type="button" key={w.mode} role="radio" aria-checked={on}
-                      className={`tcard-way${on ? ' is-on' : ''}`} onClick={() => { acted(); setModePick(w.mode); }}>
-                      <span className="tcard-way-ico" aria-hidden="true">
-                        {w.mode === 'plane' && w.airline ? <AirlineMark code={w.airline} size="sm" /> : <Icon size={18} />}
-                      </span>
-                      <span className="tcard-way-what">
+                    <Plate key={w.mode} variant="leg" as="button" checked={on} tabIndex={stop ? 0 : -1}
+                      className={`tcard-way${on ? ' is-on' : ''}`}
+                      onClick={() => { acted(); setModePick(w.mode); haptic('tick'); }}
+                      lead={(
+                        <span className="tcard-way-ico" aria-hidden="true">
+                          {w.mode === 'plane' && w.airline ? <AirlineMark code={w.airline} size="sm" /> : <Icon size={18} />}
+                        </span>
+                      )}
+                      name={(
                         <span className="tcard-way-name">
                           {wayName(w)}
                           {rows.length > 1 && w.mode === ways.cheapest && <span className="tcard-badge is-cheap">{t('destx.cheapest')}</span>}
                           {fastest === w.mode && fastest !== ways.cheapest && <span className="tcard-badge">{t('tc.fastest')}</span>}
                         </span>
-                        <span className="tcard-way-sub">{waySub(w)}</span>
-                        {fpText(w) && <span className="tcard-way-fp">{fpText(w)}</span>}
-                      </span>
-                      <span className="tcard-way-fig">
-                        <b>{money(w.perPerson)}</b>
-                        <small>{t('tc.returnEach')}</small>
-                      </span>
-                    </button>
+                      )}
+                      sub={(
+                        <span className="tcard-way-sub">
+                          {waySub(w)}
+                          {fp && <span className="tcard-way-fp">{fp}</span>}
+                        </span>
+                      )}
+                      fig={money(w.perPerson)}
+                    />
                   );
                 })}
               </div>
@@ -403,7 +468,7 @@ export function DestPriceCard({
                 </div>
               )}
               {mode === 'plane' && cartaLine && flightsOpen && (
-                <div className="dpc-flights tcard-flights" id={`${uid}-flights`}>
+                <div className="dpc-flights tcard-flights hs-reveal" id={`${uid}-flights`}>
                   <FlightPass dir="out" leg={withEnds(carta.out, home, airport)} paying={people} bagKey={bagKey} airlines={airlines} />
                   <FlightPass dir="back" leg={withEnds(carta.back, airport, home)} paying={people} bagKey={bagKey} airlines={airlines} />
                   <p className="dpc-flt-note">
@@ -420,52 +485,54 @@ export function DestPriceCard({
 
           {/* Where you sleep (T1026, owner: "change stays"): the stay types
               this place prices, one tap each; the same choice the Lifestyle
-              holds, so every card follows. */}
+              holds, so every card follows. Kit choice chips (G1). */}
           {offered.length > 1 && (
             <div className="tcard-part">
               <h4 className="tcard-h">{t('lifestyle.stay')}</h4>
-              <div className="tcard-chips" role="radiogroup" aria-label={t('lifestyle.stay')}>
+              <ChipGroup className="tcard-chips" label={t('lifestyle.stay')}>
                 {offered.map((k) => (
-                  <button type="button" key={k} role="radio" aria-checked={k === tier}
+                  <Chip key={k} kind="choice" selected={k === tier}
                     className={`tcard-chip${k === tier ? ' is-on' : ''}`}
                     onClick={() => { acted(); ctx.setChoices((prev) => ({ ...prev, stay_tier: k })); }}>
                     {t(`stay.${k}`)}
-                  </button>
+                  </Chip>
                 ))}
-              </div>
+              </ChipGroup>
             </div>
           )}
 
-          {/* The breakdown: every line of the total, the total under them. */}
-          <dl className="tcard-lines">
+          {/* The receipt (G1): every line of the total along a dotted
+              leader, a Rounding line where the printed lines do not add up,
+              the engine's own total, and what has no figure yet under it,
+              outside the sum. */}
+          <dl className="tcard-lines costrows has-leaders">
             {price.lines.map((l) => (
-              <div key={l.key} className="tcard-line">
-                <dt>
-                  {opensLifestyle(l) ? (
-                    <button type="button" className="tcard-line-btn" aria-haspopup="dialog" onClick={onOpenLifestyle}>
-                      {lineLabel(l)}
-                      <small>{lineSub(l)}<PencilIcon size={12} /></small>
-                    </button>
-                  ) : lineLabel(l)}
-                </dt>
-                <dd>
-                  <Money value={l.eur} />
-                  {l.thin && <ThinBedNote />}
-                </dd>
-              </div>
+              <CostRow key={l.key} kind={lineKind(l)} className="tcard-line"
+                label={opensLifestyle(l) ? (
+                  <button type="button" className="tcard-line-btn" aria-haspopup="dialog" onClick={onOpenLifestyle}>
+                    {lineLabel(l)}
+                    <small>{lineSub(l)}<PencilIcon size={12} /></small>
+                  </button>
+                ) : lineLabel(l)}
+                value={(
+                  <>
+                    <Money value={l.eur} />
+                    {l.thin && <ThinBedNote />}
+                  </>
+                )}
+              />
             ))}
+            {rounding !== 0 && (
+              <CostRow className="tcard-line is-rounding" label={t('place.rounding')}
+                value={`${rounding > 0 ? '+' : '\u2212'}${money(Math.abs(rounding))}`} />
+            )}
+            <CostSum className="tcard-line is-total" label={t('place.total')} value={<Money value={price.total} />} live={false} />
             {/* T1075 (D10): a part with no figure yet says so in words; the
-                total under it does not include it, and is never padded. */}
+                total above does not include it, and is never padded. */}
             {priceNotes(costRow).unmeasured.map((key) => (
-              <div key={key} className="tcard-line is-unmeasured">
-                <dt>{t(`price.item.${key}`)}</dt>
-                <dd><NotMeasuredValue /></dd>
-              </div>
+              <CostRow key={key} tone="missing" className="tcard-line is-unmeasured"
+                label={t(`price.item.${key}`)} value={<NotMeasuredValue />} />
             ))}
-            <div className="tcard-line is-total">
-              <dt>{t('destx.totalFor', { people: peopleText })}</dt>
-              <dd><Money value={price.total} /></dd>
-            </div>
           </dl>
         </div>
       </section>
@@ -476,22 +543,12 @@ export function DestPriceCard({
             <li className="pitems-row" key={a.key}>
               <Switch label={a.name} hint={t('price.actEach', { price: formatMoney(a.eur, { precision: Number.isInteger(a.eur) ? 'whole' : 'cents' }) })}
                 checked={actsOn.has(a.key)}
-                onChange={(on) => setActsOn((prev) => { const next = new Set(prev); if (on) next.add(a.key); else next.delete(a.key); return next; })} />
+                onChange={(on) => { actAt.current = Date.now(); setActsOn((prev) => { const next = new Set(prev); if (on) next.add(a.key); else next.delete(a.key); return next; }); }} />
             </li>
           ))}
         </ul>
       )}
 
-      {/* The page's one primary (hidden below 1024 px, where the foot bar
-          carries it), and one day as a quiet link under it. */}
-      {onPlanTrip && (
-        <Button variant="primary" block className="destp-plan-btn" iconStart={<RouteIcon size={18} />} onClick={onPlanTrip}>
-          {t('dest.planTrip')}
-        </Button>
-      )}
-      {onPlanDay && (
-        <Button variant="quiet" size="sm" className="tcard-day" onClick={onPlanDay}>{t('destx.planOneDay')}</Button>
-      )}
       {/* T1205 (I17): a price alert on this place, behind its flag. */}
       <PriceAlertControl
         refId={`dest:${dest.id}`}

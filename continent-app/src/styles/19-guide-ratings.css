@@ -23,16 +23,30 @@
 }
 .score-chip.xs,
 .score-chip.sm { font-size: var(--text-caption); }
-.score-chip.lg { font-size: var(--text-lead); gap: 6px; }
-.score-star { width: 1.05em; height: 1.05em; flex: none; color: var(--rate); }
-.score-chip.rt-0 .score-star { color: var(--text-3); }
-.score-chip-n { display: inline-block; }
+.score-chip.lg { font-size: var(--text-lead); gap: var(--space-2); }
+/* G1 (house style, DESIGN.md "Score plate"): no stars; the figure sits on
+   the small ink plate, the band word after it in ink. The markup (star svg,
+   data-band, data-score) stays for the readers and checks that use it. */
+.score-star { display: none; }
+.score-chip-n {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  background: var(--plate);
+  color: var(--on-plate);
+  font-weight: 800;
+}
+.score-chip.lg .score-chip-n { min-width: 44px; height: 30px; padding: 0 8px; }
 .score-chip-band {
   margin-left: var(--space-1);
-  font-weight: 500;
-  color: var(--text-2);
+  font-weight: 600;
+  color: var(--text);
 }
 .score-chip.lg .score-chip-band { font-size: var(--text-body); }
+@media (forced-colors: active) { .score-chip-n { border: 1px solid CanvasText; } }
 .hidden-gem-tag {
   display: inline-flex;
   align-items: center;

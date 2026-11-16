@@ -37,6 +37,9 @@
 .pmos.is-blank .pmos-blank { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pmos-track {
   display: flex;
+  gap: var(--space-2);
+  padding: 0 var(--pt-pad-r, var(--gutter)) 0 var(--pt-pad-l, var(--gutter));
+  scroll-padding-inline: var(--pt-pad-l, var(--gutter));
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
@@ -44,35 +47,37 @@
 }
 .pmos-track::-webkit-scrollbar { display: none; }
 .pmos-track:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.pmos-slide:only-child { width: 100%; }
 .pmos-slide {
   flex: none;
-  width: 100%;
+  width: 88%;
   aspect-ratio: 3 / 2;
-  max-height: 36vh;
+  max-height: 228px;
+  border-radius: var(--radius-card);
   object-fit: cover;
   scroll-snap-align: start;
   display: block;
   background: var(--surface-sunken);
 }
 .pmos-arrow.icon-btn { position: absolute; top: 50%; z-index: 1; transform: translateY(-50%); }
-.pmos-arrow.is-prev { left: var(--space-3); }
+.pmos-arrow.is-prev { left: calc(var(--pt-pad-l, var(--gutter)) + var(--space-2)); }
 .pmos-arrow.is-prev svg { transform: rotate(180deg); }
-.pmos-arrow.is-next { right: var(--space-3); }
+.pmos-arrow.is-next { right: calc(var(--pt-pad-r, var(--gutter)) + var(--space-2)); }
 .pmos-arrow:disabled { opacity: 0; pointer-events: none; }
 .pmos-count {
   position: absolute;
-  right: var(--space-3);
-  bottom: var(--space-3);
+  right: calc(var(--pt-pad-r, var(--gutter)) + var(--space-2));
+  bottom: var(--space-2);
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 32px;
+  min-height: var(--tap);
   padding: 0 var(--space-3);
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text);
-  box-shadow: var(--elev-1);
+  box-shadow: var(--elev-2);
   font: inherit;
   font-size: var(--text-caption);
   font-weight: 700;
@@ -100,8 +105,8 @@
     grid-template-columns: 2fr 1fr 1fr;
     grid-template-rows: 1fr 1fr;
     gap: var(--space-2);
-    height: 360px;
-    border-radius: 24px;
+    height: 300px;
+    border-radius: var(--radius-card);
     overflow: hidden;
   }
   .pmos-tile { display: block; width: 100%; height: 100%; min-height: 0; padding: 0; border: 0; overflow: hidden; background: var(--surface-sunken); cursor: zoom-in; }
@@ -118,7 +123,7 @@
   .pmos .pmos-all { display: inline-flex; position: absolute; right: var(--space-4); bottom: var(--space-4); box-shadow: var(--elev-1); border-color: transparent; }
   .pmos.pmos-n1 .pmos-all { display: none; }
 }
-@media (min-width: 1024px) { .pmos-grid { height: 440px; } }
+@media (min-width: 1024px) { .pmos-grid { height: clamp(320px, 30vw, 420px); } }
 @media (prefers-reduced-motion: reduce) { .pmos-tile img { transition: none; } }
 
 /* Every photograph, over the page: the dialog family (one scrim, one close). */
@@ -166,22 +171,35 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-main { min-width: 0; display: grid; }
 
 .pt-side { position: sticky; top: var(--space-4); }
+@media (min-width: 1024px) {
+  .destp-v5 .pt-body { grid-template-columns: minmax(0, 1fr) 380px; gap: var(--space-7); padding-top: 0; }
+  .destp-v5 .pt-side {
+    top: var(--space-3);
+    display: grid;
+    gap: var(--space-2);
+    max-height: calc(100dvh - 96px);
+    margin-top: var(--space-3);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    border-radius: var(--radius-panel);
+  }
+}
 
 /* ── The head (T1024): the name, one line of where and how it rates, the
    standing as small tags, then the intro: its first sentence leads. ── */
 .pt-head { display: grid; gap: var(--space-2); padding: var(--space-4) 0 0; }
 .pt-title {
   margin: 0;
-  font-size: 32px;
+  font-size: var(--text-headline);
   font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  line-height: 1.1;
+  letter-spacing: -0.018em;
   color: var(--text);
   text-wrap: balance;
 }
 .pt-title:focus { outline-color: transparent; }
 .pt-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (min-width: 700px) { .pt-title { font-size: 48px; } }
 .pt-subtitle { margin: 0; font-size: var(--text-lead); font-weight: 500; color: var(--text-2); }
 .pt-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--space-4); }
 .pt-where {
@@ -194,14 +212,15 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 }
 .pt-score { display: inline-flex; align-items: center; min-height: var(--tap); padding: 0; border: 0; border-radius: var(--radius-control); background: none; font: inherit; color: inherit; text-decoration: none; cursor: pointer; }
 .pt-score:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.pt-tags { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; }
+/* G1: the standing wraps (a scrolling row was a focus trap for keyboards, axe). */
+.pt-tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .pt-tags::-webkit-scrollbar { display: none; }
 .pt-tags > li { flex: none; }
 /* Below the two-column layout the swipe rows (tags, tabs) run to the screen's
    edges, the page's margin kept as their inner padding, so a row reads as
    one that scrolls rather than one cut off at the margin. */
 @media (max-width: 1023px) {
-  .pt-wrap .pt-tags, .pt-wrap .pt-jump, .pt-wrap .pcards, .pt-wrap .spots,
+  .pt-wrap .pt-jump, .pt-wrap .pcards, .pt-wrap .spots,
   .pt-wrap .ar-radius {
     margin-left: calc(-1 * var(--pt-pad-l, var(--gutter)));
     margin-right: calc(-1 * var(--pt-pad-r, var(--gutter)));
@@ -219,8 +238,8 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   white-space: nowrap;
   font-size: var(--text-label);
   font-weight: 700;
-  background: var(--umber-100);
-  color: var(--umber-800);
+  background: var(--select-bg);
+  color: var(--select-ink);
 }
 .pt-lead { display: grid; gap: var(--space-2); margin-top: var(--space-5); max-width: 62ch; }
 .pt-lead-first { margin: 0; font-size: var(--text-title); font-weight: 600; line-height: 1.45; letter-spacing: -0.01em; color: var(--text); text-wrap: pretty; }
@@ -272,9 +291,10 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   top: 0;
   z-index: var(--z-sticky);
   display: flex;
-  gap: var(--space-2);
-  margin: var(--space-3) 0 0;
-  padding: var(--space-2) 0;
+  gap: var(--space-1);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border);
   background: var(--surface-page);
   overflow-x: auto;
   scrollbar-width: none;
@@ -282,25 +302,37 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 }
 .pt-jump::-webkit-scrollbar { display: none; }
 .pt-jump-link {
+  position: relative;
   flex: none;
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
   font-size: var(--text-body);
   font-weight: 600;
   color: var(--text-2);
   text-decoration: none;
   white-space: nowrap;
-  transition: background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+  transition: color var(--dur-1) var(--ease-out);
 }
-@media (hover: hover) { .pt-jump-link:hover { color: var(--text); background: var(--surface-hover); } }
-.pt-jump-link[aria-current="location"] { background: var(--text); color: var(--surface); }
-.pt-jump-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (pointer: coarse) { .pt-jump-link { min-height: var(--tap); } }
-@media (prefers-reduced-motion: reduce) { .pt-jump-link { transition: none; } }
+.pt-jump-link::after {
+  content: '';
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: -1px;
+  height: var(--stroke-route);
+  border-radius: var(--radius-pill);
+  background: var(--action);
+  scale: 0 1;
+  transform-origin: left center;
+  transition: scale var(--dur-paint) var(--ease-out);
+}
+@media (hover: hover) { .pt-jump-link:hover { color: var(--text); } }
+.pt-jump-link[aria-current="location"] { color: var(--text); }
+.pt-jump-link[aria-current="location"]::after { scale: 1 1; }
+.pt-jump-link:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -3px; border-radius: var(--radius-control); }
+@media (prefers-reduced-motion: reduce) { .pt-jump-link, .pt-jump-link::after { transition: none; } }
 
 /* ── Sections ── */
 .pt-group { display: grid; }
@@ -310,7 +342,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   margin-top: var(--space-5);
 }
 .pt-sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
-.pt-sec-title { margin: 0; font-size: var(--text-title); font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
+.pt-sec-title { margin: 0; font-size: var(--text-title); font-weight: 800; letter-spacing: -0.01em; color: var(--text); }
 .pt-sec-note { font-size: var(--text-label); color: var(--text-3); }
 .pt-block { display: grid; gap: var(--space-3); min-width: 0; }
 .pt-block-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
@@ -616,154 +648,165 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-card-row { display: flex; gap: var(--space-2); }
 .pt-card-row > .btn { flex: 1; }
 
-/* ── The place's price card in the plan tab's language (T1019) ──
-   The umber cost card (92-cost-card.css: .ccard, the arc, the rows, the
-   foot), plus what only this card has: the two input pills, the light sheet
-   a pill opens, the trip lines under the rows, and the flight passes one
-   tap away under Flights. Cream on umber throughout, never grey. */
+/* ── The cost post (G1, house style 2026-11; place lane decision) ──
+   The place's price card on paper: a hairline, the panel radius, no shadow,
+   no coloured top edge. Top to bottom: the dates and party pills, the day a
+   person as the loudest figure with its formation (getting there outlined,
+   the bed umber, food beige), the stay for the party on one signpost plate,
+   the page's primary; then the ways as leg plates, the stay types as choice
+   chips and the receipt along dotted leaders with the engine's own total.
+   Below 1024 px it follows the head (the foot bar holds the primary); from
+   1024 px it is the sticky side column, beside the photos. */
 .dpc-wrap { display: grid; gap: var(--space-4); min-width: 0; }
+.dpc-wrap:has(> .tcard) {
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+@media (min-width: 600px) { .dpc-wrap:has(> .tcard) { padding: var(--space-5); } }
+.pt-inlinecost { display: grid; gap: var(--space-2); padding-top: var(--space-4); scroll-margin-top: var(--space-2); }
 
+/* The card itself sits flat inside the post: the umber ground of .ccard
+   (the trip page's card) is not this card's. */
+.tcard {
+  display: grid;
+  gap: 0;
+  padding: 0;
+  overflow: visible;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--text);
+}
+.tcard ::selection { background: var(--select-bg); color: var(--select-ink); }
+
+.tcard-band { display: grid; gap: var(--space-4); min-width: 0; }
 .dpc-inputs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .dpc-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  min-height: 36px;
-  padding: 0 var(--space-3);
-  border: 0;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: var(--stroke-edge) solid var(--edge);
   border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--umber-50) 12%, transparent);
-  color: var(--ccard-ink);
+  background: var(--surface);
+  color: var(--text);
   font: inherit;
   font-size: var(--text-label);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
-  transition: background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.dpc-pill svg { flex: none; opacity: 0.85; }
-.dpc-pill.is-open { background: var(--umber-50); color: var(--umber-800); }
-@media (hover: hover) { .dpc-pill:not(.is-open):hover { background: color-mix(in srgb, var(--umber-50) 20%, transparent); } }
-.dpc-pill:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
-@media (pointer: coarse) { .dpc-pill { min-height: var(--tap); } }
+.dpc-pill svg { flex: none; color: var(--text-2); }
+@media (hover: hover) { .dpc-pill:not(.is-open):hover { border-color: var(--text); } }
+.dpc-pill.is-open { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
+.dpc-pill.is-open svg { color: var(--select-ink); }
+.dpc-pill:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 
-.dpc-sheet, .dpc-party { border-radius: var(--radius-card); background: var(--surface); color: var(--text); }
+/* The day: the loudest figure in the post, the unit said once, the split
+   under it as the formation (its own day figure stays out: it is printed
+   above, at the display size). */
+.tcard-dayrow { display: grid; gap: var(--space-3); min-width: 0; }
+.tcard-each { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; font-variant-numeric: tabular-nums lining-nums; }
+.tcard-each .money { font-size: var(--text-display); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--text); }
+.tcard-each .pitems-trigger { text-decoration-thickness: 2px; text-underline-offset: 6px; }
+.tcard-unit { font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
+.tcard-split { max-width: 100%; }
+.tcard-split .hs-formation-day { display: none; }
+
+/* The stay for the party: one signpost plate (name: nights and people; the
+   second line: a person; the figure: the engine's total). */
+.tcard-total { display: grid; margin: 0; min-width: 0; }
+.tcard-total .hs-plate { min-height: 60px; }
+.tcard-total .hs-delta { display: block; margin-top: 2px; font-size: var(--text-micro); font-weight: 700; color: var(--on-plate-2); }
+
+.tcard-go { display: grid; justify-items: center; gap: var(--space-1); }
+.tcard-go .destp-plan-btn { min-height: var(--tap-main); }
+.btn.tcard-day { min-height: var(--tap); }
+
+.tcard-sheet { margin: var(--space-4) 0 0; }
+.dpc-sheet, .dpc-party { border: 1px solid var(--border-soft); border-radius: var(--radius-panel); background: var(--surface-sunken); color: var(--text); }
 .dpc-sheet { display: grid; gap: var(--space-3); padding: var(--space-3); }
 .dpc-party { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-2) var(--space-3); }
 
-/* ── The trip card (T1026): the total, the way there, the stay ──
-   The umber cost card's ground (.ccard tokens), in two parts: the band
-   (the dates and party pills, the trip's total for the party, then a
-   person and a day), and the body (the ways there to pick, the stay types
-   to pick, the lines of the total). The picked way and stay wear the open
-   pill's cream fill; everything else stays cream on umber, never white. */
-.ccard.tcard { gap: 0; padding: 0; }
-.tcard-band { display: grid; gap: var(--space-1); padding: var(--space-4); }
-.tcard-band .dpc-inputs { margin-bottom: var(--space-3); }
-.tcard-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; }
-.tcard-total .money { font-size: var(--text-display); font-weight: 800; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--ccard-ink); }
-.tcard-total > span { font-size: var(--text-label); color: var(--ccard-ink-2); }
-.tcard-each { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-1); margin: 0; font-size: var(--text-label); color: var(--ccard-ink-2); font-variant-numeric: tabular-nums; }
-.tcard-each > span:first-child::after { content: ","; }
-.tcard-each .money { color: var(--ccard-ink); font-weight: 700; }
-.tcard-sheet { margin: 0 var(--space-4) var(--space-3); }
+.tcard-body { display: grid; gap: var(--space-6); margin-top: var(--space-4); padding-top: var(--space-5); border-top: 1px solid var(--border-soft); min-width: 0; }
+.tcard-part { display: grid; gap: var(--space-3); min-width: 0; }
+.tcard-h { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); }
+.tcard-h-unit { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 
-.tcard-body { display: grid; gap: var(--space-5); padding: var(--space-4); border-top: 1px solid var(--ccard-line); }
-.tcard-part { display: grid; gap: var(--space-2); min-width: 0; }
-.tcard-h { margin: 0; font-size: var(--text-label); font-weight: 700; color: var(--ccard-ink); }
-
-/* The ways there: one to pick; the price on the right, tabular. */
-.tcard-ways { display: grid; gap: var(--space-1); }
-.tcard-way {
-  display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: 56px;
-  padding: var(--space-2) var(--space-3);
-  border: 0;
-  border-radius: var(--radius-control);
-  background: color-mix(in srgb, var(--umber-50) 8%, transparent);
-  color: var(--ccard-ink);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
-}
-@media (hover: hover) { .tcard-way:not(.is-on):hover { background: color-mix(in srgb, var(--umber-50) 16%, transparent); } }
-.tcard-way:focus-visible, .tcard-chip:focus-visible, .tcard-line-btn:focus-visible { outline: 2px solid var(--umber-50); outline-offset: 2px; }
-.tcard-way.is-on { background: var(--umber-50); color: var(--umber-800); }
-.tcard-way-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: color-mix(in srgb, var(--umber-50) 14%, transparent); }
-.tcard-way.is-on .tcard-way-ico { background: var(--umber-100); }
+/* The ways there: leg plates in a radio group; the picked one takes the
+   umber edge and the beige wash (the kit's checked leg). */
+.tcard-ways { display: grid; gap: var(--space-2); }
+.tcard-way.hs-plate { min-height: 60px; }
+.tcard-way-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--surface-sunken); color: var(--text-2); transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out); }
+.tcard-way.is-on .tcard-way-ico { background: var(--surface); color: var(--action); }
 .tcard-way-ico .flt-mark { width: 24px; height: 24px; border-radius: 50%; background: var(--surface); }
-.tcard-way-what { display: grid; gap: 2px; min-width: 0; }
-.tcard-way-name { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-weight: 700; font-size: var(--text-body); }
-.tcard-way-sub { display: flex; flex-wrap: wrap; gap: 0 4px; font-size: var(--text-caption); color: var(--ccard-ink-2); }
-.tcard-way.is-on .tcard-way-sub, .tcard-way.is-on .tcard-way-fig small { color: var(--umber-600); }
-.tcard-way-fig { display: grid; justify-items: end; gap: 2px; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.tcard-way-fig b { font-size: var(--text-lead); font-weight: 800; }
-.tcard-way-fig small { font-size: var(--text-caption); color: var(--ccard-ink-2); }
-.tcard-badge { display: inline-flex; align-items: center; min-height: 20px; padding: 0 var(--space-2); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--umber-50) 16%, transparent); font-size: var(--text-micro); font-weight: 700; letter-spacing: 0.01em; }
-.tcard-badge.is-cheap { background: var(--sun-400); color: var(--umber-800); }
-.tcard-way.is-on .tcard-badge:not(.is-cheap) { background: var(--umber-100); }
-/* T1100: why the card opened on a dearer way than the cheapest, in hours. */
-.tcard-note { margin: 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }
-
-.tcard-acts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
-.ccard .tcard-acts .btn, .ccard .tcard-acts .btn:is(:hover, :focus, :active, [aria-expanded="true"]) { background: transparent; color: var(--ccard-ink); }
-@media (hover: hover) { .ccard .tcard-acts .btn:hover { background: color-mix(in srgb, var(--umber-50) 10%, transparent); } }
-.tcard-way-fp { display: block; font-size: var(--text-caption); color: var(--ccard-ink-2); }
-.tcard-fp-note { margin: 6px 0 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }
-.tcard-fp-note a { color: inherit; text-decoration: underline; }
+.tcard-way-name { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-weight: 700; }
+.tcard-way-sub { display: flex; flex-wrap: wrap; gap: 0 var(--space-2); font-size: var(--text-caption); color: var(--text-2); }
 .tcard-way-sub > span { white-space: nowrap; }
+.tcard-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: var(--text-micro);
+  font-weight: 700;
+}
+.tcard-badge.is-cheap { border-color: var(--best); background: var(--best-bg); color: var(--best-ink); }
+/* T1100: why the card opened on a dearer way than the cheapest, in hours. */
+.tcard-note { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
+.tcard-fp-note { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
+.tcard-fp-note a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.tcard-acts { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
 .tcard-more svg { transition: transform var(--dur-2) var(--ease-out); }
 .tcard-more[aria-expanded="true"] svg { transform: rotate(180deg); }
 
-/* The stay types as chips: one swipe row on a phone, wrapped on desktop. */
-.tcard-chips { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--space-4)); padding: 0 var(--space-4); }
-.tcard-chips::-webkit-scrollbar { display: none; }
-.tcard-chip {
-  flex: none;
-  min-height: 36px;
-  padding: 0 var(--space-3);
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: color-mix(in srgb, var(--umber-50) 10%, transparent);
-  color: var(--ccard-ink);
-  font: inherit;
-  font-size: var(--text-label);
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
-}
-@media (hover: hover) { .tcard-chip:not(.is-on):hover { background: color-mix(in srgb, var(--umber-50) 18%, transparent); } }
-.tcard-chip.is-on { background: var(--umber-50); color: var(--umber-800); }
-@media (pointer: coarse) { .tcard-chip { min-height: var(--tap); } .tcard-way { min-height: 60px; } }
-@media (min-width: 1024px) { .tcard-chips { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; } }
+/* Where you sleep: the kit's choice chips, wrapped. */
+.tcard-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
-/* The lines of the total, the total under a rule. */
-.tcard-lines { display: grid; margin: 0; padding-top: var(--space-3); border-top: 1px solid var(--ccard-line); font-size: var(--text-body); color: var(--ccard-ink-2); }
-.tcard-line { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); min-height: 36px; }
-.tcard-line dt { min-width: 0; }
-.tcard-line dd { margin: 0; color: var(--ccard-ink); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.tcard-line-btn { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2); padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
-.tcard-line-btn small { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-caption); color: var(--ccard-ink-2); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--ccard-line); }
-.tcard-thin { display: block; font-size: var(--text-caption); font-weight: 500; color: var(--ccard-ink-2); text-align: right; }
-.tcard-line.is-unmeasured dd { font-weight: 500; color: var(--ccard-ink-2); }
-.tcard-line.is-total { margin-top: var(--space-1); padding-top: var(--space-2); border-top: 1px solid var(--ccard-line); }
-.tcard-line.is-total dt { color: var(--ccard-ink); font-weight: 700; }
-.tcard-line.is-total dd { font-size: var(--text-lead); font-weight: 800; }
-.tcard-flights { margin-top: var(--space-1); }
-.btn.tcard-day { justify-self: center; }
-@media (min-width: 1024px) {
-  .pt-side .tcard-band, .pt-side .tcard-body { padding-left: var(--space-5); padding-right: var(--space-5); }
-  .pt-side .tcard-sheet { margin-left: var(--space-5); margin-right: var(--space-5); }
+/* The receipt: the kit's cost rows along dotted leaders. */
+.tcard-lines.costrows { margin: 0; }
+/* The label keeps its own width so the dotted leader runs to the figure. */
+.tcard-lines .costrow-text { flex: 0 1 auto; }
+.tcard-lines .costrow dt::after { align-self: flex-start; margin: 14px 0 0 var(--space-2); }
+.tcard-line-btn {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-2);
+  min-height: 28px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
-@media (prefers-reduced-motion: reduce) { .tcard-way, .tcard-chip, .tcard-more svg { transition: none; } }
+.tcard-line-btn small { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-caption); color: var(--select-ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--umber-300); }
+@media (hover: hover) { .tcard-line-btn:hover small { text-decoration-color: currentColor; } }
+.tcard-line-btn:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.tcard-line-btn { position: relative; }
+/* A 44 px target on touch without growing the row: the hit area reaches
+   past the text. */
+@media (pointer: coarse) { .tcard-line-btn::before { content: ''; position: absolute; inset: -10px -6px; } }
+/* The figure and a thin-data note stack on the right, so the label keeps
+   its line. */
+.tcard-lines .costrow dd { flex-direction: column; align-items: flex-end; gap: 2px; }
+.tcard-thin { display: block; max-width: 14ch; font-size: var(--text-caption); font-weight: 500; line-height: var(--leading-ui); color: var(--text-2); text-align: right; white-space: normal; }
+.tcard-line.is-rounding dd { font-weight: 500; color: var(--text-2); }
+.tcard-flights { margin-top: var(--space-1); }
 
 .dpc-flights { display: grid; gap: var(--space-2); }
-.dpc-pass { display: grid; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); background: var(--surface); color: var(--text); }
+.dpc-pass { display: grid; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-radius: var(--radius-panel); background: var(--surface-sunken); color: var(--text); }
 .dpc-pass .jr-code { font-size: var(--text-title); }
 .dpc-pass-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; padding-top: var(--space-2); border-top: 1px solid var(--border-soft); }
 .dpc-pass-fig .money { font-size: var(--text-lead); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
@@ -771,12 +814,23 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 /* Owner 2026-11-03: no source or "may have changed" line, only Book. */
 .dpc-flt-note { display: flex; justify-content: flex-end; margin: 0; }
 .dpc-flt-note .jr-book.btn { flex: none; }
-@media (prefers-reduced-motion: reduce) { .dpc-pill { transition: none; } }
+.dpc-wrap > .pitems-list { margin: 0; padding: 0 var(--space-1); }
+.pt-side .why-asof, .pt-inlinecost .why-asof { margin: 0; padding: 0 var(--space-1); }
+@media (prefers-reduced-motion: reduce) { .dpc-pill, .tcard-way-ico, .tcard-more svg { transition: none; } }
 
-/* Below 1024 px the foot bar holds the page's one primary, so the card's
+/* Below 1024 px the foot bar holds the page's one primary, so the post's
    own primary hides (one primary at a time, carta-design). */
 @media (max-width: 1023px) {
   .pt-inlinecost .destp-plan-btn { display: none; }
+}
+
+/* Tablet (769 to 1023): the post is a two-column card: the inputs, the day
+   and the plate on the left, the ways, the stay and the receipt on the
+   right, so the width works and the page is not a stretched phone. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .pt-inlinecost .tcard { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); column-gap: var(--space-6); align-items: start; }
+  .pt-inlinecost .tcard-band, .pt-inlinecost .tcard-sheet { grid-column: 1; }
+  .pt-inlinecost .tcard-body { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; padding: 0 0 0 var(--space-6); border-top: 0; border-left: 1px solid var(--border-soft); }
 }
 
 /* ── The foot bar below 1024 px: the price, the inputs, the primary. ── */
@@ -792,9 +846,16 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   position: relative;
   z-index: var(--z-sticky);
 }
-.pt-dock-text { flex: 1; min-width: 0; display: grid; justify-items: start; }
+.pt-dock-text { flex: 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; }
+/* G1 (judge fix): the inputs line keeps to its column (a long German date
+   ran under the primary); the label then ends in an ellipsis. */
+.pt-dock-text > .btn.pt-dock-inputs { min-width: 0; max-width: 100%; }
+.btn.pt-dock-inputs .btn-label { min-width: 0; }
 .pt-dock-price { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-.pt-dock-fig { font-size: var(--text-lead); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.pt-dock.is-post-in-view .pt-dock-price { display: none; }
+.destp-v5 .pt-dock:not(.is-post-in-view) .pt-dock-price { animation: pt-rise var(--dur-2) var(--ease-out); }
+@media (prefers-reduced-motion: reduce) { .pt-dock .pt-dock-price { animation: none; } }
+.pt-dock-fig { font-size: var(--text-figure); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
 .pt-dock-unit { font-size: var(--text-label); color: var(--text-2); }
 .btn.pt-dock-inputs {
   min-height: var(--tap);
@@ -931,7 +992,8 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .bf-group { display: grid; gap: var(--space-2); }
 .bf-h { margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); }
 /* One sunken list for the parking rows and the rating's parts. */
-.bf-rows, .rs-parts ul { list-style: none; margin: 0; padding: 0 var(--space-4); border-radius: 14px; background: var(--surface-sunken); }
+.bf-rows { list-style: none; margin: 0; padding: 0 var(--space-4); border-radius: var(--radius-panel); background: var(--surface-sunken); }
+.rs-parts ul { list-style: none; margin: 0; padding: 0; }
 .bf-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); min-height: 60px; padding: var(--space-2) 0; }
 .bf-row + .bf-row { border-top: 1px solid var(--border-soft); }
 .bf-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: var(--radius-control); background: var(--umber-100); color: var(--umber-700); }
@@ -946,24 +1008,32 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .bf-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-5); margin: 0; font-size: var(--text-label); color: var(--text-2); }
 
 /* ── Why it rates (T1029): the sheet behind the Score in the head ── */
-.rs-sheet { background: var(--surface-page); max-width: 560px; }
+/* The rating sheet (G1, house style): the Score plate and its word lead,
+   the standing reads as receipt rows (label left, words right, hairlines),
+   the parts as rows whose figure is text and whose thin umber bar is the
+   picture of it, never the only carrier. */
+.frr-sheet.rs-sheet { background: var(--surface); max-width: 560px; }
 .rs-body { display: grid; gap: var(--space-5); padding: var(--space-4) var(--space-4) calc(var(--space-5) + env(safe-area-inset-bottom, 0px)); }
 .rs-hero { display: grid; gap: var(--space-3); justify-items: start; }
-.rs-why { margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: 1.35; color: var(--text); text-wrap: pretty; }
-.rs-stand { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin: 0; }
-.rs-stand > div { display: grid; align-content: start; gap: 2px; padding: var(--space-3) var(--space-4); border-radius: 14px; background: var(--surface-sunken); }
-.rs-stand dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
-.rs-stand dd { margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); }
-.rs-parts { display: grid; gap: var(--space-3); }
-.rs-h { margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); }
-.rs-part { display: grid; gap: var(--space-1); padding: var(--space-3) 0; }
+.rs-why { margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: 1.4; color: var(--text); text-wrap: pretty; }
+.rs-stand { display: grid; margin: 0; border-top: 1px solid var(--border); }
+.rs-stand > div { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid var(--border-soft); }
+.rs-stand dt { font-size: var(--text-body); font-weight: 500; color: var(--text-2); }
+.rs-stand dd { margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); text-align: right; }
+.rs-parts { display: grid; gap: var(--space-2); }
+.rs-h { margin: 0; font-size: var(--text-title); font-weight: 800; color: var(--text); }
+.rs-part { display: grid; gap: var(--space-2); padding: var(--space-3) 0; }
 .rs-part + .rs-part { border-top: 1px solid var(--border-soft); }
 .rs-part-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
 .rs-part-name { font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.rs-gem { margin: 0; font-size: var(--text-label); line-height: 1.5; color: var(--text-2); }
-.rs-part-val { font-size: var(--text-body); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
-.rs-track { display: block; height: 6px; border-radius: var(--radius-pill); background: color-mix(in srgb, var(--umber-700) 12%, transparent); overflow: hidden; }
-.rs-track > span { display: block; height: 100%; border-radius: inherit; background: var(--umber-700); }
+.rs-gem { margin: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius-panel); background: var(--select-row); font-size: var(--text-label); line-height: 1.5; color: var(--text-2); }
+.rs-part-val { font-size: var(--text-figure); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.rs-track { display: block; height: 6px; border-radius: var(--radius-pill); background: var(--select-bg); overflow: hidden; }
+.rs-track > span { display: block; height: 100%; border-radius: inherit; background: var(--action); transform-origin: left center; }
+@media (prefers-reduced-motion: no-preference) {
+  .rs-track > span { animation: rs-draw var(--dur-4) var(--ease-settle) both; }
+}
+@keyframes rs-draw { from { scale: 0 1; } to { scale: 1 1; } }
 
 /* ── What to see and Best things to do (T1032) ──
    One card for both: the photograph on top (4:3), the name, one line of
@@ -999,7 +1069,8 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
 .spot-media { position: relative; aspect-ratio: 4 / 3; background: var(--umber-100); overflow: hidden; }
 .spot-media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease-out); }
 @media (hover: hover) { .spot:hover .spot-media img { transform: scale(1.04); } }
-.spot-ph { display: grid; place-items: center; width: 100%; height: 100%; color: var(--umber-700); background: linear-gradient(160deg, var(--umber-100), color-mix(in srgb, var(--umber-200) 70%, var(--umber-100))); }
+/* A sight with no photo: the world tint (DESIGN.md "The missing photo"). */
+.spot-ph { display: grid; place-items: center; width: 100%; height: 100%; color: var(--text-3); background: var(--world-lowland); }
 .spot-n {
   position: absolute;
   top: var(--space-2);
@@ -1089,39 +1160,55 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
    icon in a frosted disc, the name and count in white at the foot. */
 .ar-tiles { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; padding: 0; }
 @media (min-width: 700px) { .ar-tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); } }
+/* The relief from the place's own peaks (DESIGN.md "Background graphics"):
+   a band of the ground around it with the real heights on paper tags; no
+   text of ours sits on it (the flat side is empty, cut at the left edge). */
+.pt-relief { height: 136px; border-radius: var(--radius-card); overflow: hidden; }
+.pt-relief .relief-zone { border-radius: var(--radius-card); }
+.pt-relief .relief-cut-blaze, .pt-relief .relief-cut { display: none; }
+@media (min-width: 700px) { .pt-relief { height: 168px; } }
+
+/* G1 (house style): the photo above, the kind and its count under it on
+   the page's ground (text never on a photo); a tile with no photo shows the
+   world tint in the photo's place. */
 .ar-tile {
-  position: relative;
-  isolation: isolate;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
   width: 100%;
-  aspect-ratio: 4 / 3;
-  padding: var(--space-3);
-  overflow: hidden;
+  min-height: var(--tap);
+  padding: 0;
   border: 0;
   border-radius: var(--radius-card);
-  background: linear-gradient(160deg, var(--umber-600), var(--umber-800));
-  color: #fff;
+  background: none;
+  color: var(--text);
   font: inherit;
   text-align: left;
   cursor: pointer;
-  box-shadow: var(--elev-1);
-  transition: transform var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
 }
-.ar-tile > img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: transform var(--dur-3) var(--ease-out); }
-.ar-tile.has-photo::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(20, 12, 4, 0.08) 30%, rgba(20, 12, 4, 0.72)); }
-.ar-tile-ico { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: rgba(255, 255, 255, 0.22); backdrop-filter: blur(6px); }
-.ar-tile-txt { display: grid; gap: 0; padding-right: 28px; }
-.ar-tile-txt b { font-size: var(--text-lead); font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3); }
-.ar-tile-txt small { font-size: var(--text-label); font-weight: 600; opacity: 0.9; font-variant-numeric: tabular-nums; }
-.ar-tile-go { position: absolute; right: var(--space-3); bottom: var(--space-3); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--umber-800); }
+.ar-tile > img, .ar-tile:not(.has-photo)::before {
+  grid-column: 1 / -1;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  height: auto;
+  border-radius: var(--radius-card);
+  object-fit: cover;
+  background: var(--surface-sunken);
+}
+.ar-tile:not(.has-photo)::before { content: ""; background: var(--world-lowland); }
+.ar-tile-ico { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--select-bg); color: var(--select-ink); }
+.ar-tile-txt { display: grid; gap: 0; min-width: 0; }
+.ar-tile-txt b { font-size: var(--text-body); font-weight: 800; line-height: 1.2; }
+.ar-tile-txt small { font-size: var(--text-label); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ar-tile-go { display: grid; place-items: center; width: 32px; height: 32px; border: var(--stroke-edge) solid var(--edge); border-radius: 50%; background: var(--surface); color: var(--text); transition: border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out); }
 @media (hover: hover) {
-  .ar-tile:hover { transform: translateY(-2px); box-shadow: var(--elev-2); }
-  .ar-tile:hover > img { transform: scale(1.05); }
+  .ar-tile:hover .ar-tile-go { border-color: var(--action); color: var(--action); }
+  .ar-tile:hover .ar-tile-txt b { text-decoration: underline; text-underline-offset: 3px; }
 }
-.ar-tile:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
-@media (prefers-reduced-motion: reduce) { .ar-tile, .ar-tile > img { transition: none; } .ar-tile:hover { transform: none; } }
+.ar-tile:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .ar-tile-go { transition: none; } }
 
 /* ── A kind's own page (NearPage): over the place page in its frame ── */
 .destp.near-page { z-index: calc(var(--z-page) + 45); }
