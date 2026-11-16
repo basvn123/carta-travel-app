@@ -7,5 +7,5 @@
 # nothing. The +cpu builds below exist for cp312 manylinux_2_28_aarch64 on the
 # PyTorch index (checked the same day). Versions match the laptop.
 --index-url https://download.pytorch.org/whl/cpu
-torch==2.13.0+cpu
-torchvision==0.28.0+cpu
+torch==2.15.0+cpu
+torchvision==0.29.2+cpu
