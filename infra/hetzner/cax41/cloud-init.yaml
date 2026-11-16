@@ -90,9 +90,14 @@ write_files:
       # checksums (T299): arm64 for CAX workers, amd64 for the x86 types a job
       # may name (T647). Change the version in both files together.
       # https://downloads.rclone.org/v1.75.1/SHA256SUMS
-      RCLONE_VERSION='1.75.1'
-      RCLONE_SHA256_ARM64='03f2504174034b6d004152ed7369251c9a9ec1f7e0836eda420f5c7a5ec0dff9'
-      RCLONE_SHA256_AMD64='982b5aa772841168f8e380f139e9e787b2a105403e32b94da8676a0e1c0a13ab'
+      # CARTA_ prefixed on purpose: this file is sourced under set -a, and
+      # rclone reads every exported RCLONE_<FLAG> as that flag, so an
+      # exported CARTA_RCLONE_VERSION became --version=1.75.1 and every rclone
+      # call on the worker died (2026-11-16, T047-b). Only RCLONE_CONFIG_*
+      # (the R2 remote) may be exported here.
+      CARTA_RCLONE_VERSION='1.75.1'
+      CARTA_RCLONE_SHA256_ARM64='03f2504174034b6d004152ed7369251c9a9ec1f7e0836eda420f5c7a5ec0dff9'
+      CARTA_RCLONE_SHA256_AMD64='982b5aa772841168f8e380f139e9e787b2a105403e32b94da8676a0e1c0a13ab'
 
   - path: /usr/local/sbin/carta-worker-boot
     owner: root:root
@@ -157,16 +162,16 @@ write_files:
         local t arch sum; t=$(mktemp -d)
         arch="$(dpkg --print-architecture)"
         case "$arch" in
-          arm64) sum="$RCLONE_SHA256_ARM64" ;;
-          amd64) sum="$RCLONE_SHA256_AMD64" ;;
+          arm64) sum="$CARTA_RCLONE_SHA256_ARM64" ;;
+          amd64) sum="$CARTA_RCLONE_SHA256_AMD64" ;;
           *) say "unsupported architecture $arch"; return 1 ;;
         esac
         [ "$arch" = "${CARTA_WORKER_ARCH:-$arch}" ] || say "note: spawn.sh expected $CARTA_WORKER_ARCH, the box is $arch"
         curl -fsSL --retry 3 --connect-timeout 20 -o "$t/rclone.zip" \
-          "https://downloads.rclone.org/v${RCLONE_VERSION}/rclone-v${RCLONE_VERSION}-linux-${arch}.zip" || return 1
+          "https://downloads.rclone.org/v${CARTA_RCLONE_VERSION}/rclone-v${CARTA_RCLONE_VERSION}-linux-${arch}.zip" || return 1
         echo "$sum  $t/rclone.zip" | sha256sum -c - || return 1
         unzip -q "$t/rclone.zip" -d "$t" &&
-          install -m 0755 "$t/rclone-v${RCLONE_VERSION}-linux-${arch}/rclone" /usr/local/bin/rclone
+          install -m 0755 "$t/rclone-v${CARTA_RCLONE_VERSION}-linux-${arch}/rclone" /usr/local/bin/rclone
         local rc=$?; rm -rf "$t"; return $rc
       }
       # Without rclone there is no way to report. The box powers off, and the
