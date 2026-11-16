@@ -1114,7 +1114,9 @@ def context_radius_m(lake):
 
 
 def context_for(batch):
-    """{lake key: {feature: count}} for a batch.
+    """{lake key: {feature: count}} for a batch, or None when Overpass
+    failed, so the caller leaves those lakes without context and the next
+    run asks again (as enrich_beaches and enrich_peaks do).
 
     Overpass answers one blob for the whole query with no way to say which
     around clause produced which element, so every element goes to the nearest
@@ -1129,7 +1131,7 @@ def context_for(batch):
         elements = overpass(query, timeout=300)
     except SourceError as exc:
         print(f"    context batch failed: {str(exc)[:90]}")
-        return {}
+        return None
     out = {b["key"]: {} for b in batch}
     for el in elements:
         tags = el.get("tags") or {}
@@ -1358,6 +1360,12 @@ def enrich_country(cc, shortlist_n=SHORTLIST, refresh=False, bathing=None,
     batches = split_batches(todo)
     for i, chunk in enumerate(batches, 1):
         found = context_for(chunk)
+        if found is None:
+            # Every mirror declined: no context, not an empty one, so the
+            # lakes stay due (an empty dict read as "nothing near", was
+            # kept by every later run and lowered the lake's score; H9).
+            print(f"    context batch {i}/{len(batches)} failed; due next run")
+            continue
         for lake in chunk:
             lake["context"] = found.get(lake["key"], {})
         print(f"    context batch {i}/{len(batches)}")
