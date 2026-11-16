@@ -446,7 +446,7 @@
 .tff-card .hero-blank.tff-photo { display: flex; align-items: center; justify-content: center; padding-bottom: 30%; }
 .tff-card .hero-blank-mark { display: none; }
 .tff-card .hero-blank .country-flag, .tff-card .hero-blank img, .tff-card .hero-blank svg { transform: scale(2.4); }
-@media (min-width: 600px) { .tff-card.is-feat .tff-photos { aspect-ratio: 2 / 1; } }
+@media (min-width: 600px) { .tff-card.is-feat .tff-photos { aspect-ratio: 21 / 9; } }
 .tff-photos { aspect-ratio: 3 / 2; border-radius: var(--radius-card); overflow: hidden; background: var(--surface-sunken); }
 /* HeroImage sets width and height attributes for the ratio; without an
    explicit height the 3 x 2 attributes drew a 2 px strip (T809 audit). */
@@ -737,6 +737,7 @@
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
 }
+.tff-see-row:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
 .tff-see-row.is-loading { height: 140px; border-radius: var(--radius-card); background: var(--surface-sunken); }
 .tff-sight { display: grid; gap: var(--space-1); align-content: start; scroll-snap-align: start; min-width: 0; }
 .tff-sight-img { display: block; width: 100%; aspect-ratio: 4 / 3; height: auto; border-radius: var(--radius-card); overflow: hidden; object-fit: cover; }

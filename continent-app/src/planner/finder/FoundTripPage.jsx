@@ -567,7 +567,7 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
                   {sights == null ? (
                     <div className="tff-see-row is-loading" aria-busy="true"><span className="sr-only">{t('tf.pv.loading')}</span></div>
                   ) : sights.length ? (
-                    <ul className="tff-see-row">
+                    <ul className="tff-see-row" tabIndex={0}>
                       {sights.map((s) => (
                         <li key={s.name} className="tff-sight">
                           <HeroImage url={s.img} city={s.name} iso2={d?.iso2} className="tff-sight-img" maxWidth={320} sizes="200px" ratio={[4, 3]} />
