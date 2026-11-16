@@ -1,6 +1,22 @@
 # Outdoors rules (reference)
 
-> Look rules for these screens are rewritten by the outdoors lane of the house style run (2026-11). Until then the look comes from `DESIGN.md` and the carta-design `SKILL.md`; the rules below are the product rules these screens keep (what they show, what each control does, how numbers behave). They bind.
+## The look (house style, outdoors lane 2026-11)
+
+The trail, cycle, beach, lake and mountain pages wear the place page's template (`.pt-*`, `88-place-template.css`, the place lane's); `src/styles/89-outdoor-page.css` adds what only they draw, scoped to the root `.oxp`. Shell: `OutdoorPage` in `src/browse/OutdoorParts.jsx`.
+
+- **Order of the first view:** photos, the head (name, where, the ink Score plate, standing tags), **the board**, the jump bar, the hook. The board is the first thing read after the name at every angle; at 1440 x 900 it ends above the fold (the mosaic is 320 px on these pages from 1024 px).
+- **The board** (`.ox-board` around `KeyFacts`): one paper panel with a hairline frame (`--radius-panel`), hairlines between cells, label (`--text-label`, a bare 14 px icon, `--text-2`) over the figure (`--text-lead` on a phone, `--text-title` from 600 px, 800, tabular). Two across on a phone, three from 600 px (four in one row when there are four); an odd last cell takes the rest of its row. A long word hyphenates (German), never breaks mid-letter. Paper and hairline only: never an ink fill, never a pointed end (a plate is not a card).
+- **Each figure once on screen.** Beside the board (1024 px up) the side card does not repeat a row whose value the board shows; a row only the card has (sea in a month, parking, entry) stays. The card's title is a screen-reader heading. Below 1024 px the foot bar's figures wait until the board has scrolled away (`is-post-in-view`); "Add to day" is always there.
+- **The side card**: 380 px, paper, hairline, `--radius-panel`, no shadow (it is not floating), sticky. Inside: rows left, the one umber primary, the secondaries (44 px), the stay row.
+- **Tablet (600 to 1023 px)**: its own layout: the board three across, the card's half as two columns (secondaries beside the stay row), rows two across from 700 px, cards three across; the foot bar holds the primary. 1024 px up: main column and the side card.
+- **Rows on hairlines** for Before you go, Getting there, the shore, routes to the top: a bare 20 px icon in `--text-2`, the title 700, one line in `--text-2`, a rule under each row; warnings keep the amber icon and an amber title plus the words. No sunken tiles anywhere on these pages.
+- **Panels on paper with a hairline**: the route block (map, then the profile), the grade, the water class, the months, the cells (waves, faces, storms), facilities, the surface mix, the safety line, stage signposts.
+- **One umber ramp** for every drawn measure: steepness (umber 100, 300, 600), the best months (umber 600 over umber 200, the current month on the selected wash with an umber edge), the water class steps, the paved and traffic-free bars. The kind colours stay on pictograms only.
+- **No grey tile (G8)**: a card without a photograph shows `WorldTile` in its kind's world (water: beach, lake; rock: mountain; lowland: trail, cycle). One missing-photo grammar.
+- **Minimal text**: the season row says the months and only "Estimated" when it is; "Waymarked" says only the route reference; a loop or an out-and-back says only the word (the one-way sentence stays: it tells the walker to plan the way back); the Route section has no side note.
+- **Motion**: the kit's press on every control; the 2D/3D Segmented, save and share are kit parts; the stay row and route rows nudge their chevron on hover; the foot bar's figures rise once when the board leaves the view. The signature act is the profile scrub (the traveller's own): the readout and the map pin follow the finger. No draw at load, no relief band on these pages (DESIGN.md does not allow it here). "Add to a day plan" opens the day planner, so it takes the press and no haptic.
+
+> The rules below are the product rules these screens keep (what they show, what each control does, how numbers behave). They bind.
 
 Covers the trail, cycle route and tour, beach, lake and mountain pages.
 
