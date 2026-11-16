@@ -325,7 +325,7 @@ export function DestPriceCard({
               <PersonIcon size={16} />{peopleText}
             </button>
           </div>
-          <div className="tcard-day">
+          <div className="tcard-dayrow">
             <p className="tcard-each" ref={dayRef}>
               <PriceItems cost={costRow} way={carta?.perSeat > 0 ? { mode: 'plane', perPerson: carta.perSeat } : null}>
                 <Money value={view.day(price.dayEur)} />
@@ -356,7 +356,7 @@ export function DestPriceCard({
                 </Button>
               )}
               {onPlanDay && (
-                <Button variant="quiet" size="sm" className="tcard-day-btn" onClick={onPlanDay}>{t('destx.planOneDay')}</Button>
+                <Button variant="quiet" size="sm" className="tcard-day" onClick={onPlanDay}>{t('destx.planOneDay')}</Button>
               )}
             </div>
           )}

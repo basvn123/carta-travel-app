@@ -568,6 +568,13 @@
   background: var(--surface);
 }
 .rgnp-dayfact dd { margin-top: 0; }
+/* Tablet: the block is two columns (the facts left, the actions right), so
+   the width works instead of stretching a phone column. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .rgnp-side { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); column-gap: var(--space-6); row-gap: var(--space-3); align-items: start; padding: var(--space-5); }
+  .rgnp-side > .rgnp-facts { grid-row: 1 / span 4; }
+  .rgnp-side > .btn { grid-column: 2; }
+}
 .rgnp-dayfact dt:not(.sr-only) { display: flex; align-items: center; gap: var(--space-1); margin-bottom: var(--space-2); }
 .rgnp-facts { margin: 0; }
 .rgnp-fact {

@@ -709,7 +709,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 /* The day: the loudest figure in the post, the unit said once, the split
    under it as the formation (its own day figure stays out: it is printed
    above, at the display size). */
-.tcard-day { display: grid; gap: var(--space-3); min-width: 0; }
+.tcard-dayrow { display: grid; gap: var(--space-3); min-width: 0; }
 .tcard-each { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; font-variant-numeric: tabular-nums lining-nums; }
 .tcard-each .money { font-size: var(--text-display); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--text); }
 .tcard-each .pitems-trigger { text-decoration-thickness: 2px; text-underline-offset: 6px; }
@@ -725,7 +725,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 
 .tcard-go { display: grid; justify-items: center; gap: var(--space-1); }
 .tcard-go .destp-plan-btn { min-height: var(--tap-main); }
-.btn.tcard-day-btn { min-height: var(--tap); }
+.btn.tcard-day { min-height: var(--tap); }
 
 .tcard-sheet { margin: var(--space-4) 0 0; }
 .dpc-sheet, .dpc-party { border: 1px solid var(--border-soft); border-radius: var(--radius-panel); background: var(--surface-sunken); color: var(--text); }
@@ -849,7 +849,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-dock-text { flex: 1; min-width: 0; display: grid; justify-items: start; }
 .pt-dock-price { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .pt-dock.is-post-in-view .pt-dock-price { display: none; }
-.pt-dock:not(.is-post-in-view) .pt-dock-price { animation: pt-rise var(--dur-2) var(--ease-out); }
+.destp-v5 .pt-dock:not(.is-post-in-view) .pt-dock-price { animation: pt-rise var(--dur-2) var(--ease-out); }
 @media (prefers-reduced-motion: reduce) { .pt-dock .pt-dock-price { animation: none; } }
 .pt-dock-fig { font-size: var(--text-figure); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
 .pt-dock-unit { font-size: var(--text-label); color: var(--text-2); }
@@ -1008,7 +1008,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
    the standing reads as receipt rows (label left, words right, hairlines),
    the parts as rows whose figure is text and whose thin umber bar is the
    picture of it, never the only carrier. */
-.rs-sheet { background: var(--surface); max-width: 560px; }
+.frr-sheet.rs-sheet { background: var(--surface); max-width: 560px; }
 .rs-body { display: grid; gap: var(--space-5); padding: var(--space-4) var(--space-4) calc(var(--space-5) + env(safe-area-inset-bottom, 0px)); }
 .rs-hero { display: grid; gap: var(--space-3); justify-items: start; }
 .rs-why { margin: 0; font-size: var(--text-lead); font-weight: 600; line-height: 1.4; color: var(--text); text-wrap: pretty; }
