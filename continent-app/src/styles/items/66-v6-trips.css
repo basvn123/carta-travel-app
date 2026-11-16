@@ -88,23 +88,23 @@
 .dtrack .itin-day-note { margin-left: 0; }
 .dtrack .tday-chip { white-space: normal; }
 .dtrack .tday-shot { width: auto; min-width: 0; }
-.dtrack .tday-shot-cap { font-size: 12px; color: var(--ink-mute); }
+.dtrack .tday-shot-cap { font-size: var(--text-caption); color: var(--text-2); }
 .itin-page .tday-prose { padding: var(--space-1) 0 var(--space-2); }
 .itin-receipt .itin-cost { padding: 0 var(--space-4); }
 .itin-receipt .itin-cost li > span { min-width: 0; }
 .itin-receipt .itin-cost li b {
   flex: none;
-  font-family: var(--mono);
+  font-family: var(--ui);
   font-size: 15px;
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   text-align: right;
-  color: var(--ink);
+  color: var(--text);
 }
 .itin-receipt .itin-cost-day { border-bottom: none; }
 .jpage .jstrip-word:has(.mono) { text-transform: none; }
-.jpage .rfig-week .tpage-elev-area { fill: var(--rule-soft); }
-.jpage .rfig-week .tpage-elev-line { stroke: var(--ink); }
+.jpage .rfig-week .tpage-elev-area { fill: var(--border-soft); }
+.jpage .rfig-week .tpage-elev-line { stroke: var(--text); }
 @media print {
   body:has(.jpage),
   :has(.jpage) {

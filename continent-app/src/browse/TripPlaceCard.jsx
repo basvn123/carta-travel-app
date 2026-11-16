@@ -60,14 +60,15 @@ export function TripPlaceCard({ card, length, month, saved = false, onToggleSave
       <a className="ctc-hit" href={journeyHash(card.id)} onClick={open} aria-label={[card.title, where].filter(Boolean).join(', ')}>
         <span className="ctc-media">
           <HeroImage url={photo} city={card.title} iso2={card.cc} className="ctc-img" ratio={[4, 5]} maxWidth={720} sizes={sizes} />
-          {inSeason && <span className="ctc-badge">{t('tp.card.inSeason')}</span>}
-          <span className="ctc-over">
-            {where && <span className="ctc-where">{where}</span>}
-            <span className="ctc-name">{name}</span>
-          </span>
+        </span>
+        {/* House style: the name and the countries sit under the photo. */}
+        <span className="ctc-over">
+          <span className="ctc-name">{name}</span>
+          {where && <span className="ctc-where">{where}</span>}
         </span>
         {what && <span className="ctc-what">{what}</span>}
         <span className="ctc-facts">
+          {inSeason && <span className="ctc-badge">{t('tp.card.inSeason')}</span>}
           {level && <span className={`ctc-level ${DIFF_TONE[card.diff] || 'is-mid'}`}>{level}</span>}
           <span className="ctc-days">{t('tp.card.days', { n: days })}</span>
         </span>

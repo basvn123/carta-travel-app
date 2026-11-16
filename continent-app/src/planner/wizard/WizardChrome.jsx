@@ -3,7 +3,7 @@ import { SheetShell } from '../../browse/SheetShell.jsx';
 import { Button } from '../../components/Button.jsx';
 import { TripTotalBar } from '../TripTotalBar.jsx';
 import { ArrowLeftIcon, CheckIcon, ChevronDownIcon, CloseIcon } from '../../components/Icons.jsx';
-import { IconButton, StepList } from '../../components/ui/index.js';
+import { Blaze, IconButton, StepList } from '../../components/ui/index.js';
 import '../../styles/planners/88-pf2-wizard.css';
 import { cityLabel } from '../../lib/placeName.js';
 import { STEP_LABEL_KEYS } from './wizardSteps.js';
@@ -54,7 +54,7 @@ export function WizardHead({ inline, onClose, steps, step, isDesktop, stepsOpen,
             {steps.map((label, i) => {
               const n = i + 1;
               const state = n < step ? 'done' : n === step ? 'now' : 'todo';
-              const mark = <span className="wz-stepper-mark" aria-hidden="true">{state === 'done' ? <CheckIcon size={12} /> : n}</span>;
+              const mark = <span className="wz-stepper-mark" aria-hidden="true">{state === 'done' ? <CheckIcon size={12} /> : state === 'now' ? <Blaze size="sm" /> : n}</span>;
               return (
                 <li key={label} className={`wz-stepper-step is-${state}`}>
                   {state === 'done' ? (

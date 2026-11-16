@@ -26,7 +26,7 @@
   box-shadow: var(--elev-3);
   overflow: hidden;
 }
-.guide-title { font-family: var(--display); font-size: var(--text-title); color: var(--ink); font-weight: 600; }
+.guide-title { font-family: var(--ui); font-size: var(--text-title); color: var(--text); font-weight: 600; }
 
 /* Step 1 - countries */
 .guide-flag-img-sm {
@@ -44,23 +44,23 @@
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: 12px;
   transition: border-color var(--dur-1), background var(--dur-1);
 }
 .guide-nights button {
   width: 26px; height: 26px;
   border-radius: 50%;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   font-size: var(--text-lead); line-height: 1;
-  color: var(--ink);
+  color: var(--text);
   display: flex; align-items: center; justify-content: center;
 }
 @media (hover: hover) {
-  .guide-nights button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .guide-nights button:hover:not(:disabled) { border-color: var(--action); color: var(--action); }
 }
 .guide-nights button:disabled { opacity: 0.3; cursor: default; }
-.guide-nights-val b { font-family: var(--mono); color: var(--ink); }
+.guide-nights-val b { font-family: var(--ui); color: var(--text); }
 
 /* Step 2 - when (exact dates vs flexible) */
 .guide-datemode button {
@@ -70,7 +70,7 @@
   border-radius: 9px;
   font-size: var(--text-label);
   font-weight: 600;
-  color: var(--ink-soft);
+  color: var(--text-2);
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 /* A segment that is on is the selected state (T398): ink fill. */
@@ -96,9 +96,9 @@
 /* Stay step: Carta-designs-it CTA, map/list switch, tier chips + legend. */
 .guide-design-btn small { font-weight: 400; font-size: var(--text-micro); opacity: 0.85; }
 /* Neutral chip, coloured glyph - the icon reads the tier, not a colour block. */
-.guide-tier-top svg { color: var(--accent); }
+.guide-tier-top svg { color: var(--action); }
 .guide-tier-great svg { color: var(--good-mid); }
-.guide-tier-good svg { color: var(--ink-mute); }
+.guide-tier-good svg { color: var(--text-3); }
 .guide-city-combo b { font-weight: 600; }
 
 /* City-picker map pills: the browse map's price-pill language, city names +
@@ -106,8 +106,8 @@
 .citypick-pin {
   display: inline-flex; align-items: center; gap: 5px;
   padding: 3px 7px 3px 6px;
-  background: var(--bg-card);
-  border: 1px solid var(--rule);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   box-shadow: 0 1px 5px rgba(26, 26, 26, 0.18);
   cursor: pointer;
@@ -128,29 +128,29 @@
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  background: var(--ink);
-  color: var(--on-fill);
+  background: var(--text);
+  color: var(--action-text);
   border-radius: var(--radius-sm);
   font-family: var(--ui);
   font-size: var(--text-caption);
   font-weight: 600;
   white-space: nowrap;
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--elev-1);
 }
 /* Little downward stem so the flag reads as a sign pinned to the pill. */
 /* Keep the flag on top even when the pill is also selected. */
-.citypick-pin.anchor.on { background: var(--ink); border-color: var(--ink); }
+.citypick-pin.anchor.on { background: var(--text); border-color: var(--text); }
 
 /* Step 4 - stays: search, groups, budget */
-.guide-nights-budget b { color: var(--ink); }
+.guide-nights-budget b { color: var(--text); }
 .guide-nights-budget.over b { color: var(--warn-ink); }
 .guide-show-more {
   margin-top: 8px;
   padding: 7px 14px;
-  border: 1px dashed var(--rule);
+  border: 1px dashed var(--border);
   border-radius: var(--radius-pill);
   font-size: var(--text-caption);
-  color: var(--ink-soft);
+  color: var(--text-2);
   width: 100%;
 }
 
@@ -158,11 +158,11 @@
 .guide-chip {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 7px 12px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-pill);
-  background: var(--paper);
+  background: var(--surface);
   font-size: 12.5px;
-  color: var(--ink);
+  color: var(--text);
   transition: border-color var(--dur-1), background var(--dur-1);
 }
 /* An empty state is the content of its box, so it is not metadata grey and
@@ -174,7 +174,7 @@
 .guide-foot {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 12px 18px;
-  border-top: 1px solid var(--rule);
+  border-top: 1px solid var(--border);
   flex-shrink: 0;
 }
 /* "2 cities, 6 nights" is a phrase, so the UI face (T193). */
@@ -200,10 +200,10 @@
 .guide-next:not(.btn) {
   padding: 10px 22px;
   border-radius: var(--radius-control);
-  border: 1px solid var(--accent);
-  background: var(--accent);
-  color: var(--on-fill);
-  font-size: 13.5px;
+  border: 1px solid var(--action);
+  background: var(--action);
+  color: var(--action-text);
+  font-size: var(--text-body);
   font-weight: 600;
   transition: opacity var(--dur-1);
 }
@@ -215,9 +215,9 @@
    footer. Not-yet gets its own flat neutral instead, which is both more
    legible and unmistakably inactive. */
 .guide-next:not(.btn):disabled {
-  background: var(--paper-dim);
-  border-color: var(--rule);
-  color: var(--ink-mute);
+  background: var(--surface-sunken);
+  border-color: var(--border);
+  color: var(--text-3);
   cursor: default;
 }
 
@@ -233,7 +233,7 @@
 }
 .trip-plan-prompt {
   width: min(100%, 400px);
-  background: var(--paper);
+  background: var(--surface);
   border-radius: 18px;
   box-shadow: var(--shadow-2);
   padding: 26px 24px 20px;
@@ -243,30 +243,30 @@
   width: 46px; height: 46px;
   margin: 0 auto 14px;
   border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-fill);
+  background: var(--action);
+  color: var(--action-text);
   display: flex; align-items: center; justify-content: center;
   font-size: 22px;
 }
-.trip-plan-prompt h3 { font-family: var(--display); font-size: 19px; color: var(--ink); font-weight: 600; }
-.trip-plan-prompt p { font-size: var(--text-label); color: var(--ink-soft); line-height: 1.55; margin: 8px 0 20px; }
+.trip-plan-prompt h3 { font-family: var(--ui); font-size: var(--text-title); color: var(--text); font-weight: 600; }
+.trip-plan-prompt p { font-size: var(--text-label); color: var(--text-2); line-height: 1.55; margin: 8px 0 20px; }
 .trip-plan-prompt-actions { display: flex; flex-direction: column; gap: 9px; }
 .trip-plan-prompt-yes {
   padding: 12px; border-radius: var(--radius-control);
-  background: var(--accent); color: var(--on-fill);
+  background: var(--action); color: var(--action-text);
   font-size: var(--text-body); font-weight: 600;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--action);
 }
 @media (hover: hover) {
   .trip-plan-prompt-yes:hover { opacity: 0.9; }
 }
 .trip-plan-prompt-no {
   padding: 12px; border-radius: var(--radius-control);
-  border: 1px solid var(--rule);
-  color: var(--ink-soft); font-size: 13.5px;
+  border: 1px solid var(--border);
+  color: var(--text-2); font-size: var(--text-body);
 }
 @media (hover: hover) {
-  .trip-plan-prompt-no:hover { border-color: var(--ink-soft); }
+  .trip-plan-prompt-no:hover { border-color: var(--text-2); }
 }
 
 /* ── Day planner: "In Saved trips" confirmation popup ── */
@@ -274,12 +274,12 @@
   width: 46px; height: 46px;
   margin: 0 auto 14px;
   border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-fill);
+  background: var(--action);
+  color: var(--action-text);
   display: flex; align-items: center; justify-content: center;
 }
-.day-saved-card h3 { font-family: var(--display); font-size: 19px; color: var(--ink); font-weight: 600; }
-.day-saved-card p { font-size: var(--text-label); color: var(--ink-soft); line-height: 1.55; margin: 8px 0 20px; }
+.day-saved-card h3 { font-family: var(--ui); font-size: var(--text-title); color: var(--text); font-weight: 600; }
+.day-saved-card p { font-size: var(--text-label); color: var(--text-2); line-height: 1.55; margin: 8px 0 20px; }
 
 /* ───────── Guided trip: itinerary day view ───────── */
 .itin { padding-top: 4px; }
@@ -289,14 +289,14 @@
   display: flex; align-items: center; gap: 12px;
   width: 100%; text-align: left;
   padding: 11px 12px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: 12px;
   transition: border-color var(--dur-1);
 }
 @media (hover: hover) {
-  .itin-stop:hover { border-color: var(--ink-soft); }
+  .itin-stop:hover { border-color: var(--text-2); }
 }
-.itin-stop.active { border-color: var(--ink); outline: 1px solid var(--ink); outline-offset: -2px; }
+.itin-stop.active { border-color: var(--text); outline: 1px solid var(--text); outline-offset: -2px; }
 /* The stop in focus takes the selected state (T398); the accent numbers on
    the map are the live route and stay there. */
 /* The receipt's head (T398, row T388-j): the label in --ui, the party and
@@ -318,15 +318,15 @@
   width: 22px; height: 22px; flex: none;
   margin-left: -10px;
   border-radius: 50%;
-  border: 1px solid var(--rule);
-  background: var(--paper);
-  color: var(--ink-soft);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
 }
-.itin-leg-text small { display: block; font-family: var(--mono); font-size: 10px; color: var(--ink-mute); margin-top: 1px; }
+.itin-leg-text small { display: block; font-family: var(--ui); font-size: var(--text-caption); color: var(--text-2); margin-top: 1px; }
 .itin-leg-change {
   font-family: var(--ui); font-size: var(--text-caption);
-  color: var(--ink-soft);
-  border: 1px solid var(--rule);
+  color: var(--text-2);
+  border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   padding: 3px 9px;
   transition: color var(--dur-1), border-color var(--dur-1);
@@ -343,7 +343,7 @@
   align-items: baseline;
   gap: 10px;
   padding: 9px 12px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-control);
   background: none;
   text-align: left;
@@ -371,9 +371,9 @@
 .trip-plan-prompt-thumb {
   width: 52px; height: 52px;
   border-radius: var(--radius-control);
-  background: var(--paper-dim) center/cover no-repeat;
+  background: var(--surface-sunken) center/cover no-repeat;
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--display); font-size: var(--text-title); color: var(--ink-mute);
+  font-family: var(--ui); font-size: var(--text-title); color: var(--text-3);
 }
 
 /* Planned itinerary imagery */
@@ -385,3 +385,12 @@
   .guide-modal { max-height: 92vh; border-radius: 18px 18px 0 0; width: 100%; }
 }
 
+
+/* House style (plan lane 2026-11): the quiet "Pick my cities" door is a
+   paper button with an edge, its count line readable (the solid fill from
+   the held base rule made its small line ink on umber). No sparkle: the
+   route mark says what it does. */
+.guide-design-btn.guide-design-btn-quiet { border: var(--stroke-edge) solid var(--edge); background: var(--surface); color: var(--text); }
+.guide-design-btn.guide-design-btn-quiet small { font-size: var(--text-caption); color: var(--text-2); opacity: 1; }
+.guide-design-btn.guide-design-btn-quiet .guide-design-spark { color: var(--action); }
+.guide-design-btn.guide-design-btn-quiet.on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }

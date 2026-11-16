@@ -6,23 +6,14 @@
    (two lines at most); under it the flag with places and nights, then one
    price line, so cards in a row end level. */
 .ctc-media { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius-card); background: var(--surface-sunken); }
-.ctc-media::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 62%;
-  background: linear-gradient(to top, color-mix(in srgb, var(--text) 82%, transparent), transparent);
-  pointer-events: none;
-}
+.ctc-media { aspect-ratio: 4 / 3; }
+/* In season: a beige tag in the facts row, never on the photo. */
 .ctc-badge {
-  position: absolute;
-  top: var(--space-2);
-  left: var(--space-2);
-  z-index: 1;
-  padding: 3px var(--space-2);
+  display: inline-flex;
+  padding: 2px var(--space-2);
   border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text);
+  background: var(--select-bg);
+  color: var(--select-ink);
   font-size: var(--text-caption);
   font-weight: 700;
 }
@@ -192,7 +183,6 @@
 
 /* The card. */
 .ctc-name { display: block; overflow: visible; -webkit-line-clamp: unset; font-size: var(--text-body); line-height: 1.2; text-wrap: balance; }
-.ctc-media::after { height: 70%; }
 .ctc-what {
   font-size: var(--text-label);
   font-weight: 600;
