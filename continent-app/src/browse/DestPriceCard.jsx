@@ -283,11 +283,6 @@ export function DestPriceCard({
   const lineKind = (l) => (l.key === 'flight' ? 'flight' : l.key === 'way' ? (l.mode === 'plane' ? 'flight' : l.mode)
     : l.key === 'stay' ? 'bed' : l.key === 'ground' ? 'food' : l.key === 'car' ? 'car'
       : l.key === 'transport' ? 'local' : 'tickets');
-  // The getting-there wagon: the picked way's return fare a person, outside
-  // the day (DESIGN.md "Formation"); none when the flight is switched off.
-  const goFare = flightOff ? null
-    : pickedWay ? { mode, amount: view.way(pickedWay.perPerson) }
-      : carta?.perSeat > 0 ? { mode: 'plane', amount: view.way(carta.perSeat) } : null;
   const mine = Date.now() - actAt.current < 1500;
   // Ways as a radio group: arrow keys move the pick, as a native radio does.
   const onWayKey = (e) => {
@@ -333,7 +328,7 @@ export function DestPriceCard({
               <span className="tcard-unit">{view.unit}</span>
             </p>
             {(Number.isFinite(costRow?.stayEur) || Number.isFinite(costRow?.foodEur)) && (
-              <Formation className="tcard-split" weighted go={goFare}
+              <Formation className="tcard-split" weighted
                 bed={Number.isFinite(costRow?.stayEur) ? view.day(costRow.stayEur) : undefined}
                 food={Number.isFinite(costRow?.foodEur) ? view.day(costRow.foodEur) : undefined}
                 day={view.day(price.dayEur)} />
@@ -421,12 +416,13 @@ export function DestPriceCard({
                 <span className="tcard-h-unit">{t('place.wayUnit')}</span>
               </h4>
               <div className="tcard-ways" role="radiogroup" aria-labelledby={`${uid}-ways`} onKeyDown={onWayKey}>
-                {rows.map((w) => {
+                {rows.map((w, i) => {
                   const Icon = WAY_ICONS[w.mode] || RouteIcon;
                   const on = w.mode === mode;
                   const fp = fpText(w);
+                  const stop = on || (!pickedWay && i === 0);
                   return (
-                    <Plate key={w.mode} variant="leg" as="button" checked={on} tabIndex={on ? 0 : -1}
+                    <Plate key={w.mode} variant="leg" as="button" checked={on} tabIndex={stop ? 0 : -1}
                       className={`tcard-way${on ? ' is-on' : ''}`}
                       onClick={() => { acted(); setModePick(w.mode); haptic('tick'); }}
                       lead={(
@@ -528,7 +524,7 @@ export function DestPriceCard({
             ))}
             {rounding !== 0 && (
               <CostRow className="tcard-line is-rounding" label={t('place.rounding')}
-                value={`${rounding > 0 ? '+' : '-'}${money(Math.abs(rounding))}`} />
+                value={`${rounding > 0 ? '+' : '\u2212'}${money(Math.abs(rounding))}`} />
             )}
             <CostSum className="tcard-line is-total" label={t('place.total')} value={<Money value={price.total} />} live={false} />
             {/* T1075 (D10): a part with no figure yet says so in words; the

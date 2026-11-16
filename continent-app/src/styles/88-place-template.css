@@ -846,7 +846,11 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   position: relative;
   z-index: var(--z-sticky);
 }
-.pt-dock-text { flex: 1; min-width: 0; display: grid; justify-items: start; }
+.pt-dock-text { flex: 1; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; }
+/* G1 (judge fix): the inputs line keeps to its column (a long German date
+   ran under the primary); the label then ends in an ellipsis. */
+.pt-dock-text > .btn.pt-dock-inputs { min-width: 0; max-width: 100%; }
+.btn.pt-dock-inputs .btn-label { min-width: 0; }
 .pt-dock-price { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .pt-dock.is-post-in-view .pt-dock-price { display: none; }
 .destp-v5 .pt-dock:not(.is-post-in-view) .pt-dock-price { animation: pt-rise var(--dur-2) var(--ease-out); }
@@ -1161,7 +1165,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
    text of ours sits on it (the flat side is empty, cut at the left edge). */
 .pt-relief { height: 136px; border-radius: var(--radius-card); overflow: hidden; }
 .pt-relief .relief-zone { border-radius: var(--radius-card); }
-.pt-relief .relief-cut-blaze { translate: 4px 0; }
+.pt-relief .relief-cut-blaze, .pt-relief .relief-cut { display: none; }
 @media (min-width: 700px) { .pt-relief { height: 168px; } }
 
 /* G1 (house style): the photo above, the kind and its count under it on
