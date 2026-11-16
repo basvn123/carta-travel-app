@@ -1124,7 +1124,7 @@ html.kbd-open .settings-done { display: none; }
   height: 10px;
   border-radius: calc(var(--radius-sm) / 3);
   background: var(--neutral-0);
-  outline: 1px solid rgba(30, 36, 33, 0.38);
+  outline: 1px solid var(--blaze-edge);
   outline-offset: -1px;
 }
 .bottom-nav .nav-marker::before {

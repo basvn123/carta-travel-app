@@ -377,7 +377,7 @@ Define every duration and curve as a token; never write a literal in a component
 | `--dur-press` | 80 ms | Press-in |
 | `--dur-tick` and `--ease-tick` | 300 ms, a `linear()` curve generated from the tick spring | Press release, switch thumb, check mark |
 | `--dur-pop` and `--ease-pop` | 550 ms, generated from the pop spring | The Add icon only |
-| `--dur-sheet` and `--ease-sheet` | 400 ms, `cubic-bezier(0.32, 0.72, 0, 1)` (the iOS sheet curve) | A sheet rising |
+| `--dur-sheet` and `--ease-sheet` | 420 ms, `cubic-bezier(0.32, 0.72, 0, 1)` (the iOS sheet curve) | A sheet rising |
 | `--press-scale` | 0.97 | Buttons, chips, switches, segments |
 | `--press-scale-sm` | 0.92 | Icon-only controls up to 48 px |
 | `--press-scale-lg` | 0.985 | Cards and rows (larger things move less) |

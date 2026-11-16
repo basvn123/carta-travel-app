@@ -14,7 +14,7 @@ Say in the task report what departed from the defaults and why.
 
 ## Where the truth lives
 
-- `PRODUCT.md` (repo root): who Carta is for, the voice, accessibility, the visual brand commitment. Read it first.
+- `PRODUCT.md` (repo root): who the app is for, the voice, accessibility, the vocabulary, the interaction promise and the three angles. Read it first.
 - The live style guide: run the app and open `?styleguide`. It renders the real kit on the real tokens with "use for" and "not for" lines, and switches all six languages.
 - If no rule covers a case, the question goes to a task or the owner; do not make the call silently.
 
@@ -22,13 +22,13 @@ Say in the task report what departed from the defaults and why.
 
 Carta once had a homepage that looked machine generated, because defaults accumulated one component at a time. The generic look comes back the same way: in a hurry, when nobody is looking at the whole page. The rules are not suggestions to weigh against convenience. Deviating from them needs a reason you could defend out loud.
 
-## What Carta is
+## What the app is
 
-"Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs." (owner, T471-b, 2026-10-21; the same sentence as PRODUCT.md). One app for planning a trip anywhere in Europe, cutting coordination and logistics. It prices the ground for every destination (a bed plus food and drink, per person per day; local transport is not in the day figure yet), plans the trip city by city and each day hour by hour, and marks every estimate as an estimate. Carta never navigates: no route guidance and no GPS, the traveller's maps app takes them there. For the flight it shows Google Flights' price, with the airline, the times and when it was checked, so the flight, the bed and the days add up to one total; a fare the traveller types in replaces it. The flight price is never presented as Carta's own. It takes no booking and never ranks by what it earns; some links pay Carta a small fee at no cost to the traveller (I-e, 2026-11-12). It hands the traveller to the operator.
+"Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs." (owner, T471-b, 2026-10-21; the same sentence as PRODUCT.md). One app for planning a trip anywhere in Europe, cutting coordination and logistics. It prices the ground for every destination (a bed plus food and drink, per person per day; local transport is not in the day figure yet), plans the trip city by city and each day hour by hour. Carta never navigates: no route guidance and no GPS, the traveller's maps app takes them there. For the flight it shows Google Flights' price, with the airline, the times and when it was checked, so the flight, the bed and the days add up to one total; a fare the traveller types in replaces it. The flight price is never presented as Carta's own. It takes no booking and never ranks by what it earns; some links pay Carta a small fee at no cost to the traveller (I-e, 2026-11-12). It hands the traveller to the operator.
 
 The audience counts money: students, young workers, families on one income, retirees, and hikers first at launch. The only real asset is trust in the numbers.
 
-Carta's own mark is one calm price line under every photo (T419). The voice is plain, specific and short.
+The formation (DESIGN.md "Signature components") is the price row under every photo. The voice is plain, specific and short.
 
 ## App structure
 
@@ -115,7 +115,7 @@ Use the kit in `continent-app/src/components/ui/`; a new local button, chip or c
 
 ## Copy
 
-The voice did not change with the look. Carta sounds like an instrument, not a brochure.
+The voice did not change with the look. The app sounds like an instrument, not a brochure.
 
 - Every headline carries a verb the traveller recognises or a number. "What the whole trip actually costs" works; "Everything the price tag usually hides" could sit on any product. A browse section title may be a plain noun phrase ("Hidden gems").
 - Say less (owner, 2026-10-13). Every sentence on a page earns its place for the traveller. Method notes, coverage statements and catalogue counts ("3,855 places", "253 trips in 39 countries") are not page furniture (catalogue counts left the page furniture, T438); a figure the traveller needs (a price, a distance, their own shortlist) is.
@@ -135,7 +135,7 @@ The voice did not change with the look. Carta sounds like an instrument, not a b
 2. Fabricated social proof: testimonials, user counts, press, partner logos, "popular" badges without a measure. Data freshness is the proof Carta has.
 3. AI-generated photographs of places, stock people with laptops.
 4. A euro sign or "EUR" in an i18n string or JSX, `toFixed` on a price, a rounded receipt line, or any mark of provenance on a price: a tilde, "est.", "live", a method line (2026-10-24, price plan rule 2).
-5. Functional text under 11 px, a figure or rating under 12 px, or a touch target under 44 px on a coarse pointer.
+5. Any text under 12 px, or a touch target under 44 px on a coarse pointer.
 
 Also never: catalogue counts, method sentences or coverage notes as page furniture; scroll-triggered counters or a count-up on a figure.
 
@@ -144,7 +144,7 @@ Also never: catalogue counts, method sentences or coverage notes as page furnitu
 - 360 px wide with no horizontal scroll; one `h1` per view, headings in order.
 - Real `<a>` for navigation, real `<button>` for actions; visible focus on every interactive element (`:focus-visible`; never `outline: none` without a replacement).
 - `--tap` (44 px) is the floor for anything interactive, icon-only controls included; on a fine pointer a compact control such as the small Button or a chip may be 32 px.
-- Nothing functional under 11 px; no figure and no rating under 12 px.
+- No text under 12 px (the house floor, DESIGN.md "Type").
 - Every text pair 4.5:1 or better (`node scripts/ci/token-contrast.mjs`).
 - Colour is never the only carrier: selection carries a mark, place kind survives greyscale, good news and danger come with words.
 - `prefers-reduced-motion: reduce` on every transition; scripted motion asks `prefersReducedMotion()` or `durationMs()` in `src/lib/motion.js`.
@@ -156,5 +156,5 @@ Also never: catalogue counts, method sentences or coverage notes as page furnitu
 ## Gates before you ship
 
 These two questions still gate (owner design-freedom decision, 2026-10-30), with contrast:
-- Is any rating or figure under 12 px, any functional text under 11 px, any column of figures without tabular numerals, any euro not from `formatMoney`?
+- Is any rating or figure under 12 px, any text under 12 px, any column of figures without tabular numerals, any euro not from `formatMoney`?
 - Does every headline contain a verb or a number (or name a browse section), is there no count, method line or coverage sentence that could go, and is the diff free of em and en dashes, middots and the banned words?

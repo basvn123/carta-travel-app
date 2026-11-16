@@ -16,7 +16,7 @@ What a day price includes is built from a list of parts, one key per part ("A be
 
 ## The receipt
 
-Carta's signature object, wherever a total needs justifying: a head with destination and route, one hairline separated line per cost component with the figure right aligned in cents, a rule above the sum, the sum, and a footer showing what one changed input would do to the total. It is the page's one bounded object. On a trip page the trip's own budget is the receipt (cost bar, lines, total a person and for the party, the one Lifestyle control under it); a nearby town's receipt is a labelled second view and carries no stay select of its own. A day plan carries one per person figure for the day from the same cost index; a tap opens the compact receipt. A receipt line may appear outside the receipt only when read live from it and set exactly as it sets it.
+The app's signature object, wherever a total needs justifying: a head with destination and route, one hairline separated line per cost component with the figure right aligned in cents, a rule above the sum, the sum, and a footer showing what one changed input would do to the total. It is the page's one bounded object. On a trip page the trip's own budget is the receipt (cost bar, lines, total a person and for the party, the one Lifestyle control under it); a nearby town's receipt is a labelled second view and carries no stay select of its own. A day plan carries one per person figure for the day from the same cost index; a tap opens the compact receipt. A receipt line may appear outside the receipt only when read live from it and set exactly as it sets it.
 
 ## The cost bar
 

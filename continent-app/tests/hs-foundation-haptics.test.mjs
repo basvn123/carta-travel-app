@@ -100,3 +100,28 @@ test('no screen vibrates directly: navigator.vibrate lives in haptics.js only', 
   walk(new URL('../src', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
   assert.deepEqual(hits, []);
 });
+
+// A stand-in element: matches() decides which selector it belongs to.
+const el = (kind, { kit = false, disabled = false } = {}) => {
+  const self = {
+    disabled,
+    getAttribute: () => null,
+    closest(sel) {
+      if (sel.includes('.ui-chip')) return kit ? self : null;
+      if (sel.includes('aria-pressed') && kind === 'toggle') return self;
+      return null;
+    },
+  };
+  return self;
+};
+
+test('a click on a toggle outside the kit commits one tick; kit controls, folds and disabled toggles do not', async () => {
+  const { committedToggle } = await import('../src/lib/touchFeedback.js');
+  assert.ok(committedToggle(el('toggle')));
+  assert.equal(committedToggle(el('toggle', { kit: true })), null);
+  assert.equal(committedToggle(el('fold')), null);
+  assert.equal(committedToggle(el('toggle', { disabled: true })), null);
+  const src = fs.readFileSync(new URL('../src/lib/touchFeedback.js', import.meta.url), 'utf8');
+  assert.match(src, /addEventListener\('click'/);
+  assert.doesNotMatch(src.replace(/\/\/.*$/gm, ''), /aria-expanded/);
+});

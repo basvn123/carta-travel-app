@@ -142,6 +142,8 @@
   transition: background-color var(--dur-2) var(--ease-out), color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
 }
 .seg-sm .seg-item { min-height: 32px; padding: 0 var(--space-3); }
+/* Decision must-fix 12: segmented buttons are 44 px high on every pointer. */
+.seg-item { min-height: var(--tap); }
 @media (pointer: coarse) {
   .seg-item, .seg-sm .seg-item { min-height: var(--tap); }
 }

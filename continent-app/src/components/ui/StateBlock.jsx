@@ -43,7 +43,7 @@ export function Skeleton({ w = '100%', h = 16, className = '' }) {
 
 export function NotYet({ className = '' }) {
   const { t } = useI18n();
-  return <span className={`hs-notyet ${className}`.trim()}>{t('mt.state.none')}</span>;
+  return <span className={`hs-notyet ${className}`.trim()}>{t('price.notMeasured')}</span>;
 }
 
 export function WorldTile({ world = 'rock', className = '' }) {

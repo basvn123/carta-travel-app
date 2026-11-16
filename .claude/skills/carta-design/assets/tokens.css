@@ -50,7 +50,10 @@
   --umber-700:    #744820;
   --umber-800:    #5a3716;
 
-  /* Sun yellow: best value, as a fill or a marker. Never text. */
+  /* Sun yellow: retired as a role (no yellow in the house style; --best is
+     beige now). Kept as primitives only because the share images read them
+     by name (src/lib/share/draw.js SHARE_TOKENS) and screens not yet rebuilt
+     still name them; page lanes remove those direct reads. */
   --sun-400:      #f2b33d;
   --sun-100:      #fdf1d8;
   --sun-800:      #7a5000;
@@ -93,9 +96,13 @@
 
   --focus:           var(--umber-700);    /* 3 px ring, 2 px offset; 6.80 on stone */
   --focus-on-dark:   var(--neutral-0);    /* the ring on a dark plate */
-  --best:            var(--sun-400);      /* best value marker; --text on it 7.9 */
-  --best-bg:         #fdefc0;
-  --best-ink:        var(--text);
+  /* Best value (house style: no yellow; decision 0012). A beige mark with
+     its word ("Cheapest", "Best value"), never colour alone; it never
+     outshouts the umber chosen pin. --text on it 11.6; the tint stays apart
+     from the selected wash (token-contrast DISTINCT). */
+  --best:            var(--umber-200);
+  --best-bg:         var(--umber-50);
+  --best-ink:        var(--umber-800);
 
   /* ---- 3. House parts ---------------------------------------------------- */
 
@@ -190,6 +197,10 @@
   --elev-2:          0 0 0 1px rgba(30, 36, 33, 0.06), 0 12px 32px -8px rgba(30, 36, 33, 0.24);
   --elev-3:          0 0 0 1px rgba(30, 36, 33, 0.06), 0 18px 48px -12px rgba(30, 36, 33, 0.32);
   --scrim:           rgba(30, 36, 33, 0.42);
+  /* The one photo scrim (DESIGN.md "Photography"): ink at 78 % under the
+     bottom 45 % of a photo header. White text on it measures 7.7:1 even
+     where the photo is pure white, so a title there passes AA at any size. */
+  --photo-scrim:     rgba(30, 36, 33, 0.78);
 
   /* Layers, low to high (T474). Every z-index of 10 or more reads one of
      these, or calc(var(--z-band) + n); 1 to 9 stays a number. */

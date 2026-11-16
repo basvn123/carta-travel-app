@@ -55,6 +55,7 @@ export function Plate({
 
 export function ScorePlate({ value, label, size = 'md', className = '' }) {
   if (!Number.isFinite(value)) return null;
+  // The app's own Score format (src/lib/rating.js): one decimal, a point, in every language.
   const shown = value.toFixed(1);
   return (
     <span className={`hs-score${size === 'lg' ? ' is-lg' : ''}${className ? ` ${className}` : ''}`}>

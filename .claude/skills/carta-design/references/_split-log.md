@@ -13,15 +13,15 @@ Every section of the old `app-rules.md` and where its content went. "shared" is 
 | Owner decision 2026-10-30: design freedom | shared What still binds; plan.md The persona question |
 | Where the truth lives, and what wins | shared Where the truth lives (PRODUCT.md, styleguide, ask the owner); the Lagoon contract and token lines dropped: old look sources |
 | Why this file exists | shared Why these rules exist |
-| What Carta is | shared What Carta is |
-| The look in one paragraph | shared What Carta is (the price line under every photo, the voice); rest dropped: old look only |
+| What Carta is | shared What the app is |
+| The look in one paragraph | shared What the app is (the price line under every photo, the voice); rest dropped: old look only |
 | Explore v6 (T584 to T594) | explore.md Explore v6; footer to home.md Site footer; Ask Carta T584 to account.md Ask Carta; dropped: card chrome, tilt, browse motion, map pill fonts (old look) |
 | Explore v7 (T595 to T600) | explore.md Explore v7; the one Ask door also in account.md and plan.md |
 | Explore v8 (T601 to T604) | explore.md Explore v8 (panel tokens and heights dropped) |
 | Trips for you v2 (T879 to T884) | plan.md Trips for you v2; dropped: photo fade, ring colours, tile tints (old look) |
 | The trip page v5 (T885 to T890) | trip.md The trip page v5 |
 | Colour | shared Controls (one selected state with a mark, `aria-current`), Quality floor (colour never the only carrier); rest dropped: old palette and token roles |
-| Type | shared Quality floor (11 px and 12 px floors), Numbers and money (tabular figures), Controls (16 px inputs); rest dropped: Figtree and type scale |
+| Type | shared Quality floor (now one 12 px floor), Numbers and money (tabular figures), Controls (16 px inputs); rest dropped: Figtree and type scale |
 | Numbers and money | shared Numbers and money (flights included); place.md and trip.md point to it |
 | Layout, spacing and shape | shared App structure (breakpoints, page widths), Quality floor (touch, decorative icons); explore.md Density; spacing, radius, elevation, layers, hairlines dropped: old look only |
 | Photography | shared Photography (licensing, credit, placeholder, no AI photos); home.md (home exception); explore.md Density (gallery on a list tile); place.md Sources and credits; dropped: no text on photos, aspects, corners, hero heights (old look, now defaults in DESIGN.md) |

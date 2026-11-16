@@ -71,8 +71,8 @@ colors:
   map-water: "#d3dfe2"
   map-border: "#d7dcd3"
   map-route: "#8c5a2b"
-  best: "#f2b33d"
-  best-bg: "#fdefc0"
+  best: "#e7d3bc"
+  best-bg: "#faf6f1"
   danger: "#a12a1c"
   danger-dark: "#86200f"
   danger-bg: "#f6dcd8"
@@ -250,7 +250,7 @@ The file is name-free: it says "the app".
 
 **The furniture of a European footpath, made for prices.** A walker reads a waymark painted on a rock, a signpost with a place, a time on foot and a distance, and the shape of the ground around them. The app gives prices the same furniture:
 
-- **The blaze**: a white halo with a square umber paint stripe and a short ink heel. It means "chosen" or "here", nothing else.
+- **The blaze**: a white halo with a square umber paint stripe and a short ink heel. It means "chosen" or "here", and, in its resting or dashed state, "the path is waiting" (the loading mark, the empty state, the missing photo). Nothing else.
 - **The signpost plate**: a dark ink plate with one pointed end that holds a place, a time on foot and euros as one unit, read the same way everywhere.
 - **The relief**: illuminated contours drawn only from a place's real peaks, always printing a real height. It is honest by construction: no peak in the data, no relief.
 - **The formation**: the price row, where getting there, the bed and food couple like wagons in front of the day figure.
@@ -325,7 +325,7 @@ Kinds of place have their own paint, for the kind's pictogram mark, swatch and t
 
 ### Status and the rest
 
-`--danger` `#a12a1c` (6.43 on stone) for destructive actions and errors, always with words. `--best` sun yellow marks best value as a fill or marker, never text. The domain colours under "Domain colours" in the token file are single-job (water quality, climate, crowds, cost-bar groups); do not use them as general colours. Legacy names (`--paper`, `--ink`, `--accent`, `--rule` and the rest) are aliases re-pointed at the roles; new rules read roles (the lint flags legacy names outside the token file).
+`--danger` `#a12a1c` (6.43 on stone) for destructive actions and errors, always with words. Best value is a beige mark (`--best` umber 200, `--best-bg` umber 50, `--best-ink` umber 800) always with its word ("Cheapest", "Best value"); there is no yellow in the house style. The `--sun-*` primitives stay only because the share images read them by name (`src/lib/share/draw.js`); screens must not read them, and page lanes remove the direct reads that remain (home's yellow headline word, the trip page's sun chips). The cost-bar group colours (`--cost-*`) and `--ai-violet` are Lagoon leftovers kept for the screens that still draw them; the place lane decides whether the cost bar moves to umber and beige, and they retire with their last reader. The domain colours under "Domain colours" in the token file are single-job (water quality, climate, crowds, cost-bar groups); do not use them as general colours. Legacy names (`--paper`, `--ink`, `--accent`, `--rule` and the rest) are aliases re-pointed at the roles; new rules read roles (the lint flags legacy names outside the token file).
 
 ### Colour rules
 
@@ -405,15 +405,15 @@ Use: `<ReliefBand mountains={dossier.nearby.mountains} seed={place.id} cut="55%"
 
 All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05-house.css` with the `hs-` prefix.
 
-**Blaze** (`<Blaze size="sm|md|lg|xl" state="painted|rest|blank" kind=…/>`). 16 x 10, 24 x 14, 40 x 22, 72 x 40. Only where it means chosen or here: the wordmark slot, the current nav place, the chosen map pin, a sheet grip, the relief cut, the empty-state mark. Not on section headings, bullets, plates, ordinary pins or panels.
+**Blaze** (`<Blaze size="sm|md|lg|xl" state="painted|rest|blank" kind=…/>`). 16 x 10, 24 x 14, 40 x 22, 72 x 40. Only where it means chosen or here: the wordmark slot, the current nav place, the chosen map pin, a sheet grip, the relief cut; and as the waiting path: three painting blazes while loading, a dashed blaze in an empty state, a resting blaze on the missing-photo tile. This widens decision item 8 on purpose: those three states are the path not yet walked. Not on section headings, bullets, plates, ordinary pins or panels.
 
-**Plate** (`<Plate variant="place|leg|total|mark" …/>`). Place: ink plate, pointed end, name in the plate face, a second line in beige, the figure right in Overpass 800. Leg: paper inside a 1.5 px edge; as a radio (`checked`) it takes the umber edge and the umber 50 fill. Total: label above a 40 to 54 px figure (the engine's own total). Mark: the small umber plate for "you chose this" (a chosen row's price, the chosen pin). Price bands ("€100 to €149", count on the tip) are place plates and appear only when the traveller sorts by cheapest day. Never use a plate as an ordinary card. One total plate per screen.
+**Plate** (`<Plate variant="place|leg|total|mark" …/>`). A leg plate with `checked` is a radio: the caller wraps the group in `role="radiogroup"` with its label and handles the arrow keys (as `ChipGroup` does). Place: ink plate, pointed end, name in the plate face, a second line in beige, the figure right in Overpass 800. Leg: paper inside a 1.5 px edge; as a radio (`checked`) it takes the umber edge and the umber 50 fill. Total: label above a 40 to 54 px figure (the engine's own total). Mark: the small umber plate for "you chose this" (a chosen row's price, the chosen pin). Price bands ("€100 to €149", count on the tip) are place plates and appear only when the traveller sorts by cheapest day. Never use a plate as an ordinary card. One total plate per screen.
 
 **Score plate** (`<ScorePlate value={9.7} label="Score" />`). Ink, white figure out of 10, right after the place name. No stars, no coloured scores.
 
-**Formation** (`<Formation go={{mode, amount}} bed food day weighted? size="lg"? />`). The price row of every row and card: getting there as an outlined umber pill with its mode icon (a return fare, outside the day; the outlined pill means "outside the day figure" and nothing else, so a cost inside a total is never outlined), the bed as a solid umber wagon, food and drink as a beige wagon, coupled with 2 px gaps, then the day figure, always the loudest. A part without a figure is a dashed "Not yet" wagon outside the sum; a place without a split shows the day only. Wagons are content-sized in rows; `weighted` sizes them by their euros on cards and the cost post. Heights 24 (rows, cards), 36 (`size="lg"`, cost posts). The component formats, never sums.
+**Formation** (`<Formation go={{mode, amount}} bed food day weighted? size="lg"? />`). The price row of every row and card: getting there as an outlined umber pill with its mode icon (a return fare, outside the day; the outlined pill means "outside the day figure" and nothing else, so a cost inside a total is never outlined), the bed as a solid umber wagon, food and drink as a beige wagon, coupled with 2 px gaps, then the day figure, always the loudest. A part without a figure is a dashed "Not yet" wagon outside the sum; a place without a split shows the day figure alone (decision 0012 says "one honest wagon"; a lone wagon would repeat the day figure, so the figure stands by itself). Wagons are content-sized in rows; `weighted` sizes them by their euros on cards and the cost post. Heights 24 (rows, cards), 36 (`size="lg"`, cost posts). The component formats, never sums.
 
-**Rail and RailCard**. Head: title left, "See all" in umber 700 and two round outlined arrow buttons right (from 1024 px; touch scrolls). Cards: 4:3 photo at 16 px corners, the name with its Score plate, flag and country (and the Hidden gem diamond in umber 700), the weighted formation; a paper save disc over the photo. Four across from 1024, about two at tablet, 76 % on a phone.
+**Rail and RailCard**. It keeps every behaviour of the old `StoryRail`: the section labelled by its heading, the arrows labelled "Scroll back" and "Scroll forward" and disabled at the ends, ArrowLeft and ArrowRight moving focus card to card, "See all" a real button (a link only when given an href). Head: title left, "See all" in umber 700 and two round outlined arrow buttons right (from 1024 px; touch scrolls). Cards: 4:3 photo at 16 px corners, the name with its Score plate, flag and country (and the Hidden gem diamond in umber 700), the weighted formation; a paper save disc over the photo. Four across from 1024, about two at tablet, 76 % on a phone.
 
 **List row** (built by the explore lane from these parts). One grid per container width. Under 600 px: two lines (name and Score, then the day; flag and country, then the formation), a 44 px photo, about 8 rows above the bar at 390 x 844. From 600: one line, the formation in its own column. Selected: the umber 50 wash and the umber price mark, never a side stripe. The unit is said once in the column head ("A day, a person").
 
@@ -427,7 +427,7 @@ All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05
 
 ## The kit
 
-`src/components/ui/`: `Button` (primary umber, default paper with a 1.5 px ink edge, quiet umber text, danger; 44 px), `IconButton` (round 44 px; `surface` with an edge, `photo` a paper disc), `Chip` and `ChipGroup` (pills, 1.5 px edge, selected wash with a tick that springs in), `Segmented` (a pill; the chosen segment takes the paint; 44 px on touch), `Tabs` (the umber 3 px paint bar strokes in under the chosen tab), `Switch` (umber when on, the thumb springs), `Field` (8 px, 1.5 px edge, 16 px text, the error under it), `Card`, `Tile`, `ChoiceRows`, `CostRow`, `Money` (every euro through `formatMoney()`), `DialogSheet`, `CarouselArrows`, `StepRail`. The Ask button carries a boxed "AI" tag (`.ai-tag`), never a sparkle. A screen that needs a variant the kit lacks files a foundation request; it never restyles a kit class locally.
+`src/components/ui/`: `Button` (primary umber, default paper with a 1.5 px ink edge, quiet umber text, danger; 44 px), `IconButton` (round 44 px; `surface` with an edge, `photo` a paper disc), `Chip` and `ChipGroup` (pills, 1.5 px edge, selected wash with a tick that springs in), `Segmented` (a pill; the chosen segment takes the paint; 44 px high on every pointer), `Tabs` (the umber 3 px paint bar strokes in under the chosen tab), `Switch` (umber when on, the thumb springs), `Field` (8 px, 1.5 px edge, 16 px text, the error under it), `Card`, `Tile`, `ChoiceRows`, `CostRow`, `Money` (every euro through `formatMoney()`), `DialogSheet`, `CarouselArrows`, `StepRail`. The Ask button carries a boxed "AI" tag (`.ai-tag`), never a sparkle. A screen that needs a variant the kit lacks files a foundation request; it never restyles a kit class locally.
 
 ## Icons
 
@@ -435,7 +435,7 @@ All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05
 
 ## Photography
 
-Licensed photos only, each with author and licence (credits under the gallery and in "Sources and photo credits"). Corners `--radius-card`. Text never on a photo: titles and prices sit under it; a control on a photo is a paper disc. Missing photo: the world tile. The one exception, a photo header that must carry its title, uses `.hs-photo-scrim` (ink 55 % under the bottom 45 %, white text 7:1 or more).
+Licensed photos only, each with author and licence (credits under the gallery and in "Sources and photo credits"). Corners `--radius-card`. Text never on a photo: titles and prices sit under it; a control on a photo is a paper disc. Missing photo: the world tile. The one exception, a photo header that must carry its title, uses `.hs-photo-scrim`: `--photo-scrim` (ink `#1e2421` at 78 %) under the bottom 45 % of the photo; white text inside that band measures 7.7:1 even over a pure white photo. Text outside the band never sits on the photo.
 
 ## Interaction
 
@@ -456,7 +456,7 @@ Character: **painted and placed**. Rules:
 
 | Token | Value | For |
 |---|---|---|
-| `--dur-press` | 80 ms (`--ease-out`) | The finger lands: `--press-scale` 0.97 (0.92 small icons, 0.985 cards and rows), `--press-shade` 0.78 |
+| `--dur-press` | 80 ms (`--ease-out`) | The finger lands: `--press-scale` 0.97 (0.92 small icons, 0.985 cards and rows), `--press-shade` 0.78; `--lift-scale` 1.03 lifts a row picked up to reorder |
 | `--dur-tick`, `--ease-tick` | 300 ms, spring 180 ms visual, bounce 0.3 | The release, a switch thumb, a check mark, a segment |
 | `--dur-pop`, `--ease-pop` | 550 ms, spring 260 ms, bounce 0.45 | The Add icon only |
 | `--dur-settle`, `--ease-settle` | 400 ms, spring 200 ms, no bounce | Figures rolling, plates arriving, the chosen pin, rows gliding, the nav marker |

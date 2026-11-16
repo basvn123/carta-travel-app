@@ -32,7 +32,7 @@ The one app for planning a trip anywhere in Europe. The owner's sentence (2026-1
 - **Around the towns** sit walking routes, beaches, lakes, summits and cycling routes, each with a page; where a region is empty the page says so in one line.
 - **It sells nothing.** It takes no booking and never ranks by what it earns; it prices, plans and hands the traveller to the operator. Some links pay the app a small fee at no cost to the traveller (I-e, owner ticks T461-d and T1047-a, 2026-11-12).
 
-The catalogue is master data in `app_data/app_data.json` and grows with every ingest; never copy a count into the UI (read `meta`). Nothing on the map is live-searched; the pipeline precomputes everything and a CDN serves it as static JSON. Flight prices come from a sweep Worker that checks each route on a schedule; only the trip planner searches one day live. Six languages: English, Dutch, French, German, Spanish and Italian, on every surface including the PDF, KML and ICS exports.
+The catalogue is master data in `app_data/app_data.json` and grows with every ingest; never copy a count into the UI (read `meta`). Nothing on the map is live-searched; the pipeline precomputes everything and a CDN serves it as static JSON. Flight prices come from a sweep Worker that checks each route on a schedule; only the trip planner searches one day live. Live at carta-europetravel.com. Six languages: English, Dutch, French, German, Spanish and Italian, on every surface including the PDF, KML and ICS exports.
 
 ## Who it is for
 
@@ -79,7 +79,7 @@ The product's only real asset is trust in its numbers. Every visual and copy cho
 The app sounds like a well made instrument, not a brochure: a trail sign, a timetable, an itemised receipt. When a copy decision is open, ask what a good waymark or receipt would say: the place, the time on foot, the price, nothing else.
 
 - **Plain, specific, verb first.** Every headline carries a verb the traveller recognises or a number. "What the whole trip costs" works; "Everything the price tag usually hides" could sit on any product and so does not.
-- **Short.** Labels are two or three words. The unit is said once per list or card ("A person, a day" in the column head), never under every figure.
+- **Short.** Labels are two or three words. The unit is said once per list or card ("A day, a person" in the column head), never under every figure.
 - **Honest, in its own voice.** A flight price is named as Google Flights', with when it was checked; when the AI is off, the app says so. Ask's answers carry "AI, from our own figures. It can be wrong." No testimonials.
 - **Sentence case everywhere.** No terminal punctuation on labels, buttons or headings; helper text and body copy take full stops. Contractions are fine. Active voice. A button that says "Save trip" produces "Trip saved".
 - **Errors** say what happened and what to do, in one sentence, with no apology and no "Error:" prefix ("Type the fare you paid, in euros."). **Empty states** name the space and give the action ("No place fits", Clear all).
@@ -100,7 +100,7 @@ Decided 2026-11-15 by the house style run (G1). Use these words in every screen,
 | Trips the app made | **Ready-made trips** | the app's own trips, ready-made routes, guides |
 | Explore's places area | **Places** (the tab itself is **Explore**) | Destinations |
 | A figure the app does not have | **Not yet** | Price on request, Unknown, Not yet measured |
-| The unit in lists | **a person, a day** (said once, in the head) | bed and food for one person a day |
+| The unit in lists | **A day, a person** (said once, in the column head) | bed and food for one person a day |
 | The unit switch | **Per person** / **Whole group** | |
 | Who travels | **People** | Travellers, Who, party |
 | How the traveller spends | **Lifestyle** (stay and food style inside it) | How you'll spend |
@@ -131,11 +131,11 @@ These are not optional and are not announced in the UI.
 
 ## Positioning
 
-Every travel product shows a price; the app shows what the whole day costs, honestly. Each neighbouring category beats it on one axis and none can say the second half: route and trail products (Komoot, AllTrails) do not price the town the walk starts from; journey planners (Rome2Rio, Omio) price the leg but not the stay; flight discovery (Skyscanner, Google Flights) does not know what a bed and a day cost; itinerary planners (Wanderlog, TripIt) start from whatever the user types in; Google Maps is the best at getting there and knows neither what a bed costs nor how to build a trip. The app sits where cost and logistics meet, and hands over to the maps app at the last step.
+Every travel product shows a price; the app shows what the whole day costs, honestly. Each neighbouring category beats it on one axis and none can say the second half: route and trail products (Komoot, AllTrails) do not price the town the walk starts from; journey planners (Rome2Rio, Omio) price the leg but not the stay; flight discovery (Skyscanner, Google Flights) does not know what a bed and a day cost; itinerary planners (Wanderlog, TripIt) start from whatever the user types in; Google Maps is the best at getting there and knows neither what a bed costs nor how to build a trip; ViaMichelin prices the car leg (fuel, tolls, vignettes) and nothing else, no bed and no day. The app sits where cost and logistics meet, and hands over to the maps app at the last step.
 
 ## Operating context
 
-A traveller plans at home or on the move, mostly on a phone: browsing places by what a day costs, saving a few, comparing them on the map, then turning one into a multi-city trip and its days. Acquisition is organic search on honest item and coverage pages (`docs/GTM-ACQUISITION-CONSTRAINT.md`). Public opening Tuesday 9 March 2027, launch campaign Tuesday 4 May 2027 (`ROADMAP.md` sections 4 and 16). Success in the first year (owner, 2026-10-13): travellers buy Trip Passes, visitors arrive from search, and travellers trust the figures enough to save trips and come back (`docs/LAUNCH-METRICS.md`).
+A traveller plans at home or on the move, mostly on a phone: browsing places by what a day costs, saving a few, comparing them on the map, then turning one into a multi-city trip and its days. Acquisition is organic search on honest item and coverage pages; at about €0.17 of allowable spend per visitor no paid channel fits (`docs/GTM-ACQUISITION-CONSTRAINT.md`). Public opening Tuesday 9 March 2027, launch campaign Tuesday 4 May 2027 (`ROADMAP.md` sections 4 and 16). Success in the first year (owner, 2026-10-13): travellers buy Trip Passes, visitors arrive from search, and travellers trust the figures enough to save trips and come back. The admin Overview is where these are read (`docs/LAUNCH-METRICS.md`); visitors and priced-trip completions have no instrument yet.
 
 ## Evidence on hand
 

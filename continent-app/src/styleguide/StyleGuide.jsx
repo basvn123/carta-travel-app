@@ -267,7 +267,7 @@ export default function StyleGuide() {
             </div>
           </Section>
 
-          <Section id="house" title="House parts" lead="The formation is the price row of every list and card. The day figure is always the loudest thing in it.">
+          <Section id="house" title="House parts" lead="The formation is the price row of every list and card. The day figure is always the loudest thing in it. Figures here are demo figures.">
             <div className="sg-grid">
               <Demo title="Formation" note="Getting there outlined, the bed solid umber, food beige, then the day. Not yet is dashed and outside the sum.">
                 <div className="sg-stack">
@@ -282,7 +282,7 @@ export default function StyleGuide() {
                   <Plate lead={<Blaze size="sm" />} name="Sentier des Alpages" fig="6 h 39" figSub="on foot" />
                   <Plate variant="leg" as="button" checked={leg === 'train'} onClick={() => setLeg('train')} name="Train" sub="Fastest, 9 h 12" fig={<Money value={211} />} />
                   <Plate variant="leg" as="button" checked={leg === 'bus'} onClick={() => setLeg('bus')} name="Bus" sub="Cheapest, 13 h 05" fig={<Money value={148} />} />
-                  <Plate variant="total" name="Total, 2 people" fig={<Figure value={total} mine delta />} />
+                  <Plate variant="total" name="Total, 2 people" fig={<Figure value={total} still />} />
                   <span className="sg-row"><ScorePlate value={9.7} label="Score" /><ScorePlate value={8.2} label="Score" size="lg" /></span>
                 </div>
               </Demo>
@@ -291,9 +291,11 @@ export default function StyleGuide() {
               {[['Aosta', 'IT', 'Italy', 9.4, { mode: 'car', amount: 118 }, 68, 65, 133],
                 ['Hallstatt', 'AT', 'Austria', 9.6, { mode: 'car', amount: 138 }, 109, 64, 172],
                 ['Moustiers-Sainte-Marie', 'FR', 'France', 9.4, { mode: 'flight', amount: 120 }, 96, 50, 145],
-                ['Piran', 'SI', 'Slovenia', 9.1, { mode: 'bus', amount: null }, 79, 59, 138]].map(([n, cc, c, s, go, bed, food, day], i) => (
+                ['Piran', 'SI', 'Slovenia', 9.1, { mode: 'bus', amount: null }, 79, 59, 138],
+                // Demo figures: the longest case a card must hold (a four-figure fare, a long German name).
+                ['Demo: Sankt Gilgen am Wolfgangsee', 'AT', 'Österreich', 8.8, { mode: 'flight', amount: 1234 }, 1180, 245, 1425]].map(([n, cc, c, s, go, bed, food, day], i) => (
                 <RailCard key={n} href="#house" name={n} score={s} scoreLabel="Score"
-                  world={['rock', 'water', 'lowland', 'water'][i]}
+                  world={['rock', 'water', 'lowland', 'water', 'rock'][i]}
                   where={<><CountryFlag country={cc} size={14} /> {c}</>}
                   gem={i === 2 ? 'Hidden gem' : null}
                   formation={<Formation go={go} bed={bed} food={food} day={day} weighted dayLabel="A day" />}
@@ -329,7 +331,7 @@ export default function StyleGuide() {
               <Demo title="Figure that answers you" note="Demo figures. Change the people: the total rolls once and a delta note shows. A figure nobody touched never moves.">
                 <Segmented label="People" value={String(people)} onChange={(v) => setPeople(Number(v))}
                   options={[1, 2, 3, 4].map((n) => ({ value: String(n), label: String(n) }))} />
-                <span className="sg-big"><Figure value={total} mine delta /></span>
+                <span className="sg-big"><Figure value={total} mine delta label="Total" /></span>
               </Demo>
               <Demo title="Springs" note="Generated into CSS linear() by scripts/ci/spring-easings.mjs.">
                 <ul className="sg-springs">

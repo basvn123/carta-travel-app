@@ -23,7 +23,7 @@
   height: var(--bh);
   border-radius: calc(var(--radius-sm) / 3);
   background: var(--neutral-0);
-  outline: 1px solid rgba(30, 36, 33, 0.38);
+  outline: 1px solid var(--blaze-edge);
   outline-offset: -1px;
 }
 .hs-blaze::before {
@@ -205,11 +205,16 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 .hs-formation {
   --wh: 24px;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
+  gap: 6px 4px;
   min-width: 0;
 }
-.hs-formation-train { display: flex; gap: 2px; flex: 1 1 auto; min-width: 0; }
+/* The price row wraps before anything collides: a euro figure is never
+   clipped (wagons keep max-content) and the day figure keeps the right edge
+   on whichever line it lands. */
+.hs-formation-train { display: flex; gap: 2px; flex: 0 1 auto; min-width: max-content; }
+.hs-formation.is-weighted .hs-formation-train { flex: 1 1 auto; }
 .hs-wagon {
   display: inline-flex;
   align-items: center;
@@ -307,12 +312,16 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 }
 .hs-rail::-webkit-scrollbar { display: none; }
 @media (min-width: 600px) { .hs-rail { grid-auto-columns: calc((100% - var(--space-3)) / 2.15); } }
+/* Arrows wherever a mouse can use them; touch scrolls. */
+@media (hover: hover) and (pointer: fine) { .hs-rail-arrows { display: flex; } }
 @media (min-width: 1024px) {
   .hs-rail-arrows { display: flex; }
-  .hs-rail { grid-auto-columns: calc((100% - 3 * var(--space-5)) / 4); gap: var(--space-5); margin: 0; padding: 2px 0 4px; scroll-padding: 0; }
+  /* Four across only when each card keeps 256 px; a narrower rail shows
+     three and a bit and scrolls, rather than squeezing the price row. */
+  .hs-rail { grid-auto-columns: minmax(256px, calc((100% - 3 * var(--space-5)) / 4)); gap: var(--space-5); margin: 0; padding: 2px 0 4px; scroll-padding: 0; }
 }
 .hs-rcard { position: relative; min-width: 0; scroll-snap-align: start; }
-.hs-rcard-link { display: grid; gap: 6px; color: inherit; text-decoration: none; }
+.hs-rcard-link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; color: inherit; text-decoration: none; }
 .hs-rcard-photo {
   display: block;
   aspect-ratio: 4 / 3;
@@ -488,9 +497,9 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 
 /* ---- Text on photos: never. Where a control must sit on a photo it is a
    paper disc (.icon-btn-photo); a caption goes under the photo. The one
-   measured scrim, for a photo header that must carry its title (and only
-   then): ink at 55 % under the bottom third gives white text 7:1 or more on
-   any photo. */
+   scrim, for a photo header that must carry its title (and only then):
+   --photo-scrim (ink 78 %) under the bottom 45 %. White text on it measures
+   7.7:1 over the brightest possible photo; the title sits inside that band. */
 .hs-photo-scrim { position: relative; }
 .hs-photo-scrim::after {
   content: '';
@@ -499,7 +508,7 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
   right: 0;
   bottom: 0;
   height: 45%;
-  background: rgba(30, 36, 33, 0.55);
+  background: var(--photo-scrim);
   pointer-events: none;
 }
 

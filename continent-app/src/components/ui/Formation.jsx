@@ -4,7 +4,10 @@
  * its mode icon, the bed a solid umber wagon, food and drink a beige wagon,
  * then the day figure, always the loudest thing in the row. A part with no
  * figure is a dashed "Not yet" wagon, outside the sum. A place without a
- * split shows one honest wagon (pass only `day`).
+ * split shows the day figure alone (pass only `day`): a lone wagon would
+ * repeat the day figure (DESIGN.md records this against decision 0012).
+ * "Not yet" reads the shared price key (price.notMeasured), so a My trips
+ * wording change can never change a price row.
  *
  *   <Formation go={{ mode: 'car', amount: 118 }} bed={68} food={65} day={133} />
  *
@@ -33,7 +36,7 @@ function Wagon({ kind, value, icon: Glyph, label, weight, extraClass = '' }) {
     <span className={`hs-wagon is-${has ? kind : 'none'}${extraClass ? ` ${extraClass}` : ''}`} style={style}>
       {Glyph && <Glyph size={13} />}
       <span className="sr-only">{label} </span>
-      {has ? <Money value={value} /> : <span>{t('mt.state.none')}</span>}
+      {has ? <Money value={value} /> : <span>{t('price.notMeasured')}</span>}
     </span>
   );
 }
@@ -54,7 +57,7 @@ export function Formation({ go, bed, food, day, size = 'md', weighted = false, c
       )}
       <span className="hs-formation-day">
         {dayLabel && <span className="sr-only">{dayLabel} </span>}
-        {finite(day) ? <Money value={day} /> : <span className="hs-notyet">{t('mt.state.none')}</span>}
+        {finite(day) ? <Money value={day} /> : <span className="hs-notyet">{t('price.notMeasured')}</span>}
       </span>
     </span>
   );
