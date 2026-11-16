@@ -464,6 +464,8 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 /* ---- A switch as a Settings row (HapticsSetting) --------------------- */
 .hs-setting-row { gap: var(--space-3); }
 .hs-setting-row .hs-setting-switch { flex: 1; min-width: 0; min-height: var(--tap); padding: 0; }
+/* The label reads like its sibling rows' labels (91-account.css .ac-row-label). */
+.hs-setting-row .ui-switch-label { font-size: var(--text-lead); font-weight: 600; }
 
 /* ---- Toast and sheet grip --------------------------------------------- */
 .hs-toast {
