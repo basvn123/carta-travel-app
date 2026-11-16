@@ -14,7 +14,8 @@ import { loadAskLexicon } from '../lib/ask/data.js';
 import { useI18n } from '../i18n/index.jsx';
 import { GuidesStrip } from '../community/GuidesStrip.jsx';
 import { FULL_RATING_RANGE } from '../lib/rating.js';
-import { ChevronRightIcon, MapPinIcon, ListDayIcon } from '../components/Icons.jsx';
+import { ChevronRightIcon } from '../components/Icons.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { PriceViewSwitch } from '../components/PriceViewSwitch.jsx';
 import { scrollBehavior } from '../lib/motion.js';
@@ -510,7 +511,7 @@ export function ExploreTab({
     const facet = learnFacet(tasteRef.current, records);
     if (facet) setLearn(facet);
   }, [favorites, data?.destinations, firstRun?.setChoices]);
-  const { rails, railLead, quickRails, heroPhoto } = useExploreRails({
+  const { rails, railLead, quickRails } = useExploreRails({
     allRows, favorites, guided, isDesktop, lang, patchXf, railMonth, railsIdle, rows,
     setGemOnly, setShowFavOnly, setSortKey, t, xf,
   });
@@ -547,7 +548,7 @@ export function ExploreTab({
     return (
       <span className={cls} onPointerEnter={prefetchMap} onFocus={prefetchMap}>
         <Button variant="secondary" size="sm" className="xview-toggle"
-          iconStart={toMap ? <MapPinIcon size={16} /> : <ListDayIcon size={16} />}
+          iconStart={toMap ? <HouseIcon.map size={18} /> : <HouseIcon.list size={18} />}
           onClick={() => setView(toMap ? 'map' : 'grid')}>
           {t(toMap ? 'explore.viewMap' : 'explore.viewList')}
         </Button>
@@ -645,7 +646,7 @@ export function ExploreTab({
             toggle, then the categories and the quick chips. The phone's
             old Ask Carta and Filters row is gone: both live in the block. */}
         {railsIdle && (
-          <OverviewHero t={t} TitleTag={TitleTag} photo={isDesktop ? heroPhoto : null} docked={!isDesktop}
+          <OverviewHero t={t} TitleTag={TitleTag} docked={!isDesktop}
             locationQuery={locationQuery} setLocationQuery={setLocationQuery}
             onShowAll={() => setFocusAll(true)}
             viewToggle={viewSwitch('xov-view')}

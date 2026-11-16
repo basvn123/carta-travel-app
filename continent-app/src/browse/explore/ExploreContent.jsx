@@ -7,6 +7,7 @@ import { ExploreRails } from '../ExploreRails.jsx';
 import { EmptyResult } from '../EmptyResult.jsx';
 import { Button } from '../../components/ui/index.js';
 import { ExploreCard } from './ExploreCard.jsx';
+import { ListHead } from './PlaceRow.jsx';
 
 export function ExploreContent({
   allRows, anyActive, cardLinkId, chips, contentRef, costIndex, drawer, dxf, emptyLine, favSet,
@@ -126,11 +127,13 @@ export function ExploreContent({
           </EmptyResult>
         )}
 
-        <div className={`xrows xrows--cards${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
+        {/* House style 2026-11 (the walker's table): the places as rows
+            under one head that says the dates and the unit once. */}
+        {listed.length > 0 && <ListHead t={t} />}
+        <div className={`xrows xrows--ledger${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
           {listed.map((p) => (
             <ExploreCard
               key={p.id}
-              layout="card"
               p={p}
               role={roleFor(p)}
               selected={p.id === (pickedId || selectedId)}

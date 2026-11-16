@@ -6,12 +6,14 @@
  * one selected state (the light tint plus a tick ring), never colour alone.
  */
 
-/* ---- Tones: --ts-ink (glyph), --ts-ground (disc), --ts-line (ring) ---- */
-.tone-sun    { --ts-ink: var(--sun-800);    --ts-ground: var(--sun-100);    --ts-line: var(--sun-400); }
-.tone-lagoon { --ts-ink: var(--lagoon-700); --ts-ground: var(--lagoon-100); --ts-line: var(--lagoon-600); }
-.tone-umber  { --ts-ink: var(--umber-700);  --ts-ground: var(--umber-100);  --ts-line: var(--umber-600); }
-.tone-sea    { --ts-ink: var(--lagoon-800); --ts-ground: var(--lagoon-50);  --ts-line: var(--lagoon-700); }
-.tone-mist   { --ts-ink: var(--umber-800);  --ts-ground: var(--umber-50);   --ts-line: var(--umber-500); }
+/* ---- Tones (house style 2026-11): one quiet disc for every style, the band
+   ground and an ink glyph; the chosen one takes the umber. The old sun and
+   lagoon tones left the palette with Lagoon. ---- */
+.tone-sun, .tone-lagoon, .tone-umber, .tone-sea, .tone-mist {
+  --ts-ink: var(--text);
+  --ts-ground: var(--surface-sunken);
+  --ts-line: var(--action);
+}
 
 .tstyle-disc {
   display: inline-grid;
@@ -218,3 +220,24 @@
 @media (prefers-reduced-motion: reduce) {
   .style-door, .tstyle-card, .tstyle-tpl { transition: none; }
 }
+
+/* House style 2026-11: the "who do you travel with" choices are tiles, not
+   brown links: paper, the control edge, ink words; the press and the
+   selected edge from the kit. */
+.btn.tstyle-tpl {
+  min-height: 52px;
+  padding: var(--space-1) var(--space-4) var(--space-1) var(--space-1);
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
+}
+@media (hover: hover) {
+  .btn.tstyle-tpl:hover { border-color: var(--text); background: var(--surface); }
+}
+.btn.tstyle-tpl:focus-visible,
+.btn.tstyle-card:focus-visible,
+.style-door:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.btn.tstyle-card { border: var(--stroke-edge) solid var(--edge); border-radius: var(--radius-control); }
+.btn.tstyle-card.is-on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }

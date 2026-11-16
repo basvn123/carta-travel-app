@@ -2,11 +2,10 @@
    T592 (owner decision 6, 2026-10-22): Explore's map the Kayak way.
    Imported by src/browse/MapPlacePanel.jsx.
 
-   On a desktop the map takes the whole content width and the panel floats
-   on its left: the places on the map, or the picked place with its trip
-   box. From 769 to 1023 px the panel is a column beside the map instead of
-   over it, so the map keeps room. On a phone the panel is the map drawer's
-   body. The one view toggle and the price pins are styled here too.
+   From 769 px the panel is a column docked on the map's left (house style
+   2026-11): the places on the map, or the picked place with its trip box.
+   On a phone the panel is the map drawer's body. The one view toggle and
+   the price pins are styled here too.
    Selectors carry .explore-shell twice over where they override
    62-v6-explore.css, so the order the two files load in never matters.
    ========================================================================== */
@@ -22,40 +21,47 @@
   }
 }
 
-/* --- Desktop: the map full width, the list column gone ----------------- */
+/* --- Tablet and desktop: the list and the map side by side ------------- */
+/* House style 2026-11 (the walker's table): from 769 px the panel is a
+   column docked on the map's left inside one frame, paper on a hairline, so
+   the rows and the map read together; the picked place takes the same
+   column. The column grows with the screen (340, 380, 420). */
 @media (min-width: 769px) {
   .explore-shell .xcontent.xcontent--split { display: block; }
   .explore-shell .xcontent.xcontent--split .xcontent-main { display: none; }
-  .explore-shell .xcontent.xcontent--split .xcontent-map { position: relative; }
-}
-@media (min-width: 769px) and (max-width: 1023px) {
   .explore-shell .xcontent.xcontent--split .xcontent-map {
+    --mpp-w: 340px;
+    --mpp-h: max(420px, calc(100dvh - var(--xmap-top, 280px) - var(--space-4)));
+    position: relative;
     display: grid;
-    grid-template-columns: minmax(300px, 40%) minmax(0, 1fr);
-    gap: var(--space-4);
-    align-items: start;
+    grid-template-columns: var(--mpp-w) minmax(0, 1fr);
+    overflow: hidden;
+    border: var(--stroke-hair) solid var(--border);
+    border-radius: var(--radius-panel);
+    background: var(--surface);
   }
-  .explore-shell .xcontent.xcontent--split .xcontent-map > .xmap { grid-column: 2; grid-row: 1; }
+  .explore-shell .xcontent.xcontent--split .xcontent-map[hidden] { display: none; }
+  .explore-shell .xcontent.xcontent--split .xcontent-map > .xmap {
+    grid-column: 2;
+    grid-row: 1;
+    height: var(--mpp-h);
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+  }
   .explore-shell .mpp--float {
     grid-column: 1;
     grid-row: 1;
-    max-height: calc(100dvh - var(--filter-h) - 2 * var(--space-8));
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-  }
-}
-@media (min-width: 1024px) {
-  .explore-shell .mpp--float {
-    position: absolute;
-    top: var(--space-4);
-    left: var(--space-4);
-    bottom: var(--space-4);
-    z-index: calc(var(--z-float) + 2);
-    width: min(400px, 42%);
-    border-radius: var(--radius-sheet);
-    box-shadow: var(--elev-2);
+    height: var(--mpp-h);
+    border-right: var(--stroke-hair) solid var(--border);
     animation: mpp-in var(--dur-3) var(--ease-out);
   }
+}
+@media (min-width: 1200px) {
+  .explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 380px; }
+}
+@media (min-width: 1440px) {
+  .explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 420px; }
 }
 
 /* --- The panel ---------------------------------------------------------- */
@@ -80,7 +86,7 @@
   line-height: var(--leading-body);
   color: var(--text-2);
 }
-.explore-shell .mpp-rows { display: block; padding: var(--space-3) var(--space-2) var(--space-4); }
+.explore-shell .mpp-rows { padding: var(--space-1) var(--space-3) var(--space-4); }
 
 /* The picked place. */
 .explore-shell .mpp-place { padding: var(--space-3) var(--space-4) var(--space-5); }
@@ -119,7 +125,8 @@
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
-.explore-shell .mpp-name:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.explore-shell .mpp-name:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.explore-shell .mpp-band { font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
 .explore-shell .mpp-where {
   display: flex;
   align-items: center;
@@ -133,8 +140,9 @@
 .explore-shell .mpp-trip {
   margin-top: var(--space-5);
   padding: var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
 }
 .explore-shell .mpp-sub {
   margin: 0;
@@ -178,23 +186,45 @@
 .explore-shell .mpp--compact .mpp-media { aspect-ratio: 16 / 9; }
 .explore-shell .mpp--compact .mpp-name { font-size: var(--text-title); }
 
-/* --- Price pins: the figure first and bold, the name smaller after ------ */
+/* --- Price pins (DESIGN.md "Map"): a paper price plate, the figure first
+   and bold, the name smaller after; the cheapest in view carries the beige
+   best-value plate with a small diamond (never colour alone, and its name
+   says so to a screen reader); the chosen pin is the umber mark plate with
+   paper text, settling without overshoot. Map and list in sync: a row under
+   the pointer rings its pin in ink. ---------------------------------------- */
+.explore-shell .xmap-kpins .xmap-kpin.is-label {
+  border: var(--stroke-edge) solid var(--text);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
 .explore-shell .xmap-kpins .xmap-kpin-label { align-items: baseline; gap: var(--space-1); }
 .explore-shell .xmap-kpins .xmap-kpin-eur {
   font-size: var(--text-caption);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums lining-nums;
 }
 .explore-shell .xmap-kpins .xmap-kpin-label.has-fig .xmap-kpin-name {
   font-size: var(--text-micro);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text-2);
 }
-.explore-shell .xmap-kpins .xmap-kpin.is-label {
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+.explore-shell .xmap-kpins .xmap-kpin.is-cheapest {
+  border-color: var(--best-ink);
+  background: var(--best-bg);
+  color: var(--best-ink);
 }
-/* Hover and the pick: the light selected tint with the brown edge, never an
-   ink fill. The pick adds the brown ring as its mark. */
+.explore-shell .xmap-kpins .xmap-kpin.is-cheapest .xmap-kpin-label::before {
+  content: '';
+  flex: none;
+  align-self: center;
+  width: 6px;
+  height: 6px;
+  margin-right: 2px;
+  background: currentColor;
+  rotate: 45deg;
+}
 @media (hover: hover) {
   .explore-shell .xmap-kpins .xmap-kpin.is-label:hover {
     z-index: 4;
@@ -205,13 +235,20 @@
 }
 .explore-shell .xmap-kpins .xmap-kpin.is-label.is-picked {
   z-index: 5;
-  border-color: var(--select-border);
-  background: var(--select-bg);
-  color: var(--select-ink);
-  outline: 1px solid var(--select-border);
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--action-text);
+  outline: var(--stroke-edge) solid var(--surface);
+  animation: xpin-settle var(--dur-settle) var(--ease-settle) both;
 }
-.explore-shell .xmap-kpins .xmap-kpin.is-label:hover .xmap-kpin-name,
-.explore-shell .xmap-kpins .xmap-kpin.is-label.is-picked .xmap-kpin-name { color: var(--select-ink); }
+.explore-shell .xmap-kpins .xmap-kpin.is-label:hover .xmap-kpin-name { color: var(--select-ink); }
+.explore-shell .xmap-kpins .xmap-kpin.is-label.is-picked .xmap-kpin-name { color: var(--action-text); }
+/* Settles from 0.9 with no overshoot; the scale property composes with the
+   centring transform, so the plate does not jump. */
+@keyframes xpin-settle {
+  from { scale: 0.9; }
+  to { scale: 1; }
+}
 
 @keyframes mpp-in {
   from { opacity: 0; transform: translateX(calc(-1 * var(--space-3))); }
@@ -220,4 +257,5 @@
 @media (prefers-reduced-motion: reduce) {
   .explore-shell .mpp--float { animation: none; }
   .explore-shell .xmap-kpins .xmap-kpin.is-label { transition: none; }
+  .explore-shell .xmap-kpins .xmap-kpin.is-label.is-picked { animation: none; }
 }

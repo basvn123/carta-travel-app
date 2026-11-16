@@ -1,7 +1,6 @@
 import React from 'react';
 import { openAskChat } from '../ask/askChatStore.js';
-import { fallbackSrc, srcSetFor } from '../../lib/heroImage.js';
-import { SparkIcon, SearchIcon, CameraIcon, FilterIcon, BookmarkIcon, DiamondIcon, TrainIcon, PersonIcon, PiggyIcon, SunIcon, StarIcon, BootIcon, BeachIcon } from '../../components/Icons.jsx';
+import { SparkIcon, SearchIcon, FilterIcon, BookmarkIcon, DiamondIcon, TrainIcon, PersonIcon, PiggyIcon, SunIcon, StarIcon, BootIcon, BeachIcon } from '../../components/Icons.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
 import { PriceViewSwitch } from '../../components/PriceViewSwitch.jsx';
 
@@ -24,7 +23,7 @@ import { PriceViewSwitch } from '../../components/PriceViewSwitch.jsx';
  */
 export function OverviewHero({
   t, TitleTag, locationQuery, setLocationQuery, onShowAll,
-  viewToggle, quick, filtersRef, filtersOn, filterCount, onAllFilters, photo, tasteChip = null,
+  viewToggle, quick, filtersRef, filtersOn, filterCount, onAllFilters, tasteChip = null,
   strongChip = null, docked = false,
 }) {
   const [where, setWhere] = React.useState(locationQuery || '');
@@ -39,70 +38,44 @@ export function OverviewHero({
     else setLocationQuery(q);
   };
   const whereId = React.useId();
-  // T601: the photograph fades in once it has arrived, never from a blank
-  // box the page waits on; a cached photo is shown at once.
-  const photoUrl = photo?.url || null;
-  const [shown, setShown] = React.useState(null);
-  const imgRef = React.useCallback((el) => {
-    if (el && el.complete && el.naturalWidth) setShown(photoUrl);
-  }, [photoUrl]);
   // T961 (owner 2026-10-31): on a phone the dock in the top bar is the
   // search and Ask Carta, and the quick chips live behind its Filters
   // button (T962), so the overview keeps only its name for a screen reader.
   if (docked) {
     return <TitleTag className="xov-title sr-only" id="xov-title">{t('explore.heroTitle')}</TitleTag>;
   }
+  // House style 2026-11 (G1, the waymark top): the photograph band went
+  // (its headline sat on the photo); the one field leads at full width with
+  // Ask beside it, the same door the phone's dock has, then the quiet row.
   return (
-    <section className={`xov-hero${photo ? ' has-photo' : ''}`} aria-labelledby="xov-title">
-      {/* T622 (owner 2026-10-23): on a desktop one scenic photograph with
-          the search panel centred over it, so the block takes less height;
-          on a phone no photograph at all, only the panel. No text on the
-          photo; the credit sits under the band. */}
-      <div className="xov-band">
-        {photo && (
-          <div className="xov-photo" aria-hidden="true">
-            <img key={photo.url} ref={imgRef}
-              className={`xov-photo-img${shown === photo.url ? ' is-in' : ''}`}
-              src={fallbackSrc(photo.url, 1280)} srcSet={srcSetFor(photo.url, 1920)}
-              sizes="100vw" alt="" width={16} height={9}
-              loading="eager" decoding="async" fetchpriority="high"
-              onLoad={() => setShown(photo.url)} />
-          </div>
-        )}
-        {/* T906: the headline on the photograph; without one (a phone) it
-            is the page's name for a screen reader only. */}
-        <TitleTag className={photo ? 'xov-title xov-title--photo' : 'xov-title sr-only'} id="xov-title">{t('explore.heroTitle')}</TitleTag>
-        <div className="xov-panel">
-          <form className="xov-bar" role="search" aria-label={t('explore.heroSearchAria')} onSubmit={submit}>
-            {/* One joined control, Where | Search (T622: What left; the
-                category tabs above choose the kind). Where names itself by
-                its label, with no placeholder. */}
-            <div className="xov-field">
-              <div className="xov-seg xov-seg-where">
-                <SparkIcon size={20} className="xov-where-icon" />
-                <label className="xov-seg-cap" htmlFor={whereId}>{t('explore.askOrSearch')}</label>
-                {/* A blank placeholder, only so CSS can tell an empty field
-                    (:placeholder-shown) and rest the label where the value goes. */}
-                <input id={whereId} type="search" className="xov-where-input" value={where}
-                  placeholder=" " autoComplete="off" enterKeyHint="search"
-                  onChange={(e) => setWhere(e.target.value)} />
-              </div>
-              <Button type="submit" variant="primary" className="xov-go"
-                iconStart={<SearchIcon size={18} />}>
-                <span className="xov-go-word">{t('explore.heroSearch')}</span>
-              </Button>
+    <section className="xov-hero xov-hero--hs" aria-labelledby="xov-title">
+      <TitleTag className="xov-title sr-only" id="xov-title">{t('explore.heroTitle')}</TitleTag>
+      <div className="xov-top">
+        <form className="xov-bar" role="search" aria-label={t('explore.heroSearchAria')} onSubmit={submit}>
+          {/* One joined control, Where | Search (T622: What left; the
+              category tabs above choose the kind). Where names itself by
+              its label, with no placeholder. */}
+          <div className="xov-field">
+            <div className="xov-seg xov-seg-where">
+              <SearchIcon size={20} className="xov-where-icon" />
+              <label className="xov-seg-cap" htmlFor={whereId}>{t('explore.askOrSearch')}</label>
+              {/* A blank placeholder, only so CSS can tell an empty field
+                  (:placeholder-shown) and rest the label where the value goes. */}
+              <input id={whereId} type="search" className="xov-where-input" value={where}
+                placeholder=" " autoComplete="off" enterKeyHint="search"
+                onChange={(e) => setWhere(e.target.value)} />
             </div>
-          </form>
-        </div>
+            <Button type="submit" variant="secondary" className="xov-go"
+              iconStart={<SearchIcon size={18} />}>
+              <span className="xov-go-word">{t('explore.heroSearch')}</span>
+            </Button>
+          </div>
+        </form>
+        <Button variant="primary" className="xov-ask" onClick={(e) => openAskChat(e.currentTarget)}
+          aria-label={t('dock.ask')} iconStart={<SparkIcon size={22} />}>
+          {t('dock.askShort')}
+        </Button>
       </div>
-      {photo?.page && (
-        <p className="xov-credit">
-          <a href={photo.page} target="_blank" rel="noopener noreferrer">
-            <CameraIcon size={14} className="xov-credit-icon" />
-            <span>{t('explore.heroCredit', { place: photo.city, source: photo.source })}</span>
-          </a>
-        </p>
-      )}
       {/* The quick chips: one quiet row; the map pill closes it on a
           desktop (a phone has the floating one). */}
       <div className="xov-picks">

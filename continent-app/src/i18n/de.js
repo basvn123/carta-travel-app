@@ -935,6 +935,7 @@ export const de = {
   "detail.tabBreakdown": "Aufschlüsselung",
   "detail.tag": "Reiseziel",
   // lane:explore (house style 2026-11): this lane adds its new keys directly under this line
+  "explore.colUnit": "Ein Tag, pro Person",
   "detail.timesPeople": " × {n} Personen",
   "detail.tollNotes": "Beinhaltet {notes}, pro Auto, berechnet je durchquertem Land.",
   "detail.tolls": "Maut / Vignette",
@@ -10427,7 +10428,7 @@ export const de = {
   "styles.new": "Neuer Stil",
   "styles.startFrom": "Beginne mit",
   "styles.firstTitle": "Mit wem reist du?",
-  "styles.firstLead": "Wähle einen zum Start. Du kannst alles ändern und für jede Art Reise einen Stil behalten: allein, zu zweit, mit den Kindern.",
+  "styles.firstLead": "Wähle einen zum Start. Du kannst ihn ändern und für jede Art Reise einen behalten.",
   "styles.fromNow": "Wie ich jetzt reise",
   "styles.cancel": "Abbrechen",
   "styles.mine": "Mein Stil",

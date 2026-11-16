@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../../components/ui/index.js';
-import { SortIcon, CheckIcon } from '../../components/Icons.jsx';
+import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { createPortal } from 'react-dom';
 
 /**
@@ -68,7 +68,7 @@ export function SortMenu({ t, options, value, onChange }) {
   return (
     <>
       <Button ref={btnRef} variant="secondary" size="sm" className={`xtool${open ? ' is-open' : ''}`}
-        iconStart={<SortIcon size={18} />} aria-haspopup="menu" aria-expanded={open}
+        iconStart={<HouseIcon.sort size={18} />} aria-haspopup="menu" aria-expanded={open}
         aria-controls={open ? id : undefined}
         aria-label={`${t('places.sortLabel')}: ${t(cur.labelKey)}`}
         onClick={toggle}>
@@ -82,7 +82,7 @@ export function SortMenu({ t, options, value, onChange }) {
             return (
               <Button key={o.key} variant="quiet" size="sm" role="menuitemradio" aria-checked={on}
                 tabIndex={-1} className={`xsort-item${on ? ' is-on' : ''}`}
-                iconEnd={on ? <CheckIcon size={16} /> : null}
+                iconEnd={on ? <HouseIcon.check size={16} /> : null}
                 onClick={() => { onChange(o.key); close(true); }}>
                 {t(o.labelKey)}
               </Button>

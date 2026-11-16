@@ -434,95 +434,170 @@
   gap: var(--space-2);
 }
 
-/* --- The list: compact rows -------------------------------------------- */
-.explore-shell .xrows {
+/* --- The list: the walker's table (house style 2026-11) ----------------- */
+/* One row a place (PlaceRow.jsx), one grid per LIST width through container
+   queries, so the map's docked column and the phone drawer read like a phone
+   list and a desktop list reads as a table. The formation spreads into the
+   row's grid (display: contents): the day figure faces the name, the parts
+   face the country. The figure is always the loudest thing in the row. */
+.explore-shell .xrows,
+.mpp-rows {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 400px), 1fr));
-  gap: 0 var(--space-6);
+  grid-template-columns: minmax(0, 1fr);
+  container: xlist / inline-size;
   transition: opacity var(--dur-2) var(--ease-out);
 }
 .explore-shell .xrows.is-pending { opacity: 0.55; }
-.explore-shell .xrow {
+.xlist-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-1) 6px;
+  border-bottom: var(--stroke-hair) solid var(--border);
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--text-2);
+}
+.xlist-unit { margin-left: auto; text-align: right; }
+.xrow-hs {
   position: relative;
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
   min-width: 0;
-  border-bottom: 1px solid var(--border-soft);
-  border-radius: var(--radius-control);
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
   transition: background-color var(--dur-1) var(--ease-out);
 }
-.explore-shell .xrow-hit {
-  display: flex;
+.xrow-hs .xrow-hit {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "media l1 l1 day"
+    "media l2 parts parts"
+    "media fit fit fit";
   align-items: center;
-  gap: var(--space-3);
+  column-gap: 10px;
+  row-gap: 0;
   flex: 1 1 auto;
   min-width: 0;
-  padding: var(--space-3) var(--space-2);
-  border: 0;
+  padding: 5px var(--space-1) 5px 0;
   border-radius: var(--radius-control);
-  background: none;
   color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
+  text-decoration: none;
 }
-@media (hover: hover) {
-  .explore-shell .xrow:hover { background: var(--surface); }
-}
-.explore-shell .xrow-media {
-  flex: none;
-  width: 72px;
-  height: 72px;
+.xrow-hs .xrow-media {
+  grid-area: media;
+  align-self: start;
+  width: 44px;
+  height: 44px;
   overflow: hidden;
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-control);
   background: var(--surface-sunken);
 }
-.explore-shell .xrow-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.explore-shell .xrow-body {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.explore-shell .xrow-line1 {
+.xrow-hs .xrow-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.xrow-hs .xrow-line1 {
+  grid-area: l1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: var(--space-2);
   min-width: 0;
 }
-.explore-shell .xrow-name {
+.xrow-hs .xrow-name {
   min-width: 0;
   overflow: hidden;
   font-size: var(--text-lead);
-  font-weight: 600;
+  font-weight: 700;
   line-height: var(--leading-tight);
   color: var(--text);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.explore-shell .xrow-line2 {
+.xrow-hs .xband { display: none; font-size: var(--text-label); font-weight: 600; color: var(--text-2); white-space: nowrap; }
+.xrow-hs .xrow-line2 {
+  grid-area: l2;
+  margin-top: 3px;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-1) var(--space-2);
+  gap: 6px;
+  min-width: 0;
   font-size: var(--text-label);
+  font-weight: 600;
   color: var(--text-2);
 }
-.explore-shell .xrow-save { flex: none; margin-right: var(--space-1); }
-/* The price line: the figure in the one family, tabular, then its unit. */
-.explore-shell .xprice { font-size: var(--text-body); color: var(--text); }
-.explore-shell .xprice .money { font-weight: 600; }
-/* Selected is the brown edge; a card the map is pointing at rings in ink
-   (house rule "Map and list in sync"). */
-.explore-shell .xrow.is-selected { outline: 2px solid var(--select-border); outline-offset: -2px; background: var(--surface); }
-.explore-shell .xrow.is-linked { outline: 2px solid var(--text); outline-offset: -2px; }
-.explore-shell .xrow.previewing { z-index: 5; }
-.explore-shell .xrow-hit:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.xrow-hs .xrow-country { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xrow-hs .xrow-gem { margin-left: 0; font-size: var(--text-label); }
+.xrow-hs .xrow-hit .xrow-why { display: none; grid-area: why; min-width: 0; font-size: var(--text-label); color: var(--text-2); line-height: var(--leading-ui); }
+.xrow-hs .xrow-fit { grid-area: fit; margin-top: var(--space-1); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); min-width: 0; font-size: var(--text-label); color: var(--text-2); }
+.xrow-hs .xrow-fit:empty { display: none; }
+/* The formation spread into the row: the parts under the figure. */
+.xrow-hs .xform { display: contents; }
+.xrow-hs .xform-parts { grid-area: parts; margin-top: 3px; display: flex; justify-content: flex-end; gap: 2px; min-width: 0; --wh: 22px; }
+.xrow-hs .xform-parts .hs-wagon { padding-inline: 5px; gap: 2px; }
+.xrow-hs .xform-parts .hs-wagon svg { width: 12px; height: 12px; }
+.xrow-hs .hs-formation-day { grid-area: day; justify-self: end; margin: 0; padding: 0; }
+.xrow-hs .hs-formation-day .money { font-weight: 800; }
+.xrow-hs .xrow-save { flex: none; }
+@media (hover: hover) {
+  .xrow-hs:hover { background: var(--surface); }
+}
+.xrow-hs .xrow-hit:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -3px; }
+/* The pointer on a pin rings its row (house rule "Map and list in sync"). */
+.xrow-hs.is-linked { background: var(--surface); outline: var(--stroke-edge) solid var(--text); outline-offset: calc(var(--stroke-edge) * -1); }
+.xrow-hs.previewing { z-index: 5; }
+/* Chosen: the beige row and the price as the umber mark plate, settling in
+   without overshoot (the signature moment, with the chosen pin). */
+.xrow-hs.is-selected { background: var(--select-row); outline: var(--stroke-hair) solid var(--select-border); outline-offset: calc(var(--stroke-hair) * -1); }
+.xrow-hs.is-selected .hs-formation-day {
+  padding: 4px 8px 3px;
+  border-radius: var(--radius-sm);
+  background: var(--action);
+  color: var(--action-text);
+  animation: hs-settle-in var(--dur-settle) var(--ease-settle) both;
+}
+.xrow-hs.is-selected .hs-formation-day .money,
+.xrow-hs.is-selected .hs-formation-day .pitems-trigger { color: inherit; }
+
+/* Save (ExploreCards.jsx SaveButton): the cairn, its stones filled in umber
+   once saved; it pops on the traveller's own press only (.hs-pop). */
+.xsave[aria-pressed="true"] { color: var(--action); }
+.xsave[aria-pressed="true"] .hs-icon-cairn .stone { fill: currentColor; }
+
+/* A list of 600 px and more: one line a place, the parts in their own
+   column before the figure. */
+@container xlist (min-width: 600px) {
+  .xrow-hs .xrow-hit {
+    grid-template-columns: 56px minmax(0, 1fr) auto minmax(76px, auto);
+    grid-template-areas:
+      "media l1 parts day"
+      "media l2 parts day"
+      "media fit fit fit";
+    column-gap: var(--space-4);
+    padding: var(--space-2) var(--space-2) var(--space-2) 0;
+  }
+  .xrow-hs .xrow-media { width: 56px; height: 56px; }
+  .xrow-hs .xform-parts { --wh: 24px; gap: 4px; margin-top: 0; }
+  .xrow-hs .xform-parts .hs-wagon { padding-inline: 9px; gap: 4px; }
+  .xrow-hs .xform-parts .hs-wagon svg { width: 13px; height: 13px; }
+  .xrow-hs .xrow-hit { row-gap: var(--space-1); }
+  .xrow-hs .xrow-line2 { margin-top: 0; }
+  .xrow-hs .hs-formation-day { font-size: var(--text-title); }
+}
+/* From 1024 px the band word and the one reason join the row. */
+@container xlist (min-width: 1024px) {
+  .xrow-hs .xrow-hit {
+    grid-template-columns: 56px minmax(0, 1.1fr) minmax(0, 1fr) auto minmax(84px, auto);
+    grid-template-areas:
+      "media l1 why parts day"
+      "media l2 why parts day"
+      "media fit fit fit fit";
+  }
+  .xrow-hs .xband { display: inline; }
+  .xrow-hs .xrow-hit .xrow-why { display: block; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .explore-shell .xrows, .explore-shell .xrow { transition: none; }
+  .explore-shell .xrows, .xrow-hs { transition: none; }
+  .xrow-hs.is-selected .hs-formation-day { animation: none; }
 }
 
 /* The side panel's content starts on the same gutter as the header. One
@@ -823,6 +898,14 @@
   /* Anything else the view adds (a country link, an empty line) goes
      under the map, full width, rather than into a column. */
   .explore-shell.is-map .explore-wrap > :not(.xcats-bar, .xbar, .xqf, .xcontent) { grid-column: 1 / -1; }
+}
+/* House style 2026-11, tablet: the back arrow and the pills share a row,
+   the quick chips take the next one whole, so none is clipped at 820. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .explore-shell.is-map .explore-wrap { grid-template-rows: auto auto auto minmax(0, 1fr); }
+  .explore-shell.is-map .xbar-tools { grid-column: 2 / -1; justify-self: end; }
+  .explore-shell.is-map .xqf { grid-column: 1 / -1; grid-row: 3; margin-top: var(--space-2); }
+  .explore-shell.is-map .xcontent { grid-row: 4; }
 }
 .explore-shell .xmap-failed {
   position: absolute;

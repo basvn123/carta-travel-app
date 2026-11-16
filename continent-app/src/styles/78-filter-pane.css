@@ -1,5 +1,7 @@
 /* ==========================================================================
-   T589 (Explore v6): the filter pane. One column that fits about one
+   T589 (Explore v6): the filter pane. House style 2026-11: section heads
+   in ink at 800, hairlines in the rule colour, controls on the 1.5 px
+   control edge, the popover a floating sheet that scales in from 0.96. One column that fits about one
    desktop screen with nothing folded: sections parted by a hairline and
    spacing, 12 px 600 labels in --text-2, small chips, a stepped budget
    range, a month row, short Segmented choices and icon + switch rows (the
@@ -24,12 +26,12 @@
   flex-direction: column;
   gap: var(--space-2);
   min-width: 0;
-  padding: var(--space-3) 0;
-  border-top: 1px solid var(--border-soft);
+  padding: var(--space-4) 0;
+  border-top: var(--stroke-hair) solid var(--border);
 }
 .xpane > .xpane-sec:first-child,
 .xpane-head + .xpane-sec { border-top: 0; padding-top: var(--space-1); }
-.xpane .xrail-h { margin: 0; }
+.xpane .xrail-h { margin: 0; font-size: var(--text-body); font-weight: 800; line-height: var(--leading-tight); color: var(--text); }
 
 /* The head: the live count and a quiet Clear all. Desktop panel only: the
    phone sheet has both in its own foot. */
@@ -92,7 +94,7 @@
   margin-top: -2px;
   border-radius: var(--radius-pill);
 }
-.xpane-range-track::before { left: 0; right: 0; background: var(--border); }
+.xpane-range-track::before { left: 0; right: 0; background: var(--edge); }
 .xpane-range-fill { left: var(--lo); right: calc(100% - var(--hi)); background: var(--action); }
 /* Two native ranges laid over one track: only the thumbs take the pointer,
    so each keeps its own keyboard, focus and screen-reader value. */
@@ -135,8 +137,8 @@
   cursor: grab;
   pointer-events: auto;
 }
-.xpane-range-in:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--focus); outline-offset: 2px; }
-.xpane-range-in:focus-visible::-moz-range-thumb { outline: 2px solid var(--focus); outline-offset: 2px; }
+.xpane-range-in:focus-visible::-webkit-slider-thumb { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.xpane-range-in:focus-visible::-moz-range-thumb { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 @media (pointer: coarse) {
   .xpane-range-track { height: var(--tap); }
   .xpane-range-in::-webkit-slider-thumb { margin-top: 12px; }
@@ -153,28 +155,28 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  min-height: 30px;
+  min-height: 36px;
   padding: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-control);
   background: var(--surface);
   color: var(--text);
   font-family: var(--font);
   font-size: var(--text-label);
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .xpane-months .ui-chip.xpane-month.is-any { grid-row: span 2; padding: 0 var(--space-3); }
 @media (hover: hover) {
-  .xpane-month:hover:not(.is-selected) { border-color: var(--neutral-300); }
+  .xpane-month:hover:not(.is-selected) { border-color: var(--text); }
 }
-.xpane-month:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.xpane-month:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .xpane-months .ui-chip.xpane-month.is-selected {
   background: var(--select-bg);
   border-color: var(--select-border);
   color: var(--select-ink);
-  font-weight: 600;
+  font-weight: 800;
 }
 @media (pointer: coarse) {
   .xpane-months .ui-chip.xpane-month { min-height: var(--tap); }
@@ -191,7 +193,7 @@
 .xpane-know .xrail-h { margin-bottom: var(--space-1); }
 .xpane-know-row.ui-switch { min-height: 36px; padding: 0; }
 .xpane-know-row + .xpane-know-row { border-top: 1px solid var(--border-soft); }
-.xpane-know-row:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.xpane-know-row:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
 .xpane-know-label { display: inline-flex; align-items: center; gap: var(--space-3); }
 .xpane-know-icon {
   display: inline-flex;
@@ -251,7 +253,7 @@
 }
 .xqf-chip.is-selected .xqf-chev { color: var(--select-ink); }
 .xqf-chip.is-open .xqf-chev { transform: rotate(180deg); }
-.xqf-chip.is-open:not(.is-selected) { border-color: var(--neutral-300); }
+.xqf-chip.is-open:not(.is-selected) { border-color: var(--text); }
 @media (pointer: coarse) {
   .xqf-chip.ui-chip-filter { min-height: var(--tap); }
 }
@@ -264,9 +266,10 @@
   z-index: var(--z-popover);
   width: min(320px, 100%);
   padding: var(--space-2) var(--space-4) var(--space-3);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-panel);
   background: var(--surface);
   box-shadow: var(--elev-2);
+  transform-origin: top left;
   animation: xqf-in var(--dur-2) var(--ease-out);
 }
 .xqf-pop .xpane-sec { padding: var(--space-2) 0 0; }
@@ -275,11 +278,11 @@
   justify-content: flex-end;
   margin-top: var(--space-3);
   padding-top: var(--space-2);
-  border-top: 1px solid var(--border-soft);
+  border-top: var(--stroke-hair) solid var(--border);
 }
 .xqf-clear { margin-right: calc(-1 * var(--space-2)); }
 @keyframes xqf-in {
-  from { opacity: 0; transform: translateY(-4px); }
+  from { opacity: 0; transform: translateY(-4px) scale(0.96); }
   to { opacity: 1; transform: none; }
 }
 @media (max-width: 768px) {

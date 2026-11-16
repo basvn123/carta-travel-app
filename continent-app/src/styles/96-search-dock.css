@@ -9,20 +9,15 @@
    Every ink below sits on its own ground at 4.5:1 or better; white on every
    solid ink at 4.5:1 or better. */
 
-/* The six colour worlds: an ink (icons, the selected fill, the underline)
-   and a ground (the tile at rest). */
-[data-act="places"]    { --act-ink: var(--umber-700);   --act-bg: var(--umber-100); }
-[data-act="trails"]    { --act-ink: var(--green);       --act-bg: color-mix(in srgb, var(--green) 15%, var(--surface)); }
-[data-act="beaches"]   { --act-ink: var(--sun-800);     --act-bg: var(--sun-100); }
-[data-act="lakes"]     { --act-ink: var(--lagoon-700);  --act-bg: var(--lagoon-100); }
-[data-act="mountains"] { --act-ink: var(--neutral-800); --act-bg: color-mix(in srgb, var(--slate-pin) 15%, var(--surface)); }
-[data-act="cycling"]   { --act-ink: var(--danger);      --act-bg: color-mix(in srgb, var(--danger) 12%, var(--surface)); }
-
-/* The one lifted shadow the dock's objects share (carta-design 4, smaller). */
-.sdock {
-  --dock-shadow: 0 1px 2px color-mix(in srgb, var(--umber-800) 8%, transparent),
-    0 12px 30px -16px color-mix(in srgb, var(--umber-800) 34%, transparent);
-}
+/* The six kinds (house style 2026-11): each kind's own paint for its
+   pictogram, always with its word (DESIGN.md "Kinds"); the tile at rest is
+   the band, Places the beige. */
+[data-act="places"]    { --act-ink: var(--umber-700);      --act-bg: var(--umber-100); }
+[data-act="trails"]    { --act-ink: var(--kind-trails);    --act-bg: var(--surface-sunken); }
+[data-act="beaches"]   { --act-ink: var(--kind-beaches);   --act-bg: var(--surface-sunken); }
+[data-act="lakes"]     { --act-ink: var(--kind-lakes);     --act-bg: var(--surface-sunken); }
+[data-act="mountains"] { --act-ink: var(--kind-mountains); --act-bg: var(--surface-sunken); }
+[data-act="cycling"]   { --act-ink: var(--kind-cycling);   --act-bg: var(--surface-sunken); }
 
 /* --- T960. The header on the page's own ground ------------------------- */
 @media (max-width: 768px) {
@@ -46,104 +41,101 @@
 }
 /* The Together mark: one pin solid, one in outline, leaning in. */
 
-/* --- T961. The dock ---------------------------------------------------- */
+/* --- T961. The dock (house style 2026-11, the waymark top) ------------
+   One field on paper with an ink edge, the kind's pictogram in it, then Ask
+   as the screen's one solid umber action with its boxed AI mark; in a list,
+   Back and Filters as round paper doors. Flat on the stone: the dock does
+   not float, so it casts no shadow. */
 .sdock {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 2px max(var(--space-4), env(safe-area-inset-right, 0px)) var(--space-3) max(var(--space-4), env(safe-area-inset-left, 0px));
+  gap: var(--space-2);
+  padding: 2px max(var(--space-4), env(safe-area-inset-right, 0px)) var(--space-2) max(var(--space-4), env(safe-area-inset-left, 0px));
 }
 .sdock-pill {
   display: flex;
   flex: 1 1 auto;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-3);
   min-width: 0;
-  min-height: 60px;
-  padding: 8px 20px 8px 8px;
-  border: 0;
-  border-radius: var(--radius-pill);
+  min-height: 52px;
+  padding: var(--space-1) var(--space-4) var(--space-1) var(--space-1);
+  border: var(--stroke-edge) solid var(--text);
+  border-radius: var(--radius-control);
   background: var(--surface);
-  box-shadow: var(--dock-shadow);
   color: var(--text);
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: transform var(--dur-1) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
+  transition: transform var(--dur-press) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
-.sdock-pill:active { transform: scale(.985); }
-.sdock-pill:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.sdock-pill:active { transform: scale(var(--press-scale-lg)); }
+.sdock-pill:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .sdock-act {
   display: inline-flex;
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-pill);
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
   background: var(--act-bg);
   color: var(--act-ink);
 }
 .sdock-text { display: flex; flex-direction: column; min-width: 0; gap: 1px; }
 .sdock-line1,
 .sdock-line2 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sdock-line1 { font-size: var(--text-lead); font-weight: 800; letter-spacing: -0.01em; line-height: var(--leading-tight); }
-.sdock-line2 { font-size: var(--text-label); color: var(--text-2); line-height: var(--leading-ui); font-variant-numeric: tabular-nums; }
+.sdock-line1 { font-size: var(--text-lead); font-weight: 800; line-height: var(--leading-tight); }
+.sdock-line2 { font-size: var(--text-label); font-weight: 600; color: var(--text-2); line-height: var(--leading-ui); font-variant-numeric: tabular-nums; }
 
-/* Ask Carta: the one round door in colour, a warm umber disc with the
-   saffron spark. */
+/* Ask: the solid umber action, as tall as the field. */
 .sdock-ask {
   position: relative;
   display: inline-flex;
   flex: none;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   align-items: center;
   justify-content: center;
   min-width: 56px;
-  height: 56px;
+  height: 52px;
   padding: 0 var(--space-2);
   border: 0;
-  border-radius: var(--radius-pill);
-  background:
-    radial-gradient(120% 90% at 30% 20%, color-mix(in srgb, var(--sun-400) 30%, transparent), transparent 60%),
-    linear-gradient(150deg, var(--umber-600), var(--umber-800));
-  box-shadow: var(--dock-shadow), inset 0 1px 0 color-mix(in srgb, white 22%, transparent);
-  color: var(--sun-400);
+  border-radius: var(--radius-control);
+  background: var(--action);
+  color: var(--action-text);
   cursor: pointer;
-  transition: transform var(--dur-2) var(--ease-out);
+  transition: transform var(--dur-press) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 .sdock-ask-word {
   font-size: var(--text-micro);
   font-weight: 800;
   line-height: 1;
-  letter-spacing: .01em;
-  color: var(--surface);
+  color: var(--action-text);
 }
-.sdock-ask svg { transition: transform var(--dur-3) var(--ease-out); }
 @media (hover: hover) {
-  .sdock-ask:hover svg { transform: rotate(18deg) scale(1.08); }
-  .sdock-pill:hover { box-shadow: var(--dock-shadow), 0 0 0 1px var(--border-soft); }
+  .sdock-ask:hover { background: var(--action-hover); }
+  .sdock-pill:hover { border-color: var(--action); }
 }
-.sdock-ask:active { transform: scale(.94); }
-.sdock-ask:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.sdock-ask:active { transform: scale(var(--press-scale)); background: var(--action-press); }
+.sdock-ask:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; }
 
-/* T962: Back and Filters, round, on the surface. */
+/* T962: Back and Filters, round paper doors with a control edge. */
 .sdock-round.icon-btn {
   position: relative;
   flex: none;
   width: 48px;
   height: 48px;
+  border: var(--stroke-edge) solid var(--edge);
   border-radius: var(--radius-pill);
   background: var(--surface);
-  box-shadow: var(--dock-shadow);
   color: var(--text);
 }
-.sdock-filters.is-on { background: var(--select-bg); color: var(--select-ink); }
+.sdock-filters.is-on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 .sdock-count {
   position: absolute;
-  top: -2px;
-  right: -2px;
+  top: -4px;
+  right: -4px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -152,14 +144,17 @@
   padding: 0 5px;
   border-radius: var(--radius-pill);
   background: var(--action);
-  box-shadow: 0 0 0 2px var(--surface-page);
-  color: var(--surface);
+  outline: 2px solid var(--surface-page);
+  color: var(--action-text);
   font-size: var(--text-micro);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
-.sdock.is-results .sdock-pill { min-height: 52px; padding-right: 16px; }
-.sdock.is-results .sdock-act { width: 36px; height: 36px; }
+.sdock.is-results .sdock-pill { min-height: 48px; padding-right: var(--space-3); }
+.sdock.is-results .sdock-act { width: 38px; height: 38px; }
+@media (prefers-reduced-motion: reduce) {
+  .sdock-pill, .sdock-ask { transition: none; }
+}
 
 /* --- T961. The search sheet -------------------------------------------- */
 html.sdock-locked,

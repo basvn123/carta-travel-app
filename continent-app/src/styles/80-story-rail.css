@@ -122,37 +122,8 @@
 .storyr .storyr-card .card-price { min-width: 0; font-size: var(--text-body); }
 .storyr .storyr-card .card-rating { flex: none; margin-left: auto; line-height: 0; }
 
-/* Decision 2: on the photo only solid --surface pills with --elev-1. */
-.storyr .storyr-pill {
-  position: absolute;
-  top: var(--space-3);
-  display: inline-flex;
-  align-items: center;
-  max-width: calc(60% - var(--space-3));
-  min-height: 28px;
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-  color: var(--text);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  pointer-events: none;
-}
-.storyr .storyr-status { left: var(--space-3); }
-.storyr .storyr-score { right: var(--space-3); max-width: none; padding: 0 var(--space-2); }
-/* T965: a walk's difficulty and its score never share the top edge (on a
-   phone the score's band word squeezed "Very hard" to "V"): with a score
-   on the photo the difficulty drops to the bottom left. */
-.storyr .storyr-status:has(~ .storyr-score) { top: auto; bottom: var(--space-3); max-width: calc(100% - 64px); }
 .storyr .storyr-save {
   position: absolute;
-  right: var(--space-2);
-  bottom: var(--space-2);
   z-index: 2;
 }
 
@@ -258,4 +229,73 @@
    keeps one line. */
 @media (max-width: 768px) {
   .storyr .storyr-nav { display: none; }
+}
+
+/* ---- House style 2026-11 (G1): the house rail grammar -------------------
+   DESIGN.md "Rail and RailCard": the head is the title, See all in umber 700
+   and two round outlined arrows; a card is the 4:3 photo at 16 px with only
+   the save disc on it, then the name with the Score as the dark plate, the
+   meta line with the status as a beige tag, then the price. No lift, no
+   tilt and no arrival stagger: nothing moves unless the traveller acts
+   (DESIGN.md "What never animates"); the photo leans in 3 percent on hover. */
+.storyr .storyr-title { font-size: var(--text-title); font-weight: 800; letter-spacing: 0; }
+.storyr .btn.storyr-all { color: var(--umber-700); font-weight: 700; }
+.storyr .storyr-arrow.icon-btn {
+  width: var(--tap);
+  height: var(--tap);
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+}
+.storyr .storyr-arrow--prev svg { transform: none; }
+.storyr .storyr-arrow.icon-btn:disabled { opacity: 0.38; }
+.storyr[data-arrival] .storyr-item { opacity: 1; animation: none; }
+.storyr .storyr-card.card,
+.storyr .storyr-card.card:hover,
+.storyr .storyr-card:has(.card-open:focus-visible) { transform: none; }
+.storyr .storyr-card .card-media {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--world-rock);
+}
+.storyr .storyr-card .card-media img { transition: scale var(--dur-3) var(--ease-out); }
+@media (hover: hover) {
+  .storyr .storyr-card:hover .card-media img { scale: 1.03; }
+}
+.storyr .storyr-card .card-title { font-weight: 700; }
+.storyr .storyr-card .card-figures { align-items: center; gap: var(--space-2); }
+.storyr .storyr-card .card-rating { line-height: 1; }
+/* The Score as the house plate: ink, the figure in paper, no star. */
+.storyr .storyr-score .score-chip {
+  min-width: 36px;
+  height: 24px;
+  padding: 1px 6px 0;
+  gap: 0;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--plate);
+  color: var(--on-plate);
+  font-size: var(--text-label);
+  font-weight: 800;
+}
+.storyr .storyr-score .score-chip .score-star,
+.storyr .storyr-score .score-chip svg,
+.storyr .storyr-score .score-chip .score-chip-band { display: none; }
+.storyr .storyr-status {
+  flex: none;
+  padding: 2px var(--space-2) 1px;
+  border-radius: var(--radius-pill);
+  background: var(--select-bg);
+  color: var(--select-ink);
+  font-size: var(--text-micro);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.storyr .storyr-card .card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-weight: 600; color: var(--text-2); }
+.storyr .storyr-save { position: absolute; top: var(--space-2); right: var(--space-2); }
+@media (prefers-reduced-motion: reduce) {
+  .storyr .storyr-card .card-media img { transition: none; }
 }

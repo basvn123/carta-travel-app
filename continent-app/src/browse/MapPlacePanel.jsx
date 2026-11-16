@@ -1,7 +1,6 @@
 import React from 'react';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { ScoreChip } from '../components/RatingBadge.jsx';
 import { Button, Money } from '../components/ui/index.js';
 import { CostRow, CostSum } from '../components/ui/CostRow.jsx';
 import { ArrowLeftIcon, CalendarIcon } from '../components/Icons.jsx';
@@ -13,14 +12,16 @@ import { visitLength } from '../lib/nearby.js';
 import { placeSights } from '../lib/placeStory.js';
 import { knownFor } from '../lib/knownFor.js';
 import { useI18n } from '../i18n/index.jsx';
-import { PlaceOverview } from './PlaceOverview.jsx';
+import { PlaceRow } from './explore/PlaceRow.jsx';
+import { PlaceScore, BandWord } from './explore/HouseParts.jsx';
 import { SaveButton } from './ExploreCards.jsx';
 import '../styles/81-map-panel.css';
 
 /**
  * MapPlacePanel (T592, owner decision 6 of 2026-10-22): Explore's map the
- * Kayak way. On a desktop it floats on the left over the map; on a phone it
- * is the body of the map drawer (`compact`).
+ * Kayak way. From 769 px it is a column docked beside the map (house style
+ * 2026-11: list and map side by side); on a phone it is the body of the map
+ * drawer (`compact`).
  *
  * With no pick it lists the places on the map as the compact overview rows
  * (a row picks its place, it does not leave the map). With a pick it shows
@@ -89,7 +90,7 @@ export function MapPlacePanel({
           ) : (
             <div className="xrows mpp-rows">
               {rows.map((p) => (
-                <PlaceOverview key={p.id} p={p} {...overviewOf(p)} t={t}
+                <PlaceRow key={p.id} p={p} {...overviewOf(p)} t={t}
                   fav={favSet ? favSet.has(p.id) : false} onToggleFav={onToggleFav}
                   onOpen={() => onPick(p.id)} />
               ))}
@@ -122,7 +123,8 @@ function PickedPlace({ p, ov, headRef, t, onBack, onOpen, fav, onToggleFav, comp
       </div>
       <div className="mpp-head">
         <h2 className="mpp-name" ref={headRef} tabIndex={-1}>{p.city}</h2>
-        <ScoreChip rating={ov.rating || p.rating} size="lg" band />
+        <PlaceScore rating={ov.rating || p.rating} size="lg" />
+        <BandWord rating={ov.rating || p.rating} className="mpp-band" />
       </div>
       <p className="mpp-where">
         <CountryFlag country={p.iso2} size={14} />
