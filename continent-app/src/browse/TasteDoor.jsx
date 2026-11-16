@@ -4,7 +4,8 @@ import { useFirstRun } from '../lib/firstRunContext.js';
 import { tasteListText } from '../lib/taste.js';
 import { Button } from '../components/ui/index.js';
 import { durationMs } from '../lib/motion.js';
-import { ChevronRightIcon, SparkIcon } from '../components/Icons.jsx';
+import { ChevronRightIcon } from '../components/Icons.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
 import '../styles/84-explore-overview.css';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { styleName } from './TravelStylesSheet.jsx';
@@ -88,7 +89,7 @@ export function TasteRow({ className = '', before }) {
         setTimeout(() => openTasteSheet(null), durationMs('--dur-3') + 40);
       }}
     >
-      <SparkIcon size={20} className="taste-door-icon" />
+      <HouseIcon.pack size={20} className="taste-door-icon" />
       <span className="taste-door-label">{t('taste.title')}</span>
       <span className={`taste-door-v${value ? '' : ' is-unset'}`}>{value || t('taste.notSet')}</span>
       <ChevronRightIcon size={16} className="taste-door-chev" />

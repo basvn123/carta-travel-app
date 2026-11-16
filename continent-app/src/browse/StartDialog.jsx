@@ -2,6 +2,7 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Field, IconButton } from '../components/ui/index.js';
 import { CloseIcon, SparkIcon } from '../components/Icons.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useDialogExit } from '../lib/motion.js';
@@ -120,7 +121,7 @@ export function StartDialog({ t, onClose, mode: firstMode = 'home' }) {
             <h2 className="xstart-title" id="xstart-title">{t('explore.startTitle')}</h2>
             <Field ref={fieldRef} as="textarea" className="xstart-field" label={t('explore.startField')}
               value={text} maxLength={500} rows={3} onChange={(e) => setText(e.target.value)} />
-            <Button variant="secondary" block className="xstart-taste" iconStart={<SparkIcon size={20} />}
+            <Button variant="secondary" block className="xstart-taste" iconStart={<HouseIcon.pack size={20} />}
               onClick={() => setMode('taste')}>
               {t('taste.chipEmpty')}
             </Button>

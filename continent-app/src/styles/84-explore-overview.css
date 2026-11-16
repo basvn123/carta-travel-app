@@ -21,82 +21,31 @@
 @keyframes xov-fade-a { from { opacity: 0; } to { opacity: 1; } }
 @keyframes xov-fade-b { from { opacity: 0; } to { opacity: 1; } }
 
-/* --- T622. The overview's top (owner review 2026-10-23) -----------------
-   Replaces T601's band. Read top to bottom: the six categories as wide tabs
-   right under the settings line (below), then this block, then the quick
-   chips.
-     phone    no photograph: the headline with Ask Carta beside it, then one
-              joined field, Where | Search, flat on the page ground.
-     desktop  one scenic catalogue photograph as a short band, the search
-              panel centred over it (a solid --surface, no text on the
-              photo), the credit under the band with a camera mark.
-   Where carries no placeholder: its label sits in the field like a value
+/* --- The overview's top (house style 2026-11, the waymark top) ---------
+   One row: the ask-or-search field at full width and the umber Ask button
+   with its boxed AI mark beside it; under them one quiet row: the rail doors,
+   All filters, how prices read, the map. No photograph: its headline sat on
+   the photo, and the rails below carry the pictures. A phone has the dock
+   (96-search-dock.css) instead. The field's label sits where the value goes
    and rises to a caption once the field has focus or text. */
 .xov-hero {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  margin: 0 0 var(--space-5);
-}
-.xov-band { position: relative; }
-.xov-photo {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
-}
-.xov-photo-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0;
-  transform: scale(1.02);
-  transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-4) var(--ease-out);
-}
-.xov-photo-img.is-in { opacity: 1; transform: none; }
-
-.xov-panel {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
   gap: var(--space-3);
-}
-.xov-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  min-width: 0;
+  width: 100%;
+  margin: 0 0 var(--space-6);
 }
 .xov-title {
   min-width: 0;
   margin: 0;
   font-size: var(--text-headline);
-  font-weight: 700;
+  font-weight: 800;
   line-height: var(--leading-tight);
-  letter-spacing: -0.02em;
   color: var(--text);
   text-wrap: balance;
 }
-/* Ask Carta: a full-height pill with the brown spark, the chat's one door,
-   level with the headline. */
-.btn.xov-ask {
-  flex: none;
-  padding: 0 var(--space-4);
-  border-radius: var(--radius-pill);
-  font-weight: 600;
-}
-.btn.xov-ask > .btn-icon { color: var(--action); }
-.btn.xov-ask[aria-expanded="true"] {
-  background: var(--select-bg);
-  border-color: var(--select-border);
-  color: var(--select-ink);
-}
-
-/* The bar: one joined field, Where then Search. */
-.xov-bar { display: flex; align-items: center; min-width: 0; }
+.xov-top { display: flex; align-items: stretch; gap: var(--space-3); min-width: 0; }
+.xov-bar { display: flex; flex: 1 1 auto; align-items: stretch; min-width: 0; }
 .xov-field {
   position: relative;
   display: flex;
@@ -105,28 +54,12 @@
   min-width: 0;
   min-height: 56px;
   padding: var(--space-1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
+  border: var(--stroke-edge) solid var(--text);
+  border-radius: var(--radius-control);
   background: var(--surface);
-  transition: transform var(--dur-2) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+  transition: border-color var(--dur-1) var(--ease-out);
 }
-/* The lift: a shadow on a layer of its own fades in (a shadow never
-   animates) while the field rises 2 px. */
-.xov-field::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  box-shadow: var(--elev-2);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--dur-2) var(--ease-out);
-}
-.xov-field:focus-within { transform: translateY(-2px); border-color: var(--neutral-300); }
-.xov-field:focus-within::after { opacity: 1; }
-@media (hover: hover) {
-  .xov-field:hover { border-color: var(--neutral-300); }
-}
+.xov-field:focus-within { border-color: var(--action); }
 .xov-seg {
   --seg-pad: var(--space-3);
   position: relative;
@@ -138,17 +71,15 @@
   align-self: stretch;
   border-radius: var(--radius-control);
 }
-/* The label, read where the value goes while the field is empty and at
-   rest; a caption over the value otherwise. It moves by transform only. */
 .xov-seg-cap {
   position: absolute;
   z-index: 1;
   top: 50%;
   left: var(--seg-pad);
   font-size: var(--text-lead);
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1;
-  color: var(--text-2);
+  color: var(--text);
   pointer-events: none;
   transform-origin: left center;
   transform: translateY(-50%);
@@ -156,8 +87,7 @@
 }
 .xov-seg-where:focus-within .xov-seg-cap,
 .xov-seg-where:has(.xov-where-input:not(:placeholder-shown)) .xov-seg-cap {
-  color: var(--text);
-  font-weight: 600;
+  color: var(--text-2);
   transform: translateY(-140%) scale(0.75);
 }
 .xov-where-input {
@@ -175,27 +105,37 @@
   font-size: var(--text-lead);
   line-height: var(--leading-ui);
 }
-.xov-where-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 0; }
+.xov-where-input:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 0; }
 .xov-where-input::-webkit-search-cancel-button { display: none; }
 .xov-where-icon {
   position: absolute;
   left: var(--space-3);
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-2);
+  color: var(--text);
   pointer-events: none;
 }
-.xov-seg-where { --seg-pad: calc(var(--space-3) + 20px + var(--space-2)); }
+.xov-seg-where { --seg-pad: calc(var(--space-3) + 20px + var(--space-3)); }
 .btn.xov-go {
   flex: none;
   min-height: 46px;
   margin-left: var(--space-1);
-  padding: 0 var(--space-5);
+  padding: 0 var(--space-4);
   border-radius: var(--radius-control);
 }
-@media (max-width: 768px) {
-  /* The Search button keeps its icon on a phone, the word stays for screen
-     readers; the map toggle floats above the nav. */
+/* Ask: the screen's one solid umber action, as tall as the field. */
+.btn.xov-ask {
+  flex: none;
+  min-height: 56px;
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-control);
+  font-size: var(--text-lead);
+  font-weight: 800;
+}
+.btn.xov-ask > .btn-icon { color: inherit; }
+@media (max-width: 1023px) {
+  /* Tablet: the Search word becomes its icon (the word stays for screen
+     readers), so the field keeps its width beside Ask. */
   .xov-go-word {
     position: absolute;
     width: 1px;
@@ -205,35 +145,11 @@
     white-space: nowrap;
   }
   .btn.xov-go { width: 46px; padding: 0; }
-  .xov-quick .xov-view { display: none; }
 }
 
-/* The credit: small, under the band at its right edge, linked to the
-   photograph's file page (author and licence). */
-.xov-credit {
-  display: flex;
-  justify-content: flex-end;
-  margin: var(--space-2) var(--space-1) 0 0;
-  font-size: var(--text-caption);
-  line-height: var(--leading-ui);
-  color: var(--text-3);
-}
-.xov-credit a {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  color: inherit;
-  text-decoration: none;
-}
-.xov-credit-icon { flex: none; }
-@media (hover: hover) {
-  .xov-credit a:hover { color: var(--text-2); text-decoration: underline; text-underline-offset: 2px; }
-}
-.xov-credit a:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
-
-/* The quick chips. */
-.xov-picks { min-width: 0; margin-top: var(--space-4); }
-.xov-hero:has(.xov-credit) .xov-picks { margin-top: var(--space-3); }
+/* The quiet row: the doors first, then All filters, how prices read and
+   the map at its end. */
+.xov-picks { min-width: 0; }
 .xov-quick {
   display: flex;
   flex-wrap: wrap;
@@ -243,18 +159,16 @@
 }
 .xov-quick > * { flex: none; }
 .xov-quick .btn.xquick-chip {
-  min-height: 32px;
-  padding: 0 var(--space-3);
-  border-color: var(--border-soft);
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: var(--stroke-edge) solid var(--edge);
   border-radius: var(--radius-pill);
-  font-size: var(--text-label);
-  font-weight: 500;
-}
-@media (pointer: coarse) {
-  .xov-quick .btn.xquick-chip { min-height: var(--tap); }
+  font-size: var(--text-body);
+  font-weight: 600;
 }
 .xov-quick .btn.xquick-chip .btn-icon { color: var(--text-2); }
-.xov-quick .btn.xquick-filters { border-color: var(--border); font-weight: 600; }
+.xov-quick .btn.xquick-filters { border-color: var(--text); font-weight: 700; }
+.xov-quick .btn.xquick-filters .btn-icon { color: var(--text); }
 .xov-quick .btn.xstrong-chip[aria-pressed="true"],
 .xov-quick .btn.xquick-filters.is-on {
   background: var(--select-bg);
@@ -263,45 +177,37 @@
 }
 .xov-quick .btn.xquick-filters.is-on .btn-icon { color: var(--select-ink); }
 .xov-quick .btn.xquick-filters .xfilters-n { margin-left: var(--space-1); }
-
+.xov-quick .xov-view { display: inline-flex; margin-left: auto; }
+.xov-quick .xov-view .btn { border-radius: var(--radius-pill); }
 @media (min-width: 769px) {
-  .xov-hero { margin: 0 0 var(--space-6); }
-  .xov-photo { height: clamp(240px, 34vh, 340px); }
-  /* The panel sits in the middle of the band, so the hero is the band's
-     height and no more. */
-  .xov-hero.has-photo .xov-panel {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: min(720px, calc(100% - var(--space-8) * 2));
-    transform: translate(-50%, -50%);
-  }
-  .xov-panel {
-    gap: var(--space-4);
-    padding: var(--space-5) var(--space-6) var(--space-6);
-    border-radius: var(--radius-sheet);
-    background: var(--surface);
-    box-shadow: var(--elev-2);
-  }
-  .xov-hero:not(.has-photo) .xov-panel { max-width: 720px; margin: 0 auto; }
-  .xov-field { min-height: 64px; }
-  .xov-seg,
-  .btn.xov-go { min-height: 54px; }
-  .xov-where-input { padding-top: 18px; }
-  .xov-seg-where { --seg-pad: calc(var(--space-4) + 20px + var(--space-3)); }
-  .xov-where-icon { left: var(--space-4); }
-  .xov-quick .xov-view { display: inline-flex; margin-left: auto; }
-  .xov-quick .xov-view .btn { border-radius: var(--radius-pill); }
   /* "All filters" on the overview opens the pane beside it. */
   .explore-shell.is-overview.is-ov-pane .explore-side { display: block; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .xov-photo-img { opacity: 1; transform: none; transition: none; }
   .xov-field,
-  .xov-field::after,
   .xov-seg-cap { transition: none; }
-  .xov-field:focus-within { transform: none; }
 }
+
+/* The rail cards' own lines (ExploreRails.jsx): the month status beside the
+   country, the price notes and the friends line under the formation. */
+.xrails { display: flex; flex-direction: column; gap: var(--space-7); }
+.hs-rcard .xrc-country { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hs-rcard .xrc-status {
+  flex: none;
+  margin-left: var(--space-1);
+  padding: 2px var(--space-2) 1px;
+  border-radius: var(--radius-pill);
+  background: var(--select-bg);
+  color: var(--select-ink);
+  font-size: var(--text-micro);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.hs-rcard .xrc-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.hs-rcard .xprice-notes,
+.hs-rcard .xstory-why { font-size: var(--text-label); color: var(--text-2); }
+.hs-rcard .xprice-notes:empty,
+.hs-rcard .xstory-why:empty { display: none; }
 
 /* The categories (T622, owner 2026-10-23: "brought more to the front, and
    larger, also more on top ... also more wide"; on a phone "Meren is half
@@ -425,6 +331,12 @@
 @media (min-width: 769px) {
   .explore-shell.is-pane-closed .explore-side { display: none; }
 }
+@media (min-width: 769px) and (max-width: 1023px) {
+  /* Tablet: the pills move under the title when they do not fit beside it;
+     nothing is cut and nothing hides in a menu. */
+  .explore-shell.is-focus .xbar { flex-wrap: wrap; row-gap: var(--space-2); }
+  .explore-shell.is-focus .xtools { flex-wrap: wrap; justify-content: flex-end; }
+}
 @media (max-width: 768px) {
   /* T598: one row on a phone too, the arrow, the title and the pills,
      scrolling sideways as one strip; no row is spent on the title alone. */
@@ -452,7 +364,7 @@
     font-size: var(--text-lead);
   }
   .explore-shell .xtools { flex: none; margin: 0; }
-  .xtools > * { flex: none; }
+  .xtools > * { flex: 0 1 auto; min-width: 0; }
   .explore-shell.is-focus .xcats-bar { margin-bottom: var(--space-2); }
   .explore-shell.is-focus .xqf { margin-bottom: var(--space-2); }
   /* The phone keeps its floating List/Map switch until T592 places the
@@ -631,21 +543,53 @@
     flex: 1 1 100%;
     min-width: 0;
   }
+  /* House style 2026-11: the pills wrap onto a second line instead of
+     scrolling past the edge, and each one shrinks with an ellipsis, so
+     nothing is cut at 360 (the Countries pill ran past the edge). */
   .explore-shell.is-focus .xbar.xbar .xtools {
     display: flex;
     flex: 1 1 100%;
+    flex-wrap: wrap;
     gap: var(--space-2);
-    margin: 0 calc(var(--space-4) * -1);
-    padding: 2px var(--space-4);
-    overflow-x: auto;
-    scrollbar-width: none;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
   }
   .explore-shell.is-focus .xbar.xbar .xtools::-webkit-scrollbar { display: none; }
 }
-/* The Countries pill keeps its size inside a scrolling row of pills (its
-   settings-line rule lets it shrink to nothing). */
+/* House style 2026-11, phone: the dock above already names the list
+   ("Places in Europe") and holds the way back, so the head's title is read,
+   not drawn, and the pills are compact enough for one row at 390 (they
+   wrap, never scroll, in longer languages). At least eight rows show above
+   the bottom nav at 390 x 844. */
+@media (max-width: 768px) {
+  .explore-shell.is-focus .xbar.xbar .xbar-lead { display: contents; }
+  .explore-shell.is-focus .xbar.xbar .xbar-lead .xbar-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .explore-shell.is-focus .xbar.xbar { margin: 0 0 var(--space-1); }
+  .explore-shell.is-focus .xbar.xbar .xtools { gap: 6px; }
+  .explore-shell.is-focus .xbar.xbar .xtools .btn { padding: 0 var(--space-2); gap: var(--space-1); }
+  .explore-shell.is-focus .xcats-bar { margin-bottom: var(--space-2); }
+  /* The list's tabs at 48 px (the tap floor is 44) and a tight unit head:
+     the rows keep eight to a 390 x 844 screen with the region shown. */
+  .explore-shell.is-focus .xcats-row .ui-tab { min-height: 46px; }
+  .explore-shell.is-focus .xcats-bar.xcats-bar { margin-bottom: var(--space-1); }
+  .explore-shell.is-focus .xlist-head { padding-block: 1px; }
+}
+
+/* The Countries pill takes its words' width but may shrink to the row,
+   its value ending in an ellipsis (house style 2026-11: at 360 it ran past
+   the edge). */
 .xov-quick .btn.ctry-btn,
-.xtools .btn.ctry-btn { flex: none; min-width: auto; }
+.xtools .btn.ctry-btn { flex: 0 1 auto; min-width: 0; max-width: 100%; }
+.xtools .btn.ctry-btn .ctry-btn-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 
 /* T604: the focused head's two kinds of pill share one size (36 px on a
    fine pointer, --tap on touch), the pill radius and 16 px icons. The
@@ -666,46 +610,6 @@
   .explore-shell.is-focus .xtools .btn { min-height: var(--tap); }
 }
 
-/* ---- T906 (owner, Explore board 2026-10-30) ----
-   One field for a place and for Ask Carta. On a phone no photograph: the
-   field alone, a round search pill. On a desktop the photograph at a height
-   that shows it (300 to 420 px, about 40 percent of the screen), the
-   headline on it, and the field on its lower edge so the middle of the
-   photo is never covered. */
-.xov-panel { gap: 0; }
-.xov-field { border-radius: var(--radius-pill); box-shadow: var(--elev-1); }
-.xov-field .btn.xov-go { border-radius: var(--radius-pill); }
-@media (min-width: 769px) {
-  .xov-hero.has-photo { margin-bottom: calc(var(--space-6) + 36px); }
-  .xov-hero.has-photo .xov-photo { height: clamp(300px, 40vh, 420px); }
-  .xov-hero.has-photo .xov-photo-img { object-position: center 45%; }
-  .xov-title.xov-title--photo {
-    position: absolute;
-    top: 40%;
-    left: 50%;
-    z-index: 1;
-    max-width: calc(100% - 2 * var(--space-8));
-    transform: translate(-50%, -50%);
-    color: var(--surface);
-    font-size: var(--text-display);
-    font-weight: 800;
-    text-align: center;
-    text-shadow: var(--elev-3);
-    pointer-events: none;
-  }
-  .xov-hero.has-photo .xov-panel {
-    top: auto;
-    bottom: 0;
-    width: min(760px, calc(100% - var(--space-8) * 2));
-    padding: var(--space-2);
-    border-radius: var(--radius-pill);
-    transform: translate(-50%, 50%);
-    box-shadow: var(--elev-3);
-  }
-  .xov-hero.has-photo .xov-field { border-color: transparent; box-shadow: none; }
-  .xov-hero.has-photo .xov-credit { margin-top: calc(36px + var(--space-3)); }
-  .xov-hero:not(.has-photo) .xov-panel { padding: 0; background: none; box-shadow: none; }
-}
 /* T907: how prices read, by the results: at the row's end on a desktop,
    the map pill after it. */
 @media (min-width: 769px) {

@@ -1015,7 +1015,10 @@ export function ExploreMap({
                 ref={(el) => { if (el) kpinElsRef.current.set(k.key, el); else kpinElsRef.current.delete(k.key); }}
                 className={cls}
                 style={{ left: k.x, top: k.y, '--kpin-d': `${Math.round(k.r * 2 + 4)}px` }}
-                aria-label={kpinLabel(k)}
+                // WCAG 2.5.3 (house style check, 2026-11): the name starts
+                // with the words the label shows ("€194 Bergen"), then says
+                // the rest (country, Score, the unit).
+                aria-label={label ? `${[pinText(k), k.city].filter(Boolean).join(' ')}, ${kpinLabel(k)}` : kpinLabel(k)}
                 aria-pressed={onPick ? k.id === pickedId : undefined}
                 onFocus={() => kpinFocus(k)}
                 onBlur={kpinBlur}

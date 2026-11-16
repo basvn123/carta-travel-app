@@ -935,6 +935,7 @@ export const fr = {
   "detail.tabBreakdown": "Détail",
   "detail.tag": "Destination",
   // lane:explore (house style 2026-11): this lane adds its new keys directly under this line
+  "explore.colUnit": "Une journée, par personne",
   "detail.timesPeople": " × {n} personnes",
   "detail.tollNotes": "Comprend {notes}, par voiture, tarifé par pays traversé.",
   "detail.tolls": "Péages / vignette",
@@ -10427,7 +10428,7 @@ export const fr = {
   "styles.new": "Nouveau style",
   "styles.startFrom": "Partir de",
   "styles.firstTitle": "Avec qui voyagez-vous ?",
-  "styles.firstLead": "Choisissez-en un pour commencer. Tout se modifie, et vous pouvez garder un style par type de voyage : seul, à deux, avec les enfants.",
+  "styles.firstLead": "Choisissez-en un pour commencer. Vous pouvez le modifier et en garder un par type de voyage.",
   "styles.fromNow": "Ma façon actuelle",
   "styles.cancel": "Annuler",
   "styles.mine": "Mon style",

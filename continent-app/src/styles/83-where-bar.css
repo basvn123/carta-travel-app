@@ -30,9 +30,9 @@
   flex-direction: row;
   align-items: center;
   gap: 0;
-  min-height: var(--tap);
+  min-height: 52px;
   padding-left: var(--space-3);
-  border: 1px solid var(--border);
+  border: var(--stroke-edge) solid var(--text);
   border-radius: var(--radius-control);
   background: var(--surface);
   transition: border-color var(--dur-1) var(--ease-out);
@@ -48,7 +48,7 @@
 }
 .wbar .wbar-what .field-control select:focus-visible { outline-offset: -2px; }
 @media (hover: hover) {
-  .wbar .wbar-what.field:hover { border-color: var(--neutral-300); }
+  .wbar .wbar-what.field:hover { border-color: var(--action); }
 }
 .wbar .wbar-what.field:focus-within { border-color: var(--action); }
 
@@ -56,26 +56,26 @@
   position: relative;
   display: flex;
   align-items: center;
-  min-height: var(--tap);
-  border: 1px solid var(--border);
+  min-height: 52px;
+  border: var(--stroke-edge) solid var(--text);
   border-radius: var(--radius-control);
   background: var(--surface);
   transition: border-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .wbar-box:hover { border-color: var(--neutral-300); }
+  .wbar-box:hover { border-color: var(--action); }
 }
 .wbar-box:focus-within { border-color: var(--action); }
 .wbar-icon {
   flex: none;
   margin-left: var(--space-3);
-  color: var(--text-3);
+  color: var(--text);
   pointer-events: none;
 }
 .wbar-input {
   flex: 1 1 auto;
   min-width: 0;
-  height: calc(var(--tap) - 2px);
+  height: 48px;
   padding: 0 var(--space-2);
   border: 0;
   background: transparent;
@@ -83,9 +83,9 @@
   font-family: var(--font);
   font-size: var(--text-lead);
 }
-.wbar-input::placeholder { color: var(--text-3); }
+.wbar-input::placeholder { color: var(--text-2); }
 /* The box carries the focus edge as well as the ring. */
-.wbar-input:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; border-radius: var(--radius-control); }
+.wbar-input:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -3px; border-radius: var(--radius-control); }
 .wbar-input::-webkit-search-cancel-button { display: none; }
 .wbar-clear { flex: none; color: var(--text-3); }
 .wbar-box .places-locate {

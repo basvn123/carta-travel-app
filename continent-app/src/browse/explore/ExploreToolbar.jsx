@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ShareIcon, FilterIcon, BookmarkIcon } from '../../components/Icons.jsx';
+import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
 import { MATCH } from '../../lib/match.js';
 import { CountriesButton } from '../../components/CountriesControl.jsx';
@@ -23,7 +23,7 @@ export function ExploreToolbar({
         {isDesktop && <a className="icon-btn icon-btn-surface xov-back" href={lens.href}
           aria-label={t('explore.backOverview')} title={t('explore.backOverview')}
           onClick={(e) => { e.preventDefault(); lens.back(); }}>
-          <ArrowLeftIcon size={20} />
+          <HouseIcon.back size={20} />
         </a>}
         <TitleTag className="xbar-title">{t('explore.placesTitle')}</TitleTag>
         <span className="xbar-count sr-only">
@@ -35,7 +35,7 @@ export function ExploreToolbar({
       {/* T588: one row of pills: Share, Sort, Filters, Saved, then the
           countries on a phone and the map toggle last. */}
       <div className="xbar-tools xtools" role="group" aria-label={t('explore.toolsAria')}>
-        <Button variant="secondary" size="sm" className="xtool" iconStart={<ShareIcon size={18} />}
+        <Button variant="secondary" size="sm" className="xtool" iconStart={<HouseIcon.share size={18} />}
           onClick={shareView}>
           {t('explore.toolShare')}
         </Button>
@@ -46,7 +46,7 @@ export function ExploreToolbar({
           size="sm"
           ref={filterBtnRef}
           className={`xtool${isDesktop && paneOpen ? ' is-on' : ''}`}
-          iconStart={<FilterIcon size={18} />}
+          iconStart={<HouseIcon.filter size={18} />}
           onClick={() => (isDesktop ? setPaneOpen((v) => !v) : setSheetOpen(true))}
           aria-haspopup={isDesktop ? undefined : 'dialog'}
           aria-expanded={isDesktop ? paneOpen : sheetOpen}
@@ -56,7 +56,7 @@ export function ExploreToolbar({
           {chips.length > 0 && <Chip kind="count" className="xfilters-n">{chips.length}</Chip>}
         </Button>}
         <Button variant="secondary" size="sm" className={`xtool${showFavOnly ? ' is-on' : ''}`}
-          iconStart={<BookmarkIcon size={18} />} aria-pressed={showFavOnly}
+          iconStart={<HouseIcon.cairn size={18} />} aria-pressed={showFavOnly}
           onClick={() => setShowFavOnly(!showFavOnly)}>
           {t('explore.toolSaved')}
         </Button>

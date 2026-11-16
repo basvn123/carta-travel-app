@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeftIcon, ChevronRightIcon } from '../components/Icons.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
 import { Button, Card, IconButton } from '../components/ui/index.js';
 import { prefersReducedMotion, scrollBehavior } from '../lib/motion.js';
 import '../styles/80-story-rail.css';
@@ -154,11 +154,11 @@ export function StoryRail({
           <span className="storyr-nav">
             <IconButton tone="surface" label={t('explore.railPrev')} onClick={() => page(-1)}
               disabled={pos.atStart} className="storyr-arrow storyr-arrow--prev">
-              <ChevronRightIcon size={16} />
+              <HouseIcon.prev size={18} />
             </IconButton>
             <IconButton tone="surface" label={t('explore.railNext')} onClick={() => page(1)}
               disabled={pos.atEnd} className="storyr-arrow">
-              <ChevronRightIcon size={16} />
+              <HouseIcon.next size={18} />
             </IconButton>
           </span>
         </div>
@@ -173,14 +173,15 @@ export function StoryRail({
 }
 
 /**
- * A photo card in a StoryRail, on the kit Card (layout tile): the photo with
- * its pills and save control as the media, then title, meta and price on the
- * page ground, and the brown arrow in the rating slot (decorative: the title's
- * link or button opens the card).
+ * A photo card in a StoryRail, on the kit Card (layout tile), in the house
+ * rail card grammar (house style 2026-11, DESIGN.md "Rail and RailCard"):
+ * the photo with only the save disc on it (text never sits on a photo), then
+ * the title with the Score beside it, the meta line with the status after
+ * it, and the price, on the page ground.
  *
- *   photo   the <img> (HeroImage) at 4:5
- *   status  a short word for the top-left pill, or null
- *   score   the ScoreChip for the top-right pill, or null
+ *   photo   the photograph (HeroImage)
+ *   status  a short word ("Good in Nov", a difficulty), or null
+ *   score   the Score (ScoreChip, drawn as the dark plate), or null
  *   save    the save control (SaveButton), or null
  */
 export function StoryCard({
@@ -196,17 +197,20 @@ export function StoryCard({
       media={(
         <>
           {photo}
-          {status && <span className="storyr-pill storyr-status">{status}</span>}
-          {score && <span className="storyr-pill storyr-score">{score}</span>}
           {save && <span className="storyr-save">{save}</span>}
         </>
       )}
       title={title}
       href={href}
       onOpen={onOpen}
-      meta={meta}
+      meta={(meta || status) ? (
+        <>
+          {meta}
+          {status && <span className="storyr-status">{status}</span>}
+        </>
+      ) : null}
       price={price}
-      rating={<ArrowLeftIcon size={20} className="storyr-go" />}
+      rating={score ? <span className="storyr-score">{score}</span> : null}
       {...rest}
     />
   );

@@ -61,7 +61,12 @@ test('Explore card: the card price slot carries the notes from the card cost row
   assert.match(out, /xprice-notes/);
   assert.match(out, /data-note="bed"/);
   assert.match(src('browse/ExploreCards.jsx'), /<PriceNotes row=\{p\.cost\}/);
-  assert.match(src('browse/ExploreRails.jsx'), /<PriceNotes row=\{p\.cost\}/);
+  // House style (orchestrator fix round 1): a rail card carries its own notes
+  // from its cost row; a note every card on screen shares is said once over
+  // the rails (ListHead), not under each card.
+  assert.match(src('browse/ExploreRails.jsx'), /const own = priceNotes\(p\.cost\);/);
+  assert.match(src('browse/ExploreRails.jsx'), /<PriceNotes notes=\{notes\}/);
+  assert.match(src('browse/ExploreRails.jsx'), /<ListHead t=\{t\} notes=\{shared\} \/>/);
 });
 
 test('Ask card: the stay section carries the notes from the destination cost row', async () => {
