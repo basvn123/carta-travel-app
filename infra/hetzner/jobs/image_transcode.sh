@@ -8,6 +8,13 @@
 #   spawn.sh image_transcode beaches lakes mountains
 #   spawn.sh image_transcode trails cycling             wire layers (T269-c, T324)
 #   spawn.sh image_transcode beaches -- --limit 500      derive.py options after --
+#   spawn.sh image_transcode beaches lakes published     only what the app shows
+#
+# `published` is a job argument, not a layer: it passes --published-only to
+# every derive.py run, so each layer derives the titles of its published
+# list (img/manifest/_sources/<layer>.json) and not the cache's long tail.
+# spawn.sh refuses `--` in a job argument (valid_job_arg), so the option
+# could not reach the worker any other way (2026-11-16, T049-f).
 #
 # Layers. Three cache layers (beaches, lakes, mountains) and the eight wire
 # layers derive.py reads (trails, cycling, region, dossier, poi, dest, trips,
@@ -81,10 +88,12 @@ is_cache_layer() { case "$CACHE_LAYERS" in *" $1 "*) return 0 ;; *) return 1 ;; 
 [ $# -ge 1 ] || { jlog "usage: image_transcode.sh <layer> [...] [-- derive.py options]; cache layers:$CACHE_LAYERS wire layers:$WIRE_LAYERS"; exit 2; }
 LAYERS=()
 EXTRA=()
+PUBLISHED=()
 while [ $# -gt 0 ]; do
   case "$1" in
     --) shift; EXTRA=("$@"); break ;;
     beaches|lakes|mountains|trails|cycling|region|dossier|poi|dest|trips|journeys) LAYERS+=("$1") ;;
+    published) PUBLISHED=(--published-only) ;;
     *) jlog "unknown layer '$1' (cache layers:$CACHE_LAYERS wire layers:$WIRE_LAYERS; the layers derive.py knows)"; exit 2 ;;
   esac
   shift
@@ -177,7 +186,7 @@ for layer in "${LAYERS[@]}"; do
   x "$CARTA_PY" pipeline/photos/derive.py run "$layer" --upload r2 \
     --held "$HELD" --prior "$PRIOR" --work "$CARTA_WORK/derive-$layer" \
     --out "$CARTA_OUT" --encoders "$CARTA_THREADS" --budget-s "$left" \
-    --run-id "${CARTA_RUN_ID:-local}" ${RECHECK[@]+"${RECHECK[@]}"} ${EXTRA[@]+"${EXTRA[@]}"}
+    --run-id "${CARTA_RUN_ID:-local}" ${RECHECK[@]+"${RECHECK[@]}"} ${PUBLISHED[@]+"${PUBLISHED[@]}"} ${EXTRA[@]+"${EXTRA[@]}"}
   lrc=$?
   set -e
   jlog "$layer: derive.py exited $lrc"
