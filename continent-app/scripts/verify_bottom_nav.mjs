@@ -64,7 +64,7 @@ await page.screenshot({ path: 'shots/bottom-nav-bar.png' });
 await page.evaluate(() => { try { localStorage.removeItem('carta.tripDraft.v1'); } catch { /* */ } });
 await page.locator('.bottom-nav-item').nth(1).click({ timeout: 60000 });
 await page.waitForTimeout(2000);
-check('Plan opens its screen', await page.locator('.pf, .pf-open-start, main').first().isVisible().catch(() => false));
+check('Plan opens its screen', (await page.locator('.pf, .pf-open-start, #main').filter({ visible: true }).count()) > 0);
 check('Plan marked active', /^plan$/i.test((await active()).trim()));
 check('the address names Plan', /[?&]tab=plan/.test(page.url()), page.url());
 await page.screenshot({ path: 'shots/bottom-nav-plan.png' });
