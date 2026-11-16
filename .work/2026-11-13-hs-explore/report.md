@@ -92,8 +92,24 @@ No token changed (the lane reads roles only). New screen-scoped classes: `.xrow-
 - The Ask chat (`76-ask-chat.css`) still draws `PlaceOverview` rows (place lane's component); it could adopt `PlaceRow` so Ask's places look like Explore's.
 - Dead rules left in the place lane's `79-place-card.css` (`.xrows--cards`), no longer reached by Explore.
 
+## Fix round 1 from the orchestrator's judges (2026-11-16)
+The orchestrator's two judges (`judgement-orch-explore-1.md` 106 and `-2.md` 103 of 135, both "Merge: no", in the orchestrator's run folder) blocked on four items; all four are fixed in `5cf92e2ab5`, with the cheap integration items.
+
+| # | Blocking item | What changed | Evidence |
+|---|---|---|---|
+| 1 | The docked map column and 600 to 1023 px lists hid the reason ("Best in Apr to May") and the column hid the region | The column and the phone drawer show the region with the country and the reason on every row; lists from 600 px keep the reason on its own line (from 1024 in its column) | `shots/explore-map-820.png`, `-1180`, `-1440`; `shots/explore-list-820.png`; `verify_explore` check "map column: rows show their reason and region" |
+| 2 | The phone list showed the country only | The region and the country as two parts of one line in the language's order (`WhereLine` in `PlaceRow.jsx`), the country never shrinking; the phone row has three even lines so "Salzkammergut, Austria" shows whole. Still 8 full rows at 390 x 844 (rows 67 px, first at 244 px: the list's tabs at 46 px, the dock and head tighter); 7 at the 360 x 780 floor | `shots/explore-list-390.png`; probe of the first 10 regions: none cut; `verify_explore` "phone: rows show the region with the country" |
+| 3 | "Local transport: not yet" under every rail card | Said once in the head over the rails (`ListHead` with `notes`), computed as the parts every shown card lacks; each card keeps only notes of its own (a thin bed). The head is readable to a screen reader; the unit beside it stays visual only | `shots/explore-390.png`, `explore-1440.png`; `tests/hs-explore-parts.test.mjs`; `tests/priceNotes.test.mjs` updated to this contract |
+| 4 | No haptic on save | `SaveButton` calls `haptic(fav ? 'tick' : 'confirm')` after the toggle; `haptic()` plays only after a touch, behind the traveller's setting, never under reduced motion. Kit request for `IconButton` in `foundation-requests.md` item 3 | `ExploreCards.jsx`; test "saving a place commits with a haptic" |
+
+Also done: the rail card's price row (a button) moved out of the card link; the wide list's parts take a fixed track (no drifting reason column); Travel styles fill the dialog (two rows of three); the empty state is one centred block. Left for integration with reasons: `handbook-notes.md`, section "Orchestrator fix round 1".
+
+Checks after the round: `npm test` 2,122 tests, 25 fail, the baseline set (one timing test, "24 trips under 50 ms", failed once while the sweep loaded the machine and passed alone at 38.5 ms; the full rerun is clean); `npm run lint` 0 errors; design-lint 0 new; token-contrast 0 under; css-routes all route-only; impeccable `[]`; `verify_explore` 104/104; `verify_axe` 0 on Explore list, map and Destinations at 390, 820, 1440; width sweep of overview, list, map and travel styles at ten widths 40 of 40 clean (`sweep-r1.txt`). Shots retaken at 390, 820, 1180 and 1440 for explore, explore-list, explore-map, explore-map-pick; 390 for explore-filters and explore-empty; 820, 1180 and 1440 for travel-styles.
+
+Files changed in this round: `.claude/skills/carta-design/references/explore.md` (rows, unit head, shared note), `continent-app/scripts/verify_explore.mjs` (reason, region, country checks), `continent-app/src/browse/ExploreCards.jsx` (save haptic), `continent-app/src/browse/ExploreRails.jsx` (shared note, price row out of the link), `continent-app/src/browse/explore/ExploreContent.jsx` (the rails' head moved into ExploreRails), `continent-app/src/browse/explore/PlaceRow.jsx` (`WhereLine`, notes in `ListHead`), `continent-app/src/styles/62-v6-explore.css` (row grids, empty state, rail head), `continent-app/src/styles/79-travel-styles.css` (grid), `continent-app/src/styles/84-explore-overview.css` (phone tabs and head), `continent-app/src/styles/96-search-dock.css` (dock gap in a list), `continent-app/tests/hs-explore-parts.test.mjs` (4 tests), `continent-app/tests/priceNotes.test.mjs` (the rail cards' notes contract).
+
 ## How to undo
-`git revert 7650e2e273 3869dd3460 3aa3ee625c b49fc84f60 abffbf8e36` (newest first) on `p15-hs-explore`, plus the report commit. No data, schema, contract or token change.
+`git revert 5cf92e2ab5 7650e2e273 3869dd3460 3aa3ee625c b49fc84f60 abffbf8e36` (newest first) on `p15-hs-explore`, plus the report commit. No data, schema, contract or token change.
 
 ## Next step
 The orchestrator's own judges on `p15-hs-explore`, then the merge into `p15-housestyle`.
