@@ -1,10 +1,23 @@
 # Plan rules (reference)
 
-> Look rules for these screens are rewritten by the plan lane of the house style run (2026-11). Until then the look comes from `DESIGN.md` and the carta-design `SKILL.md`; the rules below are the product rules these screens keep (what they show, what each control does, how numbers behave). They bind.
+> Look rules below were written by the plan lane of the house style run (2026-11); they sit on `DESIGN.md` and the carta-design `SKILL.md`. The product rules after them (what each screen shows, what each control does, how numbers behave) bind as before.
 
 Covers the plan flow, the wizard, the trip finder, "Trips for you", ready-made trips (trip styles) and journeys.
 
 Numbers and money, flights and the typical fare (T882-b, never counted in "Fits" without its label), cost on cards, the "More" menu and a multi-step flow's chrome, copy and the quality floor: see shared-product-rules.md. The receipt and cost bar: see place.md. The planner workspace, day detail and the planned trip page: see trip.md. Trip style tiles in a list: see explore.md, Density. The five difficulty squares: see outdoors.md.
+
+## Look rules (house style, plan lane 2026-11)
+
+- **Wayfinding is the layout.** A multi-step flow always shows the route so far. On a phone the step head carries a slim path: a walked step is an umber disc with its tick, the step in hand carries the small blaze, the rest wait as rings on one hairline, and the "x of n" text stays visible beside it. From 769 px the step list (`FlowRail`) is a trail pane on the stone ground: waymarks on one line, each answer under its step, the step in hand on the selected row (`--select-row`, umber 800, weight 800) with the blaze; the head path and its text step back there, so the position is said once. Your trip so far (`FlowSide`) is a third column from 1100 px and the fold over the question below that. The wizard's head stepper uses the same waymarks in a row.
+- **One question, one Continue.** The question is a paper pane, flat on a hairline beside the trail; its reading column is `--w-read` (persona and likes, `is-wide`, up to `--w-detail`) and centres in the pane from 1280 px. The title is left aligned in `--text-headline` 800. Continue is pinned: a sticky foot above the nav on a phone (paper, hairline, `--elev-2`), the pane's foot from 769 px. The blaze on the step mark paints in only after the traveller's own step, never on the flow's first paint.
+- **Plan home** shows its name ("Your trips", `pf.home.tripsTitle`) over New trip and the Ready-made trips door.
+- **The trip finder** keeps the phone list with the floating map switch (a paper pill with an ink edge, never an ink slab) and the list beside the map from 1024 px. Its card follows the rail-card grammar: the photo carries only the photo and the paper save disc; under it the name, the match, the place, the top pick's label and reasons, the facts, the figure (loudest), its unit. The match is an ink arc on the hairline track with its words ("89% match"): never a Score plate, never umber. Quick filters and answer chips are pills with a 1.5 px edge; on a phone their row fades at the right edge as the scroll hint.
+- **Trip pages** (found trip, library trip, journey) share the page grammar: the photo with 16 px corners, the head under it (never on it), fact tiles (paper on a hairline, label then value), sections on hairlines, and a cost post: flat on a hairline beside the content from 769 px (journey: from 1024 px, where `PageTemplate` switches), a sticky foot with the figure and the one action on a phone. Only the phone foot casts a shadow.
+- **The library trip page** keeps its folds and its pinned classes (`.itin-photohero` then the flush `.itin-capband` with the one h1, `.itin-facts`, `.dsec`, `.itin-cost*`); the Score is the `ScorePlate`, the missing photo the world tile, the gone state the error `StateBlock`.
+- **The found trip's cost bar** uses the wagon paint (getting there outlined umber, around sunken with an edge, stay solid umber, food beige with its edge), 2 px gaps, words on every line. It is the trip's cost bar, not a `Formation` (that part prices a day).
+- **Warnings** (over budget, a missed like, busy crowds) read in `--danger` with a word or icon; there is no amber. A cheapest-total mark says "Cheapest" (`tf.card.best`).
+- **Ready-made trip cards** (`.ctc`) carry the name, countries and "In season" under the photo; difficulty is a neutral tag whose word carries the meaning.
+- **No sparkle**: the wizard's design and templates doors use the route mark.
 
 ## Where Plan starts (T496)
 
