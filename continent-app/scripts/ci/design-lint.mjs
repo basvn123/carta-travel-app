@@ -138,7 +138,9 @@ function scanFile(abs, rel) {
     }
     if (inFontFace && l.includes('}')) inFontFace = false;
     if (!isCss) {
-      const code = l.replace(/^\s*(\/\/|\*|\/\*).*$/, '');
+      // Strip a CR first: in a CRLF checkout '.' stops at the CR, so '$' never
+      // matched and euro signs in comments read as code (Windows only).
+      const code = l.replace(/\r$/, '').replace(/^\s*(\/\/|\*|\/\*).*$/, '');
       if (!/(^|\/)i18n\//.test(rel) && !JS_HEX_EXEMPT.has(rel) && JS_HEX.test(code)) add('js-hex-literal', i);
       if (rel !== 'src/lib/money.js' && (code.includes('€') || /\b\w*(eur|price|cost|total)\w*\)?\.toFixed\(/i.test(code))) add('money-literal', i);
       if (rel.endsWith('.jsx') && !rel.startsWith('src/components/ui/') && /<button\b/.test(code)) add('raw-button', i);
