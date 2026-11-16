@@ -75,10 +75,10 @@
 }
 .day-ws .dst-h { font-size: var(--text-body); font-weight: 800; color: var(--text); }
 .day-ws .dst-facts { grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr)); gap: var(--space-3); }
-.day-ws .dst-fact { grid-template-columns: 20px minmax(0, 1fr); }
-.day-ws .dst-ic { width: 20px; height: 20px; border-radius: 0; background: none; color: var(--umber-700); }
-.day-ws .dst-txt dt { font-size: var(--text-micro); color: var(--text-2); }
-.day-ws .dst-txt dd { font-size: var(--text-body); font-weight: 700; }
+.day-ws .dst-fact { grid-template-columns: 20px minmax(0, 1fr); column-gap: var(--space-2); row-gap: 2px; }
+.day-ws .dst-fact dt { display: contents; font-size: var(--text-micro); font-weight: 600; color: var(--text-2); }
+.day-ws .dst-fact dd { grid-column: 2; margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); overflow-wrap: anywhere; }
+.day-ws .dst-ic { grid-row: 1 / span 2; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 0; background: none; color: var(--umber-700); }
 /* What the day costs is the strip's figure (and the cost bar's): it is not
    said a third time in the card. */
 .day-ws .dst-fact[data-k="cost"] { display: none; }

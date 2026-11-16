@@ -182,9 +182,11 @@ export function CostCard({
       if (onLifestyle) { act = onLifestyle; actLabel = t('lifestyle.title'); }
     }
     if (!act && onOpen) { act = () => onOpen(k); actLabel = t('tp.breakdown'); }
-    const fig = tile.missing ? <NotYet /> : tile.empty
-      ? <span className="ccard-none">{k === 'around' && aroundNote ? aroundNote : t('tp.tile.notNeeded')}</span>
-      : <Money value={tile.eur / div} est precision="whole" />;
+    // A leading space inside the figure's own box, so the row's visible
+    // words read "Flights Not yet", not "FlightsNot yet" (WCAG 2.5.3).
+    const fig = tile.missing ? <>{' '}<NotYet /></> : tile.empty
+      ? <span className="ccard-none">{` ${k === 'around' && aroundNote ? aroundNote : t('tp.tile.notNeeded')}`}</span>
+      : <>{' '}<Money value={tile.eur / div} est precision="whole" /></>;
     const figText = tile.missing ? t('data.notYet') : tile.empty ? '' : money(tile.eur / div);
     const edits = act && (k === 'stay' || k === 'food' || (k === 'travel' && onChangeFlight && carriers.length));
     return (

@@ -7350,7 +7350,7 @@ export const es = {
   "dayws.fromTrip": "En {city}, de {name}.",
   "dayws.fromTripBed": "Sales de {place}.",
   "dayws.costBarAria": "Lo que cuesta",
-  "dayws.costBarName": "El día {n} cuesta {price} por persona. Ver qué incluye el precio",
+  "dayws.costBarName": "Día {n}: {price} por persona y día. Qué incluye el precio",
   "dayws.costBarTripName": "Tu viaje cuesta {price} para {people}. Volver al viaje",
   "dayws.receiptTitle": "Lo que cuesta el día {n}",
   "dayws.receiptHolds": "La cama y la comida según tu Lifestyle, y las entradas cuyo precio conoce Carta. El transporte local no está incluido.",

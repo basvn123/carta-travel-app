@@ -821,11 +821,11 @@ span.tbp-seg { cursor: default; }
 .itin-extras { display: grid; gap: var(--space-3); }
 
 /* ---- The trip on the map (T1005) ----
-   A titled card: Europe drawn quietly (white land on a pale lagoon sea, the
-   trip's countries in sand), the flights as dashed umber arcs with a plane
-   at their middle, the ground between stops as a solid lagoon line, home
-   and the numbered stops as marks with their names. Open the map gives the
-   live map full size. */
+   A titled card: Europe drawn quietly in the map's own land and water (the
+   house style), the trip's countries in beige, the flights as dotted umber
+   arcs, the ground between stops as the solid umber route, home and the
+   numbered stops as marks with their names. Open the map gives the live
+   map full size. */
 .tpg-mapcard { display: grid; gap: var(--space-2); min-width: 0; }
 .tpg-mapcard-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .tpg-mapcard-top .tpg-h { margin: 0; }
@@ -848,7 +848,7 @@ span.tbp-seg { cursor: default; }
   position: relative;
   overflow: hidden;
   border-radius: var(--radius-card);
-  background: var(--lagoon-50);
+  background: var(--map-water);
   box-shadow: var(--elev-1);
 }
 .tt-svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
@@ -856,7 +856,7 @@ span.tbp-seg { cursor: default; }
 .tt-land { fill: var(--surface); stroke: var(--umber-200); stroke-width: 0.75; stroke-linejoin: round; }
 .tt-land.is-trip { fill: var(--umber-100); }
 .tt-fly { fill: none; stroke: var(--umber-700); stroke-width: 2; stroke-dasharray: 6 5; stroke-linecap: round; }
-.tt-ground { fill: none; stroke: var(--lagoon-600); stroke-width: 3; stroke-linecap: round; }
+.tt-ground { fill: none; stroke: var(--map-route); stroke-width: var(--stroke-route); stroke-linecap: round; }
 .tt-plane {
   position: absolute;
   display: grid;
@@ -909,9 +909,9 @@ span.tbp-seg { cursor: default; }
 .tt-label small { font-size: var(--text-micro); font-weight: 500; color: var(--text-2); }
 .tt-key { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
 .tt-key-item { display: inline-flex; align-items: center; gap: var(--space-1); }
-.tt-key-item svg { color: var(--lagoon-700); }
+.tt-key-item svg { color: var(--text-2); }
 .tt-swatch { display: inline-block; width: 22px; height: 0; margin-right: 2px; border-top: 2px dashed var(--umber-700); }
-.tt-swatch.is-ground { border-top: 3px solid var(--lagoon-600); border-radius: 2px; }
+.tt-swatch.is-ground { border-top: var(--stroke-route) solid var(--map-route); border-radius: var(--radius-pill); }
 
 /* ---- Your route as a footpath (T1005; house style, the trip lane) ----
    Three columns per step: the day stamp (a waymark post), the path with its
@@ -1003,6 +1003,7 @@ span.tbp-seg { cursor: default; }
 .tpg .jr-card.is-tip { gap: var(--space-2); padding: var(--space-2) 0; }
 .tpg .jr-card.is-tip .jr-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .tpg .jr-card.is-tip .jr-brand { color: var(--text); }
+.tpg .jr-card.is-tip .jr-name, .tpg .jr-card.is-tip .jr-meta { overflow: visible; white-space: normal; text-overflow: clip; overflow-wrap: anywhere; }
 .tpg .jr-brand-text { display: grid; gap: 2px; }
 .tpg .jr-card.is-tip .jr-glyph { display: none; }
 .tpg .jr-card.is-tip .jr-meta { font-size: var(--text-label); font-weight: 500; color: var(--text-2); }
@@ -1039,11 +1040,11 @@ span.tbp-seg { cursor: default; }
 .tpg.is-costs .plan-total-head,
 .tpg.is-costs .plan-total-note,
 .tpg.is-costs .plan-costbar { display: none; }
-.tpg.is-costs .plan-total-group .plan-total-dot { width: 12px; height: 12px; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 0%, transparent); }
-.tpg.is-costs .is-travel > .plan-total-group-h .plan-total-dot { background: var(--sun-400); }
-.tpg.is-costs .is-around > .plan-total-group-h .plan-total-dot { background: var(--lagoon-300); }
-.tpg.is-costs .is-stay > .plan-total-group-h .plan-total-dot { background: var(--umber-300); }
-.tpg.is-costs .is-food > .plan-total-group-h .plan-total-dot { background: #e8916b; }
+.tpg.is-costs .plan-total-group .plan-total-dot { width: 12px; height: 12px; }
+.tpg.is-costs .is-travel > .plan-total-group-h .plan-total-dot { border: var(--stroke-edge) solid var(--edge); background: var(--surface-sunken); }
+.tpg.is-costs .is-around > .plan-total-group-h .plan-total-dot { background: var(--umber-200); }
+.tpg.is-costs .is-stay > .plan-total-group-h .plan-total-dot { background: var(--wagon-bed); }
+.tpg.is-costs .is-food > .plan-total-group-h .plan-total-dot { border: var(--stroke-hair) solid var(--wagon-food-edge); background: var(--wagon-food); }
 .tpg.is-costs .plan-total-group-name { font-weight: 700; }
 .tpg.is-costs .plan-total-group-n { font-weight: 800; }
 .tpg.is-costs .plan-line-edit.btn {
@@ -1351,7 +1352,7 @@ span.tbp-seg { cursor: default; }
    After the research round: one Share door with the other ways out under
    it (TripIt, Wanderlog, KAYAK), packing as a row with its count and a thin
    bar (QuickPack), the country's facts as short cards. Colour comes from the
-   Carta palette: the umber card, the sun, the lagoon, the terracotta. */
+   house style: one umber mark on beige for every tile and topic. */
 
 /* The kit: two rows, each a tinted mark, its name and state, a thin bar. */
 .tpg .itin-tool-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
@@ -1374,14 +1375,14 @@ span.tbp-seg { cursor: default; }
 }
 .tpg .itin-tool .btn-label { display: contents; }
 .tpg .itin-tool-icon { grid-area: ic; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; }
-.tpg .itin-tool.is-lagoon .itin-tool-icon { background: var(--lagoon-100); color: var(--lagoon-800); }
-.tpg .itin-tool.is-sun .itin-tool-icon { background: var(--sun-100); color: var(--sun-800); }
+.tpg .itin-tool.is-lagoon .itin-tool-icon { background: var(--umber-100); color: var(--umber-700); }
+.tpg .itin-tool.is-sun .itin-tool-icon { background: var(--umber-100); color: var(--umber-700); }
 .tpg .itin-tool-name { grid-area: name; font-size: var(--text-body); font-weight: 700; color: var(--text); }
 .tpg .itin-tool-state { grid-area: state; font-size: var(--text-caption); color: var(--text-2); }
 .tpg .itin-tool-bar { grid-area: bar; display: block; height: 4px; margin-top: 4px; overflow: hidden; border-radius: 2px; background: var(--surface-sunken); }
 .tpg .itin-tool-bar i { display: block; height: 100%; border-radius: 2px; transition: width var(--dur-3) var(--ease-out); }
-.tpg .itin-tool.is-lagoon .itin-tool-bar i { background: var(--lagoon-600); }
-.tpg .itin-tool.is-sun .itin-tool-bar i { background: var(--sun-400); }
+.tpg .itin-tool.is-lagoon .itin-tool-bar i { background: var(--action); }
+.tpg .itin-tool.is-sun .itin-tool-bar i { background: var(--action); }
 .tpg .itin-tool-go { grid-area: go; color: var(--text-3); }
 @media (hover: hover) { .tpg .itin-tool.btn:hover { box-shadow: var(--elev-2); } }
 
@@ -1393,11 +1394,9 @@ span.tbp-seg { cursor: default; }
   padding: var(--space-4);
   overflow: hidden;
   border-radius: var(--radius-sheet);
-  background:
-    radial-gradient(80% 90% at 100% 0%, color-mix(in srgb, var(--sun-400) 30%, transparent), transparent 60%),
-    linear-gradient(150deg, var(--umber-600), var(--umber-800));
-  box-shadow: 0 10px 24px -14px color-mix(in srgb, var(--umber-800) 60%, transparent);
-  color: var(--umber-50);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
 }
 .tpg .itin-export-h { margin: 0; font-size: var(--text-title); font-weight: 800; letter-spacing: -0.02em; color: var(--umber-50); }
 .tpg .itin-export-share.btn { background: var(--umber-50); color: var(--umber-800); }
@@ -1424,10 +1423,10 @@ span.tbp-seg { cursor: default; }
 }
 @media (hover: hover) { .tpg .itin-export-chip:hover { background: color-mix(in srgb, var(--umber-50) 22%, transparent); } }
 .tpg .itin-export-chip-ic { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; color: var(--umber-800); }
-.tpg .itin-export-chip.is-lagoon .itin-export-chip-ic { background: var(--lagoon-300); }
-.tpg .itin-export-chip.is-sun .itin-export-chip-ic { background: var(--sun-400); }
-.tpg .itin-export-chip.is-terra .itin-export-chip-ic { background: #e8916b; }
-.tpg .itin-export-chip.is-sand .itin-export-chip-ic { background: var(--umber-200); }
+.tpg .itin-export-chip.is-lagoon .itin-export-chip-ic { background: var(--umber-100); color: var(--umber-700); }
+.tpg .itin-export-chip.is-sun .itin-export-chip-ic { background: var(--umber-100); color: var(--umber-700); }
+.tpg .itin-export-chip.is-terra .itin-export-chip-ic { background: var(--umber-100); color: var(--umber-700); }
+.tpg .itin-export-chip.is-sand .itin-export-chip-ic { background: var(--umber-100); color: var(--umber-700); }
 .tpg .itin-export-note { margin: var(--space-2) 0 0; font-size: var(--text-caption); color: var(--text-2); }
 
 
@@ -1449,9 +1448,9 @@ span.tbp-seg { cursor: default; }
 }
 .bgo-meta { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .bgo-mark { display: grid; flex: none; place-items: center; width: 32px; height: 32px; border-radius: 10px; }
-.bgo-card.is-sun .bgo-mark { background: var(--sun-100); color: var(--sun-800); }
-.bgo-card.is-lagoon .bgo-mark { background: var(--lagoon-100); color: var(--lagoon-800); }
-.bgo-card.is-terra .bgo-mark { background: #fbe3d8; color: #8f3a17; }
+.bgo-card.is-sun .bgo-mark { background: var(--umber-100); color: var(--umber-700); }
+.bgo-card.is-lagoon .bgo-mark { background: var(--umber-100); color: var(--umber-700); }
+.bgo-card.is-terra .bgo-mark { background: var(--umber-100); color: var(--umber-700); }
 .bgo-card.is-umber .bgo-mark { background: var(--umber-100); color: var(--umber-700); }
 .bgo-meta-text { min-width: 0; }
 .bgo-title { font-size: var(--text-lead); font-weight: 700; line-height: var(--leading-tight); }
@@ -1539,7 +1538,7 @@ span.tbp-seg { cursor: default; }
 }
 @media (hover: hover) { .tpg .itin-export-chip:hover { border-color: var(--umber-200); background: var(--umber-100); } }
 .tpg .itin-export-chip-ic { flex: none; width: 32px; height: 32px; }
-.tpg .itin-export-chip.is-umber .itin-export-chip-ic { background: var(--umber-200); }
+.tpg .itin-export-chip.is-umber .itin-export-chip-ic { background: var(--umber-100); color: var(--umber-700); }
 
 /* The Costs receipt: every line's words and figure on one centre line, the
    figures right-aligned in one column, Carta's umber for the totals and the
@@ -1565,7 +1564,7 @@ span.tbp-seg { cursor: default; }
   font-weight: 600;
 }
 @media (hover: hover) { .tpg.is-costs .plan-line-edit.btn:hover { border-color: var(--umber-300); background: var(--umber-100); color: var(--umber-800); } }
-.tpg.is-costs .plan-whatif { margin-top: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); background: var(--sun-100); color: var(--text); }
+.tpg.is-costs .plan-whatif { margin-top: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); background: var(--umber-50); color: var(--text); }
 
 /* T1014 (owner: "remove that border, and the white background"): the
    section sits on the page ground; its tiles are white, no rule. */
@@ -1626,8 +1625,8 @@ span.tbp-seg { cursor: default; }
 .tnt-open { display: flex; flex: 1; align-items: center; gap: var(--space-3); min-width: 0; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-2); border: 0; border-radius: var(--radius-card); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .tnt-open:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .tnt-thumb { display: block; flex: none; width: 48px; height: 48px; border-radius: var(--radius-control); object-fit: cover; background: var(--surface-sunken); }
-.tnt-thumb.is-mark { display: grid; place-items: center; align-content: center; gap: 1px; background: var(--lagoon-100); color: var(--lagoon-800); }
-.tnt-thumb.is-pdf { background: #fbe3d8; color: #8f3a17; }
+.tnt-thumb.is-mark { display: grid; place-items: center; align-content: center; gap: 1px; background: var(--umber-100); color: var(--umber-800); }
+.tnt-thumb.is-pdf { background: var(--surface-sunken); color: var(--text); }
 .tnt-thumb.is-mark small { font-size: 9px; font-weight: 800; letter-spacing: 0.04em; }
 .tnt-info { display: grid; gap: 2px; min-width: 0; }
 .tnt-name { overflow: hidden; font-size: var(--text-body); font-weight: 600; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
@@ -1635,7 +1634,7 @@ span.tbp-seg { cursor: default; }
 .tnt-del { flex: none; color: var(--text-3); }
 .tnt-quiet { display: flex; align-items: flex-start; gap: var(--space-2); margin: 0; font-size: var(--text-caption); line-height: 1.45; color: var(--text-2); }
 .tnt-quiet svg { flex: none; margin-top: 2px; color: var(--umber-600); }
-.tnt-problem { margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); background: #fbe3d8; color: #8f3a17; font-size: var(--text-label); }
+.tnt-problem { margin: 0; padding: var(--space-2) var(--space-3); border-radius: var(--radius-control); background: var(--danger-bg); color: var(--danger); font-size: var(--text-label); }
 
 /* ==== House style (G1, 2026-11): the trip lane's layer ==== */
 /* Rules here restyle shared parts on the trip page only (every selector is

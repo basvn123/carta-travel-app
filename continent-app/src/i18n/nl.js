@@ -7361,7 +7361,7 @@ export const nl = {
   "dayws.fromTrip": "In {city}, uit {name}.",
   "dayws.fromTripBed": "Je vertrekt vanaf {place}.",
   "dayws.costBarAria": "Wat dit kost",
-  "dayws.costBarName": "Dag {n} kost {price} per persoon. Toon wat de prijs omvat",
+  "dayws.costBarName": "Dag {n}: {price} per persoon per dag. Wat de prijs omvat",
   "dayws.costBarTripName": "Je reis kost {price} voor {people}. Terug naar de reis",
   "dayws.receiptTitle": "Wat dag {n} kost",
   "dayws.receiptHolds": "Het bed en het eten bij jouw Lifestyle, en de tickets waarvan Carta de prijs kent. Lokaal vervoer zit er niet in.",

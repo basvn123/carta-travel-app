@@ -48,7 +48,9 @@ function DayFigure({ dayCost, t }) {
   return (
     <span className="dcb-fig">
       <span ref={ref} className="dcb-n"><Money value={dayCost.eur} est={dayCost.est} /></span>
-      <span className="dcb-unit">{t('dayws.costLabel')}</span>
+      {/* The space inside the unit's own box: a bare space between flex
+          items has none, so the figure and its unit ran together (WCAG 2.5.3). */}
+      <span className="dcb-unit">{` ${t('dayws.costLabel')}`}</span>
     </span>
   );
 }
@@ -100,7 +102,7 @@ export function DayCostBar({ dayCost, dayNumber, trip = null, onOpen, onOpenTrip
           {hasTrip && <span className="dcb-lbl">{t('itin.dayN', { n: dayNumber })}</span>}
           <DayFigure dayCost={dayCost} t={t} />
           <span className="dcb-open">
-            {!hasTrip && t('plan.whatsIn')}
+            {!hasTrip && ` ${t('plan.whatsIn')}`}
             <ChevronRightIcon size={16} />
           </span>
         </Button>

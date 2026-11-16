@@ -7984,7 +7984,7 @@ export const en = {
   "dayws.fromTrip": "In {city}, from {name}.",
   "dayws.fromTripBed": "You leave from {place}.",
   "dayws.costBarAria": "What this costs",
-  "dayws.costBarName": "Day {n} costs {price} a person. Show what the price holds",
+  "dayws.costBarName": "Day {n}: {price} a person a day. What the price holds",
   "dayws.costBarTripName": "Your trip costs {price} for {people}. Back to the trip",
   "dayws.receiptTitle": "What Day {n} costs",
   "dayws.receiptHolds": "The bed and the food at your Lifestyle, and the tickets Carta knows the price of. Local transport is not included.",
