@@ -212,7 +212,7 @@
 }
 .explore-shell .xmap-kpins .xmap-kpin.is-cheapest {
   border-color: var(--best-ink);
-  background: var(--best-bg);
+  background: var(--best);
   color: var(--best-ink);
 }
 .explore-shell .xmap-kpins .xmap-kpin.is-cheapest .xmap-kpin-label::before {

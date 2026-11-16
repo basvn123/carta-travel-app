@@ -179,7 +179,7 @@ export function StoryRail({
  * the title with the Score beside it, the meta line with the status after
  * it, and the price, on the page ground.
  *
- *   photo   the <img> (HeroImage)
+ *   photo   the photograph (HeroImage)
  *   status  a short word ("Good in Nov", a difficulty), or null
  *   score   the Score (ScoreChip, drawn as the dark plate), or null
  *   save    the save control (SaveButton), or null

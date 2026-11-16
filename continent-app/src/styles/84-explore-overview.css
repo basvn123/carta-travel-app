@@ -563,10 +563,12 @@
    wrap, never scroll, in longer languages). At least eight rows show above
    the bottom nav at 390 x 844. */
 @media (max-width: 768px) {
-  .explore-shell.is-focus .xbar.xbar .xbar-lead {
+  .explore-shell.is-focus .xbar.xbar .xbar-lead { display: contents; }
+  .explore-shell.is-focus .xbar.xbar .xbar-lead .xbar-title {
     position: absolute;
     width: 1px;
     height: 1px;
+    margin: -1px;
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;

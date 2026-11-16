@@ -5,7 +5,7 @@ import { MapPlacePanel } from '../MapPlacePanel.jsx';
 import { MapDrawer } from '../../components/MapDrawer.jsx';
 import { ExploreRails } from '../ExploreRails.jsx';
 import { EmptyResult } from '../EmptyResult.jsx';
-import { Button } from '../../components/ui/index.js';
+import { Blaze, Button } from '../../components/ui/index.js';
 import { ExploreCard } from './ExploreCard.jsx';
 import { ListHead } from './PlaceRow.jsx';
 
@@ -96,6 +96,11 @@ export function ExploreContent({
             eager={isActive && !pageOver} />
         )}
 
+        {gridTotal === 0 && (
+          /* House style 2026-11: the dashed blaze, "the path is waiting",
+             marks the empty state (DESIGN.md "States"). */
+          <Blaze size="lg" state="blank" className="xempty-mark" />
+        )}
         {gridTotal === 0 && (
           /* One empty block for every category and the library (T498,
              roadmap 1.3b F; V3 T383 before it): the sentence names what

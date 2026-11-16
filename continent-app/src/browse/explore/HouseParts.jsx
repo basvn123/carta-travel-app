@@ -105,12 +105,8 @@ export function RowFormation({ cost, t, figRef = null, weighted = false, classNa
 
   return (
     <span className={`hs-formation xprice xform${weighted ? ' is-weighted' : ''}${className ? ` ${className}` : ''}`}>
-      {(go || bed || food) && (
-        <span className="xform-parts pparts-list">
-          {go}
-          {(bed || food) && <span className="hs-formation-train">{bed}{food}</span>}
-        </span>
-      )}
+      {/* The day figure first: a screen reader hears the price before its
+          parts; CSS draws it last, the loudest thing at the row's end. */}
       {day && (
         <span className="hs-formation-day pparts-total" ref={figRef}>
           {/* T695: a press on the amount opens the items in it, with switches. */}
@@ -120,6 +116,12 @@ export function RowFormation({ cost, t, figRef = null, weighted = false, classNa
           {/* The unit is said once on screen (the list head); a screen
               reader hears it with every figure. */}
           <span className="sr-only"> {view.unit}</span>
+        </span>
+      )}
+      {(go || bed || food) && (
+        <span className="xform-parts pparts-list">
+          {go}
+          {(bed || food) && <span className="hs-formation-train">{bed}{food}</span>}
         </span>
       )}
     </span>

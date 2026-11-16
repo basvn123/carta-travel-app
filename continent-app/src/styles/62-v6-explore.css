@@ -531,6 +531,9 @@
 .xrow-hs .xrow-fit { grid-area: fit; margin-top: var(--space-1); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); min-width: 0; font-size: var(--text-label); color: var(--text-2); }
 .xrow-hs .xrow-fit:empty { display: none; }
 /* The formation spread into the row: the parts under the figure. */
+/* The day figure comes first in the DOM (read first); in a flex row (a
+   rail card) it is drawn last. */
+.xform > .hs-formation-day { order: 2; }
 .xrow-hs .xform { display: contents; }
 .xrow-hs .xform-parts { grid-area: parts; margin-top: 3px; display: flex; justify-content: flex-end; gap: 2px; min-width: 0; --wh: 22px; }
 .xrow-hs .xform-parts .hs-wagon { padding-inline: 5px; gap: 2px; }
@@ -557,6 +560,8 @@
 }
 .xrow-hs.is-selected .hs-formation-day .money,
 .xrow-hs.is-selected .hs-formation-day .pitems-trigger { color: inherit; }
+
+.explore-shell .xempty-mark { display: block; margin: var(--space-6) 0 var(--space-3); }
 
 /* Save (ExploreCards.jsx SaveButton): the cairn, its stones filled in umber
    once saved; it pops on the traveller's own press only (.hs-pop). */
