@@ -9,6 +9,7 @@ import {
   BulbIcon,
 } from '../components/Icons.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
+import { Button, ScorePlate, StateBlock, WorldTile } from '../components/ui/index.js';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { GlossLine } from '../components/InfoDot.jsx';
@@ -655,6 +656,7 @@ export function TripPage({
       />
 
       <div className="tpage-scroll" ref={scrollEl}>
+        <div className="itin-wrap">
         {/* The photograph leads, and nothing is written on it (the caption
             band rule, T380): the name, the countries, the themes and the
             credit sit in a solid band flush under the photo, no scrim and no
@@ -672,7 +674,7 @@ export function TripPage({
               alt=""
             />
           ) : (
-            <span className="itin-photohero-img itin-photohero-none" aria-hidden="true" />
+            <span className="itin-photohero-img itin-photohero-none" aria-hidden="true"><WorldTile /></span>
           )}
         </div>
         <div className="itin-capband">
@@ -692,7 +694,7 @@ export function TripPage({
                   </React.Fragment>
                 ))}
                 {trip.score != null && (
-                  <span className="itin-capband-score mono">{trip.score.toFixed(1)}</span>
+                  <ScorePlate value={trip.score} label={t('ask.col.score')} className="itin-capband-score" />
                 )}
               </p>
             )}
@@ -705,17 +707,16 @@ export function TripPage({
           </div>
         </div>
 
-        <div className="tpage-col">
+        <div className="tpage-col itin-body">
+        <div className="itin-main">
           {/* The card came from a list that has since been re-exported: the id
               it names no longer has a detail file. Nothing below can be drawn
               from a card alone, so the page stops here and offers the way
               back rather than half-rendering around the hole. */}
           {failed && (
             <div className="itin-gone">
-              <p>{t('trip.detailGone')}</p>
-              <button type="button" className="itin-gone-back" onClick={onClose}>
-                {t('trip.back')}
-              </button>
+              <StateBlock kind="error" title={t('trip.detailGone')}
+                action={<Button className="itin-gone-back" onClick={onClose}>{t('trip.back')}</Button>} />
             </div>
           )}
 
@@ -736,18 +737,6 @@ export function TripPage({
           </div>
           )}
 
-          {primaryAction && detail && (
-            <button type="button" className="itin-use" onClick={() => primaryAction.onClick(detail || card)}>
-              <CheckIcon size={15} />
-              <span>{primaryAction.label}</span>
-            </button>
-          )}
-          {!primaryAction && onOpenInPlanner && detail && (
-            <button type="button" className="itin-use" onClick={() => onOpenInPlanner(detail || card)}>
-              <PlusIcon size={15} />
-              <span>{t('trip.openInPlanner')}</span>
-            </button>
-          )}
           {copied && <p className="itin-copied">{t('trip.linkCopied')}</p>}
 
           {/* The route: every stop with its nights, every leg with its mode,
@@ -1065,6 +1054,29 @@ export function TripPage({
               <p className="tpage-credit">{t('trip.galleryCredit')}</p>
             </Fold>
           )}
+        </div>
+        {/* The post (house style): the day figure and the one action, beside
+            the page from 769 px, a sticky foot on a phone. The figure is the
+            receipt's own day line, the same one the facts show. */}
+        {detail && (primaryAction || onOpenInPlanner) && (
+          <aside className="itin-post" aria-label={tripHeadline(trip, t)}>
+            {perDayText && (
+              <p className="itin-post-fig"><b>{perDayText}</b><span>{t('trip.factPerDay')}</span></p>
+            )}
+            {primaryAction ? (
+              <Button variant="primary" className="itin-use" iconStart={<CheckIcon size={16} />}
+                onClick={() => primaryAction.onClick(detail || card)}>
+                {primaryAction.label}
+              </Button>
+            ) : (
+              <Button variant="primary" className="itin-use" iconStart={<PlusIcon size={16} />}
+                onClick={() => onOpenInPlanner(detail || card)}>
+                {t('trip.openInPlanner')}
+              </Button>
+            )}
+          </aside>
+        )}
+        </div>
         </div>
       </div>
     </div>

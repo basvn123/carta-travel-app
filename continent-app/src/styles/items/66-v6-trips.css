@@ -5,18 +5,71 @@
    cascade could override; scripts/css-routes.mjs --check proves it on a build. */
 .jpage-book-list label { min-height: var(--tap); }
 .jpage-book-count { font-family: var(--ui); }
-.itin-capband {
-  background: var(--paper);
-  border-bottom: 1px solid var(--rule);
-}
+/* ---- The library trip page in the house page grammar (plan lane 2026-11) ----
+   The same grammar as the place and journey pages: a capped wrap, the
+   photo with 16 px corners, the head flush under it (name, countries with
+   the Score plate, themes, credit), fact tiles, the sections on hairlines,
+   and the post (the day figure and the one action) beside the page from
+   769 px, a sticky foot on a phone. Rules here are scoped under .itin-page
+   so they win over the older item-page rules in the place lane's files. */
+.itin-page .itin-wrap { max-width: var(--w-detail); margin-inline: auto; padding: var(--space-2) var(--page-gutter) 0; }
+.itin-page .itin-photohero { height: auto; aspect-ratio: 4 / 3; border-radius: var(--radius-card); background: var(--surface-sunken); }
+@media (min-width: 769px) { .itin-page .itin-photohero { aspect-ratio: auto; height: 420px; } }
+@media (min-width: 1280px) { .itin-page .itin-photohero { height: 440px; } }
+.itin-page .itin-photohero-none { display: block; background: none; }
+.itin-page .itin-photohero-none .hs-world { position: absolute; inset: 0; }
+.itin-page .itin-capband { background: none; border-bottom: 0; }
+.itin-page .itin-capband-in { max-width: none; margin: 0; padding: var(--space-4) 0 var(--space-5); }
+.itin-page .itin-capband-score { margin-left: var(--space-2); padding: 0 var(--space-2); border-radius: var(--radius-sm); background: var(--plate); color: var(--on-plate); font-family: var(--ui); font-size: var(--text-label); font-weight: 800; line-height: 24px; }
 .itin-facts .tpage-fact-val { white-space: normal; }
-@media (hover: hover) {
-  .itin-page .itin-use:hover { background: var(--accent); }
+
+.itin-page .tpage-col.itin-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); max-width: none; margin: 0; padding: 0 0 var(--space-8); }
+.itin-page .itin-main { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.itin-page .itin-post {
+  position: sticky;
+  bottom: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 calc(-1 * var(--page-gutter));
+  padding: var(--space-3) var(--page-gutter) max(var(--space-3), env(safe-area-inset-bottom));
+  border-top: var(--stroke-hair) solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
 }
-@media (hover: hover) {
-  .itin-page .itin-use:hover { background: var(--accent-hover); }
+.itin-page .itin-post-fig { display: grid; flex: 1; min-width: 0; margin: 0; line-height: var(--leading-tight); }
+.itin-page .itin-post-fig b { font-size: var(--text-figure); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.itin-page .itin-post-fig span { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.itin-page .itin-post .itin-use.btn { flex: none; width: auto; height: auto; min-height: var(--tap-main); margin: 0; font-size: var(--text-body); }
+@media (min-width: 769px) {
+  .itin-page .tpage-col.itin-body { grid-template-columns: minmax(0, 1fr) 288px; column-gap: var(--space-6); align-items: start; }
+  .itin-page .itin-post {
+    top: var(--space-4);
+    bottom: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+    margin: 0;
+    padding: var(--space-5);
+    border: var(--stroke-hair) solid var(--border);
+    border-radius: var(--radius-panel);
+    box-shadow: none;
+  }
+  .itin-page .itin-post-fig b { font-size: var(--text-display); letter-spacing: -0.02em; }
+  .itin-page .itin-post .itin-use.btn { width: 100%; }
 }
-.itin-page .itin-use:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (min-width: 1024px) { .itin-page .tpage-col.itin-body { grid-template-columns: minmax(0, 1fr) 364px; column-gap: var(--space-8); } }
+
+.itin-page .itin-gone { margin: var(--space-5) 0; padding: 0; border: 0; text-align: left; }
+.itin-page .itin-gone .itin-gone-back.btn { height: auto; margin: 0; }
+
+/* The facts as tiles: label over value, paper on a hairline. */
+.itin-page .tpage-facts.itin-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); padding: 0; border: 0; border-radius: 0; background: none; }
+@media (min-width: 600px) { .itin-page .tpage-facts.itin-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.itin-page .itin-facts .tpage-fact { min-width: 0; padding: var(--space-3); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
+.itin-page .itin-facts .tpage-fact-val { font-family: var(--ui); font-size: var(--text-lead); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.itin-page .itin-facts .tpage-fact-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .itin-page .itin-copied::before {
   content: "";
   flex: none;
