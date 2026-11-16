@@ -1,6 +1,6 @@
 # Report: foundation lane of the house style (G1)
 
-Status: done
+Status: done (fix round 1 from the orchestrator's judges complete)
 Branch: `p15-housestyle` (worktree `wt/housestyle`), base `143daa19a4`, 14 commits from `ff6f9a4b10` to `8921c470df`. ROADMAP: G1, with G2, G5, G10, G11.
 
 The shared layer of the house style is in the app: new tokens (stone ground, green-black ink, umber as the paint, beige tints, a rounder radius scale), Overpass and Sofia Sans Extra Condensed self-hosted, the kit restyled, the house parts (blaze, signpost plate, Score plate, price formation, rails, relief from real peaks, states, rolling figures), an interaction kit with springs, primitives and haptics, a shell that fits at every angle, map colours, a rebuilt style guide, new contrast and relief checks, one vocabulary in six languages, and DESIGN.md, PRODUCT.md, the carta-design skill, the craft guide and decision 0012. Every screen wears the new style through the re-pointed tokens today; page lanes now rebuild their layouts on it. The second foundation judge scored 107 of 135 with ten of eleven criteria passing; the one short (every function intact, pass at 5) was short on verify evidence, which this report now closes (below).
@@ -70,6 +70,24 @@ Motion was checked in code and on the style guide's demos, not watched on a phon
 - The relief cut is a 1.5 px umber line, not 3 px: the hybrid's judges counted a 3 px bar as a side stripe.
 - Selected has two looks by design, written as one rule: the wash for an item chosen among many, the paint for the one option of a single control.
 - PDFs, share images and social cards still use Figtree (brand-surfaces lane).
+
+## Fix round 1 (orchestrator's judges, 2026-11-16)
+The orchestrator's two judges scored the foundation 102 and 103 of 135, FAIL, with eight blocking items (`foundation-fixes-r1.md`). All eight are fixed in `5c8d20594e`:
+
+| # | Item | What changed |
+|---|---|---|
+| 1 | Rail parity with StoryRail | `continent-app/src/components/ui/Rail.jsx`: the section is labelled by its heading; the arrows carry `explore.railPrev` and `explore.railNext` and are disabled at the ends through the strip-position logic, now shared in `continent-app/src/lib/useStripPosition.js` (`StoryRail.jsx` untouched); ArrowLeft and ArrowRight move focus card to card and bring it into view; "See all" is a `Button` (a link only with an href). Recorded in DESIGN.md "Rail and RailCard". |
+| 2 | Figure announces | `continent-app/src/components/ui/Figure.jsx`: one polite, atomic live region with the full value (and its label) after the traveller's own change; `still` for refreshes and co-planners' edits; `DUR_NOTE_MS` named after `--dur-note`; the unbuilt "while the page scrolls" claim removed. |
+| 3 | Ticks on non-kit toggles | `continent-app/src/lib/touchFeedback.js`: one delegated `click` listener (never pointerdown) ticks `[aria-pressed]`, switches and checkboxes outside the kit; folds (`aria-expanded`) stay silent; the setting, touch-only rule, reduced motion and 50 ms gap apply through `haptic()`. Test: `continent-app/tests/hs-foundation-haptics.test.mjs` (8 of 8). |
+| 4 | Docs agree | `references/shared-product-rules.md`: the 12 px floor, the formation as the price row, the estimate line dropped, the PRODUCT.md summary; one unit string, "A day, a person", in PRODUCT.md and DESIGN.md; references name-free in prose; `references/home.md` regains T1128-b. |
+| 5 | Photo scrim | `--photo-scrim` token at ink 78 %: white text measures 7.7:1 even over a pure white photo (it was 3.65:1 at 55 %); DESIGN.md "Photography" and the CSS comment say so. |
+| 6 | Price row overlap | `.hs-formation` wraps (row gap 6 px) with the train keeping its content width; the rail card link has a `minmax(0, 1fr)` track (the `auto` track was what let the row run past the card); four rail columns only while each keeps 256 px; a longest-figures demo card (a four-figure fare, a long German name); the sweep now fails on a day figure touching a wagon or a row passing its card. |
+| 7 | No yellow | `--best` is beige (umber 200), `--best-bg` umber 50, `--best-ink` umber 800, always with its word; contrast and distinctness pairs pass; the `--sun-*` primitives stay only for the share images' `SHARE_TOKENS` and the cost-card test, recorded in the token file and DESIGN.md. |
+| 8 | Reshoot and checks | explore, explore-list, explore-map, place, trip, day-planner, mytrips, account and the style guide at 390, 820, 1180 and 1440 in `shots/`; checks below. |
+
+Cheap non-blocking items done in the same commit, and the rest left for integration, are listed in `handbook-notes.md` ("Fix round 1").
+
+Checks after the round (at `5c8d20594e`): `npm test` 2,111 tests, 23 failures all in the sparse baseline, none new; `npm run lint` 0 errors; fast build ok; design-lint 0 new; token-contrast 45 text pairs, 22 marks, 0 under; springs in step; width sweep 100 runs (10 screens, 360 to 1920) with the new overlap check: no formation overlap, no page scroll, only Explore's toolbar button at 360 (explore lane); axe 0 on home, Explore list and map, place, plan start and trip at 390 and 1280; `verify_bottom_nav`, `verify_top_bar`, `verify_focus_trap`, `verify_relief` all pass; docs checks ok apart from the pre-existing SCHEMA drift.
 
 ## Open items
 - `foundation-requests.md`: none (this is the foundation).
