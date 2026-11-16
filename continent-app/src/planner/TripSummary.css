@@ -49,15 +49,16 @@
    Without a photo the same block stands alone. */
 .tpg-head { display: grid; gap: var(--space-3); min-width: 0; }
 .tpg-head.has-photo { grid-template-areas: "photo" "ov"; }
-.tpg-ov { grid-area: ov; display: grid; justify-items: start; align-content: center; gap: var(--space-1); min-width: 0; }
+.tpg-ov { grid-area: ov; display: flex; flex-wrap: wrap; align-items: center; align-content: center; gap: var(--space-1) var(--space-3); min-width: 0; }
+.tpg-ov > .tpg-name-row, .tpg-ov > .tpg-name-input { flex: 1 0 100%; }
 .tpg-photo { grid-area: photo; position: relative; overflow: hidden; aspect-ratio: 5 / 2; border-radius: var(--radius-card); background: var(--surface-sunken); }
 .tpg-photo-img, .tpg-photo > .hero-blank { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; }
 @media (min-width: 769px) {
-  .tpg-head.has-photo { grid-template-columns: minmax(0, 1fr) minmax(0, 18rem); grid-template-areas: "ov photo"; align-items: center; gap: var(--space-6); }
+  .tpg-head.has-photo { grid-template-columns: minmax(0, 1fr) minmax(0, 16rem); grid-template-areas: "ov photo"; align-items: center; gap: var(--space-6); }
   .tpg-photo { aspect-ratio: 3 / 2; }
 }
-@media (min-width: 1280px) { .tpg-head.has-photo { grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); } }
-.tpg-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-1) 0 0; }
+@media (min-width: 1280px) { .tpg-head.has-photo { grid-template-columns: minmax(0, 1fr) minmax(0, 19rem); } }
+.tpg-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; }
 .tpg-pill {
   display: inline-flex;
   align-items: center;
@@ -1746,8 +1747,8 @@ span.tbp-seg { cursor: default; }
 
 /* ---- Change your trip: setting rows, the date shifts as leg-plate radios */
 .tpx-opts { gap: 0; }
-.tpx-opt.btn { grid-template-columns: 24px minmax(0, 1fr) auto; min-height: 56px; padding: var(--space-2) var(--space-1); border: 0; border-bottom: var(--stroke-hair) solid var(--border-soft); border-radius: 0; }
-.tpx-opts > li:last-child .tpx-opt.btn { border-bottom: 0; }
+.tpx .tpx-opt.btn { grid-template-columns: 24px minmax(0, 1fr) auto; min-height: 56px; padding: var(--space-2) var(--space-1); border: 0; border-bottom: var(--stroke-hair) solid var(--border-soft); border-radius: 0; }
+.tpx .tpx-opts > li:last-child .tpx-opt.btn { border-bottom: 0; }
 .tpx-ic { width: 24px; height: 24px; border-radius: 0; background: none; color: var(--umber-700); }
 .tpx-txt b { font-weight: 700; }
 .tpx-impact { border-radius: var(--radius-panel); }
@@ -1755,4 +1756,52 @@ span.tbp-seg { cursor: default; }
 /* the chosen day: the kit's select border, set above */
 
 /* ---- Share this trip: two setting rows under the choice and Copy link ---- */
-.tpsh-row.btn { border-radius: 0; }
+.tpsh .tpsh-row.btn { border-radius: 0; }
+
+/* ---- The Itinerary on the path (decision item 4) ----
+   The stops and the legs between them hang on one path column at the left:
+   the umber route beside every stop, a solid ink line through a hop, ink
+   ends for the way there and back. Each stop is a paper panel on the
+   hairline; its number the umber disc of its pill on the journey line. */
+.tpg .itin-steps { position: relative; display: grid; gap: var(--space-3); margin: 0; padding: 0 0 0 var(--space-6); list-style: none; }
+.tpg .itin-steps::before {
+  content: '';
+  position: absolute;
+  top: var(--space-5);
+  bottom: var(--space-5);
+  left: calc(var(--space-3) - 1.5px);
+  border-left: var(--stroke-route) solid var(--map-route);
+}
+.tpg .itin-steps > li { position: relative; }
+.tpg .itin-steps > li.itin-end::after {
+  content: '';
+  position: absolute;
+  top: var(--space-5);
+  left: calc(-1 * var(--space-6) + var(--space-3) - 7px);
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-pill);
+  background: var(--plate);
+  outline: 3px solid var(--surface-page);
+}
+.tpg .itin-steps > li.itin-hop::before { left: calc(-1 * var(--space-6) + var(--space-3) - 1px); border-left: 2px solid var(--text); background: var(--surface-page); width: 4px; }
+.tpg .itin-steps > li.itin-stopcard {
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.tpg .itin-steps .itin-stop-idx { background: var(--action); color: var(--action-text); font-weight: 800; }
+.tpg .itin-steps > li.itin-add::after {
+  content: '';
+  position: absolute;
+  top: var(--space-4);
+  left: calc(-1 * var(--space-6) + var(--space-3) - 7px);
+  width: 14px;
+  height: 14px;
+  border: var(--stroke-edge) dashed var(--wagon-none-edge);
+  border-radius: var(--radius-pill);
+  background: var(--surface-page);
+}
+
+/* ---- The Costs receipt: a paper panel on the hairline ---- */
+.tpg.is-costs .plan-total { border: 0; border-radius: var(--radius-panel); background: var(--surface); box-shadow: var(--elev-1); }

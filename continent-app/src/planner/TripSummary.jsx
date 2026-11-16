@@ -210,7 +210,7 @@ export function TripSummary({
   // presentation flag only: it never changes what is priced.
   const [mineAt, setMineAt] = useState(0);
   const markMine = () => setMineAt(Date.now());
-  const mine = mineAt > 0 && Date.now() - mineAt < 6000;
+  const mine = mineAt > 0 && Date.now() - mineAt < 1500;
   const people = partyText(t, party);
   const n = Math.max(1, (party.adults || 0) + (party.children || 0) + (party.babies || 0));
   const div = per === 'person' ? n : 1;

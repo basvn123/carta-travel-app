@@ -75,7 +75,10 @@ function CostTrain({ tiles, mine = false }) {
   const shown = tiles.filter((x) => !x.missing && !x.empty && x.eur > 0);
   const missing = tiles.filter((x) => x.missing);
   const before = seen.current;
-  seen.current = new Set(shown.map((x) => x.key));
+  const keys = shown.map((x) => x.key).join(',');
+  // What was drawn is remembered after the render (an effect, so a second
+  // render pass never sees its own wagons as old).
+  useEffect(() => { seen.current = new Set(keys ? keys.split(',') : []); }, [keys]);
   return (
     <div className="ccard-arc ccard-train" aria-hidden="true">
       <span className="ccard-train-run">
