@@ -313,7 +313,7 @@ export function OutdoorPage({
   const firstJump = jumps.find((j) => j?.id);
   const onDockSub = dock?.onSub || (firstJump ? () => scrollToSection(scrollRef.current, firstJump.id) : null);
   const factsCls = `pt-facts ox-facts${(facts || []).length === 6 ? ' is-six' : ''}`;
-  const said = wide ? (facts || []).map((c) => String(c?.value ?? '')).filter(Boolean) : null;
+  const said = wide ? (facts || []).flatMap((c) => [c?.value, c?.note]).map((v) => String(v ?? '')).filter(Boolean) : null;
 
   return (
     <div
