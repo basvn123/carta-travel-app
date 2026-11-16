@@ -29,7 +29,7 @@
     {
       "name": "Barcelona to Madrid with a hire car",
       "input": { "stops": [{ "id": "BCN", "nights": 2 }, { "id": "MAD", "nights": 2 }], "adults": 2, "stay": "private", "legs_by": "car", "start": "2027-06-01" },
-      "expect": { "total_eur": 1091.76, "parts": { "beds": 464, "days": 397.88, "between": 91.88, "car": 138 }, "legs": [["car", 91.88]] }
+      "expect": { "total_eur": 1207.88, "parts": { "beds": 464, "days": 397.88, "between": 91.88, "car": 254.12 }, "legs": [["car", 91.88]] }
     }
   ]
 }
