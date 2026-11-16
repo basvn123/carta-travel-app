@@ -82,7 +82,7 @@
    the search finds first sit where the list will be. */
 @media (min-width: 769px) {
   .pf-stage.is-wide:has(.tff-trips, .tff-load) { padding: var(--space-5) var(--space-5) var(--space-8); }
-  .pf-stage.is-wide .pf-sheet:has(.tff-trips, .tff-load) { width: 100%; padding: var(--space-5) var(--space-6) var(--space-6); }
+  .pf-stage.is-wide .pf-sheet:has(.tff-trips, .tff-load) { width: min(100%, var(--w-browse)); padding: var(--space-2) var(--space-3) var(--space-6); border-radius: 0; background: none; box-shadow: none; }
 }
 
 /* Searching: the working stage has one still brown dot because it is live;
@@ -309,13 +309,13 @@
 .tff-answers::-webkit-scrollbar { display: none; }
 .tff-answers li { flex: none; }
 .tff-answer.btn {
-  min-height: 32px;
+  min-height: 36px;
   padding: 0 var(--space-3);
-  border: 0;
+  border: var(--stroke-edge) solid var(--edge);
   border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
-  color: var(--text-2);
-  font: 500 var(--text-caption) / 1 var(--font);
+  background: var(--surface);
+  color: var(--text);
+  font: 600 var(--text-label) / 1 var(--font);
   white-space: nowrap;
   cursor: pointer;
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
@@ -337,10 +337,13 @@
   scrollbar-width: none;
 }
 .tff-toolbar::-webkit-scrollbar { display: none; }
+/* The scroll hint on a phone: the row fades at its right edge. */
+@media (max-width: 768px) { .tff-toolbar, .tff-answers { mask-image: linear-gradient(to right, var(--text) calc(100% - var(--space-6)), transparent); } }
 .tff-toolbar > * { flex: none; }
 .tff-toolbar .btn { border-radius: var(--radius-pill); }
 .tff-sortbtn.btn { font-weight: 600; }
 .tff-quick.btn { font-weight: 500; }
+.tff-quick.btn { border: var(--stroke-edge) solid var(--edge); background: var(--surface); }
 .tff-quick.is-on.btn { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 .tff-view.btn { margin-left: auto; }
 @media (min-width: 769px) { .tff-toolbar { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; } }
@@ -366,10 +369,10 @@
 .tff-none { display: grid; justify-items: start; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface); }
 .tff-none p { margin: 0; color: var(--text-2); }
 
-/* The phone's map switch (T880): one dark pill floating above the nav. */
+/* The phone's map switch (T880): one paper pill floating above the nav (house style: no dark slab). */
 .tff-fab-slot {
   position: sticky;
-  bottom: calc(var(--bottom-nav-h) + var(--space-3));
+  bottom: var(--space-3);
   z-index: var(--z-sticky);
   display: flex;
   justify-content: center;
@@ -379,14 +382,15 @@
   pointer-events: auto;
   min-height: 40px;
   padding: 0 var(--space-4);
-  border: 0;
+  min-height: var(--tap);
+  border: var(--stroke-edge) solid var(--text);
   border-radius: var(--radius-pill);
-  background: var(--text);
-  color: var(--surface);
-  font-weight: 600;
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 700;
   box-shadow: var(--elev-2);
 }
-@media (hover: hover) { .tff-fab.btn:hover { background: var(--neutral-800); } }
+@media (hover: hover) { .tff-fab.btn:hover { background: var(--surface-hover); } }
 
 /* From 1024 px (T880): the gallery and the map side by side, the map
    following the scroll, the picked trip floating on its lower left. */
@@ -404,7 +408,7 @@
   padding: var(--space-2);
   border-radius: var(--radius-sheet);
   background: var(--surface);
-  box-shadow: var(--elev-3);
+  box-shadow: var(--elev-2);
 }
 .tff-mapcard.is-float .tff-card .tff-photos { aspect-ratio: 16 / 9; }
 
@@ -435,131 +439,79 @@
   cursor: pointer;
 }
 .tff-card-media { position: relative; border-radius: var(--radius-card); overflow: hidden; background: var(--surface-sunken); }
-.tff-card .tff-photos { aspect-ratio: 4 / 5; border-radius: 0; }
-.tff-card.is-feat .tff-photos { aspect-ratio: 16 / 12; }
+.tff-card .tff-photos { aspect-ratio: 4 / 3; border-radius: 0; }
+.tff-card.is-feat .tff-photos { aspect-ratio: 3 / 2; }
 /* No photo at all: the flag-and-name placeholder, centred above the name the
    photo already carries (so its initials stay out). */
 .tff-card .hero-blank.tff-photo { display: flex; align-items: center; justify-content: center; padding-bottom: 30%; }
 .tff-card .hero-blank-mark { display: none; }
 .tff-card .hero-blank .country-flag, .tff-card .hero-blank img, .tff-card .hero-blank svg { transform: scale(2.4); }
-@media (min-width: 600px) { .tff-card.is-feat .tff-photos { aspect-ratio: 21 / 9; } }
+@media (min-width: 600px) { .tff-card.is-feat .tff-photos { aspect-ratio: 2 / 1; } }
 .tff-photos { aspect-ratio: 3 / 2; border-radius: var(--radius-card); overflow: hidden; background: var(--surface-sunken); }
 /* HeroImage sets width and height attributes for the ratio; without an
    explicit height the 3 x 2 attributes drew a 2 px strip (T809 audit). */
 .tff-photo { display: block; width: 100%; height: 100%; min-height: 0; object-fit: cover; }
-/* The fade under the name: ink, never black, over the lower part only. */
-.tff-card-media::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 60%;
-  background: linear-gradient(to top, color-mix(in srgb, var(--text) 82%, transparent), transparent);
-  pointer-events: none;
-}
+/* House style (plan lane 2026-11): the photo carries the photo and the save
+   disc only; the name, the match and the place sit under it (text never on
+   a photo, the rail-card grammar). */
 .tff-card.is-marked .tff-card-media,
-.tff-card.is-ticked .tff-card-media { outline: 2px solid var(--select-border); outline-offset: 2px; }
+.tff-card.is-ticked .tff-card-media { outline: var(--stroke-edge) solid var(--select-border); outline-offset: 2px; }
 @media (hover: hover) {
   .tff-card .tff-photo { transition: transform var(--dur-2) var(--ease-out); }
   .tff-card:hover .tff-photo { transform: scale(1.03); }
 }
-
-/* The match ring: an umber arc to the score on a white disc (T879). */
-.tff-ring {
-  position: absolute;
-  top: var(--space-2);
-  left: var(--space-2);
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  --arc: var(--umber-600);
-  box-shadow: var(--elev-1);
-}
-.tff-ring-arc { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
-.tff-ring-arc circle { fill: none; stroke-width: 4; }
-.tff-ring-arc .is-track { stroke: color-mix(in srgb, var(--surface) 60%, transparent); }
-.tff-ring-arc .is-arc { stroke: var(--arc); stroke-linecap: round; }
-.tff-ring.is-mid { --arc: var(--umber-500); }
-.tff-ring.is-lo { --arc: var(--umber-300); }
-.tff-ring b {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  position: relative;
-  width: 34px;
-  height: 34px;
-  padding-top: 9px;
-  border-radius: 50%;
-  background: var(--surface);
-  color: var(--text);
-  font-size: var(--text-caption);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
-.tff-ring small { font-size: var(--text-micro); font-weight: 600; }
-.tff-card-toplbl {
-  position: absolute;
-  top: calc(var(--space-2) + 7px);
-  left: 58px;
-  z-index: 1;
-  padding: 4px var(--space-2);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-  font-size: var(--text-caption);
-  font-weight: 700;
-  color: var(--text);
-}
-.tff-card-heart.icon-btn { position: absolute; top: var(--space-1); right: var(--space-1); z-index: 1; }
+.tff-card-heart.icon-btn { position: absolute; top: var(--space-2); right: var(--space-2); z-index: 1; }
 .tff-card-heart.is-kept svg, .tff-pv-heart.is-kept svg { fill: currentColor; }
 
-/* On the photo: the name, the country, the top pick's reasons, in white. */
-.tff-card-ov {
-  position: absolute;
-  inset: auto var(--space-3) var(--space-3) var(--space-3);
-  z-index: 1;
-  display: grid;
-  gap: 2px;
-  color: var(--surface);
-  pointer-events: none;
-}
-.tff-card-name { margin: 0; font-size: var(--text-lead); font-weight: 700; line-height: var(--leading-tight); letter-spacing: -0.01em; text-wrap: balance; }
-.tff-card.is-feat .tff-card-name { font-size: var(--text-headline); }
-.tff-card-open { color: inherit; text-decoration: none; pointer-events: auto; }
-.tff-card-open:focus-visible { outline: 2px solid var(--surface); outline-offset: 2px; border-radius: var(--radius-sm); }
-.tff-card-where { display: flex; align-items: center; gap: var(--space-1); margin: 0; font-size: var(--text-caption); }
+/* The name, then the match, then the place. */
+.tff-card-id { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; column-gap: var(--space-2); row-gap: 2px; }
+.tff-card-name { margin: 0; font-size: var(--text-lead); font-weight: 800; line-height: var(--leading-tight); letter-spacing: -0.01em; color: var(--text); text-wrap: balance; overflow-wrap: anywhere; }
+.tff-card.is-feat .tff-card-name { font-size: var(--text-title); }
+.tff-card-open { color: inherit; text-decoration: none; }
+.tff-card-open:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.tff-card-where { grid-column: 1 / -1; display: flex; align-items: center; gap: var(--space-1); margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .tff-card-where span { min-width: 0; overflow-wrap: anywhere; }
-.tff-card-why { display: flex; flex-wrap: wrap; gap: var(--space-1); margin: var(--space-2) 0 0; padding: 0; list-style: none; }
-.tff-card-why li { padding: 4px var(--space-2); border-radius: var(--radius-pill); background: var(--surface); color: var(--text); font-size: var(--text-caption); font-weight: 600; }
+.tff-card-toplbl { grid-column: 1 / -1; justify-self: start; margin-top: var(--space-1); padding: 2px var(--space-2); border-radius: var(--radius-pill); background: var(--select-bg); color: var(--select-ink); font-size: var(--text-caption); font-weight: 700; }
+.tff-card-why { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 2px; margin: var(--space-1) 0 0; padding: 0; list-style: none; }
+.tff-card-why li { position: relative; padding-left: var(--space-4); color: var(--text-2); font-size: var(--text-label); }
+.tff-card-why li::before { content: ""; position: absolute; left: 2px; top: 0.45em; width: 8px; height: 4px; border-left: var(--stroke-edge) solid var(--text-2); border-bottom: var(--stroke-edge) solid var(--text-2); transform: rotate(-45deg); }
+
+/* The match (T884): the finder's ranked fit, never a quality rating. An ink
+   arc on the hairline track with its words beside it ("89% match"), so it
+   can never read as the Score plate; umber stays for what was chosen. */
+.tff-ring { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.tff-ring-arc { flex: none; width: 18px; height: 18px; transform: rotate(-90deg); }
+.tff-ring-arc circle { fill: none; stroke-width: 6; }
+.tff-ring-arc .is-track { stroke: var(--border); }
+.tff-ring-arc .is-arc { stroke: var(--text-2); stroke-linecap: round; }
+.tff-ring-txt { font-size: var(--text-caption); font-weight: 700; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.tff-card .tff-ring { margin-top: 3px; }
 
 .tff-card-body { display: flex; flex-direction: column; gap: var(--space-1); flex: 1; min-width: 0; }
 .tff-card-facts { display: flex; flex-wrap: wrap; gap: 2px var(--space-3); margin: 0; padding: 0; list-style: none; font-size: var(--text-caption); color: var(--text-2); }
 .tff-card-facts li { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
 .tff-card-facts svg { flex: none; color: var(--text-3); }
-.tff-card-facts svg.is-sun { color: var(--umber-500); }
-.tff-card-facts li.is-warn { color: var(--amber-ink); }
+.tff-card-facts svg.is-sun { color: var(--text-2); }
+.tff-card-facts li.is-warn { color: var(--danger); }
 .tff-meter { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
 .tff-meter i { width: 3px; border-radius: var(--radius-pill); background: var(--border); }
 .tff-meter i:nth-child(1) { height: 5px; } .tff-meter i:nth-child(2) { height: 7px; }
 .tff-meter i:nth-child(3) { height: 9px; } .tff-meter i:nth-child(4) { height: 12px; }
 .tff-meter i.is-on { background: var(--text-2); }
-.tff-meter.is-high i.is-on { background: var(--amber-ink); }
+.tff-meter.is-high i.is-on { background: var(--danger); }
 .tff-card-tags { margin: 0; }
 .tff-card-best { display: inline-flex; padding: 2px var(--space-2); border-radius: var(--radius-pill); background: var(--best); color: var(--best-ink); font-size: var(--text-caption); font-weight: 700; }
 .tff-card-price { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--space-1); margin-top: auto; padding-top: var(--space-1); }
 .tff-card-total { display: grid; margin: 0; }
-.tff-total-eur { font-size: var(--text-lead); font-weight: 800; line-height: var(--leading-tight); letter-spacing: -0.01em; color: var(--text); font-variant-numeric: tabular-nums; }
+.tff-total-eur { font-size: var(--text-figure); font-weight: 800; line-height: var(--leading-tight); letter-spacing: -0.01em; color: var(--text); font-variant-numeric: tabular-nums; }
 .tff-card.is-feat .tff-total-eur { font-size: var(--text-title); }
-.tff-total-unit { font-size: var(--text-caption); color: var(--text-3); }
+.tff-total-unit { font-size: var(--text-caption); color: var(--text-2); }
 .tff-card-budget { display: grid; gap: 4px; }
 .tff-card-bar { display: block; height: 4px; border-radius: var(--radius-pill); background: var(--surface-sunken); overflow: hidden; }
 .tff-card-bar i { display: block; height: 100%; border-radius: var(--radius-pill); background: var(--text-2); }
 .tff-card-budl { font-size: var(--text-caption); color: var(--text-2); }
-.tff-card-budget.is-over .tff-card-bar i { background: var(--amber-ink); }
-.tff-card-budget.is-over .tff-card-budl { color: var(--amber-ink); font-weight: 600; }
+.tff-card-budget.is-over .tff-card-bar i { background: var(--danger); }
+.tff-card-budget.is-over .tff-card-budl { color: var(--danger); font-weight: 600; }
 .tff-card-more { position: relative; margin: calc(-1 * var(--space-1)) calc(-1 * var(--space-2)) 0 0; }
 .tff-card-more .icon-btn { color: var(--text-2); }
 .tff-card-pop {
@@ -764,12 +716,12 @@
 }
 .tff-fit-bar > svg { color: var(--text-2); }
 .tff-fit-track { position: relative; height: 6px; border-radius: var(--radius-pill); background: var(--surface-sunken); overflow: hidden; }
-.tff-fit-fill { position: absolute; inset: 0; background: var(--kind-city); transform-origin: left center; }
+.tff-fit-fill { position: absolute; inset: 0; background: var(--text-2); transform-origin: left center; }
 .tff-fit-pct { font-weight: 600; text-align: right; }
 .tff-fit-lines li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: var(--space-2); align-items: start; font-size: var(--text-label); color: var(--text-2); line-height: var(--leading-ui); }
 .tff-fit-lines svg { margin-top: 1px; color: var(--text-3); }
 .tff-fit-lines .is-catch { color: var(--text); }
-.tff-fit-lines .is-catch svg { color: var(--amber-ink); }
+.tff-fit-lines .is-catch svg { color: var(--danger); }
 
 .tff-see { display: grid; gap: var(--space-2); }
 .tff-see-place { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
@@ -825,7 +777,7 @@
   text-align: left;
 }
 .tff-opt.btn:has(.flt-mark) { grid-template-columns: auto minmax(0, 1fr) auto; }
-@media (hover: hover) { .tff-opt.btn:hover { background: var(--surface-hover); border-color: var(--neutral-300); } }
+@media (hover: hover) { .tff-opt.btn:hover { background: var(--surface-hover); border-color: var(--edge); } }
 .tff-opt.btn.is-selected { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 .tff-opt-what { display: grid; gap: 2px; min-width: 0; }
 .tff-opt-label { font-size: var(--text-body); font-weight: 600; }
@@ -897,9 +849,9 @@
 .tff-cmp-table thead .cmp-rowhead { z-index: calc(var(--z-sticky) + 1); }
 .tff-cmp-img { width: 96px; margin-bottom: var(--space-2); border-radius: var(--radius-sm); overflow: hidden; }
 .tff-cmp-name { display: block; font-size: var(--text-label); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
-.tff-cmp-table td.is-best { background: var(--sun-100); }
+.tff-cmp-table td.is-best { background: var(--best-bg); }
 .tff-cmp-table .money, .tff-cmp-table .cmp-fig { font-variant-numeric: tabular-nums; }
-.tff-cmp-over { color: var(--amber-ink); }
+.tff-cmp-over { color: var(--danger); }
 .tff-cmp-table tfoot th, .tff-cmp-table tfoot td { border-top: 1px solid var(--border-soft); border-bottom: 0; }
 .tff-cmp-foot { vertical-align: bottom; }
 .tff-cmp-foot .btn { display: flex; width: 100%; }
@@ -926,7 +878,7 @@
 .tff-tog-meta, .tff-tog-price { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 .tff-tog-price .money { font-weight: 600; color: var(--text); }
 .tff-tog-state { display: inline-flex; align-items: center; gap: var(--space-1); margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
-.tff-tog-state.is-all { color: var(--good-ink); }
+.tff-tog-state.is-all { color: var(--text); font-weight: 700; }
 .tff-tog-acts { grid-column: 1 / -1; display: flex; gap: var(--space-1); justify-content: flex-end; }
 .tff-tog-foot { display: grid; gap: var(--space-2); }
 .tff-tog-hint, .tff-tog-sent { margin: 0; font-size: var(--text-label); color: var(--text-2); }
@@ -976,7 +928,7 @@
    why it fits and the catch, and alternatives, with the price card beside
    them, sticky from 1024 px. A reading page: its column caps at 1180 px. */
 .tff-under[hidden] { display: none; }
-.tff-tp { display: flex; flex-direction: column; gap: var(--space-5); width: 100%; max-width: 1180px; margin: 0 auto; }
+.tff-tp { display: flex; flex-direction: column; gap: var(--space-5); width: 100%; max-width: var(--w-detail); margin: 0 auto; }
 .tff-tp-bar { display: flex; align-items: center; min-height: var(--tap); margin-left: calc(-1 * var(--space-2)); }
 .tff-tp-gal .tff-gal-track { border-radius: var(--radius-card); }
 .tff-tp-gal .tff-gal-slide { height: 240px; }
@@ -990,15 +942,16 @@
   .tff-tp-gal .tff-gal-prev.icon-btn, .tff-tp-gal .tff-gal-next.icon-btn { top: 168px; }
 }
 .tff-tp-head { display: grid; gap: var(--space-2); }
-.tff-tp-title.pf-title { margin: 0; font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); letter-spacing: -0.01em; text-wrap: balance; }
+.tff-tp-title.pf-title { margin: 0; font-size: var(--text-headline); font-weight: 800; line-height: var(--leading-tight); letter-spacing: -0.018em; text-wrap: balance; }
 .tff-tp-h { margin: 0; font-size: var(--text-title); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
 
 .tff-tp-grid { display: grid; gap: var(--space-6); grid-template-areas: "lead" "side" "main"; }
 .tff-tp-lead { grid-area: lead; display: grid; gap: var(--space-5); align-content: start; }
 .tff-tp-side { grid-area: side; }
 .tff-tp-main { grid-area: main; display: grid; gap: var(--space-7); min-width: 0; }
-@media (min-width: 1024px) {
-  .tff-tp-grid { grid-template-columns: minmax(0, 1fr) 360px; grid-template-areas: "lead side" "main side"; column-gap: var(--space-7); }
+/* House style: two panes from 769 px, the cost post sticky beside the page. */
+@media (min-width: 769px) {
+  .tff-tp-grid { grid-template-columns: minmax(0, 1fr) 288px; grid-template-areas: "lead side" "main side"; column-gap: var(--space-6); }
   .tff-tp-side { align-self: start; position: sticky; top: var(--space-5); }
 }
 .tff-tp-prose { margin: 0; max-width: var(--measure); font-size: var(--text-lead); font-weight: 400; line-height: var(--leading-body); color: var(--text); }
@@ -1007,18 +960,21 @@
 .tff-tp-fact dd { margin: 0; font-size: var(--text-lead); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 
 /* The price card: the trip's one bordered object and its one primary. */
-.tff-tp-price { display: grid; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
+.tff-tp-price { display: grid; gap: var(--space-3); padding: var(--space-4); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
 @media (min-width: 769px) { .tff-tp-price { padding: var(--space-5); } }
 .tff-tp-price-h { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .tff-tp-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2); margin: 0; }
-.tff-tp-eur { font-size: var(--text-headline); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.tff-tp-eur { font-size: var(--text-display); font-weight: 800; letter-spacing: -0.02em; color: var(--text); font-variant-numeric: tabular-nums; }
 .tff-tp-unit { font-size: var(--text-caption); color: var(--text-2); }
-.tff-tp-costbar { display: flex; gap: 1px; height: 8px; margin: 0; border-radius: var(--radius-pill); overflow: hidden; background: var(--surface); }
-.tff-tp-costbar > span { display: block; height: 100%; min-width: 4px; }
-.tff-tp-costbar > .is-travel { background: var(--cost-travel); }
-.tff-tp-costbar > .is-around { background: var(--cost-around); }
-.tff-tp-costbar > .is-stay { background: var(--cost-stay); }
-.tff-tp-costbar > .is-food { background: var(--cost-food); }
+/* The cost bar (house style): the wagon paint, coupled with 2 px gaps; the
+   words stay on the lines below, so colour is never alone. It is the trip's
+   cost bar, not a Formation (that part prices a day). */
+.tff-tp-costbar { display: flex; gap: 2px; height: 10px; margin: 0; background: none; }
+.tff-tp-costbar > span { display: block; box-sizing: border-box; height: 100%; min-width: 6px; border-radius: var(--radius-pill); }
+.tff-tp-costbar > .is-travel { border: var(--stroke-edge) solid var(--wagon-go-edge); background: var(--surface); }
+.tff-tp-costbar > .is-around { border: var(--stroke-edge) solid var(--edge); background: var(--surface-sunken); }
+.tff-tp-costbar > .is-stay { background: var(--wagon-bed); }
+.tff-tp-costbar > .is-food { border: var(--stroke-edge) solid var(--wagon-food-edge); background: var(--wagon-food); }
 .tff-tp-lines { margin: 0; padding: 0; list-style: none; }
 .tff-tp-line { border-bottom: 1px solid var(--border-soft); }
 .tff-tp-line:first-child { border-top: 1px solid var(--border-soft); }
@@ -1085,27 +1041,8 @@
 @media (prefers-reduced-motion: reduce) { .tff-delta { animation: none; } }
 
 /* ---- The trip page, T881: the head on the photo, tiles, for and against, when to go ---- */
-/* On a phone the head lies on the first photo over an ink fade. */
-.tff-gal-ov {
-  position: absolute;
-  inset: 0 0 auto 0;
-  z-index: 1;
-  display: flex;
-  align-items: flex-end;
-  height: 320px;
-  padding: var(--space-4);
-  border-radius: var(--radius-card);
-  background: linear-gradient(to top, color-mix(in srgb, var(--text) 82%, transparent), transparent 62%);
-  color: var(--surface);
-  pointer-events: none;
-}
-@media (max-width: 768px) { .tff-tp-gal .tff-gal-slide { height: 320px; } }
-.tff-gal-ov .tff-tp-title.pf-title { color: var(--surface); font-size: var(--text-display); font-weight: 800; letter-spacing: -0.02em; }
-.tff-gal-ov .tff-pv-meta, .tff-gal-ov .tff-meta-item svg { color: var(--surface); }
-.tff-gal-ov .tff-tp-head { gap: var(--space-1); }
-.tff-gal-ov .tff-tp-title:focus-visible { outline: 2px solid var(--surface); outline-offset: 2px; }
 .tff-tp-titlerow { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
-.tff-ring.is-head { position: relative; inset: auto; flex: none; }
+.tff-ring.is-head { flex: none; }
 .tff-tp-lede { font-size: var(--text-body); color: var(--text-2); }
 
 /* The facts as tiles: an icon on a light umber ground, the label over the value. */
@@ -1118,26 +1055,24 @@
   gap: 2px;
   min-width: 0;
   min-height: 64px;
-  padding: var(--space-3) var(--space-3) var(--space-3) 56px;
-  border-radius: var(--radius-card);
+  padding: var(--space-3) var(--space-3) var(--space-3) 44px;
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
   background: var(--surface);
-  box-shadow: var(--elev-1);
 }
-.tff-tp-fact dt { display: block; font-size: var(--text-caption); color: var(--text-3); }
+.tff-tp-fact dt { display: block; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .tff-tp-fact-ic {
   position: absolute;
   left: var(--space-3);
   top: 50%;
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  margin-top: -17px;
-  border-radius: var(--radius-control);
-  background: var(--umber-50);
-  color: var(--umber-700);
+  width: 24px;
+  height: 24px;
+  margin-top: -12px;
+  color: var(--text-2);
 }
-.tff-tp-fact dd { font-size: var(--text-lead); font-weight: 700; }
+.tff-tp-fact dd { font-size: var(--text-lead); font-weight: 800; }
 
 /* Why it fits: for and against as two cards, then the bars. */
 .tff-why { display: grid; gap: var(--space-3); }
@@ -1148,7 +1083,7 @@
 .tff-why-col .tff-fit-lines li { font-size: var(--text-label); color: var(--text); }
 .tff-why-col.is-pro .tff-fit-lines svg { color: var(--umber-600); }
 .tff-fit-fill { background: var(--text-2); }
-.tff-fit-miss { grid-column: 2 / -1; font-size: var(--text-caption); color: var(--amber-ink); }
+.tff-fit-miss { grid-column: 2 / -1; font-size: var(--text-caption); color: var(--danger); }
 .tff-fit-bar.is-miss .tff-fit-pct { color: var(--text-3); }
 
 /* When to go: twelve months, the highs as bars, the crowds as dots. */
@@ -1167,20 +1102,20 @@
 .tff-when-m { display: grid; grid-template-rows: auto 72px 12px auto; justify-items: center; gap: 4px; min-width: 0; }
 .tff-when-c { font-size: var(--text-micro); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
 .tff-when-bar { display: flex; align-items: flex-end; width: 100%; height: 100%; }
-.tff-when-bar i { display: block; width: 100%; border-radius: var(--radius-sm); background: var(--neutral-150); }
+.tff-when-bar i { display: block; width: 100%; border-radius: var(--radius-sm); background: var(--border-soft); }
 .tff-when-m.is-on .tff-when-bar i { background: var(--action); }
 .tff-when-m.is-on .tff-when-c, .tff-when-m.is-on .tff-when-l { color: var(--action); font-weight: 700; }
 .tff-when-dot { align-self: center; width: 4px; height: 4px; border-radius: 50%; background: var(--text-3); }
 .tff-when-dot[data-tier="1"] { width: 6px; height: 6px; }
 .tff-when-dot[data-tier="2"] { width: 8px; height: 8px; background: var(--text-2); }
-.tff-when-dot[data-tier="3"] { width: 10px; height: 10px; background: var(--amber-ink); }
+.tff-when-dot[data-tier="3"] { width: 10px; height: 10px; background: var(--text); }
 .tff-when-dot[data-tier=""] { visibility: hidden; }
 .tff-when-l { font-size: var(--text-micro); color: var(--text-3); }
 .tff-when-key { margin: 0; font-size: var(--text-caption); color: var(--text-3); }
 
 /* ---- The price card, T882: compact, Breakdown opens the lines ---- */
-.tff-tp-price { gap: var(--space-2); border: 0; border-radius: var(--radius-sheet); box-shadow: var(--elev-1); }
-@media (min-width: 1024px) { .tff-tp-side .tff-tp-price { box-shadow: var(--elev-2); } }
+/* The cost post lies flat on its hairline: it sits in the grid, it does not float. */
+.tff-tp-price { gap: var(--space-2); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); box-shadow: none; }
 .tff-cost-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
 .tff-cost-tog.btn { border-radius: var(--radius-pill); font-weight: 600; }
 .tff-cost-tog .btn-icon { transition: transform var(--dur-3) var(--ease-out); }
@@ -1188,7 +1123,7 @@
 .tff-cost-tog[aria-expanded="true"] .btn-icon { transform: rotate(180deg); }
 .tff-tp-eur { font-weight: 800; letter-spacing: -0.02em; }
 .tff-cost-pp { margin: calc(-1 * var(--space-1)) 0 0; font-size: var(--text-label); color: var(--text-2); }
-.tff-tp-price .tff-tp-costbar { gap: 2px; height: 6px; margin: var(--space-1) 0; background: none; }
+.tff-tp-price .tff-tp-costbar { gap: 2px; height: 10px; margin: var(--space-1) 0; background: none; }
 .tff-tp-price .tff-tp-costbar > span { border-radius: var(--radius-pill); }
 /* The lines fold open: the row grows from nothing, the content fades in. */
 .tff-cost-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur-3) var(--ease-out); }
@@ -1205,17 +1140,17 @@
 .tff-tp-price .tff-tp-line-btn.is-static { grid-template-columns: 34px minmax(0, 1fr) auto; }
 .tff-tp-price .tff-tp-line-btn .btn-icon { grid-column: 4; }
 .tff-cost-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: var(--radius-control); }
-.tff-cost-ic.is-travel { color: var(--cost-travel); background: color-mix(in srgb, var(--cost-travel) 11%, var(--surface)); }
-.tff-cost-ic.is-around { color: var(--cost-around); background: color-mix(in srgb, var(--cost-around) 11%, var(--surface)); }
-.tff-cost-ic.is-stay { color: var(--cost-stay); background: color-mix(in srgb, var(--cost-stay) 11%, var(--surface)); }
-.tff-cost-ic.is-food { color: var(--cost-food); background: color-mix(in srgb, var(--cost-food) 11%, var(--surface)); }
+.tff-cost-ic.is-travel { color: var(--wagon-go-ink); background: var(--surface); border: var(--stroke-edge) solid var(--wagon-go-edge); }
+.tff-cost-ic.is-around { color: var(--text-2); background: var(--surface-sunken); }
+.tff-cost-ic.is-stay { color: var(--surface); background: var(--wagon-bed); }
+.tff-cost-ic.is-food { color: var(--wagon-food-ink); background: var(--wagon-food); }
 .tff-cost-name { display: grid; min-width: 0; line-height: var(--leading-ui); }
 .tff-cost-name b { font-size: var(--text-body); font-weight: 600; }
 .tff-cost-name small { font-size: var(--text-caption); color: var(--text-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tff-cost-fit { display: flex; align-items: center; gap: var(--space-1); margin: 0; font-size: var(--text-label); color: var(--text-2); }
 .tff-cost-fit svg { flex: none; color: var(--umber-600); }
-.tff-cost-fit.is-over { color: var(--amber-ink); font-weight: 600; }
-.tff-cost-fit.is-over svg { color: var(--amber-ink); }
+.tff-cost-fit.is-over { color: var(--danger); font-weight: 600; }
+.tff-cost-fit.is-over svg { color: var(--danger); }
 
 /* The pinned bar under 1024 px: the total and the one primary, above the
    nav on a phone; the card's own button hides there. */
@@ -1228,16 +1163,19 @@
   gap: var(--space-3);
   margin: 0 calc(-1 * var(--gutter));
   padding: var(--space-2) var(--gutter);
-  border-top: 1px solid var(--border);
+  border-top: var(--stroke-hair) solid var(--border);
   background: var(--surface);
+  box-shadow: var(--elev-2);
 }
-@media (max-width: 768px) { .tff-tp-dock { bottom: var(--bottom-nav-h); } }
+/* The .pf box already ends above the nav, so the dock sticks to its foot. */
+@media (max-width: 768px) { .tff-tp-dock { bottom: 0; } }
 .tff-dock-total { display: grid; flex: 1; min-width: 0; margin: 0; line-height: var(--leading-tight); }
 .tff-dock-total .money { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
-.tff-dock-total span:last-child { font-size: var(--text-caption); color: var(--text-3); }
+.tff-dock-total span:last-child { font-size: var(--text-caption); color: var(--text-2); }
 .tff-dock-plan.btn { flex: none; }
-@media (max-width: 1023px) { .tff-tp-plan.btn { display: none; } .tff-tp-acts { justify-content: flex-start; } }
-@media (min-width: 1024px) { .tff-tp-dock { display: none; } }
+@media (min-width: 1024px) { .tff-tp-grid { grid-template-columns: minmax(0, 1fr) 364px; column-gap: var(--space-8); } }
+@media (max-width: 768px) { .tff-tp-plan.btn { display: none; } .tff-tp-acts { justify-content: flex-start; } }
+@media (min-width: 769px) { .tff-tp-dock { display: none; } }
 @media (prefers-reduced-motion: reduce) {
   .tff-cost-body, .tff-cost-body > .tff-tp-lines, .tff-cost-tog .btn-icon { transition: none; }
 }

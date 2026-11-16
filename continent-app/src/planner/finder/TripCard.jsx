@@ -108,7 +108,7 @@ export function MatchRing({ pct, label, className = '' }) {
         <circle className="is-track" cx="21" cy="21" r="19" />
         <circle className="is-arc" cx="21" cy="21" r="19" pathLength="100" strokeDasharray={`${pct} 100`} />
       </svg>
-      <b aria-hidden="true">{pct}<small>%</small></b>
+      <b className="tff-ring-txt" aria-hidden="true">{label}</b>
     </span>
   );
 }
@@ -191,8 +191,6 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
     <article className={`tff-card${feat ? ' is-feat' : ''}${marked ? ' is-marked' : ''}${ticked ? ' is-ticked' : ''}`} onClick={onCardClick}>
       <div className="tff-card-media">
         <TripPhotos trip={trip} destinations={destinations} sizes={feat ? '(max-width: 599px) 92vw, (max-width: 1023px) 92vw, 640px' : '(max-width: 599px) 46vw, (max-width: 1023px) 31vw, 320px'} />
-        {pct != null && <MatchRing pct={pct} label={t('tf.card.match', { pct })} />}
-        {feat && <span className="tff-card-toplbl">{t('tf.card.top')}</span>}
         {keep && (
           <IconButton
             tone="photo"
@@ -204,7 +202,10 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
             <HeartIcon size={18} />
           </IconButton>
         )}
-        <div className="tff-card-ov">
+      </div>
+
+      <div className="tff-card-body">
+        <div className="tff-card-id">
           <h3 className="tff-card-name">
             {/* T870: the trip's page has its own address, so the name is a
                 link to it (a new tab opens the page from the address). */}
@@ -222,19 +223,18 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
               {name}
             </a>
           </h3>
+          {pct != null && <MatchRing pct={pct} label={t('tf.card.match', { pct })} />}
           <p className="tff-card-where">
             {trip.iso2 && <CountryFlag country={trip.iso2} size={13} />}
             <span>{bases > 1 ? `${country}, ${t('tf.card.bases', { n: bases })}` : country}</span>
           </p>
+          {feat && <span className="tff-card-toplbl">{t('tf.card.top')}</span>}
           {reasons.length > 0 && (
             <ul className="tff-card-why">
               {reasons.map((r) => <li key={r}>{r}</li>)}
             </ul>
           )}
         </div>
-      </div>
-
-      <div className="tff-card-body">
         <ul className="tff-card-facts" aria-label={t('tf.card.facts')}>
           {f.high != null && month && (
             <li aria-label={t('tf.card.highs', { c: f.high, month })}><SunIcon size={14} className="is-sun" /><span aria-hidden="true">{f.high}°</span></li>

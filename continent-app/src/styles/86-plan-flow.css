@@ -1304,9 +1304,12 @@
   align-items: start;
   margin: var(--space-3) 0;
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-card);
-  background: color-mix(in srgb, var(--home-ground-mist) 55%, var(--surface));
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
 }
+/* A phone keeps the words and the two actions; the mark steps back. */
+@media (max-width: 599px) { .pf-refine { grid-template-columns: minmax(0, 1fr); } .pf-refine-icon { display: none; } }
 
 .pf-refine-icon {
   display: grid;

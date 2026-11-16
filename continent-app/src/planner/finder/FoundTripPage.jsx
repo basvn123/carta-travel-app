@@ -15,7 +15,6 @@ import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
 import { cityLabel } from '../../lib/placeName.js';
 import { CROWD_KEYS, crowdTier, dayHighs } from '../../lib/recommend/compare.js';
-import { useIsDesktop } from '../../hooks/useIsDesktop.js';
 import { slotTotals } from '../../lib/recommend/slots.js';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { useKeepTrip } from './finderHooks.js';
@@ -447,7 +446,6 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
   const name = tripName(trip, destinations, lang);
   const pct = trip.match?.pct;
   const bases = trip.places.length;
-  const desk = useIsDesktop();
   const when = settings ? whenText(t, settings.when, months, bcp47) : null;
   const dates = settings?.when?.mode === 'exact' && when?.start ? (when.end ? t('tf.chip.dates', { start: when.start, end: when.end }) : when.start) : monthName(trip.month, lang);
   const placeIds = useMemo(() => trip.places.map((p) => p.id), [trip.places]);
@@ -502,8 +500,8 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
       </div>
 
       {(() => {
-        // The head (T881): on a phone it lies on the first photo; from 769 px
-        // it follows the gallery. Rendered once, so the page keeps one h1.
+        // The head (T881) follows the gallery at every width (house style:
+        // text never sits on a photo). Rendered once, so the page keeps one h1.
         const head = (
           <header className="tff-tp-head">
             <div className="tff-tp-titlerow">
@@ -518,11 +516,10 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
             </p>
           </header>
         );
-        const onPhoto = !desk && photos.length > 0;
         return (
           <>
-            <Gallery photos={photos} name={name} t={t}>{onPhoto ? head : null}</Gallery>
-            {!onPhoto && head}
+            <Gallery photos={photos} name={name} t={t}>{null}</Gallery>
+            {head}
           </>
         );
       })()}
