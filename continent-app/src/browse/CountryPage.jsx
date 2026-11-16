@@ -4,7 +4,7 @@ import { ChevronRightIcon } from '../components/Icons.jsx';
 import { kindOf } from '../lib/taxonomy.js';
 import { fmtMonthRanges } from './ClimateStrip.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, MoneyUnit } from '../components/ui/index.js';
+import { Button, Money, Plate } from '../components/ui/index.js';
 import { PlaceTile } from './ExploreCards.jsx';
 import { Strip } from './SectionOpening.jsx';
 import { GalleryStrip } from './CountryGallery.jsx';
@@ -184,10 +184,11 @@ export function CountryPage({
                 {hasFacts && (
                   <dl className="rgnp-facts">
                     {day != null && (
-                      <div className="rgnp-fact">
+                      <div className="rgnp-fact rgnp-dayfact">
                         <dt>{t('cpage.kDay')}<DayPriceDot /></dt>
                         <dd>
-                          <MoneyUnit value={view.day(day)} est={dayEst} unit={view.unit} unitClassName="rgnp-unit" />
+                          {/* G1 (house style): the day as a signpost plate. */}
+                          <Plate name={country} sub={view.unit} fig={<Money value={view.day(day)} est={dayEst} />} />
                         </dd>
                       </div>
                     )}
