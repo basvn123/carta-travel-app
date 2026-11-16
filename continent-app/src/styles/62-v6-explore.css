@@ -594,14 +594,20 @@
    take their own line, so the country stays readable beside the flag. The
    phone list (about 358 px) keeps its two lines and its 8 rows. */
 @container xlist (max-width: 599px) {
+  /* The name line takes the full width; the day figure faces the
+     country, which is short. */
   .mpp--float .xrow-hs .xrow-hit {
     grid-template-areas:
-      "media l1 l1 day"
-      "media l2 l2 l2"
+      "media l1 l1 l1"
+      "media l2 l2 day"
       "media parts parts parts"
       "media fit fit fit";
   }
   .mpp--float .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
+  /* A long name wraps rather than losing its end ("Agrigento (Valley of
+     the Temples)"); short names keep one line. */
+  .mpp--float .xrow-hs .xrow-line1 { align-items: flex-start; }
+  .mpp--float .xrow-hs .xrow-name { white-space: normal; overflow-wrap: anywhere; text-overflow: clip; }
 }
 
 /* A list of 600 px and more: one line a place, the parts in their own

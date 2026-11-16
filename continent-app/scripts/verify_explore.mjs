@@ -337,7 +337,7 @@ try {
   await page.waitForTimeout(1500);
   // House style 2026-11: a row's country is never cut (the water mark rides
   // with the name, the docked column stacks the parts under it).
-  check('map column: no country is cut', await page.evaluate(() => [...document.querySelectorAll('.mpp-rows .xrow-country')]
+  check('map column: no country and no name is cut', await page.evaluate(() => [...document.querySelectorAll('.mpp-rows .xrow-country, .mpp-rows .xrow-name')]
     .every((e) => e.scrollWidth <= e.clientWidth + 1)));
   check('the map canvas is up', await page.locator('.xcontent-map .maplibregl-canvas').count() === 1);
   check('the list stays beside the map', await page.locator('.xcontent--split .xrows .xrow').first().isVisible());
