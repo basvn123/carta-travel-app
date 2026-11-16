@@ -55,7 +55,13 @@ The place page now leads with what a day costs: after the photo and the name com
 - `continent-app/src/browse/DestNearby.jsx`: the relief band in Around.
 - `continent-app/src/browse/RegionPage.jsx`, `continent-app/src/browse/CountryPage.jsx`: the day as a signpost plate.
 - `continent-app/src/browse/CountryGallery.jsx`: the strip focusable where its slides are not links.
-- `continent-app/src/i18n/en.js`, `nl.js`, `de.js`, `fr.js`, `es.js`, `it.js`: 4 new keys, `destx.dayCosts` changed, 2 keys retired.
+- `continent-app/src/i18n/en.js`: 4 new keys (`place.tripName`, `place.total`, `place.rounding`, `place.wayUnit`) for the cost post, `destx.dayCosts` "Your trip" to "Costs", `tc.forParty` and `tc.returnEach` retired (no reader left).
+- `continent-app/src/i18n/nl.js`: the same 4 keys, the `destx.dayCosts` change and the 2 retired keys, in Dutch (six-language parity).
+- `continent-app/src/i18n/de.js`: the same, in German.
+- `continent-app/src/i18n/fr.js`: the same, in French.
+- `continent-app/src/i18n/es.js`: the same, in Spanish.
+- `continent-app/src/i18n/it.js`: the same, in Italian.
+- `continent-app/axe-audit/axe-audit.json`: written by `verify_axe.mjs` into the app folder; moved to the run folder (`verify/axe-audit.json`) and the folder removed, so nothing is committed there.
 - `continent-app/src/styles/88-place-template.css`: the post, layout, jump bar, gallery, tiles, relief, rating sheet, dock.
 - `continent-app/src/styles/19-guide-ratings.css`: the Score plate.
 - `continent-app/src/styles/23-places-pages.css`: the month strip.
