@@ -64,3 +64,34 @@ test('the chosen pin is the umber mark and nothing overshoots', () => {
   assert.match(css, /\.xmap-kpin\.is-label\.is-picked \{[^}]*background: var\(--action\)/);
   assert.match(css, /animation: xpin-settle var\(--dur-settle\) var\(--ease-settle\)/);
 });
+
+test('a row shows the region with the country, the country never shrinks', () => {
+  const row = read('src/browse/explore/PlaceRow.jsx');
+  assert.match(row, /className="xrow-region"/);
+  assert.match(row, /className="xrow-ctry"/);
+  assert.doesNotMatch(row, /xrow-where-short/);
+  const css = read('src/styles/62-v6-explore.css');
+  assert.match(css, /\.xrow-hs \.xrow-ctry \{ flex: none; \}/);
+});
+
+test('the reason stays in the map column and in tablet lists', () => {
+  const css = read('src/styles/62-v6-explore.css');
+  assert.match(css, /\.mpp-rows \.xrow-hs \.xrow-hit \.xrow-why \{ display: block;/);
+  assert.match(css, /"media why why why"/);
+});
+
+test('a note every rail card shares is said once over the rails', () => {
+  const rails = read('src/browse/ExploreRails.jsx');
+  assert.match(rails, /<ListHead t=\{t\} notes=\{shared\} \/>/);
+  assert.match(rails, /unmeasured: own\.unmeasured\.filter\(\(k\) => !shared\.includes\(k\)\)/);
+  assert.doesNotMatch(rails, /<PriceNotes row=\{p\.cost\}/);
+  // The price row (its day figure is a button) sits outside the card link.
+  assert.match(rails, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} weighted \/>/);
+});
+
+test('saving a place commits with a haptic through the house utility', () => {
+  const cards = read('src/browse/ExploreCards.jsx');
+  assert.match(cards, /import \{ haptic \} from '\.\.\/lib\/haptics\.js';/);
+  assert.match(cards, /onToggle\(\); haptic\(fav \? 'tick' : 'confirm'\);/);
+  assert.doesNotMatch(cards, /navigator\.vibrate/);
+});

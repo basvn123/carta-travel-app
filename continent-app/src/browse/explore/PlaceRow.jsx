@@ -38,17 +38,46 @@ import { PlaceScore, BandWord, RowFormation } from './HouseParts.jsx';
  * the column head"). Each row still carries the unit for a screen reader, so
  * the head itself is hidden from it.
  */
-export function ListHead({ t }) {
+export function ListHead({ t, notes = [] }) {
   const settings = useSettings();
   const view = useDayView();
   const { lang, languages } = useI18n();
   const bcp47 = languages?.find((l) => l.code === lang)?.bcp47 || 'en-GB';
   const dates = tripDates(settings, t, bcp47);
   return (
-    <div className="xlist-head" aria-hidden="true">
-      <span className="xlist-dates">{dates || ''}</span>
-      <span className="xlist-unit">{view.total ? view.unit : t('explore.colUnit')}</span>
+    <div className="xlist-head">
+      <span className="xlist-dates" aria-hidden="true">{dates || ''}</span>
+      {/* A price note every place below shares ("Local transport: not
+          yet") is said once here, not under every card (owner rule: no
+          repeated text). It stays readable to a screen reader. */}
+      {notes.map((key) => (
+        <span className="xlist-note" data-note={key} key={key}>
+          {t('price.noteMissing', { part: t(`price.item.${key}`) })}
+        </span>
+      ))}
+      <span className="xlist-unit" aria-hidden="true">{view.total ? view.unit : t('explore.colUnit')}</span>
     </div>
+  );
+}
+
+/** The region and the country as two parts of one line, in the language's
+ *  own order ("Alps, Italy"): the region gives way, the country never. */
+function WhereLine({ p, region, t }) {
+  const country = countryName(p.iso2, p.country);
+  if (!region) return <span className="xrow-country"><span className="xrow-ctry">{country}</span></span>;
+  // The language's own pattern, read with two markers, gives the order and
+  // the separator; an order other than region first falls back to one span.
+  const tpl = t('overview.regionCountry', { region: '@@R@@', country: '@@C@@' });
+  const c = tpl.indexOf('@@C@@');
+  if (!tpl.startsWith('@@R@@') || c < 0 || !tpl.endsWith('@@C@@')) {
+    return <span className="xrow-country"><span className="xrow-region">{regionLine(p, region, t)}</span></span>;
+  }
+  const sep = tpl.slice(5, c).trimEnd();
+  return (
+    <span className="xrow-country">
+      <span className="xrow-region">{region}{sep}</span>
+      <span className="xrow-ctry">{country}</span>
+    </span>
   );
 }
 
@@ -60,8 +89,6 @@ export const PlaceRow = React.memo(function PlaceRow({
   onOpen, t, selected = false, linked = false, className = '',
   rootRef = null, rootProps = null, hitProps = null, children = null,
 }) {
-  const where = regionLine(p, region, t);
-  const country = countryName(p.iso2, p.country);
   const score = rating || p.rating;
   const figRef = React.useRef(null);
   useSettledFigure(figRef, p.cost?.dayEur ?? null);
@@ -99,12 +126,7 @@ export const PlaceRow = React.memo(function PlaceRow({
         </span>
         <span className="xrow-line2">
           <CountryFlag country={p.iso2} size={12} />
-          {/* A narrow list (a phone, the map's column) shows the country;
-              a wide one, and every screen reader, the region with it. */}
-          <span className="xrow-country">
-            <span className="xrow-where-full">{where}</span>
-            {where !== country && <span className="xrow-where-short" aria-hidden="true">{country}</span>}
-          </span>
+          <WhereLine p={p} region={region} t={t} />
           {p.rating?.hidden_gem && <span className="hs-gem xrow-gem">{t('common.hiddenGem')}</span>}
         </span>
         {reason && <span className="xrow-why">{reason}</span>}

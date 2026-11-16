@@ -7,6 +7,7 @@ import { WhyChips } from './WhyChips.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { BusIcon, CarIcon, TrainIcon } from '../components/Icons.jsx';
 import { HouseIcon } from '../components/HouseIcons.jsx';
+import { haptic } from '../lib/haptics.js';
 import { formatEst } from '../lib/money.js';
 import { Card, IconButton } from '../components/ui/index.js';
 import { PriceParts } from '../components/PriceParts.jsx';
@@ -80,7 +81,10 @@ export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '', n
       className={`xsave${popped && fav ? ' hs-pop' : ''}${className ? ` ${className}` : ''}`}
       pressed={fav}
       label={label}
-      onClick={() => { setPopped(true); onToggle(); }}
+      // The commit's haptic (house style 2026-11): confirm on a save, a tick
+      // on an unsave; haptic() itself plays only after a touch, behind the
+      // traveller's setting and never under reduced motion.
+      onClick={() => { setPopped(true); onToggle(); haptic(fav ? 'tick' : 'confirm'); }}
       onAnimationEnd={() => setPopped(false)}
     >
       <HouseIcon.cairn size={20} />

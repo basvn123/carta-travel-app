@@ -156,7 +156,8 @@
 }
 .tstyle-cards.is-compact .tstyle-card { min-width: 0; min-height: 52px; }
 
-.tstyle-templates { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); }
+/* The choices fill the dialog: two rows of three at 820 and 1440. */
+.tstyle-templates { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: var(--space-2); margin-bottom: var(--space-3); }
 .tstyle-tpl {
   display: inline-flex;
   align-items: center;

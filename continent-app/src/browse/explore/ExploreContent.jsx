@@ -143,8 +143,6 @@ export function ExploreContent({
             no longer carries its own block or list. */}
         {/* The rails' doors, Show all places and the map toggle moved to
             the head block (T595); the rails draw no doors of their own. */}
-        {/* The rails' figures are a day, a person: said once, over them. */}
-        {railsIdle && rails.some((r) => r.rows.length >= 4) && <ListHead t={t} />}
         {railsIdle && (
           <ExploreRails rails={rails} onSelect={openPlace} t={t}
             favorites={favSet} onToggleFav={onToggleFav}
