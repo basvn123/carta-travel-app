@@ -68,7 +68,13 @@ No token changed (the lane reads roles only). New screen-scoped classes: `.xrow-
 - `continent-app/src/browse/explore/kindLabel.js` (new): the size word for a chip, never a raw key
 - `continent-app/src/browse/explore/useExploreChips.js`: reads `kindLabel`
 - `continent-app/src/components/SearchDock.jsx`: house pictograms and icons
-- `continent-app/src/i18n/de.js`, `en.js`, `es.js`, `fr.js`, `it.js`, `nl.js`: `explore.colUnit` added under the lane marker; `styles.firstLead` shortened
+- `continent-app/src/i18n/de.js`: `explore.colUnit` ("A day, a person", the unit said once over a list) added under the `// lane:explore` marker; `styles.firstLead` shortened (owner rule: minimal text)
+- `continent-app/src/i18n/en.js`: `explore.colUnit` ("A day, a person", the unit said once over a list) added under the `// lane:explore` marker; `styles.firstLead` shortened (owner rule: minimal text)
+- `continent-app/src/i18n/es.js`: `explore.colUnit` ("A day, a person", the unit said once over a list) added under the `// lane:explore` marker; `styles.firstLead` shortened (owner rule: minimal text)
+- `continent-app/src/i18n/fr.js`: `explore.colUnit` ("A day, a person", the unit said once over a list) added under the `// lane:explore` marker; `styles.firstLead` shortened (owner rule: minimal text)
+- `continent-app/src/i18n/it.js`: `explore.colUnit` ("A day, a person", the unit said once over a list) added under the `// lane:explore` marker; `styles.firstLead` shortened (owner rule: minimal text)
+- `continent-app/src/i18n/nl.js`: `explore.colUnit` ("A day, a person", the unit said once over a list) added under the `// lane:explore` marker; `styles.firstLead` shortened (owner rule: minimal text)
+- `scripts/vite.fast.mjs.timestamp-1794815573413-ab52746a328978.mjs`: a temporary file Vite writes beside its config during a fast build and deletes after it; not committed and no longer on disk
 - `continent-app/src/styles/14-filters-panels.css`: the sheet on roles, a centred dialog from 769 px
 - `continent-app/src/styles/62-v6-explore.css`: the row grid, selected and linked rows, save, empty mark, tablet map toolbar
 - `continent-app/src/styles/78-filter-pane.css`: the pane in the house style
