@@ -1,69 +1,187 @@
-/* The outdoor pages on the place page's template (T919 to T922, the owner's
-   approved spec of 2026-10-30). The trail, beach, lake, mountain and cycling
-   pages wear the .pt- template of 88-place-template.css; this sheet adds the
-   parts only they draw. Class prefix .ox-, the page root .oxp.
-   Departures from the look defaults, under the owner's design freedom of
-   2026-10-30 and as the approved spec draws them: the grade steps and the
-   water class steps are filled in umber, and the profile's steepness is
-   shaded on the umber ramp instead of the ink ramp. */
+/* The outdoor pages on the place page's template (T919 to T922), in the
+   house style (G1, decision 0012; the outdoors lane, 2026-11). The trail,
+   beach, lake, mountain and cycling pages wear the .pt- template of
+   88-place-template.css (the place lane's); this sheet adds the parts only
+   they draw and, scoped to .oxp, how the template reads on them. Class
+   prefix .ox-, the page root .oxp.
+   The grammar: the board of measured figures right under the head (paper,
+   one hairline frame, label over a tabular figure, the figure loudest), the
+   one umber primary in the side card or the foot bar, rows on hairlines
+   with bare icons (no sunken tiles), panels on paper with a hairline, the
+   umber ramp for steepness, months and the water class, the world tile for
+   a card without a photograph (G8: never a grey tile). */
 
 .oxp { background: var(--surface-page); }
 
-/* Six facts: two across on a phone, three from 700 px. */
-@media (min-width: 700px) {
-  .pt-page .ox-facts.is-six .dsk-kf-list { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row; }
+/* ── First view: a lower mosaic from 1024 px, so the board is read beside
+   the side card before the fold at 1440 x 900. ── */
+@media (min-width: 1024px) {
+  .oxp .pmos-grid { height: 320px; }
+  .oxp .pt-body { grid-template-columns: minmax(0, 1fr) 380px; gap: var(--space-7); }
 }
 
-/* ── The side card ── */
+/* ── The board: the measured figures as one instrument ── */
+.oxp .ox-board { margin-top: var(--space-4); }
+.oxp .ox-board:empty { display: none; }
+.oxp .pt-facts.dsk-keyfacts { margin: 0; }
+.oxp .pt-facts .dsk-kf-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row;
+  gap: 0;
+  background: var(--surface);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+}
+@media (min-width: 600px) {
+  .oxp .pt-facts .dsk-kf-list { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-columns: auto; grid-auto-flow: row; }
+}
+/* Four facts read as one row from 600 px; five as three over two. */
+@media (min-width: 600px) {
+  .oxp .pt-facts .dsk-kf-list:has(> .dsk-kf:nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.oxp .pt-facts .dsk-kf {
+  display: grid;
+  gap: var(--space-1);
+  align-content: start;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  border-radius: 0;
+  background: none;
+  /* The hairlines between cells: each cell draws its left and top edge,
+     pulled out by a hairline and clipped by the frame, so any count of
+     cells closes cleanly. */
+  border-left: var(--stroke-hair) solid var(--border-soft); border-top: var(--stroke-hair) solid var(--border-soft); margin: calc(var(--stroke-hair) * -1) 0 0 calc(var(--stroke-hair) * -1);
+  min-width: 0;
+}
+/* An odd count closes the frame: the last cell takes the rest of its row
+   (two across: an odd last cell; three across: the fifth of five). */
+.oxp .pt-facts .dsk-kf:last-child:nth-child(odd) { grid-column: 1 / -1; }
+@media (min-width: 600px) {
+  .oxp .pt-facts .dsk-kf:last-child:nth-child(odd) { grid-column: auto; }
+  .oxp .pt-facts .dsk-kf:nth-child(5):last-child { grid-column: span 2; }
+}
+.oxp .pt-facts .dsk-kf-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text-2);
+}
+.oxp .pt-facts .dsk-kf-icon { display: inline-grid; place-items: center; width: auto; height: auto; border-radius: 0; background: none; color: var(--text-2); }
+.oxp .pt-facts .dsk-kf-icon svg { width: 14px; height: 14px; }
+.oxp .pt-facts .dsk-kf-value {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums lining-nums;
+  /* A long word (German "Alpinwanderung") breaks at a syllable, never
+     mid-letter. */
+  overflow-wrap: break-word;
+  hyphens: auto;
+  text-wrap: balance;
+}
+@media (min-width: 600px) { .oxp .pt-facts .dsk-kf-value { font-size: var(--text-title); } }
+.oxp .pt-facts .dsk-kf-note { display: block; margin-top: 2px; font-size: var(--text-caption); font-weight: 600; letter-spacing: 0; color: var(--text-2); }
+/* The lake's swim verdict leads the board in its own words. */
+.oxp .pt-facts > .lpage-swim { margin: 0 0 var(--space-3); }
+
+/* The jump bar follows the board; the hook follows the jump bar. */
+.oxp .pt-jump { margin-top: var(--space-4); }
+.oxp .pt-lead { margin-top: var(--space-4); }
+.oxp .pt-lead-first { font-size: var(--text-lead); font-weight: 600; line-height: 1.5; color: var(--text); }
+@media (min-width: 700px) { .oxp .pt-lead-first { font-size: var(--text-title); } }
+
+/* ── The side card (1024 px up) and its phone and tablet half ── */
 .oxp .ox-card { gap: var(--space-3); }
-.oxp .ox-card.is-compact { margin-top: var(--space-4); padding: var(--space-4); }
+.oxp .pt-side { top: var(--space-3); margin-top: var(--space-3); }
+.oxp .pt-side .pt-card {
+  padding: var(--space-5);
+  background: var(--surface);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
+  box-shadow: none;
+}
 .ox-card-title { margin: 0; font-size: var(--text-lead); font-weight: 700; color: var(--text); }
 .ox-kv { margin: 0; display: grid; }
 .ox-kv > div {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   gap: var(--space-3);
   padding: var(--space-2) 0;
-  border-top: 1px solid var(--border-soft);
+  border-top: var(--stroke-hair) solid var(--border-soft);
   font-size: var(--text-body);
 }
 .ox-kv > div:first-child { border-top: 0; padding-top: 0; }
 .ox-kv dt { color: var(--text-2); }
-.ox-kv dd { margin: 0; color: var(--text); font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.ox-kv dd { margin: 0; color: var(--text); font-size: var(--text-figure); font-weight: 800; text-align: right; font-variant-numeric: tabular-nums lining-nums; }
 .oxp .ox-add { width: 100%; }
 .ox-card-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .ox-card-row > .btn { flex: 1 1 auto; }
+.oxp .ox-card-row > .btn { min-height: var(--tap); }
 
-/* Stay nearby: a priced line that opens the town's page. */
+/* Below 1024 px the card's half sits in the page: the secondaries and the
+   stay line, on the ground, no box. */
+.oxp .ox-card.is-compact { margin-top: var(--space-4); padding: 0; background: none; border: 0; box-shadow: none; }
+/* Tablet: its own layout, the secondaries beside the stay line. */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .oxp .ox-card.is-compact { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: stretch; column-gap: var(--space-4); }
+  .oxp .ox-card.is-compact .ox-card-row { align-content: center; }
+  .oxp .ox-card.is-compact > :only-child { grid-column: 1 / -1; }
+}
+
+/* Stay nearby: a priced row that opens the town's page. */
 .ox-stay {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 2px var(--space-3);
-  padding: var(--space-3);
-  border-radius: var(--radius-control);
-  background: var(--umber-50);
+  padding: var(--space-3) var(--space-4);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
   color: var(--text);
   text-decoration: none;
   min-height: var(--tap);
+  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
-.ox-stay-label { grid-column: 1 / -1; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.ox-stay-label { grid-column: 1 / -1; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .ox-stay-town { display: grid; gap: 2px; min-width: 0; }
-.ox-stay-town b { font-size: var(--text-lead); font-weight: 700; }
+.ox-stay-town b { font-size: var(--text-lead); font-weight: 800; }
 .ox-stay-town small { font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.ox-stay-go { display: inline-flex; align-items: center; color: var(--action); }
-@media (hover: hover) { .ox-stay:hover .ox-stay-town b { text-decoration: underline; } }
-.ox-stay:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ox-stay-go { display: inline-flex; align-items: center; color: var(--action); transition: translate var(--dur-2) var(--ease-out); }
+@media (hover: hover) {
+  .ox-stay:hover { border-color: var(--edge); }
+  .ox-stay:hover .ox-stay-town b { text-decoration: underline; text-underline-offset: 3px; }
+  .ox-stay:hover .ox-stay-go { translate: 3px 0; }
+}
+.ox-stay:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .ox-stay, .ox-stay-go { transition: none; } }
 
 .ox-linkbtn { text-decoration: none; }
 .ox-dock-sub { font-size: var(--text-label); color: var(--text-2); }
 
-/* ── Route: the map, then the profile, in one bordered block ── */
+/* The foot bar: its figures wait while the board is in view (the place
+   page's is-post-in-view rule), then rise once. */
+.oxp .pt-dock.is-post-in-view .pt-dock-inputs,
+.oxp .pt-dock.is-post-in-view .ox-dock-sub { display: none; }
+.oxp .pt-dock:not(.is-post-in-view) .pt-dock-text { animation: ox-rise var(--dur-2) var(--ease-out); }
+@keyframes ox-rise { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .oxp .pt-dock .pt-dock-text { animation: none; } }
+.oxp .pt-dock .pt-dock-cta { margin-left: auto; }
+
+/* ── Route: the map, then the profile, in one paper panel ── */
 .ox-route {
   display: grid;
-  background: var(--surface-sunken);
-  border: 1px solid transparent;
-  border-radius: var(--radius-card);
+  background: var(--surface);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
   overflow: hidden;
 }
 .ox-route-map .map-shell { border-radius: 0; }
@@ -75,12 +193,13 @@
   .ox-route-map .tpage-hero,
   .ox-route-map .cycle-map,
   .ox-route-map .dsk-map-frame,
-  .ox-route-map .place-map { height: 380px; }
+  .ox-route-map .place-map { height: 400px; }
 }
-.ox-route-map .map-tools { padding: var(--space-2) var(--space-3); border-top: 1px solid var(--border-soft); }
-.ox-route-prof { padding: var(--space-3) var(--space-4) var(--space-4); border-top: 1px solid var(--border-soft); }
+.ox-route-map .map-tools { padding: var(--space-2) var(--space-3); border-top: var(--stroke-hair) solid var(--border-soft); background: var(--surface); }
+.ox-route-prof { padding: var(--space-3) var(--space-4) var(--space-4); border-top: var(--stroke-hair) solid var(--border-soft); }
 .ox-route-prof:first-child { border-top: 0; }
 .ox-dl { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.oxp .ox-dl > .btn { min-height: var(--tap); }
 
 /* The map while it loads: the item's own line or point in ink (MapSketch),
    the canvas crossfading over it once maplibre has drawn. */
@@ -92,13 +211,13 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-5);
-  background: var(--surface-sunken);
+  background: var(--world-lowland);
   pointer-events: none;
 }
 .oxp .dsk-sketch-svg { width: 100%; height: 100%; overflow: visible; }
-.oxp .dsk-sketch-line { fill: none; stroke: var(--text); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.oxp .dsk-sketch-line { fill: none; stroke: var(--action); stroke-width: var(--stroke-route); stroke-linecap: round; stroke-linejoin: round; }
 .oxp .dsk-sketch-ring { fill: none; stroke: var(--text); stroke-width: 1.5; }
-.oxp .dsk-sketch-dot { fill: var(--text); }
+.oxp .dsk-sketch-dot { fill: var(--action); }
 .oxp .dsk-sketch-name {
   position: absolute;
   left: var(--space-3);
@@ -117,15 +236,17 @@
 .ox-surface { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
 
 /* The profile with its height scale: the profile's own parts are laid into
-   this grid (display: contents), so the scale shares the drawing's row. */
+   this grid (display: contents), so the scale shares the drawing's row.
+   Scrubbing it is the page's signature act: the cursor and its readout
+   follow the finger, the pin on the map settles. */
 .ox-prof { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--space-2); }
 .ox-prof .sig-trail { display: contents; }
 .ox-prof .sig-trail > * { grid-column: 2; }
 .ox-prof .sig-cap { grid-row: 1; font-size: var(--text-label); color: var(--text-2); }
-.ox-prof .sig-cap .mono { color: var(--text); font-weight: 600; }
+.ox-prof .sig-cap .mono { color: var(--text); font-weight: 800; font-variant-numeric: tabular-nums; }
 .ox-prof .sig-scrub { grid-row: 2; }
-.ox-prof .sig-axis { grid-row: 3; color: var(--text-3); font-size: var(--text-micro); }
-.ox-prof .rsurf-keys { grid-row: 4; }
+.ox-prof .sig-axis { grid-row: 3; color: var(--text-2); font-size: var(--text-micro); font-variant-numeric: tabular-nums; }
+.ox-prof .rsurf-keys { grid-row: 4; color: var(--text-2); }
 .ox-prof-axis {
   grid-column: 1;
   grid-row: 2;
@@ -137,15 +258,15 @@
   font-size: var(--text-micro);
   font-weight: 600;
   line-height: 1;
-  color: var(--text-3);
+  color: var(--text-2);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.ox-prof .tpage-elev-svg { height: 120px; }
+.ox-prof .tpage-elev-svg { height: 128px; }
 .ox-prof .sig-slope.is-slope0 { fill: var(--umber-100); }
 .ox-prof .sig-slope.is-slope1 { fill: var(--umber-300); }
 .ox-prof .sig-slope.is-slope2 { fill: var(--umber-600); }
-.ox-prof .rsurf-dot.is-slope0 { background: var(--umber-100); }
+.ox-prof .rsurf-dot.is-slope0 { background: var(--umber-100); outline: var(--stroke-hair) solid var(--umber-300); outline-offset: -1px; }
 .ox-prof .rsurf-dot.is-slope1 { background: var(--umber-300); }
 .ox-prof .rsurf-dot.is-slope2 { background: var(--umber-600); }
 .ox-prof .sig-plain-area { fill: var(--umber-100); }
@@ -158,109 +279,129 @@
   gap: var(--space-3) var(--space-4);
   align-items: center;
   padding: var(--space-4);
-  background: var(--surface-sunken);
-  border: 1px solid transparent;
-  border-radius: var(--radius-card);
+  background: var(--surface);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
 }
 @media (max-width: 480px) { .ox-grade { grid-template-columns: 1fr; } }
 .ox-scale { display: flex; gap: 3px; }
 .ox-scale span {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: var(--radius-sm);
-  background: var(--surface-sunken);
-  color: var(--text-3);
+  background: var(--surface);
+  outline: var(--stroke-hair) solid var(--edge);
+  outline-offset: calc(var(--stroke-hair) * -1);
+  color: var(--text-2);
   font-size: var(--text-micro);
-  font-weight: 700;
-  line-height: 28px;
+  font-weight: 800;
+  line-height: 30px;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
-.ox-scale span.is-on { background: var(--umber-700); color: var(--surface); }
+.ox-scale span.is-on { background: var(--umber-700); outline-color: var(--umber-700); color: var(--action-text); }
 .ox-grade-text { display: grid; gap: 2px; min-width: 0; }
-.ox-grade-text b { font-size: var(--text-lead); font-weight: 600; color: var(--text); }
+.ox-grade-text b { font-size: var(--text-lead); font-weight: 800; color: var(--text); }
 .ox-grade-text span { font-size: var(--text-label); color: var(--text-2); line-height: var(--leading-body); }
 
-.ox-chk { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
-@media (min-width: 700px) { .ox-chk:not(.is-single) { grid-template-columns: 1fr 1fr; } }
+/* Rows on hairlines: a bare icon, the title, one line. Two across from
+   700 px; the rule runs under each row. */
+.ox-chk { list-style: none; margin: 0; padding: 0; display: grid; column-gap: var(--space-6); border-top: var(--stroke-hair) solid var(--border); }
+@media (min-width: 700px) { .ox-chk:not(.is-single) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
 .ox-chk li {
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr);
+  grid-template-columns: 20px minmax(0, 1fr);
   gap: var(--space-3);
   align-items: start;
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-sunken);
-  border: 1px solid transparent;
-  border-radius: var(--radius-card);
+  padding: var(--space-3) 0;
+  background: none;
+  border: 0;
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+  border-radius: 0;
   min-width: 0;
 }
+.oxp .ox-chk-icon,
+.oxp .pt-tip-icon.ox-chk-icon { display: grid; place-items: center; width: 20px; height: 20px; margin-top: 1px; border-radius: 0; background: none; color: var(--text-2); }
 .ox-chk-text { display: grid; gap: 2px; min-width: 0; }
-.ox-chk-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.ox-chk-text > span { font-size: var(--text-label); color: var(--text-2); line-height: var(--leading-ui); }
-.ox-chk-text a { justify-self: start; font-size: var(--text-label); font-weight: 600; color: var(--action); }
+.ox-chk-text b { font-size: var(--text-body); font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+.ox-chk-text > span { font-size: var(--text-label); color: var(--text-2); line-height: var(--leading-ui); font-variant-numeric: tabular-nums; }
+.ox-chk-text a {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  margin: calc(var(--space-2) * -1) 0;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--action);
+  text-underline-offset: 3px;
+}
 .ox-chk li.is-warn .ox-chk-icon { color: var(--amber-ink); }
+.ox-chk li.is-warn .ox-chk-text b { color: var(--amber-ink); }
 
 .ox-safety {
   margin: 0;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: minmax(0, 1fr);
-  gap: 1px;
-  background: var(--border-soft);
-  border: 1px solid transparent;
-  border-radius: var(--radius-card);
+  gap: 0;
+  background: var(--surface);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
   overflow: hidden;
 }
-.ox-safety > div { background: var(--surface-page); padding: var(--space-2) var(--space-3); display: grid; gap: 2px; min-width: 0; }
-.ox-safety dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
-.ox-safety dd { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
-@media (max-width: 480px) { .ox-safety { grid-auto-flow: row; } }
+.ox-safety > div { padding: var(--space-3) var(--space-4); display: grid; gap: 2px; min-width: 0; border-left: var(--stroke-hair) solid var(--border-soft); border-top: var(--stroke-hair) solid var(--border-soft); margin: calc(var(--stroke-hair) * -1) 0 0 calc(var(--stroke-hair) * -1); }
+.ox-safety dt { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.ox-safety dd { margin: 0; font-size: var(--text-figure); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+@media (max-width: 480px) {
+  .ox-safety { grid-auto-flow: row; }
+}
 
-/* ── Facilities ── */
+/* ── Facilities: a ruled grid on paper ── */
 .ox-facil {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  /* End check: the surface, not the hairline colour, so an odd last row
-     leaves white, not a grey hole; the cells draw the hairlines. */
-  background: var(--surface-sunken);
-  border: 1px solid transparent;
-  border-radius: var(--radius-card);
+  gap: 0;
+  background: var(--surface);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
   overflow: hidden;
 }
 @media (min-width: 700px) { .ox-facil { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .ox-facil li {
-  background: var(--surface-page);
-  outline: 1px solid var(--border-soft);
-  padding: var(--space-2) var(--space-3);
+  background: none;
+  border-left: var(--stroke-hair) solid var(--border-soft); border-top: var(--stroke-hair) solid var(--border-soft); margin: calc(var(--stroke-hair) * -1) 0 0 calc(var(--stroke-hair) * -1);
+  padding: var(--space-3);
   display: grid;
   grid-template-columns: 20px minmax(0, 1fr);
   gap: 2px var(--space-2);
   align-items: center;
   font-size: var(--text-body);
+  font-weight: 600;
   color: var(--text);
   min-width: 0;
 }
 .ox-facil-icon { color: var(--action); display: grid; place-items: center; }
-.ox-facil small { grid-column: 2; font-size: var(--text-caption); color: var(--text-2); }
-.ox-facil li.is-no { color: var(--text-2); }
-.ox-facil li.is-no .ox-facil-icon { color: var(--text-3); }
+.ox-facil small { grid-column: 2; font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
+.ox-facil li.is-no { color: var(--text-2); font-weight: 400; }
+.ox-facil li.is-no .ox-facil-icon { color: var(--text-2); }
 
-/* ── The water class: four named steps ── */
-.ox-wq { display: grid; gap: var(--space-2); padding: var(--space-4); background: var(--surface-sunken); border: 1px solid transparent; border-radius: var(--radius-card); }
+/* ── The water class: four named steps on the umber ramp ── */
+.ox-wq { display: grid; gap: var(--space-2); padding: var(--space-4); background: var(--surface); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); }
 .ox-wq-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
-.ox-wq-top b { font-size: var(--text-lead); font-weight: 700; color: var(--text); }
+.ox-wq-top b { font-size: var(--text-title); font-weight: 800; color: var(--text); }
 .ox-wq-top span { font-size: var(--text-label); color: var(--text-2); }
-.ox-wq-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-1); }
+.ox-wq-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; }
 .ox-wq-steps span { height: 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
-.ox-wq-steps span.is-on { background: var(--lagoon-600); }
-.ox-wq-lbl { display: grid; grid-template-columns: repeat(4, 1fr); font-size: var(--text-micro); color: var(--text-3); }
+.ox-wq-steps span.is-on { background: var(--umber-600); }
+.ox-wq-lbl { display: grid; grid-template-columns: repeat(4, 1fr); font-size: var(--text-micro); color: var(--text-2); }
 .ox-wq-lbl span:last-child { text-align: right; }
 .ox-wq p { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 
-/* ── Twelve months ── */
+/* ── Twelve months: the umber ramp, the best months painted ── */
 .ox-months {
   margin: 0;
   display: grid;
@@ -268,102 +409,118 @@
   gap: var(--space-1);
   align-items: end;
   padding: var(--space-3) var(--space-2) var(--space-2);
-  background: var(--surface-sunken);
-  border: 1px solid transparent;
-  border-radius: var(--radius-card);
+  background: var(--surface);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
 }
 .ox-mo { display: grid; justify-items: center; gap: var(--space-1); min-width: 0; padding: 2px 0; border-radius: var(--radius-sm); }
 .ox-mo-t { font-size: var(--text-micro); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.ox-mo-bar { width: 70%; max-width: 22px; border-radius: var(--radius-sm); background: var(--lagoon-200); }
-.ox-mo.is-best .ox-mo-bar { background: var(--lagoon-600); }
-.ox-mo.is-best .ox-mo-t { color: var(--text); }
-.ox-mo-l { font-size: var(--text-micro); font-weight: 600; color: var(--text-3); }
-.ox-mo.is-now { outline: 2px solid var(--text); outline-offset: -1px; }
+.ox-mo-bar { width: 70%; max-width: 22px; border-radius: var(--radius-sm); background: var(--umber-200); }
+.ox-mo.is-best .ox-mo-bar { background: var(--umber-600); }
+.ox-mo.is-best .ox-mo-t { color: var(--text); font-weight: 800; }
+.ox-mo-l { font-size: var(--text-micro); font-weight: 600; color: var(--text-2); }
+.ox-mo.is-now { background: var(--select-row); outline: var(--stroke-edge) solid var(--select-border); outline-offset: -1px; }
 @media (max-width: 420px) { .ox-mo:not(.is-best):not(.is-now) .ox-mo-t { visibility: hidden; } }
 .ox-legend { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: 0; font-size: var(--text-caption); color: var(--text-2); }
-.ox-legend i { display: inline-block; width: 10px; height: 10px; border-radius: var(--radius-sm); margin-right: var(--space-1); vertical-align: -1px; background: var(--lagoon-600); }
+.ox-legend i { display: inline-block; width: 10px; height: 10px; border-radius: var(--radius-sm); margin-right: var(--space-1); vertical-align: -1px; background: var(--umber-600); }
 
-/* ── Cells (waves, faces, storms...) ── */
-.ox-cells { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+/* ── Cells (waves, faces, storms...): a ruled row on paper ── */
+.ox-cells { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; background: var(--surface); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); overflow: hidden; }
 @media (min-width: 700px) { .ox-cells { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.ox-cells li { display: grid; gap: 2px; align-content: start; padding: var(--space-3) var(--space-4); background: var(--surface-sunken); border: 1px solid transparent; border-radius: var(--radius-card); min-width: 0; }
-.ox-cells small { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
-.ox-cells b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+.ox-cells li { display: grid; gap: 2px; align-content: start; padding: var(--space-3) var(--space-4); background: none; border-radius: 0; border-left: var(--stroke-hair) solid var(--border-soft); border-top: var(--stroke-hair) solid var(--border-soft); margin: calc(var(--stroke-hair) * -1) 0 0 calc(var(--stroke-hair) * -1); min-width: 0; }
+.ox-cells small { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.ox-cells b { font-size: var(--text-figure); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
 .ox-cells span { font-size: var(--text-label); color: var(--text-2); }
 
-/* ── Along the way and Other nearby: photo cards ── */
-.ox-along, .ox-sim { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-3); }
-@media (min-width: 700px) { .ox-along, .ox-sim { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* ── Along the way and Other nearby: photo cards (the world tile when a
+   card has no photograph; G8) ── */
+.ox-along, .ox-sim { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); }
+@media (min-width: 700px) { .ox-along, .ox-sim { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5) var(--space-4); } }
 .ox-acard { display: grid; gap: var(--space-2); align-content: start; min-width: 0; }
 .ox-acard-media, .ox-sim-media {
+  position: relative;
   display: block;
   aspect-ratio: 4 / 3;
   border-radius: var(--radius-card);
   overflow: hidden;
-  background: var(--surface-sunken);
+  background: var(--world-rock);
 }
-.ox-acard-media img, .ox-sim-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ox-acard-media img, .ox-sim-media img { width: 100%; height: 100%; object-fit: cover; display: block; transition: scale var(--dur-3) var(--ease-out); }
 .ox-acard-text { display: grid; gap: 2px; }
-.ox-acard-text b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.ox-acard-text small { font-size: var(--text-caption); color: var(--text-2); }
+.ox-acard-text b { font-size: var(--text-body); font-weight: 700; color: var(--text); }
+.ox-acard-text small { font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
 .ox-simcard { display: grid; gap: var(--space-1); align-content: start; min-width: 0; }
 .ox-sim-link { display: grid; gap: var(--space-2); color: var(--text); text-decoration: none; border-radius: var(--radius-card); }
-.ox-sim-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.ox-sim-name { font-size: var(--text-body); font-weight: 600; }
-@media (hover: hover) { .ox-sim-link:hover .ox-sim-name { text-decoration: underline; } }
-.ox-sim-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-size: var(--text-caption); color: var(--text-2); }
-.ox-sim-tag { justify-self: start; padding: 2px var(--space-2); border-radius: var(--radius-pill); background: var(--surface-sunken); font-size: var(--text-micro); font-weight: 600; color: var(--text-2); }
+.ox-sim-link:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.ox-sim-name { font-size: var(--text-body); font-weight: 700; }
+@media (hover: hover) {
+  .ox-sim-link:hover .ox-sim-name { text-decoration: underline; text-underline-offset: 3px; }
+  .ox-sim-link:hover .ox-sim-media img { scale: 1.03; }
+}
+@media (prefers-reduced-motion: reduce) { .ox-acard-media img, .ox-sim-media img { transition: none; } }
+.ox-sim-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ox-sim-tag { justify-self: start; padding: 2px var(--space-2); border-radius: var(--radius-pill); background: var(--select-bg); font-size: var(--text-micro); font-weight: 700; color: var(--select-ink); }
 
-/* The map spot: a drawing, never a grey box. */
+/* The map spot (kept for any caller): a drawing on the world tint. */
 .ox-spot { display: block; width: 100%; height: 100%; }
-.ox-spot-ground { fill: var(--surface-sunken); }
+.ox-spot-ground { fill: var(--world-lowland); }
 .ox-spot-line { fill: none; stroke: var(--surface); stroke-width: 5; }
 .ox-spot-ring { fill: none; stroke: var(--border); stroke-width: 1; }
-.ox-spot-dot { fill: var(--text); stroke: var(--surface); stroke-width: 2.5; }
+.ox-spot-dot { fill: var(--action); stroke: var(--surface); stroke-width: 2.5; }
 
-/* ── Routes to the top (mountain) ── */
-.ox-rtc { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+/* ── Routes to the top (mountain): rows on hairlines that open a walk ── */
+.ox-rtc { list-style: none; margin: 0; padding: 0; display: grid; border-top: var(--stroke-hair) solid var(--border); }
 .ox-rc {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: var(--space-2) var(--space-3);
   align-items: start;
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-sunken);
-  border: 1px solid transparent;
-  border-radius: var(--radius-card);
+  padding: var(--space-3) 0;
+  background: none;
+  border: 0;
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+  border-radius: 0;
   color: var(--text);
   text-decoration: none;
+  transition: background-color var(--dur-1) var(--ease-out);
 }
-a.ox-rc:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (hover: hover) { a.ox-rc:hover b { text-decoration: underline; } }
-.ox-rc b { font-size: var(--text-lead); font-weight: 600; }
+a.ox-rc:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
+@media (hover: hover) {
+  a.ox-rc:hover b { text-decoration: underline; text-underline-offset: 3px; }
+  a.ox-rc:hover .ox-rc-go { translate: 3px 0; color: var(--action); }
+}
+.ox-rc b { font-size: var(--text-lead); font-weight: 700; }
 .ox-rc-meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--space-1); }
-.ox-rc-meta span { padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); background: var(--surface-sunken); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
-.ox-rc-go { color: var(--text-3); }
+.ox-rc-meta span { padding: 2px var(--space-2); border-radius: var(--radius-pill); background: var(--surface); outline: var(--stroke-hair) solid var(--border); outline-offset: -1px; font-size: var(--text-caption); font-weight: 700; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.ox-rc-go { color: var(--text-2); transition: translate var(--dur-2) var(--ease-out), color var(--dur-1) var(--ease-out); }
+@media (prefers-reduced-motion: reduce) { .ox-rc, .ox-rc-go { transition: none; } }
 
-/* ── Surface and traffic (cycling): two stacked bars ── */
-.ox-mix { display: grid; gap: var(--space-4); padding: var(--space-4); background: var(--surface-sunken); border: 1px solid transparent; border-radius: var(--radius-card); }
+/* ── Surface and traffic (cycling): two stacked bars on paper ── */
+.ox-mix { display: grid; gap: var(--space-4); padding: var(--space-4); background: var(--surface); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); }
 .ox-mix-row { display: grid; gap: var(--space-2); }
 .ox-mix-h { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--text-body); color: var(--text-2); }
-.ox-mix-h b { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
-.ox-bar { display: flex; height: 10px; border-radius: var(--radius-pill); overflow: hidden; background: var(--surface-sunken); gap: 1px; }
+.ox-mix-h b { color: var(--text); font-size: var(--text-figure); font-weight: 800; font-variant-numeric: tabular-nums; }
+.ox-bar { display: flex; height: 10px; border-radius: var(--radius-pill); overflow: hidden; background: var(--surface-sunken); gap: 2px; }
 .ox-bar i { display: block; height: 100%; }
 .ox-bar i.is-a { background: var(--umber-600); }
 .ox-bar i.is-b { background: var(--umber-200); }
-.ox-mix-keys { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: 0; padding: 0; list-style: none; font-size: var(--text-caption); color: var(--text-2); }
+.ox-mix-keys { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: 0; padding: 0; list-style: none; font-size: var(--text-caption); color: var(--text-2); font-variant-numeric: tabular-nums; }
 .ox-mix-keys i { display: inline-block; width: 10px; height: 10px; border-radius: var(--radius-sm); margin-right: var(--space-1); vertical-align: -1px; }
 .ox-mix-keys i.is-a { background: var(--umber-600); }
 .ox-mix-keys i.is-b { background: var(--umber-200); }
-.ox-mix .pt-muted { color: var(--text-3); }
+.ox-mix .pt-muted { color: var(--text-2); }
 
-/* Stages before and after */
-.ox-stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
-.ox-stage { display: grid; gap: 2px; padding: var(--space-3) var(--space-4); background: var(--surface-sunken); border: 1px solid transparent; border-radius: var(--radius-card); font-size: var(--text-label); color: var(--text-2); text-decoration: none; min-width: 0; }
-.ox-stage b { font-size: var(--text-body); font-weight: 600; color: var(--text); }
+/* Stages before and after: two signposts, one pointing back, one on. */
+.ox-stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-2); }
+.ox-stage { display: grid; gap: 2px; padding: var(--space-3) var(--space-4); background: var(--surface); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); font-size: var(--text-label); color: var(--text-2); text-decoration: none; min-width: 0; min-height: var(--tap); transition: border-color var(--dur-1) var(--ease-out); }
+.ox-stage b { font-size: var(--text-body); font-weight: 700; color: var(--text); }
 .ox-stage.is-next { text-align: right; }
-a.ox-stage:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (hover: hover) { a.ox-stage:hover b { text-decoration: underline; } }
+a.ox-stage:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+@media (hover: hover) {
+  a.ox-stage:hover { border-color: var(--edge); }
+  a.ox-stage:hover b { text-decoration: underline; text-underline-offset: 3px; }
+}
+@media (prefers-reduced-motion: reduce) { .ox-stage { transition: none; } }
 
 /* The score fold near the sources. */
 .ox-why { margin-top: var(--space-6); }
@@ -376,12 +533,14 @@ a.ox-stage:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px;
 /* No "Not available yet" on these pages: a cell without data is left out. */
 .oxp .not-yet { display: none; }
 
-/* T1039 (owner: follow the place page, no white boxes; the blocks above
-   take the sunken ground in their own rules). The card's buttons and stay
-   line sit on the page on a phone; the desktop side card goes soft. */
-.oxp .ox-card.is-compact { background: none; border: 0; box-shadow: none; padding: 0; margin-top: var(--space-4); }
-.oxp .pt-side .pt-card { background: var(--surface-sunken); border: 0; box-shadow: none; }
-.oxp .ox-kv > div { border-top-color: color-mix(in srgb, var(--text) 8%, transparent); }
 /* The why-it-rates fold reads as the place page's folds: a row under a rule. */
-.oxp .pt-fold { background: none; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; padding: 0; }
-.oxp .pt-fold summary { min-height: 52px; font-size: var(--text-lead); }
+.oxp .pt-fold { background: none; border: 0; border-bottom: var(--stroke-hair) solid var(--border-soft); border-radius: 0; padding: 0; }
+.oxp .pt-fold summary { min-height: 52px; font-size: var(--text-lead); font-weight: 700; }
+
+/* ── Sections the shell shares with other sheets, read on outdoor pages:
+   the stages, bases and the trek (25-feature-pages), the rain warning and
+   the score bars (23-places-pages), the nearby lists. Scoped to .oxp. ── */
+.oxp .pt-block-title { font-size: var(--text-lead); font-weight: 800; }
+.oxp .nbx-block > h2 { font-size: var(--text-lead); font-weight: 800; color: var(--text); }
+.oxp .nbx-item { min-height: var(--tap); }
+.oxp .nbx-item .mono { font-variant-numeric: tabular-nums; color: var(--text-2); }

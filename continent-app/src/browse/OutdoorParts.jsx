@@ -4,7 +4,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { usePageArrival } from '../hooks/usePageArrival.js';
 import { useBaseDay } from '../hooks/useBaseDay.js';
 import { useDayView } from '../hooks/useDayView.js';
-import { Button, PlaceHead, PlaceTag } from '../components/ui/index.js';
+import { Button, PlaceHead, PlaceTag, WorldTile } from '../components/ui/index.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import {
   PlusIcon, ChevronRightIcon, CheckIcon, CloseIcon, ParkingIcon, BusIcon, TrainIcon, FerryIcon, MapPinIcon,
@@ -50,7 +50,7 @@ import '../styles/89-outdoor-page.css';
  *   MonthStrip    one figure a month as twelve bars
  *   SafetyBlock   112 and the weather, short and fixed
  *   AlongCards    the sights along the way as photo cards
- *   OtherNearby   "Other X nearby": photo cards, a map spot without a photo
+ *   OtherNearby   "Other X nearby": photo cards, the world tile without a photo
  */
 
 /** The model the PDF prints: what this page shows (T430's rule). */
@@ -202,14 +202,18 @@ export function StayLine({ destId, city, km = null, onOpen }) {
  *  secondary row and the stay line. `compact` (below 1024 px, in the page)
  *  keeps only the secondaries and the stay line: the facts sit just above it
  *  and the foot bar holds the primary. */
-function OxCard({ card, compact = false }) {
+function OxCard({ card, compact = false, said = null }) {
   const { t } = useI18n();
-  const rows = (card.rows || []).filter((r) => r && r.value != null && r.value !== '');
+  // House style (G1): each figure is said once on screen. Beside the board a
+  // row the board already shows is not drawn again; a row only the card has
+  // (the sea in July, parking, entry) stays.
+  const rows = (card.rows || []).filter((r) => r && r.value != null && r.value !== ''
+    && !(said && said.some((v) => v.includes(String(r.value)))));
   const secondary = (card.secondary || []).filter(Boolean);
   if (compact && !secondary.length && !card.stay) return null;
   return (
     <div className={`pt-card ox-card${compact ? ' is-compact' : ''}`}>
-      {!compact && card.title && <h2 className="ox-card-title">{card.title}</h2>}
+      {!compact && card.title && <h2 className="ox-card-title sr-only">{card.title}</h2>}
       {!compact && rows.length > 0 && (
         <dl className="ox-kv">
           {rows.map((r) => (
@@ -270,6 +274,8 @@ export function OutdoorPage({
   const headRef = React.useRef(null);
   const whyRef = React.useRef(null);
   const [titleGone, setTitleGone] = React.useState(false);
+  const boardRef = React.useRef(null);
+  const [boardInView, setBoardInView] = React.useState(true);
   const wide = useWide();
 
   const arrivalRef = usePageArrival(pageRef, resetKey);
@@ -287,6 +293,17 @@ export function OutdoorPage({
     return () => io.disconnect();
   }, [resetKey]);
 
+  // The foot bar's figures wait until the board has scrolled away, so the
+  // first view says them once (the place page's is-post-in-view rule).
+  React.useEffect(() => {
+    const el = boardRef.current;
+    const root = scrollRef.current;
+    if (!el || !root || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([entry]) => setBoardInView(entry.isIntersecting), { root, threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [resetKey, wide]);
+
   const openWhy = (e) => {
     e.preventDefault();
     if (whyRef.current) whyRef.current.open = true;
@@ -296,6 +313,7 @@ export function OutdoorPage({
   const firstJump = jumps.find((j) => j?.id);
   const onDockSub = dock?.onSub || (firstJump ? () => scrollToSection(scrollRef.current, firstJump.id) : null);
   const factsCls = `pt-facts ox-facts${(facts || []).length === 6 ? ' is-six' : ''}`;
+  const said = wide ? (facts || []).map((c) => String(c?.value ?? '')).filter(Boolean) : null;
 
   return (
     <div
@@ -345,14 +363,19 @@ export function OutdoorPage({
                   ...(head.badges || []).filter(Boolean).map((b) => <PlaceTag key={b}>{b}</PlaceTag>),
                 ]} />
 
-              {/* T1039: the tabs right under the head, as on the place page. */}
+              {/* House style (G1): the board of measured figures right under
+                  the head, the first thing read after the name; then the jump
+                  bar, then the hook. */}
+              {factsLead}
+              <div className="ox-board" ref={boardRef}>
+                <KeyFacts cells={facts} className={factsCls} />
+              </div>
+
+              {/* T1039: the tabs under the head, as on the place page. */}
               <JumpBar items={jumps} scrollRef={scrollRef} ready={`${resetKey}:${React.Children.count(children)}`}
                 label={t('detail.railAria')} />
 
               {head.lead && <div className="pt-lead"><p className="pt-lead-first">{head.lead}</p></div>}
-
-              {factsLead}
-              <KeyFacts cells={facts} className={factsCls} />
 
               {!wide && card && <OxCard card={card} compact />}
 
@@ -369,7 +392,7 @@ export function OutdoorPage({
             </div>
             {wide && card && (
               <aside className="pt-side" aria-label={card.title || name}>
-                <OxCard card={card} />
+                <OxCard card={card} said={said} />
               </aside>
             )}
           </div>
@@ -377,7 +400,7 @@ export function OutdoorPage({
       </div>
 
       {!wide && !following && dock && (
-        <PriceDock className="ox-dock" price={dock.fig} unit={dock.note}
+        <PriceDock className={`ox-dock${boardInView ? ' is-post-in-view' : ''}`} price={dock.fig} unit={dock.note}
           inputs={onDockSub ? dock.sub : null} onInputs={onDockSub}
           note={!onDockSub && dock.sub ? <span className="ox-dock-sub">{dock.sub}</span> : null}
           primary={card?.onAdd && (
@@ -618,17 +641,17 @@ export function MapSpot({ seed = 0 }) {
 
 /** The sights along the way: a photograph (or the map spot), the name,
  *  one line. */
-export function AlongCards({ items }) {
+export function AlongCards({ items, world = 'lowland' }) {
   const list = (items || []).filter((x) => x && x.title);
   if (!list.length) return null;
   return (
     <ul className="ox-along">
-      {list.map((h, i) => (
+      {list.map((h) => (
         <li key={h.key} className="ox-acard">
           <span className="ox-acard-media">
             {h.photo?.url
               ? <img src={h.photo.thumb || h.photo.url} alt="" loading="lazy" decoding="async" />
-              : <MapSpot seed={i + 1} />}
+              : <WorldTile world={world} />}
           </span>
           <span className="ox-acard-text">
             <b>{h.title}</b>
@@ -645,18 +668,18 @@ export function AlongCards({ items }) {
  * each a link to its page. A card without a photograph shows the map spot.
  * `hrefOf(row)` gives the page's address for a real link.
  */
-export function OtherNearby({ exits, hrefOf = null }) {
+export function OtherNearby({ exits, hrefOf = null, world = 'lowland' }) {
   const list = (exits || []).filter((e) => e && e.title);
   if (!list.length) return null;
   return (
     <ul className="ox-sim">
-      {list.map((e, i) => (
+      {list.map((e) => (
         <li key={e.key} className="ox-simcard">
           <a className="ox-sim-link" href={(hrefOf && hrefOf(e.row)) || '#'} onClick={linkOpener(e.onOpen)}>
             <span className="ox-sim-media">
               {e.photoUrl
                 ? <img src={e.photoUrl} alt="" loading="lazy" decoding="async" />
-                : <MapSpot seed={i + 3} />}
+                : <WorldTile world={world} />}
             </span>
             <span className="ox-sim-name">{e.title}</span>
           </a>

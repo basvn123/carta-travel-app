@@ -500,7 +500,7 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
 
       {(exits.length > 0 || mountain.nb) && (
         <PSection id="ox-near" title={t('ox.otherPeaks')}>
-          <OtherNearby exits={exits} hrefOf={(r) => featureHref('mountain', { id: r.id, cc: r.cc })} />
+          <OtherNearby world="rock" exits={exits} hrefOf={(r) => featureHref('mountain', { id: r.id, cc: r.cc })} />
           <NearbyOutdoors
             row={mountain}
             cc={mountain.cc}

@@ -361,7 +361,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, onOpenNeigh
 
       {(exits.length > 0 || lake.nb) && (
         <PSection id="ox-near" title={t('ox.otherLakes')}>
-          <OtherNearby exits={exits} hrefOf={(r) => featureHref('lake', { id: r.id, cc: r.cc })} />
+          <OtherNearby world="water" exits={exits} hrefOf={(r) => featureHref('lake', { id: r.id, cc: r.cc })} />
           <NearbyOutdoors
             row={lake}
             cc={lake.cc}

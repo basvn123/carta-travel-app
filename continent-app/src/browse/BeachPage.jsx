@@ -366,7 +366,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
 
       {(exits.length > 0 || beach.nb) && (
         <PSection id="ox-near" title={t('ox.otherBeaches')}>
-          <OtherNearby exits={exits} hrefOf={(r) => featureHref('beach', { id: r.id, cc: r.cc })} />
+          <OtherNearby world="water" exits={exits} hrefOf={(r) => featureHref('beach', { id: r.id, cc: r.cc })} />
           <NearbyOutdoors
             row={beach}
             cc={beach.cc}

@@ -727,7 +727,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
     },
     shapeKey && !tour && {
       key: 'shape', icon: isLoop ? <LoopIcon size={16} /> : <ArrowRightIcon size={16} />, title: shapeWord,
-      text: t(isLoop ? 'ox.shapeLoop' : rt === 'out_back' ? 'ox.shapeBack' : 'ox.shapeOneWay'),
+      text: isLoop || rt === 'out_back' ? '' : t('ox.shapeOneWay'),
     },
   ];
 
@@ -895,7 +895,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
         </div>
       )}
 
-      <PSection id="ox-route" title={t('ox.jump.route')} note={shapeWord || null}>
+      <PSection id="ox-route" title={t('ox.jump.route')}>
           <RouteBlock
             map={mapNode}
             profile={hasElev ? (
