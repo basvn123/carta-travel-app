@@ -801,7 +801,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
 
   const mapNode = (
     <MapShell getMap={getMap} relief beneath={['cycle-casing']}>
-      <div ref={mapEl} className="cycle-map" data-testid="cycle-map" role="img" aria-label={t('cycle.mapLabel')}>
+      <div ref={mapEl} className="cycle-map" data-testid="cycle-map" role="group" aria-label={t('cycle.mapLabel')}>
         {/* The line in ink while maplibre loads (T396). */}
         <MapSketch lines={sketchLines} label={title} />
       </div>
