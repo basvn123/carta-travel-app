@@ -416,8 +416,13 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
     state.y += h + 1.6;
     if (caption) {
       const credit = [ph.author, ph.licence].filter(Boolean).join(', ');
+      // The name keeps to its side of the credit, cut to one line, so two
+      // photographs side by side never print over each other.
+      font('normal', 7, C.text3);
+      const creditW = credit ? Math.min(w * 0.55, doc.getTextWidth(clean(credit))) + 3 : 0;
       font('semibold', 8.5);
-      doc.text(clean(ph.caption || ''), x, state.y, { baseline: 'top' });
+      const capLine = doc.splitTextToSize(clean(ph.caption || ''), Math.max(10, w - creditW))[0] || '';
+      doc.text(capLine, x, state.y, { baseline: 'top' });
       if (credit) {
         font('normal', 7, C.text3);
         doc.text(clean(credit), x + w, state.y + 0.4, { baseline: 'top', align: 'right', maxWidth: w * 0.55 });
