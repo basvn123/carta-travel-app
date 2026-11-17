@@ -54,5 +54,14 @@ Own judge (fresh, one): **PASS, 107 of 135, merge into p15-housestyle: yes** (`j
 - ROADMAP G1: polish lane done, judge 107/135 PASS; items in handbook-notes.md.
 - `.work/INDEX.md` line: `2026-11-17 · L2 · design · House style, polish lane (G1, G5, G10): Ask Carta rows on the house row, secondary screens as a ruled ledger with one plate, blaze on chosen choice rows and pass plans, plan home and wizard desktop layouts, one-voice slogan, tablet inputs bar 3 by 2; judge PASS 107/135 → .work/2026-11-13-hs-polish/report.md`
 
+## Round 2 (orchestrator, 2026-11-17): the four spots left in the old look
+Commit 87a4657c47. Visual only: no markup, handler or copy changed; CSS only.
+- **Trip page pass card** (`src/pass/PassMoment.css`): no white card; ruled onto the ground like the pricing page (rule above and below, hairlines between lines), plain ink ticks for Free and umber ticks for the Trip Pass instead of tinted discs. It still rises once. `shots/r2/pass-moment-{390,820,1180,1440}.png`.
+- **Together's lower panels** (`90-together.css`): Plans that meet, group trips, the budget fit lines, Friends, the hand-over and card blocks are ruled ledgers like To answer; touching blocks share one rule (also when the group page's columns stack below 1024); the shared-days chart keeps a paper ground so it reads as a chart; the trip photo cards drop their panel like Explore's rail cards. Forms and buttons (add a cost, start, share card, toggles) are unchanged. `shots/r2/together-*.png`, `together-group-*.png`.
+- **Plan home photos** (`86-plan-flow.css`): no white panel; the photographs lie on the ground and the title with "See the trips" sits on a ruled foot. Still one link. `shots/r2/plan-home-*.png`.
+- **Settings Emails switches** (`91-account.css`): `.ac-row.is-static` gave the Emails rows an empty third column plus a 12 px gap; the switch row rule now matches its specificity, so both Emails switches end where "Vibrate on tap" ends. `shots/r2/settings-1440.png`.
+
+Checks (round 2): `npm test` 25 failing names, identical to the baseline (`r2-fails.txt`); lint 0 errors (13 old warnings); design-lint 3920/3920, 0 new; token-contrast 0 under. Shots at 390, 820, 1180 and 1440 for every touched screen in `shots/r2/`, from a fixture build (`VITE_E2E_SEAMS=1`). No judge run, as asked.
+
 ## How to undo
 `git revert` the lane's commits (newest first), or do not merge `p15-hs-polish`. No data, schema or migration changes.
