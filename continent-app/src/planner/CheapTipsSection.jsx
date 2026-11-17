@@ -6,7 +6,7 @@ import { scrollBehavior } from '../lib/motion.js';
 import { monthName } from '../lib/dates.js';
 import { stripDashes } from '../lib/format.js';
 import {
-  CalendarIcon, TrainIcon, CarIcon, DiningIcon, StarIcon, InfoIcon, SparkIcon,
+  CalendarIcon, TrainIcon, CarIcon, DiningIcon, StarIcon, InfoIcon, BulbIcon,
 } from '../components/Icons.jsx';
 
 // i18n keys for the tip categories. The tip texts themselves are English data
@@ -88,14 +88,14 @@ export function CheapTipsSection({ stopDetails = [], tripStart = null, transport
     picked.byCountry.forEach((g) => g.tips.forEach((tip) => {
       const label = CATEGORY_KEY[tip.category] ? t(CATEGORY_KEY[tip.category]) : (tip.category || '');
       out.push({
-        key: tip.id, Icon: SparkIcon, tone: 'umber', meta: [label, countryNames.get(g.iso2) || g.iso2].filter(Boolean).join(', '),
+        key: tip.id, Icon: BulbIcon, tone: 'umber', meta: [label, countryNames.get(g.iso2) || g.iso2].filter(Boolean).join(', '),
         title: stripDashes(tip.title || ''), text: stripDashes(tip.tip || ''), save: tip.savings || '',
       });
     }));
     // Europe-wide tips only when nothing was researched for these countries.
     if (!out.length) {
       picked.generic.forEach((tip) => out.push({
-        key: tip.id, Icon: SparkIcon, tone: 'umber', meta: CATEGORY_KEY[tip.category] ? t(CATEGORY_KEY[tip.category]) : '',
+        key: tip.id, Icon: BulbIcon, tone: 'umber', meta: CATEGORY_KEY[tip.category] ? t(CATEGORY_KEY[tip.category]) : '',
         title: stripDashes(tip.title || ''), text: stripDashes(tip.tip || ''), save: tip.savings || '',
       }));
     }

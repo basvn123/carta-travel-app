@@ -1,5 +1,5 @@
 import React from 'react';
-import { SparkIcon, BedIcon } from '../../components/Icons.jsx';
+import { BedIcon, DotIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { Tile, TileGroup } from '../../components/ui/index.js';
 import { LifestyleChoices } from '../LifestyleChoices.jsx';
@@ -20,7 +20,7 @@ const BOOKED_BITS = [
 // commonest way into the planner, and a screen whose correct answer is to
 // touch nothing reads as a screen you have not finished. Picking it clears
 // the other two rather than adding a third flag.
-const BOOKED_NONE = { key: 'none', Icon: SparkIcon, labelKey: 'plan.bookedNone' };
+const BOOKED_NONE = { key: 'none', Icon: DotIcon, labelKey: 'plan.bookedNone' };
 
 /**
  * The first step (T490-c, owner): what is already booked, then who is going

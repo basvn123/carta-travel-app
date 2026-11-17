@@ -2,7 +2,8 @@ import React, { useEffect, useId, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Figure, Money, Plate, Segmented } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
-import NotYet from '../../components/NotYet.jsx';
+// A missing price is the kit's "Not yet" (price.notMeasured), the same word as the wagon beside it.
+import { NotYet } from '../../components/ui/StateBlock.jsx';
 import { PriceNotes } from '../../components/PriceNotes.jsx';
 import { BedIcon, CarIcon, ChevronRightIcon, DiningIcon, PencilIcon, RouteIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
@@ -190,7 +191,7 @@ export function CostCard({
     const fig = tile.missing ? <>{' '}<NotYet /></> : tile.empty
       ? <span className="ccard-none">{` ${k === 'around' && aroundNote ? aroundNote : t('tp.tile.notNeeded')}`}</span>
       : <>{' '}<Money value={tile.eur / div} est precision="whole" /></>;
-    const figText = tile.missing ? t('data.notYet') : tile.empty ? '' : money(tile.eur / div);
+    const figText = tile.missing ? t('price.notMeasured') : tile.empty ? '' : money(tile.eur / div);
     const edits = act && (k === 'stay' || k === 'food' || (k === 'travel' && onChangeFlight && carriers.length));
     return (
       <CostRow key={k} k={k} className={tile.empty ? ' is-empty' : ''} data-tile={k} data-eur={tile.eur}

@@ -3,8 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { Button } from '../components/ui/index.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import {
-  DownloadIcon, ShareIcon, LinkIcon, MapPinIcon, RouteIcon, CalendarIcon, ChevronDownIcon,
-  PencilIcon, TicketIcon, BulbIcon, SparkIcon, CheckIcon,
+  DownloadIcon, ShareIcon, LinkIcon, MapPinIcon, RouteIcon, CalendarIcon, ChevronDownIcon, PencilIcon, TicketIcon, BulbIcon, CheckIcon,
 } from '../components/Icons.jsx';
 import { fmtClockLoose } from './daySchedule.js';
 import { fmtKm } from './dayFormat.js';
@@ -92,7 +91,7 @@ export function DayKit({ tools }) {
 }
 
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
-export const KIT_ICONS = { tips: BulbIcon, notes: PencilIcon, files: TicketIcon, ideas: SparkIcon };
+export const KIT_ICONS = { tips: BulbIcon, notes: PencilIcon, files: TicketIcon, ideas: MapPinIcon };
 
 /**
  * The day in Google Maps (T487), under the summary where a traveller looks

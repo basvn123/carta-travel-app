@@ -4,9 +4,7 @@ import {
   Button, Chip, ChipGroup, IconButton, Switch, Tabs, Tile, TileGroup,
 } from '../components/ui/index.js';
 import {
-  BeachIcon, BootIcon, CameraIcon, CastleIcon, CloseIcon, CompassIcon, DiningIcon, FamilyIcon,
-  HeartIcon, LakeIcon, LeafIcon, LotusIcon, MedalIcon, MoonIcon, MountainIcon, MuseumIcon,
-  PalmIcon, SearchIcon, SkylineIcon, SparkIcon, TownIcon, TreeIcon, VillageIcon,
+  BeachIcon, BootIcon, CameraIcon, CastleIcon, CloseIcon, CompassIcon, DiningIcon, FamilyIcon, HeartIcon, LakeIcon, LeafIcon, LotusIcon, MedalIcon, MoonIcon, MountainIcon, MuseumIcon, PalmIcon, SearchIcon, SkylineIcon, TownIcon, TreeIcon, VillageIcon, LifestyleIcon,
 } from '../components/Icons.jsx';
 import { loadGuidedData } from '../lib/guidedData.js';
 import { loadSearchIndex } from '../lib/searchIndex.js';
@@ -198,7 +196,7 @@ export function GuidedSearch({
                   <ul id="gs-listbox" role="listbox" aria-label={t('gs.optionsLabel')} className="gs-options">
                     {options.map((o, i) => {
                       const Icon = o.open || o.entry?.kind === 'near' ? CompassIcon
-                        : o.entry?.kind === 'vibe' ? (VIBE_ICONS[o.entry.value] || SparkIcon) : SearchIcon;
+                        : o.entry?.kind === 'vibe' ? (VIBE_ICONS[o.entry.value] || LifestyleIcon) : SearchIcon;
                       return (
                         <li
                           key={o.key}
@@ -239,7 +237,7 @@ export function GuidedSearch({
                     <h3 className="gs-h" id="gs-h-try">{t('gs.tryOne')}</h3>
                     <div className="gs-try-list">
                       {examples.map((f) => {
-                        const Icon = VIBE_ICONS[f.vibe] || SparkIcon;
+                        const Icon = VIBE_ICONS[f.vibe] || LifestyleIcon;
                         const words = facetLabels(f, labels, null, t);
                         return (
                           <Button key={words.join('|')} variant="secondary" className="gs-try-item"
@@ -313,11 +311,11 @@ export function GuidedSlots({ t, lang, guided, countries, facets, labels, budget
   const panel = {
     what: (
       <TileGroup label={t('gs.what')} kind="choice" columns={4} className="gs-vibes">
-        <Tile kind="choice" icon={<SparkIcon size={20} />} selected={!facets.vibe} onClick={() => onApply({ vibe: null })}>
+        <Tile kind="choice" icon={<LifestyleIcon size={20} />} selected={!facets.vibe} onClick={() => onApply({ vibe: null })}>
           {t('gs.any')}
         </Tile>
         {(guided?.vibes || []).map((v) => {
-          const Icon = VIBE_ICONS[v.id] || SparkIcon;
+          const Icon = VIBE_ICONS[v.id] || LifestyleIcon;
           return (
             <Tile key={v.id} kind="choice" icon={<Icon size={20} />} selected={facets.vibe === v.id}
               onClick={() => onApply({ vibe: facets.vibe === v.id ? null : v.id })}>

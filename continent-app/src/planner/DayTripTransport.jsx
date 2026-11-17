@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { TrainIcon, BusIcon, CarIcon, SparkIcon, ExternalIcon } from '../components/Icons.jsx';
+import { TrainIcon, BusIcon, CarIcon, ExternalIcon, InfoIcon, MedalIcon } from '../components/Icons.jsx';
 import { safeUrl, eurExact } from '../lib/format.js';
 import { formatEst } from '../lib/money.js';
 import { fmtDur } from './dayFormat.js';
@@ -40,7 +40,7 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
       <div className="trip-block daytrip-transport">
         <div className="trip-block-title">{t('day.gettingTo', { city: toDest.city })}</div>
         <p className="trip-note daytrip-here">
-          <SparkIcon size={11} /> {t('day.stayLocalNote', { city: toDest.city })}
+          <InfoIcon size={11} /> {t('day.stayLocalNote', { city: toDest.city })}
         </p>
       </div>
     );
@@ -79,7 +79,7 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
         <span className="daytrip-reco-main">
           <b>
             {isRec
-              ? <><SparkIcon size={10} /> {t('day.bestBet', { mode: t(MODE_META[active].labelKey) })}</>
+              ? <><MedalIcon size={10} /> {t('day.bestBet', { mode: t(MODE_META[active].labelKey) })}</>
               : <>{t('day.yourPick', { mode: t(MODE_META[active].labelKey) })}</>}
           </b>
           <small>
@@ -122,7 +122,7 @@ export function DayTripTransport({ fromDest, toDest, opts, mode, onPickMode }) {
               >
                 <span>
                   {React.createElement(MODE_META[m].Icon, { size: 12 })} {t(MODE_META[m].labelKey)}
-                  {opts.recommended === m && <SparkIcon size={9} />}
+                  {opts.recommended === m && <MedalIcon size={9} />}
                 </span>
                 <b>{fareFor(m, o.eur_pp, false)}</b>
                 <small>{t('day.eachWay', { dur: fmtDur(o.hours * 60) })}</small>

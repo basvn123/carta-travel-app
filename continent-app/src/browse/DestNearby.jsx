@@ -4,7 +4,7 @@ import { PartnerMark } from '../components/PartnerMark.jsx';
 import { Button, Chip, ChipGroup, ReliefBand } from '../components/ui/index.js';
 import { reliefPeaks } from '../lib/relief.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
-import { ArrowRightIcon, BusIcon, CalendarIcon, CarIcon, CompassIcon, ExternalIcon, MapPinIcon, SparkIcon, TrainIcon } from '../components/Icons.jsx';
+import { ArrowRightIcon, BusIcon, CalendarIcon, CarIcon, CompassIcon, ExternalIcon, MapPinIcon, TrainIcon, TicketIcon } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { mapsSearchUrl } from '../lib/destInfo.js';
 import { cleanBlurb, safeUrl } from '../lib/format.js';
@@ -45,7 +45,7 @@ const DestMap = React.lazy(() => import('./DestMap.jsx'));
 // Cards shown before Show all from 700 px; the CSS hides the rest with
 // .spots:not(.is-all) > .spot:nth-child(n + 7), so the two change together.
 const SPOTS_FIRST = 6;
-const DO_ICON = { activity: CompassIcon, experience: SparkIcon, festival: CalendarIcon };
+const DO_ICON = { activity: CompassIcon, experience: TicketIcon, festival: CalendarIcon };
 
 /** "A day on foot": the walk's stops with the minutes between them. */
 function OnFoot({ walk, t, lang }) {

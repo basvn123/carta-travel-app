@@ -4,9 +4,7 @@ import { Button, Figure, IconButton, Plate } from '../../components/ui/index.js'
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import {
-  AlertIcon, ArrowLeftIcon, ArrowRightIcon, BeachIcon, BedIcon, BikeIcon, BootIcon, BusIcon, CalendarIcon, CarIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon,
-  CityIcon, ClockIcon, DiamondIcon, DiningIcon, FriendsIcon, HeartIcon, LakeIcon, LotusIcon, MapPinIcon, MoonIcon, MuseumIcon,
-  MusicIcon, PalmIcon, PlaneIcon, SnowIcon, SparkIcon, SunIcon, SwimIcon,
+  AlertIcon, ArrowLeftIcon, ArrowRightIcon, BeachIcon, BedIcon, BikeIcon, BootIcon, BusIcon, CalendarIcon, CarIcon, CheckIcon, ChevronDownIcon, ChevronRightIcon, CityIcon, ClockIcon, DiamondIcon, DiningIcon, FriendsIcon, HeartIcon, LakeIcon, LotusIcon, MapPinIcon, MoonIcon, MuseumIcon, MusicIcon, PalmIcon, PlaneIcon, SnowIcon, SunIcon, SwimIcon,
 } from '../../components/Icons.jsx';
 import { prefersReducedMotion } from '../../lib/motion.js';
 import { fetchDestPoiMap } from '../../lib/appData.js';
@@ -364,7 +362,7 @@ function FitAndCatch({ trip, t, lang }) {
       {bars.length > 0 && (
         <ul className="tff-fit-bars">
           {bars.map((b) => {
-            const Icon = LIKE_ICON[b.key] || SparkIcon;
+            const Icon = LIKE_ICON[b.key] || HeartIcon;
             return (
               <li key={b.key} className={`tff-fit-bar${b.pct < 20 ? ' is-miss' : ''}`}>
                 <Icon size={18} />

@@ -6,7 +6,7 @@ import { useSettings } from '../components/SettingsLine.jsx';
 import { Button, Chip, ChipGroup, Segmented } from '../components/ui/index.js';
 import { PartyEditor } from '../planner/PartyEditor.jsx';
 import {
-  CheckIcon, ChevronRightIcon, CopyIcon, FamilyIcon, FriendsIcon, HeartIcon, PersonIcon, PlusIcon, SparkIcon, TrashIcon,
+  CheckIcon, ChevronRightIcon, CopyIcon, FamilyIcon, FriendsIcon, HeartIcon, PersonIcon, PlusIcon, TrashIcon,
 } from '../components/Icons.jsx';
 import { partyText } from '../lib/party.js';
 import { formatMoney } from '../lib/money.js';
@@ -23,7 +23,7 @@ import '../styles/79-travel-styles.css';
 /** The glyph of a style, from who comes: it is how travellers name them. */
 const WHO_ICONS = { solo: PersonIcon, couple: HeartIcon, friends: FriendsIcon, family: FamilyIcon, group: FriendsIcon };
 // eslint-disable-next-line react-refresh/only-export-components -- small helper shared with the header door
-export const styleIcon = (style) => WHO_ICONS[style?.who?.kind] || SparkIcon;
+export const styleIcon = (style) => WHO_ICONS[style?.who?.kind] || PersonIcon;
 
 /** A style's name: the one the traveller typed, else its template's. */
 // eslint-disable-next-line react-refresh/only-export-components -- small helper shared with the header door
@@ -182,7 +182,7 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
       <div className="tstyle-templates">
         {TEMPLATE_IDS.map((id) => {
           const tp = TEMPLATES[id];
-          const Ico = WHO_ICONS[tp.who.kind] || SparkIcon;
+          const Ico = WHO_ICONS[tp.who.kind] || PersonIcon;
           return (
             <Button key={id} variant="quiet" className={`tstyle-tpl tone-${tp.tone}`} onClick={() => { ts.create(id); setAdding(false); setHalf('stay'); }}>
               <span className="tstyle-disc" aria-hidden="true"><Ico size={18} /></span>

@@ -3,7 +3,7 @@ import { useI18n } from '../../i18n/index.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import NotYet from '../../components/NotYet.jsx';
-import { BedIcon, BulbIcon, CalendarIcon, ChevronDownIcon, InfoIcon, MusicIcon, SparkIcon } from '../../components/Icons.jsx';
+import { BedIcon, BulbIcon, CalendarIcon, ChevronDownIcon, InfoIcon, MusicIcon, LifestyleIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
 import { formatEst } from '../../lib/money.js';
 import { formatRange } from '../../lib/format.js';
@@ -12,7 +12,7 @@ import { loadDossier } from '../../lib/dossier.js';
 import { townGuide, townPhotos } from './townGuide.js';
 import { tipText } from '../../browse/destParts.js';
 
-const ICON = { vibe: SparkIcon, sleep: BedIcon, when: CalendarIcon, getting: PlaneIcon, know: BulbIcon, on: MusicIcon, tip: InfoIcon };
+const ICON = { vibe: LifestyleIcon, sleep: BedIcon, when: CalendarIcon, getting: PlaneIcon, know: BulbIcon, on: MusicIcon, tip: InfoIcon };
 
 /**
  * The town's own page head on a day (T673), after the Polarsteps place page

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  PlusIcon, CompassIcon, LinkIcon, SparkIcon, FriendsIcon,
+  PlusIcon, CompassIcon, LinkIcon, FriendsIcon, BoltIcon,
 } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { BADGES, fetchAchievements } from './achievements.js';
@@ -31,7 +31,7 @@ const ICONS = {
   well_connected: FriendsIcon,
   copilot: CompassIcon,
   local_guide: LinkIcon,
-  catalyst: SparkIcon,
+  catalyst: BoltIcon,
 };
 
 // The ring is drawn in a 48-unit box around a 46px medal; the -4px inset in

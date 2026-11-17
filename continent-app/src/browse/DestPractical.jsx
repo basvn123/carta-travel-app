@@ -14,7 +14,7 @@ import { useStayRecord } from '../lib/staysData.js';
 import { baseCity } from '../lib/nearby.js';
 import { stayBookLinks } from '../lib/transportLinks.js';
 import { stayKindsOf } from '../lib/whenGuide.js';
-import { AccessIcon, BunkIcon, HomeIcon, HotelIcon } from '../components/Icons.jsx';
+import { AccessIcon, BunkIcon, HomeIcon, HotelIcon, LifestyleIcon } from '../components/Icons.jsx';
 import { practicalSlotRows } from './DestPracticalSlots.jsx';
 import { BeforeYouGo } from './DestBefore.jsx';
 import { parkingTruth } from '../lib/parkingTruth.js';
@@ -23,7 +23,7 @@ import { accessCard } from '../lib/accessFacts.js';
 import { PSection, WayFig } from './PageTemplate.jsx';
 import '../styles/94-when-stay.css';
 import {
-  SunIcon, RainIcon, SnowIcon, ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon, BackpackIcon, SparkIcon, BusIcon, TrainIcon, CarIcon, ExternalIcon, ClockIcon, TicketIcon,
+  SunIcon, RainIcon, SnowIcon, ShoeIcon, SwimIcon, BootIcon, PlugIcon, BottleIcon, JacketIcon, BackpackIcon, BusIcon, TrainIcon, CarIcon, ExternalIcon, ClockIcon, TicketIcon,
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
@@ -310,7 +310,7 @@ export function DestPractical({ p }) {
         {showMatch(matchFit) && (
           <Fold level={3}
             id="sec-match"
-            icon={SparkIcon}
+            icon={LifestyleIcon}
             title={t('fit.title')}
             summary={t('fit.pct', { pct: matchFit.pct })}
             open={isOpen('match')}

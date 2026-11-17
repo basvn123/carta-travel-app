@@ -123,8 +123,8 @@
 @media (pointer: coarse) {
   .trip-wizard-modal .cal-inline .cal-day { min-height: var(--tap); }
 }
-/* Progress is data, not an action: the bar is ink (brief row 31). */
-.trip-wizard-modal .wiz-mini-bar > span { background: var(--ink-fill); }
+/* The step bar fills in the paint, as the kit StepMini and the tab paint bar do (DESIGN.md; trip FR 2). */
+.trip-wizard-modal .wiz-mini-bar > span { background: var(--action); }
 
 /* ── V4 (T398): visual and dynamic ──────────────────────────────────────── */
 

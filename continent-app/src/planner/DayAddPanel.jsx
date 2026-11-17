@@ -5,8 +5,7 @@ import { useTaste } from '../browse/WhyItMatches.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { safeUrl } from '../lib/format.js';
 import {
-  SearchIcon, PlusIcon, CheckIcon, StarIcon, SparkIcon, RouteIcon,
-  MapPinIcon, MountainIcon, InfoIcon, CloseIcon,
+  SearchIcon, PlusIcon, CheckIcon, StarIcon, RouteIcon, MapPinIcon, MountainIcon, InfoIcon, CloseIcon, ClockIcon,
 } from '../components/Icons.jsx';
 import { Chip } from '../components/ui/index.js';
 
@@ -235,7 +234,7 @@ export function DayAddPanel({
 
               {suggShown && (
                 <div className="daya-sugg">
-                  <div className="daya-sugg-title"><SparkIcon size={11} /> {t('dayws.suggTitle')}</div>
+                  <div className="daya-sugg-title"><ClockIcon size={11} /> {t('dayws.suggTitle')}</div>
                   {suggestions.map(({ item, idx, note }) => (
                     <button key={`s${idx}`} className="daya-sugg-row" onClick={() => onToggle(idx)}>
                       <span className="daya-sugg-text">
