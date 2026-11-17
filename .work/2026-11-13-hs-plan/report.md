@@ -57,3 +57,21 @@ Full table: `checks.md`. On HEAD: `npm test` 25 failures, all in the sparse base
 
 ## How to undo
 `git revert` the lane's 11 commits (a3816e914b to the last "keep the collection card's See the trips pill") in reverse order (or revert the merge of `p15-hs-plan`). No data migration, no schema change, nothing one-way.
+
+## Polish round 1 (from the orchestrator's judges, 2026-11-17)
+
+Input: `plan-fixes-r1.md`, `judgement-orch-plan-1.md` (100 of 135) and `judgement-orch-plan-2.md` (97 of 135), both "Merge: yes" with every function intact, soft criteria under the bar. First `git merge p15-housestyle` (clean, no conflicts), then the fixes. Commits: 9f322b2e57, 4c9b5ba008 (plus the merge cff7b77a07).
+
+| Fix asked | Done |
+|---|---|
+| Unit said once | Cards print "From €124" (new key `pf.fromEur`, six languages); "A day, a person" (`tp.bud.kindDay`) heads the wizard country grid, the match cards, the trip-style lists and Ready-made trips (`.pl-unit-head`). Library trip: the post shows the trip total, the facts the day figure, so "€263.85 a day, two people" appears once. Up next drops "7 nights" when the name says it. The found trip's photo caption no longer repeats the title. The wizard's plain step name steps back where the stepper names it |
+| Totals on the signpost plate | Found trip total and library trip total on `Plate variant="total"` (the library's is the receipt's own sum, the same figure as the cost fold's total line); the library post starts level with the head from 769 px (the wrap is one grid) |
+| Card grids with the formation | Finder card: the house `Formation` (stay and food wagons, then the trip total; getting there outlined only when the total leaves the flight out). Ready-made cards: flag with the country. `RailCard` itself still lacks the slots these cards need (foundation request 2) |
+| No polaroid fan | The plan home collection is a flat row of rounded photo tiles; the Ready-made door's three photos lie flat |
+| Motion | The question settles in on a step change (`useStepIn`, settle curve, no overshoot); the chosen row's mark ticks in; the finder heart pops on the tap (`.hs-pop`); the found trip total rolls once after the traveller's own line swap (`Figure`). Reduced motion shows the end state |
+| Disabled Continue | Reads unavailable in the flow and wizard feet (screen scope); cause and exact kit fix in foundation request 1 (`.btn-primary` overrides `.btn:disabled`) |
+| Other exact fixes | When segments read word over value (no "Start Set a date"); compact library fact tiles and a tighter head gap; the calendar's day cells a hand high in the wide pane; Up next shows its trip art whole; the plan home tab takes the umber paint bar; "All" in Ready-made uses the route mark (the sparkle drew as an "AI" box) |
+
+Not done, with reason: no ground graphic on the empty plan home (the relief needs a place's real peaks, and the blaze means chosen or here only); the journey page's dot separator ("Active ● Best in May") is in `JourneyPage`, outside this lane's changes.
+
+Checks on HEAD 4c9b5ba008: `npm test` 25 failures, all in the sparse baseline, none new (2122 tests after the merge); lint 0 errors; design-lint 0 new (4,241 in the baseline); token-contrast 0; css-routes clean; `verify_trip_page` 60/60; `verify_plan_short`, `verify_core_flow` pass; `verify_when_step` 13/13; `verify_carta_route` 20/20; `verify_journeys` all pass except the wire pass (needs the full `public/`); axe 0 serious or critical and no overflow on 8 screens at 360, 390, 600, 768, 820, 1024, 1180, 1280, 1440, 1920 (80 of 80, `verify/sweep-p1.txt`). Shots re-taken at 390, 820, 1180, 1440 (`shots/`).
