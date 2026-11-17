@@ -360,7 +360,7 @@
   white-space: nowrap;
 }
 .credit-chip svg { color: var(--text-2); }
-.credit-chip.is-out { color: var(--text); background: var(--amber-bg); }
+.credit-chip.is-out { color: var(--select-ink); background: var(--select-bg); }
 
 /* ── Carta's questions ────────────────────────────────────────────────── */
 .daychat-dots > span { width: 16px; height: 4px; border-radius: var(--radius-sm); background: var(--border); }
@@ -433,6 +433,19 @@
 .day-ws .dayws-mode { flex: none; }
 /* The start's pin is 18 px; its tap box is the 44 px floor, not 36. */
 .trip-pin-stay::before { inset: -13px; }
+/* House style (G1, integration T7, DESIGN.md "Map"): the stay is the house
+   pin, an ink head on a post, its tip on the address (TripMap draws the
+   pushpin glyph; the marker is anchored bottom). */
+.trip-pin-stay { width: 18px; height: 26px; }
+.trip-pin-stay .trip-pin-shape {
+  transform: translate(var(--pin-dx, 0px), var(--pin-dy, 0px));
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.trip-pin-stay .trip-pin-head, .trip-pin-stay .trip-pin-needle { fill: var(--plate); }
+.trip-pin-stay .trip-pin-dot { fill: var(--surface); opacity: 1; }
 
 /* The day, hour by hour. */
 .dayp-summary svg { flex: none; margin-top: 3px; }

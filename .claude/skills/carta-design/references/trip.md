@@ -8,9 +8,9 @@ Covers the planned trip page, the day planner and workspace, stays, and flights 
 
 The trip and the day are drawn as a walk: one path, the stops on it as signposts, the legs as the line you travel.
 
-**Trip page head.** The name (`--text-headline`, 800), the where button (flag, country, places) and two status chips (countdown, "n of m booked" with a ring that fills with the paint) stand on the page; the first stop's photo sits beside them from 769 px (3:2, `--radius-card`, 18 to 22 rem wide) and above them on a phone (5:2). Never text on the photo.
+**Trip page head.** The name (`--text-headline`, 800), the where button (flag, country, places) and two status chips (countdown, "n of m booked" with a ring that fills with the paint) stand on the page; the first stop's photo sits beside them from 769 px (`--radius-card`, 16 to 19 rem wide, as tall as the text block and at least 7.5 rem, so no band opens above the journey line) and above them on a phone (5:2), where the where line tucks up under the name. Never text on the photo.
 
-**Journey line** (`trip/JourneyLine.jsx`, `.tpg-line`), under the head on every tab: home ends as 12 px ink discs, legs as a 40 px (24 under 420) ink line with the mode's icon in a 20 px paper disc, dashed for a flight, stops as umber pills (28 px high) whose flex-grow is their nights; a pill shows its number and, where its container is 88 px or wider, its name; "N nights" at the end. Static: no buttons, no scroll, no motion (it always fits its width).
+**Journey line** (`trip/JourneyLine.jsx`, `.tpg-line`), under the head on every tab: home ends as 12 px ink discs, legs as a 40 px (24 under 420) ink line with the mode's icon in a 20 px paper disc, dashed for a flight, stops as umber pills (28 px high) whose flex-grow is their nights; a pill shows its number and, where its container is 88 px or wider, its name (visually hidden below 88 px, so a screen reader always hears the city); "N nights" at the end. Static: no buttons, no scroll, no motion (it always fits its width).
 
 **Trip bar.** One paper bar on the `--elev-1` hairline, `--radius-panel`; cells label (12, 600, `--text-2`) over value (14, 700) over the sub line; the pencil in `--text-3` stays as the edit cue.
 
@@ -26,7 +26,7 @@ The trip and the day are drawn as a walk: one path, the stops on it as signposts
 
 **Itinerary and Costs tabs.** The Itinerary's stops and legs hang on one path column (the umber route, a solid ink line through a hop, ink ends, a dashed node for Add a stop); each stop is a paper panel on the hairline with its number on the umber disc. The Costs receipt is a paper panel; a group with no figure says "Not yet", never 0.00.
 
-**Motion.** Tabs paint; Segmented ticks; a total the traveller just changed (the hire car, Apply in Change your trip) rolls with its delta note within 1.5 s of the act, any other change swaps in place (`Figure mine`/`still`); a wagon that arrives with the hire car couples in. The day's one signature: after Best order the rows glide to their new places on `--dur-settle`/`--ease-settle`. Nothing animates at first paint (the day list's entrance is off). Haptics only through the kit.
+**Motion.** Tabs paint; Segmented ticks; a total the traveller just changed (the hire car, Apply in Change your trip) rolls with its delta note within 1 s of the act, any other change swaps in place (`Figure mine`/`still`); a wagon that arrives with the hire car couples in. The day's one signature: after Best order the rows glide to their new places on `--dur-settle`/`--ease-settle`. Nothing animates at first paint (the day list's entrance is off). Haptics only through the kit.
 
 Numbers and money (flights, one day-cost basis, a saved trip keeps its stay and Lifestyle, T703-a), tracks (the day track), the bottom slot and undo, the hand-over copy ("Open Day 2 in Google Maps"), copy and the quality floor: see shared-product-rules.md. The receipt and the cost bar with its four cost groups (T845): see place.md. The 3D terrain map on a trip day: see outdoors.md. Trips for you and the ready-made trip page: see plan.md.
 
@@ -57,3 +57,7 @@ On a multi-day map stops are numbered by day, the selected day's line is marked 
 ## A day plan's figure
 
 A day plan carries one per person figure for the day from the same cost index; a tap opens the compact receipt.
+
+**Sheets** (share, flight, Who is going: `SheetShell`). Paper sheet; a list of choices is one paper panel with hairline rows (Who is going's people, the flight sheet's flights), never a stack of boxed cards; the chosen row keeps the select tint. Still to book shows two whole cards from 600 px, never one cut through its Book button.
+
+**Day map.** The stay is the house pin (an ink head on a post, its tip on the address) and takes its place in the label collision, so the town's name steps aside instead of hiding under it. A boat leg is the route's umber, dashed; no blue line.

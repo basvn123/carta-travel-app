@@ -113,6 +113,26 @@ const PUSHPIN_SVG = '<svg class="trip-pin-push" viewBox="0 0 24 30" aria-hidden=
   + '<circle class="trip-pin-dot" cx="12" cy="9.6" r="3.1"/></svg>';
 
 /**
+ * Town and village labels of the basemap that sit centred on their point may
+ * move to a side when something placed before them (the stay pin's collision
+ * icon) holds the centre. Only centred text labels without an icon change, so
+ * labels the style already offsets keep their place. Never throws.
+ */
+function letPlaceLabelsStepAside(map) {
+  const layers = map?.getStyle?.()?.layers || [];
+  for (const layer of layers) {
+    if (layer.type !== 'symbol' || !/^place/.test(layer.id || '')) continue;
+    const lay = layer.layout || {};
+    if (!lay['text-field'] || lay['icon-image'] || lay['text-variable-anchor']) continue;
+    if (lay['text-anchor'] && lay['text-anchor'] !== 'center') continue;
+    try {
+      map.setLayoutProperty(layer.id, 'text-variable-anchor', ['center', 'top', 'bottom', 'left', 'right']);
+      map.setLayoutProperty(layer.id, 'text-radial-offset', 0.9);
+    } catch { /* a style without the property */ }
+  }
+}
+
+/**
  * A chevron for the route line, drawn pixel by pixel into an RGBA buffer.
  * A line alone says which places are joined; it doesn't say which way the day
  * runs. Repeating this glyph along the line answers that at a glance.
@@ -391,8 +411,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         },
         paint: { 'icon-opacity': 0.95 },
       });
-      // Ferry legs of a route get their own over-water styling (dashed blue) so
-      // a lake or sea crossing never reads as a walk in a straight line.
+      // Ferry legs of a route get their own over-water styling so a lake or
+      // sea crossing never reads as a walk in a straight line. House style
+      // (G1, integration T7): a boat leg is the route's umber, dashed; no blue
+      // line on the map.
       map.addSource('trip-ferry', {
         type: 'geojson',
         data: { type: 'FeatureCollection', features: [] },
@@ -403,7 +425,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         source: 'trip-ferry',
         layout: { 'line-cap': 'round', 'line-join': 'round' },
         paint: {
-          'line-color': tokenColour('--water-link'),
+          'line-color': tokenColour('--map-route'),
           'line-width': 3,
           'line-dasharray': [1, 1.4],
           'line-opacity': 0.9,
@@ -432,6 +454,19 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       // layout is driven by --panel-w / --filter-h). MapLibre sizes its canvas
       // once at construction, so without this it can bake in a 0x0 canvas and
       // render blank forever. Resize now, and keep observing for later changes.
+      // House style (G1, integration T7, DESIGN.md "Map": labels never cover
+      // a post): the stay pin is an HTML marker, which the basemap's labels
+      // cannot see. An empty icon of the pin's size at the stay, on top of
+      // every layer, takes its place in the label collision, and the town
+      // labels may step aside (variable anchor) instead of sitting under it.
+      map.addSource('trip-stay-clear', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+      if (!map.hasImage('stay-clear')) map.addImage('stay-clear', { width: 20, height: 30, data: new Uint8Array(20 * 30 * 4) });
+      map.addLayer({
+        id: 'trip-stay-clear',
+        type: 'symbol',
+        source: 'trip-stay-clear',
+        layout: { 'icon-image': 'stay-clear', 'icon-anchor': 'bottom', 'icon-allow-overlap': true, 'icon-ignore-placement': false },
+      });
       map.resize();
       readyRef.current = true;
       mapRef.current._drawTrip?.();
@@ -592,6 +627,14 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         }
       }
 
+      // The stay's place in the label collision (see 'trip-stay-clear').
+      const stays = pts.filter((p) => p.stay);
+      map.getSource('trip-stay-clear')?.setData({
+        type: 'FeatureCollection',
+        features: stays.map((p) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [p.lon, p.lat] } })),
+      });
+      if (stays.length) letPlaceLabelsStepAside(map);
+
       // Numbered pins, reconcile by teardown+rebuild (there are only a handful).
       markersRef.current.forEach((m) => m.marker.remove());
       // A `stay` point (the traveller's own address) gets its own quiet pin
@@ -643,6 +686,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
             label.textContent = p.city || '';
             el.append(photo, label);
           }
+        } else if (p.stay) {
+          // House style (G1, integration T7): the stay is the house pin, an
+          // ink head on a post whose tip is the address.
+          shape.innerHTML = PUSHPIN_SVG;
         } else {
           const num = document.createElement('span');
           num.className = 'trip-pin-no';

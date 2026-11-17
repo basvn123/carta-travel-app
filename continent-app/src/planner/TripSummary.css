@@ -49,13 +49,23 @@
    Without a photo the same block stands alone. */
 .tpg-head { display: grid; gap: var(--space-3); min-width: 0; }
 .tpg-head.has-photo { grid-template-areas: "photo" "ov"; }
+/* Integration (T4): on a phone the rename button and the where line keep
+   their 44 px tap height but stop spacing the head out: the button overhangs
+   the name's line and the where line tucks up under the name. */
+@media (max-width: 768px) {
+  .tpg-name-row .tpg-rename { margin-block: calc(-1 * var(--space-2)); }
+  .tpg-ov > .tpg-where.btn { margin-top: calc(-1 * var(--space-2)); }
+}
 .tpg-ov { grid-area: ov; display: flex; flex-wrap: wrap; align-items: center; align-content: center; gap: var(--space-1) var(--space-3); min-width: 0; }
 .tpg-ov > .tpg-name-row, .tpg-ov > .tpg-name-input { flex: 1 0 100%; }
 .tpg-photo { grid-area: photo; position: relative; overflow: hidden; aspect-ratio: 5 / 2; border-radius: var(--radius-card); background: var(--surface-sunken); }
 .tpg-photo-img, .tpg-photo > .hero-blank { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; }
 @media (min-width: 769px) {
-  .tpg-head.has-photo { grid-template-columns: minmax(0, 1fr) minmax(0, 16rem); grid-template-areas: "ov photo"; align-items: center; gap: var(--space-6); }
-  .tpg-photo { aspect-ratio: 3 / 2; }
+  /* Integration (T1): the photo takes the text block's height (at least
+     7.5rem) instead of a 3:2 box, so no empty band opens between the name
+     and the journey line at 820 to 1440. */
+  .tpg-head.has-photo { grid-template-columns: minmax(0, 1fr) minmax(0, 16rem); grid-template-areas: "ov photo"; align-items: stretch; gap: var(--space-6); }
+  .tpg-photo { aspect-ratio: auto; min-height: 7.5rem; }
 }
 @media (min-width: 1280px) { .tpg-head.has-photo { grid-template-columns: minmax(0, 1fr) minmax(0, 19rem); } }
 .tpg-pills { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; }
@@ -142,10 +152,10 @@
   white-space: nowrap;
 }
 .tpg-line-no { font-variant-numeric: tabular-nums; }
-.tpg-line-name { display: none; overflow: hidden; text-overflow: ellipsis; }
+.tpg-line-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @container (min-width: 88px) {
   .tpg-line-pill { justify-content: flex-start; padding: 0 var(--space-3); }
-  .tpg-line-name { display: block; }
+  .tpg-line-name { position: static; display: block; width: auto; height: auto; clip-path: none; text-overflow: ellipsis; }
 }
 .tpg-line-sum { flex: none; margin: 0; font-size: var(--text-label); font-weight: 700; color: var(--text-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
 @media (max-width: 419px) { .tpg-line-leg { flex-basis: var(--space-5); } .tpg-line-mode { width: 16px; height: 16px; } .tpg-line-mode svg { width: 10px; height: 10px; } }
@@ -369,6 +379,11 @@ body:has(.tpg-dock) .bottom-nav { border-top-color: transparent; box-shadow: non
 .tpg-rename { flex: none; }
 .tpe { display: flex; flex-direction: column; gap: var(--space-4); }
 .tpe .pf-from { max-height: min(52vh, 420px); overflow: auto; }
+/* Integration (T6): Who is going is one paper panel with hairline rows (the
+   house panel grammar), not three boxed cards. */
+.tpe-sheet .party { gap: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
+.tpe-sheet .party > .party-row { border: 0; border-radius: 0; background: none; }
+.tpe-sheet .party > .party-row + .party-row { border-top: 1px solid var(--border-soft); }
 .tpb { display: flex; flex-direction: column; gap: var(--space-2); }
 .tpb-q { margin: 0; font-size: var(--text-body); color: var(--text-2); line-height: var(--leading-body); }
 
@@ -449,6 +464,11 @@ body:has(.tpg-dock) .bottom-nav { border-top-color: transparent; box-shadow: non
 .tpf-hours { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
 .tpf-way { margin: 0; font-size: var(--text-lead); color: var(--text); }
 .tpf-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+/* Integration (T6): the day's flights are one paper panel with hairline
+   rows, like Who is going; the chosen row keeps the select tint. */
+.tpf-list { gap: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
+.tpf-list > li + li { border-top: 1px solid var(--border-soft); }
+.tpf-list .tpf-row { border: 0; border-radius: 0; }
 .tpf-row {
   display: flex;
   align-items: center;
@@ -737,7 +757,9 @@ span.tbp-seg { cursor: default; }
 }
 .tbp-track::-webkit-scrollbar { display: none; }
 .tbp-track:has(> :only-child) { grid-auto-columns: 100%; }
-@media (min-width: 600px) { .tbp-track { grid-auto-columns: minmax(17rem, calc(50% - var(--space-2))); } }
+/* Integration (T2): from 600 px two whole cards fill the track, so no card
+   is cut through its Book button; the pager scrolls by card. */
+@media (min-width: 600px) { .tbp-track { grid-auto-columns: calc((100% - var(--space-3)) / 2); } }
 .tbp-card { display: flex; min-width: 0; scroll-snap-align: start; }
 .tbp-pass {
   position: relative;

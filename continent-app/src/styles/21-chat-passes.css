@@ -192,8 +192,8 @@
 
 /* Headings and labels carry real contrast here. --ink-soft is 8.1:1 on paper
    against --ink-mute's 3.4:1, and the extra half point of size costs nothing. */
-.account-panel .section-title { color: var(--ink-soft); font-size: 10px; }
-.account-panel .auth-label { color: var(--ink-soft); font-size: 10px; letter-spacing: 0.14em; }
+.account-panel .section-title { color: var(--text-2); font-size: var(--text-caption); }
+.account-panel .auth-label { color: var(--text-2); font-size: var(--text-caption); }
 
 /* A 44px target, anchored to the sticky header (see AccountPanel.jsx) so it
    is still there when you are at the bottom of the panel, and header padding
@@ -251,7 +251,7 @@
   border-radius: 50%;
   color: var(--paper);
 }
-.auth-mark.is-ok { background: var(--green); }
+.auth-mark.is-ok { background: var(--action); }
 .auth-mark.is-bad { background: var(--danger); }
 /* Colour is never the only carrier: the tick and the cross differ in shape,
    and each one names itself for a screen reader. */
@@ -315,7 +315,7 @@
   cursor: pointer;
   transition: border-color var(--dur-1), background var(--dur-1);
 }
-.account-avatar-opt.on { border-color: var(--accent); background: var(--accent-bg); }
+.account-avatar-opt.on { border-color: var(--select-border); background: var(--select-bg); }
 
 .auth-hint {
   font-size: var(--text-caption);
@@ -354,8 +354,8 @@
   transition: background var(--dur-1);
 }
 .pw-strength.weak .pw-strength-seg.on { background: var(--danger); }
-.pw-strength.fair .pw-strength-seg.on { background: var(--rate); }
-.pw-strength.strong .pw-strength-seg.on { background: var(--green); }
+.pw-strength.fair .pw-strength-seg.on { background: var(--umber-300); }
+.pw-strength.strong .pw-strength-seg.on { background: var(--action); }
 .pw-strength-label {
   flex: none;
   font-size: var(--text-caption);
@@ -380,7 +380,8 @@
   font-size: 12.5px;
   color: var(--ink-soft);
 }
-.pw-req.met { color: var(--green); }
+.pw-req.met { color: var(--text); }
+.pw-req.met svg { color: var(--action); }
 .pw-req svg { flex: none; }
 .pw-req-dot {
   flex: none;
@@ -444,12 +445,12 @@
   gap: 9px;
   margin-bottom: 14px;
   padding: 11px 8px 11px 12px;
-  border: 1px solid color-mix(in srgb, var(--green) 34%, var(--paper));
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--green) 7%, var(--paper));
-  font-size: 12.5px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--select-bg);
+  font-size: var(--text-body);
   line-height: 1.5;
-  color: var(--green);
+  color: var(--select-ink);
 }
 .auth-banner svg { flex: none; margin-top: 1px; }
 .auth-banner-text { flex: 1; min-width: 0; }
@@ -464,7 +465,7 @@
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--green);
+  color: var(--select-ink);
   cursor: pointer;
   transition: background var(--dur-1);
 }
