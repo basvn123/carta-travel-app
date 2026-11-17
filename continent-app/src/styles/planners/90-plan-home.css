@@ -248,3 +248,7 @@
   .pfh a.pfh-next.is-blank { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); }
   .pfh a.pfh-next.is-blank .pfh-next-media { aspect-ratio: 1 / 1; min-height: 0; align-self: center; }
 }
+
+/* Polish round 1: the door's three photos lie flat and overlap (no tilted
+   polaroid deck), in the house photo treatment. */
+.pfh a.pfh-door .pfh-door-photo { border-width: var(--stroke-edge); border-radius: var(--radius-control); transform: none; animation: none; }

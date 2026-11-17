@@ -19,6 +19,12 @@ Numbers and money, flights and the typical fare (T882-b, never counted in "Fits"
 - **Ready-made trip cards** (`.ctc`) carry the name, countries and "In season" under the photo; difficulty is a neutral tag whose word carries the meaning.
 - **No sparkle**: the wizard's design and templates doors use the route mark.
 
+- **Totals on the signpost plate.** The found trip's total and the library trip's total (the receipt's own sum) sit on `Plate variant="total"`, as the trip page's total does; the library post shows the total, the facts show the day figure, so each figure is said once. A total moves only after the traveller's own change (`Figure`, `mine` only then).
+- **Card prices.** A finder card's price is the house `Formation`: the stay and food wagons, then the trip total; getting there is the outlined pill only when the total leaves the flight out. Ready-made, trip-style and country cards print "From €124" (`pf.fromEur`), and the list says the unit once in its head ("A day, a person", class `pl-unit-head`).
+- **Photos in a collection** are a flat row of rounded tiles (16 px corners, no tilt, no white frame, no shadow); never a fanned or polaroid stack.
+- **Motion.** A step change settles the question in (`useStepIn`, `pl-step-in`, settle curve, no overshoot); the chosen row's mark ticks in on the tick spring; the step blaze paints only after the traveller's own step (`usePaintOnStep`); a save pops (`.hs-pop`) at the tap. Reduced motion shows the end state.
+- **A Continue that is not ready** reads unavailable (band fill, `--text-3`), never as an umber button.
+
 ## Where Plan starts (T496)
 
 Plan holds trip and day in one place; with nothing in progress it is a "Plan something new" page with two tiles, Trip and One day. Ask Carta has no door on Plan (T595: its one door is on Explore's overview).

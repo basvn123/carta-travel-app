@@ -3361,7 +3361,7 @@ color: var(--ink-soft);
 }
 .pfh-mine { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
 .btn.pfh-tab { flex: none; height: auto; min-height: var(--tap); padding: 0 var(--space-3); border-bottom: 2px solid transparent; border-radius: 0; color: var(--text-2); }
-.btn.pfh-tab.is-on { border-bottom-color: var(--text); color: var(--text); }
+.btn.pfh-tab.is-on { border-bottom-color: var(--action); color: var(--text); }
 .pfh-tab .btn-label { display: inline-flex; align-items: center; gap: var(--space-2); }
 .pfh-rows { display: flex; flex-direction: column; margin: 0; padding: 0; overflow: hidden; border: 1px solid var(--border-soft); border-radius: var(--radius-card); background: var(--surface); list-style: none; }
 .pfh-row:first-child { border-top: 0; }
