@@ -1,6 +1,6 @@
 import React from 'react';
 import { SheetShell } from './SheetShell.jsx';
-import { PlaceOverview } from './PlaceOverview.jsx';
+import { PlaceRow } from './explore/PlaceRow.jsx';
 import { GuidedSlots } from './GuidedSearch.jsx';
 import { useAsk, EXAMPLE_KEYS } from './useAsk.js';
 import { Button, Field, IconButton, Segmented } from '../components/ui/index.js';
@@ -353,7 +353,7 @@ export function AskAnswer({ t, answer, facts, intent, written, answerRef, onOpen
             if (!pick) return null;
             return (
               <li key={p.id} className="ask-pick">
-                <PlaceOverview p={pick.dest} t={t} reason={p.why.join(', ')} onOpen={() => onOpen(p.id)}
+                <PlaceRow p={pick.dest} t={t} reason={p.why.join(', ')} onOpen={() => onOpen(p.id)}
                   fav={!!favorites?.has?.(p.id)} onToggleFav={onToggleFav} />
                 {p.nights != null && <p className="ask-pick-meta">{t(p.nights === 1 ? 'ask.night' : 'ask.nights', { n: p.nights })}</p>}
                 {p.price && <Receipt t={t} price={p.price} />}

@@ -214,8 +214,19 @@
 }
 .ac-place { border-top: 1px solid var(--border-soft); }
 .ac .ac-places .xrow { border-bottom: 0; }
-.ac .ac-places .xrow-hit { gap: var(--space-3); padding: var(--space-2) 0; }
-.ac .ac-places .xrow-media { width: 56px; height: 56px; border-radius: var(--radius-control); }
+/* Ask's rows are the house list row (PlaceRow, G1). The sheet is a narrow
+   column at every width and no xlist container, so it takes the phone
+   list's lines itself: the name and the day figure, then the region and
+   country on their own line, then the parts. */
+.ac .ac-places .xrow-hs .xrow-hit {
+  grid-template-areas:
+    "media l1 l1 day"
+    "media l2 l2 l2"
+    "media parts parts parts"
+    "media fit fit fit";
+  padding-block: var(--space-2);
+}
+.ac .ac-places .xrow-hs .xform-parts { --wh: 20px; justify-content: flex-start; margin-top: 2px; }
 .ac .ac-places .xrow-name { font-size: var(--text-body); }
 .btn.ac-more-places { align-self: flex-start; margin: calc(-1 * var(--space-1)) 0 calc(-1 * var(--space-1)) calc(-1 * var(--space-3)); }
 @media (hover: hover) {

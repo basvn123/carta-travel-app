@@ -15,7 +15,7 @@ import { prefersReducedMotion } from '../../lib/motion.js';
 import { googleFlightsLink } from '../../lib/flights/flights.js';
 import { AskAnswer, askReport } from '../AskSearchFull.jsx';
 import { AiMark, AiReport } from '../../components/AiMark.jsx';
-import { PlaceOverview } from '../PlaceOverview.jsx';
+import { PlaceRow } from '../explore/PlaceRow.jsx';
 import { AskTripCard } from './AskTripCard.jsx';
 import { CornerArrow } from './marks.jsx';
 
@@ -304,7 +304,7 @@ function ListReply({ t, lang, ctx, turn, s, latest, animate }) {
           <ol className="ask-picks explore-shell ac-places" aria-label={t('askChat.placesLabel')}>
             {picks.slice(0, shown).map((p) => (
               <li key={p.id} className="ac-place">
-                <PlaceOverview p={p.dest} t={t}
+                <PlaceRow p={p.dest} t={t}
                   reason={totals.has(p.id) ? t('askChat.groupTotal', { total: totals.get(p.id) }) : null}
                   onOpen={() => pickPlace({ id: p.id, city: p.dest.city })}
                   hitProps={{ 'aria-label': t('askChat.pickAria', { place: p.dest.city }) }}
