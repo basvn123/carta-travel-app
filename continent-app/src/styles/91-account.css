@@ -538,17 +538,34 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 }
 
 
-/* ── Account as a ledger (account lane, judge round 2) ──────────────────
-   Account's panels are pages of the traveller's own ledger: control-radius
-   corners and one hairline edge, no shadow, so they read as written records
-   rather than floating cards; the identity face is the person drawn as
-   Together draws them (paper with an ink outline: umber means "chosen",
-   never a person). The plan keeps the umber mark plate (the traveller chose
-   it). */
-.ac-list, .ac-me, .ac-signin, .ac-plancard, .ac-pc, .ac-know {
-  border-radius: var(--radius-control);
-  box-shadow: none;
-  border: 1px solid var(--border);
-}
-.ac-pc.is-mine { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
+/* The identity face is the person as Together draws them: paper with an
+   ink outline (umber means "chosen", never a person). */
 .ac-face { background: var(--surface); color: var(--text); outline: var(--stroke-edge) solid var(--text); outline-offset: calc(-1 * var(--stroke-edge)); }
+
+/* ── One panel grammar (account lane, design pass 1) ─────────────────────
+   Every panel in this area is the house panel, as the place and trip pages
+   draw it: paper, a 1 px soft hairline, the card radius, no shadow. Only
+   what floats (sheets, menus, toasts) casts a shadow; plates stay plates. */
+.ac-list,
+.ac-me,
+.ac-signin,
+.ac-proof,
+.ac-plancard,
+.ac-pc,
+.ac-know { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); box-shadow: none; }
+.ac-pc.is-mine { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
+
+/* ── Account's head and sections (design pass 1) ─────────────────────────
+   The overview opens on the traveller, not on settings: the name at the
+   headline size, the plan on its umber mark plate, the counts as figures.
+   Groups take the house section head (title size, 800, ink), as the place
+   and trip pages head theirs. The current pane carries the blaze ("here"). */
+.ac-me { padding: var(--space-5); gap: var(--space-4) var(--space-5); }
+@media (min-width: 600px) { .ac-me-tx b { font-size: var(--text-headline); letter-spacing: -0.018em; } }
+.ac-group-h { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.01em; padding-left: 0; }
+.ac-group { gap: var(--space-3); }
+.ac-pane { gap: var(--space-6); }
+.ac-rail-a { position: relative; }
+.ac-rail-here { margin-left: auto; flex: none; }
+.ac-out-ask { animation: hs-reveal var(--dur-2) var(--ease-out) both; }
+@media (prefers-reduced-motion: reduce) { .ac-out-ask { animation: none; } }

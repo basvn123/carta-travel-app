@@ -1,6 +1,6 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, IconButton } from '../../components/ui/index.js';
+import { Button, IconButton, ScorePlate } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag, COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
 import {
@@ -222,9 +222,14 @@ export function YourEurope({
               <div className="mt-fig">
                 <dt>{t('mt.figGreat')}</dt>
                 <dd><b>{formatMoney(figures.cheapestGreat.eur)}</b></dd>
+                {/* The place's Score on the house Score plate (the words stay for
+                    screen readers), then the month. */}
                 <dd className="mt-fig-sub">
-                  {[figures.cheapestGreat.title, t('mt.scorePlace', { n: scoreText(figures.cheapestGreat.score) }), figures.cheapestGreat.when ? fmtMonth(figures.cheapestGreat.when) : '']
-                    .filter(Boolean).join(', ')}
+                  {figures.cheapestGreat.title}
+                  {Number.isFinite(Number(figures.cheapestGreat.score)) && (
+                    <>{' '}<ScorePlate value={Number(figures.cheapestGreat.score)} label={t('mt.scorePlace', { n: scoreText(figures.cheapestGreat.score) })} /></>
+                  )}
+                  {figures.cheapestGreat.when ? `, ${fmtMonth(figures.cheapestGreat.when)}` : ''}
                 </dd>
               </div>
             )}

@@ -1055,3 +1055,46 @@
 .mt-kept-price .money { font-size: var(--text-body); font-weight: 700; color: var(--text); }
 .mt-kept-drop { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--good-ink); }
 .mt-kept-acts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--space-1); justify-content: flex-end; }
+
+/* ── One panel grammar (account lane, design pass 1) ─────────────────────
+   Every panel in this area is the house panel, as the place and trip pages
+   draw it: paper, a 1 px soft hairline, the card radius, no shadow. Only
+   what floats (sheets, menus, toasts) casts a shadow; plates stay plates. */
+.mt-empty,
+.mt-next-card,
+.mt-next .modnote,
+.mt-row-wrap .modnote,
+.mt-crew,
+.mytrips .tshare,
+.mt-today,
+.mt-item,
+.mt-people,
+.mt-fig,
+.mt-mile,
+.mt-jcard,
+.mt-recap-toggles,
+.mt-kept-row,
+.mt-atlas,
+.mt-row.card,
+.btn.mt-lcard:not([aria-pressed="true"]) { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); box-shadow: none; }
+.mt-mile.is-next { border-style: dashed; }
+
+/* ── Motion from the interaction kit (design pass 1) ─────────────────────
+   Each thing the traveller opens or adds arrives the house way, at the
+   moment of their own act: menus and inline forms reveal, the selection bar
+   rises like a sheet, a saved row's new note or list picker reveals. Nothing
+   moves at first paint; reduced motion shows the end state. */
+.mt-menu-pop, .mt-name-form, .mt-note-form, .mt-pick-lists, .mt-today-note, .mt-recap-note,
+.mt-sheet-note, .mt-read, .ac-out-ask { animation: hs-reveal var(--dur-2) var(--ease-out) both; }
+.mt-selbar { animation: hs-sheet-in var(--dur-sheet) var(--ease-sheet) both; }
+.mt-tl-item, .mt-step { transition: color var(--dur-1) var(--ease-out); }
+.mt-step-mark, .mt-tl-item .icon-btn { transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick); }
+@media (prefers-reduced-motion: reduce) {
+  .mt-menu-pop, .mt-name-form, .mt-note-form, .mt-pick-lists, .mt-today-note, .mt-recap-note,
+  .mt-sheet-note, .mt-read, .ac-out-ask, .mt-selbar { animation: none; }
+}
+/* The trip's day on the signpost plate: the plate's own inks (on-plate for
+   the figure, beige for the party's total). */
+.mt-next-plate { align-self: flex-start; max-width: 100%; }
+.mt-next-plate .mt-next-fig .money, .mt-next-plate .money { color: var(--on-plate); font-size: var(--text-figure); font-weight: 800; }
+.mt-next-plate .mt-next-party { color: var(--on-plate-2); font-size: var(--text-caption); font-weight: 600; }

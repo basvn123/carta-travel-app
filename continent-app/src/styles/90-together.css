@@ -294,9 +294,10 @@
   color: var(--action-text);
 }
 .tg-opt[aria-pressed="true"] .tg-opt-ck { background: var(--action); border-color: var(--action); }
-.tg-money2 { display: flex; align-items: baseline; gap: var(--space-2); }
-.tg-money2 b { font-size: var(--text-headline); font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.tg-money2 span { font-size: var(--text-body); color: var(--text-2); }
+/* The group's figure is the total plate (kit); this only places it. */
+.tg-money2.hs-plate { margin: var(--space-2) 0; }
+/* Sentence case for the plate name: the key is a unit line that starts lower case. */
+.tg-money2 .hs-plate-name::first-letter { text-transform: uppercase; }
 .tg-budget { display: flex; align-items: flex-end; gap: var(--space-2); flex-wrap: wrap; }
 .tg-budget input {
   width: 8ch;
@@ -630,3 +631,25 @@
 
 /* Settle up: the add-a-cost form is a paper panel like the ledger beside it. */
 .tg-new.tg-addcost { padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--elev-1); }
+
+/* ── One panel grammar (account lane, design pass 1) ─────────────────────
+   Every panel in this area is the house panel, as the place and trip pages
+   draw it: paper, a 1 px soft hairline, the card radius, no shadow. Only
+   what floats (sheets, menus, toasts) casts a shadow; plates stay plates. */
+.tg-wait.tg-list,
+.tg-meet,
+.tg-gp,
+.tg-fit,
+.tg-fp,
+.tg-people,
+.tg-hand,
+.tg-sharecard,
+.tg-toggles,
+.tg-tip,
+.tg-bi,
+.tg-planq,
+.tg-cardblock,
+.tg-start.btn,
+.tg-out,
+.tg-new.tg-addcost { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); box-shadow: none; }
+.tg-gp .tg-fit { padding: var(--space-3) 0 0; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }

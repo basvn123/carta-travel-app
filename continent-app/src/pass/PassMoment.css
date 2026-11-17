@@ -107,3 +107,9 @@
 @media (forced-colors: active) {
   .pm, .pm-col { border: 1px solid CanvasText; }
 }
+
+/* ── One panel grammar (account lane, design pass 1) ─────────────────────
+   Every panel in this area is the house panel, as the place and trip pages
+   draw it: paper, a 1 px soft hairline, the card radius, no shadow. Only
+   what floats (sheets, menus, toasts) casts a shadow; plates stay plates. */
+.pm { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); box-shadow: none; }

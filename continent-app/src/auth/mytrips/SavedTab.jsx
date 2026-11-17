@@ -3,7 +3,8 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip, ChipGroup, Field } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
-import { DayPrice } from '../../browse/ExploreCards.jsx';
+import { RowFormation } from '../../browse/explore/HouseParts.jsx';
+import { useSettledFigure } from '../../lib/figureChange.js';
 import {
   PlusIcon, RouteIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon, FriendsIcon, ShareIcon,
 } from '../../components/Icons.jsx';
@@ -69,6 +70,15 @@ function Mosaic({ rows }) {
 
 /** One saved thing: select box, photo, kind, name, today's price and its
  *  move since the save, the cheapest month, the traveller's note, a menu. */
+/** A saved place's price as Explore draws it (house style): the formation,
+ *  getting there, bed and food coupled in front of the day figure. Same
+ *  figures and settle behaviour as the DayPrice it replaces. */
+function SavedPrice({ cost, t }) {
+  const ref = useRef(null);
+  useSettledFigure(ref, cost?.dayEur ?? null);
+  return <RowFormation cost={cost} t={t} figRef={ref} />;
+}
+
 function SavedItem({
   row, meta, cost, dest, lists, shared = [], me = null, onShared = null, selected, onSelect, onOpen, onRemove, active, itemRef,
 }) {
@@ -104,7 +114,7 @@ function SavedItem({
         )}
         {cost && (
           <span className="mt-item-price">
-            <DayPrice cost={cost} t={t} />
+            <SavedPrice cost={cost} t={t} />
             {change && (
               <Chip kind="status" tone={change.diff < 0 ? 'positive' : 'neutral'} className="mt-item-move">
                 {t(change.diff < 0 ? 'mt.fellSince' : 'mt.roseSince', { price: formatMoney(Math.abs(change.diff)) })}
@@ -418,6 +428,8 @@ export function SavedTab({
           <Chip kind="filter" selected={fell} onClick={() => setFell((v) => !v)}>{t('mt.priceFell')}</Chip>
         )}
         <span className="mt-spacer" />
+        {/* The unit of the rows' day figures, said once (as Explore's column head). */}
+        <span className="mt-section-unit mt-saved-unit">{t('mt.figDay')}</span>
         <Button size="sm" className="mt-view-toggle" onClick={() => setView((v) => (v === 'map' ? 'list' : 'map'))}>
           {t(view === 'map' ? 'mt.viewList' : 'mt.viewMap')}
         </Button>

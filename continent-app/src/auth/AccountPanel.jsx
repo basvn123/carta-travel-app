@@ -32,7 +32,7 @@ import { useIsAdmin } from '../hooks/useIsAdmin.js';
 import { FaqView } from './account/FaqView.jsx';
 import { FeedbackView } from './account/FeedbackView.jsx';
 import { PlanView } from './account/PlanView.jsx';
-import { Button, Chip } from '../components/ui/index.js';
+import { Button, Chip, Blaze } from '../components/ui/index.js';
 import { SiteFooter } from '../components/SiteFooter.jsx';
 import { GoogleButton } from './GoogleButton.jsx';
 import { useTogether } from '../together/useTogether.js';
@@ -745,6 +745,8 @@ export function AccountPanel({
     >
       <Icon size={20} />
       <span>{label}</span>
+      {/* The blaze marks where you are (house style: "here"). */}
+      {railOn === v && <Blaze size="sm" className="ac-rail-here" />}
     </a>
   );
 
