@@ -98,7 +98,7 @@ export function HomeTour({ lang, doors, wide }) {
         <div className="hm-tour-head">
           <MaskedText id="hm-tour-title" className="hm-big" parts={[t('home.tourTitle')]} />
         </div>
-        <Reveal className="hm-tour-grid">
+        <Reveal className="hm-tour-grid" amount={0.1}>
           <div className="hm-tour-side" onPointerEnter={() => setHold(true)} onPointerLeave={() => setHold(false)}
             onFocus={() => setHold(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setHold(false); }}>
             <div className="hm-tabs" role="tablist" aria-label={t('home.tourTitle')} aria-orientation={wide ? 'vertical' : 'horizontal'} onKeyDown={onKey}>

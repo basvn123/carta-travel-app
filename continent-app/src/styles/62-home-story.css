@@ -330,7 +330,7 @@
 /* Under 768 a card is narrow: every card prints its row the same way, the
    wagons on one line and the day figure on its own line under them, at the
    right edge as the house row keeps it (the row wraps by design). */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .hm-card-price .hs-formation-day { flex-basis: 100%; text-align: right; }
 }
 .hm-card-over { min-height: 1.4em; color: var(--text-2); font-size: var(--text-label); font-weight: 600; }
@@ -342,8 +342,8 @@
 /* ── Tablet: its own layout ─────────────────────────────────────────── */
 
 @media (min-width: 768px) {
-  .hm-cost-grid { grid-template-columns: minmax(0, 1fr) minmax(320px, 360px); gap: var(--space-7); align-items: start; }
-  .hm-post { position: sticky; top: calc(var(--filter-h) + var(--space-5)); }
+  /* The post is the taller column: the chapters centre against it. */
+  .hm-cost-grid { grid-template-columns: minmax(0, 1fr) minmax(320px, 360px); gap: var(--space-7); align-items: center; }
   .hm-compare { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--space-7); align-items: start; }
   .hm-compare-foot { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding-top: var(--space-4); border-top: var(--stroke-hair) solid var(--border); }
 
@@ -359,11 +359,9 @@
 
 @media (min-width: 1024px) {
   .hm-cost { padding: var(--space-9) 0; }
-  /* From 1024 the post is the taller column: the chapters sit centred
-     against it (no dead band under them), and their amounts stay a step
-     under the total plate, the loudest money in the band. */
+  /* The amounts stay a step under the total plate, the loudest money in
+     the band. */
   .hm-cost-grid { grid-template-columns: minmax(0, 1fr) 400px; gap: var(--space-9); align-items: center; }
-  .hm-post { position: static; }
   .hm-chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-7); }
 
   .hm-tour-grid { grid-template-columns: minmax(300px, 5fr) 7fr; grid-template-areas: "tabs stage" "panel stage"; grid-template-rows: auto 1fr; gap: var(--space-6) var(--space-8); }
@@ -376,6 +374,7 @@
   .hm-phone { width: 284px; }
 
   .hm-try-card { grid-template-columns: minmax(0, 1fr); }
+  .hm-ruler-wrap { max-width: none; } /* the ruler spans the card row */
   .hm-cards { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-4); }
 }
 @media (min-width: 1440px) {

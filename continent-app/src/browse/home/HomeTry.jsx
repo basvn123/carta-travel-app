@@ -61,7 +61,7 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
     <section className="hm-try" aria-labelledby="hm-try-title">
       <div className="hm-in">
         <MaskedText id="hm-try-title" className="hm-big" parts={[t('home.tryTitle')]} />
-        <Reveal className="hm-try-card">
+        <Reveal className="hm-try-card" amount={0.1}>
           <div className="hm-ruler-wrap">
             <label htmlFor="hm-budget" className="hm-budget-label">
               <span>{t('home.tryBudget')}</span>

@@ -104,7 +104,7 @@
   padding-top: var(--space-8); padding-bottom: var(--space-8);
 }
 .hg-join .wl { margin-top: 0; }
-@media (min-width: 900px) {
+@media (min-width: 1024px) {
   .hg-join { grid-template-columns: 3fr 2fr; align-items: start; }
 }
 .hg-share {
