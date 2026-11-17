@@ -238,19 +238,28 @@ const CHAPTERS = {
     ready: async (page) => {
       await open(page, `?paymock#day=${DAY}`, 18000);
       await page.waitForSelector('#dayk-h', { timeout: 60000 });
-      await page.evaluate(() => {
+      // Only the drawer's own scroller moves: scrollIntoView also shifted an
+      // outer overflow-hidden frame and cut the drawer off at mid screen.
+      await page.evaluate((sel) => {
         const h = document.querySelector('#dayk-h');
-        h.scrollIntoView({ block: 'start' });
-        let el = h.parentElement;
-        while (el && el !== document.body) {
-          const cs = getComputedStyle(el);
-          if (/(auto|scroll)/.test(cs.overflowY) && el.scrollHeight > el.clientHeight) { el.scrollTop -= 120; return; }
-          el = el.parentElement;
-        }
-      });
+        const box = document.querySelector(sel);
+        box.scrollTop += h.getBoundingClientRect().top - box.getBoundingClientRect().top - 120;
+      }, DAY_LIST);
       await page.waitForTimeout(1500);
     },
-    move: async (page) => { await page.waitForTimeout(900); await glide(page, 900, 5200, '#dayk-h'); await page.waitForTimeout(1600); },
+    // The drawer ends in a tall spacer, so a fixed glide ran into it and held
+    // the exports in the top third over empty ground: stop where "Export and
+    // share" rests just above the tab bar.
+    move: async (page) => {
+      await page.waitForTimeout(900);
+      const px = await page.evaluate(() => {
+        const x = document.querySelector('.dayx');
+        const bar = document.elementFromPoint(innerWidth / 2, innerHeight - 4)?.closest('nav, footer, [role="navigation"]');
+        const floor = bar ? bar.getBoundingClientRect().top : innerHeight;
+        return x ? Math.max(200, Math.round(x.getBoundingClientRect().bottom - (floor - 24))) : 900;
+      });
+      await glide(page, px, 5200, '#dayk-h'); await page.waitForTimeout(1600);
+    },
   },
 };
 
