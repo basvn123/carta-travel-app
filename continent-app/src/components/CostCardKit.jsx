@@ -65,6 +65,8 @@ export function CostRow({
       {lead}
       <span className="ccard-what">
         <span className="ccard-label">{label}</span>
+        {/* A space between the label and its sub, so the visible words match the name (WCAG 2.5.3). */}
+        {sub && ' '}
         {sub && (
           <span className="ccard-sub">
             {sub}

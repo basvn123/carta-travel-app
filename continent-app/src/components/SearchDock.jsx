@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, Chip, ChipGroup, IconButton } from './ui/index.js';
 import {
-  ChevronDownIcon, CloseIcon, SearchIcon, ClockIcon, GlobeIcon,
+  ChevronDownIcon, CloseIcon, SearchIcon, SparkIcon, ClockIcon, GlobeIcon,
 } from './Icons.jsx';
 import { HouseIcon } from './HouseIcons.jsx';
 import {
@@ -116,7 +116,8 @@ export function SearchDock({ onSearch }) {
       ) : (
         <button type="button" className="sdock-ask" aria-label={t('dock.ask')} title={t('dock.ask')}
           onClick={(e) => openAskChat(e.currentTarget)}>
-          <AiTag />
+          {/* The boxed AI mark as a glyph: the letters as text would break the label's name match (WCAG 2.5.3). */}
+          <SparkIcon size={20} />
           <span className="sdock-ask-word" aria-hidden="true">{t('dock.askShort')}</span>
         </button>
       )}

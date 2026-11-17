@@ -1438,3 +1438,11 @@
   .pf-open .pf-coll .pf-coll-fan { gap: var(--space-3); }
   .pf-open .pf-coll .pf-coll-photo:nth-child(even) { margin-top: 0; }
 }
+/* Below 1024 the house head leads at the top of the page and the collection
+   follows it, instead of the head floating in the middle of an empty ground
+   (integration, 390 shot: about 180 px of bare stone above "Plan a trip"). */
+@media (max-width: 1023px) {
+  .pf-open:not(.is-bare) { justify-content: flex-start; }
+  .pf-open:not(.is-bare) .pf-open-text { flex: none; justify-content: flex-start; }
+  .pf-open:not(.is-bare) .pf-open-stage { margin-top: var(--space-2); }
+}
