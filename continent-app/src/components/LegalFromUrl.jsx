@@ -7,6 +7,8 @@ import { SupportPage } from './SupportPage.jsx';
 import { PressKitPage } from './PressKitPage.jsx';
 import { AiPage } from './AiPage.jsx';
 import { PartnerPage } from './PartnerPage.jsx';
+import { NotFoundPage } from './NotFoundPage.jsx';
+import { isUnknownPath } from '../lib/notFound.js';
 
 /**
  * Gives the three legal texts a URL without giving the app a router.
@@ -42,6 +44,11 @@ function readLegalParam() {
 
 export function LegalFromUrl() {
   const [page, setPage] = useState(readLegalParam);
+  // The 404 (house style G1, 2026-11): an address the app cannot read shows
+  // the not-found page over the app instead of the bare map. Read once at
+  // mount, like the legal parameter; lib/notFound.js says which paths.
+  const [lost, setLost] = useState(() => typeof window !== 'undefined' && isUnknownPath(window.location.pathname));
+  if (lost) return <NotFoundPage onClose={() => setLost(false)} />;
   if (!page) return null;
   const Page = PAGES[page];
   const close = () => {

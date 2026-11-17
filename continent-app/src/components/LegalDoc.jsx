@@ -1,9 +1,10 @@
-import React, { useLayoutEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { scrollBehavior, useDialogExit } from '../lib/motion.js';
 import { useI18n } from '../i18n/index.jsx';
 import { CloseIcon } from './Icons.jsx';
-import { IconButton } from './ui/index.js';
+import { Blaze, IconButton } from './ui/index.js';
+import '../styles/brand-pages.css';
 
 /**
  * LegalDoc (T461): the reading page the privacy policy, the terms and the
@@ -34,12 +35,35 @@ export function LegalDoc({ id, title, updated, onClose, children, contentsLabel 
     setToc(heads.map((h) => ({ id: h.id, label: h.textContent })));
   }, [id]);
 
+  // House style (G1 2026-11): the contents mark the section you are in
+  // ("here", the blaze), from the last heading that has scrolled past the
+  // top of the reading column. Presentation only; nothing else listens.
+  const [here, setHere] = useState('');
+  const colsRef = useRef(null);
+  useEffect(() => {
+    const box = colsRef.current;
+    if (!box || toc.length < 3) return undefined;
+    const pick = () => {
+      const top = box.getBoundingClientRect().top + 24;
+      let cur = toc[0].id;
+      for (const s of toc) {
+        const el = box.querySelector(`#${CSS.escape(s.id)}`);
+        if (el && el.getBoundingClientRect().top <= top) cur = s.id;
+      }
+      setHere(cur);
+    };
+    pick();
+    box.addEventListener('scroll', pick, { passive: true });
+    return () => box.removeEventListener('scroll', pick);
+  }, [toc]);
+
   const go = (ev, target) => {
     ev.preventDefault();
     const el = cardRef.current?.querySelector(`#${CSS.escape(target)}`);
     el?.scrollIntoView({ block: 'start', behavior: scrollBehavior() });
     el?.setAttribute('tabindex', '-1');
     el?.focus({ preventScroll: true });
+    setHere(target);
     // On a phone the list sits above the text; fold it once it has done its job.
     ev.currentTarget.closest('details')?.removeAttribute('open');
   };
@@ -67,7 +91,12 @@ export function LegalDoc({ id, title, updated, onClose, children, contentsLabel 
   const contents = toc.length > 2 && (
     <ol className="legal-toc-list">
       {toc.map((s) => (
-        <li key={s.id}><a href={`#${s.id}`} onClick={(ev) => go(ev, s.id)}>{s.label}</a></li>
+        <li key={s.id}>
+          <a href={`#${s.id}`} onClick={(ev) => go(ev, s.id)} aria-current={here === s.id ? 'location' : undefined}>
+            {here === s.id && <Blaze size="sm" className="hs-paint" />}
+            {s.label}
+          </a>
+        </li>
       ))}
     </ol>
   );
@@ -75,7 +104,7 @@ export function LegalDoc({ id, title, updated, onClose, children, contentsLabel 
   return (
     <div className={`auth-overlay legal-overlay shell-scrim${exit.leaving ? ' is-leaving' : ''}`} onClick={exit.close}>
       <div
-        className={`legal-doc privacy-modal shell-dialog${exit.leaving ? ' is-leaving' : ''}`}
+        className={`legal-doc privacy-modal shell-dialog hs-legal${exit.leaving ? ' is-leaving' : ''}`}
         ref={cardRef}
         role="dialog"
         aria-modal="true"
@@ -90,7 +119,7 @@ export function LegalDoc({ id, title, updated, onClose, children, contentsLabel 
           </div>
           <IconButton label={t('a11y.close')} onClick={exit.close}><CloseIcon size={16} /></IconButton>
         </header>
-        <div className="legal-cols">
+        <div className="legal-cols" ref={colsRef}>
           {contents && (
             <nav className="legal-toc" aria-label={contentsLabel}>
               <details className="legal-toc-fold">
