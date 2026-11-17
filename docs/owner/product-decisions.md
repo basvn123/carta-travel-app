@@ -4,7 +4,7 @@ Each row asks for a call, a confirmation or an approval. Answer in chat with the
 
 Steps are the open register rows with Owner `user` that belong to this system, in register order: the Order column first, then task number. A row's own wording says what it waits on ("after", "before"); that is repeated beside the step. Nothing here is new: each step is a row, and the task report named in the row has the detail. When a step is done, delete it here (docs/decisions/0003-open-items-owner-steps-and-roadmap.md).
 
-Rows: 11 (5 numbered, 6 in the table), recounted by owner sweep round 2 on 2026-11-12.
+Rows: 18 (5 numbered, 13 in the tables); 7 added by the house style run on 2026-11-17.
 
 Owner sweep 2026-11-12: every other step was decided, done or found obsolete by the decisions lane; `.work/2026-11-12-owner-decisions/report.md` lists each with its outcome.
 
@@ -26,3 +26,17 @@ Owner sweep 2026-11-12: every other step was decided, done or found obsolete by 
 | T1172-a | Register the affiliate programmes and set the four partner ids; until then partner links stay plain (owner step) |  |
 | T1213-f | Travelpayouts Data API signup and token for the P1 coverage run |  |
 | T1213-i | Partner applications at the milestones in docs/data/access-ladder.md |  |
+
+## From the house style run (2026-11-17)
+
+Visual-only run: these were left as calls because they change logic or a rule. Report: `.work/2026-11-13-house-style/report.md`.
+
+| ID | Item | Order |
+|---|---|---|
+| HS-a | The trip page counts bookings two ways: the head says "0 of 5 booked", Still to book says "0 of 7" (`TripSummary.jsx` vs `BookPasses.jsx`). Pick one count | |
+| HS-b | The trip total prints cents (EUR 2,293.39) while lists show whole euros: keep cents on the total, or round it like the lists | |
+| HS-c | Phone rail cards: two across (T968) or one large card at 76 % width (DESIGN.md now); say which | |
+| HS-d | Mountain pages: add the relief drawn from the real peaks (needs a DESIGN.md rule for a page whose own peak is the subject) | |
+| HS-e | At the next deploy: rewrite the CSP style hashes (`node continent-app/scripts/csp-hashes.mjs --write`), keeping the old prerender hash until R2's prerendered pages are re-uploaded | at the next deploy |
+| HS-f | The new name: the wordmark slot holds "Carta" until you choose the name; the identity is name-free | |
+| HS-g | Real-phone check of the haptic tick ("Vibrate on tap" in Settings) on an Android phone and an iPhone | before launch |
