@@ -301,8 +301,8 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, onOpenNeigh
       card={{
         title: t('ox.card.lake'),
         rows: [
-          { key: 's', label: t('ox.fact.swim'), value: swim.label },
-          water && { key: 'w', label: t('lake.factWater'), value: waterWord },
+          { key: 's', label: t('ox.fact.swim'), value: swim.label, board: true },
+          water && { key: 'w', label: t('lake.factWater'), value: waterWord, board: true },
           peakMonth && Number.isFinite(peakC) && { key: 'pk', label: t('ox.warmestIn', { month: months.long(peakMonth) }), value: `${nf(peakC)}°` },
           lake.entry_eur != null && Number.isFinite(entry) && { key: 'e', label: t('ox.entry'), value: entry === 0 ? t('ox.free') : formatMoney(entry) },
         ].filter(Boolean),

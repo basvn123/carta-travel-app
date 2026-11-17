@@ -7153,8 +7153,6 @@ export const en = {
   "destx.dockInputs": "Change dates and travellers: {what}",
   "ox.addDay": "Add to day",
   "ox.stayNearby": "Stay nearby",
-  "ox.stayLine": "{km} km, {price} {unit}",
-  "ox.stayPrice": "{price} {unit}",
   "ox.whyRates": "How the score is built",
   "ox.gradeAria": "Grade T{n} of six",
   "ox.gradeTitle": "T{n}, {word}",

@@ -4,10 +4,10 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { usePageArrival } from '../hooks/usePageArrival.js';
 import { useBaseDay } from '../hooks/useBaseDay.js';
 import { useDayView } from '../hooks/useDayView.js';
-import { Button, PlaceHead, PlaceTag, WorldTile } from '../components/ui/index.js';
+import { Button, PlaceHead, PlaceTag, Plate, WorldTile } from '../components/ui/index.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import {
-  PlusIcon, ChevronRightIcon, CheckIcon, CloseIcon, ParkingIcon, BusIcon, TrainIcon, FerryIcon, MapPinIcon,
+  PlusIcon, CheckIcon, CloseIcon, ParkingIcon, BusIcon, TrainIcon, FerryIcon, MapPinIcon,
 } from '../components/Icons.jsx';
 import { formatMoney } from '../lib/money.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
@@ -177,23 +177,18 @@ export function StayLine({ destId, city, km = null, onOpen }) {
   if (!destId || !city) return null;
   const kmText = Number.isFinite(km)
     ? (km < 1 ? '<1' : Math.round(km).toLocaleString(lang)) : null;
-  const line = base
-    ? (kmText != null
-      ? t('ox.stayLine', { km: kmText, price: formatMoney(view.day(base.dayEur)), unit: view.unit })
-      : t('ox.stayPrice', { price: formatMoney(view.day(base.dayEur)), unit: view.unit }))
-    : (kmText != null ? t('detail.exitKm', { km: kmText }) : '');
+  const price = base ? formatMoney(view.day(base.dayEur)) : null;
+  const away = kmText != null ? t('detail.exitKm', { km: kmText }) : null;
   return (
-    // Named by its visible text (T1128, WCAG 2.5.3: an aria-label that
-    // added "See" no longer held the words on screen).
+    // House style (G1): the town is the signpost plate (DESIGN.md: a place
+    // and euros as one unit): the name, how far, the day it costs on the
+    // tip. Named by its visible text (T1128, WCAG 2.5.3).
     <a className="ox-stay" href={featureHref('dest', { id: destId }) || undefined}
       onClick={linkOpener(() => onOpen?.(destId))}>
       <span className="ox-stay-label">{t('ox.stayNearby')}</span>
       {' '}
-      <span className="ox-stay-town">
-        <b>{city}</b>
-        {line && <>{' '}<small>{line}</small></>}
-      </span>
-      <span className="ox-stay-go" aria-hidden="true"><ChevronRightIcon size={20} /></span>
+      <Plate as="span" className="ox-stay-plate" name={city} sub={away}
+        fig={price} figSub={price ? view.unit : null} />
     </a>
   );
 }
@@ -202,13 +197,13 @@ export function StayLine({ destId, city, km = null, onOpen }) {
  *  secondary row and the stay line. `compact` (below 1024 px, in the page)
  *  keeps only the secondaries and the stay line: the facts sit just above it
  *  and the foot bar holds the primary. */
-function OxCard({ card, compact = false, said = null }) {
+function OxCard({ card, compact = false, besideBoard = false }) {
   const { t } = useI18n();
   // House style (G1): each figure is said once on screen. Beside the board a
-  // row the board already shows is not drawn again; a row only the card has
-  // (the sea in July, parking, entry) stays.
+  // row the page marks `board: true` (the board shows it) is not drawn again;
+  // a row only the card has (the sea in July, parking, entry) stays.
   const rows = (card.rows || []).filter((r) => r && r.value != null && r.value !== ''
-    && !(said && said.some((v) => v.includes(String(r.value)))));
+    && !(besideBoard && r.board));
   const secondary = (card.secondary || []).filter(Boolean);
   if (compact && !secondary.length && !card.stay) return null;
   return (
@@ -313,7 +308,6 @@ export function OutdoorPage({
   const firstJump = jumps.find((j) => j?.id);
   const onDockSub = dock?.onSub || (firstJump ? () => scrollToSection(scrollRef.current, firstJump.id) : null);
   const factsCls = `pt-facts ox-facts${(facts || []).length === 6 ? ' is-six' : ''}`;
-  const said = wide ? (facts || []).flatMap((c) => [c?.value, c?.note]).map((v) => String(v ?? '')).filter(Boolean) : null;
 
   return (
     <div
@@ -392,7 +386,7 @@ export function OutdoorPage({
             </div>
             {wide && card && (
               <aside className="pt-side" aria-label={card.title || name}>
-                <OxCard card={card} said={said} />
+                <OxCard card={card} besideBoard={(facts || []).length > 0} />
               </aside>
             )}
           </div>
@@ -621,38 +615,26 @@ export function SafetyBlock({ extra = [] }) {
 
 /* ── Cards ──────────────────────────────────────────────────────────── */
 
-/** A small drawn map spot for a card without a photograph: contour lines
- *  and the place's dot, never a grey box. */
-export function MapSpot({ seed = 0 }) {
-  const s = Math.abs(Number(seed) || 0) % 7;
-  const cx = 70 + s * 6;
-  const cy = 46 + (s % 3) * 4;
-  return (
-    <svg className="ox-spot" viewBox="0 0 160 120" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
-      <rect width="160" height="120" className="ox-spot-ground" />
-      <path className="ox-spot-line" d={`M-10 ${92 - s} C40 ${70 + s} 90 ${104 - s} 170 ${78 + s}`} />
-      <path className="ox-spot-line" d={`M-10 ${30 + s} C30 ${50 - s} 110 ${18 + s} 170 ${40 - s}`} />
-      <ellipse className="ox-spot-ring" cx={cx} cy={cy} rx="34" ry="22" />
-      <ellipse className="ox-spot-ring" cx={cx} cy={cy} rx="18" ry="11" />
-      <circle className="ox-spot-dot" cx={cx} cy={cy} r="6" />
-    </svg>
-  );
-}
-
 /** The sights along the way: a photograph (or the map spot), the name,
  *  one line. */
 export function AlongCards({ items, world = 'lowland' }) {
   const list = (items || []).filter((x) => x && x.title);
   if (!list.length) return null;
+  // G8: never a wall of placeholders. Without a single photograph the
+  // sights read as rows on hairlines; one missing photo among photographed
+  // cards takes the kind's world tile.
+  const pictured = list.some((h) => h.photo?.url);
   return (
-    <ul className="ox-along">
+    <ul className={`ox-along${pictured ? '' : ' is-text'}`}>
       {list.map((h) => (
         <li key={h.key} className="ox-acard">
-          <span className="ox-acard-media">
-            {h.photo?.url
-              ? <img src={h.photo.thumb || h.photo.url} alt="" loading="lazy" decoding="async" />
-              : <WorldTile world={world} />}
-          </span>
+          {pictured && (
+            <span className="ox-acard-media">
+              {h.photo?.url
+                ? <img src={h.photo.thumb || h.photo.url} alt="" loading="lazy" decoding="async" />
+                : <WorldTile world={world} />}
+            </span>
+          )}
           <span className="ox-acard-text">
             <b>{h.title}</b>
             {h.line && <small>{h.line}</small>}
@@ -671,16 +653,19 @@ export function AlongCards({ items, world = 'lowland' }) {
 export function OtherNearby({ exits, hrefOf = null, world = 'lowland' }) {
   const list = (exits || []).filter((e) => e && e.title);
   if (!list.length) return null;
+  const pictured = list.some((e) => e.photoUrl);
   return (
-    <ul className="ox-sim">
+    <ul className={`ox-sim${pictured ? '' : ' is-text'}`}>
       {list.map((e) => (
         <li key={e.key} className="ox-simcard">
           <a className="ox-sim-link" href={(hrefOf && hrefOf(e.row)) || '#'} onClick={linkOpener(e.onOpen)}>
-            <span className="ox-sim-media">
-              {e.photoUrl
-                ? <img src={e.photoUrl} alt="" loading="lazy" decoding="async" />
-                : <WorldTile world={world} />}
-            </span>
+            {pictured && (
+              <span className="ox-sim-media">
+                {e.photoUrl
+                  ? <img src={e.photoUrl} alt="" loading="lazy" decoding="async" />
+                  : <WorldTile world={world} />}
+              </span>
+            )}
             <span className="ox-sim-name">{e.title}</span>
           </a>
           <span className="ox-sim-meta">

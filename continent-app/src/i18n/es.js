@@ -6434,8 +6434,6 @@ export const es = {
   "destx.dockInputs": "Cambiar fechas y viajeros: {what}",
   "ox.addDay": "Añadir al día",
   "ox.stayNearby": "Alojarse cerca",
-  "ox.stayLine": "{km} km, {price} {unit}",
-  "ox.stayPrice": "{price} {unit}",
   "ox.whyRates": "Cómo se calcula la puntuación",
   "ox.gradeAria": "Grado T{n} de seis",
   "ox.gradeTitle": "T{n}, {word}",

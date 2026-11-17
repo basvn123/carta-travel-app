@@ -136,33 +136,26 @@
   .oxp .ox-card.is-compact > :only-child { grid-column: 1 / -1; }
 }
 
-/* Stay nearby: a priced row that opens the town's page. */
+/* Stay nearby: the town as the signpost plate (DESIGN.md: a place, how
+   far, and the day it costs as one unit), under its small label; the whole
+   row is the link to the town's page. */
 .ox-stay {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 2px var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  border: var(--stroke-hair) solid var(--border);
-  border-radius: var(--radius-panel);
-  background: var(--surface);
+  gap: var(--space-2);
   color: var(--text);
   text-decoration: none;
+  border-radius: var(--radius-control);
   min-height: var(--tap);
-  transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
-.ox-stay-label { grid-column: 1 / -1; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
-.ox-stay-town { display: grid; gap: 2px; min-width: 0; }
-.ox-stay-town b { font-size: var(--text-lead); font-weight: 800; }
-.ox-stay-town small { font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.ox-stay-go { display: inline-flex; align-items: center; color: var(--action); transition: translate var(--dur-2) var(--ease-out); }
+.ox-stay-label { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.ox-stay .ox-stay-plate { width: 100%; transition: translate var(--dur-2) var(--ease-out); }
 @media (hover: hover) {
-  .ox-stay:hover { border-color: var(--edge); }
-  .ox-stay:hover .ox-stay-town b { text-decoration: underline; text-underline-offset: 3px; }
-  .ox-stay:hover .ox-stay-go { translate: 3px 0; }
+  .ox-stay:hover .ox-stay-plate { translate: 3px 0; }
+  .ox-stay:hover .hs-plate-name { text-decoration: underline; text-underline-offset: 3px; }
+  .ox-stay:hover .hs-plate::before { background: var(--plate-hover); }
 }
 .ox-stay:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { .ox-stay, .ox-stay-go { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ox-stay .ox-stay-plate { transition: none; } }
 
 .ox-linkbtn { text-decoration: none; }
 .ox-dock-sub { font-size: var(--text-label); color: var(--text-2); }
@@ -461,12 +454,21 @@
 .ox-sim-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
 .ox-sim-tag { justify-self: start; padding: 2px var(--space-2); border-radius: var(--radius-pill); background: var(--select-bg); font-size: var(--text-micro); font-weight: 700; color: var(--select-ink); }
 
-/* The map spot (kept for any caller): a drawing on the world tint. */
-.ox-spot { display: block; width: 100%; height: 100%; }
-.ox-spot-ground { fill: var(--world-lowland); }
-.ox-spot-line { fill: none; stroke: var(--surface); stroke-width: 5; }
-.ox-spot-ring { fill: none; stroke: var(--border); stroke-width: 1; }
-.ox-spot-dot { fill: var(--action); stroke: var(--surface); stroke-width: 2.5; }
+/* No photograph in the whole list: rows on hairlines, never a wall of
+   placeholder tiles (G8). */
+.ox-along.is-text, .ox-sim.is-text { gap: 0 var(--space-6); border-top: var(--stroke-hair) solid var(--border); }
+.ox-along.is-text, .ox-sim.is-text { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 700px) { .ox-along.is-text, .ox-sim.is-text { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.ox-along.is-text .ox-acard,
+.ox-sim.is-text .ox-simcard { padding: var(--space-3) 0; border-bottom: var(--stroke-hair) solid var(--border-soft); }
+.ox-sim.is-text .ox-sim-link { min-height: var(--tap); align-content: center; }
+
+/* The profile scrub is the page's signature act: the pin it drops on the
+   map settles once, on the traveller's own touch (the scale property, as
+   maplibre owns the marker's transform). */
+.oxp .tpage-scrub-pin { animation: ox-pin-settle var(--dur-settle) var(--ease-settle) both; }
+@keyframes ox-pin-settle { from { scale: 0.4; opacity: 0; } to { scale: 1; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .oxp .tpage-scrub-pin { animation: none; } }
 
 /* ── Routes to the top (mountain): rows on hairlines that open a walk ── */
 .ox-rtc { list-style: none; margin: 0; padding: 0; display: grid; border-top: var(--stroke-hair) solid var(--border); }

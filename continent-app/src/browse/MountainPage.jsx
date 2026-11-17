@@ -411,10 +411,10 @@ export function MountainPage({ mountain, countryName, onClose, onSelectDest, onO
       card={{
         title: t('ox.card.mountain'),
         rows: [
-          { key: 'h', label: t('mtn.factHeight'), value: mountain.ele != null ? `${nf(mountain.ele)} m` : '' },
+          { key: 'h', label: t('mtn.factHeight'), value: mountain.ele != null ? `${nf(mountain.ele)} m` : '', board: true },
           easiest && { key: 'r', label: t('ox.easiestRoute'), value: easiest.grade },
-          { key: 'w', label: t('detail.factWayUp'), value: wayUp },
-          seasonText && { key: 's', label: t('detail.factSeason'), value: seasonText },
+          { key: 'w', label: t('detail.factWayUp'), value: wayUp, board: true },
+          seasonText && { key: 's', label: t('detail.factSeason'), value: seasonText, board: true },
           Number.isFinite(liftReturn) && { key: 'l', label: t('ox.liftReturnShort'), value: formatMoney(liftReturn) },
         ].filter(Boolean),
         onAdd,

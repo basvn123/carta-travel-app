@@ -6445,8 +6445,6 @@ export const nl = {
   "destx.dockInputs": "Data en reizigers wijzigen: {what}",
   "ox.addDay": "Aan dag toevoegen",
   "ox.stayNearby": "In de buurt overnachten",
-  "ox.stayLine": "{km} km, {price} {unit}",
-  "ox.stayPrice": "{price} {unit}",
   "ox.whyRates": "Hoe de score tot stand komt",
   "ox.gradeAria": "Graad T{n} van zes",
   "ox.gradeTitle": "T{n}, {word}",

@@ -800,12 +800,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
         text: isNum(s.m) ? t('ox.mWalk', { d: mText(s.m) }) : '',
       };
     }),
-    !isCityDay && shapeKey && {
+    // The board says a loop or an out and back; only a one way walk needs
+    // the row (plan the way back).
+    !isCityDay && shapeKey && !isLoopShape && rt !== 'out_back' && {
       key: 'shape',
       icon: isLoopShape ? <LoopIcon size={16} /> : <ArrowRightIcon size={16} />,
       title: shapeWord,
       // The word says a loop or an out and back; a one way walk adds "plan the way back".
-      text: isLoopShape || rt === 'out_back' ? '' : t('ox.shapeOneWay'),
+      text: t('ox.shapeOneWay'),
     },
   ] : [];
 
@@ -968,11 +970,11 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       card={{
         title: t(isCityDay ? 'ox.card.day' : 'ox.card.walk'),
         rows: isCityDay ? [] : [
-          { key: 'g', label: t('ox.fact.grade'), value: gradeWord },
-          { key: 'l', label: t('ox.fact.length'), value: lengthText },
-          { key: 't', label: t('ox.fact.time'), value: timeText },
-          { key: 'c', label: t('ox.fact.climb'), value: climbText },
-          { key: 'r', label: t('ox.fact.route'), value: shapeWord },
+          { key: 'g', label: t('ox.fact.grade'), value: gradeWord, board: true },
+          { key: 'l', label: t('ox.fact.length'), value: lengthText, board: true },
+          { key: 't', label: t('ox.fact.time'), value: timeText, board: true },
+          { key: 'c', label: t('ox.fact.climb'), value: climbText, board: true },
+          { key: 'r', label: t('ox.fact.route'), value: shapeWord, board: true },
         ],
         onAdd,
         secondary: [
@@ -999,8 +1001,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
         </>
       )}
     >
-      <PSection id="ox-route" title={t('ox.jump.route')}
-        >
+      <PSection id="ox-route" title={t('ox.jump.route')}>
         <RouteBlock
           map={mapNode}
           profile={profileNode}
