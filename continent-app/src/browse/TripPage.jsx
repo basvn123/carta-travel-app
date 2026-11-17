@@ -717,6 +717,19 @@ export function TripPage({
             {perDayText && (
               <p className="itin-post-fig"><b>{perDayText}</b><span>{t('trip.factPerDay')}</span></p>
             )}
+            {primaryAction ? (
+              <Button variant="primary" className="itin-post-use" iconStart={<CheckIcon size={16} />}
+                onClick={() => primaryAction.onClick(detail || card)}>
+                {primaryAction.label}
+              </Button>
+            ) : (
+              <Button variant="primary" className="itin-post-use" iconStart={<PlusIcon size={16} />}
+                onClick={() => onOpenInPlanner(detail || card)}>
+                {t('trip.openInPlanner')}
+              </Button>
+            )}
+          </aside>
+        )}
         <div className="itin-main">
           {/* The card came from a list that has since been re-exported: the id
               it names no longer has a detail file. Nothing below can be drawn
@@ -1064,19 +1077,6 @@ export function TripPage({
             </Fold>
           )}
         </div>
-            {primaryAction ? (
-              <Button variant="primary" className="itin-post-use" iconStart={<CheckIcon size={16} />}
-                onClick={() => primaryAction.onClick(detail || card)}>
-                {primaryAction.label}
-              </Button>
-            ) : (
-              <Button variant="primary" className="itin-post-use" iconStart={<PlusIcon size={16} />}
-                onClick={() => onOpenInPlanner(detail || card)}>
-                {t('trip.openInPlanner')}
-              </Button>
-            )}
-          </aside>
-        )}
         </div>
         </div>
       </div>

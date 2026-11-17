@@ -7,6 +7,7 @@ import { Blaze, IconButton, StepList } from '../../components/ui/index.js';
 import '../../styles/planners/88-pf2-wizard.css';
 import { cityLabel } from '../../lib/placeName.js';
 import { STEP_LABEL_KEYS } from './wizardSteps.js';
+import { usePaintOnStep } from '../flow/paintGuard.js';
 import { useI18n } from '../../i18n/index.jsx';
 
 /**
@@ -21,6 +22,7 @@ export function WizardHead({ inline, onClose, steps, step, isDesktop, stepsOpen,
   const { t } = useI18n();
   const name = steps[step - 1] ? t(STEP_LABEL_KEYS[steps[step - 1]]) : t('wizard.planYourTrip');
   const multi = steps.length > 1;
+  const paint = usePaintOnStep(`wz-${step}`);
   return (
     <div className={`guide-head wz-head ${isDesktop ? 'is-wide' : 'is-phone'}`}>
       <div className="wz-head-row">
@@ -54,7 +56,7 @@ export function WizardHead({ inline, onClose, steps, step, isDesktop, stepsOpen,
             {steps.map((label, i) => {
               const n = i + 1;
               const state = n < step ? 'done' : n === step ? 'now' : 'todo';
-              const mark = <span className="wz-stepper-mark" aria-hidden="true">{state === 'done' ? <CheckIcon size={12} /> : state === 'now' ? <Blaze size="sm" /> : n}</span>;
+              const mark = <span className="wz-stepper-mark" aria-hidden="true">{state === 'done' ? <CheckIcon size={12} /> : state === 'now' ? <Blaze size="sm" className={paint ? 'hs-paint' : ''} /> : n}</span>;
               return (
                 <li key={label} className={`wz-stepper-step is-${state}`}>
                   {state === 'done' ? (

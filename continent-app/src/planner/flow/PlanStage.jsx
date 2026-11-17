@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Blaze, IconButton } from '../../components/ui/index.js';
-import { noteNow, paintsNow } from './paintGuard.js';
+import { usePaintOnStep } from './paintGuard.js';
 import { ArrowLeftIcon, CloseIcon } from '../../components/Icons.jsx';
 
 /**
@@ -45,8 +45,7 @@ export function PlanStage({ bar = null, wide = false, rail = null, side = null, 
  */
 export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '', marks = null, end = null }) {
   const nowStep = marks?.find((m) => m.now)?.key ?? position;
-  const paint = paintsNow(nowStep);
-  useEffect(() => { noteNow(nowStep); }, [nowStep]);
+  const paint = usePaintOnStep(nowStep);
   return (
     <div className="pf-head">
       <span className="pf-head-side">
