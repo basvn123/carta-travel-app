@@ -1,6 +1,6 @@
 # Report: account lane of the house style run
 
-- **Status:** done; final judge FAIL 100 of 135 after three rounds (hard criteria all pass; see "Judgement")
+- **Status:** done; lane judges FAIL 100 of 135 after three rounds (hard criteria all pass), then the orchestrator's design pass 1 (see the last section; not re-judged by the lane)
 - **Date:** 2026-11-17
 - **Level:** L2, `crew:design` playbook (autonomous; Stage 7 pre-approved by the owner)
 - **Branch:** `p15-hs-account` (worktree `wt/hs-account`, from `p15-housestyle` at `e890b35789`)
@@ -103,3 +103,20 @@ After round 3 (no fourth judge, per the crew limit) the lane fixed two of the fo
 
 ## Next step
 For the orchestrator: decide whether the account lane merges at 100 of 135 (every hard criterion passes) or gets one more design pass on Account's ownability and the panel split (see "Still open"); apply `foundation-requests.md` (AiTag into the kit, the sparkles left in other lanes, dialog motion in the kit, the dead account rules in `21-chat-passes.css` and `24-destination-workspace.css`); read `handbook-notes.md` for ROADMAP lines (G1, G5, G10) and the shared-file effects (`16-auth.css` is global). The `.work/INDEX.md` line and the project-map line for `components/AiTag.jsx` are the orchestrator's.
+
+## Design pass 1 (orchestrator, `account-fixes-r1.md`)
+Visual only; no behaviour, step or control changed.
+
+- **Merged** `p15-housestyle` (`38233f7d36`, with the explore, place, trip, plan, outdoors and home lanes) into the branch first: no conflicts.
+- **One panel grammar.** Every panel in Account, My trips, Together, /pricing and the Pass moment is now the house panel as the merged place and trip pages draw it: paper, `1px solid var(--border-soft)`, `--radius-card`, no shadow (blocks at the end of `91-account.css`, `70-mytrips.css`, `90-together.css`, `72-pricing.css`, `69-v6-account.css`, `PassMoment.css`). This replaces the three treatments the last judge counted (Account's flat ledger, the shadowed cards, the outlined plates); the pass plans stay leg plates (a plate, not a panel).
+- **The house signature on these screens.** Saved places carry Explore's price formation (`RowFormation`: getting there, bed, food, then the day), with the unit said once in the filter bar (`SavedTab.jsx`). The next trip's day sits on the signpost plate ("A day, a person", the party's total under the figure; `TripCards.jsx`). A group's figure in Together sits on the total plate (`GroupTrips.jsx`). Your Europe's cheapest great day shows the place's Score on the Score plate, the words kept for screen readers (`YourEurope.jsx`). The current Account pane carries the blaze ("here"; `AccountPanel.jsx`). My trips' menus, inline forms, notes, list pickers and the sign-out question reveal, and the selection bar rises like a sheet; Account panes and Together views keep the Route motion.
+- **Account no longer reads as a settings list.** The overview opens on the traveller: the name at the headline size (from 600 px), the plan on the umber mark plate, the counts as headline figures, the face as Together draws "you". Groups take the house section head (`--text-title`, 800). What the overview shows is unchanged; the content idea stays an owner suggestion in `handbook-notes.md`.
+- **Keyboard and focus trap, rerun one at a time.** `verify_focus_trap.mjs http://localhost:5317`: all checks pass (the earlier "crash" was a wrong argument, `--port` where it takes the base URL). `verify_keyboard.mjs --port 5317`: 5 of 22 surface checks pass (trip planner, day planner, trip page at 1280); none of its 11 surfaces is an account screen; the other failures are Explore, destination, journey and day-workspace pages that time out loading on this static server with the sparse data, plus the trip page at 380 (7 covered stops), the trip lane's page. Output in `verify/verify_focus_trap-p1.txt`, `verify/verify_keyboard-p1.txt`.
+
+**Screenshots:** `shots-p/<screen>-<width>.png`, 19 screens (Account overview, guest, Your travel, Plan, Security, Your data, Profile, Preferences; My trips, Saved, empty, Your Europe; Together, group, settle, add, privacy; /pricing; the pass sheet) at 390, 820, 1180 and 1440 (76 files). Sweep: 72 measured shots with 0 horizontal scroll and 0 overflowing elements (`shots-p/sweep.json`), Your Europe at ten widths 360 to 1920 clean (`sweep-europe.json`).
+
+**Checks:** `npm test` 2122 tests, 25 failures, identical to the sparse baseline (`npm-test-p1.txt`); `npm run lint` 0 errors; design-lint 0 new (3941 in the merged baseline); token-contrast 0 under the floor; css-routes none overridable (928 route selectors); fast build passes; entry points OK; axe 15 screens at 390 and 1440, 0 serious or critical (`axe-p.log`).
+
+**Commits:** merge of `p15-housestyle`; `5a2607438a` (panels and signatures); `f10bde7da6` (`references/account.md`: one panel grammar, Account opens on the traveller, the plates in My trips and Together).
+
+**Not done or left for the orchestrator:** no judge was run (as asked). Sign in and the auth gate were not reshot (not touched in this pass; their round-3 shots are in `shots-auth/`). The fast build output `wt/_fast/account` is left in place (a delete there was refused by the permission check); it is throwaway.
