@@ -1517,3 +1517,21 @@
   background: none;
 }
 .pf-step .party:not(.is-compact) > .party-row + .party-row { border-top: var(--stroke-hair) solid var(--border-soft); }
+
+/* Carta's own trips on Plan home lie on the ground, not in a white panel
+   (polish lane, round 2): the photographs keep their rounded corners and
+   the title with its door sits under them on a ruled foot. Still one link. */
+.pf-open .pf-coll,
+.pf-open .pf-coll:hover {
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-card);
+}
+.pf-open .pf-coll .pf-coll-foot {
+  padding-top: var(--space-3);
+  border-top: var(--stroke-hair) solid var(--border);
+}
+@media (min-width: 1024px) {
+  .pf-open .pf-coll { padding: 0; }
+}

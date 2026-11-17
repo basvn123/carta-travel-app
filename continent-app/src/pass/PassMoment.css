@@ -113,3 +113,30 @@
    draw it: paper, a 1 px soft hairline, the card radius, no shadow. Only
    what floats (sheets, menus, toasts) casts a shadow; plates stay plates. */
 .pm { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); box-shadow: none; }
+
+/* ── The pass moment as a ledger (polish lane, round 2) ──────────────────
+   The same grammar as the pricing page: no card. The block is ruled onto
+   the trip page's ground (a rule above and below), its lines split by
+   hairlines, the marks plain ink ticks and umber pluses without disc
+   fills. It still rises once when the trip is priced. */
+.pm {
+  overflow: visible;
+  background: none;
+  border: 0;
+  border-top: var(--stroke-hair) solid var(--border);
+  border-bottom: var(--stroke-hair) solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+}
+.pm-main { padding-inline: 0; }
+.pm-list { gap: 0; }
+.pm-list li { padding: var(--space-2) 0; }
+.pm-list li + li { border-top: var(--stroke-hair) solid var(--border-soft); }
+.pm-mark { width: 16px; height: 16px; margin-top: 3px; border-radius: 0; background: none; }
+.is-free .pm-mark { background: none; color: var(--text-2); }
+.is-pass .pm-mark { background: none; color: var(--action); }
+.pm-foot { padding-inline: 0; }
+@media (min-width: 769px) {
+  .pm-main { padding-inline: 0; }
+  .pm-foot { padding-inline: 0; }
+}
