@@ -20,7 +20,7 @@
     box-shadow var(--dur-2) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
 }
 .btn.dock-trigger:active:not(:disabled) { scale: 0.94; }
-.btn.dock-trigger[aria-expanded="true"] { border-color: transparent; box-shadow: var(--shadow-2); }
+.btn.dock-trigger[aria-expanded="true"] { border-color: transparent; box-shadow: var(--elev-2); }
 .dock-glyph { display: inline-grid; place-items: center; }
 .dock-chev { color: var(--text-2); transform: rotate(90deg); transition: transform var(--dur-2) var(--ease-out); }
 .dock-trigger[aria-expanded="true"] .dock-chev { transform: rotate(-90deg); }
@@ -72,9 +72,9 @@
   border-radius: var(--radius-pill);
   background: var(--ts-ground, var(--select-bg));
   color: var(--ts-ink, var(--umber-700));
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--elev-2);
 }
-.btn.dock-trigger--corner[aria-expanded="true"] { box-shadow: var(--shadow-2); }
+.btn.dock-trigger--corner[aria-expanded="true"] { box-shadow: var(--elev-2); }
 .dock-trigger--corner .dock-glyph .hs-icon,
 .dock-trigger--corner .dock-glyph svg { width: 26px; height: 26px; }
 .dock-trigger--corner .dock-glyph.is-swap { animation: dock-glyph-in var(--dur-2) var(--ease-out); }
@@ -92,7 +92,7 @@
   height: 20px;
   border-radius: var(--radius-pill);
   background: var(--surface);
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--elev-1);
 }
 .dock-badge .dock-chev { transform: rotate(-90deg); }
 .dock-trigger--corner[aria-expanded="true"] .dock-badge .dock-chev { transform: rotate(90deg); }
@@ -114,7 +114,7 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
   border-radius: var(--radius-sheet);
   background: var(--surface);
   color: var(--text);
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--elev-2);
   opacity: 0;
   transform: scale(0.92);
   visibility: hidden;
@@ -153,7 +153,8 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
 .dock-card--corner.is-modal {
   top: auto;
   bottom: calc(var(--dock-bottom, 140px) + var(--space-2));
-  max-height: calc(100dvh - var(--dock-bottom, 140px) - var(--space-6));
+  /* Capped so the header stays in view above it; the card scrolls. */
+  max-height: min(78dvh, 640px, calc(100dvh - var(--dock-bottom, 140px) - var(--space-6)));
   border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
   border-bottom: 0;
   transform-origin: bottom left;
@@ -304,9 +305,83 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
   to { opacity: 1; transform: none; }
 }
 
+/* ---- The Style dock (StyleDock.jsx) ----------------------------------- */
+/* A style switch cross-fades the glyph: the keyed span mounts anew. */
+.dock-glyph-in { display: inline-grid; place-items: center; animation: dock-glyph-in var(--dur-2) var(--ease-out); }
+.style-dock-body { display: flex; flex-direction: column; min-width: 0; }
+/* The styles: one full-width line each, the disc, the name, the figure. */
+.dock-card .tstyle-cards.is-line { display: flex; flex-direction: column; gap: 0; padding: 0; }
+.dock-card .tstyle-cards.is-line .btn.tstyle-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: none;
+  min-height: 52px;
+  margin: 0;
+  padding: var(--space-1) var(--space-4);
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  text-align: start;
+}
+.dock-card .tstyle-cards.is-line .btn.tstyle-card .btn-label { display: contents; }
+.dock-card .tstyle-cards.is-line .btn.tstyle-card.is-on { background: var(--select-bg); color: var(--select-ink); }
+.dock-card .tstyle-cards.is-line .tstyle-card-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.dock-card .tstyle-cards.is-line .tstyle-card-fig { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.tstyle-card-unit { font-weight: 500; color: var(--text-2); }
+.dock-card .btn.tstyle-card:focus-visible { outline-offset: -3px; }
+.style-dock-note { margin: 0; padding: 0 var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
+.dock-row .style-dock-note { padding: 0; }
+.style-dock-held {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--border-soft);
+}
+.style-dock-held-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.style-dock-halves { padding: var(--space-3) var(--space-4) var(--space-2); border-top: 1px solid var(--border-soft); }
+.style-dock-half { display: flex; flex-direction: column; min-width: 0; }
+.style-dock-set { min-width: 0; margin: 0; padding: 0; border: 0; }
+.style-dock-set:disabled { opacity: 0.6; }
+.dock-card .tstyle-chips { min-width: 0; }
+/* The explore half draws the sheet's own fields: full width, the hairline
+   rows of the dock. */
+.style-dock-explore .tstyle-field { padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-soft); }
+.style-dock-explore .tstyle-field-title { margin: 0 0 var(--space-2); }
+.style-dock-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-1);
+  border-top: 1px solid var(--border-soft);
+}
+.btn.style-dock-more { min-width: var(--tap); min-height: var(--tap); }
+.style-dock-menu { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: 0 var(--space-4) var(--space-2); justify-content: flex-end; }
+.style-dock-first { display: flex; flex-direction: column; gap: var(--space-3); padding: 0 var(--space-4) var(--space-2); }
+.style-dock-first-title { margin: 0; font-weight: 700; }
+.style-dock-templates { display: flex; flex-direction: column; gap: var(--space-1); }
+.style-dock-templates .btn.tstyle-tpl { justify-content: flex-start; width: 100%; max-width: none; }
+
+/* The Map pill steps aside while the Style dock is open: both live at the
+   foot of the list. The list keeps room under its last row for the disc on
+   a desktop, where it sits inside the list pane. */
+html[data-dock="style"] .xview-fab { opacity: 0; pointer-events: none; transition: opacity var(--dur-2) var(--ease-out); }
+@media (min-width: 769px) {
+  .dock--corner { left: var(--space-5); bottom: var(--space-5); }
+  .explore-shell .explore-wrap,
+  .places-wrap { padding-bottom: 88px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dock-card,
   .dock-card.is-open { transform: none; }
   .dock-row { transform: none; }
-  .trip-dock-drill { animation: none; }
+  .trip-dock-drill,
+  .dock-glyph-in { animation: none; }
 }

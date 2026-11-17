@@ -93,6 +93,7 @@ import { useKeyboardOpen } from './hooks/useKeyboardOpen.js';
 import { usePanelState } from './hooks/usePanelState.js';
 import { loadStoredStyles, useTravelStyles } from './hooks/useTravelStyles.js';
 import { TravelStylesSheet } from './browse/TravelStylesSheet.jsx';
+import { StyleDock } from './components/dock/StyleDock.jsx';
 import { useFilterState } from './hooks/useFilterState.js';
 import { useReach } from './lib/reach.js';
 import { resolveWhen, whenMonth, xmFromSearch } from './lib/when.js';
@@ -1673,6 +1674,11 @@ function TravelApp() {
       {travelStyles.open && (
         <TravelStylesSheet onClose={() => travelStyles.setOpen(false)} openLifestyle={openLifestyle} initialHalf={travelStyles.open} />
       )}
+      {/* G12: the Style dock, the travel style's one door on Explore,
+          Destinations and My trips. Plan's bar owns the bottom there, and a
+          full page (a place, a country, a region, the account) has its own
+          foot, so the corner stays empty on those. */}
+      <StyleDock hidden={!(place === 'explore' || place === 'trips') || !!selectedDest || !!countryPage || !!pendingRegion} />
 
       {/* The home page (T462, which replaced the T209 landing receipt): what
           Carta does, a live demo of it, and a door to each part. Not kept

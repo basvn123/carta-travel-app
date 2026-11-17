@@ -107,3 +107,28 @@ test('the three new house glyphs exist', () => {
   assert.match(icons, /className="tune-k1"/);
   assert.match(icons, /className="tune-k2"/);
 });
+
+// Steps 3 and 4: what each dock holds and where it sits (decision.md change 1).
+test('the Trip dock holds style, from, when and prices only', () => {
+  const trip = src('components/dock/TripDock.jsx');
+  const rows = [...trip.matchAll(/rowKey="([a-z]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(rows, ['style', 'from', 'when', 'prices']);
+  assert.match(trip, /openDock\('style'\)/, 'the Style row hands over');
+  assert.doesNotMatch(src('browse/explore/OverviewHero.jsx'), /PriceViewSwitch/, 'how prices read moved into the dock');
+  for (const f of ['browse/explore/OverviewHero.jsx', 'browse/explore/ExploreToolbar.jsx', 'browse/ExploreTab.jsx', 'browse/DestinationsTab.jsx']) {
+    assert.match(src(f), /<TripDock \/>/, `${f} mounts the Trip dock`);
+  }
+  assert.doesNotMatch(src('App.jsx'), /<SettingsLine /, 'the header settings line left Explore and Destinations');
+});
+
+test('the Style dock replaces the header door and stays off Plan and full pages', () => {
+  assert.doesNotMatch(src('components/AppHeader.jsx'), /<StyleDoor/);
+  const app = src('App.jsx');
+  assert.match(app, /<StyleDock hidden=\{!\(place === 'explore' \|\| place === 'trips'\) \|\| !!selectedDest/);
+  assert.match(app, /<TravelStylesSheet /, 'the full sheet stays mounted');
+  const dock = src('components/dock/StyleDock.jsx');
+  for (const row of ['who', 'stay', 'food', 'way', 'priority']) assert.match(dock, new RegExp(`rowKey="${row}"`));
+  assert.match(dock, /StyleExploreFields/, 'the explore half reuses the sheet fields');
+  assert.match(dock, /disabled=\{held\}/, 'bed and table wait while a trip holds the style');
+  assert.match(src('styles/89-dock.css'), /html\[data-dock="style"\] \.xview-fab/, 'the Map pill steps aside');
+});

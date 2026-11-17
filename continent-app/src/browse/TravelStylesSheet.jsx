@@ -40,7 +40,8 @@ export function styleSummary(t, style) {
 
 /** The label of a planner option, read from the question it answers, so a
  *  style says each thing in the planner's own words. */
-function optLabel(t, qid, value) {
+// eslint-disable-next-line react-refresh/only-export-components -- shared with components/dock/StyleDock.jsx
+export function optLabel(t, qid, value) {
   const o = QUESTIONS[qid]?.options?.find((x) => x.value === value);
   return o?.labelKey ? t(o.labelKey) : '';
 }
@@ -49,7 +50,7 @@ function optLabel(t, qid, value) {
  * One card per style, the active one ticked: a radio group, so arrows move
  * between styles and a tap switches every price at once.
  */
-export function StylePicker({ list, activeId, onPick, label, extra = null, compact = false, figures = null }) {
+export function StylePicker({ list, activeId, onPick, label, extra = null, compact = false, figures = null, line = false }) {
   const { t } = useI18n();
   const onKeyDown = (e) => {
     if (!['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp'].includes(e.key)) return;
@@ -68,10 +69,33 @@ export function StylePicker({ list, activeId, onPick, label, extra = null, compa
   // takes the tab stop, so the group is never out of the keyboard's reach.
   const anyOn = list.some((s) => s.id === activeId);
   return (
-    <div className={`tstyle-cards${compact ? ' is-compact' : ''}`} role="radiogroup" aria-label={label} onKeyDown={onKeyDown}>
+    <div className={`tstyle-cards${compact ? ' is-compact' : ''}${line ? ' is-line' : ''}`} role="radiogroup" aria-label={label} onKeyDown={onKeyDown}>
       {list.map((s) => {
         const on = s.id === activeId;
         const Ico = styleIcon(s);
+        const fig = figures?.get(s.id);
+        // The Style dock (G12): one line, the name and the day figure; its
+        // name says what the figure is, the line shows only the number.
+        if (line) {
+          const price = fig != null ? formatMoney(fig, { precision: 'whole' }) : '';
+          return (
+            <Button
+              key={s.id}
+              variant="quiet"
+              role="radio"
+              aria-checked={on}
+              aria-label={price ? t('styles.rowAria', { name: styleName(t, s), price }) : styleName(t, s)}
+              tabIndex={on || (!anyOn && s === list[0]) ? 0 : -1}
+              data-sid={s.id}
+              className={`tstyle-card tone-${s.tone}${on ? ' is-on' : ''}`}
+              onClick={() => onPick(s.id)}
+            >
+              <span className="tstyle-disc" aria-hidden="true">{on ? <CheckIcon size={18} /> : <Ico size={20} />}</span>
+              <span className="tstyle-card-name">{styleName(t, s)}</span>
+              {price && <span className="tstyle-card-fig" aria-hidden="true">{price} <span className="tstyle-card-unit">{t('card.perDay')}</span></span>}
+            </Button>
+          );
+        }
         return (
           <Button
             key={s.id}
@@ -100,7 +124,7 @@ export function StylePicker({ list, activeId, onPick, label, extra = null, compa
 }
 
 /** A group of choice chips for one answer (single or several). */
-function ChoiceChips({ label, values, picked, onChange, multi = false, max = 99, labelOf }) {
+export function ChoiceChips({ label, values, picked, onChange, multi = false, max = 99, labelOf }) {
   const set = new Set(picked);
   return (
     <ChipGroup label={label} className="tstyle-chips">
@@ -125,7 +149,7 @@ function ChoiceChips({ label, values, picked, onChange, multi = false, max = 99,
   );
 }
 
-function Field({ title, note = '', children }) {
+export function Field({ title, note = '', children }) {
   const id = useId();
   return (
     <section className="tstyle-field" aria-labelledby={id}>
@@ -133,6 +157,110 @@ function Field({ title, note = '', children }) {
       {note && <p className="tstyle-field-note">{note}</p>}
       {children}
     </section>
+  );
+}
+
+/**
+ * How you explore (the style's second half): shape, personas, likes, what to
+ * avoid, size, quiet, getting around, mornings and pace. Drawn by this sheet
+ * and by the Style dock (G12), so both edit the same fields alike.
+ */
+export function StyleExploreFields({ s, ts }) {
+  const { t } = useI18n();
+  const ex = s.explore;
+  const setExplore = (patch) => ts.update(s.id, { explore: { ...s.explore, ...patch } });
+  const setDays = (patch) => ts.update(s.id, { days: { ...s.days, ...patch } });
+  const one = (list) => list[0] || '';
+  return (
+    <>
+      <Field title={t('styles.shape')}>
+        <ChoiceChips
+          multi
+          label={t('styles.shape')}
+          values={SHAPES}
+          picked={ex.shapes}
+          labelOf={(v) => optLabel(t, 'g:shape', v)}
+          onChange={(v) => setExplore({ shapes: v })}
+        />
+      </Field>
+      <Field title={t('styles.persona')}>
+        <ChoiceChips
+          multi
+          max={3}
+          label={t('styles.persona')}
+          values={PERSONAS}
+          picked={ex.personas}
+          labelOf={(v) => t(`pf.persona.${v}`)}
+          onChange={(v) => setExplore({ personas: v.includes('mix') && v.length > 1 ? v.filter((x) => x !== 'mix') : v })}
+        />
+      </Field>
+      <Field title={t('styles.likes')}>
+        <ChoiceChips
+          multi
+          max={3}
+          label={t('styles.likes')}
+          values={LIKES}
+          picked={ex.likes}
+          labelOf={(v) => t(`pf.like.${v}`)}
+          onChange={(v) => setExplore({ likes: v })}
+        />
+      </Field>
+      <Field title={t('styles.avoid')}>
+        <ChoiceChips
+          multi
+          label={t('styles.avoid')}
+          values={AVOID}
+          picked={ex.avoid}
+          labelOf={(v) => optLabel(t, 'g:avoid', v)}
+          onChange={(v) => setExplore({ avoid: v })}
+        />
+      </Field>
+      <Field title={t('taste.q.size')}>
+        <ChoiceChips
+          label={t('taste.q.size')}
+          values={SIZES}
+          picked={ex.size ? [ex.size] : []}
+          labelOf={(v) => t(`taste.opt.${v}`)}
+          onChange={(v) => setExplore({ size: one(v) })}
+        />
+      </Field>
+      <Field title={t('taste.q.quiet')}>
+        <ChoiceChips
+          label={t('taste.q.quiet')}
+          values={QUIET}
+          picked={ex.quiet ? [ex.quiet] : []}
+          labelOf={(v) => t(`taste.opt.${v}`)}
+          onChange={(v) => setExplore({ quiet: one(v) })}
+        />
+      </Field>
+      <Field title={t('styles.around')}>
+        <ChoiceChips
+          label={t('styles.around')}
+          values={AROUND}
+          picked={ex.around ? [ex.around] : []}
+          labelOf={(v) => optLabel(t, 'g:around', v)}
+          onChange={(v) => setExplore({ around: one(v) })}
+        />
+      </Field>
+      <Field title={t('styles.mornings')}>
+        <ChoiceChips
+          label={t('styles.mornings')}
+          values={MORNINGS}
+          picked={s.days.mornings ? [s.days.mornings] : []}
+          labelOf={(v) => optLabel(t, 'r:mornings', v)}
+          onChange={(v) => setDays({ mornings: one(v) })}
+        />
+      </Field>
+      <Field title={t('styles.pace')}>
+        <ChoiceChips
+          label={t('styles.pace')}
+          values={PACE}
+          picked={s.days.pace ? [s.days.pace] : []}
+          labelOf={(v) => optLabel(t, 'r:pace', v)}
+          onChange={(v) => setDays({ pace: one(v) })}
+        />
+      </Field>
+    </>
   );
 }
 
@@ -201,11 +329,7 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
     </div>
   );
 
-  const ex = s?.explore;
-  const setExplore = (patch) => ts.update(s.id, { explore: { ...s.explore, ...patch } });
-  const setDays = (patch) => ts.update(s.id, { days: { ...s.days, ...patch } });
   const profile = s ? matchProfile(s.lifestyle) : null;
-  const one = (list) => list[0] || '';
 
   const editor = s && (
     <div className="tstyle-editor">
@@ -298,93 +422,7 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
       ) : (
         <div className="tstyle-half">
           <p className="tstyle-note">{t('styles.exploreNote')}</p>
-          <Field title={t('styles.shape')}>
-            <ChoiceChips
-              multi
-              label={t('styles.shape')}
-              values={SHAPES}
-              picked={ex.shapes}
-              labelOf={(v) => optLabel(t, 'g:shape', v)}
-              onChange={(v) => setExplore({ shapes: v })}
-            />
-          </Field>
-          <Field title={t('styles.persona')}>
-            <ChoiceChips
-              multi
-              max={3}
-              label={t('styles.persona')}
-              values={PERSONAS}
-              picked={ex.personas}
-              labelOf={(v) => t(`pf.persona.${v}`)}
-              onChange={(v) => setExplore({ personas: v.includes('mix') && v.length > 1 ? v.filter((x) => x !== 'mix') : v })}
-            />
-          </Field>
-          <Field title={t('styles.likes')}>
-            <ChoiceChips
-              multi
-              max={3}
-              label={t('styles.likes')}
-              values={LIKES}
-              picked={ex.likes}
-              labelOf={(v) => t(`pf.like.${v}`)}
-              onChange={(v) => setExplore({ likes: v })}
-            />
-          </Field>
-          <Field title={t('styles.avoid')}>
-            <ChoiceChips
-              multi
-              label={t('styles.avoid')}
-              values={AVOID}
-              picked={ex.avoid}
-              labelOf={(v) => optLabel(t, 'g:avoid', v)}
-              onChange={(v) => setExplore({ avoid: v })}
-            />
-          </Field>
-          <Field title={t('taste.q.size')}>
-            <ChoiceChips
-              label={t('taste.q.size')}
-              values={SIZES}
-              picked={ex.size ? [ex.size] : []}
-              labelOf={(v) => t(`taste.opt.${v}`)}
-              onChange={(v) => setExplore({ size: one(v) })}
-            />
-          </Field>
-          <Field title={t('taste.q.quiet')}>
-            <ChoiceChips
-              label={t('taste.q.quiet')}
-              values={QUIET}
-              picked={ex.quiet ? [ex.quiet] : []}
-              labelOf={(v) => t(`taste.opt.${v}`)}
-              onChange={(v) => setExplore({ quiet: one(v) })}
-            />
-          </Field>
-          <Field title={t('styles.around')}>
-            <ChoiceChips
-              label={t('styles.around')}
-              values={AROUND}
-              picked={ex.around ? [ex.around] : []}
-              labelOf={(v) => optLabel(t, 'g:around', v)}
-              onChange={(v) => setExplore({ around: one(v) })}
-            />
-          </Field>
-          <Field title={t('styles.mornings')}>
-            <ChoiceChips
-              label={t('styles.mornings')}
-              values={MORNINGS}
-              picked={s.days.mornings ? [s.days.mornings] : []}
-              labelOf={(v) => optLabel(t, 'r:mornings', v)}
-              onChange={(v) => setDays({ mornings: one(v) })}
-            />
-          </Field>
-          <Field title={t('styles.pace')}>
-            <ChoiceChips
-              label={t('styles.pace')}
-              values={PACE}
-              picked={s.days.pace ? [s.days.pace] : []}
-              labelOf={(v) => optLabel(t, 'r:pace', v)}
-              onChange={(v) => setDays({ pace: one(v) })}
-            />
-          </Field>
+          <StyleExploreFields s={s} ts={ts} />
         </div>
       )}
     </div>

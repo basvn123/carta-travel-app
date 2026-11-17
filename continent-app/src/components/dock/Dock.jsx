@@ -79,8 +79,15 @@ export function Dock({
   useEffect(() => {
     if (!isOpen || !modal) return undefined;
     const root = document.getElementById('root');
+    const trigger = triggerRef.current;
     root?.setAttribute('inert', '');
-    return () => root?.removeAttribute('inert');
+    return () => {
+      root?.removeAttribute('inert');
+      // The trap hands focus to whatever opened it, which after a hand-over
+      // (the Trip dock's Style row) is the other dock's trigger. Closing goes
+      // back to this dock's own trigger, unless another dock is opening.
+      requestAnimationFrame(() => { if (!getDock().open) trigger?.focus({ preventScroll: true }); });
+    };
   }, [isOpen, modal]);
   useFocusTrap(cardRef, close, { enabled: isOpen && modal, skipEscapeWhen: back });
 
