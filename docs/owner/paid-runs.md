@@ -20,7 +20,7 @@ Everything that costs money goes to the back, after all free work (owner instruc
 11. T047-b: a self-test spawn, about EUR 0.06: `CARTA_WORKER_TYPE_SELFTEST=cpx22 bash infra/hetzner/cax41/spawn.sh selftest`. Passes when it ends "outcome ok, exit 0" and `hcloud server list --selector role=worker` is empty.
 12. T047-c: start a spawn and stop it halfway (Ctrl+C); passes when the worker is still deleted.
 13. T047-d: the first heavy job, the Switzerland route maps.
-14. T049-b to T049-d: the beaches photo conversion (`spawn.sh --dry-run image_transcode beaches` first), then the real run, then repeat until none are left (about 8 runs at about EUR 0.45). After it: T050-a (a real takedown test), T051-a (credits travel with the copies), T269-d (photo scores match), T269-e (`derive.py gc`, dry run first), and T1105-a (switch `heroLadder.json` to live).
+14. The photo conversion ran on 2026-11-16 and 17 (three runs on CPX22, about EUR 0.79): every published photo except lakes. Left: lakes, once its cache tarball carries no rescore hold (`spawn.sh image_transcode lakes published`, about EUR 0.26 a run, Claude does it), then T050-a (a real takedown test), T051-a (credits travel with the copies), T269-d (photo scores match) and T269-e (`derive.py gc`, dry run first).
 
 ## Paid data sources
 
@@ -32,7 +32,6 @@ Everything that costs money goes to the back, after all free work (owner instruc
 |---|---|---|
 | T152-a | 236 of the 253 catalogue trips are over a word cap (41 summaries, 943 day blocks, 334 pro tips); bringing them within needs a model rewrite of the prose, which is a paid Gemini run and stage 3 of _OPEN-MASTER.md is not done, so the done condition "every trip within the caps" holds for generated trips only | LAST (paid, see docs/owner/paid-runs.md); after stage 3 |
 | T1112-a | Run the Aviasales coverage probe with the owner token and the sweep export; steps in the report (D14) |  |
-| T1105-a | Self-hosted first paint is built but ships not live: derive the `dest` and `dossier` layers to R2, then re-run `pipeline/photos/hero_ladder.py --manifests` so `continent-app/src/lib/heroLadder.json` says live; see the T1105 report's owner steps | 1 |
 | T1148-e | Run the Gemini judge (`node scripts/eval/plan-day/judge.mjs --backend gemini`, a model outside plan-day's chain) on the pipeline key; the key is not in the cloud container, so only the session judge has verdicts | 3 |
 | T1138-e | Ask quality for Gemini Flash-Lite and OVHcloud Mistral Small 3.2 is an owner run (ask-eval-live.mjs needs wrangler pages dev and a key); also rerun Qwen3, whose 88.7 percent is from T563 on 2026-10-22 |  |
 | T1144-c | Run the truth text judge once on Gemini through the gateway (judge.mjs --backend gemini) to compare it with the blind session judge | 3 |

@@ -140,6 +140,14 @@ if "$PY" -c 'import yaml' 2>/dev/null; then
       fi
       grep -q '@@[A-Z0-9_]*@@' "$out" && fail "user data for $j keeps a placeholder" || true
       grep -q $'\r' "$out" && fail "user data for $j has CR bytes" || true
+      # worker.conf is sourced under set -a: an exported RCLONE_<FLAG> other
+      # than the remote's RCLONE_CONFIG_* is read by rclone as a flag
+      # (RCLONE_VERSION killed every worker rclone call, 2026-11-16).
+      if grep -nE '^[[:space:]]*(export[[:space:]]+)?RCLONE_[A-Z0-9_]*=' "$out" | grep -v 'RCLONE_CONFIG_' > "$T/rc.txt"; then
+        fail "user data for $j sets an RCLONE_ variable rclone would read as a flag: $(head -n 1 "$T/rc.txt")"
+      else
+        pass "user data for $j sets no stray RCLONE_ variable"
+      fi
       if [ -f "$out.boot.sh" ]; then
         if bash -n "$out.boot.sh" 2>"$T/err"; then pass "carta-worker-boot for $j parses"; else fail "carta-worker-boot for $j: $(cat "$T/err")"; fi
       else

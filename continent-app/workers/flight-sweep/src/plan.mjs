@@ -23,6 +23,13 @@
  * night (owner, 2026-11-04). So a night minute carries half a day minute's
  * share; each cycle still takes exactly its days (a day has the same
  * SLOTS_PER_DAY), and by day a minute carries about 17% more than before.
+ *
+ * N6 (2026-11-17): half speed did not help, 0 of 7 nights clean, each
+ * night three refusals in about 100 swept minutes and the pause ladder
+ * (1, 2, 4 hours) eating the rest. A night minute now has NIGHT_SLOTS = 0:
+ * no searches from 22:00 to 05:00 UTC, and the day minutes carry the
+ * whole cycle (about 21% more each than at half speed), so every route
+ * still has its turn once a cycle.
  */
 
 // T780: as few searches as the app needs (owner, 2026-10-27: a price may be a
@@ -46,19 +53,22 @@ export const LATE_CYCLE = 40320; // minutes in 4 weeks
 export const LATE_WEEKS = 19; // weeks 27 to 45, after the far tier's 24
 export const FIND_MIN_KM = 150; // closer than this nobody flies
 export const DORMANT_AFTER = 6;
-// T1043: half speed from 22:00 to 05:00 UTC.
+// T1043: the night window, 22:00 to 05:00 UTC. N6: no slots in it (was one
+// a minute, half speed); a day minute has two.
 export const NIGHT_UTC = [22, 5];
+export const NIGHT_SLOTS = 0;
+const DAY_SLOTS = 2;
 const NIGHT_MIN = (24 - NIGHT_UTC[0] + NIGHT_UTC[1]) * 60;
-export const SLOTS_PER_DAY = 2 * 1440 - NIGHT_MIN;
+export const SLOTS_PER_DAY = DAY_SLOTS * 1440 - (DAY_SLOTS - NIGHT_SLOTS) * NIGHT_MIN;
 
 const DAY = 86400000;
 
-/** Slots (half minutes, one per night minute) from the epoch to this minute. */
+/** Slots (half minutes; NIGHT_SLOTS per night minute) from the epoch to this minute. */
 export function slotsAt(minute) {
   const day = Math.floor(minute / 1440);
   const r = minute - day * 1440;
   const night = Math.min(r, NIGHT_UTC[1] * 60) + Math.max(0, r - NIGHT_UTC[0] * 60);
-  return 2 * minute - day * NIGHT_MIN - night;
+  return DAY_SLOTS * minute - (DAY_SLOTS - NIGHT_SLOTS) * (day * NIGHT_MIN + night);
 }
 
 /**

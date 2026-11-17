@@ -144,7 +144,14 @@ def build(images, known, have_manifest, max_missing=MAX_MISSING):
         derived += 1
         if e["h"] != plain:
             rev[key] = e["h"]
-        d = [list(x) for x in e["d"]]
+        # A journal entry stores the rungs as {"320": [w, h], ...}, a manifest
+        # as [[w, h], ...]; load_prior lets the journal win, so read both
+        # (iterating the dict gave its keys, "320" -> ["3", "2", "0"], and
+        # every copy landed in dims, 2026-11-17).
+        raw = e["d"]
+        if isinstance(raw, dict):
+            raw = [raw.get(str(w)) for w in dv.WIDTHS]
+        d = [list(x) for x in raw if x]
         if d != expected_dims(img.get("w"), img.get("h")):
             dims[key] = d
     live = bool(have_manifest and derived and len(missing) <= max_missing)
