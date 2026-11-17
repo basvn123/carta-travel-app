@@ -197,6 +197,10 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
   letter-spacing: -0.018em;
   color: var(--text);
   text-wrap: balance;
+  /* T1089: one very long word (a German compound) breaks inside the column
+     instead of running past the viewport. */
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 .pt-title:focus { outline-color: transparent; }
 .pt-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
