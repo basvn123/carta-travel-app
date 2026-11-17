@@ -4,7 +4,8 @@
  *
  * Uses the Playwright Chromium the repo already has (continent-app's
  * devDependency; no new package, research in T1175).
- * The app's own Figtree (continent-app/public/fonts, OFL) is inlined as a data
+ * The app's own Overpass (continent-app/src/assets/fonts, OFL; house style
+ * G1 2026-11) is inlined as a data
  * URL, so the PNG sets the type the app sets and nothing is fetched.
  *
  *   node scripts/share/render_png.mjs <file.svg> [more.svg ...]
@@ -23,9 +24,15 @@ const APP = process.env.CARTA_APP || join(ROOT, 'continent-app');
 export async function renderPngs(files) {
   const require = createRequire(join(APP, 'package.json'));
   const { chromium } = require('playwright');
-  const fonts = ['Figtree-latin.woff2', 'Figtree-latin-ext.woff2']
-    .map((f) => readFileSync(join(APP, 'public', 'fonts', f)).toString('base64'));
-  const face = fonts.map((b) => `@font-face{font-family:'Figtree';font-weight:300 900;src:url(data:font/woff2;base64,${b}) format('woff2');}`).join('');
+  // The screens' own faces and unicode ranges (src/styles/00-fonts.css).
+  const RANGES = {
+    latin: 'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD',
+    'latin-ext': 'U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+1EF2-1EFF,U+20A0-20AB,U+20AD-20C4,U+2C60-2C7F,U+A720-A7FF',
+  };
+  const face = Object.entries(RANGES).map(([sub, range]) => {
+    const b = readFileSync(join(APP, 'src', 'assets', 'fonts', `Overpass-${sub}.woff2`)).toString('base64');
+    return `@font-face{font-family:'Overpass';font-weight:100 900;unicode-range:${range};src:url(data:font/woff2;base64,${b}) format('woff2');}`;
+  }).join('');
   const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
   const out = [];
   try {
@@ -36,7 +43,7 @@ export async function renderPngs(files) {
       const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
       await page.setContent(`<!doctype html><html><head><meta charset="utf-8"><style>${face}html,body{margin:0;padding:0}svg{display:block}</style></head><body>${svg}</body></html>`);
       await page.evaluate(() => document.fonts.ready);
-      await page.evaluate(() => Promise.all([300, 400, 500, 600, 700, 800].map((wt) => document.fonts.load(`${wt} 20px Figtree`))));
+      await page.evaluate(() => Promise.all([300, 400, 500, 600, 700, 800].map((wt) => document.fonts.load(`${wt} 20px Overpass`, 'AaČő0€'))));
       const png = f.replace(/\.svg$/, '.png');
       writeFileSync(png, await page.locator('svg').screenshot({ type: 'png' }));
       await page.close();
