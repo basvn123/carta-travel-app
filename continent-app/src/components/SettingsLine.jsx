@@ -455,23 +455,16 @@ function WayPart({ s, compact = false }) {
   );
 }
 
-export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children, slot = false }) {
-  const s = useSettings();
-  const { t } = useI18n();
-  const isDesktop = useIsDesktop();
-  const shortDate = useShortDate();
-  const [open, setOpen] = useState(null); // 'from' | 'dates' | 'party' | 'countries' | 'sheet' | null
+/**
+ * The one calendar's pick rule, shared by this line and the Trip dock (G12)
+ * so both move the dates alike. A pick on the leaving end moves the trip
+ * and keeps its length, then hands the next pick to the return; a pick on
+ * the return end sets it, unless it lands on or before the leaving day,
+ * which then moves instead.
+ */
+// eslint-disable-next-line react-refresh/only-export-components -- a hook shared with components/dock/TripDock.jsx
+export function useDatePick(s) {
   const [pickEnd, setPickEnd] = useState('start');
-  const [sheetFrom, setSheetFrom] = useState(false);
-  const baseId = useId();
-  const fromRef = useRef(null);
-  const datesRef = useRef(null);
-  const partyRef = useRef(null);
-  const countriesRef = useRef(null);
-  const summaryRef = useRef(null);
-  // A pick on the leaving end moves the trip and keeps its length, then hands
-  // the next pick to the return; a pick on the return end sets it, unless it
-  // lands on or before the leaving day, which then moves instead.
   const pickDate = useCallback((iso) => {
     if (!s || !iso) return;
     const nights = Math.max(1, nightsBetween(s.departDate, s.returnDate));
@@ -483,6 +476,23 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
     s.setReturnDate(addDaysISO(iso, nights));
     setPickEnd('end');
   }, [s, pickEnd]);
+  return { pickEnd, setPickEnd, pickDate };
+}
+
+export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children, slot = false }) {
+  const s = useSettings();
+  const { t } = useI18n();
+  const isDesktop = useIsDesktop();
+  const shortDate = useShortDate();
+  const [open, setOpen] = useState(null); // 'from' | 'dates' | 'party' | 'countries' | 'sheet' | null
+  const { pickEnd, setPickEnd, pickDate } = useDatePick(s);
+  const [sheetFrom, setSheetFrom] = useState(false);
+  const baseId = useId();
+  const fromRef = useRef(null);
+  const datesRef = useRef(null);
+  const partyRef = useRef(null);
+  const countriesRef = useRef(null);
+  const summaryRef = useRef(null);
   const close = useCallback(() => setOpen(null), []);
   const names = useMemo(() => new Map(s?.availableCountries || []), [s?.availableCountries]);
   if (!s) return null;

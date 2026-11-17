@@ -2,6 +2,7 @@ import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
 import { MATCH } from '../../lib/match.js';
 import { CountriesButton } from '../../components/CountriesControl.jsx';
+import { TripDock } from '../../components/dock/TripDock.jsx';
 
 export function ExploreToolbar({
   TitleTag, chips, filterBtnRef, gridTotal, isDesktop, isMock, lang, lens, matchTaste, paneOpen,
@@ -69,6 +70,8 @@ export function ExploreToolbar({
         )}
         {!isDesktop && <CountriesButton s={settingsLine} className="xtool" />}
         {viewSwitch('xtool-view')}
+        {/* G12: the Trip dock closes the row on every width. */}
+        <TripDock />
       </div>
     </div>
   );

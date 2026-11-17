@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo, useSyncExtern
 import { AppHeader } from './components/AppHeader.jsx';
 import { setFooterNavigate } from './components/SiteFooter.jsx';
 import { AnnouncementBar, PassExpiryBanner, BottomSlot } from './components/AnnouncementBar.jsx';
-import { SettingsLine, SettingsContext } from './components/SettingsLine.jsx';
+import { SettingsContext } from './components/SettingsLine.jsx';
 import { CloseIcon } from './components/Icons.jsx';
 import { crossTab } from './lib/sharedElement.js';
 import { usePresence, useDialogExit } from './lib/motion.js';
@@ -1523,9 +1523,11 @@ function TravelApp() {
           savedCount={savedCount}
           planInProgress={planInProgress}
         />
-        {settingsParts !== null && (settingsParts === undefined && !isDesktopShell
-          ? <SearchDock onSearch={dockSearch} />
-          : <SettingsLine parts={settingsParts} slot />)}
+        {/* G12 (explore polish): from 769 px the Trip dock under the
+            category tabs holds From, When and how prices read, so the
+            header's settings line left Explore and Destinations (one door
+            per screen). The phone keeps its search pill. */}
+        {settingsParts === undefined && !isDesktopShell && <SearchDock onSearch={dockSearch} />}
       </header>
 
       {/* A trip arrived via share link: offer it, never silently apply it. */}

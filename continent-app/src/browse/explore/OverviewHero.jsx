@@ -3,7 +3,7 @@ import { openAskChat } from '../ask/askChatStore.js';
 import { DiamondIcon, SparkIcon } from '../../components/Icons.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
-import { PriceViewSwitch } from '../../components/PriceViewSwitch.jsx';
+import { TripDock } from '../../components/dock/TripDock.jsx';
 
 /**
  * The overview's head (T586, T595; rebuilt as a hero by T601, Explore v8,
@@ -101,8 +101,9 @@ export function OverviewHero({
           ))}
           {tasteChip}
           {strongChip}
-          <PriceViewSwitch className="xov-price" />
           {viewToggle}
+          {/* G12: the Trip dock ends the row; how prices read moved inside it. */}
+          <TripDock />
         </div>
       </div>
     </section>

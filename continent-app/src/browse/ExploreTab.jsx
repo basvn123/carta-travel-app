@@ -36,6 +36,7 @@ import { MatchMonth } from './WhyItMatches.jsx';
 import '../styles/84-explore-overview.css';
 import { SortMenu } from './explore/SortMenu.jsx';
 import { OverviewHero } from './explore/OverviewHero.jsx';
+import { TripDock } from '../components/dock/TripDock.jsx';
 import { useExploreLens } from './explore/useExploreLens.js';
 import { ExploreContent } from './explore/ExploreContent.jsx';
 import { ExploreToolbar } from './explore/ExploreToolbar.jsx';
@@ -610,6 +611,16 @@ export function ExploreTab({
 
   const anyActive = chips.length > 0;
   const TitleTag = isActive && !pageOver ? 'h1' : 'div';
+  // T765: Strong match, 70% and up; a filter the traveller sets. One chip,
+  // drawn in the desktop quick row or the phone's Trip dock row (G12).
+  const strongChip = matchTaste ? (
+    <Button variant="secondary" size="sm"
+      className={`xquick-chip xstrong-chip${strongOnly ? ' is-on' : ''}`}
+      title={t('fit.strongHint', { pct: Math.round(MATCH.strong_min * 100) })}
+      aria-pressed={strongOnly} onClick={() => setStrongOnly((v) => !v)}>
+      {t('fit.strong')}
+    </Button>
+  ) : null;
 
 
   return (
@@ -641,6 +652,15 @@ export function ExploreTab({
             the front, larger, more on top"): the six categories lead every
             view of the tab, right under the settings line. */}
         {catTiles && <div className="xcats-bar">{catTiles}</div>}
+        {/* G12: the phone overview has no quick row, so the Trip dock gets its
+            own slim row under the tabs; Strong match leads it when a taste
+            is set. */}
+        {railsIdle && !isDesktop && (
+          <div className="xsub">
+            {strongChip}
+            <TripDock />
+          </div>
+        )}
         {/* T586, T595: the overview leads with one compact block: the
             headline, Ask Carta's field, the What and Where bar with the map
             toggle, then the categories and the quick chips. The phone's
@@ -655,15 +675,7 @@ export function ExploreTab({
             filtersOn={isDesktop ? ovPane : sheetOpen}
             filterCount={chips.length}
             onAllFilters={() => (isDesktop ? setOvPane((v) => !v) : setSheetOpen(true))}
-            strongChip={matchTaste ? (
-              // T765: Strong match, 70% and up; a filter the traveller sets.
-              <Button variant="secondary" size="sm"
-                className={`xquick-chip xstrong-chip${strongOnly ? ' is-on' : ''}`}
-                title={t('fit.strongHint', { pct: Math.round(MATCH.strong_min * 100) })}
-                aria-pressed={strongOnly} onClick={() => setStrongOnly((v) => !v)}>
-                {t('fit.strong')}
-              </Button>
-            ) : null} />
+            strongChip={strongChip} />
         )}
         {/* The six categories as one row of tabs (T586, owner decision 7);
             on the overview they sit inside the head block (T595). */}

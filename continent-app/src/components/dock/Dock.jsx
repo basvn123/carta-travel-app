@@ -37,6 +37,7 @@ const DockContext = createContext(null);
 const useBeforePaint = typeof document !== 'undefined' ? useLayoutEffect : useEffect;
 
 /** Inside a dock: close it, and register a "back one level" for Escape. */
+// eslint-disable-next-line react-refresh/only-export-components -- the docks' rows need it beside the Dock they live in
 export function useDockBack(back) {
   const ctx = useContext(DockContext);
   const ref = ctx?.backRef;

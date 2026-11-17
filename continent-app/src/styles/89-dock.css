@@ -237,8 +237,76 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
   to { background: transparent; }
 }
 
+/* ---- The Trip dock (TripDock.jsx) ------------------------------------- */
+/* The row its pill ends: under the category tabs on the phone overview and
+   on Destinations. The start slot keeps Strong match when a taste is set. */
+.xsub {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0 0 var(--space-3);
+}
+.xsub > .dock { margin-left: auto; }
+.xov-quick > .trip-dock { margin-left: auto; }
+.xov-quick > .xov-view + .trip-dock { margin-left: 0; }
+/* The focused list: the pill closes the tools row. On a phone that row
+   scrolls sideways, so the pill sticks to its right edge and never
+   scrolls away. */
+.xtools > .dock.trip-dock { flex: none; }
+@media (max-width: 768px) {
+  .xtools > .dock.trip-dock {
+    position: sticky;
+    right: 0;
+    padding-left: var(--space-2);
+    background: linear-gradient(to right, transparent, var(--surface-page) var(--space-2));
+  }
+}
+
+.trip-dock-style { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.trip-dock-style .tstyle-disc { flex: none; width: 28px; height: 28px; }
+.trip-dock-style-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Changed for now: in words, with the umber dot the triggers use. */
+.trip-dock-changed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: none;
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--select-ink);
+}
+.trip-dock-changed::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--umber-600);
+}
+
+/* A drilled row: Back and its title, then the panel; it slides in from the
+   end, as the motion table in proposal.md section 3 asks. */
+.trip-dock-drill { display: flex; flex-direction: column; min-width: 0; animation: dock-drill-in var(--dur-2) var(--ease-out); }
+.trip-dock-rows { display: flex; flex-direction: column; min-width: 0; }
+.trip-dock-drill-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--border-soft);
+}
+.trip-dock-drill-title { margin: 0; font-size: var(--text-body); font-weight: 700; }
+.btn.trip-dock-back { min-height: var(--tap); }
+.trip-dock-panel { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; padding: var(--space-3) var(--space-4) var(--space-2); }
+@keyframes dock-drill-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dock-card,
   .dock-card.is-open { transform: none; }
   .dock-row { transform: none; }
+  .trip-dock-drill { animation: none; }
 }

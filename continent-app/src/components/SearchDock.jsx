@@ -54,8 +54,10 @@ export const DOCK_KINDS = [
 ];
 const kindOf = (key) => DOCK_KINDS.find((k) => k.key === key) || DOCK_KINDS[0];
 
-/** The trip in one line: when, from where, who. */
-function useTripLine(s) {
+/** The trip in one line: when, from where, who. The Trip dock's name and
+ *  tooltip read it too (G12), so the pill and the dock never disagree. */
+// eslint-disable-next-line react-refresh/only-export-components -- a hook shared with components/dock/TripDock.jsx
+export function useTripLine(s) {
   const { t } = useI18n();
   const shortDate = useShortDate();
   if (!s) return '';
