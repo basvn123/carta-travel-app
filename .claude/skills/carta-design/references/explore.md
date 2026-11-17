@@ -1,6 +1,6 @@
 # Explore rules (reference)
 
-Covers Explore (overview and focused view), the map and list, rails, filters, the category tabs (Destinations), search, the settings line and the Lifestyle control, the start dialog, travel styles, and Trip styles as a row.
+Covers Explore (overview and focused view), the map and list, rails, filters, the category tabs (the Places tiles), search, the settings line and the Lifestyle control, the start dialog, travel styles, and Trip styles as a row.
 
 Numbers and money, cost on cards, best value, ratings, copy, photography licensing, controls and the quality floor: see shared-product-rules.md. Ask Carta's chat: see account.md, section "Ask Carta". The site footer: see home.md. The item pages behind the outdoor tabs: see outdoors.md. The place page: see place.md.
 
@@ -12,7 +12,7 @@ The direction is "the walker's table": places as rows of a table, the map beside
 - **The unit and dates once** (`ListHead`): "A day, a person" (`explore.colUnit`; the group view says its own unit) and the traveller's dates when set, over every list of figures: the focused list, the map's docked column and the overview's rails. A price note every place below shares ("Local transport: not yet") is said once in that head, never under each card; a card keeps only notes of its own. Rows and cards keep the unit in their accessible name only.
 - **No photo cards in a list.** Photo cards live in rails only.
 
-**Rails (`ExploreRails.jsx` on the kit `Rail`; `StoryRail.jsx` for the other browse rails).** The head is the title, See all in umber 700 and two round outlined arrows (fine pointer and 1024 up). A card is the 4:3 photo at 16 px with only the save disc on it, the name with the Score plate, flag and country with one status ("Good in Nov" as a beige tag, else the gem), the weighted formation, the price notes. No lead card facts and no rail lines (the cards show the cheapest day, the month and the Score; StoryRail stopped drawing them in T968). Destinations' StoryRail cards follow the same grammar: the Score plate beside the name. No lift, tilt or arrival stagger.
+**Rails (`ExploreRails.jsx` on the kit `Rail`; `StoryRail.jsx` for the other browse rails).** The head is the title, See all in umber 700 and two round outlined arrows (fine pointer and 1024 up). A card is the 4:3 photo at 16 px with only the save disc on it, the name with the Score plate, flag and country with one status ("Good in Nov" as a beige tag, else the gem), the weighted formation, the price notes. No lead card facts and no rail lines (the cards show the cheapest day, the month and the Score; StoryRail stopped drawing them in T968). The category pages' StoryRail cards follow the same grammar: the Score plate beside the name. No lift, tilt or arrival stagger.
 
 **Overview top, tablet and desktop (`OverviewHero.jsx`).** No photograph (its headline sat on the photo). One field on paper with a 1.5 px ink edge ("Where to? Ask Carta or search a place", the same routing: a question goes to Ask, a name searches, empty shows all), the Search button inside it (its icon only below 1024), and Ask beside it as the screen's one solid umber action with the boxed AI mark. Under it one quiet row: All filters, the rail doors, Per person or Whole group and Map at its end. The h1 is read, not drawn. Phone: the search dock instead (`96-search-dock.css`): the same ink-edged field with the kind's pictogram, Ask as a solid umber tile, Back and Filters as round paper doors in a list; no gradients, no shadow (the dock does not float).
 
@@ -22,7 +22,7 @@ The direction is "the walker's table": places as rows of a table, the map beside
 
 **Filters (`78-filter-pane.css`, sheet `14-filters-panels.css`).** Section heads in ink 800, hairlines in the rule colour, months as 8 px tiles on the control edge, the popover a floating sheet that scales in from 0.96. The sheet is a bottom sheet on a phone and a centred dialog (every corner round, no grab handle) from 769 px.
 
-**Destinations (`63`, `83`, `80`).** The category tabs carry the house pictograms; the where field is the same ink-edged field; the opening rails are StoryRails in the rail grammar. The phone quick row stays one swipe row (owner, T1038).
+**The category pages (`DestinationsTab.jsx`; CSS `63`, `83`, `80`).** The category tabs carry the house pictograms; the where field is the same ink-edged field; the opening rails are StoryRails in the rail grammar. The phone quick row stays one swipe row (owner, T1038).
 
 **Sheets.** Travel styles: the "who do you travel with" choices are tiles (paper, control edge, ink words), not brown links; every style shares one quiet disc, the chosen takes the umber; a style is a pack, never the AI mark. The start dialog's taste button is the pack too; its first field keeps the AI mark (it asks Ask Carta).
 

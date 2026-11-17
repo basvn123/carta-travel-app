@@ -9,14 +9,14 @@ The app plans a whole trip in Europe in one place, with what each day really cos
 
 This skill wins over every other design source (CLAUDE.md says so). Read, in this order:
 1. `PRODUCT.md` (who, the voice, the vocabulary, the number rules) and `DESIGN.md` (every token, part and rule with values) at the repo root.
-2. The reference file for your screens in `references/`: `explore.md`, `place.md`, `outdoors.md`, `plan.md`, `trip.md`, `account.md`, `home.md`, `brand.md`, and `shared-product-rules.md` for rules every screen keeps. Their product rules bind; their look rules are rewritten by each screen's lane of the house style run.
+2. The reference file for your screens in `references/`: `explore.md`, `place.md`, `outdoors.md`, `plan.md`, `trip.md`, `account.md`, `home.md`, `brand.md`, and `shared-product-rules.md` for rules every screen keeps. Their product rules bind; their look sections were written by each screen's lane (2026-11) and win over any older dated section in the same file. `app-rules.md` is a pointer; `_split-log.md` records the 2026-11-15 split.
 3. `docs/design/craft-guide.md` for general practice (process, tools, judging).
 Token values live in `continent-app/src/styles/01-tokens.css` (copied in `assets/tokens.css` for sketches; the app file wins). The live index of every part: `/?styleguide`.
 
 ## 1. What binds, always
 
 - **Every function stays.** A visual change never removes a feature, a control, a flow step, a setting or a data field, and never changes what a button does (owner, 2026-11-13). A secondary control may move into a menu only if it stays reachable and behaves the same. If a visual idea needs a logic change, write it down as a suggestion; do not build it.
-- **Honest numbers.** Every euro through `formatMoney()`. No made-up figure; a missing one is "Not yet" and stays out of every sum. A total is the engine's own total, with a "Rounding" line where printed lines do not add up. The flight price is Google Flights', with its checked time.
+- **Honest numbers.** Every euro through `formatMoney()`. No made-up figure; a missing one is "Not yet" and stays out of every sum. A total is the engine's own total, with a "Rounding" line where printed lines do not add up. The flight price is Google Flights', with a link and "prices may have changed"; its checked time shows where the screen has room (owner T840).
 - **Accessibility.** Text 4.5:1, marks 3:1 (`scripts/ci/token-contrast.mjs`), 44 px targets, a visible 3 px focus ring, reduced motion shows the end state, colour never alone, real links and buttons, axe serious and critical 0.
 - **Copy.** No em or en dashes, no middots as separators, no banned words (PRODUCT.md), six languages through i18n keys, sentence case, the vocabulary in PRODUCT.md (one name per object). Minimal text: no unit sentences or sublines the context gives; the unit is said once.
 - **The umber brown stays** as the paint. Licensed photography with its credit; never AI pictures of places.
