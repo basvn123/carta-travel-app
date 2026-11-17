@@ -87,4 +87,17 @@ export const HouseIcon = {
   bell: glyph('bell', <><path d="M6 17.5V11a6 6 0 0 1 12 0v6.5" /><path d="M4 17.5h16" /><path d="M10 20.5h4" /></>),
   gauge: glyph('gauge', <><path d="M3.5 17a8.5 8.5 0 1 1 17 0" /><path d="M12 17l4-5" /></>),
   send: glyph('send', <><path d="M12 20.5V4" /><path d="M5.5 10.5L12 4l6.5 6.5" /></>),
+  // G12 (explore polish): the Trip dock's mark, a plane over two slider
+  // lines with their knobs; not a gear. Its parts carry classes so the dock
+  // can glide the plane and swap the knobs when it opens (89-dock.css).
+  tune: glyph('tune', <>
+    <g className="tune-plane"><path d="M3 8.2l4.6-1 3-4.2h1.4L10.6 7l3.2.3 1-1.3h1l-.6 2.2.6 2.2h-1l-1-1.3-3.2.3 1.4 4.2h-1.4l-3-4.2L3 9.4z" fill="currentColor" stroke="none" /></g>
+    <path className="tune-rail" d="M3 15h18M3 20h18" />
+    <g className="tune-k1"><circle cx="8" cy="15" r="2.2" /></g>
+    <g className="tune-k2"><circle cx="16" cy="20" r="2.2" fill="currentColor" /></g>
+  </>),
+  // A return flight: two opposed arrows (the flight wagon's return mark).
+  ret: glyph('ret', <><path d="M4 8h14.5" /><path d="M15.5 4.5L19 8l-3.5 3.5" /><path d="M20 16H5.5" /><path d="M8.5 12.5L5 16l3.5 3.5" /></>),
+  // Save (the cairn stays My trips): a ribbon; .is-filled fills it when on.
+  bookmark: glyph('bookmark', <><path className="bm-fill" d="M6 3.5h12v17l-6-4.2-6 4.2z" /></>),
 };
