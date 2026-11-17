@@ -22,8 +22,25 @@
 }
 .ac-pane { display: grid; gap: var(--space-5); align-content: start; min-width: 0; }
 
-/* The rail: desktop only. */
+/* The rail: from the tablet up (house style: a tablet is two panes, not a
+   stretched phone); narrower on a tablet, the hub width on a desktop. */
 .ac-rail { display: none; }
+@media (min-width: 769px) {
+  .ac-page {
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: var(--space-5);
+    padding: var(--space-5) var(--page-gutter) var(--space-8);
+    align-items: start;
+  }
+  .ac-rail {
+    display: grid;
+    gap: 2px;
+    position: sticky;
+    top: var(--space-5);
+  }
+  .ac-back-phone { display: none; }
+  .ac-back-desk { display: inline-flex; }
+}
 @media (min-width: 1024px) {
   .ac-page {
     grid-template-columns: 240px minmax(0, 1fr);
@@ -92,8 +109,6 @@
 .ac-back:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .ac-back-desk { display: none; }
 @media (min-width: 1024px) {
-  .ac-back-phone { display: none; }
-  .ac-back-desk { display: inline-flex; }
   .ac-phone-only { display: none !important; }
 }
 
@@ -284,7 +299,7 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .ac-meter-bar > span {
   display: block;
   height: 100%;
-  background: var(--text-2);
+  background: var(--action);
   border-radius: var(--radius-pill);
   transform-origin: left center;
   transition: transform var(--dur-2) var(--ease-out);
@@ -379,6 +394,19 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .account-shell .section-title { font-size: var(--text-title); font-weight: 800; color: var(--text); letter-spacing: 0; text-transform: none; }
 .account-shell .auth-label { font-size: var(--text-label); font-weight: 600; letter-spacing: 0; color: var(--text); }
 .account-shell .account-section-hint { font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); margin: 0; }
+
+/* Fields are paper with the control edge, as the kit Field (this wins over
+   the older dim-ground rule in 24-destination-workspace.css). */
+.account-shell .auth-field input,
+.account-shell .account-feedback-input { background: var(--surface); border: var(--stroke-edge) solid var(--edge); }
+.account-shell .auth-field input:focus,
+.account-shell .account-feedback-input:focus { background: var(--surface); box-shadow: none; }
+.account-shell .auth-field input:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 1px; border-color: var(--action); }
+.account-shell .acct-handle-row input,
+.account-shell .acct-handle-row input:focus { background: transparent; border: 0; outline: none; }
+/* The page title already names the form: the older "Profile" sub-heading
+   stays for screen readers only (minimal text). */
+.ac-pane .panel-section > .section-title-iconed { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 /* Buttons of the in-place forms: the kit's primary and secondary. */
 .account-shell .book-btn,

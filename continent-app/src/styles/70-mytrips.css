@@ -232,6 +232,8 @@
 .mt-unit { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .mt-section-unit { margin-left: auto; font-size: var(--text-label); font-weight: 600; color: var(--text-2); white-space: nowrap; }
 .mt-section-unit + .mt-section-action { margin-left: var(--space-3); }
+/* A row without a price says so quietly; only a figure is loud. */
+.mt-row .card-price .mt-muted { font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
 .mt-next-money.is-none { font-size: var(--text-body); color: var(--text-3); }
 .mt-next-party { font-size: var(--text-body); color: var(--text-2); }
 /* The one price nudge: good news in data, backed by words, green only as a dot. */
