@@ -792,6 +792,7 @@ export const es = {
   "auth.subForgot": "Te enviaremos un enlace para establecer una nueva contraseña.",
   "auth.titleForgot": "Restablece tu contraseña",
   "auth.titleSignin": "Bienvenido de nuevo",
+  "auth.off": "El inicio de sesión está desactivado en esta versión. Prueba el sitio en línea.",
   "auth.titleSignup": "Crea tu cuenta",
   "auth.updatePassword": "Actualizar contraseña",
 

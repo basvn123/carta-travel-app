@@ -801,6 +801,7 @@ export const nl = {
   "auth.subForgot": "We sturen je een link om een nieuw wachtwoord in te stellen.",
   "auth.titleForgot": "Wachtwoord resetten",
   "auth.titleSignin": "Welkom terug",
+  "auth.off": "Inloggen staat uit in deze versie. Probeer de live site.",
   "auth.titleSignup": "Maak je account aan",
   "auth.updatePassword": "Wachtwoord bijwerken",
 

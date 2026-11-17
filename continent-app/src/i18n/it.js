@@ -792,6 +792,7 @@ export const it = {
   "auth.subForgot": "Ti invieremo via email un link per impostare una nuova password.",
   "auth.titleForgot": "Reimposta la password",
   "auth.titleSignin": "Bentornato",
+  "auth.off": "L'accesso è disattivato in questa versione. Prova il sito online.",
   "auth.titleSignup": "Crea il tuo account",
   "auth.updatePassword": "Aggiorna password",
 

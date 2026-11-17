@@ -792,6 +792,7 @@ export const fr = {
   "auth.subForgot": "Nous vous enverrons un e-mail avec un lien pour définir un nouveau mot de passe.",
   "auth.titleForgot": "Réinitialisez votre mot de passe",
   "auth.titleSignin": "Content de vous revoir",
+  "auth.off": "La connexion est désactivée sur cette version. Essayez le site en ligne.",
   "auth.titleSignup": "Créez votre compte",
   "auth.updatePassword": "Mettre à jour le mot de passe",
 

@@ -18,7 +18,7 @@ export function AppOverlays({
   openFeatureFrom, openGuides, openLifestyle, openPlanInList, openRegionPage, openSaved,
   openTogether, openTripForCountry, openTripInPlanner, openTripStyles, pastAtOpen,
   pendingFriend, pendingGuide, pendingRegion, place, placeRows, planInProgress, savedCount,
-  savedTripsOpen, selectedDest, selectedId, setAdminOpen, setAuthModalMode, setAuthModalOpen,
+  requestAuth, savedTripsOpen, selectedDest, selectedId, setAdminOpen, setAuthModalOpen,
   setCountryPage, setGuidesOpen, setLifestyleOpen, setPastAtOpen, setPendingDayPlanId,
   setPendingGuide, setPendingRegion, setPendingTrip, setSavedTripsOpen, setSelectedId,
   setTogetherCode, togetherCode, togetherOpen, togetherView, toggleFav, user,
@@ -140,7 +140,7 @@ export function AppOverlays({
           /* Signing in from My trips keeps My trips open behind the modal
              (T390-b), so the traveller is back on the shelf, not on the
              tab under it, once they are in. */
-          onOpenAuth={() => { setAuthModalMode('signin'); setAuthModalOpen(true); }}
+          onOpenAuth={() => requestAuth('signin')}
           /* The day cost of every saved place and plan, from the same
              computeCosts() map Explore's cards print from (T390-a), and
              friends' trips as one line pointing at Friends. */
@@ -206,7 +206,7 @@ export function AppOverlays({
             pendingHandle={pendingFriend}
             onOpenGuides={openGuides}
             onOpenSaved={openSaved}
-            onOpenAuth={() => { setAuthModalMode('signin'); setAuthModalOpen(true); }}
+            onOpenAuth={() => requestAuth('signin')}
             onPlanDay={(destId, date) => openDayForDest(destId, date)}
             onOpenTripPlan={openPlanInList}
             favorites={favorites}
@@ -242,7 +242,7 @@ export function AppOverlays({
           groupSize={choices.group_size}
           /* Signing in keeps Account open behind the dialog, so the
              traveller is back on Account once they are in. */
-          onOpenAuth={() => { setAuthModalMode('signin'); setAuthModalOpen(true); }}
+          onOpenAuth={() => requestAuth('signin')}
         />
       </div>
     )}

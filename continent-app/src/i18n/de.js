@@ -792,6 +792,7 @@ export const de = {
   "auth.subForgot": "Wir schicken dir einen Link, um ein neues Passwort festzulegen.",
   "auth.titleForgot": "Passwort zurücksetzen",
   "auth.titleSignin": "Willkommen zurück",
+  "auth.off": "Anmelden ist in dieser Version aus. Probier die Live-Seite.",
   "auth.titleSignup": "Erstelle dein Konto",
   "auth.updatePassword": "Passwort aktualisieren",
 

@@ -842,6 +842,7 @@ export const en = {
   "auth.subForgot": "We'll email you a link to set a new password.",
   "auth.titleForgot": "Reset your password",
   "auth.titleSignin": "Welcome back",
+  "auth.off": "Sign-in is off on this version. Try the live site.",
   "auth.titleSignup": "Create your account",
   "auth.updatePassword": "Update password",
 

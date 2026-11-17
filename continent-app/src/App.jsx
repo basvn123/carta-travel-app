@@ -1081,7 +1081,23 @@ function TravelApp() {
     : accountOpen ? t('nav.account')
       : ({ explore: t('nav.explore'), plan: t('nav.plan'), home: t('nav.home') }[placeOf(activeTab)]
         || t('detail.backToList'));
-  const requestAuth = useCallback(() => setAuthModalOpen(true), [setAuthModalOpen]);
+  // One door to the sign-in dialog (G12, owner point 9). A build without the
+  // Supabase variables used to swallow the press silently (the dialog only
+  // renders when auth is configured), which is how "Sign in on Together does
+  // nothing" reproduces; now it says so. The mode is always set, so a dialog
+  // last left on "Create account" never reopens there. An onClick hands an
+  // event in, which is not a mode.
+  const [authOffNote, setAuthOffNote] = useState(false);
+  const requestAuth = useCallback((mode) => {
+    if (!authConfigured) { setAuthOffNote(true); return; }
+    setAuthModalMode(typeof mode === 'string' ? mode : 'signin');
+    setAuthModalOpen(true);
+  }, [authConfigured, setAuthModalMode, setAuthModalOpen]);
+  useEffect(() => {
+    if (!authOffNote) return undefined;
+    const id = setTimeout(() => setAuthOffNote(false), 10000);
+    return () => clearTimeout(id);
+  }, [authOffNote]);
   // The day planner's two hand-offs, stable for the same reason (T192): as
   // inline arrows they gave DayPlannerTab new props on every App render.
   const planTripFromDay = useCallback(() => goToTab('trip'), [goToTab]);
@@ -1478,10 +1494,7 @@ function TravelApp() {
        owns the one pass modal. It sits inside TravelApp rather than beside
        AuthProvider because the sign-in handoff is TravelApp's own modal. */
     <PaywallProvider
-      onSignIn={() => {
-        setAuthModalMode('signin');
-        setAuthModalOpen(true);
-      }}
+      onSignIn={() => requestAuth('signin')}
       /* "See all prices" in the pass sheet and Account's Your plan (T503,
          T497-a): the pricing page is a place, so it is a tab change. */
       onOpenPricing={() => goToTab('pricing')}
@@ -1876,7 +1889,7 @@ function TravelApp() {
         pendingRegion={pendingRegion} place={place} placeRows={placeRows}
         planInProgress={planInProgress} savedCount={savedCount} savedTripsOpen={savedTripsOpen}
         selectedDest={selectedDest} selectedId={selectedId} setAdminOpen={setAdminOpen}
-        setAuthModalMode={setAuthModalMode} setAuthModalOpen={setAuthModalOpen}
+        requestAuth={requestAuth} setAuthModalOpen={setAuthModalOpen}
         setCountryPage={setCountryPage} setGuidesOpen={setGuidesOpen}
         setLifestyleOpen={setLifestyleOpen} setPastAtOpen={setPastAtOpen}
         setPendingDayPlanId={setPendingDayPlanId} setPendingGuide={setPendingGuide}
@@ -1901,6 +1914,14 @@ function TravelApp() {
           <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
             {coplanNote}
             <IconButton label={t('a11y.close')} className="confirm-toast-close" onClick={() => setCoplanNote('')}>
+              <CloseIcon size={16} />
+            </IconButton>
+          </div>
+        )}
+        {authOffNote && (
+          <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
+            {t('auth.off')}
+            <IconButton label={t('a11y.close')} className="confirm-toast-close" onClick={() => setAuthOffNote(false)}>
               <CloseIcon size={16} />
             </IconButton>
           </div>
