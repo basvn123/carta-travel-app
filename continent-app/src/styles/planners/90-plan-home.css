@@ -220,10 +220,10 @@
 .pfh a.pfh-next .pfh-next-name { font-size: var(--text-title); font-weight: 800; color: var(--text); text-shadow: none; }
 .pfh a.pfh-next .pfh-next-facts { color: var(--text-2); }
 @media (min-width: 769px) {
-  .pfh a.pfh-next { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); grid-template-rows: auto 1fr; }
-  .pfh a.pfh-next .pfh-next-media { grid-row: 1 / span 2; aspect-ratio: 3 / 2; }
-  .pfh a.pfh-next .pfh-next-cd { align-self: end; margin: var(--space-5) var(--space-5) 0; }
-  .pfh a.pfh-next .pfh-next-body { align-self: start; padding: var(--space-3) var(--space-5) var(--space-5); }
+  .pfh a.pfh-next { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: 1fr auto auto 1fr; }
+  .pfh a.pfh-next .pfh-next-media { grid-column: 1; grid-row: 1 / -1; aspect-ratio: auto; min-height: 280px; }
+  .pfh a.pfh-next .pfh-next-cd { grid-column: 2; grid-row: 2; margin: 0 var(--space-6) var(--space-2); }
+  .pfh a.pfh-next .pfh-next-body { grid-column: 2; grid-row: 3; padding: 0 var(--space-6); }
   .pfh a.pfh-next .pfh-next-name { font-size: var(--text-headline); }
 }
 .pfh a.pfh-door {
@@ -234,3 +234,5 @@
 }
 .pfh a.pfh-door .pfh-door-name { color: var(--text); }
 .pfh a.pfh-door .pfh-door-photo { border-color: var(--surface); background: var(--surface-sunken); box-shadow: var(--elev-1); }
+/* A draft row keeps its menu in the row (the card rule from 1024 px puts it over the photo corner). */
+.pfh .pfh-row .pf-trip-more { position: static; margin: 0; }
