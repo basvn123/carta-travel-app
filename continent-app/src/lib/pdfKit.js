@@ -616,13 +616,25 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
     doc.setLineWidth(0.5);
     doc.line(zoneX, top, zoneX, top + h);
     blaze(zoneX - 3, top + 2.5, 6);
-    // The heights, on the flat side (never on the contours), ink on band.
-    const flatW = zoneX - M - 12;
-    let ty = top + 6;
+    // Each height at its own summit: an ink point and the name and height
+    // on a paper tag above it (DESIGN.md "Background graphics": a height on
+    // a paper tag, never words straight on the contours).
     for (const sp of drawn.spots.slice(0, 3)) {
-      font('semibold', 9, C.text);
-      doc.text(lines(sp.text, 9, flatW, 'semibold')[0] || '', M + 6, ty, { baseline: 'top' });
-      ty += lh(9, 1.5);
+      const sx = zoneX + sp.x * k;
+      const sy = top + sp.y * k;
+      const label = clean(sp.text);
+      font('semibold', 8, C.text);
+      const tw = doc.getTextWidth(label) + 3;
+      const tx = Math.min(Math.max(sx - tw / 2, zoneX + 1.5), PAGE_W - M - tw - 1.5);
+      const tyTop = Math.max(top + 1.2, sy - 7.2);
+      doc.setFillColor(...C.text);
+      doc.circle(sx, Math.min(sy, top + h - 1.5), 0.7, 'F');
+      doc.setFillColor(...C.white);
+      doc.setDrawColor(...C.border);
+      doc.setLineWidth(0.15);
+      doc.roundedRect(tx, tyTop, tw, 4.6, 0.8, 0.8, 'FD');
+      font('semibold', 8, C.text);
+      doc.text(label, tx + 1.5, tyTop + 2.4, { baseline: 'middle' });
     }
     state.y = top + h + 3;
     return true;

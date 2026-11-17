@@ -44,5 +44,17 @@
 - **Fixed** in `f7d518a3dd`: leaders measured from the real text (canvas in the page); the phone chart as separated rows; the Score plate right after the name's plate (destination beside its formation, walk and the rest above their facts); the Score line on the plate's centre; more room above the months and under the route; the contents fold opens with the kit's reveal (`hs-reveal`), the "here" wash moves on `--dur-1`; the 404 has no entrance (DESIGN.md: nothing at first paint) and lifts away on "Open the map" with the kit's exit (`useDialogExit`, `hs-leave`).
 - **Round 2** (`judgement-brand-2.md`): **110 of 135, every criterion at its threshold, merge yes, 0 blocking.** Its one integration nit (the blog's "All posts" link close under the action) is fixed in the last commit.
 
+## Fix round 1 (orchestrator judges `judgement-orch-brand-1.md` 102, `-2.md` 108; brief `brand-fixes-r1.md`)
+- **Merged** the current `p15-housestyle` (home, plan, account and the rest) into the branch first: clean, no conflicts.
+- **OG destination and site cards:** the figure's unit is "a day, a person" again (`specs.mjs`; the site card inherits it from its example).
+- **Lake card:** "Warmest water about 20 °C" is back, on the months' label line, with "Estimated" beside the label.
+- **Panel heads and notes restored on every card**, restyled: the head line ("One person, one day", "What is measured", "The route", and "Example" on the site card), every fact's method note under its figure ("Measured from OpenStreetMap", "Rise above the saddle to a higher peak"...), the walk's time note on the head line ("Walking time: estimated from distance and ascent"), each strip's note. The Score plate now carries its word ("Score") on the head line. Nothing the old cards printed is missing; the PDFs, receipt and emails were already complete (judge 1).
+- **Short 1200 cards centred:** every card's block is measured, then placed centred between the top margin and the foot (`cards.mjs` `block()` run twice).
+- **Press facts:** five in one row from 1024, three and two from 600, two across with the fifth spanning on a phone; no lone tile (checked at 390, 820, 1180, 1440, 1920, English and German, no overflow).
+- **Also (judge 2, integration item):** the destination PDF relief prints each height at its own summit on a paper tag.
+- **Recorded** in `decision.md`: decision line 8 ("figures said once") removes repeated figures only, never a unit, a figure or a note.
+- **Checks after the round:** `npm test` 2,077 pass, 25 fail, no new failure against the sparse baseline (`final-fails-r1.txt`); lint 0 errors; design-lint 0 new (4,224 after the merge); `css-breakpoints` on scale; `og/check.mjs` all card, copy, token and icon checks pass (the same 3 pre-existing head failures: `index.html` title, `public/og/site.png` absent in the sparse checkout); every card under 85 KB, nothing truncated; `verify_item_pdf` 27/27 (seams build); `verify_share_receipt` all good; axe on press (English, German) and the 404 at 390 and 1440: 0; width sweep 360 to 1920 on all reading pages and the 404: clean.
+- Shots refreshed: `og-*-1200.png`, `og-*-1080.png`, `legal-press-*.png`, `legal-press-facts-<w>.png`, `pdf-destination-cover-harness.png`.
+
 ## How to undo
 `git revert` the lane's commits (73117f750c, fcfba13ad7, 8d2d75f5b1, bf5981cdbc, a6296c3d97, c5ed736ae0, 17d923edca, 33ace99668, f7d518a3dd and the final report commit). No data migration, no schema change; the staged icons were never copied into `public/`.

@@ -84,7 +84,8 @@ export function destinationSpec(key, dest, all = null) {
         { label: 'Bed', value: eurDay(cost.stayEur) },
         { label: 'Food', value: eurDay(cost.foodEur) },
       ],
-      total: { label: 'A day here', value: eurDay(cost.dayEur), unit: 'a day' },
+      // A card stands alone, so it says its whole unit (PRODUCT.md vocabulary).
+      total: { label: 'A day here', value: eurDay(cost.dayEur), unit: 'a day, a person' },
     },
     strip: months ? { label: 'Cheapest months to stay', good: months, note: 'From a year of listing prices' } : null,
     alt: `Receipt for a day in ${dest.city}: bed ${eurDay(cost.stayEur)}, food ${eurDay(cost.foodEur)}, ${eurDay(cost.dayEur)} in total per person.`,

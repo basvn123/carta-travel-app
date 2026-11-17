@@ -107,18 +107,25 @@ function formation(rows, x, y, maxW, h) {
   return out.join('');
 }
 
-/** Measured facts: label over figure, up to three across, a hairline over. */
+/** Measured facts: label over figure, up to three across, a hairline over,
+ *  each figure's note (how it was measured) under it in the second ink.
+ *  Returns { svg, h }. */
 function facts(rows, x, y, w, { cols = 3, size = 44 } = {}) {
   const list = rows.slice(0, cols);
-  if (!list.length) return '';
+  if (!list.length) return { svg: '', h: 0 };
   const cw = w / list.length;
+  const notes = list.some((r) => r.note);
+  const labelY = y + Math.round(size * 0.82);
+  const valueY = labelY + Math.round(size * 1.12);
+  const noteY = valueY + Math.round(size * 0.62);
   const out = [`<rect x="${x}" y="${y}" width="${w}" height="2" fill="${C.rule}"/>`];
   list.forEach((r, i) => {
     const fx = x + i * cw;
-    out.push(text(fx, y + 40, r.label, { size: size * 0.5, weight: 600, fill: C.inkSoft, fit: { maxW: cw - 24, min: 14 } }));
-    out.push(text(fx, y + 40 + size * 1.15, r.value, { size, weight: 800, fill: C.ink, fit: { maxW: cw - 24, min: 20 } }));
+    out.push(text(fx, labelY, r.label, { size: size * 0.5, weight: 600, fill: C.inkSoft, fit: { maxW: cw - 24, min: 14 } }));
+    out.push(text(fx, valueY, r.value, { size, weight: 800, fill: C.ink, fit: { maxW: cw - 24, min: 20 } }));
+    if (r.note) out.push(text(fx, noteY, r.note, { size: Math.max(16, size * 0.42), weight: 500, fill: C.inkSoft, fit: { maxW: cw - 24, min: 12 } }));
   });
-  return out.join('');
+  return { svg: out.join(''), h: (notes ? noteY : valueY) - y + Math.round(size * 0.2) };
 }
 
 function routePath(lines, x, y, w, h) {
@@ -152,19 +159,20 @@ function routePath(lines, x, y, w, h) {
 }
 
 /** The figure a plate carries: the panel's total, else the walk's time or
- *  its distance (the signpost's own unit). Returns { value, unit, rows }
- *  with the row that became the figure taken out of the facts. */
+ *  its distance (the signpost's own unit). Returns { value, unit, note, rows }
+ *  with the row that became the figure taken out of the facts (its note
+ *  rides along and is printed on the head line). */
 function plateFigure(spec) {
   const p = spec.panel;
-  if (!p) return { value: null, unit: '', rows: [] };
+  if (!p) return { value: null, unit: '', note: '', rows: [] };
   if (p.total) {
     const unit = p.total.tone === 'rate' ? 'Score' : (p.total.unit || p.total.label || '');
-    return { value: p.total.value, unit, rows: p.rows || [] };
+    return { value: p.total.value, unit, note: '', rows: p.rows || [] };
   }
   const rows = [...(p.rows || [])];
   const at = Math.max(0, rows.findIndex((r) => /time/i.test(r.label)));
   const [row] = rows.splice(at, 1);
-  return row ? { value: row.value, unit: row.label, rows } : { value: null, unit: '', rows };
+  return row ? { value: row.value, unit: row.label, note: row.note || '', rows } : { value: null, unit: '', note: '', rows };
 }
 
 /** Returns { svg, width, height }. The SVG is complete and self-contained except for fonts. */
@@ -173,52 +181,73 @@ export function drawCard(spec, format = 'og') {
   const sq = format === 'square';
   const M = sq ? 72 : 64;
   const W = w - M * 2;
-  const out = [];
-  out.push(`<rect width="${w}" height="${h}" fill="${C.paper}"/>`);
   const isSite = spec.type === 'site';
   const fig = plateFigure(spec);
+  const p = spec.panel || {};
 
-  // The top line: the kind, and the Score plate where the record has one.
-  // The square sits its block lower, so a post reads from the middle; a
-  // short card (no months, no route) lower still. A wide card with months
-  // takes a shorter plate so the months clear the foot.
-  const short = !spec.strip && !(spec.panel && spec.panel.route);
-  const drop = sq ? (short ? 330 : 200) : (spec.strip ? 72 : 84);
-  const kindY = drop;
-  if (!isSite) out.push(text(M, kindY, spec.kind, { size: sq ? 30 : 26, weight: 700, fill: C.inkSoft }));
+  // The foot: the wordmark slot (the blaze and the name), the domain.
+  const fy = sq ? h - 64 : h - 40;
+  const bw = sq ? 52 : 46;
+  const footTop = fy - bw * 0.58 - 2;
 
-  // The plate: the name, the line under it in beige, the figure on the end.
-  const tip = sq ? 60 : 56;
-  const plateTop = isSite ? (sq ? 480 : 300) : kindY + (sq ? 40 : 32);
-  const plateH = isSite ? (sq ? 190 : 150) : (sq ? 290 : (spec.strip ? 168 : 196));
+  // Sizes of the parts, per format.
+  const S = sq
+    ? { kind: 30, tip: 60, pad: 44, plateH: 280, gap: 30, head: 26, formH: 68, facts: 52, stripLabel: 28, pill: 56, stripNote: 24, sitePlateH: 190, title: 76 }
+    : { kind: 26, tip: 56, pad: 40, plateH: 168, gap: 22, head: 22, formH: 56, facts: 42, stripLabel: 24, pill: 44, stripNote: 20, sitePlateH: 150, title: 60 };
   const figW = fig.value ? (sq ? 290 : 320) : 0;
-  const pad = sq ? 44 : 40;
-  const nameW = W - tip - pad * 2 - figW;
+  const nameW = W - S.tip - S.pad * 2 - figW;
+  const sh = spec.score && fig.unit !== 'Score' ? (sq ? 52 : 46) : 0;
+  const sw = sh ? Math.round(sh * 0.5 + String(spec.score).length * sh * 0.42) : 0;
+  const route = p.route && p.route.length;
 
-  if (isSite) {
-    // The headline is not a place, so it stands on the ground in ink.
-    const cfg = { x: M, maxW: W, titleBottom: sq ? 330 : 176, titleSize: sq ? 76 : 60, titleMin: 40, titleLines: 2, subSize: sq ? 32 : 28, subGap: sq ? 62 : 52, kindGap: 0, subMaxBottom: sq ? 392 : 228, kindFixed: true };
-    out.push(`<g id="header" data-cfg='${JSON.stringify(cfg)}'>`);
-    out.push(text(M, 0, '', { extra: ' data-role="kind"' }));
-    out.push(text(M, 200, spec.title, { size: cfg.titleSize, weight: 800, fill: C.ink, extra: ' data-role="title"' }));
-    out.push(text(M, 300, spec.subtitle, { size: cfg.subSize, fill: C.inkSoft, extra: ' data-role="sub"' }));
-    out.push('</g>');
-    if (spec.panel) {
-      // The example: a real place on its plate, with its formation under it.
-      const name = String(spec.panel.head || '').replace(/^Example,\s*/, '');
-      out.push(platePath(M, plateTop, W, plateH, tip));
-      out.push(text(M + pad, plateTop + plateH * 0.6, name, { font: 'plate', size: sq ? 96 : 80, weight: 700, fill: C.onPlate, fit: { maxW: nameW, min: 40 } }));
-      if (fig.value) {
-        out.push(text(M + W - tip - pad, plateTop + plateH * 0.55, fig.value, { size: sq ? 84 : 72, weight: 800, fill: C.onPlate, anchor: 'end', fit: { maxW: figW - 20, min: 36 } }));
-        out.push(text(M + W - tip - pad, plateTop + plateH * 0.55 + (sq ? 44 : 38), fig.unit, { size: sq ? 26 : 22, weight: 600, fill: C.onPlate2, anchor: 'end' }));
+  /** Draws the block from `top`; returns { svg, bottom }. Run once to
+   *  measure, once to place, so every card sits centred above the foot. */
+  const block = (top) => {
+    const out = [];
+    let y = top;
+    if (isSite) {
+      // The headline is not a place, so it stands on the ground in ink.
+      const titleBottom = y + S.title * 0.8 + (sq ? S.title * 1.08 : 0);
+      const cfg = { x: M, maxW: W, titleBottom, titleSize: S.title, titleMin: 40, titleLines: 2, subSize: sq ? 32 : 28, subGap: sq ? 62 : 52, kindGap: 0, subMaxBottom: titleBottom + (sq ? 62 : 52), kindFixed: true };
+      out.push(`<g id="header" data-cfg='${JSON.stringify(cfg)}'>`);
+      out.push(text(M, 0, '', { extra: ' data-role="kind"' }));
+      out.push(text(M, 200, spec.title, { size: cfg.titleSize, weight: 800, fill: C.ink, extra: ' data-role="title"' }));
+      out.push(text(M, 300, spec.subtitle, { size: cfg.subSize, fill: C.inkSoft, extra: ' data-role="sub"' }));
+      out.push('</g>');
+      y = cfg.subMaxBottom + (sq ? 44 : 30);
+      if (spec.panel) {
+        // The example: its head ("Example"), then a real place on its plate
+        // with its unit, then its formation.
+        const name = String(p.head || '').replace(/^Example,\s*/, '');
+        out.push(text(M, y + S.head * 0.8, 'Example', { size: S.head, weight: 700, fill: C.inkSoft }));
+        y += S.head + 10;
+        const ph = S.sitePlateH;
+        out.push(platePath(M, y, W, ph, S.tip));
+        out.push(text(M + S.pad, y + ph * 0.6, name, { font: 'plate', size: sq ? 96 : 80, weight: 700, fill: C.onPlate, fit: { maxW: nameW, min: 40 } }));
+        if (fig.value) {
+          out.push(text(M + W - S.tip - S.pad, y + ph * 0.52, fig.value, { size: sq ? 84 : 72, weight: 800, fill: C.onPlate, anchor: 'end', fit: { maxW: figW - 20, min: 36 } }));
+          out.push(text(M + W - S.tip - S.pad, y + ph * 0.52 + (sq ? 42 : 36), fig.unit, { size: sq ? 26 : 22, weight: 600, fill: C.onPlate2, anchor: 'end', fit: { maxW: figW - 20, min: 14 } }));
+        }
+        y += ph + S.gap;
+        out.push(formation(fig.rows, M, y, W, S.formH));
+        y += S.formH;
       }
-      out.push(formation(fig.rows, M, plateTop + plateH + 24, W, sq ? 64 : 56));
+      return { svg: out.join(''), bottom: y };
     }
-  } else {
-    out.push(platePath(M, plateTop, W, plateH, tip));
+
+    // The kind.
+    out.push(text(M, y + S.kind * 0.8, spec.kind, { size: S.kind, weight: 700, fill: C.inkSoft }));
+    y += S.kind + 12;
+
+    // The plate: the name, the line under it in beige, the figure and its
+    // unit on the square end.
+    const plateTop = y;
+    // A wide card with months takes a shorter plate, so all of it fits.
+    const plateH = !sq && spec.strip ? 136 : S.plateH;
+    out.push(platePath(M, plateTop, W, plateH, S.tip));
     const cfg = {
-      x: M + pad, maxW: nameW, titleBottom: plateTop + plateH * 0.55, titleSize: sq ? 104 : 92, titleMin: sq ? 56 : 48, titleLines: 2,
-      subSize: sq ? 26 : 28, subGap: sq ? 48 : 44, kindGap: 0, subMaxBottom: 0, kindFixed: true, plateTop, plateH,
+      x: M + S.pad, maxW: nameW, titleBottom: plateTop + plateH * 0.55, titleSize: sq ? 96 : 88, titleMin: sq ? 56 : 48, titleLines: 2,
+      subSize: sq ? 26 : 26, subGap: sq ? 48 : 40, kindGap: 0, subMaxBottom: 0, kindFixed: true, plateTop, plateH,
     };
     cfg.subMaxBottom = cfg.titleBottom + cfg.subGap;
     out.push(`<g id="header" data-cfg='${JSON.stringify(cfg)}'>`);
@@ -227,53 +256,81 @@ export function drawCard(spec, format = 'og') {
     out.push(text(cfg.x, 300, spec.subtitle || '', { size: cfg.subSize, weight: 600, fill: C.onPlate2, extra: ' data-role="sub"' }));
     out.push('</g>');
     if (fig.value) {
-      const fx = M + W - tip - pad;
-      const fy = plateTop + plateH / 2 + (sq ? 14 : 10);
-      out.push(text(fx, fy, fig.value, { size: sq ? 96 : 80, weight: 800, fill: C.onPlate, anchor: 'end', fit: { maxW: figW - 16, min: 36 } }));
-      if (fig.unit) out.push(text(fx, fy + (sq ? 50 : 42), fig.unit, { size: sq ? 28 : 24, weight: 600, fill: C.onPlate2, anchor: 'end' }));
+      const fx = M + W - S.tip - S.pad;
+      const fyy = plateTop + plateH / 2 + (sq ? 12 : 8);
+      out.push(text(fx, fyy, fig.value, { size: sq ? 92 : 76, weight: 800, fill: C.onPlate, anchor: 'end', fit: { maxW: figW - 16, min: 36 } }));
+      if (fig.unit) out.push(text(fx, fyy + (sq ? 46 : 38), fig.unit, { size: sq ? 26 : 22, weight: 600, fill: C.onPlate2, anchor: 'end', fit: { maxW: figW - 16, min: 14 } }));
     }
+    y = plateTop + plateH + S.gap;
 
-    // Under the plate: the formation for a place, the facts for the rest.
-    const p = spec.panel || {};
-    const underY = plateTop + plateH + (sq ? 40 : 28);
-    const route = p.route && p.route.length;
-    // The Score plate right after the name's plate (DESIGN.md "Score
-    // plate"), where the plate's own figure is not the Score; a place's
-    // formation runs on beside it, a walk's facts start under it.
-    const sh = spec.score && fig.unit !== 'Score' ? (sq ? 56 : 52) : 0;
-    const sw = sh ? Math.round(sh * 0.5 + String(spec.score).length * sh * 0.42) : 0;
-    const formH = sq ? 68 : 60;
+    // The head line: the panel's head on the left; on the right the Score
+    // plate (when the plate's figure is not the Score) or the note of the
+    // figure the plate carries (a walk's time: how it was estimated).
+    const headY = y + Math.max(S.head * 0.8, sh * 0.72);
+    if (p.head) out.push(text(M, headY, p.head, { size: S.head, weight: 700, fill: C.inkSoft, fit: { maxW: W * 0.5, min: 14 } }));
+    if (sh) {
+      const lw = Math.round(S.head * 0.56 * 5) + 10;
+      out.push(scorePlate(M + W - sw, headY - sh * 0.72, spec.score, sh));
+      out.push(text(M + W - sw - 12, headY, 'Score', { size: S.head, weight: 700, fill: C.inkSoft, anchor: 'end' }));
+      void lw;
+    } else if (fig.note) {
+      out.push(text(M + W, headY, `${fig.unit}: ${fig.note.charAt(0).toLowerCase()}${fig.note.slice(1)}`, { size: S.head * 0.86, weight: 500, fill: C.inkSoft, anchor: 'end', fit: { maxW: W * 0.48, min: 12 } }));
+    }
+    y = headY + (sq ? 22 : 16);
+
+    // The content: the formation for a place, the facts (with their notes)
+    // for the rest, a walk's route beside them (under them on the square).
     if (spec.type === 'destination') {
-      if (sh) out.push(scorePlate(M, underY + (formH - sh) / 2, spec.score, sh));
-      out.push(formation(fig.rows, M + (sh ? sw + 16 : 0), underY, W - (sh ? sw + 16 : 0), formH));
+      out.push(formation(fig.rows, M, y, W, S.formH));
+      y += S.formH;
     } else if (route) {
-      if (sh) out.push(scorePlate(M, underY, spec.score, sh));
-      const factsY = underY + (sh ? sh + 20 : 0);
-      const rw = sq ? W : 440;
-      const rh = sq ? 150 : 200;
+      const rw = sq ? W : 420;
+      const f = facts(fig.rows, M, y, sq ? W : W - rw - 32, { cols: sq ? 3 : 2, size: S.facts });
+      out.push(f.svg);
+      const rh = sq ? 170 : Math.max(f.h, 150);
       const rx = sq ? M : M + W - rw;
-      const ry = sq ? factsY + 148 : underY;
-      out.push(facts(fig.rows, M, factsY, sq ? W : W - rw - 32, { cols: sq ? 3 : 2, size: sq ? 52 : 44 }));
+      const ry = sq ? y + f.h + 20 : y;
       out.push(`<rect x="${rx}" y="${ry}" width="${rw}" height="${rh}" rx="12" fill="${C.paperDim}"/>`);
       out.push(routePath(p.route, rx, ry, rw, rh));
+      y = sq ? ry + rh : y + Math.max(f.h, rh);
     } else {
-      if (sh) out.push(scorePlate(M, underY, spec.score, sh));
-      out.push(facts(fig.rows, M, underY + (sh ? sh + 20 : 0), W, { cols: 3, size: sq ? 56 : 46 }));
+      const f = facts(fig.rows, M, y, W, { cols: 3, size: !sq && spec.strip ? 36 : S.facts });
+      out.push(f.svg);
+      y += f.h;
     }
+
+    // The months, with what they mean on the label's line (the lake's
+    // warmest water) and the method under them.
     if (spec.strip) {
-      // A clear step above the months' label (the facts end about 100 px down).
-      const sy = sq ? (route ? 0 : underY + 200) : underY + 150;
-      if (sy) {
-        out.push(text(M, sy, spec.strip.label, { size: sq ? 28 : 24, weight: 700, fill: C.ink }));
-        out.push(strip(spec, M, sy + 18, W, sq ? 60 : 48));
+      y += sq ? 34 : 26;
+      const ly = y + S.stripLabel * 0.8;
+      out.push(text(M, ly, spec.strip.label, { size: S.stripLabel, weight: 700, fill: C.ink }));
+      const note = String(spec.strip.note || '');
+      const m = /^(Warmest water about [^,]+)(?:,\s*(.*))?$/.exec(note);
+      if (m) out.push(text(M + W, ly, m[1], { size: S.stripLabel, weight: 700, fill: C.ink, anchor: 'end', fit: { maxW: W * 0.55, min: 14 } }));
+      y = ly + 14;
+      out.push(strip(spec, M, y, W, S.pill));
+      y += S.pill;
+      const method = m ? (m[2] ? `${m[2].charAt(0).toUpperCase()}${m[2].slice(1)}` : '') : note;
+      if (method && !sq && m) {
+        // On the wide card the method rides on the label's line.
+        out.push(text(M + Math.round(spec.strip.label.length * S.stripLabel * 0.58) + 14, ly, method, { size: S.stripNote, weight: 500, fill: C.inkSoft, fit: { maxW: W * 0.25, min: 12 } }));
+      } else if (method) {
+        out.push(text(M, y + S.stripNote + 8, method, { size: S.stripNote, weight: 500, fill: C.inkSoft, fit: { maxW: W, min: 12 } }));
+        y += S.stripNote + 12;
       }
     }
-  }
+    return { svg: out.join(''), bottom: y };
+  };
 
-  // The foot: the wordmark slot (the blaze and the name), the domain.
-  const fy = sq ? h - 64 : h - 40;
-  const bw = sq ? 52 : 46;
-  out.push(blaze(M, fy - bw * 0.58 - 2, bw));
+  // Measure, then centre the block between the top margin and the foot.
+  const room = footTop - (sq ? 24 : 20);
+  const probe = block(0);
+  const top = Math.max(M * (sq ? 0.75 : 0.6), M * 0.6 + (room - M * 0.6 - probe.bottom) / 2);
+  const placed = block(Math.round(top));
+
+  const out = [`<rect width="${w}" height="${h}" fill="${C.paper}"/>`, placed.svg];
+  out.push(blaze(M, footTop, bw));
   out.push(text(M + bw + 14, fy, APP_NAME, { font: 'plate', size: sq ? 46 : 40, weight: 700, fill: C.ink }));
   out.push(text(w - M, fy - 2, DOMAIN, { size: sq ? 28 : 24, weight: 700, fill: C.inkSoft, anchor: 'end' }));
 
