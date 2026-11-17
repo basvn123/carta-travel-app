@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, IconButton } from '../components/ui/index.js';
+import { Button, IconButton, Blaze } from '../components/ui/index.js';
 import {
   ArrowLeftIcon, CheckIcon, CloseIcon, LockIcon, PlusIcon, RouteIcon, ChevronRightIcon, TogetherIcon,
 } from '../components/Icons.jsx';
-import { TripArt } from '../components/TripArt.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
 import { listGuides } from '../community/guides.js';
@@ -176,12 +175,17 @@ export function TogetherPage({
 
   let body;
   if (!s.signedIn && s.loaded) {
-    // T991 (owner): signed out, Together is one card: TripArt with the
-    // Together mark, the title, the one line and Sign in.
+    // T991 (owner): signed out, Together is one card: the Together mark,
+    // the title, the one line and Sign in. House style (2026-11): the art
+    // is the waiting path (a dashed blaze), not a drawn contour, which the
+    // house keeps for real peaks.
     body = (
       <div className="tg-page">
         <div className="tg-out">
-          <TripArt tone="ink" icon={<TogetherIcon size={30} />} className="tg-out-art" />
+          <div className="tg-out-art" aria-hidden="true">
+            <Blaze size="lg" state="blank" />
+            <TogetherIcon size={28} />
+          </div>
           <div className="tg-out-body">
             <h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
             <p className="tg-out-line">{t('tg.signInLine')}</p>
@@ -367,7 +371,10 @@ export function TogetherPage({
   return (
     <div className="saved-shell together">
       <div className="panel open account-panel saved-trips-panel tg-panel">
-        {body}
+        {/* House style: each view arrives as a pushed view (Route
+            primitive); the key only remounts the frame when the view or its
+            subject changes. */}
+        <div className="tg-route" key={`${view || 'home'}:${viewId || ''}`}>{body}</div>
       </div>
     </div>
   );

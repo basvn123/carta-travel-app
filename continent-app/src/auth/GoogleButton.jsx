@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
 import { useI18n } from '../i18n/index.jsx';
+import { Button } from '../components/ui/Button.jsx';
 
 // The four-colour G, inline so no external asset is fetched.
 const GoogleG = () => (
@@ -26,10 +27,12 @@ export function GoogleButton() {
   const [busy, setBusy] = useState(false);
   return (
     <>
-      <button
-        type="button"
-        className="auth-submit auth-google"
-        disabled={busy}
+      <Button
+        variant="secondary"
+        block
+        className="auth-google"
+        loading={busy}
+        iconStart={<GoogleG />}
         onClick={async () => {
           setError('');
           setBusy(true);
@@ -41,8 +44,8 @@ export function GoogleButton() {
           }
         }}
       >
-        <GoogleG /> {t('auth.continueWithGoogle')}
-      </button>
+        {t('auth.continueWithGoogle')}
+      </Button>
       {error && <div className="auth-error" role="alert">{error}</div>}
     </>
   );

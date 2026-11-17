@@ -2017,7 +2017,7 @@ export const nl = {
   "tg2.upToTrip": "Tot {price} voor de reis",
   "tg2.yourMaxTrip": "Jouw maximum voor de reis",
   "tg2.forTrip": "{price} voor de reis",
-  "tg2.tripOver": "{price} voor de reis, boven budget",
+  "tg2.tripOver": "{price}, boven budget",
   "tg2.aPersonTrip": "per persoon voor de reis",
   "tg2.bedAndFood": "Bed en eten. De reis ernaartoe zit er niet in.",
   "tg2.askJoin": "Vraag om mee te gaan",
@@ -6345,6 +6345,7 @@ export const nl = {
   "pack.why.low": "Minima rond {t}°C in {month}.",
   "pack.why.rain": "Ongeveer {mm} mm regen in {month}.",
   // lane:account (house style 2026-11): this lane adds its new keys directly under this line
+  "acc.authMode": "Inloggen of een account maken",
   "pack.why.swim": "Zwemmen hoort hier bij de reis.",
   "pack.why.layers": "De avonden kunnen fris worden.",
   "pack.why.boots": "Paden en natuur dichtbij.",

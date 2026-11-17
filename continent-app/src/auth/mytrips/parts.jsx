@@ -144,7 +144,7 @@ export function RecordMapDialog({ title, onClose, children }) {
  * trip is opened: the estimate, the figure and the party. Whole euros on a list, the estimate
  * mark whenever Carta priced any of it.
  */
-export function TripPrice({ figure, className = '' }) {
+export function TripPrice({ figure, className = '', showUnit = false }) {
   const { t } = useI18n();
   const ref = useRef(null);
   // One figure a trip card prints (owner 1.8, T503): a person a day in whole
@@ -154,8 +154,12 @@ export function TripPrice({ figure, className = '' }) {
   if (day == null) return null;
   return (
     <span className={`mt-price ${className}`.trim()} ref={ref}>
+      {/* The unit is said once (account.md, house style): a label before
+          the focal card's figure, the section head for rows. Rows keep it
+          for screen readers. */}
+      {showUnit && <span className="mt-unit">{t('mt.figDay')}{' '}</span>}
       <Money value={day} est={figure.est} />
-      <span className="mt-price-unit">{' '}{t('dest.priceDayUnit')}</span>
+      {!showUnit && <span className="mt-price-unit sr-only">{' '}{t('dest.priceDayUnit')}</span>}
     </span>
   );
 }

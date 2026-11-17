@@ -13,7 +13,7 @@
   justify-content: center;
   padding: var(--space-6) var(--space-4);
   overflow-y: auto;
-  background: color-mix(in srgb, var(--ink) 28%, transparent);
+  background: color-mix(in srgb, var(--text) 28%, transparent);
 }
 
 .upl-head {
@@ -29,9 +29,9 @@
   display: block;
   margin-bottom: var(--space-2);
   padding: 0;
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
 }
 
 .upl-kind {
@@ -40,47 +40,47 @@
   align-items: center;
   justify-content: center;
   min-height: var(--tap);
-  font-size: 13px;
+  font-size: var(--text-label);
   font-weight: 500;
-  color: var(--ink-soft);
+  color: var(--text-2);
   cursor: pointer;
 }
 
-.upl-kind + .upl-kind { border-left: 1px solid var(--rule); }
+.upl-kind + .upl-kind { border-left: 1px solid var(--border); }
 
 .upl-kind.is-on { background: var(--select-bg); color: var(--select-ink); }
 
-.upl-kind:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.upl-kind:has(input:focus-visible) { outline: 2px solid var(--action); outline-offset: 2px; }
 
 .upl-file::file-selector-button {
   margin-right: var(--space-3);
   padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   font-family: var(--ui);
-  font-size: 13px;
-  color: var(--ink);
+  font-size: var(--text-label);
+  color: var(--text);
   cursor: pointer;
 }
 
 .upl-file:focus-visible,
-.upl-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.upl-input:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
 
 .upl-status:empty { display: none; }
 
-.upl-lic:last-child { border-bottom: 1px solid var(--rule-soft); }
+.upl-lic:last-child { border-bottom: 1px solid var(--border-soft); }
 
-.upl-lic-name { font-size: 14px; font-weight: 600; }
+.upl-lic-name { font-size: var(--text-body); font-weight: 600; }
 
-.upl-lic-sub { font-size: 13px; line-height: 1.4; color: var(--ink-soft); }
+.upl-lic-sub { font-size: var(--text-label); line-height: 1.4; color: var(--text-2); }
 
 .upl-tick {
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
   min-height: var(--tap);
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.45;
   cursor: pointer;
 }
@@ -90,13 +90,13 @@
   align-items: center;
   min-height: var(--tap);
   padding-left: 30px;
-  font-size: 13px;
-  color: var(--ink);
+  font-size: var(--text-label);
+  color: var(--text);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-.upl-terms:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.upl-terms:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
 
 @media (hover: hover) {
   .upl-send:hover:not(:disabled) { filter: brightness(0.95); }
@@ -107,14 +107,14 @@
 .upl-open:focus-visible,
 .upl-x:focus-visible,
 .upl-send:focus-visible,
-.upl-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.upl-btn:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
 
 .upl-done {
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
   margin-bottom: var(--space-4);
-  font-size: 14px;
+  font-size: var(--text-body);
   line-height: 1.45;
 }
 

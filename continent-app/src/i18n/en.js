@@ -2418,7 +2418,7 @@ export const en = {
   "tg2.upToTrip": "Up to {price} for the trip",
   "tg2.yourMaxTrip": "Your most for the trip",
   "tg2.forTrip": "{price} for the trip",
-  "tg2.tripOver": "{price} for the trip, over budget",
+  "tg2.tripOver": "{price}, over budget",
   "tg2.aPersonTrip": "a person for the trip",
   "tg2.bedAndFood": "Bed and food. Getting there is not in it.",
   "tg2.askJoin": "Ask to join",
@@ -7053,6 +7053,7 @@ export const en = {
   "pack.why.low": "Lows around {t}°C in {month}.",
   "pack.why.rain": "About {mm} mm of rain in {month}.",
   // lane:account (house style 2026-11): this lane adds its new keys directly under this line
+  "acc.authMode": "Sign in or create an account",
   "pack.why.swim": "Swimming is part of a trip here.",
   "pack.why.layers": "Evenings can turn cool.",
   "pack.why.boots": "Trails and nature close by.",

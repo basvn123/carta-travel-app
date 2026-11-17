@@ -1,7 +1,9 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { Button, IconButton, Segmented } from '../../components/ui/index.js';
-import { ClockIcon, CloseIcon, MapPinIcon, PencilIcon, SparkIcon, TrashIcon, ArrowLeftIcon } from '../../components/Icons.jsx';
+import { ClockIcon, CloseIcon, MapPinIcon, PencilIcon, TrashIcon, ArrowLeftIcon } from '../../components/Icons.jsx';
+import { AiTag } from '../../components/AiTag.jsx';
+import { haptic } from '../../lib/haptics.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { FromPanel, fromPoint } from '../../components/FromPicker.jsx';
 import { useFocusTrap } from '../../hooks/useFocusTrap.js';
@@ -294,7 +296,9 @@ export default function AskChat(props) {
   starts.unshift(t('askChat.start.cheap', { month: labels.month(next.getMonth() + 1) }));
   const hint = useTypedHint(starts.slice(0, 4), !text && !chat, boxRef);
 
-  const submit = (e) => { e.preventDefault(); ask(text); };
+  // House style: sending is a commit, so a touch gets the confirm tick
+  // (haptics.js no-ops for mouse, keyboard and an empty field).
+  const submit = (e) => { e.preventDefault(); if (text.trim()) haptic('confirm'); ask(text); };
   const grow = (el) => { el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 160)}px`; };
   const groups = groupChats(chats);
   const remove = (id) => {
@@ -315,7 +319,7 @@ export default function AskChat(props) {
           ? <IconButton label={t('askChat.back')} onClick={() => setView('chat')}><ArrowLeftIcon size={20} /></IconButton>
           : <IconButton label={t('askChat.history')} onClick={() => setView('history')}><ClockIcon size={20} /></IconButton>}
         <h2 className="ac-title" id="ac-title" tabIndex={-1} ref={titleRef}>
-          <SparkIcon size={18} />
+          {view !== 'history' && <AiTag />}
           {view === 'history' ? t('askChat.history') : t('askChat.title')}
         </h2>
         <IconButton label={t('askChat.new')} onClick={() => { setChat(null); setView('chat'); setText(''); fieldRef.current?.focus(); }} disabled={!chat && view === 'chat'}>

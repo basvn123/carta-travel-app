@@ -15,7 +15,7 @@
    ========================================================================== */
 
 .frr-card .mono {
-  font-family: var(--mono);
+  font-family: var(--font);
   font-variant-numeric: tabular-nums;
 }
 
@@ -88,23 +88,23 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background: color-mix(in srgb, var(--ink) 28%, transparent);
+  background: color-mix(in srgb, var(--text) 28%, transparent);
 }
 .frr-sheet {
   width: 100%;
   max-width: 520px;
   max-height: 92dvh;
   overflow-y: auto;
-  background: var(--paper);
-  border: 1px solid var(--rule);
+  background: var(--surface-page);
+  border: 1px solid var(--border);
   border-radius: 12px 12px 0 0;
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--elev-2);
   font-family: var(--ui);
-  color: var(--ink);
+  color: var(--text);
 }
 @media (min-width: 700px) {
   .frr-scrim { align-items: center; }
-  .frr-sheet { border-radius: 12px; }
+  .frr-sheet { border-radius: var(--radius-panel); }
 }
 .frr-sheet-head {
   display: flex;
@@ -112,11 +112,11 @@
   justify-content: space-between;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--border-soft);
 }
 .frr-sheet-head h2 {
   margin: 0;
-  font-family: var(--display);
+  font-family: var(--font);
   font-size: var(--text-title);
   font-weight: 600;
 }
@@ -127,19 +127,19 @@
   padding: var(--space-4);
 }
 .frr-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.frr-field-label { font-size: var(--text-label); font-weight: 600; color: var(--ink); }
+.frr-field-label { font-size: var(--text-label); font-weight: 600; color: var(--text); }
 .frr-field input {
   min-height: var(--tap);
   padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  color: var(--ink);
+  background: var(--surface);
+  color: var(--text);
   font-family: var(--ui);
-  font-size: 15px;
+  font-size: var(--text-lead);
 }
-.frr-field input.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-.frr-field input:focus-visible { outline: none; border-color: var(--accent); }
+.frr-field input.mono { font-family: var(--font); font-variant-numeric: tabular-nums; }
+.frr-field input:focus-visible { outline: none; border-color: var(--action); }
 .frr-field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
 .frr-sheet-actions {
   display: flex;

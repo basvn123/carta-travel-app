@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Chip } from '../components/ui/index.js';
+import { Button, Chip, Plate } from '../components/ui/index.js';
 import { CheckIcon, ChevronRightIcon, FriendsIcon, PlusIcon } from '../components/Icons.jsx';
 import { formatMoney } from '../lib/money.js';
 import { priceRequest, priceDay } from '../lib/price/index.js';
@@ -298,7 +298,8 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
               <h2 className="tg-h2">{t('tg.resultTitle', { place: destinations?.[placeId]?.city || placeId, dates: fmtShort(lead.when.start, lead.when.end, lang, t('friends.dateJoin')) })}</h2>
               {Number.isFinite(leadTotal) && (
                 <>
-                  <div className="tg-money2"><b>{money(leadTotal)}</b><span>{t('tg2.aPersonTrip')}</span></div>
+                  {/* The group's figure on the total plate (house signature). */}
+                  <Plate variant="total" className="tg-money2" name={t('tg2.aPersonTrip')} fig={money(leadTotal)} />
                   <p className="tg-muted">{t('tg2.bedAndFood')}</p>
                 </>
               )}

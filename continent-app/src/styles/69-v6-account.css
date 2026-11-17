@@ -24,12 +24,12 @@
    title size (DIRECTION.md part 5: 28 px phone, 40 px desktop). */
 .saved-title {
   margin: 0 0 var(--space-3);
-  font-family: var(--display);
+  font-family: var(--font);
   font-size: var(--text-headline);
   font-weight: 600;
   line-height: 1.15;
   letter-spacing: -0.015em;
-  color: var(--ink);
+  color: var(--text);
 }
 @media (min-width: 769px) {
   .saved-title { font-size: var(--text-display); margin-bottom: var(--space-4); }
@@ -42,12 +42,12 @@
 .saved-cat::before { content: none; }
 .saved-cat small,
 .saved-cat.on small {
-  font-family: var(--mono);
+  font-family: var(--font);
   font-size: var(--text-micro);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--ink);
-  background: var(--paper-dim);
+  color: var(--text);
+  background: var(--surface-sunken);
   border-radius: var(--radius-pill);
 }
 
@@ -62,14 +62,14 @@
   gap: var(--space-2);
   margin-top: var(--space-2);
   padding: var(--space-3);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--bg-card);
+  background: var(--surface);
 }
-.tshare-ask-text { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--ink); }
+.tshare-ask-text { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text); }
 .tshare-ask-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
-.tshare-ask button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tshare-ask button:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
 
 /* 6. The past-trip form's second step behind one quiet door (T968, owner
    2026-11-01: no box, no line under it). */
@@ -85,14 +85,14 @@
   font-family: var(--ui);
   font-size: var(--text-body);
   font-weight: 600;
-  color: var(--accent);
+  color: var(--action);
   text-align: left;
   cursor: pointer;
 }
 @media (hover: hover) {
   .pasttrip-details:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
-.pasttrip-details:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.pasttrip-details:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; border-radius: var(--radius-sm); }
 
 /* 7. The account hub. A label above a group of controls is --ui 12 px 600
    --ink-soft, sentence case, no tracking (carta-design "Small text rules"). */
@@ -103,11 +103,11 @@
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 /* A setting's current value reads as information, not as an action: ink-soft,
    never the accent (carta-design "Accent marks"). */
-.account-shell .account-menu-value { color: var(--ink-soft); }
+.account-shell .account-menu-value { color: var(--text-2); }
 /* The pass card is one status line and one door. */
 .account-pass-card .account-pass-cta { width: 100%; margin-top: var(--space-3); min-height: var(--tap); }
 /* Until the balance is known the line holds its place (carta-design
@@ -116,8 +116,8 @@
   display: inline-block;
   width: 9em;
   height: 1.2em;
-  border-radius: 4px;
-  background: var(--paper-dim);
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
 }
 
 /* 11. One sign-in door: the modal's submit is its one primary, in the accent
@@ -125,12 +125,12 @@
    "Continue with Google" and the gate's "Create an account" stay secondary. */
 .auth-modal .auth-submit:not(.auth-google):not(.auth-submit-ghost) {
   min-height: var(--tap);
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-fill);
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--action-text);
 }
 @media (hover: hover) {
-  .auth-modal .auth-submit:not(.auth-google):not(.auth-submit-ghost):hover:not(:disabled) { background: var(--accent-hover); }
+  .auth-modal .auth-submit:not(.auth-google):not(.auth-submit-ghost):hover:not(:disabled) { background: var(--action-hover); }
 }
 .auth-modal .auth-tabs button { min-height: var(--tap); }
 .auth-modal .auth-close {
@@ -139,7 +139,7 @@
   justify-content: center;
   min-width: var(--tap);
   min-height: var(--tap);
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 
 /* Two My trips controls the quality floor counts under the tap floor on a
@@ -175,18 +175,18 @@
   max-width: 100%;
   min-height: var(--tap);
   padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-control);
-  background: var(--bg-card);
-  color: var(--ink);
+  background: var(--surface);
+  color: var(--text);
   font-family: var(--ui);
   font-size: var(--text-body);
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--elev-2);
   animation: acc-rise var(--dur-3) var(--ease-out) backwards;
 }
 .undo-toast-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-.undo-toast button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.undo-toast button:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
 
 /* From 769 px My trips and Account are pages at z-index 56 (25-feature-
    pages.css), above the shell's bottom slot at 40, so a toast in the slot
@@ -223,19 +223,19 @@
 /* 9. The pass balance: the figures in mono, an 8 px thin bar under them in
    the ink ramp, filled to the plans left and outlined beyond. */
 .account-pass-fig {
-  font-family: var(--mono);
+  font-family: var(--font);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--ink);
+  color: var(--text);
 }
 .account-pass-bar {
   display: block;
   flex: 1 0 100%;
   height: 8px;
   overflow: hidden;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: 2px;
-  background: var(--bg-card);
+  background: var(--surface);
 }
 .account-pass-bar-fill {
   display: block;
@@ -299,9 +299,9 @@
    drawing, in mono (brief V5-8). */
 .adminpage-sparkfig {
   margin: var(--space-1) 0 0;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--ink-soft);
+  font-family: var(--font);
+  font-size: var(--text-caption);
+  color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
 
@@ -310,7 +310,7 @@
    decision in T410 (row T400-g): the pages have always read on the paper
    ground, and the caption bands sit one step under it. Moved here from
    24-destination-workspace.css under OWNERSHIP rule 5. */
-.saved-shell, .account-shell { --bg-card: var(--paper-dim); }
+.saved-shell, .account-shell { --bg-card: var(--surface-sunken); }
 
 /* The install hint's dismiss is the house close glyph, not a letter x. */
 .install-hint-x { display: inline-flex; align-items: center; justify-content: center; }
@@ -321,7 +321,7 @@
    sign-in modal and the shared trip scroll inside their overlay and keep clear
    of the notch and the home bar, so the on-screen keyboard never hides the
    submit and a collapsing address bar never hides a button. */
-.pass-overlay { background: color-mix(in srgb, var(--ink) 28%, transparent); backdrop-filter: none; }
+.pass-overlay { background: color-mix(in srgb, var(--text) 28%, transparent); backdrop-filter: none; }
 .auth-overlay {
   align-items: flex-start;
   overflow-y: auto;
@@ -373,8 +373,8 @@
     bottom: 0;
     z-index: 3;
     padding: var(--space-2) 0;
-    background: var(--paper);
-    border-top: 1px solid var(--rule-soft);
+    background: var(--surface-page);
+    border-top: 1px solid var(--border-soft);
   }
   /* A focused field scrolls clear of that bar, not under it. */
   .saved-trips-panel { scroll-padding-bottom: calc(var(--tap) + var(--space-5)); }
@@ -386,12 +386,12 @@
 .pw-strength-seg,
 .auth-banner-x { transition-duration: var(--dur-1); transition-timing-function: var(--ease-out); }
 @media (hover: hover) {
-  .account-avatar-edit:hover { border-color: var(--ink-soft); color: var(--ink); background: var(--paper-dim); }
-  .account-avatar-opt:hover { border-color: var(--ink-soft); }
-  .pw-reveal:hover { color: var(--ink); background: var(--paper-dim); }
-  .auth-check:hover { color: var(--ink); }
-  .auth-banner-x:hover { background: color-mix(in srgb, var(--green) 14%, var(--paper)); }
-  .account-delete-arm:hover { background: var(--paper); border-color: var(--danger); color: var(--danger-dark); }
+  .account-avatar-edit:hover { border-color: var(--text-2); color: var(--text); background: var(--surface-sunken); }
+  .account-avatar-opt:hover { border-color: var(--text-2); }
+  .pw-reveal:hover { color: var(--text); background: var(--surface-sunken); }
+  .auth-check:hover { color: var(--text); }
+  .auth-banner-x:hover { background: color-mix(in srgb, var(--green) 14%, var(--surface-page)); }
+  .account-delete-arm:hover { background: var(--surface-page); border-color: var(--danger); color: var(--danger-dark); }
 }
 
 /* ── Guides (T434): a real dialog on the kit. ── */
@@ -657,3 +657,10 @@
 .legal-body .press-asset { margin: .8rem 0; }
 .legal-body .press-asset figcaption { font-size: var(--text-label); margin-top: .3rem; }
 .legal-body .press-founder[data-placeholder] { font-style: italic; opacity: .7; }
+
+/* ── One panel grammar (account lane, design pass 1) ─────────────────────
+   Every panel in this area is the house panel, as the place and trip pages
+   draw it: paper, a 1 px soft hairline, the card radius, no shadow. Only
+   what floats (sheets, menus, toasts) casts a shadow; plates stay plates. */
+.acct-card,
+.tshare-ask { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); box-shadow: none; }

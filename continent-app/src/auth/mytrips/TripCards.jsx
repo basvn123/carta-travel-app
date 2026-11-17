@@ -1,6 +1,6 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Card } from '../../components/ui/index.js';
+import { Button, Card, Plate } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlagStack } from '../../components/CountryFlag.jsx';
 import { CheckIcon, ChevronRightIcon, PersonIcon, ListDayIcon, UploadIcon } from '../../components/Icons.jsx';
@@ -103,12 +103,18 @@ export function NextTripCard({
         </p>
         <Readiness readiness={readiness} onAddBooking={onAddBooking} />
         {figure ? (
-          <p className="mt-next-money">
-            <TripPrice figure={figure} className="mt-next-fig" />
-            {figure.total > 0 && head > 1 && (
-              <span className="mt-next-party">{t('mt.forParty', { price: formatMoney(figure.total), n: figure.party || head })}</span>
-            )}
-          </p>
+          // The house signature: the trip's day on the signpost plate (the unit
+          // as the plate's name, the party's total under the figure).
+          <div className="mt-next-money">
+            <Plate
+              className="mt-next-plate"
+              name={t('mt.figDay')}
+              fig={<TripPrice figure={figure} className="mt-next-fig" />}
+              figSub={figure.total > 0 && head > 1
+                ? <span className="mt-next-party">{t('mt.forParty', { price: formatMoney(figure.total), n: figure.party || head })}</span>
+                : null}
+            />
+          </div>
         ) : (
           <p className="mt-next-money is-none">{t('saved.factNoPrice')}</p>
         )}

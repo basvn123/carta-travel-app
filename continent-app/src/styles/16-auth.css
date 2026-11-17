@@ -1,6 +1,12 @@
 /* Top-bar account slot, auth overlay, entry gate, email-confirmed toast.
    Part of the modular stylesheet (T191). Load order is set by styles.css and
-   must not change: the cascade depends on it. */
+   must not change: the cascade depends on it.
+
+   House style (account lane, 2026-11): roles and the kit's measures only.
+   The dialog is paper on the scrim with the dialog shadow (it floats); the
+   fields read exactly like the kit Field (1.5 px edge, 8 px, 16 px text, the
+   3 px focus ring); errors are danger text with words, never colour alone.
+   Class names stay: scripts and Account's forms read them. */
 
 /* ─── Top-bar account slot ─── */
 
@@ -9,32 +15,31 @@
   align-items: center;
   align-self: center;
   flex-shrink: 0;
-  margin-left: 12px;
+  margin-left: var(--space-3);
 }
 
 .account-signin-btn {
-  padding: 7px 16px;
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
   border-radius: var(--radius-pill);
-  border: 1px solid var(--ink);
+  border: var(--stroke-edge) solid var(--action);
   background: var(--action);
-  color: var(--paper);
+  color: var(--action-text);
   font-family: inherit;
-  font-size: var(--text-caption);
-  font-weight: 500;
-  letter-spacing: 0.01em;
+  font-size: var(--text-label);
+  font-weight: 700;
   transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .account-signin-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .account-signin-btn:hover { background: var(--action-hover); border-color: var(--action-hover); }
 }
 
 @media (max-width: 1023px) {
   .account-slot { width: 100%; justify-content: flex-end; margin: 2px 0 0; }
 }
 /* Below 768px the desktop account slot is replaced by .mobile-account-btn in
-   the filter bar's own header row (see the mobile filter-bar block above);
-   this rule must come after the base .account-slot definition above so it
-   actually wins the cascade at this width. */
+   the filter bar's own header row; this rule must come after the base
+   .account-slot definition above so it wins the cascade at this width. */
 @media (max-width: 768px) {
   .account-slot { display: none; }
 }
@@ -45,78 +50,72 @@
   position: fixed;
   inset: 0;
   z-index: var(--z-modal);
-  background: color-mix(in srgb, var(--ink) 28%, transparent);
-  backdrop-filter: none;
+  background: var(--scrim);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: var(--space-5) var(--page-gutter);
+  overflow-y: auto;
 }
-.auth-overlay-solid {
-  background: var(--paper);
-  backdrop-filter: none;
-}
+.auth-overlay-solid { background: var(--surface-page); }
 
 .auth-modal {
   position: relative;
   width: 100%;
-  max-width: 380px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  box-shadow: var(--shadow-2);
-  padding: 32px 30px 30px;
+  max-width: 400px;
+  margin: auto;
+  background: var(--surface);
+  border-radius: var(--radius-sheet);
+  box-shadow: var(--elev-3);
+  padding: var(--space-6) var(--space-5) var(--space-5);
 }
 
 .auth-close {
   position: absolute;
-  top: 16px; right: 16px;
+  top: var(--space-2);
+  right: var(--space-2);
 }
 
+/* The wordmark slot, as in the header: a blaze and the name in the plate face. */
 .auth-brand {
   display: flex;
   align-items: center;
-  gap: 9px;
-  margin-bottom: 22px;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
 }
 .auth-brand-name {
-  font-family: var(--display);
-  font-weight: 600;
-  font-size: 18px;
-  letter-spacing: -0.02em;
-  color: var(--ink);
+  font-family: var(--plate-face);
+  font-weight: 700;
+  font-size: var(--text-plate);
+  line-height: 1;
+  color: var(--text);
 }
 
-.auth-tabs {
-  width: 100%;
-  margin-bottom: 22px;
-}
-.auth-tabs button {
-  flex: 1;
-  text-align: center;
-}
+.auth-tabs { margin-bottom: var(--space-5); }
 
 .auth-title {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: 24px;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  margin-bottom: 6px;
+  font-family: var(--ui);
+  font-weight: 800;
+  font-size: var(--text-title);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  text-wrap: balance;
+  color: var(--text);
+  margin-bottom: var(--space-4);
 }
 .auth-sub {
-  font-size: var(--text-label);
-  color: var(--ink-soft);
-  line-height: 1.5;
-  margin-bottom: 22px;
+  font-size: var(--text-body);
+  color: var(--text-2);
+  line-height: var(--leading-body);
+  margin: calc(-1 * var(--space-2)) 0 var(--space-4);
 }
 
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-4);
 }
-.auth-form-inline { gap: 14px; }
+.auth-form-inline { gap: var(--space-4); }
 
 .auth-field {
   display: flex;
@@ -126,214 +125,194 @@
 .auth-label {
   font-family: var(--ui);
   font-weight: 600;
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
+  font-size: var(--text-label);
+  color: var(--text);
 }
-.auth-field input {
-  padding: 10px 12px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-sm);
-  background: var(--paper);
-  font-size: var(--text-body);
-  color: var(--ink);
-  transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .auth-field input:hover { border-color: var(--ink-soft); }
-}
-.auth-field input:focus {
-  outline: none;
-  border-color: var(--accent);
-  background: var(--paper-dim);
-}
-.auth-field input::placeholder { color: var(--ink-mute); }
-
-.auth-submit {
-  margin-top: 4px;
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  background: var(--action);
-  color: var(--paper);
-  font-size: 13.5px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-  transition: background var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .auth-submit:hover:not(:disabled) { background: var(--accent); }
-}
-.auth-submit:disabled { opacity: 0.55; cursor: default; }
-
-/* "Continue with Google" + the or-divider under it. */
-.auth-google {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
+/* The kit Field's control, for the auth and account forms' own inputs. */
+.auth-field input,
+.pw-input-wrap input {
   width: 100%;
-  background: var(--paper);
-  color: var(--ink);
-  border: 1px solid var(--rule);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  font-family: var(--ui);
+  font-size: var(--text-lead);
+  color: var(--text);
+  transition: border-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .auth-google:hover:not(:disabled) { background: var(--paper-dim); color: var(--ink); }
+  .auth-field input:hover { border-color: var(--text); }
 }
+.auth-field input:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 1px;
+  border-color: var(--action);
+}
+.auth-field input::placeholder { color: var(--text-3); }
+.auth-field.has-error input { border-color: var(--danger); }
+
+/* The submit is the kit primary Button (.auth-go; the old raw .auth-submit
+   stays for the forms that still use it); this keeps its place. */
+.auth-go { margin-top: var(--space-1); }
+
+/* "Continue with Google" (a kit secondary Button) + the or-divider. */
+.auth-google svg { flex: none; }
 .auth-divider {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 12px 0 6px;
-  color: var(--ink-mute);
-  font-size: var(--text-micro);
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+  color: var(--text-3);
+  font-size: var(--text-caption);
+  font-weight: 600;
 }
 .auth-divider::before, .auth-divider::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: var(--rule);
+  background: var(--border);
 }
 
 /* Privacy policy modal + entry-gate link. */
-.auth-gate-privacy { display: block; margin: 14px auto 0; font-size: var(--text-micro); color: var(--ink-mute); }
+.auth-gate-privacy { display: flex; margin: var(--space-2) auto 0; }
 .privacy-modal { max-height: 84dvh; overflow-y: auto; }
-.privacy-body { font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); text-align: left; }
-.privacy-body h3 { font-size: var(--text-caption); color: var(--ink); margin: 14px 0 4px; }
-.privacy-body p { margin: 0 0 8px; }
-.privacy-body a { color: var(--accent); }
-.privacy-table { font-size: var(--text-caption); margin: 8px 0; }
-.privacy-table th, .privacy-table td { text-align: left; padding: 6px 0.5rem; color: var(--ink-soft); }
-.privacy-table th { font-weight: 600; color: var(--ink); border-bottom: 1px solid var(--stroke); }
-.privacy-table td { border-bottom: 1px solid var(--stroke-soft); }
+.privacy-body { font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); text-align: left; }
+.privacy-body h3 { font-size: var(--text-label); color: var(--text); margin: var(--space-4) 0 var(--space-1); }
+.privacy-body p { margin: 0 0 var(--space-2); }
+.privacy-body a { color: var(--action-hover); }
+.privacy-table { font-size: var(--text-caption); margin: var(--space-2) 0; }
+.privacy-table th, .privacy-table td { text-align: left; padding: 6px var(--space-2); color: var(--text-2); }
+.privacy-table th { font-weight: 600; color: var(--text); border-bottom: 1px solid var(--border); }
+.privacy-table td { border-bottom: 1px solid var(--border-soft); }
 
-/* ── "Travel cheaper" tailored tips ── */
-
-/* Account deletion (danger zone). */
-.account-delete-actions { display: flex; gap: 8px; margin-top: 12px; }
-.account-delete-btn { background: var(--danger); border-color: var(--danger); color: var(--on-fill); }
+/* Account deletion and export confirms: the two buttons of an in-place form. */
+.account-delete-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+.account-delete-btn { background: var(--danger); border-color: var(--danger); color: var(--action-text); }
 @media (hover: hover) {
-  .account-delete-btn:hover:not(:disabled) { background: var(--danger-dark); }
+  .account-delete-btn:hover:not(:disabled) { background: var(--danger-dark); border-color: var(--danger-dark); }
 }
 .account-delete-btn:disabled { opacity: 0.6; cursor: default; }
 
-.auth-link {
-  font-size: var(--text-caption);
-  color: var(--ink-soft);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-align: left;
-  width: fit-content;
-  transition: color var(--dur-1) var(--ease-out);
-}
-@media (hover: hover) {
-  .auth-link:hover { color: var(--accent); }
-}
-.auth-forgot { align-self: flex-end; margin-top: -6px; }
-.auth-back { align-self: center; margin-top: 2px; }
+/* Text links in the forms are kit quiet Buttons; these place them. */
+.auth-link.btn { min-height: var(--tap); padding-inline: var(--space-2); }
+.auth-forgot { align-self: flex-end; margin-top: calc(-1 * var(--space-2)); }
+.auth-back { align-self: center; }
 
+/* An error: danger text with a mark, on paper (no tinted slab). */
 .auth-error {
-  padding: 9px 12px;
-  border-radius: var(--radius-sm);
-  background: var(--accent-bg);
-  color: var(--accent);
-  font-size: 12.5px;
-  line-height: 1.4;
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  color: var(--danger);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: var(--leading-body);
+}
+.auth-error::before {
+  content: '!';
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-pill);
+  background: var(--danger);
+  color: var(--action-text);
+  font-size: var(--text-micro);
+  font-weight: 800;
+  line-height: 1;
+  translate: 0 2px;
 }
 
 .auth-notice {
-  padding: 14px 16px;
-  border-radius: 8px;
-  background: var(--paper-dim);
-  border: 1px solid var(--rule);
-  color: var(--ink-soft);
-  font-size: var(--text-label);
-  line-height: 1.55;
+  padding: var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  align-items: flex-start;
+  gap: var(--space-2);
 }
 .auth-notice-inline {
-  padding: 8px 12px;
-  color: var(--green);
+  padding: 0;
+  color: var(--text-2);
   background: transparent;
-  border: none;
-  font-size: 12.5px;
+  font-size: var(--text-body);
 }
 
 /* ─── Entry gate (sign in / create account / continue as guest) ─── */
 
 .auth-gate {
   max-width: 400px;
-  padding: 40px 34px 34px;
+  padding: var(--space-7) var(--space-5) var(--space-5);
   text-align: center;
 }
 .auth-brand-center {
   justify-content: center;
-  margin-bottom: 26px;
+  margin-bottom: var(--space-5);
 }
-.auth-gate-title { text-align: center; }
+.auth-gate .auth-brand-name { font-size: var(--text-headline); }
+.auth-gate-title { text-align: center; margin-bottom: var(--space-5); }
 .auth-gate-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--space-3);
 }
-.auth-submit-ghost {
-  background: transparent;
-  color: var(--ink);
-  border: 1px solid var(--rule);
-}
-@media (hover: hover) {
-  .auth-submit-ghost:hover:not(:disabled) {
-    background: var(--paper-dim);
-    color: var(--ink);
+.auth-gate-guest { display: flex; margin: var(--space-4) auto 0; }
+
+/* Phone: the dialog is a sheet rising from the foot. */
+@media (max-width: 599px) {
+  .auth-overlay:not(.auth-overlay-solid) { align-items: flex-end; padding: var(--space-5) 0 0; }
+  .auth-overlay:not(.auth-overlay-solid) .auth-modal {
+    max-width: none;
+    margin: auto 0 0;
+    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+    padding-bottom: max(var(--space-5), env(safe-area-inset-bottom));
+    animation: hs-sheet-in var(--dur-sheet) var(--ease-sheet) both;
   }
 }
-.auth-gate-guest {
-  align-self: center;
-  margin: 20px auto 0;
+@media (prefers-reduced-motion: reduce) {
+  .auth-overlay .auth-modal { animation: none; }
 }
 
-/* ─── Email-confirmed toast ─── */
+/* ─── Email-confirmed toast (the house toast: an ink plate rising) ─── */
 
 .confirm-toast {
   position: fixed;
   left: 50%;
-  bottom: 28px;
+  bottom: max(var(--space-6), env(safe-area-inset-bottom));
   transform: translateX(-50%);
   z-index: var(--z-toast);
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background: var(--ink);
-  color: var(--paper);
-  font-size: var(--text-label);
-  box-shadow: var(--shadow-2);
-  animation: confirm-toast-in var(--dur-2) var(--ease-out);
+  gap: var(--space-3);
+  max-width: calc(100vw - 2 * var(--page-gutter));
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--plate);
+  color: var(--on-plate);
+  font-size: var(--text-body);
+  box-shadow: var(--elev-2);
+  animation: confirm-toast-in var(--dur-3) var(--ease-sheet);
 }
 .confirm-toast-check {
-  color: var(--green);
-  font-weight: 700;
+  color: var(--on-plate-2);
+  font-weight: 800;
 }
-.confirm-toast-close {
-  color: var(--paper);
-  opacity: 0.6;
-  font-size: var(--text-lead);
-  line-height: 1;
-  margin-left: 4px;
-}
-@media (hover: hover) {
-  .confirm-toast-close:hover { opacity: 1; }
-}
+.confirm-toast-close { color: var(--on-plate); }
 @keyframes confirm-toast-in {
-  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  from { opacity: 0; transform: translateX(-50%) translateY(12px); }
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* ─── Account panel (side panel: profile, saved trips, change password) ─── */
+/* ─── Account panel heading (older views) ─── */
 
 .account-heading {
-  font-size: 26px;
-  word-break: break-word;
+  font-size: var(--text-headline);
+  overflow-wrap: anywhere;
 }
-

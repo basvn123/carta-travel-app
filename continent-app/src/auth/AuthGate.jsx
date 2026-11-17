@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Logo from '../components/Logo.jsx';
+import { Blaze } from '../components/ui/Blaze.jsx';
+import { Button } from '../components/ui/Button.jsx';
 import { GoogleButton } from './GoogleButton.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -9,37 +10,41 @@ import { useI18n } from '../i18n/index.jsx';
  * the visitor hasn't already chosen to continue as a guest (App.jsx tracks
  * that choice in localStorage). Mirrors ResetPasswordScreen's solid-overlay
  * takeover so it reads as part of the same auth flow, not a separate page.
+ *
+ * House style (account lane, 2026-11): the wordmark slot (blaze and name),
+ * one primary (Sign in), Create account as the secondary, the guest and
+ * privacy links quiet. Same four doors, same handlers.
  */
 export function AuthGate({ onSignIn, onSignUp, onGuest }) {
   const { t } = useI18n();
   const [privacyOpen, setPrivacyOpen] = useState(false);
   return (
     <div className="auth-overlay auth-overlay-solid">
-      <div className="auth-modal auth-gate">
+      <div className="auth-modal auth-gate hs-dialog-in">
         <div className="auth-brand auth-brand-center">
-          <Logo size={34} />
+          <Blaze size="lg" />
           <span className="auth-brand-name">Carta</span>
         </div>
 
         <h2 className="auth-title auth-gate-title">{t('gate.title')}</h2>
 
         <div className="auth-gate-actions">
-          <GoogleButton />
-          <button type="button" className="auth-submit" onClick={onSignIn}>
+          <Button variant="primary" block className="auth-go" onClick={onSignIn}>
             {t('gate.signIn')}
-          </button>
-          <button type="button" className="auth-submit auth-submit-ghost" onClick={onSignUp}>
+          </Button>
+          <Button variant="secondary" block className="auth-go auth-go-ghost" onClick={onSignUp}>
             {t('gate.signUp')}
-          </button>
+          </Button>
+          <GoogleButton />
         </div>
 
-        <button type="button" className="auth-link auth-gate-guest" onClick={onGuest}>
+        <Button variant="quiet" className="auth-link auth-gate-guest" onClick={onGuest}>
           {t('gate.guest')}
-        </button>
+        </Button>
 
-        <button type="button" className="auth-link auth-gate-privacy" onClick={() => setPrivacyOpen(true)}>
+        <Button variant="quiet" size="sm" className="auth-link auth-gate-privacy" onClick={() => setPrivacyOpen(true)}>
           {t('account.privacyPolicy')}
-        </button>
+        </Button>
       </div>
       {privacyOpen && <PrivacyPolicy onClose={() => setPrivacyOpen(false)} />}
     </div>

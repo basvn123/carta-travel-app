@@ -146,8 +146,10 @@ export function TodayCard({
   return (
     <section className="mt-today" aria-labelledby="mt-today-h">
       <div className="mt-today-main">
-        <p className="mt-today-kicker">{t('mt.todayDay', { n: today.dayNum, of: today.of })}</p>
+        {/* House style: no eyebrow above the heading; the day count follows
+            the title as its first fact. */}
         <h3 className="mt-today-title" id="mt-today-h">{dayWords ? t('mt.todayPlaceWords', { place: city, words: dayWords }) : city}</h3>
+        <p className="mt-today-kicker">{t('mt.todayDay', { n: today.dayNum, of: today.of })}</p>
         <p className="mt-today-facts">
           {sky && Number.isFinite(sky.hi) && (
             <span><Sky size={16} />{t('mt.todayWeather', { t: Math.round(sky.hi) })}</span>

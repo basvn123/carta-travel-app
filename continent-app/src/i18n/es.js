@@ -2008,7 +2008,7 @@ export const es = {
   "tg2.upToTrip": "Hasta {price} por el viaje",
   "tg2.yourMaxTrip": "Tu máximo para el viaje",
   "tg2.forTrip": "{price} por el viaje",
-  "tg2.tripOver": "{price} por el viaje, por encima del presupuesto",
+  "tg2.tripOver": "{price}, por encima del presupuesto",
   "tg2.aPersonTrip": "por persona para el viaje",
   "tg2.bedAndFood": "Cama y comida. El viaje de ida no está incluido.",
   "tg2.askJoin": "Pedir unirme",
@@ -6334,6 +6334,7 @@ export const es = {
   "pack.why.low": "Mínimas de unos {t}°C en {month}.",
   "pack.why.rain": "Unos {mm} mm de lluvia en {month}.",
   // lane:account (house style 2026-11): this lane adds its new keys directly under this line
+  "acc.authMode": "Iniciar sesión o crear una cuenta",
   "pack.why.swim": "Bañarse forma parte del viaje aquí.",
   "pack.why.layers": "Las noches pueden refrescar.",
   "pack.why.boots": "Senderos y naturaleza cerca.",
