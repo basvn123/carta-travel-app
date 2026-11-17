@@ -110,7 +110,7 @@ function HomePass({ flight, price, from, to }) {
  *  the field share a box (T623): on a phone the hero puts the primary under
  *  it at full width, so the whole placeholder shows in every language. */
 const warmChat = () => import('../ask/AskChat.jsx').catch(() => {});
-export function AskField({ t, onSearch, id, primary = false }) {
+export function AskField({ t, onSearch, id, primary = false, labelledBy }) {
   const [text, setText] = React.useState('');
   const warm = () => { loadGuidedData(); warmChat(); };
   const ask = (e) => {
@@ -119,7 +119,7 @@ export function AskField({ t, onSearch, id, primary = false }) {
     onSearch(q ? { question: q } : { open: true });
   };
   return (
-    <form className="hv-ask" role="search" onSubmit={ask} onPointerEnter={warm} onPointerDown={warm} onFocus={warm}>
+    <form className="hv-ask" role="search" aria-labelledby={labelledBy} onSubmit={ask} onPointerEnter={warm} onPointerDown={warm} onFocus={warm}>
       <span className="hv-ask-box">
         <span className="hv-ask-glyph" aria-hidden="true"><HouseIcon.search size={20} /></span>
         <input id={id} className="hv-ask-input" type="text" value={text} maxLength={200}

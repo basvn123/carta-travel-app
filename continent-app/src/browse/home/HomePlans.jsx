@@ -55,7 +55,7 @@ export function HomePlans() {
               </span>
               <span className="hv-plan-note">{n || t(tier.blurbKey)}</span>
               <details className="hv-plan-more" open={wide || undefined}>
-                <summary>{t('home.planWhat')}<HouseIcon.next size={16} /></summary>
+                <summary>{t('home.planWhat')}<span className="sr-only"> {t(tier.labelKey)}</span><HouseIcon.next size={16} /></summary>
                 <ul className="hv-plan-list">
                   {list.map((x) => (
                     <li key={x}><span className="hv-tick" aria-hidden="true"><HouseIcon.check size={16} /></span><span>{x}</span></li>

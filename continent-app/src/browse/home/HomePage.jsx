@@ -139,7 +139,7 @@ export function HomePage({
         <section className="hv-section hv-close" aria-labelledby="hv-close-title" {...close}>
           <div className="hv-close-in">
             <h2 id="hv-close-title" className="hv-h2 hv-close-title">{t('home.closeTitle')}</h2>
-            <AskField t={t} onSearch={onSearch} id="hv-ask-close" />
+            <AskField t={t} onSearch={onSearch} id="hv-ask-close" labelledBy="hv-close-title" />
           </div>
         </section>
         <WaitlistForm />
