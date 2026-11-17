@@ -21,6 +21,7 @@ import { ChangeTripSheet } from './trip/ChangeTripSheet.jsx';
 import { bookRows } from './trip/ReadyToBook.jsx';
 import { BookPasses } from './trip/BookPasses.jsx';
 import { Journey } from './trip/Journey.jsx';
+import { JourneyLine } from './trip/JourneyLine.jsx';
 import { PassMoment } from '../pass/PassMoment.jsx';
 import { TripTrace } from './trip/TripTrace.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
@@ -203,6 +204,13 @@ export function TripSummary({
   const uid = useId();
   const wide = useMedia('(min-width: 1024px)');
   const [per, setPer] = useState('group');
+  // House style (G1, DESIGN.md "Numbers that move honestly"): the total rolls
+  // only within a moment of the traveller's own act on this page (the hire
+  // car, Apply in Change your trip); any other change swaps in place. A
+  // presentation flag only: it never changes what is priced.
+  const [mineAt, setMineAt] = useState(0);
+  const markMine = () => setMineAt(Date.now());
+  const mine = mineAt > 0 && Date.now() - mineAt < 1500;
   const people = partyText(t, party);
   const n = Math.max(1, (party.adults || 0) + (party.children || 0) + (party.babies || 0));
   const div = per === 'person' ? n : 1;
@@ -278,11 +286,8 @@ export function TripSummary({
   const change = () => setChanging(true);
   const tools = (
     <div className="tpg-tools" role="group" aria-label={t('plan.toolsTitle')}>
-      {onPlanDays && wide && (
-        <Button variant="primary" className="tpg-tool is-primary" iconStart={<SparkIcon size={18} />} onClick={onPlanDays}>
-          {t('trip.planYourDays')}
-        </Button>
-      )}
+      {/* House style (G1): from 1024 px Plan your days is the top row's
+          primary, beside Change your trip (same handler, one place). */}
       {onPlanRest && (
         <Button variant="secondary" className="tpg-tool tpg-rest" iconStart={<RouteIcon size={18} />} onClick={onPlanRest}>
           {t('pf.doors.rest')}
@@ -303,18 +308,20 @@ export function TripSummary({
   // T886: what the trip costs, once: the side column from 1024 px (every
   // tab), the Overview on a phone. The budget lives inside it.
   const costCard = (
-    <CostCard priced={priced} people={n} per={per} onPer={setPer} budget={budgetCard}
+    <CostCard priced={priced} people={n} per={per} onPer={setPer} budget={budgetCard} mine={mine}
       aroundNote={carTip && carTip.verdict === 'yes' && !flight?.driving ? t('tp.tile.carAdvised') : ''}
       onOpen={(k) => go('costs', `tp-cost-${k}`)} onAll={() => go('costs')} onAddPaid={onAddPaid}
       lifestyle={lifestyle} onLifestyle={onLifestyle} onChangeFlight={onChangeFlight} />
   );
 
+  // House style (G1): below 1024 px the cost post leads the Overview (a
+  // phone reads it first; at 769 to 1023 it stands in the right column
+  // beside the route); the map follows the route at every width.
   const overview = (
     <div className="tpg-overview">
-      {bookedNow.of > 0 && <BookPasses rows={rows} headId={`${uid}-next`} />}
+      {!wide && <div className="tpg-post">{costCard}</div>}
 
-      {!wide && costCard}
-      {!wide && mapCard}
+      {bookedNow.of > 0 && <BookPasses rows={rows} headId={`${uid}-next`} />}
 
       <section className="tpg-route" aria-labelledby={`${uid}-route`}>
         <div className="tpg-route-top">
@@ -328,9 +335,11 @@ export function TripSummary({
         <Journey
           tripStart={tripStart} tripEnd={tripEnd} stopDetails={stopDetails} stayCosts={stayCosts} stayTier={stayTier}
           priced={priced} flight={flight} ownFlight={ownFlight} driveLegs={driveLegs} origin={origin} div={div}
-          carTip={carTip} rows={rows} onCar={onCar} carDelta={carDelta} onChangeFlight={onChangeFlight}
+          carTip={carTip} rows={rows} onCar={onCar ? () => { markMine(); onCar(); } : null} carDelta={carDelta} onChangeFlight={onChangeFlight}
         />
       </section>
+
+      {!wide && mapCard}
 
       {/* T1171 (I14): the Pass moment, behind its flag; renders nothing when off. */}
       <PassMoment priced={priced?.grandTotal > 0} />
@@ -360,6 +369,11 @@ export function TripSummary({
               {t('tp.change')}
             </Button>
           )}
+          {wide && onPlanDays && (
+            <Button variant="primary" size="sm" className="tpg-tool is-primary tpg-plan" iconStart={<SparkIcon size={16} />} onClick={onPlanDays}>
+              {t('trip.planYourDays')}
+            </Button>
+          )}
           {bar}
           {onExport && (
             // T847: Share this trip, beside Save and the settings.
@@ -370,19 +384,11 @@ export function TripSummary({
         </span>
       </div>
 
-      {/* T885: one photo carries the trip's name, its places and where it
-          stands (the countdown, what is booked); without a photo the same
-          head stands on the page. */}
+      {/* House style (G1): the name, its places and where it stands sit on
+          the page; the photo beside it (under it on a phone) carries no text
+          (DESIGN.md "Photography"). Without a photo the same head stands
+          alone. */}
       <header className={`tpg-head${photos.length ? ' has-photo' : ''}`}>
-        {photos.length > 0 && (
-          <HeroImage url={photos[0].url} city={photos[0].city} className="tpg-photo-img" ratio={[3, 2]} maxWidth={1600} eager />
-        )}
-        {(countdown || bookedNow.of > 0) && (
-          <p className="tpg-pills">
-            {countdown && <span className="tpg-pill">{countdown}</span>}
-            {bookedNow.of > 0 && <span className={`tpg-pill${bookedNow.n ? ' is-some' : ''}`}><span className="tpg-pill-dot" aria-hidden="true" />{t('tp.bookedOf', { n: bookedNow.n, of: bookedNow.of })}</span>}
-          </p>
-        )}
         <div className="tpg-ov">
           {naming != null ? (
             <>
@@ -405,7 +411,7 @@ export function TripSummary({
             <div className="tpg-name-row">
               <h1 className="pf-title tpg-name" tabIndex={-1}>{title}</h1>
               {onRename && (
-                <IconButton tone={photos.length ? 'photo' : 'plain'} className="tpg-rename" label={t('tp.rename')} onClick={() => setNaming(shownTripName(name, stopDetails, lang))}>
+                <IconButton tone="plain" className="tpg-rename" label={t('tp.rename')} onClick={() => setNaming(shownTripName(name, stopDetails, lang))}>
                   <PencilIcon size={16} />
                 </IconButton>
               )}
@@ -417,8 +423,26 @@ export function TripSummary({
             {lead?.iso2 && <CountryFlag country={lead.iso2} size={13} />}
             <span>{whereLine}</span>
           </Button>
+          {(countdown || bookedNow.of > 0) && (
+            <p className="tpg-pills">
+              {countdown && <span className="tpg-pill">{countdown}</span>}
+              {bookedNow.of > 0 && <span className={`tpg-pill${bookedNow.n ? ' is-some' : ''}`}><span className="tpg-pill-dot" aria-hidden="true" />{t('tp.bookedOf', { n: bookedNow.n, of: bookedNow.of })}</span>}
+            </p>
+          )}
         </div>
+        {photos.length > 0 && (
+          <div className="tpg-photo">
+            <HeroImage url={photos[0].url} city={photos[0].city} className="tpg-photo-img" ratio={[3, 2]} maxWidth={1200} eager />
+          </div>
+        )}
       </header>
+
+      <JourneyLine
+        stops={stopDetails}
+        legs={stopDetails.slice(1).map((_, i) => rows.find((r) => r.key === `leg-${i}`)?.pass?.mode || '')}
+        way={flight?.driving ? 'car' : (flight?.own ? (flight?.mode || ownFlight?.mode || 'fly') : (flight || priced?.cartaFlight ? 'fly' : ''))}
+        home={Boolean(origin)}
+      />
 
       <div className="tpg-tripbar" role="group" aria-label={t('tp.bar.label')}>
         {cells.map(({ key, label, text, sub, onClick, dialog }) => (
@@ -457,9 +481,9 @@ export function TripSummary({
         </div>
         {wide && (
           <aside className="tpg-side" aria-label={t('tp.sideLabel')}>
-            {mapCard}
             {costCard}
             {tools}
+            {mapCard}
           </aside>
         )}
       </div>
@@ -471,7 +495,7 @@ export function TripSummary({
           tripEnd={tripEnd}
           quoteDelta={quoteDelta}
           flightsBooked={Boolean(booked?.flights)}
-          onDates={(a, b) => onDates?.(a, b)}
+          onDates={(a, b) => { markMine(); onDates?.(a, b); }}
           history={history}
           onClose={() => setChanging(false)}
           open={{

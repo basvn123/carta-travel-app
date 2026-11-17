@@ -1,7 +1,7 @@
 import React from 'react';
 import { partnerButtonProps } from '../../lib/partnerLink.js';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Chip, Money } from '../../components/ui/index.js';
+import { Button, Chip, Money, Plate } from '../../components/ui/index.js';
 import NotYet from '../../components/NotYet.jsx';
 import { BusIcon, CarIcon, ExternalIcon, FerryIcon, HomeIcon, PencilIcon, TrainIcon } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
@@ -58,6 +58,13 @@ function Stamp({ iso }) {
  * the figure, and Book (T1006: compact; what was paid goes in from the
  * section's Add what you paid).
  *
+ * House style (G1, 2026-11, the trip lane's "path"): the list is drawn as a
+ * footpath. A stay is a signpost plate (the town, its dates and nights, the
+ * figure as one unit); a flight, a drive or a hop is a leg plate on one line
+ * (the two ends, the figure). What is done with a part (where it stands,
+ * Change, Book) sits in the quiet row under its plate. The day stamps stand
+ * beside the path like waymark posts; the path itself is drawn in CSS.
+ *
  *   rows             bookRows() output (the links, the paid fields, booked)
  *   onChangeFlight   (dir) the flight sheet, or null
  */
@@ -80,16 +87,13 @@ export function Journey({
   // one row, where it stands, the figure, then Book out to the operator
   // (named for screen readers as the link it is: "Find on Google Flights").
   // What was paid goes in from the section's own Add what you paid.
-  const Foot = ({ row, fig, figNote = '' }) => (
+  const Foot = ({ row, lead = null }) => (
     <div className="jr-foot">
+      {lead}
       <span className="jr-status">
         {row?.booked
           ? <Chip kind="status" tone="positive" className="ts-booked">{t('pf.doors.bookedMark')}</Chip>
           : row?.link && <Chip kind="status" tone="neutral" className="ts-tobook">{t('tp.toBook')}</Chip>}
-      </span>
-      <span className="jr-fig">
-        {fig}
-        {fig && (row?.yours ? <small>{t('plan.yours')}</small> : figNote && <small>{figNote}</small>)}
       </span>
       {!row?.booked && row?.link && (
         <Button {...partnerButtonProps(row.link.href)} size="sm" className="jr-book" aria-label={row.link.label}
@@ -109,12 +113,12 @@ export function Journey({
       return (
         <li className="jr-step is-way">
           <Stamp iso={date} />
-          <article className="jr-card">
-            <div className="jr-head">
-              <span className="jr-brand"><span className="jr-glyph"><CarIcon size={16} /></span>{title}</span>
-              {d && <span className="jr-meta">{t('trip.sum.km', { km: Math.round(d.road_km) })}</span>}
-            </div>
-            <Foot row={row} fig={money(d?.ground_total)} />
+          <span className="jr-node" aria-hidden="true"><CarIcon size={14} /></span>
+          <article className="jr-card is-drive">
+            <Plate variant="leg" className="jr-plate" lead={<CarIcon size={16} />} name={title}
+              sub={d ? t('trip.sum.km', { km: Math.round(d.road_km) }) : null}
+              fig={money(d?.ground_total)} figSub={row?.yours ? t('plan.yours') : null} />
+            <Foot row={row} />
           </article>
         </li>
       );
@@ -137,36 +141,43 @@ export function Journey({
     return (
       <li className="jr-step is-way">
         <Stamp iso={day} />
+        <span className="jr-node" aria-hidden="true"><Icon size={14} /></span>
         <article className="jr-card is-flight" aria-label={[title, ends.filter(Boolean).join(' '), who].filter(Boolean).join(', ')}>
-          <div className="jr-head">
-            <span className="jr-brand">
-              {leg?.airline && !own ? <AirlineMark code={leg.airline} size="sm" /> : <span className="jr-glyph"><Icon size={16} /></span>}
-              <span className="jr-name">{who}</span>
-            </span>
-            {canChange && (
-              <Button variant="secondary" size="sm" className="jr-change" iconStart={<PencilIcon size={14} />} onClick={() => onChangeFlight(dir)}>
-                {t('tp.fl.change')}
-              </Button>
-            )}
-          </div>
-          {ends[0] && ends[1] ? (
-            <div className="jr-ends">
-              <span className="jr-end">
-                <span className="jr-code">{ends[0]}</span>
-                <span className="jr-time">{leg?.dep || ' '}</span>
+          <Plate
+            variant="leg"
+            className="jr-plate"
+            name={ends[0] && ends[1] ? (
+              <span className="jr-ends">
+                <span className="jr-end">
+                  <span className="jr-code">{ends[0]}</span>
+                  <span className="jr-time">{leg?.dep || ''}</span>
+                </span>
+                <span className="jr-line" aria-hidden="true" />
+                <span className="jr-end is-to">
+                  <span className="jr-code">{ends[1]}</span>
+                  <span className="jr-time">{arr || ''}</span>
+                </span>
               </span>
-              <span className="jr-line">
-                <Icon size={14} aria-hidden="true" />
+            ) : title}
+            sub={!leg && !own ? <NotYet /> : null}
+            fig={money(eur)}
+            figSub={money(eur) && row?.yours ? t('plan.yours') : null}
+          />
+          <Foot
+            row={row}
+            lead={(
+              <span className="jr-brand">
+                {leg?.airline && !own ? <AirlineMark code={leg.airline} size="sm" /> : <span className="jr-glyph"><Icon size={16} /></span>}
+                <span className="jr-name">{who}</span>
                 {stops && <span className="jr-line-note">{stops}</span>}
+                {canChange && (
+                  <Button variant="quiet" size="sm" className="jr-change" iconStart={<PencilIcon size={14} />} onClick={() => onChangeFlight(dir)}>
+                    {t('tp.fl.change')}
+                  </Button>
+                )}
               </span>
-              <span className="jr-end is-to">
-                <span className="jr-code">{ends[1]}</span>
-                <span className="jr-time">{arr || ' '}</span>
-              </span>
-            </div>
-          ) : null}
-          {!leg && !own && <p className="jr-none"><NotYet /></p>}
-          <Foot row={row} fig={money(eur)} />
+            )}
+          />
         </article>
       </li>
     );
@@ -176,6 +187,7 @@ export function Journey({
     <li className={`jr-step is-home${end ? ' is-end' : ''}`}>
       {/* The flight beside it carries the day; home is a mark on the rail. */}
       <span className="jr-stamp is-empty" aria-hidden="true" />
+      <span className="jr-node is-home" aria-hidden="true" />
       <div className="jr-home">
         <span className="jr-home-mark" aria-hidden="true"><HomeIcon size={16} /></span>
         <span className="jr-home-name">{origin || t('trip.sum.home')}</span>
@@ -199,40 +211,35 @@ export function Journey({
           <React.Fragment key={`${s.destinationId}-${i}`}>
             <li className="jr-step is-stay">
               <Stamp iso={s.arriveDate} />
+              <span className="jr-node is-stay" aria-hidden="true">{i + 1}</span>
               <article className="jr-card is-stay" aria-label={[city, nights, bed].join(', ')}>
-                <div className="jr-stay">
-                  <span className="jr-photo" aria-hidden="true">
-                    <HeroImage url={s.dest?.image?.url} city={city} iso2={s.dest?.iso2} className="jr-photo-img" ratio={[1, 1]} maxWidth={200} />
-                  </span>
-                  <span className="jr-city">{city}</span>
-                </div>
-                {s.arriveDate && (
-                  <div className="jr-ends is-dates">
-                    <span className="jr-end">
-                      <span className="jr-k">{t('tp.pass.in')}</span>
-                      <span className="jr-date">{fmtShort(s.arriveDate)}</span>
+                <Plate
+                  className="jr-plate"
+                  lead={(
+                    <span className="jr-photo" aria-hidden="true">
+                      <HeroImage url={s.dest?.image?.url} city={city} iso2={s.dest?.iso2} className="jr-photo-img" ratio={[1, 1]} maxWidth={200} />
                     </span>
-                    <span className="jr-line is-quiet" aria-hidden="true" />
-                    <span className="jr-end is-to">
-                      <span className="jr-k">{t('tp.pass.out')}</span>
-                      <span className="jr-date">{fmtShort(s.departDate)}</span>
-                    </span>
-                  </div>
-                )}
-                <Foot row={row} fig={money(sc?.accomTotal ?? sc?.total)} figNote={Number.isFinite(sc?.accomTotal ?? sc?.total) ? t('tp.fig.stay') : ''} />
+                  )}
+                  name={<span className="jr-city">{city}</span>}
+                  sub={[s.arriveDate ? t('plan.dateRange', { a: fmtShort(s.arriveDate), b: fmtShort(s.departDate) }) : '', nights].filter(Boolean).join(', ')}
+                  fig={money(sc?.accomTotal ?? sc?.total)}
+                  figSub={money(sc?.accomTotal ?? sc?.total) && row?.yours ? t('plan.yours') : null}
+                />
+                <Foot row={row} />
               </article>
             </li>
             {hop && (
               <li className="jr-step is-hop">
                 <Stamp iso={hop.pass?.date} />
-                {/* T1006: the two towns and the mode between them say it all. */}
+                {/* T1006: the two towns and the mode between them say it all;
+                    house style: "Bus to Lake Bled" on a leg plate, from the
+                    town of the plate above. */}
+                <span className="jr-node" aria-hidden="true"><HopIcon size={14} /></span>
                 <article className="jr-card is-hop" aria-label={hop.title}>
-                  <div className="jr-ends is-towns">
-                    <span className="jr-end"><span className="jr-town">{hop.pass?.from}</span></span>
-                    <span className="jr-line" aria-hidden="true"><HopIcon size={14} /></span>
-                    <span className="jr-end is-to"><span className="jr-town">{hop.pass?.to}</span></span>
-                  </div>
-                  <Foot row={hop} fig={money(hop.eur)} />
+                  <Plate variant="leg" className="jr-plate" lead={<HopIcon size={16} />} name={hop.title}
+                    sub={hop.pass?.from ? t('tp.hopFrom', { city: hop.pass.from }) : null}
+                    fig={money(hop.eur)} figSub={money(hop.eur) && hop.yours ? t('plan.yours') : null} />
+                  <Foot row={hop} />
                 </article>
               </li>
             )}
@@ -243,6 +250,7 @@ export function Journey({
       {carTip && carTip.verdict !== 'no' && !flight?.driving && (
         <li className="jr-step is-car" data-testid="ts-car">
           <span className="jr-stamp is-empty" aria-hidden="true" />
+          <span className="jr-node is-tip" aria-hidden="true"><CarIcon size={14} /></span>
           <article className="jr-card is-tip">
             <div className="jr-head">
               <span className="jr-brand">

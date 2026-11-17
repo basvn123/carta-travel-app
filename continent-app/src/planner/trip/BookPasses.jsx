@@ -132,7 +132,7 @@ function Pass({ row }) {
           <span className="tbp-code">{p.from}</span>
           {p.dep && <span className="tbp-time">{p.dep}</span>}
         </span>
-        <span className="tbp-line" aria-hidden="true"><PlaneIcon size={16} /></span>
+        <span className="tbp-line" aria-hidden="true" />
         <span className="tbp-end is-to">
           <span className="tbp-code">{p.to}</span>
           {p.arr && <span className="tbp-time">{p.arr}</span>}
@@ -179,7 +179,7 @@ function Pass({ row }) {
     ends = (
       <div className="tbp-ends is-towns">
         <span className="tbp-end"><span className="tbp-town">{p.from}</span></span>
-        <span className="tbp-line" aria-hidden="true"><Icon size={16} /></span>
+        <span className="tbp-line" aria-hidden="true" />
         <span className="tbp-end is-to"><span className="tbp-town">{p.to}</span></span>
       </div>
     );
@@ -195,7 +195,7 @@ function Pass({ row }) {
           {fig && row.yours && <small>{t('plan.yours')}</small>}
         </span>
         {row.link && (
-          <Button href={row.link.href} external variant="primary" size="sm" className="tbp-book" aria-label={`${t('tp.book')}: ${row.link.label}`}>
+          <Button href={row.link.href} external variant="secondary" size="sm" className="tbp-book" aria-label={`${t('tp.book')}: ${row.link.label}`}>
             {t('tp.book')}
           </Button>
         )}

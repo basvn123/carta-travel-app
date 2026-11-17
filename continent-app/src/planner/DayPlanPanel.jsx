@@ -98,10 +98,12 @@ function useRowSlide(listRef, keys) {
     const prev = tops.current;
     tops.current = next;
     if (!prev.size) return;
-    const dur = durationMs('--dur-2');
+    // House style (G1): the day's one signature, Best order's rows glide to
+    // their new places on the settle spring (reduced motion: no duration).
+    const dur = durationMs('--dur-settle');
     if (!dur) return;
     let ease = '';
-    try { ease = getComputedStyle(document.documentElement).getPropertyValue('--ease-in-out').trim(); } catch { /* no DOM */ }
+    try { ease = getComputedStyle(document.documentElement).getPropertyValue('--ease-settle').trim(); } catch { /* no DOM */ }
     rows.forEach((el) => {
       const before = prev.get(el.dataset.key);
       const now = next.get(el.dataset.key);

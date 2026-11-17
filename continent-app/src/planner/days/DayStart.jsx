@@ -46,9 +46,9 @@ export function DayStart({ leaveMin = null, first = null, highC = null, tickets 
       </div>
       <dl className="dst-facts">
         {facts.map(({ k, Icon, label, value }) => (
-          <div key={k} className="dst-fact">
-            <span className="dst-ic" aria-hidden="true"><Icon size={16} /></span>
-            <div className="dst-txt"><dt>{label}</dt><dd>{value}</dd></div>
+          <div key={k} className="dst-fact" data-k={k}>
+            <dt><span className="dst-ic" aria-hidden="true"><Icon size={16} /></span>{label}</dt>
+            <dd>{value}</dd>
           </div>
         ))}
       </dl>
