@@ -22,7 +22,10 @@ const shots = process.argv.includes('--shots') ? path.resolve(process.argv[proce
 const out = fs.mkdtempSync(path.join(os.tmpdir(), 'blogverify-'));
 build({ content, out, drafts: true });
 
-const TYPES = { '.html': 'text/html', '.json': 'application/json', '.xml': 'application/xml' };
+const TYPES = { '.html': 'text/html', '.json': 'application/json', '.xml': 'application/xml', '.css': 'text/css', '.woff2': 'font/woff2' };
+// The site's style rule (public/_headers): only 'self' and hashed inline
+// blocks. The blog's sheet is a file (house style G1), so it must load here.
+const CSP = "default-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' https: data:";
 const server = http.createServer((req, res) => {
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
   if (p.endsWith('/')) p += 'index.html';
@@ -30,7 +33,7 @@ const server = http.createServer((req, res) => {
   if (p === '/favicon.svg' || p === '/favicon.ico') { res.writeHead(204); res.end(); return; }
   const f = path.join(out, p);
   if (!f.startsWith(out) || !fs.existsSync(f)) { res.writeHead(404); res.end('no'); return; }
-  res.writeHead(200, { 'content-type': TYPES[path.extname(f)] || 'application/octet-stream' });
+  res.writeHead(200, { 'content-type': TYPES[path.extname(f)] || 'application/octet-stream', 'content-security-policy': CSP });
   res.end(fs.readFileSync(f));
 });
 await new Promise((r) => server.listen(0, '127.0.0.1', r));
@@ -63,8 +66,11 @@ for (const [label, width, height] of [['phone', 390, 844], ['desktop', 1280, 900
       bars: document.querySelectorAll('.bl-chart li').length,
       overflow: document.documentElement.scrollWidth - window.innerWidth,
       text: document.body.innerText,
+      ground: getComputedStyle(document.body).backgroundColor,
     };
   });
+  r.face = await page.evaluate(async () => (await document.fonts.load('800 20px Overpass', 'Aa0')).length > 0);
+  check(`${label} post: the house sheet loads under the CSP (stone ground, Overpass)`, r.ground === 'rgb(238, 240, 234)' && r.face, `${r.ground}, Overpass ${r.face}`);
   check(`${label} post: one h1`, r.h1 === 1);
   check(`${label} post: canonical`, r.canonical === `https://www.carta-europetravel.com/blog/${slug}`, r.canonical);
   check(`${label} post: draft is noindex`, /noindex/.test(r.robots || ''));
