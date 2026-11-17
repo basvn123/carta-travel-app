@@ -26,6 +26,35 @@ L2 crew run (design playbook): three explorers (home code and function inventory
 
 Every changed file: `git diff --stat 0a5517d74c..p15-hs-home` (25 files). `homeIcons.jsx` deleted (unused).
 
+## Files changed
+| File | What changed and why |
+|---|---|
+| `continent-app/src/browse/home/HomeHero.jsx` | House icons, the boxed AI tag on Ask Carta, the pass stub as the getting-there wagon; `AskField` takes `labelledBy` to name the closing search landmark |
+| `continent-app/src/browse/home/HomePage.jsx` | The closing Ask wrapped for the full-width band and named by its heading |
+| `continent-app/src/browse/home/HomeCost.jsx` | The umber band with two chapters and the paper cost post (Formation, CostRows, Rounding, total Plate); scroll-tied light-up and run bar retired |
+| `continent-app/src/browse/home/HomeProof.jsx` | Count-up replaced by still figures, formation colours, house icons, secondary door |
+| `continent-app/src/browse/home/HomeStory.jsx` | Stops passing the unused `place` prop to HomeProof |
+| `continent-app/src/browse/home/HomeTour.jsx` | House icons and the AI tag, no kicker, tone classes removed, house springs, tall Reveal arrives at a tenth in view |
+| `continent-app/src/browse/home/HomeTry.jsx` | Route ruler, still budget Figure, haptic tick on release, cards with the place formation, secondary door, reduced-motion end state |
+| `continent-app/src/browse/home/HomePlans.jsx` | Plan lists behind a named fold on a phone, open from 769; house check icon |
+| `continent-app/src/browse/home/HomeG14.jsx` | House arrow icon in the G14 doors |
+| `continent-app/src/browse/home/motionKit.jsx` | Re-exports the house springs; Reveal takes `amount` and starts at its end state under reduced motion; punctuation after an accent stays on its word |
+| `continent-app/src/browse/home/homeIcons.jsx` | Deleted: the Phosphor icons gave way to HouseIcon |
+| `continent-app/src/components/WaitlistForm.jsx` | Secondary submit with its loading state, shake on every refusal, done note arrives with hs-reveal |
+| `continent-app/src/styles/61-v6-home.css` | Rewritten in the house style: hero, pass, Ask field, plans, close band, footer legal tap targets, reduced motion |
+| `continent-app/src/styles/62-home-story.css` | Rewritten: umber band and cost post, share bars, tour tabs and phone, route ruler and cards, tablet and desktop layouts |
+| `continent-app/src/styles/63-home-g14.css` | G14 on stone with the paper post and formation colours; breakpoints on the scale |
+| `continent-app/src/styles/94-waitlist.css` | Paper field, states, house tokens |
+| `continent-app/src/i18n/en.js` | Shorter home and waitlist strings; new `home.planWhat`, `home.weekTotal` under the lane marker |
+| `continent-app/src/i18n/nl.js` | The same changes in Dutch |
+| `continent-app/src/i18n/de.js` | The same changes in German |
+| `continent-app/src/i18n/fr.js` | The same changes in French |
+| `continent-app/src/i18n/es.js` | The same changes in Spanish |
+| `continent-app/src/i18n/it.js` | The same changes in Italian |
+| `continent-app/scripts/verify_home.mjs` | Stale week, voices, story, route and why checks replaced by week, story, tabs, try and plans checks |
+| `continent-app/scripts/record_home_clips.mjs` | New `--out` option so clips can be staged outside the protected public/ |
+| `.claude/skills/carta-design/references/home.md` | New "The look (house style 2026-11)" section |
+
 ## Function parity
 No control, door, handler, show/hide condition or data field removed (both judges: criterion 11 at 5). Presentation-only changes: the scroll-tied chapter light-up and the phone run bar (their figures are all in the post from the first paint), kickers and `home.proofNote` no longer rendered (keys kept in the catalogues by decision, listed in `handbook-notes.md`), the per-card "Fits your budget" line (the foot says how many fit), the count-up (still figures), the Proof, Try and waitlist buttons from primary to secondary (one primary; owner note), the chapter facts pills (their figures are the post's line subs).
 
