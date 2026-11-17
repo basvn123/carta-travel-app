@@ -82,13 +82,24 @@ export const C = {
   umber200: colour('umber-200'),
   umber300: colour('umber-300'),
   onFill: colour('on-fill'),
+  // House style (G1 2026-11): the plates, the formation and the blaze.
+  plate: colour('plate'),
+  onPlate: colour('on-plate'),
+  onPlate2: colour('on-plate-2'),
+  beige: colour('umber-100'),
+  foodEdge: colour('wagon-food-edge'),
+  umber800: colour('umber-800'),
+  edge: colour('edge'),
 };
+// The blaze's halo edge is ink at 38 % (an rgba token); images mix it opaque.
+C.blazeEdge = mix(C.ink, C.card, 0.38);
 C.good = mix(C.green, C.card, 0.16); // the MonthStrip's good cell: green 16% on the card
 
 export const F = {
   display: family('display'),
   ui: family('ui'),
   mono: family('mono'),
+  plate: family('plate-face'),
 };
 
-export const stack = (name) => `'${F[name]}', ${name === 'display' ? 'Georgia, serif' : name === 'mono' ? 'monospace' : 'sans-serif'}`;
+export const stack = (name) => `'${F[name]}', ${name === 'plate' ? `'${F.ui}', ` : ''}sans-serif`;

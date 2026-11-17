@@ -1,6 +1,17 @@
 /**
  * icons.mjs, builds the favicon, the app icon set and the store masters from
- * the one compass mark, on the product's own tokens.
+ * the one mark, on the product's own tokens.
+ *
+ * The mark (house style G1, 2026-11): the blaze, the waymark painted on a
+ * rock, white halo, square umber stripe, short ink heel, on an umber 600
+ * tile. It carries no letters, so it does not depend on the app's name
+ * (DESIGN.md "Shell": the wordmark slot takes any name). At 16 and 32 px the
+ * heel and the halo's hairline would be under a pixel, so those frames draw
+ * the halo and the stripe with a heavier heel.
+ *
+ * `--out <dir>` writes the whole set under <dir>/public and
+ * <dir>/brand/store instead of the live folders: public/ is protected, so a
+ * new set is staged first and copied in when the owner agrees.
  *
  * Served from public/ (paths unchanged, so sw.js, the manifest and index.html
  * keep working): favicon.svg, favicon.ico, icon-192.png, icon-512.png,
@@ -15,41 +26,49 @@
  *
  * Maskable and adaptive icons put the mark inside the central 80 percent
  * circle, the safe zone both Android and the W3C manifest spec define, so no
- * launcher mask can cut the needle.
+ * launcher mask can cut a corner of the blaze (check.mjs measures it from the
+ * blaze's own box, BLAZE_HALF_DIAGONAL).
  *
- * Run from continent-app/:  node scripts/og/icons.mjs
+ * Run from continent-app/:  node scripts/og/icons.mjs [--out <dir>]
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { APP_ROOT } from './tokens.mjs';
-import { markShapes } from './cards.mjs';
+import { APP_ROOT, C } from './tokens.mjs';
+import { blazeShapes } from './cards.mjs';
 import { rasterise, closeBrowser } from './render.mjs';
 
-const PUB = path.join(APP_ROOT, 'public');
-const STORE = path.join(APP_ROOT, 'brand', 'store');
+const outArg = process.argv.indexOf('--out');
+const ROOT = outArg > 0 ? path.resolve(process.argv[outArg + 1]) : APP_ROOT;
+const PUB = path.join(ROOT, 'public');
+const STORE = path.join(ROOT, 'brand', 'store');
 
-/* Owner 2026-10-21: the app icon is back to the T212 mark, the ink compass
-   with a rust north needle on a cream tile (T436/T438 had made it white on
-   teal, then on brown). Fixed values, not tokens, so a palette change cannot
-   move the brand mark again. */
-const ICON_GROUND = '#f8f6f0';
-const ICON_MARK = { ring: '#0f172a', inner: '#ccc7b8', north: '#e05a47', south: '#0f172a', pivot: ICON_GROUND, pivotEdge: '#0f172a' };
+/* Owner 2026-10-21 had brought back the T212 compass on a cream tile. The
+   house style (owner 2026-11-13: a full custom house style; DESIGN.md bans a
+   compass rose) makes the blaze the mark, on the umber the owner kept. The
+   new set is staged with --out; the owner's copy into public/ is the switch. */
+const ICON_GROUND = C.accent;
 
-/** A square icon: cream ground, ink mark centred and sized as a share of the side. */
+/** Half the blaze box's diagonal as a share of its width (24 x 14 units). */
+export const BLAZE_HALF_DIAGONAL = Math.hypot(12, 7) / 24;
+
+/** A square icon: umber ground, the blaze centred, `share` of the side wide. */
 function iconSvg(size, share, { ground = true } = {}) {
-  const m = size * share;
-  const o = (size - m) / 2;
+  const bw = size * share;
+  const bh = (bw * 14) / 24;
+  const ox = (size - bw) / 2;
+  const oy = (size - bh) / 2;
+  const simple = size <= 32;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`
     + (ground ? `<rect width="${size}" height="${size}" fill="${ICON_GROUND}"/>` : '')
-    + `<g transform="translate(${o} ${o}) scale(${m / 32})">${markShapes(ICON_MARK)}</g></svg>`;
+    + `<g transform="translate(${ox} ${oy}) scale(${bw / 24})">${blazeShapes({ simple, edge: C.card })}</g></svg>`;
 }
 
-/** The favicon: a cream tile with the mark, so it reads on a dark tab strip too. */
-export function faviconSvg() {
+/** The favicon: an umber tile with the blaze; it reads on a light and a dark tab strip. */
+export function faviconSvg({ simple = false } = {}) {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none">`
     + `<rect width="32" height="32" rx="7" fill="${ICON_GROUND}"/>`
-    + `<g transform="translate(1.5 1.5) scale(0.9375)">${markShapes(ICON_MARK)}</g></svg>\n`;
+    + `<g transform="translate(3 8.4) scale(${26 / 24})">${blazeShapes({ simple, edge: C.card })}</g></svg>\n`;
 }
 
 /** An .ico holding PNG frames (supported since Vista and by every browser). */
@@ -70,9 +89,11 @@ function ico(frames) {
 const png = async (svg, size, opts) => (await rasterise(svg, size, size, { layout: false, ...opts })).png;
 const write = (file, buf) => { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, buf); };
 
-export const ANY_SHARE = 0.86;      // ring is 0.70 of the side
-export const SAFE_SHARE = 0.78;     // ring is 0.63 of the side, inside the 0.80 safe circle
-export const ADAPTIVE_SHARE = 0.56; // foreground is 108 units, the mark sits in the central 66
+// The blaze's width as a share of the side. Its corners reach
+// share x BLAZE_HALF_DIAGONAL from the centre (0.58 of its width).
+export const ANY_SHARE = 0.74;      // corners at 0.43 of the side: a margin round the mark
+export const SAFE_SHARE = 0.6;      // corners at 0.35, inside the 0.40 safe circle
+export const ADAPTIVE_SHARE = 0.5;  // foreground is 108 units, corners inside the central 66
 
 export const IOS_SIZES = [20, 29, 40, 58, 60, 76, 80, 87, 120, 152, 167, 180, 1024];
 export const ANDROID_DENSITIES = { mdpi: 48, hdpi: 72, xhdpi: 96, xxhdpi: 144, xxxhdpi: 192 };
@@ -83,7 +104,7 @@ export async function buildIcons() {
 
   put(path.join(PUB, 'favicon.svg'), Buffer.from(faviconSvg()));
   const fav = [];
-  for (const size of [16, 32, 48]) fav.push({ size, png: await png(faviconSvg(), size) });
+  for (const size of [16, 32, 48]) fav.push({ size, png: await png(faviconSvg({ simple: size <= 32 }), size) });
   put(path.join(PUB, 'favicon.ico'), ico(fav));
 
   put(path.join(PUB, 'icon-192.png'), await png(iconSvg(192, ANY_SHARE), 192));

@@ -18,13 +18,20 @@
  *              with absolute https URLs and the 1200 x 630 declaration
  *
  * Run from continent-app/:  node scripts/og/check.mjs
+ *   --icons <dir>   check a staged icon set (<dir>/public, <dir>/brand/store)
+ *   --data <dir>    render the sample cards from another wire than public/
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { APP_ROOT } from './tokens.mjs';
 import { drawCard, FORMATS } from './cards.mjs';
 import { SAMPLES, renderCard, rasterise, closeBrowser } from './render.mjs';
-import { IOS_SIZES, ANDROID_DENSITIES, ANY_SHARE, SAFE_SHARE } from './icons.mjs';
+import { DEFAULT_DATA } from './data.mjs';
+import { IOS_SIZES, ANDROID_DENSITIES, ANY_SHARE, SAFE_SHARE, ADAPTIVE_SHARE, BLAZE_HALF_DIAGONAL } from './icons.mjs';
+
+const arg = (flag) => { const i = process.argv.indexOf(flag); return i > 0 ? process.argv[i + 1] : null; };
+const ICON_ROOT = arg('--icons') ? path.resolve(arg('--icons')) : APP_ROOT;
+const DATA = arg('--data') ? path.resolve(arg('--data')) : DEFAULT_DATA;
 
 const failures = [];
 const fail = (m) => { failures.push(m); console.log(`FAIL ${m}`); };
@@ -52,7 +59,7 @@ async function cards() {
   const dir = APP_ROOT;
   for (const s of SAMPLES) {
     for (const format of Object.keys(FORMATS)) {
-      const r = await renderCard({ ...s, format });
+      const r = await renderCard({ ...s, format, data: DATA });
       const name = `${s.name} ${format}`;
       const { w, h } = FORMATS[format];
       const png = r.png;
@@ -73,7 +80,7 @@ async function cards() {
   // a name too long for two lines at the smallest size must be cut and reported, not clipped
   const long = {
     type: 'beach', kind: 'Beach', subtitle: 'Spain', title: 'Playa de la Concha de la Bahia de Santander y la Magdalena junto al Sardinero',
-    panel: { head: 'What is measured', rows: [{ label: 'Bathing water', value: 'Excellent', note: 'Class at a very long monitoring site name that goes on and on for far too long', font: 'ui' }], total: { label: 'Carta score', value: '8.4', unit: 'of 10', tone: 'rate' } },
+    panel: { head: 'What is measured', rows: [{ label: 'Bathing water', value: 'Excellent', note: 'Class at a very long monitoring site name that goes on and on for far too long', font: 'ui' }], total: { label: 'Score', value: '8.4', unit: 'of 10', tone: 'rate' } },
     strip: null, alt: 'long',
   };
   const { svg, width, height } = drawCard(long, 'og');
@@ -91,8 +98,8 @@ function tokens() {
 }
 
 function icons() {
-  const pub = (n) => path.join(APP_ROOT, 'public', n);
-  const store = (...n) => path.join(APP_ROOT, 'brand', 'store', ...n);
+  const pub = (n) => path.join(ICON_ROOT, 'public', n);
+  const store = (...n) => path.join(ICON_ROOT, 'brand', 'store', ...n);
   const want = [
     [pub('icon-192.png'), 192], [pub('icon-512.png'), 512], [pub('icon-maskable-512.png'), 512], [pub('apple-touch-icon.png'), 180],
     [store('android', 'playstore-512.png'), 512], [store('android', 'adaptive-foreground-432.png'), 432],
@@ -109,9 +116,11 @@ function icons() {
     assert(i.colourType === 2, `AppIcon-${s}.png has no alpha channel`);
   }
   assert(pngInfo(pub('icon-192.png')).colourType === 2 && pngInfo(store('android', 'playstore-512.png')).colourType === 2, 'launcher and Play Store icons are opaque');
-  // ring diameter is 26/32 of the mark box; the safe circle is 0.8 of the side
-  assert((SAFE_SHARE * 26) / 32 <= 0.8, 'maskable mark sits inside the 80 percent safe circle');
-  assert((ANY_SHARE * 26) / 32 <= 0.9, 'any icon keeps a margin round the ring');
+  // The blaze's corners sit share x half-diagonal from the centre; the safe
+  // circle's radius is 0.4 of the side (0.305 for the adaptive 66 of 108).
+  assert(SAFE_SHARE * BLAZE_HALF_DIAGONAL <= 0.4, 'maskable mark sits inside the 80 percent safe circle');
+  assert(ADAPTIVE_SHARE * BLAZE_HALF_DIAGONAL <= 33 / 108, 'adaptive foreground sits inside the central 66 units');
+  assert(ANY_SHARE * BLAZE_HALF_DIAGONAL <= 0.45, 'any icon keeps a margin round the mark');
   const ico = fs.readFileSync(pub('favicon.ico'));
   assert(ico.readUInt16LE(2) === 1 && ico.readUInt16LE(4) === 3, 'favicon.ico holds three frames');
   const manifest = JSON.parse(fs.readFileSync(pub('manifest.webmanifest'), 'utf8'));
