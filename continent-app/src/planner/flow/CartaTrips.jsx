@@ -194,7 +194,7 @@ export function CartaTrips({ titleTag = 'h1', onOpenJourney, initialStyle = null
   }, [all, active]);
   const open = (card) => onOpenJourney(card.id);
   const card = (c, sizes) => (
-    <TripPlaceCard key={c.id} card={c} length={WEEK} month={month} saved={savedSet.has(c.id)}
+    <TripPlaceCard key={c.id} card={c} length={WEEK} month={month} saved={savedSet.has(c.id)} short
       onToggleSave={toggleSavedJourney} onOpen={open} t={t} lang={lang} sizes={sizes} />
   );
 

@@ -379,7 +379,7 @@ export function JourneysSection({
           </header>
         )}
         {types.map((tp) => (
-          <StyleCard key={tp.slug} type={tp} perDay={perDay[tp.slug]} onPick={onView} t={t} />
+          <StyleCard key={tp.slug} type={tp} perDay={perDay[tp.slug]} onPick={onView} t={t} short={!country || !inPanel} />
         ))}
         {index && types.length === 0 && country && (
           <EmptyResult
@@ -489,7 +489,7 @@ export function JourneysSection({
         </div>
       )}
       {rows && rows.map((card) => (
-        <JourneyCard key={card.id} card={card} length={length} onOpen={onOpen} t={t} lang={lang} />
+        <JourneyCard key={card.id} card={card} length={length} onOpen={onOpen} t={t} lang={lang} short />
       ))}
       {rows && rows.length === 0 && (
         scoped && scoped.length > 0

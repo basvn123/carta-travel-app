@@ -40,7 +40,7 @@ const DIFF_TONE = { 1: 'is-easy', 2: 'is-easy', 3: 'is-mid', 4: 'is-hard', 5: 'i
  *             and how many days
  *   price     one price a person a day, the cheapest flight beside it
  */
-export function TripPlaceCard({ card, length, month, saved = false, onToggleSave, onOpen, t, lang, sizes }) {
+export function TripPlaceCard({ card, length, month, saved = false, onToggleSave, onOpen, t, lang, sizes, short = false }) {
   const perDay = cardPerDay(card, length);
   const flight = useCardFlight(card, length);
   const days = cardTotal(card, length)?.days || card.days || length;
@@ -74,7 +74,7 @@ export function TripPlaceCard({ card, length, month, saved = false, onToggleSave
           <span className="ctc-days">{t('tp.card.days', { n: days })}</span>
         </span>
         <span className="ctc-price">
-          {Number.isFinite(perDay) ? <DayFrom value={perDay} t={t} /> : <span className="jcap-fig is-none">{t('journey.fromNone')}</span>}
+          {Number.isFinite(perDay) ? <DayFrom value={perDay} t={t} short={short} /> : <span className="jcap-fig is-none">{t('journey.fromNone')}</span>}
           {flight && <FlightChip perSeat={flight.perSeat} airline={flight.out.airline} />}
         </span>
       </a>

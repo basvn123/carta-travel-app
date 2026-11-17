@@ -39,16 +39,19 @@ export const RAIL_SIZES = '(max-width: 559px) 80vw, (max-width: 1079px) 40vw, 32
  *  budgets are estimates, so they carry Explore's ~ and est. mark. */
 
 /** "From {eur} a person a day" with the estimate mark, or null when there is no figure. */
-export function DayFrom({ value, t, className = 'jcap-fig' }) {
+// `short` (plan lane, house style): "From €124" without the unit, only for a list
+// that states the unit once in its head ("A day, a person"). Off by default, so
+// every other caller keeps the full "From €124 a person a day".
+export function DayFrom({ value, t, className = 'jcap-fig', short = false }) {
   if (!Number.isFinite(value)) return null;
-  return <span className={className}><SlotText text={t('pf.fromEur', { eur: SLOT })}><Money value={value} est /></SlotText></span>;
+  return <span className={className}><SlotText text={t(short ? 'pf.fromEur' : 'journey.fromPpDay', { eur: SLOT })}><Money value={value} est /></SlotText></span>;
 }
 
 /** One style as a kit tile (T428, T431): the photograph of people doing
  *  it, the name, one line of what the week is, and what the cheapest of
  *  them costs a person a day at the list's length. No count of trips: the
  *  list behind the tile is the answer. */
-export function StyleCard({ type, perDay = null, flight = null, onPick, t, sizes = TILE_SIZES }) {
+export function StyleCard({ type, perDay = null, flight = null, onPick, t, sizes = TILE_SIZES, short = false }) {
   const name = typeLabel(type.slug, t, type.name);
   const desc = typeDesc(type.slug, t);
   return (
@@ -64,7 +67,7 @@ export function StyleCard({ type, perDay = null, flight = null, onPick, t, sizes
       price={Number.isFinite(perDay)
         ? (
           <>
-            <DayFrom value={perDay} t={t} />
+            <DayFrom value={perDay} t={t} short={short} />
             {/* The style's cheapest return a person, when the caller has one
                 ({ perSeat, airline }, T518). */}
             {flight && <FlightChip perSeat={flight.perSeat} airline={flight.airline} />}
@@ -114,7 +117,7 @@ export function monthsLine(months, lang, t) {
  *  it visits, the best months, and one from-price a person a day at the
  *  list's length. No day count (the length control says it) and no
  *  difficulty word (the trip page explains the effort with its numbers). */
-export function JourneyCard({ card, length, onOpen, t, lang, sizes = TILE_SIZES }) {
+export function JourneyCard({ card, length, onOpen, t, lang, sizes = TILE_SIZES, short = false }) {
   const months = monthsLine(card.months, lang, t);
   const perDay = cardPerDay(card, length);
   const flight = useCardFlight(card, length);
@@ -163,7 +166,7 @@ export function JourneyCard({ card, length, onOpen, t, lang, sizes = TILE_SIZES 
       )}
       price={(
         <>
-          <DayFrom value={perDay} t={t} />
+          <DayFrom value={perDay} t={t} short={short} />
           {flight && <FlightChip perSeat={flight.perSeat} airline={flight.out.airline} />}
         </>
       )}
