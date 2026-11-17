@@ -216,7 +216,7 @@
 /* The house row (PlaceRow) keeps its own grid and photo (75-ask.css); in
    the chat it only loses the row's own hairline and side padding. */
 .ac .ac-places .xrow { border-bottom: 0; }
-.ac .ac-places .xrow-hs .xrow-hit { padding: var(--space-2) 0; }
+.ac .ac-places .xrow-hs { padding: var(--space-2) 0; }
 .ac .ac-places .xrow-name { font-size: var(--text-body); }
 .btn.ac-more-places { align-self: flex-start; margin: calc(-1 * var(--space-1)) 0 calc(-1 * var(--space-1)) calc(-1 * var(--space-3)); }
 @media (hover: hover) {

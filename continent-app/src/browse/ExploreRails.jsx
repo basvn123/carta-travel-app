@@ -7,9 +7,6 @@ import { countryName } from '../lib/countryName.js';
 import { useI18n } from '../i18n/index.jsx';
 import { SaveButton } from './ExploreCards.jsx';
 import { PlaceScore, RowFormation } from './explore/HouseParts.jsx';
-import { PriceNotes } from '../components/PriceNotes.jsx';
-import { priceNotes } from '../lib/price/notes.js';
-import { ListHead } from './explore/PlaceRow.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
 import { WhyChips } from './WhyChips.jsx';
 import { STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
@@ -69,12 +66,8 @@ const inMonth = (p, month) => !!month && (p.climate?.best || []).includes(month)
  *  with only the save disc on it (no text on a photo), the name with the
  *  Score plate, the flag and country with the status the rail's own question
  *  does not already say (the month, else the hidden gem), the why chips, then
- *  the weighted formation, the price notes and the friends line. */
-function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t, eager = false, shared = [] }) {
-  // Notes every card shares are said once over the rails (ListHead); a card
-  // keeps only its own (a thin bed, a part only it lacks).
-  const own = priceNotes(p.cost);
-  const notes = { ...own, unmeasured: own.unmeasured.filter((k) => !shared.includes(k)) };
+ *  the weighted formation (its figure with the unit) and the friends line. */
+function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t, eager = false }) {
   const goodNow = !MONTH_RAILS.has(railKey) && inMonth(p, month);
   const gem = !goodNow && railKey !== 'gems' && p.rating?.hidden_gem;
   return (
@@ -104,10 +97,11 @@ function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleF
         {/* T1208 (G9): why it fits this traveller, only with evidence on both sides. */}
         <WhyChips place={p} className="xstory-why" />
       </a>
-      {/* The price row sits outside the link: its day figure is a button
-          (the items in it, T695), and a button never nests in a link. */}
-      <RowFormation cost={p.cost} t={t} weighted />
-      <PriceNotes notes={notes} className="xprice-notes" />
+      {/* The price row sits outside the link: its day figure and wagons
+          are buttons (the items in them, T695), and a button never nests in
+          a link. G12, D10: no note line under it; the figure says its unit
+          and a thin bed is a dot on the bed wagon. */}
+      <RowFormation cost={p.cost} t={t} weighted pressable />
       <FriendCardLine destId={p.id} />
       {onToggleFav && (
         <span className="hs-rcard-save">
@@ -124,7 +118,7 @@ function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleF
 const EAGER_RAILS = 2;
 const EAGER_CARDS = 2;
 
-function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false, shared = [] }) {
+function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false }) {
   const shown = r.rows.slice(0, CAP);
   const monthShort = month ? new Intl.DateTimeFormat(lang, { month: 'short' }).format(new Date(2026, month - 1, 15)) : '';
   // h2: the rails sit straight under the page's h1 (T193). The house rail
@@ -137,7 +131,7 @@ function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eage
       {shown.map((p, i) => (
         <PlaceRailCard key={p.id} p={p} railKey={r.key} month={month} monthShort={monthShort}
           onSelect={onSelect} fav={favorites?.has(p.id)} onToggleFav={onToggleFav} t={t}
-          eager={eager && i < EAGER_CARDS} shared={shared} />
+          eager={eager && i < EAGER_CARDS} />
       ))}
     </HouseRail>
   );
@@ -153,18 +147,14 @@ export function ExploreRails({
   if (!visible.length) return null;
   const strips = visible.slice(0, lead);
   const doors = hideDoors ? [] : visible.slice(lead);
-  // A part every card on screen lacks ("Local transport") is said once, in
-  // the head over the rails, with the unit (owner rule: no repeated text).
-  const shown = strips.flatMap((r) => r.rows.slice(0, CAP));
-  const shared = shown.length
-    ? priceNotes(shown[0].cost).unmeasured.filter((k) => shown.every((p) => priceNotes(p.cost).unmeasured.includes(k)))
-    : [];
+  // G12, D10 (owner, 2026-11-17): no head line over the rails. Each figure
+  // says its unit; "Local transport: not yet measured" lives in what the
+  // figure opens, inside the price it explains.
   return (
     <div className="xrails">
-      <ListHead t={t} notes={shared} />
       {strips.map((r, ri) => (
         <ExploreRail key={r.key} r={r} onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t}
-          month={month} lang={lang} eager={eager && ri < EAGER_RAILS} shared={shared} />
+          month={month} lang={lang} eager={eager && ri < EAGER_RAILS} />
       ))}
       {doors.length > 0 && (
         <nav className="xrails-doors" aria-label={t('explore.moreRails')}>

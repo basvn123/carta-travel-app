@@ -8,7 +8,6 @@ import { ExploreRails } from '../ExploreRails.jsx';
 import { EmptyResult } from '../EmptyResult.jsx';
 import { Blaze, Button } from '../../components/ui/index.js';
 import { ExploreCard } from './ExploreCard.jsx';
-import { ListHead } from './PlaceRow.jsx';
 
 // The List or Map switch is a route change (DESIGN.md "Route"): the content
 // rises in once on the traveller's own switch, never at first paint, and the
@@ -189,9 +188,9 @@ export function ExploreContent({
           </EmptyResult>
         )}
 
-        {/* House style 2026-11 (the walker's table): the places as rows
-            under one head that says the dates and the unit once. */}
-        {listed.length > 0 && <ListHead t={t} />}
+        {/* House style 2026-11 (the walker's table): the places as rows.
+            G12 (owner, 2026-11-17): no column head over them any more; each
+            figure says its own unit and the dates live in the Trip dock. */}
         <div className={`xrows xrows--ledger${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
           {listed.map((p) => (
             <ExploreCard

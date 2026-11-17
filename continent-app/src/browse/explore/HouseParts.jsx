@@ -8,6 +8,10 @@ import { ScorePlate } from '../../components/ui/Plate.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { isNational } from '../../components/CostSummary.jsx';
 import { PriceItems } from '../../components/PriceItems.jsx';
+import { seatsOf } from '../../lib/price/request.js';
+import { bedIsThin } from '../../lib/price/display.js';
+import { rowFigures, rowUnit } from '../../lib/price/rowFigures.js';
+import { partyText } from '../../lib/party.js';
 
 /**
  * Explore's house parts (G1, house style 2026-11; DESIGN.md "Signature
@@ -48,8 +52,16 @@ function wayOf(cost) {
 }
 
 /** The price parts as the house formation. `weighted` sizes the bed and food
- *  wagons by their euros (rail cards); rows keep them content-sized. */
-export function RowFormation({ cost, t, figRef = null, weighted = false, className = '' }) {
+ *  wagons by their euros (rail cards); rows keep them content-sized.
+ *  `pressable` (G12, D10, Explore's list and rails only): the figure says its
+ *  unit, every wagon is its own button, bed and food sit joined. Opt-in so
+ *  My trips and the home story keep the formation they were judged with. */
+export function RowFormation({ cost, t, figRef = null, weighted = false, className = '', pressable = false }) {
+  if (pressable) return <ListFormation cost={cost} t={t} figRef={figRef} weighted={weighted} className={className} />;
+  return <PlainFormation cost={cost} t={t} figRef={figRef} weighted={weighted} className={className} />;
+}
+
+function PlainFormation({ cost, t, figRef, weighted, className }) {
   const view = useDayView();
   const way = view.request.excluded?.includes('flight') ? null : wayOf(cost);
   const day = cost && Number.isFinite(cost.dayEur);
@@ -110,6 +122,99 @@ export function RowFormation({ cost, t, figRef = null, weighted = false, classNa
         <span className="xform-parts pparts-list">
           {go}
           {(bed || food) && <span className="hs-formation-train">{bed}{food}</span>}
+        </span>
+      )}
+    </span>
+  );
+}
+
+/**
+ * Explore's list formation (G12, D10; explore-polish decision changes 3, 5
+ * and 6). The owner read the old row as loose numbers with a unit said once
+ * far away, so here:
+ *   - the figure carries its unit ("/day", or "/day for 2" in the group
+ *     view, never "total": the flight and local transport are not in it);
+ *   - bed and food sit joined, with a "+" only when the whole euros on screen
+ *     add up to the figure (rowFigures), so the sum shown is never wrong;
+ *   - the way there stands apart with the return mark, the word "return"
+ *     from a 600 px list;
+ *   - the figure and each wagon are buttons that open what is in the price
+ *     (PriceItems for now; the price sheet replaces it in step 6);
+ *   - a bed on few listings gets a dot, said in the name and the title too,
+ *     since colour alone is no message.
+ */
+function ListFormation({ cost, t, figRef, weighted, className }) {
+  const view = useDayView();
+  const req = view.request;
+  const way = wayOf(cost);
+  const shownWay = req.excluded?.includes('flight') ? null : way;
+  const fig = rowFigures(cost, { group: view.total, seats: seatsOf(req) });
+  if (fig.day == null && !shownWay) return null;
+  const g = fig.group;
+  const people = g ? partyText(t, req.group) : '';
+  const say = (eur, est) => (est ? t('money.estSpoken', { price: formatMoney(eur) }) : formatMoney(eur));
+  const [unitKey, unitArgs] = rowUnit(fig);
+
+  let go = null;
+  if (shownWay) {
+    const Icon = WAY_ICON[shownWay.mode];
+    const plane = shownWay.mode === 'plane';
+    const eur = view.way(shownWay.perPerson);
+    const spoken = plane
+      ? t(g ? 'card.flightSpokenGroup' : 'card.flightSpoken', { price: formatMoney(eur), people })
+      : t(g ? 'card.waySpokenGroup' : 'card.waySpoken', { mode: t(`way.${shownWay.mode}`), price: say(eur, true), people });
+    go = (
+      <PriceItems cost={cost} way={way} className="xform-item" triggerClass="hs-wagon is-go pparts-part xform-btn"
+        label={spoken} title={spoken} part="way">
+        <Icon size={13} />
+        <span className="pparts-fig money" aria-hidden="true">{formatMoney(eur)}</span>
+        {plane && <HouseIcon.ret size={12} className="xform-ret" />}
+        {plane && <span className="xform-ret-word" aria-hidden="true">{t('card.unitReturn')}</span>}
+      </PriceItems>
+    );
+  }
+
+  const thin = bedIsThin(cost);
+  const wagon = (key, kind, eur, est, Icon, personKey, groupKey) => {
+    if (eur == null) return null;
+    const isThin = key === 'bed' && thin;
+    const base = t(g ? groupKey : personKey, { price: say(eur, est), people });
+    const spoken = isThin ? `${base}. ${t('price.bedThin')}` : base;
+    return (
+      <PriceItems cost={cost} way={way} className="xform-item" triggerClass={`hs-wagon is-${kind} pparts-part xform-btn`}
+        label={spoken} title={spoken} part={key}
+        style={weighted ? { '--ww': Math.max(1, Math.round(eur)) } : undefined}>
+        <Icon size={13} />
+        <span className="pparts-fig money" aria-hidden="true">{formatMoney(eur)}</span>
+        {isThin && <span className="xform-thin" aria-hidden="true" />}
+      </PriceItems>
+    );
+  };
+  const bed = wagon('bed', 'bed', fig.bed, cost?.stayLevel !== 'city', HouseIcon.bed, 'card.bedSpoken', 'card.bedSpokenGroup');
+  const food = wagon('food', 'food', fig.food, cost?.foodLevel !== 'city', HouseIcon.food, 'card.foodSpoken', 'card.foodSpokenGroup');
+  const est = isNational(cost);
+
+  return (
+    <span className={`hs-formation xprice xform is-pressable${weighted ? ' is-weighted' : ''}${className ? ` ${className}` : ''}`}>
+      {fig.day != null && (
+        <span className="hs-formation-day pparts-total" ref={figRef}>
+          <PriceItems cost={cost} way={way} triggerClass="xform-fig"
+            label={t(g ? 'card.dayFigSpokenGroup' : 'card.dayFigSpoken', { price: say(fig.day, est), people })}>
+            <Money value={fig.day} est={est} />
+            <span className="xform-unit" aria-hidden="true">{t(unitKey, unitArgs)}</span>
+          </PriceItems>
+        </span>
+      )}
+      {(go || bed || food) && (
+        <span className="xform-parts pparts-list">
+          {go}
+          {(bed || food) && (
+            <span className="hs-formation-train hs-wagon-pair">
+              {bed}
+              {bed && food && fig.plus && <span className="xform-plus" aria-hidden="true">+</span>}
+              {food}
+            </span>
+          )}
         </span>
       )}
     </span>

@@ -80,8 +80,11 @@ export function PriceItemList({ cost, way = null }) {
   );
 }
 
-/** The amount as a button that opens the item list in a popover. */
-export function PriceItems({ cost, way = null, children, className = '' }) {
+/** The amount as a button that opens the item list in a popover.
+ *  `triggerClass`, `label`, `title` and `part` (G12, explore polish): a list
+ *  row's figure and each of its wagons are their own trigger, named for what
+ *  they hold; every other caller keeps the plain amount trigger. */
+export function PriceItems({ cost, way = null, children, className = '', triggerClass = '', label, title, part, style }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState(null);
@@ -140,15 +143,17 @@ export function PriceItems({ cost, way = null, children, className = '' }) {
   };
 
   return (
-    <span className={`pitems ${className}`.trim()}>
+    <span className={`pitems ${className}`.trim()} style={style}>
       <button
         ref={btnRef}
         type="button"
-        className="pitems-trigger"
+        className={`pitems-trigger${triggerClass ? ` ${triggerClass}` : ''}`}
         aria-expanded={open}
         aria-controls={open ? id : undefined}
         aria-haspopup="dialog"
-        title={t('price.itemsOpen')}
+        aria-label={label}
+        data-part={part}
+        title={title || t('price.itemsOpen')}
         onClick={onClick}
       >
         {children}

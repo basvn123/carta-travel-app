@@ -464,32 +464,43 @@
 .xrows--ledger ~ .xlist-head,
 .xlist-head:has(+ .xrows--ledger),
 .xlist-head:has(+ .mpp-rows) { padding-right: calc(var(--tap) + var(--space-1)); }
+/* G12, D10 (explore polish): the row itself is the grid, so the price
+   formation (buttons) can sit outside the link and still face the name. The
+   link is a subgrid over every column but the save one; its parts land in
+   the row's named areas, the formation lands in day and parts beside it.
+   Every template below names a last "save" column. */
 .xrow-hs {
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-width: 0;
-  border-bottom: var(--stroke-hair) solid var(--border-soft);
-  transition: background-color var(--dur-1) var(--ease-out);
-}
-.xrow-hs .xrow-hit {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto auto;
+  grid-template-columns: 44px minmax(0, 1fr) auto auto auto;
   grid-template-areas:
-    "media l1 l1 day"
-    "media l2 parts parts"
-    "media fit fit fit";
+    "media l1 l1 day save"
+    "media l2 parts parts save"
+    "media fit fit fit save";
   align-items: center;
   column-gap: 10px;
   row-gap: 0;
-  flex: 1 1 auto;
   min-width: 0;
-  padding: 5px var(--space-1) 5px 0;
+  padding: 5px 0;
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.xrow-hs > .xrow-hit {
+  grid-column: 1 / -2;
+  grid-row: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+  align-items: center;
+  min-width: 0;
   border-radius: var(--radius-control);
   color: inherit;
   text-decoration: none;
 }
+/* The whole row still opens the place, padding and gaps too: the link's
+   own layer stretches over the row, under the buttons. */
+.xrow-hs > .xrow-hit::after { content: ""; position: absolute; inset: 0; }
+.xrow-hs > .xrow-save { grid-area: save; position: relative; z-index: 1; }
 .xrow-hs .xrow-media {
   grid-area: media;
   align-self: start;
@@ -537,12 +548,12 @@
    full width ("Salzkammergut, Austria") instead of a letter beside the
    parts (orchestrator fix round 1: the region shows as it does today). */
 @container xlist (max-width: 599px) {
-  .xrows--ledger .xrow-hs .xrow-hit {
+  .xrows--ledger .xrow-hs {
     grid-template-areas:
-      "media l1 l1 day"
-      "media l2 l2 l2"
-      "media parts parts parts"
-      "media fit fit fit";
+      "media l1 l1 day save"
+      "media l2 l2 l2 save"
+      "media parts parts parts save"
+      "media fit fit fit save";
     padding-block: 2px;
   }
   .xrows--ledger .xrow-hs .xrow-line2 { margin-top: 1px; line-height: var(--leading-tight); flex-wrap: wrap; row-gap: 2px; }
@@ -560,13 +571,15 @@
 /* The day figure comes first in the DOM (read first); in a flex row (a
    rail card) it is drawn last. */
 .xform > .hs-formation-day { order: 2; }
-.xrow-hs .xform { display: contents; }
+.xrow-hs > .xform { display: contents; }
 .xrow-hs .xform-parts { grid-area: parts; margin-top: 3px; display: flex; justify-content: flex-end; gap: 2px; min-width: 0; --wh: 22px; }
 .xrow-hs .xform-parts .hs-wagon { padding-inline: 5px; gap: 2px; }
 .xrow-hs .xform-parts .hs-wagon svg { width: 12px; height: 12px; }
 .xrow-hs .hs-formation-day { grid-area: day; justify-self: end; margin: 0; padding: 0; }
 .xrow-hs .hs-formation-day .money { font-weight: 800; }
-.xrow-hs .xrow-save { flex: none; }
+/* G12: the pressable wagons are 32 px in every list width. */
+.xrow-hs .xform.is-pressable .xform-parts { --wh: 32px; align-items: center; }
+.xrow-hs.is-selected .xform-unit { color: inherit; }
 @media (hover: hover) {
   .xrow-hs:hover { background: var(--surface); }
 }
@@ -621,13 +634,13 @@
 @container xlist (max-width: 599px) {
   /* The name line takes the full width; the day figure faces the
      country, which is short. */
-  .mpp-rows .xrow-hs .xrow-hit {
+  .mpp-rows .xrow-hs {
     grid-template-areas:
-      "media l1 l1 l1"
-      "media l2 l2 day"
-      "media why why why"
-      "media parts parts parts"
-      "media fit fit fit";
+      "media l1 l1 l1 save"
+      "media l2 l2 day save"
+      "media why why why save"
+      "media parts parts parts save"
+      "media fit fit fit save";
   }
   .mpp-rows .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
   /* The map column and the drawer keep the one reason ("Best in Apr to
@@ -642,15 +655,15 @@
 /* A list of 600 px and more: one line a place, the parts in their own
    column before the figure. */
 @container xlist (min-width: 600px) {
-  .xrow-hs .xrow-hit {
-    grid-template-columns: 56px minmax(0, 1fr) auto minmax(76px, auto);
+  .xrow-hs {
+    grid-template-columns: 56px minmax(0, 1fr) auto minmax(76px, auto) auto;
     grid-template-areas:
-      "media l1 parts day"
-      "media l2 parts day"
-      "media why why why"
-      "media fit fit fit";
+      "media l1 parts day save"
+      "media l2 parts day save"
+      "media why why why save"
+      "media fit fit fit save";
     column-gap: var(--space-4);
-    padding: var(--space-2) var(--space-2) var(--space-2) 0;
+    padding: var(--space-2) 0;
   }
   .xrow-hs .xrow-media { width: 56px; height: 56px; }
   .xrow-hs .xform-parts { --wh: 24px; gap: 4px; margin-top: 0; }
@@ -659,20 +672,22 @@
   .xrow-hs .xrow-hit .xrow-why { display: block; }
   .xrow-hs .xform-parts .hs-wagon { padding-inline: 9px; gap: 4px; }
   .xrow-hs .xform-parts .hs-wagon svg { width: 13px; height: 13px; }
-  .xrow-hs .xrow-hit { row-gap: var(--space-1); }
+  .xrow-hs { row-gap: var(--space-1); }
   .xrow-hs .xrow-line2 { margin-top: 0; }
   .xrow-hs .hs-formation-day { font-size: var(--text-title); }
+  /* G12: the return mark gets its word where the row has room. */
+  .xrow-hs .xform-ret-word { display: inline; }
 }
 /* From 1024 px the band word and the one reason join the row. */
 @container xlist (min-width: 1024px) {
-  .xrow-hs .xrow-hit {
+  .xrow-hs {
     /* The parts take a fixed track, so the reason column does not drift
        with the width of the wagons and the row has no empty middle. */
-    grid-template-columns: 56px minmax(0, 18rem) minmax(0, 1fr) 15rem minmax(84px, auto);
+    grid-template-columns: 56px minmax(0, 18rem) minmax(0, 1fr) 15rem minmax(84px, auto) auto;
     grid-template-areas:
-      "media l1 why parts day"
-      "media l2 why parts day"
-      "media fit fit fit fit";
+      "media l1 why parts day save"
+      "media l2 why parts day save"
+      "media fit fit fit fit save";
   }
   .xrow-hs .xband { display: inline; }
   .xrow-hs .xform-parts { justify-self: end; }

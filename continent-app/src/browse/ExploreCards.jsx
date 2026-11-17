@@ -11,7 +11,6 @@ import { haptic } from '../lib/haptics.js';
 import { formatEst } from '../lib/money.js';
 import { Card, IconButton } from '../components/ui/index.js';
 import { PriceParts } from '../components/PriceParts.jsx';
-import { PriceNotes } from '../components/PriceNotes.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { countryName } from '../lib/countryName.js';
@@ -124,7 +123,9 @@ export function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
           <WhyChips place={p} />
         </>
       )}
-      price={<><DayPrice cost={p.cost} t={t} /><PriceNotes row={p.cost} className="xprice-notes" /><FriendCardLine destId={p.id} /></>}
+      // G12, D10 (owner, 2026-11-17): no note line under the price on an
+      // Explore card; what the price leaves out opens from the figure.
+      price={<><DayPrice cost={p.cost} t={t} /><FriendCardLine destId={p.id} /></>}
       rating={<ScoreChip rating={p.rating} size="sm" />}
       actions={onToggleFav ? (
         <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} tone="photo" name={p.city} />

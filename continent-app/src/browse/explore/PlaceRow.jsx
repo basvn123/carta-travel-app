@@ -24,10 +24,13 @@ import { PlaceScore, BandWord, RowFormation } from './HouseParts.jsx';
  *   Score plate (the band word where the row has room), the flag with the
  *   region and country (the hidden gem and water marks), the one reason (from
  *   a 1024 px list), the taste lines where a taste is set (T765, T1208), the
- *   formation and the day figure, loudest; the save control outside the link.
+ *   formation and the day figure, loudest; the formation and the save
+ *   control outside the link (G12: they are buttons).
  *
  * The layout is one grid per list width (container queries in
- * 62-v6-explore.css), so a narrow map column reads like a phone. The markup
+ * 62-v6-explore.css), so a narrow map column reads like a phone. The row is
+ * the grid; the link is a subgrid over every column but the save one, so its
+ * parts and the formation beside it share the same tracks. The markup
  * keeps the .xrow, .xrow-hit, .xrow-name, .xrow-country, .xrow-why, .xprice
  * and .xrow-save names the harnesses read.
  */
@@ -134,8 +137,11 @@ export const PlaceRow = React.memo(function PlaceRow({
           <MatchLine place={p} />
           <WhyChips place={p} className="xrow-whychips" />
         </span>
-        <RowFormation cost={p.cost} t={t} figRef={figRef} />
       </a>
+      {/* G12, D10: the price sits outside the link, a direct child of the
+          row grid (62-v6-explore.css), because its figure and wagons are
+          buttons and a button never nests in a link. */}
+      <RowFormation cost={p.cost} t={t} figRef={figRef} pressable />
       {onToggleFav && (
         <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city} className="xrow-save" />
       )}

@@ -142,13 +142,13 @@
    (why it fits, or the group total) keeps its own line under the country,
    as the map column does, and the parts sit under it. */
 @container xlist (max-width: 599px) {
-  .ask-picks .xrow-hs .xrow-hit {
+  .ask-picks .xrow-hs {
     grid-template-areas:
-      "media l1 l1 day"
-      "media l2 l2 l2"
-      "media why why why"
-      "media parts parts parts"
-      "media fit fit fit";
+      "media l1 l1 day save"
+      "media l2 l2 l2 save"
+      "media why why why save"
+      "media parts parts parts save"
+      "media fit fit fit save";
   }
   .ask-picks .xrow-hs .xrow-hit .xrow-why { display: block; margin-top: 2px; }
   .ask-picks .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
