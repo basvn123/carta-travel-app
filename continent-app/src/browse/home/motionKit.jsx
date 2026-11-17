@@ -1,5 +1,6 @@
 import React from 'react';
-import { LazyMotion, MotionConfig, domAnimation, m, useInView } from 'motion/react';
+import { LazyMotion, MotionConfig, domAnimation, m, useInView, useReducedMotion } from 'motion/react';
+import { SPRING as HOUSE } from '../../lib/motionTokens.js';
 
 /**
  * The home page's motion kit (T948, owner 2026-10-31: "I will use Motion").
@@ -18,12 +19,11 @@ import { LazyMotion, MotionConfig, domAnimation, m, useInView } from 'motion/rea
  * chunk alone, so Motion never sits in the first load.
  */
 
+// The house springs (src/lib/motionTokens.js, G1): home reads the same
+// vocabulary as every screen. quick is the house settle; surface and reveal
+// are the house's own (reveal is the home page's alone).
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
-export const SPRING = {
-  quick: { type: 'spring', visualDuration: 0.2, bounce: 0 },
-  surface: { type: 'spring', visualDuration: 0.32, bounce: 0 },
-  reveal: { type: 'spring', visualDuration: 0.64, bounce: 0 },
-};
+export const SPRING = { ...HOUSE, quick: HOUSE.settle };
 
 /** How far into view a thing must be before it arrives. */
 const ONCE = { once: true, amount: 0.35 };
@@ -51,9 +51,20 @@ export function MaskedText({ as = 'h2', className, parts, id }) {
   const words = [];
   (Array.isArray(parts) ? parts : [parts]).forEach((p) => {
     const em = typeof p === 'object' && p !== null;
-    String(em ? p.em : p).split(/\s+/).filter(Boolean).forEach((w) => words.push({ w, em }));
+    String(em ? p.em : p).split(/\s+/).filter(Boolean).forEach((w) => {
+      // Punctuation after an accent ("{price}. Here") rides on the word
+      // before it, so a line never starts with a full stop.
+      const lead = w.match(/^[.,:;!?)]+/);
+      if (lead && words.length) {
+        words[words.length - 1].tail = (words[words.length - 1].tail || '') + lead[0];
+        const rest = w.slice(lead[0].length);
+        if (rest) words.push({ w: rest, em });
+        return;
+      }
+      words.push({ w, em });
+    });
   });
-  const label = words.map((x) => x.w).join(' ');
+  const label = words.map((x) => x.w + (x.tail || '')).join(' ');
   return (
     // The words are split for the reveal and hidden from assistive tech; the
     // whole line is read once from a visually hidden copy. aria-label would
@@ -64,25 +75,28 @@ export function MaskedText({ as = 'h2', className, parts, id }) {
       {words.map((x, i) => (
         <React.Fragment key={i}>
           <span className="hm-word" aria-hidden="true">
-            <m.span className={x.em ? 'hm-em' : undefined}
-              initial={{ y: '110%' }} animate={inView ? { y: '0%' } : undefined}
+            <m.span initial={{ y: '110%' }} animate={inView ? { y: '0%' } : undefined}
               transition={{ ...SPRING.reveal, delay: i * 0.04 }}>
-              {x.w}
+              <span className={x.em ? 'hm-em' : undefined}>{x.w}</span>{x.tail}
             </m.span>
           </span>
-          {i < words.length - 1 && !/^[.,:;!?)]/.test(words[i + 1].w) ? ' ' : null}
+          {i < words.length - 1 ? ' ' : null}
         </React.Fragment>
       ))}
     </Tag>
   );
 }
 
-/** A block that rises 32 px and fades in once; `delay` staggers siblings. */
-export const Reveal = React.forwardRef(function Reveal({ as = 'div', className, delay = 0, children, ...rest }, ref) {
+/** A block that rises 24 px and fades in once; `delay` staggers siblings;
+ *  a tall block passes a small `amount` so it arrives as soon as it shows. */
+export const Reveal = React.forwardRef(function Reveal({ as = 'div', className, delay = 0, amount = ONCE.amount, children, ...rest }, ref) {
   const Tag = m[as] || m.div;
+  // Reduced motion: the block is simply there (Motion's "user" setting
+  // drops the rise but would still fade it in).
+  const reduce = useReducedMotion();
   return (
-    <Tag ref={ref} className={className} initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }}
-      viewport={ONCE} transition={{ ...SPRING.reveal, delay }} {...rest}>
+    <Tag ref={ref} className={className} initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ ...ONCE, amount }} transition={{ ...SPRING.reveal, delay }} {...rest}>
       {children}
     </Tag>
   );

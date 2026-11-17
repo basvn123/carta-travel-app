@@ -3,13 +3,14 @@ import { m, useInView, useIsPresent, useReducedMotion, AnimatePresence } from 'm
 import { useI18n } from '../../i18n/index.jsx';
 import { clipSrc } from '../../lib/homeDemo.js';
 import { MaskedText, Reveal, SPRING } from './motionKit.jsx';
-import {
-  ArrowRight, BookmarkSimple, Clock, Coins, GlobeHemisphereWest, HandCoins, ICON, Lightbulb, MagnifyingGlass, MapTrifold,
-  Mountains, Path, Scales, Sparkle, Ticket, Train, UsersThree,
-} from './homeIcons.jsx';
+import { HouseIcon } from '../../components/HouseIcons.jsx';
+import { Blaze } from '../../components/ui/index.js';
+
+/** Ask carries the boxed AI tag, never a sparkle (DESIGN.md "Icons"). */
+function AskTag() { return <span className="ai-tag" aria-hidden="true">AI</span>; }
 
 /**
- * Everything in one place (T952; one stage since T956, owner 2026-10-31:
+ * Everything in one place (T952; house style 2026-11: the paint bar, house icons; one stage since T956, owner 2026-10-31:
  * "it needs to really stand out what you can do, make it dynamic, but also
  * compact, the user doesn't want to scroll too much").
  *
@@ -27,17 +28,18 @@ import {
  * Each chapter names its own recording first and an older one second: the
  * browser plays the first that exists (scripts/record_home_clips.mjs).
  */
+const H = HouseIcon;
 const FEATURES = [
-  { id: 'ask', clip: ['ask', 'find'], icon: Sparkle, door: 'ask', tone: 'sun',
-    rows: [[MagnifyingGlass, 'home.tAsk1'], [Coins, 'home.tAsk2'], [Path, 'home.tAsk3']] },
-  { id: 'explore', clip: ['explore', 'place'], icon: Mountains, door: 'explore', tone: 'lagoon',
-    rows: [[Coins, 'home.tExp1'], [Mountains, 'home.tExp2'], [Lightbulb, 'home.tExp3']] },
-  { id: 'plan', clip: ['day', 'plan'], icon: Path, door: 'plan', tone: 'umber',
-    rows: [[Train, 'home.tPlan1'], [Clock, 'home.tPlan2'], [MapTrifold, 'home.tPlan3']] },
-  { id: 'trips', clip: ['trips', 'share'], icon: BookmarkSimple, door: 'trips', tone: 'mist',
-    rows: [[BookmarkSimple, 'home.tTrips1'], [Ticket, 'home.tTrips2'], [GlobeHemisphereWest, 'home.tTrips3']] },
-  { id: 'together', clip: ['together', 'share'], icon: UsersThree, door: 'together', tone: 'sea',
-    rows: [[UsersThree, 'home.tTog1'], [Scales, 'home.tTog2'], [HandCoins, 'home.tTog3']] },
+  { id: 'ask', clip: ['ask', 'find'], icon: AskTag, door: 'ask',
+    rows: [[H.search, 'home.tAsk1'], [H.food, 'home.tAsk2'], [H.route, 'home.tAsk3']] },
+  { id: 'explore', clip: ['explore', 'place'], icon: H.places, door: 'explore',
+    rows: [[H.signpost, 'home.tExp1'], [H.trails, 'home.tExp2'], [H.bulb, 'home.tExp3']] },
+  { id: 'plan', clip: ['day', 'plan'], icon: H.route, door: 'plan',
+    rows: [[H.train, 'home.tPlan1'], [H.clock, 'home.tPlan2'], [H.map, 'home.tPlan3']] },
+  { id: 'trips', clip: ['trips', 'share'], icon: H.pack, door: 'trips',
+    rows: [[H.pack, 'home.tTrips1'], [H.note, 'home.tTrips2'], [H.borders, 'home.tTrips3']] },
+  { id: 'together', clip: ['together', 'share'], icon: H.rings, door: 'together',
+    rows: [[H.people, 'home.tTog1'], [H.gauge, 'home.tTog2'], [H.rings, 'home.tTog3']] },
 ];
 
 /** No chapter holds the stage longer than this, whatever its clip. */
@@ -95,19 +97,20 @@ export function HomeTour({ lang, doors, wide }) {
     <section className="hm-tour" aria-labelledby="hm-tour-title" ref={ref}>
       <div className="hm-in">
         <div className="hm-tour-head">
-          <MaskedText as="p" className="hm-kick" parts={[t('home.tourKick')]} />
           <MaskedText id="hm-tour-title" className="hm-big" parts={[t('home.tourTitle')]} />
         </div>
-        <Reveal className="hm-tour-grid">
+        <Reveal className="hm-tour-grid" amount={0.1}>
           <div className="hm-tour-side" onPointerEnter={() => setHold(true)} onPointerLeave={() => setHold(false)}
             onFocus={() => setHold(true)} onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setHold(false); }}>
             <div className="hm-tabs" role="tablist" aria-label={t('home.tourTitle')} aria-orientation={wide ? 'vertical' : 'horizontal'} onKeyDown={onKey}>
               {FEATURES.map((x, i) => (
                 <button key={x.id} id={`hm-tab-${x.id}`} type="button" role="tab" aria-selected={i === active}
                   aria-controls="hm-tour-panel" tabIndex={i === active ? 0 : -1}
-                  className={`hm-tab is-${x.tone}${i === active ? ' is-on' : ''}`} onClick={() => pick(i)}>
-                  <span className="hm-tab-dot" aria-hidden="true"><x.icon {...ICON} size={20} /></span>
+                  className={`hm-tab${i === active ? ' is-on' : ''}`} onClick={() => pick(i)}>
+                  <span className="hm-tab-dot" aria-hidden="true"><x.icon size={20} /></span>
                   <span className="hm-tab-name">{t(`home.t_${x.id}`)}</span>
+                  {/* The blaze marks the chosen chapter ("here"); painted on select. */}
+                  {i === active && <Blaze size="sm" className="hm-tab-blaze hs-paint" />}
                   <span className="hm-tab-bar" aria-hidden="true"><i ref={(el) => { bars.current[i] = el; }} /></span>
                 </button>
               ))}
@@ -120,14 +123,14 @@ export function HomeTour({ lang, doors, wide }) {
                   <ul className="hm-panel-rows">
                     {f.rows.map(([RowIcon, key], i) => (
                       <li key={key} className={i < shown ? 'is-lit' : undefined}>
-                        <span className="hm-row-dot" aria-hidden="true"><RowIcon {...ICON} size={18} /></span>
+                        <span className="hm-row-dot" aria-hidden="true"><RowIcon size={18} /></span>
                         {t(key)}
                       </li>
                     ))}
                   </ul>
                   {door && (
                     <a className="hm-panel-door" href={door.href} onClick={door.go}>
-                      {door.label}<ArrowRight {...ICON} size={18} weight="bold" aria-hidden="true" />
+                      {door.label}<HouseIcon.next size={18} />
                     </a>
                   )}
                 </m.div>
@@ -135,12 +138,12 @@ export function HomeTour({ lang, doors, wide }) {
             </div>
           </div>
 
-          <div className={`hm-stage-panel is-${f.tone}`}>
+          <div className="hm-stage-panel">
             <div className="hm-stage-glow" aria-hidden="true" />
             <div className="hm-phone" aria-hidden="true">
               <AnimatePresence initial={false}>
-                <m.div key={f.id} className="hm-phone-in" initial={{ opacity: 0, scale: 1.04 }} animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }} transition={{ type: 'spring', visualDuration: 0.45, bounce: 0 }}>
+                <m.div key={f.id} className="hm-phone-in" initial={{ opacity: 0, scale: 1.02 }} animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }} transition={SPRING.surface}>
                   <Clip lang={lang} ids={f.clip} playing={playing} loop={!moving} onProgress={onProgress} onEnd={onEnd} />
                 </m.div>
               </AnimatePresence>
@@ -150,10 +153,10 @@ export function HomeTour({ lang, doors, wide }) {
                 <AnimatePresence>
                   {f.rows.slice(0, shown).map(([RowIcon, key], i) => (i === shown - 1 ? (
                     <m.span key={`${f.id}-${key}`} className={`hm-note at-${i}`}
-                      initial={{ opacity: 0, y: 10, scale: 0.94 }} animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.15 } }}
-                      transition={{ type: 'spring', visualDuration: 0.4, bounce: 0.25 }}>
-                      <RowIcon {...ICON} size={18} />{t(key)}
+                      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, transition: SPRING.settle }}
+                      transition={SPRING.settle}>
+                      <RowIcon size={18} />{t(key)}
                     </m.span>
                   ) : null))}
                 </AnimatePresence>

@@ -1,5 +1,6 @@
 /**
- * The home page v2 (T606 batch, rebuilt from scratch; src/browse/home/).
+ * The home page v2 (T606 batch, rebuilt from scratch; src/browse/home/; the
+ * section checks follow the house style home of 2026-11, the hs-home lane).
  *
  * It drives a cold first visit (fresh browser storage) on two phones (390 x 844
  * and 375 x 812, touch) and a desktop (1440 x 800), and checks what the T606
@@ -7,7 +8,7 @@
  *
  *   home      a first visit with no link opens the home page
  *   h1        exactly one visible h1, the slogan
- *   primary   exactly one visible primary button, "Plan a trip"
+ *   primary   exactly one visible primary button, "Ask Carta"
  *   hscroll   nothing scrolls sideways
  *   hero      the film fills the page box and the window edge to edge
  *             (T620, T621), the slogan, the line and Ask Carta stand on it
@@ -19,15 +20,13 @@
  *   onebar    exactly one visible brand on the first screen (G14: the
  *             phone once showed the shell header and the film's own bar)
  *   film      a clip plays and the film moves on to the next shot by itself
- *   week      the week card shows one total and its lines; another place
- *             changes the total in place
- *   voices    six traveller tabs; a picked tab types its question and answers
- *             with its place
+ *   week      the cost post on the umber band: the day's formation, the
+ *             week's lines and one total plate with a figure
  *   story     five chapter tabs; the clip in view is the page language's and
  *             plays
- *   route     the route card draws itself in view and ends in a total
- *   why       five promise cards
- *   plans     three plan columns and the free sentence
+ *   tabs      a picked chapter tab is selected and names its panel
+ *   try       moving the budget changes its figure and which places fit
+ *   plans     three plans, each with its list
  *   footer    the site footer ends the page
  *   jump      a jump to the foot of the page leaves no section waiting to
  *             arrive above it
@@ -95,7 +94,7 @@ async function coldPage(browser, vp, opts = {}) {
   await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: WAIT });
   await page.waitForSelector('.hv-page', { timeout: WAIT });
   await page.waitForSelector('.hv-slogan', { timeout: WAIT });
-  await page.waitForSelector('.hv-week', { timeout: WAIT });
+  await page.waitForSelector('.hm-tour', { timeout: WAIT });
   return { ctx, page, errors };
 }
 
@@ -215,62 +214,66 @@ async function run(browser, vp) {
     check(k, 'fold', fold.cta != null && fold.cta <= fold.top, `primary ends ${Math.round(fold.cta)}, nav at ${Math.round(fold.top)}`);
   }
 
-  // The week card.
-  await toSection(page, '.hv-week');
-  const week0 = await page.evaluate(() => ({
-    total: document.querySelector('.hv-week-total-fig')?.textContent.trim(),
-    rows: document.querySelectorAll('.hv-week-rows .costrow').length,
+  // The week (house style 2026-11): the cost post on the umber band holds
+  // the place's day as a formation, at least the bed and food lines, and
+  // one total plate with a figure. Shown only when the story place is priced.
+  await toSection(page, '.hm-tour', 400);
+  const week = await page.evaluate(() => ({
+    post: !!document.querySelector('.hm-cost .hm-post'),
+    rows: document.querySelectorAll('.hm-post .costrow').length,
+    plates: document.querySelectorAll('.hm-post .hs-plate.is-total').length,
+    total: document.querySelector('.hm-post .hs-plate.is-total .hs-plate-fig')?.textContent.trim(),
+    formation: !!document.querySelector('.hm-post .hs-formation'),
   }));
-  await page.locator('.hv-week-places [role="radio"]').nth(3).click();
-  await page.waitForTimeout(500);
-  const week1 = await page.evaluate(() => document.querySelector('.hv-week-total-fig')?.textContent.trim());
-  check(k, 'week', /\d/.test(week0.total || '') && week0.rows >= 3 && week1 !== week0.total,
-    `${week0.rows} lines, total ${week0.total} then ${week1}`);
+  check(k, 'week', week.post && week.rows >= 2 && week.plates === 1 && /\d/.test(week.total || '') && week.formation,
+    `${week.rows} lines, ${week.plates} total plate, "${week.total}"`);
 
-  // The voices.
-  await toSection(page, '.hv-voices');
-  const tabs = page.locator('.hv-voices [role="tab"]');
-  const nTabs = await tabs.count();
-  await tabs.nth(1).click();
-  await page.waitForTimeout(3500);
-  const voice = await page.evaluate(() => ({
-    q: document.querySelector('.hv-say-you .sr-only')?.textContent.trim(),
-    typed: document.querySelector('.hv-say-you [aria-hidden="true"]')?.textContent.trim(),
-    place: document.querySelector('.hv-answer-name')?.textContent.trim(),
-  }));
-  check(k, 'voices', nTabs === 6 && voice.typed === voice.q && voice.place === 'Albufeira',
-    `${nTabs} tabs, answer "${voice.place}"`);
-
-  // The story.
-  await toSection(page, '.hv-story', 5200, -60);
+  // The tour: five chapter tabs; the clip in view is the page language's and plays.
+  await toSection(page, '.hm-tour', 5200, -60);
   const story = await page.evaluate(() => {
-    const v = document.querySelector('.hv-phone-screen');
+    const v = document.querySelector('.hm-clip');
     return {
-      tabs: document.querySelectorAll('.hv-story [role="tab"]').length,
+      tabs: document.querySelectorAll('.hm-tour [role="tab"]').length,
       src: v?.currentSrc || '', t: v?.currentTime || 0, err: v?.error?.code || null,
       lang: document.documentElement.lang,
     };
   });
   check(k, 'story', story.tabs === 5 && story.src.includes(`/home/clips/${story.lang || 'en'}/`) && story.t > 0.5 && !story.err,
     `${story.tabs} tabs, ${story.src.split('/home/')[1] || 'no clip'} at ${story.t.toFixed(1)} s${story.err ? `, error ${story.err}` : ''}`);
-
-  // The route.
-  await toSection(page, '.hv-route', 3600);
-  const route = await page.evaluate(() => ({
-    drawn: document.querySelector('.hv-route-card')?.classList.contains('is-drawn'),
-    total: document.querySelector('.hv-route-total')?.textContent.trim(),
-    pills: document.querySelectorAll('.hv-route-pill').length,
+  // A picked tab takes over: it is selected and its panel names it.
+  await page.locator('.hm-tour [role="tab"]').nth(2).click();
+  await page.waitForTimeout(600);
+  const picked = await page.evaluate(() => ({
+    sel: document.querySelector('.hm-tour [role="tab"][aria-selected="true"]')?.id,
+    panel: document.querySelector('#hm-tour-panel')?.getAttribute('aria-labelledby'),
   }));
-  check(k, 'route', route.drawn && route.pills === 3 && /\d/.test(route.total || ''), `${route.pills} towns, "${route.total}"`);
+  check(k, 'tabs', picked.sel === 'hm-tab-plan' && picked.panel === 'hm-tab-plan', `${picked.sel}, panel ${picked.panel}`);
 
-  await toSection(page, '.hv-why', 800);
-  check(k, 'why', (await page.locator('.hv-why-card').count()) === 5, '');
+  // Try it: moving the budget changes the figure and which places fit.
+  await toSection(page, '.hm-try', 1400);
+  const tryAt = () => page.evaluate(() => ({
+    fig: document.querySelector('.hm-budget-fig')?.textContent.trim(),
+    over: document.querySelectorAll('.hm-card.is-over').length,
+    cards: document.querySelectorAll('.hm-card').length,
+  }));
+  const try0 = await tryAt();
+  await page.evaluate(() => {
+    const i = document.querySelector('#hm-budget');
+    const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+    set.call(i, i.min);
+    i.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await page.waitForTimeout(600);
+  const try1 = await tryAt();
+  check(k, 'try', try0.cards >= 3 && try1.fig !== try0.fig && try1.over > try0.over,
+    `${try0.cards} places, ${try0.fig} (${try0.over} over) then ${try1.fig} (${try1.over} over)`);
+
   await toSection(page, '.hv-plans', 800);
   const plans = await page.evaluate(() => ({
     cols: document.querySelectorAll('.hv-plan').length,
-    free: document.querySelector('.hv-plans .hv-lead')?.textContent.trim(),
+    lists: [...document.querySelectorAll('.hv-plan .hv-plan-list')].filter((l) => l.children.length > 0).length,
   }));
-  check(k, 'plans', plans.cols === 3 && !!plans.free, `${plans.cols} columns`);
+  check(k, 'plans', plans.cols === 3 && plans.lists === 3, `${plans.cols} plans, ${plans.lists} lists`);
 
   // A jump to the foot: nothing above the screen may still wait to arrive.
   await page.evaluate(() => { const b = document.querySelector('.hv-page'); b.scrollTo(0, b.scrollHeight); });
