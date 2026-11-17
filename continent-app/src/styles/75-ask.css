@@ -133,6 +133,28 @@
 .ask-pick { padding: var(--space-2) 0; border-top: 1px solid var(--border-soft); }
 .ask-pick:first-child { border-top: 0; }
 .ask-pick-meta { margin: var(--space-1) 0 0; font-size: var(--text-caption); color: var(--text-2); }
+/* The rows are Explore's house rows (PlaceRow, .xrow-hs), laid out by the
+   list's own width like Explore's list: the list is an xlist container. The
+   list item draws the hairline, so the row's own goes. */
+.ask-picks.explore-shell { container: xlist / inline-size; }
+.ask-picks .xrow-hs { border-bottom: 0; }
+/* A narrow answer (the chat column, a phone sheet): the reason Ask gives
+   (why it fits, or the group total) keeps its own line under the country,
+   as the map column does, and the parts sit under it. */
+@container xlist (max-width: 599px) {
+  .ask-picks .xrow-hs .xrow-hit {
+    grid-template-areas:
+      "media l1 l1 day"
+      "media l2 l2 l2"
+      "media why why why"
+      "media parts parts parts"
+      "media fit fit fit";
+  }
+  .ask-picks .xrow-hs .xrow-hit .xrow-why { display: block; margin-top: 2px; }
+  .ask-picks .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
+  .ask-picks .xrow-hs .xrow-line1 { align-items: flex-start; }
+  .ask-picks .xrow-hs .xrow-name { white-space: normal; overflow-wrap: anywhere; text-overflow: clip; }
+}
 
 /* A total for the group: the receipt, folded under its row. */
 .ask-receipt { margin: var(--space-2) 0 0; }

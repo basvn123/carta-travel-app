@@ -213,9 +213,10 @@
   animation: ask-in var(--dur-2) var(--ease-out);
 }
 .ac-place { border-top: 1px solid var(--border-soft); }
+/* The house row (PlaceRow) keeps its own grid and photo (75-ask.css); in
+   the chat it only loses the row's own hairline and side padding. */
 .ac .ac-places .xrow { border-bottom: 0; }
-.ac .ac-places .xrow-hit { gap: var(--space-3); padding: var(--space-2) 0; }
-.ac .ac-places .xrow-media { width: 56px; height: 56px; border-radius: var(--radius-control); }
+.ac .ac-places .xrow-hs .xrow-hit { padding: var(--space-2) 0; }
 .ac .ac-places .xrow-name { font-size: var(--text-body); }
 .btn.ac-more-places { align-self: flex-start; margin: calc(-1 * var(--space-1)) 0 calc(-1 * var(--space-1)) calc(-1 * var(--space-3)); }
 @media (hover: hover) {
