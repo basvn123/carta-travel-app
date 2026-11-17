@@ -4,10 +4,10 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { usePageArrival } from '../hooks/usePageArrival.js';
 import { useBaseDay } from '../hooks/useBaseDay.js';
 import { useDayView } from '../hooks/useDayView.js';
-import { Button, PlaceHead, PlaceTag } from '../components/ui/index.js';
+import { Button, PlaceHead, PlaceTag, Plate, WorldTile } from '../components/ui/index.js';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import {
-  PlusIcon, ChevronRightIcon, CheckIcon, CloseIcon, ParkingIcon, BusIcon, TrainIcon, FerryIcon, MapPinIcon,
+  PlusIcon, CheckIcon, CloseIcon, ParkingIcon, BusIcon, TrainIcon, FerryIcon, MapPinIcon,
 } from '../components/Icons.jsx';
 import { formatMoney } from '../lib/money.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
@@ -50,7 +50,7 @@ import '../styles/89-outdoor-page.css';
  *   MonthStrip    one figure a month as twelve bars
  *   SafetyBlock   112 and the weather, short and fixed
  *   AlongCards    the sights along the way as photo cards
- *   OtherNearby   "Other X nearby": photo cards, a map spot without a photo
+ *   OtherNearby   "Other X nearby": photo cards, the world tile without a photo
  */
 
 /** The model the PDF prints: what this page shows (T430's rule). */
@@ -177,23 +177,18 @@ export function StayLine({ destId, city, km = null, onOpen }) {
   if (!destId || !city) return null;
   const kmText = Number.isFinite(km)
     ? (km < 1 ? '<1' : Math.round(km).toLocaleString(lang)) : null;
-  const line = base
-    ? (kmText != null
-      ? t('ox.stayLine', { km: kmText, price: formatMoney(view.day(base.dayEur)), unit: view.unit })
-      : t('ox.stayPrice', { price: formatMoney(view.day(base.dayEur)), unit: view.unit }))
-    : (kmText != null ? t('detail.exitKm', { km: kmText }) : '');
+  const price = base ? formatMoney(view.day(base.dayEur)) : null;
+  const away = kmText != null ? t('detail.exitKm', { km: kmText }) : null;
   return (
-    // Named by its visible text (T1128, WCAG 2.5.3: an aria-label that
-    // added "See" no longer held the words on screen).
+    // House style (G1): the town is the signpost plate (DESIGN.md: a place
+    // and euros as one unit): the name, how far, the day it costs on the
+    // tip. Named by its visible text (T1128, WCAG 2.5.3).
     <a className="ox-stay" href={featureHref('dest', { id: destId }) || undefined}
       onClick={linkOpener(() => onOpen?.(destId))}>
       <span className="ox-stay-label">{t('ox.stayNearby')}</span>
       {' '}
-      <span className="ox-stay-town">
-        <b>{city}</b>
-        {line && <>{' '}<small>{line}</small></>}
-      </span>
-      <span className="ox-stay-go" aria-hidden="true"><ChevronRightIcon size={20} /></span>
+      <Plate as="span" className="ox-stay-plate" name={city} sub={away}
+        fig={price} figSub={price ? view.unit : null} />
     </a>
   );
 }
@@ -202,14 +197,18 @@ export function StayLine({ destId, city, km = null, onOpen }) {
  *  secondary row and the stay line. `compact` (below 1024 px, in the page)
  *  keeps only the secondaries and the stay line: the facts sit just above it
  *  and the foot bar holds the primary. */
-function OxCard({ card, compact = false }) {
+function OxCard({ card, compact = false, besideBoard = false }) {
   const { t } = useI18n();
-  const rows = (card.rows || []).filter((r) => r && r.value != null && r.value !== '');
+  // House style (G1): each figure is said once on screen. Beside the board a
+  // row the page marks `board: true` (the board shows it) is not drawn again;
+  // a row only the card has (the sea in July, parking, entry) stays.
+  const rows = (card.rows || []).filter((r) => r && r.value != null && r.value !== ''
+    && !(besideBoard && r.board));
   const secondary = (card.secondary || []).filter(Boolean);
   if (compact && !secondary.length && !card.stay) return null;
   return (
     <div className={`pt-card ox-card${compact ? ' is-compact' : ''}`}>
-      {!compact && card.title && <h2 className="ox-card-title">{card.title}</h2>}
+      {!compact && card.title && <h2 className="ox-card-title sr-only">{card.title}</h2>}
       {!compact && rows.length > 0 && (
         <dl className="ox-kv">
           {rows.map((r) => (
@@ -270,6 +269,8 @@ export function OutdoorPage({
   const headRef = React.useRef(null);
   const whyRef = React.useRef(null);
   const [titleGone, setTitleGone] = React.useState(false);
+  const boardRef = React.useRef(null);
+  const [boardInView, setBoardInView] = React.useState(true);
   const wide = useWide();
 
   const arrivalRef = usePageArrival(pageRef, resetKey);
@@ -286,6 +287,17 @@ export function OutdoorPage({
     io.observe(el);
     return () => io.disconnect();
   }, [resetKey]);
+
+  // The foot bar's figures wait until the board has scrolled away, so the
+  // first view says them once (the place page's is-post-in-view rule).
+  React.useEffect(() => {
+    const el = boardRef.current;
+    const root = scrollRef.current;
+    if (!el || !root || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([entry]) => setBoardInView(entry.isIntersecting), { root, threshold: 0 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [resetKey, wide]);
 
   const openWhy = (e) => {
     e.preventDefault();
@@ -345,14 +357,19 @@ export function OutdoorPage({
                   ...(head.badges || []).filter(Boolean).map((b) => <PlaceTag key={b}>{b}</PlaceTag>),
                 ]} />
 
-              {/* T1039: the tabs right under the head, as on the place page. */}
+              {/* House style (G1): the board of measured figures right under
+                  the head, the first thing read after the name; then the jump
+                  bar, then the hook. */}
+              {factsLead}
+              <div className="ox-board" ref={boardRef}>
+                <KeyFacts cells={facts} className={factsCls} />
+              </div>
+
+              {/* T1039: the tabs under the head, as on the place page. */}
               <JumpBar items={jumps} scrollRef={scrollRef} ready={`${resetKey}:${React.Children.count(children)}`}
                 label={t('detail.railAria')} />
 
               {head.lead && <div className="pt-lead"><p className="pt-lead-first">{head.lead}</p></div>}
-
-              {factsLead}
-              <KeyFacts cells={facts} className={factsCls} />
 
               {!wide && card && <OxCard card={card} compact />}
 
@@ -369,7 +386,7 @@ export function OutdoorPage({
             </div>
             {wide && card && (
               <aside className="pt-side" aria-label={card.title || name}>
-                <OxCard card={card} />
+                <OxCard card={card} besideBoard={(facts || []).length > 0} />
               </aside>
             )}
           </div>
@@ -377,7 +394,7 @@ export function OutdoorPage({
       </div>
 
       {!wide && !following && dock && (
-        <PriceDock className="ox-dock" price={dock.fig} unit={dock.note}
+        <PriceDock className={`ox-dock${boardInView ? ' is-post-in-view' : ''}`} price={dock.fig} unit={dock.note}
           inputs={onDockSub ? dock.sub : null} onInputs={onDockSub}
           note={!onDockSub && dock.sub ? <span className="ox-dock-sub">{dock.sub}</span> : null}
           primary={card?.onAdd && (
@@ -598,38 +615,26 @@ export function SafetyBlock({ extra = [] }) {
 
 /* ── Cards ──────────────────────────────────────────────────────────── */
 
-/** A small drawn map spot for a card without a photograph: contour lines
- *  and the place's dot, never a grey box. */
-export function MapSpot({ seed = 0 }) {
-  const s = Math.abs(Number(seed) || 0) % 7;
-  const cx = 70 + s * 6;
-  const cy = 46 + (s % 3) * 4;
-  return (
-    <svg className="ox-spot" viewBox="0 0 160 120" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
-      <rect width="160" height="120" className="ox-spot-ground" />
-      <path className="ox-spot-line" d={`M-10 ${92 - s} C40 ${70 + s} 90 ${104 - s} 170 ${78 + s}`} />
-      <path className="ox-spot-line" d={`M-10 ${30 + s} C30 ${50 - s} 110 ${18 + s} 170 ${40 - s}`} />
-      <ellipse className="ox-spot-ring" cx={cx} cy={cy} rx="34" ry="22" />
-      <ellipse className="ox-spot-ring" cx={cx} cy={cy} rx="18" ry="11" />
-      <circle className="ox-spot-dot" cx={cx} cy={cy} r="6" />
-    </svg>
-  );
-}
-
 /** The sights along the way: a photograph (or the map spot), the name,
  *  one line. */
-export function AlongCards({ items }) {
+export function AlongCards({ items, world = 'lowland' }) {
   const list = (items || []).filter((x) => x && x.title);
   if (!list.length) return null;
+  // G8: never a wall of placeholders. Without a single photograph the
+  // sights read as rows on hairlines; one missing photo among photographed
+  // cards takes the kind's world tile.
+  const pictured = list.some((h) => h.photo?.url);
   return (
-    <ul className="ox-along">
-      {list.map((h, i) => (
+    <ul className={`ox-along${pictured ? '' : ' is-text'}`}>
+      {list.map((h) => (
         <li key={h.key} className="ox-acard">
-          <span className="ox-acard-media">
-            {h.photo?.url
-              ? <img src={h.photo.thumb || h.photo.url} alt="" loading="lazy" decoding="async" />
-              : <MapSpot seed={i + 1} />}
-          </span>
+          {pictured && (
+            <span className="ox-acard-media">
+              {h.photo?.url
+                ? <img src={h.photo.thumb || h.photo.url} alt="" loading="lazy" decoding="async" />
+                : <WorldTile world={world} />}
+            </span>
+          )}
           <span className="ox-acard-text">
             <b>{h.title}</b>
             {h.line && <small>{h.line}</small>}
@@ -645,19 +650,22 @@ export function AlongCards({ items }) {
  * each a link to its page. A card without a photograph shows the map spot.
  * `hrefOf(row)` gives the page's address for a real link.
  */
-export function OtherNearby({ exits, hrefOf = null }) {
+export function OtherNearby({ exits, hrefOf = null, world = 'lowland' }) {
   const list = (exits || []).filter((e) => e && e.title);
   if (!list.length) return null;
+  const pictured = list.some((e) => e.photoUrl);
   return (
-    <ul className="ox-sim">
-      {list.map((e, i) => (
+    <ul className={`ox-sim${pictured ? '' : ' is-text'}`}>
+      {list.map((e) => (
         <li key={e.key} className="ox-simcard">
           <a className="ox-sim-link" href={(hrefOf && hrefOf(e.row)) || '#'} onClick={linkOpener(e.onOpen)}>
-            <span className="ox-sim-media">
-              {e.photoUrl
-                ? <img src={e.photoUrl} alt="" loading="lazy" decoding="async" />
-                : <MapSpot seed={i + 3} />}
-            </span>
+            {pictured && (
+              <span className="ox-sim-media">
+                {e.photoUrl
+                  ? <img src={e.photoUrl} alt="" loading="lazy" decoding="async" />
+                  : <WorldTile world={world} />}
+              </span>
+            )}
             <span className="ox-sim-name">{e.title}</span>
           </a>
           <span className="ox-sim-meta">

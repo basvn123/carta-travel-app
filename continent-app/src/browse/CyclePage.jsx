@@ -725,9 +725,9 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
       key: 'dir', icon: <RouteIcon size={16} />, title: t('ox.onMap'), text: `${start.lat.toFixed(5)}, ${start.lon.toFixed(5)}`,
       link: <a href={dirUrl} target="_blank" rel="noopener noreferrer">{t('ox.directions')}</a>,
     },
-    shapeKey && !tour && {
+    shapeKey && !tour && !isLoop && rt !== 'out_back' && {
       key: 'shape', icon: isLoop ? <LoopIcon size={16} /> : <ArrowRightIcon size={16} />, title: shapeWord,
-      text: t(isLoop ? 'ox.shapeLoop' : rt === 'out_back' ? 'ox.shapeBack' : 'ox.shapeOneWay'),
+      text: t('ox.shapeOneWay'),
     },
   ];
 
@@ -801,7 +801,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
 
   const mapNode = (
     <MapShell getMap={getMap} relief beneath={['cycle-casing']}>
-      <div ref={mapEl} className="cycle-map" data-testid="cycle-map" role="img" aria-label={t('cycle.mapLabel')}>
+      <div ref={mapEl} className="cycle-map" data-testid="cycle-map" role="group" aria-label={t('cycle.mapLabel')}>
         {/* The line in ink while maplibre loads (T396). */}
         <MapSketch lines={sketchLines} label={title} />
       </div>
@@ -853,10 +853,10 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
       card={gone ? null : {
         title: t(tour ? 'ox.card.tour' : 'ox.card.ride'),
         rows: [
-          { key: 'l', label: t('ox.fact.length'), value: lengthText },
-          { key: 't', label: t('ox.fact.time'), value: timeText },
+          { key: 'l', label: t('ox.fact.length'), value: lengthText, board: true },
+          { key: 't', label: t('ox.fact.time'), value: timeText, board: !tour },
           pavedPct != null && { key: 's', label: t('ox.surface'), value: t('ox.pavedPct', { pct: pavedPct }) },
-          freePct != null && { key: 'f', label: t('ox.fact.free'), value: `${freePct}%` },
+          freePct != null && { key: 'f', label: t('ox.fact.free'), value: `${freePct}%`, board: true },
         ].filter(Boolean),
         onAdd,
         secondary: [
@@ -895,7 +895,7 @@ export function CyclePage({ routeId, tourSlug, country, countryName,
         </div>
       )}
 
-      <PSection id="ox-route" title={t('ox.jump.route')} note={shapeWord || null}>
+      <PSection id="ox-route" title={t('ox.jump.route')}>
           <RouteBlock
             map={mapNode}
             profile={hasElev ? (
