@@ -1,0 +1,182 @@
+/* The day planner in the house style (G1, 2026-11, the trip lane).
+   Loaded after the route sheet (planners.css) by DayPlannerTab.jsx, so these
+   rules restyle the day's parts without touching their markup's job. Every
+   selector is scoped under .day-ws or a day-only class. Tokens and roles
+   only (01-tokens.css); DESIGN.md is the law for the look.
+
+   The day reads as a walk on the same footpath as the trip page: the stops
+   are numbered umber discs on an umber path (the same numbers as the umber
+   pins on the map), a walk is the path itself, a ride a dashed ink line, the
+   day's start and end ink. The drawer's strip is the day's signpost plate:
+   the place, the day, its stops and hours, and its figure as one unit. */
+
+/* ---- The head: the day's name once ---- */
+/* Under 1024 px the drawer's strip already says the day: the heading stays
+   for screen readers and the saved state keeps its place on the right. */
+.day-ws.is-drawer .dayws-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.day-ws.is-drawer .dayws-titlebar { justify-content: flex-end; min-height: 0; }
+.day-ws .dayws-title { font-weight: 800; letter-spacing: -0.02em; }
+/* Saved: the tick and the word; the green dot said it a third time. */
+.day-ws .day-save-status { gap: var(--space-1); font-family: var(--font); font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.day-ws .day-save-status::before { content: none; }
+.day-ws .day-save-status svg { color: var(--action); }
+
+/* ---- The day switcher: one pill, round arrows, the date ---- */
+.day-ws .day-sw { gap: var(--space-2); }
+.day-ws .day-sw-label {
+  flex: 0 1 auto;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  outline: var(--stroke-edge) solid var(--edge); outline-offset: calc(-1 * var(--stroke-edge));
+}
+.day-ws .day-sw-day { font-family: var(--font); font-size: var(--text-body); font-weight: 800; color: var(--text); }
+.day-ws .day-sw-date { font-family: var(--font); font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
+.day-ws .day-sw-btn,
+.day-ws.is-drawer .day-sw-btn {
+  width: var(--tap);
+  height: var(--tap);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  outline: var(--stroke-edge) solid var(--edge); outline-offset: calc(-1 * var(--stroke-edge));
+  color: var(--text);
+  transition: background-color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
+}
+.day-ws .day-sw-btn:active:not(:disabled) { scale: var(--press-scale-sm); transition-duration: var(--dur-press); }
+.day-ws .day-sw-btn:disabled { color: var(--text-3); outline-color: var(--border); }
+@media (hover: hover) { .day-ws .day-sw-btn:hover:not(:disabled) { background: var(--surface-hover); color: var(--text); } }
+.day-ws .day-sw-btn:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.day-ws .day-sw-morebtn { min-height: var(--tap); border-radius: var(--radius-pill); border-color: var(--edge); font-family: var(--font); color: var(--text); }
+.day-ws .day-sw-more { margin-left: auto; }
+/* The day pills inside a trip: the day in hand painted. */
+.day-ws .dpl-pill.is-now.btn { background: var(--action); border-color: var(--action); color: var(--action-text); }
+
+/* ---- Start your day and the day in numbers: two flat panels ---- */
+.day-ws .dst {
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.day-ws .dst-h { font-size: var(--text-body); font-weight: 800; color: var(--text); }
+.day-ws .dst-facts { grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr)); gap: var(--space-3); }
+.day-ws .dst-fact { grid-template-columns: 20px minmax(0, 1fr); column-gap: var(--space-2); row-gap: 2px; }
+.day-ws .dst-fact dt { display: contents; font-size: var(--text-micro); font-weight: 600; color: var(--text-2); }
+.day-ws .dst-fact dd { grid-column: 2; margin: 0; font-size: var(--text-body); font-weight: 700; color: var(--text); overflow-wrap: anywhere; }
+.day-ws .dst-ic { grid-row: 1 / span 2; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 0; background: none; color: var(--umber-700); }
+/* What the day costs is the strip's figure (and the cost bar's): it is not
+   said a third time in the card. */
+.day-ws .dst-fact[data-k="cost"] { display: none; }
+.day-ws .dst.is-empty { padding: var(--space-4); }
+.day-ws .days-card {
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-panel);
+  box-shadow: var(--elev-1);
+  animation: none;
+}
+.day-ws .days-time > b,
+.day-ws.is-page .days-time > b { font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+
+/* ---- Your day: the head on its own line, its three tools under it ---- */
+.day-ws .dayp-head { flex-wrap: wrap; gap: var(--space-1) var(--space-2); }
+.day-ws .dayp-h { flex: 1 0 100%; font-size: var(--text-title); font-weight: 800; letter-spacing: -0.01em; }
+.day-ws .dayp-links { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); }
+
+/* ---- The day on the path ---- */
+/* The list arrives with the day, not as an entrance of its own. */
+.day-ws .dayt { animation: none; }
+/* A walk is the path itself (the umber route, 3 px); a ride or a drive a
+   dashed ink line; the day's start and end a thin ink line. */
+.day-ws .dayt-rail::before { left: calc(50% - 1px); border-left: 2px solid var(--text); }
+.day-ws .dayt-leg:not(.is-ride) .dayt-rail::before { left: calc(50% - 1.5px); border-left: var(--stroke-route) solid var(--map-route); }
+.day-ws .dayt-leg.is-ride .dayt-rail::before { border-left: 2px dashed var(--text); }
+.day-ws .dayt-rail > svg { padding: 3px; border: var(--stroke-edge) solid var(--edge); background: var(--surface); outline: 3px solid var(--surface-page); color: var(--text); }
+/* A stop's number: the umber disc of its pin on the map. */
+.day-ws .dayt-no {
+  min-width: 22px;
+  height: 22px;
+  background: var(--action);
+  outline: 2px solid var(--surface-page);
+  color: var(--action-text);
+  font-weight: 800;
+}
+.day-ws .dayt-name { font-weight: 700; }
+.day-ws .dayt-stop { border-radius: var(--radius-panel); }
+.day-ws .dayt-stop.flash { background: var(--select-row); }
+.day-ws .dayt-ticket { color: var(--text); font-weight: 600; }
+.day-ws .dayt-band-h { font-size: var(--text-label); font-weight: 800; color: var(--text); }
+
+/* ---- The drawer's strip: the day's signpost plate ---- */
+.day-ws .map-drawer-strip-slot { padding-left: var(--space-3); }
+.day-ws .day-strip-plate.hs-plate { display: grid; gap: 0 var(--space-3); width: 100%; min-height: 52px; padding: 4px calc(var(--plate-tip) + var(--space-2)) 4px var(--space-3); }
+.day-ws .day-strip-plate .day-strip-title { display: block; overflow: hidden; font-weight: 700; color: var(--on-plate); text-overflow: ellipsis; white-space: nowrap; }
+.day-ws .day-strip-plate .day-strip-sub { display: block; overflow: hidden; color: var(--on-plate-2); text-overflow: ellipsis; white-space: nowrap; }
+.day-ws .day-strip-plate .hs-plate-fig { align-self: stretch; display: flex; align-items: center; }
+.day-ws .day-strip-cost.btn {
+  height: auto;
+  min-height: var(--tap);
+  margin-right: calc(-1 * var(--space-2));
+  padding: 0 var(--space-2);
+  background: none;
+  color: var(--on-plate);
+}
+.day-ws .day-strip-cost .dcb-fig { align-items: flex-end; text-align: right; }
+.day-ws .day-strip-cost .dcb-n { font-size: var(--text-figure); font-weight: 800; color: var(--on-plate); }
+.day-ws .day-strip-cost .dcb-unit { font-size: var(--text-micro); font-weight: 600; color: var(--on-plate-2); }
+.day-ws .day-strip-cost.btn:focus-visible { outline: var(--stroke-focus) solid var(--focus-on-dark); outline-offset: -3px; }
+@media (hover: hover) { .day-ws .day-strip-cost.btn:hover { background: none; color: var(--on-plate); text-decoration: underline; text-underline-offset: 3px; } }
+
+/* ---- The cost bar at the foot of the day (from 1024 px) ---- */
+.day-ws .day-cost-bar { border-top: var(--stroke-hair) solid var(--border-soft); box-shadow: var(--elev-2); }
+.day-ws .dcb-n { font-size: var(--text-figure); font-weight: 800; }
+.day-ws .dcb-open { color: var(--umber-700); }
+
+/* ---- The kit, the town and the exports ---- */
+.day-ws .dayws-aside { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; }
+/* A tablet (769 to 1023 px) is its own layout: the day in the left column,
+   its kit, town and exports in a column beside it. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .day-ws.is-drawer .dayws-drawer-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 16rem);
+    align-items: start;
+    column-gap: var(--space-5);
+    row-gap: var(--space-5);
+    padding-inline: var(--space-5);
+  }
+  .day-ws.is-drawer .dayws-drawer-body > * { grid-column: 1; min-width: 0; }
+  .day-ws.is-drawer .dayws-drawer-body > .dayws-aside { grid-column: 2; grid-row: 1 / span 12; }
+  /* In the side column the kit's tiles and the exports stack as rows. */
+  .day-ws .dayws-aside .itin-tool-grid,
+  .day-ws .dayws-aside .itin-export-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+  .day-ws .dayws-aside .itin-tool.btn,
+  .day-ws .dayws-aside .itin-export-grid .btn { justify-content: flex-start; width: 100%; height: auto; min-height: var(--tap-main); text-align: left; }
+}
+/* The kit's tiles: paper on a hairline, the icon in umber. */
+.day-ws .dayk .itin-tool.btn { border-radius: var(--radius-panel); }
+.day-ws .dayk .itin-tool-icon { color: var(--umber-700); }
+.day-ws .itin-h { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.01em; }
+
+/* ---- The workspace on a desktop: the day's column on the stone ---- */
+.day-ws.is-desk .dayws-panel { background: var(--surface-page); }
+
+@media (prefers-reduced-motion: reduce) {
+  .day-ws .day-sw-btn { transition: none; }
+}

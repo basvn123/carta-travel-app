@@ -40,11 +40,11 @@ const PAGE = 6;
  *  survives every language and the estimate mark comes from formatEst only.
  *  A figure that stands in for towns not yet measured carries the mark, and
  *  nothing else about its source (T438). `as` is "span" inside a button. */
-export function DayCostLine({ cost, t, className = '', as = 'p' }) {
+export function DayCostLine({ cost, t, className = '', as = 'p', short = false }) {
   const Tag = as;
   const text = dayCostText(cost, t);
   if (!text) return null;
-  return <Tag className={`wiz-cost-line ${className}`}>{t('match.fromDay', { eur: text.visible })}</Tag>;
+  return <Tag className={`wiz-cost-line ${className}`}>{t(short ? 'pf.fromEur' : 'match.fromDay', { eur: text.visible })}</Tag>;
 }
 
 /**
@@ -91,7 +91,7 @@ function MatchCard({ match, picked, onToggle, onBrief, t, lang, cost }) {
           <b>{match.country}</b>
           {picked && <span className="mcard-check"><CheckIcon size={12} /></span>}
         </span>
-        <DayCostLine cost={cost} t={t} as="span" className="mcard-cost" />
+        <DayCostLine cost={cost} t={t} as="span" className="mcard-cost" short />
       </button>
 
       <div className="mcard-body">
@@ -166,6 +166,7 @@ export function CountryMatchCards({ matches, picked, onToggle, onBrief, costs = 
   if (!matches.length) return null;
   return (
     <>
+      {costs && <p className="pl-unit-head">{t('tp.bud.kindDay')}</p>}
       <div className="mcards">
         {matches.slice(0, shown).map((m) => (
           <MatchCard

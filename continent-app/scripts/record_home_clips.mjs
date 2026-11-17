@@ -42,7 +42,7 @@
  * It does not start a server. Serve the app first (never `npm run dev`,
  * whose predev rewrites public/):
  *   npx vite --port 5203 --strictPort
- *   node scripts/record_home_clips.mjs --port=5203 [--lang=en,de] [--only=plan,day]
+ *   node scripts/record_home_clips.mjs --port=5203 [--lang=en,de] [--only=plan,day] [--out=<dir>]
  * FFmpeg must be on the PATH. Run it again whenever a recorded screen changes.
  */
 import { chromium } from 'playwright';
@@ -60,7 +60,9 @@ const argv = Object.fromEntries(process.argv.slice(2).map((a) => {
 const BASE = `http://${argv.host || 'localhost'}:${argv.port || 5203}/`;
 const LANGS = String(argv.lang || 'en,nl,de,fr,es,it').split(',');
 const ONLY = argv.only ? new Set(String(argv.only).split(',')) : null;
-const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'home', 'clips');
+// --out writes the clips somewhere else (a lane's run folder stages them
+// under public-staging/ for the orchestrator; public/ is protected).
+const OUT = argv.out ? String(argv.out) : join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'home', 'clips');
 const FFMPEG = argv.ffmpeg || 'ffmpeg';
 const W = 390;
 const H = 844;

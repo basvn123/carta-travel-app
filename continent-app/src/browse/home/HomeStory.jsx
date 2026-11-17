@@ -16,7 +16,7 @@ export default function HomeStory({ rows, places, place, flightFor, origin, lang
   return (
     <HomeMotion>
       <HomeCost week={week} place={place} from={origin} />
-      <HomeProof week={week} place={place} onPlan={onPlan} planHref={planHref} />
+      <HomeProof week={week} onPlan={onPlan} planHref={planHref} />
       <HomeTour lang={lang} doors={doors} wide={wide} />
       <HomeTry rows={rows} places={places} onSearch={onSearch} wide={wide} />
     </HomeMotion>

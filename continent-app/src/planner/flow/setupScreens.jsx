@@ -237,8 +237,10 @@ export function WhenScreen({ settings, commit, doneLabel }) {
             value={pickEnd}
             onChange={setPickEnd}
             options={[
-              { value: 'start', label: t('pf.when.startOn', { date: short(w.start) }) },
-              { value: 'end', label: t('pf.when.endOn', { date: short(w.end) }) },
+              // House style: the word over its value ("Start" / "12 May" or
+              // "Set a date"), so the two never run together as one label.
+              { value: 'start', label: <span className="pf-when-seg"><span>{t('pf.when.startOn', { date: '' }).trim()}</span>{' '}<b>{short(w.start)}</b></span> },
+              { value: 'end', label: <span className="pf-when-seg"><span>{t('pf.when.endOn', { date: '' }).trim()}</span>{' '}<b>{short(w.end)}</b></span> },
             ]}
           />
           <DateField

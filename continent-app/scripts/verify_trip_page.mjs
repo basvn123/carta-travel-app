@@ -83,7 +83,9 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 950 } });
 wire(page);
 await seed(page);
 await page.goto(`${BASE}#itin=${TRIP}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await page.waitForTimeout(5000);
+// Wait for the page itself (a slow server took 10 s), not a fixed sleep.
+await page.locator('.tpage .dsec').first().waitFor({ timeout: 90000 }).catch(() => {});
+await page.waitForTimeout(1500);
 
 check('#itin= opens the trip page', await page.locator('.tpage.itin-page').isVisible());
 
@@ -109,6 +111,19 @@ const photoText = await page.locator('.itin-photohero').innerText().catch(() => 
 check('no text on the photograph', photoText.trim() === '', JSON.stringify(photoText.slice(0, 40)));
 check('no scrim over the photograph',
   await page.locator('.itin-photohero-scrim, .itin-photohero-text').count() === 0);
+// House style (plan lane): the post (day figure and the one action) and the
+// main column are siblings; the post comes first in the DOM (early in the
+// tab order) and sits beside a wider main column from 769 px.
+const post = await page.evaluate(() => {
+  const p = document.querySelector('.itin-post'); const m = document.querySelector('.itin-main');
+  if (!p || !m) return { ok: false, why: 'missing' };
+  const nested = Boolean(p.querySelector('.itin-main')) || Boolean(m.querySelector('.itin-post'));
+  const first = Boolean(p.compareDocumentPosition(m) & Node.DOCUMENT_POSITION_FOLLOWING);
+  const wider = m.getBoundingClientRect().width > p.getBoundingClientRect().width;
+  return { ok: !nested && first && wider, why: `nested ${nested}, post first ${first}, main wider ${wider}` };
+});
+check('the post sits beside the main column, first in the DOM', post.ok, post.why);
+
 check('the caption band sits flush under the photo', await page.evaluate(() => {
   const photo = document.querySelector('.itin-photohero');
   const band = photo && photo.nextElementSibling;
@@ -258,7 +273,8 @@ const phone = await browser.newPage({ viewport: { width: 375, height: 780 }, isM
 wire(phone);
 await seed(phone);
 await phone.goto(`${BASE}#itin=${TRIP}`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await phone.waitForTimeout(6000);
+await phone.locator('.tpage .dsec').first().waitFor({ timeout: 90000 }).catch(() => {});
+await phone.waitForTimeout(1500);
 
 check('phone opens the trip page', await phone.locator('.tpage.itin-page').isVisible());
 const overflow = await phone.evaluate(() => {

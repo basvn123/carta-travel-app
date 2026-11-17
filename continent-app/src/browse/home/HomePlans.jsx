@@ -1,11 +1,11 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
-import { CheckIcon } from '../../components/Icons.jsx';
+import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { usePaywall } from '../../hooks/usePaywall.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { TIERS, TIER_ORDER, formatPrice, monthlyCents } from '../../lib/pricing.js';
-import { useReveal } from './useHome.js';
+import { useMedia, useReveal } from './useHome.js';
 
 /**
  * The plans (T606, owner D9: they stay on the home page; the owner's Linear
@@ -19,6 +19,9 @@ export function HomePlans() {
   const { t } = useI18n();
   const paywall = usePaywall();
   const reveal = useReveal();
+  // The lists stand open from 769 up; on a phone each sits behind one fold
+  // (the footer's pattern), so the three prices read as one short list.
+  const wide = useMedia('(min-width: 769px)');
   const lists = {
     free: ['home.free1', 'home.free2', 'home.free3', 'home.free4'].map((k) => t(k)),
     trip: [t('pass.addPlansTrip', { n: TIERS.trip.aiPlans }), t('pass.addExports'), t('pass.addTrips'), t('pass.addImport')],
@@ -51,11 +54,14 @@ export function HomePlans() {
                 {p && <span className="hv-plan-per">{p}</span>}
               </span>
               <span className="hv-plan-note">{n || t(tier.blurbKey)}</span>
-              <ul className="hv-plan-list">
-                {list.map((x) => (
-                  <li key={x}><span className="hv-tick" aria-hidden="true"><CheckIcon size={16} /></span><span>{x}</span></li>
-                ))}
-              </ul>
+              <details className="hv-plan-more" open={wide || undefined}>
+                <summary>{t('home.planWhat')}<span className="sr-only"> {t(tier.labelKey)}</span><HouseIcon.next size={16} /></summary>
+                <ul className="hv-plan-list">
+                  {list.map((x) => (
+                    <li key={x}><span className="hv-tick" aria-hidden="true"><HouseIcon.check size={16} /></span><span>{x}</span></li>
+                  ))}
+                </ul>
+              </details>
             </li>
           );
         })}

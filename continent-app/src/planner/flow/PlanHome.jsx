@@ -214,9 +214,11 @@ function UpNext({ trip, onOpen }) {
   const bcp47 = useBcp47();
   const cd = trip.start ? countdownText(t, trip.start, trip.end) : '';
   // T1044: the dates and, when the trip has them, its nights.
+  const nights = trip.nights > 0 ? t(trip.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: trip.nights }) : '';
+  // House style: the nights once; a trip named "New trip, 7 nights" does not say it again.
   const facts = [
     whenLine(t, trip, bcp47),
-    trip.nights > 0 ? t(trip.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: trip.nights }) : '',
+    nights && !String(trip.name || '').includes(nights) ? nights : '',
   ].filter(Boolean).join(', ');
   return (
     <a className={`pfh-next${trip.cover ? '' : ' is-blank'}`} href={tabHref('trip')} onClick={door(onOpen)} aria-labelledby={`pfh-next-${trip.id}`}>
@@ -387,8 +389,8 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
     return (
       <div className="pfh">
         <header className="pfh-head">
-          {/* T989 (owner): no visible title; the page's name stays for screen readers. */}
-          <Title className="pf-title sr-only" tabIndex={-1}>{t('pf.home.yourTrips')}</Title>
+          {/* House style (plan lane): the page shows its name again (T989 had hidden it). */}
+          <Title className="pf-title pfh-title" tabIndex={-1}>{t('pf.home.tripsTitle')}</Title>
           <Button variant="quiet" className="pfh-new" onClick={onStart}
             iconStart={<span className="pfh-new-plus"><PlusIcon size={20} /></span>}>
             {t('pf.home.newTrip')}

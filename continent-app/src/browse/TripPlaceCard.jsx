@@ -1,5 +1,6 @@
 import React from 'react';
 import { HeroImage } from '../components/HeroImage.jsx';
+import { CountryFlag } from '../components/CountryFlag.jsx';
 import { FlightChip } from '../components/flights/Flights.jsx';
 import { SaveButton } from './ExploreCards.jsx';
 import { DayFrom, useCardFlight } from './JourneyCards.jsx';
@@ -39,7 +40,7 @@ const DIFF_TONE = { 1: 'is-easy', 2: 'is-easy', 3: 'is-mid', 4: 'is-hard', 5: 'i
  *             and how many days
  *   price     one price a person a day, the cheapest flight beside it
  */
-export function TripPlaceCard({ card, length, month, saved = false, onToggleSave, onOpen, t, lang, sizes }) {
+export function TripPlaceCard({ card, length, month, saved = false, onToggleSave, onOpen, t, lang, sizes, short = false }) {
   const perDay = cardPerDay(card, length);
   const flight = useCardFlight(card, length);
   const days = cardTotal(card, length)?.days || card.days || length;
@@ -60,19 +61,20 @@ export function TripPlaceCard({ card, length, month, saved = false, onToggleSave
       <a className="ctc-hit" href={journeyHash(card.id)} onClick={open} aria-label={[card.title, where].filter(Boolean).join(', ')}>
         <span className="ctc-media">
           <HeroImage url={photo} city={card.title} iso2={card.cc} className="ctc-img" ratio={[4, 5]} maxWidth={720} sizes={sizes} />
-          {inSeason && <span className="ctc-badge">{t('tp.card.inSeason')}</span>}
-          <span className="ctc-over">
-            {where && <span className="ctc-where">{where}</span>}
-            <span className="ctc-name">{name}</span>
-          </span>
+        </span>
+        {/* House style: the name and the countries sit under the photo. */}
+        <span className="ctc-over">
+          <span className="ctc-name">{name}</span>
+          {where && <span className="ctc-where">{codes[0] && <CountryFlag country={codes[0]} size={13} />}{where}</span>}
         </span>
         {what && <span className="ctc-what">{what}</span>}
         <span className="ctc-facts">
+          {inSeason && <span className="ctc-badge">{t('tp.card.inSeason')}</span>}
           {level && <span className={`ctc-level ${DIFF_TONE[card.diff] || 'is-mid'}`}>{level}</span>}
           <span className="ctc-days">{t('tp.card.days', { n: days })}</span>
         </span>
         <span className="ctc-price">
-          {Number.isFinite(perDay) ? <DayFrom value={perDay} t={t} /> : <span className="jcap-fig is-none">{t('journey.fromNone')}</span>}
+          {Number.isFinite(perDay) ? <DayFrom value={perDay} t={t} short={short} /> : <span className="jcap-fig is-none">{t('journey.fromNone')}</span>}
           {flight && <FlightChip perSeat={flight.perSeat} airline={flight.out.airline} />}
         </span>
       </a>

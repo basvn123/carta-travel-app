@@ -1,10 +1,13 @@
 import React from 'react';
-import { m, useInView } from 'motion/react';
+import { useInView, useReducedMotion } from 'motion/react';
 import { useI18n } from '../../i18n/index.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { STORY_PLACE, placeDay, weekSum } from '../../lib/homeDemo.js';
-import { MaskedText, Reveal, SPRING, Settle } from './motionKit.jsx';
-import { Bed, CoffeeBean, ICON } from './homeIcons.jsx';
+import { MaskedText, Reveal } from './motionKit.jsx';
+import { CostRow, Figure, Formation, Plate, ReliefBand } from '../../components/ui/index.js';
+import { COST_ICON } from '../../components/ui/CostRow.jsx';
+import { useDossier } from '../../lib/dossier.js';
+import { useMedia } from './useHome.js';
 
 export const STORY_NIGHTS = 7;
 
@@ -31,19 +34,32 @@ export function accented(t, key, vars, accentKey, accent) {
 }
 
 /**
- * The real cost (T950, owner 2026-10-31). An umber panel rises over the
- * film's bottom edge and says what the flight leaves out: the bed and the
- * days at the story place, each chapter led by its amount, a receipt beside
- * them that takes a line as each chapter reaches the middle of the view
- * (on a phone, a running total held to the panel's bottom edge). Real
- * figures only: the place's own day price, the sweep's flight or no flight
- * line at all.
+ * The real cost (T950, owner 2026-10-31; house style 2026-11, home lane,
+ * fix round 1). The page's one umber band says what the flight leaves out.
+ * Its head carries the relief of the story place's own peaks with their
+ * real heights (DESIGN.md "Background graphics"; none drawn when the place
+ * has no measured peak). Under it the bed and the days are the story, in
+ * words, and the house's paper cost post carries the money, each figure
+ * once: the place's day as a formation, the week's lines, a Rounding line
+ * only when the printed lines do not add up, and the one ink total plate
+ * with the week's own figure. Every figure is printed from the first paint.
+ * The band builds in order: on a wide screen each chapter paints its line
+ * in the post as it reaches the middle of the view (the base's old rule, a
+ * paint stroke only, no figure moves); on a phone the lines paint one after
+ * the other when the post comes into view. When both are painted the plate
+ * settles once. Real figures only.
  */
 export function HomeCost({ week, place, from }) {
   const { t, lang } = useI18n();
   const money = (v) => formatMoney(v, { precision: 'whole', locale: lang });
-  const [active, setActive] = React.useState(-1);
-  const seen = React.useCallback((i, on) => setActive((a) => (on ? Math.max(a, i) : (a === i ? i - 1 : a))), []);
+  const ref = React.useRef(null);
+  const inView = useInView(ref, { once: true, amount: 0.35 });
+  const wide = useMedia('(min-width: 768px)');
+  const reduce = useReducedMotion();
+  const dossier = useDossier(STORY_PLACE);
+  const heights = React.useMemo(() => { const f = new Intl.NumberFormat(lang); return (v) => f.format(v); }, [lang]);
+  const [seen, setSeen] = React.useState(() => new Set());
+  const onSeen = React.useCallback((k) => setSeen((s) => (s.has(k) ? s : new Set([...s, k]))), []);
   if (!week || !place) return null;
   const n = STORY_NIGHTS;
   const fly = week.flight;
@@ -51,63 +67,67 @@ export function HomeCost({ week, place, from }) {
     ? accented(t, 'home.costTitle', { place }, 'price', money(fly))
     : [t('home.costTitleNoFlight', { place })];
   const chapters = [
-    { k: 'bed', Icon: Bed, label: t('home.costBed'), amt: week.bed, per: t('home.forNights', { n }),
-      line: t('home.costBedLine', { place }), facts: [t('home.nightPrice', { price: money(week.cost.stayEur) }), t('home.nNights', { n })] },
-    { k: 'food', Icon: CoffeeBean, label: t('home.costDays'), amt: week.food, per: t('home.forDays', { n }),
-      line: t('home.costDaysLine'), facts: [t('home.dayPrice', { price: money(week.cost.foodEur) }), t('home.nDays', { n })] },
+    { k: 'bed', Icon: COST_ICON.bed, label: t('home.costBed'), line: t('home.costBedLine', { place }) },
+    { k: 'food', Icon: COST_ICON.food, label: t('home.costDays'), line: t('home.costDaysLine') },
   ];
+  // Phone: the post paints its lines in order once it is in view. Wide: the
+  // chapters paint them. Reduced motion: every line painted at once.
+  const lit = (k) => reduce || (wide ? seen.has(k) : inView);
   const lines = [
-    fly ? { k: 'fly', label: t('home.rcptFlight'), sub: from && week.flightInfo?.to ? t('home.rcptRoute', { from, to: week.flightInfo.to }) : null, v: fly, on: true } : null,
-    { k: 'bed', label: t('home.costBed'), sub: t('home.rcptAt', { n, price: money(week.cost.stayEur) }), v: week.bed, on: active >= 0 },
-    { k: 'food', label: t('home.rcptFood'), sub: t('home.rcptAt', { n, price: money(week.cost.foodEur) }), v: week.food, on: active >= 1 },
+    fly ? { k: 'flight', label: t('home.rcptFlight'), sub: from && week.flightInfo?.to ? t('home.rcptRoute', { from, to: week.flightInfo.to }) : null, v: fly, on: true } : null,
+    { k: 'bed', label: t('home.costBed'), v: week.bed, on: lit('bed') },
+    { k: 'food', label: t('home.rcptFood'), v: week.food, on: lit('food') },
   ].filter(Boolean);
-  const total = lines.filter((l) => l.on).reduce((s, l) => s + l.v, 0);
-  const last = [...lines].reverse().find((l) => l.on);
+  // The total is the week's own figure; when the printed whole-euro lines
+  // do not add up to it, a Rounding line says by how much (decision 0012).
+  const whole = (v) => Math.round(v);
+  const rounding = whole(week.total) - lines.reduce((sum, l) => sum + whole(l.v), 0);
+  const built = lines.every((l) => l.on);
 
   return (
     <section className="hm-cost" aria-labelledby="hm-cost-title">
       <div className="hm-in">
-        <div className="hm-cost-head">
-          <MaskedText as="p" className="hm-kick" parts={[t('home.costKick')]} />
-          <MaskedText id="hm-cost-title" className="hm-big" parts={title} />
-        </div>
+        <ReliefBand mountains={dossier?.nearby?.mountains} seed={STORY_PLACE} cut="56%" className="hm-cost-head" format={heights}>
+          <MaskedText id="hm-cost-title" className="hm-big hm-cost-title" parts={title} />
+        </ReliefBand>
         <div className="hm-cost-grid">
-          <div>
-            {chapters.map((c, i) => <CostChapter key={c.k} i={i} c={c} money={money} onSeen={seen} />)}
+          <div className="hm-chapters">
+            {chapters.map((c) => <CostChapter key={c.k} c={c} on={lit(c.k)} onSeen={onSeen} />)}
           </div>
-          <div className="hm-stage">
-            <div className="hm-rcpt" aria-live="polite">
-              <div className="hm-rcpt-head"><b>{t('home.rcptTitle', { place, n })}</b><span>{t('home.aPerson')}</span></div>
-              {lines.map((l) => (l.on ? (
-                <m.div key={l.k} className="hm-rcpt-line" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={SPRING.surface}>
-                  <span>{l.label}{l.sub && <small>{l.sub}</small>}</span><b>{money(l.v)}</b>
-                </m.div>
-              ) : null))}
-              <div className="hm-rcpt-total"><span>{t('home.soFar')}</span><Settle className="hm-rcpt-sum" value={money(total)} /></div>
+          <aside className={`hm-post${inView ? ' is-in' : ''}`} ref={ref} aria-labelledby="hm-post-title">
+            <div className="hm-post-head">
+              <h3 id="hm-post-title">{t('home.rcptTitle', { place, n })}</h3>
+              <span>{t('home.aPerson')}</span>
             </div>
-          </div>
-        </div>
-        <div className="hm-runbar" aria-hidden="true">
-          <span className="hm-runbar-last">{last ? `${last.label} ${money(last.v)}` : ''}</span>
-          <span className="hm-runbar-tot"><small>{t('home.soFar')}</small><Settle value={money(total)} /></span>
+            <div className="hm-post-day">
+              <Formation size="lg" weighted bed={week.cost.stayEur} food={week.cost.foodEur} day={week.cost.dayEur} dayLabel={t('home.tryPerDay')} />
+              <span className="hm-post-unit">{t('home.tryPerDay')}</span>
+            </div>
+            <dl className="costrows hm-post-lines">
+              {lines.map((l) => (
+                <CostRow key={l.k} kind={l.k} label={l.label} sub={l.sub} value={money(l.v)} className={`hm-line${l.on ? ' is-lit' : ''}`} />
+              ))}
+              {rounding !== 0 && <CostRow label={t('place.rounding')} value={money(rounding)} />}
+            </dl>
+            <Plate variant="total" className="hm-post-total" settle={built && inView && !reduce} name={t('home.weekTotal')}
+              fig={<Figure value={week.total} still />} />
+          </aside>
         </div>
       </div>
     </section>
   );
 }
 
-function CostChapter({ i, c, money, onSeen }) {
+/** One chapter of the story: its label and its one line. It lights up and
+ *  paints its line in the post when it reaches the middle of the view. */
+function CostChapter({ c, on, onSeen }) {
   const ref = React.useRef(null);
   const mid = useInView(ref, { margin: '-40% 0px -45% 0px' });
-  React.useEffect(() => { onSeen(i, mid); }, [i, mid, onSeen]);
-  const { Icon } = c;
+  React.useEffect(() => { if (mid) onSeen(c.k); }, [mid, c.k, onSeen]);
   return (
-    <Reveal as="article" className={`hm-chapter${mid ? ' is-on' : ''}`} ref={ref}>
-      <span className="hm-chapter-label"><Icon {...ICON} />{c.label}</span>
-      <span className="hm-amount">{money(c.amt)}<small>{c.per}</small></span>
+    <Reveal as="article" className={`hm-chapter${on ? ' is-on' : ''}`} ref={ref}>
+      <span className="hm-chapter-label"><c.Icon size={20} />{c.label}</span>
       <p className="hm-chapter-line">{c.line}</p>
-      <div className="hm-facts">{c.facts.map((f) => <span key={f}>{f}</span>)}</div>
     </Reveal>
   );
 }
-
