@@ -88,6 +88,9 @@
 .hs-legal .legal-toc-fold[open] > summary { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
 .hs-legal .legal-toc-fold > summary:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .hs-legal .legal-toc-fold .legal-toc-list { padding: var(--space-2) 0 0; }
+/* The fold opens with the kit's reveal; the "here" wash and the words move
+   on the press timing (the global floor in 02-base flattens both). */
+.hs-legal .legal-toc-fold[open] .legal-toc-list { animation: hs-reveal var(--dur-2) var(--ease-out) both; }
 .hs-legal .legal-toc-title { font-size: var(--text-label); font-weight: 700; color: var(--text-2); }
 .hs-legal .legal-toc-list a {
   position: relative;
@@ -98,7 +101,7 @@
   font-size: var(--text-body);
   line-height: var(--leading-ui);
   color: var(--text-2);
-  transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) { .hs-legal .legal-toc-list a:hover { color: var(--text); background: var(--surface-hover); text-decoration: none; } }
 .hs-legal .legal-toc-list a:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 0; }
@@ -173,6 +176,10 @@
   background: var(--surface-page);
   color: var(--text);
 }
+/* No entrance: the 404 is what the first paint shows (DESIGN.md: nothing
+   animates at first paint). Leaving is the answer to "Open the map": the
+   page lifts away with the kit's exit before the app is shown. */
+.hs-nf.is-leaving { animation: hs-leave var(--dur-2) var(--ease-out) both; pointer-events: none; }
 .hs-nf-mark { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); }
 .hs-nf-name { font-family: var(--plate-face); font-size: var(--text-plate); font-weight: 700; line-height: 1; color: var(--text); }
 .hs-nf-body {

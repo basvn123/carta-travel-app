@@ -62,6 +62,24 @@ function blazeOps(x, y, w) {
   ];
 }
 
+/** A text's width in px: measured on a canvas in the page's own face when
+ *  there is one (the app, the offline renderer), else Overpass's average
+ *  advance (a little wide, so a leader never runs under a word). */
+function defaultMeasure() {
+  let ctx = null;
+  try {
+    if (typeof document !== 'undefined') {
+      ctx = document.createElement('canvas').getContext('2d');
+    }
+  } catch { ctx = null; }
+  let family = 'sans-serif';
+  try { family = getComputedStyle(document.documentElement).getPropertyValue('--ui').trim() || family; } catch { /* no DOM */ }
+  return (text, size, weight) => {
+    if (ctx) { ctx.font = `${weight} ${size}px ${family}`; return ctx.measureText(text).width; }
+    return String(text).length * size * 0.56;
+  };
+}
+
 /** A dotted leader from x1 to x2 on the line at y (a receipt line). */
 function leaderOps(x1, x2, y) {
   const out = [];
@@ -115,7 +133,7 @@ export function receiptExpected(plan, opts = {}) {
 /** The drawing. `t` is the i18n function, `money` formats whole euros
  *  (formatMoney), `dateText(start, end)` words the dates, `pricedOn` is the
  *  day the trip was priced, already worded. */
-export function receiptOps(model, { t, money, dateText = () => '', pricedOn = '' }) {
+export function receiptOps(model, { t, money, dateText = () => '', pricedOn = '', measure = defaultMeasure() }) {
   const ops = [];
   const X0 = 60, W = 960, PAD = 56;
   const L = X0 + PAD, R = X0 + W - PAD;
@@ -169,15 +187,16 @@ export function receiptOps(model, { t, money, dateText = () => '', pricedOn = ''
     const missing = l.kind === 'missing';
     ops.push({ t: 'rect', x: L, y: y - 24, w: 30, h: 18, r: 9, fill: missing ? 'none' : tone(l.key), stroke: missing ? 'neutral-500' : edge(l.key), sw: 2, dash: missing ? [5, 4] : undefined });
     ops.push({ t: 'text', x: L + 44, y, text: label, size: 32, weight: 600, fill: 'neutral-900' });
-    const lw = Math.min(560, label.length * 15.5);
+    // Leaders run from 12 px after the words to 12 px before the figure.
+    const from = L + 44 + measure(label, 32, 600) + 12;
     if (missing) {
       const nt = t('plan.notIn');
-      ops.push(...leaderOps(L + 62 + lw, R - nt.length * 14 - 16, y - 6));
+      ops.push(...leaderOps(from, R - measure(nt, 26, 600) - 12, y - 6));
       ops.push({ t: 'text', x: R, y, text: nt, size: 26, weight: 600, fill: 'neutral-700', anchor: 'end' });
     } else {
       const v = Math.round(l.eur);
       const mv = money(v);
-      ops.push(...leaderOps(L + 62 + lw, R - mv.length * 20 - 16, y - 6));
+      ops.push(...leaderOps(from, R - measure(mv, 34, 800) - 12, y - 6));
       ops.push({ t: 'text', x: R, y, text: mv, size: 34, weight: 800, fill: 'neutral-900', anchor: 'end', fig: { key: `line.${l.key}`, value: v, money: true } });
     }
     y += step;

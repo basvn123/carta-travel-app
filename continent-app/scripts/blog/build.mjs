@@ -117,7 +117,7 @@ body{margin:0;background:var(--surface-page);color:var(--text);font-family:var(-
 .bl .bl-cta:hover{background:var(--action-hover)}
 .bl .bl-cta:active{scale:.97}
 @media (prefers-reduced-motion:reduce){.bl a,.bl .bl-cta{transition:none}.bl .bl-cta:active{scale:none}}
-@media (max-width:479px){.bl-chart li{grid-template-columns:1fr auto}.bl-chart .bl-bar{grid-column:1 / -1;order:3}.bl .bl-cta{display:flex}}`;
+@media (max-width:479px){.bl-chart li{grid-template-columns:1fr auto;row-gap:var(--space-1);padding:var(--space-2) 0 var(--space-3);border-bottom:1px solid var(--border-soft)}.bl-chart li:last-child{border-bottom:0}.bl-chart .bl-bar{grid-column:1 / -1;order:3}.bl .bl-cta{display:flex}}`;
 
 /** The font files the blog's sheet names (the house faces), copied beside it. */
 const FONT_FILES = ['Overpass-latin.woff2', 'Overpass-latin-ext.woff2', 'SofiaSansExtraCondensed-latin.woff2', 'SofiaSansExtraCondensed-latin-ext.woff2'];

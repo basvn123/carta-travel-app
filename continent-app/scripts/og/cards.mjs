@@ -183,15 +183,9 @@ export function drawCard(spec, format = 'og') {
   // short card (no months, no route) lower still. A wide card with months
   // takes a shorter plate so the months clear the foot.
   const short = !spec.strip && !(spec.panel && spec.panel.route);
-  const drop = sq ? (short ? 330 : 232) : (spec.strip ? 72 : 84);
+  const drop = sq ? (short ? 330 : 200) : (spec.strip ? 72 : 84);
   const kindY = drop;
-  if (!isSite) {
-    out.push(text(M, kindY, spec.kind, { size: sq ? 30 : 26, weight: 700, fill: C.inkSoft }));
-    if (spec.score && fig.unit !== 'Score') {
-      const kw = Math.round(String(spec.kind).length * (sq ? 30 : 26) * 0.6) + 16;
-      out.push(scorePlate(M + kw, kindY - (sq ? 33 : 30), spec.score, sq ? 44 : 40));
-    }
-  }
+  if (!isSite) out.push(text(M, kindY, spec.kind, { size: sq ? 30 : 26, weight: 700, fill: C.inkSoft }));
 
   // The plate: the name, the line under it in beige, the figure on the end.
   const tip = sq ? 60 : 56;
@@ -243,21 +237,32 @@ export function drawCard(spec, format = 'og') {
     const p = spec.panel || {};
     const underY = plateTop + plateH + (sq ? 40 : 28);
     const route = p.route && p.route.length;
+    // The Score plate right after the name's plate (DESIGN.md "Score
+    // plate"), where the plate's own figure is not the Score; a place's
+    // formation runs on beside it, a walk's facts start under it.
+    const sh = spec.score && fig.unit !== 'Score' ? (sq ? 56 : 52) : 0;
+    const sw = sh ? Math.round(sh * 0.5 + String(spec.score).length * sh * 0.42) : 0;
+    const formH = sq ? 68 : 60;
     if (spec.type === 'destination') {
-      out.push(formation(fig.rows, M, underY, W, sq ? 68 : 60));
+      if (sh) out.push(scorePlate(M, underY + (formH - sh) / 2, spec.score, sh));
+      out.push(formation(fig.rows, M + (sh ? sw + 16 : 0), underY, W - (sh ? sw + 16 : 0), formH));
     } else if (route) {
+      if (sh) out.push(scorePlate(M, underY, spec.score, sh));
+      const factsY = underY + (sh ? sh + 20 : 0);
       const rw = sq ? W : 440;
-      const rh = sq ? 180 : 230;
+      const rh = sq ? 150 : 200;
       const rx = sq ? M : M + W - rw;
-      const ry = sq ? underY + 150 : underY;
-      out.push(facts(fig.rows, M, underY, sq ? W : W - rw - 32, { cols: sq ? 3 : 2, size: sq ? 52 : 44 }));
+      const ry = sq ? factsY + 148 : underY;
+      out.push(facts(fig.rows, M, factsY, sq ? W : W - rw - 32, { cols: sq ? 3 : 2, size: sq ? 52 : 44 }));
       out.push(`<rect x="${rx}" y="${ry}" width="${rw}" height="${rh}" rx="12" fill="${C.paperDim}"/>`);
       out.push(routePath(p.route, rx, ry, rw, rh));
     } else {
-      out.push(facts(fig.rows, M, underY, W, { cols: 3, size: sq ? 56 : 46 }));
+      if (sh) out.push(scorePlate(M, underY, spec.score, sh));
+      out.push(facts(fig.rows, M, underY + (sh ? sh + 20 : 0), W, { cols: 3, size: sq ? 56 : 46 }));
     }
     if (spec.strip) {
-      const sy = sq ? (route ? 0 : underY + 200) : underY + 136;
+      // A clear step above the months' label (the facts end about 100 px down).
+      const sy = sq ? (route ? 0 : underY + 200) : underY + 150;
       if (sy) {
         out.push(text(M, sy, spec.strip.label, { size: sq ? 28 : 24, weight: 700, fill: C.ink }));
         out.push(strip(spec, M, sy + 18, W, sq ? 60 : 48));

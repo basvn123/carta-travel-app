@@ -1,0 +1,43 @@
+# Brand lane report (house style run, G1)
+
+- **Run:** `.work/2026-11-13-hs-brand/`, branch `p15-hs-brand`, worktree `wt/hs-brand`, base `cd80389391` (p15-housestyle after outdoors).
+- **Playbook:** crew:design at L2 (explore 3, three directions, 2 critics, decision pre-approved, lead built, fresh judge).
+- **Decision:** `decision.md`: direction A "the signpost leads": the blaze in the wordmark slot everywhere, the signpost plate only where a name meets its figure, the receipt with leaders, month wagons, the relief from real peaks on the destination cover; OG layout A2 (figures said once).
+
+## What changed, per surface (before, after)
+
+| Surface | Before | After | Files |
+|---|---|---|---|
+| **PDF exports** (destination, trip, plan, day, item) | Figtree, a rounded brown tile and "carta" as the wordmark, a star for the Score, hairline money rows, ink month cells, a green tick | Overpass 400/600/800 and the plate face (static TTFs made from the screens' own woff2, tabular figures frozen, latin-ext merged); the blaze in the wordmark slot on every cover and page foot; the destination cover prints the name on the **signpost plate** with its day figure, the **Score plate**, and the **relief** from the dossier's real peaks (heights on the flat side); trip covers keep a plain title and the **total plate**; receipts with **dotted leaders** and the total ruled in ink; months as **umber wagons**; umber cost bars; the place on its own pin map is the blaze; photo names never print over their credit | `src/lib/pdfKit.js`, `destinationPdf.js`, `itemPdf.js`, comments in `dayPdf.js`, `planPdf.js`; `src/assets/print-fonts/` (4 TTF, 36 to 60 KB, OFL beside them); `scripts/print-fonts/build_print_fonts.py`; `scripts/verify_item_pdf.mjs` now checks Overpass |
+| **OG share cards** (site, destination, beach, lake, mountain, walk; 1200 x 630 and 1080 x 1080) | drawn in Fraunces, Plus Jakarta and JetBrains files labelled "Overpass" (a live mismatch), a compass mark, a white receipt panel repeating the figures | the screens' own Overpass and plate face; the **plate** holds the name, the line under it and the record's figure (a day, a height, a walking time, a Score); under it the **formation** (bed umber, food beige) or the measured facts, months as umber wagons, the walk's route in umber on a white halo; the blaze and name in the foot; 35 to 65 KB each (budget 300) | `scripts/og/cards.mjs`, `render.mjs`, `tokens.mjs`, `specs.mjs` (destination and walk Score moved to its plate; the site subline cut to "Priced town by town across Europe."), `check.mjs` (`--data`, `--icons`, the safe circle measured from the blaze) |
+| **Icons and the mark** | the T212 compass on a cream tile (typed hex) | the **blaze on an umber 600 tile**, name-free; favicon frames at 16 and 32 drop the halo edge; maskable mark at 0.6 of the side (0 pixels outside the 80 % circle, measured), iOS masters RGB without alpha; `Logo.jsx` draws the same blaze (square box, callers unchanged). **Staged, not shipped**: `public/` is protected | `scripts/og/icons.mjs` (`--out`), `src/components/Logo.jsx`; staged set in `public-staging/` (this run folder) with the manifest at `#eef0ea` |
+| **Share receipt** (1080 x 1350) | saffron flights, lagoon food, a beige head, a plain total | the formation's colours (bed umber, food beige on its edge, getting there ink because it is inside the total), line wagons, **dotted leaders**, the total on the **ink total plate**, the blaze before the brand line; the numbers check still passes | `src/lib/share/receipt.js`, `draw.js` (`neutral-500` added to the palette); offline twin `scripts/share/*` set in Overpass |
+| **Reading pages** (terms, privacy, imprint, cookies, help, press, partner, AI) | the old sheet: 14 px text, 600 headings, plain contents list | paper sheet on a hairline, headline 800, 16 px text on a 720 column, section heads at title size; contents beside the text from 1024 with the **section in view marked** (beige wash, umber 800, the painted blaze), folded below 1024 behind a 44 px edged control; help status as a band panel (danger edge and words for a warning); press facts as flat tiles with the figure loudest | `src/components/LegalDoc.jsx` (class `hs-legal`, scroll-marked contents), new `src/styles/brand-pages.css` (scoped under `.hs-legal`; the account lane's file untouched) |
+| **404** (new) | an unknown address opened the bare map | the wordmark slot, the dashed blaze at rest, "Nothing at this address", one line, "Open the map" (umber; puts the address back to the root) and "Plan a trip" (quiet); focus on the heading, trapped; six languages | `src/lib/notFound.js`, `src/components/NotFoundPage.jsx`, `LegalFromUrl.jsx`, `tests/hs-brand-notfound.test.mjs`, i18n `nf.*` under `// lane:brand` |
+| **Blog** | an inline `<style>` the site's CSP would refuse (a published post would be unstyled), Fraunces headings, mono numbers | the house look (stone ground, Overpass, the wordmark slot, tables and charts on paper, umber bars, one umber "Open the map" at the end); the sheet is a file `/blog/blog.css` with the house fonts in `/blog/fonts/`; `verify_blog.mjs` serves under the CSP and checks the sheet loads | `scripts/blog/build.mjs`, `scripts/verify_blog.mjs`, i18n `blog.cta` |
+| **Emails** (reminder, price drop, opt-in, waitlist, the confirm pages) | slate ink `#1f2a33`, off-white `#f6f5f2`, 12 to 16 px corners | the house values by value: stone ground, paper on a hairline at 12 px, ink, umber 700 links, the umber button at 8 px, Overpass first in the stack, the blaze in the reminder's wordmark | `supabase/functions/{notify,price-alerts,waitlist}/logic.mjs` |
+| **KML** | coral trail, rust first day | the route and trail in umber 600 (`ff2b5a8c`); other day colours kept so days stay apart | `src/lib/kmlExport.js`, `trailExport.js` |
+| **Docs** | | `references/brand.md` rewritten (one system off the screen, formats, gates); `docs/tos/fonts.md` print faces | |
+
+**Not changed in code (and why):** the prerender `STYLE` and the print popup `PRINT_CSS` are hashed in protected `public/_headers`; ready patches are in `patches/` (see `foundation-requests.md`).
+
+## Screenshots (`shots/`)
+- Reading pages and 404 at 390, 820, 1180 x 820, 1440: `legal-{terms,privacy,imprint,cookies-de,support,press,partner,ai}-<w>.png`, `notfound-<w>.png`, `notfound-de-<w>.png`; sweep 360 to 1920: `sweep.txt` (clean).
+- OG cards: `og-<card>-1200.png`, `og-<card>-1080.png`. Icons: `icons-sheet.png`.
+- Share receipt: `share-receipt-1080.png`. PDFs: `pdf-real-sheet.png` and `pdf-{mountain,trail,trip,sample}-p1.png` (real exports from the app), `pdf-*-harness.png` (destination cover with relief and receipt from the kit).
+- Blog: `blog-post-{390,1280}.png`, `blog-index-{390,1280}.png`.
+
+## Checks
+- `npm test`: 2,077 pass, 25 fail, all in the sparse-checkout baseline (`baseline-fails.txt` vs `final-fails.txt`: no new failure). New: `tests/hs-brand-notfound.test.mjs` (4 pass).
+- `npm run lint`: 0 errors. `design-lint`: 0 new (4,367, one fewer: `Logo.jsx`'s hex). `token-contrast`: 0 under the floor. `css-breakpoints`: on scale.
+- `verify_item_pdf` 27/27 (Overpass embedded), `verify_share_receipt` all good, `verify_trip_share` all good, `verify_blog` all good (now under the CSP), `verify_csp` 0 violations over 42 screen loads, `verify_ai_page` 39/40 (the one is a production-data CORS error from localhost), axe on all reading pages and the 404 at 390 and 1440: 0 serious or critical, 0 minor. `scripts/og/check.mjs --icons public-staging --data <main public>`: all card, copy, token and icon checks pass; the 2 failures are pre-existing (`public/og/site.png` absent in the sparse worktree; `index.html` title pattern, foundation-owned).
+- Not run: `verify_prerender` (needs a prerender build from the full data; `STYLE` unchanged), `verify_pwa` (manifest in `public/` unchanged; staged one differs only in two colours).
+- Verify scripts were run with `tools/force-en.mjs`: this machine's Dutch locale reaches headless Chromium and the scripts look for English labels.
+
+## Departures from the house style, and why
+- The share receipt's getting-there lines are ink, not the outlined umber pill: on a trip receipt they are inside the total, and DESIGN.md keeps the outline for "outside the day figure".
+- Email colours are typed hex by value (email clients read no CSS variables).
+- The 16 and 32 px icon frames draw the blaze without the halo edge (sub-pixel).
+
+## How to undo
+`git revert` the lane's commits (73117f750c, fcfba13ad7, 8d2d75f5b1, bf5981cdbc, a6296c3d97, c5ed736ae0, 17d923edca, 33ace99668 and any later fix commit). No data migration, no schema change; the staged icons were never copied into `public/`.

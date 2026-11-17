@@ -521,7 +521,7 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
     doc.setFillColor(...C.plate);
     doc.roundedRect(x, y, w, h, 1, 1, 'F');
     font('bold', h * 1.75, C.white);
-    doc.text(v, x + w / 2, y + h / 2 + 0.25, { align: 'center', baseline: 'middle' });
+    doc.text(v, x + w / 2, y + h / 2 + 0.45, { align: 'center', baseline: 'middle' });
     return w;
   };
 
@@ -704,12 +704,14 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
       if (!s) continue;
       if (typeof s === 'object' && s.score) {
         const size = 11;
-        const sw = scorePlate(s.score, M, state.y - 0.4);
+        // The words' first line sits on the plate's centre line.
+        const ph = 6.4;
+        const sw = scorePlate(s.score, M, state.y, { h: ph });
         const sx = M + sw + 2.5;
         const words = lines(s.text || '', size, PAGE_W - M - sx);
         font('normal', size, C.text2);
-        doc.text(words, sx, state.y, { baseline: 'top', lineHeightFactor: 1.35 });
-        state.y += Math.max(7, words.length * lh(size, 1.35) + 1.5);
+        doc.text(words, sx, state.y + ph / 2 + 0.9, { baseline: 'middle', lineHeightFactor: 1.35 });
+        state.y += Math.max(ph + 2, ph / 2 + words.length * lh(size, 1.35) + 1);
       } else {
         para(s, { size: 11, color: C.text2, after: 1 });
       }

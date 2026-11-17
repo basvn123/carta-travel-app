@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useDialogExit } from '../lib/motion.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { langFromPath, langRoot } from '../lib/langPath.js';
@@ -27,13 +28,16 @@ export function NotFoundPage({ onClose }) {
     return () => { document.title = before; };
   }, [t]);
 
+  // The page lifts away on the kit's exit timing (--dur-2), then the app is
+  // there; under reduced motion it goes at once (useDialogExit).
+  const exit = useDialogExit(onClose);
   const toMap = () => {
     try { window.history.replaceState(null, '', `${root}${window.location.search}`); } catch { /* sandboxed */ }
-    onClose();
+    exit.close();
   };
 
   return (
-    <div className="hs-nf" ref={ref} role="dialog" aria-modal="true" aria-labelledby="hs-nf-title">
+    <div className={`hs-nf${exit.leaving ? ' is-leaving' : ''}`} ref={ref} role="dialog" aria-modal="true" aria-labelledby="hs-nf-title">
       {/* The wordmark slot, as in the header: the blaze and the name. */}
       <div className="hs-nf-mark"><Blaze size="md" /><span className="hs-nf-name">Carta</span></div>
       <div className="hs-nf-body">
