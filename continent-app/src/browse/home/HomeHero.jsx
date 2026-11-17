@@ -8,6 +8,7 @@ import { srcSetFor, thumbAt } from '../../lib/heroImage.js';
 import { loadGuidedData } from '../../lib/guidedData.js';
 import { FILM } from '../../lib/homeDemo.js';
 import { useAutoAdvance, useInView, usePageVisible, useReducedMotion } from './useHome.js';
+import AiTag from '../../components/AiTag.jsx';
 
 /**
  * The hero (T620 and T621, owner 2026-10-23, after Mindtrip and Komoot): the
@@ -127,7 +128,7 @@ export function AskField({ t, onSearch, id, primary = false, labelledBy }) {
           placeholder={t('home.askPlaceholder')} autoComplete="off" spellCheck={false} enterKeyHint="search" />
       </span>
       {primary ? (
-        <Button type="submit" variant="primary" className="hv-ask-go hv-ask-go-main" iconStart={<span className="ai-tag" aria-hidden="true">AI</span>}>
+        <Button type="submit" variant="primary" className="hv-ask-go hv-ask-go-main" iconStart={<AiTag />}>
           {t('askChat.open')}
         </Button>
       ) : (

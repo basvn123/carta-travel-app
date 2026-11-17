@@ -11,8 +11,20 @@
  *   **bold**  *emphasis*  [text](https://... or /path)  ![alt](src)
  *   {{chart}} on its own line: the bar chart from the post's data file
  *
- * Plain JS, no dependency, runs in Node (the build) and in a browser.
+ * Plain JS, no dependency outside the app's own money formatter, runs in
+ * Node (the build) and in a browser.
+ *
+ * Euros: the drafts write amounts as "65 EUR" (the draft checker reads the
+ * "Day EUR" column heads). On the page every euro goes through formatMoney(),
+ * like every other screen: "65 EUR" reads "€65", a "Day EUR" column reads
+ * "Day" with "€65" in its cells, a chart in EUR prints "€65" at each bar.
  */
+import { formatMoney } from '../lib/money.js';
+
+const euro = (n) => formatMoney(n, { locale: 'en-GB' });
+const toNumber = (s) => Number(String(s).replace(/,/g, ''));
+/** "65 EUR" and "1,230 EUR" in running text, through the app's formatter. */
+export const euros = (text) => String(text ?? '').replace(/\b(\d[\d,]*(?:\.\d+)?) EUR\b/g, (m, n) => (Number.isFinite(toNumber(n)) ? euro(toNumber(n)) : m));
 const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 export const escapeHtml = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ESC[c]);
 
@@ -20,7 +32,7 @@ const SAFE_URL = /^(https:\/\/|\/(?!\/))/;
 
 /** Inline Markdown to HTML. `resolveSrc` maps an image path to its URL. */
 export function inline(text, resolveSrc = (s) => s) {
-  let s = escapeHtml(text);
+  let s = escapeHtml(euros(text));
   s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (m, alt, src) => {
     const url = resolveSrc(src.replace(/&amp;/g, '&'));
     return url ? `<img src="${escapeHtml(url)}" alt="${alt}" loading="lazy" decoding="async">` : alt;
@@ -38,13 +50,19 @@ const NUMERIC = /^[\d.,]+$/;
 
 function table(lines, resolveSrc) {
   const cells = (ln) => ln.trim().replace(/^\||\|$/g, '').split('|').map((c) => c.trim());
-  const head = cells(lines[0]);
+  const raw = cells(lines[0]);
+  const money = raw.map((h) => / EUR$/.test(h));
+  const head = raw.map((h, i) => (money[i] ? h.replace(/ EUR$/, '') : h));
   const body = lines.slice(2).map(cells);
   const th = head.map((h) => `<th scope="col">${inline(h, resolveSrc)}</th>`).join('');
+  const cell = (c, i) => (money[i] && NUMERIC.test(c) && Number.isFinite(toNumber(c)) ? euro(toNumber(c)) : c);
   const rows = body.map((r) => `<tr>${r.map((c, i) => (i === 0
     ? `<th scope="row">${inline(c, resolveSrc)}</th>`
-    : `<td${NUMERIC.test(c) ? ' class="n"' : ''}>${inline(c, resolveSrc)}</td>`)).join('')}</tr>`).join('');
-  return `<div class="bl-table"><table><thead><tr>${th}</tr></thead><tbody>${rows}</tbody></table></div>`;
+    : `<td${NUMERIC.test(c) ? ' class="n"' : ''}>${inline(cell(c, i), resolveSrc)}</td>`)).join('')}</tr>`).join('');
+  // A labelled, focusable region: the table scrolls sideways on a phone, so
+  // a keyboard reader can reach and scroll it (axe scrollable-region-focusable).
+  const name = head.join(', ');
+  return `<div class="bl-table" role="region" tabindex="0" aria-label="${escapeHtml(name)}"><table><thead><tr>${th}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 /** The bar chart of a data file's `chart` ({title, unit, bars:[{label,value}]}). */
@@ -53,7 +71,7 @@ export function chartHtml(chart) {
   const max = Math.max(...chart.bars.map((b) => b.value), 1);
   const items = chart.bars.map((b) => `<li><span class="bl-lab">${escapeHtml(b.label)}</span>`
     + `<svg class="bl-bar" viewBox="0 0 100 1" preserveAspectRatio="none" aria-hidden="true"><rect width="${Math.max(2, Math.round((b.value / max) * 100))}" height="1" rx="0.5"/></svg>`
-    + `<span class="bl-val n">${escapeHtml(b.value)} ${escapeHtml(chart.unit || '')}</span></li>`).join('');
+    + `<span class="bl-val n">${chart.unit === 'EUR' && Number.isFinite(b.value) ? escapeHtml(euro(b.value)) : `${escapeHtml(b.value)} ${escapeHtml(chart.unit || '')}`}</span></li>`).join('');
   return `<figure class="bl-chart"><figcaption>${escapeHtml(chart.title)}</figcaption><ol>${items}</ol></figure>`;
 }
 

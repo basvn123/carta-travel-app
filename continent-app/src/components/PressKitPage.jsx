@@ -41,7 +41,8 @@ export function PressKitPage({ onClose }) {
       </p>
 
       <h3>{t('press.factsH')}</h3>
-      <dl className="press-facts">
+      {/* The wide grid takes its column count from FACTS (brand-pages.css). */}
+      <dl className="press-facts" style={{ '--press-facts': FACTS.length }}>
         {FACTS.map(([k, key]) => (
           <div key={k} className="press-fact">
             <dt>{t(`press.fact.${k}`)}</dt>

@@ -137,11 +137,12 @@
 .hs-legal .legal-body .support-status[data-tone="warn"] { border-color: var(--danger); background: var(--surface); }
 
 /* Press: the facts as flat tiles, the figure loud; assets on the band. */
-/* Five facts (PressKitPage FACTS): one row of five from 1024, three and two
+/* The facts (PressKitPage FACTS, five today): one row of all from 1024 (the
+   count comes in as --press-facts), three and two
    from 600, two across on a phone with the fifth spanning its row; never a
    lone tile. */
 .hs-legal .legal-body .press-facts {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--press-facts, 5), minmax(0, 1fr));
   gap: var(--space-2);
   margin: var(--space-3) 0 var(--space-5);
 }

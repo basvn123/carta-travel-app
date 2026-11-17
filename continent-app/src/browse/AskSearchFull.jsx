@@ -5,13 +5,14 @@ import { GuidedSlots } from './GuidedSearch.jsx';
 import { useAsk, EXAMPLE_KEYS } from './useAsk.js';
 import { Button, Field, IconButton, Segmented } from '../components/ui/index.js';
 import { Stepper } from '../components/FilterControls.jsx';
-import { CloseIcon, SearchIcon, SparkIcon, ChevronDownIcon } from '../components/Icons.jsx';
+import { CloseIcon, SearchIcon, ChevronDownIcon } from '../components/Icons.jsx';
 import { parseBudget, DAYS_MIN, DAYS_MAX, MODES } from '../lib/budgetSearch.js';
 import { MAX_PARTY } from '../lib/tripTotal.js';
 import { formatMoney } from '../lib/money.js';
 import { makeRetriever } from '../lib/ask/retrieve.js';
 import { AiMark, AiReport } from '../components/AiMark.jsx';
 import '../styles/75-ask.css';
+import AiTag from '../components/AiTag.jsx';
 
 // One hybrid retriever for the app (T554): BM25 in the browser, /api/ask dense.
 const RETRIEVE = makeRetriever();
@@ -133,7 +134,7 @@ export function AskSearchFull({
   return (
     <div className={`gsearch ask${inHeader ? ' is-header' : ''}${summary ? ' has-value' : ''}${mode === 'plan' ? ' is-plan' : ''}`}>
       <Button ref={triggerRef} variant="secondary" className="gsearch-trigger"
-        iconStart={<SparkIcon size={18} />}
+        iconStart={<AiTag />}
         onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}>
         <span className={summary ? 'gsearch-summary' : 'gsearch-placeholder'}>{summary || placeholder}</span>
       </Button>
@@ -213,7 +214,7 @@ function AskStart({ t, lang, guided, countries, labels, facets, budgetSteps, onA
         <div className="ask-try-list">
           {EXAMPLE_KEYS.filter((k) => mode !== 'plan' || k === 'ask.ex.plan' || k === 'ask.ex.budget' || k === 'ask.ex.compare').map((k) => (
             <Button key={k} variant="secondary" className="ask-try-item"
-              iconStart={<SparkIcon size={16} />} onClick={() => onExample(t(k))}>
+              iconStart={<AiTag />} onClick={() => onExample(t(k))}>
               {t(k)}
             </Button>
           ))}
@@ -315,7 +316,7 @@ function WrittenAnswer({ t, written, device, report = null }) {
       {/* T1215: every model sentence carries the AI line; Report once it is done. */}
       {sentences.length > 0 && <AiMark report={state === 'done' ? report : null} />}
       {state === 'writing' && !sentences.length && <span className="ask-written-wait" role="status">{t('ask.written.writing')}</span>}
-      {quiet && <p className="ask-written-off"><SparkIcon size={16} className="ask-written-mark" />{t(line)}</p>}
+      {quiet && <p className="ask-written-off"><AiTag className="ask-written-mark" />{t(line)}</p>}
       {device}
     </div>
   );

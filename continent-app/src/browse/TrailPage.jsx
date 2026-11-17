@@ -45,6 +45,7 @@ import { UploadForm } from '../community/UploadForm.jsx';
 import { ItemIcon } from './ItemParts.jsx';
 import { Button } from '../components/ui/index.js';
 import { formatMoney } from '../lib/money.js';
+import { activeLocale } from '../lib/localeState.js';
 import { toPhotos } from '../lib/itemPhotos.js';
 import { beforeGoItems } from '../lib/beforeGo.js';
 import { useItemPdf } from '../hooks/useItemPdf.js';
@@ -97,7 +98,8 @@ const hoursText = (min) => {
   const h = min / 60;
   return h >= 10 ? String(Math.round(h)) : h.toFixed(1);
 };
-const km1 = (m) => (m / 1000).toFixed(1).replace(/\.0$/, '');
+// One decimal at most, in the app's own number format: German reads "102,2 km".
+const km1 = (m) => (m / 1000).toLocaleString(activeLocale(), { maximumFractionDigits: 1 });
 /** A walking time to the nearest five minutes: "7 h", "2 h 35 min". */
 const duration = (min) => {
   const r = Math.max(5, Math.round(min / 5) * 5);
@@ -688,9 +690,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const galleryPhotos = shots.length ? shots
     : (tr.img?.u ? toPhotos([tr.img], { fallbackCaption: named.name })
       : (assoc.photoUrl ? toPhotos([assoc.photoUrl], { caption: assoc.photoOf ? t('detail.photoNear', { place: assoc.photoOf }) : named.name }) : []));
+  // The before-you-go figures print in the page's number format ("4,409 m
+  // of climbing", like the board), not as bare digits.
   const before = beforeGoItems({
     lines: notForLines('trail', tr, { reasons: detail?.reasons || tr.reasons, grade, ascent, totalM }),
-  });
+  }).map((it) => ({
+    ...it,
+    params: Object.fromEntries(Object.entries(it.params || {}).map(([k, v]) => [k, typeof v === 'number' ? nf(v) : v])),
+  }));
   const sources = [
     { label: detail?.attribution_text || tr.attribution_text || 'OpenStreetMap' },
   ];

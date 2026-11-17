@@ -2,7 +2,7 @@ import React from 'react';
 import { useSiteConfig } from '../hooks/useSiteConfig.js';
 import { useIsAdmin } from '../hooks/useIsAdmin.js';
 import { useI18n } from '../i18n/index.jsx';
-import Logo from './Logo.jsx';
+import { Blaze } from './ui/Blaze.jsx';
 import { ErrorBlock } from './StateBlocks.jsx';
 
 // Closing the doors, from the admin panel, without a deploy.
@@ -37,7 +37,11 @@ export function MaintenanceGate({ children }) {
   return (
     <div className="maintenance">
       <div className="maintenance-card">
-        <Logo />
+        {/* The wordmark slot, as on sign in: the blaze and the name. */}
+        <div className="auth-brand auth-brand-center">
+          <Blaze size="md" />
+          <span className="auth-brand-name">Carta</span>
+        </div>
         <h1 className="maintenance-title">{t('maintenance.title')}</h1>
         <ErrorBlock
           className="maintenance-block"

@@ -1,10 +1,10 @@
 import React from 'react';
-import Logo from './Logo.jsx';
+import { Blaze } from './ui/Blaze.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
 import { SUPPORT_EMAIL } from '../lib/contact.js';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
-import { ChevronDownIcon, GlobeIcon } from './Icons.jsx';
+import { ChevronDownIcon, BordersIcon } from './Icons.jsx';
 import '../styles/82-site-footer.css';
 
 /**
@@ -69,11 +69,15 @@ export function SiteFooter() {
     <footer className="site-footer" aria-label={t('footer.label')}>
       <div className="site-footer-inner">
         <div className="site-footer-brand">
-          <Logo size={28} />
+          {/* The wordmark slot, as in the header: the blaze and the name. */}
+          <div className="auth-brand site-footer-mark">
+            <Blaze size="md" />
+            <span className="auth-brand-name">Carta</span>
+          </div>
           <p className="site-footer-line">{t('footer.tagline')}</p>
           {setLang && languages?.length > 1 && (
             <label className="site-footer-lang">
-              <GlobeIcon size={16} />
+              <BordersIcon size={16} />
               <span className="sr-only">{t('footer.language')}</span>
               <select value={lang} onChange={(e) => setLang(e.target.value)}>
                 {languages.map((l) => <option key={l.code} value={l.code}>{l.label}</option>)}

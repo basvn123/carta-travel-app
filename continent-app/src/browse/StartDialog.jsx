@@ -1,13 +1,14 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Field, IconButton } from '../components/ui/index.js';
-import { CloseIcon, SparkIcon } from '../components/Icons.jsx';
+import { CloseIcon } from '../components/Icons.jsx';
 import { HouseIcon } from '../components/HouseIcons.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useDialogExit } from '../lib/motion.js';
 import { openAskChat } from './ask/askChatStore.js';
 import '../styles/84-explore-overview.css';
+import AiTag from '../components/AiTag.jsx';
 
 // T764: the taste profile's four questions load with the path, not with Explore.
 const TasteSteps = React.lazy(() => import('./TasteSheet.jsx').then((m) => ({ default: m.TasteSteps })));
@@ -117,7 +118,7 @@ export function StartDialog({ t, onClose, mode: firstMode = 'home' }) {
           </React.Suspense>
         ) : (
           <>
-            <span className="xstart-icon" aria-hidden="true"><SparkIcon size={24} /></span>
+            <span className="xstart-icon" aria-hidden="true"><AiTag /></span>
             <h2 className="xstart-title" id="xstart-title">{t('explore.startTitle')}</h2>
             <Field ref={fieldRef} as="textarea" className="xstart-field" label={t('explore.startField')}
               value={text} maxLength={500} rows={3} onChange={(e) => setText(e.target.value)} />

@@ -354,6 +354,10 @@ export function GlobeIcon({ size = 20, className = '' }) {
   );
 }
 
+/** The same glyph under its honest name: a folded map with borders, not a
+ *  globe. New callers use this; GlobeIcon stays for the older ones. */
+export const BordersIcon = GlobeIcon;
+
 /* ─── Country-intel glyphs: line icons, 1.5 stroke (one weight for the whole set, T391), inherit currentColor ─── */
 
 // The label is the English name and also the key: glyph.<slug> in the six

@@ -71,8 +71,11 @@ export async function downloadTripPdf(trip, ctx = {}) {
   const priceValue = range && (Number.isFinite(range.low) || Number.isFinite(range.high))
     ? formatMoneyRange(range.low, range.high, { locale: lang })
     : (m.price?.ppValue || '');
+  // The page's own facts row already carries Best months in its words; the
+  // booklet adds its own only when the page has none, so it prints once.
+  const pageHasBest = (m.facts || []).some((c) => c && c.value && c.label === t('journey.fBest'));
   const coverFacts = [
-    bestMonths.length ? { label: T('pdf.factBest'), value: monthSpan(bestMonths, loc) } : null,
+    bestMonths.length && !pageHasBest ? { label: T('pdf.factBest'), value: monthSpan(bestMonths, loc) } : null,
     ...(m.facts || []),
   ].filter((c) => c && c.value).slice(0, 4);
   await kit.cover({

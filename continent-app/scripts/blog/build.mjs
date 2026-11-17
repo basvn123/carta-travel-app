@@ -26,7 +26,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderMarkdown, escapeHtml as esc, chartHtml } from '../../src/blog/markdown.js';
+import { renderMarkdown, escapeHtml as esc, chartHtml, euros } from '../../src/blog/markdown.js';
 import { rssFeed, blogSitemap, postGraph, indexGraph, byNewest, postPath, ORIGIN } from '../../src/blog/feed.js';
 import { SITE_CARD, clean, fitDescription } from '../prerender/html.mjs';
 import { stripDashes } from '../../src/lib/format.js';
@@ -59,7 +59,9 @@ export function loadPosts(dir) {
   return fs.readdirSync(dir).filter((f) => f.endsWith('.md') && !/^(_|README)/.test(f)).sort().map((f) => {
     const { fm, body } = parsePost(fs.readFileSync(path.join(dir, f), 'utf8'));
     const data = fm.data ? JSON.parse(fs.readFileSync(path.join(dir, fm.data), 'utf8')) : null;
-    return { file: f, ...fm, body, data };
+    // Titles and descriptions print euros the way the page body does.
+    const money = Object.fromEntries(['title', 'description'].filter((k) => typeof fm[k] === 'string').map((k) => [k, euros(fm[k])]));
+    return { file: f, ...fm, ...money, body, data };
   });
 }
 
@@ -91,11 +93,14 @@ body{margin:0;background:var(--surface-page);color:var(--text);font-family:var(-
 .bl-meta{font-size:var(--text-body);color:var(--text-2);margin-bottom:var(--space-6)}
 .bl-draft{border:1px solid var(--select-border);background:var(--select-bg);color:var(--select-ink);border-radius:var(--radius-control);padding:var(--space-3) var(--space-4);margin:0 0 var(--space-5);font-size:var(--text-body);font-weight:600}
 .bl .n,.bl td.n{font-variant-numeric:tabular-nums lining-nums}
-.bl-table{overflow-x:auto;margin:var(--space-5) 0;border:1px solid var(--border);border-radius:var(--radius-panel);background:var(--surface)}
+.bl-table{overflow-x:auto;margin:var(--space-5) 0;border:1px solid var(--border);border-radius:var(--radius-panel);background:linear-gradient(to left,var(--surface),var(--surface)) right/var(--space-6) 100% no-repeat local,linear-gradient(to left,color-mix(in srgb,var(--text) 14%,transparent),transparent) right/var(--space-5) 100% no-repeat scroll,var(--surface)}
+.bl-table:focus-visible{outline:var(--stroke-focus) solid var(--focus);outline-offset:2px}
 .bl-table table{width:100%;border-collapse:collapse;font-size:var(--text-body)}
 .bl-table th,.bl-table td{padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--border-soft);text-align:left;font-weight:400;white-space:nowrap}
 .bl-table thead th{background:var(--surface-sunken);font-weight:700;font-size:var(--text-label);color:var(--text-2)}
 .bl-table tbody th{font-weight:700}
+.bl-table th:first-child{position:sticky;left:0;z-index:1;background:var(--surface);box-shadow:1px 0 0 var(--border-soft)}
+.bl-table thead th:first-child{background:var(--surface-sunken)}
 .bl-table td.n{text-align:right;font-weight:700}
 .bl-table tr:last-child th,.bl-table tr:last-child td{border-bottom:0}
 .bl-chart{margin:var(--space-5) 0;padding:var(--space-4);border:1px solid var(--border);border-radius:var(--radius-panel);background:var(--surface)}
@@ -222,7 +227,8 @@ export function build({ content, out, drafts = false }) {
   }
   write(path.join(out, 'blog', 'index.html'), indexPage(shown));
   write(path.join(out, 'blog', 'blog.css'), blogCss());
-  for (const f of FONT_FILES) {
+  // The OFL travels with the font files it covers (SIL OFL 1.1 asks for it).
+  for (const f of [...FONT_FILES, 'Overpass-OFL.txt', 'SofiaSansExtraCondensed-OFL.txt']) {
     fs.mkdirSync(path.join(out, 'blog', 'fonts'), { recursive: true });
     fs.copyFileSync(path.join(APP, 'src', 'assets', 'fonts', f), path.join(out, 'blog', 'fonts', f));
   }

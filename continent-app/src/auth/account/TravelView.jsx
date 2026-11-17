@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import {
-  BedIcon, DiningIcon, FriendsIcon, GlobeIcon, MapPinIcon, ReceiptIcon, CalendarIcon, PiggyIcon,
+  BedIcon, DiningIcon, FriendsIcon, BordersIcon, MapPinIcon, ReceiptIcon, CalendarIcon, PiggyIcon,
 } from '../../components/Icons.jsx';
 import { ChoiceRows, Switch } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
@@ -154,7 +154,7 @@ export function PrefsView({ head, userId = null }) {
     <>
       {head}
       <Group id="ac-prefs">
-        <Row icon={GlobeIcon} label={t('account.language')} value={current.label} expanded={open} rowRef={langRef} onClick={() => setOpen((o) => !o)} />
+        <Row icon={BordersIcon} label={t('account.language')} value={current.label} expanded={open} rowRef={langRef} onClick={() => setOpen((o) => !o)} />
         {open && (
           <div className="ac-pick">
             <ChoiceRows

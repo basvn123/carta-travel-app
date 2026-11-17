@@ -1836,20 +1836,6 @@
 /* (The 10 px tracked labels of My trips and Account went in T410: brief V5-2,
    DIRECTION rule 12. Their one rule is in 69-v6-account.css.) */
 
-/* The one filled action on these pages wears the accent, the way Get a pass
-   does in the bar. Scoped to the two shells: the same class is the ink button
-   in the auth modal and on the map, which are not this design. */
-.account-shell .auth-submit {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--on-fill);
-}
-@media (hover: hover) {
-  .account-shell .auth-submit:hover:not(:disabled) {
-    background: var(--accent-soft);
-    border-color: var(--accent-soft);
-  }
-}
 /* Deleting an account is the one control in the app that keeps its own
    colour, and the quiet Save is deliberately not a primary. */
 

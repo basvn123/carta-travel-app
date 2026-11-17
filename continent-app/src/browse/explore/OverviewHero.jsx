@@ -1,9 +1,10 @@
 import React from 'react';
 import { openAskChat } from '../ask/askChatStore.js';
-import { SparkIcon, DiamondIcon } from '../../components/Icons.jsx';
+import { DiamondIcon } from '../../components/Icons.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
 import { PriceViewSwitch } from '../../components/PriceViewSwitch.jsx';
+import AiTag from '../../components/AiTag.jsx';
 
 /**
  * The overview's head (T586, T595; rebuilt as a hero by T601, Explore v8,
@@ -73,7 +74,7 @@ export function OverviewHero({
           </div>
         </form>
         <Button variant="primary" className="xov-ask" onClick={(e) => openAskChat(e.currentTarget)}
-          aria-label={t('dock.ask')} iconStart={<SparkIcon size={22} />}>
+          aria-label={t('dock.ask')} iconStart={<AiTag />}>
           {t('dock.askShort')}
         </Button>
       </div>

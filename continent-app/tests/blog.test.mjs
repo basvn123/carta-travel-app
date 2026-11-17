@@ -27,7 +27,12 @@ test('markdown renders a table with numeric cells marked and a chart from data',
   const h = renderMarkdown('| Place | Day EUR |\n|---|---|\n| Merida | 65 |\n\n{{chart}}', {
     data: { chart: { title: 'Day', unit: 'EUR', bars: [{ label: 'Merida', value: 65 }, { label: 'Gozo', value: 90 }] } },
   });
-  assert.match(h, /<th scope="row">Merida<\/th><td class="n">65<\/td>/);
+  // Euros go through the app's formatter; the scrolling table is a named region.
+  assert.match(h, /<th scope="row">Merida<\/th><td class="n">€65<\/td>/);
+  assert.match(h, /<th scope="col">Day<\/th>/);
+  assert.match(h, /class="bl-table" role="region" tabindex="0" aria-label="Place, Day"/);
+  assert.match(h, /<span class="bl-val n">€90<\/span>/);
+  assert.match(renderMarkdown('From 65 EUR a day.'), /From €65 a day\./);
   assert.match(h, /class="bl-chart"/);
   assert.match(h, /<rect width="100"/);
   assert.equal(chartHtml(null), '');

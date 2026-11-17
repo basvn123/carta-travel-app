@@ -5,7 +5,7 @@ import { authErrorText } from './authErrors.js';
 import { AiTag } from '../components/AiTag.jsx';
 import {
   ArrowLeftIcon, BedIcon, CheckIcon, ClockIcon, CloseIcon, DownloadIcon, EyeIcon, EyeOffIcon,
-  FeedbackIcon, FriendsIcon, GlobeIcon, HomeIcon, LinkIcon, LockIcon, MapPinIcon, PencilIcon,
+  FeedbackIcon, FriendsIcon, BordersIcon, HomeIcon, LinkIcon, LockIcon, MapPinIcon, PencilIcon,
   PersonIcon, PlaneIcon, QuestionIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
   TicketIcon, TrashIcon,
 } from '../components/Icons.jsx';
@@ -698,7 +698,7 @@ export function AccountPanel({
   const SECTIONS = [
     { v: 'travel', Icon: PlaneIcon, label: t('ac.travel') },
     signedIn && { v: 'plan', Icon: TicketIcon, label: t('ac.plan') },
-    { v: 'prefs', Icon: GlobeIcon, label: t('account.preferences') },
+    { v: 'prefs', Icon: BordersIcon, label: t('account.preferences') },
     signedIn && { v: 'together', Icon: FriendsIcon, label: t('tg.title') },
     signedIn && { v: 'security', Icon: LockIcon, label: t('account.menuSecurity') },
     signedIn && { v: 'data', Icon: ShieldIcon, label: t('account.dataTitle') },
@@ -861,7 +861,7 @@ export function AccountPanel({
         </Group>
       )}
       <Group id="ac-g-prefs" title={t('account.preferences')}>
-        <Row icon={GlobeIcon} label={t('account.language')} value={langLabel} href={hrefOf('prefs')} onClick={() => go('prefs')} />
+        <Row icon={BordersIcon} label={t('account.language')} value={langLabel} href={hrefOf('prefs')} onClick={() => go('prefs')} />
         <Row icon={ReceiptIcon} label={t('ac.currency')} value={t('ac.currencyEur')} href={hrefOf('prefs')} onClick={() => go('prefs')} />
       </Group>
       {signedIn && (

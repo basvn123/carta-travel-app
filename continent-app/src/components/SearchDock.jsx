@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, Chip, ChipGroup, IconButton } from './ui/index.js';
 import {
-  ChevronDownIcon, CloseIcon, SearchIcon, SparkIcon, ClockIcon, GlobeIcon,
+  ChevronDownIcon, CloseIcon, SearchIcon, ClockIcon, GlobeIcon,
 } from './Icons.jsx';
 import { HouseIcon } from './HouseIcons.jsx';
 import {
@@ -20,6 +20,7 @@ import {
   useSearchDock, dockBack, dockFilters, loadRecent, rememberSearch, isQuestion,
 } from '../browse/searchDockStore.js';
 import '../styles/96-search-dock.css';
+import AiTag from './AiTag.jsx';
 
 /**
  * The search dock (T961, owner 2026-10-31: "like airbnb at the top a search
@@ -115,7 +116,7 @@ export function SearchDock({ onSearch }) {
       ) : (
         <button type="button" className="sdock-ask" aria-label={t('dock.ask')} title={t('dock.ask')}
           onClick={(e) => openAskChat(e.currentTarget)}>
-          <SparkIcon size={20} />
+          <AiTag />
           <span className="sdock-ask-word" aria-hidden="true">{t('dock.askShort')}</span>
         </button>
       )}
@@ -271,7 +272,7 @@ function SearchSheet({ s, startKind, startQ, opener, onClose, onSearch }) {
                       </li>
                       <li>
                         <button type="button" className="sdock-option is-ask" onClick={() => ask(typed)}>
-                          <span className="sdock-option-tile" aria-hidden="true"><SparkIcon size={20} /></span>
+                          <span className="sdock-option-tile" aria-hidden="true"><AiTag /></span>
                           <span className="sdock-option-text">
                             <span className="sdock-option-name">{t('dock.askFor', { q: typed })}</span>
                             <span className="sdock-option-sub">{t('dock.askSub')}</span>

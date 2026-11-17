@@ -155,6 +155,9 @@
 .ac-list > .ac-row:first-child,
 .ac-list > :first-child .ac-row:first-child { border-top: 0; }
 .ac-row.is-static { grid-template-columns: auto minmax(0, 1fr) auto; }
+/* Vibrate on tap has no value column: the switch spans to the row's edge,
+   so it ends where the static rows' values end, not a gap short of it. */
+.ac-row.is-static.hs-setting-row { grid-template-columns: auto minmax(0, 1fr); }
 @media (hover: hover) {
   a.ac-row:hover, .ac-row.btn:hover { background: var(--surface-hover); border-color: var(--border-soft); }
 }

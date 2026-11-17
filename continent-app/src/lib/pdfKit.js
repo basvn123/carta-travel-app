@@ -217,8 +217,6 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
       return orig(...a);
     };
   }
-  const TOTAL = '{total_pages}';
-
   const font = (style, size, color = C.text) => {
     doc.setFont(...face(style));
     doc.setFontSize(size);
@@ -229,6 +227,17 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
     doc.setFont(...face(style));
     doc.setFontSize(size);
     return doc.splitTextToSize(clean(text), width);
+  };
+  // At most `max` lines; when text is cut, the last kept line ends in an
+  // ellipsis so a reader sees there was more.
+  const linesCut = (text, size, width, style, max) => {
+    const ls = lines(text, size, width, style);
+    if (ls.length <= max) return ls;
+    const kept = ls.slice(0, max);
+    let last = `${kept[max - 1]} `;
+    do { last = last.slice(0, -1).trimEnd(); } while (last && doc.getTextWidth(`${last}…`) > width);
+    kept[max - 1] = `${last}…`;
+    return kept;
   };
   const footer = () => {
     doc.setDrawColor(...C.soft);
@@ -243,11 +252,16 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
     blaze(M, PAGE_H - FOOT + 2.6, 4);
     font('normal', 7.5, C.text3);
     doc.text(clean(footerLabel), M + 5.6, PAGE_H - FOOT + 4.5);
-    // The total is written in after the last page, so the label is set
-    // from the left at the width its final text will have (one digit).
-    const pl = pageLabel(state.page, TOTAL);
-    const plW = doc.getTextWidth(pageLabel(state.page, '9'));
-    doc.text(pl, PAGE_W - M - plW, PAGE_H - FOOT + 4.5);
+  };
+  // The page labels are written once the last page exists, so each one is
+  // measured with its real total and ends on the right margin ("10 / 12").
+  const pageLabels = () => {
+    const total = typeof doc.getNumberOfPages === 'function' ? doc.getNumberOfPages() : state.page;
+    for (let n = 1; n <= total; n += 1) {
+      if (typeof doc.setPage === 'function') doc.setPage(n);
+      font('normal', 7.5, C.text3);
+      doc.text(pageLabel(n, total), PAGE_W - M, PAGE_H - FOOT + 4.5, { align: 'right' });
+    }
   };
   const newPage = () => {
     footer();
@@ -421,7 +435,7 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
       font('normal', 7, C.text3);
       const creditW = credit ? Math.min(w * 0.55, doc.getTextWidth(clean(credit))) + 3 : 0;
       font('semibold', 8.5);
-      const capLine = doc.splitTextToSize(clean(ph.caption || ''), Math.max(10, w - creditW))[0] || '';
+      const capLine = linesCut(ph.caption || '', 8.5, Math.max(10, w - creditW), 'semibold', 1)[0] || '';
       doc.text(capLine, x, state.y, { baseline: 'top' });
       if (credit) {
         font('normal', 7, C.text3);
@@ -537,7 +551,7 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
     const pad = 6;
     const figW = figure ? (() => { font('bold', size * 0.82); return doc.getTextWidth(clean(figure)) + pad; })() : 0;
     const nameW = W - tip - pad * 2 - figW;
-    const nl = lines(name, size, nameW, 'plate').slice(0, 2);
+    const nl = linesCut(name, size, nameW, 'plate', 2);
     const nameH = nl.length * lh(size, 1.0);
     const subH = sub ? lh(10.5, 1.3) + 1 : 0;
     const h = Math.max(20, nameH + subH + pad * 1.6);
@@ -555,7 +569,7 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
     ty += nameH + 1;
     if (sub) {
       font('semibold', 10.5, C.onPlate2);
-      doc.text(lines(sub, 10.5, nameW, 'semibold')[0] || '', x + pad, ty, { baseline: 'top' });
+      doc.text(linesCut(sub, 10.5, nameW, 'semibold', 1)[0] || '', x + pad, ty, { baseline: 'top' });
     }
     if (figure) {
       const fx = x + W - tip - pad;
@@ -895,7 +909,7 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
 
   const save = (filename) => {
     footer();
-    if (typeof doc.putTotalPages === 'function') doc.putTotalPages(TOTAL);
+    pageLabels();
     doc.save(filename);
   };
 
