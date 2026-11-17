@@ -1696,6 +1696,8 @@ span.tbp-seg { cursor: default; }
 .tpg .ccard-wagon.is-food { background: var(--wagon-food); color: var(--wagon-food-ink); outline: var(--stroke-hair) solid var(--wagon-food-edge); outline-offset: -1px; }
 .tpg .ccard-wagon.is-none { flex: none; min-width: 0; gap: var(--space-1); font-size: var(--text-micro); }
 .tpg .ccard-wagon svg { width: 16px; height: 16px; }
+/* The train still carries the old ccard-arc class; its arc rule (stroke-width 12) must not reach the icons. */
+.tpg .ccard-train path { stroke-width: inherit; }
 /* The budget: one line under the train, the bar shown. */
 .tpg .ccard:not(.is-umber) .ccard-budget { justify-items: stretch; }
 .tpg .ccard:not(.is-umber) .tpbud.is-compact { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--space-1) var(--space-3); text-align: left; }
