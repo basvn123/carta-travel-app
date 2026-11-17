@@ -192,9 +192,11 @@ check('gateway record describes the city, not the airport',
 
 // Opened from an Explore card, the page opens and back returns to the list.
 await page.goto(BASE, { waitUntil: 'domcontentloaded', timeout: 90000 });
-await page.waitForSelector('a.card-open[href^="#dest="]', { timeout: 90000 });
+// The house style's Explore rows link through .xrow-hit (same #dest= href, same open behaviour).
+const OPEN = 'a.card-open[href^="#dest="], a.xrow-hit[href^="#dest="]';
+await page.waitForSelector(OPEN, { timeout: 90000 });
 await page.waitForTimeout(1500);
-await page.locator('a.card-open[href^="#dest="]:visible').first().click();
+await page.locator('a.card-open[href^="#dest="]:visible, a.xrow-hit[href^="#dest="]:visible').first().click();
 await settle(page);
 check('a card opens the place page', await page.locator('.destp .pt-title').isVisible());
 await page.close();
