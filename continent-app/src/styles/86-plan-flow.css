@@ -286,8 +286,6 @@
 }
 
 .pf-coll-go svg { transition: transform var(--dur-2) var(--ease-out); }
-/* House style: Ready-made trips is already a button above; the whole card stays the link, its pill steps back. */
-.pf-open .pf-coll-go { display: none; }
 
 @media (hover: hover) {
   .pf-coll:hover { border-color: var(--edge); }
