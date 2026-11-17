@@ -232,6 +232,16 @@
 .mt-unit { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
 .mt-section-unit { margin-left: auto; font-size: var(--text-label); font-weight: 600; color: var(--text-2); white-space: nowrap; }
 .mt-section-unit + .mt-section-action { margin-left: var(--space-3); }
+/* The moderation statement under a trip is its own row, a full gap below
+   the card (not a half-joined panel hanging off it). */
+.mt-next .modnote, .mt-row-wrap .modnote {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
 /* A row without a price says so quietly; only a figure is loud. */
 .mt-row .card-price .mt-muted { font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
 .mt-next-money.is-none { font-size: var(--text-body); color: var(--text-3); }
@@ -1000,9 +1010,12 @@
   .mt-map { height: 360px; }
 }
 
-/* ── Phone ── */
-@media (max-width: 768px) {
+/* ── Phone and tablet: the actions share the card's width (no orphan
+   button on its own line at 820) ── */
+@media (max-width: 1023px) {
   .mt-next-actions .btn { flex: 1 1 auto; }
+}
+@media (max-width: 768px) {
   .mt-next-actions .btn-primary { flex-basis: 100%; }
 }
 @media (max-width: 420px) {

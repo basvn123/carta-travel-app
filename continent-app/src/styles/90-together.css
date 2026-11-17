@@ -4,14 +4,14 @@
 
    House style (account lane, 2026-11): no dark slab outside the plates and
    no second accent, so
-   - "Plans that meet" is a paper card; your days are the beige wash with
-     umber 800 words, theirs the stone hairline tint with ink words, and the
-     shared days a dashed umber outline;
-   - faces wear one of four quiet tones (beige for you; stone, band and the
-     world tints for friends) so a friend is recognisable across screens,
-     always with the name beside it;
-   - the "You and Sam" map: both ink, you beige, them the control edge grey,
-     each carried by a legend word and a count. */
+   - "Plans that meet" is a paper card; your days are paper with an ink
+     outline, theirs the stone tint with ink words, and the shared days a
+     dashed umber outline (umber marks what you two could choose);
+   - faces: you are paper with an ink outline, friends wear one of four
+     fills from the neutral ramp, always with the name beside it (no umber
+     as a person colour: umber means "chosen");
+   - the "You and Sam" map: both ink, you paper with an ink edge, them the
+     control grey, each carried by a legend word and a count. */
 
 /* ── The header door ─────────────────────────────────────────────────── */
 
@@ -38,12 +38,16 @@
 
 /* ── Faces in four tones ─────────────────────────────────────────────── */
 
-.frn-face.tg-tone-you { background: var(--umber-100); color: var(--umber-700); }
-.frn-face.tg-tone-0 { background: var(--world-water); color: var(--text); }
+/* You: paper with an ink outline; friends: fills from the neutral ramp (no
+   umber as a person colour: umber means "chosen"). Names always beside. */
+.frn-face.tg-tone-you { background: var(--surface); color: var(--text); outline: var(--stroke-edge) solid var(--text); outline-offset: calc(-1 * var(--stroke-edge)); }
+.frn-face.tg-tone-0 { background: var(--neutral-100); color: var(--text); }
 .frn-face.tg-tone-1 { background: var(--neutral-150); color: var(--text); }
-.frn-face.tg-tone-2 { background: var(--world-rock); color: var(--text); }
-.frn-face.tg-tone-3 { background: var(--world-lowland); color: var(--text); }
+.frn-face.tg-tone-2 { background: var(--neutral-200); color: var(--text); }
+.frn-face.tg-tone-3 { background: var(--neutral-700); color: var(--on-plate); }
 .tg-faces .frn-face { box-sizing: content-box; border: 2px solid var(--surface); }
+/* A light overlap so no initial is clipped by its neighbour. */
+.tg-faces .frn-face + .frn-face { margin-left: calc(var(--space-1) * -1); }
 
 /* ── The page ────────────────────────────────────────────────────────── */
 
@@ -187,7 +191,7 @@
   font-size: var(--text-micro);
   font-weight: 700;
 }
-.tg-bar.is-you { background: var(--umber-100); color: var(--umber-800); outline: 1px solid var(--umber-300); outline-offset: -1px; }
+.tg-bar.is-you { background: var(--surface); color: var(--text); outline: var(--stroke-edge) solid var(--text); outline-offset: calc(-1 * var(--stroke-edge)); }
 .tg-bar.is-them { background: var(--neutral-200); color: var(--text); }
 .tg-over {
   position: absolute;
@@ -244,7 +248,9 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.tg-poll { display: grid; gap: var(--space-2); }
+/* A poll is a list of hairline rows inside the card (the one row language),
+   not boxes in a card; the vote share is the beige fill behind each row. */
+.tg-poll { display: grid; gap: 0; }
 .tg-poll-q { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
 .tg-opt.btn {
   position: relative;
@@ -253,8 +259,9 @@
   height: auto;
   min-height: var(--tap);
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
+  border: 0;
+  border-bottom: 1px solid var(--border-soft);
+  border-radius: 0;
   background: var(--surface);
   color: var(--text);
   text-align: left;
@@ -273,8 +280,10 @@
 .tg-opt > .btn-label > :not(.tg-opt-fill) { position: relative; }
 .tg-opt b { display: block; font-size: var(--text-body); font-weight: 600; }
 .tg-opt small { display: block; font-size: var(--text-caption); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.tg-opt small.is-over { color: var(--amber-ink); }
-.tg-opt[aria-pressed="true"] { border-color: var(--select-border); }
+.tg-opt small.is-over { color: var(--danger); font-weight: 600; }
+.tg-poll-q + .tg-opt.btn { border-top: 1px solid var(--border-soft); }
+.tg-opt[aria-pressed="true"] { border-color: var(--border-soft); background: var(--select-row); }
+.tg-opt[aria-pressed="true"] b { color: var(--select-ink); }
 .tg-opt-ck {
   display: grid;
   place-items: center;
@@ -444,7 +453,7 @@
 .tg-menu-item.is-danger { color: var(--danger); }
 .tg-duo svg { display: block; width: 100%; height: auto; max-width: 560px; }
 .tg-duo .is-both { fill: var(--text); }
-.tg-duo .is-you { fill: var(--umber-200); stroke: var(--umber-500); stroke-width: 1.5; }
+.tg-duo .is-you { fill: var(--surface); stroke: var(--text); stroke-width: 1.5; }
 .tg-duo .is-them { fill: var(--edge); }
 .tg-duo .is-none { fill: var(--surface-sunken); }
 .tg-duo text { font-family: var(--font); font-size: var(--text-lead); font-weight: 700; fill: var(--text-3); }
@@ -452,7 +461,7 @@
 .tg-leg { display: flex; gap: var(--space-4); flex-wrap: wrap; margin-top: var(--space-2); font-size: var(--text-label); color: var(--text-2); font-variant-numeric: tabular-nums; }
 .tg-leg i { display: inline-block; width: 10px; height: 10px; margin-right: var(--space-2); border-radius: var(--radius-sm); }
 .tg-leg .is-both { background: var(--text); }
-.tg-leg .is-you { background: var(--umber-200); outline: var(--stroke-edge) solid var(--umber-500); outline-offset: calc(-1 * var(--stroke-edge)); }
+.tg-leg .is-you { background: var(--surface); outline: var(--stroke-edge) solid var(--text); outline-offset: calc(-1 * var(--stroke-edge)); }
 .tg-leg .is-them { background: var(--edge); }
 .tg-tip, .tg-bi {
   display: grid;

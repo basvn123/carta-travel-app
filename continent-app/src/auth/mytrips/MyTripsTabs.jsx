@@ -8,6 +8,7 @@ import { PlusIcon, UploadIcon, ChevronRightIcon, RouteIcon } from '../../compone
 import { countryName } from '../../lib/countryName.js';
 import { tabHref } from '../../lib/urlState.js';
 import { NextTripCard, TripRow } from './TripCards.jsx';
+import { TripPrice } from './parts.jsx';
 import { JoinsLine } from '../../together/signals.jsx';
 import { FaceStack } from '../FriendFaces.jsx';
 
@@ -20,6 +21,10 @@ export function door(go) {
     go();
   };
 }
+
+/** Does any row in a list print a day figure? The section head says the unit
+ *  only then (an unpriced list has no unit to name). */
+const priced = (rows) => rows.some((r) => r.figure?.type === TripPrice);
 
 /** A section of one tab: a heading with an optional count and action. */
 export function Section({ title, count, action, unit, children, id, className = '' }) {
@@ -141,7 +146,7 @@ export function TripsTab({
           {(coming.length > 0 || planning.length > 0) && (
             <div className="mt-two">
               {coming.length > 0 && (
-                <Section id="mt-coming" title={t('mt.comingUp')} unit={t('mt.figDay')}>
+                <Section id="mt-coming" title={t('mt.comingUp')} unit={priced(coming) ? t('mt.figDay') : null}>
                   <div className="mt-rows">
                     {coming.map((r) => <TripRow key={r.id} {...r}><JoinsLine planId={r.id} />{r.below}</TripRow>)}
                   </div>
@@ -151,7 +156,7 @@ export function TripsTab({
                 <Section
                   id="mt-planning"
                   title={t('mt.beingPlanned')}
-                  unit={t('mt.figDay')}
+                  unit={priced(planning) ? t('mt.figDay') : null}
                   action={(
                     <a className="mt-link" href={tabHref('planstart')} onClick={door(onAllInPlan)}>
                       {t('mt.allInPlan')}<ChevronRightIcon size={16} />

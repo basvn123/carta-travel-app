@@ -114,16 +114,19 @@
 
 /* Groups of rows. */
 .ac-group { display: grid; gap: var(--space-2); min-width: 0; }
+/* House style: a group is a section head (800, ink, as My trips and Together
+   head theirs) over one paper panel (12 px, flat on its hairline). */
 .ac-group-h {
   margin: 0;
   padding-left: 2px;
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text-2);
+  font-size: var(--text-lead);
+  font-weight: 800;
+  letter-spacing: -0.005em;
+  color: var(--text);
 }
 .ac-list {
   background: var(--surface);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-panel);
   box-shadow: var(--elev-1);
   overflow: hidden;
   min-width: 0;
@@ -156,7 +159,10 @@
   a.ac-row:hover, .ac-row.btn:hover { background: var(--surface-hover); border-color: var(--border-soft); }
 }
 a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
-.ac-row-icon { color: var(--text-3); flex: none; }
+/* Each row's icon stands in a round band disc, the milestone language of
+   Your Europe, so Account reads as part of the traveller's own record. */
+.ac-row-icon { color: var(--text-2); flex: none; box-sizing: content-box; padding: 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.ac-row .ai-tag.ac-row-icon { padding: 0 3px; background: none; color: var(--action-hover); }
 .ac-row-label { font-size: var(--text-lead); font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
 .ac-row-v {
   font-size: var(--text-body);
@@ -182,10 +188,22 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
   gap: var(--space-4);
   padding: var(--space-4);
   background: var(--surface);
-  border-radius: var(--radius-sheet);
+  border-radius: var(--radius-panel);
   box-shadow: var(--elev-1);
   color: var(--text);
   text-decoration: none;
+}
+/* The plan is the traveller's own choice, so it wears the mark plate (the
+   small umber plate that means "you chose this"), pointed end and all. */
+.ac-me .ac-me-plan.ui-chip {
+  min-height: 28px;
+  padding: 0 calc(var(--plate-tip) + 6px) 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--action);
+  color: var(--action-text);
+  font-weight: 800;
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 0 100%);
 }
 @media (hover: hover) { .ac-me:hover { background: var(--surface-hover); } }
 .ac-me:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
@@ -201,7 +219,7 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
   font-weight: 700;
 }
 .ac-me-tx { display: grid; gap: 2px; min-width: 0; }
-.ac-me-tx b { font-size: var(--text-title); font-weight: 700; letter-spacing: -0.01em; overflow-wrap: anywhere; }
+.ac-me-tx b { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.01em; overflow-wrap: anywhere; }
 .ac-me-tx span { font-size: var(--text-body); color: var(--text-2); overflow-wrap: anywhere; }
 .ac-me-plan { justify-self: end; }
 .ac-nums {
@@ -214,7 +232,7 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 }
 .ac-nums div { display: flex; flex-direction: column-reverse; gap: 2px; }
 .ac-nums dt { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
-.ac-nums dd { margin: 0; font-size: var(--text-title); font-weight: 700; font-variant-numeric: tabular-nums; }
+.ac-nums dd { margin: 0; font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.018em; line-height: 1.1; font-variant-numeric: tabular-nums; }
 
 /* Signed out. */
 .ac-signin {
