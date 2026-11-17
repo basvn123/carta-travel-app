@@ -56,8 +56,10 @@ export function ExploreToolbar({
           {t('filter.filters')}
           {chips.length > 0 && <Chip kind="count" className="xfilters-n">{chips.length}</Chip>}
         </Button>}
-        <Button variant="secondary" size="sm" className={`xtool${showFavOnly ? ' is-on' : ''}`}
-          iconStart={<HouseIcon.cairn size={18} />} aria-pressed={showFavOnly}
+        {/* G12: the saved filter wears the save glyph, filled while on. */}
+        <Button variant="secondary" size="sm" className={`xtool xtool-saved${showFavOnly ? ' is-on' : ''}`}
+          iconStart={<HouseIcon.bookmark size={18} />} aria-pressed={showFavOnly}
+          aria-label={t('explore.savedOnlyAria')}
           onClick={() => setShowFavOnly(!showFavOnly)}>
           {t('explore.toolSaved')}
         </Button>

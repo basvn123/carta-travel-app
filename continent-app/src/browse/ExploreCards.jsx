@@ -62,31 +62,44 @@ export function WayChip({ way, t }) {
   );
 }
 
-/** The save control, the same on a tile and a row: a bookmark, like My trips
- *  in the nav (a star would sit beside the rating's star and read as one). */
+// G12 (explore polish, point 4): the first save in a session shows where
+// saved places go, once: the My trips mark in the nav bumps. Module state,
+// because "once a session" outlives any one button.
+let tripsBumped = false;
+function bumpTripsOnce() {
+  if (tripsBumped || typeof document === 'undefined') return;
+  tripsBumped = true;
+  const marks = document.querySelectorAll('[data-nav="trips"] .hs-icon');
+  marks.forEach((el) => el.classList.add('hs-nav-bump'));
+  // A timer, not animationend: the nav copy hidden at this width never
+  // animates, so it would keep the class.
+  setTimeout(() => marks.forEach((el) => el.classList.remove('hs-nav-bump')), 400);
+}
+
+/** The save control, the same on a tile and a row: the bookmark (G12). The
+ *  cairn stays the My trips mark only, so one glyph means one thing. */
 export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '', name = '' }) {
   // The place's name is in the label (T444): a screen reader walking a rail
-  // heard "Add to shortlist" twenty times with no place.
-  const label = name
-    ? t(fav ? 'explore.unsaveNamed' : 'explore.saveNamed', { place: name })
-    : (fav ? t('results.removeShortlist') : t('results.addShortlist'));
-  // House style 2026-11: the cairn (save, My trips), filled once saved. It
-  // pops only on the traveller's own press (the Add primitive), never when
-  // a saved place first paints.
-  const [popped, setPopped] = React.useState(false);
+  // heard "Add to shortlist" twenty times with no place. The name stays the
+  // same whether saved or not (decision change 7): aria-pressed says which,
+  // so the control does not rename itself under the reader.
+  const label = name ? t('explore.saveNamed', { place: name }) : t('results.addShortlist');
+  // The tick and its ring play only on the traveller's own save, never when
+  // a saved place first paints, and not on an unsave.
+  const [ticked, setTicked] = React.useState(false);
   return (
     <IconButton
       tone={tone}
-      className={`xsave${popped && fav ? ' hs-pop' : ''}${className ? ` ${className}` : ''}`}
+      className={`xsave${ticked && fav ? ' is-ticking' : ''}${className ? ` ${className}` : ''}`}
       pressed={fav}
       label={label}
       // The commit's haptic (house style 2026-11): confirm on a save, a tick
       // on an unsave; haptic() itself plays only after a touch, behind the
       // traveller's setting and never under reduced motion.
-      onClick={() => { setPopped(true); onToggle(); haptic(fav ? 'tick' : 'confirm'); }}
-      onAnimationEnd={() => setPopped(false)}
+      onClick={() => { setTicked(true); onToggle(); haptic(fav ? 'tick' : 'confirm'); if (!fav) bumpTripsOnce(); }}
+      onAnimationEnd={() => setTicked(false)}
     >
-      <HouseIcon.cairn size={20} />
+      <HouseIcon.bookmark size={20} />
     </IconButton>
   );
 }

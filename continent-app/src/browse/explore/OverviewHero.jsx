@@ -120,6 +120,6 @@ function isQuestion(q) {
 
 /** The quick chips' icons: the same line icons the filter pane uses. */
 const QUICK_ICONS = {
-  saved: HouseIcon.cairn, gems: DiamondIcon, nocar: HouseIcon.train, quiet: HouseIcon.people,
+  saved: HouseIcon.bookmark, gems: DiamondIcon, nocar: HouseIcon.train, quiet: HouseIcon.people,
   cost: HouseIcon.gauge, now: HouseIcon.sun, top: HouseIcon.star, hiking: HouseIcon.trails, beach: HouseIcon.beaches,
 };

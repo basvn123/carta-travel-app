@@ -623,10 +623,41 @@
   .explore-shell .xcontent-main { padding-bottom: calc(var(--tap) + var(--space-7)); }
 }
 
-/* Save (ExploreCards.jsx SaveButton): the cairn, its stones filled in umber
-   once saved; it pops on the traveller's own press only (.hs-pop). */
-.xsave[aria-pressed="true"] { color: var(--action); }
-.xsave[aria-pressed="true"] .hs-icon-cairn .stone { fill: currentColor; }
+/* Save (ExploreCards.jsx SaveButton; G12 point 4): the bookmark, an
+   outline in the quiet ink, filled in the select ink once saved. The
+   traveller's own save ticks the glyph (1, 1.14, 1) and sends one ring out,
+   both 240 ms; an unsave only fades the fill. */
+.xsave { position: relative; }
+.xsave .hs-icon-bookmark { color: var(--text-2); }
+.xsave .bm-fill { fill: transparent; transition: fill var(--dur-1) var(--ease-out); }
+.xsave[aria-pressed="true"] .hs-icon-bookmark { color: var(--select-ink); }
+.xsave[aria-pressed="true"] .bm-fill { fill: var(--select-ink); }
+.xsave.is-ticking .hs-icon-bookmark { animation: xsave-tick 240ms var(--ease-out); }
+.xsave.is-ticking::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--select-bg);
+  pointer-events: none;
+  animation: xsave-ring 240ms var(--ease-out) forwards;
+}
+@keyframes xsave-tick { 50% { scale: 1.14; } }
+@keyframes xsave-ring { from { scale: 0.6; opacity: 0.9; } to { scale: 1.4; opacity: 0; } }
+/* The saved filter chip: the same glyph, filled while it is on. */
+.xtool-saved .bm-fill { fill: transparent; transition: fill var(--dur-1) var(--ease-out); }
+.xtool-saved[aria-pressed="true"] .bm-fill { fill: currentColor; }
+.xov-quick [aria-pressed="true"] .bm-fill { fill: currentColor; }
+/* The first save of a session: My trips in the nav bumps once. */
+.hs-nav-bump { animation: hs-nav-bump 200ms var(--ease-out); }
+@keyframes hs-nav-bump { 50% { translate: 0 -3px; } }
+@media (prefers-reduced-motion: reduce) {
+  .xsave.is-ticking .hs-icon-bookmark, .hs-nav-bump { animation: none; }
+  .xsave.is-ticking::after { display: none; }
+}
 
 /* The map's docked column on a tablet or desktop (340 to 420 px): the parts
    take their own line, so the country stays readable beside the flag. The

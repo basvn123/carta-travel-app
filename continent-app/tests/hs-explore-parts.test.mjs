@@ -111,6 +111,34 @@ test('the rails carry no head or note line; each figure says its unit', () => {
   assert.match(rails, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} weighted pressable \/>/);
 });
 
+test('save wears the bookmark with one fixed name; the cairn stays My trips', () => {
+  // G12 (explore polish, point 4 and decision change 7).
+  const cards = read('src/browse/ExploreCards.jsx');
+  assert.match(cards, /<HouseIcon\.bookmark size=\{20\} \/>/);
+  assert.doesNotMatch(cards, /HouseIcon\.cairn/);
+  assert.match(cards, /t\('explore\.saveNamed', \{ place: name \}\)/);
+  assert.doesNotMatch(cards, /unsaveNamed/);
+  assert.match(cards, /pressed=\{fav\}/);
+  assert.match(cards, /if \(!fav\) bumpTripsOnce\(\)/);
+  assert.match(read('src/components/AppHeader.jsx'), /key: 'trips', labelKey: 'nav\.myTrips', Icon: HouseIcon\.cairn/);
+  for (const f of ['src/components/AppHeader.jsx', 'src/components/BottomNav.jsx']) assert.match(read(f), /data-nav=\{key\}/, f);
+  const bar = read('src/browse/explore/ExploreToolbar.jsx');
+  assert.match(bar, /iconStart=\{<HouseIcon\.bookmark size=\{18\} \/>\} aria-pressed=\{showFavOnly\}/);
+  const css = read('src/styles/62-v6-explore.css');
+  assert.match(css, /\.xsave\[aria-pressed="true"\] \.bm-fill \{ fill: var\(--select-ink\); \}/);
+  assert.match(css, /animation: xsave-tick 240ms/);
+  assert.match(css, /animation: xsave-ring 240ms/);
+  // No star left in the save copy, in any language.
+  for (const lang of ['en', 'nl', 'de', 'fr', 'es', 'it']) {
+    const cat = read(`src/i18n/${lang}.js`);
+    for (const key of ['results.emptyFav', 'fav.shortlistEmpty', 'fav.snapped']) {
+      const line = cat.split(/\r?\n/).find((l) => l.includes(`"${key}"`) || l.includes(`'${key}'`));
+      assert.ok(line, `${lang} ${key}`);
+      assert.doesNotMatch(line, /\b(star|starred|ster|Stern|étoile|estrella|stella)\b/i, `${lang} ${key}`);
+    }
+  }
+});
+
 test('saving a place commits with a haptic through the house utility', () => {
   const cards = read('src/browse/ExploreCards.jsx');
   assert.match(cards, /import \{ haptic \} from '\.\.\/lib\/haptics\.js';/);

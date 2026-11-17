@@ -180,6 +180,7 @@ export function AppHeader({
             <SectionLink
               key={key}
               tab={key}
+              data-nav={key}
               className={`header-nav-item ${on ? 'active' : ''}`}
               current={on}
               onNavigate={onNavigate}
