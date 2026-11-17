@@ -383,6 +383,8 @@ The signpost plate keeps its pointed end (`--plate-tip` 14 px) with softly round
 
 **Depth, one rule:** only what floats over the page casts a shadow (`--elev-2`: sheets, menus, popovers, toasts, the action bar; `--elev-3` for a dialog). Cards and panels lie flat on a hairline (`--elev-1` is that hairline as a ring). No coloured top or side border on a panel (a side stripe is a template tell): mark a panel with a plate or a hairline.
 
+**Ledger before panel:** a list (settings and account rows, answers to choose from, things to answer, plan lines on pricing, the pass lists, group and friend lists) is ruled straight onto the ground, not put in a white panel: a rule above and below (`--stroke-hair`, `--border`), hairlines between its lines (`--border-soft`), no fill, radius or shadow; its text lines up with the section head and two ledgers that touch share one rule. Hover lifts a row to `--surface`. A paper panel is kept for one object that must read as a thing: an identity card, a form, a chart's ground, a card in a grid of cards, a sheet or dialog. This keeps the screens off the stack-of-white-cards template.
+
 ## Background graphics: the relief
 
 The one background graphic. Rulebook:
