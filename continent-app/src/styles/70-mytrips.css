@@ -682,6 +682,10 @@
 @media (min-width: 769px) {
   .mt-lists { grid-auto-flow: row; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); margin: 0; padding: 2px 0; overflow: visible; }
 }
+/* Tablet: five list tiles fit one row at 820 (no "New list" orphan). */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .mt-lists { grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
+}
 @media (min-width: 1024px) {
   .mt-view-toggle { display: none; }
   .mt-split, .mt-split.is-map { grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); align-items: start; }
