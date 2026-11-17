@@ -29,15 +29,15 @@ function AskTag() { return <span className="ai-tag" aria-hidden="true">AI</span>
  */
 const H = HouseIcon;
 const FEATURES = [
-  { id: 'ask', clip: ['ask', 'find'], icon: AskTag, door: 'ask', tone: 'sun',
+  { id: 'ask', clip: ['ask', 'find'], icon: AskTag, door: 'ask',
     rows: [[H.search, 'home.tAsk1'], [H.food, 'home.tAsk2'], [H.route, 'home.tAsk3']] },
-  { id: 'explore', clip: ['explore', 'place'], icon: H.places, door: 'explore', tone: 'lagoon',
+  { id: 'explore', clip: ['explore', 'place'], icon: H.places, door: 'explore',
     rows: [[H.signpost, 'home.tExp1'], [H.trails, 'home.tExp2'], [H.bulb, 'home.tExp3']] },
-  { id: 'plan', clip: ['day', 'plan'], icon: H.route, door: 'plan', tone: 'umber',
+  { id: 'plan', clip: ['day', 'plan'], icon: H.route, door: 'plan',
     rows: [[H.train, 'home.tPlan1'], [H.clock, 'home.tPlan2'], [H.map, 'home.tPlan3']] },
-  { id: 'trips', clip: ['trips', 'share'], icon: H.pack, door: 'trips', tone: 'mist',
+  { id: 'trips', clip: ['trips', 'share'], icon: H.pack, door: 'trips',
     rows: [[H.pack, 'home.tTrips1'], [H.note, 'home.tTrips2'], [H.borders, 'home.tTrips3']] },
-  { id: 'together', clip: ['together', 'share'], icon: H.rings, door: 'together', tone: 'sea',
+  { id: 'together', clip: ['together', 'share'], icon: H.rings, door: 'together',
     rows: [[H.people, 'home.tTog1'], [H.gauge, 'home.tTog2'], [H.rings, 'home.tTog3']] },
 ];
 
@@ -105,7 +105,7 @@ export function HomeTour({ lang, doors, wide }) {
               {FEATURES.map((x, i) => (
                 <button key={x.id} id={`hm-tab-${x.id}`} type="button" role="tab" aria-selected={i === active}
                   aria-controls="hm-tour-panel" tabIndex={i === active ? 0 : -1}
-                  className={`hm-tab is-${x.tone}${i === active ? ' is-on' : ''}`} onClick={() => pick(i)}>
+                  className={`hm-tab${i === active ? ' is-on' : ''}`} onClick={() => pick(i)}>
                   <span className="hm-tab-dot" aria-hidden="true"><x.icon size={20} /></span>
                   <span className="hm-tab-name">{t(`home.t_${x.id}`)}</span>
                   <span className="hm-tab-bar" aria-hidden="true"><i ref={(el) => { bars.current[i] = el; }} /></span>
@@ -135,7 +135,7 @@ export function HomeTour({ lang, doors, wide }) {
             </div>
           </div>
 
-          <div className={`hm-stage-panel is-${f.tone}`}>
+          <div className="hm-stage-panel">
             <div className="hm-stage-glow" aria-hidden="true" />
             <div className="hm-phone" aria-hidden="true">
               <AnimatePresence initial={false}>

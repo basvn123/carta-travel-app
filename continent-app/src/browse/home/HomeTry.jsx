@@ -65,7 +65,9 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
           <div className="hm-ruler-wrap">
             <label htmlFor="hm-budget" className="hm-budget-label">
               <span>{t('home.tryBudget')}</span>
-              <b className="hm-budget-fig"><Figure value={budget} /></b>
+              {/* still: the figure follows the thumb without a dip on every step; the
+                  debounced line below speaks it once the drag settles. */}
+              <b className="hm-budget-fig"><Figure value={budget} still /></b>
             </label>
             <div className="hm-ruler" style={{ '--p': at(budget) }}>
               <span className="hm-ruler-track" aria-hidden="true"><i /></span>

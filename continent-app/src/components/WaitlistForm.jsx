@@ -14,12 +14,23 @@ export default function WaitlistForm({ source = 'home' }) {
   const { t, lang } = useI18n();
   const [email, setEmail] = React.useState('');
   const [state, setState] = React.useState('idle'); // idle, busy, done, email, unavailable
+  const formRef = React.useRef(null);
+  // A refused submit shakes the row once, every time (the class restarts).
+  const shake = () => {
+    const f = formRef.current;
+    if (!f) return;
+    f.classList.remove('hs-shake');
+    void f.offsetWidth;
+    f.classList.add('hs-shake');
+  };
   const onSubmit = async (e) => {
     e.preventDefault();
     if (state === 'busy') return;
-    if (!validEmail(email)) { setState('email'); return; }
+    if (!validEmail(email)) { setState('email'); shake(); return; }
     setState('busy');
-    setState(await joinWaitlist({ email, locale: lang, source }) === 'ok' ? 'done' : 'unavailable');
+    const ok = await joinWaitlist({ email, locale: lang, source }) === 'ok';
+    setState(ok ? 'done' : 'unavailable');
+    if (!ok) shake();
   };
   const bad = state === 'email' || state === 'unavailable';
   return (
@@ -29,7 +40,7 @@ export default function WaitlistForm({ source = 'home' }) {
       {state === 'done' ? (
         <p className="wl-done hs-reveal" role="status">{t('waitlist.done')}</p>
       ) : (
-        <form className={`wl-form${bad ? ' hs-shake' : ''}`} onSubmit={onSubmit} noValidate>
+        <form ref={formRef} className="wl-form" onSubmit={onSubmit} noValidate>
           <label className="sr-only" htmlFor="wl-email">{t('waitlist.label')}</label>
           <input
             id="wl-email" className="wl-input" type="email" name="email" autoComplete="email" inputMode="email"
