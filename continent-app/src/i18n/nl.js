@@ -6550,7 +6550,7 @@ export const nl = {
   "ox.seaUnit": "Gemiddelde zeetemperatuur, °C",
   "ox.fact.swim": "Zwemmen",
   "ox.fact.warm": "Warm genoeg",
-  "ox.peakC": "{c}° op zijn warmst",
+  "ox.peakC": "{c}° in {month}",
   "ox.shorePath": "Oeverpad",
   "ox.swimFrom": "Bron: {src}.",
   "ox.shoreBeach": "Strand aan de oever",

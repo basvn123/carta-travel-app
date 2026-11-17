@@ -330,6 +330,8 @@
   text-underline-offset: 3px;
 }
 .ox-chk li.is-warn .ox-chk-icon { color: var(--amber-ink); }
+/* A list of one row: the section's own rule is enough. */
+.ox-chk > li:only-child { border-bottom: 0; }
 .ox-chk li.is-warn .ox-chk-text b { color: var(--amber-ink); }
 
 .ox-safety {
@@ -462,6 +464,7 @@
 .ox-along.is-text .ox-acard,
 .ox-sim.is-text .ox-simcard { padding: var(--space-3) 0; border-bottom: var(--stroke-hair) solid var(--border-soft); }
 .ox-sim.is-text .ox-sim-link { min-height: var(--tap); align-content: center; }
+.ox-sim.is-text .ox-simcard { gap: 2px; }
 
 /* The profile scrub is the page's signature act: the pin it drops on the
    map settles once, on the traveller's own touch (the scale property, as

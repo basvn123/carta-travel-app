@@ -7258,7 +7258,7 @@ export const en = {
   "ox.seaUnit": "Average sea temperature, °C",
   "ox.fact.swim": "Swimming",
   "ox.fact.warm": "Warm enough",
-  "ox.peakC": "{c}° at its warmest",
+  "ox.peakC": "{c}° in {month}",
   "ox.shorePath": "Shore path",
   "ox.swimFrom": "Source: {src}.",
   "ox.shoreBeach": "Beach on the shore",

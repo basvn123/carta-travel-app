@@ -111,6 +111,10 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, onOpenNeigh
   const sTo = monthIndex(season?.to);
   const warmText = sFrom && sTo ? t('detail.monthRange', { from: months.short(sFrom), to: months.short(sTo) }) : '';
   const peakC = Number(season?.peak);
+  // The board's note names the warmest month (the side card then need not
+  // say the figure again; house style: each figure once).
+  const tempsAll = Array.isArray(lake.swim?.temps) && lake.swim.temps.length === 12 ? lake.swim.temps.map(Number) : null;
+  const warmestWord = tempsAll && tempsAll.every(Number.isFinite) ? months.long(tempsAll.indexOf(Math.max(...tempsAll)) + 1) : '';
   const shore = lakeShore(lake);
   const shoreKm = shore.state === 'path' ? shore.km : null;
   const shoreText = shoreKm != null ? `${shoreKm.toLocaleString(lang, { maximumFractionDigits: 1 })} km` : '';
@@ -126,7 +130,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, onOpenNeigh
   const keyFacts = keyFactCells([
     { key: 'swim', label: t('ox.fact.swim'), value: swim.label },
     water && { key: 'water', label: t('lake.factWater'), value: waterWord, note: water.year ? String(water.year) : null },
-    warmText && { key: 'season', label: t('ox.fact.warm'), value: warmText, note: Number.isFinite(peakC) ? t('ox.peakC', { c: nf(peakC) }) : null },
+    warmText && { key: 'season', label: t('ox.fact.warm'), value: warmText, note: Number.isFinite(peakC) ? (warmestWord ? t('ox.peakC', { c: nf(peakC), month: warmestWord }) : `${nf(peakC)}°`) : null },
     shoreText && { key: 'walk', icon: 'way', label: t('ox.shorePath'), value: shoreText },
     altM != null && { key: 'elev', label: t('lake.factElevation'), value: `${nf(altM)} m` },
     size.areaKm2 && { key: 'area', label: t('lake.factArea'), value: `${size.areaKm2.toLocaleString(lang)} km²`, fallback: true },
@@ -303,7 +307,7 @@ export function LakePage({ lake, countryName, onClose, onSelectDest, onOpenNeigh
         rows: [
           { key: 's', label: t('ox.fact.swim'), value: swim.label, board: true },
           water && { key: 'w', label: t('lake.factWater'), value: waterWord, board: true },
-          peakMonth && Number.isFinite(peakC) && { key: 'pk', label: t('ox.warmestIn', { month: months.long(peakMonth) }), value: `${nf(peakC)}°` },
+          peakMonth && Number.isFinite(peakC) && { key: 'pk', label: t('ox.warmestIn', { month: months.long(peakMonth) }), value: `${nf(peakC)}°`, board: Boolean(warmText) },
           lake.entry_eur != null && Number.isFinite(entry) && { key: 'e', label: t('ox.entry'), value: entry === 0 ? t('ox.free') : formatMoney(entry) },
         ].filter(Boolean),
         onAdd,

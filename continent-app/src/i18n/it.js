@@ -6539,7 +6539,7 @@ export const it = {
   "ox.seaUnit": "Temperatura media del mare, °C",
   "ox.fact.swim": "Balneazione",
   "ox.fact.warm": "Abbastanza calda",
-  "ox.peakC": "{c}° al massimo",
+  "ox.peakC": "{c}° a {month}",
   "ox.shorePath": "Sentiero lungo la riva",
   "ox.swimFrom": "Fonte: {src}.",
   "ox.shoreBeach": "Spiaggia sulla riva",

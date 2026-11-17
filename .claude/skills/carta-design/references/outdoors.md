@@ -15,7 +15,7 @@ The trail, cycle, beach, lake and mountain pages wear the place page's template 
 - **Stay nearby** is the kit's signpost `Plate` under a small label: the town, how far, the day it costs on the tip (`formatMoney`, the traveller's unit under it). The whole row is the link.
 - **No grey tile (G8)**: a list where no item has a photograph reads as rows on hairlines (no media box at all); one missing photo among photographed cards shows `WorldTile` in its kind's world (water: beach, lake; rock: mountain; lowland: trail, cycle).
 - **Minimal text**: the season row says the months and only "Estimated" when it is; "Waymarked" says only the route reference; a loop or an out-and-back is said on the board only (Getting there draws the shape row only for a one way route, whose sentence tells the walker to plan the way back); the Route section has no side note.
-- **Motion**: the kit's press on every control; the 2D/3D Segmented, save and share are kit parts; the stay row and route rows nudge their chevron on hover; the foot bar's figures rise once when the board leaves the view. The signature act is the profile scrub (the traveller's own): the readout and the map pin follow the finger, and the pin settles once on `--ease-settle` when it lands (the `scale` property; maplibre owns the marker's transform). No draw at load, no relief band on these pages (DESIGN.md does not allow it here). "Add to a day plan" opens the day planner, so it takes the press and no haptic.
+- **Motion**: the kit's press on every control; the 2D/3D Segmented, save and share are kit parts; the stay plate nudges and route rows nudge their chevron on hover; the foot bar's figures rise once when the board leaves the view. The signature act is the profile scrub (the traveller's own): the readout and the map pin follow the finger, and the pin settles once on `--ease-settle` when it lands (the `scale` property; maplibre owns the marker's transform). No draw at load, no relief band on these pages (DESIGN.md does not allow it here). "Add to a day plan" opens the day planner, so it takes the press and no haptic.
 
 > The rules below are the product rules these screens keep (what they show, what each control does, how numbers behave). They bind.
 
@@ -31,7 +31,7 @@ Exception (T630 to T632): the explore-completeness fields keep their slot with `
 
 ## Difficulty
 
-The difficulty is the board's Grade cell (the T step and its word) and, under Before you go, the grade panel's six T squares filled to the level in umber 700, outlined beyond, with the plain words (house style 2026-11; was a status chip in the head, T431). The five squares stay the one difficulty drawing everywhere. Difficulty is one five-step scale in one i18n group.
+The difficulty is the board's Grade cell (the T step and its word) and, under Before you go, the grade panel's six T squares filled to the level in umber 700, outlined beyond, with the plain words (house style 2026-11; was a status chip in the head, T431). The six T steps are the SAC grade's own scale (OSM `sac_scale`); the app's difficulty word on cards and lists stays the five squares, one five-step scale in one i18n group.
 
 ## 3D terrain map (owner decision 2026-10-15, T430)
 
