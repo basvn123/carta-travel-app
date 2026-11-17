@@ -282,7 +282,7 @@ export function DestPriceCard({
   const lineKind = (l) => (l.key === 'flight' ? 'flight' : l.key === 'way' ? (l.mode === 'plane' ? 'flight' : l.mode)
     : l.key === 'stay' ? 'bed' : l.key === 'ground' ? 'food' : l.key === 'car' ? 'car'
       : l.key === 'transport' ? 'local' : 'tickets');
-  const mine = Date.now() - actAt.current < 1500;
+  const mine = Date.now() - actAt.current < 1000; // DESIGN.md: within a second of the own change
   return (
     <div className="dpc-wrap">
       <section className="tcard" aria-labelledby={`${uid}-h`}>

@@ -325,7 +325,7 @@ Kinds of place have their own paint, for the kind's pictogram mark, swatch and t
 
 ### Status and the rest
 
-`--danger` `#a12a1c` (6.43 on stone) for destructive actions and errors, always with words. Best value is a beige mark (`--best` umber 200, `--best-bg` umber 50, `--best-ink` umber 800) always with its word ("Cheapest", "Best value"); there is no yellow in the house style. The `--sun-*` primitives stay only because the share images read them by name (`src/lib/share/draw.js`); screens must not read them, and page lanes remove the direct reads that remain (home's yellow headline word, the trip page's sun chips). The cost-bar group colours (`--cost-*`) and `--ai-violet` are Lagoon leftovers kept for the screens that still draw them; the place lane decides whether the cost bar moves to umber and beige, and they retire with their last reader. The domain colours under "Domain colours" in the token file are single-job (water quality, climate, crowds, cost-bar groups); do not use them as general colours. Legacy names (`--paper`, `--ink`, `--accent`, `--rule` and the rest) are aliases re-pointed at the roles; new rules read roles (the lint flags legacy names outside the token file).
+`--danger` `#a12a1c` (6.43 on stone) for destructive actions and errors, always with words. Best value is a beige mark (`--best` umber 200, `--best-bg` umber 50, `--best-ink` umber 800) always with its word ("Cheapest", "Best value"); there is no yellow in the house style. The `--sun-*` primitives are read by the share images by name (`src/lib/share/draw.js`) and still by a few older screen rules (the cost card `92-cost-card.css`, the taste chip, the search dock's Ask tile and beaches tab, one place template tag, the trip art); new work must not read them. The cost-bar group colours (`--cost-*`) stay for the trip summary bar's four groups only (owner T845, `TripSummary.css`). `--ai-violet` is read only by the day planner's AI marks (`20-day-planner-flow.css`, `planners-held.css`). Each retires with its last reader. The domain colours under "Domain colours" in the token file are single-job (water quality, climate, crowds, cost-bar groups); do not use them as general colours. Legacy names (`--paper`, `--ink`, `--accent`, `--rule` and the rest) are aliases re-pointed at the roles; new rules read roles (the lint flags legacy names outside the token file).
 
 ### Colour rules
 
@@ -362,7 +362,7 @@ Every screen is designed at three angles, each its own layout:
 | Angle | Widths | Shell | Layout rules |
 |---|---|---|---|
 | Phone | to 768 (390 x 844 the reference, 360 the floor) | Slim header row (wordmark, travel style as its icon, Together, account) and a bottom nav of three (Explore, Plan, My trips) | One column; lists dense (about 8 to 10 rows in the first view); the main action in a sticky bottom bar where a page has one |
-| Tablet | 769 to 1279 (820 x 1180 portrait, 1180 x 820 landscape) | One header row; the three places stack icon over word; the travel style door shows its icon | Two panes where the content allows (list plus map, content plus a sticky cost post); never a stretched phone, never a cramped desktop; toolbars wrap or move extras into a More menu, nothing is cut |
+| Tablet | 769 to 1279 (820 x 1180 portrait, 1180 x 820 landscape) | One header row; the three places stack icon over word; the travel style door shows its icon | Two panes where the content allows (list and map side by side from 769; detail pages take a sticky side column from 1024); never a stretched phone, never a cramped desktop; toolbars wrap or move extras into a More menu, nothing is cut |
 | Desktop | 1280 and up (1440 x 900 the reference, 1920 checked) | One header row; places with icon and word; the door with its label | Content caps above; the price and its action in the first view; filters as a rail beside lists |
 
 Breakpoints come from the scale in `scripts/ci/css-breakpoints.mjs` (360, 380, 420, 430, 480, 600, 700, 768, 1024, 1100, 1200, 1240, 1280, 1440, 1600, 1800; max-width as boundary minus 1 for 600, 1024, 1280). A width sweep (360, 390, 600, 768, 820, 1024, 1180, 1280, 1440, 1920) must show no horizontal scroll and no overflowing element. Touch and pointer both work; hover is never the only way to anything.
@@ -389,7 +389,7 @@ The one background graphic. Rulebook:
 
 1. **Only from real ground.** A relief is drawn from the peaks with a height in the place's own dossier (`nearby.mountains[]`: name, km, bearing, `elev_m`; `src/lib/relief.js`, `reliefPeaks()`). No peak, no relief: the band stays flat. Prices are never drawn as terrain.
 2. **Prints a real height.** Every relief shows at least one height tag ("Grand Combin 4,309 m") on a paper tag (contrast 15.8).
-3. **Where:** the place page's "Around" band, the trip header (from the trip's places), print and share covers. **Not** on Explore or in any list header (lists stay dense), not behind figures, rows, fields, focus rings or map labels. At most two per screen.
+3. **Where:** the place and outdoor pages' "Around" band, the trip header (from the trip's places), the home page's story band, print and share covers. **Not** on Explore or in any list header (lists stay dense), not behind figures, rows, fields, focus rings or map labels. At most two per screen.
 4. **Clear zone:** text sits only on the flat side, which ends a gutter (`--space-6`) before the cut. The zone starts at a thin umber cut (`--stroke-edge`) with a blaze on top; contours never run under text.
 5. **Contrast budget:** lit lines white at 95 %, shade lines ink at 20 %, on the band; decorative only (`aria-hidden`).
 6. **Light from the north-west**, east-west at true scale, north-south squeezed to the band.
@@ -415,13 +415,13 @@ All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05
 
 **Formation** (`<Formation go={{mode, amount}} bed food day weighted? size="lg"? />`). The price row of every row and card: getting there as an outlined umber pill with its mode icon (a return fare, outside the day; the outlined pill means "outside the day figure" and nothing else, so a cost inside a total is never outlined), the bed as a solid umber wagon, food and drink as a beige wagon, coupled with 2 px gaps, then the day figure, always the loudest. A part without a figure is a dashed "Not yet" wagon outside the sum; a place without a split shows the day figure alone (decision 0012 says "one honest wagon"; a lone wagon would repeat the day figure, so the figure stands by itself). Wagons are content-sized in rows; `weighted` sizes them by their euros on cards and the cost post. Heights 24 (rows, cards), 36 (`size="lg"`, cost posts). The component formats, never sums. More props: `est` (true, or per part) is spoken as an estimate and draws nothing; `dayWrap` wraps the day figure (for example in the items list); `figure={false}` drops the day slot (the place cost post prints its day above; a trip total); `around` adds a getting around wagon (umber 200) and `extras` more wagons inside the train (flights on sunken paper), for a trip total.
 
-**Rail and RailCard**. It keeps every behaviour of the old `StoryRail`: the section labelled by its heading, the arrows labelled "Scroll back" and "Scroll forward" and disabled at the ends, ArrowLeft and ArrowRight moving focus card to card, "See all" a real button (a link only when given an href). Head: title left, "See all" in umber 700 and two round outlined arrow buttons right (from 1024 px; touch scrolls). Cards: 4:3 photo at 16 px corners, the name with its Score plate, flag and country (and the Hidden gem diamond in umber 700), the weighted formation; a paper save disc over the photo. Four across from 1024, about two at tablet, 76 % on a phone. Only the photo, the name line and the country sit in the card's link; the formation and the `body`, `foot` and `mark` slots render after it, so a button in them never nests in a link. Without `href` or `onOpen` the card is static (no link).
+**Rail and RailCard**. It keeps every behaviour of the old `StoryRail`: the section labelled by its heading, the arrows labelled "Scroll back" and "Scroll forward" and disabled at the ends, ArrowLeft and ArrowRight moving focus card to card, "See all" a real button (a link only when given an href). Head: title left, "See all" in umber 700 and two round outlined arrow buttons right (from 1024 px; touch scrolls). Cards: 4:3 photo at 16 px corners, the name with its Score plate, flag and country (and the Hidden gem diamond in umber 700), the weighted formation; a paper save disc over the photo. 76 % wide to 599 px, about two across from 600, four from 1024. Only the photo, the name line and the country sit in the card's link; the formation and the `body`, `foot` and `mark` slots render after it, so a button in them never nests in a link. Without `href` or `onOpen` the card is static (no link).
 
-**List row** (built by the explore lane from these parts). One grid per container width. Under 600 px: two lines (name and Score, then the day; flag and country, then the formation), a 44 px photo, about 8 rows above the bar at 390 x 844. From 600: one line, the formation in its own column. Selected: the umber 50 wash and the umber price mark, never a side stripe. The unit is said once in the column head ("A day, a person").
+**List row** (Explore, `browse/explore/PlaceRow.jsx`). One grid per container width. Under 600 px: three lines (name, Score and the day; flag, region and country; the formation), a 44 px photo, about 8 rows above the bar at 390 x 844. From 600: one line with a 56 px photo, the formation in its own column and the reason under it; from 1024 the reason takes its own column. Selected: the umber 50 wash and the umber price mark, never a side stripe. The unit is said once in the column head ("A day, a person").
 
 **Receipt** (`CostRow`, `CostSum`, `.costrows.has-leaders`). The label reaches its figure along a dotted leader on wide receipts; the total is the engine's own total; a "Rounding" line where printed lines do not add up; parts without a price as "Not yet", outside the sum.
 
-**Journey line** (trip page, built by the trip lane): stops as umber pills as long as their nights, legs as a 2 px ink line (dashed for flights) with a mode icon, home ends as ink discs.
+**Journey line** (trip page, `planner/trip/JourneyLine.jsx`): stops as umber pills as long as their nights, legs as a 2 px ink line (dashed for flights) with a mode icon, home ends as ink discs.
 
 **States** (`StateBlock`, `Skeleton`, `NotYet`, `WorldTile`). Loading: three blazes painting, announced politely, plus still bands the size of what comes. Empty: a dashed blaze, the name of the space and the action ("No place fits", Clear all). Error: one sentence of what happened and what to do, an action, no apology. Missing figure: "Not yet", out of every sum.
 
@@ -433,7 +433,7 @@ All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05
 
 ## Icons
 
-`src/components/HouseIcons.jsx`, through the `Icon` wrapper (`<Icon as={HouseIcon.signpost} />`): a 24 px grid, 1.75 stroke, square caps, mitred joins, currentColor, decorative (the control carries the name). The set includes signpost (Explore), route (Plan), cairn of four flat stones (save, My trips), pack (travel style), rings (Together), borders (countries, no globe), car, train, bus, ferry, flight, bed, food, walk, the kinds and the standard actions. No sparkle for AI, no compass rose, no plane with a dashed trail, no emoji. Older glyphs in `Icons.jsx` stay until lanes replace them; new work uses the house set.
+`src/components/HouseIcons.jsx`, through the `Icon` wrapper (`<Icon as={HouseIcon.signpost} />`): a 24 px grid, 1.75 stroke, square caps, mitred joins, currentColor, decorative (the control carries the name). The set includes signpost (Explore), route (Plan), cairn of four flat stones (save, My trips), pack (travel style), rings (Together), borders (countries, no globe), car, train, bus, ferry, flight, bed, food, walk, the kinds and the standard actions. No sparkle for AI, no compass rose, no plane with a dashed trail, no emoji. Older glyphs in `Icons.jsx` are still used in many files and stay; new work uses the house set. `SparkIcon` draws the boxed AI mark, so it stands only where the thing is AI (an Ask, an AI plan, an AI reading); a tip, a vibe or a recommended train takes its own glyph.
 
 ## Photography
 
@@ -496,11 +496,15 @@ Signature moments: Explore, a chosen pin and its row paint and the price settles
 
 ### Numbers that move honestly
 
-A figure animates only within a second of the traveller's own change, only the figure that change moved, once, from the side it moved to, with a delta note; a figure nobody touched never moves under the reader's eye (refreshes, a co-planner's edit, first paint). Many figures at once share one dip. Screen readers hear the new value once, politely. Prices swap in place; list order changes only from the traveller's own sort or filter.
+A figure animates only within a second of the traveller's own change (`mine` windows of 1000 ms in `TripSummary.jsx` and `DestPriceCard.jsx`), only the figure that change moved, once, from the side it moved to, with a delta note; a figure nobody touched never moves under the reader's eye (refreshes, a co-planner's edit, first paint). Many figures at once share one dip. Screen readers hear the new value once, politely. Prices swap in place; list order changes only from the traveller's own sort or filter.
 
 ### What never animates
 
 A price the traveller did not change, list order while reading, anything at first paint, the map camera on its own, the relief (beyond its one fade), hover beyond a colour change, focus rings, loops other than a real loading indicator, blur, confetti, sparkles, sound.
+
+## Home page
+
+The one surface that persuades rather than operates, so it may move on its own (the film, the drawn route, the tour's tabs). Its larger type (`--text-hero`, `--text-showcase`, `--tracking-hero`, `--leading-hero`), the film tint and bar and the film and reveal timings are in `01-tokens.css` under "The home page"; the rules are in `references/home.md`. It still keeps one primary, 44 px targets and a reduced-motion branch.
 
 ## Shell
 
@@ -512,7 +516,7 @@ The app's own MapLibre maps on the CARTO Voyager style, repainted by `src/map/ho
 
 ## Print and share
 
-Print and share follow the same tokens: the cover with the total plate, a relief where the trip's places have peaks, the journey line, the receipt with leaders and Rounding. Until the brand-surfaces lane moves them, the PDF and share images use Figtree from `public/fonts` (`docs/tos/fonts.md`).
+Print and share follow the same tokens: the cover with the total plate, a relief where the trip's places have peaks, the journey line, the receipt with leaders and Rounding. PDFs use the screens' two faces as static TTFs (`src/assets/print-fonts/`, built by `scripts/print-fonts/build_print_fonts.py`); the social cards and share images load the screens' woff2. Rules per surface: `references/brand.md`; licences: `docs/tos/fonts.md`.
 
 ## Do and don't
 

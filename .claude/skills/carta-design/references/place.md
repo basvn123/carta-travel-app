@@ -9,7 +9,7 @@ Covers the place (destination) page, the receipt, the cost card and cost bar, fo
 **The cost post** (`DestPriceCard.jsx`, `.dpc-wrap` and `.tcard` in `88-place-template.css`): paper, 1 px `--border`, `--radius-panel`, no shadow, no coloured edge, no visible title (an sr-only heading "Costs").
 1. The dates and party pills: outlined (`--stroke-edge` `--edge`), 44 px; open takes the selected grammar.
 2. The day row, the loudest figure on the page: `.tcard-each .money` at `--text-display`, the `PriceItems` popover on it, the unit once ("a person a day"), then the `Formation` with the day's parts only (the bed umber, food beige; its own day figure hidden because the day is printed above). The return fare is not a wagon here: it is a different unit and the ways list right below says it. Each wagon is rounded on its own, so bed plus food may differ from the day by a euro; the day is the engine's figure.
-3. The stay for the party on one signpost `Plate` (place variant): name "7 nights, 2 people", second line "€1,087 a person", the figure the engine's total through `Figure` (rolls only within 1.5 s of the traveller's own change; `still` otherwise). Never a second total plate.
+3. The stay for the party on one signpost `Plate` (place variant): name "7 nights, 2 people", second line "€1,087 a person", the figure the engine's total through `Figure` (rolls only within 1 s of the traveller's own change; `still` otherwise). Never a second total plate.
 4. The primary and "Or plan one day here" (the primary hides below 1024 px, where the foot bar holds it).
 5. "Getting there from X" with "Return, a person" said once in the head; ways as leg `Plate`s in a radio group (roving tab stop, arrow keys, Home and End), Cheapest and Fastest as word tags (best value is the beige mark with its word).
 6. "Where you sleep" as kit choice chips (`ChipGroup`).
@@ -46,7 +46,7 @@ At most one stacked bar above a receipt's lines, never instead of them: 8 px, fu
 
 ## Fields with no data yet (owner decision 2026-10-23, T630 to T632)
 
-The fields of the explore-completeness spec keep their slot on the Explore detail sheets even with no data, and show the shared placeholder `components/NotYet.jsx` ("Not available yet"). For those fields "a missing fact is left out" and "Say less" do not apply. The fact band itself (KeyFacts) still leaves a missing cell out; the slots live in the Facts rows and sections. See DESIGN.md "Fields with no data yet".
+The fields of the explore-completeness spec keep their slot on the Explore detail sheets even with no data, and show the shared placeholder `components/NotYet.jsx` ("Not available yet"). For those fields "a missing fact is left out" and "Say less" do not apply. The fact band itself (KeyFacts) still leaves a missing cell out; the slots live in the Facts rows and sections. A missing fact says "Not available yet" (`components/NotYet.jsx`, `data.notYet`); a missing price says "Not yet" (the kit `NotYet`, `price.notMeasured`). Both share one look (`.not-yet` and `.hs-notyet`)..
 
 ## Sources and credits on the page
 
