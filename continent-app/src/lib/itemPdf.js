@@ -30,6 +30,9 @@ export async function downloadItemPdf(kind, item, ctx = {}) {
   });
   const photos = (m.photos || []).filter((p) => p && p.url);
 
+  // The wordmark slot opens every PDF, as the guides' cover does (house style).
+  kit.wordmark();
+  kit.gap(10);
   if (photos[0]) await kit.photo(photos[0], { maxH: 96 });
   kit.h1(name);
   if (m.where) kit.para(m.where, { size: 10.5, color: kit.C.text2, after: 2.5 });

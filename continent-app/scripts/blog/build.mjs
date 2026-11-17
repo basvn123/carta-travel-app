@@ -65,41 +65,67 @@ export function loadPosts(dir) {
 
 const tokens = () => fs.readFileSync(path.join(APP, 'src/styles/01-tokens.css'), 'utf8');
 
+// House style (G1 2026-11): the blog wears the app's look: the stone
+// ground, Overpass for every word and figure, the wordmark slot (the blaze
+// and the name in the plate face), data tables and bar charts on paper with
+// hairlines, the bars in umber, one umber action at the end of a post. The
+// sheet is a file (/blog/blog.css), not an inline <style>: the site's CSP
+// allows only hashed inline styles, so an inline block would be refused.
 const STYLE = `${''}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ui)}
-.bl{box-sizing:border-box;max-width:760px;margin:0 auto;padding:var(--space-6) var(--space-4) var(--space-8);font-size:16px;line-height:1.55}
+body{margin:0;background:var(--surface-page);color:var(--text);font-family:var(--ui);font-variant-numeric:tabular-nums lining-nums}
+.bl{box-sizing:border-box;max-width:calc(var(--w-read) + 2 * var(--page-gutter));margin:0 auto;padding:var(--space-4) var(--page-gutter) var(--space-9);font-size:var(--text-lead);line-height:var(--leading-body)}
 .bl *{box-sizing:border-box}
-.bl a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px}
-.bl a:hover{text-decoration-color:var(--accent)}
-.bl a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.bl-top{display:flex;justify-content:space-between;gap:var(--space-4);font-size:14px;color:var(--ink-soft);margin-bottom:var(--space-6)}
-.bl h1{font-family:var(--display);font-weight:600;font-size:clamp(28px,6vw,42px);line-height:1.12;letter-spacing:-0.02em;margin:0 0 var(--space-3);overflow-wrap:anywhere}
-.bl h2{font-size:20px;font-weight:600;letter-spacing:-0.01em;margin:var(--space-7) 0 var(--space-3)}
-.bl p{margin:0 0 var(--space-3)}
-.bl-meta{font-size:14px;color:var(--ink-soft);margin-bottom:var(--space-5)}
-.bl-draft{border:1px solid var(--rule-soft);background:var(--accent-bg);border-radius:10px;padding:var(--space-3) var(--space-4);margin:0 0 var(--space-5);font-size:14px}
-.bl .n,.bl td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.bl-table{overflow-x:auto;margin:var(--space-4) 0;border:1px solid var(--rule-soft);border-radius:10px;background:var(--bg-card)}
-.bl-table table{width:100%;border-collapse:collapse;font-size:14px}
-.bl-table th,.bl-table td{padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--rule-soft);text-align:left;font-weight:400;white-space:nowrap}
-.bl-table thead th{background:var(--paper-dim);font-weight:600}
-.bl-table tbody th{font-weight:600}
-.bl-table td.n{text-align:right}
+.bl a{color:var(--action-hover);font-weight:600;text-decoration:underline;text-decoration-color:var(--border);text-decoration-thickness:2px;text-underline-offset:3px;transition:text-decoration-color var(--dur-2) var(--ease-out)}
+.bl a:hover{text-decoration-color:var(--action)}
+.bl a:focus-visible{outline:var(--stroke-focus) solid var(--focus);outline-offset:2px;border-radius:var(--radius-sm)}
+.bl-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--space-2) var(--space-4);min-height:var(--tap);margin-bottom:var(--space-7);padding-bottom:var(--space-3);border-bottom:1px solid var(--border);font-size:var(--text-body)}
+.bl-top a{display:inline-flex;align-items:center;min-height:var(--tap)}
+.bl .bl-brand{gap:var(--space-2);color:var(--text);text-decoration:none;font-family:var(--plate-face);font-size:var(--text-plate);font-weight:700;line-height:1}
+.bl-nav{display:flex;gap:var(--space-4)}
+.bl-blaze{position:relative;display:inline-block;flex:none;width:24px;height:14px;border-radius:2px;background:var(--surface);outline:1px solid var(--blaze-edge)}
+.bl-blaze::before{content:'';position:absolute;left:14%;right:14%;top:20%;height:36%;background:var(--action)}
+.bl-blaze::after{content:'';position:absolute;right:14%;width:34%;bottom:14%;height:max(1.5px,11%);background:var(--text)}
+.bl h1{font-weight:800;font-size:var(--text-headline);line-height:var(--leading-tight);letter-spacing:-0.018em;margin:0 0 var(--space-3);overflow-wrap:anywhere;text-wrap:balance}
+.bl h2{font-size:var(--text-title);font-weight:800;line-height:var(--leading-tight);margin:var(--space-8) 0 var(--space-3);text-wrap:balance}
+.bl p{margin:0 0 var(--space-4)}
+.bl-meta{font-size:var(--text-body);color:var(--text-2);margin-bottom:var(--space-6)}
+.bl-draft{border:1px solid var(--select-border);background:var(--select-bg);color:var(--select-ink);border-radius:var(--radius-control);padding:var(--space-3) var(--space-4);margin:0 0 var(--space-5);font-size:var(--text-body);font-weight:600}
+.bl .n,.bl td.n{font-variant-numeric:tabular-nums lining-nums}
+.bl-table{overflow-x:auto;margin:var(--space-5) 0;border:1px solid var(--border);border-radius:var(--radius-panel);background:var(--surface)}
+.bl-table table{width:100%;border-collapse:collapse;font-size:var(--text-body)}
+.bl-table th,.bl-table td{padding:var(--space-2) var(--space-3);border-bottom:1px solid var(--border-soft);text-align:left;font-weight:400;white-space:nowrap}
+.bl-table thead th{background:var(--surface-sunken);font-weight:700;font-size:var(--text-label);color:var(--text-2)}
+.bl-table tbody th{font-weight:700}
+.bl-table td.n{text-align:right;font-weight:700}
 .bl-table tr:last-child th,.bl-table tr:last-child td{border-bottom:0}
-.bl-chart{margin:var(--space-5) 0}
-.bl-chart figcaption{font-weight:600;margin-bottom:var(--space-2)}
+.bl-chart{margin:var(--space-5) 0;padding:var(--space-4);border:1px solid var(--border);border-radius:var(--radius-panel);background:var(--surface)}
+.bl-chart figcaption{font-weight:800;margin-bottom:var(--space-3)}
 .bl-chart ol{list-style:none;margin:0;padding:0}
-.bl-chart li{display:grid;grid-template-columns:minmax(80px,30%) 1fr auto;gap:var(--space-3);align-items:center;padding:var(--space-1) 0;font-size:14px}
-.bl-bar{display:block;width:100%;height:10px;background:var(--paper-dim);border-radius:5px}
-.bl-bar rect{fill:var(--accent)}
-.bl-val{color:var(--ink-soft);white-space:nowrap}
-.bl-fig{margin:var(--space-5) 0}.bl-fig img{display:block;max-width:100%;height:auto;border-radius:10px}
-.bl-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule-soft)}
-.bl-list li{padding:var(--space-4) 0;border-bottom:1px solid var(--rule-soft)}
-.bl-list a{font-weight:600;font-size:18px}
-.bl-list p{margin:var(--space-1) 0 0;color:var(--ink-soft);font-size:15px}
-.bl-foot{margin-top:var(--space-7);font-size:13px;color:var(--ink-soft)}
-@media (max-width:480px){.bl-chart li{grid-template-columns:1fr auto}.bl-chart .bl-bar{grid-column:1 / -1;order:3}}`;
+.bl-chart li{display:grid;grid-template-columns:minmax(80px,30%) 1fr auto;gap:var(--space-3);align-items:center;min-height:32px;font-size:var(--text-body)}
+.bl-bar{display:block;width:100%;height:12px;background:var(--surface-sunken);border-radius:var(--radius-pill)}
+.bl-bar rect{fill:var(--action)}
+.bl-val{color:var(--text);font-weight:800;white-space:nowrap}
+.bl-fig{margin:var(--space-5) 0}.bl-fig img{display:block;max-width:100%;height:auto;border-radius:var(--radius-card)}
+.bl-fig figcaption{margin-top:var(--space-2);font-size:var(--text-label);color:var(--text-2)}
+.bl-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--border)}
+.bl-list li{padding:var(--space-4) 0;border-bottom:1px solid var(--border)}
+.bl-list a{font-weight:800;font-size:var(--text-title);color:var(--text);text-decoration:none}
+.bl-list a:hover{text-decoration:underline;text-decoration-color:var(--action)}
+.bl-list p{margin:var(--space-1) 0 0;color:var(--text-2);font-size:var(--text-body)}
+.bl-foot{margin-top:var(--space-7);font-size:var(--text-label);color:var(--text-2)}
+.bl article{margin-bottom:var(--space-6)}
+.bl .bl-cta{display:inline-flex;align-items:center;justify-content:center;min-height:var(--tap-main);padding:0 var(--space-5);margin-top:var(--space-6);border-radius:var(--radius-control);background:var(--action);color:var(--on-plate);font-weight:700;text-decoration:none;transition:background-color var(--dur-2) var(--ease-out),scale var(--dur-1) var(--ease-out)}
+.bl .bl-cta:hover{background:var(--action-hover)}
+.bl .bl-cta:active{scale:.97}
+@media (prefers-reduced-motion:reduce){.bl a,.bl .bl-cta{transition:none}.bl .bl-cta:active{scale:none}}
+@media (max-width:479px){.bl-chart li{grid-template-columns:1fr auto;row-gap:var(--space-1);padding:var(--space-2) 0 var(--space-3);border-bottom:1px solid var(--border-soft)}.bl-chart li:last-child{border-bottom:0}.bl-chart .bl-bar{grid-column:1 / -1;order:3}.bl .bl-cta{display:flex}}`;
+
+/** The font files the blog's sheet names (the house faces), copied beside it. */
+const FONT_FILES = ['Overpass-latin.woff2', 'Overpass-latin-ext.woff2', 'SofiaSansExtraCondensed-latin.woff2', 'SofiaSansExtraCondensed-latin-ext.woff2'];
+/** The screens' own @font-face blocks, pointed at the copies in /blog/fonts/. */
+const fontFaces = () => (fs.readFileSync(path.join(APP, 'src/styles/00-fonts.css'), 'utf8').match(/@font-face\s*{[^}]*}/g) || [])
+  .map((b) => b.replace(/url\([^)]*?([\w-]+\.woff2)\)/g, 'url(/blog/fonts/$1)')).join('\n');
+export const blogCss = () => `${fontFaces()}\n${tokens()}\n${STYLE}\n`;
 
 const doc = ({ title, description, canonical, noindex, graph, body, card = SITE_CARD, type = 'website', extraHead = '' }) => `<!doctype html>
 <html lang="en">
@@ -121,7 +147,7 @@ ${noindex ? '<meta name="robots" content="noindex,follow">\n' : ''}<link rel="al
 <meta property="og:image:alt" content="${esc(card.alt)}">
 <meta name="twitter:card" content="summary_large_image">
 ${extraHead}<script type="application/ld+json">${JSON.stringify(graph).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026')}</script>
-<style>${tokens()}\n${STYLE}</style>
+<link rel="stylesheet" href="/blog/blog.css">
 </head>
 <body>
 ${body}
@@ -130,7 +156,7 @@ ${body}
 `;
 
 const dateText = (d) => new Date(`${d}T12:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-const top = () => `<div class="bl-top"><a href="/">Carta</a><span><a href="/blog/">${esc(t('blog.title'))}</a> · <a href="/blog/rss.xml">${esc(t('blog.rss'))}</a></span></div>`.replace(' · ', ', ');
+const top = () => `<div class="bl-top"><a class="bl-brand" href="/"><span class="bl-blaze" aria-hidden="true"></span>Carta</a><span class="bl-nav"><a href="/blog/">${esc(t('blog.title'))}</a><a href="/blog/rss.xml">${esc(t('blog.rss'))}</a></span></div>`;
 
 export function postPage(p, { draft }) {
   const html = renderMarkdown(p.body, { data: p.data, resolveSrc: (s) => (/^https:\/\//.test(s) ? s : `/blog/${p.slug}/${s.replace(/^\.?\//, '')}`) });
@@ -143,6 +169,7 @@ ${draft ? `<p class="bl-draft">${esc(t('blog.draft'))}</p>\n` : ''}<h1>${esc(cle
 <p class="bl-meta">${esc(t('blog.by', { author: p.author }))}, ${esc(t('blog.published', { date: dateText(p.date) }))}</p>
 ${html}
 <p class="bl-foot">${esc(t('blog.source', { date: (p.snapshot || '').slice(0, 10) }))} <a href="/blog/${esc(p.slug)}/data.json">${esc(t('blog.data'))}</a></p>
+<a class="bl-cta" href="/">${esc(t('blog.cta'))}</a>
 </article>
 <p class="bl-foot"><a href="/blog/">${esc(t('blog.all'))}</a></p>
 </main>`;
@@ -194,6 +221,11 @@ export function build({ content, out, drafts = false }) {
     }
   }
   write(path.join(out, 'blog', 'index.html'), indexPage(shown));
+  write(path.join(out, 'blog', 'blog.css'), blogCss());
+  for (const f of FONT_FILES) {
+    fs.mkdirSync(path.join(out, 'blog', 'fonts'), { recursive: true });
+    fs.copyFileSync(path.join(APP, 'src', 'assets', 'fonts', f), path.join(out, 'blog', 'fonts', f));
+  }
   const feedPosts = published.map((p) => ({ slug: p.slug, title: stripDashes(p.title), description: stripDashes(p.description), date: p.date }));
   write(path.join(out, 'blog', 'rss.xml'), rssFeed(feedPosts, { title: 'Carta blog', description: t('blog.lead') }));
   if (published.length) write(path.join(out, 'sitemap-blog-en.xml'), blogSitemap(feedPosts));

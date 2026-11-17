@@ -8769,6 +8769,11 @@ export const fr = {
   "days.money": "Ce que coûte le voyage",
   "days.total": "Total",
   // lane:brand (house style 2026-11): this lane adds its new keys directly under this line
+  "nf.title": "Rien à cette adresse",
+  "nf.text": "Le lien est peut-être ancien ou mal saisi.",
+  "nf.map": "Ouvrir la carte",
+  "nf.plan": "Planifier un voyage",
+  "blog.cta": "Ouvrir la carte",
   "days.perDay": "Par personne et par jour",
   "days.nNights": "{n} nuits",
   "days.part.getting": "Aller et retour",

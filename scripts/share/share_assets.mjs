@@ -314,7 +314,7 @@ export function loadStaysDir(dir) {
 export function buildAll(app, { budget = 100, year = 2027, places = null, geo, pal }) {
   const files = new Map();
   const problems = [];
-  const svg = (ops, w = W, h = H, bg = 'umber-50') => opsToSvg(ops, { w, h, pal, family: 'Figtree, sans-serif', bg });
+  const svg = (ops, w = W, h = H, bg = 'umber-50') => opsToSvg(ops, { w, h, pal, family: 'Overpass, sans-serif', bg });
 
   const m = mapModel(app, { budget });
   const mOps = mapOps(m, geo);
@@ -348,7 +348,7 @@ export function sampleReceipt(app, { pal, t }) {
   const pricedOn = longDate(String(app.meta?.generated_at || '').slice(0, 10) || '2026-01-01');
   const ops = receiptOps(model, { t, money, dateText: (a, b) => `${shortDate(a)} to ${longDate(b)}`, pricedOn });
   const problems = checkReceipt(ops, model, SAMPLE_PLAN, opts, money).map((p) => `receipt: ${p}`);
-  return { svg: opsToSvg(ops, { w: RECEIPT_W, h: RECEIPT_H, pal, family: 'Figtree, sans-serif', bg: 'umber-800' }), problems };
+  return { svg: opsToSvg(ops, { w: RECEIPT_W, h: RECEIPT_H, pal, family: 'Overpass, sans-serif', bg: 'umber-800' }), problems };
 }
 
 async function main() {

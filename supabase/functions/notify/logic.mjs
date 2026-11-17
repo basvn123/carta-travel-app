@@ -268,14 +268,16 @@ function listOf(names, lang) {
 // system fonts (an email client loads no web font reliably).
 function shell(lang, lines, cta, why, unsub) {
   const w = words(lang);
-  const body = lines.map((l) => `<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#1f2a33">${esc(l)}</p>`).join('');
-  return `<!doctype html><html lang="${langOf(lang)}"><body style="margin:0;padding:24px;background:#f6f5f2;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">`
-    + '<div style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:16px;padding:24px">'
-    + '<p style="margin:0 0 16px;font-size:20px;font-weight:700;color:#1f2a33">Carta</p>'
+  const body = lines.map((l) => `<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#1e2421">${esc(l)}</p>`).join('');
+  return `<!doctype html><html lang="${langOf(lang)}"><body style="margin:0;padding:24px;background:#eef0ea;font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">`
+    + '<div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #cfd5cc;border-radius:12px;padding:24px">'
+    // The wordmark slot (house style): the blaze, then the name.
+    + '<p style="margin:0 0 16px;font-size:20px;font-weight:800;color:#1e2421">'
+    + '<span style="display:inline-block;vertical-align:middle;width:16px;height:5px;margin:0 8px 3px 0;background:#8c5a2b;border:4px solid #ffffff;outline:1px solid #a5ada7"></span>Carta</p>'
     + body
-    + `<p style="margin:16px 0 0"><a href="${esc(cta.href)}" style="color:#8c5a2b;font-weight:600;font-size:16px">${esc(cta.label)}</a></p>`
+    + `<p style="margin:16px 0 0"><a href="${esc(cta.href)}" style="color:#744820;font-weight:700;font-size:16px">${esc(cta.label)}</a></p>`
     + '</div>'
-    + `<p style="max-width:520px;margin:16px auto 0;font-size:13px;line-height:1.5;color:#44515c">${esc(why)} <a href="${esc(unsub)}" style="color:#44515c">${esc(w.unsub)}</a></p>`
+    + `<p style="max-width:520px;margin:16px auto 0;font-size:13px;line-height:1.5;color:#465049">${esc(why)} <a href="${esc(unsub)}" style="color:#465049">${esc(w.unsub)}</a></p>`
     + '</body></html>';
 }
 
@@ -311,11 +313,11 @@ export function dropEmail({ lang, items, appUrl, unsub }) {
 export function unsubPage(lang, ok, appUrl) {
   const w = words(lang);
   return `<!doctype html><html lang="${langOf(lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(w.pageTitle)}</title></head>`
-    + '<body style="margin:0;padding:24px;background:#f6f5f2;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">'
-    + '<main style="max-width:480px;margin:48px auto;background:#ffffff;border-radius:16px;padding:24px">'
-    + `<h1 style="margin:0 0 12px;font-size:20px;color:#1f2a33">${esc(ok ? w.pageTitle : 'Carta')}</h1>`
-    + `<p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#1f2a33">${esc(ok ? w.pageOk : w.pageBad)}</p>`
-    + `<p style="margin:0"><a href="${esc(appUrl)}" style="color:#8c5a2b;font-weight:600">${esc(w.pageBack)}</a></p>`
+    + '<body style="margin:0;padding:24px;background:#eef0ea;font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">'
+    + '<main style="max-width:480px;margin:48px auto;background:#ffffff;border:1px solid #cfd5cc;border-radius:12px;padding:24px">'
+    + `<h1 style="margin:0 0 12px;font-size:20px;color:#1e2421">${esc(ok ? w.pageTitle : 'Carta')}</h1>`
+    + `<p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#1e2421">${esc(ok ? w.pageOk : w.pageBad)}</p>`
+    + `<p style="margin:0"><a href="${esc(appUrl)}" style="color:#744820;font-weight:700">${esc(w.pageBack)}</a></p>`
     + '</main></body></html>';
 }
 

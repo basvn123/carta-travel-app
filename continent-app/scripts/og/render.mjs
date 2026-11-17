@@ -2,8 +2,8 @@
  * render.mjs, rasterises a card to a PNG in headless Chromium.
  *
  * Why a browser and not a Node SVG library: the fonts are the brand, and the
- * only reliable way to set Fraunces, Plus Jakarta Sans and JetBrains Mono with
- * real hinting and real measurement is the engine the product itself is drawn
+ * only reliable way to set Overpass and Sofia Sans Extra Condensed with real
+ * hinting and real measurement is the engine the product itself is drawn
  * in. Playwright is already a devDependency (the verify scripts use it), so
  * this adds nothing to package.json.
  *
@@ -38,18 +38,15 @@ import {
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const b64 = (file) => fs.readFileSync(file).toString('base64');
 
+/** The screens' own @font-face blocks (src/styles/00-fonts.css), with each
+ *  woff2 inlined, so the cards are set in the very files the app loads:
+ *  Overpass and Sofia Sans Extra Condensed, latin and latin-ext. */
 function fontCss() {
-  const pub = path.join(APP_ROOT, 'public', 'fonts');
-  const face = (family, weight, file, mime, fmt) => `@font-face{font-family:'${family}';font-weight:${weight};font-style:normal;src:url(data:${mime};base64,${b64(file)}) format('${fmt}');}`;
-  const og = (n) => path.join(HERE, 'fonts', n);
-  return [
-    face(F.display, '600', og('Fraunces-600-latin.woff2'), 'font/woff2', 'woff2').replace('}', ';unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}'),
-    face(F.display, '600', og('Fraunces-600-latin-ext.woff2'), 'font/woff2', 'woff2').replace('}', ';unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}'),
-    face(F.ui, '400', path.join(pub, 'PlusJakartaSans-Regular.ttf'), 'font/ttf', 'truetype'),
-    face(F.ui, '500 700', path.join(pub, 'PlusJakartaSans-SemiBold.ttf'), 'font/ttf', 'truetype'),
-    face(F.mono, '400', path.join(pub, 'JetBrainsMono-Regular.ttf'), 'font/ttf', 'truetype'),
-    face(F.mono, '500 700', path.join(pub, 'JetBrainsMono-Medium.ttf'), 'font/ttf', 'truetype'),
-  ].join('\n');
+  const css = fs.readFileSync(path.join(APP_ROOT, 'src', 'styles', '00-fonts.css'), 'utf8');
+  return (css.match(/@font-face\s*{[^}]*}/g) || []).map((block) => block.replace(/url\(([^)]+\.woff2)\)/g, (_, rel) => {
+    const file = path.resolve(APP_ROOT, 'src', 'styles', rel.replace(/['"]/g, ''));
+    return `url(data:font/woff2;base64,${b64(file)})`;
+  })).join('\n');
 }
 
 // Runs in the page. Returns { truncated: [...], titleSize, titleLines, subLines, subBottom }.
@@ -124,7 +121,7 @@ function layoutInPage() {
   setLines(title, lines, firstY, pitch);
   report.titleSize = size;
   report.titleLines = lines.length;
-  kind.setAttribute('y', firstY - size * 0.74 - cfg.kindGap);
+  if (!cfg.kindFixed) kind.setAttribute('y', firstY - size * 0.74 - cfg.kindGap);
 
   // subtitle: fixed size, as many lines as fit above subMaxBottom
   const subText = sub.textContent;
@@ -144,6 +141,20 @@ function layoutInPage() {
   setLines(sub, sl, subFirst, subPitch);
   report.subLines = sl.length;
   report.subBottom = subFirst + (sl.length - 1) * subPitch;
+  // On a plate the name and its line sit centred in the plate's height.
+  if (cfg.plateTop != null && subText) {
+    const capH = size * 0.7;
+    const block = capH + (lines.length - 1) * pitch + cfg.subGap + cfg.subSize * 0.22;
+    const want = cfg.plateTop + (cfg.plateH - block) / 2 + capH;
+    const dy = want - firstY;
+    for (const t of [...title.children, ...sub.children]) t.setAttribute('y', Number(t.getAttribute('y')) + dy);
+    report.subBottom += dy;
+  } else if (cfg.plateTop != null) {
+    const capH = size * 0.7;
+    const block = capH + (lines.length - 1) * pitch;
+    const dy = cfg.plateTop + (cfg.plateH - block) / 2 + capH - firstY;
+    for (const t of title.children) t.setAttribute('y', Number(t.getAttribute('y')) + dy);
+  }
   return report;
 }
 /* eslint-enable no-undef */
@@ -161,8 +172,8 @@ export async function rasterise(svg, width, height, { layout = true, transparent
   try {
     await page.setContent(`<!doctype html><meta charset="utf-8"><style>${fontCss()}html,body{margin:0;background:${transparent ? 'transparent' : '#fff'}}svg{display:block}</style>${svg}`);
     await page.evaluate(async () => {
-      await Promise.all(['600 20px "Fraunces"', '400 20px "Plus Jakarta Sans"', '600 20px "Plus Jakarta Sans"', '400 20px "JetBrains Mono"', '600 20px "JetBrains Mono"']
-        .map((f) => document.fonts.load(f, 'AaÉé0123')));
+      await Promise.all(['400 20px "Overpass"', '600 20px "Overpass"', '800 20px "Overpass"', '700 20px "Sofia Sans Extra Condensed"']
+        .map((f) => document.fonts.load(f, 'AaÉéČŠő0123€')));
       await document.fonts.ready;
     });
     const report = layout ? await page.evaluate(layoutInPage) : null;

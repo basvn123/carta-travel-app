@@ -22,8 +22,10 @@ const xmlEsc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
 const cdata = (html) => `<![CDATA[${String(html ?? '').replace(/\]\]>/g, ']]]]><![CDATA[>')}]]>`;
 
 // KML colours are aabbggrr. A small rotating palette so each day's pins and
-// line share a colour and days stay tellable-apart after import.
-const DAY_COLORS = ['ff2d50c8', 'ff2e8b57', 'ff1478b4', 'ff8b3a9e', 'ffb4641e', 'ff507896'];
+// line share a colour and days stay tellable-apart after import. The first
+// (a one-day file, the trip's route) is the house umber 600, #8c5a2b, the
+// route's colour on every map of the app (house style G1, 2026-11).
+const DAY_COLORS = ['ff2b5a8c', 'ff2e8b57', 'ff1478b4', 'ff8b3a9e', 'ffb4641e', 'ff507896'];
 const dayColor = (i) => DAY_COLORS[i % DAY_COLORS.length];
 
 const PIN_ICON = 'https://maps.google.com/mapfiles/kml/paddle/wht-blank.png';

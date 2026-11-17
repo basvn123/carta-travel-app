@@ -4,7 +4,7 @@
  * Renders from the SAME dossier contract the full-screen page reads
  * (public/dossier/{id}.json), so the PDF cannot drift from the app: one
  * contract, two renderers. Since T914 it is drawn with the kit every other
- * Carta PDF uses (pdfKit.js): Figtree with tabular figures, the role colours,
+ * Carta PDF uses (pdfKit.js): Overpass with tabular figures, the role colours,
  * photographs with the credit under them, vector drawings, one footer. The
  * trip booklet (tripPdf.js) opens with the same cover.
  *
@@ -163,6 +163,10 @@ export async function downloadDestinationPdf({
     price: Number.isFinite(cost?.dayEur) ? { value: eur(cost.dayEur), unit: T('dest.priceDayUnit') } : null,
     facts: coverFacts.slice(0, 4),
     qr: share ? { url: share, head: T('pdf.qrHead'), note: T('pdf.qrNote') } : null,
+    // The house plate: the place and its day figure as one unit; the
+    // relief only from the dossier's real peaks (none, none drawn).
+    place: true,
+    relief: { mountains: d.nearby?.mountains || d.around?.mountains, seed: d.place?.id || city, format: nf },
   });
 
   // ════════════════════════════ 2. At a glance ════════════════════════════

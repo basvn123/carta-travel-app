@@ -1,0 +1,222 @@
+/* ==========================================================================
+   Brand pages (house style G1, 2026-11; the brand lane): the reading pages
+   (terms, privacy, imprint, cookies, help, press, partner, AI: LegalDoc.jsx)
+   and the 404 (NotFoundPage.jsx). Imported by those two components, so it
+   loads with them. The older reading-page rules live in the account lane's
+   69-v6-account.css; every rule here is scoped under `.hs-legal` (one class
+   more) so it wins without touching that file.
+
+   The look: a paper sheet on a hairline over the scrim (it floats, so it
+   casts the dialog shadow), the title at headline size in 800, reading text
+   at 16 on a 720 column, section heads at title size; the contents list
+   beside the text from 1024 with the blaze on the section you are in ("here"),
+   folded above the text on smaller screens behind a 44 px control. Figures
+   (press facts) are the loudest thing in their tile.
+   ========================================================================== */
+
+.hs-legal.legal-doc.privacy-modal {
+  width: min(1040px, 100%);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-3);
+}
+.hs-legal .legal-head {
+  align-items: center;
+  padding: var(--space-5) var(--space-4) var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--border);
+}
+.hs-legal .legal-title {
+  font-size: var(--text-headline);
+  font-weight: 800;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
+.hs-legal .legal-updated { font-size: var(--text-label); color: var(--text-2); }
+
+.hs-legal .legal-cols { padding: var(--space-5) var(--space-6) var(--space-8); }
+.hs-legal .legal-body.privacy-body {
+  max-width: var(--w-read);
+  font-size: var(--text-lead);
+  line-height: var(--leading-body);
+}
+.hs-legal .legal-body h3 {
+  margin: var(--space-7) 0 var(--space-3);
+  font-size: var(--text-title);
+  font-weight: 800;
+  text-wrap: balance;
+}
+.hs-legal .legal-body h3:first-child { margin-top: 0; }
+.hs-legal .legal-body p { margin: 0 0 var(--space-4); }
+.hs-legal .legal-body a {
+  color: var(--action-hover);
+  font-weight: 600;
+  text-decoration-color: var(--border);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--dur-2) var(--ease-out);
+}
+@media (hover: hover) { .hs-legal .legal-body a:hover { text-decoration-color: var(--action); } }
+.hs-legal .legal-body a:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.hs-legal .legal-body ul,
+.hs-legal .legal-body ol { padding-left: var(--space-5); margin: 0 0 var(--space-4); }
+.hs-legal .legal-body li { margin-bottom: var(--space-2); }
+
+/* Tables: a head on the band, hairlines between rows, no zebra. */
+.hs-legal .legal-body table {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: var(--text-body);
+}
+.hs-legal .legal-body th { background: var(--surface-sunken); font-weight: 700; }
+.hs-legal .legal-body th,
+.hs-legal .legal-body td { padding: var(--space-2) var(--space-3); }
+.hs-legal .legal-body tr:last-child td { border-bottom: 0; }
+.hs-legal .legal-credits { font-size: var(--text-body); }
+
+/* The contents: folded above the text below 1024 behind a 44 px control. */
+.hs-legal .legal-toc-fold > summary {
+  padding: 0 var(--space-4);
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  transition: background-color var(--dur-2) var(--ease-out);
+}
+@media (hover: hover) { .hs-legal .legal-toc-fold > summary:hover { background: var(--surface-hover); } }
+.hs-legal .legal-toc-fold[open] > summary { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
+.hs-legal .legal-toc-fold > summary:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.hs-legal .legal-toc-fold .legal-toc-list { padding: var(--space-2) 0 0; }
+/* The fold opens with the kit's reveal; the "here" wash and the words move
+   on the press timing (the global floor in 02-base flattens both). */
+.hs-legal .legal-toc-fold[open] .legal-toc-list { animation: hs-reveal var(--dur-2) var(--ease-out) both; }
+.hs-legal .legal-toc-title { font-size: var(--text-label); font-weight: 700; color: var(--text-2); }
+.hs-legal .legal-toc-list a {
+  position: relative;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-6);
+  border-radius: var(--radius-control);
+  font-size: var(--text-body);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) { .hs-legal .legal-toc-list a:hover { color: var(--text); background: var(--surface-hover); text-decoration: none; } }
+.hs-legal .legal-toc-list a:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 0; }
+/* The section you are in: the beige wash, umber 800 words, the blaze. */
+.hs-legal .legal-toc-list a[aria-current] { color: var(--select-ink); background: var(--select-row); font-weight: 700; }
+.hs-legal .legal-toc-list .hs-blaze { position: absolute; left: var(--space-1); top: 50%; translate: 0 -50%; }
+
+@media (min-width: 1024px) {
+  .hs-legal .legal-cols { gap: var(--space-8); padding-left: var(--space-5); }
+  .hs-legal .legal-toc { flex: 0 0 248px; padding-top: var(--space-1); }
+}
+@media (max-width: 768px) {
+  .hs-legal.legal-doc.privacy-modal { width: 100%; border-radius: 0; box-shadow: none; }
+  .hs-legal .legal-head { padding: max(var(--space-3), env(safe-area-inset-top)) var(--space-2) var(--space-3) var(--page-gutter); }
+  .hs-legal .legal-title { font-size: var(--text-headline); }
+  .hs-legal .legal-cols { padding: var(--space-4) var(--page-gutter) calc(var(--space-8) + env(safe-area-inset-bottom)); }
+  .hs-legal .legal-body h3 { margin-top: var(--space-6); }
+}
+
+/* Help: the status line as a flat panel on a hairline; a warning says it in
+   words and takes the danger edge (never colour alone). The mail address is
+   the page's action. */
+.hs-legal .legal-body .support-group { margin: var(--space-6) 0 var(--space-2); font-size: var(--text-title); font-weight: 800; }
+.hs-legal .legal-body .support-mail { font-size: var(--text-title); font-weight: 800; }
+.hs-legal .legal-body .support-status {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface-sunken);
+  font-size: var(--text-body);
+}
+.hs-legal .legal-body .support-status[data-tone="warn"] { border-color: var(--danger); background: var(--surface); }
+
+/* Press: the facts as flat tiles, the figure loud; assets on the band. */
+/* Five facts (PressKitPage FACTS): one row of five from 1024, three and two
+   from 600, two across on a phone with the fifth spanning its row; never a
+   lone tile. */
+.hs-legal .legal-body .press-facts {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: var(--space-3) 0 var(--space-5);
+}
+.hs-legal .legal-body .press-fact {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+@media (max-width: 1023px) {
+  .hs-legal .legal-body .press-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 599px) {
+  .hs-legal .legal-body .press-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hs-legal .legal-body .press-fact:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+.hs-legal .legal-body .press-fact dt { font-size: var(--text-label); font-weight: 600; color: var(--text-2); opacity: 1; overflow-wrap: anywhere; hyphens: auto; }
+.hs-legal .legal-body .press-fact dd { font-size: var(--text-figure); font-weight: 800; }
+.hs-legal .legal-body .press-asset {
+  margin: var(--space-3) 0 var(--space-5);
+  padding: var(--space-4);
+  border-radius: var(--radius-panel);
+  background: var(--surface-sunken);
+}
+.hs-legal .legal-body .press-asset img { border-radius: var(--radius-control); }
+.hs-legal .legal-body .press-asset figcaption { margin-top: var(--space-2); font-size: var(--text-label); color: var(--text-2); }
+.hs-legal .legal-body .press-founder[data-placeholder] { font-style: normal; color: var(--text-2); opacity: 1; }
+
+/* ---- The 404 ----------------------------------------------------------- */
+.hs-nf {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-page);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow-y: auto;
+  padding: max(var(--space-4), env(safe-area-inset-top)) var(--page-gutter) max(var(--space-6), env(safe-area-inset-bottom));
+  background: var(--surface-page);
+  color: var(--text);
+}
+/* No entrance: the 404 is what the first paint shows (DESIGN.md: nothing
+   animates at first paint). Leaving is the answer to "Open the map": the
+   page lifts away with the kit's exit before the app is shown. */
+.hs-nf.is-leaving { animation: hs-leave var(--dur-2) var(--ease-out) both; pointer-events: none; }
+.hs-nf-mark { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); }
+.hs-nf-name { font-family: var(--plate-face); font-size: var(--text-plate); font-weight: 700; line-height: 1; color: var(--text); }
+.hs-nf-body {
+  display: grid;
+  justify-items: start;
+  align-content: center;
+  gap: var(--space-3);
+  width: min(100%, var(--w-form));
+  margin: 0 auto;
+  padding-bottom: var(--space-8);
+}
+.hs-nf-blaze { margin-bottom: var(--space-3); }
+.hs-nf-title {
+  margin: 0;
+  font-size: var(--text-display);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.hs-nf-title:focus-visible { outline: 2px solid transparent; }
+.hs-nf-text { margin: 0; font-size: var(--text-lead); line-height: var(--leading-body); color: var(--text-2); }
+.hs-nf-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+@media (max-width: 599px) {
+  .hs-nf-actions { flex-direction: column; align-self: stretch; width: 100%; }
+  .hs-nf-actions > * { width: 100%; justify-content: center; }
+}
+@media (min-width: 1024px) {
+  .hs-nf { padding-left: var(--space-8); padding-right: var(--space-8); }
+}

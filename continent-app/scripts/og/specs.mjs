@@ -57,7 +57,7 @@ function monthRange(from, to) {
 
 function score(row) {
   const s = row?.score ?? row?.rating?.score;
-  return typeof s === 'number' ? { label: 'Carta score', value: DEC1.format(s), unit: 'of 10', tone: 'rate' } : null;
+  return typeof s === 'number' ? { label: 'Score', value: DEC1.format(s), unit: 'of 10', tone: 'rate' } : null;
 }
 
 /** `all` is the catalogue, so a place with no usable bed borrows its
@@ -74,14 +74,18 @@ export function destinationSpec(key, dest, all = null) {
     type: 'destination',
     kind: 'Destination',
     title: dest.city,
-    subtitle: rating != null ? `${dest.country}, rated ${DEC1.format(rating)} of 10` : dest.country,
+    // The Score rides on its own plate (house style), so the line under the
+    // name is the country alone.
+    subtitle: dest.country,
+    score: rating != null ? DEC1.format(rating) : null,
     panel: {
       head: 'One person, one day',
       rows: [
         { label: 'Bed', value: eurDay(cost.stayEur) },
         { label: 'Food', value: eurDay(cost.foodEur) },
       ],
-      total: { label: 'A day here', value: eurDay(cost.dayEur), unit: 'a day' },
+      // A card stands alone, so it says its whole unit (PRODUCT.md vocabulary).
+      total: { label: 'A day here', value: eurDay(cost.dayEur), unit: 'a day, a person' },
     },
     strip: months ? { label: 'Cheapest months to stay', good: months, note: 'From a year of listing prices' } : null,
     alt: `Receipt for a day in ${dest.city}: bed ${eurDay(cost.stayEur)}, food ${eurDay(cost.foodEur)}, ${eurDay(cost.dayEur)} in total per person.`,
@@ -204,7 +208,8 @@ export function trailSpec(t) {
     type: 'trail',
     kind: t.category === 'hike' || !t.category ? 'Walk' : cap(t.category),
     title: t.name,
-    subtitle: [countryName(t.country), t.difficulty ? `${t.difficulty} difficulty` : null, typeof t.score === 'number' ? `rated ${DEC1.format(t.score)} of 10` : null].filter(Boolean).join(', '),
+    subtitle: [countryName(t.country), t.difficulty ? `${t.difficulty} difficulty` : null].filter(Boolean).join(', '),
+    score: typeof t.score === 'number' ? DEC1.format(t.score) : null,
     panel: { head: 'The route', rows, route: lines, total: null },
     strip: null,
     alt: `${t.name}: ${DEC1.format(t.distance_m / 1000)} km${t.ascent_m != null ? `, ${NUM.format(t.ascent_m)} m of ascent` : ''}.`,
@@ -218,7 +223,9 @@ export function siteSpec(_counts, sample) {
     kind: 'Carta',
     title: 'What a day costs, place by place',
     // No catalogue counts and no method line on the card (owner, 2026-10-13, T438).
-    subtitle: 'A bed plus food and drink for one person, priced town by town across Europe.',
+    // House style 2026-11: the unit is said once, on the example's plate,
+    // so the line under the headline does not repeat it.
+    subtitle: 'Priced town by town across Europe.',
     panel: null,
     strip: null,
     alt: 'Carta prices the ground for every place in Europe it covers: a bed plus food and drink, per person per day.',

@@ -1,7 +1,7 @@
 /**
  * dayPdf.js (T433): a day plan as a booklet, the day planner's Download PDF.
  * It replaces the print window (planner/dayPlanPdf.js), which printed an HTML
- * page in whatever the browser made of it, with the Figtree booklet the trip
+ * page in whatever the browser made of it, with the house booklet the trip
  * planner prints (lib/pdfKit.js, T430/T432).
  *
  * The paper says what the screen says: every day is routed through the same

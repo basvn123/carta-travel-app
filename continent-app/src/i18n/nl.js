@@ -8780,6 +8780,11 @@ export const nl = {
   "days.money": "Wat de reis kost",
   "days.total": "Totaal",
   // lane:brand (house style 2026-11): this lane adds its new keys directly under this line
+  "nf.title": "Niets op dit adres",
+  "nf.text": "De link is misschien oud of verkeerd getypt.",
+  "nf.map": "Open de kaart",
+  "nf.plan": "Plan een reis",
+  "blog.cta": "Open de kaart",
   "days.perDay": "Per persoon per dag",
   "days.nNights": "{n} nachten",
   "days.part.getting": "Heen en terug",

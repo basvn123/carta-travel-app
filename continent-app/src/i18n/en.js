@@ -9396,6 +9396,11 @@ export const en = {
   "days.money": "What the trip costs",
   "days.total": "Total",
   // lane:brand (house style 2026-11): this lane adds its new keys directly under this line
+  "nf.title": "Nothing at this address",
+  "nf.text": "The link may be old or mistyped.",
+  "nf.map": "Open the map",
+  "nf.plan": "Plan a trip",
+  "blog.cta": "Open the map",
   "days.perDay": "A person a day",
   "days.nNights": "{n} nights",
   "days.part.getting": "Getting there and home",

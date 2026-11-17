@@ -1,10 +1,17 @@
 /**
- * pdfKit.js (T430, T431): the parts every Carta PDF is made of, so the item
- * pages and the trip page print as one family, in the app's own look.
+ * pdfKit.js (T430, T431; house style G1 2026-11): the parts every PDF is
+ * made of, so the item pages and the trip page print as one family, and as
+ * the same system as the screens (DESIGN.md "Print and share"): the blaze in
+ * the wordmark slot, the signpost plate holding the name, the Score plate,
+ * the receipt with dotted leaders, the months as umber wagons, the relief
+ * from a place's real peaks on the cover.
  *
- *   type      Figtree, the app's one face, at 400, 600 and 700, as static
- *             TTFs with tabular figures frozen in (public/fonts, OFL), so a
- *             column of prices lines up on paper as it does on screen
+ *   type      Overpass at 400, 600 and 800 for every word and figure, and
+ *             Sofia Sans Extra Condensed 700 for plate names and the
+ *             wordmark: static TTFs made from the screens' own woff2 by
+ *             scripts/print-fonts/build_print_fonts.py (OFL), with tabular
+ *             figures frozen in, so a column of prices lines up on paper as
+ *             it does on screen
  *   colour    the role tokens of src/styles/01-tokens.css, read live, with
  *             the token mirror as the fallback; ink is never black
  *   photos    drawn through a canvas as JPEG, with the credit under each,
@@ -25,6 +32,15 @@
 import { stripDashes, formatRange } from './format.js';
 import { isPartnerLink } from './partnerLink.js';
 import { TOKEN_COLOURS } from '../map/tokenColors.js';
+import { layoutRelief, reliefPeaks } from './relief.js';
+import overpassRegular from '../assets/print-fonts/Overpass-Regular.ttf?url';
+import overpassSemiBold from '../assets/print-fonts/Overpass-SemiBold.ttf?url';
+import overpassExtraBold from '../assets/print-fonts/Overpass-ExtraBold.ttf?url';
+import plateBold from '../assets/print-fonts/SofiaSansExtraCondensed-Bold.ttf?url';
+
+/** The name in the wordmark slot. The slot takes any name (DESIGN.md
+ *  "Shell"); this is the one place print spells it. */
+export const APP_NAME = 'Carta';
 
 export const PAGE_W = 210;
 export const PAGE_H = 297;
@@ -44,6 +60,10 @@ const FALLBACK = {
   '--amber-ink': TOKEN_COLOURS['--amber-ink'],
   '--status-success': TOKEN_COLOURS['--status-success'],
   '--rate': TOKEN_COLOURS['--rate'],
+  '--plate': TOKEN_COLOURS['--plate'],
+  '--umber-200': TOKEN_COLOURS['--accent-bg'],
+  '--umber-50': TOKEN_COLOURS['--accent-bg'],
+  '--edge': TOKEN_COLOURS['--ink-mute'],
 };
 
 /** A token as [r, g, b]: the live value (hex or rgb()), else the mirror. */
@@ -58,24 +78,27 @@ export function rgb(name) {
   return [1, 3, 5].map((i) => parseInt(f.slice(i, i + 2), 16));
 }
 
+// [file name in the PDF, bundled URL, family, style]. 'bold' is Overpass
+// 800, the house weight for titles and figures.
 const FONT_FILES = [
-  ['Figtree-Regular.ttf', 'normal'],
-  ['Figtree-SemiBold.ttf', 'semibold'],
-  ['Figtree-Bold.ttf', 'bold'],
+  ['Overpass-Regular.ttf', overpassRegular, 'Overpass', 'normal'],
+  ['Overpass-SemiBold.ttf', overpassSemiBold, 'Overpass', 'semibold'],
+  ['Overpass-ExtraBold.ttf', overpassExtraBold, 'Overpass', 'bold'],
+  ['SofiaSansExtraCondensed-Bold.ttf', plateBold, 'PlateFace', 'bold'],
 ];
 let fontCache = null;
 
 async function loadFonts() {
   if (fontCache) return fontCache;
   const out = [];
-  for (const [file, style] of FONT_FILES) {
+  for (const [file, url, family, style] of FONT_FILES) {
     try {
-      const res = await fetch(`/fonts/${file}`);
+      const res = await fetch(url);
       if (!res.ok) throw new Error(String(res.status));
       const buf = new Uint8Array(await res.arrayBuffer());
       let bin = '';
       for (let i = 0; i < buf.length; i += 0x8000) bin += String.fromCharCode.apply(null, buf.subarray(i, i + 0x8000));
-      out.push({ file, style, b64: btoa(bin) });
+      out.push({ file, family, style, b64: btoa(bin) });
     } catch { /* that weight falls back to the built-in face */ }
   }
   fontCache = out;
@@ -130,22 +153,59 @@ export const fileSlug = (s) => clean(s).toLowerCase().normalize('NFKD').replace(
  * `partnerNote` is the disclosure line (I15): a page that carries a partner
  * link prints it above the footer rule, so the mark is not lost in the PDF.
  */
-export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => `${n} / ${of}`, partnerNote = '' } = {}) {
+export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) => `${n} / ${of}`, partnerNote = '' } = {}) {
   const { jsPDF } = await import('jspdf');
   const fonts = await loadFonts();
   const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true });
   const has = new Set();
   for (const f of fonts) {
     doc.addFileToVFS(f.file, f.b64);
-    doc.addFont(f.file, 'Figtree', f.style);
-    has.add(f.style);
+    doc.addFont(f.file, f.family, f.style);
+    has.add(`${f.family}:${f.style}`);
   }
-  const face = (style) => (has.has(style) ? ['Figtree', style] : ['helvetica', style === 'normal' ? 'normal' : 'bold']);
+  // `style` 'plate' is the plate face (Sofia Sans Extra Condensed 700).
+  const face = (style) => {
+    if (style === 'plate') return has.has('PlateFace:bold') ? ['PlateFace', 'bold'] : face('bold');
+    return has.has(`Overpass:${style}`) ? ['Overpass', style] : ['helvetica', style === 'normal' ? 'normal' : 'bold'];
+  };
   const C = {
     text: rgb('--text'), text2: rgb('--text-2'), text3: rgb('--text-3'), border: rgb('--border'),
     soft: rgb('--border-soft'), sunken: rgb('--surface-sunken'), action: rgb('--action'),
-    select: rgb('--select-bg'), warn: rgb('--amber-ink'), ok: rgb('--status-success'),
-    rate: rgb('--rate'), white: [255, 255, 255],
+    select: rgb('--select-bg'), warn: rgb('--amber-ink'), ok: rgb('--action'),
+    rate: rgb('--rate'), white: [255, 255, 255], plate: rgb('--plate'),
+    onPlate2: rgb('--umber-200'), selectRow: rgb('--umber-50'), edge: rgb('--edge'),
+  };
+  // The relief's shade lines are ink at 20 % on the band; print has no
+  // reliable alpha, so the mix is made here (and stays legible in grey).
+  const mix = (a, b, t) => a.map((v, i) => Math.round(v * (1 - t) + b[i] * t));
+  C.shade = mix(C.sunken, C.text, 0.2);
+  C.shadeIdx = mix(C.sunken, C.text, 0.32);
+  C.blazeEdge = mix(C.white, C.text, 0.38);
+
+  /** The blaze (DESIGN.md "Signature components"), w mm wide at (x, y):
+   *  a white halo, the square umber paint stripe, the short ink heel. The
+   *  same proportions as `.hs-blaze`. Only where it means "here": the
+   *  wordmark slot, the place on its own map, the relief cut.
+   *  `blank` draws the dashed stripe (the path not yet walked). */
+  const blaze = (x, y, w = 6, { blank = false } = {}) => {
+    const h = (w * 14) / 24;
+    doc.setFillColor(...C.white);
+    doc.setDrawColor(...C.blazeEdge);
+    doc.setLineWidth(Math.max(0.12, w * 0.02));
+    doc.roundedRect(x, y, w, h, h * 0.1, h * 0.1, 'FD');
+    if (blank) {
+      doc.setDrawColor(...C.action);
+      doc.setLineWidth(h * 0.12);
+      doc.setLineDashPattern([w * 0.08, w * 0.06], 0);
+      doc.line(x + w * 0.14, y + h * 0.36, x + w * 0.86, y + h * 0.36);
+      doc.setLineDashPattern([], 0);
+    } else {
+      doc.setFillColor(...C.action);
+      doc.rect(x + w * 0.14, y + h * 0.2, w * 0.72, h * 0.36, 'F');
+    }
+    doc.setFillColor(...C.text);
+    doc.rect(x + w * 0.52, y + h * 0.75, w * 0.34, Math.max(0.25, h * 0.11), 'F');
+    return h;
   };
   const state = { y: M, page: 1, partner: false };
   // Any link written to the page that carries a partner id flags the page.
@@ -179,8 +239,15 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
       doc.text(clean(partnerNote), M, PAGE_H - FOOT - 1.5);
       state.partner = false;
     }
-    doc.text(clean(footerLabel), M, PAGE_H - FOOT + 4.5);
-    doc.text(pageLabel(state.page, TOTAL), PAGE_W - M, PAGE_H - FOOT + 4.5, { align: 'right' });
+    // The wordmark slot in small: the blaze before the page's label.
+    blaze(M, PAGE_H - FOOT + 2.6, 4);
+    font('normal', 7.5, C.text3);
+    doc.text(clean(footerLabel), M + 5.6, PAGE_H - FOOT + 4.5);
+    // The total is written in after the last page, so the label is set
+    // from the left at the width its final text will have (one digit).
+    const pl = pageLabel(state.page, TOTAL);
+    const plW = doc.getTextWidth(pageLabel(state.page, '9'));
+    doc.text(pl, PAGE_W - M - plW, PAGE_H - FOOT + 4.5);
   };
   const newPage = () => {
     footer();
@@ -278,16 +345,42 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
     state.y += 6.2;
   };
 
-  /** A receipt line: words left, figure right, hairline above. */
+  /** A receipt line (DESIGN.md "Receipt"): the words reach their figure
+   *  along a dotted leader. A `bold` line is the total: ruled off in ink
+   *  above it, no leader, the figure the loudest on the page section. */
   const moneyRow = (label, value, { bold = false } = {}) => {
     ensure(8);
-    rule();
-    state.y += 2;
-    font(bold ? 'semibold' : 'normal', 10, bold ? C.text : C.text2);
-    doc.text(clean(label), M, state.y, { baseline: 'top' });
-    font(bold ? 'bold' : 'semibold', 10.5);
-    doc.text(clean(value), PAGE_W - M, state.y, { baseline: 'top', align: 'right' });
-    state.y += 6;
+    if (bold) {
+      state.y += 1;
+      doc.setDrawColor(...C.text);
+      doc.setLineWidth(0.5);
+      doc.line(M, state.y, PAGE_W - M, state.y);
+      state.y += 2.4;
+    } else {
+      state.y += 1.4;
+    }
+    const lab = clean(label);
+    const val = clean(value);
+    font(bold ? 'bold' : 'normal', bold ? 11 : 10, bold ? C.text : C.text2);
+    doc.text(lab, M, state.y, { baseline: 'top' });
+    const lw = doc.getTextWidth(lab);
+    font('bold', bold ? 13 : 10.5);
+    doc.text(val, PAGE_W - M, state.y, { baseline: 'top', align: 'right' });
+    const vw = doc.getTextWidth(val);
+    if (!bold) {
+      const x1 = M + lw + 2;
+      const x2 = PAGE_W - M - vw - 2;
+      if (x2 - x1 > 4) {
+        doc.setDrawColor(...C.edge);
+        doc.setLineWidth(0.35);
+        doc.setLineCap('round');
+        doc.setLineDashPattern([0.01, 1.1], 0);
+        doc.line(x1, state.y + 2.7, x2, state.y + 2.7);
+        doc.setLineDashPattern([], 0);
+        doc.setLineCap('butt');
+      }
+    }
+    state.y += bold ? 7.5 : 5.6;
   };
 
   /** A photograph at the kit's corners with its name and credit under it.
@@ -323,8 +416,13 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
     state.y += h + 1.6;
     if (caption) {
       const credit = [ph.author, ph.licence].filter(Boolean).join(', ');
+      // The name keeps to its side of the credit, cut to one line, so two
+      // photographs side by side never print over each other.
+      font('normal', 7, C.text3);
+      const creditW = credit ? Math.min(w * 0.55, doc.getTextWidth(clean(credit))) + 3 : 0;
       font('semibold', 8.5);
-      doc.text(clean(ph.caption || ''), x, state.y, { baseline: 'top' });
+      const capLine = doc.splitTextToSize(clean(ph.caption || ''), Math.max(10, w - creditW))[0] || '';
+      doc.text(capLine, x, state.y, { baseline: 'top' });
       if (credit) {
         font('normal', 7, C.text3);
         doc.text(clean(credit), x + w, state.y + 0.4, { baseline: 'top', align: 'right', maxWidth: w * 0.55 });
@@ -405,14 +503,141 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
 
   // ── Shared cover parts and drawings (T914) ──
 
-  /** The Carta wordmark at (x, y), top left: a small brown tile and the name. */
-  const wordmark = (x = M, y = state.y, size = 13) => {
-    const s = size * 0.3528 * 0.9;
-    doc.setFillColor(...C.action);
-    doc.roundedRect(x, y, s, s, s * 0.28, s * 0.28, 'F');
-    font('bold', size);
-    doc.text('carta', x + s + 1.8, y + s / 2, { baseline: 'middle' });
-    return s;
+  /** The wordmark slot at (x, y), top left, as on the screens' header: the
+   *  blaze ("here") and the name in the plate face. Returns its height. */
+  const wordmark = (x = M, y = state.y, size = 15) => {
+    const bw = size * 0.52;
+    const bh = blaze(x, y + 0.2, bw);
+    font('plate', size);
+    doc.text(APP_NAME, x + bw + 2, y + bh / 2 + 0.2, { baseline: 'middle' });
+    return bh;
+  };
+
+  /** The Score plate: ink, the white figure out of 10. Returns its width. */
+  const scorePlate = (value, x, y, { h = 6.4 } = {}) => {
+    const v = clean(value);
+    font('bold', h * 1.75, C.white);
+    const w = doc.getTextWidth(v) + h * 0.9;
+    doc.setFillColor(...C.plate);
+    doc.roundedRect(x, y, w, h, 1, 1, 'F');
+    font('bold', h * 1.75, C.white);
+    doc.text(v, x + w / 2, y + h / 2 + 0.45, { align: 'center', baseline: 'middle' });
+    return w;
+  };
+
+  /**
+   * The signpost plate (DESIGN.md "Plate", place variant): an ink plate,
+   * the pointed end to the right, the name in the plate face, a second line
+   * in beige, the figure at the right in Overpass 800. Only where a place
+   * meets its figure; never as an ordinary banner. Long names wrap to two
+   * lines inside the plate.
+   */
+  const plate = ({ name, sub = '', figure = '', unit = '' } = {}, { size = 26 } = {}) => {
+    const tip = 9;
+    const pad = 6;
+    const figW = figure ? (() => { font('bold', size * 0.82); return doc.getTextWidth(clean(figure)) + pad; })() : 0;
+    const nameW = W - tip - pad * 2 - figW;
+    const nl = lines(name, size, nameW, 'plate').slice(0, 2);
+    const nameH = nl.length * lh(size, 1.0);
+    const subH = sub ? lh(10.5, 1.3) + 1 : 0;
+    const h = Math.max(20, nameH + subH + pad * 1.6);
+    ensure(h + 4);
+    const x = M;
+    const y = state.y;
+    const r = 1.8;
+    doc.setFillColor(...C.plate);
+    // Rounded square end on the left, a pointed end on the right.
+    doc.roundedRect(x, y, W - tip, h, r, r, 'F');
+    doc.lines([[tip, h / 2], [-tip, h / 2]], x + W - tip - 0.01, y, [1, 1], 'F', true);
+    let ty = y + (h - nameH - subH) / 2;
+    font('plate', size, C.white);
+    doc.text(nl, x + pad, ty, { baseline: 'top', lineHeightFactor: 1.0 });
+    ty += nameH + 1;
+    if (sub) {
+      font('semibold', 10.5, C.onPlate2);
+      doc.text(lines(sub, 10.5, nameW, 'semibold')[0] || '', x + pad, ty, { baseline: 'top' });
+    }
+    if (figure) {
+      const fx = x + W - tip - pad;
+      font('bold', size * 0.82, C.white);
+      doc.text(clean(figure), fx, y + h / 2 - (unit ? 1.6 : 0), { baseline: 'middle', align: 'right' });
+      if (unit) {
+        font('normal', 8.5, C.onPlate2);
+        doc.text(clean(unit), fx, y + h / 2 + 4.6, { baseline: 'middle', align: 'right' });
+      }
+    }
+    state.y = y + h + 3;
+    return h;
+  };
+
+  /**
+   * The relief (DESIGN.md "Background graphics"), drawn only from a place's
+   * real peaks, in a band `h` mm high across the column: illuminated
+   * contours on the band, a hard umber cut with the blaze, and the peaks'
+   * real heights on the flat side, a gutter before the cut, never on the
+   * contours. No peak: nothing, returns false.
+   */
+  const relief = (mountains, { seed = 'relief', h = 30, format = (n) => n.toLocaleString('en') } = {}) => {
+    const peaks = reliefPeaks(mountains);
+    if (!peaks.length) return false;
+    const pxPerMm = 4;
+    const zoneX = M + W * 0.3;
+    const zoneW = PAGE_W - M - zoneX;
+    const drawn = layoutRelief(peaks, { w: zoneW * pxPerMm, h: h * pxPerMm, seed, format });
+    if (!drawn) return false;
+    ensure(h + 12);
+    const top = state.y;
+    doc.setFillColor(...C.sunken);
+    doc.roundedRect(M, top, W, h, 3, 3, 'F');
+    doc.saveGraphicsState();
+    doc.rect(zoneX, top, zoneW, h, null);
+    doc.clip();
+    doc.discardPath();
+    const k = 1 / pxPerMm;
+    const draw = (path, color, width) => {
+      if (!path) return;
+      doc.setDrawColor(...color);
+      doc.setLineWidth(width);
+      const re = /M([\d.-]+) ([\d.-]+)L([\d.-]+) ([\d.-]+)/g;
+      let m;
+      while ((m = re.exec(path))) {
+        doc.line(zoneX + m[1] * k, top + m[2] * k, zoneX + m[3] * k, top + m[4] * k);
+      }
+    };
+    draw(drawn.paths.sh2, C.shade, 0.18);
+    draw(drawn.paths.sh1, C.shade, 0.24);
+    draw(drawn.paths.is, C.shadeIdx, 0.32);
+    draw(drawn.paths.lit2, C.white, 0.18);
+    draw(drawn.paths.lit1, C.white, 0.26);
+    draw(drawn.paths.il, C.white, 0.36);
+    doc.restoreGraphicsState();
+    // The cut: a thin umber line where the zone starts, the blaze on it.
+    doc.setDrawColor(...C.action);
+    doc.setLineWidth(0.5);
+    doc.line(zoneX, top, zoneX, top + h);
+    blaze(zoneX - 3, top + 2.5, 6);
+    // Each height at its own summit: an ink point and the name and height
+    // on a paper tag above it (DESIGN.md "Background graphics": a height on
+    // a paper tag, never words straight on the contours).
+    for (const sp of drawn.spots.slice(0, 3)) {
+      const sx = zoneX + sp.x * k;
+      const sy = top + sp.y * k;
+      const label = clean(sp.text);
+      font('semibold', 8, C.text);
+      const tw = doc.getTextWidth(label) + 3;
+      const tx = Math.min(Math.max(sx - tw / 2, zoneX + 1.5), PAGE_W - M - tw - 1.5);
+      const tyTop = Math.max(top + 1.2, sy - 7.2);
+      doc.setFillColor(...C.text);
+      doc.circle(sx, Math.min(sy, top + h - 1.5), 0.7, 'F');
+      doc.setFillColor(...C.white);
+      doc.setDrawColor(...C.border);
+      doc.setLineWidth(0.15);
+      doc.roundedRect(tx, tyTop, tw, 4.6, 0.8, 0.8, 'FD');
+      font('semibold', 8, C.text);
+      doc.text(label, tx + 1.5, tyTop + 2.4, { baseline: 'middle' });
+    }
+    state.y = top + h + 3;
+    return true;
   };
 
   /** The Score's star, filled, centred on (cx, cy). */
@@ -462,45 +687,68 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
   };
 
   /**
-   * The cover both guides open with: the wordmark, a photograph with its
-   * credit under it, the title, the lines under it (one may carry the Score:
-   * `{ score, text }`), the price with its unit, the facts two across, and
-   * a QR code back to the live page at the foot.
+   * The cover both guides open with: the wordmark slot, a photograph with
+   * its credit under it, then the name. A place (`place: true`) prints its
+   * name on the signpost plate with its day figure (the place and its
+   * figure as one unit); a trip prints a plain title and its total on the
+   * total plate. The lines under it (one may carry the Score:
+   * `{ score, text }`), the relief when the place has real peaks
+   * (`relief: { mountains, seed }`), the facts two across, and a QR code
+   * back to the live page at the foot.
    */
-  const cover = async ({ photo: ph, title, lines: sub = [], price, facts: cells = [], qr: q } = {}) => {
+  const cover = async ({ photo: ph, title, lines: sub = [], price, facts: cells = [], qr: q, place = false, relief: rel = null } = {}) => {
     wordmark(M, state.y);
-    state.y += 9;
-    if (ph?.url) await photo(ph, { ratio: 16 / 9, maxH: 98 });
-    const tl = lines(title, 30, W, 'bold');
-    font('bold', 30);
-    doc.text(tl, M, state.y, { baseline: 'top', lineHeightFactor: 1.1 });
-    state.y += tl.length * lh(30, 1.1) + 1.5;
-    for (const s of sub) {
+    state.y += 10;
+    if (ph?.url) await photo(ph, { ratio: 16 / 9, maxH: 92 });
+    const rest = [...sub];
+    if (place) {
+      // The first plain line (the country) rides on the plate in beige.
+      const i = rest.findIndex((s) => typeof s === 'string' && s);
+      const plateSub = i >= 0 ? rest.splice(i, 1)[0] : '';
+      plate({ name: title, sub: plateSub, figure: price?.value || '', unit: price?.unit || '' });
+    } else {
+      const tl = lines(title, 28, W, 'bold');
+      font('bold', 28);
+      doc.text(tl, M, state.y, { baseline: 'top', lineHeightFactor: 1.08 });
+      state.y += tl.length * lh(28, 1.08) + 2;
+    }
+    for (const s of rest) {
       if (!s) continue;
       if (typeof s === 'object' && s.score) {
-        const size = 11.5;
-        star(M + 1.9, state.y + 2, 1.9);
-        font('bold', size);
-        doc.text(clean(s.score), M + 5, state.y, { baseline: 'top' });
-        const sx = M + 5 + doc.getTextWidth(clean(s.score)) + 1.5;
-        const rest = lines(s.text || '', size, PAGE_W - M - sx);
+        const size = 11;
+        // The words' first line sits on the plate's centre line.
+        const ph = 6.4;
+        const sw = scorePlate(s.score, M, state.y, { h: ph });
+        const sx = M + sw + 2.5;
+        const words = lines(s.text || '', size, PAGE_W - M - sx);
         font('normal', size, C.text2);
-        doc.text(rest, sx, state.y, { baseline: 'top', lineHeightFactor: 1.35 });
-        state.y += rest.length * lh(size, 1.35) + 1;
+        doc.text(words, sx, state.y + ph / 2 + 0.9, { baseline: 'middle', lineHeightFactor: 1.35 });
+        state.y += Math.max(ph + 2, ph / 2 + words.length * lh(size, 1.35) + 1);
       } else {
-        para(s, { size: 11.5, color: C.text2, after: 1 });
+        para(s, { size: 11, color: C.text2, after: 1 });
       }
     }
-    if (price?.value) {
+    if (!place && price?.value) {
+      // The total plate: the unit above, the figure big, once per page.
       state.y += 3;
       font('bold', 22);
       const pv = clean(price.value);
-      doc.text(pv, M, state.y, { baseline: 'top' });
-      const px = M + doc.getTextWidth(pv) + 2;
-      font('normal', 11.5, C.text2);
-      doc.text(clean(price.unit || ''), px, state.y + 3.4, { baseline: 'top' });
-      state.y += lh(22, 1.2) + 3;
+      const pw = Math.max(doc.getTextWidth(pv), (() => { font('semibold', 9); return doc.getTextWidth(clean(price.unit || '')); })()) + 12;
+      const ph2 = 21;
+      ensure(ph2 + 3);
+      doc.setFillColor(...C.plate);
+      doc.roundedRect(M, state.y, pw, ph2, 1.8, 1.8, 'F');
+      font('semibold', 9, C.onPlate2);
+      doc.text(clean(price.unit || ''), M + 6, state.y + 4.2, { baseline: 'top' });
+      font('bold', 22, C.white);
+      doc.text(pv, M + 6, state.y + 9, { baseline: 'top' });
+      state.y += ph2 + 4;
     }
+    if (rel?.mountains) {
+      state.y += 2;
+      relief(rel.mountains, { seed: rel.seed || title, format: rel.format });
+    }
+    state.y += 1;
     facts(cells, 2);
     if (q?.url) {
       const size = 26;
@@ -525,8 +773,8 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
     }
   };
 
-  /** Thin bars, one a row: the label, an ink bar on a sunken track scaled
-   *  to `of` (the whole), the figure right. Rows without a figure drop out. */
+  /** Thin bars, one a row: the label, an umber bar on the band scaled to
+   *  `of` (the whole), the figure right. Rows without a figure drop out. */
   const bars = (rows, { of = null, labelW = 48, valueW = 24 } = {}) => {
     const list = (rows || []).filter((r) => r && Number.isFinite(r.value) && r.value > 0);
     if (!list.length) return;
@@ -539,17 +787,18 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
       const by = state.y + 1.4;
       doc.setFillColor(...C.sunken);
       doc.roundedRect(M + labelW, by, trackW, 2.4, 1.2, 1.2, 'F');
-      doc.setFillColor(...C.text);
+      doc.setFillColor(...C.action);
       doc.roundedRect(M + labelW, by, Math.max(2.4, trackW * Math.min(1, r.value / whole)), 2.4, 1.2, 1.2, 'F');
-      font('semibold', 10.5);
+      font('bold', 10.5);
       doc.text(clean(r.text), PAGE_W - M, state.y, { baseline: 'top', align: 'right' });
       state.y += 7.5;
     }
     state.y += 1;
   };
 
-  /** The twelve-month strip: the good months filled in ink with white
-   *  letters, the rest outlined; the words under it say the same. */
+  /** The twelve-month strip: the good months as solid umber wagons with
+   *  white letters (bold), the rest outlined on the control edge; the
+   *  weight says it too, so it reads in black and white. */
   const monthStrip = (best, labels, { h = 9 } = {}) => {
     const on = new Set(best || []);
     ensure(h + 4);
@@ -558,12 +807,12 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
       const x = M + i * cw;
       const good = on.has(i + 1);
       if (good) {
-        doc.setFillColor(...C.text);
-        doc.roundedRect(x + 0.6, state.y, cw - 1.2, h, 1.4, 1.4, 'F');
+        doc.setFillColor(...C.action);
+        doc.roundedRect(x + 0.4, state.y, cw - 0.8, h, h / 2, h / 2, 'F');
       } else {
-        doc.setDrawColor(...C.border);
-        doc.setLineWidth(0.25);
-        doc.roundedRect(x + 0.6, state.y, cw - 1.2, h, 1.4, 1.4, 'S');
+        doc.setDrawColor(...C.edge);
+        doc.setLineWidth(0.3);
+        doc.roundedRect(x + 0.4, state.y, cw - 0.8, h, h / 2, h / 2, 'S');
       }
       font(good ? 'bold' : 'normal', 9, good ? C.white : C.text2);
       doc.text(clean(l), x + cw / 2, state.y + h / 2, { align: 'center', baseline: 'middle' });
@@ -594,14 +843,8 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
     const P = (p) => [ox + (p.lon * kx - minX) * s, oy + (maxY - p.lat) * s];
     doc.setFillColor(...C.sunken);
     doc.roundedRect(M, top, W, h, 3, 3, 'F');
-    if (all.length > pts.length) {
-      const [cx, cy] = P(centre);
-      doc.setDrawColor(...C.text2);
-      doc.setLineWidth(0.4);
-      doc.circle(cx, cy, 3.4, 'S');
-      doc.setFillColor(...C.text2);
-      doc.circle(cx, cy, 0.8, 'F');
-    }
+    // The place itself is "here": the blaze, as on the screens' maps.
+    const here = all.length > pts.length ? P(centre) : null;
     // Pins that would cover each other step aside a little, then the first
     // pin is drawn last, so it sits on top.
     const placed = [];
@@ -622,6 +865,7 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
       font('bold', 7.5, C.white);
       doc.text(String(n), x, y + 0.1, { align: 'center', baseline: 'middle' });
     }
+    if (here) blaze(here[0] - 4, here[1] - 2.33, 8);
     // A scale bar, bottom left: one degree of latitude is 111.32 km.
     const mmPerKm = s / 111.32;
     const nice = [0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200].find((k) => k * mmPerKm >= 14) || 200;
@@ -659,5 +903,6 @@ export async function createPdf({ footerLabel = 'Carta', pageLabel = (n, of) => 
     doc, C, state, font, lh, lines, para, h1, h2, h3, rule, gap, ensure, newPage,
     facts, tickRow, moneyRow, photo, photoPair, route, profile, link, save,
     wordmark, star, qr, startPage, cover, bars, monthStrip, pinMap,
+    blaze, plate, scorePlate, relief,
   };
 }

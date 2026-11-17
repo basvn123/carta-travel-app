@@ -25,7 +25,7 @@
 
 /** Every colour token a share image may use. */
 export const SHARE_TOKENS = [
-  'neutral-0', 'neutral-50', 'neutral-100', 'neutral-200', 'neutral-600', 'neutral-700', 'neutral-900',
+  'neutral-0', 'neutral-50', 'neutral-100', 'neutral-200', 'neutral-500', 'neutral-600', 'neutral-700', 'neutral-900',
   'umber-50', 'umber-100', 'umber-200', 'umber-500', 'umber-600', 'umber-700', 'umber-800',
   'sun-100', 'sun-400', 'sun-800', 'lagoon-100', 'lagoon-600', 'lagoon-700',
 ];

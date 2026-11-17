@@ -8769,6 +8769,11 @@ export const it = {
   "days.money": "Quanto costa il viaggio",
   "days.total": "Totale",
   // lane:brand (house style 2026-11): this lane adds its new keys directly under this line
+  "nf.title": "Niente a questo indirizzo",
+  "nf.text": "Il link potrebbe essere vecchio o scritto male.",
+  "nf.map": "Apri la mappa",
+  "nf.plan": "Pianifica un viaggio",
+  "blog.cta": "Apri la mappa",
   "days.perDay": "A persona al giorno",
   "days.nNights": "{n} notti",
   "days.part.getting": "Andata e ritorno",
