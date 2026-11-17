@@ -51,7 +51,7 @@
 .ccard-arc-ground { stroke: var(--ccard-line); stroke-linecap: butt; }
 .ccard-arc-seg {
   stroke-linecap: butt;
-  transition: stroke-dasharray 900ms var(--ease-out), stroke-dashoffset 900ms var(--ease-out);
+  transition: stroke-dasharray var(--dur-4) var(--ease-out), stroke-dashoffset var(--dur-4) var(--ease-out);
 }
 .ccard-arc-seg.ccard-k-travel { stroke: var(--ccard-travel); }
 .ccard-arc-seg.ccard-k-around { stroke: var(--ccard-around); }

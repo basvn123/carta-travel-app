@@ -636,7 +636,7 @@ export function JourneyPage({
                 <div className="pt-badges">
                   <Chip kind="status" className="pt-badge">{typeLabel(trip.tripTypeSlug, t, trip.tripType)}</Chip>
                   <DifficultyChip profile={profile} stats={stats} />
-                  {bestText && <Chip kind="status" className="pt-badge">{t('jx.bestIn', { months: bestText })}</Chip>}
+                  {/* Best months are on the facts board (`best` cell), so the head does not say them twice. */}
                 </div>
                 {hook && (
                   <p className="pt-lead">{hook.built ? t('journey.hookBuilt', hook.built) : stripDashes(hook.line)}</p>

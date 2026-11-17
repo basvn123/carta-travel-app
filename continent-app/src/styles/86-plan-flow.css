@@ -63,7 +63,6 @@
   text-wrap: balance;
 }
 
-.pf-open-accent { color: var(--action); }
 
 /* The two actions are the page's point: tall, bold, stacked full width on a
    phone, side by side from 769 px. */
@@ -1421,7 +1420,7 @@
 @media (min-width: 1024px) {
   .pf-open:not(.is-bare) {
     grid-template-columns: minmax(0, 1fr);
-    align-content: center;
+    align-content: start; /* the house head leads at the top, as below 1024 */
     gap: var(--space-6);
   }
   .pf-open:not(.is-bare) .pf-open-text {
