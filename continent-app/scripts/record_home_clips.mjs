@@ -199,7 +199,14 @@ const CHAPTERS = {
       const f = page.locator('.hv-ask-input:visible').first();
       await page.waitForTimeout(500);
       await f.pressSequentially(ASK_QUESTION[lang] || ASK_QUESTION.en, { delay: 70 });
-      await page.waitForTimeout(700); await f.press('Enter'); await page.waitForTimeout(6000);
+      await page.waitForTimeout(700); await f.press('Enter');
+      // Until the answer's places and their photos are drawn, not a fixed
+      // 6 s: a slow answer filmed 4 s of still dots and grey photos.
+      await page.waitForFunction(() => {
+        const imgs = [...document.querySelectorAll('.ac-body .ac-places img')];
+        return imgs.length > 0 && imgs.every((i) => i.complete && i.naturalWidth > 0);
+      }, null, { timeout: 30000 });
+      await page.waitForTimeout(1500);
       // The answer scrolls in the chat sheet, not the Explore list under it;
       // a short answer fits the sheet and is held while it reads instead.
       const long = await page.evaluate(() => {
