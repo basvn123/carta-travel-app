@@ -8401,7 +8401,7 @@ export const es = {
   "pf.home.plan": "Empezar a planificar",
   "pf.home.seeTrips": "Ver tus viajes con precio",
   "pf.refine.title": "Precios desde tu aeropuerto, tus fechas y tu grupo",
-  "pf.refine.sub": "Cuéntale a Carta dónde duermes y qué te gusta, y estos viajes se ajustarán mejor a ti.",
+  "pf.refine.sub": "Cuéntale más a Carta y estos viajes se ajustarán mejor a ti.",
   "pf.refine.sleep": "Dónde duermes",
   "pf.refine.go": "Ajustarlos a mí",
   "pf.refine.count": "{n} preguntas cortas.",

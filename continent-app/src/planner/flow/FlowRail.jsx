@@ -1,6 +1,7 @@
 import React from 'react';
 import { Blaze, Button } from '../../components/ui/index.js';
 import { CheckIcon } from '../../components/Icons.jsx';
+import { paintsNow } from './paintGuard.js';
 
 /**
  * The step list beside a question from 1100 px (T893, the owner's plan
@@ -28,7 +29,7 @@ export function FlowRail({ groups, label }) {
                   disabled={!it.onClick && !it.now}
                   onClick={it.onClick || undefined}
                 >
-                  <span className="pf-rail-dot" aria-hidden="true">{it.now ? <Blaze size="sm" /> : it.done ? <CheckIcon size={12} /> : it.n}</span>
+                  <span className="pf-rail-dot" aria-hidden="true">{it.now ? <Blaze size="sm" className={paintsNow(it.id) ? 'hs-paint' : ''} /> : it.done ? <CheckIcon size={12} /> : it.n}</span>
                   <span className="pf-rail-txt">
                     <span className="pf-rail-name">{it.label}</span>
                     {it.answer && <span className="pf-rail-ans">{it.answer}</span>}

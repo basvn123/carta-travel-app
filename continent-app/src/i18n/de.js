@@ -8401,7 +8401,7 @@ export const de = {
   "pf.home.plan": "Planung starten",
   "pf.home.seeTrips": "Deine berechneten Reisen ansehen",
   "pf.refine.title": "Berechnet ab deinem Flughafen, deinen Daten und deinen Mitreisenden",
-  "pf.refine.sub": "Sag Carta, wo du schläfst und was du magst, dann passen diese Reisen besser zu dir.",
+  "pf.refine.sub": "Erzähl Carta mehr, dann passen diese Reisen besser zu dir.",
   "pf.refine.sleep": "Wo du schläfst",
   "pf.refine.go": "An mich anpassen",
   "pf.refine.count": "{n} kurze Fragen.",

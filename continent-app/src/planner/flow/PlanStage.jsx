@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Blaze, IconButton } from '../../components/ui/index.js';
+import { noteNow, paintsNow } from './paintGuard.js';
 import { ArrowLeftIcon, CloseIcon } from '../../components/Icons.jsx';
 
 /**
@@ -42,13 +43,10 @@ export function PlanStage({ bar = null, wide = false, rail = null, side = null, 
  * close would stand, so it lines up with the back control (owner, plan flow
  * walk) instead of floating in a bar above the step.
  */
-// House style (plan lane): the blaze paints onto the mark asked now only
-// after the traveller's own step, never at the flow's first paint.
-let headSeen = false;
-
 export function SheetHead({ onBack, backLabel, onClose, closeLabel, position = '', marks = null, end = null }) {
-  const paint = headSeen;
-  useEffect(() => { headSeen = true; }, []);
+  const nowStep = marks?.find((m) => m.now)?.key ?? position;
+  const paint = paintsNow(nowStep);
+  useEffect(() => { noteNow(nowStep); }, [nowStep]);
   return (
     <div className="pf-head">
       <span className="pf-head-side">

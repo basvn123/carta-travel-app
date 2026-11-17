@@ -8401,7 +8401,7 @@ export const fr = {
   "pf.home.plan": "Commencer",
   "pf.home.seeTrips": "Voir vos voyages chiffrés",
   "pf.refine.title": "Prix calculés depuis votre aéroport, vos dates et votre groupe",
-  "pf.refine.sub": "Dites à Carta où vous dormez et ce que vous aimez, et ces voyages vous iront mieux.",
+  "pf.refine.sub": "Dites-en plus à Carta et ces voyages vous iront mieux.",
   "pf.refine.sleep": "Où vous dormez",
   "pf.refine.go": "Les adapter à moi",
   "pf.refine.count": "{n} questions courtes.",

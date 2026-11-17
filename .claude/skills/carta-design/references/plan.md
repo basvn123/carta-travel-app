@@ -34,12 +34,12 @@ The owner reviewed the plan flow's results and trip page and freed Trips for you
 - **A trip card** carries the name and the country; the top pick may take a whole row.
 - **The match ring** shows the trip finder's ranked score (T884), never a quality rating.
 - **Warnings** (over budget, Overvol, a missed like) read as warnings; best value marks only best value; the four cost colours are only in the cost card. No traffic-light scale.
-- **The phone's primary may stick.** Under 1024 px a bar pinned above the nav holds the total and Plan this trip, and the price card's own button hides, so one primary shows at a time.
+- **The phone's primary may stick.** Up to 768 px a bar pinned above the nav holds the total and Plan this trip, and the price card's own button hides, so one primary shows at a time. From 769 px the cost post sits beside the page with its own button (plan lane, 2026-11).
 - **Wat het kost** is compact by default: the total, the price a person, the cost bar and the budget line, with one Breakdown (Opbouw) button at its top that folds the lines open.
 - **The trips map** draws photo pins and curved lines from the home airport with the time there; the picked trip is the marked one.
 
 ## Ready-made trip page (T430, T431)
 
-The trip page of a ready-made trip: gallery, head, fact band, Why this trip, the price card (a sticky side column from 1024 px), Is this week for you, Not quite right? straight after it, the week day by day, getting there, before you go. The suitability strip under a trip hero is retired (2026-10-15, T431): the page carries a fact band (days, distance, climb, highest point, where you sleep, start) and the difficulty as a status chip in the head (see outdoors.md, Difficulty).
+The trip page of a ready-made trip: gallery, head, fact band, Why this trip, the price card (a sticky side column from 1024 px on the journey page; the library trip's post sits beside the page from 769 px), Is this week for you, Not quite right? straight after it, the week day by day, getting there, before you go. The suitability strip under a trip hero is retired (2026-10-15, T431): the page carries a fact band (days, distance, climb, highest point, where you sleep, start) and the difficulty as a status chip in the head (see outdoors.md, Difficulty).
 
 A trip style's list is tiles: a week is chosen on its photographs and the places it visits (owner 2026-10-15, T431; see explore.md, Density). In a trip list whose length control already states the days, the card carries no length (owner 2026-10-15).

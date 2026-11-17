@@ -84,15 +84,17 @@
   font-weight: 700;
 }
 
-.pf-open-start.btn { box-shadow: var(--elev-1); }
+.pf-open-start.btn { box-shadow: none; }
 
+/* House style: Start planning is the one umber action; Ready-made trips is
+   the paper door with an edge (beige would read as "selected"). */
 .pf-open-browse.btn {
-  border-color: transparent;
-  background: var(--action-tint);
-  color: var(--select-ink);
+  border: var(--stroke-edge) solid var(--edge);
+  background: var(--surface);
+  color: var(--text);
 }
 
-.pf-open-browse.btn:hover { border-color: transparent; background: var(--action-tint); box-shadow: var(--elev-1); }
+.pf-open-browse.btn:hover { border-color: var(--action); background: var(--surface); }
 
 .pf-open-start .btn-icon { transition: transform var(--dur-2) var(--ease-out); }
 
@@ -220,12 +222,12 @@
   flex-direction: column;
   gap: var(--space-4);
   padding: var(--space-4) var(--space-4) var(--space-3);
+  border: var(--stroke-hair) solid var(--border);
   border-radius: var(--radius-card);
   background: var(--surface);
-  box-shadow: var(--elev-1);
   color: var(--text);
   text-decoration: none;
-  transition: box-shadow var(--dur-3) var(--ease-out);
+  transition: border-color var(--dur-3) var(--ease-out);
 }
 
 .pf-coll-fan { position: relative; display: block; padding-top: calc(var(--pw) * 1.45 + var(--space-3)); }
@@ -274,21 +276,22 @@
   gap: var(--space-1);
   min-height: var(--tap);
   padding: 0 var(--space-4);
+  border: var(--stroke-edge) solid var(--text);
   border-radius: var(--radius-pill);
-  background: var(--action);
-  color: var(--action-text);
+  background: var(--surface);
+  color: var(--text);
   font-size: var(--text-label);
   font-weight: 700;
-  transition: background var(--dur-1) var(--ease-out);
+  transition: border-color var(--dur-1) var(--ease-out);
 }
 
 .pf-coll-go svg { transition: transform var(--dur-2) var(--ease-out); }
 
 @media (hover: hover) {
-  .pf-coll:hover { box-shadow: var(--elev-2); }
+  .pf-coll:hover { border-color: var(--edge); }
   .pf-coll:hover { --step: 70%; --turn: 7deg; }
   .pf-coll:hover .pf-coll-photo { transform: translateX(calc(-50% + var(--k) * var(--step))) translateY(calc(var(--k) * var(--k) * 3px - 6px)) rotate(calc(var(--k) * var(--turn))); }
-  .pf-coll:hover .pf-coll-go { background: var(--action-hover); }
+  .pf-coll:hover .pf-coll-go { border-color: var(--action); }
   .pf-coll:hover .pf-coll-go svg { transform: translateX(3px); }
 }
 
@@ -1123,8 +1126,6 @@
   .pf-stage.is-studio .pf-step > .pf-title { font-size: var(--text-headline); }
 }
 @media (min-width: 1024px) { .pf-stage { --pf-trail-w: 272px; } }
-/* The calendar keeps a hand's width in the wide pane. */
-@media (min-width: 1024px) { .pf-stage.is-studio .pf-step .cal-inline { max-width: 560px; } }
 @media (min-width: 1100px) {
   .pf-stage.is-studio:has(> .pf-side) { grid-template-columns: var(--pf-trail-w) minmax(0, 1fr) 320px; }
   .pf-stage.is-studio > .pf-side { display: block; grid-column: 3; grid-row: 1; align-self: stretch; min-width: 0; border-left: var(--stroke-hair) solid var(--border); background: var(--surface-page); }

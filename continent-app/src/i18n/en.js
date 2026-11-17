@@ -9028,7 +9028,7 @@ export const en = {
   "pf.home.plan": "Start planning",
   "pf.home.seeTrips": "See your priced trips",
   "pf.refine.title": "Priced from your airport, dates and people",
-  "pf.refine.sub": "Tell Carta where you sleep and what you like, and these trips fit you closer.",
+  "pf.refine.sub": "Tell Carta more and these trips fit you closer.",
   "pf.refine.sleep": "Where you sleep",
   "pf.refine.go": "Fit these to me",
   "pf.refine.count": "{n} short questions.",

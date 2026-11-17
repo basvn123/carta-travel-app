@@ -708,6 +708,15 @@ export function TripPage({
         </div>
 
         <div className="tpage-col itin-body">
+        {/* The post (house style): the day figure and the one action, beside
+            the page from 769 px, a sticky foot on a phone. First in the DOM so
+            the one action comes early in the tab order; CSS places it. The figure is the
+            receipt's own day line, the same one the facts show. */}
+        {detail && (primaryAction || onOpenInPlanner) && (
+          <aside className="itin-post">
+            {perDayText && (
+              <p className="itin-post-fig"><b>{perDayText}</b><span>{t('trip.factPerDay')}</span></p>
+            )}
         <div className="itin-main">
           {/* The card came from a list that has since been re-exported: the id
               it names no longer has a detail file. Nothing below can be drawn
@@ -1055,14 +1064,6 @@ export function TripPage({
             </Fold>
           )}
         </div>
-        {/* The post (house style): the day figure and the one action, beside
-            the page from 769 px, a sticky foot on a phone. The figure is the
-            receipt's own day line, the same one the facts show. */}
-        {detail && (primaryAction || onOpenInPlanner) && (
-          <aside className="itin-post" aria-label={tripHeadline(trip, t)}>
-            {perDayText && (
-              <p className="itin-post-fig"><b>{perDayText}</b><span>{t('trip.factPerDay')}</span></p>
-            )}
             {primaryAction ? (
               <Button variant="primary" className="itin-post-use" iconStart={<CheckIcon size={16} />}
                 onClick={() => primaryAction.onClick(detail || card)}>

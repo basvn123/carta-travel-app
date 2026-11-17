@@ -8412,7 +8412,7 @@ export const nl = {
   "pf.home.plan": "Begin met plannen",
   "pf.home.seeTrips": "Bekijk je geprijsde reizen",
   "pf.refine.title": "Geprijsd vanaf je luchthaven, je data en je reisgenoten",
-  "pf.refine.sub": "Vertel Carta waar je slaapt en wat je graag doet, dan passen deze reizen beter bij je.",
+  "pf.refine.sub": "Vertel Carta meer, dan passen deze reizen beter bij je.",
   "pf.refine.sleep": "Waar je slaapt",
   "pf.refine.go": "Pas ze aan mij aan",
   "pf.refine.count": "{n} korte vragen.",

@@ -529,6 +529,9 @@
 
 .itin-page .tpage-col.itin-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); max-width: none; margin: 0; padding: 0 0 var(--space-8); }
 .itin-page .itin-main { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+/* The post comes first in the DOM (the action early in the tab order); on a
+   phone it shows last, as the sticky foot; from 769 px it is the right column. */
+.itin-page .itin-post { order: 2; }
 .itin-page .itin-post {
   position: sticky;
   bottom: 0;
@@ -548,6 +551,8 @@
 .itin-page .itin-post .itin-post-use.btn { flex: none; width: auto; height: auto; min-height: var(--tap-main); margin: 0; font-size: var(--text-body); }
 @media (min-width: 769px) {
   .itin-page .tpage-col.itin-body { grid-template-columns: minmax(0, 1fr) 288px; column-gap: var(--space-6); align-items: start; }
+  .itin-page .itin-main { grid-column: 1; grid-row: 1; }
+  .itin-page .itin-body > .itin-post { grid-column: 2; grid-row: 1; order: 0; }
   .itin-page .itin-post {
     top: var(--space-4);
     bottom: auto;
@@ -569,8 +574,8 @@
 .itin-page .itin-gone .itin-gone-back.btn { height: auto; margin: 0; }
 
 /* The facts as tiles: label over value, paper on a hairline. */
-.itin-page .tpage-facts.itin-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); padding: 0; border: 0; border-radius: 0; background: none; }
+.itin-page .tpage-facts.itin-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); padding: 0; border: 0; border-radius: 0; background: none; }
 @media (min-width: 600px) { .itin-page .tpage-facts.itin-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.itin-page .itin-facts .tpage-fact { min-width: 0; padding: var(--space-3); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
+.itin-page .itin-facts .tpage-fact { min-width: 0; padding: var(--space-2) var(--space-3); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
 .itin-page .itin-facts .tpage-fact-val { font-family: var(--ui); font-size: var(--text-lead); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
 .itin-page .itin-facts .tpage-fact-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
