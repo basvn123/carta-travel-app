@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { SectionLink, NavCount, PLACE_ITEMS } from './AppHeader.jsx';
 import { useNavMarker } from '../lib/motion.js';
+import { useCompactNav } from '../hooks/useCompactNav.js';
 
 // Bottom navigation, PHONE only (hidden by CSS from 769 px, where the same
 // places live in AppHeader). Equal slots of --tap-main (T496, roadmap 1.3a T1
@@ -21,6 +22,8 @@ export function BottomNav({
   const { t, lang } = useI18n();
   const navRef = useRef(null);
   const markerRef = useRef(null);
+  // The bar folds to its tap row while a list scrolls down (ROADMAP I7).
+  useCompactNav(place);
   // The place showing is one --select-bg pill behind its icon, sliding
   // between the slots (T391, rule R5).
   useNavMarker(navRef, markerRef, `${place}:${lang}:${savedCount}:${planInProgress}`, {
