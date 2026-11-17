@@ -5,7 +5,7 @@
 - **Level and playbook:** L2 · crew:design over crew:deep-task, run by an orchestrator session with eleven headless lanes
 - **Run folder:** `.work/2026-11-13-house-style/` (only this report is tracked)
 - **ROADMAP items:** G1 (done), with G2, G3, G5, G8, G9, G10, G14 advanced by the lanes
-- **On main:** fast-forward from `7d4e7c98d8` to the house style (2026-11-17), CI green (app, python, evals, csp, edge). Nothing deployed.
+- **On main:** fast-forward from `7d4e7c98d8` to the house style (2026-11-17), CI green (app, python, evals, csp, edge). **Deployed to production 2026-11-17** (owner asked): shell only, from a clean worktree of `main` (`b7d156fd24`) with the live `boot.json` and Ask Carta index taken from production; preview checked first; data on R2 untouched (no data push, no prune). Live check: house style at 390 and 1440, 48 places, no page errors, Ask answers, CSP headers present.
 
 ## What the owner asked
 A complete, original house style ("no AI slop whatsoever", background graphics, signature elements), DESIGN.md and PRODUCT.md completely redesigned, every page optimized and clear, checked by multiple judges, using the crew system with separate sessions per area. Added on the way: interactions that feel alive with a haptic tick; phone, tablet and desktop always checked; visual only, no logic or function removed (Ask Carta included); keep the umber brown; minimal text; modern but unique; rich motion; automatic restarts after usage limits; the owner picks the direction from a comparison; the app will be renamed (name-free identity).
