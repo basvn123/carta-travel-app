@@ -5,6 +5,7 @@ import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { RowFormation } from '../../browse/explore/HouseParts.jsx';
 import { useSettledFigure } from '../../lib/figureChange.js';
+import { useDayView } from '../../hooks/useDayView.js';
 import {
   PlusIcon, RouteIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon, FriendsIcon, ShareIcon,
 } from '../../components/Icons.jsx';
@@ -184,6 +185,12 @@ export function SavedTab({
   shared = null, friends = [], sharedRows = null, heldKey = '',
 }) {
   const { t } = useI18n();
+  // The rows' figures follow the traveller's price view, so their unit must too:
+  // the house string in the day view, the view's own unit ("for 2 people, 7 nights") in a total view.
+  const dayView = useDayView();
+  const unitHead = dayView.total
+    ? dayView.unit.charAt(0).toLocaleUpperCase(activeLocale()) + dayView.unit.slice(1)
+    : t('mt.figDay');
   const [list, setList] = useState('all');
   const [kind, setKind] = useState('all');
   const [fell, setFell] = useState(false);
@@ -429,7 +436,7 @@ export function SavedTab({
         )}
         <span className="mt-spacer" />
         {/* The unit of the rows' day figures, said once (as Explore's column head). */}
-        <span className="mt-section-unit mt-saved-unit">{t('mt.figDay')}</span>
+        <span className="mt-section-unit mt-saved-unit">{unitHead}</span>
         <Button size="sm" className="mt-view-toggle" onClick={() => setView((v) => (v === 'map' ? 'list' : 'map'))}>
           {t(view === 'map' ? 'mt.viewList' : 'mt.viewMap')}
         </Button>
