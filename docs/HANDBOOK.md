@@ -2359,9 +2359,9 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 **Where it lives.** `pipeline/photos/derive.py`, `pipeline/photos/wire_ladder.py`, `pipeline/photos/hero_ladder.py`, `continent-app/src/lib/imageLadder.js`, `continent-app/src/lib/heroImage.js`, `continent-app/src/lib/heroLadder.json`, `continent-app/src/lib/pictureFlag.js`, `continent-app/src/components/LayerPhoto.jsx`, `continent-app/src/components/HeroImage.jsx`, `archive/execution-2026-11-11:archive/docs-2026-11/PHOTOS.md`.
 
 **Limits.**
-- The CDN is not live: open rows T049-a to T049-d, T052-a and T235-d.
+- The CDN is live since 2026-11-17: three `image_transcode` runs on CPX22 workers (no CAX41 was free in any EU location) derived the published photos of beaches, mountains, trails, cycling, region, dest and dossier (68,687; job argument `published`). Lakes waits on a lakes cache tarball without a rescore hold. T052-a and T235-d stay open.
 - Nothing joins the manifest into the wire, so production has no `ih` or `d` (T052-d).
-- `heroLadder.json` ships not live until the owner's derive run of the `dest` and `dossier` layers is on R2 and `hero_ladder.py` is re-run (T1105-a).
+- `heroLadder.json` is live since 2026-11-17: 13,887 of 13,976 destination and gallery photographs have a copy, 89 are listed missing, 1,798 carry their real rung sizes in `dims`. It adds about 25 KB gzip to the entry chunk; storing one source size per `dims` key instead of three rungs would cut most of it (H12).
 - Every surface except beach, lake and mountain pages still links to Wikimedia directly (T052-f).
 
 ### Licensed photo sources and credits

@@ -29,7 +29,7 @@ How to use it:
 | `docs/owner/explore-data-runs.md` | what the Monday explore data run does (no steps left) | procedure |
 | `docs/owner/uploads.md` | switching on the upload path | procedure |
 | `docs/owner/pass-subscription.md` | switching on the 12-month pass and the Trip Pass | procedure |
-| `docs/owner/paid-runs.md` | paid runs, last in the order | procedure, 28 runs |
+| `docs/owner/paid-runs.md` | paid runs, last in the order | procedure, 27 runs |
 | `docs/owner/unsorted.md` | owner steps no procedure covers yet (emptied by round 2 of the 2026-11-12 sweep) | 0 |
 
 Counts were recounted from the files by owner sweep round 2 on 2026-11-12 (`.work/2026-11-12-owner-round2/report.md`): a count is the numbered steps, step bullets and table rows in the file.
