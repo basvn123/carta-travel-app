@@ -1,0 +1,53 @@
+# Report: home lane of the house style (G1)
+
+Status: done. Judge 1 109/135, merge no (craft 3; two CSS fixes, `judgement-1.md`), fixed in `bfc4d3f382`; judge 2 108/135, merge no (craft 3; the 820 band, the phone tour reveal, an off-scale breakpoint, `judgement-2.md`), fixed in `6dead46582`; judge 3 110/135, **merge: yes**, nothing blocking (`judgement-3.md`). Fix at integration: ship the re-recorded clips (the phone frame still plays the old recordings), merge order with the moved `p15-housestyle`, the waitlist-emphasis owner flag.
+Branch: `p15-hs-home` (worktree `wt/hs-home`), base `0a5517d74c`; commits `70da1aff74`, `ff0a3c4dff`, `bfc4d3f382`, `6dead46582`. ROADMAP: G1, with G10 (three angles).
+
+## What was done
+L2 crew run (design playbook): three explorers (home code and function inventory, the foundation kit, jobs, copy and clips), three proposals (A the walk, B the receipt, C the signposts), three critics (no blockers; all three picked B's skeleton), decision `decision.md` (B, with A's hero order and route ruler and C's umber band), build by the lane orchestrator, three judges with a fix round after each of the first two. Tour clips re-recorded in six languages into `public-staging/`.
+
+## What changed, per section (before: `before/`, `contact-before-*.png`; after: `shots/`)
+| Section | Before | After | Files |
+|---|---|---|---|
+| Hero | centred slogan with a sun-yellow word, sparkle on Ask Carta, a long line, a cream ticket with an uppercase label | slogan at the lower left on the header's line, accent in beige, the boxed AI tag, a shorter line; the pass a paper ticket whose stub is the getting-there wagon (outlined umber pill, glyph, figure); header-on-film and one-bar rule unchanged | `HomeHero.jsx`, `61-v6-home.css` |
+| The week | two umber panels led by uppercase kickers, figures lit by scroll position, a sticky receipt from 1024 only (`display:none` below), a phone run bar | one umber band: heading, two chapters (amount, one line), and the house's paper cost post on every width (the day's formation, `CostRow` lines, Rounding only when the printed lines differ, one ink total `Plate` with `Figure still`); the wagons couple in once; chapters centre against the post from 768, their amounts a step under the total | `HomeCost.jsx`, `62-home-story.css` |
+| The flight's share (flight in the sweep only) | sun, umber and lagoon bars, a count-up, a sheen | the formation's colours, every figure whole from the first paint, bars draw once; door secondary | `HomeProof.jsx` |
+| Tour | pill tabs with per-chapter tone grounds and a radial glow, Phosphor icons, chips for "Also in Carta" | tabs on a hairline with the umber paint bar that fills with the clip (vertical from 1024), house icons, AI tag; the clip in an ink phone on a sunken card; one quiet "Also in Carta" line | `HomeTour.jsx` |
+| Try it | a slider in a card, per-card "Fits your budget" | a route ruler (umber paint to the budget, places as stop discs, best-value ring), the budget figure follows the thumb, a haptic tick on release with a new value; cards with the place's formation; over budget fades only the photo; door secondary | `HomeTry.jsx` |
+| Plans | three columns, lists always open | rows on a phone with each list behind a "What is in it" fold, columns with open lists from 769, title beside them from 1024 | `HomePlans.jsx` |
+| Close | a field under a title | a full-width sunken band; on a phone the field stacks over its quiet Ask; its search landmark named by the heading | `HomePage.jsx`, `HomeHero.jsx` |
+| Waitlist | primary submit, no state motion | paper field, secondary submit with its loading state, a shake on every refusal, the done note on beige | `WaitlistForm.jsx`, `94-waitlist.css` |
+| Footer from home | legal links 18 px tall | 44 px targets, same look | `61-v6-home.css` |
+| G14 (`?home=g14`) | mist hero, uppercase kicker, umber card with lagoon bar | stone, plain kicker, paper post with the formation's colours, house arrow icons | `HomeG14.jsx`, `63-home-g14.css` |
+| Motion kit | its own spring copy | the house springs (`src/lib/motionTokens.js`); punctuation after an accent no longer starts a line; reduced motion starts every arrival at its end state | `motionKit.jsx` |
+| Copy (six languages) | | shorter hero line, cost, share and Try lines, waitlist lead and fine print; headings lose their full stops; new `home.planWhat`, `home.weekTotal` under `// lane:home` | `src/i18n/*.js` |
+| Docs | | `references/home.md` gains "The look (house style 2026-11)" | `.claude/skills/carta-design/references/home.md` |
+| Scripts | `verify_home` checks for markup removed in earlier runs (it aborted at `.hv-week`); the recorder wrote only into `public/` | `verify_home` checks the cost post, the tour tabs, try it and the plan lists (same depth); the recorder takes `--out` | `scripts/verify_home.mjs`, `scripts/record_home_clips.mjs` |
+
+Every changed file: `git diff --stat 0a5517d74c..p15-hs-home` (25 files). `homeIcons.jsx` deleted (unused).
+
+## Function parity
+No control, door, handler, show/hide condition or data field removed (both judges: criterion 11 at 5). Presentation-only changes: the scroll-tied chapter light-up and the phone run bar (their figures are all in the post from the first paint), kickers and `home.proofNote` no longer rendered (keys kept in the catalogues by decision, listed in `handbook-notes.md`), the per-card "Fits your budget" line (the foot says how many fit), the count-up (still figures), the Proof, Try and waitlist buttons from primary to secondary (one primary; owner note), the chapter facts pills (their figures are the post's line subs).
+
+## Checks
+See `checks.md` (at `6dead46582`): `npm test` equals the 25-failure sparse baseline; lint 0 errors; design-lint 0 new (16 fewer); token-contrast 0 under; css-routes ok; verify_home 65 PASS; verify_home_g14, verify_language_urls, verify_url_scheme pass; verify_prerender not applicable (content pages only); axe home 390/820/1440 0 violations, G14 and flight state 0 serious; sweep 360 to 1920 clean in EN and DE (v3) and DE (G14); impeccable detect `[]` (`impeccable.json`); docs checks OK apart from the baseline SCHEMA drift.
+
+## Screenshots
+`shots/home-<w>.png` and `home-<w>-s<n>.png` at 360, 390, 820, 1180, 1440, 1920; `g14-<w>*.png` at 390, 820, 1440; flight states `flight-*.png` (dev build, `?tab=home&o=BRU&flightmock`); German 360 in `shots/de/` and G14 at 390, 820, 1024, 1440 (retaken on the final build); sweeps `shots/sweep-*.json`. Contact sheets `contact-*.png`.
+
+## Recordings
+54 clips (9 chapters by 6 languages, mp4 plus webp poster) in `public-staging/home/clips/<lang>/`, 27 MB (the shipped set is 32 MB); frame strips in `strips/` (`sheet-en.png`, `sheet-de.png`). Recorded against the lane's dev-mode build (the recorder's seams need DEV); they show explore, place and trip in the house style and plan, My trips and Together as they were at the lane's base. Copying into `continent-app/public/home/clips/` is the orchestrator's or owner's step (protected path); a final re-record after all lanes merge is advised.
+
+## Departures from the house style
+- Try it's cards use the formation and house radius on their own `.hm-card` instead of the kit `RailCard`, which always renders a link (FR 3).
+- The cost post's wagons couple in through a scoped rule on `.hs-wagon` (the kit's own keyframes), as the trip lane did.
+- From home the shared footer's legal links get 44 px targets (scoped to `.hv-page`).
+
+## Open items
+`foundation-requests.md` (4: home-only tokens, a compact formation, a static RailCard, the Phosphor dependency), `handbook-notes.md` (ROADMAP and project-map lines, the clips step, owner suggestions: waitlist emphasis, the footer tagline conflict). Integration: `p15-housestyle` has moved on since the base (outdoors lane): merge normally. Unused home keys (`home.*Kick`, `home.tryFits`, `home.proofNote`, `home.nightPrice`, `home.dayPrice`, `home.nNights`, `home.nDays`, `home.soFar`) are kept by decision (no test churn; a later copy pass may retire them with `home.test.mjs`'s retired list).
+
+## How to undo
+`git revert 6dead46582 bfc4d3f382 ff0a3c4dff 70da1aff74`. No data, schema or storage change.
+
+## Judge 3's optional items (not built)
+The ruler's thumb half covers the stop disc at the budget's own value (1024+); the chapters could take a larger step at 1440+; the "See Trip Pass prices" door sits under the Free column from 1024. Listed in `handbook-notes.md`.
