@@ -71,6 +71,16 @@ def test_reupload_and_size_drift_are_carried():
     assert doc["missing"] == []
 
 
+def test_journal_rungs_read_like_manifest_rungs():
+    # derive journals store d as {"320": [w, h], ...}; load_prior lets them
+    # win over manifests, so a right-sized copy must not land in dims.
+    t_bru = dv.canonical_title(BRU)
+    e = entry(t_bru, 3332, 2000)
+    e["d"] = {str(w): list(v) for w, v in zip(dv.WIDTHS, e["d"])}
+    doc = hl.build(images(), {t_bru: e}, have_manifest=True)
+    assert doc["derived"] == 1 and doc["dims"] == {}
+
+
 def test_a_forged_address_is_not_a_copy():
     t_bru = dv.canonical_title(BRU)
     known = {t_bru: {"h": "0" * 40, "d": [[320, 192], [640, 384], [1280, 768]]}}
