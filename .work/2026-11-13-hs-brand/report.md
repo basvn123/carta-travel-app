@@ -39,5 +39,10 @@
 - Email colours are typed hex by value (email clients read no CSS variables).
 - The 16 and 32 px icon frames draw the blaze without the halo edge (sub-pixel).
 
+## Judges
+- **Round 1** (`judgement-brand-1.md`): 102 of 135, merge no, 6 blocking: receipt leaders from guessed widths, the blog chart on a phone, the OG Score plate beside the kind label, the PDF Score line off centre, OG spacing (lake months, walk route), no motion on the contents fold and the 404.
+- **Fixed** in `f7d518a3dd`: leaders measured from the real text (canvas in the page); the phone chart as separated rows; the Score plate right after the name's plate (destination beside its formation, walk and the rest above their facts); the Score line on the plate's centre; more room above the months and under the route; the contents fold opens with the kit's reveal (`hs-reveal`), the "here" wash moves on `--dur-1`; the 404 has no entrance (DESIGN.md: nothing at first paint) and lifts away on "Open the map" with the kit's exit (`useDialogExit`, `hs-leave`).
+- **Round 2** (`judgement-brand-2.md`): **110 of 135, every criterion at its threshold, merge yes, 0 blocking.** Its one integration nit (the blog's "All posts" link close under the action) is fixed in the last commit.
+
 ## How to undo
-`git revert` the lane's commits (73117f750c, fcfba13ad7, 8d2d75f5b1, bf5981cdbc, a6296c3d97, c5ed736ae0, 17d923edca, 33ace99668 and any later fix commit). No data migration, no schema change; the staged icons were never copied into `public/`.
+`git revert` the lane's commits (73117f750c, fcfba13ad7, 8d2d75f5b1, bf5981cdbc, a6296c3d97, c5ed736ae0, 17d923edca, 33ace99668, f7d518a3dd and the final report commit). No data migration, no schema change; the staged icons were never copied into `public/`.

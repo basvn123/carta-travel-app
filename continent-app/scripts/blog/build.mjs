@@ -113,6 +113,7 @@ body{margin:0;background:var(--surface-page);color:var(--text);font-family:var(-
 .bl-list a:hover{text-decoration:underline;text-decoration-color:var(--action)}
 .bl-list p{margin:var(--space-1) 0 0;color:var(--text-2);font-size:var(--text-body)}
 .bl-foot{margin-top:var(--space-7);font-size:var(--text-label);color:var(--text-2)}
+.bl article{margin-bottom:var(--space-6)}
 .bl .bl-cta{display:inline-flex;align-items:center;justify-content:center;min-height:var(--tap-main);padding:0 var(--space-5);margin-top:var(--space-6);border-radius:var(--radius-control);background:var(--action);color:var(--on-plate);font-weight:700;text-decoration:none;transition:background-color var(--dur-2) var(--ease-out),scale var(--dur-1) var(--ease-out)}
 .bl .bl-cta:hover{background:var(--action-hover)}
 .bl .bl-cta:active{scale:.97}
