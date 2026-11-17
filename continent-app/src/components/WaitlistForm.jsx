@@ -27,9 +27,9 @@ export default function WaitlistForm({ source = 'home' }) {
       <h2 id="wl-title" className="hv-h2 wl-title">{t('waitlist.title')}</h2>
       <p className="wl-lead">{t('waitlist.lead')}</p>
       {state === 'done' ? (
-        <p className="wl-done" role="status">{t('waitlist.done')}</p>
+        <p className="wl-done hs-reveal" role="status">{t('waitlist.done')}</p>
       ) : (
-        <form className="wl-form" onSubmit={onSubmit} noValidate>
+        <form className={`wl-form${bad ? ' hs-shake' : ''}`} onSubmit={onSubmit} noValidate>
           <label className="sr-only" htmlFor="wl-email">{t('waitlist.label')}</label>
           <input
             id="wl-email" className="wl-input" type="email" name="email" autoComplete="email" inputMode="email"
@@ -37,7 +37,8 @@ export default function WaitlistForm({ source = 'home' }) {
             aria-invalid={bad || undefined} aria-describedby={bad ? 'wl-msg' : 'wl-fine'}
             onChange={(e) => { setEmail(e.target.value); if (state !== 'busy') setState('idle'); }}
           />
-          <Button type="submit" variant="primary" disabled={state === 'busy'}>{t('waitlist.button')}</Button>
+          {/* Secondary: the page's one primary is Ask Carta (house style). */}
+          <Button type="submit" variant="secondary" disabled={state === 'busy'} loading={state === 'busy'}>{t('waitlist.button')}</Button>
           {bad && <p id="wl-msg" className="wl-msg" role="alert">{t(state === 'email' ? 'waitlist.badEmail' : 'waitlist.unavailable')}</p>}
         </form>
       )}

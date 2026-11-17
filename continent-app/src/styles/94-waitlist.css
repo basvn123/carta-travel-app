@@ -1,15 +1,29 @@
-/* The waitlist form on the Home page (T1110). Tokens only. */
-.wl { max-width: 760px; }
-.wl-title { max-width: 20ch; }
-.wl-lead { margin: 0 0 var(--space-4); color: var(--text-2); line-height: var(--leading-body); max-width: 52ch; }
-.wl-form { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-start; }
+/* The waitlist form on the Home page (T1110; house style 2026-11, home
+   lane): a quiet title, one line, the paper field and its button on one
+   row, the small print under it. Tokens only. A refused submit shakes the
+   row once (.hs-shake), the done line arrives with .hs-reveal. */
+.wl { max-width: 720px; }
+.wl-title { max-width: 20ch; font-size: var(--text-headline); letter-spacing: -0.018em; }
+.wl-lead { margin: 0 0 var(--space-4); color: var(--text-2); font-size: var(--text-body); line-height: 1.5; max-width: 52ch; }
+.wl-form { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: flex-start; }
 .wl-input {
-  flex: 1 1 240px; min-height: 44px; padding: 0 var(--space-3);
-  border: 1px solid var(--border); border-radius: var(--radius-control);
-  background: var(--surface); color: var(--text); font: inherit;
+  flex: 1 1 240px; min-width: 0; min-height: var(--tap); padding: 0 var(--space-3);
+  border: var(--stroke-edge) solid var(--edge); border-radius: var(--radius-control);
+  background: var(--surface); color: var(--text); font: inherit; font-size: var(--text-lead);
+  transition: border-color var(--dur-1) var(--ease-out);
 }
-.wl-input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.wl-input[aria-invalid="true"] { border-color: var(--danger, currentColor); }
-.wl-msg { flex-basis: 100%; margin: 0; color: var(--text); font-size: var(--text-label); }
-.wl-done { margin: 0; font-weight: 600; color: var(--text); }
-.wl-fine { margin: var(--space-3) 0 0; color: var(--text-2); font-size: var(--text-label); line-height: var(--leading-body); max-width: 56ch; }
+.wl-input::placeholder { color: var(--text-3); }
+.wl-input:hover { border-color: var(--text-2); }
+.wl-input:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-color: var(--action); }
+.wl-input[aria-invalid="true"] { border-color: var(--danger); }
+.wl-form .btn { min-height: var(--tap); }
+.wl-msg { flex-basis: 100%; margin: 0; color: var(--danger); font-size: var(--text-label); font-weight: 600; }
+.wl-done {
+  margin: 0; padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-panel); background: var(--select-bg);
+  color: var(--select-ink); font-weight: 700;
+}
+.wl-fine { margin: var(--space-3) 0 0; color: var(--text-2); font-size: var(--text-micro); line-height: 1.5; max-width: 56ch; }
+@media (max-width: 479px) {
+  .wl-form .btn { flex: 1 1 100%; }
+}

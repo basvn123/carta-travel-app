@@ -1,21 +1,18 @@
 /* ==========================================================================
-   The home page, v2 (T606 batch, rebuilt from scratch on 2026-10-23;
-   browse/home/)
+   The home page (browse/home/), in the house style (G1, house style run
+   2026-11, home lane; decision in .work/2026-11-13-hs-home/decision.md).
 
    One thing said and then shown: "A cheap flight is not a cheap trip".
-   A film of real places filling the first screen with the slogan, one line,
-   Ask Carta and Plan a trip on it (T620), a week priced with a real flight, six travellers asking
-   in their own words, five colour panels each playing a recording of the
-   app, the story's trip drawn on Slovenia, five promises as a rail, the
-   plans as columns, the question again, the site footer.
+   The film of real places fills the first screen with the slogan, one line,
+   Ask Carta (the page's one primary) and the boarding pass on it; under it
+   the week's cost on the page's one umber band, the flight's share, the
+   tour, try it, the plans, the question again, the waitlist, the footer.
 
-   The home page exception v2 (DESIGN.md, owner decisions D4 to D6,
-   2026-10-23; T620): the film plays as one continuous cut, the panels' clips
-   play in view and move the story on, the chats type, the route draws
-   itself once, sections arrive once. Nothing scrubs or moves with the
-   scroll itself. Grounds and sizes come from the --home-* and --text-hero
-   tokens in 01-tokens.css, read by this file alone. Every animation has its
-   reduced-motion branch at the end, where the page simply stands still.
+   This file: the page, the hero, the plans, the close and the arrivals.
+   62-home-story.css holds the lazy story sections. The home exception
+   (references/home.md): the film plays as one cut, the tour's clips play
+   in view, sections arrive once; nothing moves with the scroll itself.
+   Every animation has its reduced-motion branch at the end.
    ========================================================================== */
 
 /* ── The page ─────────────────────────────────────────────────────────── */
@@ -33,7 +30,8 @@
   scrollbar-width: none;
   background: var(--surface-page);
   color: var(--text);
-  /* The hero's film takes this box's visible height (cqh). */
+  /* The hero's film takes this box's visible height (cqh); full-bleed
+     bands take its width (cqi). */
   container: hv-page / size;
 }
 .hv-page::-webkit-scrollbar { display: none; }
@@ -44,27 +42,27 @@
   padding: 0 var(--page-gutter) var(--space-8);
 }
 
-.hv-section { margin-top: clamp(80px, 11vw, 152px); }
+.hv-section { margin-top: var(--space-9); }
 
+/* A section title: the house headline, one size up on the Persuade page. */
 .hv-h2 {
   margin: 0 0 var(--space-5);
-  max-width: 18ch;
+  max-width: 20ch;
   font-size: var(--text-showcase);
-  font-weight: 700;
-  line-height: 1.02;
-  letter-spacing: -0.03em;
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 .hv-page a.btn { text-decoration: none; }
 
 /* ── The hero ─────────────────────────────────────────────────────────── */
 
-/* The film fills the first screen from edge to edge (T620 and T621, owner
-   2026-10-23, after Mindtrip and Komoot): it starts under the app header,
-   which lies on it at every width (see "The header on the film"). Its
-   height is the page's own visible height (the page is the size container).
-   One even tint lies over the whole film, never a gradient, and the words
-   stand on it in white. */
+/* The film fills the first screen from edge to edge (T620 and T621): it
+   starts under the app header, which lies on it at every width (see "The
+   header on the film"). One even tint over the whole film, never a
+   gradient; the words stand on it in white, set at the lower left on the
+   header's own line (a centred hero is a template's). */
 .hv-hero { position: relative; }
 .hv-hero-stage {
   position: relative;
@@ -110,12 +108,11 @@
 /* The header on the film (T621; G14 at every width). HomePage sets
    data-home-film on the root: "under" while the film is under the app
    header, "past" once it has scrolled by. The page then starts at the
-   window's top, and under the film the header is transparent and white, its
-   own tokens turned white so the mark, the tabs and the account disc follow.
-   It holds no menu, so nothing white lands on white. G14 (2026-11-12): the
-   phone's own top line on the film went; since T960/T980 the shell header
-   carries the brand and the account door on a phone too, so one bar lies on
-   the film at every width, never two. */
+   window's top, and under the film the header is a thin ink bar with white
+   labels, its own tokens turned white so the mark, the tabs and the account
+   disc follow. One bar lies on the film at every width, never two (G14,
+   2026-11-12: the shell header carries the brand and the account door on a
+   phone too). */
 :root[data-home-film] .hv-page { top: 0; }
 :root[data-home-film] .top-bar {
   transition: background-color var(--dur-2) var(--ease-out), border-color var(--dur-2) var(--ease-out);
@@ -148,10 +145,13 @@
   z-index: 3;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  justify-items: center;
+  justify-items: start;
   gap: var(--space-4);
-  padding: 0 var(--gutter) var(--space-7);
-  text-align: center;
+  width: 100%;
+  max-width: calc(var(--w-browse) + 2 * var(--page-gutter));
+  margin: 0 auto;
+  padding: 0 var(--page-gutter) var(--space-6);
+  text-align: left;
   --focus: var(--home-ink-on-deep); /* a focus ring on the film is white */
   /* A soft shadow under the words only (not a scrim): it holds the line on a
      busy stretch of a clip, such as Dubrovnik's roofs. */
@@ -161,47 +161,51 @@
 .hv-hero-copy .hv-acts { text-shadow: none; }
 .hv-slogan {
   margin: 0;
-  max-width: 14ch;
+  max-width: 12ch;
   font-size: var(--text-hero);
-  font-weight: 700;
+  font-weight: 800;
   line-height: var(--leading-hero);
   letter-spacing: var(--tracking-hero);
   text-wrap: balance;
 }
-/* The slogan's words lift out of their own line once (T949), 40 ms apart;
-   the accent ("cheap trip") is sun yellow, large type on the tinted film. */
+/* The slogan's words lift out of their own line once (T949), one beat
+   apart; the accent ("cheap trip") is the house's beige, the colour of the
+   food wagon and of every quiet surface, in large type on the tinted film. */
 .hv-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
-.hv-word > span { display: inline-block; animation: hv-lift var(--dur-reveal) var(--ease-out) calc(var(--i, 0) * var(--dur-1)) both; }
-.hv-em { color: var(--sun-400); }
+.hv-word > span { display: inline-block; animation: hv-lift var(--dur-reveal) var(--ease-out) calc(var(--i, 0) * var(--dur-1) / 2) both; }
+.hv-em { color: var(--umber-200); }
 @keyframes hv-lift { from { transform: translateY(110%); } to { transform: none; } }
 .hv-sub {
   margin: 0;
-  max-width: 44ch;
+  max-width: 40ch;
   font-size: var(--text-lead);
-  line-height: 1.5;
+  font-weight: 600;
+  line-height: 1.45;
   text-wrap: pretty;
   animation: hv-rise var(--dur-reveal) var(--ease-out) var(--dur-1) both;
 }
 
+/* Ask Carta's field: a paper field with the house's control radius, its
+   button the page's one primary with the boxed AI tag. */
 .hv-ask {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   min-height: 56px;
   padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-pill);
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-panel);
   background: var(--surface);
   color: var(--text);
   transition: border-color var(--dur-1) var(--ease-out);
 }
-.hv-ask:focus-within { border-color: var(--action); outline: 2px solid var(--focus); outline-offset: 2px; }
+.hv-ask:focus-within { border-color: var(--action); outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .hv-hero .hv-ask { border-color: transparent; box-shadow: var(--elev-2); }
 .hv-hero .hv-ask:focus-within { outline-color: var(--home-ink-on-deep); }
 /* The glyph and the field's box (T623): no box of its own unless the
    phone's hero gives it one (below). */
 .hv-ask-box { display: contents; }
-.hv-ask-glyph { display: inline-flex; color: var(--text-2); }
+.hv-ask-glyph { display: inline-flex; color: var(--umber-700); }
 .hv-ask-input {
   flex: 1;
   min-width: 0;
@@ -216,10 +220,10 @@
 }
 .hv-ask-input:focus-visible { outline-color: transparent; } /* the form draws the ring */
 .hv-ask-input::placeholder { color: var(--text-3); }
-.hv-ask-go { min-height: var(--tap); border-radius: var(--radius-pill); }
-/* The hero's field: one tall pill, "Ask Carta" its primary (T621). */
-.hv-hero .hv-ask { min-height: 64px; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-5); }
-.hv-ask-go-main { flex: none; min-height: 48px; padding-inline: var(--space-5); font-size: var(--text-lead); }
+.hv-ask-go { min-height: var(--tap); }
+/* The hero's field: one tall field, "Ask Carta" its primary (T621). */
+.hv-hero .hv-ask { min-height: 64px; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4); }
+.hv-ask-go-main { flex: none; min-height: var(--tap-main); padding-inline: var(--space-5); font-size: var(--text-lead); }
 /* On a phone the field takes the whole width, so "A place, a month or a
    budget" is never cut, and "Ask Carta" stands under it at full width
    (T623, register T621-b). */
@@ -240,97 +244,154 @@
     gap: var(--space-2);
     min-height: 56px;
     padding: var(--space-1) var(--space-4);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-panel);
     background: var(--surface);
     box-shadow: var(--elev-2);
   }
-  .hv-hero .hv-ask-box:focus-within { outline: 2px solid var(--home-ink-on-deep); outline-offset: 2px; }
-  .hv-hero .hv-ask-go-main { width: 100%; min-height: var(--tap-main); }
+  .hv-hero .hv-ask-box:focus-within { outline: var(--stroke-focus) solid var(--home-ink-on-deep); outline-offset: 2px; }
+  .hv-hero .hv-ask-go-main { width: 100%; }
 }
 
 .hv-acts {
   display: grid;
   gap: var(--space-3);
   width: 100%;
-  max-width: 560px;
+  max-width: 600px;
   margin-top: var(--space-2);
   animation: hv-rise var(--dur-reveal) var(--ease-out) var(--dur-1) both;
 }
 
-/* The boarding pass (T949): the one price every flight site shows. Two
-   lines and a stub; the stub's notches cut into the film. */
+/* The boarding pass (T949): the one price every flight site shows, as a
+   paper ticket that floats on the film. The stub carries the formation's
+   getting-there wagon look (outlined umber pill, mode glyph, figure), so
+   the pass reads as the first line of the week's receipt below. */
 .hv-pass {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  width: min(420px, 100%);
-  margin-top: var(--space-5);
-  border-radius: var(--radius-sheet);
+  width: min(440px, 100%);
+  margin-top: var(--space-2);
+  border-radius: var(--radius-panel);
   background: var(--surface);
   color: var(--text);
-  box-shadow: var(--elev-3);
+  box-shadow: var(--elev-2);
   text-shadow: none;
   text-align: left;
   animation: hv-rise var(--dur-reveal) var(--ease-out) var(--dur-2) both;
 }
 .hv-pass-main { display: grid; gap: var(--space-1); min-width: 0; padding: var(--space-3) var(--space-4); }
-.hv-pass-route { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); font-size: var(--text-title); font-weight: 800; letter-spacing: 0.01em; }
-.hv-pass-line { position: relative; display: grid; place-items: center; height: 16px; color: var(--action); }
-.hv-pass-line::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 2px dashed var(--umber-300); }
+.hv-pass-route { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); font-size: var(--text-figure); font-weight: 800; }
+.hv-pass-line { position: relative; display: grid; place-items: center; height: 16px; color: var(--umber-600); }
+.hv-pass-line::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: var(--stroke-hair) solid var(--border); }
 .hv-pass-line svg { position: relative; padding: 0 var(--space-1); background: var(--surface); box-sizing: content-box; }
-.hv-pass-meta { overflow: hidden; color: var(--text-3); font-size: var(--text-label); white-space: nowrap; text-overflow: ellipsis; }
+.hv-pass-meta { overflow: hidden; color: var(--text-2); font-size: var(--text-micro); white-space: nowrap; text-overflow: ellipsis; }
 .hv-pass-stub {
   position: relative;
   display: grid;
   align-content: center;
-  justify-items: end;
-  gap: 2px;
-  padding: var(--space-3) var(--space-5);
-  border-left: 2px dashed var(--umber-300);
-  border-radius: 0 var(--radius-sheet) var(--radius-sheet) 0;
-  background: var(--sun-100);
+  justify-items: start;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  border-left: var(--stroke-hair) dashed var(--border);
 }
-.hv-pass-stub::before,
-.hv-pass-stub::after { content: ""; position: absolute; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: var(--neutral-900); }
-.hv-pass-stub::before { top: -8px; }
-.hv-pass-stub::after { bottom: -8px; }
-.hv-pass-label { color: var(--sun-800); font-size: var(--text-micro); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-.hv-pass-price { font-size: var(--text-display); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.hv-pass-label { color: var(--text-2); font-size: var(--text-micro); font-weight: 600; }
+.hv-pass-price {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border: var(--stroke-edge) solid var(--umber-600);
+  border-radius: var(--radius-pill);
+  color: var(--umber-700);
+  font-size: var(--text-figure);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums lining-nums;
+  line-height: 1;
+}
 
 /* ── Plans ────────────────────────────────────────────────────────────── */
 
+/* The three plans: rows on a phone (name and price facing each other, the
+   lists behind one fold), three columns split by hairlines from 769 with
+   the lists open. The featured plan carries its Recommended chip only. */
 .hv-plan-cols {
   display: grid;
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--border);
+  border-top: var(--stroke-hair) solid var(--border);
 }
 .hv-plan {
   display: grid;
-  align-content: start;
-  gap: var(--space-2);
-  padding: var(--space-5) 0;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  column-gap: var(--space-4);
+  row-gap: var(--space-1);
+  padding: var(--space-4) 0;
 }
-.hv-plan + .hv-plan { border-top: 1px solid var(--border); }
-.hv-plan-top { display: flex; align-items: center; gap: var(--space-2); }
-.hv-plan-name { font-size: var(--text-title); font-weight: 600; }
-.hv-plan-price { display: flex; align-items: baseline; gap: var(--space-2); }
-.hv-plan-fig { font-size: var(--text-display); font-weight: 700; letter-spacing: -0.02em; }
+.hv-plan + .hv-plan { border-top: var(--stroke-hair) solid var(--border-soft); }
+.hv-plan-top { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.hv-plan-name { font-size: var(--text-title); font-weight: 800; }
+.hv-plan-price { display: flex; align-items: baseline; justify-content: flex-end; gap: var(--space-1); }
+.hv-plan-fig { font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; }
 .hv-plan-per,
-.hv-plan-note { font-size: var(--text-body); color: var(--text-2); }
-.hv-plan-list { display: grid; gap: var(--space-2); margin: var(--space-3) 0 0; padding: 0; list-style: none; }
-.hv-plan-list li { display: flex; gap: var(--space-2); font-size: var(--text-body); line-height: 1.5; }
-.hv-tick { display: inline-flex; flex: none; padding-top: 2px; color: var(--text-2); }
+.hv-plan-note { font-size: var(--text-label); color: var(--text-2); }
+.hv-plan-note { grid-column: 1 / -1; }
+.hv-plan-more { grid-column: 1 / -1; }
+.hv-plan-more > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  color: var(--umber-700);
+  font-size: var(--text-label);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+.hv-plan-more > summary::-webkit-details-marker { display: none; }
+.hv-plan-more > summary svg { transition: transform var(--dur-2) var(--ease-out); }
+.hv-plan-more[open] > summary svg { transform: rotate(90deg); }
+.hv-plan-more[open] > .hv-plan-list { animation: hv-rise var(--dur-2) var(--ease-out) both; }
+.hv-plan-list { display: grid; gap: var(--space-2); margin: var(--space-2) 0 0; padding: 0; list-style: none; }
+.hv-plan-list li { display: flex; gap: var(--space-2); font-size: var(--text-body); line-height: 1.45; }
+.hv-tick { display: inline-flex; flex: none; padding-top: 1px; color: var(--umber-600); }
 .hv-plans-door { margin-top: var(--space-5); }
 
 /* ── The close ────────────────────────────────────────────────────────── */
 
-.hv-close { max-width: 760px; }
-.hv-close-title { max-width: 16ch; }
+/* The question again, on a sunken band the page's full width. */
+.hv-close {
+  width: 100cqi;
+  margin-left: calc(50% - 50cqi);
+  padding: var(--space-8) 0;
+  background: var(--surface-sunken);
+}
+.hv-close-in {
+  display: grid;
+  gap: var(--space-2);
+  max-width: calc(var(--w-browse) + 2 * var(--page-gutter));
+  margin: 0 auto;
+  padding: 0 var(--page-gutter);
+}
+.hv-close-title { max-width: 16ch; margin-bottom: var(--space-3); }
+.hv-close .hv-ask { width: 100%; max-width: 640px; }
+
+/* ── The footer, as seen from home ───────────────────────────────────── */
+
+/* The legal links at the foot are small words; from home each takes a full
+   44 px target (the page's tap rule), without changing their look. */
+.hv-page .site-footer-legal a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap);
+  min-height: var(--tap);
+}
 
 /* ── Arrivals ─────────────────────────────────────────────────────────── */
 
-.hv-section[data-reveal="wait"] { opacity: 0; transform: translateY(32px); }
+.hv-section[data-reveal="wait"] { opacity: 0; transform: translateY(16px); }
 .hv-section[data-reveal="in"] {
   opacity: 1;
   transform: none;
@@ -338,24 +399,37 @@
 }
 
 @keyframes hv-push { from { transform: scale(1); } to { transform: scale(1.08); } }
-@keyframes hv-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-@keyframes hv-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
-@keyframes hv-fade { from { opacity: 0; } to { opacity: 1; } }
-@keyframes hv-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-
-/* ── Pointers ─────────────────────────────────────────────────────────── */
+@keyframes hv-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 /* ── Wider screens ────────────────────────────────────────────────────── */
 
 @media (min-width: 769px) {
-  .hv-wrap { padding: 0 var(--page-gutter) var(--space-8); }  /* T1041: on the header's line */
-  .hv-hero-copy { padding: 0 var(--space-6) clamp(var(--space-7), 11cqh, 136px); gap: var(--space-5); }
-  .hv-sub { font-size: var(--text-title); line-height: 1.45; }
+  .hv-hero-copy { padding-bottom: clamp(var(--space-7), 10cqh, 120px); gap: var(--space-5); }
+  .hv-sub { font-size: var(--text-title); }
   .hv-acts { max-width: 640px; }
 
-  .hv-plan-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .hv-plan { padding: var(--space-6) var(--space-5) var(--space-5) 0; }
-  .hv-plan + .hv-plan { border-top: 0; border-left: 1px solid var(--border); padding-left: var(--space-5); }
+  .hv-plan-cols { grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 0; }
+  .hv-plan {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    row-gap: var(--space-2);
+    padding: var(--space-5) var(--space-5) var(--space-5) 0;
+    border-top: var(--stroke-edge) solid var(--text);
+  }
+  .hv-plan + .hv-plan { border-top: var(--stroke-edge) solid var(--text); padding-left: var(--space-5); border-left: var(--stroke-hair) solid var(--border-soft); }
+  .hv-plan.is-featured { border-top-color: var(--umber-600); }
+  .hv-plan-price { justify-content: flex-start; }
+  .hv-plan-fig { font-size: var(--text-display); }
+  /* The lists are open on a wide screen: the fold's summary steps aside. */
+  .hv-plan-more > summary { display: none; }
+}
+@media (min-width: 1024px) {
+  /* The plans' title beside the columns, so the section reads as one row. */
+  .hv-plans { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); column-gap: var(--space-7); align-items: start; }
+  .hv-plans .hv-h2 { position: sticky; top: calc(var(--filter-h) + var(--space-5)); }
+  .hv-plans-door { grid-column: 2; justify-self: start; }
+  .hv-close-in { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--space-7); align-items: center; }
+  .hv-close-title { margin: 0; }
 }
 
 /* ── Reduced motion: the page stands still and shows everything ───────── */
@@ -367,6 +441,8 @@
   .hv-sub,
   .hv-acts,
   .hv-pass,
+  .hv-plan-list,
   .hv-word > span { animation: none !important; }
+  .hv-plan-more > summary svg { transition: none; }
   .hv-section[data-reveal] { opacity: 1; transform: none; transition: none; }
 }
