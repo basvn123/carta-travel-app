@@ -447,3 +447,15 @@
 /* T1204 (D22): the trip footprint under a leg's fare, quiet and labelled as an estimate. */
 .trip-wizard-modal .wz-leg-fp { margin: 4px 0 0; font-size: var(--text-caption); color: var(--text-2); }
 .trip-wizard-modal .wz-leg-fp a { color: inherit; text-decoration: underline; }
+
+/* Polish round 1 (plan lane): on a wide screen the stepper names the step and
+   the step's title follows it, so the head's plain name steps back visually
+   (it stays for screen readers). */
+.trip-wizard-modal .wz-head.is-wide .wz-head-name.is-plain {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -964,9 +964,11 @@
 .tff-tp-price { display: grid; gap: var(--space-3); padding: var(--space-4); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-card); background: var(--surface); }
 @media (min-width: 769px) { .tff-tp-price { padding: var(--space-5); } }
 .tff-tp-price-h { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
-.tff-tp-total { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2); margin: 0; }
-.tff-tp-eur { font-size: var(--text-display); font-weight: 800; letter-spacing: -0.02em; color: var(--text); font-variant-numeric: tabular-nums; }
-.tff-tp-unit { font-size: var(--text-caption); color: var(--text-2); }
+.tff-tp-total { margin: 0; }
+.tff-tp-eur { font-weight: 800; letter-spacing: -0.02em; color: inherit; font-variant-numeric: tabular-nums; }
+.tff-tp-unit { color: inherit; }
+/* On the plate the delta note reads in beige, the plate's second line. */
+.tff-tp-total .tff-delta { justify-self: start; border-color: var(--on-plate-2); background: none; color: var(--on-plate-2); font-size: var(--text-label); font-weight: 700; }
 /* The cost bar (house style): the wagon paint, coupled with 2 px gaps; the
    words stay on the lines below, so colour is never alone. It is the trip's
    cost bar, not a Formation (that part prices a day). */
@@ -1216,3 +1218,8 @@
 .tff-split .tff-list > li.is-hot .tff-card-media { outline: 2px solid var(--text); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .tff-map .tff-pin { transition: none; } }
 
+/* Polish round 1: the card's price is the house formation (the stay and
+   food wagons, then the trip total, the loudest); the kit sizes it. */
+.tff-card .tff-total-eur:has(> .hs-formation) { font-size: var(--text-body); }
+.tff-card .tff-total-eur .hs-formation { flex-wrap: wrap; row-gap: var(--space-1); }
+.tff-card.is-feat .tff-total-eur .hs-formation-day { font-size: var(--text-title); }

@@ -5,6 +5,7 @@ import { loadTripDraft } from '../tripDraftStore.js';
 import { Button, ChoiceRows, IconButton } from '../../components/ui/index.js';
 import { ClockIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
+import { useStepIn } from './paintGuard.js';
 import { QUESTIONS } from './questions.js';
 import { firstSetup, tripUnderWay, continueTo, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings } from './tripSettings.js';
@@ -58,6 +59,9 @@ export function PlanFlow({
   const [kept] = useState(() => (settings.trip.created ? null
     : recallPlace('opening', tripsStore.getActiveId(), [...firstSetup(settings), 'create', 'kind', 'now'])));
   const [screen, setScreen] = useState(kept?.screen || 'home');
+  // House style: the question settles in when the step changes (presentation only).
+  const stepRef = useRef(null);
+  useStepIn(stepRef, screen);
   // T1030: Explore's doors and a closed trip page open Carta's own trips
   // here (openAt: { screen: 'carta', style, cc, n }), the one trip library.
   const [cartaStart, setCartaStart] = useState(null);
@@ -254,7 +258,7 @@ export function PlanFlow({
       />
     );
     body = (
-      <div className="pf-step">
+      <div className="pf-step" ref={stepRef}>
         <SheetHead
           onBack={back}
           backLabel={t('pf.back')}

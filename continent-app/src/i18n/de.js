@@ -3774,6 +3774,7 @@ export const de = {
   "mtn.rankHeight": "{rank} von {n} nach Höhe in {range}",
   "mtn.rankProm": "{rank} von {n} nach Schartenhöhe",
   // lane:plan (house style 2026-11): this lane adds its new keys directly under this line
+  "pf.fromEur": "Ab {eur}",
   "pf.home.tripsTitle": "Deine Reisen",
   "mtn.slope": "Neigung auf der flachsten Seite",
   "mtn.slopeDeg": "{deg} Grad",

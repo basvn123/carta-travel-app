@@ -1,5 +1,6 @@
 import React from 'react';
 import { HeroImage } from '../components/HeroImage.jsx';
+import { CountryFlag } from '../components/CountryFlag.jsx';
 import { FlightChip } from '../components/flights/Flights.jsx';
 import { SaveButton } from './ExploreCards.jsx';
 import { DayFrom, useCardFlight } from './JourneyCards.jsx';
@@ -64,7 +65,7 @@ export function TripPlaceCard({ card, length, month, saved = false, onToggleSave
         {/* House style: the name and the countries sit under the photo. */}
         <span className="ctc-over">
           <span className="ctc-name">{name}</span>
-          {where && <span className="ctc-where">{where}</span>}
+          {where && <span className="ctc-where">{codes[0] && <CountryFlag country={codes[0]} size={13} />}{where}</span>}
         </span>
         {what && <span className="ctc-what">{what}</span>}
         <span className="ctc-facts">

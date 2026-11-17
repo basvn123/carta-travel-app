@@ -9,7 +9,7 @@ import {
   BulbIcon,
 } from '../components/Icons.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { Button, ScorePlate, StateBlock, WorldTile } from '../components/ui/index.js';
+import { Button, Plate, ScorePlate, StateBlock, WorldTile } from '../components/ui/index.js';
 import { srcSetFor, fallbackSrc } from '../lib/heroImage.js';
 import { RatingBadge } from '../components/RatingBadge.jsx';
 import { GlossLine } from '../components/InfoDot.jsx';
@@ -714,7 +714,14 @@ export function TripPage({
             receipt's own day line, the same one the facts show. */}
         {detail && (primaryAction || onOpenInPlanner) && (
           <aside className="itin-post">
-            {perDayText && (
+            {/* The trip's total on the signpost plate, the receipt's own sum
+                (the same figure as the cost fold's total line); the day figure
+                stays in the facts, so the page says each figure once. */}
+            {receipt && Number.isFinite(receipt.total) ? (
+              <Plate variant="total" className="itin-post-plate"
+                name={t('itin.costTotal', { n: receipt.group })}
+                fig={costFig(receipt.total, receipt.est, t)} />
+            ) : perDayText && (
               <p className="itin-post-fig"><b>{perDayText}</b><span>{t('trip.factPerDay')}</span></p>
             )}
             {primaryAction ? (

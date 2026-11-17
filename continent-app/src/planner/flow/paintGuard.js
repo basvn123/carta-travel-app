@@ -20,3 +20,18 @@ export function usePaintOnStep(step) {
   useEffect(() => () => { left.step = latest.current; left.at = Date.now(); }, []);
   return seen.current.paint;
 }
+
+/** The question settles in when the step changes (not at first paint): the
+ *  class is taken off and put back so the CSS animation plays again on the
+ *  same element, without remounting the step. Presentation only. */
+export function useStepIn(ref, step) {
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) { first.current = false; return; }
+    const el = ref.current;
+    if (!el) return;
+    el.classList.remove('pl-step-in');
+    void el.offsetWidth; // restart the animation
+    el.classList.add('pl-step-in');
+  }, [ref, step]);
+}

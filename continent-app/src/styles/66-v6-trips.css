@@ -579,3 +579,38 @@
 .itin-page .itin-facts .tpage-fact { min-width: 0; padding: var(--space-2) var(--space-3); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
 .itin-page .itin-facts .tpage-fact-val { font-family: var(--ui); font-size: var(--text-lead); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
 .itin-page .itin-facts .tpage-fact-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+
+/* ---- Polish round 1 (plan lane, orchestrator's judges) ----
+   The post carries the trip total on the signpost plate (the receipt's own
+   sum). From 769 px the wrap is one grid, so the post starts level with the
+   head instead of under it: .itin-body steps out of the way (display:
+   contents), its two children take the wrap's columns. On a phone the post
+   stays the sticky foot, the plate compact beside the action. */
+.itin-page .itin-post-plate { flex: 1; min-width: 0; }
+@media (max-width: 768px) {
+  .itin-page .itin-post .itin-post-plate { min-height: 0; padding: 8px calc(var(--plate-tip) + 12px) 8px 12px; row-gap: 2px; }
+  .itin-page .itin-post .itin-post-plate .hs-plate-name { font-size: var(--text-caption); }
+  .itin-page .itin-post .itin-post-plate .hs-plate-fig { font-size: var(--text-figure); }
+  .itin-page .itin-capband-in { padding-bottom: var(--space-3); }
+}
+@media (min-width: 769px) {
+  .itin-page .itin-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 288px; column-gap: var(--space-6); align-items: start; }
+  .itin-page .itin-wrap > .itin-photohero { grid-column: 1 / -1; }
+  .itin-page .itin-wrap > .itin-capband { grid-column: 1; }
+  .itin-page .itin-wrap > .tpage-col.itin-body { display: contents; }
+  .itin-page .itin-body > .itin-post { grid-column: 2; grid-row: 2 / span 2; margin-top: var(--space-4); }
+  .itin-page .itin-body > .itin-main { grid-column: 1; grid-row: 3; padding-bottom: var(--space-8); }
+}
+@media (min-width: 1024px) { .itin-page .itin-wrap { grid-template-columns: minmax(0, 1fr) 364px; column-gap: var(--space-8); } }
+
+/* The facts, compact: icon and figure on one line, the label under it. */
+.itin-page .itin-facts .tpage-fact { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--space-2); row-gap: 0; }
+.itin-page .itin-facts .tpage-fact .itin-fact-icon { grid-column: 1; grid-row: 1; margin: 0; color: var(--text-2); }
+.itin-page .itin-facts .tpage-fact-val { grid-column: 2; grid-row: 1; font-size: var(--text-body); }
+.itin-page .itin-facts .tpage-fact-label { grid-column: 1 / -1; grid-row: 2; }
+
+/* The unit, said once for a list of priced cards (plan lane polish round 1):
+   the cards print "From €124", this line says what the figure counts. */
+.pl-unit-head { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.tlib-head .pl-unit-head { flex-basis: 100%; }
+.pf-cgrid > .pl-unit-head { grid-column: 1 / -1; }

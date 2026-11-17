@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useId, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, IconButton } from '../../components/ui/index.js';
+import { Button, Formation, IconButton } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { CarIcon, CheckIcon, HeartIcon, MoreIcon, PlaneIcon, ScaleIcon, SunIcon } from '../../components/Icons.jsx';
@@ -164,6 +164,15 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
   const time = shortDuration(t, f.minutes);
   const badge = budgetBadge(trip, { locale: lang });
   const used = trip.budget?.eur ? (trip.budget.eur + trip.budget.delta) / trip.budget.eur : null;
+  // House style: the price row is the formation. The stay and food wagons
+  // couple in front of the trip's own total (the engine's figures, never
+  // summed here); getting there is the outlined pill only when the total
+  // leaves the flight out, the one thing the outline means (DESIGN.md).
+  const slotEur = (id) => {
+    const s = trip.slots?.find((x) => x.id === id);
+    return s ? (Number.isFinite(s.eurGroup) ? s.eurGroup : null) : undefined;
+  };
+  const flightEur = slotEur('flight');
   const reasons = feat ? (trip.reasons || []).slice(0, 2).map((r) => factText(r, { t, lang })).filter(Boolean) : [];
 
   const setRefs = (el) => {
@@ -197,7 +206,12 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
             className={`tff-card-heart${keep.kept ? ' is-kept' : ''}`}
             pressed={keep.kept}
             label={t('tf.keep.one', { name })}
-            onClick={() => keep.onKeep(trip)}
+            onClick={(e) => {
+              // House style: the save pops (the kit's .hs-pop) at the traveller's own tap, never at first paint.
+              const el = e.currentTarget;
+              el.classList.remove('hs-pop'); void el.offsetWidth; el.classList.add('hs-pop');
+              keep.onKeep(trip);
+            }}
           >
             <HeartIcon size={18} />
           </IconButton>
@@ -254,7 +268,17 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
         {best && <p className="tff-card-tags"><span className="tff-card-best">{t('tf.card.best')}</span></p>}
         <div className="tff-card-price">
           <p className="tff-card-total">
-            {total ? <span className="tff-total-eur money">{total}</span> : <span className="tff-total-eur">{t('money.onRequest')}</span>}
+            {total ? (
+              <span className="tff-total-eur money">
+                <Formation
+                  go={partial ? { mode: f.way === 'car' ? 'car' : 'flight', amount: flightEur ?? null } : undefined}
+                  bed={slotEur('stay')}
+                  food={slotEur('food')}
+                  day={group}
+                  dayLabel={unit}
+                />
+              </span>
+            ) : <span className="tff-total-eur">{t('money.onRequest')}</span>}
             <span className="tff-total-unit">{unit}</span>
           </p>
           {(compare || keep?.onSkip) && (

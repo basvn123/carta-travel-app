@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, IconButton } from '../../components/ui/index.js';
+import { Button, Figure, IconButton, Plate } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import {
@@ -130,7 +130,8 @@ function Gallery({ photos, name, t, children = null }) {
         </>
       )}
       <p className="tff-gal-cap">
-        <span className="tff-gal-name">{cur.caption}</span>
+        {/* House style: a caption that only repeats the page title steps back. */}
+        <span className="tff-gal-name">{cur.caption && cur.caption !== name ? cur.caption : ''}</span>
         <span className="tff-tp-cap-end">
           <Credit url={cur.url} t={t} />
           {photos.length > 1 && <span className="tff-gal-pos">{t('tf.pv.pos', { n: at + 1, total: photos.length })}</span>}
@@ -231,12 +232,22 @@ function PriceCard({ trip, t, lang, onLine, onPlan, keeper, name, ui, delta = nu
           {t(open ? 'tf.cost.close' : 'tf.cost.open')}
         </Button>
       </div>
-      <p className="tff-tp-total">
-        <span className="tff-tp-eur money">{Number.isFinite(group) ? formatMoney(group, { locale: lang }) : t('money.onRequest')}</span>
-        <span className="tff-tp-unit">{t(`tf.card.${head === 1 ? 'forYou' : 'forN'}${partial ? 'Partial' : ''}`, { n: head })}</span>
+      {/* House style: the trip total on the signpost plate, as the trip page
+          prints its total; it rolls once only after the traveller's own swap
+          of a line (useTotalDelta), never on its own. */}
+      <Plate variant="total" className="tff-tp-total"
+        name={<span className="tff-tp-unit">{t(`tf.card.${head === 1 ? 'forYou' : 'forN'}${partial ? 'Partial' : ''}`, { n: head })}</span>}
+        fig={(
+          <span className="tff-tp-eur money">
+            {Number.isFinite(group)
+              ? <Figure value={group} mine={delta != null} still={delta == null} />
+              : t('money.onRequest')}
+          </span>
+        )}
+      >
         {/* What the last swap did to the total, for three seconds (useTotalDelta). */}
         {delta != null && Math.abs(delta) >= 1 && <span className="tff-delta" role="status">{signedMoney(delta, { locale: lang })}</span>}
-      </p>
+      </Plate>
       {pp && <p className="tff-cost-pp">{t(partial ? 'tf.card.ppPartial' : 'tf.card.ppAll', { eur: pp })}</p>}
       {parts.length > 1 && sum > 0 && (
         <span className="tff-tp-costbar" aria-hidden="true">

@@ -3783,6 +3783,7 @@ export const nl = {
   "mtn.rankHeight": "{rank} van {n} qua hoogte in {range}",
   "mtn.rankProm": "{rank} van {n} qua prominentie",
   // lane:plan (house style 2026-11): this lane adds its new keys directly under this line
+  "pf.fromEur": "Vanaf {eur}",
   "pf.home.tripsTitle": "Je reizen",
   "mtn.slope": "Helling aan de zachtste kant",
   "mtn.slopeDeg": "{deg} graden",

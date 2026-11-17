@@ -1342,3 +1342,58 @@
   .pf-refine { grid-template-columns: auto 1fr auto; align-items: center; }
   .pf-refine-acts { grid-column: auto; flex-wrap: nowrap; }
 }
+
+/* ---- Polish round 1 (plan lane, orchestrator's judges) ---- */
+
+/* When: each segment reads its word over its value. */
+.pf-when-seg { display: inline-grid; justify-items: center; line-height: var(--leading-tight); }
+.pf-when-seg > span { font-size: var(--text-caption); font-weight: 600; opacity: 0.85; }
+.pf-when-seg > b { font-weight: 800; }
+
+/* A Continue that is not ready reads as unavailable at every width. The kit
+   orders .btn-primary after .btn:disabled, so a disabled primary kept its
+   umber (foundation request 1); this screen states the kit's own disabled
+   look until the kit fixes the order. */
+.pf-step .pf-foot .btn.btn-primary:disabled,
+.trip-wizard-modal .guide-foot .btn.btn-primary:disabled {
+  border-color: var(--border);
+  background: var(--surface-sunken);
+  color: var(--text-3);
+}
+
+/* Step change: the question settles in (opacity and a short rise on the
+   settle curve, no overshoot), only when the step really changed; reduced
+   motion shows the end state (02-base.css zeroes durations). */
+.pf-step.pl-step-in { animation: pl-step-in var(--dur-3) var(--ease-settle) both; }
+@keyframes pl-step-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
+
+/* Select: the chosen row's radio dot springs in on the tick (the finger's
+   control may overshoot, DESIGN.md Interaction rule 3). */
+.pf-step .ui-crow.is-on .ui-crow-mark::after,
+.trip-wizard-modal .ui-crow.is-on .ui-crow-mark::after { animation: pl-tick var(--dur-tick) var(--ease-tick) both; }
+@keyframes pl-tick { from { scale: 0.2; } to { scale: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .pf-step.pl-step-in,
+  .pf-step .ui-crow.is-on .ui-crow-mark::after,
+  .trip-wizard-modal .ui-crow.is-on .ui-crow-mark::after { animation: none; }
+}
+
+/* The collection: a flat row of rounded photo tiles in the house photo
+   treatment (16 px corners, no tilt, no white frame, no shadow), replacing
+   the fanned stack that read as polaroids. The card stays one link. */
+.pf-open .pf-coll .pf-coll-fan { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-2); padding-top: 0; }
+.pf-open .pf-coll .pf-coll-photo,
+.pf-open .pf-coll:hover .pf-coll-photo {
+  position: relative;
+  left: auto;
+  bottom: auto;
+  z-index: auto;
+  width: auto;
+  aspect-ratio: 3 / 4;
+  border: 0;
+  border-radius: var(--radius-card);
+  box-shadow: none;
+  transform: none;
+  animation: none;
+}
+.pf-open .pf-coll .pf-coll-photo:nth-child(even) { margin-top: var(--space-4); }

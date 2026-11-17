@@ -236,3 +236,15 @@
 .pfh a.pfh-door .pfh-door-photo { border-color: var(--surface); background: var(--surface-sunken); box-shadow: var(--elev-1); }
 /* A draft row keeps its menu in the row (the card rule from 1024 px puts it over the photo corner). */
 .pfh .pfh-row .pf-trip-more { position: static; margin: 0; }
+
+/* Polish round 1: the Ready-made card's country carries its flag (rail-card grammar). */
+.ctc .ctc-where { display: inline-flex; align-items: center; gap: var(--space-1); }
+.ctc .ctc-where .country-flag { flex: none; }
+
+/* Polish round 1: a trip without a photo shows its trip art whole (the art
+   is square; a wide crop cut its trail's end mark). */
+.pfh a.pfh-next.is-blank .pfh-next-media { aspect-ratio: 4 / 3; }
+@media (min-width: 769px) {
+  .pfh a.pfh-next.is-blank { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); }
+  .pfh a.pfh-next.is-blank .pfh-next-media { aspect-ratio: 1 / 1; min-height: 0; align-self: center; }
+}

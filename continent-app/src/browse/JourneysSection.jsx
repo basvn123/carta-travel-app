@@ -374,6 +374,8 @@ export function JourneysSection({
           <header className={`dtab-head tlib-head${country ? ' is-bare' : ''}`}>
             {!country && <h2 className="dtab-title">{t('dtab.head.trips')}</h2>}
             {!inPanel && lengthControl}
+            {/* House style: the unit once for the list; the cards print the figure. */}
+            <p className="pl-unit-head">{t('tp.bud.kindDay')}</p>
           </header>
         )}
         {types.map((tp) => (
@@ -460,6 +462,7 @@ export function JourneysSection({
         </Button>
         <h2 className="dtab-title">{typeLabel(view, t, openType?.name)}</h2>
         {typeDesc(view, t) && <p className="tlib-desc">{typeDesc(view, t)}</p>}
+        <p className="pl-unit-head">{t('tp.bud.kindDay')}</p>
       </header>
       <StyleSwitch styles={switchStyles} view={view} onView={onView} t={t} />
       {/* On a phone the length lives in the Filters sheet only (T502): the

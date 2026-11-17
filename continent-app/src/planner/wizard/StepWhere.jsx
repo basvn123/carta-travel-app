@@ -81,7 +81,7 @@ function CountryCard({ c, on, reading, img, favN, cost, onToggle, onInfo }) {
           </button>
         </h3>
         {favN > 0 && <div className="card-meta pf-ccard-fav" id={favId}><StarIcon size={11} /> {t('wizard.onShortlist', { n: favN })}</div>}
-        <div className="card-figures"><div className="card-price"><DayCostLine cost={cost} t={t} as="span" className="pf-ccard-cost" /></div></div>
+        <div className="card-figures"><div className="card-price"><DayCostLine cost={cost} t={t} as="span" className="pf-ccard-cost" short /></div></div>
       </div>
       <div className="card-actions">
         <IconButton tone="surface" className="pf-ccard-info" label={t('brief.whatsThereIn', { country: c.country })}
@@ -281,6 +281,7 @@ export function StepWhere({
 
               {view === 'list' ? (
                 <div className="pf-cgrid">
+                  <p className="pl-unit-head pf-cgrid-unit">{t('tp.bud.kindDay')}</p>
                   {handCountries.map((c) => (
                     <CountryCard
                       key={c.country}

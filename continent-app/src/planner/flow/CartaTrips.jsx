@@ -15,7 +15,7 @@ import { PlacesFilterSheet } from '../../browse/PlacesFilterSheet.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
 import {
   BikeIcon, BunkIcon, CarIcon, CityIcon, DiningIcon, FilterIcon, LakeIcon, LeafIcon, MountainIcon, PalmIcon,
-  RouteIcon, ShoeIcon, SnowIcon, SparkIcon, TrainIcon, VillageIcon,
+  RouteIcon, ShoeIcon, SnowIcon, TrainIcon, VillageIcon,
 } from '../../components/Icons.jsx';
 
 // Cards per page of the grid; More adds the next page.
@@ -227,7 +227,8 @@ export function CartaTrips({ titleTag = 'h1', onOpenJourney, initialStyle = null
       {types.length > 0 && (
         <div className="pf-carta-styles" role="group" aria-label={t('pf.carta.styles')}>
           {[{ slug: null }, ...types].map((tp) => {
-            const Icon = tp.slug ? STYLE_ICON[tp.slug] || SparkIcon : SparkIcon;
+            // House style: no sparkle (it drew as an "AI" box); All and an unknown style take the route mark.
+            const Icon = tp.slug ? STYLE_ICON[tp.slug] || RouteIcon : RouteIcon;
             const on = style === tp.slug;
             return (
               <Button key={tp.slug || 'all'} variant="quiet" className={`pf-carta-style${on ? ' is-on' : ''}`} aria-pressed={on}
@@ -266,6 +267,8 @@ export function CartaTrips({ titleTag = 'h1', onOpenJourney, initialStyle = null
         />
       )}
 
+      {/* House style: every card's figure is a day for one person; the unit is said once. */}
+      <p className="pl-unit-head">{t('tp.bud.kindDay')}</p>
       {featured.length > 0 && (
         <section className="pf-carta-sec" aria-labelledby="pf-carta-season">
           <h2 className="pf-carta-h" id="pf-carta-season">{t('pf.carta.inSeason')}</h2>
