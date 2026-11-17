@@ -710,13 +710,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       icon: <CalendarIcon size={16} />,
       title: season.allYear ? t('detail.seasonAllYear')
         : t('detail.monthRange', { from: monthShort(season.from), to: monthShort(season.to) }),
-      text: season.est ? t('ox.seasonEst') : t('ox.seasonText'),
+      // G1 minimal text: the months say what they are; only "Estimated" adds.
+      text: season.est ? t('ox.seasonEst') : '',
     },
     waymarked && {
       key: 'way',
       icon: <BootIcon size={16} />,
       title: t('ox.waymarked'),
-      text: named.ref ? t('ox.waymarkedRef', { ref: named.ref }) : t('ox.waymarkedText'),
+      text: named.ref ? t('ox.waymarkedRef', { ref: named.ref }) : '',
     },
     waterPts.length > 0 && {
       key: 'water',
@@ -799,11 +800,14 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
         text: isNum(s.m) ? t('ox.mWalk', { d: mText(s.m) }) : '',
       };
     }),
-    !isCityDay && shapeKey && {
+    // The board says a loop or an out and back; only a one way walk needs
+    // the row (plan the way back).
+    !isCityDay && shapeKey && !isLoopShape && rt !== 'out_back' && {
       key: 'shape',
       icon: isLoopShape ? <LoopIcon size={16} /> : <ArrowRightIcon size={16} />,
       title: shapeWord,
-      text: t(isLoopShape ? 'ox.shapeLoop' : rt === 'out_back' ? 'ox.shapeBack' : 'ox.shapeOneWay'),
+      // The word says a loop or an out and back; a one way walk adds "plan the way back".
+      text: t('ox.shapeOneWay'),
     },
   ] : [];
 
@@ -966,11 +970,11 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
       card={{
         title: t(isCityDay ? 'ox.card.day' : 'ox.card.walk'),
         rows: isCityDay ? [] : [
-          { key: 'g', label: t('ox.fact.grade'), value: gradeWord },
-          { key: 'l', label: t('ox.fact.length'), value: lengthText },
-          { key: 't', label: t('ox.fact.time'), value: timeText },
-          { key: 'c', label: t('ox.fact.climb'), value: climbText },
-          { key: 'r', label: t('ox.fact.route'), value: shapeWord },
+          { key: 'g', label: t('ox.fact.grade'), value: gradeWord, board: true },
+          { key: 'l', label: t('ox.fact.length'), value: lengthText, board: true },
+          { key: 't', label: t('ox.fact.time'), value: timeText, board: true },
+          { key: 'c', label: t('ox.fact.climb'), value: climbText, board: true },
+          { key: 'r', label: t('ox.fact.route'), value: shapeWord, board: true },
         ],
         onAdd,
         secondary: [
@@ -997,8 +1001,7 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
         </>
       )}
     >
-      <PSection id="ox-route" title={t('ox.jump.route')}
-        note={!isCityDay && shapeWord ? shapeWord : null}>
+      <PSection id="ox-route" title={t('ox.jump.route')}>
         <RouteBlock
           map={mapNode}
           profile={profileNode}
