@@ -243,7 +243,7 @@
   box-shadow: var(--elev-1);
 }
 /* Face stacks in My trips overlap lightly so no initial is clipped. */
-.mytrips .frn-stack .frn-face + .frn-face { margin-left: calc(var(--space-1) * -1); }
+.mytrips .frn-stack .frn-face + .frn-face { margin-left: -2px; }
 /* Saved's list tiles: a hairline edge like every other panel here, the
    chosen one the select edge and wash. */
 .btn.mt-lcard:not([aria-pressed='true']) { border: 1px solid var(--border); }
