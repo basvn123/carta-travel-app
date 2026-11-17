@@ -84,7 +84,7 @@
 .trip-wizard-modal .wz-stepper-step + .wz-stepper-step::before {
   content: '';
   width: var(--space-5);
-  height: 1px;
+  height: var(--stroke-edge);
   background: var(--border);
 }
 .trip-wizard-modal .wz-stepper-btn,
@@ -103,19 +103,23 @@
   white-space: nowrap;
 }
 .trip-wizard-modal .btn.wz-stepper-btn { color: var(--text-2); border-radius: var(--radius-pill); }
-.trip-wizard-modal .is-now .wz-stepper-btn { background: var(--select-bg); color: var(--select-ink); font-weight: 600; }
+.trip-wizard-modal .is-now .wz-stepper-btn { background: var(--select-row); color: var(--select-ink); font-weight: 800; }
 .trip-wizard-modal .wz-stepper-mark {
   display: inline-grid;
   place-items: center;
   width: 22px;
   height: 22px;
-  border: 1px solid var(--border);
+  border: var(--stroke-edge) solid var(--edge);
   border-radius: var(--radius-pill);
-  font-size: var(--text-micro);
-  font-weight: 600;
+  background: var(--surface);
+  color: var(--text-2);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
-.trip-wizard-modal .is-done .wz-stepper-mark { border-color: var(--text-2); color: var(--text); }
-.trip-wizard-modal .is-now .wz-stepper-mark { border-color: var(--select-border); background: var(--surface); }
+/* House style: a walked step is an umber disc with its tick, the one in hand carries the blaze. */
+.trip-wizard-modal .is-done .wz-stepper-mark { border-color: var(--action); background: var(--action); color: var(--surface); }
+.trip-wizard-modal .is-now .wz-stepper-mark { width: auto; border: 0; background: none; }
 
 @media (min-width: 769px) {
   .trip-wizard-modal .guide-head.wz-head { padding-inline: var(--space-6); }
@@ -443,3 +447,15 @@
 /* T1204 (D22): the trip footprint under a leg's fare, quiet and labelled as an estimate. */
 .trip-wizard-modal .wz-leg-fp { margin: 4px 0 0; font-size: var(--text-caption); color: var(--text-2); }
 .trip-wizard-modal .wz-leg-fp a { color: inherit; text-decoration: underline; }
+
+/* Polish round 1 (plan lane): on a wide screen the stepper names the step and
+   the step's title follows it, so the head's plain name steps back visually
+   (it stays for screen readers). */
+.trip-wizard-modal .wz-head.is-wide .wz-head-name.is-plain {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

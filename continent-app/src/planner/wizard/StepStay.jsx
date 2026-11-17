@@ -10,7 +10,7 @@ import { cityLabel } from '../../lib/placeName.js';
 import { scrollBehavior } from '../../lib/motion.js';
 import { formatMoney } from '../../lib/money.js';
 import {
-  SparkIcon, CheckIcon, AlertIcon, LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon,
+  CheckIcon, AlertIcon, LeafIcon, ScaleIcon, BoltIcon, StarIcon, RouteIcon, BedIcon,
   MapPinIcon, DiamondIcon, DotIcon, PlusIcon,
 } from '../../components/Icons.jsx';
 import { PlaneIcon } from '../../components/TransportIcons.jsx';
@@ -433,7 +433,7 @@ export function StepStay({
       {cartaPlan && (
         <div className="wroute">
           <div className="wroute-head">
-            <span className="wroute-label"><SparkIcon size={12} /> {t('route.title')}</span>
+            <span className="wroute-label"><RouteIcon size={12} /> {t('route.title')}</span>
             {cartaPlan.kmSaved > 20 && (
               <span className="wroute-saved">{t('route.saved', { km: cartaPlan.kmSaved })}</span>
             )}
@@ -503,7 +503,7 @@ export function StepStay({
       {/* Curated route shapes, fitted to THIS trip's nights. */}
       {stayTemplates.length > 0 && (
         <div className="guide-templates">
-          <span className="trip-field-label"><SparkIcon size={11} /> {t('wizard.templatesLabel', { n: windowNights || flexNights })}</span>
+          <span className="trip-field-label"><RouteIcon size={11} /> {t('wizard.templatesLabel', { n: windowNights || flexNights })}</span>
           <div className="guide-template-row">
             {stayTemplates.map((tpl) => (
               <button key={tpl.key} className="guide-template" onClick={() => applyTemplate(tpl)}>
@@ -528,7 +528,7 @@ export function StepStay({
       )}
 
       <button className="guide-design-btn guide-design-btn-quiet" onClick={() => setDesignQuizOpen((v) => !v)} aria-expanded={designQuizOpen}>
-        <span className="guide-design-spark"><SparkIcon size={13} /></span>
+        <span className="guide-design-spark"><RouteIcon size={14} /></span>
         <span className="guide-design-text">
           {t(stayStyle === 'single' ? 'wizard.pickMyBase' : 'wizard.pickMyCities')}
           <small>{t('wizard.nightsTuned', { n: windowNights || flexNights })}</small>
@@ -577,7 +577,7 @@ export function StepStay({
             </div>
           )}
           <button className="guide-next guide-quiz-go" onClick={applyDesign}>
-            <SparkIcon size={12} /> {t(stayStyle === 'single' ? 'wizard.designMyStay' : 'wizard.designMyRoute')}
+            <RouteIcon size={12} /> {t(stayStyle === 'single' ? 'wizard.designMyStay' : 'wizard.designMyRoute')}
           </button>
         </div>
       )}

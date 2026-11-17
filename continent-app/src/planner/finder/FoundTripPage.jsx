@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, IconButton } from '../../components/ui/index.js';
+import { Button, Figure, IconButton, Plate } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import {
@@ -15,7 +15,6 @@ import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
 import { cityLabel } from '../../lib/placeName.js';
 import { CROWD_KEYS, crowdTier, dayHighs } from '../../lib/recommend/compare.js';
-import { useIsDesktop } from '../../hooks/useIsDesktop.js';
 import { slotTotals } from '../../lib/recommend/slots.js';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { useKeepTrip } from './finderHooks.js';
@@ -131,7 +130,8 @@ function Gallery({ photos, name, t, children = null }) {
         </>
       )}
       <p className="tff-gal-cap">
-        <span className="tff-gal-name">{cur.caption}</span>
+        {/* House style: a caption that only repeats the page title steps back. */}
+        <span className="tff-gal-name">{cur.caption && cur.caption !== name ? cur.caption : ''}</span>
         <span className="tff-tp-cap-end">
           <Credit url={cur.url} t={t} />
           {photos.length > 1 && <span className="tff-gal-pos">{t('tf.pv.pos', { n: at + 1, total: photos.length })}</span>}
@@ -232,12 +232,22 @@ function PriceCard({ trip, t, lang, onLine, onPlan, keeper, name, ui, delta = nu
           {t(open ? 'tf.cost.close' : 'tf.cost.open')}
         </Button>
       </div>
-      <p className="tff-tp-total">
-        <span className="tff-tp-eur money">{Number.isFinite(group) ? formatMoney(group, { locale: lang }) : t('money.onRequest')}</span>
-        <span className="tff-tp-unit">{t(`tf.card.${head === 1 ? 'forYou' : 'forN'}${partial ? 'Partial' : ''}`, { n: head })}</span>
+      {/* House style: the trip total on the signpost plate, as the trip page
+          prints its total; it rolls once only after the traveller's own swap
+          of a line (useTotalDelta), never on its own. */}
+      <Plate variant="total" className="tff-tp-total"
+        name={<span className="tff-tp-unit">{t(`tf.card.${head === 1 ? 'forYou' : 'forN'}${partial ? 'Partial' : ''}`, { n: head })}</span>}
+        fig={(
+          <span className="tff-tp-eur money">
+            {Number.isFinite(group)
+              ? <Figure value={group} mine={delta != null} still={delta == null} />
+              : t('money.onRequest')}
+          </span>
+        )}
+      >
         {/* What the last swap did to the total, for three seconds (useTotalDelta). */}
         {delta != null && Math.abs(delta) >= 1 && <span className="tff-delta" role="status">{signedMoney(delta, { locale: lang })}</span>}
-      </p>
+      </Plate>
       {pp && <p className="tff-cost-pp">{t(partial ? 'tf.card.ppPartial' : 'tf.card.ppAll', { eur: pp })}</p>}
       {parts.length > 1 && sum > 0 && (
         <span className="tff-tp-costbar" aria-hidden="true">
@@ -447,7 +457,6 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
   const name = tripName(trip, destinations, lang);
   const pct = trip.match?.pct;
   const bases = trip.places.length;
-  const desk = useIsDesktop();
   const when = settings ? whenText(t, settings.when, months, bcp47) : null;
   const dates = settings?.when?.mode === 'exact' && when?.start ? (when.end ? t('tf.chip.dates', { start: when.start, end: when.end }) : when.start) : monthName(trip.month, lang);
   const placeIds = useMemo(() => trip.places.map((p) => p.id), [trip.places]);
@@ -502,8 +511,8 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
       </div>
 
       {(() => {
-        // The head (T881): on a phone it lies on the first photo; from 769 px
-        // it follows the gallery. Rendered once, so the page keeps one h1.
+        // The head (T881) follows the gallery at every width (house style:
+        // text never sits on a photo). Rendered once, so the page keeps one h1.
         const head = (
           <header className="tff-tp-head">
             <div className="tff-tp-titlerow">
@@ -518,11 +527,10 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
             </p>
           </header>
         );
-        const onPhoto = !desk && photos.length > 0;
         return (
           <>
-            <Gallery photos={photos} name={name} t={t}>{onPhoto ? head : null}</Gallery>
-            {!onPhoto && head}
+            <Gallery photos={photos} name={name} t={t}>{null}</Gallery>
+            {head}
           </>
         );
       })()}
@@ -570,7 +578,7 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
                   {sights == null ? (
                     <div className="tff-see-row is-loading" aria-busy="true"><span className="sr-only">{t('tf.pv.loading')}</span></div>
                   ) : sights.length ? (
-                    <ul className="tff-see-row">
+                    <ul className="tff-see-row" tabIndex={0}>
                       {sights.map((s) => (
                         <li key={s.name} className="tff-sight">
                           <HeroImage url={s.img} city={s.name} iso2={d?.iso2} className="tff-sight-img" maxWidth={320} sizes="200px" ratio={[4, 3]} />
