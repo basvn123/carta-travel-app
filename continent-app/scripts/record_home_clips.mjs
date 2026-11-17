@@ -185,10 +185,19 @@ const FIND_LIST = '.explore-tab';
 /** Each chapter: `ready` loads it off the record, `move` is the clip. */
 const CHAPTERS = {
   ask: {
-    ready: (page) => open(page, '?tab=home', 9000),
+    // The field is focused off the record: the click waits for the hero
+    // film to settle and the page shifts as it focuses, which filmed up to
+    // 4 s of an idle field in some languages.
+    ready: async (page) => {
+      await open(page, '?tab=home', 9000);
+      const f = page.locator('.hv-ask-input:visible').first();
+      await f.waitFor({ state: 'visible', timeout: 120000 });
+      await f.click({ timeout: 60000 });
+      await page.waitForTimeout(1500);
+    },
     move: async (page, lang) => {
       const f = page.locator('.hv-ask-input:visible').first();
-      await f.click(); await page.waitForTimeout(500);
+      await page.waitForTimeout(500);
       await f.pressSequentially(ASK_QUESTION[lang] || ASK_QUESTION.en, { delay: 70 });
       await page.waitForTimeout(700); await f.press('Enter'); await page.waitForTimeout(6000);
       // The answer scrolls in the chat sheet, not the Explore list under it;
@@ -207,7 +216,17 @@ const CHAPTERS = {
     // or half-tiled map box.
     ready: async (page) => {
       await open(page, `${JULY}#dest=gem%3Abled`, 10000);
-      await page.evaluate((sel) => { document.querySelector(sel).scrollTop = 3200; }, PLACE_PAGE);
+      // A language other than English reloads on its own path (/nl/) first.
+      await page.waitForSelector(`${PLACE_PAGE} .dmap`, { state: 'attached', timeout: 60000 });
+      // Scroll to the map itself: the page's length differs by language
+      // (a fixed 3200 px missed it in nl).
+      await page.evaluate((sel) => {
+        const box = document.querySelector(sel);
+        const map = box.querySelector('.dmap');
+        if (!map) throw new Error('explore: no map on the place page');
+        box.scrollTop += map.getBoundingClientRect().top - box.getBoundingClientRect().top - 100;
+      }, PLACE_PAGE);
+      await page.waitForSelector(`${PLACE_PAGE} .maplibregl-canvas`, { timeout: 30000 });
       await page.waitForTimeout(6000);
       await page.evaluate((sel) => { document.querySelector(sel).scrollTop = 0; }, PLACE_PAGE);
       await page.waitForTimeout(1200);
@@ -344,6 +363,10 @@ for (const lang of LANGS) {
       await cdp.send('Page.stopScreencast');
       await ctx.close();
       if (frames.length < 2) throw new Error(`only ${frames.length} frame(s) captured`);
+      // A loaded machine drops screencast frames and stalls the typing or
+      // the glide: say so, the clip wants another take.
+      const fps = frames.length / Math.max(0.1, endedAt - startedAt);
+      if (fps < 15) console.warn(`${lang}/${id}: only ${fps.toFixed(1)} frames a second, record it again`);
       // The clip plays in real time: each 30 fps tick shows the last frame
       // drawn by then, until the move ended. (An FFmpeg concat list with a
       // duration per frame gave every screencast frame at least one 25 fps
