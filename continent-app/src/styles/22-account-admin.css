@@ -21,11 +21,11 @@
   font-family: var(--ui);
   font-weight: 600;
   font-size: var(--text-caption);
-  color: var(--ink-soft);
+  color: var(--text-2);
   transition: color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .account-back:hover { color: var(--ink); background: var(--paper-dim); }
+  .account-back:hover { color: var(--text); background: var(--surface-sunken); }
 }
 .account-back svg { color: currentColor; }
 
@@ -40,19 +40,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: color-mix(in srgb, var(--accent) 14%, var(--paper));
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--paper));
-  color: var(--accent);
-  font-size: 15px;
+  background: color-mix(in srgb, var(--action) 14%, var(--surface-page));
+  border: 1px solid color-mix(in srgb, var(--action) 30%, var(--surface-page));
+  color: var(--action);
+  font-size: var(--text-lead);
   font-weight: 600;
   letter-spacing: 0.03em;
 }
 .account-hub-avatar-guest {
-  background: var(--paper-dim);
-  border-color: var(--rule);
-  color: var(--ink-soft);
+  background: var(--surface-sunken);
+  border-color: var(--border);
+  color: var(--text-2);
 }
-.account-hub-avatar-lg { width: 64px; height: 64px; font-size: 21px; }
+.account-hub-avatar-lg { width: 64px; height: 64px; font-size: var(--text-headline); }
 .account-profile-head {
   display: flex;
   flex-direction: column;
@@ -62,7 +62,7 @@
   padding-bottom: 6px;
   border-bottom: none;
 }
-.account-profile-head .account-hub-avatar-lg { font-size: 26px; }
+.account-profile-head .account-hub-avatar-lg { font-size: var(--text-headline); }
 
 /* The door to profile details: who you are, and a chevron promising the rest. */
 .account-profile-card {
@@ -71,14 +71,14 @@
   align-items: center;
   gap: 14px;
   padding: 14px 16px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-control);
-  background: var(--bg-card);
+  background: var(--surface);
   text-align: left;
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .account-profile-card:hover { border-color: var(--ink-soft); background: var(--paper-dim); }
+  .account-profile-card:hover { border-color: var(--text-2); background: var(--surface-sunken); }
 }
 .account-profile-meta {
   flex: 1;
@@ -88,21 +88,21 @@
   gap: 2px;
 }
 .account-profile-meta b {
-  font-size: 15px;
+  font-size: var(--text-lead);
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .account-profile-meta span {
-  font-size: 12.5px;
-  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  color: var(--text-2);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.account-menu-chev { flex: none; color: var(--ink-mute); }
+.account-menu-chev { flex: none; color: var(--text-3); }
 
 .account-signin-card {
   display: flex;
@@ -110,31 +110,31 @@
   align-items: flex-start;
   gap: 10px;
   padding: 16px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-control);
-  background: var(--bg-card);
+  background: var(--surface);
 }
 .account-signin-card .account-section-hint { margin-bottom: 2px; }
 
 /* The invite banner: the one tinted surface in the panel, because it is the
    one thing here that is an invitation rather than plumbing. */
 .account-invite {
-  border: 1px solid color-mix(in srgb, var(--accent) 32%, var(--paper));
+  border: 1px solid color-mix(in srgb, var(--action) 32%, var(--surface-page));
   border-radius: var(--radius-control);
-  background: color-mix(in srgb, var(--accent) 7%, var(--paper));
+  background: color-mix(in srgb, var(--action) 7%, var(--surface-page));
   padding: 16px;
 }
 .account-invite-title {
   display: block;
   font-size: var(--text-body);
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
   margin-bottom: 4px;
 }
 .account-invite-body {
   font-size: var(--text-label);
   line-height: 1.55;
-  color: var(--ink-soft);
+  color: var(--text-2);
   margin-bottom: 12px;
 }
 .account-invite-btn {
@@ -143,25 +143,25 @@
   gap: 8px;
   min-height: 40px;
   padding: 0 14px;
-  border: 1px solid color-mix(in srgb, var(--accent) 55%, var(--paper));
+  border: 1px solid color-mix(in srgb, var(--action) 55%, var(--surface-page));
   border-radius: var(--radius-sm);
-  background: var(--paper);
-  font-size: 13.5px;
+  background: var(--surface-page);
+  font-size: var(--text-label);
   font-weight: 500;
-  color: var(--ink);
+  color: var(--text);
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .account-invite-btn:hover { border-color: var(--accent); }
+  .account-invite-btn:hover { border-color: var(--action); }
 }
-.account-invite-btn svg { color: var(--accent); }
+.account-invite-btn svg { color: var(--action); }
 
 /* The help menu: one bounded object, rows divided by hairlines, every row a
    52px button. The chevron is the only hint needed that these go somewhere. */
 .account-menu {
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-control);
-  background: var(--bg-card);
+  background: var(--surface);
   overflow: hidden;
 }
 .account-menu-row {
@@ -180,10 +180,10 @@
 a.account-menu-row { color: var(--text); text-decoration: none; }
 a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 @media (hover: hover) {
-  .account-menu-row:hover { background: var(--paper-dim); }
+  .account-menu-row:hover { background: var(--surface-sunken); }
 }
-.account-menu-icon { flex: none; display: flex; color: var(--ink-soft); }
-.account-menu-label { flex: 1; font-size: var(--text-body); font-weight: 500; color: var(--ink); }
+.account-menu-icon { flex: none; display: flex; color: var(--text-2); }
+.account-menu-label { flex: 1; font-size: var(--text-body); font-weight: 500; color: var(--text); }
 
 /* FAQ accordion: a hairline list, one answer open at a time. The question is
    a full-width button so the whole row is the target, not just the chevron.
@@ -194,10 +194,10 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   margin: 0 0 6px;
   font-size: var(--text-caption);
   font-weight: 600;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
-.account-faq { border-top: 1px solid var(--rule); }
-.account-faq-item { border-bottom: 1px solid var(--rule); }
+.account-faq { border-top: 1px solid var(--border); }
+.account-faq-item { border-bottom: 1px solid var(--border); }
 .account-faq-q {
   width: 100%;
   display: flex;
@@ -209,19 +209,19 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   font-size: var(--text-body);
   font-weight: 600;
   line-height: 1.4;
-  color: var(--ink);
+  color: var(--text);
   transition: color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .account-faq-q:hover { color: var(--accent); }
+  .account-faq-q:hover { color: var(--action); }
 }
-.account-faq-chev { flex: none; color: var(--ink-mute); transition: transform var(--dur-1); }
+.account-faq-chev { flex: none; color: var(--text-3); transition: transform var(--dur-1); }
 .account-faq-item.open .account-faq-chev { transform: rotate(180deg); }
 .account-faq-a {
   padding: 0 2px 16px;
-  font-size: 13.5px;
+  font-size: var(--text-label);
   line-height: 1.6;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 /* The way out of the FAQ when the FAQ has not answered it. */
 .account-faq-foot { margin-top: 24px; }
@@ -233,14 +233,14 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   list-style: none;
   margin: 12px 0 0;
   padding: 0;
-  border-top: 1px solid var(--rule-soft);
+  border-top: 1px solid var(--border-soft);
 }
 .account-credits li {
   padding: 9px 2px;
-  border-bottom: 1px solid var(--rule-soft);
-  font-size: 12.5px;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: var(--text-caption);
   line-height: 1.55;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 
 /* Feedback: a textarea styled like every other input in the app. */
@@ -249,24 +249,24 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   min-height: 130px;
   resize: vertical;
   padding: 10px 12px;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--paper);
+  background: var(--surface-page);
   font-family: var(--ui);
   font-size: var(--text-body);
   line-height: 1.5;
-  color: var(--ink);
+  color: var(--text);
   transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .account-feedback-input:hover { border-color: var(--ink-soft); }
+  .account-feedback-input:hover { border-color: var(--text-2); }
 }
 .account-feedback-input:focus {
   outline: none;
-  border-color: var(--accent);
-  background: var(--paper-dim);
+  border-color: var(--action);
+  background: var(--surface-sunken);
 }
-.account-feedback-input::placeholder { color: var(--ink-mute); }
+.account-feedback-input::placeholder { color: var(--text-3); }
 .account-feedback-note { margin-top: 10px; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -737,20 +737,27 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  background: var(--paper);
+  padding: var(--space-5) var(--page-gutter);
+  background: var(--surface-page);
 }
+/* House style: a paper panel on the stone, the title in the headline. */
 .maintenance-card {
   width: min(440px, 100%);
+  padding: var(--space-6) var(--space-5);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
   text-align: center;
 }
 .maintenance-title {
-  font-family: var(--display);
-  font-size: 26px;
-  font-weight: 600;
-  letter-spacing: -.02em;
-  color: var(--ink);
-  margin: 18px 0 8px;
+  font-family: var(--ui);
+  font-size: var(--text-headline);
+  font-weight: 800;
+  letter-spacing: -0.018em;
+  line-height: 1.15;
+  text-wrap: balance;
+  color: var(--text);
+  margin: var(--space-4) 0 var(--space-2);
 }
 .maintenance-strip {
   position: fixed;
@@ -758,23 +765,23 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   left: 0;
   right: 0;
   z-index: calc(var(--z-page) + 10);
-  padding: 5px 12px;
-  background: var(--danger);
-  color: var(--on-fill);
-  font-family: var(--mono);
-  font-size: 10.5px;
+  padding: var(--space-1) var(--space-3);
+  background: var(--plate);
+  color: var(--on-plate);
+  font-family: var(--ui);
+  font-size: var(--text-caption);
+  font-weight: 700;
   text-align: center;
-  letter-spacing: .04em;
 }
 
 .account-feedback-done {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
-  color: var(--green);
+  gap: var(--space-2);
+  color: var(--action);
 }
-.account-feedback-done p { margin: 0; font-size: 14.5px; color: var(--ink); line-height: 1.5; }
+.account-feedback-done p { margin: 0; font-size: var(--text-body); color: var(--text); line-height: var(--leading-body); }
 
 /* ---- Site notice banner ---------------------------------------------- */
 /* The live announcement from site_config. Floats bottom centre, under the
@@ -787,43 +794,44 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
   z-index: var(--z-nav);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   width: max-content;
-  max-width: min(520px, calc(100vw - 32px));
-  padding: 12px 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--rule);
+  max-width: min(520px, calc(100vw - 2 * var(--page-gutter)));
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  background: var(--surface);
   border-radius: var(--radius-control);
-  box-shadow: var(--shadow-1);
-  font-size: 13.5px;
-  color: var(--ink);
+  box-shadow: var(--elev-2);
+  font-size: var(--text-body);
+  color: var(--text);
 }
-.site-banner > svg { flex: none; color: var(--accent); }
-.site-banner.warn { border-color: var(--amber); background: var(--amber-bg); }
-.site-banner.warn > svg { color: var(--amber-ink); }
+/* House style: no yellow. A notice carries its icon in umber; a warning its
+   icon in danger and its words in bold, never colour alone. */
+.site-banner > svg { flex: none; color: var(--action); }
+.site-banner.warn { outline: var(--stroke-edge) solid var(--danger); outline-offset: calc(-1 * var(--stroke-edge)); font-weight: 700; }
+.site-banner.warn > svg { color: var(--danger); }
 .site-banner-text { flex: 1; min-width: 0; }
 .site-banner-close {
   flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  margin: -4px -6px -4px 0;
+  width: var(--tap);
+  height: var(--tap);
+  margin: 0;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-pill);
   background: none;
-  color: var(--ink-mute);
+  color: var(--text-2);
   cursor: pointer;
 }
 @media (hover: hover) {
-  .site-banner-close:hover { color: var(--ink); background: var(--paper-dim); }
+  .site-banner-close:hover { color: var(--text); background: var(--surface-hover); }
 }
 /* The expiry banner's one action: a ghost Button, quiet by design because it
    reaches somebody who has already paid. Layout only; the look is .btn-ghost. */
 .site-banner-action { flex: none; }
 @media (max-width: 768px) {
-  .site-banner { bottom: calc(var(--bottom-nav-h) + 12px); }
+  .site-banner { bottom: calc(var(--bottom-nav-h) + var(--space-3)); }
 }
 
 /* ---- Trails nearby (destination detail) + ready-made day ------------- */
@@ -835,11 +843,25 @@ a.account-menu-row:focus-visible { outline: 2px solid var(--focus); outline-offs
    option: same shape, paper ground and a hairline instead of the action-brown
    wash, so the day keeps exactly one loud call to action. */
 .day-citytrip-hero {
-  border-color: var(--rule);
-  background: var(--bg-card);
+  border-color: var(--border);
+  background: var(--surface);
 }
 @media (hover: hover) {
-  .day-citytrip-hero:hover { background: var(--paper-dim); }
+  .day-citytrip-hero:hover { background: var(--surface-sunken); }
 }
-.day-citytrip-hero .day-ai-hero-ico { color: var(--ink-soft); }
+.day-citytrip-hero .day-ai-hero-ico { color: var(--text-2); }
 
+/* ── The handle field in the house style (account lane, 2026-11) ──
+   Account's profile and Together's Add both use it: the kit Field's edge,
+   radius and 16 px text, the @ in second ink, the 3 px focus ring.
+   Scoped to .saved-shell so it wins over 23-places-pages.css. */
+.saved-shell .acct-handle-row {
+  min-height: var(--tap);
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.saved-shell .acct-handle-row:focus-within { outline: var(--stroke-focus) solid var(--focus); outline-offset: 1px; border-color: var(--action); background: var(--surface); }
+.saved-shell .acct-handle-at { padding: 0 2px 0 var(--space-3); font-family: var(--ui); font-size: var(--text-lead); font-weight: 700; color: var(--text-2); }
+.saved-shell .acct-handle-row input { padding: 0 var(--space-3) 0 2px; min-height: calc(var(--tap) - 3px); font-family: var(--ui); font-size: var(--text-lead); color: var(--text); }

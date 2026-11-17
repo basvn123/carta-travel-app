@@ -1,6 +1,10 @@
 import React, { useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import Logo from '../components/Logo.jsx';
+import { Blaze } from '../components/ui/Blaze.jsx';
+import { Button } from '../components/ui/Button.jsx';
+import { IconButton } from '../components/ui/IconButton.jsx';
+import { Segmented } from '../components/ui/Segmented.jsx';
+import { haptic } from '../lib/haptics.js';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
 import { GoogleButton } from './GoogleButton.jsx';
@@ -29,6 +33,10 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState('');
+  // House style: a refused submit shakes the form once and warns (Error
+  // primitive). Visual only: the messages and the checks are unchanged.
+  const [shake, setShake] = useState(false);
+  const refuse = (msg) => { setError(msg); setShake(true); haptic('warn'); };
 
   const reset = () => { setError(''); setNotice(''); };
 
@@ -45,25 +53,25 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
     reset();
 
     if (mode === 'forgot') {
-      if (!email) { setError(t('auth.errEnterEmail')); return; }
+      if (!email) { refuse(t('auth.errEnterEmail')); return; }
       setLoading(true);
       try {
         await sendPasswordReset(email);
         setNotice(t('auth.noticeResetSent', { email }));
       } catch (err) {
-        setError(authErrorText(err, t, 'auth.errGeneric'));
+        refuse(authErrorText(err, t, 'auth.errGeneric'));
       } finally {
         setLoading(false);
       }
       return;
     }
 
-    if (!email || !password) { setError(t('auth.errEnterEmailPassword')); return; }
+    if (!email || !password) { refuse(t('auth.errEnterEmailPassword')); return; }
     if (mode === 'signup') {
-      if (!fullName.trim()) { setError(t('auth.errEnterName')); return; }
-      if (password.length < MIN_PASSWORD_LENGTH) { setError(t('auth.errPasswordShort', { n: MIN_PASSWORD_LENGTH })); return; }
-      if (passwordContextWord(password, { name: fullName, email })) { setError(t('auth.errPasswordContext')); return; }
-      if (password !== confirmPassword) { setError(t('auth.errPasswordMismatch')); return; }
+      if (!fullName.trim()) { refuse(t('auth.errEnterName')); return; }
+      if (password.length < MIN_PASSWORD_LENGTH) { refuse(t('auth.errPasswordShort', { n: MIN_PASSWORD_LENGTH })); return; }
+      if (passwordContextWord(password, { name: fullName, email })) { refuse(t('auth.errPasswordContext')); return; }
+      if (password !== confirmPassword) { refuse(t('auth.errPasswordMismatch')); return; }
     }
 
     setLoading(true);
@@ -80,7 +88,7 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
         onClose();
       }
     } catch (err) {
-      setError(authErrorText(err, t, 'auth.errGeneric'));
+      refuse(authErrorText(err, t, 'auth.errGeneric'));
     } finally {
       setLoading(false);
     }
@@ -102,33 +110,30 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
 
   return (
     <div className="auth-overlay" onClick={onClose}>
-      <div className="auth-modal" ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" onClick={(e) => e.stopPropagation()}>
-        <button ref={closeRef} className="panel-close auth-close" onClick={onClose} aria-label={t('auth.close')}>
-          <CloseIcon size={16} />
-        </button>
+      <div className="auth-modal hs-dialog-in" ref={cardRef} role="dialog" aria-modal="true" aria-labelledby="auth-modal-title" onClick={(e) => e.stopPropagation()}>
+        <IconButton ref={closeRef} className="panel-close auth-close" onClick={onClose} label={t('auth.close')}>
+          <CloseIcon size={18} />
+        </IconButton>
 
+        {/* The wordmark slot, as in the header: a blaze and the name in the
+            plate face (house style; the old compass logo is retired). */}
         <div className="auth-brand">
-          <Logo size={26} />
+          <Blaze size="md" />
           <span className="auth-brand-name">Carta</span>
         </div>
 
         {mode !== 'forgot' && (
-          <div className="segmented auth-tabs">
-            <button
-              className={mode === 'signin' ? 'seg-on' : ''}
-              onClick={() => switchMode('signin')}
-              type="button"
-            >
-              {t('auth.signIn')}
-            </button>
-            <button
-              className={mode === 'signup' ? 'seg-on' : ''}
-              onClick={() => switchMode('signup')}
-              type="button"
-            >
-              {t('auth.createAccount')}
-            </button>
-          </div>
+          <Segmented
+            className="auth-tabs"
+            block
+            label={t('acc.authMode')}
+            value={mode}
+            onChange={switchMode}
+            options={[
+              { value: 'signin', label: t('auth.signIn') },
+              { value: 'signup', label: t('auth.createAccount') },
+            ]}
+          />
         )}
 
         <h2 className="auth-title" id="auth-modal-title">{titles[mode]}</h2>
@@ -142,14 +147,14 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
         )}
 
         {notice ? (
-          <div className="auth-notice">
+          <div className="auth-notice hs-reveal" role="status">
             {notice}
-            <button type="button" className="auth-link" onClick={() => switchMode('signin')}>
+            <Button variant="quiet" size="sm" className="auth-link" onClick={() => switchMode('signin')}>
               {t('auth.backToSignIn')}
-            </button>
+            </Button>
           </div>
         ) : (
-          <form className="auth-form" onSubmit={handleSubmit}>
+          <form className={`auth-form${shake ? ' hs-shake' : ''}`} onSubmit={handleSubmit} onAnimationEnd={() => setShake(false)}>
             {mode === 'signup' && (
               <label className="auth-field">
                 <span className="auth-label">{t('auth.fullName')}</span>
@@ -200,29 +205,28 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
             )}
 
             {mode === 'signin' && (
-              <button
-                type="button"
+              <Button
+                variant="quiet"
+                size="sm"
                 className="auth-link auth-forgot"
                 onClick={() => switchMode('forgot')}
               >
                 {t('auth.forgotPassword')}
-              </button>
+              </Button>
             )}
 
-            {error && <div className="auth-error" role="alert">{error}</div>}
+            {error && <div className="auth-error hs-reveal" role="alert">{error}</div>}
 
-            {/* The modal's one primary, in the accent like every other
-                submit on the account surface (69-v6-account.css). */}
-            <button type="submit" className="auth-submit" disabled={loading}>
-              {loading
-                ? t('auth.pleaseWait')
-                : mode === 'signin' ? t('auth.signIn') : mode === 'signup' ? t('auth.createAccount') : t('auth.sendResetLink')}
-            </button>
+            {/* The modal's one primary: the kit button (press, spinner while
+                busy; the label stays so the width never jumps). */}
+            <Button type="submit" variant="primary" block className="auth-go" loading={loading}>
+              {mode === 'signin' ? t('auth.signIn') : mode === 'signup' ? t('auth.createAccount') : t('auth.sendResetLink')}
+            </Button>
 
             {mode === 'forgot' && (
-              <button type="button" className="auth-link auth-back" onClick={() => switchMode('signin')}>
+              <Button variant="quiet" size="sm" className="auth-link auth-back" onClick={() => switchMode('signin')}>
                 {t('auth.backToSignIn')}
-              </button>
+              </Button>
             )}
           </form>
         )}

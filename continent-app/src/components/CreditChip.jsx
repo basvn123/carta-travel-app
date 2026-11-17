@@ -2,7 +2,7 @@ import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { TIERS } from '../lib/pricing.js';
-import { SparkIcon } from './Icons.jsx';
+import { AiTag } from './AiTag.jsx';
 
 /**
  * What an AI action costs, said before the tap (T433).
@@ -59,7 +59,7 @@ export function CreditChip({ free = false, freeLeft = 0, inline = false, classNa
   if (inline) return <span className={`credit-inline ${className}`}>{text}</span>;
   return (
     <span className={`credit-chip${c.out && !free ? ' is-out' : ''} ${className}`}>
-      <SparkIcon size={13} aria-hidden="true" />
+      <AiTag />
       <span>{text}</span>
     </span>
   );

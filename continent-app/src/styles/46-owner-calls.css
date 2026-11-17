@@ -6,9 +6,8 @@
    filled control. Scoped to the Explore filter bar: Destinations keeps its
    own row. */
 
-/* The scrim behind every modal dialog is --ink at 28 percent (carta-design,
-   Components). It was a literal rgba of the same colour. */
-.lifestyle-scrim { background: color-mix(in srgb, var(--ink) 28%, transparent); }
+/* The scrim behind every modal dialog is the house scrim token. */
+.lifestyle-scrim { background: var(--scrim); }
 
 /* The fine-pointer exception (owner, 2026-10-07; carta-design Layout). On a
    mouse a compact control may be 32 px, and it may not be less. These are the
@@ -30,7 +29,8 @@
    measured in the city or is a country-level one (T098-b, owner call). */
 
 /* The install hint in My trips (T246-d, owner call): one line, one secondary
-   button, an ordinary row under the tabs. */
+   button, an ordinary row under the tabs. House style: a paper row flat on
+   its hairline, the close a round 44 px icon button. */
 .install-hint {
   display: flex;
   align-items: center;
@@ -38,21 +38,28 @@
   gap: var(--space-3);
   margin: var(--space-3) var(--space-4) 0;
   padding: var(--space-3);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-control);
-  background: var(--bg-card);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  animation: hs-reveal var(--dur-2) var(--ease-out) both;
 }
-.install-hint-text { margin: 0; font-size: 13.5px; color: var(--ink); min-width: 0; }
+.install-hint-text { margin: 0; font-size: var(--text-body); color: var(--text); min-width: 0; }
 .install-hint-actions { display: flex; align-items: center; gap: var(--space-2); flex: none; }
 .install-hint-x {
   min-width: var(--tap);
   min-height: var(--tap);
+  display: inline-grid;
+  place-items: center;
   border: 0;
+  border-radius: var(--radius-pill);
   background: none;
-  color: var(--ink-soft);
+  color: var(--text-2);
   font: inherit;
   cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
 }
+.install-hint-x:active { scale: var(--press-scale-sm); transition-duration: var(--dur-press); }
 @media (hover: hover) {
-  .install-hint-x:hover { color: var(--ink); }
+  .install-hint-x:hover { color: var(--text); background: var(--surface-hover); }
 }
+@media (prefers-reduced-motion: reduce) { .install-hint { animation: none; } }

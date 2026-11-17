@@ -41,7 +41,7 @@ body:has(.prc[aria-modal="true"]) .tab-h1 { display: none; }
 .prc-title {
   margin: 0;
   font-size: var(--text-headline);
-  font-weight: 700;
+  font-weight: 800;
   line-height: var(--leading-tight);
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -264,7 +264,6 @@ body:has(.prc[aria-modal="true"]) .tab-h1 { display: none; }
 
 @media (min-width: 769px) {
   .prc-inner { padding-top: var(--space-8); }
-  .prc-title { font-size: var(--text-display); }
   .prc-compare { grid-template-columns: 1fr 1fr; }
   .prc-col { padding: var(--space-6); }
   .prc-col + .prc-col { border-top: 0; border-left: 1px solid var(--border-soft); }

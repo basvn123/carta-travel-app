@@ -210,27 +210,15 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
   border-radius: var(--radius-sheet);
   box-shadow: var(--elev-1);
 }
-.ac-signin-h { margin: 0; font-size: var(--text-title); font-weight: 700; line-height: var(--leading-tight); }
-.ac-signin-btns { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
-/* Google is the secondary beside the one primary, Sign in with email. */
-.account-shell .ac-signin-btns .auth-submit.auth-google {
-  width: auto;
-  min-height: var(--tap);
-  margin: 0;
-  padding: 0 var(--space-4);
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  font-size: var(--text-label);
-  font-weight: 600;
-}
-@media (hover: hover) {
-  .account-shell .ac-signin-btns .auth-submit.auth-google:hover:not(:disabled) { background: var(--surface-hover); color: var(--text); }
-}
+.ac-signin-h { margin: 0; font-size: var(--text-title); font-weight: 800; line-height: var(--leading-tight); text-wrap: balance; }
+/* Google is the kit secondary beside the one primary, Sign in with email:
+   two equal buttons side by side, stacked full width on a phone. */
+.ac-signin-btns { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: var(--space-2); align-items: center; }
+.ac-signin-btns .btn { width: auto; }
+
 @media (max-width: 480px) {
-  .ac-signin-btns { display: grid; }
-  .account-shell .ac-signin-btns .auth-submit.auth-google { width: 100%; }
+  .ac-signin-btns { grid-template-columns: minmax(0, 1fr); }
+  .ac-signin-btns .btn { width: 100%; }
 }
 
 .ac-signout.btn { justify-self: start; }
@@ -375,3 +363,127 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 
 /* T1118: what Carta keeps, and for how long (the plain Article 30 lines). */
 .ac-keep-list { margin: 0; padding-left: 1.1em; display: grid; gap: var(--space-1); }
+
+/* ── The older forms in the house style (account lane, 2026-11) ──────────
+   Profile, password, forgot, download and delete keep their markup, ids and
+   classes (scripts pin them); here they take the kit's look: fields like the
+   kit Field, buttons like the kit Button, marks in umber and ink with words,
+   no green, no tinted slabs. An in-place form arrives with the reveal.
+   These win over the older rules in 14-filters-panels and 21-chat-passes
+   because this file loads later and is scoped to Account. */
+.ac-list > .ac-inline.panel-section,
+.ac-inline { animation: hs-reveal var(--dur-2) var(--ease-out) both; }
+.ac-list > .ac-inline.panel-section { padding: var(--space-4); background: var(--surface); }
+.ac-list > .ac-inline.panel-section > * + * { margin-top: var(--space-3); }
+
+.account-shell .section-title { font-size: var(--text-title); font-weight: 800; color: var(--text); letter-spacing: 0; text-transform: none; }
+.account-shell .auth-label { font-size: var(--text-label); font-weight: 600; letter-spacing: 0; color: var(--text); }
+.account-shell .account-section-hint { font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); margin: 0; }
+
+/* Buttons of the in-place forms: the kit's primary and secondary. */
+.account-shell .book-btn,
+.account-shell .auth-submit:not(.btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: var(--stroke-edge) solid var(--action);
+  border-radius: var(--radius-control);
+  background: var(--action);
+  color: var(--action-text);
+  font-family: var(--ui);
+  font-size: var(--text-body);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
+}
+.account-shell .book-btn.secondary {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--text);
+}
+.account-shell .book-btn.account-delete-btn { background: var(--danger); border-color: var(--danger); color: var(--action-text); }
+@media (hover: hover) {
+  .account-shell .book-btn:hover:not(:disabled),
+  .account-shell .auth-submit:not(.btn):hover:not(:disabled) { background: var(--action-hover); border-color: var(--action-hover); }
+  .account-shell .book-btn.secondary:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--text); }
+  .account-shell .book-btn.account-delete-btn:hover:not(:disabled) { background: var(--danger-dark); border-color: var(--danger-dark); }
+}
+.account-shell :is(.book-btn, .auth-submit:not(.btn)):active:not(:disabled) { scale: var(--press-scale); transition-duration: var(--dur-press); }
+.account-shell :is(.book-btn, .auth-submit:not(.btn)):disabled { opacity: 0.55; cursor: default; }
+.account-shell .auth-forgot-actions .book-btn { min-height: var(--tap); }
+.account-shell .account-wide-btn { width: 100%; }
+.account-shell .auth-link:not(.btn) {
+  min-height: var(--tap);
+  font-size: var(--text-body);
+  font-weight: 700;
+  color: var(--action-hover);
+  text-decoration: none;
+}
+@media (hover: hover) {
+  .account-shell .auth-link:not(.btn):hover { text-decoration: underline; text-underline-offset: 3px; color: var(--action-press); }
+}
+
+/* Field marks: ok in umber with a tick, bad in danger with a cross. */
+.account-shell .auth-mark { width: 18px; height: 18px; color: var(--action-text); }
+.account-shell .auth-mark.is-ok { background: var(--action); }
+.account-shell .auth-field-error { color: var(--danger); font-size: var(--text-body); font-weight: 600; }
+.account-shell .auth-hint { color: var(--text-2); font-size: var(--text-body); }
+
+/* Password strength and rules: the umber scale, words always beside it. */
+.account-shell .pw-strength.fair .pw-strength-seg.on { background: var(--umber-300); }
+.account-shell .pw-strength.strong .pw-strength-seg.on { background: var(--action); }
+.account-shell .pw-req { color: var(--text-2); font-size: var(--text-body); }
+.account-shell .pw-req.met { color: var(--text); }
+.account-shell .pw-req.met svg { color: var(--action); }
+.account-shell .pw-match { color: var(--danger); }
+
+/* The checkbox row: a 44 px target with an umber box. */
+.account-shell .auth-check { font-size: var(--text-body); color: var(--text); }
+.account-shell .auth-check input[type='checkbox'] { accent-color: var(--action); width: 20px; height: 20px; }
+
+/* The success line: ink on beige with its tick, a 44 px close. */
+.account-shell .auth-banner {
+  align-items: center;
+  margin: 0;
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--select-bg);
+  color: var(--select-ink);
+  font-size: var(--text-body);
+  font-weight: 600;
+  animation: hs-reveal var(--dur-2) var(--ease-out) both;
+}
+.account-shell .auth-banner svg { color: var(--action); }
+.account-shell .auth-banner-x { width: var(--tap); height: var(--tap); margin: 0; border-radius: var(--radius-pill); color: var(--select-ink); }
+@media (hover: hover) { .account-shell .auth-banner-x:hover { background: var(--umber-200); } }
+
+/* Forgot: a quiet step inside the form, not a tinted box. */
+.account-shell .auth-forgot-confirm { padding: var(--space-3) 0 0; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; animation: hs-reveal var(--dur-2) var(--ease-out) both; }
+.account-shell .auth-forgot-text { font-size: var(--text-body); color: var(--text-2); }
+
+/* Delete: the danger lives in the button and the words, never a red slab. */
+.account-shell .account-danger { background: none; border-color: transparent; }
+.account-shell .account-danger-text { font-size: var(--text-body); line-height: var(--leading-body); color: var(--text); }
+.account-shell .account-danger-title { color: var(--danger); }
+
+/* Profile: the avatar and its picker. */
+.account-shell .account-profile-head .account-hub-avatar-lg { font-size: var(--text-headline); }
+.account-shell .account-avatar-opt { width: var(--tap); height: var(--tap); border: var(--stroke-edge) solid var(--edge); border-radius: var(--radius-pill); background: var(--surface); font-size: var(--text-title); transition: border-color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick); }
+.account-shell .account-avatar-opt:active { scale: var(--press-scale); transition-duration: var(--dur-press); }
+.account-shell .account-avatar-opt.on { border-color: var(--select-border); background: var(--select-bg); outline: 1px solid var(--select-border); outline-offset: -2.5px; }
+.account-shell .account-avatar-picker { gap: var(--space-2); max-width: 320px; animation: hs-reveal var(--dur-2) var(--ease-out) both; }
+.account-shell .acct-handle-row:focus-within { outline: var(--stroke-focus) solid var(--focus); outline-offset: 1px; border-color: var(--action); background: var(--surface); }
+
+/* The pane changes like a pushed view (Route primitive). */
+.ac-pane { animation: hs-route-in var(--dur-2) var(--ease-out) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ac-inline, .ac-list > .ac-inline.panel-section, .account-shell .auth-banner,
+  .account-shell .auth-forgot-confirm, .account-shell .account-avatar-picker,
+  .ac-pane { animation: none; }
+}

@@ -367,7 +367,10 @@ export function TogetherPage({
   return (
     <div className="saved-shell together">
       <div className="panel open account-panel saved-trips-panel tg-panel">
-        {body}
+        {/* House style: each view arrives as a pushed view (Route
+            primitive); the key only remounts the frame when the view or its
+            subject changes. */}
+        <div className="tg-route" key={`${view || 'home'}:${viewId || ''}`}>{body}</div>
       </div>
     </div>
   );

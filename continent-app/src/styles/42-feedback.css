@@ -10,54 +10,60 @@
   font: inherit;
   font-size: var(--text-label);
   font-weight: 600;
-  color: var(--ink-soft);
+  color: var(--text-2);
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
 }
 @media (hover: hover) {
-  .report-link:hover { color: var(--ink); }
+  .report-link:hover { color: var(--text); }
 }
-.report-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.report-link:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .report-link.is-price { font-weight: 400; font-size: var(--text-caption); }
 @media (pointer: fine) { .report-link { min-height: 32px; } }
 
 .report-form { display: flex; flex-direction: column; gap: var(--space-2); }
-.report-about { margin: 0; font-size: var(--text-body); color: var(--ink); font-weight: 600; }
-.report-label { font-size: var(--text-label); color: var(--ink-soft); }
+.report-about { margin: 0; font-size: var(--text-body); color: var(--text); font-weight: 700; }
+.report-label { font-size: var(--text-label); font-weight: 600; color: var(--text); }
 .report-whats { display: flex; flex-direction: column; gap: 0; }
 .report-what {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   min-height: var(--tap);
-  border-bottom: 1px solid var(--rule-soft);
+  padding: 0 var(--space-2);
+  border-bottom: 1px solid var(--border-soft);
   font-size: var(--text-body);
-  color: var(--ink);
+  color: var(--text);
   cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
 }
-.report-what input { accent-color: var(--ink-fill); width: 18px; height: 18px; margin: 0; }
-.report-what.on { font-weight: 600; }
-.report-what:focus-within { outline: 2px solid var(--accent); outline-offset: -2px; }
+/* The chosen reason: the row wash and umber words (Select), the radio umber. */
+.report-what input { accent-color: var(--action); width: 20px; height: 20px; margin: 0; }
+.report-what.on { font-weight: 700; color: var(--select-ink); background: var(--select-row); }
+.report-what:focus-within { outline: var(--stroke-focus) solid var(--focus); outline-offset: -3px; }
 .report-input {
   width: 100%;
   box-sizing: border-box;
-  padding: var(--space-2);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
+  padding: var(--space-3);
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-control);
+  background: var(--surface);
   font: inherit;
-  font-size: var(--text-body);
-  color: var(--ink);
+  font-size: var(--text-lead);
+  color: var(--text);
 }
 .report-mail { min-height: var(--tap); }
-.report-input::placeholder { color: var(--ink-mute); }
-.report-input:focus { outline: none; border-color: var(--accent); }
-.report-note { margin: 0; font-size: var(--text-caption); color: var(--ink-mute); }
-.report-err { margin: 0; font-size: var(--text-label); color: var(--ink); border-left: 2px solid var(--accent); padding-left: var(--space-2); }
+.report-input::placeholder { color: var(--text-3); }
+.report-input:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 1px; border-color: var(--action); }
+.report-note { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
+/* An error: danger words, no side stripe (house style). */
+.report-err { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--danger); animation: hs-reveal var(--dur-2) var(--ease-out) both; }
 /* Send is the kit's primary (T468); the sheet's one action. */
 .report-send { margin-top: var(--space-1); }
-.report-done { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); font-size: var(--text-body); color: var(--ink); }
+.report-done { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); font-size: var(--text-body); font-weight: 600; color: var(--text); animation: hs-reveal var(--dur-2) var(--ease-out) both; }
+.report-done svg { color: var(--action); }
+@media (prefers-reduced-motion: reduce) { .report-err, .report-done { animation: none; } }
 .report-done p { margin: 0; }
 
 /* The admin inbox: the report line. */

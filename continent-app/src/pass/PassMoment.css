@@ -1,17 +1,19 @@
 /* T1171 (ROADMAP I14): the Pass moment, one Carta card under the trip's
-   route. White card on the stage radius, built in bands: the title and the
-   two lists (free on a lagoon tint, the Trip Pass on an umber tint), then
-   the foot strip on mist with the sentence left and the two buttons right
-   (stacked, full width, on a phone). One elevation: the card shadow token,
-   no border. It rises once; under reduced motion it is simply there.
-   Tokens only. */
+   route. House style (account lane, 2026-11): one paper card on the card
+   radius, flat on its hairline; the two lists side by side on the same
+   paper, split by one hairline (no tinted columns, so the free plan is
+   never dimmed and nothing is a card in a card); the Trip Pass list is
+   marked by its ticket and umber ticks, the free list by ink ticks; the
+   foot under a hairline with the sentence left and the two buttons right
+   (stacked, full width, on a phone). It rises once when the trip is
+   priced; under reduced motion it is simply there. Tokens only. */
 
 .pm {
   overflow: hidden;
-  border-radius: var(--radius-stage);
+  border-radius: var(--radius-card);
   background: var(--surface);
   box-shadow: var(--elev-1);
-  animation: pm-rise var(--dur-3) var(--ease-out) both;
+  animation: pm-rise var(--dur-settle) var(--ease-settle) both;
 }
 
 @keyframes pm-rise {
@@ -31,11 +33,10 @@
   text-wrap: balance;
 }
 
-.pm-cols { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
+.pm-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
 
-.pm-col { min-width: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius-card); }
-.pm-col.is-free { background: color-mix(in srgb, var(--lagoon-100) 70%, var(--surface)); }
-.pm-col.is-pass { background: color-mix(in srgb, var(--umber-100) 70%, var(--surface)); }
+.pm-col { min-width: 0; padding: var(--space-3) 0; }
+.pm-col + .pm-col { border-top: 1px solid var(--border-soft); }
 
 .pm-col-h {
   display: flex;
@@ -69,17 +70,17 @@
   height: 20px;
   margin-top: 1px;
   border-radius: var(--radius-pill);
-  background: var(--surface);
+  background: var(--surface-sunken);
 }
-.is-free .pm-mark { color: var(--lagoon-700); }
-.is-pass .pm-mark { color: var(--select-ink); }
+.is-free .pm-mark { color: var(--text); }
+.is-pass .pm-mark { background: var(--select-bg); color: var(--select-ink); }
 
 .pm-foot {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4) var(--space-4);
-  background: color-mix(in srgb, var(--home-ground-mist) 55%, var(--surface));
+  border-top: 1px solid var(--border-soft);
 }
 
 .pm-foot-line { display: flex; flex-direction: column; gap: 2px; margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
@@ -87,14 +88,13 @@
 
 .pm-acts { display: flex; flex-direction: column-reverse; gap: var(--space-2); }
 .pm-acts .btn { width: 100%; min-height: 44px; }
-.pm-see .btn-icon { transition: transform var(--dur-2) var(--ease-out); }
-.pm-see:hover .btn-icon { transform: translateX(3px); }
 
 .pm-hidden { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 
 @media (min-width: 769px) {
   .pm-main { padding: var(--space-5) var(--space-5) var(--space-4); }
-  .pm-cols { grid-template-columns: 1fr 1fr; }
+  .pm-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-5); }
+  .pm-col + .pm-col { border-top: 0; border-left: 1px solid var(--border-soft); padding-left: var(--space-5); }
   .pm-foot { flex-direction: row; align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-5); }
   .pm-acts { flex-direction: row; flex: none; }
   .pm-acts .btn { width: auto; }
@@ -102,8 +102,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .pm { animation: none; }
-  .pm-see .btn-icon { transition: none; }
-  .pm-see:hover .btn-icon { transform: none; }
 }
 
 @media (forced-colors: active) {

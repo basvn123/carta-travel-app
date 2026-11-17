@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
+import { AiTag } from '../components/AiTag.jsx';
 import {
   ArrowLeftIcon, BedIcon, CheckIcon, ClockIcon, CloseIcon, DownloadIcon, EyeIcon, EyeOffIcon,
   FeedbackIcon, FriendsIcon, GlobeIcon, HomeIcon, LinkIcon, LockIcon, MapPinIcon, PencilIcon,
   PersonIcon, PlaneIcon, QuestionIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
-  SparkIcon, TicketIcon, TrashIcon,
+  TicketIcon, TrashIcon,
 } from '../components/Icons.jsx';
 
 // The explainer page (scripts/explainer/numbers.mjs), a static page outside
@@ -854,7 +855,7 @@ export function AccountPanel({
       {signedIn && (
         <Group id="ac-g-plan" title={t('ac.plan')}>
           <Row icon={TicketIcon} label={t(TIERS[tierKey].labelKey)} value={planWhen} href={hrefOf('plan')} onClick={() => go('plan')} />
-          {plansLine && <Row icon={SparkIcon} label={t('ac.meterPlans')} value={plansLine} href={hrefOf('plan')} onClick={() => go('plan')} />}
+          {plansLine && <Row icon={AiTag} label={t('ac.meterPlans')} value={plansLine} href={hrefOf('plan')} onClick={() => go('plan')} />}
         </Group>
       )}
       <Group id="ac-g-prefs" title={t('account.preferences')}>
@@ -1430,7 +1431,7 @@ export function AccountPanel({
               </ul>
             </div>
           )}
-          <Row icon={SparkIcon} label={t('ac.ai')} href={hrefOf('ai')} onClick={() => go('ai')} />
+          <Row icon={AiTag} label={t('ac.ai')} href={hrefOf('ai')} onClick={() => go('ai')} />
           <Row icon={ShieldIcon} label={t('account.privacyPolicy')} onClick={() => setPrivacyOpen(true)} />
           <Row icon={EyeOffIcon} label={t('ac2.cookies')} onClick={() => setCookiesOpen(true)} />
         </Group>
@@ -1455,7 +1456,7 @@ export function AccountPanel({
       <div className="panel open account-panel saved-trips-panel ac-panel" ref={panelRef}>
         <div className={`ac-page${view === 'home' ? ' is-home' : ''}`}>
           {rail}
-          <div className="ac-pane">{pane}</div>
+          <div className="ac-pane" key={view}>{pane}</div>
         </div>
         {/* The legal texts render at document.body, not inside the panel:
             the panel's transform would pin a fixed overlay to its own box. */}

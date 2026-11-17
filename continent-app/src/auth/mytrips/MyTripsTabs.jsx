@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Chip, Tabs, IconButton } from '../../components/ui/index.js';
+import { Button, Chip, Tabs, IconButton, Blaze } from '../../components/ui/index.js';
 import { CountryFlag, COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
 import { LoadingBlock, ErrorBlock } from '../../components/StateBlocks.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { PlusIcon, UploadIcon, ChevronRightIcon, RouteIcon } from '../../components/Icons.jsx';
-import { TripArt } from '../../components/TripArt.jsx';
 import { countryName } from '../../lib/countryName.js';
 import { tabHref } from '../../lib/urlState.js';
 import { NextTripCard, TripRow } from './TripCards.jsx';
@@ -23,12 +22,13 @@ export function door(go) {
 }
 
 /** A section of one tab: a heading with an optional count and action. */
-export function Section({ title, count, action, children, id, className = '' }) {
+export function Section({ title, count, action, unit, children, id, className = '' }) {
   return (
     <section className={`mt-section ${className}`.trim()} aria-labelledby={id}>
       <div className="mt-section-head">
         <h3 className="mt-section-title" id={id}>{title}</h3>
         {count > 0 && <Chip kind="count">{count}</Chip>}
+        {unit && <span className="mt-section-unit">{unit}</span>}
         {action && <span className="mt-section-action">{action}</span>}
       </div>
       {children}
@@ -37,14 +37,18 @@ export function Section({ title, count, action, children, id, className = '' }) 
 }
 
 /**
- * An empty tab: the space named, one way forward, no apology. T990: one
- * card, TripArt across its top (with an icon when given), the title and the
- * action under it.
+ * An empty tab: the space named, one way forward, no apology. House style
+ * (2026-11): the waiting path, a dashed blaze with the space's icon beside
+ * it, then the title and the action (DESIGN.md "States"; `icon` and `tone`
+ * are kept for callers; the tone no longer paints a band).
  */
 export function Empty({ title, line, action, icon = null, tone = 'umber' }) {
   return (
-    <div className="mt-empty">
-      <TripArt tone={tone} icon={icon} className="mt-empty-art" />
+    <div className={`mt-empty is-${tone}`}>
+      <div className="mt-empty-art" aria-hidden="true">
+        <Blaze size="lg" state="blank" />
+        {icon && <span className="mt-empty-icon">{icon}</span>}
+      </div>
       <div className="mt-empty-body">
         <p className="mt-empty-title">{title}</p>
         {line && <p className="mt-empty-line">{line}</p>}
@@ -137,7 +141,7 @@ export function TripsTab({
           {(coming.length > 0 || planning.length > 0) && (
             <div className="mt-two">
               {coming.length > 0 && (
-                <Section id="mt-coming" title={t('mt.comingUp')}>
+                <Section id="mt-coming" title={t('mt.comingUp')} unit={t('mt.figDay')}>
                   <div className="mt-rows">
                     {coming.map((r) => <TripRow key={r.id} {...r}><JoinsLine planId={r.id} />{r.below}</TripRow>)}
                   </div>
@@ -147,6 +151,7 @@ export function TripsTab({
                 <Section
                   id="mt-planning"
                   title={t('mt.beingPlanned')}
+                  unit={t('mt.figDay')}
                   action={(
                     <a className="mt-link" href={tabHref('planstart')} onClick={door(onAllInPlan)}>
                       {t('mt.allInPlan')}<ChevronRightIcon size={16} />

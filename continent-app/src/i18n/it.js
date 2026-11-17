@@ -6330,6 +6330,7 @@ export const it = {
   "pack.why.low": "Minime intorno ai {t}°C a {month}.",
   "pack.why.rain": "Circa {mm} mm di pioggia a {month}.",
   // lane:account (house style 2026-11): this lane adds its new keys directly under this line
+  "acc.authMode": "Accedi o crea un account",
   "pack.why.swim": "Fare il bagno fa parte del viaggio qui.",
   "pack.why.layers": "Le sere possono essere fresche.",
   "pack.why.boots": "Sentieri e natura vicini.",

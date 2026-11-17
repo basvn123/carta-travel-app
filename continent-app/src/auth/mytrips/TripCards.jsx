@@ -104,7 +104,7 @@ export function NextTripCard({
         <Readiness readiness={readiness} onAddBooking={onAddBooking} />
         {figure ? (
           <p className="mt-next-money">
-            <TripPrice figure={figure} className="mt-next-fig" />
+            <TripPrice figure={figure} className="mt-next-fig" showUnit />
             {figure.total > 0 && head > 1 && (
               <span className="mt-next-party">{t('mt.forParty', { price: formatMoney(figure.total), n: figure.party || head })}</span>
             )}

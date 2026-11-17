@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import {
-  BedIcon, DiningIcon, FriendsIcon, GlobeIcon, MapPinIcon, ReceiptIcon, SparkIcon, CalendarIcon, PiggyIcon,
+  BedIcon, DiningIcon, FriendsIcon, GlobeIcon, MapPinIcon, ReceiptIcon, CalendarIcon, PiggyIcon,
 } from '../../components/Icons.jsx';
 import { ChoiceRows, Switch } from '../../components/ui/index.js';
+import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { PriceViewSwitch } from '../../components/PriceViewSwitch.jsx';
 import { SettingsEditorSheet } from '../../components/SettingsLine.jsx';
@@ -77,7 +78,7 @@ export function TravelView({ head, destinations, costs, preferId, onOpenLifestyl
           <Row icon={DiningIcon} label={t('ac.eatPace')} value={v.vibe} onClick={() => onOpenLifestyle?.()} />
           {v.tasteEditable && (
             <Row
-              icon={SparkIcon}
+              icon={HouseIcon.pack}
               label={t('taste.title')}
               value={v.taste ? v.taste : <span className="ac-unset">{t('taste.notSet')}</span>}
               onClick={(e) => openTasteSheet(e?.currentTarget || null)}

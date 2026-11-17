@@ -70,6 +70,11 @@
   color: var(--text);
 }
 .ac-title svg { flex: none; color: var(--text-2); }
+/* House style: the boxed AI tag stands for Carta's AI, never a sparkle. */
+.ac-title .ai-tag { flex: none; color: var(--action-hover); }
+/* A trip card inside Carta's answer is a section of the bubble, not a card
+   in a card: a hairline above it, the bubble's own paper. */
+.ac-bubble .ac-trip { border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }
 /* The title takes focus only from code (tabindex -1: opening the chat on a
    phone moves focus here so a screen reader names the dialog); Tab never
    reaches it, so it draws no ring (T623, register T621-c). */

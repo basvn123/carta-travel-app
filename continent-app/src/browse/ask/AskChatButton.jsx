@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../../components/ui/index.js';
-import { SparkIcon } from '../../components/Icons.jsx';
+import { AiTag } from '../../components/AiTag.jsx';
 import { openAskChat, closeAskChat, useAskChat } from './askChatStore.js';
 import '../../styles/76-ask-door.css';
 
@@ -20,7 +20,7 @@ export function AskChatDoor({ t, className = '' }) {
   const { open } = useAskChat();
   return (
     <Button variant="secondary" className={`ac-door ${className}`.trim()}
-      iconStart={<SparkIcon size={18} />} aria-expanded={open}
+      iconStart={<AiTag />} aria-expanded={open}
       onClick={(e) => (open ? closeAskChat() : openAskChat(e.currentTarget))}>
       {t('askChat.open')}
     </Button>

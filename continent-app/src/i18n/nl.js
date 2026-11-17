@@ -6341,6 +6341,7 @@ export const nl = {
   "pack.why.low": "Minima rond {t}°C in {month}.",
   "pack.why.rain": "Ongeveer {mm} mm regen in {month}.",
   // lane:account (house style 2026-11): this lane adds its new keys directly under this line
+  "acc.authMode": "Inloggen of een account maken",
   "pack.why.swim": "Zwemmen hoort hier bij de reis.",
   "pack.why.layers": "De avonden kunnen fris worden.",
   "pack.why.boots": "Paden en natuur dichtbij.",

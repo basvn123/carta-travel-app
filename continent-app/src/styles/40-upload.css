@@ -10,13 +10,13 @@
   min-height: var(--tap);
   margin-top: var(--space-3);
   padding: 0 var(--space-4);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: transparent;
   font-family: var(--ui);
   font-size: var(--text-label);
   font-weight: 500;
-  color: var(--ink-soft);
+  color: var(--text-2);
   cursor: pointer;
 }
 
@@ -25,17 +25,17 @@
   max-width: 520px;
   margin: auto 0;
   padding: var(--space-5);
-  border: 1px solid var(--rule);
-  border-radius: 12px;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
   font-family: var(--ui);
-  color: var(--ink);
+  color: var(--text);
 }
 .upl-title {
   margin: 0;
   padding-top: var(--space-2);
-  font-family: var(--display);
+  font-family: var(--font);
   font-size: var(--text-title);
   font-weight: 600;
   line-height: 1.25;
@@ -47,10 +47,10 @@
   justify-content: center;
   width: var(--tap);
   height: var(--tap);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--ink-soft);
+  color: var(--text-2);
   cursor: pointer;
 }
 
@@ -58,7 +58,7 @@
   margin: 0 0 var(--space-4);
   font-size: var(--text-body);
   line-height: 1.45;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 
 .upl-form {
@@ -78,7 +78,7 @@
 .upl-kinds {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;
 }
@@ -97,26 +97,26 @@
   width: 100%;
   max-width: 100%;
   padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: var(--paper);
+  background: var(--surface-page);
   font-family: var(--ui);
   font-size: var(--text-body);
-  color: var(--ink);
+  color: var(--text);
 }
 .upl-file { font-size: var(--text-label); }
 
 .upl-hint {
   margin: var(--space-2) 0 0;
-  font-size: 12.5px;
+  font-size: var(--text-caption);
   line-height: 1.45;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 .upl-status {
   margin: var(--space-2) 0 0;
   font-size: var(--text-label);
   line-height: 1.45;
-  color: var(--ink);
+  color: var(--text);
 }
 .upl-preview {
   display: block;
@@ -124,7 +124,7 @@
   height: 90px;
   margin-top: var(--space-2);
   object-fit: cover;
-  border: 1px solid var(--rule-soft);
+  border: 1px solid var(--border-soft);
   border-radius: var(--radius-sm);
 }
 
@@ -135,10 +135,10 @@
   width: 18px;
   height: 18px;
   margin: 1px 0 0;
-  accent-color: var(--ink-fill);
+  accent-color: var(--umber-800);
 }
 .upl-lic input:focus-visible,
-.upl-tick input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.upl-tick input:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
 .upl-lic-text { display: flex; flex-direction: column; gap: 2px; }
 .upl-tick-wrap .upl-hint { margin-top: 0; padding-left: 30px; }
 
@@ -146,8 +146,8 @@
   margin: 0;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
-  background: var(--accent-bg);
-  color: var(--ink);
+  background: var(--action-tint);
+  color: var(--text);
   font-size: var(--text-label);
   line-height: 1.4;
 }
@@ -170,8 +170,8 @@
   font-weight: 500;
   cursor: pointer;
 }
-.upl-send { border: 1px solid var(--accent); background: var(--accent); color: var(--on-fill); }
-.upl-btn { border: 1px solid var(--rule); background: transparent; color: var(--ink); }
+.upl-send { border: 1px solid var(--action); background: var(--action); color: var(--action-text); }
+.upl-btn { border: 1px solid var(--border); background: transparent; color: var(--text); }
 .upl-done p { margin: 0; }
 .upl-done svg { flex: none; margin-top: 2px; color: var(--status-success); }
 

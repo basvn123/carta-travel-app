@@ -1,7 +1,7 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, Chip, ChipGroup } from './ui/index.js';
-import { SparkIcon } from './Icons.jsx';
+import { AiTag } from './AiTag.jsx';
 import { SUPPORT_EMAIL } from '../lib/contact.js';
 import { REASONS, LIMITS, sendAiReport } from '../lib/aiReport.js';
 import '../styles/95-ai-mark.css';
@@ -23,7 +23,7 @@ export function AiMark({ report = null, className = '' }) {
   return (
     <div className={`ai-mark${className ? ` ${className}` : ''}`}>
       <p className="ai-mark-line">
-        <SparkIcon size={14} className="ai-mark-icon" />
+        <AiTag className="ai-mark-icon" />
         <span>{t('aiMark.label')}</span>
         <a className="ai-mark-link" href="?legal=ai" target="_blank" rel="noopener noreferrer">
           {t('aiMark.how')}

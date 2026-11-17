@@ -3,7 +3,8 @@ import { useI18n } from '../../i18n/index.jsx';
 import { usePaywall } from '../../hooks/usePaywall.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { Button, Chip, ChipGroup, Field } from '../../components/ui/index.js';
-import { UploadIcon, CameraIcon, PencilIcon, SparkIcon, BedIcon, PlaneIcon, TicketIcon } from '../../components/Icons.jsx';
+import { UploadIcon, CameraIcon, PencilIcon, BedIcon, PlaneIcon, TicketIcon } from '../../components/Icons.jsx';
+import { AiTag } from '../../components/AiTag.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { filesToPayload, requestBookingImport, IMPORT_ACCEPT, MAX_IMPORT_FILES } from '../../planner/bookingImport.js';
 import { matchBookingRow } from '../../planner/bookingImportLogic.js';
@@ -206,7 +207,7 @@ export function AddBookingSheet({ plans = [], planId = '', costs = null, onClose
 
       {phase === 'review' && (
         <div className="mt-read">
-          <p className="mt-read-head"><SparkIcon size={18} />{fileName ? t('mt.readFrom', { name: fileName }) : t('mt.readDone')}</p>
+          <p className="mt-read-head"><AiTag />{fileName ? t('mt.readFrom', { name: fileName }) : t('mt.readDone')}</p>
           {rows.map((b) => {
             const Icon = ICON[b.kind] || PlaneIcon;
             const unsure = (f) => b.unsure.includes(f);
