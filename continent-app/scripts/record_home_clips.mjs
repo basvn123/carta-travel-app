@@ -19,8 +19,9 @@
  * The home tour (T952) adds four chapters; until they are recorded the
  * page plays the older clip named after each (HomeTour.jsx):
  *
- *   ask       the home page's Ask Carta field, "A week by the sea under
- *             €80 a day" typed and asked, then down the answer
+ *   ask       the home page's Ask Carta field, "A week by the sea in
+ *             September" typed in the clip's language and asked, then the
+ *             answer (down it when it is longer than the sheet)
  *   explore   Lake Bled's page, down past what a day costs to what to see,
  *             things to do and its tips
  *   trips     My trips with a saved trip (?savedmock=next), down its board
@@ -89,6 +90,22 @@ const QUIET_CSS = `
   .maplibregl-ctrl-attrib-inner { visibility: hidden !important; }
   *, *::before, *::after { caret-color: transparent !important; }
 `;
+// Ask Carta's question, typed in the clip's own language. No budget in it:
+// the answer ranks places by fit and states each one's own day cost, so a
+// typed "under €80 a day" sat over €126 to €166 answers (G14).
+const ASK_QUESTION = {
+  en: 'A week by the sea in September',
+  nl: 'Een week aan zee in september',
+  de: 'Eine Woche am Meer im September',
+  fr: 'Une semaine à la mer en septembre',
+  es: 'Una semana junto al mar en septiembre',
+  it: 'Una settimana al mare a settembre',
+};
+
+// The story's week in July, so the place's dates line agrees with the tour
+// ("lakes in the Alps in July") instead of the app's default dates.
+const JULY = '?d=2027-07-03&r=2027-07-10';
+
 const SEED = [
   ['continent.homeSeen.v1', '1'], ['continent.guestMode.v1', '1'],
   ['continent.mapGuideDismissed.v1', '1'], ['carta.fareNoticeSeen', '1'],
@@ -169,18 +186,33 @@ const FIND_LIST = '.explore-tab';
 const CHAPTERS = {
   ask: {
     ready: (page) => open(page, '?tab=home', 9000),
-    move: async (page) => {
+    move: async (page, lang) => {
       const f = page.locator('.hv-ask-input:visible').first();
       await f.click(); await page.waitForTimeout(500);
-      await f.pressSequentially('A week by the sea under €80 a day', { delay: 70 });
+      await f.pressSequentially(ASK_QUESTION[lang] || ASK_QUESTION.en, { delay: 70 });
       await page.waitForTimeout(700); await f.press('Enter'); await page.waitForTimeout(6000);
-      // The answer scrolls in the chat sheet, not the Explore list under it.
-      await glide(page, 900, 4200, '.ac-body'); await page.waitForTimeout(900);
+      // The answer scrolls in the chat sheet, not the Explore list under it;
+      // a short answer fits the sheet and is held while it reads instead.
+      const long = await page.evaluate(() => {
+        const b = document.querySelector('.ac-body');
+        return !!b && b.scrollHeight > b.clientHeight + 40;
+      });
+      if (long) await glide(page, 900, 4200, '.ac-body'); else await page.waitForTimeout(3000);
+      await page.waitForTimeout(900);
     },
   },
   explore: {
-    ready: (page) => open(page, '#dest=gem%3Abled', 10000),
-    move: async (page) => { await page.waitForTimeout(700); await glide(page, 1800, 5200, PLACE_PAGE); await page.waitForTimeout(900); await glide(page, 1400, 4200, PLACE_PAGE); await page.waitForTimeout(900); },
+    // The page's map sits far down and loads its tiles only once it is in
+    // view: show it off the record first, so the clip never films an empty
+    // or half-tiled map box.
+    ready: async (page) => {
+      await open(page, `${JULY}#dest=gem%3Abled`, 10000);
+      await page.evaluate((sel) => { document.querySelector(sel).scrollTop = 3200; }, PLACE_PAGE);
+      await page.waitForTimeout(6000);
+      await page.evaluate((sel) => { document.querySelector(sel).scrollTop = 0; }, PLACE_PAGE);
+      await page.waitForTimeout(1200);
+    },
+    move: async (page) => { await page.waitForTimeout(700); await glide(page, 1800, 5200, PLACE_PAGE); await page.waitForTimeout(900); await glide(page, 1400, 4200, PLACE_PAGE); await page.waitForTimeout(1500); },
   },
   trips: {
     // The seam's fixture carries a moderation statement for the DSA tests;
@@ -220,7 +252,7 @@ const CHAPTERS = {
     move: async (page) => { await page.waitForTimeout(900); await glide(page, 1500, 6200, FIND_LIST); await page.waitForTimeout(900); },
   },
   place: {
-    ready: (page) => open(page, '#dest=gem%3Abled', 10000),
+    ready: (page) => open(page, `${JULY}#dest=gem%3Abled`, 10000),
     move: async (page) => { await page.waitForTimeout(900); await glide(page, 900, 4200, PLACE_PAGE); await page.waitForTimeout(1200); await glide(page, 500, 2400, PLACE_PAGE); await page.waitForTimeout(800); },
   },
   plan: {
@@ -307,7 +339,7 @@ for (const lang of LANGS) {
       });
       await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 92, maxWidth: W * 2, maxHeight: H * 2, everyNthFrame: 1 });
       const startedAt = Date.now() / 1000;
-      await ch.move(page);
+      await ch.move(page, lang);
       const endedAt = Date.now() / 1000;
       await cdp.send('Page.stopScreencast');
       await ctx.close();
