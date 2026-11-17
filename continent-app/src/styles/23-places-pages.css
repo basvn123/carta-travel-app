@@ -546,23 +546,38 @@
   padding: 0;
   list-style: none;
 }
+/* G1 (house style): a good month is the beige wash with umber ink and the
+   umber paint bar under it (the selected grammar), never colour alone: the
+   cell's name says "good" to a screen reader and the bar and weight show it. */
 .mstrip-cell {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 28px;
-  border-radius: 4px;
-  font-family: var(--mono);
+  height: 32px;
+  border-radius: var(--radius-sm);
+  font-family: var(--ui);
   font-size: var(--text-caption);
+  font-weight: 600;
   line-height: 1;
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 .mstrip-cell.is-good {
-  background: color-mix(in srgb, var(--green) 16%, var(--bg-card));
-  color: var(--green);
-  font-weight: 600;
+  background: var(--select-bg);
+  color: var(--select-ink);
+  font-weight: 800;
 }
-.mstrip-cell.is-avoid { color: var(--ink-mute); }
+.mstrip-cell.is-good::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 3px;
+  height: var(--stroke-route);
+  border-radius: var(--radius-pill);
+  background: var(--action);
+}
+.mstrip-cell.is-avoid { color: var(--text-3); }
 .mstrip-cell.is-avoid span {
   text-decoration: line-through;
   text-decoration-thickness: 1px;

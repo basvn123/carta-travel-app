@@ -1,12 +1,68 @@
 import React from 'react';
 import { LoadingBlock } from '../../components/StateBlocks.jsx';
+import { prefersReducedMotion } from '../../lib/motion.js';
 import { ExploreMap, DRAWER_MAX } from './exploreMapLazy.js';
 import { MapPlacePanel } from '../MapPlacePanel.jsx';
 import { MapDrawer } from '../../components/MapDrawer.jsx';
 import { ExploreRails } from '../ExploreRails.jsx';
 import { EmptyResult } from '../EmptyResult.jsx';
-import { Button } from '../../components/ui/index.js';
+import { Blaze, Button } from '../../components/ui/index.js';
 import { ExploreCard } from './ExploreCard.jsx';
+import { ListHead } from './PlaceRow.jsx';
+
+// The List or Map switch is a route change (DESIGN.md "Route"): the content
+// rises in once on the traveller's own switch, never at first paint, and the
+// map stays mounted (T441), so the class is added, not a remount.
+// Reflow (DESIGN.md "Primitives"): after the traveller's own sort or
+// filter, rows that stay glide from where they were on the settle curve and
+// rows that arrive fade in. Only while 24 rows or fewer are on screen, no
+// per-row stagger, nothing at first paint, nothing under reduced motion.
+// Positions are read from offsetTop, so a scroll between renders never
+// reads as a move.
+const GLIDE_MAX = 24;
+function useReflowGlide(ref, ids) {
+  const prev = React.useRef(null);
+  const key = ids.join('|');
+  React.useLayoutEffect(() => {
+    const list = ref?.current?.querySelector('.xrows--ledger');
+    if (!list) return;
+    const rows = [...list.children].filter((el) => el.dataset && el.dataset.id);
+    const now = new Map(rows.map((el) => [el.dataset.id, el.offsetTop]));
+    const before = prev.current;
+    prev.current = now;
+    if (!before || prefersReducedMotion() || typeof rows[0]?.animate !== 'function') return;
+    const vh = window.innerHeight;
+    const seen = rows.filter((el) => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < vh; });
+    if (!seen.length || seen.length > GLIDE_MAX) return;
+    const css = getComputedStyle(document.documentElement);
+    const settle = { duration: parseFloat(css.getPropertyValue('--dur-settle')) || 400, easing: css.getPropertyValue('--ease-settle').trim() || 'ease-out' };
+    const fade = { duration: parseFloat(css.getPropertyValue('--dur-2')) || 200, easing: 'ease-out' };
+    for (const el of seen) {
+      const was = before.get(el.dataset.id);
+      if (was == null) { el.animate([{ opacity: 0 }, { opacity: 1 }], fade); continue; }
+      const dy = was - now.get(el.dataset.id);
+      if (Math.abs(dy) >= 1) el.animate([{ transform: `translateY(${dy}px)` }, { transform: 'none' }], settle);
+    }
+  }, [ref, key]);
+}
+
+function useRouteIn(ref, view) {
+  const last = React.useRef(view);
+  React.useEffect(() => {
+    if (last.current === view) return undefined;
+    last.current = view;
+    const el = ref?.current;
+    if (!el) return undefined;
+    el.classList.remove('hs-route-in');
+    void el.offsetWidth;
+    el.classList.add('hs-route-in');
+    // Only the content's own animation ends the route class; a child's pop
+    // or settle bubbling up must not cut it short.
+    const done = (e) => { if (e.target === el) el.classList.remove('hs-route-in'); else el.addEventListener('animationend', done, { once: true }); };
+    el.addEventListener('animationend', done, { once: true });
+    return () => el.removeEventListener('animationend', done);
+  }, [ref, view]);
+}
 
 export function ExploreContent({
   allRows, anyActive, cardLinkId, chips, contentRef, costIndex, drawer, dxf, emptyLine, favSet,
@@ -17,6 +73,8 @@ export function ExploreContent({
   setCardLinkId, setDrawer, setLocationQuery, setPickedId, setShowFavOnly, setView, showFavOnly,
   shownRows, t, taxRows, view, viewSwitch, viewportMode, visible, xf,
 }) {
+  useRouteIn(contentRef, view);
+  useReflowGlide(contentRef, listed.map((p) => p.id));
   return (
     <div className={`xcontent ${view === 'map' ? 'xcontent--split' : ''}`.trim()} ref={contentRef}
       style={mapTop != null ? { '--xmap-top': `${mapTop}px` } : undefined}>
@@ -96,6 +154,11 @@ export function ExploreContent({
         )}
 
         {gridTotal === 0 && (
+          /* House style 2026-11: the dashed blaze, "the path is waiting",
+             marks the empty state (DESIGN.md "States"). */
+          <Blaze size="lg" state="blank" className="xempty-mark" />
+        )}
+        {gridTotal === 0 && (
           /* One empty block for every category and the library (T498,
              roadmap 1.3b F; V3 T383 before it): the sentence names what
              emptied the list, one button changes it, Clear all beside
@@ -126,11 +189,13 @@ export function ExploreContent({
           </EmptyResult>
         )}
 
-        <div className={`xrows xrows--cards${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
+        {/* House style 2026-11 (the walker's table): the places as rows
+            under one head that says the dates and the unit once. */}
+        {listed.length > 0 && <ListHead t={t} />}
+        <div className={`xrows xrows--ledger${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
           {listed.map((p) => (
             <ExploreCard
               key={p.id}
-              layout="card"
               p={p}
               role={roleFor(p)}
               selected={p.id === (pickedId || selectedId)}

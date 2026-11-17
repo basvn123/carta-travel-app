@@ -610,7 +610,7 @@
   justify-content: center;
   /* The one scrim (T391, carta-design "Dialog family"): --ink at 28 percent,
      no blur; it was 44 percent. */
-  background: color-mix(in srgb, var(--ink) 28%, transparent);
+  background: color-mix(in srgb, var(--text) 28%, transparent);
   animation: fsheet-scrim-in var(--dur-3) var(--ease-out);
 }
 
@@ -620,13 +620,27 @@
   width: 100%;
   max-width: 560px;
   max-height: 92dvh;
-  background: var(--paper);
-  /* One radius and one shadow for the dialog family (T391). */
-  border-radius: 12px 12px 0 0;
-  box-shadow: var(--shadow-2);
-  transition: transform var(--dur-3) var(--ease-out);
-  animation: fsheet-in var(--dur-3) var(--ease-out);
+  background: var(--surface);
+  /* House style 2026-11: the sheet radius, the float shadow, the sheet curve. */
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  box-shadow: var(--elev-2);
+  transition: transform var(--dur-sheet) var(--ease-sheet);
+  animation: fsheet-in var(--dur-sheet) var(--ease-sheet);
   overflow: hidden;
+}
+/* Tablet and desktop: a dialog in the middle of the screen, every corner
+   round, no grab handle (the drag is a touch gesture), so it never runs off
+   the bottom edge. */
+@media (min-width: 769px) {
+  .fsheet-scrim:not(.is-anchored) { align-items: center; padding: var(--space-6); }
+  .fsheet:not(.is-anchored) {
+    max-height: min(86dvh, 820px);
+    border-radius: var(--radius-sheet);
+    box-shadow: var(--elev-3);
+    animation: fsheet-pop var(--dur-3) var(--ease-settle);
+  }
+  .fsheet:not(.is-anchored) .fsheet-grab { display: none; }
+  .fsheet:not(.is-anchored) .fsheet-head { padding-top: var(--space-3); }
 }
 
 @keyframes fsheet-scrim-in { from { opacity: 0; } to { opacity: 1; } }
@@ -649,15 +663,14 @@
   position: fixed;
   width: auto;             /* the hook sets width/top/left/max-height inline */
   max-width: none;
-  border: 1px solid var(--rule);
-  /* A popover (T391): 10 px, --shadow-2, arriving in --dur-3. */
-  border-radius: var(--radius-control);
-  box-shadow: var(--shadow-2);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--elev-2);
   animation: fsheet-pop var(--dur-3) var(--ease-out);
 }
 @keyframes fsheet-pop {
-  from { opacity: 0; transform: translateY(-6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-4px) scale(0.96); }
+  to { opacity: 1; transform: none; }
 }
 /* The handle is a touch affordance and the drag it advertises is bound to
    touch pointers only, so on a menu it would be a lie. */
@@ -672,8 +685,8 @@
       of touch scrolling. ── */
 .fsheet-head {
   flex: none;
-  padding: 8px 16px 12px;
-  border-bottom: 1px solid var(--rule-soft);
+  padding: var(--space-2) var(--space-4) var(--space-3);
+  border-bottom: var(--stroke-hair) solid var(--border);
   touch-action: none;
 }
 .fsheet-grab {
@@ -681,8 +694,8 @@
   width: 40px;
   height: 4px;
   margin: 0 auto 8px;
-  border-radius: 2px;
-  background: var(--rule);
+  border-radius: var(--radius-pill);
+  background: var(--edge);
 }
 .fsheet-head-row {
   display: flex;
@@ -692,11 +705,11 @@
   min-height: 44px;
 }
 .fsheet-title {
-  font-family: var(--display);
-  font-size: 21px;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--ink);
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  color: var(--text);
 }
 .fsheet-close {
   display: inline-flex;
@@ -704,13 +717,13 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  margin-right: -8px;    /* optical: the glyph lines up with the body edge */
-  border-radius: 50%;
-  color: var(--ink-soft);
+  margin-right: calc(var(--space-2) * -1);    /* optical: the glyph lines up with the body edge */
+  border-radius: var(--radius-pill);
+  color: var(--text-2);
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .fsheet-close:hover { background: var(--paper-dim); color: var(--ink); }
+  .fsheet-close:hover { background: var(--surface-hover); color: var(--text); }
 }
 
 /* ── Body ── */

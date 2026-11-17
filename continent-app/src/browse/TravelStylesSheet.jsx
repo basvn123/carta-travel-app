@@ -1,3 +1,4 @@
+import { HouseIcon } from '../components/HouseIcons.jsx';
 import React, { useId, useMemo, useState } from 'react';
 import { SheetShell } from './SheetShell.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -190,7 +191,7 @@ export function TravelStylesSheet({ onClose, openLifestyle, initialHalf = 'stay'
           );
         })}
         <Button variant="quiet" className="tstyle-tpl tone-mist" onClick={() => { ts.create(''); setAdding(false); }}>
-          <span className="tstyle-disc" aria-hidden="true"><SparkIcon size={18} /></span>
+          <span className="tstyle-disc" aria-hidden="true"><HouseIcon.pack size={18} /></span>
           <span>{t('styles.fromNow')}</span>
         </Button>
       </div>

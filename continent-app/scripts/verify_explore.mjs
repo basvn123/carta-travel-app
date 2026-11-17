@@ -18,8 +18,10 @@
 // Explore v6 to v8 (brought up to date 2026-10-28): the tab opens as an
 // overview (a hero headed "Where to next?" with the Where search and Ask
 // Carta, the category tabs, the quick chips, the story rails). "Show all
-// places" opens the focused list: cards are .xrow.xov.xov--card (photo in
-// .xpc-media with the Score on it, name .xpc-name), and the toolbar is
+// places" opens the focused list: rows are .xrow.xov (house style 2026-11:
+// photo in .xrow-media with nothing on it, the Score plate .xscore after the
+// name, the formation .xprice), the rails are the house .hs-rail-sec with
+// .hs-rcard cards and .hs-see-all, and the toolbar is
 // Share, Sort, Filters, Saved and one Map/List toggle. Filters opens the
 // filter pane beside the list on a desktop and as a sheet on a phone; on a
 // phone the Map toggle floats, and the map's list is a drawer.
@@ -68,10 +70,10 @@ const boot = async (viewport, opts = {}) => {
 const showAll = async (page, tap = false) => {
   // T1089: the "Show all places" chip left the overview; the first rail's
   // "See all" opens the focused list (filtered to Excellent and up).
-  const chip = page.locator('.xrails-rail .storyr-all:visible').first();
+  const chip = page.locator('.xrails-rail .hs-see-all:visible').first();
   await chip.waitFor({ timeout: 30000 });
   if (tap) await chip.tap(); else await chip.click();
-  await page.locator('.xov--card').first().waitFor({ timeout: 30000 });
+  await page.locator('.xrows .xrow').first().waitFor({ timeout: 30000 });
   await page.waitForTimeout(1200);
 };
 
@@ -88,7 +90,7 @@ try {
   // and the story rails, each rail card priced like a list card. ──
   check('explore grid renders', await page.locator('.explore-tab').isVisible());
   check('no map canvas anywhere on Explore', await page.locator('.maplibregl-canvas').count() === 0);
-  await page.locator('.xrails-rail .storyr-item:not(.storyr-item--lead)').first()
+  await page.locator('.xrails-rail .hs-rcard').first()
     .waitFor({ state: 'attached', timeout: 30000 }).catch(() => {});
   check('Explore opens on the overview, headed "Where to next?"',
     (await page.locator('h1:visible').allInnerTexts()).map((s) => s.trim()).join('|') === 'Where to next?');
@@ -106,13 +108,13 @@ try {
     quick.some((q) => q.startsWith('All filters')), quick.join('|'));
   // T427: four sections at most lead the page (the trip styles row counts
   // as one), with no subtitle or position figure on any of them.
-  const railN = await page.locator('.explore-tab .storyr').count();
+  const railN = await page.locator('.explore-tab .hs-rail-sec').count();
   check('at most four sections lead the page', railN >= 2 && railN <= 4, `${railN} rails`);
-  const railCards = await page.locator('.xrails-rail .storyr-item:not(.storyr-item--lead)').count();
-  const railPriced = await page.locator('.xrails-rail .storyr-item:not(.storyr-item--lead) .xprice').count();
+  const railCards = await page.locator('.xrails-rail .hs-rcard').count();
+  const railPriced = await page.locator('.xrails-rail .hs-rcard .xprice').count();
   check('every section tile shows a euro-a-day figure', railCards > 0 && railCards === railPriced,
     `${railPriced} of ${railCards}`);
-  const seeAll = await page.locator('.xrails-rail .storyr-all').allInnerTexts();
+  const seeAll = await page.locator('.xrails-rail .hs-see-all').allInnerTexts();
   check('"See all" carries no count', seeAll.length > 0 && seeAll.every((s) => !/\d/.test(s)), seeAll.join('|'));
   await page.screenshot({ path: 'shots/explore-overview-desktop.png' });
 
@@ -123,11 +125,11 @@ try {
   check('no map canvas on the list', await page.locator('.maplibregl-canvas').count() === 0);
   const cards = await page.locator('.xrow').count();
   check('a real page of cards', cards >= 24, `${cards} cards`);
-  const withImg = await page.locator('.xrow .xpc-media img.xpc-img').count();
+  const withImg = await page.locator('.xrow .xrow-media img.xrow-img').count();
   check('cards carry photos', withImg >= cards * 0.8, `${withImg}/${cards}`);
   // The 640px thumb splice must resolve to real bytes, not a 404 tile.
   const imgOk = await page.waitForFunction(() => {
-    const el = document.querySelector('.xrow img.xpc-img');
+    const el = document.querySelector('.xrow img.xrow-img');
     return !!el && el.complete && el.naturalWidth > 0;
   }, null, { timeout: 30000 }).then(() => true).catch(() => false);
   netCheck('spliced card thumb actually loads', imgOk);
@@ -156,7 +158,7 @@ try {
   // width answers 400, which is exactly how this breaks silently.
   // T427: a 72 px row photo needs one width (250), so it may carry a plain
   // src and no srcset; either way only renderable widths may appear.
-  const img0 = page.locator('.xrow img.xpc-img').first();
+  const img0 = page.locator('.xrow img.xrow-img').first();
   const srcset = (await img0.getAttribute('srcset')) || (await img0.getAttribute('src'));
   const widths = (srcset || '').match(/(\d+)px-/g) || [];
   const legalW = ['250px-', '330px-', '500px-', '960px-', '1280px-', '1920px-'];
@@ -202,7 +204,7 @@ try {
   if (previewOpen) {
     const pop = await page.evaluate(() => {
       const p = document.querySelector('.xcard-preview');
-      const m = p.closest('.xrow').querySelector('.xpc-media').getBoundingClientRect();
+      const m = p.closest('.xrow').querySelector('.xrow-media').getBoundingClientRect();
       const r = p.getBoundingClientRect();
       const ox = Math.max(0, Math.min(r.right, m.right) - Math.max(r.left, m.left));
       const oy = Math.max(0, Math.min(r.bottom, m.bottom) - Math.max(r.top, m.top));
@@ -294,12 +296,13 @@ try {
     pane.kinds === 9 && pane.sizes >= 4 && pane.budget === 2 && pane.months === 13
     && pane.rating === 4 && pane.switches >= 6, JSON.stringify(pane));
   // A card: the name, the Score, the country, the price.
-  const bodyFacts = await page.locator('.xrow').first().locator('.xrow-name, .score-chip, .xrow-country, .xprice').count();
+  const bodyFacts = await page.locator('.xrow').first().locator('.xrow-name, .xscore, .xrow-country, .xprice').count();
   check('the card carries its four facts', bodyFacts === 4, `${bodyFacts} parts`);
-  // v6 puts the Score on the photograph (.xpc-score); nothing else sits there.
-  check('only the Score sits on the card photograph',
-    await page.locator('.xrow').first().locator('.xpc-media > .xpc-score').count() === 1
-    && await page.locator('.xrow').first().locator('.xpc-media > :not(img):not(.xpc-score)').count() === 0);
+  // House style 2026-11: text never sits on a photo; the Score plate follows
+  // the name, and nothing but the picture sits in the row's photo.
+  check('nothing sits on the row photograph; the Score follows the name',
+    await page.locator('.xrow').first().locator('.xrow-line1 > .xscore').count() === 1
+    && await page.locator('.xrow').first().locator('.xrow-media > :not(img):not(.hero-blank)').count() === 0);
   const countBefore = await firstNames();
   // T1089: See all lands on a list already filtered (Excellent and up), so the
   // Filters count starts above zero.
@@ -331,6 +334,16 @@ try {
   await viewToggle.click();
   await page.waitForTimeout(4000);
   check('map view splits the feed', await page.locator('.xcontent--split').count() === 1);
+  await page.waitForTimeout(1500);
+  // House style 2026-11: a row's country is never cut (the water mark rides
+  // with the name, the docked column stacks the parts under it).
+  check('map column: no country and no name is cut', await page.evaluate(() => [...document.querySelectorAll('.mpp-rows .xrow-ctry, .mpp-rows .xrow-name')]
+    .every((e) => e.scrollWidth <= e.clientWidth + 1)));
+  // Nothing the column showed before goes: each row keeps its reason and its region.
+  check('map column: rows show their reason and region', await page.evaluate(() => {
+    const vis = (sel) => [...document.querySelectorAll(sel)].filter((e) => e.getClientRects().length && e.getBoundingClientRect().width > 0).length;
+    return vis('.mpp-rows .xrow-why') > 0 && vis('.mpp-rows .xrow-region') > 0;
+  }));
   check('the map canvas is up', await page.locator('.xcontent-map .maplibregl-canvas').count() === 1);
   check('the list stays beside the map', await page.locator('.xcontent--split .xrows .xrow').first().isVisible());
   check('on the map the toggle offers the list', (await viewToggle.innerText()).trim() === 'List');
@@ -433,6 +446,12 @@ try {
   await showAll(page);
   const cards = await page.locator('.xrow').count();
   check('phone shows cards', cards >= 12, `${cards} cards`);
+  // House style 2026-11: a row's country is never cut (the water mark rides
+  // with the name, the docked column stacks the parts under it).
+  check('phone: no country is cut', await page.evaluate(() => [...document.querySelectorAll('.xrows--ledger .xrow-ctry')].slice(0, 12)
+    .every((e) => e.scrollWidth <= e.clientWidth + 1)));
+  check('phone: rows show the region with the country', await page.evaluate(() => [...document.querySelectorAll('.xrows--ledger .xrow-region')]
+    .some((e) => e.getBoundingClientRect().width > 8)));
   const gridBox = await page.locator('.xrows').boundingBox();
   check('no horizontal scroll', !!gridBox && gridBox.width > 0 && gridBox.width <= 390, `grid ${Math.round(gridBox?.width || 0)}px`);
 
@@ -551,7 +570,7 @@ try {
   await where.focus();
   await page.keyboard.type('Rome', { delay: 15 });
   await page.keyboard.press('Enter');
-  await page.locator('.xov--card').first().waitFor({ timeout: 30000 }).catch(() => {});
+  await page.locator('.xrows .xrow').first().waitFor({ timeout: 30000 }).catch(() => {});
   await page.waitForTimeout(1200);
   const hits = await page.locator('.xrow .xrow-name').allInnerTexts();
   check('search: Enter narrows the list to the places that match',

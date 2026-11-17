@@ -37,7 +37,10 @@ export function GalleryStrip({ cc, name, t, eager = false, sizes, onPhoto = null
   }
   return (
     <div className={`dgal ${className}`.trim()}>
-      <div className="dgal-strip" ref={ref}>
+      {/* A strip with no links of its own takes the focus, so a keyboard
+          can scroll it (axe: scrollable-region-focusable). */}
+      <div className="dgal-strip" ref={ref}
+        {...(onPhoto ? {} : { tabIndex: 0, role: 'group', 'aria-label': name })}>
         {photos.map((p, i) => {
           const img = (
             <HeroImage url={p.u} city={p.place} className="dgal-img" maxWidth={960}

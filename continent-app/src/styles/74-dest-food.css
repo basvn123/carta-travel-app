@@ -84,11 +84,13 @@
 .pfeel-scale { display: grid; gap: var(--space-2); }
 .pfeel-steps { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-1); height: 8px; }
 .pfeel-steps i { border-radius: var(--radius-pill); }
-.pfeel-steps .is-0 { background: var(--good-mid); }
-.pfeel-steps .is-1 { background: color-mix(in srgb, var(--good-mid) 50%, var(--surface-page)); }
-.pfeel-steps .is-2 { background: color-mix(in srgb, var(--umber-200) 75%, var(--surface-page)); }
-.pfeel-steps .is-3 { background: var(--umber-300); }
-.pfeel-steps .is-4 { background: var(--umber-500); }
+/* G1 (house style): cheap to pricey as one umber ramp, light to dark; the
+   end words and the groups' headings say it in words too. */
+.pfeel-steps .is-0 { background: var(--umber-100); }
+.pfeel-steps .is-1 { background: var(--umber-200); }
+.pfeel-steps .is-2 { background: var(--umber-300); }
+.pfeel-steps .is-3 { background: var(--umber-500); }
+.pfeel-steps .is-4 { background: var(--umber-700); }
 .pfeel-pin {
   position: absolute;
   top: 50%;
@@ -113,8 +115,8 @@
   color: var(--text);
 }
 .pfeel-head::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--feel); }
-.pfeel-group.is-cheap, .pfeel-dev.is-cheap { --feel: var(--good-mid); }
-.pfeel-group.is-dear, .pfeel-dev.is-dear { --feel: var(--umber-500); }
+.pfeel-group.is-cheap, .pfeel-dev.is-cheap { --feel: var(--umber-300); }
+.pfeel-group.is-dear, .pfeel-dev.is-dear { --feel: var(--umber-700); }
 
 .pfeel-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
 .pfeel-row {

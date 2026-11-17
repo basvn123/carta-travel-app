@@ -1,4 +1,5 @@
 import React from 'react';
+import { kindLabel } from './kindLabel.js';
 import { PAGE } from './exploreConsts.js';
 import { FULL_RATING_RANGE, bandWord } from '../../lib/rating.js';
 import { viewFactor } from '../../lib/price/display.js';
@@ -57,7 +58,7 @@ export function useExploreChips({
     if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: formatMoney(xf.budget * vf) }), remove: drop({ budget: null }) });
     if (xf.bmin) list.push({ key: 'bmin', label: t('filter.budgetFrom', { eur: formatMoney(xf.bmin * vf) }), remove: drop({ bmin: null }) });
     if (xf.fh && flightLimitAvailable) list.push({ key: 'fh', label: t('filter.flightChip', { n: xf.fh }), remove: drop({ fh: null }) });
-    for (const k of xf.kinds) list.push({ key: `k:${k}`, label: t(`pkind.${k}`), remove: drop({ kinds: xf.kinds.filter((x) => x !== k) }) });
+    for (const k of xf.kinds) list.push({ key: `k:${k}`, label: kindLabel(k, t), remove: drop({ kinds: xf.kinds.filter((x) => x !== k) }) });
     // One chip for the rating, "Excellent and up" (T440): the rail asks for
     // a band and every band above it.
     if (xf.verdicts.length) {

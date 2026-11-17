@@ -7,7 +7,7 @@ import { visitLength } from '../../lib/nearby.js';
 import { formatMoney } from '../../lib/money.js';
 import { ChevronRightIcon } from '../../components/Icons.jsx';
 import { useTravelMonth } from '../../components/SettingsLine.jsx';
-import { PlaceOverview } from '../PlaceOverview.jsx';
+import { PlaceRow } from './PlaceRow.jsx';
 import { openShared } from '../../lib/sharedElement.js';
 
 // The popover's width cap and its gap to the card (house rule "Dialog
@@ -114,7 +114,6 @@ const FOCUS_MS = 400;
 export const ExploreCard = React.memo(function ExploreCard({
   p, selected, fav, onSelect, onToggleFav, t,
   linked = false, onLink = null, month = null, region = null, reason = null, rating = null,
-  layout = 'row',
 }) {
   // The preview speaks of the chosen month, else the traveller's own (T591).
   const travelMonth = useTravelMonth();
@@ -157,13 +156,13 @@ export const ExploreCard = React.memo(function ExploreCard({
     };
   }, [preview]);
 
-  // T504 (roadmap 1.5): the row IS the place's one overview, the same
-  // component the map's selected place and the phone's drawer draw. The
-  // popover beside it adds what a row cannot fit; it is not a second overview.
+  // T504 (roadmap 1.5): the row IS the place's one overview, the same row
+  // the map's docked column and the phone's drawer draw (PlaceRow, house
+  // style 2026-11). The popover beside it adds what a row cannot fit.
   return (
-    <PlaceOverview
+    <PlaceRow
       p={p} region={region} reason={reason} rating={rating} fav={fav} onToggleFav={onToggleFav} t={t}
-      selected={selected} linked={linked} layout={layout}
+      selected={selected} linked={linked}
       className={preview ? 'previewing' : ''}
       rootRef={cardRef}
       rootProps={{
@@ -186,6 +185,6 @@ export const ExploreCard = React.memo(function ExploreCard({
         <CardPreview id={popId} p={p} t={t} month={previewMonth} place={place} reveal={open === 'pin'}
           onOpen={(e) => openShared(cardRef.current?.querySelector('.xrow-hit') || e.currentTarget, p.id, () => onSelect(p.id))} />
       )}
-    </PlaceOverview>
+    </PlaceRow>
   );
 });

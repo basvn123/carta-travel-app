@@ -41,7 +41,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { LoadingBlock, ErrorBlock } from '../components/StateBlocks.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { usePageArrival } from '../hooks/usePageArrival.js';
-import { Button, Card, Chip, MoneyUnit } from '../components/ui/index.js';
+import { Button, Card, Chip, Money, Plate } from '../components/ui/index.js';
 import { PageBar } from './PageBar.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
@@ -394,11 +394,13 @@ export function RegionPage({
           {hasFacts && (
             <dl className="rgnp-facts">
               {priced && (
-                <div className="rgnp-fact">
-                  <dt>{t('item.dayIn', { city: priced.city })}</dt>
+                <div className="rgnp-fact rgnp-dayfact">
+                  {/* G1 (house style): the day as a signpost plate, the town on
+                      it and the unit once; the sentence stays for screen readers. */}
+                  <dt className="sr-only">{t('item.dayIn', { city: priced.city })}</dt>
                   <dd>
-                    <MoneyUnit value={view.day(priced.cost.dayEur)} est={isNational(priced.cost)} unit={view.unit}
-                      unitClassName="rgnp-unit" />
+                    <Plate name={priced.city} sub={view.unit}
+                      fig={<Money value={view.day(priced.cost.dayEur)} est={isNational(priced.cost)} />} />
                   </dd>
                 </div>
               )}

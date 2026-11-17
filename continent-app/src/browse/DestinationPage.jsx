@@ -217,6 +217,9 @@ export function DestinationPage({
   });
   const [cardSignal, setCardSignal] = React.useState(0);
   const wide = useWide();
+  // G1: whether the cost post's day row is on screen (the dock's figure
+  // shows only once it has scrolled away). Display only.
+  const [postInView, setPostInView] = React.useState(true);
   const firstRun = useFirstRun();
   const view = useDayView();   // T694: per person or the group's total
   const tripMonth = monthOf(firstRun?.departDate || firstRun?.defaultDates?.start || null);
@@ -332,6 +335,17 @@ export function DestinationPage({
     setPendingJump(null);
     requestAnimationFrame(() => { scrollToSection(sc, id); });
   }, [pendingJump, settled]);
+
+  // G1: watch the cost post's day row in the page's scroller (below 1024 px).
+  React.useEffect(() => {
+    const root = scrollRef.current;
+    if (wide || !settled || !root || typeof IntersectionObserver === 'undefined') { setPostInView(false); return undefined; }
+    const row = root.querySelector('#pt-cost .tcard-each');
+    if (!row) { setPostInView(false); return undefined; }
+    const io = new IntersectionObserver(([e]) => setPostInView(e.isIntersecting), { root, threshold: 0 });
+    io.observe(row);
+    return () => io.disconnect();
+  }, [wide, settled, destination?.id, firstRun?.indices]);
 
   if (!destination) return null;
 
@@ -634,16 +648,18 @@ export function DestinationPage({
 
       <div className="destp-scroll pt-scroll" ref={scrollRef} onScroll={onScroll}>
         <div className="pt-wrap">
-          <GalleryStrip
-            gallery={d?.gallery}
-            city={city}
-            iso2={destination.iso2}
-            fallbackUrl={destination.image?.url}
-            destId={destination.id}
-          />
-
           <div className="pt-body">
             <div className="pt-main">
+              {/* G1 (house style): the photos sit in the main column, so from
+                  1024 px the cost post's column starts at the top of the page
+                  beside them and the price is in the first view. */}
+              <GalleryStrip
+                gallery={d?.gallery}
+                city={city}
+                iso2={destination.iso2}
+                fallbackUrl={destination.image?.url}
+                destId={destination.id}
+              />
               {/* T1024 (owner 2026-11-03: compact, clean, no travel style here):
                   the name, then one line of where it is and how it rates, then
                   the standing as small tags, then the intro, answer first. */}
@@ -666,6 +682,18 @@ export function DestinationPage({
                 <div className="destp-wait" aria-busy="true">
                   <span className="sr-only">{t('state.loading')}</span>
                 </div>
+              )}
+
+              {/* G1 (house style, orchestrator: "the day cost the first thing
+                  after the photo and the name"): below 1024 px the cost post
+                  follows the head, before the tabs; its heading is for screen
+                  readers only (the post's figures say what it is). */}
+              {settled && !wide && priceCard && waysInCard && (
+                <section id="pt-cost" className="pt-inlinecost" aria-labelledby="pt-cost-h">
+                  <h2 className="sr-only" id="pt-cost-h">{t('destx.dayCosts')}</h2>
+                  {priceCard}
+                  <PricesRefreshed record={destination} />
+                </section>
               )}
 
               {settled && (
@@ -691,13 +719,6 @@ export function DestinationPage({
                   {/* Friends here (T466, T929), right after Good to know: the
                       approved place for it, where the decision is made. */}
                   <FriendsWentHere destId={destination?.id} destinations={data?.destinations} />
-                  {/* T1021: no section without a day price (missing data leaves). */}
-                  {!wide && priceCard && waysInCard && (
-                    <PSection id="pt-cost" title={t('destx.dayCosts')} className="pt-inlinecost">
-                      {priceCard}
-                      <PricesRefreshed record={destination} />
-                    </PSection>
-                  )}
                   <DestSee p={p} />
                   <DestAround p={p} />
                   <DestWhen p={p} />
@@ -718,6 +739,7 @@ export function DestinationPage({
 
       {settled && !wide && (
         <PriceDock
+          className={postInView ? 'is-post-in-view' : ''}
           price={Number.isFinite(costRow?.dayEur) ? <Money value={view.day(costRow.dayEur)} /> : null}
           unit={view.unit}
           inputs={dockInputs}

@@ -303,8 +303,8 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
       card={{
         title: t('ox.card.beach'),
         rows: [
-          { key: 'w', label: t('beach.factWater'), value: waterWord },
-          { key: 's', label: t('beach.factSurface'), value: capFirst(surfaceWord) },
+          { key: 'w', label: t('beach.factWater'), value: waterWord, board: true },
+          { key: 's', label: t('beach.factSurface'), value: capFirst(surfaceWord), board: true },
           sea && { key: 'sea', label: t('ox.seaIn', { month: months.long(peakI + 1) }), value: `${nf(sea[peakI])}°` },
           Number.isFinite(parkingEur) && { key: 'p', label: t('ox.parking'), value: t('ox.parkDay', { price: formatMoney(parkingEur) }) },
         ].filter(Boolean),
@@ -366,7 +366,7 @@ export function BeachPage({ beach, countryName, onClose, onSelectDest, model, on
 
       {(exits.length > 0 || beach.nb) && (
         <PSection id="ox-near" title={t('ox.otherBeaches')}>
-          <OtherNearby exits={exits} hrefOf={(r) => featureHref('beach', { id: r.id, cc: r.cc })} />
+          <OtherNearby world="water" exits={exits} hrefOf={(r) => featureHref('beach', { id: r.id, cc: r.cc })} />
           <NearbyOutdoors
             row={beach}
             cc={beach.cc}

@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 // The rules only this route renders load with its chunk (T474, CSS per route;
 // scripts/css-routes.mjs).
 import '../styles/planners.css';
+// House style (G1, the trip lane): the day planner's own layer, after the route sheet.
+import './days/DayHouse.css';
 import { TripMap } from '../map/TripMap.jsx';
 import { DayExploreMap } from '../map/DayExploreMap.jsx';
 import { Button, IconButton } from '../components/ui/index.js';

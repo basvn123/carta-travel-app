@@ -1,9 +1,7 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Tabs, Tile, TileGroup } from '../components/ui/index.js';
-import {
-  CompassIcon, BootIcon, BeachIcon, LakeIcon, MountainIcon, BikeIcon,
-} from '../components/Icons.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
 
 /**
  * What Explore holds, as six kit tiles (T498, roadmap 1.3b A; replaces the
@@ -31,12 +29,12 @@ import {
  */
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const EXPLORE_TILES = [
-  { key: 'places', labelKey: 'places.catPlaces', Icon: CompassIcon },
-  { key: 'trails', labelKey: 'places.catTrails', Icon: BootIcon },
-  { key: 'beaches', labelKey: 'places.catBeaches', Icon: BeachIcon },
-  { key: 'lakes', labelKey: 'places.catLakes', Icon: LakeIcon },
-  { key: 'mountains', labelKey: 'places.catMountains', Icon: MountainIcon },
-  { key: 'cycling', labelKey: 'places.catCycling', Icon: BikeIcon },
+  { key: 'places', labelKey: 'places.catPlaces', Icon: HouseIcon.places },
+  { key: 'trails', labelKey: 'places.catTrails', Icon: HouseIcon.trails },
+  { key: 'beaches', labelKey: 'places.catBeaches', Icon: HouseIcon.beaches },
+  { key: 'lakes', labelKey: 'places.catLakes', Icon: HouseIcon.lakes },
+  { key: 'mountains', labelKey: 'places.catMountains', Icon: HouseIcon.mountains },
+  { key: 'cycling', labelKey: 'places.catCycling', Icon: HouseIcon.cycling },
 ];
 
 export function ExploreCategories({ current, onPick, columns = 3, panelId, className = '', variant = 'grid' }) {

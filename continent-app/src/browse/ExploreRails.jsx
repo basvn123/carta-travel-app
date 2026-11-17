@@ -1,19 +1,18 @@
 import React from 'react';
-import { CalendarIcon, PiggyIcon, StarIcon } from '../components/Icons.jsx';
-import { Button, Money, SlotText } from '../components/ui/index.js';
-import { SLOT } from '../lib/slot.js';
+import { Button, Rail as HouseRail } from '../components/ui/index.js';
 import { HeroImage } from '../components/HeroImage.jsx';
-import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { isNational } from '../components/CostSummary.jsx';
 import { openShared } from '../lib/sharedElement.js';
 import { countryName } from '../lib/countryName.js';
 import { useI18n } from '../i18n/index.jsx';
-import { DayPrice, SaveButton } from './ExploreCards.jsx';
+import { SaveButton } from './ExploreCards.jsx';
+import { PlaceScore, RowFormation } from './explore/HouseParts.jsx';
 import { PriceNotes } from '../components/PriceNotes.jsx';
+import { priceNotes } from '../lib/price/notes.js';
+import { ListHead } from './explore/PlaceRow.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
 import { WhyChips } from './WhyChips.jsx';
-import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
+import { STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 
 /**
  * Explore's sections (T427, after the owner's review of 2026-10-13).
@@ -32,13 +31,10 @@ import { StoryRail, StoryCard, STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
  * a scroller with no scrollbar gives a mouse no way in; the arrow keys move
  * between the tiles.
  *
- * T587: each strip is a StoryRail (the owner's Komoot rail in Carta's
- * colours): a tilted lead card holding the heading, a stack of its photos (T599), the "See all"
- * and facts read from the rail's own rows (the cheapest day, the month when
- * every place is good then, the best Score), then tall photo cards with the
- * status and the Score in solid pills on the photo. `month` is the month the
- * rails speak about (ExploreTab's); the rail logic, the lead count, the doors
- * and every seeAll are unchanged.
+ * House style 2026-11 (G1): each strip is the house Rail (components/ui)
+ * with rail cards (photo, name and Score plate, flag and country, the
+ * formation). `month` is the month the rails speak about (ExploreTab's); the
+ * rail logic, the lead count, the doors and every seeAll are unchanged.
  */
 
 const CAP = 12;
@@ -64,90 +60,61 @@ export function interleaveByCountry(rows) {
 
 
 // The rails whose own question already says the month, or the gem: their
-// cards do not repeat it in the status pill.
+// cards do not repeat it on the status line.
 const MONTH_RAILS = new Set(['now', 'cost', 'beach']);
-// One short line under a rail's heading (rail.line.*), only where it says
-// something the heading does not (T599: what the day price covers, what a
-// hiking base or a car-free trip means). The other rails speak for themselves.
-const LINES = new Set(['cost', 'hiking', 'nocar']);
 
 const inMonth = (p, month) => !!month && (p.climate?.best || []).includes(month);
 
-/** The lead card's facts, read from the rail's own rows: the cheapest day,
- *  the month when every place in it is good then, and the best Score. The
- *  cheapest day is the card's one large figure (T599); a rail with no price
- *  shows its best Score large instead. */
-function railFacts(rows, month, monthLong, t) {
-  const facts = [];
-  const priced = rows.filter((p) => p.cost?.dayEur != null);
-  if (priced.length) {
-    const low = priced.reduce((a, b) => (b.cost.dayEur < a.cost.dayEur ? b : a));
-    facts.push({
-      key: 'from',
-      icon: PiggyIcon,
-      figure: true,
-      text: <SlotText text={t('rail.factFrom', { price: SLOT })}><Money value={low.cost.dayEur} est={isNational(low.cost)} /></SlotText>,
-    });
-  }
-  if (month && rows.length && rows.every((p) => inMonth(p, month))) {
-    facts.push({ key: 'month', icon: CalendarIcon, text: t('rail.goodIn', { month: monthLong }) });
-  }
-  const scores = rows.map((p) => p.rating?.score).filter((n) => Number.isFinite(n));
-  if (scores.length) {
-    const best = Math.max(...scores).toFixed(1);
-    facts.push({
-      key: 'score',
-      icon: StarIcon,
-      figure: !priced.length,
-      text: priced.length
-        ? t('rail.factScore', { n: best })
-        : <SlotText text={t('rail.factScore', { n: SLOT })}><span className="storyr-num">{best}</span></SlotText>,
-    });
-  }
-  return facts;
-}
-
-/** One place as a StoryRail photo card: the status pill says the month or
- *  the gem (whichever the rail's own question does not already say), the
- *  Score sits top right, the flag and country under the title, then the
- *  day price. */
-function PlaceStoryCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t, eager = false }) {
-  let status = null;
-  if (!MONTH_RAILS.has(railKey) && inMonth(p, month)) status = t('rail.goodIn', { month: monthShort });
-  else if (railKey !== 'gems' && p.rating?.hidden_gem) status = t('common.hiddenGem');
+/** One place as a house rail card (DESIGN.md "Rail and RailCard"): the photo
+ *  with only the save disc on it (no text on a photo), the name with the
+ *  Score plate, the flag and country with the status the rail's own question
+ *  does not already say (the month, else the hidden gem), the why chips, then
+ *  the weighted formation, the price notes and the friends line. */
+function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t, eager = false, shared = [] }) {
+  // Notes every card shares are said once over the rails (ListHead); a card
+  // keeps only its own (a thin bed, a part only it lacks).
+  const own = priceNotes(p.cost);
+  const notes = { ...own, unmeasured: own.unmeasured.filter((k) => !shared.includes(k)) };
+  const goodNow = !MONTH_RAILS.has(railKey) && inMonth(p, month);
+  const gem = !goodNow && railKey !== 'gems' && p.rating?.hidden_gem;
   return (
-    <StoryCard
-      className="xstory"
-      photo={(
-        <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} className="storyr-img" maxWidth={STORY_MAX}
-          sizes={STORY_SIZES} ratio={[4, 5]} eager={eager} />
+    <article className="hs-rcard xstory" role="listitem">
+      <a className="hs-rcard-link" href={`#dest=${encodeURIComponent(p.id)}`}
+        onClick={(e) => {
+          // A real link (T444): a plain click opens the place here, a
+          // modifier click lets the browser open it in a new tab.
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          openShared(e.currentTarget.closest('.hs-rcard'), p.id, () => onSelect(p.id));
+        }}>
+        <span className="hs-rcard-photo">
+          <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} className="xrc-img" maxWidth={STORY_MAX}
+            sizes={STORY_SIZES} ratio={[4, 3]} eager={eager} />
+        </span>
+        <span className="hs-rcard-head">
+          <span className="hs-rcard-name">{p.city}</span>
+          <PlaceScore rating={p.rating} />
+        </span>
+        <span className="hs-rcard-where">
+          <CountryFlag country={p.iso2} size={12} />
+          <span className="xrc-country">{countryName(p.iso2, p.country)}</span>
+          {goodNow && <span className="xrc-status">{t('rail.goodIn', { month: monthShort })}</span>}
+          {gem && <span className="hs-gem">{t('common.hiddenGem')}</span>}
+        </span>
+        {/* T1208 (G9): why it fits this traveller, only with evidence on both sides. */}
+        <WhyChips place={p} className="xstory-why" />
+      </a>
+      {/* The price row sits outside the link: its day figure is a button
+          (the items in it, T695), and a button never nests in a link. */}
+      <RowFormation cost={p.cost} t={t} weighted />
+      <PriceNotes notes={notes} className="xprice-notes" />
+      <FriendCardLine destId={p.id} />
+      {onToggleFav && (
+        <span className="hs-rcard-save">
+          <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} tone="photo" name={p.city} />
+        </span>
       )}
-      status={status}
-      score={p.rating?.score != null ? <ScoreChip rating={p.rating} size="sm" /> : null}
-      save={onToggleFav ? (
-        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} tone="photo" name={p.city} />
-      ) : null}
-      title={p.city}
-      href={`#dest=${encodeURIComponent(p.id)}`}
-      onOpen={(e) => {
-        // A real link (T444): a plain click opens the place here, a
-        // modifier click lets the browser open it in a new tab.
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-        e.preventDefault();
-        openShared(e.currentTarget.closest('.card'), p.id, () => onSelect(p.id));
-      }}
-      meta={(
-        <>
-          <span className="xstory-meta">
-            <CountryFlag country={p.iso2} size={12} />
-            <span>{countryName(p.iso2, p.country)}</span>
-          </span>
-          {/* T1208 (G9): why it fits this traveller, only with evidence on both sides. */}
-          <WhyChips place={p} className="xstory-why" />
-        </>
-      )}
-      price={<><DayPrice cost={p.cost} t={t} /><PriceNotes row={p.cost} className="xprice-notes" /><FriendCardLine destId={p.id} /></>}
-    />
+    </article>
   );
 }
 
@@ -157,29 +124,22 @@ function PlaceStoryCard({ p, railKey, month, monthShort, onSelect, fav, onToggle
 const EAGER_RAILS = 2;
 const EAGER_CARDS = 2;
 
-function Rail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false }) {
+function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false, shared = [] }) {
   const shown = r.rows.slice(0, CAP);
-  const monthLong = month ? new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(2026, month - 1, 15)) : '';
   const monthShort = month ? new Intl.DateTimeFormat(lang, { month: 'short' }).format(new Date(2026, month - 1, 15)) : '';
-  // h2: the rails sit straight under the page's h1 (T193).
+  // h2: the rails sit straight under the page's h1 (T193). The house rail
+  // (G1): the heading, See all and the two round arrows; the lead card's
+  // facts and the rail lines went (house style 2026-11, owner: no redundant
+  // text): the cards already show the cheapest day, the month and the Score.
   return (
-    <StoryRail
-      id={`xrail-${r.key}`}
-      title={r.title}
-      line={LINES.has(r.key) ? t(`rail.line.${r.key}`) : null}
-      facts={railFacts(shown, month, monthLong, t)}
-      onSeeAll={r.seeAll}
-      stack={shown.filter((p) => p.image).slice(0, 3).map((p) => ({ url: p.image, city: p.city }))}
-      headingLevel={2}
-      className="xrails-rail"
-      t={t}
-    >
+    <HouseRail id={`xrail-${r.key}`} title={r.title} headingLevel={2}
+      onSeeAll={r.seeAll} className="xrails-rail">
       {shown.map((p, i) => (
-        <PlaceStoryCard key={p.id} p={p} railKey={r.key} month={month} monthShort={monthShort}
+        <PlaceRailCard key={p.id} p={p} railKey={r.key} month={month} monthShort={monthShort}
           onSelect={onSelect} fav={favorites?.has(p.id)} onToggleFav={onToggleFav} t={t}
-          eager={eager && i < EAGER_CARDS} />
+          eager={eager && i < EAGER_CARDS} shared={shared} />
       ))}
-    </StoryRail>
+    </HouseRail>
   );
 }
 
@@ -193,11 +153,18 @@ export function ExploreRails({
   if (!visible.length) return null;
   const strips = visible.slice(0, lead);
   const doors = hideDoors ? [] : visible.slice(lead);
+  // A part every card on screen lacks ("Local transport") is said once, in
+  // the head over the rails, with the unit (owner rule: no repeated text).
+  const shown = strips.flatMap((r) => r.rows.slice(0, CAP));
+  const shared = shown.length
+    ? priceNotes(shown[0].cost).unmeasured.filter((k) => shown.every((p) => priceNotes(p.cost).unmeasured.includes(k)))
+    : [];
   return (
     <div className="xrails">
+      <ListHead t={t} notes={shared} />
       {strips.map((r, ri) => (
-        <Rail key={r.key} r={r} onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t}
-          month={month} lang={lang} eager={eager && ri < EAGER_RAILS} />
+        <ExploreRail key={r.key} r={r} onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t}
+          month={month} lang={lang} eager={eager && ri < EAGER_RAILS} shared={shared} />
       ))}
       {doors.length > 0 && (
         <nav className="xrails-doors" aria-label={t('explore.moreRails')}>

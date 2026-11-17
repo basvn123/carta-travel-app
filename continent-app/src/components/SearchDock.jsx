@@ -3,9 +3,9 @@ import { createPortal } from 'react-dom';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, Chip, ChipGroup, IconButton } from './ui/index.js';
 import {
-  ArrowLeftIcon, BeachIcon, BikeIcon, BootIcon, ChevronDownIcon, CloseIcon, CompassIcon, FilterIcon,
-  LakeIcon, MountainIcon, SearchIcon, SparkIcon, ClockIcon, GlobeIcon,
+  ChevronDownIcon, CloseIcon, SearchIcon, SparkIcon, ClockIcon, GlobeIcon,
 } from './Icons.jsx';
+import { HouseIcon } from './HouseIcons.jsx';
 import {
   useSettings, useShortDate, whenValue, DatesControl, PartyControl, addDaysISO, nightsBetween, WAY_ICONS,
 } from './SettingsLine.jsx';
@@ -44,12 +44,12 @@ import '../styles/96-search-dock.css';
  */
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const DOCK_KINDS = [
-  { key: 'places', labelKey: 'places.catPlaces', Icon: CompassIcon },
-  { key: 'trails', labelKey: 'places.catTrails', Icon: BootIcon },
-  { key: 'beaches', labelKey: 'places.catBeaches', Icon: BeachIcon },
-  { key: 'lakes', labelKey: 'places.catLakes', Icon: LakeIcon },
-  { key: 'mountains', labelKey: 'places.catMountains', Icon: MountainIcon },
-  { key: 'cycling', labelKey: 'places.catCycling', Icon: BikeIcon },
+  { key: 'places', labelKey: 'places.catPlaces', Icon: HouseIcon.places },
+  { key: 'trails', labelKey: 'places.catTrails', Icon: HouseIcon.trails },
+  { key: 'beaches', labelKey: 'places.catBeaches', Icon: HouseIcon.beaches },
+  { key: 'lakes', labelKey: 'places.catLakes', Icon: HouseIcon.lakes },
+  { key: 'mountains', labelKey: 'places.catMountains', Icon: HouseIcon.mountains },
+  { key: 'cycling', labelKey: 'places.catCycling', Icon: HouseIcon.cycling },
 ];
 const kindOf = (key) => DOCK_KINDS.find((k) => k.key === key) || DOCK_KINDS[0];
 
@@ -81,7 +81,7 @@ export function SearchDock({ onSearch }) {
     <div className={`sdock${r ? ' is-results' : ''}`} role="search" aria-label={t('dock.title')}>
       {r && (
         <IconButton className="sdock-round sdock-back" label={t('explore.backOverview')} onClick={dockBack}>
-          <ArrowLeftIcon size={20} />
+          <HouseIcon.back size={20} />
         </IconButton>
       )}
       <button
@@ -109,7 +109,7 @@ export function SearchDock({ onSearch }) {
           aria-expanded={!!r.filtersOpen}
           onClick={() => dockFilters(filtersRef.current)}
         >
-          <FilterIcon size={20} />
+          <HouseIcon.filter size={20} />
           {r.filterCount > 0 && <span className="sdock-count" aria-hidden="true">{r.filterCount}</span>}
         </IconButton>
       ) : (

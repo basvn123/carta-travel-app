@@ -1,3 +1,4 @@
+import NotYet from '../components/NotYet.jsx';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
@@ -265,7 +266,8 @@ export function PlanTotal({
                     >
                       <span className="plan-total-dot" aria-hidden="true" />
                       <span className="plan-total-group-name">{t(head)}</span>
-                      <span className="plan-total-group-n">{tile.empty ? t('tp.tile.notNeeded') : <Money value={tile.eur} est precision="cents" />}</span>
+                      {/* A group the engine has no figure for says Not yet, never "0.00" (house style, honest numbers; the same flag the cost post reads). */}
+                      <span className="plan-total-group-n">{tile.empty ? t('tp.tile.notNeeded') : tile.missing ? <NotYet /> : <Money value={tile.eur} est precision="cents" />}</span>
                       <ChevronDownIcon size={16} className={isOpen ? 'plan-chev is-open' : 'plan-chev'} />
                     </button>
                   </h3>

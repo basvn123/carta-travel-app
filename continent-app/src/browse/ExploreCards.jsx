@@ -5,7 +5,9 @@ import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { MatchLine } from './WhyItMatches.jsx';
 import { WhyChips } from './WhyChips.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
-import { BookmarkIcon, BusIcon, CarIcon, TrainIcon } from '../components/Icons.jsx';
+import { BusIcon, CarIcon, TrainIcon } from '../components/Icons.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
+import { haptic } from '../lib/haptics.js';
 import { formatEst } from '../lib/money.js';
 import { Card, IconButton } from '../components/ui/index.js';
 import { PriceParts } from '../components/PriceParts.jsx';
@@ -69,15 +71,23 @@ export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '', n
   const label = name
     ? t(fav ? 'explore.unsaveNamed' : 'explore.saveNamed', { place: name })
     : (fav ? t('results.removeShortlist') : t('results.addShortlist'));
+  // House style 2026-11: the cairn (save, My trips), filled once saved. It
+  // pops only on the traveller's own press (the Add primitive), never when
+  // a saved place first paints.
+  const [popped, setPopped] = React.useState(false);
   return (
     <IconButton
       tone={tone}
-      className={className}
+      className={`xsave${popped && fav ? ' hs-pop' : ''}${className ? ` ${className}` : ''}`}
       pressed={fav}
       label={label}
-      onClick={onToggle}
+      // The commit's haptic (house style 2026-11): confirm on a save, a tick
+      // on an unsave; haptic() itself plays only after a touch, behind the
+      // traveller's setting and never under reduced motion.
+      onClick={() => { setPopped(true); onToggle(); haptic(fav ? 'tick' : 'confirm'); }}
+      onAnimationEnd={() => setPopped(false)}
     >
-      <BookmarkIcon size={18} />
+      <HouseIcon.cairn size={20} />
     </IconButton>
   );
 }
