@@ -179,17 +179,6 @@
 @media (pointer: coarse) {
   .dsk-page .maplibregl-ctrl-attrib-button { position: relative; }
 }
-.itin-capband-score {
-  margin-left: var(--space-2);
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-sm);
-  background: var(--rate-bg);
-  color: var(--rate);
-  font-family: var(--mono);
-  font-size: var(--text-label);
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
 .itin-receipt {
   border: 1px solid var(--rule-soft);
   border-radius: var(--radius-control);

@@ -25,22 +25,22 @@
    old .jstyle-card, .jcard and .jsec rules in 25-feature-pages.css moved
    here and were deleted there in the same commit. */
 .jcap-name {
-  font-family: var(--display);
+  font-family: var(--ui);
   font-size: var(--text-lead);
-  font-weight: 600;
-  line-height: 1.2;
-  color: var(--ink);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  color: var(--text);
 }
-.jstyle-card .jcap-name { font-size: 19px; }
+.jstyle-card .jcap-name { font-size: var(--text-title); font-weight: 800; }
 /* The figure line: the euro figure in mono, its words in sans (T397,
    brief V4.4; JourneysSection FigLine). */
 .jcap-fig {
   font-family: var(--ui);
   font-size: var(--text-label);
-  color: var(--ink);
+  color: var(--text);
 }
 .jcap-fig .mono {
-  font-family: var(--mono);
+  font-family: var(--ui);
   font-variant-numeric: tabular-nums;
 }
 /* Two abreast on a phone (DIRECTION part 3): 3:2 leaves the half-width
@@ -60,19 +60,19 @@
   gap: var(--space-3);
   min-height: var(--tap);
   padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-control);
-  background: var(--bg-card);
-  color: var(--ink);
+  background: var(--surface);
+  color: var(--text);
   font: inherit;
   text-align: left;
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out);
 }
 @media (hover: hover) {
-  .jcomposed-card:hover { border-color: var(--ink-mute); }
+  .jcomposed-card:hover { border-color: var(--text-3); }
 }
-.jcomposed-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.jcomposed-card:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {
   .jcomposed-card { transition: none; }
 }
@@ -89,21 +89,21 @@
   gap: var(--space-2);
   padding-bottom: var(--space-3);
   border-radius: var(--radius-control);
-  background: var(--bg-card);
-  border: 1px solid var(--rule-soft);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
   overflow: hidden;
 }
 .jskel-photo {
   display: block;
   aspect-ratio: 3 / 2;
-  background: var(--paper-dim);
+  background: var(--surface-sunken);
 }
 .jskel-line {
   display: block;
   height: 12px;
   margin: 0 var(--space-3);
   border-radius: var(--radius-sm);
-  background: var(--paper-dim);
+  background: var(--surface-sunken);
 }
 .jskel-line.is-short { width: 45%; }
 
@@ -116,13 +116,13 @@
   padding: 0 var(--space-2) 0 0;
   border: 0;
   background: transparent;
-  color: var(--ink);
+  color: var(--text);
   font: inherit;
   font-size: var(--text-body);
   font-weight: 600;
   cursor: pointer;
 }
-.jsec-back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.jsec-back:focus-visible { outline: 2px solid var(--action); outline-offset: 2px; }
 @media (hover: hover) {
   .jsec-back:hover span { text-decoration: underline; }
 }
@@ -141,9 +141,9 @@
 .tlib-refine .xchip {
   min-height: var(--tap);
   padding: 0 var(--space-3);
-  border: 1px solid var(--rule);
-  background: var(--paper-dim);
-  color: var(--ink);
+  border: 1px solid var(--border);
+  background: var(--surface-sunken);
+  color: var(--text);
 }
 .tlib-refine .xchip-clear { background: transparent; }
 .tlib-filters .ui-chip-count { margin-left: var(--space-1); }
@@ -182,10 +182,10 @@
 /* The length control: one two-segment control on the list and the page. */
 .tl-seg {
   display: inline-flex;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   overflow: hidden;
-  background: var(--bg-card);
+  background: var(--surface);
 }
 .tl-seg .tl-btn {
   min-height: var(--tap);
@@ -196,7 +196,7 @@
   font-family: var(--ui);
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
-.tl-seg .tl-btn + .tl-btn { border-left: 1px solid var(--rule); }
+.tl-seg .tl-btn + .tl-btn { border-left: 1px solid var(--border); }
 @media (pointer: fine) {
   .tl-seg .tl-btn { min-height: 32px; }
 }
@@ -215,7 +215,7 @@
   font-family: var(--ui);
   font-size: var(--text-body);
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
 }
 
 /* The trip's own receipt (rule "Receipt, extended"). The Cost group's fold
@@ -228,7 +228,7 @@
   margin-top: 2px;
   font-size: var(--text-caption);
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
 }
 
 /* "More about this day" reaches the tap floor. */
@@ -260,15 +260,16 @@
 }
 .itin-capband-title {
   margin: 0;
-  font-family: var(--display);
+  font-family: var(--ui);
   font-size: var(--text-headline);
-  font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-  color: var(--ink);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.018em;
+  color: var(--text);
+  text-wrap: balance;
 }
 @media (min-width: 769px) {
-  .itin-capband-title { font-size: var(--text-display); }
+  .itin-capband-title { font-size: var(--text-headline); }
 }
 .itin-capband-sub {
   display: flex;
@@ -278,20 +279,20 @@
   margin: var(--space-2) 0 0;
   font-family: var(--ui);
   font-size: var(--text-label);
-  color: var(--ink-soft);
+  font-weight: 600;
+  color: var(--text-2);
 }
-/* The score is a rating, so it is ochre and mono, beside the countries. */
 .itin-capband-themes {
   margin: var(--space-1) 0 0;
   font-family: var(--ui);
   font-size: var(--text-label);
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 .itin-capband-credit {
   margin: var(--space-1) 0 0;
   font-family: var(--ui);
   font-size: var(--text-caption);
-  color: var(--ink-mute);
+  color: var(--text-2);
   overflow-wrap: anywhere;
 }
 @media (max-width: 700px) {
@@ -309,7 +310,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  color: var(--ink);
+  color: var(--text);
 }
 
 /* The route: the dot separators are gone from the markup (commas now), and
@@ -324,18 +325,18 @@
 .dtrack .tday,
 .dtrack .tday:first-child {
   padding: var(--space-3) var(--space-4) var(--space-2);
-  border: 1px solid var(--rule-soft);
+  border: 1px solid var(--border-soft);
   border-radius: var(--radius-control);
-  background: var(--bg-card);
+  background: var(--surface);
 }
 .dtrack .tday-title {
   margin: 0;
-  font-family: var(--display);
+  font-family: var(--ui);
   font-size: var(--text-lead);
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.01em;
-  color: var(--ink);
+  color: var(--text);
 }
 .dtrack .tday-more { margin-left: 0; }
 
@@ -359,13 +360,13 @@
   padding: 0;
   font-family: var(--ui);
   font-size: var(--text-label);
-  color: var(--ink-soft);
+  color: var(--text-2);
 }
 @media (hover: hover) {
-  .itin-page .tday-more:hover { color: var(--ink-soft); }
+  .itin-page .tday-more:hover { color: var(--text-2); }
 }
 @media (hover: hover) {
-  .itin-page .tday-more:hover { color: var(--ink); }
+  .itin-page .tday-more:hover { color: var(--text); }
 }
 .itin-page .tday-more-chev { transition: transform var(--dur-2) var(--ease-out); }
 
@@ -379,23 +380,23 @@
   gap: var(--space-3);
   margin: 0;
   padding: var(--space-2) var(--space-4);
-  background: var(--paper-dim);
-  border-bottom: 1px solid var(--rule-soft);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border-soft);
   font-family: var(--ui);
   font-size: var(--text-label);
   font-weight: 600;
-  color: var(--ink);
+  color: var(--text);
 }
 .itin-receipt-route { min-width: 0; }
 .itin-receipt-days {
   flex: none;
-  font-family: var(--mono);
+  font-family: var(--ui);
   font-size: var(--text-label);
   font-weight: 500;
-  color: var(--ink-soft);
+  color: var(--text-2);
   font-variant-numeric: tabular-nums;
 }
-.itin-receipt .itin-cost-day b { color: var(--ink-soft); }
+.itin-receipt .itin-cost-day b { color: var(--text-2); }
 
 @media (prefers-reduced-motion: reduce) {
   .itin-page .tday-more-chev { transition: none; }
@@ -413,7 +414,7 @@
 
 /* ── The strip's cost cell: the range in mono, "a person" in sans ─────── */
 .jpage .jstrip-word .mono {
-  font-family: var(--mono);
+  font-family: var(--ui);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
@@ -506,3 +507,110 @@
   }
   .jpage * { animation: none; transition: none; }
 }
+
+/* ---- The library trip page in the house page grammar (plan lane 2026-11) ----
+   The same grammar as the place and journey pages: a capped wrap, the
+   photo with 16 px corners, the head flush under it (name, countries with
+   the Score plate, themes, credit), fact tiles, the sections on hairlines,
+   and the post (the day figure and the one action) beside the page from
+   769 px, a sticky foot on a phone. Rules here are scoped under .itin-page
+   so they win over the older item-page rules in the place lane's files.
+   They live in the main sheet (css-routes: route sheets hold only rules
+   nothing later could override). */
+.itin-page .itin-wrap { max-width: var(--w-detail); margin-inline: auto; padding: var(--space-2) var(--page-gutter) 0; }
+.itin-page .itin-photohero { height: auto; aspect-ratio: 4 / 3; border-radius: var(--radius-card); background: var(--surface-sunken); }
+@media (min-width: 769px) { .itin-page .itin-photohero { aspect-ratio: auto; height: 420px; } }
+@media (min-width: 1280px) { .itin-page .itin-photohero { height: 440px; } }
+.itin-page .itin-photohero-none { display: block; background: none; }
+.itin-page .itin-photohero-none .hs-world { position: absolute; inset: 0; }
+.itin-page .itin-capband { background: none; border-bottom: 0; }
+.itin-page .itin-capband-in { max-width: none; margin: 0; padding: var(--space-4) 0 var(--space-5); }
+.itin-page .itin-capband-score { margin-left: var(--space-2); padding: 0 var(--space-2); border-radius: var(--radius-sm); background: var(--plate); color: var(--on-plate); font-family: var(--ui); font-size: var(--text-label); font-weight: 800; line-height: 24px; }
+
+.itin-page .tpage-col.itin-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); max-width: none; margin: 0; padding: 0 0 var(--space-8); }
+.itin-page .itin-main { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+/* The post comes first in the DOM (the action early in the tab order); on a
+   phone it shows last, as the sticky foot; from 769 px it is the right column. */
+.itin-page .itin-post { order: 2; }
+.itin-page .itin-post {
+  position: sticky;
+  bottom: 0;
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 calc(-1 * var(--page-gutter));
+  padding: var(--space-3) var(--page-gutter) max(var(--space-3), env(safe-area-inset-bottom));
+  border-top: var(--stroke-hair) solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+.itin-page .itin-post-fig { display: grid; flex: 1; min-width: 0; margin: 0; line-height: var(--leading-tight); }
+.itin-page .itin-post-fig b { font-size: var(--text-figure); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.itin-page .itin-post-fig span { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.itin-page .itin-post .itin-post-use.btn { flex: none; width: auto; height: auto; min-height: var(--tap-main); margin: 0; font-size: var(--text-body); }
+@media (min-width: 769px) {
+  .itin-page .tpage-col.itin-body { grid-template-columns: minmax(0, 1fr) 288px; column-gap: var(--space-6); align-items: start; }
+  .itin-page .itin-main { grid-column: 1; grid-row: 1; }
+  .itin-page .itin-body > .itin-post { grid-column: 2; grid-row: 1; order: 0; }
+  .itin-page .itin-post {
+    top: var(--space-4);
+    bottom: auto;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-4);
+    margin: 0;
+    padding: var(--space-5);
+    border: var(--stroke-hair) solid var(--border);
+    border-radius: var(--radius-panel);
+    box-shadow: none;
+  }
+  .itin-page .itin-post-fig b { font-size: var(--text-display); letter-spacing: -0.02em; }
+  .itin-page .itin-post .itin-post-use.btn { width: 100%; }
+}
+@media (min-width: 1024px) { .itin-page .tpage-col.itin-body { grid-template-columns: minmax(0, 1fr) 364px; column-gap: var(--space-8); } }
+
+.itin-page .itin-gone { margin: var(--space-5) 0; padding: 0; border: 0; text-align: left; }
+.itin-page .itin-gone .itin-gone-back.btn { height: auto; margin: 0; }
+
+/* The facts as tiles: label over value, paper on a hairline. */
+.itin-page .tpage-facts.itin-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-2); padding: 0; border: 0; border-radius: 0; background: none; }
+@media (min-width: 600px) { .itin-page .tpage-facts.itin-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.itin-page .itin-facts .tpage-fact { min-width: 0; padding: var(--space-2) var(--space-3); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); background: var(--surface); }
+.itin-page .itin-facts .tpage-fact-val { font-family: var(--ui); font-size: var(--text-lead); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.itin-page .itin-facts .tpage-fact-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+
+/* ---- Polish round 1 (plan lane, orchestrator's judges) ----
+   The post carries the trip total on the signpost plate (the receipt's own
+   sum). From 769 px the wrap is one grid, so the post starts level with the
+   head instead of under it: .itin-body steps out of the way (display:
+   contents), its two children take the wrap's columns. On a phone the post
+   stays the sticky foot, the plate compact beside the action. */
+.itin-page .itin-post-plate { flex: 1; min-width: 0; }
+@media (max-width: 768px) {
+  .itin-page .itin-post .itin-post-plate { min-height: 0; padding: 8px calc(var(--plate-tip) + 12px) 8px 12px; row-gap: 2px; }
+  .itin-page .itin-post .itin-post-plate .hs-plate-name { font-size: var(--text-caption); }
+  .itin-page .itin-post .itin-post-plate .hs-plate-fig { font-size: var(--text-figure); }
+  .itin-page .itin-capband-in { padding-bottom: var(--space-3); }
+}
+@media (min-width: 769px) {
+  .itin-page .itin-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 288px; column-gap: var(--space-6); align-items: start; }
+  .itin-page .itin-wrap > .itin-photohero { grid-column: 1 / -1; }
+  .itin-page .itin-wrap > .itin-capband { grid-column: 1; }
+  .itin-page .itin-wrap > .tpage-col.itin-body { display: contents; }
+  .itin-page .itin-body > .itin-post { grid-column: 2; grid-row: 2 / span 2; margin-top: var(--space-4); }
+  .itin-page .itin-body > .itin-main { grid-column: 1; grid-row: 3; padding-bottom: var(--space-8); }
+}
+@media (min-width: 1024px) { .itin-page .itin-wrap { grid-template-columns: minmax(0, 1fr) 364px; column-gap: var(--space-8); } }
+
+/* The facts, compact: icon and figure on one line, the label under it. */
+.itin-page .itin-facts .tpage-fact { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: var(--space-2); row-gap: 0; }
+.itin-page .itin-facts .tpage-fact .itin-fact-icon { grid-column: 1; grid-row: 1; margin: 0; color: var(--text-2); }
+.itin-page .itin-facts .tpage-fact-val { grid-column: 2; grid-row: 1; font-size: var(--text-body); }
+.itin-page .itin-facts .tpage-fact-label { grid-column: 1 / -1; grid-row: 2; }
+
+/* The unit, said once for a list of priced cards (plan lane polish round 1):
+   the cards print "From €124", this line says what the figure counts. */
+.pl-unit-head { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.tlib-head .pl-unit-head { flex-basis: 100%; }
+.pf-cgrid > .pl-unit-head { grid-column: 1 / -1; }

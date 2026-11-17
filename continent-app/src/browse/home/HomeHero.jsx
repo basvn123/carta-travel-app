@@ -1,7 +1,7 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
-import { PlaneIcon, SearchIcon, SparkIcon } from '../../components/Icons.jsx';
+import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { srcSetFor, thumbAt } from '../../lib/heroImage.js';
@@ -87,7 +87,7 @@ function HomePass({ flight, price, from, to }) {
       <div className="hv-pass-main" aria-hidden="true">
         <span className="hv-pass-route">
           <span>{from}</span>
-          <span className="hv-pass-line"><PlaneIcon size={16} /></span>
+          <span className="hv-pass-line"><HouseIcon.flight size={16} /></span>
           <span>{to}</span>
         </span>
         <span className="hv-pass-meta">
@@ -96,7 +96,7 @@ function HomePass({ flight, price, from, to }) {
       </div>
       <div className="hv-pass-stub" aria-hidden="true">
         <span className="hv-pass-label">{t('home.passFlight')}</span>
-        <span className="hv-pass-price">{price}</span>
+        <span className="hv-pass-price"><HouseIcon.flight size={14} />{price}</span>
       </div>
     </div>
   );
@@ -110,7 +110,7 @@ function HomePass({ flight, price, from, to }) {
  *  the field share a box (T623): on a phone the hero puts the primary under
  *  it at full width, so the whole placeholder shows in every language. */
 const warmChat = () => import('../ask/AskChat.jsx').catch(() => {});
-export function AskField({ t, onSearch, id, primary = false }) {
+export function AskField({ t, onSearch, id, primary = false, labelledBy }) {
   const [text, setText] = React.useState('');
   const warm = () => { loadGuidedData(); warmChat(); };
   const ask = (e) => {
@@ -119,15 +119,15 @@ export function AskField({ t, onSearch, id, primary = false }) {
     onSearch(q ? { question: q } : { open: true });
   };
   return (
-    <form className="hv-ask" role="search" onSubmit={ask} onPointerEnter={warm} onPointerDown={warm} onFocus={warm}>
+    <form className="hv-ask" role="search" aria-labelledby={labelledBy} onSubmit={ask} onPointerEnter={warm} onPointerDown={warm} onFocus={warm}>
       <span className="hv-ask-box">
-        <span className="hv-ask-glyph" aria-hidden="true"><SearchIcon size={20} /></span>
+        <span className="hv-ask-glyph" aria-hidden="true"><HouseIcon.search size={20} /></span>
         <input id={id} className="hv-ask-input" type="text" value={text} maxLength={200}
           onChange={(e) => setText(e.target.value)} aria-label={t('ask.inputLabel')}
           placeholder={t('home.askPlaceholder')} autoComplete="off" spellCheck={false} enterKeyHint="search" />
       </span>
       {primary ? (
-        <Button type="submit" variant="primary" className="hv-ask-go hv-ask-go-main" iconStart={<SparkIcon size={18} />}>
+        <Button type="submit" variant="primary" className="hv-ask-go hv-ask-go-main" iconStart={<span className="ai-tag" aria-hidden="true">AI</span>}>
           {t('askChat.open')}
         </Button>
       ) : (

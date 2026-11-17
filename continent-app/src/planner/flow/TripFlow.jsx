@@ -6,6 +6,7 @@ import { ArrowRightIcon, HomeIcon, MapPinIcon, PlusIcon, SettingsIcon } from '..
 import { TripHead } from '../TripSummary.jsx';
 import { partyText } from '../../lib/party.js';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
+import { useStepIn } from './paintGuard.js';
 import { QUESTIONS } from './questions.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { FlowRail } from './FlowRail.jsx';
@@ -78,6 +79,9 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   const quick = useRef(fresh || Boolean(kept?.quick));
   const [walked, setWalked] = useState(kept ? Boolean(kept.walked) : !fresh);
   const [phase, setPhase] = useState(() => (arriveTrip.current || fresh ? TRIPS_SCREEN : kept?.phase || 'home')); // home | g:* | ff | engine
+  // House style: the question settles in when the step changes (presentation only).
+  const stepRef = useRef(null);
+  useStepIn(stepRef, phase);
   useEffect(() => {
     rememberPlace('trip', tripsStore.getActiveId(), phase === 'engine' ? null : { phase, walked, quick: quick.current });
   }, [phase, walked]);
@@ -302,7 +306,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
     // T1103: the refine walk began on the trips, so its first question goes back there.
     const back = returnTo || prevScreen(guide, phase) || (quick.current ? TRIPS_SCREEN : 'home');
     body = (
-      <div className="pf-step">
+      <div className="pf-step" ref={stepRef}>
         <SheetHead
           onBack={() => { setReturnTo(null); setPhase(back); }}
           backLabel={t('pf.back')}

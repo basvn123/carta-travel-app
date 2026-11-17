@@ -374,10 +374,12 @@ export function JourneysSection({
           <header className={`dtab-head tlib-head${country ? ' is-bare' : ''}`}>
             {!country && <h2 className="dtab-title">{t('dtab.head.trips')}</h2>}
             {!inPanel && lengthControl}
+            {/* House style: the unit once for the list; the cards print the figure. */}
+            <p className="pl-unit-head">{t('tp.bud.kindDay')}</p>
           </header>
         )}
         {types.map((tp) => (
-          <StyleCard key={tp.slug} type={tp} perDay={perDay[tp.slug]} onPick={onView} t={t} />
+          <StyleCard key={tp.slug} type={tp} perDay={perDay[tp.slug]} onPick={onView} t={t} short={!country || !inPanel} />
         ))}
         {index && types.length === 0 && country && (
           <EmptyResult
@@ -460,6 +462,7 @@ export function JourneysSection({
         </Button>
         <h2 className="dtab-title">{typeLabel(view, t, openType?.name)}</h2>
         {typeDesc(view, t) && <p className="tlib-desc">{typeDesc(view, t)}</p>}
+        <p className="pl-unit-head">{t('tp.bud.kindDay')}</p>
       </header>
       <StyleSwitch styles={switchStyles} view={view} onView={onView} t={t} />
       {/* On a phone the length lives in the Filters sheet only (T502): the
@@ -486,7 +489,7 @@ export function JourneysSection({
         </div>
       )}
       {rows && rows.map((card) => (
-        <JourneyCard key={card.id} card={card} length={length} onOpen={onOpen} t={t} lang={lang} />
+        <JourneyCard key={card.id} card={card} length={length} onOpen={onOpen} t={t} lang={lang} short />
       ))}
       {rows && rows.length === 0 && (
         scoped && scoped.length > 0

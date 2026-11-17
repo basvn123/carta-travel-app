@@ -6,23 +6,14 @@
    (two lines at most); under it the flag with places and nights, then one
    price line, so cards in a row end level. */
 .ctc-media { position: relative; display: block; aspect-ratio: 4 / 5; overflow: hidden; border-radius: var(--radius-card); background: var(--surface-sunken); }
-.ctc-media::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 62%;
-  background: linear-gradient(to top, color-mix(in srgb, var(--text) 82%, transparent), transparent);
-  pointer-events: none;
-}
+.ctc-media { aspect-ratio: 4 / 3; }
+/* In season: a beige tag in the facts row, never on the photo. */
 .ctc-badge {
-  position: absolute;
-  top: var(--space-2);
-  left: var(--space-2);
-  z-index: 1;
-  padding: 3px var(--space-2);
+  display: inline-flex;
+  padding: 2px var(--space-2);
   border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text);
+  background: var(--select-bg);
+  color: var(--select-ink);
   font-size: var(--text-caption);
   font-weight: 700;
 }
@@ -97,7 +88,7 @@
 .pfh-door-photo:nth-child(2) { top: 0; }
 @keyframes pfh-deal { from { opacity: 0; transform: translateX(calc(var(--i) * -24px)) rotate(0deg); } }
 @media (hover: hover) {
-  .pfh-door:hover { transform: translateY(-1px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 4px 8px rgba(90, 55, 22, 0.16), 0 16px 32px rgba(90, 55, 22, 0.24); }
+  .pfh a.pfh-door:hover { border-color: var(--action); }
   .pfh-door:hover .pfh-door-photo { transform: translateX(calc((var(--i) - 1) * 5px)) translateY(-2px) rotate(calc((var(--i) - 1) * 11deg)); }
 }
 
@@ -106,16 +97,6 @@
    more stops, so the tint has no visible edge), with a hairline inside the
    corners so a pale sky still has a frame. */
 .pfh .pfh-next:active { transform: scale(0.99); }
-.pfh .pfh-next-media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgba(20, 14, 8, 0.08);
-  background: linear-gradient(to top,
-    rgba(20, 14, 8, 0.74) 0%, rgba(20, 14, 8, 0.6) 14%, rgba(20, 14, 8, 0.4) 30%,
-    rgba(20, 14, 8, 0.2) 46%, rgba(20, 14, 8, 0.07) 60%, transparent 72%);
-}
 @keyframes pfh-drift { from { transform: scale(1.02); } to { transform: scale(1.07) translate(-1%, 0.6%); } }
 @media (hover: hover) {
   .pfh .pfh-next:hover .pfh-next-media { transform: scale(1.025); }
@@ -192,7 +173,6 @@
 
 /* The card. */
 .ctc-name { display: block; overflow: visible; -webkit-line-clamp: unset; font-size: var(--text-body); line-height: 1.2; text-wrap: balance; }
-.ctc-media::after { height: 70%; }
 .ctc-what {
   font-size: var(--text-label);
   font-weight: 600;
@@ -205,3 +185,70 @@
 .ctc-days { font-weight: 600; }
 .ctc-price { margin-top: 2px; }
 @media (min-width: 600px) { .ctc-name { font-size: var(--text-lead); } }
+
+/* House style (plan lane 2026-11): Your trips shows its name, a page title
+   over the two doors (New trip, Ready-made trips). */
+.pfh .pfh-head .pfh-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.018em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+/* House style (plan lane 2026-11): Up next is the photo with its words
+   under it on paper (text never on a photo; the drift loop and the dark
+   fall are gone), side by side from 769 px. The Ready-made trips door is
+   paper with an edge: New trip is the screen's one umber action. */
+.pfh a.pfh-next {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  aspect-ratio: auto;
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: none;
+}
+.pfh a.pfh-next .pfh-next-media { position: relative; inset: auto; z-index: auto; display: block; aspect-ratio: 16 / 9; overflow: hidden; background: var(--surface-sunken); }
+.pfh a.pfh-next .pfh-next-img { position: absolute; inset: 0; animation: none; }
+.pfh a.pfh-next .pfh-next-cd { position: static; justify-self: start; margin: var(--space-4) var(--space-4) 0; min-height: 28px; background: var(--select-bg); color: var(--select-ink); box-shadow: none; }
+.pfh a.pfh-next .pfh-next-body { position: static; align-items: center; padding: var(--space-3) var(--space-4) var(--space-4); }
+.pfh a.pfh-next .pfh-next-name { font-size: var(--text-title); font-weight: 800; color: var(--text); text-shadow: none; }
+.pfh a.pfh-next .pfh-next-facts { color: var(--text-2); }
+@media (min-width: 769px) {
+  .pfh a.pfh-next { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: 1fr auto auto 1fr; }
+  .pfh a.pfh-next .pfh-next-media { grid-column: 1; grid-row: 1 / -1; aspect-ratio: auto; min-height: 280px; }
+  .pfh a.pfh-next .pfh-next-cd { grid-column: 2; grid-row: 2; margin: 0 var(--space-6) var(--space-2); }
+  .pfh a.pfh-next .pfh-next-body { grid-column: 2; grid-row: 3; padding: 0 var(--space-6); }
+  .pfh a.pfh-next .pfh-next-name { font-size: var(--text-headline); }
+}
+.pfh a.pfh-door {
+  border: var(--stroke-edge) solid var(--edge);
+  background: var(--surface);
+  box-shadow: none;
+  color: var(--text);
+}
+.pfh a.pfh-door .pfh-door-name { color: var(--text); }
+.pfh a.pfh-door .pfh-door-photo { border-color: var(--surface); background: var(--surface-sunken); box-shadow: var(--elev-1); }
+/* A draft row keeps its menu in the row (the card rule from 1024 px puts it over the photo corner). */
+.pfh .pfh-row .pf-trip-more { position: static; margin: 0; }
+
+/* Polish round 1: the Ready-made card's country carries its flag (rail-card grammar). */
+.ctc .ctc-where { display: inline-flex; align-items: center; gap: var(--space-1); }
+.ctc .ctc-where .country-flag { flex: none; }
+
+/* Polish round 1: a trip without a photo shows its trip art whole (the art
+   is square; a wide crop cut its trail's end mark). */
+.pfh a.pfh-next.is-blank .pfh-next-media { aspect-ratio: 4 / 3; }
+@media (min-width: 769px) {
+  .pfh a.pfh-next.is-blank { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); }
+  .pfh a.pfh-next.is-blank .pfh-next-media { aspect-ratio: 1 / 1; min-height: 0; align-self: center; }
+}
+
+/* Polish round 1: the door's three photos lie flat and overlap (no tilted
+   polaroid deck), in the house photo treatment. */
+.pfh a.pfh-door .pfh-door-photo { border-width: var(--stroke-edge); border-radius: var(--radius-control); transform: none; animation: none; }

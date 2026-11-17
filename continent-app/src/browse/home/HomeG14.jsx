@@ -1,4 +1,5 @@
 import React from 'react';
+import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
 import { SiteFooter } from '../../components/SiteFooter.jsx';
@@ -76,7 +77,7 @@ export default function HomeG14({ data, choices, pageOver = false, onNavigate, o
           <p className="hg-sub">{t('home.sub')}</p>
           <div className="hg-doors">
             <Button href={exploreHref} variant="primary" className="hg-go" onClick={door(() => onNavigate('map'))}>
-              {t('home.gExplore')}<span className="hg-arrow" aria-hidden="true">{'→'}</span>
+              {t('home.gExplore')}<span className="hg-arrow" aria-hidden="true"><HouseIcon.next size={18} /></span>
             </Button>
             <a className="hg-link" href={sampleHref()} onClick={door(() => onOpenJourney(SAMPLE_JOURNEY))}>{t('home.gSample')}</a>
           </div>
@@ -108,7 +109,7 @@ export default function HomeG14({ data, choices, pageOver = false, onNavigate, o
             <div className="hg-foot">
               <p className="hg-foot-line">{t('home.gDayFoot')}</p>
               <Button href={`#dest=${encodeURIComponent(EXAMPLE_PLACE)}`} variant="primary" className="hg-go" onClick={door(() => onOpenDest(EXAMPLE_PLACE))}>
-                {t('home.gOpen', { place: place.city })}<span className="hg-arrow" aria-hidden="true">{'→'}</span>
+                {t('home.gOpen', { place: place.city })}<span className="hg-arrow" aria-hidden="true"><HouseIcon.next size={18} /></span>
               </Button>
             </div>
           </article>
