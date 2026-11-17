@@ -186,3 +186,43 @@
   .pass-plan-mark svg { scale: 1; }
   .pass-sheet { animation: none; }
 }
+
+/* The chosen plan carries the blaze ("chosen"), painted in on the pick, in
+   place of a filled round tick (polish lane, final judges); the unchosen
+   plan keeps the plain ring. Same radio, same keys. */
+.pass-plan.is-selected .pass-plan-mark {
+  height: 14px;
+  margin-top: 7px;
+  border: 0;
+  border-radius: calc(var(--radius-sm) / 3);
+  background: var(--neutral-0);
+  outline: 1px solid var(--blaze-edge);
+  outline-offset: -1px;
+}
+.pass-plan.is-selected .pass-plan-mark svg { display: none; }
+.pass-plan.is-selected .pass-plan-mark::before,
+.pass-plan.is-selected .pass-plan-mark::after { content: ''; position: absolute; }
+.pass-plan.is-selected .pass-plan-mark::before {
+  left: 14%;
+  right: 14%;
+  top: 20%;
+  height: 36%;
+  background: var(--action);
+  transform-origin: left center;
+  animation: hs-paint-x var(--dur-paint) var(--ease-out) both;
+}
+.pass-plan.is-selected .pass-plan-mark::after {
+  right: 14%;
+  width: 34%;
+  bottom: 14%;
+  height: max(1.5px, 11%);
+  background: var(--text);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pass-plan.is-selected .pass-plan-mark::before { animation: none; }
+}
+/* Side by side the mark sits in the plan's corner: the blaze keeps the
+   ring's centre there. */
+@media (min-width: 769px) {
+  .pass-plan.is-selected .pass-plan-mark { margin-top: 5px; }
+}

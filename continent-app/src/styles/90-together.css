@@ -653,3 +653,19 @@
 .tg-out,
 .tg-new.tg-addcost { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); box-shadow: none; }
 .tg-gp .tg-fit { padding: var(--space-3) 0 0; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }
+
+/* ── To answer as a ledger (polish lane, final judges) ───────────────────
+   The rows that wait for the traveller are ruled onto the ground under
+   their head, as Account's lists are: a rule above and below, a hairline
+   between, no white panel. Accept stays the one filled answer. */
+.tg-wait.tg-list {
+  padding: 0;
+  background: none;
+  border: 0;
+  border-top: var(--stroke-hair) solid var(--border);
+  border-bottom: var(--stroke-hair) solid var(--border);
+  border-radius: 0;
+}
+.tg-wait.tg-list .tg-wr { padding: var(--space-3) 0; transition: background-color var(--dur-1) var(--ease-out); }
+.tg-wait.tg-list .tg-wr + .tg-wr { border-top-color: var(--border-soft); }
+@media (prefers-reduced-motion: reduce) { .tg-wait.tg-list .tg-wr { transition: none; } }

@@ -283,3 +283,73 @@ body:has(.prc[aria-modal="true"]) .tab-h1 { display: none; }
 .prc-compare,
 .prc-plan,
 .prc-faq { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); box-shadow: none; }
+
+/* ── Pricing as a ledger with one plate (polish lane, final judges: "a stock
+   SaaS plan picker") ─────────────────────────────────────────────────────
+   Nothing here is a white card. The compare, the two plans and the
+   questions are ruled onto the page ground like a fare table: a rule above
+   and below, hairlines between columns and lines. The lead plan's price is
+   the one signpost plate of the page (ink, pointed end), settling in once;
+   the other price is the outlined leg plate. No blaze: nothing is chosen
+   on this page yet. */
+.prc-compare,
+.prc-plan,
+.prc-faq {
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.prc-compare,
+.prc-plans,
+.prc-faq {
+  border-top: var(--stroke-hair) solid var(--border);
+  border-bottom: var(--stroke-hair) solid var(--border);
+}
+.prc-col { padding: var(--space-4) 0; }
+.prc-col + .prc-col { border-top: var(--stroke-hair) solid var(--border-soft); }
+.prc-list { gap: 0; }
+.prc-list li { padding: var(--space-2) 0; }
+.prc-list li + li { border-top: var(--stroke-hair) solid var(--border-soft); }
+.prc-mark { margin-top: 2px; }
+.prc-plans { gap: 0; }
+.prc-plan { padding: var(--space-5) 0; }
+.prc-plan + .prc-plan { border-top: var(--stroke-hair) solid var(--border-soft); }
+.prc-q-sum { padding-inline: 0; border-radius: var(--radius-control); }
+.prc-q-body { padding-inline: 0; }
+@media (hover: hover) {
+  .prc-q-sum:hover { background: none; text-decoration: underline; text-underline-offset: 3px; }
+}
+
+/* The price on its plate. */
+.prc-plan-price {
+  position: relative;
+  isolation: isolate;
+  align-self: flex-start;
+  padding: 8px calc(var(--plate-tip) + 16px) 8px 14px;
+  color: var(--text);
+}
+.prc-plan-price::before,
+.prc-plan-price::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  clip-path: polygon(0 0, calc(100% - var(--plate-tip)) 0, 100% 50%, calc(100% - var(--plate-tip)) 100%, 0 100%);
+}
+.prc-plan-price::before { inset: 0; border-radius: var(--radius-sm); background: var(--edge); }
+.prc-plan-price::after { inset: 1.5px; border-radius: calc(var(--radius-sm) * 0.8); background: var(--surface-page); }
+.prc-plan.is-lead .prc-plan-price { color: var(--on-plate); }
+.prc-plan.is-lead .prc-plan-price::before { background: var(--plate); }
+.prc-plan.is-lead .prc-plan-price::after { content: none; }
+.prc-plan.is-lead .prc-plan-per { color: var(--on-plate-2); }
+.prc-plan.is-lead .prc-plan-price { animation: hs-settle-in var(--dur-settle) var(--ease-settle) both; transform-origin: 6px 0; }
+
+@media (min-width: 769px) {
+  .prc-col { padding: var(--space-5) var(--space-6) var(--space-5) 0; }
+  .prc-col + .prc-col { border-top: 0; border-left: var(--stroke-hair) solid var(--border-soft); padding-left: var(--space-6); }
+  .prc-plan { padding: var(--space-6) var(--space-6) var(--space-6) 0; }
+  .prc-plan + .prc-plan { border-top: 0; border-left: var(--stroke-hair) solid var(--border-soft); padding-left: var(--space-6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .prc-plan.is-lead .prc-plan-price { animation: none; }
+}

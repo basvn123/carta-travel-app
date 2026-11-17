@@ -883,9 +883,14 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-dock-text > .btn.pt-dock-inputs { min-width: 0; max-width: 100%; }
 .btn.pt-dock-inputs .btn-label { min-width: 0; }
 .pt-dock-price { margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-.pt-dock.is-post-in-view .pt-dock-price { display: none; }
-.destp-v5 .pt-dock:not(.is-post-in-view) .pt-dock-price { animation: pt-rise var(--dur-2) var(--ease-out); }
-@media (prefers-reduced-motion: reduce) { .pt-dock .pt-dock-price { animation: none; } }
+/* While the cost post is in view its own date and people pills say them,
+   so the bar does not say them a second time (polish lane, final judges);
+   both rise back once the post scrolls away, as on the outdoor pages. */
+.pt-dock.is-post-in-view .pt-dock-price,
+.pt-dock.is-post-in-view .pt-dock-inputs { display: none; }
+.destp-v5 .pt-dock:not(.is-post-in-view) .pt-dock-price,
+.destp-v5 .pt-dock:not(.is-post-in-view) .pt-dock-inputs { animation: pt-rise var(--dur-2) var(--ease-out); }
+@media (prefers-reduced-motion: reduce) { .pt-dock .pt-dock-price, .pt-dock .pt-dock-inputs { animation: none; } }
 .pt-dock-fig { font-size: var(--text-figure); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
 .pt-dock-unit { font-size: var(--text-label); color: var(--text-2); }
 .btn.pt-dock-inputs {
