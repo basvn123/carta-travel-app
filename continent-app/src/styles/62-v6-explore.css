@@ -545,7 +545,7 @@
       "media fit fit fit";
     padding-block: 2px;
   }
-  .xrows--ledger .xrow-hs .xrow-line2 { margin-top: 1px; line-height: var(--leading-tight); }
+  .xrows--ledger .xrow-hs .xrow-line2 { margin-top: 1px; line-height: var(--leading-tight); flex-wrap: wrap; row-gap: 2px; }
   .xrows--ledger .xrow-hs .xform-parts { --wh: 20px; justify-content: flex-start; margin-top: 1px; }
 }
 /* The flag and the water mark never shrink; the words give way. */

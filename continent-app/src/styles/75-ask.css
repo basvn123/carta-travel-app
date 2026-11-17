@@ -152,8 +152,15 @@
   }
   .ask-picks .xrow-hs .xrow-hit .xrow-why { display: block; margin-top: 2px; }
   .ask-picks .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
-  .ask-picks .xrow-hs .xrow-line1 { align-items: flex-start; }
-  .ask-picks .xrow-hs .xrow-name { white-space: normal; overflow-wrap: anywhere; text-overflow: clip; }
+  /* The name line flows as text, so a name that wraps ("Adrspach-Teplice
+     Rocks") keeps its Score plate after its last word, as short names do. */
+  .ask-picks .xrow-hs .xrow-line1 { display: block; }
+  .ask-picks .xrow-hs .xrow-name { display: inline; white-space: normal; overflow-wrap: anywhere; text-overflow: clip; vertical-align: middle; }
+  .ask-picks .xrow-hs .xrow-line1 > .xscore,
+  .ask-picks .xrow-hs .xrow-line1 > .water-badge { display: inline-flex; margin-left: var(--space-2); vertical-align: middle; }
+  /* A long country ("Bosnia & Herzegovina") puts the hidden gem on its own
+     line instead of running into it. */
+  .ask-picks .xrow-hs .xrow-line2 { flex-wrap: wrap; row-gap: 2px; }
 }
 
 /* A total for the group: the receipt, folded under its row. */
