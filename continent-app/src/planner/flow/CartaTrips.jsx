@@ -192,6 +192,16 @@ export function CartaTrips({ titleTag = 'h1', onOpenJourney, initialStyle = null
     const at = (c) => cardPerDay(c, WEEK);
     return all.filter((c) => Number.isFinite(at(c))).sort((a, b) => at(a) - at(b)).slice(0, FEATURED);
   }, [all, active]);
+  // House style, owner rule 3: every card's figure is a day for one person.
+  // The unit is said once, beside the title of the first section that shows
+  // figures, so it sits next to the figures it explains.
+  const unitAt = featured.length > 0 ? 'season' : cheapest.length > 0 ? 'cheap' : 'all';
+  const secHead = (id, title, unit) => (
+    <div className="pf-carta-hrow">
+      <h2 className="pf-carta-h" id={id}>{title}</h2>
+      {unit && <p className="pl-unit-head">{t('tp.bud.kindDay')}</p>}
+    </div>
+  );
   const open = (card) => onOpenJourney(card.id);
   const card = (c, sizes) => (
     <TripPlaceCard key={c.id} card={c} length={WEEK} month={month} saved={savedSet.has(c.id)} short
@@ -267,18 +277,16 @@ export function CartaTrips({ titleTag = 'h1', onOpenJourney, initialStyle = null
         />
       )}
 
-      {/* House style: every card's figure is a day for one person; the unit is said once. */}
-      <p className="pl-unit-head">{t('tp.bud.kindDay')}</p>
       {featured.length > 0 && (
         <section className="pf-carta-sec" aria-labelledby="pf-carta-season">
-          <h2 className="pf-carta-h" id="pf-carta-season">{t('pf.carta.inSeason')}</h2>
+          {secHead('pf-carta-season', t('pf.carta.inSeason'), unitAt === 'season')}
           <div className="pf-carta-rail">{featured.map((c) => card(c, RAIL_SIZES))}</div>
         </section>
       )}
 
       {cheapest.length > 0 && (
         <section className="pf-carta-sec" aria-labelledby="pf-carta-cheap">
-          <h2 className="pf-carta-h" id="pf-carta-cheap">{t('pf.carta.cheapest')}</h2>
+          {secHead('pf-carta-cheap', t('pf.carta.cheapest'), unitAt === 'cheap')}
           <div className="pf-carta-rail">{cheapest.map((c) => card(c, RAIL_SIZES))}</div>
         </section>
       )}
@@ -289,9 +297,7 @@ export function CartaTrips({ titleTag = 'h1', onOpenJourney, initialStyle = null
         </div>
       ) : (
         <section className="pf-carta-sec" aria-labelledby="pf-carta-all">
-          <h2 className="pf-carta-h" id="pf-carta-all">
-            {style ? styleName(style) : t('pf.carta.allTrips')}
-          </h2>
+          {secHead('pf-carta-all', style ? styleName(style) : t('pf.carta.allTrips'), unitAt === 'all' && rows.length > 0)}
           {rows.length > 0 ? (
             <div className="pf-carta-grid">{rows.slice(0, shown).map((c) => card(c, GRID_SIZES))}</div>
           ) : (

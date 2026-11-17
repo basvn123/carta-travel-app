@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { tabHref } from '../../lib/urlState.js';
-import { loadJourneyIndex, splitAround } from '../../lib/journeys.js';
+import { loadJourneyIndex } from '../../lib/journeys.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { TripArt } from '../../components/TripArt.jsx';
 import { Button, Chip, IconButton } from '../../components/ui/index.js';
@@ -56,7 +56,7 @@ function TripCollection({ fan, onOpen }) {
           <span key={tp?.slug || i} className={`pf-coll-photo${tp ? '' : ' is-wait'}`}
             style={{ '--k': SLOTS[i], '--z': SLOTS.length - Math.abs(SLOTS[i]), '--i': i }}>
             {tp && <HeroImage url={tp.hero.url} city={tp.name} className="pf-coll-img" maxWidth={500}
-              sizes="(max-width: 768px) 30vw, 200px" ratio={[3, 4]} />}
+              sizes="(max-width: 768px) 30vw, (max-width: 1023px) 200px, 280px" ratio={[3, 4]} />}
           </span>
         ))}
       </span>
@@ -361,9 +361,6 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
     return () => { live = false; };
   }, []);
 
-  const accent = t('pf.home.titleAccent');
-  const [lead, , tail] = splitAround(t, 'pf.home.title', { accent }, 'accent');
-
   // T903 (owner, Plan home board 2026-10-30): with trips, the page is where
   // you come back to: your trips first, the slogan and the fan only greet a
   // first visit. T988: no in-season rail; Carta's trips are the door under
@@ -446,9 +443,9 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
   return (
     <div className="pf-open">
       <div className="pf-open-text">
-        <Title className="pf-title pf-open-title" tabIndex={-1}>
-          {lead}<span className="pf-open-accent">{accent}</span>{tail}
-        </Title>
+        {/* House style (integration, P10): the house page head, the tab's
+            job in ink, instead of a slogan with an umber second line. */}
+        <Title className="pf-title pf-open-title" tabIndex={-1}>{t('pf.home.planTitle')}</Title>
         <div className="pf-open-actions">
           <Button variant="primary" className="pf-open-start" iconEnd={<ArrowRightIcon size={20} />} onClick={onStart}>
             {t('pf.home.start')}

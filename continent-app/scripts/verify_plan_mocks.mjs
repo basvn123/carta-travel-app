@@ -104,8 +104,9 @@ if (ONLY.includes('U')) try {
   const page = await fresh();
   await page.goto(`${BASE}/?tab=plan&paymock`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('.pf-open', { timeout: 30000 });
+  // T1103 (G12): Start planning opens on Tell Carta (no trip under way, so
+  // no "new trip or the one you are on" question first).
   await page.getByRole('button', { name: 'Start planning' }).click();
-  await cont(page);
   await page.waitForSelector('#pf-tell');
   await page.locator('.pf-prompt input[type=file]').setInputFiles({ name: 'booking.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4\n% booking\n') });
   // The parse-booking call goes to the mock Supabase host baked into the build
@@ -152,9 +153,21 @@ if (ONLY.includes('U')) try {
 // ---- N. On a trip now ----
 if (ONLY.includes('N')) try {
   const page = await fresh();
+  // T1103 (G12): "a new trip or the one you are on" is asked only while a
+  // trip is under way today, so this run keeps one on the device: Lisbon,
+  // from yesterday to three days on. With a trip the Plan home lists it and
+  // offers New trip.
+  await page.addInitScript(() => {
+    const day = (n) => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+    try {
+      if (!localStorage.getItem('carta.tripDraft.v1')) {
+        localStorage.setItem('carta.tripDraft.v1', JSON.stringify({ stops: [{ destinationId: 'LIS', nights: 4 }], tripStart: day(-1), tripEnd: day(3), planLabel: 'Lisbon now' }));
+      }
+    } catch { /* none */ }
+  });
   await page.goto(`${BASE}/?tab=plan`, { waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('.pf-open', { timeout: 30000 });
-  await page.getByRole('button', { name: 'Start planning' }).click();
+  await page.waitForSelector('.pfh-new', { timeout: 30000 });
+  await page.locator('.pfh-new').first().click();
   await page.getByRole('radio', { name: /on a trip/i }).click();
   await cont(page);
   await page.getByRole('radio', { name: /Add my trip as it is/ }).click();

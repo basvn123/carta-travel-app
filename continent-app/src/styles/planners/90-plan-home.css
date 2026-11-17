@@ -252,3 +252,36 @@
 /* Polish round 1: the door's three photos lie flat and overlap (no tilted
    polaroid deck), in the house photo treatment. */
 .pfh a.pfh-door .pfh-door-photo { border-width: var(--stroke-edge); border-radius: var(--radius-control); transform: none; animation: none; }
+
+/* Integration (P1): the unit is said once, right-aligned in the first
+   section's title row, next to the figures it explains. */
+.pf-carta-hrow { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); margin-bottom: var(--space-3); }
+.pf-carta-hrow .pf-carta-h,
+.pf.is-carta .pf-carta-hrow .pf-carta-h { margin: 0; }
+.pf.is-carta .pf-carta-hrow { margin-bottom: var(--space-2); }
+.pf-carta-hrow .pl-unit-head { margin: 0; }
+
+/* Integration (P6): the Ready-made card on the rail-card grammar (05-house.css
+   .hs-rcard): the photo, the name loud, the flag and country in the body
+   size, then the figure loudest of all in the formation's figure size. The
+   card keeps its own markup until the kit RailCard takes body and foot slots
+   (builder-P.md). Journey cards carry no score, so no Score plate. */
+.ctc .ctc-hit { gap: 6px; }
+.ctc .ctc-over { gap: 2px; margin-top: 4px; }
+.ctc .ctc-name { font-size: var(--text-lead); font-weight: 700; line-height: 1.25; letter-spacing: 0; }
+.ctc .ctc-where { gap: 6px; font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
+.ctc .ctc-what { font-weight: 500; color: var(--text-2); }
+.ctc .ctc-price { align-items: center; margin-top: 4px; }
+.ctc .ctc-price .jcap-fig { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.ctc .ctc-price .jcap-fig .money {
+  font-size: var(--text-figure);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--text);
+}
+.ctc .ctc-price .jcap-fig.is-none { font-weight: 400; color: var(--text-3); }
+@media (hover: hover) {
+  .ctc .ctc-hit:hover .ctc-img { transform: scale(1.03); }
+}

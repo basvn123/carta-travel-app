@@ -6,7 +6,7 @@ import { ArrowRightIcon, HomeIcon, MapPinIcon, PlusIcon, SettingsIcon } from '..
 import { TripHead } from '../TripSummary.jsx';
 import { partyText } from '../../lib/party.js';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
-import { useStepIn } from './paintGuard.js';
+import { usePickTick, useStepIn } from './paintGuard.js';
 import { QUESTIONS } from './questions.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { FlowRail } from './FlowRail.jsx';
@@ -82,6 +82,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   // House style: the question settles in when the step changes (presentation only).
   const stepRef = useRef(null);
   useStepIn(stepRef, phase);
+  usePickTick(stepRef);
   useEffect(() => {
     rememberPlace('trip', tripsStore.getActiveId(), phase === 'engine' ? null : { phase, walked, quick: quick.current });
   }, [phase, walked]);

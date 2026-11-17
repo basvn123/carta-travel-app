@@ -21,6 +21,29 @@ export function usePaintOnStep(step) {
   return seen.current.paint;
 }
 
+/** The chosen row's mark ticks only after the traveller's own pick, never
+ *  for a row that arrives already chosen: a tap or a key on a choice row
+ *  marks its step (`data-picked`), and the CSS tick is scoped to that mark.
+ *  The flow's step clears it on a step change (useStepIn); the wizard's
+ *  step remounts, so a new step starts without it. Presentation only. */
+export function usePickTick(ref) {
+  useEffect(() => {
+    const root = ref.current;
+    if (!root) return undefined;
+    const mark = (e) => {
+      const row = e.target instanceof Element ? e.target.closest('.ui-crow') : null;
+      const step = row?.closest('.pf-step, .guide-canvas');
+      if (step) step.dataset.picked = '';
+    };
+    root.addEventListener('click', mark);
+    root.addEventListener('keydown', mark);
+    return () => {
+      root.removeEventListener('click', mark);
+      root.removeEventListener('keydown', mark);
+    };
+  }, [ref]);
+}
+
 /** The question settles in when the step changes (not at first paint): the
  *  class is taken off and put back so the CSS animation plays again on the
  *  same element, without remounting the step. Presentation only. */
@@ -30,6 +53,8 @@ export function useStepIn(ref, step) {
     if (first.current) { first.current = false; return; }
     const el = ref.current;
     if (!el) return;
+    // A new step starts unpicked: its preselected row does not tick.
+    delete el.dataset.picked;
     el.classList.remove('pl-step-in');
     void el.offsetWidth; // restart the animation
     el.classList.add('pl-step-in');

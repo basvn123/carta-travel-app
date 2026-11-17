@@ -1350,17 +1350,6 @@
 .pf-when-seg > span { font-size: var(--text-caption); font-weight: 600; opacity: 0.85; }
 .pf-when-seg > b { font-weight: 800; }
 
-/* A Continue that is not ready reads as unavailable at every width. The kit
-   orders .btn-primary after .btn:disabled, so a disabled primary kept its
-   umber (foundation request 1); this screen states the kit's own disabled
-   look until the kit fixes the order. */
-.pf-step .pf-foot .btn.btn-primary:disabled,
-.trip-wizard-modal .guide-foot .btn.btn-primary:disabled {
-  border-color: var(--border);
-  background: var(--surface-sunken);
-  color: var(--text-3);
-}
-
 /* Step change: the question settles in (opacity and a short rise on the
    settle curve, no overshoot), only when the step really changed; reduced
    motion shows the end state (02-base.css zeroes durations). */
@@ -1368,14 +1357,33 @@
 @keyframes pl-step-in { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
 
 /* Select: the chosen row's radio dot springs in on the tick (the finger's
-   control may overshoot, DESIGN.md Interaction rule 3). */
-.pf-step .ui-crow.is-on .ui-crow-mark::after,
-.trip-wizard-modal .ui-crow.is-on .ui-crow-mark::after { animation: pl-tick var(--dur-tick) var(--ease-tick) both; }
+   control may overshoot, DESIGN.md Interaction rule 3), only after the
+   traveller's own pick: usePickTick marks the step (data-picked), so a row
+   that arrives chosen stays still. */
+.pf-step[data-picked] .ui-crow.is-on .ui-crow-mark::after,
+.trip-wizard-modal .guide-canvas[data-picked] .ui-crow.is-on .ui-crow-mark::after { animation: pl-tick var(--dur-tick) var(--ease-tick) both; }
 @keyframes pl-tick { from { scale: 0.2; } to { scale: 1; } }
+
+/* The guided wizard's step settles in the same way, only after a step change
+   (GuidedTripWizard gives the remounted canvas .pl-step-in); the first paint
+   stays still. Forward rises in from the right, Back from the left. */
+.trip-wizard-modal:not(.day-wizard) .wiz-main .guide-canvas { animation: none; }
+.trip-wizard-modal:not(.day-wizard) .wiz-main .guide-canvas.pl-step-in { animation: wiz-in-fwd var(--dur-3) var(--ease-settle) both; }
+.trip-wizard-modal.wiz-back:not(.day-wizard) .wiz-main .guide-canvas.pl-step-in { animation-name: wiz-in-back; }
+
+/* More: the page it adds glides in (the first page and a filter change of
+   the first page stay still). Ready-made trips add 24, the recommended
+   countries 6. */
+.pf-carta-grid > .ctc:nth-child(n + 25),
+.guide-where .mcards > .mcard:nth-child(n + 7) { animation: pl-step-in var(--dur-3) var(--ease-settle) both; }
+
 @media (prefers-reduced-motion: reduce) {
   .pf-step.pl-step-in,
-  .pf-step .ui-crow.is-on .ui-crow-mark::after,
-  .trip-wizard-modal .ui-crow.is-on .ui-crow-mark::after { animation: none; }
+  .pf-step[data-picked] .ui-crow.is-on .ui-crow-mark::after,
+  .trip-wizard-modal .guide-canvas[data-picked] .ui-crow.is-on .ui-crow-mark::after,
+  .trip-wizard-modal:not(.day-wizard) .wiz-main .guide-canvas.pl-step-in,
+  .pf-carta-grid > .ctc:nth-child(n + 25),
+  .guide-where .mcards > .mcard:nth-child(n + 7) { animation: none; }
 }
 
 /* The collection: a flat row of rounded photo tiles in the house photo
@@ -1397,3 +1405,36 @@
   animation: none;
 }
 .pf-open .pf-coll .pf-coll-photo:nth-child(even) { margin-top: var(--space-4); }
+
+/* Integration (P10): the empty plan home opens on the house page head (the
+   tab's job in ink, --text-headline 800, no umber second line). From 1024 px
+   the head and its two actions share one row at the top and the collection
+   runs under them across the whole width, its tiles as one row of large
+   photographs, so the wide screen is filled by trips, not by margin. */
+.pf-open .pf-open-title {
+  max-width: none;
+  font-size: var(--text-headline);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.018em;
+}
+@media (min-width: 1024px) {
+  .pf-open:not(.is-bare) {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: var(--space-6);
+  }
+  .pf-open:not(.is-bare) .pf-open-text {
+    flex: none;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4) var(--space-6);
+  }
+  .pf-open:not(.is-bare) .pf-open-actions { width: auto; margin-top: 0; }
+  .pf-open:not(.is-bare) .pf-open-text > .pf-open-resume { flex-basis: 100%; }
+  .pf-open:not(.is-bare) .pf-open-stage { grid-column: 1; grid-row: 2; }
+  .pf-open .pf-coll { gap: var(--space-5); padding: var(--space-5); }
+  .pf-open .pf-coll .pf-coll-fan { gap: var(--space-3); }
+  .pf-open .pf-coll .pf-coll-photo:nth-child(even) { margin-top: 0; }
+}

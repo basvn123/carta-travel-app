@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
+import { usePickTick } from './flow/paintGuard.js';
 import { countriesFromData } from '../lib/tripGuide.js';
 import { TRAVEL_STYLES, nearbyAirports } from '../lib/wizardTransit.js';
 import { plannerStore } from './plannerStore.js';
@@ -706,6 +707,7 @@ export function GuidedTripWizard({
   // (T408, brief V5-1). The inline mount is the page itself and takes none.
   const modalRef = useRef(null);
   useFocusTrap(modalRef, handleCancel, { enabled: !inline });
+  usePickTick(modalRef);
   const startOver = () => {
     if (!window.confirm(t('wizard.confirmStartOver'))) return;
     setStep(1);
@@ -827,6 +829,12 @@ export function GuidedTripWizard({
   // step's scroll offset, so a long screen can open halfway down its own
   // heading and read as broken.
   const bodyRef = useRef(null);
+  // House style: the step settles in only after the traveller's own step,
+  // never at the wizard's first paint (the flow's useStepIn). The canvas
+  // remounts per step, so the class comes from the render, not an effect,
+  // which would show the new step for a frame before it settles.
+  const firstStepKey = useRef(`${stepName}-${step}`);
+  const stepIn = firstStepKey.current !== `${stepName}-${step}`;
   useEffect(() => {
     if (bodyRef.current) bodyRef.current.scrollTop = 0;
   }, [step]);
@@ -987,7 +995,7 @@ export function GuidedTripWizard({
           <div className={`wiz-main ${railOn ? 'has-rail wiz-split' : ''}`}>
             {/* Keyed on the step so each screen remounts and replays its
                 entrance rather than silently swapping content in place. */}
-            <div className="guide-canvas" key={`${stepName}-${step}`}>
+            <div className={`guide-canvas${stepIn ? ' pl-step-in' : ''}`} key={`${stepName}-${step}`}>
               {stepName === 'Booked' && <StepBookedWho {...{ titleTag: StepTitle, booked, setBooked, party, setParty }} />}
 
               {stepName === 'From' && (
