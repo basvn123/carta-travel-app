@@ -133,6 +133,35 @@
 .ask-pick { padding: var(--space-2) 0; border-top: 1px solid var(--border-soft); }
 .ask-pick:first-child { border-top: 0; }
 .ask-pick-meta { margin: var(--space-1) 0 0; font-size: var(--text-caption); color: var(--text-2); }
+/* The rows are Explore's house rows (PlaceRow, .xrow-hs), laid out by the
+   list's own width like Explore's list: the list is an xlist container. The
+   list item draws the hairline, so the row's own goes. */
+.ask-picks.explore-shell { container: xlist / inline-size; }
+.ask-picks .xrow-hs { border-bottom: 0; }
+/* A narrow answer (the chat column, a phone sheet): the reason Ask gives
+   (why it fits, or the group total) keeps its own line under the country,
+   as the map column does, and the parts sit under it. */
+@container xlist (max-width: 599px) {
+  .ask-picks .xrow-hs .xrow-hit {
+    grid-template-areas:
+      "media l1 l1 day"
+      "media l2 l2 l2"
+      "media why why why"
+      "media parts parts parts"
+      "media fit fit fit";
+  }
+  .ask-picks .xrow-hs .xrow-hit .xrow-why { display: block; margin-top: 2px; }
+  .ask-picks .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
+  /* The name line flows as text, so a name that wraps ("Adrspach-Teplice
+     Rocks") keeps its Score plate after its last word, as short names do. */
+  .ask-picks .xrow-hs .xrow-line1 { display: block; }
+  .ask-picks .xrow-hs .xrow-name { display: inline; white-space: normal; overflow-wrap: anywhere; text-overflow: clip; vertical-align: middle; }
+  .ask-picks .xrow-hs .xrow-line1 > .xscore,
+  .ask-picks .xrow-hs .xrow-line1 > .water-badge { display: inline-flex; margin-left: var(--space-2); vertical-align: middle; }
+  /* A long country ("Bosnia & Herzegovina") puts the hidden gem on its own
+     line instead of running into it. */
+  .ask-picks .xrow-hs .xrow-line2 { flex-wrap: wrap; row-gap: 2px; }
+}
 
 /* A total for the group: the receipt, folded under its row. */
 .ask-receipt { margin: var(--space-2) 0 0; }

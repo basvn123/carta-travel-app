@@ -1,5 +1,6 @@
 import React from 'react';
 import { SheetShell } from './SheetShell.jsx';
+// The house list row, as Explore draws it (G1 polish).
 import { PlaceRow } from './explore/PlaceRow.jsx';
 import { GuidedSlots } from './GuidedSearch.jsx';
 import { useAsk, EXAMPLE_KEYS } from './useAsk.js';

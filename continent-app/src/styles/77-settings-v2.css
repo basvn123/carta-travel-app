@@ -227,6 +227,26 @@
 @media (min-width: 769px) and (max-width: 1200px) {
   .settings-line .settings-vibe { display: none; }
 }
+/* A tablet (769 to 1023 px) is its own layout, not a squeezed desktop bar
+   (polish lane, final judges: at 820 "Any time, 7 ..." was cut and When and
+   Lifestyle lost their labels). The parts lie in two rows of three, ruled
+   like the timetable they are, so every part keeps its label and its whole
+   value. Nothing moves out of the bar. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .settings-line .settings-line-parts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    flex: 1 1 auto;
+  }
+  .settings-line-parts > .settings-slot { min-width: 0; }
+  .settings-line-parts > :nth-child(3n + 1) { border-left: 0; }
+  .settings-line-parts > :nth-child(n + 4) { border-top: 1px solid var(--border-soft); }
+  .settings-line-parts > :nth-child(3n + 1) .settings-part { padding-left: 0; }
+  /* The container rule for a narrow line hides these labels; the tablet
+     grid has room for them. */
+  .settings-line .settings-part-dates .settings-part-label,
+  .settings-line .settings-part-lifestyle .settings-part-label { display: inline; }
+}
 
 /* ---- Phone: the Countries door beside Filters. ---- */
 .btn.ctry-btn { flex: 1 1 0; min-width: 0; }

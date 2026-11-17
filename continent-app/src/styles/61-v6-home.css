@@ -169,11 +169,12 @@
   text-wrap: balance;
 }
 /* The slogan's words lift out of their own line once (T949), one beat
-   apart; the accent ("cheap trip") is the house's beige, the colour of the
-   food wagon and of every quiet surface, in large type on the tinted film. */
+   apart. The slogan speaks in one voice (polish lane, final judges: a
+   coloured headline word is a template tell), so the accent span keeps
+   only its place in the lift; it takes the headline's own ink. */
 .hv-word { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: 0.08em; margin-bottom: -0.08em; }
 .hv-word > span { display: inline-block; animation: hv-lift var(--dur-reveal) var(--ease-out) calc(var(--i, 0) * var(--dur-1) / 2) both; }
-.hv-em { color: var(--umber-200); }
+.hv-em { color: inherit; }
 @keyframes hv-lift { from { transform: translateY(110%); } to { transform: none; } }
 .hv-sub {
   margin: 0;

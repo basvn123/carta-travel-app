@@ -15,6 +15,8 @@ import { prefersReducedMotion } from '../../lib/motion.js';
 import { googleFlightsLink } from '../../lib/flights/flights.js';
 import { AskAnswer, askReport } from '../AskSearchFull.jsx';
 import { AiMark, AiReport } from '../../components/AiMark.jsx';
+// The house list row, as Explore draws it (G1 polish: the Ask rows lost
+// their layout when the row CSS moved to .xrow-hs).
 import { PlaceRow } from '../explore/PlaceRow.jsx';
 import { AskTripCard } from './AskTripCard.jsx';
 import { CornerArrow } from './marks.jsx';
@@ -286,6 +288,7 @@ function ListReply({ t, lang, ctx, turn, s, latest, animate }) {
   const { facts, answer, intent, written } = s;
   const [shown, setShown] = React.useState(SHOWN_PLACES);
   const [revealed, setRevealed] = React.useState(!animate);
+  const uid = React.useId();
   const picks = facts.picks;
   const chips = placeChips(picks);
   const fromModel = written.state === 'done' ? replyText(written.sentences) : '';
@@ -302,13 +305,17 @@ function ListReply({ t, lang, ctx, turn, s, latest, animate }) {
         <Reveal text={text} animate={animate} onDone={() => setRevealed(true)} />
         {revealed && picks.length > 0 && (
           <ol className="ask-picks explore-shell ac-places" aria-label={t('askChat.placesLabel')}>
-            {picks.slice(0, shown).map((p) => (
+            {picks.slice(0, shown).map((p, i) => (
               <li key={p.id} className="ac-place">
                 <PlaceRow p={p.dest} t={t}
                   reason={totals.has(p.id) ? t('askChat.groupTotal', { total: totals.get(p.id) }) : null}
                   onOpen={() => pickPlace({ id: p.id, city: p.dest.city })}
-                  hitProps={{ 'aria-label': t('askChat.pickAria', { place: p.dest.city }) }}
-                  fav={!!ctx.favorites?.has?.(p.id)} onToggleFav={ctx.onToggleFav} />
+                  // The link is named by its row, city first, as Explore's rows
+                  // are (WCAG 2.5.3); what it does is its description.
+                  hitProps={{ 'aria-describedby': `${uid}-${i}` }}
+                  fav={!!ctx.favorites?.has?.(p.id)} onToggleFav={ctx.onToggleFav}>
+                  <span id={`${uid}-${i}`} className="sr-only">{t('askChat.pickAria', { place: p.dest.city })}</span>
+                </PlaceRow>
               </li>
             ))}
           </ol>

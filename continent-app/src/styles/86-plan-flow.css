@@ -1445,3 +1445,93 @@
   .pf-open:not(.is-bare) .pf-open-text { flex: none; justify-content: flex-start; }
   .pf-open:not(.is-bare) .pf-open-stage { margin-top: var(--space-2); }
 }
+
+/* ── Desktop layouts (polish lane, final judges: "a phone layout given more
+   ground") ─────────────────────────────────────────────────────────────── */
+/* Plan home from 1024 px: two columns that fill the first view. Left, the
+   tab's job and its two actions stacked as a column; right, Carta's own
+   trips as a mosaic of their photographs (three over two), so the page
+   is filled by trips, not by bare ground. One link, as before. */
+@media (min-width: 1024px) {
+  .pf-open:not(.is-bare) {
+    display: grid;
+    grid-template-columns: minmax(280px, 4fr) minmax(0, 7fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: stretch;
+    align-content: stretch;
+    gap: var(--space-8);
+    height: 100%;
+    max-height: 860px;
+    padding-block: var(--space-6);
+  }
+  .pf-open:not(.is-bare) .pf-open-text {
+    grid-column: 1;
+    grid-row: 1;
+    flex-flow: column nowrap;
+    align-items: stretch;
+    justify-content: center;
+    gap: var(--space-5);
+  }
+  .pf-open:not(.is-bare) .pf-open-title { font-size: var(--text-plan-hero); }
+  .pf-open:not(.is-bare) .pf-open-actions { flex-direction: column; align-items: stretch; width: 100%; max-width: 360px; }
+  .pf-open:not(.is-bare) .pf-open-text > .pf-open-resume { flex-basis: auto; max-width: 360px; }
+  .pf-open:not(.is-bare) .pf-open-stage { display: flex; grid-column: 2; grid-row: 1; min-height: 0; }
+  .pf-open:not(.is-bare) .pf-coll { flex: 1 1 auto; min-height: 420px; }
+  .pf-open:not(.is-bare) .pf-coll .pf-coll-fan {
+    flex: 1 1 auto;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    min-height: 0;
+  }
+  .pf-open:not(.is-bare) .pf-coll .pf-coll-photo,
+  .pf-open:not(.is-bare) .pf-coll:hover .pf-coll-photo { aspect-ratio: auto; height: 100%; min-height: 0; }
+  /* Three over two, every tile within its photograph's own resolution. */
+  .pf-open:not(.is-bare) .pf-coll .pf-coll-photo { grid-column: span 2; }
+  .pf-open:not(.is-bare) .pf-coll .pf-coll-photo:nth-child(n + 4) { grid-column: span 3; }
+  .pf-open:not(.is-bare) .pf-coll .pf-coll-photo .ladder-pic,
+  .pf-open:not(.is-bare) .pf-coll .pf-coll-photo .pf-coll-img { display: block; width: 100%; height: 100%; object-fit: cover; }
+}
+
+/* The wizard from 1024 px: the step column stands in the middle of its
+   pane, and Continue follows the content instead of waiting at the bottom
+   of the screen; it still sticks to the pane's foot when a long step
+   scrolls. */
+@media (min-width: 1024px) {
+  .pf-stage.is-studio > .pf-sheet { align-items: center; padding-top: var(--space-7); }
+  .pf-stage.is-studio > .pf-sheet > .pf-step { flex: 0 0 auto; }
+  .pf-stage.is-studio .pf-step .pf-foot { margin-top: var(--space-5); }
+}
+
+/* The party counters in a planner step follow the choice rows above them:
+   one ruled list (rule above and below, a hairline between), not three
+   white cards (polish lane). The steppers and their limits are unchanged. */
+.pf-step .party:not(.is-compact) {
+  gap: 0;
+  border-top: var(--stroke-hair) solid var(--border);
+  border-bottom: var(--stroke-hair) solid var(--border);
+}
+.pf-step .party:not(.is-compact) > .party-row {
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+.pf-step .party:not(.is-compact) > .party-row + .party-row { border-top: var(--stroke-hair) solid var(--border-soft); }
+
+/* Carta's own trips on Plan home lie on the ground, not in a white panel
+   (polish lane, round 2): the photographs keep their rounded corners and
+   the title with its door sits under them on a ruled foot. Still one link. */
+.pf-open .pf-coll,
+.pf-open .pf-coll:hover {
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: var(--radius-card);
+}
+.pf-open .pf-coll .pf-coll-foot {
+  padding-top: var(--space-3);
+  border-top: var(--stroke-hair) solid var(--border);
+}
+@media (min-width: 1024px) {
+  .pf-open .pf-coll { padding: 0; }
+}

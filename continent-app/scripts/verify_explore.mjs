@@ -302,7 +302,8 @@ try {
   // the name, and nothing but the picture sits in the row's photo.
   check('nothing sits on the row photograph; the Score follows the name',
     await page.locator('.xrow').first().locator('.xrow-line1 > .xscore').count() === 1
-    && await page.locator('.xrow').first().locator('.xrow-media > :not(img):not(.hero-blank)').count() === 0);
+    // The photo ladder (main, 2026-11) draws the photo as <picture class="ladder-pic">.
+    && await page.locator('.xrow').first().locator('.xrow-media > :not(img):not(picture.ladder-pic):not(.hero-blank)').count() === 0);
   const countBefore = await firstNames();
   // T1089: See all lands on a list already filtered (Excellent and up), so the
   // Filters count starts above zero.

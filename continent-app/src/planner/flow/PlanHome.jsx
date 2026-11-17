@@ -55,8 +55,8 @@ function TripCollection({ fan, onOpen }) {
         {(fan || SLOTS.map(() => null)).map((tp, i) => (
           <span key={tp?.slug || i} className={`pf-coll-photo${tp ? '' : ' is-wait'}`}
             style={{ '--k': SLOTS[i], '--z': SLOTS.length - Math.abs(SLOTS[i]), '--i': i }}>
-            {tp && <HeroImage url={tp.hero.url} city={tp.name} className="pf-coll-img" maxWidth={500}
-              sizes="(max-width: 768px) 30vw, (max-width: 1023px) 200px, 280px" ratio={[3, 4]} />}
+            {tp && <HeroImage url={tp.hero.url} city={tp.name} className="pf-coll-img" maxWidth={800}
+              sizes="(max-width: 768px) 30vw, (max-width: 1023px) 200px, 480px" ratio={[3, 4]} />}
           </span>
         ))}
       </span>

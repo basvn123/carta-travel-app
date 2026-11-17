@@ -1053,6 +1053,18 @@
 @media (min-width: 600px) { .tff-tp-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 /* Beside the cost post at 769 to 1023 px the pane is narrow: two tiles a row, none orphaned. */
 @media (min-width: 769px) and (max-width: 1023px) { .tff-tp-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Four facts never leave one alone on a row (polish lane, final judges: 3 + 1
+   at 1440): two by two up to 1023 px, one row of four from 1024 px. */
+@media (min-width: 600px) and (max-width: 768px) {
+  .tff-tp-facts:has(> :nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1024px) {
+  .tff-tp-facts:has(> :nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+/* An odd last fact in a two-column grid takes the whole row. */
+@media (max-width: 599px), (min-width: 769px) and (max-width: 1023px) {
+  .tff-tp-facts > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
 .tff-tp-fact {
   position: relative;
   display: grid;

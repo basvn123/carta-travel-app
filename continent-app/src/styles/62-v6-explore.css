@@ -545,7 +545,7 @@
       "media fit fit fit";
     padding-block: 2px;
   }
-  .xrows--ledger .xrow-hs .xrow-line2 { margin-top: 1px; line-height: var(--leading-tight); }
+  .xrows--ledger .xrow-hs .xrow-line2 { margin-top: 1px; line-height: var(--leading-tight); flex-wrap: wrap; row-gap: 2px; }
   .xrows--ledger .xrow-hs .xform-parts { --wh: 20px; justify-content: flex-start; margin-top: 1px; }
 }
 /* The flag and the water mark never shrink; the words give way. */
@@ -596,6 +596,15 @@
    shares), close to the first rail, without a rule. */
 .xrails > .xlist-head { padding: 0; border-bottom: 0; margin-bottom: calc(var(--space-3) - var(--space-7)); }
 .xlist-note { color: var(--text-2); }
+/* Over the rails a shared note ("Local transport: not yet") is about the
+   figures, so it stands with their unit at the right, after a hairline,
+   instead of floating at the left with no subject (polish lane, final
+   judges). The dates, when set, keep the left. */
+.xrails > .xlist-head { justify-content: flex-end; align-items: baseline; }
+.xrails > .xlist-head .xlist-dates { order: -2; margin-right: auto; }
+.xrails > .xlist-head .xlist-dates:empty { display: none; }
+.xrails > .xlist-head .xlist-unit { order: -1; margin-left: 0; }
+.xrails > .xlist-head .xlist-note { padding-left: var(--space-3); border-left: var(--stroke-hair) solid var(--border); font-weight: 500; }
 @media (max-width: 768px) {
   /* Room under the last row for the floating Map pill. */
   .explore-shell .xcontent-main { padding-bottom: calc(var(--tap) + var(--space-7)); }

@@ -1339,7 +1339,7 @@ Worked example: core 1,738, buffer 10% = 174, total 1,912. Budget 1,800: core fi
    - far: weeks 3 to 26, one day a week, each route every 2 weeks (`FAR_CYCLE` 20,160)
    - late: weeks 27 to 45, each route every 4 weeks, run on the Hetzner box and sent in through `/ingest`
    - find: Carta airport pairs with no route, 21 days out, direct flights only, at least 150 km apart, each pair every 90 days (`FIND_CYCLE` 129,600)
-4. A route's turn is its index modulo the cycle, in half minute slots: two per minute by day, one per minute from 22:00 to 05:00 UTC (T1043).
+4. A route's turn is its index modulo the cycle, in half minute slots: two per minute by day, none from 22:00 to 05:00 UTC (`NIGHT_SLOTS = 0`, N6, 2026-11-17; T1043 had one, half speed). The night searches nothing; the day minutes carry the whole cycle, about 20 searches a minute.
 5. A route with no direct flight on 6 checks in a row is dormant (`DORMANT_AFTER`); only the find tier looks again.
 6. Guard: the first refusal from Google stops the minute and pauses the sweep for 1 hour, doubling while refusals keep coming (reset after 2 hours quiet), at most 24 hours.
 7. Publish gate (`gate.sweep`): a one way fare is dropped if it is 0 or less, or above max(250, 150 + 0.5 x km); with no distance known, above 1,500. Example: a 1,000 km route allows up to EUR 650.
@@ -1349,7 +1349,7 @@ Worked example: core 1,738, buffer 10% = 174, total 1,912. Budget 1,800: core fi
 
 **Where it lives.** `continent-app/workers/flight-sweep/src/index.mjs`, `plan.mjs`, `publish.mjs`, `ingest.mjs`, `continent-app/workers/shared/flightSearch.mjs`, `pipeline/flights/build_routes.py`. Latest reports: `T1043`, T1042, T1020.
 
-**Limits.** Google's terms do not allow automated reading; the owner accepted the risk (T518-c). The night half speed is not deployed yet (T1043-a). The late tier's first cycle is still being watched (T798-b). UK and Czech gaps were found (T915-a, T915-b).
+**Limits.** Google's terms do not allow automated reading; the owner accepted the risk (T518-c). Google refused the Worker every night, also at half speed (0 of 7 nights clean, three refusals a night), so since 2026-11-17 it does not search at night (N6). The late tier's first cycle is still being watched (T798-b). UK and Czech gaps were found (T915-a, T915-b).
 
 ---
 
@@ -2359,9 +2359,9 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 **Where it lives.** `pipeline/photos/derive.py`, `pipeline/photos/wire_ladder.py`, `pipeline/photos/hero_ladder.py`, `continent-app/src/lib/imageLadder.js`, `continent-app/src/lib/heroImage.js`, `continent-app/src/lib/heroLadder.json`, `continent-app/src/lib/pictureFlag.js`, `continent-app/src/components/LayerPhoto.jsx`, `continent-app/src/components/HeroImage.jsx`, `archive/execution-2026-11-11:archive/docs-2026-11/PHOTOS.md`.
 
 **Limits.**
-- The CDN is not live: open rows T049-a to T049-d, T052-a and T235-d.
+- The CDN is live since 2026-11-17: three `image_transcode` runs on CPX22 workers (no CAX41 was free in any EU location) derived the published photos of beaches, mountains, trails, cycling, region, dest and dossier (68,687; job argument `published`). Lakes waits on a lakes cache tarball without a rescore hold. T052-a and T235-d stay open.
 - Nothing joins the manifest into the wire, so production has no `ih` or `d` (T052-d).
-- `heroLadder.json` ships not live until the owner's derive run of the `dest` and `dossier` layers is on R2 and `hero_ladder.py` is re-run (T1105-a).
+- `heroLadder.json` is live since 2026-11-17: 13,887 of 13,976 destination and gallery photographs have a copy, 89 are listed missing, 1,798 carry their real rung sizes in `dims`. It adds about 25 KB gzip to the entry chunk; storing one source size per `dims` key instead of three rungs would cut most of it (H12).
 - Every surface except beach, lake and mountain pages still links to Wikimedia directly (T052-f).
 
 ### Licensed photo sources and credits

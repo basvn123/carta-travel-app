@@ -381,7 +381,9 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .ac-doc p { margin: 0; font-size: var(--text-body); line-height: var(--leading-body); color: var(--text-2); }
 
 /* T944: the Emails switches, one row each; the whole row is the switch. */
-.ac-switch-row { grid-template-columns: auto minmax(0, 1fr); padding-top: 0; padding-bottom: 0; }
+/* As specific as .ac-row.is-static, so the row has no empty third column
+   and its switch ends where Vibrate on tap's does (polish lane, round 2). */
+.ac-row.is-static.ac-switch-row { grid-template-columns: auto minmax(0, 1fr); padding-top: 0; padding-bottom: 0; }
 .ac-switch.ui-switch { min-height: 56px; }
 .ac-switch .ui-switch-label { font-size: var(--text-lead); font-weight: 600; }
 .ac-switch-err { display: block; margin: 0; min-height: 0; padding: var(--space-3) var(--space-4); color: var(--danger); font-size: var(--text-body); }
@@ -549,7 +551,6 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
    Every panel in this area is the house panel, as the place and trip pages
    draw it: paper, a 1 px soft hairline, the card radius, no shadow. Only
    what floats (sheets, menus, toasts) casts a shadow; plates stay plates. */
-.ac-list,
 .ac-me,
 .ac-signin,
 .ac-proof,
@@ -572,3 +573,30 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .ac-rail-here { margin-left: auto; flex: none; }
 .ac-out-ask { animation: hs-reveal var(--dur-2) var(--ease-out) both; }
 @media (prefers-reduced-motion: reduce) { .ac-out-ask { animation: none; } }
+
+/* ── Lists as a ledger (polish lane, final judges: "an iOS settings list of
+   white rounded groups") ─────────────────────────────────────────────────
+   A group's rows are ruled straight onto the page ground under the section
+   head, as a walker's log: a rule above and below, a hairline between rows,
+   no panel fill, radius or shadow. The row text lines up with the head; the
+   hover and press wash reaches a little past it so it reads as a row. */
+.ac-list {
+  margin-inline: calc(-1 * var(--space-3));
+  background: none;
+  border: 0;
+  border-top: var(--stroke-hair) solid var(--border);
+  border-bottom: var(--stroke-hair) solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+}
+.ac-list .ac-row,
+.ac-list .ac-row.btn { padding-inline: var(--space-3); border-radius: 0; }
+.ac-list .ac-row + .ac-row,
+.ac-list > * + * .ac-row:first-child { border-top-color: var(--border-soft); }
+@media (hover: hover) {
+  .ac-list a.ac-row:hover, .ac-list .ac-row.btn:hover { background: var(--surface); }
+}
+.ac-list a.ac-row:active, .ac-list .ac-row.btn:active { background: var(--surface-sunken); }
+/* The current value is a figure of the traveller's own, in ink. */
+.ac-list .ac-row-v { color: var(--text); font-weight: 600; }

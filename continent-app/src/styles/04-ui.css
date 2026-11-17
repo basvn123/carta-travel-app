@@ -514,33 +514,63 @@
   flex: none;
 }
 
-/* ChoiceRows (T654): answer rows for a one-question screen, after the
-   Polarsteps trip-kind sheet. Bordered, full width, a mark on the left;
-   selected is the one selected state plus the filled mark. */
-.ui-crows { display: flex; flex-direction: column; gap: var(--space-2); }
+/* ChoiceRows (T654): answer rows for a one-question screen. One ruled list
+   (polish lane, house style: "ledger with one plate"), not a stack of white
+   cards: the rows lie on the screen's own ground, a hairline between them
+   and a rule above and below the list. Unchosen shows a plain ring (a
+   square when several may be picked). The chosen row takes the one selected
+   state: the beige wash, umber ink, a full umber edge (never a side stripe)
+   and, for a single pick, the ring turns into the blaze, painted in. */
+.ui-crows {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: var(--stroke-hair) solid var(--border);
+  border-bottom: var(--stroke-hair) solid var(--border);
+}
 .ui-crow {
+  position: relative;
   display: flex;
   align-items: center;
   gap: var(--space-3);
   width: 100%;
   min-height: 56px;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
+  padding: var(--space-3) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
   color: var(--text);
   font: inherit;
   text-align: left;
   cursor: pointer;
-  transition: background var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+  transition: background var(--dur-1) var(--ease-out);
 }
+/* The hairline between rows, inset to the text so the rule reads as a list. */
+.ui-crow + .ui-crow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--space-3);
+  right: var(--space-3);
+  border-top: var(--stroke-hair) solid var(--border-soft);
+  pointer-events: none;
+}
+.ui-crow.is-on::before,
+.ui-crow.is-on + .ui-crow::before { border-top-color: transparent; }
 .ui-crow:hover { background: var(--surface-hover); }
-.ui-crow:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.ui-crow.is-on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.ui-crow:focus-visible { outline: 2px solid var(--focus); outline-offset: -3px; }
+.ui-crow.is-on {
+  background: var(--select-bg);
+  color: var(--select-ink);
+  outline: 1.5px solid var(--select-border);
+  outline-offset: -1.5px;
+}
+.ui-crow.is-on:focus-visible { outline: 2px solid var(--focus); outline-offset: -3px; }
 .ui-crow-mark {
   flex: none;
   width: 20px;
   height: 20px;
+  margin-inline: 2px;
   border: 1.5px solid var(--text-3);
   background: var(--surface);
   position: relative;
@@ -548,12 +578,38 @@
 .ui-crow-mark.is-dot { border-radius: var(--radius-pill); }
 .ui-crow-mark.is-box { border-radius: var(--radius-sm); }
 .ui-crow.is-on .ui-crow-mark { border-color: var(--select-border); }
+/* A single pick: the chosen ring becomes the blaze (05-house.css .hs-blaze:
+   a white halo, the umber stripe, the ink heel), its stripe painted left to
+   right on the pick. */
+.ui-crow.is-on .ui-crow-mark.is-dot {
+  width: 24px;
+  height: 14px;
+  margin-inline: 0;
+  border: 0;
+  border-radius: calc(var(--radius-sm) / 3);
+  background: var(--neutral-0);
+  outline: 1px solid var(--blaze-edge);
+  outline-offset: -1px;
+}
+.ui-crow.is-on .ui-crow-mark.is-dot::before {
+  content: '';
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  top: 20%;
+  height: 36%;
+  background: var(--action);
+  transform-origin: left center;
+  animation: hs-paint-x var(--dur-paint) var(--ease-out) both;
+}
 .ui-crow.is-on .ui-crow-mark.is-dot::after {
   content: '';
   position: absolute;
-  inset: 4px;
-  border-radius: var(--radius-pill);
-  background: var(--select-border);
+  right: 14%;
+  width: 34%;
+  bottom: 14%;
+  height: max(1.5px, 11%);
+  background: var(--text);
 }
 .ui-crow.is-on .ui-crow-mark.is-box { background: var(--select-border); }
 .ui-crow.is-on .ui-crow-mark.is-box::after {
@@ -566,6 +622,9 @@
   border: solid var(--surface);
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui-crow.is-on .ui-crow-mark.is-dot::before { animation: none; }
 }
 .ui-crow-icon { display: flex; flex: none; color: var(--text-2); }
 .ui-crow.is-on .ui-crow-icon { color: var(--select-ink); }

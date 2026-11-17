@@ -653,3 +653,54 @@
 .tg-out,
 .tg-new.tg-addcost { background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--radius-card); box-shadow: none; }
 .tg-gp .tg-fit { padding: var(--space-3) 0 0; border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }
+
+/* ── To answer as a ledger (polish lane, final judges) ───────────────────
+   The rows that wait for the traveller are ruled onto the ground under
+   their head, as Account's lists are: a rule above and below, a hairline
+   between, no white panel. Accept stays the one filled answer. */
+.tg-wait.tg-list {
+  padding: 0;
+  background: none;
+  border: 0;
+  border-top: var(--stroke-hair) solid var(--border);
+  border-bottom: var(--stroke-hair) solid var(--border);
+  border-radius: 0;
+}
+.tg-wait.tg-list .tg-wr { padding: var(--space-3) 0; transition: background-color var(--dur-1) var(--ease-out); }
+.tg-wait.tg-list .tg-wr + .tg-wr { border-top-color: var(--border-soft); }
+@media (prefers-reduced-motion: reduce) { .tg-wait.tg-list .tg-wr { transition: none; } }
+
+/* ── The rest of Together as a ledger (polish lane, round 2) ─────────────
+   Plans that meet, group trips, the fit lines, friends, the hand-over and
+   the card blocks lie on the ground like To answer: a rule above and below,
+   hairlines inside, no white panel or shadow. The content lines up with
+   its section head. The shared-days chart keeps a paper ground of its own
+   so its lanes still read as a chart. The trip photo cards follow
+   Explore's rail cards: the photo rounded, the words on the ground. */
+.tg-meet,
+.tg-gp,
+.tg-fit,
+.tg-people,
+.tg-hand,
+.tg-cardblock {
+  padding-inline: 0;
+  background: none;
+  border: 0;
+  border-top: var(--stroke-hair) solid var(--border);
+  border-bottom: var(--stroke-hair) solid var(--border);
+  border-radius: 0;
+  box-shadow: none;
+}
+/* Two ruled blocks in a row share one rule. */
+:is(.tg-meet, .tg-gp, .tg-fit, .tg-people, .tg-hand, .tg-cardblock) + :is(.tg-meet, .tg-gp, .tg-fit, .tg-people, .tg-hand, .tg-cardblock) { border-top: 0; }
+.tg-gp .tg-fit { border-bottom: 0; }
+.tg-meet .tg-faces .frn-face { border-color: var(--surface-page); }
+.tg-meet .tg-lanes { background: var(--surface); outline: var(--stroke-hair) solid var(--border-soft); outline-offset: -1px; }
+.tg-fp { background: none; border: 0; box-shadow: none; }
+.tg-fp-img { border-radius: var(--radius-card); }
+
+/* Below 1024 px the group page's two columns stack: the second column's
+   first ruled block meets the first column's last rule, so it drops its own. */
+@media (max-width: 1023px) {
+  .tg-col:has(> :is(.tg-gp, .tg-fit, .tg-cardblock):last-child) + .tg-col > :is(.tg-gp, .tg-fit, .tg-cardblock):first-child { border-top: 0; }
+}

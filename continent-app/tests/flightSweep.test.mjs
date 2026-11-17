@@ -348,17 +348,19 @@ test("the gap search takes pairs between countries that do not report, far enoug
   assert.deepEqual(gapPairs(json, countries, list), [["EDI", "LGW"], ["EDI", "LHR"], ["LGW", "PRG"], ["LHR", "PRG"]]);
 });
 
-test("a night minute (22:00 to 05:00 UTC) has one slot, a day minute two, and a day always the same count (T1043)", () => {
+test("a night minute (22:00 to 05:00 UTC) has no slot, a day minute two, and a day always the same count (T1043, N6)", () => {
   const day = Math.floor(NOW / 86400000) * 1440;
   assert.equal(slotsAt(day + 1440) - slotsAt(day), SLOTS_PER_DAY);
-  assert.equal(SLOTS_PER_DAY, 2 * 1440 - (24 - NIGHT_UTC[0] + NIGHT_UTC[1]) * 60);
-  assert.equal(slotsAt(day + 3 * 60 + 1) - slotsAt(day + 3 * 60), 1, "03:00 is night");
-  assert.equal(slotsAt(day + 23 * 60 + 1) - slotsAt(day + 23 * 60), 1, "23:00 is night");
+  assert.equal(SLOTS_PER_DAY, 2 * 1440 - 2 * (24 - NIGHT_UTC[0] + NIGHT_UTC[1]) * 60);
+  assert.equal(slotsAt(day + 3 * 60 + 1) - slotsAt(day + 3 * 60), 0, "03:00 is night");
+  assert.equal(slotsAt(day + 23 * 60 + 1) - slotsAt(day + 23 * 60), 0, "23:00 is night");
+  assert.equal(slotsAt(day + 22 * 60 + 1) - slotsAt(day + 22 * 60), 0, "22:00 is night");
+  assert.equal(slotsAt(day + 5 * 60 + 1) - slotsAt(day + 5 * 60), 2, "05:00 is day");
   assert.equal(slotsAt(day + 12 * 60 + 1) - slotsAt(day + 12 * 60), 2, "noon is day");
-  for (let m = day; m < day + 1440; m++) assert.ok(slotsAt(m + 1) > slotsAt(m));
+  for (let m = day; m < day + 1440; m++) assert.ok(slotsAt(m + 1) >= slotsAt(m));
 });
 
-test("over each cycle every route has its turn exactly once, and a night hour carries about half a day hour (T1043)", () => {
+test("over each cycle every route has its turn exactly once, and a night hour searches nothing (T1043, N6)", () => {
   const n = 10285;
   const m0 = Math.floor(NOW / 60000);
   for (const cycle of [NEAR_CYCLE, FAR_CYCLE]) {
@@ -372,6 +374,7 @@ test("over each cycle every route has its turn exactly once, and a night hour ca
     for (let m = start; m < start + 60; m++) k += routesForMinute(m, NEAR_CYCLE, n).length;
     return k;
   };
-  const ratio = hour(2) / hour(14);
-  assert.ok(ratio > 0.45 && ratio < 0.55, `night/day ${ratio}`);
+  assert.equal(hour(2), 0, "02:00 searches nothing");
+  assert.equal(hour(23), 0, "23:00 searches nothing");
+  assert.ok(hour(14) > 0, "14:00 searches");
 });

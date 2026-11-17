@@ -1,6 +1,6 @@
 # Pipeline status, hotel scrape, flight sweep and the stale data (D12, T1099-a, D3, N1, I16, H9)
 
-Status: done. The refreshed data and the app on `main` (Travel styles included) are in production, checked in Chrome; the box's root disk went from full to 12 GB free, with the cause fixed in code. What is left is listed at the end.
+Status: done. The refreshed data and the app on `main` (Travel styles included) are in production, checked in Chrome; the box's root disk went from full to 12 GB free, with the cause fixed in code. The production deploy of 2026-11-13 left out the Ask Carta index, so Ask's search answered 503 until it was restored on 2026-11-15 (item 10 below). What is left is listed at the end.
 
 ## Date
 
@@ -46,6 +46,7 @@ Live changes:
 7. **Box storage, owner asked:** deleted the five local dumps R2 held at the same size (two trailslab, three Supabase; about 9.8 GB), `git reflog expire` and `git gc --prune=now` on the clone (2.5 to 1.3 GB), `npm cache verify` (97 MB). Root disk 1.2 GB free to 12 GB (68%).
 8. **Box config:** `/mnt/trailslab/dumps` (carta, mode 700) on the lab volume (in fstab, 65 GB free); `CARTA_DUMP_DIR=/mnt/trailslab/dumps` appended to `~/.config/carta/env` (backup `env.bak-2026-11-13-dumpdir`). Undo: remove that line.
 9. **Laptop:** `pip install pyyaml==6.0.2` (the pinned project requirement) into the user site, to run the lineage and provenance checks.
+10. **Ask Carta index, 2026-11-15 (owner asked):** the box's `dist/` deployed in item 6 had no `search/ask` index: it is gitignored and built by the `ask_index` task, which follows the quarterly layers, and no quarterly chain had finished on the box, so the box held only the tracked `lexicon.json`. Production's `/api/ask` answered `503 unavailable` from 13 to 15 Nov (the deploy before, `cf2eed04`, answers). The laptop's index (built 2026-11-12, the files `cf2eed04` served, 38 files, 51 MB, without the tracked lexicon) went to the box over ssh (sha256 checked) and into `continent-app/dist/search/ask` and `continent-app/public/search/ask`, then `dist/` was deployed to preview and to production (`ef780848`), same entry script `index-BQP3YI-m.js`. No run lock: `carta-catchup-4` holds it and does not touch `dist/` until its build step. `public/search/ask` is ignored by git, so the box's next build keeps the index until `ask_index` rebuilds it. Undo: redeploy `0387b66a` (`wrangler pages deployment` rollback), which brings the 503 back.
 
 ## Verification
 
@@ -53,6 +54,7 @@ Live changes:
 - Wire build on the box master, isolated tree on the laptop and on the box: contract passes, boot index and rank tier round trips exact.
 - CI green on `d364f1725e` (app lint and unit tests, fast build, CSP, Deno, python with ruff, pytest, lineage and reference checks, evals) and again on `172077c282`, the storage commit (the box script tests in pytest included). The schema-contract gate fails only on its two older problems.
 - Preview and production in Chrome (isolated context): home and `#dest=gem:bruges` load with no console errors; entry `index-BQP3YI-m.js`; boot meta 2026-11-08 schema 20; the place page shows "Vlieg naar BRU" (the new `airports`); the Travel styles header is there; R2 trips index 2026-11-13 with 3,781 trips, a trip detail opens. A hashed deployment URL (`96202dcb.carta-app.pages.dev`) fails with CORS by design: the data host allows the preview alias, not hashed hosts.
+- Ask Carta, 2026-11-15: preview and production serve `search/ask/manifest.json` (built 2026-11-12), `bm25.json` and the vectors; `/api/ask` answers 200 with hits for an English and a Dutch question; in Chrome (isolated context) the home page loads with no console errors and the page's own fetches of the manifest and `/api/ask` succeed.
 - Box after the storage pass: `/` 12 GB free; the env file loads `CARTA_DUMP_DIR=/mnt/trailslab/dumps`; `run_pipeline.sh` and `weekly.sh` pass `bash -n`.
 - Laptop tasks `CartaStaysBooking` and `CartaStaysHostelworld`: Ready, next run 2027-03-01 00:16. `carta-late-sweep.service` active on the box.
 
@@ -60,7 +62,9 @@ Live changes:
 
 - Trails wire (2026-09-13): needs the paid trailslab run; the owner skipped it on 2026-11-13.
 - `reach/` (2026-08-06): built by `tools/reachability/build_reach.py`, which no task runs (D12).
-- The rest of the quarterly chain (lakes, trails, cycling, parking, access facts and more) waits on Overpass access from the box (ROADMAP H9).
+- The rest of the quarterly chain (lakes, trails, cycling, parking, access facts and more) waited on Overpass access from the box; the transport fix (`143daa19a4`) is in, and `carta-catchup-4` runs it since 2026-11-15 19:56 (ROADMAP H9).
+- The box deploy does not check that `dist/` carries the Ask Carta index; a guard is an H9 follow-up.
+- `guided_search` builds on the box only with `CARTA_BOX_ML=all` (not set), so `search/guided.json` (2026-10-13) passes its 45 days on 2026-11-27 (H9).
 - The `coverage` task soft-fails on the box: `pyarrow` is missing from the box venv (H9).
 - Stay prices: the 743,916 scraped prices wait on owner step T1021-a (`docs/owner/stays-box.md`).
 - March 2027: the box timer and the laptop would both scrape Hostelworld into one journal key (ROADMAP I16).
