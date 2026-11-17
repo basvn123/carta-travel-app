@@ -4,6 +4,7 @@ import { useI18n } from '../../i18n/index.jsx';
 import { clipSrc } from '../../lib/homeDemo.js';
 import { MaskedText, Reveal, SPRING } from './motionKit.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
+import { Blaze } from '../../components/ui/index.js';
 
 /** Ask carries the boxed AI tag, never a sparkle (DESIGN.md "Icons"). */
 function AskTag() { return <span className="ai-tag" aria-hidden="true">AI</span>; }
@@ -108,6 +109,8 @@ export function HomeTour({ lang, doors, wide }) {
                   className={`hm-tab${i === active ? ' is-on' : ''}`} onClick={() => pick(i)}>
                   <span className="hm-tab-dot" aria-hidden="true"><x.icon size={20} /></span>
                   <span className="hm-tab-name">{t(`home.t_${x.id}`)}</span>
+                  {/* The blaze marks the chosen chapter ("here"); painted on select. */}
+                  {i === active && <Blaze size="sm" className="hm-tab-blaze hs-paint" />}
                   <span className="hm-tab-bar" aria-hidden="true"><i ref={(el) => { bars.current[i] = el; }} /></span>
                 </button>
               ))}

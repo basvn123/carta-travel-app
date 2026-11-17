@@ -1,7 +1,7 @@
 import React from 'react';
 import { m, useReducedMotion } from 'motion/react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Figure, Formation } from '../../components/ui/index.js';
+import { Blaze, Button, Figure, Formation } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { haptic } from '../../lib/haptics.js';
 import { formatMoney } from '../../lib/money.js';
@@ -72,7 +72,7 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
             <div className="hm-ruler" style={{ '--p': at(budget) }}>
               <span className="hm-ruler-track" aria-hidden="true"><i /></span>
               {list.map((p) => (
-                <m.span key={p.id} className={`hm-ruler-dot${p.day <= budget ? ' is-in' : ''}${p.id === best ? ' is-best' : ''}`}
+                <m.span key={p.id} className={`hm-ruler-dot${p.day <= budget ? ' is-in' : ''}${p.id === best ? ' is-best' : ''}${Math.abs(p.day - budget) / (hi - lo) < 0.03 ? ' is-under' : ''}`}
                   style={{ left: at(p.day) }} aria-hidden="true"
                   animate={{ scale: p.day <= budget ? 1 : 0.75 }} transition={SPRING.settle} />
               ))}
@@ -84,23 +84,9 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
             <div className="hm-ruler-ends" aria-hidden="true"><span>{money(lo)}</span><span>{money(hi)}</span></div>
           </div>
           <div className="hm-cards">
-            {list.map((p, i) => {
-              const over = p.day > budget;
-              return (
-                <m.div key={p.id} className={`hm-card${over ? ' is-over' : ''}`} initial={reduce ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }} transition={{ ...SPRING.reveal, delay: i * 0.04 }}>
-                  <span className="hm-card-photo">
-                    <img src={p.clip.poster} alt="" loading="lazy" decoding="async" />
-                    {p.id === best && <span className="hm-card-best">{t('home.tryBest')}</span>}
-                  </span>
-                  <span className="hm-card-line">
-                    <b>{p.name}</b>
-                  </span>
-                  <Formation weighted className="hm-card-price" bed={p.stay} food={p.food} day={p.day} dayLabel={t('home.tryPerDay')} />
-                  <span className="hm-card-over" aria-live="off">{over ? t('home.tryOverBy', { price: money(p.day - budget) }) : null}</span>
-                </m.div>
-              );
-            })}
+            {list.map((p, i) => (
+              <TryCard key={p.id} p={p} i={i} over={p.day > budget} best={p.id === best} reduce={reduce} t={t} money={money} budget={budget} />
+            ))}
           </div>
           <div className="hm-try-foot">
             <p><b>{t('home.tryFit', { n: fit, total: list.length })}</b><span className="sr-only" aria-live="polite">{said}</span></p>
@@ -112,5 +98,33 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
         </Reveal>
       </div>
     </section>
+  );
+}
+
+/** One place in Try it. Over the budget its photo steps back; the moment the
+ *  traveller's own drag brings it within the budget it lifts once (the house
+ *  tick, on the card that changed only), never at first paint. The best
+ *  value carries the blaze: the one to pick, "here". */
+function TryCard({ p, i, over, best, reduce, t, money, budget }) {
+  const was = React.useRef(over);
+  const [lift, setLift] = React.useState(0);
+  React.useEffect(() => {
+    if (was.current && !over && !reduce) setLift((n) => n + 1);
+    was.current = over;
+  }, [over, reduce]);
+  return (
+    <m.div className={`hm-card${over ? ' is-over' : ''}`} initial={reduce ? false : { opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }} transition={{ ...SPRING.reveal, delay: i * 0.04 }}>
+      <m.span key={lift} className="hm-card-photo" initial={lift ? { y: -8 } : false} animate={{ y: 0 }}
+        transition={SPRING.tick}>
+        <img src={p.clip.poster} alt="" loading="lazy" decoding="async" />
+        {best && <span className="hm-card-best"><Blaze size="sm" />{t('home.tryBest')}</span>}
+      </m.span>
+      <span className="hm-card-line">
+        <b>{p.name}</b>
+      </span>
+      <Formation weighted className="hm-card-price" bed={p.stay} food={p.food} day={p.day} dayLabel={t('home.tryPerDay')} />
+      <span className="hm-card-over" aria-live="off">{over ? t('home.tryOverBy', { price: money(p.day - budget) }) : null}</span>
+    </m.div>
   );
 }

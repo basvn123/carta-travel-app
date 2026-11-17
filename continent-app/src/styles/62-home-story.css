@@ -36,23 +36,28 @@
 }
 .hm-cost .hm-em { color: var(--umber-200); }
 .hm-cost-title { max-width: 24ch; }
+
+/* The band's head carries the relief of the story place's own peaks with
+   their printed heights (kit ReliefBand; nothing drawn without a measured
+   peak). On the umber ground the zone is the band itself: no light panel,
+   the lit lines in white, the shade a deeper umber. On a phone the relief
+   is a strip above the title; from 768 it sits beside it after the cut. */
+.hm-cost-head {
+  --relief-ground: transparent;
+  --relief-shade: color-mix(in srgb, var(--neutral-900) 45%, transparent);
+}
+.hm-cost-head.has-relief { display: flex; flex-direction: column-reverse; gap: var(--space-5); }
+.hm-cost-head.has-relief .relief-flat { max-width: none; }
+.hm-cost-head .relief-zone { position: relative; top: auto; right: auto; bottom: auto; left: auto; height: 136px; border-radius: 0; }
+
+/* The story: each chapter is its label and one line; it lights up when it
+   reaches the middle of the view (wide) or when the post is in view
+   (phone), and paints its line in the post. */
 .hm-cost-grid { display: grid; gap: var(--space-6); margin-top: var(--space-6); }
 .hm-chapters { display: grid; gap: var(--space-6); align-content: start; }
-.hm-chapter { display: grid; gap: var(--space-2); }
-.hm-chapter-label { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--umber-200); font-size: var(--text-label); font-weight: 700; }
-.hm-amount {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-2);
-  font-size: var(--text-headline); /* a step under the total plate's figure */
-  font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: var(--tracking-hero);
-  font-variant-numeric: tabular-nums lining-nums;
-}
-.hm-amount small { font-size: var(--text-lead); font-weight: 600; letter-spacing: 0; color: var(--umber-200); }
-.hm-chapter-line { margin: 0; max-width: 36ch; color: var(--umber-100); font-size: var(--text-lead); line-height: 1.45; }
+.hm-chapter { display: grid; gap: var(--space-2); transition: opacity var(--dur-4) var(--ease-out); }
+.hm-chapter-label { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--umber-200); font-size: var(--text-body); font-weight: 700; }
+.hm-chapter-line { margin: 0; max-width: 22ch; color: var(--on-plate); font-size: var(--text-headline); font-weight: 800; line-height: 1.15; letter-spacing: -0.018em; text-wrap: balance; }
 
 /* The cost post: the house's paper post on the band (the trip and place
    pages' object), the one ink total plate at its foot. */
@@ -79,6 +84,25 @@
 .hm-post.is-in .hs-wagon { animation: hs-couple-in var(--dur-couple) var(--ease-settle) both; }
 .hm-post.is-in .hs-formation-train .hs-wagon:nth-child(1) { animation-delay: var(--dur-1); }
 .hm-post.is-in .hs-formation-train .hs-wagon:nth-child(2) { animation-delay: var(--dur-2); }
+/* A line is painted when its chapter is told: the house's select response,
+   a 2 px umber stroke drawn from the left under the line. The figure never
+   moves. On a phone the second line paints one beat after the first. */
+.hm-post .hm-line { position: relative; }
+.hm-post .hm-line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: var(--stroke-edge);
+  border-radius: var(--radius-pill);
+  background: var(--umber-600);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-4) var(--ease-out);
+}
+.hm-post .hm-line.is-lit::after { transform: scaleX(1); }
+.hm-post .hm-line[data-line="food"]::after { transition-delay: var(--dur-2); }
 
 /* ── The flight's share ─────────────────────────────────────────────── */
 
@@ -171,6 +195,7 @@
 .hm-tab-dot { display: grid; place-items: center; width: 28px; height: 28px; color: var(--text-2); transition: color var(--dur-2) var(--ease-out); }
 .hm-tab.is-on { color: var(--text); }
 .hm-tab.is-on .hm-tab-dot { color: var(--umber-700); }
+.hm-tab-blaze { margin-left: var(--space-1); }
 .hm-tab-bar { position: absolute; left: var(--space-3); right: var(--space-3); bottom: 0; height: var(--stroke-route); border-radius: var(--radius-pill); opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
 .hm-tab.is-on .hm-tab-bar { opacity: 1; background: var(--umber-100); }
 .hm-tab-bar i { display: block; height: 100%; border-radius: inherit; background: var(--umber-600); transform: scaleX(var(--p, 0)); transform-origin: left; }
@@ -234,9 +259,12 @@
   box-shadow: var(--elev-2);
 }
 .hm-note svg { color: var(--umber-700); }
-.hm-note.at-0 { top: 20%; right: calc(50% + 160px); }
-.hm-note.at-1 { top: 46%; left: calc(50% + 160px); }
-.hm-note.at-2 { top: 72%; right: calc(50% + 160px); }
+/* The notes hug the phone (they may overlap its edge, as a floating label
+   does) so the stage never cuts them; from 1440 they stand clear of it. */
+.hm-note { max-width: calc(50% - 104px - var(--space-3)); white-space: normal; }
+.hm-note.at-0 { top: 20%; right: calc(50% + 104px); }
+.hm-note.at-1 { top: 46%; left: calc(50% + 104px); }
+.hm-note.at-2 { top: 72%; right: calc(50% + 104px); }
 
 /* Also in Carta: one quiet line, no chips. */
 .hm-also { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); margin-top: var(--space-7); padding-top: var(--space-4); border-top: var(--stroke-hair) solid var(--border); }
@@ -271,6 +299,8 @@
 }
 .hm-ruler-dot.is-in { background: var(--umber-600); border-color: var(--umber-600); }
 .hm-ruler-dot.is-best { outline: var(--stroke-route) solid var(--best-bg); }
+/* The disc right under the thumb steps aside, so the thumb never half covers it. */
+.hm-ruler-dot.is-under { opacity: 0; }
 .hm-ruler input[type="range"] {
   position: absolute;
   inset: 0;
@@ -314,6 +344,9 @@
 .hm-card-photo { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; border-radius: var(--radius-card); background: var(--world-lowland); }
 .hm-card-photo img { display: block; width: 100%; height: 100%; object-fit: cover; transition: opacity var(--dur-3) var(--ease-out), filter var(--dur-3) var(--ease-out); }
 .hm-card-best {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   position: absolute;
   left: var(--space-2);
   top: var(--space-2);
@@ -342,8 +375,16 @@
 /* ── Tablet: its own layout ─────────────────────────────────────────── */
 
 @media (min-width: 768px) {
-  /* The post is the taller column: the chapters centre against it. */
-  .hm-cost-grid { grid-template-columns: minmax(0, 1fr) minmax(320px, 360px); gap: var(--space-7); align-items: center; }
+  /* The relief beside the title after the cut; the chapters as a column of
+     told steps, each about a third of the view tall so it can reach the
+     middle; the post holds still beside them (sticky) while they paint it. */
+  .hm-cost-head.has-relief { display: block; min-height: 200px; }
+  .hm-cost-head.has-relief .relief-flat { max-width: calc(var(--relief-cut, 55%) - var(--space-6)); }
+  .hm-cost-head .relief-zone { position: absolute; top: 0; bottom: 0; right: 0; left: var(--relief-cut, 55%); height: auto; }
+  .hm-cost-grid { grid-template-columns: minmax(0, 1fr) minmax(320px, 360px); gap: var(--space-7); align-items: start; }
+  .hm-chapter { min-height: 34vh; align-content: center; opacity: 0.6; }
+  .hm-chapter.is-on { opacity: 1; }
+  .hm-post { position: sticky; top: calc(var(--filter-h) + var(--space-6)); }
   .hm-compare { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--space-7); align-items: start; }
   .hm-compare-foot { grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding-top: var(--space-4); border-top: var(--stroke-hair) solid var(--border); }
 
@@ -358,11 +399,10 @@
 /* ── Wide: the desktop spreads ──────────────────────────────────────── */
 
 @media (min-width: 1024px) {
-  .hm-cost { padding: var(--space-9) 0; }
-  /* The amounts stay a step under the total plate, the loudest money in
-     the band. */
-  .hm-cost-grid { grid-template-columns: minmax(0, 1fr) 400px; gap: var(--space-9); align-items: center; }
-  .hm-chapters { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-7); }
+  .hm-cost { padding: var(--space-9) 0 var(--space-8); }
+  .hm-cost-head.has-relief { min-height: 240px; }
+  .hm-cost-grid { grid-template-columns: minmax(0, 1fr) 400px; gap: var(--space-9); }
+  .hm-chapter-line { font-size: var(--text-display); line-height: 1.08; letter-spacing: -0.02em; }
 
   .hm-tour-grid { grid-template-columns: minmax(300px, 5fr) 7fr; grid-template-areas: "tabs stage" "panel stage"; grid-template-rows: auto 1fr; gap: var(--space-6) var(--space-8); }
   .hm-tabs { flex-direction: column; gap: 0; overflow: visible; border-bottom: 0; border-left: var(--stroke-hair) solid var(--border); }
@@ -380,6 +420,9 @@
 @media (min-width: 1440px) {
   .hm-cost-grid { grid-template-columns: minmax(0, 1fr) 420px; }
   .hm-phone { width: 300px; }
+  .hm-note { max-width: calc(50% - 160px - var(--space-3)); }
+  .hm-note.at-0, .hm-note.at-2 { right: calc(50% + 160px); }
+  .hm-note.at-1 { left: calc(50% + 160px); }
 }
 
 /* ── Reduced motion: the end state ──────────────────────────────────── */
@@ -388,6 +431,8 @@
   .hm-tab, .hm-tab-dot, .hm-tab-bar, .hm-panel-rows li, .hm-row-dot, .hm-card-photo img,
   .hm-panel-door svg { transition: none; }
   .hm-post.is-in .hs-wagon { animation: none; }
+  .hm-chapter { opacity: 1; transition: none; }
+  .hm-post .hm-line::after { transition: none; }
   .hm-ruler input[type="range"]::-webkit-slider-thumb { transition: none; }
   .hm-ruler input[type="range"]::-moz-range-thumb { transition: none; }
 }

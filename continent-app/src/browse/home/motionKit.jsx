@@ -87,7 +87,7 @@ export function MaskedText({ as = 'h2', className, parts, id }) {
   );
 }
 
-/** A block that rises 16 px and fades in once; `delay` staggers siblings;
+/** A block that rises 24 px and fades in once; `delay` staggers siblings;
  *  a tall block passes a small `amount` so it arrives as soon as it shows. */
 export const Reveal = React.forwardRef(function Reveal({ as = 'div', className, delay = 0, amount = ONCE.amount, children, ...rest }, ref) {
   const Tag = m[as] || m.div;
@@ -95,7 +95,7 @@ export const Reveal = React.forwardRef(function Reveal({ as = 'div', className, 
   // drops the rise but would still fade it in).
   const reduce = useReducedMotion();
   return (
-    <Tag ref={ref} className={className} initial={reduce ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
+    <Tag ref={ref} className={className} initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
       viewport={{ ...ONCE, amount }} transition={{ ...SPRING.reveal, delay }} {...rest}>
       {children}
     </Tag>

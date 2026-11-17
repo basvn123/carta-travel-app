@@ -169,7 +169,7 @@ export const en = {
   "home.priceTitle": "Plan for free, pay when you need more",
   "home.priceDoor": "See Trip Pass prices",
   "waitlist.title": "Get the Carta list",
-  "waitlist.lead": "Early access to new features, and now and then the best-value places in Europe. One mail a month at most.",
+  "waitlist.lead": "Early access to planning features, and now and then the best-value places in Europe. One mail a month at most.",
   "waitlist.label": "Email address",
   "waitlist.placeholder": "you@example.com",
   "waitlist.button": "Join the list",

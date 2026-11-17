@@ -9679,7 +9679,7 @@ export const es = {
   "taste.profile.via": "a través de {label}",
   // T1170 (I8): machine-drafted, awaiting native review (docs/i18n/review.md)
   "waitlist.title": "Apúntate a la lista de Carta",
-  "waitlist.lead": "Acceso anticipado a nuevas funciones y, de vez en cuando, los lugares con mejor relación calidad-precio de Europa. Un correo al mes, como mucho.",
+  "waitlist.lead": "Acceso anticipado a las funciones de planificación y, de vez en cuando, los lugares con mejor relación calidad-precio de Europa. Un correo al mes, como mucho.",
   "waitlist.label": "Correo electrónico",
   "waitlist.placeholder": "tu@ejemplo.com",
   "waitlist.button": "Unirme a la lista",

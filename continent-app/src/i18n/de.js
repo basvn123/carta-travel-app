@@ -9679,7 +9679,7 @@ export const de = {
   "taste.profile.via": "über {label}",
   // T1170 (I8): machine-drafted, awaiting native review (docs/i18n/review.md)
   "waitlist.title": "Hol dir die Carta-Liste",
-  "waitlist.lead": "Früher Zugang zu neuen Funktionen und ab und zu die besten Orte Europas fürs Geld. Höchstens eine Mail im Monat.",
+  "waitlist.lead": "Früher Zugang zu Planungsfunktionen und ab und zu die besten Orte Europas fürs Geld. Höchstens eine Mail im Monat.",
   "waitlist.label": "E-Mail-Adresse",
   "waitlist.placeholder": "du@example.com",
   "waitlist.button": "Auf die Liste",

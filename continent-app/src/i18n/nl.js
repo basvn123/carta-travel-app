@@ -164,7 +164,7 @@ export const nl = {
   "home.priceTitle": "Plan gratis, betaal als je meer nodig hebt",
   "home.priceDoor": "Bekijk de prijzen van de Trip Pass",
   "waitlist.title": "Krijg de Carta-lijst",
-  "waitlist.lead": "Eerder toegang tot nieuwe functies en af en toe de voordeligste plekken van Europa. Hooguit één mail per maand.",
+  "waitlist.lead": "Eerder toegang tot planfuncties en af en toe de voordeligste plekken van Europa. Hooguit één mail per maand.",
   "waitlist.label": "E-mailadres",
   "waitlist.placeholder": "jij@voorbeeld.nl",
   "waitlist.button": "Zet me op de lijst",
