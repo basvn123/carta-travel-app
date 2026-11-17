@@ -220,13 +220,17 @@
 .tg-fit {
   display: grid;
   gap: var(--space-2);
-  padding: var(--space-3);
+  padding: var(--space-4);
   border-radius: var(--radius-card);
-  background: var(--surface-sunken);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
 }
+/* Inside a group card the budget line is a section of the card, not a
+   card in a card. */
+.tg-gp .tg-fit { padding: var(--space-3) 0 0; border-radius: 0; background: none; box-shadow: none; border-top: 1px solid var(--border-soft); }
 .tg-fit-row { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--text-label); color: var(--text-2); }
 .tg-fit-row b { color: var(--text); font-size: var(--text-body); font-variant-numeric: tabular-nums; }
-.tg-fitbar { position: relative; height: 26px; margin-bottom: 18px; border-radius: var(--radius-control); background: var(--surface); }
+.tg-fitbar { position: relative; height: 26px; margin-bottom: 18px; border-radius: var(--radius-control); background: var(--surface-sunken); }
 .tg-fitbar-ok { position: absolute; top: 4px; bottom: 4px; left: 4px; border-radius: var(--radius-sm); background: var(--umber-200); }
 .tg-fitbar-tick { position: absolute; top: -3px; bottom: -3px; width: 2px; border-radius: var(--radius-sm); background: var(--text); }
 .tg-fitbar-tick.is-mine { background: var(--action); }

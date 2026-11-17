@@ -406,6 +406,7 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
    focus ring (:focus-within); the older rule already drops its own outline. */
 .account-shell .acct-handle-row input,
 .account-shell .acct-handle-row input:focus { background: transparent; border: 0; }
+.account-shell .acct-handle-row input:focus-visible { outline-color: transparent; }
 /* The page title already names the form: the older "Profile" sub-heading
    stays for screen readers only (minimal text). */
 .ac-pane .panel-section > .section-title-iconed { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
