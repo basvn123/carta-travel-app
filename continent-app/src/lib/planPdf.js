@@ -1,7 +1,7 @@
 /**
  * planPdf.js (T432): the planned trip as a booklet, the trip planner's
  * Download PDF. It replaces the print window (lib/tripExport.js), which
- * printed whatever the browser made of an HTML page, with the same Figtree
+ * printed whatever the browser made of an HTML page, with the same house
  * booklet the trip pages print (lib/pdfKit.js, T430).
  *
  * Every figure comes from the trip as the planner prices it
