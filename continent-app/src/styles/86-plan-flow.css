@@ -1450,7 +1450,7 @@
    ground") ─────────────────────────────────────────────────────────────── */
 /* Plan home from 1024 px: two columns that fill the first view. Left, the
    tab's job and its two actions stacked as a column; right, Carta's own
-   trips as a mosaic of their photographs (the first one tall), so the page
+   trips as a mosaic of their photographs (three over two), so the page
    is filled by trips, not by bare ground. One link, as before. */
 @media (min-width: 1024px) {
   .pf-open:not(.is-bare) {
@@ -1479,13 +1479,15 @@
   .pf-open:not(.is-bare) .pf-coll { flex: 1 1 auto; min-height: 420px; }
   .pf-open:not(.is-bare) .pf-coll .pf-coll-fan {
     flex: 1 1 auto;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(0, 1fr));
     min-height: 0;
   }
   .pf-open:not(.is-bare) .pf-coll .pf-coll-photo,
   .pf-open:not(.is-bare) .pf-coll:hover .pf-coll-photo { aspect-ratio: auto; height: 100%; min-height: 0; }
-  .pf-open:not(.is-bare) .pf-coll .pf-coll-photo:first-child { grid-row: 1 / span 2; }
+  /* Three over two, every tile within its photograph's own resolution. */
+  .pf-open:not(.is-bare) .pf-coll .pf-coll-photo { grid-column: span 2; }
+  .pf-open:not(.is-bare) .pf-coll .pf-coll-photo:nth-child(n + 4) { grid-column: span 3; }
   .pf-open:not(.is-bare) .pf-coll .pf-coll-photo .ladder-pic,
   .pf-open:not(.is-bare) .pf-coll .pf-coll-photo .pf-coll-img { display: block; width: 100%; height: 100%; object-fit: cover; }
 }
