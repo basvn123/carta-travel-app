@@ -469,12 +469,6 @@
   color: var(--ink);
   font: 500 13px/1.4 var(--ui);
 }
-.dayws-stay-btn:focus-visible .dayws-stay-text b {
-  overflow: visible;
-  text-overflow: clip;
-  white-space: normal;
-  overflow-wrap: anywhere;
-}
 .dayws-tip-name,
 .dayws-tip-note { overflow-wrap: anywhere; hyphens: auto; }
 .day-wizard .dayw-step { display: flex; flex-direction: column; gap: var(--space-5); }
@@ -567,7 +561,6 @@
 @media (max-width: 599px) { .daychat-tiles { --tile-cols: 2 !important; } }
 .daychat-hint { margin: 0; font-size: var(--text-label); color: var(--text-2); }
 .daychat-credit { align-self: flex-start; }
-@media (max-width: 768px) { .dayw-chat .guide-foot-summary .credit-chip { display: none; } }
 .daychat-weather { margin: 0; font-size: var(--text-body); color: var(--text-2); }
 .daychat-fail-text { margin: 0; font-size: var(--text-body); color: var(--text-2); max-width: var(--measure); }
 .dayw-manual .dayex { display: flex; flex-direction: column; gap: var(--space-4); padding: 0; }
@@ -961,11 +954,7 @@
 /* The cost bar at the foot of the day (desktop): the trip first inside a
    trip (owner T492-f), then the day; each part opens what it holds. */
 .day-cost-bar.has-trip .dcb-trip.btn { border-right: 1px solid var(--border-soft); }
-.day-cost-bar .dcb-part.btn:disabled { background: transparent; color: var(--text); }
 .day-cost-bar .dcb-part.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
-@media (hover: hover) {
-  .day-cost-bar .dcb-part.btn:not(:disabled):hover { background: var(--surface-hover); }
-}
 .dcb-n { font-size: var(--text-lead); font-weight: 700; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .dcb-unit { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
 .dcb-open { margin-left: auto; display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); font-weight: 600; color: var(--action); white-space: nowrap; }

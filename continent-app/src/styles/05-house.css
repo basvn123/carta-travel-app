@@ -240,6 +240,10 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 .hs-wagon.is-bed { background: var(--wagon-bed); color: var(--wagon-bed-ink); }
 .hs-wagon.is-food { background: var(--wagon-food); color: var(--wagon-food-ink); outline: 1px solid var(--wagon-food-edge); outline-offset: -1px; }
 .hs-wagon.is-extra { background: var(--umber-800); color: var(--action-text); }
+/* A trip total's own parts (K2, Formation `extras` and `around`): flights
+   sunken, getting around on umber 200, as the trip cost post paints them. */
+.hs-wagon.is-fly { background: var(--surface-sunken); color: var(--umber-800); }
+.hs-wagon.is-around { background: var(--umber-200); color: var(--umber-800); }
 .hs-wagon.is-none { flex: none; background: transparent; color: var(--text-2); outline: var(--stroke-edge) dashed var(--wagon-none-edge); outline-offset: -1.5px; }
 .hs-formation-day {
   flex: none;
@@ -359,6 +363,13 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 .hs-gem::before { content: ''; width: 7px; height: 7px; background: currentColor; rotate: 45deg; }
 .hs-rcard .hs-formation { margin-top: 2px; }
 .hs-rcard-save { position: absolute; top: var(--space-2); right: var(--space-2); }
+/* K4: the slots after the link (price row, body, foot) keep the link's 6 px
+   rhythm; the mark rides on the photo's top left, as the save disc does on
+   its right. A static card (no link) has no hover zoom. */
+.hs-rcard-after { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; margin-top: 6px; }
+.hs-rcard-foot { font-size: var(--text-label); color: var(--text-2); }
+.hs-rcard-mark { position: absolute; top: var(--space-2); left: var(--space-2); }
+.hs-rcard-link.is-static .hs-rcard-photo img { scale: none; }
 
 /* ---- The relief band (ui/Relief.jsx) ---------------------------------- */
 /* Text on the flat side only; the zone starts at a hard umber cut with a
@@ -380,7 +391,9 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
   border-radius: 0 var(--radius-card) var(--radius-card) 0;
 }
 .relief-cut { position: absolute; left: 0; top: 0; bottom: 0; width: var(--stroke-edge); background: var(--action); z-index: 3; }
-.relief-zone .relief-cut-blaze { position: absolute; left: 0; top: 10px; z-index: 4; translate: -50% 0; }
+/* No centring translate: the zone clips its overflow, so a blaze pulled half
+   across the cut was cut in half (home judge 3). It hangs from the cut instead. */
+.relief-zone .relief-cut-blaze { position: absolute; left: 0; top: 10px; z-index: 4; }
 .relief { position: absolute; inset: 0; overflow: hidden; pointer-events: none; contain: paint; animation: hs-fade-in var(--dur-4) var(--ease-out); }
 .relief svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .relief .relief-lit { stroke: var(--relief-lit); fill: none; stroke-width: 1.15; }
@@ -419,6 +432,8 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 }
 .hs-world[data-world="water"] { background: var(--world-water); }
 .hs-world[data-world="lowland"] { background: var(--world-lowland); }
+/* HeroImage's blank is a world tile; the older .hero-blank ground loads later. */
+.hs-world.hero-blank { display: grid; background: var(--world-rock); color: inherit; }
 
 /* ---- State blocks: loading, empty, error, Not yet ---------------------- */
 .hs-state {
@@ -539,10 +554,23 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 .hs-shake { animation: hs-shake var(--dur-3) var(--ease-out); }
 @keyframes hs-shake { 20% { translate: -6px 0; } 40% { translate: 5px 0; } 60% { translate: -3px 0; } 80% { translate: 2px 0; } to { translate: 0 0; } }
 
+/* DialogSheet motion (K7): a sheet rising on a phone, a dialog scaling in
+   from 700 px where 38-first-run.css centres the scrim; each leaves the way
+   it came. The scrim fades with it. */
+.hs-dscrim { animation: hs-fade-in var(--dur-2) var(--ease-out) both; }
+.hs-dscrim.is-leaving { animation: hs-fade-out var(--dur-2) var(--ease-in) both; }
+@keyframes hs-fade-out { to { opacity: 0; } }
+.hs-dsheet { animation: hs-sheet-in var(--dur-sheet) var(--ease-sheet) both; }
+.hs-dsheet.is-leaving { animation: hs-sheet-out var(--dur-2) var(--ease-in) both; }
+@media (min-width: 700px) {
+  .hs-dsheet { animation: hs-dialog-in var(--dur-2) var(--ease-out) both; }
+  .hs-dsheet.is-leaving { animation: hs-leave var(--dur-2) var(--ease-in) both; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* Exits (.hs-leave, .hs-sheet-out) are not listed: the floor in
      02-base.css runs them in 0.01 ms, so they land on their end state. */
-  .hs-pop, .hs-reveal, .hs-sheet-in, .hs-dialog-in, .hs-route-in, .hs-shake,
+  .hs-pop, .hs-reveal, .hs-sheet-in, .hs-dialog-in, .hs-dscrim:not(.is-leaving), .hs-dsheet:not(.is-leaving), .hs-route-in, .hs-shake,
   .hs-paint::before, .hs-blaze.hs-paint::before, .hs-plate.hs-settle-in, .hs-wagon.hs-couple-in,
   .hs-wagon.hs-couple-out, .relief, .hs-fig.hs-roll, .hs-fig.hs-dip, .hs-delta, .hs-toast,
   .hs-wait .hs-blaze::before, .hs-skeleton { animation: none; }

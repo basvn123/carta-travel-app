@@ -9,9 +9,8 @@ import { priceNotes } from '../lib/price/notes.js';
 import { NotMeasuredValue, ThinBedNote } from '../components/PriceNotes.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import {
-  Button, Money, Segmented, Plate, Formation, Figure, CostRow, CostSum, Chip, ChipGroup,
+  Button, Money, Segmented, Plate, PlateGroup, Formation, Figure, CostRow, CostSum, Chip, ChipGroup,
 } from '../components/ui/index.js';
-import { haptic } from '../lib/haptics.js';
 import { formatMoney } from '../lib/money.js';
 import { doPriceOf } from '../lib/price/doPrice.js';
 import { Switch } from '../components/ui/Switch.jsx';
@@ -284,21 +283,6 @@ export function DestPriceCard({
     : l.key === 'stay' ? 'bed' : l.key === 'ground' ? 'food' : l.key === 'car' ? 'car'
       : l.key === 'transport' ? 'local' : 'tickets');
   const mine = Date.now() - actAt.current < 1500;
-  // Ways as a radio group: arrow keys move the pick, as a native radio does.
-  const onWayKey = (e) => {
-    const keys = ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'];
-    if (!keys.includes(e.key)) return;
-    const items = [...e.currentTarget.querySelectorAll('[role="radio"]')];
-    const i = items.indexOf(document.activeElement);
-    if (i < 0) return;
-    e.preventDefault();
-    const n = items.length;
-    const j = e.key === 'Home' ? 0 : e.key === 'End' ? n - 1
-      : (i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1) + n) % n;
-    items[j].focus();
-    items[j].click();
-  };
-
   return (
     <div className="dpc-wrap">
       <section className="tcard" aria-labelledby={`${uid}-h`}>
@@ -328,10 +312,9 @@ export function DestPriceCard({
               <span className="tcard-unit">{view.unit}</span>
             </p>
             {(Number.isFinite(costRow?.stayEur) || Number.isFinite(costRow?.foodEur)) && (
-              <Formation className="tcard-split" weighted
+              <Formation className="tcard-split" weighted figure={false}
                 bed={Number.isFinite(costRow?.stayEur) ? view.day(costRow.stayEur) : undefined}
-                food={Number.isFinite(costRow?.foodEur) ? view.day(costRow.foodEur) : undefined}
-                day={view.day(price.dayEur)} />
+                food={Number.isFinite(costRow?.foodEur) ? view.day(costRow.foodEur) : undefined} />
             )}
           </div>
           <div className="tcard-total" ref={linesRef}>
@@ -415,16 +398,15 @@ export function DestPriceCard({
                 <span>{ways?.from ? t('destx.gettingFrom', { place: ways.from }) : t('detail.gettingThere')}</span>
                 <span className="tcard-h-unit">{t('place.wayUnit')}</span>
               </h4>
-              <div className="tcard-ways" role="radiogroup" aria-labelledby={`${uid}-ways`} onKeyDown={onWayKey}>
-                {rows.map((w, i) => {
+              <PlateGroup className="tcard-ways" labelledBy={`${uid}-ways`}>
+                {rows.map((w) => {
                   const Icon = WAY_ICONS[w.mode] || RouteIcon;
                   const on = w.mode === mode;
                   const fp = fpText(w);
-                  const stop = on || (!pickedWay && i === 0);
                   return (
-                    <Plate key={w.mode} variant="leg" as="button" checked={on} tabIndex={stop ? 0 : -1}
+                    <Plate key={w.mode} variant="leg" as="button" checked={on}
                       className={`tcard-way${on ? ' is-on' : ''}`}
-                      onClick={() => { acted(); setModePick(w.mode); haptic('tick'); }}
+                      onClick={() => { acted(); setModePick(w.mode); }}
                       lead={(
                         <span className="tcard-way-ico" aria-hidden="true">
                           {w.mode === 'plane' && w.airline ? <AirlineMark code={w.airline} size="sm" /> : <Icon size={18} />}
@@ -447,7 +429,7 @@ export function DestPriceCard({
                     />
                   );
                 })}
-              </div>
+              </PlateGroup>
               {pickNote && <p className="tcard-note">{pickNote}</p>}
               {Number.isFinite(ways?.km) && (
                 <p className="tcard-fp-note">

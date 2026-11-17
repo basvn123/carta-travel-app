@@ -1516,7 +1516,7 @@
   gap: var(--space-4);
   min-width: 0;
 }
-.trip-wizard-modal .wiz-mini .wiz-mini-bar > span { background: var(--text); }
+.trip-wizard-modal .wiz-mini .wiz-mini-bar > span { background: var(--action); } /* K8: the step paint is umber, as the tab paint bar */
 .trip-wizard-modal .wbw-h {
   margin: 0;
   font-size: var(--text-title);
@@ -5527,3 +5527,70 @@ color: var(--ink-soft);
 .pdh-foot { display: flex; justify-content: flex-end; gap: var(--space-2); }
 .pfh .pfh-next-media { transition: transform var(--dur-4) var(--ease-out); }
 .cintel-chip.budget-very_high { background: var(--action-tint); color: var(--action); }
+.dayws-stay-btn:focus-visible .dayws-stay-text b {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 768px) { .dayw-chat .guide-foot-summary .credit-chip { display: none; } }
+.day-cost-bar .dcb-part.btn:disabled { background: transparent; color: var(--text); }
+@media (hover: hover) {
+  .day-cost-bar .dcb-part.btn:not(:disabled):hover { background: var(--surface-hover); }
+  .pfh .pfh-new.btn:hover { background: transparent; }
+  .pfh a.pfh-door:hover { border-color: var(--action); }
+}
+.pfh .pfh-head .pfh-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.018em;
+  color: var(--text);
+  text-wrap: balance;
+}
+.pfh a.pfh-next {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  aspect-ratio: auto;
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: none;
+}
+.pfh a.pfh-next .pfh-next-media { position: relative; inset: auto; z-index: auto; display: block; aspect-ratio: 16 / 9; overflow: hidden; background: var(--surface-sunken); }
+.pfh a.pfh-next .pfh-next-cd { position: static; justify-self: start; margin: var(--space-4) var(--space-4) 0; min-height: 28px; background: var(--select-bg); color: var(--select-ink); box-shadow: none; }
+.pfh a.pfh-next .pfh-next-body { position: static; align-items: center; padding: var(--space-3) var(--space-4) var(--space-4); }
+.pfh a.pfh-next .pfh-next-name { font-size: var(--text-title); font-weight: 800; color: var(--text); text-shadow: none; }
+.pfh a.pfh-next .pfh-next-facts { color: var(--text-2); }
+@media (min-width: 769px) {
+  .pfh a.pfh-next { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: 1fr auto auto 1fr; }
+  .pfh a.pfh-next .pfh-next-media { grid-column: 1; grid-row: 1 / -1; aspect-ratio: auto; min-height: 280px; }
+  .pfh a.pfh-next .pfh-next-cd { grid-column: 2; grid-row: 2; margin: 0 var(--space-6) var(--space-2); }
+  .pfh a.pfh-next .pfh-next-body { grid-column: 2; grid-row: 3; padding: 0 var(--space-6); }
+  .pfh a.pfh-next .pfh-next-name { font-size: var(--text-headline); }
+}
+.pfh a.pfh-door {
+  border: var(--stroke-edge) solid var(--edge);
+  background: var(--surface);
+  box-shadow: none;
+  color: var(--text);
+}
+.pfh a.pfh-door .pfh-door-name { color: var(--text); }
+.pfh a.pfh-door .pfh-door-photo { border-color: var(--surface); background: var(--surface-sunken); box-shadow: var(--elev-1); }
+.ctc .ctc-where { display: inline-flex; align-items: center; gap: var(--space-1); }
+.ctc .ctc-where .country-flag { flex: none; }
+.pfh a.pfh-door .pfh-door-photo { border-width: var(--stroke-edge); border-radius: var(--radius-control); transform: none; animation: none; }
+.pf-carta-hrow { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); margin-bottom: var(--space-3); }
+.ctc .ctc-where { gap: 6px; font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
+.ctc .ctc-what { font-weight: 500; color: var(--text-2); }
+.ctc .ctc-price .jcap-fig .money {
+  font-size: var(--text-figure);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--text);
+}

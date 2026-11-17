@@ -16,6 +16,7 @@
  */
 import React from 'react';
 import { haptic } from '../../lib/haptics.js';
+import { useRovingRadios, radioGroupKeyDown } from './radioGroup.js';
 
 function Tick() {
   return (
@@ -58,20 +59,13 @@ export const Chip = React.forwardRef(function Chip(
   );
 });
 
-/* A row of choice chips. Arrow keys move the checked chip, as a radio group does. */
+/* A row of choice chips. Arrow keys, Home and End move the checked chip, as a
+   radio group does; with nothing checked the first chip is the tab stop (K9). */
 export function ChipGroup({ label, className = '', children, ...rest }) {
-  const onKeyDown = (e) => {
-    if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(e.key)) return;
-    const items = [...e.currentTarget.querySelectorAll('[role="radio"]:not(:disabled)')];
-    const i = items.indexOf(document.activeElement);
-    if (i < 0) return;
-    e.preventDefault();
-    const next = items[(i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length];
-    next.focus();
-    next.click();
-  };
+  const ref = React.useRef(null);
+  useRovingRadios(ref);
   return (
-    <div role="radiogroup" aria-label={label} className={`ui-chip-group ${className}`.trim()} onKeyDown={onKeyDown} {...rest}>
+    <div ref={ref} role="radiogroup" aria-label={label} className={`ui-chip-group ${className}`.trim()} onKeyDown={radioGroupKeyDown} {...rest}>
       {children}
     </div>
   );

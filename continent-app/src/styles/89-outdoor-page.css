@@ -24,70 +24,8 @@
 .oxp .ox-board { margin-top: var(--space-4); }
 .oxp .ox-board:empty { display: none; }
 .oxp .pt-facts.dsk-keyfacts { margin: 0; }
-.oxp .pt-facts .dsk-kf-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-auto-flow: row;
-  gap: 0;
-  background: var(--surface);
-  border: var(--stroke-hair) solid var(--border);
-  border-radius: var(--radius-panel);
-  overflow: hidden;
-}
-@media (min-width: 600px) {
-  .oxp .pt-facts .dsk-kf-list { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-columns: auto; grid-auto-flow: row; }
-}
-/* Four facts read as one row from 600 px; five as three over two. */
-@media (min-width: 600px) {
-  .oxp .pt-facts .dsk-kf-list:has(> .dsk-kf:nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
-.oxp .pt-facts .dsk-kf {
-  display: grid;
-  gap: var(--space-1);
-  align-content: start;
-  padding: var(--space-3) var(--space-4) var(--space-4);
-  border-radius: 0;
-  background: none;
-  /* The hairlines between cells: each cell draws its left and top edge,
-     pulled out by a hairline and clipped by the frame, so any count of
-     cells closes cleanly. */
-  border-left: var(--stroke-hair) solid var(--border-soft); border-top: var(--stroke-hair) solid var(--border-soft); margin: calc(var(--stroke-hair) * -1) 0 0 calc(var(--stroke-hair) * -1);
-  min-width: 0;
-}
-/* An odd count closes the frame: the last cell takes the rest of its row
-   (two across: an odd last cell; three across: the fifth of five). */
-.oxp .pt-facts .dsk-kf:last-child:nth-child(odd) { grid-column: 1 / -1; }
-@media (min-width: 600px) {
-  .oxp .pt-facts .dsk-kf:last-child:nth-child(odd) { grid-column: auto; }
-  .oxp .pt-facts .dsk-kf:nth-child(5):last-child { grid-column: span 2; }
-}
-.oxp .pt-facts .dsk-kf-label {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  margin: 0;
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--text-2);
-}
-.oxp .pt-facts .dsk-kf-icon { display: inline-grid; place-items: center; width: auto; height: auto; border-radius: 0; background: none; color: var(--text-2); }
-.oxp .pt-facts .dsk-kf-icon svg { width: 14px; height: 14px; }
-.oxp .pt-facts .dsk-kf-value {
-  margin: 0;
-  font-size: var(--text-lead);
-  font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-  color: var(--text);
-  font-variant-numeric: tabular-nums lining-nums;
-  /* A long word (German "Alpinwanderung") breaks at a syllable, never
-     mid-letter. */
-  overflow-wrap: break-word;
-  hyphens: auto;
-  text-wrap: balance;
-}
-@media (min-width: 600px) { .oxp .pt-facts .dsk-kf-value { font-size: var(--text-title); } }
-.oxp .pt-facts .dsk-kf-note { display: block; margin-top: 2px; font-size: var(--text-caption); font-weight: 600; letter-spacing: 0; color: var(--text-2); }
+/* The board grammar itself lives in 88-place-template.css (.pt-page .pt-facts),
+   shared with the place and journey pages (outdoors FR1). */
 /* The lake's swim verdict leads the board in its own words. */
 .oxp .pt-facts > .lpage-swim { margin: 0 0 var(--space-3); }
 
@@ -332,6 +270,14 @@
 .ox-chk li.is-warn .ox-chk-icon { color: var(--amber-ink); }
 /* A list of one row: the section's own rule is enough. */
 .ox-chk > li:only-child { border-bottom: 0; }
+/* B7: a hairline list that ends its section lets the next section's rule
+   close it, so the two never stack (outdoors judge 2, fix 2). Two across
+   from 700 px, the last row can hold two items. */
+.oxp .pt-sec:is(:has(+ .pt-sec), :has(+ .pt-group)) > :is(.ox-chk, .ox-along.is-text, .ox-sim.is-text):last-child > :last-child,
+.oxp .pt-sec:is(:has(+ .pt-sec), :has(+ .pt-group)) > .ox-rtc:last-child > :last-child > .ox-rc { border-bottom: 0; }
+@media (min-width: 700px) {
+  .oxp .pt-sec:is(:has(+ .pt-sec), :has(+ .pt-group)) > :is(.ox-chk:not(.is-single), .ox-along.is-text, .ox-sim.is-text):last-child > :nth-last-child(2):nth-child(odd) { border-bottom: 0; }
+}
 .ox-chk li.is-warn .ox-chk-text b { color: var(--amber-ink); }
 
 .ox-safety {

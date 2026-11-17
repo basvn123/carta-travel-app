@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
-  srcSetFor, fallbackSrc, initials, heroLadder,
+  srcSetFor, fallbackSrc, heroLadder,
 } from '../lib/heroImage.js';
-import { CountryFlag } from './CountryFlag.jsx';
+import { WorldTile } from './ui/StateBlock.jsx';
 
 /**
  * One photograph at the size the layout draws it, from our own copy when
@@ -67,8 +67,7 @@ export function LadderImg({
 export function HeroImage({
   url,
   image = null,
-  city,
-  iso2,
+  // city and iso2 are still passed by callers; the world tile blank no longer prints them.
   className = '',
   maxWidth = 960,
   sizes,
@@ -77,12 +76,9 @@ export function HeroImage({
 }) {
   const src = url || image?.url || null;
   if (!src) {
-    return (
-      <span className={`hero-blank ${className}`} aria-hidden="true">
-        <span className="hero-blank-mark">{initials(city)}</span>
-        {iso2 && <CountryFlag country={iso2} size={13} />}
-      </span>
-    );
+    // No photo: the house's world tile (a blaze on the rock ground), not
+    // initials and a flag (plan FR4, K11). Decorative, as the old blank was.
+    return <WorldTile className={`hero-blank ${className}`.trim()} />;
   }
   return (
     <LadderImg

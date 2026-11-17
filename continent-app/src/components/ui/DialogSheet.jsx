@@ -22,17 +22,36 @@ import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 import { IconButton } from './IconButton.jsx';
 import { CloseIcon } from '../Icons.jsx';
 
+// Longest exit (--dur-2 plus slack): onClose still runs if animationend never fires.
+const EXIT_FALLBACK_MS = 320;
+
 export function DialogSheet({ titleId, title, className = '', onClose, closeLabel, skipEscapeWhen = null, children }) {
   const panelRef = React.useRef(null);
   const closeRef = React.useRef(null);
+  const [leaving, setLeaving] = React.useState(false);
+  const doneRef = React.useRef(false);
+  const timerRef = React.useRef(0);
+  React.useEffect(() => () => clearTimeout(timerRef.current), []);
+  const finish = React.useCallback(() => {
+    if (doneRef.current) return;
+    doneRef.current = true;
+    clearTimeout(timerRef.current);
+    onClose();
+  }, [onClose]);
+  const close = React.useCallback(() => {
+    if (leaving) return;
+    setLeaving(true);
+    timerRef.current = setTimeout(finish, EXIT_FALLBACK_MS);
+  }, [leaving, finish]);
   const skip = skipEscapeWhen ? () => skipEscapeWhen(panelRef.current) : null;
-  useFocusTrap(panelRef, onClose, { initialFocusRef: closeRef, skipEscapeWhen: skip });
+  useFocusTrap(panelRef, close, { initialFocusRef: closeRef, skipEscapeWhen: skip });
   return createPortal(
-    <div className="frr-scrim" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className={`frr-sheet ${className}`.trim()} role="dialog" aria-modal="true" aria-labelledby={titleId} ref={panelRef}>
+    <div className={`frr-scrim hs-dscrim${leaving ? ' is-leaving' : ''}`} onMouseDown={(e) => { if (e.target === e.currentTarget) close(); }}>
+      <div className={`frr-sheet hs-dsheet${leaving ? ' is-leaving' : ''} ${className}`.trim()} role="dialog" aria-modal="true" aria-labelledby={titleId} ref={panelRef}
+        onAnimationEnd={(e) => { if (leaving && e.target === e.currentTarget) finish(); }}>
         <div className="frr-sheet-head">
           <h2 id={titleId}>{title}</h2>
-          <IconButton label={closeLabel} onClick={onClose} ref={closeRef}>
+          <IconButton label={closeLabel} onClick={close} ref={closeRef}>
             <CloseIcon size={16} />
           </IconButton>
         </div>

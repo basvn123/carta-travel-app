@@ -49,6 +49,8 @@
 .hm-cost-head.has-relief { display: flex; flex-direction: column-reverse; gap: var(--space-5); }
 .hm-cost-head.has-relief .relief-flat { max-width: none; }
 .hm-cost-head .relief-zone { position: relative; top: auto; right: auto; bottom: auto; left: auto; height: 136px; border-radius: 0; }
+/* The kit cut is --action, which vanishes on the umber band (home judge 3). */
+.hm-cost-head .relief-cut { background: var(--umber-200); }
 
 /* The story: each chapter is its label and one line; it lights up when it
    reaches the middle of the view (wide) or when the post is in view

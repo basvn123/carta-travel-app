@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import Logo from '../components/Logo.jsx';
+import { Blaze } from '../components/ui/Blaze.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { MapPinIcon, CalendarIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -72,9 +72,10 @@ export function SharedTripView({ token, onDismiss, destinations }) {
   return (
     <div className="auth-overlay auth-overlay-solid stview-overlay">
       <div className="stview" ref={viewRef} role="dialog" aria-modal="true" aria-label={t('share.viewTitle')}>
-        <div className="stview-brand">
-          <Logo size={26} />
-          <span className="stview-brand-name">Carta</span>
+        {/* The wordmark slot (blaze and name), as sign in and the footer. */}
+        <div className="auth-brand stview-brand">
+          <Blaze size="md" />
+          <span className="auth-brand-name">Carta</span>
         </div>
 
         {state.loading ? (

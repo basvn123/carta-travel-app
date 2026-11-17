@@ -1,14 +1,2 @@
-import React from 'react';
-
-/**
- * The boxed "AI" tag (house style, DESIGN.md "The kit"): what stands for
- * AI, never a sparkle. Decorative: the control or line beside it names the
- * thing, so the tag is hidden from screen readers. It takes the same props as
- * an icon component (`size`, `className`) so it can stand where an icon
- * component is expected (an Account row, a chip).
- */
-export function AiTag({ className = '' }) {
-  return <span className={`ai-tag ${className}`.trim()} aria-hidden="true">AI</span>;
-}
-
-export default AiTag;
+// The AI tag is a kit part now (K12): this path stays so its importers keep working.
+export { AiTag, default } from './ui/AiTag.jsx';

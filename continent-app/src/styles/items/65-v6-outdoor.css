@@ -48,16 +48,7 @@
 .dsk-page .dsk-part + .dsk-part { margin-top: var(--space-2); }
 .dsk-page .rstage.is-static { cursor: default; color: var(--ink); }
 .dsk-page .sig-sq.is-on { border-color: var(--select-border); background: var(--ink); }
-.dsk-page .dsk-head .cycle-title h1 {
-  font-family: var(--display);
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-}
 @media (min-width: 769px) {
-  .dsk-page .dsk-head .cycle-title h1 { font-size: 40px; line-height: 1.1; }
   .dsk-page .dsk-grid section h2 { font-size: 26px; }
 }
 .dsk-page #dsk-sec-facts,
@@ -136,11 +127,6 @@
   .dsk-page .dsk-primary.cycle-gpx:active { transition: none; }
 }
 .dsk-page .sig-plain-area { fill: var(--rule); stroke: none; }
-.dsk-page .dsk-head .cycle-title h1 {
-  overflow-wrap: anywhere;
-  hyphens: auto;
-  text-wrap: balance;
-}
 .dsk-page .dsk-ref { max-width: 100%; overflow-wrap: anywhere; }
 .dsk-page .jstrip-word,
 .dsk-page .dsk-kf-label,

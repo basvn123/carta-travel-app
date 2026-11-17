@@ -62,6 +62,22 @@
   .btn-danger:hover { background: var(--danger-dark); border-color: var(--danger-dark); }
 }
 
+/* The filled variants match .btn:disabled's specificity and come later, so a
+   disabled primary kept its umber with dim ink on it (plan FR1). Restated here,
+   after the variants and their hover, so disabled always wins. */
+.btn-primary:disabled,
+.btn-primary[aria-disabled="true"],
+.btn-danger:disabled,
+.btn-danger[aria-disabled="true"],
+.btn-primary:disabled:hover,
+.btn-primary[aria-disabled="true"]:hover,
+.btn-danger:disabled:hover,
+.btn-danger[aria-disabled="true"]:hover {
+  background: var(--surface-sunken);
+  border-color: var(--border);
+  color: var(--text-3);
+}
+
 /* Inline, inside a bar. Shorter on a fine pointer; a touch target stays --tap. */
 .btn-sm { min-height: 32px; padding: 0 var(--space-3); font-size: var(--text-label); }
 @media (pointer: coarse) {
@@ -90,9 +106,11 @@
 .ai-tag {
   display: inline-grid;
   place-items: center;
-  min-width: 22px;
-  height: 16px;
-  padding: 0 3px;
+  /* Sized in em of --text-micro (22 by 16 px at 12 px), so it scales
+     with the type tokens instead of fixed pixels (K12). */
+  min-width: 1.85em;
+  height: 1.35em;
+  padding: 0 0.25em;
   border: var(--stroke-edge) solid currentColor;
   border-radius: calc(var(--radius-sm) / 2);
   font-size: var(--text-micro);

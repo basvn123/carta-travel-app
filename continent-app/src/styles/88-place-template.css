@@ -245,43 +245,74 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .pt-lead-first { margin: 0; font-size: var(--text-title); font-weight: 600; line-height: 1.45; letter-spacing: -0.01em; color: var(--text); text-wrap: pretty; }
 .pt-lead-rest { margin: 0; font-size: var(--text-lead); line-height: 1.65; color: var(--text-2); text-wrap: pretty; }
 
-/* ── The facts (T1024): soft tiles on the page's ground, two across on a
-   phone, one row from 700 px; an icon disc, the label, the value. ── */
+/* ── The facts: one paper board with hairlines between cells, the same
+   instrument on the place, journey and outdoor pages (outdoors FR1, K14).
+   Two across on a phone, three from 600 px, four in a row when there are four. ── */
 .pt-page .pt-facts.dsk-keyfacts { margin: var(--space-5) 0 0; padding: 0; border: 0; }
 .pt-page .pt-facts .dsk-kf-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-2);
-  margin: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row;
+  gap: 0;
+  background: var(--surface);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
+  overflow: hidden;
+}
+@media (min-width: 600px) {
+  .pt-page .pt-facts .dsk-kf-list { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-columns: auto; grid-auto-flow: row; }
+}
+/* Four facts read as one row from 600 px; five as three over two. */
+@media (min-width: 600px) {
+  .pt-page .pt-facts .dsk-kf-list:has(> .dsk-kf:nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .pt-page .pt-facts .dsk-kf {
   display: grid;
-  gap: 4px;
+  gap: var(--space-1);
   align-content: start;
-  margin: 0;
-  padding: var(--space-3);
-  border: 0;
-  border-radius: var(--radius-card);
-  background: var(--surface-sunken);
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  border-radius: 0;
+  background: none;
+  /* The hairlines between cells: each cell draws its left and top edge,
+     pulled out by a hairline and clipped by the frame, so any count of
+     cells closes cleanly. */
+  border-left: var(--stroke-hair) solid var(--border-soft); border-top: var(--stroke-hair) solid var(--border-soft); margin: calc(var(--stroke-hair) * -1) 0 0 calc(var(--stroke-hair) * -1);
   min-width: 0;
 }
+/* An odd count closes the frame: the last cell takes the rest of its row
+   (two across: an odd last cell; three across: the fifth of five). */
 .pt-page .pt-facts .dsk-kf:last-child:nth-child(odd) { grid-column: 1 / -1; }
+@media (min-width: 600px) {
+  .pt-page .pt-facts .dsk-kf:last-child:nth-child(odd) { grid-column: auto; }
+  .pt-page .pt-facts .dsk-kf:nth-child(5):last-child { grid-column: span 2; }
+}
 .pt-page .pt-facts .dsk-kf-label {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-1);
   margin: 0;
-  font-size: var(--text-caption);
+  font-size: var(--text-label);
   font-weight: 600;
-  color: var(--text-3);
+  color: var(--text-2);
 }
-.pt-page .pt-facts .dsk-kf-icon { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--surface); color: var(--umber-700); }
-.pt-page .pt-facts .dsk-kf-value { margin: 0; font-size: var(--text-lead); font-weight: 700; color: var(--text); overflow-wrap: anywhere; }
-.pt-page .pt-facts .dsk-kf-note { display: block; margin-top: 2px; font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
-@media (min-width: 700px) {
-  .pt-page .pt-facts .dsk-kf-list { grid-template-columns: none; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; }
-  .pt-page .pt-facts .dsk-kf:last-child:nth-child(odd) { grid-column: auto; }
+.pt-page .pt-facts .dsk-kf-icon { display: inline-grid; place-items: center; width: auto; height: auto; border-radius: 0; background: none; color: var(--text-2); }
+.pt-page .pt-facts .dsk-kf-icon svg { width: 14px; height: 14px; }
+.pt-page .pt-facts .dsk-kf-value {
+  margin: 0;
+  font-size: var(--text-lead);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  font-variant-numeric: tabular-nums lining-nums;
+  /* A long word (German "Alpinwanderung") breaks at a syllable, never
+     mid-letter. */
+  overflow-wrap: break-word;
+  hyphens: auto;
+  text-wrap: balance;
 }
+@media (min-width: 600px) { .pt-page .pt-facts .dsk-kf-value { font-size: var(--text-title); } }
+.pt-page .pt-facts .dsk-kf-note { display: block; margin-top: 2px; font-size: var(--text-caption); font-weight: 600; letter-spacing: 0; color: var(--text-2); }
 
 /* ── The jump bar (T1024): a sticky row of pills inside the content column,
    on the page's ground, no line across the screen; the section in view is
@@ -707,7 +738,7 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .dpc-pill:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 
 /* The day: the loudest figure in the post, the unit said once, the split
-   under it as the formation (its own day figure stays out: it is printed
+   under it as the formation (figure={false}: the day figure is printed
    above, at the display size). */
 .tcard-dayrow { display: grid; gap: var(--space-3); min-width: 0; }
 .tcard-each { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; font-variant-numeric: tabular-nums lining-nums; }
@@ -715,7 +746,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 .tcard-each .pitems-trigger { text-decoration-thickness: 2px; text-underline-offset: 6px; }
 .tcard-unit { font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
 .tcard-split { max-width: 100%; }
-.tcard-split .hs-formation-day { display: none; }
 
 /* The stay for the party: one signpost plate (name: nights and people; the
    second line: a person; the figure: the engine's total). */
@@ -774,9 +804,6 @@ a.pgal-all-credit { text-decoration: underline; text-underline-offset: 2px; }
 
 /* The receipt: the kit's cost rows along dotted leaders. */
 .tcard-lines.costrows { margin: 0; }
-/* The label keeps its own width so the dotted leader runs to the figure. */
-.tcard-lines .costrow-text { flex: 0 1 auto; }
-.tcard-lines .costrow dt::after { align-self: flex-start; margin: 14px 0 0 var(--space-2); }
 .tcard-line-btn {
   display: inline-flex;
   flex-wrap: wrap;

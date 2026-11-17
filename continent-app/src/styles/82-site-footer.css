@@ -17,6 +17,8 @@
   gap: var(--space-5);
 }
 .site-footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); max-width: 40ch; }
+/* The wordmark slot keeps the column's own gap, not the sign in sheet's margin. */
+.site-footer-brand .auth-brand { margin-bottom: 0; }
 .site-footer-line { margin: 0; color: var(--text-2); font-size: var(--text-label); line-height: var(--leading-body); }
 .site-footer-lang {
   position: relative;

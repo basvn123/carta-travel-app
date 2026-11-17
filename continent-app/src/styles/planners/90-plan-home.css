@@ -70,7 +70,6 @@
 .pfh .pfh-new.btn:active { transform: scale(0.985); }
 .pfh .pfh-new.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
 @media (hover: hover) {
-  .pfh .pfh-new.btn:hover { background: transparent; }
   .pfh .pfh-new.btn:hover .pfh-new-plus { transform: rotate(90deg); }
 }
 
@@ -88,7 +87,6 @@
 .pfh-door-photo:nth-child(2) { top: 0; }
 @keyframes pfh-deal { from { opacity: 0; transform: translateX(calc(var(--i) * -24px)) rotate(0deg); } }
 @media (hover: hover) {
-  .pfh a.pfh-door:hover { border-color: var(--action); }
   .pfh-door:hover .pfh-door-photo { transform: translateX(calc((var(--i) - 1) * 5px)) translateY(-2px) rotate(calc((var(--i) - 1) * 11deg)); }
 }
 
@@ -188,58 +186,16 @@
 
 /* House style (plan lane 2026-11): Your trips shows its name, a page title
    over the two doors (New trip, Ready-made trips). */
-.pfh .pfh-head .pfh-title {
-  grid-column: 1 / -1;
-  margin: 0;
-  font-size: var(--text-headline);
-  font-weight: 800;
-  line-height: var(--leading-tight);
-  letter-spacing: -0.018em;
-  color: var(--text);
-  text-wrap: balance;
-}
 
 /* House style (plan lane 2026-11): Up next is the photo with its words
    under it on paper (text never on a photo; the drift loop and the dark
    fall are gone), side by side from 769 px. The Ready-made trips door is
    paper with an edge: New trip is the screen's one umber action. */
-.pfh a.pfh-next {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  aspect-ratio: auto;
-  border: var(--stroke-hair) solid var(--border);
-  border-radius: var(--radius-card);
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: none;
-}
-.pfh a.pfh-next .pfh-next-media { position: relative; inset: auto; z-index: auto; display: block; aspect-ratio: 16 / 9; overflow: hidden; background: var(--surface-sunken); }
 .pfh a.pfh-next .pfh-next-img { position: absolute; inset: 0; animation: none; }
-.pfh a.pfh-next .pfh-next-cd { position: static; justify-self: start; margin: var(--space-4) var(--space-4) 0; min-height: 28px; background: var(--select-bg); color: var(--select-ink); box-shadow: none; }
-.pfh a.pfh-next .pfh-next-body { position: static; align-items: center; padding: var(--space-3) var(--space-4) var(--space-4); }
-.pfh a.pfh-next .pfh-next-name { font-size: var(--text-title); font-weight: 800; color: var(--text); text-shadow: none; }
-.pfh a.pfh-next .pfh-next-facts { color: var(--text-2); }
-@media (min-width: 769px) {
-  .pfh a.pfh-next { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); grid-template-rows: 1fr auto auto 1fr; }
-  .pfh a.pfh-next .pfh-next-media { grid-column: 1; grid-row: 1 / -1; aspect-ratio: auto; min-height: 280px; }
-  .pfh a.pfh-next .pfh-next-cd { grid-column: 2; grid-row: 2; margin: 0 var(--space-6) var(--space-2); }
-  .pfh a.pfh-next .pfh-next-body { grid-column: 2; grid-row: 3; padding: 0 var(--space-6); }
-  .pfh a.pfh-next .pfh-next-name { font-size: var(--text-headline); }
-}
-.pfh a.pfh-door {
-  border: var(--stroke-edge) solid var(--edge);
-  background: var(--surface);
-  box-shadow: none;
-  color: var(--text);
-}
-.pfh a.pfh-door .pfh-door-name { color: var(--text); }
-.pfh a.pfh-door .pfh-door-photo { border-color: var(--surface); background: var(--surface-sunken); box-shadow: var(--elev-1); }
 /* A draft row keeps its menu in the row (the card rule from 1024 px puts it over the photo corner). */
 .pfh .pfh-row .pf-trip-more { position: static; margin: 0; }
 
 /* Polish round 1: the Ready-made card's country carries its flag (rail-card grammar). */
-.ctc .ctc-where { display: inline-flex; align-items: center; gap: var(--space-1); }
-.ctc .ctc-where .country-flag { flex: none; }
 
 /* Polish round 1: a trip without a photo shows its trip art whole (the art
    is square; a wide crop cut its trail's end mark). */
@@ -251,11 +207,9 @@
 
 /* Polish round 1: the door's three photos lie flat and overlap (no tilted
    polaroid deck), in the house photo treatment. */
-.pfh a.pfh-door .pfh-door-photo { border-width: var(--stroke-edge); border-radius: var(--radius-control); transform: none; animation: none; }
 
 /* Integration (P1): the unit is said once, right-aligned in the first
    section's title row, next to the figures it explains. */
-.pf-carta-hrow { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--space-1) var(--space-3); margin-bottom: var(--space-3); }
 .pf-carta-hrow .pf-carta-h,
 .pf.is-carta .pf-carta-hrow .pf-carta-h { margin: 0; }
 .pf.is-carta .pf-carta-hrow { margin-bottom: var(--space-2); }
@@ -269,18 +223,8 @@
 .ctc .ctc-hit { gap: 6px; }
 .ctc .ctc-over { gap: 2px; margin-top: 4px; }
 .ctc .ctc-name { font-size: var(--text-lead); font-weight: 700; line-height: 1.25; letter-spacing: 0; }
-.ctc .ctc-where { gap: 6px; font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
-.ctc .ctc-what { font-weight: 500; color: var(--text-2); }
 .ctc .ctc-price { align-items: center; margin-top: 4px; }
 .ctc .ctc-price .jcap-fig { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
-.ctc .ctc-price .jcap-fig .money {
-  font-size: var(--text-figure);
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.01em;
-  font-variant-numeric: tabular-nums lining-nums;
-  color: var(--text);
-}
 .ctc .ctc-price .jcap-fig.is-none { font-weight: 400; color: var(--text-3); }
 @media (hover: hover) {
   .ctc .ctc-hit:hover .ctc-img { transform: scale(1.03); }

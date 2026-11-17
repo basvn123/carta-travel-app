@@ -4,7 +4,7 @@ import { ratingWords } from '../../lib/rating.js';
 import { formatApprox, formatMoney } from '../../lib/money.js';
 import { useDayView } from '../../hooks/useDayView.js';
 import { Money } from '../../components/ui/Money.jsx';
-import { NotYet } from '../../components/ui/StateBlock.jsx';
+import { ScorePlate } from '../../components/ui/Plate.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { isNational } from '../../components/CostSummary.jsx';
 import { PriceItems } from '../../components/PriceItems.jsx';
@@ -13,12 +13,9 @@ import { PriceItems } from '../../components/PriceItems.jsx';
  * Explore's house parts (G1, house style 2026-11; DESIGN.md "Signature
  * components", the explore lane's decision in .work/2026-11-13-hs-explore).
  *
- * PlaceScore    the Score as the dark plate after a name. It keeps what the
- *               old ScoreChip said: an estimated Score reads "about 8.1", an
- *               unscored place "Not yet", and the accessible name carries the
- *               band word ("Score 9.7, Exceptional"). The kit's ScorePlate
- *               only prints a number, so these rows draw the same .hs-score
- *               plate here.
+ * PlaceScore    the Score as the dark plate after a name: the kit's
+ *               ScorePlate with a `rating` (K1): "about 8.1", "Not yet", and
+ *               the band word in the accessible name.
  * RowFormation  the price row as the house formation (getting there
  *               outlined, the bed solid umber, food and drink beige, then the
  *               day figure, loudest). Every figure, unit and switch is the
@@ -30,18 +27,9 @@ import { PriceItems } from '../../components/PriceItems.jsx';
  *               `.xprice` and the `.pparts-*` names stay for the harnesses.
  */
 
+/** K1: the kit's ScorePlate draws it now; the name stays for Explore's callers. */
 export function PlaceScore({ rating, size = 'md', className = '' }) {
-  const { t } = useI18n();
-  if (rating?.unscored) return <NotYet className={`xscore-none ${className}`.trim()} />;
-  const w = ratingWords(rating, t);
-  if (!w) return null;
-  const aria = w.word ? `${t('score.aria', { n: w.shown })}, ${w.word}` : t('score.aria', { n: w.shown });
-  return (
-    <span className={`hs-score xscore${size === 'lg' ? ' is-lg' : ''}${w.estimated ? ' is-est' : ''}${className ? ` ${className}` : ''}`}
-      role="img" aria-label={aria} title={aria} data-band={w.band || ''} data-score={w.figure}>
-      <span aria-hidden="true">{w.shown}</span>
-    </span>
-  );
+  return <ScorePlate rating={rating} size={size} className={className} />;
 }
 
 /** The band word ("Exceptional") beside the plate, where a row has room. */

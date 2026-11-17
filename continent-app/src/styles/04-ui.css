@@ -379,7 +379,11 @@
 /* The label sits on the big figure's baseline, not on the per-person line under it. */
 .costsum { border-top: 2px solid var(--text); align-items: baseline; }
 /* Ledger leaders: on a wide receipt the label reaches its figure along a dotted line. */
-.costrows.has-leaders .costrow dt::after { content: ''; flex: 1; align-self: flex-end; min-width: var(--space-4); margin: 0 0 5px var(--space-2); border-bottom: 2px dotted var(--border); }
+/* The label keeps its own width so the leader runs the whole way to the
+   figure, and the leader sits under the label's first line, not under a
+   second line or a sub line (place FR2, K5). */
+.costrows.has-leaders .costrow-text { flex: 0 1 auto; }
+.costrows.has-leaders .costrow dt::after { content: ''; flex: 1; align-self: flex-start; min-width: var(--space-4); margin: 0.9em 0 0 var(--space-2); border-bottom: 2px dotted var(--border); }
 .costsum .costrow-label { font-weight: 600; }
 .costsum dd { flex-direction: column; align-items: flex-end; gap: 2px; }
 .costsum-fig { font-size: var(--text-title); font-weight: 800; line-height: var(--leading-tight); }

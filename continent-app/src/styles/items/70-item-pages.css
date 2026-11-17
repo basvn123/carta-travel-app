@@ -16,8 +16,6 @@
 
 .ipage .ipage-grid > .ipage-head { margin-top: var(--space-5); }
 
-.ipage .ipage-grid > .dsk-keyfacts { margin-top: var(--space-4); }
-
 @media (min-width: 1024px) {
   .ipage .ipage-grid {
     display: grid;

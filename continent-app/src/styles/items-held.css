@@ -293,3 +293,21 @@
   .itin-page .itin-use { transition: none; }
 }
 .tdiff-sq.is-on { background: var(--text); border-color: var(--text); }
+.dsk-page .dsk-head .cycle-title h1 {
+  font-family: var(--font);
+  font-size: var(--text-headline);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+@media (min-width: 769px) {
+  .dsk-page .dsk-head .cycle-title h1 { font-size: var(--text-display); line-height: 1.1; }
+}
+.dsk-page .dsk-head .cycle-title h1 {
+  overflow-wrap: anywhere;
+  hyphens: auto;
+  text-wrap: balance;
+}
+
+.ipage .ipage-grid > .dsk-keyfacts { margin-top: var(--space-4); }

@@ -402,29 +402,22 @@
   --dur-loop:     2800ms;
   --dur-drift:    24000ms;
 
-  /* The home page (T606, DESIGN.md "Home page"): read only by the home
-     stylesheets; the home lane rebuilds them in the house style. */
+  /* The home page (DESIGN.md "Home page"): read by the home stylesheets;
+     --home-ground-deep, --radius-stage and --text-total are also read by
+     the cost card, My trips and the taste and search surfaces. */
   --text-hero:        clamp(44px, 6.8vw, 112px);
   --text-showcase:    clamp(32px, 4.6vw, 64px);
   --tracking-hero:    -0.035em;
   --leading-hero:     0.98;
   --radius-stage:     16px;
-  --text-amount:      clamp(64px, 9vw, 128px);
   --text-total:       clamp(40px, 5vw, 64px);
-  --text-feature:     clamp(28px, 3.4vw, 48px);
-  --home-ground-mist: var(--umber-100);
   --home-ground-deep: var(--umber-800);
-  --home-ground-lake: var(--world-water);
-  --home-ground-clay: var(--umber-200);
-  --home-ground-sea:  var(--world-water);
   --home-ink-on-deep: var(--surface);
   --home-film-bar:    color-mix(in srgb, var(--neutral-900) 30%, transparent);
   --home-film-tint:   color-mix(in srgb, var(--neutral-900) 40%, transparent);
   --dur-film:         9000ms;
   --dur-film-fade:    1200ms;
   --dur-reveal:       640ms;
-  --dur-draw:         1600ms;
-  --dur-advance:      7000ms;
 
   /* The Plan opening (T743): read only by 86-plan-flow.css. */
   --plan-ground:      var(--surface-page);

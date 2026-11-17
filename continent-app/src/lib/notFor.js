@@ -21,6 +21,10 @@
  * a card, a page and a test. Resolve with t(key, params) in the component.
  */
 
+// Climbs and distances in the app language's grouping ("4,409 m"), as every
+// other figure on the page.
+import { count } from './format.js';
+
 const MAX_LINES = 2;
 const FALLBACK = { key: 'notfor.conditions', params: {} };
 
@@ -79,7 +83,7 @@ const TRAIL_RULES = [
     ? line('notfor.trailGrade') : null),
   (x, ctx) => {
     const m = num(ctx.ascent);
-    return m !== null && m >= 800 ? line('notfor.trailClimb', { m: Math.round(m) }) : null;
+    return m !== null && m >= 800 ? line('notfor.trailClimb', { m: count(m) }) : null;
   },
   (x, ctx) => {
     const km = num(ctx.totalM) !== null ? ctx.totalM / 1000 : null;
@@ -101,7 +105,7 @@ const CYCLE_RULES = [
     const asc = num(c.asc);
     const km = num(c.km);
     return asc !== null && km && asc / km >= 12
-      ? line('notfor.cycleHilly', { asc: Math.round(asc), km: Math.round(km) }) : null;
+      ? line('notfor.cycleHilly', { asc: count(asc), km: count(km) }) : null;
   },
 ];
 

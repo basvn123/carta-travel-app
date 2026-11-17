@@ -72,6 +72,9 @@ export function CostRow({
           </span>
         )}
       </span>
+      {/* A space in the visible text, so the row's name reads "Flights Not yet",
+          not "FlightsNot yet" (trip FR3, WCAG 2.5.3). */}
+      {' '}
       <span className="ccard-fig">{fig}</span>
       {go && (onAct && !edits
         ? <ChevronRightIcon size={16} className="ccard-go" aria-hidden="true" />

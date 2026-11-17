@@ -257,7 +257,8 @@ a.cov-near-row { text-decoration: none; }
 
 /* A field the sheet keeps before the data has it (T630, components/NotYet.jsx):
    the words in the secondary ink, never a blank or a dash. */
-.not-yet { color: var(--ink-soft); font-style: normal; }
+/* One look for a missing figure: the same as the kit NotYet (.hs-notyet), K16. */
+.not-yet { color: var(--text-2); font-weight: 700; font-style: normal; }
 .not-yet-line { display: block; margin: 0; font-size: var(--text-body); line-height: 1.45; }
 
 /* T631 (climate, lakes and beaches): the monthly figures under the climate
