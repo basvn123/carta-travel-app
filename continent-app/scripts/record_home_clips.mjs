@@ -113,7 +113,18 @@ async function glide(page, px, ms, sel = null) {
       }
       return document.scrollingElement;
     };
-    let box = s ? scrollerOf(document.querySelector(s)) : null;
+    // A named scroller that is missing, or does not scroll, is a broken
+    // clip (the house style moved My trips, Together and the trip page into
+    // their own scrollers and the old fallback filmed a still window): fail
+    // the clip instead of recording one frame.
+    let box = null;
+    if (s) {
+      const el = document.querySelector(s);
+      box = el && scrollerOf(el);
+      if (!box || box === document.scrollingElement) {
+        throw new Error(`glide: nothing scrolls under ${s}`);
+      }
+    }
     if (!box) {
       const all = [...document.querySelectorAll('*')].filter((el) => {
         const cs = getComputedStyle(el);
@@ -140,12 +151,19 @@ async function openSharedTrip(page) {
   if (await page.locator('.pass-overlay').count()) { await page.keyboard.press('Escape'); await page.waitForTimeout(600); }
 }
 
-// What scrolls a day plan's own list (the stops, then the day kit).
-// The trip page scrolls inside its map drawer, 245 px tall on a phone.
-// The trip page (TripSummary, T885) scrolls in its body; a day's stops and
-// its day kit scroll in the day's phone drawer (T957 updated both).
-const PLAN_LIST = '.tpg-body';
+// What scrolls each chapter's screen. In the house style (G1, G14) most
+// screens scroll inside their own panel, not the window, and the Explore
+// list stays mounted under the panels at the same size, so the "largest
+// scroller" guess picks the wrong one: every chapter names its scroller.
+// The trip page scrolls in its page frame; a day's stops and its day kit in
+// the day's phone drawer; My trips and a Together group in their account
+// panel; a place in its page; Explore's results in the Explore tab.
+const PLAN_LIST = '.pf.is-trip-page';
 const DAY_LIST = '.dayws-drawer .map-drawer-scroll';
+const TRIPS_LIST = '.saved-trips-panel';
+const GROUP_LIST = '.tg-panel';
+const PLACE_PAGE = '.pt-scroll';
+const FIND_LIST = '.explore-tab';
 
 /** Each chapter: `ready` loads it off the record, `move` is the clip. */
 const CHAPTERS = {
@@ -162,7 +180,7 @@ const CHAPTERS = {
   },
   explore: {
     ready: (page) => open(page, '#dest=gem%3Abled', 10000),
-    move: async (page) => { await page.waitForTimeout(700); await glide(page, 1800, 5200, '.pt-scroll'); await page.waitForTimeout(900); await glide(page, 1400, 4200, '.pt-scroll'); await page.waitForTimeout(900); },
+    move: async (page) => { await page.waitForTimeout(700); await glide(page, 1800, 5200, PLACE_PAGE); await page.waitForTimeout(900); await glide(page, 1400, 4200, PLACE_PAGE); await page.waitForTimeout(900); },
   },
   trips: {
     // The seam's fixture carries a moderation statement for the DSA tests;
@@ -170,6 +188,7 @@ const CHAPTERS = {
     // and starts from the top of My trips.
     ready: async (page) => {
       await open(page, '?tab=trips&savedmock=next', 9000);
+      await page.waitForSelector(TRIPS_LIST, { timeout: 60000 });
       await page.addStyleTag({ content: '.modnote { display: none !important; }' });
       await page.evaluate(() => {
         document.querySelectorAll('*').forEach((el) => { if (el.scrollTop) el.scrollTop = 0; });
@@ -177,7 +196,7 @@ const CHAPTERS = {
       });
       await page.waitForTimeout(1200);
     },
-    move: async (page) => { await page.waitForTimeout(900); await glide(page, 900, 5000); await page.waitForTimeout(1000); },
+    move: async (page) => { await page.waitForTimeout(900); await glide(page, 900, 5000, TRIPS_LIST); await page.waitForTimeout(1000); },
   },
   together: {
     // A group trip, not the hub (T957): the members, the budget that fits
@@ -186,23 +205,23 @@ const CHAPTERS = {
       await open(page, '?tab=together&tv=group&tg=g-summer&friendsmock', 6000);
       // The group page opens after Together's own load; start on its title.
       await page.waitForSelector('.tg-head.is-sub .tg-h1', { timeout: 60000 });
-      await page.evaluate(() => {
-        const h = document.querySelector('.tg-head.is-sub');
-        h.scrollIntoView({ block: 'start' });
+      await page.evaluate((sel) => {
+        const box = document.querySelector(sel);
+        if (box) box.scrollTop = 0;
         window.scrollTo(0, 0);
-      });
+      }, GROUP_LIST);
       await page.waitForTimeout(2500);
     },
-    move: async (page) => { await page.waitForTimeout(900); await glide(page, 1100, 5200); await page.waitForTimeout(1000); },
+    move: async (page) => { await page.waitForTimeout(900); await glide(page, 1100, 5200, GROUP_LIST); await page.waitForTimeout(1000); },
   },
   find: {
     // July dates, so the settings line agrees with "lakes in the Alps in July".
     ready: (page) => open(page, '?tab=map&xe=lake&xa=alps&xm=7&d=2027-07-03&r=2027-07-10', 12000),
-    move: async (page) => { await page.waitForTimeout(900); await glide(page, 1500, 6200); await page.waitForTimeout(900); },
+    move: async (page) => { await page.waitForTimeout(900); await glide(page, 1500, 6200, FIND_LIST); await page.waitForTimeout(900); },
   },
   place: {
     ready: (page) => open(page, '#dest=gem%3Abled', 10000),
-    move: async (page) => { await page.waitForTimeout(900); await glide(page, 900, 4200); await page.waitForTimeout(1200); await glide(page, 500, 2400); await page.waitForTimeout(800); },
+    move: async (page) => { await page.waitForTimeout(900); await glide(page, 900, 4200, PLACE_PAGE); await page.waitForTimeout(1200); await glide(page, 500, 2400, PLACE_PAGE); await page.waitForTimeout(800); },
   },
   plan: {
     ready: openSharedTrip,
@@ -284,20 +303,25 @@ for (const lang of LANGS) {
       await cdp.send('Page.stopScreencast');
       await ctx.close();
       if (frames.length < 2) throw new Error(`only ${frames.length} frame(s) captured`);
-      // Each frame holds until the next one; the last until the move ended.
-      const lines = [];
-      frames.forEach((f, i) => {
-        const name = `f${String(i).padStart(5, '0')}.jpg`;
-        writeFileSync(join(tmp, name), Buffer.from(f.data, 'base64'));
-        const next = i + 1 < frames.length ? frames[i + 1].t : Math.max(f.t + 0.04, endedAt - startedAt + frames[0].t);
-        lines.push(`file '${name}'`, `duration ${Math.max(0.001, next - f.t).toFixed(4)}`);
-      });
-      lines.push(`file 'f${String(frames.length - 1).padStart(5, '0')}.jpg'`);
-      writeFileSync(join(tmp, 'frames.txt'), lines.join('\n'));
-      const src = ['-f', 'concat', '-safe', '0', '-i', join(tmp, 'frames.txt')];
+      // The clip plays in real time: each 30 fps tick shows the last frame
+      // drawn by then, until the move ended. (An FFmpeg concat list with a
+      // duration per frame gave every screencast frame at least one 25 fps
+      // tick, so a 60 fps scroll played up to 40 percent slow and every clip
+      // ran about 3 s longer than its move; G14.) Frame timestamps and
+      // startedAt share the epoch clock.
+      const FPS = 30;
+      const ticks = Math.max(2, Math.round((endedAt - startedAt) * FPS));
+      const jpgs = frames.map((f) => Buffer.from(f.data, 'base64'));
+      let k = 0;
+      for (let n = 0; n < ticks; n += 1) {
+        const at = startedAt + n / FPS;
+        while (k + 1 < frames.length && frames[k + 1].t <= at) k += 1;
+        writeFileSync(join(tmp, `f${String(n).padStart(5, '0')}.jpg`), jpgs[k]);
+      }
+      const src = ['-framerate', String(FPS), '-i', join(tmp, 'f%05d.jpg')];
       // 546 by 1182: twice the phone frame's 273 px on the page, so it stays
       // sharp on a 2x screen at about half the bytes of the captured 780.
-      const fit = `fps=30,scale=${OUT_W}:${OUT_H}:flags=lanczos:out_range=tv,format=yuv420p`;
+      const fit = `scale=${OUT_W}:${OUT_H}:flags=lanczos:out_range=tv,format=yuv420p`;
       ffmpeg([...src, '-vf', fit, '-an', '-c:v', 'libx264', '-preset', 'slow', '-crf', '29', '-color_range', 'tv', '-movflags', '+faststart', join(dir, `${id}.mp4`)]);
       ffmpeg(['-i', join(tmp, 'f00000.jpg'), '-vf', `scale=${OUT_W}:${OUT_H}:flags=lanczos`, '-c:v', 'libwebp', '-quality', '80', join(dir, `${id}.webp`)]);
       const kb = (f) => Math.round(statSync(join(dir, f)).size / 1024);
