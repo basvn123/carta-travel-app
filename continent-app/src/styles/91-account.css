@@ -159,10 +159,10 @@
   a.ac-row:hover, .ac-row.btn:hover { background: var(--surface-hover); border-color: var(--border-soft); }
 }
 a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
-/* Each row's icon stands in a round band disc, the milestone language of
-   Your Europe, so Account reads as part of the traveller's own record. */
-.ac-row-icon { color: var(--text-2); flex: none; box-sizing: content-box; padding: 8px; border-radius: var(--radius-pill); background: var(--surface-sunken); }
-.ac-row .ai-tag.ac-row-icon { padding: 0 3px; background: none; color: var(--action-hover); }
+/* Row icons in second ink; the AI tag in the same ink so every icon in a
+   list reads alike. */
+.ac-row-icon { color: var(--text-2); flex: none; }
+.ac-row .ai-tag.ac-row-icon { color: var(--text-2); }
 .ac-row-label { font-size: var(--text-lead); font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
 .ac-row-v {
   font-size: var(--text-body);
