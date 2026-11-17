@@ -102,11 +102,11 @@ export function confirmEmail({ lang, confirm, unsub }) {
   return {
     subject: w.confirmSubject,
     text: `${w.confirmBody}\n\n${w.confirmButton}: ${confirm}\n\n${w.confirmIgnore}\n${w.unsub}: ${unsub}\n`,
-    html: '<div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;color:#1f2a33">'
+    html: '<div style="font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;color:#1e2421">'
       + `<p style="font-size:16px;line-height:1.5">${esc(w.confirmBody)}</p>`
-      + `<p><a href="${esc(confirm)}" style="display:inline-block;background:#8c5a2b;color:#ffffff;text-decoration:none;font-weight:600;padding:12px 20px;border-radius:12px">${esc(w.confirmButton)}</a></p>`
-      + `<p style="font-size:13px;line-height:1.5;color:#5b6670">${esc(w.confirmIgnore)}</p>`
-      + `<p style="font-size:13px"><a href="${esc(unsub)}" style="color:#5b6670">${esc(w.unsub)}</a></p></div>`,
+      + `<p><a href="${esc(confirm)}" style="display:inline-block;background:#8c5a2b;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:8px">${esc(w.confirmButton)}</a></p>`
+      + `<p style="font-size:13px;line-height:1.5;color:#465049">${esc(w.confirmIgnore)}</p>`
+      + `<p style="font-size:13px"><a href="${esc(unsub)}" style="color:#465049">${esc(w.unsub)}</a></p></div>`,
   };
 }
 
@@ -116,10 +116,10 @@ export function resultPage(lang, kind, appUrl) {
   const [title, body] = kind === 'confirm' ? [w.pageConfirmed, w.pageConfirmedBody]
     : kind === 'unsub' ? [w.pageUnsub, w.pageUnsubBody] : ['Carta', w.pageBad];
   return `<!doctype html><html lang="${langOf(lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${esc(title)}</title></head>`
-    + '<body style="margin:0;padding:24px;background:#f6f5f2;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">'
-    + '<main style="max-width:480px;margin:48px auto;background:#ffffff;border-radius:16px;padding:24px">'
-    + `<h1 style="margin:0 0 12px;font-size:20px;color:#1f2a33">${esc(title)}</h1>`
-    + `<p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#1f2a33">${esc(body)}</p>`
-    + `<p style="margin:0"><a href="${esc(appUrl)}" style="color:#8c5a2b;font-weight:600">${esc(w.pageBack)}</a></p>`
+    + '<body style="margin:0;padding:24px;background:#eef0ea;font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">'
+    + '<main style="max-width:480px;margin:48px auto;background:#ffffff;border:1px solid #cfd5cc;border-radius:12px;padding:24px">'
+    + `<h1 style="margin:0 0 12px;font-size:20px;color:#1e2421">${esc(title)}</h1>`
+    + `<p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#1e2421">${esc(body)}</p>`
+    + `<p style="margin:0"><a href="${esc(appUrl)}" style="color:#744820;font-weight:700">${esc(w.pageBack)}</a></p>`
     + '</main></body></html>';
 }
