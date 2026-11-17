@@ -242,6 +242,11 @@
   background: var(--surface);
   box-shadow: var(--elev-1);
 }
+/* Face stacks in My trips overlap lightly so no initial is clipped. */
+.mytrips .frn-stack .frn-face + .frn-face { margin-left: calc(var(--space-1) * -1); }
+/* Saved's list tiles: a hairline edge like every other panel here, the
+   chosen one the select edge and wash. */
+.btn.mt-lcard:not([aria-pressed='true']) { border: 1px solid var(--border); }
 /* A row without a price says so quietly; only a figure is loud. */
 .mt-row .card-price .mt-muted { font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
 .mt-next-money.is-none { font-size: var(--text-body); color: var(--text-3); }

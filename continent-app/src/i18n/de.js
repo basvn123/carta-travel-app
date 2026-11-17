@@ -2008,7 +2008,7 @@ export const de = {
   "tg2.upToTrip": "Bis {price} für die Reise",
   "tg2.yourMaxTrip": "Dein Höchstbetrag für die Reise",
   "tg2.forTrip": "{price} für die Reise",
-  "tg2.tripOver": "{price} für die Reise, über dem Budget",
+  "tg2.tripOver": "{price}, über dem Budget",
   "tg2.aPersonTrip": "pro Person für die Reise",
   "tg2.bedAndFood": "Bett und Essen. Die Anreise ist nicht enthalten.",
   "tg2.askJoin": "Mitkommen anfragen",

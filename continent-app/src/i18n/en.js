@@ -2418,7 +2418,7 @@ export const en = {
   "tg2.upToTrip": "Up to {price} for the trip",
   "tg2.yourMaxTrip": "Your most for the trip",
   "tg2.forTrip": "{price} for the trip",
-  "tg2.tripOver": "{price} for the trip, over budget",
+  "tg2.tripOver": "{price}, over budget",
   "tg2.aPersonTrip": "a person for the trip",
   "tg2.bedAndFood": "Bed and food. Getting there is not in it.",
   "tg2.askJoin": "Ask to join",

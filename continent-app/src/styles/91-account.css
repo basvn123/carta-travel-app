@@ -536,3 +536,19 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
   .account-shell .auth-forgot-confirm, .account-shell .account-avatar-picker,
   .ac-pane { animation: none; }
 }
+
+
+/* ── Account as a ledger (account lane, judge round 2) ──────────────────
+   Account's panels are pages of the traveller's own ledger: control-radius
+   corners and one hairline edge, no shadow, so they read as written records
+   rather than floating cards; the identity face is the person drawn as
+   Together draws them (paper with an ink outline: umber means "chosen",
+   never a person). The plan keeps the umber mark plate (the traveller chose
+   it). */
+.ac-list, .ac-me, .ac-signin, .ac-plancard, .ac-pc, .ac-know {
+  border-radius: var(--radius-control);
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+.ac-pc.is-mine { border-color: var(--select-border); outline: 1px solid var(--select-border); outline-offset: -2px; }
+.ac-face { background: var(--surface); color: var(--text); outline: var(--stroke-edge) solid var(--text); outline-offset: calc(-1 * var(--stroke-edge)); }

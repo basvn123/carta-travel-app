@@ -2017,7 +2017,7 @@ export const nl = {
   "tg2.upToTrip": "Tot {price} voor de reis",
   "tg2.yourMaxTrip": "Jouw maximum voor de reis",
   "tg2.forTrip": "{price} voor de reis",
-  "tg2.tripOver": "{price} voor de reis, boven budget",
+  "tg2.tripOver": "{price}, boven budget",
   "tg2.aPersonTrip": "per persoon voor de reis",
   "tg2.bedAndFood": "Bed en eten. De reis ernaartoe zit er niet in.",
   "tg2.askJoin": "Vraag om mee te gaan",

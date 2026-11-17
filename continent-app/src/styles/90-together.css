@@ -280,7 +280,7 @@
 .tg-opt > .btn-label > :not(.tg-opt-fill) { position: relative; }
 .tg-opt b { display: block; font-size: var(--text-body); font-weight: 600; }
 .tg-opt small { display: block; font-size: var(--text-caption); color: var(--text-2); font-variant-numeric: tabular-nums; }
-.tg-opt small.is-over { color: var(--danger); font-weight: 600; }
+.tg-opt small.is-over { color: var(--text-2); }
 .tg-poll-q + .tg-opt.btn { border-top: 1px solid var(--border-soft); }
 .tg-opt[aria-pressed="true"] { border-color: var(--border-soft); background: var(--select-row); }
 .tg-opt[aria-pressed="true"] b { color: var(--select-ink); }
@@ -627,3 +627,6 @@
   .tg-route, .tg-menu-list, .tg-addopt, .tg-found, .tg-panel .auth-error, .tg-panel .auth-notice-inline,
   .tg-askjoin-err { animation: none; }
 }
+
+/* Settle up: the add-a-cost form is a paper panel like the ledger beside it. */
+.tg-new.tg-addcost { padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--elev-1); }
