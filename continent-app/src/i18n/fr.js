@@ -17,6 +17,7 @@ export const fr = {
   "alerts.error": "Cela n'a pas fonctionné. Réessayez plus tard.",
   "alerts.note": "Le total est une estimation de Carta d'après les prix d'hébergement et de vols, pas un devis de réservation.",
   'shell.tagline': "L'Europe en carte",
+  'shell.slowLoad': 'Le chargement prend plus de temps que prévu',
   'shell.failedToLoad': 'Échec du chargement : {error}',
   'toast.emailConfirmed': 'E-mail confirmé. Bienvenue sur Carta.',
   'a11y.dismiss': 'Fermer',

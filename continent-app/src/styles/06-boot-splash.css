@@ -1,0 +1,184 @@
+/* The opening screen (G5, owner choice "deep umber" 2026-11-17; HANDBOOK
+   "Opening screen"). Its markup lives in index.html so it paints in the
+   first frame, before any script; src/lib/bootSplash.js draws the relief,
+   localises the words and lifts it away; LoadingScreen.jsx holds it while
+   the app waits on the session or the data.
+
+   The base rules are the end state. Every arrival is an animation with a
+   backwards fill, so reduced motion (animation: none) shows the finished
+   screen at once, and .no-intro (shown again later in a visit) does too.
+
+   Departures from the house defaults, on purpose: a full deep umber ground
+   with a soft glow, and the relief drawn in once. The relief keeps its own
+   rules: real peaks only (Chamonix's, from its dossier), one real height
+   printed, never under the words. */
+
+.boot-splash {
+  position: fixed;
+  inset: 0;
+  /* Above every page (up to --z-page + 40) and the guides panel; under the
+     crash screen (--z-max), which must stay readable. */
+  z-index: calc(var(--z-top) + 10);
+  overflow: hidden;
+  background:
+    radial-gradient(90% 60% at 50% 34%, color-mix(in srgb, var(--umber-700) 70%, var(--umber-800)) 0%, transparent 70%),
+    var(--umber-800);
+  color: var(--umber-50);
+  font-family: var(--ui);
+  -webkit-user-select: none;
+  user-select: none;
+  will-change: transform;
+  --boot-relief-h: 40%;
+  /* The opening's timeline, one place: when each part starts after the
+     first paint. Durations are house tokens; INTRO_MS in bootSplash.js is
+     when the last arrival ends. */
+  --boot-at-blaze: 80ms;
+  --boot-at-paint: 380ms;
+  --boot-at-name: 480ms;
+  --boot-step: 50ms;
+  --boot-at-heel: 880ms;
+  --boot-at-spot: 900ms;
+  --boot-at-tag: 920ms;
+  --boot-at-wait: 1500ms;
+}
+/* A prerendered page shows its own readable text first; the splash waits
+   until the app holds it (data-state is then set). */
+#root:not(:empty) ~ .boot-splash:not([data-state]) { display: none; }
+.boot-splash[data-state="done"] { display: none; }
+.boot-splash[data-state="lifting"] {
+  pointer-events: none;
+  box-shadow: var(--elev-3);
+}
+
+/* ---- The words: centred on the flat ground above the relief ---------- */
+.boot-stack {
+  position: absolute;
+  /* The relief's top third is its fade, so the words may centre a little
+     lower than its edge and still never sit on a contour. */
+  inset: 0 0 calc(var(--boot-relief-h) * 0.62) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: env(safe-area-inset-top, 0px) var(--space-4) 0;
+  text-align: center;
+}
+/* The blaze at splash size, the same proportions as .hs-blaze. */
+.boot-blaze {
+  position: relative;
+  display: block;
+  width: 88px;
+  aspect-ratio: 24 / 14;
+  border-radius: calc(var(--radius-sm) / 2);
+  background: var(--neutral-0);
+  box-shadow: var(--elev-2);
+  animation: boot-rise var(--dur-4) var(--ease-out) var(--boot-at-blaze) backwards;
+}
+.boot-paint,
+.boot-heel { position: absolute; display: block; }
+.boot-paint {
+  left: 14%;
+  right: 14%;
+  top: 20%;
+  height: 36%;
+  background: var(--action);
+  transform-origin: left center;
+  animation: boot-paint var(--dur-pop) var(--ease-out) var(--boot-at-paint) backwards;
+}
+.boot-heel {
+  right: 14%;
+  width: 34%;
+  bottom: 14%;
+  height: 11%;
+  background: var(--text);
+  transform-origin: right center;
+  animation: boot-paint var(--dur-paint) var(--ease-out) var(--boot-at-heel) backwards;
+}
+
+.boot-name {
+  font-size: var(--text-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+/* Each letter lifts out of a clip once. */
+.boot-letters { display: inline-flex; overflow: hidden; padding-bottom: 0.08em; }
+.boot-letters > span { display: inline-block; animation: boot-lift var(--dur-reveal) var(--ease-out) backwards; }
+.boot-letters > span:nth-child(1) { animation-delay: calc(var(--boot-at-name) + var(--boot-step) * 0); }
+.boot-letters > span:nth-child(2) { animation-delay: calc(var(--boot-at-name) + var(--boot-step) * 1); }
+.boot-letters > span:nth-child(3) { animation-delay: calc(var(--boot-at-name) + var(--boot-step) * 2); }
+.boot-letters > span:nth-child(4) { animation-delay: calc(var(--boot-at-name) + var(--boot-step) * 3); }
+.boot-letters > span:nth-child(5) { animation-delay: calc(var(--boot-at-name) + var(--boot-step) * 4); }
+
+/* Empty until the app names it in the reader's language; the line keeps its
+   height so nothing shifts when the words arrive. */
+.boot-tag {
+  min-height: 1.4em;
+  margin-top: calc(var(--space-2) * -1);
+  font-size: var(--text-label);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--umber-200);
+  animation: boot-fade var(--dur-4) var(--ease-out) var(--boot-at-tag) backwards;
+}
+.boot-tag:empty { visibility: hidden; }
+
+/* The house loading mark (.hs-wait), shown once the opening has played. */
+.boot-splash .hs-wait { animation: boot-appear var(--dur-3) var(--ease-out) var(--boot-at-wait) backwards; }
+
+.boot-slow {
+  min-height: 1.4em;
+  max-width: 32ch;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--umber-200);
+}
+.boot-slow:not(:empty) { animation: boot-fade var(--dur-settle) var(--ease-out) backwards; }
+
+/* ---- The relief: real ground along the bottom, never under the words -- */
+.boot-relief {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--boot-relief-h);
+  pointer-events: none;
+  /* It rises out of the ground rather than starting at a line. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, var(--neutral-900) 38%);
+  mask-image: linear-gradient(to bottom, transparent, var(--neutral-900) 38%);
+}
+.boot-relief svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.boot-relief .boot-art { animation: boot-reveal var(--dur-film-fade) var(--ease-out) backwards; }
+.boot-relief .relief-lit { stroke: color-mix(in srgb, var(--umber-100) 42%, transparent); fill: none; stroke-width: 1.1; }
+.boot-relief .relief-shade { stroke: color-mix(in srgb, var(--neutral-900) 38%, transparent); fill: none; stroke-width: 1; }
+.boot-relief .relief-faint { stroke-opacity: 0.6; }
+.boot-relief .relief-index { stroke-width: 1.7; }
+.boot-relief .relief-spot { animation: boot-fade var(--dur-4) var(--ease-out) var(--boot-at-spot) backwards; }
+
+/* ---- Shown again later in a visit, or under reduced motion: at rest ---- */
+.boot-splash.no-intro :is(.boot-blaze, .boot-paint, .boot-heel, .boot-letters > span, .boot-tag, .hs-wait, .boot-art, .relief-spot) {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .boot-splash,
+  .boot-splash *,
+  .boot-splash *::before,
+  .boot-splash *::after { animation: none !important; }
+}
+@media (forced-colors: active) {
+  .boot-relief { display: none; }
+}
+
+/* Short landscape phones: a lower relief and a tighter stack. */
+@media (max-height: 480px) {
+  .boot-splash { --boot-relief-h: 30%; }
+  .boot-stack { gap: var(--space-3); }
+}
+
+@keyframes boot-rise { from { opacity: 0; transform: translateY(12px) scale(0.86); } }
+@keyframes boot-paint { from { scale: 0 1; } }
+@keyframes boot-lift { from { transform: translateY(105%); } }
+@keyframes boot-fade { from { opacity: 0; transform: translateY(6px); } }
+@keyframes boot-appear { from { opacity: 0; } }
+@keyframes boot-reveal { from { opacity: 0; clip-path: inset(100% 0 0 0); } }

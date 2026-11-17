@@ -1,4 +1,7 @@
 import './lib/pathBoot.js';
+// G5: the opening screen in index.html starts drawing its relief as soon as
+// the bundle runs, before React does any work.
+import { settleBootSplash } from './lib/bootSplash.js';
 // T1122: keep a ?cc=umber cost card preview before the address is rewritten.
 import './planner/trip/costCardVariant.js';
 import React, { Suspense, lazy } from 'react';
@@ -44,8 +47,18 @@ window.addEventListener('vite:preloadError', (event) => {
 const StyleGuide = lazy(() => import('./styleguide/StyleGuide.jsx'));
 const showStyleGuide = new URLSearchParams(window.location.search).has('styleguide');
 
+// After the first commit the opening screen lifts unless LoadingScreen holds
+// it (its layout effect runs before this passive one). Outside the error
+// boundary, so a crash on the first render still uncovers the crash screen.
+// eslint-disable-next-line react-refresh/only-export-components -- the entry module has no exports; this tiny root-only component lives beside the render it settles
+function BootSplashSettle() {
+  React.useEffect(() => { settleBootSplash(); }, []);
+  return null;
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <BootSplashSettle />
     <ErrorBoundary>
       {showStyleGuide ? (
         <I18nProvider>

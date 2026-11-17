@@ -2678,6 +2678,25 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Limits.** Account trips are read from Supabase and do not open offline unless the account sync has mirrored them to the device (T1169-a). Not checked on a real iPhone or Android phone (T246-c, T1169-b). No store listing; the route is I-R3's decision (T1169-c). The precache list is read from the built page and entry script, not from Vite's manifest (T1169-d).
 
+### Opening screen
+
+**What it does.** When Carta opens, the first frame is a deep umber screen: the blaze paints itself, "Carta" lifts in letter by letter with the tagline, and the real ground around Chamonix rises along the bottom with one real height, "Mont Blanc 4,806 m". While the app waits on the session or the travel data, the house loading mark shows; after 4 s one plain line says it is taking longer than usual. When the app is ready, the whole screen lifts away like a curtain onto the app. Before this, the browser showed a blank page until the script ran, then a small logo screen that cut to the app. ROADMAP G5 (owner choice "deep umber", 2026-11-17).
+
+**How it works.**
+1. **First frame, no script.** The markup is static in `continent-app/index.html` (`#boot-splash`, a sibling after `#root`), styled by `src/styles/06-boot-splash.css` in the main stylesheet (no inline style, for the CSP). Every arrival is a CSS animation with a backwards fill, so the base rules are the finished screen. `theme-color` starts at `--umber-800` and carries the app's stone ground in `data-app`.
+2. **When the bundle runs.** `src/lib/bootSplash.js` is the first import in `main.jsx`. It draws the relief with `layoutRelief()` from Chamonix's dossier peaks (`gem:chamonix`, `nearby.mountains`, copied into the module) at the zone's real size, and starts the slow timer (`SLOW_MS`, 4 s from first paint).
+3. **Who holds it.** `src/components/LoadingScreen.jsx` replaces the two waits in `App.jsx` (session resolving, data loading). Its layout effect calls `holdBootSplash()` and hands over the tagline, the slow line (`shell.slowLoad`, six languages) and the language for the height's number format; unmounting releases it. `BootSplashSettle` in `main.jsx` calls `settleBootSplash()` after the first commit, so a screen that never waits (a shared trip, the entry gate, an error, the styleguide) lifts it at once.
+4. **The lift.** With nothing holding it, the splash waits for what is left of the opening (`liftDelay`, at most `INTRO_MS` 1.5 s from first paint), but only on the first open in a browser session (`sessionStorage` `carta.splash.seen.v1`); later opens lift the moment the app is ready, and a tap skips the wait. The lift is a 720 ms curtain (`translateY(-100%)`, bottom corners rounding to `--radius-stage`) while the words rise and fade. Then `data-state="done"` hides it and `theme-color` goes back.
+5. **Shown again.** A later wait in the same page (a hold after `done`) shows it at rest (`.no-intro`).
+6. **Prerendered pages** carry their text inside `#root`, so the CSS hides the splash until the app holds it.
+7. **Never in the way.** Under automation (`navigator.webdriver`) and reduced motion it goes at once with no lift, and reduced motion shows the finished screen with no animation. The crash screen (`--z-max`) sits above it. If a cached `index.html` has no `#boot-splash`, `LoadingScreen` draws the same screen itself, at rest.
+
+**Data behind it.** Five peaks from `public/dossier/gem-chamonix.json` (name, height, km, bearing), copied into `bootSplash.js` so the first screen fetches nothing.
+
+**Where it lives.** `continent-app/index.html`, `continent-app/src/styles/06-boot-splash.css`, `continent-app/src/lib/bootSplash.js`, `continent-app/src/components/LoadingScreen.jsx`, `continent-app/src/main.jsx` (`BootSplashSettle`), `continent-app/tests/bootSplash.test.mjs`. The error screen keeps the older `.loading-screen` look (`14-filters-panels.css`).
+
+**Limits.** The installed app's own launch screen uses `manifest.webmanifest` `background_color`, still the stone ground, so an installed launch shows stone, then umber (the manifest is a protected path; owner step). The peaks are a copy: if Chamonix's dossier changes, `GROUND` in `bootSplash.js` does not follow. The first open of a session holds the app for up to 1.5 s from first paint when it is ready sooner. Not checked on a real phone yet.
+
 ### Taste profile with validation
 
 **What it does.** On My trips, Your Europe tab, a "Your taste" card shows the interests Carta reads from the traveller's own saves, trips and filters, as chips on the Carta travel taxonomy (T1149, five facets). Each chip says what it rests on ("2 trips, 1 saved place", then up to three names) and has a Yes and a Not me. Yes keeps the chip first and shown while any evidence remains; Not me hides it under "Hidden (n)", where Show again takes it back, and turns it into a negative. Start over clears every verdict. ROADMAP F3, T1152.

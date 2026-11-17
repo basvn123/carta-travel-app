@@ -8,7 +8,10 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <meta name="theme-color" content="#eef0ea" />
+    <!-- The bar matches the opening screen's deep umber (--umber-800) while
+         it shows; src/lib/bootSplash.js puts back data-app (the stone ground,
+         --neutral-50) when it lifts or when the page opens without it. -->
+    <meta name="theme-color" content="#5a3716" data-app="#eef0ea" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -52,6 +55,22 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- The opening screen (G5, HANDBOOK "Opening screen"). Static, so it
+         paints in the first frame; styled by src/styles/06-boot-splash.css
+         (no inline style, for the CSP) and run by src/lib/bootSplash.js. It
+         stays a sibling after #root: the prerender splices a page into the
+         empty root (src/lib/prerenderShell.js), and the CSS hides the splash
+         while that page is showing. -->
+    <div id="boot-splash" class="boot-splash" aria-busy="true">
+      <div class="boot-relief" aria-hidden="true"></div>
+      <div class="boot-stack">
+        <span class="boot-blaze" aria-hidden="true"><i class="boot-paint"></i><i class="boot-heel"></i></span>
+        <div class="boot-name"><span class="sr-only">Carta</span><span class="boot-letters" aria-hidden="true"><span>C</span><span>a</span><span>r</span><span>t</span><span>a</span></span></div>
+        <div class="boot-tag" data-boot="tagline"></div>
+        <span class="hs-wait" aria-hidden="true"><span class="hs-blaze blaze-sm"></span><span class="hs-blaze blaze-sm"></span><span class="hs-blaze blaze-sm"></span></span>
+        <div class="boot-slow" role="status" data-boot="slow"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

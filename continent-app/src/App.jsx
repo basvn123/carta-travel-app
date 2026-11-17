@@ -14,6 +14,7 @@ import { LifestylePanel } from './browse/LifestylePanel.jsx';
 import { TasteSheetHost } from './browse/TasteDoor.jsx';
 import { DestinationsTab } from './browse/DestinationsTab.jsx';
 import Logo from './components/Logo.jsx';
+import LoadingScreen from './components/LoadingScreen.jsx';
 // The home page (T462). In the entry bundle, not lazy: it is what a first
 // visit paints, and a lazy chunk cost that paint about 1.8 s on a slow
 // phone (React suspends and renders the shell twice; T462 report).
@@ -1418,16 +1419,10 @@ function TravelApp() {
 
   // Resolve whether there's an existing session before deciding whether to
   // show the entry gate, otherwise a returning signed-in user would flash
-  // the gate for a moment on every load.
+  // the gate for a moment on every load. Both waits keep the opening screen
+  // up (G5, LoadingScreen.jsx), so the hand-over is one lift, not a cut.
   if (authConfigured && authLoading) {
-    return (
-      <div className="loading-screen">
-        <Logo size={56} />
-        <div className="name">Carta</div>
-        <div className="sub">{t('shell.tagline')}</div>
-        <div className="pulse" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (showGate) {
@@ -1463,14 +1458,7 @@ function TravelApp() {
   }
 
   if (!data || (partial && linkedAtLoad)) {
-    return (
-      <div className="loading-screen">
-        <Logo size={56} />
-        <div className="name">Carta</div>
-        <div className="sub">{t('shell.tagline')}</div>
-        <div className="pulse" />
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
