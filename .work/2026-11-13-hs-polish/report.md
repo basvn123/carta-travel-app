@@ -63,5 +63,8 @@ Commit 87a4657c47. Visual only: no markup, handler or copy changed; CSS only.
 
 Checks (round 2): `npm test` 25 failing names, identical to the baseline (`r2-fails.txt`); lint 0 errors (13 old warnings); design-lint 3920/3920, 0 new; token-contrast 0 under. Shots at 390, 820, 1180 and 1440 for every touched screen in `shots/r2/`, from a fixture build (`VITE_E2E_SEAMS=1`). No judge run, as asked.
 
+## Docs round (orchestrator, blocking item of judgement-final2-engineer.md)
+Commit 6d9cf399c8, docs only, no code. `DESIGN.md` gains "Ledger before panel" beside the depth rule. `references/account.md` (two surfaces, ledger and panel; rows on the ground; Together's ledgers and chart ground; the pass plans' blaze, the Pass moment ledger and /pricing's one plate; Ask's house rows), `references/plan.md` (ruled ChoiceRows with the blaze; Continue under the content from 1024; Plan home's two columns and mosaic on the ground; four facts never 3 + 1; the blaze paints in), `references/explore.md` (PlaceRow everywhere incl. Ask; the shared note beside the unit; the tablet settings line in two rows of three), `references/home.md` (slogan in one ink), `references/place.md` (dock dates hidden while the post shows them). The craft guide already matches ("separate groups with space or one hairline, not boxes"). Checks: `check_entry_points` OK (300 paths); `drift.py` only the known SCHEMA wire-table item (sparse checkout, green in CI).
+
 ## How to undo
 `git revert` the lane's commits (newest first), or do not merge `p15-hs-polish`. No data, schema or migration changes.
