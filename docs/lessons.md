@@ -7,6 +7,10 @@ Things learned in Carta that every future run should know. Claude reads this at 
 - **Keep it short.** Past about 40 lines, promote or prune. Full stories are in the old reports (`.work/INDEX.md`).
 
 ## Lessons
+- 2026-11-17 · Launch headless lanes hidden (`Start-Process -WindowStyle Hidden`) and judge them alive by a `claude.exe` that holds their session id, not by their log · (a lane in a visible console died silently when the window closed; a lane that hit a usage limit stayed alive but idle behind a background shell; the house style run's `watchdog.sh` handles both)
+- 2026-11-17 · Crew subagents stop after about 40 turns: brief each to write its output file by about turn 20, and resume one that stops with "write your file now" · (a proposer and three judges read for 40 turns and wrote nothing)
+- 2026-11-17 · Many open Claude sessions grow the Windows pagefile until the disk is full (28 to 41 GB in a day): close idle sessions before a multi-lane run and run at most three lanes on 16 GB of RAM · (the disk hit 0 bytes twice in the house style run)
+- 2026-11-17 · A design-lint baseline regenerated on Windows can drop entries Linux still finds (the `motion-literal` rule and the smooth-scroll check miss backslash paths) · regenerate it on Linux or fix the flagged lines
 - 2026-07-18 · Another session may be writing the same data or files. Run `git status` and `git diff` before committing and stage only your own files; re-read a file right before editing it · (a parallel harvest once reset `app_data.json` mid-run)
 - 2026-10-28 · Remove app worktrees only with `node scripts/worktree.mjs remove <slug>` · (`git worktree remove` followed the `node_modules` junction and deleted packages in the main checkout, T782; a sparse checkout once deleted 48,037 files of `continent-app/public` through a junction, T818)
 - 2026-11-01 · Check free space before a big build or commit; the Visual Studio installer cache in `%LOCALAPPDATA%\Temp` is the usual safe win. Ask before touching `data/raw` · (git commit failed on a full disk twice)
