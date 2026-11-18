@@ -29,7 +29,8 @@ import { chromium } from 'playwright';
 // harness has to ask for BOTH and scope to :visible. Asking for .places-cat
 // alone passed for as long as the tab was phone-first and has silently
 // pointed at a hidden node ever since the desktop shell landed.
-const CAT = '.dtab-cats [role="tab"]';
+// G12 (Explore top): the tabs are the band's (phone) or the tab's own row (desktop); the layer's old row is hidden.
+const CAT = '[role="tablist"]:visible [role="tab"]';
 // Sorts are twinned too, and again under different classes.
 // T428: the sort is one select (the panel's on a desktop, the refine row's on a phone).
 const SORT = '.dtab-sort-side select:visible, .dtab-sort select:visible';
@@ -82,15 +83,13 @@ async function pickCountry(scope, cc) {
     await scope.waitForTimeout(1800);
     return;
   }
-  // T457: on a desktop the country is the side panel's fold (one radio a
-  // country, with its flag, "All countries" first), not a button.
-  const fold = scope.locator('.places-side .side-country:visible');
-  if (await fold.count()) {
-    const label = name;
-    if (!(await fold.evaluate((d) => d.open))) await fold.locator('summary').click();
-    await fold.locator('.xrail-country-find input').fill(label);
-    await fold.locator('.xrail-country', { hasText: new RegExp(`^${label}$`, 'i') }).first().click();
-    await scope.waitForTimeout(1800);
+  // G12 (Explore top): the side panel and its country fold left; a layer
+  // keeps its country in the address (`dn`), so a run sets it there.
+  if (cc) {
+    const u = new URL(scope.url());
+    u.searchParams.set('dn', cc);
+    await scope.goto(u.toString(), { waitUntil: 'domcontentloaded' });
+    await scope.waitForTimeout(2500);
     return;
   }
   await scope.locator('.places-country:visible').first().click();

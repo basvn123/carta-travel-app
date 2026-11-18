@@ -31,7 +31,7 @@ async function open(browser, view, query) {
     try { for (const [k, v] of seeds) localStorage.setItem(k, v); localStorage.removeItem('carta.places.v1'); } catch { /* */ }
   }, SEEDS);
   await page.goto(`${BASE}${query}`, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  await page.waitForSelector('.dtab-cats', { timeout: 60000 });
+  await page.waitForSelector('.band-input', { timeout: 60000 });
   await page.waitForTimeout(3500);
   return page;
 }
@@ -62,7 +62,7 @@ for (const view of ['phone', 'desk']) {
 
   // Beaches at rest: the whole opening.
   let page = await open(browser, view, '?tab=places&dc=beaches');
-  const tabs = await page.$$eval('.dtab-cats [role="tab"]', (els) => els.map((e) => ({ t: e.textContent.trim(), on: e.getAttribute('aria-selected') })));
+  const tabs = await page.$$eval('[role="tablist"] [role="tab"]', (els) => els.map((e) => ({ t: e.textContent.trim(), on: e.getAttribute('aria-selected') })));
   check(tabs.length === 6, `${tag}six section tabs`, String(tabs.length));
   check(tabs.find((x) => x.on === 'true')?.t === 'Beaches', `${tag}dc=beaches selects Beaches`);
   // T430 (owner, 2026-10-15): the photograph at the top of a section went;
@@ -97,17 +97,13 @@ for (const view of ['phone', 'desk']) {
     check(hs <= 1, `${tag}no sideways scroll`, String(hs));
     check(await page.$('.dtab-top .dtab-filters') !== null, `${tag}search and Filters share one row`);
   } else {
-    check(await page.$('#header-search-slot .places-search') !== null, `${tag}the search sits in the header slot`);
-    // T457 (owner 2026-10-16): the six sections head the side panel as
-    // kit tiles, the way Explore's panel heads with its trip types, and the
-    // country is the panel's fold with a flag a row.
-    check(await page.locator('.places-side .dtab-cats [role="tab"]').count() === 6, `${tag}the side panel heads with the six section tiles`);
-    check(await page.locator('.places-side .side-country .xrail-country').count() > 1, `${tag}the country is the panel's fold`);
-    const lines = await page.evaluate(() => {
-      const x = (sel) => Math.round(document.querySelector(sel)?.getBoundingClientRect().x ?? -1);
-      return { content: x('.places-wrap .dtab-title'), rail: x('.places-side .xrail-h') };
-    });
-    check(lines.content === 296 && lines.rail === 32, `${tag}the panel and the column stand on Explore's lines`, JSON.stringify(lines));
+    // G12 (Explore top): the band's search stands in the top bar on every
+    // tab; a layer has no Settings button and no side panel, and the six
+    // tabs run under the band.
+    check(await page.locator('.top-bar .band.is-desk .band-input').isVisible(), `${tag}the band's search sits in the top bar`);
+    check(await page.locator('.band-settings').count() === 0, `${tag}a layer has no Settings button`);
+    check(await page.locator('.places-side, .explore-side').count() === 0, `${tag}no side panel`);
+    check(await page.locator('[role="tablist"] [role="tab"]:visible').count() >= 6, `${tag}the six tabs show`);
   }
 
   // Picking a country: the band, the URL, the Explore door.
@@ -207,7 +203,7 @@ for (const view of ['phone', 'desk']) {
   // Init scripts run in order on every load: this one outlasts the 'en' seed.
   await page.addInitScript(() => { try { localStorage.setItem('continent.lang.v1', 'de'); } catch { /* */ } });
   await page.reload({ waitUntil: 'domcontentloaded' });
-  await page.waitForSelector('.dtab-cats', { timeout: 60000 });
+  await page.waitForSelector('.band-input', { timeout: 60000 });
   await page.waitForTimeout(3000);
   const deNames = await page.$$eval('.dgal-card .card-title', (els) => els.map((e) => e.textContent.trim()));
   check(deNames.includes('Albanien') || deNames.includes('Kroatien'), `${tag}German country names on the cards`, deNames.slice(0, 3).join(', '));

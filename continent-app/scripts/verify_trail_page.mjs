@@ -17,7 +17,8 @@ import { readFileSync } from 'node:fs';
 // harness has to ask for BOTH and scope to :visible. Asking for .places-cat
 // alone passed for as long as the tab was phone-first and has silently
 // pointed at a hidden node ever since the desktop shell landed.
-const CAT = '.dtab-cats [role="tab"]';
+// G12 (Explore top): the tabs are the band's (phone) or the tab's own row (desktop); the layer's old row is hidden.
+const CAT = '[role="tablist"]:visible [role="tab"]';
 // Sorts are twinned too, and again under different classes.
 // T428: the sort is one select; its options are the three orders.
 const SORT = '.dtab-sort-side select:visible option, .dtab-sort select:visible option';
@@ -27,20 +28,21 @@ const SORT = '.dtab-sort-side select:visible option, .dtab-sort select:visible o
 // selectOption() throws "Element is not a <select> element" and took the
 // whole run down before the first check. Driving it the way a person does
 // also exercises the popover, which the old selectOption never did.
+const CC_OF = Object.fromEntries(['AL', 'AT', 'CH', 'DE', 'ES', 'FR', 'GB', 'HR', 'IT', 'PT', 'SI']
+  .map((cc) => [new Intl.DisplayNames(['en'], { type: 'region' }).of(cc).toLowerCase(), cc]));
 async function pickCountry(page, name) {
+  const cc = CC_OF[String(name).toLowerCase()] || null;
   // T428: Trails at rest opens on the country galleries; the card is the picker.
   const card = page.locator('.dgal-card .card-open', { hasText: new RegExp(`^${name}$`, 'i') }).first();
   if (await card.isVisible().catch(() => false)) { await card.click(); await page.waitForTimeout(1800); return; }
 
-  // T457: on a desktop the country is the side panel's fold (one radio a
-  // country, with its flag, "All countries" first), not a button.
-  const fold = page.locator('.places-side .side-country:visible');
-  if (await fold.count()) {
-    const label = name;
-    if (!(await fold.evaluate((d) => d.open))) await fold.locator('summary').click();
-    await fold.locator('.xrail-country-find input').fill(label);
-    await fold.locator('.xrail-country', { hasText: new RegExp(`^${label}$`, 'i') }).first().click();
-    await page.waitForTimeout(1800);
+  // G12 (Explore top): the side panel and its country fold left; a layer
+  // keeps its country in the address (`dn`), so a run sets it there.
+  if (cc) {
+    const u = new URL(page.url());
+    u.searchParams.set('dn', cc);
+    await page.goto(u.toString(), { waitUntil: 'domcontentloaded' });
+    await page.waitForTimeout(2500);
     return;
   }
   await page.locator('.places-country:visible').first().click();
