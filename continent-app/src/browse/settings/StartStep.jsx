@@ -18,6 +18,15 @@ function browserCountry() {
   return '';
 }
 
+/** The ISO2 of the home airport's country, read off the catalogue (airports
+ *  carry the country's name only). */
+function originIso(data, code) {
+  const name = data?.meta?.origins?.[code]?.country;
+  if (!name) return '';
+  for (const d of Object.values(data?.destinations || {})) if (d?.country === name && d.iso2) return d.iso2;
+  return '';
+}
+
 /**
  * Start (G12 Settings, APPROVED): "Use my current location" first, then a
  * search over the countries and the towns in Carta's data, then every
@@ -31,7 +40,9 @@ export function StartStep({ model, onChange }) {
   const [locating, setLocating] = React.useState(false);
   const [locNote, setLocNote] = React.useState('');
 
-  const home = start.country || start.place?.iso2 || browserCountry();
+  // The start's own country on top (flow-B M3): a country start, a town's
+  // country, the home airport's country, and only then the browser's.
+  const home = start.country || start.place?.iso2 || originIso(data, model.m?.origin) || browserCountry();
   // The list keeps the order it opened with, so a pick never moves the row
   // under the finger.
   const [homeAtOpen] = React.useState(home);

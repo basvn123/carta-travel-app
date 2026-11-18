@@ -10675,10 +10675,11 @@ export const en = {
   "settings.sheet.viewLabel": "For whom",
   "settings.sheet.view.person": "Each person",
   "settings.sheet.view.group": "The group",
-  "settings.sheet.alone": "You travel alone",
   "settings.sheet.example": "{place}, as you will see it",
   "settings.sheet.bed": "Bed {amount}",
   "settings.sheet.food": "Food {amount}",
+  "settings.sheet.wayPart": "{way} {amount}",
+  "settings.sheet.unitNights": "{unit}, {nights}",
   // G12 Lane 4: Explore search panel
   "search.youSearchAs": "You search as",
   "search.change": "Change",

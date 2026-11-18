@@ -84,6 +84,11 @@ export function PricesStep({ model, onChange }) {
   const unit = fig ? t(fig.unit[0], fig.unit[1]) : '';
   const bed = fig?.parts?.bed;
   const food = fig?.parts?.food;
+  // On the whole trip the way there is the third part, so the parts add
+  // up to the figure (flow-B M2).
+  const way = prices.span === 'trip' && Number.isFinite(fig?.parts?.way) ? fig.parts.way : null;
+  const WayIcon = wayIcon(fig?.parts?.wayMode || model.way.mode);
+  const wayName = t(`settings.sheet.way.${fig?.parts?.wayMode || model.way.mode}`);
   // The whole trip for the group beside it, unless that is what shows.
   const both = prices.span === 'trip' && prices.view === 'group';
   const groupTrip = row && !both && !alone ? model.figure(row, { priceSpan: 'trip', priceView: 'total' }) : null;
@@ -113,7 +118,6 @@ export function PricesStep({ model, onChange }) {
           { value: 'group', label: t('settings.sheet.view.group'), disabled: alone },
         ]}
       />
-      {alone && <p className="set-note set-note-quiet">{t('settings.sheet.alone')}</p>}
 
       {place && (
         <section className="set-example" aria-labelledby="set-example-title">
@@ -125,7 +129,9 @@ export function PricesStep({ model, onChange }) {
               {Number.isFinite(shown) ? <Figure value={shown} mine={touched} still={!touched} /> : t('price.notMeasured')}
             </span>
             <span className="sr-only">{Number.isFinite(shown) ? formatMoney(shown) : t('price.notMeasured')}</span>
-            <span className="set-example-unit">{unit}</span>
+            <span className="set-example-unit">
+              {prices.span === 'trip' && fig ? t('settings.sheet.unitNights', { unit, nights: nightsText(t, fig.parts.nights) }) : unit}
+            </span>
           </div>
           {wayLine(fig) && <p className="set-example-unit">{wayLine(fig)}</p>}
           {Number.isFinite(bed) && Number.isFinite(food) && (
@@ -133,10 +139,14 @@ export function PricesStep({ model, onChange }) {
               <div className="sst-bar set-example-bar" aria-hidden="true">
                 <i className="sst-bar-bed" style={{ flexGrow: bed }} />
                 <i className="sst-bar-food" style={{ flexGrow: food }} />
+                {way != null && <i className="set-bar-way" style={{ flexGrow: way }} />}
               </div>
               <p className="set-example-parts">
                 <span><HouseIcon.bed size={16} aria-hidden="true" />{t('settings.sheet.bed', { amount: formatMoney(bed) })}</span>
                 <span><HouseIcon.food size={16} aria-hidden="true" />{t('settings.sheet.food', { amount: formatMoney(food) })}</span>
+                {way != null && (
+                  <span><WayIcon size={16} aria-hidden="true" />{t('settings.sheet.wayPart', { way: wayName, amount: formatMoney(way) })}</span>
+                )}
               </p>
             </>
           )}
@@ -145,7 +155,7 @@ export function PricesStep({ model, onChange }) {
               <span className="set-example-trip-label">{t('settingsSum.prices.tripGroup')}</span>
               <b className="set-example-trip-fig">{Number.isFinite(groupTrip.eur) ? formatMoney(groupTrip.eur) : t('price.notMeasured')}</b>
               <span className="set-example-unit">
-                {t(groupTrip.unit[0], groupTrip.unit[1])}, {nightsText(t, groupTrip.parts.nights)}
+                {t('settings.sheet.unitNights', { unit: t(groupTrip.unit[0], groupTrip.unit[1]), nights: nightsText(t, groupTrip.parts.nights) })}
               </span>
               {wayLine(groupTrip) && <span className="set-example-unit set-example-way">{wayLine(groupTrip)}</span>}
             </p>

@@ -90,7 +90,11 @@ export function WhenStep({ model, onChange }) {
         <div className="set-months" role="radiogroup" aria-label={t('settings.sheet.mode.month')}>
           {months.map((ym, i) => {
             const on = ym === when.month;
-            const from = when.monthFrom ? when.monthFrom(ym) : null;
+            // The engine's month figure (E2): a number, or { eur, unit } with
+            // the unit as [i18nKey, params]; null shows nothing at all.
+            const raw = when.monthFrom ? when.monthFrom(ym) : null;
+            const from = raw != null && typeof raw === 'object' ? raw.eur : raw;
+            const fromUnit = raw && typeof raw === 'object' && Array.isArray(raw.unit) ? t(raw.unit[0], raw.unit[1]) : '';
             const year = ym.slice(0, 4) !== thisYear ? yearFmt.format(at(`${ym}-01`)) : '';
             return (
               <Pressable
@@ -115,7 +119,10 @@ export function WhenStep({ model, onChange }) {
               >
                 <span className="set-month-name">{monthFmt.format(at(`${ym}-01`))}{year && <span className="set-month-year"> {year}</span>}</span>
                 {Number.isFinite(from) && (
-                  <span className="set-month-from">{t('settings.sheet.monthFrom', { amount: formatMoney(from) })}</span>
+                  <span className="set-month-from">
+                    {t('settings.sheet.monthFrom', { amount: formatMoney(from) })}
+                    {fromUnit && <span className="set-month-unit"> {fromUnit}</span>}
+                  </span>
                 )}
                 <span className="sst-tile-tick" aria-hidden="true"><HouseIcon.check size={12} /></span>
               </Pressable>

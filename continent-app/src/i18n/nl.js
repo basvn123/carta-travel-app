@@ -10589,10 +10589,11 @@ export const nl = {
   "settings.sheet.viewLabel": "Voor wie",
   "settings.sheet.view.person": "Per persoon",
   "settings.sheet.view.group": "De groep",
-  "settings.sheet.alone": "Je reist alleen",
   "settings.sheet.example": "{place}, zoals je het ziet",
   "settings.sheet.bed": "Bed {amount}",
   "settings.sheet.food": "Eten {amount}",
+  "settings.sheet.wayPart": "{way} {amount}",
+  "settings.sheet.unitNights": "{unit}, {nights}",
   // G12 Lane 4: Explore search panel
   "search.youSearchAs": "Je zoekt als",
   "search.change": "Wijzig",

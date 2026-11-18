@@ -87,8 +87,9 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
   const model = useSettingsModel();
   const [step, setStep] = React.useState(() => stepOf(openStep));
   const [dir, setDir] = React.useState(0);
-  // The row a step was opened from, so Back puts focus on it again.
-  const [cameFrom, setCameFrom] = React.useState('');
+  // The row a step belongs to, so Back puts focus on it, also when a chip
+  // opened the step directly (flow-B m4).
+  const [cameFrom, setCameFrom] = React.useState(() => (stepOf(openStep) === 'overview' ? '' : stepOf(openStep)));
   const panelRef = React.useRef(null);
   const titleRef = React.useRef(null);
   const status = useLiveStatus(t('settings.sheet.updated'));
@@ -100,7 +101,7 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
     if (nonce === lastNonce.current) return;
     lastNonce.current = nonce;
     setDir(0);
-    setCameFrom('');
+    setCameFrom(stepOf(openStep) === 'overview' ? '' : stepOf(openStep));
     setStep(stepOf(openStep));
   }, [nonce, openStep]);
 

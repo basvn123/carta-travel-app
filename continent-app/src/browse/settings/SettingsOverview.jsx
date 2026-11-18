@@ -32,7 +32,8 @@ export function SettingsOverview({ model, focusRow, onOpen, onStyle }) {
   }, [focusRow]);
 
   const rows = [
-    { key: 'start', icon: model.start.kind === 'here' ? HouseIcon.pin : HouseIcon.from, label: t('settings.sheet.row.start'),
+    { key: 'start', // A country is a flag post, a town or here a pin, as on the chip.
+      icon: model.start.kind === 'country' ? HouseIcon.from : HouseIcon.pin, label: t('settings.sheet.row.start'),
       value: place || t('settingsSum.startNone') },
     { key: 'when', icon: HouseIcon.calendar, label: t('settings.sheet.row.when'), value: sum.get('when')?.text },
     { key: 'way', icon: wayIcon(model.way.mode), label: t('settings.sheet.row.way'), value: sum.get('way')?.text },

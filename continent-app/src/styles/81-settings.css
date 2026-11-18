@@ -483,6 +483,9 @@
 }
 .set-example-unit { font-size: var(--text-label); color: var(--text-2); }
 .set-example-bar { margin-top: var(--space-1); }
+/* The way there on the whole trip: an open umber segment, told apart from
+   the solid bed and the light food by its edge; its word says it too. */
+.sst-bar .set-bar-way { background: var(--surface); border: var(--stroke-edge) solid var(--umber-700); }
 .set-example-parts {
   display: flex;
   flex-wrap: wrap;
