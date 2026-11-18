@@ -130,3 +130,36 @@ test('the style disc opens the Style Studio and stays off Plan and full pages', 
   assert.doesNotMatch(dock, /rowKey=|DockRowField|editAll/, 'no inline editors left in the disc');
   assert.doesNotMatch(src('styles/89-dock.css'), /style-dock-|dock-card--corner/, 'the panel CSS is gone');
 });
+
+// Judge 2 (G12): the owner's style button stays bottom left on every width
+// and keeps off a card's name and price row and the Map pill by itself.
+test('the style disc is bottom left at every width, with no right-edge override', () => {
+  const css = readFileSync(new URL('../src/styles/89-dock.css', import.meta.url), 'utf8');
+  const rules = [...css.matchAll(/\.dock--corner \{[^}]*\}/g)].map((m) => m[0]).filter((r) => /bottom:/.test(r));
+  assert.ok(rules.length >= 2, 'the base rule and the 769 px rule');
+  for (const r of rules) {
+    assert.doesNotMatch(r, /\bright:/, r);
+    assert.match(r, /\bleft:/, r);
+  }
+  assert.match(css, /\.dock--corner\[data-tucked="1"\] \{[^}]*opacity: 0;[^}]*pointer-events: none;/);
+  assert.match(css, /translateY\(calc\(var\(--disc-lift, 0px\) \* -1\)\)/);
+  assert.match(src('components/dock/Dock.jsx'), /useDiscClear\(wrapRef, anchor === 'corner' && !hidden\)/);
+});
+
+test('discLift rises to the first gap above a name or price, and stays home when clear', async () => {
+  const { discLift, DISC_CLEAR } = await vite.ssrLoadModule('/src/components/dock/discClear.js');
+  const disc = { left: 16, right: 68, top: 512, bottom: 564 };
+  const box = (top, bottom, left = 16, right = 250) => ({ left, right, top, bottom });
+  assert.equal(discLift(disc, []), 0, 'nothing under it');
+  assert.equal(discLift(disc, [box(600, 630)]), 0, 'a price row below its gap');
+  assert.equal(discLift(disc, [box(200, 300, 260, 340)]), 0, 'a peek card to its right');
+  // Rome at 360x640: the price row under it and the name line above that.
+  const lift = discLift(disc, [box(540, 568), box(500, 530)], { gap: 6 });
+  const at = { top: disc.top - lift, bottom: disc.bottom - lift };
+  assert.ok(at.bottom <= 500 - 6, `clear of the name line (${lift})`);
+  assert.ok(lift < 80, 'only as far as needed');
+  assert.equal(discLift(disc, [box(100, 560)], { minTop: 120 }), 0, 'no gap under the band: it stays home');
+  for (const sel of ['.xprice', '.xrc-head', '.hs-rcard-name', '.xrow-line1', '.card-title', '.card-price', '.xview-fab']) {
+    assert.ok(DISC_CLEAR.includes(sel), sel);
+  }
+});

@@ -1194,7 +1194,7 @@
 @media (max-width: 768px) {
   /* The right edge, not the middle: centred it sat on the first card's
      bed and food figures at rest (judge 1, G12); at the edge it only meets
-     the next card's peek. The style disc stands above it (89-dock.css). */
+     the next card's peek. The style disc keeps the bottom left (89-dock.css). */
   .explore-shell .xview-fab {
     position: fixed;
     right: max(var(--space-4), env(safe-area-inset-right, 0px));

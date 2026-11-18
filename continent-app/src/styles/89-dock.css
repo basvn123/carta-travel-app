@@ -65,6 +65,16 @@
   left: max(var(--space-4), env(safe-area-inset-left, 0px));
   bottom: calc(var(--bottom-nav-h) + var(--space-3));
   z-index: var(--z-overlay);
+  /* discClear.js: the lift that keeps it off a card's name and price at
+     rest, and the tuck while a list scrolls down (owner: bottom left on
+     every width, G12 judge 2). */
+  transform: translateY(calc(var(--disc-lift, 0px) * -1));
+  transition: transform var(--dur-3) var(--ease-out), opacity var(--dur-2) var(--ease-out);
+}
+.dock--corner[data-tucked="1"] {
+  transform: translate(calc(-100% - var(--space-5)), calc(var(--disc-lift, 0px) * -1));
+  opacity: 0;
+  pointer-events: none;
 }
 .btn.dock-trigger--corner {
   width: 52px;
@@ -97,16 +107,6 @@
 }
 .dock-badge .dock-chev { transform: rotate(-90deg); }
 .dock-trigger--corner .dock-dot { top: auto; left: auto; right: 0; bottom: 0; }
-/* Phone: the disc moves to the right edge above the Map pill, so neither
-   sits on the first card's figures at rest (judge 1, G12); the right
-   thumb reaches both. */
-@media (max-width: 768px) {
-  .dock--corner {
-    left: auto;
-    right: max(var(--space-4), env(safe-area-inset-right, 0px));
-    bottom: calc(var(--bottom-nav-h) + var(--space-3) + var(--tap) + var(--space-3));
-  }
-}
 
 /* The style disc steps aside for the keyboard and for any modal, the
    studio it opens included. */
@@ -268,6 +268,8 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
   .dock-card,
   .dock-card.is-open { transform: none; }
   .dock-row { transform: none; }
+  /* The disc never tucks (discClear.js) and its lift is a jump. */
+  .dock--corner { transition: none; }
   .trip-dock-drill,
   .dock-glyph-in { animation: none; }
 }

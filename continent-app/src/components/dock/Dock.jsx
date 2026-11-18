@@ -8,6 +8,7 @@ import { useIsDesktop } from '../../hooks/useIsDesktop.js';
 import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 import { prefersReducedMotion } from '../../lib/motion.js';
 import { clearDockFocus, closeDock, getDock, toggleDock, useDock } from './dockStore.js';
+import { useDiscClear } from './discClear.js';
 import '../../styles/89-dock.css';
 
 /**
@@ -66,6 +67,9 @@ export function Dock({
   const triggerRef = useRef(null);
   const cardRef = useRef(null);
   const backRef = useRef(null);
+
+  // The corner disc keeps off a card's name and price (discClear.js).
+  useDiscClear(wrapRef, anchor === 'corner' && !hidden);
 
   const close = useCallback(() => closeDock(id), [id]);
   // Escape walks back out of a drilled row first, then closes.
