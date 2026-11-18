@@ -4,7 +4,7 @@ import { Blaze } from './ui/Blaze.jsx';
 import { HouseIcon } from './HouseIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
-import { PersonIcon, TogetherIcon } from './Icons.jsx';
+import { PersonIcon } from './Icons.jsx';
 import { useTogether, waitingCount } from '../together/useTogether.js';
 
 /* The three places (T496, roadmap 1.3a and 1.15; owner T485-b): Explore,
@@ -92,8 +92,18 @@ export function accountInitial(user) {
  * the person glyph for a guest and the initial when signed in. A link to the
  * Account place; on Account it carries the selected tint.
  */
-function AccountLink({ user, current, onNavigate }) {
+function AccountLink({ user, current, onNavigate, onSignIn = null }) {
   const { t } = useI18n();
+  // G12 (decision.md step 10): signed out, the door is a "Sign in" pill that
+  // opens the sign-in dialog at once (one requestAuth path in App.jsx);
+  // signed in, it is the avatar, a link to Account.
+  if (!user && onSignIn) {
+    return (
+      <button type="button" className="hdr-pill signin-pill" onClick={() => onSignIn('signin')}>
+        {t('auth.signIn')}
+      </button>
+    );
+  }
   const name = user ? (user.user_metadata?.full_name?.trim() || user.email) : t('header.accountTitle');
   return (
     <SectionLink
@@ -125,13 +135,16 @@ function TogetherDoor({ current, onNavigate }) {
   return (
     <SectionLink
       tab="together"
-      className={`account-door tg-door${current ? ' on' : ''}`}
+      className={`hdr-pill tg-door${current ? ' on' : ''}`}
       current={current}
       onNavigate={onNavigate}
-      title={t('tg.title')}
-      aria-label={label}
+      title={t('tg.doorAria')}
+      aria-label={n ? label : t('tg.doorAria')}
     >
-      <TogetherIcon size={24} />
+      {/* G12: the people glyph and the word, so the door says what it is;
+          from 769 to 1099 px CSS leaves the glyph alone, with the title. */}
+      <HouseIcon.people size={20} />
+      <span className="tg-door-word" aria-hidden="true">{t('tg.title')}</span>
       {n > 0 && <span className="tg-door-n" aria-hidden="true">{n > 9 ? '9+' : n}</span>}
     </SectionLink>
   );
@@ -149,6 +162,8 @@ export function AppHeader({
   // The shortlist's size for the count chip after My trips, and whether an
   // unsaved trip plan is in progress (the state dot on Plan).
   savedCount = 0, planInProgress = false,
+  // G12: the Sign in pill's one door, App's requestAuth.
+  onSignIn = null,
 }) {
   const { t, lang } = useI18n();
   const navRef = useRef(null);
@@ -202,7 +217,7 @@ export function AppHeader({
         {/* The travel style moved to the Style dock in the bottom-left
             corner (G12, components/dock/StyleDock.jsx). */}
         <TogetherDoor current={place === 'together'} onNavigate={onNavigate} />
-        <AccountLink user={user} current={place === 'account'} onNavigate={onNavigate} />
+        <AccountLink user={user} current={place === 'account'} onNavigate={onNavigate} onSignIn={onSignIn} />
       </div>
     </div>
   );

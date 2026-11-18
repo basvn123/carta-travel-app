@@ -20,8 +20,8 @@
 .tg-door.on svg { color: var(--select-ink); }
 .tg-door-n {
   position: absolute;
-  top: 4px;
-  right: 2px;
+  top: -4px;
+  right: -4px;
   min-width: 18px;
   height: 18px;
   padding: 0 4px;
@@ -34,6 +34,53 @@
   line-height: 14px;
   text-align: center;
   font-variant-numeric: tabular-nums;
+}
+
+/* G12 (decision.md step 10): the header's two pills, 44 px tall. Together
+   wears the people glyph and its word on a phone and from 1100 px, the
+   glyph alone (with its tooltip) from 769 to 1099 px, where the places
+   need the room. Signed out, Sign in is the second pill. */
+.hdr-pill {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--umber-50);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+.hdr-pill:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.hdr-pill:active { scale: var(--press-scale-sm); }
+@media (hover: hover) {
+  .hdr-pill:hover { border-color: var(--edge); }
+}
+.hdr-pill.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.signin-pill { background: var(--surface); border-color: var(--edge); }
+.app-header-account:has(.hdr-pill) { gap: var(--space-2); }
+@media (min-width: 769px) and (max-width: 1099px) {
+  .tg-door.hdr-pill { width: var(--tap); padding: 0; justify-content: center; }
+  .tg-door-word { display: none; }
+}
+/* Measured signed out (2026-11-18): at 390 the widest pair, fr "Ensemble"
+   and "Se connecter", needs 225 px of the 256 beside the logo, so the word
+   stays; under 360 it would touch the logo, so the word goes there. */
+@media (max-width: 359px) {
+  .app-header-account:has(.signin-pill) .tg-door.hdr-pill { width: var(--tap); padding: 0; justify-content: center; }
+  .app-header-account:has(.signin-pill) .tg-door-word { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hdr-pill { transition: none; }
 }
 
 /* ── Faces in four tones ─────────────────────────────────────────────── */

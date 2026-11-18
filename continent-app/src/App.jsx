@@ -1523,6 +1523,7 @@ function TravelApp() {
           onNavigate={goTo}
           savedCount={savedCount}
           planInProgress={planInProgress}
+          onSignIn={requestAuth}
         />
         {/* G12 (explore polish): from 769 px the Trip dock under the
             category tabs holds From, When and how prices read, so the
