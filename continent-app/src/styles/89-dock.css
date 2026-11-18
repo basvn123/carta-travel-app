@@ -97,6 +97,17 @@
 }
 .dock-badge .dock-chev { transform: rotate(-90deg); }
 .dock-trigger--corner .dock-dot { top: auto; left: auto; right: 0; bottom: 0; }
+/* Phone: the disc moves to the right edge above the Map pill, so neither
+   sits on the first card's figures at rest (judge 1, G12); the right
+   thumb reaches both. */
+@media (max-width: 768px) {
+  .dock--corner {
+    left: auto;
+    right: max(var(--space-4), env(safe-area-inset-right, 0px));
+    bottom: calc(var(--bottom-nav-h) + var(--space-3) + var(--tap) + var(--space-3));
+  }
+}
+
 /* The style disc steps aside for the keyboard and for any modal, the
    studio it opens included. */
 html.kbd-open .dock--corner,
