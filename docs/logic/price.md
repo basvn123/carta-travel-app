@@ -27,8 +27,9 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### PRICE-003 Date modes never mix, and the nights
 - Decides: whether a bed and a flight are priced for the traveller's exact days, a month, or the year.
-- Rule: `when.kind` is `exact` (own dates with a valid pair), `month` (the Explore month filter wins app-wide while on, B7; `ym` is the depart month when it matches, else the next occurrence of that month from today, this month counting) or `any`. The bed reads `start` only in `exact` and `month` only in `month` (`costChoices`). Nights are the date pair's nights in every mode (at least 1), else 7. `atDates` re-prices a request at a screen's own exact dates (a day planner stop).
-- Constant: `priceRequest`, `nextYm`, `atDates`, `costChoices` in `continent-app/src/lib/price/request.js:79`, `:66`, `:119`, `:147`
+- Rule: `when.kind` is `exact` (own dates with a valid pair), `month` (the Settings When month, `when_month`; G12 2026-11-18: the climate month filter no longer sets it; before a month is picked `ym` is the next occurrence of the month from today, this month counting) or `any` (Any time and Cheapest). The bed reads `start` only in `exact` and `month` only in `month` (`costChoices`). Nights are the date pair's nights in every mode (at least 1), else 7. `atDates` re-prices a request at a screen's own exact dates (a day planner stop).
+- Constant: `priceRequest`, `atDates`, `costChoices` in `continent-app/src/lib/price/request.js`
+- Constant: `nextYm`, `readSettings` in `continent-app/src/lib/settings/model.js`
 - Test: `continent-app/tests/priceEngine.test.mjs` :: "V7: a month or any time never reads an exact date, for the bed or the flight"
 - Test: `continent-app/tests/priceEngine.test.mjs` :: "B7: the Explore month filter wins over the traveller's dates while it is on"
 
