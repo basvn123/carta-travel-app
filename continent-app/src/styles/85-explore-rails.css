@@ -96,7 +96,7 @@
 .xrc { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; }
 .xrc > .hs-rcard-link { display: block; }
 .xrc > .hs-rcard-link::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-card); }
-.xrc > :is(.xrc-head, .xrc-parts, .xstory-why) :is(a, button),
+.xrc > :is(.xrc-head, .xrc-parts) :is(a, button),
 .xrc .pitems { position: relative; z-index: 1; }
 .xrc > .hs-rcard-save { z-index: 2; }
 
@@ -136,7 +136,6 @@
 .xrc .xrc-parts.hs-formation { --wh: 28px; margin-top: 10px; }
 .xrc .xrc-parts .xform-parts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px var(--space-2); }
 .xrc .xrc-parts .hs-wagon { padding-inline: 8px; }
-.xrc .xstory-why:not(:empty) { margin-top: 6px; }
 .xrc .tg-sig { margin-top: 6px; }
 
 @media (min-width: 1024px) {

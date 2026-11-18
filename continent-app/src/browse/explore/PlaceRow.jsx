@@ -6,7 +6,6 @@ import { regionLine } from '../../lib/placeOverview.js';
 import { countryName } from '../../lib/countryName.js';
 import { useSettledFigure } from '../../lib/figureChange.js';
 import { MatchLine } from '../WhyItMatches.jsx';
-import { WhyChips } from '../WhyChips.jsx';
 import { SaveButton } from '../ExploreCards.jsx';
 import { PlaceScore, BandWord, RowFormation } from './HouseParts.jsx';
 
@@ -104,7 +103,6 @@ export const PlaceRow = React.memo(function PlaceRow({
         {reason && <span className="xrow-why">{reason}</span>}
         <span className="xrow-fit">
           <MatchLine place={p} />
-          <WhyChips place={p} className="xrow-whychips" />
         </span>
       </a>
       {/* G12, D10: the price sits outside the link, a direct child of the

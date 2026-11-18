@@ -204,10 +204,8 @@
   white-space: nowrap;
 }
 .hs-rcard .xrc-img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.hs-rcard .xprice-notes,
-.hs-rcard .xstory-why { font-size: var(--text-label); color: var(--text-2); }
-.hs-rcard .xprice-notes:empty,
-.hs-rcard .xstory-why:empty { display: none; }
+.hs-rcard .xprice-notes { font-size: var(--text-label); color: var(--text-2); }
+.hs-rcard .xprice-notes:empty { display: none; }
 
 /* The categories (T622, owner 2026-10-23: "brought more to the front, and
    larger, also more on top ... also more wide"; on a phone "Meren is half

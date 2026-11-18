@@ -10,7 +10,6 @@ import { useI18n } from '../i18n/index.jsx';
 import { SaveButton } from './ExploreCards.jsx';
 import { PlaceScore, RowFormation } from './explore/HouseParts.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
-import { WhyChips } from './WhyChips.jsx';
 import { STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
 
 /**
@@ -110,8 +109,6 @@ function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleF
         {goodNow && <span className="xrc-status">{t('rail.goodIn', { month: monthShort })}</span>}
         {gem && <span className="hs-gem">{t('common.hiddenGem')}</span>}
       </span>
-      {/* T1208 (G9): why it fits this traveller, only with evidence on both sides. */}
-      <WhyChips place={p} className="xstory-why" />
       {/* The parts: each wagon a button to the price sheet; a thin bed is
           a dot on the bed wagon. */}
       <RowFormation cost={p.cost} t={t} pressable place={p} slot="parts" className="xrc-parts" />

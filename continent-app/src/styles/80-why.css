@@ -1,28 +1,6 @@
-/* Why this place (T1208, ROADMAP G9). Imported by browse/WhyChips.jsx, so it
-   rides with the cards and the place page. Scoped under .why.
-   Chips are lagoon, the "fits" colour of the palette (carta-design 4): text
-   --lagoon-700 on a lagoon-50 ground (6.4:1). A "likely" chip says so in
-   words; on a card its pill also wears a dashed edge. Colour never carries
-   the confidence alone. */
-
-.why.why-chips {
-  display: flex; flex-wrap: wrap; gap: var(--space-1);
-  min-width: 0;
-}
-.why .why-chip {
-  display: inline-flex; align-items: center;
-  max-width: 100%;
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-pill);
-  background: var(--lagoon-50);
-  color: var(--lagoon-700);
-  border: 1px solid color-mix(in srgb, var(--lagoon-600) 28%, transparent);
-  font-size: var(--text-caption);
-  font-weight: 600;
-  line-height: 18px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.why .why-chip.is-likely { border-style: dashed; }
+/* Why this place (T1208, ROADMAP G9). Imported by browse/WhyChips.jsx for
+   the place page. Scoped under .why. The cards' teal chips left with G12
+   (Explore top); the confidence is said in words on each row. */
 
 /* The place page section: one row per reason, its confidence on the right,
    then the traveller's evidence and the place's evidence. */

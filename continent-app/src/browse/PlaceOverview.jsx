@@ -10,7 +10,6 @@ import { useSettings } from '../components/SettingsLine.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { ratingWords } from '../lib/rating.js';
 import { MatchLine } from './WhyItMatches.jsx';
-import { WhyChips } from './WhyChips.jsx';
 import '../styles/79-place-card.css';
 
 /**
@@ -171,8 +170,6 @@ function PlaceCard({
             )}
             <MatchLine place={p} />
           </span>
-          {/* T1208 (G9): why it fits this traveller, only with evidence on both sides. */}
-          <WhyChips place={p} className="xpc-whychips" />
           {reason && <span className="xrow-why xpc-why">{reason}</span>}
           {dates && (
             <span className="xpc-dates">

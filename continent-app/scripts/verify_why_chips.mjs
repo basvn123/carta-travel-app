@@ -1,9 +1,10 @@
-// T1208 (ROADMAP G9): "why this place" chips and the refreshed price date, at
-// a phone and a desktop width, on the shipped wire (fixture data). DOM checks,
+// T1208 (ROADMAP G9): "why this place" and the refreshed price date, at a
+// phone and a desktop width, on the shipped wire (fixture data). DOM checks,
 // screenshots only when SHOTS names a folder:
-//   1. Explore, no taste: no chip anywhere (no evidence on the traveller's side).
+//   1. Explore, no taste: no chip anywhere.
 //   2. Explore with Yes on Castle and Big city in carta.taste.v1 and Not me on
-//      UNESCO: chips render, at most two per card, never UNESCO.
+//      UNESCO: still no chip on a card (G12 Explore top: the cards' teal
+//      chips left; the place page keeps its section).
 //   3. Edinburgh's page: "Why this place" with every row carrying a
 //      confidence word and its evidence, no UNESCO row; "Prices refreshed"
 //      with a date from the price blocks' _asof.
@@ -95,21 +96,9 @@ async function run(width, height, label) {
     await seed(ctx, { taste: TASTE });
     const page = await ctx.newPage(); wire(page);
     await boot(page); await explore(page);
-    const sets = await page.locator('.why-chips').evaluateAll((els) => els.map((e) => ({
-      nodes: (e.getAttribute('data-why') || '').split(' '), n: e.querySelectorAll('.why-chip').length,
-      text: [...e.querySelectorAll('.why-chip')].map((c) => c.textContent).join(', '),
-      label: e.querySelector('.sr-only')?.textContent || '',
-    })));
-    if (!sets.length) fail(`${label}: no chips on Explore with taste`);
-    else ok(`${sets.length} cards with chips, first: ${sets[0].text}`);
-    if (sets.some((s) => s.n > 2)) fail(`${label}: a card has more than two chips`);
-    if (sets.some((s) => s.nodes.includes('set.unesco'))) fail(`${label}: a rejected node shows`);
-    if (sets.some((s) => !s.label.startsWith('Why it fits you:'))) fail(`${label}: a chip set has no screen reader line`);
-    if (sets.length) ok('at most two per card, never a rejected node, each with a screen reader line');
-    const shown = page.locator('.xov:has(.why-chips), .xtile:has(.why-chips), .xstory:has(.why-chips)').filter({ visible: true });
-    if (!(await shown.count())) fail(`${label}: no visible card with chips on the first screen`);
-    else ok(`${await shown.count()} visible cards with chips`);
-    if (SHOTS) await shown.first().screenshot({ path: `${SHOTS}/why-card-${label}.png`, timeout: 8000 }).catch((e) => console.log('  note: card shot', String(e).split('\n')[0]));
+    const n = await page.locator('.why-chips, .why-chip').count();
+    if (n) fail(`${label}: ${n} why chips on Explore cards (G12 removed them)`);
+    else ok('with taste: still no chip on a card');
     await noHScroll(page, `${label} Explore`);
 
     await openDest(page, 'EDI');

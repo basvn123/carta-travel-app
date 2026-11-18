@@ -9,11 +9,8 @@ import '../styles/80-why.css';
 /**
  * Trust made visible (T1208, ROADMAP G9).
  *
- *   <WhyChips place={p} />           a card's chips: up to two reasons this
- *                                    place fits the traveller, nothing when
- *                                    there is no evidence on both sides
  *   <WhyPlace destination={d} />     the place page's "Why this place": the
- *                                    same reasons with their evidence and
+ *                                    reasons this place fits the traveller with their evidence and
  *                                    confidence in words, then what the place
  *                                    is known for
  *   <PricesRefreshed record={d} />   "Prices refreshed 7 Jun 2026" under the
@@ -21,12 +18,12 @@ import '../styles/80-why.css';
  *
  * The rules (what counts as evidence, the two confidence words, the dates)
  * live in lib/why.js and lib/asOf.js. lib/why.js carries the taxonomy map
- * (about 10 KB gzip), so it loads on demand: a card asks for it only when
- * the traveller has a Yes or a picked like, the place page always. Chips are text inside the card's link,
- * never a second control in it. Scoped CSS: styles/80-why.css (.why).
+ * (about 10 KB gzip), so it loads on demand, on the place page only.
+ * G12 (Explore top): the cards' teal chips left (decision.md, Removed); the
+ * place page's section stays. Scoped CSS: styles/80-why.css (.why).
  */
 
-// lib/why.js, loaded once on demand and shared by every chip.
+// lib/why.js, loaded once on demand.
 let whyMod = null;
 let whyLoad = null;
 function useWhyModule(wanted) {
@@ -55,12 +52,6 @@ function useTraveller(always = false) {
   return { why, traveller };
 }
 
-/** The chip's words: the node, with "(likely)" under the strong bar. */
-function chipText(why, c, t, lang) {
-  const label = why.whyLabel(c.node, lang);
-  return c.conf === 'likely' ? t('why.place.chipLikely', { label }) : label;
-}
-
 /** The traveller's evidence in words. */
 function youText(why, you, t, lang) {
   if (you.kind === 'accepted') return t('why.place.youYes', { node: why.whyLabel(you.node, lang) });
@@ -72,23 +63,6 @@ function placeText(tag, t, lang) {
   const ev = tag.evidence[0];
   if (ev?.kind === 'quote') return lang === 'en' ? t('why.place.evQuote', { text: ev.text }) : t('why.place.evText');
   return t('why.place.evListing');
-}
-
-/** Up to two chips on a card; nothing without evidence. */
-export function WhyChips({ place, className = '' }) {
-  const { t, lang } = useI18n();
-  const { why, traveller } = useTraveller();
-  const chips = React.useMemo(() => (why && traveller ? why.whyChips(place, traveller) : []), [why, place, traveller]);
-  if (!chips.length) return null;
-  const words = chips.map((c) => chipText(why, c, t, lang));
-  return (
-    <span className={`why why-chips ${className}`.trim()} data-why={chips.map((c) => c.node).join(' ')}>
-      <span className="sr-only">{t('why.place.cardAria', { list: words.join(', ') })}</span>
-      {chips.map((c, i) => (
-        <span key={c.node} className={`why-chip is-${c.conf}`} aria-hidden="true">{words[i]}</span>
-      ))}
-    </span>
-  );
 }
 
 function WhyRow({ why, tag, you, t, lang }) {

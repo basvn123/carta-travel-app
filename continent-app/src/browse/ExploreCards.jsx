@@ -3,7 +3,6 @@ import { openShared } from '../lib/sharedElement.js';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { ScoreChip, HiddenGemTag } from '../components/RatingBadge.jsx';
 import { MatchLine } from './WhyItMatches.jsx';
-import { WhyChips } from './WhyChips.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { BusIcon, CarIcon, TrainIcon } from '../components/Icons.jsx';
 import { HouseIcon } from '../components/HouseIcons.jsx';
@@ -136,8 +135,6 @@ export function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
           </span>
           {/* T765: "86% match: hiking, quiet", from 55% up, beside the Score. */}
           <MatchLine place={p} />
-          {/* T1208 (G9): why it fits, with evidence on both sides. */}
-          <WhyChips place={p} />
         </>
       )}
       // G12, D10 (owner, 2026-11-17): no note line under the price on an
