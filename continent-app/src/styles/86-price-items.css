@@ -347,7 +347,11 @@
   animation: psheet-fade var(--dur-2) var(--ease-out) both;
   animation-delay: calc(min(var(--i, 0), 12) * 24ms);
 }
-.btn.pft-row.is-on { background: var(--select-bg); border-left: 3px solid var(--select-border); }
+/* The chosen flight: the house "selected" (DESIGN.md colour rules), the
+   beige wash, umber 800 ink and an umber edge all round, never a side
+   stripe (integration 2026-11-18, impeccable detect). The "In your list"
+   word under the times is its mark in words. */
+.btn.pft-row.is-on { background: var(--select-bg); color: var(--select-ink); outline: 1.5px solid var(--select-border); outline-offset: -1.5px; }
 .btn.pft-row:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 .pft-row-main { display: flex; flex-direction: column; min-width: 0; }
 .pft-row-times { font-size: var(--text-label); font-weight: 700; font-variant-numeric: tabular-nums; }
