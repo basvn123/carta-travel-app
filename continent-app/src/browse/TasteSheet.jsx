@@ -6,7 +6,7 @@ import { Button, Chip, ChoiceRows, IconButton, Segmented, Switch } from '../comp
 import { CloseIcon } from '../components/Icons.jsx';
 import { SheetShell } from './SheetShell.jsx';
 import { LikeTiles, partyKindOptions } from '../planner/flow/setupScreens.jsx';
-import { PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
+import { PROFILE_LABEL_KEYS } from './styles/spendBits.jsx';
 import { PROFILES } from '../lib/lifestyleProfiles.js';
 import {
   SIZES, lifestyleKey, normalizeTaste, recordAsked, setTasteAnswer, toggleLike,

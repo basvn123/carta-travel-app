@@ -7,7 +7,7 @@ import { PartyEditor } from '../../planner/PartyEditor.jsx';
 import {
   ChoiceChips, optLabel, StyleExploreFields, StylePicker, styleIcon, styleName,
 } from '../../browse/TravelStylesSheet.jsx';
-import { matchProfile, PROFILE_LABEL_KEYS, PROFILES } from '../../browse/LifestylePanel.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS, PROFILES } from '../../browse/styles/spendBits.jsx';
 import { offeredStayTiers } from '../../lib/runtime_pricing.js';
 import { styleDayEur } from '../../lib/price/styleDay.js';
 import { TRAVEL_MODES } from '../../lib/travelWay.js';

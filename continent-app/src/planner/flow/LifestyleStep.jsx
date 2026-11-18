@@ -6,7 +6,7 @@ import { StayTypes } from './StayTypes.jsx';
 import {
   PROFILES, PROFILE_ICONS, PROFILE_LABEL_KEYS, matchProfile,
   PERIOD_FIELDS, COFFEE_MAX, toCadence,
-} from '../../browse/LifestylePanel.jsx';
+} from '../../browse/styles/spendBits.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { Button, Segmented, Tile, TileGroup } from '../../components/ui/index.js';
 import { ChevronDownIcon, SettingsIcon } from '../../components/Icons.jsx';

@@ -3,7 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import { offeredStayTiers, DEFAULT_LIFESTYLE } from '../lib/runtime_pricing.js';
 import { offeredSleepGroups, optionsFor, sleepGroupOf, tierForGroup } from '../lib/sleepGroups.js';
-import { PROFILES, PROFILE_ICONS, PROFILE_LABEL_KEYS, SLEEP_ICONS, matchProfile } from '../browse/LifestylePanel.jsx';
+import { PROFILES, PROFILE_ICONS, PROFILE_LABEL_KEYS, SLEEP_ICONS, matchProfile } from '../browse/styles/spendBits.jsx';
 import { Segmented, Tile, TileGroup } from '../components/ui/index.js';
 import { useSettings } from '../components/SettingsLine.jsx';
 

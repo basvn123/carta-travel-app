@@ -6,7 +6,7 @@ import { DatesControl, useDatePick, useSettings, useShortDate, whenValue } from 
 import { useTripLine } from '../SearchDock.jsx';
 import { FromPanel, fromName, fromPoint } from '../FromPicker.jsx';
 import { AirportReach } from '../AirportReach.jsx';
-import { styleIcon, styleName } from '../../browse/TravelStylesSheet.jsx';
+import { styleIcon, styleName } from '../../browse/styles/styleBits.jsx';
 import { Dock, DockRowButton, DockRowField, useDockBack } from './Dock.jsx';
 import { openDock } from './dockStore.js';
 

@@ -8,7 +8,7 @@ import { ChevronRightIcon } from '../components/Icons.jsx';
 import { HouseIcon } from '../components/HouseIcons.jsx';
 import '../styles/84-explore-overview.css';
 import { useSettings } from '../components/SettingsLine.jsx';
-import { styleName } from './TravelStylesSheet.jsx';
+import { styleName } from './styles/styleBits.jsx';
 
 /*
  * The doors to "Your travel style" (T947, the owner: "make sure across the

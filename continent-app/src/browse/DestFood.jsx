@@ -9,7 +9,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { Button, Money } from '../components/ui/index.js';
 import { ChevronDownIcon, ChevronRightIcon, DiningIcon } from '../components/Icons.jsx';
 import { Fold } from './Fold.jsx';
-import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from './styles/spendBits.jsx';
 
 /**
  * The destination page's Food and drink fold (T515), in the Practical tab

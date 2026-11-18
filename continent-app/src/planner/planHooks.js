@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
-import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/styles/spendBits.jsx';
 
 /** "Entire place, Easygoing": the Lifestyle the trip is priced at, in the
  *  settings line's own words. */

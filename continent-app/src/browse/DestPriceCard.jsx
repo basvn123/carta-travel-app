@@ -26,7 +26,7 @@ import {
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { minutesText } from '../lib/journeys.js';
 import { tiersAt } from '../lib/stayPrice.js';
-import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from './styles/spendBits.jsx';
 import { legCost, googleFlightsLink } from '../lib/flights/flights.js';
 import { bagTier } from '../lib/flights/bagFees.js';
 import { flightLegs, flightQuote } from '../lib/price/flight.js';

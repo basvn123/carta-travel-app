@@ -1,6 +1,6 @@
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { fromName } from '../../components/FromPicker.jsx';
-import { matchProfile, PROFILE_LABEL_KEYS } from '../../browse/LifestylePanel.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from '../../browse/styles/spendBits.jsx';
 import { partyText } from '../../lib/party.js';
 import { useFirstRun } from '../../lib/firstRunContext.js';
 import { tasteListText } from '../../lib/taste.js';

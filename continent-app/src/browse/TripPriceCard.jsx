@@ -9,7 +9,7 @@ import { Stepper } from '../components/FilterControls.jsx';
 import { FlightSheet } from '../components/FlightSheet.jsx';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
-import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from './styles/spendBits.jsx';
 import { formatMoney, formatEst } from '../lib/money.js';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { SLOTS, includedRows, lifestyleShares, tripPrice } from '../lib/tripPrice.js';

@@ -5,7 +5,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import { DateField } from './DateField.jsx';
 import { Stepper } from './FilterControls.jsx';
-import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/LifestylePanel.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/styles/spendBits.jsx';
 import { Button, Chip, ChipGroup, IconButton, Segmented } from './ui/index.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';

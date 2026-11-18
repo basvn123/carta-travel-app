@@ -2,7 +2,7 @@ import { bestMonthsFor, guardsHeat } from '../lib/heatRisk.js';
 import React from 'react';
 import { ReportProblem } from '../components/ReportProblem.jsx';
 import { knownFor } from '../lib/knownFor.js';
-import { matchProfile, PROFILE_LABEL_KEYS } from './LifestylePanel.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from './styles/spendBits.jsx';
 import { safeUrl } from '../lib/format.js';
 import { useDossier, destShareUrl } from '../lib/dossier.js';
 import { activityLink } from '../lib/activityAffiliates.js';

@@ -26,7 +26,7 @@ import {
 } from '../../lib/price/priceSheet.js';
 import { partyText } from '../../lib/party.js';
 import { countryName } from '../../lib/countryName.js';
-import { matchProfile, PROFILE_LABEL_KEYS } from '../../browse/LifestylePanel.jsx';
+import { matchProfile, PROFILE_LABEL_KEYS } from '../../browse/styles/spendBits.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { Button, Tabs } from '../ui/index.js';
 import NotYet from '../NotYet.jsx';

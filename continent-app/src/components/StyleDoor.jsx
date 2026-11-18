@@ -3,7 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useSettings } from './SettingsLine.jsx';
 import { HouseIcon } from './HouseIcons.jsx';
 import { Button } from './ui/index.js';
-import { styleIcon, styleName } from '../browse/TravelStylesSheet.jsx';
+import { styleIcon, styleName } from '../browse/styles/styleBits.jsx';
 
 /**
  * The travel style door (owner, 2026-11-12: "a little button which stays all
