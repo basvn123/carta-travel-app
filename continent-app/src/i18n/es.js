@@ -10592,6 +10592,12 @@ export const es = {
   "settingsSum.notKnown.bus": "Precio del autobús aún sin conocer",
   "settingsSum.notKnown.car": "Coste en coche aún sin conocer",
   "settingsSum.notKnown.any": "Precio del trayecto aún sin conocer",
+  "band.searchPh": "Busca un lugar, una región o un país",
+  "band.settings": "Ajustes",
+  "band.chipsAria": "Tus ajustes",
+  "band.chipAria": "{text}, cambiar",
+  "band.peaks": "Cimas",
+  "band.clear": "Borrar la búsqueda",
   // G12 (Explore top): the Settings sheet (browse/settings).
   "settings.sheet.title": "Tus ajustes",
   "settings.sheet.close": "Cerrar ajustes",

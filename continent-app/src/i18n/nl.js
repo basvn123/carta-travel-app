@@ -10592,6 +10592,12 @@ export const nl = {
   "settingsSum.notKnown.bus": "Busprijs nog niet bekend",
   "settingsSum.notKnown.car": "Autokosten nog niet bekend",
   "settingsSum.notKnown.any": "Reisprijs nog niet bekend",
+  "band.searchPh": "Zoek een plaats, regio of land",
+  "band.settings": "Instellingen",
+  "band.chipsAria": "Je instellingen",
+  "band.chipAria": "{text}, wijzigen",
+  "band.peaks": "Toppen",
+  "band.clear": "Zoekopdracht wissen",
   // G12 (Explore top): the Settings sheet (browse/settings).
   "settings.sheet.title": "Je instellingen",
   "settings.sheet.close": "Instellingen sluiten",

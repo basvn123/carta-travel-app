@@ -10592,6 +10592,12 @@ export const de = {
   "settingsSum.notKnown.bus": "Buspreis noch nicht bekannt",
   "settingsSum.notKnown.car": "Autokosten noch nicht bekannt",
   "settingsSum.notKnown.any": "Anreisepreis noch nicht bekannt",
+  "band.searchPh": "Ort, Region oder Land suchen",
+  "band.settings": "Einstellungen",
+  "band.chipsAria": "Deine Einstellungen",
+  "band.chipAria": "{text}, ändern",
+  "band.peaks": "Gipfel",
+  "band.clear": "Suche löschen",
   // G12 (Explore top): the Settings sheet (browse/settings).
   "settings.sheet.title": "Deine Einstellungen",
   "settings.sheet.close": "Einstellungen schließen",

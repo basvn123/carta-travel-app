@@ -10678,6 +10678,12 @@ export const en = {
   "settingsSum.notKnown.bus": "Bus price not known yet",
   "settingsSum.notKnown.car": "Car cost not known yet",
   "settingsSum.notKnown.any": "Price to get there not known yet",
+  "band.searchPh": "Search a place, region or country",
+  "band.settings": "Settings",
+  "band.chipsAria": "Your settings",
+  "band.chipAria": "{text}, change",
+  "band.peaks": "Peaks",
+  "band.clear": "Clear search",
   // G12 (Explore top): the Settings sheet (browse/settings).
   "settings.sheet.title": "Your settings",
   "settings.sheet.close": "Close settings",

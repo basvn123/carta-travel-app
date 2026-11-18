@@ -10592,6 +10592,12 @@ export const fr = {
   "settingsSum.notKnown.bus": "Prix du car pas encore connu",
   "settingsSum.notKnown.car": "Coût en voiture pas encore connu",
   "settingsSum.notKnown.any": "Prix du trajet pas encore connu",
+  "band.searchPh": "Chercher un lieu, une région ou un pays",
+  "band.settings": "Réglages",
+  "band.chipsAria": "Vos réglages",
+  "band.chipAria": "{text}, modifier",
+  "band.peaks": "Sommets",
+  "band.clear": "Effacer la recherche",
   // G12 (Explore top): the Settings sheet (browse/settings).
   "settings.sheet.title": "Vos réglages",
   "settings.sheet.close": "Fermer les réglages",
