@@ -2327,7 +2327,7 @@ export const en = {
   "coplan.joined": "Joined. The trip is in My trips, and you can edit its route.",
   "coplan.whatYouGet": "Joining lets you edit the route and the dates. It does not share their day plans, their expenses or their booking references.",
   "coplan.ownedBy": "Planned with {who}",
-  "tg.title": "Together",
+  "tg.title": "Together",
   'tg.doorAria': "Together: plan a trip with friends",
   "tg.doorWaiting": "Together, {n} waiting on you",
   "tg.signInLine": "Sign in to add the people you travel with.",

@@ -1917,7 +1917,7 @@ export const fr = {
   "coplan.joined": "Vous avez rejoint. Le voyage est dans Mes voyages et vous pouvez modifier son itinéraire.",
   "coplan.whatYouGet": "Rejoindre vous laisse modifier l'itinéraire et les dates. Cela ne partage ni leurs journées, ni leurs dépenses, ni leurs réservations.",
   "coplan.ownedBy": "Planifié avec {who}",
-  "tg.title": "Ensemble",
+  "tg.title": "Ensemble",
   'tg.doorAria': "Ensemble : planifiez un voyage entre amis",
   "tg.doorWaiting": "Ensemble, {n} en attente de vous",
   "tg.signInLine": "Connectez-vous pour ajouter les personnes avec qui vous voyagez.",

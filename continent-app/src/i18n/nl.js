@@ -1926,7 +1926,7 @@ export const nl = {
   "coplan.joined": "Je doet mee. De reis staat in Mijn reizen en je kunt de route bewerken.",
   "coplan.whatYouGet": "Meedoen laat je de route en de data bewerken. Het deelt hun dagplannen, uitgaven of boekingen niet.",
   "coplan.ownedBy": "Samen gepland met {who}",
-  "tg.title": "Samen",
+  "tg.title": "Samen",
   'tg.doorAria': "Samen: plan een reis met vrienden",
   "tg.doorWaiting": "Samen, {n} wachten op jou",
   "tg.signInLine": "Log in om de mensen toe te voegen met wie je reist.",
