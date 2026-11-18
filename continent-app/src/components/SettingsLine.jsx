@@ -606,13 +606,13 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
             <span className="settings-quad-word" aria-hidden="true">{t('settings.from')}</span>
           </Part>
         )}
-        {show('lifestyle') && s.openLifestyle && (
+        {show('lifestyle') && s.openStyleSpend && (
           <Part
             name="bed"
             className="settings-quad"
             value={`${bed}, ${vibe}`}
             ariaLabel={t('settings.changeAria', { label: t('settings.lifestyle'), value: `${bed}, ${vibe}` })}
-            onClick={s.openLifestyle}
+            onClick={s.openStyleSpend}
           >
             <BedIcon size={20} className="settings-quad-icon" />
             <span className="settings-quad-word" aria-hidden="true">{t('settings.stayShort')}</span>
@@ -742,7 +742,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
           </div>
         )}
 
-        {show('lifestyle') && s.openLifestyle && (
+        {show('lifestyle') && s.openStyleSpend && (
           <div className="settings-slot settings-slot-lifestyle">
             <Part
               name="lifestyle"
@@ -757,7 +757,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
                   <span className="settings-vibe">{vibe}</span>
                 </>
               )}
-              onClick={s.openLifestyle}
+              onClick={s.openStyleSpend}
             />
           </div>
         )}
