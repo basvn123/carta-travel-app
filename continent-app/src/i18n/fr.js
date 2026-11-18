@@ -6212,7 +6212,6 @@ export const fr = {
   "mapPanel.whyGo": "Pourquoi y aller",
   "mapPanel.sights": "À voir",
   "explore.heroTitle": "Où partir ensuite ?",
-  "explore.askOrSearch": "Où aller ? Demandez à Carta ou cherchez un lieu",
   'explore.chooseOrAsk': "Choisissez où aller, ou demandez à Carta",
   "dock.title": "Recherche",
   "dock.where": "Où aller ?",

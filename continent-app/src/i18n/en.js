@@ -6930,7 +6930,6 @@ export const en = {
   "mapPanel.whyGo": "Why go",
   "mapPanel.sights": "Sights",
   "explore.heroTitle": "Where to next?",
-  "explore.askOrSearch": "Where to? Ask Carta or search a place",
   'explore.chooseOrAsk': "Choose where to go, or ask Carta",
   'dock.title': 'Search',
   'dock.where': 'Where to?',

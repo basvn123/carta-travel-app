@@ -6223,7 +6223,6 @@ export const nl = {
   "mapPanel.whyGo": "Waarom gaan",
   "mapPanel.sights": "Bezienswaardigheden",
   "explore.heroTitle": "Waar gaan we naartoe?",
-  "explore.askOrSearch": "Waarheen? Vraag het Carta of zoek een plek",
   'explore.chooseOrAsk': "Kies waar je heen wilt, of vraag het Carta",
   "dock.title": "Zoeken",
   "dock.where": "Waarheen?",
