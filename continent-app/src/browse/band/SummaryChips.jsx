@@ -6,7 +6,7 @@ import { Pressable } from '../../components/ui/Pressable.jsx';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { openStudio } from '../styles/studioDoors.js';
 import { openSettings } from '../settings/settingsSheetStore.js';
-import { settingsSummary } from './lanes.js';
+import { settingsSummary } from '../../lib/settings/summary.js';
 
 // lib/settings/summary.js names a few glyphs by what they show; the house
 // set draws them under its own names.
@@ -21,15 +21,15 @@ function glyphOf(icon) {
   return HouseIcon[ALIAS[icon] || icon] || null;
 }
 
-/** The items to draw, read from Lane 3's settingsSummary (never re-derived
- *  here, contract.md); none until it lands. */
+/** The items to draw, read from settingsSummary (lib/settings; never re-derived
+ *  here). */
 // eslint-disable-next-line react-refresh/only-export-components -- read by the band's own test and the verify script
 export function useSummaryItems() {
   const { t } = useI18n();
   const s = useSettings();
   const style = s?.travelStyles?.active || null;
   return React.useMemo(() => {
-    if (!s || !settingsSummary) return [];
+    if (!s) return [];
     try {
       const out = settingsSummary(s.model ?? s, style, t, { data: s.data || null });
       return Array.isArray(out) ? out.filter((it) => it && it.text) : [];

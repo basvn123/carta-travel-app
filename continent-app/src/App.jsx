@@ -102,7 +102,8 @@ import { gatewayCity } from './lib/rating.js';
 import { reportPriceDrops, mayAsk } from './lib/priceDrop.js';
 import { loadEmailPrefs } from './auth/account/emailPrefs.js';
 import { ExploreBand } from './browse/band/ExploreBand.jsx';
-import { SettingsSheet } from './browse/band/lanes.js';
+// G12: the Settings sheet loads on its first open.
+const SettingsSheet = React.lazy(() => import('./browse/settings/SettingsSheet.jsx').then((m) => ({ default: m.SettingsSheet })));
 import { requestShowAll } from './browse/searchDockStore.js';
 import { TabFallback } from './shell/TabFallback.jsx';
 import { DayPlannerTab, PlanFlow, PricingPage, TripPlannerTab } from './shell/lazyScreens.js';
@@ -1660,11 +1661,9 @@ function TravelApp() {
       <StyleDock hidden={!(place === 'explore' || place === 'trips') || !!selectedDest || !!countryPage || !!pendingRegion} />
       {/* G12 (Explore top): Settings, mounted once so every door (the band's
           button and chips, the search's "You search as" rows) reaches it. */}
-      {SettingsSheet && (
-        <Suspense fallback={null}>
-          <SettingsSheet />
-        </Suspense>
-      )}
+      <Suspense fallback={null}>
+        <SettingsSheet />
+      </Suspense>
       {/* D10: the price sheet a list row's figure and wagons open; one
           mount, so a row carries only its buttons (priceSheetStore). */}
       <PriceSheet data={data} />

@@ -8,7 +8,8 @@ import { ExploreCategories } from '../ExploreCategories.jsx';
 import { openAskChat } from '../ask/askChatStore.js';
 import { useSearchDock, dockBack, dockShare, isQuestion } from '../searchDockStore.js';
 import { toggleSettings, useSettingsSheet } from '../settings/settingsSheetStore.js';
-import { SearchPanel } from './lanes.js';
+// The search panel loads on the field's first focus.
+const SearchPanel = React.lazy(() => import('../search/SearchPanel.jsx').then((m) => ({ default: m.SearchPanel })));
 import { SummaryChips, useSummaryItems } from './SummaryChips.jsx';
 import { useQuickReturn } from './useQuickReturn.js';
 import '../../styles/80-band.css';
@@ -115,10 +116,12 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     </div>
   ) : null;
   const showChips = places && items.length > 0;
-  const panel = open && SearchPanel ? (
+  // The panel's listbox is `${panelId}-list` (SearchPanel); the field
+  // points at it, and the wrapper carries no id of its own.
+  const panel = open ? (
     <React.Suspense fallback={null}>
-      <div className="band-search-panel" id={panelId}>
-        <SearchPanel query={q} kind={kind} id={panelId}
+      <div className="band-search-panel">
+        <SearchPanel query={q} kind={kind} id={panelId} inputRef={inputRef}
           onSubmit={(text) => { onSearch({ kind, q: text }); inputRef.current?.blur(); close(); }}
           onClose={() => { inputRef.current?.blur(); close(); }} />
       </div>
@@ -152,9 +155,9 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
               <input ref={inputRef} type="search" className="band-input"
                 value={value} placeholder={t('band.searchPh')} aria-label={t('band.searchPh')}
                 autoComplete="off" enterKeyHint="search" spellCheck={false}
-                role={SearchPanel ? 'combobox' : undefined}
-                aria-expanded={SearchPanel ? open : undefined}
-                aria-controls={SearchPanel && open ? panelId : undefined}
+                role="combobox"
+                aria-expanded={open}
+                aria-controls={open ? `${panelId}-list` : undefined}
                 onFocus={() => { if (!edited) setQ(shownQuery); setEdited(true); setOpen(true); }}
                 onChange={(e) => { setQ(e.target.value); setEdited(true); setOpen(true); }}
                 onKeyDown={onKeyDown} />
