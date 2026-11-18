@@ -12,17 +12,20 @@
      photo to name        10     12
      name to country      2      2
      country to parts     10     10
-     strip to next title  40     56   (plus the strip's 4 px foot; a
+     strip to next title  24     32   (plus the strip's 4 px foot; a
                                        rail holding a two-line name is
                                        that line taller)
 
    Before this the gap between rails was 16 px (T983) and a title sat 14 px
    from its own strip, so a heading read as the foot of the rail above it.
+   The first pass set 40 / 56; the owner found that too airy (2026-11-18,
+   "bring the sections closer"), so the rail gap now matches the dock to
+   first title gap: one section step, still twice the title's own 12 / 16.
    This replaces the older section gaps (25-feature-pages, 62-v6-explore,
    80-story-rail T983, 84-explore-overview) for Explore. */
 
 .explore-shell .xrails.xrails {
-  gap: var(--space-7);
+  gap: var(--space-5);
   margin: var(--space-5) 0 var(--space-7);
 }
 .explore-shell .xsub { margin: var(--space-2) 0 0; }
@@ -37,7 +40,11 @@
 }
 @media (min-width: 1024px) {
   .explore-shell .xrails-rail { contain-intrinsic-size: auto 350px; }
-  .explore-shell .xrails.xrails { gap: var(--space-8); }
+  .explore-shell .xrails.xrails { gap: var(--space-6); margin-top: var(--space-4); }
+  /* The Map button's row sits between the tabs and the first title: 16
+     on each side of it, so the tabs and the first rail read as one page
+     (was 16 + 32, the tabs 80 px from the first title). */
+  .explore-shell .xov-hero { margin-bottom: var(--space-4); }
   .explore-shell .xrails-rail .hs-rail-head { margin-bottom: var(--space-4); }
 }
 

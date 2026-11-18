@@ -13,9 +13,10 @@
   background: var(--surface-page);
 }
 
-/* The fold: on a phone the header, the search and the tabs fold away while
-   the list scrolls down (useQuickReturn). Rows from 1fr to 0fr, so the top
-   bar's measured height (--filter-h) follows and the list keeps its place. */
+/* The fold: on a phone the header and the search (one fold) and the tabs
+   (a second, under the settings strip) fold away while the list scrolls
+   down (useQuickReturn). Rows from 1fr to 0fr, so the top bar's measured
+   height (--filter-h) follows and the list keeps its place. */
 .band-fold {
   display: grid;
   /* minmax(0, 1fr): a long header word (Se connecter at 360) must not widen
@@ -211,18 +212,27 @@
 }
 
 /* --- Phone -------------------------------------------------------------- */
+/* One rhythm, top to bottom (owner 2026-11-18, "cleaner, the gap is too
+   big"): search, 4, the settings strip (32 drawn in a 44 hit), the tabs,
+   one hairline under the band, then the list's own 8 / 24 / 12 / 24. */
+.band.is-phone .band-row { padding-bottom: var(--space-1); }
 .band.is-phone .band-tabs { padding: 0 var(--space-4); }
 .band.is-phone .band-cats.ui-tabs { border-bottom: 0; }
-/* The chip row: one sideways swipe under the tabs, snapping to a chip, with
-   a soft fade on a side that has more. It stays when the rest folds. */
+/* The tabs' selected underline stands on the band's one edge. */
+.band.is-phone { border-bottom: var(--stroke-hair) solid var(--border-soft); }
+/* The settings strip: one sideways swipe between the search and the tabs,
+   snapping to a chip, with a soft fade on a side that has more. It stays
+   when the rest folds. A context strip, not a row of buttons: icon and
+   word on the ground, no pill, so it reads apart from the rails' outlined
+   doors below; only the heart keeps its mist pill. */
 .band-chips.is-swipe {
   position: relative;
   z-index: 1;
-  padding: var(--space-1) var(--space-4);
+  gap: 0;
+  padding: 0 var(--space-4);
   scroll-snap-type: x proximity;
   scroll-padding-inline: var(--space-4);
   background: var(--surface-page);
-  border-top: var(--stroke-hair) solid var(--border-soft);
   --fade-s: 0px;
   --fade-e: 0px;
   -webkit-mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
@@ -230,11 +240,35 @@
 }
 .band-chips.is-swipe.has-start { --fade-s: var(--space-6); }
 .band-chips.is-swipe.has-end { --fade-e: var(--space-6); }
-.band-chips.is-swipe .band-chip { scroll-snap-align: start; }
-/* Paper pills without an edge: apart from the rails' outlined doors below. */
-.band-chips.is-swipe .band-chip:not(.is-style) { background: var(--surface); }
+.band-chips.is-swipe .band-chip {
+  isolation: isolate;
+  gap: 6px;
+  padding: 0 var(--space-2);
+  background: transparent;
+  scroll-snap-align: start;
+}
+.band-chips.is-swipe .band-chip.is-style { margin-right: var(--space-1); padding: 0 var(--space-3); }
+/* The drawn ground: 32 px inside the 44 px target. */
+.band-chips.is-swipe .band-chip::before {
+  content: '';
+  position: absolute;
+  inset: 6px 0;
+  z-index: -1;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.band-chips.is-swipe .band-chip.is-style::before { background: var(--umber-50); }
+.band-chips.is-swipe .band-chip:active::before { background: var(--surface-hover); }
+.band-chips.is-swipe .band-chip.is-style:active::before { background: var(--umber-100); }
+@media (hover: hover) {
+  .band-chips.is-swipe .band-chip:hover { background: transparent; border-color: transparent; }
+  .band-chips.is-swipe .band-chip:hover::before { background: var(--surface-hover); }
+  .band-chips.is-swipe .band-chip.is-style:hover::before { background: var(--umber-100); }
+}
+.band-chips.is-swipe .band-chip-dot { top: 10px; }
 /* Pinned, the band floats over the list: one soft lift. */
-.band.is-phone.is-tucked { box-shadow: var(--elev-2); }
+.band.is-phone.is-tucked { border-bottom-color: transparent; box-shadow: var(--elev-2); }
 
 /* The search panel (Lane 4) under the field. */
 .band-search-panel { position: relative; z-index: 2; }
@@ -250,5 +284,6 @@
   .band-ask,
   .band-settings,
   .band-settings .hs-icon-fader path:last-child,
-  .band-chip { transition: none; }
+  .band-chip,
+  .band-chips.is-swipe .band-chip::before { transition: none; }
 }

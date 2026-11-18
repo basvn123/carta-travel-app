@@ -31,10 +31,11 @@ function oneCountry(places) {
  *   desktop   the search field with Ask, the Settings button (Places only),
  *             then the settings in one line under it (Places only; the line's
  *             room stays on the other tabs, so the band never changes height)
- *   phone     the search field, the six tabs, then the settings as one
- *             sideways row of chips (Places only). Scrolling the list down
- *             folds the search and the tabs away and pins the chips; a small
- *             scroll up brings them back.
+ *   phone     the search field, the settings as one sideways strip of
+ *             chips (Places only), then the six tabs (owner 2026-11-18:
+ *             the settings sit with the search they shape, above the tabs).
+ *             Scrolling the list down folds the search and the tabs away
+ *             and pins the strip; a small scroll up brings them back.
  *
  * The five layers price nothing from Start, When or the way (their rows
  * read only the country), so their band carries no chips and no Settings.
@@ -62,15 +63,17 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   const [edited, setEdited] = React.useState(false);
   const value = edited || open ? q : shownQuery;
 
-  const foldRef = React.useRef(null);
+  // A phone folds two parts (the search above the strip, the tabs below
+  // it); the list never tucks the band before it has scrolled past both.
+  const bandRef = React.useRef(null);
   const [foldPx, setFoldPx] = React.useState(120);
   React.useLayoutEffect(() => {
-    const el = foldRef.current?.firstElementChild;
-    if (!el) return undefined;
-    const read = () => setFoldPx(el.scrollHeight || 120);
+    const els = [...(bandRef.current?.querySelectorAll('.band-fold-in') || [])];
+    if (!els.length) return undefined;
+    const read = () => setFoldPx(els.reduce((sum, el) => sum + (el.scrollHeight || 0), 0) || 120);
     read();
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
-    ro?.observe(el);
+    els.forEach((el) => ro?.observe(el));
     return () => ro?.disconnect();
   }, [isDesktop]);
   const tucked = useQuickReturn(!isDesktop && !open, foldPx, `${kind}:${open}`);
@@ -107,7 +110,6 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     if (q) { e.preventDefault(); setQ(''); }
   };
   // A press outside the band and its panel closes the panel.
-  const bandRef = React.useRef(null);
   React.useEffect(() => {
     if (!open) return undefined;
     const onDown = (e) => {
@@ -120,9 +122,13 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   }, [open]);
 
   const tabs = !isDesktop ? (
-    <div className="band-tabs">
-      <ExploreCategories current={kind} variant="row" className="band-cats"
-        onPick={(key) => onPickCategory?.(key, oneCountry(places))} />
+    <div className="band-fold band-fold--tabs" inert={tucked || undefined}>
+      <div className="band-fold-in">
+        <div className="band-tabs">
+          <ExploreCategories current={kind} variant="row" className="band-cats"
+            onPick={(key) => onPickCategory?.(key, oneCountry(places))} />
+        </div>
+      </div>
     </div>
   ) : null;
   const showChips = places && items.length > 0;
@@ -149,7 +155,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
         if (open && to && !e.currentTarget.contains(to)) setOpen(false);
       }}
       className={`band${places ? ' is-places' : ''}${tucked ? ' is-tucked' : ''}${instant ? ' is-instant' : ''}${open ? ' is-searching' : ''}${isDesktop ? ' is-desk' : ' is-phone'}`}>
-      <div className="band-fold" ref={foldRef} inert={tucked || undefined}>
+      <div className="band-fold" inert={tucked || undefined}>
         <div className="band-fold-in">
           {!isDesktop && head}
           <div className="band-row">
@@ -199,7 +205,6 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
               </Pressable>
             )}
           </div>
-          {tabs}
         </div>
       </div>
       {/* The line under the search: hidden while the search is open on a
@@ -208,6 +213,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
       {isDesktop ? (
         <div className="band-line">{showChips && <SummaryChips items={items} />}</div>
       ) : (showChips && !open && <SummaryChips items={items} className="is-swipe" />)}
+      {tabs}
       {panel}
     </div>
     </>
