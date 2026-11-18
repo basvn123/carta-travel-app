@@ -1,0 +1,205 @@
+/* The search panel under Explore's search field (G12, browse/search/SearchPanel.jsx).
+   Phone: one column; while typing the settings shrink to one line above the
+   suggestions. Desktop: suggestions and "You search as" side by side. The
+   Studio pattern: brown and saffron only, icon and word, no separators. */
+
+.sp {
+  display: grid;
+  box-sizing: border-box;
+  max-width: 100%;
+  min-width: 0;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface);
+  border: var(--stroke-hair) solid var(--border-soft);
+  border-radius: var(--radius-card);
+  box-shadow: var(--elev-2);
+  max-height: min(70vh, 640px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: var(--text);
+}
+
+/* Phone, before typing: the settings first, then Recent. */
+.sp.is-empty .sp-as { order: -1; }
+/* Phone, typing: the one line replaces the rows (keyboard-open budget). */
+.sp.is-typing .sp-as { display: none; }
+
+.sp-main { display: grid; gap: var(--space-2); align-content: start; min-width: 0; }
+
+.sp-head {
+  margin: 0;
+  padding: var(--space-1) var(--space-2) 0;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--text-2);
+}
+
+/* "You search as" */
+.sp-as { display: grid; gap: var(--space-1); align-content: start; min-width: 0; }
+.sp-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
+.sp-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 0 0 var(--space-2);
+  border-radius: var(--radius-control);
+  font-size: var(--text-body);
+}
+.sp-row-ic, .sp-opt-ic {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-pill);
+  color: var(--umber-800);
+  background: var(--umber-50);
+}
+.sp-row.is-style .sp-row-ic { background: var(--umber-100); }
+.sp-row-text { flex: 1; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+
+.sp-change {
+  flex: none;
+  min-height: var(--tap);
+  min-width: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--action);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease-out), transform var(--dur-press) var(--ease-tick);
+}
+.sp-change:hover { background: var(--umber-50); }
+.sp-change:active { transform: scale(var(--press-scale)); }
+.sp-change:focus-visible, .sp-tok-x:focus-visible, .sp-tok-more:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* The one line while typing */
+.sp-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-left: var(--space-2);
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+}
+.sp-line-items {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: var(--space-3);
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: var(--text-label);
+  color: var(--text-2);
+  -webkit-mask-image: linear-gradient(to right, black 85%, transparent);
+  mask-image: linear-gradient(to right, black 85%, transparent);
+}
+.sp-line-item { display: inline-flex; align-items: center; gap: var(--space-1); }
+.sp-line-item:first-child { color: var(--umber-800); font-weight: 600; }
+
+/* Feature tokens: two shown, then "+n"; each remove is a 44 px target. */
+.sp-tokens { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0 var(--space-1); }
+.sp-tok {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding-left: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--select-bg);
+  color: var(--umber-800);
+  border: var(--stroke-hair) solid var(--select-border);
+  font-size: var(--text-label);
+  font-weight: 600;
+}
+.sp-tok-x, .sp-tok-more {
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: transform var(--dur-press) var(--ease-tick);
+}
+.sp-tok-x:active, .sp-tok-more:active { transform: scale(var(--press-scale)); }
+.sp-tok-more {
+  padding: 0 var(--space-3);
+  background: var(--umber-50);
+  color: var(--umber-800);
+  font-weight: 600;
+}
+
+/* Suggestions */
+.sp-list { display: grid; gap: var(--space-2); }
+.sp-list > [role='group'] { display: grid; gap: var(--space-1); }
+.sp-opt {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: background var(--dur-1) var(--ease-out);
+}
+.sp-opt.is-active {
+  background: var(--select-bg);
+  outline: var(--stroke-hair) solid var(--select-border);
+  outline-offset: calc(-1 * var(--stroke-hair));
+}
+.sp-opt-text { flex: 1; min-width: 0; display: grid; }
+.sp-opt-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1);
+  font-weight: 600;
+  font-size: var(--text-body);
+  overflow-wrap: anywhere;
+}
+.sp-opt-sub { font-size: var(--text-label); color: var(--text-2); overflow-wrap: anywhere; }
+.sp-opt-count {
+  flex: none;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--umber-800);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.sp-tok-mark {
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--select-bg);
+  color: var(--umber-800);
+  font-size: var(--text-caption);
+}
+
+/* Desktop: suggestions beside the settings. */
+@media (min-width: 769px) {
+  .sp.has-settings {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    column-gap: var(--space-4);
+  }
+  .sp.has-settings .sp-as {
+    display: grid;
+    order: 0;
+    padding-left: var(--space-4);
+    border-left: var(--stroke-hair) solid var(--border-soft);
+  }
+  .sp .sp-line { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-change, .sp-tok-x, .sp-tok-more, .sp-opt { transition: none; }
+}
