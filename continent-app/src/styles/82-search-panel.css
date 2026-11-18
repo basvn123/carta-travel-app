@@ -194,13 +194,30 @@
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     column-gap: var(--space-4);
   }
-  .sp.has-settings .sp-as {
-    display: grid;
-    order: 0;
+  .sp.has-settings .sp-as { display: grid; order: 0; }
+  /* The rule parts two columns; alone, the settings need none (judge 1). */
+  .sp.has-settings.has-list .sp-as {
     padding-left: var(--space-4);
     border-left: var(--stroke-hair) solid var(--border-soft);
   }
   .sp .sp-line { display: none; }
+
+  /* The panel drops from the pill over the page, as a menu does, instead
+     of pushing the page down; it starts where the settings line sits and
+     the line hides meanwhile, so the summary shows once (judge 1). The
+     band keeps its height. Width: the pill's 720 px for the settings
+     alone, wider with suggestions beside them, so each Change sits by its
+     value. */
+  .band.is-desk.is-searching .band-line { visibility: hidden; }
+  .band.is-desk .band-search-panel {
+    position: absolute;
+    left: var(--page-inset);
+    top: calc(100% - var(--tap) - var(--space-1));
+    width: min(720px, calc(100% - 2 * var(--page-inset)));
+  }
+  .band.is-desk .band-search-panel:has(.sp.has-list.has-settings) {
+    width: min(1040px, calc(100% - 2 * var(--page-inset)));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
