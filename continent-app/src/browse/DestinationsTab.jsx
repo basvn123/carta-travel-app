@@ -33,7 +33,6 @@ import { PlaceCard, PlaceCardPhoto, PlaceCardNoPhoto } from './PlaceCard.jsx';
 import { SectionOpening, SectionHead } from './SectionOpening.jsx';
 import { countryKnownKey } from '../lib/countryGallery.js';
 import { Button, Chip, Field, Segmented, Tile, TileGroup } from '../components/ui/index.js';
-import { createPortal } from 'react-dom';
 import { pickIcons, buildRails, photoOf, photosOf } from '../lib/openingScreen.js';
 import { offeredStayTiers } from '../lib/runtime_pricing.js';
 import { ExploreCategories } from './ExploreCategories.jsx';
@@ -1381,9 +1380,14 @@ export function DestinationsTab({
       onBack: clearAllChips,
     });
   }
+  // The band searches the layer on screen at every width; on the trip
+  // library its text filters the library (App opens the 'trips' section
+  // with dq), so the band is the library's search too (G12).
+  useEffect(() => {
+    if (isActive) setDockKind(cat);
+  }, [isActive, cat]);
   useEffect(() => {
     if (!isActive || isDesktop) return;
-    setDockKind(cat === 'trips' ? 'places' : cat);
     setDockResults(dockOn ? {
       label: dockLabel, query: query || '', filterCount: activeFilters,
     } : null);
@@ -1559,36 +1563,6 @@ export function DestinationsTab({
       )}
     </div>
   ));
-
-  // The search field, built once. It renders inline in the phone toolbar and
-  // portals into the app header on desktop; the suggestion list rides with it.
-  const searchField = (
-    <div className="places-search" ref={searchRef}>
-      <SearchIcon size={15} className="places-search-icon" />
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => { setQuery(e.target.value); setSuggOpen(true); }}
-        onFocus={() => setSuggOpen(true)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') { e.preventDefault(); onSearchEnter(); }
-          else if (e.key === 'Escape') setSuggOpen(false);
-        }}
-        placeholder={t('places.searchDest')}
-        aria-label={t('places.searchDest')}
-      />
-      {locateBtn}
-      {suggList}
-    </div>
-  );
-
-  // The header's search slot belongs to whichever browse tab is on screen
-  // (both stay mounted), the way ExploreTab claims it.
-  const [headerSlot, setHeaderSlot] = useState(null);
-  useEffect(() => {
-    if (isDesktop && isActive) setHeaderSlot(document.getElementById('header-search-slot'));
-    else setHeaderSlot(null);
-  }, [isDesktop, isActive]);
 
   // ── The What and Where bar and the quick filter row (T593) ──────────────
   // What sets one facet group to a single choice (or none); Where is the
@@ -1772,15 +1746,9 @@ export function DestinationsTab({
       <h1 className="sr-only tab-h1">{t('explore.title')}</h1>
       <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
-        {/* The outdoor tabs search from their What and Where bar (T593);
-            Places' trip library keeps the field. */}
-        {!outdoorCat && (headerSlot
-          ? createPortal(searchField, headerSlot)
-          : (
-            <div className="dtab-top">
-              {searchField}
-            </div>
-          ))}
+        {/* G12: the trip library searches from the band, the one search
+            field on every tab (its text arrives as dq, below); its own
+            field in the header made two on a desktop. */}
         {/* Under the search row, as on Places (T498), so moving between the
             six never moves the grid. */}
         {/* T586: the six as one row of pills on every width, as on Places. */}
