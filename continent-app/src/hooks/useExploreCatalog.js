@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { matchesAnyKind } from '../lib/trip_kinds.js';
 import { isFullRatingRange, isGateway } from '../lib/rating.js';
-import { fit, sortForYou, strongMatch } from '../lib/match.js';
+import { sortForYou } from '../lib/match.js';
 import { isEmptyTaste } from '../lib/taste.js';
 import { isBigPlace } from '../lib/placeSize.js';
 import { priceDays, DEFAULT_PRICE_REQUEST } from '../lib/price/index.js';
@@ -52,10 +52,9 @@ export function useExploreCatalog({
   // T765: the traveller's taste, the month the list speaks about, and the
   // Strong match toggle (70% and up, a filter the traveller sets; fit alone
   // never hides a place).
-  taste = null, month = null, strongOnly = false,
+  taste = null, month = null,
 }) {
   const hasTaste = !!taste && !isEmptyTaste(taste);
-  const strongActive = hasTaste && strongOnly;
   const rLo = ratingRange?.[0] ?? 0;
   const rHi = ratingRange?.[1] ?? 10;
   const ratingActive = !isFullRatingRange(ratingRange);
@@ -162,13 +161,12 @@ export function useExploreCatalog({
         const m = reachMinutes.get(p.id);
         if (m == null || m > reachCutoffMin) return false;
       }
-      if (strongActive && !strongMatch(fit(taste, p.taste, month))) return false;
       return true;
     });
     // favorites only re-filters while the shortlist view is on (favDep).
   }, [all, q, searchHits, countryFilter, countryNot, tripKinds, ratingActive, rLo, rHi, gemOnly,
     unescoOnly, topBeachOnly, bigOnly, showFavOnly, favDep,
-    reachActive, reachCutoffMin, reachMinutes, strongActive, taste, month]);
+    reachActive, reachCutoffMin, reachMinutes]);
 
   const rows = useMemo(() => {
     const raw = sortKey || 'beauty';

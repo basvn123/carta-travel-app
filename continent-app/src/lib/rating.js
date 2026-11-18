@@ -369,3 +369,17 @@ export async function ratingWhy(id, rating, lang) {
   const m = await loadRatingWhy(lang);
   return m?.[id] || en;
 }
+
+/**
+ * The lowest band a verdict list asks for, or '' when it asks for none.
+ * Old links carry v4 tiers ("1" to "3"); each reads as the v5 band of the
+ * same cutoff (filterBand). Moved here from the retired filter pane (G12).
+ */
+export function minVerdict(verdicts) {
+  let low = '';
+  for (const v of verdicts || []) {
+    const b = filterBand(v);
+    if (b && (!low || bandRank(b) < bandRank(low))) low = b;
+  }
+  return low;
+}

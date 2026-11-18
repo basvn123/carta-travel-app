@@ -220,13 +220,9 @@ test('the live search dock draws the style marks and the ways, and the dead sett
   assert.doesNotMatch(read('../src/components/SettingsLine.jsx'), /export function SettingsLine\b/);
 });
 
-test('Explore: "Priced for" heads the full pane and never a chip popover', () => {
-  const src = read('../src/browse/ExploreFilterRail.jsx');
-  assert.match(src, /\{!only && <PricedFor \/>\}/);
-  const pf = read('../src/browse/PricedFor.jsx');
-  assert.match(pf, /ts\.switchTo\(id\)/);
-  assert.match(pf, /setOpen\(\{ view: 'overview' \}\)/);
-  assert.match(pf, /setOpen\(\{ view: 'create' \}\)/);
-  assert.match(pf, /formatMoney\(/);
-  assert.doesNotMatch(pf, /TasteRow|openTasteSheet/);
+test('Explore: "Priced for" left with the filter pane; the style is the Settings row and the heart chip (G12)', async () => {
+  const { existsSync } = await import('node:fs');
+  for (const f of ['ExploreFilterRail.jsx', 'PricedFor.jsx', 'CategoryRail.jsx']) {
+    assert.equal(existsSync(new URL(`../src/browse/${f}`, import.meta.url)), false, f);
+  }
 });

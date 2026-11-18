@@ -1,18 +1,15 @@
 import React from 'react';
-import { kindLabel } from './kindLabel.js';
 import { PAGE } from './exploreConsts.js';
-import { FULL_RATING_RANGE, bandWord } from '../../lib/rating.js';
+import { FULL_RATING_RANGE, bandWord, minVerdict } from '../../lib/rating.js';
 import { viewFactor } from '../../lib/price/display.js';
 import { formatMoney } from '../../lib/money.js';
-import { minVerdict, goodForOf } from '../ExploreFilterRail.jsx';
 
 export function useExploreChips({
-  availableCountries, countryFilter, countryNot, favorites, flightLimitAvailable, gLabels,
+  availableCountries, countryFilter, countryNot, favorites, gLabels,
   gemOnly, gridTotal, locationQuery, nearRow, patchXf, reachAvailable, reachHours, request,
   scrollRef, sentinelRef, setBigOnly, setCountryFilter, setGemOnly, setLocationQuery,
   setRatingRange, setReachHours, setShowFavOnly, setTopBeachOnly, setTopPick, setTripKinds,
   setUnescoOnly, setVisible, setXf, showFavOnly, t, tripKinds, unescoOnly, xf,
-  strongOnly = false, setStrongOnly = null,
 }) {
   // The phone's Filters door. It used to be a bare <details> fold here while
   // Destinations opened a proper sheet from a Filters button, so the same
@@ -45,10 +42,8 @@ export function useExploreChips({
     // G12: every filter with a chip goes with Clear all, so the badge is
     // never left counting one the traveller cannot see being cleared.
     setShowFavOnly(false);
-    setStrongOnly?.(false);
-    setXf({ kinds: [], verdicts: [], roles: [], month: null, budget: null, bmin: null, fh: null,
-      nocar: false, quiet: false, sea: false, badged: false, vibe: null,
-      area: null, near: null, nb: [] });
+    setXf({ verdicts: [], month: null, budget: null, nocar: false, quiet: false,
+      vibe: null, area: null, near: null, nb: [] });
   };
 
   // C6: one chip per active filter, each removing exactly itself.
@@ -61,20 +56,14 @@ export function useExploreChips({
     // T694: the chips say the budget in the traveller's view (V15).
     const vf = viewFactor(request);
     if (xf.budget) list.push({ key: 'budget', label: t('explore.budgetUpTo', { eur: formatMoney(xf.budget * vf) }), remove: drop({ budget: null }) });
-    if (xf.bmin) list.push({ key: 'bmin', label: t('filter.budgetFrom', { eur: formatMoney(xf.bmin * vf) }), remove: drop({ bmin: null }) });
-    if (xf.fh && flightLimitAvailable) list.push({ key: 'fh', label: t('filter.flightChip', { n: xf.fh }), remove: drop({ fh: null }) });
-    for (const k of xf.kinds) list.push({ key: `k:${k}`, label: kindLabel(k, t), remove: drop({ kinds: xf.kinds.filter((x) => x !== k) }) });
     // One chip for the rating, "Excellent and up" (T440): the rail asks for
     // a band and every band above it.
     if (xf.verdicts.length) {
       list.push({ key: 'rating', label: t('filter.ratingAtLeast', { band: bandWord(t, minVerdict(xf.verdicts)) }), remove: drop({ verdicts: [] }) });
     }
-    if (goodForOf(xf.roles)) list.push({ key: 'role', label: t(`filter.goodFor.${goodForOf(xf.roles)}`), remove: drop({ roles: [] }) });
     if (xf.month) list.push({ key: 'month', label: t('gs.whyMonth', { month: gLabels.monthInline(xf.month) }), remove: drop({ month: null }) });
     if (xf.nocar) list.push({ key: 'nocar', label: t('filter.noCar'), remove: drop({ nocar: false }) });
     if (xf.quiet) list.push({ key: 'quiet', label: t('filter.notCrowded'), remove: drop({ quiet: false }) });
-    if (xf.sea) list.push({ key: 'sea', label: t('filter.nearSea'), remove: drop({ sea: false }) });
-    if (xf.badged) list.push({ key: 'badged', label: t('filter.bestOf'), remove: drop({ badged: false }) });
     if (xf.vibe) list.push({ key: 'vibe', label: gLabels.vibe(xf.vibe), remove: drop({ vibe: null }) });
     if (xf.area) list.push({ key: 'area', label: gLabels.area(xf.area), remove: drop({ area: null }) });
     if (xf.near) list.push({ key: 'near', label: t('gs.near', { place: nearRow?.city || xf.near }), remove: drop({ near: null }) });
@@ -83,7 +72,6 @@ export function useExploreChips({
     if (unescoOnly) list.push({ key: 'unesco', label: t('dest.unesco'), remove: () => setUnescoOnly(false) });
     // G12: Strong match narrows the list like any filter, so it gets a chip,
     // counts in the badge and an empty list can name it as the cause.
-    if (strongOnly && setStrongOnly) list.push({ key: 'strong', label: t('fit.strong'), remove: () => setStrongOnly(false) });
     if (showFavOnly) list.push({ key: 'fav', label: t('filter.shortlistOnly'), remove: () => setShowFavOnly(false) });
     for (const iso2 of countryFilter) {
       const name = (availableCountries.find(([c]) => c === iso2) || [])[1] || iso2;
@@ -94,7 +82,7 @@ export function useExploreChips({
     // focused view then always says why it holds what it holds.
     if (locationQuery && locationQuery.trim()) list.push({ key: 'q', label: `“${locationQuery.trim()}”`, remove: () => setLocationQuery('') });
     return list;
-  }, [xf, locationQuery, setLocationQuery, flightLimitAvailable, tripKinds, gemOnly, unescoOnly, showFavOnly, strongOnly, setStrongOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow, request]);
+  }, [xf, locationQuery, setLocationQuery, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow, request]);
 
   // The filter set last, so an empty grid can name it and offer to remove
   // just that one (brief V3-11). A chip key that was not there a render ago

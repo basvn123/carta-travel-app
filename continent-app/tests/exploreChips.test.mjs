@@ -1,6 +1,7 @@
-// G12 (decision.md step 8): the filter strip. Strong match is a chip that
-// counts in the badge and goes with Clear all and the lens clear; the badge
-// equals the chips; each width draws a chip once.
+// G12 (decision.md step 8, Explore top): the filter strip. The filter pane,
+// its quick row and Strong match left Explore; what a rail's See all or Ask
+// sets shows as a chip; the badge equals the chips; each width draws a chip
+// once.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -10,50 +11,45 @@ import {
 
 const read = (p) => fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
 const chip = (key) => ({ key, label: key, remove: () => {} });
-const many = ['strong', 'fav', 'budget', 'month', 'c:IT', 'c:FR', 'c:ES', 'nocar', 'q'].map(chip);
+const many = ['fav', 'budget', 'month', 'c:IT', 'c:FR', 'c:ES', 'nocar', 'q'].map(chip);
 
-test('Strong match is a chip with its own remove', () => {
-  const src = read('src/browse/explore/useExploreChips.js');
-  assert.match(src, /if \(strongOnly && setStrongOnly\) list\.push\(\{ key: 'strong', label: t\('fit\.strong'\), remove: \(\) => setStrongOnly\(false\) \}\)/);
-});
-
-test('Clear all clears Strong match and Saved too', () => {
-  const src = read('src/browse/explore/useExploreChips.js');
-  const reset = src.slice(src.indexOf('const resetAll'), src.indexOf('};', src.indexOf('const resetAll')));
-  assert.match(reset, /setStrongOnly\?\.\(false\)/);
+test('Strong match and the pane-only filters are gone; Clear all and the lens clear keep Saved', () => {
+  const chips = read('src/browse/explore/useExploreChips.js');
+  const tab = read('src/browse/ExploreTab.jsx');
+  for (const src of [chips, tab, read('src/hooks/useExploreCatalog.js')]) {
+    assert.doesNotMatch(src, /strongOnly|setStrongOnly|strongMatch/);
+  }
+  // Kind, Good for, budget floor, flight limit, best of, near the sea: no state, no chip.
+  assert.doesNotMatch(chips, /xf\.(kinds|roles|bmin|fh|sea|badged)\b/);
+  assert.doesNotMatch(tab, /\b(kinds|roles|bmin|fh|sea|badged): /);
+  const reset = chips.slice(chips.indexOf('const resetAll'), chips.indexOf('};', chips.indexOf('const resetAll')));
   assert.match(reset, /setShowFavOnly\(false\)/);
-});
-
-test('the lens clear clears Strong match', () => {
-  const src = read('src/browse/ExploreTab.jsx');
-  const clear = src.slice(src.indexOf('clear: () => {'), src.indexOf('setPickedId(null);'));
-  assert.match(clear, /setStrongOnly\(false\)/);
+  const clear = tab.slice(tab.indexOf('clear: () => {'), tab.indexOf('setPickedId(null);'));
   assert.match(clear, /setShowFavOnly\(false\)/);
 });
 
-test('the badge equals the chips, Strong match, Saved and countries included', () => {
-  assert.equal(badgeCount(many), 9);
+test('the badge equals the chips, Saved and countries included', () => {
+  assert.equal(badgeCount(many), 8);
   assert.equal(badgeCount([]), 0);
   // The phone row shows Saved as its pressed toggle plus every other chip.
   const phone = phoneChips(many);
   assert.equal(phone.length + 1, badgeCount(many));
   assert.ok(!phone.some((c) => c.key === 'fav'));
-  assert.ok(phone.some((c) => c.key === 'strong'));
+  assert.ok(phone.some((c) => c.key === 'budget'));
   // G12 (Explore top): the Filters button and its count left the toolbar.
   const bar = read('src/browse/explore/ExploreToolbar.jsx');
   assert.doesNotMatch(bar, /xfilters-n|<TripDock/);
 });
 
-test('Strong match and countries do not leave the overview; other chips do', () => {
-  assert.equal(lensCount([chip('strong'), chip('c:IT')]), 0);
-  assert.equal(lensCount([chip('strong'), chip('budget')]), 1);
+test('countries do not leave the overview; other chips do', () => {
+  assert.equal(lensCount([chip('c:IT')]), 0);
+  assert.equal(lensCount([chip('c:IT'), chip('budget')]), 1);
 });
 
-test('a desktop chip row leaves out what the quick row and the toolbar show', () => {
-  for (const k of ['s:city', 'role', 'budget', 'bmin', 'month', 'rating', 'fh', 'fav', 'strong']) {
-    assert.ok(DESK_SHOWN.test(k), k);
-  }
-  assert.deepEqual(deskChips(many).map((c) => c.key), ['c:IT', 'c:FR', 'c:ES', 'nocar', 'q']);
+test('a desktop chip row leaves out only Saved (the toolbar toggle); a See all lens shows as a chip', () => {
+  assert.ok(DESK_SHOWN.test('fav'));
+  for (const k of ['budget', 'month', 'rating', 'nocar']) assert.ok(!DESK_SHOWN.test(k), k);
+  assert.deepEqual(deskChips(many).map((c) => c.key), ['budget', 'month', 'c:IT', 'c:FR', 'c:ES', 'nocar', 'q']);
 });
 
 test('the phone row is Sort, then the chips with Clear all first', () => {

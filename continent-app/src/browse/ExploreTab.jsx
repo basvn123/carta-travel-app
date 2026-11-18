@@ -122,18 +122,11 @@ export function ExploreTab({
     const budget = Number.isFinite(xb) && xb > 0 ? xb
       : (q.get('xp')?.includes('e') ? LEGACY_CHEAP : null);
     return {
-      kinds: list('xk'),
       verdicts: list('xv'),
-      roles: list('xr'),
       month: q.get('xm') ? Number(q.get('xm')) : null,
       nocar: q.get('xp')?.includes('c') || false,
-      badged: q.get('xp')?.includes('b') || false,
       budget,
-      // T589: the budget floor (xbm) and the longest flight in hours (xfh).
-      bmin: Number(q.get('xbm')) > 0 ? Number(q.get('xbm')) : null,
-      fh: Number(q.get('xfh')) > 0 ? Number(q.get('xfh')) : null,
       quiet: q.get('xp')?.includes('q') || false,
-      sea: q.get('xp')?.includes('s') || false,
       // A vibe from the guided search data (T427): "hiking", "beach", ...
       vibe: q.get('xe') || null,
       // The guided search's own facets (T442): a named area (xa), within
@@ -209,13 +202,11 @@ export function ExploreTab({
   // (reported to App by the effect after useSettings below).
   // T765: the personal match. "For you" is a sort the traveller picks; it is
   // the default only once config/rating.json match.for_you_default is on
-  // (off while persona gate 7 fails). Strong match (70% and up) is a filter
-  // the traveller sets, never one the match sets by itself.
+  // (off while persona gate 7 fails).
   const matchTasteRaw = useFirstRun()?.choices?.taste;
   const matchTaste = React.useMemo(
     () => (isEmptyTaste(matchTasteRaw) ? null : normalizeTaste(matchTasteRaw)), [matchTasteRaw]);
   const matchMonth = dxf.month || travelMonth || null;
-  const [strongOnly, setStrongOnly] = React.useState(false);
   const catSort = (MATCH.for_you_default && matchTaste && (!sortKey || sortKey === 'beauty') && !xf.vibe && !xf.near)
     ? 'foryou' : sortKey;
   const { all: catAllRows, rows: catRows, availableCountries, indices: costIndex } = useExploreCatalog({
@@ -223,11 +214,11 @@ export function ExploreTab({
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes, sortKey: catSort, showFavOnly, favorites,
     indices, searchHits,
-    taste: matchTaste, month: matchMonth, strongOnly,
+    taste: matchTaste, month: matchMonth,
   });
 
   const {
-    settingsLine, setCountryNot, oneCountry, request, flightLimitAvailable, allRows, rows,
+    settingsLine, setCountryNot, oneCountry, request, allRows, rows,
     nearRow, gLabels, overviewOf, roleFor, taxRows, guidedRows, shownRows, listed,
   } = useExploreRows({
     availableCountries, bbox, catAllRows, catRows, countryFilter, countryNot, data, dxf, guided,
@@ -259,14 +250,13 @@ export function ExploreTab({
     if (!isActive) return;
     const q = new URLSearchParams(window.location.search);
     const setOrDrop = (k, v) => (v ? q.set(k, v) : q.delete(k));
-    setOrDrop('xk', xf.kinds.join(','));
+    // G12: kind, Good for, budget floor, flight limit, best of and near the
+    // sea left with the filter pane; an old link's keys are dropped.
+    for (const k of ['xk', 'xr', 'xbm', 'xfh']) q.delete(k);
     setOrDrop('xv', xf.verdicts.join(','));
-    setOrDrop('xr', xf.roles.join(','));
     setOrDrop('xm', xf.month || '');
     setOrDrop('xb', xf.budget || '');
-    setOrDrop('xbm', xf.bmin || '');
-    setOrDrop('xfh', xf.fh || '');
-    const flags = `${xf.nocar ? 'c' : ''}${xf.quiet ? 'q' : ''}${xf.sea ? 's' : ''}${xf.badged ? 'b' : ''}`;
+    const flags = `${xf.nocar ? 'c' : ''}${xf.quiet ? 'q' : ''}`;
     setOrDrop('xp', flags);
     setOrDrop('xe', xf.vibe || '');
     setOrDrop('xa', xf.area || '');
@@ -328,12 +318,11 @@ export function ExploreTab({
     card.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
   }, []);
   const { resetAll, chips, lastChip, favSet, emptyLine } = useExploreChips({
-    availableCountries, countryFilter, countryNot, favorites, flightLimitAvailable, gLabels,
+    availableCountries, countryFilter, countryNot, favorites, gLabels,
     gemOnly, gridTotal, locationQuery, nearRow, patchXf, reachAvailable, reachHours, request,
     scrollRef, sentinelRef, setBigOnly, setCountryFilter, setGemOnly, setLocationQuery,
     setRatingRange, setReachHours, setShowFavOnly, setTopBeachOnly, setTopPick, setTripKinds,
     setUnescoOnly, setVisible, setXf, showFavOnly, t, tripKinds, unescoOnly, xf,
-    strongOnly, setStrongOnly,
   });
 
   // Desktop chrome: the controls stand in the left panel. Ask Carta's one
@@ -427,12 +416,10 @@ export function ExploreTab({
       setReachHours(null);
       setTripKinds([]);
       setShowFavOnly(false);
-      setStrongOnly(false);
       setLocationQuery('');
       setView('grid');
-      setXf({ kinds: [], verdicts: [], roles: [], month: null, budget: null,
-        nocar: false, quiet: false, sea: false, badged: false, vibe: null,
-        area: null, near: null, nb: [], bmin: null, fh: null });
+      setXf({ verdicts: [], month: null, budget: null, nocar: false, quiet: false,
+        vibe: null, area: null, near: null, nb: [] });
       setPickedId(null);
     },
   });

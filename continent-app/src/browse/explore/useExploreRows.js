@@ -4,12 +4,11 @@ import { resolveWhen } from '../../lib/when.js';
 import { partyOf } from '../../lib/party.js';
 import { homePoint } from '../../lib/travelWay.js';
 import { wayRowsFor, wayKey, flightFiles } from '../../lib/settings/ways.js';
-import { minVerdict } from '../ExploreFilterRail.jsx';
 import { makeLabels, whyFacts, noCarOk, underOk, quietOk, matchGuided, guidedComparator } from '../../lib/guidedSearch.js';
 import { overviewRegion, overviewScore, reasonText, overviewReason } from '../../lib/placeOverview.js';
 import { fmtMonthRanges } from '../ClimateStrip.jsx';
-import { buildNearbyIndex, roleOf, kindOf } from '../../lib/taxonomy.js';
-import { bandAtLeast } from '../../lib/rating.js';
+import { buildNearbyIndex, roleOf } from '../../lib/taxonomy.js';
+import { bandAtLeast, minVerdict } from '../../lib/rating.js';
 
 export function useExploreRows({
   availableCountries, bbox, catAllRows, catRows, countryFilter, countryNot, data, dxf, guided,
@@ -117,27 +116,17 @@ export function useExploreRows({
   // is up, the part of it inside the viewport), so it can never disagree
   // with what renders.
   const taxRows = React.useMemo(() => rows.filter((p) => {
-    if (dxf.kinds.length && !dxf.kinds.includes(kindOf(p))) return false;
     if (dxf.verdicts.length && !bandAtLeast(p.rating, minVerdict(dxf.verdicts))) return false;
-    if (dxf.roles.length && !dxf.roles.includes(roleFor(p).key)) return false;
     if (dxf.month && !(p.climate?.best || []).includes(dxf.month)) return false;
     if (dxf.nocar && !noCarOk(p)) return false;
     if (dxf.budget && !underOk(dxf.budget)(p)) return false;
-    if (dxf.bmin && !(p.cost?.dayEur != null && p.cost.dayEur >= dxf.bmin)) return false;
-    // T589: a flight longer than the limit drops the place; no flight drops
-    // it only when the traveller goes by plane.
-    if (dxf.fh && flightLimitAvailable) {
-      if (p.fmin != null ? p.fmin > dxf.fh * 60 : wayMode === 'plane') return false;
-    }
     if (dxf.quiet && !quietOk(p, quietWhen)) return false;
-    if (dxf.badged && !p.country_badge) return false;
-    if (dxf.sea && !(p.categories || []).some((c) => c === 'beach' || c === 'coast' || c === 'island')) return false;
     // The guided facets (vibe, area, near, close by) hold only once the
     // guided data has landed; until then the list waits empty rather than
     // showing places that may not match (T442).
     if ((dxf.vibe || dxf.area || dxf.near || dxf.nb.length) && !matchGuided(p, dxf, gctx)) return false;
     return true;
-  }), [rows, dxf, roleFor, gctx, flightLimitAvailable, wayMode, quietWhen]);
+  }), [rows, dxf, gctx, quietWhen]);
   // A guided question ranks its answer: nearest first around a place, the
   // strongest vibe first otherwise, while the reader keeps the default sort.
   const guidedRows = React.useMemo(() => {
