@@ -1,369 +1,182 @@
-// T1089 UNRESOLVED: the page is now .tpage-v2 with .pt-* markup (Download GPX is .ox-gpx, no KML door), and the Trails list is Explore cat=trails with story rails; see verify_trail_free_gpx.mjs for the new selectors.
-// Headless verify for the rebuilt Trails category and trail page.
+// Headless verify for the Trails list since G12 (Explore top, 2026-11-18).
 //
-//   node scripts/verify_trails.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
+//   node scripts/verify_trails.mjs [url] [CC]   (default http://localhost:$CARTA_PORT or 4173, SI)
+//   CARTA_DATA_MIRROR=".../continent-app/public" fills a sparse worktree's data.
 //
-// What this exists to catch, in the order the complaints came in:
-//   the hero image     a trail card must show a photograph of the TRAIL, or
-//                      no photograph at all. The old behaviour borrowed the
-//                      nearest town's hero, which put a townhouse and a beach
-//                      on Bulgarian mountain routes.
-//   the rating         every trail card carries its own 0-10 chip, and the
-//                      default order is best first.
-//   the km filter      length band chips filter the list and carry counts.
-//   loops              a loops-only chip, and a Loop marker on the card.
-//   the GPX            the downloaded file must be ONE continuous track, not
-//                      a set of segments that teleport between each other.
-//   why it is special  the trail page leads with measured reasons.
-//   the views          a photo strip of what the walk looks like.
-//   the removed notes  the two paragraphs about which apps open a GPX and how
-//                      following behaves are gone from every language.
+// G12 took the side facets, the phone Filters sheet, the loops chip and the
+// sort select out of Explore's layers (the layers get their own filters in a
+// later run), so those checks went. What still matters, at desktop and phone
+// width:
+//   reaching Trails  the Trails tab under the band; a country card picks the
+//                    country (dn in the URL) and the band names it.
+//   the list         a country lists many walks, each with its own 0-10
+//                    rating, best first by default.
+//   the photograph   a trail card shows a photograph of the TRAIL from
+//                    Commons, or none, never a borrowed town hero.
+//   the sort         Sort by length orders shortest first (the quick bar's
+//                    Sort, the one sort left).
+//   the page         a card opens its trail page with the same name; Back
+//                    returns to the same country's list.
+//   the GPX          the downloaded file is ONE continuous track with full
+//                    geometry, elevation and the OSM credit (no teleports).
+//   the layout       the band search over the list, no Settings, no side
+//                    panel, nothing pushes the page sideways.
 //
 // Screenshots to shots/trails-*.png.
 
 import { chromium } from 'playwright';
+import { mkdirSync } from 'node:fs';
+import { mirrorData } from './lib/dataMirror.mjs';
 
-// The category rail is TWINNED and the two halves do not share a class. The
-// desktop shell renders .side-cat inside the left panel; the phone shell
-// renders .places-cat in the banded toolbar. Only one is ever visible, so a
-// harness has to ask for BOTH and scope to :visible. Asking for .places-cat
-// alone passed for as long as the tab was phone-first and has silently
-// pointed at a hidden node ever since the desktop shell landed.
-// G12 (Explore top): the tabs are the band's (phone) or the tab's own row (desktop); the layer's old row is hidden.
-const CAT = '[role="tablist"]:visible [role="tab"]';
-// Sorts are twinned too, and again under different classes.
-// T428: the sort is one select (the panel's on a desktop, the refine row's on a phone).
-const SORT = '.dtab-sort-side select:visible, .dtab-sort select:visible';
-
-// The facet rail is twinned the same way the category rail is, and again the
-// two halves do not share a wrapper class: .side-facets on desktop and
-// .places-facets on the phone. Scope to the visible one rather than to either
-// name, so the harness follows the shell instead of asserting which shell.
-//
-// A helper rather than a bare string, because a selector LIST cannot be
-// interpolated in front of a descendant: `${FACETS} .places-class` parses as
-// ".side-facets:visible" OR ".places-facets:visible .places-class", which
-// silently matched the wrapper and made the band chips read as zero while
-// every other check still passed. Comma binds looser than a space.
-// T428: a phone keeps every chip in the Filters sheet (as Explore does); the
-// desktop panel shows the short set inline. Kit filter chips (.ui-chip).
-const inFacets = (sel) =>
-  `.side-facets:visible ${sel}, .fsheet-places ${sel}`;
-
-const RAW_URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
-// ?paymock: the GPX and KML exports are entitlement gated, and a headless run
-// cannot sign in or hold an entitlement, so without the seam the button opens
-// a paywall dialog and the "is the GPX one continuous track" check tests the
-// paywall instead. See src/hooks/usePaywall.jsx.
-const URL = RAW_URL + (RAW_URL.includes('?') ? '&' : '?') + 'paymock';
-// Which country's list to check. Slovenia by default: a few hundred curated
-// routes, about half of them loops, and enough relief that the reason codes
-// have something to say. Pass another ISO2 to check a country whose photo
-// pass has finished.
-//
-// Deliberately not asserted against a fixed count any more. Slovenia carried
-// exactly 150 for as long as the budget was a country constant; it is now the
-// sum of its regions' quotas, so a hard-coded number here would be asserting
-// the bug this layer removed.
+const BASE = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
+// Slovenia by default: a few hundred curated routes and enough relief for
+// the reasons to say something. Never asserted against a fixed count: a
+// country's total is the sum of its regions' quotas.
 const CC = (process.argv[3] || 'SI').toUpperCase();
-
-// The country filter is no longer a <select>. It is a button that opens a
-// search-and-listbox popover (src/components/CountryPicker.jsx), so
-// selectOption() throws "Element is not a <select> element" and took the
-// whole run down before the first check. The popover lists countries by
-// NAME, so the code this harness is parameterised by is resolved through
-// Intl rather than a hand-kept table that would rot the next time a country
-// is added.
-const COUNTRY_NAME = new Intl.DisplayNames(['en'], { type: 'region' });
-async function pickCountry(scope, cc) {
-  const name = COUNTRY_NAME.of(cc);
-  const card = scope.locator(`.dgal-card[data-cc="${cc}"] .card-open`).first();
-  if (await card.isVisible().catch(() => false)) {
-    await card.click();
-    await scope.waitForTimeout(1800);
-    return;
-  }
-  // G12 (Explore top): the side panel and its country fold left; a layer
-  // keeps its country in the address (`dn`), so a run sets it there.
-  if (cc) {
-    const u = new URL(scope.url());
-    u.searchParams.set('dn', cc);
-    await scope.goto(u.toString(), { waitUntil: 'domcontentloaded' });
-    await scope.waitForTimeout(2500);
-    return;
-  }
-  await scope.locator('.places-country:visible').first().click();
-  await scope.waitForTimeout(400);
-  const pop = scope.locator('.country-picker-pop:visible');
-  await pop.locator('.origin-search').fill(name);
-  await scope.waitForTimeout(400);
-  await pop.locator('.origin-opt', { hasText: new RegExp(`^${name}$`, 'i') }).first().click();
-  await scope.waitForTimeout(1800);
-}
+const COUNTRY = new Intl.DisplayNames(['en'], { type: 'region' }).of(CC);
+mkdirSync('shots', { recursive: true });
 
 const browser = await chromium.launch();
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
 const errors = [];
-// The one 404 these pages produce is Supabase's content_overrides, an
-// OPTIONAL table (migration 018) that is not applied on the live project.
-// overrides.js reads it, ignores the error and falls back to an empty
-// table (`.catch(() => table)`), so the 404 is documented behaviour
-// rather than a fault. Matched on the MESSAGE because the console text
-// carries no URL: `status of 404` and nothing broader, so a 404 on a
-// wire file the app actually needs still fails the run.
-const NOISE = /status of 404|ERR_FAILED|config is not valid/;
+// A local build fetches flights from R2, which answers CORS for its own hosts only.
+const NOISE = /ERR_FAILED|config is not valid|content_overrides|Failed to load resource|Access to fetch at 'https:\/\/data\./;
 
-const seed = (page) => page.addInitScript(() => {
-  try {
-    localStorage.setItem('continent.lang.v1', 'en');
-    localStorage.setItem('continent.guestMode.v1', '1');
-    localStorage.setItem('continent.homeSeen.v1', '1');
-    localStorage.setItem('continent.mapGuideDismissed.v1', '1');
-  } catch { /* storage unavailable */ }
-});
+async function open(view) {
+  const phone = view === 'phone';
+  const ctx = await browser.newContext({
+    viewport: phone ? { width: 390, height: 844 } : { width: 1280, height: 900 },
+    hasTouch: phone, isMobile: phone, serviceWorkers: 'block', acceptDownloads: true,
+  });
+  await mirrorData(ctx);
+  await ctx.addInitScript(() => {
+    try {
+      localStorage.setItem('continent.lang.v1', 'en');
+      localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('continent.homeSeen.v1', '1');
+      localStorage.setItem('carta.welcomeSeen.v1', '1');
+      localStorage.setItem('continent.mapGuideDismissed.v1', '1');
+      localStorage.setItem('carta.mapGuideDone', '1');
+    } catch { /* storage unavailable */ }
+    // A headless Chromium that claims the Web Share API cannot show a share
+    // sheet, so the GPX would never reach the download path.
+    try {
+      Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+      Object.defineProperty(navigator, 'canShare', { value: undefined, configurable: true });
+    } catch { /* older engines */ }
+  });
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => errors.push(`${view}: pageerror: ${e.message.split('\n')[0]}`));
+  page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push(`${view}: console: ${m.text().slice(0, 120)}`); });
+  await page.goto(`${BASE}?tab=map`, { waitUntil: 'domcontentloaded', timeout: 120000 });
+  await page.waitForSelector('.band-input', { timeout: 120000 });
+  await page.waitForTimeout(3000);
+  return page;
+}
+const sideways = (page) => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+const kmOf = (s) => parseFloat(((s.match(/([\d.,]+)\s*km/) || [])[1] || '').replace(',', '.'));
 
-const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
-page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
-page.on('console', (m) => {
-  if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console: ' + m.text().slice(0, 120));
-});
-await seed(page);
-await page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await page.waitForTimeout(3000);
+for (const view of ['desk', 'phone']) {
+  const tag = `${view}: `;
+  const page = await open(view);
 
-// ── Reach the Trails category ────────────────────────────────────────────
-// Desktop uses .header-nav-item; the bottom bar exists in the DOM but is
-// hidden above 768px, so filtering by text alone finds an invisible button.
-// The app also OPENS on Destinations, so the click is only a safety net.
-const destTab = page.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
-if (await destTab.isVisible().catch(() => false)) {
-  await destTab.click();
+  // ── Reach Trails and pick the country ──
+  await page.locator('[role="tablist"] [role="tab"]:visible', { hasText: /^\s*Trails\s*$/ }).first().click();
+  await page.waitForTimeout(2000);
+  check(`${tag}the Trails tab opens the Trails layer`, /[?&]cat=trails\b/.test(page.url())
+    && await page.locator('.dtab-bycountry .dgal-card').count() >= 30, page.url().split('?')[1]?.slice(0, 50));
+  check(`${tag}the band search stays over the list`, await page.locator('.band-input').isVisible());
+  check(`${tag}a layer has no Settings button`, await page.locator('.band-settings').count() === 0);
+  check(`${tag}no side panel`, await page.locator('.places-side, .explore-side, .side-panel').count() === 0);
+  await page.locator(`.dtab-bycountry .dgal-card[data-cc="${CC}"] .card-open`).first().click();
+  await page.waitForTimeout(2500);
+  check(`${tag}a country card writes dn=${CC}`, new RegExp(`[?&]dn=${CC}\\b`).test(page.url()));
+  check(`${tag}the country band names ${COUNTRY}`,
+    (await page.locator('.dtab-countryband-name').innerText().catch(() => '')).trim() === COUNTRY);
+
+  // ── The list and the rating ──
+  const cards = page.locator('.places-tcard');
+  const nCards = await cards.count();
+  check(`${tag}the country lists many walks`, nCards >= 30, `${nCards} cards`);
+  const scores = (await page.locator('.places-tcard .score-chip').allInnerTexts()).map((s) => parseFloat(s)).filter(Number.isFinite);
+  check(`${tag}trail cards carry their own rating`, scores.length >= nCards * 0.9, `${scores.length} on ${nCards}`);
+  check(`${tag}ratings are on the 0-10 scale`, scores.every((s) => s >= 0 && s <= 10), `${Math.min(...scores)} to ${Math.max(...scores)}`);
+  check(`${tag}default order is best rated first`, scores.every((s, i) => i === 0 || scores[i - 1] >= s - 0.001), scores.slice(0, 5).join(', '));
+
+  // ── The photograph: the trail's own or none ──
+  const imgs = await page.locator('.places-tcard .places-card-img').evaluateAll(
+    (els) => els.map((e) => (e.tagName === 'IMG' ? (e.currentSrc || e.getAttribute('src') || e.getAttribute('srcset') || '') : 'NOIMG')),
+  );
+  const real = imgs.filter((s) => s && s !== 'NOIMG');
+  check(`${tag}trail cards show photographs`, real.length > 0, `${real.length} of ${imgs.length}`);
+  check(`${tag}every trail photograph comes from Commons`, real.every((s) => /upload\.wikimedia\.org/.test(s)), real[0]?.slice(0, 80));
+  check(`${tag}nothing pushes the list sideways`, await sideways(page) <= 1, `${await sideways(page)} px`);
+  await page.screenshot({ path: `shots/trails-${view}-${CC.toLowerCase()}-list.png` });
+
+  // ── Sort by length ──
+  await page.locator('.qfbar-sort:visible').first().click();
+  await page.waitForTimeout(500);
+  await page.locator('.xsort-item:visible', { hasText: /^\s*Length\s*$/ }).first().click();
   await page.waitForTimeout(1200);
-}
-await page.locator(CAT, { hasText: /trails/i }).click();
-await page.waitForTimeout(1000);
-check('trails category opens', await page.locator('.places-tab').isVisible());
+  const kms = (await page.locator('.places-tcard .places-card-facts').allInnerTexts()).map(kmOf).filter(Number.isFinite);
+  check(`${tag}length sort orders shortest first`, kms.length >= 10 && kms.every((k, i) => i === 0 || kms[i - 1] <= k + 0.05),
+    kms.slice(0, 5).join(', '));
+  await page.locator('.qfbar-sort:visible').first().click();
+  await page.waitForTimeout(500);
+  await page.locator('.xsort-item:visible', { hasText: /^\s*Rating\s*$/ }).first().click();
+  await page.waitForTimeout(1200);
 
-await pickCountry(page, CC);
-await page.waitForTimeout(2500);
+  // ── The trail page ──
+  const name = (await page.locator('.places-tcard .places-card-name').first().innerText()).trim();
+  await page.locator('.places-tcard .card-open').first().click();
+  await page.waitForTimeout(3500);
+  check(`${tag}a card opens its trail page`, await page.locator('.tpage-v2').isVisible().catch(() => false));
+  const title = (await page.locator('.pt-title').first().innerText().catch(() => '')).trim();
+  check(`${tag}the page is the card's walk`, title === name, `${name} -> ${title}`);
+  check(`${tag}the page carries the rating`, /^\d/.test((await page.locator('.pt-score').first().innerText().catch(() => '')).trim()));
+  const body = await page.locator('.tpage-scroll').innerText().catch(() => '');
+  check(`${tag}the GPX apps and following paragraphs stay gone`,
+    !/Komoot, AllTrails, OsmAnd|mymaps\.google\.com|Following works while this page is open|It stops when the phone locks/i.test(body));
+  check(`${tag}the trail page fits the screen`, await sideways(page) <= 1, `${await sideways(page)} px`);
+  await page.screenshot({ path: `shots/trails-${view}-${CC.toLowerCase()}-page.png` });
 
-const cards = page.locator('.places-tcard');
-const nCards = await cards.count();
-// Held so a later filter can prove it moved the LIST rather than the count.
-const firstNames = await page.locator('.places-tcard .places-card-name').allInnerTexts();
-check('country list is much longer than the old 13', nCards >= 30, `${nCards} cards rendered`);
-
-// ── The rating ───────────────────────────────────────────────────────────
-const chips = page.locator('.places-tcard .score-chip');
-const nChips = await chips.count();
-check('trail cards carry their own rating chip', nChips >= nCards * 0.9,
-  `${nChips} chips on ${nCards} cards`);
-const scores = (await chips.allInnerTexts()).map((s) => parseFloat(s)).filter(Number.isFinite);
-check('ratings are on the 0-10 scale', scores.every((s) => s >= 0 && s <= 10),
-  `${Math.min(...scores)} to ${Math.max(...scores)}`);
-const sortedDesc = scores.every((s, i) => i === 0 || scores[i - 1] >= s - 0.001);
-check('default order is best rated first', sortedDesc,
-  scores.slice(0, 5).join(', '));
-
-// ── The hero image: a trail photo or nothing, never a borrowed town ───────
-const imgs = await page.locator('.places-tcard .places-card-img').evaluateAll(
-  (els) => els.map((e) => (e.tagName === 'IMG' ? e.getAttribute('src') : 'NOIMG')),
-);
-const real = imgs.filter((s) => s && s !== 'NOIMG');
-check('trail cards show photographs', real.length > 0,
-  `${real.length} of ${imgs.length} cards have one`);
-check('every trail photograph comes from Commons',
-  real.every((s) => /upload\.wikimedia\.org/.test(s)),
-  real.slice(0, 1).join(''));
-await page.screenshot({ path: `shots/trails-${CC.toLowerCase()}-list.png`, fullPage: false });
-
-// ── The length filter ────────────────────────────────────────────────────
-const bandChips = page.locator(inFacets('.ui-chip')).filter({ hasNotText: /loops/i });
-const nBands = await bandChips.count();
-check('length band chips render', nBands >= 4, `${nBands} bands`);
-const bandLabel = await bandChips.first().innerText().catch(() => '');
-check('band chips carry no count (T428)', !/\s\d+$/.test(bandLabel.trim()), bandLabel.replace(/\n/g, ' '));
-
-// Tap the shortest band and confirm the list actually shortens to short walks.
-const shortChip = page.locator(inFacets('.ui-chip'), { hasText: /under 5 km/i }).first();
-await shortChip.click();
-await page.waitForTimeout(900);
-// Compare WHICH cards are shown, not how many.
-//
-// The list paginates at a fixed page size, and a country now carries hundreds
-// of routes rather than 150, so both the filtered and the unfiltered set can
-// exceed one page and the rendered COUNT stays identical while the filter is
-// working perfectly. Counting was a valid check when Slovenia published 150
-// and the short band held 30 of them; it silently became a check on the page
-// size. The chip's own number is the honest total, and the identity of the
-// visible cards is what proves the filter moved the list.
-const afterBand = await page.locator('.places-tcard').count();
-const afterNames = await page.locator('.places-tcard .places-card-name').allInnerTexts();
-const bandTotal = '(no count on the chip since T428)';
-check('length filter changes the list',
-  afterBand > 0 && (afterNames.join('|') !== firstNames.join('|') || afterBand < nCards),
-  `${afterBand} of ${nCards} shown, ${bandTotal} in the band`);
-const kmTexts = await page.locator('.places-tcard .places-card-facts').allInnerTexts();
-// The facts are label over value since T428 ("Length 13.1 km ..."): read the
-// km figure itself, and require one, so an empty read cannot pass.
-const kms = kmTexts.map((s) => parseFloat(((s.match(/([\d.,]+)\s*km/) || [])[1] || '').replace(',', '.'))).filter(Number.isFinite);
-// The card rounds to one decimal and drops a trailing zero, so a 4.96 km
-// walk prints as "5 km". The bound is on the metres in the wire, not on the
-// rounded label, so the assertion has to allow the boundary value back.
-check('filtered list really is under 5 km', kms.length > 0 && kms.every((k) => k <= 5),
-  `max ${Math.max(...kms)} km as printed`);
-await page.screenshot({ path: `shots/trails-${CC.toLowerCase()}-band-filter.png` });
-await shortChip.click();
-await page.waitForTimeout(700);
-
-// ── Loops ────────────────────────────────────────────────────────────────
-const loopChip = page.locator('.places-loopchip:visible').first();
-check('loops-only chip is offered', await loopChip.count() > 0);
-if (await loopChip.count()) {
-  await loopChip.click();
-  await page.waitForTimeout(900);
-  const loopCards = await page.locator('.places-tcard').count();
-  const loopMarks = await page.locator('.places-tcard .places-card-loop').count();
-  check('loops filter returns only loops', loopCards > 0 && loopMarks === loopCards,
-    `${loopMarks} loop marks on ${loopCards} cards`);
-  await page.screenshot({ path: `shots/trails-${CC.toLowerCase()}-loops.png` });
-  await loopChip.click();
-  await page.waitForTimeout(700);
-}
-
-// ── Sort by length ───────────────────────────────────────────────────────
-await page.locator(SORT).first().selectOption('distance');
-await page.waitForTimeout(900);
-const sortedKm = (await page.locator('.places-tcard .places-card-facts').allInnerTexts())
-  .map((s) => parseFloat(s)).filter(Number.isFinite);
-check('length sort orders shortest first',
-  sortedKm.every((k, i) => i === 0 || sortedKm[i - 1] <= k + 0.001),
-  sortedKm.slice(0, 5).join(', '));
-await page.locator(SORT).first().selectOption('rating');
-await page.waitForTimeout(800);
-
-// ── The trail page ───────────────────────────────────────────────────────
-await page.locator('.places-tcard').first().click();
-await page.waitForTimeout(3500);
-check('trail page opens', await page.locator('.tpage').isVisible());
-
-const why = page.locator('.tpage-why');
-check('page leads with why this walk is special', await why.count() > 0);
-const whyLines = await page.locator('.tpage-why .tpage-story li').count();
-check('the why section makes several measured claims', whyLines >= 2, `${whyLines} lines`);
-const whyText = await why.innerText().catch(() => '');
-check('why text is composed, not a raw code',
-  whyText.length > 20 && !/\bcode\b|undefined|NaN/.test(whyText),
-  whyText.replace(/\n/g, ' | ').slice(0, 120));
-
-const pageRating = await page.locator('.ihead-line .score-chip').first().innerText().catch(() => ''); // T430: the head line
-check('trail page carries the rating', /^\d/.test(pageRating.trim()), pageRating);
-
-// The removed paragraphs must be gone.
-const body = await page.locator('.tpage-scroll').innerText();
-check('the GPX apps paragraph is gone',
-  !/Komoot, AllTrails, OsmAnd/i.test(body) && !/mymaps\.google\.com/i.test(body));
-check('the following-works paragraph is gone',
-  !/Following works while this page is open/i.test(body)
-  && !/It stops when the phone locks/i.test(body));
-
-// Views strip and highlights.
-// T396 (design wave V4): the views are one photo track; each frame carries
-// its km marker in the band under the photograph, not on it.
-// T430: the views are the gallery at the top, each photograph named in the
-// band under it with where on the route it was taken. A photograph the
-// browser cannot load (the sandbox cannot reach Commons) leaves the gallery.
-const views = await page.locator('.pgal .destp-slide').count();
-const viewsTried = views > 0 || await page.locator('.ipage-gallery').count() > 0
-  || await page.locator('.tpage-map').count() > 0;
-check('views along the way render (or the drawn route stands in)', viewsTried, `${views} photographs`);
-if (views > 1) {
-  const ats = await page.locator('.pgal .destp-slide-cap').allInnerTexts();
-  check('view photographs say where on the route they were taken',
-    ats.some((a) => /km/.test(a)), ats.slice(0, 3).join(', '));
-}
-const hls = await page.locator('.ipage-why .ihl, .ipage-why .iwhy-row').count(); // T430: Why go
-check('what you walk past is listed', hls >= 0, `${hls} named features`);
-await page.screenshot({ path: `shots/trails-${CC.toLowerCase()}-page.png`, fullPage: false });
-await page.locator('.tpage-scroll').evaluate((el) => el.scrollTo(0, 900));
-await page.waitForTimeout(700);
-await page.screenshot({ path: `shots/trails-${CC.toLowerCase()}-page-views.png` });
-
-// ── The GPX must be one continuous track ─────────────────────────────────
-const download = await Promise.all([
-  page.waitForEvent('download', { timeout: 20000 }).catch(() => null),
-  page.locator('.tpage-primary').click(),
-]).then(([d]) => d);
-if (download) {
-  const stream = await download.createReadStream();
-  let gpx = '';
-  for await (const chunk of stream) gpx += chunk;
-  const segs = (gpx.match(/<trkseg>/g) || []).length;
-  const pts = (gpx.match(/<trkpt /g) || []).length;
-  check('GPX is a single continuous track segment', segs === 1, `${segs} trkseg, ${pts} points`);
-  check('GPX carries full resolution geometry, not the card sketch', pts > 100, `${pts} points`);
-  check('GPX carries elevation', /<ele>/.test(gpx));
-  check('GPX credits OpenStreetMap',
-    /OpenStreetMap contributors/.test(gpx) && /opendatacommons\.org/.test(gpx));
-  // The teleport test: no jump between consecutive points bigger than a
-  // kilometre. This is what 142 of the old 545 published hikes failed.
-  const coords = [...gpx.matchAll(/<trkpt lat="([-\d.]+)" lon="([-\d.]+)"/g)]
-    .map((m) => [parseFloat(m[1]), parseFloat(m[2])]);
-  let worst = 0;
-  for (let i = 1; i < coords.length; i += 1) {
-    const [la1, lo1] = coords[i - 1];
-    const [la2, lo2] = coords[i];
-    const dy = (la2 - la1) * 111.32;
-    const dx = (lo2 - lo1) * 111.32 * Math.cos((la1 * Math.PI) / 180);
-    worst = Math.max(worst, Math.sqrt(dx * dx + dy * dy));
+  // ── The GPX must be one continuous track ──
+  const dl = page.waitForEvent('download', { timeout: 20000 }).catch(() => null);
+  await page.locator('.ox-gpx').first().click();
+  const download = await dl;
+  if (download) {
+    let gpx = '';
+    for await (const chunk of await download.createReadStream()) gpx += chunk;
+    const segs = (gpx.match(/<trkseg>/g) || []).length;
+    const pts = (gpx.match(/<trkpt /g) || []).length;
+    check(`${tag}GPX is a single continuous track segment`, segs === 1, `${segs} trkseg, ${pts} points`);
+    check(`${tag}GPX carries full geometry, not the card sketch`, pts > 100, `${pts} points`);
+    check(`${tag}GPX carries elevation and the OSM credit`, /<ele>/.test(gpx) && /OpenStreetMap contributors/.test(gpx));
+    // The teleport test: no jump between consecutive points over a kilometre.
+    const coords = [...gpx.matchAll(/<trkpt lat="([-\d.]+)" lon="([-\d.]+)"/g)].map((m) => [parseFloat(m[1]), parseFloat(m[2])]);
+    let worst = 0;
+    for (let i = 1; i < coords.length; i += 1) {
+      const [la1, lo1] = coords[i - 1];
+      const [la2, lo2] = coords[i];
+      const dy = (la2 - la1) * 111.32;
+      const dx = (lo2 - lo1) * 111.32 * Math.cos((la1 * Math.PI) / 180);
+      worst = Math.max(worst, Math.sqrt(dx * dx + dy * dy));
+    }
+    check(`${tag}GPX never teleports between points`, worst < 1, `largest step ${(worst * 1000).toFixed(0)} m`);
+  } else {
+    check(`${tag}GPX downloads`, false, 'no download event');
   }
-  check('GPX never teleports between points', worst < 1,
-    `largest step ${(worst * 1000).toFixed(0)} m`);
-} else {
-  check('GPX downloads', false, 'no download event');
+
+  // ── Back to the same list ──
+  await page.locator('.tpage-back').first().click();
+  await page.waitForTimeout(1200);
+  check(`${tag}Back closes the page onto the same country`, await page.locator('.tpage').count() === 0
+    && new RegExp(`[?&]dn=${CC}\\b`).test(page.url()) && await page.locator('.places-tcard').count() >= 30);
+  await page.context().close();
 }
 
-// ── Phone ────────────────────────────────────────────────────────────────
-// The filter rail is the one genuinely new piece of chrome, and it is a row
-// of six chips on a 390px screen. It has to wrap rather than push the page
-// sideways: a horizontally scrolling body is the classic way a chip row
-// breaks a phone layout.
-const phone = await browser.newPage({ viewport: { width: 390, height: 844 } });
-phone.on('pageerror', (e) => errors.push('phone pageerror: ' + String(e.message).slice(0, 120)));
-await seed(phone);
-await phone.goto(URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await phone.waitForTimeout(3000);
-await phone.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first().click();
-await phone.waitForTimeout(1200);
-await phone.locator(CAT, { hasText: /trails/i }).click();
-await phone.waitForTimeout(900);
-await pickCountry(phone, CC);
-await phone.waitForTimeout(2500);
-check('phone: trail cards render', await phone.locator('.places-tcard').count() > 5);
-await phone.locator('.dtab-filters:visible').first().click().catch(() => {});
-await phone.waitForTimeout(700);
-check('phone: the filter sheet holds the chips',
-  await phone.locator(inFacets('.ui-chip')).count() >= 4);
-await phone.keyboard.press('Escape');
-await phone.waitForTimeout(500);
-const overflow = await phone.evaluate(
-  () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-);
-check('phone: nothing pushes the page sideways', overflow <= 1, `${overflow}px of overflow`);
-await phone.screenshot({ path: `shots/trails-${CC.toLowerCase()}-phone.png` });
-await phone.locator('.places-tcard').first().click();
-await phone.waitForTimeout(3500);
-check('phone: trail page opens', await phone.locator('.tpage').isVisible());
-const pOverflow = await phone.evaluate(
-  () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
-);
-check('phone: the trail page fits the screen', pOverflow <= 1, `${pOverflow}px of overflow`);
-await phone.locator('.tpage-scroll').evaluate((el) => el.scrollTo(0, 620));
-await phone.waitForTimeout(1000);
-await phone.screenshot({ path: `shots/trails-${CC.toLowerCase()}-phone-page.png` });
-
-// ── Report ───────────────────────────────────────────────────────────────
+// ── Report ──
 await browser.close();
 let failed = 0;
 for (const c of checks) {

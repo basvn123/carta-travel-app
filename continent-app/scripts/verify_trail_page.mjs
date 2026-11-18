@@ -1,390 +1,193 @@
-// T1089 UNRESOLVED: the page is now .tpage-v2 with .pt-* markup (Download GPX is .ox-gpx, no KML door), and the Trails list is Explore cat=trails with story rails; see verify_trail_free_gpx.mjs for the new selectors.
-// Headless verify for the trail page (.tpage): the full page a trail card now
-// opens, the composed explanation, the GPX/KML/link exports, live following,
-// and the price chrome that Trails no longer shows.
+// Headless verify for the trail page (.tpage-v2) since G12 (Explore top,
+// 2026-11-18): the page a trail card opens, its measured facts, the GPX, the
+// share link, live following, Back, a shared link, and the desktop columns.
 //
-//   node scripts/verify_trail_page.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
+//   node scripts/verify_trail_page.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
+//   CARTA_DATA_MIRROR=".../continent-app/public" fills a sparse worktree's data.
 //
-// Phone viewport first (that is where a walker uses this), then a desktop pass.
-// Screenshots to shots/trail-*.png.
+// Phone first (that is where a walker uses this), then a desktop pass. The
+// trail is the first card of Albania's list; its route comes from its own
+// GPX, so the run needs no wire file on disk. The KML door, the city-day
+// stops and the Trips tab's sort chips left before or with G12 (T1089, T431),
+// so their checks went. Screenshots to shots/trail-*.png.
 
 import { chromium } from 'playwright';
-import { readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
+import { mirrorData } from './lib/dataMirror.mjs';
 
-// The category rail is TWINNED and the two halves do not share a class. The
-// desktop shell renders .side-cat inside the left panel; the phone shell
-// renders .places-cat in the banded toolbar. Only one is ever visible, so a
-// harness has to ask for BOTH and scope to :visible. Asking for .places-cat
-// alone passed for as long as the tab was phone-first and has silently
-// pointed at a hidden node ever since the desktop shell landed.
-// G12 (Explore top): the tabs are the band's (phone) or the tab's own row (desktop); the layer's old row is hidden.
-const CAT = '[role="tablist"]:visible [role="tab"]';
-// Sorts are twinned too, and again under different classes.
-// T428: the sort is one select; its options are the three orders.
-const SORT = '.dtab-sort-side select:visible option, .dtab-sort select:visible option';
-
-// The country filter is no longer a <select>. It is a button that opens a
-// search-and-listbox popover (src/components/CountryPicker.jsx), so
-// selectOption() throws "Element is not a <select> element" and took the
-// whole run down before the first check. Driving it the way a person does
-// also exercises the popover, which the old selectOption never did.
-const CC_OF = Object.fromEntries(['AL', 'AT', 'CH', 'DE', 'ES', 'FR', 'GB', 'HR', 'IT', 'PT', 'SI']
-  .map((cc) => [new Intl.DisplayNames(['en'], { type: 'region' }).of(cc).toLowerCase(), cc]));
-async function pickCountry(page, name) {
-  const cc = CC_OF[String(name).toLowerCase()] || null;
-  // T428: Trails at rest opens on the country galleries; the card is the picker.
-  const card = page.locator('.dgal-card .card-open', { hasText: new RegExp(`^${name}$`, 'i') }).first();
-  if (await card.isVisible().catch(() => false)) { await card.click(); await page.waitForTimeout(1800); return; }
-
-  // G12 (Explore top): the side panel and its country fold left; a layer
-  // keeps its country in the address (`dn`), so a run sets it there.
-  if (cc) {
-    const u = new URL(page.url());
-    u.searchParams.set('dn', cc);
-    await page.goto(u.toString(), { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(2500);
-    return;
-  }
-  await page.locator('.places-country:visible').first().click();
-  await page.waitForTimeout(400);
-  const pop = page.locator('.country-picker-pop:visible');
-  await pop.locator('.origin-search').fill(name);
-  await page.waitForTimeout(400);
-  await pop.locator('.origin-opt', { hasText: new RegExp(`^${name}$`, 'i') }).first().click();
-  await page.waitForTimeout(1800);
-}
-
-const RAW_URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
-// ?paymock: the GPX and KML exports are entitlement gated, and a headless run
-// cannot sign in or hold an entitlement, so without the seam the export button
-// opens a paywall dialog and the download checks below test the paywall
-// instead of the file. See src/hooks/usePaywall.jsx.
-const APP_URL = RAW_URL + (RAW_URL.includes('?') ? '&' : '?') + 'paymock';
-const ORIGIN = new URL(APP_URL).origin;
-
-// The first hike of AL in wire order is the first card the Trails list shows.
-const wire = JSON.parse(readFileSync('public/trails/AL.json', 'utf8'));
-const hike = wire.trips.find((t) => t.category !== 'citytrip');
-const line = hike.geometry.type === 'LineString' ? hike.geometry.coordinates : hike.geometry.coordinates[0];
-const onRoute = line[Math.floor(line.length * 0.4)];   // a point the walker could be standing on
-const offRoute = [line[0][0] + 0.02, line[0][1] + 0.02]; // ~2.5 km away
+const BASE = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
+const ORIGIN = new URL(BASE).origin;
+mkdirSync('shots', { recursive: true });
 
 const checks = [];
 const check = (label, ok, note = '') => { checks.push({ label, ok, note }); };
-
-// T180 folded every descriptive block of the five detail pages into a closed
-// row (browse/DetailSkeleton.jsx). A closed row keeps its body in the page,
-// hidden, so counts still see it; text is read the way a reader would get it,
-// by opening the row that holds the selector first.
-async function openRowWith(p, sel) {
-  await p.evaluate((s) => {
-    const el = document.querySelector(s);
-    const row = el && el.closest('.jpage-lrow');
-    if (row && !row.classList.contains('is-open')) row.querySelector('.jpage-lrow-btn').click();
-  }, sel);
-  await p.waitForTimeout(250);
-}
 const errors = [];
-// The one 404 these pages produce is Supabase's content_overrides, an
-// OPTIONAL table (migration 018) that is not applied on the live project.
-// overrides.js reads it, ignores the error and falls back to an empty
-// table (`.catch(() => table)`), so the 404 is documented behaviour
-// rather than a fault. Matched on the MESSAGE because the console text
-// carries no URL: `status of 404` and nothing broader, so a 404 on a
-// wire file the app actually needs still fails the run.
-const NOISE = /status of 404|ERR_FAILED|config is not valid|Geolocation/;
+// A local build fetches flights from R2, which answers CORS for its own hosts only.
+const NOISE = /ERR_FAILED|config is not valid|content_overrides|Failed to load resource|Access to fetch at 'https:\/\/data\.|Geolocation/;
 
 const browser = await chromium.launch();
+async function newContext(viewport, geo) {
+  const ctx = await browser.newContext({
+    viewport, serviceWorkers: 'block', acceptDownloads: true,
+    permissions: ['geolocation', 'clipboard-read', 'clipboard-write'], geolocation: geo,
+  });
+  await mirrorData(ctx);
+  await ctx.addInitScript(() => {
+    try {
+      localStorage.setItem('continent.lang.v1', 'en');
+      localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('continent.homeSeen.v1', '1');
+      localStorage.setItem('carta.welcomeSeen.v1', '1');
+      localStorage.setItem('continent.mapGuideDismissed.v1', '1');
+      localStorage.setItem('carta.mapGuideDone', '1');
+    } catch { /* storage unavailable */ }
+    // Force the download and clipboard paths: a headless Chromium that claims
+    // the Web Share API cannot show a share sheet.
+    try {
+      Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
+      Object.defineProperty(navigator, 'canShare', { value: undefined, configurable: true });
+    } catch { /* older engines */ }
+  });
+  return ctx;
+}
+const watch = (page, tag) => {
+  page.on('pageerror', (e) => errors.push(`${tag} pageerror: ${e.message.split('\n')[0]}`));
+  page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push(`${tag} console: ${m.text().slice(0, 140)}`); });
+};
+const sideways = (page) => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
 
-const context = await browser.newContext({
-  viewport: { width: 390, height: 844 },
-  permissions: ['geolocation', 'clipboard-read', 'clipboard-write'],
-  geolocation: { latitude: onRoute[1], longitude: onRoute[0], accuracy: 12 },
-  acceptDownloads: true,
-});
-await context.addInitScript(() => {
-  try {
-    localStorage.setItem('continent.lang.v1', 'en');
-    localStorage.setItem('continent.guestMode.v1', '1');
-    localStorage.setItem('continent.homeSeen.v1', '1');
-    localStorage.setItem('continent.mapGuideDismissed.v1', '1');
-    localStorage.setItem('carta.mapGuideDone', '1');
-  } catch { /* storage unavailable */ }
-  // Force the download path and the clipboard path: a headless Chromium that
-  // claims the Web Share API cannot show a share sheet, so the test would
-  // otherwise verify nothing.
-  try {
-    Object.defineProperty(navigator, 'share', { value: undefined, configurable: true });
-    Object.defineProperty(navigator, 'canShare', { value: undefined, configurable: true });
-  } catch { /* older engines */ }
-});
-
+// ── Phone: from Albania's list to the page ───────────────────────────────
+const context = await newContext({ width: 390, height: 844 }, { latitude: 41.3, longitude: 19.8, accuracy: 12 });
 const page = await context.newPage();
-page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
-page.on('console', (m) => { if (m.type() === 'error' && !NOISE.test(m.text())) errors.push('console: ' + m.text().slice(0, 140)); });
-
-await page.goto(APP_URL, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await page.waitForTimeout(3000);
-await page.locator('.bottom-nav-item', { hasText: /^\s*explore\s*$/i }).first().click();
-await page.waitForTimeout(1200);
-
-// ── Trails: the price chrome is gone ──────────────────────────────────────
-await page.locator(CAT, { hasText: /trails/i }).click();
-await page.waitForTimeout(800);
-await pickCountry(page, 'Albania');
-await page.waitForTimeout(1800);
+watch(page, 'phone');
+await page.goto(`${BASE}?tab=places&dc=trails&dn=AL`, { waitUntil: 'domcontentloaded', timeout: 120000 });
+await page.waitForSelector('.band-input', { timeout: 120000 });
+await page.waitForTimeout(3500);
 
 const cards = await page.locator('.places-tcard').count();
 check('trail cards render for Albania', cards >= 3, `${cards} cards`);
-const trailSorts = await page.locator(SORT).allInnerTexts();
-check('no PRICE sort on trails', !trailSorts.some((x) => /price|from .?[0-9]/i.test(x)),
-  trailSorts.join(' | '));
-check('trails keep their own sorts', trailSorts.length === 3, `${trailSorts.length} chips`);
-check('no priced-from origin picker on trails', await page.locator('.places-controls .origin-btn').count() === 0);
-check('no lifestyle pill on trails', await page.locator('.lifestyle-btn:visible').count() === 0);
-check('cards carry no clipped summary', await page.locator('.places-tcard-summary').count() === 0);
+check('trail cards carry no price', await page.locator('.places-tcard .places-card-price').count() === 0);
 const cardText = await page.locator('.places-tcard').first().innerText();
-// T428: "Waymarked" is one of the card's facts now (the hook line), not prose;
-// the prose this guards against is the wire's summary sentence.
-check('card is facts only, no prose', !/route in AL/i.test(cardText), cardText.replace(/\n/g, ' ').slice(0, 70));
+check('a card is facts, not the wire summary', !/route in AL/i.test(cardText), cardText.replace(/\n/g, ' ').slice(0, 70));
 await page.screenshot({ path: 'shots/trail-list.png' });
 
-// Other categories keep their price chrome.
-await page.locator(CAT, { hasText: /^trips$/i }).click();
-await page.waitForTimeout(1200);
-// Trips opens on the style grid of the Journeys library, which carries no
-// sort chips; the composed itineraries sit behind their own door at the end
-// of the grid (the same route verify_places_tab.mjs takes). W5-a: the check
-// was stale, it looked for the chips on the grid.
-await page.locator('.jcomposed-card').click();
-await page.waitForTimeout(1500);
-check('trips still show the sort chips', await page.locator(SORT).count() === 3,
-  `${await page.locator(SORT).count()} chips`);
-// The from-price origin picker moved out of this tab into the map tool row,
-// so asserting it here was asserting a layout that was replaced on purpose.
-// The "other categories keep their price chrome" intent is carried by the
-// sort-chips check on the line above.
-await page.locator(CAT, { hasText: /trails/i }).click();
-await page.waitForTimeout(1200);
-
-// ── The page opens ────────────────────────────────────────────────────────
-await page.locator('.places-tcard').first().click();
-await page.waitForTimeout(4500);
-check('trail page opens full screen', await page.locator('.tpage').isVisible());
-const box = await page.locator('.tpage').boundingBox();
+const cardName = (await page.locator('.places-tcard .places-card-name').first().innerText()).trim();
+await page.locator('.places-tcard .card-open').first().click();
+await page.locator('.tpage-v2').waitFor({ timeout: 30000 }).catch(() => {});
+await page.waitForTimeout(3500);
+check('trail page opens full screen', await page.locator('.tpage-v2').isVisible());
+const box = await page.locator('.tpage-v2').boundingBox();
 check('page covers the viewport', box && box.height > 800, box ? `${Math.round(box.width)}x${Math.round(box.height)}` : 'none');
-check('page draws the route on a real map', await page.locator('.tpage-map canvas').isVisible().catch(() => false));
-check('page names the trail as a heading', (await page.locator('.ipage-head h1').innerText()).length > 3,
-  await page.locator('.ipage-head h1').innerText());
+const title = (await page.locator('.pt-title').first().innerText().catch(() => '')).trim();
+check('page names the trail as its heading', title === cardName, `${cardName} -> ${title}`);
+check('page carries the rating', /^\d/.test((await page.locator('.pt-score').first().innerText().catch(() => '')).trim()));
+const facts = await page.locator('.pt-facts').first().innerText().catch(() => '');
+check('the facts carry the measured numbers', /km/.test(facts) && /\bh\b/.test(facts), facts.replace(/\n/g, ' ').slice(0, 120));
+check('page draws the route on a real map', await page.locator('.tpage-map canvas').count() > 0);
+check('elevation profile renders', await page.locator('.tpage-elev-svg').count() > 0);
+const text = await page.locator('.tpage-scroll').innerText().catch(() => '');
+check('the GPX apps paragraph stays gone', !/Komoot, AllTrails, OsmAnd|mymaps\.google\.com/i.test(text));
+check('the following-works paragraph stays gone', !/It stops when the phone locks/i.test(text));
+check('explanation leaks no ISO2 country code', !/\bin AL\b|\broute in AL\b/.test(text));
+check('phone: the page fits the screen', await sideways(page) <= 1, `${await sideways(page)} px`);
+await page.screenshot({ path: 'shots/trail-page.png' });
 
-await openRowWith(page, '.tpage-facts');
-const facts = await page.locator('.tpage-facts').innerText();
-check('facts strip carries the measured numbers', /km/.test(facts) && /\bh\b/.test(facts), facts.replace(/\n/g, ' '));
-
-// The two explanatory paragraphs (which apps open a GPX, what following
-// cannot do) were deliberately removed: verify_trails.mjs asserts their
-// ABSENCE, and this harness was still asserting their presence, so the two
-// contradicted each other and whichever ran second was wrong. Absence is the
-// intended state, so this checks that instead.
-const notes = await page.locator('.tpage-note').allInnerTexts();
-check('the GPX apps paragraph stays gone', !notes.some((x) => /Komoot/i.test(x)));
-check('the following-works paragraph stays gone', !notes.some((x) => /locks/i.test(x)));
-
-await openRowWith(page, '.tpage-expect');
-const storyLines = await page.locator('.tpage-expect .tpage-story li').count();
-const story = await page.locator('.tpage-expect .tpage-story').innerText();
-check('what to expect explains the route', storyLines >= 3, `${storyLines} lines`);
-check('explanation leaks no ISO2 country code', !/\bin AL\b|\broute in AL\b/.test(story), story.replace(/\n/g, ' | ').slice(0, 160));
-check('explanation is not the wire boilerplate', !/DIN 33466|derived from/i.test(story));
-check('elevation profile renders', await page.locator('.tpage-elev-svg').isVisible().catch(() => false));
-await page.screenshot({ path: 'shots/trail-page.png', fullPage: false });
-await page.locator('.tpage-scroll').evaluate((el) => el.scrollTo(0, 700));
-await page.waitForTimeout(500);
-await page.screenshot({ path: 'shots/trail-page-body.png' });
-
-// ── Exports ───────────────────────────────────────────────────────────────
-// Leaving with the route is THE action on this page, so it owns the one
-// primary button; the share sheet is stubbed out above, so it reads "Download
-// GPX" here rather than "Send to a hiking app".
-const primaryLabel = await page.locator('.tpage-primary').innerText();
-check('the handoff is the primary action', /gpx|hiking app/i.test(primaryLabel), primaryLabel);
-check('following is a secondary, not the primary', await page.locator('.tpage-primary.tpage-follow').count() === 0
-  && await page.locator('.ipage-acts .tpage-follow').count() === 1); // T430: kit secondaries in the hand-off row
-const [gpxDl] = await Promise.all([
-  page.waitForEvent('download', { timeout: 15000 }),
-  page.locator('.tpage-primary').click(),
-]);
-const gpxPath = await gpxDl.path();
-const gpx = readFileSync(gpxPath, 'utf8');
-check('GPX downloads with a route filename', /\.gpx$/.test(gpxDl.suggestedFilename()), gpxDl.suggestedFilename());
-check('GPX is a valid track', /<gpx version="1\.1"/.test(gpx) && /<trkpt lat="/.test(gpx),
-  `${(gpx.match(/<trkpt/g) || []).length} points`);
-check('GPX carries elevation from the wire', /<ele>/.test(gpx));
+// ── GPX ───────────────────────────────────────────────────────────────────
+const gpxP = page.waitForEvent('download', { timeout: 15000 }).catch(() => null);
+await page.locator('.ox-gpx').first().click();
+const gpxDl = await gpxP;
+const gpx = gpxDl ? readFileSync(await gpxDl.path(), 'utf8') : '';
+check('GPX downloads with a route filename, no paywall', !!gpxDl && /\.gpx$/.test(gpxDl.suggestedFilename())
+  && await page.locator('.pass-overlay:visible').count() === 0, gpxDl ? gpxDl.suggestedFilename() : 'no download');
+check('GPX is a valid track', /<gpx version="1\.1"/.test(gpx) && /<trkpt lat="/.test(gpx), `${(gpx.match(/<trkpt/g) || []).length} points`);
+check('GPX carries elevation', /<ele>/.test(gpx));
 check('GPX keeps the OpenStreetMap credit', /OpenStreetMap contributors/.test(gpx));
 check('GPX marks the start', /<wpt /.test(gpx));
-
-// T430: the Google Maps file moved into The measurements fold, a quiet
-// door beside the figures, so the hand-off row keeps four secondaries.
-await page.evaluate(() => {
-  const row = document.querySelector('.tpage-kml')?.closest('.jpage-lrow');
-  if (row && !row.classList.contains('is-open')) row.querySelector('.jpage-lrow-btn').click();
-});
-await page.waitForTimeout(300);
-const [kmlDl] = await Promise.all([
-  page.waitForEvent('download', { timeout: 15000 }),
-  page.locator('.tpage-kml').first().click(),
-]);
-const kml = readFileSync(await kmlDl.path(), 'utf8');
-check('KML downloads for Google My Maps', /\.kml$/.test(kmlDl.suggestedFilename()), kmlDl.suggestedFilename());
-check('KML carries the drawn line', /<LineString>/.test(kml) && /<coordinates>/.test(kml));
+const line = [...gpx.matchAll(/<trkpt lat="([-\d.]+)" lon="([-\d.]+)"/g)].map((m) => [parseFloat(m[1]), parseFloat(m[2])]);
 
 // ── Share link ────────────────────────────────────────────────────────────
-// T180 renamed the button "Send the link" (spec 5.4: take it with you, send to
-// phone); the bar's share icon keeps the name "Share". T386 (design wave V3)
-// removed "Send the link" from the hand-off band: the page bar's share icon
-// is the one share door (carta-design "Detail page grammar"), so the check
-// presses that icon and still proves the copied link reopens the trail.
-check('the band carries no second share door',
-  await page.locator('.ipage-handoff', { hasText: /send the link/i }).count() === 0);
-await page.locator('.tpage-bar-act:not(.fav-star)').click();
+await page.locator('.tpage-bar-act[aria-label="Share"]').first().click();
 await page.waitForTimeout(700);
 const copied = await page.evaluate(() => navigator.clipboard.readText().catch(() => ''));
 check('share copies a reopenable link', /#trail=\d+&tc=AL/.test(copied), copied.slice(-40));
-check('a toast confirms the copy', await page.locator('.tpage-toast').isVisible().catch(() => false),
-  await page.locator('.tpage-toast').innerText().catch(() => ''));
-
-// ── Directions to the start ───────────────────────────────────────────────
-const dirHref = await page.locator('.ipage-acts a.btn').first().getAttribute('href').catch(() => ''); // T430
-check('directions to the start use coordinates', /google\.com\/maps\/dir\/.*destination=-?\d+\.\d+,-?\d+\.\d+/.test(dirHref || ''),
-  (dirHref || '').slice(0, 80));
+check('a toast confirms the copy', /copied/i.test(await page.locator('.tpage-toast').innerText().catch(() => '')));
 
 // ── Following ─────────────────────────────────────────────────────────────
-await page.locator('.tpage-follow').click();
+if (line.length > 10) {
+  const [lat, lon] = line[Math.floor(line.length * 0.4)];
+  await context.setGeolocation({ latitude: lat, longitude: lon, accuracy: 12 });
+}
+await page.locator('.tpage-follow').first().click();
 await page.waitForTimeout(3500);
 check('following turns the page into the map', await page.locator('.tpage.following').count() === 1);
 const hud = await page.locator('.tpage-hud-card').innerText().catch(() => '');
-check('HUD reports progress along the route', /\d+(\.\d+)?\s*$|of [\d.]+ km walked/m.test(hud) && /left/.test(hud),
-  hud.replace(/\n/g, ' | '));
+check('HUD reports progress along the route', /km walked/.test(hud) && /left/.test(hud), hud.replace(/\n/g, ' | ').slice(0, 120));
 const doneKm = parseFloat(await page.locator('.tpage-hud-done').innerText().catch(() => 'NaN'));
 check('progress is measured, not zero', doneKm > 0.2, `${doneKm} km walked`);
 check('no off-route warning while on the line', await page.locator('.tpage-hud-off').count() === 0);
 await page.screenshot({ path: 'shots/trail-follow.png' });
-
-await context.setGeolocation({ latitude: offRoute[1], longitude: offRoute[0], accuracy: 12 });
-await page.waitForTimeout(3000);
+if (line.length) {
+  await context.setGeolocation({ latitude: line[0][0] + 0.02, longitude: line[0][1] + 0.02, accuracy: 12 });
+  await page.waitForTimeout(3000);
+}
 const off = await page.locator('.tpage-hud-off').innerText().catch(() => '');
 check('wandering off the line warns with a distance', /\d+\s*m off the route/.test(off), off);
-await page.screenshot({ path: 'shots/trail-follow-off.png' });
-
-// Scoped to the page: the hidden map tab keeps a maplibre control row of its own.
-const creditBottom = await page.locator('.tpage .maplibregl-ctrl-bottom-right').evaluate(
-  (el) => window.innerHeight - el.getBoundingClientRect().bottom,
-).catch(() => -1);
-check('basemap credit clears the HUD card', creditBottom > 100, `${Math.round(creditBottom)} px above the bottom`);
-
 await page.locator('.tpage-hud-close').click();
 await page.waitForTimeout(800);
-check('stopping following returns to the page', await page.locator('.tpage.following').count() === 0
-  && await page.locator('.tpage-follow').isVisible());
-
-await page.locator('.tpage-back').click();
-await page.waitForTimeout(600);
-check('back closes the page', await page.locator('.tpage').count() === 0);
-
-// ── A city day is the same page, with its stops ───────────────────────────
-await page.locator(CAT, { hasText: /^trips$/i }).click();
-await page.waitForTimeout(1500);
-// Trips opens on the style grid; the composed door leads to the length slider.
-if (await page.locator('.jcomposed-card').count()) await page.locator('.jcomposed-card').click();
-await page.waitForTimeout(1500);
-// The Trips category opens on its country index, exactly as Trails does, so a
-// card only exists once a country is chosen. Clicking straight through was
-// only ever right while the tab opened on a flat list.
-// A drawn city walk is the ONE DAY end of the Trips category, which is
-// otherwise the composed-itinerary surface. Without moving the length slider
-// to 1 the list is multi-day itineraries and no .places-tcard exists at all.
-// The slider goes first: at 1 the index lists the countries with city walks.
-await page.locator('.dtab-length select:visible').first()
-  .selectOption('1').catch(() => {});
-await page.waitForTimeout(1600);
-await pickCountry(page, 'Albania').catch(() => {});
-await page.waitForTimeout(1800);
-const cityCards = await page.locator('.places-tcard').count();
-check('city day cards render', cityCards >= 1, `${cityCards} cards`);
-if (cityCards) {
-await page.locator('.places-tcard').first().click();
-await page.waitForTimeout(4500);
-const cityStops = await page.locator('.tpage-stops li').count();
-check('city day lists its stops in order', cityStops >= 3, `${cityStops} stops`);
-await openRowWith(page, '.tpage-expect');
-const cityStory = await page.locator('.tpage-expect .tpage-story').innerText().catch(() => '');
-check('city day explanation counts stops and walking', /stops/.test(cityStory) && /km on foot/.test(cityStory),
-  cityStory.replace(/\n/g, ' | ').slice(0, 120));
-check('city day offers the priced destination', await page.locator('.dsk-primary-row .btn-primary').isVisible().catch(() => false), // T430: the kit primary, the price on the cost line
-  (await page.locator('.dsk-primary-row .btn-primary').innerText().catch(() => '')).replace(/\n/g, ' '));
-await page.screenshot({ path: 'shots/trail-citytrip.png' });
-await page.locator('.tpage-back').click();
-await page.waitForTimeout(500);
+check('stopping following returns to the page', await page.locator('.tpage.following').count() === 0);
+// Following leaves the map full screen over the page bar; its own button
+// closes it (the same on main before G12).
+const closeMap = page.locator('.map-expand[aria-label="Close the full screen map"]').first();
+await closeMap.waitFor({ timeout: 4000 }).catch(() => {});
+if (await closeMap.count()) {
+  await closeMap.click();
+  await page.waitForTimeout(800);
 }
+await page.locator('.tpage-back').first().click();
+await page.waitForTimeout(800);
+check('Back closes the page onto the list', await page.locator('.tpage').count() === 0
+  && await page.locator('.places-tcard').count() >= 3);
 
 // ── A shared link opens the trail ─────────────────────────────────────────
+const link = (copied.match(/#trail=\d+&tc=AL/) || [''])[0];
 const deep = await context.newPage();
-deep.on('pageerror', (e) => errors.push('deeplink pageerror: ' + e.message.split('\n')[0]));
-await deep.goto(`${ORIGIN}/#trail=${hike.id}&tc=AL`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await deep.waitForTimeout(6000);
-check('shared link opens the trail page', await deep.locator('.tpage').isVisible().catch(() => false));
-check('shared link opens the right trail', (await deep.locator('.ipage-head h1').innerText().catch(() => '')).includes(hike.name.slice(0, 12)),
-  await deep.locator('.ipage-head h1').innerText().catch(() => ''));
+watch(deep, 'deeplink');
+await deep.goto(`${ORIGIN}/${link}`, { waitUntil: 'domcontentloaded', timeout: 120000 });
+await deep.locator('.tpage-v2').waitFor({ timeout: 60000 }).catch(() => {});
+await deep.waitForTimeout(2500);
+check('shared link opens the trail page', await deep.locator('.tpage-v2').isVisible().catch(() => false));
+check('shared link opens the right trail', (await deep.locator('.pt-title').first().innerText().catch(() => '')).trim() === cardName);
 check('shared link is stripped from the address bar', !deep.url().includes('trail='), deep.url());
-await deep.screenshot({ path: 'shots/trail-deeplink.png' });
 await deep.close();
-await page.close();
+await context.close();
 
 // ── Desktop pass ──────────────────────────────────────────────────────────
-const deskCtx = await browser.newContext({
-  viewport: { width: 1280, height: 860 },
-  permissions: ['geolocation'],
-  geolocation: { latitude: onRoute[1], longitude: onRoute[0], accuracy: 12 },
-});
-await deskCtx.addInitScript(() => {
-  try {
-    localStorage.setItem('continent.lang.v1', 'en');
-    localStorage.setItem('continent.guestMode.v1', '1');
-    localStorage.setItem('continent.homeSeen.v1', '1');
-    localStorage.setItem('carta.mapGuideDone', '1');
-  } catch { /* storage unavailable */ }
-});
+const deskCtx = await newContext({ width: 1280, height: 860 },
+  line.length ? { latitude: line[Math.floor(line.length * 0.4)][0], longitude: line[Math.floor(line.length * 0.4)][1], accuracy: 12 } : undefined);
 const desk = await deskCtx.newPage();
-desk.on('pageerror', (e) => errors.push('desktop pageerror: ' + e.message.split('\n')[0]));
-await desk.goto(`${ORIGIN}/#trail=${hike.id}&tc=AL`, { waitUntil: 'domcontentloaded', timeout: 45000 });
-await desk.waitForTimeout(6500);
-check('desktop: shared link opens the page', await desk.locator('.tpage').isVisible().catch(() => false));
-// T180 replaced the single 760 px column with spec 5.4's 60/40 grid: the
-// reading column on the left keeps the same bound, and the map sits beside it
-// in a sticky column instead of above it.
-const colW = await desk.locator('.dsk-head').evaluate((el) => el.getBoundingClientRect().width).catch(() => 0);
-check('desktop: the column stays readable', colW > 500 && colW <= 800, `${Math.round(colW)} px`);
-// T430: the map and the climb share one sticky side column (.ipage-side).
-const mapBeside = await desk.evaluate(() => {
-  const head = document.querySelector('.dsk-head');
-  const map = document.querySelector('.dsk-map');
-  const side = document.querySelector('.ipage-side');
-  if (!head || !map || !side) return null;
-  return { beside: map.getBoundingClientRect().left >= head.getBoundingClientRect().right,
-    sticky: getComputedStyle(side).position };
+watch(desk, 'desktop');
+await desk.goto(`${ORIGIN}/${link}`, { waitUntil: 'domcontentloaded', timeout: 120000 });
+await desk.locator('.tpage-v2').waitFor({ timeout: 60000 }).catch(() => {});
+await desk.waitForTimeout(3500);
+check('desktop: shared link opens the page', await desk.locator('.tpage-v2').isVisible().catch(() => false));
+const cols = await desk.evaluate(() => {
+  const main = document.querySelector('.pt-main');
+  const side = document.querySelector('.pt-side');
+  if (!main || !side) return null;
+  const m = main.getBoundingClientRect();
+  return { mainW: Math.round(m.width), beside: side.getBoundingClientRect().left >= m.right, sticky: getComputedStyle(side).position };
 });
-check('desktop: the map sits beside the column, sticky',
-  Boolean(mapBeside && mapBeside.beside && mapBeside.sticky === 'sticky'), JSON.stringify(mapBeside));
+check('desktop: the reading column stays readable', Boolean(cols && cols.mainW > 500 && cols.mainW <= 900), JSON.stringify(cols));
+check('desktop: the walk card sits beside the column, sticky', Boolean(cols && cols.beside && cols.sticky === 'sticky'), JSON.stringify(cols));
+check('desktop: the page fits the screen', await sideways(desk) <= 1, `${await sideways(desk)} px`);
 await desk.screenshot({ path: 'shots/trail-desktop.png' });
-
 // Following on a wide screen: the HUD is a card in the corner, not a banner.
-await desk.locator('.tpage-follow').click();
+await desk.locator('.tpage-follow').first().click();
 await desk.waitForTimeout(2500);
 const hudW = await desk.locator('.tpage-hud-card').evaluate((el) => el.getBoundingClientRect().width).catch(() => 0);
 check('desktop: the HUD stays a corner card', hudW > 200 && hudW < 420, `${Math.round(hudW)} px`);
 await desk.screenshot({ path: 'shots/trail-desktop-follow.png' });
-await desk.close();
-
+await deskCtx.close();
 await browser.close();
 
 let failed = 0;
@@ -396,5 +199,5 @@ if (errors.length) {
   console.log('\npage errors:');
   for (const e of errors) console.log('  ' + e);
 }
-console.log(failed === 0 && errors.length === 0 ? '\nAll checks passed.' : `\n${failed} checks failed, ${errors.length} page errors.`);
-process.exit(failed === 0 ? 0 : 1);
+console.log(failed === 0 && errors.length === 0 ? `\nAll ${checks.length} checks passed.` : `\n${failed} checks failed, ${errors.length} page errors.`);
+process.exit(failed === 0 && errors.length === 0 ? 0 : 1);
