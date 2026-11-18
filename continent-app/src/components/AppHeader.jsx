@@ -95,18 +95,13 @@ export function accountInitial(user) {
  */
 function AccountLink({ user, current, onNavigate, onSignIn = null }) {
   const { t } = useI18n();
-  // G12 (decision.md step 10): signed out, the door is a "Sign in" pill that
-  // opens the sign-in dialog at once (one requestAuth path in App.jsx);
-  // signed in, it is the avatar, a link to Account.
-  if (!user && onSignIn) {
-    return (
-      <Button variant="secondary" className="hdr-pill signin-pill" onClick={() => onSignIn('signin')}>
-        {t('auth.signIn')}
-      </Button>
-    );
-  }
+  // G12 (decision.md step 10): signed out, a "Sign in" pill opens the
+  // sign-in dialog at once (one requestAuth path in App.jsx), and the person
+  // icon beside it still opens Account: a guest's language and "How Carta
+  // works" live there, and a redesign removes no feature (orchestrator,
+  // fixes round 1). Signed in, the avatar alone, a link to Account.
   const name = user ? (user.user_metadata?.full_name?.trim() || user.email) : t('header.accountTitle');
-  return (
+  const door = (
     <SectionLink
       tab="account"
       className={`account-door${current ? ' on' : ''}`}
@@ -119,6 +114,15 @@ function AccountLink({ user, current, onNavigate, onSignIn = null }) {
         {user ? accountInitial(user) : <PersonIcon size={18} />}
       </span>
     </SectionLink>
+  );
+  if (user || !onSignIn) return door;
+  return (
+    <>
+      <Button variant="secondary" className="hdr-pill signin-pill" onClick={() => onSignIn('signin')}>
+        {t('auth.signIn')}
+      </Button>
+      {door}
+    </>
   );
 }
 
