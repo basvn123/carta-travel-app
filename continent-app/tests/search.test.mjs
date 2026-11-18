@@ -227,3 +227,12 @@ test("the start town's names in every UI language come from the gazetteer", () =
   assert.equal(startTown({ originKind: "country", originCountry: "BE" }, data), null);
   assert.equal(startTown({ originKind: "place", fromPlace: { name: "Gent", lat: 51, lon: 3.7 } }, data).name, "Gent");
 });
+
+test('a Carta place speaks the UI language when its gazetteer town has a name in it (fixes r1)', async () => {
+  const { localPlaceName } = await import('../src/lib/search/suggest.js');
+  const p = { id: 'BRU', city: 'Brussels', folds: ['brussels'], lat: 50.85, lon: 4.35 };
+  const towns = [{ folds: ['brussels', 'bruxelles', 'brussel'], l: { fr: 'Bruxelles', nl: 'Brussel' }, lat: 50.85, lon: 4.35 }];
+  assert.equal(localPlaceName(p, towns, 'fr'), 'Bruxelles');
+  assert.equal(localPlaceName(p, towns, 'en'), null, 'no name of its own: the place keeps Brussels');
+  assert.equal(localPlaceName(p, [{ ...towns[0], lat: 52, lon: 5 }], 'fr'), null, 'a far town is another place');
+});

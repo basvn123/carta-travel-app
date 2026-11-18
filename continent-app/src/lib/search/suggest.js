@@ -56,6 +56,19 @@ export function cartaTwin(town, places) {
   return best?.p || null;
 }
 
+/** A Carta place's name in the UI language, from its gazetteer town among
+ *  the loaded shard (French "Bruxelles" for Brussels); null when the shard
+ *  has no such town or no name in that language. */
+export function localPlaceName(p, towns, lang) {
+  if (!p || !lang) return null;
+  for (const town of towns || []) {
+    const name = town.l?.[lang];
+    if (!name || !p.folds.some((f) => town.folds.includes(f))) continue;
+    if (kmBetween(town.lat, town.lon, p.lat, p.lon) <= SAME_TOWN_KM) return name;
+  }
+  return null;
+}
+
 function placeItem(p, tokens, match) {
   return {
     type: 'place', key: `p:${p.id}`, id: p.id, name: p.city, match, cc: p.iso2, lat: p.lat, lon: p.lon, tokens,
@@ -194,6 +207,13 @@ export function suggest(query, ctx = {}) {
   // countries and regions by prefix, above villages ("Ital" is Italy before
   // Itala). With feature words the areas lead: "beach portugal" is about
   // Portugal.
+  // Carta's rows speak the UI language too (fixes r1: French showed
+  // "Brussels"); the place keeps its own name where the shard has none.
+  const byId = new Map(places.map((p) => [p.id, p]));
+  for (const it of carta) {
+    const local = localPlaceName(byId.get(it.id), ctx.towns, lang);
+    if (local) it.name = local;
+  }
   const groups = tokens.length
     ? [exact('country'), exact('region'), partial, dropTwinRows(carta), near]
     : [exact('country'), dropTwinRows(carta), exact('region'), partial, near];
