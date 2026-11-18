@@ -81,7 +81,16 @@ check('My trips is marked and addressed', /my trips/i.test(await active()) && /[
 await page.screenshot({ path: 'shots/bottom-nav-saved.png' });
 
 // Account is the header door: it opens the account page and the bar marks nothing.
-await page.locator('.account-door[aria-label^="Account"]').click();
+// G12 (explore polish, step 10): signed out the door is the Sign in pill,
+// which opens sign-in, not Account; a guest reaches the Account page by its
+// address only, so the page checks below go there directly.
+if (await page.locator('.signin-pill:visible').count()) {
+  check('Signed out, the header door is the Sign in pill', (await page.locator('.account-door:visible').count()) === 0);
+  await page.goto(new globalThis.URL('?tab=account', page.url()).href, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(2500);
+} else {
+  await page.locator('.account-door[aria-label^="Account"]').click();
+}
 await page.waitForTimeout(1200);
 check('Account opens the account page', await page.locator('.ac-panel').isVisible());
 check('Account has an address', /[?&]tab=account/.test(page.url()), page.url());

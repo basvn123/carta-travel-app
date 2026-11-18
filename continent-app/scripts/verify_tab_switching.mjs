@@ -67,17 +67,31 @@ const READ = () => {
     account: !!document.querySelector('.ac-panel'),
     saved: !!document.querySelector('.saved-trips-panel:not(.ac-panel):not(.tg-panel)'),
     lifestyle: !!document.querySelector('.lifestyle-panel'),
+    // G12 (explore polish): the Style dock in the bottom-left corner is the
+    // style door on Explore now.
+    styleDock: !!document.querySelector('.dock-card--corner.is-open'),
     hdrActive: [...document.querySelectorAll('.header-nav-item.active .header-nav-label')].map((b) => b.textContent.trim()).join(','),
     avatarOn: !!document.querySelector('.account-door.on'),
     tab: new URLSearchParams(location.search).get('tab') || 'explore',
     mode: new URLSearchParams(location.search).get('mode') || '',
     sbw: getComputedStyle(document.documentElement).getPropertyValue('--sbw').trim(),
     // T1089: Explore no longer portals a search field into the header; its
-    // header settings line (the From part) is what only Explore draws.
-    slotFields: [...document.querySelectorAll('.settings-part-origin')].filter((e) => { const r = e.getBoundingClientRect(); return r.width > 2 && r.height > 2; }).length,
+    // header settings line (the From part) is what only Explore drew. G12:
+    // that line left Explore for the Trip dock under the tabs, so the dock's
+    // trigger is what only Explore draws.
+    slotFields: [...document.querySelectorAll('.explore-tab .trip-dock .dock-trigger')].filter((e) => { const r = e.getBoundingClientRect(); return r.width > 2 && r.height > 2; }).length,
     exploreScroll: document.querySelector('.explore-tab')?.scrollTop ?? null,
   };
 };
+
+// G12 (explore polish, step 10): signed out the header door is the Sign in
+// pill, which opens sign-in; a guest reaches Account by its address only.
+async function openAccount(page) {
+  const door = page.locator('.account-door:not(.tg-door):visible');
+  if (await door.count()) return door.first().click();
+  await page.goto(new globalThis.URL('?tab=account', page.url()).href, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(2500);
+}
 
 async function open(viewport) {
   const page = await browser.newPage({ viewport });
@@ -160,11 +174,11 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
 
   // 2 + 3: the account page must not survive a section switch.
   for (const [to, body] of [['Explore', 'explore']]) {
-    await page.locator('.account-door:not(.tg-door)').click();
+    await openAccount(page);
     await page.waitForTimeout(900);
     const opened = await read();
     check(`account page open marks the avatar, not a tab (before ${to})`,
-      opened.account && opened.avatarOn && opened.hdrActive === '', JSON.stringify(opened).slice(0, 120));
+      opened.account && (opened.avatarOn || !(await page.locator('.account-door:not(.tg-door)').count())) && opened.hdrActive === '', JSON.stringify(opened).slice(0, 120));
     await nav(to);
     await page.waitForTimeout(2200);
     const s = await read();
@@ -206,15 +220,16 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
   // T401: Explore's own Lifestyle button is gone (explore V3 and V4 left the
   // settings line as the one door), so the door is the first visible one: the
   // settings line's Lifestyle part, or the older button where a tab still draws it.
-  await page.locator('.settings-part-lifestyle:visible, .settings-bed:visible, .lifestyle-btn:visible').first().click();
+  // G12: the door is the Style dock disc, a popover on a desktop.
+  await page.locator('.dock--corner .dock-trigger:visible').first().click();
   await page.waitForTimeout(900);
-  check('Lifestyle opens on Explore', await read().then((s) => s.lifestyle));
+  check('Lifestyle opens on Explore', await read().then((s) => s.styleDock));
   const swallowed = await page.locator('.header-nav-item').nth(1)
     .click({ timeout: 3000 }).then(() => false).catch(() => true);
   check('the Lifestyle scrim does not cover the section tabs', !swallowed);
   await page.waitForTimeout(2200);
   check('Lifestyle closes on switching to Plan',
-    await read().then((s) => !s.lifestyle && !s.explore && s.hdrActive === 'Plan'));
+    await read().then((s) => !s.styleDock && !s.lifestyle && !s.explore && s.hdrActive === 'Plan'));
 
   // 6: keep-alive and the bar's gutter.
   await nav('Explore');
@@ -260,7 +275,7 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
   check('phone: the bottom nav carries three links',
     await page.locator('nav.bottom-nav[aria-label="Sections"] a.bottom-nav-item').count() === 3);
 
-  await page.locator('.account-door:not(.tg-door)').click();
+  await openAccount(page);
   await page.waitForTimeout(1100);
   check('phone: Account opens', await read().then((s) => s.account));
   await item(0);
