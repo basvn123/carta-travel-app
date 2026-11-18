@@ -17,6 +17,7 @@ export const it = {
   "alerts.error": "Non ha funzionato. Riprova più tardi.",
   "alerts.note": "Il totale è una stima di Carta dai prezzi di alloggi e voli, non un preventivo di prenotazione.",
   'shell.tagline': "Mappando l'Europa",
+  'shell.slowLoad': 'Ci vuole più del solito',
   'shell.failedToLoad': 'Caricamento non riuscito: {error}',
   'toast.emailConfirmed': 'Email confermata. Benvenuto su Carta.',
   'a11y.dismiss': 'Chiudi',

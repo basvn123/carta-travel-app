@@ -22,6 +22,7 @@ export const en = {
   "alerts.note": "The total is Carta's estimate from stay and flight prices, not a booking quote.",
   // Brand & shell
   'shell.tagline': 'Charting Europe',
+  'shell.slowLoad': 'Taking longer than usual',
   'shell.failedToLoad': 'Failed to load: {error}',
   'toast.emailConfirmed': 'Email confirmed. Welcome to Carta.',
   'a11y.dismiss': 'Dismiss',

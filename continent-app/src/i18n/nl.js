@@ -17,6 +17,7 @@ export const nl = {
   "alerts.error": "Dat lukte niet. Probeer het later opnieuw.",
   "alerts.note": "Het totaal is een schatting van Carta op basis van prijzen voor verblijf en vluchten, geen boekingsofferte.",
   'shell.tagline': 'Europa in kaart',
+  'shell.slowLoad': 'Dit duurt langer dan normaal',
   'shell.failedToLoad': 'Laden mislukt: {error}',
   'toast.emailConfirmed': 'E-mail bevestigd. Welkom bij Carta.',
   'a11y.dismiss': 'Sluiten',

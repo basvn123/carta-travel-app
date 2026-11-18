@@ -2,7 +2,7 @@
 
 What is left here needs a person, or a system that one lane of the owner sweep did not own. On 2026-11-12 the owner sweep went through all 81 rows. It closed 49 of them as done, decided, already done or obsolete; `.work/2026-11-12-owner-review/report.md` names each one with its reason, and the engineering follow-ups moved into their ROADMAP items. When a step is done, delete it here (docs/decisions/0003-open-items-owner-steps-and-roadmap.md).
 
-Rows: 60 steps (14 numbered, 46 in the table), recounted by owner sweep round 2 on 2026-11-12.
+Rows: 61 steps (15 numbered, 46 in the table), recounted by owner sweep round 2 on 2026-11-12.
 
 ## Steps only you can do
 
@@ -23,6 +23,7 @@ Rows: 60 steps (14 numbered, 46 in the table), recounted by owner sweep round 2 
 12. **T1040-d / T1162-a** (orchestrator) Delete the stale nested repo `continent-app/.git` in the main checkout. Bundle it outside the tree first if disk allows.
 13. **T235-a** (supabase, then security; two values from you) Once migration 041 is live, set the Actions secrets `CARTA_SUPABASE_URL` and `SUPABASE_ANON_KEY` from `continent-app/.env`. You supply `CARTA_SUPABASE_SERVICE_KEY` and `ALERT_WEBHOOK_URL` (a Slack hook or an ntfy topic URL).
 14. **T887-b** (after the next ship) On a live trip page, note the total, tap "Add a hire car, +€…", and check that the total grows by exactly that amount.
+15. **G5-a** (your yes, then any session) The installed app's launch colour. `continent-app/public/manifest.webmanifest` is a protected path; with your yes, set `background_color` to the opening screen's deep umber (`#5a3716`, `--umber-800`) so an installed Carta opens umber to umber instead of stone, then umber. Leave `theme_color` as it is. Then open the installed app on a phone and look at the first two seconds. Done when the launch shows no stone flash.
 
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 

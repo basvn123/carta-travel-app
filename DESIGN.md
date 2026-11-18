@@ -403,6 +403,8 @@ Check: `node scripts/verify_relief.mjs --port <port> --pages "/?styleguide,<your
 
 Use: `<ReliefBand mountains={dossier.nearby.mountains} seed={place.id} cut="55%">…flat-side text…</ReliefBand>`.
 
+**The opening screen (G5, owner choice "deep umber", 2026-11-17)** is the one place the relief leaves rules 3 to 5 and 7, on purpose. It fills the bottom 40 % of a full deep umber ground (`--umber-800` with a soft `--umber-700` glow), drawn from Chamonix's own peaks (`gem:chamonix`, `nearby.mountains`) with one tag, "Mont Blanc 4,806 m". There is no cut: the zone fades in over its top third, and the words centre above it so no contour runs under them. Lit lines are `--umber-100` at 42 %, shade lines ink at 38 %, tuned for the dark ground. It rises in once (a clip from the bottom, 1.4 s) and never moves again. The blaze paints itself (halo, stripe left to right, then the heel), the name lifts in letter by letter, and the house loading mark (`.hs-wait`) shows once the opening has played. When the app is ready, the whole screen lifts away like a curtain with rounded bottom corners. Under reduced motion everything shows at rest and it goes at once. Files: `continent-app/index.html` (markup), `src/styles/06-boot-splash.css`, `src/lib/bootSplash.js`, `src/components/LoadingScreen.jsx`; HANDBOOK "Opening screen".
+
 ## Signature components
 
 All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05-house.css` with the `hs-` prefix.
@@ -506,7 +508,7 @@ A figure animates only within a second of the traveller's own change (`mine` win
 
 ### What never animates
 
-A price the traveller did not change, list order while reading, anything at first paint, the map camera on its own, the relief (beyond its one fade), hover beyond a colour change, focus rings, loops other than a real loading indicator, blur, confetti, sparkles, sound.
+A price the traveller did not change, list order while reading, anything at first paint (the opening screen is the one exception, see "Background graphics"), the map camera on its own, the relief (beyond its one fade), hover beyond a colour change, focus rings, loops other than a real loading indicator, blur, confetti, sparkles, sound.
 
 ## Home page
 
