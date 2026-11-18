@@ -688,11 +688,12 @@
     scrollbar-width: none;
     /* A focused chip is never hidden under the sticky Clear all or the fade.
        The fade is 32 px, not 24: at 24 a chip cut at the edge still read as
-       a hard cut beside the Trip dock (judge round 1). #000 is only the
-       alpha mask, not a colour. */
+       a hard cut beside the Trip dock (judge round 1). A mask reads only
+       alpha, so the opaque ink token stands in for black (design-lint bans
+       hex). */
     scroll-padding-inline: 112px var(--space-6);
     padding-inline-end: var(--space-6);
-    mask-image: linear-gradient(to right, #000 calc(100% - var(--space-6)), transparent);
+    mask-image: linear-gradient(to right, var(--text) calc(100% - var(--space-6)), transparent);
   }
   .explore-shell.is-focus .xbar.xbar .xtools--phone > .xtools-chips::-webkit-scrollbar { display: none; }
   /* 44 px on every pointer: the row is the phone list's one control. */

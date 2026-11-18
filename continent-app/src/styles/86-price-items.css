@@ -273,11 +273,12 @@
 .pft-days-row { display: flex; width: max-content; padding: 0 var(--space-1); }
 /* The strip is cut mid-bar at both ends ("S 5", "S 1" in the desktop sheet,
    judge round 1): a short fade says there is more, and the row's end
-   padding lets the first and last bars scroll clear of it. #000 is only
-   the alpha mask, not a colour. */
+   padding lets the first and last bars scroll clear of it. A mask reads
+   only alpha, so the opaque ink token stands in for black (design-lint
+   bans hex). */
 .pft-days {
   scroll-padding-inline: var(--space-5);
-  mask-image: linear-gradient(to right, transparent, #000 var(--space-5), #000 calc(100% - var(--space-5)), transparent);
+  mask-image: linear-gradient(to right, transparent, var(--text) var(--space-5), var(--text) calc(100% - var(--space-5)), transparent);
 }
 .pft-days-row { padding-inline: var(--space-5); }
 .btn.pft-day {

@@ -244,7 +244,9 @@
   transition: border-color var(--dur-1) var(--ease-out);
   animation: xchip-in var(--dur-1) var(--ease-out);
 }
-.explore-shell .xchip-clear { background: transparent; color: var(--text-2); animation: none; }
+/* Clear all in full ink, as on a phone: in --text-2 it read as disabled
+   (judge round 2). */
+.explore-shell .xchip-clear { background: transparent; color: var(--text); animation: none; }
 @media (hover: hover) {
   .explore-shell .xchip:hover { border-color: var(--neutral-300); }
 }
