@@ -2379,8 +2379,9 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 4. **Rendering.** `LayerPhoto.jsx` renders `<picture>`: AVIF, then WebP, then an `<img>` with the Wikimedia URL.
    - Sizes: `HERO_SIZES = '(min-width: 769px) 860px, 100vw'`, `THUMB_SIZES = '(min-width: 769px) 215px, 25vw'`.
    - The hero loads eagerly with high priority and an AVIF preload. On error it falls back to the plain image.
-5. **Switch.** `lib/pictureFlag.js`: `PICTURE_LAYERS = ['beaches', 'lakes', 'mountains']`, turned on by `VITE_PICTURE_LAYERS` or `?pic=`. It is off when unset.
-6. **First paint: own copies first (H12, T1105).** Destination heroes and gallery photos (Explore cards and rails, the destination page mosaic and its similar cards) go through `HeroImage` / `LadderImg` (`components/HeroImage.jsx`) with the wire `image` record.
+5. **Switch.** `lib/pictureFlag.js`: `PICTURE_LAYERS = ['beaches', 'lakes', 'mountains']`, set by `VITE_PICTURE_LAYERS` or `?pic=`. Unset or empty means every layer (`BUILD_DEFAULT = 'all'`, T052-d, 2026-11-18); `off` turns it off. A record without `ih` shows Wikimedia as before.
+6. **Wire join (T052-d).** `run_pipeline.py` sets `CARTA_IMG_MANIFEST=cdn`, so every beach, lake and mountain export it runs fetches `img/manifest/<layer>.json` from the CDN (`wire_ladder.cdn_manifest`) and joins `ih`, `d` and `ph` into the wire. A 404 writes the wire without the ladder; a network failure uses the last good copy in `data/img_manifest/`. The monthly `picture_join` task re-exports the three layers (cache only, no Overpass) so a derive run on a worker reaches the wire. `--img-manifest off` or `CARTA_IMG_MANIFEST=off` writes a wire without it.
+7. **First paint: own copies first (H12, T1105).** Destination heroes and gallery photos (Explore cards and rails, the destination page mosaic and its similar cards) go through `HeroImage` / `LadderImg` (`components/HeroImage.jsx`) with the wire `image` record.
    - `lib/heroImage.js` `heroLadder(image, max)` works the address out in the browser: `commonsTitle(url)` folds the title exactly as `derive.canonical_title`, `sha1Hex` hashes it, and `ladderDims(w, h)` gives the rung sizes as `derive.rung_dims` (from the 1920 source, never upscaled, halves rounded to even). A record that already carries `ih` and `d` uses them.
    - Whether the copy exists comes from `lib/heroLadder.json` (`carta.hero-ladder.v1`), written by `pipeline/photos/hero_ladder.py` from derive.py's manifests: `live`, `missing` (12 hex characters of the title sha1 for each published photograph with no copy), `rev` (re-upload addresses) and `dims` (copies whose size differs from the wire's). `MAX_MISSING = 2500` keys; past that it stays not live and the ladder belongs on the wire (T052-d).
    - Not live, listed as missing, no w and h, not a Commons file, or `?pic=off`: the plain Wikimedia `<img>`, as before. A copy that fails to load drops that photograph back to Wikimedia.
@@ -2393,7 +2394,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 
 **Limits.**
 - The CDN is live since 2026-11-17: three `image_transcode` runs on CPX22 workers (no CAX41 was free in any EU location) derived the published photos of beaches, mountains, trails, cycling, region, dest and dossier (68,687; job argument `published`). Lakes waits on a lakes cache tarball without a rescore hold. T052-a and T235-d stay open.
-- Nothing joins the manifest into the wire, so production has no `ih` or `d` (T052-d).
+- The wire join is on since 2026-11-18 (T052-d); a layer's pages show its own copies after the first export that ran with it. Lakes have no manifest until their derive run, so lake pages stay on Wikimedia until then.
 - `heroLadder.json` is live since 2026-11-17: 13,887 of 13,976 destination and gallery photographs have a copy, 89 are listed missing, 1,798 carry their real rung sizes in `dims`. It adds about 25 KB gzip to the entry chunk; storing one source size per `dims` key instead of three rungs would cut most of it (H12).
 - Every surface except beach, lake and mountain pages still links to Wikimedia directly (T052-f).
 

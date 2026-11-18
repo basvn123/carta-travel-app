@@ -921,6 +921,10 @@ def main():
         log("(--also is ignored with --only: --only names exactly what runs)")
         args.also = ""
     also_keys(args)
+    # T052-d: every beach, lake and mountain export this run starts joins the
+    # image ladder from the CDN (pipeline/photos/wire_ladder.py). Set it to
+    # "off" in the environment to write a wire without it.
+    os.environ.setdefault("CARTA_IMG_MANIFEST", "cdn")
     if os.name != "nt":
         _exit_on_sigterm()
 

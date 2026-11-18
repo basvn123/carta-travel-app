@@ -1031,6 +1031,7 @@
       "tasks": [
         "beaches",
         "beach_context",
+        "picture_join",
         "rating_v5_profile"
       ],
       "writer": "pipeline/beaches/export_beaches.py",
@@ -1045,6 +1046,7 @@
       "tasks": [
         "lakes",
         "lake_detail",
+        "picture_join",
         "rating_v5_profile"
       ],
       "writer": "pipeline/lakes/export_lakes.py",
@@ -1059,6 +1061,7 @@
       "tasks": [
         "mountains",
         "peak_context",
+        "picture_join",
         "rating_v5_profile"
       ],
       "writer": "pipeline/mountains/export_peaks.py",
