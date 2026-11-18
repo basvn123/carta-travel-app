@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react';
 import { readSettings } from '../lib/settings/model.js';
 import { makeSettingsSetters } from '../lib/settings/setters.js';
 import { monthFrom as monthFromOf } from '../lib/settings/monthFrom.js';
+import { useStartNames } from '../lib/search/startNames.js';
 
 export function useAppSettingsValue({
   availableCountries, choices, countryFilter, countryNot, data, dateBounds, dateFlex,
@@ -17,10 +18,14 @@ export function useAppSettingsValue({
   // that write new fields do nothing).
   const choicesRef = useRef(choices);
   choicesRef.current = choices;
-  const model = useMemo(
+  const readModel = useMemo(
     () => readSettings(choices, { departDate, returnDate, dateFlex, ownDates, xm: exploreMonth }),
     [choices, departDate, returnDate, dateFlex, ownDates, exploreMonth],
   );
+  // The home town and "here" carry no names of their own; the gazetteer
+  // gives them in the UI language (Brussel, Bruxelles), so the start chip,
+  // the summary and the Settings Start row all read one model (fixes-r1).
+  const model = useStartNames(readModel, data);
   const set = useMemo(() => makeSettingsSetters({
     setChoices, setFrom, setDepartDate, setReturnDate, setDateFlex, setExploreMonth, data, sweptOrigins,
     getChoices: () => choicesRef.current,

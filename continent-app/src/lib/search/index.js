@@ -9,3 +9,4 @@ export { resolveIds, hitsFor, placesNear, NEAR_KM, NEAR_MIN, NEAR_MAX_KM } from 
 export { rememberPick, pickedHits, resetPicked } from './picked.js';
 export { readRecent, addRecent, clearRecent, MAX_RECENT } from './recent.js';
 export { cartaRegionsFrom } from './cartaRegions.js';
+export { townNames, namesFromTowns, startTown, useStartNames } from './startNames.js';

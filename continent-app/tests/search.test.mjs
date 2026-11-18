@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import {
   extractTokens, hasFeatures, shardsFor, prepareAreas, prepareTowns, cartaPlaces, suggest,
   resolveIds, hitsFor, placesNear, rememberPick, pickedHits, resetPicked, readRecent, addRecent,
-  clearRecent, cartaRegionsFrom, cartaTwin, NEAR_MIN,
+  clearRecent, cartaRegionsFrom, cartaTwin, NEAR_MIN, namesFromTowns, startTown,
 } from "../src/lib/search/index.js";
 import { querySearchIndex } from "../src/lib/searchIndex.js";
 
@@ -213,4 +213,17 @@ test("no dead-end rows: no 0-place feature row, no Near beside its own region (Q
   const towns = prepareTowns([[5, ["Valais"], 46.2, 7.5, "CH", "VS", 900]]);
   const items = suggest("valais", { places, towns, areas }).items;
   assert.equal(items.filter((x) => x.name === "Valais").length, 1);
+});
+
+test("the start town's names in every UI language come from the gazetteer", () => {
+  const towns = prepareTowns([
+    [2800866, ["Brussels", "Brussel", "Bruxelles"], 50.85, 4.35, "BE", "BRU", 1019022, { nl: "Brussel", fr: "Bruxelles", de: "Brüssel" }],
+    [1, ["Brussels"], 40.0, -80.0, "BE", "X", 9000000, { nl: "Elders" }],
+  ]);
+  assert.deepEqual(namesFromTowns(towns, "Brussels", 50.9, 4.48), { nl: "Brussel", fr: "Bruxelles", de: "Brüssel" });
+  assert.equal(namesFromTowns(towns, "Ghent", 51, 3.7), null);
+  const data = { meta: { origins: { BRU: { city: "Brussels", lat: 50.9, lon: 4.48 } } } };
+  assert.deepEqual(startTown({ originKind: "place", origin: "BRU" }, data), { name: "Brussels", lat: 50.9, lon: 4.48 });
+  assert.equal(startTown({ originKind: "country", originCountry: "BE" }, data), null);
+  assert.equal(startTown({ originKind: "place", fromPlace: { name: "Gent", lat: 51, lon: 3.7 } }, data).name, "Gent");
 });
