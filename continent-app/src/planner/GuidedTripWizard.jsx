@@ -351,7 +351,7 @@ export function GuidedTripWizard({
   // Travel style: one answer that sets what a bed and a day cost everywhere
   // (stay tier + eating-out cadence, see wizardTransit.TRAVEL_STYLES). The
   // wizard no longer asks for it as a step of its own; it follows the app's
-  // own lifestyle panel until the Where quiz starts setting it.
+  // own Lifestyle (the travel style's) until the Where quiz starts setting it.
   const [travelStyle, setTravelStyle] = useState(() => (
     plannerStore.getState().travelers.lifestyle
     || TRAVEL_STYLES.find((st) => st.stayTier === stayTier)?.key
@@ -400,10 +400,8 @@ export function GuidedTripWizard({
     }
     return list;
   }, [originPoint, data?.meta, originCode, originRec, originCity]);
-  // What a bed costs follows the travel style, not the app-wide lifestyle
-  // panel; the panel's tier still stands when the style says nothing.
-  // What a bed costs follows the Lifestyle panel (T432): the wizard used to
-  // keep a travel style of its own, so its estimate and the planned trip read
+  // What a bed costs follows the app's stay tier, which the active travel
+  // style sets (T432): the wizard used to keep a travel style of its own, so its estimate and the planned trip read
   // the Lifestyle from two places and disagreed.
   const effectiveStayTier = stayTier || 'home';
 

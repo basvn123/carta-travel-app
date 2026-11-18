@@ -89,8 +89,8 @@ const PARTY = {
 /**
  * The starting styles, one per kind of company. Each is a sensible guess a
  * traveller then makes their own; the names are i18n keys until renamed.
- * The bed and the table are the Lifestyle panel's own tiers and presets, so
- * a template never prices anything the panel could not. The personas are
+ * The bed and the table are the studio's spend step's own tiers and presets,
+ * so a template never prices anything that step could not. The personas are
  * not set here: they follow from the rest (derivePersonas), as on every save.
  */
 export const TEMPLATES = {
@@ -141,7 +141,7 @@ const clampInt = (v, lo, hi, d) => {
 const oneOf = (v, list, d) => (list.includes(v) ? v : d);
 const someOf = (v, list, max = 99) => (Array.isArray(v) ? [...new Set(v.filter((x) => list.includes(x)))].slice(0, max) : []);
 
-/** The lifestyle counts made safe (the same keys the Lifestyle panel keeps). */
+/** The lifestyle counts made safe (the same keys the studio's spend step keeps). */
 function lifestyleOf(raw) {
   const base = { ...DEFAULT_LIFESTYLE };
   if (!raw || typeof raw !== 'object') return base;
@@ -352,7 +352,8 @@ export function kindOfCounts(adults, kids, babies = 0) {
 /**
  * The style with its "how you stay" half read from the app's choices. Called
  * whenever those choices move, so the active style follows every edit made
- * through the Lifestyle panel, the settings line or the planner.
+ * through the settings line or the planner (the Style Studio saves the
+ * style itself).
  * Returns `style` itself when nothing moved.
  */
 export function styleFromChoices(style, choices = {}) {

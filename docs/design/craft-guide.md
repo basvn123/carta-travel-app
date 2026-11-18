@@ -138,7 +138,7 @@ Strong products own three to five of the systems below, drawn from one idea. Pla
 **An illustration system.** Written as constraints so a new drawing takes minutes: stroke width, colour limit, what is never shown. Prefer diagrams that explain (a day, a leg, a price) over decorative scenes. It goes wrong when every use needs an illustrator, when it looks like generic generated vector art, or when screens mix styles.
 
 **A characterful icon set.** One grid, one stroke logic, one recognisable quirk (a cut corner, an open terminal), so the set is identifiable at 16 px. Pair with a word wherever meaning is not universal; tap area stays 44 px.
-- In this app: custom icons on a 24 px grid, 1.75 stroke, square caps, mitred joins: signpost for Explore, route for Plan, a cairn of four flat stones for save, rings for Together, borders for countries (no globe). No sparkle for AI: the Ask button carries a small boxed "AI" tag.
+- In this app: custom icons on a 24 px grid, 1.75 stroke, square caps, mitred joins: signpost for Explore, route for Plan, a ticket for My trips, a bookmark for save, rings for Together, borders for countries (no globe). No sparkle for AI: the Ask button carries a small boxed "AI" tag.
 
 **A type system with personality.** A readable text and figure face plus personality in two or three roles only (display, large figures, one label role). Use weight, width and optical size for hierarchy instead of many sizes; at most five or six sizes in use.
 - Choose the text face first: legible at 13 to 16 px, real tabular figures, every glyph your languages need.

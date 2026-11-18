@@ -6,10 +6,10 @@
  * low end is a week of cheap beds and cooking, the high end a week of hotel
  * rooms and dinners out. The slider places the traveller between the two.
  *
- * It is not a second control. Its stops are the Lifestyle panel's own "Where
+ * It is not a second control. Its stops are the Style Studio's own "Where
  * you sleep" answers (offeredSleepGroups, cheapest first) and moving it writes
- * the same setting the panel's tiles write, choices.stay_tier, so the trip
- * page, the panel and every other price in the app agree on one answer.
+ * the same setting a style's bed sets, choices.stay_tier, so the trip page,
+ * the studio and every other price in the app agree on one answer.
  *
  * Stop i of n sits at share i / (n - 1) of the way from low to high, and each
  * figure is placed at that share of its own range. Whole euros, because the
@@ -27,7 +27,7 @@ import { formatMoney } from './money.js';
 export const BUDGET_SLOTS = ['accommodation', 'food', 'transport', 'activities'];
 
 /** Index of the stop that holds the stored tier. A tier the dataset does not
- *  offer resolves the way the panel resolves it (sleepGroupOf), then to the
+ *  offer resolves the way the studio resolves it (sleepGroupOf), then to the
  *  entire place, then to the first stop. */
 export function stopIndexFor(stops, stayTier) {
   if (!stops?.length) return -1;

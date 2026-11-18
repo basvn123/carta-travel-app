@@ -3,10 +3,10 @@
  *
  * Eight priced stay tiers are three choices: a hostel, a home or a hotel.
  * "Which bed", "which home" and "which hotel" are each a second question, not
- * more tiles, so the Lifestyle panel and the planner draw one tile per kind
+ * more tiles, so the Style Studio's spend step and the planner draw one tile per kind
  * and, under the chosen kind, one segmented row of its options.
  *
- * Lives outside the panel because the panel is .jsx and carries icons, and
+ * Lives outside the studio because its steps are .jsx and carry icons, and
  * the headless harness has to be able to import the table on its own.
  *
  * `tiers` is in preference order, so a kind with nothing chosen inside it
@@ -37,7 +37,7 @@ const GROUP_OPTIONS = {
 
 /** The kinds a dataset can offer, cheapest first, each carrying the tiers
  *  it can price (`offered`, in preference order). A kind with nothing
- *  priced is left out. The Lifestyle panel draws these as tiles and the
+ *  priced is left out. The studio's spend step draws these as tiles and the
  *  trip page (T173) draws the same list as a stepped slider, so both read
  *  one table and write one setting, choices.stay_tier. */
 export function offeredSleepGroups(stayTiers) {
@@ -61,7 +61,7 @@ export function tierForGroup(g, current) {
 
 /** Which tile a stored tier belongs to. Anything unrecognised resolves to the
  *  home, because choices.stay_tier is restored from URLs and from accounts
- *  and must always land somewhere the panel can show back. */
+ *  and must always land somewhere the studio can show back. */
 export function sleepGroupOf(tier) {
   const t = tier === 'hotel' ? 'hotel3' : tier;
   return SLEEP_GROUPS.find((g) => g.tiers.includes(t))?.key || 'home';

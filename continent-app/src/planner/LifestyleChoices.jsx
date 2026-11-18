@@ -8,12 +8,13 @@ import { Segmented, Tile, TileGroup } from '../components/ui/index.js';
 import { useSettings } from '../components/SettingsLine.jsx';
 
 /**
- * The Lifestyle panel's two answers, embedded in the trip planner's Who step
- * (T432): where you sleep, and how you spend a day. Not a second setting: the
- * tiles read and write the same choices.stay_tier and choices.lifestyle the
- * panel does, so the planner, the panel, Explore and every price in the app
- * move together (carta-design, "Lifestyle control"). The panel itself stays
- * one tap away on the price card for the hotel grade and the six habits.
+ * The two spend answers, embedded in the trip planner's Who step (T432):
+ * where you sleep, and how you spend a day. Not a second setting: the tiles
+ * read and write the same choices.stay_tier and choices.lifestyle a travel
+ * style sets, so the planner, the Style Studio, Explore and every price in
+ * the app move together (carta-design, "Lifestyle control"). The studio's
+ * spend step stays one tap away on the price card for the hotel grade and
+ * the six habits.
  */
 export function LifestyleChoices() {
   const { t } = useI18n();

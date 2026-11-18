@@ -10,7 +10,7 @@ import { useSettings } from '../../components/SettingsLine.jsx';
 const TYPE_ICONS = { apartment: HomeIcon, hotel: HotelIcon, hostel: BunkIcon };
 
 // The planner asks three types (owner, plan flow walk 2026-10-30): a room in
-// a home stays a Lifestyle panel choice, and no price shows here because a
+// a home stays a travel style choice (the Style Studio's spend step), and no price shows here because a
 // night's price depends on the destination.
 const PLAN_TYPES = new Set(['apartment', 'hotel', 'hostel']);
 

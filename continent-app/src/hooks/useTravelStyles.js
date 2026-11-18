@@ -24,8 +24,8 @@ export function loadStoredStyles() {
  * The traveller's travel styles (lib/travelStyles.js), kept in
  * `choices.travel_styles`. The rules that live here:
  *
- *  1. The active style follows the app's own choices: a bed changed in the
- *     Lifestyle panel or a head count on the settings line is written into
+ *  1. The active style follows the app's own choices: a bed changed for the
+ *     whole app or a head count on the settings line is written into
  *     the active style, so there is no "save to style" step for them.
  *     Except while the style is held (`choices.style_held`): a change made
  *     for one trip (the planner's Who, Tell Carta's words, the way there of

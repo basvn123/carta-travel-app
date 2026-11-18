@@ -41,7 +41,8 @@
  * not a measurement of this town, and saying so is the difference between an
  * instrument and a guess.
  *
- * LIFESTYLE. The figures answer to the Lifestyle panel, because a page that
+ * LIFESTYLE. The figures answer to the travel style's Lifestyle (the Style
+ * Studio's spend step), because a page that
  * shows a control and a price has promised the control moves the price. Food
  * is priced through groundSpendPerPerson, the same function the trip receipt
  * and the day planner use, so a card and a receipt cannot disagree about what

@@ -12,7 +12,7 @@
  *   group       { adults, children, babies } (lib/party.js partyOf, the one
  *               definition of a group)
  *   stay        a lib/stayPrice.js tier id
- *   lifestyle   the Lifestyle panel's frequencies
+ *   lifestyle   the travel style's eating and drinking frequencies (the studio's spend step)
  *   transport   'any' | 'plane' | 'train' | 'bus' | 'car'
  *   origin, driveHome, baggage   for the way there (not the day price)
  *   view        'pp' (per person, the default) | 'total' (F4)

@@ -160,8 +160,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   const [saveState, setSaveState] = useState('idle'); // idle | saving | saved
   const [planned, setPlanned] = useState(draft?.planned || false); // true = show the day-by-day itinerary view
   // How the days are priced: the app's own Lifestyle, live (T432). A trip
-  // used to freeze the eating habits it was handed at, so changing them in
-  // the Lifestyle panel moved every price in the app except this one.
+  // used to freeze the eating habits it was handed at, so changing them for
+  // the whole app moved every price except this one.
   // A trip handed over with its own eating habits (the trip finder's Food
   // choice, T816) keeps them until the traveller changes the Lifestyle:
   // `base` is the app's Lifestyle at the hand-over, and once it moves the

@@ -154,7 +154,7 @@ export function lifestyleKey(name) {
  * The chip's words (Explore header, Account): at most `max` summary keys and
  * how many more there are. A taste that names only who comes, or only the
  * Lifestyle preset, reads as that ("For you: family"), so a set taste never
- * shows an empty chip. The preset's word is the Lifestyle panel's own
+ * shows an empty chip. The preset's word is the studio's spend step's own
  * (lifestyle.profileCafeCulture for cafe_culture).
  */
 export function tasteChipWords(raw, max = 3) {

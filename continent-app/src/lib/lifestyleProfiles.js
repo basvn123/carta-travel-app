@@ -3,9 +3,9 @@
  *
  * Per-person presets, defined in the weekly cadence. Picking one applies the
  * preset in its native weekly cadence (a weekly rate like 5 dinners/week can't
- * be shown faithfully as a per-day integer, so the panel snaps back to per-week
- * - this keeps the priced spend exactly equal to the preset and lets the active
- * tile highlight correctly).
+ * be shown faithfully as a per-day integer, so the studio's spend step snaps
+ * back to per-week; this keeps the priced spend exactly equal to the preset
+ * and lets the active tile highlight correctly).
  *
  * Lives in lib, not in a component, so pure modules (lib/tripPrice.js, which
  * places a trip's written budget at the traveller's Lifestyle) and the node
