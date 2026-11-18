@@ -41,5 +41,33 @@ Found on the way: the desktop strip's `minmax(256px, 25%)` never grows in an ove
 ## Changed files
 App: `src/browse/ExploreRails.jsx`, `src/browse/explore/useExploreRails.js`, `src/browse/explore/railLeads.js` (new), `src/browse/explore/HouseParts.jsx` (`slot`), `src/components/ui/Rail.jsx`, `src/components/AppHeader.jsx`, styles `05-house.css`, `80-story-rail.css`, `85-explore-rails.css` (new), `90-together.css`, six i18n catalogues (14 keys each). Tests: `tests/exploreRails.test.mjs` (new), `tests/hs-explore-parts.test.mjs`, `tests/headerPills.test.mjs`. Scripts: `scripts/verify_explore.mjs`. Docs: `docs/HANDBOOK.md` (Explore item 10, header pills), `DESIGN.md` (Rail and RailCard), `ROADMAP.md` (G12).
 
+## Merge (p15-integrate-2026-11-18, from origin/main)
+Four sessions brought together, in this order: `p15-explore-polish` (Explore redesign, G12, D10), `p15-app-feel` (the native-app feel: the bottom nav folds while a list scrolls, installed-app touch defaults, iPhone launch screens, I7; taken as the "native tabs" session, no branch carried that name), `p15-splash-deep-umber` (the opening screen, G5), `p15-explore-rails` (this run). One conflict, `.work/INDEX.md`: both lines kept.
+
+Two fixes found on the merged branch:
+- impeccable detect flagged the chosen flight row's 3 px side stripe (explore polish); it now takes the house selected (wash, umber edge all round).
+- The first frames showed Hidden gems under Top rated, then thirteen vibe rails arriving above it: the rails now wait for the guided data past Top rated (checked: earlier rails never move).
+
+Left as is, with a note: app feel's bar folds by easing `height` and `padding` (impeccable: layout transition). It runs once per fold, not per scroll frame, and gives the 16 px back to the layouts behind it; a transform would not.
+
+| Check on the merge | Result |
+|---|---|
+| npm run lint | 0 errors (13 baseline warnings) |
+| design-lint | 0 new |
+| impeccable detect (46 UI files) | clean after the fix, the fold note above |
+| Fast build | passes |
+| Docs | check_entry_points OK; drift.py flags only the SCHEMA wire table, as on the base |
+| ruff | passes (no Python changed) |
+| npm test | 2227 tests, 2201 pass, 20 fail, every one on the explore polish run's base or timeout lists; none new. Files that timed out under load pass alone |
+| The four branches' own tests together | 120/120 |
+| verify_explore | 105/105 |
+| verify_bottom_nav | 0 failed (with the folding nav) |
+| verify_docks | 52/52 |
+| verify_together_signin | 10/10 (AUTH_OFF) |
+| Bottom nav fold | 64 to 48 px on scroll, labels folded |
+
+Not done: pushing, merging into main, deploying. Owner's call.
+Undo the merge: `git revert -m 1 <merge>` per branch, or drop the branch.
+
 ## Undo
 `git revert` the Explore rails commit (or `git revert -m 1` its merge). No data, schema, settings or URL change.
