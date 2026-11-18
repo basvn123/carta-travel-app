@@ -51,6 +51,26 @@ const waitForServer = async () => {
   throw new Error('vite preview never came up');
 };
 
+
+// G12 (explore polish): the settings line's Lifestyle part left Explore; the
+// style door is the Style dock disc in the bottom-left corner. Its "Open all
+// settings" opens the Travel styles sheet, whose bed row names the bed and
+// the habits (what the old door said) and opens the Lifestyle panel. A first
+// visit has no style, so the first template is picked.
+async function styleDoor(page) {
+  const disc = page.locator('.dock--corner .dock-trigger:visible').first();
+  if (!(await disc.count())) return null;
+  await disc.click();
+  await page.waitForTimeout(700);
+  const card = page.locator('.dock-card--corner.is-open');
+  const tpl = card.locator('.style-dock-templates .tstyle-tpl').first();
+  if (await tpl.isVisible().catch(() => false)) { await tpl.click(); await page.waitForTimeout(700); }
+  await card.locator('.style-dock-foot .btn').first().click();
+  await page.waitForTimeout(900);
+  const row = page.locator('.tstyle-row:visible').first();
+  return (await row.count()) ? row : null;
+}
+
 const dismiss = async (page) => {
   for (const label of ['Continue without an account', 'Got it', 'START HERE']) {
     const b = page.getByRole('button', { name: label });
@@ -81,8 +101,8 @@ try {
   // header carries the Lifestyle part (T381). Either counts, the first
   // visible one is used, and it must state both answers. This used to look
   // for '.explore-side .lifestyle-btn' only.
-  const exploreBtn = page.locator('.explore-shell .lifestyle-btn:visible, .settings-part-lifestyle:visible').first();
-  if (!(await exploreBtn.count())) fail('Explore has no lifestyle door');
+  let exploreBtn = await styleDoor(page);
+  if (!exploreBtn) fail('Explore has no lifestyle door');
   const doorText = (await exploreBtn.innerText()).replace(/\s+/g, ' ');
   console.log('explore door reads:', JSON.stringify(doorText));
   if (!/Entire place/i.test(doorText)) fail(`door shows "${doorText}", expected the entire-place default`);
@@ -161,7 +181,9 @@ try {
   // --tap box); it was '.panel-close' with a letter x.
   await page.locator('.lifestyle-panel .ls-close').first().click();
   await page.waitForTimeout(700);
-  const doorVibe = (await exploreBtn.innerText()).replace(/\s+/g, ' ');
+  exploreBtn = await styleDoor(page);
+  const doorVibe = exploreBtn ? (await exploreBtn.innerText()).replace(/\s+/g, ' ') : '';
+  await page.keyboard.press('Escape');
   if (!/Custom/i.test(doorVibe)) fail(`door reads "${doorVibe}" after hand-tuning, expected Custom`);
 
   // ---- The same door on Destinations ----
@@ -177,9 +199,10 @@ try {
   // the first visible one must state the tier just set. This used to require
   // the side panel's door, which the default category (the trip library)
   // does not draw.
-  const placesBtn = page.locator('.side-panel .lifestyle-btn:visible, .settings-part-lifestyle:visible').first();
-  if (!(await placesBtn.count())) fail('Destinations has no lifestyle door');
-  const placesBed = await placesBtn.locator('.lifestyle-btn-bed, .settings-part-value').first().innerText();
+  const placesBtn = await styleDoor(page);
+  if (!placesBtn) fail('Destinations has no lifestyle door');
+  const placesBed = await placesBtn.innerText();
+  await page.keyboard.press('Escape');
   console.log('destinations door reads:', JSON.stringify(placesBed));
   if (!/5-star hotel/i.test(placesBed)) fail(`Destinations door shows "${placesBed}", not the tier just set`);
   await page.screenshot({ path: `${SHOTS}/lifestyle-door-destinations.png` });
@@ -219,8 +242,8 @@ try {
   await phone.waitForTimeout(700);
   // T391: Explore v5's phone row and the settings line both carry a door
   // (see the desktop note above); this looked for '.explore-chips' before.
-  const phoneBtn = phone.locator('.settings-part-lifestyle:visible, .explore-shell .lifestyle-btn:visible').first();
-  if (!(await phoneBtn.count())) fail('phone has no lifestyle door');
+  const phoneBtn = await styleDoor(phone);
+  if (!phoneBtn) fail('phone has no lifestyle door');
   // The word "Lifestyle" stands down on a phone so the answer gets the room.
   const labelShown = await phoneBtn.locator('.lifestyle-btn-label, .settings-part-label').first()
     .evaluate((el) => getComputedStyle(el).display).catch(() => 'none');

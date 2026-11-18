@@ -103,6 +103,26 @@ const waitForServer = async () => {
   throw new Error('vite preview never came up');
 };
 
+
+// G12 (explore polish): the settings line's Lifestyle part left Explore; the
+// style door is the Style dock disc in the bottom-left corner. Its "Open all
+// settings" opens the Travel styles sheet, whose bed row names the bed and
+// the habits (what the old door said) and opens the Lifestyle panel. A first
+// visit has no style, so the first template is picked.
+async function styleDoor(page) {
+  const disc = page.locator('.dock--corner .dock-trigger:visible').first();
+  if (!(await disc.count())) return null;
+  await disc.click();
+  await page.waitForTimeout(700);
+  const card = page.locator('.dock-card--corner.is-open');
+  const tpl = card.locator('.style-dock-templates .tstyle-tpl').first();
+  if (await tpl.isVisible().catch(() => false)) { await tpl.click(); await page.waitForTimeout(700); }
+  await card.locator('.style-dock-foot .btn').first().click();
+  await page.waitForTimeout(900);
+  const row = page.locator('.tstyle-row:visible').first();
+  return (await row.count()) ? row : null;
+}
+
 try {
   await waitForServer();
   const browser = await chromium.launch();
@@ -131,10 +151,11 @@ try {
   // the control that ships.
   // T1089: on a desktop the header settings line carries it, as
   // .settings-part-lifestyle (aria-label "Lifestyle: Dorm bed, Easygoing, change").
-  const stayDoor = page.locator('.settings-part-lifestyle:visible').first();
-  await stayDoor.waitFor({ timeout: 30000 }).catch(() => {});
-  if (!(await stayDoor.count())) fail('lifestyle door missing on Explore');
-  const stayLabel = (await stayDoor.getAttribute('aria-label')) || '';
+  await page.locator('.dock--corner .dock-trigger').first().waitFor({ timeout: 30000 }).catch(() => {});
+  const stayDoor = await styleDoor(page);
+  if (!stayDoor) fail('lifestyle door missing on Explore');
+  const stayLabel = stayDoor ? await stayDoor.innerText() : '';
+  await page.keyboard.press('Escape');
   console.log('lifestyle door reads:', JSON.stringify(stayLabel.replace(/\s+/g, ' ')));
   if (!/Dorm bed/i.test(stayLabel)) fail('st=dorm URL param not restored into the door');
 
@@ -154,7 +175,8 @@ try {
     const btn = page.getByRole('button', { name: label });
     if (await btn.count()) await btn.first().click().catch(() => {});
   }
-  await page.locator('.settings-part-lifestyle:visible').first().click();
+  await page.locator('.dock--corner .dock-trigger').first().waitFor({ timeout: 30000 }).catch(() => {});
+  await (await styleDoor(page))?.click();
   await page.waitForTimeout(700);
   // T1089: three sleep tiles now (Hostel, Home, Hotel); the exact bed is a
   // segmented row under the chosen tile (Dorm bed / Private room; 2 to 5 star).
@@ -176,7 +198,10 @@ try {
   await page.locator('.ls-kind .seg-item', { hasText: 'Dorm bed' }).first().click();
   await page.waitForTimeout(1200);
   if (!/[?&]st=dorm/.test(page.url())) fail(`stay tier not in the URL after the panel click: ${page.url()}`);
-  const barText = (await page.locator('.settings-part-lifestyle:visible').first().getAttribute('aria-label')) || '';
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  const barRow = await styleDoor(page);
+  const barText = barRow ? await barRow.innerText() : '';
   if (!/Dorm bed/i.test(barText)) fail('the lifestyle door did not follow the panel choice');
   console.log('lifestyle panel drives the shared stay tier OK');
 

@@ -159,8 +159,9 @@ async function run(width, height) {
   await page.close();
 }
 
-await run(390, 844);
-await run(1440, 900);
+// WIDTHS=390,768,1440 adds widths (768 is a phone layout: modal docks).
+const WIDTHS = (process.env.WIDTHS || '390,1440').split(',').map(Number);
+for (const w of WIDTHS) await run(w, w < 769 ? 844 : 900);
 await browser.close();
 
 let failed = 0;

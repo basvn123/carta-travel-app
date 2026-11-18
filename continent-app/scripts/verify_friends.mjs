@@ -231,7 +231,12 @@ const run = async () => {
     localStorage.setItem('carta.mapGuideDone', '1');
   })()`);
   await guest.goto(`${BASE}/?o=CRL`);
-  await guest.locator('.account-door').first().click({ timeout: 60000 });
+  // G12 (explore polish, step 10): signed out the header door is the Sign
+  // in pill, which opens sign-in; a guest reaches Account by its address.
+  const pill = guest.locator('.signin-pill');
+  await guest.locator('.signin-pill, .account-door').first().waitFor({ timeout: 60000 });
+  if (await pill.count()) await guest.goto(`${BASE}/?o=CRL&tab=account`);
+  else await guest.locator('.account-door').first().click({ timeout: 60000 });
   await guest.locator('.account-panel').waitFor({ timeout: 15000 });
   const guestText = await guest.locator(ACCOUNT_PANEL).innerText();
   if (/Friends/i.test(guestText)) fail('a guest is offered a Friends row');
