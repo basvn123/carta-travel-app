@@ -667,12 +667,24 @@ export function ExploreTab({
             the front, larger, more on top"): the six categories lead every
             view of the tab, right under the settings line. */}
         {catTiles && <div className="xcats-bar">{catTiles}</div>}
-        {/* G12: the phone overview has no quick row, so the Trip dock gets its
-            own slim row under the tabs; Strong match leads it when a taste
-            is set. */}
+        {/* G12: the phone overview's row under the tabs. Explore rails
+            (owner 2026-11-18, "fix these tiles": the Trip dock stood alone
+            on a row of its own): the rails' doors fill it as one sideways
+            row of chips, each opening what its rail's See all opens, Strong
+            match first when a taste is set; the Trip dock stays pinned at
+            the row's right end and never scrolls away. */}
         {railsIdle && !isDesktop && (
-          <div className="xsub">
-            {strongChip}
+          <div className="xsub xsub--rails">
+            <div className="xsub-chips" role="group" aria-label={t('explore.quickAria')}>
+              {strongChip}
+              {/* The first rail's own heading stands right under the row,
+                  so its chip would say the same twice. */}
+              {rails.filter((r) => r.rows.length >= 4 && r.key !== 'saved').slice(1).map((r) => (
+                <Button key={r.key} variant="secondary" size="sm" className="xquick-chip xsub-chip" onClick={r.seeAll}>
+                  {r.short || r.title}
+                </Button>
+              ))}
+            </div>
             <TripDock />
           </div>
         )}

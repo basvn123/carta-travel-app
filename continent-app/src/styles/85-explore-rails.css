@@ -41,6 +41,54 @@
   .explore-shell .xrails-rail .hs-rail-head { margin-bottom: var(--space-4); }
 }
 
+/* ---- The phone row under the tabs ------------------------------------- */
+/* The rails' doors as one sideways row of chips, the Trip dock pinned at
+   its right end (owner 2026-11-18: the dock no longer stands alone on a row
+   of its own). Chips and dock share one shape: paper, the soft edge, a
+   40 px pill with a 44 px hit area. The chip strip runs out to the screen's
+   left edge and fades out before the dock, so a cut chip reads as more. */
+.explore-shell .xsub.xsub--rails {
+  justify-content: flex-start;
+  gap: 0;
+  margin: var(--space-2) 0 0;
+}
+.xsub-chips {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  margin-left: calc(var(--page-gutter) * -1);
+  padding: 2px var(--space-6) 2px var(--page-gutter);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  scroll-padding-inline: var(--page-gutter);
+  mask-image: linear-gradient(to right, var(--text) calc(100% - var(--space-6)), transparent);
+}
+.xsub-chips::-webkit-scrollbar { display: none; }
+.xsub-chips > * { flex: none; }
+.xsub--rails .btn.xsub-chip,
+.xsub--rails .btn.dock-trigger {
+  min-height: 40px;
+  border: var(--stroke-edge) solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+}
+.xsub--rails .btn.xsub-chip {
+  padding: 0 var(--space-4);
+  color: var(--text);
+  font-size: var(--text-body);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.xsub--rails .btn.xsub-chip::after,
+.xsub--rails .btn.dock-trigger::after { content: ""; position: absolute; inset: -2px 0; }
+@media (hover: hover) {
+  .xsub--rails .btn.xsub-chip:hover { border-color: var(--edge); background: var(--surface); }
+}
+.xsub--rails > .dock { flex: none; margin-left: var(--space-1); }
+
 /* ---- The rail card --------------------------------------------------- */
 /* The photo is the card's link, stretched over the whole card (the list
    row's pattern), so a press on the name or the country opens the place
