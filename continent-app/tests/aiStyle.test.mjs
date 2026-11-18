@@ -211,12 +211,9 @@ test("the Transport card offers the style's ways first when it has two or more",
   assert.deepEqual(wayChoices('train', { ways: ['train', 'any', 'rocket'] }).shown, all, 'junk is ignored');
 });
 
-test('the live search dock draws the style marks and the ways, and the dead settings line is gone', () => {
-  const dock = read('../src/components/SearchDock.jsx');
-  assert.match(dock, /fromStyle=\{sourced\.party\}/);
-  assert.match(dock, /fromStyle=\{sourced\.way\}/);
-  assert.match(dock, /className="sr-only">\{`, \$\{t\('settings\.fromStyle'\)\}`\}/, 'the dot has words');
-  assert.match(dock, /ways\.shown\.map/);
+test('the phone search dock and its seven questions left with G12; the dead settings line is gone', async () => {
+  const { existsSync } = await import('node:fs');
+  assert.equal(existsSync(new URL('../src/components/SearchDock.jsx', import.meta.url)), false);
   assert.doesNotMatch(read('../src/components/SettingsLine.jsx'), /export function SettingsLine\b/);
 });
 

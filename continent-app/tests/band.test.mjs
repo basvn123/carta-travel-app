@@ -40,7 +40,6 @@ test('the fader, the euro and six tab glyphs on one ground line', () => {
   for (const k of ['fader', 'euro', 'places', 'trails', 'beaches', 'lakes', 'mountains', 'cycling']) {
     assert.match(icons, new RegExp(`\\n  ${k}: glyph\\('${k}'`), k);
   }
-  assert.match(read('src/components/SearchDock.jsx'), /export const DOCK_KINDS = EXPLORE_TILES;/);
   assert.match(read('src/browse/ExploreCategories.jsx'), /shortKey: 'band\.peaks'/);
 });
 

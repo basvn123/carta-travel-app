@@ -3,13 +3,25 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Button, Segmented } from '../ui/index.js';
 import { HouseIcon } from '../HouseIcons.jsx';
 import { DatesControl, useDatePick, useSettings, useShortDate, whenValue } from '../SettingsLine.jsx';
-import { useTripLine } from '../SearchDock.jsx';
 import { FromPanel, fromName, fromPoint } from '../FromPicker.jsx';
 import { AirportReach } from '../AirportReach.jsx';
 import { HeartIcon } from '../Icons.jsx';
 import { styleName } from '../../browse/styles/styleBits.jsx';
 import { Dock, DockRowButton, DockRowField, useDockBack } from './Dock.jsx';
 import { closeDock } from './dockStore.js';
+
+/** The trip in one line: when, from where, who; the dock's name and tooltip.
+ *  It lived in the phone search dock, which left with G12 (Explore top). */
+function useTripLine(s) {
+  const { t } = useI18n();
+  const shortDate = useShortDate();
+  if (!s) return '';
+  const when = whenValue(t, s, shortDate, { nightsToo: false });
+  const heads = (Number.isFinite(s.party) ? s.party : 2) + (s.babies || 0);
+  const people = t(heads === 1 ? 'settings.peopleOne' : 'settings.peopleMany', { n: heads });
+  const from = fromName(s);
+  return from ? t('dock.summary', { when, from, people }) : t('settings.summary', { dates: when, people });
+}
 import { openStudio } from '../../browse/styles/studioDoors.js';
 
 /**

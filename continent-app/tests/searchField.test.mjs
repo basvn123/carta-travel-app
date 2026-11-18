@@ -1,6 +1,7 @@
-// G12 (decision.md step 9): the phone dock is one field, "Choose where to
-// go", with no trip line; applied, Back and Share sit inside it and Filters
-// stays outside. The strings are the copy deck's in six languages.
+// G12 (Explore top, decision.md APPROVED 2026-11-18): the search field is the
+// band's, "Search a place, region or country", with Ask inside it; the
+// phone search dock and its "Choose where to go" pill left, and their words
+// with them (retired in tests/home.test.mjs).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -12,33 +13,23 @@ const value = (lang, key) => {
   return m ? m[2] : null;
 };
 
-test('the empty field says "Choose where to go" and draws no trip line', () => {
-  const src = read('src/components/SearchDock.jsx');
-  const dock = src.slice(src.indexOf('export function SearchDock'), src.indexOf('function Card('));
-  assert.match(dock, /r\?\.label \|\| t\('dock\.choose'\)/);
-  assert.doesNotMatch(dock, /sdock-line2|useTripLine\(s\)/);
-  assert.match(dock, /className="sdock-mag"/);
+test('the band field names itself and keeps Ask inside it', () => {
+  const band = read('src/browse/band/ExploreBand.jsx');
+  assert.match(band, /placeholder=\{t\('band\.searchPh'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
+  assert.match(band, /className="band-ask" aria-label=\{t\('dock\.ask'\)\}/);
+  assert.equal(fs.existsSync(new URL('../src/components/SearchDock.jsx', import.meta.url)), false);
 });
 
-test('applied: Back and Share inside the field, Filters outside it', () => {
-  const src = read('src/components/SearchDock.jsx');
-  const box = src.slice(src.indexOf('<div className="sdock-box">'), src.indexOf('{r ? (\n        <IconButton\n          ref={filtersRef}'.replace(/\n/g, src.includes('\r\n') ? '\r\n' : '\n')));
-  assert.match(box, /sdock-in sdock-back/);
-  assert.match(box, /r\?\.canShare && \(/);
-  assert.match(box, /onClick=\{dockShare\}/);
-  assert.doesNotMatch(box, /sdock-filters/);
-  assert.match(src, /aria-label=\{r \? t\('dock\.openAria', \{ what: title \}\) : title\}/);
+test('the field is a combobox whose aria-controls names the panel listbox', () => {
+  const band = read('src/browse/band/ExploreBand.jsx');
+  assert.match(band, /aria-controls=\{open \? `\$\{panelId\}-list` : undefined\}/);
+  assert.doesNotMatch(band, /className="band-search-panel" id=/, 'the wrapper has no id of its own');
 });
 
-test('the copy deck strings, in six languages, with no summary left', () => {
-  assert.equal(value('en', 'dock.choose'), 'Choose where to go');
-  assert.equal(value('de', 'dock.choose'), 'Wähle, wohin es geht');
-  assert.equal(value('en', 'explore.chooseOrAsk'), 'Choose where to go, or ask Carta');
-  assert.equal(value('en', 'dock.openAria'), 'Where to go: {what}. Change');
+test('the band strings, in six languages, the old dock pill strings gone', () => {
+  assert.equal(value('en', 'band.searchPh'), 'Search a place, region or country');
   for (const l of LANGS) {
-    for (const k of ['dock.choose', 'explore.chooseOrAsk', 'dock.openAria']) assert.ok(value(l, k), `${l} ${k}`);
-    assert.doesNotMatch(value(l, 'dock.openAria'), /\{summary\}/);
+    for (const k of ['band.searchPh', 'band.settings', 'band.clear']) assert.ok(value(l, k), `${l} ${k}`);
+    for (const k of ['dock.choose', 'dock.openAria', 'explore.chooseOrAsk']) assert.equal(value(l, k), null, `${l} ${k}`);
   }
-  // G12 (Explore top): the band's field names itself with band.searchPh.
-  assert.match(read('src/browse/band/ExploreBand.jsx'), /t\('band\.searchPh'\)/);
 });

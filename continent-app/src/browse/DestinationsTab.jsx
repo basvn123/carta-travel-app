@@ -349,7 +349,9 @@ export function DestinationsTab({
   const [sheetFrom, setSheetFrom] = useState('toolbar');
   // T602: the desktop filter pane, closed by default and opened and closed
   // by All filters, as Places' Filters pill opens its pane.
-  const [paneOpen, setPaneOpen] = useState(false);
+  // G12: All filters left, so the desktop pane stays shut until the tab
+  // gets its own filters (ROADMAP G12 follow-up).
+  const [paneOpen] = useState(false);
 
   useEffect(() => {
     if (layerError.trails) return undefined;
@@ -1728,10 +1730,6 @@ export function DestinationsTab({
       t={t}
       fmt={fmt}
       groups={quickGroups}
-      allCount={filterCount}
-      allRef={filterBtnRef}
-      allOn={facetGroups.length > 0 && (isDesktop ? paneOpen : sheetOpen)}
-      allControls={isDesktop ? 'dtab-side' : undefined}
       lead={(
         <>
           {/* T1038: the full list right after All filters, never wrapped
@@ -1742,12 +1740,10 @@ export function DestinationsTab({
         </>
       )}
       trail={phoneViewPill}
-      onAll={facetGroups.length > 0
-        ? () => {
-          if (isDesktop) setPaneOpen((v) => !v);
-          else { setSheetFrom('toolbar'); setSheetOpen(true); }
-        }
-        : null}
+      // G12 (Explore top, decision.md Removed): "All filters" left every
+      // tab for now; each tab gets its own filters in a later run (ROADMAP
+      // G12). The quick chips stay.
+      onAll={null}
     />
   ) : null;
 
