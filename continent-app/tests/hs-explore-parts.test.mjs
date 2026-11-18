@@ -5,26 +5,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { kindLabel } from '../src/browse/explore/kindLabel.js';
 
 const read = (p) => fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
-const EN = {
-  'pkind.village': 'Village',
-  'places.catLakes': 'Lakes',
-};
-const t = (k) => EN[k] ?? k;
-
-test('a size word from the link never shows a raw key', () => {
-  assert.equal(kindLabel('village', t), 'Village');
-  assert.equal(kindLabel('lake', t), 'Lakes');
-  assert.equal(kindLabel('harbour', t), 'Harbour');
-  for (const k of ['lake', 'harbour', 'beach', '']) assert.ok(!kindLabel(k, t).startsWith('pkind.'));
-});
-
-test('the chips read the size words through kindLabel', () => {
+test('the kind of place chip left with the filter pane (G12), so no raw pkind key can show', () => {
   const src = read('src/browse/explore/useExploreChips.js');
-  assert.match(src, /label: kindLabel\(k, t\)/);
-  assert.doesNotMatch(src, /label: t\(`pkind\./);
+  assert.doesNotMatch(src, /kindLabel|xf\.kinds|label: t\(`pkind\./);
+  assert.equal(fs.existsSync(new URL('../src/browse/explore/kindLabel.js', import.meta.url)), false);
 });
 
 test('the row keeps its link, its price items and the save outside the link', () => {

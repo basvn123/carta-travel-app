@@ -14,6 +14,8 @@ import { seatsOf } from '../../lib/price/request.js';
 import { bedIsThin } from '../../lib/price/display.js';
 import { rowFigures, rowUnit } from '../../lib/price/rowFigures.js';
 import { partyText } from '../../lib/party.js';
+import { priceFigure } from '../../lib/settings/prices.js';
+import { useSettings } from '../../components/SettingsLine.jsx';
 
 /**
  * Explore's house parts (G1, house style 2026-11; DESIGN.md "Signature
@@ -153,7 +155,16 @@ function ListFormation({ cost, t, figRef, weighted, className, place, slot = 'al
   const req = view.request;
   const way = wayOf(cost);
   const shownWay = req.excluded?.includes('flight') ? null : way;
-  const fig = rowFigures(cost, { group: view.total, seats: seatsOf(req) });
+  const day = rowFigures(cost, { group: view.total, seats: seatsOf(req) });
+  // G12 (D10): under "The whole trip" the figure is the Settings model's
+  // (lib/settings grandTotal: nights x day + the way there), with the bed
+  // and food over the nights; a way with no figure leaves the stay part
+  // marked "+". A day keeps the row's own figures (rowFigures).
+  const model = useSettings()?.model || null;
+  const pf = model && model.priceSpan === 'trip' ? priceFigure({ cost }, model) : null;
+  const fig = pf
+    ? { ...day, day: pf.eur, bed: pf.parts.bed, food: pf.parts.food, plus: false, open: pf.notKnown && pf.eur != null }
+    : day;
   if (fig.day == null && !shownWay) return null;
   if (slot === 'figure' && fig.day == null) return null;
   const withFigure = slot !== 'parts';
@@ -161,7 +172,7 @@ function ListFormation({ cost, t, figRef, weighted, className, place, slot = 'al
   const g = fig.group;
   const people = g ? partyText(t, req.group) : '';
   const say = (eur, est) => (est ? t('money.estSpoken', { price: formatMoney(eur) }) : formatMoney(eur));
-  const [unitKey, unitArgs] = rowUnit(fig);
+  const [unitKey, unitArgs] = pf ? pf.unit : rowUnit(fig);
 
   let go = null;
   if (shownWay) {
@@ -207,8 +218,9 @@ function ListFormation({ cost, t, figRef, weighted, className, place, slot = 'al
       {withFigure && fig.day != null && (
         <span className="hs-formation-day pparts-total" ref={figRef}>
           <SheetTrigger place={place} cost={cost} triggerClass="xform-fig" part="day"
-            label={t(g ? 'card.dayFigSpokenGroup' : 'card.dayFigSpoken', { price: say(fig.day, est), people })}>
+            label={pf ? `${say(fig.day, est)} ${t(unitKey, unitArgs)}` : t(g ? 'card.dayFigSpokenGroup' : 'card.dayFigSpoken', { price: say(fig.day, est), people })}>
             <Money value={fig.day} est={est} />
+            {fig.open && <span className="xform-open" aria-hidden="true">+</span>}
             <span className="xform-unit" aria-hidden="true">{t(unitKey, unitArgs)}</span>
           </SheetTrigger>
         </span>
