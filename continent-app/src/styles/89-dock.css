@@ -346,6 +346,11 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
 .style-dock-held-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .style-dock-halves { padding: var(--space-3) var(--space-4) var(--space-2); border-top: 1px solid var(--border-soft); }
 .style-dock-half { display: flex; flex-direction: column; min-width: 0; }
+/* The Who steppers sit in a wrapping flex control, which shrinks them to
+   their content; the owner asked for rows that run full width on a phone,
+   like every other dock row (judge round 1). */
+.style-dock-half .party { width: 100%; align-self: stretch; }
+.style-dock-half .party-row { justify-content: space-between; }
 .style-dock-set { min-width: 0; margin: 0; padding: 0; border: 0; }
 .style-dock-set:disabled { opacity: 0.6; }
 .dock-card .tstyle-chips { min-width: 0; }

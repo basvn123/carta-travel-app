@@ -113,6 +113,16 @@ async function run(width, height) {
   const styleBox = await styleCard.boundingBox();
   if (width < 769) check(`${width}: Style card spans the screen`, styleBox && styleBox.width >= width - 16, `${styleBox?.width}`);
   else check(`${width}: Style card inside the screen`, styleBox && styleBox.x >= 0 && styleBox.y >= 0 && styleBox.x + styleBox.width <= width, `${styleBox?.x},${styleBox?.y}`);
+  // The owner's binding note: rows run full width, the Who steppers too
+  // (judge round 1 saw them stop at 232 of 390 px). Full = the row's control width.
+  const whoFit = await styleCard.evaluate((card) => {
+    const ctl = card.querySelector('[data-dock-row="who"] .dock-row-control');
+    const rows = [...card.querySelectorAll('.style-dock-half .party-row')];
+    if (!ctl || !rows.length) return null;
+    const hw = ctl.getBoundingClientRect().width;
+    return { hw: Math.round(hw), min: Math.round(Math.min(...rows.map((r) => r.getBoundingClientRect().width))) };
+  });
+  check(`${width}: Who rows span the row`, whoFit && whoFit.min >= whoFit.hw - 1, whoFit ? `${whoFit.min} of ${whoFit.hw}` : 'no Who rows');
   check(`${width}: no sideways scroll, Style open`, await noOverflow(page));
   if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `shot-dock-style-${width}.png`) });
 
