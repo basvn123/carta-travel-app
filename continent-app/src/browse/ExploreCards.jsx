@@ -78,7 +78,7 @@ function bumpTripsOnce() {
 
 /** The save control, the same on a tile and a row: the bookmark (G12). The
  *  cairn stays the My trips mark only, so one glyph means one thing. */
-export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '', name = '' }) {
+export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '', name = '', word = false }) {
   // The place's name is in the label (T444): a screen reader walking a rail
   // heard "Add to shortlist" twenty times with no place. The name stays the
   // same whether saved or not (decision change 7): aria-pressed says which,
@@ -90,7 +90,7 @@ export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '', n
   return (
     <IconButton
       tone={tone}
-      className={`xsave${ticked && fav ? ' is-ticking' : ''}${className ? ` ${className}` : ''}`}
+      className={`xsave${word ? ' has-word' : ''}${ticked && fav ? ' is-ticking' : ''}${className ? ` ${className}` : ''}`}
       pressed={fav}
       label={label}
       // The commit's haptic (house style 2026-11): confirm on a save, a tick
@@ -100,6 +100,10 @@ export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '', n
       onAnimationEnd={() => setTicked(false)}
     >
       <HouseIcon.bookmark size={20} />
+      {/* copy.md explore.save: a visible word from 1100 px (CSS shows it),
+          for readers who do not know the bookmark yet. The fixed name
+          above stays the accessible name; the word is decoration. */}
+      {word && <span className="xsave-word">{fav ? t('detail.saved') : t('explore.save')}</span>}
     </IconButton>
   );
 }

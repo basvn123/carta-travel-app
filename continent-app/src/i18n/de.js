@@ -6186,6 +6186,7 @@ export const de = {
   "sort.match": "Beste Treffer",
   "gs.cheapest": "Günstigste zuerst",
   "explore.saveNamed": "{place} merken",
+  "explore.save": "Merken",
   "mapPanel.aria": "Orte auf der Karte",
   "mapPanel.inView": "{n} Orte auf der Karte",
   "mapPanel.inViewOne": "1 Ort auf der Karte",

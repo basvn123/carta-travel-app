@@ -112,7 +112,7 @@ export const PlaceRow = React.memo(function PlaceRow({
           buttons and a button never nests in a link. */}
       <RowFormation cost={p.cost} t={t} figRef={figRef} pressable place={p} />
       {onToggleFav && (
-        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city} className="xrow-save" />
+        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city} className="xrow-save" word />
       )}
       {children}
     </div>

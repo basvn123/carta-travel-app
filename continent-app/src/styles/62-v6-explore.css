@@ -622,6 +622,18 @@
 }
 @keyframes xsave-tick { 50% { scale: 1.14; } }
 @keyframes xsave-ring { from { scale: 0.6; opacity: 0.9; } to { scale: 1.4; opacity: 0; } }
+/* The save word (copy.md explore.save): only on a wide Explore list, from
+   1100 px, where the row has room; the map column and phones keep the
+   bare bookmark. */
+.xsave-word { display: none; }
+@media (min-width: 1100px) {
+  @container xlist (min-width: 600px) {
+    .xrows--ledger .xrow-hs .xsave.has-word { width: auto; padding-inline: var(--space-2) var(--space-3); }
+    .xrows--ledger .xrow-hs .xsave.has-word .icon-btn-glyph { align-items: center; gap: var(--space-1); }
+    .xrows--ledger .xrow-hs .xsave-word { display: inline; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+    .xrows--ledger .xrow-hs .xsave[aria-pressed="true"] .xsave-word { color: var(--select-ink); }
+  }
+}
 /* The saved filter chip: the same glyph, filled while it is on. */
 .xtool-saved .bm-fill { fill: transparent; transition: fill var(--dur-1) var(--ease-out); }
 .xtool-saved[aria-pressed="true"] .bm-fill { fill: currentColor; }

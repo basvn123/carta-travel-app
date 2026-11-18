@@ -126,6 +126,11 @@ test('save wears the bookmark with one fixed name; the cairn stays My trips', ()
   assert.match(bar, /iconStart=\{<HouseIcon\.bookmark size=\{18\} \/>\} aria-pressed=\{showFavOnly\}/);
   const css = read('src/styles/62-v6-explore.css');
   assert.match(css, /\.xsave\[aria-pressed="true"\] \.bm-fill \{ fill: var\(--select-ink\); \}/);
+  // The visible word from 1100 px rides inside the same button, so the
+  // fixed name stays the accessible name.
+  assert.match(cards, /\{word && <span className="xsave-word">\{fav \? t\('detail\.saved'\) : t\('explore\.save'\)\}<\/span>\}/);
+  assert.match(read('src/browse/explore/PlaceRow.jsx'), /className="xrow-save" word \/>/);
+  assert.match(css, /\.xsave-word \{ display: none; \}/);
   assert.match(css, /animation: xsave-tick 240ms/);
   assert.match(css, /animation: xsave-ring 240ms/);
   // No star left in the save copy, in any language.

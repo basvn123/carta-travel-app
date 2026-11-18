@@ -6904,6 +6904,7 @@ export const en = {
   "sort.match": "Best match",
   "gs.cheapest": "Cheapest first",
   "explore.saveNamed": "Save {place}",
+  "explore.save": "Save",
   "mapPanel.aria": "Places on the map",
   "mapPanel.inView": "{n} places on the map",
   "mapPanel.inViewOne": "1 place on the map",

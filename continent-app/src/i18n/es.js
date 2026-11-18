@@ -6186,6 +6186,7 @@ export const es = {
   "sort.match": "Mejor coincidencia",
   "gs.cheapest": "Los más baratos primero",
   "explore.saveNamed": "Guardar {place}",
+  "explore.save": "Guardar",
   "mapPanel.aria": "Lugares en el mapa",
   "mapPanel.inView": "{n} lugares en el mapa",
   "mapPanel.inViewOne": "1 lugar en el mapa",

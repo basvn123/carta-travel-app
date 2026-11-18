@@ -6197,6 +6197,7 @@ export const nl = {
   "sort.match": "Beste match",
   "gs.cheapest": "Goedkoopste eerst",
   "explore.saveNamed": "{place} bewaren",
+  "explore.save": "Bewaren",
   "mapPanel.aria": "Plaatsen op de kaart",
   "mapPanel.inView": "{n} plaatsen op de kaart",
   "mapPanel.inViewOne": "1 plaats op de kaart",
