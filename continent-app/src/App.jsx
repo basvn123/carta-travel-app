@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo, useSyncExtern
 import { AppHeader } from './components/AppHeader.jsx';
 import { setFooterNavigate } from './components/SiteFooter.jsx';
 import { AnnouncementBar, PassExpiryBanner, BottomSlot } from './components/AnnouncementBar.jsx';
-import { SettingsLine, SettingsContext } from './components/SettingsLine.jsx';
+import { SettingsContext } from './components/SettingsLine.jsx';
 import { CloseIcon } from './components/Icons.jsx';
 import { crossTab } from './lib/sharedElement.js';
 import { usePresence, useDialogExit } from './lib/motion.js';
@@ -93,6 +93,8 @@ import { useKeyboardOpen } from './hooks/useKeyboardOpen.js';
 import { usePanelState } from './hooks/usePanelState.js';
 import { loadStoredStyles, useTravelStyles } from './hooks/useTravelStyles.js';
 import { TravelStylesSheet } from './browse/TravelStylesSheet.jsx';
+import { StyleDock } from './components/dock/StyleDock.jsx';
+import { PriceSheet } from './components/price/PriceSheet.jsx';
 import { useFilterState } from './hooks/useFilterState.js';
 import { useReach } from './lib/reach.js';
 import { resolveWhen, whenMonth, xmFromSearch } from './lib/when.js';
@@ -1081,7 +1083,23 @@ function TravelApp() {
     : accountOpen ? t('nav.account')
       : ({ explore: t('nav.explore'), plan: t('nav.plan'), home: t('nav.home') }[placeOf(activeTab)]
         || t('detail.backToList'));
-  const requestAuth = useCallback(() => setAuthModalOpen(true), [setAuthModalOpen]);
+  // One door to the sign-in dialog (G12, owner point 9). A build without the
+  // Supabase variables used to swallow the press silently (the dialog only
+  // renders when auth is configured), which is how "Sign in on Together does
+  // nothing" reproduces; now it says so. The mode is always set, so a dialog
+  // last left on "Create account" never reopens there. An onClick hands an
+  // event in, which is not a mode.
+  const [authOffNote, setAuthOffNote] = useState(false);
+  const requestAuth = useCallback((mode) => {
+    if (!authConfigured) { setAuthOffNote(true); return; }
+    setAuthModalMode(typeof mode === 'string' ? mode : 'signin');
+    setAuthModalOpen(true);
+  }, [authConfigured, setAuthModalMode, setAuthModalOpen]);
+  useEffect(() => {
+    if (!authOffNote) return undefined;
+    const id = setTimeout(() => setAuthOffNote(false), 10000);
+    return () => clearTimeout(id);
+  }, [authOffNote]);
   // The day planner's two hand-offs, stable for the same reason (T192): as
   // inline arrows they gave DayPlannerTab new props on every App render.
   const planTripFromDay = useCallback(() => goToTab('trip'), [goToTab]);
@@ -1478,10 +1496,7 @@ function TravelApp() {
        owns the one pass modal. It sits inside TravelApp rather than beside
        AuthProvider because the sign-in handoff is TravelApp's own modal. */
     <PaywallProvider
-      onSignIn={() => {
-        setAuthModalMode('signin');
-        setAuthModalOpen(true);
-      }}
+      onSignIn={() => requestAuth('signin')}
       /* "See all prices" in the pass sheet and Account's Your plan (T503,
          T497-a): the pricing page is a place, so it is a tab change. */
       onOpenPricing={() => goToTab('pricing')}
@@ -1509,10 +1524,13 @@ function TravelApp() {
           onNavigate={goTo}
           savedCount={savedCount}
           planInProgress={planInProgress}
+          onSignIn={requestAuth}
         />
-        {settingsParts !== null && (settingsParts === undefined && !isDesktopShell
-          ? <SearchDock onSearch={dockSearch} />
-          : <SettingsLine parts={settingsParts} slot />)}
+        {/* G12 (explore polish): from 769 px the Trip dock under the
+            category tabs holds From, When and how prices read, so the
+            header's settings line left Explore and Destinations (one door
+            per screen). The phone keeps its search pill. */}
+        {settingsParts === undefined && !isDesktopShell && <SearchDock onSearch={dockSearch} />}
       </header>
 
       {/* A trip arrived via share link: offer it, never silently apply it. */}
@@ -1658,6 +1676,14 @@ function TravelApp() {
       {travelStyles.open && (
         <TravelStylesSheet onClose={() => travelStyles.setOpen(false)} openLifestyle={openLifestyle} initialHalf={travelStyles.open} />
       )}
+      {/* G12: the Style dock, the travel style's one door on Explore,
+          Destinations and My trips. Plan's bar owns the bottom there, and a
+          full page (a place, a country, a region, the account) has its own
+          foot, so the corner stays empty on those. */}
+      <StyleDock hidden={!(place === 'explore' || place === 'trips') || !!selectedDest || !!countryPage || !!pendingRegion} />
+      {/* D10: the price sheet a list row's figure and wagons open; one
+          mount, so a row carries only its buttons (priceSheetStore). */}
+      <PriceSheet data={data} />
 
       {/* The home page (T462, which replaced the T209 landing receipt): what
           Carta does, a live demo of it, and a door to each part. Not kept
@@ -1876,7 +1902,7 @@ function TravelApp() {
         pendingRegion={pendingRegion} place={place} placeRows={placeRows}
         planInProgress={planInProgress} savedCount={savedCount} savedTripsOpen={savedTripsOpen}
         selectedDest={selectedDest} selectedId={selectedId} setAdminOpen={setAdminOpen}
-        setAuthModalMode={setAuthModalMode} setAuthModalOpen={setAuthModalOpen}
+        requestAuth={requestAuth} setAuthModalOpen={setAuthModalOpen}
         setCountryPage={setCountryPage} setGuidesOpen={setGuidesOpen}
         setLifestyleOpen={setLifestyleOpen} setPastAtOpen={setPastAtOpen}
         setPendingDayPlanId={setPendingDayPlanId} setPendingGuide={setPendingGuide}
@@ -1901,6 +1927,14 @@ function TravelApp() {
           <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
             {coplanNote}
             <IconButton label={t('a11y.close')} className="confirm-toast-close" onClick={() => setCoplanNote('')}>
+              <CloseIcon size={16} />
+            </IconButton>
+          </div>
+        )}
+        {authOffNote && (
+          <div className="confirm-toast" role="status" onClick={(e) => e.stopPropagation()}>
+            {t('auth.off')}
+            <IconButton label={t('a11y.close')} className="confirm-toast-close" onClick={() => setAuthOffNote(false)}>
               <CloseIcon size={16} />
             </IconButton>
           </div>

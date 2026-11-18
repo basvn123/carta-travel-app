@@ -2,11 +2,8 @@ import React from 'react';
 import { WaterQualityBadge, swimRelevant } from '../../components/WaterQualityBadge.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
-import { regionLine, tripDates } from '../../lib/placeOverview.js';
+import { regionLine } from '../../lib/placeOverview.js';
 import { countryName } from '../../lib/countryName.js';
-import { useSettings } from '../../components/SettingsLine.jsx';
-import { useDayView } from '../../hooks/useDayView.js';
-import { useI18n } from '../../i18n/index.jsx';
 import { useSettledFigure } from '../../lib/figureChange.js';
 import { MatchLine } from '../WhyItMatches.jsx';
 import { WhyChips } from '../WhyChips.jsx';
@@ -24,41 +21,16 @@ import { PlaceScore, BandWord, RowFormation } from './HouseParts.jsx';
  *   Score plate (the band word where the row has room), the flag with the
  *   region and country (the hidden gem and water marks), the one reason (from
  *   a 1024 px list), the taste lines where a taste is set (T765, T1208), the
- *   formation and the day figure, loudest; the save control outside the link.
+ *   formation and the day figure, loudest; the formation and the save
+ *   control outside the link (G12: they are buttons).
  *
  * The layout is one grid per list width (container queries in
- * 62-v6-explore.css), so a narrow map column reads like a phone. The markup
+ * 62-v6-explore.css), so a narrow map column reads like a phone. The row is
+ * the grid; the link is a subgrid over every column but the save one, so its
+ * parts and the formation beside it share the same tracks. The markup
  * keeps the .xrow, .xrow-hit, .xrow-name, .xrow-country, .xrow-why, .xprice
  * and .xrow-save names the harnesses read.
  */
-
-/**
- * The list's column head: the traveller's dates (only when set) and the unit
- * every figure below is in, said once (DESIGN.md: "the unit is said once in
- * the column head"). Each row still carries the unit for a screen reader, so
- * the head itself is hidden from it.
- */
-export function ListHead({ t, notes = [] }) {
-  const settings = useSettings();
-  const view = useDayView();
-  const { lang, languages } = useI18n();
-  const bcp47 = languages?.find((l) => l.code === lang)?.bcp47 || 'en-GB';
-  const dates = tripDates(settings, t, bcp47);
-  return (
-    <div className="xlist-head">
-      <span className="xlist-dates" aria-hidden="true">{dates || ''}</span>
-      {/* A price note every place below shares ("Local transport: not
-          yet") is said once here, not under every card (owner rule: no
-          repeated text). It stays readable to a screen reader. */}
-      {notes.map((key) => (
-        <span className="xlist-note" data-note={key} key={key}>
-          {t('price.noteMissing', { part: t(`price.item.${key}`) })}
-        </span>
-      ))}
-      <span className="xlist-unit" aria-hidden="true">{view.total ? view.unit : t('explore.colUnit')}</span>
-    </div>
-  );
-}
 
 /** The region and the country as two parts of one line, in the language's
  *  own order ("Alps, Italy"): the region gives way, the country never. */
@@ -134,10 +106,13 @@ export const PlaceRow = React.memo(function PlaceRow({
           <MatchLine place={p} />
           <WhyChips place={p} className="xrow-whychips" />
         </span>
-        <RowFormation cost={p.cost} t={t} figRef={figRef} />
       </a>
+      {/* G12, D10: the price sits outside the link, a direct child of the
+          row grid (62-v6-explore.css), because its figure and wagons are
+          buttons and a button never nests in a link. */}
+      <RowFormation cost={p.cost} t={t} figRef={figRef} pressable place={p} />
       {onToggleFav && (
-        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city} className="xrow-save" />
+        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city} className="xrow-save" word />
       )}
       {children}
     </div>

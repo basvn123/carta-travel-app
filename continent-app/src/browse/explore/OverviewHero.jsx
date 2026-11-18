@@ -3,7 +3,7 @@ import { openAskChat } from '../ask/askChatStore.js';
 import { DiamondIcon, SparkIcon } from '../../components/Icons.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { Button, Chip } from '../../components/ui/index.js';
-import { PriceViewSwitch } from '../../components/PriceViewSwitch.jsx';
+import { TripDock } from '../../components/dock/TripDock.jsx';
 
 /**
  * The overview's head (T586, T595; rebuilt as a hero by T601, Explore v8,
@@ -59,7 +59,7 @@ export function OverviewHero({
           <div className="xov-field">
             <div className="xov-seg xov-seg-where">
               <HouseIcon.search size={20} className="xov-where-icon" />
-              <label className="xov-seg-cap" htmlFor={whereId}>{t('explore.askOrSearch')}</label>
+              <label className="xov-seg-cap" htmlFor={whereId}>{t('explore.chooseOrAsk')}</label>
               {/* A blank placeholder, only so CSS can tell an empty field
                   (:placeholder-shown) and rest the label where the value goes. */}
               <input id={whereId} type="search" className="xov-where-input" value={where}
@@ -101,8 +101,9 @@ export function OverviewHero({
           ))}
           {tasteChip}
           {strongChip}
-          <PriceViewSwitch className="xov-price" />
           {viewToggle}
+          {/* G12: the Trip dock ends the row; how prices read moved inside it. */}
+          <TripDock />
         </div>
       </div>
     </section>
@@ -119,6 +120,6 @@ function isQuestion(q) {
 
 /** The quick chips' icons: the same line icons the filter pane uses. */
 const QUICK_ICONS = {
-  saved: HouseIcon.cairn, gems: DiamondIcon, nocar: HouseIcon.train, quiet: HouseIcon.people,
+  saved: HouseIcon.bookmark, gems: DiamondIcon, nocar: HouseIcon.train, quiet: HouseIcon.people,
   cost: HouseIcon.gauge, now: HouseIcon.sun, top: HouseIcon.star, hiking: HouseIcon.trails, beach: HouseIcon.beaches,
 };

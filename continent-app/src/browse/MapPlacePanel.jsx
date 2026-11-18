@@ -12,7 +12,7 @@ import { visitLength } from '../lib/nearby.js';
 import { placeSights } from '../lib/placeStory.js';
 import { knownFor } from '../lib/knownFor.js';
 import { useI18n } from '../i18n/index.jsx';
-import { PlaceRow, ListHead } from './explore/PlaceRow.jsx';
+import { PlaceRow } from './explore/PlaceRow.jsx';
 import { PlaceScore, BandWord } from './explore/HouseParts.jsx';
 import { SaveButton } from './ExploreCards.jsx';
 import '../styles/81-map-panel.css';
@@ -89,7 +89,6 @@ export function MapPlacePanel({
             <p className="mpp-empty">{t('mapPanel.empty')}</p>
           ) : (
             <>
-            <ListHead t={t} />
             <div className="xrows mpp-rows">
               {rows.map((p) => (
                 <PlaceRow key={p.id} p={p} {...overviewOf(p)} t={t}

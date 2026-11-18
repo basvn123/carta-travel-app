@@ -174,19 +174,28 @@ try {
   // the shell's settings line above the tab (T381); Explore's own input-row
   // door was a second door to the same dialog and is gone. The check now
   // reads the settings line's part and asserts Explore draws none of its own.
+  // G12 (explore polish): the one door is now the Style dock disc in the
+  // bottom-left corner; on a desktop it opens a popover, so the list stays
+  // live beside it (no modal, no scrim). Its Stay half moves the prices.
   check('one Lifestyle control on screen',
-    await page.locator('.settings-part-lifestyle:visible').count() === 1
-    && await page.locator('.explore-shell .lifestyle-btn:visible').count() === 0);
+    await page.locator('.dock--corner .dock-trigger:visible').count() === 1
+    && await page.locator('.settings-part-lifestyle:visible, .explore-shell .lifestyle-btn:visible').count() === 0);
   const priceText = () => page.locator('.xrow .xprice .money:visible').allInnerTexts();
   const beforeLs = (await priceText()).slice(0, 8).join(' ');
-  await page.locator('.settings-part-lifestyle:visible').first().click();
+  await page.locator('.dock--corner .dock-trigger:visible').first().click();
   await page.waitForTimeout(800);
-  check('Lifestyle opens as a right-hand drawer', await page.locator('.accom-panel.from-right').count() === 1);
-  check('the grid behind it stays reachable through a scrim', await page.locator('.lifestyle-scrim').count() === 1);
-  const bp = page.locator('.lifestyle-panel .ls-tile', { hasText: /^Backpacker$/ }).first();
-  if (await bp.count()) { await bp.click(); await page.waitForTimeout(700); }
+  const styleCard = page.locator('.dock-card--corner.is-open');
+  check('Style dock opens as a popover', await styleCard.isVisible().catch(() => false)
+    && (await styleCard.getAttribute('aria-modal')) === 'false');
+  const tpl = styleCard.locator('.style-dock-templates .tstyle-tpl').first();
+  // A first visit has no style; picking one also turns on its taste, so the
+  // toolbar gains Strong match and the sort gains For you (checked below).
+  const styled = await tpl.isVisible().catch(() => false);
+  if (styled) { await tpl.click(); await page.waitForTimeout(700); }
+  const otherBed = styleCard.locator('[data-dock-row="stay"] button:not([aria-pressed="true"]):not([disabled])').first();
+  check('the Stay half offers another bed', await otherBed.count() === 1);
+  if (await otherBed.count()) { await otherBed.click(); await page.waitForTimeout(900); }
   await page.keyboard.press('Escape');
-  await page.locator('.lifestyle-scrim').click({ position: { x: 120, y: 400 } }).catch(() => {});
   await page.waitForTimeout(700);
   const afterLs = (await priceText()).slice(0, 8).join(' ');
   check('changing Lifestyle reprices the grid', beforeLs !== afterLs, `${beforeLs} -> ${afterLs}`);
@@ -250,8 +259,11 @@ try {
     && await page.locator('.xbar-count:not(.sr-only)').count() === 0);
   check('no tier legend', await page.locator('.tierlegend, .tierlegend-row').count() === 0);
   const toolLabels = (await page.locator('.xbar-tools .xtool:visible').allInnerTexts()).map((s) => s.trim());
+  // G12: Share is icon only on a desktop (its name is its label), and a
+  // style's taste adds the Strong match toggle.
   check('the toolbar is Share, Sort, Filters, Saved and one Map toggle',
-    toolLabels.map((l) => l.replace(/\d+$/, '')).join('|') === 'Share|Sort|Filters|Saved'
+    await page.locator('.xbar-tools .xtool-share:visible').count() === 1
+    && toolLabels.map((l) => l.replace(/\d+$/, '')).join('|') === `Sort|Filters|Saved${styled ? '|Strong match' : ''}`
     && await page.locator('.xbar-tools .xview-toggle:visible').count() === 1
     && (await page.locator('.xbar-tools .xview-toggle').innerText()).trim() === 'Map',
     `${toolLabels.join('|')} + ${await page.locator('.xbar-tools .xview-toggle').innerText().catch(() => 'no toggle')}`);
@@ -266,7 +278,7 @@ try {
   await page.locator('.xsort-menu[role="menu"] [role="menuitemradio"]').first().waitFor({ timeout: 5000 }).catch(() => {});
   const sortItems = (await page.locator('.xsort-menu[role="menu"] [role="menuitemradio"]').allInnerTexts()).map((s) => s.trim());
   check('Sort opens a menu: Rating, Cheapest day, A-Z, Country',
-    sortItems.join('|') === 'Rating|Cheapest day|A-Z|Country', sortItems.join('|'));
+    sortItems.join('|') === `${styled ? 'For you|' : ''}Rating|Cheapest day|A-Z|Country`, sortItems.join('|'));
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
   const filtersBtn = page.locator('.xbar-tools .xtool[aria-controls="explore-side"]');
@@ -476,7 +488,9 @@ try {
   check('phone: Escape closes the sheet', await page.locator('.fsheet-explore').count() === 0);
   await page.screenshot({ path: 'shots/explore-phone.png' });
 
-  await page.locator('.xrow-hit').first().click();
+  // G12: on a phone the price wagons sit over the link's middle (they are
+  // buttons beside it, by design), so a tap on the place goes to its name.
+  await page.locator('.xrow-hit .xrow-name').first().click();
   await page.locator('.destp').waitFor({ timeout: 30000 }).catch(() => {});
   await page.waitForTimeout(1000);
   check('phone destination page opens', await page.locator('.destp').isVisible());
@@ -490,7 +504,8 @@ try {
   await page.screenshot({ path: 'shots/explore-panel-phone.png' });
   await page.close();
 } catch (e) {
-  check('phone pass ran', false, String(e).split('\n')[0]);
+  // The waiting-for line names the control that timed out.
+  check('phone pass ran', false, String(e).split('\n').filter((l) => /Timeout|waiting for/.test(l)).slice(0, 2).join(' ') || String(e).split('\n')[0]);
 }
 
 // ── The phone map (T441, T592), on a touch screen: full height to the nav,
@@ -592,7 +607,9 @@ try {
   await page.locator('.xbar-tools .xtool', { hasText: 'Sort' }).click();
   await page.locator('.xsort-menu [role="menuitemradio"]', { hasText: 'Cheapest day' }).click();
   await page.waitForTimeout(900);
-  const days = (await page.locator('.xrow .pitems-trigger .money').allInnerTexts()).slice(0, 10)
+  // The day figure only: since G12 the bed, food and flight wagons are
+  // .pitems-trigger buttons too, and reading them mixed four prices a row.
+  const days = (await page.locator('.xrow .hs-formation-day .money').allInnerTexts()).slice(0, 10)
     .map((s) => Number(s.replace(/[^\d]/g, '')));
   check('search: "Cheapest day" sorts the cheapest first',
     days.length >= 5 && days.every((d, i) => i === 0 || d >= days[i - 1]) && page.url().includes('xs=cost'),

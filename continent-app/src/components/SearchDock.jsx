@@ -17,7 +17,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useDialogExit } from '../lib/motion.js';
 import { openAskChat } from '../browse/ask/askChatStore.js';
 import {
-  useSearchDock, dockBack, dockFilters, loadRecent, rememberSearch, isQuestion,
+  useSearchDock, dockBack, dockFilters, dockShare, loadRecent, rememberSearch, isQuestion,
 } from '../browse/searchDockStore.js';
 import '../styles/96-search-dock.css';
 import AiTag from './AiTag.jsx';
@@ -54,8 +54,10 @@ export const DOCK_KINDS = [
 ];
 const kindOf = (key) => DOCK_KINDS.find((k) => k.key === key) || DOCK_KINDS[0];
 
-/** The trip in one line: when, from where, who. */
-function useTripLine(s) {
+/** The trip in one line: when, from where, who. The Trip dock's name and
+ *  tooltip read it too (G12), so the pill and the dock never disagree. */
+// eslint-disable-next-line react-refresh/only-export-components -- a hook shared with components/dock/TripDock.jsx
+export function useTripLine(s) {
   const { t } = useI18n();
   const shortDate = useShortDate();
   if (!s) return '';
@@ -73,34 +75,43 @@ export function SearchDock({ onSearch }) {
   const [open, setOpen] = useState(false);
   const pillRef = useRef(null);
   const filtersRef = useRef(null);
-  const line = useTripLine(s);
   if (!s) return null;
   const r = dock.results;
   const kind = kindOf(dock.kind);
-  const title = r?.label || t('dock.where');
+  const title = r?.label || t('dock.choose');
+  // G12 (decision.md step 9): one field. Empty, a magnifier and "Choose
+  // where to go"; applied, Back inside its left, the list's name and Share at
+  // its right edge. The trip line left: the Trip dock names the trip now.
   return (
     <div className={`sdock${r ? ' is-results' : ''}`} role="search" aria-label={t('dock.title')}>
-      {r && (
-        <IconButton className="sdock-round sdock-back" label={t('explore.backOverview')} onClick={dockBack}>
-          <HouseIcon.back size={20} />
-        </IconButton>
-      )}
-      <button
-        type="button"
-        ref={pillRef}
-        className="sdock-pill"
-        aria-haspopup="dialog"
-        aria-expanded={open}
-        aria-label={t('dock.openAria', { what: title, summary: line })}
-        onClick={() => setOpen(true)}
-      >
-        <span className="sdock-act" data-act={kind.key} aria-hidden="true"><kind.Icon size={20} /></span>
-        <span className="sdock-text" aria-hidden="true">
-          <span className="sdock-line1">{title}</span>
-          {' '}
-          <span className="sdock-line2">{line}</span>
-        </span>
-      </button>
+      <div className="sdock-box">
+        {r ? (
+          <IconButton className="sdock-in sdock-back" label={t('explore.backOverview')} onClick={dockBack}>
+            <HouseIcon.back size={20} />
+          </IconButton>
+        ) : (
+          <span className="sdock-mag" aria-hidden="true"><HouseIcon.search size={20} /></span>
+        )}
+        <button
+          type="button"
+          ref={pillRef}
+          className="sdock-pill"
+          data-act={kind.key}
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          aria-label={r ? t('dock.openAria', { what: title }) : title}
+          onClick={() => setOpen(true)}
+        >
+          <span className="sdock-text" aria-hidden="true">
+            <span className="sdock-line1">{title}</span>
+          </span>
+        </button>
+        {r?.canShare && (
+          <IconButton className="sdock-in sdock-share" label={t('explore.toolShare')} onClick={dockShare}>
+            <HouseIcon.share size={20} />
+          </IconButton>
+        )}
+      </div>
       {r ? (
         <IconButton
           ref={filtersRef}

@@ -1,0 +1,392 @@
+/* The docks (G12, explore polish; components/dock/Dock.jsx). One trigger and
+   one card shared by the Trip dock (under the category tabs, grows down) and
+   the Style dock (bottom-left disc, grows up). Phone: the card is a modal the
+   full width of the screen over a light umber scrim. 769 px and up: a
+   popover card beside its trigger. Only transform and opacity move, on the
+   motion tokens; the global reduced-motion floor (02-base.css) shows every
+   end state at once. Imported by Dock.jsx only. */
+
+.dock { position: relative; display: inline-flex; flex: none; }
+
+/* ---- The trigger ------------------------------------------------------ */
+.btn.dock-trigger {
+  position: relative;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  border: var(--stroke-edge) solid var(--border-soft);
+  background: var(--surface);
+  color: var(--select-ink);
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-2) var(--ease-out),
+    box-shadow var(--dur-2) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
+}
+.btn.dock-trigger:active:not(:disabled) { scale: 0.94; }
+.btn.dock-trigger[aria-expanded="true"] { border-color: transparent; box-shadow: var(--elev-2); }
+.dock-glyph { display: inline-grid; place-items: center; }
+.dock-chev { color: var(--text-2); transform: rotate(90deg); transition: transform var(--dur-2) var(--ease-out); }
+.dock-trigger[aria-expanded="true"] .dock-chev { transform: rotate(-90deg); }
+
+/* The changed mark: an umber dot with a paper ring (3:1 on paper and on the
+   tone grounds); the words are in the trigger's name. */
+.dock-dot {
+  position: absolute;
+  top: var(--space-1);
+  left: calc(var(--space-6) - var(--space-1));
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--surface);
+  border-radius: var(--radius-pill);
+  background: var(--umber-600);
+}
+
+/* Trip: a 44 px pill, the tune glyph and a chevron. */
+.btn.dock-trigger--under-tabs {
+  min-width: 64px;
+  padding: 0 var(--space-2) 0 var(--space-3);
+  border-radius: var(--radius-pill);
+}
+.dock-trigger--under-tabs .hs-icon-tune { width: 24px; height: 24px; }
+
+/* The tune glyph moves when its dock opens: the plane glides on, the two
+   knobs swap places. */
+.hs-icon-tune .tune-k1 { fill: var(--surface); }
+.hs-icon-tune .tune-plane { transition: transform var(--dur-3) var(--ease-out); }
+.hs-icon-tune .tune-k1,
+.hs-icon-tune .tune-k2 { transition: transform var(--dur-tick) var(--ease-tick); }
+.dock-trigger[aria-expanded="true"] .tune-plane { transform: translateX(2px); }
+.dock-trigger[aria-expanded="true"] .tune-k1 { transform: translateX(8px); }
+.dock-trigger[aria-expanded="true"] .tune-k2 { transform: translateX(-8px); }
+
+/* Style: a 52 px disc in the active style's tone, the chevron on a badge.
+   The whole disc is the target; the badge is never a button of its own. */
+.dock--corner {
+  position: fixed;
+  left: max(var(--space-4), env(safe-area-inset-left, 0px));
+  bottom: calc(var(--bottom-nav-h) + var(--space-3));
+  z-index: var(--z-overlay);
+}
+.btn.dock-trigger--corner {
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--ts-ground, var(--select-bg));
+  color: var(--ts-ink, var(--umber-700));
+  box-shadow: var(--elev-2);
+}
+.btn.dock-trigger--corner[aria-expanded="true"] { box-shadow: var(--elev-2); }
+.dock-trigger--corner .dock-glyph .hs-icon,
+.dock-trigger--corner .dock-glyph svg { width: 26px; height: 26px; }
+.dock-trigger--corner .dock-glyph.is-swap { animation: dock-glyph-in var(--dur-2) var(--ease-out); }
+@keyframes dock-glyph-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+.dock-badge {
+  position: absolute;
+  top: calc(var(--space-1) * -1);
+  right: calc(var(--space-1) * -1);
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+}
+.dock-badge .dock-chev { transform: rotate(-90deg); }
+.dock-trigger--corner[aria-expanded="true"] .dock-badge .dock-chev { transform: rotate(90deg); }
+.dock-trigger--corner .dock-dot { top: auto; left: auto; right: 0; bottom: 0; }
+/* The style dock steps aside for the keyboard and for any other modal. */
+html.kbd-open .dock--corner,
+body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden; }
+
+/* ---- The card --------------------------------------------------------- */
+.dock-card {
+  position: absolute;
+  z-index: var(--z-overlay);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-2) 0;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--elev-2);
+  opacity: 0;
+  transform: scale(0.92);
+  visibility: hidden;
+  transition: opacity var(--dur-2) var(--ease-in-out), transform var(--dur-2) var(--ease-in-out),
+    visibility 0s linear var(--dur-2);
+}
+.dock-card.is-open {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-settle) var(--ease-settle), visibility 0s;
+}
+/* Desktop: a popover under the pill, or over the disc. */
+.dock-card--under-tabs { top: calc(100% + var(--space-2)); right: 0; width: 360px; max-height: min(70dvh, 560px); transform-origin: top right; }
+.dock-card--corner { bottom: calc(100% + var(--space-2)); left: 0; width: 340px; max-height: min(70dvh, 560px); transform-origin: bottom left; }
+
+/* Phone: a modal the full width of the screen, rows full width. */
+.dock-card.is-modal {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  max-width: none;
+  z-index: var(--z-modal);
+  border-left: 0;
+  border-right: 0;
+}
+.dock-card--under-tabs.is-modal {
+  top: calc(var(--dock-top, 120px) + var(--space-2));
+  bottom: auto;
+  max-height: calc(100dvh - var(--dock-top, 120px) - var(--space-5));
+  border-radius: 0 0 var(--radius-sheet) var(--radius-sheet);
+  border-top: 0;
+  transform-origin: top right;
+}
+.dock-card--corner.is-modal {
+  top: auto;
+  bottom: calc(var(--dock-bottom, 140px) + var(--space-2));
+  /* Capped so the header stays in view above it; the card scrolls. */
+  max-height: min(78dvh, 640px, calc(100dvh - var(--dock-bottom, 140px) - var(--space-6)));
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  border-bottom: 0;
+  transform-origin: bottom left;
+}
+.dock-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal) - 1);
+  background: color-mix(in srgb, var(--umber-800) 12%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+.dock-scrim.is-open { opacity: 1; pointer-events: auto; }
+
+.dock-head {
+  margin: var(--space-1) var(--space-4) var(--space-2);
+  font-size: var(--text-body);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+}
+.dock-body { display: flex; flex-direction: column; min-width: 0; }
+
+/* ---- Rows: full width, 52 px, a hairline between; they arrive 24 ms apart */
+.dock-row {
+  display: grid;
+  grid-template-columns: minmax(64px, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  width: 100%;
+  min-height: 52px;
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--border-soft);
+  opacity: 0;
+  transform: translateY(6px);
+}
+.dock-card.is-open .dock-row {
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-settle) var(--ease-settle),
+    background-color var(--dur-1) var(--ease-out);
+  transition-delay: calc(min(var(--i, 0), 8) * 24ms + 40ms);
+}
+/* The kit button reset for a row: no box, no pill, the full width. */
+.dock-card .btn.dock-row--button {
+  display: grid;
+  grid-template-columns: minmax(64px, auto) minmax(0, 1fr) auto;
+  justify-content: stretch;
+  max-width: none;
+  min-height: 52px;
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  border-top: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: none;
+  color: var(--text);
+  font-weight: 600;
+  text-align: start;
+  white-space: normal;
+}
+.dock-card .btn.dock-row--button .btn-label { display: contents; }
+.dock-card .btn.dock-row--button .btn-icon { color: var(--text-3); }
+@media (hover: hover) {
+  .dock-card .btn.dock-row--button:hover { background: var(--select-row); }
+}
+.dock-card .btn.dock-row--button:focus-visible { outline-offset: -3px; }
+.dock-row-label {
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.dock-row-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-body); }
+.dock-row-control { min-width: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.dock-row--stack { grid-template-columns: minmax(0, 1fr); }
+.dock-row.is-pulse { animation: dock-pulse var(--dur-4) var(--ease-out); }
+@keyframes dock-pulse {
+  from { background: var(--select-bg); }
+  to { background: transparent; }
+}
+
+/* ---- The Trip dock (TripDock.jsx) ------------------------------------- */
+/* The row its pill ends: under the category tabs on the phone overview and
+   on Destinations. The start slot keeps Strong match when a taste is set. */
+.xsub {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  min-width: 0;
+  margin: 0 0 var(--space-3);
+}
+.xsub > .dock { margin-left: auto; }
+.xov-quick > .trip-dock { margin-left: auto; }
+.xov-quick > .xov-view + .trip-dock { margin-left: 0; }
+/* The focused list: the pill closes the tools row. On a phone that row
+   scrolls sideways, so the pill sticks to its right edge and never
+   scrolls away. */
+.xtools > .dock.trip-dock { flex: none; }
+@media (max-width: 768px) {
+  .xtools > .dock.trip-dock {
+    position: sticky;
+    right: 0;
+    padding-left: var(--space-2);
+    background: linear-gradient(to right, transparent, var(--surface-page) var(--space-2));
+  }
+}
+
+.trip-dock-style { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.trip-dock-style .tstyle-disc { flex: none; width: 28px; height: 28px; }
+.trip-dock-style-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Changed for now: in words, with the umber dot the triggers use. */
+.trip-dock-changed {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: none;
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--select-ink);
+}
+.trip-dock-changed::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--umber-600);
+}
+
+/* A drilled row: Back and its title, then the panel; it slides in from the
+   end, as the motion table in proposal.md section 3 asks. */
+.trip-dock-drill { display: flex; flex-direction: column; min-width: 0; animation: dock-drill-in var(--dur-2) var(--ease-out); }
+.trip-dock-rows { display: flex; flex-direction: column; min-width: 0; }
+.trip-dock-drill-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3) var(--space-2);
+  border-bottom: 1px solid var(--border-soft);
+}
+.trip-dock-drill-title { margin: 0; font-size: var(--text-body); font-weight: 700; }
+.btn.trip-dock-back { min-height: var(--tap); }
+.trip-dock-panel { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; padding: var(--space-3) var(--space-4) var(--space-2); }
+@keyframes dock-drill-in {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- The Style dock (StyleDock.jsx) ----------------------------------- */
+/* A style switch cross-fades the glyph: the keyed span mounts anew. */
+.dock-glyph-in { display: inline-grid; place-items: center; animation: dock-glyph-in var(--dur-2) var(--ease-out); }
+.style-dock-body { display: flex; flex-direction: column; min-width: 0; }
+/* The styles: one full-width line each, the disc, the name, the figure. */
+.dock-card .tstyle-cards.is-line { display: flex; flex-direction: column; gap: 0; padding: 0; }
+.dock-card .tstyle-cards.is-line .btn.tstyle-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: none;
+  min-height: 52px;
+  margin: 0;
+  padding: var(--space-1) var(--space-4);
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  text-align: start;
+}
+.dock-card .tstyle-cards.is-line .btn.tstyle-card .btn-label { display: contents; }
+.dock-card .tstyle-cards.is-line .btn.tstyle-card.is-on { background: var(--select-bg); color: var(--select-ink); }
+.dock-card .tstyle-cards.is-line .tstyle-card-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
+.dock-card .tstyle-cards.is-line .tstyle-card-fig { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.tstyle-card-unit { font-weight: 500; color: var(--text-2); }
+.dock-card .btn.tstyle-card:focus-visible { outline-offset: -3px; }
+.style-dock-note { margin: 0; padding: 0 var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
+.dock-row .style-dock-note { padding: 0; }
+.style-dock-held {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-top: 1px solid var(--border-soft);
+}
+.style-dock-held-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.style-dock-halves { padding: var(--space-3) var(--space-4) var(--space-2); border-top: 1px solid var(--border-soft); }
+.style-dock-half { display: flex; flex-direction: column; min-width: 0; }
+/* The Who steppers sit in a wrapping flex control, which shrinks them to
+   their content; the owner asked for rows that run full width on a phone,
+   like every other dock row (judge round 1). */
+.style-dock-half .party { width: 100%; align-self: stretch; }
+.style-dock-half .party-row { justify-content: space-between; }
+.style-dock-set { min-width: 0; margin: 0; padding: 0; border: 0; }
+.style-dock-set:disabled { opacity: 0.6; }
+.dock-card .tstyle-chips { min-width: 0; }
+/* The explore half draws the sheet's own fields: full width, the hairline
+   rows of the dock. */
+.style-dock-explore .tstyle-field { padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-soft); }
+.style-dock-explore .tstyle-field-title { margin: 0 0 var(--space-2); }
+.style-dock-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-1);
+  border-top: 1px solid var(--border-soft);
+}
+.btn.style-dock-more { min-width: var(--tap); min-height: var(--tap); }
+.style-dock-menu { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: 0 var(--space-4) var(--space-2); justify-content: flex-end; }
+.style-dock-first { display: flex; flex-direction: column; gap: var(--space-3); padding: 0 var(--space-4) var(--space-2); }
+.style-dock-first-title { margin: 0; font-weight: 700; }
+.style-dock-templates { display: flex; flex-direction: column; gap: var(--space-1); }
+.style-dock-templates .btn.tstyle-tpl { justify-content: flex-start; width: 100%; max-width: none; }
+
+/* The Map pill steps aside while the Style dock is open: both live at the
+   foot of the list. The list keeps room under its last row for the disc on
+   a desktop, where it sits inside the list pane. */
+html[data-dock="style"] .xview-fab { opacity: 0; pointer-events: none; transition: opacity var(--dur-2) var(--ease-out); }
+@media (min-width: 769px) {
+  .dock--corner { left: var(--space-5); bottom: var(--space-5); }
+  .explore-shell .explore-wrap,
+  .places-wrap { padding-bottom: 88px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock-card,
+  .dock-card.is-open { transform: none; }
+  .dock-row { transform: none; }
+  .trip-dock-drill,
+  .dock-glyph-in { animation: none; }
+}

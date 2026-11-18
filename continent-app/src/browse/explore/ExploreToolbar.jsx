@@ -1,11 +1,60 @@
 import { HouseIcon } from '../../components/HouseIcons.jsx';
-import { Button, Chip } from '../../components/ui/index.js';
+import { CloseIcon } from '../../components/Icons.jsx';
+import { Button, Chip, IconButton } from '../../components/ui/index.js';
 import { MATCH } from '../../lib/match.js';
-import { CountriesButton } from '../../components/CountriesControl.jsx';
+import { TripDock } from '../../components/dock/TripDock.jsx';
+import { phoneChips, badgeCount } from './chipRules.js';
+
+/** G12: the saved filter wears the save glyph, filled while on. It stays one
+ *  tap away on every width (decision.md change 7). */
+function SavedToggle({ showFavOnly, setShowFavOnly, t, className = '' }) {
+  return (
+    <Button variant="secondary" size="sm" className={`xtool xtool-saved${showFavOnly ? ' is-on' : ''}${className ? ` ${className}` : ''}`}
+      iconStart={<HouseIcon.bookmark size={18} />} aria-pressed={showFavOnly}
+      aria-label={t('explore.savedOnlyAria')}
+      onClick={() => setShowFavOnly(!showFavOnly)}>
+      {t('explore.toolSaved')}
+    </Button>
+  );
+}
+
+/**
+ * G12 (decision.md step 8): the phone list's one row. Sort, then the chips
+ * scrolling between it and the Trip dock, which stays at the end. Clear all
+ * leads the chips and sticks to the left so it is always reachable; Saved
+ * is always there. Every chip is capped in CSS and keeps its full text in
+ * its name and title, so a long German or French label never pushes the row
+ * past the screen.
+ */
+function PhoneTools({ chips, resetAll, showFavOnly, setShowFavOnly, sortMenu, t }) {
+  const shown = phoneChips(chips);
+  return (
+    <>
+      <span className="xtools-sort">{sortMenu}</span>
+      <div className="xtools-chips" role="group" aria-label={t('filter.activeAria')}>
+        {chips.length > 0 && (
+          <Button variant="quiet" size="sm" className="xtools-clear"
+            aria-label={t('explore.clearAllAria')} onClick={resetAll}>
+            {t('dock.clear')}
+          </Button>
+        )}
+        <SavedToggle showFavOnly={showFavOnly} setShowFavOnly={setShowFavOnly} t={t} className="xtools-saved" />
+        {shown.map((c) => (
+          <Button key={c.key} variant="quiet" size="sm" className="xtools-chip" data-chip={c.key}
+            title={c.label} aria-label={t('filter.removeChip', { name: c.label })} onClick={c.remove}
+            iconEnd={<CloseIcon size={12} />}>
+            <span className="xchip-text">{c.label}</span>
+          </Button>
+        ))}
+      </div>
+      <TripDock />
+    </>
+  );
+}
 
 export function ExploreToolbar({
   TitleTag, chips, filterBtnRef, gridTotal, isDesktop, isMock, lang, lens, matchTaste, paneOpen,
-  setPaneOpen, setSheetOpen, setShowFavOnly, setStrongOnly, settingsLine, shareView, sheetOpen,
+  resetAll, setPaneOpen, setShowFavOnly, setStrongOnly, shareView,
   showFavOnly, sortMenu, strongOnly, t, viewSwitch,
 }) {
   return (
@@ -32,43 +81,45 @@ export function ExploreToolbar({
         </span>
         {isMock && <span className="explore-mock">{t('explore.mockData')}</span>}
       </div>
-      {/* T588: one row of pills: Share, Sort, Filters, Saved, then the
-          countries on a phone and the map toggle last. */}
-      <div className="xbar-tools xtools" role="group" aria-label={t('explore.toolsAria')}>
-        <Button variant="secondary" size="sm" className="xtool" iconStart={<HouseIcon.share size={18} />}
-          onClick={shareView}>
-          {t('explore.toolShare')}
-        </Button>
-        {sortMenu}
-        {/* T962: on a phone Filters is the dock's round button. */}
-        {isDesktop && <Button
-          variant="secondary"
-          size="sm"
-          ref={filterBtnRef}
-          className={`xtool${isDesktop && paneOpen ? ' is-on' : ''}`}
-          iconStart={<HouseIcon.filter size={18} />}
-          onClick={() => (isDesktop ? setPaneOpen((v) => !v) : setSheetOpen(true))}
-          aria-haspopup={isDesktop ? undefined : 'dialog'}
-          aria-expanded={isDesktop ? paneOpen : sheetOpen}
-          aria-controls={isDesktop ? 'explore-side' : undefined}
-        >
-          {t('filter.filters')}
-          {chips.length > 0 && <Chip kind="count" className="xfilters-n">{chips.length}</Chip>}
-        </Button>}
-        <Button variant="secondary" size="sm" className={`xtool${showFavOnly ? ' is-on' : ''}`}
-          iconStart={<HouseIcon.cairn size={18} />} aria-pressed={showFavOnly}
-          onClick={() => setShowFavOnly(!showFavOnly)}>
-          {t('explore.toolSaved')}
-        </Button>
-        {matchTaste && (
-          <Button variant="secondary" size="sm" className={`xtool${strongOnly ? ' is-on' : ''}`}
-            title={t('fit.strongHint', { pct: Math.round(MATCH.strong_min * 100) })}
-            aria-pressed={strongOnly} onClick={() => setStrongOnly((v) => !v)}>
-            {t('fit.strong')}
-          </Button>
+      <div className={`xbar-tools xtools${isDesktop ? '' : ' xtools--phone'}`} role="group" aria-label={t('explore.toolsAria')}>
+        {isDesktop ? (
+          <>
+            {/* G12: Share is an icon on a desktop (on a phone it sits in the
+                search field), so the row keeps its room for the filters. */}
+            <IconButton className="xtool-share" tone="surface" label={t('explore.toolShare')}
+              onClick={shareView}>
+              <HouseIcon.share size={18} />
+            </IconButton>
+            {sortMenu}
+            <Button
+              variant="secondary"
+              size="sm"
+              ref={filterBtnRef}
+              className={`xtool${paneOpen ? ' is-on' : ''}`}
+              iconStart={<HouseIcon.filter size={18} />}
+              onClick={() => setPaneOpen((v) => !v)}
+              aria-expanded={paneOpen}
+              aria-controls="explore-side"
+            >
+              {t('filter.filters')}
+              {badgeCount(chips) > 0 && <Chip kind="count" className="xfilters-n">{badgeCount(chips)}</Chip>}
+            </Button>
+            <SavedToggle showFavOnly={showFavOnly} setShowFavOnly={setShowFavOnly} t={t} />
+            {matchTaste && (
+              <Button variant="secondary" size="sm" className={`xtool xtool-strong${strongOnly ? ' is-on' : ''}`}
+                title={t('fit.strongHint', { pct: Math.round(MATCH.strong_min * 100) })}
+                aria-pressed={strongOnly} onClick={() => setStrongOnly((v) => !v)}>
+                {t('fit.strong')}
+              </Button>
+            )}
+            {viewSwitch('xtool-view')}
+            {/* G12: the Trip dock closes the row on every width. */}
+            <TripDock />
+          </>
+        ) : (
+          <PhoneTools chips={chips} resetAll={resetAll} showFavOnly={showFavOnly}
+            setShowFavOnly={setShowFavOnly} sortMenu={sortMenu} t={t} />
         )}
-        {!isDesktop && <CountriesButton s={settingsLine} className="xtool" />}
-        {viewSwitch('xtool-view')}
       </div>
     </div>
   );

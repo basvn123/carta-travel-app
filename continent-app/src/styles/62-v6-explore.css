@@ -244,7 +244,9 @@
   transition: border-color var(--dur-1) var(--ease-out);
   animation: xchip-in var(--dur-1) var(--ease-out);
 }
-.explore-shell .xchip-clear { background: transparent; color: var(--text-2); animation: none; }
+/* Clear all in full ink, as on a phone: in --text-2 it read as disabled
+   (judge round 2). */
+.explore-shell .xchip-clear { background: transparent; color: var(--text); animation: none; }
 @media (hover: hover) {
   .explore-shell .xchip:hover { border-color: var(--neutral-300); }
 }
@@ -448,48 +450,43 @@
   transition: opacity var(--dur-2) var(--ease-out);
 }
 .explore-shell .xrows.is-pending { opacity: 0.55; }
-.xlist-head {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-1) 6px;
-  border-bottom: var(--stroke-hair) solid var(--border);
-  font-size: var(--text-label);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  color: var(--text-2);
-}
-.xlist-unit { margin-left: auto; text-align: right; }
-/* The unit ends over the figures, not over the save column. */
-.xrows--ledger ~ .xlist-head,
-.xlist-head:has(+ .xrows--ledger),
-.xlist-head:has(+ .mpp-rows) { padding-right: calc(var(--tap) + var(--space-1)); }
+/* G12, D10 (explore polish): the row itself is the grid, so the price
+   formation (buttons) can sit outside the link and still face the name. The
+   link is a subgrid over every column but the save one; its parts land in
+   the row's named areas, the formation lands in day and parts beside it.
+   Every template below names a last "save" column. */
 .xrow-hs {
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  min-width: 0;
-  border-bottom: var(--stroke-hair) solid var(--border-soft);
-  transition: background-color var(--dur-1) var(--ease-out);
-}
-.xrow-hs .xrow-hit {
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto auto;
+  grid-template-columns: 44px minmax(0, 1fr) auto auto auto;
   grid-template-areas:
-    "media l1 l1 day"
-    "media l2 parts parts"
-    "media fit fit fit";
+    "media l1 l1 day save"
+    "media l2 parts parts save"
+    "media fit fit fit save";
   align-items: center;
   column-gap: 10px;
   row-gap: 0;
-  flex: 1 1 auto;
   min-width: 0;
-  padding: 5px var(--space-1) 5px 0;
+  padding: 5px 0;
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.xrow-hs > .xrow-hit {
+  grid-column: 1 / -2;
+  grid-row: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-template-rows: subgrid;
+  align-items: center;
+  min-width: 0;
   border-radius: var(--radius-control);
   color: inherit;
   text-decoration: none;
 }
+/* The whole row still opens the place, padding and gaps too: the link's
+   own layer stretches over the row, under the buttons. */
+.xrow-hs > .xrow-hit::after { content: ""; position: absolute; inset: 0; }
+.xrow-hs > .xrow-save { grid-area: save; position: relative; z-index: 1; }
 .xrow-hs .xrow-media {
   grid-area: media;
   align-self: start;
@@ -537,14 +534,18 @@
    full width ("Salzkammergut, Austria") instead of a letter beside the
    parts (orchestrator fix round 1: the region shows as it does today). */
 @container xlist (max-width: 599px) {
-  .xrows--ledger .xrow-hs .xrow-hit {
+  /* G12: the name gets the whole text column ("Lake Como", "Dubrovnik" in
+     full); the figure moves down beside the region, over its own parts. A
+     name too long for one line wraps rather than ends in an ellipsis. */
+  .xrows--ledger .xrow-hs {
     grid-template-areas:
-      "media l1 l1 day"
-      "media l2 l2 l2"
-      "media parts parts parts"
-      "media fit fit fit";
+      "media l1 l1 l1 save"
+      "media l2 l2 day save"
+      "media parts parts parts save"
+      "media fit fit fit save";
     padding-block: 2px;
   }
+  .xrows--ledger .xrow-hs .xrow-name { white-space: normal; overflow: visible; text-wrap: balance; }
   .xrows--ledger .xrow-hs .xrow-line2 { margin-top: 1px; line-height: var(--leading-tight); flex-wrap: wrap; row-gap: 2px; }
   .xrows--ledger .xrow-hs .xform-parts { --wh: 20px; justify-content: flex-start; margin-top: 1px; }
 }
@@ -560,13 +561,15 @@
 /* The day figure comes first in the DOM (read first); in a flex row (a
    rail card) it is drawn last. */
 .xform > .hs-formation-day { order: 2; }
-.xrow-hs .xform { display: contents; }
+.xrow-hs > .xform { display: contents; }
 .xrow-hs .xform-parts { grid-area: parts; margin-top: 3px; display: flex; justify-content: flex-end; gap: 2px; min-width: 0; --wh: 22px; }
 .xrow-hs .xform-parts .hs-wagon { padding-inline: 5px; gap: 2px; }
 .xrow-hs .xform-parts .hs-wagon svg { width: 12px; height: 12px; }
 .xrow-hs .hs-formation-day { grid-area: day; justify-self: end; margin: 0; padding: 0; }
 .xrow-hs .hs-formation-day .money { font-weight: 800; }
-.xrow-hs .xrow-save { flex: none; }
+/* G12: the pressable wagons are 32 px in every list width. */
+.xrow-hs .xform.is-pressable .xform-parts { --wh: 32px; align-items: center; }
+.xrow-hs.is-selected .xform-unit { color: inherit; }
 @media (hover: hover) {
   .xrow-hs:hover { background: var(--surface); }
 }
@@ -592,28 +595,58 @@
 .explore-shell .xempty-mark { display: block; margin: var(--space-7) auto var(--space-3); }
 .explore-shell .xempty-mark + .xempty { align-items: center; text-align: center; }
 .explore-shell .xempty-mark + .xempty .empty-result-line { font-size: var(--text-lead); }
-/* Over the rails the head is a quiet line (the unit and any note every card
-   shares), close to the first rail, without a rule. */
-.xrails > .xlist-head { padding: 0; border-bottom: 0; margin-bottom: calc(var(--space-3) - var(--space-7)); }
-.xlist-note { color: var(--text-2); }
-/* Over the rails a shared note ("Local transport: not yet") is about the
-   figures, so it stands with their unit at the right, after a hairline,
-   instead of floating at the left with no subject (polish lane, final
-   judges). The dates, when set, keep the left. */
-.xrails > .xlist-head { justify-content: flex-end; align-items: baseline; }
-.xrails > .xlist-head .xlist-dates { order: -2; margin-right: auto; }
-.xrails > .xlist-head .xlist-dates:empty { display: none; }
-.xrails > .xlist-head .xlist-unit { order: -1; margin-left: 0; }
-.xrails > .xlist-head .xlist-note { padding-left: var(--space-3); border-left: var(--stroke-hair) solid var(--border); font-weight: 500; }
 @media (max-width: 768px) {
   /* Room under the last row for the floating Map pill. */
   .explore-shell .xcontent-main { padding-bottom: calc(var(--tap) + var(--space-7)); }
 }
 
-/* Save (ExploreCards.jsx SaveButton): the cairn, its stones filled in umber
-   once saved; it pops on the traveller's own press only (.hs-pop). */
-.xsave[aria-pressed="true"] { color: var(--action); }
-.xsave[aria-pressed="true"] .hs-icon-cairn .stone { fill: currentColor; }
+/* Save (ExploreCards.jsx SaveButton; G12 point 4): the bookmark, an
+   outline in the quiet ink, filled in the select ink once saved. The
+   traveller's own save ticks the glyph (1, 1.14, 1) and sends one ring out,
+   both 240 ms; an unsave only fades the fill. */
+.xsave { position: relative; }
+.xsave .hs-icon-bookmark { color: var(--text-2); }
+.xsave .bm-fill { fill: transparent; transition: fill var(--dur-1) var(--ease-out); }
+.xsave[aria-pressed="true"] .hs-icon-bookmark { color: var(--select-ink); }
+.xsave[aria-pressed="true"] .bm-fill { fill: var(--select-ink); }
+.xsave.is-ticking .hs-icon-bookmark { animation: xsave-tick 240ms var(--ease-out); }
+.xsave.is-ticking::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--select-bg);
+  pointer-events: none;
+  animation: xsave-ring 240ms var(--ease-out) forwards;
+}
+@keyframes xsave-tick { 50% { scale: 1.14; } }
+@keyframes xsave-ring { from { scale: 0.6; opacity: 0.9; } to { scale: 1.4; opacity: 0; } }
+/* The save word (copy.md explore.save): only on a wide Explore list, from
+   1100 px, where the row has room; the map column and phones keep the
+   bare bookmark. */
+.xsave-word { display: none; }
+@media (min-width: 1100px) {
+  @container xlist (min-width: 600px) {
+    .xrows--ledger .xrow-hs .xsave.has-word { width: auto; padding-inline: var(--space-2) var(--space-3); }
+    .xrows--ledger .xrow-hs .xsave.has-word .icon-btn-glyph { align-items: center; gap: var(--space-1); }
+    .xrows--ledger .xrow-hs .xsave-word { display: inline; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+    .xrows--ledger .xrow-hs .xsave[aria-pressed="true"] .xsave-word { color: var(--select-ink); }
+  }
+}
+/* The saved filter chip: the same glyph, filled while it is on. */
+.xtool-saved .bm-fill { fill: transparent; transition: fill var(--dur-1) var(--ease-out); }
+.xtool-saved[aria-pressed="true"] .bm-fill { fill: currentColor; }
+.xov-quick [aria-pressed="true"] .bm-fill { fill: currentColor; }
+/* The first save of a session: My trips in the nav bumps once. */
+.hs-nav-bump { animation: hs-nav-bump 200ms var(--ease-out); }
+@keyframes hs-nav-bump { 50% { translate: 0 -3px; } }
+@media (prefers-reduced-motion: reduce) {
+  .xsave.is-ticking .hs-icon-bookmark, .hs-nav-bump { animation: none; }
+  .xsave.is-ticking::after { display: none; }
+}
 
 /* The map's docked column on a tablet or desktop (340 to 420 px): the parts
    take their own line, so the country stays readable beside the flag. The
@@ -621,13 +654,13 @@
 @container xlist (max-width: 599px) {
   /* The name line takes the full width; the day figure faces the
      country, which is short. */
-  .mpp-rows .xrow-hs .xrow-hit {
+  .mpp-rows .xrow-hs {
     grid-template-areas:
-      "media l1 l1 l1"
-      "media l2 l2 day"
-      "media why why why"
-      "media parts parts parts"
-      "media fit fit fit";
+      "media l1 l1 l1 save"
+      "media l2 l2 day save"
+      "media why why why save"
+      "media parts parts parts save"
+      "media fit fit fit save";
   }
   .mpp-rows .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
   /* The map column and the drawer keep the one reason ("Best in Apr to
@@ -642,15 +675,15 @@
 /* A list of 600 px and more: one line a place, the parts in their own
    column before the figure. */
 @container xlist (min-width: 600px) {
-  .xrow-hs .xrow-hit {
-    grid-template-columns: 56px minmax(0, 1fr) auto minmax(76px, auto);
+  .xrow-hs {
+    grid-template-columns: 56px minmax(0, 1fr) auto minmax(76px, auto) auto;
     grid-template-areas:
-      "media l1 parts day"
-      "media l2 parts day"
-      "media why why why"
-      "media fit fit fit";
+      "media l1 parts day save"
+      "media l2 parts day save"
+      "media why why why save"
+      "media fit fit fit save";
     column-gap: var(--space-4);
-    padding: var(--space-2) var(--space-2) var(--space-2) 0;
+    padding: var(--space-2) 0;
   }
   .xrow-hs .xrow-media { width: 56px; height: 56px; }
   .xrow-hs .xform-parts { --wh: 24px; gap: 4px; margin-top: 0; }
@@ -659,20 +692,22 @@
   .xrow-hs .xrow-hit .xrow-why { display: block; }
   .xrow-hs .xform-parts .hs-wagon { padding-inline: 9px; gap: 4px; }
   .xrow-hs .xform-parts .hs-wagon svg { width: 13px; height: 13px; }
-  .xrow-hs .xrow-hit { row-gap: var(--space-1); }
+  .xrow-hs { row-gap: var(--space-1); }
   .xrow-hs .xrow-line2 { margin-top: 0; }
   .xrow-hs .hs-formation-day { font-size: var(--text-title); }
+  /* G12: the return mark gets its word where the row has room. */
+  .xrow-hs .xform-ret-word { display: inline; }
 }
 /* From 1024 px the band word and the one reason join the row. */
 @container xlist (min-width: 1024px) {
-  .xrow-hs .xrow-hit {
+  .xrow-hs {
     /* The parts take a fixed track, so the reason column does not drift
        with the width of the wagons and the row has no empty middle. */
-    grid-template-columns: 56px minmax(0, 18rem) minmax(0, 1fr) 15rem minmax(84px, auto);
+    grid-template-columns: 56px minmax(0, 18rem) minmax(0, 1fr) 15rem minmax(84px, auto) auto;
     grid-template-areas:
-      "media l1 why parts day"
-      "media l2 why parts day"
-      "media fit fit fit fit";
+      "media l1 why parts day save"
+      "media l2 why parts day save"
+      "media fit fit fit fit save";
   }
   .xrow-hs .xband { display: inline; }
   .xrow-hs .xform-parts { justify-self: end; }

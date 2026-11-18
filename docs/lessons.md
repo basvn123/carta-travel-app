@@ -7,6 +7,8 @@ Things learned in Carta that every future run should know. Claude reads this at 
 - **Keep it short.** Past about 40 lines, promote or prune. Full stories are in the old reports (`.work/INDEX.md`).
 
 ## Lessons
+- 2026-11-18 · PowerShell here prints numbers in Dutch format: "115.447 MB" is 115 GB, not 115 MB. Read free space with `[math]::Round((Get-PSDrive C).Free/1GB,1)` before calling the disk full · (a run told the owner the disk was full while 115 GB were free)
+- 2026-11-18 · Parallel builder lanes in worktrees committed whole files as CRLF; before merging a lane, check its blobs for `\r\n` with Python (Git Bash `grep $'\r'` matches every line) · (a 63,000 line i18n conflict that was only line endings)
 - 2026-11-17 · Launch headless lanes hidden (`Start-Process -WindowStyle Hidden`) and judge them alive by a `claude.exe` that holds their session id, not by their log · (a lane in a visible console died silently when the window closed; a lane that hit a usage limit stayed alive but idle behind a background shell; the house style run's `watchdog.sh` handles both)
 - 2026-11-17 · Crew subagents stop after about 40 turns: brief each to write its output file by about turn 20, and resume one that stops with "write your file now" · (a proposer and three judges read for 40 turns and wrote nothing)
 - 2026-11-17 · Many open Claude sessions grow the Windows pagefile until the disk is full (28 to 41 GB in a day): close idle sessions before a multi-lane run and run at most three lanes on 16 GB of RAM · (the disk hit 0 bytes twice in the house style run)

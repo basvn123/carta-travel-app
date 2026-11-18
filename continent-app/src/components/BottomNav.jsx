@@ -36,6 +36,7 @@ export function BottomNav({
           <SectionLink
             key={key}
             tab={key}
+            data-nav={key}
             className={`bottom-nav-item ${on ? 'active' : ''}`}
             current={on}
             onNavigate={onNavigate}

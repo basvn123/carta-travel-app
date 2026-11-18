@@ -238,7 +238,11 @@ test('every language carries the same home strings with the same placeholders', 
 test('the retired home strings are gone', () => {
   const retired = ['home.tryLabel', 'home.try2', 'home.try3', 'home.deskAlt', 'home.tripAlt', 'home.chapterPos',
     'home.addsTitle', 'home.promise1', 'home.promise2', 'home.promise3', 'home.credits', 'home.aDay', 'home.planStory',
-    'home.yoursTitle', 'home.inDates', 'home.inPeople', 'home.inStay', 'home.inTotal'];
+    'home.yoursTitle', 'home.inDates', 'home.inPeople', 'home.inStay', 'home.inTotal',
+    // G12 (explore polish): the save name no longer flips; aria-pressed says the state.
+    'explore.unsaveNamed',
+    // G12: the desktop hero reads explore.chooseOrAsk now.
+    'explore.askOrSearch'];
   for (const [lang, cat] of Object.entries(CATALOGS)) {
     for (const k of retired) assert.equal(cat[k], undefined, `${lang} ${k}`);
     assert.deepEqual(Object.keys(cat).filter((k) => k.startsWith('landing.')), [], lang);

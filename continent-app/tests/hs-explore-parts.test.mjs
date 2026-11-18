@@ -31,12 +31,34 @@ test('the row keeps its link, its price items and the save outside the link', ()
   const row = read('src/browse/explore/PlaceRow.jsx');
   assert.match(row, /className="xrow-hit"/);
   assert.match(row, /href=\{`#dest=\$\{encodeURIComponent\(p\.id\)\}`\}/);
-  assert.match(row, /<\/a>\s*\{onToggleFav && \(\s*<SaveButton/);
+  // G12, D10: the formation (buttons) left the link, then the save.
+  assert.match(row, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} figRef=\{figRef\} pressable place=\{p\} \/>\s*\{onToggleFav && \(\s*<SaveButton/);
   const parts = read('src/browse/explore/HouseParts.jsx');
+  // My trips and the home story keep the plain formation.
   assert.match(parts, /<PriceItems cost=\{cost\} way=\{wayOf\(cost\)\}>/);
   assert.match(parts, /className="sr-only"> \{view\.unit\}/);
   assert.match(parts, /view\.request\.excluded\?\.includes\('flight'\)/);
   assert.match(parts, /est=\{isNational\(cost\)\}/);
+  // The list formation: the unit on the figure, every part a dialog button.
+  assert.match(parts, /className="xform-unit" aria-hidden="true">\{t\(unitKey, unitArgs\)\}/);
+  assert.match(parts, /t\(g \? 'card\.dayFigSpokenGroup' : 'card\.dayFigSpoken'/);
+  assert.match(parts, /bed && food && fig\.plus && <span className="xform-plus" aria-hidden="true">\+<\/span>/);
+  assert.match(parts, /<HouseIcon\.ret size=\{12\}/);
+  assert.match(read('src/components/PriceItems.jsx'), /aria-haspopup="dialog"/);
+  assert.match(read('src/auth/mytrips/SavedTab.jsx'), /<RowFormation cost=\{cost\} t=\{t\} figRef=\{ref\} \/>/);
+});
+
+test('the row is the grid: the formation and the save sit in its areas, beside the link subgrid', () => {
+  const css = read('src/styles/62-v6-explore.css');
+  assert.match(css, /\.xrow-hs > \.xrow-hit \{[^}]*grid-template-columns: subgrid;/);
+  assert.match(css, /\.xrow-hs > \.xform \{ display: contents; \}/);
+  assert.match(css, /\.xrow-hs > \.xrow-save \{ grid-area: save;/);
+  // Every row template (Explore, map column, Ask) names the save column.
+  for (const f of ['62-v6-explore.css', '75-ask.css']) {
+    const areas = read(`src/styles/${f}`).match(/grid-template-areas:[^;]*;/g).filter((a) => a.includes('media'));
+    for (const a of areas) for (const line of a.match(/"[^"]+"/g)) assert.match(line, /save"$/, `${f}: ${line}`);
+  }
+  assert.doesNotMatch(css, /\.xrow-hs \.xrow-hit \{\s*grid-template/);
 });
 
 test('the list, the map column and the drawer draw the same row', () => {
@@ -77,16 +99,49 @@ test('a row shows the region with the country, the country never shrinks', () =>
 test('the reason stays in the map column and in tablet lists', () => {
   const css = read('src/styles/62-v6-explore.css');
   assert.match(css, /\.mpp-rows \.xrow-hs \.xrow-hit \.xrow-why \{ display: block;/);
-  assert.match(css, /"media why why why"/);
+  assert.match(css, /"media why why why save"/);
 });
 
-test('a note every rail card shares is said once over the rails', () => {
+test('the rails carry no head or note line; each figure says its unit', () => {
+  // G12, D10 (owner, 2026-11-17): the head and the note lines went.
   const rails = read('src/browse/ExploreRails.jsx');
-  assert.match(rails, /<ListHead t=\{t\} notes=\{shared\} \/>/);
-  assert.match(rails, /unmeasured: own\.unmeasured\.filter\(\(k\) => !shared\.includes\(k\)\)/);
-  assert.doesNotMatch(rails, /<PriceNotes row=\{p\.cost\}/);
-  // The price row (its day figure is a button) sits outside the card link.
-  assert.match(rails, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} weighted \/>/);
+  assert.doesNotMatch(rails, /<ListHead\b/);
+  assert.doesNotMatch(rails, /<PriceNotes\b/);
+  // The price row (its figure and wagons are buttons) sits outside the card link.
+  assert.match(rails, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} weighted pressable place=\{p\} \/>/);
+});
+
+test('save wears the bookmark with one fixed name; the cairn stays My trips', () => {
+  // G12 (explore polish, point 4 and decision change 7).
+  const cards = read('src/browse/ExploreCards.jsx');
+  assert.match(cards, /<HouseIcon\.bookmark size=\{20\} \/>/);
+  assert.doesNotMatch(cards, /HouseIcon\.cairn/);
+  assert.match(cards, /t\('explore\.saveNamed', \{ place: name \}\)/);
+  assert.doesNotMatch(cards, /unsaveNamed/);
+  assert.match(cards, /pressed=\{fav\}/);
+  assert.match(cards, /if \(!fav\) bumpTripsOnce\(\)/);
+  assert.match(read('src/components/AppHeader.jsx'), /key: 'trips', labelKey: 'nav\.myTrips', Icon: HouseIcon\.cairn/);
+  for (const f of ['src/components/AppHeader.jsx', 'src/components/BottomNav.jsx']) assert.match(read(f), /data-nav=\{key\}/, f);
+  const bar = read('src/browse/explore/ExploreToolbar.jsx');
+  assert.match(bar, /iconStart=\{<HouseIcon\.bookmark size=\{18\} \/>\} aria-pressed=\{showFavOnly\}/);
+  const css = read('src/styles/62-v6-explore.css');
+  assert.match(css, /\.xsave\[aria-pressed="true"\] \.bm-fill \{ fill: var\(--select-ink\); \}/);
+  // The visible word from 1100 px rides inside the same button, so the
+  // fixed name stays the accessible name.
+  assert.match(cards, /\{word && <span className="xsave-word">\{fav \? t\('detail\.saved'\) : t\('explore\.save'\)\}<\/span>\}/);
+  assert.match(read('src/browse/explore/PlaceRow.jsx'), /className="xrow-save" word \/>/);
+  assert.match(css, /\.xsave-word \{ display: none; \}/);
+  assert.match(css, /animation: xsave-tick 240ms/);
+  assert.match(css, /animation: xsave-ring 240ms/);
+  // No star left in the save copy, in any language.
+  for (const lang of ['en', 'nl', 'de', 'fr', 'es', 'it']) {
+    const cat = read(`src/i18n/${lang}.js`);
+    for (const key of ['results.emptyFav', 'fav.shortlistEmpty', 'fav.snapped']) {
+      const line = cat.split(/\r?\n/).find((l) => l.includes(`"${key}"`) || l.includes(`'${key}'`));
+      assert.ok(line, `${lang} ${key}`);
+      assert.doesNotMatch(line, /\b(star|starred|ster|Stern|étoile|estrella|stella)\b/i, `${lang} ${key}`);
+    }
+  }
 });
 
 test('saving a place commits with a haptic through the house utility', () => {

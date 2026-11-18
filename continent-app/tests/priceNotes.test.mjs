@@ -54,19 +54,25 @@ test('the component draws both notes, and nothing for a clean row', async () => 
   assert.equal(quiet, '');
 });
 
-test('Explore card: the card price slot carries the notes from the card cost row', async () => {
-  const m = await load();
-  const row = rowWith(m, 2);
-  const out = html(m, m.React.createElement(m.PriceNotes, { row, className: 'xprice-notes' }));
-  assert.match(out, /xprice-notes/);
-  assert.match(out, /data-note="bed"/);
-  assert.match(src('browse/ExploreCards.jsx'), /<PriceNotes row=\{p\.cost\}/);
-  // House style (orchestrator fix round 1): a rail card carries its own notes
-  // from its cost row; a note every card on screen shares is said once over
-  // the rails (ListHead), not under each card.
-  assert.match(src('browse/ExploreRails.jsx'), /const own = priceNotes\(p\.cost\);/);
-  assert.match(src('browse/ExploreRails.jsx'), /<PriceNotes notes=\{notes\}/);
-  assert.match(src('browse/ExploreRails.jsx'), /<ListHead t=\{t\} notes=\{shared\} \/>/);
+test('Explore: no note line on the list, the rails or a card; the notes live in what the figure opens', async () => {
+  // G12, D10 (explore polish, owner 2026-11-17): the owner read the note
+  // lines as sloppy repeated text. The thin bed is a dot on the bed wagon
+  // (said in its name), local transport is a row in the opened price.
+  for (const f of ['browse/ExploreCards.jsx', 'browse/ExploreRails.jsx', 'browse/explore/ExploreContent.jsx']) {
+    assert.doesNotMatch(src(f), /<PriceNotes\b/, f);
+    assert.doesNotMatch(src(f), /<ListHead\b/, f);
+  }
+  const parts = src('browse/explore/HouseParts.jsx');
+  assert.match(parts, /const thin = bedIsThin\(cost\);/);
+  assert.match(parts, /t\('price\.bedThin'\)/);
+  assert.match(parts, /className="xform-thin"/);
+  // The opened price still lists local transport with its placeholder.
+  const items = src('components/PriceItems.jsx');
+  assert.match(items, /const ORDER = \['bed', 'food', 'transport'/);
+  assert.match(items, /data-item=\{r\.key\}/);
+  // The map list lost its head too (judge round 1): every row says "/day".
+  assert.doesNotMatch(src('browse/MapPlacePanel.jsx'), /ListHead/);
+  assert.doesNotMatch(src('browse/explore/PlaceRow.jsx'), /export function ListHead/);
 });
 
 test('Ask card: the stay section carries the notes from the destination cost row', async () => {

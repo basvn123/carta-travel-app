@@ -12,6 +12,7 @@ export function useExploreChips({
   scrollRef, sentinelRef, setBigOnly, setCountryFilter, setGemOnly, setLocationQuery,
   setRatingRange, setReachHours, setShowFavOnly, setTopBeachOnly, setTopPick, setTripKinds,
   setUnescoOnly, setVisible, setXf, showFavOnly, t, tripKinds, unescoOnly, xf,
+  strongOnly = false, setStrongOnly = null,
 }) {
   // The phone's Filters door. It used to be a bare <details> fold here while
   // Destinations opened a proper sheet from a Filters button, so the same
@@ -41,6 +42,10 @@ export function useExploreChips({
     setTopPick(null);
     setReachHours(null);
     setTripKinds([]);
+    // G12: every filter with a chip goes with Clear all, so the badge is
+    // never left counting one the traveller cannot see being cleared.
+    setShowFavOnly(false);
+    setStrongOnly?.(false);
     setXf({ kinds: [], verdicts: [], roles: [], month: null, budget: null, bmin: null, fh: null,
       nocar: false, quiet: false, sea: false, badged: false, vibe: null,
       area: null, near: null, nb: [] });
@@ -76,6 +81,9 @@ export function useExploreChips({
     for (const x of xf.nb) list.push({ key: `nb:${x}`, label: gLabels.extra(x), remove: drop({ nb: xf.nb.filter((y) => y !== x) }) });
     if (gemOnly) list.push({ key: 'gem', label: t('rail.gems'), remove: () => setGemOnly(false) });
     if (unescoOnly) list.push({ key: 'unesco', label: t('dest.unesco'), remove: () => setUnescoOnly(false) });
+    // G12: Strong match narrows the list like any filter, so it gets a chip,
+    // counts in the badge and an empty list can name it as the cause.
+    if (strongOnly && setStrongOnly) list.push({ key: 'strong', label: t('fit.strong'), remove: () => setStrongOnly(false) });
     if (showFavOnly) list.push({ key: 'fav', label: t('filter.shortlistOnly'), remove: () => setShowFavOnly(false) });
     for (const iso2 of countryFilter) {
       const name = (availableCountries.find(([c]) => c === iso2) || [])[1] || iso2;
@@ -86,7 +94,7 @@ export function useExploreChips({
     // focused view then always says why it holds what it holds.
     if (locationQuery && locationQuery.trim()) list.push({ key: 'q', label: `“${locationQuery.trim()}”`, remove: () => setLocationQuery('') });
     return list;
-  }, [xf, locationQuery, setLocationQuery, flightLimitAvailable, tripKinds, gemOnly, unescoOnly, showFavOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow, request]);
+  }, [xf, locationQuery, setLocationQuery, flightLimitAvailable, tripKinds, gemOnly, unescoOnly, showFavOnly, strongOnly, setStrongOnly, countryFilter, countryNot, reachHours, reachAvailable, availableCountries, t, patchXf, setTripKinds, setGemOnly, setUnescoOnly, setShowFavOnly, setCountryFilter, setReachHours, gLabels, nearRow, request]);
 
   // The filter set last, so an empty grid can name it and offer to remove
   // just that one (brief V3-11). A chip key that was not there a render ago

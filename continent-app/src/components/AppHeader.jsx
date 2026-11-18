@@ -4,9 +4,9 @@ import { Blaze } from './ui/Blaze.jsx';
 import { HouseIcon } from './HouseIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
-import { PersonIcon, TogetherIcon } from './Icons.jsx';
+import { PersonIcon } from './Icons.jsx';
+import { Button } from './ui/index.js';
 import { useTogether, waitingCount } from '../together/useTogether.js';
-import { StyleDoor } from './StyleDoor.jsx';
 
 /* The three places (T496, roadmap 1.3a and 1.15; owner T485-b): Explore,
    Plan and My trips, in this order on both widths. Home is the logo and
@@ -93,10 +93,15 @@ export function accountInitial(user) {
  * the person glyph for a guest and the initial when signed in. A link to the
  * Account place; on Account it carries the selected tint.
  */
-function AccountLink({ user, current, onNavigate }) {
+function AccountLink({ user, current, onNavigate, onSignIn = null }) {
   const { t } = useI18n();
+  // G12 (decision.md step 10): signed out, a "Sign in" pill opens the
+  // sign-in dialog at once (one requestAuth path in App.jsx), and the person
+  // icon beside it still opens Account: a guest's language and "How Carta
+  // works" live there, and a redesign removes no feature (orchestrator,
+  // fixes round 1). Signed in, the avatar alone, a link to Account.
   const name = user ? (user.user_metadata?.full_name?.trim() || user.email) : t('header.accountTitle');
-  return (
+  const door = (
     <SectionLink
       tab="account"
       className={`account-door${current ? ' on' : ''}`}
@@ -109,6 +114,15 @@ function AccountLink({ user, current, onNavigate }) {
         {user ? accountInitial(user) : <PersonIcon size={18} />}
       </span>
     </SectionLink>
+  );
+  if (user || !onSignIn) return door;
+  return (
+    <>
+      <Button variant="secondary" className="hdr-pill signin-pill" onClick={() => onSignIn('signin')}>
+        {t('auth.signIn')}
+      </Button>
+      {door}
+    </>
   );
 }
 
@@ -126,13 +140,16 @@ function TogetherDoor({ current, onNavigate }) {
   return (
     <SectionLink
       tab="together"
-      className={`account-door tg-door${current ? ' on' : ''}`}
+      className={`hdr-pill tg-door${current ? ' on' : ''}`}
       current={current}
       onNavigate={onNavigate}
-      title={t('tg.title')}
-      aria-label={label}
+      title={t('tg.doorAria')}
+      aria-label={n ? label : t('tg.doorAria')}
     >
-      <TogetherIcon size={24} />
+      {/* G12: the people glyph and the word, so the door says what it is;
+          from 769 to 1099 px CSS leaves the glyph alone, with the title. */}
+      <HouseIcon.people size={20} />
+      <span className="tg-door-word" aria-hidden="true">{t('tg.title')}</span>
       {n > 0 && <span className="tg-door-n" aria-hidden="true">{n > 9 ? '9+' : n}</span>}
     </SectionLink>
   );
@@ -150,6 +167,8 @@ export function AppHeader({
   // The shortlist's size for the count chip after My trips, and whether an
   // unsaved trip plan is in progress (the state dot on Plan).
   savedCount = 0, planInProgress = false,
+  // G12: the Sign in pill's one door, App's requestAuth.
+  onSignIn = null,
 }) {
   const { t, lang } = useI18n();
   const navRef = useRef(null);
@@ -181,6 +200,7 @@ export function AppHeader({
             <SectionLink
               key={key}
               tab={key}
+              data-nav={key}
               className={`header-nav-item ${on ? 'active' : ''}`}
               current={on}
               onNavigate={onNavigate}
@@ -199,10 +219,10 @@ export function AppHeader({
             The slot collapses when empty (:empty), so every other place
             leaves no hole in the row. */}
         <div className="header-search-slot" id="header-search-slot" />
-        {/* The travel style, on every tab (lib/travelStyles.js). */}
-        <StyleDoor />
+        {/* The travel style moved to the Style dock in the bottom-left
+            corner (G12, components/dock/StyleDock.jsx). */}
         <TogetherDoor current={place === 'together'} onNavigate={onNavigate} />
-        <AccountLink user={user} current={place === 'account'} onNavigate={onNavigate} />
+        <AccountLink user={user} current={place === 'account'} onNavigate={onNavigate} onSignIn={onSignIn} />
       </div>
     </div>
   );

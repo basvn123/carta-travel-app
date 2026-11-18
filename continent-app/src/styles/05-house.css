@@ -260,6 +260,53 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 .hs-formation.is-lg .hs-wagon { font-size: var(--text-body); padding: 1px 12px 0; gap: 6px; }
 .hs-formation.is-lg .hs-wagon svg { width: 16px; height: 16px; }
 .hs-formation.is-lg .hs-formation-day { font-size: var(--text-title); }
+
+/* G12, D10 (explore polish): Explore's pressable formation (RowFormation
+   pressable). Each wagon is a PriceItems button: the button keeps the wagon
+   look, 32 px tall, with a 44 px hit area from its own layer so the row
+   does not grow for the target. */
+.hs-formation.is-pressable { --wh: 32px; }
+.hs-formation.is-pressable .pitems { display: inline-flex; }
+.pitems-trigger.xform-btn {
+  display: inline-flex;
+  height: var(--wh);
+  font-size: var(--text-micro);
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+.pitems-trigger.xform-btn::before { content: ""; position: absolute; inset: calc((var(--wh) - 44px) / 2) 0; }
+.hs-wagon-pair { align-items: center; }
+.hs-formation.is-weighted .hs-wagon-pair > .pitems { flex: var(--ww, 1) 1 0; min-width: max-content; }
+.hs-formation.is-weighted .hs-wagon-pair .xform-btn { flex: 1 1 auto; }
+/* Bed and food read as one sum: the two wagons meet with tight inner
+   corners, the plus between them only when the euros add up. */
+.hs-wagon-pair > .pitems:not(:last-child) .hs-wagon { border-top-right-radius: calc(var(--radius-sm) * 0.66); border-bottom-right-radius: calc(var(--radius-sm) * 0.66); }
+.hs-wagon-pair > .pitems:not(:first-child) .hs-wagon { border-top-left-radius: calc(var(--radius-sm) * 0.66); border-bottom-left-radius: calc(var(--radius-sm) * 0.66); }
+.xform-plus { padding: 0 2px; font-size: var(--text-micro); font-weight: 800; color: var(--text-2); }
+.xform-ret { opacity: 0.8; }
+.xform-ret-word { display: none; font-weight: 600; }
+/* Few listings behind the bed: an umber dot with a paper ring, so it reads
+   on the umber wagon too; the words are in the wagon's name and title. */
+.xform-thin {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--umber-600);
+  outline: 1.5px solid var(--surface-page);
+}
+/* The figure opens what is in it: a dotted umber underline is the cue
+   (3.4:1 on paper), the unit rides after it, quieter. */
+.pitems-trigger.xform-fig {
+  text-decoration: underline dotted var(--umber-500);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+.pitems-trigger.xform-fig::before { content: ""; position: absolute; inset: -10px -4px; }
+.xform-unit { margin-left: 3px; font-size: var(--text-label); font-weight: 600; letter-spacing: 0; color: var(--text-2); }
 /* The wagon coupling (Add and Remove of a cost part): it rolls in from the
    right and couples; leaving, it uncouples and fades. */
 .hs-wagon.hs-couple-in { animation: hs-couple-in var(--dur-couple) var(--ease-settle) both; }
