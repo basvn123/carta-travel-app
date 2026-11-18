@@ -17,6 +17,9 @@ public/stays/
 # scripts/build-ask-bm25.mjs. lexicon.json beside it is a reviewed input (T552).
 public/search/ask/*
 !public/search/ask/lexicon.json
+# Explore search's gazetteer (G12), written by ../pipeline/gazetteer_layer.py
+# (run_pipeline.py --only gazetteer) from GeoNames; 6 MB of shards.
+public/search/places/
 public/activities_full.json
 # Sharded from activities_full.json by sync-data.mjs, same status.
 public/poi/

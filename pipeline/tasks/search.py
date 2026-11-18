@@ -62,6 +62,22 @@ def guard_intel_url(ctx=None):
 
 TASKS = [
     {
+        "key": "gazetteer",
+        "title": "Gazetteer: Europe's towns, regions and countries from GeoNames -> public/search/places",
+        "cadence": "backfill",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "cmds": [[PY, "pipeline/gazetteer_layer.py", "--fetch"]],
+        "note": ("G12. Explore search finds any place in Europe: cities500 "
+                 "towns, admin1 regions and countries, with en, nl, de, fr, "
+                 "es and it names from alternateNamesV2 (CC BY 4.0). --fetch "
+                 "downloads the three extra GeoNames files into "
+                 "cache/geonames/ once (about 200 MB). About 20 prefix "
+                 "shards, 6 MB raw and 2.5 MB gzip in all, fetched one or two "
+                 "at a time as the traveller types. Static geography: run it "
+                 "by hand when GeoNames is worth refreshing."),
+    },
+    {
         "key": "taxonomy_tags",
         "title": "Taxonomy tags: every place, trail, beach, lake and peak on taxonomy v1 -> cache/taxonomy/tags.json",
         "cadence": "after",

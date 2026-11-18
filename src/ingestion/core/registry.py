@@ -1465,9 +1465,11 @@ SOURCES = (
     Source(
         key="geonames_cities500",
         section="content_layers",
-        scripts=('pipeline/harvest_geonames.py',),
-        name="GeoNames cities500 (`pipeline/harvest_geonames.py`)",
-        takes="Population, settlement class, elevation, timezone",
+        scripts=('pipeline/harvest_geonames.py', 'pipeline/gazetteer_layer.py'),
+        name="GeoNames cities500 (`pipeline/harvest_geonames.py`, `pipeline/gazetteer_layer.py`)",
+        takes=("Population, settlement class, elevation, timezone; the search gazetteer's towns, "
+               "admin1 regions and countries with their en, nl, de, fr, es and it names "
+               "(admin1CodesASCII, countryInfo, alternateNamesV2)"),
         licence="CC BY 4.0 (per harvester header)",
         attribution="Yes",
         share_alike="No",

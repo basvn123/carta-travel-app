@@ -85,7 +85,7 @@ export const ATTRIBUTIONS = [
   {
     source: 'GeoNames',
     license: 'CC BY 4.0',
-    credit: 'Population and settlement data from GeoNames (geonames.org)',
+    credit: 'Population, settlement data and the place names search finds, from GeoNames (geonames.org)',
   },
   {
     source: 'Inside Airbnb',

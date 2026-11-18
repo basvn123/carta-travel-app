@@ -14,6 +14,7 @@
  */
 
 import { dataUrl } from './dataHost.js';
+import { pickedHits } from './search/picked.js';
 
 const FOLD_TABLE = {
   'ł': 'l', 'Ł': 'l', 'ø': 'o', 'Ø': 'o', 'æ': 'ae', 'Æ': 'ae',
@@ -59,6 +60,10 @@ function editDistanceAtMost1(a, b) {
  * an empty Set means "searched and found nothing".
  */
 export function querySearchIndex(index, rawQuery) {
+  // G12: a label picked from the search panel ("Near Zermatt", "Valais")
+  // means the places the panel resolved, not a text match.
+  const picked = pickedHits(rawQuery);
+  if (picked) return picked;
   const q = foldName(rawQuery);
   const none = { ids: null, bbox: null, regionLabel: null,
     memberHits: [], suggestions: [] };
