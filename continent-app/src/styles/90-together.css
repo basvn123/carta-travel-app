@@ -40,7 +40,7 @@
    wears the people glyph and its word on a phone and from 1100 px, the
    glyph alone (with its tooltip) from 769 to 1099 px, where the places
    need the room. Signed out, Sign in is the second pill. */
-.hdr-pill {
+.app-header .hdr-pill {
   display: inline-flex;
   flex: none;
   align-items: center;

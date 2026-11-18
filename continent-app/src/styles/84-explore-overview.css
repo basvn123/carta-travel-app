@@ -694,7 +694,7 @@
   }
   .explore-shell.is-focus .xbar.xbar .xtools--phone > .xtools-chips::-webkit-scrollbar { display: none; }
   /* 44 px on every pointer: the row is the phone list's one control. */
-  .explore-shell.is-focus .xbar.xbar .xtools--phone .xchip,
+  .explore-shell.is-focus .xbar.xbar .xtools--phone .xtools-chip,
   .explore-shell.is-focus .xbar.xbar .xtools--phone .btn { min-height: var(--tap); }
   .explore-shell.is-focus .xbar.xbar .xtools--phone .xtools-chips > * { flex: none; }
   .explore-shell.is-focus .xbar.xbar .xtools--phone .xtools-clear {
@@ -716,6 +716,18 @@
   }
 }
 .xchip-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The phone row's chips are kit Buttons with their own class, not .xchip:
+   the route sheets' order check reads every Button as able to sit beside
+   any other, so a shared .xchip would tie them to unrelated pages. */
+.explore-shell .xtools .xtools-chip,
+.explore-shell .xtools .xtools-clear {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 500;
+}
+.explore-shell .xtools .xtools-clear { background: var(--surface-page); color: var(--text-2); }
 .xtool-sort.is-compact .xtool-word { display: none; }
 .explore-shell.is-focus .xtools .xtool-sort.is-compact { min-width: var(--tap); justify-content: center; padding-inline: 0; }
 @media (max-width: 359px) {

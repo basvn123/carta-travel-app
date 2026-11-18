@@ -33,14 +33,14 @@ function PhoneTools({ chips, resetAll, showFavOnly, setShowFavOnly, sortMenu, t 
       <span className="xtools-sort">{sortMenu}</span>
       <div className="xtools-chips" role="group" aria-label={t('filter.activeAria')}>
         {chips.length > 0 && (
-          <Button variant="quiet" size="sm" className="xchip xchip-clear xtools-clear"
+          <Button variant="quiet" size="sm" className="xtools-clear"
             aria-label={t('explore.clearAllAria')} onClick={resetAll}>
             {t('dock.clear')}
           </Button>
         )}
         <SavedToggle showFavOnly={showFavOnly} setShowFavOnly={setShowFavOnly} t={t} className="xtools-saved" />
         {shown.map((c) => (
-          <Button key={c.key} variant="quiet" size="sm" className="xchip xtools-chip" data-chip={c.key}
+          <Button key={c.key} variant="quiet" size="sm" className="xtools-chip" data-chip={c.key}
             title={c.label} aria-label={t('filter.removeChip', { name: c.label })} onClick={c.remove}
             iconEnd={<CloseIcon size={12} />}>
             <span className="xchip-text">{c.label}</span>
