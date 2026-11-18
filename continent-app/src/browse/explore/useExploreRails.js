@@ -75,7 +75,12 @@ export function useExploreRails({
     // The sections (T427): a question each, no subtitle, no count. The
     // traveller's saved places lead when there are any. The themes alternate
     // town, coast and outdoors so the page never runs two alike in a row.
-    return spreadLeads([
+    // Until the guided data is in, the list stops before Hiking bases, its
+    // first vibe rail: the rest arrive under what is on screen instead of
+    // pushing Hidden gems and Go without a car down while the traveller
+    // reads (checked on the merged branch, 2026-11-18).
+    const untilGuided = (list) => (guided ? list : list.slice(0, list.findIndex((r) => r.key === 'hiking')));
+    return spreadLeads(untilGuided([
       { key: 'saved', title: t('rail.shortlist'), rows: q.saved,
         seeAll: () => setShowFavOnly(true) },
       { key: 'now', title: t('rail.bestIn', { month: monthName }), short: t('rail.bestIn', { month: monthName }),
@@ -110,7 +115,7 @@ export function useExploreRails({
       theme('art'),
       { key: 'quiet', title: t('rail.quiet'), short: t('filter.notCrowded'), rows: q.quiet,
         seeAll: () => patchXf({ quiet: true }) },
-    ]);
+    ]));
   }, [railsIdle, rows, xf.month, xf.budget, railMonth, lang, guided, favorites, t, patchXf,
     setGemOnly, setSortKey, setShowFavOnly]);
 

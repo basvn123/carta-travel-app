@@ -40,6 +40,9 @@ test('every rail with four places is a strip; the theme rails use the vibe filte
     assert.match(src, new RegExp(`theme\\('${k}'\\)`), k);
   }
   assert.match(src, /seeAll: \(\) => patchXf\(\{ vibe \}\)/);
+  // Before the guided data loads, nothing after Hiking bases shows, so the
+  // vibe rails never push the rails below them down under the reader.
+  assert.match(src, /guided \? list : list\.slice\(0, list\.findIndex\(\(r\) => r\.key === 'hiking'\)\)/);
   // A theme rail asks for a Good Score or better, best first, by country.
   assert.match(src, /vibeOf\(guided, p\.id, vibe\) >= 80 && bandAtLeast\(p\.rating, 'good'\)\)\.sort\(byRating\)/);
 });
