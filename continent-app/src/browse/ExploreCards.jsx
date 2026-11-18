@@ -77,7 +77,7 @@ function bumpTripsOnce() {
 }
 
 /** The save control, the same on a tile and a row: the bookmark (G12). The
- *  cairn stays the My trips mark only, so one glyph means one thing. */
+ *  ticket stays the My trips mark only, so one glyph means one thing. */
 export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '', name = '', word = false }) {
   // The place's name is in the label (T444): a screen reader walking a rail
   // heard "Add to shortlist" twenty times with no place. The name stays the

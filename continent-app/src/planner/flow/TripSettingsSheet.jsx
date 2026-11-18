@@ -11,7 +11,8 @@ import { QuestionBody } from './QuestionScreen.jsx';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { normalizeSettings } from './tripSettings.js';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
-import { StylePicker, styleName } from '../../browse/TravelStylesSheet.jsx';
+import { StyleCards } from '../../browse/styles/StyleCards.jsx';
+import { styleName, useStyleFigures } from '../../browse/styles/styleBits.jsx';
 import { switchTripStyle } from './styleSeed.js';
 import { explorePatchFromSettings, normalizeStyle } from '../../lib/travelStyles.js';
 import { formatMoney } from '../../lib/money.js';
@@ -50,6 +51,7 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
   // explore answers have since moved away from it (then they can be kept in
   // the style, for the next trip).
   const ts = app?.travelStyles;
+  const figures = useStyleFigures(ts?.list, app?.data?.destinations);
   const tripStyle = ts?.list?.find((x) => x.id === s.style) || null;
   const drifted = tripStyle && JSON.stringify(normalizeStyle({ ...tripStyle, ...explorePatchFromSettings(s, tripStyle) }).explore)
     !== JSON.stringify(tripStyle.explore);
@@ -167,11 +169,12 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
         {ts?.list?.length > 0 && (
           <section className="pf-set-group pf-style" aria-labelledby="pf-set-style">
             <h3 className="pf-label" id="pf-set-style">{t('styles.tripStyle')}</h3>
-            <StylePicker
+            <StyleCards
               compact
               list={ts.list}
               activeId={s.style}
               label={t('styles.tripStyle')}
+              figures={figures}
               onPick={(id) => {
                 const st = ts.list.find((x) => x.id === id);
                 if (!st || id === s.style) return;

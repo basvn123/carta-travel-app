@@ -8,13 +8,14 @@ import { FromPanel, fromName, fromPoint } from '../FromPicker.jsx';
 import { AirportReach } from '../AirportReach.jsx';
 import { styleIcon, styleName } from '../../browse/styles/styleBits.jsx';
 import { Dock, DockRowButton, DockRowField, useDockBack } from './Dock.jsx';
-import { openDock } from './dockStore.js';
+import { closeDock } from './dockStore.js';
+import { openStudio } from '../../browse/styles/studioDoors.js';
 
 /**
  * The Trip dock (G12, explore polish; decision.md change 1): what belongs to
  * this trip only, under the category tabs on the right. Four rows and
- * nothing else: the travel style (a hand-over to the Style dock, which owns
- * every style setting, so no row lives in both docks), From, When, and how
+ * nothing else: the travel style (a hand-over to the Style Studio, the one
+ * place a style is edited, so no style setting lives here), From, When, and how
  * prices read. From and When drill in place; Back or Escape steps out.
  *
  * Mounted wherever a priced list starts (the Explore overview and focused
@@ -141,7 +142,13 @@ function TripRows({ s }) {
               {changed && <span className="trip-dock-changed">{t('styles.kickerChanged')}</span>}
             </span>
           )}
-          onClick={() => openDock('style')}
+          onClick={() => {
+            closeDock('trip');
+            // Two frames: the closing dock hands focus back to its trigger
+            // one frame after it closes; the studio opens after that, so its
+            // own focus move wins and its close returns focus to this pill.
+            requestAnimationFrame(() => requestAnimationFrame(() => openStudio(ts)));
+          }}
         />
       )}
       <DockRowButton

@@ -392,11 +392,11 @@ function SearchSheet({ s, startKind, startQ, opener, onClose, onSearch }) {
 
           {/* Stay opens the one Lifestyle dialog (the bed and the habits),
               which is richer than a card can hold. */}
-          {s.openLifestyle && (
+          {s.openStyleSpend && (
             <section className="sdock-card">
               <h3 className="sdock-card-h">
                 <button type="button" className="sdock-card-head" aria-haspopup="dialog"
-                  onClick={() => { exit.close(); s.openLifestyle(); }}>
+                  onClick={() => { exit.close(); s.openStyleSpend(); }}>
                   <span className="sdock-card-label">{t('settings.stayShort')}</span>
                   <span className="sdock-card-value">{bed}</span>
                   <span className="sdock-card-go">{t('dock.change')}</span>

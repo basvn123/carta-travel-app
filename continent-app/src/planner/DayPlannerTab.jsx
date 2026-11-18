@@ -122,7 +122,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   onPlanHome = null,
   // T433: Explore's cost map (App computes it once) for the day's one
   // per-person figure, and the Lifestyle panel that moves it.
-  costs = null, onOpenLifestyle = null,
+  costs = null, onOpenStyleSpend = null,
   // T666: the app's one price request (lib/price/); a stop's day is priced
   // at the stop's own dates with it.
   priceRequest = null,
@@ -2182,7 +2182,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           trip={tripPriced ? { priced: tripPriced } : null}
           tripName={tripName}
           onBackToTrip={backToTrip}
-          onLifestyle={onOpenLifestyle}
+          onStyleSpend={onOpenStyleSpend}
           onClose={() => setReceiptOpen(false)}
         />
       )}

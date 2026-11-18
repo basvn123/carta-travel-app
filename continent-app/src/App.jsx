@@ -5,13 +5,11 @@ import { AnnouncementBar, PassExpiryBanner, BottomSlot } from './components/Anno
 import { SettingsContext } from './components/SettingsLine.jsx';
 import { CloseIcon } from './components/Icons.jsx';
 import { crossTab } from './lib/sharedElement.js';
-import { usePresence, useDialogExit } from './lib/motion.js';
+import { useDialogExit } from './lib/motion.js';
 import { useFocusTrap } from './hooks/useFocusTrap.js';
 import { SectionBoundary } from './components/ErrorBoundary.jsx';
 import { MaintenanceGate } from './components/MaintenanceGate.jsx';
 import { ExploreTab } from './browse/ExploreTab.jsx';
-import { LifestylePanel } from './browse/LifestylePanel.jsx';
-import { TasteSheetHost } from './browse/TasteDoor.jsx';
 import { DestinationsTab } from './browse/DestinationsTab.jsx';
 import Logo from './components/Logo.jsx';
 import LoadingScreen from './components/LoadingScreen.jsx';
@@ -27,6 +25,8 @@ import { homeVariant } from './browse/home/homeVariant.js';
 let homeG14Ready = null;
 const loadHomeG14 = () => import('./browse/home/HomeG14.jsx').then((m) => { homeG14Ready = m.default; return m; });
 const HomeG14Lazy = React.lazy(loadHomeG14);
+// The Style Studio carries Motion, so it loads the first time a door opens it.
+const StyleStudio = React.lazy(() => import('./browse/styles/StyleStudio.jsx').then((m) => ({ default: m.StyleStudio })));
 function HomeG14(props) {
   const Ready = homeG14Ready;
   if (Ready) return <Ready {...props} />;
@@ -93,7 +93,6 @@ import { useUrlSync } from './hooks/useUrlSync.js';
 import { useKeyboardOpen } from './hooks/useKeyboardOpen.js';
 import { usePanelState } from './hooks/usePanelState.js';
 import { loadStoredStyles, useTravelStyles } from './hooks/useTravelStyles.js';
-import { TravelStylesSheet } from './browse/TravelStylesSheet.jsx';
 import { StyleDock } from './components/dock/StyleDock.jsx';
 import { PriceSheet } from './components/price/PriceSheet.jsx';
 import { useFilterState } from './hooks/useFilterState.js';
@@ -178,11 +177,8 @@ function TravelApp() {
   const {
     authModalOpen, setAuthModalOpen,
     authModalMode, setAuthModalMode, accountOpen, setAccountOpen,
-    savedTripsOpen, setSavedTripsOpen, lifestyleOpen, setLifestyleOpen,
+    savedTripsOpen, setSavedTripsOpen,
   } = usePanelState();
-  // The Lifestyle dialog leaves in --dur-2 instead of vanishing (T391): it
-  // stays mounted with a leaving class until its exit has run.
-  const lifestyleSheet = usePresence(lifestyleOpen);
   const {
     priceMode, setPriceMode, countryFilter, setCountryFilter, countryNot, setCountryNot,
     tripKinds, setTripKinds, ratingRange, setRatingRange, gemOnly, setGemOnly,
@@ -330,7 +326,6 @@ function TravelApp() {
     setGuidesOpen(false);
     setSavedTripsOpen(false);
     setTogetherOpen(false);
-    setLifestyleOpen(false);
     setAccountView(view);
     setAccountEntry((n) => n + 1);
     if (!accountOpen) pushOverlay('account', { view });
@@ -351,7 +346,6 @@ function TravelApp() {
   const openSaved = () => {
     setAccountOpen(false);
     setTogetherOpen(false);
-    setLifestyleOpen(false);
     setGuidesOpen(false);
     if (!savedTripsOpen) pushOverlay('trips');
     setSavedTripsOpen(true);
@@ -375,7 +369,6 @@ function TravelApp() {
     setGuidesOpen(false);
     setSavedTripsOpen(false);
     setAccountOpen(false);
-    setLifestyleOpen(false);
     const next = { view: view || 'home', id: id || '' };
     try {
       const st = window.history.state || {};
@@ -399,8 +392,7 @@ function TravelApp() {
   // full-height pages on desktop (z-index 56, everything below the bar), so a
   // switch that left one open moved the underline to Explore while Explore
   // stayed hidden behind the account page: the tab said one thing and the
-  // screen said another. Lifestyle goes with them, since every tab that can
-  // reprice from it carries its own button.
+  // screen said another.
   //
   // Stable: the handovers further down take it as a dependency, and every
   // setter it closes over is a useState setter.
@@ -427,7 +419,6 @@ function TravelApp() {
       setSavedTripsOpen(false);
       setAccountOpen(false);
       setTogetherOpen(false);
-      setLifestyleOpen(false);
       setActiveTab(key);
     };
     if (!opts.replace && from && (key !== from || overlayOpenRef.current)) {
@@ -445,7 +436,7 @@ function TravelApp() {
     activeTabRef.current = key;
     if (opts.replace || !from || key === from) commit();
     else crossTab(commit);
-  }, [setSavedTripsOpen, setAccountOpen, setLifestyleOpen]);
+  }, [setSavedTripsOpen, setAccountOpen]);
   // The entry gate is NOT a front door any more.
   //
   // It used to be the first thing every visitor saw: a full-screen sign-in
@@ -618,6 +609,10 @@ function TravelApp() {
     travel_styles: loadStoredStyles(),
   });
   const travelStyles = useTravelStyles(choices, setChoices);
+  // The studio's opener, read through a ref so the doors below stay stable
+  // callbacks while the styles change (setOpen follows the store).
+  const openStudioRef = useRef(travelStyles.setOpen);
+  openStudioRef.current = travelStyles.setOpen;
 
   // Shortlist (favorites) + list controls, also persisted in the URL.
   //
@@ -917,7 +912,8 @@ function TravelApp() {
   useEffect(() => {
     const onPop = () => {
       const route = routeFromSearch(window.location.search, { hasPlan: hasPlanOpen() });
-      setLifestyleOpen(false);
+      // Back closes the Style Studio with the page it stood over.
+      openStudioRef.current(false);
       // A step that names a place (#dest=, T444) reopens it; any other step
       // closes the page.
       setSelectedId(destFromHash());
@@ -951,7 +947,7 @@ function TravelApp() {
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
-  }, [setSavedTripsOpen, setAccountOpen, setLifestyleOpen, setCountryPage, regionPushedRef]);
+  }, [setSavedTripsOpen, setAccountOpen, setCountryPage, regionPushedRef]);
 
   // Opening a place is one step in the history (T444, the Explore check):
   // Back, and a phone's swipe back, close the page onto the list it came
@@ -1075,8 +1071,10 @@ function TravelApp() {
   // Stable callback props for the two planner tabs. Both are memoized and both
   // stay mounted behind display:none, so a fresh arrow here re-rendered two
   // 3,000-line components (and up to four live MapLibre contexts) on every
-  // lifestyle slider tick and every search keystroke.
-  const openLifestyle = useCallback(() => setLifestyleOpen(true), [setLifestyleOpen]);
+  // lifestyle slider tick and every search keystroke. Every "where you sleep
+  // and eat" door opens the Style Studio at that step of the active style
+  // (Style Studio, G12).
+  const openStyleSpend = useCallback(() => openStudioRef.current({ view: 'edit', step: 'spend' }), []);
   // What a page opened over the shell names in its back control (carta-design
   // "Navigation": the back control names the list it returns to; T474): the
   // surface it closes back to.
@@ -1121,7 +1119,7 @@ function TravelApp() {
   // 2026-11-12.
 
   // Where you sleep, set from the trip page's Lifestyle slider (T173). The
-  // same field the Lifestyle panel's tiles write, so the two never disagree.
+  // same field the travel style's bed writes, so the two never disagree.
   const setStayTier = useCallback((tier) => {
     setChoices((prev) => ({ ...prev, stay_tier: tier }));
   }, []);
@@ -1278,7 +1276,7 @@ function TravelApp() {
 
   // The Explore page's two price-level indices, computed once per dataset and
   // shared by the grid and the open destination panel.
-  // Recomputed whenever the Lifestyle panel changes a stay tier, a party
+  // Recomputed whenever the travel style changes a stay tier, a party
   // size or a single frequency. That is 3,038 destinations repriced in about
   // 7 ms, which is why there is no loading state anywhere near it: the grid
   // simply renders the new numbers on the next frame.
@@ -1369,14 +1367,14 @@ function TravelApp() {
   const travelMonth = whenMonth(when);
   const { settings } = useAppSettingsValue({
     availableCountries, choices, countryFilter, countryNot, data, dateBounds, dateFlex,
-    defaultDates, departDate, exploreMonth, openLifestyle, ownDates, request, returnDate,
+    defaultDates, departDate, exploreMonth, openStyleSpend, ownDates, request, returnDate,
     setAirports, setCountryFilter, setCountryNot, setDateFlex, setDepartDate, setExploreMonth,
     setFrom, setOrigin, setParty, setPartyParts, setPriceExcluded, setPriceView, setReturnDate,
     setTransportMode, sweptOrigins, travelMonth, when,
   });
-  // The travel styles ride on the same context, so the header door, the
+  // The travel styles ride on the same context, so the style disc, the
   // planner's Who screen and the trip settings read one store.
-  const settingsValue = useMemo(() => ({ ...settings, travelStyles, openLifestyle }), [settings, travelStyles, openLifestyle]);
+  const settingsValue = useMemo(() => ({ ...settings, travelStyles, openStyleSpend }), [settings, travelStyles, openStyleSpend]);
 
   // Which parts of the settings line each tab shows. Explore and Destinations
   // price from every input. The Trip planner keeps its own origin, dates and
@@ -1616,7 +1614,7 @@ function TravelApp() {
               selectedId={selectedId}
               onSelect={openDetail}
               indices={exploreIndices}
-              onOpenLifestyle={openLifestyle}
+              onOpenStyleSpend={openStyleSpend}
               onOpenGuides={openGuides}
               onOpenCountry={openCountryPage}
               onPickCategory={openExploreSection}
@@ -1633,39 +1631,16 @@ function TravelApp() {
         </div>
       )}
 
-      {/* Lifestyle lives outside the tab blocks: where you sleep and how you
-          eat price the map, the catalogue and the planners alike, so the panel
-          has to open over whichever tab asked for it. */}
-      {lifestyleSheet.mounted && (
-        <div onClick={(e) => e.stopPropagation()}>
-          {/* On Explore the panel is a right-hand drawer, so the grid it
-              reprices stays visible behind it. Everywhere else it keeps the
-              left-hand position the map layout was built around. Every modal
-              dialog has a scrim (owner call, T362; carta-design Components),
-              so the scrim shows on every tab and the page behind takes no
-              clicks. */}
-          <div className={`lifestyle-scrim${lifestyleSheet.leaving ? ' is-leaving' : ''}`} onClick={() => setLifestyleOpen(false)} aria-hidden="true" />
-          {/* The trade-off sentence at its foot prices the open destination
-              page when there is one (T391), else the catalogue's median. */}
-          <LifestylePanel
-            side={activeTab === 'map' ? 'right' : 'left'}
-            choices={choices}
-            setChoices={setChoices}
-            onClose={() => setLifestyleOpen(false)}
-            data={data}
-            destination={selectedDest || null}
-            leaving={lifestyleSheet.leaving}
-          />
-        </div>
-      )}
-
-      {/* Travel styles: every tab's header door opens it over whatever is on
-          screen, like Lifestyle. */}
+      {/* The Style Studio (G12): every style door (the corner disc, a price's
+          bed and food, the planner, the account) opens this one sheet over
+          whatever is on screen; nothing else edits a style. */}
       {travelStyles.open && (
-        <TravelStylesSheet onClose={() => travelStyles.setOpen(false)} openLifestyle={openLifestyle} initialHalf={travelStyles.open} />
+        <Suspense fallback={null}>
+          <StyleStudio onClose={() => travelStyles.setOpen(false)} />
+        </Suspense>
       )}
-      {/* G12: the Style dock, the travel style's one door on Explore,
-          Destinations and My trips. Plan's bar owns the bottom there, and a
+      {/* G12: the style disc, the travel style's corner door on Explore,
+          Destinations and My trips; a tap opens the studio. Plan's bar owns the bottom there, and a
           full page (a place, a country, a region, the account) has its own
           foot, so the corner stays empty on those. */}
       <StyleDock hidden={!(place === 'explore' || place === 'trips') || !!selectedDest || !!countryPage || !!pendingRegion} />
@@ -1717,7 +1692,7 @@ function TravelApp() {
             onSelectDest={openDetail}
             stayTier={choices.stay_tier || 'home'}
             lifestyle={choices.lifestyle}
-            onOpenLifestyle={openLifestyle}
+            onOpenStyleSpend={openStyleSpend}
             onChangeStayTier={setStayTier}
             origin={choices.origin}
             openTrail={pendingTrail}
@@ -1787,7 +1762,7 @@ function TravelApp() {
               onOpenCountry={openCountryPage}
               onOpenTrip={openTripPage}
               onOpenJourney={openJourneyPage}
-              onOpenLifestyle={openLifestyle}
+              onOpenStyleSpend={openStyleSpend}
               onPlanHome={() => goToTab('planstart')}
             />}
           </Suspense>
@@ -1814,7 +1789,7 @@ function TravelApp() {
               onDaySeedConsumed={clearPendingDaySeed}
               onOpenTrip={openTripFromDay}
               onPlanHome={() => goToTab('planstart')}
-              onOpenLifestyle={openLifestyle}
+              onOpenStyleSpend={openStyleSpend}
               costs={exploreIndices}
               priceRequest={request}
               stayTier={choices.stay_tier || 'home'}
@@ -1882,7 +1857,7 @@ function TravelApp() {
         leaveRegionPage={leaveRegionPage} onAccountView={onAccountView}
         openDayForDest={openDayForDest} openDetail={openDetail}
         openExploreSection={openExploreSection} openFeature={openFeature}
-        openFeatureFrom={openFeatureFrom} openGuides={openGuides} openLifestyle={openLifestyle}
+        openFeatureFrom={openFeatureFrom} openGuides={openGuides} openStyleSpend={openStyleSpend}
         openPlanInList={openPlanInList} openRegionPage={openRegionPage} openSaved={openSaved}
         openTogether={openTogether} openTripForCountry={openTripForCountry}
         openTripInPlanner={openTripInPlanner} openTripStyles={openTripStyles}
@@ -1892,7 +1867,7 @@ function TravelApp() {
         selectedDest={selectedDest} selectedId={selectedId} setAdminOpen={setAdminOpen}
         requestAuth={requestAuth} setAuthModalOpen={setAuthModalOpen}
         setCountryPage={setCountryPage} setGuidesOpen={setGuidesOpen}
-        setLifestyleOpen={setLifestyleOpen} setPastAtOpen={setPastAtOpen}
+        setPastAtOpen={setPastAtOpen}
         setPendingDayPlanId={setPendingDayPlanId} setPendingGuide={setPendingGuide}
         setPendingRegion={setPendingRegion} setPendingTrip={setPendingTrip}
         setSavedTripsOpen={setSavedTripsOpen} setSelectedId={setSelectedId}
@@ -1942,8 +1917,6 @@ function TravelApp() {
           </div>
         )}
       </BottomSlot>
-      {/* T947: the one "Your travel style" sheet every door opens. */}
-      <TasteSheetHost />
     </div>
     </SettingsContext.Provider>
     </FirstRunContext.Provider>

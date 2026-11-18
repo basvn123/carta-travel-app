@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 export function useAppSettingsValue({
   availableCountries, choices, countryFilter, countryNot, data, dateBounds, dateFlex,
-  defaultDates, departDate, exploreMonth, openLifestyle, ownDates, request, returnDate,
+  defaultDates, departDate, exploreMonth, openStyleSpend, ownDates, request, returnDate,
   setAirports, setCountryFilter, setCountryNot, setDateFlex, setDepartDate, setExploreMonth,
   setFrom, setOrigin, setParty, setPartyParts, setPriceExcluded, setPriceView, setReturnDate,
   setTransportMode, sweptOrigins, travelMonth, when,
@@ -43,7 +43,7 @@ export function useAppSettingsValue({
     availableCountries,
     stayTier: choices.stay_tier || 'home',
     lifestyle: choices.lifestyle,
-    openLifestyle,
-  }), [data, choices.origin, choices.drive_home, choices.origins, choices.airport_hours, choices.group_size, choices.children, choices.babies, choices.transport_mode, choices.price_view, choices.price_excluded, choices.stay_tier, choices.lifestyle, setOrigin, setFrom, setAirports, sweptOrigins, departDate, returnDate, setDepartDate, setReturnDate, defaultDates, dateBounds, ownDates, dateFlex, setDateFlex, travelMonth, when, request, exploreMonth, setExploreMonth, setParty, setPartyParts, setTransportMode, setPriceView, setPriceExcluded, countryFilter, setCountryFilter, countryNot, setCountryNot, availableCountries, openLifestyle]);
+    openStyleSpend,
+  }), [data, choices.origin, choices.drive_home, choices.origins, choices.airport_hours, choices.group_size, choices.children, choices.babies, choices.transport_mode, choices.price_view, choices.price_excluded, choices.stay_tier, choices.lifestyle, setOrigin, setFrom, setAirports, sweptOrigins, departDate, returnDate, setDepartDate, setReturnDate, defaultDates, dateBounds, ownDates, dateFlex, setDateFlex, travelMonth, when, request, exploreMonth, setExploreMonth, setParty, setPartyParts, setTransportMode, setPriceView, setPriceExcluded, countryFilter, setCountryFilter, countryNot, setCountryNot, availableCountries, openStyleSpend]);
   return { settings };
 }

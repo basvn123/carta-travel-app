@@ -5,7 +5,6 @@ import { MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreFilterRail, ExploreQuickFilters } from './ExploreFilterRail.jsx';
 import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
-import { TasteRow } from './TasteDoor.jsx';
 import { ExploreCategories } from './ExploreCategories.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { loadSearchIndex, querySearchIndex } from '../lib/searchIndex.js';
@@ -19,9 +18,6 @@ import { HouseIcon } from '../components/HouseIcons.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { PriceViewSwitch } from '../components/PriceViewSwitch.jsx';
 import { scrollBehavior } from '../lib/motion.js';
-
-// T764: the taste profile's sheet and learning question load when asked for.
-const TasteLearnPrompt = React.lazy(() => import('./TasteSheet.jsx').then((m) => ({ default: m.TasteLearnPrompt })));
 import { Button } from '../components/ui/index.js';
 import { useGuidedData } from '../lib/guidedData.js';
 import { setDockKind, setDockResults, setDockHandlers, useSearchDock } from './searchDockStore.js';
@@ -30,7 +26,7 @@ import { setDockKind, setDockResults, setDockHandlers, useSearchDock } from './s
 // T585: the start dialog.
 import { StartDialog, startMode, markStartSeen } from './StartDialog.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
-import { isEmptyTaste, learnFacet, normalizeTaste } from '../lib/taste.js';
+import { isEmptyTaste, normalizeTaste } from '../lib/taste.js';
 import { MATCH } from '../lib/match.js';
 import { MatchMonth } from './WhyItMatches.jsx';
 import '../styles/84-explore-overview.css';
@@ -491,35 +487,22 @@ export function ExploreTab({
   };
   if (isActive && !isDesktop) setDockHandlers({ onShare: shareView });
   // T585: the start dialog, once per device on a wide screen (T595: on the
-  // first visit only; Ask Carta's field took over its door). T764: on a
-  // phone a first visit with no taste opens it on the taste questions.
-  const firstRun = useFirstRun();
-  const taste = normalizeTaste(firstRun?.choices?.taste);
-  const tasteRef = React.useRef(taste);
-  tasteRef.current = taste;
+  // first visit only; Ask Carta's field took over its door). On a phone a
+  // first visit with no travel style opens the Style Studio's create flow
+  // instead (Style Studio, G12): the style is what every price follows.
+  const travelStyles = useSettings()?.travelStyles;
+  const stylesRef = React.useRef(travelStyles);
+  stylesRef.current = travelStyles;
   const [startOpen, setStartOpen] = React.useState(null);
   React.useEffect(() => {
     if (!isActive || pageOver) return;
-    const mode = startMode({ tasteEmpty: isEmptyTaste(tasteRef.current) });
-    if (mode) { markStartSeen(); setStartOpen(mode); }
+    const ts = stylesRef.current;
+    const mode = startMode({ noStyle: !ts?.list?.length });
+    if (!mode) return;
+    markStartSeen();
+    if (mode === 'create') ts?.setOpen({ view: 'create' });
+    else setStartOpen(mode);
   }, [isActive, pageOver]);
-  // T947 (owner): the taste chip left the chip row; "Your travel style" is a
-  // row in the Filters pane and in every settings surface (TasteDoor.jsx).
-  // T764: the learning question, only with consent and only after a save:
-  // when the shortlist grows (never on load), the saved places are read for
-  // a facet five of them share that the traveller did not pick and was
-  // never asked about (lib/taste.js learnFacet).
-  const [learn, setLearn] = React.useState(null);
-  const savedCountRef = React.useRef(null);
-  React.useEffect(() => {
-    const n = favorites?.size ?? 0;
-    const before = savedCountRef.current;
-    savedCountRef.current = n;
-    if (before == null || n <= before || !firstRun?.setChoices) return;
-    const records = [...favorites].map((id) => data?.destinations?.[id]).filter(Boolean);
-    const facet = learnFacet(tasteRef.current, records);
-    if (facet) setLearn(facet);
-  }, [favorites, data?.destinations, firstRun?.setChoices]);
   const { rails, railLead, quickRails } = useExploreRails({
     allRows, favorites, guided, isDesktop, lang, patchXf, railMonth, railsIdle, rows,
     setGemOnly, setShowFavOnly, setSortKey, t, xf,
@@ -623,12 +606,12 @@ export function ExploreTab({
   };
   const filterRail = (
     <ExploreFilterRail {...railProps}
-      tasteRow={<>
-        <TasteRow className="xpane-taste" before={sheetOpen ? () => setSheetOpen(false) : undefined} />
-        {/* G12: the phone list has no Strong match toggle in its one row, so
-            the sheet offers it beside the taste it depends on. */}
-        {!isDesktop && strongToggle('xstrong-chip xpane-strong')}
-      </>}
+      tasteRow={isDesktop ? null : (
+        // G12: the phone list has no Strong match toggle in its one row, so
+        // the sheet offers it. The style that ranks the match is edited in
+        // the Style Studio only (Style Studio, G12).
+        strongToggle('xstrong-chip xpane-strong')
+      )}
       count={gridTotal}
       onClearAll={chips.length ? resetAll : null}
     />
@@ -804,11 +787,6 @@ export function ExploreTab({
           dropdown on top of the rail's would be the duplicate control this
           change exists to remove. */}
       {startOpen && <StartDialog t={t} mode={startOpen} onClose={() => setStartOpen(null)} />}
-      {learn && (
-        <React.Suspense fallback={null}>
-          <TasteLearnPrompt facet={learn} onDone={() => setLearn(null)} />
-        </React.Suspense>
-      )}
 
       {/* T588: Share's answer, in the bottom slot. */}
       <div className="xtoast-slot" role="status" aria-live="polite">

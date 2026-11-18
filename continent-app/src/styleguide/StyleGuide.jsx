@@ -230,7 +230,7 @@ export default function StyleGuide() {
               <Demo title="Icon buttons">
                 <IconButton label="Back" tone="surface"><HouseIcon.back size={20} /></IconButton>
                 <IconButton label="Share"><HouseIcon.share size={20} /></IconButton>
-                <IconButton label="Save" pressed><HouseIcon.cairn size={20} /></IconButton>
+                <IconButton label="Save" pressed><HouseIcon.bookmark size={20} /></IconButton>
               </Demo>
               <Demo title="Chips" note="Select: the fill, then the tick springs in. A haptic tick on a touch commit.">
                 <ChipGroup label="Kind of place">
@@ -299,7 +299,7 @@ export default function StyleGuide() {
                   where={<><CountryFlag country={cc} size={14} /> {c}</>}
                   gem={i === 2 ? 'Hidden gem' : null}
                   formation={<Formation go={go} bed={bed} food={food} day={day} weighted dayLabel="A day" />}
-                  action={<IconButton label={`Save ${n}`} tone="photo"><HouseIcon.cairn size={20} /></IconButton>} />
+                  action={<IconButton label={`Save ${n}`} tone="photo"><HouseIcon.bookmark size={20} /></IconButton>} />
               ))}
             </Rail>
           </Section>
@@ -341,7 +341,7 @@ export default function StyleGuide() {
               <Demo title="Primitives" note="Save pops the icon (confirm), a fold reveals, a refused field shakes (warn); a removed stop fades with .hs-leave, then goes. Reduced motion shows each end state.">
                 <IconButton label={saved ? 'Saved' : 'Save'} pressed={saved} tone="surface"
                   onClick={() => setSaved((v) => !v)}>
-                  <span key={String(saved)} className={saved ? 'hs-pop' : undefined}><HouseIcon.cairn size={20} /></span>
+                  <span key={String(saved)} className={saved ? 'hs-pop' : undefined}><HouseIcon.bookmark size={20} /></span>
                 </IconButton>
                 <Button onClick={() => setOpen((v) => !v)} aria-expanded={open}>{open ? 'Hide' : 'Why this one'}</Button>
                 {open && <p className="hs-reveal sg-note">Revealed over --dur-2, 4 px.</p>}

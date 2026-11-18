@@ -6,9 +6,6 @@
    filled control. Scoped to the Explore filter bar: Destinations keeps its
    own row. */
 
-/* The scrim behind every modal dialog is the house scrim token. */
-.lifestyle-scrim { background: var(--scrim); }
-
 /* The fine-pointer exception (owner, 2026-10-07; carta-design Layout). On a
    mouse a compact control may be 32 px, and it may not be less. These are the
    Explore controls the T193 audit found under 32 px at 1280 px. A touch
@@ -20,10 +17,6 @@
   .wtrip-len { min-width: 32px; min-height: 32px; }
   .guide-startover, .wready-link { min-height: 32px; display: inline-flex; align-items: center; }
 }
-
-/* The left-hand Lifestyle panel opens over a scrim on every tab now, so it
-   must sit above it (it was z-index 15, under the scrim's 40). */
-.accom-panel.lifestyle-panel { z-index: calc(var(--z-overlay) + 1); }
 
 /* The compact receipt on an Explore card says, per figure, whether it was
    measured in the city or is a country-level one (T098-b, owner call). */

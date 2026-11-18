@@ -157,7 +157,7 @@ function MapCard({ map, mapFull, title, trace, headId }) {
  *   onChip(key, ref)     T836: a chip's own editor ('dates', 'people', 'from'),
  *                        hung from the chip; absent, those chips open the settings
  *   onRename(name)       the name in place (T836): a tap on it or its pencil
- *   onLifestyle()        the Lifestyle sheet; absent hides the chip
+ *   onStyleSpend()        the Lifestyle sheet; absent hides the chip
  *   onExport()           Share and export (the Itinerary's export block)
  *   history              { canUndo, canRedo, undo, redo } (T835): from 1024 px
  *                        Undo and Redo at the end of the tab row
@@ -200,7 +200,7 @@ export function TripSummary({
   // with the trip's own, opening the same sheet as everywhere else.
   const settings = useSettings();
   const lifestyle = useLifestyleParts();
-  const onLifestyle = settings?.openLifestyle || null;
+  const onStyleSpend = settings?.openStyleSpend || null;
   const uid = useId();
   const wide = useMedia('(min-width: 1024px)');
   const [per, setPer] = useState('group');
@@ -277,7 +277,7 @@ export function TripSummary({
     { key: 'dates', label: t('tp.bar.when'), text: datesShort || dates || t('pf.when.unsure'), sub: datesShort ? datesSub : nightsNote, onClick: openChip('dates'), dialog: Boolean(onChip) },
     { key: 'people', label: t('tp.bar.who'), text: people, onClick: openChip('people'), dialog: Boolean(onChip) },
     origin && { key: 'from', label: t('tp.bar.from'), text: origin, onClick: openChip('from'), dialog: Boolean(onChip) },
-    onLifestyle && lifestyle && { key: 'lifestyle', label: t('tp.bar.stay'), text: lifestyle.bed, sub: lifestyle.vibe, onClick: onLifestyle, dialog: true },
+    onStyleSpend && lifestyle && { key: 'lifestyle', label: t('tp.bar.stay'), text: lifestyle.bed, sub: lifestyle.vibe, onClick: onStyleSpend, dialog: true },
   ].filter(Boolean);
 
   // T886, T888: one primary, then the trip's two doors: Change your trip
@@ -311,7 +311,7 @@ export function TripSummary({
     <CostCard priced={priced} people={n} per={per} onPer={setPer} budget={budgetCard} mine={mine}
       aroundNote={carTip && carTip.verdict === 'yes' && !flight?.driving ? t('tp.tile.carAdvised') : ''}
       onOpen={(k) => go('costs', `tp-cost-${k}`)} onAll={() => go('costs')} onAddPaid={onAddPaid}
-      lifestyle={lifestyle} onLifestyle={onLifestyle} onChangeFlight={onChangeFlight} />
+      lifestyle={lifestyle} onStyleSpend={onStyleSpend} onChangeFlight={onChangeFlight} />
   );
 
   // House style (G1): below 1024 px the cost post leads the Overview (a
@@ -502,7 +502,7 @@ export function TripSummary({
             people: onChip ? openChip('people') : null,
             from: onChip && origin ? openChip('from') : null,
             flights: onFlights,
-            stay: onLifestyle,
+            stay: onStyleSpend,
             places: () => go('itinerary'),
             settings: onSettings,
           }}

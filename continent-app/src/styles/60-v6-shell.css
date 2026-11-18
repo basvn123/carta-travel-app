@@ -462,122 +462,6 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
   .shell-close { transition: none; }
 }
 
-/* The Lifestyle dialog (brief V4-6): the dialog family, a body that
-   scrolls under a fixed close and foot, and on a phone a bottom sheet over
-   the bar. */
-.accom-panel.lifestyle-panel {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: shell-dialog-in var(--dur-3) var(--ease-out);
-}
-.accom-panel.lifestyle-panel.is-leaving { animation: shell-dialog-out var(--dur-2) var(--ease-in-out) forwards; }
-.lifestyle-scrim.is-leaving { animation: shell-scrim-out var(--dur-2) var(--ease-in-out) forwards; }
-.lifestyle-panel .ls-body {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-.lifestyle-panel .ls-close {
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
-  z-index: 3;
-}
-.lifestyle-panel .panel-header { padding-right: calc(var(--tap) + var(--space-3)); }
-.ls-grab { display: none; }
-.ls-foot {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-5);
-  border-top: 1px solid var(--border-soft);
-  background: var(--surface);
-}
-/* The dialog's one primary: it closes, the prices behind are already set. */
-.ls-done {
-  flex: none;
-  min-height: var(--tap);
-  margin-left: auto;
-  padding: 0 var(--space-5);
-  border: 1px solid var(--action);
-  border-radius: var(--radius-control);
-  background: var(--action);
-  color: var(--action-text);
-  font-family: var(--ui);
-  font-size: var(--text-body);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
-}
-.ls-done:active { background: var(--action-press); border-color: var(--action-press); transform: scale(0.97); }
-@media (hover: hover) {
-  .ls-done:hover { background: var(--action-hover); border-color: var(--action-hover); }
-}
-.ls-done:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-@media (max-width: 768px) {
-  /* A sheet: it rises from the bottom over the one scrim, above the bottom
-     nav in z-order so the bar never covers its foot (brief V4-6), with a
-     grab handle whose swipe is a shortcut for the close and Done. */
-  .lifestyle-scrim { top: 0; }
-  .accom-panel.lifestyle-panel,
-  .accom-panel.lifestyle-panel.from-right {
-    position: fixed;
-    top: auto;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    max-width: none;
-    max-height: calc(100dvh - var(--space-7));
-    border: 0;
-    border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
-    box-shadow: var(--elev-3);
-    padding-left: env(safe-area-inset-left, 0px);
-    padding-right: env(safe-area-inset-right, 0px);
-    animation: shell-sheet-in var(--dur-3) var(--ease-out);
-  }
-  .accom-panel.lifestyle-panel.is-leaving { animation: shell-sheet-out var(--dur-2) var(--ease-in-out) forwards; }
-  .ls-grab {
-    display: block;
-    flex: none;
-    width: 100%;
-    height: var(--space-5);
-    touch-action: none;
-    cursor: grab;
-  }
-  .ls-grab::before {
-    content: '';
-    display: block;
-    width: 40px;
-    height: 4px;
-    margin: var(--space-2) auto 0;
-    border-radius: var(--radius-pill);
-    background: var(--border);
-  }
-  /* On the title's line, under the grab handle. */
-  .lifestyle-panel .ls-close { top: var(--space-5); }
-  .ls-foot {
-    padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
-  }
-  /* On a phone the one primary runs the full width of the sheet. */
-  .ls-done { flex: 1 1 auto; margin-left: 0; font-size: var(--text-lead); }
-}
-@media (max-width: 768px) and (orientation: landscape) {
-  .accom-panel.lifestyle-panel,
-  .accom-panel.lifestyle-panel.from-right { max-height: 80dvh; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .accom-panel.lifestyle-panel,
-  .accom-panel.lifestyle-panel.is-leaving,
-  .lifestyle-scrim.is-leaving { animation: none; }
-  .ls-done { transition: none; }
-  .ls-done:active { transform: none; }
-}
-
 /* The bottom slot's messages arrive the way a dialog does (rule R6). */
 .bottom-slot > .confirm-toast,
 .bottom-slot > .site-banner { animation: shell-dialog-in var(--dur-3) var(--ease-out); }
@@ -625,12 +509,6 @@ html.tab-vt::view-transition-new(root) { animation: shell-tab-in var(--dur-2) va
   .shell-dialog.is-leaving,
   .fsheet.is-leaving { animation: none; }
 }
-
-/* The Lifestyle dialog stands over the bottom slot on every width (row
-   T400-c); 46-owner-calls.css gave the desktop drawer z 41. */
-.lifestyle-scrim { z-index: calc(var(--z-shell) + 3); }
-.accom-panel.lifestyle-panel,
-.accom-panel.lifestyle-panel.from-right { z-index: calc(var(--z-shell) + 4); }
 
 /* A pointer open does not draw a focus ring on the control focus moved to
    (row T396-e). useFocusTrap() marks it, and the mark comes off at the first
@@ -1165,48 +1043,30 @@ html.kbd-open .settings-done { display: none; }
 /* Account and Together doors: plain ink icons; the chosen one takes the wash. */
 .account-door.on { background: var(--select-bg); color: var(--select-ink); }
 
-/* Phone: one slim row that always fits (the travel style door is its icon;
-   its name is in its accessible name, so nothing is cut). */
+/* Phone: one slim row that always fits. */
 @media (max-width: 768px) {
   .app-header { background: var(--surface-page); border-bottom: var(--stroke-hair) solid var(--border); gap: var(--space-2); }
   .app-header .app-header-brand .brand-name { font-size: var(--text-headline); }
   .app-header .app-header-account { gap: 0; flex: none; }
-  .app-header .style-door { min-width: var(--tap); padding: 0; border-color: transparent; background: none; }
-  .app-header .style-door .style-door-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .app-header .style-door .tstyle-disc { width: var(--tap); height: var(--tap); background: none; }
 }
 @media (max-width: 360px) {
   .app-header .app-header-brand .brand-name { font-size: var(--text-title); }
 }
 
-/* Tablet: places stack icon over word; the door shows its icon only. */
+/* Tablet: places stack icon over word. */
 @media (min-width: 769px) and (max-width: 1279px) {
   .app-header { gap: var(--space-4); padding: 0 var(--page-gutter); min-height: var(--header-h); }
   .header-nav { gap: var(--space-1); }
   .header-nav .header-nav-item { flex-direction: column; gap: 2px; min-height: 56px; padding: 6px 12px; }
   .header-nav .header-nav-label { display: inline; font-size: var(--text-caption); }
   .header-nav .nav-marker::after { bottom: -4px; }
-  .app-header .style-door .style-door-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .app-header .style-door { padding: 0 var(--space-1); }
   .app-header .app-header-brand .brand-name { display: inline; font-size: var(--text-title); }
 }
-/* Desktop: icon and word in one line, the door with its label. */
+/* Desktop: icon and word in one line. */
 @media (min-width: 1280px) {
   .app-header { padding: 0 var(--page-inset); min-height: var(--header-h); }
   .header-nav { gap: var(--space-2); margin-left: var(--space-5); }
   .header-nav .header-nav-item { min-height: var(--tap); padding: 8px 12px; font-size: var(--text-body); }
-}
-/* On the home film the header's words are white (61-v6-home.css sets the
-   ink to paper); the travel style door's umber label would sit brown on a
-   dark photo, so on the film it takes the paper ink too. */
-/* Where the words are hidden (to 1279 px) the door is its icon alone: paper
-   ink on the film, no tile. From 1280 the words show, on an ink pill. */
-:root[data-home-film="under"] .top-bar .style-door .tstyle-disc { background: none; color: var(--home-ink-on-deep); }
-@media (min-width: 1280px) {
-  :root[data-home-film="under"] .top-bar .style-door { background: var(--plate); border-color: var(--plate); text-shadow: none; }
-  :root[data-home-film="under"] .top-bar .style-door .style-door-name,
-  :root[data-home-film="under"] .top-bar .style-door .style-door-kicker,
-  :root[data-home-film="under"] .top-bar .style-door .tstyle-disc { color: var(--on-plate); }
 }
 @media (prefers-reduced-motion: reduce) {
   .header-nav .nav-marker[data-slide="true"], .bottom-nav .nav-marker[data-slide="true"] { transition: none; }

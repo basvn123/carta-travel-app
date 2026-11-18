@@ -491,25 +491,8 @@
 }
 .xstart-foot { display: flex; justify-content: flex-end; margin-top: var(--space-2); }
 
-/* T764: the taste profile's four questions (browse/TasteSheet.jsx), on the
-   start dialog's "Tell Carta what you like" path (.xstart.is-taste) and in
-   the sheet the Explore header chip and Account open. The rows, tiles,
-   Segmented and Switch are the kit's; only the stack is set here. */
-.xstart-taste.btn { min-height: var(--tap); }
-.taste-steps { display: flex; flex-direction: column; gap: var(--space-4); }
-.taste-head { display: flex; flex-direction: column; gap: var(--space-1); padding-right: var(--space-7); }
-.taste-sheet .taste-head { padding-right: 0; }
-.taste-pos { margin: 0; font-size: var(--text-caption); color: var(--text-2); }
-.taste-q { margin: 0; font-size: var(--text-title); font-weight: 600; line-height: var(--leading-tight); color: var(--text); }
-.taste-body { display: flex; flex-direction: column; gap: var(--space-4); }
-.taste-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.taste-help { margin: 0; font-size: var(--text-label); color: var(--text-2); }
-.taste-group { display: flex; flex-direction: column; gap: var(--space-2); }
-.taste-label { margin: 0; font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
-.taste-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding-top: var(--space-2); }
-/* The learning question rides the Undo toast's frame; its sentence wraps. */
-.taste-learn { flex-wrap: wrap; }
-.taste-learn-text { flex: 1 1 12em; min-width: 0; line-height: var(--leading-ui); }
+/* The start dialog's door to the Style Studio (Style Studio, G12). */
+.xstart-style.btn { min-height: var(--tap); }
 @media (max-width: 768px) {
   .xstart-scrim { padding: var(--space-3); }
   .xstart { padding: var(--space-5) var(--space-4) var(--space-4); max-height: calc(100dvh - var(--space-5)); }
@@ -616,37 +599,6 @@
   .xov-quick .price-view { margin-left: auto; }
   .xov-quick .price-view ~ .xov-view { margin-left: 0; }
 }
-
-/* T947: the doors to "Your travel style" (TasteDoor.jsx). A row in a
-   settings surface: icon, label, what is set, chevron; and a small link on
-   a place page while no taste is set. */
-.btn.taste-door {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
-  align-items: center;
-  gap: var(--space-3);
-  min-height: var(--tap);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-control);
-  background: var(--surface);
-  color: var(--text);
-  text-align: left;
-}
-.btn.taste-door > .btn-label { display: contents; }
-.taste-door-icon, .taste-door-chev { color: var(--text-2); }
-.taste-door-label { font-size: var(--text-body); font-weight: 600; min-width: 0; }
-.taste-door-v {
-  font-size: var(--text-label);
-  font-weight: 500;
-  color: var(--text-2);
-  min-width: 0;
-  max-width: 14em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.taste-door-v.is-unset { color: var(--text-3); }
 
 /* --- G12: the focused list's one row (decision.md step 8) -------------
    A phone: Sort, the chips scrolling between, the Trip dock at the end.

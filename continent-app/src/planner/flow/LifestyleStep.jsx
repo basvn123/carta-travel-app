@@ -9,11 +9,13 @@ import {
 } from '../../browse/styles/spendBits.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { Button, Segmented, Tile, TileGroup } from '../../components/ui/index.js';
-import { ChevronDownIcon, SettingsIcon } from '../../components/Icons.jsx';
-import { TasteRow } from '../../browse/TasteDoor.jsx';
+import { ChevronDownIcon, ChevronRightIcon, SettingsIcon } from '../../components/Icons.jsx';
+import { HouseIcon } from '../../components/HouseIcons.jsx';
+import { styleName } from '../../browse/styles/styleBits.jsx';
+import { openStudioAt } from '../../browse/styles/studioDoors.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 
-// The seven counts in the order the Lifestyle panel shows them; coffee is a
+// The seven counts in the order the studio's spend step shows them; coffee is a
 // day count whatever the cadence.
 const COUNTS = [
   ['dinners_per_week', 'lifestyle.dinnersOut'],
@@ -26,14 +28,16 @@ const COUNTS = [
 ];
 
 /**
- * The planner's "How do you like to travel?" step (T750): everything the
- * Lifestyle panel holds, in the order it holds it. Where you sleep (three
+ * The planner's "How do you like to travel?" step (T750): this trip's bed
+ * and table, in the order the Style Studio's spend step holds them. Where you sleep (three
  * stay types, the stars for a hotel; StayTypes.jsx), how you spend, and the
  * seven counts behind the spend behind one Fine tune button at the right of
  * the spend heading. Getting there is its own question since T860 (the
  * way screen). Not a second setting: it reads and writes the same
- * choices.stay_tier and choices.lifestyle the panel does, so every price in
- * the app moves with it. One quiet line says it can all be changed later.
+ * choices.stay_tier and choices.lifestyle every price reads, for this trip
+ * (the style is held, not rewritten). The style itself, and how it
+ * explores, is edited in the Style Studio only: one row opens it. One quiet
+ * line says it can all be changed later.
  */
 export function LifestyleStep() {
   const { t } = useI18n();
@@ -115,8 +119,17 @@ export function LifestyleStep() {
         )}
       </section>
 
-      {/* T947: the taste profile, the same door as Account and Explore. */}
-      <TasteRow className="pf-ls-taste" />
+      {/* Style Studio (G12): how the traveller explores lives in the style,
+          so this row opens the studio at that part, never a second editor. */}
+      {styles && (
+        <Button variant="quiet" block className="pf-style-row" aria-haspopup="dialog"
+          onClick={() => openStudioAt(styles, 'shapes')}>
+          <HouseIcon.pack size={20} className="pf-style-row-icon" />
+          <span className="pf-style-row-label">{t('styles.exploreHalf')}</span>
+          <span className="pf-style-row-v">{styles.active ? styleName(t, styles.active) : t('styles.choose')}</span>
+          <ChevronRightIcon size={16} className="pf-style-row-chev" />
+        </Button>
+      )}
 
       <p className="pf-ls-later">
         <SettingsIcon size={16} />

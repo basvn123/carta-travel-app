@@ -94,14 +94,6 @@ export function toggleLike(raw, like) {
   return t;
 }
 
-/** Remember the answer to a learning question, so a no is never asked again. */
-export function recordAsked(raw, facet, yes) {
-  const t = normalizeTaste(raw);
-  t.asked = { ...t.asked, [facet]: yes ? 'yes' : 'no' };
-  if (yes && !t.likes.includes(facet) && t.likes.length < MAX_LIKES) t.likes = [...t.likes, facet];
-  return normalizeTaste(t);
-}
-
 const isSet = (k, v) => (k === 'likes' ? Array.isArray(v) && v.length > 0 : v != null);
 
 /**
@@ -247,34 +239,4 @@ export function decodeTaste(s) {
     }
   }
   return normalizeTaste(raw);
-}
-
-// A saved place counts towards a facet when it sits in the top fifth of the
-// catalogue for it (the profile values are frozen percentiles).
-const LEARN_MIN_VALUE = 0.8;
-export const LEARN_MIN_SAVES = 5;
-
-/**
- * The learning question: the facet the traveller did not pick that at least
- * five saved places share, or null. A facet already asked (yes or no) is
- * never offered again. `saved` is the list of saved place records.
- */
-export function learnFacet(raw, saved) {
-  const t = normalizeTaste(raw);
-  if (t.likes.length >= MAX_LIKES || !Array.isArray(saved)) return null;
-  const counts = {};
-  for (const p of saved) {
-    const likes = p?.taste?.likes;
-    if (!likes) continue;
-    for (const k of LIKES) {
-      const v = Array.isArray(likes[k]) ? likes[k][0] : null;
-      if (v != null && v >= LEARN_MIN_VALUE) counts[k] = (counts[k] || 0) + 1;
-    }
-  }
-  let best = null;
-  for (const k of LIKES) {
-    if (t.likes.includes(k) || t.asked[k]) continue;
-    if ((counts[k] || 0) >= LEARN_MIN_SAVES && (!best || counts[k] > counts[best])) best = k;
-  }
-  return best;
 }

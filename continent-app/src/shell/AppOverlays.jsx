@@ -15,11 +15,11 @@ export function AppOverlays({
   authModalOpen, backToLabel, choices, closeOverlay, countryPage, data, exploreIndices,
   favDests, favorites, goTo, goToTab, guidesOpen, handleLoadTrip, isFavorite, leaveCountryPage,
   leaveRegionPage, onAccountView, openDayForDest, openDetail, openExploreSection, openFeature,
-  openFeatureFrom, openGuides, openLifestyle, openPlanInList, openRegionPage, openSaved,
+  openFeatureFrom, openGuides, openStyleSpend, openPlanInList, openRegionPage, openSaved,
   openTogether, openTripForCountry, openTripInPlanner, openTripStyles, pastAtOpen,
   pendingFriend, pendingGuide, pendingRegion, place, placeRows, planInProgress, savedCount,
   requestAuth, savedTripsOpen, selectedDest, selectedId, setAdminOpen, setAuthModalOpen,
-  setCountryPage, setGuidesOpen, setLifestyleOpen, setPastAtOpen, setPendingDayPlanId,
+  setCountryPage, setGuidesOpen, setPastAtOpen, setPendingDayPlanId,
   setPendingGuide, setPendingRegion, setPendingTrip, setSavedTripsOpen, setSelectedId,
   setTogetherCode, togetherCode, togetherOpen, togetherView, toggleFav, user,
 }) {
@@ -87,7 +87,7 @@ export function AppOverlays({
           data={data}
           indices={exploreIndices}
           choices={choices}
-          onOpenLifestyle={openLifestyle}
+          onOpenStyleSpend={openStyleSpend}
           onClose={() => setSelectedId(null)}
           backLabel={backToLabel}
           onSelect={openDetail}
@@ -228,9 +228,9 @@ export function AppOverlays({
           favorites={favorites}
           onClose={closeOverlay}
           onOpenAdmin={() => setAdminOpen(true)}
-          /* Lifestyle is a dialog: it opens over Account, which stays the
-             place on screen (and in the address) behind it. */
-          onOpenLifestyle={() => setLifestyleOpen(true)}
+          /* The Style Studio is a dialog: it opens over Account, which
+             stays the place on screen (and in the address) behind it. */
+          onOpenStyleSpend={openStyleSpend}
           onOpenSaved={openSaved}
           onOpenGuides={openGuides}
           onOpenTogether={(v) => openTogether(v || 'home')}

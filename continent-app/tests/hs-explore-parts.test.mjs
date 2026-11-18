@@ -115,16 +115,16 @@ test('the rails carry no head or note line; each figure says its unit', () => {
   assert.match(afterLink, /<RowFormation cost=\{p\.cost\} t=\{t\} pressable place=\{p\} slot="parts"/);
 });
 
-test('save wears the bookmark with one fixed name; the cairn stays My trips', () => {
+test('save wears the bookmark with one fixed name; the ticket is My trips', () => {
   // G12 (explore polish, point 4 and decision change 7).
   const cards = read('src/browse/ExploreCards.jsx');
   assert.match(cards, /<HouseIcon\.bookmark size=\{20\} \/>/);
-  assert.doesNotMatch(cards, /HouseIcon\.cairn/);
+  assert.doesNotMatch(cards, /HouseIcon\.ticket/);
   assert.match(cards, /t\('explore\.saveNamed', \{ place: name \}\)/);
   assert.doesNotMatch(cards, /unsaveNamed/);
   assert.match(cards, /pressed=\{fav\}/);
   assert.match(cards, /if \(!fav\) bumpTripsOnce\(\)/);
-  assert.match(read('src/components/AppHeader.jsx'), /key: 'trips', labelKey: 'nav\.myTrips', Icon: HouseIcon\.cairn/);
+  assert.match(read('src/components/AppHeader.jsx'), /key: 'trips', labelKey: 'nav\.myTrips', Icon: HouseIcon\.ticket/);
   for (const f of ['src/components/AppHeader.jsx', 'src/components/BottomNav.jsx']) assert.match(read(f), /data-nav=\{key\}/, f);
   const bar = read('src/browse/explore/ExploreToolbar.jsx');
   assert.match(bar, /iconStart=\{<HouseIcon\.bookmark size=\{18\} \/>\} aria-pressed=\{showFavOnly\}/);

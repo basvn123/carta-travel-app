@@ -27,14 +27,15 @@ export function wayTabKey(cost) {
 export const isGroundWay = (cost) => GROUND.has(cost?.way?.mode);
 
 /**
- * Where each tab's button hands over (decision change 1): getting there and
- * the whole day lead to the Trip dock at From; bed, food and the ground way
- * to the Style dock at their own row, the row that moves that number.
+ * Where each tab's button hands over: getting there and the whole day lead
+ * to the Trip dock at From; bed, food and the ground way to the Style Studio
+ * at the step that moves that number (Style Studio, G12: the studio is the
+ * one place a style is edited).
  */
 export function handoff(tab, cost = null) {
-  if (tab === 'stay') return { dock: 'style', focus: 'stay', key: 'price.changeStay' };
-  if (tab === 'food') return { dock: 'style', focus: 'food', key: 'price.changeFood' };
-  if (tab === 'flight' && isGroundWay(cost)) return { dock: 'style', focus: 'way', key: 'price.changeWay' };
+  if (tab === 'stay') return { studio: 'spend', key: 'price.changeStay' };
+  if (tab === 'food') return { studio: 'spend', key: 'price.changeFood' };
+  if (tab === 'flight' && isGroundWay(cost)) return { studio: 'way', key: 'price.changeWay' };
   if (tab === 'flight') return { dock: 'trip', focus: 'from', key: 'price.changeFlight' };
   return { dock: 'trip', focus: 'from', key: 'price.changeTrip' };
 }

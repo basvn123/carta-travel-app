@@ -1,5 +1,6 @@
-// G12 (explore polish, decision.md "Dock semantics"): the Trip dock and the
-// Style dock share one component and one store. One open at a time; a phone
+// G12 (explore polish, decision.md "Dock semantics"): the Trip dock's card
+// and the style disc share one component and one store; the disc opens the
+// Style Studio instead of a card (Style Studio, G12). A phone
 // card is a real modal (aria-modal, focus trap, inert app, scrim), a desktop
 // card a non-modal popover that closes on Escape, a press outside and focus
 // leaving; reduced motion shows the end state. The browser half (Escape,
@@ -15,27 +16,26 @@ test.after(() => vite.close());
 
 const src = (p) => readFileSync(new URL(`../src/${p}`, import.meta.url), 'utf8');
 
-test('one dock open at a time; close by id; focus is a one-shot', async () => {
+test('only the Trip dock opens a card; close by id; focus is a one-shot', async () => {
   const s = await vite.ssrLoadModule('/src/components/dock/dockStore.js');
   let calls = 0;
   const off = s.subscribeDock(() => { calls += 1; });
-  s.openDock('trip');
-  assert.deepEqual(s.getDock(), { open: 'trip', focus: null });
-  s.openDock('style', { focus: 'food' });
-  assert.deepEqual(s.getDock(), { open: 'style', focus: 'food' }, 'opening one closes the other');
-  s.closeDock('trip');
-  assert.equal(s.getDock().open, 'style', 'closing the closed dock leaves the open one');
+  s.openDock('trip', { focus: 'from' });
+  assert.deepEqual(s.getDock(), { open: 'trip', focus: 'from' });
+  s.closeDock('style');
+  assert.equal(s.getDock().open, 'trip', 'closing another id leaves the open one');
   s.clearDockFocus();
-  assert.deepEqual(s.getDock(), { open: 'style', focus: null });
-  s.toggleDock('style');
+  assert.deepEqual(s.getDock(), { open: 'trip', focus: null });
+  s.toggleDock('trip');
   assert.equal(s.getDock().open, null);
-  s.openDock('nope');
-  assert.equal(s.getDock().open, null, 'only the two docks');
+  // The style disc opens the Style Studio, never a dock card (G12).
+  s.openDock('style');
+  assert.equal(s.getDock().open, null, 'the style disc has no card');
   s.toggleDock('trip');
   s.closeDock();
   assert.equal(s.getDock().open, null, 'closeDock() closes whichever is open');
   off();
-  assert.ok(calls >= 5);
+  assert.ok(calls >= 4);
 });
 
 async function render(desktop, open) {
@@ -113,7 +113,7 @@ test('the Trip dock holds style, from, when and prices only', () => {
   const trip = src('components/dock/TripDock.jsx');
   const rows = [...trip.matchAll(/rowKey="([a-z]+)"/g)].map((m) => m[1]);
   assert.deepEqual(rows, ['style', 'from', 'when', 'prices']);
-  assert.match(trip, /openDock\('style'\)/, 'the Style row hands over');
+  assert.match(trip, /closeDock\('trip'\);[\s\S]*openStudio\(ts\)/, 'the Style row hands over to the Style Studio');
   assert.doesNotMatch(src('browse/explore/OverviewHero.jsx'), /PriceViewSwitch/, 'how prices read moved into the dock');
   for (const f of ['browse/explore/OverviewHero.jsx', 'browse/explore/ExploreToolbar.jsx', 'browse/ExploreTab.jsx', 'browse/DestinationsTab.jsx']) {
     assert.match(src(f), /<TripDock \/>/, `${f} mounts the Trip dock`);
@@ -121,14 +121,15 @@ test('the Trip dock holds style, from, when and prices only', () => {
   assert.doesNotMatch(src('App.jsx'), /<SettingsLine /, 'the header settings line left Explore and Destinations');
 });
 
-test('the Style dock replaces the header door and stays off Plan and full pages', () => {
-  assert.doesNotMatch(src('components/AppHeader.jsx'), /<StyleDoor/);
+test('the style disc opens the Style Studio and stays off Plan and full pages', () => {
+  // Style Studio (G12): the disc keeps its glyph, changed dot and hidden
+  // rules, and a tap opens the studio's overview; it has no panel.
   const app = src('App.jsx');
   assert.match(app, /<StyleDock hidden=\{!\(place === 'explore' \|\| place === 'trips'\) \|\| !!selectedDest/);
-  assert.match(app, /<TravelStylesSheet /, 'the full sheet stays mounted');
+  assert.match(app, /<StyleStudio onClose=\{\(\) => travelStyles\.setOpen\(false\)\} \/>/, 'the studio is the one style sheet');
   const dock = src('components/dock/StyleDock.jsx');
-  for (const row of ['who', 'stay', 'food', 'way', 'priority']) assert.match(dock, new RegExp(`rowKey="${row}"`));
-  assert.match(dock, /StyleExploreFields/, 'the explore half reuses the sheet fields');
-  assert.match(dock, /disabled=\{held\}/, 'bed and table wait while a trip holds the style');
-  assert.match(src('styles/89-dock.css'), /html\[data-dock="style"\] \.xview-fab/, 'the Map pill steps aside');
+  assert.match(dock, /onActivate=\{\(\) => openStudio\(ts\)\}/);
+  assert.match(dock, /changed=\{changed\}/);
+  assert.doesNotMatch(dock, /rowKey=|DockRowField|editAll/, 'no inline editors left in the disc');
+  assert.doesNotMatch(src('styles/89-dock.css'), /style-dock-|dock-card--corner/, 'the panel CSS is gone');
 });

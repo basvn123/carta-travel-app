@@ -5,7 +5,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   emptyTaste, normalizeTaste, isEmptyTaste, hasMatchSignal, toggleLike, setTasteAnswer,
-  recordAsked, mergeTaste, encodeTaste, decodeTaste, tasteSummaryKeys, learnFacet, MAX_LIKES,
+  mergeTaste, encodeTaste, decodeTaste, tasteSummaryKeys, MAX_LIKES,
 } from "../src/lib/taste.js";
 
 test("normalize drops unknown values and caps likes at three", () => {
@@ -70,18 +70,6 @@ test("encode and decode round trip", () => {
 test("summary keys follow likes, size, quiet", () => {
   assert.deepEqual(tasteSummaryKeys({ likes: ["hiking"], size: "village", quiet: "quiet" }),
     ["taste.like.hiking", "taste.size.village", "taste.quiet.quiet"]);
-});
-
-test("learning asks once, after five saves share a facet, never again after a no", () => {
-  const lakePlace = { taste: { likes: { lakes: [0.9, {}], beach: [0.1, {}] } } };
-  const saved = Array.from({ length: 5 }, () => lakePlace);
-  assert.equal(learnFacet({ likes: ["hiking"] }, saved.slice(0, 4)), null, "four is not enough");
-  assert.equal(learnFacet({ likes: ["hiking"] }, saved), "lakes");
-  assert.equal(learnFacet({ likes: ["lakes"] }, saved), null, "already picked");
-  const no = recordAsked({ likes: ["hiking"] }, "lakes", false);
-  assert.equal(learnFacet(no, saved), null, "a no is never asked again");
-  const yes = recordAsked({ likes: ["hiking"] }, "lakes", true);
-  assert.deepEqual(yes.likes, ["hiking", "lakes"]);
 });
 
 // T766: "Help me choose" ranks with the trip's likes, never rewriting the profile.

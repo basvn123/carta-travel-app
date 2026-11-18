@@ -222,11 +222,11 @@ export function PlanTotal({
             </div>
           )}
         </div>
-        {settings?.openLifestyle && (
+        {settings?.openStyleSpend && (
           <div className="plan-input">
             <dt>{t('settings.lifestyle')}</dt>
             <dd>
-              <Button variant="quiet" size="sm" className="plan-input-btn" onClick={settings.openLifestyle}
+              <Button variant="quiet" size="sm" className="plan-input-btn" onClick={settings.openStyleSpend}
                 iconEnd={<ChevronRightIcon size={16} />}>
                 {lifestyle}
               </Button>

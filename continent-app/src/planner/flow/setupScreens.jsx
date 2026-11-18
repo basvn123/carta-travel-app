@@ -32,7 +32,8 @@ import { LifestyleStep } from './LifestyleStep.jsx';
 import { StayTypes } from './StayTypes.jsx';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { PartyEditor } from '../PartyEditor.jsx';
-import { StylePicker } from '../../browse/TravelStylesSheet.jsx';
+import { StyleCards } from '../../browse/styles/StyleCards.jsx';
+import { useStyleFigures } from '../../browse/styles/styleBits.jsx';
 import { switchTripStyle } from './styleSeed.js';
 import { answer, markAnswered, normalizeSettings, personasOfRaw, withPartyKind, PARTY_KINDS, WAYS } from './tripSettings.js';
 import { MAX_TRIP_NIGHTS, addDaysUTC, nightsBetween, windowFromStart } from '../../lib/tripDates.js';
@@ -91,6 +92,7 @@ export function WhoScreen({ settings, commit, doneLabel }) {
   // this trip's party and every answer the style holds, and becomes the
   // app's active style, so the prices behind the planner follow it too.
   const ts = app?.travelStyles;
+  const figures = useStyleFigures(ts?.list, app?.data?.destinations);
   const pickStyle = (id) => {
     const st = ts.list.find((x) => x.id === id);
     if (!st) return;
@@ -102,7 +104,7 @@ export function WhoScreen({ settings, commit, doneLabel }) {
       {ts?.list?.length > 0 && (
         <div className="pf-style">
           <p className="pf-label">{t('styles.as')}</p>
-          <StylePicker compact list={ts.list} activeId={s.style || ts.activeId} onPick={pickStyle} label={t('styles.as')} />
+          <StyleCards compact list={ts.list} activeId={s.style || ts.activeId} onPick={pickStyle} label={t('styles.as')} figures={figures} />
           <p className="pf-note">{t('styles.whoNote')}</p>
         </div>
       )}

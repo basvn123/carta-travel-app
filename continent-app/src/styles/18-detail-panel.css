@@ -522,11 +522,6 @@
 /* Structured label/value rows inside the ⓘ popovers (stay, on the ground,
    local rates). One fact per line, label column fixed, easy to scan. */
 
-/* Lifestyle panel: one merged Eating & drinking section with the cadence
-   toggle in its header row; consistent section rhythm. */
-.lifestyle-cadence { margin: 0; }
-.accom-panel .panel-section { padding: 18px 26px; }
-
 /* Wizard stay rows: the ⓘ button + expandable facts */
 .guide-city-info-btn {
   display: inline-flex;

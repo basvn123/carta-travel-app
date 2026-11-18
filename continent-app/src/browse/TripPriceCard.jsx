@@ -211,8 +211,8 @@ export function TripPriceCard({
           <span className="pt-field-label">{t('destx.travellers')}</span>
           <span className="pt-field-value">{peopleText}</span>
         </Button>
-        {settings?.openLifestyle && (
-          <Button variant="quiet" className="pt-field is-wide" aria-haspopup="dialog" onClick={settings.openLifestyle}>
+        {settings?.openStyleSpend && (
+          <Button variant="quiet" className="pt-field is-wide" aria-haspopup="dialog" onClick={settings.openStyleSpend}>
             <span className="pt-field-label">{t('receipt.stripStay')}</span>
             <span className="pt-field-value">{lifestyleText}</span>
           </Button>

@@ -17,8 +17,10 @@ import '../../styles/89-dock.css';
  *
  *   anchor="under-tabs"  the Trip dock, a 44 px pill at the right end of the
  *                        row under the category tabs; the card grows down
- *   anchor="corner"      the Style dock, a disc in the bottom-left corner;
- *                        the card grows up
+ *   anchor="corner"      the Style dock, a disc in the bottom-left corner.
+ *                        It passes onActivate and has no card: a tap opens
+ *                        the Style Studio, the one place a style is edited
+ *                        (Style Studio, G12)
  *
  * Below 769 px the card is a real modal: aria-modal, the rest of the app
  * inert, a scrim, Tab kept inside, and it spans the full width of the screen
@@ -51,10 +53,11 @@ export function useDockBack(back) {
 
 export function Dock({
   id, anchor = 'under-tabs', glyph, label, title = '', changed = false, heading,
-  headingHidden = false, className = '', hidden = false, children,
+  headingHidden = false, className = '', hidden = false, onActivate = null, children,
 }) {
   const { open, focus } = useDock();
-  const isOpen = open === id && !hidden;
+  // A disc with onActivate opens something else, so its own card never opens.
+  const isOpen = open === id && !hidden && !onActivate;
   const isDesktop = useIsDesktop();
   const modal = !isDesktop;
   const cardId = useId();
@@ -132,16 +135,15 @@ export function Dock({
     clearDockFocus();
   }, [isOpen, focus]);
 
-  // Where the phone card sits: under the trigger, or above the corner disc,
-  // always the full width of the screen.
+  // Where the phone card sits: under the trigger, the full width of the
+  // screen. (The corner disc has no card: it opens the Style Studio.)
   useBeforePaint(() => {
     if (!isOpen || !modal) return;
     const r = triggerRef.current?.getBoundingClientRect();
     const card = cardRef.current;
     if (!r || !card) return;
-    if (anchor === 'corner') card.style.setProperty('--dock-bottom', `${Math.round(window.innerHeight - r.top)}px`);
-    else card.style.setProperty('--dock-top', `${Math.round(r.bottom)}px`);
-  }, [isOpen, modal, anchor]);
+    card.style.setProperty('--dock-top', `${Math.round(r.bottom)}px`);
+  }, [isOpen, modal]);
 
   const onBlur = (e) => {
     if (modal || !isOpen) return;
@@ -176,11 +178,11 @@ export function Dock({
           variant="quiet"
           className={`dock-trigger dock-trigger--${anchor}${changed ? ' is-changed' : ''}`}
           aria-haspopup="dialog"
-          aria-expanded={isOpen}
-          aria-controls={cardId}
+          aria-expanded={onActivate ? undefined : isOpen}
+          aria-controls={onActivate ? undefined : cardId}
           aria-label={label}
           title={title || undefined}
-          onClick={() => toggleDock(id)}
+          onClick={onActivate || (() => toggleDock(id))}
         >
           <span className="dock-glyph">{glyph}</span>
           {anchor === 'corner'
@@ -190,7 +192,7 @@ export function Dock({
         </Button>
         {/* On a phone the card leaves the app's tree, so the app can be
             inert while the card stays live. */}
-        {modal && typeof document !== 'undefined' ? createPortal(<>{scrim}{card}</>, document.body) : card}
+        {onActivate ? null : modal && typeof document !== 'undefined' ? createPortal(<>{scrim}{card}</>, document.body) : card}
       </div>
     </DockContext.Provider>
   );

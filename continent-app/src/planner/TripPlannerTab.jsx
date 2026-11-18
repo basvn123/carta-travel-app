@@ -161,7 +161,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   };
   const onReceiptLine = (key) => {
     if ((key === 'out' || key === 'back') && tp.priced?.cartaFlight?.[key]) { setFlightSheet(key); return; }
-    if (key === 'days' && app?.openLifestyle) { app.openLifestyle(); return; }
+    if (key === 'days' && app?.openStyleSpend) { app.openStyleSpend(); return; }
     setTripTab('itinerary');
     window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
       const el = document.querySelector(ROUTE_SPOT[key] || '#itin-route-h');

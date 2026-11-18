@@ -2,8 +2,6 @@ import { useSettings } from '../../components/SettingsLine.jsx';
 import { fromName } from '../../components/FromPicker.jsx';
 import { matchProfile, PROFILE_LABEL_KEYS } from '../../browse/styles/spendBits.jsx';
 import { partyText } from '../../lib/party.js';
-import { useFirstRun } from '../../lib/firstRunContext.js';
-import { tasteListText } from '../../lib/taste.js';
 
 /**
  * The traveller's price settings as Account rows read them (T933, T934):
@@ -13,13 +11,11 @@ import { tasteListText } from '../../lib/taste.js';
  */
 export function useTravelValues(t) {
   const s = useSettings();
-  const firstRun = useFirstRun();
   if (!s) return null;
   const party = Number.isFinite(s.party) ? s.party : 2;
   const children = s.children || 0;
   const babies = s.babies || 0;
   const profile = matchProfile(s.lifestyle || {});
-  const taste = tasteListText(firstRun?.choices?.taste, t);
   return {
     s,
     home: fromName(s) || t('origin.pickTown'),
@@ -28,8 +24,6 @@ export function useTravelValues(t) {
     party,
     bed: t(`stay.${s.stayTier || 'home'}`),
     vibe: profile ? t(PROFILE_LABEL_KEYS[profile]) : t('lifestyle.custom'),
-    taste,
-    tasteEditable: !!firstRun?.setChoices,
     priceView: s.priceView === 'total' ? t('party.viewTotal') : t('party.viewPp'),
   };
 }

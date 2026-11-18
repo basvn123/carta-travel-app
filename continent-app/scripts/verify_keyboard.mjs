@@ -121,12 +121,12 @@ const SURFACES = {
     await vis(p, '.settings-part-lifestyle, .lifestyle-btn').click();
     await sleep(1500);
     await openAll(p, FOLDS);
-    // After the walk: Escape closes the panel and hands focus back to the
-    // Lifestyle button that opened it.
+    // After the walk: Escape closes the Style Studio and hands focus back to
+    // the Stay button that opened it (Style Studio, G12).
     const after = async (pg) => {
       await pg.keyboard.press('Escape'); await sleep(600);
       return {
-        escapeCloses: (await pg.locator('.lifestyle-panel').count()) === 0,
+        escapeCloses: (await pg.locator('.fsheet.sst').count()) === 0,
         focusReturns: await pg.evaluate(() => !!document.activeElement?.closest('.lifestyle-btn, .settings-part-lifestyle')),
       };
     };

@@ -144,7 +144,7 @@ export function DayStrip({ title, sub, dayCost, onOpen, dayNumber }) {
 
 export function DayReceiptSheet({
   dayCost, city, dayNumber, dateLabel = '', trip = null, tripName = '', onBackToTrip = null,
-  onLifestyle = null, onClose, id = 'day-receipt',
+  onStyleSpend = null, onClose, id = 'day-receipt',
 }) {
   const { t } = useI18n();
   if (!dayCost) return null;
@@ -210,8 +210,8 @@ export function DayReceiptSheet({
             )}
           </div>
         )}
-        {onLifestyle && (
-          <Button variant="quiet" className="day-receipt-life" onClick={() => { onClose(); onLifestyle(); }}>
+        {onStyleSpend && (
+          <Button variant="quiet" className="day-receipt-life" onClick={() => { onClose(); onStyleSpend(); }}>
             {t('dayws.receiptLifestyle')}
           </Button>
         )}

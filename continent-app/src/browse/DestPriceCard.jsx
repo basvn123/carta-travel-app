@@ -84,7 +84,7 @@ const MAX_PARTY = rule('party.limits').max_seats;   // T691: one cap
 const WAY_ICONS = { plane: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon };
 
 export function DestPriceCard({
-  dest, city, onOpenLifestyle, onPlanTrip, onPlanDay, reportItem, doItems = null, ways = null,
+  dest, city, onOpenStyleSpend, onPlanTrip, onPlanDay, reportItem, doItems = null, ways = null,
   // T912: a number the page bumps when its foot bar asks for the inputs;
   // the card then opens its dates and takes the focus.
   openSignal = 0,
@@ -272,7 +272,7 @@ export function DestPriceCard({
     : l.key === 'car' ? t('price.item.car')
     : l.key === 'transport' ? t('price.item.transport') : t('price.item.activities'));
   const lineSub = (l) => (l.key === 'stay' ? t(`stay.${tier}`) : l.key === 'ground' ? vibe : '');
-  const opensLifestyle = (l) => onOpenLifestyle && (l.key === 'stay' || l.key === 'ground');
+  const opensStyleSpend = (l) => onOpenStyleSpend && (l.key === 'stay' || l.key === 'ground');
 
   // G1 (house style): the receipt's lines print in whole euros; when they
   // do not add up to the engine's own total, a Rounding line says by how
@@ -490,8 +490,8 @@ export function DestPriceCard({
           <dl className="tcard-lines costrows has-leaders">
             {price.lines.map((l) => (
               <CostRow key={l.key} kind={lineKind(l)} className="tcard-line"
-                label={opensLifestyle(l) ? (
-                  <button type="button" className="tcard-line-btn" aria-haspopup="dialog" onClick={onOpenLifestyle}>
+                label={opensStyleSpend(l) ? (
+                  <button type="button" className="tcard-line-btn" aria-haspopup="dialog" onClick={onOpenStyleSpend}>
                     {lineLabel(l)}
                     <small>{lineSub(l)}<PencilIcon size={12} /></small>
                   </button>

@@ -192,7 +192,7 @@ const normalView = (v) => VIEW_ALIAS[v] || v || 'home';
 
 export function AccountPanel({
   onClose, onOpenAuth, initialView = 'home', onViewChange,
-  onOpenAdmin, onOpenLifestyle, onOpenHome, onOpenTogether,
+  onOpenAdmin, onOpenStyleSpend, onOpenHome, onOpenTogether,
   destinations, costs, favorites,
 }) {
   const auth = useAuth();
@@ -1307,7 +1307,7 @@ export function AccountPanel({
         destinations={destinations}
         costs={costs}
         preferId={facts.nextTripDest}
-        onOpenLifestyle={onOpenLifestyle}
+        onOpenStyleSpend={onOpenStyleSpend}
       />
     );
   }

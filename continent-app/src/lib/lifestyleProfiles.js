@@ -7,9 +7,9 @@
  * - this keeps the priced spend exactly equal to the preset and lets the active
  * tile highlight correctly).
  *
- * Lives outside LifestylePanel.jsx so pure modules (lib/tripPrice.js, which
+ * Lives in lib, not in a component, so pure modules (lib/tripPrice.js, which
  * places a trip's written budget at the traveller's Lifestyle) and the node
- * tests can read it without a JSX loader. The panel re-exports it.
+ * tests can read it without a JSX loader. browse/styles/spendBits.jsx re-exports it.
  */
 import { rule } from './price/config.js';
 

@@ -1,9 +1,9 @@
 /**
  * The docks' one store (G12, explore polish; decision.md "Dock semantics").
- * Two docks share it, the Trip dock under the category tabs and the Style
- * dock in the bottom-left corner, so at most one is open: opening one closes
- * the other. `focus` names the row a dock opens on (the price sheet's
- * hand-off opens the Trip dock at From, the Style dock at Stay or Food).
+ * Only the Trip dock under the category tabs opens a card now: the style
+ * disc in the corner opens the Style Studio instead (Style Studio, G12).
+ * `focus` names the row a dock opens on (the price sheet's hand-off opens
+ * the Trip dock at From).
  * The open state lives in memory only; a reload starts closed.
  *
  * Read it with useDock() (useSyncExternalStore); write it with openDock,
@@ -11,7 +11,7 @@
  */
 import { useSyncExternalStore } from 'react';
 
-const DOCKS = ['trip', 'style'];
+const DOCKS = ['trip'];
 const CLOSED = Object.freeze({ open: null, focus: null });
 
 let state = CLOSED;

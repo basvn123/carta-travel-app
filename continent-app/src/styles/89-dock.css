@@ -1,6 +1,7 @@
 /* The docks (G12, explore polish; components/dock/Dock.jsx). One trigger and
-   one card shared by the Trip dock (under the category tabs, grows down) and
-   the Style dock (bottom-left disc, grows up). Phone: the card is a modal the
+   one card for the Trip dock (under the category tabs, grows down), and the
+   style disc (bottom-left), a trigger alone that opens the Style Studio
+   (Style Studio, G12). Phone: the card is a modal the
    full width of the screen over a light umber scrim. 769 px and up: a
    popover card beside its trigger. Only transform and opacity move, on the
    motion tokens; the global reduced-motion floor (02-base.css) shows every
@@ -56,8 +57,9 @@
 .dock-trigger[aria-expanded="true"] .tune-k1 { transform: translateX(8px); }
 .dock-trigger[aria-expanded="true"] .tune-k2 { transform: translateX(-8px); }
 
-/* Style: a 52 px disc in the active style's tone, the chevron on a badge.
-   The whole disc is the target; the badge is never a button of its own. */
+/* Style: a 52 px disc in the active style's tone, the chevron on a badge
+   pointing up at the studio it opens. The whole disc is the target; the
+   badge is never a button of its own. */
 .dock--corner {
   position: fixed;
   left: max(var(--space-4), env(safe-area-inset-left, 0px));
@@ -74,7 +76,6 @@
   color: var(--ts-ink, var(--umber-700));
   box-shadow: var(--elev-2);
 }
-.btn.dock-trigger--corner[aria-expanded="true"] { box-shadow: var(--elev-2); }
 .dock-trigger--corner .dock-glyph .hs-icon,
 .dock-trigger--corner .dock-glyph svg { width: 26px; height: 26px; }
 .dock-trigger--corner .dock-glyph.is-swap { animation: dock-glyph-in var(--dur-2) var(--ease-out); }
@@ -95,9 +96,9 @@
   box-shadow: var(--elev-1);
 }
 .dock-badge .dock-chev { transform: rotate(-90deg); }
-.dock-trigger--corner[aria-expanded="true"] .dock-badge .dock-chev { transform: rotate(90deg); }
 .dock-trigger--corner .dock-dot { top: auto; left: auto; right: 0; bottom: 0; }
-/* The style dock steps aside for the keyboard and for any other modal. */
+/* The style disc steps aside for the keyboard and for any modal, the
+   studio it opens included. */
 html.kbd-open .dock--corner,
 body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden; }
 
@@ -127,9 +128,8 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
   visibility: visible;
   transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-settle) var(--ease-settle), visibility 0s;
 }
-/* Desktop: a popover under the pill, or over the disc. */
+/* Desktop: a popover under the pill. */
 .dock-card--under-tabs { top: calc(100% + var(--space-2)); right: 0; width: 360px; max-height: min(70dvh, 560px); transform-origin: top right; }
-.dock-card--corner { bottom: calc(100% + var(--space-2)); left: 0; width: 340px; max-height: min(70dvh, 560px); transform-origin: bottom left; }
 
 /* Phone: a modal the full width of the screen, rows full width. */
 .dock-card.is-modal {
@@ -149,15 +149,6 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
   border-radius: 0 0 var(--radius-sheet) var(--radius-sheet);
   border-top: 0;
   transform-origin: top right;
-}
-.dock-card--corner.is-modal {
-  top: auto;
-  bottom: calc(var(--dock-bottom, 140px) + var(--space-2));
-  /* Capped so the header stays in view above it; the card scrolls. */
-  max-height: min(78dvh, 640px, calc(100dvh - var(--dock-bottom, 140px) - var(--space-6)));
-  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
-  border-bottom: 0;
-  transform-origin: bottom left;
 }
 .dock-scrim {
   position: fixed;
@@ -305,78 +296,12 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
   to { opacity: 1; transform: none; }
 }
 
-/* ---- The Style dock (StyleDock.jsx) ----------------------------------- */
+/* ---- The style disc (StyleDock.jsx) ---------------------------------- */
 /* A style switch cross-fades the glyph: the keyed span mounts anew. */
 .dock-glyph-in { display: inline-grid; place-items: center; animation: dock-glyph-in var(--dur-2) var(--ease-out); }
-.style-dock-body { display: flex; flex-direction: column; min-width: 0; }
-/* The styles: one full-width line each, the disc, the name, the figure. */
-.dock-card .tstyle-cards.is-line { display: flex; flex-direction: column; gap: 0; padding: 0; }
-.dock-card .tstyle-cards.is-line .btn.tstyle-card {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  max-width: none;
-  min-height: 52px;
-  margin: 0;
-  padding: var(--space-1) var(--space-4);
-  border: 0;
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-  text-align: start;
-}
-.dock-card .tstyle-cards.is-line .btn.tstyle-card .btn-label { display: contents; }
-.dock-card .tstyle-cards.is-line .btn.tstyle-card.is-on { background: var(--select-bg); color: var(--select-ink); }
-.dock-card .tstyle-cards.is-line .tstyle-card-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; }
-.dock-card .tstyle-cards.is-line .tstyle-card-fig { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
-.tstyle-card-unit { font-weight: 500; color: var(--text-2); }
-.dock-card .btn.tstyle-card:focus-visible { outline-offset: -3px; }
-.style-dock-note { margin: 0; padding: 0 var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
-.dock-row .style-dock-note { padding: 0; }
-.style-dock-held {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
-  border-top: 1px solid var(--border-soft);
-}
-.style-dock-held-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.style-dock-halves { padding: var(--space-3) var(--space-4) var(--space-2); border-top: 1px solid var(--border-soft); }
-.style-dock-half { display: flex; flex-direction: column; min-width: 0; }
-/* The Who steppers sit in a wrapping flex control, which shrinks them to
-   their content; the owner asked for rows that run full width on a phone,
-   like every other dock row (judge round 1). */
-.style-dock-half .party { width: 100%; align-self: stretch; }
-.style-dock-half .party-row { justify-content: space-between; }
-.style-dock-set { min-width: 0; margin: 0; padding: 0; border: 0; }
-.style-dock-set:disabled { opacity: 0.6; }
-.dock-card .tstyle-chips { min-width: 0; }
-/* The explore half draws the sheet's own fields: full width, the hairline
-   rows of the dock. */
-.style-dock-explore .tstyle-field { padding: var(--space-3) var(--space-4); border-top: 1px solid var(--border-soft); }
-.style-dock-explore .tstyle-field-title { margin: 0 0 var(--space-2); }
-.style-dock-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4) var(--space-1);
-  border-top: 1px solid var(--border-soft);
-}
-.btn.style-dock-more { min-width: var(--tap); min-height: var(--tap); }
-.style-dock-menu { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: 0 var(--space-4) var(--space-2); justify-content: flex-end; }
-.style-dock-first { display: flex; flex-direction: column; gap: var(--space-3); padding: 0 var(--space-4) var(--space-2); }
-.style-dock-first-title { margin: 0; font-weight: 700; }
-.style-dock-templates { display: flex; flex-direction: column; gap: var(--space-1); }
-.style-dock-templates .btn.tstyle-tpl { justify-content: flex-start; width: 100%; max-width: none; }
 
-/* The Map pill steps aside while the Style dock is open: both live at the
-   foot of the list. The list keeps room under its last row for the disc on
-   a desktop, where it sits inside the list pane. */
-html[data-dock="style"] .xview-fab { opacity: 0; pointer-events: none; transition: opacity var(--dur-2) var(--ease-out); }
+/* The list keeps room under its last row for the disc on a desktop, where
+   it sits inside the list pane. */
 @media (min-width: 769px) {
   .dock--corner { left: var(--space-5); bottom: var(--space-5); }
   .explore-shell .explore-wrap,

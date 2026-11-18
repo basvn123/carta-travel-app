@@ -31,7 +31,10 @@ function glyph(name, body) {
 export const HouseIcon = {
   signpost: glyph('signpost', <><path d="M11 21.5V2.5" /><path d="M4 4.5h12.5l3 3-3 3H4z" /><path d="M18 13H7.5l-3 2.75 3 2.75H18z" /></>),
   route: glyph('route', <><path d="M6 18.5V10a3 3 0 0 1 3-3h6a3 3 0 0 0 3-3" /><path d="M3 18.5h6v3H3z" /><path d="M15 2.5h6v3h-6z" /></>),
-  cairn: glyph('cairn', <><path className="stone" d="M3.5 19.4c0-1.6 3.8-2.7 8.5-2.7s8.5 1.1 8.5 2.7-3.8 1.9-8.5 1.9-8.5-.3-8.5-1.9z" /><path className="stone" d="M6.3 14.1c0-1.5 2.5-2.5 5.6-2.5s5.9 1 5.9 2.5-2.8 1.8-5.9 1.8-5.6-.3-5.6-1.8z" /><path className="stone" d="M8.7 9.2c0-1.4 1.6-2.4 3.5-2.4s3.8 1 3.8 2.4-1.9 1.7-3.8 1.7-3.5-.3-3.5-1.7z" /><path className="stone" d="M10.6 4.6c0-.9.7-1.5 1.6-1.5s1.6.6 1.6 1.5-.7 1.2-1.6 1.2-1.6-.3-1.6-1.2z" /></>),
+  // My trips (Style Studio, G12): a ticket, the thing a booked trip leaves in
+  // your hand. The perforation draws butt caps: square caps would grow each
+  // dash by the stroke width and close the gaps.
+  ticket: glyph('ticket', <><path d="M3.5 6.5h17v3a2.5 2.5 0 0 0 0 5v3h-17v-3a2.5 2.5 0 0 0 0-5z" /><path d="M15 6.5v11" strokeDasharray="1.6 2.2" strokeLinecap="butt" /><path d="M7 10.5h4.5M7 13.5h3" /></>),
   search: glyph('search', <><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5l5.5 5.5" /></>),
   people: glyph('people', <><circle cx="9" cy="7.5" r="3.5" /><path d="M2.5 20.5v-2a5 5 0 0 1 5-5h3a5 5 0 0 1 5 5v2" /><path d="M16 4.5a3.5 3.5 0 0 1 0 6.5" /><path d="M19 13.8a5 5 0 0 1 2.5 4.4v2.3" /></>),
   calendar: glyph('calendar', <><path d="M3.5 5.5h17v15h-17z" /><path d="M3.5 10h17" /><path d="M8 3v4.5M16 3v4.5" /></>),
@@ -98,6 +101,6 @@ export const HouseIcon = {
   </>),
   // A return flight: two opposed arrows (the flight wagon's return mark).
   ret: glyph('ret', <><path d="M4 8h14.5" /><path d="M15.5 4.5L19 8l-3.5 3.5" /><path d="M20 16H5.5" /><path d="M8.5 12.5L5 16l3.5 3.5" /></>),
-  // Save (the cairn stays My trips): a ribbon; .is-filled fills it when on.
+  // Save (the ticket stays My trips): a ribbon; .is-filled fills it when on.
   bookmark: glyph('bookmark', <><path className="bm-fill" d="M6 3.5h12v17l-6-4.2-6 4.2z" /></>),
 };

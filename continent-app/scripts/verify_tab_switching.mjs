@@ -66,10 +66,8 @@ const READ = () => {
     // account page adds .ac-panel, Together .tg-panel.
     account: !!document.querySelector('.ac-panel'),
     saved: !!document.querySelector('.saved-trips-panel:not(.ac-panel):not(.tg-panel)'),
-    lifestyle: !!document.querySelector('.lifestyle-panel'),
-    // G12 (explore polish): the Style dock in the bottom-left corner is the
-    // style door on Explore now.
-    styleDock: !!document.querySelector('.dock-card--corner.is-open'),
+    // Style Studio (G12): every style door opens the one studio sheet.
+    studio: !!document.querySelector('.fsheet.sst'),
     hdrActive: [...document.querySelectorAll('.header-nav-item.active .header-nav-label')].map((b) => b.textContent.trim()).join(','),
     avatarOn: !!document.querySelector('.account-door.on'),
     tab: new URLSearchParams(location.search).get('tab') || 'explore',
@@ -214,22 +212,19 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
   // 4: removed by T496-T501 (Account and My trips are places now; a second
   // press stays there instead of closing a door).
 
-  // 2 + 5: the Lifestyle drawer, on the tab whose scrim used to cover the bar.
+  // 2 + 5: the style disc opens the Style Studio, a modal over the tabs;
+  // Escape closes it and the tabs work again (Style Studio, G12).
   await nav('Explore');
   await page.waitForTimeout(2000);
-  // T401: Explore's own Lifestyle button is gone (explore V3 and V4 left the
-  // settings line as the one door), so the door is the first visible one: the
-  // settings line's Lifestyle part, or the older button where a tab still draws it.
-  // G12: the door is the Style dock disc, a popover on a desktop.
   await page.locator('.dock--corner .dock-trigger:visible').first().click();
   await page.waitForTimeout(900);
-  check('Lifestyle opens on Explore', await read().then((s) => s.styleDock));
-  const swallowed = await page.locator('.header-nav-item').nth(1)
-    .click({ timeout: 3000 }).then(() => false).catch(() => true);
-  check('the Lifestyle scrim does not cover the section tabs', !swallowed);
+  check('the style disc opens the Style Studio on Explore', await read().then((s) => s.studio));
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(600);
+  await nav('Plan');
   await page.waitForTimeout(2200);
-  check('Lifestyle closes on switching to Plan',
-    await read().then((s) => !s.styleDock && !s.lifestyle && !s.explore && s.hdrActive === 'Plan'));
+  check('the studio closes, then Plan opens',
+    await read().then((s) => !s.studio && !s.explore && s.hdrActive === 'Plan'));
 
   // 6: keep-alive and the bar's gutter.
   await nav('Explore');
@@ -297,25 +292,23 @@ const only = (s, key) => ['explore', 'plan', 'trip', 'day'].every((k) => s[k] ==
   await page.locator('.sdock-pill').first().click();
   await page.locator('.sdock-card-head').filter({ hasText: /stay/i }).first().click();
   await page.waitForTimeout(900);
-  check('phone: Lifestyle opens', await read().then((s) => s.lifestyle));
-  // T391 (shell V4, brief V4-6): on a phone Lifestyle is a bottom sheet over
-  // the bar, so the bar never covers its foot, and like every modal dialog
-  // the page behind (the bar included) takes no tap while it is up. This
-  // used to tap Destinations through it; now the sheet's Done closes it and
-  // the tab is pressed after, which is what a traveller does.
+  check('phone: Stay opens the Style Studio', await read().then((s) => s.studio));
+  // On a phone the studio is a full-height sheet over the bar, and like every
+  // modal dialog the page behind (the bar included) takes no tap while it is
+  // up. Escape closes it and the tab is pressed after.
   const navCovered = await page.evaluate(() => {
     const n = document.querySelector('.bottom-nav-item');
     const r = n.getBoundingClientRect();
     const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
     return !n.contains(hit);
   });
-  check('phone: the Lifestyle sheet stands over the bar', navCovered);
-  await page.locator('.ls-done').click();
+  check('phone: the studio stands over the bar', navCovered);
+  await page.keyboard.press('Escape');
   await page.waitForTimeout(600);
   await item(1);
   await page.waitForTimeout(2000);
-  check('phone: Lifestyle closes, then Plan opens',
-    await read().then((s) => !s.lifestyle && only(s, 'plan')));
+  check('phone: the studio closes, then Plan opens',
+    await read().then((s) => !s.studio && only(s, 'plan')));
 
   // T1089: Plan home's Start planning is the door; the question flow is a focus
   // screen (the desktop header steps aside), the system back leaves it.

@@ -190,7 +190,7 @@ function Similar({ rows, data, indices, t, view, onSelect }) {
 }
 
 export function DestinationPage({
-  destination, data, choices, onOpenLifestyle, onClose, onSelect,
+  destination, data, choices, onOpenStyleSpend, onClose, onSelect,
   isFavorite, onToggleFavorite, onOpenFeature, onOpenItin,
   // The two doors into the planners (App.openTripForCountry / openDayForDest).
   onPlanTrip = null, onPlanDay = null,
@@ -538,7 +538,7 @@ export function DestinationPage({
     <DestPriceCard
       dest={destination}
       city={city}
-      onOpenLifestyle={onOpenLifestyle}
+      onOpenStyleSpend={onOpenStyleSpend}
       onPlanTrip={onPlanTrip}
       onPlanDay={onPlanDay}
       doItems={doItems}
@@ -575,7 +575,7 @@ export function DestinationPage({
     area: isArea(d), hasRoutes, members, memberFocus,
     monthPick: statMonth, water, festivals, heatGuard,
     getting, rhythm, bookAhead, verdict, tips, packs, month, parking, tours, flightLinks, bookPhoto,
-    isOpen, toggle, onOpenLifestyle, onOpenFeature, onSelect, onOpenItin, goTab,
+    isOpen, toggle, onOpenStyleSpend, onOpenFeature, onSelect, onOpenItin, goTab,
     ways, aroundStat, airportText, airportIata, guideUrl,
     carDayEur: getting?.car_needed ? getting.rental_eur_day ?? null : null,
   };

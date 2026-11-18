@@ -183,7 +183,7 @@ export function DestFood(props) {
   return props.inline ? <PriceFeel t={props.t} destination={props.destination} /> : <FoodFold {...props} />;
 }
 
-function FoodFold({ t, city, destination, isOpen, toggle, onOpenLifestyle }) {
+function FoodFold({ t, city, destination, isOpen, toggle, onOpenStyleSpend }) {
   const ctx = useFirstRun();
   const costs = destination?.costs;
   const lifestyle = ctx?.choices?.lifestyle || DEFAULT_LIFESTYLE;
@@ -223,14 +223,14 @@ function FoodFold({ t, city, destination, isOpen, toggle, onOpenLifestyle }) {
       <div className="dfood">
         <div className="dfood-head">
           <h3 className="destp-subhead">{t('food.spendHead')}</h3>
-          {onOpenLifestyle && (
+          {onOpenStyleSpend && (
             <Button
               variant="quiet"
               size="sm"
               aria-haspopup="dialog"
               aria-label={`${t('filter.lifestyle')} ${vibe}`}
               iconEnd={<ChevronRightIcon size={14} />}
-              onClick={onOpenLifestyle}
+              onClick={onOpenStyleSpend}
             >
               {vibe}
             </Button>

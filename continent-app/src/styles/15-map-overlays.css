@@ -508,9 +508,8 @@
 
   /* ── Map fills the whole screen, sitting under the overlays ── */
 
-  /* ── List / detail / lifestyle become full-width overlays ── */
-  .panel,
-  .accom-panel {
+  /* ── List and detail become full-width overlays ── */
+  .panel {
     left: 0;
     right: 0;
     width: 100%;
@@ -531,7 +530,6 @@
      (overflow-y:auto). Bottom stops above the persistent bottom nav, same as
      every other full-bleed panel, rather than covering it. */
   .panel { z-index: var(--z-overlay); top: 0; bottom: var(--bottom-nav-h); }
-  .accom-panel { z-index: var(--z-overlay); top: 0; bottom: var(--bottom-nav-h); }
 
   /* The detail panel uses translateX for its open/close transition; keep that
      working at full width. */

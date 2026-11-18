@@ -7,13 +7,14 @@ import { ChoiceRows, Switch } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { PriceViewSwitch } from '../../components/PriceViewSwitch.jsx';
-import { SettingsEditorSheet } from '../../components/SettingsLine.jsx';
+import { SettingsEditorSheet, useSettings } from '../../components/SettingsLine.jsx';
 import { useDayView } from '../../hooks/useDayView.js';
 import { formatMoney } from '../../lib/money.js';
 import { useSettledFigure } from '../../lib/figureChange.js';
 import { Group, Row } from './parts.jsx';
 import { useTravelValues } from './travelValues.js';
-import { openTasteSheet } from '../../browse/TasteDoor.jsx';
+import { styleName } from '../../browse/styles/styleBits.jsx';
+import { openStudio } from '../../browse/styles/studioDoors.js';
 import { EMAILS_OFF, loadEmailPrefs, saveEmailPrefs } from './emailPrefs.js';
 import { HapticsSetting } from '../../components/HapticsSetting.jsx';
 
@@ -55,9 +56,10 @@ function PriceProof({ destinations, costs, preferId }) {
 }
 
 /** Your travel (T934): the settings behind every price, from the one store. */
-export function TravelView({ head, destinations, costs, preferId, onOpenLifestyle }) {
+export function TravelView({ head, destinations, costs, preferId, onOpenStyleSpend }) {
   const { t } = useI18n();
   const v = useTravelValues(t);
+  const ts = useSettings()?.travelStyles;
   const [editor, setEditor] = useState(null); // 'origin' | 'party' | null
   const homeRef = useRef(null);
   const partyRef = useRef(null);
@@ -74,14 +76,16 @@ export function TravelView({ head, destinations, costs, preferId, onOpenLifestyl
         <Group id="ac-travel">
           <Row icon={MapPinIcon} label={t('ac.home')} value={v.home} rowRef={homeRef} onClick={() => setEditor('origin')} />
           <Row icon={FriendsIcon} label={t('ac.travellers')} value={v.people} rowRef={partyRef} onClick={() => setEditor('party')} />
-          <Row icon={BedIcon} label={t('ac.stay')} value={v.bed} onClick={() => onOpenLifestyle?.()} />
-          <Row icon={DiningIcon} label={t('ac.eatPace')} value={v.vibe} onClick={() => onOpenLifestyle?.()} />
-          {v.tasteEditable && (
+          <Row icon={BedIcon} label={t('ac.stay')} value={v.bed} onClick={() => onOpenStyleSpend?.()} />
+          <Row icon={DiningIcon} label={t('ac.eatPace')} value={v.vibe} onClick={() => onOpenStyleSpend?.()} />
+          {/* The styles themselves (who, how you stay, how you explore) are
+              edited in the Style Studio only; this row opens its overview. */}
+          {ts && (
             <Row
               icon={HouseIcon.pack}
-              label={t('taste.title')}
-              value={v.taste ? v.taste : <span className="ac-unset">{t('taste.notSet')}</span>}
-              onClick={(e) => openTasteSheet(e?.currentTarget || null)}
+              label={t('styles.title')}
+              value={ts.active ? styleName(t, ts.active) : <span className="ac-unset">{t('styles.choose')}</span>}
+              onClick={() => openStudio(ts)}
             />
           )}
         </Group>

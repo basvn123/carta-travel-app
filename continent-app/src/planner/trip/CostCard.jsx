@@ -135,7 +135,7 @@ function CostTrain({ tiles, mine = false }) {
  *   onAddPaid      put in what was paid; absent hides it
  *   aroundNote     what an empty Getting around says instead of Not needed (T887)
  *   lifestyle      { bed, vibe } from useLifestyleParts()
- *   onLifestyle    opens the Lifestyle panel
+ *   onStyleSpend    opens the Lifestyle panel
  *   onChangeFlight(dir)  opens the flight sheet
  *   mine           the traveller changed something a moment ago (house
  *                  style): the total rolls with its delta note; otherwise
@@ -143,7 +143,7 @@ function CostTrain({ tiles, mine = false }) {
  */
 export function CostCard({
   priced, people = 1, per = 'group', onPer, budget = null, onOpen = null, onAll = null, onAddPaid = null, aroundNote = '',
-  lifestyle = null, onLifestyle = null, onChangeFlight = null, mine = false,
+  lifestyle = null, onStyleSpend = null, onChangeFlight = null, mine = false,
 }) {
   const { t, lang } = useI18n();
   const [variant] = useState(readVariant);
@@ -183,7 +183,7 @@ export function CostCard({
     } else {
       lead = <span className="ccard-ico">{k === 'stay' ? <BedIcon size={18} /> : <DiningIcon size={18} />}</span>;
       sub = lifestyle ? (k === 'stay' ? lifestyle.bed : lifestyle.vibe) : '';
-      if (onLifestyle) { act = onLifestyle; actLabel = t('lifestyle.title'); }
+      if (onStyleSpend) { act = onStyleSpend; actLabel = t('lifestyle.title'); }
     }
     if (!act && onOpen) { act = () => onOpen(k); actLabel = t('tp.breakdown'); }
     // A leading space inside the figure's own box, so the row's visible

@@ -97,20 +97,6 @@
 }
 .destp .xp-wday-hi { font-size: var(--text-label); font-variant-numeric: tabular-nums; }
 
-/* The Lifestyle dialog opens over the page. A destination or trip page is a
-   full-screen layer at z 240 (24-destination-workspace.css, 23-places-pages.css)
-   and the dialog was drawn under it at 58 and 59 (60-v6-shell.css), so the
-   price card's Stay opened a panel nobody could see. While such a page is
-   open, the scrim and the dialog stand above it (T474: the journey page's
-   Lifestyle row opens it too, so .tpage joins .destp). */
-body:has(.destp, .tpage) .lifestyle-scrim { z-index: calc(var(--z-page) + 50); top: 0; }
-body:has(.destp, .tpage) .accom-panel.lifestyle-panel { z-index: calc(var(--z-page) + 51); }
-/* On a desktop the dialog is a drawer under the shell's header; over the
-   page there is no header, so it runs from the top. */
-@media (min-width: 769px) {
-  body:has(.destp, .tpage) .accom-panel.lifestyle-panel { top: 0; }
-}
-
 /* --------------------------------------------------------------------------
    The gallery: each photograph named in full under it (owner, T429)
    -------------------------------------------------------------------------- */

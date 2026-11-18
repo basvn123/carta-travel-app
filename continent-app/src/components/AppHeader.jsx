@@ -15,10 +15,10 @@ import { useTogether, waitingCount } from '../together/useTogether.js';
    slot. */
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const PLACE_ITEMS = [
-  // House icons (house style 2026-11): the signpost, the route, the cairn.
+  // House icons (house style 2026-11): the signpost, the route, the ticket.
   { key: 'explore', labelKey: 'nav.explore', Icon: HouseIcon.signpost },
   { key: 'plan', labelKey: 'nav.plan', Icon: HouseIcon.route },
-  { key: 'trips', labelKey: 'nav.myTrips', Icon: HouseIcon.cairn },
+  { key: 'trips', labelKey: 'nav.myTrips', Icon: HouseIcon.ticket },
 ];
 
 /**

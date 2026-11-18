@@ -4,8 +4,8 @@
  * explains what was tapped: Flight (or the row's own ground way), Stay,
  * Food, In this price. Each tab says what its number is built on in one
  * line and has one button to the setting that moves it (the Trip dock at
- * From for getting there and the whole day, the Style dock at the Stay,
- * Food or Way row).
+ * From for getting there and the whole day, the Style Studio at the step
+ * for the bed and food, or the way there; Style Studio, G12).
  *
  * Phone: the shared bottom sheet (SheetShell), modal and full width.
  * 769 px and up: a 380 px popover hung off the tapped part, non-modal: it
@@ -31,6 +31,8 @@ import { SheetShell } from '../../browse/SheetShell.jsx';
 import { Button, Tabs } from '../ui/index.js';
 import NotYet from '../NotYet.jsx';
 import { openDock } from '../dock/dockStore.js';
+import { useSettings } from '../SettingsLine.jsx';
+import { openStudioAt } from '../../browse/styles/studioDoors.js';
 import { closePriceSheet, usePriceSheet } from './priceSheetStore.js';
 import '../../styles/86-price-items.css';
 
@@ -53,6 +55,7 @@ export function PriceSheet({ data }) {
 
 function OpenSheet({ s, data }) {
   const { t } = useI18n();
+  const ts = useSettings()?.travelStyles;
   const [tab, setTab] = useState(s.tab);
   const [desk] = useState(isDesktop);
   const baseId = useId();
@@ -63,11 +66,11 @@ function OpenSheet({ s, data }) {
     if (s.anchor?.isConnected) s.anchor.focus({ preventScroll: true });
   };
   // A hand-off closes the sheet without handing focus back, then opens the
-  // dock at its row, which takes focus (accessibility critique: the sheet's
-  // focus return would race the dock's).
+  // dock at its row or the studio at its step, which takes focus
+  // (accessibility critique: the sheet's focus return would race theirs).
   const handOff = (h) => {
     closePriceSheet();
-    requestAnimationFrame(() => openDock(h.dock, { focus: h.focus }));
+    requestAnimationFrame(() => (h.studio ? openStudioAt(ts, h.studio) : openDock(h.dock, { focus: h.focus })));
   };
 
   const body = <SheetBody s={s} data={data} tab={tab} setTab={setTab} baseId={baseId} onHand={handOff} t={t} />;
@@ -147,7 +150,7 @@ function Big({ eur, est, unit }) {
 function Foot({ h, t, onHand }) {
   return (
     <div className="psheet-foot">
-      <Button variant="primary" block className="psheet-primary" data-handoff={`${h.dock}:${h.focus}`} onClick={() => onHand(h)}>
+      <Button variant="primary" block className="psheet-primary" data-handoff={h.studio ? `studio:${h.studio}` : `${h.dock}:${h.focus}`} onClick={() => onHand(h)}>
         {t(h.key)}
       </Button>
     </div>

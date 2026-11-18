@@ -45,7 +45,7 @@ export function overviewShown(p) {
 }
 
 export function DestOverview({ p }) {
-  const { t, city, destination, onOpenLifestyle } = p;
+  const { t, city, destination, onOpenStyleSpend } = p;
   const rows = goodRows(p);
   const dishes = dishesOf(p.d);
   const eat = dishes.length > 0 || foodPriceKeys(destination).length > 0;
@@ -82,7 +82,7 @@ export function DestOverview({ p }) {
                 })}
               </ul>
             )}
-            <DestFood t={t} city={city} destination={destination} inline onOpenLifestyle={onOpenLifestyle} />
+            <DestFood t={t} city={city} destination={destination} inline onOpenStyleSpend={onOpenStyleSpend} />
           </div>
         </PSection>
       )}
