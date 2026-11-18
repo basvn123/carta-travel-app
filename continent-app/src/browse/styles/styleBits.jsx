@@ -3,6 +3,8 @@ import { FamilyIcon, FriendsIcon, HeartIcon, PersonIcon } from '../../components
 import { partyText } from '../../lib/party.js';
 import { QUESTIONS } from '../../planner/flow/questions.js';
 import { summaryParts } from '../../lib/travelStyles.js';
+import { styleDayEur } from '../../lib/price/styleDay.js';
+import { useMemo } from 'react';
 
 /** The glyph of a style, from who comes: it is how travellers name them. */
 export const WHO_ICONS = { solo: PersonIcon, couple: HeartIcon, friends: FriendsIcon, family: FamilyIcon, group: FriendsIcon };
@@ -24,5 +26,16 @@ export function styleSummary(t, style) {
 export function optLabel(t, qid, value) {
   const o = QUESTIONS[qid]?.options?.find((x) => x.value === value);
   return o?.labelKey ? t(o.labelKey) : '';
+}
+
+/** Each style's day figure (bed and food, one person, euros) by id, from
+ *  styleDayEur. One memo for the overview, the dock and the filter switcher. */
+export function useStyleFigures(list, destinations) {
+  const key = (list || []).map((x) => JSON.stringify([x.id, x.who, x.stay, x.lifestyle])).join('|');
+  return useMemo(() => {
+    const m = new Map();
+    for (const x of list || []) m.set(x.id, styleDayEur(x, destinations));
+    return m;
+  }, [key, destinations]); // eslint-disable-line react-hooks/exhaustive-deps -- key stands for the list's priced parts
 }
 
