@@ -77,6 +77,19 @@ test('See all keeps its word, wears the disc and is named with its rail', () => 
   assert.match(rail, /t\('rail\.seeAllNamed', \{ title \}\)/);
 });
 
+test('the phone row under the tabs: rail chips, then the Trip dock, never the dock alone', () => {
+  const tab = read('src/browse/ExploreTab.jsx');
+  const row = tab.slice(tab.indexOf('<div className="xsub xsub--rails">'), tab.indexOf('<TripDock />', tab.indexOf('xsub--rails')));
+  assert.match(row, /<div className="xsub-chips" role="group" aria-label=\{t\('explore\.quickAria'\)\}>/);
+  // Every drawn rail but the first (its heading is right below) is a chip
+  // that opens what its See all opens.
+  assert.match(row, /r\.rows\.length >= 4 && r\.key !== 'saved'\)\.slice\(1\)/);
+  assert.match(row, /onClick=\{r\.seeAll\}/);
+  const css = read('src/styles/85-explore-rails.css');
+  assert.match(css, /\.xsub-chips \{[^}]*overflow-x: auto;[^}]*mask-image: linear-gradient\(to right, var\(--text\)/);
+  assert.match(css, /\.xsub--rails \.btn\.xsub-chip::after,\s*\.xsub--rails \.btn\.dock-trigger::after \{ content: ""; position: absolute; inset: -2px 0; \}/);
+});
+
 test('signed out, Account and Sign in share one split pill', () => {
   const src = read('src/components/AppHeader.jsx');
   const acc = src.slice(src.indexOf('function AccountLink'), src.indexOf('function TogetherDoor'));
