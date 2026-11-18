@@ -267,8 +267,19 @@
   .band-chips.is-swipe .band-chip.is-style:hover::before { background: var(--umber-100); }
 }
 .band-chips.is-swipe .band-chip-dot { top: 10px; }
-/* Pinned, the band floats over the list: one soft lift. */
-.band.is-phone.is-tucked { border-bottom-color: transparent; box-shadow: var(--elev-2); }
+/* Pinned, the strip is a solid stone bar with its hairline and one soft
+   lift, so cards slide under a clean edge (lead review 2026-11-18). The
+   top bar's own ground fills the safe area above it. */
+.band.is-phone.is-tucked {
+  background: var(--surface-page);
+  box-shadow: var(--elev-2);
+  /* The lift falls below only: elev-2's ring would draw a line over the
+     strip under a notch (the safe area is the same stone ground). */
+  clip-path: inset(0 0 calc(var(--space-7) * -1) 0);
+}
+/* Six tabs in 344 px at 360: equal sixths cut "Wanderwege" into its
+   neighbour, so each tab takes its word's width and shares the rest. */
+.band.is-phone .xcats-row .ui-tab { flex: 1 1 auto; }
 
 /* The search panel (Lane 4) under the field. */
 .band-search-panel { position: relative; z-index: 2; }
