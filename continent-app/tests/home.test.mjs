@@ -278,7 +278,19 @@ test('the retired home strings are gone', () => {
     'pf.persona.label.eg', 'pf.persona.label.choose', 'pf.persona.label.about', 'pf.persona.label.details',
     // G12 judge 1: the persona question's title and lines, and the trip
     // settings' Keep (a style is edited only in the studio).
-    'pf.q.persona', 'styles.keep', 'pf.persona.citiesSub', 'pf.persona.hubtripsSub', 'pf.persona.outsideSub', 'pf.persona.townsSub', 'pf.persona.coastSub', 'pf.persona.natureSub', 'pf.persona.hiddenSub', 'pf.persona.slowSub', 'pf.persona.livelySub', 'pf.persona.mixSub'];
+    'pf.q.persona', 'styles.keep', 'pf.persona.citiesSub', 'pf.persona.hubtripsSub', 'pf.persona.outsideSub', 'pf.persona.townsSub', 'pf.persona.coastSub', 'pf.persona.natureSub', 'pf.persona.hiddenSub', 'pf.persona.slowSub', 'pf.persona.livelySub', 'pf.persona.mixSub',
+    // G12 Explore top: the filter pane, Priced for, Strong match, the cards' why chips
+    // and the phone search dock left with their strings.
+    'dock.anywhere', 'dock.anywhereSub', 'dock.askFor', 'dock.askSub', 'dock.change', 'dock.changeFrom', 'dock.choose', 'dock.clearText', 'dock.filtersAria', 'dock.openAria', 'dock.search', 'dock.what', 'dock.where', 'dock.wherePh', 'dock.whereShort', 'dock.who', 'explore.chooseOrAsk', 'settings.stayShort', 'settings.wayShort',
+    'dock.otherWays', 'explore.qfAria', 'explore.qfBudget', 'explore.qfFlight', 'explore.qfRange',
+    'explore.qfRatingUp', 'filter.anyMonth', 'filter.bestOf', 'filter.budget', 'filter.budgetAny',
+    'filter.budgetFrom', 'filter.budgetMax', 'filter.budgetMaxAria', 'filter.budgetMin',
+    'filter.budgetMinAria', 'filter.budgetUnit', 'filter.flightChip', 'filter.flightUpTo', 'filter.goodFor',
+    'filter.goodFor.base', 'filter.goodFor.daytrip', 'filter.goodFor.stop', 'filter.goodToKnow',
+    'filter.month', 'filter.nearSea', 'filter.paneAny', 'filter.paneCount', 'filter.paneCountOne',
+    'filter.paneHours', 'filter.pricedForCreate', 'filter.pricedForHeld', 'filter.pricedForList',
+    'filter.size', 'filter.tripType', 'fit.strong', 'settings.fromStyle', 'why.place.cardAria',
+    'why.place.chipLikely'];
   for (const [lang, cat] of Object.entries(CATALOGS)) {
     for (const k of retired) assert.equal(cat[k], undefined, `${lang} ${k}`);
     assert.deepEqual(Object.keys(cat).filter((k) => k.startsWith('landing.')), [], lang);
