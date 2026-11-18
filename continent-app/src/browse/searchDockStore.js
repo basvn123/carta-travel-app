@@ -30,7 +30,8 @@ export function setDockKind(kind) {
 export function setDockResults(results) {
   const a = state.results;
   const same = (!a && !results) || (a && results && a.label === results.label && a.query === results.query
-    && a.filterCount === results.filterCount && a.filtersOpen === results.filtersOpen);
+    && a.filterCount === results.filterCount && a.filtersOpen === results.filtersOpen
+    && !!a.canShare === !!results.canShare);
   if (same) return;
   state = { ...state, results: results || null };
   emit();
@@ -42,6 +43,9 @@ export function setDockHandlers(next) {
 
 export function dockBack() { handlers.onBack?.(); }
 export function dockFilters(opener) { handlers.onFilters?.(opener); }
+// G12: Share left the phone toolbar for the applied field; the tab that
+// sets `canShare` on its results gives the handler.
+export function dockShare() { handlers.onShare?.(); }
 
 export function requestShowAll() {
   state = { ...state, showAll: state.showAll + 1 };
