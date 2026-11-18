@@ -163,7 +163,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
                 <span className="band-mag" aria-hidden="true"><HouseIcon.search size={20} /></span>
               )}
               <input ref={inputRef} type="search" className="band-input"
-                value={value} placeholder={t('band.searchPh')} aria-label={t('band.searchPh')}
+                value={value} placeholder={t(isDesktop ? 'band.searchPh' : 'band.searchPhShort')} aria-label={t('band.searchPh')}
                 autoComplete="off" enterKeyHint="search" spellCheck={false}
                 role="combobox"
                 aria-expanded={open}

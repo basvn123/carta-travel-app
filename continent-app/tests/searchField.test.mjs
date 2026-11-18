@@ -15,7 +15,8 @@ const value = (lang, key) => {
 
 test('the band field names itself and keeps Ask inside it', () => {
   const band = read('src/browse/band/ExploreBand.jsx');
-  assert.match(band, /placeholder=\{t\('band\.searchPh'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
+  // A phone shows the short placeholder so it is never cut at 360 (fixes r1 T3); the name stays full.
+  assert.match(band, /placeholder=\{t\(isDesktop \? 'band\.searchPh' : 'band\.searchPhShort'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
   assert.match(band, /className="band-ask" aria-label=\{t\('dock\.ask'\)\}/);
   assert.equal(fs.existsSync(new URL('../src/components/SearchDock.jsx', import.meta.url)), false);
 });
@@ -29,7 +30,7 @@ test('the field is a combobox whose aria-controls names the panel listbox', () =
 test('the band strings, in six languages, the old dock pill strings gone', () => {
   assert.equal(value('en', 'band.searchPh'), 'Search a place, region or country');
   for (const l of LANGS) {
-    for (const k of ['band.searchPh', 'band.settings', 'band.clear']) assert.ok(value(l, k), `${l} ${k}`);
+    for (const k of ['band.searchPh', 'band.searchPhShort', 'band.settings', 'band.clear']) assert.ok(value(l, k), `${l} ${k}`);
     for (const k of ['dock.choose', 'dock.openAria', 'explore.chooseOrAsk']) assert.equal(value(l, k), null, `${l} ${k}`);
   }
 });

@@ -281,6 +281,7 @@ test('the retired home strings are gone', () => {
     'pf.q.persona', 'styles.keep', 'pf.persona.citiesSub', 'pf.persona.hubtripsSub', 'pf.persona.outsideSub', 'pf.persona.townsSub', 'pf.persona.coastSub', 'pf.persona.natureSub', 'pf.persona.hiddenSub', 'pf.persona.slowSub', 'pf.persona.livelySub', 'pf.persona.mixSub',
     // G12 Explore top: the filter pane, Priced for, Strong match, the cards' why chips
     // and the phone search dock left with their strings.
+    'dock.back', 'dock.from', 'dock.rowAria', 'dock.styleRowAria', 'dock.summary', 'dock.trip', 'dock.tripAria', 'dock.tripTip', 'settings.peopleMany', 'settings.peopleOne', 'settings.summary', 'studio.rowLabel',
     'dock.anywhere', 'dock.anywhereSub', 'dock.askFor', 'dock.askSub', 'dock.change', 'dock.changeFrom', 'dock.choose', 'dock.clearText', 'dock.filtersAria', 'dock.openAria', 'dock.search', 'dock.what', 'dock.where', 'dock.wherePh', 'dock.whereShort', 'dock.who', 'explore.chooseOrAsk', 'settings.stayShort', 'settings.wayShort',
     'dock.otherWays', 'explore.qfAria', 'explore.qfBudget', 'explore.qfFlight', 'explore.qfRange',
     'explore.qfRatingUp', 'filter.anyMonth', 'filter.bestOf', 'filter.budget', 'filter.budgetAny',
