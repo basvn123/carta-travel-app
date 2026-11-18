@@ -8,9 +8,10 @@ import { formatMoney } from '../../lib/money.js';
 import { SCENIC_HERO } from './exploreConsts.js';
 import { isResizable } from '../../lib/heroImage.js';
 import { commonsPageUrl } from '../../lib/imageCredit.js';
+import { spreadLeads } from './railLeads.js';
 
 export function useExploreRails({
-  allRows, favorites, guided, isDesktop, lang, patchXf, railMonth, railsIdle, rows, setGemOnly,
+  allRows, favorites, guided, lang, patchXf, railMonth, railsIdle, rows, setGemOnly,
   setShowFavOnly, setSortKey, t, xf,
 }) {
   const rails = React.useMemo(() => {
@@ -23,16 +24,29 @@ export function useExploreRails({
     // T649: the same tier the Crowds stat shows, in the month the rail names.
     const railWhen = resolveWhen({ xm: month });
     const byRating = (a, b) => (b.rating?.score || 0) - (a.rating?.score || 0);
+    // Explore rails (owner 2026-11-18, "scroll a lot, horizontally and
+    // vertically"): a theme rail holds the places strongest in one vibe of
+    // the guided data that also score Good or better, best Score first,
+    // round-robin by country. Its See all is the same vibe filter, so the
+    // list holds these places and the weaker matches after them.
+    const vibeRail = (vibe) => (guided
+      ? interleaveByCountry(rows.filter((p) => vibeOf(guided, p.id, vibe) >= 80 && bandAtLeast(p.rating, 'good')).sort(byRating))
+      : []);
     const q = {
-      top: rows.filter((p) => bandAtLeast(p.rating, 'excellent')),
-      gems: interleaveByCountry(rows.filter((p) => p.rating?.hidden_gem)),
+      // Top rated and the gems open on the highest Score, never on one country.
+      top: interleaveByCountry(rows.filter((p) => bandAtLeast(p.rating, 'excellent')).sort(byRating)),
+      gems: interleaveByCountry(rows.filter((p) => p.rating?.hidden_gem).sort(byRating)),
       now: interleaveByCountry(rows.filter((p) => inSeason(p) && bandAtLeast(p.rating, 'very_good')).sort(byRating)),
-      hiking: guided ? interleaveByCountry(rows.filter((p) => vibeOf(guided, p.id, 'hiking') >= 80).sort(byRating)) : [],
+      hiking: vibeRail('hiking'),
       beach: guided ? interleaveByCountry(rows.filter((p) => inSeason(p) && vibeOf(guided, p.id, 'beach') >= 80).sort(byRating)) : [],
       nocar: interleaveByCountry(rows.filter(noCarOk)),
       // Quiet in high season says something only in June to September.
       quiet: month >= 6 && month <= 9 ? interleaveByCountry(rows.filter((p) => quietOk(p, railWhen))) : [],
       saved: favorites && favorites.size ? rows.filter((p) => favorites.has(p.id)) : [],
+    };
+    const theme = (key, vibe = key) => {
+      const title = t(`rail.${key}`);
+      return { key, title, short: title, rows: vibeRail(vibe), seeAll: () => patchXf({ vibe }) };
     };
     // V3 (T383): the page leads with cost (house rule "Rails and cuts",
     // explore N8). Well-rated places (Good and up) whose best months
@@ -59,8 +73,9 @@ export function useExploreRails({
       else costRest.push(p);
     }
     // The sections (T427): a question each, no subtitle, no count. The
-    // traveller's shortlist leads when it holds anything.
-    return [
+    // traveller's saved places lead when there are any. The themes alternate
+    // town, coast and outdoors so the page never runs two alike in a row.
+    return spreadLeads([
       { key: 'saved', title: t('rail.shortlist'), rows: q.saved,
         seeAll: () => setShowFavOnly(true) },
       { key: 'now', title: t('rail.bestIn', { month: monthName }), short: t('rail.bestIn', { month: monthName }),
@@ -76,13 +91,26 @@ export function useExploreRails({
         seeAll: () => patchXf({ vibe: 'hiking' }) },
       { key: 'beach', title: t('rail.beachSeason'), short: t('rail.beachSeason'), rows: q.beach,
         seeAll: () => patchXf({ vibe: 'beach', month }) },
+      theme('oldtown'),
+      theme('island'),
       { key: 'gems', title: t('rail.gems'), short: t('rail.gems'), rows: q.gems,
         seeAll: () => setGemOnly(true) },
+      theme('mountain'),
+      theme('unesco'),
+      theme('lake'),
       { key: 'nocar', title: t('rail.nocar'), short: t('rail.nocar'), rows: q.nocar,
         seeAll: () => patchXf({ nocar: true }) },
+      theme('food'),
+      theme('views'),
+      theme('castles'),
+      theme('village'),
+      theme('city'),
+      theme('family'),
+      theme('romantic'),
+      theme('art'),
       { key: 'quiet', title: t('rail.quiet'), short: t('filter.notCrowded'), rows: q.quiet,
         seeAll: () => patchXf({ quiet: true }) },
-    ];
+    ]);
   }, [railsIdle, rows, xf.month, xf.budget, railMonth, lang, guided, favorites, t, patchXf,
     setGemOnly, setSortKey, setShowFavOnly]);
 
@@ -90,7 +118,11 @@ export function useExploreRails({
   // the overview as quick chips that act at once: every rail past the ones
   // drawn as strips, then the month's price and season rails. The same rail
   // objects, so a chip opens exactly what that rail's See all opens.
-  const railLead = isDesktop ? 4 : 3;
+  // Explore rails (owner 2026-11-18): every rail with four or more places
+  // is drawn as a strip, on every width, so the overview scrolls down
+  // through all of them; T427's cap (three on a phone, four on a desktop)
+  // is lifted. The quick chips keep the price and season rails.
+  const railLead = Infinity;
   const quickRails = React.useMemo(() => {
     const shown = rails.filter((r) => r.rows.length >= 4);
     const out = shown.slice(railLead);

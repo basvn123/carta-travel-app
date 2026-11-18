@@ -217,7 +217,8 @@
   .storyr { gap: var(--space-2); }
   .storyr .storyr-strip { padding: var(--space-1) 0 0; }
   .storyr .storyr-card .card-media { aspect-ratio: 1 / 1; }
-  .explore-shell .xrails.xrails { gap: var(--space-4); }  /* T983: 24 to 16 px */
+  /* T983's 16 px between Explore's rails went (Explore rails, 2026-11-18):
+     the gap lives in 85-explore-rails.css with the rest of the rhythm. */
 }
 
 /* T982 (owner 2026-11-01): a rail card's caption is three lines, not

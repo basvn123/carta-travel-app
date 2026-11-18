@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { Button, Rail as HouseRail } from '../components/ui/index.js';
+import { HouseIcon } from '../components/HouseIcons.jsx';
+import '../styles/85-explore-rails.css';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { openShared } from '../lib/sharedElement.js';
@@ -34,7 +36,9 @@ import { STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
  * rail logic, the lead count, the doors and every seeAll are unchanged.
  */
 
-const CAP = 12;
+// Explore rails (owner 2026-11-18, "scroll a lot horizontally"): sixteen
+// places a strip, then the See all tile (it was twelve).
+const CAP = 16;
 
 // Round-robin by country, so a rail of 292 gems does not open on ten
 // Italian tiles: take each country's best in turn until the cap.
@@ -70,9 +74,18 @@ const inMonth = (p, month) => !!month && (p.climate?.best || []).includes(month)
 function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t, eager = false }) {
   const goodNow = !MONTH_RAILS.has(railKey) && inMonth(p, month);
   const gem = !goodNow && railKey !== 'gems' && p.rating?.hidden_gem;
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
+  // Explore rails (owner 2026-11-18, "cleaner and clearer under the image"):
+  // three lines in a grid. The name, its Score and the day figure share the
+  // first line, so the price is read with the place, not on a line of its
+  // own; the flag and country follow; then the parts of that figure (bed
+  // plus food) and the return fare apart. The link is the photo, stretched
+  // over the whole card (the list row's pattern), so the figure and the
+  // parts can be buttons beside it: a button never nests in a link.
   return (
-    <article className="hs-rcard xstory" role="listitem">
+    <article className="hs-rcard xstory xrc" role="listitem">
       <a className="hs-rcard-link" href={`#dest=${encodeURIComponent(p.id)}`}
+        aria-labelledby={`${uid}-n ${uid}-w`}
         onClick={(e) => {
           // A real link (T444): a plain click opens the place here, a
           // modifier click lets the browser open it in a new tab.
@@ -84,30 +97,64 @@ function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleF
           <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} className="xrc-img" maxWidth={STORY_MAX}
             sizes={STORY_SIZES} ratio={[4, 3]} eager={eager} />
         </span>
-        <span className="hs-rcard-head">
-          <span className="hs-rcard-name">{p.city}</span>
-          <PlaceScore rating={p.rating} />
-        </span>
-        <span className="hs-rcard-where">
-          <CountryFlag country={p.iso2} size={12} />
-          <span className="xrc-country">{countryName(p.iso2, p.country)}</span>
-          {goodNow && <span className="xrc-status">{t('rail.goodIn', { month: monthShort })}</span>}
-          {gem && <span className="hs-gem">{t('common.hiddenGem')}</span>}
-        </span>
-        {/* T1208 (G9): why it fits this traveller, only with evidence on both sides. */}
-        <WhyChips place={p} className="xstory-why" />
       </a>
-      {/* The price row sits outside the link: its day figure and wagons
-          are buttons (the items in them, T695), and a button never nests in
-          a link. G12, D10: no note line under it; the figure says its unit
-          and a thin bed is a dot on the bed wagon. */}
-      <RowFormation cost={p.cost} t={t} weighted pressable place={p} />
+      <div className="xrc-head">
+        <span className="hs-rcard-name" id={`${uid}-n`}>{p.city}</span>
+        <PlaceScore rating={p.rating} />
+        {/* G12, D10: the figure says its unit and opens the price sheet. */}
+        <RowFormation cost={p.cost} t={t} pressable place={p} slot="figure" className="xrc-fig" />
+      </div>
+      <span className="hs-rcard-where" id={`${uid}-w`}>
+        <CountryFlag country={p.iso2} size={12} />
+        <span className="xrc-country">{countryName(p.iso2, p.country)}</span>
+        {goodNow && <span className="xrc-status">{t('rail.goodIn', { month: monthShort })}</span>}
+        {gem && <span className="hs-gem">{t('common.hiddenGem')}</span>}
+      </span>
+      {/* T1208 (G9): why it fits this traveller, only with evidence on both sides. */}
+      <WhyChips place={p} className="xstory-why" />
+      {/* The parts: each wagon a button to the price sheet; a thin bed is
+          a dot on the bed wagon. */}
+      <RowFormation cost={p.cost} t={t} pressable place={p} slot="parts" className="xrc-parts" />
       <FriendCardLine destId={p.id} />
       {onToggleFav && (
         <span className="hs-rcard-save">
           <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} tone="photo" name={p.city} />
         </span>
       )}
+    </article>
+  );
+}
+
+/**
+ * The rail's last tile (Explore rails, owner 2026-11-18: "See all must be
+ * cleaner, more beautiful, more custom"). A traveller who scrolled to the
+ * end of a strip wants more of the same, so the strip ends on a door the
+ * size of a photo: the next places' photos as a row of round faces, "See
+ * all" and the rail's name, and the umber arrow disc the head's See all
+ * wears. One press opens what the head's See all opens.
+ */
+function SeeAllTile({ r, rest, t }) {
+  const faces = rest.filter((p) => p.image || p.photo).slice(0, 3);
+  return (
+    <article className="hs-rcard xrc-more" role="listitem">
+      <Button variant="quiet" className="xrc-more-btn" onClick={r.seeAll}
+        aria-label={t('rail.seeAllNamed', { title: r.title })}>
+        {faces.length > 0 && (
+          <span className="xrc-more-faces" aria-hidden="true">
+            {faces.map((p) => (
+              <span key={p.id} className="xrc-more-face">
+                <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} maxWidth={160}
+                  sizes="64px" ratio={[1, 1]} />
+              </span>
+            ))}
+          </span>
+        )}
+        <span className="xrc-more-text" aria-hidden="true">
+          <span className="xrc-more-word">{t('rail.seeAllPlain')}</span>
+          <span className="xrc-more-title">{r.title}</span>
+        </span>
+        <span className="hs-go-disc is-lg" aria-hidden="true"><HouseIcon.next size={20} /></span>
+      </Button>
     </article>
   );
 }
@@ -133,6 +180,7 @@ function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eage
           onSelect={onSelect} fav={favorites?.has(p.id)} onToggleFav={onToggleFav} t={t}
           eager={eager && i < EAGER_CARDS} />
       ))}
+      {r.seeAll && <SeeAllTile r={r} rest={r.rows.slice(CAP)} t={t} />}
     </HouseRail>
   );
 }

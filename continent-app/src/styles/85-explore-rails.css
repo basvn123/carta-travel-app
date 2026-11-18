@@ -1,0 +1,162 @@
+/* Explore rails (owner 2026-11-18, ROADMAP G12): the overview's rhythm, the
+   rail card's three lines and the See all tile. Imported by ExploreRails.jsx.
+
+   One spacing rule, from the proximity principle: what belongs together
+   sits tight, what is separate gets about three times the room, and a
+   heading has more space above it than below it.
+
+     phone                       desktop (1024 px and up)
+     tabs to Trip dock    8      (the dock lives in the quick row)
+     dock to first title  24     24
+     title to its strip   12     16
+     photo to name        10     12
+     name to country      2      2
+     country to parts     10     10
+     strip to next title  40     56   (plus the strip's 4 px foot; a
+                                       rail holding a two-line name is
+                                       that line taller)
+
+   Before this the gap between rails was 16 px (T983) and a title sat 14 px
+   from its own strip, so a heading read as the foot of the rail above it.
+   This replaces the older section gaps (25-feature-pages, 62-v6-explore,
+   80-story-rail T983, 84-explore-overview) for Explore. */
+
+.explore-shell .xrails.xrails {
+  gap: var(--space-7);
+  margin: var(--space-5) 0 var(--space-7);
+}
+.explore-shell .xsub { margin: var(--space-2) 0 0; }
+.explore-shell .xrails-rail .hs-rail-head { margin-bottom: var(--space-3); }
+/* Twenty rails: the ones off screen skip layout and paint until the
+   traveller nears them. The height they hold until then is a rail's own
+   (measured 2026-11-18: 361 px at 390, 348 at 1440), and once drawn the
+   browser remembers the real one, so nothing jumps under the reader. */
+.explore-shell .xrails-rail {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 360px;
+}
+@media (min-width: 1024px) {
+  .explore-shell .xrails-rail { contain-intrinsic-size: auto 350px; }
+  .explore-shell .xrails.xrails { gap: var(--space-8); }
+  .explore-shell .xrails-rail .hs-rail-head { margin-bottom: var(--space-4); }
+}
+
+/* ---- The rail card --------------------------------------------------- */
+/* The photo is the card's link, stretched over the whole card (the list
+   row's pattern), so a press on the name or the country opens the place
+   and the figure and the parts stay buttons of their own. */
+.xrc { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; }
+.xrc > .hs-rcard-link { display: block; }
+.xrc > .hs-rcard-link::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-card); }
+.xrc > :is(.xrc-head, .xrc-parts, .xstory-why) :is(a, button),
+.xrc .pitems { position: relative; z-index: 1; }
+.xrc > .hs-rcard-save { z-index: 2; }
+
+/* Line 1: the name, its Score, and the day figure at the right end. */
+/* A long name ("Saint-Jean-Pied-de-Port") wraps to a second line rather
+   than lose its end; the Score and the figure stay on the first line. */
+.xrc .xrc-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  min-width: 0;
+  margin-top: 10px;
+}
+.xrc .xrc-head .hs-rcard-name {
+  flex: 0 1 auto;
+  min-width: 0;
+  padding-top: 1px;
+  font-size: var(--text-lead);
+  line-height: 1.25;
+  white-space: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.xrc .xrc-head > :not(.hs-rcard-name) { flex: none; }
+.xrc .xrc-fig.hs-formation { margin: 1px 0 0 auto; padding-left: var(--space-1); }
+.xrc .xrc-fig .hs-formation-day { margin: 0; padding: 0; }
+
+/* Line 2: the flag and the country, one quiet line. */
+.xrc .hs-rcard-where { margin-top: 2px; font-size: var(--text-label); }
+
+/* Line 3: the parts. Bed plus food, joined, are the figure above; the
+   return fare stands apart after them, outlined because it is outside it. */
+.xrc .xrc-parts.hs-formation { --wh: 28px; margin-top: 10px; }
+.xrc .xrc-parts .xform-parts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px var(--space-2); }
+.xrc .xrc-parts .hs-wagon { padding-inline: 8px; }
+.xrc .xstory-why:not(:empty) { margin-top: 6px; }
+.xrc .tg-sig { margin-top: 6px; }
+
+@media (min-width: 1024px) {
+  .xrc .xrc-head { margin-top: var(--space-3); }
+}
+
+/* ---- The See all tile ------------------------------------------------ */
+/* The strip's last stop: a beige tile the size of a photo, the next places
+   as round faces, "See all" and the rail's name, and the big arrow disc.
+   The faces part a little and the disc takes the paint on hover. */
+.xrc-more { align-self: start; }
+/* The kit Button (quiet) restyled as the tile: its label span steps out of
+   the way (display: contents) so the faces, the words and the disc are the
+   tile's own grid. */
+.btn.xrc-more-btn {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "faces go" "text text";
+  align-content: space-between;
+  justify-content: stretch;
+  gap: 0;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+  padding: var(--space-4);
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--select-bg);
+  color: var(--select-ink);
+  font-size: var(--text-body);
+  text-align: left;
+  white-space: normal;
+}
+.btn.xrc-more-btn .btn-label { display: contents; }
+.btn.xrc-more-btn:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.xrc-more-faces { grid-area: faces; display: flex; align-items: center; }
+.xrc-more-face {
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--world-rock);
+  outline: 3px solid var(--select-bg);
+  transition: translate var(--dur-3) var(--ease-out);
+}
+.xrc-more-face + .xrc-more-face { margin-left: -14px; }
+.xrc-more-face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.xrc-more-btn .hs-go-disc { grid-area: go; align-self: start; background: var(--action); color: var(--action-text); }
+.xrc-more-text { grid-area: text; display: grid; gap: 2px; min-width: 0; }
+.xrc-more-word { font-size: var(--text-label); font-weight: 700; color: var(--action-hover); }
+.xrc-more-title {
+  font-size: var(--text-title);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+@media (hover: hover) {
+  .btn.xrc-more-btn:hover { background: var(--select-bg); color: var(--select-ink); }
+  .xrc-more-btn:hover .hs-go-disc { background: var(--action-press); }
+  .xrc-more-btn:hover .hs-go-disc svg { translate: 3px 0; }
+  .xrc-more-btn:hover .xrc-more-face:nth-child(2) { translate: 5px 0; }
+  .xrc-more-btn:hover .xrc-more-face:nth-child(3) { translate: 10px 0; }
+}
+.xrc-more-btn:active { scale: var(--press-scale-sm); }
+@media (prefers-reduced-motion: reduce) {
+  .xrc-more-face { transition: none; }
+  .xrc-more-btn:active { scale: none; }
+}

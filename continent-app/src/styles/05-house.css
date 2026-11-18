@@ -315,21 +315,52 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 @keyframes hs-couple-out { to { translate: 16px 0; opacity: 0; } }
 
 /* ---- The rail and its cards ------------------------------------------- */
-.hs-rail-head { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
-.hs-rail-head h2 { margin-right: auto; min-width: 0; font-size: var(--text-title); font-weight: 800; }
+.hs-rail-head { display: flex; align-items: center; gap: var(--space-2); min-height: 28px; margin-bottom: var(--space-3); }
+.hs-rail-head h2 { margin-right: auto; min-width: 0; font-size: var(--text-title); font-weight: 800; line-height: 1.2; letter-spacing: -0.015em; text-wrap: balance; }
+/* See all (Explore rails, owner 2026-11-18): the umber word and a 24 px
+   beige disc with the arrow. The 44 px target hangs 8 px above and below
+   the 28 px head, so the head reads as one line tight on its strip. On
+   hover or press the disc takes the paint and the arrow nudges 2 px. */
+.hs-rail-head .hs-see-all,
 .hs-see-all {
+  display: inline-flex;
   flex: none;
+  align-items: center;
+  gap: var(--space-2);
   min-height: var(--tap);
-  padding: 0 6px;
-  border-radius: var(--radius-control);
+  margin-block: calc((var(--tap) - 28px) / -2);
+  padding: 0 0 0 var(--space-2);
+  line-height: 1;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
   color: var(--action-hover);
   font-size: var(--text-body);
   font-weight: 700;
   text-decoration: none;
 }
-@media (hover: hover) {
-  .hs-see-all:hover { text-decoration: underline; text-underline-offset: 3px; }
+/* The kit Button wraps both in its label span: lay that out too. */
+.hs-see-all .btn-label { display: inline-flex; align-items: center; gap: var(--space-2); }
+.hs-go-disc {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  background: var(--select-bg);
+  color: var(--select-ink);
+  transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
 }
+.hs-go-disc svg { transition: translate var(--dur-2) var(--ease-out); }
+.hs-go-disc.is-lg { width: var(--tap); height: var(--tap); }
+@media (hover: hover) {
+  .hs-rail-head .hs-see-all:hover { background: transparent; color: var(--action-press); }
+  .hs-see-all:hover .hs-go-disc { background: var(--action); color: var(--action-text); }
+  .hs-see-all:hover .hs-go-disc svg { translate: 2px 0; }
+}
+.hs-see-all:active .hs-go-disc { background: var(--action-press); color: var(--action-text); }
+.hs-see-all:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .hs-rail-arrows { display: none; gap: var(--space-2); }
 .hs-round {
   display: inline-grid;
@@ -367,9 +398,12 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 @media (hover: hover) and (pointer: fine) { .hs-rail-arrows { display: flex; } }
 @media (min-width: 1024px) {
   .hs-rail-arrows { display: flex; }
-  /* Four across only when each card keeps 256 px; a narrower rail shows
-     three and a bit and scrolls, rather than squeezing the price row. */
-  .hs-rail { grid-auto-columns: minmax(256px, calc((100% - 3 * var(--space-5)) / 4)); gap: var(--space-5); margin: 0; padding: 2px 0 4px; scroll-padding: 0; }
+  /* Four across and a quarter of the fifth, so the strip shows it scrolls;
+     never under 256 px, so a narrower rail shows fewer and a bit rather
+     than squeezing the price row. max(), not minmax(): an implicit track in
+     a strip that overflows never grows past a minmax's minimum, so every
+     card sat at 256 px (found 2026-11-18, Explore rails). */
+  .hs-rail { grid-auto-columns: max(256px, calc((100% - 4 * var(--space-5)) / 4.25)); gap: var(--space-5); margin: 0; padding: 2px 0 4px; scroll-padding: 0; }
 }
 .hs-rcard { position: relative; min-width: 0; scroll-snap-align: start; }
 .hs-rcard-link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; color: inherit; text-decoration: none; }
@@ -622,4 +656,5 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
   .hs-wagon.hs-couple-out, .relief, .hs-fig.hs-roll, .hs-fig.hs-dip, .hs-delta, .hs-toast,
   .hs-wait .hs-blaze::before, .hs-skeleton { animation: none; }
   .hs-rcard-photo img { transition: none; }
+  .hs-go-disc, .hs-go-disc svg { transition: none; }
 }

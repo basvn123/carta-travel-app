@@ -106,14 +106,19 @@ try {
   const quick = (await page.locator('.xquick-chip:visible').allInnerTexts()).map((s) => s.trim());
   check('the quick chips offer All filters',
     quick.some((q) => q.startsWith('All filters')), quick.join('|'));
-  // T427: four sections at most lead the page (the trip styles row counts
-  // as one), with no subtitle or position figure on any of them.
+  // Explore rails (owner 2026-11-18, G12; T427's cap of four lifted): every
+  // rail with four places or more is drawn, so the page runs long, with no
+  // subtitle or position figure on any of them.
   const railN = await page.locator('.explore-tab .hs-rail-sec').count();
-  check('at most four sections lead the page', railN >= 2 && railN <= 4, `${railN} rails`);
-  const railCards = await page.locator('.xrails-rail .hs-rcard').count();
-  const railPriced = await page.locator('.xrails-rail .hs-rcard .xprice').count();
+  check('the overview draws many rails', railN >= 8, `${railN} rails`);
+  // A place card (not the See all tile at a strip's end) shows its price,
+  // the day figure on the name's line and the parts under the country.
+  const railCards = await page.locator('.xrails-rail .xrc').count();
+  const railPriced = await page.locator('.xrails-rail .xrc:has(.xprice)').count();
   check('every section tile shows a euro-a-day figure', railCards > 0 && railCards === railPriced,
     `${railPriced} of ${railCards}`);
+  const tiles = await page.locator('.xrails-rail .xrc-more').count();
+  check('every rail ends on its See all tile', tiles === railN, `${tiles} tiles, ${railN} rails`);
   const seeAll = await page.locator('.xrails-rail .hs-see-all').allInnerTexts();
   check('"See all" carries no count', seeAll.length > 0 && seeAll.every((s) => !/\d/.test(s)), seeAll.join('|'));
   await page.screenshot({ path: 'shots/explore-overview-desktop.png' });

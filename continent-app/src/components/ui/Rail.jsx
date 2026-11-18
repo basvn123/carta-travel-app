@@ -55,14 +55,26 @@ export function Rail({ id, title, headingLevel = 2, seeAllHref, onSeeAll, seeAll
   };
   const H = `h${headingLevel}`;
   const seeAll = seeAllLabel || t('rail.seeAllPlain');
+  // Explore rails (owner 2026-11-18, "See all cleaner and more custom"): the
+  // word stays (a heading alone is missed as a door) and wears a small umber
+  // disc with the arrow, which fills and nudges on hover and press. A screen
+  // reader hears the rail with it ("See all: Hiking bases"); the name starts
+  // with the visible words.
+  const named = typeof title === 'string' && !seeAllLabel ? t('rail.seeAllNamed', { title }) : undefined;
+  const seeAllFace = (
+    <>
+      <span className="hs-see-all-word">{seeAll}</span>
+      <span className="hs-go-disc" aria-hidden="true"><HouseIcon.next size={14} /></span>
+    </>
+  );
   return (
     <section className={`hs-rail-sec ${className}`.trim()} aria-labelledby={headId}>
       <div className="hs-rail-head">
         <H id={headId}>{title}</H>
         {seeAllHref ? (
-          <a className="hs-see-all" href={seeAllHref} onClick={onSeeAll}>{seeAll}</a>
+          <a className="hs-see-all" href={seeAllHref} onClick={onSeeAll} aria-label={named}>{seeAllFace}</a>
         ) : onSeeAll ? (
-          <Button variant="quiet" size="sm" className="hs-see-all" onClick={onSeeAll}>{seeAll}</Button>
+          <Button variant="quiet" size="sm" className="hs-see-all" onClick={onSeeAll} aria-label={named}>{seeAllFace}</Button>
         ) : null}
         <span className="hs-rail-arrows">
           <RoundButton label={t('explore.railPrev')} onClick={() => step(-1)} disabled={pos.atStart} flip />

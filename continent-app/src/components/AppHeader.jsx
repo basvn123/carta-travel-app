@@ -116,13 +116,18 @@ function AccountLink({ user, current, onNavigate, onSignIn = null }) {
     </SectionLink>
   );
   if (user || !onSignIn) return door;
+  // Explore rails (owner 2026-11-18, "optimise the account button"): the two
+  // guest controls read as one object, a split pill: the person face on
+  // the left (Account) and "Sign in" on the right (the dialog). Two real
+  // targets, each 44 px, one outline, so the header shows two shapes, not
+  // three.
   return (
-    <>
+    <span className="acct-split">
+      {door}
       <Button variant="secondary" className="hdr-pill signin-pill" onClick={() => onSignIn('signin')}>
         {t('auth.signIn')}
       </Button>
-      {door}
-    </>
+    </span>
   );
 }
 
