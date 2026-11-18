@@ -6,7 +6,8 @@ import { DatesControl, useDatePick, useSettings, useShortDate, whenValue } from 
 import { useTripLine } from '../SearchDock.jsx';
 import { FromPanel, fromName, fromPoint } from '../FromPicker.jsx';
 import { AirportReach } from '../AirportReach.jsx';
-import { styleIcon, styleName } from '../../browse/styles/styleBits.jsx';
+import { HeartIcon } from '../Icons.jsx';
+import { styleName } from '../../browse/styles/styleBits.jsx';
 import { Dock, DockRowButton, DockRowField, useDockBack } from './Dock.jsx';
 import { closeDock } from './dockStore.js';
 import { openStudio } from '../../browse/styles/studioDoors.js';
@@ -78,7 +79,7 @@ function TripRows({ s }) {
 
   const ts = s.travelStyles;
   const active = ts?.active || null;
-  const Ico = active ? styleIcon(active) : HouseIcon.pack;
+  // Explore top (G12): the style's door is always the heart, as on the disc.
   const name = active ? styleName(t, active) : t('styles.choose');
   const changed = Boolean(active && ts?.changed);
   const from = fromName(s) || t('origin.pickTown');
@@ -137,7 +138,7 @@ function TripRows({ s }) {
           ariaLabel={t('dock.styleRowAria', { name }) + (changed ? `. ${t('styles.kickerChanged')}` : '')}
           value={(
             <span className="trip-dock-style">
-              <span className={`tstyle-disc${active ? ` tone-${active.tone}` : ''}`} aria-hidden="true"><Ico size={16} /></span>
+              <span className={`tstyle-disc${active ? ` tone-${active.tone}` : ''}`} aria-hidden="true"><HeartIcon size={16} /></span>
               <span className="trip-dock-style-name">{name}</span>
               {changed && <span className="trip-dock-changed">{t('styles.kickerChanged')}</span>}
             </span>

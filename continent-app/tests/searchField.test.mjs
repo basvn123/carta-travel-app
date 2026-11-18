@@ -39,5 +39,6 @@ test('the copy deck strings, in six languages, with no summary left', () => {
     for (const k of ['dock.choose', 'explore.chooseOrAsk', 'dock.openAria']) assert.ok(value(l, k), `${l} ${k}`);
     assert.doesNotMatch(value(l, 'dock.openAria'), /\{summary\}/);
   }
-  assert.match(read('src/browse/explore/OverviewHero.jsx'), /t\('explore\.chooseOrAsk'\)/);
+  // G12 (Explore top): the band's field names itself with band.searchPh.
+  assert.match(read('src/browse/band/ExploreBand.jsx'), /t\('band\.searchPh'\)/);
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Tabs, Tile, TileGroup } from '../components/ui/index.js';
 import { HouseIcon } from '../components/HouseIcons.jsx';
+import { useIsDesktop } from '../hooks/useIsDesktop.js';
 
 /**
  * What Explore holds, as six kit tiles (T498, roadmap 1.3b A; replaces the
@@ -33,24 +34,27 @@ export const EXPLORE_TILES = [
   { key: 'trails', labelKey: 'places.catTrails', Icon: HouseIcon.trails },
   { key: 'beaches', labelKey: 'places.catBeaches', Icon: HouseIcon.beaches },
   { key: 'lakes', labelKey: 'places.catLakes', Icon: HouseIcon.lakes },
-  { key: 'mountains', labelKey: 'places.catMountains', Icon: HouseIcon.mountains },
+  // "Peaks" on a phone only (G12, owner 2026-11-18): six words in one row
+  // at 360 px, German and French too, without cutting a word.
+  { key: 'mountains', labelKey: 'places.catMountains', shortKey: 'band.peaks', Icon: HouseIcon.mountains },
   { key: 'cycling', labelKey: 'places.catCycling', Icon: HouseIcon.cycling },
 ];
 
 export function ExploreCategories({ current, onPick, columns = 3, panelId, className = '', variant = 'grid' }) {
   const row = variant === 'row';
   const { t } = useI18n();
+  const isDesktop = useIsDesktop();
   if (row) {
     return (
       <Tabs label={t('places.sideBrowse')} value={current} panelId={panelId}
         className={`xcats xcats-row ${className}`.trim()}
         onChange={(key) => { if (key !== current) onPick(key); }}
-        tabs={EXPLORE_TILES.map(({ key, labelKey, Icon }) => ({
+        tabs={EXPLORE_TILES.map(({ key, labelKey, shortKey, Icon }) => ({
           id: key,
           label: (
             <span className="xcats-tab" data-cat={key}>
               <span className="xcats-tab-icon" aria-hidden="true"><Icon size={20} /></span>
-              <span className="xcats-tab-label">{t(labelKey)}</span>
+              <span className="xcats-tab-label">{t(!isDesktop && shortKey ? shortKey : labelKey)}</span>
             </span>
           ),
         }))} />

@@ -115,9 +115,11 @@ test('the Trip dock holds style, from, when and prices only', () => {
   assert.deepEqual(rows, ['style', 'from', 'when', 'prices']);
   assert.match(trip, /closeDock\('trip'\);[\s\S]*openStudio\(ts\)/, 'the Style row hands over to the Style Studio');
   assert.doesNotMatch(src('browse/explore/OverviewHero.jsx'), /PriceViewSwitch/, 'how prices read moved into the dock');
-  for (const f of ['browse/explore/OverviewHero.jsx', 'browse/explore/ExploreToolbar.jsx', 'browse/ExploreTab.jsx', 'browse/DestinationsTab.jsx']) {
-    assert.match(src(f), /<TripDock \/>/, `${f} mounts the Trip dock`);
+  // G12 (Explore top): Places' settings live in the band; the layers keep the dock for now.
+  for (const f of ['browse/explore/OverviewHero.jsx', 'browse/explore/ExploreToolbar.jsx', 'browse/ExploreTab.jsx']) {
+    assert.doesNotMatch(src(f), /<TripDock \/>/, `${f} no longer mounts the Trip dock`);
   }
+  assert.match(src('browse/DestinationsTab.jsx'), /<TripDock \/>/);
   assert.doesNotMatch(src('App.jsx'), /<SettingsLine /, 'the header settings line left Explore and Destinations');
 });
 

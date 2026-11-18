@@ -1,9 +1,7 @@
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { CloseIcon } from '../../components/Icons.jsx';
-import { Button, Chip, IconButton } from '../../components/ui/index.js';
-import { MATCH } from '../../lib/match.js';
-import { TripDock } from '../../components/dock/TripDock.jsx';
-import { phoneChips, badgeCount } from './chipRules.js';
+import { Button, IconButton } from '../../components/ui/index.js';
+import { phoneChips } from './chipRules.js';
 
 /** G12: the saved filter wears the save glyph, filled while on. It stays one
  *  tap away on every width (decision.md change 7). */
@@ -20,7 +18,7 @@ function SavedToggle({ showFavOnly, setShowFavOnly, t, className = '' }) {
 
 /**
  * G12 (decision.md step 8): the phone list's one row. Sort, then the chips
- * scrolling between it and the Trip dock, which stays at the end. Clear all
+ * scrolling after it (Explore top: the Trip dock left for the band). Clear all
  * leads the chips and sticks to the left so it is always reachable; Saved
  * is always there. Every chip is capped in CSS and keeps its full text in
  * its name and title, so a long German or French label never pushes the row
@@ -47,15 +45,13 @@ function PhoneTools({ chips, resetAll, showFavOnly, setShowFavOnly, sortMenu, t 
           </Button>
         ))}
       </div>
-      <TripDock />
     </>
   );
 }
 
 export function ExploreToolbar({
-  TitleTag, chips, filterBtnRef, gridTotal, isDesktop, isMock, lang, lens, matchTaste, paneOpen,
-  resetAll, setPaneOpen, setShowFavOnly, setStrongOnly, shareView,
-  showFavOnly, sortMenu, strongOnly, t, viewSwitch,
+  TitleTag, chips, gridTotal, isDesktop, isMock, lang, lens,
+  resetAll, setShowFavOnly, shareView, showFavOnly, sortMenu, t, viewSwitch,
 }) {
   return (
     <div className="xbar">
@@ -91,30 +87,10 @@ export function ExploreToolbar({
               <HouseIcon.share size={18} />
             </IconButton>
             {sortMenu}
-            <Button
-              variant="secondary"
-              size="sm"
-              ref={filterBtnRef}
-              className={`xtool${paneOpen ? ' is-on' : ''}`}
-              iconStart={<HouseIcon.filter size={18} />}
-              onClick={() => setPaneOpen((v) => !v)}
-              aria-expanded={paneOpen}
-              aria-controls="explore-side"
-            >
-              {t('filter.filters')}
-              {badgeCount(chips) > 0 && <Chip kind="count" className="xfilters-n">{badgeCount(chips)}</Chip>}
-            </Button>
+            {/* G12 (Explore top): Filters, Strong match and the Trip dock
+                left; the band's Settings holds what the dock did. */}
             <SavedToggle showFavOnly={showFavOnly} setShowFavOnly={setShowFavOnly} t={t} />
-            {matchTaste && (
-              <Button variant="secondary" size="sm" className={`xtool xtool-strong${strongOnly ? ' is-on' : ''}`}
-                title={t('fit.strongHint', { pct: Math.round(MATCH.strong_min * 100) })}
-                aria-pressed={strongOnly} onClick={() => setStrongOnly((v) => !v)}>
-                {t('fit.strong')}
-              </Button>
-            )}
             {viewSwitch('xtool-view')}
-            {/* G12: the Trip dock closes the row on every width. */}
-            <TripDock />
           </>
         ) : (
           <PhoneTools chips={chips} resetAll={resetAll} showFavOnly={showFavOnly}

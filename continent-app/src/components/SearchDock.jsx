@@ -22,6 +22,7 @@ import {
   useSearchDock, dockBack, dockFilters, dockShare, loadRecent, rememberSearch, isQuestion,
 } from '../browse/searchDockStore.js';
 import '../styles/96-search-dock.css';
+import { EXPLORE_TILES } from '../browse/ExploreCategories.jsx';
 import AiTag from './AiTag.jsx';
 
 /**
@@ -45,15 +46,9 @@ import AiTag from './AiTag.jsx';
  *
  *   onSearch({ kind, q })   App moves to the kind's view with the text
  */
-// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
-export const DOCK_KINDS = [
-  { key: 'places', labelKey: 'places.catPlaces', Icon: HouseIcon.places },
-  { key: 'trails', labelKey: 'places.catTrails', Icon: HouseIcon.trails },
-  { key: 'beaches', labelKey: 'places.catBeaches', Icon: HouseIcon.beaches },
-  { key: 'lakes', labelKey: 'places.catLakes', Icon: HouseIcon.lakes },
-  { key: 'mountains', labelKey: 'places.catMountains', Icon: HouseIcon.mountains },
-  { key: 'cycling', labelKey: 'places.catCycling', Icon: HouseIcon.cycling },
-];
+// G12 (Explore top): the six kinds are the tabs' own list, so a glyph or a
+// word changes in one place.
+export const DOCK_KINDS = EXPLORE_TILES;
 const kindOf = (key) => DOCK_KINDS.find((k) => k.key === key) || DOCK_KINDS[0];
 
 /** The trip in one line: when, from where, who. The Trip dock's name and

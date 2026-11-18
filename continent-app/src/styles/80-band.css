@@ -1,0 +1,241 @@
+/* --- G12, Explore top: the band (decision.md, APPROVED 2026-11-18) -------
+   The search field with Ask, the Settings button (desktop, Places), the six
+   tabs (phone) and the settings in one line, in the top bar, so it never
+   scrolls away. Studio look: umber family for every selection, saffron only
+   for the held dot, no teal; icon plus word, no separators. The band's
+   height is the same on every tab and in every state but the phone's tuck,
+   which is a scroll position, not a change of state. */
+
+.band {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-page);
+}
+
+/* The fold: on a phone the header, the search and the tabs fold away while
+   the list scrolls down (useQuickReturn). Rows from 1fr to 0fr, so the top
+   bar's measured height (--filter-h) follows and the list keeps its place. */
+.band-fold {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--dur-2) var(--ease-out);
+}
+.band-fold-in { min-height: 0; }
+.band.is-tucked .band-fold { grid-template-rows: 0fr; }
+.band.is-tucked .band-fold-in { overflow: hidden; }
+
+/* Row 1: the field, then Settings. */
+.band-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) max(var(--space-4), env(safe-area-inset-right, 0px)) var(--space-2) max(var(--space-4), env(safe-area-inset-left, 0px));
+}
+.band-search {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  min-height: var(--tap-main);
+  padding: 0 var(--space-1) 0 var(--space-3);
+  border: var(--stroke-edge) solid var(--umber-300);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.band-search:focus-within { border-color: var(--action); }
+@media (hover: hover) {
+  .band-search:hover { border-color: var(--umber-600); }
+}
+.band-search.is-results { padding-left: 2px; }
+.band-mag { display: inline-flex; flex: none; color: var(--text-2); }
+.band-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--tap);
+  padding: 0 var(--space-1);
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-body);
+  font-weight: 600;
+  text-overflow: ellipsis;
+}
+.band-input::placeholder { color: var(--text-2); font-weight: 500; opacity: 1; }
+/* The field's own ring is the band's edge; the 3 px ring sits on the box. */
+.band-input:focus-visible { outline: 0; }
+.band-search:has(.band-input:focus-visible) {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+.band-input::-webkit-search-cancel-button { display: none; }
+.band-in.icon-btn { flex: none; width: var(--tap); height: var(--tap); color: var(--text); }
+
+/* Ask: the field's one solid umber action, its word beside the mark. */
+.band-ask {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: var(--tap);
+  height: calc(var(--tap) - var(--space-2));
+  margin: var(--space-1) 0;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--action);
+  color: var(--action-text);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--dur-press) var(--ease-tick), background-color var(--dur-1) var(--ease-out);
+}
+/* A 36 px pill drawn, a 44 px target: the press area grows past the pill. */
+.band-ask { position: relative; }
+.band-ask::after { content: ''; position: absolute; inset: calc(var(--space-1) * -1) 0; }
+@media (hover: hover) { .band-ask:hover { background: var(--action-hover); } }
+.band-ask:active { transform: scale(var(--press-scale)); background: var(--action-press); }
+.band-ask:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+
+/* Settings (desktop, Places): the fader and its word, the studio's umber
+   edge; on while the sheet is open (wash, umber 800, the edge). */
+.band-settings {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-main);
+  padding: 0 var(--space-4) 0 var(--space-3);
+  border: var(--stroke-edge) solid var(--umber-300);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--umber-800);
+  font: inherit;
+  font-size: var(--text-body);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--dur-press) var(--ease-tick), border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
+}
+.band-settings .hs-icon { color: var(--umber-600); }
+@media (hover: hover) { .band-settings:hover { border-color: var(--umber-600); } }
+.band-settings:active { transform: scale(var(--press-scale)); }
+.band-settings:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.band-settings.is-on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+/* The one motion of the band: the knobs trade places when Settings opens. */
+.band-settings .hs-icon-fader path:last-child { transition: transform var(--dur-2) var(--ease-settle); }
+.band-settings.is-on .hs-icon-fader path:last-child { transform: translateY(-1px); }
+
+/* The settings line: one row of icon-plus-word chips. */
+.band-chips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+}
+.band-chips::-webkit-scrollbar { display: none; }
+.band-chip {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: var(--stroke-hair) solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform var(--dur-press) var(--ease-tick), background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
+}
+.band-chip-ic { display: inline-flex; flex: none; color: var(--umber-600); }
+.band-chip.is-style { background: var(--umber-50); color: var(--umber-800); }
+.band-chip.is-style .band-chip-ic { color: var(--umber-800); }
+@media (hover: hover) {
+  .band-chip:hover { background: var(--surface-hover); border-color: var(--border); }
+  .band-chip.is-style:hover { background: var(--umber-100); }
+}
+.band-chip:active { transform: scale(var(--press-scale)); }
+.band-chip:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -1px; }
+/* The held dot (the studio's one saffron mark), said in the chip's name. */
+.band-chip-dot {
+  position: absolute;
+  top: var(--space-2);
+  left: calc(var(--space-3) + 12px);
+  width: 8px;
+  height: 8px;
+  border: var(--stroke-edge) solid var(--surface);
+  border-radius: var(--radius-pill);
+  background: var(--sun-400);
+}
+
+/* --- Desktop ------------------------------------------------------------ */
+.band.is-desk { border-top: var(--stroke-hair) solid var(--border-soft); }
+/* On the header's own inset, so the field starts under the wordmark. */
+.band.is-desk .band-row,
+.band.is-desk .band-line {
+  padding-left: var(--page-inset);
+  padding-right: var(--page-inset);
+}
+.band.is-desk .band-row { padding-top: var(--space-2); padding-bottom: 0; }
+.band.is-desk .band-search { max-width: 720px; }
+/* The line keeps its room on every tab, so the band never changes height. */
+.band.is-desk .band-line { min-height: calc(var(--tap) + var(--space-1)); padding-top: 2px; padding-bottom: 2px; }
+.band.is-desk .band-chips { margin-left: calc(var(--space-3) * -1); }
+
+/* --- Phone -------------------------------------------------------------- */
+.band.is-phone .band-tabs { padding: 0 var(--space-4); }
+.band.is-phone .band-cats.ui-tabs { border-bottom: 0; }
+/* The chip row: one sideways swipe under the tabs, snapping to a chip, with
+   a soft fade on a side that has more. It stays when the rest folds. */
+.band-chips.is-swipe {
+  position: relative;
+  z-index: 1;
+  padding: var(--space-1) var(--space-4);
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--space-4);
+  background: var(--surface-page);
+  border-top: var(--stroke-hair) solid var(--border-soft);
+  --fade-s: 0px;
+  --fade-e: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+}
+.band-chips.is-swipe.has-start { --fade-s: var(--space-6); }
+.band-chips.is-swipe.has-end { --fade-e: var(--space-6); }
+.band-chips.is-swipe .band-chip { scroll-snap-align: start; }
+/* Paper pills without an edge: apart from the rails' outlined doors below. */
+.band-chips.is-swipe .band-chip:not(.is-style) { background: var(--surface); }
+/* Pinned, the band floats over the list: one soft lift. */
+.band.is-phone.is-tucked { box-shadow: var(--elev-2); }
+
+/* The search panel (Lane 4) under the field. */
+.band-search-panel { position: relative; z-index: 2; }
+
+/* Explore's own tab rows give way to the band's on a phone. */
+@media (max-width: 768px) {
+  .places-wrap > .dtab-bar.xcats-bar { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .band-fold,
+  .band-search,
+  .band-ask,
+  .band-settings,
+  .band-settings .hs-icon-fader path:last-child,
+  .band-chip { transition: none; }
+}

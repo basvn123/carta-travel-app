@@ -51,12 +51,21 @@ export const HouseIcon = {
   train: glyph('train', <><path d="M6 3.5h12v12.5H6z" /><path d="M6 10h12" /><path d="M8.5 20.5l2-4.5M15.5 20.5l-2-4.5" /><path d="M9 13h.5M14.5 13h.5" /></>),
   ferry: glyph('ferry', <><path d="M3 15.5h18l-2.5 4h-13z" /><path d="M6 15.5v-5h12v5" /><path d="M10 10.5V6h4v4.5" /></>),
   walk: glyph('walk', <><path d="M8.5 2.5c1.9 0 2.8 1.9 2.8 4.6s-.9 4.6-2.8 4.6-2.8-1.9-2.8-4.6.9-4.6 2.8-4.6z" /><path d="M6.6 14h3.8v2.7a1.9 1.9 0 0 1-3.8 0z" /><path d="M15.5 7.5c1.9 0 2.8 1.9 2.8 4.6s-.9 4.6-2.8 4.6-2.8-1.9-2.8-4.6.9-4.6 2.8-4.6z" /><path d="M13.6 19h3.8" /></>),
-  places: glyph('places', <><path d="M11 21.5V2.5" /><path d="M4 4.5h12.5l3 3-3 3H4z" /></>),
-  trails: glyph('trails', <><path d="M4 20.5c3-1 4-3 6-6s4-4 10-5" /><path d="M4 9.5h4v3H4z" /><path d="M16 15.5h4v3h-4z" /></>),
-  beaches: glyph('beaches', <><path d="M2.5 18c2 0 2-1.5 4-1.5s2 1.5 4 1.5 2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 3-1.5" /><circle cx="16" cy="7.5" r="3" /><path d="M4 13.5h10" /></>),
-  lakes: glyph('lakes', <><path d="M3 13.5c2 0 2-1.5 4.5-1.5s2.5 1.5 4.5 1.5 2-1.5 4.5-1.5 2.5 1.5 4.5 1.5" /><path d="M3 18c2 0 2-1.5 4.5-1.5S10 18 12 18s2-1.5 4.5-1.5S19 18 21 18" /><path d="M5 9l4-5 3 3.5 2-2 4 3.5" /></>),
-  mountains: glyph('mountains', <><path d="M2.5 20.5L9 7l4 7 2.5-3.5 6 10z" /></>),
-  cycling: glyph('cycling', <><circle cx="6" cy="16" r="4" /><circle cx="18" cy="16" r="4" /><path d="M6 16l4-7h6l2 7M10 9l3 7h-7M14 5.5h3" /></>),
+  // Explore top (G12, decision.md "Icons", owner 2026-11-18): the six tabs
+  // as one family on one ground line, each with at most three strokes over
+  // it, so Lakes no longer repeats Beaches' wave or Mountains' peak.
+  places: glyph('places', <><path d="M2.5 20.5h19" /><path d="M4.5 20.5V7l2-3 2 3v13.5" /><path d="M10 20.5v-7.5l3.5-3.5 3.5 3.5v7.5" /><path d="M12.5 15.5h2v2h-2z" /><path d="M17 20.5v-4.5h3.5v4.5" /></>),
+  trails: glyph('trails', <><path d="M3 20.5h6l-3-4.5h8l-3-4.5h4" /><path d="M17 12V3.5" /><path d="M17 4h4v3h-4z" /></>),
+  beaches: glyph('beaches', <><path d="M2.5 14.5h19" /><path d="M8 14.5a4 4 0 0 1 8 0" /><path d="M2.5 19c2.25 0 2.25-1.5 4.75-1.5S9.5 19 12 19s2.25-1.5 4.75-1.5 2.25 1.5 4.75 1.5" /></>),
+  lakes: glyph('lakes', <><path d="M3.5 15c0-3 3.8-4.5 8.5-4.5s8.5 1.5 8.5 4.5-3.8 4.5-8.5 4.5-8.5-1.5-8.5-4.5z" /><path d="M9 15h6" /><path d="M7 9.5l2-5 2 5z" /></>),
+  mountains: glyph('mountains', <><path d="M2.5 20.5l6-11 3 5 3.5-9 6.5 15z" /><path d="M13.1 9.7l1.4 1.3 1.5-1.4 1.5 1.3" /></>),
+  cycling: glyph('cycling', <><circle cx="6" cy="16.75" r="3.75" /><circle cx="18" cy="16.75" r="3.75" /><path d="M6 16.75l4.5-7.25h5.5l2 7.25M10.5 9.5l3 7.25h-7.5" /><path d="M14.5 6h3" /></>),
+  // Settings (G12): two waymark posts with open knobs, a fader that is also
+  // a marked path; open squares are the house knob, never a filled blaze.
+  // How prices read (G12, the settings line): the euro, two bars through
+  // an open arc; the figure itself always goes through formatMoney.
+  euro: glyph('euro', <><path d="M17.5 6.2A7 7 0 1 0 17.5 17.8" /><path d="M4 10h10M4 14h10" /></>),
+  fader: glyph('fader', <><path d="M7 3v9.5M7 16.5V21M17 3v3.5M17 10.5V21" /><path d="M4.5 12.5h5v4h-5zM14.5 6.5h5v4h-5z" /></>),
   up: glyph('up', <><path d="M3 20.5L10 7l4 6 2.5-3.5 4.5 11z" /></>),
   plus: glyph('plus', <><path d="M12 4.5v15M4.5 12h15" /></>),
   minus: glyph('minus', <><path d="M4.5 12h15" /></>),

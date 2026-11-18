@@ -39,8 +39,9 @@ test('the badge equals the chips, Strong match, Saved and countries included', (
   assert.equal(phone.length + 1, badgeCount(many));
   assert.ok(!phone.some((c) => c.key === 'fav'));
   assert.ok(phone.some((c) => c.key === 'strong'));
+  // G12 (Explore top): the Filters button and its count left the toolbar.
   const bar = read('src/browse/explore/ExploreToolbar.jsx');
-  assert.match(bar, /badgeCount\(chips\) > 0 && <Chip kind="count" className="xfilters-n">\{badgeCount\(chips\)\}<\/Chip>/);
+  assert.doesNotMatch(bar, /xfilters-n|<TripDock/);
 });
 
 test('Strong match and countries do not leave the overview; other chips do', () => {
@@ -55,10 +56,10 @@ test('a desktop chip row leaves out what the quick row and the toolbar show', ()
   assert.deepEqual(deskChips(many).map((c) => c.key), ['c:IT', 'c:FR', 'c:ES', 'nocar', 'q']);
 });
 
-test('the phone row is Sort, the chips with Clear all first, then the Trip dock', () => {
+test('the phone row is Sort, then the chips with Clear all first', () => {
   const bar = read('src/browse/explore/ExploreToolbar.jsx');
   const phone = bar.slice(bar.indexOf('function PhoneTools'), bar.indexOf('export function ExploreToolbar'));
-  const order = ['xtools-sort', 'xtools-chips', 'xtools-clear', 'xtools-saved', 'xtools-chip"', '<TripDock'];
+  const order = ['xtools-sort', 'xtools-chips', 'xtools-clear', 'xtools-saved', 'xtools-chip"'];
   let at = -1;
   for (const k of order) {
     const i = phone.indexOf(k);

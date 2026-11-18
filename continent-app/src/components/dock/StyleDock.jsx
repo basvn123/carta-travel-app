@@ -1,15 +1,16 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { HouseIcon } from '../HouseIcons.jsx';
+import { HeartIcon } from '../Icons.jsx';
 import { useSettings } from '../SettingsLine.jsx';
-import { styleIcon, styleName } from '../../browse/styles/styleBits.jsx';
+import { styleName } from '../../browse/styles/styleBits.jsx';
 import { openStudio } from '../../browse/styles/studioDoors.js';
 import { Dock } from './Dock.jsx';
 
 /**
  * The style disc (Style Studio, G12; decision.md "Doors"): the active travel
- * style in the bottom-left corner, its glyph and a dot while a trip has
- * changed it. A tap opens the Style Studio overview; the disc edits nothing
+ * style in the bottom-left corner, the heart and a dot while a trip has
+ * changed it. Explore top (G12, owner 2026-11-18): always the legacy heart,
+ * never a glyph by who travels, so the door reads as one thing. A tap opens the Style Studio overview; the disc edits nothing
  * itself, so the studio stays the one place a style changes.
  *
  * Hidden where the corner is taken: on Plan (its bar owns the bottom), on
@@ -22,7 +23,6 @@ export function StyleDock({ hidden = false }) {
   const ts = app?.travelStyles;
   if (!ts) return null;
   const s = ts.active;
-  const Ico = s ? styleIcon(s) : HouseIcon.pack;
   const name = s ? styleName(t, s) : t('styles.choose');
   const changed = Boolean(s && (ts.changed || ts.held));
   return (
@@ -31,7 +31,7 @@ export function StyleDock({ hidden = false }) {
       anchor="corner"
       hidden={hidden}
       className={`style-dock${s ? ` tone-${s.tone}` : ' is-empty'}`}
-      glyph={<span key={s?.id || 'none'} className="dock-glyph-in"><Ico size={26} /></span>}
+      glyph={<span className="dock-glyph-in"><HeartIcon size={26} /></span>}
       label={s ? t(changed ? 'styles.doorAriaChanged' : 'styles.doorAria', { name }) : name}
       title={name}
       changed={changed}

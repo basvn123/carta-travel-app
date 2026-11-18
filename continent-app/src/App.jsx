@@ -101,8 +101,8 @@ import { resolveWhen, whenMonth, xmFromSearch } from './lib/when.js';
 import { gatewayCity } from './lib/rating.js';
 import { reportPriceDrops, mayAsk } from './lib/priceDrop.js';
 import { loadEmailPrefs } from './auth/account/emailPrefs.js';
-import { SearchDock } from './components/SearchDock.jsx';
-import { useIsDesktop } from './hooks/useIsDesktop.js';
+import { ExploreBand } from './browse/band/ExploreBand.jsx';
+import { SettingsSheet } from './browse/band/lanes.js';
 import { requestShowAll } from './browse/searchDockStore.js';
 import { TabFallback } from './shell/TabFallback.jsx';
 import { DayPlannerTab, PlanFlow, PricingPage, TripPlannerTab } from './shell/lazyScreens.js';
@@ -598,6 +598,15 @@ function TravelApp() {
     origins: Array.isArray(init.origins) ? init.origins : [],
     airport_hours: init.airport_hours ?? null,
     lifestyle: { ...DEFAULT_LIFESTYLE, ...(init.lifestyle || {}) },
+    // G12 (D10): the Settings model's fields (lib/settings/model.js); null
+    // means "not set" and readSettings migrates today's state.
+    date_mode: init.date_mode ?? null,
+    when_month: init.when_month ?? null,
+    trip_nights: init.trip_nights ?? null,
+    price_span: init.price_span ?? null,
+    origin_kind: init.origin_kind ?? null,
+    origin_country: init.origin_country ?? null,
+    here_town: init.here_town ?? null,
     // T694: every price per person ('pp') or for the whole group ('total').
     price_view: init.price_view === 'total' ? 'total' : 'pp',
     // T695: the items switched off in the opened price (lib/price PRICE_ITEMS).
@@ -1370,7 +1379,7 @@ function TravelApp() {
     defaultDates, departDate, exploreMonth, openStyleSpend, ownDates, request, returnDate,
     setAirports, setCountryFilter, setCountryNot, setDateFlex, setDepartDate, setExploreMonth,
     setFrom, setOrigin, setParty, setPartyParts, setPriceExcluded, setPriceView, setReturnDate,
-    setTransportMode, sweptOrigins, travelMonth, when,
+    setTransportMode, sweptOrigins, travelMonth, when, setChoices,
   });
   // The travel styles ride on the same context, so the style disc, the
   // planner's Who screen and the trip settings read one store.
@@ -1386,7 +1395,6 @@ function TravelApp() {
   // pill and Ask Carta) in place of the line's four buttons. A search moves
   // to the kind's view with the Where text; Places with none opens every
   // place, as its overview's empty Search did.
-  const isDesktopShell = useIsDesktop();
   const dockSearch = useCallback(({ kind, q }) => {
     if (kind === 'places') {
       openExploreSection('places');
@@ -1414,6 +1422,17 @@ function TravelApp() {
     return !!(d && !d.planId && d.stops?.length);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- a localStorage read, refreshed on a section change and when a page over the tab closes
   }, [activeTab, savedTripsOpen, accountOpen]);
+
+  const appHeader = (
+    <AppHeader
+      user={user}
+      place={place}
+      onNavigate={goTo}
+      savedCount={savedCount}
+      planInProgress={planInProgress}
+      onSignIn={requestAuth}
+    />
+  );
 
   if (recoveryMode) {
     return <ResetPasswordScreen />;
@@ -1504,19 +1523,14 @@ function TravelApp() {
         {t('a11y.skipToContent')}
       </a>
       <header className={`top-bar${place === 'plan' && planInner ? ' is-hidden' : ''}`} ref={filterBarRef} onClick={(e) => e.stopPropagation()}>
-        <AppHeader
-          user={user}
-          place={place}
-          onNavigate={goTo}
-          savedCount={savedCount}
-          planInProgress={planInProgress}
-          onSignIn={requestAuth}
-        />
-        {/* G12 (explore polish): from 769 px the Trip dock under the
-            category tabs holds From, When and how prices read, so the
-            header's settings line left Explore and Destinations (one door
-            per screen). The phone keeps its search pill. */}
-        {settingsParts === undefined && !isDesktopShell && <SearchDock onSearch={dockSearch} />}
+        {/* G12 (Explore top, decision.md APPROVED 2026-11-18): on Explore
+            and its five layers the band under the header holds the search,
+            Settings and the settings in one line, on every width, so it
+            never scrolls away; on a phone the header folds into it. */}
+        {settingsParts === undefined ? (
+          <ExploreBand head={appHeader} places={activeTab === 'map'} onSearch={dockSearch}
+            onPickCategory={openExploreSection} />
+        ) : appHeader}
       </header>
 
       {/* A trip arrived via share link: offer it, never silently apply it. */}
@@ -1644,6 +1658,13 @@ function TravelApp() {
           full page (a place, a country, a region, the account) has its own
           foot, so the corner stays empty on those. */}
       <StyleDock hidden={!(place === 'explore' || place === 'trips') || !!selectedDest || !!countryPage || !!pendingRegion} />
+      {/* G12 (Explore top): Settings, mounted once so every door (the band's
+          button and chips, the search's "You search as" rows) reaches it. */}
+      {SettingsSheet && (
+        <Suspense fallback={null}>
+          <SettingsSheet />
+        </Suspense>
+      )}
       {/* D10: the price sheet a list row's figure and wagons open; one
           mount, so a row carries only its buttons (priceSheetStore). */}
       <PriceSheet data={data} />
