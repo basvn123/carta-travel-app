@@ -155,7 +155,9 @@ export function StyleWizard({ ts, style, startStep, destinations, meta, escRef, 
           <HouseIcon.close size={18} />
         </IconButton>
         <p className="sst-where">
-          <b>{edit ? styleName(t, style) : partName}</b>
+          {/* The progress label above already names the part; the line
+              adds the style's name only when editing one (judge 1). */}
+          {edit && <b>{styleName(t, style)}</b>}
           <span>{t('studio.stepOf', { n: place.n, total: place.of })}</span>
           <span className="sr-only">{t('studio.stepAria', { n: idx + 1, total: STEPS.length, part: partName })}</span>
         </p>

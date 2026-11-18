@@ -55,7 +55,13 @@ test('every former style door leads into the studio', () => {
   assert.match(read('auth/account/TravelView.jsx'), /onClick=\{\(\) => openStudio\(ts\)\}/);
   assert.match(read('planner/flow/LifestyleStep.jsx'), /openStudioAt\(styles, 'shapes'\)/);
   assert.match(read('browse/StartDialog.jsx'), /setOpen\(\{ view: 'create' \}\)/);
-  assert.match(read('browse/ExploreTab.jsx'), /mode === 'create'\) ts\?\.setOpen\(\{ view: 'create' \}\)/);
+  // First visit: create opens once the studio chunk is here, only while still
+  // on Explore, and seen is marked only when it really opens.
+  assert.match(
+    read('browse/ExploreTab.jsx'),
+    /import\('\.\/styles\/StyleStudio\.jsx'\)\.then\(\(\) => \{\s*if \(!live \|\| !hereRef\.current[^\n]*\n\s*markStartSeen\(\);\s*stylesRef\.current\?\.setOpen\(\{ view: 'create' \}\)/,
+    'the first-visit door opens the studio create view',
+  );
   for (const f of ['planner/flow/setupScreens.jsx', 'planner/flow/TripSettingsSheet.jsx']) {
     assert.match(read(f), /<StyleCards\s+compact/, `${f} picks a style from the studio's cards`);
   }

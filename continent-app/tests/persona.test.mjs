@@ -9,7 +9,7 @@ import {
 } from "../src/lib/recommend/persona.js";
 import { shapesFor, placesNear } from "../src/lib/recommend/candidates.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
-import { QUESTIONS } from "../src/planner/flow/questions.js";
+import { en } from "../src/i18n/en.js";
 import { guideScreens } from "../src/planner/flow/flowGraph.js";
 
 // A small Côte d'Azur: a metro, a city 12 km from it, a village 8 km from it,
@@ -33,7 +33,8 @@ test("ten personas; mix weighs nothing", () => {
   assert.equal(weighs(""), false);
   assert.equal(personaFit("mix", "NCE", coast), null);
   assert.equal(personaShift(null), 0);
-  assert.ok(PERSONAS.every((p) => QUESTIONS["g:persona"].options.some((o) => o.value === p)));
+  // The question is gone (G12); every persona still has its name.
+  assert.ok(PERSONAS.every((p) => typeof en[`pf.persona.${p}`] === "string"));
 });
 
 test("near the hubs, not in them: the calmer places beside Nice beat Nice", () => {

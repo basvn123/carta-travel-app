@@ -9,7 +9,7 @@ import { priceNotes } from '../lib/price/notes.js';
 import { NotMeasuredValue, ThinBedNote } from '../components/PriceNotes.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import {
-  Button, Money, Segmented, Plate, PlateGroup, Formation, Figure, CostRow, CostSum, Chip, ChipGroup,
+  Button, Money, Segmented, Plate, PlateGroup, Formation, Figure, CostRow, CostSum,
 } from '../components/ui/index.js';
 import { formatMoney } from '../lib/money.js';
 import { doPriceOf } from '../lib/price/doPrice.js';
@@ -25,7 +25,6 @@ import {
 } from '../components/Icons.jsx';
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 import { minutesText } from '../lib/journeys.js';
-import { tiersAt } from '../lib/stayPrice.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from './styles/spendBits.jsx';
 import { legCost, googleFlightsLink } from '../lib/flights/flights.js';
 import { bagTier } from '../lib/flights/bagFees.js';
@@ -264,7 +263,6 @@ export function DestPriceCard({
     ? [t('destx.flightTimes', { dep: w.dep, arr: w.arr }), w.minutes ? minutesText(w.minutes) : ''].filter(Boolean)
       .map((part, i, all) => <span key={part}>{part}{i < all.length - 1 ? ',' : ''}</span>)
     : Number.isFinite(w.hours) ? t('destx.aboutTime', { time: minutesText(Math.round(w.hours * 60)) }) : '');
-  const offered = tiersAt(dest);
   const lineLabel = (l) => (l.key === 'flight' ? (l.carta ? t('tp.tile.flights') : t('receipt.yourFlight'))
     : l.key === 'way' ? t(`way.${l.mode}`)
     : l.key === 'stay' ? t('receipt.stay', { nights: nightsText })
@@ -465,24 +463,9 @@ export function DestPriceCard({
             </div>
           )}
 
-          {/* Where you sleep (T1026, owner: "change stays"): the stay types
-              this place prices, one tap each; the same choice the Lifestyle
-              holds, so every card follows. Kit choice chips (G1). */}
-          {offered.length > 1 && (
-            <div className="tcard-part">
-              <h4 className="tcard-h">{t('lifestyle.stay')}</h4>
-              <ChipGroup className="tcard-chips" label={t('lifestyle.stay')}>
-                {offered.map((k) => (
-                  <Chip key={k} kind="choice" selected={k === tier}
-                    className={`tcard-chip${k === tier ? ' is-on' : ''}`}
-                    onClick={() => { acted(); ctx.setChoices((prev) => ({ ...prev, stay_tier: k })); }}>
-                    {t(`stay.${k}`)}
-                  </Chip>
-                ))}
-              </ChipGroup>
-            </div>
-          )}
-
+          {/* G12 (judge 1): no bed chips here. The bed belongs to the
+              travel style, so the Stay line below names it and opens the
+              studio's spend step; one way to change it, not two. */}
           {/* The receipt (G1): every line of the total along a dotted
               leader, a Rounding line where the printed lines do not add up,
               the engine's own total, and what has no figure yet under it,

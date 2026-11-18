@@ -7,7 +7,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   MAX_STYLES, PERSONAS, STUDIO_STEPS, TRADEOFF_DEFAULTS, addStyle, afterChoicesChange, choicesFromStyle, choicesMatchStyle,
-  commitChoices, createChoices, derivePersonas, draftFromTemplate, draftWithPriority, emptyDraft, explorePatchFromSettings, normalizeStyle,
+  commitChoices, createChoices, derivePersonas, draftFromTemplate, draftWithPriority, emptyDraft, normalizeStyle,
   normalizeStyles, studioOpen, styleFromDraft, styleFromTemplate, styleWays, duplicateStyle, removeChoices, NO_STYLE_CHOICES,
 } from '../src/lib/travelStyles.js';
 import { styleForAi, STYLE_AI_ENUMS } from '../src/lib/styleForAi.js';
@@ -191,11 +191,6 @@ test('a trip with no style keeps every flight; an own priority takes its default
   // Another style: its own trade-offs, nothing of the old one's.
   const moved = switchTripStyle(s, withPriority('balance'));
   assert.deepEqual(moved.tradeoffs, TRADEOFF_DEFAULTS.balance);
-  // Keep in my style: the trade-offs go with the priority.
-  const st = withPriority('price', { early: false, stops: true, hostel: true });
-  assert.deepEqual(explorePatchFromSettings({ ...s, priority: 'price' }, st).tradeoffs, st.tradeoffs);
-  assert.deepEqual(explorePatchFromSettings({ ...s, priority: 'comfort' }, st).tradeoffs, TRADEOFF_DEFAULTS.comfort);
-  assert.ok(explorePatchFromSettings(s, st).explore.personas.length > 0, 'personas derived on keep too');
 });
 
 test('fitsPrefs: maxStops caps the changes of planes', () => {

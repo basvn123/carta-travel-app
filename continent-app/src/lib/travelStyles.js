@@ -719,32 +719,6 @@ export function seedTripSettings(settings, style, { normalize, markAnswered }) {
   return s;
 }
 
-/** A trip's "how you explore" answers as a style patch, for "Keep these in
- *  my style" on the trip settings. */
-export function explorePatchFromSettings(s, style = null) {
-  const g = s.guide || {};
-  const priority = PRIORITIES.includes(s.priority) ? s.priority : 'balance';
-  const explore = {
-    // The taste facets have no trip question; the style keeps its own.
-    size: style?.explore?.size || '',
-    quiet: style?.explore?.quiet || '',
-    shapes: (g.shapes || []).filter((x) => SHAPES.includes(x)),
-    likes: g.likes || [],
-    avoid: (g.avoid || []).filter((x) => AVOID.includes(x)),
-    around: g.around || '',
-  };
-  const days = { mornings: s.rhythm?.mornings || '', pace: s.rhythm?.pace || '' };
-  return {
-    priority,
-    // The style's own trade-offs while the priority is still its own;
-    // a new priority takes its defaults, as picking it in the studio does.
-    tradeoffs: style && style.priority === priority ? { ...normalizeStyle(style).tradeoffs } : { ...TRADEOFF_DEFAULTS[priority] },
-    // A style's personas follow from its answers on every save (G12).
-    explore: { ...explore, personas: derivePersonas(explore, days) },
-    days,
-  };
-}
-
 /** The planner's own option words, so a style reads exactly as the
  *  questions it answers (planner/flow/questions.js). */
 const SHAPE_KEYS = { one: 'pf.o.shapeOne', towns: 'pf.o.shapeTowns', road: 'pf.o.shapeRoad', countries: 'pf.o.shapeCountries' };

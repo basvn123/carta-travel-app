@@ -275,7 +275,10 @@ test('the retired home strings are gone', () => {
     'pf.persona.hiddenLine', 'pf.persona.slowLine', 'pf.persona.livelyLine', 'pf.persona.mixLine',
     'pf.persona.most', 'pf.persona.mostSame', 'pf.persona.mostTag', 'pf.persona.mix.stay', 'pf.persona.mix.visit',
     'pf.persona.mix.move', 'pf.persona.label.stay', 'pf.persona.label.visit', 'pf.persona.label.move',
-    'pf.persona.label.eg', 'pf.persona.label.choose', 'pf.persona.label.about', 'pf.persona.label.details'];
+    'pf.persona.label.eg', 'pf.persona.label.choose', 'pf.persona.label.about', 'pf.persona.label.details',
+    // G12 judge 1: the persona question's title and lines, and the trip
+    // settings' Keep (a style is edited only in the studio).
+    'pf.q.persona', 'styles.keep', 'pf.persona.citiesSub', 'pf.persona.hubtripsSub', 'pf.persona.outsideSub', 'pf.persona.townsSub', 'pf.persona.coastSub', 'pf.persona.natureSub', 'pf.persona.hiddenSub', 'pf.persona.slowSub', 'pf.persona.livelySub', 'pf.persona.mixSub'];
   for (const [lang, cat] of Object.entries(CATALOGS)) {
     for (const k of retired) assert.equal(cat[k], undefined, `${lang} ${k}`);
     assert.deepEqual(Object.keys(cat).filter((k) => k.startsWith('landing.')), [], lang);

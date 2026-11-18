@@ -14,7 +14,6 @@ import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { StyleCards } from '../../browse/styles/StyleCards.jsx';
 import { styleName, useStyleFigures } from '../../browse/styles/styleBits.jsx';
 import { switchTripStyle } from './styleSeed.js';
-import { explorePatchFromSettings, normalizeStyle } from '../../lib/travelStyles.js';
 import { formatMoney } from '../../lib/money.js';
 
 /**
@@ -47,14 +46,11 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
   const w = whenText(t, s.when, months, bcp47);
   const booked = Object.entries(s.booked).filter(([, on]) => on).map(([k]) => k);
 
-  // The travel style this trip was started from, and whether the trip's own
-  // explore answers have since moved away from it (then they can be kept in
-  // the style, for the next trip).
+  // The travel style this trip was started from. A trip's own answers stay
+  // the trip's: a style is edited only in the Style Studio (G12, judge 1).
   const ts = app?.travelStyles;
   const figures = useStyleFigures(ts?.list, app?.data?.destinations);
   const tripStyle = ts?.list?.find((x) => x.id === s.style) || null;
-  const drifted = tripStyle && JSON.stringify(normalizeStyle({ ...tripStyle, ...explorePatchFromSettings(s, tripStyle) }).explore)
-    !== JSON.stringify(tripStyle.explore);
   const fromStyle = (id) => s.answered.includes(id) && s.sources?.[id] === 'style';
   const budget = s.guide.budget;
   const budgetText = budget.eur > 0
@@ -183,11 +179,6 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
                 setNotice(onSaved ? onSaved(normalizeSettings(next), s) || null : null);
               }}
             />
-            {drifted && (
-              <Button variant="secondary" size="sm" onClick={() => ts.update(tripStyle.id, explorePatchFromSettings(s, tripStyle))}>
-                {t('styles.keep', { name: styleName(t, tripStyle) })}
-              </Button>
-            )}
           </section>
         )}
         {groups.map((g) => (

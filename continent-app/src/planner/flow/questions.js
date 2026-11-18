@@ -8,7 +8,7 @@
  * trip settings. Screens with their own controls (who, sleep, when, from)
  * carry `custom: true` and render a component instead of options.
  */
-import { RHYTHM, LIKES, personasOfRaw } from './tripSettings.js';
+import { RHYTHM, LIKES } from './tripSettings.js';
 
 const opt = (value, icon, extra = {}) => ({ value, icon, labelKey: null, ...extra });
 
@@ -55,23 +55,8 @@ export const QUESTIONS = {
   nowUntil: { titleKey: 'pf.q.nowUntil', custom: true },
 
   // ---- Help me choose ----
-  // How they like to travel, the persona (owner, plan flow walk 2026-10-30):
-  // the first help-me-choose question. Its own screen (PersonaScreen) draws
-  // each as a line icon, its name and one statement, the whole persona one
-  // tap away; the trip finder weighs places by it (lib/recommend/persona.js).
-  'g:persona': {
-    titleKey: 'pf.q.persona', custom: true,
-    options: [
-      // T892: the big city, the city base and the small towns first (owner).
-      opt('cities', 'SkylineIcon'), opt('hubtrips', 'RouteIcon'), opt('towns', 'VillageIcon'),
-      opt('outside', 'TownIcon'), opt('coast', 'BeachIcon'), opt('nature', 'MountainIcon'),
-      opt('hidden', 'CompassIcon'), opt('slow', 'CoffeeIcon'), opt('lively', 'MusicIcon'), opt('mix', 'SparkIcon'),
-    ].map((o) => ({ ...o, labelKey: `pf.persona.${o.value}`, subKey: `pf.persona.${o.value}Sub` })),
-    // T891: up to three, one maybe most you (tripSettings personasOfRaw).
-    multi: true, max: 3,
-    read: (s) => (s.guide.personas?.length ? s.guide.personas : s.guide.persona ? [s.guide.persona] : []),
-    write: (s, values) => ({ guide: { ...s.guide, ...personasOfRaw({ personas: values, personaMost: s.guide.personaMost }) } }),
-  },
+  // G12: no persona question; the personas follow from the trip's other
+  // answers (tripSettings tripPersonas), and pf.persona.* only names them.
   // T753: as many shapes as fit, or no preference.
   'g:shape': {
     titleKey: 'pf.q.shape', multi: true, none: 'any',

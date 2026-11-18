@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   MAX_STYLES, TEMPLATE_IDS, activeStyle, addStyle, choicesFromStyle, choicesMatchStyle, duplicateStyle,
-  explorePatchFromSettings, normalizeStyle, normalizeStyles, removeStyle, setActive, styleFromChoices,
+  normalizeStyle, normalizeStyles, removeStyle, setActive, styleFromChoices,
   styleFromTemplate, summaryParts, updateStyle,
 } from '../src/lib/travelStyles.js';
 import { defaultSettings, normalizeSettings, aroundOf, goalOfGoals, dayAiPreset, dayPrefs } from '../src/planner/flow/tripSettings.js';
@@ -150,18 +150,6 @@ test('the planner passes over what the style answered, never the trips', () => {
   assert.equal(continueTo(['tell', 'who', 'when'], 'tell', s), 'who');
   const k = continueTo(list, 'g:persona', s, TRIPS_SCREEN, GUIDE_SKIP);
   assert.ok(!['g:shape'].includes(k));
-});
-
-test('a trip\'s explore answers go back into the style', () => {
-  const f = family();
-  let s = newTripSettings(f);
-  s = normalizeSettings({ ...s, guide: { ...s.guide, shapes: ['towns', 'road'], likes: ['lakes'] }, rhythm: { ...s.rhythm, mornings: 'early' } });
-  const patched = normalizeStyle({ ...f, ...explorePatchFromSettings(s, f) });
-  assert.equal(patched.explore.size, f.explore.size, 'the taste facets stay the style\'s');
-  assert.deepEqual(patched.explore.shapes, ['towns', 'road']);
-  assert.deepEqual(patched.explore.likes, ['lakes']);
-  assert.equal(patched.days.mornings, 'early');
-  assert.equal(patched.stay, f.stay, 'the stay half is not the trip\'s to change');
 });
 
 test('getting around is one answer: the guide\'s drives the day steps', () => {
