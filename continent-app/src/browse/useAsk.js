@@ -14,6 +14,7 @@ import { answerFacts } from '../lib/ask/rank.js';
 import { composeAnswer, unknownNote } from '../lib/ask/compose.js';
 import { buildPack } from '../lib/ask/context.js';
 import { writeAnswer } from '../lib/ask/generate.js';
+import { useAiStyle } from '../hooks/useAiStyle.js';
 
 /** The suggested questions, each a question type Carta answers well. */
 export const EXAMPLE_KEYS = ['ask.ex.hike', 'ask.ex.budget', 'ask.ex.warm', 'ask.ex.nocar',
@@ -30,6 +31,8 @@ const IDLE = { state: 'idle', sentences: [], backend: null };
  *   onDevice   optional on-device writer (T557)
  */
 export function useAsk({ open, t, lang, guided, rows, countries, labels, price = NO_PRICE, retrieve = null, onDevice = null, deviceTick = 0, written: writeOn = true }) {
+  // G12: the written answer picks each place's reason for this traveller.
+  const aiStyle = useAiStyle();
   const [index, setIndex] = React.useState(null);
   const [lexicon, setLexicon] = React.useState(undefined);
   React.useEffect(() => {
@@ -122,7 +125,7 @@ export function useAsk({ open, t, lang, guided, rows, countries, labels, price =
     if (!writeOn || !answer || !facts?.picks?.length) { setWritten(IDLE); return undefined; }
     const ctl = new AbortController();
     const monthsText = (d) => (d.climate?.best || []).map((m) => labels.month(m)).join(', ');
-    const pack = buildPack({ question, lang, facts, answer, passages: found?.passages || [], labels: { monthsText, estWord: t('money.est') } });
+    const pack = buildPack({ question, lang, facts, answer, passages: found?.passages || [], labels: { monthsText, estWord: t('money.est') }, style: aiStyle });
     setWritten({ state: 'writing', sentences: [], backend: null });
     const shown = [];
     writeAnswer(pack, {

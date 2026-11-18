@@ -10,11 +10,14 @@ import {
 } from '../components/Icons.jsx';
 import '../styles/78-filter-pane.css';
 import { useDayView } from '../hooks/useDayView.js';
+import { PricedFor } from './PricedFor.jsx';
 
 /**
  * The Explore filter pane (T589, Explore v6). One column that fits about one
  * desktop screen with nothing folded, in the order a traveller narrows:
  *
+ *   Priced for      the travel style every figure follows, with a switcher
+ *                   (PricedFor.jsx, Style Studio G12); not in a chip's popover
  *   Kind of place   small chips with their icon, many can be on
  *   Size            plain words, no icons (the old size glyphs read as noise);
  *                   beside Kind of place since T604, the same question
@@ -233,8 +236,10 @@ export function ExploreFilterRail({
         </div>
       )}
 
-      {/* T947: "Your travel style", the taste profile's door, at the top of
-          the full pane (never in a quick chip's popover). */}
+      {/* G12: what the prices are for comes first, because every budget
+          and figure below reads it (never in a quick chip's popover). */}
+      {!only && <PricedFor />}
+      {/* Whatever the tab adds under it (the phone's Strong match toggle). */}
       {tasteRow && !only && <div className="xpane-sec xpane-taste-sec">{tasteRow}</div>}
 
       {setTripKinds && show('type') && (

@@ -16,6 +16,7 @@ import { stripDashes } from '../format.js';
 import { formatMoney, formatEst } from '../money.js';
 import { monthRow } from './rank.js';
 import { ask as askPrompt, frag } from '../../../functions/_lib/prompts.js';
+import { readAiStyle, aiStyleLines, aiStyleKey } from '../../../functions/_lib/aiStyle.js';
 
 // v2 (T563): comparisons and budget verdicts are written by code as notes
 // of their own, and the prompt forbids the model any it is not given.
@@ -40,9 +41,17 @@ const cut = (s, n) => {
  * The system prompt. Kept short: small models follow few rules well, so
  * each rule is one the verifier also checks.
  */
-export function systemPrompt(lang) {
+export function systemPrompt(lang, style = null) {
   // The text is the registry's ask prompt (prompts/ask, T1140).
-  return frag(askPrompt, 'system', { lang: LANG_NAME[lang] || 'English' });
+  const base = frag(askPrompt, 'system', { lang: LANG_NAME[lang] || 'English' });
+  // G12: the travel style's lines (prompts/travel-style) go in before the
+  // closing directive, which the model reads only as the last line. With no
+  // style the prompt is the registry's, byte for byte.
+  const lines = aiStyleLines(style, 'ask');
+  if (!lines.length) return base;
+  const tail = '\n/no_think';
+  const add = lines.join('\n');
+  return base.endsWith(tail) ? `${base.slice(0, -tail.length)}\n${add}${tail}` : `${base}\n${add}`;
 }
 
 /** One fact row as a note, from a facts-answer pick (compose.js) and its facts (rank.js). */
@@ -188,7 +197,7 @@ export function comparisonNotes(facts, { estWord = 'est.', monthName = monthEn }
  *   passages [{pid, destId, text, source}] in retrieval order
  *   labels   { monthsText(dest) -> "May, June" } for the best months
  */
-export function buildPack({ question, lang, facts, answer, passages = [], labels = {} }) {
+export function buildPack({ question, lang, facts, answer, passages = [], labels = {}, style = null }) {
   const notes = [];
   const places = new Map();
   const shownById = new Map((answer?.picks || []).map((p) => [p.id, p]));
@@ -219,12 +228,16 @@ export function buildPack({ question, lang, facts, answer, passages = [], labels
     notes.push({ kind: 'passage', destId: p.destId || null, pid: p.pid, source: p.source, text: cut(p.text, MAX_NOTE_CHARS) });
   }
   const numbered = notes.slice(0, MAX_NOTES).map((n, i) => ({ ...n, n: i + 1 }));
+  // G12: the active travel style (styleForAi), enum values only; it picks
+  // which reason the answer gives for a place, never the places themselves.
+  const st = readAiStyle(style);
   return {
     v: PROMPT_VERSION,
     lang,
     question: cut(question, MAX_QUESTION_CHARS),
     notes: numbered,
     places: [...places.values()].map((d) => ({ id: d.id, city: d.city, country: d.country })),
+    ...(st ? { style: st } : {}),
   };
 }
 
@@ -247,17 +260,26 @@ export function readWirePack(body) {
   if (typeof question !== 'string' || !question.trim() || question.length > MAX_QUESTION_CHARS) return null;
   if (!Array.isArray(notes) || !notes.length || notes.length > MAX_NOTES) return null;
   if (notes.some((n) => typeof n !== 'string' || !n.trim() || n.length > MAX_NOTE_CHARS)) return null;
-  return { v, lang, question: question.trim(), notes: notes.map((n) => n.trim()) };
+  // A style with unknown values is cut down to the known ones, not refused:
+  // an older or newer app still gets its answer.
+  const style = readAiStyle(body.style);
+  return { v, lang, question: question.trim(), notes: notes.map((n) => n.trim()), ...(style ? { style } : {}) };
 }
 
 /** What the browser sends to /api/ask/answer: the pack, nothing else. */
 export function wirePack(pack) {
-  return { v: pack.v, lang: pack.lang, question: pack.question, notes: pack.notes.map((n) => n.text) };
+  return {
+    v: pack.v, lang: pack.lang, question: pack.question, notes: pack.notes.map((n) => n.text),
+    ...(pack.style ? { style: pack.style } : {}),
+  };
 }
 
 /** A stable key for one pack: same question, notes, language and prompt, same answer. */
 export async function packKey(wire) {
-  const text = JSON.stringify([wire.v, wire.lang, wire.question.toLowerCase(), wire.notes]);
+  // The style joins the key only when there is one, so the answers cached
+  // before G12 (no style) are still found.
+  const st = aiStyleKey(wire.style);
+  const text = JSON.stringify([wire.v, wire.lang, wire.question.toLowerCase(), wire.notes, ...(st ? [st] : [])]);
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }

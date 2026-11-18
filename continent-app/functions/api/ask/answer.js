@@ -107,7 +107,8 @@ export async function onRequestPost({ request, env, waitUntil }) {
   if (!input.ok) return fail(400, 'unsafe');
 
   const nonce = makeNonce();
-  const system = `${systemPrompt(wire.lang)}\n${systemRules(nonce)}`;
+  // G12: readWirePack kept only the style's known values; its lines join the system prompt.
+  const system = `${systemPrompt(wire.lang, wire.style)}\n${systemRules(nonce)}`;
   // The guard version is in the key: an answer cached before a guard change is not served.
   const key = `a:g${GUARD_VERSION}:${await packKey(wire)}`;
   const hit = await env.ASK.get(key);

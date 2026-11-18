@@ -109,7 +109,7 @@ export async function writeAnswer(pack, { knownPlaces = [], onSentence = () => {
   try {
     if (onDevice?.isReady?.()) {
       backend = 'device';
-      await onDevice.generate({ system: systemPrompt(pack.lang), user: userPrompt(pack), onToken: feed, signal });
+      await onDevice.generate({ system: systemPrompt(pack.lang, pack.style), user: userPrompt(pack), onToken: feed, signal });
     } else {
       backend = 'server';
       for await (const ev of serverStream(pack, signal)) {

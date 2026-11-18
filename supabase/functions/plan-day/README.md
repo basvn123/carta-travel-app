@@ -137,6 +137,13 @@ prompt, because these strings are printed into it:
 | `avoidHills`, `transitOk`, `avoidCrowds` | booleans |
 | `weather` | `{ rain, hot }`, read from the forecast rather than asked |
 
+`style` (G12) is the traveller's active travel style, sent by the app as enum
+values only (`styleForAi` in `continent-app/src/lib/travelStyles.js`; no name,
+no free text). `readAiStyle` in `../_shared/aiStyle.mjs` keeps only known
+values and caps the lists; `aiStyleLines` adds one head and at most three short
+lines from the `travel-style` registry prompt, after the profile's lines and
+marked as a soft preference. It joins the cache key only when present.
+
 `mustInclude` is a separate top-level field: the places the traveller named
 by hand in the ideas step, with a candidate id where one matched. Any id that
 is not in the candidate deck is dropped, so a tampered payload cannot name a

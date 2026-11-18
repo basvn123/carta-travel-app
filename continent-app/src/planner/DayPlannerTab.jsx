@@ -29,6 +29,7 @@ import { AutoPlanBar } from './days/AutoPlanBar.jsx';
 import { TripDaysOverview } from './days/TripDaysOverview.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
 import { AI_PLAN_MOCK, buildAiCandidates, requestAiDayPlan, decorateAiStops } from './aiDayPlan.js';
+import { useAiStyle } from '../hooks/useAiStyle.js';
 import { estimateWalkMinutes, fmtDur } from './dayFormat.js';
 import {
   buildDaySchedule, fmtClockLoose, GAP_SUGGEST_MIN, DAY_START_MIN,
@@ -961,6 +962,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
   const aiKey = `${stopIdx}:${dayIdx}`;
   const aiPlan = prefs?.aiPlans?.[aiKey] || null;
+  // G12: the active travel style rides along (enum values only).
+  const aiStyle = useAiStyle();
 
   // A redraft invalidates the AI schedule it replaces: drop this day's entry
   // (or every entry of this city when the whole stay was redrafted).
@@ -1023,6 +1026,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       candidates,
       // T674: a trip's day carries the trip's rhythm as the profile.
       ...(plan && !plan.standalone ? { profile: dayAiPreset(fromDraft(plannerStore.getState())).profile } : {}),
+      ...(aiStyle ? { style: aiStyle } : {}),
     });
     // The bot answers with names and reasons; the photos are already here.
     return res.ok ? { ...res, plan: decorateAiStops(res.plan, items) } : res;

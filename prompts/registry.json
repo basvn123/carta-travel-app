@@ -65,6 +65,27 @@
         "at": "2026-11-06T17:24:21.707Z"
       }
     },
+    "travel-style": {
+      "version": 1,
+      "file": "prompts/travel-style/v1.md",
+      "format": "registry",
+      "sha256": "21e4a7183956df5db3b80bcd9d4803704d1cee206eae5d6a41643d9c4b1127a8",
+      "runtime": "bundle",
+      "eval": null,
+      "guard": "continent-app/tests/aiStyle.test.mjs (enum checks, line caps, no style no change); the ask and plan-day evals run without a style",
+      "callers": [
+        "supabase/functions/_shared/aiStyle.mjs",
+        "continent-app/functions/_lib/aiStyle.js"
+      ],
+      "lastScore": {
+        "version": 1,
+        "eval": null,
+        "status": "unguarded",
+        "key": null,
+        "value": null,
+        "at": "2026-11-18T11:02:21.453Z"
+      }
+    },
     "suggest-city": {
       "version": 2,
       "file": "prompts/suggest-city/v2.md",

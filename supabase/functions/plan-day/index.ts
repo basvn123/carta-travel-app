@@ -65,6 +65,8 @@ import {
 } from '../_shared/aiModels.mjs';
 // The prompt and the response schema, from the prompt registry (T1140, E5).
 import { LANG_NAMES, RESPONSE_SCHEMA, buildPrompt } from './prompt.mjs';
+// G12: the traveller's travel style, enum values only, checked here.
+import { readAiStyle } from '../_shared/aiStyle.mjs';
 
 // The largest body this function reads (T1079): refused with 413 beyond it.
 const MAX_BODY = 400000;
@@ -184,6 +186,9 @@ Deno.serve(withCors(async (req) => {
       }
       : null,
   } : null;
+  // G12: the active travel style (the app's styleForAi). Unknown values are
+  // dropped and lists capped, so only the registry's own words reach the prompt.
+  const style = readAiStyle(body.style);
   // Places the traveller named by hand. Names and coordinates only, and any
   // id must match a real candidate: an unchecked id here would let a payload
   // name a stop the deck never offered.
@@ -311,7 +316,7 @@ Deno.serve(withCors(async (req) => {
   const hash = await sha256Hex(cacheKeyInput({
     model: chainKey(access.cfg), destId, month, dateISO, groupSize, pace, vibe, avoidHills,
     freeText, lang, candidates: promptCandidates, refine, prevStopIds: prevStops, wantEvents,
-    profile, mustInclude, days,
+    profile, mustInclude, days, style,
   }));
   // The next refine token: the same plan, one more free change spent.
   const nextToken = async () => ({
@@ -371,6 +376,7 @@ Deno.serve(withCors(async (req) => {
   const prompt = buildPrompt({
     city, country, dateISO, month, groupSize, pace, vibe, avoidHills, freeText, lang,
     hasStay: !!stay, candidates: promptCandidates, wantEvents, refine, prevStops, profile, mustInclude, days, nonce,
+    style,
   });
   if (prompt.length > LIMITS.planPromptChars) return await failed(400, { code: 'too_big' });
   // Google Search grounding is the paid feature, and the only one here that

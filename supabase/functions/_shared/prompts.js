@@ -92,6 +92,24 @@ export const planDay = {
   },
 };
 
+/** @type {Prompt} travel-style v1 */
+export const travelStyle = {
+  id: "travel-style",
+  version: 1,
+  sha256: "21e4a7183956df5db3b80bcd9d4803704d1cee206eae5d6a41643d9c4b1127a8",
+  f: {
+    "ask.head": "About this traveller, for choosing the one reason you give for each place. Never mention it, never change the order of the places and never add a fact for it:",
+    "plan.head": "- Their usual travel style, a soft preference. The rules and answers above win wherever they say something:",
+    "trip": "- Their trip: {{items}}.",
+    "taste": "- They love {{likes}}, and would rather avoid {{avoid}}.",
+    "likes": "- They love {{likes}}.",
+    "avoid": "- They would rather avoid {{avoid}}.",
+    "days": "- How they like it there: {{items}}.",
+    "ways": "getting there {{list}}",
+    "words": "{\n  \"and\": \"and\",\n  \"or\": \"or\",\n  \"party\": {\n    \"adult\": \"1 adult\",\n    \"adults\": \"{n} adults\",\n    \"child\": \"1 child\",\n    \"children\": \"{n} children\",\n    \"baby\": \"1 baby\",\n    \"babies\": \"{n} babies\"\n  },\n  \"stay\": {\n    \"dorm\": \"sleeping in hostel dorms\",\n    \"private\": \"sleeping in private hostel rooms\",\n    \"home\": \"sleeping in a rented home\",\n    \"room\": \"sleeping in a room in a local home\",\n    \"hotel2\": \"sleeping in simple hotels\",\n    \"hotel3\": \"sleeping in 3 star hotels\",\n    \"hotel4\": \"sleeping in 4 star hotels\",\n    \"hotel5\": \"sleeping in 5 star hotels\"\n  },\n  \"priority\": {\n    \"price\": \"the lowest price matters most\",\n    \"balance\": \"a good balance of price and comfort\",\n    \"comfort\": \"comfort matters most\"\n  },\n  \"way\": {\n    \"plane\": \"by plane\",\n    \"train\": \"by train\",\n    \"bus\": \"by coach\",\n    \"car\": \"by car\"\n  },\n  \"shapes\": {\n    \"one\": \"one base\",\n    \"towns\": \"town to town\",\n    \"road\": \"a road trip\",\n    \"countries\": \"several countries\"\n  },\n  \"likes\": {\n    \"beach\": \"beaches\",\n    \"hiking\": \"hiking\",\n    \"lakes\": \"lakes\",\n    \"culture\": \"culture and history\",\n    \"city\": \"city breaks\",\n    \"food\": \"food and wine\",\n    \"nightlife\": \"nights out\",\n    \"hidden\": \"quiet, hidden places\",\n    \"cycling\": \"cycling\",\n    \"ski\": \"snow and skiing\",\n    \"wellness\": \"spas and slow days\",\n    \"islands\": \"islands\"\n  },\n  \"avoid\": {\n    \"crowds\": \"crowds\",\n    \"transfers\": \"many changes on the way\",\n    \"heat\": \"strong heat\"\n  },\n  \"size\": {\n    \"city\": \"cities\",\n    \"town\": \"towns\",\n    \"village\": \"villages\",\n    \"mix\": \"places of every size\"\n  },\n  \"quiet\": {\n    \"quiet\": \"quiet places\",\n    \"lively\": \"lively places\"\n  },\n  \"around\": {\n    \"public\": \"around by public transport\",\n    \"taxi\": \"around by taxi\",\n    \"car\": \"around by car\",\n    \"mix\": \"around by a mix of ways\"\n  },\n  \"mornings\": {\n    \"early\": \"up at sunrise\",\n    \"onthego\": \"breakfast on the go\",\n    \"slow\": \"slow mornings\"\n  },\n  \"pace\": {\n    \"slow\": \"a slow pace\",\n    \"balanced\": \"a balanced pace\",\n    \"packed\": \"a packed pace\"\n  }\n}",
+  },
+};
+
 /** @type {Prompt} suggest-city v2 */
 export const suggestCity = {
   id: "suggest-city",

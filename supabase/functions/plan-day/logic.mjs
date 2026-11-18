@@ -7,6 +7,7 @@
  * index.ts, and the repo's Node test harness (continent-app/scripts/ai/)
  * imports the very same file, so what is tested is what ships.
  */
+import { aiStyleKey } from '../_shared/aiStyle.mjs';
 
 /* ---- text hygiene ---- */
 
@@ -667,7 +668,7 @@ function compact(obj) {
  */
 export function cacheKeyInput({
   model, destId, month, dateISO, groupSize, pace, vibe, avoidHills, freeText,
-  lang, candidates, refine, prevStopIds, wantEvents, profile, mustInclude, days = 1,
+  lang, candidates, refine, prevStopIds, wantEvents, profile, mustInclude, days = 1, style = null,
 }) {
   const n = Number(groupSize);
   const size = Number.isFinite(n) ? n : 2;
@@ -733,6 +734,10 @@ export function cacheKeyInput({
     // A day built around the Alhambra is not the day the cache holds for
     // someone who named nothing, even when every other answer matches.
     must,
+    // G12: the travel style changes the prompt, so it is part of the identity.
+    // A request without one keys exactly as before (compact drops the null),
+    // so the version did not move and the cached days stay reachable.
+    style: aiStyleKey(style),
     refine: normText(refine, 280),
     prev: Array.isArray(prevStopIds) ? prevStopIds.map((s) => String(s)) : [],
     lang,

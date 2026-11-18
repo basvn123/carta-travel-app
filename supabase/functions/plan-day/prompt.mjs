@@ -8,6 +8,7 @@
  */
 import { dataBlock } from '../_shared/aiGuard.mjs';
 import { frag, planDay as P } from '../_shared/prompts.js';
+import { aiStyleLines } from '../_shared/aiStyle.mjs';
 
 /** @type {Record<string, string>} */
 export const LANG_NAMES = {
@@ -31,7 +32,7 @@ const pick = (group, value) => (P.f[`profile.${group}.${value}`] != null ? f(`pr
  *   wantEvents: boolean, refine: string, prevStops: string[],
  *   profile: Record<string, unknown> | null,
  *   mustInclude: { name: string, id: string | null, lat: number | null, lon: number | null, timeOfDay: string | null }[],
- *   days: number, nonce: string,
+ *   days: number, nonce: string, style?: Record<string, unknown> | null,
  * }} p
  * @returns {string}
  */
@@ -89,6 +90,9 @@ export function buildPrompt(p) {
       pr.weather?.hot ? f('profile.hot') : '',
       Array.isArray(pr.moods) && pr.moods.length ? f('profile.moods', { moods: pr.moods.join(', ') }) : '',
     ] : []),
+    // G12: the travel style, after the answers it must never overrule (its
+    // head line says so). Nothing without a style, so old prompts stay as they were.
+    ...aiStyleLines(p.style, 'plan'),
     // Places the traveller named by hand. This is the one instruction the
     // model may not trade away for a tidier route: dropping a stop somebody
     // asked for by name is the single failure that makes a plan worthless.

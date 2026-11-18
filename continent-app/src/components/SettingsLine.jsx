@@ -15,7 +15,9 @@ import { FromPanel, fromName, fromPoint } from './FromPicker.jsx';
 import { AirportReach } from './AirportReach.jsx';
 import { CountriesPanel, countriesValue } from './CountriesControl.jsx';
 import { partyText } from '../lib/party.js';
-import { nextMode, TRAVEL_MODES } from '../lib/travelWay.js';
+import { TRAVEL_MODES } from '../lib/travelWay.js';
+// G12: which values the travel style set, and its ways for the cycler.
+import { nextWayFor, styleSourced } from './settingsStyle.js';
 import '../styles/77-settings-v2.css';
 import { rule } from '../lib/price/config.js';
 
@@ -138,13 +140,28 @@ function SettingsPop({ id, label, anchorRef, onClose, children, className = '' }
   );
 }
 
+/** The small umber dot beside a value the style set, and its words for a
+ *  screen reader (the dot alone would be colour carrying meaning). */
+function StyleMark({ id }) {
+  const { t } = useI18n();
+  return (
+    <>
+      <span className="settings-style-dot" aria-hidden="true" />
+      <span className="sr-only" id={id}>{t('settings.fromStyle')}</span>
+    </>
+  );
+}
+
 /** One part: a label over (or before) its value, one button. */
 function Part({
   name, label, value, display, mono, onClick, expanded, popId, partRef, hasPopup = 'dialog',
   // The phone face's buttons draw their own content and name (T496).
   ariaLabel, className = '', children,
+  // G12: the value came from the active travel style.
+  fromStyle = false,
 }) {
   const { t } = useI18n();
+  const markId = `${useId()}-style`;
   // A value that changes settles in place (T391, DIRECTION.md 2.3): one dip
   // of its opacity, the box keeping its width; nothing moves that did not
   // change, and nothing at all under reduced motion.
@@ -160,6 +177,7 @@ function Part({
       aria-expanded={hasPopup === 'dialog' && (popId || children) ? !!expanded : undefined}
       aria-controls={expanded && popId ? popId : undefined}
       aria-label={ariaLabel || t('settings.changeAria', { label, value })}
+      aria-describedby={fromStyle ? markId : undefined}
     >
       {children || (
         <>
@@ -170,6 +188,7 @@ function Part({
           <span ref={valueRef} className={`settings-part-value${mono ? ' is-mono' : ''}`} aria-hidden="true">{display ?? value}</span>
         </>
       )}
+      {fromStyle && <StyleMark id={markId} />}
     </button>
   );
 }
@@ -425,7 +444,8 @@ export function SettingsEditorSheet({ part, onClose, anchorRef = null }) {
 function WayPart({ s, compact = false }) {
   const { t } = useI18n();
   const mode = TRAVEL_MODES.includes(s.transportMode) ? s.transportMode : 'any';
-  const next = nextMode(mode);
+  const next = nextWayFor(mode, s.travelStyles?.active);
+  const fromStyle = styleSourced(s).way;
   const Icon = WAY_ICONS[mode];
   const label = t('way.label');
   const word = t(`way.${mode}`);
@@ -444,6 +464,7 @@ function WayPart({ s, compact = false }) {
       value={word}
       hasPopup={null}
       ariaLabel={aria}
+      fromStyle={fromStyle}
       display={(
         <span className="settings-way-value">
           <Icon size={16} className="settings-way-icon" />
@@ -515,6 +536,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
   const countryList = s.countryFilter || [];
   const countriesText = countriesValue(t, countryList, s.countryNot, names);
   const pickFrom = (p, then) => { s.setFrom(p); then?.(); };
+  const sourced = styleSourced(s);
   // T860: the home airports in reach, the same choice the planner's reach
   // question sets; shown once a town is set and the way there may fly.
   const mayFly = !['train', 'bus', 'car'].includes(s.transportMode);
@@ -554,7 +576,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
     const mode = TRAVEL_MODES.includes(s.transportMode) ? s.transportMode : 'any';
     // Any way draws a route, so it never reads as From's pin beside it.
     const WayIcon = mode === 'any' ? RouteIcon : WAY_ICONS[mode];
-    const nextWay = nextMode(mode);
+    const nextWay = nextWayFor(mode, s.travelStyles?.active);
     return (
       <div className={`settings-line settings-line-phone ${className}`.trim()} role="group" aria-label={t('settings.label')}>
         {(show('dates') || show('party')) && (
@@ -603,6 +625,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
             value={t(`way.${mode}`)}
             hasPopup={null}
             ariaLabel={t('way.cycleAria', { mode: t(`way.${mode}`), next: t(`way.${nextWay}`) })}
+            fromStyle={sourced.way}
             onClick={() => s.setTransportMode(nextWay)}
           >
             <WayIcon size={20} className="settings-quad-icon" />
@@ -708,6 +731,7 @@ export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children,
               partRef={partyRef}
               popId={`${baseId}-party`}
               expanded={open === 'party'}
+              fromStyle={sourced.party}
               onClick={() => toggle('party')}
             />
             {open === 'party' && (

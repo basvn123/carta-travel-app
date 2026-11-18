@@ -6,6 +6,7 @@ import { answerFacts } from '../../lib/ask/rank.js';
 import { composeAnswer, unknownNote } from '../../lib/ask/compose.js';
 import { buildPack } from '../../lib/ask/context.js';
 import { writeAnswer } from '../../lib/ask/generate.js';
+import { useAiStyle } from '../../hooks/useAiStyle.js';
 import { outsidePlace } from '../../lib/ask/outside.js';
 import { bindFollowUp, pointsBack } from '../../lib/ask/followup.js';
 import {
@@ -49,6 +50,8 @@ const TRIP_TYPES = new Set(['plan', 'about', 'when']);
 
 function useTurn(turn, vocab, ctx) {
   const { t, lang, byId, guided, price, labels, retrieve } = ctx;
+  // G12: the written answer picks each place's reason for this traveller.
+  const aiStyle = useAiStyle();
   // T573: a question asked with Explore's filters kept answers within them.
   const rows = turn.within && ctx.filteredRows?.length ? ctx.filteredRows : ctx.rows;
   const raw = React.useMemo(
@@ -106,7 +109,7 @@ function useTurn(turn, vocab, ctx) {
     if (hasWritten || !answer || !facts?.picks?.length) return undefined;
     const ctl = new AbortController();
     const monthsText = (d) => (d.climate?.best || []).map((m) => labels.month(m)).join(', ');
-    const pack = buildPack({ question: turn.q, lang, facts, answer, passages: found?.passages || [], labels: { monthsText, estWord: t('money.est') } });
+    const pack = buildPack({ question: turn.q, lang, facts, answer, passages: found?.passages || [], labels: { monthsText, estWord: t('money.est') }, style: aiStyle });
     setWritten({ state: 'writing', sentences: [], backend: null });
     const shown = [];
     writeAnswer(pack, {

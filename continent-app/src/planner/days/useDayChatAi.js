@@ -8,12 +8,15 @@ import { isGateway } from '../../lib/rating.js';
 import { buildCityCandidates, requestCitySuggestion } from '../aiCitySuggest.js';
 import { dwellMinutes, poiKind } from '../dayDraft.js';
 import { buildDays } from '../dayBuild.js';
+import { useAiStyle } from '../../hooks/useAiStyle.js';
 
 export function useDayChatAi({
   chatDest, chatInterests, chatVibe, chatWeather, destinations, groupSizeFor, homeTownId, ideas,
   ideasTownId, lang, moodFocus, moodInterests, newDayCount, newStartDate, newStayPoint,
   openBuiltPlan, prefs,
 }) {
+  // G12: the active travel style rides along with every plan (enum values only).
+  const aiStyle = useAiStyle();
   /**
    * Fold the ideas into the free-text wish the prompt already treats as a
    * hard requirement. The Edge Function caps this field at 280 characters
@@ -138,6 +141,7 @@ export function useDayChatAi({
       lang,
       stay: newStayPoint ? { lat: newStayPoint.lat, lon: newStayPoint.lon } : null,
       candidates,
+      ...(aiStyle ? { style: aiStyle } : {}),
     });
     // Rejoin each proposed stop with the catalogue photo it came from, so the
     // proposal shows the places rather than only naming them.
