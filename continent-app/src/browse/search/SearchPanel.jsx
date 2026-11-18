@@ -8,9 +8,10 @@ import { countryName } from '../../lib/countryName.js';
 import { loadSearchIndex } from '../../lib/searchIndex.js';
 import { settingsSummary } from '../../lib/settings/index.js';
 import {
-  cartaPlaces, cartaRegionsFrom, extractTokens, hitsFor, loadAreas, loadTownsFor, readRecent,
-  addRecent, rememberPick, resolveIds, suggest,
+  cartaPlaces, cartaRegionsFrom, extractTokens, hitsFor, loadAreas, loadTownsFor, prefetchFor, readRecent,
+  addRecent, rememberPick, removeFeature, resolveIds, suggest,
 } from '../../lib/search/index.js';
+import { isQuestion } from '../searchDockStore.js';
 import { openAskChat } from '../ask/askChatStore.js';
 import { openSettings, settingsSheetState } from '../settings/settingsSheetStore.js';
 import { openStudio } from '../styles/studioDoors.js';
@@ -43,6 +44,15 @@ function useSummary(t) {
       return [];
     }
   }, [s, style, t]);
+}
+
+/** Sets a React-controlled field's value as typing would, so the band's
+ *  own state follows (the field belongs to Lane 1's band). */
+function setFieldValue(field, value) {
+  if (!field) return;
+  const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+  if (setter) setter.call(field, value); else field.value = value;
+  field.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 /** Back to the search once Settings or the Style Studio closes, so Change
@@ -92,7 +102,6 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
   const showSettings = isPlaces && summary.length > 0;
   const listId = `${id || 'search'}-list`;
 
-  const [dropped, setDropped] = React.useState([]);
   const [allTokens, setAllTokens] = React.useState(false);
   const [towns, setTowns] = React.useState([]);
   const [areas, setAreas] = React.useState(null);
@@ -103,28 +112,44 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
 
   React.useEffect(() => {
     let live = true;
+    prefetchFor('');
     loadAreas().then((a) => { if (live) setAreas(a); });
     loadSearchIndex().then((ix) => { if (live) setCartaRegions(cartaRegionsFrom(ix)); });
     return () => { live = false; };
   }, []);
 
-  const { rest } = extractTokens(typed, dropped);
+  // A question goes to Ask: no feature tokens above it (flow-C m5).
+  const question = isQuestion(typed);
+  const { rest } = extractTokens(typed);
+  React.useEffect(() => {
+    if (typed.length === 1) prefetchFor(typed);
+  }, [typed]);
+  // Towns for the text without feature words and for the whole text, so a
+  // name holding a feature word ("Lake District") is still found.
   React.useEffect(() => {
     let live = true;
-    loadTownsFor(rest).then((list) => { if (live) setTowns(list); });
+    Promise.all([loadTownsFor(rest), rest === typed ? [] : loadTownsFor(typed)]).then(([a, b]) => {
+      if (!live) return;
+      if (!b.length) { setTowns(a); return; }
+      const seen = new Set(a.map((x) => x.gid));
+      setTowns([...a, ...b.filter((x) => !seen.has(x.gid))]);
+    });
     return () => { live = false; };
-  }, [rest]);
+  }, [rest, typed]);
 
   const result = React.useMemo(
-    () => suggest(typed, { places, towns, areas, cartaRegions, dropped }),
-    [typed, places, towns, areas, cartaRegions, dropped],
+    () => suggest(typed, { places, towns, areas, cartaRegions, lang, noTokens: question }),
+    [typed, places, towns, areas, cartaRegions, lang, question],
   );
 
   const featureName = (k) => t(`search.feature.${k}`);
   const labelOf = (it) => {
     const fx = (it.tokens || []).map(featureName).join(', ');
     if (it.type === 'feature') return fx;
-    const base = it.type === 'near' ? t('search.near', { place: it.name }) : it.name;
+    // A region carries its country, so the region Porto and the place
+    // Porto never share a label (picked.js keys on it, flow-C M1).
+    const base = it.type === 'near' ? t('search.near', { place: it.name })
+      : it.type === 'region' && it.cc ? `${it.name}, ${countryName(it.cc, '', lang)}` : it.name;
     if (!fx || it.type === 'place') return base;
     return t(it.type === 'near' ? 'search.featuresNear' : 'search.featuresIn', { features: fx, place: it.name });
   };
@@ -149,7 +174,7 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
   const optId = (i) => `${listId}-o${i}`;
 
   React.useEffect(() => { setActive(-1); }, [typed]);
-  React.useEffect(() => { setDropped([]); setAllTokens(false); }, [typing]);
+  React.useEffect(() => { setAllTokens(false); }, [typing]);
 
   const fieldOf = React.useCallback(() => inputRef?.current
     || (typeof document !== 'undefined' && id ? document.querySelector(`[aria-controls="${id}"], [aria-controls="${listId}"]`) : null),
@@ -207,6 +232,7 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
   React.useEffect(() => {
     const field = fieldOf();
     if (!field) return undefined;
+    field.setAttribute('aria-autocomplete', 'list');
     if (active >= 0) field.setAttribute('aria-activedescendant', optId(active));
     else field.removeAttribute('aria-activedescendant');
     if (active >= 0) document.getElementById(optId(active))?.scrollIntoView?.({ block: 'nearest' });
@@ -285,7 +311,7 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
     </div>
   );
 
-  const tokens = typing ? result.tokens : [];
+  const tokens = typing && !question ? result.tokens : [];
   const shown = allTokens ? tokens : tokens.slice(0, MAX_TOKENS_SHOWN);
   const tokenRow = tokens.length > 0 && (
     <div className="sp-tokens" role="group" aria-label={t('search.tokensAria')}>
@@ -293,7 +319,12 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
         <span key={k} className="sp-tok">
           <span className="sp-tok-word">{featureName(k)}</span>
           <Pressable className="sp-tok-x" aria-label={t('search.tokenRemove', { word: featureName(k) })}
-            onClick={() => setDropped((d) => [...d, k])}>
+            onClick={() => {
+              // The word leaves the field, and focus stays in it (Q6).
+              const field = fieldOf();
+              setFieldValue(field, removeFeature(query, k));
+              field?.focus();
+            }}>
             <HouseIcon.close size={16} />
           </Pressable>
         </span>
@@ -313,12 +344,13 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
     : '';
 
   return (
-    <div className={`sp${typing ? ' is-typing' : ' is-empty'}${showSettings ? ' has-settings' : ''}`}>
+    <div className={`sp${typing ? ' is-typing' : ' is-empty'}${showSettings ? ' has-settings' : ''}${options.length ? ' has-list' : ''}`}>
       <p className="sr-only" role="status" aria-live="polite">{status}</p>
       <div className="sp-main">
         {line}
         {tokenRow}
-        <div role="listbox" id={listId} aria-label={t('search.listAria')} className="sp-list">
+        <div role="listbox" id={listId} aria-label={t('search.listAria')} className="sp-list"
+          hidden={options.length === 0}>
           {nPlaces > 0 && (
             <div role="group" aria-labelledby={`${listId}-g1`}>
               <div className="sp-head" id={`${listId}-g1`} role="presentation">

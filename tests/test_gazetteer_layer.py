@@ -99,6 +99,18 @@ def test_every_name_routes_to_a_shard_that_holds_it(tmp_path):
                 assert any(r[0] == row[0] for r in held), name
 
 
+def test_rows_carry_the_name_for_each_ui_language(tmp_path):
+    out = tmp_path / "out"
+    G.build(_fixture(tmp_path), out, shards=3)
+    _, shards, areas = _load(out)
+    rows = {r[0]: r for rs in shards.values() for r in rs}
+    assert rows[2886242][7] == {"fr": "Cologne", "nl": "Keulen"}
+    assert len(rows[2657928]) == 7  # Zermatt: no other name, no map
+    regions = {r[0]: r for r in areas["regions"]}
+    assert regions["IT.16"][4] == {"it": "Toscana"}
+    assert {c[0]: c for c in areas["countries"]}["IT"][4] == {"nl": "Italië"}
+
+
 def test_areas_have_boxes_and_names(tmp_path):
     out = tmp_path / "out"
     G.build(_fixture(tmp_path), out, shards=3)

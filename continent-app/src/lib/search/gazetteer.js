@@ -52,6 +52,8 @@ export function prepareAreas(a) {
     folds: row[1].map(foldName),
     bbox: row[2],
     pop: row[3] || 0,
+    // the name to show per UI language, where it differs from names[0]
+    l: row[4] || {},
   });
   return {
     countries: (a?.countries || []).map(mk('country')),
@@ -86,10 +88,25 @@ export function prepareTowns(rows) {
     cc: r[4],
     a1: r[5],
     pop: r[6] || 0,
+    l: r[7] || {},
   }));
 }
 
 const prepared = new Map();
+
+/** Fetches what the first letters will need before they are typed: the
+ *  index and the areas when search opens, and on the first letter the
+ *  shards it spans, so the second letter answers from memory on a slow
+ *  network (flow-C, fixes-r1 Q8). Errors are ignored: it is only a warm-up. */
+export function prefetchFor(rawQuery = '') {
+  loadAreas();
+  const q = foldName(rawQuery).slice(0, 1);
+  loadGazetteerIndex().then((index) => {
+    for (const f of shardsFor(index, q)) {
+      if (!prepared.has(f)) getJson(f).then((rows) => { if (rows && !prepared.has(f)) prepared.set(f, prepareTowns(rows)); });
+    }
+  });
+}
 
 /** Towns whose shards a typed prefix spans, deduplicated; [] under 2 letters. */
 export async function loadTownsFor(rawQuery) {

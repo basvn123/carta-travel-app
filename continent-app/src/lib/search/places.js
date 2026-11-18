@@ -19,6 +19,12 @@ function foldsOf(city) {
   return [...out];
 }
 
+/** 'Venice (Marco Polo)' -> 'Venice'. */
+export function cityPart(name) {
+  const m = /^(.*?)\s*\(.*\)\s*$/.exec(name || '');
+  return (m ? m[1] : name || '').trim();
+}
+
 export function cartaPlaces(data) {
   const dests = data?.destinations;
   if (!dests) return [];
@@ -28,9 +34,15 @@ export function cartaPlaces(data) {
     const lat = d.city_lat ?? d.lat;
     const lon = d.city_lon ?? d.lon;
     if (typeof lat !== 'number' || typeof lon !== 'number') continue;
+    const airport = d.tier === 'airport';
     out.push({
       id: d.id || id,
-      city: d.city || '',
+      // An airport-tier record is the city's own place, named after its
+      // airport ('London (Heathrow)'); search shows the city, never the
+      // airport (decision.md APPROVED: no airport talk). Gems keep their
+      // whole name: there the brackets hold the village ('Luberon (Gordes)').
+      city: airport ? cityPart(d.city) : (d.city || ''),
+      airport,
       country: d.country || '',
       iso2: d.iso2 || '',
       lat,

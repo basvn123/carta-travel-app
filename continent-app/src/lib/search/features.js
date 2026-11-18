@@ -71,6 +71,24 @@ export function extractTokens(query, dropped = []) {
   return { tokens, rest: keep.join(' ') };
 }
 
+/**
+ * The typed text without one feature's words, keeping the rest as typed
+ * (fixes-r1 Q6): removing the Beach token takes "beach" out of the field,
+ * so it does not come back as a name search for "Palm Beach".
+ */
+export function removeFeature(query, key) {
+  const words = String(query || '').split(/\s+/).filter(Boolean);
+  const phrases = (FEATURES[key]?.words || []).map((w) => foldName(w).split(/\s+/))
+    .sort((a, b) => b.length - a.length);
+  const out = [];
+  for (let i = 0; i < words.length;) {
+    const hit = phrases.find((ph) => ph.every((w, j) => words[i + j] !== undefined && foldName(words[i + j]) === w));
+    if (hit) i += hit.length;
+    else { out.push(words[i]); i += 1; }
+  }
+  return out.join(' ');
+}
+
 /** True when a place's categories carry every token's feature. */
 export function hasFeatures(categories, tokens) {
   if (!tokens?.length) return true;

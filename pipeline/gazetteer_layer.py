@@ -27,7 +27,9 @@ entry, so it travels to the data host with the other search files):
                fetches one or two small files for what is typed, never the
                whole list (measure.md, gate G2)
 
-A town row is [geonameid, [names], lat, lon, cc, admin1, population]. A town
+A town row is [geonameid, [names], lat, lon, cc, admin1, population,
+{lang: name}?], the last only where a UI language names it differently; an
+area row ends with the same map. A town
 sits in every shard where one of its names starts, and carries all its
 names there, so a prefix search needs only the shards its prefix spans.
 
@@ -164,9 +166,10 @@ def read_countries(path):
 
 
 def read_alt_names(path, wanted):
-    """{gid: [names]} in LANGS for the geonameids in `wanted`, streamed
-    from the zip so the 790 MB text never lands on disk. Historic and
-    colloquial names are left out: they would match what nobody types."""
+    """{gid: [(lang, name, preferred, short)]} in LANGS for the geonameids
+    in `wanted`, streamed from the zip so the 790 MB text never lands on
+    disk. Historic and colloquial names are left out: they would match what
+    nobody types."""
     out = {}
     if not path.exists():
         return out
@@ -182,8 +185,26 @@ def read_alt_names(path, wanted):
                     continue
                 name = c[3].strip()
                 if name:
-                    out.setdefault(gid, []).append(name)
+                    out.setdefault(gid, []).append((c[2], name, c[4] == "1", c[5] == "1"))
     return out
+
+
+def alt_list(entries):
+    return [e[1] for e in entries or ()]
+
+
+def lang_names(main, entries):
+    """{lang: name} to show in each UI language, only where it differs from
+    the main name: "Lissabon" finds Lisbon in an English UI, which then shows
+    "Lisbon" (flow-C M4). Preferred names win, then full names over short
+    ones, then the first listed."""
+    best = {}
+    for lang, name, preferred, short in entries or ():
+        rank = (0 if preferred else 1, 1 if short else 0)
+        if lang not in best or rank < best[lang][0]:
+            best[lang] = (rank, name)
+    main_fold = fold(main)
+    return {lang: n for lang, (_, n) in sorted(best.items()) if fold(n) != main_fold}
 
 
 def names_for(main, ascii_name, alts):
@@ -258,8 +279,11 @@ def build(cache, out, *, shards=SHARDS, now=None):
     rows = {}
     keyed = []
     for gid, t in towns.items():
-        names = names_for(t["name"], t["ascii"], alts.get(gid, ()))
+        names = names_for(t["name"], t["ascii"], alt_list(alts.get(gid)))
         rows[gid] = [gid, names, round(t["lat"], 4), round(t["lon"], 4), t["cc"], t["a1"], t["pop"]]
+        shown = lang_names(t["name"], alts.get(gid))
+        if shown:
+            rows[gid].append(shown)
         for k in {fold(x) for x in names}:
             keyed.append((k, gid))
 
@@ -269,12 +293,14 @@ def build(cache, out, *, shards=SHARDS, now=None):
         if code not in bx:
             continue  # a region with no town in the list has nothing to show
         box, pop = bx[code]
-        area_regions.append([code, names_for(a["name"], a["ascii"], alts.get(a["gid"], ())), box, pop])
+        area_regions.append([code, names_for(a["name"], a["ascii"], alt_list(alts.get(a["gid"]))), box, pop,
+                             lang_names(a["name"], alts.get(a["gid"]))])
     area_countries = []
     for cc, c in sorted(countries.items()):
         if cc not in bx:
             continue
-        area_countries.append([cc, names_for(c["name"], "", alts.get(c["gid"], ())), bx[cc][0], c["pop"]])
+        area_countries.append([cc, names_for(c["name"], "", alt_list(alts.get(c["gid"]))), bx[cc][0], c["pop"],
+                               lang_names(c["name"], alts.get(c["gid"]))])
 
     out.mkdir(parents=True, exist_ok=True)
     table = []
@@ -289,7 +315,7 @@ def build(cache, out, *, shards=SHARDS, now=None):
     _write(out / "areas.json", {"countries": area_countries, "regions": area_regions})
     stamp = (now or datetime.now(timezone.utc)).strftime("%Y-%m-%d")
     index = {
-        "v": 1,
+        "v": 2,
         "built": stamp,
         "source": "GeoNames, CC BY 4.0",
         "langs": langs,

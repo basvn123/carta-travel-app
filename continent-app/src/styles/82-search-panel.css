@@ -82,27 +82,28 @@
   outline-offset: 2px;
 }
 
-/* The one line while typing */
+/* The settings while typing: every item whole, wrapping onto a second line
+   when the width runs out (never cut, never wider than the panel), Change
+   at the end where a thumb reaches it (flow-C M2). */
 .sp-line {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-2);
-  padding-left: var(--space-2);
+  min-width: 0;
+  padding: 0 0 var(--space-1) var(--space-2);
   border-bottom: var(--stroke-hair) solid var(--border-soft);
 }
 .sp-line-items {
   flex: 1;
   min-width: 0;
   display: flex;
-  gap: var(--space-3);
-  overflow: hidden;
-  white-space: nowrap;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  padding-top: var(--space-3);
   font-size: var(--text-label);
   color: var(--text-2);
-  -webkit-mask-image: linear-gradient(to right, black 85%, transparent);
-  mask-image: linear-gradient(to right, black 85%, transparent);
 }
-.sp-line-item { display: inline-flex; align-items: center; gap: var(--space-1); }
+.sp-line-item { display: inline-flex; align-items: center; gap: var(--space-1); min-width: 0; overflow-wrap: anywhere; }
 .sp-line-item:first-child { color: var(--umber-800); font-weight: 600; }
 
 /* Feature tokens: two shown, then "+n"; each remove is a 44 px target. */
@@ -187,7 +188,9 @@
 
 /* Desktop: suggestions beside the settings. */
 @media (min-width: 769px) {
-  .sp.has-settings {
+  /* Side by side only when there is a list: with no recent searches the
+     settings take the panel alone, no blank half (flow-C m6). */
+  .sp.has-settings.has-list {
     grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     column-gap: var(--space-4);
   }

@@ -135,7 +135,11 @@ export function useExploreCatalog({
         // exonym, a folded diacritic, a member village or a region box all
         // count as a hit. Additive only: everything the substring found
         // before, it still finds.
-        const plain = normalize(p.city).includes(q) || normalize(p.country).includes(q);
+        // G12: a label picked from the search panel (lib/search/picked.js)
+        // means exactly its places, so "Porto" the place is not widened to
+        // Portofino and Porto Ercole by the substring.
+        const plain = !searchHits?.picked
+          && (normalize(p.city).includes(q) || normalize(p.country).includes(q));
         const viaIndex = searchHits?.ids?.has(p.id) || false;
         const viaRegion = searchHits?.bbox
           ? ((p.city_lat ?? p.lat) >= searchHits.bbox[1]

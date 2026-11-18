@@ -34,7 +34,7 @@ const TOWNS = prepareTowns([
   [2264442, ["Porto Covo"], 37.8526, -8.7902, "PT", "19", 1400],
 ]);
 const AREAS = prepareAreas({
-  countries: [["PT", ["Portugal", "Portogallo"], [-31.3, 32.6, -6.2, 42.2], 10e6], ["CH", ["Switzerland", "Zwitserland", "Schweiz"], [5.9, 45.8, 10.5, 47.8], 8e6]],
+  countries: [["PT", ["Portugal", "Portogallo"], [-31.3, 32.6, -6.2, 42.2], 10e6], ["CH", ["Switzerland", "Zwitserland", "Schweiz"], [5.9, 45.8, 10.5, 47.8], 8e6, { nl: "Zwitserland", de: "Schweiz" }]],
   regions: [["CH.VS", ["Valais", "Wallis", "Vallese"], [6.75, 45.9, 8.2, 46.5], 278000], ["IT.16", ["Tuscany", "Toscana"], [9.7, 42.3, 12.4, 44.5], 3.4e6]],
 });
 
@@ -98,9 +98,10 @@ test("rank: Carta places, then towns by population, then regions, then countries
   ]);
   const extra = cartaPlaces({ destinations: { "gem:valx": { city: "Valère", iso2: "CH", lat: 46.23, lon: 7.36, categories: [] } } });
   const r = suggest("val", { places: [...places, ...extra], towns, areas: AREAS });
-  assert.deepEqual(r.items.map((x) => x.type), ["place", "near", "near", "region"]);
-  assert.equal(r.items[1].name, "Valbig");
-  assert.equal(r.items[3].code, "CH.VS");
+  // fixes-r1 Q7: regions and countries by prefix rank above villages.
+  assert.deepEqual(r.items.map((x) => x.type), ["place", "region", "near", "near"]);
+  assert.equal(r.items[1].code, "CH.VS");
+  assert.equal(r.items[2].name, "Valbig");
 });
 
 test("an area named in full leads, and resolves to the places inside it", () => {
@@ -108,7 +109,7 @@ test("an area named in full leads, and resolves to the places inside it", () => 
   assert.equal(r.items[0].type, "region");
   const ids = resolveIds(r.items[0], places);
   assert.deepEqual(ids.sort(), ["gem:sion", "gem:tasch", "gem:visp"]);
-  const it = suggest("zwitserland", { places, areas: AREAS }).items[0];
+  const it = suggest("zwitserland", { places, areas: AREAS, lang: "nl" }).items[0];
   assert.equal(it.type, "country");
   assert.equal(it.name, "Zwitserland");
   assert.equal(it.count, 3);
@@ -162,4 +163,54 @@ test("recent searches: newest first, deduplicated, capped, storage errors swallo
   const broken = { getItem: () => { throw new Error("off"); }, setItem: () => { throw new Error("off"); } };
   assert.deepEqual(readRecent(broken), []);
   assert.doesNotThrow(() => addRecent({ type: "place", key: "p:x" }, broken));
+});
+
+test("names show in the UI language, whatever language matched (Q3)", () => {
+  const en = suggest("zwitserland", { places, areas: AREAS, lang: "en" }).items[0];
+  assert.equal(en.name, "Switzerland");
+  assert.equal(suggest("schw", { places, areas: AREAS, lang: "de" }).items[0].name, "Schweiz");
+  // a prefix in another language does not offer the country ("porto" is not Portogallo)
+  assert.equal(suggest("portog", { places, areas: AREAS, lang: "en" }).items.some((x) => x.type === "country"), false);
+  const towns = prepareTowns([[9, ["Lisboa", "Lisbon", "Lissabon"], 38.72, -9.14, "PT", "14", 500000, { en: "Lisbon", nl: "Lissabon" }]]);
+  const near = suggest("lissab", { places, towns, lang: "en" }).items.find((x) => x.type === "near");
+  assert.equal(near.name, "Lisbon");
+});
+
+test("feature words stay part of a place name (Q4)", () => {
+  const extra = cartaPlaces({ destinations: {
+    "gem:ld": { city: "Lake District", iso2: "GB", lat: 54.5, lon: -3.1, categories: ["lake"] },
+    "gem:bled": { city: "Bled", iso2: "SI", lat: 46.37, lon: 14.11, categories: ["lake"] },
+  } });
+  const all = [...places, ...extra];
+  const ld = suggest("Lake District", { places: all });
+  assert.deepEqual(ld.tokens, []);
+  assert.equal(ld.items[0].id, "gem:ld");
+  const bled = suggest("Lake Bled", { places: all });
+  assert.deepEqual(bled.tokens, []);
+  assert.equal(bled.items[0].id, "gem:bled");
+  assert.deepEqual(suggest("lake", { places: all }).tokens, ["lake"]);
+  assert.deepEqual(suggest("what beach in June?", { places: all, noTokens: true }).tokens, []);
+  assert.deepEqual(suggest("Strand in Portugal", { places, areas: AREAS }).items[0].type, "country");
+});
+
+test("airports show as their city, and one town gives one row (Q5)", () => {
+  const ps = cartaPlaces({ destinations: {
+    VCE: { tier: "airport", city: "Venice (Marco Polo)", iso2: "IT", lat: 45.5, lon: 12.35, city_lat: 45.44, city_lon: 12.33, categories: [] },
+    CGN: { tier: "airport", city: "Cologne-Bonn", iso2: "DE", lat: 50.87, lon: 7.14, categories: [] },
+    "gem:koln": { city: "Köln", iso2: "DE", lat: 50.94, lon: 6.96, categories: [] },
+    "gem:luberon": { city: "Luberon (Gordes)", iso2: "FR", lat: 43.9, lon: 5.2, categories: [] },
+  } });
+  assert.equal(ps.find((p) => p.id === "VCE").city, "Venice");
+  assert.equal(ps.find((p) => p.id === "gem:luberon").city, "Luberon (Gordes)");
+  const towns = prepareTowns([[2886242, ["Köln", "Cologne"], 50.9333, 6.95, "DE", "07", 1024621]]);
+  const ids = suggest("cologne", { places: ps, towns }).items.map((x) => x.id);
+  assert.deepEqual(ids, ["gem:koln"]);
+});
+
+test("no dead-end rows: no 0-place feature row, no Near beside its own region (Q7)", () => {
+  assert.equal(suggest("ski islands", { places }).items.length, 0);
+  const areas = prepareAreas({ countries: [], regions: [["CH.VS", ["Valais"], [6.75, 45.9, 8.2, 46.5], 1]] });
+  const towns = prepareTowns([[5, ["Valais"], 46.2, 7.5, "CH", "VS", 900]]);
+  const items = suggest("valais", { places, towns, areas }).items;
+  assert.equal(items.filter((x) => x.name === "Valais").length, 1);
 });
