@@ -5,7 +5,7 @@ import { HouseIcon } from '../../components/HouseIcons.jsx';
 import {
   AreaIcon, BeachIcon, BoltIcon, CityIcon, CoffeeIcon, CompassIcon, DiningIcon, InfoIcon, LeafIcon, LotusIcon,
   MuseumIcon, MusicIcon, PalmIcon, RoadIcon, ScaleIcon, ShoeIcon, SkylineIcon, SnowIcon, TownIcon, VillageIcon,
-  PiggyIcon, DiamondIcon,
+  PiggyIcon,
 } from '../../components/Icons.jsx';
 import { PartyEditor } from '../../planner/PartyEditor.jsx';
 import { radioGroupKeyDown, useRovingRadios } from '../../components/ui/radioGroup.js';
@@ -93,7 +93,6 @@ export function StepName({ draft, set, onWho, focusTitle, autoName }) {
 export function StepWay({ draft, set, focusTitle }) {
   const { t } = useI18n();
   const ways = draft.ways || [];
-  const [choosing, setChoosing] = React.useState(false);
   const modes = TRAVEL_MODES.filter((m) => m !== 'any');
   return (
     <>
@@ -103,32 +102,31 @@ export function StepWay({ draft, set, focusTitle }) {
         {modes.map((m) => (
           <Tile key={m} on={ways.includes(m)} Icon={WAY_ICONS[m]} label={t(`way.${m}`)}
             tag={draft.way === m && ways.includes(m) ? t('studio.onExplore') : null}
-            onClick={() => { setChoosing(false); set('way', toggleWay(draft, m)); }} />
+            onClick={() => set('way', toggleWay(draft, m))} />
         ))}
       </div>
       {ways.length === 0 && <p className="sst-line">{t('studio.wayNone')}</p>}
+      {/* One control, only when there is a choice to make: which of the
+          ways picked Explore prices with. */}
       {ways.length > 1 && (
-        <div className="sst-line sst-line-main">
-          <span className="sst-line-mark" aria-hidden="true"><HouseIcon.star size={16} /></span>
-          <span className="sst-line-text">{t(`studio.wayMain.${draft.way}`)}</span>
-          <Button variant="quiet" size="sm" aria-expanded={choosing} onClick={() => setChoosing(!choosing)}>{t('studio.wayChange')}</Button>
+        <div className="sst-group">
+          <p className="sst-label" id="sst-way-shown" aria-hidden="true">{t('studio.wayShown')}</p>
+          <Segmented
+            label={t('studio.wayShown')}
+            block
+            className="sst-way-main"
+            value={draft.way}
+            onChange={(m) => set('way', { ...draft, way: m })}
+            options={ways.map((m) => ({ value: m, label: t(`way.${m}`), icon: React.createElement(WAY_ICONS[m], { size: 16 }) }))}
+          />
         </div>
-      )}
-      {ways.length > 1 && choosing && (
-        <Segmented
-          label={t('studio.wayMainAsk')}
-          block
-          className="sst-way-main"
-          value={draft.way}
-          onChange={(m) => set('way', { ...draft, way: m })}
-          options={ways.map((m) => ({ value: m, label: t(`way.${m}`), icon: React.createElement(WAY_ICONS[m], { size: 16 }) }))}
-        />
       )}
     </>
   );
 }
 
-const PRIORITY_ICONS = { price: PiggyIcon, balance: ScaleIcon, comfort: DiamondIcon };
+// Three outline glyphs alike (the filled diamond stood out of the set).
+const PRIORITY_ICONS = { price: PiggyIcon, balance: ScaleIcon, comfort: HouseIcon.star };
 
 /** Step 4: what matters most, then the three trade-offs it sets, each one
  *  flippable. Picking a card puts the three back to that card's answers. */

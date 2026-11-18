@@ -115,8 +115,9 @@ export function StaySpendFields({ stay, lifestyle, stayTiers, onStay, onLifestyl
  * One choice tile, the wizard's shared look: the icon over its word, the
  * selected one on the umber tint with an umber edge and a tick disc inside
  * its top right corner (never colour alone). `radio` gives a radio in a
- * radiogroup; otherwise a toggle (aria-pressed). `tag` is a small mark
- * inside the tile (the way Explore prices with).
+ * radiogroup; otherwise a toggle (aria-pressed). `tag` is a small mark on
+ * the tile's bottom row, clear of the icon and the word (the way Explore
+ * prices with).
  */
 export function Tile({ on, Icon, label, onClick, radio = false, disabled = false, tag = null, wide = false }) {
   const a11y = radio ? { role: 'radio', 'aria-checked': on } : { 'aria-pressed': on };
@@ -128,9 +129,9 @@ export function Tile({ on, Icon, label, onClick, radio = false, disabled = false
       onClick={disabled ? undefined : onClick}
       {...a11y}
     >
-      {tag && <span className="sst-tile-tag">{tag}</span>}
       {Icon && <span className="sst-tile-ic" aria-hidden="true"><Icon size={22} /></span>}
       <span className="sst-tile-label">{label}</span>
+      {tag && <span className="sst-tile-tag">{tag}</span>}
       <span className="sst-tile-tick" aria-hidden="true"><HouseIcon.check size={12} /></span>
     </button>
   );

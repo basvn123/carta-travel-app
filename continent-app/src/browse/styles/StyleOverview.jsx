@@ -133,11 +133,11 @@ export function StyleOverview({ ts, figures, fresh, escRef, onClose, onCreate, o
           <div className="sst-why-rows" id="sst-why-rows" hidden={folded}>
             <p className="sst-why-row">
               <span className="sst-why-ic" aria-hidden="true"><HouseIcon.bed size={20} /></span>
-              <span><b>{t('studio.whyStayHead')}</b> {t('studio.whyStay')}</span>
+              <span className="sst-why-text"><b className="sst-why-head">{t('studio.whyStayHead')}</b><span>{t('studio.whyStay')}</span></span>
             </p>
             <p className="sst-why-row">
               <span className="sst-why-ic" aria-hidden="true"><HouseIcon.signpost size={20} /></span>
-              <span><b>{t('studio.whyExploreHead')}</b> {t('studio.whyExplore')}</span>
+              <span className="sst-why-text"><b className="sst-why-head">{t('studio.whyExploreHead')}</b><span>{t('studio.whyExplore')}</span></span>
             </p>
           </div>
         </section>

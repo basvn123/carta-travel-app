@@ -114,14 +114,15 @@
   display: grid;
   grid-template-columns: 36px 1fr;
   gap: var(--space-3);
-  align-items: start;
+  align-items: center;
   margin: 0;
   font-size: var(--text-body);
   line-height: var(--leading-body);
   color: color-mix(in srgb, var(--home-ink-on-deep) 88%, var(--umber-800));
   text-wrap: pretty;
 }
-.sst-why-row b { font-weight: 700; color: var(--home-ink-on-deep); }
+.sst-why-text { display: grid; gap: 2px; min-width: 0; }
+.sst-why-head { font-size: var(--text-lead); font-weight: 700; line-height: var(--leading-tight); color: var(--home-ink-on-deep); }
 .sst-why-ic {
   display: grid;
   place-items: center;
@@ -170,7 +171,9 @@
 .sst-card-hit:active { transform: scale(var(--press-scale, 0.98)); }
 /* The ring goes round the whole card, More button and all, so it never
    cuts across the card's own edge. */
-.sst-card-hit:focus-visible { outline: none; }
+/* .fsheet button:focus-visible (14-filters-panels.css) would draw a second,
+   inner ring; this wins over it. */
+.sst-cards .sst-card .sst-card-hit:focus-visible { outline: none; }
 .sst-card:has(> .sst-card-hit:focus-visible) { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .sst-disc {
   display: grid;
@@ -532,12 +535,11 @@ button.sst-bar-step { height: var(--tap); cursor: pointer; border-radius: var(--
 }
 .sst-row .sst-tile-tick { top: 50%; right: var(--space-3); margin-top: -10px; }
 .is-on > .sst-tile-tick { opacity: 1; transform: none; }
-/* The one saffron mark, inside the tile's top left so it never spills. */
+/* The one saffron mark, the tile's bottom row: clear of the icon, the word
+   and the tick. */
 .sst-tile-tag {
-  position: absolute;
-  top: var(--space-2);
-  left: var(--space-2);
-  max-width: calc(100% - 40px);
+  max-width: 100%;
+  margin-top: 2px;
   padding: 1px var(--space-2);
   border-radius: var(--radius-pill);
   background: var(--sun-400);
@@ -550,20 +552,8 @@ button.sst-bar-step { height: var(--tap); cursor: pointer; border-radius: var(--
   text-overflow: ellipsis;
 }
 
-/* One line under the ways, with its Change. */
+/* The line under the ways when none is picked. */
 .sst-line { margin: 0; font-size: var(--text-body); color: var(--text-2); }
-.sst-line-main {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
-  border: var(--stroke-hair) solid var(--border);
-  border-radius: var(--radius-control);
-  color: var(--text);
-}
-.sst-line-mark { flex: none; color: var(--sun-800); }
-.sst-line-text { flex: 1; min-width: 0; }
-.sst-line-main .btn { flex: none; min-height: var(--tap); }
 
 /* Step 4: the trade-offs, a word and a Yes or No each. */
 .sst-trades { display: grid; }
@@ -675,7 +665,10 @@ button.sst-bar-step { height: var(--tap); cursor: pointer; border-radius: var(--
 .sst-bar { display: flex; gap: 3px; height: 10px; }
 .sst-bar i { min-width: 6px; border-radius: var(--radius-pill); transition: flex-grow var(--dur-3) var(--ease-out); }
 .sst-bar-bed, .sst-dot-bed { background: var(--action); }
-.sst-bar-food, .sst-dot-food { background: var(--lagoon-600); }
+/* Food in a light umber with a darker edge (no teal in the studio, owner
+   2026-11-18): the edge holds 3:1 on the paper, and the fill tells it from
+   the solid bed segment; the legend's words carry the meaning too. */
+.sst-bar-food, .sst-dot-food { background: var(--umber-200); box-shadow: inset 0 0 0 1.5px var(--umber-500); }
 .sst-legend { display: flex; gap: var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
 .sst-legend-item { display: inline-flex; align-items: center; gap: 6px; }
 .sst-dot { width: 8px; height: 8px; border-radius: 50%; }
