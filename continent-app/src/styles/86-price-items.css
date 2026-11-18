@@ -271,6 +271,15 @@
 /* The day strip scrolls on its own, so a sideways swipe never drags the sheet. */
 .pft-days { overflow-x: auto; scroll-snap-type: x proximity; overscroll-behavior-x: contain; scrollbar-width: thin; margin: 0 calc(-1 * var(--space-1)); }
 .pft-days-row { display: flex; width: max-content; padding: 0 var(--space-1); }
+/* The strip is cut mid-bar at both ends ("S 5", "S 1" in the desktop sheet,
+   judge round 1): a short fade says there is more, and the row's end
+   padding lets the first and last bars scroll clear of it. #000 is only
+   the alpha mask, not a colour. */
+.pft-days {
+  scroll-padding-inline: var(--space-5);
+  mask-image: linear-gradient(to right, transparent, #000 var(--space-5), #000 calc(100% - var(--space-5)), transparent);
+}
+.pft-days-row { padding-inline: var(--space-5); }
 .btn.pft-day {
   position: relative;
   display: flex;
