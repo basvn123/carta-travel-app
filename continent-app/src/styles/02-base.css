@@ -10,6 +10,27 @@ html, body, #root {
   overflow: hidden;
 }
 
+/* App feel on a phone (ROADMAP I7). The screen itself never rubber-bands or
+   pulls to refresh: the lists inside it scroll, the frame stays put, as in an
+   installed app. The grey flash a browser paints over a tapped control is
+   off, because the Press primitive below already answers every tap. */
+html, body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+/* Controls are things you press, not text you copy: no selection loupe and
+   no link menu when a thumb rests on a tab or a button, and no double-tap
+   zoom between two quick taps. Links in running text keep the menu, so a
+   traveller can still copy or share an address. */
+:where(button, [role="button"], [role="tab"], .bottom-nav, .top-bar nav, summary) {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+:where(button, a[href], [role="button"], [role="tab"], summary, label, input, select) {
+  touch-action: manipulation;
+}
+
 body {
   font-family: var(--ui);
   font-size: var(--text-body);
