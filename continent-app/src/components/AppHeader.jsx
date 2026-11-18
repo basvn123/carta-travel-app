@@ -5,6 +5,7 @@ import { HouseIcon } from './HouseIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
 import { PersonIcon } from './Icons.jsx';
+import { Button } from './ui/index.js';
 import { useTogether, waitingCount } from '../together/useTogether.js';
 
 /* The three places (T496, roadmap 1.3a and 1.15; owner T485-b): Explore,
@@ -99,9 +100,9 @@ function AccountLink({ user, current, onNavigate, onSignIn = null }) {
   // signed in, it is the avatar, a link to Account.
   if (!user && onSignIn) {
     return (
-      <button type="button" className="hdr-pill signin-pill" onClick={() => onSignIn('signin')}>
+      <Button variant="secondary" className="hdr-pill signin-pill" onClick={() => onSignIn('signin')}>
         {t('auth.signIn')}
-      </button>
+      </Button>
     );
   }
   const name = user ? (user.user_metadata?.full_name?.trim() || user.email) : t('header.accountTitle');
