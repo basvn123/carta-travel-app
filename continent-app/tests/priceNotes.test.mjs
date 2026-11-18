@@ -70,8 +70,9 @@ test('Explore: no note line on the list, the rails or a card; the notes live in 
   const items = src('components/PriceItems.jsx');
   assert.match(items, /const ORDER = \['bed', 'food', 'transport'/);
   assert.match(items, /data-item=\{r\.key\}/);
-  // The map panel keeps its head.
-  assert.match(src('browse/MapPlacePanel.jsx'), /<ListHead t=\{t\} \/>/);
+  // The map list lost its head too (judge round 1): every row says "/day".
+  assert.doesNotMatch(src('browse/MapPlacePanel.jsx'), /ListHead/);
+  assert.doesNotMatch(src('browse/explore/PlaceRow.jsx'), /export function ListHead/);
 });
 
 test('Ask card: the stay section carries the notes from the destination cost row', async () => {

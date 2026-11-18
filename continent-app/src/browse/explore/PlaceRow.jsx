@@ -2,11 +2,8 @@ import React from 'react';
 import { WaterQualityBadge, swimRelevant } from '../../components/WaterQualityBadge.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
-import { regionLine, tripDates } from '../../lib/placeOverview.js';
+import { regionLine } from '../../lib/placeOverview.js';
 import { countryName } from '../../lib/countryName.js';
-import { useSettings } from '../../components/SettingsLine.jsx';
-import { useDayView } from '../../hooks/useDayView.js';
-import { useI18n } from '../../i18n/index.jsx';
 import { useSettledFigure } from '../../lib/figureChange.js';
 import { MatchLine } from '../WhyItMatches.jsx';
 import { WhyChips } from '../WhyChips.jsx';
@@ -34,34 +31,6 @@ import { PlaceScore, BandWord, RowFormation } from './HouseParts.jsx';
  * keeps the .xrow, .xrow-hit, .xrow-name, .xrow-country, .xrow-why, .xprice
  * and .xrow-save names the harnesses read.
  */
-
-/**
- * The list's column head: the traveller's dates (only when set) and the unit
- * every figure below is in, said once (DESIGN.md: "the unit is said once in
- * the column head"). Each row still carries the unit for a screen reader, so
- * the head itself is hidden from it.
- */
-export function ListHead({ t, notes = [] }) {
-  const settings = useSettings();
-  const view = useDayView();
-  const { lang, languages } = useI18n();
-  const bcp47 = languages?.find((l) => l.code === lang)?.bcp47 || 'en-GB';
-  const dates = tripDates(settings, t, bcp47);
-  return (
-    <div className="xlist-head">
-      <span className="xlist-dates" aria-hidden="true">{dates || ''}</span>
-      {/* A price note every place below shares ("Local transport: not
-          yet") is said once here, not under every card (owner rule: no
-          repeated text). It stays readable to a screen reader. */}
-      {notes.map((key) => (
-        <span className="xlist-note" data-note={key} key={key}>
-          {t('price.noteMissing', { part: t(`price.item.${key}`) })}
-        </span>
-      ))}
-      <span className="xlist-unit" aria-hidden="true">{view.total ? view.unit : t('explore.colUnit')}</span>
-    </div>
-  );
-}
 
 /** The region and the country as two parts of one line, in the language's
  *  own order ("Alps, Italy"): the region gives way, the country never. */

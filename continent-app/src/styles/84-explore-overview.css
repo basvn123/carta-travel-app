@@ -578,11 +578,10 @@
   .explore-shell.is-focus .xbar.xbar .xtools { gap: 6px; }
   .explore-shell.is-focus .xbar.xbar .xtools .btn { padding: 0 var(--space-2); gap: var(--space-1); }
   .explore-shell.is-focus .xcats-bar { margin-bottom: var(--space-2); }
-  /* The list's tabs at 48 px (the tap floor is 44) and a tight unit head:
+  /* The list's tabs at 48 px (the tap floor is 44):
      the rows keep eight to a 390 x 844 screen with the region shown. */
   .explore-shell.is-focus .xcats-row .ui-tab { min-height: 46px; }
   .explore-shell.is-focus .xcats-bar.xcats-bar { margin-bottom: var(--space-1); }
-  .explore-shell.is-focus .xlist-head { padding-block: 1px; }
 }
 
 /* The Countries pill takes its words' width but may shrink to the row,

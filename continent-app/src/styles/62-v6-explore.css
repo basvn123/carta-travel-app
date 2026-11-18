@@ -448,22 +448,6 @@
   transition: opacity var(--dur-2) var(--ease-out);
 }
 .explore-shell .xrows.is-pending { opacity: 0.55; }
-.xlist-head {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-1) 6px;
-  border-bottom: var(--stroke-hair) solid var(--border);
-  font-size: var(--text-label);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  color: var(--text-2);
-}
-.xlist-unit { margin-left: auto; text-align: right; }
-/* The unit ends over the figures, not over the save column. */
-.xrows--ledger ~ .xlist-head,
-.xlist-head:has(+ .xrows--ledger),
-.xlist-head:has(+ .mpp-rows) { padding-right: calc(var(--tap) + var(--space-1)); }
 /* G12, D10 (explore polish): the row itself is the grid, so the price
    formation (buttons) can sit outside the link and still face the name. The
    link is a subgrid over every column but the save one; its parts land in
@@ -609,19 +593,6 @@
 .explore-shell .xempty-mark { display: block; margin: var(--space-7) auto var(--space-3); }
 .explore-shell .xempty-mark + .xempty { align-items: center; text-align: center; }
 .explore-shell .xempty-mark + .xempty .empty-result-line { font-size: var(--text-lead); }
-/* Over the rails the head is a quiet line (the unit and any note every card
-   shares), close to the first rail, without a rule. */
-.xrails > .xlist-head { padding: 0; border-bottom: 0; margin-bottom: calc(var(--space-3) - var(--space-7)); }
-.xlist-note { color: var(--text-2); }
-/* Over the rails a shared note ("Local transport: not yet") is about the
-   figures, so it stands with their unit at the right, after a hairline,
-   instead of floating at the left with no subject (polish lane, final
-   judges). The dates, when set, keep the left. */
-.xrails > .xlist-head { justify-content: flex-end; align-items: baseline; }
-.xrails > .xlist-head .xlist-dates { order: -2; margin-right: auto; }
-.xrails > .xlist-head .xlist-dates:empty { display: none; }
-.xrails > .xlist-head .xlist-unit { order: -1; margin-left: 0; }
-.xrails > .xlist-head .xlist-note { padding-left: var(--space-3); border-left: var(--stroke-hair) solid var(--border); font-weight: 500; }
 @media (max-width: 768px) {
   /* Room under the last row for the floating Map pill. */
   .explore-shell .xcontent-main { padding-bottom: calc(var(--tap) + var(--space-7)); }

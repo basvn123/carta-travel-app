@@ -945,7 +945,6 @@ export const nl = {
   "detail.tabBreakdown": "Overzicht",
   "detail.tag": "Bestemming",
   // lane:explore (house style 2026-11): this lane adds its new keys directly under this line
-  "explore.colUnit": "Een dag, per persoon",
   "detail.timesPeople": " × {n} personen",
   "detail.tollNotes": "Inclusief {notes}, per auto, geprijsd per doorkruist land.",
   "detail.tolls": "Tol / vignet",

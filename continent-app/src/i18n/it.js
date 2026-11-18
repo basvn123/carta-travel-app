@@ -936,7 +936,6 @@ export const it = {
   "detail.tabBreakdown": "Dettaglio costi",
   "detail.tag": "Destinazione",
   // lane:explore (house style 2026-11): this lane adds its new keys directly under this line
-  "explore.colUnit": "Un giorno, a persona",
   "detail.timesPeople": " × {n} persone",
   "detail.tollNotes": "Include {notes}, per auto, calcolato per ogni paese attraversato.",
   "detail.tolls": "Pedaggi / bollino",
