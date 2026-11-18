@@ -10,7 +10,7 @@
  *    into its cache key; plan-day's prompt and cache key take it.
  * 4. The client: styleForAi's output passes the server check whole, and
  *    every Ask and plan-day call site sends it.
- * 5. Explore: the settings line's style marks and its way cycler.
+ * 5. Explore: the search dock's style marks and the style's ways first.
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -21,7 +21,7 @@ import { buildPrompt } from '../../supabase/functions/plan-day/prompt.mjs';
 import { cacheKeyInput } from '../../supabase/functions/plan-day/logic.mjs';
 import { STYLE_AI_ENUMS, styleForAi } from '../src/lib/styleForAi.js';
 import { normalizeStyle, TEMPLATES } from '../src/lib/travelStyles.js';
-import { nextWayFor, styleSourced } from '../src/components/settingsStyle.js';
+import { styleSourced, wayChoices } from '../src/components/settingsStyle.js';
 
 const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 const golden = JSON.parse(read('../../prompts/_golden/js.json'));
@@ -200,14 +200,24 @@ test('the settings line marks the party and the way the style set, and nothing i
   assert.deepEqual(styleSourced({ ...s, travelStyles: { active: null } }), { party: false, way: false });
 });
 
-test("the way cycler steps through the style's ways when it has two or more", () => {
-  const two = { ways: ['train', 'plane'] };
-  assert.equal(nextWayFor('train', two), 'plane');
-  assert.equal(nextWayFor('plane', two), 'train');
-  assert.equal(nextWayFor('any', two), 'train', 'a mode outside the list steps to its first');
-  assert.equal(nextWayFor('car', { ways: ['car'] }), 'any', 'one way: the full list');
-  assert.equal(nextWayFor('plane', null), 'train');
-  assert.equal(nextWayFor('train', { ways: ['train', 'any', 'rocket'] }), 'bus', 'junk is ignored; one real way left steps the full list');
+test("the Transport card offers the style's ways first when it has two or more", () => {
+  const all = ['any', 'plane', 'train', 'bus', 'car'];
+  const two = { ways: ['train', 'car'] };
+  assert.deepEqual(wayChoices('train', two), { shown: ['train', 'car'], more: true }, 'the style order');
+  assert.deepEqual(wayChoices('train', two, true).shown, all, 'Other ways shows the rest');
+  assert.deepEqual(wayChoices('plane', two).shown, all, 'the selected way is never hidden');
+  assert.deepEqual(wayChoices('car', { ways: ['car'] }).shown, all, 'one way: every way');
+  assert.deepEqual(wayChoices('plane', null).shown, all);
+  assert.deepEqual(wayChoices('train', { ways: ['train', 'any', 'rocket'] }).shown, all, 'junk is ignored');
+});
+
+test('the live search dock draws the style marks and the ways, and the dead settings line is gone', () => {
+  const dock = read('../src/components/SearchDock.jsx');
+  assert.match(dock, /fromStyle=\{sourced\.party\}/);
+  assert.match(dock, /fromStyle=\{sourced\.way\}/);
+  assert.match(dock, /className="sr-only">\{`, \$\{t\('settings\.fromStyle'\)\}`\}/, 'the dot has words');
+  assert.match(dock, /ways\.shown\.map/);
+  assert.doesNotMatch(read('../src/components/SettingsLine.jsx'), /export function SettingsLine\b/);
 });
 
 test('Explore: "Priced for" heads the full pane and never a chip popover', () => {

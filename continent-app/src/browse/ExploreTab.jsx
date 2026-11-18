@@ -494,14 +494,31 @@ export function ExploreTab({
   const stylesRef = React.useRef(travelStyles);
   stylesRef.current = travelStyles;
   const [startOpen, setStartOpen] = React.useState(null);
+  // Read when the studio's chunk arrives, which can be seconds later.
+  const hereRef = React.useRef(false);
+  hereRef.current = isActive && !pageOver;
   React.useEffect(() => {
-    if (!isActive || pageOver) return;
+    if (!isActive || pageOver) return undefined;
     const ts = stylesRef.current;
     const mode = startMode({ noStyle: !ts?.list?.length });
-    if (!mode) return;
-    markStartSeen();
-    if (mode === 'create') ts?.setOpen({ view: 'create' });
-    else setStartOpen(mode);
+    if (!mode) return undefined;
+    if (mode !== 'create') {
+      markStartSeen();
+      setStartOpen(mode);
+      return undefined;
+    }
+    // G12 (flow-1 m5): the create flow opens only once its chunk is here
+    // (the same module App's lazy studio loads, so it then draws at once,
+    // with no empty frame), and only while the traveller is still on
+    // Explore. Seen is marked when it opens: a traveller who left first
+    // gets it on the next visit instead of never.
+    let live = true;
+    import('./styles/StyleStudio.jsx').then(() => {
+      if (!live || !hereRef.current || stylesRef.current?.list?.length) return;
+      markStartSeen();
+      stylesRef.current?.setOpen({ view: 'create' });
+    }).catch(() => { /* offline: the corner disc still opens the studio */ });
+    return () => { live = false; };
   }, [isActive, pageOver]);
   const { rails, railLead, quickRails } = useExploreRails({
     allRows, favorites, guided, isDesktop, lang, patchXf, railMonth, railsIdle, rows,

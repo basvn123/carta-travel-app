@@ -1,13 +1,14 @@
 /**
- * The settings line and the active travel style (Style Studio, G12). Pure,
- * so node tests hold the rules SettingsLine.jsx draws.
+ * The trip settings and the active travel style (Style Studio, G12). Pure,
+ * so node tests hold the rules the search dock's Who and Transport cards
+ * draw (components/SearchDock.jsx).
  */
-import { nextMode, TRAVEL_MODES } from '../lib/travelWay.js';
+import { TRAVEL_MODES } from '../lib/travelWay.js';
 
 /**
- * Which parts of the line hold the active travel style's own value: the
- * party when its counts are the style's, the way there when it is the way
- * the style picked. A style that picked no way ('any') sets nothing.
+ * Which settings hold the active travel style's own value: the party when
+ * its counts are the style's, the way there when it is the way the style
+ * picked. A style that picked no way ('any') sets nothing.
  *   s  the settings context (party, children, babies, transportMode, travelStyles)
  */
 export function styleSourced(s) {
@@ -22,13 +23,16 @@ export function styleSourced(s) {
 }
 
 /**
- * The way the cycler steps to: through the style's own ways when it ticked
- * two or more, in its order, so a tap never lands on a way the traveller
- * left out; else through every way. A mode outside the list (a link, a
- * trip's way) steps to the list's first.
+ * The ways the Transport card offers: the style's own ways, in its order,
+ * when it ticked two or more, so the choice is between the ways the
+ * traveller travels; the rest wait behind "Other ways". Every way shows
+ * when the style has fewer than two, when the traveller asked for all
+ * (`all`), or when the current mode is outside the style's ways (a link, a
+ * trip's way), so the selected chip is never hidden.
+ * Returns { shown: modes[], more: bool }.
  */
-export function nextWayFor(mode, style) {
+export function wayChoices(mode, style, all = false) {
   const ways = (Array.isArray(style?.ways) ? style.ways : []).filter((w) => w !== 'any' && TRAVEL_MODES.includes(w));
-  if (ways.length < 2) return nextMode(mode);
-  return ways[(ways.indexOf(mode) + 1) % ways.length];
+  if (all || ways.length < 2 || !ways.includes(mode)) return { shown: [...TRAVEL_MODES], more: false };
+  return { shown: ways, more: true };
 }

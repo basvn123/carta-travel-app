@@ -427,6 +427,18 @@ html.sdock-locked body { overflow: hidden; }
 
 .sdock-ways { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .sdock-ways .ui-chip { gap: 6px; }
+/* G12: a value the active travel style set carries a small umber dot beside
+   it; its words ("From your travel style") are the card head's description,
+   so colour is never the only carrier. */
+.sdock-style-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin-left: calc(var(--space-2) * -1);
+  border-radius: var(--radius-pill);
+  background: var(--action);
+}
+.sdock-ways-more { min-height: var(--tap); margin-top: var(--space-2); }
 .sdock-from-change { margin-bottom: var(--space-2); }
 
 .sdock-sheet-foot {

@@ -273,19 +273,3 @@
 .settings-airports .settings-sheet-h { margin: 0; }
 .settings-pop.settings-pop-list:has(.settings-airports) { max-height: calc(100dvh - 160px); overflow-y: auto; }
 .settings-pop-list:has(.settings-airports) .from-list { max-height: min(28dvh, 240px); }
-
-/* G12: a value the active travel style set carries a small umber dot after
-   it; its words ("From your travel style") are the part's description, so
-   colour is never the only carrier. On the phone's quads it sits by the icon. */
-.settings-style-dot {
-  flex: none;
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-pill);
-  background: var(--action);
-}
-.settings-quad .settings-style-dot {
-  position: absolute;
-  top: var(--space-2);
-  left: calc(50% + 12px);
-}

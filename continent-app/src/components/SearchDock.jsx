@@ -13,6 +13,8 @@ import { FromPanel, fromName, fromPoint } from './FromPicker.jsx';
 import { AirportReach } from './AirportReach.jsx';
 import { partyText } from '../lib/party.js';
 import { TRAVEL_MODES } from '../lib/travelWay.js';
+// G12: which settings the travel style set, and the ways it travels.
+import { styleSourced, wayChoices } from './settingsStyle.js';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useDialogExit } from '../lib/motion.js';
 import { openAskChat } from '../browse/ask/askChatStore.js';
@@ -155,8 +157,11 @@ export function SearchDock({ onSearch }) {
 }
 
 /** One card of the sheet: its head names the input and its value; the body
- *  shows while it is the open one. */
-function Card({ id, label, value, open, onOpen, children, icon = null }) {
+ *  shows while it is the open one. `fromStyle` (G12): the value is the
+ *  active travel style's, shown by a small umber dot and said in words to a
+ *  screen reader, so colour never carries it alone. */
+function Card({ id, label, value, open, onOpen, children, icon = null, fromStyle = false }) {
+  const { t } = useI18n();
   const bodyId = `${id}-body`;
   return (
     <section className={`sdock-card${open ? ' is-open' : ''}`}>
@@ -164,6 +169,14 @@ function Card({ id, label, value, open, onOpen, children, icon = null }) {
         <button type="button" className="sdock-card-head" aria-expanded={open} aria-controls={bodyId} onClick={onOpen}>
           <span className="sdock-card-label">{label}</span>
           <span className="sdock-card-value">{value}</span>
+          {/* The words sit in the head's own name, after the value: "Who 2
+              adults, from your travel style". */}
+          {fromStyle && (
+            <>
+              <span className="sdock-style-dot" aria-hidden="true" />
+              <span className="sr-only">{`, ${t('settings.fromStyle')}`}</span>
+            </>
+          )}
           {icon || <ChevronDownIcon size={16} className="sdock-card-chev" />}
         </button>
       </h3>
@@ -181,6 +194,7 @@ function SearchSheet({ s, startKind, startQ, opener, onClose, onSearch }) {
   const [card, setCard] = useState('where');
   const [pickEnd, setPickEnd] = useState('start');
   const [fromOpen, setFromOpen] = useState(false);
+  const [allWays, setAllWays] = useState(false);
   const recent = useMemo(() => loadRecent(), []);
   const panelRef = useRef(null);
   const inputRef = useRef(null);
@@ -229,6 +243,8 @@ function SearchSheet({ s, startKind, startQ, opener, onClose, onSearch }) {
   const people = partyText(t, { adults: Math.max(1, party - children), children, babies: s.babies || 0 });
   const from = fromName(s) || t('origin.pickTown');
   const bed = t(`stay.${s.stayTier || 'home'}`);
+  const sourced = styleSourced(s);
+  const ways = wayChoices(mode, s.travelStyles?.active, allWays);
 
   return createPortal(
     <div className={`sdock-scrim${exit.leaving ? ' is-leaving' : ''}`}
@@ -370,15 +386,15 @@ function SearchSheet({ s, startKind, startQ, opener, onClose, onSearch }) {
             )}
           </Card>
 
-          <Card id={`${baseId}-who`} label={t('dock.who')} value={people}
+          <Card id={`${baseId}-who`} label={t('dock.who')} value={people} fromStyle={sourced.party}
             open={card === 'who'} onOpen={() => toggle('who')}>
             <PartyControl s={s} />
           </Card>
 
-          <Card id={`${baseId}-way`} label={t('settings.wayShort')} value={t(`way.${mode}`)}
+          <Card id={`${baseId}-way`} label={t('settings.wayShort')} value={t(`way.${mode}`)} fromStyle={sourced.way}
             open={card === 'way'} onOpen={() => toggle('way')}>
             <ChipGroup label={t('way.label')} className="sdock-ways">
-              {TRAVEL_MODES.map((m) => {
+              {ways.shown.map((m) => {
                 const Icon = WAY_ICONS[m];
                 return (
                   <Chip key={m} kind="choice" selected={mode === m} onClick={() => s.setTransportMode(m)}>
@@ -388,6 +404,13 @@ function SearchSheet({ s, startKind, startQ, opener, onClose, onSearch }) {
                 );
               })}
             </ChipGroup>
+            {/* G12: the style's ways come first; the rest are one tap away,
+                never removed. */}
+            {ways.more && (
+              <Button variant="quiet" size="sm" className="sdock-ways-more" onClick={() => setAllWays(true)}>
+                {t('dock.otherWays')}
+              </Button>
+            )}
           </Card>
 
           {/* Stay opens the one Lifestyle dialog (the bed and the habits),

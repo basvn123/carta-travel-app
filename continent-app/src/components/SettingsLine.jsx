@@ -1,57 +1,29 @@
 import React, {
-  createContext, useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState,
+  createContext, useCallback, useContext, useId, useMemo, useState,
 } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { useSettledFigure } from '../lib/figureChange.js';
 import { DateField } from './DateField.jsx';
 import { Stepper } from './FilterControls.jsx';
-import { matchProfile, PROFILE_LABEL_KEYS } from '../browse/styles/spendBits.jsx';
-import { Button, Chip, ChipGroup, IconButton, Segmented } from './ui/index.js';
+import { Button, Chip, ChipGroup, Segmented } from './ui/index.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
-import { useIsDesktop } from '../hooks/useIsDesktop.js';
-import { BedIcon, BusIcon, CalendarIcon, CarIcon, ChevronDownIcon, MapPinIcon, RouteIcon, TrainIcon } from './Icons.jsx';
+import { BusIcon, CarIcon, MapPinIcon, TrainIcon } from './Icons.jsx';
 import { PlaneIcon } from './TransportIcons.jsx';
-import { FromPanel, fromName, fromPoint } from './FromPicker.jsx';
+import { FromPanel, fromPoint } from './FromPicker.jsx';
 import { AirportReach } from './AirportReach.jsx';
-import { CountriesPanel, countriesValue } from './CountriesControl.jsx';
-import { partyText } from '../lib/party.js';
-import { TRAVEL_MODES } from '../lib/travelWay.js';
-// G12: which values the travel style set, and its ways for the cycler.
-import { nextWayFor, styleSourced } from './settingsStyle.js';
 import '../styles/77-settings-v2.css';
 import { rule } from '../lib/price/config.js';
 
 /**
- * The settings line (T381; carta-design "Settings line", DIRECTION.md rule
- * shell R2): one compact row on every priced view that shows every input its
- * prices depend on, each part a button that opens the control that sets it.
+ * The trip settings every priced view reads (T381), and the controls that
+ * set them. The values live in App, which fills SettingsContext once; this
+ * file only reads and writes them, so any surface can read a value through
+ * useSettings / useTravelMonth / useWhen without a prop chain.
  *
- *   from      where the trip starts: a town, any in Europe, or the device's
- *             location (T577; FromPicker, never an airport code)
- *   when      exact dates, a month, or any time (T578), and the nights
- *   people    adults, children and babies (T579)
- *   lifestyle the bed and the habits (opens the one Lifestyle dialog)
- *   countries only these, or all but these (T581, desktop; the phone has
- *             its own door beside Filters)
- *   way       how the traveller gets there: one button that steps through
- *             any way, plane, train, bus and car (T582)
- *
- * On a phone (T496) the line is one sentence, the bed and the way: the
- * sentence opens one sheet with From, When and People and one Done.
- *
- * The values live in App, which fills SettingsContext once; this file only
- * reads and writes them, so any surface can mount a line (or read a value
- * through useSettings / useTravelMonth) without a prop chain.
- *
- * Props, the contract other surfaces build against (register row T380-e):
- *   parts     which parts to draw, in this fixed order; default all six
- *   children  a surface's own filters, drawn after the parts
- *   className extra class on the band
- * The shell's own line also carries an empty `#settings-line-slot` that a tab
- * may portal its filters into (the header search slot works the same way).
- *
- * No accent anywhere: labels 12 px --text-2, values --text, figures tabular
- * (styles in 60-v6-shell.css and 77-settings-v2.css).
+ * The settings line itself (one row of parts on every priced view) left the
+ * app in commit 4a68a45e2d and was removed here in G12: Explore's controls
+ * are the search dock's cards (components/SearchDock.jsx) and the Trip dock.
+ * What stays is shared by them: the When and People controls, the one-part
+ * editor sheet Account opens, the date pick rule and the formatters.
  */
 
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
@@ -80,118 +52,12 @@ export function useWhen() {
 }
 const ANY_WHEN = { kind: 'any', month: null, months: [] };
 
-// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
-export const SETTINGS_PARTS = ['origin', 'dates', 'party', 'lifestyle', 'countries', 'way'];
 const MAX_NIGHTS = 30;
 // T691: one cap for every screen (config/pricing.json party.limits).
 const { max_seats: MAX_PARTY, max_babies: MAX_BABIES } = rule('party.limits');
 
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const WAY_ICONS = { any: MapPinIcon, plane: PlaneIcon, train: TrainIcon, bus: BusIcon, car: CarIcon };
-
-/**
- * A small non-modal popover under a part: Escape or a press outside closes
- * it and focus goes back to the part that opened it. It is fixed under the
- * top bar (top: var(--filter-h), 60-v6-shell.css) and lined up with its part
- * here, so the band itself can clip what does not fit on a phone without
- * clipping the popover.
- */
-function SettingsPop({ id, label, anchorRef, onClose, children, className = '' }) {
-  const ref = useRef(null);
-  useLayoutEffect(() => {
-    const el = ref.current;
-    const a = anchorRef.current;
-    if (!el || !a) return;
-    const gutter = 16;
-    const r = a.getBoundingClientRect();
-    const left = Math.max(gutter, Math.min(r.left, window.innerWidth - el.offsetWidth - gutter));
-    el.style.left = `${Math.round(left)}px`;
-  }, [anchorRef]);
-  // Focus moves in once, when the popover opens, never again on a re-render
-  // (a field that focuses itself wins).
-  useEffect(() => {
-    if (ref.current?.contains(document.activeElement)) return;
-    ref.current?.querySelector('input, button:not([disabled]), [tabindex="0"]')?.focus();
-  }, []);
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key !== 'Escape') return;
-      e.stopPropagation();
-      onClose();
-      anchorRef.current?.focus();
-    };
-    const onDown = (e) => {
-      if (ref.current?.contains(e.target) || anchorRef.current?.contains(e.target)) return;
-      onClose();
-    };
-    // Capture phase, so the app's own Escape handlers (which close the page
-    // under the line) do not see the key that was meant for this popover.
-    document.addEventListener('keydown', onKey, true);
-    document.addEventListener('mousedown', onDown);
-    return () => {
-      document.removeEventListener('keydown', onKey, true);
-      document.removeEventListener('mousedown', onDown);
-    };
-  }, [anchorRef, onClose]);
-  return (
-    <div className={`settings-pop ${className}`.trim()} id={id} role="dialog" aria-label={label} ref={ref}>
-      {children}
-    </div>
-  );
-}
-
-/** The small umber dot beside a value the style set, and its words for a
- *  screen reader (the dot alone would be colour carrying meaning). */
-function StyleMark({ id }) {
-  const { t } = useI18n();
-  return (
-    <>
-      <span className="settings-style-dot" aria-hidden="true" />
-      <span className="sr-only" id={id}>{t('settings.fromStyle')}</span>
-    </>
-  );
-}
-
-/** One part: a label over (or before) its value, one button. */
-function Part({
-  name, label, value, display, mono, onClick, expanded, popId, partRef, hasPopup = 'dialog',
-  // The phone face's buttons draw their own content and name (T496).
-  ariaLabel, className = '', children,
-  // G12: the value came from the active travel style.
-  fromStyle = false,
-}) {
-  const { t } = useI18n();
-  const markId = `${useId()}-style`;
-  // A value that changes settles in place (T391, DIRECTION.md 2.3): one dip
-  // of its opacity, the box keeping its width; nothing moves that did not
-  // change, and nothing at all under reduced motion.
-  const valueRef = useRef(null);
-  useSettledFigure(valueRef, value);
-  return (
-    <button
-      type="button"
-      ref={partRef}
-      className={`settings-part settings-part-${name} ${className}`.trim()}
-      onClick={onClick}
-      aria-haspopup={hasPopup || undefined}
-      aria-expanded={hasPopup === 'dialog' && (popId || children) ? !!expanded : undefined}
-      aria-controls={expanded && popId ? popId : undefined}
-      aria-label={ariaLabel || t('settings.changeAria', { label, value })}
-      aria-describedby={fromStyle ? markId : undefined}
-    >
-      {children || (
-        <>
-          <span className="settings-part-label" aria-hidden="true">{label}</span>
-          {/* A space between label and value, so the visible text reads as
-              two words wherever it is taken as text (T1128, WCAG 2.5.3). */}
-          {' '}
-          <span ref={valueRef} className={`settings-part-value${mono ? ' is-mono' : ''}`} aria-hidden="true">{display ?? value}</span>
-        </>
-      )}
-      {fromStyle && <StyleMark id={markId} />}
-    </button>
-  );
-}
 
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useShortDate() {
@@ -440,42 +306,6 @@ export function SettingsEditorSheet({ part, onClose, anchorRef = null }) {
   );
 }
 
-/** Getting there (T582): one button that steps to the next way. */
-function WayPart({ s, compact = false }) {
-  const { t } = useI18n();
-  const mode = TRAVEL_MODES.includes(s.transportMode) ? s.transportMode : 'any';
-  const next = nextWayFor(mode, s.travelStyles?.active);
-  const fromStyle = styleSourced(s).way;
-  const Icon = WAY_ICONS[mode];
-  const label = t('way.label');
-  const word = t(`way.${mode}`);
-  const aria = t('way.cycleAria', { mode: word, next: t(`way.${next}`) });
-  if (compact) {
-    return (
-      <IconButton label={aria} className="settings-way-btn" onClick={() => s.setTransportMode(next)}>
-        <Icon size={20} />
-      </IconButton>
-    );
-  }
-  return (
-    <Part
-      name="way"
-      label={label}
-      value={word}
-      hasPopup={null}
-      ariaLabel={aria}
-      fromStyle={fromStyle}
-      display={(
-        <span className="settings-way-value">
-          <Icon size={16} className="settings-way-icon" />
-          <span>{word}</span>
-        </span>
-      )}
-      onClick={() => s.setTransportMode(next)}
-    />
-  );
-}
-
 /**
  * The one calendar's pick rule, shared by this line and the Trip dock (G12)
  * so both move the dates alike. A pick on the leaving end moves the trip
@@ -498,301 +328,4 @@ export function useDatePick(s) {
     setPickEnd('end');
   }, [s, pickEnd]);
   return { pickEnd, setPickEnd, pickDate };
-}
-
-export function SettingsLine({ parts = SETTINGS_PARTS, className = '', children, slot = false }) {
-  const s = useSettings();
-  const { t } = useI18n();
-  const isDesktop = useIsDesktop();
-  const shortDate = useShortDate();
-  const [open, setOpen] = useState(null); // 'from' | 'dates' | 'party' | 'countries' | 'sheet' | null
-  const { pickEnd, setPickEnd, pickDate } = useDatePick(s);
-  const [sheetFrom, setSheetFrom] = useState(false);
-  const baseId = useId();
-  const fromRef = useRef(null);
-  const datesRef = useRef(null);
-  const partyRef = useRef(null);
-  const countriesRef = useRef(null);
-  const summaryRef = useRef(null);
-  const close = useCallback(() => setOpen(null), []);
-  const names = useMemo(() => new Map(s?.availableCountries || []), [s?.availableCountries]);
-  if (!s) return null;
-
-  const show = (p) => parts.includes(p);
-  const toggle = (p) => {
-    if (p === 'dates' || p === 'sheet') setPickEnd('start');
-    if (p === 'sheet') setSheetFrom(false);
-    setOpen((v) => (v === p ? null : p));
-  };
-
-  const from = fromName(s);
-  const whenText = whenValue(t, s, shortDate);
-  const children_ = s.children || 0;
-  const party = Number.isFinite(s.party) ? s.party : 2;
-  const people = partyText(t, { adults: Math.max(1, party - children_), children: children_, babies: s.babies || 0 });
-  const profileKey = matchProfile(s.lifestyle || {});
-  const bed = t(`stay.${s.stayTier || 'home'}`);
-  const vibe = profileKey ? t(PROFILE_LABEL_KEYS[profileKey]) : t('lifestyle.custom');
-  const countryList = s.countryFilter || [];
-  const countriesText = countriesValue(t, countryList, s.countryNot, names);
-  const pickFrom = (p, then) => { s.setFrom(p); then?.(); };
-  const sourced = styleSourced(s);
-  // T860: the home airports in reach, the same choice the planner's reach
-  // question sets; shown once a town is set and the way there may fly.
-  const mayFly = !['train', 'bus', 'car'].includes(s.transportMode);
-  const airports = s.setAirports && s.fromPlace && mayFly ? (
-    <section className="settings-airports" aria-labelledby={`${baseId}-airports`}>
-      <h3 className="settings-sheet-h" id={`${baseId}-airports`}>{t('pf.q.airports')}</h3>
-      <AirportReach
-        meta={s.data?.meta}
-        point={s.fromPlace}
-        covered={s.sweptOrigins}
-        hours={s.airportHours}
-        codes={s.airports}
-        labelId={`${baseId}-airports-list`}
-        onChange={(codes, hours) => s.setAirports(codes, hours)}
-      />
-    </section>
-  ) : null;
-
-  // The phone face (T622, owner 2026-10-23: "the when part is cut off,
-  // just show when, from, type, transport ... use icons, but no full on
-  // text"): four equal buttons, an icon over one short word each. When and
-  // From open the one settings sheet (From with its town panel open), the
-  // stay opens the Lifestyle dialog, and the way steps through the ways,
-  // its icon showing the current one. Every value is in the button's name.
-  if (!isDesktop) {
-    const heads = party + (s.babies || 0);
-    const summary = t('settings.summary', {
-      dates: whenValue(t, s, shortDate, { nightsToo: false }),
-      people: t(heads === 1 ? 'settings.peopleOne' : 'settings.peopleMany', { n: heads }),
-    });
-    const closeSheet = () => { close(); summaryRef.current?.focus(); };
-    const openSheet = (withFrom) => {
-      setPickEnd('start');
-      setSheetFrom(!!withFrom);
-      setOpen((v) => (v === 'sheet' ? null : 'sheet'));
-    };
-    const mode = TRAVEL_MODES.includes(s.transportMode) ? s.transportMode : 'any';
-    // Any way draws a route, so it never reads as From's pin beside it.
-    const WayIcon = mode === 'any' ? RouteIcon : WAY_ICONS[mode];
-    const nextWay = nextWayFor(mode, s.travelStyles?.active);
-    return (
-      <div className={`settings-line settings-line-phone ${className}`.trim()} role="group" aria-label={t('settings.label')}>
-        {(show('dates') || show('party')) && (
-          <Part
-            name="when"
-            className="settings-quad"
-            partRef={summaryRef}
-            value={summary}
-            expanded={open === 'sheet' && !sheetFrom}
-            ariaLabel={t('settings.summaryAria', { summary })}
-            onClick={() => openSheet(false)}
-          >
-            <CalendarIcon size={20} className="settings-quad-icon" />
-            <span className="settings-quad-word" aria-hidden="true">{t('dates.when')}</span>
-          </Part>
-        )}
-        {show('origin') && (
-          <Part
-            name="from"
-            className="settings-quad"
-            value={from || t('origin.pickTown')}
-            expanded={open === 'sheet' && sheetFrom}
-            ariaLabel={t('settings.changeAria', { label: t('settings.from'), value: from || t('origin.pickTown') })}
-            onClick={() => openSheet(true)}
-          >
-            <MapPinIcon size={20} className="settings-quad-icon" />
-            <span className="settings-quad-word" aria-hidden="true">{t('settings.from')}</span>
-          </Part>
-        )}
-        {show('lifestyle') && s.openStyleSpend && (
-          <Part
-            name="bed"
-            className="settings-quad"
-            value={`${bed}, ${vibe}`}
-            ariaLabel={t('settings.changeAria', { label: t('settings.lifestyle'), value: `${bed}, ${vibe}` })}
-            onClick={s.openStyleSpend}
-          >
-            <BedIcon size={20} className="settings-quad-icon" />
-            <span className="settings-quad-word" aria-hidden="true">{t('settings.stayShort')}</span>
-          </Part>
-        )}
-        {show('way') && s.setTransportMode && (
-          <Part
-            name="way"
-            className="settings-quad"
-            value={t(`way.${mode}`)}
-            hasPopup={null}
-            ariaLabel={t('way.cycleAria', { mode: t(`way.${mode}`), next: t(`way.${nextWay}`) })}
-            fromStyle={sourced.way}
-            onClick={() => s.setTransportMode(nextWay)}
-          >
-            <WayIcon size={20} className="settings-quad-icon" />
-            <span className="settings-quad-word" aria-hidden="true">{t('settings.wayShort')}</span>
-          </Part>
-        )}
-        {open === 'sheet' && (
-          <SheetShell
-            title={t('settings.label')}
-            labelId={`${baseId}-sheet`}
-            className="settings-sheet"
-            closeLabel={t('a11y.close')}
-            onClose={closeSheet}
-          >
-            {show('origin') && (
-              <section className="settings-sheet-sec">
-                <h3 className="settings-sheet-h">{t('settings.from')}</h3>
-                <Button variant="secondary" block className="from-current" aria-expanded={sheetFrom}
-                  iconStart={<MapPinIcon size={16} />} iconEnd={<ChevronDownIcon size={16} />}
-                  onClick={() => setSheetFrom((v) => !v)}>
-                  <span className="from-current-name">{from || t('origin.pickTown')}</span>
-                </Button>
-                {sheetFrom && (
-                  <FromPanel data={s.data} current={fromPoint(s)} autoFocus={false}
-                    onPick={(p) => pickFrom(p, () => setSheetFrom(false))} />
-                )}
-                {airports}
-              </section>
-            )}
-            {show('dates') && (
-              <section className="settings-sheet-sec">
-                <h3 className="settings-sheet-h">{t('dates.when')}</h3>
-                <DatesControl s={s} pickEnd={pickEnd} setPickEnd={setPickEnd} pickDate={pickDate} shortDate={shortDate} />
-              </section>
-            )}
-            {show('party') && (
-              <section className="settings-sheet-sec">
-                <h3 className="settings-sheet-h">{t('settings.party')}</h3>
-                <PartyControl s={s} />
-              </section>
-            )}
-            {/* The sheet's one primary. Every change holds at once; Done
-                only closes. */}
-            <Button variant="primary" block className="settings-done" onClick={closeSheet}>
-              {t('settings.done')}
-            </Button>
-          </SheetShell>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div className={`settings-line ${className}`.trim()} role="group" aria-label={t('settings.label')}>
-      <div className="settings-line-parts">
-        {show('origin') && (
-          <div className="settings-slot settings-slot-origin">
-            <Part
-              name="origin"
-              label={t('settings.from')}
-              value={from || t('origin.pickTown')}
-              partRef={fromRef}
-              popId={`${baseId}-from`}
-              expanded={open === 'from'}
-              onClick={() => toggle('from')}
-            />
-            {open === 'from' && (
-              <SettingsPop id={`${baseId}-from`} label={t('settings.from')} anchorRef={fromRef} onClose={close} className="settings-pop-list">
-                <FromPanel data={s.data} current={fromPoint(s)}
-                  onPick={(p) => pickFrom(p, () => { close(); fromRef.current?.focus(); })} />
-                {airports}
-              </SettingsPop>
-            )}
-          </div>
-        )}
-
-        {show('dates') && (
-          <div className="settings-slot settings-slot-dates">
-            <Part
-              name="dates"
-              label={t('dates.when')}
-              value={whenText}
-              mono
-              partRef={datesRef}
-              popId={`${baseId}-dates`}
-              expanded={open === 'dates'}
-              onClick={() => toggle('dates')}
-            />
-            {open === 'dates' && (
-              <SettingsPop id={`${baseId}-dates`} label={t('dates.when')} anchorRef={datesRef} onClose={close} className="settings-pop-dates">
-                <DatesControl s={s} pickEnd={pickEnd} setPickEnd={setPickEnd} pickDate={pickDate} shortDate={shortDate} />
-              </SettingsPop>
-            )}
-          </div>
-        )}
-
-        {show('party') && (
-          <div className="settings-slot settings-slot-party">
-            <Part
-              name="party"
-              label={t('settings.party')}
-              value={people}
-              partRef={partyRef}
-              popId={`${baseId}-party`}
-              expanded={open === 'party'}
-              fromStyle={sourced.party}
-              onClick={() => toggle('party')}
-            />
-            {open === 'party' && (
-              <SettingsPop id={`${baseId}-party`} label={t('settings.party')} anchorRef={partyRef} onClose={close} className="settings-pop-party">
-                <PartyControl s={s} />
-              </SettingsPop>
-            )}
-          </div>
-        )}
-
-        {show('lifestyle') && s.openStyleSpend && (
-          <div className="settings-slot settings-slot-lifestyle">
-            <Part
-              name="lifestyle"
-              label={t('settings.lifestyle')}
-              value={`${bed}, ${vibe}`}
-              display={(
-                <>
-                  {/* The space sits inside the first word's box: a bare space
-                      between flex items has no box, so tools that read the
-                      visible text ran the two together (T1128). */}
-                  <span>{`${bed} `}</span>
-                  <span className="settings-vibe">{vibe}</span>
-                </>
-              )}
-              onClick={s.openStyleSpend}
-            />
-          </div>
-        )}
-
-        {show('countries') && s.setCountryFilter && (
-          <div className="settings-slot settings-slot-countries">
-            <Part
-              name="countries"
-              label={t('settings.countries')}
-              value={countriesText}
-              partRef={countriesRef}
-              popId={`${baseId}-countries`}
-              expanded={open === 'countries'}
-              onClick={() => toggle('countries')}
-            />
-            {open === 'countries' && (
-              <SettingsPop id={`${baseId}-countries`} label={t('settings.countries')} anchorRef={countriesRef} onClose={close} className="settings-pop-list">
-                <CountriesPanel countries={s.availableCountries} list={countryList} setList={s.setCountryFilter}
-                  not={!!s.countryNot} setNot={s.setCountryNot} />
-              </SettingsPop>
-            )}
-          </div>
-        )}
-
-        {show('way') && s.setTransportMode && (
-          <div className="settings-slot settings-slot-way">
-            <WayPart s={s} />
-          </div>
-        )}
-      </div>
-      {(children || slot) && (
-        <div className="settings-line-extra" id={slot ? 'settings-line-slot' : undefined}>
-          {children}
-        </div>
-      )}
-    </div>
-  );
 }
