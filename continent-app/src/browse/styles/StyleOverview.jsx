@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pressable } from '../../components/ui/Pressable.jsx';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, IconButton } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
@@ -35,6 +36,17 @@ export function StyleOverview({ ts, figures, fresh, escRef, onClose, onCreate, o
   const list = ts.list;
   const full = list.length >= MAX_STYLES;
   const changed = Boolean(ts.active && (ts.changed || ts.held));
+
+  // After a control goes away under the finger (Delete, Keep, Undo) focus
+  // lands on what is there next, never on the page behind: a card by its
+  // id, else the New tile, else the empty state's button.
+  const bodyRef = React.useRef(null);
+  const focusAfter = (id) => requestAnimationFrame(() => requestAnimationFrame(() => {
+    const root = bodyRef.current;
+    if (!root) return;
+    const el = (id && root.querySelector(`[data-sid="${id}"]`)) || root.querySelector('.sst-new') || root.querySelector('.sst-go');
+    el?.focus();
+  }));
 
   // Escape closes the card menu first and keeps the sheet; focus goes back
   // to the More button that opened it.
@@ -86,8 +98,8 @@ export function StyleOverview({ ts, figures, fresh, escRef, onClose, onCreate, o
         <div className="sst-held">
           <span className="sst-held-text">{t('studio.heldTitle')}</span>
           <span className="sst-held-acts">
-            <Button variant="quiet" size="sm" aria-label={t('studio.heldKeepAria', { name: styleName(t, s) })} onClick={ts.keep}>{t('studio.heldKeep')}</Button>
-            <Button variant="quiet" size="sm" aria-label={t('studio.heldUndoAria', { name: styleName(t, s) })} onClick={ts.revert}>{t('studio.heldUndo')}</Button>
+            <Button variant="quiet" size="sm" aria-label={t('studio.heldKeepAria', { name: styleName(t, s) })} onClick={() => { ts.keep(); focusAfter(s.id); }}>{t('studio.heldKeep')}</Button>
+            <Button variant="quiet" size="sm" aria-label={t('studio.heldUndoAria', { name: styleName(t, s) })} onClick={() => { ts.revert(); focusAfter(s.id); }}>{t('studio.heldUndo')}</Button>
           </span>
         </div>
       )}
@@ -105,7 +117,12 @@ export function StyleOverview({ ts, figures, fresh, escRef, onClose, onCreate, o
           }}
           onAskDelete={() => setConfirmFor(s.id)}
           onKeep={() => setConfirmFor('')}
-          onDelete={() => { ts.remove(s.id); setMenuFor(''); setConfirmFor(''); }}
+          onDelete={() => {
+            const i = list.findIndex((x) => x.id === s.id);
+            const next = list[i + 1] || list[i - 1];
+            ts.remove(s.id); setMenuFor(''); setConfirmFor('');
+            focusAfter(next?.id);
+          }}
         />
       )}
     </>
@@ -119,15 +136,15 @@ export function StyleOverview({ ts, figures, fresh, escRef, onClose, onCreate, o
           <HouseIcon.close size={18} />
         </IconButton>
       </header>
-      <div className="sst-body">
+      <div className="sst-body" ref={bodyRef}>
         <section className={`sst-why${folded ? ' is-folded' : ''}`} aria-labelledby="sst-why-title">
           <div className="sst-why-top">
             <h3 className="sst-why-title" id="sst-why-title">{t('studio.whyTitle')}</h3>
             {narrow && list.length > 0 && (
-              <button type="button" className="sst-why-toggle" aria-expanded={!folded} aria-controls="sst-why-rows" onClick={toggleFold}>
+              <Pressable className="sst-why-toggle" aria-expanded={!folded} aria-controls="sst-why-rows" onClick={toggleFold}>
                 {t('studio.howItWorks')}
                 <HouseIcon.next size={16} className="sst-why-chev" />
-              </button>
+              </Pressable>
             )}
           </div>
           <div className="sst-why-rows" id="sst-why-rows" hidden={folded}>
@@ -167,10 +184,10 @@ export function StyleOverview({ ts, figures, fresh, escRef, onClose, onCreate, o
             {full ? (
               <p className="sst-note">{t('studio.max')}</p>
             ) : (
-              <button type="button" className="sst-new" onClick={onCreate}>
+              <Pressable className="sst-new" onClick={onCreate}>
                 <span className="sst-new-disc" aria-hidden="true"><HouseIcon.plus size={20} /></span>
                 {t('studio.new')}
-              </button>
+              </Pressable>
             )}
           </>
         )}

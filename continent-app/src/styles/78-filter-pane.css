@@ -316,6 +316,12 @@
   text-align: left;
 }
 .xpane-priced-btn {
+  /* The figure sits under the name, not beside it: the pane is 320 px, and a
+     long name (a German one) needs the whole text column (G12 r3). */
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "disc text chev" "disc fig chev";
+  row-gap: 2px;
   cursor: pointer;
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
@@ -337,13 +343,18 @@
 .xpane-priced-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .xpane-priced-label { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); line-height: 1.3; }
 .xpane-priced-name {
+  /* A long name (a German one at 1440) wraps to a second line rather than
+     losing its end; past two lines it ends in an ellipsis. */
+  display: -webkit-box;
   overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
   font-size: var(--text-body);
   font-weight: 700;
   line-height: 1.3;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: break-word;
 }
+.xpane-priced-sub { font-size: var(--text-caption); color: var(--text-2); line-height: 1.3; }
 .xpane-priced-card.is-none .xpane-priced-name { white-space: normal; font-weight: 600; }
 .xpane-priced-held {
   display: inline-flex;
@@ -354,11 +365,16 @@
   color: var(--sun-800);
 }
 .xpane-priced-held-dot { flex: none; width: 8px; height: 8px; border-radius: var(--radius-pill); background: var(--sun-400); }
+.xpane-priced-btn .xpane-priced-disc { grid-area: disc; }
+.xpane-priced-btn .xpane-priced-text { grid-area: text; }
+.xpane-priced-btn .xpane-priced-chev { grid-area: chev; }
 .xpane-priced-fig {
+  grid-area: fig;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  flex: none;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-1);
+  min-width: 0;
   line-height: 1.2;
 }
 .xpane-priced-num { font-size: var(--text-body); font-weight: 800; font-variant-numeric: tabular-nums; }

@@ -256,7 +256,26 @@ test('the retired home strings are gone', () => {
     'styles.way', 'styles.priority', 'styles.priorityNote', 'styles.shape', 'styles.likes', 'styles.avoid',
     'styles.mornings', 'styles.pace', 'styles.noneActive', 'styles.max', 'styles.duplicate', 'styles.copyOf',
     'styles.delete', 'styles.deleteSure', 'styles.done', 'styles.dayFig', 'styles.dayFigNote', 'styles.heldNote',
-    'styles.keepStay', 'styles.back', 'styles.bedHeld'];
+    'styles.keepStay', 'styles.back', 'styles.bedHeld', 'lifestyle.title', 'dock.close', 'styles.kicker', 'styles.as',
+    'styles.persona', 'filter.pricedForNone',
+    // G12: the persona question left the planner (derived from the trip's answers); its screen's strings go too.
+    'pf.persona.citiesTag', 'pf.persona.cities.stay', 'pf.persona.cities.visit', 'pf.persona.cities.move',
+    'pf.persona.cities.eg', 'pf.persona.hubtripsTag', 'pf.persona.hubtrips.stay', 'pf.persona.hubtrips.visit',
+    'pf.persona.hubtrips.move', 'pf.persona.hubtrips.eg', 'pf.persona.outsideTag', 'pf.persona.outside.stay',
+    'pf.persona.outside.visit', 'pf.persona.outside.move', 'pf.persona.outside.eg', 'pf.persona.townsTag',
+    'pf.persona.towns.stay', 'pf.persona.towns.visit', 'pf.persona.towns.move', 'pf.persona.towns.eg',
+    'pf.persona.coastTag', 'pf.persona.coast.stay', 'pf.persona.coast.visit', 'pf.persona.coast.move',
+    'pf.persona.coast.eg', 'pf.persona.natureTag', 'pf.persona.nature.stay', 'pf.persona.nature.visit',
+    'pf.persona.nature.move', 'pf.persona.nature.eg', 'pf.persona.hiddenTag', 'pf.persona.hidden.stay',
+    'pf.persona.hidden.visit', 'pf.persona.hidden.move', 'pf.persona.hidden.eg', 'pf.persona.slowTag',
+    'pf.persona.slow.stay', 'pf.persona.slow.visit', 'pf.persona.slow.move', 'pf.persona.slow.eg',
+    'pf.persona.livelyTag', 'pf.persona.lively.stay', 'pf.persona.lively.visit', 'pf.persona.lively.move',
+    'pf.persona.lively.eg', 'pf.persona.mixTag', 'pf.persona.citiesLine', 'pf.persona.hubtripsLine',
+    'pf.persona.townsLine', 'pf.persona.outsideLine', 'pf.persona.coastLine', 'pf.persona.natureLine',
+    'pf.persona.hiddenLine', 'pf.persona.slowLine', 'pf.persona.livelyLine', 'pf.persona.mixLine',
+    'pf.persona.most', 'pf.persona.mostSame', 'pf.persona.mostTag', 'pf.persona.mix.stay', 'pf.persona.mix.visit',
+    'pf.persona.mix.move', 'pf.persona.label.stay', 'pf.persona.label.visit', 'pf.persona.label.move',
+    'pf.persona.label.eg', 'pf.persona.label.choose', 'pf.persona.label.about', 'pf.persona.label.details'];
   for (const [lang, cat] of Object.entries(CATALOGS)) {
     for (const k of retired) assert.equal(cat[k], undefined, `${lang} ${k}`);
     assert.deepEqual(Object.keys(cat).filter((k) => k.startsWith('landing.')), [], lang);

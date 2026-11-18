@@ -10,7 +10,7 @@ import { usePickTick, useStepIn } from './paintGuard.js';
 import { QUESTIONS } from './questions.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { FlowRail } from './FlowRail.jsx';
-import { FlowSide, PersonaDraft, SideFold, usePersonaFit } from './FlowSide.jsx';
+import { FlowSide, SideFold, usePersonaFit } from './FlowSide.jsx';
 import { personaOf } from '../../lib/recommend/persona.js';
 import { groupsOf, stepAnswer } from './stepText.js';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
@@ -192,17 +192,10 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
       onClick: id !== phase && (done || id === firstOpen) ? () => { setReturnTo(null); setPhase(id); } : null,
     };
   });
-  // T894: Your trip so far. The persona screen reports its picks before
-  // Continue (PersonaDraft), so the places that fit move on every tick.
-  const [draft, setDraft] = useState(null);
-  useEffect(() => { setDraft(null); }, [phase]);
-  const live = draft && phase === 'g:persona' ? { ...settings, guide: { ...settings.guide, ...draft } } : settings;
-  const fit = usePersonaFit(personaOf(live.guide));
-  const sideRows = [
-    ...tripSteps,
-    ...stepItems(questions).map((it) => (it.now && phase === 'g:persona' && draft
-      ? { ...it, answer: stepAnswer(t, it.id, live, { locale: lang }) } : it)),
-  ];
+  // T894: Your trip so far counts the places that fit the trip's personas
+  // (derived from its answers since the persona question left, G12).
+  const fit = usePersonaFit(personaOf(settings.guide));
+  const sideRows = [...tripSteps, ...stepItems(questions)];
   const side = studio ? <FlowSide rows={sideRows} fit={fit} /> : null;
   const foldSummary = fit ? t('pf.side.chip', { n: fit.count }) : [settings.from?.name, whenWords.start].filter(Boolean).join(', ');
   const rail = studio ? (
@@ -327,14 +320,12 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   }
 
   return (
-    <PersonaDraft.Provider value={setDraft}>
     <div className={`pf${phase === 'home' ? ' is-trip' : ''}`} ref={rootRef}>
-      <PlanStage bar={phase === 'home' || inHead ? null : bar} rail={rail} side={side} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === 'g:persona' ||phase === TRIPS_SCREEN || phase === 'ff'}>
+      <PlanStage bar={phase === 'home' || inHead ? null : bar} rail={rail} side={side} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === TRIPS_SCREEN || phase === 'ff'}>
         {body}
       </PlanStage>
       {settingsOpen && <TripSettingsSheet anchorRef={gearRef} onClose={() => setSettingsOpen(false)} />}
     </div>
-    </PersonaDraft.Provider>
   );
 }
 

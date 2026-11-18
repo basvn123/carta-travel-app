@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pressable } from '../../components/ui/Pressable.jsx';
 import { useI18n } from '../../i18n/index.jsx';
 import { Segmented } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
@@ -82,10 +83,10 @@ export function StaySpendFields({ stay, lifestyle, stayTiers, onStay, onLifestyl
       </div>
 
       <div className="sst-group">
-        <button type="button" className="sst-fold" aria-expanded={tuned} aria-controls="sst-tune" onClick={() => setTuned(!tuned)}>
+        <Pressable className="sst-fold" aria-expanded={tuned} aria-controls="sst-tune" onClick={() => setTuned(!tuned)}>
           {t('lifestyle.fineTune')}
           <HouseIcon.next size={16} className="sst-fold-chev" />
-        </button>
+        </Pressable>
         {tuned && (
           <div className="sst-tune" id="sst-tune">
             <Segmented
@@ -122,8 +123,7 @@ export function StaySpendFields({ stay, lifestyle, stayTiers, onStay, onLifestyl
 export function Tile({ on, Icon, label, onClick, radio = false, disabled = false, tag = null, wide = false }) {
   const a11y = radio ? { role: 'radio', 'aria-checked': on } : { 'aria-pressed': on };
   return (
-    <button
-      type="button"
+    <Pressable
       className={`sst-tile${on ? ' is-on' : ''}${wide ? ' is-wide' : ''}`}
       aria-disabled={disabled || undefined}
       onClick={disabled ? undefined : onClick}
@@ -133,7 +133,7 @@ export function Tile({ on, Icon, label, onClick, radio = false, disabled = false
       <span className="sst-tile-label">{label}</span>
       {tag && <span className="sst-tile-tag">{tag}</span>}
       <span className="sst-tile-tick" aria-hidden="true"><HouseIcon.check size={12} /></span>
-    </button>
+    </Pressable>
   );
 }
 

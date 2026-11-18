@@ -1,4 +1,4 @@
-import React, { createContext, useId, useMemo, useState } from 'react';
+import React, { useId, useMemo, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
 import { ChevronDownIcon } from '../../components/Icons.jsx';
@@ -13,12 +13,7 @@ import { personaFit, personaMatches, picksOf } from '../../lib/recommend/persona
  * step, in one column beside the question from 1100 px. The places move
  * as travellers are ticked (Kayak's live map, Zillow's count on the button). Below 1100 px the same
  * column folds behind one button over the question (SideFold).
- *
- * The persona screen reports its picks before Continue through
- * PersonaDraft, so the count moves on every tick.
  */
-// eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
-export const PersonaDraft = createContext(null);
 
 /** The places that fit the persona answer, the best three with the pick each fits most. */
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here

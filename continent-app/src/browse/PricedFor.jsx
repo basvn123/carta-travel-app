@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pressable } from '../components/ui/Pressable.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
 import { Button } from '../components/ui/index.js';
@@ -58,7 +59,10 @@ export function PricedFor() {
           <span className="xpane-priced-disc" aria-hidden="true"><HouseIcon.pack size={18} /></span>
           <span className="xpane-priced-text">
             <span className="xpane-priced-label" id={headId}>{t('filter.pricedFor')}</span>
-            <span className="xpane-priced-name">{t('filter.pricedForNone', { people, bed })}</span>
+            {/* Who and the bed on a line each, so the bed's label keeps its
+                own capital ("Entire place") instead of sitting mid-sentence. */}
+            <span className="xpane-priced-name">{people}</span>
+            <span className="xpane-priced-sub">{bed}</span>
           </span>
         </div>
         <Button variant="secondary" size="sm" block className="xpane-priced-create"
@@ -77,8 +81,7 @@ export function PricedFor() {
   const held = ts.changed;
   return (
     <section className="xpane-sec xpane-priced">
-      <button
-        type="button"
+      <Pressable
         ref={btnRef}
         className={`xpane-priced-card xpane-priced-btn${held ? ' is-held' : ''}`}
         aria-haspopup="dialog"
@@ -108,7 +111,7 @@ export function PricedFor() {
           </span>
         )}
         <ChevronDownIcon size={16} className="xpane-priced-chev" />
-      </button>
+      </Pressable>
       {open && (
         <SheetShell
           title={t('filter.pricedFor')}
@@ -127,7 +130,7 @@ export function PricedFor() {
             label={t('filter.pricedForList')}
             onPick={(id) => ts.switchTo(id)}
           />
-          <Button variant="quiet" size="sm" block className="xpane-priced-edit"
+          <Button variant="quiet" block className="xpane-priced-edit"
             iconStart={<HouseIcon.edit size={16} />}
             onClick={() => { setOpen(false); ts.setOpen({ view: 'overview' }); }}>
             {t('filter.pricedForEdit')}

@@ -44,7 +44,24 @@ export function StyleStudio({ onClose }) {
 
   const destinations = app?.data?.destinations || null;
   const figures = useStyleFigures(ts?.list || [], destinations);
-  const exit = useDialogExit(onClose);
+  // Focus goes back where the traveller was. The trap's own return runs
+  // while the sheet is still in the page, when the corner disc is hidden
+  // (89-dock.css hides it under any modal), so it can fail; this one runs
+  // once the sheet is gone: the opener if it is still there and visible,
+  // else the corner disc, else the Trip dock's button.
+  const [opener] = React.useState(() => (typeof document !== 'undefined' ? document.activeElement : null));
+  const closeAndReturn = React.useCallback(() => {
+    onClose?.();
+    const back = () => {
+      const seen = (el) => el && el.isConnected && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden';
+      const now = document.activeElement;
+      if (now && now !== document.body && now.isConnected) return;
+      const to = [opener, document.querySelector('.dock--corner .dock-trigger'), document.querySelector('.trip-dock .dock-trigger')].find(seen);
+      to?.focus();
+    };
+    requestAnimationFrame(() => requestAnimationFrame(back));
+  }, [onClose, opener]);
+  const exit = useDialogExit(closeAndReturn);
 
   // Escape is one key with several meanings: an open card menu closes, a
   // changed draft asks first, otherwise the sheet leaves. The view in front

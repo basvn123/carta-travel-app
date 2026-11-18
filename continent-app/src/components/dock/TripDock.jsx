@@ -133,7 +133,7 @@ function TripRows({ s }) {
         <DockRowButton
           index={0}
           rowKey="style"
-          label={t('styles.kicker')}
+          label={t('studio.rowLabel')}
           ariaLabel={t('dock.styleRowAria', { name }) + (changed ? `. ${t('styles.kickerChanged')}` : '')}
           value={(
             <span className="trip-dock-style">

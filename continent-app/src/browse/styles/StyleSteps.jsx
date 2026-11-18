@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pressable } from '../../components/ui/Pressable.jsx';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Segmented } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
@@ -31,7 +32,13 @@ const COUNTED = ['friends', 'family', 'group'];
  *  hears the new question and Tab starts from it. */
 export function StepTitle({ children, focus }) {
   const ref = React.useRef(null);
-  React.useEffect(() => { if (focus) ref.current?.focus({ preventScroll: true }); }, [focus]);
+  // A frame later, so the sheet's focus trap (which focuses its first
+  // control on open) has run first and the question wins.
+  React.useEffect(() => {
+    if (!focus) return undefined;
+    const id = requestAnimationFrame(() => ref.current?.focus({ preventScroll: true }));
+    return () => cancelAnimationFrame(id);
+  }, [focus]);
   return <h2 ref={ref} className="sst-q" id="sst-title" tabIndex={-1}>{children}</h2>;
 }
 
@@ -66,12 +73,12 @@ export function StepName({ draft, set, onWho, focusTitle, autoName }) {
           const Ico = WHO_ICONS[k];
           const on = k === kind;
           return (
-            <button key={k} type="button" role="radio" aria-checked={on} className={`sst-row${on ? ' is-on' : ''}`}
+            <Pressable key={k} type="button" role="radio" aria-checked={on} className={`sst-row${on ? ' is-on' : ''}`}
               onClick={() => { if (!on) onWho(k); }}>
               <span className="sst-row-ic" aria-hidden="true"><Ico size={20} /></span>
               <span className="sst-row-label">{t(`pf.who.${k}`)}</span>
               <span className="sst-tile-tick" aria-hidden="true"><HouseIcon.check size={12} /></span>
-            </button>
+            </Pressable>
           );
         })}
       </div>
@@ -144,7 +151,7 @@ export function StepPriority({ draft, set, focusTitle }) {
           const on = draft.priority === p;
           const Ico = PRIORITY_ICONS[p];
           return (
-            <button key={p} type="button" role="radio" aria-checked={on} className={`sst-row is-tall${on ? ' is-on' : ''}`}
+            <Pressable key={p} type="button" role="radio" aria-checked={on} className={`sst-row is-tall${on ? ' is-on' : ''}`}
               onClick={() => { if (!on) set('priority', { ...draft, priority: p, tradeoffs: { ...TRADEOFF_DEFAULTS[p] } }); }}>
               <span className="sst-row-ic" aria-hidden="true"><Ico size={20} /></span>
               <span className="sst-row-text">
@@ -152,7 +159,7 @@ export function StepPriority({ draft, set, focusTitle }) {
                 <span className="sst-row-sub">{t(`pf.o.${p}Sub`)}</span>
               </span>
               <span className="sst-tile-tick" aria-hidden="true"><HouseIcon.check size={12} /></span>
-            </button>
+            </Pressable>
           );
         })}
       </div>
@@ -270,10 +277,10 @@ export function ExploreStep({ step, draft, set, focusTitle, showSkip, onSkip }) 
     <>
       <StepTitle focus={focusTitle}>{t(`studio.q.${step}`)}</StepTitle>
       <div className="sst-ask-row">
-        <button type="button" className="sst-whybtn" aria-expanded={why} aria-controls={whyId} onClick={() => setWhy(!why)}>
+        <Pressable className="sst-whybtn" aria-expanded={why} aria-controls={whyId} onClick={() => setWhy(!why)}>
           <InfoIcon size={16} />
           {t('studio.whyAsk')}
-        </button>
+        </Pressable>
         {showSkip && <Button variant="quiet" size="sm" className="sst-skip" onClick={onSkip}>{t('studio.skip')}</Button>}
       </div>
       {why && <p className="sst-whyline" id={whyId}>{t(`studio.why.${step}`)}</p>}

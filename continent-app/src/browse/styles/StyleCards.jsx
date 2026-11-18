@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pressable } from '../../components/ui/Pressable.jsx';
 import { useI18n } from '../../i18n/index.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { formatMoney } from '../../lib/money.js';
@@ -89,8 +90,7 @@ function StyleCard({ s, t, on, fig, compact, fresh, onPick, aside, below }) {
   const ghost = fig != null ? formatMoney(fig, { precision: 'whole' }) : '';
   return (
     <div className={`sst-card${on ? ' is-on' : ''}${fresh ? ' is-fresh' : ''}${aside ? ' has-aside' : ''}`}>
-      <button
-        type="button"
+      <Pressable
         role="radio"
         aria-checked={on}
         className="sst-card-hit"
@@ -125,22 +125,25 @@ function StyleCard({ s, t, on, fig, compact, fresh, onPick, aside, below }) {
             <span className="sst-fig-unit">{t('studio.aDayEach')}</span>
           </span>
         )}
-      </button>
+      </Pressable>
       {aside}
       {below}
     </div>
   );
 }
 
+const prefersLess = () => typeof window !== 'undefined' && Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+
 /** A figure that counts up once from a third of its value (a style just
  *  made), on the house settle curve's length; the end value at once under
  *  reduced motion or when there is nothing to count. */
 function useCountUp(value, run) {
-  const [shown, setShown] = React.useState(run && value != null ? value / 3 : null);
+  // Under reduced motion the first frame is already the end value: no
+  // partial figure, not even for one paint.
+  const [shown, setShown] = React.useState(() => (run && value != null && !prefersLess() ? value / 3 : null));
   React.useEffect(() => {
     if (!run || value == null) { setShown(null); return undefined; }
-    const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) { setShown(null); return undefined; }
+    if (prefersLess()) { setShown(null); return undefined; }
     const from = value / 3;
     const ms = 640;
     let raf = 0;

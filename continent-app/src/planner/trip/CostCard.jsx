@@ -183,7 +183,7 @@ export function CostCard({
     } else {
       lead = <span className="ccard-ico">{k === 'stay' ? <BedIcon size={18} /> : <DiningIcon size={18} />}</span>;
       sub = lifestyle ? (k === 'stay' ? lifestyle.bed : lifestyle.vibe) : '';
-      if (onStyleSpend) { act = onStyleSpend; actLabel = t('lifestyle.title'); }
+      if (onStyleSpend) { act = onStyleSpend; actLabel = t('studio.changeSpend'); }
     }
     if (!act && onOpen) { act = () => onOpen(k); actLabel = t('tp.breakdown'); }
     // A leading space inside the figure's own box, so the row's visible

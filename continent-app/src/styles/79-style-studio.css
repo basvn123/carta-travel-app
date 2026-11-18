@@ -5,12 +5,15 @@
  *
  * Colour: the umber family does every selection and both wizard parts;
  * saffron (--sun-*) is the one "On Explore" mark and the held strip; the
- * house food colour appears only as the food segment of the cost bar. No
- * gradient anywhere. Selected is the umber edge, the --umber-50 ground and a
+ * food segment of the cost bar is a light umber with a darker edge (no teal,
+ * owner 2026-11-18). No gradient anywhere. Selected is the umber edge, the --umber-50 ground and a
  * tick disc, so the state never rests on colour alone.
  */
 
 /* ---- The sheet: full height on a phone, a 560 px dialog from 769 px ---- */
+/* Over every surface a door opens it from: place and trip pages sit at
+   --z-page + 40, the saved map at + 200. */
+.fsheet-scrim.sst-scrim { z-index: calc(var(--z-page) + 300); }
 .fsheet.sst {
   display: flex;
   flex-direction: column;
@@ -156,7 +159,7 @@
   min-height: 72px;
   padding: var(--space-3) var(--space-3) var(--space-3) var(--space-3);
   border: 0;
-  border-radius: calc(var(--radius-card) - 2px);
+  border-radius: var(--radius-card);
   background: none;
   color: var(--text);
   font: inherit;
@@ -172,8 +175,8 @@
 /* The ring goes round the whole card, More button and all, so it never
    cuts across the card's own edge. */
 /* .fsheet button:focus-visible (14-filters-panels.css) would draw a second,
-   inner ring; this wins over it. */
-.sst-cards .sst-card .sst-card-hit:focus-visible { outline: none; }
+   inner ring; this wins over it. The visible ring is the card's, below. */
+.sst-cards .sst-card .sst-card-hit:focus-visible { outline-color: transparent; }
 .sst-card:has(> .sst-card-hit:focus-visible) { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .sst-disc {
   display: grid;
@@ -229,7 +232,26 @@
    width, the live one counts inside it. */
 .sst-fig-ghost, .sst-fig-val { grid-area: 1 / 1; justify-self: end; white-space: nowrap; }
 .sst-fig-ghost { visibility: hidden; }
-.sst-fig-unit { font-size: var(--text-caption); color: var(--text-2); white-space: nowrap; }
+.sst-fig { max-width: 7.5rem; }
+/* A narrow phone gives the name and its facts the card's whole width: the
+   figure moves under them, its unit beside it, so no language squeezes the
+   name to a word a line (de "pro Person und Tag"). */
+@media (max-width: 420px) {
+  .sst-cards:not(.is-compact) .sst-card-hit { grid-template-columns: auto 1fr; }
+  .sst-cards:not(.is-compact) .sst-fig {
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-2);
+    max-width: none;
+    text-align: left;
+  }
+  .sst-cards:not(.is-compact) .sst-fig-ghost, .sst-cards:not(.is-compact) .sst-fig-val { justify-self: start; }
+}
+/* A long unit ("pro Person und Tag") wraps under the figure rather than
+   squeezing the name column to a word a line. */
+.sst-fig-unit { font-size: var(--text-caption); line-height: var(--leading-tight); color: var(--text-2); text-wrap: balance; }
 .sst-more { align-self: start; margin: var(--space-2) var(--space-1) 0 0; color: var(--text-2); }
 
 /* Compact (the planner, the filter popover): one line a card. */
@@ -338,34 +360,22 @@
   .sst-go:hover .btn-icon, .sst-next:hover .btn-icon { transform: translateX(3px); }
 }
 
-/* The status after Done, one line that fades. */
-.sst-status { margin: 0; }
+/* The status after Done: a strip at the foot of the sheet, under the list,
+   so it never covers a card or the New tile; it clears after --dur-note. */
+.sst-status { flex: none; margin: 0; }
 .sst-status:empty { display: none; }
 .sst-status-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
-  width: fit-content;
-  max-width: calc(100% - var(--space-6));
-  margin-inline: auto;
-  text-align: center;
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-pill);
-  background: var(--text);
-  color: var(--surface);
+  display: block;
+  padding: var(--space-3) var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+  border-top: var(--stroke-hair) solid var(--border-soft);
+  background: var(--umber-50);
+  color: var(--umber-800);
   font-size: var(--text-label);
-  font-weight: 600;
-  box-shadow: var(--elev-2);
-  animation: sst-note 4s var(--ease-out) both;
-  pointer-events: none;
+  font-weight: 700;
+  text-align: center;
+  animation: sst-note var(--dur-3) var(--ease-out) both;
 }
-.fsheet.sst { position: relative; }
-@keyframes sst-note {
-  0% { opacity: 0; transform: translateY(8px); }
-  8%, 85% { opacity: 1; transform: none; }
-  100% { opacity: 0; transform: none; }
-}
+@keyframes sst-note { from { opacity: 0; } to { opacity: 1; } }
 
 /* ---- The wizard ---- */
 .sst-wz-head { flex-wrap: wrap; align-items: flex-start; row-gap: 0; padding-bottom: var(--space-3); border-bottom: var(--stroke-hair) solid var(--border-soft); }
@@ -401,7 +411,7 @@ button.sst-bar-step { height: var(--tap); cursor: pointer; border-radius: var(--
   transition: background-color var(--dur-2) var(--ease-out), box-shadow var(--dur-2) var(--ease-out);
 }
 .sst-bar-step.is-done i { background: var(--action); }
-.sst-bar-step.is-now i { background: var(--action); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--umber-300); }
+.sst-bar-step.is-now i { background: var(--action); outline: 2px solid var(--umber-300); outline-offset: 2px; }
 @media (hover: hover) {
   button.sst-bar-step:hover i { background: var(--umber-300); }
   button.sst-bar-step.is-done:hover i, button.sst-bar-step.is-now:hover i { background: var(--action-hover); }
@@ -430,7 +440,7 @@ button.sst-bar-step { height: var(--tap); cursor: pointer; border-radius: var(--
   text-wrap: balance;
   color: var(--text);
 }
-.sst-q:focus { outline: none; }
+.sst-q:focus { outline-color: transparent; }
 .sst-q:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 4px; border-radius: var(--radius-sm); }
 .sst-step > .sst-q:first-child { margin-top: 0; }
 .sst-label { margin: 0; font-size: var(--text-label); font-weight: 700; color: var(--text-2); }
@@ -510,7 +520,7 @@ button.sst-bar-step { height: var(--tap); cursor: pointer; border-radius: var(--
   transition: border-color var(--dur-1) var(--ease-out), background-color var(--dur-1) var(--ease-out);
 }
 .sst-tile-ic { color: var(--umber-600); }
-.sst-tile-label { overflow-wrap: anywhere; hyphens: auto; }
+.sst-tile-label { overflow-wrap: break-word; hyphens: manual; }
 .sst-tile[aria-disabled='true'] { cursor: not-allowed; color: var(--text-3); }
 .sst-tile[aria-disabled='true'] .sst-tile-ic { color: var(--text-3); }
 @media (hover: hover) {
@@ -654,7 +664,7 @@ button.sst-bar-step { height: var(--tap); cursor: pointer; border-radius: var(--
 .sst-dayfig-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); }
 .sst-dayfig-num {
   display: grid;
-  font-size: min(var(--text-headline), 30px);
+  font-size: var(--text-headline);
   font-weight: 800;
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
@@ -668,7 +678,7 @@ button.sst-bar-step { height: var(--tap); cursor: pointer; border-radius: var(--
 /* Food in a light umber with a darker edge (no teal in the studio, owner
    2026-11-18): the edge holds 3:1 on the paper, and the fill tells it from
    the solid bed segment; the legend's words carry the meaning too. */
-.sst-bar-food, .sst-dot-food { background: var(--umber-200); box-shadow: inset 0 0 0 1.5px var(--umber-500); }
+.sst-bar-food, .sst-dot-food { background: var(--umber-200); border: var(--stroke-edge) solid var(--umber-500); }
 .sst-legend { display: flex; gap: var(--space-4); font-size: var(--text-caption); color: var(--text-2); }
 .sst-legend-item { display: inline-flex; align-items: center; gap: 6px; }
 .sst-dot { width: 8px; height: 8px; border-radius: 50%; }
@@ -686,6 +696,19 @@ button.sst-bar-step { height: var(--tap); cursor: pointer; border-radius: var(--
 }
 .sst-foot-end { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); margin-left: auto; }
 .sst-back { margin-left: calc(var(--space-2) * -1); }
+/* A narrow phone keeps Back, Save style and Next on one row: Back shows its
+   arrow alone and keeps its word for screen readers. */
+@media (max-width: 400px) {
+  .sst-back { min-width: var(--tap); padding-inline: var(--space-2); }
+  .sst-back .btn-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+/* On touch the edit wizard's step bars are jump targets: the two parts take
+   a row each so every step is 44 px wide. */
+@media (pointer: coarse) {
+  .sst-prog.is-edit { flex-direction: column; gap: var(--space-1); }
+  .sst-prog.is-edit .sst-prog-group { flex-basis: auto; }
+  .sst-prog.is-edit button.sst-bar-step { flex: 0 0 var(--tap); min-width: var(--tap); }
+}
 .sst-discard { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); width: 100%; }
 .sst-discard-ask { margin: 0; font-size: var(--text-body); font-weight: 700; }
 @media (max-width: 400px) {

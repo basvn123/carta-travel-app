@@ -1,4 +1,5 @@
 import React from 'react';
+import { Pressable } from '../../components/ui/Pressable.jsx';
 // Capitalised so the linter sees the JSX use (`<Motion.div>`).
 import { m as Motion } from 'motion/react';
 import { useI18n } from '../../i18n/index.jsx';
@@ -85,7 +86,11 @@ export function StyleWizard({ ts, style, startStep, destinations, meta, escRef, 
   const keepRef = React.useRef(null);
   React.useEffect(() => { if (asking) keepRef.current?.focus(); }, [asking]);
 
-  const focusTitle = moved;
+  // The question takes focus when a step arrives, and when the wizard opens
+  // anywhere but a desktop's first step (that one focuses the name field).
+  const [deskName] = React.useState(() => !edit && step === 'name'
+    && typeof window !== 'undefined' && Boolean(window.matchMedia?.('(min-width: 769px) and (pointer: fine)').matches));
+  const focusTitle = moved || !deskName;
   let body;
   if (step === 'name') {
     body = (
@@ -125,7 +130,7 @@ export function StyleWizard({ ts, style, startStep, destinations, meta, escRef, 
   return (
     <>
       <header className="sst-head sst-wz-head">
-        <div className="sst-prog">
+        <div className={`sst-prog${edit ? ' is-edit' : ''}`}>
           {[['stay', STAY_STEPS], ['explore', EXPLORE_STEPS]].map(([part, steps]) => (
             <div key={part} className={`sst-prog-group${place.part === part ? ' is-here' : ''}`} style={{ flexGrow: steps.length }}>
               <span className="sst-prog-label" aria-hidden="true">{t(part === 'stay' ? 'studio.partStay' : 'studio.partExplore')}</span>
@@ -134,10 +139,10 @@ export function StyleWizard({ ts, style, startStep, destinations, meta, escRef, 
                   const j = STEPS.indexOf(s);
                   const cls = `sst-bar-step${j < idx ? ' is-done' : ''}${j === idx ? ' is-now' : ''}`;
                   return edit ? (
-                    <button key={s} type="button" className={cls} aria-current={j === idx ? 'step' : undefined}
+                    <Pressable key={s} type="button" className={cls} aria-current={j === idx ? 'step' : undefined}
                       aria-label={t('studio.goTo', { step: t(`studio.s.${s}`) })} onClick={() => go(s)}>
                       <i aria-hidden="true" />
-                    </button>
+                    </Pressable>
                   ) : (
                     <span key={s} className={cls} aria-hidden="true"><i /></span>
                   );

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useBcp47, useMonths, whenText } from './flowHooks.js';
 import { formatMoney } from '../../lib/money.js';
 import { useFirstRun } from '../../lib/firstRunContext.js';
@@ -17,9 +17,6 @@ import { DateField } from '../../components/DateField.jsx';
 import { FriendsInWindow } from '../../together/signals.jsx';
 import { Stepper } from '../../components/FilterControls.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
-import { personaPhotos } from '../../lib/recommend/persona.js';
-import { PersonaDraft } from './FlowSide.jsx';
-import { creditFor, creditLine } from '../../lib/imageCredit.js';
 import {
   Button, Chip, ChipGroup, ChoiceRows, Field, IconButton, Segmented, Switch,
 } from '../../components/ui/index.js';
@@ -35,7 +32,7 @@ import { PartyEditor } from '../PartyEditor.jsx';
 import { StyleCards } from '../../browse/styles/StyleCards.jsx';
 import { useStyleFigures } from '../../browse/styles/styleBits.jsx';
 import { switchTripStyle } from './styleSeed.js';
-import { answer, markAnswered, normalizeSettings, personasOfRaw, withPartyKind, PARTY_KINDS, WAYS } from './tripSettings.js';
+import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS, WAYS } from './tripSettings.js';
 import { MAX_TRIP_NIGHTS, addDaysUTC, nightsBetween, windowFromStart } from '../../lib/tripDates.js';
 
 /*
@@ -103,10 +100,20 @@ export function WhoScreen({ settings, commit, doneLabel }) {
     <>
       {ts?.list?.length > 0 && (
         <div className="pf-style">
-          <p className="pf-label">{t('styles.as')}</p>
-          <StyleCards compact list={ts.list} activeId={s.style || ts.activeId} onPick={pickStyle} label={t('styles.as')} figures={figures} />
+          <p className="pf-label">{t('styles.tripStyle')}</p>
+          <StyleCards compact list={ts.list} activeId={s.style || ts.activeId} onPick={pickStyle} label={t('styles.tripStyle')} figures={figures} />
           <p className="pf-note">{t('styles.whoNote')}</p>
+          {/* G12 (flow-3 m5): the one door into the studio from here, so a
+              style can be changed without leaving the trip. */}
+          <Button variant="quiet" size="sm" className="pf-style-door" onClick={() => ts.setOpen({ view: 'overview' })}>
+            {t('filter.pricedForEdit')}
+          </Button>
         </div>
+      )}
+      {ts && !ts.list?.length && (
+        <Button variant="quiet" size="sm" className="pf-style-door" onClick={() => ts.setOpen({ view: 'create' })}>
+          {t('studio.create')}
+        </Button>
       )}
       <ChoiceRows
         label={t('pf.q.who')}
@@ -517,106 +524,6 @@ export function LikeTiles({ picked, onToggle }) {
           {showCredits && <p className="pf-credit" id="pf-credit-list">{t('pf.likes.credit', { list: credits })}</p>}
         </div>
       )}
-    </>
-  );
-}
-
-// ---- How you like to travel: the persona (owner, plan flow walk 2026-10-30) ----
-
-/** The Commons credits of photographs, read from the credits file (lib/imageCredit.js). */
-function usePhotoCredits(photos) {
-  const urls = Object.values(photos).map((x) => x.url).filter(Boolean);
-  const key = urls.join('|');
-  const [state, setState] = useState({ key: null, list: [] });
-  useEffect(() => {
-    let live = true;
-    if (!key) return undefined;
-    Promise.all(Object.values(photos).map((x) => creditFor(x.url).then((c) => ({ city: x.city, c })).catch(() => ({ city: x.city, c: null }))))
-      .then((rows) => { if (live) setState({ key, list: rows.filter((r) => r.c).map((r) => `${r.city}, ${creditLine(r.c)}`) }); });
-    return () => { live = false; };
-  }, [key]); // eslint-disable-line react-hooks/exhaustive-deps -- the urls are the key
-  return state.key === key ? state.list : [];
-}
-
-/**
- * The persona (T892, owner's plan flow studio board 2026-10-30): ten
- * travellers as photographs, two to a row on every width, each its name and
- * one line in the traveller's own words over the photo (the Explore tile:
- * no white band under it). The photo is a real place that fits that
- * persona best (persona.js personaPhotos), credited under the grid. Up to
- * three can be picked; a fourth replaces the first, "A bit of everything"
- * stands alone. With two or more, one quiet row asks which is most you.
- */
-export function PersonaScreen({ settings, commit, doneLabel }) {
-  const { t } = useI18n();
-  const q = QUESTIONS['g:persona'];
-  const ctx = useFirstRun();
-  const destinations = ctx?.data?.destinations;
-  const photos = useMemo(() => personaPhotos(destinations), [destinations]);
-  const credits = usePhotoCredits(photos);
-  const [showCredits, setShowCredits] = useState(false);
-  const [picked, setPicked] = useState(() => personasOfRaw(settings.guide).personas);
-  const [most, setMost] = useState(settings.guide.personaMost || '');
-  const real = picked.filter((v) => v !== 'mix');
-  const mostOn = real.length > 1 && real.includes(most) ? most : '';
-  // T894: Your trip so far counts the places that fit while ticking.
-  const report = useContext(PersonaDraft);
-  useEffect(() => { report?.(personasOfRaw({ personas: picked, personaMost: mostOn })); }, [picked, mostOn]); // eslint-disable-line react-hooks/exhaustive-deps -- report is a state setter
-  const toggle = (v) => setPicked((cur) => {
-    if (cur.includes(v)) return cur.filter((x) => x !== v);
-    if (v === 'mix') return ['mix'];
-    const rest = cur.filter((x) => x !== 'mix');
-    return [...(rest.length >= 3 ? rest.slice(1) : rest), v];
-  });
-  return (
-    <>
-      <div className="pf-pcs" role="group" aria-label={t(q.titleKey)}>
-        {q.options.map((o) => {
-          const on = picked.includes(o.value);
-          const ph = photos[o.value];
-          return (
-            <Button key={o.value} variant="quiet" role="checkbox" aria-checked={on} data-p={o.value}
-              className={`pf-pc${on ? ' is-on' : ''}`} onClick={() => toggle(o.value)}>
-              <HeroImage url={ph?.url} city={ph?.city || t(o.labelKey)} iso2={ph?.iso2} className="pf-pc-img" ratio={[4, 5]} maxWidth={480} />
-              <span className="pf-pc-tick" aria-hidden="true"><CheckIcon size={14} /></span>
-              {mostOn === o.value && <span className="pf-pc-most">{t('pf.persona.mostTag')}</span>}
-              <span className="pf-pc-text">
-                <span className="pf-pc-name">{t(o.labelKey)}</span>
-                <span className="pf-pc-line">{t(`pf.persona.${o.value}Line`)}</span>
-              </span>
-            </Button>
-          );
-        })}
-      </div>
-      {real.length > 1 && (
-        <div className="pf-pc-mostrow">
-          <p className="pf-pc-mostq" id="pf-pc-most">{t('pf.persona.most')}</p>
-          <ChipGroup aria-labelledby="pf-pc-most" className="pf-pc-mostchips">
-            {real.map((v) => (
-              <Chip key={v} kind="choice" role="radio" aria-checked={mostOn === v} selected={mostOn === v} onClick={() => setMost(v)}>
-                {t(`pf.persona.${v}`)}
-              </Chip>
-            ))}
-            <Chip kind="choice" role="radio" aria-checked={!mostOn} selected={!mostOn} onClick={() => setMost('')}>
-              {t('pf.persona.mostSame')}
-            </Chip>
-          </ChipGroup>
-        </div>
-      )}
-      {credits.length > 0 && (
-        <div className="pf-credits">
-          <Button variant="quiet" size="sm" className="pf-credits-btn" aria-expanded={showCredits} aria-controls="pf-pc-credits"
-            onClick={() => setShowCredits((v) => !v)}>
-            {t('pf.likes.creditsBtn')}
-          </Button>
-          {showCredits && <p className="pf-credit" id="pf-pc-credits">{t('pf.likes.credit', { list: credits.join('; ') })}</p>}
-        </div>
-      )}
-      <Foot
-        disabled={!picked.length}
-        label={doneLabel}
-        onContinue={() => commit(answer(settings, 'g:persona', { guide: { ...settings.guide, ...personasOfRaw({ personas: picked, personaMost: mostOn }) } }))}
-      />
     </>
   );
 }
