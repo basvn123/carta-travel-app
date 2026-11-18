@@ -41,6 +41,8 @@ const POP_W = 380;
 const GUTTER = 16;
 const GAP = 8;
 
+// Explore rows carry the place's name as `city`.
+const placeName = (p) => p?.name || p?.city || '';
 const isDesktop = () => typeof window !== 'undefined' && window.innerWidth >= DESKTOP_FROM;
 
 export function PriceSheet({ data }) {
@@ -54,7 +56,7 @@ function OpenSheet({ s, data }) {
   const [tab, setTab] = useState(s.tab);
   const [desk] = useState(isDesktop);
   const baseId = useId();
-  const title = t('price.sheetLabel', { place: s.place?.name || '' });
+  const title = t('price.sheetLabel', { place: placeName(s.place) });
 
   const close = () => {
     closePriceSheet();
@@ -85,15 +87,22 @@ function SheetBody({ s, data, tab, setTab, baseId, onHand, t }) {
   const tabs = TABS.map((id) => ({ id, label: id === 'flight' ? t(wayTabKey(s.cost)) : t(`price.tab${id === 'in' ? 'In' : id[0].toUpperCase() + id.slice(1)}`) }));
   // The tapped part chose the tab; it takes focus so a keyboard or screen
   // reader user lands on what they opened.
+  // Two frames: the phone sheet's trap focuses its close button in its own
+  // effect after this one, and the desktop popover is hidden until placed.
   useEffect(() => {
-    wrapRef.current?.querySelector('[role="tab"][aria-selected="true"]')?.focus({ preventScroll: true });
+    let id = requestAnimationFrame(() => {
+      id = requestAnimationFrame(() => {
+        wrapRef.current?.querySelector('[role="tab"][aria-selected="true"]')?.focus({ preventScroll: true });
+      });
+    });
+    return () => cancelAnimationFrame(id);
   }, []);
   const panelId = `${baseId}-panel`;
   const shownLabel = tabs.find((x) => x.id === tab)?.label;
 
   return (
     <div className="psheet-in" ref={wrapRef}>
-      <Tabs label={t('price.sheetLabel', { place: s.place?.name || '' })} tabs={tabs} value={tab} onChange={setTab}
+      <Tabs label={t('price.sheetLabel', { place: placeName(s.place) })} tabs={tabs} value={tab} onChange={setTab}
         panelId={panelId} className="psheet-tabs" />
       <div className="psheet-panel" role="tabpanel" id={panelId} aria-label={shownLabel} data-tab={tab}>
         {tab === 'flight' && (isGroundWay(s.cost)

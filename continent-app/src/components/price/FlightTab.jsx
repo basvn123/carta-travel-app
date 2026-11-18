@@ -60,7 +60,7 @@ export default function FlightTab({ place, data, request, view, active, onChange
     }
     return (
       <div className="pft">
-        <p className="psheet-lead">{origin ? t('price.flight.noAirport', { airport: origin }) : t('price.flight.noneAny', { place: place?.name || '' })}</p>
+        <p className="psheet-lead">{origin ? t('price.flight.noAirport', { airport: origin }) : t('price.flight.noneAny', { place: place?.name || place?.city || '' })}</p>
         <div className="psheet-foot">{changeBtn(true)}</div>
       </div>
     );
@@ -107,7 +107,7 @@ export default function FlightTab({ place, data, request, view, active, onChange
           <Button variant="quiet" type="button" className="psheet-raw pft-textbtn" onClick={ft.backToList}>{t('price.flight.backToList')}</Button>
         )}
         {figure && !ft.rowLegs && <p className="psheet-basis">{t('price.flight.notListPrice')}</p>}
-        {!figure && noneKey && <p className="psheet-lead">{t(noneKey, { month, place: place?.name || '' })}</p>}
+        {!figure && noneKey && <p className="psheet-lead">{t(noneKey, { month, place: place?.name || place?.city || '' })}</p>}
       </div>
 
       {(shown.out || shown.back) && (
