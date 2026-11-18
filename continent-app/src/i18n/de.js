@@ -10594,6 +10594,8 @@ export const de = {
   "search.near": "In der Nähe von {place}",
   "search.featuresIn": "{features} in {place}",
   "search.featuresNear": "{features} bei {place}",
+  "search.nearElided": "In der Nähe von {place}",
+  "search.featuresNearElided": "{features} bei {place}",
   "search.subPlace": "{country}, in Carta",
   "search.subPlaceAny": "In Carta",
   "search.subNear": "{country}, ein Ort, den Carta noch nicht hat",

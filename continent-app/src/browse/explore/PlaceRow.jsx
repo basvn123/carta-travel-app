@@ -3,6 +3,8 @@ import { WaterQualityBadge, swimRelevant } from '../../components/WaterQualityBa
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { regionLine } from '../../lib/placeOverview.js';
+import { localNameOf } from '../../lib/search/localNames.js';
+import { useI18n } from '../../i18n/index.jsx';
 import { countryName } from '../../lib/countryName.js';
 import { useSettledFigure } from '../../lib/figureChange.js';
 import { MatchLine } from '../WhyItMatches.jsx';
@@ -61,6 +63,9 @@ export const PlaceRow = React.memo(function PlaceRow({
   rootRef = null, rootProps = null, hitProps = null, children = null,
 }) {
   const score = rating || p.rating;
+  const { lang } = useI18n();
+  // A row a search pick opened says the name picked (Florenz), G12.
+  const name = localNameOf(p.id, lang) || p.city;
   const figRef = React.useRef(null);
   useSettledFigure(figRef, p.cost?.dayEur ?? null);
   return (
@@ -88,7 +93,7 @@ export const PlaceRow = React.memo(function PlaceRow({
             maxWidth={ROW_MAX} sizes={ROW_SIZES} ratio={[1, 1]} />
         </span>
         <span className="xrow-line1">
-          <span className="xrow-name">{p.city}</span>
+          <span className="xrow-name">{name}</span>
           <PlaceScore rating={score} />
           <BandWord rating={score} className="xrow-band" />
           {/* The water mark rides with the name (as the judged prototype
@@ -110,7 +115,7 @@ export const PlaceRow = React.memo(function PlaceRow({
           buttons and a button never nests in a link. */}
       <RowFormation cost={p.cost} t={t} figRef={figRef} pressable place={p} />
       {onToggleFav && (
-        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city} className="xrow-save" word />
+        <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={name} className="xrow-save" word />
       )}
       {children}
     </div>

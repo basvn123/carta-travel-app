@@ -10594,6 +10594,8 @@ export const nl = {
   "search.near": "Bij {place}",
   "search.featuresIn": "{features} in {place}",
   "search.featuresNear": "{features} bij {place}",
+  "search.nearElided": "Bij {place}",
+  "search.featuresNearElided": "{features} bij {place}",
   "search.subPlace": "{country}, in Carta",
   "search.subPlaceAny": "In Carta",
   "search.subNear": "{country}, een plaats die Carta nog niet heeft",

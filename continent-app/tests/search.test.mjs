@@ -236,3 +236,34 @@ test('a Carta place speaks the UI language when its gazetteer town has a name in
   assert.equal(localPlaceName(p, towns, 'en'), null, 'no name of its own: the place keeps Brussels');
   assert.equal(localPlaceName(p, [{ ...towns[0], lat: 52, lon: 5 }], 'fr'), null, 'a far town is another place');
 });
+
+test('Near bends before a vowel in French and before an a in Italian (judge 1 fix 3)', async () => {
+  const { elides, nearLabel } = await import('../src/lib/search/nearLabel.js');
+  const { fr } = await import('../src/i18n/fr.js');
+  assert.ok(elides('fr', 'Annecy-le-Vieux'));
+  assert.ok(elides('fr', 'Évian'));
+  assert.ok(elides('fr', 'Ypres'), 'Y said as a vowel');
+  assert.ok(!elides('fr', 'Yalta'));
+  assert.ok(!elides('fr', 'Honfleur'), 'an h stays de: many are aspirated');
+  assert.ok(!elides('fr', 'Lyon'));
+  assert.ok(elides('it', 'Ancona'));
+  assert.ok(!elides('it', 'Empoli'));
+  assert.ok(!elides('de', 'Annecy'));
+  const t = (k, v) => `${k}:${v.features ? `${v.features}|` : ''}${v.place}`;
+  assert.equal(nearLabel(t, 'fr', 'Annecy'), 'search.nearElided:Annecy');
+  assert.equal(nearLabel(t, 'fr', 'Lyon'), 'search.near:Lyon');
+  assert.equal(nearLabel(t, 'fr', 'Annecy', 'Lacs'), 'search.featuresNearElided:Lacs|Annecy');
+  assert.equal(fr['search.nearElided'], "Près d'{place}");
+});
+
+test('a picked Carta place keeps its picked name for the list row (judge 1 fix 3)', async () => {
+  const { rememberLocalName, localNameOf, resetLocalNames } = await import('../src/lib/search/localNames.js');
+  resetLocalNames();
+  rememberLocalName('FLR', 'de', 'Florenz');
+  rememberLocalName('FLR', 'en', 'Florence');
+  assert.equal(localNameOf('FLR', 'de'), 'Florenz');
+  assert.equal(localNameOf('FLR', 'fr'), null, 'another language keeps the catalogue name');
+  assert.equal(localNameOf('FLR', 'en'), null, 'English is the catalogue name already');
+  resetLocalNames();
+  assert.equal(localNameOf('FLR', 'de'), null);
+});

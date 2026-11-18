@@ -10,3 +10,5 @@ export { rememberPick, pickedHits, resetPicked } from './picked.js';
 export { readRecent, addRecent, clearRecent, MAX_RECENT } from './recent.js';
 export { cartaRegionsFrom } from './cartaRegions.js';
 export { townNames, namesFromTowns, startTown, useStartNames } from './startNames.js';
+export { rememberLocalName, localNameOf, resetLocalNames, usePlaceLocalName } from './localNames.js';
+export { elides, nearLabel } from './nearLabel.js';

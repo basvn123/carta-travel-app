@@ -9,7 +9,7 @@ import { loadSearchIndex } from '../../lib/searchIndex.js';
 import { settingsSummary } from '../../lib/settings/index.js';
 import {
   cartaPlaces, cartaRegionsFrom, extractTokens, hitsFor, loadAreas, loadTownsFor, prefetchFor, readRecent,
-  addRecent, rememberPick, removeFeature, resolveIds, suggest,
+  addRecent, rememberPick, removeFeature, resolveIds, suggest, nearLabel, rememberLocalName,
 } from '../../lib/search/index.js';
 import { isQuestion } from '../searchDockStore.js';
 import { openAskChat } from '../ask/askChatStore.js';
@@ -148,10 +148,10 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
     if (it.type === 'feature') return fx;
     // A region carries its country, so the region Porto and the place
     // Porto never share a label (picked.js keys on it, flow-C M1).
-    const base = it.type === 'near' ? t('search.near', { place: it.name })
+    const base = it.type === 'near' ? nearLabel(t, lang, it.name)
       : it.type === 'region' && it.cc ? `${it.name}, ${countryName(it.cc, '', lang)}` : it.name;
     if (!fx || it.type === 'place') return base;
-    return t(it.type === 'near' ? 'search.featuresNear' : 'search.featuresIn', { features: fx, place: it.name });
+    return it.type === 'near' ? nearLabel(t, lang, it.name, fx) : t('search.featuresIn', { features: fx, place: it.name });
   };
   const subOf = (it) => {
     const country = it.cc ? countryName(it.cc, '', lang) : '';
@@ -196,12 +196,14 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
       return;
     }
     const ids = resolveIds(it, places);
+    // The list row this opens says the name the traveller picked (Florenz).
+    if (it.type === 'place') rememberLocalName(it.id, lang, it.name);
     rememberPick(label, hitsFor({ ...it, name: label }, ids));
     if (onPick) onPick({ ...it, query: label, ids });
     else onSubmit?.(label);
     // labelOf reads t; it is rebuilt with the panel, as is this callback.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fieldOf, typed, isPlaces, places, onPick, onSubmit, onClose]);
+  }, [fieldOf, typed, isPlaces, places, lang, onPick, onSubmit, onClose]);
 
   // The combobox's keys live on Lane 1's field; this panel owns the list.
   const optionsRef = React.useRef(options);
@@ -267,7 +269,7 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
           <span className="sp-opt-name">
             {tokens.map((k) => <span key={k} className="sp-tok-mark">{featureName(k)}</span>)}
             {/* With tokens the marks say the features, so the words carry only the place. */}
-            {tokens.length ? (it.type === 'near' ? t('search.near', { place: it.name }) : it.name) : labelOf(it)}
+            {tokens.length ? (it.type === 'near' ? nearLabel(t, lang, it.name) : it.name) : labelOf(it)}
           </span>
           <span className="sp-opt-sub">{subOf(it)}</span>
         </span>

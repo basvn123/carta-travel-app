@@ -8,6 +8,7 @@ import { placeRow, flightFiles } from '../../lib/settings/ways.js';
 import { homePoint } from '../../lib/travelWay.js';
 import { partyOf } from '../../lib/party.js';
 import { destCityLabel } from '../../lib/placeName.js';
+import { usePlaceLocalName } from '../../lib/search/localNames.js';
 import { ChoiceTiles, wayIcon, nightsText } from './settingsBits.jsx';
 
 const WAYS = ['any', 'plane', 'train', 'bus', 'car'];
@@ -51,13 +52,15 @@ function examplePlace(destinations, request) {
  * the group. No sentence, no formula.
  */
 export function PricesStep({ model, onChange }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { prices, s } = model;
   const alone = prices.party <= 1;
   const destinations = model.data?.destinations || null;
   // The place is chosen once per open, so it never changes under a switch.
   const [place] = React.useState(() => examplePlace(destinations, s?.priceRequest));
   const [touched, setTouched] = React.useState(false);
+  // Named in the UI language, as search names it (Rom, not Rome).
+  const localName = usePlaceLocalName(place, lang);
 
   const setSpan = (v) => { prices.setSpan(v); setTouched(true); onChange(); };
   const setView = (v) => { prices.setView(v); setTouched(true); onChange(); };
@@ -121,7 +124,7 @@ export function PricesStep({ model, onChange }) {
 
       {place && (
         <section className="set-example" aria-labelledby="set-example-title">
-          <h3 className="set-example-title" id="set-example-title">{t('settings.sheet.example', { place: destCityLabel(place) })}</h3>
+          <h3 className="set-example-title" id="set-example-title">{t('settings.sheet.example', { place: localName || destCityLabel(place) })}</h3>
           <div className="set-example-top">
             {/* The figure rolls when a switch changes it; the sheet's one
                 status line speaks, so the roll stays silent. */}
