@@ -1092,6 +1092,24 @@
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
     },
+    "flights.pair_slack_days": {
+      "value": 1,
+      "unit": "days",
+      "kind": "measured",
+      "source": "G12 measure.md: a trip-length pair with one day of slack exists for 48 to 88 percent of swept airports, exact-night pairs for 13 to 64 percent (lib/flights/pairs.js cheapestPair)",
+      "date": "2026-11-18",
+      "review": "2027-05-18",
+      "test": "tests/settingsEngine.test.mjs"
+    },
+    "flights.typical_min_fares": {
+      "value": 3,
+      "unit": "fares each way",
+      "kind": "estimate",
+      "source": "G12 decision: a route's typical fare is the median of its checked fares each way, shown only with at least this many (measure.md: 87 to 93 percent of airports qualify; lib/flights/pairs.js typicalFare)",
+      "date": "2026-11-18",
+      "review": "2027-05-18",
+      "test": "tests/settingsEngine.test.mjs"
+    },
     "origins.airport_access": {
       "value": {
         "road_factor": 1.3,

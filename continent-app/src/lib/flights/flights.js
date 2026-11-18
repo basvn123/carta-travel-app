@@ -92,7 +92,7 @@ export function sweptDay(file, dir, airport, date, now = Date.now()) {
 }
 
 /** Every fresh swept flight one way in a month ('2026-11'), or over all days. */
-function sweptLegs(file, dir, airport, month = null, now = Date.now()) {
+export function sweptLegs(file, dir, airport, month = null, now = Date.now()) {
   const days = file?.[dir === 'back' ? 'back' : 'to']?.[airport];
   if (!days) return [];
   return Object.entries(days)

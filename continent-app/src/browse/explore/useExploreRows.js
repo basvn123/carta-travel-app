@@ -2,11 +2,9 @@ import { useSettings } from '../../components/SettingsLine.jsx';
 import React from 'react';
 import { resolveWhen } from '../../lib/when.js';
 import { partyOf } from '../../lib/party.js';
-import { homePoint, wayFor } from '../../lib/travelWay.js';
-import { flightLegs } from '../../lib/price/flight.js';
-import { destAnchor } from '../../lib/origins.js';
-import { legCost } from '../../lib/flights/flights.js';
-import { legMinutes, minVerdict } from '../ExploreFilterRail.jsx';
+import { homePoint } from '../../lib/travelWay.js';
+import { wayRowsFor, wayKey, flightFiles } from '../../lib/settings/ways.js';
+import { minVerdict } from '../ExploreFilterRail.jsx';
 import { makeLabels, whyFacts, noCarOk, underOk, quietOk, matchGuided, guidedComparator } from '../../lib/guidedSearch.js';
 import { overviewRegion, overviewScore, reasonText, overviewReason } from '../../lib/placeOverview.js';
 import { fmtMonthRanges } from '../ClimateStrip.jsx';
@@ -23,17 +21,19 @@ export function useExploreRows({
   // airport's sweep (data.flights), or a train, coach or car journey from
   // the traveller's From point (lib/travelWay.js), or with any way the
   // cheapest of them. The party splits it (children, babies on a lap, T579).
-  // With a month or any time (T578) the flight is the month's or the
-  // year's cheapest. A place the chosen ground way cannot reach leaves the
-  // list; a place without a flight keeps its row in plane mode, as before.
+  // G12 (D10): the flight follows the Settings When (lib/price/flight.js:
+  // checked pairs of the trip length, else the route's typical fare,
+  // flagged), from every home airport file the app holds. No setting
+  // removes a row: a way with no figure is kept as notKnown. The climate
+  // month filter no longer sets the app's month: When owns it now (the
+  // logic critic's fact 5: two months gave wrong prices).
   const settingsLine = useSettings();
-  const setExploreMonth = settingsLine?.setExploreMonth;
-  React.useEffect(() => { setExploreMonth?.(dxf.month || null); }, [dxf.month, setExploreMonth]);
   const setCountryNot = settingsLine?.setCountryNot;
   // The one country the list is narrowed to, for its page link and the
   // category doors; none while the list leaves countries out (T581).
   const oneCountry = !countryNot && countryFilter.length === 1 ? countryFilter[0] : null;
   const flights = data?.flights || null;
+  const files = React.useMemo(() => flightFiles(data), [data]);
   // T649: the month the quiet flag judges, from the one helper: the Explore
   // month filter when set, else the traveller's own when.
   const quietWhen = React.useMemo(
@@ -53,28 +53,18 @@ export function useExploreRows({
     () => homePoint({ drive_home: settingsLine?.fromPlace, origin: settingsLine?.origin }, data),
     [settingsLine?.fromPlace, settingsLine?.origin, data],
   );
+  // G12: memoised on the part of the request a way depends on (wayKey), so
+  // a price view or span change reprices nothing here; the figure itself is
+  // lib/settings priceFigure at render.
+  const wKey = wayKey(request, wayMode, home, party);
   const wayRows = React.useMemo(() => {
     if (!data?.destinations) return null;
-    const m = new Map();
-    for (const p of catAllRows) {
-      const d = data.destinations[p.id];
-      const r = flights && (wayMode === 'plane' || wayMode === 'any') ? flightLegs(flights, destAnchor(d), request) : null;
-      // T691: the traveller's bag on both legs, as the calculator prices it.
-      const bagKey = request?.baggage;
-      const flight = r ? {
-        perSeat: legCost(r.out, { paying: 1, bagKey }).perSeat + legCost(r.back, { paying: 1, bagKey }).perSeat,
-        airline: r.out.airline,
-        minutes: legMinutes(r.out), // T1100: the air time in the door-to-door weighing
-      } : null;
-      const way = wayFor(d || p, wayMode, { home, party, flight });
-      // T589: the outbound flight's length, for the "Flight up to" filter.
-      const fmin = flight ? flight.minutes : null;
-      m.set(p.id, way ? { ...p, cost: { ...p.cost, way }, fmin } : (wayMode === 'plane' ? p : null));
-    }
-    return m;
-  }, [catAllRows, flights, request, wayMode, home, party, data]);
+    return wayRowsFor({ rows: catAllRows, destinations: data.destinations, files, request, mode: wayMode, home, party });
+    // `request` is read through wKey: only a change that moves a way reprices.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catAllRows, files, wKey, data]);
   const withWay = React.useCallback(
-    (list) => (wayRows ? list.map((p) => (wayRows.has(p.id) ? wayRows.get(p.id) : p)).filter(Boolean) : list),
+    (list) => (wayRows ? list.map((p) => (wayRows.has(p.id) ? wayRows.get(p.id) : p)) : list),
     [wayRows],
   );
   const allRows = React.useMemo(() => withWay(catAllRows), [catAllRows, withWay]);

@@ -111,21 +111,39 @@ export function groundReturn(dest, home, mode, party) {
  * cost, and flies above a distance when a fare exists (T1100, D13,
  * lib/wayChoice.js); it used to be the cheapest, which put a car to Bergen.
  */
-export function wayFor(dest, mode, { home, party, flight = null } = {}) {
+export function wayFor(dest, mode, { home, party, flight = null, ground = null } = {}) {
   const ways = [];
   if ((mode === 'plane' || mode === 'any') && flight?.perSeat > 0) {
     ways.push({
       mode: 'plane', perPerson: flightPerSeat(flight.perSeat, party), airline: flight.airline || null,
       ...(Number.isFinite(flight.minutes) ? { minutes: flight.minutes } : {}),
+      // G12: a route's median fare, not a fare for any date; the price
+      // sheet labels it. `from` is the home airport it was priced from.
+      ...(flight.typical ? { typical: true } : {}),
+      ...(flight.from ? { from: flight.from } : {}),
+      ...(flight.dates ? { dates: flight.dates } : {}),
     });
   }
   for (const g of GROUND_MODES) {
     if (mode !== g && mode !== 'any') continue;
-    const r = groundReturn(dest, home, g, party);
+    // `ground` (G12): a memo of groundReturn for this start and party, so a
+    // date change does not re-run 3,868 leg estimates (lib/settings/ways.js).
+    const r = ground ? ground(g) : groundReturn(dest, home, g, party);
     if (r) ways.push({ mode: g, perPerson: r.perPerson, hours: r.hours });
   }
   if (!ways.length) return null;
   const choice = chooseWay(ways, { km: wayKm(home, dest), transferMinutes: transferMinutesOf(dest) });
   const pick = choice && ways.find((w) => w.mode === choice.pick);
   return pick || ways.reduce((a, b) => (b.perPerson < a.perPerson ? b : a));
+}
+
+/**
+ * The way a row keeps when its mode has no figure (G12, D10): wayFor gives
+ * null for a ride over MAX_GROUND_HOURS, a gap in the leg data, no start
+ * point or no flight known, so the row says "not known yet", never "no
+ * route", and never leaves the list. perPerson null keeps every reader
+ * that checks `perPerson > 0` drawing nothing.
+ */
+export function notKnownWay(mode) {
+  return { mode: TRAVEL_MODES.includes(mode) ? mode : 'any', perPerson: null, notKnown: true };
 }

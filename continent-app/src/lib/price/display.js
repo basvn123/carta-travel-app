@@ -4,8 +4,13 @@
  * day; a view only multiplies, so the two views can never disagree.
  *
  *   per person   the day a person a day; a way there a person, return
- *   total        the day x seats x nights (the stay for everyone); a way
- *                there x seats
+ *   total        the day x seats; a way there x seats
+ *
+ * G12 (D10, Prices shown): the span multiplies on top, 'day' by 1 and 'trip'
+ * by the nights. Before G12 'total' always meant seats x nights while the
+ * Explore row meant seats x one day: two group rules (explore-settings.md
+ * 2d). Now the span says which, and a request without one (older callers)
+ * reads 'total' as the trip, as it did.
  *
  * A filter or a sort compares the number on the card in the same view (V15):
  * the shown figure and the shown threshold are the per-person ones times the
@@ -17,10 +22,18 @@ const cents = (v) => Math.round(v * 100) / 100;
 
 export const isTotalView = (req) => (req || DEFAULT_PRICE_REQUEST).view === 'total';
 
-/** The day-price factor: 1 per person, seats x nights for the group. */
+/** 'day' or 'trip': the request's span, else the pre-G12 reading. */
+export function spanOf(req) {
+  const r = req || DEFAULT_PRICE_REQUEST;
+  if (r.span === 'day' || r.span === 'trip') return r.span;
+  return isTotalView(r) ? 'trip' : 'day';
+}
+
+/** The day-price factor: seats for the group (else 1), times the nights
+ *  for the whole trip. */
 export function viewFactor(req) {
   const r = req || DEFAULT_PRICE_REQUEST;
-  return isTotalView(r) ? seatsOf(r) * r.nights : 1;
+  return (isTotalView(r) ? seatsOf(r) : 1) * (spanOf(r) === 'trip' ? r.nights : 1);
 }
 
 /** The way-there factor: 1 per person, seats for the group. */
@@ -42,8 +55,10 @@ export function shownWay(eur, req) {
 /** The unit words for a day amount in the view, through i18n. */
 export function dayUnit(t, req) {
   const r = req || DEFAULT_PRICE_REQUEST;
-  if (!isTotalView(r)) return t('dest.priceDayUnit');
-  const seats = seatsOf(r);
+  const trip = spanOf(r) === 'trip';
+  if (!isTotalView(r) && !trip) return t('dest.priceDayUnit');
+  const seats = isTotalView(r) ? seatsOf(r) : 1;
+  if (!trip) return t('settingsSum.unitDayGroup', { n: seats });
   return t('price.unitTotal', {
     people: seats === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: seats }),
     nights: r.nights === 1 ? t('receipt.oneNight') : t('receipt.nNights', { n: r.nights }),

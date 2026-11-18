@@ -197,6 +197,20 @@ export function encodeState({
   if (choices?.transport_mode && choices.transport_mode !== 'any') q.set('t', choices.transport_mode);
   if (choices?.stay_tier && choices.stay_tier !== 'home') q.set('st', choices.stay_tier);
   if (choices?.price_view === 'total') q.set('pv', 't');   // T694: the group's total
+  // G12 (D10), the Settings model (lib/settings/model.js), each key only
+  // when it is not the default: the price span (ps=t, the whole trip), the
+  // When mode (wm: d dates, m month, a any time, c cheapest), its month
+  // (wy, 'YYYY-MM') and the trip length (wn), the Start kind (sk: h here,
+  // c country), its country (sc) and the Carta town 'here' resolved to (sh).
+  if (choices?.price_span === 'trip') q.set('ps', 't');
+  else if (choices?.price_span === 'day' && choices?.price_view === 'total') q.set('ps', 'd');
+  const WM = { dates: 'd', month: 'm', any: 'a', cheapest: 'c' };
+  if (WM[choices?.date_mode]) q.set('wm', WM[choices.date_mode]);
+  if (/^\d{4}-\d{2}$/.test(choices?.when_month || '')) q.set('wy', choices.when_month);
+  if (Number.isFinite(choices?.trip_nights)) q.set('wn', String(choices.trip_nights));
+  if (choices?.origin_kind === 'here' || choices?.origin_kind === 'country') q.set('sk', choices.origin_kind === 'here' ? 'h' : 'c');
+  if (choices?.origin_kind === 'country' && /^[A-Z]{2}$/.test(choices?.origin_country || '')) q.set('sc', choices.origin_country);
+  if (choices?.origin_kind === 'here' && choices?.here_town) q.set('sh', String(choices.here_town));
   if (choices?.price_excluded?.length) q.set('px', choices.price_excluded.join('.'));   // T695
   if (choices?.origin) q.set('o', choices.origin);
   // T860: the home airports in reach ("oa", codes joined by '.') and the
@@ -267,6 +281,21 @@ export function decodeState(search) {
   if (has('t')) out.transport_mode = q.get('t');
   if (has('st')) out.stay_tier = q.get('st');
   if (has('pv')) out.price_view = q.get('pv') === 't' ? 'total' : 'pp';
+  // G12: the Settings model (see encodeState). A link from before it has
+  // none of these and readSettings migrates its df, d, r and xm.
+  if (has('ps')) out.price_span = q.get('ps') === 't' ? 'trip' : 'day';
+  if (has('wm')) {
+    const wm = { d: 'dates', m: 'month', a: 'any', c: 'cheapest' }[q.get('wm')];
+    if (wm) out.date_mode = wm;
+  }
+  if (has('wy') && /^\d{4}-(0[1-9]|1[0-2])$/.test(q.get('wy'))) out.when_month = q.get('wy');
+  if (has('wn')) {
+    const n = parseInt(q.get('wn'), 10);
+    if (n >= 1 && n <= 30) out.trip_nights = n;
+  }
+  if (has('sk')) out.origin_kind = q.get('sk') === 'h' ? 'here' : q.get('sk') === 'c' ? 'country' : 'place';
+  if (has('sc') && /^[A-Z]{2}$/.test(q.get('sc'))) out.origin_country = q.get('sc');
+  if (has('sh') && /^[A-Za-z0-9_:.-]{1,80}$/.test(q.get('sh'))) out.here_town = q.get('sh');
   if (has('px')) out.price_excluded = q.get('px').split('.').filter((k) => /^[a-z]{2,12}$/.test(k)).slice(0, 8);
   if (has('o')) out.origin = q.get('o');
   if (has('oa')) out.origins = q.get('oa').split('.').filter((c) => /^[A-Z]{3}$/.test(c)).slice(0, 12);
@@ -423,7 +452,7 @@ export function loadInitialState() {
 // owned too: otherwise children set back to 0 left gc=2 standing in the
 // address and a reload brought the children back (travel styles review,
 // 2026-11-13).
-const OWN_KEYS = ['ah', 'b', 'big', 'cat', 'cc', 'cf', 'cn', 'd', 'dest', 'df', 'dh', 'fav', 'favonly', 'feat', 'g', 'gb', 'gc', 'gem', 'ls', 'mode', 'o', 'oa', 'pm', 'pr', 'pv', 'px', 'r', 'rh', 'rr', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'ty', 'un'];
+const OWN_KEYS = ['ah', 'b', 'big', 'cat', 'cc', 'cf', 'cn', 'd', 'dest', 'df', 'dh', 'fav', 'favonly', 'feat', 'g', 'gb', 'gc', 'gem', 'ls', 'mode', 'o', 'oa', 'pm', 'pr', 'ps', 'pv', 'px', 'r', 'rh', 'rr', 'sc', 'sh', 'sk', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'ty', 'un', 'wm', 'wn', 'wy'];
 
 /** Push the encoded state into the URL (replaceState) and the localStorage mirror.
  *

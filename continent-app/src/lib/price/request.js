@@ -19,10 +19,18 @@
  *   excluded    items the traveller switched off (F4, rule 9)
  *   activities  chosen activities (F9), empty by default
  *   subArea     a part of the destination (after F2, micro-hubs)
+ *
+ * G12 (D10, the Settings model, lib/settings/model.js) adds:
+ *   dateMode    'dates' | 'month' | 'any' | 'cheapest'; `when` stays the
+ *               three kinds every bed and month reader knows (cheapest reads
+ *               as any time there), the flight reads dateMode
+ *   span        'day' | 'trip' (Prices shown)
+ *   originKind, originCountry   the Start kind
+ * and `nights` is the trip length in month, any and cheapest modes.
  */
 import { DEFAULT_LIFESTYLE, tripDaysBetween } from '../runtime_pricing.js';
 import { resolveWhen } from '../when.js';
-import { partyOf } from '../party.js';
+import { readSettings } from '../settings/model.js';
 import { rule } from './config.js';
 
 /** The stay a price assumes when the traveller has set no dates (B5). */
@@ -62,46 +70,43 @@ export const DEFAULT_PRICE_REQUEST = Object.freeze({
   excluded: Object.freeze([]),
   activities: Object.freeze([]),
   subArea: null,
+  dateMode: 'any',
+  // null: the pre-G12 reading, where 'total' is the trip (display.js spanOf).
+  span: null,
+  originKind: 'place',
+  originCountry: null,
 });
 
-const pad2 = (n) => String(n).padStart(2, '0');
-
-/** The next 'YYYY-MM' of `month` from `today` (this month counts). */
-function nextYm(month, today) {
-  const y = Number(String(today).slice(0, 4));
-  const m = Number(String(today).slice(5, 7));
-  return `${month >= m ? y : y + 1}-${pad2(month)}`;
-}
-
 /**
- * The request from the app's state: the choices App.jsx holds, the dates,
- * the date mode (dateFlex), whether the dates are the traveller's own, and
- * the Explore month filter (xm), which wins app-wide while it is on (B7).
+ * The request from the app's state: the choices App.jsx holds (with the
+ * Settings model's fields, lib/settings/model.js), the dates, and for state
+ * from before that model the date mode (dateFlex), whether the dates are the
+ * traveller's own and the Explore month filter (xm), which readSettings
+ * migrates. With a date_mode in the choices, xm no longer moves a price.
  *
  * @param {object} s  { choices, departDate, returnDate, dateFlex, ownDates, xm, today }
  */
 export function priceRequest(s = {}) {
   const c = s.choices || {};
-  const w = resolveWhen({
-    dateFlex: s.dateFlex, departDate: s.departDate, returnDate: s.returnDate, ownDates: s.ownDates, xm: s.xm,
-  });
+  const m = readSettings(c.price_view || !s.view ? c : { ...c, price_view: s.view }, s);
   let when = ANY_WHEN;
-  // The pair's length is the traveller's trip length in every mode (a month
-  // or any time keeps the pair, T578); only the exact mode reads its days.
-  const paired = !!(s.departDate && s.returnDate && s.returnDate > s.departDate);
-  const nights = paired ? Math.max(1, tripDaysBetween(s.departDate, s.returnDate)) : DEFAULT_NIGHTS;
-  if (w.kind === 'exact' && paired) {
-    when = { ...w, start: s.departDate, end: s.returnDate, ym: s.departDate.slice(0, 7) };
-  } else if (w.kind === 'month') {
-    const fromDates = s.departDate && Number(s.departDate.slice(5, 7)) === w.month ? s.departDate.slice(0, 7) : null;
-    const today = s.today || new Date().toISOString().slice(0, 10);
-    when = { ...w, start: null, end: null, ym: fromDates || nextYm(w.month, today) };
+  if (m.dateMode === 'dates' && m.datesOk) {
+    const w = resolveWhen({ departDate: m.dates.start, returnDate: m.dates.end, ownDates: true });
+    when = { ...w, start: m.dates.start, end: m.dates.end, ym: m.dates.start.slice(0, 7) };
+  } else if (m.dateMode === 'month') {
+    const month = Number(m.month.slice(5, 7));
+    when = { kind: 'month', month, months: [month], start: null, end: null, ym: m.month };
   }
-  const p = partyOf(c);
+  const p = m.party;
   return {
     ...DEFAULT_PRICE_REQUEST,
     when,
-    nights,
+    nights: m.nights || DEFAULT_NIGHTS,
+    // Dates without a second day read as any time (readSettings datesOk).
+    dateMode: m.dateMode === 'dates' && !m.datesOk ? 'any' : m.dateMode,
+    span: m.priceSpan,
+    originKind: m.originKind,
+    originCountry: m.originCountry,
     group: { adults: p.adults, children: p.children, babies: p.babies },
     stay: c.stay_tier || DEFAULT_PRICE_REQUEST.stay,
     lifestyle: c.lifestyle || DEFAULT_PRICE_REQUEST.lifestyle,
@@ -130,6 +135,7 @@ export function atDates(req, start, end) {
     ...r,
     when: { kind: 'exact', month: m, months, start, end, ym: String(start).slice(0, 7) },
     nights: Math.max(1, tripDaysBetween(start, end)),
+    dateMode: 'dates',
   };
 }
 
@@ -141,12 +147,17 @@ export const seatsOf = (req) => Math.max(1, (req?.group?.adults || 0) + (req?.gr
  *  and the day's car line count cars the same way). */
 export const carSeatsOf = (req) => seatsOf(req) + Math.max(0, req?.group?.babies || 0);
 
-/** A stable key for the request, for memo and cache keys. */
+/** A stable key for the request, for memo and cache keys. G12: every
+ *  choice that moves a shown figure is in it (the logic critic found the
+ *  way there, the start and the basis missing), so a memo on this key
+ *  cannot hand back a figure for other settings. */
 export function requestKey(req) {
   const r = req || DEFAULT_PRICE_REQUEST;
-  return JSON.stringify([r.when.kind, r.when.start, r.when.end, r.when.month, r.nights,
+  const dh = r.driveHome;
+  return JSON.stringify([r.when.kind, r.when.start, r.when.end, r.when.month, r.when.ym || null, r.nights,
     r.group.adults, r.group.children, r.group.babies, r.stay, r.lifestyle, r.transport, !!r.hire,
-    r.excluded, r.activities, r.subArea]);
+    r.excluded, r.activities, r.subArea, r.dateMode || null, r.span || null, r.view || null,
+    r.origin || null, dh ? [dh.lat, dh.lon] : null, r.baggage || null, r.originKind || null, r.originCountry || null]);
 }
 
 /**
@@ -167,12 +178,15 @@ export function costChoices(req) {
 /**
  * The flight window that follows the same date mode as the bed (V7):
  *   { kind: 'exact', from, to }   the exact dates
- *   { kind: 'month', ym }         the month's cheapest return
- *   { kind: 'any' }               the year's cheapest return
+ *   { kind: 'month', ym }         the month's cheapest return of the trip length
+ *   { kind: 'cheapest' }          the cheapest checked return of the trip length (G12)
+ *   { kind: 'any' }               any time: the route's typical fare on a card
  */
 export function flightWindow(req) {
-  const w = (req || DEFAULT_PRICE_REQUEST).when;
+  const r = req || DEFAULT_PRICE_REQUEST;
+  const w = r.when;
   if (w.kind === 'exact') return { kind: 'exact', from: w.start, to: w.end };
   if (w.kind === 'month') return { kind: 'month', ym: w.ym };
+  if (r.dateMode === 'cheapest') return { kind: 'cheapest' };
   return { kind: 'any' };
 }
