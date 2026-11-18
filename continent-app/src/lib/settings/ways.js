@@ -109,3 +109,16 @@ export function wayRowsFor({ rows, destinations, files, request, mode, home, par
   }
   return m;
 }
+
+/**
+ * One place as an Explore row: its day answer (priceDay) under `cost` with
+ * the way there the list gives it, so a figure outside the list (the
+ * Prices shown example) adds the same way, checked or typical, as its card.
+ *
+ *   day   the priceDay answer for the place (null: null)
+ *   rest  as wayRowsFor
+ */
+export function placeRow({ id, day, destinations, files, request, mode, home, party, now = Date.now() }) {
+  if (!id || !day) return null;
+  return wayRowsFor({ rows: [{ id, cost: day }], destinations, files, request, mode, home, party, now }).get(id) || null;
+}

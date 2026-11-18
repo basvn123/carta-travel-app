@@ -9,4 +9,5 @@ export { nearestTown, countryStartTown, countryAirports, CAPITALS, MAX_COUNTRY_A
 export { grandTotal, priceFigure, priceSortValue, asModel } from './prices.js';
 export { settingsSummary, whenText, datesText, startPlace } from './summary.js';
 export { makeSettingsSetters } from './setters.js';
-export { wayRowsFor, wayKey, flightFiles } from './ways.js';
+export { monthFrom, atMonth } from './monthFrom.js';
+export { wayRowsFor, wayKey, flightFiles, placeRow } from './ways.js';

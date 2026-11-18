@@ -4,6 +4,9 @@ import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { Segmented, Figure } from '../../components/ui/index.js';
 import { formatMoney } from '../../lib/money.js';
 import { priceDay } from '../../lib/price/index.js';
+import { placeRow, flightFiles } from '../../lib/settings/ways.js';
+import { homePoint } from '../../lib/travelWay.js';
+import { partyOf } from '../../lib/party.js';
 import { destCityLabel } from '../../lib/placeName.js';
 import { ChoiceTiles, wayIcon, nightsText } from './settingsBits.jsx';
 
@@ -60,9 +63,22 @@ export function PricesStep({ model, onChange }) {
   const setView = (v) => { prices.setView(v); setTouched(true); onChange(); };
 
   // The model's figure for this place in the current settings (Lane 3,
-  // priceFigure over the engine's day answer): the amount, its unit and
-  // its bed and food parts in the same span and view.
-  const row = place ? priceDay(place, s?.priceRequest, destinations) : null;
+  // priceFigure over the engine's day answer and the way there its card
+  // has): the amount, its unit and its bed and food parts in the same span
+  // and view. Without the way the whole trip would say "not known yet" for
+  // a place whose card shows a fare.
+  const data = model.data;
+  const request = s?.priceRequest;
+  const wayMode = s?.transportMode || 'any';
+  const row = React.useMemo(() => {
+    if (!place) return null;
+    const day = priceDay(place, request, destinations);
+    return placeRow({
+      id: place.id, day, destinations, files: flightFiles(data), request, mode: wayMode,
+      home: homePoint({ drive_home: s?.fromPlace, origin: s?.origin }, data),
+      party: partyOf({ group_size: s?.party, children: s?.children, babies: s?.babies }),
+    }) || day;
+  }, [place, request, destinations, data, wayMode, s?.fromPlace, s?.origin, s?.party, s?.children, s?.babies]);
   const fig = row ? model.figure(row) : null;
   const shown = fig && Number.isFinite(fig.eur) ? fig.eur : null;
   const unit = fig ? t(fig.unit[0], fig.unit[1]) : '';

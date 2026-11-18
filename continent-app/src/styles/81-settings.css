@@ -48,7 +48,18 @@
   animation: set-dock-in var(--dur-3) var(--ease-out) both;
 }
 /* While the panel is docked the page knows (html.has-settings-dock and
-   --settings-dock-w), so Explore can keep its list clear of it. */
+   --settings-dock-w), so Explore keeps its band and list clear of it: the
+   decision wants the list visible and recounting beside the panel, never
+   running under it (1100 to 1440 and up). */
+@media (min-width: 1100px) {
+  html.has-settings-dock .app-main {
+    padding-right: calc(var(--settings-dock-w, 400px) + var(--space-4));
+  }
+  html.has-settings-dock .band.is-desk .band-row,
+  html.has-settings-dock .band.is-desk .band-line {
+    padding-right: calc(var(--settings-dock-w, 400px) + var(--space-4) * 2);
+  }
+}
 /* Given a column to live in (dockTo), the panel is part of the page. */
 .set-dock.is-inline {
   position: sticky;

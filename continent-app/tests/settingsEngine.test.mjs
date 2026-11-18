@@ -18,6 +18,11 @@ import { encodeState, decodeState } from "../src/lib/urlState.js";
 import { notKnownWay, wayFor } from "../src/lib/travelWay.js";
 import { legCost } from "../src/lib/flights/flights.js";
 import { rule } from "../src/lib/price/config.js";
+import { readFileSync } from "node:fs";
+import { setStayRecords } from "../src/lib/staysData.js";
+import { monthFrom, atMonth } from "../src/lib/settings/monthFrom.js";
+import { placeRow } from "../src/lib/settings/ways.js";
+import { priceDays } from "../src/lib/price/priceDay.js";
 
 const t = (k, v = {}) => String(en[k] ?? k).replace(/\{(\w+)\}/g, (_, n) => v[n]);
 const TODAY = "2026-11-18";
@@ -422,4 +427,41 @@ test("URL: the new keys round-trip, and only when not the default", () => {
   assert.equal(decodeState("?wm=zz").date_mode, undefined);
   assert.equal(decodeState("?wy=2027-13").when_month, undefined);
   assert.equal(decodeState("?wn=99").trip_nights, undefined);
+});
+
+/* ------------------------------------------------------------ month from */
+
+test("When month cards: the from figure is the lowest complete day that month, in the traveller's view, null without data", () => {
+  const FX = JSON.parse(readFileSync(new URL("./fixtures/price/destinations.json", import.meta.url), "utf8"));
+  setStayRecords(FX.stays);
+  const choices = { date_mode: "month", when_month: "2027-06", trip_nights: 7, group_size: 2 };
+  const req = priceRequest({ choices });
+  const at = atMonth(req, "2027-01");
+  assert.deepEqual([at.when.kind, at.when.ym, at.when.month], ["month", "2027-01", 1]);
+  const days = [...priceDays(FX.destinations, at).values()].map((r) => r.dayEur).filter((v) => v > 0);
+  const pp = monthFrom(FX.destinations, req, "2027-01", choices);
+  assert.equal(pp, Math.min(...days));
+  // The group view doubles a day for two seats; the span is always a day.
+  const group = monthFrom(FX.destinations, req, "2027-01", { ...choices, price_view: "total", price_span: "trip" });
+  assert.equal(group, Math.round(pp * 2 * 100) / 100);
+  assert.equal(monthFrom({}, req, "2027-01", choices), null);
+  assert.equal(monthFrom(FX.destinations, req, "2027-13", choices), null);
+  assert.equal(monthFrom(null, req, "2027-01", choices), null);
+});
+
+test("Prices shown example: one place gets the same way there as its card, so the whole trip adds it", () => {
+  const f = file("BRU", { LIS: ROUTE });
+  const ctx = {
+    destinations: DATA.destinations, files: [f], request: priceRequest({ choices: { date_mode: "cheapest", trip_nights: 7 } }),
+    mode: "plane", home: null, party: { adults: 2, children: 0, babies: 0, seats: 2 }, now: NOW,
+  };
+  const day = { dayEur: 90, stayEur: 60, foodEur: 30 };
+  const row = placeRow({ id: "LIS", day, ...ctx });
+  const card = wayRowsFor({ rows: [{ id: "LIS", cost: day }], ...ctx }).get("LIS");
+  assert.deepEqual(row.cost.way, card.cost.way);
+  const fig = priceFigure(row, readSettings({ price_span: "trip", trip_nights: 7, date_mode: "cheapest" }));
+  assert.equal(fig.notKnown, false);
+  assert.ok(fig.parts.way > 0);
+  assert.equal(fig.eur, Math.round((90 * 7 + fig.parts.way) * 100) / 100);
+  assert.equal(placeRow({ id: "LIS", day: null, ...ctx }), null);
 });
