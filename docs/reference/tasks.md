@@ -1215,6 +1215,7 @@ Beaches, lakes, mountains: re-export with the image ladder from the CDN
 
 - Cadence: monthly
 - Writes: the wire files in `continent-app/public/`
+- Wire files: `beaches/`, `lakes/`, `mountains/`
 - Expected hours of a warm run: 0.3
 - Code: guard `guard_files(('cache/beaches/rich_*.json', 20, 'pull beaches-`
 - Note: T052-d. Every export the pipeline runs already joins the ladder (run_pipeline.py sets CARTA_IMG_MANIFEST=cdn), but a derive run on an on-demand worker changes the CDN manifest without any export following it. This cache-only pass (no Overpass) brings the wire up to what the CDN holds within a month. A layer with no manifest on the CDN is written as before.
