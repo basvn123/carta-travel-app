@@ -6,8 +6,8 @@
  * product and not all of it. Two inputs, read once at module load:
  *
  *   VITE_PICTURE_LAYERS   the build's setting: "beaches", "beaches,lakes",
- *                         "all", or unset (off everywhere). This is the
- *                         production switch.
+ *                         "all" or "off". Unset or empty means "all" since
+ *                         T052-d (2026-11-18). This is the production switch.
  *   ?pic=                 the same vocabulary in the page URL, plus "off".
  *                         When present it replaces the build's setting for
  *                         that page load. It exists so a harness (and the
@@ -48,7 +48,14 @@ function fromQuery() {
   }
 }
 
-const ACTIVE = fromQuery() ?? parse(ENV.VITE_PICTURE_LAYERS);
+// T052-d (2026-11-18): every layer is on when the build leaves the setting
+// unset or empty. The beach and mountain copies are on the CDN and every
+// pipeline export joins them into the wire; a layer whose wire has no `ih` yet
+// (lakes until their derive run lands) shows Wikimedia exactly as before.
+// VITE_PICTURE_LAYERS=off is the switch back.
+const BUILD_DEFAULT = 'all';
+
+const ACTIVE = fromQuery() ?? parse(ENV.VITE_PICTURE_LAYERS || BUILD_DEFAULT);
 
 /** True when `layer` serves its photographs from the CDN ladder. */
 export function pictureOn(layer) {

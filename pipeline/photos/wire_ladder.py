@@ -110,6 +110,65 @@ def valid_placeholder(value):
         and re.fullmatch(r"[A-Za-z0-9_-]+", value) is not None
 
 
+# T052-d (2026-11-18): the CDN mode. `--img-manifest cdn` (or
+# CARTA_IMG_MANIFEST=cdn, which run_pipeline.py sets for every task it runs)
+# fetches the layer's manifest from the public CDN, so every export the
+# pipeline runs joins the ladder without a derive tree on disk. Before this,
+# an export joined only when someone passed a path by hand, so the next
+# scheduled export would have quietly dropped `ih` and `d` from the wire.
+# A layer with no manifest on the CDN (404) is written without the ladder; a
+# network failure falls back to the last good copy under data/img_manifest,
+# and with none the wire is written without it. Never an error: the app
+# reads a wire record without `ih` exactly as before.
+CDN_MANIFEST = "https://cdn.carta-europetravel.com/img/manifest/{layer}.json"
+MANIFEST_ENV = "CARTA_IMG_MANIFEST"
+LOCAL_COPY = HERE.parents[1] / "data" / "img_manifest"
+
+
+def _fetch(url):
+    """(status, bytes) of a GET; status 0 on a network failure."""
+    import urllib.error  # noqa: PLC0415
+    import urllib.request  # noqa: PLC0415
+    req = urllib.request.Request(url, headers={"User-Agent": "carta-pipeline"})
+    try:
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            return resp.status, resp.read()
+    except urllib.error.HTTPError as exc:
+        return exc.code, b""
+    except (urllib.error.URLError, OSError, TimeoutError):
+        return 0, b""
+
+
+def cdn_manifest(layer, fetch=_fetch, local_dir=None):
+    """The path of this layer's manifest as the CDN serves it, or None."""
+    local = Path(local_dir or LOCAL_COPY) / f"{layer}.json"
+    status, body = fetch(CDN_MANIFEST.format(layer=layer))
+    if status == 200:
+        try:
+            data = json.loads(body)
+        except ValueError:
+            data = None
+        if (isinstance(data, dict) and data.get("schema") == "carta.img-manifest.v1"
+                and data.get("layer") in (None, layer)):
+            local.parent.mkdir(parents=True, exist_ok=True)
+            tmp = local.with_suffix(".json.tmp")
+            tmp.write_bytes(body)
+            tmp.replace(local)
+            return local
+        print(f"[{layer}] the CDN manifest is not a carta.img-manifest.v1 "
+              f"for {layer}; ignored")
+    elif status == 404:
+        print(f"[{layer}] no image ladder on the CDN yet; wire written without it")
+        return None
+    if local.exists():
+        print(f"[{layer}] CDN manifest unavailable (HTTP {status or 'none'}); "
+              f"using the last good copy {local.name}")
+        return local
+    print(f"[{layer}] CDN manifest unavailable (HTTP {status or 'none'}) and no "
+          f"local copy; wire written without the ladder")
+    return None
+
+
 def _manifest_path(value, layer):
     if not value:
         return None
@@ -196,8 +255,13 @@ def load(layer, manifest=None, img_roots=()):
     was given and cannot be read is an error, not a silent no-op: an export
     asked to join the ladder that quietly did not would ship a wire the
     owner believes is joined."""
-    if not manifest:
+    if not manifest or manifest == "off":
         return None
+    if manifest == "cdn":
+        path = cdn_manifest(layer)
+        if path is None:
+            return None
+        manifest = str(path)
     path = _manifest_path(manifest, layer)
     if path is None:
         raise SystemExit(f"[{layer}] --img-manifest {manifest}: no "
@@ -214,11 +278,14 @@ def load(layer, manifest=None, img_roots=()):
 
 def add_arguments(parser):
     """The two export flags, identical on every layer."""
+    import os  # noqa: PLC0415
     parser.add_argument(
-        "--img-manifest", default="",
+        "--img-manifest", default=os.environ.get(MANIFEST_ENV, ""),
         help="derive.py's manifest (img/manifest/<layer>.json, or a "
-             "directory holding it); joins ih, d and the hero placeholder "
-             "into the wire. Omitted: the wire is written as before")
+             "directory holding it), or 'cdn' to fetch it from the CDN "
+             f"(the default under run_pipeline.py, via {MANIFEST_ENV}), or "
+             "'off'; joins ih, d and the hero placeholder into the wire. "
+             "Omitted: the wire is written as before")
     parser.add_argument(
         "--img-root", action="append", default=[],
         help="a local img/ tree from a derive run, for hero placeholders "

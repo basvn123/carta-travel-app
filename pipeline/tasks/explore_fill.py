@@ -198,6 +198,32 @@ TASKS = [
                  "lifeguards, bans, wind profile) are resumable Overpass passes."),
     },
     {
+        "key": "picture_join",
+        "title": "Beaches, lakes, mountains: re-export with the image ladder from the CDN",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "writes_wire": True,
+        "soft": True,
+        "est_h": 0.3,
+        "guard": guard_files(("cache/beaches/rich_*.json", 20, "pull beaches-cache from R2"),
+                             ("cache/lakes/rich_*.json", 20, "pull lakes-json from R2"),
+                             ("cache/mountains/rich_*.json", 20, "pull mountains-cache from R2")),
+        "cmds": [
+            [PY, PUBLISH, "--layer", "beaches", "--", PY, "pipeline/beaches/export_beaches.py",
+             "--img-manifest", "cdn"],
+            [PY, PUBLISH, "--layer", "peaks", "--", PY, "pipeline/mountains/export_peaks.py",
+             "--img-manifest", "cdn"],
+            [PY, PUBLISH, "--layer", "lakes", "--", PY, "pipeline/lakes/export_lakes.py",
+             "--img-manifest", "cdn"],
+        ],
+        "note": ("T052-d. Every export the pipeline runs already joins the "
+                 "ladder (run_pipeline.py sets CARTA_IMG_MANIFEST=cdn), but a "
+                 "derive run on an on-demand worker changes the CDN manifest "
+                 "without any export following it. This cache-only pass (no "
+                 "Overpass) brings the wire up to what the CDN holds within a "
+                 "month. A layer with no manifest on the CDN is written as before."),
+    },
+    {
         "key": "dest_overlays",
         "title": "Destination overlays: emergency numbers, hospitals, swim bans",
         "cadence": "quarterly",

@@ -185,6 +185,9 @@ data/history/
 data/models/
 data/deadletter/
 
+# Last good copy of the CDN image manifests (pipeline/photos/wire_ladder.py, T052-d).
+data/img_manifest/
+
 # Coverage candidate universe (docs/COVERAGE.md): ~70 MB of every plausible
 # European destination with its measurements, rebuilt offline in ~75 seconds
 # by build_place_candidates.py from the gazetteer and the POI corpus, both of
