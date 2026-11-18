@@ -4686,6 +4686,7 @@ export const nl = {
   'places.cityWalksEmpty': 'Voor {country} is nog geen stadswandeling gepubliceerd. De dekking groeit land voor land.',
   'journey.emptyCountryAll': 'Voor {country} is nog geen week geschreven.',
   'journey.noneMatch': 'Geen reis in deze stijl past bij die zoekopdracht.',
+  'journey.noneMatchAll': 'Geen reis past bij die zoekopdracht.',
   'region.nearestHead': 'De dichtstbijzijnde op naam',
   'filter.noneLine': 'Niets past bij al deze. Zet er een uit.',
   'brief.noTripsLength': 'Geen samengestelde reis voor {country} duurt {n} dagen.',

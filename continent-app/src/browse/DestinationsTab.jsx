@@ -371,9 +371,15 @@ export function DestinationsTab({
   // Moved by its own tile from another layer, so the view starts as a list.
   useEffect(() => { setDview('top'); }, [cat]);
 
+  const catNow = useRef(cat);
+  catNow.current = cat;
   useEffect(() => {
     if (!openCategory) return;
     if (CATS.some((c) => c.key === openCategory)) {
+      // A band search on the trip library stays in the style on screen, so
+      // its text narrows that style's trips (G12); any other door opens
+      // the styles list.
+      const sameLibrary = openCategory === 'trips' && catNow.current === 'trips';
       setCat(openCategory);
       // T600: Explore's overview hands its Where text over in the address
       // (dq, App openExploreSection); a plain category press carries none.
@@ -381,7 +387,7 @@ export function DestinationsTab({
       setQuery(handed);
       setDebouncedQuery(handed);
       setPendingWhere(handed);
-      setJourneyView(null);
+      if (!(sameLibrary && handed)) setJourneyView(null);
       scrollRef.current?.scrollTo?.(0, 0);
     }
     onOpenCategoryConsumed?.();

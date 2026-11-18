@@ -4677,6 +4677,7 @@ export const es = {
   'places.cityWalksEmpty': 'Aún no hay paseos urbanos publicados para {country}. La cobertura crece país a país.',
   'journey.emptyCountryAll': 'Aún no hay ninguna semana escrita para {country}.',
   'journey.noneMatch': 'Ningún viaje de este estilo coincide con esa búsqueda.',
+  'journey.noneMatchAll': 'Ningún viaje coincide con esa búsqueda.',
   'region.nearestHead': 'Las más cercanas por nombre',
   'filter.noneLine': 'Nada coincide con todos estos. Quita uno.',
   'brief.noTripsLength': 'Ningún viaje compuesto para {country} dura {n} días.',

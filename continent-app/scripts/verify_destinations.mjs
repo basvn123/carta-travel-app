@@ -191,6 +191,44 @@ for (const view of ['phone', 'desk']) {
   check(styles.length === 15 && styles.every((s) => /From|No written/.test(s)), `${tag}dc=trips still shows the fifteen styles with a from-price`, String(styles.length));
   await close(page);
 
+  // ── The trip library's link today and its one search field (G12) ──
+  // The footer's Trip styles is ?tab=explore&cat=trips; ?tab=map is Places,
+  // whatever dc says. The band is the library's search: Enter narrows the
+  // styles to those holding a matching trip, and inside a style its trips,
+  // and the library stays on screen.
+  page = await open(browser, view, '?tab=explore&cat=trips');
+  const libStyles = () => page.$$eval('.jstyle-card', (els) => els.filter((e) => e.getBoundingClientRect().width > 0).length);
+  const before = await libStyles();
+  check(before === 15, `${tag}?tab=explore&cat=trips lands on the trip library`, String(before));
+  const bandSearch = async (text) => {
+    await page.locator('.band-input').click();
+    await page.locator('.band-input').fill(text);
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(2500);
+  };
+  await bandSearch('Italy');
+  const after = await libStyles();
+  check(after >= 1 && after < before, `${tag}band text narrows the library's styles`, `${before} -> ${after}`);
+  check(/[?&]cat=trips\b/.test(page.url()) && /[?&]dq=Italy\b/.test(page.url()), `${tag}Enter stays on the library`, page.url().split('?')[1]?.slice(0, 70) || '');
+  await bandSearch('zzqx');
+  check(await libStyles() === 0 && await page.locator('.tlib .empty-result, .tlib [class*="empty"]').count() > 0,
+    `${tag}a search with no trip says so`, String(await libStyles()));
+  await bandSearch('');
+  check(await libStyles() === 15, `${tag}an empty search shows every style again`, String(await libStyles()));
+  // Inside a style: the band narrows its trips and the style stays open.
+  await page.locator('.jstyle-card[data-style="hiking"] .card-open').first().click();
+  await page.waitForSelector('.jcard', { timeout: 30000 }).catch(() => {});
+  await page.waitForTimeout(1500);
+  const trips = () => page.$$eval('.jcard', (els) => els.filter((e) => e.getBoundingClientRect().width > 0).length);
+  const inStyle = await trips();
+  await bandSearch('Italy');
+  const inStyleAfter = await trips();
+  const head = await page.$eval('.tlib-head.is-style .dtab-title', (e) => e.textContent.trim()).catch(() => '');
+  check(head === 'Hiking' && inStyleAfter >= 1 && inStyleAfter < inStyle, `${tag}inside Hiking the band narrows its trips and stays in the style`,
+    `${head}: ${inStyle} -> ${inStyleAfter}`);
+  await page.screenshot({ path: `shots/dest-${view}-trips-search.png` });
+  await close(page);
+
   // ── German: the country names are German, the flags are not read out ──
   page = await open(browser, view, '?tab=places&dc=trails', 'de');
   const deNames = await page.$$eval('.dgal-card .card-title', (els) => els.map((e) => e.textContent.trim()));

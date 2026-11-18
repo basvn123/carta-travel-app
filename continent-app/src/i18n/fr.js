@@ -4677,6 +4677,7 @@ export const fr = {
   'places.cityWalksEmpty': 'Aucune balade urbaine n\'est encore publiée pour {country}. La couverture s\'étend pays par pays.',
   'journey.emptyCountryAll': 'Aucune semaine n\'est encore écrite pour {country}.',
   'journey.noneMatch': 'Aucun voyage de ce style ne correspond à cette recherche.',
+  'journey.noneMatchAll': 'Aucun voyage ne correspond à cette recherche.',
   'region.nearestHead': 'Les plus proches par le nom',
   'filter.noneLine': 'Rien ne correspond à tous ces filtres. Retirez-en un.',
   'brief.noTripsLength': 'Aucun voyage composé pour {country} ne dure {n} jours.',

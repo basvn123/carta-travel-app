@@ -5602,6 +5602,7 @@ export const en = {
   'places.cityWalksEmpty': 'No city walk is published for {country} yet. Coverage grows country by country.',
   'journey.emptyCountryAll': 'No week is written for {country} yet.',
   'journey.noneMatch': 'No trip in this style matches that search.',
+  'journey.noneMatchAll': 'No trip matches that search.',
   'region.nearestHead': 'The nearest by name',
   'filter.noneLine': 'Nothing matches all of these. Turn one off.',
   'brief.noTripsLength': 'No composed trip for {country} runs {n} days.',

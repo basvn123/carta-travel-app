@@ -252,6 +252,19 @@ export function JourneysSection({
     return [...list.filter((tp) => tp.slug === LEAD_STYLE), ...list.filter((tp) => tp.slug !== LEAD_STYLE)];
   }, [index, country]);
 
+  // The band's text on the styles list (G12: the band is the library's one
+  // search field): only the styles that hold a matching trip stay, and the
+  // text keeps narrowing the trips inside the style picked next (scoped).
+  const shownTypes = useMemo(() => {
+    if (!query || !library) return types;
+    const hit = new Set();
+    for (const c of library) {
+      if (country && !inCountry(c, country)) continue;
+      if (norm(`${c.title} ${c.country} ${c.sub || ''}`).includes(query)) hit.add(c.type);
+    }
+    return types.filter((tp) => hit.has(tp.slug));
+  }, [types, library, country, query]);
+
   // The cheapest a person a day of each style at the list's length, in the
   // country when one is chosen, so the figure on the tile is one the list
   // can show.
@@ -378,9 +391,15 @@ export function JourneysSection({
             <p className="pl-unit-head">{t('tp.bud.kindDay')}</p>
           </header>
         )}
-        {types.map((tp) => (
+        {shownTypes.map((tp) => (
           <StyleCard key={tp.slug} type={tp} perDay={perDay[tp.slug]} onPick={onView} t={t} short={!country || !inPanel} />
         ))}
+        {index && types.length > 0 && shownTypes.length === 0 && (
+          <EmptyResult
+            line={t('journey.noneMatchAll')}
+            action={onClearSearch ? { label: t('results.clearSearch'), onClick: onClearSearch } : null}
+          />
+        )}
         {index && types.length === 0 && country && (
           <EmptyResult
             line={t('journey.emptyCountryAll', { country: countryName(country) })}
