@@ -6255,6 +6255,7 @@ export const nl = {
   'dock.openAria': "Waarheen: {what}. Wijzigen",
   'dock.choose': "Kies waar je heen wilt",
   "dock.summary": "{when}, vanuit {from}, {people}",
+  "dock.otherWays": "Andere manieren",
   "dock.trip": "Je reis",
   "dock.tripAria": "Je reis: {summary}. Wijzigen",
   "dock.tripTip": "Je reis: {summary}",

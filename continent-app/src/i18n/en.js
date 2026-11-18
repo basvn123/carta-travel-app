@@ -6963,6 +6963,7 @@ export const en = {
   'dock.openAria': "Where to go: {what}. Change",
   'dock.choose': "Choose where to go",
   'dock.summary': '{when}, from {from}, {people}',
+  "dock.otherWays": "Other ways",
   "dock.trip": "Your trip",
   "dock.tripAria": "Your trip: {summary}. Change",
   "dock.tripTip": "Your trip: {summary}",

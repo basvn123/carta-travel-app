@@ -6244,6 +6244,7 @@ export const it = {
   'dock.openAria': "Dove andare: {what}. Cambia",
   'dock.choose': "Scegli dove andare",
   "dock.summary": "{when}, da {from}, {people}",
+  "dock.otherWays": "Altri modi",
   "dock.trip": "Il tuo viaggio",
   "dock.tripAria": "Il tuo viaggio: {summary}. Cambia",
   "dock.tripTip": "Il tuo viaggio: {summary}",
