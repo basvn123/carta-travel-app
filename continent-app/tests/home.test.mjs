@@ -242,7 +242,21 @@ test('the retired home strings are gone', () => {
     // G12 (explore polish): the save name no longer flips; aria-pressed says the state.
     'explore.unsaveNamed',
     // G12: the desktop hero reads explore.chooseOrAsk now.
-    'explore.askOrSearch'];
+    'explore.askOrSearch',
+    // G12 Style Studio: the old travel styles sheet, the Lifestyle dialog and
+    // the taste sheet left with their strings; the studio's own are studio.*.
+    'lifestyle.close', 'lifestyle.exploreHint', 'lifestyle.done', 'taste.title', 'taste.step', 'taste.q.party',
+    'taste.q.likes', 'taste.q.stay', 'taste.q.size', 'taste.q.quiet', 'taste.q.travel', 'taste.noCar', 'taste.noCarHint',
+    'taste.noPref', 'taste.skip', 'taste.next', 'taste.done', 'taste.back', 'taste.notSet', 'taste.learnYes', 'taste.learnNo',
+    'taste.learn.beach', 'taste.learn.hiking', 'taste.learn.lakes', 'taste.learn.culture', 'taste.learn.city',
+    'taste.learn.food', 'taste.learn.nightlife', 'taste.learn.hidden', 'taste.learn.cycling', 'taste.learn.ski',
+    'taste.learn.wellness', 'taste.learn.islands', 'styles.rowAria', 'styles.more', 'styles.editAll', 'styles.new',
+    'styles.startFrom', 'styles.firstTitle', 'styles.firstLead', 'styles.fromNow', 'styles.cancel', 'styles.name',
+    'styles.halves', 'styles.stayHalf', 'styles.stayNote', 'styles.exploreNote', 'styles.who', 'styles.bedTable',
+    'styles.way', 'styles.priority', 'styles.priorityNote', 'styles.shape', 'styles.likes', 'styles.avoid',
+    'styles.mornings', 'styles.pace', 'styles.noneActive', 'styles.max', 'styles.duplicate', 'styles.copyOf',
+    'styles.delete', 'styles.deleteSure', 'styles.done', 'styles.dayFig', 'styles.dayFigNote', 'styles.heldNote',
+    'styles.keepStay', 'styles.back', 'styles.bedHeld'];
   for (const [lang, cat] of Object.entries(CATALOGS)) {
     for (const k of retired) assert.equal(cat[k], undefined, `${lang} ${k}`);
     assert.deepEqual(Object.keys(cat).filter((k) => k.startsWith('landing.')), [], lang);
