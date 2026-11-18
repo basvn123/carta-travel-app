@@ -10,6 +10,11 @@
  * time; a day nobody checked has no bar, a swept flight never gets a
  * duration (only a searched one carries its own), and nothing here says
  * "exact" or "live".
+ *
+ * G12 (D10 honesty): a row priced on the route's typical fare (no checked
+ * pair for its dates) shows that figure here under "Typical fare", so the
+ * sheet never passes a typical number off as checked; a row with no flight
+ * figure at all says "No flight checked yet".
  */
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
@@ -36,7 +41,7 @@ const monthLabel = (ym, lang) => {
   } catch { return ym; }
 };
 
-export default function FlightTab({ place, data, request, view, active, onChangeTrip }) {
+export default function FlightTab({ place, data, request, view, active, onChangeTrip, way = null }) {
   const { t, lang } = useI18n();
   const ft = useFlightTab({ place, data, request, view, active });
   const airlines = useAirlines();
@@ -68,6 +73,10 @@ export default function FlightTab({ place, data, request, view, active, onChange
 
   const { shown, figure } = ft;
   const unit = view?.total ? t('price.flight.unitGroup', { n: ft.party.seats }) : t('price.flight.unit');
+  // The row's own way: a typical fare the card shows (labelled, never as a
+  // checked one) until the traveller picks a checked day here.
+  const typicalEur = way?.typical && way.perPerson > 0 && !ft.picked
+    ? (view?.way ? view.way(way.perPerson) : way.perPerson) : null;
   const w = request?.when || {};
   const month = w.kind === 'month' && w.ym ? monthLabel(w.ym, lang) : '';
   const noneKey = !ft.rowLegs ? (w.kind === 'exact' ? 'price.flight.noneNear' : w.kind === 'month' ? 'price.flight.noneMonth' : 'price.flight.noneAny') : null;
@@ -89,7 +98,12 @@ export default function FlightTab({ place, data, request, view, active, onChange
         <span className="pft-route" aria-label={t('price.flight.routeAria', { from: ft.home, to: ft.airport })}>
           <span aria-hidden="true">{ft.home} <span className="pft-route-arrow">&gt;</span> {ft.airport}</span>
         </span>
-        {figure ? (
+        {typicalEur != null ? (
+          <span className="pft-figrow pft-typical">
+            <span className="psheet-big money pft-fig">{formatMoney(typicalEur)}</span>
+            <span className="psheet-unit">{unit}</span>
+          </span>
+        ) : figure ? (
           <span className="pft-figrow">
             <span key={Math.round(figure.shown)} className="psheet-big money pft-fig">{formatMoney(figure.shown)}</span>
             <span className="psheet-unit">{unit}</span>
@@ -105,16 +119,18 @@ export default function FlightTab({ place, data, request, view, active, onChange
         )}
         {/* Right under the figure: the leg cards show fares only, so without
             this line the legs and the headline do not add up (judge round 1). */}
-        {figure?.split && (
+        {typicalEur != null && <p className="psheet-basis pft-typical-label">{t('settingsSum.typical')}</p>}
+        {typicalEur == null && figure?.split && (
           <p className="psheet-basis pft-split">
             {t('price.flight.split', { fares: formatMoney(figure.split.fares), bags: formatMoney(figure.split.bags) })}
           </p>
         )}
-        {figure && ft.picked && ft.rowLegs && (
+        {typicalEur == null && figure && ft.picked && ft.rowLegs && (
           <Button variant="quiet" type="button" className="psheet-raw pft-textbtn" onClick={ft.backToList}>{t('price.flight.backToList')}</Button>
         )}
-        {figure && !ft.rowLegs && <p className="psheet-basis">{t('price.flight.notListPrice')}</p>}
-        {!figure && noneKey && <p className="psheet-lead">{t(noneKey, { month, place: place?.name || place?.city || '' })}</p>}
+        {typicalEur == null && figure && !ft.rowLegs && <p className="psheet-basis">{t('price.flight.notListPrice')}</p>}
+        {!figure && typicalEur == null && <p className="psheet-lead pft-noflight">{t('settingsSum.noFlight')}</p>}
+        {!figure && typicalEur == null && noneKey && <p className="psheet-basis">{t(noneKey, { month, place: place?.name || place?.city || '' })}</p>}
       </div>
 
       {(shown.out || shown.back) && (

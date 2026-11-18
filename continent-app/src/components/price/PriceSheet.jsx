@@ -112,7 +112,7 @@ function SheetBody({ s, data, tab, setTab, baseId, onHand, t }) {
           ? <WayPanel cost={s.cost} view={view} t={t} onHand={onHand} />
           : (
             <Suspense fallback={<p className="psheet-basis" role="status">{t('price.flight.loading')}</p>}>
-              <FlightTab place={s.place} data={data} request={view.request} view={view}
+              <FlightTab place={s.place} data={data} request={view.request} view={view} way={s.cost?.way || null}
                 active={tab === 'flight'} onChangeTrip={() => onHand(handoff('flight', s.cost))} />
             </Suspense>
           ))}

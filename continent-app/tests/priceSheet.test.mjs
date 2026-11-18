@@ -109,3 +109,13 @@ test('the sheet tabs are a tablist and the flight tab loads lazily', () => {
   assert.match(src, /role="tabpanel"/);
   assert.match(src, /aria-modal="false"/, 'the desktop popover is not modal');
 });
+
+test('G12 (D10): a typical fare is labelled typical, and no fare says no flight checked yet', () => {
+  const src = read('src/components/price/FlightTab.jsx');
+  assert.match(src, /way\?\.typical && way\.perPerson > 0 && !ft\.picked/, 'the row typical fare heads the tab until a checked day is picked');
+  assert.match(src, /t\('settingsSum\.typical'\)/);
+  assert.match(src, /t\('settingsSum\.noFlight'\)/);
+  assert.match(read('src/components/price/PriceSheet.jsx'), /<FlightTab [^>]*way=\{s\.cost\?\.way/);
+  assert.match(en['settingsSum.typical'], /^Typical fare/);
+  assert.equal(en['settingsSum.noFlight'], 'No flight checked yet');
+});
