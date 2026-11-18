@@ -103,8 +103,12 @@ test('signed out, Account and Sign in share one split pill', () => {
 test('one spacing rule for Explore: T983 no longer squeezes the rails', () => {
   assert.doesNotMatch(read('src/styles/80-story-rail.css'), /\.xrails\.xrails \{ gap: var\(--space-4\); \}/);
   const css = read('src/styles/85-explore-rails.css');
-  assert.match(css, /\.explore-shell \.xrails\.xrails \{\s*gap: var\(--space-7\);/);
+  // Rail to rail 24 on a phone and 32 from 1024 (owner 2026-11-18, was
+  // 40 / 56), still twice the title's own 12 / 16.
+  assert.match(css, /\.explore-shell \.xrails\.xrails \{\s*gap: var\(--space-5\);/);
+  assert.match(css, /\.explore-shell \.xrails\.xrails \{ gap: var\(--space-6\);/);
   assert.match(css, /\.explore-shell \.xrails-rail \.hs-rail-head \{ margin-bottom: var\(--space-3\); \}/);
+  assert.match(css, /\.explore-shell \.xrails-rail \.hs-rail-head \{ margin-bottom: var\(--space-4\); \}/);
   // The desktop strip grows its cards (max, not minmax, in an overflowing strip).
   assert.match(read('src/styles/05-house.css'), /grid-auto-columns: max\(256px,/);
 });
