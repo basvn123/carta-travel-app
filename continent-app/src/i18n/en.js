@@ -2608,7 +2608,8 @@ export const en = {
   "profile.markHandleBad": "This handle will be refused",
 
   // Explore tab v2: the grid, the indices, the destination panel
-  'explore.sortAria': 'Sort the destinations',
+  'explore.sortAria': "Sort: {value}. Change",
+  'explore.clearAllAria': "Clear every filter",
   'side.account': 'Account',
   'side.help': 'Help',
   'account.menuOverview': 'Overview',

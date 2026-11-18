@@ -2197,7 +2197,8 @@ export const es = {
   "profile.markHandleBad": "Este nombre será rechazado",
 
   // Explore tab v2
-  'explore.sortAria': 'Ordenar los destinos',
+  'explore.sortAria': "Ordenar: {value}. Cambiar",
+  'explore.clearAllAria': "Quitar todos los filtros",
   'side.account': 'Cuenta',
   'side.help': 'Ayuda',
   'account.menuOverview': 'Resumen',

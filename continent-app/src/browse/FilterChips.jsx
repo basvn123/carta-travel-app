@@ -26,8 +26,10 @@ export function FilterChips({ t, chips, onClearAll, lead = null }) {
           className="xchip"
           onClick={c.remove}
           aria-label={t('filter.removeChip', { name: c.label })}
+          title={c.label}
         >
-          <span>{c.label}</span>
+          {/* G12: capped chips end in an ellipsis; the title keeps the text. */}
+          <span className="xchip-text">{c.label}</span>
           <span className="xchip-x" aria-hidden="true"><CloseIcon size={12} /></span>
         </button>
       ))}

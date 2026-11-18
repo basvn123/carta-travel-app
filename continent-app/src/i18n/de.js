@@ -2197,7 +2197,8 @@ export const de = {
   "profile.markHandleBad": "Dieser Name wird abgelehnt",
 
   // Explore tab v2
-  'explore.sortAria': 'Reiseziele sortieren',
+  'explore.sortAria': "Sortieren: {value}. Ändern",
+  'explore.clearAllAria': "Alle Filter entfernen",
   'side.account': 'Konto',
   'side.help': 'Hilfe',
   'account.menuOverview': 'Übersicht',

@@ -2206,7 +2206,8 @@ export const nl = {
   "profile.markHandleBad": "Deze naam wordt geweigerd",
 
   // Explore tab v2
-  'explore.sortAria': 'Sorteer de bestemmingen',
+  'explore.sortAria': "Sorteren: {value}. Wijzigen",
+  'explore.clearAllAria': "Alle filters wissen",
   'side.account': 'Account',
   'side.help': 'Hulp',
   'account.menuOverview': 'Overzicht',
