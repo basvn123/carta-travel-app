@@ -5,7 +5,8 @@
 //
 //   node scripts/verify_band.mjs      (a server at CARTA_PORT, default 5182)
 //
-// SIZES=360x640,390x844 picks the sizes (default the five of judge 2).
+// SIZES=360x640,390x844 picks the sizes (default the five of judge 2);
+// 360x640 in French runs after them (FR=0 skips it).
 // Shots go to SHOTS_DIR when it is set: j2fix-disc-{w}x{h}-{rest,scrolled}.png.
 // Supabase is answered locally (signed out); the service worker is blocked.
 import { chromium } from 'playwright';
@@ -18,7 +19,7 @@ const SHOTS = process.env.SHOTS_DIR || '';
 const SIZES = (process.env.SIZES || '360x640,360x780,390x844,820x1180,1440x900')
   .split(',').map((s) => s.split('x').map(Number));
 // The same list the disc keeps clear of (src/components/dock/discClear.js).
-const CLEAR = '.xrow-line1, .xrc-head, .hs-rcard-name, .xprice, .xform, .card-title, .card-price, .places-card-price, .itin-card-name, .itin-card-cost, .xview-fab';
+const CLEAR = '.xrow-line1, .xrc-head, .hs-rcard-name, .xprice, .xform, .card-title, .card-price, .places-card-price, .itin-card-name, .itin-card-cost, .jstyle-desc, .ttile-line, .empty-result-line, .empty-result-actions, .xview-fab';
 
 const checks = [];
 const check = (label, ok, note = '') => checks.push({ label, ok: !!ok, note });
@@ -47,8 +48,8 @@ async function wheel(page, dy, steps = 6) {
   for (let i = 0; i < steps; i += 1) { await page.mouse.wheel(0, dy / steps); await page.waitForTimeout(40); }
 }
 
-async function run(width, height) {
-  const tag = `${width}x${height}`;
+async function run(width, height, lang = 'en') {
+  const tag = `${width}x${height}${lang === 'en' ? '' : ` ${lang}`}`;
   const ctx = await browser.newContext({ viewport: { width, height }, serviceWorkers: 'block' });
   await mirrorData(ctx);
   const page = await ctx.newPage();
@@ -59,15 +60,15 @@ async function run(width, height) {
     if (/\/auth\/v1\/user/.test(url)) return r.fulfill({ status: 401, contentType: 'application/json', body: '{"message":"no session"}' });
     return r.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
   });
-  await page.addInitScript(() => {
+  await page.addInitScript((l) => {
     try {
-      localStorage.setItem('continent.lang.v1', 'en');
+      localStorage.setItem('continent.lang.v1', l);
       localStorage.setItem('continent.guestMode.v1', '1');
       localStorage.setItem('continent.homeSeen.v1', '1');
       localStorage.setItem('carta.welcomeSeen.v1', '1');
       localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     } catch { /* storage unavailable */ }
-  });
+  }, lang);
   await page.goto(BASE + '?tab=map', { waitUntil: 'domcontentloaded', timeout: 90000 });
   await page.waitForSelector('.dock--corner .dock-trigger', { timeout: 90000 });
   await page.waitForSelector('.xprice', { timeout: 90000 }).catch(() => {});
@@ -144,6 +145,26 @@ async function run(width, height) {
     if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `j2fix-disc-${tag}-${cat}.png`) });
   }
 
+  // Judge 3: the library after a search that finds nothing. Its one line
+  // ("No trip matches that search.") is what the screen says, so the disc
+  // keeps clear of it as it does of a card's name.
+  // A scroll down folds the phone band's search away; back at the top it shows.
+  await page.evaluate(() => {
+    for (const el of document.querySelectorAll('.explore-tab, .places-tab')) el.scrollTop = 0;
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(900);
+  await page.locator('.band-input').click();
+  await page.locator('.band-input').fill('zzqx');
+  await page.keyboard.press('Enter');
+  await page.waitForSelector('.empty-result-line', { timeout: 30000 }).catch(() => {});
+  await page.waitForTimeout(1200);
+  const none = await overlaps(page);
+  const hasLine = await page.locator('.empty-result-line').count();
+  check(`${tag} trips, no match: the disc meets no part of the empty line`, hasLine > 0 && !none.hits.length,
+    hasLine ? none.hits.join('; ') : 'no empty-result line');
+  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `j3fix-disc-${tag}-trips-none.png`) });
+
   check(`${tag}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
   await ctx.close();
   return { tag, rest, after };
@@ -151,6 +172,9 @@ async function run(width, height) {
 
 const out = [];
 for (const [w, h] of SIZES) out.push(await run(w, h));
+// Judge 3 saw the library's lines covered on the small French screen, where
+// the lines run longest: run it there too (FR=0 skips it).
+if (process.env.FR !== '0') out.push(await run(360, 640, 'fr'));
 await browser.close();
 
 let failed = 0;

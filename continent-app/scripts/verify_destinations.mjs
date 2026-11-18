@@ -229,6 +229,21 @@ for (const view of ['phone', 'desk']) {
   await page.screenshot({ path: `shots/dest-${view}-trips-search.png` });
   await close(page);
 
+  // The band speaks the reader's language, so a country typed in French or
+  // German finds the same styles as "Italy" in English (judge 3, fix 1).
+  // The library head's unit line wraps there rather than running off.
+  for (const [lang, word] of [['fr', 'Italie'], ['de', 'Italien']]) {
+    page = await open(browser, view, '?tab=explore&cat=trips', lang);
+    const unitOver = await page.$$eval('.tlib-head, .tlib-head .pl-unit-head', (els) => els
+      .map((e) => Math.max(e.scrollWidth - e.clientWidth, e.getBoundingClientRect().right - window.innerWidth))
+      .reduce((a, b) => Math.max(a, b), 0));
+    check(unitOver <= 1, `${tag}${lang}: the library head's unit line fits`, String(unitOver));
+    await bandSearch(word);
+    const local = await libStyles();
+    check(local === after, `${tag}${lang}: "${word}" finds the same styles as "Italy"`, `${local} vs ${after}`);
+    await close(page);
+  }
+
   // ── German: the country names are German, the flags are not read out ──
   page = await open(browser, view, '?tab=places&dc=trails', 'de');
   const deNames = await page.$$eval('.dgal-card .card-title', (els) => els.map((e) => e.textContent.trim()));

@@ -243,6 +243,16 @@ export function JourneysSection({
   const edges = useMemo(() => costEdges(library, length), [library, length]);
 
   const query = norm(q);
+  // The band is in the reader's language, so "Italie" or "Italien" must find
+  // the Italian trips too: the text is matched against the country names in
+  // the UI language (countryName), not only the catalogue's English one.
+  const matches = useMemo(() => {
+    if (!query) return () => true;
+    const local = (cc) => (cc && countryName ? countryName(cc) : '');
+    return (c) => norm([
+      c.title, c.country, c.sub, local(c.cc), ...(c.countries || []).map(local),
+    ].filter(Boolean).join(' ')).includes(query);
+  }, [query, countryName]);
 
   // The styles, narrowed by the shared country filter: a style with nothing
   // in the chosen country is absent, not greyed. Hiking leads.
@@ -260,10 +270,10 @@ export function JourneysSection({
     const hit = new Set();
     for (const c of library) {
       if (country && !inCountry(c, country)) continue;
-      if (norm(`${c.title} ${c.country} ${c.sub || ''}`).includes(query)) hit.add(c.type);
+      if (matches(c)) hit.add(c.type);
     }
     return types.filter((tp) => hit.has(tp.slug));
-  }, [types, library, country, query]);
+  }, [types, library, country, query, matches]);
 
   // The cheapest a person a day of each style at the list's length, in the
   // country when one is chosen, so the figure on the tile is one the list
@@ -285,10 +295,10 @@ export function JourneysSection({
     let out = cards;
     if (country) out = out.filter((c) => inCountry(c, country));
     if (query) {
-      out = out.filter((c) => norm(`${c.title} ${c.country} ${c.sub || ''}`).includes(query));
+      out = out.filter(matches);
     }
     return out;
-  }, [cards, country, query]);
+  }, [cards, country, query, matches]);
   // Tags (T089): the vocabulary is the style's common tags before any other
   // filter, so the choices stay put.
   const vocab = useMemo(() => tagVocabulary(scoped), [scoped]);

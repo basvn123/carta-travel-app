@@ -16,10 +16,14 @@ import { prefersReducedMotion } from '../../lib/motion.js';
 
 // What the disc must never sit on: a card's name line and its price row on
 // every list (Places rows, layer and trip cards), and the phone's Map pill.
+// Judge 3: also the body text a reader reads whole, the trip style's one
+// line, a trip card's meta lines and an empty screen's one message, since a
+// covered first word changes what the line says.
 export const DISC_CLEAR = [
   '.xrow-line1', '.xrc-head', '.hs-rcard-name', '.xprice', '.xform',
   '.card-title', '.card-price',
   '.places-card-price', '.itin-card-name', '.itin-card-cost',
+  '.jstyle-desc', '.ttile-line', '.empty-result-line', '.empty-result-actions',
   '.xview-fab', '[data-disc-clear]',
 ].join(', ');
 

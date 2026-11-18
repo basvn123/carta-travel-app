@@ -612,5 +612,11 @@
 /* The unit, said once for a list of priced cards (plan lane polish round 1):
    the cards print "From €124", this line says what the figure counts. */
 .pl-unit-head { margin: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
-.tlib-head .pl-unit-head { flex-basis: 100%; }
+.tlib-head .pl-unit-head { flex-basis: 100%; min-width: 0; overflow-wrap: anywhere; }
+/* On a phone the head is a column (30-section-opening), where a 100 % basis
+   is a height: the line opened a second column beside the title and ran off
+   the screen in French (judge 3). There it is one more line under the rest. */
+@media (max-width: 768px) {
+  .tlib-head .pl-unit-head { flex-basis: auto; }
+}
 .pf-cgrid > .pl-unit-head { grid-column: 1 / -1; }
