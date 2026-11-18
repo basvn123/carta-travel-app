@@ -498,7 +498,7 @@ export function stageLines(settings, { t, lang = 'en', when, data = null, origin
     out.push({ key: 'flights', text });
   }
   const stayRow = SLOT_ROWS.find((r) => r.id === 'stay');
-  const tier = stayTierFor({ stayTier: stayTier || null, priority: settings.priority }, stayRow);
+  const tier = stayTierFor({ stayTier: stayTier || null, priority: settings.priority, settings }, stayRow);
   const p = settings.party || {};
   const who = partyText(t, { adults: p.adults || 1, children: p.kids || 0, babies: p.babies || 0 });
   out.push({ key: 'stays', text: t(`tf.stage.stay.${STAY_LINES.has(tier) ? tier : 'home'}`, { who, n: nightsOf(settings.when) }) });

@@ -2,7 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { tripRequest, priceDays, priceDaysAtNights, stopNightsFor } from '../../lib/price/index.js';
 import { isGateway } from '../../lib/rating.js';
 import { usePlannerStore } from '../plannerStore.js';
-import { flightRanking, fromDraft } from '../flow/tripSettings.js';
+import { flightStateOf, fromDraft } from '../flow/tripSettings.js';
 import { pickedLive } from './flightChoices.js';
 import { wizardPlannerState, quoteTrip as priceWholeTrip, PLANNER_BAG } from '../../lib/tripTotal.js';
 import { useLiveFlights } from '../../lib/flights/useLiveFlights.js';
@@ -70,9 +70,10 @@ export function useWizardPricing({
 
   // The whole trip priced by the planner's own function (lib/tripTotal.js,
   // T432): the hand-over above, as the planned trip will hold it.
-  // T657: the trip settings' "what matters most" orders the live flights.
+  // T657: the trip settings' "what matters most" orders the live flights;
+  // G12: the style's trade-offs set which flights may be priced at all.
   const plannerDraft = usePlannerStore();
-  const flightRank = useMemo(() => flightRanking(fromDraft(plannerDraft)).sort, [plannerDraft]);
+  const flightState = useMemo(() => flightStateOf(fromDraft(plannerDraft)), [plannerDraft]);
   const planned = handOver;
   // T812: a flight picked on Getting there prices the trip on that flight
   // (one live answer per way, keyed by its day, so a moved trip drops it).
@@ -81,13 +82,13 @@ export function useWizardPricing({
   const picked = useMemo(() => pickedLive({ out: flightPickOut, back: flightPickBack }), [flightPickOut, flightPickBack]);
   const priced = useMemo(() => {
     if (!planned.stops.length) return null;
-    const state = { ...wizardPlannerState(planned, { stayTier: effectiveStayTier, lifestyle: dailyLifestyle }), flightRank };
+    const state = { ...wizardPlannerState(planned, { stayTier: effectiveStayTier, lifestyle: dailyLifestyle }), ...flightState };
     // T855: a pick holds its direction.
     const withPicks = picked.length
       ? { ...state, liveFlights: new Map([...(state.liveFlights || []), ...picked]), flightPicks: { out: flightPickOut, back: flightPickBack } }
       : state;
     return priceWholeTrip(withPicks, { data, countryInsights });
-  }, [planned, effectiveStayTier, dailyLifestyle, data, countryInsights, flightRank, picked, flightPickOut, flightPickBack]);
+  }, [planned, effectiveStayTier, dailyLifestyle, data, countryInsights, flightState, picked, flightPickOut, flightPickBack]);
   // Carta's figure for each leg the traveller has not priced, keyed the way
   // the Getting there rows are, so a row shows the estimate its own figure
   // replaces.

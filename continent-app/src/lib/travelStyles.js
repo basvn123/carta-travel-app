@@ -57,6 +57,26 @@ export const MORNINGS = ['early', 'onthego', 'slow'];
 export const SIZES = ['city', 'town', 'village', 'mix'];
 export const QUIET = ['quiet', 'lively'];
 export const PACE = ['slow', 'balanced', 'packed'];
+/** The ways there a style can pick several of (G12 Style Studio): WAYS
+ *  without 'any', which is "none picked". */
+export const WAY_MODES = ['plane', 'train', 'bus', 'car'];
+/** The steps of the Style Studio wizard, in order (decision.md View 2). */
+export const STUDIO_STEPS = ['name', 'spend', 'way', 'priority', 'shapes', 'likes', 'avoid', 'place', 'around', 'days'];
+export const STUDIO_VIEWS = ['overview', 'create', 'edit'];
+
+/**
+ * What a traveller would give up to save money, by what matters most (G12).
+ * `early` a flight before 07:00, `stops` one change of planes, `hostel` a
+ * hostel private room. Picking a priority resets the three to its row; each
+ * can then be flipped. Read by the trip settings (flight prefs, ranking and
+ * the planner's stay options), never by Explore's prices.
+ */
+export const TRADEOFF_DEFAULTS = Object.freeze({
+  price: Object.freeze({ early: true, stops: true, hostel: true }),
+  balance: Object.freeze({ early: false, stops: true, hostel: false }),
+  comfort: Object.freeze({ early: false, stops: false, hostel: false }),
+});
+const TRADEOFF_KEYS = ['early', 'stops', 'hostel'];
 
 const PARTY = {
   solo: { adults: 1, kids: 0 },
@@ -70,28 +90,29 @@ const PARTY = {
  * The starting styles, one per kind of company. Each is a sensible guess a
  * traveller then makes their own; the names are i18n keys until renamed.
  * The bed and the table are the Lifestyle panel's own tiers and presets, so
- * a template never prices anything the panel could not.
+ * a template never prices anything the panel could not. The personas are
+ * not set here: they follow from the rest (derivePersonas), as on every save.
  */
 export const TEMPLATES = {
   solo: {
     nameKey: 'styles.t.solo', tone: 'sun',
     who: { kind: 'solo', adults: 1, kids: 0, babies: 0, slowWalkers: false },
     stay: 'private', table: 'Backpacker', way: 'any', priority: 'price',
-    explore: { shapes: ['towns'], personas: ['cities', 'lively'], likes: [], avoid: [], around: 'public', size: 'city', quiet: 'lively' },
+    explore: { shapes: ['towns'], likes: [], avoid: [], around: 'public', size: 'city', quiet: 'lively' },
     days: { mornings: 'early', pace: 'packed' },
   },
   couple: {
     nameKey: 'styles.t.couple', tone: 'umber',
     who: { kind: 'couple', adults: 2, kids: 0, babies: 0, slowWalkers: false },
     stay: 'hotel3', table: 'Foodie', way: 'any', priority: 'balance',
-    explore: { shapes: ['towns'], personas: ['towns', 'hidden'], likes: [], avoid: ['crowds'], around: 'public', size: 'town', quiet: 'quiet' },
+    explore: { shapes: ['towns'], likes: [], avoid: ['crowds'], around: 'public', size: 'town', quiet: 'quiet' },
     days: { mornings: 'slow', pace: 'balanced' },
   },
   friends: {
     nameKey: 'styles.t.friends', tone: 'lagoon',
     who: { kind: 'friends', adults: 4, kids: 0, babies: 0, slowWalkers: false },
     stay: 'home', table: 'Nightlife', way: 'any', priority: 'price',
-    explore: { shapes: ['one', 'towns'], personas: ['lively', 'coast'], likes: [], avoid: [], around: 'mix', size: 'mix', quiet: 'lively' },
+    explore: { shapes: ['one', 'towns'], likes: [], avoid: [], around: 'mix', size: 'mix', quiet: 'lively' },
     days: { mornings: 'slow', pace: 'balanced' },
   },
   family: {
@@ -100,14 +121,14 @@ export const TEMPLATES = {
     stay: 'home', table: 'Family', way: 'any', priority: 'balance',
     // Getting around is "a mix", not a car: 'car' prices a hire for every
     // trip the finder builds, a choice the traveller makes, not a template.
-    explore: { shapes: ['one'], personas: ['slow', 'coast'], likes: [], avoid: ['transfers', 'heat'], around: 'mix', size: 'mix', quiet: 'quiet' },
+    explore: { shapes: ['one'], likes: [], avoid: ['transfers', 'heat'], around: 'mix', size: 'mix', quiet: 'quiet' },
     days: { mornings: 'onthego', pace: 'slow' },
   },
   group: {
     nameKey: 'styles.t.group', tone: 'mist',
     who: { kind: 'group', adults: 6, kids: 0, babies: 0, slowWalkers: false },
     stay: 'home', table: 'Easygoing', way: 'any', priority: 'price',
-    explore: { shapes: ['one'], personas: ['hubtrips'], likes: [], avoid: ['transfers'], around: 'public' },
+    explore: { shapes: ['one'], likes: [], avoid: ['transfers'], around: 'public' },
     days: { mornings: 'onthego', pace: 'balanced' },
   },
 };
@@ -135,6 +156,29 @@ function lifestyleOf(raw) {
 
 const newId = () => `s${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
+/**
+ * The ways there and the main one, kept in step. A style made before G12
+ * has only `way`, so it becomes its one way (or none for 'any'). The main
+ * way is always one of the ways: Explore's settings line can move
+ * choices.transport_mode to a mode the traveller never ticked, and the
+ * active style follows the choices (rule 1), so that mode joins the list
+ * rather than being rewritten, which would leave the choices and the style
+ * apart for good. 'any' is "Explore picks", so it clears the list.
+ */
+function waysOf(raw, way) {
+  if (way === 'any') return [];
+  const ways = Array.isArray(raw.ways) ? someOf(raw.ways, WAY_MODES) : [];
+  return ways.includes(way) ? ways : [...ways, way];
+}
+
+/** The three trade-offs made safe; a style made before G12 takes its
+ *  priority's defaults. */
+function tradeoffsOf(raw, priority) {
+  const base = TRADEOFF_DEFAULTS[priority];
+  const t = raw && typeof raw === 'object' ? raw : {};
+  return Object.fromEntries(TRADEOFF_KEYS.map((k) => [k, typeof t[k] === 'boolean' ? t[k] : base[k]]));
+}
+
 /** One style made safe: unknown keys dropped, every value checked. */
 export function normalizeStyle(raw) {
   if (!raw || typeof raw !== 'object') return null;
@@ -146,6 +190,8 @@ export function normalizeStyle(raw) {
   const allP = someOf(e.personas, PERSONAS);
   const personas = (allP.length > 1 ? allP.filter((p) => p !== 'mix') : allP).slice(0, 3);
   const d = raw.days || {};
+  const way = oneOf(raw.way, WAYS, 'any');
+  const priority = oneOf(raw.priority, PRIORITIES, 'balance');
   return {
     id: typeof raw.id === 'string' && raw.id ? raw.id.slice(0, 24) : newId(),
     // A name the traveller typed, or '' for the template's own (nameKey).
@@ -162,8 +208,10 @@ export function normalizeStyle(raw) {
     },
     stay: oneOf(raw.stay, STAY_TIERS, 'home'),
     lifestyle: lifestyleOf(raw.lifestyle),
-    way: oneOf(raw.way, WAYS, 'any'),
-    priority: oneOf(raw.priority, PRIORITIES, 'balance'),
+    way,
+    ways: waysOf(raw, way),
+    priority,
+    tradeoffs: tradeoffsOf(raw.tradeoffs, priority),
     explore: {
       shapes: someOf(e.shapes, SHAPES),
       personas,
@@ -198,24 +246,99 @@ export function normalizeStyles(raw) {
   return { version: STYLES_VERSION, list, active };
 }
 
-/** A new style from a template (or from the choices as they stand, for
- *  "make your own"). `choices` fills what a template does not decide. */
-export function styleFromTemplate(templateId, choices = {}) {
-  const t = TEMPLATES[templateId];
-  if (!t) return styleFromChoices({ tone: 'umber' }, choices);
-  return normalizeStyle({
-    id: newId(),
-    nameKey: t.nameKey,
-    template: templateId,
-    tone: t.tone,
+/**
+ * The personas a style stands for, worked out from its other answers (G12:
+ * the wizard no longer asks "which of these travellers are you?"). The trip
+ * finder still ranks by persona (config recommend.json persona), so the
+ * style keeps feeding it. The likes come first, in the traveller's own
+ * order, as they are the most direct answer; then the kind of place and
+ * its feel; then the pace. At most three; 'mix' (no lean) when nothing points anywhere.
+ */
+export function derivePersonas(explore = {}, days = {}) {
+  const e = explore || {};
+  const likes = Array.isArray(e.likes) ? e.likes : [];
+  const shapes = Array.isArray(e.shapes) ? e.shapes : [];
+  const out = [];
+  const add = (p) => { if (PERSONAS.includes(p) && !out.includes(p)) out.push(p); };
+  const BY_LIKE = { beach: 'coast', islands: 'coast', hiking: 'nature', lakes: 'nature', nightlife: 'lively', hidden: 'hidden', city: 'cities' };
+  for (const l of likes) add(BY_LIKE[l]);
+  const oneBase = shapes.length > 0 && shapes.every((x) => x === 'one');
+  if (e.size === 'city') {
+    // A city lover who stays put is the city-base-with-day-trips traveller;
+    // a quiet one sleeps outside the city and visits it.
+    add(e.quiet === 'quiet' ? 'outside' : oneBase ? 'hubtrips' : 'cities');
+  }
+  if (e.size === 'town' || e.size === 'village') add('towns');
+  if (e.quiet === 'lively') add('lively');
+  if (oneBase && days?.pace === 'slow') add('slow');
+  return out.length ? out.slice(0, 3) : ['mix'];
+}
+
+/** The template's starting answers as a style, before an id or a name. */
+function templateFields(t) {
+  return {
     who: t.who,
     stay: t.stay,
     lifestyle: { ...(PROFILES[t.table] || DEFAULT_LIFESTYLE), cadence: 'week', coffees_per_day: (PROFILES[t.table] || DEFAULT_LIFESTYLE).coffees_per_day },
     way: t.way,
     priority: t.priority,
-    explore: t.explore,
+    explore: { ...t.explore, personas: derivePersonas(t.explore, t.days) },
     days: t.days,
-  });
+  };
+}
+
+/** A new style from a template (or from the choices as they stand when the
+ *  id is unknown). `choices` fills what a template does not decide. */
+export function styleFromTemplate(templateId, choices = {}) {
+  const t = TEMPLATES[templateId];
+  if (!t) return styleFromChoices({ tone: 'umber' }, choices);
+  return normalizeStyle({ id: newId(), nameKey: t.nameKey, template: templateId, tone: t.tone, ...templateFields(t) });
+}
+
+/**
+ * A wizard draft (decision.md View 2): a whole style with no id yet, so the
+ * wizard can hold it in its own state and nothing reaches the store until
+ * Save or Done. `draftFromTemplate(kind)` is what picking "Who's coming?"
+ * loads; `emptyDraft()` is the wizard before that pick, priced as the app
+ * prices with no style (two adults, a mid-range home, the default table).
+ */
+export function draftFromTemplate(kind) {
+  const t = TEMPLATES[kind];
+  if (!t) return emptyDraft();
+  return { ...normalizeStyle({ nameKey: t.nameKey, template: kind, tone: t.tone, ...templateFields(t) }), id: '' };
+}
+
+export function emptyDraft() {
+  return { ...normalizeStyle({}), id: '' };
+}
+
+/** "What matters most?" picked in the wizard: the priority, and the three
+ *  trade-offs back to its defaults (each can be flipped after). */
+export function draftWithPriority(draft, priority) {
+  const p = PRIORITIES.includes(priority) ? priority : 'balance';
+  return { ...draft, priority: p, tradeoffs: { ...TRADEOFF_DEFAULTS[p] } };
+}
+
+/**
+ * A draft made into a style to store: checked like any style, the personas
+ * worked out again (the traveller may have changed the likes or the place),
+ * and the main way taken from the ways when the draft left it at 'any' or
+ * at a way it no longer ticks (the first picked is the main one). Keeps the
+ * draft's id when it has one; otherwise a new one.
+ */
+export function styleFromDraft(draft) {
+  const d = draft && typeof draft === 'object' ? draft : {};
+  const ways = Array.isArray(d.ways) ? d.ways.filter((x) => WAY_MODES.includes(x)) : null;
+  const way = ways && ways.length ? (ways.includes(d.way) ? d.way : ways[0]) : (ways ? 'any' : d.way);
+  const s = normalizeStyle({ ...d, id: d.id || newId(), way, ways: ways || d.ways });
+  return { ...s, explore: { ...s.explore, personas: derivePersonas(s.explore, s.days) } };
+}
+
+/** The ways there a style ticked, the main one among them (Explore's
+ *  settings line cycles through these when there are two or more). */
+export function styleWays(style) {
+  const s = normalizeStyle(style);
+  return s ? [...s.ways] : [];
 }
 
 /** The party kind the head counts read as, for a style made from choices. */
@@ -319,6 +442,32 @@ export const activeStyle = (store) => {
   return st.list.find((s) => s.id === st.active) || null;
 };
 
+/**
+ * Where the Style Studio opens, from what a door asked for (decision.md
+ * "Doors"): null (closed) or { view, id, step }. `true` is the overview.
+ * The old sheet's 'stay' and 'explore' halves become the active style's
+ * first step of each half, so a door not yet moved still lands right.
+ * An edit needs a style that exists: no id means the active one, and with
+ * none at all it becomes a new style at the first step; with styles but
+ * none in use, the overview lets the traveller pick.
+ */
+export function studioOpen(v, store) {
+  if (!v) return null;
+  const st = normalizeStyles(store);
+  let want = v;
+  if (v === true) want = { view: 'overview' };
+  else if (v === 'stay') want = { view: 'edit', step: 'name' };
+  else if (v === 'explore') want = { view: 'edit', step: 'shapes' };
+  else if (typeof v !== 'object') return null;
+  const view = oneOf(want.view, STUDIO_VIEWS, 'overview');
+  const step = oneOf(want.step, STUDIO_STEPS, 'name');
+  if (view === 'overview') return { view, id: '', step: 'name' };
+  if (view === 'create') return { view, id: '', step };
+  const id = st.list.some((s) => s.id === want.id) ? want.id : st.active;
+  if (id) return { view, id, step };
+  return st.list.length ? { view: 'overview', id: '', step: 'name' } : { view: 'create', id: '', step: 'name' };
+}
+
 // ---- The choices and the active style (hooks/useTravelStyles.js) ----
 //
 // Pure steps over the whole `choices` object, so the rules are tested here
@@ -358,6 +507,30 @@ export function keepChoices(prev) {
   const a = activeStyle(st);
   if (!a) return { ...prev, style_held: false };
   return { ...prev, travel_styles: updateStyle(st, a.id, styleFromChoices(a, prev)), style_held: false };
+}
+
+/** The Style Studio's Done on a new style: `style` (styleFromDraft) added
+ *  and made active, its stay half priced, the hold lifted. At MAX_STYLES
+ *  nothing is added and `prev` comes back. */
+export function createChoices(prev, style) {
+  const st = addStyle(normalizeStyles(prev.travel_styles), style);
+  const made = st.active === style.id ? st.list.find((x) => x.id === style.id) : null;
+  return made ? { ...prev, ...choicesFromStyle(made), travel_styles: st, style_held: false } : prev;
+}
+
+/**
+ * The Style Studio's Save on a style that exists. The active style, not
+ * held, prices the app again at once (its bed or party may have changed).
+ * A held one is only stored: the choices are a trip's on purpose, and the
+ * hold's own Keep or Undo decides what happens to them.
+ */
+export function commitChoices(prev, id, style) {
+  const before = normalizeStyles(prev.travel_styles);
+  if (!before.list.some((s) => s.id === id)) return prev;
+  const st = updateStyle(before, id, { ...style, id });
+  const s = st.list.find((x) => x.id === id);
+  if (st.active !== id || prev.style_held) return { ...prev, travel_styles: st };
+  return { ...prev, ...choicesFromStyle(s), travel_styles: st };
 }
 
 /** Switch (and Back): the style's stay half priced, the hold lifted. */
@@ -407,21 +580,6 @@ export function exploreFromTaste(style, taste) {
 }
 
 /**
- * A new style that keeps what the taste profile already knew (review
- * finding 3: a style made active rewrites the taste, so a template with no
- * likes used to wipe the traveller's). `all` (the "How I travel now" style)
- * takes every taste answer; a template keeps its own place facets and takes
- * the likes when it has none.
- */
-export function styleWithTaste(style, taste, { all = false } = {}) {
-  const s = normalizeStyle(style);
-  if (!s || !taste) return s;
-  if (all) return exploreFromTaste(s, taste);
-  const likes = s.explore.likes.length ? s.explore.likes : (Array.isArray(taste.likes) ? taste.likes : []);
-  return normalizeStyle({ ...s, explore: { ...s.explore, likes } });
-}
-
-/**
  * The account's styles merged with this device's (review finding 4): the
  * lists are joined by id (the account's copy wins for an id both hold, up to
  * MAX_STYLES), and the account's active style stays active when it has one.
@@ -465,7 +623,10 @@ export function seedTripSettings(settings, style, { normalize, markAnswered }) {
   const e = st.explore;
   let s = { ...settings, style: st.id };
   if (!mine('who')) s.party = { ...s.party, ...st.who, kidAges: (s.party?.kidAges || []).slice(0, st.who.kids) };
-  if (!mine('priority')) s.priority = st.priority;
+  // The trade-offs belong with what matters most: a trip whose priority
+  // the traveller answered on its own screen falls back to that
+  // priority's defaults (tripSettings tradeoffsOf), not the style's.
+  if (!mine('priority')) { s.priority = st.priority; s.tradeoffs = { ...st.tradeoffs }; }
   const guide = { ...s.guide };
   if (!mine('g:shape') && e.shapes.length) guide.shapes = e.shapes;
   if (!mine('g:persona') && e.personas.length) { guide.personas = e.personas; guide.personaMost = ''; guide.persona = e.personas[0]; }
@@ -500,19 +661,25 @@ export function seedTripSettings(settings, style, { normalize, markAnswered }) {
  *  my style" on the trip settings. */
 export function explorePatchFromSettings(s, style = null) {
   const g = s.guide || {};
+  const priority = PRIORITIES.includes(s.priority) ? s.priority : 'balance';
+  const explore = {
+    // The taste facets have no trip question; the style keeps its own.
+    size: style?.explore?.size || '',
+    quiet: style?.explore?.quiet || '',
+    shapes: (g.shapes || []).filter((x) => SHAPES.includes(x)),
+    likes: g.likes || [],
+    avoid: (g.avoid || []).filter((x) => AVOID.includes(x)),
+    around: g.around || '',
+  };
+  const days = { mornings: s.rhythm?.mornings || '', pace: s.rhythm?.pace || '' };
   return {
-    priority: s.priority,
-    explore: {
-      // The taste facets have no trip question; the style keeps its own.
-      size: style?.explore?.size || '',
-      quiet: style?.explore?.quiet || '',
-      shapes: (g.shapes || []).filter((x) => SHAPES.includes(x)),
-      personas: g.personas || [],
-      likes: g.likes || [],
-      avoid: (g.avoid || []).filter((x) => AVOID.includes(x)),
-      around: g.around || '',
-    },
-    days: { mornings: s.rhythm?.mornings || '', pace: s.rhythm?.pace || '' },
+    priority,
+    // The style's own trade-offs while the priority is still its own;
+    // a new priority takes its defaults, as picking it in the studio does.
+    tradeoffs: style && style.priority === priority ? { ...normalizeStyle(style).tradeoffs } : { ...TRADEOFF_DEFAULTS[priority] },
+    // A style's personas follow from its answers on every save (G12).
+    explore: { ...explore, personas: derivePersonas(explore, days) },
+    days,
   };
 }
 

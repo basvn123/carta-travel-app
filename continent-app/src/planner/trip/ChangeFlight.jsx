@@ -69,7 +69,9 @@ export function ChangeFlight({ dir: startDir = 'out', cartaFlight, answers, pref
         />
         <section className="tpf-prefs" aria-labelledby="tpf-prefs-h">
           <h3 className="tpf-h" id="tpf-prefs-h">{t('tp.fl.prefs')}</h3>
-          <Switch label={t('tp.fl.direct')} checked={p.direct} onChange={(v) => onPrefs({ ...p, direct: v })} />
+          {/* The style's cap on changes (G12 maxStops) has no control of its
+              own: touching Direct only hands the stops rule to the traveller. */}
+          <Switch label={t('tp.fl.direct')} checked={p.direct} onChange={(v) => onPrefs({ ...p, direct: v, maxStops: undefined })} />
           <div className="tpf-hours">
             <Field as="select" label={t('tp.fl.after')} value={p.after} onChange={(e) => onPrefs({ ...p, after: Math.min(Number(e.target.value), p.before - 1) })}>
               {HOURS.slice(0, 24).map((h) => <option key={h} value={h}>{hh(h)}</option>)}

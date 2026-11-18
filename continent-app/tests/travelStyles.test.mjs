@@ -95,7 +95,7 @@ test('a new trip starts from the style, marked as the style\'s', () => {
   assert.equal(s.party.kids, 2);
   assert.equal(s.priority, 'balance');
   assert.deepEqual(s.guide.shapes, ['one']);
-  assert.deepEqual(s.guide.personas, ['slow', 'coast']);
+  assert.deepEqual(s.guide.personas, ['slow'], 'derived: one base at a slow pace');
   assert.equal(s.guide.around, 'mix', 'no template assumes a hire car');
   assert.equal(s.rhythm.pace, 'slow');
   for (const id of ['who', 'priority', 'g:shape', 'g:persona', 'g:avoid', 'g:around', 'r:mornings', 'r:pace']) {
@@ -224,7 +224,7 @@ test('the style and the taste profile are one thing', async () => {
 });
 
 test('review fixes: links, account merge, taste kept, babies', async () => {
-  const { mergeStyles, styleWithTaste, kindOfCounts } = await import('../src/lib/travelStyles.js');
+  const { mergeStyles, kindOfCounts } = await import('../src/lib/travelStyles.js');
   const { mergeAccountChoices } = await import('../src/lib/taste.js');
   // Account merge keeps this device's styles and the account's active one.
   const mine = addStyle(normalizeStyles(null), styleFromTemplate('solo'));
@@ -244,13 +244,6 @@ test('review fixes: links, account merge, taste kept, babies', async () => {
   // A hold is this device's moment, never carried in from the account.
   const held = mergeAccountChoices({ style_held: false }, { style_held: true, group_size: 3 });
   assert.equal(held.style_held, false);
-  // A new style keeps what the taste knew.
-  const taste = { likes: ['hiking', 'lakes'], size: 'village', quiet: 'quiet', noCar: true };
-  const tpl = styleWithTaste(styleFromTemplate('couple'), taste);
-  assert.deepEqual(tpl.explore.likes, ['hiking', 'lakes']);
-  assert.equal(tpl.explore.size, 'town', 'a template keeps its own place facets');
-  const now = styleWithTaste(styleFromTemplate('couple'), taste, { all: true });
-  assert.equal(now.explore.size, 'village');
   // A baby makes a family.
   assert.equal(kindOfCounts(2, 0, 1), 'family');
   const c = styleFromTemplate('couple');

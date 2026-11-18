@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  STYLES_KEY, activeStyle, addStyle, afterChoicesChange, holdChoices, keepChoices, switchChoices, choicesFromStyle, choicesMatchStyle, duplicateStyle, exploreFromTaste, normalizeStyles, styleWithTaste,
-  removeStyle, styleFromChoices, styleFromTemplate, tasteFromStyle, tasteMatchesStyle, updateStyle,
+  MAX_STYLES, STYLES_KEY, activeStyle, afterChoicesChange, holdChoices, keepChoices, switchChoices, choicesFromStyle, choicesMatchStyle, commitChoices, createChoices,
+  draftFromTemplate, duplicateStyle, emptyDraft, exploreFromTaste, normalizeStyles, removeStyle, studioOpen, styleFromDraft, tasteFromStyle, tasteMatchesStyle, updateStyle,
 } from '../lib/travelStyles.js';
 import { normalizeTaste } from '../lib/taste.js';
 
@@ -46,9 +46,15 @@ export function loadStoredStyles() {
 export function useTravelStyles(choices, setChoices) {
   const store = useMemo(() => normalizeStyles(choices.travel_styles), [choices.travel_styles]);
   const active = useMemo(() => activeStyle(store), [store]);
-  // false, or the half the sheet opens on ('stay' | 'explore').
-  const [open, setOpenRaw] = useState(false);
-  const setOpen = useCallback((v) => setOpenRaw(v === true ? 'stay' : v || false), []);
+  // Where the Style Studio is open: null, or { view, id, step } (see
+  // lib/travelStyles.js studioOpen for what each door may pass). Read from
+  // the store as it stands when the door is used, so an edit always names a
+  // style that exists.
+  const [open, setOpenRaw] = useState(null);
+  const setOpen = useCallback((v) => setOpenRaw(studioOpen(v, store)), [store]);
+  // A style deleted while the studio edits it: back to the overview.
+  const openGone = open?.view === 'edit' && !store.list.some((s) => s.id === open.id);
+  const openNow = useMemo(() => (openGone ? studioOpen(true, store) : open), [openGone, open, store]);
 
   // Rule 1. Keyed on the priced choices only, not on the whole object.
   const mounted = useRef(false);
@@ -106,16 +112,20 @@ export function useTravelStyles(choices, setChoices) {
     setChoices((prev) => switchChoices(prev, id));
   }, [setChoices]);
 
-  /** A new style from a template ('' for "from how I travel now"), made active. */
-  const create = useCallback((templateId) => {
-    setChoices((prev) => {
-      const s = templateId
-        ? styleWithTaste(styleFromTemplate(templateId, prev), prev.taste)
-        : styleWithTaste(styleFromChoices({ tone: 'umber' }, prev), prev.taste, { all: true });
-      const st = addStyle(normalizeStyles(prev.travel_styles), s);
-      const made = st.list.find((x) => x.id === st.active);
-      return made ? { ...prev, ...choicesFromStyle(made), travel_styles: st, style_held: false } : prev;
-    });
+  /** The Style Studio's Done on a new style: added, made active, its stay
+   *  half priced. Returns the new id, or '' at MAX_STYLES (nothing added).
+   *  The id is made here, outside the updater, so the caller has it now. */
+  const createFrom = useCallback((draft) => {
+    if (store.list.length >= MAX_STYLES) return '';
+    const s = styleFromDraft({ ...draft, id: '' });
+    setChoices((prev) => createChoices(prev, s));
+    return s.id;
+  }, [store, setChoices]);
+  /** The Style Studio's Save on an existing style (see commitChoices: the
+   *  active one reprices the app unless it is held). */
+  const commit = useCallback((id, draft) => {
+    const s = styleFromDraft({ ...draft, id });
+    setChoices((prev) => commitChoices(prev, id, s));
   }, [setChoices]);
 
   const update = useCallback((id, patch) => write((st) => updateStyle(st, id, patch)), [write]);
@@ -150,10 +160,13 @@ export function useTravelStyles(choices, setChoices) {
     list: store.list,
     activeId: store.active,
     active,
-    open,
+    open: openNow,
     setOpen,
     switchTo,
-    create,
+    createFrom,
+    commit,
+    draftFromTemplate,
+    emptyDraft,
     update,
     remove,
     duplicate,
@@ -162,5 +175,5 @@ export function useTravelStyles(choices, setChoices) {
     revert,
     changed,
     held,
-  }), [store, active, open, setOpen, switchTo, create, update, remove, duplicate, hold, keep, revert, changed, held]);
+  }), [store, active, openNow, setOpen, switchTo, createFrom, commit, update, remove, duplicate, hold, keep, revert, changed, held]);
 }

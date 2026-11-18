@@ -12,8 +12,8 @@ import {
 } from '../auth/tripPlanStorage.js';
 import { assignmentsKey, prefsKey, extrasKey, persistAssignments, persistPrefs, persistTripExtras, TRIP_DRAFT_PLAN_ID } from '../planner/dayPlanStore.js';
 import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planner/tripDraftStore.js';
-import { usePlannerStore } from '../planner/plannerStore.js';
-import { fromDraft, flightRanking } from '../planner/flow/tripSettings.js';
+import { plannerStore, usePlannerStore } from '../planner/plannerStore.js';
+import { fromDraft, flightPrefsFor, flightRanking } from '../planner/flow/tripSettings.js';
 import { pickedLive } from '../planner/wizard/flightChoices.js';
 import { fitsPrefs, NO_FLIGHT_PREFS } from '../lib/flights/flights.js';
 
@@ -395,7 +395,9 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setOwnLegs(wizardOwnLegs || {});
     setOwnStays(wizardOwnStays || {});
     setFlightPicks(wizardFlightPicks?.out || wizardFlightPicks?.back ? wizardFlightPicks : null);
-    setFlightPrefsRaw(NO_FLIGHT_PREFS);
+    // G12: the trip starts with its style's flight trade-offs (no dawn
+    // flight, direct only), the same ones the wizard's estimate priced.
+    setFlightPrefsRaw(flightPrefsFor(fromDraft(plannerStore.getState())));
     // The stay and the eating habits the wizard priced (T816, row T801-f):
     // Review's total and the planned trip's are one figure.
     if (wizardStayTier) setStayTier(wizardStayTier);

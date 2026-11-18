@@ -20,6 +20,8 @@
 import SLOTS from '../../../config/slots.json' with { type: 'json' };
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { exactWindow, monthsByNext } from '../../lib/tripDates.js';
+import { TRADEOFF_DEFAULTS } from '../../lib/travelStyles.js';
+import { NO_FLIGHT_PREFS } from '../../lib/flights/flights.js';
 
 const wholeWhen = (w) => (w.mode === 'exact' ? exactWindow(w) : w);
 
@@ -139,6 +141,10 @@ export function defaultSettings() {
     // The travel style this trip was started from (lib/travelStyles.js), or
     // '' for a trip planned before styles. Its answers carry sources 'style'.
     style: '',
+    // G12: what the style would give up to save money ({ early, stops,
+    // hostel }, lib/travelStyles.js TRADEOFF_DEFAULTS), or null for a trip
+    // with no style. Read through tradeoffsOf, never directly.
+    tradeoffs: null,
   };
 }
 
@@ -276,7 +282,14 @@ export function normalizeSettings(raw) {
       : {},
     door: oneOf(raw.door, TRIP_DOORS, ''),
     style: typeof raw.style === 'string' ? raw.style.slice(0, 24) : '',
+    tradeoffs: tradeoffsRaw(raw.tradeoffs),
   };
+}
+
+/** Three booleans or null; anything else is no answer. */
+function tradeoffsRaw(t) {
+  if (!t || typeof t !== 'object') return null;
+  return { early: Boolean(t.early), stops: Boolean(t.stops), hostel: Boolean(t.hostel) };
 }
 
 const IMPORT_KINDS = ['flight_out', 'flight_home', 'flight', 'stay', 'car', 'transfer', 'activity', 'other'];
@@ -368,11 +381,58 @@ export function withPartyKind(s, kind) {
 /** The Where quiz's spend answer, from what matters most. */
 export const spendFor = (s) => ({ price: 'budget', comfort: 'luxury' }[s.priority] || 'standard');
 
-/** How flights are ordered. Price first, or the fewest stops and best hours. */
+/**
+ * What this trip would give up to save money (G12), or null for a trip with
+ * no travel style, which keeps the rules it had before styles. The style's
+ * trade-offs hold while what matters most is still the style's answer; once
+ * the traveller answers it on its own screen, that priority's defaults
+ * apply, as picking a priority in the Style Studio resets them.
+ */
+export function tradeoffsOf(s) {
+  if (!s?.style) return null;
+  const own = s.answered?.includes('priority') && s.sources?.priority !== 'style';
+  if (!own && s.tradeoffs) return s.tradeoffs;
+  return { ...(TRADEOFF_DEFAULTS[s.priority] || TRADEOFF_DEFAULTS.balance) };
+}
+
+/**
+ * How flights are ordered (`sort`, lib/flights/flights.js rankFlights) and
+ * how many changes a flight may have (`maxStops`). With a style: no change
+ * of planes is direct only; one is fine, up to two when price comes first,
+ * else one. Without one, the priority alone, as before.
+ */
 export function flightRanking(s) {
-  if (s.priority === 'price') return { sort: 'price', maxStops: 2 };
-  if (s.priority === 'comfort') return { sort: 'comfort', maxStops: 0 };
-  return { sort: 'balanced', maxStops: 1 };
+  const sort = { price: 'price', comfort: 'comfort' }[s.priority] || 'balanced';
+  const t = tradeoffsOf(s);
+  if (t) return { sort, maxStops: !t.stops ? 0 : s.priority === 'price' ? 2 : 1 };
+  return { sort, maxStops: { price: 2, comfort: 0 }[s.priority] ?? 1 };
+}
+
+/**
+ * The trip's flight preferences (lib/flights/flights.js fitsPrefs) a new
+ * trip starts with: with a style, no flight before 07:00 unless an early
+ * flight is fine, direct only when a change is not, and at most
+ * flightRanking's stops otherwise. Without one, every flight, as before.
+ * The traveller changes them on Change flight like any other preference.
+ */
+export const EARLY_FLIGHT_HOUR = 7;
+export function flightPrefsFor(s) {
+  const t = tradeoffsOf(s);
+  if (!t) return { ...NO_FLIGHT_PREFS };
+  const { maxStops } = flightRanking(s);
+  return {
+    ...NO_FLIGHT_PREFS,
+    direct: maxStops === 0,
+    after: t.early ? 0 : EARLY_FLIGHT_HOUR,
+    ...(maxStops > 0 ? { maxStops } : {}),
+  };
+}
+
+/** The flight half of a priced trip's state (lib/price/trip.js): one call,
+ *  so the wizard's estimate, the trip finder and the planned trip pick the
+ *  same flight. */
+export function flightStateOf(s) {
+  return { flightRank: flightRanking(s).sort, flightPrefs: flightPrefsFor(s) };
 }
 
 /** The help-me-choose answers as the Where quiz's answer shape, which is what

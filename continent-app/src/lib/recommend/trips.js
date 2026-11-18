@@ -16,7 +16,7 @@
  */
 import { quoteTrip } from '../price/trip.js';
 import { wizardPlannerState } from '../tripTotal.js';
-import { flightRanking, partySize } from '../../planner/flow/tripSettings.js';
+import { flightStateOf, partySize, tradeoffsOf } from '../../planner/flow/tripSettings.js';
 import { buildCandidates, wantsNoCar } from './candidates.js';
 import { SLOT_ROWS, ADAPTERS, buildSlots, prepareState, slotTotals } from './slots.js';
 import { planOf, finderState } from '../../planner/finder/planOf.js';
@@ -40,7 +40,7 @@ export function tripId(c) {
 export function answerKey(input) {
   const s = input.settings;
   return stableHash(JSON.stringify([
-    s.guide, s.when, s.party, s.priority, input.origin?.iata || null, input.origin?.lat ?? null, input.origin?.lon ?? null,
+    s.guide, s.when, s.party, s.priority, tradeoffsOf(s), input.origin?.iata || null, input.origin?.lat ?? null, input.origin?.lon ?? null,
     input.lifestyle || null, input.stayTier || null, input.baggage || null, input.ownFlight || null, input.flights?.checked || null,
     input.taste || null, Boolean(input.countryInsights),
     // T861: the home airports in reach and when each one's file was checked.
@@ -82,7 +82,7 @@ function plannerState(c, input) {
     // finder's flight is priced with the bag Explore and the place page use.
     baggage: input.baggage || null,
   };
-  return { ...wizardPlannerState(handOver, { lifestyle: input.lifestyle || null }), flightRank: flightRanking(s).sort };
+  return { ...wizardPlannerState(handOver, { lifestyle: input.lifestyle || null }), ...flightStateOf(s) };
 }
 
 /** The data the engine prices with: the catalogue, the origin and its swept flights. */

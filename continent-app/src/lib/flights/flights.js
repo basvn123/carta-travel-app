@@ -54,11 +54,14 @@ export const HOURS = Object.freeze({
  * and steering which flight is priced): { direct, after, before }, `direct`
  * only flights with no stop, `after` and `before` whole hours 0 to 24 the
  * departure falls in. Missing or default preferences let every flight in.
+ * `maxStops` (G12, optional) caps the changes of planes; a travel style's
+ * trade-offs set it (planner/flow/tripSettings.js flightPrefsFor).
  */
 export const NO_FLIGHT_PREFS = Object.freeze({ direct: false, after: 0, before: 24 });
 export function fitsPrefs(f, prefs = null) {
   if (!prefs) return true;
   if (prefs.direct && (Number(f?.stops) || 0) > 0) return false;
+  if (Number.isFinite(prefs.maxStops) && (Number(f?.stops) || 0) > prefs.maxStops) return false;
   const after = Number.isFinite(prefs.after) ? prefs.after : 0;
   const before = Number.isFinite(prefs.before) ? prefs.before : 24;
   if (after <= 0 && before >= 24) return true;

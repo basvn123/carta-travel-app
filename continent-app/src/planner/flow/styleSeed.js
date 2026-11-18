@@ -38,6 +38,7 @@ export function switchTripStyle(s, style) {
   if (styled.includes('g:around')) guide.around = '';
   if (styled.includes('r:mornings')) rhythm.mornings = '';
   if (styled.includes('r:pace')) rhythm.pace = '';
-  next = normalizeSettings({ ...next, guide, rhythm, style: '' });
+  // The old style's trade-offs go with it; the new style seeds its own.
+  next = normalizeSettings({ ...next, guide, rhythm, style: '', tradeoffs: null });
   return withStyle(next, style);
 }
