@@ -5179,7 +5179,6 @@ export const it = {
   "places.sideAria": "Sfoglia e restringi l'elenco",
   "places.sideBrowse": "Sfoglia",
   "places.sideRefine": "Restringi l'elenco",
-  "places.allFilters": "Tutti i filtri",
   "places.walksNearMe": "Escursioni vicino a me",
   "open.moreCuts": "Altri modi per iniziare",
   "open.railLabel": "{name}, usa le frecce per spostarti",

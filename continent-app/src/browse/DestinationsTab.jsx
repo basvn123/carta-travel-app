@@ -1690,18 +1690,17 @@ export function DestinationsTab({
       groups={quickGroups}
       lead={(
         <>
-          {/* T1038: the full list right after All filters, never wrapped
-              down to a second line. */}
+          {/* T1038: the full list first, never wrapped down to a second
+              line. */}
           {fullListBtn}
           {settings?.setCountryFilter && <CountriesButton s={settings} size="sm" className="qfbar-ctry" />}
           {sortPill}
         </>
       )}
-      trail={phoneViewPill}
       // G12 (Explore top, decision.md Removed): "All filters" left every
       // tab for now; each tab gets its own filters in a later run (ROADMAP
       // G12). The quick chips stay.
-      onAll={null}
+      trail={phoneViewPill}
     />
   ) : null;
 

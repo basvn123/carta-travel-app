@@ -17,7 +17,7 @@
 import { useSyncExternalStore } from 'react';
 
 let state = { kind: 'places', results: null, showAll: 0 };
-let handlers = { onBack: null, onFilters: null };
+let handlers = { onBack: null };
 const subs = new Set();
 const emit = () => subs.forEach((f) => f());
 
@@ -42,7 +42,6 @@ export function setDockHandlers(next) {
 }
 
 export function dockBack() { handlers.onBack?.(); }
-export function dockFilters(opener) { handlers.onFilters?.(opener); }
 // G12: Share left the phone toolbar for the applied field; the tab that
 // sets `canShare` on its results gives the handler.
 export function dockShare() { handlers.onShare?.(); }

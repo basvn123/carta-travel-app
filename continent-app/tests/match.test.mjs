@@ -3,7 +3,7 @@
 // a taste reorders and never hides.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { fit, forYou, showMatch, strongMatch, sortForYou, MATCH } from "../src/lib/match.js";
+import { fit, forYou, showMatch, sortForYou, MATCH } from "../src/lib/match.js";
 
 const profile = (likes, extra = {}) => ({
   likes: Object.fromEntries(Object.entries(likes).map(([k, v]) => [k, [v, { n: 1 }]])),
@@ -49,11 +49,9 @@ test("a conflict multiplies F and is listed on its own", () => {
   for (const c of Object.values(MATCH.conflicts)) assert.ok(c >= 0.6 && c <= 1, "factors stay in 0.6 to 1");
 });
 
-test("the 55% floor: below it no match shows; 70% is strong", () => {
+test("the 55% floor: below it no match shows", () => {
   assert.ok(!showMatch(fit({ likes: ["beach"] }, profile({ beach: 0.54 }))));
   assert.ok(showMatch(fit({ likes: ["beach"] }, profile({ beach: 0.55 }))));
-  assert.ok(!strongMatch(fit({ likes: ["beach"] }, profile({ beach: 0.69 }))));
-  assert.ok(strongMatch(fit({ likes: ["beach"] }, profile({ beach: 0.7 }))));
   assert.ok(!showMatch(null));
 });
 

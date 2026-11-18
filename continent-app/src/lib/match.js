@@ -114,11 +114,6 @@ export function showMatch(f) {
   return !!f && f.F >= MATCH.show_min;
 }
 
-/** True when a fit passes the Strong match toggle (70% and up). */
-export function strongMatch(f) {
-  return !!f && f.F >= MATCH.strong_min;
-}
-
 /** The quality a place is ordered by: the month score when a month is set. */
 export function qualityOf(place, month = null) {
   const r = place?.rating;

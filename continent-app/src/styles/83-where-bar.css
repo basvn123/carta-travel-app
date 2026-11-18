@@ -129,7 +129,6 @@
   margin: -3px -2px;
 }
 .qfbar-row::-webkit-scrollbar { display: none; }
-.qfbar-all { flex: none; }
 .qfbar-chip .ui-chip-label { display: inline-flex; align-items: center; gap: var(--space-1); }
 .qfbar-chev {
   flex: none;

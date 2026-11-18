@@ -6102,7 +6102,6 @@ export const en = {
   "places.sideAria": "Browse and narrow the list",
   "places.sideBrowse": "Browse",
   "places.sideRefine": "Narrow the list",
-  "places.allFilters": "All filters",
   "places.walksNearMe": "Walks near me",
   "open.moreCuts": "More ways in",
   "open.railLabel": "{name}, use the arrow keys to move along",

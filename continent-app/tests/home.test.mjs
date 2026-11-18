@@ -291,7 +291,7 @@ test('the retired home strings are gone', () => {
     'filter.month', 'filter.nearSea', 'filter.paneAny', 'filter.paneCount', 'filter.paneCountOne',
     'filter.paneHours', 'filter.pricedForCreate', 'filter.pricedForHeld', 'filter.pricedForList',
     'filter.size', 'filter.tripType', 'fit.strong', 'settings.fromStyle', 'why.place.cardAria',
-    'why.place.chipLikely'];
+    'why.place.chipLikely', 'places.allFilters'];
   for (const [lang, cat] of Object.entries(CATALOGS)) {
     for (const k of retired) assert.equal(cat[k], undefined, `${lang} ${k}`);
     assert.deepEqual(Object.keys(cat).filter((k) => k.startsWith('landing.')), [], lang);

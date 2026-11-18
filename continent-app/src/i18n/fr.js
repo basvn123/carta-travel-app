@@ -5179,7 +5179,6 @@ export const fr = {
   "places.sideAria": "Parcourir et affiner la liste",
   "places.sideBrowse": "Parcourir",
   "places.sideRefine": "Affiner la liste",
-  "places.allFilters": "Tous les filtres",
   "places.walksNearMe": "Randonnées près de moi",
   "open.moreCuts": "Autres entrées",
   "open.railLabel": "{name}, avancez avec les flèches",

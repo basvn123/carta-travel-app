@@ -1,5 +1,5 @@
 import React, {
-  createContext, useCallback, useContext, useId, useMemo, useState,
+  createContext, useCallback, useContext, useId, useMemo,
 } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { DateField } from './DateField.jsx';
@@ -21,9 +21,9 @@ import { rule } from '../lib/price/config.js';
  *
  * The settings line itself (one row of parts on every priced view) left the
  * app in commit 4a68a45e2d and was removed here in G12: Explore's controls
- * are the search dock's cards (components/SearchDock.jsx) and the Trip dock.
- * What stays is shared by them: the When and People controls, the one-part
- * editor sheet Account opens, the date pick rule and the formatters.
+ * are the band's chips and the Settings sheet (browse/band, browse/settings).
+ * What stays is shared: the When and People controls, the one-part editor
+ * sheet Account opens and the formatters.
  */
 
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
@@ -304,28 +304,4 @@ export function SettingsEditorSheet({ part, onClose, anchorRef = null }) {
       </Button>
     </SheetShell>
   );
-}
-
-/**
- * The one calendar's pick rule, shared by this line and the Trip dock (G12)
- * so both move the dates alike. A pick on the leaving end moves the trip
- * and keeps its length, then hands the next pick to the return; a pick on
- * the return end sets it, unless it lands on or before the leaving day,
- * which then moves instead.
- */
-// eslint-disable-next-line react-refresh/only-export-components -- a hook shared with components/dock/TripDock.jsx
-export function useDatePick(s) {
-  const [pickEnd, setPickEnd] = useState('start');
-  const pickDate = useCallback((iso) => {
-    if (!s || !iso) return;
-    const nights = Math.max(1, nightsBetween(s.departDate, s.returnDate));
-    if (pickEnd === 'end' && s.departDate && iso > s.departDate) {
-      s.setReturnDate(iso);
-      return;
-    }
-    s.setDepartDate(iso);
-    s.setReturnDate(addDaysISO(iso, nights));
-    setPickEnd('end');
-  }, [s, pickEnd]);
-  return { pickEnd, setPickEnd, pickDate };
 }

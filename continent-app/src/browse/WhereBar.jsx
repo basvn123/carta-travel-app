@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button, Chip, Field, IconButton } from '../components/ui/index.js';
-import { CheckIcon, ChevronDownIcon, CloseIcon, FilterIcon, SearchIcon, SortIcon } from '../components/Icons.jsx';
+import { CheckIcon, ChevronDownIcon, CloseIcon, SearchIcon, SortIcon } from '../components/Icons.jsx';
 import '../styles/78-filter-pane.css';
 import '../styles/83-where-bar.css';
 
@@ -99,7 +99,7 @@ export function WhereBar({ t, what = null, where, onSearch, after = null, childr
 /*
  * The quick filter row (T593, the owner's AllTrails reference): the tab's
  * most used facet groups as dropdown chips, each opening a small popover
- * with the group's existing choices, then "All filters" for the sheet.
+ * with the group's existing choices. "All filters" left with G12.
  * Sits over the list and over the map alike.
  *
  * A group is the shape DestinationsTab's facetGroups already has:
@@ -112,8 +112,7 @@ export function WhereBar({ t, what = null, where, onSearch, after = null, childr
  * the chip again closes it, and Escape hands focus back to the chip.
  */
 export function FilterChipBar({
-  t, groups, onAll, allCount = 0, fmt = String,
-  allOn = false, allControls = undefined, allRef = undefined, lead = null, trail = null,
+  t, groups, fmt = String, lead = null, trail = null,
 }) {
   const [openKey, setOpenKey] = useState(null);
   const [left, setLeft] = useState(0);
@@ -163,7 +162,7 @@ export function FilterChipBar({
     if (openKey && !open) setOpenKey(null);
   }, [openKey, open]);
 
-  if (!groups.length && !onAll && !lead && !trail) return null;
+  if (!groups.length && !lead && !trail) return null;
 
   const chipText = (g) => {
     const on = g.options.filter((o) => o.on);
@@ -175,24 +174,6 @@ export function FilterChipBar({
   return (
     <div className="qfbar" ref={barRef}>
       <div className="qfbar-row" role="group" aria-label={t('where.chipsAria')}>
-        {onAll && (
-          <Button
-            ref={allRef}
-            variant="secondary"
-            size="sm"
-            className={`qfbar-all${allOn ? ' is-on' : ''}`}
-            iconStart={<FilterIcon size={15} />}
-            onClick={() => { setOpenKey(null); onAll(); }}
-            // T602: on a desktop All filters opens and closes the side pane
-            // (allControls names it); on a phone it opens the sheet.
-            aria-haspopup={allControls ? undefined : 'dialog'}
-            aria-expanded={allOn}
-            aria-controls={allControls}
-          >
-            {t('places.allFilters')}
-            {allCount > 0 && <Chip kind="count" className="dtab-count">{fmt(allCount)}</Chip>}
-          </Button>
-        )}
         {lead}
         {groups.map((g) => {
           const isOpen = openKey === g.key;

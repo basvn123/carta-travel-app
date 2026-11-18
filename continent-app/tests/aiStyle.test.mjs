@@ -21,7 +21,6 @@ import { buildPrompt } from '../../supabase/functions/plan-day/prompt.mjs';
 import { cacheKeyInput } from '../../supabase/functions/plan-day/logic.mjs';
 import { STYLE_AI_ENUMS, styleForAi } from '../src/lib/styleForAi.js';
 import { normalizeStyle, TEMPLATES } from '../src/lib/travelStyles.js';
-import { styleSourced, wayChoices } from '../src/components/settingsStyle.js';
 
 const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 const golden = JSON.parse(read('../../prompts/_golden/js.json'));
@@ -189,27 +188,6 @@ test('every Ask and plan-day call site sends the active style', () => {
 /* ---- 5. Explore ---- */
 
 const style = (over = {}) => normalizeStyle({ ...TEMPLATES.couple, ...over });
-
-test('the settings line marks the party and the way the style set, and nothing it did not', () => {
-  const a = style({ way: 'train', ways: ['train'] });
-  const s = { travelStyles: { active: a }, party: 2, children: 0, babies: 0, transportMode: 'train' };
-  assert.deepEqual(styleSourced(s), { party: true, way: true });
-  assert.deepEqual(styleSourced({ ...s, party: 3 }), { party: false, way: true });
-  assert.deepEqual(styleSourced({ ...s, transportMode: 'car' }), { party: true, way: false });
-  assert.equal(styleSourced({ ...s, travelStyles: { active: style({ way: 'any' }) }, transportMode: 'any' }).way, false, "'any' is no pick");
-  assert.deepEqual(styleSourced({ ...s, travelStyles: { active: null } }), { party: false, way: false });
-});
-
-test("the Transport card offers the style's ways first when it has two or more", () => {
-  const all = ['any', 'plane', 'train', 'bus', 'car'];
-  const two = { ways: ['train', 'car'] };
-  assert.deepEqual(wayChoices('train', two), { shown: ['train', 'car'], more: true }, 'the style order');
-  assert.deepEqual(wayChoices('train', two, true).shown, all, 'Other ways shows the rest');
-  assert.deepEqual(wayChoices('plane', two).shown, all, 'the selected way is never hidden');
-  assert.deepEqual(wayChoices('car', { ways: ['car'] }).shown, all, 'one way: every way');
-  assert.deepEqual(wayChoices('plane', null).shown, all);
-  assert.deepEqual(wayChoices('train', { ways: ['train', 'any', 'rocket'] }).shown, all, 'junk is ignored');
-});
 
 test('the phone search dock and its seven questions left with G12; the dead settings line is gone', async () => {
   const { existsSync } = await import('node:fs');

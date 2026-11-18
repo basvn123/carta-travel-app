@@ -5188,7 +5188,6 @@ export const nl = {
   "places.sideAria": "Bladeren en lijst verfijnen",
   "places.sideBrowse": "Bladeren",
   "places.sideRefine": "Lijst verfijnen",
-  "places.allFilters": "Alle filters",
   "places.walksNearMe": "Wandelingen bij mij in de buurt",
   "open.moreCuts": "Meer ingangen",
   "open.railLabel": "{name}, ga verder met de pijltjestoetsen",

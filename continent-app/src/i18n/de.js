@@ -5179,7 +5179,6 @@ export const de = {
   "places.sideAria": "Stöbern und Liste eingrenzen",
   "places.sideBrowse": "Stöbern",
   "places.sideRefine": "Liste eingrenzen",
-  "places.allFilters": "Alle Filter",
   "places.walksNearMe": "Wanderungen in meiner Nähe",
   "open.moreCuts": "Weitere Einstiege",
   "open.railLabel": "{name}, mit den Pfeiltasten weitergehen",
