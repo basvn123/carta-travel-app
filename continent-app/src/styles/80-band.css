@@ -73,7 +73,7 @@
 }
 .band-input::placeholder { color: var(--text-2); font-weight: 500; opacity: 1; }
 /* The field's own ring is the band's edge; the 3 px ring sits on the box. */
-.band-input:focus-visible { outline: 0; }
+.band-input:focus-visible { outline: 0; box-shadow: none; }
 .band-search:has(.band-input:focus-visible) {
   outline: var(--stroke-focus) solid var(--focus);
   outline-offset: 2px;

@@ -43,7 +43,7 @@
   width: min(400px, 34vw);
   border-radius: var(--radius-panel);
   background: var(--surface);
-  box-shadow: var(--shadow-2);
+  box-shadow: var(--elev-2);
   overflow: hidden;
   animation: set-dock-in var(--dur-3) var(--ease-out) both;
 }
@@ -319,7 +319,7 @@
   color: var(--umber-800);
 }
 .set-pick-flag { display: grid; place-items: center; width: 24px; }
-.set-pick-flag .country-flag { border-radius: 2px; box-shadow: var(--shadow-1); }
+.set-pick-flag .country-flag { border-radius: var(--radius-sm); box-shadow: var(--elev-1); }
 .set-pick-pin { display: grid; place-items: center; width: 24px; color: var(--umber-600); }
 .set-pick-name { display: grid; gap: 1px; min-width: 0; overflow-wrap: anywhere; }
 .set-pick-sub { font-size: var(--text-label); font-weight: 400; color: var(--text-2); }
@@ -414,7 +414,7 @@
   animation: set-pop var(--dur-pop) var(--ease-pop) both;
 }
 .set .set-cal-grid .set-cal-day:focus,
-.set .set-cal-grid .set-cal-day:focus-visible { outline: none; }
+.set .set-cal-grid .set-cal-day:focus-visible { outline: none; box-shadow: none; }
 /* The ring goes round the day's disc, not the square cell. */
 .set-cal-day:focus-visible .set-cal-n { outline: var(--stroke-focus) solid var(--focus); outline-offset: 1px; }
 

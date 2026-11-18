@@ -30,7 +30,7 @@ import { matchProfile, PROFILE_LABEL_KEYS } from '../../browse/styles/spendBits.
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { Button, Tabs } from '../ui/index.js';
 import NotYet from '../NotYet.jsx';
-import { openDock } from '../dock/dockStore.js';
+import { openSettings } from '../../browse/settings/settingsSheetStore.js';
 import { useSettings } from '../SettingsLine.jsx';
 import { openStudioAt } from '../../browse/styles/studioDoors.js';
 import { closePriceSheet, usePriceSheet } from './priceSheetStore.js';
@@ -66,11 +66,11 @@ function OpenSheet({ s, data }) {
     if (s.anchor?.isConnected) s.anchor.focus({ preventScroll: true });
   };
   // A hand-off closes the sheet without handing focus back, then opens the
-  // dock at its row or the studio at its step, which takes focus
+  // Settings at its step or the studio at its step, which takes focus
   // (accessibility critique: the sheet's focus return would race theirs).
   const handOff = (h) => {
     closePriceSheet();
-    requestAnimationFrame(() => (h.studio ? openStudioAt(ts, h.studio) : openDock(h.dock, { focus: h.focus })));
+    requestAnimationFrame(() => (h.studio ? openStudioAt(ts, h.studio) : openSettings({ step: h.settings })));
   };
 
   const body = <SheetBody s={s} data={data} tab={tab} setTab={setTab} baseId={baseId} onHand={handOff} t={t} />;

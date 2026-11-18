@@ -28,7 +28,7 @@ test('Settings is a desktop Places button; chips open their step or the studio',
 });
 
 test('the style door is always the heart', () => {
-  for (const f of ['src/components/dock/StyleDock.jsx', 'src/components/dock/TripDock.jsx']) {
+  for (const f of ['src/components/dock/StyleDock.jsx']) {
     const s = read(f);
     assert.match(s, /<HeartIcon size=/, f);
     assert.doesNotMatch(s, /styleIcon\(/, f);

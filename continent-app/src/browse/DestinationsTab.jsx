@@ -7,7 +7,6 @@ import { countryName as localCountryName } from '../lib/countryName.js';
 import { needsCountry } from '../lib/favorites.js';
 import { railOrigin } from '../lib/railAlternative.js';
 import { HeroImage } from '../components/HeroImage.jsx';
-import { PlacesFilterSheet } from './PlacesFilterSheet.jsx';
 import { FilterChips } from './FilterChips.jsx';
 import { HeroPreload } from '../components/LayerPhoto.jsx';
 import { loadTrails, loadListedTrails, loadTrailsIndex, loadTopTrails } from '../lib/trails.js';
@@ -337,20 +336,9 @@ export function DestinationsTab({
   const [mtnFacets, setMtnFacets] = useState({});
   const [lakeFacets, setLakeFacets] = useState({});
   const [beachFacets, setBeachFacets] = useState({});
-  // The Filters door. One sheet on every width, the same as Explore's.
-  const [sheetOpen, setSheetOpen] = useState(false);
-  // The Filters sheet hangs off this button on a pointer screen.
-  const filterBtnRef = useRef(null);
-  // Which door opened the sheet (T384): the toolbar's Filters hangs it off
-  // the button; the desktop panel's "All filters" sits low in a tall column,
-  // where a hanging panel would run off the screen, so it opens the sheet
-  // centred, the way the shared filter sheet stands on a wide screen.
-  const [sheetFrom, setSheetFrom] = useState('toolbar');
-  // T602: the desktop filter pane, closed by default and opened and closed
-  // by All filters, as Places' Filters pill opens its pane.
-  // G12: All filters left, so the desktop pane stays shut until the tab
-  // gets its own filters (ROADMAP G12 follow-up).
-  const [paneOpen] = useState(false);
+  // G12 (Explore top): the Filters sheet, the desktop pane and All filters
+  // left every tab; the quick chips stay until the tab gets its own filters
+  // (ROADMAP G12 follow-up).
 
   useEffect(() => {
     if (layerError.trails) return undefined;
@@ -1391,16 +1379,15 @@ export function DestinationsTab({
   if (isActive && !isDesktop) {
     setDockHandlers({
       onBack: clearAllChips,
-      onFilters: () => { setSheetFrom('toolbar'); setSheetOpen(true); },
     });
   }
   useEffect(() => {
     if (!isActive || isDesktop) return;
     setDockKind(cat === 'trips' ? 'places' : cat);
     setDockResults(dockOn ? {
-      label: dockLabel, query: query || '', filterCount: activeFilters, filtersOpen: sheetOpen,
+      label: dockLabel, query: query || '', filterCount: activeFilters,
     } : null);
-  }, [isActive, isDesktop, cat, dockOn, dockLabel, query, activeFilters, sheetOpen]);
+  }, [isActive, isDesktop, cat, dockOn, dockLabel, query, activeFilters]);
   const { openingRails, openingDoors, outdoorCat, bedFood, routeMap, mapRows, openMapItem } = useDestMapItems({
     applyRail, beachRows, cat, country, countryName, cycleRows, data, indices, isActive,
     isCycleCat, isDesktop, lakeRows, lang, mountainRows, openCycleRoute, openNeighbour, opening,
@@ -1498,33 +1485,6 @@ export function DestinationsTab({
     setNearPlace(null);
     setSort({ key, dir: SORTS.find((x) => x.key === key).defaultDir });
   };
-  const renderFacetGroups = (only) => facetGroups
-    // Inline only the short set flagged `toolbar`, or a group with a chip
-    // on (an opening's "See all" can switch on a chip from any group);
-    // every other group lives in the Filters sheet (T384, brief V3-1).
-    .filter((g) => (only === 'toolbar'
-      ? g.toolbar === true || g.options.some((o) => o.on)
-      : true))
-    .map((g) => (
-      <div key={g.key} className="dtab-facet xpane-sec">
-        <h3 className="dtab-facet-label xrail-h">{g.label}</h3>
-        <div className="dtab-chips xpane-chips" role="group" aria-label={g.label}>
-          {g.options.map((o) => (
-            <Chip
-              key={o.key}
-              kind="filter"
-              selected={!!o.on}
-              disabled={o.disabled}
-              className={o.cls || ''}
-              onClick={() => g.onToggle(o.key)}
-            >
-              {o.label}
-            </Chip>
-          ))}
-        </div>
-        {g.notYet && <NotYet />}
-      </div>
-    ));
 
   // The locate door and the suggestion list, built once: they ride in the
   // phone toolbar's field and in the What and Where bar alike (T593).
@@ -1708,7 +1668,6 @@ export function DestinationsTab({
   const sortPill = showSorts && sortDefs.length > 0 && !isJourneyBrowse ? (
     <SortPill t={t} options={sortDefs} value={sortCur.key} onChange={pickSort} />
   ) : null;
-  const filterCount = activeFilters - (country ? 1 : 0);
   // The Full list toggle (T622): only where the section has a list under
   // its rails (Europe-wide trails open on their countries instead).
   const fullListBtn = opening && !opening.europe && !mapOn ? (
@@ -1812,26 +1771,6 @@ export function DestinationsTab({
           is for assistive technology. It steps aside while a dialog (a detail
           page, a sheet) is open, so that dialog's own h1 is the only one. */}
       <h1 className="sr-only tab-h1">{t('explore.title')}</h1>
-      {/* T602: the filter pane, desktop only (CSS hides it under 769px)
-          and only while All filters has it open: every facet group of the
-          tab in Places' pane sections. No sort (the quick row's pill) and
-          no country (the settings line's Countries, or Where). */}
-      {facetGroups.length > 0 && paneOpen && isDesktop && (
-        <aside className="side-panel places-side" id="dtab-side" aria-label={t('filter.filters')}>
-          <div className="xrail xpane">
-            <div className="xpane-head">
-              <h2 className="xpane-count">{t('filter.filters')}</h2>
-              {filterCount > 0 && (
-                <Button variant="quiet" size="sm" className="xpane-clear" onClick={resetFacets}>
-                  {t('filter.clearAll')}
-                </Button>
-              )}
-            </div>
-            {renderFacetGroups('all')}
-          </div>
-        </aside>
-      )}
-
       <div className="places-tab" ref={scrollRef}>
       <div className="places-wrap">
         {/* The outdoor tabs search from their What and Where bar (T593);
@@ -2299,23 +2238,6 @@ export function DestinationsTab({
         </>
       )}
 
-      {/* The one Filters door, holding the country and the same facet groups
-          the toolbar shows, so the sheet is the complete set rather than the
-          leftovers. */}
-      {sheetOpen && (
-        <PlacesFilterSheet
-          onClose={() => setSheetOpen(false)}
-          anchorRef={sheetFrom === 'side' ? null : filterBtnRef}
-          groups={facetGroups}
-          country={country}
-          setCountry={(cc) => { setCountry(cc); setNearPlace(null); }}
-          countryOptions={[]}
-          activeFilters={activeFilters}
-          resetAll={resetAll}
-          resultCount={rowCount}
-          noun={cat}
-        />
-      )}
       <SiteFooter />
       </div>
     </div>

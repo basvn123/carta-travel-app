@@ -143,7 +143,8 @@ test('the why.place keys are in all six languages with the same placeholders', a
   const langs = ['en', 'nl', 'de', 'fr', 'es', 'it'];
   const mods = await Promise.all(langs.map(async (l) => (await import(`../src/i18n/${l}.js`))[l]));
   const keys = Object.keys(mods[0]).filter((k) => k.startsWith('why.place.'));
-  assert.equal(keys.length, 14);
+  // G12 (Explore top): the cards' chip keys (chipLikely, cardAria) left with the chips.
+  assert.equal(keys.length, 12);
   const holes = (s) => (s.match(/\{\w+\}/g) || []).sort().join();
   for (const [i, m] of mods.entries()) {
     for (const k of keys) {

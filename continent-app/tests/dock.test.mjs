@@ -109,16 +109,11 @@ test('the three new house glyphs exist', () => {
 });
 
 // Steps 3 and 4: what each dock holds and where it sits (decision.md change 1).
-test('the Trip dock holds style, from, when and prices only', () => {
-  const trip = src('components/dock/TripDock.jsx');
-  const rows = [...trip.matchAll(/rowKey="([a-z]+)"/g)].map((m) => m[1]);
-  assert.deepEqual(rows, ['style', 'from', 'when', 'prices']);
-  assert.match(trip, /closeDock\('trip'\);[\s\S]*openStudio\(ts\)/, 'the Style row hands over to the Style Studio');
-  assert.doesNotMatch(src('browse/explore/OverviewHero.jsx'), /PriceViewSwitch/, 'how prices read moved into the dock');
-  // G12 (Explore top): Places' settings live in the band; the layers keep the dock for now.
-  // Explore top (fixes r1 B1): no Explore tab mounts the Trip dock any more.
-  for (const f of ['browse/explore/OverviewHero.jsx', 'browse/explore/ExploreToolbar.jsx', 'browse/ExploreTab.jsx', 'browse/DestinationsTab.jsx']) {
-    assert.doesNotMatch(src(f), /<TripDock \/>/, `${f} no longer mounts the Trip dock`);
+test('the Trip dock is gone: Settings holds the trip (G12 Explore top)', async () => {
+  const { existsSync } = await import('node:fs');
+  assert.equal(existsSync(new URL('../src/components/dock/TripDock.jsx', import.meta.url)), false);
+  for (const f of ['browse/explore/OverviewHero.jsx', 'browse/explore/ExploreToolbar.jsx', 'browse/ExploreTab.jsx', 'browse/DestinationsTab.jsx', 'App.jsx']) {
+    assert.doesNotMatch(src(f), /TripDock/, f);
   }
   assert.doesNotMatch(src('App.jsx'), /<SettingsLine /, 'the header settings line left Explore and Destinations');
 });

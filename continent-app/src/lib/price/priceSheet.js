@@ -36,8 +36,9 @@ export function handoff(tab, cost = null) {
   if (tab === 'stay') return { studio: 'spend', key: 'price.changeStay' };
   if (tab === 'food') return { studio: 'spend', key: 'price.changeFood' };
   if (tab === 'flight' && isGroundWay(cost)) return { studio: 'way', key: 'price.changeWay' };
-  if (tab === 'flight') return { dock: 'trip', focus: 'from', key: 'price.changeFlight' };
-  return { dock: 'trip', focus: 'from', key: 'price.changeTrip' };
+  // G12 (Explore top): the trip lives in Settings; a flight moves with the start.
+  if (tab === 'flight') return { settings: 'start', key: 'price.changeFlight' };
+  return { settings: 'overview', key: 'price.changeTrip' };
 }
 
 const bedLine = (cost) => (cost?.lines || []).find((l) => l.key === 'bed') || null;

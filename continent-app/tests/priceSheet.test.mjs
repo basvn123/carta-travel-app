@@ -74,15 +74,14 @@ test('"In this price" lists bed, food, the day, transport not measured, the way 
   assert.match(src, /price\.in\.covers/);
 });
 
-test('each tab hands over to the dock row or studio step that moves its number', () => {
+test('each tab hands over to the Settings or studio step that moves its number', () => {
   assert.deepEqual(handoff('stay'), { studio: 'spend', key: 'price.changeStay' });
   assert.deepEqual(handoff('food'), { studio: 'spend', key: 'price.changeFood' });
-  assert.deepEqual(handoff('flight'), { dock: 'trip', focus: 'from', key: 'price.changeFlight' });
-  assert.deepEqual(handoff('in'), { dock: 'trip', focus: 'from', key: 'price.changeTrip' });
+  assert.deepEqual(handoff('flight'), { settings: 'start', key: 'price.changeFlight' });
+  assert.deepEqual(handoff('in'), { settings: 'overview', key: 'price.changeTrip' });
   assert.deepEqual(handoff('flight', { way: { mode: 'train' } }), { studio: 'way', key: 'price.changeWay' });
-  // A studio step goes through the one studio door; the dock row exists.
-  assert.match(read('src/components/price/PriceSheet.jsx'), /h\.studio \? openStudioAt\(ts, h\.studio\)/);
-  assert.match(read('src/components/dock/TripDock.jsx'), /rowKey="from"/);
+  // A studio step goes through the one studio door, the rest through Settings.
+  assert.match(read('src/components/price/PriceSheet.jsx'), /h\.studio \? openStudioAt\(ts, h\.studio\) : openSettings\(\{ step: h\.settings \}\)/);
 });
 
 test('the tapped part chooses the tab; a ground way names its own tab', () => {

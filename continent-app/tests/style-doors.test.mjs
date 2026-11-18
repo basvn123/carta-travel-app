@@ -50,7 +50,6 @@ test('the old style flows are gone', () => {
 test('every former style door leads into the studio', () => {
   assert.match(read('App.jsx'), /openStudioRef\.current\(\{ view: 'edit', step: 'spend' \}\)/, 'bed and food doors open the spend step');
   assert.match(read('components/dock/StyleDock.jsx'), /onActivate=\{\(\) => openStudio\(ts\)\}/);
-  assert.match(read('components/dock/TripDock.jsx'), /openStudio\(ts\)/);
   assert.match(read('components/price/PriceSheet.jsx'), /openStudioAt\(ts, h\.studio\)/);
   assert.match(read('auth/account/TravelView.jsx'), /onClick=\{\(\) => openStudio\(ts\)\}/);
   assert.match(read('planner/flow/LifestyleStep.jsx'), /openStudioAt\(styles, 'shapes'\)/);
