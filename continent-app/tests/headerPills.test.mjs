@@ -22,8 +22,9 @@ test('signed out: a Sign in pill that calls requestAuth; signed in: the avatar',
   const src = read('src/components/AppHeader.jsx');
   const acc = src.slice(src.indexOf('function AccountLink'), src.indexOf('function TogetherDoor'));
   assert.match(acc, /if \(user \|\| !onSignIn\) return door;/);
-  // Signed out the account icon stays beside Sign in: a guest's way to Account.
-  assert.match(acc, /<\/Button>\s*\{door\}/);
+  // Signed out the account icon stays beside Sign in: a guest's way to Account
+  // (Explore rails, 2026-11-18: the two share one split pill, the face first).
+  assert.match(acc, /\{door\}\s*<Button[^>]*signin-pill/);
   assert.match(acc, /t\('header\.accountTitle'\)/);
   assert.match(acc, /onClick=\{\(\) => onSignIn\('signin'\)\}/);
   assert.match(acc, /\{t\('auth\.signIn'\)\}/);

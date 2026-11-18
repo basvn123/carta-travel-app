@@ -107,8 +107,12 @@ test('the rails carry no head or note line; each figure says its unit', () => {
   const rails = read('src/browse/ExploreRails.jsx');
   assert.doesNotMatch(rails, /<ListHead\b/);
   assert.doesNotMatch(rails, /<PriceNotes\b/);
-  // The price row (its figure and wagons are buttons) sits outside the card link.
-  assert.match(rails, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} weighted pressable place=\{p\} \/>/);
+  // The price row (its figure and wagons are buttons) sits outside the card
+  // link: since Explore rails (2026-11-18) as two slots, the figure on the
+  // name's line and the parts after the country, both after the link.
+  const afterLink = rails.slice(rails.indexOf('</a>'));
+  assert.match(afterLink, /<RowFormation cost=\{p\.cost\} t=\{t\} pressable place=\{p\} slot="figure"/);
+  assert.match(afterLink, /<RowFormation cost=\{p\.cost\} t=\{t\} pressable place=\{p\} slot="parts"/);
 });
 
 test('save wears the bookmark with one fixed name; the cairn stays My trips', () => {

@@ -78,6 +78,49 @@
   font-weight: 600;
 }
 .app-header-account:has(.hdr-pill) { gap: var(--space-2); }
+/* The guest's split pill (Explore rails, owner 2026-11-18): one outline
+   around the person face (Account) and "Sign in" (the dialog), so the
+   header holds two shapes instead of three. Each half is its own 44 px
+   control with its own focus ring; the outline darkens on either's hover. */
+.app-header .acct-split {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: var(--tap);
+  border: 1px solid var(--edge);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+.app-header .acct-split .account-door { width: calc(var(--tap) - 2px); height: calc(var(--tap) - 2px); }
+.app-header .acct-split .account-door-disc {
+  width: 32px;
+  height: 32px;
+  background: var(--select-bg);
+  color: var(--select-ink);
+  box-shadow: none;
+}
+.app-header .acct-split .btn.hdr-pill.signin-pill {
+  min-height: calc(var(--tap) - 2px);
+  padding: 0 var(--space-4) 0 var(--space-1);
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+}
+@media (hover: hover) {
+  .app-header .acct-split:hover { border-color: var(--text); }
+  .app-header .acct-split .account-door:not(.on):hover { background: transparent; }
+  .app-header .acct-split .account-door:not(.on):hover .account-door-disc { background: var(--umber-200); }
+}
+/* Signed in, the avatar is the initial on beige with a thin umber ring,
+   so it reads as a person, not as an empty button. */
+.app-header .account-door-disc.has-initial {
+  background: var(--select-bg);
+  color: var(--select-ink);
+  font-weight: 700;
+  outline: 1.5px solid var(--umber-300);
+  outline-offset: -1.5px;
+}
 @media (min-width: 769px) and (max-width: 1099px) {
   .tg-door.hdr-pill { width: var(--tap); padding: 0; justify-content: center; }
   .tg-door-word { display: none; }
@@ -92,7 +135,7 @@
   .app-header-account:has(.signin-pill) .tg-door-word { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hdr-pill { transition: none; }
+  .hdr-pill, .app-header .acct-split { transition: none; }
 }
 
 /* ── Faces in four tones ─────────────────────────────────────────────── */

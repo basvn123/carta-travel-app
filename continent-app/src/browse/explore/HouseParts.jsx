@@ -57,9 +57,12 @@ function wayOf(cost) {
  *  wagons by their euros (rail cards); rows keep them content-sized.
  *  `pressable` (G12, D10, Explore's list and rails only): the figure says its
  *  unit, every wagon is its own button, bed and food sit joined. Opt-in so
- *  My trips and the home story keep the formation they were judged with. */
-export function RowFormation({ cost, t, figRef = null, weighted = false, className = '', pressable = false, place = null }) {
-  if (pressable) return <ListFormation cost={cost} t={t} figRef={figRef} weighted={weighted} className={className} place={place} />;
+ *  My trips and the home story keep the formation they were judged with.
+ *  `slot` (pressable only; Explore rails, owner 2026-11-18): 'figure' draws
+ *  the day figure alone, 'parts' everything but it, so a rail card can set
+ *  the figure on the name's line and the parts under the country. */
+export function RowFormation({ cost, t, figRef = null, weighted = false, className = '', pressable = false, place = null, slot = 'all' }) {
+  if (pressable) return <ListFormation cost={cost} t={t} figRef={figRef} weighted={weighted} className={className} place={place} slot={slot} />;
   return <PlainFormation cost={cost} t={t} figRef={figRef} weighted={weighted} className={className} />;
 }
 
@@ -145,13 +148,16 @@ function PlainFormation({ cost, t, figRef, weighted, className }) {
  *   - a bed on few listings gets a dot, said in the name and the title too,
  *     since colour alone is no message.
  */
-function ListFormation({ cost, t, figRef, weighted, className, place }) {
+function ListFormation({ cost, t, figRef, weighted, className, place, slot = 'all' }) {
   const view = useDayView();
   const req = view.request;
   const way = wayOf(cost);
   const shownWay = req.excluded?.includes('flight') ? null : way;
   const fig = rowFigures(cost, { group: view.total, seats: seatsOf(req) });
   if (fig.day == null && !shownWay) return null;
+  if (slot === 'figure' && fig.day == null) return null;
+  const withFigure = slot !== 'parts';
+  const withParts = slot !== 'figure';
   const g = fig.group;
   const people = g ? partyText(t, req.group) : '';
   const say = (eur, est) => (est ? t('money.estSpoken', { price: formatMoney(eur) }) : formatMoney(eur));
@@ -198,7 +204,7 @@ function ListFormation({ cost, t, figRef, weighted, className, place }) {
 
   return (
     <span className={`hs-formation xprice xform is-pressable${weighted ? ' is-weighted' : ''}${className ? ` ${className}` : ''}`}>
-      {fig.day != null && (
+      {withFigure && fig.day != null && (
         <span className="hs-formation-day pparts-total" ref={figRef}>
           <SheetTrigger place={place} cost={cost} triggerClass="xform-fig" part="day"
             label={t(g ? 'card.dayFigSpokenGroup' : 'card.dayFigSpoken', { price: say(fig.day, est), people })}>
@@ -207,9 +213,12 @@ function ListFormation({ cost, t, figRef, weighted, className, place }) {
           </SheetTrigger>
         </span>
       )}
-      {(go || bed || food) && (
+      {withParts && (go || bed || food) && (
         <span className="xform-parts pparts-list">
-          {go}
+          {/* On a rail card the figure stands on the name's line, so the
+              two parts it is made of come first and the return fare,
+              outside it, after them (slot 'parts'). */}
+          {slot !== 'parts' && go}
           {(bed || food) && (
             <span className="hs-formation-train hs-wagon-pair">
               {bed}
@@ -217,6 +226,7 @@ function ListFormation({ cost, t, figRef, weighted, className, place }) {
               {food}
             </span>
           )}
+          {slot === 'parts' && go}
         </span>
       )}
     </span>
