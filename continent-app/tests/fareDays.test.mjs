@@ -90,6 +90,23 @@ test('pairFigure is the row formula (legCost per seat, flightPerSeat for the par
   assert.equal(pairFigure(out, null, {}), null);
 });
 
+test('pairFigure split: fares plus bags make the headline, or no split at all', () => {
+  const out = { price: 34, airline: 'U2' };
+  const back = { price: 41, airline: 'U2' };
+  const one = { adults: 1, children: 0, babies: 0, seats: 1 };
+  const f = pairFigure(out, back, { party: one, bagKey: 'priority_10kg' });
+  assert.ok(f.split, 'a bag gives a split');
+  assert.equal(f.split.fares, 75);
+  assert.equal(f.split.fares + f.split.bags, f.shown);
+  const two = { adults: 2, children: 0, babies: 0, seats: 2 };
+  const g = pairFigure(out, back, { party: two, bagKey: 'priority_10kg', group: true });
+  assert.equal(g.split.fares, 150);
+  assert.equal(g.split.fares + g.split.bags, g.shown);
+  assert.equal(pairFigure(out, back, { party: one, bagKey: 'small' }).split, null, 'no bag, no split');
+  const baby = { adults: 2, children: 0, babies: 1, seats: 2 };
+  assert.equal(pairFigure(out, back, { party: baby, bagKey: 'priority_10kg' }).split, null, 'lap fee: parts would not add up');
+});
+
 test('airportPairs: homes without a file left out, no pair is legs null, selected first', () => {
   const other = { from: 'CRL', to: { FCO: {} }, back: { FCO: {} } };
   const data = {

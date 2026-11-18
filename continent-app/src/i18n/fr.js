@@ -7988,6 +7988,7 @@ export const fr = {
   "price.flight.basisAny": "L'aller-retour le moins cher parmi toutes les dates vérifiées.",
   "price.flight.basisPicked": "Les vols que vous avez choisis, sur Google Flights.",
   "price.flight.bagNote": "Les frais de bagage sont notre estimation.",
+  "price.flight.split": "{fares} vols + {bags} bagages (notre estimation)",
   "price.flight.babies": "Inclut un petit supplément par bébé sur les genoux, réparti sur les sièges.",
   "price.changeFlight": "Autre aéroport ou dates",
   "price.flight.loading": "Chargement de votre vol",

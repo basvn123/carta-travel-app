@@ -7988,6 +7988,7 @@ export const de = {
   "price.flight.basisAny": "Der günstigste Hin- und Rückflug aller Tage, die wir geprüft haben.",
   "price.flight.basisPicked": "Die Flüge, die du gewählt hast, von Google Flights.",
   "price.flight.bagNote": "Die Gepäckgebühren sind unsere Schätzung.",
+  "price.flight.split": "{fares} Flüge + {bags} Gepäck (unsere Schätzung)",
   "price.flight.babies": "Mit einer kleinen Gebühr pro Baby auf dem Schoß, auf die Sitze verteilt.",
   "price.changeFlight": "Flughafen oder Daten ändern",
   "price.flight.loading": "Dein Flug wird geladen",

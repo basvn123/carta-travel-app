@@ -7999,6 +7999,7 @@ export const nl = {
   "price.flight.basisAny": "De goedkoopste retour van alle data die we bekeken.",
   "price.flight.basisPicked": "De vluchten die je koos, van Google Flights.",
   "price.flight.bagNote": "De bagagekosten zijn onze schatting.",
+  "price.flight.split": "{fares} vluchten + {bags} bagage (onze schatting)",
   "price.flight.babies": "Inclusief een kleine toeslag per baby op schoot, verdeeld over de stoelen.",
   "price.changeFlight": "Luchthaven of data wijzigen",
   "price.flight.loading": "Je vlucht laden",

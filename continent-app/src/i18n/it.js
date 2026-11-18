@@ -7988,6 +7988,7 @@ export const it = {
   "price.flight.basisAny": "L'andata e ritorno più economica tra tutte le date controllate.",
   "price.flight.basisPicked": "I voli che hai scelto, da Google Flights.",
   "price.flight.bagNote": "I costi del bagaglio sono una nostra stima.",
+  "price.flight.split": "{fares} voli + {bags} bagaglio (nostra stima)",
   "price.flight.babies": "Include un piccolo supplemento per ogni neonato in braccio, diviso tra i posti.",
   "price.changeFlight": "Cambia aeroporto o date",
   "price.flight.loading": "Carico il tuo volo",

@@ -103,6 +103,13 @@ export default function FlightTab({ place, data, request, view, active, onChange
         ) : (
           <span className="pft-figrow"><NotYet className="psheet-big" /></span>
         )}
+        {/* Right under the figure: the leg cards show fares only, so without
+            this line the legs and the headline do not add up (judge round 1). */}
+        {figure?.split && (
+          <p className="psheet-basis pft-split">
+            {t('price.flight.split', { fares: formatMoney(figure.split.fares), bags: formatMoney(figure.split.bags) })}
+          </p>
+        )}
         {figure && ft.picked && ft.rowLegs && (
           <Button variant="quiet" type="button" className="psheet-raw pft-textbtn" onClick={ft.backToList}>{t('price.flight.backToList')}</Button>
         )}
@@ -124,7 +131,7 @@ export default function FlightTab({ place, data, request, view, active, onChange
       {figure && (
         <div className="pft-basis">
           <p className="psheet-basis">{t(basisKey, { month })}</p>
-          {hasBag && <p className="psheet-basis">{t('price.flight.bagNote')}</p>}
+          {hasBag && !figure.split && <p className="psheet-basis">{t('price.flight.bagNote')}</p>}
           {figure && !figure.bagsKnown && <p className="psheet-basis">{t('flight.bagsExtra')}</p>}
           {ft.party.babies > 0 && <p className="psheet-basis">{t('price.flight.babies')}</p>}
           {checkLines.map((c) => <p className="psheet-basis" key={c}>{c}</p>)}

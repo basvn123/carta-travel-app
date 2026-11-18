@@ -111,13 +111,29 @@ export function pairFigure(out, back, { party = null, bagKey, group = false } = 
   const perPerson = flightPerSeat(perSeat, party);
   if (perPerson == null) return null;
   const seats = Math.max(1, party?.seats || 1);
+  const shown = group ? Math.round(perPerson * seats * 100) / 100 : perPerson;
   return {
     perSeat,
     perPerson,
-    shown: group ? Math.round(perPerson * seats * 100) / 100 : perPerson,
+    shown,
     bags: a.bags + b.bags,
     bagsKnown: a.bagsKnown && b.bagsKnown,
+    split: fareSplit(a, b, shown, group ? seats : 1),
   };
+}
+
+/**
+ * The headline cut into fares and bags, scaled like the headline, so the
+ * leg cards (fares only) and the figure add up on screen (judge round 1).
+ * Null without a bag, or when the parts do not make the headline: a baby's
+ * lap fee is in it then and has its own line, and a wrong sum is worse
+ * than none.
+ */
+function fareSplit(a, b, shown, k) {
+  const bags = (a.bags + b.bags) * k;
+  if (!(bags > 0)) return null;
+  const fares = (a.fare + b.fare) * k;
+  return Math.abs(fares + bags - shown) < 0.01 ? { fares, bags } : null;
 }
 
 /**

@@ -8615,6 +8615,7 @@ export const en = {
   "price.flight.basisAny": "Cheapest return we checked on any date.",
   "price.flight.basisPicked": "The flights you picked, from Google Flights.",
   "price.flight.bagNote": "Bag fees are our estimate.",
+  "price.flight.split": "{fares} flights + {bags} bags (our estimate)",
   "price.flight.babies": "Includes a small lap fee for each baby, shared over the seats.",
   "price.changeFlight": "Change airport or dates",
   "price.flight.loading": "Loading your flight",
