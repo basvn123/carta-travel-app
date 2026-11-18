@@ -32,7 +32,7 @@ test('the row keeps its link, its price items and the save outside the link', ()
   assert.match(row, /className="xrow-hit"/);
   assert.match(row, /href=\{`#dest=\$\{encodeURIComponent\(p\.id\)\}`\}/);
   // G12, D10: the formation (buttons) left the link, then the save.
-  assert.match(row, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} figRef=\{figRef\} pressable \/>\s*\{onToggleFav && \(\s*<SaveButton/);
+  assert.match(row, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} figRef=\{figRef\} pressable place=\{p\} \/>\s*\{onToggleFav && \(\s*<SaveButton/);
   const parts = read('src/browse/explore/HouseParts.jsx');
   // My trips and the home story keep the plain formation.
   assert.match(parts, /<PriceItems cost=\{cost\} way=\{wayOf\(cost\)\}>/);
@@ -108,7 +108,7 @@ test('the rails carry no head or note line; each figure says its unit', () => {
   assert.doesNotMatch(rails, /<ListHead\b/);
   assert.doesNotMatch(rails, /<PriceNotes\b/);
   // The price row (its figure and wagons are buttons) sits outside the card link.
-  assert.match(rails, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} weighted pressable \/>/);
+  assert.match(rails, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} weighted pressable place=\{p\} \/>/);
 });
 
 test('save wears the bookmark with one fixed name; the cairn stays My trips', () => {

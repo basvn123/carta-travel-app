@@ -94,6 +94,7 @@ import { usePanelState } from './hooks/usePanelState.js';
 import { loadStoredStyles, useTravelStyles } from './hooks/useTravelStyles.js';
 import { TravelStylesSheet } from './browse/TravelStylesSheet.jsx';
 import { StyleDock } from './components/dock/StyleDock.jsx';
+import { PriceSheet } from './components/price/PriceSheet.jsx';
 import { useFilterState } from './hooks/useFilterState.js';
 import { useReach } from './lib/reach.js';
 import { resolveWhen, whenMonth, xmFromSearch } from './lib/when.js';
@@ -1679,6 +1680,9 @@ function TravelApp() {
           full page (a place, a country, a region, the account) has its own
           foot, so the corner stays empty on those. */}
       <StyleDock hidden={!(place === 'explore' || place === 'trips') || !!selectedDest || !!countryPage || !!pendingRegion} />
+      {/* D10: the price sheet a list row's figure and wagons open; one
+          mount, so a row carries only its buttons (priceSheetStore). */}
+      <PriceSheet data={data} />
 
       {/* The home page (T462, which replaced the T209 landing receipt): what
           Carta does, a live demo of it, and a door to each part. Not kept

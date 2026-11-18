@@ -141,7 +141,7 @@ export const PlaceRow = React.memo(function PlaceRow({
       {/* G12, D10: the price sits outside the link, a direct child of the
           row grid (62-v6-explore.css), because its figure and wagons are
           buttons and a button never nests in a link. */}
-      <RowFormation cost={p.cost} t={t} figRef={figRef} pressable />
+      <RowFormation cost={p.cost} t={t} figRef={figRef} pressable place={p} />
       {onToggleFav && (
         <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={p.city} className="xrow-save" />
       )}

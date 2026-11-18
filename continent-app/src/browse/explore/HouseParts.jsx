@@ -8,6 +8,8 @@ import { ScorePlate } from '../../components/ui/Plate.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { isNational } from '../../components/CostSummary.jsx';
 import { PriceItems } from '../../components/PriceItems.jsx';
+import { closePriceSheet, getPriceSheet, openPriceSheet, usePriceSheet } from '../../components/price/priceSheetStore.js';
+import { tabForPart } from '../../lib/price/priceSheet.js';
 import { seatsOf } from '../../lib/price/request.js';
 import { bedIsThin } from '../../lib/price/display.js';
 import { rowFigures, rowUnit } from '../../lib/price/rowFigures.js';
@@ -56,8 +58,8 @@ function wayOf(cost) {
  *  `pressable` (G12, D10, Explore's list and rails only): the figure says its
  *  unit, every wagon is its own button, bed and food sit joined. Opt-in so
  *  My trips and the home story keep the formation they were judged with. */
-export function RowFormation({ cost, t, figRef = null, weighted = false, className = '', pressable = false }) {
-  if (pressable) return <ListFormation cost={cost} t={t} figRef={figRef} weighted={weighted} className={className} />;
+export function RowFormation({ cost, t, figRef = null, weighted = false, className = '', pressable = false, place = null }) {
+  if (pressable) return <ListFormation cost={cost} t={t} figRef={figRef} weighted={weighted} className={className} place={place} />;
   return <PlainFormation cost={cost} t={t} figRef={figRef} weighted={weighted} className={className} />;
 }
 
@@ -138,12 +140,12 @@ function PlainFormation({ cost, t, figRef, weighted, className }) {
  *     add up to the figure (rowFigures), so the sum shown is never wrong;
  *   - the way there stands apart with the return mark, the word "return"
  *     from a 600 px list;
- *   - the figure and each wagon are buttons that open what is in the price
- *     (PriceItems for now; the price sheet replaces it in step 6);
+ *   - the figure and each wagon are buttons that open the price sheet on
+ *     the tab that explains them (components/price/PriceSheet.jsx);
  *   - a bed on few listings gets a dot, said in the name and the title too,
  *     since colour alone is no message.
  */
-function ListFormation({ cost, t, figRef, weighted, className }) {
+function ListFormation({ cost, t, figRef, weighted, className, place }) {
   const view = useDayView();
   const req = view.request;
   const way = wayOf(cost);
@@ -164,13 +166,13 @@ function ListFormation({ cost, t, figRef, weighted, className }) {
       ? t(g ? 'card.flightSpokenGroup' : 'card.flightSpoken', { price: formatMoney(eur), people })
       : t(g ? 'card.waySpokenGroup' : 'card.waySpoken', { mode: t(`way.${shownWay.mode}`), price: say(eur, true), people });
     go = (
-      <PriceItems cost={cost} way={way} className="xform-item" triggerClass="hs-wagon is-go pparts-part xform-btn"
+      <SheetTrigger place={place} cost={cost} className="xform-item" triggerClass="hs-wagon is-go pparts-part xform-btn"
         label={spoken} title={spoken} part="way">
         <Icon size={13} />
         <span className="pparts-fig money" aria-hidden="true">{formatMoney(eur)}</span>
         {plane && <HouseIcon.ret size={12} className="xform-ret" />}
         {plane && <span className="xform-ret-word" aria-hidden="true">{t('card.unitReturn')}</span>}
-      </PriceItems>
+      </SheetTrigger>
     );
   }
 
@@ -181,13 +183,13 @@ function ListFormation({ cost, t, figRef, weighted, className }) {
     const base = t(g ? groupKey : personKey, { price: say(eur, est), people });
     const spoken = isThin ? `${base}. ${t('price.bedThin')}` : base;
     return (
-      <PriceItems cost={cost} way={way} className="xform-item" triggerClass={`hs-wagon is-${kind} pparts-part xform-btn`}
+      <SheetTrigger place={place} cost={cost} className="xform-item" triggerClass={`hs-wagon is-${kind} pparts-part xform-btn`}
         label={spoken} title={spoken} part={key}
         style={weighted ? { '--ww': Math.max(1, Math.round(eur)) } : undefined}>
         <Icon size={13} />
         <span className="pparts-fig money" aria-hidden="true">{formatMoney(eur)}</span>
         {isThin && <span className="xform-thin" aria-hidden="true" />}
-      </PriceItems>
+      </SheetTrigger>
     );
   };
   const bed = wagon('bed', 'bed', fig.bed, cost?.stayLevel !== 'city', HouseIcon.bed, 'card.bedSpoken', 'card.bedSpokenGroup');
@@ -198,11 +200,11 @@ function ListFormation({ cost, t, figRef, weighted, className }) {
     <span className={`hs-formation xprice xform is-pressable${weighted ? ' is-weighted' : ''}${className ? ` ${className}` : ''}`}>
       {fig.day != null && (
         <span className="hs-formation-day pparts-total" ref={figRef}>
-          <PriceItems cost={cost} way={way} triggerClass="xform-fig"
+          <SheetTrigger place={place} cost={cost} triggerClass="xform-fig" part="day"
             label={t(g ? 'card.dayFigSpokenGroup' : 'card.dayFigSpoken', { price: say(fig.day, est), people })}>
             <Money value={fig.day} est={est} />
             <span className="xform-unit" aria-hidden="true">{t(unitKey, unitArgs)}</span>
-          </PriceItems>
+          </SheetTrigger>
         </span>
       )}
       {(go || bed || food) && (
@@ -218,5 +220,26 @@ function ListFormation({ cost, t, figRef, weighted, className }) {
         </span>
       )}
     </span>
+  );
+}
+
+/**
+ * One part of a list row as the door to the price sheet (D10). A card is one
+ * stretched link, so the button keeps its click to itself: opening the price
+ * never opens the place. A second press on the same part closes the sheet.
+ */
+function SheetTrigger({ place, cost, part, children, className = '', triggerClass = '', label, title, style }) {
+  const sheet = usePriceSheet();
+  const [el, setEl] = React.useState(null);
+  const onOpen = (button) => {
+    if (!el) setEl(button);
+    if (getPriceSheet()?.anchor === button) { closePriceSheet(); return; }
+    openPriceSheet({ place: place || { id: null }, cost, tab: tabForPart(part), anchor: button });
+  };
+  return (
+    <PriceItems cost={cost} className={className} triggerClass={triggerClass} label={label} title={title}
+      part={part} style={style} onOpen={onOpen} expanded={!!sheet && !!el && sheet.anchor === el}>
+      {children}
+    </PriceItems>
   );
 }

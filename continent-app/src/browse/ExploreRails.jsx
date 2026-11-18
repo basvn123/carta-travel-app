@@ -101,7 +101,7 @@ function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleF
           are buttons (the items in them, T695), and a button never nests in
           a link. G12, D10: no note line under it; the figure says its unit
           and a thin bed is a dot on the bed wagon. */}
-      <RowFormation cost={p.cost} t={t} weighted pressable />
+      <RowFormation cost={p.cost} t={t} weighted pressable place={p} />
       <FriendCardLine destId={p.id} />
       {onToggleFav && (
         <span className="hs-rcard-save">
