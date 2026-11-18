@@ -158,6 +158,44 @@
   .sdock-pill, .sdock-ask { transition: none; }
 }
 
+/* G12 (decision.md step 9): the dock is one field. The box carries the
+   edge, so Back and Share sit inside it as their own buttons beside the
+   pill (a button never nests in a button); the pill is the text between. */
+.sdock-box {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-width: 0;
+  min-height: 52px;
+  border: var(--stroke-edge) solid var(--text);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  transition: border-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .sdock-box:hover { border-color: var(--action); }
+}
+.sdock-box > .sdock-pill {
+  align-self: stretch;
+  min-height: 0;
+  padding: 0 var(--space-3) 0 var(--space-2);
+  border: 0;
+  background: transparent;
+}
+.sdock-box > .sdock-pill:active { transform: none; }
+.sdock-box:has(.sdock-pill:active) { transform: scale(var(--press-scale-lg)); }
+.sdock-mag {
+  display: inline-flex;
+  flex: none;
+  padding-left: var(--space-4);
+  color: var(--text-2);
+}
+.sdock-box .sdock-line1 { font-size: var(--text-body); font-weight: 600; }
+.sdock-in.icon-btn { flex: none; width: var(--tap); height: var(--tap); color: var(--text); }
+.sdock-box > .sdock-share { margin-right: 2px; color: var(--text-2); }
+.sdock.is-results .sdock-box { min-height: 48px; }
+.sdock.is-results .sdock-box .sdock-line1 { font-size: var(--text-lead); font-weight: 800; }
+
 /* --- T961. The search sheet -------------------------------------------- */
 html.sdock-locked,
 html.sdock-locked body { overflow: hidden; }

@@ -543,13 +543,14 @@
     flex: 1 1 100%;
     min-width: 0;
   }
-  /* House style 2026-11: the pills wrap onto a second line instead of
-     scrolling past the edge, and each one shrinks with an ellipsis, so
-     nothing is cut at 360 (the Countries pill ran past the edge). */
+  /* G12 (decision.md step 8): one row, never a second line; the chips
+     scroll inside it (the G12 block at the end of this file). Countries
+     left the phone row for the Filters sheet. */
   .explore-shell.is-focus .xbar.xbar .xtools {
     display: flex;
     flex: 1 1 100%;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    min-width: 0;
     gap: var(--space-2);
     margin: 0;
     padding: 0;
@@ -647,3 +648,101 @@
   white-space: nowrap;
 }
 .taste-door-v.is-unset { color: var(--text-3); }
+
+/* --- G12: the focused list's one row (decision.md step 8) -------------
+   A phone: Sort, the chips scrolling between, the Trip dock at the end.
+   The row never wraps; the chips give way (scroll, cap, ellipsis) and Sort
+   drops its word, at 320 px or once a chip exists, before any chip
+   shrinks. Clear all sticks left so it is always one tap away. */
+@media (max-width: 768px) {
+  .explore-shell.is-focus .xbar:has(.xtools--phone) {
+    overflow: visible;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+  /* The search field above names the list, so the title is read only. */
+  .explore-shell.is-focus .xbar:has(.xtools--phone) > .xbar-lead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .explore-shell .xtools.xtools--phone {
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    min-width: 0;
+    margin: 0;
+    gap: var(--space-2);
+  }
+  .explore-shell.is-focus .xbar.xbar .xtools--phone > .xtools-sort { flex: none; display: flex; }
+  .explore-shell.is-focus .xbar.xbar .xtools--phone > .xtools-chips {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: var(--space-2);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    /* A focused chip is never hidden under the sticky Clear all or the fade. */
+    scroll-padding-inline: 112px 24px;
+    padding-inline-end: 24px;
+    mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+  }
+  .explore-shell.is-focus .xbar.xbar .xtools--phone > .xtools-chips::-webkit-scrollbar { display: none; }
+  /* 44 px on every pointer: the row is the phone list's one control. */
+  .explore-shell.is-focus .xbar.xbar .xtools--phone .xtools-chip,
+  .explore-shell.is-focus .xbar.xbar .xtools--phone .btn { min-height: var(--tap); }
+  .explore-shell.is-focus .xbar.xbar .xtools--phone .xtools-chips > * { flex: none; }
+  .explore-shell.is-focus .xbar.xbar .xtools--phone .xtools-clear {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--surface-page);
+  }
+  .explore-shell.is-focus .xbar.xbar .xtools--phone .xtools-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    max-width: min(60vw, 220px);
+  }
+  .explore-shell.is-focus .xbar.xbar .xtools--phone > .dock.trip-dock {
+    position: static;
+    padding-left: 0;
+    background: none;
+  }
+}
+.xchip-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The phone row's chips are kit Buttons with their own class, not .xchip:
+   the route sheets' order check reads every Button as able to sit beside
+   any other, so a shared .xchip would tie them to unrelated pages. */
+.explore-shell .xtools .xtools-chip,
+.explore-shell .xtools .xtools-clear {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 500;
+}
+.explore-shell .xtools .xtools-clear { background: var(--surface-page); color: var(--text-2); }
+.xtool-sort.is-compact .xtool-word { display: none; }
+.explore-shell.is-focus .xtools .xtool-sort.is-compact { min-width: var(--tap); justify-content: center; padding-inline: 0; }
+@media (max-width: 359px) {
+  .explore-shell.is-focus .xbar.xbar .xtools--phone .xtool-sort .xtool-word { display: none; }
+  .explore-shell.is-focus .xbar.xbar .xtools--phone .xtool-sort { min-width: var(--tap); justify-content: center; padding-inline: 0; }
+}
+/* A desktop: one line of chips for what the quick row cannot show. */
+@media (min-width: 769px) {
+  .explore-shell.is-focus .xchips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-inline-end: 24px;
+    mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+  }
+  .explore-shell.is-focus .xchips > * { flex: none; }
+  .explore-shell.is-focus .xchips .xchip { display: inline-flex; align-items: center; gap: var(--space-1); max-width: min(60vw, 220px); }
+}

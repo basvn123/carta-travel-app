@@ -45,6 +45,7 @@ import { PAGE } from './explore/exploreConsts.js';
 import { useExploreRails } from './explore/useExploreRails.js';
 import { useExploreAsk } from './explore/useExploreAsk.jsx';
 import { useExploreChips } from './explore/useExploreChips.js';
+import { deskChips, lensCount } from './explore/chipRules.js';
 import { prefetchMap } from './explore/exploreMapLazy.js';
 import { useExploreMapView } from './explore/useExploreMapView.js';
 
@@ -341,6 +342,7 @@ export function ExploreTab({
     scrollRef, sentinelRef, setBigOnly, setCountryFilter, setGemOnly, setLocationQuery,
     setRatingRange, setReachHours, setShowFavOnly, setTopBeachOnly, setTopPick, setTripKinds,
     setUnescoOnly, setVisible, setXf, showFavOnly, t, tripKinds, unescoOnly, xf,
+    strongOnly, setStrongOnly,
   });
 
   // Desktop chrome: the controls stand in the left panel. Ask Carta's one
@@ -416,7 +418,9 @@ export function ExploreTab({
   // line, so an overview of three countries is still an overview.
   const [focusAll, setFocusAll] = React.useState(() => (
     typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('xall') === '1'));
-  const lensChips = chips.filter((c) => !c.key.startsWith('c:')).length;
+  // G12: Strong match is also the overview's own toggle, so like the
+  // countries it narrows without leaving the overview.
+  const lensChips = lensCount(chips);
   const railsIdle = lensChips === 0 && !locationQuery && !focusAll
     && tripKinds.length === 0 && !showFavOnly && view === 'grid';
   const lens = useExploreLens({
@@ -432,6 +436,7 @@ export function ExploreTab({
       setReachHours(null);
       setTripKinds([]);
       setShowFavOnly(false);
+      setStrongOnly(false);
       setLocationQuery('');
       setView('grid');
       setXf({ kinds: [], verdicts: [], roles: [], month: null, budget: null,
@@ -463,6 +468,8 @@ export function ExploreTab({
     setDockKind('places');
     setDockResults(railsIdle ? null : {
       label: dockLabel, query: locationQuery || '', filterCount: chips.length, filtersOpen: sheetOpen,
+      // G12: the applied field carries Share on a phone (the toolbar lost it).
+      canShare: true,
     });
   }, [isActive, isDesktop, railsIdle, dockLabel, locationQuery, chips.length, sheetOpen]);
   // T588: Filters opens and closes the side pane on a desktop (the
@@ -482,6 +489,7 @@ export function ExploreTab({
         .then(() => setToast(t('explore.linkCopied')), fail);
     } catch { fail(); }
   };
+  if (isActive && !isDesktop) setDockHandlers({ onShare: shareView });
   // T585: the start dialog, once per device on a wide screen (T595: on the
   // first visit only; Ask Carta's field took over its door). T764: on a
   // phone a first visit with no taste opens it on the taste questions.
@@ -535,7 +543,7 @@ export function ExploreTab({
     : matchTaste ? [{ key: 'foryou', labelKey: 'fit.sort' }, ...SORTS] : SORTS;
   // T588: the sort is a menu behind one pill in the toolbar.
   const sortMenu = (
-    <SortMenu t={t} options={sortOptions} onChange={setSortKey}
+    <SortMenu t={t} options={sortOptions} onChange={setSortKey} compact={!isDesktop && chips.length > 0}
       value={sortOptions.some((x) => x.key === catSort) ? catSort : 'beauty'} />
   );
 
@@ -594,6 +602,18 @@ export function ExploreTab({
 
   // T604: the pane and the quick chips' popovers take the same props, so a
   // filter is one control over one state wherever it is drawn.
+  // T765: Strong match, 70% and up; a filter the traveller sets. Drawn in
+  // the desktop toolbar, the phone overview's Trip dock row and the phone
+  // Filters sheet (G12).
+  const strongToggle = (cls) => (matchTaste ? (
+    <Button variant="secondary" size="sm"
+      className={`${cls}${strongOnly ? ' is-on' : ''}`}
+      title={t('fit.strongHint', { pct: Math.round(MATCH.strong_min * 100) })}
+      aria-pressed={strongOnly} onClick={() => setStrongOnly((v) => !v)}>
+      {t('fit.strong')}
+    </Button>
+  ) : null);
+  const strongChip = strongToggle('xquick-chip xstrong-chip');
   const railProps = {
     t, lang, xf, patch: patchXf, budgetSteps,
     showFavOnly, setShowFavOnly, gemOnly, setGemOnly, unescoOnly, setUnescoOnly,
@@ -603,7 +623,12 @@ export function ExploreTab({
   };
   const filterRail = (
     <ExploreFilterRail {...railProps}
-      tasteRow={<TasteRow className="xpane-taste" before={sheetOpen ? () => setSheetOpen(false) : undefined} />}
+      tasteRow={<>
+        <TasteRow className="xpane-taste" before={sheetOpen ? () => setSheetOpen(false) : undefined} />
+        {/* G12: the phone list has no Strong match toggle in its one row, so
+            the sheet offers it beside the taste it depends on. */}
+        {!isDesktop && strongToggle('xstrong-chip xpane-strong')}
+      </>}
       count={gridTotal}
       onClearAll={chips.length ? resetAll : null}
     />
@@ -611,16 +636,6 @@ export function ExploreTab({
 
   const anyActive = chips.length > 0;
   const TitleTag = isActive && !pageOver ? 'h1' : 'div';
-  // T765: Strong match, 70% and up; a filter the traveller sets. One chip,
-  // drawn in the desktop quick row or the phone's Trip dock row (G12).
-  const strongChip = matchTaste ? (
-    <Button variant="secondary" size="sm"
-      className={`xquick-chip xstrong-chip${strongOnly ? ' is-on' : ''}`}
-      title={t('fit.strongHint', { pct: Math.round(MATCH.strong_min * 100) })}
-      aria-pressed={strongOnly} onClick={() => setStrongOnly((v) => !v)}>
-      {t('fit.strong')}
-    </Button>
-  ) : null;
 
 
   return (
@@ -692,7 +707,7 @@ export function ExploreTab({
           setShowFavOnly={setShowFavOnly} setStrongOnly={setStrongOnly}
           settingsLine={settingsLine} shareView={shareView} sheetOpen={sheetOpen}
           showFavOnly={showFavOnly} sortMenu={sortMenu} strongOnly={strongOnly} t={t}
-          viewSwitch={viewSwitch}
+          viewSwitch={viewSwitch} resetAll={resetAll}
         />
         )}
 
@@ -704,7 +719,12 @@ export function ExploreTab({
             head, AllTrails style, each a small popover over the same state
             the pane edits; then the active filters. */}
         {!railsIdle && isDesktop && <ExploreQuickFilters {...railProps} />}
-        {!railsIdle && <FilterChips t={t} chips={chips} onClearAll={resetAll} />}
+        {/* G12: a phone draws its chips inside the toolbar's one row; a
+            desktop shows here only what its quick row and the toolbar's
+            Saved and Strong match toggles cannot (one line). */}
+        {!railsIdle && isDesktop && (
+          <FilterChips t={t} chips={deskChips(chips)} onClearAll={resetAll} />
+        )}
 
         {/* The one community surface on a browse tab: a real count of what
             people have published, and one door. Absent entirely when

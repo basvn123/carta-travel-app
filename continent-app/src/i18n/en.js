@@ -2328,6 +2328,7 @@ export const en = {
   "coplan.whatYouGet": "Joining lets you edit the route and the dates. It does not share their day plans, their expenses or their booking references.",
   "coplan.ownedBy": "Planned with {who}",
   "tg.title": "Together",
+  'tg.doorAria': "Together: plan a trip with friends",
   "tg.doorWaiting": "Together, {n} waiting on you",
   "tg.signInLine": "Sign in to add the people you travel with.",
   "tg.aDay": "{price} a day",
@@ -2608,7 +2609,8 @@ export const en = {
   "profile.markHandleBad": "This handle will be refused",
 
   // Explore tab v2: the grid, the indices, the destination panel
-  'explore.sortAria': 'Sort the destinations',
+  'explore.sortAria': "Sort: {value}. Change",
+  'explore.clearAllAria': "Clear every filter",
   'side.account': 'Account',
   'side.help': 'Help',
   'account.menuOverview': 'Overview',
@@ -6928,7 +6930,7 @@ export const en = {
   "mapPanel.whyGo": "Why go",
   "mapPanel.sights": "Sights",
   "explore.heroTitle": "Where to next?",
-  "explore.askOrSearch": "Where to? Ask Carta or search a place",
+  'explore.chooseOrAsk': "Choose where to go, or ask Carta",
   'dock.title': 'Search',
   'dock.where': 'Where to?',
   'dock.whereShort': 'Where',
@@ -6947,7 +6949,8 @@ export const en = {
   'dock.askShort': 'Ask',
   // T964: Explore's own-trips block (the old Trip styles rail).
   'xown.title': "Ready-made trips",
-  'dock.openAria': 'Search: {what}, {summary}, change',
+  'dock.openAria': "Where to go: {what}. Change",
+  'dock.choose': "Choose where to go",
   'dock.summary': '{when}, from {from}, {people}',
   "dock.trip": "Your trip",
   "dock.tripAria": "Your trip: {summary}. Change",

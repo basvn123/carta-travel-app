@@ -59,7 +59,7 @@ export function OverviewHero({
           <div className="xov-field">
             <div className="xov-seg xov-seg-where">
               <HouseIcon.search size={20} className="xov-where-icon" />
-              <label className="xov-seg-cap" htmlFor={whereId}>{t('explore.askOrSearch')}</label>
+              <label className="xov-seg-cap" htmlFor={whereId}>{t('explore.chooseOrAsk')}</label>
               {/* A blank placeholder, only so CSS can tell an empty field
                   (:placeholder-shown) and rest the label where the value goes. */}
               <input id={whereId} type="search" className="xov-where-input" value={where}

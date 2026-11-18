@@ -548,14 +548,18 @@
    full width ("Salzkammergut, Austria") instead of a letter beside the
    parts (orchestrator fix round 1: the region shows as it does today). */
 @container xlist (max-width: 599px) {
+  /* G12: the name gets the whole text column ("Lake Como", "Dubrovnik" in
+     full); the figure moves down beside the region, over its own parts. A
+     name too long for one line wraps rather than ends in an ellipsis. */
   .xrows--ledger .xrow-hs {
     grid-template-areas:
-      "media l1 l1 day save"
-      "media l2 l2 l2 save"
+      "media l1 l1 l1 save"
+      "media l2 l2 day save"
       "media parts parts parts save"
       "media fit fit fit save";
     padding-block: 2px;
   }
+  .xrows--ledger .xrow-hs .xrow-name { white-space: normal; overflow: visible; text-wrap: balance; }
   .xrows--ledger .xrow-hs .xrow-line2 { margin-top: 1px; line-height: var(--leading-tight); flex-wrap: wrap; row-gap: 2px; }
   .xrows--ledger .xrow-hs .xform-parts { --wh: 20px; justify-content: flex-start; margin-top: 1px; }
 }

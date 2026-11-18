@@ -10,7 +10,9 @@ import { createPortal } from 'react-dom';
  * menu is fixed under the pill, so the toolbar's sideways scroll on a
  * phone does not clip it.
  */
-export function SortMenu({ t, options, value, onChange }) {
+// G12: `compact` draws the icon alone (the phone row once a chip exists);
+// at 320 px CSS hides the word too, before any chip shrinks.
+export function SortMenu({ t, options, value, onChange, compact = false }) {
   const [pos, setPos] = React.useState(null);
   const btnRef = React.useRef(null);
   const menuRef = React.useRef(null);
@@ -67,12 +69,14 @@ export function SortMenu({ t, options, value, onChange }) {
   };
   return (
     <>
-      <Button ref={btnRef} variant="secondary" size="sm" className={`xtool${open ? ' is-open' : ''}`}
+      <Button ref={btnRef} variant="secondary" size="sm"
+        className={`xtool xtool-sort${open ? ' is-open' : ''}${compact ? ' is-compact' : ''}`}
         iconStart={<HouseIcon.sort size={18} />} aria-haspopup="menu" aria-expanded={open}
         aria-controls={open ? id : undefined}
-        aria-label={`${t('places.sortLabel')}: ${t(cur.labelKey)}`}
+        aria-label={t('explore.sortAria', { value: t(cur.labelKey) })}
+        title={compact ? t('explore.sortAria', { value: t(cur.labelKey) }) : undefined}
         onClick={toggle}>
-        {t('explore.toolSort')}
+        <span className="xtool-word">{t('explore.toolSort')}</span>
       </Button>
       {open && createPortal(
         <div className="xsort-menu" role="menu" id={id} ref={menuRef} aria-label={t('places.sortLabel')}
