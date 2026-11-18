@@ -1,15 +1,19 @@
 // G12 (explore polish, decision.md steps 3 and 4): the Trip dock under the
-// category tabs and the Style dock in the bottom-left corner, in a browser.
+// category tabs and the style disc in the bottom-left corner, in a browser.
+// Since the Style Studio (2026-11-18) the disc and the Trip dock's style row
+// open the studio; the disc grows no card.
 //
 //   node scripts/verify_docks.mjs      (dev server at CARTA_PORT, default 5182)
 //
-// At 390 and 1440: each dock opens, opening one closes the other, Escape
-// closes it and gives focus back to its trigger, a phone card spans the
-// screen (viewport minus at most 16 px), nothing scrolls sideways, and the
-// Style dock is absent on Plan. Supabase is answered locally (signed out).
+// At 390 and 1440: the Trip dock opens, Escape closes it and gives focus
+// back to its trigger, a phone card spans the screen (viewport minus at most
+// 16 px), the style row and the disc open the studio (full width on a phone,
+// at most 560 px wide on a desktop), nothing scrolls sideways, and the disc
+// is absent on Plan. Supabase is answered locally (signed out).
 // Shots go to SHOTS_DIR when it is set: shot-dock-{trip,style}-{width}.png.
 import { chromium } from 'playwright';
 import path from 'node:path';
+import { mirrorData } from './lib/dataMirror.mjs';
 
 const PORT = Number(process.env.CARTA_PORT) || 5182;
 const BASE = `http://127.0.0.1:${PORT}/`;
@@ -26,6 +30,7 @@ async function noOverflow(page) {
 
 async function run(width, height) {
   const page = await browser.newPage({ viewport: { width, height } });
+  await mirrorData(page);
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message.split('\n')[0]));
   await page.route(/supabase\.co\//, (r) => {
@@ -47,7 +52,7 @@ async function run(width, height) {
   const tripShown = await tripBtn.waitFor({ state: 'visible', timeout: 60000 }).then(() => true).catch(() => false);
   check(`${width}: Trip dock trigger on the Explore overview`, tripShown);
   const styleBtn = page.locator('.dock--corner .dock-trigger');
-  check(`${width}: Style dock disc on Explore`, await styleBtn.isVisible().catch(() => false));
+  check(`${width}: style disc on Explore`, await styleBtn.isVisible().catch(() => false));
   check(`${width}: no sideways scroll, docks closed`, await noOverflow(page));
   if (!tripShown) { await page.close(); return; }
   await page.waitForTimeout(800);
@@ -81,65 +86,41 @@ async function run(width, height) {
   check(`${width}: Escape closes the Trip dock`, (await page.locator('.dock-card--under-tabs.is-open').count()) === 0);
   check(`${width}: focus back on the Trip trigger`, await tripBtn.evaluate((el) => el === document.activeElement));
 
-  // Style dock: opens, closes the Trip dock when the Trip row hands over.
+  // The style (Style Studio, G12, 2026-11-18): the Trip dock's style row and
+  // the corner disc both open the studio's overview; the disc grows no card
+  // of its own, so the studio is the one place a style changes.
+  const studio = page.locator('.fsheet.sst[role="dialog"]');
   await tripBtn.click();
   await page.waitForTimeout(400);
   const styleRow = page.locator('.dock-card--under-tabs.is-open [data-dock-row="style"]');
   if (await styleRow.count()) {
     await styleRow.click();
-    await page.waitForTimeout(500);
+    check(`${width}: the Style row opens the studio`, await studio.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false));
     check(`${width}: the Style row hands over (Trip closed)`, (await page.locator('.dock-card--under-tabs.is-open').count()) === 0);
+    await page.keyboard.press('Escape');
+    await studio.waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(300);
   } else {
+    check(`${width}: the Trip dock has a Style row`, false);
     await page.keyboard.press('Escape');
     await page.waitForTimeout(300);
-    await styleBtn.click();
   }
-  const styleCard = page.locator('.dock-card--corner.is-open');
-  check(`${width}: Style dock opens`, await styleCard.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false));
-  await page.waitForTimeout(500);
-  // A first visit has no style: pick "On my own", then the card shows the
-  // style list and its halves (the state most travellers see).
-  const tpl = styleCard.locator('.style-dock-templates .tstyle-tpl').first();
-  if (await tpl.isVisible().catch(() => false)) {
-    await tpl.click();
-    await page.waitForTimeout(600);
-  }
-  check(`${width}: Style dock lists the styles as a radiogroup`, (await styleCard.locator('[role="radiogroup"] [role="radio"]').count()) >= 1);
-  check(`${width}: Style dock has its halves and foot`, (await styleCard.locator('.style-dock-halves').count()) === 1
-    && (await styleCard.locator('.style-dock-foot').count()) === 1);
-  for (const row of ['who', 'stay', 'food', 'way', 'priority']) {
-    if (!(await styleCard.locator(`[data-dock-row="${row}"]`).count())) check(`${width}: Stay half row ${row}`, false);
-  }
-  const styleBox = await styleCard.boundingBox();
-  if (width < 769) check(`${width}: Style card spans the screen`, styleBox && styleBox.width >= width - 16, `${styleBox?.width}`);
-  else check(`${width}: Style card inside the screen`, styleBox && styleBox.x >= 0 && styleBox.y >= 0 && styleBox.x + styleBox.width <= width, `${styleBox?.x},${styleBox?.y}`);
-  // The owner's binding note: rows run full width, the Who steppers too
-  // (judge round 1 saw them stop at 232 of 390 px). Full = the row's control width.
-  const whoFit = await styleCard.evaluate((card) => {
-    const ctl = card.querySelector('[data-dock-row="who"] .dock-row-control');
-    const rows = [...card.querySelectorAll('.style-dock-half .party-row')];
-    if (!ctl || !rows.length) return null;
-    const hw = ctl.getBoundingClientRect().width;
-    return { hw: Math.round(hw), min: Math.round(Math.min(...rows.map((r) => r.getBoundingClientRect().width))) };
-  });
-  check(`${width}: Who rows span the row`, whoFit && whoFit.min >= whoFit.hw - 1, whoFit ? `${whoFit.min} of ${whoFit.hw}` : 'no Who rows');
-  check(`${width}: no sideways scroll, Style open`, await noOverflow(page));
-  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `shot-dock-style-${width}.png`) });
 
-  // Opening the Trip dock closes the Style dock (desktop: both triggers live).
-  if (width >= 769) {
-    await tripBtn.click();
-    await page.waitForTimeout(400);
-    check(`${width}: Trip opening closes Style`, (await page.locator('.dock-card--corner.is-open').count()) === 0
-      && (await page.locator('.dock-card--under-tabs.is-open').count()) === 1);
-    await page.keyboard.press('Escape');
-    await page.waitForTimeout(300);
-    await styleBtn.click();
-    await page.waitForTimeout(400);
-  }
+  await styleBtn.click();
+  check(`${width}: the disc opens the studio`, await studio.waitFor({ state: 'visible', timeout: 5000 }).then(() => true).catch(() => false));
+  check(`${width}: on its overview`, !/\bis-wizard\b/.test((await studio.getAttribute('class').catch(() => '')) || ''));
+  check(`${width}: the disc grows no card`, (await page.locator('.dock-card--corner.is-open').count()) === 0);
+  await page.waitForTimeout(500);
+  const box = await studio.boundingBox();
+  if (width < 769) check(`${width}: the studio spans the screen`, box && box.width >= width - 1, `${box?.width}`);
+  else check(`${width}: the studio inside the screen`, box && box.x >= 0 && box.y >= 0 && box.x + box.width <= width && box.width <= 560, `${box?.x},${box?.width}`);
+  check(`${width}: no sideways scroll, studio open`, await noOverflow(page)
+    && await studio.evaluate((el) => el.scrollWidth <= el.clientWidth + 1));
+  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `shot-dock-style-${width}.png`) });
   await page.keyboard.press('Escape');
-  await page.waitForTimeout(400);
-  check(`${width}: Escape closes the Style dock`, (await page.locator('.dock-card--corner.is-open').count()) === 0);
+  await studio.waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
+  await page.waitForTimeout(300);
+  check(`${width}: Escape closes the studio`, (await studio.count()) === 0);
   check(`${width}: focus back on the Style disc`, await styleBtn.evaluate((el) => el === document.activeElement));
 
   // Destinations: the Trip dock sits under its tabs too.
@@ -153,7 +134,7 @@ async function run(width, height) {
   await page.goto(BASE + '?tab=plan', { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('.app', { timeout: 60000 });
   await page.waitForTimeout(1500);
-  check(`${width}: Style dock absent on Plan`, (await page.locator('.dock--corner').count()) === 0);
+  check(`${width}: style disc absent on Plan`, (await page.locator('.dock--corner').count()) === 0);
 
   check(`${width}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
   await page.close();

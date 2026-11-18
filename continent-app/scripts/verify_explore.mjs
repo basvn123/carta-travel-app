@@ -27,6 +27,7 @@
 // phone the Map toggle floats, and the map's list is a drawer.
 
 import { chromium } from 'playwright';
+import { mirrorData } from './lib/dataMirror.mjs';
 
 const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 
@@ -44,6 +45,7 @@ const netCheck = (label, ok, note = '') => (ONLINE || ok
 
 const boot = async (viewport, opts = {}) => {
   const page = await browser.newPage({ viewport, ...opts });
+  await mirrorData(page);
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message.split('\n')[0]));
   // The live data host does not answer localhost (CORS), so a dev server's
   // fetch of the flight index is refused; that is the setup, not the page.
@@ -179,28 +181,46 @@ try {
   // the shell's settings line above the tab (T381); Explore's own input-row
   // door was a second door to the same dialog and is gone. The check now
   // reads the settings line's part and asserts Explore draws none of its own.
-  // G12 (explore polish): the one door is now the Style dock disc in the
-  // bottom-left corner; on a desktop it opens a popover, so the list stays
-  // live beside it (no modal, no scrim). Its Stay half moves the prices.
+  // G12 (explore polish): the one door is the style disc in the bottom-left
+  // corner. Style Studio (2026-11-18): it opens the studio, the one place the
+  // bed and the table are set (step 2 of a style); a saved style moves the
+  // prices, a draft does not.
   check('one Lifestyle control on screen',
     await page.locator('.dock--corner .dock-trigger:visible').count() === 1
-    && await page.locator('.settings-part-lifestyle:visible, .explore-shell .lifestyle-btn:visible').count() === 0);
+    && await page.locator('.settings-part-lifestyle:visible, .explore-shell .lifestyle-btn:visible, .lifestyle-panel').count() === 0);
   const priceText = () => page.locator('.xrow .xprice .money:visible').allInnerTexts();
   const beforeLs = (await priceText()).slice(0, 8).join(' ');
   await page.locator('.dock--corner .dock-trigger:visible').first().click();
-  await page.waitForTimeout(800);
-  const styleCard = page.locator('.dock-card--corner.is-open');
-  check('Style dock opens as a popover', await styleCard.isVisible().catch(() => false)
-    && (await styleCard.getAttribute('aria-modal')) === 'false');
-  const tpl = styleCard.locator('.style-dock-templates .tstyle-tpl').first();
-  // A first visit has no style; picking one also turns on its taste, so the
-  // toolbar gains Strong match and the sort gains For you (checked below).
-  const styled = await tpl.isVisible().catch(() => false);
-  if (styled) { await tpl.click(); await page.waitForTimeout(700); }
-  const otherBed = styleCard.locator('[data-dock-row="stay"] button:not([aria-pressed="true"]):not([disabled])').first();
-  check('the Stay half offers another bed', await otherBed.count() === 1);
-  if (await otherBed.count()) { await otherBed.click(); await page.waitForTimeout(900); }
+  const studio = page.locator('.fsheet.sst[role="dialog"]');
+  check('the disc opens the Style Studio', await studio.waitFor({ state: 'visible', timeout: 8000 }).then(() => true, () => false));
+  // A first visit has no style: make one "On my own" (the first who), which
+  // also turns on its taste, so the toolbar gains Strong match and the sort
+  // gains For you (checked below).
+  let styled = false;
+  const create = studio.getByRole('button', { name: 'Create a travel style' }).first();
+  if (await create.isVisible().catch(() => false)) {
+    await create.click();
+    await page.waitForTimeout(500);
+    await studio.locator('.sst-rows [role="radio"]').first().click();
+    await page.waitForTimeout(300);
+    await studio.getByRole('button', { name: 'Next', exact: true }).click();
+    await page.waitForTimeout(600);
+    const otherBed = studio.locator('.sst-spend .sst-tiles').first().locator('[role="radio"][aria-checked="false"]').first();
+    check('step 2 offers another bed', await otherBed.count() === 1);
+    if (await otherBed.count()) await otherBed.click();
+    await page.waitForTimeout(400);
+    check('a draft does not reprice the list', (await priceText()).slice(0, 8).join(' ') === beforeLs);
+    for (let i = 0; i < 2; i += 1) {
+      await studio.getByRole('button', { name: 'Next', exact: true }).click();
+      await page.waitForTimeout(400);
+    }
+    await studio.getByRole('button', { name: 'Save style', exact: true }).click();
+    await page.waitForTimeout(900);
+    styled = (await studio.locator('.sst-card-hit[role="radio"]').count()) === 1;
+    check('Save style makes the style', styled);
+  }
   await page.keyboard.press('Escape');
+  await studio.waitFor({ state: 'detached', timeout: 5000 }).catch(() => {});
   await page.waitForTimeout(700);
   const afterLs = (await priceText()).slice(0, 8).join(' ');
   check('changing Lifestyle reprices the grid', beforeLs !== afterLs, `${beforeLs} -> ${afterLs}`);
