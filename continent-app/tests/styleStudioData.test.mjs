@@ -8,11 +8,11 @@ import assert from 'node:assert/strict';
 import {
   MAX_STYLES, PERSONAS, STUDIO_STEPS, TRADEOFF_DEFAULTS, addStyle, afterChoicesChange, choicesFromStyle, choicesMatchStyle,
   commitChoices, createChoices, derivePersonas, draftFromTemplate, draftWithPriority, emptyDraft, explorePatchFromSettings, normalizeStyle,
-  normalizeStyles, studioOpen, styleFromDraft, styleFromTemplate, styleWays,
+  normalizeStyles, studioOpen, styleFromDraft, styleFromTemplate, styleWays, duplicateStyle, removeChoices, NO_STYLE_CHOICES,
 } from '../src/lib/travelStyles.js';
 import { styleForAi, STYLE_AI_ENUMS } from '../src/lib/styleForAi.js';
 import {
-  defaultSettings, flightPrefsFor, flightRanking, flightStateOf, markAnswered, normalizeSettings, tradeoffsOf,
+  answer, tripPersonas, defaultSettings, flightPrefsFor, flightRanking, flightStateOf, markAnswered, normalizeSettings, tradeoffsOf,
 } from '../src/planner/flow/tripSettings.js';
 import { newTripSettings, switchTripStyle } from '../src/planner/flow/styleSeed.js';
 import { fitsPrefs, NO_FLIGHT_PREFS } from '../src/lib/flights/flights.js';
@@ -242,4 +242,82 @@ test('styleForAi: enum values and head counts only, unanswered left out', () => 
   const bare = styleForAi(emptyDraft());
   assert.deepEqual(Object.keys(bare).sort(), ['party', 'priority', 'stay'], 'way "any" and empty answers are not sent');
   assert.equal(styleForAi(null), null);
+});
+
+test('fixes r1 A1: a duplicate sits after its original and never takes "in use"', () => {
+  const a = styleFromTemplate('solo');
+  const b = styleFromTemplate('family');
+  let st = { ...addStyle(addStyle(normalizeStyles(null), a), b), active: b.id };
+  st = duplicateStyle(st, a.id, 'Solo, copy');
+  assert.equal(st.active, b.id, 'the style in use stays in use');
+  assert.deepEqual(st.list.map((x) => x.name), ['', 'Solo, copy', '']);
+  st = duplicateStyle(st, a.id, 'Solo, copy');
+  st = duplicateStyle(st, a.id, 'Solo, copy');
+  assert.deepEqual(st.list.slice(1, 4).map((x) => x.name), ['Solo, copy 3', 'Solo, copy 2', 'Solo, copy'], 'unique names');
+  const long = duplicateStyle(addStyle(normalizeStyles(null), b), b.id, 'x'.repeat(40));
+  const again = duplicateStyle(long, b.id, 'x'.repeat(40));
+  assert.ok(again.list.every((x) => x.name.length <= 40));
+  assert.equal(again.list.filter((x) => x.name.startsWith('xxx')).length, 2);
+});
+
+test('fixes r1 A2: deleting hands the prices to the next style, the last one back to the no-style prices', () => {
+  const a = styleFromTemplate('solo');
+  const b = styleFromTemplate('family');
+  const c = styleFromTemplate('couple');
+  let prev = createChoices(createChoices(createChoices({}, a), b), c);
+  prev = { ...prev, travel_styles: { ...prev.travel_styles, active: b.id }, ...choicesFromStyle(b), style_held: true };
+  const next = removeChoices(prev, b.id);
+  assert.equal(next.travel_styles.active, c.id, 'the next card, not the top one');
+  assert.equal(next.stay_tier, c.stay);
+  assert.equal(next.group_size, 2);
+  assert.equal(next.style_held, false);
+  const notActive = removeChoices(next, a.id);
+  assert.equal(notActive.stay_tier, c.stay, 'deleting another style prices nothing new');
+  const last = removeChoices({ ...notActive, lifestyle: { dinners_per_week: 9 } }, c.id);
+  assert.equal(last.travel_styles.list.length, 0);
+  for (const [k, v] of Object.entries(NO_STYLE_CHOICES)) assert.equal(last[k], v, k);
+  assert.equal(last.lifestyle, undefined, 'the default table again');
+  assert.equal(removeChoices(last, 'gone'), last);
+});
+
+test("fixes r1 A5: a trip's personas follow its own answers; the question is never asked", () => {
+  let s = newTripSettings(styleFromDraft({ ...draftFromTemplate('couple'), explore: { ...draftFromTemplate('couple').explore, size: 'city', likes: [] } }));
+  assert.equal(s.guide.size, 'city');
+  s = answer(s, 'g:likes', { guide: { ...s.guide, likes: ['beach'] } });
+  assert.deepEqual(s.guide.personas, ['coast', 'outside'], "the style's quiet city still counts");
+  assert.ok(!s.answered.includes('g:persona') || s.sources['g:persona'] === 'style');
+  assert.deepEqual(tripPersonas(defaultSettings()), [], 'no lean is no persona');
+  const plain = answer(defaultSettings(), 'g:shape', { guide: { ...defaultSettings().guide, shapes: ['one'] } });
+  assert.deepEqual(plain.guide.personas, []);
+  const slow = answer(plain, 'r:pace', { rhythm: { ...plain.rhythm, pace: 'slow' } });
+  assert.deepEqual(slow.guide.personas, ['slow']);
+  assert.equal(slow.guide.persona, 'slow');
+});
+
+test('fixes r1 A3 and A4: the day figure leaves tier fallbacks out and is worked out once', async (t) => {
+  const { styleDayEur } = await import('../src/lib/price/styleDay.js');
+  const { priceDays } = await import('../src/lib/price/priceDay.js');
+  const { priceRequest } = await import('../src/lib/price/request.js');
+  const fs = await import('node:fs');
+  const path = new URL('../public/app_data.json', import.meta.url);
+  if (!fs.existsSync(path)) { t.skip('no local catalogue'); return; }
+  const dests = JSON.parse(fs.readFileSync(path, 'utf8')).destinations;
+  const couple = styleFromTemplate('couple');
+  const at = (stay) => styleDayEur({ ...couple, stay }, dests);
+  // The figure is the median of the places that price the bed itself.
+  const req = priceRequest({ choices: { ...choicesFromStyle({ ...couple, stay: 'dorm' }), price_view: 'pp', price_excluded: [] } });
+  const own = [...priceDays(dests, req).values()].filter((a) => a && !a.tierFallback && a.stayEur != null && a.foodEur != null).map((a) => a.stayEur + a.foodEur).sort((x, y) => x - y);
+  const mid = Math.floor(own.length / 2);
+  assert.equal(at('dorm'), own.length % 2 ? own[mid] : (own[mid - 1] + own[mid]) / 2);
+  // Measured 2026-11-18 (couple, Foodie table): dorm 79.7, private 95.1,
+  // hotel2 85.4, hotel3 104.7 a person a day; with fallbacks counted the
+  // dorm read above the 3-star (flow-1 M1).
+  assert.ok(at('dorm') < at('hotel3'), `${at('dorm')} < ${at('hotel3')}`);
+  assert.ok(at('private') < at('hotel3'));
+  assert.ok(at('hotel2') < at('hotel3'));
+  // A4: the same priced parts are not walked twice.
+  const t0 = performance.now();
+  const again = styleDayEur({ ...couple, stay: 'dorm', name: 'renamed', explore: { ...couple.explore, likes: ['ski'] } }, dests);
+  assert.equal(again, at('dorm'));
+  assert.ok(performance.now() - t0 < 15, 'a rename or an explore edit costs no repricing');
 });

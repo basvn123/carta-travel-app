@@ -85,7 +85,6 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
       key: 'guide',
       title: t('pf.set.guide'),
       rows: [
-        { id: 'g:persona', label: t('styles.persona'), value: (s.guide.personas || []).map((v) => t(`pf.persona.${v}`)).join(', ') },
         // T753 left one shape behind: several picked read as their list.
         { id: 'g:shape', label: t('pf.set.shape'), value: many('g:shape', s.guide.shapes) },
         { id: 'g:likes', label: t('pf.set.likes'), value: many('g:likes', s.guide.likes) },

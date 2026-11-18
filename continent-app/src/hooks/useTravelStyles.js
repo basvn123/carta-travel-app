@@ -1,13 +1,26 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  MAX_STYLES, STYLES_KEY, activeStyle, afterChoicesChange, holdChoices, keepChoices, switchChoices, choicesFromStyle, choicesMatchStyle, commitChoices, createChoices,
-  draftFromTemplate, duplicateStyle, emptyDraft, exploreFromTaste, normalizeStyles, removeStyle, studioOpen, styleFromDraft, tasteFromStyle, tasteMatchesStyle, updateStyle,
+  MAX_STYLES, STYLES_KEY, activeStyle, afterChoicesChange, holdChoices, keepChoices, switchChoices, choicesMatchStyle, commitChoices, createChoices,
+  draftFromTemplate, duplicateStyle, emptyDraft, exploreFromTaste, normalizeStyles, removeChoices, studioOpen, styleFromDraft, tasteFromStyle, tasteMatchesStyle, updateStyle,
 } from '../lib/travelStyles.js';
 import { normalizeTaste } from '../lib/taste.js';
 
 /** The query keys that carry a priced choice (lib/urlState.js: party g, gc,
  *  gb; stay st; Lifestyle ls; way t). */
 const PRICED_QUERY = /[?&](g|gc|gb|st|ls|t)=/;
+
+/**
+ * The taste written with the style in the same update (rule 4), for the
+ * studio's saves: left to the rule 4 effect it is a second update, so the
+ * whole app (Explore's every price) renders twice per Save (fixes r1 A4).
+ * The effect then finds the two agreeing and does nothing.
+ */
+function withActiveTaste(next) {
+  const a = activeStyle(next.travel_styles);
+  if (!a) return next;
+  const taste = normalizeTaste(next.taste);
+  return tasteMatchesStyle(a, taste) ? next : { ...next, taste: normalizeTaste(tasteFromStyle(a, taste)) };
+}
 
 /** The styles this device kept, read once at start (the URL mirror does not
  *  carry them; the account sync carries them inside `choices`). */
@@ -118,26 +131,22 @@ export function useTravelStyles(choices, setChoices) {
   const createFrom = useCallback((draft) => {
     if (store.list.length >= MAX_STYLES) return '';
     const s = styleFromDraft({ ...draft, id: '' });
-    setChoices((prev) => createChoices(prev, s));
+    setChoices((prev) => withActiveTaste(createChoices(prev, s)));
     return s.id;
   }, [store, setChoices]);
   /** The Style Studio's Save on an existing style (see commitChoices: the
    *  active one reprices the app unless it is held). */
   const commit = useCallback((id, draft) => {
     const s = styleFromDraft({ ...draft, id });
-    setChoices((prev) => commitChoices(prev, id, s));
+    setChoices((prev) => withActiveTaste(commitChoices(prev, id, s)));
   }, [setChoices]);
 
   const update = useCallback((id, patch) => write((st) => updateStyle(st, id, patch)), [write]);
-  // Deleting the active style moves to another one, and that one's stay
-  // half must price the app in the same update (review finding 1).
+  // Deleting the active style moves to the next one, and that one's stay
+  // half must price the app in the same update (review finding 1); the
+  // last one going sets the no-style prices back (removeChoices).
   const remove = useCallback((id) => {
-    setChoices((prev) => {
-      const before = normalizeStyles(prev.travel_styles);
-      const st = removeStyle(before, id);
-      const next = before.active === id ? activeStyle(st) : null;
-      return next ? { ...prev, ...choicesFromStyle(next), travel_styles: st, style_held: false } : { ...prev, travel_styles: st };
-    });
+    setChoices((prev) => removeChoices(prev, id));
   }, [setChoices]);
   const duplicate = useCallback((id, name) => write((st) => duplicateStyle(st, id, name)), [write]);
 

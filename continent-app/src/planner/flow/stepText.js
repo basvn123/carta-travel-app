@@ -11,7 +11,7 @@ import { personasOfRaw } from './tripSettings.js';
 
 /** The help-me-choose questions in their groups, in order. */
 export const GUIDE_GROUPS = [
-  ['like', ['g:persona', 'g:shape', 'g:likes', 'g:weather']],
+  ['like', ['g:shape', 'g:likes', 'g:weather']],
   ['practical', ['g:reach', 'g:around', 'g:avoid', 'g:budget']],
   ['last', ['g:pick', 'g:how']],
 ];

@@ -10,7 +10,7 @@ const t = (k, v) => (v ? `${k}${JSON.stringify(v)}` : k);
 test("every help-me-choose question sits in one group, in the flow's order", () => {
   const grouped = GUIDE_GROUPS.flatMap(([, ids]) => ids);
   assert.deepEqual(grouped, GUIDE.filter((id) => id !== "g:trips"));
-  assert.deepEqual(groupsOf(["g:persona", "g:budget"]).map((g) => g.key), ["like", "practical"]);
+  assert.deepEqual(groupsOf(["g:shape", "g:budget"]).map((g) => g.key), ["like", "practical"]);
 });
 
 test("answers read as short lines", () => {

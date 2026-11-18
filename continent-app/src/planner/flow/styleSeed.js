@@ -32,7 +32,7 @@ export function switchTripStyle(s, style) {
   const guide = { ...next.guide };
   const rhythm = { ...next.rhythm };
   if (styled.includes('g:shape')) { guide.shapes = d.guide.shapes; guide.shape = ''; }
-  if (styled.includes('g:persona')) { guide.personas = []; guide.personaMost = ''; guide.persona = ''; }
+  if (styled.includes('g:persona')) { guide.personas = []; guide.personaMost = ''; guide.persona = ''; guide.size = ''; guide.quiet = ''; }
   if (styled.includes('g:likes')) guide.likes = [];
   if (styled.includes('g:avoid')) guide.avoid = [];
   if (styled.includes('g:around')) guide.around = '';

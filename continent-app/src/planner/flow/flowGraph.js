@@ -38,7 +38,9 @@ export const FLYING_WAYS = ['', 'any', 'plane'];
 /** A trip already under way (T675): where the traveller is now and until
  *  when stand in for When and Where from; the way there is behind them. */
 export const NOW_SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'nowWhere', 'nowUntil'];
-export const GUIDE = ['g:persona', 'g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:around', 'g:avoid', 'g:budget', 'g:pick', 'g:how', 'g:trips'];
+// G12: no 'g:persona': the personas follow from the other answers
+// (tripSettings tripPersonas), the question is cut.
+export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:around', 'g:avoid', 'g:budget', 'g:pick', 'g:how', 'g:trips'];
 /** The help-me-choose screen that answers rather than asks (T797). */
 export const TRIPS_SCREEN = 'g:trips';
 // Getting around is asked once (g:around) and the day goal is read from the

@@ -418,19 +418,76 @@ export function updateStyle(store, id, patch) {
   return normalizeStyles({ ...st, list: st.list.map((s) => (s.id === id ? normalizeStyle({ ...s, ...patch, id }) : s)) });
 }
 
+/** Without style `id`. Deleting the style in use hands "in use" to the
+ *  next card (the one before it when it was the last), not to the top one,
+ *  so the choice moves the shortest way on the overview. */
 export function removeStyle(store, id) {
   const st = normalizeStyles(store);
+  const at = st.list.findIndex((s) => s.id === id);
   const list = st.list.filter((s) => s.id !== id);
-  return normalizeStyles({ list, active: st.active === id ? (list[0]?.id || '') : st.active });
+  const next = list[Math.min(Math.max(at, 0), list.length - 1)]?.id || '';
+  return normalizeStyles({ list, active: st.active === id ? next : st.active });
 }
 
+/**
+ * The priced choices a traveller with no style has: what a first visit
+ * prices and what the studio's empty state says ("two people sharing an
+ * entire place"). The Lifestyle key goes, so the catalogue's own default
+ * table applies, as on a first visit.
+ */
+export const NO_STYLE_CHOICES = Object.freeze({ group_size: 2, children: 0, babies: 0, stay_tier: 'home', transport_mode: 'any' });
+
+/**
+ * Delete in the studio. The style in use going hands the prices to the
+ * next one (its stay half applied, the hold lifted); the last one going
+ * sets the prices back to NO_STYLE_CHOICES, so the empty state's sentence
+ * is true (flow-2 M1) instead of the deleted style pricing on unseen.
+ */
+export function removeChoices(prev, id) {
+  const before = normalizeStyles(prev.travel_styles);
+  if (!before.list.some((s) => s.id === id)) return prev;
+  const st = removeStyle(before, id);
+  if (!st.list.length) {
+    const rest = { ...prev };
+    delete rest.lifestyle;
+    return { ...rest, ...NO_STYLE_CHOICES, travel_styles: st, style_held: false };
+  }
+  if (before.active !== id) return { ...prev, travel_styles: st };
+  const next = activeStyle(st);
+  return next ? { ...prev, ...choicesFromStyle(next), travel_styles: st, style_held: false } : { ...prev, travel_styles: st };
+}
+
+/**
+ * A copy of a style, right after the original. The style in use stays in
+ * use: a copy that became active would leave the prices on the old style and
+ * show a false "changed" hold (flow-2 B1). `copyName` is the caller's
+ * translated "{name}, copy"; a second copy of the same name gets " 2", then
+ * " 3", so the cards can be told apart.
+ */
 export function duplicateStyle(store, id, copyName = '') {
   const st = normalizeStyles(store);
-  const s = st.list.find((x) => x.id === id);
-  if (!s || st.list.length >= MAX_STYLES) return st;
+  const at = st.list.findIndex((x) => x.id === id);
+  if (at < 0 || st.list.length >= MAX_STYLES) return st;
+  const s = st.list[at];
   const used = new Set(st.list.map((x) => x.tone));
   const tone = TONES.find((x) => !used.has(x)) || s.tone;
-  return addStyle(st, { ...s, id: newId(), name: copyName, tone });
+  const copy = normalizeStyle({ ...s, id: newId(), name: uniqueName(st.list, copyName), tone });
+  const list = [...st.list.slice(0, at + 1), copy, ...st.list.slice(at + 1)];
+  return normalizeStyles({ list, active: st.active });
+}
+
+/** `name`, or `name 2`, `name 3` when taken, within the 40 characters. */
+function uniqueName(list, name) {
+  const base = String(name || '').trim().slice(0, 40);
+  if (!base) return '';
+  const taken = new Set(list.map((x) => x.name.toLocaleLowerCase()));
+  if (!taken.has(base.toLocaleLowerCase())) return base;
+  for (let n = 2; n <= MAX_STYLES + 1; n++) {
+    const tail = ` ${n}`;
+    const next = base.slice(0, 40 - tail.length).trimEnd() + tail;
+    if (!taken.has(next.toLocaleLowerCase())) return next;
+  }
+  return base;
 }
 
 export function setActive(store, id) {
@@ -633,6 +690,10 @@ export function seedTripSettings(settings, style, { normalize, markAnswered }) {
   if (!mine('g:persona') && e.personas.length) { guide.personas = e.personas; guide.personaMost = ''; guide.persona = e.personas[0]; }
   if (!mine('g:likes') && e.likes.length) guide.likes = e.likes;
   if (!mine('g:avoid') && e.avoid.length) guide.avoid = e.avoid;
+  // The place facets have no planner question; they feed the trip's own
+  // personas when the traveller later changes a shape, a like or the pace.
+  guide.size = e.size;
+  guide.quiet = e.quiet;
   if (!mine('g:around') && e.around) guide.around = e.around;
   s.guide = guide;
   const rhythm = { ...s.rhythm };

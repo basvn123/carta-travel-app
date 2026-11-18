@@ -20,7 +20,7 @@
 import SLOTS from '../../../config/slots.json' with { type: 'json' };
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { exactWindow, monthsByNext } from '../../lib/tripDates.js';
-import { TRADEOFF_DEFAULTS } from '../../lib/travelStyles.js';
+import { QUIET, SIZES, TRADEOFF_DEFAULTS, derivePersonas } from '../../lib/travelStyles.js';
 import { NO_FLIGHT_PREFS } from '../../lib/flights/flights.js';
 
 const wholeWhen = (w) => (w.mode === 'exact' ? exactWindow(w) : w);
@@ -119,7 +119,7 @@ export function defaultSettings() {
     when: { mode: 'exact', start: '', end: '', months: [], nights: 7 },
     from: null,
     way: '',
-    guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', around: '', persona: '', personas: [], personaMost: '', avoid: [], budget: { kind: 'total', per: 'person', eur: 0 }, pick: [...PICKABLE] },
+    guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', around: '', persona: '', personas: [], personaMost: '', size: '', quiet: '', avoid: [], budget: { kind: 'total', per: 'person', eur: 0 }, pick: [...PICKABLE] },
     rhythm: { mornings: '', pace: '', detail: '', goal: '', food: '', around: '', steps: 0, goals: [], keep: [] },
     trip: { name: '', visibility: 'private', cover: '', created: 0, buddies: [] },
     note: '',
@@ -244,6 +244,10 @@ export function normalizeSettings(raw) {
       // holds only it).
       ...personasOfRaw(g),
       avoid: someOf(g.avoid, AVOID),
+      // G12: the kind of place and its feel, from the travel style (the
+      // planner has no question for them); they feed the personas only.
+      size: oneOf(g.size, SIZES, ''),
+      quiet: oneOf(g.quiet, QUIET, ''),
       budget: budgetOfRaw(g.budget, adults + kids),
       // T796: what Carta picks; a slot left out is the traveller's to choose.
       pick: Array.isArray(g.pick) ? someOf(g.pick, PICKABLE) : [...PICKABLE],
@@ -364,7 +368,27 @@ export function screenGiven(s) {
 
 /** Apply a patch, normalize, and mark the question answered. */
 export function answer(s, id, patch) {
-  return markAnswered(normalizeSettings({ ...s, ...patch }), id);
+  const next = markAnswered(normalizeSettings({ ...s, ...patch }), id);
+  return PERSONA_INPUTS.includes(id) ? withTripPersonas(next) : next;
+}
+
+/**
+ * G12: the persona question is cut (owner: the style knows); a trip's
+ * personas follow from its own answers, as a style's do (travelStyles
+ * derivePersonas): the shapes, the likes and the pace asked here, the kind
+ * of place and its feel from the style. The trip finder still ranks by
+ * them (lib/recommend/persona.js). No lean at all is no persona, as an
+ * unanswered question always was ('mix' weighs nothing).
+ */
+export const PERSONA_INPUTS = ['g:shape', 'g:likes', 'r:pace'];
+export function tripPersonas(s) {
+  const g = s.guide || {};
+  const p = derivePersonas({ shapes: g.shapes, likes: g.likes, size: g.size, quiet: g.quiet }, { pace: s.rhythm?.pace });
+  return p.length === 1 && p[0] === 'mix' ? [] : p;
+}
+export function withTripPersonas(s) {
+  const personas = tripPersonas(s);
+  return { ...s, guide: { ...s.guide, personas, personaMost: '', persona: personas[0] || '' } };
 }
 
 /** Picking a party kind sets the counts it implies, keeping ages that still fit. */

@@ -81,11 +81,11 @@ test("the persona sets the shapes when What kind of trip has no answer, and big 
   assert.deepEqual(placesNear(["FCO", "FLR"], 2, "towns", it, PERSONA.towns.cities), ["FCO", "FLR"]);
 });
 
-test("the persona is the first help-me-choose question and survives normalising", () => {
+test("the persona is no question any more (G12) and survives normalising", () => {
   const n = normalizeSettings({ guide: { persona: "outside" } });
   assert.equal(n.guide.persona, "outside");
   assert.equal(normalizeSettings({ guide: { persona: "spaceman" } }).guide.persona, "");
-  assert.equal(guideScreens(n)[0], "g:persona");
+  assert.ok(!guideScreens(n).includes("g:persona"));
 });
 
 // ---- On the real catalogue ----
