@@ -74,6 +74,16 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     return () => ro?.disconnect();
   }, [isDesktop]);
   const tucked = useQuickReturn(!isDesktop && !open, foldPx, `${kind}:${open}`);
+  // A tab change is a new page: the band takes its new shape at once (the
+  // layers have no chip row), with no fold animation playing over the swap
+  // (fixes r1 B5).
+  const [seenKind, setSeenKind] = React.useState(kind);
+  const instant = seenKind !== kind;
+  React.useEffect(() => {
+    if (!instant) return undefined;
+    const id = requestAnimationFrame(() => requestAnimationFrame(() => setSeenKind(kind)));
+    return () => cancelAnimationFrame(id);
+  }, [instant, kind]);
 
   const inputRef = React.useRef(null);
   const panelId = React.useId();
@@ -138,7 +148,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
         const to = e.relatedTarget;
         if (open && to && !e.currentTarget.contains(to)) setOpen(false);
       }}
-      className={`band${places ? ' is-places' : ''}${tucked ? ' is-tucked' : ''}${open ? ' is-searching' : ''}${isDesktop ? ' is-desk' : ' is-phone'}`}>
+      className={`band${places ? ' is-places' : ''}${tucked ? ' is-tucked' : ''}${instant ? ' is-instant' : ''}${open ? ' is-searching' : ''}${isDesktop ? ' is-desk' : ' is-phone'}`}>
       <div className="band-fold" ref={foldRef} inert={tucked || undefined}>
         <div className="band-fold-in">
           {!isDesktop && head}

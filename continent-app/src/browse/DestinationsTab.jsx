@@ -26,7 +26,6 @@ import { CountriesButton } from '../components/CountriesControl.jsx';
 import { JourneysSection } from './JourneysSection.jsx';
 import { loadAllJourneyCards, dropJourneyHash } from '../lib/journeys.js';
 import { useSettings, useTravelMonth } from '../components/SettingsLine.jsx';
-import { TripDock } from '../components/dock/TripDock.jsx';
 import { CoverageEmpty } from './CoverageEmpty.jsx';
 import { MICROSTATES, countryGeo, pointGeo } from '../lib/coverageEmpty.js';
 import { loadStubs } from '../lib/stubs.js';
@@ -1848,8 +1847,8 @@ export function DestinationsTab({
             six never moves the grid. */}
         {/* T586: the six as one row of pills on every width, as on Places. */}
         <div className="dtab-bar xcats-bar">{catTiles}</div>
-        {/* G12: the Trip dock under the tabs, as on Explore. */}
-        <div className="xsub dtab-sub"><TripDock /></div>
+        {/* G12 (Explore top): the Trip dock left; the layers price nothing
+            from Start, When or the way, and Places has the band's Settings. */}
 
         <div className={`dtab-panel${outdoorCat ? ' is-outdoor' : ''}${mapOn ? ' is-map' : ''}`} id="dtab-panel" role="tabpanel"
           aria-label={t((CATS.find((c) => c.key === cat) || CATS[0]).labelKey)}>

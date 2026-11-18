@@ -18,10 +18,15 @@
    bar's measured height (--filter-h) follows and the list keeps its place. */
 .band-fold {
   display: grid;
+  /* minmax(0, 1fr): a long header word (Se connecter at 360) must not widen
+     the band past the screen; the row's own controls give way (fixes r1 B3). */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 1fr;
   transition: grid-template-rows var(--dur-2) var(--ease-out);
 }
-.band-fold-in { min-height: 0; }
+.band-fold-in { min-height: 0; min-width: 0; }
+.band.is-instant .band-fold { transition: none; }
+.band { min-width: 0; max-width: 100%; }
 .band.is-tucked .band-fold { grid-template-rows: 0fr; }
 .band.is-tucked .band-fold-in { overflow: hidden; }
 
@@ -196,6 +201,14 @@
 /* The line keeps its room on every tab, so the band never changes height. */
 .band.is-desk .band-line { min-height: calc(var(--tap) + var(--space-1)); padding-top: 2px; padding-bottom: 2px; }
 .band.is-desk .band-chips { margin-left: calc(var(--space-3) * -1); }
+
+/* The desktop tab row below 1200 px: six tabs share a narrow column, so
+   the word drops to body size and the icon sits closer; "Wanderwege" fits
+   whole at 820 (fixes r1 B4). */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .xcats-row .ui-tab { padding: 0 var(--space-1); font-size: var(--text-body); }
+  .xcats-row .xcats-tab { gap: var(--space-1); }
+}
 
 /* --- Phone -------------------------------------------------------------- */
 .band.is-phone .band-tabs { padding: 0 var(--space-4); }

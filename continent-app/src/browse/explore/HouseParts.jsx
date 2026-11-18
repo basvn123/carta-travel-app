@@ -55,6 +55,15 @@ function wayOf(cost) {
   return way && way.perPerson > 0 && WAY_ICON[way.mode] ? way : null;
 }
 
+/** The way a row has no figure for (G12, decision.md "Layout stability"):
+ *  its mode, so the slot says "Train price not known yet" instead of
+ *  going empty. */
+function wayNotKnown(cost) {
+  const way = cost?.way;
+  if (!way || way.perPerson > 0) return null;
+  return way.mode && (WAY_ICON[way.mode] || way.mode === 'any') ? way.mode : null;
+}
+
 /** The price parts as the house formation. `weighted` sizes the bed and food
  *  wagons by their euros (rail cards); rows keep them content-sized.
  *  `pressable` (G12, D10, Explore's list and rails only): the figure says its
@@ -155,6 +164,7 @@ function ListFormation({ cost, t, figRef, weighted, className, place, slot = 'al
   const req = view.request;
   const way = wayOf(cost);
   const shownWay = req.excluded?.includes('flight') ? null : way;
+  const missingMode = req.excluded?.includes('flight') ? null : wayNotKnown(cost);
   const day = rowFigures(cost, { group: view.total, seats: seatsOf(req) });
   // G12 (D10): under "The whole trip" the figure is the Settings model's
   // (lib/settings grandTotal: nights x day + the way there), with the bed
@@ -165,7 +175,7 @@ function ListFormation({ cost, t, figRef, weighted, className, place, slot = 'al
   const fig = pf
     ? { ...day, day: pf.eur, bed: pf.parts.bed, food: pf.parts.food, plus: false, open: pf.notKnown && pf.eur != null }
     : day;
-  if (fig.day == null && !shownWay) return null;
+  if (fig.day == null && !shownWay && !missingMode) return null;
   if (slot === 'figure' && fig.day == null) return null;
   const withFigure = slot !== 'parts';
   const withParts = slot !== 'figure';
@@ -189,6 +199,20 @@ function ListFormation({ cost, t, figRef, weighted, className, place, slot = 'al
         <span className="pparts-fig money" aria-hidden="true">{formatMoney(eur)}</span>
         {plane && <HouseIcon.ret size={12} className="xform-ret" />}
         {plane && <span className="xform-ret-word" aria-hidden="true">{t('card.unitReturn')}</span>}
+      </SheetTrigger>
+    );
+  }
+
+  // No figure for the way: the slot stays, dashed, "Not yet", its full name
+  // "Train price not known yet" (never an empty slot or a bare "+").
+  const missingSpoken = missingMode ? t(`settingsSum.notKnown.${missingMode}`) : '';
+  if (!go && missingMode) {
+    const Icon = WAY_ICON[missingMode] || HouseIcon.route;
+    go = (
+      <SheetTrigger place={place} cost={cost} className="xform-item" triggerClass="hs-wagon is-none pparts-part xform-btn"
+        label={missingSpoken} title={missingSpoken} part="way">
+        <Icon size={13} />
+        <span className="pparts-fig" aria-hidden="true">{t('price.notMeasured')}</span>
       </SheetTrigger>
     );
   }
@@ -218,7 +242,8 @@ function ListFormation({ cost, t, figRef, weighted, className, place, slot = 'al
       {withFigure && fig.day != null && (
         <span className="hs-formation-day pparts-total" ref={figRef}>
           <SheetTrigger place={place} cost={cost} triggerClass="xform-fig" part="day"
-            label={pf ? `${say(fig.day, est)} ${t(unitKey, unitArgs)}` : t(g ? 'card.dayFigSpokenGroup' : 'card.dayFigSpoken', { price: say(fig.day, est), people })}>
+            label={(pf ? `${say(fig.day, est)} ${t(unitKey, unitArgs)}` : t(g ? 'card.dayFigSpokenGroup' : 'card.dayFigSpoken', { price: say(fig.day, est), people }))
+              + (fig.open && missingSpoken ? `. ${missingSpoken}` : '')}>
             <Money value={fig.day} est={est} />
             {fig.open && <span className="xform-open" aria-hidden="true">+</span>}
             <span className="xform-unit" aria-hidden="true">{t(unitKey, unitArgs)}</span>

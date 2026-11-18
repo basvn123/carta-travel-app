@@ -40,15 +40,43 @@ export const EXPLORE_TILES = [
   { key: 'cycling', labelKey: 'places.catCycling', Icon: HouseIcon.cycling },
 ];
 
+// Keys that move between tabs (the kit Tabs' own).
+const MOVE_KEYS = new Set(['ArrowRight', 'ArrowLeft', 'Home', 'End']);
+
+/** After a keyboard move the chosen tab's view can mount anew (Places and
+ *  the layers are two tabs of the app, each with its own row; on a phone
+ *  the band's row learns the new tab a moment later), so focus follows the
+ *  chosen tab for a few frames wherever its row is drawn (fixes r1 B2). */
+function focusTabSoon(key) {
+  if (typeof document === 'undefined') return;
+  let n = 0;
+  const step = () => {
+    const btn = [...document.querySelectorAll(`.xcats-tab[data-cat="${key}"]`)]
+      .map((el) => el.closest('[role="tab"]'))
+      .find((b) => b && b.getAttribute('aria-selected') === 'true' && b.getClientRects().length > 0);
+    if (btn && document.activeElement !== btn) btn.focus({ preventScroll: true });
+    if (++n < 30) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
 export function ExploreCategories({ current, onPick, columns = 3, panelId, className = '', variant = 'grid' }) {
   const row = variant === 'row';
   const { t } = useI18n();
   const isDesktop = useIsDesktop();
+  const movedAt = React.useRef(0);
   if (row) {
     return (
+      // Listens to the kit Tabs' own keys; the tabs are the controls.
+      <div className="xcats-keys" style={{ display: 'contents' }}
+        onKeyDownCapture={(ev) => { if (MOVE_KEYS.has(ev.key)) movedAt.current = Date.now(); }}>
       <Tabs label={t('places.sideBrowse')} value={current} panelId={panelId}
         className={`xcats xcats-row ${className}`.trim()}
-        onChange={(key) => { if (key !== current) onPick(key); }}
+        onChange={(key) => {
+          if (key === current) return;
+          if (Date.now() - movedAt.current < 400) focusTabSoon(key);
+          onPick(key);
+        }}
         tabs={EXPLORE_TILES.map(({ key, labelKey, shortKey, Icon }) => ({
           id: key,
           label: (
@@ -58,6 +86,7 @@ export function ExploreCategories({ current, onPick, columns = 3, panelId, class
             </span>
           ),
         }))} />
+      </div>
     );
   }
   return (
