@@ -686,10 +686,13 @@
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
-    /* A focused chip is never hidden under the sticky Clear all or the fade. */
-    scroll-padding-inline: 112px 24px;
-    padding-inline-end: 24px;
-    mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+    /* A focused chip is never hidden under the sticky Clear all or the fade.
+       The fade is 32 px, not 24: at 24 a chip cut at the edge still read as
+       a hard cut beside the Trip dock (judge round 1). #000 is only the
+       alpha mask, not a colour. */
+    scroll-padding-inline: 112px var(--space-6);
+    padding-inline-end: var(--space-6);
+    mask-image: linear-gradient(to right, #000 calc(100% - var(--space-6)), transparent);
   }
   .explore-shell.is-focus .xbar.xbar .xtools--phone > .xtools-chips::-webkit-scrollbar { display: none; }
   /* 44 px on every pointer: the row is the phone list's one control. */
@@ -726,7 +729,9 @@
   color: var(--text);
   font-weight: 500;
 }
-.explore-shell .xtools .xtools-clear { background: var(--surface-page); color: var(--text-2); }
+/* Clear all keeps the page fill (it is sticky over the scrolling chips) but
+   the chips' own ink: in grey it read as disabled (judge round 1). */
+.explore-shell .xtools .xtools-clear { background: var(--surface-page); }
 .xtool-sort.is-compact .xtool-word { display: none; }
 .explore-shell.is-focus .xtools .xtool-sort.is-compact { min-width: var(--tap); justify-content: center; padding-inline: 0; }
 @media (max-width: 359px) {

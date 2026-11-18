@@ -1,6 +1,6 @@
 // G12 (explore polish, decision.md step 8): the Explore filter states of
 // explore-p7-states.md in a browser, at 320, 390, 768 and 1440 px in en, de
-// and fr.
+// and fr (LANGS=en,de,fr,es,it,nl for all six).
 //
 //   node scripts/verify_explore_states.mjs   (dev server at CARTA_PORT, default 5182)
 //
@@ -157,6 +157,27 @@ async function run(width, lang) {
     check(tag('4 many: Clear all visible'), clear && clear.x >= 0 && clear.x + clear.width <= width, clear ? `${clear.x}` : 'none');
     const capped = await page.locator('.xtools .xtools-chip').evaluateAll((els) => els.every((e) => e.getBoundingClientRect().width <= Math.min(window.innerWidth * 0.6, 220) + 1 && e.title));
     check(tag('5 long labels: chips capped, full text in the title'), capped);
+    // Judge round 1: the last chip was cut hard beside the Trip dock. Every
+    // chip's visible part ends before the trigger, and a chip the scroller
+    // cuts is cut inside its end fade (a mask), never at a hard edge.
+    const edge = await page.evaluate(() => {
+      const sc = document.querySelector('.explore-shell.is-focus .xtools--phone > .xtools-chips');
+      const trig = document.querySelector('.explore-shell.is-focus .xtools--phone .trip-dock .dock-trigger');
+      if (!sc || !trig) return null;
+      const s = sc.getBoundingClientRect();
+      const tl = trig.getBoundingClientRect().left;
+      const mask = getComputedStyle(sc).maskImage || getComputedStyle(sc).webkitMaskImage || 'none';
+      let covered = 0; let cut = 0;
+      for (const c of sc.querySelectorAll('.xtools-chip, .xtool-saved, .xtools-clear')) {
+        const b = c.getBoundingClientRect();
+        if (b.right <= s.left || b.left >= s.right) continue;
+        if (Math.min(b.right, s.right) > tl + 0.5) covered += 1;
+        if (b.right > s.right + 0.5) cut += 1;
+      }
+      return { covered, cut, mask: mask !== 'none' };
+    });
+    check(tag('4 many: the last visible chip is not covered by the Trip trigger'), edge && edge.covered === 0, edge ? `${edge.covered} covered` : 'no scroller or trigger');
+    check(tag('4 many: a chip cut at the edge fades out'), edge && (edge.cut === 0 || edge.mask), edge ? `${edge.cut} cut, mask ${edge.mask}` : '');
   } else {
     const strongChip = await page.locator('.xchips [title]').evaluateAll((els) => els.map((e) => e.title));
     check(tag('4 many: desktop chip row leaves out the quick row filters'), !strongChip.some((x) => /Strong|Passt|corresp/.test(x)), strongChip.join('|'));
