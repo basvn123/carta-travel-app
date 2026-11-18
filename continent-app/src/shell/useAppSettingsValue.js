@@ -37,7 +37,7 @@ export function useAppSettingsValue({
   const monthFrom = useMemo(() => {
     const known = new Map();
     return (ym) => {
-      if (!known.has(ym)) known.set(ym, monthFromOf(data?.destinations, latest.current.request, ym, latest.current.model));
+      if (!known.has(ym)) known.set(ym, monthFromOf(data, latest.current.request, ym, latest.current.model));
       return known.get(ym);
     };
   }, [data, fromKey]); // eslint-disable-line react-hooks/exhaustive-deps

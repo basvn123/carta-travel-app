@@ -5,7 +5,7 @@ export {
   readSettings, nextYm, addMonth, isYm, clampNights,
   withDateMode, withMonth, withTripNights, withWay, withPriceView, withPriceSpan, withStart,
 } from './model.js';
-export { nearestTown, countryStartTown, countryAirports, CAPITALS, MAX_COUNTRY_AIRPORTS } from './start.js';
+export { nearestTown, countryStartTown, countryAirports, startCountryOf, CAPITALS, MAX_COUNTRY_AIRPORTS } from './start.js';
 export { grandTotal, priceFigure, priceSortValue, asModel } from './prices.js';
 export { settingsSummary, whenText, datesText, startPlace } from './summary.js';
 export { makeSettingsSetters } from './setters.js';

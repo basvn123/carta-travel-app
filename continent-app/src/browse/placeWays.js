@@ -17,8 +17,7 @@
  *
  * Pure: no fetching, no React.
  */
-import { flightLegs } from '../lib/price/flight.js';
-import { legCost } from '../lib/flights/flights.js';
+import { cheapestFlight } from '../lib/price/flight.js';
 import { groundReturn, flightPerSeat, GROUND_MODES } from '../lib/travelWay.js';
 import { chooseWay, legDuration, wayKm, transferMinutesOf } from '../lib/wayChoice.js';
 
@@ -32,14 +31,19 @@ export { legDuration };
 export function waysThere({ dest, anchor, home = null, party = null, flights = null, request = null, bagKey } = {}) {
   if (!dest) return null;
   const rows = [];
-  const legs = flights && anchor ? flightLegs(flights, anchor, request) : null;
-  if (legs) {
-    const perSeat = legCost(legs.out, { paying: 1, bagKey }).perSeat + legCost(legs.back, { paying: 1, bagKey }).perSeat;
-    const pp = flightPerSeat(perSeat, party);
+  // fixes-r1 E3: the card's own source (lib/price/flight.js cheapestFlight):
+  // the same checked pair, else the same typical fare, from every home
+  // airport file given (`flights`: one file or a list).
+  const files = Array.isArray(flights) ? flights : (flights ? [flights] : []);
+  const req = bagKey && request && !request.baggage ? { ...request, baggage: bagKey } : request;
+  const f = anchor ? cheapestFlight(files, anchor, req) : null;
+  if (f) {
+    const pp = flightPerSeat(f.perSeat, party);
     if (pp > 0) {
       rows.push({
-        mode: 'plane', perPerson: pp, minutes: legDuration(legs.out),
-        dep: hhmm(legs.out.dep), arr: hhmm(legs.out.arr), airline: legs.out.airline || null, iata: anchor,
+        mode: 'plane', perPerson: pp, minutes: legDuration(f.out),
+        dep: hhmm(f.out.dep), arr: hhmm(f.out.arr), airline: f.out.airline || null, iata: anchor,
+        ...(f.typical ? { typical: true } : {}), from: f.from,
       });
     }
   }

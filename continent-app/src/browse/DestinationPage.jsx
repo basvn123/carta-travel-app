@@ -25,6 +25,7 @@ import { MatchLine } from './WhyItMatches.jsx';
 import { WhyPlace, PricesRefreshed } from './WhyChips.jsx';
 import { PhotoGallery } from './PhotoGallery.jsx';
 import { DestPriceCard } from './DestPriceCard.jsx';
+import { flightFiles } from '../lib/settings/ways.js';
 import { PageBar } from './PageBar.jsx';
 import { RatingSheet } from './RatingSheet.jsx';
 import { KeyFacts } from './KeyFacts.jsx';
@@ -529,7 +530,8 @@ export function DestinationPage({
     anchor: destAnchor(destination),
     home: homePoint(homeChoices, data),
     party: partyOf(partyChoices),
-    flights: fl.file,
+    // fixes-r1 E3: every home airport file, as the Explore card prices.
+    flights: flightFiles(data).length ? flightFiles(data) : fl.file,
     request,
     bagKey: request?.baggage || fl.bagKey,
   }) : null;

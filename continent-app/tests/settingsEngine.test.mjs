@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import { en } from "../src/i18n/en.js";
 import {
   readSettings, withDateMode, withMonth, withTripNights, withPriceSpan, withPriceView, withStart, withWay,
-  nearestTown, countryStartTown, countryAirports, grandTotal, priceFigure, priceSortValue,
+  nearestTown, countryStartTown, countryAirports, startCountryOf, grandTotal, priceFigure, priceSortValue,
   settingsSummary, makeSettingsSetters, wayRowsFor, wayKey, flightFiles, DEFAULT_TRIP_NIGHTS,
 } from "../src/lib/settings/index.js";
 import { cheapestPair, typicalFare, PAIR_SLACK, MIN_FARES } from "../src/lib/flights/pairs.js";
@@ -331,7 +331,7 @@ test("here: the nearest town in Carta's data", () => {
   assert.equal(nearestTown({}, { lat: 50, lon: 4 }), null);
 });
 
-test("country: ground from the airport town nearest the capital, flights from its swept airports", () => {
+test("country: ground from the town nearest the capital, flights from its swept airports", () => {
   assert.equal(countryStartTown(DATA, "BE").name, "Brussels");
   assert.equal(countryStartTown(DATA, "PT").name, "Lisbon");
   assert.equal(countryStartTown(DATA, "XX"), null);
@@ -431,22 +431,60 @@ test("URL: the new keys round-trip, and only when not the default", () => {
 
 /* ------------------------------------------------------------ month from */
 
-test("When month cards: the from figure is the lowest complete day that month, in the traveller's view, null without data", () => {
-  const FX = JSON.parse(readFileSync(new URL("./fixtures/price/destinations.json", import.meta.url), "utf8"));
-  setStayRecords(FX.stays);
-  const choices = { date_mode: "month", when_month: "2027-06", trip_nights: 7, group_size: 2 };
-  const req = priceRequest({ choices });
+test("E2 month cards: the cheapest checked return of the trip length that month, null where only typical fares exist", () => {
+  const req = priceRequest({ choices: { date_mode: "month", when_month: "2026-12", trip_nights: 7 } });
   const at = atMonth(req, "2027-01");
   assert.deepEqual([at.when.kind, at.when.ym, at.when.month], ["month", "2027-01", 1]);
-  const days = [...priceDays(FX.destinations, at).values()].map((r) => r.dayEur).filter((v) => v > 0);
-  const pp = monthFrom(FX.destinations, req, "2027-01", choices);
-  assert.equal(pp, Math.min(...days));
-  // The group view doubles a day for two seats; the span is always a day.
-  const group = monthFrom(FX.destinations, req, "2027-01", { ...choices, price_view: "total", price_span: "trip" });
-  assert.equal(group, Math.round(pp * 2 * 100) / 100);
-  assert.equal(monthFrom({}, req, "2027-01", choices), null);
-  assert.equal(monthFrom(FX.destinations, req, "2027-13", choices), null);
-  assert.equal(monthFrom(null, req, "2027-01", choices), null);
+  const data = { destinations: DATA.destinations, flights: file("BRU", { LIS: ROUTE }) };
+  const choices = { trip_nights: 7 };
+  assert.equal(monthFrom(data, req, "2026-12", choices, NOW), seat(30) + seat(25));
+  assert.equal(monthFrom(data, req, "2027-01", choices, NOW), seat(20) + seat(90));
+  // No checked pair that month: no figure, never the (monthless) typical fare.
+  assert.equal(monthFrom(data, req, "2027-03", choices, NOW), null);
+  assert.equal(monthFrom({ destinations: DATA.destinations }, req, "2026-12", choices, NOW), null);
+  assert.equal(monthFrom(data, req, "2027-13", choices, NOW), null);
+  assert.equal(monthFrom(null, req, "2026-12", choices, NOW), null);
+});
+
+test("E1 a way that is not the style's holds the style, never rewrites it", () => {
+  const store = { list: [{ id: "s1", name: "Two by train", way: "train", ways: ["train"] }], active: "s1" };
+  const c = { transport_mode: "train", travel_styles: store };
+  const held = withWay("plane")(c);
+  assert.deepEqual([held.transport_mode, held.style_held], ["plane", true]);
+  assert.equal(held.travel_styles, store, "the saved style is untouched");
+  const same = withWay("train")({ ...c });
+  assert.equal(same.style_held, undefined, "the style's own way needs no hold");
+  assert.equal(withWay("plane")({ transport_mode: "train" }).style_held, undefined, "no style, nothing to hold");
+});
+
+test("E4 dates: the checked pair keeps the trip's nights, else typical", () => {
+  const f = file("BRU", { LIS: ROUTE });
+  const req = (d, r) => priceRequest({ choices: { date_mode: "dates" }, departDate: d, returnDate: r, today: TODAY });
+  // Out 3 Dec (nearest to 2 Dec), home 7 nights later +/-1: 11 Dec (8 nights).
+  const ok = flightLegs(f, "LIS", req("2026-12-02", "2026-12-09"), NOW);
+  assert.deepEqual([ok.out.date, ok.back.date], ["2026-12-03", "2026-12-11"]);
+  // 2 nights: no checked pair of that length nearby, so the card falls back to typical.
+  assert.equal(flightLegs(f, "LIS", req("2026-12-01", "2026-12-03"), NOW), null);
+  assert.equal(flightPrice(f, "LIS", req("2026-12-01", "2026-12-03"), NOW).typical, true);
+});
+
+test("E5 any time: the sheet's legs are a trip-length pair, not the year's cheapest weeks apart", () => {
+  const f = file("BRU", { LIS: ROUTE });
+  const legs = flightLegs(f, "LIS", priceRequest({ choices: { date_mode: "any", trip_nights: 7 } }), NOW);
+  const nights = (Date.parse(legs.back.date) - Date.parse(legs.out.date)) / 86400000;
+  assert.ok(Math.abs(nights - 7) <= 1, String(nights));
+  assert.equal(flightPrice(f, "LIS", priceRequest({ choices: { date_mode: "any" } }), NOW).typical, true, "the card stays typical");
+});
+
+test("E6 and E7: a country starts at the capital's town; the start chip speaks the UI language", () => {
+  const be = countryStartTown(DATA, "BE");
+  assert.deepEqual([be.id, be.name, be.lat, be.lon], ["BRU", "Brussels", 50.85, 4.35], "the town centre, not the airport");
+  assert.equal(startCountryOf(readSettings({ origin: "CRL" }), DATA), "BE", "the home airport's country");
+  assert.equal(startCountryOf(readSettings({ origin_kind: "country", origin_country: "PT" }), DATA), "PT");
+  const c = withStart("place", { names: { de: "Br\u00fcssel", nl: "Brussel", bad: 1 } })({ drive_home: { name: "Brussels", lat: 50.85, lon: 4.35 } });
+  assert.deepEqual(c.start_names, { de: "Br\u00fcssel", nl: "Brussel" });
+  assert.equal(settingsSummary(c, null, t, { lang: "de-DE" })[1].text, "From Br\u00fcssel");
+  assert.equal(settingsSummary(c, null, t, { lang: "en-GB" })[1].text, "From Brussels");
 });
 
 test("Prices shown example: one place gets the same way there as its card, so the whole trip adds it", () => {

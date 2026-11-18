@@ -45,9 +45,11 @@ export function makeSettingsSetters(deps = {}) {
       return town;
     },
     /** A town or city the traveller picked ({ name, lat, lon, iso2?, country? }). */
+    /** `place.l` (or `place.names`): its names by UI language, as the
+     *  gazetteer gives them, so the chip says Brüssel in German (E7). */
     setStartPlace(place) {
       setFrom(place);
-      setChoices(withStart('place'));
+      setChoices(withStart('place', { names: place?.l || place?.names || null }));
     },
     /** A whole country (ISO2): ground ways from its start town, flights from
      *  every airport in it the sweep covers. Returns { town, airports } or

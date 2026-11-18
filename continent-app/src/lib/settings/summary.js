@@ -49,6 +49,10 @@ export function whenText(m, t, lang = activeLocale()) {
 /** The Start chip's place name, or '' when nothing is known. */
 export function startPlace(m, data, lang = activeLocale()) {
   if (m.originKind === 'country' && m.originCountry) return countryName(m.originCountry, '', lang);
+  // fixes-r1 E7: the picked place's own name in the UI language, where the
+  // gazetteer has one (Brussel, Bruxelles, Brüssel).
+  const local = m.startNames?.[String(lang || '').slice(0, 2).toLowerCase()];
+  if (local) return local;
   if (m.fromPlace?.name) return m.fromPlace.name;
   const o = data?.meta?.origins?.[m.origin];
   return o ? (o.city || o.name || '') : '';

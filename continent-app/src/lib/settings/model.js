@@ -24,6 +24,7 @@
 import { partyOf } from '../party.js';
 import { tripDaysBetween } from '../runtime_pricing.js';
 import { rule } from '../price/config.js';
+import { activeStyle, normalizeStyles, holdChoices } from '../travelStyles.js';
 
 export const ORIGIN_KINDS = Object.freeze(['here', 'place', 'country']);
 export const DATE_MODES = Object.freeze(['dates', 'month', 'any', 'cheapest']);
@@ -114,6 +115,7 @@ export function readSettings(choices = {}, legacy = {}) {
     originCountry: originKind === 'country' && ISO2_RE.test(c.origin_country || '') ? c.origin_country : null,
     hereTown: originKind === 'here' ? (c.here_town || null) : null,
     fromPlace: c.drive_home || null,
+    startNames: cleanNames(c.start_names),
     origin: c.origin || null,
     origins: Array.isArray(c.origins) ? c.origins : [],
     dateMode,
@@ -143,8 +145,16 @@ export const withTripNights = (n) => (prev) => {
   const v = clampNights(n);
   return v == null ? prev : { ...prev, trip_nights: v };
 };
-export const withWay = (mode) => (prev) => (
-  ['any', 'plane', 'train', 'bus', 'car'].includes(mode) ? { ...prev, transport_mode: mode } : prev);
+/** The way there. A way that is not the active style's main way HOLDS the
+ *  style (fixes-r1 E1): without the hold, useTravelStyles rule 1 wrote the
+ *  new way into the saved style; held, the heart gets its dot and the
+ *  Studio offers Keep and Undo. The style itself is never rewritten here. */
+export const withWay = (mode) => (prev) => {
+  if (!['any', 'plane', 'train', 'bus', 'car'].includes(mode)) return prev;
+  const style = activeStyle(normalizeStyles(prev.travel_styles));
+  const next = { ...prev, transport_mode: mode };
+  return style && style.way !== mode ? holdChoices(next) : next;
+};
 export const withPriceView = (view) => (prev) => ({ ...prev, price_view: view === 'total' ? 'total' : 'pp' });
 export const withPriceSpan = (span) => (prev) => (PRICE_SPANS.includes(span) ? { ...prev, price_span: span } : prev);
 
@@ -153,9 +163,9 @@ export const withPriceSpan = (span) => (prev) => (PRICE_SPANS.includes(span) ? {
  * airports unless a reach in hours ticked them (App's setFrom recomputes
  * those), so a town start never keeps flying from another country.
  */
-export const withStart = (kind, { country = null, town = null, airports = null, origin = null } = {}) => (prev) => {
+export const withStart = (kind, { country = null, town = null, airports = null, origin = null, names = null } = {}) => (prev) => {
   if (!ORIGIN_KINDS.includes(kind)) return prev;
-  const next = { ...prev, origin_kind: kind, origin_country: null, here_town: null };
+  const next = { ...prev, origin_kind: kind, origin_country: null, here_town: null, start_names: cleanNames(names) };
   if (kind === 'here') next.here_town = town || null;
   if (kind === 'country') {
     next.origin_country = ISO2_RE.test(country || '') ? country : null;
@@ -170,6 +180,17 @@ export const withStart = (kind, { country = null, town = null, airports = null, 
   }
   return next;
 };
+
+/** A place's names by UI language ({ de: 'Brüssel' }), two-letter keys,
+ *  short strings only; null when there are none (fixes-r1 E7). */
+export function cleanNames(names) {
+  if (!names || typeof names !== 'object') return null;
+  const out = {};
+  for (const [k, v] of Object.entries(names)) {
+    if (/^[a-z]{2}$/.test(k) && typeof v === 'string' && v.trim() && v.length <= 80) out[k] = v.trim();
+  }
+  return Object.keys(out).length ? out : null;
+}
 
 /** The legacy dateFlex for a mode: screens that still read it (the planner,
  *  lib/when.js) see month as month and cheapest as any time. */

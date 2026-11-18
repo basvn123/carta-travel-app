@@ -28,7 +28,9 @@ import { minutesText } from '../lib/journeys.js';
 import { matchProfile, PROFILE_LABEL_KEYS } from './styles/spendBits.jsx';
 import { legCost, googleFlightsLink } from '../lib/flights/flights.js';
 import { bagTier } from '../lib/flights/bagFees.js';
-import { flightLegs, flightQuote } from '../lib/price/flight.js';
+import { cheapestFlight, flightQuote } from '../lib/price/flight.js';
+import { flightFiles } from '../lib/settings/ways.js';
+import { whenText } from '../lib/settings/summary.js';
 import { destAnchor } from '../lib/origins.js';
 import { AirlineMark, PassEnds, PassHead } from '../components/flights/Flights.jsx';
 import { stopsText } from '../lib/flights/flightText.js';
@@ -139,10 +141,18 @@ export function DestPriceCard({
   const flightFile = ctx?.data?.flights || null;
   const bagKey = homeFlightSetup(ctx).bagKey;
   const airport = destAnchor(dest);
-  const carta = React.useMemo(
-    () => (fare ? null : flightQuote(flightLegs(flightFile, airport, request), { paying: people, bagKey })),
-    [fare, flightFile, airport, request, people, bagKey],
-  );
+  // fixes-r1 E3: the Explore card's source (cheapestFlight over every home
+  // airport file): the same checked pair, else the same typical fare.
+  const files = React.useMemo(() => {
+    const all = flightFiles(ctx?.data);
+    return all.length ? all : (flightFile ? [flightFile] : []);
+  }, [ctx?.data, flightFile]);
+  const carta = React.useMemo(() => {
+    if (fare) return null;
+    const f = cheapestFlight(files, airport, request);
+    const q = f ? flightQuote({ out: f.out, back: f.back, kind: f.kind }, { paying: people, bagKey }) : null;
+    return q ? { ...q, typical: f.typical, from: f.from } : null;
+  }, [fare, files, airport, request, people, bagKey]);
   // T715 (plan F9, B10): the things to do here with a price, as switches in
   // the calculator, all off by default; never in the day figure or a card.
   const pricedDo = React.useMemo(() => (doItems || []).map((item) => {
@@ -237,7 +247,12 @@ export function DestPriceCard({
 
   const home = flightFile?.from || null;
   const cartaLine = price.lines.find((l) => l.key === 'flight' && l.carta) || null;
-  const datesText = from && to ? t('settings.datesRange', { start: shortDate(from), end: shortDate(to) }) : '';
+  // fixes-r1 E3: the head names the Settings When (a month, any time,
+  // cheapest dates), not Carta's default pair; dates show as dates.
+  const dateMode = request?.dateMode;
+  const datesText = dateMode && dateMode !== 'dates'
+    ? whenText({ dateMode, month: request?.when?.ym || null, tripNights: request?.nights || nights, dates: null }, t, lang)
+    : (from && to ? t('settings.datesRange', { start: shortDate(from), end: shortDate(to) }) : '');
   const pill = (open) => `dpc-pill${open ? ' is-open' : ''}`;
   const money = (v) => formatMoney(v, { precision: 'whole', locale: lang });
   // T1100: fastest door to door (the airport and the transfer count), so a
@@ -436,7 +451,7 @@ export function DestPriceCard({
               )}
               {mode === 'plane' && (
                 <div className="tcard-acts">
-                  {cartaLine && (
+                  {cartaLine && !carta?.typical && (
                     <Button variant="quiet" size="sm" aria-expanded={flightsOpen} aria-controls={`${uid}-flights`}
                       iconEnd={<ChevronDownIcon size={14} />} className="tcard-more" onClick={() => setFlightsOpen((v) => !v)}>
                       {t('tc.flightDetails')}
@@ -447,7 +462,7 @@ export function DestPriceCard({
                   </Button>
                 </div>
               )}
-              {mode === 'plane' && cartaLine && flightsOpen && (
+              {mode === 'plane' && cartaLine && flightsOpen && !carta?.typical && (
                 <div className="dpc-flights tcard-flights hs-reveal" id={`${uid}-flights`}>
                   <FlightPass dir="out" leg={withEnds(carta.out, home, airport)} paying={people} bagKey={bagKey} airlines={airlines} />
                   <FlightPass dir="back" leg={withEnds(carta.back, airport, home)} paying={people} bagKey={bagKey} airlines={airlines} />

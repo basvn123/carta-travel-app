@@ -15,8 +15,8 @@
  *
  * Bags stay with each screen until F3 sets one default bag (plan 6.1).
  */
-import { cheapestReturnAnyMonth, sweptNear, legCost } from '../flights/flights.js';
-import { cheapestPair, typicalFare } from '../flights/pairs.js';
+import { legCost } from '../flights/flights.js';
+import { cheapestPair, typicalFare, pairNear } from '../flights/pairs.js';
 import { flightWindow } from './request.js';
 import { rule } from './config.js';
 
@@ -28,11 +28,16 @@ export function flightLegs(file, airport, req, now = Date.now()) {
   if (!file || !airport || airport === file.from) return null;
   const w = flightWindow(req);
   if (w.kind === 'exact') {
-    const out = sweptNear(file, 'out', airport, w.from, { now });
-    const back = out && sweptNear(file, 'back', airport, w.to, { now, after: out.date });
-    return out && back ? { out, back, kind: 'exact' } : null;
+    // fixes-r1 E4: the two legs used to be picked apart (a 1 or 12 night
+    // "trip" for a 7 night stay); the pair now keeps the nights.
+    const p = pairNear(file, airport, w.from, {
+      nights: req?.nights || rule('request.default_nights'), now, bagKey: req?.baggage || rule('request.default_bag'),
+    });
+    return p ? { out: p.out, back: p.back, kind: 'exact' } : null;
   }
-  if (w.kind === 'month' || w.kind === 'cheapest') {
+  // fixes-r1 E5: any time looks around a trip-length pair too, never the
+  // year's cheapest out and back weeks apart.
+  {
     const p = cheapestPair(file, airport, {
       nights: req?.nights || rule('request.default_nights'),
       ym: w.kind === 'month' ? w.ym : null,
@@ -41,8 +46,6 @@ export function flightLegs(file, airport, req, now = Date.now()) {
     });
     return p ? { out: p.out, back: p.back, kind: w.kind } : null;
   }
-  const r = cheapestReturnAnyMonth(file, airport, now);
-  return r ? { out: r.out, back: r.back, kind: w.kind } : null;
 }
 
 /**

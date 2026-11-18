@@ -21,6 +21,7 @@
  * Pure: no fetching, no React.
  */
 import { haversineKm } from '../runtime_pricing.js';
+import { cityLabel } from '../placeName.js';
 
 /** Each country's capital, [lat, lon], by ISO2 (FromPicker.jsx's table). */
 export const CAPITALS = Object.freeze({
@@ -90,19 +91,45 @@ const median = (xs) => {
 };
 
 /**
- * Where ground ways start for a country: its airport town nearest the
- * capital (no capital listed: nearest the median of its towns). Returns
- * { name, lat, lon, iso2, country } (the town, named as itself) or null.
+ * Where ground ways start for a country (fixes-r1 E6): the town in Carta's
+ * catalogue nearest the capital, at the town's own centre (city_lat/lon),
+ * not an airport's point. A country with no catalogue town falls back to
+ * its airport town nearest the capital (no capital listed: nearest the
+ * median of its towns). Returns { id?, name, lat, lon, iso2, country } or
+ * null.
  */
 export function countryStartTown(data, iso2) {
   const code = String(iso2 || '').toUpperCase();
   const towns = airportTowns(data, code);
-  if (!towns.length) return null;
+  const places = [];
+  for (const [id, d] of Object.entries(data?.destinations || {})) {
+    if (d?.iso2 !== code) continue;
+    const lat = d.city_lat ?? d.lat;
+    const lon = d.city_lon ?? d.lon;
+    if (Number.isFinite(lat) && Number.isFinite(lon)) places.push({ id, name: cityLabel(d.city || d.name || ''), lat, lon, country: d.country || '' });
+  }
+  const pool = places.length ? places : towns;
+  if (!pool.length) return null;
   const cap = CAPITALS[code];
-  const at = cap ? { lat: cap[0], lon: cap[1] } : { lat: median(towns.map((x) => x.lat)), lon: median(towns.map((x) => x.lon)) };
+  const at = cap ? { lat: cap[0], lon: cap[1] } : { lat: median(pool.map((x) => x.lat)), lon: median(pool.map((x) => x.lon)) };
   const off = (x) => (x.lat - at.lat) ** 2 + ((x.lon - at.lon) * Math.cos((at.lat * Math.PI) / 180)) ** 2;
-  const town = [...towns].sort((a, b) => off(a) - off(b) || a.name.localeCompare(b.name))[0];
-  return { name: town.name, lat: town.lat, lon: town.lon, iso2: code, country: town.country };
+  const town = [...pool].sort((a, b) => off(a) - off(b) || a.name.localeCompare(b.name))[0];
+  return { ...(town.id ? { id: town.id } : {}), name: town.name, lat: town.lat, lon: town.lon, iso2: code, country: town.country };
+}
+
+/**
+ * The country the traveller starts in (fixes-r1 E6), for "your country on
+ * top" in the Start list: the country start, else the picked town's, else
+ * the home airport's country. Null when none is known (the caller may then
+ * use the browser's region).
+ */
+export function startCountryOf(m, data) {
+  if (m?.originKind === 'country' && m.originCountry) return m.originCountry;
+  if (m?.fromPlace?.iso2) return m.fromPlace.iso2;
+  const iso = isoByName(data);
+  if (m?.fromPlace?.country && iso.get(m.fromPlace.country)) return iso.get(m.fromPlace.country);
+  const o = data?.meta?.origins?.[m?.origin];
+  return (o && iso.get(o.country)) || null;
 }
 
 /** The most airports a country start loads (the URL's own cap, urlState oa). */

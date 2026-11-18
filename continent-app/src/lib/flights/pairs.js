@@ -26,6 +26,7 @@ import { rule } from '../price/config.js';
 
 export const PAIR_SLACK = rule('flights.pair_slack_days');
 export const MIN_FARES = rule('flights.typical_min_fares');
+const SPREAD = rule('flights.nearest_day_spread');
 
 const DAY_MS = 86400000;
 const HOUR_MS = 3600000;
@@ -79,6 +80,55 @@ export function cheapestPair(file, airport, { nights = 7, ym = null, slack = PAI
     const { off: _off, ...pair } = best;
     return pair;
   });
+}
+
+/**
+ * Dates mode (fixes-r1 E4): the cheapest checked pair whose way out is the
+ * nearest swept day to `date` (at most flights.nearest_day_spread away) and
+ * whose way home keeps the trip `nights` long, plus or minus `slack`. Null
+ * when no such pair exists: the figure then falls back to the typical fare.
+ */
+export function pairNear(file, airport, date, { nights = 7, slack = PAIR_SLACK, spread = SPREAD, now = Date.now(), bagKey } = {}) {
+  if (!file || !airport || !date || !(nights >= 1)) return null;
+  const outs = new Map(legsOf(file, 'out', airport, now).map((l) => [l.date, l]));
+  const backs = new Map(legsOf(file, 'back', airport, now).map((l) => [l.date, l]));
+  const seat = (leg) => legCost(leg, { paying: 1, bagKey }).perSeat;
+  for (let k = 0; k <= spread; k += 1) {
+    let best = null;
+    for (const s of k ? [-k, k] : [0]) {
+      const out = outs.get(addDays(date, s));
+      if (!out) continue;
+      for (let j = 0; j <= slack; j += 1) {
+        for (const d of j ? [-j, j] : [0]) {
+          const back = backs.get(addDays(out.date, nights + d));
+          if (!back || back.date <= out.date) continue;
+          const perSeat = seat(out) + seat(back);
+          if (!best || perSeat < best.perSeat) best = { out, back, perSeat, nights: nights + d };
+        }
+      }
+    }
+    if (best) return best;
+  }
+  return null;
+}
+
+/**
+ * The When month cards' figure (fixes-r1 E2): the cheapest CHECKED return
+ * a seat (bag on both legs) of the trip length leaving in `ym`, over every
+ * place's anchor airport and every home airport file. Typical fares are
+ * left out on purpose: they do not change by month, so a month figure
+ * built on them would be the same constant on every card. Null: no figure.
+ */
+export function monthFlightFrom(files, airports, ym, { nights = 7, now = Date.now(), bagKey } = {}) {
+  let best = null;
+  for (const file of files || []) {
+    for (const ap of airports || []) {
+      if (!ap || ap === file?.from) continue;
+      const p = cheapestPair(file, ap, { nights, ym, now, bagKey });
+      if (p && (best == null || p.perSeat < best)) best = p.perSeat;
+    }
+  }
+  return best;
 }
 
 /** The median of a sorted list of legs by price: { price, airline }. The
