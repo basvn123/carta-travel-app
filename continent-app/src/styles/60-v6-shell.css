@@ -559,23 +559,14 @@ html [data-focus-quiet]:focus-visible { outline-color: transparent; }
   }
 }
 
-/* The folded bar (ROADMAP I7, app feel): while a list scrolls down on a
-   phone, useCompactNav() sets .nav-compact. The names fade, the bar shrinks
-   to its 48 px tap row and --bottom-nav-h follows, so the layouts take the
-   16 px back. The bar's own height eases; the layouts behind it change at
-   once, hidden under the bar as it folds. Every rule that hides the bar
-   (keyboard, step flow, full map) comes later or is stronger, so it wins. */
+/* The bar keeps its names while a list scrolls (G12 round 2, owner O2: the
+   ROADMAP I7 fold to icons is gone), so its height and --bottom-nav-h never
+   change under the reader; only the selected item's colour eases. */
 @media (max-width: 768px) {
-  .bottom-nav { transition: height var(--dur-2) var(--ease-out), padding var(--dur-2) var(--ease-out); }
-  .bottom-nav-item { transition: color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out), gap var(--dur-2) var(--ease-out); }
-  .bottom-nav-label { max-height: 2em; transition: opacity var(--dur-1) var(--ease-out), max-height var(--dur-2) var(--ease-out); }
-  html.nav-compact { --bottom-nav-h: calc(var(--tap-main) + env(safe-area-inset-bottom, 0px)); }
-  html.nav-compact .bottom-nav { padding-top: 0; padding-bottom: env(safe-area-inset-bottom, 0px); }
-  html.nav-compact .bottom-nav-item { gap: 0; }
-  html.nav-compact .bottom-nav-label { opacity: 0; max-height: 0; }
+  .bottom-nav-item { transition: color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out); }
 }
 @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
-  .bottom-nav, .bottom-nav-item, .bottom-nav-label { transition: none; }
+  .bottom-nav-item { transition: none; }
 }
 
 /* The on-screen keyboard (row T390-d, DIRECTION.md part 7): while a text

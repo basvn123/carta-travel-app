@@ -1,6 +1,6 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Tabs, Tile, TileGroup } from '../components/ui/index.js';
+import { Segmented, Tabs, Tile, TileGroup } from '../components/ui/index.js';
 import { HouseIcon } from '../components/HouseIcons.jsx';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 
@@ -60,13 +60,13 @@ function focusTabSoon(key) {
   requestAnimationFrame(step);
 }
 
-export function ExploreCategories({ current, onPick, columns = 3, panelId, className = '', variant = 'grid' }) {
+export function ExploreCategories({ current, onPick, columns = 3, panelId, className = '', variant = 'grid', view, onView, onViewIntent }) {
   const row = variant === 'row';
   const { t } = useI18n();
   const isDesktop = useIsDesktop();
   const movedAt = React.useRef(0);
   if (row) {
-    return (
+    const tabs = (
       // Listens to the kit Tabs' own keys; the tabs are the controls.
       <div className="xcats-keys" style={{ display: 'contents' }}
         onKeyDownCapture={(ev) => { if (MOVE_KEYS.has(ev.key)) movedAt.current = Date.now(); }}>
@@ -86,6 +86,26 @@ export function ExploreCategories({ current, onPick, columns = 3, panelId, class
             </span>
           ),
         }))} />
+      </div>
+    );
+    if (!isDesktop) return tabs;
+    // G12 round 2 (decision.md 6): on a desktop the row is one line with
+    // the hairline under it, and the List | Map switch closes it at the
+    // right when the tab passes `view` ('list' | 'map') and `onView(view)`;
+    // `onViewIntent` runs on hover or focus (the map's prefetch).
+    return (
+      <div className="xcats-line">
+        {tabs}
+        {onView && (
+          <span className="xcats-view-wrap" onPointerEnter={onViewIntent} onFocus={onViewIntent}>
+            <Segmented label={t('explore.viewAria')} size="sm" className="xcats-view"
+              value={view === 'map' ? 'map' : 'list'} onChange={onView}
+              options={[
+                { value: 'list', label: t('explore.viewList'), icon: <HouseIcon.list size={16} /> },
+                { value: 'map', label: t('explore.viewMap'), icon: <HouseIcon.map size={16} /> },
+              ]} />
+          </span>
+        )}
       </div>
     );
   }

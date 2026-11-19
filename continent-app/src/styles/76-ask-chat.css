@@ -25,16 +25,31 @@
 }
 :root { --chat-w: 420px; }
 @keyframes ac-in { from { opacity: 0; transform: translateX(var(--space-5)); } }
+@keyframes ac-out { to { opacity: 0; transform: translateX(var(--space-5)); } }
+.ac.is-leaving { animation: ac-out var(--dur-2) var(--ease-in) both; }
+/* G12 round 2: a phone opens Ask as a sheet over Explore (the page dimmed
+   above it, a press there closes), rising on the house sheet curve. */
 .ac.is-phone {
-  top: 0;
-  width: 100vw;
-  height: 100dvh;
+  top: calc(env(safe-area-inset-top, 0px) + var(--space-7));
+  left: 0;
+  right: 0;
+  width: auto;
   z-index: var(--z-modal);
   border-left: 0;
-  padding-top: env(safe-area-inset-top);
-  animation-name: ac-up;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  box-shadow: var(--elev-3);
+  overflow: hidden;
+  animation: hs-sheet-in var(--dur-sheet) var(--ease-sheet) both;
 }
-@keyframes ac-up { from { opacity: 0; transform: translateY(var(--space-6)); } }
+.ac.is-phone.is-leaving { animation: hs-sheet-out var(--dur-2) var(--ease-in) both; }
+.ac-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  background: var(--scrim);
+  animation: hs-fade-in var(--dur-2) var(--ease-out) both;
+}
+.ac-scrim.is-leaving { animation: hs-fade-out var(--dur-2) var(--ease-in) both; }
 
 /* From 1024 px the list makes room, so the answer sits beside the places. */
 @media (min-width: 1024px) {
@@ -493,6 +508,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ac,
+  .ac-scrim,
   .ac-start,
   .ac-q p,
   .ac-step,

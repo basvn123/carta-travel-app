@@ -11,7 +11,7 @@ import { commonsPageUrl } from '../../lib/imageCredit.js';
 import { spreadLeads } from './railLeads.js';
 
 export function useExploreRails({
-  allRows, favorites, guided, lang, patchXf, railMonth, railsIdle, rows, setGemOnly,
+  allRows, applyShortcut, favorites, guided, lang, patchXf, railMonth, railsIdle, rows,
   setShowFavOnly, setSortKey, t, xf,
 }) {
   const rails = React.useMemo(() => {
@@ -44,9 +44,13 @@ export function useExploreRails({
       quiet: month >= 6 && month <= 9 ? interleaveByCountry(rows.filter((p) => quietOk(p, railWhen))) : [],
       saved: favorites && favorites.size ? rows.filter((p) => favorites.has(p.id)) : [],
     };
-    const theme = (key, vibe = key) => {
+    // G12 round 2: a rail that has a Browse shortcut opens what the
+    // shortcut sets, in place, so its See all and the shortcut leave the same
+    // chip with the same words (filters/filterModel.js labelForApplied).
+    const theme = (key, vibe = key, shortcut = null) => {
       const title = t(`rail.${key}`);
-      return { key, title, short: title, rows: vibeRail(vibe), seeAll: () => patchXf({ vibe }) };
+      return { key, title, short: title, rows: vibeRail(vibe),
+        seeAll: shortcut ? () => applyShortcut(shortcut) : () => patchXf({ vibe }) };
     };
     // V3 (T383): the page leads with cost (house rule "Rails and cuts",
     // explore N8). Well-rated places (Good and up) whose best months
@@ -91,18 +95,18 @@ export function useExploreRails({
         rows: [...costLead, ...costRest],
         seeAll: () => { patchXf({ budget: ceiling, month }); setSortKey('cost'); } },
       { key: 'top', title: t('rail.topRated'), short: t('rail.topRated'), rows: q.top,
-        seeAll: () => patchXf({ verdicts: ['excellent'] }) },
+        seeAll: () => applyShortcut('top') },
       { key: 'hiking', title: t('rail.hiking'), short: t('rail.hiking'), rows: q.hiking,
-        seeAll: () => patchXf({ vibe: 'hiking' }) },
+        seeAll: () => applyShortcut('hiking') },
       { key: 'beach', title: t('rail.beachSeason'), short: t('rail.beachSeason'), rows: q.beach,
         seeAll: () => patchXf({ vibe: 'beach', month }) },
-      theme('oldtown'),
-      theme('island'),
+      theme('oldtown', 'oldtown', 'oldtown'),
+      theme('island', 'island', 'island'),
       { key: 'gems', title: t('rail.gems'), short: t('rail.gems'), rows: q.gems,
-        seeAll: () => setGemOnly(true) },
+        seeAll: () => applyShortcut('gems') },
       theme('mountain'),
       theme('unesco'),
-      theme('lake'),
+      theme('lake', 'lake', 'lake'),
       { key: 'nocar', title: t('rail.nocar'), short: t('rail.nocar'), rows: q.nocar,
         seeAll: () => patchXf({ nocar: true }) },
       theme('food'),
@@ -117,7 +121,7 @@ export function useExploreRails({
         seeAll: () => patchXf({ quiet: true }) },
     ]));
   }, [railsIdle, rows, xf.month, xf.budget, railMonth, lang, guided, favorites, t, patchXf,
-    setGemOnly, setSortKey, setShowFavOnly]);
+    applyShortcut, setSortKey, setShowFavOnly]);
 
   // T595 (owner 2026-10-22, point 1): the rails' doors stand at the top of
   // the overview as quick chips that act at once: every rail past the ones

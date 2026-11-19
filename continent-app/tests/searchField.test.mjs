@@ -13,11 +13,18 @@ const value = (lang, key) => {
   return m ? m[2] : null;
 };
 
-test('the band field names itself and keeps Ask inside it', () => {
+test('the band field names itself; Ask Carta stands outside it (round 2)', () => {
   const band = read('src/browse/band/ExploreBand.jsx');
   // A phone shows the short placeholder so it is never cut at 360 (fixes r1 T3); the name stays full.
   assert.match(band, /placeholder=\{t\(isDesktop \? 'band\.searchPh' : 'band\.searchPhShort'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
-  assert.match(band, /className="band-ask" aria-label=\{t\('dock\.ask'\)\}/);
+  // The search button closes the field at its right end; no magnifier on the left.
+  assert.match(band, /<button type="submit" className="band-go"/);
+  assert.match(band, /type="search"[\s\S]*enterKeyHint="search"/);
+  assert.doesNotMatch(band, /band-mag/);
+  // Ask leaves the form: after </form>, a popup button lit while open.
+  const afterForm = band.slice(band.indexOf('</form>'));
+  assert.match(afterForm, /className=\{`band-ask\$\{ask\.open \? ' is-on' : ''\}`\} aria-label=\{t\('dock\.ask'\)\}\s+aria-haspopup="dialog" aria-expanded=\{ask\.open\}/);
+  assert.doesNotMatch(band.slice(0, band.indexOf('</form>')), /className=\{?["`]band-ask/);
   assert.equal(fs.existsSync(new URL('../src/components/SearchDock.jsx', import.meta.url)), false);
 });
 

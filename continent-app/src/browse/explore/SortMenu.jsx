@@ -12,7 +12,9 @@ import { createPortal } from 'react-dom';
  */
 // G12: `compact` draws the icon alone (the phone row once a chip exists);
 // at 320 px CSS hides the word too, before any chip shrinks.
-export function SortMenu({ t, options, value, onChange, compact = false }) {
+// G12 round 2: `showValue` says the order on the pill ("Sort: Best match"),
+// the desktop applied row's right end.
+export function SortMenu({ t, options, value, onChange, compact = false, showValue = false, className = '' }) {
   const [pos, setPos] = React.useState(null);
   const btnRef = React.useRef(null);
   const menuRef = React.useRef(null);
@@ -70,13 +72,15 @@ export function SortMenu({ t, options, value, onChange, compact = false }) {
   return (
     <>
       <Button ref={btnRef} variant="secondary" size="sm"
-        className={`xtool xtool-sort${open ? ' is-open' : ''}${compact ? ' is-compact' : ''}`}
+        className={`xtool xtool-sort${open ? ' is-open' : ''}${compact ? ' is-compact' : ''}${className ? ` ${className}` : ''}`}
         iconStart={<HouseIcon.sort size={18} />} aria-haspopup="menu" aria-expanded={open}
         aria-controls={open ? id : undefined}
         aria-label={t('explore.sortAria', { value: t(cur.labelKey) })}
         title={compact ? t('explore.sortAria', { value: t(cur.labelKey) }) : undefined}
         onClick={toggle}>
-        <span className="xtool-word">{t('explore.toolSort')}</span>
+        <span className="xtool-word">
+          {showValue ? t('filters.sortValue', { value: t(cur.labelKey) }) : t('explore.toolSort')}
+        </span>
       </Button>
       {open && createPortal(
         <div className="xsort-menu" role="menu" id={id} ref={menuRef} aria-label={t('places.sortLabel')}

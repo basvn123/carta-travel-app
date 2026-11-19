@@ -4,9 +4,11 @@ import { useIsDesktop } from '../../hooks/useIsDesktop.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { IconButton } from '../../components/ui/index.js';
 import { Pressable } from '../../components/ui/Pressable.jsx';
+import { durationMs } from '../../lib/motion.js';
 import { ExploreCategories } from '../ExploreCategories.jsx';
-import { openAskChat } from '../ask/askChatStore.js';
-import { useSearchDock, dockBack, dockShare, isQuestion } from '../searchDockStore.js';
+import { openAskChat, closeAskChat, useAskChat } from '../ask/askChatStore.js';
+import { useSearchDock, dockBack, dockShare } from '../searchDockStore.js';
+import { useFilters } from '../filters/filtersStore.js';
 import { toggleSettings, useSettingsSheet } from '../settings/settingsSheetStore.js';
 // The search panel loads on the field's first focus.
 const SearchPanel = React.lazy(() => import('../search/SearchPanel.jsx').then((m) => ({ default: m.SearchPanel })));
@@ -24,18 +26,43 @@ function oneCountry(places) {
   } catch { return ''; }
 }
 
+/** Mounted while `open` and for one exit after it, so the panel leaves the
+ *  way it came (every open and close animates; reduced motion: at once). */
+function usePresence(open, token = '--dur-1') {
+  const [shown, setShown] = React.useState(open);
+  if (open && !shown) setShown(true);
+  const leaving = shown && !open;
+  React.useEffect(() => {
+    if (!leaving) return undefined;
+    const id = setTimeout(() => setShown(false), durationMs(token));
+    return () => clearTimeout(id);
+  }, [leaving, token]);
+  return { shown, leaving };
+}
+
 /**
- * The band at the top of Explore (G12, decision.md APPROVED block). It lives
- * in the top bar, so it never scrolls away with the list.
+ * The band at the top of Explore (G12; round 2, decision.md APPROVED
+ * 2026-11-19). It lives in the top bar, so it never scrolls away.
  *
- *   desktop   the search field with Ask, the Settings button (Places only),
- *             then the settings in one line under it (Places only; the line's
- *             room stays on the other tabs, so the band never changes height)
- *   phone     the search field, the settings as one sideways strip of
- *             chips (Places only), then the six tabs (owner 2026-11-18:
- *             the settings sit with the search they shape, above the tabs).
- *             Scrolling the list down folds the search and the tabs away
- *             and pins the strip; a small scroll up brings them back.
+ *   field     the words, on a desktop Filters with its count, then the umber
+ *             search button at the right end (Enter does the same); no
+ *             magnifier on the left. In a searched list a back arrow sits
+ *             at its left end and the query stays in it.
+ *   Ask       Ask Carta beside the field on every width ("Ask" on a phone):
+ *             a side panel on a desktop, a sheet on a phone; lit while open,
+ *             never opened on its own.
+ *   desktop   row 1 field, Ask and Settings (Places), all 48 tall; row 2
+ *             the settings line on the field's text edge (its room stays on
+ *             the layer tabs, so the band never changes height). The tabs
+ *             and the List | Map switch stand under it, in the tab's own
+ *             scroller (ExploreCategories).
+ *   phone     row 1 field and Ask (44); row 2 the settings strip; row 3 the
+ *             six tabs. Scrolling the list down folds rows 1 and 3 away and
+ *             pins the strip on its solid ground; a small scroll up brings
+ *             them back.
+ *
+ * The rows stand one gap apart (owner O1), measured ink to ink: the field's
+ * edge to the line's words, the line's words to the tabs' words.
  *
  * The five layers price nothing from Start, When or the way (their rows
  * read only the country), so their band carries no chips and no Settings.
@@ -49,12 +76,17 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   const { t } = useI18n();
   const isDesktop = useIsDesktop();
   const dock = useSearchDock();
+  const ask = useAskChat();
   const sheet = useSettingsSheet();
   const items = useSummaryItems();
   const kind = places ? 'places' : (dock.kind && dock.kind !== 'places' ? dock.kind : layerKind());
-  // A phone shows a searched list's Back and Share inside the field (the
-  // dock's old applied state); a desktop has both in the list's own head.
-  const results = !isDesktop && places ? dock.results : null;
+  // A searched or filtered Places list: Back and the query in the field
+  // (and Share on a phone), as the tab on screen says through the store.
+  const results = places ? dock.results : null;
+  // Filters live with Places (ExploreTab mounts the sheet; filtersStore is
+  // the line to it), so the control shows on Places only.
+  const filters = useFilters();
+  const filterCount = places ? filters.count || 0 : 0;
 
   const [q, setQ] = React.useState('');
   const [open, setOpen] = React.useState(false);
@@ -62,6 +94,14 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   // The field shows what the list was searched for until the traveller types.
   const [edited, setEdited] = React.useState(false);
   const value = edited || open ? q : shownQuery;
+  const panelState = usePresence(open);
+  // A phone's panel covers the screen from under row 1 (80-band.css).
+  const [panelTop, setPanelTop] = React.useState(0);
+  React.useLayoutEffect(() => {
+    if (!open || isDesktop) return;
+    const row = bandRef.current?.querySelector('.band-row');
+    if (row) setPanelTop(Math.round(row.getBoundingClientRect().bottom));
+  }, [open, isDesktop]);
 
   // A phone folds two parts (the search above the strip, the tabs below
   // it); the list never tucks the band before it has scrolled past both.
@@ -95,11 +135,12 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     setEdited(false);
     setQ('');
   }, []);
+  // Enter and the search button search. A question is offered to Ask Carta
+  // in the panel; it is never sent there on its own (decision.md 1).
   const submit = (e) => {
     e?.preventDefault?.();
     const text = (open || edited ? q : shownQuery).trim();
-    if (text && isQuestion(text)) openAskChat(inputRef.current, { text });
-    else onSearch({ kind, q: text });
+    onSearch({ kind, q: text });
     inputRef.current?.blur();
     close();
   };
@@ -121,6 +162,19 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     return () => document.removeEventListener('pointerdown', onDown, true);
   }, [open]);
 
+  // The search panel closes before Ask or Filters opens, so one thing is
+  // open at a time and focus returns to the control that opened it.
+  const openAsk = (opener, seed = null) => {
+    close();
+    openAskChat(opener, seed);
+  };
+  const toggleAsk = (e) => (ask.open ? closeAskChat() : openAsk(e.currentTarget));
+  const openFilters = (opener) => {
+    close();
+    if (filters.isOpen) filters.close();
+    else filters.open({ opener });
+  };
+
   const tabs = !isDesktop ? (
     <div className="band-fold band-fold--tabs" inert={tucked || undefined}>
       <div className="band-fold-in">
@@ -134,10 +188,13 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   const showChips = places && items.length > 0;
   // The panel's listbox is `${panelId}-list` (SearchPanel); the field
   // points at it, and the wrapper carries no id of its own.
-  const panel = open ? (
+  const panel = panelState.shown ? (
     <React.Suspense fallback={null}>
-      <div className="band-search-panel">
+      <div className={`band-search-panel${panelState.leaving ? ' is-leaving' : ''}`} inert={panelState.leaving || undefined}
+        style={isDesktop ? undefined : { '--sp-top': `${panelTop}px` }}>
         <SearchPanel query={q} kind={kind} id={panelId} inputRef={inputRef}
+          filters={places ? filters : null} onOpenFilters={openFilters}
+          onAsk={(opener, text) => openAsk(opener, text ? { text } : null)}
           onSubmit={(text) => { onSearch({ kind, q: text }); inputRef.current?.blur(); close(); }}
           onClose={() => { inputRef.current?.blur(); close(); }} />
       </div>
@@ -159,43 +216,57 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
         <div className="band-fold-in">
           {!isDesktop && head}
           <div className="band-row">
-            <form className={`band-search${results ? ' is-results' : ''}`} role="search"
-              aria-label={t('dock.title')} onSubmit={submit}>
-              {results ? (
-                <IconButton className="band-in band-back" label={t('explore.backOverview')} onClick={dockBack}>
-                  <HouseIcon.back size={20} />
-                </IconButton>
-              ) : (
-                <span className="band-mag" aria-hidden="true"><HouseIcon.search size={20} /></span>
-              )}
-              <input ref={inputRef} type="search" className="band-input"
-                value={value} placeholder={t(isDesktop ? 'band.searchPh' : 'band.searchPhShort')} aria-label={t('band.searchPh')}
-                autoComplete="off" enterKeyHint="search" spellCheck={false}
-                role="combobox"
-                aria-expanded={open}
-                aria-controls={open ? `${panelId}-list` : undefined}
-                onFocus={() => { if (!edited) setQ(shownQuery); setEdited(true); setOpen(true); }}
-                onChange={(e) => { setQ(e.target.value); setEdited(true); setOpen(true); }}
-                onKeyDown={onKeyDown} />
-              {value && open && (
-                <IconButton className="band-in band-clear" label={t('band.clear')}
-                  onClick={() => { setQ(''); inputRef.current?.focus(); }}>
-                  <HouseIcon.close size={18} />
-                </IconButton>
-              )}
-              {results?.canShare && !open && (
-                <IconButton className="band-in band-share" label={t('explore.toolShare')} onClick={dockShare}>
-                  <HouseIcon.share size={20} />
-                </IconButton>
-              )}
-              {/* Ask stays inside the field: the one door to Ask Carta. The
-                  boxed AI mark is a glyph so the name stays "Ask Carta". */}
-              <Pressable className="band-ask" aria-label={t('dock.ask')}
-                onClick={(e) => openAskChat(e.currentTarget)}>
-                <HouseIcon.ask size={16} />
-                <span className="band-ask-word" aria-hidden="true">{t(isDesktop ? 'dock.ask' : 'dock.askShort')}</span>
-              </Pressable>
-            </form>
+            <div className="band-field">
+              <form className={`band-search${results ? ' is-results' : ''}`} role="search"
+                aria-label={t('dock.title')} onSubmit={submit}>
+                {results && (
+                  <IconButton className="band-in band-back" label={t('explore.backOverview')} onClick={dockBack}>
+                    <HouseIcon.back size={20} />
+                  </IconButton>
+                )}
+                <input ref={inputRef} type="search" className="band-input"
+                  value={value} placeholder={t(isDesktop ? 'band.searchPh' : 'band.searchPhShort')} aria-label={t('band.searchPh')}
+                  autoComplete="off" enterKeyHint="search" spellCheck={false}
+                  role="combobox"
+                  aria-expanded={open}
+                  aria-controls={open ? `${panelId}-list` : undefined}
+                  onFocus={() => { if (!edited) setQ(shownQuery); setEdited(true); setOpen(true); }}
+                  onChange={(e) => { setQ(e.target.value); setEdited(true); setOpen(true); }}
+                  onKeyDown={onKeyDown} />
+                {value && open && (
+                  <IconButton className="band-in band-clear" label={t('band.clear')}
+                    onClick={() => { setQ(''); inputRef.current?.focus(); }}>
+                    <HouseIcon.close size={18} />
+                  </IconButton>
+                )}
+                {results?.canShare && !open && !isDesktop && (
+                  <IconButton className="band-in band-share" label={t('explore.toolShare')} onClick={dockShare}>
+                    <HouseIcon.share size={20} />
+                  </IconButton>
+                )}
+                {isDesktop && places && (
+                  <Pressable className={`band-filters${filters.isOpen ? ' is-on' : ''}`}
+                    aria-label={filterCount ? t('band.filtersOn', { n: filterCount }) : t('band.filters')}
+                    aria-expanded={filters.isOpen}
+                    onClick={(e) => openFilters(e.currentTarget)}>
+                    <HouseIcon.filter size={20} />
+                    <span className="band-filters-word" aria-hidden="true">{t('band.filters')}</span>
+                    {filterCount > 0 && <span className="band-count" aria-hidden="true">{filterCount}</span>}
+                  </Pressable>
+                )}
+                <button type="submit" className="band-go" aria-label={t('dock.title')}>
+                  <HouseIcon.search size={20} />
+                </button>
+              </form>
+              {panel}
+            </div>
+            {/* Ask Carta stands beside the field: it opens a panel, so it
+                says so (aria-haspopup) and stays lit while that is open. */}
+            <Pressable className={`band-ask${ask.open ? ' is-on' : ''}`} aria-label={t('dock.ask')}
+              aria-haspopup="dialog" aria-expanded={ask.open} onClick={toggleAsk}>
+              <HouseIcon.ask size={20} />
+              <span className="band-ask-word" aria-hidden="true">{t(isDesktop ? 'dock.ask' : 'dock.askShort')}</span>
+            </Pressable>
             {places && isDesktop && (
               <Pressable className={`band-settings${sheet.isOpen ? ' is-on' : ''}`}
                 aria-expanded={sheet.isOpen}
@@ -207,14 +278,13 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
           </div>
         </div>
       </div>
-      {/* The line under the search: hidden while the search is open on a
-          phone (its suggestions take the room, the keyboard is up). A
-          desktop keeps the line's room on every tab. */}
+      {/* Row 2, the settings. A desktop keeps the line's room on every tab;
+          a phone keeps the strip in place under an open search (the panel
+          covers it), so nothing below moves. */}
       {isDesktop ? (
         <div className="band-line">{showChips && <SummaryChips items={items} />}</div>
-      ) : (showChips && !open && <SummaryChips items={items} className="is-swipe" />)}
+      ) : (showChips && <SummaryChips items={items} className="is-swipe" />)}
       {tabs}
-      {panel}
     </div>
     </>
   );

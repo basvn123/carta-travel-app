@@ -29,14 +29,16 @@ test('Strong match and the pane-only filters are gone; Clear all and the lens cl
 });
 
 test('the badge equals the chips, Saved and countries included', () => {
-  assert.equal(badgeCount(many), 8);
+  // G12 round 2: the search text is in the field, so it is no chip and
+  // does not count.
+  assert.equal(badgeCount(many), 7);
   assert.equal(badgeCount([]), 0);
-  // The phone row shows Saved as its pressed toggle plus every other chip.
+  // The phone row shows every chip but the search, Saved included (its
+  // toggle is in the Filters sheet), so the count equals the row.
   const phone = phoneChips(many);
-  assert.equal(phone.length + 1, badgeCount(many));
-  assert.ok(!phone.some((c) => c.key === 'fav'));
-  assert.ok(phone.some((c) => c.key === 'budget'));
-  // G12 (Explore top): the Filters button and its count left the toolbar.
+  assert.equal(phone.length, badgeCount(many));
+  assert.ok(phone.some((c) => c.key === 'fav'));
+  assert.ok(!phone.some((c) => c.key === 'q'));
   const bar = read('src/browse/explore/ExploreToolbar.jsx');
   assert.doesNotMatch(bar, /xfilters-n|<TripDock/);
 });
@@ -46,32 +48,38 @@ test('countries do not leave the overview; other chips do', () => {
   assert.equal(lensCount([chip('c:IT'), chip('budget')]), 1);
 });
 
-test('a desktop chip row leaves out only Saved (the toolbar toggle); a See all lens shows as a chip', () => {
+test('a desktop chip row leaves out Saved (the row toggle) and the search (the field); a See all lens shows as a chip', () => {
   assert.ok(DESK_SHOWN.test('fav'));
-  for (const k of ['budget', 'month', 'rating', 'nocar']) assert.ok(!DESK_SHOWN.test(k), k);
-  assert.deepEqual(deskChips(many).map((c) => c.key), ['budget', 'month', 'c:IT', 'c:FR', 'c:ES', 'nocar', 'q']);
+  assert.ok(DESK_SHOWN.test('q'));
+  for (const k of ['budget', 'month', 'rating', 'nocar', 'p:sea', 't:20']) assert.ok(!DESK_SHOWN.test(k), k);
+  assert.deepEqual(deskChips(many).map((c) => c.key), ['budget', 'month', 'c:IT', 'c:FR', 'c:ES', 'nocar']);
 });
 
-test('the phone row is Sort, then the chips with Clear all first', () => {
-  const bar = read('src/browse/explore/ExploreToolbar.jsx');
-  const phone = bar.slice(bar.indexOf('function PhoneTools'), bar.indexOf('export function ExploreToolbar'));
-  const order = ['xtools-sort', 'xtools-chips', 'xtools-clear', 'xtools-saved', 'xtools-chip"'];
+test('the applied row: Filters leads on a phone, then the chips, then Clear all; tools at the desktop end', () => {
+  // G12 round 2 (decision.md section 2): one row, one chip style.
+  const src = read('src/browse/filters/AppliedRow.jsx');
+  const row = src.slice(src.indexOf('<div ref={rowRef}'));
+  const order = ['xap-filters', 'xap-chip"', 'xap-clear', 'xap-tools'];
   let at = -1;
   for (const k of order) {
-    const i = phone.indexOf(k);
+    const i = row.indexOf(k);
     assert.ok(i > at, `${k} in order`);
     at = i;
   }
-  // Share and Countries left the phone row (search field, Filters sheet).
-  assert.doesNotMatch(phone, /shareView|CountriesButton/);
-  assert.match(phone, /title=\{c\.label\}/);
+  assert.match(row, /title=\{c\.label\}/);
+  // The remove is its own button, named for what it removes.
+  assert.match(row, /<IconButton className="xap-x" label=\{t\('filter\.removeChip', \{ name: c\.label \}\)\}/);
+  assert.match(row, /role="status"/);
+  const bar = read('src/browse/explore/ExploreToolbar.jsx');
+  assert.doesNotMatch(bar, /PhoneTools|xtools|viewSwitch|xov-back/);
+  assert.match(bar, /\{sortMenu\}\s*<SavedToggle/);
 });
 
-test('the chips are capped with an ellipsis and the row never wraps', () => {
-  const css = read('src/styles/84-explore-overview.css');
-  assert.match(css, /\.xtools\.xtools--phone \{[^}]*flex-wrap: nowrap;[^}]*min-width: 0;/);
-  assert.match(css, /max-width: min\(60vw, 220px\)/);
-  assert.match(css, /\.xchip-text \{[^}]*text-overflow: ellipsis;/);
-  assert.match(css, /mask-image: linear-gradient/);
-  assert.match(css, /\.xtools--phone \.xtools-clear \{[^}]*position: sticky;/);
+test('the chips are capped with an ellipsis; the phone row never wraps', () => {
+  const css = read('src/styles/83-filters.css');
+  assert.match(css, /\.xap-text \{[^}]*text-overflow: ellipsis;/);
+  assert.match(css, /max-width: min\(70vw, 280px\)/);
+  assert.match(css, /\.xap\.is-phone \.xap-chips \{[^}]*overflow-x: auto;[^}]*mask-image: linear-gradient/);
+  // The remove's 44 px box spills over the 32 px chip.
+  assert.match(css, /margin: calc\(\(32px - var\(--tap\)\) \/ 2\)/);
 });

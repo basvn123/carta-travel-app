@@ -114,8 +114,9 @@ test('save wears the bookmark with one fixed name; the ticket is My trips', () =
   assert.match(cards, /if \(!fav\) bumpTripsOnce\(\)/);
   assert.match(read('src/components/AppHeader.jsx'), /key: 'trips', labelKey: 'nav\.myTrips', Icon: HouseIcon\.ticket/);
   for (const f of ['src/components/AppHeader.jsx', 'src/components/BottomNav.jsx']) assert.match(read(f), /data-nav=\{key\}/, f);
-  const bar = read('src/browse/explore/ExploreToolbar.jsx');
-  assert.match(bar, /iconStart=\{<HouseIcon\.bookmark size=\{18\} \/>\} aria-pressed=\{showFavOnly\}/);
+  // G12 round 2: Saved is the applied row's toggle (filters/AppliedRow.jsx).
+  const bar = read('src/browse/filters/AppliedRow.jsx');
+  assert.match(bar, /iconStart=\{<HouseIcon\.bookmark size=\{16\} \/>\} aria-pressed=\{on\}/);
   const css = read('src/styles/62-v6-explore.css');
   assert.match(css, /\.xsave\[aria-pressed="true"\] \.bm-fill \{ fill: var\(--select-ink\); \}/);
   // The visible word from 1100 px rides inside the same button, so the

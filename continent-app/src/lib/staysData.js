@@ -38,8 +38,8 @@ let bakedVersion = null;
 
 // A publish waits until the files stop arriving for PUBLISH_IDLE_MS, but never
 // more than PUBLISH_MAX_MS after the first unpublished one, so a slow network
-// still shows the measured months early. Measured locally the 43 files land
-// within about 2 s at 4x CPU: one to three publishes instead of 43.
+// still shows the measured months early. Measured 2026-11-19 (local server,
+// 4x CPU, scripts/perf_explore.mjs): one publish instead of 43.
 const PUBLISH_IDLE_MS = 300;
 const PUBLISH_MAX_MS = 2000;
 let publishTimer = null;

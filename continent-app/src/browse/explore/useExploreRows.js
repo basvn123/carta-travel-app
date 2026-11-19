@@ -9,6 +9,7 @@ import { overviewRegion, overviewScore, reasonText, overviewReason } from '../..
 import { fmtMonthRanges } from '../ClimateStrip.jsx';
 import { buildNearbyIndex, roleOf } from '../../lib/taxonomy.js';
 import { bandAtLeast, minVerdict } from '../../lib/rating.js';
+import { picksOk, rankVibe, tempOk } from '../filters/filterModel.js';
 
 export function useExploreRows({
   availableCountries, bbox, catAllRows, catRows, countryFilter, countryNot, data, dxf, guided,
@@ -125,15 +126,25 @@ export function useExploreRows({
     // guided data has landed; until then the list waits empty rather than
     // showing places that may not match (T442).
     if ((dxf.vibe || dxf.area || dxf.near || dxf.nb.length) && !matchGuided(p, dxf, gctx)) return false;
+    // G12 round 2 (decision.md section 2): the day high reads the month of
+    // Settings' When; without one the band waits (the sheet asks for a
+    // month), so it never filters on a month the traveller did not set.
+    if (dxf.temps.length && travelMonth && !tempOk(p, travelMonth, dxf.temps)) return false;
+    // The sheet's picks (water, walking, kind of place) read the guided
+    // data too, so like the facets above they wait for it.
+    if (dxf.picks.length && !picksOk(p, dxf.picks, guided)) return false;
     return true;
-  }), [rows, dxf, gctx, quietWhen]);
+  }), [rows, dxf, gctx, quietWhen, travelMonth, guided]);
   // A guided question ranks its answer: nearest first around a place, the
   // strongest vibe first otherwise, while the reader keeps the default sort.
   const guidedRows = React.useMemo(() => {
     if (sortKey && sortKey !== 'beauty') return taxRows;
     // (T444: under a guided question "beauty" reads "Best match"; picking
     // "Rating" sets "rating", which the catalogue sorts by rating.)
-    const cmp = guidedComparator(dxf, gctx);
+    // A pick with a vibe behind it (Hiking bases, Islands) orders its list
+    // the way the same typed word does, strongest first.
+    const rank = !dxf.vibe && !dxf.near ? rankVibe(dxf.picks) : null;
+    const cmp = guidedComparator(rank ? { ...dxf, vibe: rank } : dxf, gctx);
     return cmp ? [...taxRows].sort(cmp) : taxRows;
   }, [taxRows, dxf, gctx, sortKey]);
 

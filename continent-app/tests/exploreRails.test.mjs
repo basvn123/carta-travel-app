@@ -36,10 +36,16 @@ test('spreadLeads keeps every place and never touches saved or short rails', () 
 test('every rail with four places is a strip; the theme rails use the vibe filter', () => {
   const src = read('src/browse/explore/useExploreRails.js');
   assert.match(src, /const railLead = Infinity;/);
-  for (const k of ['oldtown', 'island', 'mountain', 'unesco', 'lake', 'food', 'views', 'castles', 'village', 'city', 'family', 'romantic', 'art']) {
+  for (const k of ['mountain', 'unesco', 'food', 'views', 'castles', 'village', 'city', 'family', 'romantic', 'art']) {
     assert.match(src, new RegExp(`theme\\('${k}'\\)`), k);
   }
-  assert.match(src, /seeAll: \(\) => patchXf\(\{ vibe \}\)/);
+  // G12 round 2: a theme with a Browse shortcut opens what the shortcut
+  // sets, so its See all and the shortcut leave the same chip.
+  for (const k of ['oldtown', 'island', 'lake']) {
+    assert.match(src, new RegExp(`theme\\('${k}', '${k}', '${k}'\\)`), k);
+  }
+  assert.match(src, /seeAll: shortcut \? \(\) => applyShortcut\(shortcut\) : \(\) => patchXf\(\{ vibe \}\)/);
+  for (const k of ['top', 'hiking', 'gems']) assert.match(src, new RegExp(`seeAll: \\(\\) => applyShortcut\\('${k}'\\)`), k);
   // Before the guided data loads, nothing after Hiking bases shows, so the
   // vibe rails never push the rails below them down under the reader.
   assert.match(src, /guided \? list : list\.slice\(0, list\.findIndex\(\(r\) => r\.key === 'hiking'\)\)/);
@@ -77,19 +83,13 @@ test('See all keeps its word, wears the disc and is named with its rail', () => 
   assert.match(rail, /t\('rail\.seeAllNamed', \{ title \}\)/);
 });
 
-test('the phone row under the tabs: rail chips only (G12: the Trip dock left Explore)', () => {
+test('no row of rail chips under the tabs: the shortcuts live in the search (G12 round 2)', () => {
   const tab = read('src/browse/ExploreTab.jsx');
   assert.doesNotMatch(tab, /<TripDock/);
-  const at = tab.indexOf('<div className="xsub xsub--rails">');
-  const row = tab.slice(at, tab.indexOf('))}', at));
-  assert.match(row, /<div className="xsub-chips" role="group" aria-label=\{t\('explore\.quickAria'\)\}>/);
-  // Every drawn rail but the first (its heading is right below) is a chip
-  // that opens what its See all opens.
-  assert.match(row, /rail\.rows\.length >= 4 && rail\.key !== 'saved'\)\.slice\(1\)/);
-  assert.match(row, /onClick=\{rail\.seeAll\}/);
-  const css = read('src/styles/85-explore-rails.css');
-  assert.match(css, /\.xsub-chips \{[^}]*overflow-x: auto;[^}]*mask-image: linear-gradient\(to right, var\(--text\)/);
-  assert.match(css, /\.xsub--rails \.btn\.xsub-chip::after,\s*\.xsub--rails \.btn\.dock-trigger::after \{ content: ""; position: absolute; inset: -2px 0; \}/);
+  // decision.md section 4: the phone's shortcut chip row is gone; the
+  // desktop overview's quick row went with it (Map is at the tab row's end).
+  assert.doesNotMatch(tab, /xsub--rails|xsub-chip|quickRails/);
+  assert.match(tab, /\{railsIdle && <OverviewHero t=\{t\} TitleTag=\{TitleTag\} docked \/>\}/);
 });
 
 test('signed out, Account and Sign in share one split pill', () => {

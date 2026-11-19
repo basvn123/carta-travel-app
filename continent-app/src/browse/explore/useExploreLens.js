@@ -1,8 +1,9 @@
 import React from 'react';
 
 // T586: the URL keys a lens sets. The overview's address keeps the rest
-// (the countries, the sort), so Back lands on the same overview.
-const LENS_KEYS = ['xk', 'xv', 'xr', 'xm', 'xb', 'xp', 'xe', 'xa', 'xn', 'xd', 'xg', 'xu', 'xw', 'xi', 'xall'];
+// (the countries, the sort), so Back lands on the same overview. G12 round
+// 2: xk holds the sheet's picks again and xt the day-high bands.
+const LENS_KEYS = ['xk', 'xt', 'xv', 'xr', 'xm', 'xb', 'xp', 'xe', 'xa', 'xn', 'xd', 'xg', 'xu', 'xw', 'xi', 'xall'];
 
 function overviewHref() {
   if (typeof window === 'undefined') return '';
