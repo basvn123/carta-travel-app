@@ -20,6 +20,7 @@
 import { STAY_TIERS } from './stayPrice.js';
 import { rule } from './price/config.js';
 import { PLANNER_BAG } from './price/request.js';
+import { shareBase, tripForShare } from './shareKeys.js';
 
 const LIMITS = rule('party.limits');   // T691: one cap for every screen
 
@@ -62,7 +63,12 @@ async function inflate(bytes) {
 export async function encodeTripShare(draft) {
   if (!draft || !Array.isArray(draft.stops) || !draft.stops.length) return null;
   try {
-    const bytes = new TextEncoder().encode(JSON.stringify(draft));
+    // C9: only the fields the decoder keeps travel, and none that name the
+    // sender's start (lib/shareKeys.js). The party counts stay: the booked
+    // figures are party totals.
+    const safe = tripForShare(sanitizeShared(draft));
+    if (!safe) return null;
+    const bytes = new TextEncoder().encode(JSON.stringify(safe));
     if (typeof CompressionStream !== 'undefined') {
       return `1.${toB64url(await deflate(bytes))}`;
     }
@@ -76,7 +82,7 @@ export async function encodeTripShare(draft) {
 export async function buildTripShareUrl(draft) {
   const payload = await encodeTripShare(draft);
   if (!payload || typeof window === 'undefined') return null;
-  return `${window.location.origin}${window.location.pathname}#${PARAM}=${payload}`;
+  return `${shareBase()}#${PARAM}=${payload}`;
 }
 
 /* ---- decode ---- */
@@ -141,7 +147,9 @@ function sanitizeShared(d) {
       // How they get there. Absent on links shared before the wizard could
       // ask, which is what 'fly' meant back then.
       mode: oneOf(d.ownFlight.mode, ['fly', 'train', 'bus', 'car', 'ferry'], 'fly'),
-      costTotal: Number.isFinite(Number(d.ownFlight.costTotal))
+      // null is "not typed", not 0 (Number(null) is 0): the encoder runs this
+      // too, so a second pass must keep it (C9, logic wave 0a).
+      costTotal: d.ownFlight.costTotal != null && Number.isFinite(Number(d.ownFlight.costTotal))
         ? Math.max(0, Math.min(99999, Number(d.ownFlight.costTotal)))
         : null,
       // The way there and home apart (T432), so a shared own car keeps

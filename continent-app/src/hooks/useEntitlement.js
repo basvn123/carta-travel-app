@@ -28,6 +28,28 @@ const GUEST = {
   known: false,
 };
 
+// V-5 (logic wave 0a): Stripe's return (?pass=ok, ?pass=cancel) is read once
+// for the whole page, before anything strips it, so the poll below does not
+// hang on the address: the address loses `pass` right away (else a later
+// reload, and every copied link, carried it), and a `user` that changes
+// identity while the session settles cannot cancel the poll.
+let passAtBoot;
+export function passReturn() {
+  if (passAtBoot === undefined) {
+    passAtBoot = typeof window === 'undefined' ? '' : (new URLSearchParams(window.location.search).get('pass') || '');
+  }
+  return passAtBoot;
+}
+
+/** The address without `pass`, or null when it has none. */
+export function addressWithoutPass(loc) {
+  const params = new URLSearchParams(loc.search);
+  if (!params.has('pass')) return null;
+  params.delete('pass');
+  const qs = params.toString();
+  return `${loc.pathname}${qs ? `?${qs}` : ''}${loc.hash || ''}`;
+}
+
 export function useEntitlement() {
   const { user } = useAuth();
   const [state, setState] = useState(GUEST);
@@ -73,8 +95,7 @@ export function useEntitlement() {
   // at the free tier.
   useEffect(() => {
     if (typeof window === 'undefined' || !user) return undefined;
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('pass') !== 'ok') return undefined;
+    if (passReturn() !== 'ok') return undefined;
     let tries = 0;
     const timers = [];
     const poll = () => {
@@ -84,6 +105,19 @@ export function useEntitlement() {
     timers.push(setTimeout(poll, 800));
     return () => timers.forEach(clearTimeout);
   }, [user, refresh]);
+
+  // One shot: take `pass` out of the address. Not added to urlState's
+  // OWN_KEYS, which would drop it before `user` arrives.
+  const stripped = useRef(false);
+  useEffect(() => {
+    if (stripped.current || typeof window === 'undefined') return;
+    stripped.current = true;
+    passReturn();
+    const url = addressWithoutPass(window.location);
+    if (url) {
+      try { window.history.replaceState(window.history.state, '', url); } catch { /* ignore */ }
+    }
+  }, []);
 
   return { ...state, refresh };
 }

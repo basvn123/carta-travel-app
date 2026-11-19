@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { getSupabase, authConfigured, mayHaveSession } from '../lib/supabaseClient.js';
 import { clearDeviceThings } from '../lib/deviceData.js';
+import { stopPersisting } from '../lib/urlState.js';
 
 const AuthContext = createContext(null);
 
@@ -188,8 +189,15 @@ export function AuthProvider({ children }) {
   // first, because device trips are not all in the account (T1054, P-09).
   const signOut = useCallback(async ({ clearDevice = false } = {}) => {
     const supabase = await getSupabase();
-    await supabase.auth.signOut();
-    if (clearDevice) clearDeviceThings();
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      // N5: no pending persist may write the mirror back after the clear;
+      // the caller then leaves for the clean address (AccountPanel). In
+      // `finally`: a failed remote sign-out still clears this device, so the
+      // page never lands on the clean address with the things still here.
+      if (clearDevice) { stopPersisting(); clearDeviceThings(); }
+    }
   }, []);
 
   /**
@@ -284,6 +292,7 @@ export function AuthProvider({ children }) {
     const { error } = await supabase.rpc('delete_user');
     if (error) throw error;
     await supabase.auth.signOut();
+    stopPersisting();
     clearDeviceThings();
   }, []);
 

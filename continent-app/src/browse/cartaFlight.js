@@ -63,7 +63,9 @@ export function openJawNear(file, startAp, endAp, outDate, backDay, { paying = 1
     return rt ? { ...rt, outCost: legCost(rt.out, { paying, bagKey }), backCost: legCost(rt.back, { paying, bagKey }) } : null;
   }
   const out = sweptNear(file, 'out', startAp, outDate);
-  const back = sweptNear(file, 'back', endAp, backDay);
+  // The way home flies after the way out (T1019; open-jaw, logic wave 0a).
+  // No later flight in the spread is no price, never a wrong one.
+  const back = out && sweptNear(file, 'back', endAp, backDay, { after: out.date });
   if (!out || !back) return null;
   const a = legCost(out, { paying, bagKey });
   const b = legCost(back, { paying, bagKey });

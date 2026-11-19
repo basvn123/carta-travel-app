@@ -121,6 +121,9 @@ test("the link carries the shortlist and the picks, and nothing else", () => {
   assert.equal(decodeTogether(encodeTogether({ trips: [list.trips[0]], people: [] })), null, "one trip is no shortlist");
   const url = togetherUrl(list, "https://carta.example/plan#old");
   assert.ok(url.startsWith("https://carta.example/plan#together="));
+  // Logic wave 0a (C9): the sender's query (home point, shortlist, party) stays home.
+  const fromQuery = togetherUrl(list, "https://carta.example/nl/?fav=d:BRU&dh=50.85,4.35,Home&g=3#old");
+  assert.ok(fromQuery.startsWith("https://carta.example/nl/#together="), fromQuery);
   assert.equal(listId(list.trips), listId([...list.trips].reverse()));
 });
 

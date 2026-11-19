@@ -9,10 +9,11 @@ import { loadTripDraft } from '../planner/tripDraftStore.js';
 import { tripsStore } from '../planner/tripsStore.js';
 import { TabFallback } from './TabFallback.jsx';
 import { AccountPanel } from '../auth/AccountPanel.jsx';
+import { daySeedDate } from '../lib/dates.js';
 
 export function AppOverlays({
   accountEntry, accountOpen, accountView, adminOpen, authConfigured, authModalMode,
-  authModalOpen, backToLabel, choices, closeOverlay, countryPage, data, exploreIndices,
+  authModalOpen, backToLabel, choices, closeOverlay, countryPage, data, defaultDates, departDate, exploreIndices,
   favDests, favorites, goTo, goToTab, guidesOpen, handleLoadTrip, isFavorite, leaveCountryPage,
   leaveRegionPage, onAccountView, openDayForDest, openDetail, openExploreSection, openFeature,
   openFeatureFrom, openGuides, openStyleSpend, openPlanInList, openRegionPage, openSaved,
@@ -100,7 +101,9 @@ export function AppOverlays({
             goToTab('places');
           }}
           onPlanTrip={selectedDest.iso2 ? () => { setSelectedId(null); openTripForCountry(selectedDest.iso2); } : undefined}
-          onPlanDay={selectedId ? () => { setSelectedId(null); openDayForDest(selectedId); } : undefined}
+          // K-4: the day opens on the trip's own date (the one the card
+          // prices), not today, when that date is still to come.
+          onPlanDay={selectedId ? () => { setSelectedId(null); openDayForDest(selectedId, daySeedDate(departDate, defaultDates?.start)); } : undefined}
         />
       </div>
     )}

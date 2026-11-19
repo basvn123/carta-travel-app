@@ -9,6 +9,7 @@
 import { isFullRatingRange, clampRatingRange, rangeFromMinTier } from './rating.js';
 import { readFavList, writeFavList } from './favorites.js';
 import { decodeTaste, encodeTaste, isEmptyTaste } from './taste.js';
+import { HOME_POINT_DP } from './shareKeys.js';
 
 const LS_ORDER = [
   'dinners_per_week', 'lunches_per_week', 'fastfood_per_week', 'drinks_per_week',
@@ -219,9 +220,10 @@ export function encodeState({
   if (choices?.airport_hours) q.set('ah', choices.airport_hours === 'pick' ? 'p' : String(choices.airport_hours));
   // Where a drive starts, packed as "lat,lon,name". The name is free text and
   // can hold commas of its own, so the decoder splits on the first two only.
+  // Owner default 12 (logic wave 0a): 0.01 degree, about 1 km, never finer.
   const dh = choices?.drive_home;
   if (dh && Number.isFinite(dh.lat) && Number.isFinite(dh.lon)) {
-    q.set('dh', `${dh.lat.toFixed(4)},${dh.lon.toFixed(4)},${dh.name || ''}`);
+    q.set('dh', `${dh.lat.toFixed(HOME_POINT_DP)},${dh.lon.toFixed(HOME_POINT_DP)},${dh.name || ''}`);
   }
   // T697 (plan 4.4): the old price mode (pm) and price range (pr) filtered
   // nothing and are no longer written; the price view is pv (T694).
@@ -428,7 +430,57 @@ export function tabFromSearch(search, opts) {
   return route.overlay || route.view;
 }
 
-/** Best-effort: read URL first, then fall back to the localStorage mirror. */
+// K-1 (logic wave 0a): how a link and this device's mirror meet at boot.
+// View keys a link names replace the stored ones, a group as a whole (a
+// link's `d` must not meet a stored old `r`; `gc gb df cn` are written only
+// off their default, so a missing one means the default, not "keep mine").
+const LINK_VIEW_GROUPS = [
+  ['ratingRange'],
+  ['countryFilter', 'countryNot'],
+  ['departDate', 'returnDate', 'dateFlex', 'date_mode', 'when_month', 'trip_nights', 'price_span'],
+];
+// The person's own groups: the device wins, and a link fills a group only
+// when the device holds none of it. T764 started this with the taste.
+const PERSON_GROUPS = [
+  ['group_size', 'children', 'babies'],
+  ['origin', 'origins', 'airport_hours', 'origin_kind', 'origin_country', 'here_town'],
+  ['lifestyle'],
+  ['taste'],
+  ['favorites', 'showFavOnly'],
+  ['transport_mode', 'stay_tier', 'baggage_key'],
+];
+const hasAny = (obj, keys) => keys.some((k) => obj[k] !== undefined);
+const isSet = (k, v) => v !== undefined && !(k === 'taste' && isEmptyTaste(v));
+
+/**
+ * The boot state from a decoded link and the decoded mirror (both may be
+ * null). Pure. The home point (`drive_home`) never comes from a link, and
+ * the view (`activeTab`) never from the mirror: the address names it.
+ */
+export function mergeLinkOverMirror(linkState, mirror) {
+  const link = linkState || {};
+  const out = { ...(mirror || {}) };
+  delete out.activeTab;
+  const personal = new Set(PERSON_GROUPS.flat());
+  const grouped = new Set(LINK_VIEW_GROUPS.flat());
+  for (const group of LINK_VIEW_GROUPS) {
+    if (!hasAny(link, group)) continue;
+    for (const k of group) {
+      if (link[k] !== undefined) out[k] = link[k]; else delete out[k];
+    }
+  }
+  for (const group of PERSON_GROUPS) {
+    if (group.some((k) => isSet(k, out[k])) || !hasAny(link, group)) continue;
+    for (const k of group) if (link[k] !== undefined) out[k] = link[k];
+  }
+  for (const [k, v] of Object.entries(link)) {
+    if (k === 'drive_home' || personal.has(k) || grouped.has(k)) continue;
+    out[k] = v;
+  }
+  return out;
+}
+
+/** Best-effort: this device's mirror, with what the address names merged over it (K-1). */
 export function loadInitialState() {
   if (typeof window === 'undefined') return {};
   const fromUrl = window.location.search ? decodeState(window.location.search) : {};
@@ -437,13 +489,7 @@ export function loadInitialState() {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (raw) stored = decodeState(raw);
   } catch { /* ignore */ }
-  if (Object.keys(fromUrl).length) {
-    // T764: the taste is the traveller's own, not the view's, so a link that
-    // carries none keeps the one this device stored.
-    if (!fromUrl.taste && stored?.taste && !isEmptyTaste(stored.taste)) return { ...fromUrl, taste: stored.taste };
-    return fromUrl;
-  }
-  return stored || {};
+  return mergeLinkOverMirror(fromUrl, stored);
 }
 
 
@@ -453,6 +499,12 @@ export function loadInitialState() {
 // address and a reload brought the children back (travel styles review,
 // 2026-11-13).
 const OWN_KEYS = ['ah', 'b', 'big', 'cat', 'cc', 'cf', 'cn', 'd', 'dest', 'df', 'dh', 'fav', 'favonly', 'feat', 'g', 'gb', 'gc', 'gem', 'ls', 'mode', 'o', 'oa', 'pm', 'pr', 'ps', 'pv', 'px', 'r', 'rh', 'rr', 'sc', 'sh', 'sk', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'ty', 'un', 'wm', 'wn', 'wy'];
+
+// N5 (logic wave 0a): a device clear stops this writer for the rest of the
+// page, so a pending 300 ms persist cannot put the home point and shortlist
+// back between the clear and the navigation to the clean address.
+let persistStopped = false;
+export function stopPersisting() { persistStopped = true; }
 
 /** Push the encoded state into the URL (replaceState) and the localStorage mirror.
  *
@@ -464,7 +516,7 @@ const OWN_KEYS = ['ah', 'b', 'big', 'cat', 'cc', 'cf', 'cn', 'd', 'dest', 'df', 
  * localStorage mirror, exactly as before.
  */
 export function persistState(state) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined' || persistStopped) return;
   const current = new URLSearchParams(window.location.search);
   // The places view writes the category Destinations is on (its own `dc`
   // key), so a reload or a copied link opens the same layer (T496).
@@ -484,8 +536,10 @@ export function persistState(state) {
   // rather than dropping it (T391, row T387-a). An open place's is too
   // (#dest=, T444), with the history step that opened it (its state), so
   // Back still closes the place. A finder trip's page (#tf=, T870) is kept the
-  // same way. Every other hash is read once at startup and is meant to go.
-  const hash = /(?:^#|&)(?:journey|dest|tf)=/.test(window.location.hash || '') ? window.location.hash : '';
+  // same way, and so are a country's and a region's page (#country=,
+  // #region=, logic wave 0a: they closed 300 ms after any change). Every
+  // other hash is read once at startup and is meant to go.
+  const hash = /(?:^#|&)(?:journey|dest|tf|country|region)=/.test(window.location.hash || '') ? window.location.hash : '';
   const url = (ms ? `${window.location.pathname}?${ms}` : window.location.pathname) + hash;
   try { window.history.replaceState(window.history.state, '', url); } catch { /* ignore */ }
   try { window.localStorage.setItem(STORAGE_KEY, qs); } catch { /* ignore */ }
