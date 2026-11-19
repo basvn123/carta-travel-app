@@ -189,10 +189,15 @@ export function AuthProvider({ children }) {
   // first, because device trips are not all in the account (T1054, P-09).
   const signOut = useCallback(async ({ clearDevice = false } = {}) => {
     const supabase = await getSupabase();
-    await supabase.auth.signOut();
-    // N5: no pending persist may write the mirror back after the clear;
-    // the caller then leaves for the clean address (AccountPanel).
-    if (clearDevice) { stopPersisting(); clearDeviceThings(); }
+    try {
+      await supabase.auth.signOut();
+    } finally {
+      // N5: no pending persist may write the mirror back after the clear;
+      // the caller then leaves for the clean address (AccountPanel). In
+      // `finally`: a failed remote sign-out still clears this device, so the
+      // page never lands on the clean address with the things still here.
+      if (clearDevice) { stopPersisting(); clearDeviceThings(); }
+    }
   }, []);
 
   /**

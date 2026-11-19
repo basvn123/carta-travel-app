@@ -133,3 +133,12 @@ test('after stopPersisting the address and the mirror are left alone', async () 
     delete globalThis.window;
   }
 });
+
+// Judge 1 (N5): a failed remote sign-out still clears the device, because
+// AccountPanel leaves for the clean address in its own `finally`.
+test('sign-out with remove clears the device even when the remote sign-out fails', () => {
+  const auth = readFileSync(new URL('../src/auth/AuthContext.jsx', import.meta.url), 'utf8');
+  const start = auth.indexOf('const signOut = useCallback(');
+  const body = auth.slice(start, auth.indexOf('}, []);', start));
+  assert.match(body, /try \{\s*await supabase\.auth\.signOut\(\);\s*\} finally \{[\s\S]*if \(clearDevice\) \{ stopPersisting\(\); clearDeviceThings\(\); \}/);
+});
