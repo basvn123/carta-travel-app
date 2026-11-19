@@ -16,10 +16,11 @@ How to use it:
 | `docs/owner/data-and-pipeline-runs.md` | phone, people and drive checks left from the data runs | 6 |
 | `docs/owner/legal.md` | legal, tax and brand | 4 |
 | `docs/owner/hetzner-box.md` | the Hetzner box and workers | 4 |
-| `docs/owner/supabase-migrations.md` | migrations, Edge Functions and secrets | 4 (063 to 075 applied 2026-11-12) |
+| `docs/owner/supabase-migrations.md` | migrations, Edge Functions and secrets | 5 (063 to 075 applied 2026-11-12; 078 open) |
 | `docs/owner/stripe.md` | Stripe prices, keys, webhook, test purchases, legal review | 5 |
 | `docs/owner/accounts-and-signups.md` | accounts, mailboxes and programme sign-ups | 7 |
 | `docs/owner/google-and-search.md` | Google, Gemini billing, Search Console | 1 |
+| `docs/owner/ai.md` | Carta's AI: live facts, thinking check, migration 078 and deploys, DPA, Turnstile cookies, labels, recorded runs, capacity triggers | 10 |
 | `docs/owner/auth-settings.md` | Supabase Auth settings and admin MFA | procedure |
 | `docs/owner/secrets-rotation.md` | secrets rotation and MFA | procedure |
 | `docs/owner/web-hardening.md` | web and API hardening | procedure |

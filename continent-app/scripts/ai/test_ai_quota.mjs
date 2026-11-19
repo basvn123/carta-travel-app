@@ -718,7 +718,7 @@ const planDay = readFileSync(resolve(functionsDir, 'plan-day/index.ts'), 'utf8')
 check("plan-day: the grounded path consumes kind 'ground'",
   /await consume\(service, user\.id, 'ground', GLOBAL_CAP\)/.test(planDay));
 check("plan-day: the ordinary path consumes kind 'plan'",
-  /await consume\(service, user\.id, 'plan', GLOBAL_CAP\)/.test(planDay));
+  /await consume\(service, user\.id, 'plan', GLOBAL_CAP(?:, \{ cached: !!cachedSafe \})?\)/.test(planDay));
 check('plan-day: grounding is only switched on when that consume() was ok',
   /if \(g\.ok\) \{ useGrounding = true; spent\.push\('ground'\); \}/.test(planDay));
 check('plan-day: a refused grounded unit degrades instead of being spent',
@@ -738,7 +738,7 @@ check('suggest-city: refunds the kind it actually spent',
 
 const parse = readFileSync(resolve(functionsDir, 'parse-booking/index.ts'), 'utf8');
 check("parse-booking: spends 'plan' and never grounds",
-  /await consume\(service, user\.id, 'plan', GLOBAL_CAP\)/.test(parse)
+  /await consume\(service, user\.id, 'plan', GLOBAL_CAP(?:, \{ cached: !!cachedSafe \})?\)/.test(parse)
   && !/'ground'/.test(parse));
 
 /* ===================================================================== */

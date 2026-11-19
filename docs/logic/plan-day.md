@@ -50,9 +50,9 @@ The allowance itself (tiers, `ai_consume`, the shared daily ceiling, refunds in 
 - Test: `continent-app/scripts/ai/test_plan_logic.mjs` :: "refine token: an expired token is refused"
 - Test: `continent-app/scripts/ai/test_plan_logic.mjs` :: "refine token: a spent count still verifies but is not under the cap"
 
-### PLANDAY-007 Quota before cache
-- Decides: that a cached plan still counts against the allowance.
-- Rule: one `plan` unit is consumed before the cache lookup (unless a free refine); a refusal is logged to `ai_cap_events` and answered 429 with `user_cap` or `global_cap`, the tier, cap and used; a quota read error is 503 `quota_check`. A cache hit returns the plan with the units left.
+### PLANDAY-007 Cache peek, then quota
+- Decides: that a cached plan still counts against the allowance, but not against the shared ceiling.
+- Rule (ai fix program wave 1): the cache is read first (read only); then one `plan` unit is consumed (unless a free refine) with `cached` set when a fresh row passed `guardPlanPayload` and will be served, so a hit spends the traveller's unit but not the shared daily count or the per-user daily limit (QUOTA-005, -005b). A refusal is logged to `ai_cap_events` and answered 429 with `user_cap` or `global_cap` (with reason `day_cap` for the daily limit), the tier, cap and used; a quota read error is 503 `quota_check`. A cache hit returns the plan with the units left. suggest-city and parse-booking follow the same order; suggest-city peeks again after a grounded-to-plain degrade.
 - Constant: `supabase/functions/plan-day/index.ts:404` to `:420`
 - Test: no test
 

@@ -22,6 +22,8 @@ import { AskTurn } from './AskTurn.jsx';
 import { useTaste } from '../WhyItMatches.jsx';
 import { CornerArrow, SendIcon } from './marks.jsx';
 import { useTypedHint } from './useTypedHint.js';
+// S4 funnel (ai fix program wave 1): ask_answer and ask_to_plan.
+import { aiFunnel } from '../../lib/ai/funnel.js';
 import '../../styles/75-ask.css';
 import '../../styles/76-ask-chat.css';
 
@@ -218,6 +220,8 @@ export default function AskChat(props) {
     setText('');
     if (fieldRef.current) fieldRef.current.style.height = '';
     setView('chat');
+    // Every question gets an answer (the code facts answer at least).
+    aiFunnel('ask_answer');
   }, [keep]);
   const onSubject = React.useCallback((turnId, subject) => {
     const cur = chatRef.current;
@@ -286,7 +290,7 @@ export default function AskChat(props) {
     onNotYet: (month) => ask(t('askChat.notYet'), { notYet: { month: month || null } }),
     onOpen: (id) => { if (isPhone) onClose(); onOpenPlace(id); },
     onApply: onApply ? (facets, keep) => { if (isPhone) onClose(); onApply(facets, keep); } : null,
-    onPlan: onPlanTrip ? (route) => { onClose(); onPlanTrip({ transport: 'public', ...route }); } : null,
+    onPlan: onPlanTrip ? (route) => { aiFunnel('ask_to_plan'); onClose(); onPlanTrip({ transport: 'public', ...route }); } : null,
   }), [t, lang, rows, byId, guided, price, labels, trip, filters, taste, favorites, onToggleFav, onWritten, onSubject, ask, isPhone, onClose, onOpenPlace, onPlanTrip, onApply]);
 
   const [moreShown, setMoreShown] = React.useState(false);

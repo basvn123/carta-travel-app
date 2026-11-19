@@ -112,7 +112,7 @@ def test_bad_config_and_missing_key():
 def test_one_call_carries_system_json_and_key():
     g, calls, _ = gw(replies=[gem('{"intros":[]}')])
     r = g.call("U", system="S", json=True)
-    assert r.text == '{"intros":[]}' and r.model == "gemini-flash-latest" and not r.fell_back
+    assert r.text == '{"intros":[]}' and r.model == G.GEMINI_CHAIN[0] and not r.fell_back
     b = calls[0]["body"]
     assert b["systemInstruction"] == {"parts": [{"text": "S"}]}
     assert b["generationConfig"]["responseMimeType"] == "application/json"
@@ -122,9 +122,10 @@ def test_one_call_carries_system_json_and_key():
 
 
 def test_429_waits_once_then_falls_over_404_falls_over_5xx_retried_once():
-    g, calls, c = gw(replies=[429, 429, 404, gem("ok")])
+    chain3 = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite", "gemini-3.6-flash"]
+    g, calls, c = gw(replies=[429, 429, 404, gem("ok")], models=chain3)
     r = g.call("U")
-    assert r.model == G.GEMINI_CHAIN[2] and r.fell_back
+    assert r.model == chain3[2] and r.fell_back
     assert 30 in c.slept
     g, _, _ = gw(replies=[503, gem("ok")])
     assert g.call("U").model == G.GEMINI_CHAIN[0]

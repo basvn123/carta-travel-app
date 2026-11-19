@@ -14,6 +14,7 @@ import { makeRetriever } from '../lib/ask/retrieve.js';
 import { AiMark, AiReport } from '../components/AiMark.jsx';
 import '../styles/75-ask.css';
 import AiTag from '../components/AiTag.jsx';
+import { aiFunnel } from '../lib/ai/funnel.js';
 
 // One hybrid retriever for the app (T554): BM25 in the browser, /api/ask dense.
 const RETRIEVE = makeRetriever();
@@ -113,6 +114,7 @@ export function AskSearchFull({
       .filter((s) => s.nights > 0);
     if (!stops.length) return;
     setOpen(false);
+    aiFunnel('ask_to_plan');
     onPlanTrip?.({ stops, transport: intent.budget.mode === 'car' ? 'car' : 'public' });
   };
   const open1 = (id) => { setOpen(false); onOpenPlace(id); };

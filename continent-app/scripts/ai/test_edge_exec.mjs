@@ -70,6 +70,7 @@ function resetWorld(over = {}) {
       ground: { status: 'ok', tier: 'year', cap: 120, used: 1, left: 119 },
     },
     consumeError: false,
+    v2Missing: false,
     status: { tier: 'year', groundLeft: 5 },
     cache: null,
     gemini: [],
@@ -87,7 +88,10 @@ const consumeCount = {};
 function rpc(name, args) {
   world.rpcCalls.push({ name, args });
   events.push(`rpc:${name}:${args.p_kind || ''}`);
-  if (name === 'ai_consume') {
+  // consume calls ai_consume_v2 first (migration 078); the stub answers both the same way.
+  // Migration 078 not applied: PostgREST answers PGRST202 and consume falls back.
+  if (name === 'ai_consume_v2' && world.v2Missing) return Promise.resolve({ data: null, error: { code: 'PGRST202', message: 'not found' } });
+  if (name === 'ai_consume' || name === 'ai_consume_v2') {
     if (world.consumeError) return Promise.resolve({ data: null, error: { message: 'boom' } });
     consumeCount[args.p_kind] = (consumeCount[args.p_kind] || 0) + 1;
     const r = world.consume[args.p_kind];
@@ -116,7 +120,7 @@ const stubClient = (key) => ({
   from: (table) => ({
     select() { return this; },
     eq() { return this; },
-    maybeSingle: async () => ({ data: table === 'ai_plan_cache' ? world.cache : null }),
+    maybeSingle: async () => { events.push(`read:${table}`); return { data: table === 'ai_plan_cache' ? world.cache : null }; },
     insert: (row) => writeResult(table, row),
     upsert: (row) => writeResult(table, row),
   }),
@@ -172,7 +176,7 @@ const call = async (name, body, { auth = true, method = 'POST' } = {}) => {
   return { status: res.status, json };
 };
 
-const consumed = (kind) => world.rpcCalls.filter((c) => c.name === 'ai_consume' && c.args.p_kind === kind).length;
+const consumed = (kind) => world.rpcCalls.filter((c) => (c.name === 'ai_consume' || c.name === 'ai_consume_v2') && c.args.p_kind === kind).length;
 const refunded = () => world.rpcCalls.filter((c) => c.name === 'ai_refund').map((c) => c.args.p_kind);
 const capEvents = () => world.inserts.filter((i) => i.table === 'ai_cap_events').map((i) => i.row);
 const modelEvents = () => world.inserts.filter((i) => i.table === 'ai_model_events').map((i) => i.row);
@@ -321,6 +325,25 @@ async function sharedContract(spec) {
   check(`${name}: a cache hit answers 200 without calling Gemini`, r.status === 200 && world.fetchCalls.length === 0);
   check(`${name}: a cache hit still spends the unit`, consumed('plan') === 1 && refunded().length === 0);
   check(`${name}: a cache hit is flagged cached`, r.json?.meta?.cached === true);
+  // S3 (migration 078): the hit is consumed as cached, so it spends no shared capacity.
+  const hitCall = world.rpcCalls.find((c) => c.name === 'ai_consume_v2' && c.args.p_kind === 'plan');
+  check(`${name}: a cache hit is consumed with p_cached true`, hitCall?.args?.p_cached === true);
+  const readAt = events.indexOf('read:ai_plan_cache');
+  const quotaAt = events.findIndex((e) => e.startsWith('rpc:ai_consume_v2'));
+  check(`${name}: the cache is read before the quota rpc`, readAt >= 0 && quotaAt > readAt, `read ${readAt}, quota ${quotaAt}`);
+
+  // 14 a miss is consumed uncached
+  base({ gemini: [spec.good] });
+  r = await call(name, spec.body());
+  const missCall = world.rpcCalls.find((c) => c.name === 'ai_consume_v2' && c.args.p_kind === 'plan');
+  check(`${name}: a miss is consumed with p_cached false`, r.status === 200 && missCall?.args?.p_cached === false);
+
+  // 15 migration 078 not applied: v2 is missing and ai_consume answers
+  base({ gemini: [spec.good], v2Missing: true });
+  r = await call(name, spec.body());
+  const names = world.rpcCalls.filter((c) => c.name.startsWith('ai_consume')).map((c) => c.name);
+  check(`${name}: without 078 consume falls back to ai_consume and still grants`,
+    r.status === 200 && names.join() === 'ai_consume_v2,ai_consume', names.join());
 }
 
 /* ---------- plan-day: the grounded unit ---------- */

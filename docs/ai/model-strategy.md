@@ -38,7 +38,7 @@ Choice: Stay on Workers AI Qwen3-30B-A3B; it is the cheapest server option and k
 
 ### plan-day (live)
 
-Today: gemini gemini-flash-lite-latest, gemini-3.5-flash-lite, gemini-flash-latest, gemini-3.1-flash-lite. Tokens per call: 4,500 in, 900 out. Eval: F6 plan-day eval (run.mjs plan-day: seven rule checks on 20 cases; the judge is calibrated at kappa 0.898 against the rules). Personal data: low to medium.
+Today: gemini gemini-3.5-flash-lite, gemini-3.1-flash-lite (pinned, thinking minimal, since wave 1 of the ai fix program, 2026-11-19). Tokens per call: 4,500 in, 900 out. Eval: F6 plan-day eval (run.mjs plan-day: seven rule checks on 20 cases; the judge is calibrated at kappa 0.898 against the rules). Personal data: low to medium.
 
 | Option | EUR per 1,000 calls | Quality | Status |
 |---|---|---|---|
@@ -48,11 +48,11 @@ Today: gemini gemini-flash-lite-latest, gemini-3.5-flash-lite, gemini-flash-late
 | OVHcloud Mistral Small 3.2 24B | 0.57 | not measured | owner run, blocked by T1138-b |
 | No model (code: facts answer, reference planner, templates, today's tags) | 0.00 | 100.0 percent plans meeting every rule (F6 plan-day, 20 cases (reference planner); this task, 2026-11-06) | measured |
 
-Choice: Stay on Gemini. Pin the model ids (T1135-e): the chain starts on the gemini-flash-lite-latest alias, whose model and price can move without notice. Move to an open model only at the plan-day trigger and only if it scores within 2 points of Gemini on the plan-day eval.
+Choice: Stay on Gemini. Model ids are pinned (T1135-e, wave 1 of the ai fix program): 3.5 Flash-Lite, then 3.1 Flash-Lite, thinking minimal. Move to an open model only at the plan-day trigger and only if it scores within 2 points of Gemini on the plan-day eval.
 
 ### suggest-city (live)
 
-Today: gemini gemini-flash-lite-latest, gemini-3.5-flash-lite, gemini-flash-latest, gemini-3.1-flash-lite. Tokens per call: 8,000 in, 400 out. Eval: none yet (T1138-c). Personal data: low.
+Today: gemini gemini-3.5-flash-lite, gemini-3.1-flash-lite (pinned, thinking minimal, since wave 1 of the ai fix program, 2026-11-19). Tokens per call: 8,000 in, 400 out. Eval: none yet (T1138-c). Personal data: low.
 
 | Option | EUR per 1,000 calls | Quality | Status |
 |---|---|---|---|
@@ -65,7 +65,7 @@ Choice: Stay on Gemini; grounded calls must (no open option has Google Search). 
 
 ### parse-booking (live)
 
-Today: gemini gemini-flash-lite-latest, gemini-3.5-flash-lite, gemini-flash-latest, gemini-3.1-flash-lite. Tokens per call: 4,000 in, 1,000 out. Eval: none yet (T1138-c); scripts/ai/verify_magic_import.mjs checks the flow on a canned answer, not the model. Personal data: high (names, booking codes, emails).
+Today: gemini gemini-3.5-flash-lite, gemini-3.1-flash-lite (pinned, thinking minimal, since wave 1 of the ai fix program, 2026-11-19). Tokens per call: 4,000 in, 1,000 out. Eval: none yet (T1138-c); scripts/ai/verify_magic_import.mjs checks the flow on a canned answer, not the model. Personal data: high (names, booking codes, emails).
 
 | Option | EUR per 1,000 calls | Quality | Status |
 |---|---|---|---|
@@ -78,7 +78,7 @@ Choice: Stay on Gemini (native PDF). The trigger is legal, not volume: if C9 say
 
 ### intros (batch)
 
-Today: gemini gemini-flash-latest, gemini-3.5-flash, gemini-3.5-flash-lite. Tokens per call: 12,050 in, 1,540 out. Eval: none yet (T1138-d); the job's own schema check only. Personal data: none (public catalogue).
+Today: gemini gemini-3.5-flash-lite, gemini-3.1-flash-lite (pipeline GEMINI_CHAIN, pinned 2026-11-19; the trips job keeps its old chain until its golden set passes). Tokens per call: 12,050 in, 1,540 out. Eval: none yet (T1138-d); the job's own schema check only. Personal data: none (public catalogue).
 
 | Option | EUR per 1,000 calls | Quality | Status |
 |---|---|---|---|
@@ -87,7 +87,7 @@ Today: gemini gemini-flash-latest, gemini-3.5-flash, gemini-3.5-flash-lite. Toke
 | Workers AI Qwen3-30B-A3B | 0.98 | not measured | owner run, blocked by T1138-d |
 | Box CPU, llama.cpp Qwen3-30B-A3B Q4_K_M | 0.79 | not measured | owner run, blocked by T1138-d |
 
-Choice: Move to the box once an intros eval exists and the box scores within 2 points of Gemini on it. Today the batch chain (pipeline GEMINI_CHAIN) starts on gemini-flash-latest, a thinking model: 19.41 EUR per 1,000 calls against 3.25 for Flash-Lite in batch mode, so a full run costs about 7.57 EUR instead of 1.27 (E-R3 assumed Flash-Lite).
+Choice: Move to the box once an intros eval exists and the box scores within 2 points of Gemini on it. Until 2026-11-19 the batch chain (pipeline GEMINI_CHAIN) started on gemini-flash-latest, a thinking model: 19.41 EUR per 1,000 calls against 3.25 for Flash-Lite in batch mode, so a full run costs about 7.57 EUR instead of 1.27 (E-R3 assumed Flash-Lite).
 
 ### tagging (batch)
 

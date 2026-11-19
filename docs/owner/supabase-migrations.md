@@ -53,6 +53,8 @@ The sweep could not apply migrations or write secrets: the session's permission 
      ```
      `source_header` must be `cf-connecting-ip`. That also closes T068-c.
 
+4. **Migration 078 and the three AI Edge Functions (ai fix program wave 1).** The exact commands, the check and the undo are steps AI-1 and AI-2 in `docs/owner/ai.md`: apply `078_ai_hygiene.sql`, then deploy plan-day, suggest-city and parse-booking.
+
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 
 T1110-b and T1205-b were merged into steps 2 and 3 by owner sweep round 2.

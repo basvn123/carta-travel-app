@@ -23,6 +23,10 @@
  *   AI_<FEATURE>_MODELS     comma-separated chain, first model first
  *   AI_<FEATURE>_BASE_URL   openai provider only: an OpenAI-compatible API
  *                           (Scaleway, OVHcloud, Mistral, llama.cpp server)
+ *   AI_<FEATURE>_THINKING   off | minimal | low | medium | high (Gemini only;
+ *                           sent only to a model whose config lists the level)
+ * The default chain, thinking levels and prices are generated from
+ * continent-app/config/ai_models.json into aiConfig.mjs.
  * <FEATURE> is the feature name in upper case with - as _ (PLAN_DAY).
  * The older GEMINI_MODELS (replaces the chain) and GEMINI_MODEL (promoted to
  * the front) still apply to the Gemini features. Keys: GEMINI_API_KEY;
@@ -44,8 +48,11 @@
  */
 
 import { buildAiEvent, writeEvent } from './aiEvents.mjs';
+// Chain, thinking levels and prices come from continent-app/config/ai_models.json
+// through the generated aiConfig.mjs (ai fix program wave 1, S1).
+import { GEMINI_LIVE_CHAIN, NEURON_PRICES, THINKING_BY_FEATURE, THINKING_LEVELS } from './aiConfig.mjs';
 
-export const AI_MODELS_VERSION = 1;
+export const AI_MODELS_VERSION = 2;
 
 export const PROVIDERS = ['gemini', 'workers-ai', 'openai'];
 
@@ -76,25 +83,36 @@ export function refusalBody(r) {
   };
 }
 
-// Every Gemini model on the free tier has its own daily budget, so the chain
-// multiplies capacity. Order and reasons: plan-day/logic.mjs (T433).
-export const GEMINI_CHAIN = [
-  'gemini-flash-lite-latest',
-  'gemini-3.5-flash-lite',
-  'gemini-flash-latest',
-  'gemini-3.1-flash-lite',
-];
+// Pinned ids only (S1): a -latest alias can be moved by Google with two weeks'
+// notice and gemini-flash-latest is a thinking model, so neither is in a live
+// chain. Each model has its own rate limit, so the second rung still adds
+// capacity. The list is config (ai_models.json live_chain).
+export const GEMINI_CHAIN = [...GEMINI_LIVE_CHAIN];
+
+/** Thinking levels a feature may ask for; 'off' in AI_<FEATURE>_THINKING sends none. */
+export const THINKING_VALUES = ['minimal', 'low', 'medium', 'high'];
+
+// Models that answered 400 to a call carrying thinkingConfig, in this isolate.
+// The REST field name is not yet confirmed by a live call (lane0-facts 5a), so
+// a model that refuses it is asked again without it, once, and then never sent
+// it again until the isolate restarts. The event records thinking 'rejected'.
+const THINKING_REFUSED = new Set();
+export function resetThinkingRefusals() { THINKING_REFUSED.clear(); }
+
+/** The thinking level to send to `model`, or null (none sent). */
+export function thinkingFor(cfg, model) {
+  const level = cfg?.thinking;
+  if (!level || THINKING_REFUSED.has(model)) return null;
+  return (THINKING_LEVELS[model] || []).includes(level) ? level : null;
+}
 
 export const WORKERS_AI_CHAIN = [
   '@cf/qwen/qwen3-30b-a3b-fp8',
   '@cf/meta/llama-3.2-3b-instruct',
 ];
 
-/** Workers AI price, Neurons per million tokens (2026-10): in, out. Unknown models are priced as the dearest known one. */
-export const NEURON_PRICES = {
-  '@cf/qwen/qwen3-30b-a3b-fp8': { in: 4625, out: 30475 },
-  '@cf/meta/llama-3.2-3b-instruct': { in: 4625, out: 30475 },
-};
+/** Workers AI price, Neurons per million tokens: in, out (ai_models.json prices). Unknown models are priced as the dearest known one. */
+export { NEURON_PRICES };
 
 /**
  * Per-feature defaults. budgetMs is the whole call; firstMs and laterMs cap
@@ -103,27 +121,32 @@ export const NEURON_PRICES = {
  */
 export const AI_FEATURES = {
   ask: {
+    thinking: THINKING_BY_FEATURE['ask'] ?? null,
     provider: 'workers-ai', models: WORKERS_AI_CHAIN,
     budgetMs: 20_000, firstMs: 12_000, laterMs: 8_000, minMs: 3_000, retry429Ms: 0,
     maxPromptChars: 12_000, maxOutputChars: 65_536,
   },
   'plan-day': {
+    thinking: THINKING_BY_FEATURE['plan-day'] ?? null,
     provider: 'gemini', models: GEMINI_CHAIN,
     budgetMs: 80_000, firstMs: 40_000, laterMs: 25_000, minMs: 8_000, retry429Ms: 0,
     maxPromptChars: 60_000, maxOutputChars: 65_536,
   },
   'suggest-city': {
+    thinking: THINKING_BY_FEATURE['suggest-city'] ?? null,
     provider: 'gemini', models: GEMINI_CHAIN,
     budgetMs: 80_000, firstMs: 45_000, laterMs: 25_000, minMs: 8_000, retry429Ms: 0,
     maxPromptChars: 60_000, maxOutputChars: 65_536,
   },
   'parse-booking': {
+    thinking: THINKING_BY_FEATURE['parse-booking'] ?? null,
     provider: 'gemini', models: GEMINI_CHAIN,
     budgetMs: 90_000, firstMs: 60_000, laterMs: 25_000, minMs: 8_000, retry429Ms: 0,
     maxPromptChars: 80_000, maxOutputChars: 65_536,
   },
   // The offline plan-day judge (T1148, F6): an eval script, never a traveller's call.
   'eval-judge': {
+    thinking: THINKING_BY_FEATURE['eval-judge'] ?? null,
     provider: 'gemini', models: GEMINI_CHAIN,
     budgetMs: 90_000, firstMs: 60_000, laterMs: 25_000, minMs: 8_000, retry429Ms: 0,
     maxPromptChars: 60_000, maxOutputChars: 65_536,
@@ -167,7 +190,10 @@ export function resolveModelConfig(feature, env = {}) {
   else if (provider === 'gemini') models = modelChain(get('GEMINI_MODEL'), get('GEMINI_MODELS'), provider === base.provider ? base.models : GEMINI_CHAIN);
   else models = provider === base.provider ? [...base.models] : [...(DEFAULT_MODELS[provider] || [])];
   const baseUrl = String(get(`${pre}_BASE_URL`) || get('AI_OPENAI_BASE_URL') || '').trim().replace(/\/+$/, '');
-  const cfg = { ...base, feature, provider, models, baseUrl, error: null };
+  // AI_<FEATURE>_THINKING overrides the config level; 'off' sends none.
+  const th = String(get(`${pre}_THINKING`) || '').trim().toLowerCase();
+  const thinking = th === 'off' ? null : THINKING_VALUES.includes(th) ? th : base.thinking ?? null;
+  const cfg = { ...base, feature, provider, models, baseUrl, thinking, error: null };
   if (!PROVIDERS.includes(provider)) cfg.error = 'unknown_provider';
   else if (!models.length) cfg.error = 'no_models';
   else if (provider === 'openai' && !/^https:\/\/[^/\s]+/.test(baseUrl)) cfg.error = 'no_base_url';
@@ -250,11 +276,35 @@ function oneShotStream(text) {
   });
 }
 
+/**
+ * The usage of one Gemini answer (S2, E4). in and out as before (prompt and
+ * answer tokens); thought (thinking tokens, billed as output), cached (the
+ * part of the prompt served from Google's implicit cache), toolIn (prompt
+ * tokens the search tool added, billed as input) and grounded (search queries
+ * the model ran). A count the provider did not send is null, never 0;
+ * grounded is 0 only when search was off.
+ */
+export function geminiUsage(data, { thinking = null, search = false } = {}) {
+  const u = data?.usageMetadata || {};
+  const num = (v) => (Number.isFinite(v) ? v : null);
+  const queries = data?.candidates?.[0]?.groundingMetadata?.webSearchQueries;
+  return {
+    in: u.promptTokenCount || 0,
+    out: u.candidatesTokenCount || 0,
+    thought: num(u.thoughtsTokenCount),
+    cached: num(u.cachedContentTokenCount),
+    toolIn: num(u.toolUsePromptTokenCount),
+    grounded: Array.isArray(queries) ? queries.length : search ? null : 0,
+    thinking,
+  };
+}
+
 const geminiAdapter = {
   name: 'gemini',
   ready: (get) => !!get('GEMINI_API_KEY'),
-  async run(req, model, ms, { get, fetchImpl }) {
+  async run(req, model, ms, { get, cfg, fetchImpl }) {
     const parts = req.parts || [{ text: req.user }];
+    const level = thinkingFor(cfg, model);
     const body = {
       ...(req.system ? { systemInstruction: { parts: [{ text: req.system }] } } : {}),
       contents: [{ role: 'user', parts: parts.map((p) => (p.inline ? { inline_data: { mime_type: p.inline.mime, data: p.inline.data } } : { text: p.text })) }],
@@ -264,24 +314,41 @@ const geminiAdapter = {
         maxOutputTokens: req.maxOutputTokens ?? 8192,
         // Grounding and a response schema are mutually exclusive on Gemini: one or the other.
         ...(req.json && !req.search ? { responseMimeType: 'application/json', ...(req.schema ? { responseSchema: req.schema } : {}) } : {}),
+        // S1: thinking capped per feature (plan-day, suggest-city, parse-booking: minimal).
+        ...(level ? { thinkingConfig: { thinkingLevel: level } } : {}),
       },
     };
-    const resp = await fetchImpl(
+    const deadline = Date.now() + ms;
+    const post = (b) => fetchImpl(
       `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-goog-api-key': get('GEMINI_API_KEY') },
-        body: JSON.stringify(body),
-        signal: AbortSignal.timeout(ms),
+        body: JSON.stringify(b),
+        signal: AbortSignal.timeout(Math.max(1, deadline - Date.now())),
       },
     );
+    let resp = await post(body);
+    let thinking = level;
+    if (resp.status === 400 && level) {
+      // Only a refusal that names thinking is ours to work around; any other
+      // 400 is a bad request and stops as before. A rejected request is not billed.
+      let detail = '';
+      try { detail = await resp.text(); } catch { /* no body */ }
+      if (/thinking/i.test(detail)) {
+        THINKING_REFUSED.add(model);
+        const gen = { ...body.generationConfig };
+        delete gen.thinkingConfig;
+        resp = await post({ ...body, generationConfig: gen });
+        thinking = 'rejected';
+      }
+    }
     if (!resp.ok) throw new HttpStatus(resp.status);
     const data = await resp.json();
     const cand = data?.candidates?.[0];
     const text = (cand?.content?.parts || []).map((p) => p.text || '').join('');
     const sources = (cand?.groundingMetadata?.groundingChunks || []).map((c) => c?.web?.uri).filter(Boolean);
-    const u = data?.usageMetadata || {};
-    return { text, sources, usage: { in: u.promptTokenCount || 0, out: u.candidatesTokenCount || 0 } };
+    return { text, sources, usage: geminiUsage(data, { thinking, search: !!req.search }) };
   },
 };
 

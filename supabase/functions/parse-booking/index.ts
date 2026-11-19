@@ -42,7 +42,8 @@ import {
   safeFetchUrl, htmlToText,
 } from './logic.mjs';
 import { fetchPublic } from './fetchGuard.mjs';
-import { consume, logCapRejection, refund } from '../_shared/passes.mjs';
+import { capRefusalBody, consume, logCapRejection, refund } from '../_shared/passes.mjs';
+import { globalCapFrom } from '../_shared/aiCapacity.mjs';
 // The prompt and the response schema, from the prompt registry (T1140, E5).
 import { LANG_NAMES, RESPONSE_SCHEMA, buildPrompt } from './prompt.mjs';
 
@@ -89,7 +90,8 @@ Deno.serve(withCors(async (req) => {
 
   const envGet = (k: string) => Deno.env.get(k);
   const access = modelAccess('parse-booking', envGet);
-  const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
+  // The shared daily ceiling: the secret, else ai_models.json capacity (200).
+  const GLOBAL_CAP = globalCapFrom(Deno.env.get('AI_GLOBAL_DAILY_CAP'));
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
   const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
   const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
@@ -177,19 +179,6 @@ Deno.serve(withCors(async (req) => {
 
   const service = createClient(SUPABASE_URL, SERVICE_KEY);
 
-  // ---- quota gate: same allowance as a bot day plan (see header) ----
-  const quota = await consume(service, user.id, 'plan', GLOBAL_CAP);
-  if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
-  if (!quota.ok) {
-    logCapRejection(service, quota.status, 'plan', quota.tier);
-    return json(429, {
-      code: quota.status, // 'user_cap' | 'global_cap'
-      tier: quota.tier,
-      cap: quota.cap ?? 0,
-      used: quota.used ?? 0,
-    });
-  }
-
   // ---- cache: a free retry, not long-term storage (24h, see header) ----
   // URL content rides inside `text`, so the key is content-addressed: the
   // same article parses once, an updated one earns a fresh generation.
@@ -206,6 +195,18 @@ Deno.serve(withCors(async (req) => {
   // A cached row passes the same text check as a fresh answer; null is a miss.
   const cachedSafe = cached?.payload && Date.now() - Date.parse(cached.created_at) < 86400_000
     ? guardBookingPayload(cached.payload) : null;
+  // ---- quota gate: same allowance as a bot day plan (see header) ----
+  // After the cache peek (S3, migration 078): a hit still spends the
+  // traveller's unit but not the shared ceiling or the daily limit.
+  const quota = await consume(service, user.id, 'plan', GLOBAL_CAP, { cached: !!cachedSafe });
+  if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
+  if (!quota.ok) {
+    logCapRejection(service, quota.status, 'plan', quota.tier);
+    // 'user_cap' | 'global_cap' | 'day_cap' (sent as global_cap with reason day_cap)
+    return json(429, capRefusalBody(quota));
+  }
+
+
   if (cachedSafe) {
     return json(200, {
       ...cachedSafe,
@@ -240,8 +241,8 @@ Deno.serve(withCors(async (req) => {
     json: true,
     schema: RESPONSE_SCHEMA,
     temperature: 0.1, // extraction wants fidelity, not flair
-    // gemini-flash-latest is a thinking model and its thoughts spend this
-    // budget (see plan-day); headroom itself costs nothing.
+    // Thinking is capped at minimal (S1); a thinking rung set by env would
+    // spend this budget on thoughts (see plan-day). Headroom costs nothing.
     maxOutputTokens: 8192,
   });
   if (!ai.ok) return await failed(ai.status, refusalBody(ai));

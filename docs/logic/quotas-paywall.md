@@ -39,14 +39,32 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 
 ### QUOTA-005 Shared daily ceiling
 - Decides: when every traveller is refused for the rest of the day, whatever they have left.
-- Rule: one counter per calendar day across both kinds and across plan-day, suggest-city and parse-booking; a grant past the ceiling is `global_cap` and the traveller's unit is rolled back. A cache hit also counts.
-- Constant: `AI_GLOBAL_DAILY_CAP` default 200 in `supabase/functions/plan-day/index.ts:233`, `supabase/functions/suggest-city/index.ts:152`, `supabase/functions/parse-booking/index.ts:161`; `ai_daily_total` check in `044_payments_quota.sql:218` to `:225`
-- Test: `continent-app/scripts/ai/test_global_cap.mjs` :: "global cap: the call that breaches the cap returns status global_cap"
-- Test: `continent-app/scripts/ai/test_global_cap.mjs` :: "global cap: the breaching user keeps their unit, ai_usage rolled back"
+- Rule (ai fix program wave 1, migration 078): one counter per calendar day across both kinds and across plan-day, suggest-city and parse-booking, written only by UNCACHED grants: a cache hit spends the traveller's unit but never the shared count. The spend breaker on it: a free account is refused at the ceiling (`global_cap`, its unit and day row rolled back); a Pass holder (any tier but free) is counted but never refused by it. Ask's guests are cut first, at `guest_share` of the ceiling, once Ask has sessions (lane 6); until then the rule is the pure `breakerAllows` in `aiCapacity.mjs`. Until 078 is applied, `consume` falls back to 044's `ai_consume`, where a cache hit counts and every tier is refused at the ceiling.
+- Constant: `AI_GLOBAL_DAILY_CAP` secret, else `capacity.global_daily_cap_default` 200 and `capacity.breaker` (`guest_share` 0.5, `free_share` 1.0, `pass` never) in `continent-app/config/ai_models.json`, generated into `supabase/functions/_shared/aiConfig.mjs`; `globalCapFrom` and `breakerCaps` in `supabase/functions/_shared/aiCapacity.mjs`; `ai_consume_v2` in `supabase/migrations/078_ai_hygiene.sql`
+- Test: `continent-app/scripts/ai/test_ai_capacity.mjs` :: "free: refused at the ceiling with global_cap"
+- Test: `continent-app/scripts/ai/test_ai_capacity.mjs` :: "Pass: granted above the free ceiling"
+- Test: `continent-app/scripts/ai/test_ai_capacity.mjs` :: "Pass: granted even with a zero free ceiling"
+- Test: `continent-app/scripts/ai/test_ai_capacity.mjs` :: "cached: the shared daily count did not move"
+- Test: `continent-app/tests/aiConfig.test.mjs` :: "the breaker cuts guests first, then free accounts, and never a Pass holder"
+- Test: `continent-app/scripts/ai/test_global_cap.mjs` :: "global cap: the call that breaches the cap returns status global_cap" (the 044 fallback)
+
+### QUOTA-005b Per-user daily limit
+- Decides: how many uncached AI generations one account may start in a day, whatever its tier.
+- Rule: checked before the shared ceiling, the same for every tier: past the limit the grant is `day_cap`, the unit is rolled back, the refusal is logged to `ai_cap_events` (reason `day_cap`) and answered 429 with code `global_cap` and reason `day_cap` (the app's "come back tomorrow" copy, true of a daily limit). Cache hits are not counted against it. 0 means no limit.
+- Constant: `capacity.user_daily_limit` (plan 20, ground 10) in `continent-app/config/ai_models.json`; `userDayLimit` in `aiCapacity.mjs`; `capRefusalBody` in `supabase/functions/_shared/passes.mjs`
+- Test: `continent-app/scripts/ai/test_ai_capacity.mjs` :: "day limit: the 4th uncached grant with a limit of 3 is day_cap"
+- Test: `continent-app/scripts/ai/test_ai_capacity.mjs` :: "day limit: a cache hit is still served past it"
+- Test: `continent-app/tests/aiConfig.test.mjs` :: "a daily-limit refusal answers with the "come back tomorrow" code and says why"
+
+### QUOTA-005c Capacity triggers
+- Decides: when the owner raises a ceiling or turns on Workers Paid.
+- Rule: a trigger fires when its signal happens on k of any n days; a day with no data is never read as a quiet day (`no_data`, not `not_fired`). `gemini-free-cut`: a `global_cap` refusal on 3 of 7 days, then raise `AI_GLOBAL_DAILY_CAP`. `ask-workers-paid`: the 450-a-day Ask warning on 5 of 7 days, then Workers Paid and a higher Ask Neuron cap. It switches nothing; the owner acts (`docs/owner/ai.md` AI-10).
+- Constant: `capacity.triggers` in `ai_models.json`; `triggerStatus`, `capacityTriggers` in `aiCapacity.mjs`
+- Test: `continent-app/tests/aiConfig.test.mjs` :: "a k-of-n-days trigger fires on k hits, needs n known days to say no, and never reads a gap as quiet"
 
 ### QUOTA-006 Refunds go back to the day they were spent
 - Decides: that a failed AI call gives the unit back, to the right day.
-- Rule: the unit comes off the traveller's latest day row that holds one and off that day's shared counter; never below zero; a spend with no day row (before 044) returns the period unit and leaves the shared counter alone; an unknown kind does nothing.
+- Rule: the unit comes off the traveller's latest day row that holds an UNCACHED grant (078: `n - cached > 0`) and off that day's shared counter; never below zero; a spend with no day row (before 044) returns the period unit and leaves the shared counter alone; an unknown kind does nothing.
 - Constant: `ai_refund` in `supabase/migrations/044_payments_quota.sql:248`; `refund` in `supabase/functions/_shared/passes.mjs:93`
 - Test: `continent-app/scripts/ai/test_ai_quota.mjs` :: "refund cross-day: the unit comes off the day it was spent on"
 - Test: `continent-app/scripts/ai/test_ai_quota.mjs` :: "refund: a double refund never drives ai_usage below zero"
@@ -61,7 +79,7 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 
 ### QUOTA-008 Refusals are counted
 - Decides: what the owner can see of travellers turned away.
-- Rule: only `user_cap` and `global_cap` are logged to `ai_cap_events` with kind and tier, no user id; a free traveller with 0 grounded units is not logged as a refusal.
+- Rule: only `user_cap`, `global_cap` and `day_cap` (078) are logged to `ai_cap_events` with kind and tier, no user id; a free traveller with 0 grounded units is not logged as a refusal.
 - Constant: `logCapRejection` in `supabase/functions/_shared/passes.mjs:123`
 - Test: no test
 

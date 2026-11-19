@@ -346,8 +346,9 @@ const capped = await consume(capClient, U1, 'plan', 2);
 check('consume: passes the status through unchanged', capped.status === 'global_cap', JSON.stringify(capped));
 check('consume: a global cap is not ok', capped.ok === false, JSON.stringify(capped));
 check('consume: the tier survives for the 429 body', capped.tier === 'free', JSON.stringify(capped));
-check('consume: calls the ai_consume RPC', capClient.calls[0].fn === 'ai_consume');
-check('consume: forwards the global cap argument', capClient.calls[0].args.p_global_cap === 2);
+// Wave 1 (078): consume asks ai_consume_v2 first; the 044 RPC is only the fallback.
+check('consume: calls the ai_consume_v2 RPC', capClient.calls[0].fn === 'ai_consume_v2');
+check('consume: forwards the free share of the global cap', Number.isFinite(capClient.calls[0].args.p_free_cap) && capClient.calls[0].args.p_free_cap <= 2);
 check('consume: forwards the user and the kind',
   capClient.calls[0].args.p_user === U1 && capClient.calls[0].args.p_kind === 'plan');
 
@@ -404,7 +405,7 @@ check('plan-day: still diverts quota_check to 503',
 // T042 put a logCapRejection call between the branch and the return, so the
 // pattern allows a short gap rather than demanding adjacency.
 check('plan-day: still turns a non-ok quota into 429',
-  /if \(!quota\.ok\) \{[\s\S]{0,600}?return json\(429, \{\s*code: quota\.status/.test(planDay));
+  /if \(!quota\.ok\) \{[\s\S]{0,600}?return json\(429, (?:\{\s*code: quota\.status|capRefusalBody\(quota\))/.test(planDay));
 
 /* ===================================================================== */
 

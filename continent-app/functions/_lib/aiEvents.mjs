@@ -31,41 +31,49 @@ export function promptOf(feature) {
   return p ? { id: p.id, version: p.version } : { id: null, version: null };
 }
 
-/**
- * Price estimates, USD per million tokens (in, out). NOT verified against the
- * providers' pages: the T1139 research and the T1206 retry were both blocked
- * (ai.google.dev and developers.cloudflare.com are outside the session's
- * network). Treat cost as an estimate, the paid tier equivalent even where
- * the free tier bills nothing. Edit here. continent-app/config/ai_models.json
- * (E-R3 prices, also unverified) prices the -latest aliases differently;
- * register row T1139-f holds the reconciliation.
+/*
+ * Prices (S2, wave 1 of the ai fix program): ONE table, generated from
+ * continent-app/config/ai_models.json `prices` into aiConfig.mjs, so the
+ * events and the model strategy can no longer price a model differently
+ * (aiConfig.test.mjs fails when they do). Paid-tier rates: the cost is an
+ * estimate of what the call would bill on a paid project. Only 3.5 Flash-Lite
+ * is checked against Google's page (lane0-facts 5f); the rest are E-R3 figures.
  */
-export const PRICE_USD_PER_M = {
-  'gemini-flash-lite-latest': { in: 0.10, out: 0.40 },
-  'gemini-3.5-flash-lite': { in: 0.30, out: 2.50 },
-  'gemini-flash-latest': { in: 0.30, out: 2.50 },
-  'gemini-3.1-flash-lite': { in: 0.25, out: 1.50 },
-};
-/** Used for a model not in the table: the dearest known, so the estimate errs high. */
-export const DEFAULT_PRICE = { in: 0.30, out: 2.50 };
-/** Workers AI paid price per 1,000 Neurons. */
-export const USD_PER_1000_NEURONS = 0.011;
+import {
+  PRICE_USD_PER_M, DEFAULT_PRICE, USD_PER_1000_NEURONS, GROUNDING_USD_PER_QUERY,
+} from './aiConfig.mjs';
+
+export { PRICE_USD_PER_M, DEFAULT_PRICE, USD_PER_1000_NEURONS, GROUNDING_USD_PER_QUERY };
 
 /** Tokens guessed from characters when the provider reports none. */
 export const estTokens = (chars) => Math.ceil((Number(chars) || 0) / 4);
 
-/** Cost estimate in USD, 6 decimals. neurons is { in, out } per million (Workers AI). */
-export function estimateCostUsd({ provider, model, tokensIn, tokensOut, neurons }) {
+/**
+ * Cost estimate in USD, 6 decimals. neurons is { in, out } per million
+ * (Workers AI). For Gemini: the uncached prompt at the input price, the cached
+ * part at the cached price (input price when unknown), the search tool's
+ * prompt tokens at the input price, answer plus thinking tokens at the output
+ * price, and each grounded query at the paid grounding rate. A count that is
+ * null (not reported) adds nothing; the event keeps it null so a reader can
+ * tell "not reported" from zero.
+ */
+export function estimateCostUsd({ provider, model, tokensIn, tokensOut, neurons, thought = null, cached = null, toolIn = null, grounded = null }) {
   const tin = tokensIn || 0;
   const tout = tokensOut || 0;
   let usd;
   if (provider === 'workers-ai' && neurons) usd = ((tin * neurons.in + tout * neurons.out) / 1e6 / 1000) * USD_PER_1000_NEURONS;
   else if (provider === 'gemini') {
     const p = PRICE_USD_PER_M[model] || DEFAULT_PRICE;
-    usd = (tin * p.in + tout * p.out) / 1e6;
+    const hit = Math.min(tin, cached || 0);
+    const cachedPrice = p.cachedIn ?? p.in;
+    usd = ((tin - hit) * p.in + hit * cachedPrice + (toolIn || 0) * p.in + (tout + (thought || 0)) * p.out) / 1e6
+      + (grounded || 0) * GROUNDING_USD_PER_QUERY;
   } else usd = 0; // openai-compatible self-hosted: unknown, not guessed
   return Math.round(usd * 1e6) / 1e6;
 }
+
+/** The S2 columns migration 078 adds; dropped from a write the database refuses for a missing column. */
+export const S2_COLUMNS = ['tokens_thought', 'tokens_cached', 'grounded_queries', 'thinking'];
 
 /**
  * The event for one call. result is what callModel returned; promptChars the
@@ -84,6 +92,9 @@ export function buildAiEvent({ feature, cfg, result, promptChars = 0, latencyMs 
   const tokensOut = u ? u.out || 0 : outputChars != null ? estTokens(outputChars) : null;
   const refused = !ok && ['config', 'no_ai', 'too_big', 'unsafe'].includes(result?.code);
   const pr = promptOf(feature);
+  const extra = {
+    thought: u?.thought ?? null, cached: u?.cached ?? null, toolIn: u?.toolIn ?? null, grounded: u?.grounded ?? null,
+  };
   return {
     feature: String(feature),
     provider,
@@ -93,7 +104,12 @@ export function buildAiEvent({ feature, cfg, result, promptChars = 0, latencyMs 
     tokens_in: tokensIn,
     tokens_out: tokensOut,
     tokens_estimated: estimated,
-    cost_usd: ok || refused ? (refused ? 0 : estimateCostUsd({ provider, model, tokensIn, tokensOut, neurons })) : 0,
+    // S2: thinking, implicit-cache and grounded counts (null when not reported).
+    tokens_thought: extra.thought,
+    tokens_cached: extra.cached,
+    grounded_queries: extra.grounded,
+    thinking: u?.thinking ?? null,
+    cost_usd: ok || refused ? (refused ? 0 : estimateCostUsd({ provider, model, tokensIn, tokensOut, neurons, ...extra })) : 0,
     latency_ms: Math.max(0, Math.round(latencyMs)),
     outcome: ok ? (result.fellBack ? 'fallback' : 'ok') : refused ? 'refused' : 'failed',
     code: ok ? null : String(result?.code || 'ai_error'),
@@ -141,12 +157,25 @@ async function postDb(get, ev, fetchImpl, ms) {
   const url = String(get('SUPABASE_URL') || '').replace(/\/+$/, '');
   const key = get('SUPABASE_SERVICE_ROLE_KEY');
   if (!url || !key) return;
-  await fetchImpl(`${url}/rest/v1/ai_model_events`, {
+  const send = (row) => fetchImpl(`${url}/rest/v1/ai_model_events`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', apikey: key, Authorization: `Bearer ${key}`, Prefer: 'return=minimal' },
-    body: JSON.stringify(dbRow(ev)),
+    body: JSON.stringify(row),
     signal: AbortSignal.timeout(ms),
   });
+  const res = await send(dbRow(ev));
+  // Functions deployed before migration 078 is applied: PostgREST refuses the
+  // S2 columns (PGRST204, or Postgres 42703). Write the row without them once,
+  // so the call is still counted; any other refusal is left alone.
+  if (res && res.status === 400) {
+    let body = '';
+    try { body = await res.text(); } catch { /* no body */ }
+    if (/PGRST204|42703/.test(body)) {
+      const row = dbRow(ev);
+      for (const c of S2_COLUMNS) delete row[c];
+      await send(row);
+    }
+  }
 }
 
 /** Is the optional Langfuse exporter switched on and fully configured? */

@@ -2,7 +2,7 @@
  "version": 1,
  "task": "T1138",
  "roadmap": "E7",
- "updated": "2026-11-06",
+ "updated": "2026-11-19",
  "doc": "docs/ai/model-strategy.md",
  "rules": [
   "Never the Claude API or an Anthropic SDK (CLAUDE.md).",
@@ -12,6 +12,138 @@
  "fx_eur_per_usd": 0.87,
  "cost_formula": "per 1,000 calls: (input tokens x input price + (output tokens + extra_out_tokens) x output price) / 1,000, in EUR; box: CPU seconds per call = input / (prompt_tok_s x parallel_slots_speedup) + output / (gen_tok_s x parallel_slots_speedup), at the CAX41 hourly price",
  "prices_source": "docs/research/E-R3-models-and-hosting.md section 4, quoted through search; verify against the primary pages (T1135-a)",
+ "live_chain": {
+  "gemini": [
+   "gemini-3.5-flash-lite",
+   "gemini-3.1-flash-lite"
+  ],
+  "why": "S1 (gemini-rag decision): pinned ids only. The -latest aliases point at a model Google can move with two weeks' notice (lane0-facts 5d) and gemini-flash-latest is a thinking model; neither is in a live chain. Generated into aiConfig.mjs (scripts/ai/gen_ai_config.mjs)."
+ },
+ "batch_chain": {
+  "gemini": [
+   "gemini-3.5-flash-lite",
+   "gemini-3.1-flash-lite"
+  ],
+  "why": "S1: pipeline/ai_gateway.py GEMINI_CHAIN for intros, parking and trips, Flash-Lite first instead of two Flash thinking models (intros about EUR 19.41 per 1,000 calls before, 3.25 in batch mode). A test fails when the Python chain differs."
+ },
+ "prices": {
+  "unit": "USD per 1M tokens, Gemini API standard (paid tier); thinking tokens are billed as output; cached_in null means priced as normal input (errs high)",
+  "models": {
+   "gemini-3.5-flash-lite": {
+    "in": 0.3,
+    "out": 2.5,
+    "cached_in": 0.03,
+    "thinking_levels": [
+     "minimal",
+     "low",
+     "medium",
+     "high"
+    ],
+    "verified": true,
+    "source": "lane0-facts 5f and 5b (aistudio.google.com/docs/pricing and /thinking), checked 2026-11-17"
+   },
+   "gemini-3.1-flash-lite": {
+    "in": 0.25,
+    "out": 1.5,
+    "cached_in": null,
+    "thinking_levels": [
+     "minimal",
+     "low",
+     "medium",
+     "high"
+    ],
+    "verified": false,
+    "source": "E-R3 section 4 (unverified); levels lane0-facts 5b"
+   },
+   "gemini-3.6-flash": {
+    "in": 0.75,
+    "out": 3.75,
+    "cached_in": null,
+    "thinking_levels": [
+     "minimal",
+     "low",
+     "medium",
+     "high"
+    ],
+    "verified": false,
+    "option_only": "not in any chain; the north-star decision says do not adopt 3.6 Flash without an eval",
+    "source": "E-R3 section 4, intro price, doubles 2027-01-01 (unverified); levels lane0-facts 5b"
+   }
+  },
+  "workers_ai_usd_per_1000_neurons": 0.011,
+  "unknown_model": "priced as the dearest model in this table, so an unknown id errs high",
+  "grounding": {
+   "usd_per_1000_queries": 14,
+   "free_queries_per_month": 5000,
+   "daily_query_cap_per_project": 1500,
+   "source": "gemini-rag decision.md line 53, verified 2026-11-17",
+   "note": "the event prices every grounded query at the paid rate; the 5,000 free a month are a month-level discount, not a per-call one"
+  },
+  "workers_ai_neurons_per_m": {
+   "@cf/qwen/qwen3-30b-a3b-fp8": {
+    "in": 4625,
+    "out": 30475
+   },
+   "@cf/meta/llama-3.2-3b-instruct": {
+    "in": 4625,
+    "out": 30475
+   },
+   "source": "Workers AI pricing 2026-10 (unknown models are priced as the dearest known one)"
+  }
+ },
+ "thinking": {
+  "field": "generationConfig.thinkingConfig.thinkingLevel",
+  "verified": false,
+  "verify": "owner: one live call (docs/owner/ai.md step AI-3); until then a 400 on a call that carries the field is retried once without it and the event records thinking = rejected",
+  "per_feature": {
+   "plan-day": "minimal",
+   "suggest-city": "minimal",
+   "parse-booking": "minimal",
+   "ask": null,
+   "eval-judge": null
+  },
+  "env_override": "AI_<FEATURE>_THINKING = off | minimal | low | medium | high"
+ },
+ "capacity": {
+  "roadmap": "QUOTA-005, S3 of the gemini-rag decision, north-star decision section 8",
+  "global_daily_cap_default": 200,
+  "global_daily_cap_env": "AI_GLOBAL_DAILY_CAP",
+  "cache_hits_count_against_global": false,
+  "user_daily_limit": {
+   "plan": 20,
+   "ground": 10,
+   "why": "the same for every tier: far above real use (a Trip Pass is 60 plans over 60 days, a Year Pass 300 over 365) and low enough that one scripted account cannot drain the shared budget"
+  },
+  "breaker": {
+   "order": [
+    "guest",
+    "free",
+    "pass"
+   ],
+   "guest_share": 0.5,
+   "free_share": 1.0,
+   "pass": "never",
+   "why": "spend is cut for guests first (at half the daily ceiling, Ask only: the Gemini features need sign-in), then free accounts (at the ceiling); Pass holders are counted but never refused by the shared ceiling, only by their own tier allowance and the daily limit"
+  },
+  "triggers": [
+   {
+    "id": "gemini-free-cut",
+    "signal": "a day with at least one ai_cap_events row of reason global_cap",
+    "k": 3,
+    "n": 7,
+    "when": "ai_cap_events has global_cap rows on 3 of any 7 days",
+    "then": "raise AI_GLOBAL_DAILY_CAP in step with the spend it allows (owner: supabase secrets set), after checking the Google Cloud budget alert"
+   },
+   {
+    "id": "ask-workers-paid",
+    "signal": "a day with at least 450 Ask answers (the admin panel warning)",
+    "k": 5,
+    "n": 7,
+    "when": "the 450-a-day Ask warning (admin panel, T1135-h) fires on 5 of any 7 days",
+    "then": "turn on Workers Paid (USD 5 a month per account, lane0-facts 2a) and raise Ask's 9,000-Neuron cap in step"
+   }
+  ]
+ },
  "options": {
   "gemini-3.5-flash-lite": {
    "label": "Gemini 3.5 Flash-Lite",
@@ -32,12 +164,13 @@
    "currency": "USD",
    "extra_out_tokens": 0,
    "residency": "global (Gemini API)",
-   "note": "batch mode is half price; pipeline/ai_gateway.py Gateway.batch() can send it (T1206), coded against a fake transport and not yet run live; no job uses it"
+   "note": "batch mode is half price; pipeline/ai_gateway.py Gateway.batch() can send it (T1206), coded against a fake transport and not yet run live; no job uses it",
+   "mode": "batch"
   },
   "gemini-3.6-flash": {
    "label": "Gemini 3.6 Flash, thinking, intro price",
    "provider": "gemini",
-   "model": "gemini-flash-latest",
+   "model": "gemini-3.6-flash",
    "in_per_m": 0.75,
    "out_per_m": 3.75,
    "currency": "USD",
@@ -210,9 +343,7 @@
    "today": {
     "provider": "gemini",
     "models": [
-     "gemini-flash-lite-latest",
      "gemini-3.5-flash-lite",
-     "gemini-flash-latest",
      "gemini-3.1-flash-lite"
     ]
    },
@@ -241,7 +372,7 @@
       "status": "owner_run",
       "value": null,
       "eval": "plan-day",
-      "command": "record the 20 plan-day eval cases on the deployed plan-day with AI_PLAN_DAY_MODELS=gemini-flash-latest (recorder: T1138-b), then: node continent-app/scripts/eval/run.mjs plan-day --plans <recorded plans.json>",
+      "command": "record the 20 plan-day eval cases on the deployed plan-day with AI_PLAN_DAY_MODELS=gemini-3.6-flash (recorder: T1138-b), then: node continent-app/scripts/eval/run.mjs plan-day --plans <recorded plans.json>",
       "blocked_by": "T1138-b"
      },
      "cost_eur_per_1000_calls": 12.4
@@ -281,7 +412,7 @@
      "cost_eur_per_1000_calls": 0.0
     }
    ],
-   "recommendation": "Stay on Gemini. Pin the model ids (T1135-e): the chain starts on the gemini-flash-lite-latest alias, whose model and price can move without notice. Move to an open model only at the plan-day trigger and only if it scores within 2 points of Gemini on the plan-day eval.",
+   "recommendation": "Stay on Gemini. Model ids are pinned (T1135-e, wave 1 of the ai fix program): 3.5 Flash-Lite, then 3.1 Flash-Lite, thinking minimal. Move to an open model only at the plan-day trigger and only if it scores within 2 points of Gemini on the plan-day eval.",
    "box": "no"
   },
   "suggest-city": {
@@ -289,9 +420,7 @@
    "today": {
     "provider": "gemini",
     "models": [
-     "gemini-flash-lite-latest",
      "gemini-3.5-flash-lite",
-     "gemini-flash-latest",
      "gemini-3.1-flash-lite"
     ]
    },
@@ -356,9 +485,7 @@
    "today": {
     "provider": "gemini",
     "models": [
-     "gemini-flash-lite-latest",
      "gemini-3.5-flash-lite",
-     "gemini-flash-latest",
      "gemini-3.1-flash-lite"
     ]
    },
@@ -423,9 +550,8 @@
    "today": {
     "provider": "gemini",
     "models": [
-     "gemini-flash-latest",
-     "gemini-3.5-flash",
-     "gemini-3.5-flash-lite"
+     "gemini-3.5-flash-lite",
+     "gemini-3.1-flash-lite"
     ]
    },
    "tokens_per_call": {
@@ -481,7 +607,7 @@
      "cost_eur_per_1000_calls": 0.79
     }
    ],
-   "recommendation": "Move to the box once an intros eval exists and the box scores within 2 points of Gemini on it. Today the batch chain (pipeline GEMINI_CHAIN) starts on gemini-flash-latest, a thinking model: 19.41 EUR per 1,000 calls against 3.25 for Flash-Lite in batch mode, so a full run costs about 7.57 EUR instead of 1.27 (E-R3 assumed Flash-Lite).",
+   "recommendation": "Move to the box once an intros eval exists and the box scores within 2 points of Gemini on it. Until 2026-11-19 the batch chain (pipeline GEMINI_CHAIN) started on gemini-flash-latest, a thinking model: 19.41 EUR per 1,000 calls against 3.25 for Flash-Lite in batch mode, so a full run costs about 7.57 EUR instead of 1.27 (E-R3 assumed Flash-Lite).",
    "box": "eligible after its eval"
   },
   "tagging": {
@@ -660,9 +786,8 @@
    "today": {
     "provider": "gemini",
     "models": [
-     "gemini-flash-latest",
-     "gemini-3.5-flash",
-     "gemini-3.5-flash-lite"
+     "gemini-3.5-flash-lite",
+     "gemini-3.1-flash-lite"
     ]
    },
    "box": "never: needs Google Search grounding"
@@ -675,7 +800,8 @@
      "gemini-flash-latest",
      "gemini-3.5-flash",
      "gemini-3.5-flash-lite"
-    ]
+    ],
+    "pinned": "not yet: keeps its chain until golden_set.py passes on Flash-Lite (pipeline/ai_gateway.py TRIPS_CHAIN); owner run in docs/owner/ai.md"
    },
    "eval": "golden_set.py (Trips)",
    "box": "possible for ungrounded runs after golden_set passes on the box"
