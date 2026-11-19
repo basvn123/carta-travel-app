@@ -16,7 +16,7 @@ import { MapCorner } from '../components/dock/MapCorner.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { scrollBehavior } from '../lib/motion.js';
 import { Button } from '../components/ui/index.js';
-import { useGuidedData } from '../lib/guidedData.js';
+import { useGuidedState } from '../lib/guidedData.js';
 import { setDockKind, setDockResults, setDockHandlers, useSearchDock } from './searchDockStore.js';
 // T586: the overview first page.
 // T588: the focused view's toolbar.
@@ -45,7 +45,7 @@ import { useExploreMapView } from './explore/useExploreMapView.js';
 import { FilterSheet } from './filters/FilterSheet.jsx';
 import { closeFilters, publishFilters, setFilterHandlers, useFilters } from './filters/filtersStore.js';
 import {
-  SHORTCUTS, SORT_OPTIONS, countNoTemp, parsePicks, parseTemps, shortcutOn, shortcutPatch, sortShown,
+  SHORTCUTS, countNoTemp, parsePicks, parseTemps, shortcutOn, shortcutPatch, sortOptionsFor, sortShown,
 } from './filters/filterModel.js';
 import { spanOf, viewFactor } from '../lib/price/display.js';
 
@@ -103,7 +103,7 @@ export function ExploreTab({
   const { t, lang } = useI18n();
   // The guided search data (T439): vibes, areas and distances. Loaded on
   // idle; the hiking and beach rails and the vibe filter read it.
-  const guided = useGuidedData(isActive);
+  const { data: guided, done: guidedDone } = useGuidedState(isActive);
   const [visible, setVisible] = React.useState(PAGE);
   // Map and list in sync (house rule, explore N5): the card under the
   // pointer or in focus rings its pin; the pin under the pointer or in focus
@@ -520,7 +520,7 @@ export function ExploreTab({
     const g = shortcutPatch(id, on, null);
     if ('gemOnly' in g) setGemOnly(g.gemOnly);
   }, [setGemOnly]);
-  const { rails, railLead } = useExploreRails({
+  const { rails, railLead, railsSettled } = useExploreRails({
     allRows, applyShortcut, favorites, guided, isDesktop, lang, patchXf, railMonth, railsIdle, rows,
     setShowFavOnly, setSortKey, t, xf,
   });
@@ -546,12 +546,14 @@ export function ExploreTab({
   // so it is grouped the way the reader's locale groups thousands.
 
   // G12 round 2 (decision.md section 2): Best match, Price, Score, A to Z,
-  // the same four in the sheet and in the desktop row's menu. Best match is
-  // the match order under a guided question or a pick (T444), else the
-  // Score order (or "For you" once config turns it on, T765).
+  // the same choices in the sheet and in the desktop row's menu. Best match
+  // is the match order under a guided question or a pick (T444), else the
+  // Score order; Best match does not read the style's taste while config
+  // keeps "For you" off by default (T765), so For you leads the list when
+  // the active style gives a taste, as in the sheet (requests-5.md R5.1).
   const sortMenu = (
-    <SortMenu t={t} options={SORT_OPTIONS} onChange={setSortKey} showValue className="xap-tool"
-      value={sortShown(sortKey)} />
+    <SortMenu t={t} options={sortOptionsFor(!!matchTaste)} onChange={setSortKey} showValue className="xap-tool"
+      value={sortShown(sortKey, !!matchTaste)} />
   );
 
   // T592 (owner, 2026-10-22): one toggle, not a List | Map pair. In the
@@ -730,7 +732,12 @@ export function ExploreTab({
           viewportMode={viewportMode} visible={visible} xf={xf}
         />
       </div>
-      <SiteFooter />
+      {/* G12, D10 (round 6): on the overview the footer waits until the
+          rails are complete (the guided data's rails in, or its file
+          missing): drawn earlier it stood in view on a short page and a
+          rail arriving above pushed it down under the reader (0.11 of a
+          1280 screen in perf_explore.mjs). */}
+      {(railsSettled || (guidedDone && !guided)) && <SiteFooter />}
 
       {/* G12 round 2: the phone's Map is the fixed bottom-right corner
           (components/dock/MapCorner.jsx); the map drawer's List brings the

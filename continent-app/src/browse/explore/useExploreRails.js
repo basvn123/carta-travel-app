@@ -32,8 +32,8 @@ export function useExploreRails({
   // month its places were not chosen for.
   const railLists = React.useRef({ ids: null, guided: null, month: null, lists: new Map(), stale: null, pending: new Map() });
   const [railsTick, setRailsTick] = React.useState(0);
-  const rails = React.useMemo(() => {
-    if (!railsIdle) return [];
+  const { rails, waiting } = React.useMemo(() => {
+    if (!railsIdle) return { rails: [], waiting: false };
     // The month the rails speak about: one set by hand, else the month of
     // the traveller's dates, else this month (T427).
     const month = xf.month || railMonth;
@@ -129,8 +129,13 @@ export function useExploreRails({
     // first vibe rail: the rest arrive under what is on screen instead of
     // pushing Hidden gems and Go without a car down while the traveller
     // reads (checked on the merged branch, 2026-11-18).
-    const untilGuided = (list) => (guided ? list : list.slice(0, list.findIndex((r) => r.key === 'hiking')));
-    return spreadLeads(untilGuided([
+    // G12, D10 (round 6): the same cut holds while the guided data's own
+    // lists are still worked out after its arrival (round 5). Without it
+    // Hidden gems, Go without a car and Quiet were drawn first and Hiking
+    // bases, Beach, Old towns and Islands were inserted above them a moment
+    // later, moving everything under the reader (0.38 of a 1280 screen in
+    // perf_explore.mjs).
+    const list = [
       { key: 'saved', title: t('rail.shortlist'), rows: q.saved,
         seeAll: () => setShowFavOnly(true) },
       { key: 'now', title: t('rail.bestIn', { month: monthName }), short: t('rail.bestIn', { month: monthName }),
@@ -165,7 +170,11 @@ export function useExploreRails({
       theme('art'),
       { key: 'quiet', title: t('rail.quiet'), short: t('filter.notCrowded'), rows: q.quiet,
         seeAll: () => patchXf({ quiet: true }) },
-    ]));
+    ];
+    const waiting = !!guided && !!cur.guidedLater
+      && [...cur.pending.keys()].some((name) => name.startsWith('vibe:') || name === 'beach');
+    const cut = guided && !waiting ? list : list.slice(0, list.findIndex((r) => r.key === 'hiking'));
+    return { rails: spreadLeads(cut), waiting };
     // railsTick: a list worked out after the render is in.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [railsTick, railsIdle, rows, xf.month, xf.budget, railMonth, lang, guided, favorites, t, patchXf,
@@ -232,5 +241,9 @@ export function useExploreRails({
     }
     return null;
   }, [rails, allRows]);
-  return { rails, railLead, quickRails, heroPhoto };
+  // The rails are all drawn and no list is still on its way (the guided
+  // data in and its lists worked out): ExploreTab draws the footer only
+  // then, so a rail arriving never pushes it down under the reader.
+  const railsSettled = !railsIdle || (!!guided && !waiting);
+  return { rails, railLead, quickRails, heroPhoto, railsSettled };
 }

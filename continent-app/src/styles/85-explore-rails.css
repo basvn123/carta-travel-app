@@ -28,7 +28,6 @@
   gap: var(--space-5);
   margin: var(--space-5) 0 var(--space-7);
 }
-.explore-shell .xsub { margin: var(--space-2) 0 0; }
 .explore-shell .xrails-rail .hs-rail-head { margin-bottom: var(--space-3); }
 /* Twenty rails: the ones off screen skip layout and paint until the
    traveller nears them. The height they hold until then is a rail's own
@@ -53,6 +52,15 @@
   .explore-shell .xrows > .xrow-hs:not(.previewing):not(:focus-within) { contain-intrinsic-size: auto 73px; }
 }
 
+/* Scrolling on a 1x desktop screen (G12, D10, round 6): Chrome left the
+   Explore column and the rail strips unpromoted there (to keep subpixel
+   text), so every scroll frame re-layerized the page: 4.2 s of Layerize
+   in eight scroll gestures at 1280 without CPU throttling, 0.4 s with both
+   promoted. The cost is greyscale text antialiasing inside them on 1x
+   screens; phones and 2x screens promote them anyway. */
+.explore-shell .explore-tab,
+.explore-shell .xrails-rail .hs-rail { will-change: scroll-position; }
+
 /* The docked Settings panel's width (81-settings.css .set-dock), as one
    constant the Explore rules read while html.has-settings-dock is on. It
    was written on the root by SettingsSheet at each open, and a custom
@@ -70,54 +78,6 @@
   .explore-shell .xov-hero { margin-bottom: var(--space-4); }
   .explore-shell .xrails-rail .hs-rail-head { margin-bottom: var(--space-4); }
 }
-
-/* ---- The phone row under the tabs ------------------------------------- */
-/* The rails' doors as one sideways row of chips, the Trip dock pinned at
-   its right end (owner 2026-11-18: the dock no longer stands alone on a row
-   of its own). Chips and dock share one shape: paper, the soft edge, a
-   40 px pill with a 44 px hit area. The chip strip runs out to the screen's
-   left edge and fades out before the dock, so a cut chip reads as more. */
-.explore-shell .xsub.xsub--rails {
-  justify-content: flex-start;
-  gap: 0;
-  margin: var(--space-2) 0 0;
-}
-.xsub-chips {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  gap: var(--space-2);
-  min-width: 0;
-  margin-left: calc(var(--page-gutter) * -1);
-  padding: 2px var(--space-6) 2px var(--page-gutter);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  scroll-padding-inline: var(--page-gutter);
-  mask-image: linear-gradient(to right, var(--text) calc(100% - var(--space-6)), transparent);
-}
-.xsub-chips::-webkit-scrollbar { display: none; }
-.xsub-chips > * { flex: none; }
-.xsub--rails .btn.xsub-chip,
-.xsub--rails .btn.dock-trigger {
-  min-height: 40px;
-  border: var(--stroke-edge) solid var(--border-soft);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-}
-.xsub--rails .btn.xsub-chip {
-  padding: 0 var(--space-4);
-  color: var(--text);
-  font-size: var(--text-body);
-  font-weight: 600;
-  white-space: nowrap;
-}
-.xsub--rails .btn.xsub-chip::after,
-.xsub--rails .btn.dock-trigger::after { content: ""; position: absolute; inset: -2px 0; }
-@media (hover: hover) {
-  .xsub--rails .btn.xsub-chip:hover { border-color: var(--edge); background: var(--surface); }
-}
-.xsub--rails > .dock { flex: none; margin-left: var(--space-1); }
 
 /* ---- The rail card --------------------------------------------------- */
 /* The photo is the card's link, stretched over the whole card (the list

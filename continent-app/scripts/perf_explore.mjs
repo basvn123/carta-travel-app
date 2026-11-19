@@ -10,7 +10,7 @@
 //   cd continent-app
 //   FAST_OUT=../.fastbuild-perf node node_modules/vite/bin/vite.js build --config ../scripts/vite.fast.mjs
 //   node scripts/perf_explore.mjs --build ../.fastbuild-perf [--public <dir>] [--port 5310]
-//        [--sizes 390x844,1440x900] [--rate 4] [--out perf.json] [--quick]
+//        [--sizes 390x844,1440x900] [--rate 4] [--out perf.json] [--quick] [--rows start,prices]
 //
 // --public is the folder holding the data (default: this app's public/; from a
 // sparse worktree pass the main checkout's continent-app/public). --quick skips
@@ -47,6 +47,8 @@ const SIZES = arg('sizes', '390x844,1440x900').split(',').map((s) => s.split('x'
 const RATE = Number(arg('rate', 4));
 const OUT = arg('out', null);
 const QUICK = flag('quick');
+// --rows start,prices walks only those settings rows (a bisect of one change).
+const ONLY_ROWS = arg('rows', null)?.split(',') ?? null;
 
 if (!fs.existsSync(path.join(BUILD, 'index.html'))) {
   console.error(`No build at ${BUILD} (pass --build <dir>)`);
@@ -326,7 +328,7 @@ try {
     ints.push(await interaction(page, 'open settings', openSettings));
     // The rows that move a price; the style row opens the studio, a page of its own.
     const rows = QUICK ? [] : (await page.$$eval('.set-row', (els) => els.map((e) => [...e.classList].find((c) => c.startsWith('set-row-'))).filter(Boolean)))
-      .filter((k) => k !== 'set-row-style');
+      .filter((k) => k !== 'set-row-style' && (!ONLY_ROWS || ONLY_ROWS.includes(k.slice(8))));
     for (const key of rows) {
       ints.push(await interaction(page, `open ${key}`, () => page.click(`.set-row.${key}`, { timeout: 30000 })));
       const opt = await page.evaluate(() => {
@@ -358,14 +360,20 @@ try {
     });
     ints.push(await interaction(page, 'search Escape x2', async () => { await page.keyboard.press('Escape'); await page.keyboard.press('Escape'); }));
     const TABS = '.band-cats button, .band-cats a, [class*="cats"] [role="tab"]';
-    const tabs = await page.$$eval(TABS, (els) => els.filter((e) => e.offsetWidth).map((e, i) => { e.setAttribute('data-perf-tab', String(i)); return e.textContent.trim().slice(0, 20); }));
+    const tabs = await page.$$eval(TABS, (els) => els.filter((e) => e.offsetWidth).map((e) => e.textContent.trim().slice(0, 20)));
+    // A layer tab draws its own band, so the tab is found again by its words
+    // before each press (an attribute set once was gone after the first hop).
+    const pressTab = async (label) => {
+      await page.$$eval(TABS, (els, l) => {
+        document.querySelectorAll('[data-perf-tab]').forEach((e) => e.removeAttribute('data-perf-tab'));
+        els.find((e) => e.offsetWidth && e.textContent.trim().slice(0, 20) === l)?.setAttribute('data-perf-tab', '1');
+      }, label);
+      await page.click('[data-perf-tab="1"]', { timeout: 30000 });
+    };
     for (let i = 1; i < Math.min(tabs.length, 4); i += 1) {
-      ints.push(await interaction(page, `tab ${tabs[i]}`, () => page.click(`[data-perf-tab="${i}"]`, { timeout: 30000 })));
+      ints.push(await interaction(page, `tab ${tabs[i]}`, () => pressTab(tabs[i])));
     }
-    if (tabs.length) {
-      await page.$$eval(TABS, (els) => els.filter((e) => e.offsetWidth).forEach((e, i) => e.setAttribute('data-perf-tab', String(i))));
-      ints.push(await interaction(page, `tab ${tabs[0]}`, () => page.click('[data-perf-tab="0"]', { timeout: 30000 })));
-    }
+    if (tabs.length) ints.push(await interaction(page, `tab ${tabs[0]}`, () => pressTab(tabs[0])));
     if (!QUICK) {
       let opened = false;
       ints.push(await interaction(page, 'open a place', async () => {

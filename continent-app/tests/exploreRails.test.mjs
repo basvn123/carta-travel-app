@@ -48,7 +48,11 @@ test('every rail with four places is a strip; the theme rails use the vibe filte
   for (const k of ['top', 'hiking', 'gems']) assert.match(src, new RegExp(`seeAll: \\(\\) => applyShortcut\\('${k}'\\)`), k);
   // Before the guided data loads, nothing after Hiking bases shows, so the
   // vibe rails never push the rails below them down under the reader.
-  assert.match(src, /guided \? list : list\.slice\(0, list\.findIndex\(\(r\) => r\.key === 'hiking'\)\)/);
+  assert.match(src, /guided && !waiting \? list : list\.slice\(0, list\.findIndex\(\(r\) => r\.key === 'hiking'\)\)/);
+  // Round 6: the cut holds while the guided rails' lists are pending, and
+  // Explore draws its footer only once the rails are complete.
+  assert.match(src, /const railsSettled = !railsIdle \|\| \(!!guided && !waiting\)/);
+  assert.match(read('src/browse/ExploreTab.jsx'), /\(railsSettled \|\| \(guidedDone && !guided\)\) && <SiteFooter \/>/);
   // A theme rail asks for a Good Score or better, best first, by country.
   assert.match(src, /vibeOf\(guided, p\.id, vibe\) >= 80 && bandAtLeast\(p\.rating, 'good'\)\)\.sort\(byRating\)/);
 });
