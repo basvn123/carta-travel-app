@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { getSupabase, authConfigured, mayHaveSession } from '../lib/supabaseClient.js';
 import { clearDeviceThings } from '../lib/deviceData.js';
+import { stopPersisting } from '../lib/urlState.js';
 
 const AuthContext = createContext(null);
 
@@ -189,7 +190,9 @@ export function AuthProvider({ children }) {
   const signOut = useCallback(async ({ clearDevice = false } = {}) => {
     const supabase = await getSupabase();
     await supabase.auth.signOut();
-    if (clearDevice) clearDeviceThings();
+    // N5: no pending persist may write the mirror back after the clear;
+    // the caller then leaves for the clean address (AccountPanel).
+    if (clearDevice) { stopPersisting(); clearDeviceThings(); }
   }, []);
 
   /**
@@ -284,6 +287,7 @@ export function AuthProvider({ children }) {
     const { error } = await supabase.rpc('delete_user');
     if (error) throw error;
     await supabase.auth.signOut();
+    stopPersisting();
     clearDeviceThings();
   }, []);
 

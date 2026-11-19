@@ -182,6 +182,14 @@ function PasswordChecklist({ password, context }) {
  * lib/urlState.js); the old `yourdata` opens Your data, `friends` opens
  * Together (App), `profile` is the identity card's editor.
  */
+// After a device clear (sign-out with remove, account delete): the page with
+// no query and no hash, so nothing personal comes back through the address.
+// The path keeps the language prefix (/nl/). N5, logic wave 0a.
+function leaveForCleanAddress() {
+  if (typeof window === 'undefined') return;
+  window.location.assign(window.location.origin + window.location.pathname);
+}
+
 const VIEW_ALIAS = { yourdata: 'data', friends: 'together' };
 // The sections a guest may open; anything else lands on the Overview.
 const GUEST_VIEWS = new Set(['home', 'travel', 'prefs', 'help', 'faq', 'feedback']);
@@ -602,6 +610,7 @@ export function AccountPanel({
       // before the rows go (T936 cancelled the old yearly subscription here).
       await deleteAccount();
       onClose();
+      leaveForCleanAddress();
     } catch (err) {
       // Most likely the delete_user() RPC isn't installed yet; keep the user
       // informed rather than failing silently on a compliance-critical path.
@@ -713,9 +722,13 @@ export function AccountPanel({
   const doSignOut = () => { setView('home'); setOutAsk(true); };
   const finishSignOut = async (clearDevice) => {
     setOutAsk(false);
-    await signOut({ clearDevice });
-    // A reload drops the copies already held in memory by open screens.
-    if (clearDevice && typeof window !== 'undefined') window.location.reload();
+    try {
+      await signOut({ clearDevice });
+    } finally {
+      // Leaving for the clean address drops the copies held in memory by open
+      // screens, and the query (?fav=..&dh=..) a reload would read back (N5).
+      if (clearDevice) leaveForCleanAddress();
+    }
   };
   // Every device, this one too (Supabase's global scope).
   const signOutEverywhere = async () => {

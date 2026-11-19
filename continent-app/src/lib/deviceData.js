@@ -13,7 +13,9 @@
  * The list is the "your things" group of components/CookiesPage.jsx, which
  * documents every key. Settings (language, map state, folds, filters) and
  * one-off notes stay: they say nothing about the person. Add a key here when
- * you add one to "your things" there.
+ * you add one to "your things" there. The address mirror (continent.state.v1)
+ * goes whole: it mixes view filters with the home point and the shortlist,
+ * and a clean start is truer than a scrub that keeps unlisted keys.
  */
 
 /** Exact keys, and prefixes ending in '.' that cover a family of keys. */
@@ -43,6 +45,21 @@ export const DEVICE_THING_KEYS = [
   'carta.accountSync.v1',
   // T1152: the traveller's yes and no on their taste chips.
   'carta.taste.v1',
+  // Logic wave 0a (N5, audit J-W5): the address mirror holds the home point,
+  // shortlist, party, start, dates and taste, so the whole key goes.
+  'continent.state.v1',
+  'carta.travelStyles.v1',
+  // A co-planner invite token: the next person on a shared device must not
+  // accept the last one's invite.
+  'carta.pendingCoplan',
+  // Fares the traveller typed, a finder plan held across a reload, the
+  // shortlist ids a price drop was asked about, and recent searches.
+  'carta.ownFares',
+  'carta.finderPlan.once',
+  'carta.priceDropAsk.v1',
+  'carta.dock.recent',
+  'carta.search.recent',
+  'carta.search.picked',
 ];
 
 /** IndexedDB databases that hold the traveller's own files. */

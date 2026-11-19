@@ -4,7 +4,7 @@ import { formatMoney } from '../../lib/money.js';
 import { useFirstRun } from '../../lib/firstRunContext.js';
 import { normalizeTaste } from '../../lib/taste.js';
 import { likePhotos } from './guidePhotos.js';
-import { syncParty, syncWhen } from './appSync.js';
+import { syncParty, syncWhen, seedWhen } from './appSync.js';
 import { QUESTIONS, toggleValue } from './questions.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { useSettings } from '../../components/SettingsLine.jsx';
@@ -198,7 +198,8 @@ export function WhenScreen({ settings, commit, doneLabel }) {
   const app = useSettings();
   const months = useMonths();
   const bcp47 = useBcp47();
-  const [w, setW] = useState(settings.when);
+  // K-3: an unanswered When starts from the settings line's nights.
+  const [w, setW] = useState(() => seedWhen(settings, app));
   const [pickEnd, setPickEnd] = useState('start');
   const set = (patch) => setW((cur) => ({ ...cur, ...patch }));
   const min = app?.dateBounds?.min || todayISO();

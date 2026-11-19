@@ -136,3 +136,24 @@ test('the Where text belongs to one hand-off', () => {
   assert.equal(browseQueryFrom(''), '');
   assert.equal(browseQueryFrom(`?dq=${'x'.repeat(200)}`).length, 80);
 });
+
+// Logic wave 0a (QW#1): a country's and a region's page stay open when the
+// state is persisted, like #dest=, #journey= and #tf=; other hashes go.
+test('persistState keeps the country and region page hashes', async () => {
+  const { persistState } = await import('../src/lib/urlState.js');
+  for (const [hash, kept] of [['#country=IT', true], ['#country=IT&region=it-toscana', true], ['#region=it-toscana', true],
+    ['#dest=BRU', true], ['#together=abc', false], ['#countryside=1', false]]) {
+    let url = `/nl/?g=2${hash}`;
+    globalThis.window = {
+      location: { get search() { return url.slice(url.indexOf('?')).split('#')[0]; }, pathname: '/nl/', get hash() { const i = url.indexOf('#'); return i < 0 ? '' : url.slice(i); } },
+      history: { state: null, replaceState: (_s, _t, u) => { url = u; } },
+      localStorage: { setItem: () => {}, getItem: () => null },
+    };
+    try {
+      persistState({ choices: { group_size: 2 } });
+      assert.equal(url.endsWith(hash), kept, `${hash} -> ${url}`);
+    } finally {
+      delete globalThis.window;
+    }
+  }
+});

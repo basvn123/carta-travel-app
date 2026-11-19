@@ -12,8 +12,8 @@ import { useI18n } from '../i18n/index.jsx';
  *                 tracking script (index.html loads only /src/main.jsx; the
  *                 CSP in public/_headers allows scripts from 'self' only).
  *   Local and session storage, by purpose (carta.* and continent.* keys):
- *     settings    continent.state.v1, continent.lang.v1, carta.tripLength,
- *                 carta.ownFares, carta.exploreStart.v1, carta.destFolds.v2,
+ *     settings    continent.lang.v1, carta.tripLength,
+ *                 carta.exploreStart.v1, carta.destFolds.v2,
  *                 carta.cartaTrips.filters.v1, carta.dayDetail.v1,
  *                 carta.dayOpen.v1, carta.savedTripsTab, carta.ask.onDevice.v1
  *     your things carta.savedLists.v1, carta.visitedCountries.v1,
@@ -25,10 +25,15 @@ import { useI18n } from '../i18n/index.jsx';
  *                 carta.tripSkips.v1, carta.together.*, carta.friends.lastSeen,
  *                 carta.accountSync.v1 (T1104: the account last synced, what was in sync)
  *                 carta.taste.v1 (T1152: yes and no on the taste chips)
+ *                 continent.state.v1 (the address mirror: home point,
+ *                 shortlist, party, start, dates, filters), carta.travelStyles.v1,
+ *                 carta.pendingCoplan (a co-planner invite across a sign-in),
+ *                 carta.ownFares, carta.finderPlan.once, carta.priceDropAsk.v1
+ *                 (T944: the price drop ask stamp), carta.dock.recent,
+ *                 carta.search.recent, carta.search.picked (logic wave 0a, N5)
  *     one-off notes  dismissed hints and banners, the paywall snooze, a
- *                 pending pass or co-planner invite across a sign-in, the
- *                 chunk reload guard, a route cache (carta.route.*), the
- *                 price drop ask stamp (carta.priceDropAsk.v1, T944)
+ *                 pending pass across a sign-in, the
+ *                 chunk reload guard, a route cache (carta.route.*)
  *   Sign-in       supabase-js's default: the session under sb-<ref>-auth-token
  *                 in local storage (plus its PKCE code verifier during a
  *                 Google sign-in). No cookie.

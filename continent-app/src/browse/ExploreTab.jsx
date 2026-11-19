@@ -42,6 +42,7 @@ import { useExploreChips } from './explore/useExploreChips.js';
 import { deskChips, lensCount } from './explore/chipRules.js';
 import { prefetchMap } from './explore/exploreMapLazy.js';
 import { useExploreMapView } from './explore/useExploreMapView.js';
+import { shareViewUrl } from '../lib/shareKeys.js';
 
 
 
@@ -450,7 +451,8 @@ export function ExploreTab({
       canShare: true,
     });
   }, [isActive, isDesktop, railsIdle, dockLabel, locationQuery, chips.length]);
-  // Share copies this view's address.
+  // Share copies this view: the place, filters and lens only, never the
+  // traveller's home point, shortlist, party, dates or taste (lib/shareKeys.js, C9).
   const [toast, setToast] = React.useState(null);
   React.useEffect(() => {
     if (!toast) return undefined;
@@ -460,7 +462,7 @@ export function ExploreTab({
   const shareView = () => {
     const fail = () => setToast(t('explore.linkFailed'));
     try {
-      navigator.clipboard.writeText(window.location.href)
+      navigator.clipboard.writeText(shareViewUrl())
         .then(() => setToast(t('explore.linkCopied')), fail);
     } catch { fail(); }
   };

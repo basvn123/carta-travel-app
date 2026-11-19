@@ -100,6 +100,7 @@ import { useReach } from './lib/reach.js';
 import { resolveWhen, whenMonth, xmFromSearch } from './lib/when.js';
 import { gatewayCity } from './lib/rating.js';
 import { reportPriceDrops, mayAsk } from './lib/priceDrop.js';
+import { roundHomePoint } from './lib/shareKeys.js';
 import { loadEmailPrefs } from './auth/account/emailPrefs.js';
 import { ExploreBand } from './browse/band/ExploreBand.jsx';
 // G12: the Settings sheet loads on its first open.
@@ -1061,11 +1062,14 @@ function TravelApp() {
     const origins = hours
       ? originsWithin(airportsNear(data?.meta, placePt, { covered: sweptOrigins }), hours)
       : prev.origins;
+    // Owner default 12 (logic wave 0a): the home point is kept, and synced to
+    // the account, at 0.01 degree (about 1 km), never the exact spot.
+    const pt = roundHomePoint(placePt.lat, placePt.lon);
     return {
       ...prev,
       origin: code,
-      home: { lat: placePt.lat, lon: placePt.lon },
-      drive_home: { name: placePt.name || '', lat: placePt.lat, lon: placePt.lon, iso2: placePt.iso2 || null, country: placePt.country || '' },
+      home: { lat: pt.lat, lon: pt.lon },
+      drive_home: { name: placePt.name || '', lat: pt.lat, lon: pt.lon, iso2: placePt.iso2 || null, country: placePt.country || '' },
       origins: origins || [],
       airport_hours: hours || null,
     };
@@ -1871,6 +1875,7 @@ function TravelApp() {
         adminOpen={adminOpen} authConfigured={authConfigured} authModalMode={authModalMode}
         authModalOpen={authModalOpen} backToLabel={backToLabel} choices={choices}
         closeOverlay={closeOverlay} countryPage={countryPage} data={data}
+        defaultDates={defaultDates} departDate={departDate}
         exploreIndices={exploreIndices} favDests={favDests} favorites={favorites} goTo={goTo}
         goToTab={goToTab} guidesOpen={guidesOpen} handleLoadTrip={handleLoadTrip}
         isFavorite={isFavorite} leaveCountryPage={leaveCountryPage}

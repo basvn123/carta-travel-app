@@ -293,7 +293,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### REC-037 Decide together
 - Decides: the shared shortlist and its order.
-- Rule: up to 8 trips and 8 people ride in the `#together=` hash; fewer than 2 trips is no shortlist; the sender is person 1 and keeps all. Picking the same again clears it. Order: trips every voter kept (with more than one voter) first, then most keeps, then fewest skips, then shared order.
+- Rule: up to 8 trips and 8 people ride in the `#together=` hash, on the page's address with no query (no home point, party or dates; `shareBase`, logic wave 0a); fewer than 2 trips is no shortlist; the sender is person 1 and keeps all. Picking the same again clears it. Order: trips every voter kept (with more than one voter) first, then most keeps, then fewest skips, then shared order.
 - Constant: `MAX_TRIPS` / `MAX_PEOPLE` in `continent-app/src/lib/recommend/together.js:19` = 8 / 8
 - Constant: `standing` in `continent-app/src/lib/recommend/together.js:113`
 - Test: `continent-app/tests/recommendKept.test.mjs` :: "the link carries the shortlist and the picks, and nothing else"

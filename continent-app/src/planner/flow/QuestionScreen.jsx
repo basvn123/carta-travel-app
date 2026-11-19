@@ -14,7 +14,7 @@ import { formatMoney } from '../../lib/money.js';
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { tellChips, tellSettings } from './tellChips.js';
 import { useBcp47, useMonths } from './flowHooks.js';
-import { syncParty, syncWhen } from './appSync.js';
+import { syncParty, syncWhen, sameWhen } from './appSync.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { plannerStore } from '../plannerStore.js';
 import {
@@ -205,7 +205,9 @@ function TellBody({ settings, commit }) {
     // What the words (or a booking) answered moves Explore's prices too, as
     // the Who and When screens do when they are asked.
     if (now.words.includes('who')) syncParty(app, s.party);
-    if (now.words.includes('when') || read !== settings) syncWhen(app, s.when);
+    // K-3: only a When the words named or a booking changed; an untouched
+    // default (7 nights) must not overwrite the app's own dates.
+    if (now.words.includes('when') || !sameWhen(read.when, settings.when)) syncWhen(app, s.when);
     commit(s);
   };
 

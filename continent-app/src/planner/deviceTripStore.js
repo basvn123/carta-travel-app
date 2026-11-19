@@ -74,6 +74,17 @@ export function deviceSaveDecision(stored, currentKey) {
 }
 
 /**
+ * The traveller's own account trips (QUOTA-016, owner default 11, logic wave
+ * 0a): a trip a friend shares to co-plan (`coplan`, auth/tripPlanStorage.js)
+ * never counts toward the free plan's one trip, and is never the one a device
+ * trip is kept over. Lists still show co-planned trips; only the count and
+ * the keep choice use this.
+ */
+export function ownTrips(plans) {
+  return Array.isArray(plans) ? plans.filter((p) => p && !p.coplan) : [];
+}
+
+/**
  * A device trip meets an account at sign-in (T490-f):
  *   'none'    nothing kept on the device
  *   'move'    the account has room (no trip yet, or a pass): move it across

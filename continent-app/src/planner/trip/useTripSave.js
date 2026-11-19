@@ -1,4 +1,4 @@
-import { deviceSaveDecision, loadDeviceTrip, newDeviceKey, saveDeviceTrip, deviceMeetsAccount, clearDeviceTrip } from '../deviceTripStore.js';
+import { deviceSaveDecision, loadDeviceTrip, newDeviceKey, saveDeviceTrip, deviceMeetsAccount, clearDeviceTrip, ownTrips } from '../deviceTripStore.js';
 import { trackFunnel } from '../../lib/funnelCounts.js';
 import { fetchTripPlans } from '../../auth/tripPlanStorage.js';
 import { useEffect } from 'react';
@@ -50,7 +50,8 @@ export function useTripSave({
     // answer, so a pass holder never pays for the round trip.
     if (!wasUpdate && !paywall.paid) {
       let existing = [];
-      try { existing = await fetchTripPlans(user.id); } catch { existing = []; }
+      // A co-planned trip is the friend's, so it never counts (QUOTA-016).
+      try { existing = ownTrips(await fetchTripPlans(user.id)); } catch { existing = []; }
       if (existing.length >= 1 && !paywall.require('save')) return;
     }
     try {
@@ -89,7 +90,8 @@ export function useTripSave({
     migrating.current = true;
     (async () => {
       let existing;
-      try { existing = await fetchTripPlans(user.id); } catch { migrating.current = false; return; }
+      // Own trips only: a device trip is never kept over a friend's (QUOTA-016).
+      try { existing = ownTrips(await fetchTripPlans(user.id)); } catch { migrating.current = false; return; }
       const how = deviceMeetsAccount(stored, existing.length, paywall.paid);
       if (how === 'move') setPendingMove({ stored, asPlanId: null });
       else if (how === 'choose') setKeepChoice({ stored, account: existing[0] });

@@ -148,10 +148,11 @@ eq('b        -> baggage_key', back.baggage_key, 'checked_20kg');
 eq('t        -> transport_mode', back.transport_mode, 'car');
 eq('st       -> stay_tier', back.stay_tier, 'hotel3');
 eq('o        -> origin', back.origin, 'BRU');
-// dh packs lat and lon to four decimals and keeps the free-text name whole,
-// commas and all, by splitting on the first two separators only.
+// dh packs lat and lon to two decimals (0.01 degree, about 1 km: owner
+// default 12, logic wave 0a) and keeps the free-text name whole, commas and
+// all, by splitting on the first two separators only.
 eq('dh       -> drive_home', back.drive_home,
-  { lat: 50.8466, lon: 4.3528, name: 'Brussels, Grand Place' });
+  { lat: 50.85, lon: 4.35, name: 'Brussels, Grand Place' });
 eq('pm       -> priceMode', back.priceMode, 'total');
 eq('cf       -> countryFilter', back.countryFilter, ['BE', 'FR']);
 eq('tk       -> tripKinds', back.tripKinds, ['city', 'beach']);

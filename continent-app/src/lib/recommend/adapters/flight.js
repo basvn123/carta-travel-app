@@ -80,7 +80,8 @@ function nearLegs(trip, state, ctx, home) {
   for (const h of files) {
     if (!h.file || h.file.from !== h.iata) continue;
     const out = sweptNear(h.file, 'out', iata, trip.dates.out);
-    const back = sweptNear(h.file, 'back', iata, trip.dates.back);
+    // The way home flies after the way out (T1019, logic wave 0a).
+    const back = out && sweptNear(h.file, 'back', iata, trip.dates.back, { after: out.date });
     if (!out || !back) continue;
     const access = ticked && h.row ? accessCost(h.row, { adults: trip.party.adults, children: trip.party.children, babies: trip.party.babies, nights: trip.nights }) : null;
     const o = { out: { ...out, cost: legFor(out, party) }, back: { ...back, cost: legFor(back, party) }, iata, home: h.iata, access };

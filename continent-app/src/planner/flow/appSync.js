@@ -49,3 +49,26 @@ export function syncWhen(app, when, today = new Date()) {
   }
   app.setDateFlex?.('any');
 }
+
+/**
+ * K-3 (logic wave 0a, G4): the When a screen starts from. Unanswered, the
+ * trip settings hold a default of 7 nights, and syncing that default wrote
+ * 7 nights over the app's own (a 3-night settings line became 7). So an
+ * unanswered When takes the nights from the app's settings line; an answered
+ * one is the traveller's and stays.
+ */
+export function seedWhen(settings, app) {
+  const when = settings?.when;
+  if (!when || settings.answered?.includes('when')) return when;
+  const n = app?.model?.nights;
+  return Number.isInteger(n) && n >= 1 && n <= 60 ? { ...when, nights: n } : when;
+}
+
+/** Two When answers name the same trip days (fields, not key order). */
+export function sameWhen(a, b) {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  const months = (w) => (Array.isArray(w.months) ? [...w.months].sort((x, y) => x - y).join(',') : '');
+  return a.mode === b.mode && (a.start || '') === (b.start || '') && (a.end || '') === (b.end || '')
+    && Number(a.nights) === Number(b.nights) && months(a) === months(b);
+}

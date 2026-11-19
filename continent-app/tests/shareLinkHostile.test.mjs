@@ -62,3 +62,33 @@ test("garbage never throws", async () => {
     assert.equal(await decodeTripShare(raw), null, `payload ${raw.slice(0, 12)}`);
   }
 });
+
+// Logic wave 0a (C9): the payload itself carries only what the decoder keeps,
+// and never the sender's start. Read the raw bytes, not the decoded draft.
+async function rawPayload(payload) {
+  const b64 = payload.slice(2).replace(/-/g, "+").replace(/_/g, "/");
+  let bytes = Uint8Array.from(atob(b64 + "=".repeat((4 - (b64.length % 4)) % 4)), (c) => c.charCodeAt(0));
+  if (payload[0] === "1") {
+    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+    bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+  }
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+
+test("the payload carries no extra fields and no home start; party counts stay", async () => {
+  const payload = await encodeTripShare({
+    stops: [{ destinationId: "PRN_a", nights: 3, note: "my flat key under the mat" }],
+    groupSize: 4, children: 1, babies: 0,
+    anchorId: "BRU", anchorOrigin: "BRU", homeTown: "Ghent", userId: "u-1",
+    drive_home: { lat: 51.05, lon: 3.72, name: "Ghent" },
+  });
+  const raw = await rawPayload(payload);
+  for (const k of ["anchorOrigin", "homeTown", "userId", "drive_home"]) assert.equal(k in raw, false, k);
+  assert.equal("note" in raw.stops[0], false);
+  assert.equal(raw.groupSize, 4);
+  assert.equal(raw.children, 1);
+  assert.equal(raw.anchorId, "BRU");
+  const out = await decodeTripShare(payload);
+  assert.equal(out.anchorOrigin, null);
+  assert.equal(out.groupSize, 4);
+});

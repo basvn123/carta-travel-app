@@ -109,9 +109,10 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 
 ### QUOTA-016 How many trips are kept free
 - Decides: when "Save trip" asks for a Pass.
-- Rule: a guest keeps one trip on the device, a second different trip opens `save`; a signed-in free traveller keeps one account trip, a second new trip opens `save`; saving over an existing trip is never gated.
-- Constant: `deviceSaveDecision` in `continent-app/src/planner/deviceTripStore.js:71`; `continent-app/src/planner/TripPlannerTab.jsx:876`
-- Test: no test
+- Rule: a guest keeps one trip on the device, a second different trip opens `save`; a signed-in free traveller keeps one account trip, a second new trip opens `save`; saving over an existing trip is never gated. A co-planned trip (a friend's, flagged `coplan`) never counts and is never the trip a device trip is kept over (owner default 11, logic wave 0a).
+- Constant: `deviceSaveDecision` and `ownTrips` in `continent-app/src/planner/deviceTripStore.js`; `continent-app/src/planner/trip/useTripSave.js`
+- Test: `continent-app/tests/ownTrips.test.mjs` :: "only a co-planned trip on the account: the device trip moves across"
+- Test: `continent-app/tests/ownTrips.test.mjs` :: "the keep choice offers the traveller's own trip, never the friend's"
 
 ### QUOTA-017 Which plan the sheet opens on
 - Decides: the plan pre-selected in the Pass sheet.
@@ -185,9 +186,9 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 
 ### QUOTA-028 Back from checkout
 - Decides: how soon a new pass shows after paying.
-- Rule: on `?pass=ok` the entitlement is re-read 5 times, first after 800 ms, then every 1500 ms.
-- Constant: `continent-app/src/hooks/useEntitlement.js:106` to `:113`
-- Test: no test
+- Rule: on `?pass=ok` the entitlement is re-read 5 times, first after 800 ms, then every 1500 ms. `pass` is read once for the page (`passReturn`) and then taken out of the address in its own one-shot effect, so a reload or a copied link does not carry it and a `user` change cannot cancel the poll (V-5, logic wave 0a).
+- Constant: `passReturn`, `addressWithoutPass` and the poll in `continent-app/src/hooks/useEntitlement.js`
+- Test: `continent-app/tests/passReturn.test.mjs` :: "the poll reads the boot value, and the strip is its own one-shot effect"
 
 ### QUOTA-029 Checkout failures in words
 - Decides: the sentence a failed checkout shows.

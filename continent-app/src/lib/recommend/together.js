@@ -14,6 +14,7 @@
  *     people: [{ keep: [id], skip: [id] }] }
  */
 import { TOGETHER_HASH } from './keptStore.js';
+import { shareBase } from '../shareKeys.js';
 
 export { TOGETHER_HASH };
 export const MAX_TRIPS = 8;
@@ -121,9 +122,10 @@ export function standing({ trips, people }) {
     .sort((a, b) => (b.all - a.all) || (b.keeps - a.keeps) || (a.skips - b.skips) || (a.i - b.i));
 }
 
-/** The link to send: this page's address with the shortlist in the hash. */
-export function togetherUrl(list, href = typeof window !== 'undefined' ? window.location.href : '') {
-  return `${href.split('#')[0]}${TOGETHER_HASH}${encodeTogether(list)}`;
+/** The link to send: this page (no query: it carries the sender's home
+ * point, party and dates, C9) with the shortlist in the hash. */
+export function togetherUrl(list, href) {
+  return `${shareBase(href)}${TOGETHER_HASH}${encodeTogether(list)}`;
 }
 
 /**
