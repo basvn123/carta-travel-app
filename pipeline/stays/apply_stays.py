@@ -16,7 +16,12 @@
 Removes the v17 fields (per_person_night_eur, entire_home_night_eur,
 seasonality, capacity_buckets, tiers, ...) and meta.stay_tiers_available.
 
-Usage:  python pipeline/stays/apply_stays.py [--dry-run]
+Refuses (exit 1, nothing written) when the measured share of the master
+would fall by more than MAX_MEASURED_LOSS; --override "reason" applies anyway.
+box_stays.py calls write_all() after its publish, so the box master gets the
+same blocks the live stays wire carries (D10, wave 1).
+
+Usage:  python pipeline/stays/apply_stays.py [--dry-run] [--override "reason"]
 """
 
 import argparse
@@ -46,8 +51,19 @@ from pricing_config import rule  # noqa: E402
 FEES = rule("stay.fees")
 
 
+from bed_rules import bed_stats, clean_beds  # noqa: E402
+
+# D10 (wave 1, 0.1): an apply may not lose more than this share of measured
+# places. A partial build pops every block it does not price (T1021), so
+# without this a half-finished scrape wipes half the master's beds.
+MAX_MEASURED_LOSS = 0.02
+
+
 def compact(rec):
-    return {"beds": rec["beds"], "q": rec["q"], "captured": rec.get("captured"),
+    # A build made before bed_rules (or by hand) may still carry a dorm above
+    # hotel3; the block every first paint reads never does.
+    beds, _, _ = clean_beds(rec["beds"])
+    return {"beds": beds, "q": rec["q"], "captured": rec.get("captured"),
             "supply": rec.get("supply", {})}
 
 
@@ -55,9 +71,22 @@ TIER_OF = {"dorm": "dorm", "private": "private", "bnb_room": "room", "bnb_home":
            "hotel2": "hotel2", "hotel3": "hotel3", "hotel4": "hotel4", "hotel5": "hotel5"}
 
 
-def patch(path, records, manifest):
-    with open(path, encoding="utf-8") as f:
-        data = json.load(f)
+def loss_problem(before, after):
+    """Why this apply loses too many measured places, or None."""
+    if after["measured_share"] < before["measured_share"] - MAX_MEASURED_LOSS:
+        return (f"measured beds would fall from {before['measured_share']:.1%} "
+                f"({before['measured']}) to {after['measured_share']:.1%} ({after['measured']}), "
+                f"more than {MAX_MEASURED_LOSS:.0%} points")
+    return None
+
+
+def apply_build(data, records, manifest):
+    """Write the build into a loaded app_data dict. Returns (n, before, after).
+
+    Pure on the dict, so the box (box_stays), the CLI and a replay on a copy
+    of a master all run the same code.
+    """
+    before = bed_stats(data["destinations"])
     n = 0
     for did, d in data["destinations"].items():
         rec = records.get(did)
@@ -77,6 +106,21 @@ def patch(path, records, manifest):
     if OVERRIDE:
         meta["stays"]["override"] = OVERRIDE
     meta["schema_version"] = max(meta.get("schema_version", 17), 18)
+    return n, before, bed_stats(data["destinations"])
+
+
+def patch(path, records, manifest):
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    n, before, after = apply_build(data, records, manifest)
+    problem = loss_problem(before, after)
+    if problem and not OVERRIDE:
+        sys.exit(f"apply_stays refused for {path.name}: {problem}. "
+                 "Nothing was written. --override \"reason\" to apply anyway.")
+    if problem:
+        print(f"OVERRIDE ({problem}): {OVERRIDE}")
+    print(f"{path.name}: measured {before['measured_share']:.1%} -> {after['measured_share']:.1%}, "
+          f"dorm above hotel3 {before['dorm_above_hotel3']} -> {after['dorm_above_hotel3']}")
     write_json(path, data, compact=path == SERVED)
     return n
 
@@ -113,15 +157,25 @@ def main():
         print(f"OVERRIDE ({problem}): {a.override}")
         global OVERRIDE
         OVERRIDE = a.override
-    records = {}
-    for f in V.glob("*.json"):
-        if f.name != "manifest.json":
-            records.update(read_json(f)["dests"])
+    records = load_records()
     with_beds = sum(1 for r in records.values() if r.get("beds"))
     print(f"{with_beds}/{len(records)} destinations have bed prices "
           f"(built {manifest['built']})")
     if a.dry_run:
         return
+    write_all(records, manifest)
+
+
+def load_records(folder=None):
+    records = {}
+    for f in (folder or V).glob("*.json"):
+        if f.name != "manifest.json":
+            records.update(read_json(f)["dests"])
+    return records
+
+
+def write_all(records, manifest):
+    """The master, the served copy and the baked stays wire (main and box_stays)."""
     for path in (MASTER, SERVED):
         if path.exists():
             print(f"{path.relative_to(ROOT)}: {patch(path, records, manifest)} blocks")

@@ -158,6 +158,14 @@ def test_one_hotel_is_not_a_star_class():
     assert "hotel3" not in rec["beds"] and "hotel4" in rec["beds"]
 
 
+def test_build_drops_dorm_above_hotel3():
+    # D10 (wave 1): a dorm dearer than the 3-star room is dropped, not shipped.
+    obs = [dict(o, price=o["price"] * 20) if o["key"] == "hs" else o for o in _scraped_obs()]
+    rec = B.build([_dest("PMI", 39.57, 2.65)], obs)["PMI"]
+    assert "dorm" not in rec["beds"] and "dorm" not in rec["month"] and "dorm" not in rec["src"]
+    assert rec["beds"]["hotel3"] and rec["supply"]["hostel"] is False
+
+
 def test_only_scrape_rows_are_read(tmp_path):
     con = journal(tmp_path / "j.sqlite")
     for src in ("fixture", "xotelo", "booking"):

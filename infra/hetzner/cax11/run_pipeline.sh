@@ -414,6 +414,12 @@ if [ $ARCHIVE -eq 1 ]; then
   fi
 fi
 [ -f app_data/app_data.json ] || say "WARNING: no app_data/app_data.json. It is gitignored, so a fresh box has none until the R2 pull (or an scp from the laptop) provides it; every fare task will fail without it"
+# D10 (wave 1): the master's bed state at the start of every run, so a drift
+# like the 2026-11 one (3,544 pre-T1021 blocks) shows in the run log. A read
+# error prints and never stops the run.
+if [ -f app_data/app_data.json ]; then
+  say "beds in the master: $("$PY" -c 'import json,sys; sys.path.insert(0,"pipeline/stays"); from bed_rules import bed_stats; print(bed_stats(json.load(open("app_data/app_data.json",encoding="utf-8"))["destinations"]))' 2>&1 | tail -1)"
+fi
 
 if [ $PULL_ONLY -eq 1 ]; then
   say "--pull-only: stopping before the pipeline"

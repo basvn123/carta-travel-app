@@ -14,9 +14,11 @@ the box:
   4. on a passed gate, publishes the country files to data/stays-live/v1/,
      which the app already reads (staysData keeps whichever copy is newer),
      so no app deploy is needed; on a failed gate the live files stay
+  5. writes the same build into the box master and the served copy
+     (apply_stays.write_all), so the next wire carries it (D10, wave 1)
 
 Exit codes: 0 published, 2 gate failed (nothing published), 1 an rclone step
-failed. Needs the rclone remote `r2` (CARTA_RCLONE names another binary):
+failed or apply_stays refused (measured beds would drop). Needs the rclone remote `r2` (CARTA_RCLONE names another binary):
 on the box, `set -a; . ~/.config/carta/env; set +a` first.
 
 Usage:  python pipeline/stays/box_stays.py [--dry-run]
@@ -74,6 +76,13 @@ def main():
     if run([RCLONE, "sync", str(V), LIVE_R2, *HEADERS], a.dry_run):
         sys.exit("box_stays: the publish failed")
     print(f"box_stays: published {len(list(V.glob('*.json')))} files to {LIVE_R2}")
+    if a.dry_run:
+        return
+    # D10 (wave 1): the box master is the one master (owner default 19), and
+    # before this it never got the blocks it had just published, so its
+    # pre-T1021 beds went out with every weekly wire.
+    import apply_stays
+    apply_stays.write_all(apply_stays.load_records(), read_json(V / "manifest.json"))
 
 
 if __name__ == "__main__":
