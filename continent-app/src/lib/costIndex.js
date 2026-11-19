@@ -251,7 +251,10 @@ function levelOf(raw, repaired) {
  * stays file arrives (staysDataVersion), so a later month curve counts.
  */
 const MEDIANS = new WeakMap();
-function countryStayMedians(destinations, tier, party, when) {
+// G12, D10: how many places a slice prices before it lets the browser in
+// (see SLICE in lib/price/priceDay.js).
+export const COST_SLICE = 64;
+function* countryStayMediansSteps(destinations, tier, party, when) {
   const key = JSON.stringify([tier, party.adults, party.children, when.start, when.month, when.nights, staysDataVersion()]);
   const cacheable = destinations && typeof destinations === 'object';
   let byReq = cacheable ? MEDIANS.get(destinations) : null;
@@ -260,7 +263,9 @@ function countryStayMedians(destinations, tier, party, when) {
   // pricing every bed twice (T692).
   const byCc = new Map();
   const atById = new Map();
+  let n = 0;
   for (const [id, d] of Object.entries(destinations || {})) {
+    if (++n % COST_SLICE === 0) yield;
     if (!d) continue;
     const at = stayAtTier(d, tier, party, when);
     atById.set(id, at);
@@ -311,6 +316,22 @@ export function computeCosts(destinations, choices) {
  * lib/price/ builds this from a price request; computeCosts from choices.
  */
 export function costContext(destinations, choices) {
+  return runSteps(costContextSteps(destinations, choices));
+}
+
+/** A generator that runs to completion and returns its value: the one way
+ *  the stepped work below is run synchronously. */
+export function runSteps(gen) {
+  for (;;) {
+    const r = gen.next();
+    if (r.done) return r.value;
+  }
+}
+
+/** costContext as steps: it yields every COST_SLICE places while it prices
+ *  the beds, so lib/price/priceDay.js priceDaysSliced can spread one
+ *  catalogue pricing over several short tasks. Same result as costContext. */
+export function* costContextSteps(destinations, choices) {
   const lifestyle = choices?.lifestyle;
   const stayTier = choices?.stay_tier || 'home';
   // Two, the app's default party: a bed is one person's share of a room or
@@ -322,7 +343,7 @@ export function costContext(destinations, choices) {
     lifestyle, stayTier, party, when,
     scale: bandScale(lifestyle, stayTier),
     eatShare: foodShare(party),
-    ...countryStayMedians(destinations, stayTier, party, when),
+    ...(yield* countryStayMediansSteps(destinations, stayTier, party, when)),
   };
 }
 

@@ -166,8 +166,48 @@ function SeeAllTile({ r, rest, t }) {
 const EAGER_RAILS = 2;
 const EAGER_CARDS = 2;
 
-const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false }) {
-  const shown = r.rows.slice(0, CAP);
+// G12, D10 (lane 1, explore-top-2): twenty rails of sixteen cards were
+// 18,000 elements, and every re-price redrew and re-committed all of them
+// (over a second of attribute writes at 4x CPU). The first rails draw their
+// cards at once; a rail further down draws them when it comes within a
+// screen and a half of the view, or when focus enters it, and keeps them.
+// Its section, heading and See all are always there, so headings, the tab
+// order and the rail doors reach every rail; its height until then is the
+// contain-intrinsic-size of 85-explore-rails.css.
+const MOUNT_FIRST = 3;
+const MOUNT_MARGIN = '150% 0px';
+
+function scrollParent(el) {
+  for (let n = el?.parentElement; n; n = n.parentElement) {
+    const oy = getComputedStyle(n).overflowY;
+    if (oy === 'auto' || oy === 'scroll') return n;
+  }
+  return null;
+}
+
+function useNearView(id, start) {
+  const [near, setNear] = React.useState(start);
+  React.useEffect(() => {
+    if (near) return undefined;
+    const sec = document.getElementById(id)?.closest('section');
+    if (!sec || typeof IntersectionObserver !== 'function') { setNear(true); return undefined; }
+    // A transition: several rails coming near in one fast scroll mount in
+    // short slices instead of one long frame.
+    const show = () => React.startTransition(() => setNear(true));
+    // The rails scroll inside the Explore column: its edge, not the
+    // viewport's, is where the margin has to reach.
+    const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) show(); },
+      { root: scrollParent(sec), rootMargin: MOUNT_MARGIN });
+    io.observe(sec);
+    sec.addEventListener('focusin', show);
+    return () => { io.disconnect(); sec.removeEventListener('focusin', show); };
+  }, [id, near]);
+  return near;
+}
+
+const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false, mountNow = false }) {
+  const near = useNearView(`xrail-${r.key}`, mountNow);
+  const shown = near ? r.rows.slice(0, CAP) : [];
   const monthShort = month ? monthName(month, lang, false) : '';
   // h2: the rails sit straight under the page's h1 (T193). The house rail
   // (G1): the heading, See all and the two round arrows; the lead card's
@@ -181,7 +221,7 @@ const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, on
           onSelect={onSelect} fav={favorites?.has(p.id)} onToggleFav={onToggleFav} t={t}
           eager={eager && i < EAGER_CARDS} />
       ))}
-      {r.seeAll && <SeeAllTile r={r} rest={r.rows.slice(CAP)} t={t} />}
+      {near && r.seeAll && <SeeAllTile r={r} rest={r.rows.slice(CAP)} t={t} />}
     </HouseRail>
   );
 });
@@ -214,7 +254,7 @@ export function ExploreRails({
     <div className="xrails">
       {strips.map((r, ri) => (
         <ExploreRail key={r.key} r={r} onSelect={select} favorites={favorites} onToggleFav={onToggleFav ? toggleFav : null} t={t}
-          month={month} lang={lang} eager={eager && ri < EAGER_RAILS} />
+          month={month} lang={lang} eager={eager && ri < EAGER_RAILS} mountNow={ri < MOUNT_FIRST} />
       ))}
       {doors.length > 0 && (
         <nav className="xrails-doors" aria-label={t('explore.moreRails')}>

@@ -14,6 +14,14 @@ export function useExploreRails({
   allRows, applyShortcut, favorites, guided, lang, patchXf, railMonth, railsIdle, rows,
   setShowFavOnly, setSortKey, t, xf,
 }) {
+  // G12, D10 (lane 1, explore-top-2 profile): a re-price gives every row a
+  // new object, and re-sorting the twenty rails from scratch cost about
+  // 0.8 s at 4x CPU. Which places a rail holds, and in what order, does not
+  // depend on a price (only the cost rail does), so those lists are kept by
+  // place id while the rows hold the same places in the same order, the
+  // guided data and the month are unchanged, and are mapped back onto the
+  // current rows, so each card still shows its current figure.
+  const railLists = React.useRef({ ids: null, guided: null, month: null, lists: new Map() });
   const rails = React.useMemo(() => {
     if (!railsIdle) return [];
     // The month the rails speak about: one set by hand, else the month of
@@ -24,24 +32,34 @@ export function useExploreRails({
     // T649: the same tier the Crowds stat shows, in the month the rail names.
     const railWhen = resolveWhen({ xm: month });
     const byRating = (a, b) => (b.rating?.score || 0) - (a.rating?.score || 0);
+    const ids = rows.map((p) => p.id).join(',');
+    if (railLists.current.ids !== ids || railLists.current.guided !== guided || railLists.current.month !== month) {
+      railLists.current = { ids, guided, month, lists: new Map() };
+    }
+    const byId = new Map(rows.map((p) => [p.id, p]));
+    const kept = (name, make) => {
+      let list = railLists.current.lists.get(name);
+      if (!list) { list = make().map((p) => p.id); railLists.current.lists.set(name, list); }
+      return list.map((id) => byId.get(id));
+    };
     // Explore rails (owner 2026-11-18, "scroll a lot, horizontally and
     // vertically"): a theme rail holds the places strongest in one vibe of
     // the guided data that also score Good or better, best Score first,
     // round-robin by country. Its See all is the same vibe filter, so the
     // list holds these places and the weaker matches after them.
     const vibeRail = (vibe) => (guided
-      ? interleaveByCountry(rows.filter((p) => vibeOf(guided, p.id, vibe) >= 80 && bandAtLeast(p.rating, 'good')).sort(byRating))
+      ? kept(`vibe:${vibe}`, () => interleaveByCountry(rows.filter((p) => vibeOf(guided, p.id, vibe) >= 80 && bandAtLeast(p.rating, 'good')).sort(byRating)))
       : []);
     const q = {
       // Top rated and the gems open on the highest Score, never on one country.
-      top: interleaveByCountry(rows.filter((p) => bandAtLeast(p.rating, 'excellent')).sort(byRating)),
-      gems: interleaveByCountry(rows.filter((p) => p.rating?.hidden_gem).sort(byRating)),
-      now: interleaveByCountry(rows.filter((p) => inSeason(p) && bandAtLeast(p.rating, 'very_good')).sort(byRating)),
+      top: kept('top', () => interleaveByCountry(rows.filter((p) => bandAtLeast(p.rating, 'excellent')).sort(byRating))),
+      gems: kept('gems', () => interleaveByCountry(rows.filter((p) => p.rating?.hidden_gem).sort(byRating))),
+      now: kept('now', () => interleaveByCountry(rows.filter((p) => inSeason(p) && bandAtLeast(p.rating, 'very_good')).sort(byRating))),
       hiking: vibeRail('hiking'),
-      beach: guided ? interleaveByCountry(rows.filter((p) => inSeason(p) && vibeOf(guided, p.id, 'beach') >= 80).sort(byRating)) : [],
-      nocar: interleaveByCountry(rows.filter(noCarOk)),
+      beach: guided ? kept('beach', () => interleaveByCountry(rows.filter((p) => inSeason(p) && vibeOf(guided, p.id, 'beach') >= 80).sort(byRating))) : [],
+      nocar: kept('nocar', () => interleaveByCountry(rows.filter(noCarOk))),
       // Quiet in high season says something only in June to September.
-      quiet: month >= 6 && month <= 9 ? interleaveByCountry(rows.filter((p) => quietOk(p, railWhen))) : [],
+      quiet: month >= 6 && month <= 9 ? kept('quiet', () => interleaveByCountry(rows.filter((p) => quietOk(p, railWhen)))) : [],
       saved: favorites && favorites.size ? rows.filter((p) => favorites.has(p.id)) : [],
     };
     // G12 round 2: a rail that has a Browse shortcut opens what the

@@ -75,12 +75,38 @@ export function wayKey(request, mode, home, party) {
  * @returns {Map<string, object>} id -> the row with cost.way set and fmin
  *   (the outbound flight's minutes, null without a dated flight)
  */
+// G12, D10 (lane 1, explore-top-2 profile): a re-price of the day figures
+// gives every row a new object, and working out each place's way again cost
+// about 0.3 s at 4x CPU though the way had not moved. A place's way depends
+// only on the place and wayKey's inputs (and the hour, for which flights are
+// still ahead), so it is kept per catalogue under that key.
+const WAYS = new WeakMap();
+function waysKept(destinations, files, key) {
+  if (!destinations || typeof destinations !== 'object') return null;
+  let byKey = WAYS.get(destinations);
+  if (!byKey) { byKey = new Map(); WAYS.set(destinations, byKey); }
+  const k = `${key}|${files?.length || 0}`;
+  let kept = byKey.get(k);
+  if (!kept || kept.files !== files) {
+    if (byKey.size > 8) byKey.clear();
+    kept = { files, ids: new Map() };
+    byKey.set(k, kept);
+  }
+  return kept.ids;
+}
+
 export function wayRowsFor({ rows, destinations, files, request, mode, home, party, now = Date.now() }) {
   const m = new Map();
   const flies = mode === 'plane' || mode === 'any';
   const byAnchor = new Map();
   const ground = groundFor(destinations, home, party);
+  const kept = waysKept(destinations, files, `${wayKey(request, mode, home, party)}|${Math.floor(now / 3600000)}`);
   for (const p of rows || []) {
+    const hit = kept?.get(p.id);
+    if (hit) {
+      m.set(p.id, { ...p, cost: { ...p.cost, way: hit.way }, fmin: hit.fmin });
+      continue;
+    }
     const d = destinations?.[p.id];
     const anchor = destAnchor(d);
     let flight = null;
@@ -100,12 +126,10 @@ export function wayRowsFor({ rows, destinations, files, request, mode, home, par
       }
       flight = byAnchor.get(anchor);
     }
-    const way = wayFor(d || p, mode, { home, party, flight, ground: ground && ground(d || p, p.id) });
-    m.set(p.id, {
-      ...p,
-      cost: { ...p.cost, way: way || notKnownWay(mode) },
-      fmin: flight && !flight.typical ? flight.minutes : null,
-    });
+    const way = wayFor(d || p, mode, { home, party, flight, ground: ground && ground(d || p, p.id) }) || notKnownWay(mode);
+    const fmin = flight && !flight.typical ? flight.minutes : null;
+    kept?.set(p.id, { way, fmin });
+    m.set(p.id, { ...p, cost: { ...p.cost, way }, fmin });
   }
   return m;
 }

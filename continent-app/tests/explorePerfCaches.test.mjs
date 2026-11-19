@@ -7,6 +7,8 @@ import assert from "node:assert/strict";
 import { monthName } from "../src/lib/dates.js";
 import { heroLadder, readLadderManifest } from "../src/lib/heroImage.js";
 import { readFileSync } from "node:fs";
+import { setStayRecords } from "../src/lib/staysData.js";
+import { priceDays, priceDaysSliced, priceRequest } from "../src/lib/price/index.js";
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), "utf8");
 
@@ -47,4 +49,23 @@ test("a desktop rail card asks for about its own width, not the story card's 570
   assert.match(story, /RAIL_CARD_SIZES = '[^']*, 300px'/);
   assert.match(story, /STORY_SIZES = '[^']*, 570px'/, "story cards keep their own sizes");
   assert.match(read("src/browse/ExploreRails.jsx"), /sizes=\{RAIL_CARD_SIZES\}/);
+});
+
+test("priceDaysSliced gives exactly what priceDays gives, and stops when aborted", async () => {
+  const FX = JSON.parse(read("tests/fixtures/price/destinations.json"));
+  setStayRecords(FX.stays);
+  // Big enough to cross several slices (COST_SLICE is 64).
+  const big = {};
+  for (let i = 0; i < 40; i += 1) {
+    for (const [id, d] of Object.entries(FX.destinations)) big[`${id}-${i}`] = { ...d, id: `${id}-${i}` };
+  }
+  const req = priceRequest({ choices: { stay_tier: "hotel3" }, xm: 7 });
+  const want = priceDays(big, req);
+  const got = await priceDaysSliced(big, req);
+  assert.equal(got.size, want.size);
+  assert.deepEqual([...got], [...want]);
+  const ctl = new AbortController();
+  ctl.abort();
+  assert.equal(await priceDaysSliced(big, req, { signal: ctl.signal }), null);
+  setStayRecords({});
 });

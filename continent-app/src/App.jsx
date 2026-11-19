@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo, useSyncExternalStore, Suspense } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo, useSyncExternalStore, Suspense, startTransition, useDeferredValue } from 'react';
 import { AppHeader } from './components/AppHeader.jsx';
 import { setFooterNavigate } from './components/SiteFooter.jsx';
 import { AnnouncementBar, PassExpiryBanner, BottomSlot } from './components/AnnouncementBar.jsx';
@@ -44,7 +44,7 @@ if (typeof window !== 'undefined' && homeVariantNow() === 'g14') loadHomeG14().c
 
 
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
-import { priceDays, priceRequest } from './lib/price/index.js';
+import { priceDays, priceDaysSliced, priceRequest } from './lib/price/index.js';
 import { loadStaysFor, setLiveBase, useStaysVersion } from './lib/staysData.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
 import { normalizeTaste } from './lib/taste.js';
@@ -154,6 +154,33 @@ export default function App() {
       </AuthProvider>
     </I18nProvider>
   );
+}
+
+// G12, D10 (lane 1, explore-top-2 profile): Explore is redrawn only when one
+// of its own inputs changes, not on every render of the shell (a setting
+// tap re-rendered all 18,000 of its elements in the tap's own task).
+const ExploreTabKept = React.memo(ExploreTab);
+
+// The latest handlers behind identities that never change, so a handler
+// rebuilt on each render does not defeat ExploreTabKept's memo.
+// A context value for Explore: while `hold` is on (a re-price runs) the value
+// Explore last drew, else the live value, deferred, so a change reaches
+// Explore's cards in a background render and never in the tap's own task.
+function useHeldWhile(hold, value) {
+  const later = useDeferredValue(value);
+  const drawn = useRef(value);
+  const out = hold ? drawn.current : later;
+  useLayoutEffect(() => { drawn.current = out; });
+  return out;
+}
+
+function useLatestHandlers(fns) {
+  const ref = useRef(fns);
+  useLayoutEffect(() => { ref.current = fns; });
+  const [stable] = useState(() => Object.fromEntries(
+    Object.keys(fns).map((k) => [k, (...a) => ref.current[k]?.(...a)]),
+  ));
+  return stable;
 }
 
 function TravelApp() {
@@ -1317,12 +1344,37 @@ function TravelApp() {
   const requestKey = JSON.stringify(requestNow);
   // eslint-disable-next-line react-hooks/exhaustive-deps -- value key: the request's contents, not its identity
   const request = useMemo(() => requestNow, [requestKey]);
-  const exploreIndices = useMemo(() => {
-    if (!data || staysVersion < 0) return null;
+  // G12, D10 (explore-top-2): the catalogue's first pricing runs in the
+  // render, so the first paint has figures. Every later one (a setting, the
+  // stays arriving) is priced in short slices off the render
+  // (priceDaysSliced) and swapped in whole, in a transition: until then the
+  // screens keep the last complete answer with the request it was priced
+  // for, never half old and half new figures. A newer request aborts an
+  // older one.
+  const [repriced, setRepriced] = useState(null);
+  const firstPricing = repriced?.data !== data;
+  const firstPriced = useMemo(() => {
+    if (!data || !firstPricing) return null;
     // One mark per catalogue re-price: scripts/perf_explore.mjs counts them.
     globalThis.performance?.mark?.('carta:reprice');
-    return priceDays(data.destinations, request);
-  }, [data, request, staysVersion]);
+    return { data, request, staysVersion, indices: priceDays(data.destinations, request) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the first pricing of a catalogue only; later requests are priced in slices below
+  }, [data, firstPricing]);
+  const priced = firstPricing ? firstPriced : repriced;
+  useEffect(() => {
+    if (!data || !priced || (priced.request === request && priced.staysVersion === staysVersion)) return undefined;
+    const ctl = new AbortController();
+    globalThis.performance?.mark?.('carta:reprice');
+    priceDaysSliced(data.destinations, request, { signal: ctl.signal }).then((indices) => {
+      if (!indices || ctl.signal.aborted) return;
+      startTransition(() => setRepriced({ data, request, staysVersion, indices }));
+    });
+    return () => ctl.abort();
+  }, [data, request, staysVersion, priced]);
+  const exploreIndices = priced?.indices ?? null;
+  // The request the figures on screen were priced for (it trails `request`
+  // while a re-price runs), for the screens that show both.
+  const pricedRequest = priced?.request ?? request;
   dayPricesRef.current = exploreIndices;
   // T944: a saved place whose day price fell clearly since it was saved is
   // reported to the notify function, only for an account with price drops
@@ -1350,9 +1402,9 @@ function TravelApp() {
   // given once here, so the destination page and the trip page price the
   // same trip from the same inputs without a prop chain through each tab.
   const firstRun = useMemo(() => ({
-    data, choices, setChoices, setOrigin, indices: exploreIndices, priceRequest: request,
+    data, choices, setChoices, setOrigin, indices: exploreIndices, priceRequest: pricedRequest,
     departDate, returnDate, setDepartDate, setReturnDate, defaultDates, dateBounds,
-  }), [data, choices, setOrigin, exploreIndices, request, departDate, returnDate, defaultDates, dateBounds]);
+  }), [data, choices, setOrigin, exploreIndices, pricedRequest, departDate, returnDate, defaultDates, dateBounds]);
 
   // The settings line's values (T381, components/SettingsLine.jsx): every
   // global input a price depends on, given once so any surface can show or
@@ -1397,6 +1449,22 @@ function TravelApp() {
   // The travel styles ride on the same context, so the style disc, the
   // planner's Who screen and the trip settings read one store.
   const settingsValue = useMemo(() => ({ ...settings, travelStyles, openStyleSpend }), [settings, travelStyles, openStyleSpend]);
+  // G12, D10 (lane 1, explore-top-2 profile): every Explore card reads the
+  // settings and first-run contexts, so a setting change redrew all of them
+  // at once, in the tap's own task (2 s at 4x CPU), and again when the new
+  // prices landed. Explore gets its own copies: while a re-price runs they
+  // keep what its figures were priced with (the values it last drew), so
+  // prices and the settings they answer stay together; then the new values
+  // arrive in the same transition as the new prices. A change that moves no
+  // price reaches Explore deferred. The band and the Settings sheet read the
+  // live values.
+  const exploreHandlers = useLatestHandlers({
+    openGuides, openCountryPage, openExploreSection, openTripStyles, openTripInPlanner,
+    showExplore: () => goToTab('map'),
+  });
+  const repricing = !!priced && (priced.request !== request || priced.staysVersion !== staysVersion);
+  const exploreSettings = useHeldWhile(repricing, settingsValue);
+  const exploreFirstRun = useHeldWhile(repricing, firstRun);
 
   // Which parts of the settings line each tab shows. Explore and Destinations
   // price from every input. The Trip planner keeps its own origin, dates and
@@ -1602,7 +1670,9 @@ function TravelApp() {
         <div className={activeTab === 'map' ? undefined : 'tab-keep-hidden'} inert={behindPanel}>
           <SectionBoundary name="explore">
           <div onClick={(e) => e.stopPropagation()}>
-            <ExploreTab
+            <FirstRunContext.Provider value={exploreFirstRun}>
+            <SettingsContext.Provider value={exploreSettings}>
+            <ExploreTabKept
               data={data}
               isActive={activeTab === 'map'}
               /* A page standing over the tab (a destination, My trips,
@@ -1642,16 +1712,18 @@ function TravelApp() {
               onSelect={openDetail}
               indices={exploreIndices}
               onOpenStyleSpend={openStyleSpend}
-              onOpenGuides={openGuides}
-              onOpenCountry={openCountryPage}
-              onPickCategory={openExploreSection}
-              onOpenStyles={openTripStyles}
+              onOpenGuides={exploreHandlers.openGuides}
+              onOpenCountry={exploreHandlers.openCountryPage}
+              onPickCategory={exploreHandlers.openExploreSection}
+              onOpenStyles={exploreHandlers.openTripStyles}
               seed={pendingExploreSeed}
               onSeedConsumed={clearExploreSeed}
-              onPlanTrip={openTripInPlanner}
-              onShowExplore={() => goToTab('map')}
+              onPlanTrip={exploreHandlers.openTripInPlanner}
+              onShowExplore={exploreHandlers.showExplore}
               isMock={!!data.meta?.is_mock}
             />
+            </SettingsContext.Provider>
+            </FirstRunContext.Provider>
           </div>
 
           </SectionBoundary>
@@ -1823,7 +1895,7 @@ function TravelApp() {
               onPlanHome={() => goToTab('planstart')}
               onOpenStyleSpend={openStyleSpend}
               costs={exploreIndices}
-              priceRequest={request}
+              priceRequest={pricedRequest}
               stayTier={choices.stay_tier || 'home'}
               lifestyle={choices.lifestyle}
               groupSize={choices.group_size || 1}
