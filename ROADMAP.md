@@ -172,6 +172,8 @@ Weeks below are the normal plan; on the fast track (J-b) read the fast-track col
 | Quality | Zero open S1 or S2 bugs on the surface; zero console errors on a scripted walk; axe zero serious or critical; Ask text and cards agree on 100% of the golden set; 50-place truth sample passes; surface wires fresh; launch-language strings complete |
 | Docs and security | Every rule on the surface has a logic ID (B3); surface threats from C1 have controls |
 
+The Places and Trails rows are measured by `python -I scripts/quality/launch_gate.py` (`--public DIR`, `--json`, `--strict` exits 1 on any failed row). A row passes only when it has rows to count and meets its share; the top 300 rule is printed under the tables. Local wire on 2026-11-19: Places pass 0 of 7 rows, Trails pass 2 of 6 (time and climb, own URL).
+
 ### Must for launch, and what can follow
 
 | Must for launch | Can follow launch |
