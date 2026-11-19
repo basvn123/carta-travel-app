@@ -4019,7 +4019,6 @@ export const en = {
   /* TRIP-KEYS-END */
 
   /* ── Cost: euros a day, replacing the two 0-10 cheapness indices ── */
-  "explore.sortCost": "Cheapest day",
   "explore.nearbyTitle": "Worth pairing with",
   "explore.nearbyNote": "Rated places within 110 km, straight-line distance.",
   "explore.stayHalfDay": "Half a day is enough here",
@@ -5755,7 +5754,6 @@ export const en = {
   // Search index (PLAN.md B2)
   "explore.didYouMean": "Did you mean",
   "explore.inParent": "{member} is part of {parent}",
-  "explore.regionFilter": "Showing places in {region}",
 
   // Destination page rebuild (PLAN.md D1-D7)
   "dest.subnavAria": "On this page",
@@ -6882,7 +6880,6 @@ export const en = {
   "gs.whyLake": "Lake {km} km away",
   "gs.whyPeak": "Peak {km} km away",
   "gs.whyMonth": "Good in {month}",
-  "sort.match": "Best match",
   "gs.cheapest": "Cheapest first",
   "explore.saveNamed": "Save {place}",
   "explore.save": "Save",
@@ -6932,7 +6929,6 @@ export const en = {
   "explore.placesTitle": "Places in Europe",
   "explore.countOne": "1 place",
   "explore.countMany": "{n} places",
-  "explore.toolsAria": "Arrange this list",
   "explore.toolShare": "Share",
   "explore.toolSort": "Sort",
   "explore.toolSaved": "Saved",

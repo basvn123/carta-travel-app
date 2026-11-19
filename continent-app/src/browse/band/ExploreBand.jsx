@@ -186,6 +186,15 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     </div>
   ) : null;
   const showChips = places && items.length > 0;
+  // Every page under the top bar stands at its height (--filter-h). App
+  // keeps that with a ResizeObserver, which lands a frame after a tab change
+  // reshapes the band (the layers have no strip), so the new tab painted at
+  // the old height first and then jumped (G12 round 2: 0.05 of the screen at
+  // 390). Written here before paint, the band and the tab land together.
+  React.useLayoutEffect(() => {
+    const bar = bandRef.current?.closest('.top-bar');
+    if (bar) document.documentElement.style.setProperty('--filter-h', `${bar.offsetHeight}px`);
+  }, [kind, showChips, isDesktop]);
   // The panel's listbox is `${panelId}-list` (SearchPanel); the field
   // points at it, and the wrapper carries no id of its own.
   const panel = panelState.shown ? (

@@ -50,6 +50,7 @@ test('the desktop tab row closes with the List | Map switch; tabs take their wor
   assert.match(css, /\.xcats-line \.xcats-row \.ui-tab,[\s\S]*?flex: none;/);
   assert.doesNotMatch(css, /margin-left: calc\(var\(--space-3\) \* -1\)/);
   // One gap (O1): the line's room under the field and the strip's under the phone field.
-  assert.match(css, /\.band\.is-desk \.band-line \{\s*min-height: 32px;\s*padding: 9px/);
+  // content-box: an empty line on a layer tab keeps the same height (round 2 smoothness).
+  assert.match(css, /\.band\.is-desk \.band-line \{\s*box-sizing: content-box;\s*min-height: 32px;\s*padding: 9px/);
   assert.match(css, /\.band-chips\.is-swipe \{[^}]*margin-top: 10px;/);
 });

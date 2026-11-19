@@ -16,7 +16,7 @@
  */
 import { useSyncExternalStore } from 'react';
 
-let state = { kind: 'places', results: null, showAll: 0, tools: null };
+let state = { kind: 'places', results: null, showAll: 0 };
 let handlers = { onBack: null };
 const subs = new Set();
 const emit = () => subs.forEach((f) => f());
@@ -45,27 +45,6 @@ export function dockBack() { handlers.onBack?.(); }
 // G12: Share left the phone toolbar for the applied field; the tab that
 // sets `canShare` on its results gives the handler.
 export function dockShare() { handlers.onShare?.(); }
-
-/*
- * G12 round 2: the tab's tools as plain data (compared field by field, so a
- * tab that re-renders on every stays file does not re-render a reader; null
- * on unmount) and their handlers (setDockHandlers({ onOpenFilters(opener),
- * onView(view), onShortcut(key) })). The band itself reads the filters from
- * filters/filtersStore.js and the view from the tab row's props.
- *
- *   tools   null, or { filterCount, filtersOpen, view: 'list' | 'map', shortcut }
- */
-const TOOL_KEYS = ['filterCount', 'filtersOpen', 'view', 'shortcut'];
-export function setDockTools(tools) {
-  const a = state.tools;
-  const b = tools ? Object.fromEntries(TOOL_KEYS.map((k) => [k, tools[k] ?? null])) : null;
-  if ((!a && !b) || (a && b && TOOL_KEYS.every((k) => a[k] === b[k]))) return;
-  state = { ...state, tools: b };
-  emit();
-}
-export function dockOpenFilters(opener) { handlers.onOpenFilters?.(opener || null); }
-export function dockView(view) { handlers.onView?.(view); }
-export function dockShortcut(key) { handlers.onShortcut?.(key); }
 
 export function requestShowAll() {
   state = { ...state, showAll: state.showAll + 1 };

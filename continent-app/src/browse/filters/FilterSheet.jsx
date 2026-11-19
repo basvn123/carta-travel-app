@@ -1,12 +1,14 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { Button, Chip, ChipGroup, IconButton, Segmented, Switch } from '../../components/ui/index.js';
+import { Button, Chip, ChipGroup, IconButton, Switch } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 import { useDialogExit } from '../../lib/motion.js';
 import { formatMoney } from '../../lib/money.js';
+import { useFirstRun } from '../../lib/firstRunContext.js';
+import { isEmptyTaste } from '../../lib/taste.js';
 import {
-  BUDGET_STEPS, GROUP_PICKS, PICKS, SORT_OPTIONS, TEMP_BANDS, bandLabel, parsePicks, sortShown,
+  BUDGET_STEPS, GROUP_PICKS, PICKS, TEMP_BANDS, bandLabel, parsePicks, sortOptionsFor, sortShown,
 } from './filterModel.js';
 import { filtersOpener } from './filtersStore.js';
 import '../../styles/83-filters.css';
@@ -216,15 +218,30 @@ export function FilterGroups({ f, t }) {
   steps.sort((a, b) => a - b);
   const setBudget = (eur) => () => setXf((v) => ({ ...v, budget: eur }));
   const dayLabel = t(f.tripSpan ? 'filters.aTrip' : 'filters.aDay');
+  // Sort shows on a list only, decided when the sheet opens: the first
+  // filter turns the overview into a list, and a Sort row arriving at the
+  // top then pushed every group down under the finger (G12 round 2).
+  const [withSort] = React.useState(!!f.listOn);
+  // The active style's explore half is the taste (useTravelStyles); with
+  // one, For you leads the choices.
+  const tasteRaw = useFirstRun()?.choices?.taste;
+  const hasTaste = !!tasteRaw && !isEmptyTaste(tasteRaw);
+  const sortValue = sortShown(f.sortKey, hasTaste);
 
   return (
     <div className="flt-body">
       <div className="flt-groups">
-        {f.listOn && (
+        {withSort && (
           <Group id="sort" label={t('filters.sort')} className="flt-group--wide">
-            <Segmented label={t('filters.sort')} block size="sm" className="flt-sort"
-              value={sortShown(f.sortKey)} onChange={f.setSortKey}
-              options={SORT_OPTIONS.map((o) => ({ value: o.key, label: t(o.labelKey) }))} />
+            {/* Chips, not a segment: five choices (For you first) wrap in
+                every language at 360 px. */}
+            <ChipGroup label={t('filters.sort')} className="flt-chips flt-sort">
+              {sortOptionsFor(hasTaste).map((o) => (
+                <Chip key={o.key} kind="choice" selected={sortValue === o.key} onClick={() => f.setSortKey(o.key)} className="flt-chip">
+                  {t(o.labelKey)}
+                </Chip>
+              ))}
+            </ChipGroup>
           </Group>
         )}
         <div className="flt-saved flt-group--wide" data-group="saved">

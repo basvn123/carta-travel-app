@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
   TEMP_BANDS, BUDGET_STEPS, SHORTCUTS, SORT_OPTIONS, appliedChips, bandLabel, countNoTemp, labelForApplied,
-  parsePicks, parseTemps, picksOk, rankVibe, shortcutOn, shortcutPatch, sortShown, tempOk,
+  parsePicks, parseTemps, picksOk, rankVibe, shortcutOn, shortcutPatch, sortOptionsFor, sortShown, tempOk,
 } from '../src/browse/filters/filterModel.js';
 import {
   applyShortcut, closeFilters, filtersState, openFilters, publishFilters, setFilterHandlers,
@@ -53,6 +53,12 @@ test('budget steps are fixed and the sort is the four of the decision', () => {
   assert.deepEqual(SORT_OPTIONS.map((o) => o.key), ['beauty', 'cost', 'rating', 'name']);
   assert.equal(sortShown('country'), 'beauty');
   assert.equal(sortShown('cost'), 'cost');
+  // For you (the active style's taste) leads once there is a taste; without
+  // one an old For you link reads as Best match.
+  assert.deepEqual(sortOptionsFor(true).map((o) => o.key), ['foryou', 'beauty', 'cost', 'rating', 'name']);
+  assert.equal(sortOptionsFor(false), SORT_OPTIONS);
+  assert.equal(sortShown('foryou', true), 'foryou');
+  assert.equal(sortShown('foryou'), 'beauty');
 });
 
 test('a shortcut sets one filter and its chip wears the shortcut words', () => {

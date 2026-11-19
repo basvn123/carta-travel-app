@@ -55,6 +55,22 @@
 @media (min-width: 1024px) {
   html.ac-open .places-shell,
   html.ac-open .explore-shell:not(.ask-picks) { right: var(--chat-w); }
+  /* The rail cards keep their width without the panel (05-house.css
+     .hs-rail against the column plus the panel's room): the strip shows
+     fewer instead of every rail reflowing as Ask comes and goes (G12 round
+     2: closing it shifted 0.18 of the screen). */
+  html.ac-open .places-shell .hs-rail,
+  html.ac-open .explore-shell:not(.ask-picks) .hs-rail {
+    grid-auto-columns: max(256px, calc((100% + var(--chat-w) - 4 * var(--space-5)) / 4.25));
+  }
+}
+/* The rail arrows follow with their own top, never an inherited property
+   (restyling every card, see 81-settings.css). */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  html.ac-open .places-shell .hs-rail-frame > .hs-rail-arrow,
+  html.ac-open .explore-shell:not(.ask-picks) .hs-rail-frame > .hs-rail-arrow {
+    top: calc(2px + max(256px, calc((100cqi + var(--chat-w) - 4 * var(--space-5)) / 4.25)) * 0.375 - var(--tap) / 2);
+  }
 }
 
 /* The head: chats, the title, a new chat, close. T584: it stands on the

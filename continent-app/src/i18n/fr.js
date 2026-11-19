@@ -3094,7 +3094,6 @@ export const fr = {
   "trip.readMore": "En savoir plus sur {name}",
   /* TRIP-KEYS-END */
 
-  "explore.sortCost": "Journée la moins chère",
   "explore.nearbyTitle": "À combiner avec",
   "explore.nearbyNote": "Lieux notés dans un rayon de 110 km à vol d'oiseau.",
   "explore.stayHalfDay": "Une demi-journée suffit ici",
@@ -4829,7 +4828,6 @@ export const fr = {
   // Search index (PLAN.md B2)
   "explore.didYouMean": "Vouliez-vous dire",
   "explore.inParent": "{member} fait partie de {parent}",
-  "explore.regionFilter": "Lieux en {region}",
 
   // Destination page rebuild (PLAN.md D1-D7)
   "dest.subnavAria": "Sur cette page",
@@ -6164,7 +6162,6 @@ export const fr = {
   "gs.whyLake": "Lac à {km} km",
   "gs.whyPeak": "Sommet à {km} km",
   "gs.whyMonth": "Bien en {month}",
-  "sort.match": "Meilleure correspondance",
   "gs.cheapest": "Les moins chers d'abord",
   "explore.saveNamed": "Enregistrer {place}",
   "explore.save": "Enregistrer",
@@ -6213,7 +6210,6 @@ export const fr = {
   "explore.placesTitle": "Lieux en Europe",
   "explore.countOne": "1 lieu",
   "explore.countMany": "{n} lieux",
-  "explore.toolsAria": "Organiser cette liste",
   "explore.toolShare": "Partager",
   "explore.toolSort": "Trier",
   "explore.toolSaved": "Enregistrés",

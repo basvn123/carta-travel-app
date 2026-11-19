@@ -3103,7 +3103,6 @@ export const nl = {
   "trip.readMore": "Lees over {name}",
   /* TRIP-KEYS-END */
 
-  "explore.sortCost": "Goedkoopste dag",
   "explore.nearbyTitle": "Goed te combineren met",
   "explore.nearbyNote": "Beoordeelde plaatsen binnen 110 km hemelsbreed.",
   "explore.stayHalfDay": "Een halve dag is hier genoeg",
@@ -4838,7 +4837,6 @@ export const nl = {
   // Search index (PLAN.md B2)
   "explore.didYouMean": "Bedoelde je",
   "explore.inParent": "{member} hoort bij {parent}",
-  "explore.regionFilter": "Plaatsen in {region}",
 
   // Destination page rebuild (PLAN.md D1-D7)
   "dest.subnavAria": "Op deze pagina",
@@ -6175,7 +6173,6 @@ export const nl = {
   "gs.whyLake": "Meer op {km} km",
   "gs.whyPeak": "Bergtop op {km} km",
   "gs.whyMonth": "Goed in {month}",
-  "sort.match": "Beste match",
   "gs.cheapest": "Goedkoopste eerst",
   "explore.saveNamed": "{place} bewaren",
   "explore.save": "Bewaren",
@@ -6224,7 +6221,6 @@ export const nl = {
   "explore.placesTitle": "Plaatsen in Europa",
   "explore.countOne": "1 plaats",
   "explore.countMany": "{n} plaatsen",
-  "explore.toolsAria": "Deze lijst ordenen",
   "explore.toolShare": "Delen",
   "explore.toolSort": "Sorteren",
   "explore.toolSaved": "Bewaard",

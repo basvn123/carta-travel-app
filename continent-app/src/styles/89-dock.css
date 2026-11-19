@@ -39,13 +39,6 @@
   background: var(--umber-600);
 }
 
-/* Trip: a 44 px pill, the tune glyph and a chevron. */
-.btn.dock-trigger--under-tabs {
-  min-width: 64px;
-  padding: 0 var(--space-2) 0 var(--space-3);
-  border-radius: var(--radius-pill);
-}
-.dock-trigger--under-tabs .hs-icon-tune { width: 24px; height: 24px; }
 
 /* The tune glyph moves when its dock opens: the plane glides on, the two
    knobs swap places. */
@@ -99,10 +92,6 @@
   transition: background-color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
 }
 .btn.corner-btn:active:not(:disabled) { scale: var(--press-scale-sm); }
-.btn.dock-trigger--corner {
-  background: var(--ts-ground, var(--select-bg));
-  color: var(--ts-ink, var(--umber-700));
-}
 .btn.corner-btn--map { background: var(--surface); color: var(--text); }
 .btn.corner-btn--map .btn-label { display: contents; }
 @media (hover: hover) {
@@ -113,9 +102,6 @@
 @media (min-width: 769px) {
   .corner-map { display: none; }
 }
-.dock-trigger--corner .dock-glyph .hs-icon,
-.dock-trigger--corner .dock-glyph svg { width: 24px; height: 24px; }
-.dock-trigger--corner .dock-glyph.is-swap { animation: dock-glyph-in var(--dur-2) var(--ease-out); }
 @keyframes dock-glyph-in {
   from { opacity: 0; transform: scale(0.6); }
   to { opacity: 1; transform: none; }
@@ -133,7 +119,6 @@
   box-shadow: var(--elev-1);
 }
 .dock-badge .dock-chev { transform: rotate(-90deg); }
-.dock-trigger--corner .dock-dot { top: auto; left: auto; right: 0; bottom: 0; }
 
 /* Both corners step aside for the keyboard and for any modal, the studio
    the disc opens included. */
@@ -260,24 +245,12 @@ body:has([aria-modal="true"]:not(.dock-card)) .corner-slot { visibility: hidden;
 }
 .dock-row-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-body); }
 .dock-row-control { min-width: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
-.dock-row--stack { grid-template-columns: minmax(0, 1fr); }
 .dock-row.is-pulse { animation: dock-pulse var(--dur-4) var(--ease-out); }
 @keyframes dock-pulse {
   from { background: var(--select-bg); }
   to { background: transparent; }
 }
 
-/* ---- The row under the tabs ------------------------------------------- */
-/* The rail chips' row on the phone overview. The Trip dock that ended it
-   left with G12 (Explore top): Settings holds the trip now. */
-.xsub {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  min-width: 0;
-  margin: 0 0 var(--space-3);
-}
 
 /* ---- The style disc (StyleDock.jsx) ---------------------------------- */
 /* A style switch cross-fades the glyph: the keyed span mounts anew. */

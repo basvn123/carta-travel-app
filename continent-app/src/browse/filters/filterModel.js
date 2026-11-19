@@ -145,8 +145,15 @@ export const SORT_OPTIONS = Object.freeze([
   { key: 'rating', labelKey: 'filters.sortScore' },
   { key: 'name', labelKey: 'filters.sortAz' },
 ]);
-/** The sort as one of the four: an older link's sort shows as Best match. */
-export const sortShown = (key) => (SORT_OPTIONS.some((o) => o.key === key) ? key : 'beauty');
+/** "For you" (T765, lib/match.js: the rating moved by the active style's
+ *  explore half) leads the choices once the traveller has a taste. Best
+ *  match does not read the taste while config/rating.json
+ *  match.for_you_default is off, so without this the order was lost in
+ *  round 2 of G12. */
+export const FOR_YOU_SORT = Object.freeze({ key: 'foryou', labelKey: 'fit.sort' });
+export const sortOptionsFor = (hasTaste) => (hasTaste ? [FOR_YOU_SORT, ...SORT_OPTIONS] : SORT_OPTIONS);
+/** The sort as one of the choices: an older link's sort shows as Best match. */
+export const sortShown = (key, hasTaste = false) => (sortOptionsFor(hasTaste).some((o) => o.key === key) ? key : 'beauty');
 
 /**
  * The shortcuts (the search panel's Browse list and the rails' See all):

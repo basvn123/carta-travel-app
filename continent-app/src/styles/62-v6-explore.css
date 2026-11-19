@@ -725,7 +725,6 @@
    every on/off filter, and three quiet folds for the long lists.
    ========================================================================== */
 .xrail { display: flex; flex-direction: column; gap: var(--space-5); }
-.xrail-clear { align-self: flex-end; margin: 0 0 calc(-1 * var(--space-3)); }
 .xrail-sec { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
 .xrail-h {
   margin: 0;
@@ -771,88 +770,12 @@
    a hairline under them there so the category's own filters read as its. */
 /* 16 px under the search row on both sides of Explore (T498). */
 .xcats-bar { margin: var(--space-2) 0 var(--space-4); }
-/* "Budget a day" with the day-price dot after it, outside the label. */
-.xrail-budget { display: flex; flex-direction: column; min-width: 0; }
-.xrail-label-row { display: inline-flex; align-items: center; }
-.xrail-pair {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-3);
-}
-.xrail-pair .field-label,
 .xrail-sec > .field .field-label {
   font-size: var(--text-caption);
   font-weight: 600;
   color: var(--text-2);
 }
-.xrail-rating { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.xrail-switches { gap: 0; }
-.xrail-switches .xrail-h { margin-bottom: var(--space-1); }
-.xrail-fold { border-top: 1px solid var(--border-soft); }
-.xrail-fold-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  cursor: pointer;
-  list-style: none;
-}
-.xrail-fold-head::-webkit-details-marker { display: none; }
-.xrail-fold-head .xrail-h { flex: 1 1 auto; }
-.xrail-fold-chev {
-  flex: none;
-  color: var(--text-3);
-  transition: transform var(--dur-2) var(--ease-out);
-}
-.xrail-fold[open] .xrail-fold-chev { transform: rotate(180deg); }
-.xrail-fold-head:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
-.xrail-fold-body { padding: 0 0 var(--space-4); }
 .xrail-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.xrail-country-find { margin-bottom: var(--space-2); }
-.xrail-countries {
-  display: flex;
-  flex-direction: column;
-  max-height: 320px;
-  margin: 0;
-  padding: 0;
-  overflow-y: auto;
-  list-style: none;
-}
-/* T457: one row height on both tabs, Explore's 44 px (its rows were that
-   tall through the country page chevron; Destinations' have none). */
-.xrail-country-row { display: flex; align-items: center; gap: var(--space-1); min-height: var(--tap); }
-.xrail-country {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 36px;
-  font-size: var(--text-body);
-  color: var(--text);
-  cursor: pointer;
-}
-.xrail-country input { width: 18px; height: 18px; margin: 0; accent-color: var(--action); }
-/* The flag's column keeps its width when a country has no drawn flag, so
-   every name starts on one line (T457). */
-.xrail-flag { display: inline-flex; flex: none; width: 17px; }
-/* A chosen country is the one selected state, the tint with the selected
-   ink, besides the native tick or dot (T457, carta-design: a selected rail
-   row). The row keeps its text on the rail's line. */
-/* The list bleeds 8 px each side, inside its own scroller, so the tint has
-   room on both sides and nothing scrolls sideways. */
-.xrail-countries { margin-inline: calc(-1 * var(--space-2)); }
-.xrail-country {
-  padding-inline: var(--space-2);
-  border-radius: var(--radius-control);
-}
-.xrail-country:has(input:checked) { background: var(--select-bg); color: var(--select-ink); }
-@media (pointer: coarse) {
-  .xrail-country { min-height: var(--tap); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .xrail-fold-chev { transition: none; }
-}
 /* The phone's Filters door and the country page link. */
 .explore-shell .xfilters-n { margin-left: var(--space-1); }
 .explore-shell .xcountry-link { margin: 0 0 var(--space-3); }
@@ -975,8 +898,6 @@
   .explore-shell.is-map .xcats-bar { grid-column: 1 / -1; margin: 0 0 var(--space-3); }
   .explore-shell.is-map .xcats-row .ui-tab { min-height: var(--tap-main); }
   .explore-shell.is-map .xbar { display: contents; }
-  .explore-shell.is-map .xbar-lead { grid-column: 1; grid-row: 2; }
-  .explore-shell.is-map .xqf { grid-column: 2; grid-row: 2; align-self: center; }
   .explore-shell.is-map .xbar-tools { grid-column: 3; grid-row: 2; }
   .explore-shell.is-map .xbar-title {
     position: absolute;
@@ -1012,7 +933,6 @@
 @media (min-width: 769px) and (max-width: 1023px) {
   .explore-shell.is-map .explore-wrap { grid-template-rows: auto auto auto minmax(0, 1fr); }
   .explore-shell.is-map .xbar-tools { grid-column: 2 / -1; justify-self: end; }
-  .explore-shell.is-map .xqf { grid-column: 1 / -1; grid-row: 3; margin-top: var(--space-2); }
   .explore-shell.is-map .xcontent { grid-row: 4; }
 }
 .explore-shell .xmap-failed {
