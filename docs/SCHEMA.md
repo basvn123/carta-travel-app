@@ -863,6 +863,9 @@ The existing tuple `m` (twelve `[t_high, t_low, precip_mm, comfort]`) and
 | `climate.rain_days` | `climate.rd` | 12 numbers: mean days per calendar month with at least 1 mm (NASA POWER daily PRECTOTCORR, 2001 to 2020) | `harvest_climate_power.py --daily`, then `apply_climate.py` |
 | `climate.wind_ms` | `climate.wind` | 12 numbers: mean 10 m wind in m/s (WS10M); the app shows km/h | same |
 | `climate.elev_m` | `climate.elev` | ground elevation in metres the temperatures are lapse corrected to (Copernicus DEM via Open-Meteo, `cache/climate_elevations.json`, 3,868 of 3,868) | `apply_climate.py` |
+| `climate.heat` | `climate.heat` | optional (D20): month numbers (1 to 12) whose mean daytime high is at or above `when.heat` `extreme_c` | `heat_fire.py` (reads `months` on the master, `m` on a wire) |
+| `climate.fire` | `climate.fire` | optional (D20): wildfire danger months, from `cache/fire_fwi.json` FWI when present, else the dry-heat proxy | `heat_fire.py` |
+| `climate.risk` | `climate.risk` | optional (D20): `{src, fire_basis, asof}`, where the two lists came from | `heat_fire.py` |
 
 `harvest_climate_power.py --daily` keeps only the twelve monthly aggregates
 per destination in `cache/climate_power_daily.json` (resumable) and folds them

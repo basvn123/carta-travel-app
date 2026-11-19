@@ -2,8 +2,9 @@
 
 Tier: Scheduled (run_pipeline task heat_fire)
 
-Reads dest.climate.m (twelve [t_high, t_low, precip_mm, comfort] rows, already
-in app_data.json) and adds, beside `best`:
+Reads the twelve monthly climate rows in either shape (see _rows: the master's
+climate.months dicts, or the wire's compact climate.m tuples) and adds, beside
+them:
 
   climate.heat   month numbers whose mean daytime high is extreme_c or more
   climate.fire   month numbers with wildfire danger
@@ -62,10 +63,27 @@ def fire_months(rows, fwi=None):
     return out, "dryheat"
 
 
+def _rows(climate):
+    """Twelve [t_high, t_low, precip_mm, comfort] rows, or None.
+
+    D20 (wave 1, V-8): the master (app_data/app_data.json, what the box runs
+    this task on) keeps climate.months as dicts; only the wire has the
+    compact climate.m tuples, which sync-data.mjs builds. Reading `m` alone
+    made the task a no-op on the master, so no heat or fire month ever
+    reached the wire."""
+    rows = climate.get("m")
+    if isinstance(rows, list) and len(rows) == 12:
+        return rows
+    months = climate.get("months")
+    if isinstance(months, list) and len(months) == 12 and all(isinstance(m, dict) for m in months):
+        return [[m.get("t_high"), m.get("t_low"), m.get("precip_mm"), m.get("comfort")] for m in months]
+    return None
+
+
 def annotate(climate, fwi=None, asof=None):
     """Add heat/fire/risk to one climate block in place. Returns True if it has months."""
-    rows = climate.get("m")
-    if not isinstance(rows, list) or len(rows) != 12:
+    rows = _rows(climate)
+    if rows is None:
         return False
     fire, basis = fire_months(rows, fwi)
     climate["heat"] = heat_months(rows)

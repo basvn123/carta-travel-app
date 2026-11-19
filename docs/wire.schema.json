@@ -585,6 +585,45 @@
             },
             "_asof": {
               "$ref": "#/$defs/asof"
+            },
+            "heat": {
+              "type": "array",
+              "description": "optional (D20): months whose mean daytime high is at or above when.heat extreme_c, pipeline/heat_fire.py",
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12
+              }
+            },
+            "fire": {
+              "type": "array",
+              "description": "optional (D20): wildfire danger months (FWI when cache/fire_fwi.json has it, else the dry-heat proxy), pipeline/heat_fire.py",
+              "items": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12
+              }
+            },
+            "risk": {
+              "type": "object",
+              "description": "optional (D20): where the heat and fire months came from",
+              "properties": {
+                "src": {
+                  "enum": [
+                    "climate",
+                    "climate+fwi"
+                  ]
+                },
+                "fire_basis": {
+                  "enum": [
+                    "dryheat",
+                    "fwi"
+                  ]
+                },
+                "asof": {
+                  "type": "string"
+                }
+              }
             }
           },
           "required": [

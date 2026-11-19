@@ -41,6 +41,7 @@ import {
   splitCatalogue, mergeCatalogue, buildRankTier, decodeRankTier, RANK_PATH, RANK_FIELDS, projectField,
 } from '../src/lib/bootIndex.js';
 import { assertWire } from './ci/contract.mjs';
+import { compactClimate } from './lib/wireClimate.mjs';
 import { createHash } from 'node:crypto';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));   // continent-app/scripts
@@ -300,24 +301,7 @@ const WHY_EN = {};
     if (d.climate?.months) {
       before += JSON.stringify(d.climate).length;
       climatePeriod ||= d.climate.period || null;
-      d.climate = {
-        m: d.climate.months.map((m) => [
-          m.t_high ?? null, m.t_low ?? null, m.precip_mm ?? null, m.comfort ?? null,
-        ]),
-        best: d.climate.summary?.best_months || [],
-        // T631: the parallel arrays apply_climate.py adds beside `months`,
-        // kept under short names and only when they exist: rd rain days per
-        // month, wind mean 10 m wind in m/s, elev the ground elevation (m)
-        // the temperatures are lapse corrected to.
-        ...(Array.isArray(d.climate.rain_days) ? { rd: d.climate.rain_days } : {}),
-        ...(Array.isArray(d.climate.wind_ms) ? { wind: d.climate.wind_ms } : {}),
-        ...(Number.isFinite(d.climate.elev_m) ? { elev: d.climate.elev_m } : {}),
-        // T641: sun_h twelve monthly sunshine totals in hours (modelled from
-        // NASA POWER radiation), water_c twelve monthly sea or lake surface
-        // temperatures in C (NASA MUR SST) for a destination on the water.
-        ...(Array.isArray(d.climate.sun_h) ? { sun_h: d.climate.sun_h } : {}),
-        ...(Array.isArray(d.climate.water_c) ? { water_c: d.climate.water_c } : {}),
-      };
+      d.climate = compactClimate(d.climate);
       after += JSON.stringify(d.climate).length;
     }
     restoreProvenance(d, stamps);
