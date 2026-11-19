@@ -71,7 +71,14 @@ AI_CODES = {
     "ai_timeout": 504, "ai_error": 502, "global_cap": 429, "ai_bad_output": 502,
 }
 
-GEMINI_CHAIN = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
+# S1 of the gemini-rag decision (ai fix program wave 1): pinned Flash-Lite ids,
+# no -latest alias and no Flash thinking model first. Equal to batch_chain in
+# continent-app/config/ai_models.json (continent-app/tests/aiConfig.test.mjs).
+GEMINI_CHAIN = ["gemini-3.5-flash-lite", "gemini-3.1-flash-lite"]
+# The trips job keeps its old chain until its golden set passes on Flash-Lite:
+# Trips/.../generate_trip.py MODEL_CHAIN must equal it (golden_set.py hashes
+# it) and whole trips are the one batch output with no eval on Flash-Lite yet.
+TRIPS_CHAIN = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.5-flash-lite"]
 
 # Batch timings: no traveller waits, so the budget is long and a 429 waits.
 FEATURES = {
@@ -81,7 +88,7 @@ FEATURES = {
     "parking": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=600, first_s=120, later_s=120,
                     min_s=10, retry_429_s=30, min_interval_s=6.5,
                     max_prompt_chars=20_000, max_output_chars=100_000),
-    "trips": dict(provider="gemini", models=GEMINI_CHAIN, budget_s=1500, first_s=300, later_s=300,
+    "trips": dict(provider="gemini", models=TRIPS_CHAIN, budget_s=1500, first_s=300, later_s=300,
                   min_s=20, retry_429_s=30, min_interval_s=6.5,
                   max_prompt_chars=600_000, max_output_chars=600_000),
     "lexicon": dict(provider="ollama", models=["qwen3:4b"], budget_s=600, first_s=300, later_s=300,
@@ -379,7 +386,14 @@ def _gemini_parse(data):
     gm = cand.get("groundingMetadata") or {}
     sources = [c.get("web", {}).get("uri") for c in gm.get("groundingChunks", []) if c.get("web", {}).get("uri")]
     u = data.get("usageMetadata") or {}
-    return text, sources, {"in": u.get("promptTokenCount", 0), "out": u.get("candidatesTokenCount", 0)}
+    # S2: thinking (billed as output), implicit-cache and grounded counts; None
+    # when Gemini did not report one, never 0 (aiModels.geminiUsage is the twin).
+    queries = gm.get("webSearchQueries")
+    return text, sources, {
+        "in": u.get("promptTokenCount", 0), "out": u.get("candidatesTokenCount", 0),
+        "thought": u.get("thoughtsTokenCount"), "cached": u.get("cachedContentTokenCount"),
+        "grounded": len(queries) if isinstance(queries, list) else None,
+    }
 
 
 GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta"
@@ -534,6 +548,9 @@ class Gateway:
             "tokens_in": usage.get("in") if usage else -(-chars // 4),
             "tokens_out": usage.get("out") if usage else None,
             "tokens_estimated": not usage,
+            "tokens_thought": usage.get("thought") if usage else None,
+            "tokens_cached": usage.get("cached") if usage else None,
+            "grounded_queries": usage.get("grounded") if usage else None,
             "latency_ms": max(0, round((self._clock() - t0) * 1000)),
             "outcome": ("fallback" if res.fell_back else "ok") if res else ("refused" if refused else "failed"),
             "code": exc.code if exc else None,

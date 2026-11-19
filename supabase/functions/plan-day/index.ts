@@ -38,7 +38,8 @@
  *   - The ai_plan_cache table, where identical requests cost nothing at all.
  *
  * Secrets (set via `supabase secrets set`): GEMINI_API_KEY, and optionally
- * GEMINI_MODEL (default gemini-flash-latest), AI_GLOBAL_DAILY_CAP (200).
+ * GEMINI_MODEL (promoted to the front of the pinned chain), AI_GLOBAL_DAILY_CAP
+ * (default from continent-app/config/ai_models.json capacity, 200).
  * Provider and model chain (T1137): AI_PLAN_DAY_PROVIDER, AI_PLAN_DAY_MODELS
  * and the other keys in supabase/functions/_shared/aiModels.mjs.
  * Per-user caps now come from public.plan_tiers, not from env.
@@ -49,7 +50,8 @@ import {
   scheduleDay, cacheKeyInput, CACHE_KEY_VERSION,
   signRefineToken, verifyRefineToken, REFINES_FREE,
 } from './logic.mjs';
-import { consume, logCapRejection, logModelEvent, refund } from '../_shared/passes.mjs';
+import { capRefusalBody, consume, logCapRejection, logModelEvent, refund } from '../_shared/passes.mjs';
+import { globalCapFrom } from '../_shared/aiCapacity.mjs';
 
 import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
 // AI security (T1117, C8): traveller and client-sent text is scrubbed and
@@ -101,7 +103,8 @@ Deno.serve(withCors(async (req) => {
   // down a rung, not to fail the request.
   const envGet = (k: string) => Deno.env.get(k);
   const access = modelAccess('plan-day', envGet);
-  const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
+  // The shared daily ceiling: the secret, else ai_models.json capacity (200).
+  const GLOBAL_CAP = globalCapFrom(Deno.env.get('AI_GLOBAL_DAILY_CAP'));
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
   const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
   const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
@@ -248,51 +251,6 @@ Deno.serve(withCors(async (req) => {
 
   const service = createClient(SUPABASE_URL, SERVICE_KEY);
 
-  // ---- quota gate (atomic, tier-aware) ----
-  // ORDER MATTERS, and it changed in 007. The cache lookup used to run first,
-  // because under the old zero-billing posture quota existed only to protect
-  // the free Gemini budget and a cache hit spent none of it. Now quota is what
-  // the traveller is BUYING, so it has to be a product rule rather than a cost
-  // passthrough: "3 AI plans a month" has to mean three, including in Paris
-  // where somebody else's identical question is already cached. Leaving the
-  // cache first would have handed free users unlimited plans in exactly the
-  // popular cities most people plan.
-  //
-  // The one cost of this ordering: a cache hit now also ticks the global daily
-  // ceiling, which it does not actually spend anything against. That errs
-  // toward under-serving rather than over-spending, which is the right way to
-  // be wrong.
-  //
-  // The response carries the tier and what is left of it so the client can
-  // render "2 of 3 plans left this month" and put the upsell in front of a
-  // free user at the exact moment the limit bites.
-  // T433: a change to a plan already paid for is free, twice. The proof is
-  // the signed token the last answer carried (see signRefineToken).
-  let freeRefine = false;
-  let refineN = 0;
-  let tokenKey = '';
-  if (refine && typeof body.refineToken === 'string') {
-    const v = await verifyRefineToken(body.refineToken, SERVICE_KEY, user.id);
-    if (v.ok && v.n < REFINES_FREE) { freeRefine = true; refineN = v.n + 1; tokenKey = v.k; }
-  }
-  const quota = freeRefine
-    ? { ok: true, status: 'free_refine', tier: null, left: null, cap: null, used: null }
-    : await consume(service, user.id, 'plan', GLOBAL_CAP);
-  if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
-  if (!quota.ok) {
-    // Count the refusal before answering it. Nothing else records that this
-    // request happened: the ledger only ever grows on a grant, so without
-    // this row a day where fifty people were turned away is indistinguishable
-    // from a quiet day. Not awaited, see logCapRejection.
-    logCapRejection(service, quota.status, 'plan', quota.tier);
-    return json(429, {
-      code: quota.status, // 'user_cap' | 'global_cap'
-      tier: quota.tier,
-      cap: quota.cap ?? 0,
-      used: quota.used ?? 0,
-    });
-  }
-
   // ---- cache: a hit still costs a unit, but costs Google nothing ----
   // Keyed on the CHAIN, not on whichever model happened to answer: the same
   // question must hit the same cache row whether the primary served it or a
@@ -318,11 +276,6 @@ Deno.serve(withCors(async (req) => {
     freeText, lang, candidates: promptCandidates, refine, prevStopIds: prevStops, wantEvents,
     profile, mustInclude, days, style,
   }));
-  // The next refine token: the same plan, one more free change spent.
-  const nextToken = async () => ({
-    refineToken: await signRefineToken({ u: user.id, k: tokenKey || hash, n: refineN }, SERVICE_KEY),
-    refinesLeft: Math.max(0, REFINES_FREE - refineN),
-  });
   const { data: cached } = await service
     .from('ai_plan_cache')
     .select('payload, created_at')
@@ -331,6 +284,59 @@ Deno.serve(withCors(async (req) => {
   const isHit = !!cached?.payload
     && Date.now() - Date.parse(cached.created_at) < 7 * 86400_000;
 
+  // A cached row passes the same payload check as a fresh answer; one that
+  // fails it (off-schema, or written before the guard) is a miss.
+  const cachedSafe = isHit ? guardPlanPayload(cached.payload) : null;
+
+  // ---- quota gate (atomic, tier-aware) ----
+  // ORDER MATTERS, and it changed in 007. The cache lookup used to run first,
+  // because under the old zero-billing posture quota existed only to protect
+  // the free Gemini budget and a cache hit spent none of it. Now quota is what
+  // the traveller is BUYING, so it has to be a product rule rather than a cost
+  // passthrough: "3 AI plans a month" has to mean three, including in Paris
+  // where somebody else's identical question is already cached. Leaving the
+  // cache first would have handed free users unlimited plans in exactly the
+  // popular cities most people plan.
+  //
+  // The cache is PEEKED first (read only, above) so the grant knows whether it
+  // will be served from the cache: a hit still spends the traveller's unit,
+  // but no longer the shared daily ceiling or the per-user daily limit, which
+  // exist to bound what Google bills (S3, wave 1 of the ai fix program,
+  // migration 078). `cached` comes from the CHECKED payload that will be
+  // served, never from a raw row that could still fail the guard and fall
+  // through to a generation.
+  //
+  // The response carries the tier and what is left of it so the client can
+  // render "2 of 3 plans left this month" and put the upsell in front of a
+  // free user at the exact moment the limit bites.
+  // T433: a change to a plan already paid for is free, twice. The proof is
+  // the signed token the last answer carried (see signRefineToken).
+  let freeRefine = false;
+  let refineN = 0;
+  let tokenKey = '';
+  if (refine && typeof body.refineToken === 'string') {
+    const v = await verifyRefineToken(body.refineToken, SERVICE_KEY, user.id);
+    if (v.ok && v.n < REFINES_FREE) { freeRefine = true; refineN = v.n + 1; tokenKey = v.k; }
+  }
+  const quota = freeRefine
+    ? { ok: true, status: 'free_refine', tier: null, left: null, cap: null, used: null }
+    : await consume(service, user.id, 'plan', GLOBAL_CAP, { cached: !!cachedSafe });
+  if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
+  if (!quota.ok) {
+    // Count the refusal before answering it. Nothing else records that this
+    // request happened: the ledger only ever grows on a grant, so without
+    // this row a day where fifty people were turned away is indistinguishable
+    // from a quiet day. Not awaited, see logCapRejection.
+    logCapRejection(service, quota.status, 'plan', quota.tier);
+    // 'user_cap' | 'global_cap' | 'day_cap' (sent as global_cap with reason day_cap)
+    return json(429, capRefusalBody(quota));
+  }
+
+  // The next refine token: the same plan, one more free change spent.
+  const nextToken = async () => ({
+    refineToken: await signRefineToken({ u: user.id, k: tokenKey || hash, n: refineN }, SERVICE_KEY),
+    refinesLeft: Math.max(0, REFINES_FREE - refineN),
+  });
   // Record the lookup either way. A hit rate needs both numbers, and a miss
   // has no cache row to count against, so the event is written here rather
   // than as a counter on ai_plan_cache. Best-effort: a failed insert must
@@ -349,9 +355,6 @@ Deno.serve(withCors(async (req) => {
     key_version: CACHE_KEY_VERSION,
   }).then(() => {}, () => {});
 
-  // A cached row passes the same payload check as a fresh answer; one that
-  // fails it (off-schema, or written before the guard) is a miss.
-  const cachedSafe = isHit ? guardPlanPayload(cached.payload) : null;
   if (cachedSafe) {
     return json(200, {
       ...cachedSafe,
@@ -426,9 +429,9 @@ Deno.serve(withCors(async (req) => {
     schema: RESPONSE_SCHEMA,
     search: useGrounding,
     temperature: refine ? 0.45 : 0.25, // a revision must actually differ
-    // gemini-flash-latest is a thinking model and its thoughts spend this
-    // budget, so a full day of stops can truncate at 4096. Headroom costs
-    // nothing, only generated tokens are billed.
+    // Thinking is capped at minimal (S1), but a thinking rung reached through
+    // AI_PLAN_DAY_MODELS would spend this budget on thoughts, so a full day
+    // of stops keeps its headroom. Only generated tokens are billed.
     maxOutputTokens: 8192,
   });
   if (!ai.ok) return await failed(ai.status, refusalBody(ai));

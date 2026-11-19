@@ -26,7 +26,7 @@
  * rather than live search. See README.md for the deploy steps.
  *
  * Secrets (set via `supabase secrets set`): GEMINI_API_KEY, and optionally
- * GEMINI_MODEL (default gemini-flash-latest), AI_GLOBAL_DAILY_CAP (200),
+ * GEMINI_MODEL (promoted to the front of the pinned chain), AI_GLOBAL_DAILY_CAP (200),
  * AI_ENABLE_CITY_GROUNDING (default true). Per-user caps come from
  * public.plan_tiers, not from env. Provider and chain (T1137):
  * AI_SUGGEST_CITY_PROVIDER, AI_SUGGEST_CITY_MODELS and the other keys in
@@ -49,7 +49,8 @@ import {
 import { sanitizeTownCandidates, sanitizeSuggestions, cacheKeyInput } from './logic.mjs';
 // The prompt and the response schema, from the prompt registry (T1140, E5).
 import { LANG_NAMES, RESPONSE_SCHEMA, buildPrompt } from './prompt.mjs';
-import { consume, logCapRejection, refund, resolveTier } from '../_shared/passes.mjs';
+import { capRefusalBody, consume, logCapRejection, refund, resolveTier } from '../_shared/passes.mjs';
+import { globalCapFrom } from '../_shared/aiCapacity.mjs';
 
 import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
 
@@ -81,7 +82,8 @@ Deno.serve(withCors(async (req) => {
   // Provider and chain from config, the same rules as plan-day (aiModels).
   const envGet = (k: string) => Deno.env.get(k);
   const access = modelAccess('suggest-city', envGet);
-  const GLOBAL_CAP = Number(Deno.env.get('AI_GLOBAL_DAILY_CAP')) || 200;
+  // The shared daily ceiling: the secret, else ai_models.json capacity (200).
+  const GLOBAL_CAP = globalCapFrom(Deno.env.get('AI_GLOBAL_DAILY_CAP'));
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL') || '';
   const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY') || '';
   const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
@@ -135,13 +137,35 @@ Deno.serve(withCors(async (req) => {
     ? (status?.tier === 'free' ? 'tier' : 'cap')
     : null;
 
+  // ---- cache peek (read only, before the quota; S3, migration 078) ----
+  // The key carries the grounded flag, so a degrade to ungrounded below peeks
+  // again. `cached` for the grant is the CHECKED payload that will be served.
+  const peek = async (grounded: boolean) => {
+    const key = await sha256Hex(cacheKeyInput({
+      // The chain, not the answering model: see plan-day for why.
+      model: chainKey(access.cfg), stay, focus, interests, freeText, lang, candidates, grounded,
+    }));
+    const { data: row } = await service
+      .from('ai_plan_cache')
+      .select('payload, created_at')
+      .eq('hash', key)
+      .maybeSingle();
+    // A cached row passes the same output check as a fresh answer; one that
+    // fails it is a miss and is regenerated.
+    const safe = row?.payload && Date.now() - Date.parse(row.created_at) < 7 * 86400_000
+      ? guardCityPayload(row.payload)
+      : null;
+    return { key, safe };
+  };
+  let probe = await peek(useGrounding);
+
   // ---- quota gate ----
   // One suggestion costs one unit. A grounded one comes out of the grounded
-  // allowance, because that is the surface Google actually meters. Ordered
-  // before the cache for the same reason as plan-day: the allowance is a
-  // product promise now, not just a cost guard.
+  // allowance, because that is the surface Google actually meters. A cache
+  // hit still spends the unit (the allowance is a product promise), but not
+  // the shared ceiling (S3).
   const kind = useGrounding ? 'ground' : 'plan';
-  let quota = await consume(service, user.id, kind, GLOBAL_CAP);
+  let quota = await consume(service, user.id, kind, GLOBAL_CAP, { cached: !!probe.safe });
   if (!quota.ok && kind === 'ground') {
     // Lost a race against the traveller's own last grounded call. Degrade
     // rather than refuse: an ungrounded answer beats an error. Degrade for
@@ -149,8 +173,9 @@ Deno.serve(withCors(async (req) => {
     // grounded search either, and a later failure must refund the 'plan'
     // unit it actually consumed (refunding 'ground' would mint paid quota).
     logCapRejection(service, quota.status, 'ground', quota.tier);
-    quota = await consume(service, user.id, 'plan', GLOBAL_CAP);
     useGrounding = false;
+    probe = await peek(false);
+    quota = await consume(service, user.id, 'plan', GLOBAL_CAP, { cached: !!probe.safe });
     groundingSkipped = 'cap';
   }
   if (quota.status === 'quota_check') return json(503, { code: 'quota_check' });
@@ -160,9 +185,7 @@ Deno.serve(withCors(async (req) => {
     // though kind still says ground. Logging kind here would record a second
     // ground refusal for a call that only ever asked for a plan unit.
     logCapRejection(service, quota.status, useGrounding ? 'ground' : 'plan', quota.tier);
-    return json(429, {
-      code: quota.status, tier: quota.tier, cap: quota.cap ?? 0, used: quota.used ?? 0,
-    });
+    return json(429, capRefusalBody(quota));
   }
   const spentKind = useGrounding ? 'ground' : 'plan';
   const failed = async (st: number, b: Record<string, unknown>) => {
@@ -170,21 +193,8 @@ Deno.serve(withCors(async (req) => {
     return json(st, b);
   };
 
-  // ---- cache ----
-  const hash = await sha256Hex(cacheKeyInput({
-    // The chain, not the answering model: see plan-day for why.
-    model: chainKey(access.cfg), stay, focus, interests, freeText, lang, candidates, grounded: useGrounding,
-  }));
-  const { data: cached } = await service
-    .from('ai_plan_cache')
-    .select('payload, created_at')
-    .eq('hash', hash)
-    .maybeSingle();
-  // A cached row passes the same output check as a fresh answer; one that
-  // fails it is a miss and is regenerated.
-  const cachedSafe = cached?.payload && Date.now() - Date.parse(cached.created_at) < 7 * 86400_000
-    ? guardCityPayload(cached.payload)
-    : null;
+  const hash = probe.key;
+  const cachedSafe = probe.safe;
   if (cachedSafe) {
     return json(200, {
       ...cachedSafe,
@@ -213,9 +223,9 @@ Deno.serve(withCors(async (req) => {
     schema: RESPONSE_SCHEMA,
     search: useGrounding,
     temperature: 0.3,
-    // gemini-flash-latest is a THINKING model and its thoughts are charged
-    // against this budget: a 120-candidate ask burns about 2,000 tokens
-    // thinking, so 2048 truncated the JSON. Only generated tokens are billed.
+    // Thinking is capped at minimal (S1). On a thinking rung a 120-candidate
+    // ask burned about 2,000 tokens thinking and 2048 truncated the JSON,
+    // so the headroom stays. Only generated tokens are billed.
     maxOutputTokens: 8192,
   });
   if (!ai.ok) return await failed(ai.status, refusalBody(ai));

@@ -50,6 +50,8 @@
  * is left in place because an applied migration is a historical record.
  */
 
+import { breakerCaps, userDayLimit } from './aiCapacity.mjs';
+
 /** Tier ids, lowest to highest. Mirrors public.plan_tiers. */
 export const TIERS = ['free', 'trip', 'year'];
 
@@ -76,13 +78,47 @@ export function stripePriceFor(tier, env) {
  * genuine grant: a caller that treats a cap as success will hand out free
  * generations, so every call site must branch on it.
  */
-export async function consume(service, userId, kind, globalCap) {
-  const { data, error } = await service.rpc('ai_consume', {
-    p_user: userId, p_kind: kind, p_global_cap: globalCap,
+export async function consume(service, userId, kind, globalCap, { cached = false } = {}) {
+  // S3 (wave 1 of the ai fix program, migration 078): ai_consume_v2 keeps
+  // cache hits off the shared count, puts the per-user daily limit first and
+  // never refuses a Pass holder at the shared ceiling. The numbers come from
+  // ai_models.json `capacity` (aiCapacity). Until 078 is applied the RPC is
+  // missing and the 044 ai_consume answers as before.
+  const caps = breakerCaps(globalCap);
+  const v2 = await service.rpc('ai_consume_v2', {
+    p_user: userId, p_kind: kind, p_free_cap: caps.free,
+    p_user_day_cap: userDayLimit(kind), p_cached: !!cached,
   });
+  let { data, error } = v2;
+  if (error && isMissingFunction(error)) {
+    ({ data, error } = await service.rpc('ai_consume', {
+      p_user: userId, p_kind: kind, p_global_cap: globalCap,
+    }));
+  }
   if (error) return { ok: false, status: 'quota_check', tier: 'free' };
   const r = data || {};
   return { ...r, ok: r.status === 'ok' };
+}
+
+/** PostgREST's "no such function" (PGRST202) or Postgres's (42883): the migration is not applied yet. */
+export function isMissingFunction(error) {
+  return error?.code === 'PGRST202' || error?.code === '42883';
+}
+
+/**
+ * The 429 body for a refused consume. A per-user daily limit (day_cap) is
+ * sent as the code the app already explains as "come back tomorrow"
+ * (global_cap), which is true of a daily limit, with reason day_cap.
+ */
+export function capRefusalBody(quota) {
+  const dayCap = quota.status === 'day_cap';
+  return {
+    code: dayCap ? 'global_cap' : quota.status,
+    ...(dayCap ? { reason: 'day_cap' } : {}),
+    tier: quota.tier,
+    cap: quota.cap ?? 0,
+    used: quota.used ?? 0,
+  };
 }
 
 /**
@@ -121,7 +157,7 @@ export async function resolveTier(service, userId) {
  * whom by tier.
  */
 export function logCapRejection(service, reason, kind, tier) {
-  if (reason !== 'user_cap' && reason !== 'global_cap') return;
+  if (reason !== 'user_cap' && reason !== 'global_cap' && reason !== 'day_cap') return;
   try {
     service.from('ai_cap_events')
       .insert({ reason, kind, tier: tier || null })

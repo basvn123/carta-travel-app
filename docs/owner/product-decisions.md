@@ -40,3 +40,14 @@ Visual-only run: these were left as calls because they change logic or a rule. R
 | HS-e | At the next deploy: rewrite the CSP style hashes (`node continent-app/scripts/csp-hashes.mjs --write`), keeping the old prerender hash until R2's prerendered pages are re-uploaded | at the next deploy |
 | HS-f | The new name: the wordmark slot holds "Carta" until you choose the name; the identity is name-free | |
 | HS-g | Real-phone check of the haptic tick ("Vibrate on tap" in Settings) on an Android phone and an iPhone | before launch |
+
+## 2026-11-19 defaults
+
+The fix programs run without stops (`.work/2026-11-19-fix-programs/plan.md` section 3). Each line is a default a program applied; overrule any line and the program changes course.
+
+| Program | Default applied | How to reverse |
+|---|---|---|
+| ai | North-star decision section 13 recommendations taken as approved (owner, 2026-11-17); owner-only steps are in `docs/owner/ai.md` and their gates stay open | say which recommendation to drop |
+| ai | Per-user daily AI limit, the same for every tier: 20 plans and 10 grounded a day (wave 1, `ai_models.json` `capacity.user_daily_limit`) | change the two numbers in `ai_models.json`, run `node continent-app/scripts/ai/gen_ai_config.mjs`, deploy the functions; 0 means no limit |
+| ai | Spend breaker: Ask guests cut at half the shared daily ceiling (lane 6), free accounts at the ceiling, Pass holders never (`capacity.breaker`) | change `guest_share` or `free_share` in `ai_models.json` and regenerate |
+| ai | The `trips` batch job keeps its old Gemini chain until its golden set passes on Flash-Lite (owner step AI-9) | run AI-9; a session then moves it |
