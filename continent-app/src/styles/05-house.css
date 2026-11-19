@@ -361,7 +361,8 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 }
 .hs-see-all:active .hs-go-disc { background: var(--action-press); color: var(--action-text); }
 .hs-see-all:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
-.hs-rail-arrows { display: none; gap: var(--space-2); }
+/* The rail arrows (G12, Explore top round 2): a 44 px paper disc on the
+   photos, floating, so it casts the one shadow and draws no edge. */
 .hs-round {
   display: inline-grid;
   place-items: center;
@@ -369,16 +370,17 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
   width: var(--tap);
   height: var(--tap);
   padding: 0;
-  border: var(--stroke-edge) solid var(--edge);
+  border: 0;
   border-radius: var(--radius-pill);
   background: var(--surface);
   color: var(--text);
+  box-shadow: var(--elev-2);
 }
-@media (hover: hover) {
-  .hs-round:hover:not(:disabled) { border-color: var(--text); }
-}
-.hs-round:disabled { opacity: 0.38; cursor: default; }
+.hs-round svg { transition: translate var(--dur-2) var(--ease-out); }
 .hs-round .is-flipped { scale: -1 1; }
+.hs-round[aria-disabled="true"] { cursor: default; }
+.hs-rail-frame { position: relative; }
+.hs-rail-arrow { display: none; }
 .hs-rail {
   display: grid;
   grid-auto-flow: column;
@@ -394,16 +396,60 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
 }
 .hs-rail::-webkit-scrollbar { display: none; }
 @media (min-width: 600px) { .hs-rail { grid-auto-columns: calc((100% - var(--space-3)) / 2.15); } }
-/* Arrows wherever a mouse can use them; touch scrolls. */
-@media (hover: hover) and (pointer: fine) { .hs-rail-arrows { display: flex; } }
 @media (min-width: 1024px) {
-  .hs-rail-arrows { display: flex; }
   /* Four across and a quarter of the fifth, so the strip shows it scrolls;
      never under 256 px, so a narrower rail shows fewer and a bit rather
      than squeezing the price row. max(), not minmax(): an implicit track in
      a strip that overflows never grows past a minmax's minimum, so every
      card sat at 256 px (found 2026-11-18, Explore rails). */
   .hs-rail { grid-auto-columns: max(256px, calc((100% - 4 * var(--space-5)) / 4.25)); gap: var(--space-5); margin: 0; padding: 2px 0 4px; scroll-padding: 0; }
+}
+/* The arrows sit on the photos' vertical middle, Back over the first
+   visible photo's left edge and Forward over the last one's right edge
+   (owner 2026-11-19: they sat 149 px above the photos, in the head). Only a
+   mouse or a keyboard sees them: they fade in while the pointer is over the
+   rail or focus is in it. Touch swipes and the peeking card says there is
+   more, so they never show there. They sit inside the frame, never over its
+   edge: an Explore rail paints with content-visibility, which clips. */
+@media (hover: hover) and (pointer: fine) {
+  .hs-rail-frame {
+    container-type: inline-size;
+    /* One card's width: the strip's own column rule (above), read against
+       the frame. 100cqi is the strip's content box, because its side
+       padding equals its negative margin. Left unregistered on purpose:
+       an unregistered property resolves its cqi where it is used (the
+       arrow, inside this container); registering it with @property would
+       resolve it here, against the page. */
+    --rail-card-w: calc(100cqi * 0.76);
+  }
+  .hs-rail-arrow {
+    position: absolute;
+    z-index: 2;
+    /* A photo is 4:3 under the strip's 2 px top padding, so its middle is
+       3/8 of a card's width down. */
+    top: calc(2px + var(--rail-card-w) * 0.375 - var(--tap) / 2);
+    display: grid;
+    opacity: 0;
+    transition: opacity var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
+  }
+  .hs-rail-arrow.is-prev { left: var(--space-2); }
+  .hs-rail-arrow.is-next { right: var(--space-2); }
+  .hs-rail-frame:hover > .hs-rail-arrow,
+  .hs-rail-frame:has(:focus-visible) > .hs-rail-arrow { opacity: 1; }
+  /* At an end the arrow dims and stays, so focus on it is never lost. */
+  .hs-rail-frame:hover > .hs-rail-arrow[aria-disabled="true"],
+  .hs-rail-frame:has(:focus-visible) > .hs-rail-arrow[aria-disabled="true"] { opacity: 0.45; }
+  .hs-rail-frame.is-still > .hs-rail-arrow { display: none; }
+  .hs-rail-arrow:hover:not([aria-disabled="true"]) { background: var(--select-row); }
+  .hs-rail-arrow.is-next:hover:not([aria-disabled="true"]) svg { translate: 2px 0; }
+  .hs-rail-arrow.is-prev:hover:not([aria-disabled="true"]) svg { translate: -2px 0; }
+  .hs-rail-arrow:active:not([aria-disabled="true"]) { scale: var(--press-scale-sm); }
+}
+@media (hover: hover) and (pointer: fine) and (min-width: 600px) {
+  .hs-rail-frame { --rail-card-w: calc((100cqi - var(--space-3)) / 2.15); }
+}
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
+  .hs-rail-frame { --rail-card-w: max(256px, calc((100cqi - 4 * var(--space-5)) / 4.25)); }
 }
 .hs-rcard { position: relative; min-width: 0; scroll-snap-align: start; }
 .hs-rcard-link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; color: inherit; text-decoration: none; }

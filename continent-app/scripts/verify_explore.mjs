@@ -503,7 +503,7 @@ try {
   await page.waitForTimeout(900);
   check('phone: the button opens the same pane in a sheet', await page.locator('.fsheet-explore .xrail').isVisible());
   check('phone: the sheet is a labelled dialog', await page.locator('.fsheet-explore[role="dialog"][aria-modal="true"]').count() === 1);
-  check('phone: the Map toggle floats above the nav', await page.locator('.xview-fab').isVisible()
+  check('phone: Map is the fixed bottom-right corner', await page.locator('.corner-map .corner-btn').isVisible()
     && await page.locator('.xbar-tools .xview-toggle').isHidden());
   check('phone: one compact row per line', await page.locator('.xrows').evaluate(
     (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length === 1));
@@ -543,7 +543,7 @@ try {
   await explore.waitFor({ state: 'visible', timeout: 30000 });
   await explore.tap();
   await showAll(page, true);
-  await page.locator('.xview-fab .xview-toggle').tap();
+  await page.locator('.corner-map .corner-btn').tap();
   await page.waitForSelector('.xmap.is-ready', { timeout: 30000 });
   await page.waitForTimeout(3500);
   const geo = await page.evaluate(() => {

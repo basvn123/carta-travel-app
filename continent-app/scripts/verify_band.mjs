@@ -1,13 +1,16 @@
-// G12 (Explore top, judge 2): the style disc in a browser. It stays bottom
-// left on every width and never sits on a card's name or price row, or on
-// the Map pill, at rest; it slides out while the list scrolls down and comes
-// back at rest; the last row of the list is reachable above it.
+// G12, Explore top round 2 (owner: the style disc "often disappears or
+// appears higher"): the two corners in a browser. The heart sits bottom left
+// and, on a phone, Map bottom right, in two fixed 48 px slots just above the
+// bottom nav (desktop: the heart alone, 24 px from the corner). Nothing moves
+// them: their place is logged every 100 ms while the list scrolls slowly
+// and fast and while the tab changes, and it must never change. At the end
+// of every list, at rest, they cover nothing; a control that takes keyboard
+// focus under a slot is scrolled clear of it (scroll-padding-bottom).
 //
 //   node scripts/verify_band.mjs      (a server at CARTA_PORT, default 5182)
 //
-// SIZES=360x640,390x844 picks the sizes (default the five of judge 2);
-// 360x640 in French runs after them (FR=0 skips it).
-// Shots go to SHOTS_DIR when it is set: j2fix-disc-{w}x{h}-{rest,scrolled}.png.
+// SIZES=360x640,390x844 picks the sizes (default the five of the contract).
+// Shots go to SHOTS_DIR when it is set: <SHOT_PREFIX>corners-{w}x{h}-{state}.png.
 // Supabase is answered locally (signed out); the service worker is blocked.
 import { chromium } from 'playwright';
 import path from 'node:path';
@@ -16,40 +19,105 @@ import { mirrorData } from './lib/dataMirror.mjs';
 const PORT = Number(process.env.CARTA_PORT) || 5182;
 const BASE = `http://127.0.0.1:${PORT}/`;
 const SHOTS = process.env.SHOTS_DIR || '';
-const SIZES = (process.env.SIZES || '360x640,360x780,390x844,820x1180,1440x900')
+const PREFIX = process.env.SHOT_PREFIX || '';
+const SIZES = (process.env.SIZES || '360x640,390x844,820x1180,1280x800,1440x900')
   .split(',').map((s) => s.split('x').map(Number));
-// The same list the disc keeps clear of (src/components/dock/discClear.js).
-const CLEAR = '.xrow-line1, .xrc-head, .hs-rcard-name, .xprice, .xform, .card-title, .card-price, .places-card-price, .itin-card-name, .itin-card-cost, .jstyle-desc, .ttile-line, .empty-result-line, .empty-result-actions, .xview-fab';
 
 const checks = [];
 const check = (label, ok, note = '') => checks.push({ label, ok: !!ok, note });
 const browser = await chromium.launch();
 
-// Every visible name or price box the disc meets, with the overlap in px.
-const overlaps = (page) => page.evaluate((sel) => {
-  const disc = document.querySelector('.dock--corner .dock-trigger');
-  if (!disc) return { disc: null, hits: [] };
-  const d = disc.getBoundingClientRect();
+// Where the two corners are now, and the nav's top.
+const corners = (page) => page.evaluate(() => {
+  const r = (sel) => {
+    const el = document.querySelector(sel);
+    if (!el) return null;
+    const b = el.getBoundingClientRect();
+    if (!b.width) return null;
+    return { x: Math.round(b.left), y: Math.round(b.top), w: Math.round(b.width), h: Math.round(b.height), vis: getComputedStyle(el).visibility };
+  };
+  const nav = document.querySelector('.bottom-nav');
+  const nb = nav && nav.getBoundingClientRect();
+  return { heart: r('.corner-slot--left .corner-btn'), map: r('.corner-map .corner-btn'), navTop: nb && nb.height ? Math.round(nb.top) : innerHeight };
+});
+
+// Every visible thing a traveller reads or presses that a slot covers: a
+// text run, a link, a button, a field, a photo.
+const covered = (page) => page.evaluate(() => {
+  const slots = [...document.querySelectorAll('.corner-slot .corner-btn')]
+    .map((el) => el.getBoundingClientRect()).filter((b) => b.width && b.height);
   const hits = [];
-  for (const el of document.querySelectorAll(sel)) {
-    if (el.closest('.dock--corner')) continue;
+  const meet = (r, s) => Math.min(r.right, s.right) > Math.max(r.left, s.left) && Math.min(r.bottom, s.bottom) > Math.max(r.top, s.top);
+  for (const el of document.querySelectorAll('.explore-tab *, .places-tab *')) {
+    if (el.closest('.corner-slot, [aria-hidden="true"], [inert]')) continue;
+    const ownText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
+    if (!ownText && !el.matches('a, button, input, select, img')) continue;
     const r = el.getBoundingClientRect();
     if (!r.width || !r.height || r.bottom <= 0 || r.top >= innerHeight) continue;
-    const w = Math.min(d.right, r.right) - Math.max(d.left, r.left);
-    const h = Math.min(d.bottom, r.bottom) - Math.max(d.top, r.top);
-    if (w > 0 && h > 0) hits.push(`${el.className.split(' ')[0]} "${el.textContent.trim().slice(0, 24)}" ${Math.round(w)}x${Math.round(h)}`);
+    // A closed <details> keeps a box for its hidden lines (the photo
+    // credits); checkVisibility leaves those out, and anything faded.
+    if (!el.checkVisibility({ visibilityProperty: true, opacityProperty: true })) continue;
+    for (const s of slots) {
+      if (meet(r, s)) hits.push(`${el.tagName.toLowerCase()}.${String(el.className).split(' ')[0]} "${(el.textContent || el.alt || '').trim().slice(0, 20)}"`);
+    }
   }
-  return { disc: { x: Math.round(d.left), y: Math.round(d.top), w: Math.round(d.width), h: Math.round(d.height) }, hits };
-}, CLEAR);
+  return hits;
+});
 
-async function wheel(page, dy, steps = 6) {
+// Logs both corners every 100 ms until stopped; the distinct places seen.
+const startLog = (page) => page.evaluate(() => {
+  window.__cornerLog = [];
+  const at = (sel) => {
+    const el = document.querySelector(sel);
+    if (!el) return 'none';
+    const b = el.getBoundingClientRect();
+    return `${Math.round(b.left)},${Math.round(b.top)},${getComputedStyle(el.closest('.corner-slot')).visibility}`;
+  };
+  window.__cornerTimer = setInterval(() => {
+    window.__cornerLog.push(`${at('.corner-slot--left .corner-btn')}|${at('.corner-map .corner-btn')}`);
+  }, 100);
+});
+const stopLog = (page) => page.evaluate(() => {
+  clearInterval(window.__cornerTimer);
+  return { n: window.__cornerLog.length, places: [...new Set(window.__cornerLog)] };
+});
+
+async function wheel(page, dy, steps, pause) {
   const { width, height } = page.viewportSize();
-  await page.mouse.move(width / 2, height * 0.6);
-  for (let i = 0; i < steps; i += 1) { await page.mouse.wheel(0, dy / steps); await page.waitForTimeout(40); }
+  await page.mouse.move(width / 2, height * 0.5);
+  for (let i = 0; i < steps; i += 1) { await page.mouse.wheel(0, dy / steps); await page.waitForTimeout(pause); }
 }
 
-async function run(width, height, lang = 'en') {
-  const tag = `${width}x${height}${lang === 'en' ? '' : ` ${lang}`}`;
+// Scrolls the list to its true end: rails below the fold load as they come
+// near, so the end moves until it stays put.
+async function toEnd(page) {
+  let last = -1;
+  for (let i = 0; i < 8; i += 1) {
+    const h = await page.evaluate(() => {
+      let top = 0;
+      for (const el of document.querySelectorAll('.explore-tab, .places-tab')) {
+        if (!el.clientHeight) continue;
+        el.scrollTop = el.scrollHeight;
+        top = Math.max(top, el.scrollHeight);
+      }
+      return top;
+    });
+    await page.waitForTimeout(700);
+    if (h === last) break;
+    last = h;
+  }
+  await page.waitForTimeout(500);
+}
+
+async function open(page, url) {
+  await page.goto(BASE + url, { waitUntil: 'domcontentloaded', timeout: 90000 });
+  await page.waitForSelector('.corner-slot--left .corner-btn', { timeout: 90000 });
+  await page.waitForTimeout(2500);
+}
+
+async function run(width, height) {
+  const tag = `${width}x${height}`;
+  const phone = width <= 768;
   const ctx = await browser.newContext({ viewport: { width, height }, serviceWorkers: 'block' });
   await mirrorData(ctx);
   const page = await ctx.newPage();
@@ -60,121 +128,125 @@ async function run(width, height, lang = 'en') {
     if (/\/auth\/v1\/user/.test(url)) return r.fulfill({ status: 401, contentType: 'application/json', body: '{"message":"no session"}' });
     return r.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
   });
-  await page.addInitScript((l) => {
+  await page.addInitScript(() => {
     try {
-      localStorage.setItem('continent.lang.v1', l);
+      localStorage.setItem('continent.lang.v1', 'en');
       localStorage.setItem('continent.guestMode.v1', '1');
       localStorage.setItem('continent.homeSeen.v1', '1');
       localStorage.setItem('carta.welcomeSeen.v1', '1');
       localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     } catch { /* storage unavailable */ }
-  }, lang);
-  await page.goto(BASE + '?tab=map', { waitUntil: 'domcontentloaded', timeout: 90000 });
-  await page.waitForSelector('.dock--corner .dock-trigger', { timeout: 90000 });
-  await page.waitForSelector('.xprice', { timeout: 90000 }).catch(() => {});
-  await page.waitForTimeout(2500);
-
-  // At rest on load.
-  const rest = await overlaps(page);
-  check(`${tag}: disc bottom left`, rest.disc && rest.disc.x + rest.disc.w / 2 < width / 2, JSON.stringify(rest.disc));
-  check(`${tag}: disc is a 44 px target or more`, rest.disc && rest.disc.w >= 44 && rest.disc.h >= 44);
-  check(`${tag}: at rest the disc meets no name, price or Map pill`, rest.hits.length === 0, rest.hits.join('; '));
-  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `j2fix-disc-${tag}-rest.png`) });
-
-  // Scrolling down: the disc slides out; at rest it is back and still clear.
-  await page.evaluate(() => {
-    const el = document.querySelector('.dock--corner');
-    window.__discTucked = false;
-    new MutationObserver(() => { if (el.dataset.tucked === '1') window.__discTucked = true; })
-      .observe(el, { attributes: true, attributeFilter: ['data-tucked'] });
   });
-  await wheel(page, 420);
-  check(`${tag}: the disc tucks while the list scrolls down`, await page.evaluate(() => window.__discTucked));
-  await page.waitForTimeout(900);
-  check(`${tag}: the disc is back at rest`, (await page.locator('.dock--corner').getAttribute('data-tucked')) === null);
-  const after = await overlaps(page);
-  check(`${tag}: after a scroll, at rest, it meets nothing`, after.hits.length === 0, after.hits.join('; '));
-  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `j2fix-disc-${tag}-scrolled.png`) });
+  await open(page, '?tab=explore');
+  await page.waitForSelector('.xprice', { timeout: 60000 }).catch(() => {});
 
-  // A few more rest points down the list.
-  let worst = [];
-  for (let i = 0; i < 4; i += 1) {
-    await wheel(page, 260 + i * 90);
-    await page.waitForTimeout(900);
-    const o = await overlaps(page);
-    if (o.hits.length) worst = worst.concat(o.hits);
+  // The slots at rest.
+  const home = await corners(page);
+  const h = home.heart;
+  const gap = phone ? 12 : 24;
+  check(`${tag}: heart bottom left, 48 px`, h && h.x <= 24 && h.w === 48 && h.h === 48, JSON.stringify(h));
+  check(`${tag}: heart ${gap} px above the ${phone ? 'nav' : 'window edge'}`, h && h.y + h.h === home.navTop - gap, `${h && h.y + h.h} vs ${home.navTop - gap}`);
+  if (phone) {
+    const m = home.map;
+    check(`${tag}: Map bottom right, 48 px, level with the heart`, m && m.w === 48 && m.h === 48 && m.y === h.y && width - (m.x + m.w) === h.x,
+      JSON.stringify(m));
+    check(`${tag}: the old floating Map pill is gone`, (await page.locator('.xview-fab').count()) === 0);
+  } else {
+    check(`${tag}: no Map corner on a desktop`, home.map === null);
   }
-  check(`${tag}: four more rest points, nothing covered`, worst.length === 0, worst.slice(0, 3).join('; '));
+  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${PREFIX}corners-${tag}-rest.png`) });
 
-  // The end of the list: its last price is reachable above the disc and the nav.
-  // Rails below the fold load as they come near, so the end moves: scroll
-  // to it until it stays put.
-  for (let i = 0; i < 4; i += 1) {
-    await page.evaluate(() => {
-      for (const el of document.querySelectorAll('.explore-tab, .places-tab')) el.scrollTop = el.scrollHeight;
+  // Slow, fast, up: the slots never move.
+  await startLog(page);
+  await wheel(page, 1200, 40, 100);
+  await wheel(page, 4000, 8, 30);
+  await page.waitForTimeout(400);
+  await wheel(page, -2400, 6, 30);
+  await page.waitForTimeout(400);
+  await wheel(page, -600, 20, 100);
+  const scrolled = await stopLog(page);
+  check(`${tag}: one place for the corners through ${scrolled.n} samples of slow and fast scrolling`,
+    scrolled.places.length === 1 && scrolled.n >= 50, scrolled.places.slice(0, 4).join(' ; '));
+  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${PREFIX}corners-${tag}-scrolled.png`) });
+
+  // A control under a slot takes focus: it is scrolled clear, the slot stays.
+  const focus = await page.evaluate(async () => {
+    const slot = document.querySelector('.corner-slot--left .corner-btn').getBoundingClientRect();
+    const sc = [...document.querySelectorAll('.explore-tab, .places-tab')].find((el) => el.clientHeight);
+    const cands = [...sc.querySelectorAll('a[href], button')].filter((el) => {
+      const r = el.getBoundingClientRect();
+      return r.width && r.height && !el.closest('[inert], [aria-hidden="true"]') && r.left < slot.right && r.right > slot.left;
     });
-    await page.waitForTimeout(900);
-  }
-  const end = await page.evaluate(() => {
-    const prices = [...document.querySelectorAll('.xprice')].filter((e) => {
-      const r = e.getBoundingClientRect();
-      return r.height > 0 && r.left < innerWidth && r.right > 0;
-    });
-    const lastP = prices.sort((a, b) => a.getBoundingClientRect().bottom - b.getBoundingClientRect().bottom).pop();
-    const nav = document.querySelector('.bottom-nav');
-    const floor = nav && nav.getBoundingClientRect().height ? nav.getBoundingClientRect().top : innerHeight;
-    return { last: lastP ? Math.round(lastP.getBoundingClientRect().bottom) : null, floor: Math.round(floor) };
+    // The first one below the slot's top: scroll it so it sits under the slot.
+    const el = cands.find((c) => c.getBoundingClientRect().top > slot.top - 400);
+    if (!el) return { none: true };
+    sc.scrollTop += el.getBoundingClientRect().top - slot.top - 4;
+    await new Promise((res) => setTimeout(res, 300));
+    const before = el.getBoundingClientRect();
+    el.focus();
+    await new Promise((res) => setTimeout(res, 600));
+    const after = el.getBoundingClientRect();
+    const now = document.querySelector('.corner-slot--left .corner-btn').getBoundingClientRect();
+    return { before: Math.round(before.bottom), after: Math.round(after.bottom), slotTop: Math.round(slot.top), slotMoved: now.top !== slot.top, name: el.className };
   });
-  check(`${tag}: the last price sits above the bottom bar`, end.last !== null && end.last <= end.floor, JSON.stringify(end));
-  const endO = await overlaps(page);
-  check(`${tag}: at the end of the list the disc meets nothing`, endO.hits.length === 0, endO.hits.join('; '));
+  check(`${tag}: a focused control under the heart is scrolled clear of it`, focus.none || (focus.after <= focus.slotTop && !focus.slotMoved), JSON.stringify(focus));
 
-  // The layer tabs and the trip library carry the disc too: at rest and
-  // after one scroll it meets no card's name or price there either.
-  for (const cat of ['trails', 'beaches', 'trips']) {
-    await page.goto(BASE + `?tab=explore&cat=${cat}`, { waitUntil: 'domcontentloaded', timeout: 90000 });
-    await page.waitForSelector('.dock--corner .dock-trigger', { timeout: 90000 });
-    await page.waitForSelector('.card-title', { timeout: 60000 }).catch(() => {});
+  // The end of the overview: nothing under either slot at rest.
+  await toEnd(page);
+  const endHits = await covered(page);
+  check(`${tag}: at the end of the overview the corners cover nothing`, endHits.length === 0, endHits.slice(0, 4).join('; '));
+  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${PREFIX}corners-${tag}-end.png`) });
+
+  // A list (the first rail's See all) and its end.
+  await page.evaluate(() => { for (const el of document.querySelectorAll('.explore-tab')) el.scrollTop = 0; });
+  await page.waitForTimeout(500);
+  const seeAll = page.locator('.explore-tab .hs-see-all:visible').first();
+  if (await seeAll.count()) {
+    await seeAll.click();
     await page.waitForTimeout(2000);
-    const a = await overlaps(page);
-    await wheel(page, 380);
-    await page.waitForTimeout(900);
-    const b = await overlaps(page);
-    check(`${tag} ${cat}: disc bottom left, meets nothing at rest and after a scroll`,
-      a.disc && a.disc.x + a.disc.w / 2 < width / 2 && !a.hits.length && !b.hits.length, [...a.hits, ...b.hits].join('; '));
-    if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `j2fix-disc-${tag}-${cat}.png`) });
+    const inList = await corners(page);
+    check(`${tag}: the list keeps the corners where they were`, inList.heart && inList.heart.y === h.y && inList.heart.x === h.x,
+      JSON.stringify(inList.heart));
+    await toEnd(page);
+    const listHits = await covered(page);
+    check(`${tag}: at the end of a list the corners cover nothing`, listHits.length === 0, listHits.slice(0, 4).join('; '));
+    if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${PREFIX}corners-${tag}-list-end.png`) });
   }
 
-  // Judge 3: the library after a search that finds nothing. Its one line
-  // ("No trip matches that search.") is what the screen says, so the disc
-  // keeps clear of it as it does of a card's name.
-  // A scroll down folds the phone band's search away; back at the top it shows.
-  await page.evaluate(() => {
-    for (const el of document.querySelectorAll('.explore-tab, .places-tab')) el.scrollTop = 0;
-    window.scrollTo(0, 0);
-  });
-  await page.waitForTimeout(900);
-  await page.locator('.band-input').click();
-  await page.locator('.band-input').fill('zzqx');
-  await page.keyboard.press('Enter');
-  await page.waitForSelector('.empty-result-line', { timeout: 30000 }).catch(() => {});
-  await page.waitForTimeout(1200);
-  const none = await overlaps(page);
-  const hasLine = await page.locator('.empty-result-line').count();
-  check(`${tag} trips, no match: the disc meets no part of the empty line`, hasLine > 0 && !none.hits.length,
-    hasLine ? none.hits.join('; ') : 'no empty-result line');
-  if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `j3fix-disc-${tag}-trips-none.png`) });
+  // A tab change (Places to Trails and back) never moves the heart, and the
+  // layer tabs and the trip library end clear of it too.
+  await open(page, '?tab=explore');
+  await startLog(page);
+  // Each tab draws its own row, so the visible one is read again after a change.
+  const tabs = () => page.locator('.band-cats [role="tab"]:visible, .xcats-bar [role="tab"]:visible');
+  let changed = false;
+  if (await tabs().count() > 1) {
+    changed = await tabs().nth(1).click({ timeout: 8000 }).then(() => true, () => false);
+    await page.waitForTimeout(1500);
+    await tabs().nth(0).click({ timeout: 8000 }).catch(() => { changed = false; });
+    await page.waitForTimeout(1500);
+  }
+  check(`${tag}: the tabs changed (Places, the next tab, Places)`, changed);
+  const switched = await stopLog(page);
+  const heartPlaces = new Set(switched.places.map((p) => p.split('|')[0]).filter((p) => p !== 'none'));
+  check(`${tag}: a tab change leaves the heart where it was`, heartPlaces.size === 1, [...heartPlaces].join(' ; '));
+  for (const cat of ['trails', 'beaches', 'trips']) {
+    await open(page, `?tab=explore&cat=${cat}`);
+    const c = await corners(page);
+    await toEnd(page);
+    const hits = await covered(page);
+    check(`${tag} ${cat}: heart in the same slot, nothing covered at the end`,
+      c.heart && c.heart.x === h.x && c.heart.y === h.y && !hits.length, `${JSON.stringify(c.heart)} ${hits.slice(0, 3).join('; ')}`);
+    if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${PREFIX}corners-${tag}-${cat}-end.png`) });
+  }
 
   check(`${tag}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
   await ctx.close();
-  return { tag, rest, after };
+  return { tag, home, scrolled: scrolled.places.length };
 }
 
 const out = [];
 for (const [w, h] of SIZES) out.push(await run(w, h));
-// Judge 3 saw the library's lines covered on the small French screen, where
-// the lines run longest: run it there too (FR=0 skips it).
-if (process.env.FR !== '0') out.push(await run(360, 640, 'fr'));
 await browser.close();
 
 let failed = 0;
@@ -182,6 +254,6 @@ for (const c of checks) {
   if (!c.ok) failed += 1;
   console.log(`${c.ok ? 'ok  ' : 'FAIL'} ${c.label}${c.note ? ` (${c.note})` : ''}`);
 }
-for (const o of out) console.log(`${o.tag}: disc ${JSON.stringify(o.rest.disc)} rest hits ${o.rest.hits.length}, after scroll ${o.after.hits.length}`);
+for (const o of out) console.log(`${o.tag}: heart ${JSON.stringify(o.home.heart)} map ${JSON.stringify(o.home.map)}, places while scrolling ${o.scrolled}`);
 console.log(`\n${checks.length - failed}/${checks.length} passed`);
 process.exit(failed ? 1 : 0);

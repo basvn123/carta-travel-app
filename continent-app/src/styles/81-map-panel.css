@@ -12,14 +12,6 @@
 
 /* --- The view toggle: one secondary pill ------------------------------- */
 .explore-shell .xview-toggle { border-radius: var(--radius-pill); }
-@media (max-width: 768px) {
-  /* Bottom centre above the bottom nav, floating: the pill takes the shadow. */
-  .explore-shell .xview-fab .xview-toggle {
-    min-height: var(--tap);
-    padding-inline: var(--space-4);
-    box-shadow: var(--elev-2);
-  }
-}
 
 /* --- Tablet and desktop: the list and the map side by side ------------- */
 /* House style 2026-11 (the walker's table): from 769 px the panel is a

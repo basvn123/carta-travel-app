@@ -57,37 +57,64 @@
 .dock-trigger[aria-expanded="true"] .tune-k1 { transform: translateX(8px); }
 .dock-trigger[aria-expanded="true"] .tune-k2 { transform: translateX(-8px); }
 
-/* Style: a 52 px disc in the active style's tone, the chevron on a badge
-   pointing up at the studio it opens. The whole disc is the target; the
-   badge is never a button of its own. */
-.dock--corner {
+/* ---- The two corners (G12, Explore top round 2; decision.md "Phone") --
+   Two fixed slots just above the bottom nav: the style disc bottom left
+   (Dock anchor="corner") and, on a phone, the Map disc bottom right
+   (MapCorner.jsx). Same size, same height, and nothing moves them: no lift,
+   no tuck, no measuring (owner: the disc "often disappears or appears
+   higher", audit-visual.md). Only the nav's own height moves the slots,
+   with a transition. Content that passes under them is the honest cost of
+   "never moves"; the scrollers end with --corner-room and pad focus clear
+   of them instead (end of this file). */
+:root {
+  --corner-size: var(--tap-main);
+  --corner-gap: var(--space-3);
+  /* What a scroller keeps free under its last line and around focus. */
+  --corner-room: calc(var(--corner-size) + 2 * var(--corner-gap));
+}
+.corner-slot {
   position: fixed;
-  left: max(var(--space-4), env(safe-area-inset-left, 0px));
-  bottom: calc(var(--bottom-nav-h) + var(--space-3));
+  bottom: calc(var(--bottom-nav-h) + var(--corner-gap));
   z-index: var(--z-overlay);
-  /* discClear.js: the lift that keeps it off a card's name and price at
-     rest, and the tuck while a list scrolls down (owner: bottom left on
-     every width, G12 judge 2). */
-  transform: translateY(calc(var(--disc-lift, 0px) * -1));
-  transition: transform var(--dur-3) var(--ease-out), opacity var(--dur-2) var(--ease-out);
+  transition: bottom var(--dur-2) var(--ease-out);
 }
-.dock--corner[data-tucked="1"] {
-  transform: translate(calc(-100% - var(--space-5)), calc(var(--disc-lift, 0px) * -1));
-  opacity: 0;
-  pointer-events: none;
-}
-.btn.dock-trigger--corner {
-  width: 52px;
-  height: 52px;
+.corner-slot--left { left: max(var(--space-4), env(safe-area-inset-left, 0px)); }
+.corner-slot--right { right: max(var(--space-4), env(safe-area-inset-right, 0px)); }
+
+/* Style: a 48 px disc in the active style's tone, the chevron on a badge
+   pointing up at the studio it opens. Map: the same disc on paper with the
+   map glyph. The whole disc is the target; the badge is never a button of
+   its own. Both float, so both cast the one shadow and draw no edge. */
+.btn.corner-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--corner-size);
+  height: var(--corner-size);
+  min-height: var(--corner-size);
   padding: 0;
   border: 0;
   border-radius: var(--radius-pill);
+  box-shadow: var(--elev-2);
+  transition: background-color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
+}
+.btn.corner-btn:active:not(:disabled) { scale: var(--press-scale-sm); }
+.btn.dock-trigger--corner {
   background: var(--ts-ground, var(--select-bg));
   color: var(--ts-ink, var(--umber-700));
-  box-shadow: var(--elev-2);
+}
+.btn.corner-btn--map { background: var(--surface); color: var(--text); }
+.btn.corner-btn--map .btn-label { display: contents; }
+@media (hover: hover) {
+  .btn.corner-btn--map:hover { background: var(--select-row); color: var(--text); }
+}
+/* The Map corner is a phone's: a desktop picks List or Map in the tab row,
+   and the phone map has its drawer's List. */
+@media (min-width: 769px) {
+  .corner-map { display: none; }
 }
 .dock-trigger--corner .dock-glyph .hs-icon,
-.dock-trigger--corner .dock-glyph svg { width: 26px; height: 26px; }
+.dock-trigger--corner .dock-glyph svg { width: 24px; height: 24px; }
 .dock-trigger--corner .dock-glyph.is-swap { animation: dock-glyph-in var(--dur-2) var(--ease-out); }
 @keyframes dock-glyph-in {
   from { opacity: 0; transform: scale(0.6); }
@@ -108,10 +135,10 @@
 .dock-badge .dock-chev { transform: rotate(-90deg); }
 .dock-trigger--corner .dock-dot { top: auto; left: auto; right: 0; bottom: 0; }
 
-/* The style disc steps aside for the keyboard and for any modal, the
-   studio it opens included. */
-html.kbd-open .dock--corner,
-body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden; }
+/* Both corners step aside for the keyboard and for any modal, the studio
+   the disc opens included. */
+html.kbd-open .corner-slot,
+body:has([aria-modal="true"]:not(.dock-card)) .corner-slot { visibility: hidden; }
 
 /* ---- The card --------------------------------------------------------- */
 .dock-card {
@@ -256,20 +283,30 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
 /* A style switch cross-fades the glyph: the keyed span mounts anew. */
 .dock-glyph-in { display: inline-grid; place-items: center; animation: dock-glyph-in var(--dur-2) var(--ease-out); }
 
-/* The list keeps room under its last row for the disc on a desktop, where
-   it sits inside the list pane. */
+/* Desktop: no bottom nav, the disc alone in the bottom-left corner of the
+   window (owner default 2026-11-19). */
 @media (min-width: 769px) {
-  .dock--corner { left: var(--space-5); bottom: var(--space-5); }
-  .explore-shell .explore-wrap,
-  .places-wrap { padding-bottom: 88px; }
+  :root { --corner-gap: var(--space-5); }
+  .corner-slot--left { left: var(--space-5); }
+}
+
+/* The lists under the corners: each scroller ends with room for a slot, so
+   its last row and the footer's last line scroll fully clear of both
+   discs, and a control that takes keyboard focus is scrolled up out of the
+   slots' band instead of being focused underneath one (WCAG 2.4.11;
+   critique-a11y-perf.md). The padding sits on the scroller itself, after
+   the footer, so it is the true end of the page. */
+.explore-shell .explore-tab,
+.places-tab {
+  padding-bottom: var(--corner-room);
+  scroll-padding-bottom: var(--corner-room);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .dock-card,
   .dock-card.is-open { transform: none; }
   .dock-row { transform: none; }
-  /* The disc never tucks (discClear.js) and its lift is a jump. */
-  .dock--corner { transition: none; }
+  .corner-slot { transition: none; }
   .trip-dock-drill,
   .dock-glyph-in { animation: none; }
 }

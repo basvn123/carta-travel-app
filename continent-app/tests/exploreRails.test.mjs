@@ -76,6 +76,28 @@ test('a rail card: the figure on the name line, the parts after the country, the
   assert.match(parts, /slot === 'parts' && go/);
 });
 
+// G12, Explore top round 2 (owner: "the arrows move to the middle of the
+// images"): out of the head, onto the photos, mouse and keyboard only, dimmed
+// rather than disabled at an end so keyboard focus stays on them. The
+// geometry in a browser is scripts/verify_rail_arrows.mjs.
+test('rail arrows sit on the photos, before the strip, and dim at the ends', () => {
+  const rail = read('src/components/ui/Rail.jsx');
+  assert.match(rail, /export const Rail = React\.memo\(function Rail\(/);
+  const head = rail.slice(rail.indexOf('<div className="hs-rail-head">'), rail.indexOf('hs-rail-frame'));
+  assert.doesNotMatch(head, /RoundButton|hs-rail-arrows/, 'no arrows in the head');
+  const frame = rail.slice(rail.indexOf('hs-rail-frame'));
+  assert.ok(frame.indexOf('<RoundButton') < frame.indexOf('className="hs-rail"'), 'arrows come before the strip');
+  assert.match(rail, /aria-disabled=\{atEnd \|\| undefined\}/);
+  assert.doesNotMatch(rail, /disabled=\{pos\./, 'never the disabled attribute');
+  const css = read('src/styles/05-house.css');
+  assert.doesNotMatch(css, /hs-rail-arrows/);
+  assert.match(css, /\.hs-rail-arrow \{ display: none; \}/, 'hidden by default, so never on touch');
+  assert.match(css, /@media \(hover: hover\) and \(pointer: fine\) \{\s+\.hs-rail-frame \{\s+container-type: inline-size;/);
+  assert.match(css, /top: calc\(2px \+ var\(--rail-card-w\) \* 0\.375 - var\(--tap\) \/ 2\);/);
+  assert.match(css, /\.hs-rail-frame:has\(:focus-visible\) > \.hs-rail-arrow \{ opacity: 1; \}/);
+  assert.match(css, /> \.hs-rail-arrow\[aria-disabled="true"\] \{ opacity: 0\.45; \}/);
+});
+
 test('See all keeps its word, wears the disc and is named with its rail', () => {
   const rail = read('src/components/ui/Rail.jsx');
   assert.match(rail, /className="hs-see-all-word"/);
