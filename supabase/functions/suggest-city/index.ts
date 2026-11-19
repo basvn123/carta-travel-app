@@ -145,15 +145,15 @@ Deno.serve(withCors(async (req) => {
       // The chain, not the answering model: see plan-day for why.
       model: chainKey(access.cfg), stay, focus, interests, freeText, lang, candidates, grounded,
     }));
-    const { data: row } = await service
+    const { data: cached } = await service
       .from('ai_plan_cache')
       .select('payload, created_at')
       .eq('hash', key)
       .maybeSingle();
     // A cached row passes the same output check as a fresh answer; one that
     // fails it is a miss and is regenerated.
-    const safe = row?.payload && Date.now() - Date.parse(row.created_at) < 7 * 86400_000
-      ? guardCityPayload(row.payload)
+    const safe = cached?.payload && Date.now() - Date.parse(cached.created_at) < 7 * 86400_000
+      ? guardCityPayload(cached.payload)
       : null;
     return { key, safe };
   };
