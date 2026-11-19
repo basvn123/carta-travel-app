@@ -80,6 +80,9 @@ export const DEFAULT_PRICE = ${js(dearest)};
 export const GROUNDING_USD_PER_QUERY = ${g.usd_per_1000_queries / 1000};
 export const GROUNDING_FREE_QUERIES_PER_MONTH = ${g.free_queries_per_month};
 
+/** Workers AI Neurons per million tokens: in, out. */
+export const NEURON_PRICES = ${js(Object.fromEntries(Object.entries(cfg.prices.workers_ai_neurons_per_m).filter(([k]) => k !== 'source')))};
+
 /** Workers AI paid price per 1,000 Neurons. */
 export const USD_PER_1000_NEURONS = ${cfg.prices.workers_ai_usd_per_1000_neurons};
 

@@ -50,7 +50,7 @@
 import { buildAiEvent, writeEvent } from './aiEvents.mjs';
 // Chain, thinking levels and prices come from continent-app/config/ai_models.json
 // through the generated aiConfig.mjs (ai fix program wave 1, S1).
-import { GEMINI_LIVE_CHAIN, THINKING_BY_FEATURE, THINKING_LEVELS } from './aiConfig.mjs';
+import { GEMINI_LIVE_CHAIN, NEURON_PRICES, THINKING_BY_FEATURE, THINKING_LEVELS } from './aiConfig.mjs';
 
 export const AI_MODELS_VERSION = 2;
 
@@ -111,11 +111,8 @@ export const WORKERS_AI_CHAIN = [
   '@cf/meta/llama-3.2-3b-instruct',
 ];
 
-/** Workers AI price, Neurons per million tokens (2026-10): in, out. Unknown models are priced as the dearest known one. */
-export const NEURON_PRICES = {
-  '@cf/qwen/qwen3-30b-a3b-fp8': { in: 4625, out: 30475 },
-  '@cf/meta/llama-3.2-3b-instruct': { in: 4625, out: 30475 },
-};
+/** Workers AI price, Neurons per million tokens: in, out (ai_models.json prices). Unknown models are priced as the dearest known one. */
+export { NEURON_PRICES };
 
 /**
  * Per-feature defaults. budgetMs is the whole call; firstMs and laterMs cap

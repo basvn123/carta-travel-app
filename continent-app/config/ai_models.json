@@ -78,6 +78,17 @@
    "daily_query_cap_per_project": 1500,
    "source": "gemini-rag decision.md line 53, verified 2026-11-17",
    "note": "the event prices every grounded query at the paid rate; the 5,000 free a month are a month-level discount, not a per-call one"
+  },
+  "workers_ai_neurons_per_m": {
+   "@cf/qwen/qwen3-30b-a3b-fp8": {
+    "in": 4625,
+    "out": 30475
+   },
+   "@cf/meta/llama-3.2-3b-instruct": {
+    "in": 4625,
+    "out": 30475
+   },
+   "source": "Workers AI pricing 2026-10 (unknown models are priced as the dearest known one)"
   }
  },
  "thinking": {

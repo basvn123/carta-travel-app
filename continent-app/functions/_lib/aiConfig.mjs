@@ -52,6 +52,18 @@ export const DEFAULT_PRICE = {
 export const GROUNDING_USD_PER_QUERY = 0.014;
 export const GROUNDING_FREE_QUERIES_PER_MONTH = 5000;
 
+/** Workers AI Neurons per million tokens: in, out. */
+export const NEURON_PRICES = {
+  "@cf/qwen/qwen3-30b-a3b-fp8": {
+    "in": 4625,
+    "out": 30475
+  },
+  "@cf/meta/llama-3.2-3b-instruct": {
+    "in": 4625,
+    "out": 30475
+  }
+};
+
 /** Workers AI paid price per 1,000 Neurons. */
 export const USD_PER_1000_NEURONS = 0.011;
 

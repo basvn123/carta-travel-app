@@ -3,7 +3,8 @@
  * gemini-rag decision; ROADMAP E4).
  *
  * Six events tell whether Ask Carta leads to a plan and a Pass:
- *   ask_answer      an Ask answer was shown            funnel_step (migration 078)
+ *   ask_answer      a question asked in the Ask chat (it always gets at
+ *                   least the code facts answer)       funnel_step (migration 078)
  *   ask_to_plan     Ask handed a route to the planner  funnel_step (migration 078)
  *   plan_started    the planner opened                 funnel_step (070), fired by funnelCounts.trackFunnel
  *   paywall_shown   a Pass offer was shown             paywall_event 'shown' (022), fired by paywallEvents

@@ -69,6 +69,7 @@ const FREE = '00000000-0000-0000-0000-0000000000b1';
 const PASS = '00000000-0000-0000-0000-0000000000b2';
 const FREE2 = '00000000-0000-0000-0000-0000000000b3';
 const DAY = '00000000-0000-0000-0000-0000000000b4';
+const HIT = '00000000-0000-0000-0000-0000000000b5';
 
 const v2 = (u, { kind = 'plan', free = 100000, day = 20, cached = false } = {}) => JSON.parse(
   scalar(`select public.ai_consume_v2('${u}'::uuid, '${kind}', ${free}, ${day}, ${cached})`));
@@ -90,7 +91,7 @@ function run() {
     check('078 applies on top of 006 to 071', true);
     psql(DB, ['-f', resolve(migrations, '078_ai_hygiene.sql')]);
     check('078 applies twice (idempotent paste)', true);
-    for (const u of [FREE, PASS, FREE2, DAY]) psql(DB, ['-c', `insert into auth.users (id) values ('${u}')`]);
+    for (const u of [FREE, PASS, FREE2, DAY, HIT]) psql(DB, ['-c', `insert into auth.users (id) values ('${u}')`]);
     // A Year Pass for PASS: a grant row the tier resolver reads.
     const tier = scalar(`select tier from public.plan_tiers where tier <> 'free' order by ai_plans desc limit 1`);
     psql(DB, ['-c', `select public.grant_pass('${PASS}'::uuid, '${tier}', 'test-w1', 'test')`]);
@@ -138,11 +139,17 @@ function run() {
     psql(DB, ['-c', `select public.ai_refund('${DAY}'::uuid, 'plan')`]);
     check('refund: the day row loses an uncached grant', dayRow(DAY) === '3/1', dayRow(DAY));
     check('refund: the shared count goes down by one', total() === before - 1);
-    // A user whose only grant today was a cache hit: nothing to take from the shared count.
+    // FREE holds one cached and one uncached grant today (2/1): the refund takes the uncached one.
     const t1 = total();
     psql(DB, ['-c', `select public.ai_refund('${FREE}'::uuid, 'plan')`]);
-    check('refund: never takes a cached grant off the shared count', total() === t1 - 1 || dayRow(FREE).endsWith('/1'),
+    check('refund: a mixed day gives back the uncached grant', total() === t1 - 1 && dayRow(FREE) === '1/1',
       `${t1} -> ${total()}, ${dayRow(FREE)}`);
+    // HIT's only grant today was a cache hit: the shared count must not move.
+    v2(HIT, { cached: true });
+    const t2 = total();
+    psql(DB, ['-c', `select public.ai_refund('${HIT}'::uuid, 'plan')`]);
+    check('refund: never takes a cached grant off the shared count', total() === t2 && dayRow(HIT) === '1/1',
+      `${t2} -> ${total()}, ${dayRow(HIT)}`);
     check('refund: the cached split stays within n', Number(scalar('select count(*) from public.ai_usage_days where cached > n')) === 0);
 
     // 5. day_cap is an allowed refusal reason; funnel steps; S2 columns.
