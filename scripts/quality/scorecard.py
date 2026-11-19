@@ -54,6 +54,23 @@ APP_LAYERS = {
     "imagery": ["image", "activities"],
 }
 
+# Derived fields (D10, wave 1): a share the layer's own fields cannot give,
+# computed per record by one shared rule. Reported in the layer's `fields`
+# and gated by rules.yaml like any field, but left out of completeness and
+# validity (they are not wire fields).
+#   prices.accommodation_measured  pipeline/stays/bed_rules.is_measured: q
+#       measured, beds and a `captured` date. A pre-T1021 block (captured
+#       null) has beds but is not measured, which the presence of
+#       `accommodation` alone cannot tell.
+DERIVED = {"prices": {"accommodation_measured": lambda rec: _bed_rules().is_measured(rec.get("accommodation"))}}
+
+
+def _bed_rules():
+    if "bed_rules" in sys.modules:
+        return sys.modules["bed_rules"]
+    return _load_module("bed_rules", ROOT / "pipeline" / "stays" / "bed_rules.py")
+
+
 # Wires sharded per country: (folder, record list key, freshness wire, fields, score key).
 SHARD_LAYERS = {
     "trails":    ("trails", "trips", "trails",
@@ -149,6 +166,8 @@ def app_layers(public: Path, fresh: dict) -> list[dict]:
                     passed += not wc.validate(v, subs[f])
             have += n
             per_field[f] = ratio(n, len(places))
+        for f, fn in DERIVED.get(layer, {}).items():
+            per_field[f] = ratio(sum(1 for rec in places.values() if fn(rec)), len(places))
         row = {
             "layer": layer, "wire": "app_data", "records": len(places),
             "completeness": ratio(have, len(places) * len(fields)),

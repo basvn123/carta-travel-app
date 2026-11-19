@@ -51,6 +51,13 @@ rules:
   # prices (app_data, 3855 records on 2026-11-06)
   - {id: prices.costs, layer: prices, field: costs, level: must_see, kind: hard, min: 0.98}  # 100.0%
   - {id: prices.accommodation, layer: prices, field: accommodation, level: must_see, kind: hard, min: 0.84}  # 86.6%
+  # D10 (wave 1): measured by pipeline/stays/bed_rules.is_measured (q measured,
+  # beds, captured set), places without gateway_of as the denominator, the
+  # same as the line above. Set 2026-11-19 at two points under the local wire
+  # (3,340 of 3,855 = 86.64%). The box master of 2026-11-10 reads 0.2% (8): it
+  # holds pre-T1021 blocks, so the box publish is refused until stays runs on
+  # the box (docs/owner/data-and-pipeline-runs.md). Raise it as coverage grows.
+  - {id: prices.accommodation_measured, layer: prices, field: accommodation_measured, level: must_see, kind: hard, min: 0.84}  # 86.6%
   - {id: prices.local_transport, layer: prices, field: local_transport, level: must_have, kind: soft, min: 0.98}  # 100.0%
   # rating (app_data, 3855 records on 2026-11-06)
   - {id: rating.rating, layer: rating, field: rating, level: must_see, kind: hard, min: 0.98}  # 100.0%
@@ -137,6 +144,18 @@ text_checks:
   - {id: trails_summaries.banned, source: trails_summaries, check: banned, kind: hard}
   - {id: trails_summaries.facts, source: trails_summaries, check: facts, kind: soft}
   - {id: trails_summaries.length, source: trails_summaries, check: length, kind: soft}
+# Invariants (D10, wave 1 item 0.3): one count over the whole app_data wire
+# against a `max`. Checked by the publish guard (scripts/quality/publish_guard.py)
+# and `engine.py --invariants`, not by the plain engine run, so the CI eval of
+# the committed wire (35 dorm above hotel3 on 2026-11-19) is not failed by a
+# figure only the next stays apply removes. Values on 2026-11-19 in comments.
+#   dorm_above_hotel3      places whose dorm bed is dearer than a 3-star room
+#                          (pipeline/stays/bed_rules.py; local wire 35, box master 589)
+#   generated_at_age_days  days since meta.generated_at. Soft until the stamp is
+#                          fixed (research step 1.3, D3): the wire says June.
+invariants:
+  - {id: beds.dorm_above_hotel3, check: dorm_above_hotel3, max: 0, kind: hard}  # 35
+  - {id: wire.generated_at_age_days, check: generated_at_age_days, max: 16, kind: soft}  # 165
 # Layer rules (T1214, register row T1142-b): the card's other three numbers per
 # layer. `layers` is `all` or a list of scorecard layers; a layer the card did
 # not measure for the metric (no records, accuracy n/a) is skipped.

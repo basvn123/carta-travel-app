@@ -1253,3 +1253,23 @@ export function validateDbContract({ calls, catalogue, edgeFunctions }) {
   }
   return problems;
 }
+
+// D2 (wave 1, item 0.3): a CLI so a publish path that is not a Vite build
+// (scripts/quality/publish_guard.py on the box) runs the same assertWire the
+// build's sync-data step runs. Exit 1 on a contract break, 2 on a bad call.
+//   node scripts/ci/contract.mjs --check <app_data.json>
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const at = process.argv.indexOf('--check');
+  const file = at >= 0 ? process.argv[at + 1] : null;
+  if (!file) {
+    console.error('usage: node scripts/ci/contract.mjs --check <app_data.json>');
+    process.exit(2);
+  }
+  try {
+    assertWire(JSON.parse(fs.readFileSync(file, 'utf8')), file);
+    console.log(`contract: ${file} passes schema ${EXPECTED_SCHEMA_VERSION}`);
+  } catch (e) {
+    console.error(`contract: ${e.message}`);
+    process.exit(1);
+  }
+}
