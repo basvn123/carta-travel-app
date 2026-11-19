@@ -230,7 +230,7 @@ export function ExploreTab({
 
   const {
     settingsLine, setCountryNot, oneCountry, request, allRows, rows,
-    nearRow, gLabels, overviewOf, roleFor, taxRows, guidedRows, shownRows, listed,
+    nearRow, gLabels, overviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed,
   } = useExploreRows({
     availableCountries, bbox, catAllRows, catRows, countryFilter, countryNot, data, dxf, guided,
     lang, sortKey, t, travelMonth, view, visible, xf,
@@ -305,6 +305,9 @@ export function ExploreTab({
   React.useEffect(() => { setVisible(PAGE); }, [bbox, view]);
 
   const gridTotal = view === 'map' ? shownRows.length : taxRows.length;
+  // The sheet's count follows a tap at once (liveTotal, the filters as
+  // tapped); the list and its own count follow when the deferred render lands.
+  const sheetTotal = view !== 'map' && liveTotal != null ? liveTotal : gridTotal;
 
   // A pin under the pointer or in focus outlines its card and brings it into
   // view, unless the reader moved the list in the last second: the list is
@@ -593,8 +596,8 @@ export function ExploreTab({
   })), [t, xf, gemOnly]);
   React.useEffect(() => {
     if (!isActive) return;
-    publishFilters({ count: filterCount, total: gridTotal, shortcuts: shortcutList });
-  }, [isActive, filterCount, gridTotal, shortcutList]);
+    publishFilters({ count: filterCount, total: sheetTotal, shortcuts: shortcutList });
+  }, [isActive, filterCount, sheetTotal, shortcutList]);
   React.useEffect(() => {
     if (!isActive) return undefined;
     return () => { closeFilters(); };
@@ -608,7 +611,7 @@ export function ExploreTab({
     unescoOnly, setUnescoOnly, month: travelMonth,
     monthName: travelMonth ? gLabels.monthInline(travelMonth) : '',
     noTemp, dayFactor: viewFactor(request), tripSpan: spanOf(request) === 'trip',
-    total: gridTotal, listOn: !railsIdle, count: filterCount, onClearAll: resetAll,
+    total: sheetTotal, countFor: view !== 'map' ? countFor : null, listOn: !railsIdle, count: filterCount, onClearAll: resetAll,
     onSetMonth: () => { closeFilters(); openSettings({ step: 'when' }); },
     // From the overview with nothing chosen, Show opens every place.
     onShow: () => { if (railsIdle) setFocusAll(true); },

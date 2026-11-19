@@ -27,8 +27,31 @@ async function count(page) {
   const digits = txt.replace(/[^\d]/g, '');
   return digits ? Number(digits) : 0;
 }
+// A tap and the time, in the page, from the pointer going down to the
+// frame that paints a new "Show n places" (the owner wants it at once:
+// about 100 ms). Measured in the page so Playwright's own round trip is out.
+async function tapAndTime(page, locator, before) {
+  await page.evaluate(() => {
+    window.__tap = { down: 0, done: 0 };
+    document.addEventListener('pointerdown', () => { window.__tap.down = performance.now(); }, { once: true, capture: true });
+    const el = document.querySelector('.flt-show');
+    const mo = new MutationObserver(() => {
+      mo.disconnect();
+      requestAnimationFrame(() => { window.__tap.done = performance.now(); });
+    });
+    mo.observe(el, { childList: true, subtree: true, characterData: true });
+    window.__tapMo = mo;
+  });
+  await locator.click();
+  const t0 = Date.now();
+  let n = await count(page);
+  while (n === before && Date.now() - t0 < 2000) { await page.waitForTimeout(10); n = await count(page); }
+  await page.waitForTimeout(50);
+  const ms = await page.evaluate(() => { window.__tapMo?.disconnect(); const t = window.__tap; return t.done && t.down ? t.done - t.down : 9999; });
+  return Math.round(ms);
+}
 async function settled(page) {
-  // The list follows as a deferred value; wait until the count holds still.
+  // Wait until the count holds still.
   let last = -1;
   for (let i = 0; i < 20; i += 1) {
     await page.waitForTimeout(150);
@@ -84,6 +107,8 @@ async function run(browser, width, height, lang) {
   await openSheet(page, phone);
   const base = await settled(page);
   check(`${tag}: the sheet opens with a live count`, base > 100, String(base));
+  // Measured at rest: the sheet's entrance (a slide up) may still run.
+  await page.waitForFunction(() => document.getAnimations().every((x) => x.playState !== 'running' || !x.effect?.target?.closest?.('.flt')), null, { timeout: 3000 }).catch(() => {});
   const sheet = await page.locator('.flt').first().boundingBox();
   check(`${tag}: the sheet fits the window`, sheet && sheet.x >= 0 && sheet.x + sheet.width <= width + 1 && sheet.y + sheet.height <= height + 1, JSON.stringify(sheet));
   if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${PREFIX}sheet-${tag}.png`) });
@@ -93,15 +118,19 @@ async function run(browser, width, height, lang) {
   const n = await chips.count();
   check(`${tag}: the sheet holds the filter options`, n >= 15, String(n));
   const listOn = (await page.locator('.flt [data-group="sort"]').count()) > 0;
+  const lags = [];
   for (let i = 0; i < n; i += 1) {
     const chip = chips.nth(i);
     const label = (await chip.innerText()).trim();
-    await chip.click();
+    lags.push(await tapAndTime(page, chip, base));
     const on = await settled(page);
-    await chip.click();
+    lags.push(await tapAndTime(page, chip, on));
     const off = await settled(page);
     check(`${tag}: "${label}" narrows and reverses`, on < base && on > 0 && off === base, `${base} -> ${on} -> ${off}`);
   }
+  lags.sort((a, b) => a - b);
+  const p90 = lags[Math.floor(lags.length * 0.9)];
+  check(`${tag}: the count follows a tap at once (pointer down to painted count: median under 100 ms, p90 under 200)`, lags[lags.length >> 1] < 100 && p90 < 200, `median ${lags[lags.length >> 1]} ms, p90 ${p90} ms`);
   // A day: each step narrows, Any restores.
   const steps = page.locator('.flt [data-group="day"] .ui-chip-choice');
   let prev = 0;

@@ -108,11 +108,20 @@ for (const [w, h] of MOUSE) {
   await page.waitForTimeout(300);
   const shown = await geometry(page);
   check(`${tag}: keyboard focus shows the arrows`, shown.next.opacity === 1, String(shown.next.opacity));
-  for (let i = 0; i < 12; i += 1) { await page.keyboard.press('Enter'); await page.waitForTimeout(250); }
+  // Press Forward until the strip's end: a phone-width strip of 1.3 cards
+  // a view needs about 14 steps of 0.85 of its width, a desktop one 4; 12
+  // fixed presses stopped short at 360 and 390.
+  for (let i = 0; i < 30; i += 1) {
+    if (await page.evaluate(() => document.activeElement?.getAttribute('aria-disabled') === 'true')) break;
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(250);
+  }
   await page.waitForTimeout(600);
   const end = await page.evaluate(() => {
     const a = document.activeElement;
-    return { cls: a?.className || '', dis: a?.getAttribute('aria-disabled'), opacity: a ? Number(getComputedStyle(a).opacity) : -1 };
+    const strip = a?.closest('section')?.querySelector('.hs-rail');
+    return { cls: a?.className || '', dis: a?.getAttribute('aria-disabled'), opacity: a ? Number(getComputedStyle(a).opacity) : -1,
+      left: strip ? Math.round(strip.scrollLeft) : -1, max: strip ? strip.scrollWidth - strip.clientWidth : -1 };
   });
   check(`${tag}: at the end Forward keeps focus, dimmed and marked`, /is-next/.test(end.cls) && end.dis === 'true' && end.opacity > 0 && end.opacity < 1,
     JSON.stringify(end));

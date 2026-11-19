@@ -132,25 +132,44 @@ export function useExploreRows({
   // count shown in the control bar is THIS list's length (or, while the map
   // is up, the part of it inside the viewport), so it can never disagree
   // with what renders.
-  const taxRows = React.useMemo(() => rows.filter((p) => {
-    if (dxf.verdicts.length && !bandAtLeast(p.rating, minVerdict(dxf.verdicts))) return false;
-    if (dxf.month && !(p.climate?.best || []).includes(dxf.month)) return false;
-    if (dxf.nocar && !noCarOk(p)) return false;
-    if (dxf.budget && !underOk(dxf.budget)(p)) return false;
-    if (dxf.quiet && !quietOk(p, quietWhen)) return false;
-    // The guided facets (vibe, area, near, close by) hold only once the
-    // guided data has landed; until then the list waits empty rather than
-    // showing places that may not match (T442).
-    if ((dxf.vibe || dxf.area || dxf.near || dxf.nb.length) && !matchGuided(p, dxf, gctx)) return false;
-    // G12 round 2 (decision.md section 2): the day high reads the month of
-    // Settings' When; without one the band waits (the sheet asks for a
-    // month), so it never filters on a month the traveller did not set.
-    if (dxf.temps.length && travelMonth && !tempOk(p, travelMonth, dxf.temps)) return false;
-    // The sheet's picks (water, walking, kind of place) read the guided
-    // data too, so like the facets above they wait for it.
-    if (dxf.picks.length && !picksOk(p, dxf.picks, guided)) return false;
+  // One predicate for the list (deferred xf) and the sheet's live count
+  // (xf as tapped): the count reads the rows already priced, so "Show n
+  // places" follows a tap at once while the list follows after (owner: the
+  // count lagged 0.5 to 1 s behind a tap).
+  const keepFor = React.useCallback((f, when) => (p) => {
+    if (f.verdicts.length && !bandAtLeast(p.rating, minVerdict(f.verdicts))) return false;
+    if (f.month && !(p.climate?.best || []).includes(f.month)) return false;
+    if (f.nocar && !noCarOk(p)) return false;
+    if (f.budget && !underOk(f.budget)(p)) return false;
+    if (f.quiet && !quietOk(p, when)) return false;
+    if ((f.vibe || f.area || f.near || f.nb.length) && !matchGuided(p, f, gctx)) return false;
+    if (f.temps.length && travelMonth && !tempOk(p, travelMonth, f.temps)) return false;
+    if (f.picks.length && !picksOk(p, f.picks, guided)) return false;
     return true;
-  }), [rows, dxf, gctx, quietWhen, travelMonth, guided]);
+  }, [gctx, travelMonth, guided]);
+  const liveWhen = React.useMemo(
+    () => (xf.month ? resolveWhen({ xm: xf.month }) : (settingsLine?.when || null)),
+    [xf.month, settingsLine?.when],
+  );
+  // The count for any filter state, for the sheet to show before React
+  // renders the tab: one cheap pass over the rows already priced.
+  const countFor = React.useCallback((f) => {
+    const keep = keepFor(f, f.month ? resolveWhen({ xm: f.month }) : (settingsLine?.when || null));
+    let n = 0;
+    for (const p of rows) if (keep(p)) n += 1;
+    return n;
+  }, [rows, keepFor, settingsLine?.when]);
+  const liveTotal = React.useMemo(() => {
+    if (xf === dxf) return null;
+    let n = 0;
+    const keep = keepFor(xf, liveWhen);
+    for (const p of rows) if (keep(p)) n += 1;
+    return n;
+  }, [rows, xf, dxf, keepFor, liveWhen]);
+  // The guided facets and the sheet's picks hold only once the guided data
+  // has landed (T442); the day high reads Settings' When month and waits
+  // without one (decision.md section 2). See keepFor above.
+  const taxRows = React.useMemo(() => rows.filter(keepFor(dxf, quietWhen)), [rows, dxf, keepFor, quietWhen]);
   // A guided question ranks its answer: nearest first around a place, the
   // strongest vibe first otherwise, while the reader keeps the default sort.
   const guidedRows = React.useMemo(() => {
@@ -180,5 +199,5 @@ export function useExploreRows({
     () => (view === 'map' ? shownRows : guidedRows).slice(0, visible),
     [guidedRows, shownRows, view, visible],
   );
-  return { settingsLine, setCountryNot, oneCountry, request, flightLimitAvailable, allRows, rows, nearRow, gLabels, overviewOf, roleFor, taxRows, guidedRows, shownRows, listed };
+  return { settingsLine, setCountryNot, oneCountry, request, flightLimitAvailable, allRows, rows, nearRow, gLabels, overviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed };
 }

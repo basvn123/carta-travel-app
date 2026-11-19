@@ -48,11 +48,37 @@ export function FilterSheet({ desktop, group, nonce, onClose, f, t, lang }) {
       titleRef.current?.focus({ preventScroll: true });
     }
   }, [group, nonce, desktop]);
-  const body = <FilterGroups f={f} t={t} />;
-  const foot = <FilterFoot f={f} t={t} lang={lang} onDone={() => { f.onShow?.(); exit.close(); }} />;
+  const fast = useFastFilters(f);
+  const body = <FilterGroups f={fast} t={t} />;
+  const foot = <FilterFoot f={fast} t={t} lang={lang} onDone={() => { f.onShow?.(); exit.close(); }} />;
   return desktop
     ? <FilterPanel {...{ panelRef, titleRef, titleId, exit, t, body, foot }} />
     : <FilterBottomSheet {...{ panelRef, titleRef, titleId, exit, t, body, foot }} />;
+}
+
+/**
+ * A tap answers at once (owner: the count lagged behind a tap): the sheet
+ * keeps the tapped filters itself, shows its chips and the count from
+ * `f.countFor` (a pass over the rows already priced) in the same frame, and
+ * hands the change to the tab as a transition, so the list and every price
+ * on it follow after without holding the tap.
+ */
+function useFastFilters(f) {
+  const [mine, setMine] = React.useState(null);
+  const latest = React.useRef(f.xf);
+  // The tab's filters moved on (the transition landed, or it changed them
+  // itself): its state rules again.
+  if (mine && f.xf !== mine.base) setMine(null);
+  latest.current = mine ? mine.xf : f.xf;
+  const { countFor, setXf } = f;
+  const fastSet = React.useCallback((up) => {
+    const next = typeof up === 'function' ? up(latest.current) : up;
+    latest.current = next;
+    if (!countFor) { setXf(next); return; }
+    setMine((m) => ({ base: m ? m.base : f.xf, xf: next, total: countFor(next) }));
+    React.startTransition(() => setXf(next));
+  }, [countFor, setXf, f.xf]);
+  return mine ? { ...f, xf: mine.xf, total: mine.total, setXf: fastSet } : { ...f, setXf: fastSet };
 }
 
 function Head({ titleId, titleRef, t, onClose, grab = null }) {

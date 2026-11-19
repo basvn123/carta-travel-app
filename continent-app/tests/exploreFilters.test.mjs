@@ -110,8 +110,10 @@ test('the tab: URL keys, every filter cleared, the sheet mounted, the phone shor
   assert.match(chips, /setXf\(\{ \.\.\.XF_EMPTY \}\)/);
   assert.match(read('src/browse/explore/useExploreLens.js'), /'xk', 'xt'/);
   const rows = read('src/browse/explore/useExploreRows.js');
-  assert.match(rows, /dxf\.temps\.length && travelMonth && !tempOk\(p, travelMonth, dxf\.temps\)/);
-  assert.match(rows, /dxf\.picks\.length && !picksOk\(p, dxf\.picks, guided\)/);
+  // One predicate (keepFor) for the list and the sheet's instant count.
+  assert.match(rows, /f\.temps\.length && travelMonth && !tempOk\(p, travelMonth, f\.temps\)/);
+  assert.match(rows, /f\.picks\.length && !picksOk\(p, f\.picks, guided\)/);
+  assert.match(rows, /rows\.filter\(keepFor\(dxf, quietWhen\)\)/);
 });
 
 test('every filters key exists in all six languages, without dashes', () => {
