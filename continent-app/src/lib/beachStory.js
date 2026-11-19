@@ -23,6 +23,7 @@
  * it is known for.
  */
 import { natureRating } from './rating.js';
+import { chooseLead } from './lakeStory.js';
 
 const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : '');
 
@@ -463,6 +464,12 @@ export function beachFacetCounts(pool, state) {
  */
 const NOT_A_HIGHLIGHT = new Set(['height', 'prominence', 'range', 'area', 'depth', 'elevation', 'length', 'surface', 'season', 'difficulty', 'graded', 'parking', 'transit', 'roadAccess', 'unrated_coverage', 'no_photo_map_card', 'water_unknown_no_source', 'swimUnknown', 'photographed', 'curated', 'editorial_pick', 'shared']);
 
+// D9 (wave 1, 0.8): water class, the Blue Flag and fame are true of most
+// beaches and shown as badges, so they never open the page; rare,
+// place-specific codes lead first and the sand colour last.
+export const BEACH_NEVER_LEAD = new Set(['waterExcellent', 'waterGood', 'waterSufficient', 'waterPoor', 'blueFlag', 'wikiFame']);
+export const BEACH_LEAD_ORDER = ['boatOnly', 'cave', 'arch', 'shipwreck', 'lagoon', 'turtles', 'cliffs', 'dunes', 'lighthouse', 'turquoise', 'emerald', 'pocket_cove', 'long_strand', 'pines', 'snorkel', 'surf', 'sunset_facing', 'nationalPark', 'natura2000', 'reserve', 'undeveloped', 'hikeIn', 'quiet', 'steps', 'shallow', 'clearWater', 'nudist', 'lifeguard', 'services', 'sandColour'];
+
 export function beachHighlights(beach, t, max = 4) {
   const out = [];
   for (const reason of beach.why || []) {
@@ -480,7 +487,6 @@ export function beachHighlights(beach, t, max = 4) {
     const tagKey = keyFor(TAG_KEY, reason);
     const title = tagKey ? t(tagKey, params) : '';
     out.push({ key: reason.k, title: title && title !== tagKey ? title : '', line });
-    if (out.length >= max) break;
   }
-  return out;
+  return chooseLead(out, { neverLead: BEACH_NEVER_LEAD, leadOrder: BEACH_LEAD_ORDER }).slice(0, max);
 }

@@ -68,7 +68,7 @@ const WHY_KEY = {
   swimLimited: (r) => `lake.whySwimLimited${cap(r.src)}`,
   swimNo: (r) => `lake.whySwimNo${cap(r.src)}`,
   swimUnknown: 'lake.whySwimUnknown',
-  designated: 'lake.whyDesignated',
+  designated: (r) => (Number(r.n) === 1 ? 'lake.whyDesignatedOne' : 'lake.whyDesignated'),
   season: 'lake.whySeason',
   neverWarm: 'lake.whyNeverWarm',
   shoreBeach: 'lake.whyShoreBeach',
@@ -537,6 +537,35 @@ export function lakeFacetCounts(pool, state) {
 // lead and are not highlights: they are already on the page as figures.
 const NOT_A_HIGHLIGHT = new Set(['height', 'prominence', 'range', 'area', 'depth', 'elevation', 'length', 'surface', 'season', 'difficulty', 'graded', 'parking', 'transit', 'roadAccess', 'unrated_coverage', 'no_photo_map_card', 'water_unknown_no_source', 'swimUnknown', 'photographed', 'curated', 'editorial_pick', 'shared']);
 
+/**
+ * D9 (wave 1, 0.8): the highlight that opens the page. The wire's narrative
+ * order put the water class first on most pages, so 31% of lakes and 63% of
+ * beaches opened on the same sentence. The lead is the eligible highlight
+ * ranked first in `leadOrder` (rare, place-specific codes first; codes not
+ * listed rank after, in wire order); the others keep wire order. Codes in
+ * `neverLead` can still be highlights, never the first. With nothing
+ * eligible the list comes back unchanged.
+ */
+export function chooseLead(highlights, { neverLead = new Set(), leadOrder = [] } = {}) {
+  const rank = (key) => {
+    const i = leadOrder.indexOf(key);
+    return i === -1 ? leadOrder.length : i;
+  };
+  let best = -1;
+  highlights.forEach((h, i) => {
+    if (neverLead.has(h.key)) return;
+    if (best === -1 || rank(h.key) < rank(highlights[best].key)) best = i;
+  });
+  if (best <= 0) return highlights;
+  return [highlights[best], ...highlights.slice(0, best), ...highlights.slice(best + 1)];
+}
+
+// Water class, swim verdicts and designation are on the page as badges and
+// are true of most lakes, so they never open it.
+export const LAKE_NEVER_LEAD = new Set(['waterExcellent', 'waterGood', 'waterSufficient', 'waterPoor', 'swimYes', 'swimLimited', 'swimNo', 'designated', 'wikiFame']);
+export const LAKE_LEAD_ORDER = ['glacier', 'waterfall', 'islands', 'castle', 'cliffs', 'turquoise', 'clearWater', 'unesco', 'hikeIn', 'church', 'nationalPark', 'undeveloped', 'cableCar', 'activities', 'neverWarm', 'mountains', 'reserve', 'forest', 'shoreWalk', 'lido', 'shoreBeach', 'shorePath'];
+
 export function lakeHighlights(lake, t, max = 4) {
-  return lakeWhy(lake, t, 12, true).filter((h) => !NOT_A_HIGHLIGHT.has(h.key)).slice(0, max);
+  const all = lakeWhy(lake, t, 12, true).filter((h) => !NOT_A_HIGHLIGHT.has(h.key));
+  return chooseLead(all, { neverLead: LAKE_NEVER_LEAD, leadOrder: LAKE_LEAD_ORDER }).slice(0, max);
 }
