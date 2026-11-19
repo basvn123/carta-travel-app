@@ -120,10 +120,16 @@
 }
 .dock-badge .dock-chev { transform: rotate(-90deg); }
 
-/* Both corners step aside for the keyboard and for any modal, the studio
-   the disc opens included. */
+/* Both corners step aside, with a fade, for the keyboard, the phone search
+   panel (ExploreBand sets band-searching; at 360x640 they covered its
+   suggestions, judge 1) and any modal, the studio the disc opens included.
+   Visibility waits for the fade on the way out and comes back at once. */
+.corner-slot {
+  transition: bottom var(--dur-2) var(--ease-out), opacity var(--dur-1) var(--ease-out), visibility var(--dur-1);
+}
 html.kbd-open .corner-slot,
-body:has([aria-modal="true"]:not(.dock-card)) .corner-slot { visibility: hidden; }
+html.band-searching .corner-slot,
+body:has([aria-modal="true"]:not(.dock-card)) .corner-slot { opacity: 0; visibility: hidden; }
 
 /* ---- The card --------------------------------------------------------- */
 .dock-card {

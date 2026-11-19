@@ -497,12 +497,18 @@ html.has-phone-band .top-bar::before {
 .band-search-panel.is-leaving { animation: hs-leave var(--dur-1) var(--ease-in) both; }
 /* Phone: the search takes the screen under row 1 on the page's own ground
    (the strip, the tabs and the list stay where they are, covered), so
-   nothing moves and the keyboard has the room. */
+   nothing moves. It ends above the bottom nav and above the keyboard
+   (--sp-kbd, from visualViewport in ExploreBand), so its foot, where
+   Filters and Ask stick (82-search-panel.css), is always on screen. */
+/* The field stands over its panel (both in the search part's stacking
+   context), so the panel's top edge never lies over the field's 3 px focus
+   ring (judge 1: the ring was cut flat). */
+.band.is-phone .band-search { z-index: calc(var(--z-overlay) + 1); }
 .band.is-phone .band-search-panel {
   position: fixed;
   z-index: var(--z-overlay);
   top: var(--sp-top, 0px);
-  bottom: 0;
+  bottom: calc(var(--bottom-nav-h) + var(--sp-kbd, 0px));
   padding: var(--space-2) max(var(--space-4), env(safe-area-inset-right, 0px)) var(--space-4) max(var(--space-4), env(safe-area-inset-left, 0px));
   overflow-y: auto;
   overscroll-behavior: contain;

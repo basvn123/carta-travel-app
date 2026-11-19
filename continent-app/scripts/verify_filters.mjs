@@ -144,14 +144,32 @@ async function run(browser, width, height, lang) {
   check(`${tag}: Any restores the count`, (await settled(page)) === base);
   check(`${tag}: Sort shows only on a list`, !listOn);
 
-  // Two filters on, then Show: the applied row lists them.
+  // Three filters on, then Show: the applied row lists them.
   await page.locator('.flt [data-group="water"] .ui-chip-filter').first().click();
   await page.locator('.flt [data-group="temp"] .ui-chip-filter').nth(1).click();
   const two = await settled(page);
+  await page.locator('.flt [data-group="day"] .ui-chip-choice').last().click();
+  await settled(page);
   await page.locator('.flt-show').click();
   await page.waitForTimeout(600);
   const row = page.locator('.xap-chip');
-  check(`${tag}: two chips in the applied row`, (await row.count()) === 2, String(await row.count()));
+  check(`${tag}: three chips in the applied row`, (await row.count()) === 3, String(await row.count()));
+  // Judge 1: Clear all read "Cle" on a phone. It stands whole inside the
+  // window, never inside the chips' scroller, never shrunk.
+  const clear = await page.evaluate(() => {
+    const el = document.querySelector('.xap-clear');
+    if (!el) return null;
+    const b = el.getBoundingClientRect();
+    const words = el.querySelector('.btn-label') || el;
+    return {
+      left: Math.round(b.left), right: Math.round(b.right), w: innerWidth,
+      cut: words.scrollWidth > words.clientWidth + 1 || el.scrollWidth > el.clientWidth + 1,
+      inScroller: !!el.closest('.xap-scroll'),
+      text: el.textContent.trim(),
+    };
+  });
+  check(`${tag}: Clear all whole and inside the window`, clear && clear.left >= 0 && clear.right <= clear.w && !clear.cut && !clear.inScroller,
+    JSON.stringify(clear));
   const x = await page.locator('.xap-x').first().boundingBox();
   check(`${tag}: a chip's remove is 44 px`, x && Math.round(x.width) >= 44 && Math.round(x.height) >= 44, JSON.stringify(x));
   const bandNow = await page.locator('.band').first().boundingBox();
@@ -166,7 +184,7 @@ async function run(browser, width, height, lang) {
   await page.locator('.xap-x').first().focus();
   await page.keyboard.press('Enter');
   await page.waitForTimeout(500);
-  check(`${tag}: one chip left after a remove`, (await row.count()) === 1);
+  check(`${tag}: two chips left after a remove`, (await row.count()) === 2);
   check(`${tag}: focus stays in the row`, await page.evaluate(() => !!document.activeElement?.closest('.xap')));
   await page.locator('.xap-clear').click();
   await page.waitForTimeout(500);
@@ -177,8 +195,11 @@ async function run(browser, width, height, lang) {
 }
 
 const browser = await chromium.launch();
-for (const lang of ['en', 'de']) {
-  for (const [w, h] of [[360, 780], [390, 844], [1280, 800], [1440, 900]]) {
+// LANGS=en,de,fr and SIZES=360x640,390x844 pick the runs.
+const LANGS = (process.env.LANGS || 'en,de').split(',');
+const SIZES = (process.env.SIZES || '360x780,390x844,1280x800,1440x900').split(',').map((s) => s.split('x').map(Number));
+for (const lang of LANGS) {
+  for (const [w, h] of SIZES) {
     try { await run(browser, w, h, lang); } catch (e) { fails += 1; console.log(`FAIL ${w}-${lang}: ${e.message.split('\n')[0]}`); }
   }
 }

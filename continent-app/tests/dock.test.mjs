@@ -161,3 +161,19 @@ test('the corners are two fixed slots that nothing measures or moves', () => {
   // A desktop chooses the view in the tab row, so the Map corner is a phone's.
   assert.match(css, /@media \(min-width: 769px\) \{\s+\.corner-map \{ display: none; \}/);
 });
+
+// Judge 1 (G12 round 2): at 360x640 the corners covered the phone search
+// panel and its Filters and Ask ran under the nav.
+test('the corners fade out while the phone search is open; the panel ends above the nav and the keyboard', () => {
+  const css = src('styles/89-dock.css');
+  assert.match(css, /html\.band-searching \.corner-slot,[^{]*\{ opacity: 0; visibility: hidden; \}/);
+  assert.match(css, /opacity var\(--dur-1\) var\(--ease-out\), visibility var\(--dur-1\)/, 'a fade, not a jump');
+  const band = src('browse/band/ExploreBand.jsx');
+  assert.match(band, /root\.classList\.add\('band-searching'\)/);
+  assert.match(band, /window\.visualViewport/);
+  assert.match(band, /'--sp-kbd': `\$\{kbdInset\}px`/);
+  const bandCss = src('styles/80-band.css');
+  assert.match(bandCss, /bottom: calc\(var\(--bottom-nav-h\) \+ var\(--sp-kbd, 0px\)\);/);
+  const sp = src('styles/82-search-panel.css');
+  assert.match(sp, /\.sp\.is-phone \.sp-actions \{\s+position: sticky;[^}]*bottom: calc\(var\(--space-4\) \* -1\);/);
+});

@@ -79,7 +79,13 @@ test('the chips are capped with an ellipsis; the phone row never wraps', () => {
   const css = read('src/styles/83-filters.css');
   assert.match(css, /\.xap-text \{[^}]*text-overflow: ellipsis;/);
   assert.match(css, /max-width: min\(70vw, 280px\)/);
-  assert.match(css, /\.xap\.is-phone \.xap-chips \{[^}]*overflow-x: auto;[^}]*mask-image: linear-gradient/);
+  // Only the chips scroll on a phone; Filters and Clear all never shrink, so
+  // Clear all is never cut (judge 1, "Cle" at 390).
+  assert.match(css, /\.xap\.is-phone \.xap-chips > \.xap-scroll \{[^}]*overflow-x: auto;[^}]*mask-image: linear-gradient/);
+  assert.match(css, /\.xap\.is-phone \.xap-chips > \* \{ flex: none; \}/);
+  const src = read('src/browse/filters/AppliedRow.jsx');
+  const scroller = src.slice(src.indexOf('className={`xap-scroll'), src.indexOf('className="xap-clear"'));
+  assert.ok(scroller.lastIndexOf('</div>') > scroller.indexOf('xap-chip"'), 'Clear all stands after the scroller, outside it');
   // The remove's 44 px box spills over the 32 px chip.
   assert.match(css, /margin: calc\(\(32px - var\(--tap\)\) \/ 2\)/);
 });

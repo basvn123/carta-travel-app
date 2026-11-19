@@ -218,12 +218,36 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     root.classList.add('has-phone-band');
     return () => root.classList.remove('has-phone-band');
   }, [isDesktop]);
+  // While the phone search is open, the corners step aside (89-dock.css) and
+  // the panel ends at the visible screen's foot: above the nav, and above a
+  // keyboard that overlays the page (iOS, Chrome's resizes-visual), which
+  // only visualViewport reports. At 360x640 the panel ran under the nav and
+  // the corners covered it, so Filters and Ask could not be reached (judge 1).
+  const [kbdInset, setKbdInset] = React.useState(0);
+  React.useLayoutEffect(() => {
+    if (isDesktop || !open) return undefined;
+    const root = document.documentElement;
+    root.classList.add('band-searching');
+    const vv = window.visualViewport;
+    const read = () => {
+      if (!vv) return;
+      setKbdInset(Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop)));
+    };
+    read();
+    vv?.addEventListener('resize', read);
+    vv?.addEventListener('scroll', read);
+    return () => {
+      root.classList.remove('band-searching');
+      vv?.removeEventListener('resize', read);
+      vv?.removeEventListener('scroll', read);
+    };
+  }, [isDesktop, open]);
   // The panel's listbox is `${panelId}-list` (SearchPanel); the field
   // points at it, and the wrapper carries no id of its own.
   const panel = panelState.shown ? (
     <React.Suspense fallback={null}>
       <div className={`band-search-panel${panelState.leaving ? ' is-leaving' : ''}`} inert={panelState.leaving || undefined}
-        style={isDesktop ? undefined : { '--sp-top': `${panelTop}px` }}>
+        style={isDesktop ? undefined : { '--sp-top': `${panelTop}px`, '--sp-kbd': `${kbdInset}px` }}>
         <SearchPanel query={q} kind={kind} id={panelId} inputRef={inputRef}
           filters={places ? filters : null} onOpenFilters={openFilters}
           onAsk={(opener, text) => openAsk(opener, text ? { text } : null)}

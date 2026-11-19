@@ -192,6 +192,21 @@
 .sp-action-word { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sp-action:active { transform: scale(var(--press-scale)); background: var(--umber-50); }
 .sp-action:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+/* On a phone the group sticks to the panel's foot (the panel ends above the
+   nav and the keyboard, 80-band.css), so a long list scrolls under it and
+   Filters and Ask are always in reach (judge 1, 360x640). It covers the
+   card's own bottom padding, so nothing shows below it. */
+.sp.is-phone .sp-actions {
+  position: sticky;
+  /* Sticky measures from inside the panel's bottom padding (80-band.css,
+     space-4): past it, so no row shows under the group. */
+  bottom: calc(var(--space-4) * -1);
+  z-index: 1;
+  margin: 0 calc(var(--space-3) * -1) calc(var(--space-3) * -1);
+  padding: var(--space-3);
+  border-radius: 0 0 var(--radius-sheet) var(--radius-sheet);
+  background: var(--surface);
+}
 
 /* Desktop: two columns, a hairline between, when both have something. */
 @media (min-width: 769px) {

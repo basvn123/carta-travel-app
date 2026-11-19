@@ -9,7 +9,9 @@
 //
 //   node scripts/verify_band.mjs      (a server at CARTA_PORT, default 5182)
 //
-// SIZES=360x640,390x844 picks the sizes (default the five of the contract).
+// SIZES=360x640,390x844 picks the sizes (default the five of the contract),
+// LANGS=en,de,fr the languages (default en). The search panel: see
+// searchPanel() below.
 // Shots go to SHOTS_DIR when it is set: <SHOT_PREFIX>corners-{w}x{h}-{state}.png.
 // Supabase is answered locally (signed out); the service worker is blocked.
 import { chromium } from 'playwright';
@@ -22,6 +24,9 @@ const SHOTS = process.env.SHOTS_DIR || '';
 const PREFIX = process.env.SHOT_PREFIX || '';
 const SIZES = (process.env.SIZES || '360x640,390x844,820x1180,1280x800,1440x900')
   .split(',').map((s) => s.split('x').map(Number));
+// LANGS=en,de,fr runs each size in each language.
+const LANGS = (process.env.LANGS || 'en').split(',');
+let LANG = 'en';
 
 const checks = [];
 const check = (label, ok, note = '') => checks.push({ label, ok: !!ok, note });
@@ -115,8 +120,89 @@ async function open(page, url) {
   await page.waitForTimeout(2500);
 }
 
+// Judge 1 (360x640 de): the phone search panel ran under the nav, the
+// corners covered it, and the field's focus ring was cut flat. With the
+// field focused and a word typed: the ring is whole (no ancestor clips it,
+// nothing is painted over it); on a phone both corners have faded out, the
+// panel ends above the nav, Filters and Ask are on screen and a tap on
+// Filters opens the sheet.
+async function searchPanel(page, tag, phone) {
+  await page.locator('.band-input').first().click();
+  await page.keyboard.type('par', { delay: 30 });
+  await page.waitForTimeout(900);
+  const ring = await page.evaluate(() => {
+    const box = document.querySelector('.band-search');
+    const cs = getComputedStyle(box);
+    const out = (parseFloat(cs.outlineWidth) || 0) + (parseFloat(cs.outlineOffset) || 0);
+    const b = box.getBoundingClientRect();
+    const r = { l: b.left - out, t: b.top - out, r: b.right + out, b: b.bottom + out };
+    const clips = [];
+    for (let el = box.parentElement; el && el !== document.documentElement; el = el.parentElement) {
+      const s = getComputedStyle(el);
+      const clipping = s.overflowX !== 'visible' || s.overflowY !== 'visible' || s.clipPath !== 'none' || /paint|strict|content/.test(s.contain);
+      if (!clipping) continue;
+      const e = el.getBoundingClientRect();
+      if (e.left > r.l + 0.5 || e.top > r.t + 0.5 || e.right < r.r - 0.5 || e.bottom < r.b - 0.5) clips.push(String(el.className).split(' ')[0]);
+    }
+    // What is hit on the ring's band, top and bottom, left and right of
+    // the middle: it must be the field or one of its ancestors.
+    const over = [];
+    for (const [x, y] of [[(r.l + r.r) / 2, r.t + 1.5], [r.l + 14, r.t + 1.5], [(r.l + r.r) / 2, r.b - 1.5], [r.l + 1.5, (r.t + r.b) / 2]]) {
+      const top = document.elementFromPoint(x, y);
+      // A box with no ground of its own paints nothing over the ring.
+      const ground = top && getComputedStyle(top).backgroundColor;
+      const paints = ground && ground !== 'transparent' && !/rgba\([^)]*,\s*0\)$/.test(ground);
+      // The panel shares the field's stacking context: a field stacked
+      // above it paints its ring over the panel.
+      const panel = top?.closest?.('.band-search-panel');
+      const under = panel && (Number(getComputedStyle(box).zIndex) || 0) > (Number(getComputedStyle(panel).zIndex) || 0);
+      if (top && paints && !under && !top.contains(box) && !box.contains(top)) over.push(`${String(top.className).split(' ')[0]}@${Math.round(x)},${Math.round(y)}`);
+    }
+    return { width: cs.outlineStyle === 'none' ? 0 : out, clips, over };
+  });
+  check(`${tag}: the field's focus ring shows`, ring.width > 0, JSON.stringify(ring));
+  check(`${tag}: no ancestor clips the field's focus ring`, ring.clips.length === 0, ring.clips.join(', '));
+  check(`${tag}: nothing lies over the field's focus ring`, ring.over.length === 0, ring.over.join(', '));
+  if (phone) {
+    const p = await page.evaluate(() => {
+      const nav = document.querySelector('.bottom-nav');
+      const nb = nav?.getBoundingClientRect();
+      const navTop = nb && nb.height ? nb.top : innerHeight;
+      const slots = [...document.querySelectorAll('.corner-slot')].map((el) => {
+        const s = getComputedStyle(el);
+        return `${s.visibility}/${s.opacity}`;
+      });
+      const panel = document.querySelector('.band-search-panel')?.getBoundingClientRect();
+      const acts = [...document.querySelectorAll('.sp-actions .sp-action')].map((el) => {
+        const b = el.getBoundingClientRect();
+        const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
+        return { top: Math.round(b.top), bottom: Math.round(b.bottom), hit: !!hit && el.contains(hit) };
+      });
+      return { navTop: Math.round(navTop), panelBottom: panel && Math.round(panel.bottom), slots, acts };
+    });
+    check(`${tag}: the corners fade out while the search is open`, p.slots.length > 0 && p.slots.every((s) => s === 'hidden/0'), p.slots.join(' '));
+    check(`${tag}: the search panel ends above the nav`, p.panelBottom != null && p.panelBottom <= p.navTop, `${p.panelBottom} vs ${p.navTop}`);
+    check(`${tag}: Filters and Ask are on screen and nothing covers them`, p.acts.length === 2
+      && p.acts.every((a) => a.top >= 0 && a.bottom <= p.navTop && a.hit), JSON.stringify(p.acts));
+    if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${PREFIX}search-${tag}.png`) });
+    await page.locator('.sp-actions .sp-action').first().click();
+    const sheet = await page.waitForSelector('.flt-show', { timeout: 8000 }).then(() => true, () => false);
+    check(`${tag}: a tap on the panel's Filters opens the sheet`, sheet);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(700);
+    const back = await page.evaluate(() => [...document.querySelectorAll('.corner-slot')].map((el) => getComputedStyle(el).visibility));
+    check(`${tag}: the corners come back when the search and the sheet close`, back.every((v) => v === 'visible'), back.join(' '));
+  } else {
+    if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${PREFIX}search-${tag}.png`) });
+    await page.keyboard.press('Escape');
+    await page.keyboard.press('Escape');
+  }
+  await page.locator('.band-input').first().blur();
+  await page.waitForTimeout(400);
+}
+
 async function run(width, height) {
-  const tag = `${width}x${height}`;
+  const tag = `${width}x${height}${LANG === 'en' ? '' : ` ${LANG}`}`;
   const phone = width <= 768;
   const ctx = await browser.newContext({ viewport: { width, height }, serviceWorkers: 'block' });
   await mirrorData(ctx);
@@ -128,15 +214,15 @@ async function run(width, height) {
     if (/\/auth\/v1\/user/.test(url)) return r.fulfill({ status: 401, contentType: 'application/json', body: '{"message":"no session"}' });
     return r.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
   });
-  await page.addInitScript(() => {
+  await page.addInitScript((lang) => {
     try {
-      localStorage.setItem('continent.lang.v1', 'en');
+      localStorage.setItem('continent.lang.v1', lang);
       localStorage.setItem('continent.guestMode.v1', '1');
       localStorage.setItem('continent.homeSeen.v1', '1');
       localStorage.setItem('carta.welcomeSeen.v1', '1');
       localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     } catch { /* storage unavailable */ }
-  });
+  }, LANG);
   await open(page, '?tab=explore');
   await page.waitForSelector('.xprice', { timeout: 60000 }).catch(() => {});
 
@@ -155,6 +241,8 @@ async function run(width, height) {
     check(`${tag}: no Map corner on a desktop`, home.map === null);
   }
   if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `${PREFIX}corners-${tag}-rest.png`) });
+
+  await searchPanel(page, tag, phone);
 
   // Slow, fast, up: the slots never move.
   await startLog(page);
@@ -246,7 +334,10 @@ async function run(width, height) {
 }
 
 const out = [];
-for (const [w, h] of SIZES) out.push(await run(w, h));
+for (const lang of LANGS) {
+  LANG = lang;
+  for (const [w, h] of SIZES) out.push(await run(w, h));
+}
 await browser.close();
 
 let failed = 0;

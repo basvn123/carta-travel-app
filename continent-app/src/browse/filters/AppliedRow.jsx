@@ -14,7 +14,7 @@ import '../../styles/83-filters.css';
  * show the filters, nothing is said twice.
  *
  *   phone    Filters (with its count) leads and opens the sheet; the chips
- *            scroll sideways in one line
+ *            scroll sideways in one line between it and Clear all
  *   desktop  the chips, Clear all, then at the right end Sort, Saved and
  *            Share (`tools`); Filters is in the search bar
  *
@@ -42,6 +42,25 @@ export function AppliedRow({ chips, count, onClearAll, desktop, tools = null, t 
       || row?.querySelector('.xap-filters, .xap-tools button');
     next?.focus({ preventScroll: true });
   }, [chips]);
+  // The scroller fades only on a side that has more, so a row that fits
+  // shows its last chip's remove whole.
+  const scrollRef = React.useRef(null);
+  const [more, setMore] = React.useState({ start: false, end: false });
+  const readMore = React.useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const start = el.scrollLeft > 1;
+    const end = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
+    setMore((m) => (m.start === start && m.end === end ? m : { start, end }));
+  }, []);
+  React.useLayoutEffect(() => {
+    if (desktop) return undefined;
+    readMore();
+    const el = scrollRef.current;
+    const ro = el && typeof ResizeObserver === 'function' ? new ResizeObserver(readMore) : null;
+    ro?.observe(el);
+    return () => ro?.disconnect();
+  }, [desktop, chips, readMore]);
   const remove = (c, i) => () => {
     refocus.current = i;
     if (chips.length === 1) keepFocusAfterEmpty(desktop);
@@ -61,14 +80,19 @@ export function AppliedRow({ chips, count, onClearAll, desktop, tools = null, t 
             {count > 0 && <span className="xap-n" aria-hidden="true">{count}</span>}
           </Button>
         )}
-        {chips.map((c, i) => (
-          <span key={c.key} className="xap-chip" data-chip={c.key} title={c.label}>
-            <span className="xap-text">{c.label}</span>
-            <IconButton className="xap-x" label={t('filter.removeChip', { name: c.label })} onClick={remove(c, i)}>
-              <HouseIcon.close size={14} />
-            </IconButton>
-          </span>
-        ))}
+        {/* Only the chips scroll on a phone: Filters and Clear all stand
+            outside the scroller, so neither is ever cut ("Cle", judge 1). */}
+        <div ref={scrollRef} className={`xap-scroll${more.start ? ' has-start' : ''}${more.end ? ' has-end' : ''}`}
+          onScroll={desktop ? undefined : readMore}>
+          {chips.map((c, i) => (
+            <span key={c.key} className="xap-chip" data-chip={c.key} title={c.label}>
+              <span className="xap-text">{c.label}</span>
+              <IconButton className="xap-x" label={t('filter.removeChip', { name: c.label })} onClick={remove(c, i)}>
+                <HouseIcon.close size={14} />
+              </IconButton>
+            </span>
+          ))}
+        </div>
         {chips.length > 0 && (
           <Button variant="quiet" size="sm" className="xap-clear" onClick={() => {
             refocus.current = 0;

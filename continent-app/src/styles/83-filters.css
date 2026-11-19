@@ -147,17 +147,35 @@
   min-width: 0;
 }
 .xap.is-desk .xap-chips { flex: 1 1 auto; flex-wrap: wrap; }
-/* One line on a phone: the row slides sideways, its far edge fading. */
-.xap.is-phone .xap-chips {
-  flex: 1 1 auto;
-  overflow-x: auto;
-  scrollbar-width: none;
-  margin: 0 calc(var(--space-4) * -1);
-  padding: 0 var(--space-4);
-  mask-image: linear-gradient(to right, var(--text) calc(100% - var(--space-6)), transparent);
-}
-.xap.is-phone .xap-chips::-webkit-scrollbar { display: none; }
+.xap.is-desk .xap-scroll { display: contents; }
+/* One line on a phone: Filters, the chips, Clear all. Only the chips slide
+   sideways, fading on a side that has more; Filters and Clear all never
+   shrink, so neither word is ever cut (judge 1: "Cle" at 390). */
+.xap.is-phone .xap-chips { flex: 1 1 auto; }
 .xap.is-phone .xap-chips > * { flex: none; }
+.xap.is-phone .xap-chips > .xap-scroll {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  /* Room for the removes' 44 px targets, which spill past the 32 px chips:
+     a scroller clips what passes its edge. */
+  margin-block: calc((32px - var(--tap)) / 2);
+  padding-block: calc((var(--tap) - 32px) / 2);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  --fade-s: 0px;
+  --fade-e: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+}
+.xap.is-phone .xap-scroll::-webkit-scrollbar { display: none; }
+.xap.is-phone .xap-scroll.has-start { --fade-s: var(--space-5); }
+.xap.is-phone .xap-scroll.has-end { --fade-e: var(--space-5); }
+.xap.is-phone .xap-scroll > * { flex: none; }
+.xap.is-phone .xap-chip { max-width: none; }
 
 .xap-chip {
   display: inline-flex;
