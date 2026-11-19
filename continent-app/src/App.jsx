@@ -1192,7 +1192,11 @@ function TravelApp() {
         if (el.offsetWidth > 0) { gutter = el.offsetWidth - el.clientWidth; break; }
       }
       if (gutter === null) return;
-      document.documentElement.style.setProperty('--sbw', `${gutter}px`);
+      // Written only when it changes: a custom property set on the root
+      // restyles the whole page (G12, D10 lane 1 round 4).
+      if (document.documentElement.style.getPropertyValue('--sbw') !== `${gutter}px`) {
+        document.documentElement.style.setProperty('--sbw', `${gutter}px`);
+      }
     };
     apply();
     window.addEventListener('resize', apply);
@@ -1215,7 +1219,11 @@ function TravelApp() {
     }
     if (!el || typeof ResizeObserver === 'undefined') return;
     const apply = () => {
-      document.documentElement.style.setProperty('--filter-h', `${el.offsetHeight}px`);
+      // Only a real change is written (see --sbw above).
+      const h = `${el.offsetHeight}px`;
+      if (document.documentElement.style.getPropertyValue('--filter-h') !== h) {
+        document.documentElement.style.setProperty('--filter-h', h);
+      }
     };
     apply();
     const ro = new ResizeObserver(apply);

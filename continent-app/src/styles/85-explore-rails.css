@@ -38,6 +38,14 @@
   content-visibility: auto;
   contain-intrinsic-size: auto 360px;
 }
+/* The docked Settings panel's width (81-settings.css .set-dock), as one
+   constant the Explore rules read while html.has-settings-dock is on. It
+   was written on the root by SettingsSheet at each open, and a custom
+   property changed on the root restyles every element of the page (1 to
+   1.5 s at 4x CPU on a desktop Explore; G12, D10 lane 1 round 4). */
+@media (min-width: 1100px) {
+  :root { --settings-dock-w: min(400px, 34vw); }
+}
 @media (min-width: 1024px) {
   .explore-shell .xrails-rail { contain-intrinsic-size: auto 350px; }
   .explore-shell .xrails.xrails { gap: var(--space-6); margin-top: var(--space-4); }

@@ -124,16 +124,15 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
 
   // A fixed docked panel covers the page's right edge: the page is told,
   // so Explore can keep its list clear of it (Lane 1 reads the class).
+  // G12, D10 (lane 1, round 4): only the class. The panel's width is a
+  // constant in CSS (--settings-dock-w, 85-explore-rails.css), because
+  // writing it on the root each open restyled the whole desktop page (1 to
+  // 1.5 s at 4x CPU), and measuring it here forced a layout first.
   React.useEffect(() => {
     if (!docked || inline) return undefined;
     const root = document.documentElement;
-    const w = Math.round(panelRef.current?.getBoundingClientRect().width || 0);
     root.classList.add('has-settings-dock');
-    root.style.setProperty('--settings-dock-w', `${w}px`);
-    return () => {
-      root.classList.remove('has-settings-dock');
-      root.style.removeProperty('--settings-dock-w');
-    };
+    return () => { root.classList.remove('has-settings-dock'); };
   }, [docked, inline]);
 
   // The phone's keyboard shrinks the visual viewport, not the layout one;
