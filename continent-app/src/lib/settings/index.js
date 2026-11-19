@@ -10,4 +10,4 @@ export { grandTotal, priceFigure, priceSortValue, asModel } from './prices.js';
 export { settingsSummary, whenText, datesText, startPlace } from './summary.js';
 export { makeSettingsSetters } from './setters.js';
 export { monthFrom, atMonth } from './monthFrom.js';
-export { wayRowsFor, wayKey, flightFiles, placeRow } from './ways.js';
+export { wayRowsFor, warmWays, wayKey, flightFiles, placeRow } from './ways.js';

@@ -45,6 +45,9 @@ if (typeof window !== 'undefined' && homeVariantNow() === 'g14') loadHomeG14().c
 
 import { tripDaysBetween, DEFAULT_LIFESTYLE } from './lib/runtime_pricing.js';
 import { priceDays, priceDaysSliced, priceRequest } from './lib/price/index.js';
+import { warmWays, flightFiles } from './lib/settings/index.js';
+import { homePoint } from './lib/travelWay.js';
+import { partyOf } from './lib/party.js';
 import { loadStaysFor, setLiveBase, useStaysVersion } from './lib/staysData.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
 import { normalizeTaste } from './lib/taste.js';
@@ -1351,25 +1354,42 @@ function TravelApp() {
   // screens keep the last complete answer with the request it was priced
   // for, never half old and half new figures. A newer request aborts an
   // older one.
+  // Round 3: a new catalogue object (a start town re-routes every place, the
+  // full catalogue replaces the lite one about 20 s into a load) is priced
+  // the same way, in slices, while the screens keep the last whole answer.
   const [repriced, setRepriced] = useState(null);
-  const firstPricing = repriced?.data !== data;
+  const hasData = !!data;
   const firstPriced = useMemo(() => {
-    if (!data || !firstPricing) return null;
+    if (!hasData) return null;
     // One mark per catalogue re-price: scripts/perf_explore.mjs counts them.
     globalThis.performance?.mark?.('carta:reprice');
     return { data, request, staysVersion, indices: priceDays(data.destinations, request) };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- the first pricing of a catalogue only; later requests are priced in slices below
-  }, [data, firstPricing]);
-  const priced = firstPricing ? firstPriced : repriced;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the app's first pricing only; every later one is priced in slices below
+  }, [hasData]);
+  const priced = repriced ?? firstPriced;
   useEffect(() => {
-    if (!data || !priced || (priced.request === request && priced.staysVersion === staysVersion)) return undefined;
+    if (!data || !priced || (priced.data === data && priced.request === request && priced.staysVersion === staysVersion)) return undefined;
     const ctl = new AbortController();
     globalThis.performance?.mark?.('carta:reprice');
-    priceDaysSliced(data.destinations, request, { signal: ctl.signal }).then((indices) => {
-      if (!indices || ctl.signal.aborted) return;
-      startTransition(() => setRepriced({ data, request, staysVersion, indices }));
-    });
+    // Round 3: the way there for every place is worked out ahead in slices
+    // too (Explore's useExploreRows then finds it cached), with the inputs
+    // the settings context gives Explore (useAppSettingsValue).
+    const ways = {
+      destinations: data.destinations, files: flightFiles(data), request,
+      mode: choices.transport_mode || 'any',
+      home: homePoint({ drive_home: choices.drive_home || null, origin: choices.origin }, data),
+      party: partyOf({ group_size: choices.group_size, children: choices.children || 0, babies: choices.babies || 0 }),
+      signal: ctl.signal,
+    };
+    priceDaysSliced(data.destinations, request, { signal: ctl.signal })
+      .then((indices) => (indices && !ctl.signal.aborted ? warmWays(ways).then(() => indices) : null))
+      .then((indices) => {
+        if (!indices || ctl.signal.aborted) return;
+        startTransition(() => setRepriced({ data, request, staysVersion, indices }));
+      });
     return () => ctl.abort();
+    // `choices` is read for the ways only; a change that moves a way moves the request or the data too.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, request, staysVersion, priced]);
   const exploreIndices = priced?.indices ?? null;
   // The request the figures on screen were priced for (it trails `request`
@@ -1462,7 +1482,7 @@ function TravelApp() {
     openGuides, openCountryPage, openExploreSection, openTripStyles, openTripInPlanner,
     showExplore: () => goToTab('map'),
   });
-  const repricing = !!priced && (priced.request !== request || priced.staysVersion !== staysVersion);
+  const repricing = !!priced && (priced.data !== data || priced.request !== request || priced.staysVersion !== staysVersion);
   const exploreSettings = useHeldWhile(repricing, settingsValue);
   const exploreFirstRun = useHeldWhile(repricing, firstRun);
 
@@ -1673,7 +1693,9 @@ function TravelApp() {
             <FirstRunContext.Provider value={exploreFirstRun}>
             <SettingsContext.Provider value={exploreSettings}>
             <ExploreTabKept
-              data={data}
+              /* The catalogue its figures were priced on: a new one reaches
+                 Explore with its prices, in one transition. */
+              data={priced?.data ?? data}
               isActive={activeTab === 'map'}
               /* A page standing over the tab (a destination, My trips,
                  Account) owns the one h1 (T411, rows T410-c and the quality

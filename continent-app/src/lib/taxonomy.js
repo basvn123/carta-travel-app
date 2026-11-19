@@ -92,7 +92,27 @@ export function roleOf(dest, nearbyCount = 0) {
 // One pass over the catalogue -> { id: neighbours within NEARBY_KM }.
 // Coarse grid buckets keep it O(n) instead of O(n^2); at 3,038 destinations
 // the whole build is a few milliseconds and is done once per session.
+// G12, D10 (lane 1, explore-top-2 profile): a start-town change or the
+// catalogue's merge hands over a new destinations object whose places sit
+// where they sat, and the index cost 0.4 s at 4x CPU to rebuild. It depends
+// only on the ids and positions, so the last one is kept for the same set.
+let nearbyKept = { dests: null, sig: null, out: null };
+function positionsSig(dests) {
+  let s = '';
+  for (const [id, d] of Object.entries(dests)) s += `${id}:${d.city_lat ?? d.lat},${d.city_lon ?? d.lon};`;
+  return s;
+}
+
 export function buildNearbyIndex(dests) {
+  if (nearbyKept.dests === dests) return nearbyKept.out;
+  const sig = positionsSig(dests || {});
+  if (nearbyKept.sig === sig) { nearbyKept = { ...nearbyKept, dests }; return nearbyKept.out; }
+  const out = buildNearbyIndexFresh(dests);
+  nearbyKept = { dests, sig, out };
+  return out;
+}
+
+function buildNearbyIndexFresh(dests) {
   const R = ROLE_RULES.NEARBY_KM;
   const cell = R / 111; // ~degrees latitude per bucket
   const buckets = new Map();

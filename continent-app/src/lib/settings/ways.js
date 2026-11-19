@@ -87,27 +87,23 @@ function waysKept(destinations, files, key) {
   if (!byKey) { byKey = new Map(); WAYS.set(destinations, byKey); }
   const k = `${key}|${files?.length || 0}`;
   let kept = byKey.get(k);
-  if (!kept || kept.files !== files) {
+  // The same files in the same order count as the same (each caller builds its own list).
+  const same = kept && kept.files.length === (files?.length || 0) && kept.files.every((f, i) => f === files[i]);
+  if (!same) {
     if (byKey.size > 8) byKey.clear();
-    kept = { files, ids: new Map() };
+    kept = { files: files || [], ids: new Map() };
     byKey.set(k, kept);
   }
   return kept.ids;
 }
 
-export function wayRowsFor({ rows, destinations, files, request, mode, home, party, now = Date.now() }) {
-  const m = new Map();
+// One place's way and outbound minutes, with the flight per anchor shared.
+function wayMaker({ destinations, files, request, mode, home, party, now }) {
   const flies = mode === 'plane' || mode === 'any';
   const byAnchor = new Map();
   const ground = groundFor(destinations, home, party);
-  const kept = waysKept(destinations, files, `${wayKey(request, mode, home, party)}|${Math.floor(now / 3600000)}`);
-  for (const p of rows || []) {
-    const hit = kept?.get(p.id);
-    if (hit) {
-      m.set(p.id, { ...p, cost: { ...p.cost, way: hit.way }, fmin: hit.fmin });
-      continue;
-    }
-    const d = destinations?.[p.id];
+  return (id, p) => {
+    const d = destinations?.[id];
     const anchor = destAnchor(d);
     let flight = null;
     if (flies && anchor && files?.length) {
@@ -126,12 +122,54 @@ export function wayRowsFor({ rows, destinations, files, request, mode, home, par
       }
       flight = byAnchor.get(anchor);
     }
-    const way = wayFor(d || p, mode, { home, party, flight, ground: ground && ground(d || p, p.id) }) || notKnownWay(mode);
+    const way = wayFor(d || p, mode, { home, party, flight, ground: ground && ground(d || p, id) }) || notKnownWay(mode);
     const fmin = flight && !flight.typical ? flight.minutes : null;
-    kept?.set(p.id, { way, fmin });
-    m.set(p.id, { ...p, cost: { ...p.cost, way }, fmin });
+    return { way, fmin };
+  };
+}
+
+const keptFor = ({ destinations, files, request, mode, home, party, now }) => waysKept(
+  destinations, files, `${wayKey(request, mode, home, party)}|${Math.floor(now / 3600000)}`);
+
+export function wayRowsFor({ rows, destinations, files, request, mode, home, party, now = Date.now() }) {
+  const m = new Map();
+  const args = { destinations, files, request, mode, home, party, now };
+  const kept = keptFor(args);
+  let one = null;
+  for (const p of rows || []) {
+    let hit = kept?.get(p.id);
+    if (!hit) {
+      one = one || wayMaker(args);
+      hit = one(p.id, p);
+      kept?.set(p.id, hit);
+    }
+    m.set(p.id, { ...p, cost: { ...p.cost, way: hit.way }, fmin: hit.fmin });
   }
   return m;
+}
+
+/**
+ * G12, D10 (lane 1, round 3): the same ways worked out ahead, in short
+ * slices, into the cache wayRowsFor reads, so the render that shows a new
+ * start town or catalogue finds every place's way already known. Same
+ * inputs as wayRowsFor; resolves false when `signal` aborts first.
+ */
+export async function warmWays({ destinations, files, request, mode, home, party, now = Date.now(), signal = null, sliceMs = 12 }) {
+  const args = { destinations, files, request, mode, home, party, now };
+  const kept = keptFor(args);
+  if (!kept) return true;
+  const one = wayMaker(args);
+  const clock = () => (globalThis.performance?.now ? performance.now() : Date.now());
+  let t0 = clock();
+  for (const id of Object.keys(destinations || {})) {
+    if (signal?.aborted) return false;
+    if (!kept.has(id)) kept.set(id, one(id, null));
+    if (clock() - t0 > sliceMs) {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      t0 = clock();
+    }
+  }
+  return true;
 }
 
 /**

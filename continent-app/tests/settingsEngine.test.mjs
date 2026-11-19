@@ -8,7 +8,7 @@ import { en } from "../src/i18n/en.js";
 import {
   readSettings, withDateMode, withMonth, withTripNights, withPriceSpan, withPriceView, withStart, withWay,
   nearestTown, countryStartTown, countryAirports, startCountryOf, grandTotal, priceFigure, priceSortValue,
-  settingsSummary, makeSettingsSetters, wayRowsFor, wayKey, flightFiles, DEFAULT_TRIP_NIGHTS,
+  settingsSummary, makeSettingsSetters, wayRowsFor, warmWays, wayKey, flightFiles, DEFAULT_TRIP_NIGHTS,
 } from "../src/lib/settings/index.js";
 import { cheapestPair, typicalFare, PAIR_SLACK, MIN_FARES } from "../src/lib/flights/pairs.js";
 import { flightLegs, flightPrice, cheapestFlight } from "../src/lib/price/flight.js";
@@ -502,4 +502,20 @@ test("Prices shown example: one place gets the same way there as its card, so th
   assert.ok(fig.parts.way > 0);
   assert.equal(fig.eur, Math.round((90 * 7 + fig.parts.way) * 100) / 100);
   assert.equal(placeRow({ id: "LIS", day: null, ...ctx }), null);
+});
+
+// G12, D10 (lane 1, round 3): ways worked out ahead in slices are the ways
+// the list would have worked out itself.
+test("warmWays fills what wayRowsFor reads, with the same ways", async () => {
+  const rows = Object.keys(DATA.destinations).map((id) => ({ id, cost: { dayEur: 90 } }));
+  const f = file("BRU", { LIS: ROUTE });
+  const args = { destinations: DATA.destinations, request: priceRequest({ choices: { date_mode: "cheapest", trip_nights: 7 } }),
+    mode: "plane", home: null, party: { adults: 2, children: 0, babies: 0, seats: 2 }, now: NOW };
+  const cold = wayRowsFor({ rows, files: [f], ...args, destinations: JSON.parse(JSON.stringify(DATA.destinations)) });
+  assert.equal(await warmWays({ files: [f], ...args }), true);
+  const warm = wayRowsFor({ rows, files: [f], ...args });
+  assert.deepEqual([...warm].map(([id, r]) => [id, r.cost.way, r.fmin]), [...cold].map(([id, r]) => [id, r.cost.way, r.fmin]));
+  const ctl = new AbortController();
+  ctl.abort();
+  assert.equal(await warmWays({ files: [f], ...args, destinations: { ...DATA.destinations }, signal: ctl.signal }), false);
 });

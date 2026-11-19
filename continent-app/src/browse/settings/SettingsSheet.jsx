@@ -109,8 +109,11 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
   useFocusTrap(panelRef, onClose, { initialFocusRef: titleRef, enabled: !docked });
   // Desktop: non-modal. Focus moves to the title on open and Escape closes
   // while focus is inside the panel; Tab leaves it into the page as usual.
+  // preventScroll (G12, D10, lane 1 round 3): the title is in view, and a
+  // focus that may scroll forces a layout of the whole Explore page (0.7 to
+  // 0.8 s at 4x CPU on desktop).
   React.useEffect(() => {
-    if (docked) titleRef.current?.focus();
+    if (docked) titleRef.current?.focus({ preventScroll: true });
   }, [docked]);
   const onKeyDown = (e) => {
     if (docked && e.key === 'Escape' && !e.defaultPrevented) {
@@ -146,6 +149,10 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
   }, [docked]);
 
   const go = (to) => {
+    // Focus leaves the pressed row for the title first: removing a focused
+    // row with the overview cost a second full style pass (about 1 s at 4x
+    // CPU), and the title is where the step's effect puts focus anyway.
+    titleRef.current?.focus({ preventScroll: true });
     setDir(1);
     setCameFrom(to);
     setStep(to);
@@ -177,7 +184,7 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
   const firstStep = React.useRef(true);
   React.useEffect(() => {
     if (firstStep.current) { firstStep.current = false; return; }
-    if (step !== 'overview') titleRef.current?.focus();
+    if (step !== 'overview' && document.activeElement !== titleRef.current) titleRef.current?.focus({ preventScroll: true });
   }, [step]);
 
   const cls = [
