@@ -112,7 +112,7 @@ const OBSERVE = () => {
   mo.observe(document, { childList: true, subtree: true });
 };
 
-const MARKS = ['carta:reprice', 'carta:stays-publish', 'carta:trip-fares'];
+const MARKS = ['carta:reprice', 'carta:stays-publish', 'carta:trip-fares', 'carta:explore-data'];
 const marks = (page) => page.evaluate((names) => Object.fromEntries(names.map((n) => [n.split(':')[1], performance.getEntriesByName(n).length])), MARKS);
 const diff = (a, b) => Object.fromEntries(Object.keys(b).map((k) => [k, b[k] - (a[k] || 0)]));
 
@@ -215,6 +215,24 @@ try {
     // ---- Load
     await page.goto(`${BASE}?tab=map`, { waitUntil: 'load', timeout: 180000 });
     await page.waitForSelector('.hs-rcard, .xrow', { timeout: 180000 });
+    // The late swap (round 5): the lite catalogue is drawn first and the full
+    // one lands later (App.jsx marks carta:catalogue-full). The page is
+    // scrolled up and down from the first card until 3 s after that, so the
+    // frames during the swap are measured, then the run waits for quiet.
+    const hasMark = () => page.evaluate(() => performance.getEntriesByName('carta:catalogue-full').length > 0);
+    const swapGesture = (yd) => cdp.send('Input.synthesizeScrollGesture', {
+      x: width / 2, y: height * 0.6, xDistance: 0, yDistance: yd, speed: 800, gestureSourceType: phone ? 'touch' : 'mouse', repeatCount: 1,
+    });
+    r.swapScroll = await frames(page, async () => {
+      const t0 = Date.now();
+      let after = null;
+      for (let i = 0; Date.now() - t0 < 120000; i += 1) {
+        await swapGesture(i % 2 ? height * 0.5 : -height * 0.5);
+        if (after == null && await hasMark()) after = Date.now();
+        if (after != null && Date.now() - after > 3000) break;
+      }
+    });
+    r.swapScroll.catalogueFull = await hasMark();
     await waitQuiet(page, 4000, 150000);
     r.load = await page.evaluate(() => {
       const P = window.__perf;
@@ -222,7 +240,11 @@ try {
       const after = P.lt.filter((e) => e.t + e.d > (P.firstCard ?? 0));
       const tbt = (list) => Math.round(list.reduce((s, e) => s + Math.max(0, e.d - 50), 0));
       const lastLt = P.lt.at(-1);
+      const full = performance.getEntriesByName('carta:catalogue-full')[0]?.startTime ?? null;
+      const afterSwap = full == null ? [] : P.lt.filter((e) => e.t + e.d > full);
       return {
+        swapAt: full == null ? null : Math.round(full),
+        afterSwap: { over200: afterSwap.filter((e) => e.d > 200).length, longest: Math.round(Math.max(0, ...afterSwap.map((e) => e.d))) },
         fcp: Math.round(fcp?.startTime || 0),
         lcp: Math.round(P.lcp.at(-1)?.t || 0),
         firstCard: Math.round(P.firstCard || 0),
@@ -371,6 +393,8 @@ for (const [tag, r] of Object.entries(results)) {
   console.log(`\n== ${tag} at CPU ${RATE}x`);
   console.log(`load: FCP ${L.fcp} ms, LCP ${L.lcp} ms, first card ${L.firstCard} ms, settled ${L.settled} ms, TBT ${L.tbt} ms, longest ${L.longest} ms, DOM ${L.dom}, CLS ${L.cls}`);
   console.log(`after first card: TBT ${L.afterFirstCard.tbt} ms, tasks over 200 ms ${L.afterFirstCard.over200}, longest ${L.afterFirstCard.longest} ms`);
+  console.log(`full catalogue drawn at ${L.swapAt ?? 'never'} ms; after it: tasks over 200 ms ${L.afterSwap.over200}, longest ${L.afterSwap.longest} ms`);
+  if (r.swapScroll) console.log(`scroll through the swap: ${r.swapScroll.frames} frames, ${r.swapScroll.over50} over 50 ms, p95 ${r.swapScroll.p95} ms, max ${r.swapScroll.max} ms`);
   console.log(`counts at settle: re-prices ${L.counts.reprice}, stays publishes ${L.counts['stays-publish']}, trip fares ${L.counts['trip-fares']}; images ${L.imgs} in the page, ${L.imgFetched} fetched (${Math.round(L.imgBytes / 1024)} KB), ${L.imgOversize} over 1.5x their slot`);
   for (const k of ['scrollPage', 'scrollFast', 'scrollRail']) {
     if (r[k]) console.log(`${k}: ${r[k].frames} frames, ${r[k].over50} over 50 ms, p95 ${r[k].p95} ms, max ${r[k].max} ms`);

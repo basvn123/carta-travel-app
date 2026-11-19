@@ -1375,6 +1375,15 @@ function TravelApp() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- the app's first pricing only; every later one is priced in slices below
   }, [hasData]);
   const priced = repriced ?? firstPriced;
+  // Marks for scripts/perf_explore.mjs: each catalogue Explore draws, and
+  // the full one (the lite catalogue's shards all in), so a run can tell the
+  // late swap's cost from the load's.
+  const drawnData = priced?.data || null;
+  useEffect(() => {
+    if (!drawnData) return;
+    globalThis.performance?.mark?.('carta:explore-data');
+    if (!drawnData.partial) globalThis.performance?.mark?.('carta:catalogue-full');
+  }, [drawnData]);
   useEffect(() => {
     if (!data || !priced || (priced.data === data && priced.request === request && priced.staysVersion === staysVersion)) return undefined;
     const ctl = new AbortController();

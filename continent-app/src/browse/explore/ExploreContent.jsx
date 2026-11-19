@@ -191,8 +191,11 @@ export function ExploreContent({
         {/* House style 2026-11 (the walker's table): the places as rows.
             G12 (owner, 2026-11-17): no column head over them any more; each
             figure says its own unit and the dates live in the Trip dock. */}
+        {/* G12, D10 (lane 1, round 5): on the overview the list is hidden
+            (84-explore-overview.css), so its rows are not drawn there: the
+            48 hidden rows were redrawn on every re-price for nobody. */}
         <div className={`xrows xrows--ledger${pending ? ' is-pending' : ''}`} aria-busy={pending || undefined}>
-          {listed.map((p) => (
+          {!railsIdle && listed.map((p) => (
             <ExploreCard
               key={p.id}
               p={p}

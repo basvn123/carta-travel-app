@@ -21,7 +21,17 @@ export function useExploreRails({
   // place id while the rows hold the same places in the same order, the
   // guided data and the month are unchanged, and are mapped back onto the
   // current rows, so each card still shows its current figure.
-  const railLists = React.useRef({ ids: null, guided: null, month: null, lists: new Map() });
+  //
+  // Round 5: when the places change but the month and guided data do not
+  // (the full catalogue landing, a filter), a list not yet worked out for
+  // the new places shows its previous order, mapped onto the new rows (so
+  // every place shown is one the rows still hold), and the new list is
+  // worked out after the render, one list per task, then swapped in. The
+  // guided data's first arrival adds its rails the same way. The very first
+  // lists and a month change are worked out at once: a rail never names a
+  // month its places were not chosen for.
+  const railLists = React.useRef({ ids: null, guided: null, month: null, lists: new Map(), stale: null, pending: new Map() });
+  const [railsTick, setRailsTick] = React.useState(0);
   const rails = React.useMemo(() => {
     if (!railsIdle) return [];
     // The month the rails speak about: one set by hand, else the month of
@@ -33,13 +43,31 @@ export function useExploreRails({
     const railWhen = resolveWhen({ xm: month });
     const byRating = (a, b) => (b.rating?.score || 0) - (a.rating?.score || 0);
     const ids = rows.map((p) => p.id).join(',');
-    if (railLists.current.ids !== ids || railLists.current.guided !== guided || railLists.current.month !== month) {
-      railLists.current = { ids, guided, month, lists: new Map() };
+    const prev = railLists.current;
+    if (prev.ids !== ids || prev.guided !== guided || prev.month !== month) {
+      const first = prev.ids == null;
+      const later = !first && prev.month === month;
+      railLists.current = {
+        ids, guided, month, lists: new Map(), pending: new Map(),
+        // Lists from the previous places, shown until their new ones are in.
+        stale: later && prev.guided === guided ? new Map([...(prev.stale || []), ...prev.lists]) : null,
+        // The guided data's first arrival: its rails wait for their lists.
+        guidedLater: later && !prev.guided && !!guided,
+      };
     }
+    const cur = railLists.current;
     const byId = new Map(rows.map((p) => [p.id, p]));
     const kept = (name, make) => {
-      let list = railLists.current.lists.get(name);
-      if (!list) { list = make().map((p) => p.id); railLists.current.lists.set(name, list); }
+      let list = cur.lists.get(name);
+      if (!list) {
+        const old = cur.stale?.get(name);
+        if (old || (cur.guidedLater && (name.startsWith('vibe:') || name === 'beach'))) {
+          cur.pending.set(name, make);
+          return (old || []).map((id) => byId.get(id)).filter(Boolean);
+        }
+        list = make().map((p) => p.id);
+        cur.lists.set(name, list);
+      }
       return list.map((id) => byId.get(id));
     };
     // Explore rails (owner 2026-11-18, "scroll a lot, horizontally and
@@ -138,8 +166,32 @@ export function useExploreRails({
       { key: 'quiet', title: t('rail.quiet'), short: t('filter.notCrowded'), rows: q.quiet,
         seeAll: () => patchXf({ quiet: true }) },
     ]));
-  }, [railsIdle, rows, xf.month, xf.budget, railMonth, lang, guided, favorites, t, patchXf,
+    // railsTick: a list worked out after the render is in.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [railsTick, railsIdle, rows, xf.month, xf.budget, railMonth, lang, guided, favorites, t, patchXf,
     applyShortcut, setSortKey, setShowFavOnly]);
+
+  // The lists the render left pending, one per task, then one redraw.
+  React.useEffect(() => {
+    const cur = railLists.current;
+    if (!cur.pending.size) return undefined;
+    let live = true;
+    const jobs = [...cur.pending];
+    cur.pending = new Map();
+    const step = () => {
+      if (!live || railLists.current !== cur) return;
+      const job = jobs.shift();
+      if (job) {
+        const [name, make] = job;
+        if (!cur.lists.has(name)) cur.lists.set(name, make().map((p) => p.id));
+        setTimeout(step, 0);
+        return;
+      }
+      React.startTransition(() => setRailsTick((n) => n + 1));
+    };
+    const timer = setTimeout(step, 0);
+    return () => { live = false; clearTimeout(timer); };
+  }, [rails]);
 
   // T595 (owner 2026-10-22, point 1): the rails' doors stand at the top of
   // the overview as quick chips that act at once: every rail past the ones

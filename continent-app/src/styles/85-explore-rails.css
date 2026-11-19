@@ -38,6 +38,21 @@
   content-visibility: auto;
   contain-intrinsic-size: auto 360px;
 }
+/* The list's rows (G12, D10, lane 1 round 5): a row off screen skips layout
+   and paint, so a change of the list's width (the docked Settings panel, a
+   resize) lays out only the rows in view. The height a row holds until it
+   is first drawn is the median row's (measured 2026-11-19: 80 px at 390,
+   73 px at 1280 and 1440); once drawn the browser keeps its real one. A row showing its preview popover or holding
+   focus is never contained: containment clips what spills out of the box
+   (the popover, the save button's focus ring). */
+.explore-shell .xrows > .xrow-hs:not(.previewing):not(:focus-within) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 80px;
+}
+@media (min-width: 769px) {
+  .explore-shell .xrows > .xrow-hs:not(.previewing):not(:focus-within) { contain-intrinsic-size: auto 73px; }
+}
+
 /* The docked Settings panel's width (81-settings.css .set-dock), as one
    constant the Explore rules read while html.has-settings-dock is on. It
    was written on the root by SettingsSheet at each open, and a custom
