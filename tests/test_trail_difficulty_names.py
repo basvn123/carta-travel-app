@@ -229,3 +229,140 @@ def test_the_source_name_rides_apart_only_when_it_differs():
     assert names.source_label(same, None, "Veluwe Zwerfpad") is None
     assert names.source_label({}, "Some title", "Some title") is None
     assert names.source_label({"name": "osm route=hiking"}, None, "x") is None
+
+
+# -- D7 (wave 1, 0.4): the 36 research rows ----------------------------------
+# Names from the 2026-11-17 trails wire (id, country, shipped name), with what
+# the next export ships: wire_name, then the ladder's split_code and cap
+# (the replay path, scripts/quality/trail_names_replay.py). HOLD rows are not
+# in the 0.4 rules (generic plus number, colour only, codes, empties, stage
+# words without a parent, typos): pinned unchanged so a later change shows.
+HOLD = None
+NAME_ROWS = [
+    (311203, "AL", "", HOLD),
+    (311344, "AL", "", HOLD),
+    (19278, "AT", "JK02", HOLD),
+    (16130, "AT", "VR", HOLD),
+    (10506, "AT", "471", HOLD),
+    (13915, "AT", "PWHa2", HOLD),
+    (95805, "BE", "33-36", HOLD),
+    (148040, "DE", "J25-K65", HOLD),
+    (63471, "AL", "(SH-MR-011)", HOLD),
+    (10071, "AT", "Wanderweg 1", HOLD),
+    (14120, "AT", "Wanderweg 543", HOLD),
+    (11235, "AT", "Wanderweg 937", HOLD),
+    (187394, "GB", "Red", HOLD),
+    (75394, "BG", "blue bar", HOLD),
+    (3964, "CH", "fixme - fixme", ""),
+    (2292, "CH", "Saulcy - fixme", "Saulcy"),
+    (62376, "LI", "Gafleisattel -fixme", "Gafleisattel"),
+    (75386, "BG", "Златни мостове - Алеко",
+     "Zlatni mostove - Aleko"),
+    # One Latin "e" inside the Cyrillic "езера".
+    (75333, "BG", "х.Ловна - х. 7-те eзера - х.Иван Вазов",
+     "h.Lovna - h. 7-te ezera - h.Ivan Vazov"),
+    (74839, "GR", "ΜΟΝΟΠΑΤΙ ΚΟΡΥΚΕΙΟΝ ΑΝΤΡΟ",
+     "Monopati Korykeion Antro"),
+    (75481, "BG", "КРЕПОСТ СТОРГОЗИЯ - ЯЗ. ТОТЛЕБЕНОВ ВАЛ - Х. СРЕБРОСТРУЙ",
+     "Krepost Storgoziya - Yaz. Totlebenov Val"),
+    (199937, "IT", "ANELLO 13 - TORCIGLIANO - PASSO DEL LUCESE - BUCA DEL CORNO - TORCIGLIANO",
+     "Anello 13 - Torcigliano - Passo del Lucese"),
+    (80630, "GB", "GLENTIES TO KILLETER", "Glenties to Killeter"),
+    (30507, "AD", "European long distance path E7 - Andorra", "E7 - Andorra"),
+    (9959, "AT", "Europäischer Fernwanderweg E4, Österreich, Rofan", "E4, Österreich, Rofan"),
+    (25575, "AD", "HRP Étape 32", HOLD),
+    (17369, "AT", "Adlerweg Etappe 12", HOLD),
+    (11137, "AT", "Wanderweg Adlerweg Etappe 90 - Kaiserwinkl", HOLD),
+    # The explore left this to the builder: today's cut is kept (the tail
+    # "de Salzes a Balaguer" alone reads badly); not in the 0.4 acceptance.
+    (39826, "AD", "El Camí IT1TR5 El Camí Capçaler: de Salzes a Balaguer",
+     "El Camí IT1TR5 El Camí Capçaler"),
+    (63461, "AL", "7 (The Blue Eye)", "The Blue Eye"),
+    (93975, "BE", "RVN 5 - Pe 2 - 08 - Roosteren-Thorn", "Roosteren-Thorn"),
+    (13338, "AT", "P (Ágfalva, főtér – Harka-Nyéki határkilépő)",
+     "Ágfalva, főtér – Harka-Nyéki határkilépő"),
+    (20050, "AT", "BergeSeen Trail 15: Gosau-Hintertal - Hallstatt", "Gosau-Hintertal - Hallstatt"),
+    (19116, "AT", "Sultans Trail Section 1: Vienna - Bratislava", "Vienna - Bratislava"),
+    (188593, "GB", "Bideam nam Bian Trail", HOLD),
+    (17965, "AT", "murauen.weg", HOLD),
+]
+
+
+def shipped(name, cc):
+    """The replay path: the export's wire_name, then the ladder's code split
+    and cap."""
+    out = names.wire_name(name, cc) or ""
+    s, _code = names.split_code(out)
+    if s and not names.is_code(s):
+        out = names.cap_title(s)
+    return out
+
+
+def test_the_36_rows_ship_the_expected_names():
+    assert len(NAME_ROWS) == 36
+    for rid, cc, src, want in NAME_ROWS:
+        got = shipped(src, cc)
+        assert got == (src if want is HOLD else want), (rid, src, got)
+        assert len(got) <= names.TITLE_MAX, rid
+
+
+def test_fixme_alone_ships_no_name_not_the_original():
+    assert names.wire_name("fixme - fixme", "CH") == ""
+
+
+def test_wire_name_is_idempotent_over_the_36_rows():
+    for rid, cc, src, _want in NAME_ROWS:
+        once = names.wire_name(src, cc) or ""
+        assert (names.wire_name(once, cc) or "") == once, rid
+        s = shipped(src, cc)
+        assert shipped(s, cc) == s, rid
+
+
+def test_a_two_part_name_never_drops_its_end():
+    # Every row with exactly one dash separator, plus long two-part names
+    # that must shorten their parts rather than cut the end off.
+    extra = [("AT", "Sultans Trail Section 1: Vienna - Bratislava"),
+             ("DE", "Wanderparkplatz am Hohen Meissner Nord - Bad Sooden-Allendorf"),
+             ("FR", "Sentier de la Grande Randonnee des Cretes - Col de la Schlucht")]
+    rows = [(cc, src) for _rid, cc, src, _w in NAME_ROWS] + extra
+    checked = 0
+    for cc, src in rows:
+        segs = names._DASH_SEP_RE.split(names.readable(src, cc).split(": ", 1)[-1])
+        if len(segs) != 2:
+            continue
+        end = names.split_code(segs[-1])[0] or segs[-1]
+        if len(end) > names.TITLE_MAX:
+            continue
+        got = shipped(src, cc)
+        assert len(got) <= names.TITLE_MAX, src
+        last = end.split()[0]
+        assert names.squash(last) in names.squash(got), (src, got)
+        checked += 1
+    assert checked >= 6
+
+
+def test_dedupe_tells_mount_korab_9_and_9_1_apart():
+    # Both originals split to "Mount Korab"; the code goes back on as a suffix.
+    rows = [{"id": 2, "country": "MK", "name": "Mount Korab", "distance_m": 9000},
+            {"id": 1, "country": "MK", "name": "Mount Korab", "distance_m": 9000},
+            {"id": 3, "country": "AL", "name": "Mount Korab", "distance_m": 9000}]
+    originals = {1: "Mount Korab (9)", 2: "Mount Korab (9/1)", 3: "Mount Korab (9)"}
+    changed = names.dedupe_names(rows, originals)
+    by_id = {r["id"]: r["name"] for r in rows}
+    assert by_id[1] != by_id[2]
+    assert "9/1" in by_id[2] and by_id[1].startswith("Mount Korab")
+    assert by_id[3] == "Mount Korab"          # another country is no clash
+    assert set(changed) == {1, 2}
+    # Run again on its own output: nothing changes.
+    assert names.dedupe_names(rows, originals) == {}
+
+
+def test_dedupe_falls_back_to_distance_then_id():
+    rows = [{"id": 5, "country": "MK", "name": "Mount Korab", "distance_m": 9000},
+            {"id": 6, "country": "MK", "name": "Mount Korab", "distance_m": 12000}]
+    names.dedupe_names(rows, {5: "Mount Korab 9", 6: "Mount Korab 9/1"})
+    assert [r["name"] for r in rows] == ["Mount Korab, 9 km", "Mount Korab, 12 km"]
+    same = [{"id": 7, "country": "MK", "name": "Korab"},
+            {"id": 8, "country": "MK", "name": "Korab"}]
+    names.dedupe_names(same, {})
+    assert [r["name"] for r in same] == ["Korab, no. 7", "Korab, no. 8"]

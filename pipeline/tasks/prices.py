@@ -71,7 +71,9 @@ TASKS = [
         "key": "stays",
         "title": "Stay layer: the Booking + Hostelworld scrape -> live stays wire (T1021)",
         "cadence": "monthly",
-        "writes_app_data": False,
+        # D10 (wave 1): box_stays now applies the build to the master, so the
+        # run backs the master up first and rebuilds the wire after.
+        "writes_app_data": True,
         "soft": True,
         "cmds": [
             [PY, "pipeline/stays/box_stays.py"],
@@ -80,9 +82,11 @@ TASKS = [
                  "scrapes (scripts/stays_scrape.bat; Booking blocks datacenter addresses) "
                  "and uploads journal_scrape.sqlite to r2:carta-stays-state; this task "
                  "downloads it, builds with the gate and publishes to "
-                 "r2:carta/data/stays-live/v1/, which the app reads without a deploy. "
-                 "Needs rclone's r2 remote (source ~/.config/carta/env). To bake a build "
-                 "into the app instead: build_stays.py --gate, then apply_stays.py."),
+                 "r2:carta/data/stays-live/v1/, which the app reads without a deploy, "
+                 "then writes the same build into the master (apply_stays.write_all; "
+                 "refuses if measured beds would drop more than 2 points). "
+                 "Needs rclone's r2 remote (source ~/.config/carta/env). On the laptop: "
+                 "build_stays.py --gate, then apply_stays.py."),
     },
 
 ]

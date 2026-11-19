@@ -414,6 +414,12 @@ if [ $ARCHIVE -eq 1 ]; then
   fi
 fi
 [ -f app_data/app_data.json ] || say "WARNING: no app_data/app_data.json. It is gitignored, so a fresh box has none until the R2 pull (or an scp from the laptop) provides it; every fare task will fail without it"
+# D10 (wave 1): the master's bed state at the start of every run, so a drift
+# like the 2026-11 one (3,544 pre-T1021 blocks) shows in the run log. A read
+# error prints and never stops the run.
+if [ -f app_data/app_data.json ]; then
+  say "beds in the master: $("$PY" -c 'import json,sys; sys.path.insert(0,"pipeline/stays"); from bed_rules import bed_stats; print(bed_stats(json.load(open("app_data/app_data.json",encoding="utf-8"))["destinations"]))' 2>&1 | tail -1)"
+fi
 
 if [ $PULL_ONLY -eq 1 ]; then
   say "--pull-only: stopping before the pipeline"
@@ -552,6 +558,15 @@ fi
 # tree must never be sent again as if it were new.
 STAGE="continent-app/dist-data/_stage.json"
 PUBLISH_FAILED=0
+# D1, D2, D10 (wave 1 item 0.3): the contract, the D2 rules and the bed checks
+# on what is about to go live (public/ and the staged dist-data/ tree). A
+# refusal holds the push; CARTA_PUBLISH_OVERRIDE="reason" publishes anyway and
+# the reason lands in this run's log.
+publish_guard() {
+  local over=()
+  [ -n "${CARTA_PUBLISH_OVERRIDE:-}" ] && over=(--override "$CARTA_PUBLISH_OVERRIDE")
+  "$PY" -I scripts/quality/publish_guard.py --public continent-app/public --staged continent-app/dist-data ${over[@]+"${over[@]}"}
+}
 if [ -z "${VITE_DATA_BASE:-}" ]; then
   say "publish skipped: VITE_DATA_BASE not set, so the build is same-origin and reaches production only through an app deploy"
 elif [ "$SHIP" != "build" ]; then
@@ -559,6 +574,11 @@ elif [ "$SHIP" != "build" ]; then
 elif [ $rc -ne 0 ]; then
   say "publish skipped: the pipeline failed, production keeps last week's data"
 elif [ $DRY_RUN -eq 1 ]; then
+  if publish_guard; then
+    say "publish guard: pass (dry run)"
+  else
+    say "publish guard: a real run would be REFUSED (dry run, see above)"
+  fi
   say "publish: a real run would upload a new $STAGE tree with: (cd continent-app && node scripts/r2/push-data.mjs --live)"
 elif [ ! -f "$STAGE" ] || [ ! "$STAGE" -nt "$RUN_MARK" ]; then
   say "publish skipped: this run made no new split build (nothing shipped, or the build was not split)"
@@ -568,6 +588,9 @@ else
   staged_base="$("$PY" -c 'import json,sys; print(json.load(open(sys.argv[1]))["data_base"])' "$STAGE" 2>/dev/null || true)"
   if [ "$staged_base" != "$VITE_DATA_BASE" ]; then
     say "PUBLISH FAILED: $STAGE was staged for '${staged_base:-?}', not VITE_DATA_BASE '$VITE_DATA_BASE'; not uploading"
+    PUBLISH_FAILED=1
+  elif ! publish_guard; then
+    say "PUBLISH REFUSED: the publish guard failed (see above); production keeps last week's data. CARTA_PUBLISH_OVERRIDE=\"reason\" publishes anyway"
     PUBLISH_FAILED=1
   else
     say "publish: phase 1 upload of the staged data to R2 (adds and replaces, deletes nothing)"

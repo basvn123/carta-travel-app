@@ -49,6 +49,7 @@ from common import (BED_TYPES, CONTRACT_COLUMNS, JOURNAL_SCRAPE, OUT, ROOT,  # n
                     STATE, UNITS, journal, load_destinations, median, now_iso,
                     read_json, write_json)
 from booking.page import per_ok  # noqa: E402
+from bed_rules import clean_beds  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from pricing_config import rule  # noqa: E402
@@ -300,6 +301,13 @@ def build(dests, obs):
             if lvl and n >= MIN_STAR_PROPS:
                 rec["beds"][k] = round(lvl)
                 put(k, lvl, cur, n)
+
+        # D10 (wave 1): a dorm bed dearer than a 3-star room is a thin or
+        # mislabelled sample; "Not available yet" beats a wrong figure.
+        beds, month, dropped = clean_beds(rec["beds"], rec["month"])
+        if dropped:
+            rec["beds"], rec["month"] = beds, month
+            rec["src"].pop("dorm", None)
 
         hotels = [o for k, v in groups.items() if k.startswith("hotel") for o in v]
         h_lvl, _, _ = curve_and_level(hotels)

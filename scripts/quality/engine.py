@@ -21,6 +21,11 @@ A run fails (exit 1) when
   audit script's report over its limit: the dossier audit, the hero image
   audit and the POI audit. A report file that is not on disk is skipped (the
   POI audit runs on the box only).
+- with `invariants` on (the publish guard, `--invariants`), a hard
+  invariant (rules.yaml `invariants`, D10 wave 1) breaks: a count over the
+  whole wire above its `max`, such as a dorm bed dearer than a 3-star room.
+  Off by default, so the CI eval of the committed wire keeps judging the D2
+  rules only; the publish guard turns them on for what is about to go live.
 A soft rule under its floor only warns. A scorecard field with no rule, or a
 rule for a field the scorecard does not measure, is a configuration error
 (exit 2) so the rules cannot fall behind the layers.
@@ -221,6 +226,20 @@ def load_rules(path: Path = RULES) -> dict:
             errors.append(f"{rid}: keys must be a non-empty list")
     if errors:
         raise ValueError("rules.yaml: " + "; ".join(errors))
+    invariants = d.get("invariants") or []
+    for c in invariants:
+        rid = c.get("id")
+        if rid in seen or rid in seen_lr:
+            errors.append(f"duplicate rule id {rid}")
+        seen_lr.add(rid)
+        if c.get("kind") not in KINDS:
+            errors.append(f"{rid}: kind must be one of {sorted(KINDS)}")
+        if c.get("check") not in INVARIANT_CHECKS:
+            errors.append(f"{rid}: check must be one of {sorted(INVARIANT_CHECKS)}")
+        if not isinstance(c.get("max"), (int, float)) or c["max"] < 0:
+            errors.append(f"{rid}: max must be a number of at least 0")
+    if errors:
+        raise ValueError("rules.yaml: " + "; ".join(errors))
     gate = d.get("gate") or {}
     lk = d.get("links")
     if lk is not None:
@@ -233,8 +252,51 @@ def load_rules(path: Path = RULES) -> dict:
             errors.append("links.max_broken_share must not exceed hard_broken_share")
     if errors:
         raise ValueError("rules.yaml: " + "; ".join(errors))
-    return {"links": lk, "rules": rules, "texts": texts, "layer_rules": layer_rules, "reports": reports, "drop_points": float(gate.get("must_see_drop_points", 2)),
+    return {"links": lk, "invariants": invariants, "rules": rules, "texts": texts, "layer_rules": layer_rules, "reports": reports, "drop_points": float(gate.get("must_see_drop_points", 2)),
             "trend_days": int(gate.get("trend_days", 90))}
+
+
+# --- Invariants (D10, wave 1 item 0.3) ---------------------------------------
+# One number over the whole app_data wire, compared with a `max`. Each check
+# takes the loaded wire and the run's time, so the publish guard can hand it a
+# wire it changed in memory (CARTA_PUBLISH_SEED_BREAK) or the staged tree.
+
+def _dorm_above_hotel3(data: dict, now: datetime) -> int:
+    br = _scorecard()._bed_rules()
+    return sum(1 for d in (data.get("destinations") or {}).values()
+               if isinstance(d, dict) and not d.get("gateway_of")
+               and br.dorm_above_hotel3((d.get("accommodation") or {}).get("beds")))
+
+
+def _generated_at_age_days(data: dict, now: datetime):
+    at = (data.get("meta") or {}).get("generated_at")
+    if not isinstance(at, str):
+        return None
+    t = _when(at)
+    if t.tzinfo is None:
+        t = t.replace(tzinfo=now.tzinfo)
+    return round((now - t).total_seconds() / 86400, 1)
+
+
+INVARIANT_CHECKS = {"dorm_above_hotel3": _dorm_above_hotel3,
+                    "generated_at_age_days": _generated_at_age_days}
+
+
+def invariants_gate(checks: list[dict], data: dict, now: datetime) -> tuple[list, list]:
+    """Failures and warnings of the rules.yaml invariants over one loaded wire.
+    A check that cannot be measured (no generated_at) breaks too: an
+    unmeasured invariant must not read as a pass."""
+    failures, warnings = [], []
+    for c in checks:
+        v = INVARIANT_CHECKS[c["check"]](data, now)
+        if v is not None and v <= c["max"]:
+            continue
+        why = (f"{c['check']} could not be measured" if v is None
+               else f"{c['check']} is {v:g} (limit {c['max']:g})")
+        (failures if c["kind"] == "hard" else warnings).append(
+            {"id": c["id"], "layer": "invariants", "field": c["check"], "level": "must_have", "kind": c["kind"],
+             "min": c["max"], "value": v, "previous": None, "delta_points": None, "why": why})
+    return failures, warnings
 
 
 # --- Text checks (T1201, register row T1179-c) -------------------------------
@@ -334,6 +396,7 @@ def measured_fields() -> set[tuple[str, str]]:
     sc = _scorecard()
     out = {(layer, f) for layer, fields in sc.APP_LAYERS.items() for f in fields}
     out |= {(layer, f) for layer, spec in sc.SHARD_LAYERS.items() for f in spec[3]}
+    out |= {(layer, f) for layer, fields in sc.DERIVED.items() for f in fields}
     return out
 
 
@@ -483,7 +546,8 @@ def panel(card: dict, result: dict, points: list[dict], days: int, baseline_at: 
 def run(public: Path, now: datetime | None, out: Path, rules_path: Path = RULES,
         write: bool = False, snapshot: Path | None = APP_SNAPSHOT,
         validation: Path | None = VALIDATION, links: Path | None = LINKS,
-        summaries: Path | None = SUMMARIES, reports_root: Path | None = ROOT) -> tuple[int, dict]:
+        summaries: Path | None = SUMMARIES, reports_root: Path | None = ROOT,
+        invariants: bool = False) -> tuple[int, dict]:
     cfg = load_rules(rules_path)
     problems = coverage_problems(cfg["rules"]) + layer_rule_problems(cfg.get("layer_rules") or [])
     if problems:
@@ -506,6 +570,11 @@ def run(public: Path, now: datetime | None, out: Path, rules_path: Path = RULES,
     tfail, twarn = text_gate(cfg.get("texts") or [], public, summaries)
     result["failures"] += tfail
     result["warnings"] += twarn
+    if invariants and cfg.get("invariants"):
+        wire = json.loads((public / "app_data.json").read_text(encoding="utf-8"))
+        ifail, iwarn = invariants_gate(cfg["invariants"], wire, _when(card["generated_at"]))
+        result["failures"] += ifail
+        result["warnings"] += iwarn
     result["ok"] = not result["failures"]
     card["gate"] = {"ok": result["ok"], "failures": len(result["failures"]),
                     "warnings": len(result["warnings"]), "baseline_at": prev_at}
@@ -543,12 +612,15 @@ def main(argv=None) -> int:
                     help="folder of the D23 validation results whose hard checks join the gate")
     ap.add_argument("--links", default=str(LINKS), help="link health snapshot (D16) whose broken share joins the gate")
     ap.add_argument("--no-validation", action="store_true", help="leave the D23 validation gate out")
+    ap.add_argument("--invariants", action="store_true",
+                    help="also check rules.yaml `invariants` (the publish guard does)")
     a = ap.parse_args(argv)
     now = _when(a.now) if a.now else None
     try:
         rc, data = run(Path(a.public).resolve(), now, Path(a.out), Path(a.rules), a.write,
                        None if a.no_snapshot else APP_SNAPSHOT,
-                       None if a.no_validation else Path(a.validation), Path(a.links))
+                       None if a.no_validation else Path(a.validation), Path(a.links),
+                       invariants=a.invariants)
     except ValueError as e:
         print(f"quality: {e}", file=sys.stderr)
         return 2

@@ -156,7 +156,8 @@ def test_cap_is_42_on_a_word_boundary():
     long = "BergeSeen Trail 15: Gosau-Hintertal - Hallstatt"
     out = ladder({"name": long})
     assert len(out["title"]) <= 42
-    assert out["title"] == "BergeSeen Trail 15: Gosau-Hintertal"
+    # D7 (wave 1): a two-part name keeps its end; the head goes to the chip.
+    assert out["title"] == "Gosau-Hintertal - Hallstatt"
     assert out["ref"] == long          # the original rides on the chip
 
 
@@ -209,6 +210,7 @@ def test_a_name_that_caps_to_a_code_moves_down_a_rung():
 
 
 def test_cap_prefers_a_segment_boundary():
-    # "A - B - C" names cut between segments, not inside one.
-    assert names.cap_title("BergeSeen Trail 15: Gosau-Hintertal - Hallstatt")         == "BergeSeen Trail 15: Gosau-Hintertal"
+    # "A - B - C" names cut between segments, not inside one; a two-part
+    # name keeps its end (D7, wave 1).
+    assert names.cap_title("BergeSeen Trail 15: Gosau-Hintertal - Hallstatt")         == "Gosau-Hintertal - Hallstatt"
     assert names.cap_title("Pecsvarad - Rockenbauer Pal sirja - Zengovarkony - RPDDK")         == "Pecsvarad - Rockenbauer Pal sirja"

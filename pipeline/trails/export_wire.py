@@ -1131,11 +1131,12 @@ def wire_item(t, n_stops, hier=None):
     return item
 
 
-def detail_item(t, stops, generated_at, hier=None):
+def detail_item(t, stops, generated_at, hier=None, name=None):
     """One trip in full: the on-demand half. Full-resolution 3D geometry lives
     here and only here, one file per trip, so nothing serves the lab's
-    geometry in bulk."""
-    shown = names.wire_name(t["title"], t["country"])
+    geometry in bulk. `name` is the country file's name when dedupe_names
+    changed it, so the list and the page agree."""
+    shown = name or names.wire_name(t["title"], t["country"])
     out = {
         "id": t["id"],
         "name": shown,
@@ -1545,6 +1546,12 @@ def main():
     items_of = {country: [wire_item(t, len(stops.get(t["id"], [])), hier)
                           for t in by_country.get(country, [])]
                 for country in wanted}
+    # D7 (wave 1, 0.4): two walks of one country never ship the same name;
+    # before the treks, so a trek lists its stages by their shipped names.
+    renamed = names.dedupe_names([i for items in items_of.values() for i in items],
+                                 {t["id"]: t["title"] for t in trips})
+    if renamed:
+        print(f"  names: {len(renamed)} same-name row(s) told apart")
     trek_list, trek_refs, trek_report = treks.build(
         [i for items in items_of.values() for i in items],
         parent_osm=parent_osm_of(trips),
@@ -1615,7 +1622,7 @@ def main():
     for t in trips:
         total_bytes += write_json(detail_dir / f"{t['id']}.json",
                                   detail_item(t, stops.get(t["id"], []),
-                                              generated_at, hier))
+                                              generated_at, hier, renamed.get(t["id"])))
     # A held-back trip is published but deliberately absent from the wire, so
     # its detail file goes too: nothing is served that no country file lists.
     held_back = {t["id"] for t in no_summary} if args.require_summary else set()

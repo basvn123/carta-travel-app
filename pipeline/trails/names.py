@@ -122,6 +122,8 @@ _CODE_THEN_NAME_RE = re.compile(r"^(\S{1,12})\s*[\(\[]\s*(.+?)\s*[\)\]]\s*$")
 _LEAD_CODE_RE = re.compile(
     r"^(?:[A-Za-z]{1,4}[\s\-]?\d+[A-Za-z]?|\d{3,}|\d+[\-/.]\d+[A-Za-z]?)"
     r"(?:\s*[:\-\u2013]\s*|\s+)(?=\S)")
+# A one or two digit stage number before a spaced dash: "08 - Roosteren".
+_BARE_NUM_LEAD_RE = re.compile(r"^\d{1,2}\s+[-\u2013]\s+(?=\S)")
 _TAG_SYNTAX_RE = re.compile(
     r"[=;{}<>|]|\bosm route\b|^\s*(?:node|way|relation)/\d+", re.IGNORECASE)
 _TRAIL_PUNCT = " -:,;/.\u2013\u2014([{"
@@ -169,6 +171,107 @@ def is_raw_osm(text):
     return bool(_TAG_SYNTAX_RE.search(str(text or "")))
 
 
+_DASH_SEP_RE = re.compile(r"\s[-\u2013]\s")
+# A short head before a colon: "BergeSeen Trail 15: Gosau-Hintertal - Hallstatt".
+_HEAD_RE = re.compile(r"^([^:]{1,40}):\s+(?=\S)")
+_END_CODE_RE = re.compile(_PAREN_CODE_RE.pattern + r"$")
+
+
+def _close_brackets(out):
+    """Drop an opener left without its closer, and what follows it."""
+    if out.count("(") > out.count(")"):
+        out = out[:out.rfind("(")]
+    if out.count("[") > out.count("]"):
+        out = out[:out.rfind("[")]
+    if out.count('"') % 2:
+        out = out[:out.rfind('"')]
+    for q, close in (("\u201e", "\u201c"), ("\u00ab", "\u00bb")):
+        if out.count(q) > out.count(close):
+            out = out[:out.rfind(q)]
+    return out.rstrip(_TRAIL_PUNCT)
+
+
+def _head_words(text, room):
+    """The longest run of whole words from the start that fits `room`, never
+    ending on a joining word or a one or two letter word; "" when not even a
+    word that is not a code fits."""
+    if len(text) <= room:
+        return text
+    out = []
+    for w in text.split(" "):
+        if len(" ".join(out + [w])) > room:
+            break
+        out.append(w)
+    while out and (out[-1].lower().strip(_TRAIL_PUNCT) in _DANGLING
+                   or (len(out[-1].strip(_TRAIL_PUNCT)) <= 2
+                       and not any(c.isdigit() for c in out[-1]))):
+        out.pop()
+    res = _close_brackets(" ".join(out).rstrip(_TRAIL_PUNCT))
+    return res if res and not is_code(res) else ""
+
+
+def _final_bracket(s):
+    """(name, inner) when s ends in a bracket holding one "A - B", else None:
+    "Bodensee-Rundwanderweg (Stein a. R. - Lindau)". Nested brackets count."""
+    if not s.endswith(")"):
+        return None
+    depth = 0
+    for i in range(len(s) - 1, -1, -1):
+        depth += {")": 1, "(": -1}.get(s[i], 0)
+        if depth == 0:
+            break
+    inner, name = s[i + 1:-1].strip(), s[:i].rstrip(_TRAIL_PUNCT)
+    if depth or not name or is_code(name) or len(_DASH_SEP_RE.findall(inner)) != 1:
+        return None
+    return name, inner
+
+
+def _keep_the_end(s, limit):
+    """D7 (wave 1, 0.4): a two-part name "A - B" or "X: A - B" keeps its end.
+
+    A walk named from where it starts to where it ends is no use with the end
+    cut off ("BergeSeen Trail 15: Gosau-Hintertal"), so the head X goes
+    first, then A is shortened from its right; B stays whole. None when the
+    name is not two parts, or B alone does not fit: the plain cut decides.
+    Three or more parts keep the plain cut (a loop's last stop repeats its
+    first, and the first two of four say where it goes)."""
+    fb = _final_bracket(s)
+    if fb:
+        # "N (A - B)": N stays with a shorter A when that fits, else the walk
+        # is named from A to B, as "X: A - B" is; N rides on the chip.
+        name, inner = fb
+        a, b = (x.strip() for x in _DASH_SEP_RE.split(inner))
+        sep = _DASH_SEP_RE.search(inner).group(0)
+        head = _head_words(a, limit - len(name) - 3 - len(sep) - len(b)) if a else ""
+        if head:
+            return f"{name} ({head}{sep}{b})"
+        return _keep_the_end(inner, limit)
+    m = _HEAD_RE.match(s)
+    body = s[m.end():] if m else s
+    seps = _DASH_SEP_RE.findall(body)
+    if len(seps) != 1:
+        return None
+    a, b = (x.strip() for x in _DASH_SEP_RE.split(body))
+    sep = seps[0]
+    if not a or not b or b.count(")") > b.count("(") or b.count("]") > b.count("["):
+        return None
+    if len(a) + len(sep) + len(b) <= limit:
+        return a + sep + b
+    code = _END_CODE_RE.search(b)
+    if code and is_code(code.group(1)) and not is_code(b[:code.start()]):
+        b = b[:code.start()].rstrip(_TRAIL_PUNCT)   # the code is on the ref chip
+    if len(b) > limit and b.endswith(")") and b.count("(") == b.count(")"):
+        # A note in brackets after the end place ("(quarta sezione)") goes
+        # before the place does.
+        b = b[:b.rfind("(")].rstrip(_TRAIL_PUNCT)
+    if not b or len(b) > limit:
+        return None
+    head = _head_words(a, limit - len(sep) - len(b))
+    if head:
+        return head + sep + b      # "Kantanos-Selino - Day 2" keeps its stage
+    return None if is_code(b) else b
+
+
 def cap_title(text, limit=TITLE_MAX):
     """Shorten to `limit` on a word boundary, trailing separators dropped.
 
@@ -180,31 +283,31 @@ def cap_title(text, limit=TITLE_MAX):
         .rstrip(_TRAIL_PUNCT)
     if len(s) <= limit:
         return s
+    # D7 (wave 1): "P (Agfalva, foter - ...)" is a waymark and then the name;
+    # cutting inside the bracket left "P".
+    m = _CODE_THEN_NAME_RE.match(s)
+    if m and is_code(m.group(1)) and not is_code(m.group(2)):
+        return cap_title(m.group(2), limit)
+    kept = _keep_the_end(s, limit)
+    if kept:
+        return kept
     cut = s[:limit + 1]
     # An "A - B - C" name cuts between its segments, not inside one, when a
     # segment boundary sits in the second half of the allowance.
-    seg = max(cut.rfind(sep) for sep in _SEGMENT_SEPS)
+    # A separator that starts right at the limit counts: the segment before
+    # it fits whole (D7, wave 1).
+    seg = max(s.rfind(sep, 0, limit + len(sep)) for sep in _SEGMENT_SEPS)
     if seg >= limit // 2:
         at = seg
     else:
         at = max(cut.rfind(" "), cut.rfind("-"), cut.rfind("/"))
     if at < limit // 3:          # one enormous word; cut it hard
         return s[:limit].rstrip(_TRAIL_PUNCT)
-    out = s[:at]
     # Never leave a bracket open: "(historic route)" cut to "(historic" reads
-    # as a typo, so the whole bracket goes.
-    if out.count("(") > out.count(")"):
-        out = out[:out.rfind("(")]
-    if out.count("[") > out.count("]"):
-        out = out[:out.rfind("[")]
-    # T1092: the same for a quote ('"Kobyle' from '"Kobyle Jezioro"'), and
-    # never end on a word that joins two places ("Circular via").
-    if out.count('"') % 2:
-        out = out[:out.rfind('"')]
-    for q, close in (("\u201e", "\u201c"), ("\u00ab", "\u00bb")):
-        if out.count(q) > out.count(close):
-            out = out[:out.rfind(q)]
-    out = out.rstrip(_TRAIL_PUNCT)
+    # as a typo, so the whole bracket goes. T1092: the same for a quote
+    # ('"Kobyle' from '"Kobyle Jezioro"'), and never end on a word that joins
+    # two places ("Circular via").
+    out = _close_brackets(s[:at])
     words = out.split(" ")
     while len(words) > 1 and words[-1].lower() in _DANGLING:
         words.pop()
@@ -218,21 +321,34 @@ def split_code(name):
     s = re.sub(r"\s+", " ", str(name or "")).strip()
     code = None
     m = _CODE_THEN_NAME_RE.match(s)
-    if m and is_code(m.group(1)) and not is_code(m.group(2)):
+    # D7 (wave 1): a lone letter is a waymark symbol, not a code ("P (...)");
+    # cap_title takes the bracket's name when it has to shorten.
+    if m and is_code(m.group(1)) and (len(m.group(1)) > 1 or m.group(1).isdigit()) \
+            and not is_code(m.group(2)):
         return m.group(2).strip(_TRAIL_PUNCT), m.group(1)
     m = _PAREN_CODE_RE.search(s)
     if m and is_code(m.group(1)):
         code = m.group(1).strip()
         s = (s[:m.start()] + " " + s[m.end():]).strip()
-    m = _LEAD_CODE_RE.match(s)
-    if m and not is_code(s[m.end():]):
+    # D7 (wave 1): "RVN 5 - Pe 2 - 08 - Roosteren-Thorn" carries three codes;
+    # up to three are peeled, the bare "08 - " included.
+    peeled = []
+    for _ in range(3):
+        m = _LEAD_CODE_RE.match(s) or _BARE_NUM_LEAD_RE.match(s)
+        if not m or is_code(s[m.end():]):
+            break
         rest = s[m.end():].strip(_TRAIL_PUNCT)
         # "GR 7 - Andorra" is a name; "Andorra" alone is a place. The code
         # stays when what follows it is one word and the whole thing fits.
-        if len(rest.split()) > 1 or len(s) > TITLE_MAX:
-            code = code or s[:m.end()].strip(_TRAIL_PUNCT)
-            s = rest
-    return s.strip(_TRAIL_PUNCT), code
+        if not peeled and len(rest.split()) <= 1 and len(s) <= TITLE_MAX:
+            break
+        peeled.append(s[:m.end()].strip(_TRAIL_PUNCT))
+        s = rest
+    if peeled:
+        code = code or " - ".join(peeled)
+    # An opening bracket at the start is part of the name ("[M] Taborskeho
+    # cesta"), as in cap_title.
+    return s.lstrip(_LEAD_PUNCT).rstrip(_TRAIL_PUNCT), code
 
 
 # The languages a place is locally named in, for the countries where the
@@ -400,8 +516,9 @@ def strip_network(text):
         m = rx.match(s)
         if m:
             rest = s[m.end():].lstrip()
-            s = short(m) + ((" " + rest) if rest and rest[0] not in ",:-\u2013"
-                            else rest)
+            # D7 (wave 1): only a comma or colon sits tight ("E7, Andorra");
+            # a dash keeps its space ("E7 - Andorra", once "E7- Andorra").
+            s = short(m) + (rest if not rest or rest[0] in ",:" else " " + rest)
             break
     s = _PART_RE.sub(", ", s, count=1)
     return s.lstrip(_LEAD_PUNCT).rstrip(_TRAIL_PUNCT) or str(text or "").strip()
@@ -495,7 +612,10 @@ def transliterate(text, country=None):
         ch = s[i]
         low = ch.lower()
         nxt = s[i + 1] if i + 1 < len(s) else ""
-        next_upper = nxt.isupper() and ch.isupper()
+        prev = s[i - 1] if i else ""
+        # D7 (wave 1): the last letter of "СТОРГОЗИЯ" has no next capital, but
+        # its word is in capitals: "STORGOZIYA", never "STORGOZIYa".
+        next_upper = ch.isupper() and (nxt.isupper() or (not nxt.isalpha() and prev.isupper()))
         pair = (low + nxt.lower()) if nxt else ""
         if pair in _GREEK_PAIRS:
             out.append(_cased(_GREEK_PAIRS[pair], ch, next_upper))
@@ -511,12 +631,60 @@ def transliterate(text, country=None):
     return re.sub(r"\s+", " ", "".join(out)).strip()
 
 
+_FIXME_RE = re.compile(r"\bfixme\b", re.IGNORECASE)
+_ROMAN_RE = re.compile(r"^[IVXLC]{1,4}$")
+_WORD_START_RE = re.compile(r"(^|[^\w'\u2019])(\w)")
+
+
+def _strip_fixme(text):
+    """The mapper's "fixme" placeholder taken out, with the separator it
+    hung on: "Saulcy - fixme" is "Saulcy", "fixme - fixme" is ""."""
+    s = str(text or "")
+    if not _FIXME_RE.search(s):
+        return s
+    s = _FIXME_RE.sub(" ", s)
+    s = re.sub(r"\s*[-\u2013:,/]\s*(?:[-\u2013:,/]\s*)+", " - ", s)
+    return re.sub(r"\s+", " ", s).lstrip(_LEAD_PUNCT).rstrip(_TRAIL_PUNCT)
+
+
+def _shouting(text):
+    """The classifier's all-caps test: six letters or more, over 85% upper."""
+    letters = [c for c in str(text or "") if c.isalpha()]
+    return len(letters) >= 6 and sum(c.isupper() for c in letters) / len(letters) > 0.85
+
+
+def _title_case(text):
+    """A name in capitals in title case: "GLENTIES TO KILLETER" is "Glenties
+    to Killeter". Codes (a digit, a Latin token of two letters, a Roman
+    numeral) keep their capitals; joining words after the first go lower.
+    Unchanged when the name is not shouting, so it is idempotent."""
+    if not _shouting(text):
+        return text
+    out = []
+    for i, w in enumerate(str(text).split(" ")):
+        core = w.strip("\"'()[],.:;-\u2013")
+        low = core.lower()
+        if any(c.isdigit() for c in w) or (low not in _DANGLING and (
+                (is_latin(core) and len(core) <= 2) or _ROMAN_RE.match(core))):
+            out.append(w)
+        elif i and low in _DANGLING:
+            out.append(w.lower())
+        else:
+            out.append(_WORD_START_RE.sub(lambda m: m.group(1) + m.group(2).upper(), w.lower()))
+    return " ".join(out)
+
+
 def readable(text, country=None):
-    """A name a reader of the app can say: network prefix folded to its
-    code, then non-Latin letters transliterated. Idempotent."""
-    s = strip_network(text)
+    """A name a reader of the app can say: the fixme placeholder out,
+    network prefix folded to its code, capitals to title case, then
+    non-Latin letters transliterated. Idempotent. Title case runs before the
+    transliteration, so "КРЕПОСТ" reads "Krepost", not "KREPOST"."""
+    s = _strip_fixme(text)
+    if not s.strip():
+        return ""
+    s = _title_case(strip_network(s))
     if s and not is_latin(s) and any(c.isalpha() for c in s):
-        s = transliterate(s, country)
+        s = _title_case(transliterate(s, country))
     return s
 
 
@@ -524,9 +692,126 @@ def wire_name(title, country=None):
     """The `name` a trail ships with: the stored title (attributes.py, the
     title ladder) made readable and capped. The export applies it so a wire
     built before the ladder re-ran still reads clean; on a ladder title it
-    changes nothing."""
+    changes nothing. "" for a title that was only a fixme placeholder: no
+    name is honest, the placeholder is not."""
     s = cap_title(readable(title, country))
+    if not s and _FIXME_RE.search(str(title or "")):
+        return ""
     return s or str(title or "").strip() or None
+
+
+# ---------------------------------------------------------------------------
+# D7 (wave 1, 0.4): what makes a shipped name unclean, and same-name rows
+# ---------------------------------------------------------------------------
+
+_STAGE_RE = re.compile(r"(?i)\b(etappe|stage|\u00e9tape|etapa|tappa|section|abschnitt|teil|deel|"
+                       r"odcinek|\u00fasek|etap|sektion|secteur|tramo)\b")
+_GENERIC_RE = re.compile(r"(?i)^(rundweg|wanderweg|rundwanderweg|wandelroute|circuit|sentier|"
+                         r"sentiero|ruta|trail|route|weg|loop|walk|szlak|camino|percorso)\s*"
+                         r"(nr\.?|no\.?|n\u00b0)?\s*[\w\-]{0,4}\d+\s*$")
+_COLOUR_ONLY_RE = re.compile(r"(?i)^(blue|red|green|yellow|black|blau|rot|gelb|gr\u00fcn)\s*"
+                             r"(bar|trail|route|weg)?\s*\d*$")
+_NETWORK_CODE_RE = re.compile(r"(?i)\bE\s?\d{1,2}\b|^(GR|GRP|PR|HRP)\s?\d")
+_CODE_FRAGMENT_RE = re.compile(r"[\(\[]\s*[A-Za-z]{0,4}[\s\-/.]?\d[\w\s\-/.]*[\)\]]|"
+                               r"^\s*[A-Za-z]{0,4}[\s\-]?\d+[A-Za-z]?\s")
+
+
+def name_problems(name):
+    """The reasons a shipped trail name is unclean, [] when it is clean.
+
+    The research classifier (2026-11-17, section 6.1), one definition for the
+    replay (scripts/quality/trail_names_replay.py) and the launch gate's
+    clean-name row."""
+    n = str(name or "")
+    if not n.strip():
+        return ["empty"]
+    hits = []
+    if not is_latin(n) and any(c.isalpha() for c in n):
+        hits.append("non_latin")
+    if is_code(n):
+        hits.append("code_only")
+    if len(n) > TITLE_MAX:
+        hits.append("too_long")
+    if _GENERIC_RE.match(n):
+        hits.append("generic_word_number")
+    if _COLOUR_ONLY_RE.match(n):
+        hits.append("colour_only")
+    if _shouting(n):
+        hits.append("all_caps")
+    if "fixme" in n.lower():
+        hits.append("fixme")
+    if _NETWORK_CODE_RE.search(n):
+        hits.append("network_code_in_name")
+    if _STAGE_RE.search(n):
+        hits.append("stage_word")
+    if _CODE_FRAGMENT_RE.search(n):
+        hits.append("code_fragment")
+    return hits
+
+
+def _sfx_code(row, original):
+    return split_code(original)[1] or ""
+
+
+def _sfx_end(row, original):
+    m = re.search(_STAGE_RE.pattern + r"\s*\.?\s*\d+[a-z]?", original, re.IGNORECASE)
+    if m:
+        return m.group(0)
+    segs = _DASH_SEP_RE.split(original)
+    end = segs[-1].strip() if len(segs) > 1 else ""
+    if end and squash(end) not in squash(row.get("name")):
+        return cap_title(end, 20)
+    return ""
+
+
+def _sfx_km(row, original):
+    d = row.get("distance_m")
+    if not isinstance(d, (int, float)) or d <= 0:
+        return ""
+    km = round(d / 1000) if d >= 10000 else round(d / 1000, 1)
+    return f"{km:g} km"
+
+
+def _sfx_id(row, original):
+    return f"no. {row.get('id')}"
+
+
+def dedupe_names(rows, originals=None):
+    """Make same-country rows that ship the same name tell apart.
+
+    rows: dicts with id, country, name and distance_m (the export's wire
+    items); originals: {id: the title before wire_name}. In each group of
+    rows whose names fold the same (squash), every row gets a suffix from the
+    first source that tells them all apart: the code split off the original
+    ("Mount Korab, 9/1"), the stage or end segment of the original, the
+    distance ("12 km"), the id. Rows are taken in id order, so a re-run gives
+    the same names; run on its own output it changes nothing. Mutates the
+    rows; returns {id: new name}."""
+    originals = originals or {}
+    groups = {}
+    for r in sorted(rows, key=lambda r: str(r.get("id"))):
+        if r.get("name"):
+            groups.setdefault((r.get("country"), squash(r["name"])), []).append(r)
+    # A new name must not land on a name another row of the country has.
+    taken = set(groups)
+    changed = {}
+
+    def named(r, x):
+        return cap_title(r["name"], TITLE_MAX - len(x) - 2) + ", " + x
+
+    for (cc, _key), rs in groups.items():
+        if len(rs) < 2:
+            continue
+        for level in (_sfx_code, _sfx_end, _sfx_km, _sfx_id):
+            sfx = [level(r, readable(originals.get(r.get("id")) or r["name"], cc)) for r in rs]
+            new = {(cc, squash(named(r, x))) for r, x in zip(rs, sfx) if x}
+            if all(sfx) and len(new) == len(rs) and not new & taken:
+                break
+        for r, x in zip(rs, sfx):
+            r["name"] = named(r, x)
+            taken.add((cc, squash(r["name"])))
+            changed[r.get("id")] = r["name"]
+    return changed
 
 
 def source_label(tags, title=None, shown=None):
