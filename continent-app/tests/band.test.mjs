@@ -58,3 +58,18 @@ test('the frozen order keeps known rows in place and new ones after', () => {
   assert.deepEqual(reorder(rows, snap).map((r) => r.id), ['a', 'b', 'c', 'x']);
   assert.equal(reorder(rows, null), rows);
 });
+
+// G12 round 2, m1: the phone fold resized its rows, so the top bar and the
+// list's column moved with it (CLS 0.42 at 360 de over one scroll).
+test('the phone fold slides the band with a transform; the list never moves', () => {
+  const css = read('src/styles/80-band.css');
+  assert.doesNotMatch(css, /grid-template-rows: 0fr/);
+  assert.match(css, /\.band\.is-phone\.is-tucked > \* \{ transform: translateY\(calc\(var\(--fold-a, 0px\) \* -1\)\); \}/);
+  assert.match(css, /transition: transform var\(--dur-2\) var\(--ease-out\), opacity var\(--dur-2\) var\(--ease-out\);/);
+  // The lists scroll under the band, its height their top padding and scroll padding.
+  assert.match(css, /html\.has-phone-band \.places-tab \{\s*top: 0;\s*padding-top: var\(--filter-h\);\s*scroll-padding-top: var\(--filter-h\);/);
+  assert.match(css, /prefers-reduced-motion: reduce\) \{[\s\S]*?\.band\.is-phone > \*,/);
+  const band = read('src/browse/band/ExploreBand.jsx');
+  assert.match(band, /band\.style\.setProperty\('--fold-a'/);
+  assert.match(band, /root\.classList\.add\('has-phone-band'\)/);
+});

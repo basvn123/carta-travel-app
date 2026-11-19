@@ -20,22 +20,16 @@
   --band-gap: var(--space-4);
 }
 
-/* The fold: on a phone the header and the search (one fold) and the tabs
-   (a second, under the settings strip) fold away while the list scrolls
-   down (useQuickReturn). Rows from 1fr to 0fr, so the top bar's measured
-   height (--filter-h) follows and the list keeps its place. */
+/* The fold's parts: on a phone the header and the search (one part) and
+   the tabs (a second, under the settings strip) slide away while the list
+   scrolls down (useQuickReturn); see "The fold" under Phone. */
 .band-fold {
   display: grid;
   /* minmax(0, 1fr): a long header word (Se connecter at 360) must not widen
      the band past the screen; the row's own controls give way (fixes r1 B3). */
   grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: 1fr;
-  transition: grid-template-rows var(--dur-2) var(--ease-out);
 }
 .band-fold-in { min-height: 0; min-width: 0; }
-.band.is-instant .band-fold { transition: none; }
-.band.is-tucked .band-fold { grid-template-rows: 0fr; }
-.band.is-tucked .band-fold-in { overflow: hidden; }
 
 /* Row 1: the field, Ask, then Settings. */
 .band-row {
@@ -356,8 +350,72 @@
 .band.is-phone .band-field { position: static; }
 .band.is-phone .band-tabs { padding: 1px var(--space-4) 0; }
 .band.is-phone .band-cats.ui-tabs { margin: 0; border-bottom: 0; }
-/* The tabs' selected underline stands on the band's one edge. */
-.band.is-phone { border-bottom: var(--stroke-hair) solid var(--border-soft); }
+
+/* The fold (G12 round 2, m1). The band keeps one height, so the top bar
+   and --filter-h never change while the list scrolls; the lists scroll
+   under it from the screen's top with the band's height as their top
+   padding and scroll padding, so at rest nothing sits under it and a
+   focused control is scrolled clear of it. Folding only slides its parts
+   (transform and opacity): the search part up and off by its own height
+   (--fold-a), the strip up to the top where it pins, the tabs up under
+   the strip and out (--fold-b). Resizing rows instead moved the list's
+   column (CLS 0.42 over one scroll at 360 de). Each part carries its own
+   ground, so where a part has gone the list shows; the band's own box
+   lets presses through. */
+.band.is-phone {
+  background: transparent;
+  pointer-events: none;
+}
+.band.is-phone > * {
+  position: relative;
+  pointer-events: auto;
+  background: var(--surface-page);
+  transition: transform var(--dur-2) var(--ease-out), opacity var(--dur-2) var(--ease-out);
+}
+/* The search part over the strip, the strip over the tabs: each slides
+   under the one above it. Its panel (fixed, under row 1) stays on top. */
+.band.is-phone > .band-fold:first-child { z-index: 3; }
+.band.is-phone > .band-strip { z-index: 2; padding-top: 10px; }
+.band.is-phone > .band-fold--tabs {
+  z-index: 1;
+  /* The tabs' selected underline stands on the band's one edge. */
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+}
+.band.is-phone.is-tucked > * { transform: translateY(calc(var(--fold-a, 0px) * -1)); }
+.band.is-phone.is-tucked > .band-fold:first-child { opacity: 0; }
+.band.is-phone.is-tucked > .band-fold--tabs {
+  transform: translateY(calc((var(--fold-a, 0px) + var(--fold-b, 0px)) * -1));
+  opacity: 0;
+}
+.band.is-phone.is-instant > * { transition: none; }
+/* The top bar holds the band and nothing else on a phone: its ground and
+   rule are the band's parts now, and only the safe area above keeps a
+   ground of its own, over the parts that slide into it. */
+html.has-phone-band .top-bar {
+  background: transparent;
+  border-bottom: 0;
+  pointer-events: none;
+}
+html.has-phone-band .top-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--surface-page);
+}
+@media (max-width: 768px) {
+  html.has-phone-band .explore-tab,
+  html.has-phone-band .places-tab {
+    top: 0;
+    padding-top: var(--filter-h);
+    scroll-padding-top: var(--filter-h);
+  }
+  /* A row that sticks to the list's top sticks under the band. */
+  html.has-phone-band .dtab-refine { top: var(--filter-h); }
+}
 /* Six tabs in 344 px at 360: equal sixths cut "Wanderwege" into its
    neighbour, so each tab is its word's width and the row shares the rest
    between them. The tab being the word's width puts the paint bar under
@@ -379,7 +437,6 @@
   position: relative;
   z-index: 1;
   gap: 0;
-  margin-top: 10px;
   padding: 0 var(--space-4);
   scroll-snap-type: x proximity;
   scroll-padding-inline: var(--space-4);
@@ -416,11 +473,10 @@
 }
 .band-chips.is-swipe .band-chip:focus-visible { outline-offset: -1px; }
 .band-chips.is-swipe .band-chip-dot { top: 10px; left: calc(var(--space-3) + 12px); }
-/* Pinned, the strip is a solid stone bar with its hairline and one soft
-   lift, so cards slide under a clean edge (lead review 2026-11-18). The
-   top bar's own ground fills the safe area above it. */
-.band.is-phone.is-tucked {
-  background: var(--surface-page);
+/* Pinned, the strip is a solid stone bar with one soft lift, so cards
+   slide under a clean edge (lead review 2026-11-18). The top bar's own
+   ground fills the safe area above it. */
+.band.is-phone.is-tucked > .band-strip {
   box-shadow: var(--elev-2);
   /* The lift falls below only: elev-2's ring would draw a line over the
      strip under a notch (the safe area is the same stone ground). */
@@ -461,7 +517,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .band-fold,
+  /* The fold lands at once: the parts jump, the list still never moves. */
+  .band.is-phone > *,
   .band-search,
   .band-filters,
   .band-go,

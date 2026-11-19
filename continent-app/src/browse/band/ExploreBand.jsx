@@ -107,12 +107,24 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
 
   // A phone folds two parts (the search above the strip, the tabs below
   // it); the list never tucks the band before it has scrolled past both.
+  // Each part's height goes on the band (--fold-a, --fold-b), so the fold
+  // slides the parts by exactly that with a transform: the band keeps its
+  // height, the top bar too, and the list under it never moves (G12 round
+  // 2, m1: resizing rows shifted the column, CLS 0.42 at 360 de).
   const bandRef = React.useRef(null);
   const [foldPx, setFoldPx] = React.useState(120);
   React.useLayoutEffect(() => {
     const els = [...(bandRef.current?.querySelectorAll('.band-fold-in') || [])];
     if (!els.length) return undefined;
-    const read = () => setFoldPx(els.reduce((sum, el) => sum + (el.scrollHeight || 0), 0) || 120);
+    const read = () => {
+      const hs = els.map((el) => el.scrollHeight || 0);
+      const band = bandRef.current;
+      if (band) {
+        band.style.setProperty('--fold-a', `${hs[0] || 0}px`);
+        band.style.setProperty('--fold-b', `${hs[1] || 0}px`);
+      }
+      setFoldPx(hs.reduce((sum, h) => sum + h, 0) || 120);
+    };
     read();
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
     els.forEach((el) => ro?.observe(el));
@@ -198,6 +210,14 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     const bar = bandRef.current?.closest('.top-bar');
     if (bar) document.documentElement.style.setProperty('--filter-h', `${bar.offsetHeight}px`);
   }, [kind, showChips, isDesktop]);
+  // On a phone the lists scroll under the band from the screen's top
+  // (80-band.css), so the band can slide away over them; the page says so.
+  React.useLayoutEffect(() => {
+    if (isDesktop) return undefined;
+    const root = document.documentElement;
+    root.classList.add('has-phone-band');
+    return () => root.classList.remove('has-phone-band');
+  }, [isDesktop]);
   // The panel's listbox is `${panelId}-list` (SearchPanel); the field
   // points at it, and the wrapper carries no id of its own.
   const panel = panelState.shown ? (
@@ -295,7 +315,11 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
           covers it), so nothing below moves. */}
       {isDesktop ? (
         <div className="band-line">{showChips && <SummaryChips items={items} />}</div>
-      ) : (showChips && <SummaryChips items={items} className="is-swipe" />)}
+      ) : (showChips && (
+        // The strip's own ground: the chips fade at their ends (a mask),
+        // and the list must not show through there when the strip is pinned.
+        <div className="band-strip"><SummaryChips items={items} className="is-swipe" /></div>
+      ))}
       {tabs}
     </div>
     </>

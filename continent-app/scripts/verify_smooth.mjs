@@ -20,6 +20,9 @@ const VERBOSE = !!process.env.VERBOSE;
 const SIZES = (process.env.SIZES || '360x640,390x844,820x1180,1280x800,1440x900')
   .split(',').map((s) => s.split('x').map(Number));
 const LANGS = (process.env.LANGS || 'en').split(',');
+// ONLY=scroll runs the scroll case alone; SCROLL_PLACES_ONLY=1 leaves out the layer.
+const ONLY = process.env.ONLY || '';
+const SCROLL_PLACES_ONLY = !!process.env.SCROLL_PLACES_ONLY;
 
 const checks = [];
 const check = (label, ok, note = '') => checks.push({ label, ok: !!ok, note });
@@ -90,6 +93,76 @@ const ACTIONS = [
   ['close Ask', async (page) => { await page.keyboard.press('Escape'); await page.waitForTimeout(1500); }],
 ];
 
+// The list scrolled down past the band's fold and back up (G12 round 2, m1:
+// at 360 de the phone band's fold resized the top bar, so the list's column
+// moved with it, 0.42). Wheel steps, as a reader scrolls; the fold animates
+// on the way down and back on the way up.
+async function wheel(page, dy, steps, pause) {
+  const { width, height } = page.viewportSize();
+  await page.mouse.move(width / 2, height * 0.6);
+  for (let i = 0; i < steps; i += 1) { await page.mouse.wheel(0, dy / steps); await page.waitForTimeout(pause); }
+}
+const SCROLL_ACTIONS = [
+  ['scroll the list down and up', async (page) => {
+    await wheel(page, 1400, 14, 80); await page.waitForTimeout(700);
+    await wheel(page, -400, 8, 80); await page.waitForTimeout(700);
+    await wheel(page, 400, 8, 80); await page.waitForTimeout(700);
+    await wheel(page, -1600, 16, 80); await page.waitForTimeout(900);
+  }],
+];
+
+// Where the list stands, as the reader sees it: the scroller's top, the
+// first rail's place in the list (its top plus the scroll), the band's
+// visible foot and the first thing in the list.
+const listPlace = (page) => page.evaluate(() => {
+  const sc = [...document.querySelectorAll('.explore-tab, .places-tab')].find((el) => el.clientHeight > 0);
+  if (!sc) return null;
+  const rail = sc.querySelector('.hs-rail, .xrow, .xcard');
+  const band = document.querySelector('.band');
+  const parts = band ? [...band.children].filter((el) => getComputedStyle(el).opacity !== '0') : [];
+  const foot = parts.reduce((m, el) => Math.max(m, el.getBoundingClientRect().bottom), 0);
+  const wrap = sc.firstElementChild;
+  const first = wrap && [...wrap.children].find((el) => el.getBoundingClientRect().height > 0);
+  return {
+    scTop: Math.round(sc.getBoundingClientRect().top),
+    y: sc.scrollTop,
+    rail: rail ? Math.round(rail.getBoundingClientRect().top + sc.scrollTop) : null,
+    foot: Math.round(foot),
+    first: first ? Math.round(first.getBoundingClientRect().top) : null,
+    pad: parseFloat(getComputedStyle(sc).scrollPaddingTop) || 0,
+    tucked: !!document.querySelector('.band.is-tucked'),
+  };
+});
+
+async function scrollCase(page, tag, phone, where) {
+  await page.evaluate(() => { for (const el of document.querySelectorAll('.explore-tab, .places-tab')) el.scrollTop = 0; });
+  await page.waitForTimeout(600);
+  const rest = await listPlace(page);
+  check(`${tag} ${where}: nothing under the band at rest`, rest && rest.first !== null && rest.first >= rest.foot - 1, JSON.stringify(rest));
+  check(`${tag} ${where}: focus keeps clear of the band (scroll-padding-top)`, rest && rest.pad >= rest.foot - rest.scTop - 1, JSON.stringify(rest));
+  // Folded: the list stays where it was; only the band moved.
+  await wheel(page, 900, 9, 80);
+  await page.waitForTimeout(700);
+  const folded = await listPlace(page);
+  if (phone) check(`${tag} ${where}: the band folds on scroll down`, folded?.tucked, JSON.stringify(folded));
+  check(`${tag} ${where}: the fold keeps the list's column and first rail in place`,
+    folded && folded.scTop === rest.scTop && folded.rail === rest.rail, `${JSON.stringify(rest)} -> ${JSON.stringify(folded)}`);
+  // Back at the top: the band is whole and the list starts under it again.
+  await page.evaluate(() => { for (const el of document.querySelectorAll('.explore-tab, .places-tab')) el.scrollTop = 0; });
+  await page.waitForTimeout(800);
+  const back = await listPlace(page);
+  check(`${tag} ${where}: back at the top, the band unfolds and the list sits where it began`,
+    back && !back.tucked && back.rail === rest.rail && back.first === rest.first, `${JSON.stringify(rest)} -> ${JSON.stringify(back)}`);
+  for (const [name, act] of SCROLL_ACTIONS) {
+    await watch(page);
+    let ok = true;
+    try { await act(page, phone); } catch (e) { ok = false; rows.push({ tag, action: `${where} ${name}`, sum: NaN, top: [{ v: 0, src: [String(e.message).split('\n')[0]] }] }); }
+    const r = await read(page);
+    if (ok) rows.push({ tag, action: `${where} ${name}`, ...r });
+    check(`${tag} ${where}: ${name} shifts ${ok ? r.sum.toFixed(3) : 'not run'}`, ok && r.sum < LIMIT);
+  }
+}
+
 async function openFilters(page, phone) {
   if (!phone) await visible(page, '.band-filters').click();
   else {
@@ -140,7 +213,7 @@ async function run(width, height, lang) {
   rows.push({ tag, action: 'load', sum: loadSum, top: [...load].sort((a, b) => b.v - a.v).slice(0, 3) });
   check(`${tag}: load shifts ${loadSum.toFixed(3)}`, loadSum < 0.1);
 
-  for (const [name, act, back] of ACTIONS) {
+  for (const [name, act, back] of ONLY === 'scroll' ? [] : ACTIONS) {
     await watch(page);
     let ok = true;
     try { await act(page, phone); } catch (e) { ok = false; rows.push({ tag, action: name, sum: NaN, top: [{ v: 0, src: [String(e.message).split('\n')[0]] }] }); }
@@ -148,6 +221,17 @@ async function run(width, height, lang) {
     if (ok) rows.push({ tag, action: name, ...r });
     check(`${tag}: ${name} shifts ${ok ? r.sum.toFixed(3) : 'not run'}`, ok && r.sum < LIMIT);
     if (back) { try { await back(page, phone); } catch { /* next action starts from where it is */ } }
+  }
+  // The scroll case on Places and on one layer (no settings strip there).
+  await scrollCase(page, tag, phone, 'Places');
+  if (!SCROLL_PLACES_ONLY) {
+    await tab(page, 'trails').click();
+    await page.waitForTimeout(2500);
+    await scrollCase(page, tag, phone, 'Trails');
+    await page.evaluate(() => { for (const el of document.querySelectorAll('.explore-tab, .places-tab')) el.scrollTop = 0; });
+    await page.waitForTimeout(600);
+    await tab(page, 'places').click();
+    await page.waitForTimeout(2000);
   }
   // The page never scrolls sideways.
   const over = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);

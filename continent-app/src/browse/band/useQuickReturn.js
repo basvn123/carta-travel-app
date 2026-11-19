@@ -7,9 +7,9 @@ const SCROLLERS = ['explore-tab', 'places-tab'];
 // (decision.md, APPROVED: "scrolling up brings the search back").
 const DOWN_PX = 16;
 const UP_PX = 24;
-// The fold changes the scroller's height, and at the end of a list the
-// browser then clamps scrollTop: that is layout, not the reader, so scroll
-// events right after a change are ignored.
+// The fold slides over the list and leaves the scroller alone (round 2,
+// m1); scroll events while it plays are still ignored, so a reader's small
+// bounce at the turn does not send the band straight back.
 const SETTLE_MS = 320;
 
 /**
