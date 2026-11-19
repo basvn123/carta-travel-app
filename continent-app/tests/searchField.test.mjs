@@ -18,7 +18,7 @@ test('the band field names itself; Ask Carta stands outside it (round 2)', () =>
   // A phone shows the short placeholder so it is never cut at 360 (fixes r1 T3); the name stays full.
   assert.match(band, /placeholder=\{t\(isDesktop \? 'band\.searchPh' : 'band\.searchPhShort'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
   // The search button closes the field at its right end; no magnifier on the left.
-  assert.match(band, /<button type="submit" className="band-go"/);
+  assert.match(band, /<Pressable type="submit" className="band-go"/);
   assert.match(band, /type="search"[\s\S]*enterKeyHint="search"/);
   assert.doesNotMatch(band, /band-mag/);
   // Ask leaves the form: after </form>, a popup button lit while open.

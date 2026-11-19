@@ -3,6 +3,7 @@ import { Button, IconButton } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { haptic } from '../../lib/haptics.js';
 import { openFilters } from './filtersStore.js';
+import { countKey } from '../../lib/plural.js';
 import '../../styles/83-filters.css';
 
 /**
@@ -43,6 +44,7 @@ export function AppliedRow({ chips, count, onClearAll, desktop, tools = null, t 
   }, [chips]);
   const remove = (c, i) => () => {
     refocus.current = i;
+    if (chips.length === 1) keepFocusAfterEmpty(desktop);
     setSaid(t('filters.removed', { name: c.label }));
     haptic('tick');
     c.remove();
@@ -53,7 +55,7 @@ export function AppliedRow({ chips, count, onClearAll, desktop, tools = null, t 
         {!desktop && (
           <Button variant="secondary" size="sm" className={`xap-filters${count ? ' is-on' : ''}`}
             iconStart={<HouseIcon.filter size={16} />} aria-haspopup="dialog"
-            aria-label={count ? t('filters.openOn', { n: count }) : t('filters.title')}
+            aria-label={count ? t(countKey(t.lang, count, 'filters.openOnOne', 'filters.openOn'), { n: count }) : t('filters.title')}
             onClick={() => openFilters()}>
             {t('filters.title')}
             {count > 0 && <span className="xap-n" aria-hidden="true">{count}</span>}
@@ -70,6 +72,7 @@ export function AppliedRow({ chips, count, onClearAll, desktop, tools = null, t 
         {chips.length > 0 && (
           <Button variant="quiet" size="sm" className="xap-clear" onClick={() => {
             refocus.current = 0;
+            keepFocusAfterEmpty(desktop);
             setSaid(t('filters.cleared'));
             onClearAll();
           }}>
@@ -81,6 +84,32 @@ export function AppliedRow({ chips, count, onClearAll, desktop, tools = null, t 
       <p className="sr-only" role="status">{said}</p>
     </div>
   );
+}
+
+/**
+ * The last chip or Clear all empties the row, and with no filter left the
+ * list turns back into the overview and the row unmounts, so focus fell to
+ * the page (flow M1). Once the swap lands (a few frames, the overview's
+ * rails arrive late), focus goes to a lasting control: the band's Filters
+ * control on a desktop, the overview's heading on a phone (the field would
+ * drop its search panel). Only when focus was really lost.
+ */
+function keepFocusAfterEmpty(desktop) {
+  let tries = 0;
+  const step = () => {
+    const at = document.activeElement;
+    const lost = !at || at === document.body || !at.isConnected;
+    // Still on the row: the render that empties it may not have landed yet.
+    if (!lost && !at.closest?.('.xap')) return;
+    if (lost) {
+      const to = (desktop && document.querySelector('.band .band-filters'))
+        || document.getElementById('xov-title')
+        || document.querySelector('.band .band-input');
+      if (to && to.getClientRects().length > 0) { to.focus({ preventScroll: true }); return; }
+    }
+    if (++tries < 30) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
 }
 
 /** Saved as a toggle at the row's right end (desktop): the save glyph,

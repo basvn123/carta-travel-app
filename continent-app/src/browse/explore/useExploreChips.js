@@ -71,13 +71,15 @@ export function useExploreChips({
     if (xf.verdicts.length) {
       list.push({ key: 'rating', label: labelForApplied('rating', t, xf) || t('filter.ratingAtLeast', { band: bandWord(t, minVerdict(xf.verdicts)) }), remove: drop({ verdicts: [] }) });
     }
-    // G12 round 2: the day high in the When month, one chip per band; with
-    // no month the band waits, so it shows no chip either.
-    if (travelMonth) {
-      for (const id of xf.temps) {
-        list.push({ key: `t:${id}`, label: t('filters.tempIn', { band: bandLabel(id, t), month: gLabels.monthInline(travelMonth) }),
-          remove: () => setXf((v) => ({ ...v, temps: v.temps.filter((x) => x !== id) })) });
-      }
+    // G12 round 2: the day high in the When month, one chip per band. With
+    // no month the band waits (it filters nothing), and its chip says so: a
+    // link carrying xt must not turn a filter on later unseen (flow m2).
+    for (const id of xf.temps) {
+      const label = travelMonth
+        ? t('filters.tempIn', { band: bandLabel(id, t), month: gLabels.monthInline(travelMonth) })
+        : t('filters.tempWaiting', { band: bandLabel(id, t) });
+      list.push({ key: `t:${id}`, label,
+        remove: () => setXf((v) => ({ ...v, temps: v.temps.filter((x) => x !== id) })) });
     }
     // The sheet's picks and the shortcuts that set them share one label.
     for (const id of xf.picks) {

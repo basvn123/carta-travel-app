@@ -121,6 +121,20 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
       onClose();
     }
   };
+  // Escape with focus on the page or on the band's Settings button closes
+  // the docked panel too: it is the one side panel open (flow-corners 1).
+  React.useEffect(() => {
+    if (!docked) return undefined;
+    const onKey = (e) => {
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      const at = document.activeElement;
+      if (at && at !== document.body && !at.closest?.('.band-settings')) return;
+      e.preventDefault();
+      onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [docked, onClose]);
 
   // A fixed docked panel covers the page's right edge: the page is told,
   // so Explore can keep its list clear of it (Lane 1 reads the class).

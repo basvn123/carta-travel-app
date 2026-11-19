@@ -2,6 +2,7 @@ import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { IconButton } from '../../components/ui/index.js';
 import { AppliedRow, SavedToggle } from '../filters/AppliedRow.jsx';
 import { deskChips, phoneChips } from './chipRules.js';
+import { countKey } from '../../lib/plural.js';
 
 /**
  * The list's head (G12, Explore top round 2): the page's h1 and its count,
@@ -36,7 +37,7 @@ export function ExploreToolbar({
           Belgian list (audit-visual defect 10). */}
       <TitleTag className="xhead-title sr-only">{t('places.catPlaces')}</TitleTag>
       <span className="xbar-count sr-only">
-        {t(gridTotal === 1 ? 'explore.countOne' : 'explore.countMany',
+        {t(countKey(lang, gridTotal, 'explore.countOne', 'explore.countMany'),
           { n: new Intl.NumberFormat(lang).format(gridTotal) })}
       </span>
       {isMock && <span className="explore-mock">{t('explore.mockData')}</span>}

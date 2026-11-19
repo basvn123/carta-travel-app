@@ -280,16 +280,21 @@
 .band.is-desk .band-chip { min-height: 32px; }
 /* Hover paints a soft ground past the item's edge without moving it. */
 @media (hover: hover) {
-  .band.is-desk .band-chip:hover { background: var(--surface-hover); box-shadow: 0 0 0 6px var(--surface-hover); }
-  .band.is-desk .band-chip.is-style:hover { background: var(--umber-100); box-shadow: 0 0 0 6px var(--umber-100); }
+  /* An outline of the same colour is the halo (no shadow token fits a
+     flat ground); the focus ring keeps the outline when both apply. */
+  .band.is-desk .band-chip:hover { background: var(--surface-hover); }
+  .band.is-desk .band-chip:hover:not(:focus-visible) { outline: 6px solid var(--surface-hover); outline-offset: 0; }
+  .band.is-desk .band-chip.is-style:hover { background: var(--umber-100); }
+  .band.is-desk .band-chip.is-style:hover:not(:focus-visible) { outline-color: var(--umber-100); }
 }
 
 /* --- The desktop tab row (ExploreCategories, in the tab's scroller) ------
    It stands right under the band: the line's 32 px items end where its 48
    px tabs start, and the tabs' ink sits 9 px down, so 16 px from the
    line's words (O1). Tabs take their word's width, 32 px apart, the paint
-   bar as wide as the icon and word (fixes audit defect 5); the List | Map
-   switch closes the row at the right. */
+   bar under the word alone, past the 20 px icon and its gap (decision
+   section 3, flow-search F5); the List | Map switch closes the row at the
+   right. */
 @media (min-width: 769px) {
   .explore-shell .explore-wrap:has(> .xcats-bar:first-child),
   .places-shell .places-wrap:has(> .xcats-bar:first-child) { padding-top: 0; }
@@ -315,7 +320,7 @@
     min-height: var(--tap-main);
     padding: 0 0 10px;
   }
-  .xcats-line .xcats-row .ui-tab::after { bottom: 0; }
+  .xcats-line .xcats-row .ui-tab::after { bottom: 0; left: calc(20px + var(--space-2)); }
   @media (hover: hover) {
     .xcats-line .xcats-row .ui-tab:hover { background: none; }
   }
@@ -340,6 +345,7 @@
   .xcats-row .ui-tab { padding: 0 var(--space-1); font-size: var(--text-body); }
   .xcats-row .xcats-tab { gap: var(--space-1); }
   .xcats-line .ui-tabs.xcats-row { gap: var(--space-5); }
+  .xcats-line .xcats-row .ui-tab::after { left: calc(20px + var(--space-1) * 2); right: var(--space-1); }
 }
 
 /* --- Phone -------------------------------------------------------------- */
@@ -353,8 +359,17 @@
 /* The tabs' selected underline stands on the band's one edge. */
 .band.is-phone { border-bottom: var(--stroke-hair) solid var(--border-soft); }
 /* Six tabs in 344 px at 360: equal sixths cut "Wanderwege" into its
-   neighbour, so each tab takes its word's width and shares the rest. */
-.band.is-phone .xcats-row .ui-tab { flex: 1 1 auto; }
+   neighbour, so each tab is its word's width and the row shares the rest
+   between them. The tab being the word's width puts the paint bar under
+   the word alone (flow-search F5); a wider hit area (::before) keeps each
+   tab a 44 px target. */
+.band.is-phone .xcats-row { justify-content: space-between; }
+.band.is-phone .xcats-row .ui-tab { flex: none; padding-inline: 0; }
+.band.is-phone .xcats-row .ui-tab::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(var(--space-2) * -1);
+}
 /* The settings strip: one sideways swipe between the search and the tabs,
    snapping to an item, with a soft fade on a side that has more. It stays
    when the rest folds. A context strip, not a row of buttons: icon and

@@ -180,8 +180,10 @@
     padding: 0;
     touch-action: manipulation;
   }
+  /* 48, a height the band allows (decision section 3: 48, 44, 32); the
+     icon, its 2 px gap and the caption line fit inside (flow-search F6). */
   .xcats-row .ui-tab {
-    min-height: 56px;
+    min-height: var(--tap-main);
     padding: var(--space-1) 2px;
     font-size: var(--text-caption);
   }

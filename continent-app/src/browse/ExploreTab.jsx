@@ -280,7 +280,10 @@ export function ExploreTab({
     setOrDrop('xu', unescoOnly ? '1' : '');
     setOrDrop('xc', countryFilter.join(','));
     setOrDrop('xo', countryNot && countryFilter.length ? '1' : '');
-    setOrDrop('xs', sortKey !== 'beauty' ? sortKey : '');
+    // The sort is App's and App writes it as `sort` (lib/urlState.js); a
+    // second key said the same twice (flow-filters m5). An old link's xs is
+    // still read above, then dropped here.
+    setOrDrop('xs', '');
     setOrDrop('xw', view === 'map' ? 'map' : '');
     setOrDrop('xi', pickedId || '');
     const qs = q.toString();

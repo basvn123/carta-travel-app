@@ -11,6 +11,7 @@ import {
   BUDGET_STEPS, GROUP_PICKS, PICKS, TEMP_BANDS, bandLabel, parsePicks, sortOptionsFor, sortShown,
 } from './filterModel.js';
 import { filtersOpener } from './filtersStore.js';
+import { countKey } from '../../lib/plural.js';
 import '../../styles/83-filters.css';
 
 /**
@@ -113,19 +114,23 @@ function FilterBottomSheet({ panelRef, titleRef, titleId, exit, t, body, foot })
 
 /** Where the panel hangs: under the band's search field, as wide as it (at
  *  least 560 px, so two columns of groups fit). */
+function measurePanelPlace() {
+  const field = document.querySelector('.band .band-search') || document.querySelector('.band');
+  const r = field?.getBoundingClientRect();
+  const gutter = 16;
+  const top = Math.round((r ? r.bottom : 120) + 8);
+  const width = Math.round(Math.min(window.innerWidth - gutter * 2, Math.max(560, r ? r.width : 720)));
+  const left = Math.round(Math.max(gutter, Math.min(r ? r.left : gutter, window.innerWidth - width - gutter)));
+  return { top, left, width, maxHeight: Math.max(320, window.innerHeight - top - gutter) };
+}
+
 function usePanelPlace() {
-  const [place, setPlace] = React.useState(null);
-  React.useLayoutEffect(() => {
-    const measure = () => {
-      const field = document.querySelector('.band .band-search') || document.querySelector('.band');
-      const r = field?.getBoundingClientRect();
-      const gutter = 16;
-      const top = Math.round((r ? r.bottom : 120) + 8);
-      const width = Math.round(Math.min(window.innerWidth - gutter * 2, Math.max(560, r ? r.width : 720)));
-      const left = Math.round(Math.max(gutter, Math.min(r ? r.left : gutter, window.innerWidth - width - gutter)));
-      setPlace({ top, left, width, maxHeight: Math.max(320, window.innerHeight - top - gutter) });
-    };
-    measure();
+  // Measured in the first render, not after it: a panel that starts hidden
+  // refuses the focus FilterSheet moves into it in the same commit, which
+  // left keyboard users on the Filters control with Escape dead (flow F1).
+  const [place, setPlace] = React.useState(measurePanelPlace);
+  React.useEffect(() => {
+    const measure = () => setPlace(measurePanelPlace());
     window.addEventListener('resize', measure);
     return () => window.removeEventListener('resize', measure);
   }, []);
@@ -153,16 +158,25 @@ function FilterPanel({ panelRef, titleRef, titleId, exit, t, body, foot }) {
     document.addEventListener('pointerdown', onDown, true);
     return () => document.removeEventListener('pointerdown', onDown, true);
   }, [close, panelRef]);
-  const onKeyDown = (e) => {
-    if (e.key === 'Escape' && !e.defaultPrevented) {
+  // Escape is heard on the document, not only inside the panel: focus may
+  // still sit on the Filters control or on the page. A dialog or the search
+  // panel that handles Escape first (defaultPrevented) wins.
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      const at = document.activeElement;
+      const ours = !at || at === document.body || panelRef.current?.contains(at)
+        || at.closest?.('.band-filters, [data-filters-door]');
+      if (!ours) return;
       e.preventDefault();
       closeAndReturn();
-    }
-  };
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [closeAndReturn, panelRef]);
   return createPortal(
     <div ref={panelRef} className={`flt flt-panel${exit.leaving ? ' is-leaving' : ''}`}
-      role="region" aria-labelledby={titleId} onKeyDown={onKeyDown}
-      style={place || { visibility: 'hidden' }}>
+      role="region" aria-labelledby={titleId} style={place}>
       <Head titleId={titleId} titleRef={titleRef} t={t} onClose={closeAndReturn} />
       {body}
       {foot}
@@ -255,7 +269,7 @@ export function FilterGroups({ f, t }) {
                 id: b.id, label: bandLabel(b.id, t), on: xf.temps.includes(b.id), toggle: toggleTemp(b.id),
               }))} />
               {f.noTemp > 0 && (
-                <p className="flt-note">{t(f.noTemp === 1 ? 'filters.noTempOne' : 'filters.noTemp', { n: f.noTemp })}</p>
+                <p className="flt-note">{t(countKey(t.lang, f.noTemp, 'filters.noTempOne', 'filters.noTemp'), { n: f.noTemp })}</p>
               )}
             </>
           ) : (
@@ -312,7 +326,7 @@ export function FilterGroups({ f, t }) {
 function FilterFoot({ f, t, lang, onDone }) {
   const n = f.total ?? 0;
   const label = n === 0 ? t('filters.none')
-    : t(n === 1 ? 'filters.showOne' : 'filters.show', { n: new Intl.NumberFormat(lang).format(n) });
+    : t(countKey(lang, n, 'filters.showOne', 'filters.show'), { n: new Intl.NumberFormat(lang).format(n) });
   // The count is spoken once it settles, not on every step of a change.
   const [said, setSaid] = React.useState('');
   const first = React.useRef(true);

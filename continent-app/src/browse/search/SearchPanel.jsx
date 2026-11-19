@@ -1,4 +1,5 @@
 import React from 'react';
+import { countKey } from '../../lib/plural.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { Pressable } from '../../components/ui/Pressable.jsx';
@@ -15,7 +16,7 @@ import { openAskChat } from '../ask/askChatStore.js';
 import '../../styles/82-search-panel.css';
 
 const FEATURE_ICON = { beach: 'beaches', lake: 'lakes', hiking: 'trails', ski: 'mountains', oldtown: 'places', islands: 'water' };
-const TYPE_ICON = { place: 'places', near: 'pin', region: 'map', country: 'from', ask: 'ask' };
+const TYPE_ICON = { place: 'places', near: 'pin', region: 'map', country: 'from', ask: 'ask', text: 'search' };
 // The Browse shortcuts' glyphs, by filtersStore id.
 const SHORTCUT_ICON = { top: 'star', hiking: 'trails', oldtown: 'places', sea: 'beaches', island: 'water', lake: 'lakes', gems: 'signpost' };
 const MAX_TOKENS_SHOWN = 2;
@@ -169,6 +170,8 @@ export function SearchPanel({ query = '', kind = 'places', id, filters = null, o
   const pick = React.useCallback((it) => {
     if (!it) return;
     if (it.type === 'ask') { askAbout(typed); return; }
+    // A recent search sent as typed words searches those words again.
+    if (it.type === 'text') { setRecent(addRecent(it)); onSubmit?.(it.name); return; }
     if (it.type === 'browse') {
       filters?.applyShortcut(it.shortcut, !it.on);
       onClose?.();
@@ -319,7 +322,7 @@ export function SearchPanel({ query = '', kind = 'places', id, filters = null, o
   const actions = !isDesktop && (
     <div className="sp-actions" role="group" aria-label={t('search.moreWays')}>
       {isPlaces && filters && (
-        <Pressable className="sp-action" aria-label={filterCount ? t('band.filtersOn', { n: filterCount }) : t('band.filters')}
+        <Pressable className="sp-action" aria-label={filterCount ? t(countKey(lang, filterCount, 'band.filtersOnOne', 'band.filtersOn'), { n: filterCount }) : t('band.filters')}
           onClick={() => onOpenFilters?.(null)}>
           <HouseIcon.filter size={20} />
           <span className="sp-action-word" aria-hidden="true">{t('band.filters')}</span>

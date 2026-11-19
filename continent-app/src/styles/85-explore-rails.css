@@ -40,13 +40,15 @@
    rail whose cards are not drawn yet (ExploreRails.jsx useNearView) holds
    the same height, so its cards arriving move nothing either. */
 .explore-shell .xrails-rail {
-  --xrail-h: calc(156.5px + 100cqi * 0.76 * 0.75);
+  /* A name line past the second adds its 1.25 x 16 px to the strip. */
+  --xname-extra: calc((var(--xrc-name-lines, 2) - 2) * 1.25 * var(--text-lead));
+  --xrail-h: calc(156.5px + var(--xname-extra) + 100cqi * 0.76 * 0.75);
   content-visibility: auto;
   contain-intrinsic-size: auto var(--xrail-h);
 }
 .explore-shell .xrails-rail.is-waiting { min-height: var(--xrail-h); }
 @media (min-width: 600px) {
-  .explore-shell .xrails-rail { --xrail-h: calc(156.5px + (100cqi - var(--space-3)) / 2.15 * 0.75); }
+  .explore-shell .xrails-rail { --xrail-h: calc(156.5px + var(--xname-extra) + (100cqi - var(--space-3)) / 2.15 * 0.75); }
 }
 /* The list's rows (G12, D10, lane 1 round 5): a row off screen skips layout
    and paint, so a change of the list's width (the docked Settings panel, a
@@ -81,7 +83,7 @@
   :root { --settings-dock-w: min(400px, 34vw); }
 }
 @media (min-width: 1024px) {
-  .explore-shell .xrails-rail { --xrail-h: calc(162.5px + max(256px, (100cqi - 4 * var(--space-5)) / 4.25) * 0.75); }
+  .explore-shell .xrails-rail { --xrail-h: calc(162.5px + var(--xname-extra) + max(256px, (100cqi - 4 * var(--space-5)) / 4.25) * 0.75); }
   .explore-shell .xrails.xrails { gap: var(--space-6); margin-top: var(--space-4); }
   /* The Map button's row sits between the tabs and the first title: 16
      on each side of it, so the tabs and the first rail read as one page
@@ -122,14 +124,17 @@
   hyphens: auto;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: var(--xrc-name-lines, 2);
+  line-clamp: var(--xrc-name-lines, 2);
   /* G12, D10 (round 6, lead decision): room for two lines on every card,
      a one-line name leaving the second empty, so every card of a strip has
      one height and a strip can draw only the cards near its view without
      its height changing (ExploreRails.jsx useStripReach). Its 1 px top
-     padding is inside the box. */
-  min-height: calc(2.5em + 1px);
+     padding is inside the box. Round 2 fix (owner: no cut text): the
+     strip sets --xrc-name-lines to what its longest name needs, 2 to 4
+     (ExploreRails.jsx useNameLines), so the room grows for every card of
+     that strip alike. */
+  min-height: calc(var(--xrc-name-lines, 2) * 1.25em + 1px);
 }
 /* A slot a strip has not drawn yet (ExploreRails.jsx): the width of a card,
    the strip's height, nothing painted. */

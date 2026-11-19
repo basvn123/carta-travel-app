@@ -62,10 +62,12 @@ test('every rail with four places is a strip; the theme rails use the vibe filte
   assert.match(rails, /sec\.addEventListener\('focusin', all\)/);
   assert.match(rails, /function useRailsInTurn\(rails, full\)/);
   const railCss = read('src/styles/85-explore-rails.css');
-  assert.match(railCss, /min-height: calc\(2\.5em \+ 1px\);/);
+  // Round 2 fix: the strip's name lines (2 to 4) set the room, one per strip.
+  assert.match(railCss, /min-height: calc\(var\(--xrc-name-lines, 2\) \* 1\.25em \+ 1px\);/);
+  assert.match(rails, /function useNameLines\(id, names, near\)/);
   assert.match(railCss, /contain-intrinsic-size: auto var\(--xrail-h\);/);
   // A theme rail asks for a Good Score or better, best first, by country.
-  assert.match(src, /vibeOf\(guided, p\.id, vibe\) >= 80 && bandAtLeast\(p\.rating, 'good'\)\)\.sort\(byRating\)/);
+  assert.match(src, /vibeOf\(guided, p\.id, vibe\) >= 80 && bandAtLeast\(p\.rating, 'good'\)\s+&& !\(vibe === 'oldtown' && castleOnly\(p\)\)\)\.sort\(byRating\)/);
 });
 
 test('the new rail titles and the named See all exist in all six languages', () => {

@@ -61,6 +61,12 @@ export function countNoTemp(rows, month) {
 const LANDLOCKED = new Set(['AD', 'AT', 'BY', 'CH', 'CZ', 'HU', 'LI', 'LU', 'MD', 'MK', 'RS', 'SK', 'SM', 'VA', 'XK']);
 const hasCat = (p, cats) => (p.categories || []).some((c) => cats.includes(c));
 const vibeOk = (p, guided, vibe) => vibeScore(guided, p.id, vibe) >= VIBE_MIN;
+// A castle on its own (Neuschwanstein, Burg Eltz, Egeskov) scores high on the
+// guided old-town vibe but is not an old town (flow-filters m3): a castle or
+// fortress with no town, village, city or historic tag of its own is left
+// out of Old towns (14 of the 634 old-town places in the 2026-11 data).
+const TOWN_CATS = ['town', 'village', 'city', 'historic', 'oldtown'];
+export const castleOnly = (p) => hasCat(p, ['castle', 'fortress']) && !hasCat(p, TOWN_CATS);
 
 /**
  * The picks, by group. Inside a group the options combine as `mode` says
@@ -83,7 +89,7 @@ export const PICKS = Object.freeze({
   hiking: { group: 'walk', labelKey: 'filters.hiking', rank: 'hiking',
     test: (p, guided) => vibeOk(p, guided, 'hiking') },
   oldtown: { group: 'walk', labelKey: 'filters.oldtown', rank: 'oldtown',
-    test: (p, guided) => vibeOk(p, guided, 'oldtown') },
+    test: (p, guided) => vibeOk(p, guided, 'oldtown') && !castleOnly(p) },
   city: { group: 'size', labelKey: 'filters.city',
     test: (p) => p.place?.class === 'metro' || p.place?.class === 'city' },
   town: { group: 'size', labelKey: 'filters.town', test: (p) => p.place?.class === 'town' },

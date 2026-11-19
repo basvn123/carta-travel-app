@@ -12,6 +12,7 @@ import { PlaceScore, RowFormation } from './explore/HouseParts.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
 import { monthName } from '../lib/dates.js';
 import { STORY_MAX, RAIL_CARD_SIZES } from './StoryRail.jsx';
+import { nameLines } from './nameLines.js';
 
 /**
  * Explore's sections (T427, after the owner's review of 2026-10-13).
@@ -280,11 +281,80 @@ function useStripReach(id, total) {
   return reach;
 }
 
+// G12 round 2 fix (owner rule: no cut text): a card's name keeps room for
+// as many lines as the strip's longest name needs (2 to 4), so every card of
+// a strip still has one height and windowing still holds, but "Stockholm
+// Archipelago (Vaxholm)" or "'s-Hertogenbosch" at 360 px in German is no
+// longer cut at two. The lines are worked out once per rail list with a
+// canvas (no layout per card): the font and the room a name gets beside its
+// Score and figure are read once from a drawn card per viewport width.
+const NAME_LINES_MIN = 2;
+const NAME_LINES_MAX = 4;
+let nameRuler = null;
+let nameCanvas = null;
+function readNameRuler(scope) {
+  const vw = window.innerWidth;
+  if (nameRuler?.vw === vw) return nameRuler;
+  const heads = [...(scope || document).querySelectorAll('.xrc .xrc-head')].slice(0, 8);
+  let room = Infinity;
+  let font = '';
+  for (const h of heads) {
+    const name = h.querySelector('.hs-rcard-name');
+    if (!name || !h.clientWidth) continue;
+    const gap = parseFloat(getComputedStyle(h).columnGap) || 0;
+    let w = h.clientWidth;
+    for (const c of h.children) if (c !== name) w -= c.getBoundingClientRect().width + gap;
+    room = Math.min(room, w);
+    if (!font) {
+      const s = getComputedStyle(name);
+      font = `${s.fontStyle} ${s.fontWeight} ${s.fontSize} ${s.fontFamily}`;
+    }
+  }
+  if (!font || !(room > 40 && room < Infinity)) return null;
+  // A card not drawn yet may carry a slightly wider figure than the ones read.
+  nameRuler = { vw, font, room: room - 8 };
+  return nameRuler;
+}
+
+function useNameLines(id, names, near) {
+  const key = names.join('\n');
+  React.useLayoutEffect(() => {
+    const sec = document.getElementById(id)?.closest('section');
+    if (!sec || !key) return undefined;
+    const apply = () => {
+      const ruler = readNameRuler(sec);
+      if (!ruler) return;
+      nameCanvas = nameCanvas || document.createElement('canvas').getContext('2d');
+      if (!nameCanvas) return;
+      nameCanvas.font = ruler.font;
+      const width = (s) => nameCanvas.measureText(s).width;
+      let most = NAME_LINES_MIN;
+      for (const n of key.split('\n')) most = Math.max(most, nameLines(n, ruler.room, width));
+      const v = String(Math.min(NAME_LINES_MAX, most));
+      if (sec.style.getPropertyValue('--xrc-name-lines') !== v) sec.style.setProperty('--xrc-name-lines', v);
+    };
+    apply();
+    // Canvas measures with a fallback until the web font has loaded.
+    let live = true;
+    document.fonts?.ready?.then(() => { if (live) apply(); });
+    let frame = 0;
+    const onResize = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => { frame = 0; apply(); });
+    };
+    window.addEventListener('resize', onResize);
+    return () => { live = false; window.removeEventListener('resize', onResize); if (frame) cancelAnimationFrame(frame); };
+  }, [id, key, near]);
+}
+
 const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false, mountNow = false }) {
   const near = useNearView(`xrail-${r.key}`, mountNow);
   const shown = near ? r.rows.slice(0, CAP) : [];
   const slots = shown.length + (r.seeAll ? 1 : 0);
   const reach = useStripReach(`xrail-${r.key}`, slots);
+  // Every name of the list, drawn or not: a waiting rail holds the height
+  // its names will need (--xrail-h reads the same lines).
+  useNameLines(`xrail-${r.key}`, React.useMemo(() => r.rows.slice(0, CAP).map((p) => p.city || ''), [r.rows]), near);
   const monthShort = month ? monthName(month, lang, false) : '';
   // h2: the rails sit straight under the page's h1 (T193). The house rail
   // (G1): the heading, See all and the two round arrows; the lead card's

@@ -9,6 +9,7 @@ import { SCENIC_HERO } from './exploreConsts.js';
 import { isResizable } from '../../lib/heroImage.js';
 import { commonsPageUrl } from '../../lib/imageCredit.js';
 import { spreadLeads } from './railLeads.js';
+import { castleOnly } from '../filters/filterModel.js';
 
 export function useExploreRails({
   allRows, applyShortcut, favorites, guided, lang, patchXf, railMonth, railsIdle, rows,
@@ -75,8 +76,10 @@ export function useExploreRails({
     // the guided data that also score Good or better, best Score first,
     // round-robin by country. Its See all is the same vibe filter, so the
     // list holds these places and the weaker matches after them.
+    // The Old towns rail drops a castle on its own, as its filter does.
     const vibeRail = (vibe) => (guided
-      ? kept(`vibe:${vibe}`, () => interleaveByCountry(rows.filter((p) => vibeOf(guided, p.id, vibe) >= 80 && bandAtLeast(p.rating, 'good')).sort(byRating)))
+      ? kept(`vibe:${vibe}`, () => interleaveByCountry(rows.filter((p) => vibeOf(guided, p.id, vibe) >= 80 && bandAtLeast(p.rating, 'good')
+        && !(vibe === 'oldtown' && castleOnly(p))).sort(byRating)))
       : []);
     const q = {
       // Top rated and the gems open on the highest Score, never on one country.

@@ -271,7 +271,14 @@ export default function AskChat(props) {
   React.useEffect(() => {
     if (isPhone) return undefined;
     const onKey = (e) => {
-      if (e.key === 'Escape' && panelRef.current?.contains(document.activeElement)) { e.preventDefault(); onClose(); }
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      // Also from the page or the band's Ask button: Ask is the one side
+      // panel open (Settings closes when it opens), so Escape is its.
+      const at = document.activeElement;
+      if (panelRef.current?.contains(at) || !at || at === document.body || at.closest?.('.band-ask')) {
+        e.preventDefault();
+        onClose();
+      }
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);

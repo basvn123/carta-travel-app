@@ -5,6 +5,8 @@ import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { IconButton } from '../../components/ui/index.js';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { durationMs } from '../../lib/motion.js';
+import { addRecentText } from '../../lib/search/recent.js';
+import { countKey } from '../../lib/plural.js';
 import { ExploreCategories } from '../ExploreCategories.jsx';
 import { openAskChat, closeAskChat, useAskChat } from '../ask/askChatStore.js';
 import { useSearchDock, dockBack, dockShare } from '../searchDockStore.js';
@@ -140,6 +142,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   const submit = (e) => {
     e?.preventDefault?.();
     const text = (open || edited ? q : shownQuery).trim();
+    if (text) addRecentText(text);
     onSearch({ kind, q: text });
     inputRef.current?.blur();
     close();
@@ -255,7 +258,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
                 )}
                 {isDesktop && places && (
                   <Pressable className={`band-filters${filters.isOpen ? ' is-on' : ''}`}
-                    aria-label={filterCount ? t('band.filtersOn', { n: filterCount }) : t('band.filters')}
+                    aria-label={filterCount ? t(countKey(t.lang, filterCount, 'band.filtersOnOne', 'band.filtersOn'), { n: filterCount }) : t('band.filters')}
                     aria-expanded={filters.isOpen}
                     onClick={(e) => openFilters(e.currentTarget)}>
                     <HouseIcon.filter size={20} />
@@ -263,9 +266,9 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
                     {filterCount > 0 && <span className="band-count" aria-hidden="true">{filterCount}</span>}
                   </Pressable>
                 )}
-                <button type="submit" className="band-go" aria-label={t('dock.title')}>
+                <Pressable type="submit" className="band-go" aria-label={t('dock.title')}>
                   <HouseIcon.search size={20} />
-                </button>
+                </Pressable>
               </form>
               {panel}
             </div>
