@@ -185,6 +185,24 @@ function scrollParent(el) {
   return null;
 }
 
+// G12, D10 (round 6): rails coming near in one fast scroll mount one at a
+// time, a frame apart, so each frame lays out one rail's cards (several at
+// once were one 0.7 s layout at 4x CPU).
+const mountQueue = [];
+let mounting = false;
+function queueMount(fn) {
+  mountQueue.push(fn);
+  if (mounting) return;
+  mounting = true;
+  const next = () => {
+    const job = mountQueue.shift();
+    if (!job) { mounting = false; return; }
+    job();
+    requestAnimationFrame(() => setTimeout(next, 0));
+  };
+  setTimeout(next, 0);
+}
+
 function useNearView(id, start) {
   const [near, setNear] = React.useState(start);
   React.useEffect(() => {
@@ -193,21 +211,80 @@ function useNearView(id, start) {
     if (!sec || typeof IntersectionObserver !== 'function') { setNear(true); return undefined; }
     // A transition: several rails coming near in one fast scroll mount in
     // short slices instead of one long frame.
-    const show = () => React.startTransition(() => setNear(true));
+    let live = true;
+    let queued = false;
+    const show = () => {
+      if (queued) return;
+      queued = true;
+      queueMount(() => { if (live) React.startTransition(() => setNear(true)); });
+    };
+    const now = () => setNear(true);
     // The rails scroll inside the Explore column: its edge, not the
     // viewport's, is where the margin has to reach.
     const io = new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) show(); },
       { root: scrollParent(sec), rootMargin: MOUNT_MARGIN });
     io.observe(sec);
-    sec.addEventListener('focusin', show);
-    return () => { io.disconnect(); sec.removeEventListener('focusin', show); };
+    // Focus mounts at once: the keyboard is already inside the rail.
+    sec.addEventListener('focusin', now);
+    return () => { live = false; io.disconnect(); sec.removeEventListener('focusin', now); };
   }, [id, near]);
   return near;
+}
+
+// G12, D10 (round 6, lead decision): a strip draws only the cards in or
+// near its visible width, plus a buffer of two; the rest of its slots are
+// empty spacers of the same width, so the strip scrolls as far, snaps the
+// same and its arrows behave the same. Every card has one height (the name
+// keeps room for two lines, 85-explore-rails.css), so a card arriving never
+// changes the strip's height. Scrolling the strip draws the cards coming
+// into reach and keeps them; focus entering the rail draws them all, so Tab
+// and the arrow keys reach every card in order. Six of sixteen cards a rail
+// on a desktop (three on a phone) cut the first draw, the late catalogue
+// swap and every relayout (the docked Settings) to about a third.
+const REACH_BUFFER = 2;
+function firstReach() {
+  const w = typeof window !== 'undefined' ? window.innerWidth : 1280;
+  // Cards in view: 4.25 from 1024 px, 2.15 from 600 px, else 1.3 (05-house.css).
+  const inView = w >= 1024 ? 5 : w >= 600 ? 3 : 2;
+  return inView + REACH_BUFFER;
+}
+
+function useStripReach(id, total) {
+  const [reach, setReach] = React.useState(firstReach);
+  React.useEffect(() => {
+    if (reach >= total) return undefined;
+    const sec = document.getElementById(id)?.closest('section');
+    if (!sec) return undefined;
+    let frame = 0;
+    const onScroll = (e) => {
+      const strip = e.target;
+      if (!(strip instanceof Element) || !strip.classList.contains('hs-rail') || frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const card = strip.firstElementChild;
+        const step = card ? card.offsetWidth + (parseFloat(getComputedStyle(strip).columnGap) || 0) : 0;
+        if (!step) return;
+        const need = Math.ceil((strip.scrollLeft + strip.clientWidth) / step) + REACH_BUFFER;
+        setReach((n) => (need > n ? need : n));
+      });
+    };
+    const all = () => setReach(total);
+    sec.addEventListener('scroll', onScroll, { capture: true, passive: true });
+    sec.addEventListener('focusin', all);
+    return () => {
+      sec.removeEventListener('scroll', onScroll, { capture: true });
+      sec.removeEventListener('focusin', all);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [id, reach, total]);
+  return reach;
 }
 
 const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false, mountNow = false }) {
   const near = useNearView(`xrail-${r.key}`, mountNow);
   const shown = near ? r.rows.slice(0, CAP) : [];
+  const slots = shown.length + (r.seeAll ? 1 : 0);
+  const reach = useStripReach(`xrail-${r.key}`, slots);
   const monthShort = month ? monthName(month, lang, false) : '';
   // h2: the rails sit straight under the page's h1 (T193). The house rail
   // (G1): the heading, See all and the two round arrows; the lead card's
@@ -215,13 +292,15 @@ const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, on
   // text): the cards already show the cheapest day, the month and the Score.
   return (
     <HouseRail id={`xrail-${r.key}`} title={r.title} headingLevel={2}
-      onSeeAll={r.seeAll} className="xrails-rail">
-      {shown.map((p, i) => (
-        <PlaceRailCard key={p.id} p={p} railKey={r.key} month={month} monthShort={monthShort}
+      onSeeAll={r.seeAll} className={near ? 'xrails-rail' : 'xrails-rail is-waiting'}>
+      {shown.map((p, i) => (i < reach
+        ? <PlaceRailCard key={p.id} p={p} railKey={r.key} month={month} monthShort={monthShort}
           onSelect={onSelect} fav={favorites?.has(p.id)} onToggleFav={onToggleFav} t={t}
           eager={eager && i < EAGER_CARDS} />
-      ))}
-      {near && r.seeAll && <SeeAllTile r={r} rest={r.rows.slice(CAP)} t={t} />}
+        : <div key={p.id} className="hs-rcard xrc-spacer" aria-hidden="true" />))}
+      {near && r.seeAll && (shown.length < reach
+        ? <SeeAllTile r={r} rest={r.rows.slice(CAP)} t={t} />
+        : <div className="hs-rcard xrc-spacer" aria-hidden="true" />)}
     </HouseRail>
   );
 });
@@ -237,12 +316,71 @@ function useStableCallback(fn) {
 
 /** `hideDoors` (T599): leave out the row of further-rail buttons, for a
  *  page that shows those doors elsewhere (the overview's top). */
+// G12, D10 (round 6, lead decision): when the full catalogue replaces the
+// lite one (`full` turns on), every rail gets new rows at once and redrawing
+// them all was one task of 0.4 to 6 s at 4x CPU. The rails take their new
+// rows one per task instead, the ones in or near the view first. Only that
+// swap is spread out: its figures are the same request priced on the same
+// inputs, so no card ever shows a price from other settings. Any other
+// change (a setting, a filter) reaches every rail at once.
+function useRailsInTurn(rails, full) {
+  const [held, setHeld] = React.useState(null);
+  const wasFull = React.useRef(full);
+  const nearKeys = React.useRef(new Set());
+  const swapping = full && !wasFull.current;
+  // The rails the swap found, frozen in the render the swap arrived in.
+  const prev = React.useRef(rails);
+  if (swapping && held == null) {
+    const map = new Map(prev.current.map((r) => [r.key, r]));
+    setHeld(map);
+  }
+  React.useLayoutEffect(() => {
+    wasFull.current = full;
+    prev.current = rails;
+  });
+  React.useEffect(() => {
+    if (!held) return undefined;
+    const order = rails.filter((r) => held.has(r.key) && held.get(r.key) !== r);
+    order.sort((a, b) => (nearKeys.current.has(b.key) ? 1 : 0) - (nearKeys.current.has(a.key) ? 1 : 0));
+    let timer = 0;
+    let i = 0;
+    const step = () => {
+      if (i >= order.length) { React.startTransition(() => setHeld(null)); return; }
+      const r = order[i];
+      i += 1;
+      React.startTransition(() => setHeld((m) => (m ? new Map(m).set(r.key, r) : m)));
+      timer = setTimeout(step, 0);
+    };
+    timer = setTimeout(step, 0);
+    return () => clearTimeout(timer);
+    // The rails worked through are the ones of the render the swap began in.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [held == null, rails]);
+  React.useEffect(() => {
+    if (typeof IntersectionObserver !== 'function') return undefined;
+    const secs = [...document.querySelectorAll('.xrails-rail')];
+    if (!secs.length) return undefined;
+    const io = new IntersectionObserver((es) => {
+      for (const e of es) {
+        const key = e.target.id?.replace(/^xrail-/, '') || e.target.querySelector('[id^="xrail-"]')?.id.replace(/^xrail-/, '');
+        if (!key) continue;
+        if (e.isIntersecting) nearKeys.current.add(key); else nearKeys.current.delete(key);
+      }
+    }, { rootMargin: '50% 0px' });
+    secs.forEach((s) => io.observe(s));
+    return () => io.disconnect();
+  }, [rails.length]);
+  return held ? rails.map((r) => held.get(r.key) || r) : rails;
+}
+
 export function ExploreRails({
-  rails, onSelect, favorites, onToggleFav, t, lead = 4, month = null, hideDoors = false, eager = false,
+  rails: railsNow, onSelect, favorites, onToggleFav, t, lead = 4, month = null, hideDoors = false, eager = false,
+  full = true,
 }) {
   const { lang } = useI18n();
   const select = useStableCallback(onSelect);
   const toggleFav = useStableCallback(onToggleFav);
+  const rails = useRailsInTurn(railsNow, full);
   const visible = rails.filter((r) => r.rows.length >= 4);
   if (!visible.length) return null;
   const strips = visible.slice(0, lead);

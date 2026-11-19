@@ -64,7 +64,7 @@ function useRouteIn(ref, view) {
 }
 
 export function ExploreContent({
-  allRows, anyActive, cardLinkId, chips, contentRef, costIndex, drawer, dxf, emptyLine, favSet,
+  allRows, anyActive, cardLinkId, catalogueFull = true, chips, contentRef, costIndex, drawer, dxf, emptyLine, favSet,
   gridTotal, isActive, isDesktop, lastChip, listed, locationQuery, mapOpened, mapTop,
   onMapNeedDetail, onMapViewport, onPick, onPinLink, onToggleFav, openPlace, overviewOf,
   pageOver, pending, pickedId, pickedRow, pinLinkId, pins, railLead, railMonth, rails,
@@ -146,7 +146,7 @@ export function ExploreContent({
           <ExploreRails rails={rails} onSelect={openPlace} t={t}
             favorites={favSet} onToggleFav={onToggleFav}
             month={xf.month || railMonth}
-            lead={railLead} hideDoors
+            lead={railLead} hideDoors full={catalogueFull}
             /* H12 (T1105): eager only while the rails are on screen; the
                tab stays mounted under Home and under a page over it. */
             eager={isActive && !pageOver} />

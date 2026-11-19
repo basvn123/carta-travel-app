@@ -29,7 +29,6 @@ export function useStripPosition(ref, count) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return undefined;
-    measure();
     let frame = 0;
     const onScroll = () => {
       cancelAnimationFrame(frame);
@@ -37,7 +36,11 @@ export function useStripPosition(ref, count) {
     };
     el.addEventListener('scroll', onScroll, { passive: true });
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(measure) : null;
-    ro?.observe(el);
+    // G12, D10 (round 6): the observer's first call (right after the next
+    // layout) is the first measure. Measuring here, in the commit, forced a
+    // layout of the whole page for every rail that mounted (0.2 to 0.9 s at
+    // 4x CPU on a desktop Explore).
+    if (ro) ro.observe(el); else measure();
     return () => {
       cancelAnimationFrame(frame);
       el.removeEventListener('scroll', onScroll);

@@ -23,6 +23,8 @@ import { setDockKind, setDockResults, setDockHandlers, useSearchDock } from './s
 // T585: the start dialog.
 import { StartDialog, startMode, markStartSeen } from './StartDialog.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
+import { calendarDefaultWindow } from '../lib/firstRun.js';
+import { todayISO } from '../lib/dates.js';
 import { isEmptyTaste, normalizeTaste } from '../lib/taste.js';
 import { MATCH } from '../lib/match.js';
 import { MatchMonth } from './WhyItMatches.jsx';
@@ -154,7 +156,12 @@ export function ExploreTab({
   // T586: the rails name the month the settings line shows, so "Best in"
   // never says October above a trip the line dates in November. The
   // traveller's own month first, then the dates on show, then today.
-  const shownDepart = useSettings()?.departDate;
+  // G12, D10 (round 6): before the app has written its default dates (they
+  // reach Explore with the first settled prices, often with the full
+  // catalogue), the month of the dates Carta will pick (lib/firstRun.js),
+  // not today's: the rails said November, then all turned to December at
+  // the late swap and were worked out again in one 0.7 s task at 4x CPU.
+  const shownDepart = useSettings()?.departDate || calendarDefaultWindow(todayISO())?.start;
   const railMonth = travelMonth || Number(String(shownDepart || '').slice(5, 7)) || new Date().getMonth() + 1;
   const {
     view, setView, bbox, pickedId, setPickedId, drawer, setDrawer, mapOpened, viewportMode,
@@ -537,10 +544,10 @@ export function ExploreTab({
   }, [listSource, rails]);
   const held = useFrozenOrder(frozen, toFreeze);
   const shownList = React.useMemo(
-    () => (frozen ? held.list.slice(0, visible) : listed), [frozen, held, listed, visible]);
+    () => (frozen && held !== toFreeze ? held.list.slice(0, visible) : listed), [frozen, held, toFreeze, listed, visible]);
   const shownRails = React.useMemo(
-    () => (frozen ? rails.map((rail) => ({ ...rail, rows: held[`rail:${rail.key}`] || rail.rows })) : rails),
-    [frozen, held, rails]);
+    () => (frozen && held !== toFreeze ? rails.map((rail) => ({ ...rail, rows: held[`rail:${rail.key}`] || rail.rows })) : rails),
+    [frozen, held, toFreeze, rails]);
 
   // The control bar's three instruments. The count is a measured figure,
   // so it is grouped the way the reader's locale groups thousands.
@@ -715,6 +722,7 @@ export function ExploreTab({
             the list back. */}
         <ExploreContent
           allRows={allRows} anyActive={anyActive} cardLinkId={cardLinkId} chips={chips}
+          catalogueFull={!data?.partial}
           contentRef={contentRef} costIndex={costIndex} drawer={drawer} dxf={dxf}
           emptyLine={emptyLine} favSet={favSet} gridTotal={gridTotal} isActive={isActive}
           isDesktop={isDesktop} lastChip={lastChip} listed={shownList}

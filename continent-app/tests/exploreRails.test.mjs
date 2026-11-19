@@ -53,6 +53,17 @@ test('every rail with four places is a strip; the theme rails use the vibe filte
   // Explore draws its footer only once the rails are complete.
   assert.match(src, /const railsSettled = !railsIdle \|\| \(!!guided && !waiting\)/);
   assert.match(read('src/browse/ExploreTab.jsx'), /\(railsSettled \|\| \(guidedDone && !guided\)\) && <SiteFooter \/>/);
+  // Round 6 (lead decision): one card height (two name lines kept), a strip
+  // draws the cards near its view and spacers for the rest, focus draws all,
+  // and the late swap reaches the rails one per task.
+  const rails = read('src/browse/ExploreRails.jsx');
+  assert.match(rails, /function useStripReach\(id, total\)/);
+  assert.match(rails, /className="hs-rcard xrc-spacer" aria-hidden="true"/);
+  assert.match(rails, /sec\.addEventListener\('focusin', all\)/);
+  assert.match(rails, /function useRailsInTurn\(rails, full\)/);
+  const railCss = read('src/styles/85-explore-rails.css');
+  assert.match(railCss, /min-height: calc\(2\.5em \+ 1px\);/);
+  assert.match(railCss, /contain-intrinsic-size: auto var\(--xrail-h\);/);
   // A theme rail asks for a Good Score or better, best first, by country.
   assert.match(src, /vibeOf\(guided, p\.id, vibe\) >= 80 && bandAtLeast\(p\.rating, 'good'\)\)\.sort\(byRating\)/);
 });
