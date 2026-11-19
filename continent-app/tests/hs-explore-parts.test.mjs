@@ -64,9 +64,10 @@ test('the overview top has no photo under text; Ask and search live in the band'
   assert.doesNotMatch(hero, /xov-photo/);
   // G12 (Explore top): the band in the top bar holds the search and Ask.
   const band = read('src/browse/band/ExploreBand.jsx');
-  assert.match(band, /openAskChat\(e\.currentTarget\)/);
+  // Round 2: Ask stands beside the field and never opens on its own.
+  assert.match(band, /openAsk\(e\.currentTarget\)/);
   assert.match(band, /role="search"/);
-  assert.match(band, /isQuestion\(text\)\) openAskChat/);
+  assert.doesNotMatch(band, /isQuestion\(text\)\) openAskChat/);
 });
 
 test('the chosen pin is the umber mark and nothing overshoots', () => {
