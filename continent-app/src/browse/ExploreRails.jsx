@@ -10,7 +10,8 @@ import { useI18n } from '../i18n/index.jsx';
 import { SaveButton } from './ExploreCards.jsx';
 import { PlaceScore, RowFormation } from './explore/HouseParts.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
-import { STORY_MAX, STORY_SIZES } from './StoryRail.jsx';
+import { monthName } from '../lib/dates.js';
+import { STORY_MAX, RAIL_CARD_SIZES } from './StoryRail.jsx';
 
 /**
  * Explore's sections (T427, after the owner's review of 2026-10-13).
@@ -70,7 +71,10 @@ const inMonth = (p, month) => !!month && (p.climate?.best || []).includes(month)
  *  Score plate, the flag and country with the status the rail's own question
  *  does not already say (the month, else the hidden gem), the why chips, then
  *  the weighted formation (its figure with the unit) and the friends line. */
-function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t, eager = false }) {
+// G12, D10 (audit-perf.md cause 4): memoised, so a rail redraw (a typed
+// letter, a saved place, a tab hop) redraws only the cards whose place, save
+// state or month changed. Every prop is a value or a stable callback.
+const PlaceRailCard = React.memo(function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t, eager = false }) {
   const goodNow = !MONTH_RAILS.has(railKey) && inMonth(p, month);
   const gem = !goodNow && railKey !== 'gems' && p.rating?.hidden_gem;
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
@@ -94,7 +98,7 @@ function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleF
         }}>
         <span className="hs-rcard-photo">
           <HeroImage url={p.image} image={p.photo} city={p.city} iso2={p.iso2} className="xrc-img" maxWidth={STORY_MAX}
-            sizes={STORY_SIZES} ratio={[4, 3]} eager={eager} />
+            sizes={RAIL_CARD_SIZES} ratio={[4, 3]} eager={eager} />
         </span>
       </a>
       <div className="xrc-head">
@@ -120,7 +124,7 @@ function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleF
       )}
     </article>
   );
-}
+});
 
 /**
  * The rail's last tile (Explore rails, owner 2026-11-18: "See all must be
@@ -162,9 +166,9 @@ function SeeAllTile({ r, rest, t }) {
 const EAGER_RAILS = 2;
 const EAGER_CARDS = 2;
 
-function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false }) {
+const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false }) {
   const shown = r.rows.slice(0, CAP);
-  const monthShort = month ? new Intl.DateTimeFormat(lang, { month: 'short' }).format(new Date(2026, month - 1, 15)) : '';
+  const monthShort = month ? monthName(month, lang, false) : '';
   // h2: the rails sit straight under the page's h1 (T193). The house rail
   // (G1): the heading, See all and the two round arrows; the lead card's
   // facts and the rail lines went (house style 2026-11, owner: no redundant
@@ -180,6 +184,15 @@ function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eage
       {r.seeAll && <SeeAllTile r={r} rest={r.rows.slice(CAP)} t={t} />}
     </HouseRail>
   );
+});
+
+// The latest callback behind a stable identity: the parents' open and save
+// handlers change with the search hits, and a new identity would redraw every
+// memoised card on each typed letter.
+function useStableCallback(fn) {
+  const ref = React.useRef(fn);
+  React.useLayoutEffect(() => { ref.current = fn; });
+  return React.useCallback((...a) => ref.current?.(...a), []);
 }
 
 /** `hideDoors` (T599): leave out the row of further-rail buttons, for a
@@ -188,6 +201,8 @@ export function ExploreRails({
   rails, onSelect, favorites, onToggleFav, t, lead = 4, month = null, hideDoors = false, eager = false,
 }) {
   const { lang } = useI18n();
+  const select = useStableCallback(onSelect);
+  const toggleFav = useStableCallback(onToggleFav);
   const visible = rails.filter((r) => r.rows.length >= 4);
   if (!visible.length) return null;
   const strips = visible.slice(0, lead);
@@ -198,7 +213,7 @@ export function ExploreRails({
   return (
     <div className="xrails">
       {strips.map((r, ri) => (
-        <ExploreRail key={r.key} r={r} onSelect={onSelect} favorites={favorites} onToggleFav={onToggleFav} t={t}
+        <ExploreRail key={r.key} r={r} onSelect={select} favorites={favorites} onToggleFav={onToggleFav ? toggleFav : null} t={t}
           month={month} lang={lang} eager={eager && ri < EAGER_RAILS} />
       ))}
       {doors.length > 0 && (

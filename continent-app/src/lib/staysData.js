@@ -12,18 +12,38 @@
  * Nothing blocks on it: bedPrice() prices from the annual medians in
  * dest.accommodation until a country's file arrives, then from the measured
  * months. Screens re-render through useStaysVersion().
+ *
+ * G12, D10 (explore-top-2 audit-perf.md cause 1): the 43 country files used
+ * to bump the version one by one, and each bump re-priced and re-rendered the
+ * whole catalogue in one blocking pass (55 to 95 s of blocked main thread at
+ * 4x CPU). Arrivals now wait in `pending` and are published together, once
+ * the files stop arriving for a moment (or when all are in), as one new
+ * immutable snapshot: the records and the version swap in the same step, so
+ * no reader sees records newer than the version its figures were keyed on.
+ * Readers take the snapshot in a transition, so a re-price yields to input.
  */
 
-import { useSyncExternalStore } from 'react';
+import { startTransition, useEffect, useState } from 'react';
 import { dataUrl } from './dataHost.js';
 
-const records = new Map();      // dest id -> record
+// The published records and their version, replaced (never mutated) at a
+// publish. Figures read only this.
+let snapshot = { version: 0, records: new Map() };
+const pending = new Map();      // dest id -> record, arrived, not yet published
 const loaded = new Map();       // cc -> Promise
 const listeners = new Set();
-let version = 0;
 let liveBase = null;
 let liveBuilt = null;   // Promise of the live copy's `built`, or null
 let bakedVersion = null;
+
+// A publish waits until the files stop arriving for PUBLISH_IDLE_MS, but never
+// more than PUBLISH_MAX_MS after the first unpublished one, so a slow network
+// still shows the measured months early. Measured locally the 43 files land
+// within about 2 s at 4x CPU: one to three publishes instead of 43.
+const PUBLISH_IDLE_MS = 300;
+const PUBLISH_MAX_MS = 2000;
+let publishTimer = null;
+let firstPendingAt = 0;
 
 // T646: every country file is asked for with its build in the URL (?b=), so a
 // new build is a new URL: neither the browser cache (max-age 1 h plus a day
@@ -48,7 +68,31 @@ export function setLiveBase(url, bakedBuilt = null) {
 }
 
 export function stayRecord(id) {
-  return id ? records.get(id) || null : null;
+  return id ? snapshot.records.get(id) || null : null;
+}
+
+/** Publish every record that arrived since the last publish, as one new
+ *  snapshot. Exported for the tests; the loader calls it itself. */
+export function publishStays() {
+  if (publishTimer) clearTimeout(publishTimer);
+  publishTimer = null;
+  if (!pending.size) return;
+  const records = new Map(snapshot.records);
+  for (const [id, rec] of pending) records.set(id, rec);
+  pending.clear();
+  snapshot = { version: snapshot.version + 1, records };
+  // One mark per publish: scripts/perf_explore.mjs counts them.
+  globalThis.performance?.mark?.('carta:stays-publish');
+  // A transition: the re-price it causes may be interrupted by a tap or a key.
+  startTransition(() => listeners.forEach((fn) => fn()));
+}
+
+function schedulePublish() {
+  const now = Date.now();
+  if (!publishTimer) firstPendingAt = now;
+  else clearTimeout(publishTimer);
+  const wait = Math.max(0, Math.min(PUBLISH_IDLE_MS, firstPendingAt + PUBLISH_MAX_MS - now));
+  publishTimer = setTimeout(publishStays, wait);
 }
 
 async function getJson(url, cache = 'default') {
@@ -74,45 +118,60 @@ export function loadStays(cc) {
     const files = res.filter((x) => x.status === 'fulfilled' && x.value?.dests).map((x) => x.value);
     if (!files.length) return 0;
     const best = files.sort((a, b) => String(b.built || '').localeCompare(String(a.built || '')))[0];
-    for (const [id, rec] of Object.entries(best.dests)) records.set(id, rec);
-    version += 1;
-    listeners.forEach((fn) => fn());
+    for (const [id, rec] of Object.entries(best.dests)) pending.set(id, rec);
+    schedulePublish();
     return Object.keys(best.dests).length;
   });
   loaded.set(cc, p);
   return p;
 }
 
-/** Load every country of a destination map, in the background. */
+/** Load every country of a destination map, in the background. The last
+ *  file in publishes at once rather than waiting for the idle timer. */
 export function loadStaysFor(destinations) {
   const ccs = new Set();
   for (const d of Object.values(destinations || {})) if (d?.iso2) ccs.add(d.iso2);
-  return Promise.all([...ccs].map(loadStays));
+  return Promise.all([...ccs].map(loadStays)).then((counts) => {
+    publishStays();
+    return counts;
+  });
 }
 
-function subscribe(fn) {
-  listeners.add(fn);
-  return () => listeners.delete(fn);
+/** The published snapshot, re-read after each publish (in a transition). */
+function useStaysSnapshot() {
+  const [snap, setSnap] = useState(snapshot);
+  useEffect(() => {
+    const onPublish = () => setSnap(snapshot);
+    listeners.add(onPublish);
+    // A publish between this render and the subscription is not missed.
+    if (snap !== snapshot) onPublish();
+    return () => { listeners.delete(onPublish); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- subscribe once; the check above only catches a publish before it
+  }, []);
+  return snap;
 }
 
-/** A number that goes up each time a country's stays arrive; put it in the
+/** A number that goes up each time stays are published; put it in the
  *  dependency list of anything that prices beds. */
 export function useStaysVersion() {
-  return useSyncExternalStore(subscribe, () => version, () => 0);
+  return useStaysSnapshot().version;
+}
+
+/** stayRecord(id), re-read whenever stays are published (T1022), from the
+ *  snapshot this render holds. */
+export function useStayRecord(id) {
+  const snap = useStaysSnapshot();
+  return id ? snap.records.get(id) || null : null;
 }
 
 /** Seed the records directly: the node builds (prerender, OG cards) read the
- *  baked files from disk with this, and the tests use it. */
-/** stayRecord(id), re-read whenever a country's stays file arrives (T1022). */
-export function useStayRecord(id) {
-  useStaysVersion();
-  return stayRecord(id);
-}
-
+ *  baked files from disk with this, and the tests use it. Synchronous: the
+ *  records are readable as soon as it returns. */
 export function setStayRecords(map) {
-  records.clear();
-  for (const [id, rec] of Object.entries(map || {})) records.set(id, rec);
-  version += 1;
+  pending.clear();
+  if (publishTimer) clearTimeout(publishTimer);
+  publishTimer = null;
+  snapshot = { version: snapshot.version + 1, records: new Map(Object.entries(map || {})) };
 }
 
 /** The records of a list of stays files ({dests}), merged, for setStayRecords. */
@@ -122,8 +181,9 @@ export function mergeStayFiles(files) {
   return out;
 }
 
-/** Goes up whenever a country's stays file is merged in; caches of figures
- *  that read the month curves key on it (lib/costIndex.js, T692). */
+/** Goes up at each publish; caches of figures that read the month curves
+ *  key on it (lib/costIndex.js, T692). Always the version of the records
+ *  stayRecord() reads. */
 export function staysDataVersion() {
-  return version;
+  return snapshot.version;
 }

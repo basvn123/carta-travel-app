@@ -254,6 +254,22 @@ function rungsFor(max) {
  */
 export function heroLadder(image, max = 960, manifest = ACTIVE) {
   if (!image || typeof image !== 'object') return null;
+  // G12, D10 (audit-perf.md cause 4): hashing the Commons title (sha1Hex) on
+  // every render of 289 cards cost over a second of an Explore load at 4x
+  // CPU. A wire image record is never changed after it is read, so its
+  // answer is kept per record, manifest and width.
+  let byImage = ladderMemo.get(manifest);
+  if (!byImage) { byImage = new WeakMap(); ladderMemo.set(manifest, byImage); }
+  let byMax = byImage.get(image);
+  if (!byMax) { byMax = new Map(); byImage.set(image, byMax); }
+  if (byMax.has(max)) return byMax.get(max);
+  const out = ladderFor(image, max, manifest);
+  byMax.set(max, out);
+  return out;
+}
+const ladderMemo = new WeakMap();
+
+function ladderFor(image, max, manifest) {
   const n = rungsFor(max);
   // Already joined on the wire (T052): the record knows its own address.
   if (image.ih) {

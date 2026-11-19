@@ -1216,9 +1216,11 @@ function TravelApp() {
   const wantReach = activeTab === 'map' || reachHours != null;
   const reachMinutes = useReach(wantReach ? choices.origin : null);
 
-  // Price every destination for the current dates/choices. The Explore tab
-  // no longer reads fares at all; this keeps running for the Destinations
-  // tab's price chips and the URL contract (priceRange restore).
+  // Price every destination for the current dates/choices, for the
+  // Destinations tab's price chips. The Explore tab reads no fares, so they
+  // are priced only while that tab shows (G12, D10: a start town pick on
+  // Explore spent about 11 s at 4x CPU here). The pr range left the URL in
+  // T697, so no restored range needs them either.
   const {
     pricedAll, availableCountries, priceRange, setPriceRange, priceBounds,
   } = useDestinationSearch({
@@ -1227,6 +1229,7 @@ function TravelApp() {
     ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
     reachHours, reachMinutes,
     initialPriceRange: init.priceRange,
+    enabled: activeTab === 'places',
   });
 
   // Keep the URL + localStorage in sync so the view is shareable and survives a
@@ -1303,14 +1306,23 @@ function TravelApp() {
   }, [data]);
   const ownDates = !!(departDate && returnDate && defaultDates
     && (departDate !== defaultDates.start || returnDate !== defaultDates.end));
-  const request = useMemo(
+  const requestNow = useMemo(
     () => priceRequest({ choices, departDate, returnDate, dateFlex, ownDates, xm: exploreMonth }),
     [choices, departDate, returnDate, dateFlex, ownDates, exploreMonth],
   );
-  const exploreIndices = useMemo(
-    () => (data && staysVersion >= 0 ? priceDays(data.destinations, request) : null),
-    [data, request, staysVersion],
-  );
+  // G12, D10 (audit-perf.md cause 3): one start-town pick re-priced the
+  // catalogue four times, because each write to `choices` made a new request
+  // even where the request's contents stayed the same. It keeps its identity
+  // while its value is the same, so only a change that moves a price prices.
+  const requestKey = JSON.stringify(requestNow);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- value key: the request's contents, not its identity
+  const request = useMemo(() => requestNow, [requestKey]);
+  const exploreIndices = useMemo(() => {
+    if (!data || staysVersion < 0) return null;
+    // One mark per catalogue re-price: scripts/perf_explore.mjs counts them.
+    globalThis.performance?.mark?.('carta:reprice');
+    return priceDays(data.destinations, request);
+  }, [data, request, staysVersion]);
   dayPricesRef.current = exploreIndices;
   // T944: a saved place whose day price fell clearly since it was saved is
   // reported to the notify function, only for an account with price drops
