@@ -149,6 +149,29 @@ export function wayRowsFor({ rows, destinations, files, request, mode, home, par
 }
 
 /**
+ * G12, D10 (round 7): whether every row's way is already kept for these
+ * inputs, so a caller can show the rows with their way "not known yet"
+ * (notKnownWay) while warmWays works the rest out in slices, instead of
+ * working out thousands of ways in one render (2.7 to 3.7 s at 4x CPU on
+ * a desktop load, before the start town was known).
+ */
+export function waysReady({ rows, destinations, files, request, mode, home, party, now = Date.now() }) {
+  const kept = keptFor({ destinations, files, request, mode, home, party, now });
+  if (!kept) return true;
+  for (const p of rows || []) if (!kept.has(p.id)) return false;
+  return true;
+}
+
+/** The rows with their way not known yet (the same state a place with no
+ *  figure shows), while warmWays runs. */
+export function wayRowsPending({ rows, mode }) {
+  const m = new Map();
+  const way = notKnownWay(mode);
+  for (const p of rows || []) m.set(p.id, { ...p, cost: { ...p.cost, way }, fmin: null });
+  return m;
+}
+
+/**
  * G12, D10 (lane 1, round 3): the same ways worked out ahead, in short
  * slices, into the cache wayRowsFor reads, so the render that shows a new
  * start town or catalogue finds every place's way already known. Same

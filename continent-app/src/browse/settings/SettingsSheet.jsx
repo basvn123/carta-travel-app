@@ -106,7 +106,7 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
   }, [nonce, openStep]);
 
   // Phone and tablet: a modal, its focus trapped, Escape closes.
-  useFocusTrap(panelRef, onClose, { initialFocusRef: titleRef, enabled: !docked });
+  useFocusTrap(panelRef, onClose, { initialFocusRef: titleRef, enabled: !docked, afterPaint: true });
   // Desktop: non-modal. Focus moves to the title on open and Escape closes
   // while focus is inside the panel; Tab leaves it into the page as usual.
   // preventScroll (G12, D10, lane 1 round 3): the title is in view, and a

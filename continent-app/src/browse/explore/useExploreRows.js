@@ -3,7 +3,7 @@ import React from 'react';
 import { resolveWhen } from '../../lib/when.js';
 import { partyOf } from '../../lib/party.js';
 import { homePoint } from '../../lib/travelWay.js';
-import { wayRowsFor, wayKey, flightFiles } from '../../lib/settings/ways.js';
+import { wayRowsFor, wayKey, flightFiles, waysReady, wayRowsPending, warmWays } from '../../lib/settings/ways.js';
 import { makeLabels, whyFacts, noCarOk, underOk, quietOk, matchGuided, guidedComparator } from '../../lib/guidedSearch.js';
 import { overviewRegion, overviewScore, reasonText, overviewReason } from '../../lib/placeOverview.js';
 import { fmtMonthRanges } from '../ClimateStrip.jsx';
@@ -57,14 +57,30 @@ export function useExploreRows({
   // a price view or span change reprices nothing here; the figure itself is
   // lib/settings priceFigure at render.
   const wKey = wayKey(request, wayMode, home, party);
+  // G12, D10 (round 7): ways not yet kept for these inputs (App warms them
+  // ahead of a re-price, but not for inputs Explore holds while the start
+  // town is still unknown) are worked out in slices here; until then every
+  // row shows its way as not known yet, never a guessed figure.
+  const [waysTick, setWaysTick] = React.useState(0);
   const wayRows = React.useMemo(() => {
     if (!data?.destinations) return null;
-    return wayRowsFor({ rows: catAllRows, destinations: data.destinations, files, request, mode: wayMode, home, party });
+    const args = { rows: catAllRows, destinations: data.destinations, files, request, mode: wayMode, home, party };
+    if (!waysReady(args)) return { pending: true, map: wayRowsPending(args) };
+    return { pending: false, map: wayRowsFor(args) };
     // `request` is read through wKey: only a change that moves a way reprices.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [catAllRows, files, wKey, data]);
+  }, [catAllRows, files, wKey, data, waysTick]);
+  const waysPending = !!wayRows?.pending;
+  React.useEffect(() => {
+    if (!waysPending || !data?.destinations) return undefined;
+    const ctl = new AbortController();
+    warmWays({ destinations: data.destinations, files, request, mode: wayMode, home, party, signal: ctl.signal })
+      .then((done) => { if (done && !ctl.signal.aborted) React.startTransition(() => setWaysTick((n) => n + 1)); });
+    return () => ctl.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [waysPending, wKey, data, files]);
   const withWay = React.useCallback(
-    (list) => (wayRows ? list.map((p) => (wayRows.has(p.id) ? wayRows.get(p.id) : p)) : list),
+    (list) => (wayRows ? list.map((p) => (wayRows.map.has(p.id) ? wayRows.map.get(p.id) : p)) : list),
     [wayRows],
   );
   const allRows = React.useMemo(() => withWay(catAllRows), [catAllRows, withWay]);
