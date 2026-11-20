@@ -846,8 +846,7 @@ export function ExploreMap({
     if (!pickedId) return undefined;
     const f = geojsonRef.current.features.find((x) => x.properties.id === pickedId);
     if (!f) return undefined;
-    // A frame later, so a card that the pick raised is in the page.
-    const h = requestAnimationFrame(() => {
+    const clear = () => {
       const cv = map.getCanvas();
       const H = cv.clientHeight; const W = cv.clientWidth;
       let top = 0; let bottom = 0;
@@ -857,14 +856,24 @@ export function ExploreMap({
       }
       const pt = map.project(f.geometry.coordinates);
       const margin = 48;
-      if (pt.x > margin && pt.x < W - margin && pt.y > top + margin && pt.y < H - bottom - margin) return;
+      // The picked pill carries the name, so it reaches further sideways.
+      const pr = f.properties;
+      const half = (pinSize(['xp', 'p', pr.city, pr.fig].join(SEP))?.[0] || 160) / 2 + 8;
+      if (pt.x > half && pt.x < W - half && pt.y > top + margin && pt.y < H - bottom - margin) return;
       map.easeTo({
         center: f.geometry.coordinates,
         padding: { top, left: 0, right: 0, bottom },
         duration: reducedMotion() ? 0 : 480,
       });
-    });
-    return () => cancelAnimationFrame(h);
+    };
+    // A frame later, so a card that the pick raised is in the page; and again
+    // once the card says it has settled (carta:map-chrome): on the first
+    // frame it is still fading in at opacity 0 and counts as no chrome, which
+    // left the picked pin under the card.
+    const h = requestAnimationFrame(clear);
+    const onChrome = () => requestAnimationFrame(clear);
+    window.addEventListener('carta:map-chrome', onChrome);
+    return () => { cancelAnimationFrame(h); window.removeEventListener('carta:map-chrome', onChrome); };
   }, [pickedId, applyPins]);
 
   // New places or new figures: the same camera, the pins re-priced and

@@ -290,6 +290,18 @@ const pinsUnder = (page) => page.evaluate(`(() => {
   return hits;
 })()`);
 
+// The picked pin (its point and the pill's half height, 15 px) is not under
+// the tap card.
+const pickedClear = (page) => page.evaluate(`(() => {
+  const m = ${MAP};
+  const card = document.querySelector('.xmap-tapcard')?.getBoundingClientRect();
+  const f = m.getLayer('xpin-picked') && m.queryRenderedFeatures({ layers: ['xpin-picked'] })[0];
+  if (!card || !f) return !!card;
+  const c = m.getCanvas().getBoundingClientRect();
+  const p = m.project(f.geometry.coordinates);
+  return p.y + c.top + 15 < card.top;
+})()`);
+
 // At rest: the map idle (its tiles in, the pins placed), then a beat longer
 // than the pins' rest after a move (PIN_REST_MS, 0.6 s in ExploreMap.jsx).
 const settle = (page) => page.evaluate(`new Promise((ok) => { const m = ${MAP}; const t = setTimeout(ok, 8000); m.once('idle', () => { clearTimeout(t); setTimeout(ok, 1000); }); m.triggerRepaint(); })`);
@@ -372,6 +384,8 @@ async function layoutChecks(w, h) {
       await settle(page);
       const u = await pinsUnder(page);
       check(`${tag}: no pin under the tap card`, u.length === 0, u.join(' '));
+      check(`${tag}: the tap card's name is whole`, await page.evaluate(() => { const n = document.querySelector('.xmap-tapcard .xrow-name'); return !!n && n.scrollWidth <= n.clientWidth + 1; }));
+      check(`${tag}: the picked pin sits clear of the tap card`, await pickedClear(page));
       // Swipe the card down.
       // A finger, as on a phone (touch events, not a mouse).
       const c = r1.card;

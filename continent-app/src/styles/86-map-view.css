@@ -192,6 +192,16 @@
     border: 0;
     background: transparent;
   }
+  /* A long name wraps to a second line and the card grows; never an
+     ellipsis (owner rule: no cut-off text). The figure keeps the first line. */
+  /* The name takes the whole first line (the score plate follows under it):
+     beside the plate it was squeezed to a letter a line at 360. */
+  .explore-shell .xmap-tapcard .xrow-hs .xrow-line1 { flex-wrap: wrap; align-items: center; row-gap: 2px; }
+  .explore-shell .xmap-tapcard .xrow-hs .xrow-name { flex: 1 1 100%; white-space: normal; overflow: visible; overflow-wrap: break-word; text-wrap: balance; }
+  .explore-shell .xmap-tapcard .xrow-hs .xfig-basis { max-width: 11ch; white-space: normal; }
+  .explore-shell .xmap-tapcard .xrow-hs .xrow-country { flex-wrap: wrap; white-space: normal; }
+  .explore-shell .xmap-tapcard .xrow-hs .xrow-region { overflow: visible; }
+  .explore-shell .xmap-tapcard .xrow-hs .hs-formation-day { align-self: start; }
   /* The close control is there for a keyboard; a finger swipes or taps the map. */
   .explore-shell .xmap-tapcard-close {
     position: absolute;
