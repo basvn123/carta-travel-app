@@ -28,29 +28,28 @@ test('flight copy never says exact, live, available, guaranteed or seats left', 
   }
 });
 
-test('the flight tab keeps its checked line and the Google Flights link', () => {
+// G12 (D10, owner 2026-11-19 and 2026-11-20): the source, the check date,
+// "it may change" and a typical fare's flag live behind the info button by
+// "Book on Google Flights", never as lines of text.
+test('the flights screen keeps the Google Flights link with its source, date and warning behind the info button', () => {
   const src = read('src/components/price/FlightTab.jsx');
-  assert.match(src, /checkedLabel\(t, /, 'each leg says when it was checked');
-  assert.match(src, /flight\.bookNote/, 'prices may have changed');
   assert.match(src, /googleFlightsLink\(ft\.home, ft\.airport, shown\.out\.date, \{ back: shown\.back\.date/);
-  assert.match(src, /t\('flight\.book'\)/);
-  assert.doesNotMatch(src, /flight\.bookReturn/, 'the button label stays short');
+  assert.match(src, /t\('price\.flight\.book'\)/);
+  assert.match(src, /t\('price\.flight\.info', \{ date \}\)/);
+  assert.match(src, /t\('price\.flight\.infoTypical'\)/);
+  assert.doesNotMatch(src, /flight\.bookNote|checkedLabel|settingsSum\.typical|price\.flight\.dayFailed|price\.flight\.basis/);
+  assert.match(en['price.flight.info'], /checked \{date\}\. It may change/);
   const href = googleFlightsLink('BRU', 'FCO', '2026-03-14', { back: '2026-03-21' });
   assert.match(href, /curr=EUR/);
   assert.match(decodeURIComponent(href), /2026-03-14 returning 2026-03-21/);
 });
 
-test('the flight tab draws a duration only for a searched flight', () => {
+test('G12 (D10): the row way figure heads the screen until a pick, and no fare says no flight checked yet', () => {
   const src = read('src/components/price/FlightTab.jsx');
-  assert.match(src, /leg\.source === 'live' \? durationOf\(t, leg\.min\) : null/);
-});
-
-test('G12 (D10): a typical fare is labelled typical, and no fare says no flight checked yet', () => {
-  const src = read('src/components/price/FlightTab.jsx');
-  assert.match(src, /way\?\.typical && way\.perPerson > 0 && !ft\.picked/, 'the row typical fare heads the tab until a checked day is picked');
-  assert.match(src, /t\('settingsSum\.typical'\)/);
+  const hook = read('src/components/price/useFlightTab.js');
+  assert.match(hook, /!picked && rowWay/, 'the cards\' own figure until another flight is picked');
+  assert.doesNotMatch(hook, /group: view/, 'always per person');
   assert.match(src, /t\('settingsSum\.noFlight'\)/);
   assert.match(read('src/components/price/PriceSheet.jsx'), /<FlightTab [^>]*way=\{s\.cost\?\.way/);
-  assert.match(en['settingsSum.typical'], /^Typical fare/);
   assert.equal(en['settingsSum.noFlight'], 'No flight checked yet');
 });
