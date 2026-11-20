@@ -13,6 +13,9 @@ User=carta
 Group=carta
 WorkingDirectory=/home/carta/carta
 Environment=LANG=C.UTF-8
+# The 13 GB extract goes on the volume: the 38 GB root disk had 11 GB free on
+# 2026-11-20.
+Environment=CARTA_BASEMAP_WORK=/mnt/trailslab/basemap
 ExecStart=/bin/bash /home/carta/carta/infra/hetzner/cax11/basemap_refresh.sh
 # About 13 GB down and 13 GB up, up to three extract tries.
 TimeoutStartSec=8h
