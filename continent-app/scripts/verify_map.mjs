@@ -416,6 +416,7 @@ async function layoutChecks(w, h) {
         await page.waitForTimeout(500);
         const hot = await page.evaluate(`${MAP}.getFilter('xpin-hot')`);
         check(`${tag}: a card under the pointer lifts its pin`, JSON.stringify(hot).includes(`"${id}"`), id);
+        await shot('hover');
       }
       await page.mouse.click(5, h - 5).catch(() => {});
     }

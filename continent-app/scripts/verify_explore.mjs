@@ -645,6 +645,50 @@ try {
   check('search pass ran', false, String(e).split('\n')[0]);
 }
 
+// ── The list view and the receipt from a card (G12 map view, with the band;
+// judgement-1 fix 6). The older passes above still name pre-band parts. On a
+// phone and a desktop: the list shows rows, each row's figure is a euro
+// amount or "Not yet", the figure opens the place's receipt, Escape closes
+// it, and the List | Map switch reaches the map. ──
+for (const [label, viewport, opts] of [
+  ['phone', { width: 390, height: 844 }, { isMobile: true, hasTouch: true, deviceScaleFactor: 3 }],
+  ['desktop', { width: 1440, height: 900 }, {}],
+]) {
+  try {
+    const page = await boot(viewport, opts);
+    await page.goto(new globalThis.URL('?tab=map', URL).href, { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.locator('.explore-tab').waitFor({ timeout: 60000 }).catch(() => {});
+    await page.waitForTimeout(2500);
+    if (!(await page.locator('.xrow').first().isVisible().catch(() => false))) {
+      await page.getByRole('button', { name: /see all|show all/i }).first().click({ timeout: 5000 }).catch(() => {});
+      await page.waitForTimeout(1500);
+    }
+    const rows = page.locator('.xrows .xrow');
+    const n = await rows.count();
+    check(`${label} list view: rows show`, n >= 5, `${n} rows`);
+    const figs = await page.locator('.xrows .xrow .xfig-amount').evaluateAll((els) => els.slice(0, 8).map((e) => e.textContent.trim()));
+    check(`${label} list view: each figure is euros or Not yet`, figs.length > 0 && figs.every((f) => /€\s?\d|\d\s?€|not yet/i.test(f)), figs.join(' | '));
+    const fig = page.locator('.xrows .xrow .xfig').first();
+    await fig.scrollIntoViewIfNeeded();
+    await fig.click();
+    await page.waitForTimeout(1200);
+    const title = await page.locator('.rcp-title, .rcp-sheet .fsheet-title').filter({ visible: true }).first().textContent({ timeout: 5000 }).catch(() => '');
+    check(`${label} list view: a card's figure opens its receipt`, !!title, title);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(800);
+    check(`${label} list view: Escape closes the receipt`, !(await page.locator('.rcp-title, .rcp-sheet').filter({ visible: true }).count()));
+    // The desktop's List | Map is a segmented control; the phone's a button.
+    await page.locator('.seg-item').filter({ hasText: /^Map$/ }).or(page.getByRole('button', { name: /^map$/i }))
+      .filter({ visible: true }).first().click({ timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(2500);
+    const onMap = await page.evaluate(() => new URLSearchParams(location.search).get('xw') === 'map' && !!document.querySelector('.xcontent-map .xmap-canvas'));
+    check(`${label} list view: Map opens the map view`, onMap);
+    await page.close();
+  } catch (e) {
+    check(`${label} list view pass ran`, false, String(e).split('\n')[0]);
+  }
+}
+
 // ── Report ──
 let failed = 0;
 for (const c of checks) {
