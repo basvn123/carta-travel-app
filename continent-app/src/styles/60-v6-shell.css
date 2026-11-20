@@ -1036,7 +1036,9 @@ html.kbd-open .settings-done { display: none; }
 
 /* Phone: one slim row that always fits. */
 @media (max-width: 768px) {
-  .app-header { background: var(--surface-page); border-bottom: var(--stroke-hair) solid var(--border); gap: var(--space-2); }
+  /* No rule under the header: the search below stands on the same ground
+     (G12, place-prices 4, owner shot 14). */
+  .app-header { background: var(--surface-page); border-bottom: 0; gap: var(--space-2); }
   .app-header .app-header-brand .brand-name { font-size: var(--text-headline); }
   .app-header .app-header-account { gap: 0; flex: none; }
 }

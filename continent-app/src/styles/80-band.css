@@ -261,15 +261,15 @@
 .band.is-desk .band-in.icon-btn { height: var(--tap-main); }
 .band.is-desk .band-ask,
 .band.is-desk .band-settings { padding: 0 var(--space-4) 0 var(--space-3); }
-/* Row 2 on the field's text edge (inset, the field's edge, its 16 px), its
-   32 px items 9 px under the field: their 18 px ink sits 16 px under the
-   field's edge, one gap (O1). Its room stays on every tab: content-box, so
+/* Row 2 on the field's own left edge, the edge the tabs start on (G12,
+   place-prices 4, owner shot 20: it sat on the field's text), its 32 px
+   items 9 px under the field. Its room stays on every tab: content-box, so
    an empty line keeps the items' 32 px under its padding and a tab change
    moves nothing below it (G12 round 2: the layers' line was 9 px shorter). */
 .band.is-desk .band-line {
   box-sizing: content-box;
   min-height: 32px;
-  padding: 9px var(--page-inset) 0 calc(var(--page-inset) + var(--stroke-edge) + var(--space-4));
+  padding: 9px var(--page-inset) 0;
 }
 .band.is-desk .band-chip { min-height: 32px; }
 /* Hover paints a soft ground past the item's edge without moving it. */

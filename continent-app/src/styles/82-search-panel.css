@@ -148,16 +148,9 @@
 .sp-chip.is-on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 .sp-chip.is-on .sp-chip-ic { color: var(--select-ink); }
 
-/* Phone: Browse swipes in one line, so the suggestions stay in view. */
-.sp.is-phone .sp-chips {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  margin: 0 calc(var(--space-3) * -1);
-  padding: var(--space-1) var(--space-3);
-  scroll-padding-inline: var(--space-3);
-  scrollbar-width: none;
-}
-.sp.is-phone .sp-chips::-webkit-scrollbar { display: none; }
+/* Phone (G12, D10, place-prices 4): Browse wraps inside the panel, so
+   every chip shows; no chip is cut at the edge (owner shot 15). */
+.sp.is-phone .sp-chips { padding-block: var(--space-1); }
 
 /* Phone, O3: Filters and Ask Carta, a group of their own under a rule, as
    buttons, never rows of the list. */
