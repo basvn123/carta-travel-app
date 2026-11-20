@@ -130,23 +130,30 @@
   .flt-row.is-loading .flt-mark-empty { animation: none; }
 }
 
-/* The airline's mark: its own logo on white, never recoloured. */
+/* The airline's mark (G12, D10): the IATA code on the airline's colour
+   (lib/flights/airlineColours.js sets --air and --air-ink, 4.5:1 or more),
+   its own logo on white laid over it once the file has loaded, never
+   recoloured. */
 .flt-mark {
+  position: relative;
   display: inline-grid;
   place-items: center;
   flex: none;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-sm);
+  background: var(--air, var(--umber-800));
+  border-radius: var(--radius-control);
   overflow: hidden;
 }
 .flt-mark-md { width: 36px; height: 36px; }
-.flt-mark-sm { width: 22px; height: 22px; }
-.flt-mark img { width: 80%; height: 80%; object-fit: contain; }
+.flt-mark-sm { width: 22px; height: 22px; border-radius: var(--radius-sm); }
+.flt-mark img { position: absolute; inset: 10%; width: 80%; height: 80%; object-fit: contain; opacity: 0; }
+.flt-mark.has-logo { background: var(--surface); outline: 1px solid var(--border-soft); outline-offset: -1px; }
+.flt-mark.has-logo img { opacity: 1; transition: opacity var(--dur-2) var(--ease-out); }
+.flt-mark.has-logo .flt-mark-code { visibility: hidden; }
 .flt-mark-code {
   font-size: var(--text-micro);
-  font-weight: 700;
-  color: var(--text-2);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--air-ink, var(--action-text));
   font-variant-numeric: tabular-nums;
 }
 .flt-mark-empty { background: var(--surface-sunken); border-color: transparent; }

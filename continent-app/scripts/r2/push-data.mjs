@@ -128,9 +128,12 @@ function uploadPlan() {
  * Top-level names under data/ that other writers own (T1042), never pruned:
  *   flights   the flight-sweep Worker (workers/flight-sweep) and
  *             pipeline/flights/build_routes.py --upload
+ *   airlines  the airline logos the flight-sweep Worker copies once per
+ *             airline (copyLogos); a prune deleted all but five of them
+ *             before this line, and the sweep never copies one twice (G12, D10)
  * A new writer under data/ adds its prefix here, or the next deploy deletes it.
  */
-export const OTHER_WRITERS = Object.freeze(['flights']);
+export const OTHER_WRITERS = Object.freeze(['flights', 'airlines']);
 
 /**
  * Top-level files under data/ the owner or a check puts there by hand, never

@@ -85,6 +85,10 @@ export default defineConfig({
       // at the edge) from production, which has the Function; STAYS_PROXY
       // to choose another deploy.
       '/api/stays': { target: process.env.STAYS_PROXY || 'https://carta-app.pages.dev', changeOrigin: true },
+      // G12 (D10): a day's live flights (a read-only GET, held an hour at the
+      // edge) from production, so localhost lists them instead of failing;
+      // FLIGHTS_PROXY to choose another deploy.
+      '/api/flights': { target: process.env.FLIGHTS_PROXY || 'https://www.carta-europetravel.com', changeOrigin: true },
     },
   },
   css: { lightningcss: { targets: CSS_TARGETS } },
