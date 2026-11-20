@@ -281,6 +281,8 @@ const pinsUnder = (page) => page.evaluate(`(() => {
   const layers = ['xpin', 'xpin-best', 'xcluster'].filter((l) => m.getLayer(l));
   const hits = [];
   for (const f of m.queryRenderedFeatures({ layers })) {
+    // A bubble under the chrome is faded by feature state (drawn at opacity 0).
+    if (f.layer.id === 'xcluster' && m.getFeatureState({ source: 'dests-c', id: f.id }).under) continue;
     const p = m.project(f.geometry.coordinates);
     const x = p.x + c.left; const y = p.y + c.top;
     if (ctl.some((r) => x > r.left && x < r.right && y > r.top && y < r.bottom)) hits.push(f.properties.fig || f.properties.point_count);
@@ -288,8 +290,9 @@ const pinsUnder = (page) => page.evaluate(`(() => {
   return hits;
 })()`);
 
-// At rest: the map idle (its tiles in, the pins placed), then a beat.
-const settle = (page) => page.evaluate(`new Promise((ok) => { const m = ${MAP}; const t = setTimeout(ok, 8000); m.once('idle', () => { clearTimeout(t); setTimeout(ok, 400); }); m.triggerRepaint(); })`);
+// At rest: the map idle (its tiles in, the pins placed), then a beat longer
+// than the pins' rest after a move (PIN_REST_MS, 0.6 s in ExploreMap.jsx).
+const settle = (page) => page.evaluate(`new Promise((ok) => { const m = ${MAP}; const t = setTimeout(ok, 8000); m.once('idle', () => { clearTimeout(t); setTimeout(ok, 1000); }); m.triggerRepaint(); })`);
 
 async function layoutChecks(w, h) {
   const tag = `${w}x${h}`;
@@ -319,25 +322,42 @@ async function layoutChecks(w, h) {
   // No camera jump on a settings change: switch the price basis.
   const cam0 = await page.evaluate(`[${MAP}.getCenter().toArray(), ${MAP}.getZoom()]`);
   const filt = phone ? '.band-chip--filters' : '.band-filters';
-  await page.locator(filt).first().click();
-  await page.waitForTimeout(800);
-  const opt = page.locator('[role="dialog"] input[type="checkbox"], [role="dialog"] [aria-pressed], [role="dialog"] [role="switch"]').first();
-  if (await opt.count()) await opt.click({ force: true }).catch(() => {});
-  await page.waitForTimeout(1500);
-  await page.keyboard.press('Escape');
-  await page.waitForTimeout(800);
-  // A desktop panel that Escape left open closes from its own button.
-  if (await page.locator('.filter-sheet, .fsheet, [role="dialog"]').filter({ visible: true }).count()) {
-    await page.locator(filt).first().click().catch(() => {});
-  }
-  await page.waitForTimeout(1200);
+  // The first option of the filters, flipped (run twice, it is undone).
+  const flipFilter = async () => {
+    await page.locator(filt).first().click();
+    await page.waitForTimeout(800);
+    const opt = page.locator('[role="dialog"] input[type="checkbox"], [role="dialog"] [aria-pressed], [role="dialog"] [role="switch"]').first();
+    if (await opt.count()) await opt.click({ force: true }).catch(() => {});
+    await page.waitForTimeout(1500);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(800);
+    // A desktop panel that Escape left open closes from its own button.
+    if (await page.locator('.filter-sheet, .fsheet, [role="dialog"]').filter({ visible: true }).count()) {
+      await page.locator(filt).first().click().catch(() => {});
+    }
+    await page.waitForTimeout(1200);
+  };
+  await flipFilter();
   const stillOpen = await page.locator('[role="dialog"]').filter({ visible: true }).count();
   const cam1 = await page.evaluate(`[${MAP}.getCenter().toArray(), ${MAP}.getZoom()]`);
   const moved = Math.hypot(cam1[0][0] - cam0[0][0], cam1[0][1] - cam0[0][1]) + Math.abs(cam1[1] - cam0[1]);
   check(`${tag}: a filter change keeps the camera`, moved < 1e-6, `moved ${moved.toFixed(6)}`);
   check(`${tag}: the filters close again`, stillOpen === 0, `${stillOpen} open`);
+  // The flipped filter can leave no place on the map: undo it before the tap.
+  await flipFilter();
+  await settle(page);
   // Tap a pill: picked, umber with its name; phone: the card, map height kept.
-  const pt = await page.evaluate(`(() => { const m = ${MAP}; const f = m.queryRenderedFeatures({ layers: ['xpin'] })[0]; if (!f) return null; const p = m.project(f.geometry.coordinates); const r = m.getCanvas().getBoundingClientRect(); return [p.x + r.left, p.y + r.top, f.properties.id]; })()`);
+  // A pill or the best pill; none here, a busier view is tried once. A size
+  // with no pin fails: its tap, card and sheet checks must run (judgement-1).
+  const findPin = () => page.evaluate(`(() => { const m = ${MAP}; const f = m.queryRenderedFeatures({ layers: ['xpin', 'xpin-best'] })[0]; if (!f) return null; const p = m.project(f.geometry.coordinates); const r = m.getCanvas().getBoundingClientRect(); return [p.x + r.left, p.y + r.top, f.properties.id]; })()`);
+  let pt = await findPin();
+  if (!pt) {
+    await page.evaluate(`${MAP}.jumpTo({ center: [10, 46.5], zoom: 6 })`);
+    await settle(page);
+    pt = await findPin();
+  }
+  const why = pt ? '' : await page.evaluate(`(() => { const m = ${MAP}; return JSON.stringify({ src: m.getSource('dests')?._data?.geojson?.features?.length, vis: m.getLayoutProperty('xpin', 'visibility'), drawn: m.queryRenderedFeatures({ layers: ['xcluster', 'dest-dots'] }).length, z: m.getZoom() }); })()`);
+  check(`${tag}: a price pin to tap is drawn`, !!pt, why);
   if (pt) {
     if (phone) await page.touchscreen.tap(pt[0], pt[1]); else await page.mouse.click(pt[0], pt[1]);
     await page.waitForTimeout(1500);
@@ -353,15 +373,23 @@ async function layoutChecks(w, h) {
       const u = await pinsUnder(page);
       check(`${tag}: no pin under the tap card`, u.length === 0, u.join(' '));
       // Swipe the card down.
+      // A finger, as on a phone (touch events, not a mouse).
       const c = r1.card;
-      await page.mouse.move((c.l + c.r) / 2, c.t + 20);
-      await page.mouse.down();
-      await page.mouse.move((c.l + c.r) / 2, c.t + 120, { steps: 8 });
-      await page.mouse.up();
+      if (c) {
+        const cdp = await page.context().newCDPSession(page);
+        const x = (c.l + c.r) / 2; const y = c.t + 20;
+        await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 1 }] });
+        for (let i = 1; i <= 8; i += 1) {
+          await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: y + 100 * i / 8, id: 1 }] });
+          await page.waitForTimeout(16);
+        }
+        await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+        await cdp.detach();
+      }
       await page.waitForTimeout(800);
       check(`${tag}: a swipe down puts the card away`, !(await page.locator('.xmap-tapcard').count()));
       // The sheet: pill to half, grab to full, flick down to peek or closed.
-      await page.locator('.xmap-listpill').click();
+      await page.locator('.xmap-listpill').click({ timeout: 5000 }).catch(() => {});
       await page.waitForTimeout(700);
       const half = await page.evaluate(() => document.querySelector('.xsheet')?.className || '');
       check(`${tag}: List opens the sheet half way`, /is-half/.test(half), half);

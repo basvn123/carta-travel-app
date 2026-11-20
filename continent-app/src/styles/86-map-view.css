@@ -231,8 +231,10 @@
   .explore-shell .xsheet-grab::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: var(--tap); }
   .explore-shell .xsheet-grab:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -2px; }
   .explore-shell .xsheet-grab-bar { width: 40px; height: 4px; border-radius: var(--radius-pill); background: var(--border); }
-  .explore-shell .xsheet-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-height: var(--tap); }
-  .explore-shell .xsheet-count { margin: 0; font-size: var(--text-lead); font-weight: 800; line-height: var(--leading-tight); }
+  /* The count has its own line over the sort and List buttons: beside them
+     "3.787 plaatsen op de kaart" wrapped to four lines (nl, fix round 3). */
+  .explore-shell .xsheet-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-1) var(--space-2); min-height: var(--tap); }
+  .explore-shell .xsheet-count { flex: 1 0 100%; margin: 0; font-size: var(--text-lead); font-weight: 800; line-height: var(--leading-tight); }
   .explore-shell .xsheet-sort { display: inline-flex; align-items: center; gap: var(--space-2); }
   .explore-shell .xsheet-legend { margin: 0; font-size: var(--text-label); color: var(--text-2); }
   .explore-shell .xsheet-body {
@@ -241,7 +243,27 @@
     overscroll-behavior: contain;
     touch-action: pan-y;
   }
-  .explore-shell .xsheet-rows { padding: 0 var(--space-4) var(--space-4); }
+  /* The last row scrolls clear of the floating Map pill. */
+  .explore-shell .xsheet-rows { padding: 0 var(--space-4) calc(var(--tap) + var(--space-6)); }
+}
+/* The sheet's rows read like the phone list: the name gets the whole line
+   and wraps rather than ending in "Lake...", the basis words wrap under the
+   figure, and the second line wraps so "Verborgen parel" never lies over
+   the region (nl, fix round 3). */
+@container xlist (max-width: 599px) {
+  .explore-shell .xsheet-rows .xrow-hs {
+    grid-template-areas:
+      "media l1 l1 l1 save"
+      "media l2 l2 day save"
+      "media . . day save"
+      "media fit fit fit save";
+  }
+  .explore-shell .xsheet-rows .xrow-hs .xrow-name { white-space: normal; overflow: visible; overflow-wrap: anywhere; text-wrap: balance; }
+  .explore-shell .xsheet-rows .xrow-hs .xrow-line2 { flex-wrap: wrap; row-gap: 2px; line-height: var(--leading-tight); }
+  /* The words wrap beside the flag; only the gem tag takes a line of its own. */
+  .explore-shell .xsheet-rows .xrow-hs .xrow-country { flex: 1 1 0; min-width: 8ch; flex-wrap: wrap; white-space: normal; }
+  .explore-shell .xsheet-rows .xrow-hs .xrow-region { overflow: visible; }
+  .explore-shell .xsheet-rows .xrow-hs .xfig-basis { max-width: 11ch; white-space: normal; }
 }
 
 /* ================================================================= Desktop */

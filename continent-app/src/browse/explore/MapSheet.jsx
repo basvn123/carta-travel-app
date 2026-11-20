@@ -37,6 +37,10 @@ export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, on
   const bodyRef = React.useRef(null);
   const [hostH, setHostH] = React.useState(0);
   const [topRoom, setTopRoom] = React.useState(0);
+  // Peek shows the head down to the sort, measured: the count's own line is
+  // one or two lines high by language.
+  const [peekPx, setPeekPx] = React.useState(PEEK_PX);
+  const [headH, setHeadH] = React.useState(PEEK_PX + 24);
   const [drag, setDrag] = React.useState(null);
   const dragRef = React.useRef(null);
 
@@ -54,17 +58,23 @@ export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, on
         if (r.height) room = Math.max(room, r.bottom - top);
       }
       setTopRoom(Math.round(room + 8));
+      const head = rootRef.current?.querySelector('.xsheet-head');
+      const row = rootRef.current?.querySelector('.xsheet-row');
+      if (row) setPeekPx(Math.max(PEEK_PX, row.offsetTop + row.offsetHeight + 8));
+      if (head) setHeadH(head.offsetHeight);
     };
     read();
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
     ro?.observe(host);
+    const head = rootRef.current?.querySelector('.xsheet-head');
+    if (head) ro?.observe(head);
     return () => ro?.disconnect();
   }, []);
 
   const shown = (s) => {
-    if (s === 'full') return Math.max(PEEK_PX, hostH - topRoom);
-    if (s === 'half') return Math.max(PEEK_PX, Math.round(hostH * 0.5));
-    if (s === 'peek') return PEEK_PX;
+    if (s === 'full') return Math.max(peekPx, hostH - topRoom);
+    if (s === 'half') return Math.max(peekPx, Math.round(hostH * 0.5));
+    if (s === 'peek') return peekPx;
     return 0;
   };
   const visible = drag != null ? drag : shown(stop);
@@ -185,7 +195,7 @@ export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, on
           </div>
           <p className="xsheet-legend"><span className="xmap-best-dot" aria-hidden="true" />{t('explore.mapBestInView')}</p>
         </div>
-        <div ref={bodyRef} className="xsheet-body" style={{ height: `${Math.max(0, shown(stop === 'closed' ? 'half' : stop) - PEEK_PX - 24)}px` }}>
+        <div ref={bodyRef} className="xsheet-body" style={{ height: `${Math.max(0, shown(stop === 'closed' ? 'half' : stop) - headH)}px` }}>
           <div className="xrows xsheet-rows">
             {/* Rows only while the sheet shows: a closed sheet re-rendering
                 60 rows after every pan cost the map its frames. */}
