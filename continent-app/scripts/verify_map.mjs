@@ -263,10 +263,7 @@ function overlaps(rs, w, h) {
     const a = rs[ks[i]];
     if (a.l < -1 || a.t < -1 || a.r > w + 1 || a.b > h + 1) bad.push(`${ks[i]} off screen`);
     for (let j = i + 1; j < ks.length; j += 1) {
-      // The chip row is a scroller as wide as the screen; the heart sits over
-      // the desktop column by design (decision.md "Desktop").
       const pair = [ks[i], ks[j]].sort().join('+');
-      if (pair === 'column+heart') continue;
       if (meet(a, rs[ks[j]])) bad.push(pair);
     }
   }
@@ -276,7 +273,7 @@ function overlaps(rs, w, h) {
 const pinsUnder = (page) => page.evaluate(`(() => {
   const m = ${MAP};
   const c = m.getCanvas().getBoundingClientRect();
-  const sel = '.band.is-map .band-row, .band.is-map .band-strip, .xmap-listpill, .xmap-tapcard, .xsheet:not(.is-closed), .xcontent-map .maplibregl-ctrl-group, .xcontent-map .maplibregl-ctrl-attrib';
+  const sel = '.band.is-map .band-row, .band.is-map .band-strip, .xmap-listpill, .xmap-tapcard, .xsheet:not(.is-closed), .xcontent-map .maplibregl-ctrl-group, .xcontent-map .maplibregl-ctrl-attrib, .corner-slot--left';
   const ctl = [...document.querySelectorAll(sel)].map((e) => e.getBoundingClientRect()).filter((r) => r.width && r.height);
   const layers = ['xpin', 'xpin-best', 'xcluster'].filter((l) => m.getLayer(l));
   const hits = [];
@@ -323,6 +320,15 @@ async function layoutChecks(w, h) {
     check(`${tag}: heart and zoom buttons hidden`, !r0.heart && !r0.zoom, Object.keys(r0).join(' '));
     check(`${tag}: the map fills the screen to the nav`, await page.evaluate(`${MAP}.getCanvas().getBoundingClientRect().top`) <= 1);
   } else {
+    // The heart in the map's bottom-left corner, 16 px in, clear of the
+    // column's cards (owner, 2026-11-20).
+    const hc = await page.evaluate(`(() => { const c = ${MAP}.getCanvas().getBoundingClientRect(); const d = document.querySelector('.corner-slot--left')?.getBoundingClientRect();
+      if (!d || !d.width) return 'no heart';
+      const cards = [...document.querySelectorAll('.mpp .xrow')].map((e) => e.getBoundingClientRect());
+      const overCard = cards.some((r) => Math.min(r.right, d.right) - Math.max(r.left, d.left) > 1 && Math.min(r.bottom, d.bottom) - Math.max(r.top, d.top) > 1);
+      const foot = Math.min(c.bottom, innerHeight);
+      return [Math.round(d.left - c.left), Math.round(foot - d.bottom), overCard ? 'over a card' : ''].join(' ').trim(); })()`);
+    check(`${tag}: the heart sits 16 px inside the map's bottom left`, /^1[5-7] 1[5-7]$/.test(hc), hc);
     check(`${tag}: zoom 40 px bottom right`, r0.zoom && Math.round(r0.zoom.r - r0.zoom.l) === 40 && r0.zoom.b > h - 120, JSON.stringify(r0.zoom));
   }
   check(`${tag}: no floating control overlaps another (open)`, overlaps(r0, w, h).length === 0, overlaps(r0, w, h).join(', '));

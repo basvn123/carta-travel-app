@@ -298,6 +298,12 @@
 
 /* ================================================================= Desktop */
 @media (min-width: 769px) {
+  /* The style disc in the map's bottom-left corner, 16 px in (ExploreMap.jsx
+     useMapCorner), never over the list column (owner, 2026-11-20). */
+  html.has-map-corner .corner-slot--left {
+    left: var(--map-corner-left);
+    bottom: var(--map-corner-bottom);
+  }
   /* The column: 400 px of compact cards on stone, the map beside it. */
   .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 400px; }
   .explore-shell .mpp--float {

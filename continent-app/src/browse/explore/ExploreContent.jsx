@@ -120,7 +120,7 @@ export function ExploreContent({
               framed={anyActive || searchHits != null}
               pickedId={pickedRow ? pickedRow.id : null} onPick={onPick}
               zoomAt="bottom-right" fitKey={searchHits != null ? locationQuery || '' : ''}
-              chrome={MAP_CHROME} />
+              chrome={MAP_CHROME} cornerInMap />
           </React.Suspense>
           {/* T592 (owner decision 6): the map the Kayak way. On a
               desktop the panel floats on the left over the map: the

@@ -249,6 +249,51 @@ function chromeRects(map, selector) {
   return out;
 }
 
+// The style disc (.corner-slot--left, fixed to the window) follows the map
+// pane on a tablet or desktop: the pane's bottom-left, 16 px in, goes to
+// --map-corner-left and --map-corner-bottom with html.has-map-corner
+// (86-map-view.css). The map names the disc as chrome, so no pin sits under it.
+const MAP_CORNER_INSET = 16;
+function useMapCorner(ref, on) {
+  useEffect(() => {
+    const el = ref.current;
+    const root = document.documentElement;
+    if (!on || !el || typeof window.matchMedia !== 'function') return undefined;
+    const wide = window.matchMedia('(min-width: 769px)');
+    let raf = 0;
+    const off = () => {
+      root.classList.remove('has-map-corner');
+      root.style.removeProperty('--map-corner-left');
+      root.style.removeProperty('--map-corner-bottom');
+    };
+    const place = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      if (!wide.matches || !r.width || !r.height) { off(); return; }
+      // A pane that runs past the window's foot keeps the disc on screen.
+      const bottom = Math.max(0, window.innerHeight - r.bottom) + MAP_CORNER_INSET;
+      root.style.setProperty('--map-corner-left', `${Math.round(r.left + MAP_CORNER_INSET)}px`);
+      root.style.setProperty('--map-corner-bottom', `${Math.round(bottom)}px`);
+      root.classList.add('has-map-corner');
+    };
+    const later = () => { if (!raf) raf = requestAnimationFrame(place); };
+    place();
+    window.addEventListener('resize', later);
+    window.addEventListener('scroll', later, { passive: true, capture: true });
+    wide.addEventListener?.('change', later);
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(later) : null;
+    ro?.observe(el);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', later);
+      window.removeEventListener('scroll', later, { capture: true });
+      wide.removeEventListener?.('change', later);
+      ro?.disconnect();
+      off();
+    };
+  }, [ref, on]);
+}
+
 export function ExploreMap({
   rows, all, pins = null, onSelect, onViewport, onNeedDetail, t, ringId = null, onPinLink = null,
   costs = null, onBack = null, visible = true, framed = false, lines = null,
@@ -261,8 +306,13 @@ export function ExploreMap({
   // zoom buttons stand, and the key whose change frames the list anew (a
   // new search); filters and settings never move the camera.
   chrome = '', zoomAt = 'top-right', fitKey = '',
+  // On a tablet or desktop the style disc moves into the map's bottom-left
+  // corner (owner, 2026-11-20: in the window corner it covered the list
+  // column's last photo).
+  cornerInMap = false,
 }) {
   const containerRef = useRef(null);
+  useMapCorner(containerRef, cornerInMap && visible);
   const mapRef = useRef(null);
   const readyRef = useRef(false);
   const popupRef = useRef(null);
