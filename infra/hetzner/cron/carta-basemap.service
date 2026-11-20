@@ -1,0 +1,21 @@
+# Carta basemap refresh (G12): a fresh Europe extract of the Protomaps
+# basemap to R2 and the manifest the Explore map reads, once a month.
+# infra/hetzner/cax11/basemap_refresh.sh skips when the manifest already names
+# the newest build. Owner steps: docs/owner/maps-refresh.md.
+[Unit]
+Description=Carta basemap refresh to R2 (G12)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=carta
+Group=carta
+WorkingDirectory=/home/carta/carta
+Environment=LANG=C.UTF-8
+ExecStart=/bin/bash /home/carta/carta/infra/hetzner/cax11/basemap_refresh.sh
+# About 13 GB down and 13 GB up, up to three extract tries.
+TimeoutStartSec=8h
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7

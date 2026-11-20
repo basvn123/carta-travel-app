@@ -30,8 +30,13 @@ import { BASEMAP_COLOURS } from '../../map/tokenColors.js';
 // lives only there, never in public/, so dev and preview builds read the
 // same files as production.
 export const MAPS_BASE = 'https://data.carta-europetravel.com/data/maps';
-// The extract's build date names it; a refresh uploads a new file and changes
-// this line (docs/owner/maps-refresh.md, scripts/maps/refresh-basemap.mjs).
+// The box's monthly job (infra/hetzner/cax11/basemap_refresh.sh) uploads a
+// new dated extract and rewrites this manifest ({ pmtiles: <file>, ... }), so
+// the map moves to it without a deploy. The style names the manifest; the
+// pmtiles source resolves it to the file (pmtilesProtocol.js).
+export const MANIFEST_URL = `${MAPS_BASE}/basemap.json`;
+// The file read when the manifest cannot be: the first extract, uploaded
+// 2026-11-20 and never deleted by the job (it is not in the job's ledger).
 export const BASEMAP_FILE = 'europe-2026-11-18.pmtiles';
 export const BASEMAP_URL = `${MAPS_BASE}/${BASEMAP_FILE}`;
 export const GLYPHS_URL = `${MAPS_BASE}/fonts/{fontstack}/{range}.pbf`;
@@ -76,7 +81,7 @@ export function cartaMapStyle({ dark = false, lang = 'en' } = {}) {
     sources: {
       [BASEMAP_SOURCE]: {
         type: 'vector',
-        url: `pmtiles://${BASEMAP_URL}`,
+        url: `pmtiles://${MANIFEST_URL}`,
         attribution: BASEMAP_ATTRIBUTION,
       },
     },

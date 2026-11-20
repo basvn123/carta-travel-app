@@ -18,8 +18,9 @@
  * `rclone copy`/`copyto`, never sync or delete, so an older extract the live
  * site still names stays readable until the owner removes it by hand. The
  * pmtiles name carries its build date and is never rewritten, so it caches
- * for a year; a refresh is a new name plus one line in
- * src/lib/map/cartaMapStyle.js (BASEMAP_FILE). push-data.mjs keeps `maps`
+ * for a year. The monthly refresh runs on the box
+ * (infra/hetzner/cax11/basemap_refresh.sh), which also moves the manifest
+ * data/maps/basemap.json; this script is the laptop path. push-data.mjs keeps `maps`
  * out of its prune (OTHER_WRITERS).
  *
  * rclone reads the r2 remote from the environment, the same five variables as
@@ -98,7 +99,7 @@ function main() {
     if (r.status !== 0) { console.error(`[push-maps] failed (exit ${r.status})`); process.exit(r.status || 1); }
   }
   if (!live) console.log('\nPlan only, nothing sent. Add --live to upload.');
-  else if (pmtiles) console.log(`\nUploaded. Set BASEMAP_FILE = '${basename(pmtiles)}' in src/lib/map/cartaMapStyle.js.`);
+  else if (pmtiles) console.log(`\nUploaded. Point data/maps/basemap.json at '${basename(pmtiles)}' (docs/owner/maps-refresh.md).`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();

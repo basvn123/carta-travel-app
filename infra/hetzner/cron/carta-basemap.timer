@@ -1,0 +1,15 @@
+# Second Wednesday of the month at 02:00 Brussels (G12): clear of the Saturday
+# 03:00 tiers, the Sunday 04:00 reboot window and the Monday 09:00 weekly tier.
+# Persistent=true: a slot missed while the box was off runs at next boot.
+[Unit]
+Description=Carta basemap refresh timer (second Wednesday, 02:00 Europe/Brussels)
+
+[Timer]
+OnCalendar=Wed *-*-08..14 02:00:00 Europe/Brussels
+RandomizedDelaySec=15min
+Persistent=true
+AccuracySec=1min
+Unit=carta-basemap.service
+
+[Install]
+WantedBy=timers.target

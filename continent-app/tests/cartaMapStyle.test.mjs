@@ -6,9 +6,9 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { validateStyleMin } from "@maplibre/maplibre-gl-style-spec";
 import {
-  cartaMapStyle, isCartaBasemap, BASEMAP_URL, BASEMAP_FILE, GLYPHS_URL, MAPS_BASE,
+  cartaMapStyle, isCartaBasemap, BASEMAP_URL, BASEMAP_FILE, GLYPHS_URL, MAPS_BASE, MANIFEST_URL,
 } from "../src/lib/map/cartaMapStyle.js";
-import { mergeFallback, isBaseLayer } from "../src/lib/map/pmtilesProtocol.js";
+import { mergeFallback, isBaseLayer, extractUrlFrom, ManifestSource } from "../src/lib/map/pmtilesProtocol.js";
 import { BASEMAP_COLOURS } from "../src/map/tokenColors.js";
 import { mapsPlan } from "../scripts/r2/push-maps.mjs";
 
@@ -21,7 +21,8 @@ test("the light and dark styles are valid MapLibre styles", () => {
 
 test("the style reads our PMTiles and glyphs on the data host and credits OpenStreetMap", () => {
   const s = cartaMapStyle();
-  assert.equal(s.sources.protomaps.url, `pmtiles://${BASEMAP_URL}`);
+  assert.equal(s.sources.protomaps.url, `pmtiles://${MANIFEST_URL}`);
+  assert.equal(MANIFEST_URL, `${MAPS_BASE}/basemap.json`);
   assert.match(BASEMAP_FILE, /^europe-\d{4}-\d{2}-\d{2}\.pmtiles$/);
   assert.ok(BASEMAP_URL.startsWith("https://data.carta-europetravel.com/data/maps/"));
   assert.equal(s.glyphs, GLYPHS_URL);
@@ -76,6 +77,20 @@ test("the CARTO fallback keeps the caller's sources and layers above CARTO's", (
   assert.equal(out.glyphs, prev.glyphs);
   assert.ok(!isCartaBasemap(out));
   assert.ok(isBaseLayer({ id: "base-earth" }) && !isBaseLayer({ id: "dest-dots", source: "dests" }));
+});
+
+test("the manifest names the extract; a missing or odd one falls back to the built-in file", async () => {
+  assert.equal(extractUrlFrom({ pmtiles: "europe-2026-12-09.pmtiles" }), `${MAPS_BASE}/europe-2026-12-09.pmtiles`);
+  for (const bad of [null, {}, { pmtiles: "../x.pmtiles" }, { pmtiles: "https://evil/europe-2026-12-09.pmtiles" }]) {
+    assert.equal(extractUrlFrom(bad), BASEMAP_URL);
+  }
+  const ok = new ManifestSource(MANIFEST_URL, async () => ({ ok: true, json: async () => ({ pmtiles: "europe-2026-12-09.pmtiles" }) }));
+  assert.equal(ok.getKey(), MANIFEST_URL);
+  assert.equal((await ok.resolve()).url, `${MAPS_BASE}/europe-2026-12-09.pmtiles`);
+  const down = new ManifestSource(MANIFEST_URL, async () => { throw new Error("offline"); });
+  assert.equal((await down.resolve()).url, BASEMAP_URL);
+  const missing = new ManifestSource(MANIFEST_URL, async () => ({ ok: false }));
+  assert.equal((await missing.resolve()).url, BASEMAP_URL);
 });
 
 test("the map upload only copies, under data/maps/, with a dated never-overwritten name", () => {

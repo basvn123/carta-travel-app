@@ -7,7 +7,7 @@
 # rotated file. The dated per-day logs run_pipeline.py writes
 # (logs/pipeline_<date>.log) are compressed after 7 days and deleted after 90
 # by run_pipeline.sh itself, since a rotation rule fits fixed names only.
-/home/carta/logs/weekly.log /home/carta/carta/logs/pipeline_run.log {
+/home/carta/logs/weekly.log /home/carta/logs/basemap.log /home/carta/carta/logs/pipeline_run.log {
     su carta carta
     weekly
     rotate 12

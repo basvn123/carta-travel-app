@@ -7,22 +7,70 @@
  * instance it keeps is shared, so the archive's header and directories are
  * fetched once and every later map starts from the cache.
  *
+ * The style names the manifest (MANIFEST_URL), not a file: ManifestSource
+ * reads basemap.json once, then serves every byte range from the extract it
+ * names, or from BASEMAP_FILE when the manifest is missing or malformed.
+ *
  * basemapFallback switches a map to CARTO's style when our archive cannot be
  * read at all (the header request fails: host down, CORS refused on an
  * unlisted preview origin). A single failed tile is not a reason to switch.
  * The switch keeps the caller's own sources and layers (everything that is
  * not `base-` on the protomaps source) and keeps our glyphs for their labels.
  */
-import { PMTiles, Protocol } from 'pmtiles';
-import { BASEMAP_SOURCE, BASEMAP_URL, CARTO_FALLBACK_STYLE, FONT_REGULAR } from './cartaMapStyle.js';
+import { FetchSource, PMTiles, Protocol } from 'pmtiles';
+import {
+  BASEMAP_SOURCE, BASEMAP_URL, CARTO_FALLBACK_STYLE, FONT_REGULAR, MANIFEST_URL, MAPS_BASE,
+} from './cartaMapStyle.js';
 
 let protocol = null;
+
+/**
+ * The extract URL a manifest names, or BASEMAP_URL. Only a dated europe
+ * file under MAPS_BASE is accepted, so a bad manifest cannot point the map
+ * anywhere else.
+ */
+export function extractUrlFrom(manifest) {
+  const name = manifest?.pmtiles;
+  return typeof name === 'string' && /^europe-\d{4}-\d{2}-\d{2}\.pmtiles$/.test(name)
+    ? `${MAPS_BASE}/${name}` : BASEMAP_URL;
+}
+
+/**
+ * A PMTiles source keyed by the manifest URL (the style's pmtiles:// URL),
+ * reading from the extract the manifest names. The manifest is read once per
+ * page; a fetch that fails or takes over 3 s falls back to BASEMAP_URL.
+ */
+export class ManifestSource {
+  constructor(manifestUrl = MANIFEST_URL, fetchImpl = (...a) => fetch(...a)) {
+    this.manifestUrl = manifestUrl;
+    this.fetchImpl = fetchImpl;
+    this.inner = null;
+  }
+
+  getKey() { return this.manifestUrl; }
+
+  resolve() {
+    if (!this.inner) {
+      const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timer = setTimeout(() => ctrl?.abort(), 3000);
+      this.inner = this.fetchImpl(this.manifestUrl, { signal: ctrl?.signal })
+        .then((r) => (r.ok ? r.json() : null))
+        .catch(() => null)
+        .then((m) => { clearTimeout(timer); return new FetchSource(extractUrlFrom(m)); });
+    }
+    return this.inner;
+  }
+
+  async getBytes(offset, length, signal, etag) {
+    return (await this.resolve()).getBytes(offset, length, signal, etag);
+  }
+}
 
 /** Register pmtiles:// on this maplibre module once; returns the protocol. */
 export function registerPmtiles(maplibregl) {
   if (protocol) return protocol;
   protocol = new Protocol({ metadata: false });
-  protocol.add(new PMTiles(BASEMAP_URL));
+  protocol.add(new PMTiles(new ManifestSource()));
   maplibregl.addProtocol('pmtiles', protocol.tile);
   return protocol;
 }
@@ -60,7 +108,7 @@ export function basemapFallback(map, { onFallback } = {}) {
   const onError = async (e) => {
     if (done || e?.sourceId !== BASEMAP_SOURCE) return;
     try {
-      await (protocol?.get(BASEMAP_URL) || new PMTiles(BASEMAP_URL)).getHeader();
+      await (protocol?.get(MANIFEST_URL) || new PMTiles(new ManifestSource())).getHeader();
       return; // the archive reads; a lone tile failed
     } catch { /* the archive is unreachable: fall back */ }
     if (done) return;

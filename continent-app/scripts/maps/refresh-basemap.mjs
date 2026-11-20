@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
  * refresh-basemap.mjs, cut a fresh Europe extract of the Protomaps basemap
- * (G12). Owner-run once a month; the steps are in docs/owner/maps-refresh.md.
+ * (G12) from the laptop. The box does this monthly on its own
+ * (infra/hetzner/cax11/basemap_refresh.sh); this is the manual path in
+ * docs/owner/maps-refresh.md.
  *
  *   node scripts/maps/refresh-basemap.mjs                 print the plan: newest build, size, commands
  *   node scripts/maps/refresh-basemap.mjs --run           extract to ../cache/maps/europe-<build date>.pmtiles
@@ -16,8 +18,8 @@
  * foot, the Canaries to the North Cape). Protomaps publishes a planet build
  * daily (https://maps.protomaps.com/builds/); extract reads only the byte
  * ranges it needs, about the extract's size. Needs that much free disk twice
- * (the file plus the upload's read). After the upload, set BASEMAP_FILE in
- * src/lib/map/cartaMapStyle.js and deploy; the old file stays on R2 until the
+ * (the file plus the upload's read). After the upload, point the manifest
+ * data/maps/basemap.json at the new file; the old file stays on R2 until the
  * owner deletes it, so open sessions keep working.
  */
 import { spawnSync } from 'node:child_process';
