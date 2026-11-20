@@ -1077,8 +1077,7 @@ def reference_picks(heads, rows):
     by_ref = {}
     for pool_rank, pool in enumerate((heads, rows)):
         for r in pool:
-            ref_id, exact = derived_gate.reference_of(r.get("title") or "",
-                                                      r.get("country"))
+            ref_id, exact = derived_gate.reference_of_row(r)
             if not ref_id:
                 continue
             key = (-pool_rank, exact, not r.get("derived_route"),

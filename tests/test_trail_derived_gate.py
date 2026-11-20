@@ -222,3 +222,20 @@ def test_shared_name_means_a_piece():
     assert g.names_overlap("Kungsleden (summer)", "Kungsleden")
     assert g.names_overlap("Adlerweg - Wanderweg 2", "Adlerweg Etappe 7")
     assert not g.names_overlap("Fürstensteig", "Via Alpina R1")
+
+
+def test_reference_trail_is_its_own_walk_inside_another_route():
+    assert "reference" in g.OWN_EVIDENCE
+
+
+def test_reference_matches_by_registry_id():
+    ids = g.reference_ids()
+    # The Lechweg's registry row carries OSM relation 4728034.
+    assert ids["AT"].get("4728034") == "lechweg"
+    row_ = {"country": "AT", "title": "Weitwanderweg 99", "source_ref": "4728034"}
+    assert g.reference_of_row(row_) == ("lechweg", True)
+
+
+def test_exact_and_longest_reference_name_wins():
+    assert g.reference_of("Escapardenne Lee Trail", "LU") == ("escapardenne-lee-trail", True)
+    assert g.reference_of("Escapardenne Eislek Trail", "LU")[0] == "escapardenne-eislek-trail"
