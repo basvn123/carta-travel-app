@@ -48,15 +48,16 @@ test('the picks: any inside water, size and feel; all inside walking; AND betwee
   assert.equal(rankVibe(['city']), null);
 });
 
-test('budget steps are fixed and the sort is the four of the decision', () => {
+test('budget steps are fixed and the sort is the seven of round 2 (G12 map view)', () => {
   assert.deepEqual([...BUDGET_STEPS], [50, 75, 100, 150]);
-  assert.deepEqual(SORT_OPTIONS.map((o) => o.key), ['beauty', 'cost', 'rating', 'name']);
+  assert.deepEqual(SORT_OPTIONS.map((o) => o.key), ['beauty', 'rating', 'cost', 'costDesc', 'distance', 'gemsFirst', 'name']);
   assert.equal(sortShown('country'), 'beauty');
   assert.equal(sortShown('cost'), 'cost');
   // For you (the active style's taste) leads once there is a taste; without
   // one an old For you link reads as Best match.
-  assert.deepEqual(sortOptionsFor(true).map((o) => o.key), ['foryou', 'beauty', 'cost', 'rating', 'name']);
-  assert.equal(sortOptionsFor(false), SORT_OPTIONS);
+  // Distance waits for a From place.
+  assert.deepEqual(sortOptionsFor(true).map((o) => o.key), ['foryou', 'beauty', 'rating', 'cost', 'costDesc', 'gemsFirst', 'name']);
+  assert.deepEqual(sortOptionsFor(false, { name: 'X' }).map((o) => o.key), SORT_OPTIONS.map((o) => o.key));
   assert.equal(sortShown('foryou', true), 'foryou');
   assert.equal(sortShown('foryou'), 'beauty');
 });
@@ -106,7 +107,7 @@ test('the tab: URL keys, every filter cleared, the sheet mounted, the phone shor
   assert.match(tab, /setFilterHandlers\(\{ applyShortcut \}\)/);
   assert.doesNotMatch(tab, /xsub--rails|FilterChips|explore\.regionFilter/);
   const chips = read('src/browse/explore/useExploreChips.js');
-  assert.match(chips, /temps: \[\], picks: \[\] \}\)/);
+  assert.match(chips, /temps: \[\], picks: \[\], minScore: null, minMatch: null \}\)/);
   assert.match(chips, /setXf\(\{ \.\.\.XF_EMPTY \}\)/);
   assert.match(read('src/browse/explore/useExploreLens.js'), /'xk', 'xt'/);
   const rows = read('src/browse/explore/useExploreRows.js');

@@ -9,11 +9,12 @@ import { overviewRegion, overviewScore, reasonText, overviewReason } from '../..
 import { fmtMonthRanges } from '../ClimateStrip.jsx';
 import { buildNearbyIndex, roleOf } from '../../lib/taxonomy.js';
 import { bandAtLeast, minVerdict } from '../../lib/rating.js';
-import { picksOk, rankVibe, tempOk } from '../filters/filterModel.js';
+import { EXTRA_SORTS, matchOk, picksOk, rankVibe, scoreOk, sortExtra, tempOk } from '../filters/filterModel.js';
+import { fit } from '../../lib/match.js';
 
 export function useExploreRows({
   availableCountries, bbox, catAllRows, catRows, countryFilter, countryNot, data, dxf, guided,
-  lang, sortKey, t, travelMonth, view, visible, xf,
+  lang, sortKey, t, travelMonth, view, visible, xf, taste = null, matchMonth = null,
 }) {
   // How the traveller gets there (T518, T582): under the settings line's
   // way, each place carries `cost.way`, { mode, perPerson, airline?, hours? }:
@@ -136,7 +137,13 @@ export function useExploreRows({
   // (xf as tapped): the count reads the rows already priced, so "Show n
   // places" follows a tap at once while the list follows after (owner: the
   // count lagged 0.5 to 1 s behind a tap).
+  // G12 map view round 2: Score 8+ and Match 70%+ (filterModel.js); the
+  // match reads the same fit the rows' mark shows.
+  const fitOf = React.useMemo(
+    () => (taste ? (p) => fit(taste, p.taste, matchMonth) : null), [taste, matchMonth]);
   const keepFor = React.useCallback((f, when) => (p) => {
+    if (f.minScore && !scoreOk(p, f.minScore)) return false;
+    if (f.minMatch && !matchOk(p, f.minMatch, fitOf)) return false;
     if (f.verdicts.length && !bandAtLeast(p.rating, minVerdict(f.verdicts))) return false;
     if (f.month && !(p.climate?.best || []).includes(f.month)) return false;
     if (f.nocar && !noCarOk(p)) return false;
@@ -146,7 +153,7 @@ export function useExploreRows({
     if (f.temps.length && travelMonth && !tempOk(p, travelMonth, f.temps)) return false;
     if (f.picks.length && !picksOk(p, f.picks, guided)) return false;
     return true;
-  }, [gctx, travelMonth, guided]);
+  }, [gctx, travelMonth, guided, fitOf]);
   const liveWhen = React.useMemo(
     () => (xf.month ? resolveWhen({ xm: xf.month }) : (settingsLine?.when || null)),
     [xf.month, settingsLine?.when],
@@ -173,6 +180,9 @@ export function useExploreRows({
   // A guided question ranks its answer: nearest first around a place, the
   // strongest vibe first otherwise, while the reader keeps the default sort.
   const guidedRows = React.useMemo(() => {
+    // G12 map view round 2: price high to low, distance from the From place
+    // and hidden gems first, over the catalogue's Score order.
+    if (EXTRA_SORTS.includes(sortKey)) return sortExtra(taxRows, sortKey, { home });
     if (sortKey && sortKey !== 'beauty') return taxRows;
     // (T444: under a guided question "beauty" reads "Best match"; picking
     // "Rating" sets "rating", which the catalogue sorts by rating.)
@@ -181,7 +191,7 @@ export function useExploreRows({
     const rank = !dxf.vibe && !dxf.near ? rankVibe(dxf.picks) : null;
     const cmp = guidedComparator(rank ? { ...dxf, vibe: rank } : dxf, gctx);
     return cmp ? [...taxRows].sort(cmp) : taxRows;
-  }, [taxRows, dxf, gctx, sortKey]);
+  }, [taxRows, dxf, gctx, sortKey, home]);
 
   // C7: what the map's viewport holds, counted live while the map is shown.
   const shownRows = React.useMemo(() => {
@@ -199,5 +209,5 @@ export function useExploreRows({
     () => (view === 'map' ? shownRows : guidedRows).slice(0, visible),
     [guidedRows, shownRows, view, visible],
   );
-  return { settingsLine, setCountryNot, oneCountry, request, flightLimitAvailable, allRows, rows, nearRow, gLabels, overviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed };
+  return { settingsLine, setCountryNot, oneCountry, request, flightLimitAvailable, allRows, rows, nearRow, gLabels, overviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed, home, keepFor, fitOf };
 }

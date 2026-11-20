@@ -141,6 +141,9 @@ export function ExploreTab({
       // old trip kinds; an old link's city, island or mountains still read.
       temps: parseTemps(list('xt')),
       picks: parsePicks(list('xk')),
+      // G12 map view round 2: Score 8+ (xq) and Match 70%+ (xy, in percent).
+      minScore: Number(q.get('xq')) > 0 ? Number(q.get('xq')) : null,
+      minMatch: Number(q.get('xy')) > 0 ? Number(q.get('xy')) / 100 : null,
     };
   });
   const patchXf = React.useCallback((delta) => setXf((v) => ({ ...v, ...delta })), []);
@@ -232,9 +235,10 @@ export function ExploreTab({
   const {
     settingsLine, setCountryNot, oneCountry, request, allRows, rows,
     nearRow, gLabels, overviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed,
+    home, keepFor, fitOf,
   } = useExploreRows({
     availableCountries, bbox, catAllRows, catRows, countryFilter, countryNot, data, dxf, guided,
-    lang, sortKey, t, travelMonth, view, visible, xf,
+    lang, sortKey, t, travelMonth, view, visible, xf, taste: matchTaste, matchMonth,
   });
 
   // C6: the filter state is the URL, so a filtered view is shareable and
@@ -268,6 +272,8 @@ export function ExploreTab({
     for (const k of ['xr', 'xbm', 'xfh']) q.delete(k);
     setOrDrop('xk', xf.picks.join(','));
     setOrDrop('xt', xf.temps.join(','));
+    setOrDrop('xq', xf.minScore || '');
+    setOrDrop('xy', xf.minMatch ? Math.round(xf.minMatch * 100) : '');
     setOrDrop('xv', xf.verdicts.join(','));
     setOrDrop('xm', xf.month || '');
     setOrDrop('xb', xf.budget || '');
@@ -397,7 +403,7 @@ export function ExploreTab({
   // filters; `replace` starts the question over (an example, Clear).
   const applyGuided = React.useCallback((delta, replace = false) => {
     const next = replace
-      ? { vibe: null, area: null, near: null, month: null, budget: null, nb: [], nocar: false, quiet: false, temps: [], picks: [], ...delta }
+      ? { vibe: null, area: null, near: null, month: null, budget: null, nb: [], nocar: false, quiet: false, temps: [], picks: [], minScore: null, minMatch: null, ...delta }
       : { ...delta };
     if ('country' in next || replace) {
       setCountryFilter(next.country ? [next.country] : []);
@@ -574,8 +580,8 @@ export function ExploreTab({
   // keeps "For you" off by default (T765), so For you leads the list when
   // the active style gives a taste, as in the sheet (requests-5.md R5.1).
   const sortMenu = (
-    <SortMenu t={t} options={sortOptionsFor(!!matchTaste)} onChange={setSortKey} showValue className="xap-tool"
-      value={sortShown(sortKey, !!matchTaste)} />
+    <SortMenu t={t} options={sortOptionsFor(!!matchTaste, home)} onChange={setSortKey} showValue className="xap-tool"
+      value={sortShown(sortKey, !!matchTaste, home)} />
   );
 
   // T592 (owner, 2026-10-22): one toggle, not a List | Map pair. In the

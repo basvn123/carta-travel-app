@@ -278,7 +278,7 @@ export function FilterGroups({ f, t }) {
             <ChipGroup label={t('filters.sort')} className="flt-chips flt-sort">
               {sortOptionsFor(hasTaste).map((o) => (
                 <Chip key={o.key} kind="choice" selected={sortValue === o.key} onClick={() => f.setSortKey(o.key)} className="flt-chip">
-                  {t(o.labelKey)}
+                  {t(o.labelKey, o.args)}
                 </Chip>
               ))}
             </ChipGroup>

@@ -109,6 +109,47 @@ export function fit(taste, profile, month = null, opts = {}) {
   return { F, pct: Math.round(F * 100), bars, conflicts, top };
 }
 
+const weightOf = (b) => (b.kind === 'like' ? MATCH.like_weight : b.kind === 'size' ? MATCH.size_weight : MATCH.quiet_weight);
+
+/**
+ * The match's working, as points that add up to the shown figure (G12 map
+ * view round 2, the WhyPopover): each bar earns w p / sum(w) x 100, rounded
+ * by largest remainder so the bars add up to the rounded fit before any
+ * conflict; the conflicts take the rest down to `f.pct`.
+ *
+ *   rows      [{ key, kind, p, share, points, tag }] in f.top order, then
+ *             the other bars; share is the bar's weight over the whole
+ *             (its track's width), tag 'strongest' or 'strong' on the two
+ *             rows with the most points
+ *   conflict  the points the conflicts take (0 or more)
+ *   pct       f.pct: sum(rows.points) - conflict === pct, always
+ */
+export function matchPoints(f) {
+  if (!f || !Array.isArray(f.bars) || !f.bars.length) return null;
+  const den = f.bars.reduce((s, b) => s + weightOf(b), 0);
+  if (!(den > 0)) return null;
+  const raw = f.bars.map((b) => (weightOf(b) * b.p) / den * 100);
+  // The whole is worked out the way fit() works out F (the same sum in the
+  // same order), so with no conflict it is exactly f.pct.
+  const num = f.bars.reduce((s, b) => s + weightOf(b) * b.p, 0);
+  const whole = Math.round(clamp01(num / den) * 100);
+  const pts = raw.map(Math.floor);
+  let left = whole - pts.reduce((s, x) => s + x, 0);
+  // Largest remainder first; ties by the bar's order, so the rounding is stable.
+  const order = raw.map((x, i) => [x - Math.floor(x), i]).sort((a, b) => (b[0] - a[0]) || (a[1] - b[1]));
+  for (let k = 0; left > 0 && k < order.length; k += 1, left -= 1) pts[order[k][1]] += 1;
+  const rows = f.bars.map((b, i) => ({
+    key: b.key, kind: b.kind, p: b.p, share: weightOf(b) / den, points: pts[i], tag: null,
+  }));
+  const topKeys = (f.top || []).map((b) => `${b.kind}:${b.key}`);
+  const rank = (r) => { const i = topKeys.indexOf(`${r.kind}:${r.key}`); return i < 0 ? 1e3 : i; };
+  rows.sort((a, b) => (rank(a) - rank(b)) || (b.points - a.points));
+  const byPoints = [...rows].filter((r) => r.points > 0).sort((a, b) => b.points - a.points);
+  if (byPoints[0]) byPoints[0].tag = 'strongest';
+  if (byPoints[1]) byPoints[1].tag = 'strong';
+  return { rows, conflict: Math.max(0, whole - f.pct), pct: f.pct };
+}
+
 /** True when a fit is high enough to show (55% and up). */
 export function showMatch(f) {
   return !!f && f.F >= MATCH.show_min;

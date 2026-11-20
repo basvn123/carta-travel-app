@@ -8,7 +8,7 @@ import { PICKS, bandLabel, labelForApplied } from '../filters/filterModel.js';
 /** Every filter off: the one shape Clear all, the lens clear and a guided
  *  search's "start over" write (G12 round 2 adds temps and picks). */
 export const XF_EMPTY = Object.freeze({ verdicts: [], month: null, budget: null, nocar: false, quiet: false,
-  vibe: null, area: null, near: null, nb: [], temps: [], picks: [] });
+  vibe: null, area: null, near: null, nb: [], temps: [], picks: [], minScore: null, minMatch: null });
 
 export function useExploreChips({
   availableCountries, countryFilter, countryNot, favorites, gLabels,
@@ -68,6 +68,9 @@ export function useExploreChips({
     // One chip for the rating, "Excellent and up" (T440): the rail asks for
     // a band and every band above it. G12 round 2: Top rated's own band
     // wears the shortcut's words (labelForApplied).
+    // G12 map view round 2: the quick chips' Score 8+ and Match 70%+.
+    if (xf.minScore) list.push({ key: 'minScore', label: t('filters.scoreMin', { n: xf.minScore }), remove: drop({ minScore: null }) });
+    if (xf.minMatch) list.push({ key: 'minMatch', label: t('filters.matchMin', { n: Math.round(xf.minMatch * 100) }), remove: drop({ minMatch: null }) });
     if (xf.verdicts.length) {
       list.push({ key: 'rating', label: labelForApplied('rating', t, xf) || t('filter.ratingAtLeast', { band: bandWord(t, minVerdict(xf.verdicts)) }), remove: drop({ verdicts: [] }) });
     }

@@ -28,7 +28,7 @@
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
-.explore-shell .xmap-kpins .xmap-kpin.is-pill { width: var(--kpin-w, var(--tap)); height: 28px; }
+.explore-shell .xmap-kpins .xmap-kpin.is-pill { width: var(--kpin-w, var(--tap)); height: var(--kpin-h, 28px); }
 .explore-shell .xmap-kpins .xmap-kpin:focus-visible {
   outline: var(--stroke-focus) solid var(--focus);
   outline-offset: 2px;
