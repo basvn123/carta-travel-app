@@ -592,6 +592,11 @@ export function ExploreMap({
     return [own, url ? thumbAt(url, 250) : null];
   }, []);
   const photoTimer = useRef(0);
+  // When the camera last started or stopped: a photograph that lands between
+  // two strokes of a pan waits for the rest like every other pin change (a
+  // new photo pin lays tiles out and re-uploads the icon atlas, which cost
+  // the next stroke its frames).
+  const lastMoveRef = useRef(0);
   const refreshPins = React.useCallback((map) => {
     if (!map?.getLayer('xpin')) return;
     const cv = map.getCanvas();
@@ -703,7 +708,7 @@ export function ExploreMap({
       loadPhotos(need, urlsOf, () => {
         clearTimeout(photoTimer.current);
         photoTimer.current = setTimeout(() => {
-          if (!map.isMoving()) refreshRef.current(map);
+          if (!map.isMoving() && Date.now() - lastMoveRef.current >= PIN_REST_MS) refreshRef.current(map);
         }, PHOTO_REST_MS);
       });
     }
@@ -872,6 +877,7 @@ export function ExploreMap({
     // of a pan it cost the next stroke its frames (fix round 3, progress-3.md).
     let pinTimer = 0;
     map.on('movestart', () => {
+      lastMoveRef.current = Date.now();
       clearTimeout(viewTimer);
       clearTimeout(pinTimer);
       pinTimer = 0;
@@ -881,6 +887,7 @@ export function ExploreMap({
     // checked again once the map is idle.
     let dirty = false;
     map.on('moveend', () => {
+      lastMoveRef.current = Date.now();
       dirty = true;
       clearTimeout(pinTimer);
       pinTimer = setTimeout(() => { pinTimer = 0; refreshRef.current(map); }, PIN_REST_MS);
