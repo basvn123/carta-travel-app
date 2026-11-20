@@ -580,7 +580,8 @@
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.xrow-hs .xfig:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+/* .xprice adds weight so no same-weight route sheet rule ties with it (css-routes). */
+.xrow-hs .xprice.xfig:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .xrow-hs .xfig-amount { font-size: var(--text-lead); font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .xrow-hs .xfig-basis { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); white-space: nowrap; text-decoration: underline dotted var(--umber-300); text-underline-offset: 3px; }
 .xrow-hs.is-selected .xfig-basis { color: inherit; }

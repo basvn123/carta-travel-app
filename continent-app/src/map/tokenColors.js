@@ -50,6 +50,10 @@ export const TOKEN_COLOURS = {
   '--map-route': '#8c5a2b',
   '--plate': '#1e2421',
   '--action': '#8c5a2b',
+  // The airline badge's house colour and its two inks (lib/flights/airlineColours.js).
+  '--umber-800': '#5a3716',
+  '--neutral-0': '#ffffff',
+  '--neutral-900': '#1e2421',
 };
 
 /**

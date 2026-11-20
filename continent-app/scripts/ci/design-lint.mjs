@@ -84,9 +84,10 @@ const bannedRe = new RegExp(`\\b(${BANNED_WORDS.join('|')})\\b`, 'i');
 // T198: the only legal values of a font-family declaration outside :root.
 const FONT_TOKENS = /^(inherit|var\(\s*--(display|ui|mono|font|plate-face)\s*\))$/;  // --font: T421 Lagoon; --plate-face: house style plate names (G1)
 // T364: the one file that may hold a hex in JavaScript, and the artwork that
-// is not a design token (flags are country artwork, the Google mark is a brand).
+// is not a design token (flags are country artwork, the Google mark and the
+// airline badge colours are brands; G12, D10).
 const MIRROR_FILE = 'src/map/tokenColors.js';
-const JS_HEX_EXEMPT = new Set([MIRROR_FILE, 'src/components/CountryFlag.jsx', 'src/auth/GoogleButton.jsx']);
+const JS_HEX_EXEMPT = new Set([MIRROR_FILE, 'src/components/CountryFlag.jsx', 'src/auth/GoogleButton.jsx', 'src/lib/flights/airlineColours.js']);
 const JS_HEX = /(?<![&\w/(])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b/;
 // T425: pre-Lagoon token names that new rules must not read (01-tokens.css aliases them).
 const LEGACY_TOKEN = /var\(\s*--(paper|paper-dim|paper-hover|paper-lift|ink|ink-soft|ink-mute|ink-fill|rule|rule-soft|accent|accent-soft|accent-bg|accent-hover|accent-press|accent-press-alt|accent-wash|accent-wash-alt|bg-card|on-fill|display|mono|shadow-1|shadow-2|shadow-card|wash)\s*\)/;

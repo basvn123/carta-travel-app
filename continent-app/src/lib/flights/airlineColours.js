@@ -7,7 +7,11 @@
  * the colour, never below 4.5:1, so the badge never fails contrast.
  *
  * Pure: the colours are data for an inline custom property, not CSS tokens.
+ * The brand table is airline artwork, so design-lint exempts this file (as
+ * it does the Google mark); the house colours come from the token mirror.
  */
+import { TOKEN_COLOURS } from '../../map/tokenColors.js';
+
 const BRAND = {
   FR: '#073590', RK: '#073590', U2: '#ff6600', W4: '#c6007e', W6: '#c6007e', W9: '#c6007e',
   VY: '#ffcc00', KL: '#00a1de', AF: '#002157', LH: '#05164d', VL: '#05164d', EN: '#05164d',
@@ -17,9 +21,9 @@ const BRAND = {
   EW: '#9f004e', LO: '#11397e', A3: '#005288', OA: '#005288', EK: '#d71921', QR: '#5c0632',
   V7: '#e5007d', XQ: '#ffcc00', LS: '#e01e37', UX: '#003a70', FI: '#003a7d', BT: '#a5c400',
 };
-const HOUSE = '#5a3716'; // umber 800, the house badge
-const PAPER = '#ffffff';
-const INK = '#1e2421';
+const HOUSE = TOKEN_COLOURS['--umber-800'];
+const PAPER = TOKEN_COLOURS['--neutral-0'];
+const INK = TOKEN_COLOURS['--neutral-900'];
 
 function luminance(hex) {
   const n = parseInt(hex.slice(1), 16);

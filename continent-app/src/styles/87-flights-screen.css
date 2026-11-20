@@ -279,7 +279,8 @@
   animation: fls-in var(--dur-2) var(--ease-out);
 }
 .fls-info[hidden] { display: none; }
-.fls-change.btn { min-height: var(--tap); color: var(--action-hover); }
+/* No colour here: the variant sets it, so the primary keeps its on-fill label. */
+.fls-change.btn { min-height: var(--tap); }
 
 @media (prefers-reduced-motion: reduce) {
   .fls-eur.money, .fls-bar, .fls-rows, .fls-info { animation: none; }
