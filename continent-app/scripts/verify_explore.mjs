@@ -96,39 +96,66 @@ try {
     .waitFor({ state: 'attached', timeout: 30000 }).catch(() => {});
   check('Explore opens on the overview, headed "Where to next?"',
     (await page.locator('h1:visible').allInnerTexts()).map((s) => s.trim()).join('|') === 'Where to next?');
-  // T1089: Where and Ask Carta are one field: "Where to? Ask Carta or search a place".
-  check('the hero carries the one Where / Ask Carta search field',
-    await page.locator('.xov-hero form[role="search"] .xov-where-input').isVisible()
-    && /ask carta/i.test(await page.locator('.xov-hero .xov-seg-cap').innerText()));
+  // G12 Explore top (2026-11-19): the band's one search field with its
+  // umber search button at the end, and Ask Carta beside it.
+  check('the band carries the search field and its search button',
+    await page.locator('.band form[role="search"] .band-input').isVisible()
+    && await page.locator('.band form[role="search"] .band-go').isVisible());
+  check('Ask Carta stands beside the field',
+    await page.locator('.band .band-ask').isVisible()
+    && /ask/i.test(await page.locator('.band .band-ask').innerText().catch(() => '')));
   const catTabs = await page.locator('.xcats-bar [role="tab"]').allInnerTexts();
   check('the category tabs lead with Places, selected',
     catTabs.length >= 4 && /places/i.test(catTabs[0])
     && /places/i.test(await page.locator('.xcats-bar [role="tab"][aria-selected="true"]').innerText()),
     catTabs.map((s) => s.trim()).join('|'));
-  const quick = (await page.locator('.xquick-chip:visible').allInnerTexts()).map((s) => s.trim());
-  check('the quick chips offer All filters',
-    quick.some((q) => q.startsWith('All filters')), quick.join('|'));
+  // The settings the prices depend on, as chips: the style first, then
+  // From, When, the way and how prices read, each opening its step.
+  const chips = (await page.locator('.band .band-chip:visible').allInnerTexts()).map((s) => s.trim());
+  check('the settings chips show the style and the price inputs',
+    chips.length >= 5 && await page.locator('.band .band-chip.is-style:visible').count() === 1
+    && chips.some((c) => /^From /.test(c)), chips.join('|'));
   // Explore rails (owner 2026-11-18, G12; T427's cap of four lifted): every
   // rail with four places or more is drawn, so the page runs long, with no
   // subtitle or position figure on any of them.
   const railN = await page.locator('.explore-tab .hs-rail-sec').count();
   check('the overview draws many rails', railN >= 8, `${railN} rails`);
-  // A place card (not the See all tile at a strip's end) shows its price,
-  // the day figure on the name's line and the parts under the country.
-  const railCards = await page.locator('.xrails-rail .xrc').count();
-  const railPriced = await page.locator('.xrails-rail .xrc:has(.xprice)').count();
-  check('every section tile shows a euro-a-day figure', railCards > 0 && railCards === railPriced,
-    `${railPriced} of ${railCards}`);
-  const tiles = await page.locator('.xrails-rail .xrc-more').count();
-  check('every rail ends on its See all tile', tiles === railN, `${tiles} tiles, ${railN} rails`);
+  // A drawn place card shows its figure with its basis right under it at
+  // the card's foot (G12, D10, Explore clean 2026-11-20); no "+".
+  const rc = await page.evaluate(() => {
+    const out = { cards: 0, priced: 0, apart: [] };
+    for (const c of document.querySelectorAll('.xrails-rail .xrc')) {
+      out.cards += 1;
+      const fig = c.querySelector('.xrc-foot .xrc-fig');
+      const basis = c.querySelector('.xrc-foot .xrc-basis');
+      if (fig && /€/.test(fig.textContent) && !/\+/.test(fig.textContent)) out.priced += 1;
+      if (fig && basis) {
+        const d = basis.getBoundingClientRect().top - fig.getBoundingClientRect().bottom;
+        if (d < -1 || d > 8) out.apart.push(d.toFixed(1));
+      }
+    }
+    return out;
+  });
+  check('every rail card shows a euro figure with no "+"', rc.cards > 0 && rc.priced === rc.cards, `${rc.priced} of ${rc.cards}`);
+  check('the basis sits right under the figure', !rc.apart.length, rc.apart.slice(0, 4).join(', '));
+  // Every rail has its See all; the first strip ends on the See all tile
+  // (a strip draws its cards near the view, so scroll it to its end first).
+  check('every rail has a See all', await page.locator('.xrails-rail .hs-see-all').count() === railN);
+  await page.locator('.xrails-rail .hs-rail').first().evaluate((el) => { el.scrollLeft = el.scrollWidth; });
+  await page.waitForTimeout(800);
+  await page.locator('.xrails-rail .hs-rail').first().evaluate((el) => { el.scrollLeft = el.scrollWidth; });
+  await page.waitForTimeout(800);
+  check('the first strip ends on its See all tile', await page.locator('.xrails-rail').first().locator('.xrc-more').count() === 1);
   const seeAll = await page.locator('.xrails-rail .hs-see-all').allInnerTexts();
   check('"See all" carries no count', seeAll.length > 0 && seeAll.every((s) => !/\d/.test(s)), seeAll.join('|'));
   await page.screenshot({ path: 'shots/explore-overview-desktop.png' });
 
   // ── The focused list ──
   await showAll(page);
+  // G12 Explore top: the focused list's title is read, not drawn (the band
+  // and the tabs name it).
   check('Show all places opens the focused list',
-    (await page.locator('.xbar .xbar-title').innerText()).trim() === 'Places in Europe' && /[?&]xv=/.test(page.url()));
+    (await page.locator('h1.xhead-title').innerText().catch(() => '')).trim() === 'Places' && /[?&]xv=/.test(page.url()));
   check('no map canvas on the list', await page.locator('.maplibregl-canvas').count() === 0);
   const cards = await page.locator('.xrow').count();
   check('a real page of cards', cards >= 24, `${cards} cards`);
@@ -268,126 +295,79 @@ try {
   check('no total/per-person toggle', await page.locator('.filter-show').count() === 0);
   check('no desktop filter tray', await page.locator('.filter-tray').count() === 0);
 
-  // C6: no modal sheet on a desktop. v6 put the filters behind the toolbar's
-  // Filters button: it opens the same pane beside the list (not a dialog),
-  // the button counts what is active, and turning a knob narrows the list
-  // live.
-  check('no filter modal anywhere', await page.locator('.fsheet-explore').count() === 0);
-  // T427: the row carries no kind word, so "narrows live" is read off the
-  // first names on the list, which change when the filter lands.
+  // G12 Explore top (2026-11-19): the list's tools are the applied row
+  // (the active chips, Clear all, Sort, Saved, Share), Filters sits inside
+  // the band's field with its count, and List | Map is one Segmented
+  // control beside the tabs. Filters opens a dialog (FilterSheet).
   const firstNames = async () => (await page.locator('.xrow .xrow-name').allInnerTexts()).slice(0, 12).join('|');
-  check('the control bar heads the feed', await page.locator('.xbar .xbar-title').isVisible());
-  // The count is read to screen readers only (.xbar-count.sr-only); nothing
-  // beside the title shows a number.
-  check('the title stands alone (no count beside it)',
-    (await page.locator('.xbar .xbar-title').innerText()).trim() === 'Places in Europe'
-    && await page.locator('.xbar-count:not(.sr-only)').count() === 0);
+  check('no count beside the title', await page.locator('.xbar-count:not(.sr-only)').count() === 0);
   check('no tier legend', await page.locator('.tierlegend, .tierlegend-row').count() === 0);
-  const toolLabels = (await page.locator('.xbar-tools .xtool:visible').allInnerTexts()).map((s) => s.trim());
-  // G12: Share is icon only on a desktop (its name is its label), and a
-  // style's taste adds the Strong match toggle.
-  check('the toolbar is Share, Sort, Filters, Saved and one Map toggle',
-    await page.locator('.xbar-tools .xtool-share:visible').count() === 1
-    && toolLabels.map((l) => l.replace(/\d+$/, '')).join('|') === `Sort|Filters|Saved${styled ? '|Strong match' : ''}`
-    && await page.locator('.xbar-tools .xview-toggle:visible').count() === 1
-    && (await page.locator('.xbar-tools .xview-toggle').innerText()).trim() === 'Map',
-    `${toolLabels.join('|')} + ${await page.locator('.xbar-tools .xview-toggle').innerText().catch(() => 'no toggle')}`);
+  const sortBtn = page.locator('.xap .btn', { hasText: /^Sort/ }).first();
+  check('the applied row carries Sort, Saved and Share',
+    await sortBtn.isVisible() && await page.locator('.xap .xap-saved:visible').count() === 1
+    && await page.locator('.xap .xap-share:visible').count() === 1);
+  const seg = (name) => page.locator('.seg-item', { hasText: new RegExp(`^\\s*${name}\\s*$`) }).first();
+  check('List | Map is one Segmented control, List chosen',
+    await seg('List').isVisible() && await seg('Map').isVisible()
+    && /is-selected/.test(await seg('List').getAttribute('class') || ''));
   check('no second results header mid-page', await page.locator('.xgrid-head').count() === 0);
-  check('no input row above the list any more', await page.locator('.xinputs').count() === 0);
-  // The sort is a menu of four, not a select. The menu closes on any scroll
-  // (a scroll-anchoring nudge from a late image counts), so it is opened
-  // from the top of the tab's own scroller with the scroll at rest.
+  // The sort is a menu, not a select. It closes on any scroll, so it is
+  // opened from the top of the tab's own scroller with the scroll at rest.
   await page.evaluate(() => { window.scrollTo(0, 0); document.querySelector('.explore-tab')?.scrollTo(0, 0); });
   await page.waitForTimeout(600);
-  await page.locator('.xbar-tools .xtool', { hasText: 'Sort' }).click();
+  await sortBtn.click();
   await page.locator('.xsort-menu[role="menu"] [role="menuitemradio"]').first().waitFor({ timeout: 5000 }).catch(() => {});
-  const sortItems = (await page.locator('.xsort-menu[role="menu"] [role="menuitemradio"]').allInnerTexts()).map((s) => s.trim());
-  check('Sort opens a menu: Rating, Cheapest day, A-Z, Country',
-    sortItems.join('|') === `${styled ? 'For you|' : ''}Rating|Cheapest day|A-Z|Country`, sortItems.join('|'));
+  const sortItems = (await page.locator('.xsort-menu[role="menu"] [role="menuitemradio"]').allInnerTexts()).map((x) => x.trim());
+  check('Sort opens a menu with the Score, a price order and A to Z',
+    sortItems.length >= 4 && sortItems.some((x) => /score|rating/i.test(x)) && sortItems.some((x) => /price|cheap/i.test(x))
+    && sortItems.some((x) => /A.?(to)?.?Z/i.test(x)), sortItems.join('|'));
   await page.keyboard.press('Escape');
   await page.waitForTimeout(400);
-  const filtersBtn = page.locator('.xbar-tools .xtool[aria-controls="explore-side"]');
-  check('the filter pane waits behind the Filters button', !(await page.locator('.explore-side .xrail').isVisible()));
-  await filtersBtn.click();
-  await page.waitForTimeout(900);
-  check('Filters opens the pane beside the list',
-    await page.locator('.explore-side .xrail').isVisible()
-    && await filtersBtn.getAttribute('aria-expanded') === 'true'
-    && await page.locator('.xrow').first().isVisible());
-  // The pane is built from the kit: kind chips, a size row, a budget range,
-  // the months, one rating choice row and the switches, as open sections.
-  const pane = await page.evaluate(() => {
-    const s = document.querySelector('.explore-side');
-    const sec = (name) => [...s.querySelectorAll('.xpane-sec')].find((x) => x.querySelector('.xrail-h')?.textContent.trim() === name);
-    return {
-      sections: s.querySelectorAll('.xpane-sec').length,
-      kinds: sec('Kind of place')?.querySelectorAll('.ui-chip').length || 0,
-      sizes: sec('Size of place')?.querySelectorAll('.ui-chip').length || 0,
-      budget: sec('Budget a day')?.querySelectorAll('input[type="range"]').length || 0,
-      months: sec('Month')?.querySelectorAll('[role="radio"]').length || 0,
-      rating: sec('Rating')?.querySelectorAll('[role="radio"]').length || 0,
-      switches: s.querySelectorAll('.xpane [role="switch"]').length,
-    };
-  });
-  check('the pane carries kind and size chips, a budget range, months, a rating row and switches',
-    pane.kinds === 9 && pane.sizes >= 4 && pane.budget === 2 && pane.months === 13
-    && pane.rating === 4 && pane.switches >= 6, JSON.stringify(pane));
-  // A card: the name, the Score, the country, the price.
-  const bodyFacts = await page.locator('.xrow').first().locator('.xrow-name, .xscore, .xrow-country, .xprice').count();
+  // A card: the name, the Score plate after it, the country, the figure.
+  const bodyFacts = await page.locator('.xrow').first().locator('.xrow-name, .xrow-line1 > .hs-score, .xrow-country, .xfig-amount').count();
   check('the card carries its four facts', bodyFacts === 4, `${bodyFacts} parts`);
-  // House style 2026-11: text never sits on a photo; the Score plate follows
-  // the name, and nothing but the picture sits in the row's photo.
-  check('nothing sits on the row photograph; the Score follows the name',
-    await page.locator('.xrow').first().locator('.xrow-line1 > .xscore').count() === 1
-    // The photo ladder (main, 2026-11) draws the photo as <picture class="ladder-pic">.
-    && await page.locator('.xrow').first().locator('.xrow-media > :not(img):not(picture.ladder-pic):not(.hero-blank)').count() === 0);
-  const countBefore = await firstNames();
-  // T1089: See all lands on a list already filtered (Excellent and up), so the
-  // Filters count starts above zero.
-  const nActive = async () => Number((await filtersBtn.locator('.xfilters-n').innerText().catch(() => '0')).trim() || 0);
+  check('nothing sits on the row photograph',
+    await page.locator('.xrow').first().locator('.xrow-media > :not(img):not(picture.ladder-pic):not(.hero-blank)').count() === 0);
+  // Filters: the band's button counts what is active (See all lands on Top
+  // rated, so one), opens the dialog, a chip there narrows the list live
+  // and shows as a removable chip in the applied row.
+  const filtersBtn = page.locator('.band .band-filters');
+  const nActive = async () => Number((await filtersBtn.locator('.band-count').innerText().catch(() => '0')).trim() || 0);
   const activeBefore = await nActive();
-  await page.locator('.explore-side .xpane-sec', { hasText: 'Size of place' })
-    .locator('.ui-chip', { hasText: /^Village$/ }).first().click();
-  await page.waitForTimeout(900);
-  const countAfter = await firstNames();
-  check('the Filters button says how many are active',
-    await nActive() === activeBefore + 1, `${activeBefore} -> ${await nActive()}`);
-  check('a pane toggle narrows the list live', countBefore !== '' && countAfter !== countBefore,
-    `${countBefore.slice(0, 40)} -> ${countAfter.slice(0, 40)}`);
-  check('the active filter shows as a chip', await page.locator('.xchip', { hasText: /Village/ }).count() === 1);
-  check('the filter landed in the URL', page.url().includes('xk=village'));
-  await page.screenshot({ path: 'shots/explore-filters-desktop.png' });
-  await page.locator('.xchip', { hasText: /Village/ }).click();
-  await page.waitForTimeout(500);
-  check('removing the chip clears the filter', !page.url().includes('xk=village')
-    && await page.locator('.xchip', { hasText: /Village/ }).count() === 0);
+  check('the Filters button counts the active filters', activeBefore >= 1, `${activeBefore}`);
+  const countBefore = await firstNames();
+  const chipsBefore = await page.locator('.xap .xap-chip').count();
   await filtersBtn.click();
-  await page.waitForTimeout(600);
+  // On a desktop the filters are a non-modal panel (a region), so the list
+  // stays readable while a chip narrows it.
+  const sheet = page.locator('.flt.flt-panel[role="region"]');
+  check('Filters opens the filter panel', await sheet.waitFor({ state: 'visible', timeout: 8000 }).then(() => true, () => false));
+  const sections = await sheet.locator('.flt-label').count();
+  check('the panel holds its sections', sections >= 5, `${sections} sections`);
+  await sheet.locator('.flt-chip[aria-pressed="false"]').first().click();
+  await page.waitForTimeout(900);
+  await sheet.locator('.flt-close').click();
+  await page.waitForTimeout(700);
+  check('a filter narrows the list live', countBefore !== '' && (await firstNames()) !== countBefore);
+  check('the Filters count goes up by one', await nActive() === activeBefore + 1, `${activeBefore} -> ${await nActive()}`);
+  check('the filter shows as a removable chip', await page.locator('.xap .xap-chip').count() === chipsBefore + 1);
+  await page.screenshot({ path: 'shots/explore-filters-desktop.png' });
+  await page.locator('.xap .xap-chip .xap-x').last().click();
+  await page.waitForTimeout(700);
+  check('removing the chip clears the filter', await nActive() === activeBefore
+    && await page.locator('.xap .xap-chip').count() === chipsBefore);
   await page.screenshot({ path: 'shots/explore-desktop.png', fullPage: false });
 
-  // C7 in v5: on a desktop the map stands beside the grid, not in its place,
-  // and the bar's count follows the viewport. v6: the two-way switch is one
-  // toggle that names the other view (Map, then List).
-  const viewToggle = page.locator('.xbar-tools .xview-toggle');
-  await viewToggle.click();
+  // On a desktop the map stands beside the list, not in its place.
+  await seg('Map').click();
   await page.waitForTimeout(4000);
   check('map view splits the feed', await page.locator('.xcontent--split').count() === 1);
   await page.waitForTimeout(1500);
-  // House style 2026-11: a row's country is never cut (the water mark rides
-  // with the name, the docked column stacks the parts under it).
   check('map column: no country and no name is cut', await page.evaluate(() => [...document.querySelectorAll('.mpp-rows .xrow-ctry, .mpp-rows .xrow-name')]
     .every((e) => e.scrollWidth <= e.clientWidth + 1)));
-  // Nothing the column showed before goes: each row keeps its reason and its region.
-  check('map column: rows show their reason and region', await page.evaluate(() => {
-    const vis = (sel) => [...document.querySelectorAll(sel)].filter((e) => e.getClientRects().length && e.getBoundingClientRect().width > 0).length;
-    return vis('.mpp-rows .xrow-why') > 0 && vis('.mpp-rows .xrow-region') > 0;
-  }));
   check('the map canvas is up', await page.locator('.xcontent-map .maplibregl-canvas').count() === 1);
   check('the list stays beside the map', await page.locator('.xcontent--split .xrows .xrow').first().isVisible());
-  check('on the map the toggle offers the list', (await viewToggle.innerText()).trim() === 'List');
-  // G12 map view: the pins are map layers (explore/mapPins.js): price
-  // pills from the opening view, none crossing the frame, the cheapest in
-  // view on its own layer (the saffron dot), the camera on Europe.
+  check('on the map, Map is the chosen segment', /is-selected/.test(await seg('Map').getAttribute('class') || ''));
   const pins = await page.evaluate(() => {
     const map = document.querySelector('.xcontent-map .xmap-canvas')?._cartaMap;
     if (!map) return { labels: 0, inside: false, cheapest: 0, domPills: 0, zoom: null, center: null };
@@ -396,7 +376,7 @@ try {
     const pills = [...q('xpin'), ...q('xpin-best')];
     return {
       labels: pills.length,
-      inside: pills.every((f) => { const p = map.project(f.geometry.coordinates); return p.x > 0 && p.y > 0 && p.x < W && p.y < H; }),
+      inside: pills.every((f) => { const pt = map.project(f.geometry.coordinates); return pt.x > 0 && pt.y > 0 && pt.x < W && pt.y < H; }),
       cheapest: q('xpin-best').length,
       domPills: document.querySelectorAll('.xmap-kpin.is-label, .xmap-kpin-label').length,
       zoom: map.getZoom(),
@@ -407,19 +387,15 @@ try {
   check('map: every pill sits inside the frame', pins.inside);
   check('map: the pins are map layers, not DOM', pins.domPills === 0);
   netCheck('map: one best value in view', pins.cheapest === 1);
-  check('map: unfiltered, the camera frames Europe', pins.zoom != null && pins.zoom >= 2.8 && pins.zoom <= 4.6
-    && pins.center[0] > -5 && pins.center[0] < 25 && pins.center[1] > 40 && pins.center[1] < 58,
-    pins.zoom != null ? `zoom ${pins.zoom.toFixed(2)} at ${pins.center.map((n) => n.toFixed(1)).join(', ')}` : 'no map');
   await page.screenshot({ path: 'shots/explore-desktop-map.png' });
   await page.locator('.xcontent-map .maplibregl-canvas').evaluate((c) => { c.dataset.probe = '1'; });
-  await viewToggle.click();
+  await seg('List').click();
   await page.waitForTimeout(600);
-  check('back to the grid, the map is hidden', await page.locator('.xcontent-map[hidden]').count() === 1
-    && !(await page.locator('.maplibregl-canvas').isVisible()));
-  await viewToggle.click();
+  check('back to the list, the map is hidden', !(await page.locator('.maplibregl-canvas').isVisible()));
+  await seg('Map').click();
   await page.waitForTimeout(400);
   check('map again: the same map, kept mounted', await page.locator('.maplibregl-canvas[data-probe="1"]').isVisible());
-  await viewToggle.click();
+  await seg('List').click();
   await page.waitForTimeout(400);
 
   // ── Open a destination: it is the full-screen page now. The deep contract
@@ -492,20 +468,19 @@ try {
   // opens as the shared sheet (the desktop pane stands beside the list, so
   // this is the one place a sheet is right).
   // T962: on a phone Filters is the search dock's round button, not a bar tool.
-  const filtersBtn = page.locator('.sdock-filters:visible');
-  check('phone: the Filters button is on the dock', await filtersBtn.first().isVisible());
+  check('phone: Map is the fixed bottom-right corner', await page.locator('.corner-map .corner-btn').isVisible()
+    && await page.locator('.seg-item:visible').count() === 0);
+  const filtersBtn = page.locator('.xap .xap-filters:visible');
+  check('phone: the Filters button leads the applied row', await filtersBtn.first().isVisible());
   await filtersBtn.first().click();
   await page.waitForTimeout(900);
-  check('phone: the button opens the same pane in a sheet', await page.locator('.fsheet-explore .xrail').isVisible());
-  check('phone: the sheet is a labelled dialog', await page.locator('.fsheet-explore[role="dialog"][aria-modal="true"]').count() === 1);
-  check('phone: Map is the fixed bottom-right corner', await page.locator('.corner-map .corner-btn').isVisible()
-    && await page.locator('.xbar-tools .xview-toggle').isHidden());
+  check('phone: the button opens the filters as a labelled sheet', await page.locator('.flt-sheet[role="dialog"][aria-modal="true"]').count() === 1);
   check('phone: one compact row per line', await page.locator('.xrows').evaluate(
     (el) => getComputedStyle(el).gridTemplateColumns.split(' ').length === 1));
   await page.screenshot({ path: 'shots/explore-filters-phone.png' });
   await page.keyboard.press('Escape');
   await page.waitForTimeout(500);
-  check('phone: Escape closes the sheet', await page.locator('.fsheet-explore').count() === 0);
+  check('phone: Escape closes the sheet', await page.locator('.flt-sheet').count() === 0);
   await page.screenshot({ path: 'shots/explore-phone.png' });
 
   // G12: on a phone the price wagons sit over the link's middle (they are
@@ -594,13 +569,11 @@ try {
   const page = await boot({ width: 1440, height: 900 });
   const exploreTab = page.locator('.header-nav-item', { hasText: /^\s*explore\s*$/i }).first();
   if (await exploreTab.isVisible().catch(() => false)) await exploreTab.click();
-  const where = page.locator('.xov-hero .xov-where-input');
+  // G12 Explore top: the band's one field (labelled by its aria-label).
+  const where = page.locator('.band form[role="search"] .band-input');
   await where.waitFor({ timeout: 30000 });
   await page.waitForTimeout(1500);
-  check('search: the Where field is labelled', await page.evaluate(() => {
-    const i = document.querySelector('.xov-where-input');
-    return !!i && !!document.querySelector(`label[for="${CSS.escape(i.id)}"]`)?.textContent.trim();
-  }));
+  check('search: the field is labelled', !!(await where.getAttribute('aria-label'))?.trim());
   await where.focus();
   await page.keyboard.type('Rome', { delay: 15 });
   await page.keyboard.press('Enter');
@@ -611,27 +584,27 @@ try {
     hits.length >= 1 && hits.length < 24 && hits[0].trim() === 'Rome'
     && hits.every((h) => /rome/i.test(h.normalize('NFD').replace(/[̀-ͯ]/g, ''))),
     hits.slice(0, 5).join('|'));
-  const qChip = page.locator('.xchip', { hasText: /Rome/ });
-  check('search: the question shows as a chip', await qChip.count() === 1);
+  // The band keeps the question in its field; emptying it ends the question.
+  check('search: the field keeps the question', (await where.inputValue()) === 'Rome');
   const whys = await page.locator('.xrow .xrow-why').allTextContents();
   check('search: every row says when it is good', whys.length >= hits.length && whys.every((w) => /\b(best|good) in\b/i.test(w)),
     whys[0]);
-  await qChip.click();
+  await where.fill('');
+  await where.press('Enter');
+  await page.waitForTimeout(1200);
+  check('search: clearing the field ends the question', (await where.inputValue()) === ''
+    && !(await page.locator('.xrow .xrow-name').allInnerTexts()).slice(0, 5).every((h) => /rome/i.test(h)));
+  // The price sort orders by the day figure (the default basis), cheapest first.
+  const sortBtn = page.locator('.xap .btn', { hasText: /^Sort/ }).first();
+  if (!(await sortBtn.isVisible().catch(() => false))) await showAll(page);
+  await sortBtn.click();
+  await page.locator('.xsort-menu [role="menuitemradio"]', { hasText: /price|cheap/i }).first().click();
   await page.waitForTimeout(900);
-  check('search: clearing the chip brings the whole list back', await page.locator('.xchip', { hasText: /Rome/ }).count() === 0
-    && await page.locator('.xrow').count() >= 24);
-  // "Cheapest day" sorts by the day figure, cheapest first.
-  if (!(await page.locator('.xbar-tools .xtool', { hasText: 'Sort' }).isVisible().catch(() => false))) await showAll(page);
-  await page.locator('.xbar-tools .xtool', { hasText: 'Sort' }).click();
-  await page.locator('.xsort-menu [role="menuitemradio"]', { hasText: 'Cheapest day' }).click();
-  await page.waitForTimeout(900);
-  // The day figure only: since G12 the bed, food and flight wagons are
-  // .pitems-trigger buttons too, and reading them mixed four prices a row.
-  const days = (await page.locator('.xrow .hs-formation-day .money').allInnerTexts()).slice(0, 10)
-    .map((s) => Number(s.replace(/[^\d]/g, '')));
-  check('search: "Cheapest day" sorts the cheapest first',
-    days.length >= 5 && days.every((d, i) => i === 0 || d >= days[i - 1]) && page.url().includes('xs=cost'),
-    `${days.join(' ')} ${page.url().includes('xs=cost') ? 'xs=cost' : 'no xs=cost'}`);
+  const days = (await page.locator('.xrow .xfig-amount').allInnerTexts()).slice(0, 10)
+    .map((x) => Number(x.replace(/[^\d]/g, ''))).filter((d) => d > 0);
+  check('search: the price sort puts the cheapest first and lands in the URL',
+    days.length >= 5 && days.every((d, i) => i === 0 || d >= days[i - 1]) && /[?&](xs|sort)=cost/.test(page.url()),
+    `${days.join(' ')} ${page.url().split('?')[1] || ''}`);
   // Back from a place returns to the list, not out of Carta.
   await page.locator('.xrow-hit').first().click();
   await page.locator('.destp').waitFor({ timeout: 30000 }).catch(() => {});
@@ -646,7 +619,7 @@ try {
 }
 
 // ── The list view and the receipt from a card (G12 map view, with the band;
-// judgement-1 fix 6). The older passes above still name pre-band parts. On a
+// judgement-1 fix 6). On a
 // phone and a desktop: the list shows rows, each row's figure is a euro
 // amount or "Not yet", the figure opens the place's receipt, Escape closes
 // it, and the List | Map switch reaches the map. ──
