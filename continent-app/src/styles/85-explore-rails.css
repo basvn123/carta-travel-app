@@ -40,15 +40,20 @@
    rail whose cards are not drawn yet (ExploreRails.jsx useNearView) holds
    the same height, so its cards arriving move nothing either. */
 .explore-shell .xrails-rail {
-  /* A name line past the second adds its 1.25 x 16 px to the strip. */
-  --xname-extra: calc((var(--xrc-name-lines, 2) - 2) * 1.25 * var(--text-lead));
-  --xrail-h: calc(118.5px + var(--xname-extra) + 100cqi * 0.76 * 0.75);
+  /* The name's room against two lines (the Score plate's 24 px when the
+     strip's names take one line), as .xrc-top holds it. */
+  --xname-extra: calc(max(var(--xrc-name-lines, 2) * 1.25 * var(--text-lead) + 1px, 24px) - 2.5 * var(--text-lead) - 1px);
+  /* Explore clean (2026-11-20): the figure and its basis took their own
+     lines at the card's foot, so the text block is the figure's line
+     (1.1 x --text-title) and about 147 px of the rest (measured 2026-11-20
+     at 390, 820, 1280 and 1440: drawn and held within 0.5 px). */
+  --xrail-h: calc(147px + 1.1 * var(--text-title) + var(--xname-extra) + 100cqi * 0.76 * 0.75);
   content-visibility: auto;
   contain-intrinsic-size: auto var(--xrail-h);
 }
 .explore-shell .xrails-rail.is-waiting { min-height: var(--xrail-h); }
 @media (min-width: 600px) {
-  .explore-shell .xrails-rail { --xrail-h: calc(118.5px + var(--xname-extra) + (100cqi - var(--space-3)) / 2.15 * 0.75); }
+  .explore-shell .xrails-rail { --xrail-h: calc(147px + 1.1 * var(--text-title) + var(--xname-extra) + (100cqi - var(--space-3)) / 2.15 * 0.75); }
 }
 /* The list's rows (G12, D10, lane 1 round 5): a row off screen skips layout
    and paint, so a change of the list's width (the docked Settings panel, a
@@ -83,7 +88,7 @@
   :root { --settings-dock-w: min(400px, 34vw); }
 }
 @media (min-width: 1024px) {
-  .explore-shell .xrails-rail { --xrail-h: calc(124.5px + var(--xname-extra) + max(256px, (100cqi - 4 * var(--space-5)) / 4.25) * 0.75); }
+  .explore-shell .xrails-rail { --xrail-h: calc(153px + 1.1 * var(--text-title) + var(--xname-extra) + max(256px, (100cqi - 4 * var(--space-5)) / 4.25) * 0.75); }
   .explore-shell .xrails.xrails { gap: var(--space-6); margin-top: var(--space-4); }
   /* The Map button's row sits between the tabs and the first title: 16
      on each side of it, so the tabs and the first rail read as one page
@@ -96,18 +101,24 @@
 /* The photo is the card's link, stretched over the whole card (the list
    row's pattern), so a press on the name or the country opens the place
    and the figure and the parts stay buttons of their own. */
-.xrc { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; }
+/* A column: the strip stretches every card to its row's height, so the
+   figure (margin-top: auto) stands on one line across the strip. */
+.xrc { display: flex; flex-direction: column; --xrc-where-h: 20px; }
 .xrc > .hs-rcard-link { display: block; }
 .xrc > .hs-rcard-link::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-card); }
 .xrc > .xrc-text { position: relative; z-index: 1; }
 .xrc > .hs-rcard-save { z-index: 2; }
 
-/* The two lines (G12, D10, place-prices card option A): one button to the
-   receipt. Line 1 the name, its Score and the figure; line 2 the flag and
-   country and the figure's basis. */
+/* The text (G12, D10, Explore clean 2026-11-20): one button to the
+   receipt. The name and its Score, the flag and country, then at the foot
+   the figure with its basis right under it, one unit. The room a strip
+   keeps for its longest name sits between the country and the figure, so
+   a short name ("Rome") never leaves a gap between the figure and its
+   basis (owner shot 32). */
 .xrc .xrc-text {
-  display: grid;
-  gap: 2px;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   min-width: 0;
   min-height: var(--tap);
@@ -125,9 +136,23 @@
 }
 .xrc .xrc-text:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; }
 .xrc .xrc-text:active { scale: var(--press-scale-lg); }
+.xrc .xrc-top {
+  display: grid;
+  gap: 2px;
+  align-content: start;
+  min-width: 0;
+  /* The name's lines (or the 24 px Score plate, when taller), the 2 px
+     gap and the country line: one height for every card of a strip. */
+  min-height: calc(max(var(--xrc-name-lines, 2) * 1.25 * var(--text-lead) + 1px, 24px) + 2px + var(--xrc-where-h));
+}
+.xrc .xrc-foot {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  margin-top: auto;
+  padding-top: var(--space-2);
+}
 .xrc .xrc-fig {
-  margin-left: auto;
-  padding-left: var(--space-1);
   font-size: var(--text-title);
   font-weight: 800;
   line-height: 1.1;
@@ -138,9 +163,6 @@
 }
 .xrc .xrc-fig .money { font-weight: inherit; }
 .xrc .xrc-basis {
-  flex: none;
-  margin-left: auto;
-  padding-left: var(--space-2);
   font-size: var(--text-caption);
   font-weight: 600;
   color: var(--text-2);
@@ -148,15 +170,16 @@
   text-decoration: underline dotted var(--umber-300);
   text-underline-offset: 3px;
 }
-.xrc .xrc-country { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* A country is never cut: a long one wraps (the stretched strip keeps the
+   figures in line). */
+.xrc .xrc-country { min-width: 0; overflow-wrap: break-word; }
 @media (hover: hover) {
   .xrc .xrc-text:hover .xrc-fig { color: var(--action-hover); }
   .xrc .xrc-text:hover .xrc-basis { text-decoration-color: var(--action); }
 }
 @media (prefers-reduced-motion: reduce) { .xrc .xrc-text { transition: none; } .xrc .xrc-text:active { scale: none; } }
-/* Line 1: the name, its Score, and the figure at the right end. */
-/* A long name ("Saint-Jean-Pied-de-Port") wraps to a second line rather
-   than lose its end; the Score and the figure stay on the first line. */
+/* The name and its Score. A long name ("Saint-Jean-Pied-de-Port") wraps
+   rather than lose its end; the Score stays beside its first line. */
 .xrc .xrc-head {
   display: flex;
   align-items: flex-start;
@@ -176,15 +199,11 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--xrc-name-lines, 2);
   line-clamp: var(--xrc-name-lines, 2);
-  /* G12, D10 (round 6, lead decision): room for two lines on every card,
-     a one-line name leaving the second empty, so every card of a strip has
-     one height and a strip can draw only the cards near its view without
-     its height changing (ExploreRails.jsx useStripReach). Its 1 px top
-     padding is inside the box. Round 2 fix (owner: no cut text): the
-     strip sets --xrc-name-lines to what its longest name needs, 2 to 4
-     (ExploreRails.jsx useNameLines), so the room grows for every card of
-     that strip alike. */
-  min-height: calc(var(--xrc-name-lines, 2) * 1.25em + 1px);
+  /* G12, D10: every card of a strip has one height, so a strip can draw
+     only the cards near its view (ExploreRails.jsx useStripReach). The
+     strip sets --xrc-name-lines to what its longest name needs, 1 to 4
+     (useNameLines); that room is held by .xrc-top, above the figure, not
+     under the name (Explore clean 2026-11-20). */
 }
 /* A slot a strip has not drawn yet (ExploreRails.jsx): the width of a card,
    the strip's height, nothing painted. */
@@ -192,7 +211,7 @@
 .xrc .xrc-head > :not(.hs-rcard-name) { flex: none; }
 
 /* Line 2: the flag and the country, one quiet line. */
-.xrc .hs-rcard-where { align-items: baseline; font-size: var(--text-label); }
+.xrc .hs-rcard-where { align-items: baseline; min-height: var(--xrc-where-h); font-size: var(--text-label); line-height: var(--xrc-where-h); }
 
 .xrc .tg-sig { margin-top: 6px; }
 
