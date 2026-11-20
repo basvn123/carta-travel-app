@@ -105,12 +105,12 @@
 }
 .flt-saved .ui-switch { width: 100%; }
 
-/* Wide enough for two columns: the groups pair up, Sort and Saved run the
-   width above them. */
+/* Wide enough for two columns: the groups pair up from the first row
+   (Score and A day); Sort, last, runs the width under them. */
 @media (min-width: 769px) {
   .flt-panel .flt-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .flt-panel .flt-group--wide { grid-column: 1 / -1; }
-  .flt-panel .flt-group:nth-child(-n + 3) { border-top: 0; }
+  .flt-panel .flt-group:nth-child(-n + 2) { border-top: 0; }
   .flt-panel .flt-group { padding: var(--space-3) 0; }
 }
 
@@ -176,6 +176,11 @@
 .xap.is-phone .xap-scroll.has-end { --fade-e: var(--space-5); }
 .xap.is-phone .xap-scroll > * { flex: none; }
 .xap.is-phone .xap-chip { max-width: none; }
+/* A first chip too wide for the room between Filters and Clear all: the
+   chips take their own line under them (AppliedRow.jsx `stacked`). */
+.xap.is-phone.is-stacked .xap-chips { flex-wrap: wrap; row-gap: var(--space-2); }
+.xap.is-phone.is-stacked .xap-scroll { order: 3; flex: 1 0 100%; }
+.xap.is-phone.is-stacked .xap-clear { margin-inline-start: auto; }
 
 .xap-chip {
   display: inline-flex;

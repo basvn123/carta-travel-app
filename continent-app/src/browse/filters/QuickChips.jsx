@@ -4,6 +4,7 @@ import { Pressable } from '../../components/ui/Pressable.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { DiamondIcon, HeartIcon } from '../../components/Icons.jsx';
 import { countKey } from '../../lib/plural.js';
+import { prefersReducedMotion } from '../../lib/motion.js';
 import { useFilters } from './filtersStore.js';
 
 // Each quick chip's glyph, from the house set where it has one.
@@ -24,8 +25,15 @@ export function QuickChips({ className = '', withFilters = true }) {
   const { t } = useI18n();
   const f = useFilters();
   const count = f.count || 0;
+  const rowRef = React.useRef(null);
+  // A chip turned on moves to the front: the row swipes back to its start,
+  // so the chip and Filters are in view (a far chip left both off screen).
+  const toFront = () => {
+    const el = rowRef.current;
+    if (el && el.scrollLeft > 0) el.scrollTo({ left: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+  };
   return (
-    <div className={`xquick ${className}`.trim()} role="group" aria-label={t('filters.quickAria')}>
+    <div ref={rowRef} className={`xquick ${className}`.trim()} role="group" aria-label={t('filters.quickAria')}>
       {withFilters && (
         <Pressable className={`xquick-chip xquick-filters${count ? ' is-on' : ''}`}
           aria-label={count ? t(countKey(t.lang, count, 'band.filtersOnOne', 'band.filtersOn'), { n: count }) : t('band.filters')}
@@ -40,7 +48,7 @@ export function QuickChips({ className = '', withFilters = true }) {
         const Ico = GLYPH[c.id];
         return (
           <Pressable key={c.id} className={`xquick-chip${c.on ? ' is-on' : ''}`} aria-pressed={c.on}
-            data-quick={c.id} onClick={() => f.applyQuick(c.id, !c.on)}>
+            data-quick={c.id} onClick={() => { f.applyQuick(c.id, !c.on); if (!c.on) toFront(); }}>
             {c.on ? <HouseIcon.check size={16} /> : Ico && <Ico size={16} />}
             <span className="xquick-word">{c.label}</span>
           </Pressable>

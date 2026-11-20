@@ -324,6 +324,9 @@ const settle = (page) => page.evaluate(`new Promise((ok) => { const m = ${MAP}; 
 async function layoutChecks(w, h) {
   const tag = `${w}x${h}`;
   const { ctx, page, errors, phone } = await boot(w, h);
+  // Under 1024 px the map keeps the phone's model (List pill, sheet, tap
+  // card); a tablet's sits in the map's frame, at most 560 px and centred.
+  const sheetModel = w < 1024;
   const shot = async (name) => { if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `map-${tag}-${name}.png`) }); };
   await shot('open');
   const dom = await page.evaluate(() => ({
@@ -406,9 +409,17 @@ async function layoutChecks(w, h) {
     const xi = await page.evaluate(() => new URLSearchParams(location.search).get('xi'));
     check(`${tag}: a tap picks the pin (umber, named)`, picked.includes(pt[2]), `${pt[2]} at ${pt.slice(0, 2).map(Math.round)}, xi ${xi}, drawn ${picked.join()}`);
     await shot('picked');
-    if (phone) {
+    if (sheetModel) {
       const r1 = await rects(page);
-      check(`${tag}: the tap card shows above the nav`, r1.card && r1.nav && r1.card.b <= r1.nav.t, JSON.stringify(r1.card));
+      if (phone) check(`${tag}: the tap card shows above the nav`, r1.card && r1.nav && r1.card.b <= r1.nav.t, JSON.stringify(r1.card));
+      else {
+        // A tablet: no column, the card at most 560 px, centred in the map.
+        const frame = await page.evaluate(`(() => { const c = ${MAP}.getCanvas().getBoundingClientRect(); return { l: c.left, r: c.right, b: Math.min(c.bottom, innerHeight) }; })()`);
+        const cw = r1.card ? r1.card.r - r1.card.l : 0;
+        const off = r1.card ? Math.abs((r1.card.l + r1.card.r) / 2 - (frame.l + frame.r) / 2) : 99;
+        check(`${tag}: no list column on a tablet`, !r1.column, JSON.stringify(r1.column));
+        check(`${tag}: the tap card at most 560 px, centred in the map`, r1.card && cw <= 560.5 && off <= 1 && r1.card.b <= frame.b, `${Math.round(cw)} px, ${off.toFixed(1)} off centre`);
+      }
       check(`${tag}: no overlaps with the tap card`, overlaps(r1, w, h).length === 0, overlaps(r1, w, h).join(', '));
       await settle(page);
       const u = await pinsUnder(page);
@@ -436,11 +447,26 @@ async function layoutChecks(w, h) {
       await page.waitForTimeout(700);
       const half = await page.evaluate(() => document.querySelector('.xsheet')?.className || '');
       check(`${tag}: List opens the sheet half way`, /is-half/.test(half), half);
+      if (!phone) {
+        const sw = await page.evaluate(`(() => { const s = document.querySelector('.xsheet').getBoundingClientRect(); const c = ${MAP}.getCanvas().getBoundingClientRect(); return [s.width, Math.abs((s.left + s.right) / 2 - (c.left + c.right) / 2)]; })()`);
+        check(`${tag}: the half sheet at most 560 px, centred`, sw[0] <= 560.5 && sw[1] <= 1, `${Math.round(sw[0])} px, ${sw[1].toFixed(1)} off centre`);
+        await shot('sheet-half');
+      }
       await page.locator('.xsheet-grab').click();
       await page.waitForTimeout(700);
       check(`${tag}: the sheet goes full with a Map pill`, /is-full/.test(await page.evaluate(() => document.querySelector('.xsheet').className))
         && await page.locator('.xmap-listpill.is-map').count() === 1);
       await shot('sheet-full');
+      if (!phone) {
+        // The full sheet takes the frame and lays its rows in two columns.
+        await page.waitForTimeout(400);
+        const cols = await page.evaluate(() => {
+          const s = document.querySelector('.xsheet').getBoundingClientRect();
+          const lefts = new Set([...document.querySelectorAll('.xsheet .xmr')].slice(0, 6).map((e) => Math.round(e.getBoundingClientRect().left)));
+          return [Math.round(s.width), lefts.size];
+        });
+        check(`${tag}: the full sheet takes the frame in two columns`, cols[0] > 560 && cols[1] === 2, `${cols[0]} px, ${cols[1]} columns`);
+      }
       const g = await page.locator('.xsheet-head').boundingBox();
       await page.mouse.move(g.x + g.width / 2, g.y + 30);
       await page.mouse.down();
@@ -595,6 +621,92 @@ async function guard(label, fn) {
   try { await fn(); } catch (e) { check(label, false, String(e.message || e).split('\n')[0]); }
 }
 
+// --why-only runs just this pass.
+async function whyPass() {
+  // Why it matches: a bottom sheet on a phone; from 769 px a 360 px popover
+  // hung off the mark, non-modal (no scrim, aria-modal false), inside the
+  // window, focus on its Close; an outside tap, Escape (focus back on the
+  // mark) and a scroll close it; a mark near the window's foot opens it
+  // above. Under 1024 the marks are in the sheet, from 1024 in the column.
+  for (const [w, h] of [[390, 844], [820, 1180], [1180, 820], [1440, 900]]) {
+    await guard(`round2 why ${w}: opens`, async () => {
+      const tag = `round2 why ${w}`;
+      const { ctx, page, errors } = await bootStyled(w, h, '?tab=map&xw=map');
+      await page.evaluate(`${MAP}.jumpTo({ center: [8, 46.5], zoom: 6 })`);
+      await settle(page);
+      const sheet = w < 1024;
+      if (sheet) {
+        await page.locator('.xmap-listpill').first().click();
+        await page.waitForTimeout(800);
+      }
+      const box = sheet ? '.xsheet-body' : '.mpp--float';
+      const marks = page.locator(`${sheet ? '.xsheet' : '.mpp'} .xmatch-mark`);
+      check(`${tag}: marks in the list`, await marks.count() > 0, `${await marks.count()}`);
+      const open = async (i = 0) => { await marks.nth(i).click(); await page.waitForTimeout(500); };
+      const state = () => page.evaluate(() => {
+        const p = document.querySelector('.xwhy-float');
+        const sh = document.querySelector('.fsheet.xwhy-pop');
+        const m = document.querySelector('.xmatch-mark[aria-expanded="true"]');
+        const r = p?.getBoundingClientRect();
+        const a = m?.getBoundingClientRect();
+        return {
+          float: !!p, sheet: !!sh, scrim: !!document.querySelector('.fsheet-scrim'), modal: (p || sh)?.getAttribute('aria-modal'),
+          w: r && Math.round(r.width), inside: !!r && r.left >= 15 && r.top >= 15 && r.right <= innerWidth - 15 && r.bottom <= innerHeight - 15,
+          below: !!(r && a) && Math.abs(r.top - (a.bottom + 8)) <= 2, above: !!(r && a) && Math.abs(r.bottom - (a.top - 8)) <= 2,
+          up: !!p?.classList.contains('is-up'), focus: !!p && p.contains(document.activeElement),
+          markFocus: document.activeElement?.classList.contains('xmatch-mark') || false,
+        };
+      });
+      if (w < 769) {
+        await open();
+        const s = await state();
+        check(`${tag}: a bottom sheet on a phone`, s.sheet && !s.float && s.modal === 'true', JSON.stringify(s));
+        if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `why-${w}.png`) });
+      } else {
+        await open();
+        const s = await state();
+        check(`${tag}: a popover, no scrim, not modal`, s.float && !s.sheet && !s.scrim && s.modal === 'false', JSON.stringify(s));
+        check(`${tag}: 360 px, inside the window, hung off the mark`, s.w === 360 && s.inside && (s.below || s.above), JSON.stringify(s));
+        check(`${tag}: focus moves into it`, s.focus, JSON.stringify(s));
+        if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `why-${w}.png`) });
+        await page.mouse.click(4, h - 4);
+        await page.waitForTimeout(400);
+        check(`${tag}: an outside tap closes it`, !(await state()).float);
+        await open();
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(400);
+        const e = await state();
+        check(`${tag}: Escape closes it, focus back on the mark`, !e.float && e.markFocus, JSON.stringify(e));
+        await open();
+        await page.evaluate((q) => { document.querySelector(q).scrollTop += 60; }, box);
+        await page.waitForTimeout(400);
+        check(`${tag}: a scroll closes it`, !(await state()).float);
+        // A mark near the window's foot: the popover opens above it.
+        const i = await page.evaluate(([q, sel]) => {
+          const list = document.querySelector(q);
+          const all = [...document.querySelectorAll(sel)];
+          const lowest = Math.min(innerHeight, list.getBoundingClientRect().bottom) - 40;
+          for (let k = 0; k < all.length; k += 1) {
+            const d = all[k].getBoundingClientRect().bottom - lowest;
+            if (d >= 0 && d < list.scrollHeight - list.scrollTop - list.clientHeight) { list.scrollTop += d; return k; }
+            if (d > -200 && d < 0) return k;
+          }
+          return -1;
+        }, [box, `${sheet ? '.xsheet' : '.mpp'} .xmatch-mark`]);
+        await page.waitForTimeout(500);
+        if (i >= 0) {
+          await open(i);
+          const u = await state();
+          check(`${tag}: near the foot it opens above the mark, inside the window`, u.float && u.up && u.above && u.inside, JSON.stringify(u));
+          if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `why-${w}-up.png`) });
+        } else check(`${tag}: a mark near the foot to try`, false, 'none found');
+      }
+      check(`${tag}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
+      await ctx.close();
+    });
+  }
+}
+
 async function round2Pass() {
   // Photo pins by zoom, and the style row in view, at 390 in English.
   {
@@ -730,7 +842,7 @@ async function round2Pass() {
 
 const perf = {};
 // --layout-only skips the speed runs (a quick rerun of the layout checks).
-if (!flag('layout-only') && !flag('round2-only')) for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
+if (!flag('layout-only') && !flag('round2-only') && !flag('why-only')) for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
 console.log('speed (CPU %dx, pan)', RATE, JSON.stringify(perf, null, 1));
 
 if (!PERF_ONLY) {
@@ -738,9 +850,10 @@ if (!PERF_ONLY) {
     check(`speed ${k}: 0 to 2 frames over 50 ms while panning at CPU ${RATE}x`, v.over50 <= 2, `${v.over50} of ${v.frames}, p95 ${v.p95}, max ${v.max}`);
     check(`speed ${k}: no DOM price pins`, v.domPins === 0, `${v.domPins}`);
   }
-  if (!flag('cards-only') && !flag('round2-only')) for (const [w, h] of SIZES) await layoutChecks(w, h);
-  if (!flag('round2-only')) await cardPass();
-  if (!flag('cards-only')) await round2Pass();
+  if (!flag('cards-only') && !flag('round2-only') && !flag('why-only')) for (const [w, h] of SIZES) await layoutChecks(w, h);
+  if (!flag('round2-only') && !flag('why-only')) await cardPass();
+  if (!flag('cards-only') && !flag('why-only')) await round2Pass();
+  if (!flag('cards-only')) await whyPass();
 }
 
 await browser.close();

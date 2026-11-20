@@ -45,13 +45,22 @@ export function AppliedRow({ chips, count, onClearAll, desktop, tools = null, t 
   // The scroller fades only on a side that has more, so a row that fits
   // shows its last chip's remove whole.
   const scrollRef = React.useRef(null);
-  const [more, setMore] = React.useState({ start: false, end: false });
+  const [more, setMore] = React.useState({ start: false, end: false, stacked: false });
   const readMore = React.useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
     const start = el.scrollLeft > 1;
     const end = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
-    setMore((m) => (m.start === start && m.end === end ? m : { start, end }));
+    // G12 (Explore clean, open item): a first chip wider than the room left
+    // between Filters and Clear all ("Am besten bewertet" at 360 px) takes
+    // a line of its own under them, so it is never cut. Read against the
+    // fixed widths, not the scroller's, so the row cannot flip back.
+    const row = rowRef.current;
+    const first = el.firstElementChild;
+    const side = (q) => row?.querySelector(q)?.offsetWidth || 0;
+    const room = (row?.clientWidth || 0) - side('.xap-filters') - side('.xap-clear') - 16;
+    const stacked = !!first && first.offsetWidth > room + 1;
+    setMore((m) => (m.start === start && m.end === end && m.stacked === stacked ? m : { start, end, stacked }));
   }, []);
   React.useLayoutEffect(() => {
     if (desktop) return undefined;
@@ -69,7 +78,7 @@ export function AppliedRow({ chips, count, onClearAll, desktop, tools = null, t 
     c.remove();
   };
   return (
-    <div ref={rowRef} className={`xap${desktop ? ' is-desk' : ' is-phone'}`}>
+    <div ref={rowRef} className={`xap${desktop ? ' is-desk' : ' is-phone'}${!desktop && more.stacked ? ' is-stacked' : ''}`}>
       <div className="xap-chips" role="group" aria-label={t('filter.activeAria')}>
         {!desktop && (
           <Button variant="secondary" size="sm" className={`xap-filters${count ? ' is-on' : ''}`}

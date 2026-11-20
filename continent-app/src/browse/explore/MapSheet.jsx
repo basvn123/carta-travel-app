@@ -38,7 +38,8 @@ const STOPS = ['closed', 'peek', 'half', 'full'];
 function measureTop(host) {
   const top = host.getBoundingClientRect().top;
   let room = 0;
-  for (const el of document.querySelectorAll('.band.is-map .band-row, .band.is-map .band-strip, .band.is-map .band-quick')) {
+  // A tablet's quick chips ride the map's top edge (.xmap-quick).
+  for (const el of document.querySelectorAll('.band.is-map .band-row, .band.is-map .band-strip, .band.is-map .band-quick, .xmap-quick')) {
     const r = el.getBoundingClientRect();
     if (r.height) room = Math.max(room, r.bottom - top);
   }

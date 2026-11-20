@@ -13,6 +13,7 @@ import { MapAnchorCard } from './MapAnchorCard.jsx';
 import { QuickChips } from '../filters/QuickChips.jsx';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { useSummaryItems } from '../band/SummaryChips.jsx';
+import { useMedia } from '../settings/settingsBits.jsx';
 import { priceFigure } from '../../lib/settings/prices.js';
 import '../../styles/86-map-view.css';
 
@@ -23,6 +24,11 @@ const MAP_CHROME = [
   '.band.is-map .band-row', '.band.is-map .band-strip', '.band.is-map .band-quick', '.xmap-listpill', '.xmap-tapcard',
   '.xsheet:not(.is-closed)', '.corner-slot--left', '.xmap-quick', '.xmap-anchor-card',
 ].join(', ');
+// G12 map view round 2 (proposal.md 8): the list column and the anchored
+// card from this width; under it (a tablet held upright, 820) the map keeps
+// the phone's model, the List pill, the sheet and the tap card, inside the
+// map's frame (86-map-view.css).
+const MAP_SPLIT = '(min-width: 1024px)';
 // The sheet and the column list at most this many places for All.
 const ALL_MAX = 120;
 
@@ -103,6 +109,7 @@ export function ExploreContent({
     }
     return best || '';
   }, [shownRows, model, view]);
+  const mapSplit = useMedia(MAP_SPLIT);
   const summary = useSummaryItems();
   const basis = summary.find((it) => it.step === 'prices')?.text || '';
   const mapList = guidedRows || taxRows;
@@ -115,7 +122,7 @@ export function ExploreContent({
     const m = document.querySelector('.xcontent-map .xmap-canvas')?._cartaMap;
     m?.easeTo({ zoom: Math.max(3, m.getZoom() - 1.5), duration: prefersReducedMotion() ? 0 : 420 });
   };
-  const anchorCard = isDesktop && view === 'map' && pickedRow ? (
+  const anchorCard = mapSplit && view === 'map' && pickedRow ? (
     <MapAnchorCard t={t} p={pickedRow} overview={overviewOf(pickedRow)}
       fav={favSet.has(pickedRow.id)} onToggleFav={onToggleFav}
       onOpen={openPlace} onClose={() => onPick(null)} />
@@ -168,7 +175,7 @@ export function ExploreContent({
               G12 map view: a 400 px column of compact cards beside the
               map, a card under the pointer lifting its pin and a pin
               under the pointer outlining its card. */}
-          {isDesktop && view === 'map' && (
+          {mapSplit && view === 'map' && (
             <MapPlacePanel t={t}
               rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
               allRows={mapList.slice(0, ALL_MAX)} allCount={mapList.length}
@@ -178,10 +185,10 @@ export function ExploreContent({
               favSet={favSet} onToggleFav={onToggleFav}
               linkedId={pinLinkId} onLink={setCardLinkId} pickedId={pickedId} />
           )}
-          {/* G12 map view (phone): the map is the page; the list is a
+          {/* G12 map view (phone, and a tablet under 1024): the map is the page; the list is a
               sheet the List pill opens, a picked place a card over the
               map. Both mount only while this tab shows the map. */}
-          {!isDesktop && view === 'map' && isActiveMap && (
+          {!mapSplit && view === 'map' && isActiveMap && (
             <MapSheet t={t} lang={lang}
               rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
               allRows={mapList.slice(0, ALL_MAX)} allCount={mapList.length}
@@ -190,7 +197,7 @@ export function ExploreContent({
               filterCount={filterCount} basis={basis} bestId={bestId} onZoomOut={zoomOut}
               listSwitch={viewSwitch('xsheet-view')} />
           )}
-          {!isDesktop && view === 'map' && isActiveMap && pickedRow && (
+          {!mapSplit && view === 'map' && isActiveMap && pickedRow && (
             <MapTapCard t={t} p={pickedRow} prev={prevRow} next={nextRow} overviewOf={overviewOf}
               fav={favSet.has(pickedRow.id)} onToggleFav={onToggleFav} onPick={onPick}
               onOpen={openPlace} onClose={() => onPick(null)} />

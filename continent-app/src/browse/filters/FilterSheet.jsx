@@ -311,19 +311,6 @@ export function FilterGroups({ f, t }) {
   return (
     <div className="flt-body">
       <div className="flt-groups">
-        {withSort && (
-          <Group id="sort" label={t('filters.sort')} className="flt-group--wide">
-            {/* Chips, not a segment: five choices (For you first) wrap in
-                every language at 360 px. */}
-            <ChipGroup label={t('filters.sort')} className="flt-chips flt-sort">
-              {sortOptionsFor(hasTaste).map((o) => (
-                <Chip key={o.key} kind="choice" selected={sortValue === o.key} onClick={() => f.setSortKey(o.key)} className="flt-chip">
-                  {t(o.labelKey, o.args)}
-                </Chip>
-              ))}
-            </ChipGroup>
-          </Group>
-        )}
         {/* G12 map view round 2: the Score, then the day's price. */}
         <Group id="score" label={t('filters.score')}>
           <ChipGroup label={t('filters.score')} className="flt-chips">
@@ -340,6 +327,20 @@ export function FilterGroups({ f, t }) {
               className="flt-chip" data-count={counts?.top}>
               {t('filters.topRated')}<Count n={counts?.top} />
             </Chip>
+          </ChipGroup>
+        </Group>
+
+        <Group id="day" label={dayLabel}>
+          <ChipGroup label={dayLabel} className="flt-chips">
+            <Chip kind="choice" selected={!xf.budget} onClick={setBudget(null)} className="flt-chip">
+              {t('filters.any')}<Count n={counts?.any} />
+            </Chip>
+            {steps.map((eur) => (
+              <Chip key={eur} kind="choice" selected={xf.budget === eur} onClick={setBudget(eur)}
+                className={`flt-chip${counts?.budget[eur] === 0 && xf.budget !== eur ? ' is-zero' : ''}`} data-count={counts?.budget[eur]}>
+                {t('filters.upTo', { eur: money(eur) })}<Count n={counts?.budget[eur]} />
+              </Chip>
+            ))}
           </ChipGroup>
         </Group>
 
@@ -389,20 +390,6 @@ export function FilterGroups({ f, t }) {
           <Toggles label={t('filters.kind')} items={[...pickItems('size'), ...pickItems('feel')]} />
         </Group>
 
-        <Group id="day" label={dayLabel}>
-          <ChipGroup label={dayLabel} className="flt-chips">
-            <Chip kind="choice" selected={!xf.budget} onClick={setBudget(null)} className="flt-chip">
-              {t('filters.any')}<Count n={counts?.any} />
-            </Chip>
-            {steps.map((eur) => (
-              <Chip key={eur} kind="choice" selected={xf.budget === eur} onClick={setBudget(eur)}
-                className={`flt-chip${counts?.budget[eur] === 0 && xf.budget !== eur ? ' is-zero' : ''}`} data-count={counts?.budget[eur]}>
-                {t('filters.upTo', { eur: money(eur) })}<Count n={counts?.budget[eur]} />
-              </Chip>
-            ))}
-          </ChipGroup>
-        </Group>
-
         <Group id="good" label={t('filters.goodToKnow')}>
           <Toggles label={t('filters.goodToKnow')} items={[
             { id: 'gems', label: t('filters.gems'), on: f.gemOnly, toggle: () => f.setGemOnly(!f.gemOnly), n: counts?.gems },
@@ -411,6 +398,22 @@ export function FilterGroups({ f, t }) {
             { id: 'saved', label: t('filters.savedOnly'), on: f.showFavOnly, toggle: () => f.setShowFavOnly(!f.showFavOnly), n: counts?.saved },
           ]} />
         </Group>
+
+        {withSort && (
+          <Group id="sort" label={t('filters.sort')} className="flt-group--wide">
+            {/* Last, as the spec lists it (proposal.md 5.2): the list's head
+                carries Sort too, so here it closes the sheet. Chips, not a
+                segment: the choices (For you first) wrap in
+                every language at 360 px. */}
+            <ChipGroup label={t('filters.sort')} className="flt-chips flt-sort">
+              {sortOptionsFor(hasTaste).map((o) => (
+                <Chip key={o.key} kind="choice" selected={sortValue === o.key} onClick={() => f.setSortKey(o.key)} className="flt-chip">
+                  {t(o.labelKey, o.args)}
+                </Chip>
+              ))}
+            </ChipGroup>
+          </Group>
+        )}
       </div>
     </div>
   );

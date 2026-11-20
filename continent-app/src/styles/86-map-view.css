@@ -136,6 +136,10 @@
   }
   .band.is-map .band-chips.is-swipe .band-chip:active::before { background: var(--surface-hover); }
 
+}
+/* The List pill, the tap card and the sheet: the phone's, and a tablet's
+   under 1024 px inside the map's frame (round 2, proposal.md 8). */
+@media (max-width: 1023px) {
   /* The pill at rest: "List of {n}", ink, bottom centre over the map. */
   .explore-shell .xmap-listpill {
     position: absolute;
@@ -313,7 +317,9 @@
   .explore-shell .mpp--float .mpp-head-row {
     position: sticky;
     top: 0;
-    z-index: 1;
+    /* Over the rows' raised parts (the figure, the mark, Save: z-index 1),
+       which otherwise paint over the head as the column scrolls. */
+    z-index: 2;
     padding: var(--space-3) var(--space-4) var(--space-2);
     background: var(--surface-page);
   }
@@ -429,6 +435,44 @@
 .xwhy-pop .xwhy-fill { display: block; height: 100%; border-radius: inherit; background: var(--umber-600); }
 .xwhy-pop .xwhy-row.is-conflict .xwhy-name,
 .xwhy-pop .xwhy-row.is-conflict .xwhy-pts { color: var(--text-3); font-weight: 600; }
+/* From 769 px the explanation floats off its mark (MatchMark.jsx WhyFloat):
+   a paper popover, no backdrop, the page live around it; it rises from the
+   mark's side. */
+.xwhy-float {
+  position: fixed;
+  z-index: var(--z-menu);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-3);
+  transform-origin: top center;
+  animation: xwhy-in var(--dur-2) var(--ease-out);
+}
+.xwhy-float.is-up { transform-origin: bottom center; }
+.xwhy-float-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+}
+.xwhy-float-title { margin: 0; min-width: 0; font-size: var(--text-lead); font-weight: 800; line-height: var(--leading-tight); overflow-wrap: anywhere; }
+.xwhy-float-body { min-height: 0; padding: var(--space-3) var(--space-4) var(--space-3); overflow-y: auto; overscroll-behavior: contain; }
+@keyframes xwhy-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+.xwhy-float.is-up { animation-name: xwhy-in-up; }
+@keyframes xwhy-in-up {
+  from { opacity: 0; transform: translateY(4px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .xwhy-float, .xwhy-float.is-up { animation: none; } }
 
 /* --- The map list's row: photo, three lines, Save ----------------------- */
 .explore-shell .xrow.xmr,
@@ -527,7 +571,7 @@
 /* --- The tap card: the place, its neighbours peeking, the way back ------ */
 /* The sheet open: the list has the screen, the tap card waits under it. */
 html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .explore-shell .xmap-tapcard {
     left: 0;
     right: 0;
@@ -734,11 +778,42 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
   .explore-shell .xac-save { position: absolute; top: var(--space-2); right: var(--space-2); }
   .explore-shell .xac-text { display: grid; gap: var(--space-1); padding: var(--space-3) var(--space-4) var(--space-4); }
 }
-@media (min-width: 1200px) {
+@media (min-width: 1024px) {
   .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 380px; }
 }
 @media (min-width: 769px) and (max-width: 1439px) {
   .explore-shell .xmap-anchor-card { width: 288px; }
+}
+/* A tablet held upright (769 to 1023, 820 the reference): the phone's map
+   model in the map's frame (ExploreContent.jsx MAP_SPLIT). The map takes
+   the frame's width; the List pill, the tap card and the half sheet stand
+   centred, at most 560 px; the full sheet takes the frame and lays its
+   rows in two columns. The quick chips keep the map's top edge, the zoom
+   buttons and the band stay the tablet's. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 0px; grid-template-columns: minmax(0, 1fr); }
+  .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map > .xmap { grid-column: 1; }
+  .explore-shell .xmap-quick { left: var(--space-3); }
+  .explore-shell .xmap-tapcard { width: min(560px, calc(100% - 2 * var(--space-6))); }
+  .explore-shell .xsheet {
+    width: min(560px, 100%);
+    margin-inline: auto;
+    box-shadow: var(--elev-3);
+    transition: transform var(--dur-3) var(--ease-settle), width var(--dur-3) var(--ease-settle);
+  }
+  .explore-shell .xsheet.is-full { width: 100%; }
+  .explore-shell .xsheet.is-full .xsheet-head { padding-inline: var(--space-5); }
+  .explore-shell .xsheet.is-full .xsheet-rows {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
+    padding-inline: var(--space-5);
+  }
+  /* While the list or a tap card is up the style disc steps aside (the
+     band's style chip stays one tap away): it would lie over the full
+     sheet's rows or the card's left neighbour. */
+  html.xsheet-open .corner-slot--left,
+  html:has(.explore-shell .xmap-tapcard) .corner-slot--left { visibility: hidden; }
 }
 @media (min-width: 1440px) {
   .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 440px; }
