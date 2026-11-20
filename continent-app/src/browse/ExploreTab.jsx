@@ -44,6 +44,7 @@ import { useExploreChips, XF_EMPTY } from './explore/useExploreChips.js';
 import { badgeCount, lensCount } from './explore/chipRules.js';
 import { prefetchMap } from './explore/exploreMapLazy.js';
 import { useExploreMapView } from './explore/useExploreMapView.js';
+import { setMapViewOn } from './explore/mapViewStore.js';
 import { FilterSheet } from './filters/FilterSheet.jsx';
 import { closeFilters, publishFilters, setFilterHandlers, useFilters } from './filters/filtersStore.js';
 import {
@@ -164,7 +165,7 @@ export function ExploreTab({
   const shownDepart = useSettings()?.departDate || calendarDefaultWindow(todayISO())?.start;
   const railMonth = travelMonth || Number(String(shownDepart || '').slice(5, 7)) || new Date().getMonth() + 1;
   const {
-    view, setView, bbox, pickedId, setPickedId, drawer, setDrawer, mapOpened, viewportMode,
+    view, setView, bbox, pickedId, setPickedId, mapOpened, viewportMode,
     pins, onMapViewport, onMapNeedDetail,
   } = useExploreMapView({ isActive });
   // B2: the fold-and-alias index answers the search box. Loaded on the
@@ -330,7 +331,9 @@ export function ExploreTab({
     if (!id && Date.now() < selfScrollUntil.current) return;
     setPinLinkId(id);
     if (!id || Date.now() - listScrolledAt.current < 1000) return;
-    const card = scrollRef.current?.querySelector(`.xcontent-main .xrow[data-id="${CSS.escape(id)}"]`);
+    // G12 map view: on a desktop the list is the column beside the map.
+    const card = scrollRef.current?.querySelector(`.xcontent-main .xrow[data-id="${CSS.escape(id)}"]`)
+      || scrollRef.current?.querySelector(`.mpp .xrow[data-id="${CSS.escape(id)}"]`);
     if (!card) return;
     const reduce = typeof window.matchMedia === 'function'
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -349,6 +352,13 @@ export function ExploreTab({
   // door is the overview's own field (T595, owner 2026-10-22: only on
   // Explore, not in the header and not on other tabs).
   const isDesktop = useIsDesktop();
+  // G12 map view: the band and the corners follow the map view while this
+  // tab is the one on screen (mapViewStore).
+  const mapViewOn = isActive && !pageOver && view === 'map';
+  React.useEffect(() => {
+    setMapViewOn(mapViewOn);
+    return () => setMapViewOn(false);
+  }, [mapViewOn]);
 
   // T504: picking and opening. A pin picks a place (the overview shows);
   // the overview, a second tap on the same pin, or a list row opens it. A
@@ -358,12 +368,11 @@ export function ExploreTab({
     setPickedId(id);
     openWithMember(id);
   }, [openWithMember, setPickedId]);
+  // G12 map view: on a phone the pick shows as the tap card over the map
+  // (MapTapCard), so the map keeps its height; a tap on the open map clears it.
   const onPick = React.useCallback((id) => {
     setPickedId(id || null);
-    // On a phone the drawer rises to half with the picked place on top, and
-    // a tap on the open map lowers it again (design 1.5 C, question 7).
-    if (!isDesktop) setDrawer((d) => (id ? (d === 'strip' ? 'half' : d) : 'strip'));
-  }, [isDesktop, setDrawer, setPickedId]);
+  }, [setPickedId]);
   // The picked place, while it survives the filters; filtered out, it
   // leaves the map and the list together.
   const pickedRow = React.useMemo(
@@ -572,7 +581,7 @@ export function ExploreTab({
   // T592 (owner, 2026-10-22): one toggle, not a List | Map pair. In the
   // list it offers the map, on the map it offers the list: a secondary pill
   // with the icon of where it goes. Drawn in the desktop toolbar, floating
-  // above the bottom nav on a phone, and in the map drawer's strip. Reaching
+  // above the bottom nav on a phone, and in the map sheet's head. Reaching
   // it starts loading the map.
   const viewSwitch = (cls) => {
     const toMap = view !== 'map';
@@ -729,7 +738,8 @@ export function ExploreTab({
         <ExploreContent
           allRows={allRows} anyActive={anyActive} cardLinkId={cardLinkId} chips={chips}
           catalogueFull={!data?.partial}
-          contentRef={contentRef} costIndex={costIndex} drawer={drawer} dxf={dxf}
+          contentRef={contentRef} costIndex={costIndex} dxf={dxf}
+          guidedRows={guidedRows} isActiveMap={mapViewOn} lang={lang} sortMenu={sortMenu}
           emptyLine={emptyLine} favSet={favSet} gridTotal={gridTotal} isActive={isActive}
           isDesktop={isDesktop} lastChip={lastChip} listed={shownList}
           locationQuery={locationQuery} mapOpened={mapOpened} mapTop={mapTop}
@@ -739,7 +749,7 @@ export function ExploreTab({
           pickedRow={pickedRow} pinLinkId={pinLinkId} pins={pins} railLead={railLead}
           railMonth={railMonth} rails={shownRails} railsIdle={railsIdle} reachMinutes={reachMinutes}
           resetAll={resetAll} roleFor={roleFor} searchHits={searchHits} selectedId={selectedId}
-          sentinelRef={sentinelRef} setCardLinkId={setCardLinkId} setDrawer={setDrawer}
+          sentinelRef={sentinelRef} setCardLinkId={setCardLinkId}
           setLocationQuery={setLocationQuery} setPickedId={setPickedId}
           setShowFavOnly={setShowFavOnly} setView={setView} showFavOnly={showFavOnly}
           shownRows={shownRows} t={t} taxRows={taxRows} view={view} viewSwitch={viewSwitch}

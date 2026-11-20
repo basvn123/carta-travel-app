@@ -975,75 +975,7 @@
 }
 .explore-shell .xmap-failed p { margin: 0; max-width: 28ch; }
 
-/* --- The keyboard layer: one real button per pin in view ----------------
-   Transparent and pointer-events none (the mouse talks to the canvas), each
-   centred on its dot so the focus ring lands on what the reader sees. */
-.explore-shell .xmap-kpins { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.explore-shell .xmap-kpin {
-  position: absolute;
-  width: var(--kpin-d, 16px);
-  height: var(--kpin-d, 16px);
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: transparent;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-.explore-shell .xmap-kpin:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-
-/* --- Price labels (house rule "Price pins"): the name at 500, the figure
-   semibold, on the surface with a border edge. ExploreMap.jsx estimates the
-   same box for its collision check (LABEL_BOX_W, LABEL_H). ------------- */
-.explore-shell .xmap-kpin.is-label {
-  display: inline-flex;
-  align-items: baseline;
-  width: auto;
-  height: auto;
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-family: var(--font);
-  font-size: var(--text-caption);
-  font-weight: 500;
-  line-height: var(--leading-tight);
-  white-space: nowrap;
-  cursor: pointer;
-  pointer-events: auto;
-}
-/* Every pin has a 44 px hit box whatever its drawn size. */
-.explore-shell .xmap-kpin.is-label::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--tap);
-  height: var(--tap);
-  transform: translate(-50%, -50%);
-}
-.explore-shell .xmap-kpin-label { display: inline-flex; align-items: baseline; gap: var(--space-1); }
-.explore-shell .xmap-kpin-eur { font-weight: 600; font-variant-numeric: tabular-nums; }
-@media (hover: hover) {
-  .explore-shell .xmap-kpin.is-label:hover { border-color: var(--text-3); }
-}
-/* The one cheapest in view: the best-value marker, ink on sun. */
-.explore-shell .xmap-kpin.is-cheapest {
-  z-index: 2;
-  border-color: var(--best);
-  background: var(--best);
-  color: var(--text);
-  animation: xpin-in var(--dur-1) var(--ease-out);
-}
-/* The card under the pointer or in focus in the list rings its pin. */
-.explore-shell .xmap-kpin.is-ringed { z-index: 3; outline: 2px solid var(--text); outline-offset: 2px; }
-/* Settles from 0.9: the scale property composes with the centring
-   transform, so the label does not jump. */
-@keyframes xpin-in {
-  from { scale: 0.9; }
-  to { scale: 1; }
-}
+/* The keyboard layer and the pins: 86-map-view.css (G12 map view). */
 
 /* --- The tip and the card a pin opens ---------------------------------- */
 /* Above the price labels, which come later in the frame: a label under the
@@ -1129,7 +1061,6 @@
 
 @media (prefers-reduced-motion: reduce) {
   .explore-shell .xmap-canvas { transition: none; }
-  .explore-shell .xmap-kpin.is-cheapest { animation: none; }
 }
 
 /* ==========================================================================
@@ -1392,18 +1323,8 @@
    Roles and scales only.
    ========================================================================== */
 
-/* The picked pin: the one selected state on the map, the light tint with
-   the brown edge (the dot under it carries the brown ring, ExploreMap.jsx).
-   The cheapest keeps its sun marker; picked wins when they are one place. */
-/* House style (decision 0012): the chosen pin is the umber mark, paper
-   figure (5.81), settling without overshoot. */
-.explore-shell .xmap-kpin.is-label.is-picked {
-  z-index: 4;
-  border-color: var(--action);
-  background: var(--action);
-  color: var(--action-text);
-  outline: 2px solid var(--surface);
-}
+/* The picked pin is drawn by the map since the G12 map view: the umber
+   pill with the name (explore/mapPins.js, layer xpin-picked). */
 
 /* The picked place on a desktop map: the same overview the list row draws,
    on the surface at the foot of the frame, with its own close. A floating

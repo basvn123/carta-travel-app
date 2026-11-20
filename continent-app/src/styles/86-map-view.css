@@ -1,0 +1,302 @@
+/* ==========================================================================
+   Explore's map view (G12, .work/2026-11-20-map-view/decision.md, approved
+   2026-11-20). Imported by src/browse/explore/ExploreContent.jsx.
+
+   Phone: the map is the page, above the bottom nav. The band floats over
+   it: the field and Ask, then one swipeable row (Filters first, the style,
+   the settings). The header, the tabs, the heart disc and the zoom buttons
+   step aside. At rest a "List of {n}" pill opens the list sheet; a picked
+   place is a card above the nav.
+   Desktop: the band stays; the list is a 400 px column of compact cards
+   beside the map; zoom 40 px bottom right, the credit small under it.
+   The pins are map layers (explore/mapPins.js); the only DOM over the
+   canvas is the keyboard layer, which steps out while the map moves.
+   `html.is-map-view` is set by browse/explore/mapViewStore.js.
+   ========================================================================== */
+
+/* --- The keyboard layer: one transparent button per drawn pin ---------- */
+.explore-shell .xmap-kpins { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.explore-shell .xmap-kpins.is-moving { visibility: hidden; }
+.explore-shell .xmap-kpins .xmap-kpin {
+  position: absolute;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.explore-shell .xmap-kpins .xmap-kpin.is-pill { width: var(--kpin-w, var(--tap)); height: 28px; }
+.explore-shell .xmap-kpins .xmap-kpin:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* --- The legend: the saffron dot of the best-value pin ----------------- */
+.xmap-best-dot {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-right: var(--space-2);
+  border: 1px solid var(--sun-800);
+  border-radius: var(--radius-pill);
+  background: var(--sun-400);
+  vertical-align: 1px;
+}
+
+/* --- The credit: always shown, small ----------------------------------- */
+.explore-shell .xmap .maplibregl-ctrl-attrib {
+  margin: 0;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  font-size: var(--text-micro);
+  line-height: 16px;
+  color: var(--text-2);
+}
+.explore-shell .xmap .maplibregl-ctrl-attrib a { color: inherit; }
+
+/* =================================================================== Phone */
+@media (max-width: 768px) {
+  /* The map takes the page, from the top of the screen to the nav. */
+  html.is-map-view .explore-shell.is-map .explore-tab {
+    overflow: hidden;
+    padding-bottom: 0;
+  }
+  html.is-map-view .explore-shell.is-map .xcontent-map {
+    position: fixed;
+    inset: 0 0 var(--bottom-nav-h) 0;
+    z-index: var(--z-float);
+    display: block;
+    margin: 0;
+    overflow: hidden;
+  }
+  html.is-map-view .explore-shell.is-map .xcontent-map .xmap {
+    height: 100%;
+    min-height: 0;
+    border: 0;
+    border-radius: 0;
+  }
+  /* What the list view says above its rows waits there. */
+  html.is-map-view .explore-shell.is-map .xhead,
+  html.is-map-view .explore-shell.is-map .xsearch-hint,
+  html.is-map-view .explore-shell.is-map .xempty,
+  html.is-map-view .explore-shell.is-map .xempty-mark { display: none; }
+  /* The heart is the strip's first chip here; the zoom buttons give way to
+     a pinch. */
+  html.is-map-view .corner-slot--left { display: none; }
+  html.is-map-view .explore-shell .xmap .maplibregl-ctrl-group { display: none; }
+  html.is-map-view .explore-shell .xmap .maplibregl-ctrl-bottom-right { right: 0; bottom: 0; }
+  html.is-map-view .explore-shell .xmap .maplibregl-ctrl-bottom-right .maplibregl-ctrl { margin: 0 var(--space-2) var(--space-1) 0; }
+
+  /* The band floats: no ground, no header, no tabs; the field and Ask
+     cast the one float shadow. */
+  .band.is-phone.is-map > * { background: transparent; }
+  .band.is-map > .band-fold > .band-fold-in > :not(.band-row) { display: none; }
+  html.is-map-view.has-phone-band .top-bar::before { background: transparent; }
+  .band.is-map .band-row { padding-top: calc(env(safe-area-inset-top, 0px) + var(--space-2)); padding-inline: var(--space-3); }
+  .band.is-map .band-search { border-color: transparent; box-shadow: var(--elev-2); }
+  .band.is-map .band-search:focus-within { border-color: var(--action); }
+  .band.is-map .band-ask {
+    width: var(--tap);
+    justify-content: center;
+    padding: 0;
+    border-color: transparent;
+    box-shadow: var(--elev-2);
+  }
+  .band.is-map .band-ask-word { display: none; }
+  .band.is-phone.is-map > .band-strip { padding-top: var(--space-1); }
+  /* One row of chips on the map: each a paper pill, the style on its mist,
+     Filters first with its umber edge; the row swipes, no fade over the map. */
+  .band.is-map .band-chips.is-swipe {
+    gap: var(--space-2);
+    padding: 0 var(--space-3);
+    background: transparent;
+    scroll-snap-type: none;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .band.is-map .band-chips.is-swipe .band-chip { padding: 0 var(--space-3); font-size: var(--text-label); }
+  .band.is-map .band-chips.is-swipe .band-chip.is-style { margin-right: 0; }
+  .band.is-map .band-chips.is-swipe .band-chip::before {
+    background: var(--surface);
+    box-shadow: var(--elev-2);
+  }
+  .band.is-map .band-chips.is-swipe .band-chip.is-style::before { background: var(--umber-100); }
+  .band.is-map .band-chips.is-swipe .band-chip--filters::before {
+    border: var(--stroke-edge) solid var(--action);
+  }
+  .band.is-map .band-chip--filters .band-count {
+    position: static;
+    margin-left: var(--space-1);
+  }
+  .band.is-map .band-chips.is-swipe .band-chip:active::before { background: var(--surface-hover); }
+
+  /* The pill at rest: "List of {n}", ink, bottom centre over the map. */
+  .explore-shell .xmap-listpill {
+    position: absolute;
+    left: 50%;
+    bottom: var(--space-6);
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    height: var(--tap);
+    padding: 0 var(--space-5);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--text);
+    color: var(--surface);
+    font: inherit;
+    font-size: var(--text-body);
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: var(--elev-2);
+    transform: translateX(-50%);
+    cursor: pointer;
+    animation: xmap-pill-in var(--dur-2) var(--ease-out);
+    transition: transform var(--dur-press) var(--ease-tick);
+  }
+  .explore-shell .xmap-listpill:active { transform: translateX(-50%) scale(var(--press-scale)); }
+  .explore-shell .xmap-listpill:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+  /* In the full list, "Map" comes back on paper over the rows. */
+  .explore-shell .xmap-listpill.is-map {
+    z-index: 5;
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  /* The tap card: one place over the map, above the nav. */
+  .explore-shell .xmap-tapcard {
+    position: absolute;
+    left: var(--space-3);
+    right: var(--space-3);
+    bottom: var(--space-6);
+    z-index: 4;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    box-shadow: var(--elev-2);
+    touch-action: pan-x;
+    animation: xmap-card-in var(--dur-3) var(--ease-settle);
+    transition: transform var(--dur-2) var(--ease-out), opacity var(--dur-2) var(--ease-out);
+  }
+  .explore-shell .xmap-tapcard.is-dragging { transition: none; }
+  .explore-shell .xmap-tapcard .xrow-hs {
+    --row-photo: 84px;
+    padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
+    border: 0;
+    background: transparent;
+  }
+  /* The close control is there for a keyboard; a finger swipes or taps the map. */
+  .explore-shell .xmap-tapcard-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .explore-shell .xmap-tapcard-close:focus-visible { opacity: 1; pointer-events: auto; background: var(--surface); }
+
+  /* The list sheet: peek, half and full, sliding (never a height). */
+  .explore-shell .xsheet {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--radius-panel) var(--radius-panel) 0 0;
+    background: var(--surface);
+    box-shadow: var(--elev-2);
+    touch-action: none;
+    transition: transform var(--dur-3) var(--ease-settle);
+  }
+  .explore-shell .xsheet.is-closed { visibility: hidden; transition: transform var(--dur-3) var(--ease-settle), visibility 0s linear var(--dur-3); }
+  .explore-shell .xsheet.is-dragging { transition: none; }
+  .explore-shell .xsheet-head { flex: none; padding: 0 var(--space-4) var(--space-2); }
+  .explore-shell .xsheet-grab {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: grab;
+  }
+  .explore-shell .xsheet-grab::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: var(--tap); }
+  .explore-shell .xsheet-grab:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -2px; }
+  .explore-shell .xsheet-grab-bar { width: 40px; height: 4px; border-radius: var(--radius-pill); background: var(--border); }
+  .explore-shell .xsheet-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); min-height: var(--tap); }
+  .explore-shell .xsheet-count { margin: 0; font-size: var(--text-lead); font-weight: 800; line-height: var(--leading-tight); }
+  .explore-shell .xsheet-sort { display: inline-flex; align-items: center; gap: var(--space-2); }
+  .explore-shell .xsheet-legend { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+  .explore-shell .xsheet-body {
+    flex: none;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+  }
+  .explore-shell .xsheet-rows { padding: 0 var(--space-4) var(--space-4); }
+}
+
+/* ================================================================= Desktop */
+@media (min-width: 769px) {
+  /* The column: 400 px of compact cards on stone, the map beside it. */
+  .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 400px; }
+  .explore-shell .mpp--float {
+    background: var(--surface-page);
+    padding-bottom: var(--corner-room);
+  }
+  .explore-shell .mpp--float .mpp-head-row {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: var(--space-3) var(--space-4) var(--space-2);
+    background: var(--surface-page);
+  }
+  .explore-shell .mpp--float .mpp-rows {
+    display: grid;
+    gap: var(--space-2);
+    padding: 0 var(--space-3) var(--space-4);
+  }
+  .explore-shell .mpp--float .mpp-rows .xrow-hs {
+    padding: var(--space-2) var(--space-3) var(--space-2) var(--space-2);
+    border: var(--stroke-hair) solid var(--border-soft);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    transition: border-color var(--dur-1) var(--ease-out), transform var(--dur-1) var(--ease-out);
+  }
+  .explore-shell .mpp--float .mpp-rows .xrow-hs.is-linked { border-color: var(--action); }
+  .explore-shell .mpp--float .mpp-rows .xrow-hs.is-selected { border-color: var(--select-border); background: var(--select-bg); }
+  /* The zoom buttons: 40 px, bottom right, the one float shadow. */
+  .explore-shell .xcontent-map .xmap .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group {
+    margin: 0 var(--space-4) var(--space-2) 0;
+    overflow: hidden;
+    border-radius: var(--radius-control);
+    box-shadow: var(--elev-2);
+  }
+  .explore-shell .xcontent-map .xmap .maplibregl-ctrl-group button { width: 40px; height: 40px; }
+  .explore-shell .xcontent-map .xmap .maplibregl-ctrl-bottom-right .maplibregl-ctrl-attrib { margin: 0 var(--space-4) var(--space-2) 0; }
+}
+.explore-shell .mpp-head-row { display: grid; gap: var(--space-1); }
+.explore-shell .mpp-count { margin: 0; font-size: var(--text-lead); font-weight: 800; line-height: var(--leading-tight); }
+.explore-shell .mpp-legend { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+
+@keyframes xmap-pill-in {
+  from { opacity: 0; transform: translate(-50%, var(--space-2)); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+@keyframes xmap-card-in {
+  from { opacity: 0; transform: translateY(var(--space-5)); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell .xmap-listpill,
+  .explore-shell .xmap-tapcard { animation: none; transition: none; }
+  .explore-shell .xsheet,
+  .explore-shell .xsheet.is-closed { transition: none; }
+}

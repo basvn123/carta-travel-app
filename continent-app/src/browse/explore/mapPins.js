@@ -1,0 +1,276 @@
+/*
+ * Explore's pins as map layers (G12, map view: decision.md "Pins"). The map
+ * draws them, not the page: a price pill, a count bubble and a dot are
+ * symbols and circles over one GeoJSON source, so panning moves no DOM and
+ * the map's own collision keeps pills apart, the best-ranked first.
+ *
+ *   dest-dots    every place not in a bubble: an 8 px umber dot, white ring
+ *   xcluster     a crowd at low zoom: a round count bubble, tap to zoom in
+ *   xpin         a price pill (white, ink figure) for the best-ranked places
+ *                that fit; symbol-sort-key is the rank in the list's sort
+ *   xpin-best    the best value in view: the same pill with a saffron dot
+ *   xpin-hot     the pin of the card under the pointer: lifted, umber edge
+ *   xpin-picked  the picked place: umber, its name before the figure
+ *
+ * The pills are canvas images made on demand (`styleimagemissing`), drawn
+ * in the page's own face (Overpass) from the tokens, so the map needs no
+ * glyph server for them and a basemap swap keeps them. An image id says
+ * everything the drawing needs: `xp<TAB>kind<TAB>text[<TAB>figure]`,
+ * `xc<TAB>count`.
+ */
+import { tokenColour } from '../../map/tokenColors.js';
+
+export const SEP = '\t';
+// Top first: the order a hit test asks in.
+export const PIN_LAYERS = ['xpin-picked', 'xpin-hot', 'xpin-best', 'xpin'];
+export const HIT_LAYERS = [...PIN_LAYERS, 'xcluster'];
+// Where crowds stop being bubbles, and how close counts as a crowd.
+const CLUSTER_MAX_ZOOM = 6;
+const CLUSTER_RADIUS = 46;
+
+const KINDS = {
+  // height, horizontal padding, figure size, edge width
+  n: { h: 26, px: 9, fs: 13, edge: 1 },
+  b: { h: 26, px: 9, fs: 13, edge: 1 },
+  h: { h: 28, px: 10, fs: 14, edge: 2 },
+  p: { h: 30, px: 11, fs: 14, edge: 0 },
+};
+// Room around the pill for its shadow.
+const SHADOW = 4;
+
+let fontCache = null;
+function face() {
+  if (!fontCache) {
+    fontCache = (typeof document !== 'undefined'
+      && getComputedStyle(document.documentElement).getPropertyValue('--font').trim()) || 'sans-serif';
+  }
+  return fontCache;
+}
+const ratio = () => Math.min(3, Math.max(1, Math.round((typeof window !== 'undefined' && window.devicePixelRatio) || 1)));
+
+/** A token hex as rgba with this alpha (canvas shadows want a soft colour). */
+function alpha(colour, a) {
+  const m = /^#([0-9a-f]{6})$/i.exec(String(colour).trim());
+  if (!m) return colour;
+  const n = parseInt(m[1], 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arc(x + w - r, y + r, r, -Math.PI / 2, 0);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arc(x + w - r, y + h - r, r, 0, Math.PI / 2);
+  ctx.lineTo(x + r, y + h);
+  ctx.arc(x + r, y + h - r, r, Math.PI / 2, Math.PI);
+  ctx.lineTo(x, y + r);
+  ctx.arc(x + r, y + r, r, Math.PI, Math.PI * 1.5);
+  ctx.closePath();
+}
+
+// The drawn width of each pill in CSS pixels, by image id, so the chrome
+// check knows how far a pill reaches from its point.
+const sizes = new Map();
+export const pinSize = (id) => sizes.get(id) || null;
+
+let measure = null;
+function textW(text, weight, size) {
+  if (!measure) measure = document.createElement('canvas').getContext('2d');
+  if (!measure) return text.length * size * 0.6;
+  measure.font = `${weight} ${size}px ${face()}`;
+  return measure.measureText(text).width;
+}
+
+/** The width a normal pill with this text will have (CSS px, no shadow). */
+export function pillWidth(text) {
+  const k = KINDS.n;
+  return Math.ceil(textW(String(text), 800, k.fs) + 2 * k.px);
+}
+
+function canvas(w, h) {
+  const pr = ratio();
+  const cv = document.createElement('canvas');
+  cv.width = Math.ceil(w * pr);
+  cv.height = Math.ceil(h * pr);
+  const ctx = cv.getContext('2d');
+  if (!ctx) return null;
+  ctx.scale(pr, pr);
+  return { cv, ctx, pr };
+}
+
+function drawPill(kind, text, fig) {
+  const k = KINDS[kind] || KINDS.n;
+  const name = kind === 'p' && fig ? text : '';
+  const figure = kind === 'p' ? (fig || text) : text;
+  const nameW = name ? textW(name, 600, k.fs) + 5 : 0;
+  const figW = textW(figure, 800, k.fs);
+  const dot = kind === 'b' ? 7 + 5 : 0;
+  const w = Math.ceil(2 * k.px + dot + nameW + figW);
+  const W = w + 2 * SHADOW;
+  const H = k.h + 2 * SHADOW + 2;
+  const c = canvas(W, H);
+  if (!c) return null;
+  const { ctx } = c;
+  const surface = tokenColour('--surface');
+  const ink = tokenColour('--text');
+  const action = tokenColour('--action');
+  ctx.save();
+  ctx.shadowColor = alpha(tokenColour('--umber-800'), 0.32);
+  ctx.shadowBlur = 5;
+  ctx.shadowOffsetY = 1.5;
+  roundRect(ctx, SHADOW, SHADOW, w, k.h, k.h / 2);
+  ctx.fillStyle = kind === 'p' ? action : surface;
+  ctx.fill();
+  ctx.restore();
+  if (k.edge) {
+    roundRect(ctx, SHADOW + k.edge / 2, SHADOW + k.edge / 2, w - k.edge, k.h - k.edge, (k.h - k.edge) / 2);
+    ctx.lineWidth = k.edge;
+    ctx.strokeStyle = kind === 'h' ? action : tokenColour('--border-soft');
+    ctx.stroke();
+  }
+  let x = SHADOW + k.px;
+  const mid = SHADOW + k.h / 2;
+  if (dot) {
+    ctx.beginPath();
+    ctx.arc(x + 3.5, mid, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = tokenColour('--sun-400');
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = tokenColour('--sun-800');
+    ctx.stroke();
+    x += dot;
+  }
+  ctx.textBaseline = 'middle';
+  const onFill = tokenColour('--on-fill');
+  if (name) {
+    ctx.font = `600 ${k.fs}px ${face()}`;
+    ctx.fillStyle = onFill;
+    ctx.fillText(name, x, mid + 1);
+    x += nameW;
+  }
+  ctx.font = `800 ${k.fs}px ${face()}`;
+  ctx.fillStyle = kind === 'p' ? onFill : ink;
+  ctx.fillText(figure, x, mid + 1);
+  return { c, w: W, h: H };
+}
+
+function drawCount(label) {
+  const fs = 12;
+  const d = Math.max(30, Math.ceil(textW(label, 800, fs) + 16));
+  const W = d + 2 * SHADOW;
+  const H = 30 + 2 * SHADOW + 2;
+  const c = canvas(W, H);
+  if (!c) return null;
+  const { ctx } = c;
+  ctx.save();
+  ctx.shadowColor = alpha(tokenColour('--umber-800'), 0.3);
+  ctx.shadowBlur = 5;
+  ctx.shadowOffsetY = 1.5;
+  roundRect(ctx, SHADOW, SHADOW, d, 30, 15);
+  ctx.fillStyle = tokenColour('--surface');
+  ctx.fill();
+  ctx.restore();
+  roundRect(ctx, SHADOW + 1, SHADOW + 1, d - 2, 28, 14);
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = tokenColour('--umber-300');
+  ctx.stroke();
+  ctx.font = `800 ${fs}px ${face()}`;
+  ctx.fillStyle = tokenColour('--umber-800');
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, SHADOW + d / 2, SHADOW + 16);
+  return { c, w: W, h: H };
+}
+
+/** Draws the image a layer asked for and adds it to the map; false when the
+ *  id is not one of ours. `countLabel` formats a crowd's count. */
+export function addPinImage(map, id, countLabel = (n) => String(n)) {
+  if (!id || map.hasImage(id)) return true;
+  const parts = String(id).split(SEP);
+  let out = null;
+  if (parts[0] === 'xp') out = drawPill(parts[1], parts[2] || '', parts[3] || '');
+  else if (parts[0] === 'xc') out = drawCount(countLabel(Number(parts[1]) || 0));
+  else return false;
+  if (!out) return true;
+  const { c, w, h } = out;
+  sizes.set(id, [w - 2 * SHADOW, h - 2 * SHADOW]);
+  map.addImage(id, c.ctx.getImageData(0, 0, c.cv.width, c.cv.height), { pixelRatio: c.pr });
+  return true;
+}
+
+/** The pin sources and layers, added once per style (a basemap swap drops
+ *  and re-adds them). `data` is the FeatureCollection to start from. */
+export function addPinLayers(map, data) {
+  if (map.getSource('dests')) return;
+  map.addSource('dests', { type: 'geojson', data });
+  map.addSource('dests-c', {
+    type: 'geojson', data, cluster: true, clusterMaxZoom: CLUSTER_MAX_ZOOM, clusterRadius: CLUSTER_RADIUS,
+  });
+  map.addLayer({
+    id: 'dest-dots', type: 'circle', source: 'dests-c',
+    filter: ['!', ['has', 'point_count']],
+    paint: {
+      'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 8, 4, 12, 5],
+      'circle-color': tokenColour('--umber-500'),
+      'circle-stroke-width': 1.5,
+      'circle-stroke-color': tokenColour('--surface'),
+    },
+  });
+  const symbol = (id, source, filter, image, extra = {}) => map.addLayer({
+    id, type: 'symbol', source, filter,
+    layout: {
+      'icon-image': image,
+      'icon-allow-overlap': false,
+      'icon-padding': 2,
+      ...extra,
+    },
+  });
+  symbol('xcluster', 'dests-c', ['has', 'point_count'],
+    ['concat', `xc${SEP}`, ['to-string', ['get', 'point_count']]]);
+  symbol('xpin', 'dests', ['!=', ['get', 'fig'], ''],
+    ['concat', `xp${SEP}n${SEP}`, ['get', 'fig']],
+    { 'symbol-sort-key': ['get', 'rank'] });
+  symbol('xpin-best', 'dests', ['==', ['get', 'id'], ''],
+    ['concat', `xp${SEP}b${SEP}`, ['get', 'fig']]);
+  symbol('xpin-hot', 'dests', ['==', ['get', 'id'], ''],
+    ['concat', `xp${SEP}h${SEP}`, ['case', ['!=', ['get', 'fig'], ''], ['get', 'fig'], ['get', 'city']]],
+    { 'icon-allow-overlap': true });
+  symbol('xpin-picked', 'dests', ['==', ['get', 'id'], ''],
+    ['concat', `xp${SEP}p${SEP}`, ['get', 'city'], SEP, ['get', 'fig']],
+    { 'icon-allow-overlap': true });
+}
+
+/** The pin layers' filters for this moment: ids under the floating chrome
+ *  (and clusters there) leave, the best, the hot and the picked pin each
+ *  draw in their own layer and nowhere else. */
+export function setPinFilters(map, { hidden = [], hiddenClusters = [], best = '', hot = '', picked = '' }) {
+  if (!map.getLayer('xpin')) return;
+  const id = ['get', 'id'];
+  const special = [best, hot, picked].filter(Boolean);
+  map.setFilter('xpin', ['all', ['!=', ['get', 'fig'], ''],
+    ['!', ['in', id, ['literal', [...hidden, ...special]]]]]);
+  map.setFilter('xpin-best', ['all', ['==', id, best || '\u0000'],
+    ['!', ['in', id, ['literal', [hot, picked].filter(Boolean)]]]]);
+  map.setFilter('xpin-hot', ['all', ['==', id, hot || '\u0000'], ['!=', id, picked || '\u0000']]);
+  map.setFilter('xpin-picked', ['==', id, picked || '\u0000']);
+  map.setFilter('xcluster', ['all', ['has', 'point_count'],
+    ['!', ['in', ['get', 'cluster_id'], ['literal', hiddenClusters]]]]);
+}
+
+/** The pin (or bubble, or nearest dot within `slop` px) under a point. */
+export function pinAt(map, pt, slop = 22) {
+  const layers = HIT_LAYERS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, 'visibility') !== 'none');
+  const top = layers.length ? map.queryRenderedFeatures([pt.x, pt.y], { layers })[0] : null;
+  if (top) return top;
+  if (!map.getLayer('dest-dots')) return null;
+  const dots = map.queryRenderedFeatures([[pt.x - slop, pt.y - slop], [pt.x + slop, pt.y + slop]], { layers: ['dest-dots'] });
+  let best = null; let bestD = Infinity;
+  for (const f of dots) {
+    const p = map.project(f.geometry.coordinates);
+    const d = Math.hypot(p.x - pt.x, p.y - pt.y);
+    if (d < bestD) { best = f; bestD = d; }
+  }
+  return best && bestD <= slop ? best : null;
+}

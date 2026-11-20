@@ -68,10 +68,14 @@ test('the overview top has no photo under text; Ask and search live in the band'
   assert.doesNotMatch(band, /isQuestion\(text\)\) openAskChat/);
 });
 
-test('the chosen pin is the umber mark and nothing overshoots', () => {
-  const css = read('src/styles/81-map-panel.css');
-  assert.match(css, /\.xmap-kpin\.is-label\.is-picked \{[^}]*background: var\(--action\)/);
-  assert.match(css, /animation: xpin-settle var\(--dur-settle\) var\(--ease-settle\)/);
+test('the chosen pin is the umber mark with its name, drawn by the map', () => {
+  // G12 map view: the pins are map layers (explore/mapPins.js), the picked
+  // one an umber pill with the place's name before its figure.
+  const pins = read('src/browse/explore/mapPins.js');
+  assert.match(pins, /fillStyle = kind === 'p' \? action : surface/);
+  assert.match(pins, /symbol\('xpin-picked'[^;]*\['get', 'city'\]/);
+  const map = read('src/browse/ExploreMap.jsx');
+  assert.doesNotMatch(map, /className=\{`xmap-kpin-label/);
 });
 
 test('a row shows the region with the country, the country never shrinks', () => {

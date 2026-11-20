@@ -12,6 +12,7 @@ import { openAskChat, closeAskChat, useAskChat } from '../ask/askChatStore.js';
 import { useSearchDock, dockBack, dockShare } from '../searchDockStore.js';
 import { useFilters } from '../filters/filtersStore.js';
 import { toggleSettings, useSettingsSheet } from '../settings/settingsSheetStore.js';
+import { useMapViewOn } from '../explore/mapViewStore.js';
 // The search panel loads on the field's first focus.
 const SearchPanel = React.lazy(() => import('../search/SearchPanel.jsx').then((m) => ({ default: m.SearchPanel })));
 import { SummaryChips, useSummaryItems } from './SummaryChips.jsx';
@@ -89,6 +90,11 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   // the line to it), so the control shows on Places only.
   const filters = useFilters();
   const filterCount = places ? filters.count || 0 : 0;
+  // G12 map view (decision.md "Phone map view"): while Places shows its
+  // map on a phone, the band floats over it: the field and Ask, then one
+  // swipeable row with Filters first, the style and the settings. The
+  // header, the tabs and the band's ground step aside (86-map-view.css).
+  const mapView = useMapViewOn() && places && !isDesktop;
 
   const [q, setQ] = React.useState('');
   const [open, setOpen] = React.useState(false);
@@ -129,8 +135,8 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
     els.forEach((el) => ro?.observe(el));
     return () => ro?.disconnect();
-  }, [isDesktop]);
-  const tucked = useQuickReturn(!isDesktop && !open, foldPx, `${kind}:${open}`);
+  }, [isDesktop, mapView]);
+  const tucked = useQuickReturn(!isDesktop && !open && !mapView, foldPx, `${kind}:${open}:${mapView}`) && !mapView;
   // A tab change is a new page: the band takes its new shape at once (the
   // layers have no chip row), with no fold animation playing over the swap
   // (fixes r1 B5).
@@ -209,7 +215,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   React.useLayoutEffect(() => {
     const bar = bandRef.current?.closest('.top-bar');
     if (bar) document.documentElement.style.setProperty('--filter-h', `${bar.offsetHeight}px`);
-  }, [kind, showChips, isDesktop]);
+  }, [kind, showChips, isDesktop, mapView]);
   // On a phone the lists scroll under the band from the screen's top
   // (80-band.css), so the band can slide away over them; the page says so.
   React.useLayoutEffect(() => {
@@ -267,7 +273,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
         const to = e.relatedTarget;
         if (open && to && !e.currentTarget.contains(to)) setOpen(false);
       }}
-      className={`band${places ? ' is-places' : ''}${tucked ? ' is-tucked' : ''}${instant ? ' is-instant' : ''}${open ? ' is-searching' : ''}${isDesktop ? ' is-desk' : ' is-phone'}`}>
+      className={`band${places ? ' is-places' : ''}${tucked ? ' is-tucked' : ''}${instant ? ' is-instant' : ''}${open ? ' is-searching' : ''}${isDesktop ? ' is-desk' : ' is-phone'}${mapView ? ' is-map' : ''}`}>
       <div className="band-fold" inert={tucked || undefined}>
         <div className="band-fold-in">
           {!isDesktop && head}
@@ -339,12 +345,23 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
           covers it), so nothing below moves. */}
       {isDesktop ? (
         <div className="band-line">{showChips && <SummaryChips items={items} />}</div>
-      ) : (showChips && (
+      ) : ((showChips || mapView) && (
         // The strip's own ground: the chips fade at their ends (a mask),
         // and the list must not show through there when the strip is pinned.
-        <div className="band-strip"><SummaryChips items={items} className="is-swipe" /></div>
+        <div className="band-strip">
+          <SummaryChips items={items} className="is-swipe" lead={mapView ? (
+            <Pressable className={`band-chip band-chip--filters${filterCount ? ' is-on' : ''}`}
+              aria-label={filterCount ? t(countKey(t.lang, filterCount, 'band.filtersOnOne', 'band.filtersOn'), { n: filterCount }) : t('band.filters')}
+              aria-expanded={filters.isOpen} aria-haspopup="dialog"
+              onClick={(e) => openFilters(e.currentTarget)}>
+              <span className="band-chip-ic" aria-hidden="true"><HouseIcon.filter size={18} /></span>
+              <span className="band-chip-text">{t('band.filters')}</span>
+              {filterCount > 0 && <span className="band-count" aria-hidden="true">{filterCount}</span>}
+            </Pressable>
+          ) : null} />
+        </div>
       ))}
-      {tabs}
+      {!mapView && tabs}
     </div>
     </>
   );

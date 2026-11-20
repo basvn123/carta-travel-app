@@ -48,9 +48,10 @@ export function useSummaryItems() {
  * no separators. Each opens Settings at its step; the style opens the Style
  * Studio. One sideways row on every width: on a phone it swipes with snap
  * and soft edge fades (the fades show only on a side with more to see), on
- * a desktop it fits and never moves.
+ * a desktop it fits and never moves. `lead` goes first in the same row
+ * (the phone map view's Filters chip).
  */
-export function SummaryChips({ items, className = '' }) {
+export function SummaryChips({ items, className = '', lead = null }) {
   const { t } = useI18n();
   const s = useSettings();
   const ts = s?.travelStyles;
@@ -80,6 +81,8 @@ export function SummaryChips({ items, className = '' }) {
     <div ref={rowRef}
       className={`band-chips${edges.start ? ' has-start' : ''}${edges.end ? ' has-end' : ''} ${className}`.trim()}
       role="group" aria-label={t('band.chipsAria')}>
+      {/* G12 map view: the phone's floating row leads with Filters. */}
+      {lead}
       {items.map((it) => {
         const Ico = glyphOf(it.icon);
         const isStyle = it.key === 'style';

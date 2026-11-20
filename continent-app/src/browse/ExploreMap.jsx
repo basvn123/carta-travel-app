@@ -1,127 +1,84 @@
-import { bandOf, inkStep, inkStepFromRank, isGateway } from '../lib/rating.js';
+import { isGateway } from '../lib/rating.js';
 import { MatchLine } from './WhyItMatches.jsx';
 import React, { useEffect, useRef } from 'react';
 import maplibregl from '../map/maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { kindOf } from '../lib/taxonomy.js';
 import { thumbAt } from '../lib/heroImage.js';
 import { knownFor } from '../lib/knownFor.js';
-import { TOKEN_COLOURS as TC, MAP_ONLY_COLOURS as MC, tokenColour } from '../map/tokenColors.js';
-import { eurDay } from '../lib/costIndex.js';
-import { formatApprox, formatEst } from '../lib/money.js';
-import { isNational } from '../components/CostSummary.jsx';
+import { tokenColour } from '../map/tokenColors.js';
+import { formatMoney } from '../lib/money.js';
 import { Button, IconButton } from '../components/ui/index.js';
 import { CloseIcon } from '../components/Icons.jsx';
 import { countryName } from '../lib/countryName.js';
-import { drawerVisiblePx } from '../lib/mapDrawerState.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { useDayView } from '../hooks/useDayView.js';
+import { useSettings } from '../components/SettingsLine.jsx';
+import { priceFigure } from '../lib/settings/prices.js';
 import { houseBasemap } from '../map/houseBasemap.js';
-
-const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
+import { cartaMapStyle } from '../lib/map/cartaMapStyle.js';
+import { registerPmtiles, basemapFallback } from '../lib/map/pmtilesProtocol.js';
+import {
+  PIN_LAYERS, SEP, addPinImage, addPinLayers, pinAt, pinSize, pillWidth, setPinFilters,
+} from './explore/mapPins.js';
 
 /**
  * The Explore map (PLAN.md C7): the same list, spatially.
  *
- * One GeoJSON source and a circle layer, not 3,868 DOM markers. The source
- * is built once from the whole catalogue, with no photo or "known for" line
- * on it (the card looks them up by id), and the filters are a layer filter
- * over an id set, which the GPU applies to tiles it already has.
+ * G12 map view (.work/2026-11-20-map-view/decision.md "Pins"): the map draws
+ * every pin itself (explore/mapPins.js). One GeoJSON source holds the
+ * places the filters keep, each with its figure in the traveller's basis
+ * (the cards' own priceFigure, whole euros) and its rank in the list's
+ * sort. The best-ranked that fit carry a price pill (white, ink figure);
+ * the map's collision keeps them apart and symbol-sort-key keeps the
+ * better-ranked ones while zooming. Crowds at low zoom are count bubbles
+ * (a tap zooms in); every other place is an 8 px umber dot with a 44 px
+ * tap area. The cheapest place in view has a saffron dot on its pill. The
+ * picked place is the one umber pill, with its name.
  *
- * T441 (the owner's review of 2026-10-13: "it loads too long, then you only
- * see numbers"): no clusters. Every place is an ink dot sized by its kind,
- * darker for a better rating, from the first frame, and the thirty
- * best-rated in view carry their name and day cost as a label from the
- * opening view, so the map answers "where can I afford" at once. Labels
- * never overlap: the cheapest is placed first, then the better-rated, and a
- * label that would collide stays a dot. The cheapest in view is the sun
- * best-value marker. A national stand-in figure carries the estimate tilde.
- * The camera fits the filtered list inside Europe's bounds and refits when
- * the filters change; the canvas shows at its first style frame; the
- * filters set before the switch apply on load.
+ * Nothing sits under the floating chrome: after each move the pins whose
+ * pill would reach under a control (the band, the chips, the List pill, the
+ * tap card, the sheet, the zoom buttons, the credits; `chrome` names the
+ * page's own) leave the pill layer and stay dots, and bubbles there leave
+ * too. A settings or filter change re-prices and re-ranks the pins in place
+ * and never moves the camera; only a new search frames its places (`fitKey`).
  *
- * Map colours are literals mirroring the :root tokens (src/map/tokenColors.js):
- * a map style sheet cannot read CSS custom properties.
+ * T441 history: the dots were ink by rating with thirty DOM labels; T441
+ * removed clusters. Both are back the other way round here: labels as map
+ * layers (panning moved 30 buttons every frame, audit-map.md), crowds as
+ * bubbles (3,800 dots of 2 px at Europe zoom covered the country names).
  *
- * Hovering shows a tip, a card from zoom 8; on a phone a tap shows the card
- * at any zoom and a second tap opens the place. Panning calls
- * onViewport(bounds, zoom). In the 'viewport' catalogue mode (T059,
- * lib/catalogue.js) `pins` holds the whole of Europe from the boot index and
- * `all` the countries loaded so far; a pin whose record has not arrived
- * (`ld` 0) draws at the default size, ignores the filters it cannot be
- * judged on yet, and asks for its country through onNeedDetail when hovered.
+ * Keyboard (T190). Over the canvas sits a layer of real buttons, one per
+ * drawn pin up to KPIN_CAP, in reading order. They are placed when the map
+ * settles and step out while it moves, so a pan touches no DOM. Focus shows
+ * the same tip a hover shows, Escape dismisses it, Enter picks or opens.
+ * `ringId` (a card under the pointer or in focus in the list) lifts its pin,
+ * and `onPinLink(id)` tells the list which pin is under the pointer.
  *
- * Keyboard (T190). Over the canvas sits a layer of real buttons, one per pin
- * in view up to KPIN_CAP (the best-rated, plus the cheapest), in reading
- * order; the labels are those buttons. Focus shows the same tip or card a
- * hover shows, Escape dismisses it, Enter opens the place. `ringId` (a card
- * under the pointer or in focus in the list) rings its pin 2 px in ink, and
- * `onPinLink(id)` tells the list which pin is under the pointer or in focus.
+ * Picking (T504). With `onPick` a tap on a pin picks the place, the caller
+ * draws it (the phone's tap card, the desktop column), and a second tap on
+ * the picked pin opens it (`onSelect`); a tap on the open map clears the
+ * pick. Without `onPick` (the outdoor layers, OutdoorMap.jsx) the map keeps
+ * its own card: on touch a peek card, with a mouse a card from zoom 8.
  *
- * Picking (T504, roadmap 1.5). With `onPick` the map no longer draws a card
- * of its own: a tap or click on a pin picks the place (`onPick(id)`), the
- * caller draws the place's one overview (browse/PlaceOverview.jsx), and a
- * second tap on the picked pin opens it (`onSelect`). `pickedId` is the one
- * brown pin; a tap on the open map clears the pick. `drawerState` names the
- * phone drawer's stop, so the camera keeps the picked pin above it. Without
- * `onPick` (the outdoor layers, OutdoorMap.jsx) the map keeps its card.
+ * Map colours are read from the tokens at paint time (tokenColour).
  */
 
-// The Score drawn as a string for the map card (T437, RatingBadge.jsx): the
-// star is filled from the second tier up, outlined below.
-const STAR_SVG = (filled) => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.4l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.8l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8L12 3.4z" fill="${filled ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>`;
-
-const KIND_RADIUS = { metro: 9, city: 7, area: 7, town: 5.5, village: 4.5 };
-// Ink by rating, darkest for the top tier (T441): a pin is never the brown
-// action colour or the rating star, and the order survives greyscale.
-const TIER_FILL = ['match', ['get', 'tier'],
-  3, TC['--ink'],
-  2, MC.tier2,
-  1, MC.tier1,
-  /* 0 */ MC.tier0];
-
-// Where a pin stops being a dot and starts being a card.
+// Where a pin stops being a tip and starts being a card (no onPick).
 const CARD_FROM = 8;
 // Europe, and how far the camera may wander from it (T441).
 const EUROPE = [[-11, 35], [32, 62]];
 const EUROPE_MAX = [[-40, 22], [60, 74]];
-// The price label's box, estimated for collision (the 12 px name at 500,
-// the 12 px figure at 600, the gap and the padding; see 62-v6-explore.css).
-// V5 (T403, row T393-g): the text is measured in the label's own font; the
-// per-character width is only the fallback where a canvas is not available.
-const LABEL_CHAR_W = 6.6;
-const LABEL_H = 24;
-// Padding 2 x 8, border 2 x 1, and the gap between the name and the figure.
-const LABEL_BOX_W = 18;
-const LABEL_GAP_W = 4;
 // How long the basemap style may take before the frame says the map failed.
 const STYLE_WAIT_MS = 12000;
-let measureCtx = null;
-let measureFont = null;
-function textWidth(text, figure) {
-  try {
-    if (!measureCtx) measureCtx = document.createElement('canvas').getContext('2d');
-    if (!measureFont) {
-      measureFont = getComputedStyle(document.documentElement).getPropertyValue('--font').trim() || 'sans-serif';
-    }
-    measureCtx.font = `${figure ? 600 : 500} 12px ${measureFont}`;
-    const w = measureCtx.measureText(text).width;
-    if (w > 0) return w;
-  } catch { /* fall through to the estimate */ }
-  return text.length * (figure ? 7.2 : LABEL_CHAR_W);
-}
 // The keyboard layer: at most this many pin stops, ordered in bands of this
 // many pixels top to bottom, left to right within a band.
 const KPIN_CAP = 30;
 const KPIN_ROW = 64;
-
-// The day figure as the cards print it, whole euros, a national stand-in
-// marked as an estimate: the label carries the tilde alone, the tip, the
-// card and the accessible name the tilde and the estimate word (T441).
-const dayFig = (eur, est, estWord) => {
-  if (!est) return eurDay(eur);
-  return estWord ? formatEst(eur, estWord, { precision: 'whole' }) : formatApprox(eur, { precision: 'whole' });
-};
+// A pill's half height plus a gap, for the chrome check.
+const PILL_HALF_H = 17;
+const EDGE_GAP = 4;
+// The map's own floating controls, always chrome for its pins.
+const OWN_CHROME = '.maplibregl-ctrl-top-right .maplibregl-ctrl, .maplibregl-ctrl-bottom-right .maplibregl-ctrl, .maplibregl-ctrl-bottom-left .maplibregl-ctrl';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -258,14 +215,43 @@ function setRouteHot(map, id) {
   }
 }
 
+const reducedMotion = () => typeof window.matchMedia === 'function'
+  && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const coarsePointer = () => typeof window.matchMedia === 'function'
+  && window.matchMedia('(pointer: coarse)').matches;
+
+/** The visible boxes of the chrome over the map, in canvas pixels. */
+function chromeRects(map, selector) {
+  const c = map.getCanvas().getBoundingClientRect();
+  const sel = selector ? `${OWN_CHROME}, ${selector}` : OWN_CHROME;
+  const out = [];
+  let els = [];
+  try { els = document.querySelectorAll(sel); } catch { return out; }
+  for (const el of els) {
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) continue;
+    const cs = getComputedStyle(el);
+    if (cs.visibility === 'hidden' || Number(cs.opacity) === 0) continue;
+    const l = r.left - c.left; const t = r.top - c.top;
+    const box = { l, t, r: l + r.width, b: t + r.height };
+    if (box.r <= 0 || box.b <= 0 || box.l >= c.width || box.t >= c.height) continue;
+    out.push(box);
+  }
+  return out;
+}
+
 export function ExploreMap({
   rows, all, pins = null, onSelect, onViewport, onNeedDetail, t, ringId = null, onPinLink = null,
   costs = null, onBack = null, visible = true, framed = false, lines = null,
-  pickedId = null, onPick = null, drawerState = null,
+  pickedId = null, onPick = null,
   // T600: 'score' labels a pin with its Score instead of the day figure
   // (beaches, lakes and mountains on their own tabs), and no pin is the
-  // cheapest one.
+  // best value.
   pinFig = 'eur',
+  // G12 map view: what else floats over the map (a CSS selector), where the
+  // zoom buttons stand, and the key whose change frames the list anew (a
+  // new search); filters and settings never move the camera.
+  chrome = '', zoomAt = 'top-right', fitKey = '',
 }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
@@ -275,14 +261,8 @@ export function ExploreMap({
   onSelectRef.current = onSelect;
   const onPickRef = useRef(onPick);
   onPickRef.current = onPick;
-  // T592: on a desktop the place panel floats over the map's left side;
-  // the camera frames and keeps pins in the part of the map left showing.
-  const leftCover = () => {
-    const box = containerRef.current;
-    const panel = box?.closest('.xcontent-map')?.querySelector('.mpp--float');
-    if (!box || !panel || getComputedStyle(panel).position !== 'absolute') return 0;
-    return Math.max(0, Math.round(panel.getBoundingClientRect().right - box.getBoundingClientRect().left));
-  };
+  const chromeRef = useRef(chrome);
+  chromeRef.current = chrome;
   const pickedRef = useRef(pickedId);
   pickedRef.current = pickedId;
   // A pin pick: a first tap picks, a tap on the picked pin opens (T504).
@@ -304,106 +284,106 @@ export function ExploreMap({
     linkedRef.current = id;
     onPinLink?.(id);
   };
+  const hoverRef = useRef(null);
   const ringRef = useRef(ringId);
   ringRef.current = ringId;
-  // The popups are HTML strings built in memoised helpers; they read the
-  // translator through a ref so a language switch reaches them.
   const tRef = useRef(t);
   tRef.current = t;
-  // T694: pins print the cards' figure and unit in the traveller's view
-  // ("a person a day", or the group's total for the stay; T504-h).
+  const pinFigRef = useRef(pinFig);
+  pinFigRef.current = pinFig;
+  // T694: the tip and the card name the cards' unit in the traveller's view.
   const view = useDayView();
   const unitRef = useRef(view.unit);
   unitRef.current = view.unit;
-  // The canvas crossfades in over --dur-3 at its first style frame (T441;
-  // V4 waited for 'load'), from the still sunken frame, instead of popping
-  // in half drawn. A slow style still shows its frame after 1.5 seconds.
+  // The figure on a pin is the cards' own (PlaceFigure): the basis the
+  // traveller set (a day or the stay, a person or the group), whole euros.
+  const model = useSettings()?.model || null;
   const [ready, setReady] = React.useState(false);
   // V5 (T403, brief V5-5): the basemap style never arrived, so the frame
   // says so and offers the list instead of staying blank.
   const [failed, setFailed] = React.useState(false);
-  // T444: on touch the card a pin raises docks at the bottom of the map,
-  // above the floating List/Map switch, with a close control (a popup hung
-  // off the pin landed under the switch). A mouse keeps the popup.
+  // T444: on touch (no onPick) the card a pin raises docks at the bottom of
+  // the map with a close control. A mouse keeps the popup.
   const [peek, setPeek] = React.useState(null);
 
-  // The whole catalogue, serialised once. `all` is the unfiltered set; when
-  // a caller does not pass one, the current rows stand in and the map
-  // behaves exactly as it did before.
   const source = all || rows;
+  // Each place's rank in the list's current order: the pills keep the
+  // better-ranked when they collide (symbol-sort-key, lower first).
+  const rankOf = React.useMemo(() => {
+    const m = new Map();
+    rows.forEach((p, i) => m.set(p.id, i));
+    return m;
+  }, [rows]);
+  // What survives the filters. `null` means everything.
+  const keepIds = React.useMemo(() => {
+    if (!all || rows === all || rows.length === all.length) return null;
+    return new Set(rows.map((p) => p.id));
+  }, [rows, all]);
   const geojson = React.useMemo(() => {
-    // The day cost at the traveller's Lifestyle, from the same cost index
-    // the cards read (`costs`, destId to cost row); -1 when there is none,
-    // because a null property does not survive into a maplibre feature.
     const costOf = (p) => costs?.get(p.id) || p.cost;
-    const dayOf = (p) => {
-      const eur = view.day(costOf(p)?.dayEur);
-      return eur != null ? Math.round(eur) : -1;
+    const figOf = (p) => {
+      if (pinFig === 'score') {
+        const s = p.rating?.score;
+        return { fig: s != null ? Number(s).toFixed(1) : '', eur: -1 };
+      }
+      const eur = priceFigure({ cost: costOf(p) }, model || {}).eur;
+      return Number.isFinite(eur) ? { fig: formatMoney(eur), eur: Math.round(eur) } : { fig: '', eur: -1 };
     };
-    const loaded = (p) => ({
-      type: 'Feature',
-      geometry: { type: 'Point', coordinates: [p.city_lon ?? p.lon, p.city_lat ?? p.lat] },
-      properties: {
-        id: p.id,
-        city: p.city,
-        country: p.country,
-        cc: p.iso2 || '',
-        // The pin's ink step from the v5 band (lib/rating.js, T763).
-        tier: inkStep(bandOf(p.rating)),
-        score: p.rating?.score ?? null,
-        gem: p.rating?.hidden_gem ? 1 : 0,
-        r: KIND_RADIUS[kindOf(p)] || 5.5,
-        eur: dayOf(p),
-        est: isNational(costOf(p)) ? 1 : 0,
-        ld: 1,
-      },
-    });
+    const loaded = (p, lon, lat) => {
+      const { fig, eur } = figOf(p);
+      return {
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [lon, lat] },
+        properties: {
+          id: p.id,
+          city: p.city,
+          country: p.country,
+          cc: p.iso2 || '',
+          score: p.rating?.score ?? null,
+          eur,
+          fig,
+          rank: rankOf.has(p.id) ? rankOf.get(p.id) : 1e6,
+          ld: 1,
+        },
+      };
+    };
     const drawable = (p) => Number.isFinite(p.lat) && Number.isFinite(p.lon);
-    if (!pins) return { type: 'FeatureCollection', features: source.filter(drawable).map(loaded) };
-    // Boot pins, upgraded to the full feature wherever the record is in.
+    const kept = (id) => !keepIds || keepIds.has(id);
+    const features = [];
+    if (!pins) {
+      for (const p of source) {
+        if (drawable(p) && kept(p.id)) features.push(loaded(p, p.city_lon ?? p.lon, p.city_lat ?? p.lat));
+      }
+      return { type: 'FeatureCollection', features };
+    }
+    // Boot pins, upgraded to the full feature wherever the record is in. A
+    // pin whose record has not arrived cannot be judged by a filter yet, so
+    // it stays (a dot) until its country lands.
     const byId = new Map(source.map((p) => [p.id, p]));
-    return {
-      type: 'FeatureCollection',
+    for (const b of pins) {
+      const p = byId.get(b.id);
       // T755: a gateway airport is never a pin of its own; its city is.
-      features: pins.filter((b) => drawable(b) && !b.gateway && !isGateway(byId.get(b.id))).map((b) => {
-        const p = byId.get(b.id);
-        if (p) return drawable(p) ? loaded(p) : loaded({ ...p, lat: b.lat, lon: b.lon });
-        return {
-          type: 'Feature',
-          geometry: { type: 'Point', coordinates: [b.lon, b.lat] },
-          properties: {
-            id: b.id, city: '', country: '', tier: inkStepFromRank(b.band), score: null,
-            gem: b.hiddenGem ? 1 : 0, r: 5.5, eur: -1, est: 0, ld: 0,
-          },
-        };
-      }),
-    };
-  }, [source, pins, costs, view]);
-  // The map's load handler seeds its source from the payload current at load
-  // time, not the one current when the map was created: the catalogue can
-  // grow in between, and the setData effect below skips until the map is ready.
+      if (!drawable(b) || b.gateway || isGateway(p)) continue;
+      if (p) {
+        if (!kept(p.id)) continue;
+        features.push(drawable(p) ? loaded(p, p.city_lon ?? p.lon, p.city_lat ?? p.lat) : loaded(p, b.lon, b.lat));
+        continue;
+      }
+      features.push({
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [b.lon, b.lat] },
+        properties: { id: b.id, city: '', country: '', cc: '', score: null, eur: -1, fig: '', rank: 1e6, ld: 0 },
+      });
+    }
+    return { type: 'FeatureCollection', features };
+  }, [source, pins, costs, model, keepIds, rankOf, pinFig]);
   const geojsonRef = useRef(geojson);
   geojsonRef.current = geojson;
-  // The card's photograph and line are looked up here, by id, when a card
-  // opens (T441): carrying them on all 3,868 features cost the payload.
+  // The card's photograph and line are looked up by id when a card opens.
   const byIdRef = useRef(new Map());
   byIdRef.current = React.useMemo(() => new Map(source.map((p) => [p.id, p])), [source]);
 
-  // What survives the filters, as an expression rather than a new payload.
-  // `null` means "everything", which is also what an absent `all` means.
-  const keepIds = React.useMemo(() => {
-    // Nothing filtered out is no filter: the camera then frames Europe,
-    // not the catalogue's outliers (Iceland, the Canaries, Cyprus).
-    if (!all || rows === all || rows.length === all.length) return null;
-    return rows.map((p) => p.id);
-  }, [rows, all]);
-
-  // Which destination the open popup is a CARD for, or null when the popup
-  // is the plain name tip (or closed). The distinction decides whether
-  // leaving the pin dismisses it.
   const cardRef = useRef(null);
-  const applyFilterRef = useRef(null);
-
   const popHelpers = React.useMemo(() => {
     const closePop = () => {
       popupRef.current?.remove();
@@ -414,41 +394,41 @@ export function ExploreMap({
     const popup = (map) => {
       if (!popupRef.current) {
         popupRef.current = new maplibregl.Popup({
-          closeButton: false, closeOnClick: false, offset: 14, maxWidth: 'none',
+          closeButton: false, closeOnClick: false, offset: 18, maxWidth: 'none',
         });
         popupRef.current.on('close', () => { cardRef.current = null; });
       }
       return popupRef.current.addTo(map);
     };
-    // The day cost as the cards print it ("€87 a day"); -1 is "no figure".
-    const eurHtml = (eur, est, cls) => (eur != null && eur >= 0
-      ? `<span class="${cls}"><span class="xmap-fig">${esc(dayFig(eur, est, tRef.current('money.est')))}</span> ${esc(unitRef.current)}</span>`
+    const eurHtml = (fig, cls) => (fig
+      ? `<span class="${cls}"><span class="xmap-fig">${esc(fig)}</span> ${esc(unitRef.current)}</span>`
       : '');
     const showTip = (map, f) => {
-      const { city, score, tier, ld, eur, est, cc } = f.properties;
-      const country = countryName(cc, f.properties.country);
-      // No record yet: ask for its country; the tip shows once it lands.
+      const { city, score, ld, fig, cc } = f.properties;
       if (ld === 0) { onNeedDetailRef.current?.(f.properties.id); return; }
+      const country = countryName(cc, f.properties.country);
+      const money = pinFigRef.current === 'score' ? '' : fig;
       const html = `<div class="xmap-pop"><strong>${esc(city)}</strong>`
-        + (score != null ? `<span class="xmap-pop-score rt-${tier}">${Number(score).toFixed(1)}</span>` : '')
+        + (score != null ? `<span class="xmap-pop-score">${Number(score).toFixed(1)}</span>` : '')
         + `<br><span class="xmap-pop-sub">${esc(country)}</span>`
-        + (eur >= 0 ? `<br>${eurHtml(eur, est === 1, 'xmap-pop-eur')}` : '')
+        + (money ? `<br>${eurHtml(money, 'xmap-pop-eur')}` : '')
         + '</div>';
       cardRef.current = null;
       popup(map).setLngLat(f.geometry.coordinates).setHTML(html);
     };
     const showCard = (map, f) => {
-      const { id, city, score, tier, eur, est, cc } = f.properties;
+      const { id, city, score, fig, cc } = f.properties;
       const country = countryName(cc, f.properties.country);
       const rec = byIdRef.current.get(id);
       const img = rec ? (rec.image?.url || rec.image || '') : '';
       const lead = rec ? (knownFor(rec) || '') : '';
       const thumb = img ? thumbAt(img, 250) : '';
-      if (typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches) {
+      const money = pinFigRef.current === 'score' ? '' : fig;
+      if (coarsePointer()) {
         popupRef.current?.remove();
         popupRef.current = null;
         cardRef.current = id;
-        setPeek({ id, city, country, score, tier, eur, est: est === 1, thumb, lead });
+        setPeek({ id, city, country, score, fig: money, thumb, lead });
         return;
       }
       const html = `<button type="button" class="xmap-card-hit" data-id="${esc(id)}">`
@@ -456,15 +436,14 @@ export function ExploreMap({
         + (thumb ? `<img class="xmap-card-img" src="${esc(thumb)}" alt="" loading="lazy">` : '')
         + '<div class="xmap-card-body"><div class="xmap-card-head">'
         + `<span class="xmap-card-name">${esc(city)}</span>`
-        + (score != null ? `<span class="xmap-card-score rt-${tier}">${STAR_SVG(true)}${Number(score).toFixed(1)}</span>` : '')
+        + (score != null ? `<span class="xmap-card-score">${Number(score).toFixed(1)}</span>` : '')
         + '</div>'
         + `<p class="xmap-card-sub">${esc(country)}</p>`
-        + (eur >= 0 ? `<p class="xmap-card-eur">${eurHtml(eur, est === 1, 'xmap-card-eur-line')}</p>` : '')
+        + (money ? `<p class="xmap-card-eur">${eurHtml(money, 'xmap-card-eur-line')}</p>` : '')
         + (lead ? `<p class="xmap-card-lead">${esc(lead)}</p>` : '')
         + '</div></div></button>';
       cardRef.current = id;
       const p = popup(map).setLngLat(f.geometry.coordinates).setHTML(html);
-      // The card is a button: clicking anywhere on it opens the place.
       p.getElement()?.querySelector('.xmap-card-hit')
         ?.addEventListener('click', () => onSelectRef.current?.(id));
     };
@@ -472,250 +451,254 @@ export function ExploreMap({
   }, []);
   const { closePop, showTip, showCard } = popHelpers;
 
-  // The keyboard layer. `kpins` is what React renders; the move handler
-  // repositions the same buttons through kpinElsRef without a render.
+  // The keyboard layer (rebuilt when the map settles, hidden while it moves).
   const [kpins, setKpins] = React.useState([]);
-  const kpinsRef = useRef(kpins);
-  kpinsRef.current = kpins;
-  const kpinElsRef = useRef(new Map());
-  // The pin that last held focus, so a rebuild that drops it (the map moved
-  // it out of view) can hand focus to the canvas instead
-  // of losing it to the page body.
+  const kpinsBoxRef = useRef(null);
   const lastKpinRef = useRef(null);
-
   const collectKpins = React.useCallback((map) => {
     const canvas = map.getCanvas();
     const W = canvas.clientWidth; const H = canvas.clientHeight;
-    const layers = ['dest-dots'].filter((l) => map.getLayer(l));
-    if (!layers.length) return [];
+    if (!map.getLayer('dest-dots')) return [];
+    const pinLayers = PIN_LAYERS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, 'visibility') !== 'none');
     const seen = new Set();
     const out = [];
-    for (const f of map.queryRenderedFeatures({ layers })) {
+    const add = (f, label) => {
       const pr = f.properties || {};
-      const key = `d${pr.id}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      // A pin whose record has not arrived has no name to read out yet; it
-      // joins the layer on the idle after its country lands.
-      if (pr.ld === 0) continue;
-      const lngLat = f.geometry.coordinates;
-      const pt = map.project(lngLat);
-      if (pt.x < 0 || pt.y < 0 || pt.x > W || pt.y > H) continue;
+      if (pr.ld === 0 || seen.has(pr.id)) return;
+      seen.add(pr.id);
+      const pt = map.project(f.geometry.coordinates);
+      if (pt.x < 0 || pt.y < 0 || pt.x > W || pt.y > H) return;
       out.push({
-        key, lngLat, x: pt.x, y: pt.y,
-        id: pr.id, city: pr.city, country: pr.country, score: pr.score, tier: pr.tier ?? 0,
-        eur: pr.eur != null && pr.eur >= 0 ? pr.eur : null, est: pr.est === 1,
-        r: pr.r || 5.5,
-        feature: { geometry: { coordinates: lngLat }, properties: pr },
+        key: `d${pr.id}`, id: pr.id, x: pt.x, y: pt.y, label,
+        city: pr.city, country: pr.country, cc: pr.cc, score: pr.score, fig: pr.fig || '',
+        w: label ? (pinSize(`xp${SEP}n${SEP}${pr.fig}`)?.[0] || pillWidth(pr.fig || pr.city || '')) : 0,
+        feature: { geometry: { coordinates: f.geometry.coordinates }, properties: pr },
       });
+    };
+    if (pinLayers.length) for (const f of map.queryRenderedFeatures({ layers: pinLayers })) add(f, true);
+    if (out.length < KPIN_CAP) {
+      for (const f of map.queryRenderedFeatures({ layers: ['dest-dots'] })) {
+        if (out.length >= KPIN_CAP) break;
+        add(f, false);
+      }
     }
-    out.sort((a, b) => (b.tier - a.tier) || ((b.score ?? -1) - (a.score ?? -1)));
-    // The cheapest place in view always gets a stop (and so a label): it is
-    // the one pin the map emphasises, so it cannot be left a bare dot because
-    // thirty better-rated places outranked it.
-    const set = out.slice(0, KPIN_CAP);
-    let cheapest = null;
-    for (const k of out) {
-      if (k.eur != null && (!cheapest || k.eur < cheapest.eur)) cheapest = k;
-    }
-    if (cheapest && !set.includes(cheapest)) set[set.length - 1] = cheapest;
-    // The picked place always keeps its stop and its label (T504).
-    const picked = pickedRef.current ? out.find((k) => k.id === pickedRef.current) : null;
-    if (picked && !set.includes(picked)) set[Math.max(0, set.length - 2)] = picked;
-    return set.sort((a, b) => (
+    return out.slice(0, KPIN_CAP).sort((a, b) => (
       Math.floor(a.y / KPIN_ROW) - Math.floor(b.y / KPIN_ROW)) || (a.x - b.x));
   }, []);
 
+  // The pin filters of this moment: what the chrome covers leaves, the best
+  // value in view gets its dot, the hovered and the picked pins their own.
+  const pinStateRef = useRef({ hidden: [], hiddenClusters: [], best: '' });
+  const applyPins = React.useCallback((map) => {
+    if (!map?.getLayer('xpin')) return;
+    setPinFilters(map, {
+      ...pinStateRef.current,
+      hot: hoverRef.current || ringRef.current || '',
+      picked: pickedRef.current || '',
+    });
+  }, []);
+  const refreshPins = React.useCallback((map) => {
+    if (!map?.getLayer('xpin')) return;
+    const cv = map.getCanvas();
+    const W = cv.clientWidth; const H = cv.clientHeight;
+    const rects = chromeRects(map, chromeRef.current);
+    const b = map.getBounds();
+    const w = b.getWest(); const e = b.getEast(); const s = b.getSouth(); const n = b.getNorth();
+    const hidden = [];
+    const fits = [];
+    let best = null;
+    const under = (pt, half) => (
+      pt.x - half < EDGE_GAP || pt.x + half > W - EDGE_GAP || pt.y - PILL_HALF_H < EDGE_GAP || pt.y + PILL_HALF_H > H - EDGE_GAP
+      || rects.some((r) => pt.x + half > r.l && pt.x - half < r.r && pt.y + PILL_HALF_H > r.t && pt.y - PILL_HALF_H < r.b));
+    for (const f of geojsonRef.current.features) {
+      const pr = f.properties;
+      if (!pr.fig) continue;
+      const [lon, lat] = f.geometry.coordinates;
+      if (lon < w || lon > e || lat < s || lat > n) continue;
+      const pt = map.project(f.geometry.coordinates);
+      const half = (pinSize(`xp${SEP}n${SEP}${pr.fig}`)?.[0] || pillWidth(pr.fig)) / 2 + 6;
+      if (under(pt, half)) { hidden.push(pr.id); continue; }
+      fits.push(pr);
+      if (pinFigRef.current !== 'score' && pr.eur >= 0
+        && (!best || pr.eur < best.eur || (pr.eur === best.eur && pr.rank < best.rank))) best = pr;
+    }
+    // A price pill for the best-ranked in view only (about one per 18,000
+    // px of map, 10 to 40); the rest are bubbles and dots (decision.md).
+    const cap = Math.max(10, Math.min(40, Math.round((W * H) / 18000)));
+    fits.sort((a, c) => a.rank - c.rank);
+    for (const pr of fits.slice(cap)) if (pr.id !== best?.id) hidden.push(pr.id);
+    const hiddenClusters = [];
+    if (map.getSource('dests-c')) {
+      for (const f of map.querySourceFeatures('dests-c', { filter: ['has', 'point_count'] })) {
+        const pt = map.project(f.geometry.coordinates);
+        if (under(pt, 22)) hiddenClusters.push(f.properties.cluster_id);
+      }
+    }
+    pinStateRef.current = { hidden, hiddenClusters, best: best?.id || '' };
+    applyPins(map);
+  }, [applyPins]);
+  const refreshRef = useRef(refreshPins);
+  refreshRef.current = refreshPins;
+
+  // The count bubble's figure in the reader's language ("1.2k").
+  const countLabel = React.useCallback((n) => {
+    try {
+      return new Intl.NumberFormat(tRef.current?.lang || undefined, { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+    } catch { return String(n); }
+  }, []);
+
+  const fitRef = useRef(null);
   useEffect(() => {
     if (mapRef.current) return undefined;
+    // G12: the Carta basemap from our own PMTiles; CARTO only if it fails.
+    registerPmtiles(maplibregl);
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: MAP_STYLE,
+      style: cartaMapStyle(),
       bounds: EUROPE,
       fitBoundsOptions: { padding: 16 },
       maxBounds: EUROPE_MAX,
       minZoom: 2.5,
-      attributionControl: { compact: true },
+      // The credit stays visible and small (decision.md "Base map").
+      attributionControl: { compact: false },
     });
     houseBasemap(map);
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+    // A verify seam: data-basemap says which basemap drew (carta or carto).
+    containerRef.current.dataset.basemap = 'carta';
+    basemapFallback(map, { onFallback: () => { if (containerRef.current) containerRef.current.dataset.basemap = 'carto'; } });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), zoomAt);
     mapRef.current = map;
-    // A verify seam: scripts/verify_map_size_cards.mjs moves the camera to an
-    // exact zoom through it (a wheel gesture lands wherever it lands).
+    // A verify seam: scripts/verify_map.mjs and verify_map_size_cards.mjs
+    // move the camera through it.
     containerRef.current._cartaMap = map;
-    // T441: the canvas shows at the first style frame, not after every tile
-    // and glyph has arrived ('load'); the dots are our own data and draw as
-    // soon as the source is in.
     const showCanvas = () => setReady(true);
     map.once('styledata', showCanvas);
     const readyTimer = setTimeout(showCanvas, 1500);
-    // Tile and glyph errors after the style has arrived are not a failed
-    // map (the pins are drawn from our own data); a style that never
-    // arrives is.
     let styleSeen = false;
     map.on('styledata', () => { styleSeen = true; });
     const fail = () => { if (!styleSeen) setFailed(true); };
     map.on('error', fail);
-    // In development a map error is said, not swallowed (T593 end check).
     if (import.meta.env?.DEV) map.on('error', (e) => console.warn('[map]', e?.error?.message || e));
     const styleTimer = setTimeout(fail, STYLE_WAIT_MS);
 
-    // T441: our dots and labels go in as soon as the style has loaded, not
-    // on 'load', which waits for the first complete render, tiles included
-    // (four to six seconds before the first price on a throttled phone).
-    map.once('style.load', () => {
-      map.addSource('dests', { type: 'geojson', data: geojsonRef.current });
-      // T441: one dot per place, in ink, sized by kind (house rule "Price
-      // pins": every place that is not a label is a dot). Better-rated places
-      // draw a touch darker, so the eye finds them; the price labels on top
-      // carry the rest.
-      map.addLayer({
-        id: 'dest-dots', type: 'circle', source: 'dests',
-        paint: {
-          // Small at the opening zoom, where 3,868 places share one screen,
-          // growing to full size by the time they spread apart.
-          'circle-radius': ['interpolate', ['linear'], ['zoom'],
-            3, ['*', ['get', 'r'], 0.42], 6, ['*', ['get', 'r'], 0.75], 9, ['get', 'r'], 12, ['*', ['get', 'r'], 1.4]],
-          'circle-color': TIER_FILL,
-          // Unrated places recede; the rated ones carry the picture.
-          'circle-opacity': ['match', ['get', 'tier'], 0, 0.55, 0.92],
-          'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 3, 0.5, 8, 1],
-          'circle-stroke-color': TC['--bg-card'],
-        },
-      });
-      // The list-to-map ring: the pin of the card under the pointer or in
-      // focus, 2 px --ink, never the accent (explore N5).
-      map.addLayer({
-        id: 'dest-ring', type: 'circle', source: 'dests',
-        filter: ['==', ['get', 'id'], ringRef.current || ''],
-        paint: {
-          'circle-radius': ['+', ['get', 'r'], 4],
-          'circle-color': TC['--ink'],
-          'circle-opacity': 0,
-          'circle-stroke-width': 2,
-          'circle-stroke-color': TC['--ink'],
-        },
-      });
-      // The picked place (T504): the one brown item on the map, a ring in
-      // the action brown around its dot (house rule "Map and list in sync").
-      map.addLayer({
-        id: 'dest-picked', type: 'circle', source: 'dests',
-        filter: ['==', ['get', 'id'], pickedRef.current || ''],
-        paint: {
-          'circle-radius': ['+', ['get', 'r'], 5],
-          'circle-color': TC['--accent'],
-          'circle-opacity': 0,
-          'circle-stroke-width': 3,
-          'circle-stroke-color': TC['--accent'],
-        },
-      });
+    // The pills and bubbles are drawn the first time a layer asks for one.
+    map.on('styleimagemissing', (e) => { addPinImage(map, e.id, countLabel); });
 
-      // A tap opens the card first and waits (touch has no hover, and the
-      // card is the thing worth reading: on a phone at any zoom, T441, a peek
-      // card over the map); a second tap of the same pin, or a click with a
-      // mouse past the card zoom, opens the place.
-      const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
-      // A tap on the open map puts the docked card away.
-      map.on('click', (e) => {
-        if (onPickRef.current) {
-          // A tap on the open map puts the pick away (T504).
-          if (pickedRef.current && !map.queryRenderedFeatures(e.point, { layers: ['dest-dots'] }).length) {
-            onPickRef.current(null);
-          }
-          return;
-        }
-        if (!coarse || !cardRef.current) return;
-        if (!map.queryRenderedFeatures(e.point, { layers: ['dest-dots'] }).length) closePop();
-      });
-      map.on('click', 'dest-dots', (e) => {
-        const f = e.features?.[0];
-        if (!f) return;
-        const id = f.properties.id;
-        if (onPickRef.current) {
-          if (f.properties.ld === 0) onNeedDetailRef.current?.(id);
-          pickOrOpenRef.current(id);
-          return;
-        }
-        if ((coarse || map.getZoom() >= CARD_FROM) && f.properties.ld !== 0 && cardRef.current !== id) { showCard(map, f); return; }
-        onSelectRef.current?.(id);
-      });
-      map.on('mouseenter', 'dest-dots', () => { map.getCanvas().style.cursor = 'pointer'; });
-      map.on('mouseleave', 'dest-dots', () => {
-        map.getCanvas().style.cursor = '';
-        onPinLinkRef.current?.(null);
-        // The card is hoverable (WCAG 1.4.13): travelling into it to read
-        // the line or click it must not dismiss it, so only the plain name
-        // tip closes on leaving the pin.
-        if (!cardRef.current) closePop();
-      });
-      map.on('mousemove', 'dest-dots', (e) => {
-        const f = e.features?.[0];
-        if (!f) return;
-        if (f.properties.ld !== 0) onPinLinkRef.current?.(f.properties.id);
-        if (!onPickRef.current && map.getZoom() >= CARD_FROM && f.properties.ld !== 0) {
-          if (cardRef.current !== f.properties.id) showCard(map, f);
-        } else {
-          showTip(map, f);
-        }
-      });
-      map.on('zoomend', () => {
-        // Zooming back out turns an open card back into the plain map.
-        if (!coarse && map.getZoom() < CARD_FROM && cardRef.current) closePop();
-      });
-      map.on('moveend', () => {
-        setKpins(collectKpins(map));
-        const b = map.getBounds();
-        onViewportRef.current?.([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], map.getZoom());
-      });
-      // Keyboard layer: follow the pins every frame, rebuild when settled.
-      map.on('move', () => {
-        for (const k of kpinsRef.current) {
-          const el = kpinElsRef.current.get(k.key);
-          if (!el) continue;
-          const pt = map.project(k.lngLat);
-          el.style.left = `${pt.x}px`;
-          el.style.top = `${pt.y}px`;
-        }
-      });
-      // The labels are placed on the first frame that draws our dots, not
-      // after every basemap tile has arrived ('idle' took 4 to 6 seconds on
-      // a throttled phone, T441); 'idle' then refines them as usual.
-      const early = () => {
-        if (!map.isSourceLoaded('dests')) return;
-        map.off('render', early);
-        setKpins(collectKpins(map));
-      };
-      map.on('render', early);
-      let firstIdle = true;
-      map.on('idle', () => {
-        setKpins(collectKpins(map));
-        // A measure point for the map's open time (T441).
-        if (firstIdle) { firstIdle = false; try { performance.mark('carta:map-idle'); } catch { /* old browser */ } }
-      });
-      readyRef.current = true;
-      // T441: the filters set before the switch apply now (they were skipped
-      // while the map loaded), and the camera frames what the list holds.
-      applyFilterRef.current?.();
-      fitRef.current?.(false);
+    // The pins go in as soon as a style has loaded (not on 'load', which
+    // waits for every tile, T441), and again after a basemap swap.
+    map.on('style.load', () => {
+      addPinLayers(map, geojsonRef.current);
+      applyPins(map);
+      if (!readyRef.current) {
+        readyRef.current = true;
+        fitRef.current?.(false);
+      }
     });
+
+    const isPicking = () => !!onPickRef.current;
+    map.on('click', (e) => {
+      const f = pinAt(map, e.point);
+      if (!f) {
+        if (isPicking()) { if (pickedRef.current) onPickRef.current(null); return; }
+        if (coarsePointer() && cardRef.current) closePop();
+        return;
+      }
+      const pr = f.properties;
+      if (pr.point_count != null) {
+        // A crowd: zoom in until it splits.
+        Promise.resolve(map.getSource('dests-c')?.getClusterExpansionZoom(pr.cluster_id))
+          .then((z) => map.easeTo({
+            center: f.geometry.coordinates, zoom: Math.min((z ?? map.getZoom() + 2) + 0.2, 12),
+            duration: reducedMotion() ? 0 : 420,
+          }))
+          .catch(() => {});
+        return;
+      }
+      const id = pr.id;
+      if (isPicking()) {
+        if (pr.ld === 0) onNeedDetailRef.current?.(id);
+        closePop();
+        pickOrOpenRef.current(id);
+        return;
+      }
+      if ((coarsePointer() || map.getZoom() >= CARD_FROM) && pr.ld !== 0 && cardRef.current !== id) { showCard(map, f); return; }
+      onSelectRef.current?.(id);
+    });
+    let pointing = false;
+    map.on('mousemove', (e) => {
+      const f = pinAt(map, e.point, 8);
+      const pr = f?.properties;
+      const id = pr && pr.point_count == null && pr.ld !== 0 ? pr.id : null;
+      if (f) { map.getCanvas().style.cursor = 'pointer'; pointing = true; }
+      else if (pointing) { map.getCanvas().style.cursor = ''; pointing = false; }
+      if (hoverRef.current !== id) {
+        hoverRef.current = id;
+        onPinLinkRef.current?.(id);
+        applyPins(map);
+      }
+      if (!f || pr.point_count != null) {
+        if (!cardRef.current && popupRef.current) closePop();
+        return;
+      }
+      if (pr.ld === 0) { onNeedDetailRef.current?.(pr.id); return; }
+      if (!isPicking() && map.getZoom() >= CARD_FROM) {
+        if (cardRef.current !== pr.id) showCard(map, f);
+      } else {
+        showTip(map, f);
+      }
+    });
+    map.getCanvas().addEventListener('mouseleave', () => {
+      if (hoverRef.current) { hoverRef.current = null; onPinLinkRef.current?.(null); applyPins(map); }
+      if (!cardRef.current) closePop();
+    });
+    map.on('zoomend', () => {
+      if (!coarsePointer() && map.getZoom() < CARD_FROM && cardRef.current) closePop();
+    });
+    // While the camera moves the keyboard layer steps out, so a pan writes
+    // nothing to the page; it is rebuilt once the map settles.
+    map.on('movestart', () => { kpinsBoxRef.current?.classList.add('is-moving'); });
+    // Tiles of a new zoom land after 'moveend': the bubbles there are
+    // checked again once the map is idle.
+    let dirty = false;
+    map.on('moveend', () => {
+      dirty = true;
+      refreshRef.current(map);
+      kpinsBoxRef.current?.classList.remove('is-moving');
+      const b = map.getBounds();
+      onViewportRef.current?.([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], map.getZoom());
+    });
+    let firstIdle = true;
+    map.on('idle', () => {
+      if (dirty) { dirty = false; refreshRef.current(map); }
+      setKpins(collectKpins(map));
+      if (firstIdle) {
+        firstIdle = false;
+        refreshRef.current(map);
+        // A measure point for the map's open time (T441).
+        try { performance.mark('carta:map-idle'); } catch { /* old browser */ }
+      }
+    });
+    // The chrome moved (a card, the sheet): the pins under it step aside.
+    const onChrome = () => requestAnimationFrame(() => refreshRef.current(map));
+    window.addEventListener('carta:map-chrome', onChrome);
+    window.addEventListener('resize', onChrome);
     return () => {
       clearTimeout(readyTimer);
       clearTimeout(styleTimer);
+      window.removeEventListener('carta:map-chrome', onChrome);
+      window.removeEventListener('resize', onChrome);
       popupRef.current?.remove();
       map.remove();
       mapRef.current = null;
       readyRef.current = false;
     };
-    // The map is built once: the popup helpers and collectKpins are memos
-    // with no dependencies, so listing them never rebuilds it.
-  }, [closePop, showTip, showCard, collectKpins]);
+    // The map is built once: the helpers are memos with no dependencies, and
+    // the zoom corner is fixed for a map's life.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [closePop, showTip, showCard, collectKpins, applyPins, countLabel]);
 
-  // T593: route lines (Trails and Cycling, the owner's AllTrails reference).
-  // `lines` is a GeoJSON FeatureCollection of (Multi)LineStrings, each with
-  // { id, label, rank }; the map draws them under the dots, a length pill at
-  // each start, and the hovered or ringed route in the action brown. The
-  // dots give way to the pills (their keyboard stops stay). Added after the
-  // map's own layers, so it never races them.
+  // T593: route lines (Trails and Cycling). The pins give way to the route
+  // pills (their keyboard stops stay).
   const linesRef = useRef(lines);
   linesRef.current = lines;
   const routeHotRef = useRef(null);
@@ -741,28 +724,33 @@ export function ExploreMap({
           },
         });
       }
-      if (!dotsOpacity.has(map)) dotsOpacity.set(map, map.getPaintProperty('dest-dots', 'circle-opacity'));
+      if (!dotsOpacity.has(map)) dotsOpacity.set(map, map.getPaintProperty('dest-dots', 'circle-opacity') ?? 1);
       map.setPaintProperty('dest-dots', 'circle-opacity', data ? 0 : dotsOpacity.get(map));
+      map.setPaintProperty('dest-dots', 'circle-stroke-opacity', data ? 0 : 1);
+      for (const l of [...PIN_LAYERS, 'xcluster']) {
+        if (map.getLayer(l)) map.setLayoutProperty(l, 'visibility', data ? 'none' : 'visible');
+      }
       return true;
     };
     if (draw()) return undefined;
-    // The dots layer arrives after the style, on the map's own load: keep
-    // trying on every style or render event until it is there, then stop.
     const retry = () => { if (draw()) { map.off('styledata', retry); map.off('idle', retry); } };
     map.on('styledata', retry);
     map.on('idle', retry);
     return () => { map.off('styledata', retry); map.off('idle', retry); };
   }, [lines]);
-  // The list's ringed card lights its route too.
+
+  // The list's ringed card lifts its pin and lights its route.
   useEffect(() => {
     const map = mapRef.current;
-    if (!map?.getLayer('route-hot')) return;
-    routeHotRef.current = ringId || '';
-    setRouteHot(map, ringId || '');
-  }, [ringId]);
+    if (!map) return;
+    applyPins(map);
+    if (map.getLayer('route-hot')) {
+      routeHotRef.current = ringId || '';
+      setRouteHot(map, ringId || '');
+    }
+  }, [ringId, applyPins]);
 
-  // A rebuild that dropped the focused pin hands focus to the canvas, so the
-  // keyboard stays on the map instead of falling to the top of the page.
+  // A rebuild that dropped the focused pin hands focus to the canvas.
   useEffect(() => {
     const last = lastKpinRef.current;
     if (!last || kpins.some((k) => k.key === last)) return;
@@ -771,194 +759,112 @@ export function ExploreMap({
     if (!a || a === document.body) mapRef.current?.getCanvas().focus({ preventScroll: true });
   }, [kpins]);
 
-  // The ring follows the card the reader is on in the list.
+  // The picked pin follows the pick, and the camera keeps it clear of the
+  // chrome (the tap card, the band, the column), only when it is not (T504).
   useEffect(() => {
     const map = mapRef.current;
-    if (readyRef.current && map?.getLayer('dest-ring')) {
-      map.setFilter('dest-ring', ['==', ['get', 'id'], ringId || '']);
-    }
-  }, [ringId]);
-
-  // The picked pin follows the pick, and the camera keeps it in the part of
-  // the map the phone's drawer leaves open (T504).
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!readyRef.current || !map?.getLayer('dest-picked')) return;
-    map.setFilter('dest-picked', ['==', ['get', 'id'], pickedId || '']);
-    setKpins(collectKpins(map));
-    if (!pickedId) return;
+    if (!readyRef.current || !map) return undefined;
+    applyPins(map);
+    if (!pickedId) return undefined;
     const f = geojsonRef.current.features.find((x) => x.properties.id === pickedId);
-    if (!f) return;
-    const cv = map.getCanvas();
-    const H = cv.clientHeight; const W = cv.clientWidth;
-    const cover = drawerState ? Math.min(H - 80, drawerVisiblePx(drawerState, H)) : 0;
-    const pt = map.project(f.geometry.coordinates);
-    const margin = 48;
-    const left = leftCover();
-    if (pt.x > left + margin && pt.x < W - margin && pt.y > margin && pt.y < H - cover - margin) return;
-    const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    map.easeTo({
-      center: f.geometry.coordinates,
-      padding: { top: 0, left, right: 0, bottom: cover },
-      duration: reduce ? 0 : 480,
-    });
-  }, [pickedId, drawerState, collectKpins]);
-
-  const kpinLabel = (k) => {
-    const cost = k.eur != null ? t('explore.pinCost', { eur: dayFig(k.eur, k.est, t('money.est')) }) : '';
-    if (k.score == null) return [k.city, k.country, cost].filter(Boolean).join(', ');
-    const base = t('explore.pinAria', { city: k.city, country: k.country, score: Number(k.score).toFixed(1) });
-    return cost ? `${base}, ${cost}` : base;
-  };
-  // At every zoom the place pins are price labels (T441), and the cheapest
-  // of them is the one emphasised pin in view.
-  let best = null;
-  if (pinFig !== 'score') for (const k of kpins) {
-    if (k.eur != null && (!best || k.eur < best.eur)) best = k;
-  }
-  const cheapestKey = best?.key ?? null;
-  // The figure a label leads with: the day figure, or the Score (T600).
-  const pinText = (k) => (pinFig === 'score'
-    ? (k.score != null ? Number(k.score).toFixed(1) : '')
-    : (k.eur != null ? dayFig(k.eur, k.est) : ''));
-  // V4 (T393, row T383-c): labels never sit on each other. They are placed
-  // in priority order, the cheapest first, then the better-rated; a label
-  // that would overlap one already placed stays a dot (still a keyboard
-  // stop, with its name and cost in its accessible name). The box is an
-  // estimate from the text length, which is all a pin knows before it draws.
-  const dotOnly = new Set();
-  {
-    const placed = [];
-    // A label must sit wholly inside the frame (T441: the phone cut
-    // "Porto" and "Lisbon" at its left edge); one that would not is a dot.
-    const cv = mapRef.current?.getCanvas();
-    const W = cv?.clientWidth || Infinity;
-    const H = cv?.clientHeight || Infinity;
-    const order = [...kpins].sort((a, b) => (
-      Number(b.id === pickedId) - Number(a.id === pickedId))
-      || (Number(b.key === cheapestKey) - Number(a.key === cheapestKey))
-      || (b.tier - a.tier) || ((b.score ?? -1) - (a.score ?? -1)));
-    for (const k of order) {
-      const name = String(k.city || '');
-      const fig = pinText(k);
-      const w = LABEL_BOX_W + textWidth(name, false)
-        + (fig ? LABEL_GAP_W + textWidth(fig, true) : 0);
-      const box = { l: k.x - w / 2, r: k.x + w / 2, t: k.y - LABEL_H / 2, b: k.y + LABEL_H / 2 };
-      const outside = box.l < 4 || box.t < 4 || box.r > W - 4 || box.b > H - 4;
-      if (outside || placed.some((o) => box.l < o.r && o.l < box.r && box.t < o.b && o.t < box.b)) {
-        dotOnly.add(k.key);
-      } else {
-        placed.push(box);
+    if (!f) return undefined;
+    // A frame later, so a card that the pick raised is in the page.
+    const h = requestAnimationFrame(() => {
+      const cv = map.getCanvas();
+      const H = cv.clientHeight; const W = cv.clientWidth;
+      let top = 0; let bottom = 0;
+      for (const r of chromeRects(map, chromeRef.current)) {
+        if (r.r - r.l < W * 0.5) continue;
+        if (r.b < H / 2) top = Math.max(top, r.b); else bottom = Math.max(bottom, H - r.t);
       }
-    }
-  }
-  const kpinFocus = (k) => {
-    lastKpinRef.current = k.key;
-    onPinLinkRef.current?.(k.id);
-    const map = mapRef.current;
-    if (!map) return;
-    // The card a tap raised stays up when the same pin is touched again.
-    if (cardRef.current === k.id) return;
-    // A picking map draws no card of its own, only the name tip (T504).
-    if (onPickRef.current) { showTip(map, k.feature); return; }
-    if (map.getZoom() >= CARD_FROM) showCard(map, k.feature);
-    else showTip(map, k.feature);
-  };
-  const kpinBlur = (e) => {
-    // Focus moving to a real element clears the memory; a blur with no
-    // target is the button being removed under focus (see the effect above).
-    if (e.relatedTarget) lastKpinRef.current = null;
-    // Focus moving into the pin's own card (a tap on it) keeps the card.
-    if (e.relatedTarget?.closest?.('.maplibregl-popup, .xmap-peek')) return;
-    onPinLinkRef.current?.(null);
-    closePop();
-  };
-  // On touch a first tap raises the peek card (photo, name, Score, price)
-  // and a second tap, on the pin or the card, opens the place (T441), the
-  // same as a tap on a dot; a mouse or the keyboard opens it at once.
-  const kpinActivate = (k) => {
-    if (onPickRef.current) { closePop(); pickOrOpen(k.id); return; }
-    const map = mapRef.current;
-    const coarse = typeof window.matchMedia === 'function' && window.matchMedia('(pointer: coarse)').matches;
-    if (coarse && map && cardRef.current !== k.id) { showCard(map, k.feature); return; }
-    onSelectRef.current?.(k.id);
-  };
+      const pt = map.project(f.geometry.coordinates);
+      const margin = 48;
+      if (pt.x > margin && pt.x < W - margin && pt.y > top + margin && pt.y < H - bottom - margin) return;
+      map.easeTo({
+        center: f.geometry.coordinates,
+        padding: { top, left: 0, right: 0, bottom },
+        duration: reducedMotion() ? 0 : 480,
+      });
+    });
+    return () => cancelAnimationFrame(h);
+  }, [pickedId, applyPins]);
 
-  // The payload is serialised once (the memo above depends on `all`, which
-  // does not change while the user filters), so this fires on mount and
-  // then only if the catalogue itself is replaced.
+  // New places or new figures: the same camera, the pins re-priced and
+  // re-ranked in place (decision.md "Pins": settings and filters never move
+  // the camera).
   useEffect(() => {
-    if (readyRef.current) mapRef.current?.getSource('dests')?.setData(geojson);
+    const map = mapRef.current;
+    if (!readyRef.current || !map?.getSource('dests')) return;
+    map.getSource('dests').setData(geojson);
+    map.getSource('dests-c').setData(geojson);
+    map.once('idle', () => refreshRef.current(map));
   }, [geojson]);
 
-  /**
-   * Filters changed: a layer filter over the one payload, never a new one.
-   * maplibre keeps the tiles it has and re-evaluates a match instead of
-   * re-parsing up to 3,868 features on every keystroke. With no clusters
-   * (T441) there is no count to keep true, so this is the whole story.
-   */
-  const applyFilter = React.useCallback(() => {
-    const map = mapRef.current;
-    if (!readyRef.current || !map || !map.getLayer('dest-dots')) return;
-    // A boot pin without its record cannot be judged by a filter yet, so it
-    // stays until its country arrives and the real answer replaces it.
-    const kept = ['in', ['get', 'id'], ['literal', keepIds || []]];
-    map.setFilter('dest-dots', keepIds
-      ? (pins ? ['any', ['==', ['get', 'ld'], 0], kept] : kept)
-      : null);
-    // The labels follow on the next frame (T444: after a cleared search the
-    // old ones stayed up for three to six seconds, until 'idle').
-    map.once('render', () => setKpins(collectKpins(map)));
-    map.triggerRepaint();
-  }, [keepIds, pins, collectKpins]);
-
-  applyFilterRef.current = applyFilter;
-  useEffect(() => { applyFilter(); }, [applyFilter]);
-
-  // The camera frames what the list holds (T441): on load, and again when
-  // the filters change; the whole of Europe when nothing narrows it
-  // (`framed` false: no filter and no search).
+  // The camera frames what the list holds on load and for a new search;
+  // the whole of Europe when nothing narrows it.
   const fit = React.useCallback((animate) => {
     const map = mapRef.current;
     if (!readyRef.current || !map) return;
     let w = 180; let s = 90; let e = -180; let n = -90;
-    const keep = keepIds && new Set(keepIds);
     let count = 0;
     for (const f of geojsonRef.current.features) {
-      if (keep && !keep.has(f.properties.id)) continue;
+      if (f.properties.ld === 0) continue;
       const [lon, lat] = f.geometry.coordinates;
       if (!Number.isFinite(lon) || !Number.isFinite(lat)) continue;
       count++;
       if (lon < w) w = lon; if (lon > e) e = lon;
       if (lat < s) s = lat; if (lat > n) n = lat;
     }
-    const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // A phone's map is narrow: the frame keeps a gutter, not a fixed 48 px.
     const pad = Math.round(Math.min(48, map.getCanvas().clientWidth * 0.06));
-    const left = leftCover();
-    const opts = { padding: { top: pad, bottom: pad, right: pad, left: pad + left }, maxZoom: 9, duration: animate && !reduce ? 480 : 0 };
-    // A list with no ids to keep (the outdoor tabs) frames all its rows.
+    const opts = { padding: { top: pad, bottom: pad, right: pad, left: pad }, maxZoom: 9, duration: animate && !reducedMotion() ? 480 : 0 };
     if (!framed || count === 0) {
-      map.fitBounds(EUROPE, { ...opts, padding: { top: 16, bottom: 16, right: 16, left: 16 + left } });
+      map.fitBounds(EUROPE, { ...opts, padding: 16 });
       return;
     }
-    if (count === 1) { map.easeTo({ center: [w, s], zoom: 9, padding: { top: 0, bottom: 0, right: 0, left }, duration: opts.duration }); return; }
+    if (count === 1) { map.easeTo({ center: [w, s], zoom: 9, duration: opts.duration }); return; }
     map.fitBounds([[w, s], [e, n]], opts);
-  }, [keepIds, framed]);
-  const fitRef = useRef(fit);
+  }, [framed]);
   fitRef.current = fit;
-  const firstFit = useRef(true);
+  const lastFitKey = useRef(fitKey);
   useEffect(() => {
-    // The load handler frames the first view; after that, a change of filters.
-    if (firstFit.current) { firstFit.current = false; return; }
-    fit(true);
-  }, [fit]);
+    if (lastFitKey.current === fitKey) return;
+    lastFitKey.current = fitKey;
+    fitRef.current?.(true);
+  }, [fitKey]);
 
   // Kept mounted after its first open (T441), the map is hidden while the
   // list shows; on coming back it re-measures its box.
   useEffect(() => {
     if (visible && readyRef.current) mapRef.current?.resize();
   }, [visible]);
+
+  const kpinLabel = (k) => {
+    const country = countryName(k.cc, k.country);
+    const cost = k.fig && pinFig !== 'score' ? t('explore.pinCost', { eur: k.fig }) : '';
+    if (k.score == null) return [k.city, country, cost].filter(Boolean).join(', ');
+    const base = t('explore.pinAria', { city: k.city, country, score: Number(k.score).toFixed(1) });
+    return cost ? `${base}, ${cost}` : base;
+  };
+  const kpinFocus = (k) => {
+    lastKpinRef.current = k.key;
+    onPinLinkRef.current?.(k.id);
+    const map = mapRef.current;
+    if (!map || cardRef.current === k.id) return;
+    if (onPickRef.current || map.getZoom() < CARD_FROM) showTip(map, k.feature);
+    else showCard(map, k.feature);
+  };
+  const kpinBlur = (e) => {
+    if (e.relatedTarget) lastKpinRef.current = null;
+    if (e.relatedTarget?.closest?.('.maplibregl-popup, .xmap-peek')) return;
+    onPinLinkRef.current?.(null);
+    closePop();
+  };
+  const kpinActivate = (k) => {
+    if (onPickRef.current) { closePop(); pickOrOpen(k.id); return; }
+    const map = mapRef.current;
+    if (coarsePointer() && map && cardRef.current !== k.id) { showCard(map, k.feature); return; }
+    onSelectRef.current?.(k.id);
+  };
 
   return (
     <div className={`xmap${ready ? ' is-ready' : ''}`} role="region" aria-label={t('explore.mapAria')}>
@@ -975,12 +881,11 @@ export function ExploreMap({
                   <ScoreChip rating={{ score: peek.score }} size="sm" />
                 </div>
                 <p className="xmap-card-sub">{peek.country}</p>
-                {/* T765: the match under the pin's card, from 55% up. */}
                 <MatchLine place={source.find((p) => p.id === peek.id)} />
-                {peek.eur >= 0 && (
+                {peek.fig && (
                   <p className="xmap-card-eur">
                     <span className="xmap-card-eur-line">
-                      <span className="xmap-fig">{dayFig(peek.eur, peek.est, t('money.est'))}</span> {view.unit}
+                      <span className="xmap-fig">{peek.fig}</span> {view.unit}
                     </span>
                   </p>
                 )}
@@ -1002,50 +907,23 @@ export function ExploreMap({
         </div>
       )}
       {!failed && kpins.length > 0 && (
-        <div className="xmap-kpins" role="group" aria-label={t('explore.mapPinsAria')}>
-          {kpins.map((k) => {
-            const label = !dotOnly.has(k.key);
-            const cls = `xmap-kpin${label ? ' is-label' : ''}`
-              + `${k.key === cheapestKey ? ' is-cheapest' : ''}${k.id === ringId ? ' is-ringed' : ''}`
-              + `${k.id === pickedId ? ' is-picked' : ''}`;
-            return (
-              <button
-                key={k.key}
-                type="button"
-                ref={(el) => { if (el) kpinElsRef.current.set(k.key, el); else kpinElsRef.current.delete(k.key); }}
-                className={cls}
-                style={{ left: k.x, top: k.y, '--kpin-d': `${Math.round(k.r * 2 + 4)}px` }}
-                // WCAG 2.5.3 (house style check, 2026-11): the name starts
-                // with the words the label shows ("€194 Bergen"), then says
-                // the rest (country, Score, the unit).
-                aria-label={label ? `${[pinText(k), k.city].filter(Boolean).join(' ')}, ${kpinLabel(k)}` : kpinLabel(k)}
-                aria-pressed={onPick ? k.id === pickedId : undefined}
-                onFocus={() => kpinFocus(k)}
-                onBlur={kpinBlur}
-                onPointerEnter={label ? () => kpinFocus(k) : undefined}
-                onPointerLeave={label ? (e) => {
-                  // Travelling into the pin's own card keeps the link and the
-                  // card (WCAG 1.4.13: hoverable); anywhere else drops both.
-                  if (e.relatedTarget?.closest?.('.maplibregl-popup')) return;
-                  onPinLinkRef.current?.(null);
-                  if (!cardRef.current) closePop();
-                } : undefined}
-                onKeyDown={(e) => { if (e.key === 'Escape' && popupRef.current) { e.stopPropagation(); closePop(); } }}
-                onClick={() => kpinActivate(k)}
-              >
-                {/* The label is drawn for the eye; the button's name above
-                    already says the same, so the label is hidden from it. */}
-                {/* T592: read the Kayak way, the figure first and bold,
-                    the name smaller after it. */}
-                {label && (
-                  <span className={`xmap-kpin-label${pinText(k) ? ' has-fig' : ''}`} aria-hidden="true">
-                    {pinText(k) && <span className="xmap-kpin-eur">{pinText(k)}</span>}
-                    <span className="xmap-kpin-name">{k.city}</span>
-                  </span>
-                )}
-              </button>
-            );
-          })}
+        <div ref={kpinsBoxRef} className="xmap-kpins" role="group" aria-label={t('explore.mapPinsAria')}>
+          {kpins.map((k) => (
+            <button
+              key={k.key}
+              type="button"
+              className={`xmap-kpin${k.label ? ' is-pill' : ''}`}
+              style={{ left: k.x, top: k.y, '--kpin-w': k.label ? `${Math.round(k.w)}px` : undefined }}
+              // WCAG 2.5.3: the name starts with the words the pill shows
+              // (the figure), then says the rest.
+              aria-label={k.label && k.fig ? `${k.fig} ${k.city}, ${kpinLabel(k)}` : kpinLabel(k)}
+              aria-pressed={onPick ? k.id === pickedId : undefined}
+              onFocus={() => kpinFocus(k)}
+              onBlur={kpinBlur}
+              onKeyDown={(e) => { if (e.key === 'Escape' && popupRef.current) { e.stopPropagation(); closePop(); } }}
+              onClick={() => kpinActivate(k)}
+            />
+          ))}
         </div>
       )}
     </div>

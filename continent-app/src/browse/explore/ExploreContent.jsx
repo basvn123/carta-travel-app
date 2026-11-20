@@ -3,11 +3,21 @@ import { LoadingBlock } from '../../components/StateBlocks.jsx';
 import { prefersReducedMotion } from '../../lib/motion.js';
 import { ExploreMap, DRAWER_MAX } from './exploreMapLazy.js';
 import { MapPlacePanel } from '../MapPlacePanel.jsx';
-import { MapDrawer } from '../../components/MapDrawer.jsx';
+import { MapSheet } from './MapSheet.jsx';
+import { MapTapCard } from './MapTapCard.jsx';
 import { ExploreRails } from '../ExploreRails.jsx';
 import { EmptyResult } from '../EmptyResult.jsx';
 import { Blaze, Button } from '../../components/ui/index.js';
 import { ExploreCard } from './ExploreCard.jsx';
+import '../../styles/86-map-view.css';
+
+// G12 map view: what floats over the map, so no pin sits under it (the
+// band's field and chip row on a phone, the List pill, the tap card, the
+// sheet, the heart).
+const MAP_CHROME = [
+  '.band.is-map .band-row', '.band.is-map .band-strip', '.xmap-listpill', '.xmap-tapcard',
+  '.xsheet:not(.is-closed)', '.corner-slot--left',
+].join(', ');
 
 // The List or Map switch is a route change (DESIGN.md "Route"): the content
 // rises in once on the traveller's own switch, never at first paint, and the
@@ -64,12 +74,12 @@ function useRouteIn(ref, view) {
 }
 
 export function ExploreContent({
-  allRows, anyActive, cardLinkId, catalogueFull = true, chips, contentRef, costIndex, drawer, dxf, emptyLine, favSet,
+  guidedRows, isActiveMap, lang, sortMenu, allRows, anyActive, cardLinkId, catalogueFull = true, chips, contentRef, costIndex, dxf, emptyLine, favSet,
   gridTotal, isActive, isDesktop, lastChip, listed, locationQuery, mapOpened, mapTop,
   onMapNeedDetail, onMapViewport, onPick, onPinLink, onToggleFav, openPlace, overviewOf,
   pageOver, pending, pickedId, pickedRow, pinLinkId, pins, railLead, railMonth, rails,
   railsIdle, reachMinutes, resetAll, roleFor, searchHits, selectedId, sentinelRef,
-  setCardLinkId, setDrawer, setLocationQuery, setPickedId, setShowFavOnly, setView, showFavOnly,
+  setCardLinkId, setLocationQuery, setPickedId, setShowFavOnly, setView, showFavOnly,
   shownRows, t, taxRows, view, viewSwitch, viewportMode, visible, xf,
 }) {
   useRouteIn(contentRef, view);
@@ -98,42 +108,48 @@ export function ExploreContent({
                 airport gateways merged into one place (T441: the raw
                 data drew three Paris dots, labelled "Paris (CDG)"). The
                 map serialises it once and filters by id (P4.5). */}
-            <ExploreMap rows={taxRows} all={allRows} pins={viewportMode ? pins : null}
+            {/* G12 map view: the rows in the list's own order rank the
+                pins (a pill for the best-ranked that fit); the floating
+                chrome named here keeps every pin clear of it; only a new
+                search moves the camera. */}
+            <ExploreMap rows={guidedRows || taxRows} all={allRows} pins={viewportMode ? pins : null}
               onSelect={openPlace} onViewport={onMapViewport}
               onNeedDetail={onMapNeedDetail} t={t}
               ringId={cardLinkId} onPinLink={onPinLink} costs={costIndex}
               onBack={() => setView('grid')} visible={view === 'map'}
               framed={anyActive || searchHits != null}
               pickedId={pickedRow ? pickedRow.id : null} onPick={onPick}
-              drawerState={!isDesktop && view === 'map' ? drawer : null} />
+              zoomAt="bottom-right" fitKey={searchHits != null ? locationQuery || '' : ''}
+              chrome={MAP_CHROME} />
           </React.Suspense>
           {/* T592 (owner decision 6): the map the Kayak way. On a
               desktop the panel floats on the left over the map: the
               places on the map, or the picked one with its trip box.
-              On a phone the same panel is the drawer's body; the strip
-              holds the toggle back to the list. */}
+              G12 map view: a 400 px column of compact cards beside the
+              map, a card under the pointer lifting its pin and a pin
+              under the pointer outlining its card. */}
           {isDesktop && view === 'map' && (
             <MapPlacePanel t={t}
               rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
               picked={pickedRow} overviewOf={overviewOf}
               onPick={onPick} onBack={() => setPickedId(null)} onOpen={openPlace}
-              favSet={favSet} onToggleFav={onToggleFav} />
+              favSet={favSet} onToggleFav={onToggleFav}
+              linkedId={pinLinkId} onLink={setCardLinkId} pickedId={pickedId} />
           )}
-          {!isDesktop && view === 'map' && (
-            <MapDrawer
-              className="xdrawer"
-              state={drawer}
-              onStateChange={setDrawer}
-              ariaLabel={t('explore.drawerAria')}
-              labels={{ strip: t('explore.drawerStrip'), half: t('drawer.half'), full: t('drawer.full') }}
-              strip={viewSwitch('xview-strip')}
-            >
-              <MapPlacePanel t={t} compact
-                rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
-                picked={pickedRow} overviewOf={overviewOf}
-                onPick={onPick} onBack={() => setPickedId(null)} onOpen={openPlace}
-                favSet={favSet} onToggleFav={onToggleFav} />
-            </MapDrawer>
+          {/* G12 map view (phone): the map is the page; the list is a
+              sheet the List pill opens, a picked place a card over the
+              map. Both mount only while this tab shows the map. */}
+          {!isDesktop && view === 'map' && isActiveMap && (
+            <MapSheet t={t} lang={lang}
+              rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
+              pickedId={pickedId} overviewOf={overviewOf} onPick={onPick}
+              favSet={favSet} onToggleFav={onToggleFav} sort={sortMenu}
+              listSwitch={viewSwitch('xsheet-view')} />
+          )}
+          {!isDesktop && view === 'map' && isActiveMap && pickedRow && (
+            <MapTapCard t={t} p={pickedRow} overview={overviewOf(pickedRow)}
+              fav={favSet.has(pickedRow.id)} onToggleFav={onToggleFav}
+              onOpen={openPlace} onClose={() => onPick(null)} />
           )}
         </div>
       )}

@@ -4,8 +4,7 @@
 
    From 769 px the panel is a column docked on the map's left (house style
    2026-11): the places on the map, or the picked place with its trip box.
-   On a phone the panel is the map drawer's body. The one view toggle and
-   the price pins are styled here too.
+   The one view toggle is styled here too.
    Selectors carry .explore-shell twice over where they override
    62-v6-explore.css, so the order the two files load in never matters.
    ========================================================================== */
@@ -178,69 +177,8 @@
 .explore-shell .mpp--compact .mpp-media { aspect-ratio: 16 / 9; }
 .explore-shell .mpp--compact .mpp-name { font-size: var(--text-title); }
 
-/* --- Price pins (DESIGN.md "Map"): a paper price plate, the figure first
-   and bold, the name smaller after; the cheapest in view carries the beige
-   best-value plate with a small diamond (never colour alone, and its name
-   says so to a screen reader); the chosen pin is the umber mark plate with
-   paper text, settling without overshoot. Map and list in sync: a row under
-   the pointer rings its pin in ink. ---------------------------------------- */
-.explore-shell .xmap-kpins .xmap-kpin.is-label {
-  border: var(--stroke-edge) solid var(--text);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.explore-shell .xmap-kpins .xmap-kpin-label { align-items: baseline; gap: var(--space-1); }
-.explore-shell .xmap-kpins .xmap-kpin-eur {
-  font-size: var(--text-caption);
-  font-weight: 800;
-  font-variant-numeric: tabular-nums lining-nums;
-}
-.explore-shell .xmap-kpins .xmap-kpin-label.has-fig .xmap-kpin-name {
-  font-size: var(--text-micro);
-  font-weight: 600;
-  color: var(--text-2);
-}
-.explore-shell .xmap-kpins .xmap-kpin.is-cheapest {
-  border-color: var(--best-ink);
-  background: var(--best);
-  color: var(--best-ink);
-}
-.explore-shell .xmap-kpins .xmap-kpin.is-cheapest .xmap-kpin-label::before {
-  content: '';
-  flex: none;
-  align-self: center;
-  width: 6px;
-  height: 6px;
-  margin-right: 2px;
-  background: currentColor;
-  rotate: 45deg;
-}
-@media (hover: hover) {
-  .explore-shell .xmap-kpins .xmap-kpin.is-label:hover {
-    z-index: 4;
-    border-color: var(--select-border);
-    background: var(--select-bg);
-    color: var(--select-ink);
-  }
-}
-.explore-shell .xmap-kpins .xmap-kpin.is-label.is-picked {
-  z-index: 5;
-  border-color: var(--action);
-  background: var(--action);
-  color: var(--action-text);
-  outline: var(--stroke-edge) solid var(--surface);
-  animation: xpin-settle var(--dur-settle) var(--ease-settle) both;
-}
-.explore-shell .xmap-kpins .xmap-kpin.is-label:hover .xmap-kpin-name { color: var(--select-ink); }
-.explore-shell .xmap-kpins .xmap-kpin.is-label.is-picked .xmap-kpin-name { color: var(--action-text); }
-/* Settles from 0.9 with no overshoot; the scale property composes with the
-   centring transform, so the plate does not jump. */
-@keyframes xpin-settle {
-  from { scale: 0.9; }
-  to { scale: 1; }
-}
+/* The price pins are map layers since the G12 map view (explore/mapPins.js,
+   86-map-view.css); their DOM labels and styles left. */
 
 @keyframes mpp-in {
   from { opacity: 0; transform: translateX(calc(-1 * var(--space-3))); }
@@ -248,6 +186,4 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .explore-shell .mpp--float { animation: none; }
-  .explore-shell .xmap-kpins .xmap-kpin.is-label { transition: none; }
-  .explore-shell .xmap-kpins .xmap-kpin.is-label.is-picked { animation: none; }
 }

@@ -42,10 +42,15 @@ import '../styles/81-map-panel.css';
  *   onOpen      (id) => void, opens the place page
  *   favSet, onToggleFav
  *   compact     the phone drawer's body: no floating chrome
+ *   linkedId    the place whose pin is under the pointer: its card is
+ *               outlined (G12 map view, hover both ways)
+ *   onLink      (id|null) => void, a card under the pointer lifts its pin
+ *   pickedId    the picked place, marked in the list
  */
 export function MapPlacePanel({
   rows = [], count = 0, picked = null, overviewOf, onPick, onBack, onOpen,
   favSet = null, onToggleFav = null, compact = false, t,
+  linkedId = null, onLink = null, pickedId: listPickedId = null,
 }) {
   const rootRef = React.useRef(null);
   const headRef = React.useRef(null);
@@ -80,11 +85,15 @@ export function MapPlacePanel({
           compact={compact} />
       ) : (
         <>
-          {/* T603 (owner 2026-10-22: "Remove: 3045 places on the map"):
-              the count stays as the list's heading for screen readers. */}
-          <h2 className="mpp-count sr-only">
-            {count === 1 ? t('mapPanel.inViewOne') : t('mapPanel.inView', { n: count })}
-          </h2>
+          {/* G12 map view (decision.md "Desktop", approved 2026-11-20,
+              after T603 had hidden it): the count heads the column again,
+              with the legend of the saffron dot on the best-value pin. */}
+          <div className="mpp-head-row">
+            <h2 className="mpp-count">
+              {count === 1 ? t('mapPanel.inViewOne') : t('mapPanel.inView', { n: new Intl.NumberFormat(t.lang || undefined).format(count) })}
+            </h2>
+            <p className="mpp-legend"><span className="xmap-best-dot" aria-hidden="true" />{t('explore.mapBestInView')}</p>
+          </div>
           {rows.length === 0 ? (
             <p className="mpp-empty">{t('mapPanel.empty')}</p>
           ) : (
@@ -93,6 +102,12 @@ export function MapPlacePanel({
               {rows.map((p) => (
                 <PlaceRow key={p.id} p={p} {...overviewOf(p)} t={t}
                   fav={favSet ? favSet.has(p.id) : false} onToggleFav={onToggleFav}
+                  selected={p.id === listPickedId} linked={p.id === linkedId}
+                  rootProps={onLink ? {
+                    onPointerEnter: () => onLink(p.id),
+                    onPointerLeave: () => onLink(null),
+                  } : null}
+                  hitProps={onLink ? { onFocus: () => onLink(p.id), onBlur: () => onLink(null) } : null}
                   onOpen={() => onPick(p.id)} />
               ))}
             </div>
