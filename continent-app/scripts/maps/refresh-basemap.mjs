@@ -9,7 +9,8 @@
  *
  * Options: --cli <path to pmtiles(.exe)> (default `pmtiles` on PATH, from
  * https://github.com/protomaps/go-pmtiles/releases), --out <dir>,
- * --maxzoom <n> (14; 13 halves the size), --build <YYYYMMDD> (default newest).
+ * --maxzoom <n> (13, about 13 GB; MapLibre overzooms past it. 14 is
+ * about 25 GB and twice failed mid-download on 2026-11-20), --build <YYYYMMDD> (default newest).
  *
  * The bbox covers the app's map bounds with a margin (Iceland to the Urals'
  * foot, the Canaries to the North Cape). Protomaps publishes a planet build
@@ -50,7 +51,7 @@ async function main() {
   const cli = arg('--cli', 'pmtiles');
   const outDir = resolve(appRoot, arg('--out', '../cache/maps'));
   const out = join(outDir, extractName(build.key));
-  const maxzoom = arg('--maxzoom', '14');
+  const maxzoom = arg('--maxzoom', '13');
   // Go's HTTP/2 client dropped a 25 GB extract at 15% (stream PROTOCOL_ERROR,
   // 2026-11-20); HTTP/1.1 ran through.
   const env = { ...process.env, GODEBUG: 'http2client=0' };

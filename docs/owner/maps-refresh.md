@@ -3,19 +3,19 @@
 The Explore map draws its land, water, roads and labels from one file on R2: a Europe extract of the Protomaps basemap, built from OpenStreetMap. Protomaps publishes a new planet build every day; once a month is plenty for a trip planner. Why our own tiles: `.work/2026-11-20-map-view/decision.md` ("Base map") and `docs/tos/data_licenses.md` section 6.
 
 What is where:
-- The extract: R2 `carta/data/maps/europe-<build date>.pmtiles`, about 25 GB at zoom 14, public at `https://data.carta-europetravel.com/data/maps/...`.
+- The extract: R2 `carta/data/maps/europe-<build date>.pmtiles`, about 13 GB, zoom 0 to 13 (MapLibre overzooms past 13), public at `https://data.carta-europetravel.com/data/maps/...`.
 - The glyphs and sprites: R2 `data/maps/fonts/` and `data/maps/sprites/v4/`. They do not need a monthly refresh.
 - The name the app reads: `BASEMAP_FILE` in `continent-app/src/lib/map/cartaMapStyle.js`.
 - The deploy's R2 prune never touches `data/maps/` (`OTHER_WRITERS` in `continent-app/scripts/r2/push-data.mjs`).
 
 ## Steps
 
-1. **Move the first extract into the cache (G12-a, once).** The 2026-11-20 build lane could not write into `cache/` (a protected path), so the extract it uploaded sits in its scratch folder, which a reboot can clear. It is also on R2, so this is only a local copy. If you want it, move `C:/Users/GEBRUI~1/AppData/Local/Temp/claude/087d6591ea9ad4e8/64ec75fe-61e8-40cb-9125-b0b37710d190/scratchpad/tools/europe-2026-11-18.pmtiles` to `cache/maps/`; otherwise delete it to free 25 GB.
+1. **Move the first extract into the cache (G12-a, once).** The 2026-11-20 build lane could not write into `cache/` (a protected path), so the extract it uploaded sits in its scratch folder, which a reboot can clear. It is also on R2, so this is only a local copy. If you want it, move `C:/Users/GEBRUI~1/AppData/Local/Temp/claude/087d6591ea9ad4e8/64ec75fe-61e8-40cb-9125-b0b37710d190/scratchpad/tools/europe-2026-11-18.pmtiles` to `cache/maps/`; otherwise delete it to free 13 GB.
 
 ## Monthly refresh (owner-run, about 1 to 2 hours, mostly download and upload)
 
 1. Get the `pmtiles` command once: download `go-pmtiles_<version>_Windows_x86_64.zip` from https://github.com/protomaps/go-pmtiles/releases and unzip `pmtiles.exe` somewhere outside the repo (not into `tools/`).
-2. Check free disk: the extract needs about 25 GB, twice to be safe.
+2. Check free disk: the extract needs about 13 GB, twice to be safe.
    ```
    powershell -c "[math]::Round((Get-PSDrive C).Free/1GB,1)"
    ```
@@ -29,7 +29,7 @@ What is where:
    ```
    node scripts/maps/refresh-basemap.mjs --cli <path to pmtiles.exe> --run --upload
    ```
-   It writes `cache/maps/europe-<date>.pmtiles`, checks it with `pmtiles verify`, then uploads it with `push-maps.mjs --live` (copy only, never deletes). If the download breaks, run it again; it starts over.
+   It writes `cache/maps/europe-<date>.pmtiles`, checks it with `pmtiles verify`, then uploads it with `push-maps.mjs --live` (copy only, never deletes). If the download breaks (it did twice at zoom 14 on 2026-11-20), run it again; it starts over.
 6. Check the public host answers a range request with 206:
    ```
    curl -s -o NUL -w "%{http_code}\n" -r 0-16383 https://data.carta-europetravel.com/data/maps/europe-<date>.pmtiles
