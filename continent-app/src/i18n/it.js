@@ -7893,6 +7893,12 @@ export const it = {
   "price.basis.tripOne": "1 notte, a persona",
   "price.basis.tripGroup": "per {n}, {nights} notti",
   "price.basis.tripGroupOne": "per {n}, 1 notte",
+  // G12, D10 (Explore clean): the receipt names the way line's step in the price chain.
+  "price.receipt.typical": "Tipico per questa tratta",
+  "price.receipt.est.train": "Stimato, in treno",
+  "price.receipt.est.bus": "Stimato, in autobus",
+  "price.receipt.est.car": "Stimato, in auto",
+  "price.receipt.wayNotPriced": "Viaggio di andata non ancora prezzato",
   "card.priceAria": "{place}: {price} {basis}. Apri il dettaglio",
   "price.insightUnder": "{price} al giorno in meno del solito",
   "price.insightOver": "{price} al giorno in più del solito",
