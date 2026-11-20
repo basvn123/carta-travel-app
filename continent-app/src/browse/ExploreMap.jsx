@@ -77,6 +77,15 @@ const KPIN_ROW = 64;
 // A pill's half height plus a gap, for the chrome check.
 const PILL_HALF_H = 17;
 const EDGE_GAP = 4;
+// How long the camera rests before the pins are chosen again and the list
+// follows: longer than the pause between two strokes of one pan (up to about
+// 0.6 s on a slowed phone, progress-3.md), so a run of strokes does that
+// work once, after the last.
+const PIN_REST_MS = 600;
+// How long the pointer rests on a pin before the list outlines its card.
+const LINK_REST_MS = 120;
+// How long the pointer rests before the map looks for a pin under it.
+const HOVER_REST_MS = 60;
 // The map's own floating controls, always chrome for its pins.
 const OWN_CHROME = '.maplibregl-ctrl-top-right .maplibregl-ctrl, .maplibregl-ctrl-bottom-right .maplibregl-ctrl, .maplibregl-ctrl-bottom-left .maplibregl-ctrl';
 
@@ -493,7 +502,7 @@ export function ExploreMap({
 
   // The pin filters of this moment: what the chrome covers leaves, the best
   // value in view gets its dot, the hovered and the picked pins their own.
-  const pinStateRef = useRef({ hidden: [], hiddenClusters: [], best: '' });
+  const pinStateRef = useRef({ shown: [], hiddenClusters: [], best: '' });
   const applyPins = React.useCallback((map) => {
     if (!map?.getLayer('xpin')) return;
     setPinFilters(map, {
@@ -510,11 +519,16 @@ export function ExploreMap({
     const rects = chromeRects(map, chromeRef.current);
     // The view plus a margin: a pill whose point is just off screen still
     // reaches into it, and must be judged (and hidden at the edge) too.
-    const nw = map.unproject([-120, -40]); const se = map.unproject([W + 120, H + 40]);
-    const w = Math.min(nw.lng, se.lng); const e = Math.max(nw.lng, se.lng);
-    const s = Math.min(nw.lat, se.lat); const n = Math.max(nw.lat, se.lat);
-    const hidden = [];
+    const box = (x0, y0, x1, y1) => {
+      const a = map.unproject([x0, y0]); const b = map.unproject([x1, y1]);
+      return [Math.min(a.lng, b.lng), Math.min(a.lat, b.lat), Math.max(a.lng, b.lng), Math.max(a.lat, b.lat)];
+    };
+    const inBox = ([lon, lat], [w, s, e, n]) => lon >= w && lon <= e && lat >= s && lat <= n;
+    const near = box(-120, -40, W + 120, H + 40);
+    // Half a view around it: pills a pan brings in are there before it ends.
+    const ring = box(-W / 2, -H / 2, W * 1.5, H * 1.5);
     const fits = [];
+    const outside = [];
     let best = null;
     const under = (pt, half) => (
       pt.x - half < EDGE_GAP || pt.x + half > W - EDGE_GAP || pt.y - PILL_HALF_H < EDGE_GAP || pt.y + PILL_HALF_H > H - EDGE_GAP
@@ -522,11 +536,13 @@ export function ExploreMap({
     for (const f of geojsonRef.current.features) {
       const pr = f.properties;
       if (!pr.fig) continue;
-      const [lon, lat] = f.geometry.coordinates;
-      if (lon < w || lon > e || lat < s || lat > n) continue;
+      if (!inBox(f.geometry.coordinates, near)) {
+        if (inBox(f.geometry.coordinates, ring)) outside.push(pr);
+        continue;
+      }
       const pt = map.project(f.geometry.coordinates);
       const half = (pinSize(`xp${SEP}n${SEP}${pr.fig}`)?.[0] || pillWidth(pr.fig)) / 2 + 6;
-      if (under(pt, half)) { hidden.push(pr.id); continue; }
+      if (under(pt, half)) continue;
       fits.push(pr);
       if (pinFigRef.current !== 'score' && pr.eur >= 0
         && (!best || pr.eur < best.eur || (pr.eur === best.eur && pr.rank < best.rank))) best = pr;
@@ -534,16 +550,19 @@ export function ExploreMap({
     // A price pill for the best-ranked in view only (about one per 18,000
     // px of map, 10 to 40); the rest are bubbles and dots (decision.md).
     const cap = Math.max(10, Math.min(40, Math.round((W * H) / 18000)));
-    fits.sort((a, c) => a.rank - c.rank);
-    for (const pr of fits.slice(cap)) if (pr.id !== best?.id) hidden.push(pr.id);
+    const byRank = (a, c) => a.rank - c.rank;
+    fits.sort(byRank);
+    outside.sort(byRank);
+    // The ring is twice the view's area beyond it: twice the cap.
+    const shown = [...fits.slice(0, cap), ...outside.slice(0, cap * 2)].map((pr) => pr.id);
     const hiddenClusters = [];
     if (map.getSource('dests-c')) {
       for (const f of map.querySourceFeatures('dests-c', { filter: ['has', 'point_count'] })) {
         const pt = map.project(f.geometry.coordinates);
-        if (under(pt, 22)) hiddenClusters.push(f.properties.cluster_id);
+        if (under(pt, 22)) hiddenClusters.push(f.id ?? f.properties.cluster_id);
       }
     }
-    pinStateRef.current = { hidden, hiddenClusters, best: best?.id || '' };
+    pinStateRef.current = { shown, hiddenClusters, best: best?.id || '' };
     applyPins(map);
   }, [applyPins]);
   const refreshRef = useRef(refreshPins);
@@ -571,6 +590,7 @@ export function ExploreMap({
       // A phone at 3x draws 2.25 times the pixels of 2x for a difference
       // the eye does not see on a map; capped, panning keeps its frames.
       pixelRatio: Math.min(2, window.devicePixelRatio || 1),
+      fadeDuration: 0,
       // The credit stays visible and small (decision.md "Base map").
       attributionControl: { compact: false },
     });
@@ -600,7 +620,7 @@ export function ExploreMap({
     // waits for every tile, T441), and again after a basemap swap.
     map.on('style.load', () => {
       addPinLayers(map, geojsonRef.current);
-      applyPins(map);
+      refreshRef.current(map);
       if (!readyRef.current) {
         readyRef.current = true;
         fitRef.current?.(false);
@@ -637,17 +657,40 @@ export function ExploreMap({
       onSelectRef.current?.(id);
     });
     let pointing = false;
+    // The list's outline follows the hovered pin once the pointer rests: it
+    // re-renders the whole tab, and a pointer crossing pins on its way to
+    // start a drag made that drag's first frames late (fix round 3).
+    let linkTimer = 0;
+    const linkLater = (id) => {
+      clearTimeout(linkTimer);
+      linkTimer = setTimeout(() => { linkTimer = 0; onPinLinkRef.current?.(id); }, LINK_REST_MS);
+    };
+    // The hover hit test runs once the pointer rests a moment: a pointer on
+    // its way to start a drag never pays for it (up to 170 ms at CPU 4x on
+    // the drag's first frame, fix round 3).
+    let hoverTimer = 0;
+    map.on('mousedown', () => {
+      clearTimeout(linkTimer); linkTimer = 0;
+      clearTimeout(hoverTimer); hoverTimer = 0;
+    });
     map.on('mousemove', (e) => {
-      // A drag is a pan, not a hover: no hit test on every move of it.
-      if (e.originalEvent?.buttons) return;
-      const f = pinAt(map, e.point, 8);
+      // A drag is a pan, not a hover: no hit test on every move of it, nor
+      // while the map still glides after one (the pins slide under the
+      // pointer; the next drag would start late).
+      clearTimeout(hoverTimer);
+      if (e.originalEvent?.buttons || map.isMoving()) return;
+      const point = e.point;
+      hoverTimer = setTimeout(() => { hoverTimer = 0; hoverAt(point); }, HOVER_REST_MS);
+    });
+    const hoverAt = (point) => {
+      const f = pinAt(map, point, 8);
       const pr = f?.properties;
       const id = pr && pr.point_count == null && pr.ld !== 0 ? pr.id : null;
       if (f) { map.getCanvas().style.cursor = 'pointer'; pointing = true; }
       else if (pointing) { map.getCanvas().style.cursor = ''; pointing = false; }
       if (hoverRef.current !== id) {
         hoverRef.current = id;
-        onPinLinkRef.current?.(id);
+        linkLater(id);
         applyPins(map);
       }
       if (!f || pr.point_count != null) {
@@ -660,9 +703,10 @@ export function ExploreMap({
       } else {
         showTip(map, f);
       }
-    });
+    };
     map.getCanvas().addEventListener('mouseleave', () => {
-      if (hoverRef.current) { hoverRef.current = null; onPinLinkRef.current?.(null); applyPins(map); }
+      clearTimeout(hoverTimer); hoverTimer = 0;
+      if (hoverRef.current) { hoverRef.current = null; linkLater(null); applyPins(map); }
       if (!cardRef.current) closePop();
     });
     map.on('zoomend', () => {
@@ -673,8 +717,14 @@ export function ExploreMap({
     // The list follows the view a moment after the map settles, so a quick
     // run of strokes re-renders it once, not after each.
     let viewTimer = 0;
+    // The pins are chosen again once the camera has rested a moment: each new
+    // choice lays out pill tiles in the worker, and done between the strokes
+    // of a pan it cost the next stroke its frames (fix round 3, progress-3.md).
+    let pinTimer = 0;
     map.on('movestart', () => {
       clearTimeout(viewTimer);
+      clearTimeout(pinTimer);
+      pinTimer = 0;
       kpinsBoxRef.current?.classList.add('is-moving');
     });
     // Tiles of a new zoom land after 'moveend': the bubbles there are
@@ -682,17 +732,18 @@ export function ExploreMap({
     let dirty = false;
     map.on('moveend', () => {
       dirty = true;
-      refreshRef.current(map);
+      clearTimeout(pinTimer);
+      pinTimer = setTimeout(() => { pinTimer = 0; refreshRef.current(map); }, PIN_REST_MS);
       kpinsBoxRef.current?.classList.remove('is-moving');
       clearTimeout(viewTimer);
       viewTimer = setTimeout(() => {
         const b = map.getBounds();
         onViewportRef.current?.([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], map.getZoom());
-      }, 250);
+      }, PIN_REST_MS);
     });
     let firstIdle = true;
     map.on('idle', () => {
-      if (dirty) { dirty = false; refreshRef.current(map); }
+      if (dirty && !pinTimer) { dirty = false; refreshRef.current(map); }
       setKpins(collectKpins(map));
       if (firstIdle) {
         firstIdle = false;
@@ -707,6 +758,9 @@ export function ExploreMap({
     window.addEventListener('resize', onChrome);
     return () => {
       clearTimeout(viewTimer);
+      clearTimeout(pinTimer);
+      clearTimeout(linkTimer);
+      clearTimeout(hoverTimer);
       clearTimeout(readyTimer);
       clearTimeout(styleTimer);
       window.removeEventListener('carta:map-chrome', onChrome);
@@ -818,12 +872,11 @@ export function ExploreMap({
   // the camera).
   useEffect(() => {
     const map = mapRef.current;
-    if (!readyRef.current || !map?.getSource('dests')) return;
-    map.getSource('dests').setData(geojson);
+    if (!readyRef.current || !map?.getSource('dests-c')) return;
     map.getSource('dests-c').setData(geojson);
-    applyPins(map);
+    refreshRef.current(map);
     map.once('idle', () => refreshRef.current(map));
-  }, [geojson, applyPins]);
+  }, [geojson]);
 
   // The camera frames what the list holds on load and for a new search;
   // the whole of Europe when nothing narrows it.

@@ -101,7 +101,12 @@ export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, on
       // A row: it drags the sheet only from the top of its scroll.
       if ((bodyRef.current?.scrollTop || 0) > 0) return;
     }
-    if (e.target.closest('.xsheet-sort')) return;
+    // The whole head starts a drag, its buttons too: a finger on the count
+    // or the legend is often retargeted to the sort button next to it (touch
+    // adjustment), and the flick was lost (en at 390). Only a move past 6 px
+    // makes it a drag, so a tap still presses the button. An open menu keeps
+    // its own touches.
+    if (e.target.closest('[role="menu"], [role="listbox"]')) return;
     dragRef.current = { id: e.pointerId, y0: e.clientY, v0: shown(stop), moved: false, last: [[e.timeStamp, e.clientY]] };
   };
   const onMove = (e) => {

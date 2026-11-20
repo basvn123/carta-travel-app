@@ -7,7 +7,12 @@
  *   dest-dots    every place not in a bubble: an 8 px umber dot, white ring
  *   xcluster     a crowd at low zoom: a round count bubble, tap to zoom in
  *   xpin         a price pill (white, ink figure) for the best-ranked places
- *                that fit; symbol-sort-key is the rank in the list's sort
+ *                that fit; symbol-sort-key is the rank in the list's sort.
+ *                Its source `dests` holds only the pills chosen to show (a
+ *                hundred at most), set again once the camera has rested and
+ *                only when the set changed: a new filter on the source of
+ *                every place made MapLibre lay out all of its tiles again,
+ *                which cost the pan its frames (fix round 3, progress-3.md)
  *   xpin-best    the best value in view: the same pill with a saffron dot
  *   xpin-hot     the pin of the card under the pointer: lifted, umber edge
  *   xpin-picked  the picked place: umber, its name before the figure
@@ -49,7 +54,9 @@ function face() {
   }
   return fontCache;
 }
-const ratio = () => Math.min(3, Math.max(1, Math.round((typeof window !== 'undefined' && window.devicePixelRatio) || 1)));
+// The map draws at 2x at most (ExploreMap.jsx); a 3x image is half again
+// as many bytes for every tile's icon atlas, for nothing the eye sees.
+const ratio = () => Math.min(2, Math.max(1, Math.round((typeof window !== 'undefined' && window.devicePixelRatio) || 1)));
 
 /** A token hex as rgba with this alpha (canvas shadows want a soft colour). */
 function alpha(colour, a) {
@@ -207,7 +214,7 @@ export function addPinImage(map, id, countLabel = (n) => String(n)) {
  *  and re-adds them). `data` is the FeatureCollection to start from. */
 export function addPinLayers(map, data) {
   if (map.getSource('dests')) return;
-  map.addSource('dests', { type: 'geojson', data });
+  map.addSource('dests', { type: 'geojson', data: EMPTY });
   // The hovered and the picked place each get a one-feature source: a new
   // filter on the big source did not always re-place its symbols until the
   // camera moved (the pick at 820 px drew nothing); new data always does.
@@ -227,7 +234,7 @@ export function addPinLayers(map, data) {
       'circle-stroke-color': tokenColour('--surface'),
     },
   });
-  const symbol = (id, source, filter, image, extra = {}) => map.addLayer({
+  const symbol = (id, source, filter, image, extra = {}, paint = undefined) => map.addLayer({
     id, type: 'symbol', source, filter,
     layout: {
       'icon-image': image,
@@ -235,13 +242,18 @@ export function addPinLayers(map, data) {
       'icon-padding': 2,
       ...extra,
     },
+    ...(paint ? { paint } : {}),
   });
+  // A bubble under the floating chrome fades by feature state: a filter on
+  // this source would lay out every dot again on each pan.
   symbol('xcluster', 'dests-c', ['has', 'point_count'],
-    ['concat', `xc${SEP}`, ['to-string', ['get', 'point_count']]]);
-  symbol('xpin', 'dests', ['!=', ['get', 'fig'], ''],
+    ['concat', `xc${SEP}`, ['to-string', ['get', 'point_count']]], {},
+    { 'icon-opacity': ['case', ['boolean', ['feature-state', 'under'], false], 0, 1] });
+  // Fixed filters: which pills show is the source's data, never a filter.
+  symbol('xpin', 'dests', ['!=', ['get', 'best'], 1],
     ['concat', `xp${SEP}n${SEP}`, ['get', 'fig']],
     { 'symbol-sort-key': ['get', 'rank'] });
-  symbol('xpin-best', 'dests', ['==', ['get', 'id'], ''],
+  symbol('xpin-best', 'dests', ['==', ['get', 'best'], 1],
     ['concat', `xp${SEP}b${SEP}`, ['get', 'fig']]);
   symbol('xpin-hot', 'dests-hot', ['has', 'id'],
     ['concat', `xp${SEP}h${SEP}`, ['case', ['!=', ['get', 'fig'], ''], ['get', 'fig'], ['get', 'city']]],
@@ -251,19 +263,41 @@ export function addPinLayers(map, data) {
     { 'icon-allow-overlap': true });
 }
 
-/** The pin layers' filters for this moment: ids under the floating chrome
- *  (and clusters there) leave, the best, the hot and the picked pin each
- *  draw in their own layer and nowhere else. */
-export function setPinFilters(map, { hidden = [], hiddenClusters = [], best = '', hot = '', picked = '', featureOf = () => null }) {
+/** The pins of this moment: `shown` (ids) are the pills that fit (none under
+ *  the floating chrome); the best, the hot and the picked pin each draw in
+ *  their own layer and nowhere else; bubbles under the chrome leave. Sources
+ *  and filters are set only when they changed. */
+export function setPinFilters(map, { shown = [], hiddenClusters = [], best = '', hot = '', picked = '', featureOf = () => null }) {
   if (!map.getLayer('xpin')) return;
-  const id = ['get', 'id'];
-  const special = [best, hot, picked].filter(Boolean);
-  map.setFilter('xpin', ['all', ['!=', ['get', 'fig'], ''],
-    ['!', ['in', id, ['literal', [...hidden, ...special]]]]]);
-  const bf = best ? featureOf(best) : null;
+  const bf = best && best !== hot && best !== picked ? featureOf(best) : null;
   if (bf && typeof document !== 'undefined' && map.hasImage) addPinImage(map, ['xp', 'b', bf.properties.fig].join(SEP));
-  map.setFilter('xpin-best', ['all', ['==', id, best || '\u0000'],
-    ['!', ['in', id, ['literal', [hot, picked].filter(Boolean)]]]]);
+  const pills = [];
+  for (const pid of shown) {
+    if (pid === hot || pid === picked) continue;
+    const f = featureOf(pid);
+    if (!f?.properties.fig) continue;
+    pills.push({ ...f, properties: { ...f.properties, best: pid === best ? 1 : 0 } });
+  }
+  if (bf && !shown.includes(best)) pills.push({ ...bf, properties: { ...bf.properties, best: 1 } });
+  const keyOf = ({ properties: p }) => `${p.fig}${SEP}${p.best}${SEP}${p.rank}`;
+  const next = new Map(pills.map((f) => [f.properties.id, keyOf(f)]));
+  const clusterKey = hiddenClusters.join(',');
+  const h0 = held.get(map) || {};
+  const prev = h0.pills;
+  const changed = !prev || prev.size !== next.size
+    || [...next].some(([pid, key]) => prev.get(pid) !== key);
+  if (changed) {
+    held.set(map, { ...h0, pills: next });
+    // Each pill's image goes in before the data: a pill laid out before its
+    // image existed stayed blank (2 of 9 drawn at 390 px).
+    if (typeof document !== 'undefined' && map.hasImage) {
+      for (const f of pills) addPinImage(map, ['xp', f.properties.best ? 'b' : 'n', f.properties.fig].join(SEP));
+    }
+    const src = map.getSource?.('dests');
+    // New data, not updateData: a diff reloaded only some tiles and left
+    // pills out (2 of 9 drawn at 390 px, progress-3.md).
+    src?.setData({ type: 'FeatureCollection', features: pills });
+  }
   const one = (src, pid) => {
     const f = pid ? featureOf(pid) : null;
     // The figure is part of the key: a new price redraws the same place.
@@ -282,14 +316,24 @@ export function setPinFilters(map, { hidden = [], hiddenClusters = [], best = ''
   };
   one('dests-hot', hot && hot !== picked ? hot : '');
   one('dests-pick', picked || '');
-  map.setFilter('xcluster', ['all', ['has', 'point_count'],
-    ['!', ['in', ['get', 'cluster_id'], ['literal', hiddenClusters]]]]);
+  const h1 = held.get(map) || {};
+  if (h1.clusters !== clusterKey && map.getSource?.('dests-c')) {
+    held.set(map, { ...h1, clusters: clusterKey });
+    map.removeFeatureState?.({ source: 'dests-c' });
+    for (const id of hiddenClusters) map.setFeatureState?.({ source: 'dests-c', id }, { under: true });
+  }
+}
+
+/** Whether a bubble is faded under the floating chrome (not a tap target). */
+export function isUnder(map, f) {
+  return f?.layer?.id === 'xcluster' && f.id != null
+    && !!map.getFeatureState?.({ source: 'dests-c', id: f.id })?.under;
 }
 
 /** The pin (or bubble, or nearest dot within `slop` px) under a point. */
 export function pinAt(map, pt, slop = 22) {
   const layers = HIT_LAYERS.filter((l) => map.getLayer(l) && map.getLayoutProperty(l, 'visibility') !== 'none');
-  const top = layers.length ? map.queryRenderedFeatures([pt.x, pt.y], { layers })[0] : null;
+  const top = layers.length ? map.queryRenderedFeatures([pt.x, pt.y], { layers }).find((f) => !isUnder(map, f)) : null;
   if (top) return top;
   if (!map.getLayer('dest-dots')) return null;
   const dots = map.queryRenderedFeatures([[pt.x - slop, pt.y - slop], [pt.x + slop, pt.y + slop]], { layers: ['dest-dots'] });
