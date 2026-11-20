@@ -201,7 +201,10 @@ TASKS = [
         "key": "trails_regionize",
         "title": "Trails: region ids on every staged route",
         "cadence": "after",
-        "after": ["trails_ingest"],
+        # Also after trails_derive_routes (D24): derived routes staged after the
+        # regions ran reached curate "unplaced", outside every region quota,
+        # and 4,893 of them were approved through the fill pass that way.
+        "after": ["trails_ingest", "trails_derive_routes"],
         "writes_app_data": False,
         "soft": True,
         "guard": guard_trailslab_up,

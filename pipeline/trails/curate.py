@@ -125,6 +125,7 @@ sys.path.insert(0, str(ROOT / "pipeline" / "regions"))
 from db import connect  # noqa: E402
 from schema import ensure  # noqa: E402
 from popularity import family_key, fold  # noqa: E402
+import derived_gate  # noqa: E402
 
 try:
     import quotas as region_quotas  # noqa: E402
@@ -473,6 +474,14 @@ CANDIDATES_SQL = """
            t.raw_tags->>'wikidata' AS wikidata,
            t.raw_tags->>'wikipedia' AS wikipedia,
            t.raw_tags->>'operator' AS raw_operator,
+           t.raw_tags->>'name' AS raw_name,
+           t.raw_tags->>'derived_from' AS derived_from,
+           t.raw_tags->>'derived_join' AS derived_join,
+           t.raw_tags->>'waymark_share' AS waymark_share,
+           t.raw_tags->>'highway' AS highway,
+           t.raw_tags->>'surface' AS surface,
+           t.raw_tags->>'tracktype' AS tracktype,
+           t.raw_tags->>'sac_scale' AS raw_sac,
            t.is_loop, t.loop_source, t.sac_scale, t.nuts3, t.derived_route,
            t.hierarchy, t.stage_of, t.top_of, t.co_located,
            (ST_XMin(t.geom) + ST_XMax(t.geom)) / 2 AS clon,
@@ -512,6 +521,8 @@ CANDIDATES_SQL = """
 CAND_COLS = ("id", "country", "title", "network", "distance_m", "quality",
              "status", "source_ref", "ref", "wikidata", "wikipedia",
              "raw_operator",
+             "raw_name", "derived_from", "derived_join", "waymark_share",
+             "highway", "surface", "tracktype", "raw_sac",
              "is_loop", "loop_source", "sac_scale", "nuts3", "derived_route",
              "hierarchy", "stage_of", "top_of", "co_located",
              "clon", "clat", "popularity", "geometry_ok")
@@ -1059,6 +1070,29 @@ def listed_fill(rows, picker, quotas, verbose=False):
     return listed
 
 
+def reference_picks(heads, rows):
+    """One candidate per reference trail of the country: family heads first,
+    any candidate when no head names it (a famous walk can sit inside a
+    family whose head is another route)."""
+    by_ref = {}
+    for pool_rank, pool in enumerate((heads, rows)):
+        for r in pool:
+            ref_id, exact = derived_gate.reference_of(r.get("title") or "",
+                                                      r.get("country"))
+            if not ref_id:
+                continue
+            key = (-pool_rank, exact, not r.get("derived_route"),
+                   r.get("distance_m") or 0, r.get("rank") or 0)
+            if ref_id not in by_ref or key > by_ref[ref_id][0]:
+                by_ref[ref_id] = (key, r)
+    picks = []
+    for ref_id, (_, r) in sorted(by_ref.items()):
+        r["reference"] = ref_id
+        r["famous"] = True
+        picks.append(r)
+    return picks
+
+
 def select_country(rows, target, quotas, loop_target=None, verbose=False,
                    floor=COUNTRY_FLOOR, national=False):
     """The country's list, in the order the wire will carry it.
@@ -1120,6 +1154,17 @@ def select_country(rows, target, quotas, loop_target=None, verbose=False,
         loop_target = int(round(target * LOOP_SHARE))
 
     picker = Picker(quotas)
+
+    # 0. The outside reference of famous trails (D24, owner goal 2026-11-20:
+    #    every famous route from the web is on the list). For each reference
+    #    trail in this country, the best candidate that names it is taken
+    #    ahead of every quota and cap: an exact name before a name inside a
+    #    longer title, a relation before a derived route, the whole route
+    #    (longest) before a stage. It still had to clear every hard gate in
+    #    the candidate query: one continuous line, 2 km to TREK_MAX_M.
+    refs = reference_picks(heads, rows)
+    picker.fill(refs, len(refs), "reference", cell_caps=(None,),
+                respect_region=False)
 
     # 1. Famous first, and never blocked by either spatial cap: if a country's
     #    two best-known walks share a massif, or its most famous one sits in a
@@ -1224,9 +1269,13 @@ REVIEW_SQL = """
 """
 
 
-def apply_selection(conn, cc, picked, verbose=False):
+def apply_selection(conn, cc, picked, verbose=False, held=None, borrowed=None):
     """Promote the picks to approved, drop everything else in the country out
-    of the published/approved set, and record both halves in the ledger."""
+    of the published/approved set, and record both halves in the ledger.
+    `held` maps derived rows the publish gate held to its rule (D24), so a
+    demoted one says why instead of "not in the shortlist"."""
+    held = held or {}
+    borrowed = borrowed or {}
     keep = [r["id"] for r in picked]
     promoted = demoted = 0
     with conn.cursor() as cur:
@@ -1239,14 +1288,27 @@ def apply_selection(conn, cc, picked, verbose=False):
               AND NOT (id = ANY(%s))""", (cc, keep))
         losers = cur.fetchall()
         for trip_id, prev in losers:
+            rule = held.get(trip_id)
+            note = (f"held by trails_curate: derived route, {rule}" if rule
+                    else "dropped by trails_curate: not in the country shortlist")
             cur.execute("UPDATE trips SET status = 'needs_review'::trip_status, "
-                        "curation_note = %s WHERE id = %s",
-                        ("dropped by trails_curate: not in the country shortlist",
-                         trip_id))
+                        "curation_note = %s WHERE id = %s", (note, trip_id))
             cur.execute(REVIEW_SQL, (trip_id, "reopen", REVIEWER,
-                                     "not selected by the curation pass",
+                                     (f"derived route held by the publish gate: "
+                                      f"{rule}") if rule
+                                     else "not selected by the curation pass",
                                      prev, "needs_review", None))
             demoted += 1
+
+        # A derived route picked under a borrowed name (its seed way's name
+        # tag, or the Wikipedia title its fame key carries): the row has no
+        # title of its own, and an untitled walk is not published
+        # (derived_gate.name_of).
+        for trip_id in keep:
+            if trip_id in borrowed:
+                cur.execute("UPDATE trips SET title = %s WHERE id = %s "
+                            "AND coalesce(title, '') = ''",
+                            (borrowed[trip_id], trip_id))
 
         for row in picked:
             tier = row.get("tier") or "r"
@@ -1364,6 +1426,10 @@ def main():
                     help="skip the l tier: rated rows only")
     ap.add_argument("--dry-run", action="store_true",
                     help="select and report, write nothing")
+    ap.add_argument("--sample-derived", type=int, default=0, metavar="N",
+                    help="print N random derived routes from the picks, with "
+                         "the gate rule that let each through (D24: the hand "
+                         "check of what would publish)")
     ap.add_argument("--verbose", action="store_true")
     args = ap.parse_args()
 
@@ -1398,10 +1464,24 @@ def main():
         totals = Counter()
         report = []
         floor_bound = []
+        derived_samples = []
+        reference_seen = set()
         for cc in countries:
             rows = fetch_candidates(conn, cc)
             if not rows:
                 print(f"{cc}: no candidate clears the continuity gate")
+                report.append((cc, 0, 0, 0, 0))
+                continue
+            # D24: a derived row needs evidence it is a walk before it may
+            # take a slot; held rows leave the pool before the quotas count it.
+            rows, held, borrowed, gate_counts = derived_gate.split(conn, cc, rows)
+            if gate_counts["derived"]:
+                print(derived_gate.count_line(cc, gate_counts))
+                totals.update({k: v for k, v in gate_counts.items()
+                               if k.startswith(("held:", "pass:"))})
+                totals["gate_derived"] += gate_counts["derived"]
+            if not rows:
+                print(f"{cc}: no candidate left after the derived-route gate")
                 report.append((cc, 0, 0, 0, 0))
                 continue
             quotas, target = region_budget(rows, args.target or TARGET_DEFAULT)
@@ -1418,8 +1498,16 @@ def main():
                 floor_bound.append(cc)
             if args.no_listed:
                 listed = []
+            picked_derived = [r for r in picked + listed if r.get("derived_route")]
+            totals["picked_derived"] += len(picked_derived)
+            derived_samples.extend(
+                {**r, "title": borrowed.get(r["id"], r.get("title") or "")}
+                for r in picked_derived)
             n_loop = sum(1 for r in picked if r.get("is_loop"))
             n_fam = sum(1 for r in picked if r.get("famous"))
+            got_refs = {r["reference"] for r in picked if r.get("reference")}
+            totals["reference"] += len(got_refs)
+            reference_seen.update(got_refs)
             print(f"{cc}: {len(picked):5d} rated + {len(listed):4d} listed of "
                   f"{len(rows):6,} candidates across {len(quotas):4d} region(s) "
                   f"(target {target}"
@@ -1428,7 +1516,9 @@ def main():
                   + f", {n_loop} loops, {n_fam} famous)")
             if not args.dry_run:
                 promoted, demoted = apply_selection(conn, cc, picked + listed,
-                                                    verbose=args.verbose)
+                                                    verbose=args.verbose,
+                                                    held=held,
+                                                    borrowed=borrowed)
                 totals["promoted"] += promoted
                 totals["demoted"] += demoted
             totals["picked"] += len(picked)
@@ -1447,6 +1537,31 @@ def main():
                   f"demoted {totals['demoted']:,} back to needs_review")
         else:
             print("dry run: nothing written")
+        ref_all = {rid for refs in derived_gate.reference_keys().values()
+                   for rid, _, _ in refs}
+        if ref_all:
+            missing = sorted(ref_all - reference_seen)
+            print(f"reference trails picked: {len(reference_seen)} of "
+                  f"{len(ref_all)} (D24); not picked in any country: "
+                  + (", ".join(missing) if missing else "none"))
+        if totals["gate_derived"]:
+            held_n = sum(v for k, v in totals.items() if k.startswith("held:"))
+            print(f"derived-route gate: {totals['gate_derived']:,} candidates, "
+                  f"{held_n:,} held, {totals['picked_derived']:,} picked; held "
+                  "by rule: " + ", ".join(
+                      f"{k[5:]} {v:,}" for k, v in totals.most_common()
+                      if k.startswith("held:")))
+        if args.sample_derived and derived_samples:
+            import random
+            rnd = random.Random(20261120)
+            pick = rnd.sample(derived_samples,
+                              min(args.sample_derived, len(derived_samples)))
+            print(f"\n{len(pick)} random picked derived routes (D24 hand check):")
+            for r in pick:
+                print(f"  {r['country']} {r['id']} {r['title'][:48]!r} "
+                      f"{(r['distance_m'] or 0) / 1000:.1f} km "
+                      f"{r.get('highway') or '-'}/{r.get('surface') or '-'} "
+                      f"{r.get('derived_join') or '-'} rule={r.get('derived_rule')}")
 
         # The check the country cap used to make impossible: if several
         # countries land on the same count, a constant is deciding the tail

@@ -559,7 +559,8 @@
    "title": "Trails: region ids on every staged route",
    "cadence": "after",
    "after": [
-    "trails_ingest"
+    "trails_ingest",
+    "trails_derive_routes"
    ],
    "writes_app_data": false,
    "soft": true,
