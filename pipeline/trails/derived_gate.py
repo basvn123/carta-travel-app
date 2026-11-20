@@ -94,7 +94,10 @@ PIECE_BUFFER_M = 40.0
 # route: the Fuerstensteig is a demanding mountain way inside the Via Alpina
 # stage and is the walk people come for. A T1 grade is not enough: the first
 # box dry run let two short stretches of the Kerry Way through on it.
-OWN_EVIDENCE = frozenset({"waymark", "mountain-graded", "rail-trail", "fame-walk"})
+# A famous reference trail inside a longer, differently named route is its own
+# walk too: Orla Perc lies inside a longer Tatra relation.
+OWN_EVIDENCE = frozenset({"waymark", "mountain-graded", "rail-trail", "fame-walk",
+                          "reference"})
 
 # Words, matched on folded tokens (lowercase, accents and the sharp s folded).
 # A token ending is used where the language compounds (German, Dutch, Nordic).
@@ -290,18 +293,70 @@ def reference_keys():
     return _REFERENCE
 
 
+REGISTRY_FILE = REFERENCE_FILE.parents[2] / "trails" / "famous_registry.json"
+_REFERENCE_IDS = None
+
+
+def reference_ids():
+    """{country: {osm relation id or Wikidata id: reference id}}: the ids the
+    famous registry holds for a reference trail of the same name, which is how
+    the external check matches a relation OSM names differently."""
+    global _REFERENCE_IDS
+    if _REFERENCE_IDS is None:
+        _REFERENCE_IDS = defaultdict(dict)
+        try:
+            rows = json.loads(REGISTRY_FILE.read_text(encoding="utf-8"))["rows"]
+        except (OSError, ValueError, KeyError):
+            rows = []
+        by_name = {}
+        for r in rows:
+            for n in [r.get("name") or ""] + list(r.get("aliases") or []):
+                if squash(n):
+                    by_name.setdefault(((r.get("country") or "").upper(), squash(n)), r)
+        for cc, refs in reference_keys().items():
+            for ref_id, exact, _ in refs:
+                for key in exact:
+                    r = by_name.get((cc, key))
+                    if not r:
+                        continue
+                    ev = r.get("evidence") or {}
+                    osm = (ev.get("osm") or {}).get("relation_id")
+                    if osm:
+                        _REFERENCE_IDS[cc].setdefault(str(osm), ref_id)
+                    if ev.get("wikidata"):
+                        _REFERENCE_IDS[cc].setdefault(ev["wikidata"], ref_id)
+    return _REFERENCE_IDS
+
+
+def reference_of_row(row):
+    """(reference id, exact) for a candidate row: by the registry's OSM or
+    Wikidata id first (exact), then by name."""
+    cc = (row.get("country") or "").upper()
+    ids = reference_ids().get(cc, {})
+    for key in (str(row.get("source_ref") or ""), row.get("wikidata") or ""):
+        if key and key in ids:
+            return ids[key], True
+    return reference_of(row.get("title") or "", cc)
+
+
 def reference_of(title, cc):
-    """(reference id, exact) for the first reference trail this title names
-    in country cc, or (None, False)."""
+    """(reference id, exact) for the reference trail this title names in
+    country cc, or (None, False). An exact name wins over any containment,
+    and among containments the longest name wins: "Escapardenne Lee Trail"
+    is the Lee Trail, not the Eislek Trail whose alias is "Escapardenne"."""
     key = squash(title)
     if not key:
         return None, False
-    for ref_id, exact, contains in reference_keys().get((cc or "").upper(), []):
+    refs = reference_keys().get((cc or "").upper(), [])
+    for ref_id, exact, _ in refs:
         if key in exact:
             return ref_id, True
-        if any(k in key for k in contains):
-            return ref_id, False
-    return None, False
+    best = None
+    for ref_id, _, contains in refs:
+        for k in contains:
+            if k in key and (best is None or len(k) > best[0]):
+                best = (len(k), ref_id)
+    return (best[1], False) if best else (None, False)
 
 
 def _significant(folded):
