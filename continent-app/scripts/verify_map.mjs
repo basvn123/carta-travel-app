@@ -408,14 +408,22 @@ async function layoutChecks(w, h) {
       check(`${tag}: a flick down moves the sheet one stop`, /is-half/.test(after), after);
     } else {
       // Hover sync: a card lifts its pin, a pin outlines its card.
+      // The pick shows its place in the column: open the map without it, so
+      // the column holds the cards again.
+      await page.goto(BASE + '?tab=map&xw=map', { waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() => performance.getEntriesByName('carta:map-idle').length > 0, null, { timeout: 120000 });
+      await page.evaluate(`${MAP}.jumpTo({ center: [11, 44.5], zoom: 6.5 })`);
+      await settle(page);
       await page.mouse.move(5, 5);
       const card = page.locator('.mpp .xrow').first();
+      check(`${tag}: the column shows cards`, await card.count() > 0);
       if (await card.count()) {
         const id = await card.getAttribute('data-id');
         await card.hover();
-        await page.waitForTimeout(500);
-        const hot = await page.evaluate(`${MAP}.getFilter('xpin-hot')`);
-        check(`${tag}: a card under the pointer lifts its pin`, JSON.stringify(hot).includes(`"${id}"`), id);
+        await page.waitForTimeout(800);
+        // The lifted pin is the one feature of its own source.
+        const hot = await page.evaluate(`JSON.stringify(${MAP}.getSource('dests-hot')._data?.geojson?.features?.map((f) => f.properties.id) || [])`);
+        check(`${tag}: a card under the pointer lifts its pin`, hot.includes(`"${id}"`), `${id} ${hot}`);
         await shot('hover');
       }
       await page.mouse.click(5, h - 5).catch(() => {});
