@@ -608,6 +608,7 @@
   animation: hs-settle-in var(--dur-settle) var(--ease-settle) both;
 }
 .xrow-hs.is-selected .hs-formation-day .money,
+.xrow-hs.is-selected .hs-formation-day .not-yet,
 .xrow-hs.is-selected .hs-formation-day .pitems-trigger { color: inherit; }
 
 /* The empty state as one centred block: the dashed blaze over the sentence

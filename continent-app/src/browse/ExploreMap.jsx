@@ -308,6 +308,9 @@ export function ExploreMap({
   // traveller set (a day or the stay, a person or the group), whole euros.
   const model = useSettings()?.model || null;
   const [ready, setReady] = React.useState(false);
+  // The pins are in (the first style.load): a pick that came with the page
+  // (?xi=) is kept clear of the card from then on (judgement-2).
+  const [pinsIn, setPinsIn] = React.useState(false);
   // V5 (T403, brief V5-5): the basemap style never arrived, so the frame
   // says so and offers the list instead of staying blank.
   const [failed, setFailed] = React.useState(false);
@@ -623,6 +626,7 @@ export function ExploreMap({
       refreshRef.current(map);
       if (!readyRef.current) {
         readyRef.current = true;
+        setPinsIn(true);
         fitRef.current?.(false);
       }
     });
@@ -846,7 +850,10 @@ export function ExploreMap({
     if (!pickedId) return undefined;
     const f = geojsonRef.current.features.find((x) => x.properties.id === pickedId);
     if (!f) return undefined;
+    let tries = 0;
+    let gone = false;
     const clear = () => {
+      if (gone) return;
       const cv = map.getCanvas();
       const H = cv.clientHeight; const W = cv.clientWidth;
       let top = 0; let bottom = 0;
@@ -860,11 +867,17 @@ export function ExploreMap({
       const pr = f.properties;
       const half = (pinSize(['xp', 'p', pr.city, pr.fig].join(SEP))?.[0] || 160) / 2 + 8;
       if (pt.x > half && pt.x < W - half && pt.y > top + margin && pt.y < H - bottom - margin) return;
+      // At low zoom the map's bounds can stop the camera short (Cyprus under
+      // the card at zoom 3, judgement-2): a second try zooms in a step.
+      const zoom = tries > 0 ? Math.min(map.getZoom() + 1.5, 9) : map.getZoom();
+      tries += 1;
       map.easeTo({
         center: f.geometry.coordinates,
+        zoom,
         padding: { top, left: 0, right: 0, bottom },
         duration: reducedMotion() ? 0 : 480,
       });
+      if (tries < 3) map.once('moveend', () => requestAnimationFrame(clear));
     };
     // A frame later, so a card that the pick raised is in the page; and again
     // once the card says it has settled (carta:map-chrome): on the first
@@ -873,8 +886,8 @@ export function ExploreMap({
     const h = requestAnimationFrame(clear);
     const onChrome = () => requestAnimationFrame(clear);
     window.addEventListener('carta:map-chrome', onChrome);
-    return () => { cancelAnimationFrame(h); window.removeEventListener('carta:map-chrome', onChrome); };
-  }, [pickedId, applyPins]);
+    return () => { gone = true; cancelAnimationFrame(h); window.removeEventListener('carta:map-chrome', onChrome); };
+  }, [pickedId, applyPins, pinsIn]);
 
   // New places or new figures: the same camera, the pins re-priced and
   // re-ranked in place (decision.md "Pins": settings and filters never move

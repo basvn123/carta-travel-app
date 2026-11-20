@@ -84,7 +84,7 @@ const check = (label, ok, note = '') => checks.push({ label, ok: !!ok, note });
 // it in software, an upper bound on frame times, audit-map.md).
 const browser = await chromium.launch(flag('gpu') ? { args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] } : {});
 
-async function boot(width, height, url = '?tab=map&xw=map') {
+async function boot(width, height, url = '?tab=map&xw=map', lang = 'en') {
   const phone = width < 769;
   const ctx = await browser.newContext({
     viewport: { width, height }, deviceScaleFactor: phone ? 3 : 1, isMobile: phone, hasTouch: phone, serviceWorkers: 'block',
@@ -107,15 +107,15 @@ async function boot(width, height, url = '?tab=map&xw=map') {
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message.split('\n')[0]));
-  await page.addInitScript(() => {
+  await page.addInitScript((lang) => {
     try {
-      localStorage.setItem('continent.lang.v1', 'en');
+      localStorage.setItem('continent.lang.v1', lang);
       localStorage.setItem('continent.guestMode.v1', '1');
       localStorage.setItem('continent.homeSeen.v1', '1');
       localStorage.setItem('carta.welcomeSeen.v1', '1');
       localStorage.setItem('continent.mapGuideDismissed.v1', '1');
     } catch { /* storage off */ }
-  });
+  }, lang);
   await page.goto(BASE + url, { waitUntil: 'domcontentloaded', timeout: 120000 });
   await page.waitForFunction(() => performance.getEntriesByName('carta:map-idle').length > 0, null, { timeout: 120000 });
   await page.waitForTimeout(2500);
@@ -447,6 +447,88 @@ async function layoutChecks(w, h) {
   await ctx.close();
 }
 
+// The tap card and the sheet row on real places, opened by ?xi= (judgement-2):
+// a priced place with a long name, two with no price yet and long names, and
+// a short one, in six languages at 360 and 390. The card: its name whole and
+// at least 40% of the text column, no two text boxes meeting, its top under
+// the chip row, at most 40% of the screen high, the picked pin clear above
+// it. The sheet row of a hidden gem with no price: no two text boxes meeting.
+// --cards-only runs just this pass.
+const CARD_PLACES = ['gem:moustiers-sainte-marie', 'gem:petra-tou-romiou', 'gem:picos-de-europa', 'gem:acquapendente'];
+const SHEET_PLACE = 'gem:petra-tou-romiou';
+const TEXT_PARTS = ['.xrow-name', '.hs-score', '.water-badge', '.country-flag', '.xrow-region', '.xrow-ctry', '.xrow-gem', '.xfig-amount', '.xfig-basis', '.xrow-save'];
+const boxesMeet = (root, parts) => {
+  const R = (e) => e.getBoundingClientRect();
+  const els = parts.flatMap((q) => [...root.querySelectorAll(q)]).filter((e) => R(e).width && R(e).height);
+  const bad = [];
+  for (let i = 0; i < els.length; i += 1) {
+    for (let j = i + 1; j < els.length; j += 1) {
+      if (els[i].contains(els[j]) || els[j].contains(els[i])) continue;
+      const a = R(els[i]); const b = R(els[j]);
+      if (Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1) {
+        bad.push(`${els[i].className.split(' ')[0]}+${els[j].className.split(' ')[0]}`);
+      }
+    }
+  }
+  return bad;
+};
+async function cardPass() {
+  for (const lang of ['en', 'nl', 'de', 'fr', 'es', 'it']) {
+    for (const [w, h] of [[360, 640], [390, 844]]) {
+      for (const id of CARD_PLACES) {
+        const tag = `card ${lang} ${w} ${id.slice(4)}`;
+        const { ctx, page, errors } = await boot(w, h, `?tab=map&xw=map&xi=${encodeURIComponent(id)}`, lang);
+        await settle(page);
+        await page.waitForTimeout(800);
+        const r = await page.evaluate(`(() => {
+          const meet = ${boxesMeet.toString()};
+          const card = document.querySelector('.xmap-tapcard');
+          if (!card) return { bad: ['no card'] };
+          const R = (e) => e?.getBoundingClientRect();
+          const cr = R(card); const n = card.querySelector('.xrow-name');
+          const col = cr.width - (R(card.querySelector('.xrow-media'))?.width || 0) - (R(card.querySelector('.xrow-save'))?.width || 0);
+          const strip = R(document.querySelector('.band.is-map .band-strip'));
+          const bad = meet(card, ${JSON.stringify(TEXT_PARTS)});
+          if (n.scrollWidth > n.clientWidth + 1) bad.push('name cut');
+          if (R(n).width < col * 0.4) bad.push('name ' + Math.round(R(n).width) + ' of ' + Math.round(col));
+          if (strip && cr.top < strip.bottom) bad.push('card top ' + Math.round(cr.top));
+          if (cr.height > innerHeight * 0.4) bad.push('card ' + Math.round(cr.height) + ' high');
+          return { bad, h: Math.round(cr.height), name: n.textContent };
+        })()`);
+        if (!r.bad.length && !(await pickedClear(page))) r.bad.push('picked pin under the card');
+        check(`${tag}: whole, apart, clear`, r.bad.length === 0 && errors.length === 0, `${r.name || ''} h${r.h} ${r.bad.join(', ')} ${errors.slice(0, 1).join('')}`);
+        if (SHOTS && lang === 'it' && w === 360) await page.screenshot({ path: path.join(SHOTS, `card-it-360-${id.slice(4)}.png`) });
+        if (id === SHEET_PLACE) {
+          // The sheet row of the same place: the card away, the list full.
+          await page.keyboard.press('Escape');
+          await page.waitForTimeout(600);
+          // Close to the place, so its row is among the rows in view (a place
+          // with no price ranks past the sheet's first rows at country zoom).
+          await page.evaluate(`(() => { const m = ${MAP}; const f = (m.getSource('dests-c')._data?.geojson?.features || []).find((x) => x.properties.id === '${SHEET_PLACE}');
+            if (f) m.jumpTo({ center: f.geometry.coordinates, zoom: 10 }); })()`);
+          await settle(page);
+          await page.locator('.xmap-listpill').click({ timeout: 5000 }).catch(() => {});
+          await page.waitForTimeout(600);
+          await page.locator('.xsheet-grab').click({ timeout: 5000 }).catch(() => {});
+          await page.waitForTimeout(800);
+          const s = await page.evaluate(`(() => {
+            const meet = ${boxesMeet.toString()};
+            const row = document.querySelector('.xsheet .xrow[data-id="${SHEET_PLACE}"]');
+            if (!row) return ['no row'];
+            row.scrollIntoView({ block: 'center' });
+            const bad = meet(row, ${JSON.stringify(TEXT_PARTS)});
+            const n = row.querySelector('.xrow-name');
+            if (n.scrollWidth > n.clientWidth + 1) bad.push('name cut');
+            return bad;
+          })()`);
+          check(`sheet ${lang} ${w} ${SHEET_PLACE.slice(4)}: row text apart`, s.length === 0, s.join(', '));
+        }
+        await ctx.close();
+      }
+    }
+  }
+}
+
 const perf = {};
 // --layout-only skips the speed runs (a quick rerun of the layout checks).
 if (!flag('layout-only')) for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
@@ -457,7 +539,8 @@ if (!PERF_ONLY) {
     check(`speed ${k}: 0 to 2 frames over 50 ms while panning at CPU ${RATE}x`, v.over50 <= 2, `${v.over50} of ${v.frames}, p95 ${v.p95}, max ${v.max}`);
     check(`speed ${k}: no DOM price pins`, v.domPins === 0, `${v.domPins}`);
   }
-  for (const [w, h] of SIZES) await layoutChecks(w, h);
+  if (!flag('cards-only')) for (const [w, h] of SIZES) await layoutChecks(w, h);
+  await cardPass();
 }
 
 await browser.close();

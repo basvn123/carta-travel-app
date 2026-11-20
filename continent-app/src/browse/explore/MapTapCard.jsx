@@ -25,6 +25,22 @@ export function MapTapCard({ p, overview, fav, onToggleFav, onOpen, onClose, t }
     const id = setTimeout(() => window.dispatchEvent(new Event('carta:map-chrome')), prefersReducedMotion() ? 0 : 260);
     return () => { clearTimeout(id); window.dispatchEvent(new Event('carta:map-chrome')); };
   }, [p.id]);
+  // A card that grows (a long name wrapping, its photo arriving) says so
+  // too, so the picked pin is kept clear of its final height (judgement-2).
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof ResizeObserver !== 'function') return undefined;
+    let h = el.offsetHeight;
+    let raf = 0;
+    const ro = new ResizeObserver(() => {
+      if (el.offsetHeight === h) return;
+      h = el.offsetHeight;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => window.dispatchEvent(new Event('carta:map-chrome')));
+    });
+    ro.observe(el);
+    return () => { ro.disconnect(); cancelAnimationFrame(raf); };
+  }, []);
   React.useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape' && !e.defaultPrevented) onClose(); };
     document.addEventListener('keydown', onKey);

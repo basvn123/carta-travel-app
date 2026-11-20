@@ -192,16 +192,36 @@
     border: 0;
     background: transparent;
   }
-  /* A long name wraps to a second line and the card grows; never an
-     ellipsis (owner rule: no cut-off text). The figure keeps the first line. */
-  /* The name takes the whole first line (the score plate follows under it):
-     beside the plate it was squeezed to a letter a line at 360. */
+  /* The tap card has the sheet rows' grid (below): the name owns the first
+     line beside the photo and never shares it with the figure, which sits
+     under it on the right; a long name wraps, never an ellipsis (owner
+     rule: no cut-off text). Beside an uncapped "Not available yet" the name
+     fell to a letter a line and the card ran off the top (judgement-2). */
+  .explore-shell .xmap-tapcard .xrow-hs {
+    grid-template-areas:
+      "media l1 l1 l1 save"
+      "media l2 l2 day save"
+      "media . . day save"
+      "media fit fit fit save";
+  }
   .explore-shell .xmap-tapcard .xrow-hs .xrow-line1 { flex-wrap: wrap; align-items: center; row-gap: 2px; }
-  .explore-shell .xmap-tapcard .xrow-hs .xrow-name { flex: 1 1 100%; white-space: normal; overflow: visible; overflow-wrap: break-word; text-wrap: balance; }
-  .explore-shell .xmap-tapcard .xrow-hs .xfig-basis { max-width: 11ch; white-space: normal; }
-  .explore-shell .xmap-tapcard .xrow-hs .xrow-country { flex-wrap: wrap; white-space: normal; }
+  .explore-shell .xmap-tapcard .xrow-hs .xrow-name { flex: 0 1 auto; white-space: normal; overflow: visible; overflow-wrap: break-word; text-wrap: balance; }
+  .explore-shell .xmap-tapcard .xrow-hs .xrow-line2 { flex-wrap: wrap; row-gap: 2px; line-height: var(--leading-tight); }
+  .explore-shell .xmap-tapcard .xrow-hs .xrow-country { flex: 1 1 0; min-width: 8ch; flex-wrap: wrap; white-space: normal; }
   .explore-shell .xmap-tapcard .xrow-hs .xrow-region { overflow: visible; }
-  .explore-shell .xmap-tapcard .xrow-hs .hs-formation-day { align-self: start; }
+  /* The figure column is capped in every state: a price's basis words and
+     the not-yet words wrap inside 12ch. */
+  .explore-shell .xmap-tapcard .xrow-hs .hs-formation-day,
+  .explore-shell .xsheet-rows .xrow-hs .hs-formation-day { max-width: 12ch; }
+  .explore-shell .xmap-tapcard .xrow-hs .xfig-amount,
+  .explore-shell .xmap-tapcard .xrow-hs .xfig-basis,
+  .explore-shell .xsheet-rows .xrow-hs .xfig-amount,
+  .explore-shell .xsheet-rows .xrow-hs .xfig-basis { white-space: normal; }
+  .explore-shell .xmap-tapcard .xrow-hs .xfig-amount .money,
+  .explore-shell .xsheet-rows .xrow-hs .xfig-amount .money { white-space: nowrap; }
+  /* The gem tag takes a line of its own, never over the region or the figure. */
+  .explore-shell .xmap-tapcard .xrow-hs .xrow-line2 > .xrow-gem,
+  .explore-shell .xsheet-rows .xrow-hs .xrow-line2 > .xrow-gem { flex: 1 1 100%; min-width: 0; white-space: normal; }
   /* The close control is there for a keyboard; a finger swipes or taps the map. */
   .explore-shell .xmap-tapcard-close {
     position: absolute;
