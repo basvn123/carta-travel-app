@@ -74,36 +74,6 @@
 .psheet-in { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
 .psheet .fsheet-body { padding-top: var(--space-2); }
 
-/* The four tabs as one pill row (the approved artifact); a long language
-   scrolls sideways rather than shrinking its words (copy.md 14). */
-.ui-tabs.psheet-tabs {
-  display: flex;
-  gap: var(--space-1);
-  overflow-x: auto;
-  scrollbar-width: none;
-  padding: 2px;
-  margin: -2px;
-  border: 0;
-}
-.psheet-tabs .ui-tab::after { display: none; }
-.psheet-tabs .ui-tab {
-  flex: 1 0 auto;
-  min-height: 44px;
-  padding: 0 var(--space-3);
-  border: 1.5px solid transparent;
-  border-radius: var(--radius-control);
-  background: var(--surface-sunken);
-  color: var(--text-2);
-  font: inherit;
-  font-size: var(--text-label);
-  font-weight: 700;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background-color var(--dur-paint) var(--ease-out), color var(--dur-paint) var(--ease-out);
-}
-.psheet-tabs .ui-tab.is-selected { background: var(--umber-100); color: var(--umber-800); border-color: var(--umber-600); }
-.psheet-panel { min-width: 0; }
-
 /* The sheet's own controls are kit Buttons (design-lint raw-button) with the
    button look taken off, so a leg, a day or a flight reads as itself. */
 .btn.psheet-raw {
@@ -127,28 +97,11 @@
 .psheet-panel > * { animation: psheet-fade var(--dur-2) var(--ease-out); }
 @keyframes psheet-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-.psheet-tabbody { display: flex; flex-direction: column; gap: var(--space-2); }
-.psheet-h { margin: var(--space-1) 0 0; font-size: var(--text-title); font-weight: 800; color: var(--text); }
-.psheet-figrow { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; }
 .psheet-big { font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: var(--text); }
 .psheet-unit { font-size: var(--text-caption); color: var(--text-2); }
 .psheet-basis { margin: 0; font-size: var(--text-caption); line-height: 1.4; color: var(--text-3); overflow-wrap: anywhere; }
 .psheet-lead { margin: 0; font-size: var(--text-body); color: var(--text-2); }
 .psheet-muted { color: var(--text-2); }
-.psheet-items { list-style: none; margin: var(--space-1) 0 0; padding: 0; }
-.psheet-item {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  border-top: 1px solid var(--border-soft);
-  font-size: var(--text-body);
-  font-variant-numeric: tabular-nums;
-}
-.psheet-item.is-sum { font-weight: 800; border-top-color: var(--border); }
-.psheet-item.is-apart { margin-top: var(--space-2); border-top: 1px dashed var(--border); }
-.psheet-item .money { white-space: nowrap; }
-
 /* The one action stays in reach: sticky at the sheet's foot. */
 .psheet-foot {
   position: sticky;
@@ -164,6 +117,138 @@
 .psheet-primary { min-height: 48px; }
 /* Quiet text, brown ink on paper: --action-text is the label on a fill. */
 .pft-second.btn { min-height: 44px; color: var(--action-hover); }
+
+/* The receipt (G12, D10, place-prices decision section 2). */
+.rcp { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.rcp-pophead { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-1); }
+.rcp-pophead .rcp-title { flex: 1; min-width: 0; margin: 0; }
+.rcp-titlerow { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px var(--space-2); min-width: 0; }
+.rcp-name { font-size: var(--text-title); font-weight: 800; letter-spacing: -0.015em; color: var(--text); }
+.rcp-country { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.rcp-titlerow:has(.rcp-back) { align-items: center; }
+.rcp-top { display: grid; gap: var(--space-2); }
+.rcp-total { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 var(--space-2); margin: 0; }
+.rcp-big { font-size: var(--text-display); font-weight: 800; line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; color: var(--text); }
+.rcp-open { font-size: var(--text-headline); font-weight: 800; color: var(--text-2); }
+.rcp-basis { font-size: var(--text-body); font-weight: 600; color: var(--text-2); }
+.rcp-insight {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 4px 10px 4px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--umber-50);
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--umber-800);
+}
+.rcp-insight-ic { color: var(--action); flex: none; }
+.rcp-insight.is-under .rcp-insight-ic { rotate: 180deg; }
+.rcp-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.rcp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  max-width: 100%;
+  padding: 0 10px 0 12px;
+  border: var(--stroke-edge) solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--dur-paint) var(--ease-out), scale var(--dur-1) var(--ease-out);
+}
+/* A 44 px target around the 36 px chip. */
+.rcp-chip { position: relative; }
+.rcp-chip::before { content: ""; position: absolute; inset: -4px 0; }
+.rcp-chip.is-style { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
+.rcp-chip-ic { display: inline-flex; color: var(--action); }
+.rcp-chip-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rcp-chip-go { flex: none; color: var(--text-3); }
+.rcp-chip:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.rcp-chip:active { scale: var(--press-scale); }
+@media (hover: hover) { .rcp-chip:hover { background: var(--surface-hover); } .rcp-chip.is-style:hover { background: var(--select-bg); } }
+
+.rcp-rows { list-style: none; margin: 0; padding: 0; border-top: var(--stroke-hair) solid var(--border-soft); }
+.rcp-row { border-bottom: var(--stroke-hair) solid var(--border-soft); }
+.rcp-rowbtn {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto 16px;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--space-2) 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.rcp-rowbtn:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -3px; border-radius: var(--radius-control); }
+.rcp-ic { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--radius-control); }
+.rcp-ic.is-bed { background: var(--wagon-bed); color: var(--action-text); }
+.rcp-ic.is-food { background: var(--wagon-food); color: var(--wagon-food-ink); }
+.rcp-ic.is-way { background: var(--surface); color: var(--wagon-go-ink); border: var(--stroke-edge) solid var(--wagon-go-edge); }
+.rcp-what { display: grid; gap: 1px; min-width: 0; }
+.rcp-label { font-size: var(--text-body); font-weight: 700; color: var(--text); }
+.rcp-sub { font-size: var(--text-label); color: var(--text-2); overflow-wrap: anywhere; }
+.rcp-amt { display: grid; justify-items: end; gap: 1px; }
+.rcp-eur { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-body); font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rcp-each { font-size: var(--text-caption); color: var(--text-2); white-space: nowrap; }
+.rcp-info { display: inline-flex; color: var(--text-3); }
+.rcp-thin { width: 7px; height: 7px; border-radius: var(--radius-pill); background: var(--sun-400); }
+.rcp-chev { color: var(--text-3); rotate: 90deg; transition: rotate var(--dur-2) var(--ease-out); }
+.rcp-row.is-open .rcp-chev { rotate: -90deg; }
+.rcp-row.is-open { background: var(--select-row); margin-inline: calc(var(--space-4) * -1); padding-inline: var(--space-4); }
+.rcp-lever { display: grid; gap: var(--space-1); padding: 0 0 var(--space-3) calc(36px + var(--space-3)); animation: psheet-fade var(--dur-2) var(--ease-out); }
+.rcp-opt {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 16px;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: var(--stroke-edge) solid var(--border-soft);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-body);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--dur-paint) var(--ease-out), border-color var(--dur-paint) var(--ease-out), scale var(--dur-1) var(--ease-out);
+}
+.rcp-opt.is-on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
+.rcp-opt:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.rcp-opt:active { scale: var(--press-scale); }
+.rcp-opt-what { display: grid; min-width: 0; }
+.rcp-opt-label { font-weight: 700; }
+.rcp-opt-sub { font-size: var(--text-caption); color: var(--text-2); }
+.rcp-opt.is-on .rcp-opt-sub { color: inherit; }
+.rcp-opt-eur { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rcp-opt-tick { grid-column: 3; color: var(--action); }
+.rcp-opt-go { color: var(--text-3); }
+@media (hover: hover) { .rcp-opt:not(.is-on):hover { background: var(--surface-hover); } }
+.rcp-line { display: flex; justify-content: space-between; gap: var(--space-3); padding: var(--space-2) 0; font-size: var(--text-body); font-variant-numeric: tabular-nums; }
+.rcp-line.is-rounding { color: var(--text-2); font-size: var(--text-label); }
+.rcp-line.is-sum { font-weight: 800; font-size: var(--text-lead); }
+.rcp-apart { height: var(--space-2); border-top: var(--stroke-hair) dashed var(--border); }
+.rcp-flights { min-width: 0; }
+.rcp-pop { padding-bottom: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .rcp-chev, .rcp-chip, .rcp-opt { transition: none; }
+  .rcp-chip:active, .rcp-opt:active { scale: none; }
+  .rcp-lever { animation: none; }
+}
 
 /* Flight tab */
 .pft { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }

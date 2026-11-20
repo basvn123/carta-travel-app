@@ -456,7 +456,7 @@
   grid-template-columns: 44px minmax(0, 1fr) auto auto auto;
   grid-template-areas:
     "media l1 l1 day save"
-    "media l2 parts parts save"
+    "media l2 l2 day save"
     "media fit fit fit save";
   align-items: center;
   column-gap: 10px;
@@ -536,7 +536,7 @@
     grid-template-areas:
       "media l1 l1 l1 save"
       "media l2 l2 day save"
-      "media parts parts parts save"
+      "media . . day save"
       "media fit fit fit save";
     padding-block: 2px;
   }
@@ -561,6 +561,30 @@
 .xrow-hs .xform-parts .hs-wagon { padding-inline: 5px; gap: 2px; }
 .xrow-hs .xform-parts .hs-wagon svg { width: 12px; height: 12px; }
 .xrow-hs .hs-formation-day { grid-area: day; justify-self: end; margin: 0; padding: 0; }
+/* G12, D10 (place-prices): the figure over its basis, one button to the
+   place's receipt, right aligned in the day column. */
+.xrow-hs .xfig {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: end;
+  align-content: center;
+  gap: 1px;
+  min-height: var(--tap);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: end;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.xrow-hs .xfig:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.xrow-hs .xfig-amount { font-size: var(--text-lead); font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.xrow-hs .xfig-basis { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); white-space: nowrap; text-decoration: underline dotted var(--umber-300); text-underline-offset: 3px; }
+.xrow-hs.is-selected .xfig-basis { color: inherit; }
+@media (hover: hover) { .xrow-hs .xfig:hover .xfig-amount { color: var(--action-hover); } }
 .xrow-hs .hs-formation-day .money { font-weight: 800; }
 /* G12: the pressable wagons are 32 px in every list width. */
 .xrow-hs .xform.is-pressable .xform-parts { --wh: 32px; align-items: center; }
@@ -650,7 +674,6 @@
       "media l1 l1 l1 save"
       "media l2 l2 day save"
       "media why why why save"
-      "media parts parts parts save"
       "media fit fit fit save";
   }
   .mpp-rows .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
@@ -669,8 +692,8 @@
   .xrow-hs {
     grid-template-columns: 56px minmax(0, 1fr) auto minmax(76px, auto) auto;
     grid-template-areas:
-      "media l1 parts day save"
-      "media l2 parts day save"
+      "media l1 l1 day save"
+      "media l2 l2 day save"
       "media why why why save"
       "media fit fit fit save";
     column-gap: var(--space-4);
@@ -694,11 +717,11 @@
   .xrow-hs {
     /* The parts take a fixed track, so the reason column does not drift
        with the width of the wagons and the row has no empty middle. */
-    grid-template-columns: 56px minmax(0, 18rem) minmax(0, 1fr) 15rem minmax(84px, auto) auto;
+    grid-template-columns: 56px minmax(0, 18rem) minmax(0, 1fr) minmax(84px, auto) auto;
     grid-template-areas:
-      "media l1 why parts day save"
-      "media l2 why parts day save"
-      "media fit fit fit fit save";
+      "media l1 why day save"
+      "media l2 why day save"
+      "media fit fit fit save";
   }
   .xrow-hs .xband { display: inline; }
   .xrow-hs .xform-parts { justify-self: end; }

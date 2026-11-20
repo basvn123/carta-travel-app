@@ -13,8 +13,10 @@ import { settingsSummary } from '../../lib/settings/summary.js';
 const ALIAS = { plane: 'flight', flag: 'from' };
 
 /** An item's glyph: a component, `heart` (the legacy heart, the style's one
- *  door, owner 2026-11-18) or a house glyph by name. */
-function glyphOf(icon) {
+ *  door, owner 2026-11-18) or a house glyph by name. The place receipt's
+ *  chips (components/price/PriceSheet.jsx) draw the same. */
+// eslint-disable-next-line react-refresh/only-export-components -- shared with the place receipt's chips
+export function glyphOf(icon) {
   if (typeof icon === 'function') return icon;
   if (icon === 'heart') return HeartIcon;
   if (typeof icon !== 'string') return null;

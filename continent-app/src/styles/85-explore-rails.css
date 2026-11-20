@@ -42,13 +42,13 @@
 .explore-shell .xrails-rail {
   /* A name line past the second adds its 1.25 x 16 px to the strip. */
   --xname-extra: calc((var(--xrc-name-lines, 2) - 2) * 1.25 * var(--text-lead));
-  --xrail-h: calc(156.5px + var(--xname-extra) + 100cqi * 0.76 * 0.75);
+  --xrail-h: calc(118.5px + var(--xname-extra) + 100cqi * 0.76 * 0.75);
   content-visibility: auto;
   contain-intrinsic-size: auto var(--xrail-h);
 }
 .explore-shell .xrails-rail.is-waiting { min-height: var(--xrail-h); }
 @media (min-width: 600px) {
-  .explore-shell .xrails-rail { --xrail-h: calc(156.5px + var(--xname-extra) + (100cqi - var(--space-3)) / 2.15 * 0.75); }
+  .explore-shell .xrails-rail { --xrail-h: calc(118.5px + var(--xname-extra) + (100cqi - var(--space-3)) / 2.15 * 0.75); }
 }
 /* The list's rows (G12, D10, lane 1 round 5): a row off screen skips layout
    and paint, so a change of the list's width (the docked Settings panel, a
@@ -83,7 +83,7 @@
   :root { --settings-dock-w: min(400px, 34vw); }
 }
 @media (min-width: 1024px) {
-  .explore-shell .xrails-rail { --xrail-h: calc(162.5px + var(--xname-extra) + max(256px, (100cqi - 4 * var(--space-5)) / 4.25) * 0.75); }
+  .explore-shell .xrails-rail { --xrail-h: calc(124.5px + var(--xname-extra) + max(256px, (100cqi - 4 * var(--space-5)) / 4.25) * 0.75); }
   .explore-shell .xrails.xrails { gap: var(--space-6); margin-top: var(--space-4); }
   /* The Map button's row sits between the tabs and the first title: 16
      on each side of it, so the tabs and the first rail read as one page
@@ -99,11 +99,62 @@
 .xrc { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; }
 .xrc > .hs-rcard-link { display: block; }
 .xrc > .hs-rcard-link::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-card); }
-.xrc > :is(.xrc-head, .xrc-parts) :is(a, button),
-.xrc .pitems { position: relative; z-index: 1; }
+.xrc > .xrc-text { position: relative; z-index: 1; }
 .xrc > .hs-rcard-save { z-index: 2; }
 
-/* Line 1: the name, its Score, and the day figure at the right end. */
+/* The two lines (G12, D10, place-prices card option A): one button to the
+   receipt. Line 1 the name, its Score and the figure; line 2 the flag and
+   country and the figure's basis. */
+.xrc .xrc-text {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--tap);
+  margin: 10px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: scale var(--dur-1) var(--ease-out);
+}
+.xrc .xrc-text:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; }
+.xrc .xrc-text:active { scale: var(--press-scale-lg); }
+.xrc .xrc-fig {
+  margin-left: auto;
+  padding-left: var(--space-1);
+  font-size: var(--text-title);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.xrc .xrc-fig .money { font-weight: inherit; }
+.xrc .xrc-basis {
+  flex: none;
+  margin-left: auto;
+  padding-left: var(--space-2);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+  text-decoration: underline dotted var(--umber-300);
+  text-underline-offset: 3px;
+}
+.xrc .xrc-country { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (hover: hover) {
+  .xrc .xrc-text:hover .xrc-fig { color: var(--action-hover); }
+  .xrc .xrc-text:hover .xrc-basis { text-decoration-color: var(--action); }
+}
+@media (prefers-reduced-motion: reduce) { .xrc .xrc-text { transition: none; } .xrc .xrc-text:active { scale: none; } }
+/* Line 1: the name, its Score, and the figure at the right end. */
 /* A long name ("Saint-Jean-Pied-de-Port") wraps to a second line rather
    than lose its end; the Score and the figure stay on the first line. */
 .xrc .xrc-head {
@@ -111,7 +162,6 @@
   align-items: flex-start;
   gap: var(--space-2);
   min-width: 0;
-  margin-top: 10px;
 }
 .xrc .xrc-head .hs-rcard-name {
   flex: 0 1 auto;
@@ -140,21 +190,14 @@
    the strip's height, nothing painted. */
 .xrc-spacer { pointer-events: none; }
 .xrc .xrc-head > :not(.hs-rcard-name) { flex: none; }
-.xrc .xrc-fig.hs-formation { margin: 1px 0 0 auto; padding-left: var(--space-1); }
-.xrc .xrc-fig .hs-formation-day { margin: 0; padding: 0; }
 
 /* Line 2: the flag and the country, one quiet line. */
-.xrc .hs-rcard-where { margin-top: 2px; font-size: var(--text-label); }
+.xrc .hs-rcard-where { align-items: baseline; font-size: var(--text-label); }
 
-/* Line 3: the parts. Bed plus food, joined, are the figure above; the
-   return fare stands apart after them, outlined because it is outside it. */
-.xrc .xrc-parts.hs-formation { --wh: 28px; margin-top: 10px; }
-.xrc .xrc-parts .xform-parts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px var(--space-2); }
-.xrc .xrc-parts .hs-wagon { padding-inline: 8px; }
 .xrc .tg-sig { margin-top: 6px; }
 
 @media (min-width: 1024px) {
-  .xrc .xrc-head { margin-top: var(--space-3); }
+  .xrc .xrc-text { margin-top: var(--space-3); }
 }
 
 /* ---- The See all tile ------------------------------------------------ */

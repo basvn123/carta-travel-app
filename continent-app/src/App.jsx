@@ -1486,6 +1486,7 @@ function TravelApp() {
   // The travel styles ride on the same context, so the style disc, the
   // planner's Who screen and the trip settings read one store.
   const settingsValue = useMemo(() => ({ ...settings, travelStyles, openStyleSpend }), [settings, travelStyles, openStyleSpend]);
+  const planFromReceipt = useCallback((p) => openTripForCountry(p?.iso2, p?.id), [openTripForCountry]);
   // G12, D10 (lane 1, explore-top-2 profile): every Explore card reads the
   // settings and first-run contexts, so a setting change redrew all of them
   // at once, in the tap's own task (2 s at 4x CPU), and again when the new
@@ -1787,9 +1788,10 @@ function TravelApp() {
       <Suspense fallback={null}>
         <SettingsSheet />
       </Suspense>
-      {/* D10: the price sheet a list row's figure and wagons open; one
-          mount, so a row carries only its buttons (priceSheetStore). */}
-      <PriceSheet data={data} />
+      {/* D10, G12: the receipt a card's figure opens; one mount, so a
+          card carries only its button (priceSheetStore). Plan this trip
+          starts the trip planner on the place's country with it as a stop. */}
+      <PriceSheet data={data} onPlan={planFromReceipt} />
 
       {/* The home page (T462, which replaced the T209 landing receipt): what
           Carta does, a live demo of it, and a door to each part. Not kept

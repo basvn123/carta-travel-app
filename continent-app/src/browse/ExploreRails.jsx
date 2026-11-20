@@ -6,11 +6,9 @@ import { HeroImage } from '../components/HeroImage.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { openShared } from '../lib/sharedElement.js';
 import { countryName } from '../lib/countryName.js';
-import { useI18n } from '../i18n/index.jsx';
 import { SaveButton } from './ExploreCards.jsx';
-import { PlaceScore, RowFormation } from './explore/HouseParts.jsx';
+import { FigureAmount, PlaceScore, ReceiptButton, figureSpoken, usePlaceFigure } from './explore/HouseParts.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
-import { monthName } from '../lib/dates.js';
 import { STORY_MAX, RAIL_CARD_SIZES } from './StoryRail.jsx';
 import { nameLines } from './nameLines.js';
 
@@ -33,8 +31,8 @@ import { nameLines } from './nameLines.js';
  *
  * House style 2026-11 (G1): each strip is the house Rail (components/ui)
  * with rail cards (photo, name and Score plate, flag and country, the
- * formation). `month` is the month the rails speak about (ExploreTab's); the
- * rail logic, the lead count, the doors and every seeAll are unchanged.
+ * figure and its basis, G12 place-prices). The rail logic, the lead count,
+ * the doors and every seeAll are unchanged.
  */
 
 // Explore rails (owner 2026-11-18, "scroll a lot horizontally"): sixteen
@@ -61,31 +59,20 @@ export function interleaveByCountry(rows) {
 }
 
 
-// The rails whose own question already says the month, or the gem: their
-// cards do not repeat it on the status line.
-const MONTH_RAILS = new Set(['now', 'cost', 'beach']);
-
-const inMonth = (p, month) => !!month && (p.climate?.best || []).includes(month);
-
 /** One place as a house rail card (DESIGN.md "Rail and RailCard"): the photo
- *  with only the save disc on it (no text on a photo), the name with the
- *  Score plate, the flag and country with the status the rail's own question
- *  does not already say (the month, else the hidden gem), the why chips, then
- *  the weighted formation (its figure with the unit) and the friends line. */
+ *  with only the save disc on it (no text on a photo), then two lines (G12,
+ *  D10, place-prices card option A): the name with its Score plate and the
+ *  figure; the flag and country and the figure's basis. The two lines are
+ *  one button to the place's receipt; the photo is the link to the place. */
 // G12, D10 (audit-perf.md cause 4): memoised, so a rail redraw (a typed
 // letter, a saved place, a tab hop) redraws only the cards whose place, save
-// state or month changed. Every prop is a value or a stable callback.
-const PlaceRailCard = React.memo(function PlaceRailCard({ p, railKey, month, monthShort, onSelect, fav, onToggleFav, t, eager = false }) {
-  const goodNow = !MONTH_RAILS.has(railKey) && inMonth(p, month);
-  const gem = !goodNow && railKey !== 'gems' && p.rating?.hidden_gem;
+// state changed. Every prop is a value or a stable callback.
+const PlaceRailCard = React.memo(function PlaceRailCard({ p, onSelect, fav, onToggleFav, t, eager = false }) {
   const uid = useId().replace(/[^a-zA-Z0-9]/g, '');
-  // Explore rails (owner 2026-11-18, "cleaner and clearer under the image"):
-  // three lines in a grid. The name, its Score and the day figure share the
-  // first line, so the price is read with the place, not on a line of its
-  // own; the flag and country follow; then the parts of that figure (bed
-  // plus food) and the return fare apart. The link is the photo, stretched
-  // over the whole card (the list row's pattern), so the figure and the
-  // parts can be buttons beside it: a button never nests in a link.
+  const fig = usePlaceFigure(p.cost);
+  // The link is the photo, stretched over the whole card (the list row's
+  // pattern), so the two lines under it can be a button beside it: a
+  // button never nests in a link.
   return (
     <article className="hs-rcard xstory xrc" role="listitem">
       <a className="hs-rcard-link" href={`#dest=${encodeURIComponent(p.id)}`}
@@ -102,21 +89,18 @@ const PlaceRailCard = React.memo(function PlaceRailCard({ p, railKey, month, mon
             sizes={RAIL_CARD_SIZES} ratio={[4, 3]} eager={eager} />
         </span>
       </a>
-      <div className="xrc-head">
-        <span className="hs-rcard-name" id={`${uid}-n`}>{p.city}</span>
-        <PlaceScore rating={p.rating} />
-        {/* G12, D10: the figure says its unit and opens the price sheet. */}
-        <RowFormation cost={p.cost} t={t} pressable place={p} slot="figure" className="xrc-fig" />
-      </div>
-      <span className="hs-rcard-where" id={`${uid}-w`}>
-        <CountryFlag country={p.iso2} size={12} />
-        <span className="xrc-country">{countryName(p.iso2, p.country)}</span>
-        {goodNow && <span className="xrc-status">{t('rail.goodIn', { month: monthShort })}</span>}
-        {gem && <span className="hs-gem">{t('common.hiddenGem')}</span>}
-      </span>
-      {/* The parts: each wagon a button to the price sheet; a thin bed is
-          a dot on the bed wagon. */}
-      <RowFormation cost={p.cost} t={t} pressable place={p} slot="parts" className="xrc-parts" />
+      <ReceiptButton place={p} cost={p.cost} model={fig.model} label={figureSpoken(t, p, fig)} className="xrc-text">
+        <span className="xrc-head">
+          <span className="hs-rcard-name" id={`${uid}-n`}>{p.city}</span>
+          <PlaceScore rating={p.rating} />
+          <FigureAmount fig={fig} className="xrc-fig" />
+        </span>
+        <span className="hs-rcard-where">
+          <CountryFlag country={p.iso2} size={12} />
+          <span className="xrc-country" id={`${uid}-w`}>{countryName(p.iso2, p.country)}</span>
+          {fig.f.eur != null && <span className="xrc-basis" aria-hidden="true">{fig.basis}</span>}
+        </span>
+      </ReceiptButton>
       <FriendCardLine destId={p.id} />
       {onToggleFav && (
         <span className="hs-rcard-save">
@@ -288,7 +272,9 @@ function useStripReach(id, total) {
 // longer cut at two. The lines are worked out once per rail list with a
 // canvas (no layout per card): the font and the room a name gets beside its
 // Score and figure are read once from a drawn card per viewport width.
-const NAME_LINES_MIN = 2;
+// Place-prices card A: a strip of one-line names keeps one line, so the
+// two lines under the photo stay two (about 48 px).
+const NAME_LINES_MIN = 1;
 const NAME_LINES_MAX = 4;
 let nameRuler = null;
 let nameCanvas = null;
@@ -347,7 +333,7 @@ function useNameLines(id, names, near) {
   }, [id, key, near]);
 }
 
-const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, onToggleFav, t, month, lang, eager = false, mountNow = false }) {
+const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, onToggleFav, t, eager = false, mountNow = false }) {
   const near = useNearView(`xrail-${r.key}`, mountNow);
   const shown = near ? r.rows.slice(0, CAP) : [];
   const slots = shown.length + (r.seeAll ? 1 : 0);
@@ -355,7 +341,6 @@ const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, on
   // Every name of the list, drawn or not: a waiting rail holds the height
   // its names will need (--xrail-h reads the same lines).
   useNameLines(`xrail-${r.key}`, React.useMemo(() => r.rows.slice(0, CAP).map((p) => p.city || ''), [r.rows]), near);
-  const monthShort = month ? monthName(month, lang, false) : '';
   // h2: the rails sit straight under the page's h1 (T193). The house rail
   // (G1): the heading, See all and the two round arrows; the lead card's
   // facts and the rail lines went (house style 2026-11, owner: no redundant
@@ -364,7 +349,7 @@ const ExploreRail = React.memo(function ExploreRail({ r, onSelect, favorites, on
     <HouseRail id={`xrail-${r.key}`} title={r.title} headingLevel={2}
       onSeeAll={r.seeAll} className={near ? 'xrails-rail' : 'xrails-rail is-waiting'}>
       {shown.map((p, i) => (i < reach
-        ? <PlaceRailCard key={p.id} p={p} railKey={r.key} month={month} monthShort={monthShort}
+        ? <PlaceRailCard key={p.id} p={p}
           onSelect={onSelect} fav={favorites?.has(p.id)} onToggleFav={onToggleFav} t={t}
           eager={eager && i < EAGER_CARDS} />
         : <div key={p.id} className="hs-rcard xrc-spacer" aria-hidden="true" />))}
@@ -444,10 +429,9 @@ function useRailsInTurn(rails, full) {
 }
 
 export function ExploreRails({
-  rails: railsNow, onSelect, favorites, onToggleFav, t, lead = 4, month = null, hideDoors = false, eager = false,
+  rails: railsNow, onSelect, favorites, onToggleFav, t, lead = 4, hideDoors = false, eager = false,
   full = true,
 }) {
-  const { lang } = useI18n();
   const select = useStableCallback(onSelect);
   const toggleFav = useStableCallback(onToggleFav);
   const rails = useRailsInTurn(railsNow, full);
@@ -462,7 +446,7 @@ export function ExploreRails({
     <div className="xrails">
       {strips.map((r, ri) => (
         <ExploreRail key={r.key} r={r} onSelect={select} favorites={favorites} onToggleFav={onToggleFav ? toggleFav : null} t={t}
-          month={month} lang={lang} eager={eager && ri < EAGER_RAILS} mountNow={ri < MOUNT_FIRST} />
+          eager={eager && ri < EAGER_RAILS} mountNow={ri < MOUNT_FIRST} />
       ))}
       {doors.length > 0 && (
         <nav className="xrails-doors" aria-label={t('explore.moreRails')}>

@@ -80,17 +80,15 @@ test('the new rail titles and the named See all exist in all six languages', () 
   }
 });
 
-test('a rail card: the figure on the name line, the parts after the country, the tile at the end', () => {
+test('a rail card: the figure on the name line, the basis after the country, the tile at the end', () => {
   const rails = read('src/browse/ExploreRails.jsx');
-  assert.match(rails, /<div className="xrc-head">[\s\S]*slot="figure"/);
-  assert.match(rails, /slot="parts"/);
+  assert.match(rails, /<span className="xrc-head">[\s\S]*<FigureAmount fig=\{fig\} className="xrc-fig" \/>/);
+  assert.match(rails, /<span className="xrc-basis" aria-hidden="true">\{fig\.basis\}<\/span>/);
   assert.match(rails, /<SeeAllTile r=\{r\} rest=\{r\.rows\.slice\(CAP\)\}/);
   // The stretched link carries the place's name; no button sits inside it.
   const link = rails.slice(rails.indexOf('<a className="hs-rcard-link"'), rails.indexOf('</a>'));
   assert.match(link, /aria-labelledby=/);
   assert.doesNotMatch(link, /<RowFormation|<button|<Button/);
-  const parts = read('src/browse/explore/HouseParts.jsx');
-  assert.match(parts, /slot === 'parts' && go/);
 });
 
 // G12, Explore top round 2 (owner: "the arrows move to the middle of the

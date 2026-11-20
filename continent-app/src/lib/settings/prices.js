@@ -82,12 +82,24 @@ export function grandTotal(row, choices) {
   };
 }
 
+/** The basis line under a figure (G12, D10, card option A): the words the
+ *  card and the receipt both print, as an i18n key and its params. */
+function basisOf(g) {
+  if (g.span !== 'trip') return g.group ? ['price.basis.dayGroup', { n: g.n }] : ['price.basis.day', {}];
+  const one = g.nights === 1;
+  if (g.group) return [one ? 'price.basis.tripGroupOne' : 'price.basis.tripGroup', { n: g.n, nights: g.nights }];
+  return [one ? 'price.basis.tripOne' : 'price.basis.trip', { nights: g.nights }];
+}
+
 /**
  * The figure for a row under the choices:
- *   { eur, unit: [key, params], typical, notKnown, missing, parts }
+ *   { eur, unit: [key, params], basis: [key, params], span, group,
+ *     typical, notKnown, missing, parts }
  *   eur       the number to show (null: no figure at all)
  *   unit      the i18n key and params after it ("/day", "/day for 3",
  *             "/trip", "/trip for 3")
+ *   basis     the line under the figure ("a day, each", "for 2, 7 nights")
+ *   span      'day' | 'trip'; group: the figure is the group's
  *   typical   the figure holds a typical fare (whole trip only)
  *   notKnown  part of the figure has no number yet (missing names it)
  *   parts     { bed, food, way, nights, n }: the wagons, each in the same
@@ -107,6 +119,9 @@ export function priceFigure(row, choices) {
   return {
     eur: trip ? g.trip : g.day,
     unit,
+    basis: basisOf(g),
+    span: trip ? 'trip' : 'day',
+    group: g.group,
     typical: trip && !g.wayMissing && !g.wayOff && g.wayTypical,
     notKnown: missing.length > 0,
     missing,

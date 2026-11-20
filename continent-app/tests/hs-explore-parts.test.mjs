@@ -18,19 +18,17 @@ test('the row keeps its link, its price items and the save outside the link', ()
   assert.match(row, /className="xrow-hit"/);
   assert.match(row, /href=\{`#dest=\$\{encodeURIComponent\(p\.id\)\}`\}/);
   // G12, D10: the formation (buttons) left the link, then the save.
-  assert.match(row, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} figRef=\{figRef\} pressable place=\{p\} \/>\s*\{onToggleFav && \(\s*<SaveButton/);
+  assert.match(row, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<PlaceFigure place=\{p\} t=\{t\} figRef=\{figRef\} \/>\s*\{onToggleFav && \(\s*<SaveButton/);
   const parts = read('src/browse/explore/HouseParts.jsx');
   // My trips and the home story keep the plain formation.
   assert.match(parts, /<PriceItems cost=\{cost\} way=\{wayOf\(cost\)\}>/);
   assert.match(parts, /className="sr-only"> \{view\.unit\}/);
   assert.match(parts, /view\.request\.excluded\?\.includes\('flight'\)/);
   assert.match(parts, /est=\{isNational\(cost\)\}/);
-  // The list formation: the unit on the figure, every part a dialog button.
-  assert.match(parts, /className="xform-unit" aria-hidden="true">\{t\(unitKey, unitArgs\)\}/);
-  assert.match(parts, /t\(g \? 'card\.dayFigSpokenGroup' : 'card\.dayFigSpoken'/);
-  assert.match(parts, /bed && food && fig\.plus && <span className="xform-plus" aria-hidden="true">\+<\/span>/);
-  assert.match(parts, /<HouseIcon\.ret size=\{12\}/);
-  assert.match(read('src/components/PriceItems.jsx'), /aria-haspopup="dialog"/);
+  // G12, D10 (place-prices card A): the figure over its basis is one
+  // button to the receipt.
+  assert.match(parts, /aria-haspopup="dialog"/);
+  assert.match(parts, /className="xfig-basis"/);
   assert.match(read('src/auth/mytrips/SavedTab.jsx'), /<RowFormation cost=\{cost\} t=\{t\} figRef=\{ref\} \/>/);
 });
 
@@ -96,12 +94,10 @@ test('the rails carry no head or note line; each figure says its unit', () => {
   const rails = read('src/browse/ExploreRails.jsx');
   assert.doesNotMatch(rails, /<ListHead\b/);
   assert.doesNotMatch(rails, /<PriceNotes\b/);
-  // The price row (its figure and wagons are buttons) sits outside the card
-  // link: since Explore rails (2026-11-18) as two slots, the figure on the
-  // name's line and the parts after the country, both after the link.
+  // G12, D10 (place-prices card A): the two lines under the photo are one
+  // button to the receipt, after the card link.
   const afterLink = rails.slice(rails.indexOf('</a>'));
-  assert.match(afterLink, /<RowFormation cost=\{p\.cost\} t=\{t\} pressable place=\{p\} slot="figure"/);
-  assert.match(afterLink, /<RowFormation cost=\{p\.cost\} t=\{t\} pressable place=\{p\} slot="parts"/);
+  assert.match(afterLink, /<ReceiptButton place=\{p\} cost=\{p\.cost\}/);
 });
 
 test('save wears the bookmark with one fixed name; the ticket is My trips', () => {

@@ -1,263 +1,454 @@
 /**
- * The price sheet (D10, G12, explore polish decision step 6; strings
- * copy.md 2 to 6). A row's figure and each wagon open it on the tab that
- * explains what was tapped: Flight (or the row's own ground way), Stay,
- * Food, In this price. Each tab says what its number is built on in one
- * line and has one button to the setting that moves it (the Trip dock at
- * From for getting there and the whole day, the Style Studio at the step
- * for the bed and food, or the way there; Style Studio, G12).
+ * A place's receipt (G12, D10, place-prices decision section 2). The card's
+ * two lines open it: one sheet, no tabs.
+ *
+ *   the place     name and country, close
+ *   the total     the card's figure and basis (receiptLines, the same
+ *                 priceFigure call the card makes), and one insight line only
+ *                 when the place's day is 10% or more off the usual day
+ *   the chips     the style and the settings that produce it: the heart opens
+ *                 the Style Studio, the rest open Settings at their step; the
+ *                 receipt steps aside and comes back with the new figures
+ *   the rows      Bed, Food and drink, the way there; each opens in place to
+ *                 its lever (beds, eating styles, ways, at this place's own
+ *                 prices). A pick is for this trip: the style is held.
+ *   the foot      the Total line and one action, Plan this trip
+ *
+ * The plane option opens the flights screen in the same sheet (FlightTab,
+ * the flights lane's; requests-A.md), with a way back to the receipt.
  *
  * Phone: the shared bottom sheet (SheetShell), modal and full width.
- * 769 px and up: a 380 px popover hung off the tapped part, non-modal: it
- * follows the part on scroll instead of closing (the owner reads the list
- * behind it), Escape and a press outside close it, focus goes back.
+ * 769 px and up: a 400 px popover hung off the tapped card, non-modal: it
+ * follows the card on scroll, Escape and a press outside close it, focus
+ * goes back to the card.
  *
- * Mounted once in App beside the docks; rows only call openPriceSheet.
+ * Mounted once in App beside the docks; cards only call openPriceSheet.
  */
-import React, { Suspense, lazy, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useI18n } from '../../i18n/index.jsx';
 import { useDayView } from '../../hooks/useDayView.js';
-import { formatApprox, formatMoney } from '../../lib/money.js';
-import { seatsOf } from '../../lib/price/request.js';
-import { rowFigures } from '../../lib/price/rowFigures.js';
-import {
-  TABS, capturedMonth, foodBasisKey, handoff, inPriceRows, isGroundWay, stayBasisKey, wayTabKey,
-} from '../../lib/price/priceSheet.js';
-import { partyText } from '../../lib/party.js';
+import { formatMoney } from '../../lib/money.js';
+import { minutesText } from '../../lib/journeys.js';
+import { priceDay } from '../../lib/price/priceDay.js';
+import { usualDayEur } from '../../lib/price/styleDay.js';
+import { dayInsight, receiptLines } from '../../lib/price/priceSheet.js';
+import { bedIsThin } from '../../lib/price/display.js';
+import { offeredStayTiers, DEFAULT_LIFESTYLE } from '../../lib/runtime_pricing.js';
+import { partyOf } from '../../lib/party.js';
+import { destAnchor } from '../../lib/origins.js';
+import { homePoint } from '../../lib/travelWay.js';
+import { flightFiles } from '../../lib/settings/ways.js';
+import { waysThere } from '../../browse/placeWays.js';
 import { countryName } from '../../lib/countryName.js';
-import { matchProfile, PROFILE_LABEL_KEYS } from '../../browse/styles/spendBits.jsx';
+import { useFirstRun } from '../../lib/firstRunContext.js';
+import { PROFILES, PROFILE_LABEL_KEYS, matchProfile } from '../../browse/styles/spendBits.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
-import { Button, Tabs } from '../ui/index.js';
+import { glyphOf, useSummaryItems } from '../../browse/band/SummaryChips.jsx';
+import { Button, IconButton } from '../ui/index.js';
+import { Money } from '../ui/Money.jsx';
+import { Pressable } from '../ui/Pressable.jsx';
+import { HouseIcon } from '../HouseIcons.jsx';
+import { CountryFlag } from '../CountryFlag.jsx';
 import NotYet from '../NotYet.jsx';
-import { openSettings } from '../../browse/settings/settingsSheetStore.js';
+import { openSettings, useSettingsSheet } from '../../browse/settings/settingsSheetStore.js';
 import { useSettings } from '../SettingsLine.jsx';
-import { openStudioAt } from '../../browse/styles/studioDoors.js';
-import { closePriceSheet, usePriceSheet } from './priceSheetStore.js';
+import { openStudio } from '../../browse/styles/studioDoors.js';
+import {
+  closePriceSheet, showPriceView, stepAway, stepBack, usePriceSheet,
+} from './priceSheetStore.js';
 import '../../styles/86-price-items.css';
 
 const FlightTab = lazy(() => import('./FlightTab.jsx'));
 
 const DESKTOP_FROM = 769;
-const POP_W = 380;
+const POP_W = 400;
 const GUTTER = 16;
 const GAP = 8;
+
+const WAY_ICON = { plane: HouseIcon.flight, train: HouseIcon.train, bus: HouseIcon.bus, car: HouseIcon.car };
 
 // Explore rows carry the place's name as `city`.
 const placeName = (p) => p?.name || p?.city || '';
 const isDesktop = () => typeof window !== 'undefined' && window.innerWidth >= DESKTOP_FROM;
+const cents = (v) => (v == null ? null : <Money value={v} precision="cents" />);
 
-export function PriceSheet({ data }) {
+export function PriceSheet({ data, onPlan = null }) {
   const s = usePriceSheet();
   if (!s) return null;
-  return <OpenSheet key={`${s.place?.id}-${s.tab}`} s={s} data={data} />;
+  if (s.away) return <AwayWatch />;
+  return <OpenSheet key={s.place?.id ?? 'none'} s={s} data={data} onPlan={onPlan} />;
 }
 
-function OpenSheet({ s, data }) {
+/**
+ * While a chip's Settings step or the Style Studio is open, the receipt
+ * waits here and comes back once they have closed, its figures already
+ * the new ones (the cards refresh the store). A door that never opened
+ * (nothing to open) brings it back at once.
+ */
+function AwayWatch() {
+  const settingsOpen = useSettingsSheet().isOpen;
+  const studioOpen = !!useSettings()?.travelStyles?.open;
+  const seen = useRef(false);
+  useEffect(() => {
+    if (settingsOpen || studioOpen) { seen.current = true; return undefined; }
+    if (seen.current) { stepBack(); return undefined; }
+    const id = setTimeout(() => { if (!seen.current) stepBack(); }, 600);
+    return () => clearTimeout(id);
+  }, [settingsOpen, studioOpen]);
+  return null;
+}
+
+function OpenSheet({ s, data, onPlan }) {
   const { t } = useI18n();
-  const ts = useSettings()?.travelStyles;
-  const [tab, setTab] = useState(s.tab);
   const [desk] = useState(isDesktop);
   const baseId = useId();
-  const title = t('price.sheetLabel', { place: placeName(s.place) });
+  const flights = s.view === 'flights';
+  const name = placeName(s.place);
+  const label = flights ? t('price.flightsTitle', { place: name }) : name;
 
   const close = () => {
     closePriceSheet();
     if (s.anchor?.isConnected) s.anchor.focus({ preventScroll: true });
   };
-  // A hand-off closes the sheet without handing focus back, then opens the
-  // Settings at its step or the studio at its step, which takes focus
-  // (accessibility critique: the sheet's focus return would race theirs).
-  const handOff = (h) => {
-    closePriceSheet();
-    requestAnimationFrame(() => (h.studio ? openStudioAt(ts, h.studio) : openSettings({ step: h.settings })));
-  };
-
-  const body = <SheetBody s={s} data={data} tab={tab} setTab={setTab} baseId={baseId} onHand={handOff} t={t} />;
+  const title = <SheetTitle s={s} flights={flights} label={label} t={t} />;
+  const body = flights
+    ? <FlightsView s={s} data={data} t={t} />
+    : <Receipt s={s} data={data} onPlan={onPlan} t={t} />;
   if (desk) {
-    return <Popover anchor={s.anchor} label={title} onClose={close}>{body}</Popover>;
+    return (
+      <Popover anchor={s.anchor} label={label} onClose={close}>
+        <div className="rcp-pophead">
+          <h2 className="rcp-title">{title}</h2>
+          <IconButton className="rcp-close" label={t('price.close')} onClick={close}><HouseIcon.close size={18} /></IconButton>
+        </div>
+        {body}
+      </Popover>
+    );
   }
   return (
-    <SheetShell title={title} onClose={close} className="psheet" labelId={`${baseId}-title`} closeLabel={t('price.close')}>
+    <SheetShell title={title} onClose={close} className="psheet rcp-sheet" labelId={`${baseId}-title`} closeLabel={t('price.close')}>
       {body}
     </SheetShell>
   );
 }
 
-function SheetBody({ s, data, tab, setTab, baseId, onHand, t }) {
-  const view = useDayView();
-  const wrapRef = useRef(null);
-  const tabs = TABS.map((id) => ({ id, label: id === 'flight' ? t(wayTabKey(s.cost)) : t(`price.tab${id === 'in' ? 'In' : id[0].toUpperCase() + id.slice(1)}`) }));
-  // The tapped part chose the tab; it takes focus so a keyboard or screen
-  // reader user lands on what they opened.
-  // Two frames: the phone sheet's trap focuses its close button in its own
-  // effect after this one, and the desktop popover is hidden until placed.
-  useEffect(() => {
-    let id = requestAnimationFrame(() => {
-      id = requestAnimationFrame(() => {
-        wrapRef.current?.querySelector('[role="tab"][aria-selected="true"]')?.focus({ preventScroll: true });
-      });
-    });
-    return () => cancelAnimationFrame(id);
-  }, []);
-  const panelId = `${baseId}-panel`;
-  const shownLabel = tabs.find((x) => x.id === tab)?.label;
-
+/** The head: the place and its country, or the flights screen's title with
+ *  the way back to the receipt. */
+function SheetTitle({ s, flights, label, t }) {
+  if (flights) {
+    return (
+      <span className="rcp-titlerow">
+        <IconButton className="rcp-back" label={t('price.backToReceipt')} onClick={() => showPriceView('receipt')}>
+          <HouseIcon.back size={18} />
+        </IconButton>
+        <span className="rcp-name">{label}</span>
+      </span>
+    );
+  }
+  const iso2 = s.place?.iso2;
   return (
-    <div className="psheet-in" ref={wrapRef}>
-      <Tabs label={t('price.sheetLabel', { place: placeName(s.place) })} tabs={tabs} value={tab} onChange={setTab}
-        panelId={panelId} className="psheet-tabs" />
-      <div className="psheet-panel" role="tabpanel" id={panelId} aria-label={shownLabel} data-tab={tab}>
-        {tab === 'flight' && (isGroundWay(s.cost)
-          ? <WayPanel cost={s.cost} view={view} t={t} onHand={onHand} />
-          : (
-            <Suspense fallback={<p className="psheet-basis" role="status">{t('price.flight.loading')}</p>}>
-              <FlightTab place={s.place} data={data} request={view.request} view={view} way={s.cost?.way || null}
-                active={tab === 'flight'} onChangeTrip={() => onHand(handoff('flight', s.cost))} />
-            </Suspense>
-          ))}
-        {tab === 'stay' && <StayPanel s={s} view={view} t={t} onHand={onHand} />}
-        {tab === 'food' && <FoodPanel s={s} view={view} t={t} onHand={onHand} />}
-        {tab === 'in' && <InPanel s={s} view={view} t={t} onHand={onHand} />}
-      </div>
-    </div>
-  );
-}
-
-const list = (lang, items) => {
-  const xs = items.filter(Boolean);
-  try { return new Intl.ListFormat(lang, { type: 'conjunction' }).format(xs); } catch { return xs.join(', '); }
-};
-const known = (t, key) => { const v = t(key); return v && v !== key ? v : null; };
-const monthName = (ym, lang) => {
-  try {
-    return new Intl.DateTimeFormat(lang, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${ym}-01T00:00:00Z`));
-  } catch { return ym; }
-};
-
-/** The figure, its unit and the estimate tilde, as the row draws them. */
-function Big({ eur, est, unit }) {
-  return (
-    <p className="psheet-figrow">
-      {eur == null ? <NotYet className="psheet-big" /> : (
-        <span className="psheet-big money">{est ? formatApprox(eur) : formatMoney(eur)}</span>
+    <span className="rcp-titlerow">
+      <span className="rcp-name">{label}</span>
+      {iso2 && (
+        <span className="rcp-country">
+          <CountryFlag country={iso2} size={12} />
+          {countryName(iso2, s.place?.country || '')}
+        </span>
       )}
-      {eur != null && <span className="psheet-unit">{unit}</span>}
-    </p>
+    </span>
   );
 }
 
-function Foot({ h, t, onHand }) {
+function FlightsView({ s, data, t }) {
+  const view = useDayView();
+  // The flight's own Settings door (Start) steps aside and comes back here.
+  const toStart = () => { stepAway(); requestAnimationFrame(() => openSettings({ step: 'start' })); };
   return (
-    <div className="psheet-foot">
-      <Button variant="primary" block className="psheet-primary" data-handoff={h.studio ? `studio:${h.studio}` : `${h.dock}:${h.focus}`} onClick={() => onHand(h)}>
-        {t(h.key)}
-      </Button>
+    <div className="rcp-flights">
+      <Suspense fallback={<p className="psheet-basis" role="status">{t('price.flight.loading')}</p>}>
+        <FlightTab place={s.place} data={data} request={view.request} view={view} way={s.cost?.way || null}
+          active onChangeTrip={toStart} />
+      </Suspense>
     </div>
   );
 }
 
-// The row's own figures (rowFigures), so the sheet and the row it opened
-// from cannot show two amounts for one thing.
-function useFigures(cost, view) {
-  const req = view.request;
-  return { f: rowFigures(cost, { group: view.total, seats: seatsOf(req) }), req };
-}
-const peopleOf = (t, req) => partyText(t, req.group || {});
-
-function StayPanel({ s, view, t, onHand }) {
-  const { lang } = useI18n();
-  const { f, req } = useFigures(s.cost, view);
-  const people = peopleOf(t, req);
-  const key = stayBasisKey(s.cost);
-  const ym = capturedMonth(s.cost);
-  const unit = f.group ? t('price.unitNightGroup', { people }) : t('price.unitNight');
-  return (
-    <div className="psheet-tabbody">
-      <h3 className="psheet-h">{t('price.stay.title')}</h3>
-      <Big eur={f.bed} est={s.cost?.stayLevel !== 'city'} unit={unit} />
-      <p className="psheet-basis" data-basis={key}>{t(key, { month: ym ? monthName(ym, lang) : '' })}</p>
-      <p className="psheet-basis">{t('price.yourSettings', { list: list(lang, [known(t, `stay.${req.stay}`), people]) })}</p>
-      <Foot h={handoff('stay')} t={t} onHand={onHand} />
-    </div>
-  );
+/** The traveller's usual day a person (lib/price/styleDay.js), worked out
+ *  in short tasks after the receipt has opened. */
+function useUsualDay(choices, destinations) {
+  const key = choices ? JSON.stringify([choices.group_size, choices.children, choices.babies, choices.stay_tier, choices.lifestyle]) : '';
+  const [got, setGot] = useState({ key: null, eur: null });
+  useEffect(() => {
+    if (!key || !destinations) return undefined;
+    const ac = new AbortController();
+    usualDayEur(choices, destinations, { signal: ac.signal })
+      .then((eur) => { if (!ac.signal.aborted) setGot({ key, eur }); })
+      .catch(() => {});
+    return () => ac.abort();
+  }, [key, destinations]); // eslint-disable-line react-hooks/exhaustive-deps
+  return got.key === key ? got.eur : null;
 }
 
-function FoodPanel({ s, view, t, onHand }) {
-  const { lang } = useI18n();
-  const { f, req } = useFigures(s.cost, view);
-  const people = peopleOf(t, req);
-  const key = foodBasisKey(s.cost);
-  const unit = f.group ? t('price.unitDayGroup', { people }) : t('price.unitDay');
-  const profile = matchProfile(req.lifestyle);
-  const country = countryName(s.place?.iso2, s.place?.country || '');
-  return (
-    <div className="psheet-tabbody">
-      <h3 className="psheet-h">{t('price.food.title')}</h3>
-      <Big eur={f.food} est={s.cost?.foodLevel !== 'city'} unit={unit} />
-      <p className="psheet-basis" data-basis={key}>{t(key, { country })}</p>
-      {!f.group && (req.group?.children || 0) > 0 && <p className="psheet-basis">{t('price.food.kids')}</p>}
-      <p className="psheet-basis">{t('price.yourSettings', { list: list(lang, [profile ? known(t, PROFILE_LABEL_KEYS[profile]) : null, people]) })}</p>
-      <Foot h={handoff('food')} t={t} onHand={onHand} />
-    </div>
-  );
-}
+function Receipt({ s, data, onPlan, t }) {
+  const settings = useSettings();
+  const ctx = useFirstRun();
+  const model = s.model || settings?.model || null;
+  const r = useMemo(() => receiptLines({ cost: s.cost }, model || {}), [s.cost, model]);
+  const [open, setOpen] = useState(null);
+  const usual = useUsualDay(ctx?.choices, data?.destinations);
+  const insight = dayInsight(s.cost?.dayEur, usual, r.group ? r.n : 1);
+  const [bKey, bArgs] = r.basis;
+  const toggle = (k) => setOpen((v) => (v === k ? null : k));
 
-function InPanel({ s, view, t, onHand }) {
-  const { f, req } = useFigures(s.cost, view);
-  const people = peopleOf(t, req);
-  const way = s.cost?.way;
-  const wayEur = req.excluded?.includes('flight') ? null : view.way(way?.perPerson);
-  const rows = inPriceRows(s.cost, { group: f.group, seats: f.seats, wayEur });
-  const unit = f.group ? t('price.unitDayGroup', { people }) : t('price.unitDay');
-  const label = (r) => {
-    if (r.key === 'sum') return t('price.in.sum');
-    if (r.key === 'way') return r.mode === 'plane' ? t('price.item.flight') : t('price.item.way', { mode: t(`way.${r.mode}`) });
-    return t(`price.item.${r.key}`);
+  const plan = () => {
+    const p = s.place;
+    closePriceSheet();
+    if (p && onPlan) requestAnimationFrame(() => onPlan(p));
   };
-  const value = (r) => {
-    if (r.key === 'transport' && r.eur == null) return <span className="psheet-muted">{t('price.notYetMeasured')}</span>;
-    if (r.eur == null) return <NotYet />;
-    if (r.key === 'way') return <span className="money">{t('price.onTop', { price: formatMoney(r.eur) })}</span>;
-    return <span className="money">{formatMoney(r.eur)}</span>;
-  };
+
+  const wayRow = !r.way.off && (r.way.mode || r.way.missing) ? (
+    <WayRow s={s} r={r} data={data} open={open === 'way'} onToggle={() => toggle('way')} t={t} />
+  ) : null;
+
   return (
-    <div className="psheet-tabbody">
-      <h3 className="psheet-h">{t('price.in.title')}</h3>
-      <Big eur={f.day} est={s.cost?.stayLevel !== 'city' || s.cost?.foodLevel !== 'city'} unit={unit} />
-      <ul className="psheet-items">
-        {rows.map((r) => (
-          <li key={r.key} className={`psheet-item is-${r.key}${r.apart ? ' is-apart' : ''}`} data-item={r.key}>
-            <span>{label(r)}</span>
-            {value(r)}
-          </li>
-        ))}
+    <div className="rcp">
+      <div className="rcp-top">
+        <p className="rcp-total">
+          {r.total == null ? <NotYet className="rcp-big" /> : <Money value={r.total} className="rcp-big" />}
+          {r.total != null && r.notKnown && <span className="rcp-open" aria-hidden="true">+</span>}
+          {r.total != null && <span className="rcp-basis">{t(bKey, bArgs)}</span>}
+        </p>
+        {insight && (
+          <p className={`rcp-insight is-${insight.dir}`}>
+            <HouseIcon.up size={14} className="rcp-insight-ic" />
+            {t(insight.dir === 'under' ? 'price.insightUnder' : 'price.insightOver', { price: formatMoney(insight.eur) })}
+          </p>
+        )}
+      </div>
+      <BasisChips t={t} />
+      <ul className="rcp-rows">
+        <BedRow s={s} r={r} data={data} ctx={ctx} open={open === 'bed'} onToggle={() => toggle('bed')} t={t} />
+        <FoodRow s={s} r={r} data={data} ctx={ctx} open={open === 'food'} onToggle={() => toggle('food')} t={t} />
+        {r.way.inTotal && wayRow}
+        {r.rounding != null && (
+          <li className="rcp-line is-rounding"><span>{t('place.rounding')}</span><Money value={r.rounding} precision="cents" /></li>
+        )}
+        <li className="rcp-line is-sum">
+          <span>{t('price.total')}</span>
+          {r.sum == null ? <NotYet /> : <Money value={r.sum} precision="cents" />}
+        </li>
+        {!r.way.inTotal && wayRow && <li className="rcp-apart" aria-hidden="true" />}
+        {!r.way.inTotal && wayRow}
       </ul>
-      <p className="psheet-basis">{t('price.in.covers')}</p>
-      <Foot h={handoff('in')} t={t} onHand={onHand} />
+      {onPlan && s.place?.iso2 && (
+        <div className="psheet-foot">
+          <Button variant="primary" block className="psheet-primary" iconStart={<HouseIcon.route size={18} />} onClick={plan}>
+            {t('brief.planThisTrip')}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
 
-/** Train, bus or car: the way's own figure and basis, no flight wording. */
-function WayPanel({ cost, view, t, onHand }) {
-  const way = cost.way;
-  const req = view.request;
-  const kids = (req.group?.children || 0) + (req.group?.babies || 0) > 0;
-  const unit = view.total ? t('price.flight.unitGroup', { n: seatsOf(req) }) : t('price.flight.unit');
+/** The settings behind the figure, as the band says them (settingsSummary):
+ *  each a door to its Settings step, the style's heart to the Studio. */
+function BasisChips({ t }) {
+  const items = useSummaryItems();
+  const ts = useSettings()?.travelStyles;
+  if (!items.length) return null;
+  const go = (it) => {
+    stepAway();
+    requestAnimationFrame(() => (it.key === 'style' ? openStudio(ts) : openSettings({ step: it.step || 'overview' })));
+  };
   return (
-    <div className="psheet-tabbody">
-      <h3 className="psheet-h">{t('price.item.way', { mode: t(`way.${way.mode}`) })}</h3>
-      <Big eur={view.way(way.perPerson)} est unit={unit} />
-      <p className="psheet-basis">{t(way.mode === 'car' ? 'price.way.basisCar' : 'price.way.basis')}</p>
-      {kids && way.mode !== 'car' && <p className="psheet-basis">{t('price.way.kids')}</p>}
-      <Foot h={handoff('flight', cost)} t={t} onHand={onHand} />
+    <div className="rcp-chips" role="group" aria-label={t('band.chipsAria')}>
+      {items.map((it) => {
+        const Ico = glyphOf(it.icon);
+        return (
+          <Pressable key={it.key} className={`rcp-chip${it.key === 'style' ? ' is-style' : ''}`}
+            data-step={it.key === 'style' ? 'style' : it.step || 'overview'}
+            aria-label={t('band.chipAria', { text: it.text })} onClick={() => go(it)}>
+            {Ico && <span className="rcp-chip-ic" aria-hidden="true"><Ico size={15} /></span>}
+            <span className="rcp-chip-text">{it.text}</span>
+            <HouseIcon.next size={13} className="rcp-chip-go" />
+          </Pressable>
+        );
+      })}
     </div>
   );
 }
 
 /**
- * The desktop popover: hangs under (or over) the tapped part and follows it
+ * One receipt row: its glyph, what it is (and the choice behind it), the
+ * amount (and a night or a day under it on a trip), and a chevron. A press
+ * opens its lever under it.
+ */
+function Row({ kind, Icon, title, sub, amount, each, mark = null, open, onToggle, children, t }) {
+  const id = useId();
+  return (
+    <li className={`rcp-row is-${kind}${open ? ' is-open' : ''}`} data-row={kind}>
+      <Pressable className="rcp-rowbtn" aria-expanded={open} aria-controls={`${id}-lever`} onClick={onToggle}>
+        <span className={`rcp-ic is-${kind}`} aria-hidden="true"><Icon size={18} /></span>
+        <span className="rcp-what">
+          <span className="rcp-label">{title}</span>
+          {sub && <span className="rcp-sub">{sub}</span>}
+        </span>
+        <span className="rcp-amt">
+          <span className="rcp-eur">{amount}{mark}</span>
+          {each && <span className="rcp-each">{each}</span>}
+        </span>
+        <HouseIcon.next size={16} className="rcp-chev" />
+      </Pressable>
+      {open && (
+        <div className="rcp-lever" id={`${id}-lever`} role="group" aria-label={t(`price.lever.${kind}`)}>
+          {children}
+        </div>
+      )}
+    </li>
+  );
+}
+
+/** One option of a lever: its name and this place's price, the chosen one
+ *  painted. */
+function Option({ on, label, sub = null, eur, onPick, extra = null }) {
+  return (
+    <Pressable className={`rcp-opt${on ? ' is-on' : ''}`} aria-pressed={on} haptic={on ? null : 'tick'} onClick={onPick}>
+      <span className="rcp-opt-what">
+        <span className="rcp-opt-label">{label}</span>
+        {sub && <span className="rcp-opt-sub">{sub}</span>}
+      </span>
+      <span className="rcp-opt-eur">{eur == null ? <NotYet /> : <Money value={eur} />}{extra}</span>
+      {on && <HouseIcon.check size={16} className="rcp-opt-tick" />}
+    </Pressable>
+  );
+}
+
+const destOf = (data, s) => data?.destinations?.[s.place?.id] || null;
+const tierOf = (v) => (v === 'hotel' ? 'hotel3' : v || 'home');
+
+/** A pick made in the receipt is this trip's: the style is held, not
+ *  rewritten (hooks/useTravelStyles.js), as the planner's Who does. */
+function useTripSet(ctx) {
+  const ts = useSettings()?.travelStyles;
+  return (fn) => { if (!ctx?.setChoices) return; ts?.hold?.(); ctx.setChoices(fn); };
+}
+
+function BedRow({ s, r, data, ctx, open, onToggle, t }) {
+  const view = useDayView();
+  const set = useTripSet(ctx);
+  const tier = tierOf(ctx?.choices?.stay_tier);
+  const thin = bedIsThin(s.cost);
+  const tiers = useMemo(() => offeredStayTiers(data?.meta), [data?.meta]);
+  const dest = destOf(data, s);
+  // This place's night at every bed the data prices, for the view's people;
+  // worked out when the row opens.
+  const nights = useMemo(() => {
+    if (!open || !dest) return [];
+    return tiers.map((k) => {
+      const a = priceDay(dest, { ...view.request, stay: k }, data.destinations);
+      const eur = a && !a.tierFallback && a.stayEur > 0 ? a.stayEur * (r.group ? r.n : 1) : null;
+      return { tier: k, eur };
+    }).filter((o) => o.eur != null || o.tier === tier);
+  }, [open, dest, tiers, view.request, data, r.group, r.n, tier]);
+  return (
+    <Row kind="bed" Icon={HouseIcon.bed} title={t('price.item.bed')} sub={t(`stay.${tier}`)}
+      amount={cents(r.bed.eur) ?? <NotYet />}
+      each={r.bed.each != null ? t('price.perNight', { price: formatMoney(r.bed.each) }) : null}
+      mark={thin ? <span className="rcp-thin" role="img" aria-label={t('price.bedThin')} title={t('price.bedThin')} /> : null}
+      open={open} onToggle={onToggle} t={t}>
+      {nights.map((o) => (
+        <Option key={o.tier} on={o.tier === tier} label={t(`stay.${o.tier}`)} eur={o.eur}
+          onPick={() => o.tier !== tier && set((prev) => ({ ...prev, stay_tier: o.tier }))} />
+      ))}
+    </Row>
+  );
+}
+
+function FoodRow({ s, r, data, ctx, open, onToggle, t }) {
+  const view = useDayView();
+  const set = useTripSet(ctx);
+  const profile = matchProfile(ctx?.choices?.lifestyle || DEFAULT_LIFESTYLE);
+  const dest = destOf(data, s);
+  const days = useMemo(() => {
+    if (!open || !dest) return [];
+    return Object.keys(PROFILES).map((name) => {
+      const a = priceDay(dest, { ...view.request, lifestyle: PROFILES[name] }, data.destinations);
+      return { name, eur: a && a.foodEur > 0 ? a.foodEur * (r.group ? r.n : 1) : null };
+    });
+  }, [open, dest, view.request, data, r.group, r.n]);
+  return (
+    <Row kind="food" Icon={HouseIcon.food} title={t('price.item.food')}
+      sub={profile ? t(PROFILE_LABEL_KEYS[profile]) : t('lifestyle.custom')}
+      amount={cents(r.food.eur) ?? <NotYet />}
+      each={r.food.each != null ? t('price.perDay', { price: formatMoney(r.food.each) }) : null}
+      open={open} onToggle={onToggle} t={t}>
+      {days.map((o) => (
+        <Option key={o.name} on={o.name === profile} label={t(PROFILE_LABEL_KEYS[o.name])} eur={o.eur}
+          onPick={() => o.name !== profile && set((prev) => ({ ...prev, lifestyle: { ...PROFILES[o.name] } }))} />
+      ))}
+    </Row>
+  );
+}
+
+const wayTitle = (t, mode) => {
+  if (mode === 'plane') return t('price.item.flight');
+  if (WAY_ICON[mode]) return t('price.item.way', { mode: t(`way.${mode}`) });
+  return t('way.label');
+};
+const hoursOf = (w) => (Number.isFinite(w?.hours) ? minutesText(Math.round(w.hours * 60))
+  : Number.isFinite(w?.minutes) ? minutesText(w.minutes) : null);
+
+function WayRow({ s, r, data, open, onToggle, t }) {
+  const view = useDayView();
+  const settings = useSettings();
+  const way = s.cost?.way || null;
+  const mode = r.way.mode || way?.mode || 'any';
+  const Icon = WAY_ICON[mode] || HouseIcon.route;
+  const dest = destOf(data, s);
+  // Every way the models price for this place from the traveller's start
+  // (browse/placeWays.js, what the place page shows), for the view's people.
+  const ways = useMemo(() => {
+    if (!open || !dest) return [];
+    const choices = { drive_home: settings?.fromPlace || null, origin: settings?.origin || null,
+      group_size: settings?.party, children: settings?.children, babies: settings?.babies };
+    const w = waysThere({
+      dest, anchor: destAnchor(dest), home: homePoint(choices, data), party: partyOf(choices),
+      flights: flightFiles(data), request: view.request,
+    });
+    return w?.rows || [];
+  }, [open, dest, data, settings, view.request]);
+  const k = r.group ? r.n : 1;
+  // Owner 2026-11-20: no visible "typical fare" line; a typical fare says
+  // so only in the amount's info (its name and hover title).
+  const sub = r.way.missing ? null : mode === 'plane' ? way?.airline || null : hoursOf(way);
+  const typical = mode === 'plane' && way?.typical ? t('settingsSum.typical') : null;
+  const pick = (m) => {
+    if (m !== mode) settings?.set?.setWay?.(m);
+    if (m === 'plane') showPriceView('flights');
+  };
+  return (
+    <Row kind="way" Icon={Icon} title={wayTitle(t, mode)} sub={sub}
+      amount={r.way.eur == null ? <NotYet /> : cents(r.way.eur)}
+      mark={typical ? <span className="rcp-info" role="img" aria-label={typical} title={typical}><HouseIcon.bulb size={14} /></span> : null}
+      open={open} onToggle={onToggle} t={t}>
+      {ways.map((w) => (
+        <Option key={w.mode} on={w.mode === mode} label={t(`way.${w.mode}`)}
+          sub={w.mode === 'plane' ? null : hoursOf(w)} eur={w.perPerson > 0 ? w.perPerson * k : null}
+          extra={w.mode === 'plane' ? <HouseIcon.next size={14} className="rcp-opt-go" /> : null}
+          onPick={() => pick(w.mode)} />
+      ))}
+      {mode === 'plane' && !ways.some((w) => w.mode === 'plane') && (
+        <Option on label={t('way.plane')} eur={r.way.eur} extra={<HouseIcon.next size={14} className="rcp-opt-go" />}
+          onPick={() => showPriceView('flights')} />
+      )}
+    </Row>
+  );
+}
+
+/**
+ * The desktop popover: hangs under (or over) the tapped card and follows it
  * on scroll, so reading the list behind it never closes it.
  */
 function Popover({ anchor, label, onClose, children }) {
@@ -269,7 +460,7 @@ function Popover({ anchor, label, onClose, children }) {
       const r = anchor.getBoundingClientRect();
       const w = Math.min(POP_W, window.innerWidth - 2 * GUTTER);
       const left = Math.max(GUTTER, Math.min(r.left + r.width / 2 > window.innerWidth / 2 ? r.right - w : r.left, window.innerWidth - GUTTER - w));
-      const maxH = Math.min(640, window.innerHeight - 2 * GUTTER);
+      const maxH = Math.min(680, window.innerHeight - 2 * GUTTER);
       const h = Math.min(ref.current?.offsetHeight || maxH, maxH);
       const below = r.bottom + GAP;
       const top = below + h <= window.innerHeight - GUTTER ? below
@@ -289,6 +480,14 @@ function Popover({ anchor, label, onClose, children }) {
     };
   }, [anchor]);
 
+  // The receipt's head takes focus once it is placed, so a keyboard or
+  // screen reader user lands in what they opened.
+  useEffect(() => {
+    if (!pos) return;
+    const el = ref.current;
+    if (el && !el.contains(document.activeElement)) el.focus({ preventScroll: true });
+  }, [pos]);
+
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape') return;
@@ -296,7 +495,7 @@ function Popover({ anchor, label, onClose, children }) {
       e.preventDefault();
       onClose();
     };
-    // A press on the part that opened it is the part's own toggle.
+    // A press on the card that opened it is the card's own toggle.
     const onDown = (e) => {
       if (ref.current?.contains(e.target) || anchor?.contains(e.target)) return;
       closePriceSheet();
@@ -317,7 +516,7 @@ function Popover({ anchor, label, onClose, children }) {
   };
 
   return createPortal(
-    <div ref={ref} role="dialog" aria-modal="false" aria-label={label} className="psheet psheet-pop"
+    <div ref={ref} role="dialog" aria-modal="false" aria-label={label} tabIndex={-1} className="psheet psheet-pop rcp-pop"
       style={pos ? { left: pos.left, top: pos.top, width: pos.width, maxHeight: pos.maxHeight } : { visibility: 'hidden' }}
       onBlur={onBlur} onClick={(e) => e.stopPropagation()}>
       {children}

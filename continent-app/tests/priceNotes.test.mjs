@@ -62,10 +62,11 @@ test('Explore: no note line on the list, the rails or a card; the notes live in 
     assert.doesNotMatch(src(f), /<PriceNotes\b/, f);
     assert.doesNotMatch(src(f), /<ListHead\b/, f);
   }
-  const parts = src('browse/explore/HouseParts.jsx');
-  assert.match(parts, /const thin = bedIsThin\(cost\);/);
-  assert.match(parts, /t\('price\.bedThin'\)/);
-  assert.match(parts, /className="xform-thin"/);
+  // G12 (place-prices): the thin bed is a quiet mark on the receipt's bed row.
+  const sheet = src('components/price/PriceSheet.jsx');
+  assert.match(sheet, /bedIsThin\(s\.cost\)/);
+  assert.match(sheet, /t\('price\.bedThin'\)/);
+  assert.match(sheet, /className="rcp-thin"/);
   // The opened price still lists local transport with its placeholder.
   const items = src('components/PriceItems.jsx');
   assert.match(items, /const ORDER = \['bed', 'food', 'transport'/);
