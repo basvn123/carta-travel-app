@@ -544,6 +544,39 @@
   .xrows--ledger .xrow-hs .xrow-line2 { margin-top: 1px; line-height: var(--leading-tight); flex-wrap: wrap; row-gap: 2px; }
   .xrows--ledger .xrow-hs .xform-parts { --wh: 20px; justify-content: flex-start; margin-top: 1px; }
 }
+/* Explore's list rows never cut (G12, Explore clean 2026-11-20, owner:
+   no cut text in any language at any width; proposal section 4): the name
+   wraps, the region and the country wrap rather than end in an ellipsis,
+   and on a phone list the region has its own line with the figure and its
+   basis on the line under it, so the figure never squeezes the name or
+   the region. Only the list (.xrows--ledger); the map's rows are their
+   own (Lane A). */
+.xrows--ledger .xrow-hs .xrow-name { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: break-word; }
+.xrows--ledger .xrow-hs .xrow-line1 { align-items: flex-start; flex-wrap: wrap; row-gap: 2px; }
+.xrows--ledger .xrow-hs .xrow-country { flex-wrap: wrap; white-space: normal; }
+.xrows--ledger .xrow-hs .xrow-region { overflow: visible; text-overflow: clip; overflow-wrap: break-word; }
+.xrows--ledger .xrow-hs .xrow-ctry { flex: 0 1 auto; }
+@container xlist (max-width: 599px) {
+  .xrows--ledger .xrow-hs {
+    grid-template-areas:
+      "media l1 l1 l1 save"
+      "media l2 l2 l2 save"
+      "media day day day save"
+      "media fit fit fit save";
+  }
+  .xrows--ledger .xrow-hs .hs-formation-day.xfig {
+    justify-self: start;
+    grid-auto-flow: column;
+    align-items: baseline;
+    justify-items: start;
+    column-gap: var(--space-2);
+    min-height: 30px;
+    margin-top: 2px;
+    text-align: start;
+  }
+  /* The figure's press area stays 44 px tall without making the row so. */
+  .xrows--ledger .xrow-hs .xfig::before { content: ""; position: absolute; inset: -7px -6px; }
+}
 /* The flag and the water mark never shrink; the words give way. */
 .xrow-hs .xrow-line2 > .country-flag,
 .xrow-hs .xrow-line2 > .xrow-gem,

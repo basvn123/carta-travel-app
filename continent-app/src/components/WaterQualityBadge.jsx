@@ -1,9 +1,12 @@
 import React from 'react';
+import { HouseIcon } from './HouseIcons.jsx';
 
 /**
  * Bathing-water quality (dest.bathing_water, EEA WISE, Bathing Water Directive).
- * A colour-coded pill: the official class of the nearby coastal/lake/river
- * bathing sites, with the count and Excellent share in the tooltip.
+ * The house water icon in umber (G12, Explore clean 2026-11-20: the teal
+ * pill went, brown and saffron only); the official class of the nearby
+ * coastal, lake or river bathing sites, the count and the Excellent share
+ * are its accessible name and hover title, never colour alone.
  *
  *   Excellent  bw-excellent   Good  bw-good
  *   Sufficient bw-sufficient  Poor  bw-poor
@@ -35,18 +38,6 @@ export const CLASS_KEY = {
 const CLASS_SLUG = {
   Excellent: 'excellent', Good: 'good', Sufficient: 'sufficient', Poor: 'poor',
 };
-
-function WaveIcon({ size = 11 }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true"
-      fill="none" stroke="currentColor" strokeWidth="1.8"
-      strokeLinecap="round" strokeLinejoin="round">
-      <path d="M2 7c2.2 0 2.2 2 4.4 2s2.2-2 4.4-2 2.2 2 4.4 2 2.2-2 4.4-2" />
-      <path d="M2 12c2.2 0 2.2 2 4.4 2s2.2-2 4.4-2 2.2 2 4.4 2 2.2-2 4.4-2" />
-      <path d="M2 17c2.2 0 2.2 2 4.4 2s2.2-2 4.4-2 2.2 2 4.4 2 2.2-2 4.4-2" />
-    </svg>
-  );
-}
 
 /** Human tooltip: "Excellent water. 89% of 19 nearby bathing sites rated
  *  Excellent (EEA 2025). Nearest: La Barceloneta, 1.0 km." */
@@ -80,8 +71,8 @@ export function WaterQualityBadge({ bathing, t, size = 'sm', showLabel = true })
   const cls = t(CLASS_KEY[bathing.rating] || 'water.excellent');
   const tip = waterTooltip(bathing, t);
   return (
-    <span className={`water-badge bw-${slug} ${size}`} title={tip} aria-label={tip}>
-      <WaveIcon size={size === 'lg' ? 13 : 11} />
+    <span className={`water-badge bw-${slug} ${size}`} title={tip} aria-label={tip} role="img">
+      <HouseIcon.water size={size === 'lg' ? 18 : 16} />
       {showLabel && <span>{t('water.badge', { cls })}</span>}
     </span>
   );
