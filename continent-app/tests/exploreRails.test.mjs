@@ -62,8 +62,10 @@ test('every rail with four places is a strip; the theme rails use the vibe filte
   assert.match(rails, /sec\.addEventListener\('focusin', all\)/);
   assert.match(rails, /function useRailsInTurn\(rails, full\)/);
   const railCss = read('src/styles/85-explore-rails.css');
-  // Round 2 fix: the strip's name lines (2 to 4) set the room, one per strip.
-  assert.match(railCss, /min-height: calc\(var\(--xrc-name-lines, 2\) \* 1\.25em \+ 1px\);/);
+  // Round 2 fix: the strip's name lines (1 to 4) set the room, one per strip;
+  // Explore clean (2026-11-20): held above the figure, which sits at the foot.
+  assert.match(railCss, /\.xrc \.xrc-top \{[^}]*min-height: calc\(max\(var\(--xrc-name-lines, 2\) \* 1\.25 \* var\(--text-lead\) \+ 1px, 24px\)/);
+  assert.match(railCss, /\.xrc \.xrc-foot \{[^}]*margin-top: auto;/);
   assert.match(rails, /function useNameLines\(id, names, near\)/);
   assert.match(railCss, /contain-intrinsic-size: auto var\(--xrail-h\);/);
   // A theme rail asks for a Good Score or better, best first, by country.
