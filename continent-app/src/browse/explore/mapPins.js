@@ -472,7 +472,7 @@ export function addPinImage(map, id, countLabel = (n) => String(n)) {
       faceImages.get(pid).add(id);
     } else {
       out = drawPill(kind.includes('p') ? 'p' : kind.includes('h') ? 'h' : kind.includes('b') ? 'b' : 'n',
-        kind.includes('p') ? name || fig : fig || name || '·', kind.includes('p') ? fig : '');
+        kind.includes('p') ? name || fig : fig || name || ' ', kind.includes('p') ? fig : '');
     }
   } else if (parts[0] === 'xp') out = drawPill(parts[1], parts[2] || '', parts[3] || '');
   else if (parts[0] === 'xc') out = drawCount(countLabel(Number(parts[1]) || 0));

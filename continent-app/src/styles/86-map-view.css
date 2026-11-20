@@ -454,8 +454,7 @@
 .explore-shell .xac-hit { color: var(--text); text-decoration: none; white-space: normal; overflow: visible; }
 /* The name is the row's link, stretched over the row; the buttons sit over it. */
 .explore-shell .xmr-hit::after { content: ''; position: absolute; inset: 0; z-index: 0; }
-.explore-shell .xmr-hit:focus-visible { outline: none; }
-.explore-shell .xmr:has(.xmr-hit:focus-visible) { outline: var(--stroke-focus) solid var(--focus); outline-offset: -2px; border-radius: var(--radius-panel); }
+.explore-shell .xmr-hit:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
 .explore-shell .xmr .hs-score,
 .explore-shell .xmap-tapcard .hs-score,
 .explore-shell .xmap-anchor-card .hs-score { display: inline-flex; vertical-align: 2px; }
@@ -607,6 +606,7 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
 .explore-shell .xsheet-scope .xsheet-n,
 .explore-shell .mpp .xsheet-n { font-weight: 800; font-variant-numeric: tabular-nums; }
 .explore-shell .xsheet-filters {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);

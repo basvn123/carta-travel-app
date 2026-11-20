@@ -29,6 +29,13 @@
 //   camera     a settings or filter change keeps the camera where it was
 //   speed      panning at CPU 4x: frames over 50 ms (--perf-only runs only
 //              this, so an older build can be measured the same way)
+//   round 2    photo pins at zoom 5, 7 and 9 in Burgundy; the style chip and
+//              the settings in view on the phone map (six languages, 360
+//              and 390); the List pill above a picked card; All lists more
+//              than In view; the sorts order the figures; a quick chip
+//              filters and counts; a Filters option's count is the result;
+//              the match points add up to the %; no cut text for four long
+//              names in six languages at six widths (--round2-only)
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -84,7 +91,7 @@ const check = (label, ok, note = '') => checks.push({ label, ok: !!ok, note });
 // it in software, an upper bound on frame times, audit-map.md).
 const browser = await chromium.launch(flag('gpu') ? { args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] } : {});
 
-async function boot(width, height, url = '?tab=map&xw=map', lang = 'en') {
+async function boot(width, height, url = '?tab=map&xw=map', lang = 'en', styleSeed = '') {
   const phone = width < 769;
   const ctx = await browser.newContext({
     viewport: { width, height }, deviceScaleFactor: phone ? 3 : 1, isMobile: phone, hasTouch: phone, serviceWorkers: 'block',
@@ -104,9 +111,18 @@ async function boot(width, height, url = '?tab=map&xw=map', lang = 'en') {
       } catch { await r.abort(); }
     });
   }
+  // Round 2's photo pins load our own copies from the CDN, which answers CORS
+  // for the production origin only; the local origin gets the same header.
+  await ctx.route(/cdn\.carta-europetravel\.com\//, async (r) => {
+    try {
+      const res = await r.fetch();
+      await r.fulfill({ response: res, headers: { ...res.headers(), 'access-control-allow-origin': '*' } });
+    } catch { await r.abort().catch(() => {}); }
+  });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message.split('\n')[0]));
+  if (styleSeed) await page.addInitScript((seed) => { try { localStorage.setItem('carta.travelStyles.v1', seed); } catch { /* storage off */ } }, styleSeed);
   await page.addInitScript((lang) => {
     try {
       localStorage.setItem('continent.lang.v1', lang);
@@ -535,9 +551,168 @@ async function cardPass() {
   }
 }
 
+// ---- Round 2 (G12, .work/2026-11-20-map-view-2): photo pins, the style row,
+// the way back, In view | All, sorts, quick chips, the filter counts, the
+// match points and no cut text. --round2-only runs just this pass.
+// A travel style with a taste, so the match mark and Match 70%+ show.
+const STYLE_SEED = JSON.stringify({ version: 1, list: [{ id: 'verify-style', name: 'The two of us', template: 'couple', tone: 'umber',
+  who: { kind: 'couple', adults: 2, kids: 0, babies: 0, slowWalkers: false },
+  explore: { shapes: ['towns'], personas: ['towns'], likes: ['beach', 'hiking', 'lakes'], avoid: ['crowds'], around: 'public', size: 'town', quiet: 'quiet' } }], active: 'verify-style' });
+const STRESS = ['gem:santa-margherita-ligure', 'gem:nice-villefranche', 'gem:louhans-chateaurenaud', 'gem:petra-tou-romiou'];
+const LANGS = ['en', 'nl', 'de', 'fr', 'es', 'it'];
+// Every text element of a box whose words run past it (an ellipsis or a clip).
+const cutIn = (sel) => `(() => {
+  const out = [];
+  for (const root of document.querySelectorAll(${JSON.stringify(sel)})) {
+    for (const el of root.querySelectorAll('*')) {
+      if (!el.childNodes.length || ![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+      const cs = getComputedStyle(el);
+      if (cs.display === 'none' || cs.visibility === 'hidden' || el.closest('.sr-only')) continue;
+      if (el.scrollWidth > el.clientWidth + 1 && cs.overflowX !== 'visible') out.push((el.className || el.tagName) + ': ' + el.textContent.trim().slice(0, 30));
+      if (cs.textOverflow === 'ellipsis' && el.scrollWidth > el.clientWidth + 1) out.push('ellipsis ' + el.textContent.trim().slice(0, 30));
+    }
+  }
+  return out;
+})()`;
+
+async function bootStyled(w, h, url, lang = 'en') {
+  const r = await boot(w, h, url, lang, STYLE_SEED);
+  return r;
+}
+
+async function round2Pass() {
+  // Photo pins by zoom, and the style row in view, at 390 in English.
+  {
+    const { ctx, page, errors } = await bootStyled(390, 844, '?tab=map&xw=map');
+    for (const z of [5, 7, 9]) {
+      await page.evaluate(`${MAP}.jumpTo({ center: [4.85, 46.9], zoom: ${z} })`);
+      await settle(page);
+      await page.waitForTimeout(2500);
+      const n = await page.evaluate(`${MAP}.queryRenderedFeatures({ layers: ['xpin-photo'] }).length`);
+      check(`round2 390 zoom ${z} Burgundy: photo pins drawn`, n > 0, `${n}`);
+      if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `r2-390-z${z}.png`) });
+    }
+    // In view | All: All lists more than In view at a town zoom.
+    await page.locator('.xmap-listpill').first().click();
+    await page.waitForTimeout(800);
+    const scope = await page.evaluate(() => [...document.querySelectorAll('.xsheet-scope .xsheet-n')].map((e) => Number(e.textContent.replace(/\D/g, ''))));
+    check('round2 390: All counts more than In view', scope.length === 2 && scope[1] > scope[0], scope.join(' / '));
+    const inView = await page.locator('.xsheet .xmr').count();
+    await page.locator('.xsheet-scope [role="radio"]').nth(1).click();
+    await page.waitForTimeout(700);
+    const allRows = await page.locator('.xsheet .xmr').count();
+    check('round2 390: scope All lists more rows than In view', allRows > inView, `${inView} -> ${allRows}`);
+    // The match points add up to the figure.
+    const mark = page.locator('.xsheet .xmatch-mark').first();
+    if (await mark.count()) {
+      await mark.click();
+      await page.waitForTimeout(700);
+      const m = await page.evaluate(() => {
+        const b = document.querySelector('[data-testid="why-points"]');
+        if (!b) return null;
+        const pts = [...b.querySelectorAll('.xwhy-row')].reduce((s, r) => s + Number(r.dataset.points || 0), 0);
+        return [pts, Number(b.dataset.pct)];
+      });
+      check('round2 390: the match points add up to the %', m && m[0] === m[1], JSON.stringify(m));
+      if (SHOTS) await page.screenshot({ path: path.join(SHOTS, 'r2-390-why.png') });
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(500);
+    } else check('round2 390: a match mark to open', false, 'none in All');
+    // The Filters sheet: an option's count is the result once it is on.
+    await page.locator('.xsheet-filters').click();
+    await page.waitForTimeout(900);
+    const opt = page.locator('.flt [data-count]').filter({ hasText: /8\+/ }).first();
+    const want = Number(await opt.getAttribute('data-count'));
+    await opt.click();
+    await page.waitForTimeout(900);
+    const shown = await page.evaluate(() => Number((document.querySelector('.flt-show')?.textContent || '').replace(/\D/g, '')));
+    check('round2 390: the Filters option count equals the result', want > 0 && want === shown, `${want} / ${shown}`);
+    if (SHOTS) await page.screenshot({ path: path.join(SHOTS, 'r2-390-filters.png') });
+    await opt.click();
+    await page.waitForTimeout(600);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(800);
+    check('round2 390 en: no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));
+    await ctx.close();
+  }
+  // Quick chips filter and count; sorts order the list.
+  {
+    const { ctx, page } = await bootStyled(390, 844, '?tab=map&xw=map');
+    const count0 = await page.evaluate(() => Number(document.querySelector('.band-quick .xquick-filters .band-count')?.textContent || 0));
+    await page.locator('.band-quick [data-quick="score8"]').click();
+    await page.waitForTimeout(1800);
+    const q = await page.evaluate(() => ({
+      on: document.querySelector('.band-quick .xquick-chip[data-quick]')?.dataset.quick,
+      n: Number(document.querySelector('.band-quick .xquick-filters .band-count')?.textContent || 0),
+      url: new URLSearchParams(location.search).get('xq'),
+    }));
+    check('round2 390: Score 8+ turns on, moves to the front and counts', q.on === 'score8' && q.n === count0 + 1 && q.url === '8', JSON.stringify(q));
+    await page.locator('.xmap-listpill').first().click();
+    await page.waitForTimeout(700);
+    await page.locator('.xsheet-scope [role="radio"]').nth(1).click();
+    await page.waitForTimeout(700);
+    const scores = await page.evaluate(() => [...document.querySelectorAll('.xsheet .xmr .hs-score')].map((e) => Number((e.textContent.match(/\d+[.,]\d/) || ['0'])[0].replace(',', '.'))));
+    check('round2 390: Score 8+ leaves only places of 8 and up', scores.length > 0 && scores.every((s) => s >= 8), scores.slice(0, 8).join(' '));
+    await ctx.close();
+    for (const [key, ok] of [['costDesc', (a) => a.every((x, i) => i === 0 || x <= a[i - 1])], ['cost', (a) => a.every((x, i) => i === 0 || x >= a[i - 1])]]) {
+      const r = await bootStyled(390, 844, `?tab=map&xw=map&sort=${key}`);
+      await r.page.locator('.xmap-listpill').first().click();
+      await r.page.waitForTimeout(700);
+      await r.page.locator('.xsheet-scope [role="radio"]').nth(1).click();
+      await r.page.waitForTimeout(900);
+      const figs = await r.page.evaluate(() => [...document.querySelectorAll('.xsheet .xmr .xfig-amount')].slice(0, 30).map((e) => Number(e.textContent.replace(/[^\d]/g, ''))).filter((x) => x > 0));
+      check(`round2 390: sort ${key} orders the figures`, figs.length > 3 && ok(figs), figs.slice(0, 8).join(' '));
+      await r.ctx.close();
+    }
+  }
+  // The style chip and the settings chips stay in view on the phone map, and
+  // a pick shows the List pill above the card; six languages at 360 and 390.
+  for (const lang of LANGS) {
+    for (const [w, h] of [[360, 640], [390, 844]]) {
+      const { ctx, page, errors } = await bootStyled(w, h, `?tab=map&xw=map&xi=${encodeURIComponent(STRESS[1])}`, lang);
+      await settle(page);
+      const vis = await page.evaluate(() => {
+        const seen = (el) => {
+          if (!el) return 'missing';
+          const r = el.getBoundingClientRect();
+          if (r.left < -1 || r.right > innerWidth + 1 || r.top < 0 || r.bottom > innerHeight) return 'off screen';
+          const at = document.elementFromPoint(r.left + Math.min(24, r.width / 2), r.top + r.height / 2);
+          return at && el.contains(at) ? 'ok' : 'covered';
+        };
+        const style = document.querySelector('.band.is-map .band-chips-pin > .band-chip.is-style');
+        const first = document.querySelector('.band.is-map .band-chips-pin .band-chips .band-chip');
+        const pill = document.querySelector('.xmap-listpill')?.getBoundingClientRect();
+        const card = document.querySelector('.xmap-tapcard')?.getBoundingClientRect();
+        return { style: seen(style), settings: seen(first), pill: !!pill && !!card && pill.bottom <= card.top + 1 };
+      });
+      check(`round2 ${lang} ${w}: the style chip and the settings stay in view`, vis.style === 'ok' && vis.settings === 'ok', JSON.stringify(vis));
+      check(`round2 ${lang} ${w}: the picked card shows the List pill above it`, vis.pill, JSON.stringify(vis));
+      check(`round2 ${lang} ${w}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
+      await ctx.close();
+    }
+  }
+  // No cut text for the stress names, six languages, six widths: the card
+  // (phone) or the anchored card (wider) and the row in the list.
+  for (const lang of LANGS) {
+    for (const [w, h] of [[360, 640], [390, 844], [440, 900], [820, 1180], [1180, 820], [1440, 900]]) {
+      const bad = [];
+      for (const id of STRESS) {
+        const { ctx, page } = await bootStyled(w, h, `?tab=map&xw=map&xi=${encodeURIComponent(id)}`, lang);
+        await settle(page);
+        const cut = await page.evaluate(cutIn('.xmap-tapcard, .xmap-anchor-card, .xsheet .xmr, .mpp .xmr'));
+        const some = await page.evaluate(() => !!document.querySelector('.xmap-tapcard, .xmap-anchor-card'));
+        if (!some) bad.push(`${id.slice(4)} no card`);
+        bad.push(...cut.map((c) => `${id.slice(4)} ${c}`));
+        await ctx.close();
+      }
+      check(`round2 cut ${lang} ${w}: the stress names are whole`, bad.length === 0, bad.slice(0, 3).join(' | '));
+    }
+  }
+}
+
 const perf = {};
 // --layout-only skips the speed runs (a quick rerun of the layout checks).
-if (!flag('layout-only')) for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
+if (!flag('layout-only') && !flag('round2-only')) for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
 console.log('speed (CPU %dx, pan)', RATE, JSON.stringify(perf, null, 1));
 
 if (!PERF_ONLY) {
@@ -545,8 +720,9 @@ if (!PERF_ONLY) {
     check(`speed ${k}: 0 to 2 frames over 50 ms while panning at CPU ${RATE}x`, v.over50 <= 2, `${v.over50} of ${v.frames}, p95 ${v.p95}, max ${v.max}`);
     check(`speed ${k}: no DOM price pins`, v.domPins === 0, `${v.domPins}`);
   }
-  if (!flag('cards-only')) for (const [w, h] of SIZES) await layoutChecks(w, h);
-  await cardPass();
+  if (!flag('cards-only') && !flag('round2-only')) for (const [w, h] of SIZES) await layoutChecks(w, h);
+  if (!flag('round2-only')) await cardPass();
+  if (!flag('cards-only')) await round2Pass();
 }
 
 await browser.close();
