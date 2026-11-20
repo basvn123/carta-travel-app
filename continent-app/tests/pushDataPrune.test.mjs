@@ -16,6 +16,11 @@ test("the prune keeps data/airlines/, the logos the flight sweep copies once (G1
   assert.deepEqual(staleEntries(["airlines/", "old-layer/", ""].join("\n")), [{ name: "old-layer", dir: true }]);
 });
 
+test("the prune keeps data/maps/, the basemap push-maps.mjs uploads (G12)", () => {
+  assert.ok(OTHER_WRITERS.includes("maps"));
+  assert.deepEqual(staleEntries(["maps/", "dest/", "old-layer/", ""].join("\n")), [{ name: "old-layer", dir: true }]);
+});
+
 test("a prefix stays kept even when a test passes its own tier list (T1042)", () => {
   assert.deepEqual(staleEntries("flights/\ndest/\n", ["poi"]), [{ name: "dest", dir: true }]);
 });

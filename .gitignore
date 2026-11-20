@@ -252,3 +252,7 @@ docs/assets/ask-docs/index.js
 
 # Open dataset export (T1176): outputs are built, only the datasheet and README are tracked
 scripts/open_data/out/
+
+# Basemap extract (G12): the Europe PMTiles, 25 GB, rebuilt by
+# continent-app/scripts/maps/refresh-basemap.mjs, served from R2 data/maps/.
+cache/maps/*

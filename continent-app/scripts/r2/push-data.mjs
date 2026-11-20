@@ -131,9 +131,12 @@ function uploadPlan() {
  *   airlines  the airline logos the flight-sweep Worker copies once per
  *             airline (copyLogos); a prune deleted all but five of them
  *             before this line, and the sweep never copies one twice (G12, D10)
+ *   maps      the basemap: the Europe PMTiles extract, its glyphs and sprites
+ *             (scripts/r2/push-maps.mjs, owner-run monthly); the app build
+ *             never writes it, so a prune would blank every map (G12)
  * A new writer under data/ adds its prefix here, or the next deploy deletes it.
  */
-export const OTHER_WRITERS = Object.freeze(['flights', 'airlines']);
+export const OTHER_WRITERS = Object.freeze(['flights', 'airlines', 'maps']);
 
 /**
  * Top-level files under data/ the owner or a check puts there by hand, never

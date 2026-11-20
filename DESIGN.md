@@ -525,7 +525,7 @@ The header lies on the stone ground with one hairline. The wordmark slot is a bl
 
 ## Map
 
-The app's own MapLibre maps on the CARTO Voyager style, repainted by `src/map/houseBasemap.js` (land `--map-land`, water `--map-water`, borders `--map-border`); routes in umber on a white halo (dotted for flights); pins: ordinary ones an ink head on a post with a paper price plate, clusters "+n"; the chosen pin the umber plate with the blaze, settling without overshoot; labels measured after the fonts load and never covering a post or another label. The pin drop plays only when the traveller opens the map. Never a drawn coast: the outline is the app's (`public/europe_map.json`, Natural Earth).
+The app's own MapLibre maps on the CARTO Voyager style, repainted by `src/map/houseBasemap.js` (land `--map-land`, water `--map-water`, borders `--map-border`); routes in umber on a white halo (dotted for flights); pins: ordinary ones an ink head on a post with a paper price plate, clusters "+n"; the chosen pin the umber plate with the blaze, settling without overshoot; labels measured after the fonts load and never covering a post or another label. The pin drop plays only when the traveller opens the map. Never a drawn coast: the outline is the app's (`public/europe_map.json`, Natural Earth). The Explore map (G12, 2026-11-20) draws on its own Protomaps basemap instead (`src/lib/map/cartaMapStyle.js`, palette `BASEMAP_COLOURS` in `src/map/tokenColors.js`): land #f4efe6, sea and lakes #dfe6e6, borders #d9c6ae, roads (from zoom 10) #e8dccb, parks #d6dccd, labels ink-soft #465049 with a land halo, countries in spaced capitals, Noto Sans glyphs; CARTO only as its fallback.
 
 ## Print and share
 
