@@ -5802,6 +5802,8 @@ export const en = {
   "overview.regionCountry": "{region}, {country}",
   "explore.drawerStrip": "Show the places on the map",
   "explore.drawerAria": "Places on the map",
+  "explore.mapListOf": "List of {n}",
+  "explore.mapBestInView": "Best value in view",
   "explore.railPrev": "Scroll back",
   "explore.railNext": "Scroll forward",
 

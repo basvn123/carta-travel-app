@@ -4876,6 +4876,8 @@ export const de = {
   "overview.regionCountry": "{region}, {country}",
   "explore.drawerStrip": "Orte auf der Karte zeigen",
   "explore.drawerAria": "Orte auf der Karte",
+  "explore.mapListOf": "Liste mit {n}",
+  "explore.mapBestInView": "Bester Preis im Bild",
   "explore.railPrev": "Zurück blättern",
   "explore.railNext": "Weiter blättern",
 

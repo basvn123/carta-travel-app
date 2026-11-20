@@ -4885,6 +4885,8 @@ export const nl = {
   "overview.regionCountry": "{region}, {country}",
   "explore.drawerStrip": "Toon de plaatsen op de kaart",
   "explore.drawerAria": "Plaatsen op de kaart",
+  "explore.mapListOf": "Lijst van {n}",
+  "explore.mapBestInView": "Beste prijs in beeld",
   "explore.railPrev": "Terug scrollen",
   "explore.railNext": "Verder scrollen",
 
