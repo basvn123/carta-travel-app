@@ -1057,7 +1057,9 @@ export function ExploreMap({
     const el = document.createElement('div');
     el.className = 'xmap-anchor';
     const right = map.project(f.geometry.coordinates).x > map.getCanvas().clientWidth / 2;
-    const marker = new maplibregl.Marker({ element: el, anchor: right ? 'right' : 'left', offset: [right ? -36 : 36, -28] })
+    // Clear of the picked pin's label, which is as wide as its name.
+    const half = (pinSize(oneImage('pick', f.properties))?.[0] || 72) / 2 + 12;
+    const marker = new maplibregl.Marker({ element: el, anchor: right ? 'right' : 'left', offset: [right ? -half : half, -28] })
       .setLngLat(f.geometry.coordinates).addTo(map);
     setAnchorEl(el);
     const settle = setTimeout(() => window.dispatchEvent(new Event('carta:map-chrome')), 60);

@@ -256,6 +256,8 @@ async function speed(width, height) {
 // The floating controls a traveller sees over the map, as rects.
 const CONTROLS = {
   field: '.band.is-map .band-search', ask: '.band.is-map .band-ask', chips: '.band.is-map .band-strip',
+  // Round 2: the third row (Filters and the quick chips).
+  quick: '.band.is-map .band-quick',
   listPill: '.xmap-listpill', zoom: '.xcontent-map .maplibregl-ctrl-group', credit: '.xcontent-map .maplibregl-ctrl-attrib',
   heart: '.corner-slot--left .corner-btn', card: '.xmap-tapcard', column: '.mpp--float', nav: '.bottom-nav',
 };
@@ -289,9 +291,9 @@ function overlaps(rs, w, h) {
 const pinsUnder = (page) => page.evaluate(`(() => {
   const m = ${MAP};
   const c = m.getCanvas().getBoundingClientRect();
-  const sel = '.band.is-map .band-row, .band.is-map .band-strip, .xmap-listpill, .xmap-tapcard, .xsheet:not(.is-closed), .xcontent-map .maplibregl-ctrl-group, .xcontent-map .maplibregl-ctrl-attrib, .corner-slot--left';
+  const sel = '.band.is-map .band-row, .band.is-map .band-strip, .band.is-map .band-quick, .xmap-listpill, .xmap-tapcard, .xsheet:not(.is-closed), .xcontent-map .maplibregl-ctrl-group, .xcontent-map .maplibregl-ctrl-attrib, .corner-slot--left, .xmap-quick';
   const ctl = [...document.querySelectorAll(sel)].map((e) => e.getBoundingClientRect()).filter((r) => r.width && r.height);
-  const layers = ['xpin', 'xpin-best', 'xcluster'].filter((l) => m.getLayer(l));
+  const layers = ['xpin', 'xpin-best', 'xpin-photo', 'xcluster'].filter((l) => m.getLayer(l));
   const hits = [];
   for (const f of m.queryRenderedFeatures({ layers })) {
     // A bubble under the chrome is faded by feature state (drawn at opacity 0).
@@ -355,7 +357,7 @@ async function layoutChecks(w, h) {
   check(`${tag}: no pin or bubble under a floating control`, under.length === 0, under.join(' '));
   // No camera jump on a settings change: switch the price basis.
   const cam0 = await page.evaluate(`[${MAP}.getCenter().toArray(), ${MAP}.getZoom()]`);
-  const filt = phone ? '.band-chip--filters' : '.band-filters';
+  const filt = phone ? '.band-quick .xquick-filters' : '.band-filters';
   // The first option of the filters, flipped (run twice, it is undone).
   const flipFilter = async () => {
     await page.locator(filt).first().click();
@@ -383,7 +385,7 @@ async function layoutChecks(w, h) {
   // Tap a pill: picked, umber with its name; phone: the card, map height kept.
   // A pill or the best pill; none here, a busier view is tried once. A size
   // with no pin fails: its tap, card and sheet checks must run (judgement-1).
-  const findPin = () => page.evaluate(`(() => { const m = ${MAP}; const f = m.queryRenderedFeatures({ layers: ['xpin', 'xpin-best'] })[0]; if (!f) return null; const p = m.project(f.geometry.coordinates); const r = m.getCanvas().getBoundingClientRect(); return [p.x + r.left, p.y + r.top, f.properties.id]; })()`);
+  const findPin = () => page.evaluate(`(() => { const m = ${MAP}; const f = m.queryRenderedFeatures({ layers: ['xpin', 'xpin-best'] })[0]; if (!f) return null; const p = m.project(f.geometry.coordinates); const r = m.getCanvas().getBoundingClientRect(); return [p.x + r.left, p.y + r.top - 14, f.properties.id]; })()`);
   let pt = await findPin();
   if (!pt) {
     await page.evaluate(`${MAP}.jumpTo({ center: [10, 46.5], zoom: 6 })`);
@@ -508,8 +510,8 @@ async function cardPass() {
           if (!card) return { bad: ['no card'] };
           const R = (e) => e?.getBoundingClientRect();
           const cr = R(card); const n = card.querySelector('.xrow-name');
-          const col = cr.width - (R(card.querySelector('.xrow-media'))?.width || 0) - (R(card.querySelector('.xrow-save'))?.width || 0);
-          const strip = R(document.querySelector('.band.is-map .band-strip'));
+          const col = R(card.querySelector('.xtc-text'))?.width || cr.width;
+          const strip = R(document.querySelector('.band.is-map .band-quick') || document.querySelector('.band.is-map .band-strip'));
           const bad = meet(card, ${JSON.stringify(TEXT_PARTS)});
           if (n.scrollWidth > n.clientWidth + 1) bad.push('name cut');
           if (R(n).width < col * 0.4) bad.push('name ' + Math.round(R(n).width) + ' of ' + Math.round(col));
