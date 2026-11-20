@@ -359,3 +359,390 @@
   .explore-shell .xsheet,
   .explore-shell .xsheet.is-closed { transition: none; }
 }
+
+/* ==========================================================================
+   Round 2 (G12, .work/2026-11-20-map-view-2/proposal.md, owner conditions in
+   decision.md): the band's three rows on the phone map, the map list's row
+   (MapRow), the sheet's head and empty state, the tap card with its way
+   back, the anchored card, the quick chips and the match mark.
+   ========================================================================== */
+
+/* --- The match mark: a saffron pill with the style's heart -------------- */
+.xmatch-mark {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  height: 24px;
+  padding: 0 var(--space-2);
+  border: var(--stroke-hair) solid var(--sun-400);
+  border-radius: var(--radius-pill);
+  background: var(--sun-100);
+  color: var(--sun-800);
+  font: inherit;
+  font-size: var(--text-micro);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform var(--dur-press) var(--ease-tick);
+}
+/* A 44 px target round the 24 px mark. */
+.xmatch-mark::after { content: ''; position: absolute; inset: -10px -4px; }
+.xmatch-mark:active { transform: scale(var(--press-scale)); }
+.xmatch-mark:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.xmatch-mark .xmatch-heart { color: var(--sun-800); fill: var(--sun-400); }
+
+/* --- Why it matches: points that add up to the figure ------------------- */
+.xwhy-pop .xwhy-body { display: grid; gap: var(--space-3); padding-bottom: var(--space-2); }
+.xwhy-pop .xwhy-style { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-body); font-weight: 700; }
+.xwhy-pop .xwhy-kicker { display: block; font-size: var(--text-micro); font-weight: 600; color: var(--text-2); }
+.xwhy-pop .xwhy-heart {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--sun-100);
+  color: var(--sun-800);
+}
+.xwhy-pop .xwhy-heart svg { fill: var(--sun-400); }
+.xwhy-pop .xwhy-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2); margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.xwhy-pop .xwhy-fig strong { font-size: var(--text-headline); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.xwhy-pop .xwhy-stack { display: flex; height: 12px; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.xwhy-pop .xwhy-seg { height: 100%; }
+.xwhy-pop .is-0 { background: var(--umber-600); }
+.xwhy-pop .is-1 { background: var(--umber-500); }
+.xwhy-pop .is-2 { background: var(--umber-300); }
+.xwhy-pop .is-3 { background: var(--umber-200); }
+.xwhy-pop .is-hatch { background: repeating-linear-gradient(135deg, var(--sun-400) 0 3px, var(--sun-100) 3px 6px); }
+.xwhy-pop .xwhy-rows { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.xwhy-pop .xwhy-row { display: grid; gap: var(--space-1); }
+.xwhy-pop .xwhy-row-top { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-size: var(--text-body); }
+.xwhy-pop .xwhy-sw { flex: none; width: 10px; height: 10px; border-radius: var(--radius-sm); }
+.xwhy-pop .xwhy-name { font-weight: 700; overflow-wrap: anywhere; }
+.xwhy-pop .xwhy-tag { padding: 2px var(--space-2); border-radius: var(--radius-pill); background: var(--umber-100); color: var(--umber-800); font-size: var(--text-micro); font-weight: 700; }
+.xwhy-pop .xwhy-pts { margin-left: auto; font-weight: 800; font-variant-numeric: tabular-nums; }
+.xwhy-pop .xwhy-track { display: block; height: 6px; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.xwhy-pop .xwhy-fill { display: block; height: 100%; border-radius: inherit; background: var(--umber-600); }
+.xwhy-pop .xwhy-row.is-conflict .xwhy-name,
+.xwhy-pop .xwhy-row.is-conflict .xwhy-pts { color: var(--text-3); font-weight: 600; }
+
+/* --- The map list's row: photo, three lines, Save ----------------------- */
+.explore-shell .xrow.xmr,
+.explore-shell .xrows > .xrow.xmr {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--xmr-w, 112px) minmax(0, 1fr) var(--tap);
+  align-items: start;
+  gap: 0 var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+}
+.explore-shell .xmr.is-selected { margin: 0 calc(-1 * var(--space-2)); padding-inline: var(--space-2); border-radius: var(--radius-panel); background: var(--select-bg); }
+.explore-shell .xmr.is-linked .xmr-media { outline: var(--stroke-edge) solid var(--action); outline-offset: 2px; }
+.explore-shell .xmr-media { width: var(--xmr-w, 112px); height: 96px; overflow: hidden; border-radius: var(--radius-panel); background: var(--surface-sunken); }
+.explore-shell .xmr-media .xmr-img,
+.explore-shell .xmr-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.explore-shell .xmr-text { display: grid; gap: var(--space-1); min-width: 0; }
+.explore-shell .xmr-l1,
+.explore-shell .xtc-l1 { margin: 0; font-size: var(--text-lead); font-weight: 800; line-height: 1.3; overflow-wrap: break-word; }
+.explore-shell .xmr-hit,
+.explore-shell .xtc-hit,
+.explore-shell .xac-hit { color: var(--text); text-decoration: none; white-space: normal; overflow: visible; }
+/* The name is the row's link, stretched over the row; the buttons sit over it. */
+.explore-shell .xmr-hit::after { content: ''; position: absolute; inset: 0; z-index: 0; }
+.explore-shell .xmr-hit:focus-visible { outline: none; }
+.explore-shell .xmr:has(.xmr-hit:focus-visible) { outline: var(--stroke-focus) solid var(--focus); outline-offset: -2px; border-radius: var(--radius-panel); }
+.explore-shell .xmr .hs-score,
+.explore-shell .xmap-tapcard .hs-score,
+.explore-shell .xmap-anchor-card .hs-score { display: inline-flex; vertical-align: 2px; }
+.explore-shell .xmr-l2,
+.explore-shell .xtc-l2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  font-size: var(--text-label);
+  line-height: 1.3;
+  color: var(--text-2);
+}
+.explore-shell .xmr-l2 .xrow-country,
+.explore-shell .xtc-l2 .xrow-country { display: inline-flex; flex-wrap: wrap; column-gap: 0.25em; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+.explore-shell .xmr-l2 .xrow-region,
+.explore-shell .xtc-l2 .xrow-region { overflow: visible; white-space: normal; }
+.explore-shell .xmr-facet { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--umber-800); font-weight: 600; }
+.explore-shell .xmr-best {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--umber-100);
+  color: var(--umber-800);
+  font-size: var(--text-micro);
+  font-weight: 700;
+}
+.explore-shell .xmr-best .xmap-best-dot { margin-right: var(--space-1); }
+.explore-shell .xmr-l3,
+.explore-shell .xtc-l3 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-1) var(--space-2); }
+.explore-shell .xmr-l3 > *,
+.explore-shell .xmr-save { position: relative; z-index: 1; }
+.explore-shell .xmr .xmr-fig,
+.explore-shell .xtc-fig {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-1);
+  min-width: 0;
+  min-height: var(--tap);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.explore-shell .xmr .xmr-fig:focus-visible,
+.explore-shell .xtc-fig:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.explore-shell .xmr .xmr-fig .xfig-amount,
+.explore-shell .xtc-fig .xfig-amount { font-size: var(--text-title); font-weight: 800; white-space: nowrap; }
+.explore-shell .xmr .xmr-fig .xfig-basis,
+.explore-shell .xtc-fig .xfig-basis { font-size: var(--text-label); color: var(--text-2); white-space: normal; text-decoration: none; }
+.explore-shell .xmr-save { justify-self: end; }
+
+/* --- The tap card: the place, its neighbours peeking, the way back ------ */
+/* The sheet open: the list has the screen, the tap card waits under it. */
+html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
+@media (max-width: 768px) {
+  .explore-shell .xmap-tapcard {
+    left: 0;
+    right: 0;
+    bottom: var(--space-5);
+    width: min(342px, calc(100% - 2 * var(--space-6)));
+    margin: 0 auto;
+    overflow: visible;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    box-shadow: var(--elev-3);
+    touch-action: none;
+  }
+  .explore-shell .xmap-tapcard.is-dragging { transition: none; }
+  /* The List pill rides 12 px above the card, so the way back never leaves. */
+  .explore-shell .xmap-listpill.is-above-card { bottom: calc(var(--space-5) + var(--xmap-card-h, 144px) + var(--space-3)); }
+}
+.explore-shell .xtc-face { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: var(--space-3); padding: var(--space-2); }
+.explore-shell .xtc-media { position: relative; width: 120px; height: 120px; overflow: hidden; border-radius: var(--radius-panel); background: var(--surface-sunken); }
+.explore-shell .xtc-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.explore-shell .xtc-save { position: absolute; top: var(--space-1); right: var(--space-1); }
+.explore-shell .xtc-text { display: grid; align-content: start; gap: var(--space-1); min-width: 0; padding: var(--space-1) calc(36px + var(--space-1)) var(--space-1) 0; }
+.explore-shell .xtc-l1 { font-size: var(--text-title); line-height: 1.25; }
+.explore-shell .xtc-l3 { margin-top: var(--space-1); }
+.explore-shell .xtc-close,
+.explore-shell .xac-close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  cursor: pointer;
+}
+.explore-shell .xtc-close::after,
+.explore-shell .xac-close::after { content: ''; position: absolute; inset: -4px; }
+.explore-shell .xtc-close:focus-visible,
+.explore-shell .xac-close:focus-visible,
+.explore-shell .xtc-step:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+/* The neighbours: the same card's edge, 16 px in view at each side. */
+.explore-shell .xtc-peek {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  pointer-events: none;
+}
+.explore-shell .xtc-peek.is-prev { right: calc(100% + var(--space-2)); }
+.explore-shell .xtc-peek.is-next { left: calc(100% + var(--space-2)); }
+.explore-shell .xtc-peek .xtc-face.is-ghost { display: flex; justify-content: flex-end; }
+.explore-shell .xtc-peek.is-next .xtc-face.is-ghost { justify-content: flex-start; }
+/* The arrows are for a keyboard: drawn while focused, a finger swipes. */
+.explore-shell .xtc-step {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-top: -18px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  opacity: 0;
+}
+.explore-shell .xtc-step.is-prev { left: calc(-1 * var(--space-4)); }
+.explore-shell .xtc-step.is-next { right: calc(-1 * var(--space-4)); }
+.explore-shell .xtc-step:focus-visible { opacity: 1; }
+
+/* --- The sheet's head: In view | All and Filters, then Sort and the basis */
+.explore-shell .xsheet-head .xsheet-row { flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
+.explore-shell .xsheet-scope .xsheet-n,
+.explore-shell .mpp .xsheet-n { font-weight: 800; font-variant-numeric: tabular-nums; }
+.explore-shell .xsheet-filters {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: var(--stroke-edge) solid var(--action);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  cursor: pointer;
+}
+.explore-shell .xsheet-filters::after { content: ''; position: absolute; inset: -4px 0; }
+.explore-shell .xsheet-filters .band-count { position: static; }
+.explore-shell .xsheet-row2 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 var(--space-2); padding-top: var(--space-1); }
+.explore-shell .xsheet-sort { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.explore-shell .xtool-sort.is-bare { padding-inline: 0; font-weight: 700; }
+.explore-shell .xsheet-basis { color: var(--text-2); font-weight: 600; white-space: normal; text-align: right; }
+/* Nothing in view: the dashed blaze, the space named, one way out. */
+.explore-shell .xsheet-empty { display: grid; justify-items: center; gap: var(--space-3); padding: var(--space-6) var(--space-4); text-align: center; }
+.explore-shell .xsheet-empty-title { margin: 0; font-size: var(--text-lead); font-weight: 800; }
+.explore-shell .xsheet-empty-acts { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); }
+
+/* --- Quick filters: the phone's third row and the desktop map's top edge  */
+.xquick { display: flex; align-items: center; gap: var(--space-2); }
+.xquick.is-swipe { padding: 0 var(--space-3); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
+.xquick.is-swipe::-webkit-scrollbar { display: none; }
+.xquick-chip {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 36px;
+  margin: var(--space-1) 0;
+  padding: 0 var(--space-3);
+  border: var(--stroke-hair) solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), transform var(--dur-press) var(--ease-tick);
+}
+.xquick-chip::after { content: ''; position: absolute; inset: -4px 0; }
+.xquick-chip:active { transform: scale(var(--press-scale)); }
+.xquick-chip:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.xquick-chip.is-on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
+.xquick-chip.xquick-filters { border: var(--stroke-edge) solid var(--action); }
+.xquick-chip .band-count { position: static; }
+.explore-shell .xmap-quick {
+  position: absolute;
+  top: var(--space-3);
+  left: calc(var(--mpp-w, 400px) + var(--space-3));
+  right: calc(var(--space-3) + 48px);
+  z-index: 3;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+.explore-shell .xmap-quick .xquick-chip { pointer-events: auto; margin: 0; }
+
+/* --- The phone map's band: row 2 the style (pinned) and the settings ----- */
+@media (max-width: 768px) {
+  .band.is-map .band-chips-pin { display: flex; align-items: center; gap: var(--space-2); min-width: 0; padding-left: var(--space-3); }
+  .band.is-map .band-chips-pin > .band-chip.is-style {
+    flex: none;
+    max-width: 52%;
+    padding: 0 var(--space-3);
+    font-size: var(--text-label);
+  }
+  .band.is-map .band-chips-pin > .band-chip.is-style .band-chip-text { overflow-wrap: anywhere; white-space: normal; line-height: 1.15; }
+  .band.is-map .band-chips-pin > .band-chip.is-style::before {
+    content: '';
+    position: absolute;
+    inset: 6px 0;
+    z-index: -1;
+    border-radius: var(--radius-pill);
+    background: var(--umber-100);
+    box-shadow: var(--elev-2);
+  }
+  .band.is-map .band-chips-pin > .band-chips.is-swipe { flex: 1; padding-left: 0; }
+  .band.is-phone.is-map > .band-quick { padding-top: 0; }
+  .band.is-map .band-quick .xquick-chip { box-shadow: var(--elev-2); border-color: transparent; }
+  .band.is-map .band-quick .xquick-chip.is-on { border-color: var(--select-border); }
+  .band.is-map .band-quick .xquick-chip.xquick-filters { border-color: var(--action); }
+}
+
+/* --- Tablet and desktop: the column, the anchored card ------------------ */
+@media (min-width: 769px) {
+  .explore-shell .mpp--float .mpp-rows { display: block; gap: 0; padding: 0 var(--space-4) var(--space-4); }
+  .explore-shell .mpp--float .mpp-head-row { gap: var(--space-1); }
+  .explore-shell .mpp-head-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+  .explore-shell .mpp-basis { justify-self: end; }
+  .explore-shell .mpp--float { background: var(--surface); border-right: var(--stroke-hair) solid var(--border-soft); }
+  .explore-shell .mpp--float .mpp-head-row { background: var(--surface); }
+  .explore-shell .mpp-empty { display: grid; justify-items: start; gap: var(--space-2); padding: var(--space-4); }
+  .explore-shell .xmap-anchor { z-index: 4; }
+  .explore-shell .xmap-anchor-card {
+    width: 320px;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    box-shadow: var(--elev-3);
+    animation: xmap-anchor-in var(--dur-3) var(--ease-settle);
+    cursor: auto;
+  }
+  .explore-shell .xac-media { position: relative; display: block; aspect-ratio: 16 / 9; background: var(--surface-sunken); }
+  .explore-shell .xac-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .explore-shell .xac-close { left: var(--space-2); right: auto; background: var(--surface); }
+  .explore-shell .xac-save { position: absolute; top: var(--space-2); right: var(--space-2); }
+  .explore-shell .xac-text { display: grid; gap: var(--space-1); padding: var(--space-3) var(--space-4) var(--space-4); }
+}
+@media (min-width: 1200px) {
+  .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 380px; }
+}
+@media (min-width: 769px) and (max-width: 1439px) {
+  .explore-shell .xmap-anchor-card { width: 288px; }
+}
+@media (min-width: 1440px) {
+  .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 440px; }
+}
+@keyframes xmap-anchor-in {
+  from { opacity: 0; transform: translateY(var(--space-2)); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell .xmap-anchor-card { animation: none; }
+  .xquick-chip, .xmatch-mark { transition: none; }
+}
+
+/* The match mark on the list rows and the rail cards (round 2). */
+.explore-shell .xrow-hs .xrow-match { position: relative; z-index: 1; justify-self: start; align-self: center; margin-top: var(--space-1); }
+.xrc-match { align-self: flex-start; margin: var(--space-1) 0 0; }

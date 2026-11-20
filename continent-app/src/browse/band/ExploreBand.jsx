@@ -13,6 +13,7 @@ import { useSearchDock, dockBack, dockShare } from '../searchDockStore.js';
 import { useFilters } from '../filters/filtersStore.js';
 import { toggleSettings, useSettingsSheet } from '../settings/settingsSheetStore.js';
 import { useMapViewOn } from '../explore/mapViewStore.js';
+import { QuickChips } from '../filters/QuickChips.jsx';
 // The search panel loads on the field's first focus.
 const SearchPanel = React.lazy(() => import('../search/SearchPanel.jsx').then((m) => ({ default: m.SearchPanel })));
 import { SummaryChips, useSummaryItems } from './SummaryChips.jsx';
@@ -349,18 +350,17 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
         // The strip's own ground: the chips fade at their ends (a mask),
         // and the list must not show through there when the strip is pinned.
         <div className="band-strip">
-          <SummaryChips items={items} className="is-swipe" lead={mapView ? (
-            <Pressable className={`band-chip band-chip--filters${filterCount ? ' is-on' : ''}`}
-              aria-label={filterCount ? t(countKey(t.lang, filterCount, 'band.filtersOnOne', 'band.filtersOn'), { n: filterCount }) : t('band.filters')}
-              aria-expanded={filters.isOpen} aria-haspopup="dialog"
-              onClick={(e) => openFilters(e.currentTarget)}>
-              <span className="band-chip-ic" aria-hidden="true"><HouseIcon.filter size={18} /></span>
-              <span className="band-chip-text">{t('band.filters')}</span>
-              {filterCount > 0 && <span className="band-count" aria-hidden="true">{filterCount}</span>}
-            </Pressable>
-          ) : null} />
+          <SummaryChips items={items} className="is-swipe" pinStyle={mapView} />
         </div>
       ))}
+      {/* G12 map view round 2 (owner, 2026-11-20: the travel style must stay
+          in view): row 2 above is the style, sticky at its left, and the
+          settings; row 3 is Filters and the quick filters. */}
+      {mapView && (
+        <div className="band-quick">
+          <QuickChips className="is-swipe" />
+        </div>
+      )}
       {!mapView && tabs}
     </div>
     </>

@@ -9,6 +9,7 @@ import { countryName } from '../lib/countryName.js';
 import { SaveButton } from './ExploreCards.jsx';
 import { FigureAmount, PlaceScore, ReceiptButton, figureSpoken, usePlaceFigure } from './explore/HouseParts.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
+import { MatchMark } from './explore/MatchMark.jsx';
 import { STORY_MAX, RAIL_CARD_SIZES } from './StoryRail.jsx';
 import { nameLines } from './nameLines.js';
 
@@ -101,6 +102,8 @@ const PlaceRailCard = React.memo(function PlaceRailCard({ p, onSelect, fav, onTo
           {fig.f.eur != null && <span className="xrc-basis" aria-hidden="true">{fig.basis}</span>}
         </span>
       </ReceiptButton>
+      {/* G12 map view round 2: the match mark under the country line. */}
+      <MatchMark place={p} className="xrc-match" />
       <FriendCardLine destId={p.id} />
       {onToggleFav && (
         <span className="hs-rcard-save">

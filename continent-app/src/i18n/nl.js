@@ -10627,6 +10627,7 @@ export const nl = {
   "explore.map.nothingInView": "Niets in beeld",
   "explore.map.showAll": "Toon alle {n}",
   "explore.map.zoomOut": "Zoom uit",
+  "explore.map.bestValue": "Beste prijs",
   "explore.map.close": "Sluiten",
   "explore.map.prev": "Vorige plaats",
   "explore.map.next": "Volgende plaats",

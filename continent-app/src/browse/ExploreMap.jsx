@@ -1,6 +1,7 @@
 import { isGateway } from '../lib/rating.js';
-import { MatchLine } from './WhyItMatches.jsx';
+import { MatchMark } from './explore/MatchMark.jsx';
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import maplibregl from '../map/maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { thumbAt } from '../lib/heroImage.js';
@@ -319,6 +320,9 @@ export function ExploreMap({
   // corner (owner, 2026-11-20: in the window corner it covered the list
   // column's last photo).
   cornerInMap = false,
+  // G12 map view round 2: on a tablet or desktop the picked place's card
+  // hangs beside its pin (a marker, so it follows the map with no render).
+  pickCard = null,
 }) {
   const containerRef = useRef(null);
   useMapCorner(containerRef, cornerInMap && visible);
@@ -1034,6 +1038,25 @@ export function ExploreMap({
     return () => { gone = true; cancelAnimationFrame(h); window.removeEventListener('carta:map-chrome', onChrome); };
   }, [pickedId, applyPins, pinsIn]);
 
+  // The picked place's card beside its pin: a marker holds a portal, on the
+  // side of the pin with room (left of a pin in the right half).
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const hasCard = !!pickCard;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!hasCard || !pickedId || !map || !pinsIn) return undefined;
+    const f = geojsonRef.current.features.find((x) => x.properties.id === pickedId);
+    if (!f) return undefined;
+    const el = document.createElement('div');
+    el.className = 'xmap-anchor';
+    const right = map.project(f.geometry.coordinates).x > map.getCanvas().clientWidth / 2;
+    const marker = new maplibregl.Marker({ element: el, anchor: right ? 'right' : 'left', offset: [right ? -36 : 36, -28] })
+      .setLngLat(f.geometry.coordinates).addTo(map);
+    setAnchorEl(el);
+    const settle = setTimeout(() => window.dispatchEvent(new Event('carta:map-chrome')), 60);
+    return () => { clearTimeout(settle); marker.remove(); setAnchorEl(null); };
+  }, [hasCard, pickedId, pinsIn]);
+
   // New places or new figures: the same camera, the pins re-priced and
   // re-ranked in place (decision.md "Pins": settings and filters never move
   // the camera).
@@ -1114,6 +1137,7 @@ export function ExploreMap({
   return (
     <div className={`xmap${ready ? ' is-ready' : ''}`} role="region" aria-label={t('explore.mapAria')}>
       <div ref={containerRef} className="xmap-canvas" />
+      {anchorEl && pickCard && createPortal(pickCard, anchorEl)}
       {peek && (
         <div className="xmap-peek" role="group" aria-label={peek.city}>
           <a className="xmap-card-hit" href={`#dest=${encodeURIComponent(peek.id)}`}
@@ -1126,7 +1150,7 @@ export function ExploreMap({
                   <ScoreChip rating={{ score: peek.score }} size="sm" />
                 </div>
                 <p className="xmap-card-sub">{peek.country}</p>
-                <MatchLine place={source.find((p) => p.id === peek.id)} />
+                <MatchMark place={source.find((p) => p.id === peek.id)} />
                 {peek.fig && (
                   <p className="xmap-card-eur">
                     <span className="xmap-card-eur-line">

@@ -48,8 +48,10 @@ import { setMapViewOn } from './explore/mapViewStore.js';
 import { FilterSheet } from './filters/FilterSheet.jsx';
 import { closeFilters, publishFilters, setFilterHandlers, useFilters } from './filters/filtersStore.js';
 import {
-  SHORTCUTS, countNoTemp, parsePicks, parseTemps, shortcutOn, shortcutPatch, sortOptionsFor, sortShown,
+  QUICK_BUDGET, SHORTCUTS, countNoTemp, parsePicks, parseTemps, quickChips, quickPatch, shortcutOn, shortcutPatch,
+  sortOptionsFor, sortShown,
 } from './filters/filterModel.js';
+import { formatMoney } from '../lib/money.js';
 import { spanOf, viewFactor } from '../lib/price/display.js';
 
 
@@ -584,6 +586,12 @@ export function ExploreTab({
       value={sortShown(sortKey, !!matchTaste, home)} />
   );
 
+  // G12 map view round 2: the map sheet's and column's Sort, quiet.
+  const mapSort = (
+    <SortMenu t={t} options={sortOptionsFor(!!matchTaste, home)} onChange={setSortKey} bare
+      value={sortShown(sortKey, !!matchTaste, home)} />
+  );
+
   // T592 (owner, 2026-10-22): one toggle, not a List | Map pair. In the
   // list it offers the map, on the map it offers the list: a secondary pill
   // with the icon of where it goes. Drawn in the desktop toolbar, floating
@@ -609,10 +617,36 @@ export function ExploreTab({
   const shortcutList = React.useMemo(() => SHORTCUTS.map((s) => ({
     id: s.id, label: t(s.labelKey), on: shortcutOn(s.id, { xf, gemOnly }),
   })), [t, xf, gemOnly]);
+  // G12 map view round 2: the map's quick chips, in the reader's words; the
+  // budget is said in the traveller's basis, as the sheet's steps are.
+  const quickList = React.useMemo(() => {
+    const words = {
+      score8: () => t('filters.scoreMin', { n: 8 }),
+      budget: () => t('filters.upTo', { eur: formatMoney(QUICK_BUDGET * (viewFactor(request) || 1)) }),
+      warm: () => t('filters.quick.warm', { month: travelMonth ? gLabels.monthInline(travelMonth) : '' }),
+      water: () => t('filters.quick.water'),
+      hiking: () => t('filters.quick.hiking'),
+      gems: () => t('filters.gems'),
+      match: () => t('filters.matchMin', { n: 70 }),
+      saved: () => t('filters.quick.saved'),
+    };
+    return quickChips({ xf, gemOnly, showFavOnly, hasMonth: !!travelMonth, hasTaste: !!matchTaste })
+      .map((c) => ({ ...c, label: words[c.id]() }));
+  }, [t, xf, gemOnly, showFavOnly, travelMonth, matchTaste, request, gLabels]);
+  const applyQuick = React.useCallback((id, on) => {
+    setXf((v) => {
+      const patch = quickPatch(id, on, v);
+      return patch.xf ? { ...v, ...patch.xf } : v;
+    });
+    const g = quickPatch(id, on, null);
+    if ('gemOnly' in g) setGemOnly(g.gemOnly);
+    if ('showFavOnly' in g) setShowFavOnly(g.showFavOnly);
+  }, [setGemOnly, setShowFavOnly]);
+  if (isActive) setFilterHandlers({ applyQuick });
   React.useEffect(() => {
     if (!isActive) return;
-    publishFilters({ count: filterCount, total: sheetTotal, shortcuts: shortcutList });
-  }, [isActive, filterCount, sheetTotal, shortcutList]);
+    publishFilters({ count: filterCount, total: sheetTotal, shortcuts: shortcutList, quick: quickList });
+  }, [isActive, filterCount, sheetTotal, shortcutList, quickList]);
   React.useEffect(() => {
     if (!isActive) return undefined;
     return () => { closeFilters(); };
@@ -626,7 +660,11 @@ export function ExploreTab({
     unescoOnly, setUnescoOnly, month: travelMonth,
     monthName: travelMonth ? gLabels.monthInline(travelMonth) : '',
     noTemp, dayFactor: viewFactor(request), tripSpan: spanOf(request) === 'trip',
-    total: sheetTotal, countFor: view !== 'map' ? countFor : null, listOn: !railsIdle, count: filterCount, onClearAll: resetAll,
+    // G12 map view round 2: the sheet counts on the map too, and each
+    // option shows the count it would leave (keepFor over the priced rows).
+    total: view !== 'map' ? sheetTotal : guidedRows.length, countFor, keepFor, rows, favorites, fitOf,
+    hasTaste: !!matchTaste, styleName: travelStyles?.active?.name || '',
+    listOn: !railsIdle, count: filterCount, onClearAll: resetAll,
     onSetMonth: () => { closeFilters(); openSettings({ step: 'when' }); },
     // From the overview with nothing chosen, Show opens every place.
     onShow: () => { if (railsIdle) setFocusAll(true); },
@@ -759,6 +797,7 @@ export function ExploreTab({
           setLocationQuery={setLocationQuery} setPickedId={setPickedId}
           setShowFavOnly={setShowFavOnly} setView={setView} showFavOnly={showFavOnly}
           shownRows={shownRows} t={t} taxRows={taxRows} view={view} viewSwitch={viewSwitch}
+          mapSort={mapSort} filterCount={filterCount}
           viewportMode={viewportMode} visible={visible} xf={xf}
         />
       </div>

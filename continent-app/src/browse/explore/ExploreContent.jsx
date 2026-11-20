@@ -9,15 +9,22 @@ import { ExploreRails } from '../ExploreRails.jsx';
 import { EmptyResult } from '../EmptyResult.jsx';
 import { Blaze, Button } from '../../components/ui/index.js';
 import { ExploreCard } from './ExploreCard.jsx';
+import { MapAnchorCard } from './MapAnchorCard.jsx';
+import { QuickChips } from '../filters/QuickChips.jsx';
+import { useSettings } from '../../components/SettingsLine.jsx';
+import { useSummaryItems } from '../band/SummaryChips.jsx';
+import { priceFigure } from '../../lib/settings/prices.js';
 import '../../styles/86-map-view.css';
 
 // G12 map view: what floats over the map, so no pin sits under it (the
 // band's field and chip row on a phone, the List pill, the tap card, the
 // sheet, the heart).
 const MAP_CHROME = [
-  '.band.is-map .band-row', '.band.is-map .band-strip', '.xmap-listpill', '.xmap-tapcard',
-  '.xsheet:not(.is-closed)', '.corner-slot--left',
+  '.band.is-map .band-row', '.band.is-map .band-strip', '.band.is-map .band-quick', '.xmap-listpill', '.xmap-tapcard',
+  '.xsheet:not(.is-closed)', '.corner-slot--left', '.xmap-quick', '.xmap-anchor-card',
 ].join(', ');
+// The sheet and the column list at most this many places for All.
+const ALL_MAX = 120;
 
 // The List or Map switch is a route change (DESIGN.md "Route"): the content
 // rises in once on the traveller's own switch, never at first paint, and the
@@ -74,15 +81,45 @@ function useRouteIn(ref, view) {
 }
 
 export function ExploreContent({
-  guidedRows, isActiveMap, lang, sortMenu, allRows, anyActive, cardLinkId, catalogueFull = true, chips, contentRef, costIndex, dxf, emptyLine, favSet,
+  guidedRows, isActiveMap, lang, allRows, anyActive, cardLinkId, catalogueFull = true, chips, contentRef, costIndex, dxf, emptyLine, favSet,
   gridTotal, isActive, isDesktop, lastChip, listed, locationQuery, mapOpened, mapTop,
   onMapNeedDetail, onMapViewport, onPick, onPinLink, onToggleFav, openPlace, overviewOf,
   pageOver, pending, pickedId, pickedRow, pinLinkId, pins, railLead, railMonth, rails,
   railsIdle, reachMinutes, resetAll, roleFor, searchHits, selectedId, sentinelRef,
   setCardLinkId, setLocationQuery, setPickedId, setShowFavOnly, setView, showFavOnly,
-  shownRows, t, taxRows, view, viewSwitch, viewportMode, visible, xf,
+  shownRows, t, taxRows, view, viewSwitch, viewportMode, visible, xf, mapSort = null, filterCount = 0,
 }) {
   useRouteIn(contentRef, view);
+  // G12 map view round 2: the best value in view (its row says so, as its
+  // pin's saffron dot does), the price basis in words, the neighbours of the
+  // picked place in the list's order (the tap card's swipe).
+  const model = useSettings()?.model || null;
+  const bestId = React.useMemo(() => {
+    if (view !== 'map') return '';
+    let best = null; let eur = Infinity;
+    for (const p of shownRows) {
+      const e = priceFigure({ cost: p.cost }, model || {}).eur;
+      if (Number.isFinite(e) && e < eur) { eur = e; best = p.id; }
+    }
+    return best || '';
+  }, [shownRows, model, view]);
+  const summary = useSummaryItems();
+  const basis = summary.find((it) => it.step === 'prices')?.text || '';
+  const mapList = guidedRows || taxRows;
+  const inView = pickedRow ? shownRows.some((p) => p.id === pickedRow.id) : false;
+  const ring = inView ? shownRows : mapList;
+  const at = pickedRow ? ring.findIndex((p) => p.id === pickedRow.id) : -1;
+  const prevRow = at > 0 ? ring[at - 1] : null;
+  const nextRow = at >= 0 && at < ring.length - 1 ? ring[at + 1] : null;
+  const zoomOut = () => {
+    const m = document.querySelector('.xcontent-map .xmap-canvas')?._cartaMap;
+    m?.easeTo({ zoom: Math.max(3, m.getZoom() - 1.5), duration: prefersReducedMotion() ? 0 : 420 });
+  };
+  const anchorCard = isDesktop && view === 'map' && pickedRow ? (
+    <MapAnchorCard t={t} p={pickedRow} overview={overviewOf(pickedRow)}
+      fav={favSet.has(pickedRow.id)} onToggleFav={onToggleFav}
+      onOpen={openPlace} onClose={() => onPick(null)} />
+  ) : null;
   useReflowGlide(contentRef, listed.map((p) => p.id));
   return (
     <div className={`xcontent ${view === 'map' ? 'xcontent--split' : ''}`.trim()} ref={contentRef}
@@ -120,8 +157,11 @@ export function ExploreContent({
               framed={anyActive || searchHits != null}
               pickedId={pickedRow ? pickedRow.id : null} onPick={onPick}
               zoomAt="bottom-right" fitKey={searchHits != null ? locationQuery || '' : ''}
-              chrome={MAP_CHROME} cornerInMap />
+              chrome={MAP_CHROME} cornerInMap pickCard={anchorCard} />
           </React.Suspense>
+          {/* G12 map view round 2: the quick filters on the map's top edge
+              (desktop); on a phone they are the band's third row. */}
+          {isDesktop && view === 'map' && <QuickChips className="xmap-quick" withFilters={false} />}
           {/* T592 (owner decision 6): the map the Kayak way. On a
               desktop the panel floats on the left over the map: the
               places on the map, or the picked one with its trip box.
@@ -131,7 +171,9 @@ export function ExploreContent({
           {isDesktop && view === 'map' && (
             <MapPlacePanel t={t}
               rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
-              picked={pickedRow} overviewOf={overviewOf}
+              allRows={mapList.slice(0, ALL_MAX)} allCount={mapList.length}
+              sort={mapSort} basis={basis} bestId={bestId}
+              picked={null} overviewOf={overviewOf}
               onPick={onPick} onBack={() => setPickedId(null)} onOpen={openPlace}
               favSet={favSet} onToggleFav={onToggleFav}
               linkedId={pinLinkId} onLink={setCardLinkId} pickedId={pickedId} />
@@ -142,13 +184,15 @@ export function ExploreContent({
           {!isDesktop && view === 'map' && isActiveMap && (
             <MapSheet t={t} lang={lang}
               rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
+              allRows={mapList.slice(0, ALL_MAX)} allCount={mapList.length}
               pickedId={pickedId} overviewOf={overviewOf} onPick={onPick}
-              favSet={favSet} onToggleFav={onToggleFav} sort={sortMenu}
+              favSet={favSet} onToggleFav={onToggleFav} sort={mapSort}
+              filterCount={filterCount} basis={basis} bestId={bestId} onZoomOut={zoomOut}
               listSwitch={viewSwitch('xsheet-view')} />
           )}
           {!isDesktop && view === 'map' && isActiveMap && pickedRow && (
-            <MapTapCard t={t} p={pickedRow} overview={overviewOf(pickedRow)}
-              fav={favSet.has(pickedRow.id)} onToggleFav={onToggleFav}
+            <MapTapCard t={t} p={pickedRow} prev={prevRow} next={nextRow} overviewOf={overviewOf}
+              fav={favSet.has(pickedRow.id)} onToggleFav={onToggleFav} onPick={onPick}
               onOpen={openPlace} onClose={() => onPick(null)} />
           )}
         </div>

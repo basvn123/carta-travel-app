@@ -160,10 +160,10 @@ export function useExploreRows({
   );
   // The count for any filter state, for the sheet to show before React
   // renders the tab: one cheap pass over the rows already priced.
-  const countFor = React.useCallback((f) => {
+  const countFor = React.useCallback((f, extra = null) => {
     const keep = keepFor(f, f.month ? resolveWhen({ xm: f.month }) : (settingsLine?.when || null));
     let n = 0;
-    for (const p of rows) if (keep(p)) n += 1;
+    for (const p of rows) if (keep(p) && (!extra || extra(p))) n += 1;
     return n;
   }, [rows, keepFor, settingsLine?.when]);
   const liveTotal = React.useMemo(() => {

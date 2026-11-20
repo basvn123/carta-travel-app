@@ -10713,6 +10713,7 @@ export const en = {
   "explore.map.nothingInView": "Nothing in view",
   "explore.map.showAll": "Show all {n}",
   "explore.map.zoomOut": "Zoom out",
+  "explore.map.bestValue": "Best value",
   "explore.map.close": "Close",
   "explore.map.prev": "Previous place",
   "explore.map.next": "Next place",

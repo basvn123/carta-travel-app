@@ -51,7 +51,10 @@ export function useSummaryItems() {
  * a desktop it fits and never moves. `lead` goes first in the same row
  * (the phone map view's Filters chip).
  */
-export function SummaryChips({ items, className = '', lead = null }) {
+// G12 map view round 2: `pinStyle` keeps the style chip out of the swipe, at
+// the row's left, so it never scrolls away (owner, 2026-11-20: on the phone
+// map the travel style must stay in view).
+export function SummaryChips({ items, className = '', lead = null, pinStyle = false }) {
   const { t } = useI18n();
   const s = useSettings();
   const ts = s?.travelStyles;
@@ -77,28 +80,37 @@ export function SummaryChips({ items, className = '', lead = null }) {
     return () => { el.removeEventListener('scroll', read); ro?.disconnect(); };
   }, [items.length]);
 
-  return (
+  const chip = (it) => {
+    const Ico = glyphOf(it.icon);
+    const isStyle = it.key === 'style';
+    const name = t('band.chipAria', { text: it.text }) + (isStyle && changed ? `. ${t('styles.kickerChanged')}` : '');
+    return (
+      <Pressable key={it.key}
+        className={`band-chip${isStyle ? ' is-style' : ''}`}
+        data-band-step={isStyle ? 'style' : it.step || 'overview'}
+        aria-label={name}
+        onClick={() => (isStyle ? openStudio(ts) : openSettings({ step: it.step || 'overview' }))}>
+        {Ico && <span className="band-chip-ic" aria-hidden="true"><Ico size={18} /></span>}
+        <span className="band-chip-text">{it.text}</span>
+        {isStyle && changed && <span className="band-chip-dot" aria-hidden="true" />}
+      </Pressable>
+    );
+  };
+  const pinned = pinStyle ? items.find((it) => it.key === 'style') : null;
+  const rest = pinned ? items.filter((it) => it !== pinned) : items;
+  const row = (
     <div ref={rowRef}
       className={`band-chips${edges.start ? ' has-start' : ''}${edges.end ? ' has-end' : ''} ${className}`.trim()}
-      role="group" aria-label={t('band.chipsAria')}>
-      {/* G12 map view: the phone's floating row leads with Filters. */}
+      role={pinned ? undefined : 'group'} aria-label={pinned ? undefined : t('band.chipsAria')}>
       {lead}
-      {items.map((it) => {
-        const Ico = glyphOf(it.icon);
-        const isStyle = it.key === 'style';
-        const name = t('band.chipAria', { text: it.text }) + (isStyle && changed ? `. ${t('styles.kickerChanged')}` : '');
-        return (
-          <Pressable key={it.key}
-            className={`band-chip${isStyle ? ' is-style' : ''}`}
-            data-band-step={isStyle ? 'style' : it.step || 'overview'}
-            aria-label={name}
-            onClick={() => (isStyle ? openStudio(ts) : openSettings({ step: it.step || 'overview' }))}>
-            {Ico && <span className="band-chip-ic" aria-hidden="true"><Ico size={18} /></span>}
-            <span className="band-chip-text">{it.text}</span>
-            {isStyle && changed && <span className="band-chip-dot" aria-hidden="true" />}
-          </Pressable>
-        );
-      })}
+      {rest.map(chip)}
+    </div>
+  );
+  if (!pinned) return row;
+  return (
+    <div className="band-chips-pin" role="group" aria-label={t('band.chipsAria')}>
+      {chip(pinned)}
+      {row}
     </div>
   );
 }

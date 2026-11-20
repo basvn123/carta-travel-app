@@ -10627,6 +10627,7 @@ export const de = {
   "explore.map.nothingInView": "Nichts im Bild",
   "explore.map.showAll": "Alle {n} zeigen",
   "explore.map.zoomOut": "Herauszoomen",
+  "explore.map.bestValue": "Bester Preis",
   "explore.map.close": "Schließen",
   "explore.map.prev": "Vorheriger Ort",
   "explore.map.next": "Nächster Ort",

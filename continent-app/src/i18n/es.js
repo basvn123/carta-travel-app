@@ -10627,6 +10627,7 @@ export const es = {
   "explore.map.nothingInView": "Nada a la vista",
   "explore.map.showAll": "Ver los {n}",
   "explore.map.zoomOut": "Alejar",
+  "explore.map.bestValue": "Mejor precio",
   "explore.map.close": "Cerrar",
   "explore.map.prev": "Lugar anterior",
   "explore.map.next": "Lugar siguiente",

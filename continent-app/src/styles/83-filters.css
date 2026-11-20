@@ -246,3 +246,10 @@
   .flt-panel, .flt-panel.is-leaving { animation: none; }
   .xap-chip .xap-x .icon-btn-glyph { transition: none; }
 }
+
+/* G12 map view round 2: each option says the count it would leave; an
+   option that would leave nothing is greyed with its 0. */
+.flt .flt-n { margin-left: var(--space-1); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.flt .flt-chip[aria-checked="true"] .flt-n, .flt .flt-chip[aria-pressed="true"] .flt-n { color: inherit; }
+.flt .flt-chip.is-zero { color: var(--text-3); border-style: dashed; }
+.flt .flt-chip.is-zero .flt-n { color: var(--text-3); }
