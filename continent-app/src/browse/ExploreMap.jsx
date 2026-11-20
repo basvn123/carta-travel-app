@@ -494,7 +494,10 @@ export function ExploreMap({
         + (money ? `<br>${eurHtml(money, 'xmap-pop-eur')}` : '')
         + '</div>';
       cardRef.current = null;
-      popup(map).setLngLat(f.geometry.coordinates).setHTML(html);
+      // The pins stand above their point: the tip opens above the hovered
+      // pin (drawn as the hot pin), never over it, so a click still picks.
+      const pin = pinSize(oneImage('hot', f.properties));
+      popup(map).setOffset(pin ? pin[1] + 8 : 18).setLngLat(f.geometry.coordinates).setHTML(html);
     };
     const showCard = (map, f) => {
       const { id, city, score, fig, cc } = f.properties;

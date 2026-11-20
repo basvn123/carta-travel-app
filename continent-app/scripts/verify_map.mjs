@@ -385,7 +385,12 @@ async function layoutChecks(w, h) {
   // Tap a pill: picked, umber with its name; phone: the card, map height kept.
   // A pill or the best pill; none here, a busier view is tried once. A size
   // with no pin fails: its tap, card and sheet checks must run (judgement-1).
-  const findPin = () => page.evaluate(`(() => { const m = ${MAP}; const f = m.queryRenderedFeatures({ layers: ['xpin', 'xpin-best'] })[0]; if (!f) return null; const p = m.project(f.geometry.coordinates); const r = m.getCanvas().getBoundingClientRect(); return [p.x + r.left, p.y + r.top - 14, f.properties.id]; })()`);
+  const findPin = () => page.evaluate(`(() => { const m = ${MAP}; const r = m.getCanvas().getBoundingClientRect();
+    for (const f of m.queryRenderedFeatures({ layers: ['xpin', 'xpin-best'] })) {
+      const p = m.project(f.geometry.coordinates); const x = p.x + r.left; const y = p.y + r.top - 14;
+      if (document.elementFromPoint(x, y)?.tagName === 'CANVAS') return [x, y, f.properties.id];
+    }
+    return null; })()`);
   let pt = await findPin();
   if (!pt) {
     await page.evaluate(`${MAP}.jumpTo({ center: [10, 46.5], zoom: 6 })`);
@@ -488,10 +493,9 @@ const boxesMeet = (root, parts) => {
   for (let i = 0; i < els.length; i += 1) {
     for (let j = i + 1; j < els.length; j += 1) {
       if (els[i].contains(els[j]) || els[j].contains(els[i])) continue;
-      const a = R(els[i]); const b = R(els[j]);
-      if (Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1) {
-        bad.push(`${els[i].className.split(' ')[0]}+${els[j].className.split(' ')[0]}`);
-      }
+      const rs = (e) => (getComputedStyle(e).display === 'inline' ? [...e.getClientRects()] : [R(e)]);
+      const hit = rs(els[i]).some((a) => rs(els[j]).some((b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1));
+      if (hit) bad.push(`${els[i].className.split(' ')[0]}+${els[j].className.split(' ')[0]}`);
     }
   }
   return bad;

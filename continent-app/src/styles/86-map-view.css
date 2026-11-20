@@ -447,6 +447,14 @@
 .explore-shell .xmr-media .xmr-img,
 .explore-shell .xmr-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .explore-shell .xmr-text { display: grid; gap: var(--space-1); min-width: 0; }
+/* The name wraps inside its column, whatever the list's row rules say (they
+   keep .xrow-name on one line): a long word breaks, never runs under Save. */
+.explore-shell .xmr-text > *,
+.explore-shell .xtc-text > *,
+.explore-shell .xac-text > * { min-width: 0; }
+.explore-shell .xrow.xmr .xmr-l1 .xmr-hit,
+.explore-shell .xmap-tapcard .xtc-l1 .xtc-hit,
+.explore-shell .xmap-anchor-card .xtc-l1 .xac-hit { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
 .explore-shell .xmr-l1,
 .explore-shell .xtc-l1 { margin: 0; font-size: var(--text-lead); font-weight: 800; line-height: 1.3; overflow-wrap: break-word; }
 .explore-shell .xmr-hit,
@@ -513,7 +521,8 @@
 .explore-shell .xtc-fig .xfig-amount { font-size: var(--text-title); font-weight: 800; white-space: nowrap; }
 .explore-shell .xmr .xmr-fig .xfig-basis,
 .explore-shell .xtc-fig .xfig-basis { font-size: var(--text-label); color: var(--text-2); white-space: normal; text-decoration: none; }
-.explore-shell .xmr-save { justify-self: end; }
+/* Save keeps its own column, whatever the list's row rules say. */
+.explore-shell .xmr .xmr-save { position: relative; inset: auto; grid-column: 3; grid-row: 1; justify-self: end; margin: 0; }
 
 /* --- The tap card: the place, its neighbours peeking, the way back ------ */
 /* The sheet open: the list has the screen, the tap card waits under it. */
@@ -522,7 +531,7 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
   .explore-shell .xmap-tapcard {
     left: 0;
     right: 0;
-    bottom: var(--space-5);
+    bottom: var(--space-6);
     width: min(342px, calc(100% - 2 * var(--space-6)));
     margin: 0 auto;
     overflow: visible;
@@ -533,7 +542,7 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
   }
   .explore-shell .xmap-tapcard.is-dragging { transition: none; }
   /* The List pill rides 12 px above the card, so the way back never leaves. */
-  .explore-shell .xmap-listpill.is-above-card { bottom: calc(var(--space-5) + var(--xmap-card-h, 144px) + var(--space-3)); }
+  .explore-shell .xmap-listpill.is-above-card { bottom: calc(var(--space-6) + var(--xmap-card-h, 144px) + var(--space-3)); }
 }
 .explore-shell .xtc-face { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: var(--space-3); padding: var(--space-2); }
 .explore-shell .xtc-media { position: relative; width: 120px; height: 120px; overflow: hidden; border-radius: var(--radius-panel); background: var(--surface-sunken); }
