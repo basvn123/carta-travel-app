@@ -93,6 +93,17 @@ async function boot(width, height, url = '?tab=map&xw=map') {
     if (/\/auth\/v1\/user/.test(r.request().url())) return r.fulfill({ status: 401, contentType: 'application/json', body: '{"message":"no session"}' });
     return r.fulfill({ status: 200, contentType: 'application/json', body: '[]' });
   });
+  // --cors-maps: the data host refuses localhost (CORS), so the map falls
+  // back to CARTO; this answers the basemap's requests through Playwright
+  // with the header added, to measure the Carta (Protomaps) style itself.
+  if (flag('cors-maps')) {
+    await ctx.route(/data\.carta-europetravel\.com\/data\/maps\//, async (r) => {
+      try {
+        const res = await r.fetch();
+        await r.fulfill({ response: res, headers: { ...res.headers(), 'access-control-allow-origin': '*', 'access-control-expose-headers': '*' } });
+      } catch { await r.abort(); }
+    });
+  }
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message.split('\n')[0]));
@@ -184,8 +195,31 @@ async function speed(width, height) {
   // Zoom to a busy middle zoom first (Alps and north Italy), unthrottled.
   await page.evaluate(`${MAP}.jumpTo({ center: [10, 46.5], zoom: 5 })`);
   await page.waitForTimeout(2500);
+  // --hide a,b (a profiling aid): layers to hide before the pan; `base`
+  // hides every basemap layer, `ours` every pin layer.
+  const hide = arg('hide', '');
+  if (hide) {
+    await page.evaluate(`(() => { const m = ${MAP}; const want = ${JSON.stringify(hide.split(','))};
+      const ours = ['dest-dots', 'xcluster', 'xpin', 'xpin-best', 'xpin-hot', 'xpin-picked'];
+      for (const l of m.getStyle().layers) {
+        const hit = want.includes(l.id) || (want.includes('ours') && ours.includes(l.id)) || (want.includes('base') && !ours.includes(l.id));
+        if (hit) m.setLayoutProperty(l.id, 'visibility', 'none');
+      } })()`);
+    await page.waitForTimeout(1500);
+  }
   const cdp = await ctx.newCDPSession(page);
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: RATE });
+  // --loaf (a profiling aid): the long animation frames of the pan, with
+  // the scripts that took them.
+  if (flag('loaf')) {
+    await page.evaluate(() => {
+      window.__loaf = [];
+      new PerformanceObserver((l) => l.getEntries().forEach((e) => window.__loaf.push({
+        d: Math.round(e.duration), block: Math.round(e.blockingDuration), render: Math.round(e.renderStart ? e.startTime + e.duration - e.renderStart : 0),
+        s: e.scripts.map((x) => `${x.invoker} ${x.sourceFunctionName}@${(x.sourceURL || '').split('/').pop()} ${Math.round(x.duration)}`).slice(0, 3),
+      }))).observe({ type: 'long-animation-frame' });
+    });
+  }
   const c0 = await page.evaluate(`${MAP}.getCenter().toArray()`);
   const out = await frames(page, () => pan(page, phone));
   const c1 = await page.evaluate(`${MAP}.getCenter().toArray()`);
@@ -193,8 +227,14 @@ async function speed(width, height) {
   out.zoom = await page.evaluate(`${MAP}.getZoom()`);
   await cdp.send('Emulation.setCPUThrottlingRate', { rate: 1 });
   const domPins = await page.evaluate(() => document.querySelectorAll('.xmap-kpin.is-label').length);
+  const basemap = await page.evaluate(`${MAP}.getContainer().dataset.basemap`);
+  if (flag('loaf')) {
+    const lo = await page.evaluate(() => window.__loaf);
+    lo.sort((x, y) => y.d - x.d);
+    console.log(`loaf ${width}x${height}: ${lo.length}`, JSON.stringify(lo.slice(0, 8), null, 0));
+  }
   await ctx.close();
-  return { ...out, domPins };
+  return { ...out, domPins, basemap };
 }
 
 // The floating controls a traveller sees over the map, as rects.
@@ -248,6 +288,9 @@ const pinsUnder = (page) => page.evaluate(`(() => {
   return hits;
 })()`);
 
+// At rest: the map idle (its tiles in, the pins placed), then a beat.
+const settle = (page) => page.evaluate(`new Promise((ok) => { const m = ${MAP}; const t = setTimeout(ok, 8000); m.once('idle', () => { clearTimeout(t); setTimeout(ok, 400); }); m.triggerRepaint(); })`);
+
 async function layoutChecks(w, h) {
   const tag = `${w}x${h}`;
   const { ctx, page, errors, phone } = await boot(w, h);
@@ -270,7 +313,7 @@ async function layoutChecks(w, h) {
   check(`${tag}: no floating control overlaps another (open)`, overlaps(r0, w, h).length === 0, overlaps(r0, w, h).join(', '));
   // A busy middle zoom, then the pins and the chrome.
   await page.evaluate(`${MAP}.jumpTo({ center: [11, 44.5], zoom: 6.5 })`);
-  await page.waitForTimeout(2500);
+  await settle(page);
   const under = await pinsUnder(page);
   check(`${tag}: no pin or bubble under a floating control`, under.length === 0, under.join(' '));
   // No camera jump on a settings change: switch the price basis.
@@ -282,22 +325,31 @@ async function layoutChecks(w, h) {
   if (await opt.count()) await opt.click({ force: true }).catch(() => {});
   await page.waitForTimeout(1500);
   await page.keyboard.press('Escape');
-  await page.waitForTimeout(1500);
+  await page.waitForTimeout(800);
+  // A desktop panel that Escape left open closes from its own button.
+  if (await page.locator('.filter-sheet, .fsheet, [role="dialog"]').filter({ visible: true }).count()) {
+    await page.locator(filt).first().click().catch(() => {});
+  }
+  await page.waitForTimeout(1200);
+  const stillOpen = await page.locator('[role="dialog"]').filter({ visible: true }).count();
   const cam1 = await page.evaluate(`[${MAP}.getCenter().toArray(), ${MAP}.getZoom()]`);
   const moved = Math.hypot(cam1[0][0] - cam0[0][0], cam1[0][1] - cam0[0][1]) + Math.abs(cam1[1] - cam0[1]);
   check(`${tag}: a filter change keeps the camera`, moved < 1e-6, `moved ${moved.toFixed(6)}`);
+  check(`${tag}: the filters close again`, stillOpen === 0, `${stillOpen} open`);
   // Tap a pill: picked, umber with its name; phone: the card, map height kept.
   const pt = await page.evaluate(`(() => { const m = ${MAP}; const f = m.queryRenderedFeatures({ layers: ['xpin'] })[0]; if (!f) return null; const p = m.project(f.geometry.coordinates); const r = m.getCanvas().getBoundingClientRect(); return [p.x + r.left, p.y + r.top, f.properties.id]; })()`);
   if (pt) {
     if (phone) await page.touchscreen.tap(pt[0], pt[1]); else await page.mouse.click(pt[0], pt[1]);
     await page.waitForTimeout(1500);
     const picked = await page.evaluate(`${MAP}.queryRenderedFeatures({ layers: ['xpin-picked'] }).map((f) => f.properties.id)`);
-    check(`${tag}: a tap picks the pin (umber, named)`, picked.includes(pt[2]), picked.join());
+    const xi = await page.evaluate(() => new URLSearchParams(location.search).get('xi'));
+    check(`${tag}: a tap picks the pin (umber, named)`, picked.includes(pt[2]), `${pt[2]} at ${pt.slice(0, 2).map(Math.round)}, xi ${xi}, drawn ${picked.join()}`);
     await shot('picked');
     if (phone) {
       const r1 = await rects(page);
       check(`${tag}: the tap card shows above the nav`, r1.card && r1.nav && r1.card.b <= r1.nav.t, JSON.stringify(r1.card));
       check(`${tag}: no overlaps with the tap card`, overlaps(r1, w, h).length === 0, overlaps(r1, w, h).join(', '));
+      await settle(page);
       const u = await pinsUnder(page);
       check(`${tag}: no pin under the tap card`, u.length === 0, u.join(' '));
       // Swipe the card down.
@@ -345,7 +397,8 @@ async function layoutChecks(w, h) {
 }
 
 const perf = {};
-for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
+// --layout-only skips the speed runs (a quick rerun of the layout checks).
+if (!flag('layout-only')) for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
 console.log('speed (CPU %dx, pan)', RATE, JSON.stringify(perf, null, 1));
 
 if (!PERF_ONLY) {

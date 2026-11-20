@@ -315,8 +315,10 @@ export function ExploreMap({
     return m;
   }, [rows]);
   // What survives the filters. `null` means everything.
+  // The same count is not the same places (a filter can swap one in for
+  // another), so only the very same list means "everything".
   const keepIds = React.useMemo(() => {
-    if (!all || rows === all || rows.length === all.length) return null;
+    if (!all || rows === all) return null;
     return new Set(rows.map((p) => p.id));
   }, [rows, all]);
   const geojson = React.useMemo(() => {
@@ -379,6 +381,9 @@ export function ExploreMap({
   }, [source, pins, costs, model, keepIds, rankOf, pinFig]);
   const geojsonRef = useRef(geojson);
   geojsonRef.current = geojson;
+  const featureById = useRef(new Map());
+  featureById.current = React.useMemo(
+    () => new Map(geojson.features.map((f) => [f.properties.id, f])), [geojson]);
   // The card's photograph and line are looked up by id when a card opens.
   const byIdRef = useRef(new Map());
   byIdRef.current = React.useMemo(() => new Map(source.map((p) => [p.id, p])), [source]);
@@ -493,6 +498,7 @@ export function ExploreMap({
     if (!map?.getLayer('xpin')) return;
     setPinFilters(map, {
       ...pinStateRef.current,
+      featureOf: (id) => featureById.current.get(id) || null,
       hot: hoverRef.current || ringRef.current || '',
       picked: pickedRef.current || '',
     });
@@ -502,8 +508,11 @@ export function ExploreMap({
     const cv = map.getCanvas();
     const W = cv.clientWidth; const H = cv.clientHeight;
     const rects = chromeRects(map, chromeRef.current);
-    const b = map.getBounds();
-    const w = b.getWest(); const e = b.getEast(); const s = b.getSouth(); const n = b.getNorth();
+    // The view plus a margin: a pill whose point is just off screen still
+    // reaches into it, and must be judged (and hidden at the edge) too.
+    const nw = map.unproject([-120, -40]); const se = map.unproject([W + 120, H + 40]);
+    const w = Math.min(nw.lng, se.lng); const e = Math.max(nw.lng, se.lng);
+    const s = Math.min(nw.lat, se.lat); const n = Math.max(nw.lat, se.lat);
     const hidden = [];
     const fits = [];
     let best = null;
@@ -559,6 +568,9 @@ export function ExploreMap({
       fitBoundsOptions: { padding: 16 },
       maxBounds: EUROPE_MAX,
       minZoom: 2.5,
+      // A phone at 3x draws 2.25 times the pixels of 2x for a difference
+      // the eye does not see on a map; capped, panning keeps its frames.
+      pixelRatio: Math.min(2, window.devicePixelRatio || 1),
       // The credit stays visible and small (decision.md "Base map").
       attributionControl: { compact: false },
     });
@@ -626,6 +638,8 @@ export function ExploreMap({
     });
     let pointing = false;
     map.on('mousemove', (e) => {
+      // A drag is a pan, not a hover: no hit test on every move of it.
+      if (e.originalEvent?.buttons) return;
       const f = pinAt(map, e.point, 8);
       const pr = f?.properties;
       const id = pr && pr.point_count == null && pr.ld !== 0 ? pr.id : null;
@@ -656,7 +670,13 @@ export function ExploreMap({
     });
     // While the camera moves the keyboard layer steps out, so a pan writes
     // nothing to the page; it is rebuilt once the map settles.
-    map.on('movestart', () => { kpinsBoxRef.current?.classList.add('is-moving'); });
+    // The list follows the view a moment after the map settles, so a quick
+    // run of strokes re-renders it once, not after each.
+    let viewTimer = 0;
+    map.on('movestart', () => {
+      clearTimeout(viewTimer);
+      kpinsBoxRef.current?.classList.add('is-moving');
+    });
     // Tiles of a new zoom land after 'moveend': the bubbles there are
     // checked again once the map is idle.
     let dirty = false;
@@ -664,8 +684,11 @@ export function ExploreMap({
       dirty = true;
       refreshRef.current(map);
       kpinsBoxRef.current?.classList.remove('is-moving');
-      const b = map.getBounds();
-      onViewportRef.current?.([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], map.getZoom());
+      clearTimeout(viewTimer);
+      viewTimer = setTimeout(() => {
+        const b = map.getBounds();
+        onViewportRef.current?.([b.getWest(), b.getSouth(), b.getEast(), b.getNorth()], map.getZoom());
+      }, 250);
     });
     let firstIdle = true;
     map.on('idle', () => {
@@ -683,6 +706,7 @@ export function ExploreMap({
     window.addEventListener('carta:map-chrome', onChrome);
     window.addEventListener('resize', onChrome);
     return () => {
+      clearTimeout(viewTimer);
       clearTimeout(readyTimer);
       clearTimeout(styleTimer);
       window.removeEventListener('carta:map-chrome', onChrome);
@@ -797,8 +821,9 @@ export function ExploreMap({
     if (!readyRef.current || !map?.getSource('dests')) return;
     map.getSource('dests').setData(geojson);
     map.getSource('dests-c').setData(geojson);
+    applyPins(map);
     map.once('idle', () => refreshRef.current(map));
-  }, [geojson]);
+  }, [geojson, applyPins]);
 
   // The camera frames what the list holds on load and for a new search;
   // the whole of Europe when nothing narrows it.

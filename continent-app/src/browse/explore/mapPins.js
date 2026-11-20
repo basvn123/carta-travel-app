@@ -21,6 +21,9 @@
 import { tokenColour } from '../../map/tokenColors.js';
 
 export const SEP = '\t';
+const EMPTY = { type: 'FeatureCollection', features: [] };
+// What each one-feature source holds now, so an unchanged hover sets nothing.
+const held = new WeakMap();
 // Top first: the order a hit test asks in.
 export const PIN_LAYERS = ['xpin-picked', 'xpin-hot', 'xpin-best', 'xpin'];
 export const HIT_LAYERS = [...PIN_LAYERS, 'xcluster'];
@@ -205,6 +208,12 @@ export function addPinImage(map, id, countLabel = (n) => String(n)) {
 export function addPinLayers(map, data) {
   if (map.getSource('dests')) return;
   map.addSource('dests', { type: 'geojson', data });
+  // The hovered and the picked place each get a one-feature source: a new
+  // filter on the big source did not always re-place its symbols until the
+  // camera moved (the pick at 820 px drew nothing); new data always does.
+  map.addSource('dests-hot', { type: 'geojson', data: EMPTY });
+  map.addSource('dests-pick', { type: 'geojson', data: EMPTY });
+  held.delete(map);
   map.addSource('dests-c', {
     type: 'geojson', data, cluster: true, clusterMaxZoom: CLUSTER_MAX_ZOOM, clusterRadius: CLUSTER_RADIUS,
   });
@@ -234,10 +243,10 @@ export function addPinLayers(map, data) {
     { 'symbol-sort-key': ['get', 'rank'] });
   symbol('xpin-best', 'dests', ['==', ['get', 'id'], ''],
     ['concat', `xp${SEP}b${SEP}`, ['get', 'fig']]);
-  symbol('xpin-hot', 'dests', ['==', ['get', 'id'], ''],
+  symbol('xpin-hot', 'dests-hot', ['has', 'id'],
     ['concat', `xp${SEP}h${SEP}`, ['case', ['!=', ['get', 'fig'], ''], ['get', 'fig'], ['get', 'city']]],
     { 'icon-allow-overlap': true });
-  symbol('xpin-picked', 'dests', ['==', ['get', 'id'], ''],
+  symbol('xpin-picked', 'dests-pick', ['has', 'id'],
     ['concat', `xp${SEP}p${SEP}`, ['get', 'city'], SEP, ['get', 'fig']],
     { 'icon-allow-overlap': true });
 }
@@ -245,16 +254,34 @@ export function addPinLayers(map, data) {
 /** The pin layers' filters for this moment: ids under the floating chrome
  *  (and clusters there) leave, the best, the hot and the picked pin each
  *  draw in their own layer and nowhere else. */
-export function setPinFilters(map, { hidden = [], hiddenClusters = [], best = '', hot = '', picked = '' }) {
+export function setPinFilters(map, { hidden = [], hiddenClusters = [], best = '', hot = '', picked = '', featureOf = () => null }) {
   if (!map.getLayer('xpin')) return;
   const id = ['get', 'id'];
   const special = [best, hot, picked].filter(Boolean);
   map.setFilter('xpin', ['all', ['!=', ['get', 'fig'], ''],
     ['!', ['in', id, ['literal', [...hidden, ...special]]]]]);
+  const bf = best ? featureOf(best) : null;
+  if (bf && typeof document !== 'undefined' && map.hasImage) addPinImage(map, ['xp', 'b', bf.properties.fig].join(SEP));
   map.setFilter('xpin-best', ['all', ['==', id, best || '\u0000'],
     ['!', ['in', id, ['literal', [hot, picked].filter(Boolean)]]]]);
-  map.setFilter('xpin-hot', ['all', ['==', id, hot || '\u0000'], ['!=', id, picked || '\u0000']]);
-  map.setFilter('xpin-picked', ['==', id, picked || '\u0000']);
+  const one = (src, pid) => {
+    const f = pid ? featureOf(pid) : null;
+    // The figure is part of the key: a new price redraws the same place.
+    const key = f ? `${pid}${SEP}${f.properties.fig}` : '';
+    const h = held.get(map) || {};
+    if (h[src] === key) return;
+    held.set(map, { ...h, [src]: key });
+    // The pill's image goes in before the data: a pill laid out before its
+    // image existed stayed blank until the next relayout (the pick at 820 px).
+    if (f && typeof document !== 'undefined' && map.hasImage) {
+      const pr = f.properties;
+      addPinImage(map, src === 'dests-pick'
+        ? ['xp', 'p', pr.city, pr.fig].join(SEP) : ['xp', 'h', pr.fig || pr.city].join(SEP));
+    }
+    map.getSource?.(src)?.setData(f ? { type: 'FeatureCollection', features: [f] } : EMPTY);
+  };
+  one('dests-hot', hot && hot !== picked ? hot : '');
+  one('dests-pick', picked || '');
   map.setFilter('xcluster', ['all', ['has', 'point_count'],
     ['!', ['in', ['get', 'cluster_id'], ['literal', hiddenClusters]]]]);
 }

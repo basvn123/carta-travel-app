@@ -385,33 +385,28 @@ try {
   check('the map canvas is up', await page.locator('.xcontent-map .maplibregl-canvas').count() === 1);
   check('the list stays beside the map', await page.locator('.xcontent--split .xrows .xrow').first().isVisible());
   check('on the map the toggle offers the list', (await viewToggle.innerText()).trim() === 'List');
-  // T441: no number clusters; prices from the opening view, wholly inside
-  // the frame; the one cheapest in view in sun; the camera on Europe.
+  // G12 map view: the pins are map layers (explore/mapPins.js): price
+  // pills from the opening view, none crossing the frame, the cheapest in
+  // view on its own layer (the saffron dot), the camera on Europe.
   const pins = await page.evaluate(() => {
-    const frame = document.querySelector('.xcontent-map .xmap').getBoundingClientRect();
-    const labels = [...document.querySelectorAll('.xmap-kpin.is-label')].map((e) => e.getBoundingClientRect());
-    const cheap = document.querySelector('.xmap-kpin.is-cheapest');
-    const map = document.querySelector('.xmap-canvas')?._cartaMap;
-    const best = getComputedStyle(document.documentElement).getPropertyValue('--best').trim();
-    const probe = document.createElement('i');
-    probe.style.color = best;
-    document.body.appendChild(probe);
-    const bestRgb = getComputedStyle(probe).color;
-    probe.remove();
+    const map = document.querySelector('.xcontent-map .xmap-canvas')?._cartaMap;
+    if (!map) return { labels: 0, inside: false, cheapest: 0, domPills: 0, zoom: null, center: null };
+    const W = map.getCanvas().clientWidth; const H = map.getCanvas().clientHeight;
+    const q = (l) => (map.getLayer(l) ? map.queryRenderedFeatures({ layers: [l] }) : []);
+    const pills = [...q('xpin'), ...q('xpin-best')];
     return {
-      labels: labels.length,
-      inside: labels.every((r) => r.left >= frame.left && r.right <= frame.right && r.top >= frame.top && r.bottom <= frame.bottom),
-      clusters: document.querySelectorAll('.xmap-kpin.is-cluster').length,
-      cheapest: document.querySelectorAll('.xmap-kpin.is-cheapest').length,
-      cheapSun: cheap ? getComputedStyle(cheap).backgroundColor === bestRgb : false,
-      zoom: map ? map.getZoom() : null,
-      center: map ? map.getCenter().toArray() : null,
+      labels: pills.length,
+      inside: pills.every((f) => { const p = map.project(f.geometry.coordinates); return p.x > 0 && p.y > 0 && p.x < W && p.y < H; }),
+      cheapest: q('xpin-best').length,
+      domPills: document.querySelectorAll('.xmap-kpin.is-label, .xmap-kpin-label').length,
+      zoom: map.getZoom(),
+      center: map.getCenter().toArray(),
     };
   });
   netCheck('map: prices from the opening view', pins.labels >= 8, `${pins.labels} labels`);
-  check('map: every label sits inside the frame', pins.inside);
-  check('map: no number clusters', pins.clusters === 0);
-  netCheck('map: one cheapest in view, in sun', pins.cheapest === 1 && pins.cheapSun);
+  check('map: every pill sits inside the frame', pins.inside);
+  check('map: the pins are map layers, not DOM', pins.domPills === 0);
+  netCheck('map: one best value in view', pins.cheapest === 1);
   check('map: unfiltered, the camera frames Europe', pins.zoom != null && pins.zoom >= 2.8 && pins.zoom <= 4.6
     && pins.center[0] > -5 && pins.center[0] < 25 && pins.center[1] > 40 && pins.center[1] < 58,
     pins.zoom != null ? `zoom ${pins.zoom.toFixed(2)} at ${pins.center.map((n) => n.toFixed(1)).join(', ')}` : 'no map');
@@ -553,38 +548,36 @@ try {
   });
   check('phone map: full width and down to the nav', geo.width === 390 && Math.abs(geo.bottom - geo.navTop) <= 2,
     `${Math.round(geo.top)} to ${Math.round(geo.bottom)}, nav at ${Math.round(geo.navTop)}`);
-  // The sort no longer leaves the map view (the toolbar stays, T592); the
-  // way back to the list is the drawer strip's toggle, and the h1 stays.
-  check('phone map: the drawer strip offers the list, the h1 stays',
-    /list/i.test(await page.locator('.xdrawer .map-drawer-strip .xview-toggle').innerText().catch(() => ''))
+  // G12 map view: the map is the page; the List pill opens the sheet, the
+  // sheet's head offers the list view; the h1 stays.
+  check('phone map: the List pill shows, the h1 stays',
+    await page.locator('.xmap-listpill').isVisible()
     && await page.evaluate(() => [...document.querySelectorAll('h1')]
       .filter((h) => h.getClientRects().length > 0 && h.getBoundingClientRect().width > 0).length) === 1);
-  const n = await page.locator('.xmap-kpin.is-label').count();
-  netCheck('phone map: prices from the first view', n >= 5, `${n} labels`);
-  if (n === 0 && !ONLINE) {
-    check('phone map: pin tap, drawer and place door', true, 'SKIP (needs network)');
-  } else {
-  const pickedName = (await page.locator('.xmap-kpin.is-label').first().innerText().catch(() => '')).replace(/€\s?\d+/, '').trim();
-  await page.locator('.xmap-kpin.is-label').first().tap();
+  const MAPJS = 'document.querySelector(".xcontent-map .xmap-canvas")._cartaMap';
+  const pill = await page.evaluate(`(() => { const m = ${MAPJS}; const f = m.queryRenderedFeatures({ layers: ['xpin', 'xpin-best'] })[0];
+    if (!f) return null; const p = m.project(f.geometry.coordinates); const r = m.getCanvas().getBoundingClientRect();
+    return { x: p.x + r.left, y: p.y + r.top, city: f.properties.city }; })()`);
+  netCheck('phone map: prices from the first view', !!pill, pill ? pill.city : 'no pill');
+  if (!pill && !ONLINE) {
+    check('phone map: pin tap, card and place door', true, 'SKIP (needs network)');
+  } else if (pill) {
+  await page.touchscreen.tap(pill.x, pill.y);
   await page.waitForTimeout(1500);
-  check('phone map: a tap picks the place into the drawer, the map stays',
-    await page.locator('.xdrawer .mpp.is-picked .mpp-place').isVisible()
+  check('phone map: a tap picks the place into the tap card, the map stays',
+    await page.locator('.xmap-tapcard').isVisible()
     && await page.locator('.destp').count() === 0
-    && (!pickedName || (await page.locator('.xdrawer .mpp-name').innerText().catch(() => '')).includes(pickedName)),
-    pickedName);
-  // The drawer runs on under the nav at its half stop (the rest is a drag
-  // or the handle away), so this reads where the picked place starts: at
-  // least its photograph's first 120 px in view above the nav, under the map.
+    && (await page.locator('.xmap-tapcard .xrow-name').innerText().catch(() => '')).includes(pill.city), pill.city);
   const dock = await page.evaluate(() => {
-    const c = document.querySelector('.xdrawer .mpp-place').getBoundingClientRect();
+    const c = document.querySelector('.xmap-tapcard').getBoundingClientRect();
     const nav = document.querySelector('.bottom-nav').getBoundingClientRect();
-    return { clear: c.top >= 0 && c.top <= nav.top - 120, placeTop: Math.round(c.top), navTop: Math.round(nav.top) };
+    return { clear: c.bottom <= nav.top && c.top > nav.top - 200, cardTop: Math.round(c.top), navTop: Math.round(nav.top) };
   });
-  check('phone map: the picked place rises into view above the nav', dock.clear, `place at ${dock.placeTop}, nav ${dock.navTop}`);
+  check('phone map: the tap card sits just above the nav', dock.clear, `card at ${dock.cardTop}, nav ${dock.navTop}`);
   await page.screenshot({ path: 'shots/explore-phone-map.png' });
-  await page.locator('.xdrawer .mpp-open').tap();
+  await page.locator('.xmap-tapcard .xrow-hit').tap();
   await page.locator('.destp').waitFor({ timeout: 30000 }).catch(() => {});
-  check('phone map: the drawer opens the place', await page.locator('.destp').isVisible());
+  check('phone map: the card opens the place', await page.locator('.destp').isVisible());
   }
   await page.close();
 } catch (e) {

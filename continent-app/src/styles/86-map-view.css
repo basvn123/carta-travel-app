@@ -80,8 +80,9 @@
     border: 0;
     border-radius: 0;
   }
-  /* What the list view says above its rows waits there. */
-  html.is-map-view .explore-shell.is-map .xhead,
+  /* What the list view says above its rows waits there; the page's h1
+     (read, not drawn) stays. */
+  html.is-map-view .explore-shell.is-map .xhead > :not(.xhead-title, .xbar-count),
   html.is-map-view .explore-shell.is-map .xsearch-hint,
   html.is-map-view .explore-shell.is-map .xempty,
   html.is-map-view .explore-shell.is-map .xempty-mark { display: none; }

@@ -182,7 +182,9 @@ export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, on
         </div>
         <div ref={bodyRef} className="xsheet-body" style={{ height: `${Math.max(0, shown(stop === 'closed' ? 'half' : stop) - PEEK_PX - 24)}px` }}>
           <div className="xrows xsheet-rows">
-            {rows.map((p) => (
+            {/* Rows only while the sheet shows: a closed sheet re-rendering
+                60 rows after every pan cost the map its frames. */}
+            {open && rows.map((p) => (
               <PlaceRow key={p.id} p={p} {...overviewOf(p)} t={t}
                 selected={p.id === pickedId}
                 fav={favSet ? favSet.has(p.id) : false} onToggleFav={onToggleFav}
