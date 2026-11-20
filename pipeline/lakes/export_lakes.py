@@ -1231,6 +1231,7 @@ def main():
         if not scored:
             continue
         rows, spare, unrated_pool = [], [], []
+        famous_spare = []   # D25: famous seeds that missed the score
         for lake, comps, score10 in sorted(scored, key=lambda t: (-t[2],
                                                                   t[0]["name"])):
             # Harvesting by ISO2 drags in what a country owns worldwide: FR
@@ -1271,6 +1272,8 @@ def main():
                 # knowing exactly that. The score gate still decides the
                 # ORDER, and the country cap still decides how many.
                 spare.append(row)
+                if (lake.get("seed") or {}).get("why") == "famous":
+                    famous_spare.append(row)
         rows = dedupe(rows)
         rows = quota_ordered(rows, qmod)[:args.max_per_country]
         rows.sort(key=lambda r: -r["score"])
@@ -1289,6 +1292,22 @@ def main():
         # The REGION floor: applicable regions the gates left empty get
         # their best remaining candidate as a listed row, no score shipped.
         listed = region_floor_fill(rows, unrated_pool, qmod)
+        # D25: a famous lake (pipeline/famous/coverage.py --handoff) is never
+        # left out. One that passed every gate but the score ships with its
+        # real score; one that missed the photo or reasons gate ships as a
+        # listed row, as the region floor does for any lake.
+        have = {r["id"] for r in rows} | {r["id"] for r in listed}
+        for row in famous_spare:
+            if row["id"] not in have:
+                rows.append(row)
+                have.add(row["id"])
+        for lake, _comps, _score in unrated_pool:
+            if (lake.get("seed") or {}).get("why") != "famous":
+                continue
+            row = wire_listed(lake)
+            if row["id"] not in have:
+                listed.append(row)
+                have.add(row["id"])
         if not rows and not listed:
             if args.verbose:
                 print(f"  {cc}: nothing clears the gate")

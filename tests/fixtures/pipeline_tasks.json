@@ -1,5 +1,5 @@
 {
- "count": 94,
+ "count": 97,
  "aliases": {
   "poi_enrich": [
    "poi_images",
@@ -419,6 +419,64 @@
    "note": "the scrape journal is the single source (owner 2026-11-03). The laptop scrapes (scripts/stays_scrape.bat; Booking blocks datacenter addresses) and uploads journal_scrape.sqlite to r2:carta-stays-state; this task downloads it, builds with the gate and publishes to r2:carta/data/stays-live/v1/, which the app reads without a deploy. Needs rclone's r2 remote (source ~/.config/carta/env). To bake a build into the app instead: build_stays.py --gate, then apply_stays.py."
   },
   {
+   "key": "famous_reference",
+   "title": "Famous reference per outdoor kind from Wikidata (data/famous/<kind>.json)",
+   "cadence": "monthly",
+   "writes_app_data": false,
+   "soft": true,
+   "cmds": [
+    [
+     "<PY>",
+     "pipeline/famous/build_reference.py",
+     "--kind",
+     "all",
+     "-q"
+    ]
+   ],
+   "note": "the famous trails, cycling routes, beaches, lakes and mountains of Europe: Wikidata items of the kind's classes with articles in enough languages (cuts in pipeline/famous/wikidata.py), plus the D24 trails reference and the country high points. One query per country and kind on QLever, then WDQS; a failed country keeps its rows from the last file. Here, in the trails domain, because the routed seeds read it in the same run; the outdoor wires it is measured against were written earlier in the run."
+  },
+  {
+   "key": "famous_coverage",
+   "title": "Famous coverage: which famous items Carta has, and why each missing one is missing (data/reports/famous/)",
+   "cadence": "after",
+   "after": [
+    "famous_reference"
+   ],
+   "writes_app_data": false,
+   "soft": true,
+   "cmds": [
+    [
+     "<PY>",
+     "pipeline/famous/coverage.py",
+     "--kind",
+     "all",
+     "--sample",
+     "30",
+     "--handoff"
+    ]
+   ],
+   "note": "matches each famous item to the published wire by Wikidata id, OSM relation, then name and place (trails through the trails external check's own matcher), and gives every miss a reason: no_osm_relation, osm_relation_not_published, matcher_miss, not_in_wire, out_of_scope. Reads files only."
+  },
+  {
+   "key": "trails_seed_routes",
+   "title": "Trails: famous walks OSM has no route for, routed with BRouter (D24)",
+   "cadence": "after",
+   "after": [
+    "famous_coverage"
+   ],
+   "writes_app_data": false,
+   "soft": true,
+   "guard": "<fn guard_trails_route_bridge>",
+   "cmds": [
+    [
+     "<PY>",
+     "pipeline/trails/seed_routes.py",
+     "--write"
+    ]
+   ],
+   "note": "behind CARTA_TRAILS_ROUTE_BRIDGE=1 like the route bridge. For each famous trail the coverage report lists as no_osm_relation, routes Wikidata's start (P1427) to end (P1444), through the walk's own point, and keeps it only on paths (80% path-like, 50% trail ways), snapped, of a sane length and not doubling back. Kept walks enter the lab as source seed_routed with the QID; curate's reference pass picks them by that id. Every refusal is in data/reports/famous/seed_routes.json."
+  },
+  {
    "key": "trails_ingest",
    "title": "Trails: OSM hiking relations -> trailslab staging",
    "cadence": "quarterly",
@@ -560,7 +618,8 @@
    "cadence": "after",
    "after": [
     "trails_ingest",
-    "trails_derive_routes"
+    "trails_derive_routes",
+    "trails_seed_routes"
    ],
    "writes_app_data": false,
    "soft": true,

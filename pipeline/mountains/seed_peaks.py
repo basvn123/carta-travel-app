@@ -1337,10 +1337,30 @@ SEED = [
 ]
 
 
+# The famous mountains the famous coverage report found missing from the
+# wire (pipeline/famous/coverage.py --handoff, D25, 2026-11-20): generated,
+# keyed by Wikidata id, why "famous". They are pinned like the hand seed and
+# ship as editorial rows when they miss the score or photo gate.
+FAMOUS_FILE = (__import__("pathlib").Path(__file__).resolve().parents[2]
+               / "data" / "famous" / "seed_mountains.json")
+
+
+def famous_entries():
+    """Generated seed entries, or [] when the file is absent or broken."""
+    import json
+    try:
+        rows = json.loads(FAMOUS_FILE.read_text(encoding="utf-8"))["rows"]
+    except (OSError, ValueError, KeyError):
+        return []
+    hand = {e.get("wd") for e in SEED if e.get("wd")}
+    return [r for r in rows if r.get("wd") and r["wd"] not in hand]
+
+
 def by_country():
-    """The seed grouped by ISO2, in file order inside each country."""
+    """The seed grouped by ISO2, in file order inside each country, then the
+    generated famous entries."""
     out = {}
-    for entry in SEED:
+    for entry in SEED + famous_entries():
         out.setdefault(entry["cc"], []).append(entry)
     return out
 

@@ -1411,6 +1411,20 @@ def main():
         extra, reason = floor_fill(cc, rows, unrated_pool, args.floor, seen_ids)
         listed = list(extra)
         listed += region_floor_fill(rows + extra, unrated_pool, qmod, seen_ids)
+        # STEP 6: famous mountains (D25). A famous seed that missed the score
+        # or photo gate and found no room under the floors still ships, as
+        # an editorial row: the famous coverage report found it missing, and
+        # a list of a country's mountains without it is wrong.
+        for peak, _comps, _score in unrated_pool:
+            if (peak.get("seed") or {}).get("why") != "famous":
+                continue
+            rid = peak_id(peak)
+            if rid in seen_ids or any(
+                    haversine_km(peak["lat"], peak["lon"], r["lat"], r["lon"])
+                    <= DUPLICATE_KM for r in rows + listed):
+                continue
+            seen_ids.add(rid)
+            listed.append(wire_unrated(peak, "e"))
         if extra:
             filled[cc] = len(extra)
         if reason:

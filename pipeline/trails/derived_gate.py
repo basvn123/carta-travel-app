@@ -36,6 +36,12 @@ from pathlib import Path
 # draw as one continuous line is on the list.
 REFERENCE_FILE = (Path(__file__).resolve().parents[2] / "data" / "reports"
                   / "validation" / "trails_reference.json")
+# The famous reference from Wikidata (pipeline/famous/build_reference.py,
+# famous coverage run 2026-11-20): its tier A trails join the list above.
+# They match a candidate by QID or OSM relation, or by an exact name; never by
+# containment, because a Wikidata label is not a curated trail name.
+FAMOUS_FILE = (Path(__file__).resolve().parents[2] / "data" / "famous"
+               / "trails.json")
 # A reference name shorter than this matches only a title that equals it
 # ("Rysy"); a longer one also matches inside a longer title ("Lechweg Etappe").
 REFERENCE_CONTAINS_MIN = 6
@@ -290,7 +296,34 @@ def reference_keys():
             for cc in t.get("countries") or []:
                 if exact:
                     _REFERENCE[cc.upper()].append((t.get("id"), exact, contains))
+        for t in famous_rows():
+            if t.get("legacy_id"):
+                continue   # already listed above under its own id
+            # Generic and very short labels only match by id: a Wikidata
+            # label "Panoramaweg" must not pull in every Panoramaweg.
+            exact = {squash(n) for n in [t.get("name") or ""] +
+                     list(t.get("names") or [])
+                     if len(squash(n)) >= REFERENCE_CONTAINS_MIN
+                     and fold(n) not in GENERIC_NAMES}
+            for cc in t.get("countries") or []:
+                if exact:
+                    _REFERENCE[cc.upper()].append((t["id"], exact, set()))
     return _REFERENCE
+
+
+_FAMOUS = None
+
+
+def famous_rows():
+    """Tier A rows of data/famous/trails.json, or [] when it is absent."""
+    global _FAMOUS
+    if _FAMOUS is None:
+        try:
+            doc = json.loads(FAMOUS_FILE.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            doc = {}
+        _FAMOUS = [r for r in doc.get("rows") or [] if r.get("tier") == "A"]
+    return _FAMOUS
 
 
 REGISTRY_FILE = REFERENCE_FILE.parents[2] / "trails" / "famous_registry.json"
@@ -325,6 +358,27 @@ def reference_ids():
                         _REFERENCE_IDS[cc].setdefault(str(osm), ref_id)
                     if ev.get("wikidata"):
                         _REFERENCE_IDS[cc].setdefault(ev["wikidata"], ref_id)
+        # Famous reference rows carry their own ids: the QID, Wikidata's OSM
+        # relation (P402) and the registry's relations for that QID.
+        rels_of = defaultdict(set)
+        for r in rows:
+            ev = r.get("evidence") or {}
+            q = ev.get("wikidata")
+            for rel in ((ev.get("osm") or {}).get("relation_id"),
+                        (ev.get("waymarked") or {}).get("relation_id")):
+                if isinstance(q, str) and rel:
+                    rels_of[q].add(str(rel))
+        for t in famous_rows():
+            ref_id = t.get("legacy_id") or t["id"]
+            keys = set()
+            if t.get("qid"):
+                keys.add(t["qid"])
+                keys |= rels_of.get(t["qid"], set())
+            if t.get("osm_rel"):
+                keys.add(str(t["osm_rel"]))
+            for cc in t.get("countries") or []:
+                for k in keys:
+                    _REFERENCE_IDS[cc.upper()].setdefault(k, ref_id)
     return _REFERENCE_IDS
 
 
@@ -336,7 +390,14 @@ def reference_of_row(row):
     for key in (str(row.get("source_ref") or ""), row.get("wikidata") or ""):
         if key and key in ids:
             return ids[key], True
-    return reference_of(row.get("title") or "", cc)
+    ref_id, exact = reference_of(row.get("title") or "", cc)
+    # A Wikidata famous trail claims a route we assembled from ways only by
+    # its id: its name alone is too common for that. The box dry run of
+    # 2026-11-20 had twelve short "Eselsweg" and five "Kaiserweg" pieces
+    # standing in for the famous long-distance trails of those names.
+    if ref_id and row.get("derived_route") and str(ref_id).startswith("wd:"):
+        return None, False
+    return ref_id, exact
 
 
 def reference_of(title, cc):
