@@ -191,14 +191,15 @@ export function ReceiptButton({ place, cost, model, label, className = '', child
   );
 }
 
-/** The figure itself: loudest, whole euros, "Not yet" without one; a way
- *  with no figure yet leaves a "+" after it. */
+/** The figure itself: loudest, whole euros, "Not yet" without one. No sign
+ *  after it (owner, 2026-11-20: the "+" went): the price chain completes the
+ *  figure (lib/settings/prices.js), a stay-only trip is said in words in the
+ *  receipt and in the accessible name, never on the card. */
 export function FigureAmount({ fig, figRef = null, className = '' }) {
   const { f } = fig;
   return (
     <span className={`xfig-amount ${className}`.trim()} ref={figRef}>
       {f.eur == null ? <NotYet /> : <Money value={f.eur} est={false} />}
-      {f.eur != null && fig.missing && <span className="xform-open" aria-hidden="true">+</span>}
     </span>
   );
 }

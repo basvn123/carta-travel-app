@@ -752,6 +752,6 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
   .xquick-chip, .xmatch-mark { transition: none; }
 }
 
-/* The match mark on the list rows and the rail cards (round 2). */
+/* The match mark on the list rows (round 2); the rail card's is in
+   85-explore-rails.css. */
 .explore-shell .xrow-hs .xrow-match { position: relative; z-index: 1; justify-self: start; align-self: center; margin-top: var(--space-1); }
-.xrc-match { align-self: flex-start; margin: var(--space-1) 0 0; }

@@ -11,6 +11,10 @@ import { buildNearbyIndex, roleOf } from '../../lib/taxonomy.js';
 import { bandAtLeast, minVerdict } from '../../lib/rating.js';
 import { EXTRA_SORTS, matchOk, picksOk, rankVibe, scoreOk, sortExtra, tempOk } from '../filters/filterModel.js';
 import { fit } from '../../lib/match.js';
+import { sortByPrice } from '../../lib/settings/prices.js';
+
+// The sort keys the catalogue orders by price (hooks/useExploreCatalog.js).
+const PRICE_SORTS = new Set(['cost', 'stay', 'food']);
 
 export function useExploreRows({
   availableCountries, bbox, catAllRows, catRows, countryFilter, countryNot, data, dxf, guided,
@@ -179,7 +183,15 @@ export function useExploreRows({
   const taxRows = React.useMemo(() => rows.filter(keepFor(dxf, quietWhen)), [rows, dxf, keepFor, quietWhen]);
   // A guided question ranks its answer: nearest first around a place, the
   // strongest vibe first otherwise, while the reader keeps the default sort.
+  const priceModel = settingsLine?.model || null;
   const guidedRows = React.useMemo(() => {
+    // G12, D10: under "the whole trip" the price sort follows the figure
+    // the cards show (stay plus the way there), and a trip figure that is
+    // the stay alone sorts after every complete one (priceSortValue). The
+    // catalogue's day order stays the tie-break (a stable sort).
+    if (PRICE_SORTS.has(sortKey) && priceModel?.priceSpan === 'trip') return sortByPrice(taxRows, priceModel);
+    // G12 map view round 2: price high to low follows the same rule.
+    if (sortKey === 'costDesc' && priceModel?.priceSpan === 'trip') return sortByPrice(taxRows, priceModel, { desc: true });
     // G12 map view round 2: price high to low, distance from the From place
     // and hidden gems first, over the catalogue's Score order.
     if (EXTRA_SORTS.includes(sortKey)) return sortExtra(taxRows, sortKey, { home });
@@ -191,7 +203,7 @@ export function useExploreRows({
     const rank = !dxf.vibe && !dxf.near ? rankVibe(dxf.picks) : null;
     const cmp = guidedComparator(rank ? { ...dxf, vibe: rank } : dxf, gctx);
     return cmp ? [...taxRows].sort(cmp) : taxRows;
-  }, [taxRows, dxf, gctx, sortKey, home]);
+  }, [taxRows, dxf, gctx, sortKey, home, priceModel]);
 
   // C7: what the map's viewport holds, counted live while the map is shown.
   const shownRows = React.useMemo(() => {

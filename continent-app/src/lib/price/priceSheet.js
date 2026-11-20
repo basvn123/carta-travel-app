@@ -15,8 +15,11 @@ const cents = (v) => Math.round(v * 100) / 100;
  *   span      'day' | 'trip'; group, n, nights
  *   bed       { eur, each }  eur in the basis; each: a night (trip only)
  *   food      { eur, each }  eur in the basis; each: a day (trip only)
- *   way       { eur, inTotal, missing, off, mode }  the return, for the
- *             view's people; inside the total on a trip, apart on a day
+ *   way       { eur, inTotal, missing, off, mode, typical, estimated }
+ *             the return, for the view's people; inside the total on a
+ *             trip, apart on a day. typical: the route's median fare;
+ *             estimated: a ground estimate for a way with no fare (the
+ *             price chain, lib/settings/prices.js); the receipt names each
  *   sum       the total again, in cents, for the receipt's Total line
  *   rounding  what the printed cent lines miss of sum (null when nothing)
  *   notKnown  part of the trip has no figure yet (the way)
@@ -27,7 +30,10 @@ export function receiptLines(row, model) {
   const trip = f.span === 'trip';
   const bed = { eur: trip ? f.parts.bed : g.bed, each: trip ? g.bed : null };
   const food = { eur: trip ? f.parts.food : g.food, each: trip ? g.food : null };
-  const way = { eur: g.way, inTotal: trip, missing: g.wayMissing, off: g.wayOff, mode: g.wayMode };
+  const way = {
+    eur: g.way, inTotal: trip, missing: g.wayMissing, off: g.wayOff, mode: g.wayMode,
+    typical: !g.wayMissing && g.wayTypical, estimated: !g.wayMissing && g.wayEstimated,
+  };
   const sum = f.eur;
   let rounding = null;
   if (sum != null && bed.eur != null && food.eur != null) {
@@ -39,6 +45,21 @@ export function receiptLines(row, model) {
     total: f.eur, basis: f.basis, span: f.span, group: f.group, n: g.n, nights: g.nights,
     bed, food, way, sum, rounding, notKnown: f.notKnown,
   };
+}
+
+/**
+ * The words under the receipt's way line for the price chain's step (G12,
+ * D10, owner 2026-11-20: the card shows no sign, the receipt says which),
+ * as [i18n key] or [null]: the route's typical fare, a ground estimate for a
+ * way with no fare (by the way it priced), or a way not priced yet (the
+ * total is the stay alone). A dated fare or a way switched off says nothing.
+ */
+export function wayLegNote(way) {
+  if (!way || way.off) return [null];
+  if (way.missing) return ['price.receipt.wayNotPriced'];
+  if (way.estimated && ['train', 'bus', 'car'].includes(way.mode)) return [`price.receipt.est.${way.mode}`];
+  if (way.typical) return ['price.receipt.typical'];
+  return [null];
 }
 
 /**

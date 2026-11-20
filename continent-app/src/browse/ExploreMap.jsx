@@ -403,8 +403,12 @@ export function ExploreMap({
         const s = p.rating?.score;
         return { fig: s != null ? Number(s).toFixed(1) : '', eur: -1 };
       }
-      const eur = priceFigure({ cost: costOf(p) }, model || {}).eur;
-      return Number.isFinite(eur) ? { fig: formatMoney(eur), eur: Math.round(eur) } : { fig: '', eur: -1 };
+      const f = priceFigure({ cost: costOf(p) }, model || {});
+      if (!Number.isFinite(f.eur)) return { fig: '', eur: -1 };
+      // G12, D10: a trip figure that is the stay alone (no way priced) is
+      // lower than the real trip, so it never takes the best-value dot
+      // (eur -1 keeps it out of that pick only; the pill shows its figure).
+      return { fig: formatMoney(f.eur), eur: f.notKnown ? -1 : Math.round(f.eur) };
     };
     const loaded = (p, lon, lat) => {
       const { fig, eur } = figOf(p);

@@ -7904,6 +7904,12 @@ export const nl = {
   "price.basis.tripOne": "1 nacht, per persoon",
   "price.basis.tripGroup": "voor {n}, {nights} nachten",
   "price.basis.tripGroupOne": "voor {n}, 1 nacht",
+  // G12, D10 (Explore clean): the receipt names the way line's step in the price chain.
+  "price.receipt.typical": "Typisch voor deze route",
+  "price.receipt.est.train": "Geschat, per trein",
+  "price.receipt.est.bus": "Geschat, per bus",
+  "price.receipt.est.car": "Geschat, per auto",
+  "price.receipt.wayNotPriced": "Reis erheen nog niet geprijsd",
   "card.priceAria": "{place}: {price} {basis}. Open de bon",
   "price.insightUnder": "{price} per dag onder je gewone dag",
   "price.insightOver": "{price} per dag boven je gewone dag",
