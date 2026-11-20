@@ -45,9 +45,11 @@ test('the row is the grid: the formation and the save sit in its areas, beside t
   assert.doesNotMatch(css, /\.xrow-hs \.xrow-hit \{\s*grid-template/);
 });
 
-test('the list, the map column and the drawer draw the same row', () => {
+test('the list draws the house row; the map column and the sheet draw the map row', () => {
   assert.match(read('src/browse/explore/ExploreCard.jsx'), /<PlaceRow/);
-  assert.match(read('src/browse/MapPlacePanel.jsx'), /<PlaceRow key=\{p\.id\}/);
+  // G12 map view round 2: one map row (MapRow) in the column and the sheet.
+  assert.match(read('src/browse/MapPlacePanel.jsx'), /<MapRow key=\{p\.id\}/);
+  assert.match(read('src/browse/explore/MapSheet.jsx'), /<MapRow key=\{p\.id\}/);
 });
 
 test('rails are the house rail and keep See all and the arrows', () => {
@@ -73,7 +75,10 @@ test('the chosen pin is the umber mark with its name, drawn by the map', () => {
   // one an umber pill with the place's name before its figure.
   const pins = read('src/browse/explore/mapPins.js');
   assert.match(pins, /fillStyle = kind === 'p' \? action : surface/);
-  assert.match(pins, /symbol\('xpin-picked'[^;]*\['get', 'city'\]/);
+  // Round 2: the picked pin's image says its name (a named photo pin or the
+  // umber pill), worked out per place (oneImage).
+  assert.match(pins, /symbol\('xpin-picked', 'dests-pick'/);
+  assert.match(pins, /role === 'pick' \? \['xp', 'p', pr\.city, pr\.fig\]/);
   const map = read('src/browse/ExploreMap.jsx');
   assert.doesNotMatch(map, /className=\{`xmap-kpin-label/);
 });

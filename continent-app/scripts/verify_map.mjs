@@ -575,9 +575,18 @@ const cutIn = (sel) => `(() => {
   return out;
 })()`;
 
+// A slow cold start (the map idle can take over two minutes on a busy
+// machine) is tried once more before it counts as a failure.
 async function bootStyled(w, h, url, lang = 'en') {
-  const r = await boot(w, h, url, lang, STYLE_SEED);
-  return r;
+  try {
+    return await boot(w, h, url, lang, STYLE_SEED);
+  } catch {
+    return boot(w, h, url, lang, STYLE_SEED);
+  }
+}
+// One check of the round 2 pass that throws records a failure, not a crash.
+async function guard(label, fn) {
+  try { await fn(); } catch (e) { check(label, false, String(e.message || e).split('\n')[0]); }
 }
 
 async function round2Pass() {
@@ -669,6 +678,7 @@ async function round2Pass() {
   // a pick shows the List pill above the card; six languages at 360 and 390.
   for (const lang of LANGS) {
     for (const [w, h] of [[360, 640], [390, 844]]) {
+      await guard(`round2 ${lang} ${w}: the style row and the List pill`, async () => {
       const { ctx, page, errors } = await bootStyled(w, h, `?tab=map&xw=map&xi=${encodeURIComponent(STRESS[1])}`, lang);
       await settle(page);
       const vis = await page.evaluate(() => {
@@ -689,6 +699,7 @@ async function round2Pass() {
       check(`round2 ${lang} ${w}: the picked card shows the List pill above it`, vis.pill, JSON.stringify(vis));
       check(`round2 ${lang} ${w}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
       await ctx.close();
+      });
     }
   }
   // No cut text for the stress names, six languages, six widths: the card
@@ -697,7 +708,8 @@ async function round2Pass() {
     for (const [w, h] of [[360, 640], [390, 844], [440, 900], [820, 1180], [1180, 820], [1440, 900]]) {
       const bad = [];
       for (const id of STRESS) {
-        const { ctx, page } = await bootStyled(w, h, `?tab=map&xw=map&xi=${encodeURIComponent(id)}`, lang);
+        let ctx = null; let page = null;
+        try { ({ ctx, page } = await bootStyled(w, h, `?tab=map&xw=map&xi=${encodeURIComponent(id)}`, lang)); } catch (e) { bad.push(`${id.slice(4)} did not open: ${String(e.message).split('\n')[0]}`); continue; }
         await settle(page);
         const cut = await page.evaluate(cutIn('.xmap-tapcard, .xmap-anchor-card, .xsheet .xmr, .mpp .xmr'));
         const some = await page.evaluate(() => !!document.querySelector('.xmap-tapcard, .xmap-anchor-card'));

@@ -81,7 +81,7 @@ export function WhyPopover({ f, place, anchorRef, onClose }) {
               <span className="xwhy-row-top">
                 <span className={`xwhy-sw is-${Math.min(i, 3)}`} aria-hidden="true" />
                 <span className="xwhy-name">{t(barLabelKey(r))}</span>
-                {r.tag && <span className="xwhy-tag">{t(r.tag === 'strongest' ? 'fit.strongest' : 'fit.strong')}</span>}
+                {r.tag && <span className="xwhy-tag">{t(r.tag === 'strongest' ? 'fit.tagStrongest' : 'fit.tagStrong')}</span>}
                 <span className="xwhy-pts" aria-label={t('fit.points', { n: r.points })}>+{r.points}</span>
               </span>
               <span className="xwhy-track" style={{ width: `${Math.max(8, r.share * 100)}%` }} aria-hidden="true">
