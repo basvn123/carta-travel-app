@@ -71,7 +71,7 @@
 //              map's Clear all 8 px from its neighbours; the phone map's two
 //              chip rows paint no ground and do not cut their chips'
 //              shadows, row 3 keeps its taps and the map below the band
-//              its drags, Clear all on paper (judgement-9); every icon in a
+//              its drags (judgement-9); every icon in a
 //              chip or button level with its word's capitals, six languages
 //              at 390 and 1440 on the map and Explore (--g-only)
 import http from 'node:http';
@@ -1502,7 +1502,7 @@ async function roundGPass() {
         // Judgement-9: the rows are transparent on the map and reach 30 px
         // or more past their chips' ground (the --elev-2 shadow's room), so
         // no pale box and no hard line; row 3's chips and the map just below
-        // the band still take their presses; Clear all stands on paper.
+        // the band still take their presses.
         const g = await page.evaluate(() => {
           const s2 = document.querySelector('.band.is-map .band-chips-pin > .band-chips');
           const s3 = document.querySelector('.band.is-map .band-quick > .xquick');
@@ -1517,13 +1517,12 @@ async function roundGPass() {
           return {
             bg2: getComputedStyle(s2).backgroundColor, bg3: getComputedStyle(s3).backgroundColor,
             room2: Math.round(b2.bottom - (ground(s2, '.band-chip') - 6)), room3: Math.round(b3.bottom - ground(s3, '.xquick-chip')),
-            chipTap: !!hit?.closest('.xquick-chip'), mapDrag: !!below?.closest('.xmap'),
-            clearPaper: clear ? getComputedStyle(clear).backgroundColor : null,
+            chipTap: !!hit?.closest('.xquick-chip'), mapDrag: !!below?.closest('.xmap'), clear: !!clear,
           };
         });
         const clearBg = (c) => c === 'rgba(0, 0, 0, 0)' || c === 'transparent';
-        check(`roundG ${w} ${lang}: the phone map's chip rows are transparent and keep their chips' shadows whole, row 3 and the map keep their presses, Clear all on paper`,
-          clearBg(g.bg2) && clearBg(g.bg3) && g.room2 >= 30 && g.room3 >= 30 && g.chipTap && g.mapDrag && g.clearPaper && !clearBg(g.clearPaper), JSON.stringify(g));
+        check(`roundG ${w} ${lang}: the phone map's chip rows are transparent and keep their chips' shadows whole, row 3 and the map keep their presses`,
+          clearBg(g.bg2) && clearBg(g.bg3) && g.room2 >= 30 && g.room3 >= 30 && g.chipTap && g.mapDrag && g.clear, JSON.stringify(g));
         if (SHOTS && (lang === 'fr' || lang === 'en')) await page.screenshot({ path: path.join(SHOTS, `g-quick-${w}-${lang}.png`) });
         await ctx.close();
       });

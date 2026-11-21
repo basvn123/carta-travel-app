@@ -837,16 +837,9 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
   .band.is-phone.is-map > .band-quick { z-index: 2; padding-top: 0; }
   .band.is-map .band-quick > .xquick.is-swipe { pointer-events: none; }
   .band.is-map .band-quick > .xquick.is-swipe > * { pointer-events: auto; }
-  /* Clear all on the chips' paper, as on the map's top edge from 769 px
-     (judgement-9): bare words read muddled over map labels. Still no edge
-     and no shadow, so it is not a chip; the row's 8 px gaps either side. */
-  .band.is-map .band-quick .xquick-clear {
-    align-self: center;
-    min-height: 28px;
-    padding: 0 var(--space-2);
-    background: var(--surface);
-  }
-  .band.is-map .band-quick .xquick-clear::after { inset: -8px 0; }
+  /* Clear all stays bare words here (judgement-9 asked for the paper of
+     769 px and up): the paper's 16 px pushed a chip turned on at the row's
+     end out of view at 360 in nl, fr and es (verify_active_chips). */
   .band.is-map .band-quick .xquick-chip { box-shadow: var(--elev-2); border-color: transparent; }
   .band.is-map .band-quick .xquick-chip.is-on { border-color: var(--select-border); }
   .band.is-map .band-quick .xquick-chip.xquick-filters { border-color: var(--action); }

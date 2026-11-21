@@ -16,7 +16,9 @@ export const ICON_ALIGN_JS = `(() => {
   const out = [];
   const cv = document.createElement('canvas').getContext('2d');
   for (const el of document.querySelectorAll(SEL)) {
-    if (!el.getClientRects().length || el.closest('[inert], [aria-hidden="true"]')) continue;
+    // One-line chips and buttons only: a tall tile (the rails' See all card)
+    // places its arrow by its own grid, not beside a word.
+    if (!el.getClientRects().length || el.closest('[inert], [aria-hidden="true"]') || el.getBoundingClientRect().height > 56) continue;
     const svg = [...el.querySelectorAll('svg')].find((s) => s.getClientRects().length && !s.closest('.band-count'));
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
       acceptNode: (n) => (n.textContent.trim() && !n.parentElement.closest('.band-count, .sr-only') ? 1 : 2),
