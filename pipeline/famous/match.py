@@ -50,6 +50,10 @@ COMPASS = {"north", "south", "east", "west", "nord", "sud", "süd", "ost",
 # A wire name with one of these the reference lacks is a section of it
 # ("Drauradweg, Teil 2"), counted as a piece even when the length is unknown
 # (judgement 1: 13 of 59 cycling matches were sections counted as in).
+# Bracketed words that name the main line, not a section: "Elberadweg
+# (Hauptroute)" is the Elberadweg.
+MAIN_WORDS = {"hauptroute", "hauptweg", "main", "route", "principal",
+              "hlavni", "trasa", "linkselbisch", "rechtselbisch"}
 SECTION_WORDS = {"etappe", "etape", "teil", "teilstrecke", "abschnitt",
                  "nebenroute", "odcinek", "stage", "section", "tappa",
                  "tramo", "troncon", "part", "deel", "osa", "faza"}
@@ -75,6 +79,14 @@ def bracket_tokens(name):
     for part in re.findall(r"\(([^)]*)\)", name or ""):
         out |= set(fold(part).split())
     return out
+
+
+def colon_tail(name):
+    """Folded words after a colon: "Bodensee-Königssee-Radweg: Etappe 3" is
+    a section of the route named before the colon."""
+    if not name or ":" not in name:
+        return set()
+    return set(fold(name.split(":", 1)[1]).split())
 
 
 def raw_tokens(names):
@@ -168,7 +180,8 @@ class Index:
             row["_names"] = names
             row["_raw"] = raw_tokens([row.get("name"), row.get("nameLocal")])
             row["_brk"] = (bracket_tokens(row.get("name")) |
-                           bracket_tokens(row.get("nameLocal")))
+                           bracket_tokens(row.get("nameLocal")) |
+                           colon_tail(row.get("name")))
             for n in names:
                 self.exact.setdefault(n, []).append(row)
                 for t in set(n.split()):
@@ -234,23 +247,27 @@ def candidates(kind, ref, index):
         extra = row.get("_raw", set()) - ref_raw
         if extra & (SIDE_WORDS | COMPASS):
             continue
-        if extra & SECTION_WORDS:
-            how = "section"
-        # A route named with its end points or region in brackets is a
-        # section of the famous one ("Sydostleden (Fridafors, Karlshamn)",
-        # judgement 2: 6 of 51 cycling rows counted in were such sections).
-        elif kind in ("trails", "cycling") and row.get("_brk", set()) - ref_raw:
-            how = "section"
+        # A section: a section word the reference lacks, or end points or a
+        # region in brackets or after a colon ("Sydostleden (Fridafors,
+        # Karlshamn)", "Bodensee-Königssee-Radweg: Etappe 3"); words that
+        # name the main line ("(Hauptroute)") do not make one.
+        brk = row.get("_brk", set()) - ref_raw - MAIN_WORDS
+        section = bool(extra & SECTION_WORDS) or (
+            kind in ("trails", "cycling") and bool(brk))
         d = km_to_row(ref, row)
         generic = generic_ref or bool(row["_names"] & GENERIC)
         if d is None:
-            # No point to check: only an exact, non-generic name counts.
-            if how != "exact" or generic:
+            # No point to check: only an exact, non-generic name counts; a
+            # section counts when its name with the section part taken off
+            # is the reference's (judgement 3: Tauernradweg sections).
+            if how != "exact" and not (section and how == "contains"):
+                continue
+            if generic:
                 continue
         elif d > near:
             continue
         out.append((2 if how == "exact" else 3, d or 0.0, row,
-                    "section" if how == "section" else "name"))
+                    "section" if section else "name"))
     return out
 
 

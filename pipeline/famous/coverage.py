@@ -184,7 +184,7 @@ def reason_for(kind, ref, rows, rels):
             return "matcher_miss"
     if ref.get("lat") is None and not ref.get("qid"):
         return "unlocated"
-    if kind == "trails":
+    if kind in ("trails", "cycling"):
         return ("osm_relation_not_published" if ref.get("osm_rels")
                 else "no_osm_relation")
     return stage_reason(kind, ref) or "not_in_wire"
@@ -336,7 +336,9 @@ def run_kind(kind, ref_dir=REF_DIR, wire=WIRE, rels=None, sample=0,
 
 
 HANDOFF_REASONS = ("not_in_wire", "not_in_catalogue", "not_enriched",
-                   "dropped_at_export")
+                   "dropped_at_export", "osm_relation_not_published",
+                   "no_osm_relation")
+HANDOFF_KINDS = ("mountains", "lakes", "beaches", "cycling")
 
 
 def seed_sane(kind, ref):
@@ -354,10 +356,11 @@ def seed_sane(kind, ref):
 
 
 def handoff(kind, res, path=None):
-    """data/famous/seed_<kind>.json for mountains and lakes: the famous (tier
-    A) items the wire lacks, as seed entries pipeline/mountains/seed_peaks.py
-    and pipeline/lakes/seed_lakes.py read (keyed by Wikidata id, why
-    "famous"). Only plain misses: a matcher_miss is reviewed first, and an
+    """data/famous/seed_<kind>.json for mountains, lakes, beaches and
+    cycling: the famous (tier A) items the wire lacks, as seed entries the
+    kind's pipeline reads (pipeline/mountains/seed_peaks.py,
+    pipeline/lakes/seed_lakes.py; beaches and cycling: D25 c and d), keyed
+    by Wikidata id, why "famous". Only plain misses: a matcher_miss is reviewed first, and an
     item outside the covered countries stays out.
 
     Idempotent: an entry from the last file stays while its item is still a
@@ -378,7 +381,10 @@ def handoff(kind, res, path=None):
                 or row.get("reason") not in HANDOFF_REASONS):
             continue
         ref = res["_refs"][row["id"]]
-        if not ref.get("qid") or ref.get("lat") is None or ref["qid"] in out:
+        # Points for the place kinds; a cycle route may have none (its OSM
+        # relation or its name finds it).
+        if not ref.get("qid") or ref["qid"] in out or (
+                kind != "cycling" and ref.get("lat") is None):
             continue
         if not seed_sane(kind, ref):
             continue
@@ -389,14 +395,23 @@ def handoff(kind, res, path=None):
             extra = {"kind": "volcano" if "Q8072" in (ref.get("classes")
                                                       or []) else "peak",
                      "lift": ""}
-        else:
+        elif kind == "lakes":
             extra = {"kind": "lake"}
-        out[ref["qid"]] = {
-            "n": ref["name"], "cc": ccs[0], **extra,
-            "lat": round(ref["lat"], 4), "lon": round(ref["lon"], 4),
-            "wd": ref["qid"], "why": "famous",
-            "note": f"famous coverage: {ref.get('sitelinks')} "
-                    f"Wikipedia languages, missing from the wire"}
+        elif kind == "cycling":
+            extra = {"countries": ccs, "osm_rel": ref.get("osm_rel"),
+                     "osm_rels": ref.get("osm_rels") or [],
+                     "length_km": ref.get("length_km"),
+                     "names": ref.get("names") or []}
+        else:
+            extra = {}
+        entry = {"n": ref["name"], "cc": ccs[0], **extra,
+                 "wd": ref["qid"], "why": "famous",
+                 "note": f"famous coverage: {ref.get('sitelinks')} "
+                         f"Wikipedia languages, missing from the wire"}
+        if ref.get("lat") is not None:
+            entry["lat"] = round(ref["lat"], 4)
+            entry["lon"] = round(ref["lon"], 4)
+        out[ref["qid"]] = entry
     rows = sorted(out.values(), key=lambda r: (r["cc"], r["n"]))
     path.write_text(json.dumps(
         {"schema": "carta-famous-seed/1", "kind": kind,
@@ -457,7 +472,8 @@ def main(argv=None):
     ap.add_argument("--stages", default=str(STAGE_DIR),
                     help="folder of the beaches, lakes and mountains stages")
     ap.add_argument("--handoff", action="store_true",
-                    help="write data/famous/seed_{mountains,lakes}.json")
+                    help="write data/famous/seed_<kind>.json for "
+                         "mountains, lakes, beaches and cycling")
     a = ap.parse_args(argv)
     kinds = KINDS if a.kind == "all" else [a.kind]
     STAGE_DIR = Path(a.stages)
@@ -471,7 +487,7 @@ def main(argv=None):
         if res is None:
             print(f"  {kind}: no reference file, skipped")
             continue
-        if a.handoff and kind in ("mountains", "lakes"):
+        if a.handoff and kind in HANDOFF_KINDS:
             n = handoff(kind, res)
             print(f"  {kind} hand-off: {n} famous item(s) to seed")
         res.pop("_refs", None)

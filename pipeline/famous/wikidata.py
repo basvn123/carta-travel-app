@@ -315,10 +315,13 @@ def values_of(qids, prop, verbose=False):
     norm = prop in SI_SCALE
     for chunk in _batches(qids):
         values = " ".join("wd:" + q for q in chunk)
-        path = (f"p:{prop}/psn:{prop}/wikibase:quantityAmount" if norm
-                else f"wdt:{prop}")
+        # Best rank only (judgement 3: every rank let old figures in,
+        # Jungfrau 4,167 m), the normalised value of that statement.
+        where = (f"?item p:{prop} ?st . ?st a wikibase:BestRank . "
+                 f"?st psn:{prop}/wikibase:quantityAmount ?v" if norm
+                 else f"?item wdt:{prop} ?v")
         got = sparql(PREFIXES + f"SELECT ?item ?v WHERE {{ VALUES ?item "
-                     f"{{ {values} }} ?item {path} ?v }}", verbose)
+                     f"{{ {values} }} {where} }}", verbose)
         for b in got or []:
             v = b["v"]["value"]
             if norm:

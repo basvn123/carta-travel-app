@@ -204,3 +204,37 @@ def test_quantities_are_read_normalised(monkeypatch):
         {"item": {"value": "http://www.wikidata.org/entity/Q2"},
          "v": {"value": "154000"}}])
     assert wd.values_of(["Q2"], "P2043") == {"Q2": [154.0]}   # m -> km
+
+
+def test_section_counts_when_the_route_has_no_point():
+    # judgement 3: most Wikidata cycle routes have no coordinate
+    refs = [ref("Tauernradweg", rid="t", cc=("AT",))]
+    rows = [row("Tauernradweg (Stadt Salzburg, Hallein)", "s", cc="AT",
+                kind="cycling", bbox=[13.0, 47.6, 13.1, 47.8], km=20)]
+    assert m.match("cycling", refs, rows)["t"]["status"] == "in_as_piece"
+
+
+def test_colon_tail_is_a_section():
+    refs = [ref("Bodensee-Königssee-Radweg", rid="b", cc=("DE",))]
+    rows = [row("Bodensee-Königssee-Radweg: Lindau - Isny", "x", cc="DE",
+                kind="cycling", bbox=[9.7, 47.5, 10.0, 47.7], km=40)]
+    assert m.match("cycling", refs, rows)["b"]["status"] == "in_as_piece"
+
+
+def test_hauptroute_is_the_route_itself():
+    refs = [ref("Elberadweg", rid="e", cc=("DE",))]
+    rows = [row("Elberadweg (Hauptroute)", "h", cc="DE", kind="cycling",
+                bbox=[10.0, 50.9, 14.4, 54.0], km=860)]
+    got = m.match("cycling", refs, rows)
+    assert got["e"]["status"] == "in" and got["e"]["by"] == "name"
+
+
+def test_best_rank_quantity_query(monkeypatch):
+    seen = {}
+
+    def fake(query, verbose=False):
+        seen["q"] = query
+        return []
+    monkeypatch.setattr(wd, "sparql", fake)
+    wd.values_of(["Q1"], "P2044")
+    assert "wikibase:BestRank" in seen["q"]
