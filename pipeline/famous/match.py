@@ -47,15 +47,33 @@ GENERIC = {"schwarzsee", "weissensee", "lago nero", "lac noir", "main beach",
            "praia grande", "spiaggia grande"}
 COMPASS = {"north", "south", "east", "west", "nord", "sud", "süd", "ost",
            "west", "est", "ouest", "norte", "sur", "este", "oeste"}
+# A wire name with one of these the reference lacks is a section of it
+# ("Drauradweg, Teil 2"), counted as a piece even when the length is unknown
+# (judgement 1: 13 of 59 cycling matches were sections counted as in).
+SECTION_WORDS = {"etappe", "etape", "teil", "teilstrecke", "abschnitt",
+                 "nebenroute", "odcinek", "stage", "section", "tappa",
+                 "tramo", "troncon", "part", "deel", "osa", "faza"}
 
 
-def fold(s):
+def fold(s, keep_brackets=False):
+    """Lowercase, accents off, punctuation to spaces. Bracketed text is
+    dropped for name equality ("Grossglockner (Glocknerwand)"), and kept
+    with keep_brackets for the side and section words, which brackets
+    often carry ("Rheinsteig (Zuweg Bad Hönningen)")."""
     s = unicodedata.normalize("NFKD", s or "")
     s = "".join(c for c in s if not unicodedata.combining(c)).lower()
     s = s.replace("ß", "ss").replace("ø", "o").replace("æ", "ae")
-    s = re.sub(r"\([^)]*\)", " ", s)
+    if not keep_brackets:
+        s = re.sub(r"\([^)]*\)", " ", s)
     s = re.sub(r"[^a-z0-9α-ω]+", " ", s)
     return " ".join(s.split())
+
+
+def raw_tokens(names):
+    out = set()
+    for n in names:
+        out |= set(fold(n, keep_brackets=True).split())
+    return out
 
 
 def km_between(a_lat, a_lon, b_lat, b_lon):
@@ -140,6 +158,7 @@ class Index:
                 self.by_osm.setdefault(rel, []).append(row)
             names = {fold(row.get("name")), fold(row.get("nameLocal"))} - {""}
             row["_names"] = names
+            row["_raw"] = raw_tokens([row.get("name"), row.get("nameLocal")])
             for n in names:
                 self.exact.setdefault(n, []).append(row)
                 for t in set(n.split()):
@@ -169,11 +188,14 @@ class Index:
         # "Malerweg Saxon Switzerland"): look the wire names up by token.
         for n in ref_names:
             for t in set(n.split()):
+                if len(t) < 4:      # "via", "de": the whole wire
+                    continue
                 for row in self.token.get(t, []):
                     if id(row) in out:
                         continue
                     for w in row["_names"]:
-                        if len(w) < len(n) and                                 name_hit(kind, {n}, w) == "contains":
+                        if len(w) < len(n) and \
+                                name_hit(kind, {n}, w) == "contains":
                             out[id(row)] = (row, "contains")
                             break
         return out
@@ -192,12 +214,18 @@ def candidates(kind, ref, index):
     if out:
         return out
     ref_names = names_of(ref)
+    ref_raw = raw_tokens([ref.get("name")] + list(ref.get("names") or []))
     ref_cc = set(ref.get("countries") or [])
     near = NEAR_KM[kind]
     generic_ref = bool(ref_names & GENERIC)
     for row, how in index.by_name(kind, ref_names).values():
         if ref_cc and row.get("cc") and row["cc"] not in ref_cc:
             continue
+        extra = row.get("_raw", set()) - ref_raw
+        if extra & (SIDE_WORDS | COMPASS):
+            continue
+        if extra & SECTION_WORDS:
+            how = "section"
         d = km_to_row(ref, row)
         generic = generic_ref or bool(row["_names"] & GENERIC)
         if d is None:
@@ -206,13 +234,18 @@ def candidates(kind, ref, index):
                 continue
         elif d > near:
             continue
-        out.append((2 if how == "exact" else 3, d or 0.0, row, "name"))
+        out.append((2 if how == "exact" else 3, d or 0.0, row,
+                    "section" if how == "section" else "name"))
     return out
 
 
-def status_of(kind, ref, row, all_rows):
-    """in / in_listed / in_as_piece / in_as_stages for a matched row."""
+def status_of(kind, ref, row, all_rows, by=None):
+    """in / in_listed / in_as_piece / in_as_stages for a matched row. A row
+    named as a section of the reference is a piece whatever the length."""
     want = ref.get("length_km")
+    if by == "section" and not (want and row.get("km")
+                                and row["km"] >= PIECE_SHARE * want):
+        return "in_as_piece"
     if kind in ("trails", "cycling") and want and row.get("km"):
         if row["km"] < PIECE_SHARE * want:
             got = sum(r.get("km") or 0 for r in all_rows)
@@ -243,7 +276,7 @@ def match(kind, refs, rows):
         taken_row.add(rkey)
         ref = refs_by_id[rid]
         same = [x[2] for x in per_ref[rid]]
-        out[rid] = {"status": status_of(kind, ref, row, same), "by": by,
+        out[rid] = {"status": status_of(kind, ref, row, same, by), "by": by,
                     "row": row, "km": round(d, 2)}
     return out
 

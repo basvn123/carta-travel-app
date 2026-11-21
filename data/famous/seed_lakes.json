@@ -434,16 +434,6 @@
    "note": "famous coverage: 21 Wikipedia languages, missing from the wire"
   },
   {
-   "n": "Lake Copais",
-   "cc": "GR",
-   "kind": "lake",
-   "lat": 38.45,
-   "lon": 23.05,
-   "wd": "Q1234240",
-   "why": "famous",
-   "note": "famous coverage: 26 Wikipedia languages, missing from the wire"
-  },
-  {
    "n": "Lake Koroneia",
    "cc": "GR",
    "kind": "lake",
@@ -672,16 +662,6 @@
    "wd": "Q335940",
    "why": "famous",
    "note": "famous coverage: 32 Wikipedia languages, missing from the wire"
-  },
-  {
-   "n": "Fucine Lake",
-   "cc": "IT",
-   "kind": "lake",
-   "lat": 42.0082,
-   "lon": 13.4801,
-   "wd": "Q914789",
-   "why": "famous",
-   "note": "famous coverage: 22 Wikipedia languages, missing from the wire"
   },
   {
    "n": "Lake Garda",

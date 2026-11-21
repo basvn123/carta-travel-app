@@ -177,6 +177,24 @@ def fetch_wikidata(kind, countries, previous, verbose=False):
     return rows, fell_back
 
 
+def same_name_row(rows, lr):
+    """The best known Wikidata row with one of the legacy trail's names and
+    a country in common, or None."""
+    import match
+    names = {match.fold(n) for n in [lr["name"], *lr["aliases"]]} - {""}
+    ccs = set(lr["countries"] or [])
+    best = None
+    for q, r in rows.items():
+        if r.get("legacy_id") or not (set(r.get("countries") or []) & ccs):
+            continue
+        rn = {match.fold(n) for n in [r.get("name")] + list(r.get("names")
+                                                            or [])}
+        if names & rn and (best is None or (r.get("sitelinks") or 0) >
+                           (rows[best].get("sitelinks") or 0)):
+            best = q
+    return best
+
+
 def legacy_trails(verbose=False):
     data = json.loads(LEGACY_TRAILS.read_text(encoding="utf-8"))
     rows = data["trails"]
@@ -209,10 +227,17 @@ def add_canaries(kind, rows, verbose=False):
     import match
     entries = json.loads(CANARIES.read_text(encoding="utf-8"))["kinds"].get(
         kind, [])
+    # Each name to its best known row: judgement 1 found "Feldberg" on an
+    # Austrian 12-sitelink item instead of the Black Forest's 39, and "Via
+    # Claudia Augusta" on a 2-sitelink piece, both then lifted to tier A.
     have = {}
     for q, r in rows.items():
         for n in [r.get("name")] + list(r.get("names") or []):
-            have.setdefault(match.fold(n), q)
+            k = match.fold(n)
+            cur = have.get(k)
+            if cur is None or (r.get("sitelinks") or 0) > \
+                    (rows[cur].get("sitelinks") or 0):
+                have[k] = q
     todo, pinned = [], {}
     for e in entries:
         n, cq = canary_name(e), canary_qid(e)
@@ -268,10 +293,23 @@ def add_canaries(kind, rows, verbose=False):
                     rows[q][key] = wd.number(v[0])
 
 
+def not_famous(kind):
+    """{QID: reason} the hand check took out (canaries.json not_famous)."""
+    try:
+        d = json.loads(CANARIES.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return d.get("not_famous", {}).get(kind, {})
+
+
 def finish(kind, rows):
-    """Tier, id and sources on each row; drop rows below tier B."""
+    """Tier, id and sources on each row; drop rows below tier B and the
+    ones the hand check took out."""
     out = []
+    drop = not_famous(kind)
     for r in rows.values():
+        if r.get("qid") in drop:
+            continue
         r.pop("_kept", None)
         srcs = r.get("sources") or ["wikidata"]
         r["sources"] = sorted(set(srcs))
@@ -299,6 +337,19 @@ def build(kind, countries, verbose=False):
         for lr in legacy_trails(verbose):
             if lr["qid"] and lr["qid"] in rows:
                 r = rows[lr["qid"]]
+                r["sources"] = sorted(set(r["sources"]) |
+                                      {"carta_trails_reference"})
+                r["legacy_id"] = lr["ref_id"]
+                r["names"] = sorted(set(r.get("names", [])) |
+                                    {lr["name"], *lr["aliases"]})
+                r.setdefault("length_km", lr["length_km"])
+                r["trail_kind"] = lr["trail_kind"]
+                if lr["start"]:
+                    r["trailhead"] = lr["start"]
+                continue
+            twin = same_name_row(rows, lr) if not lr["qid"] else None
+            if twin:
+                r = rows[twin]
                 r["sources"] = sorted(set(r["sources"]) |
                                       {"carta_trails_reference"})
                 r["legacy_id"] = lr["ref_id"]

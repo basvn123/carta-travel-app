@@ -1401,7 +1401,14 @@ def main():
         # STEP 3: dedupe, then STEP 4: the region quota, then the country's
         # sanity ceiling.
         rows = dedupe(rows)
-        rows = quota_ordered(rows, qmod)[:args.max_per_country]
+        kept = quota_ordered(rows, qmod)[:args.max_per_country]
+        # D25: a famous mountain that passed every gate is not cut by the
+        # region quota or the country ceiling; it ships rated, beyond them.
+        famous = {peak_id(p) for p, _c, _s in scored
+                  if (p.get("seed") or {}).get("why") == "famous"}
+        kept_ids = {r["id"] for r in kept}
+        rows = kept + [r for r in rows if r["id"] in famous
+                       and r["id"] not in kept_ids]
         rows.sort(key=lambda r: -r["score"])
 
         # STEP 5: the floors. Country first, then every applicable region.
@@ -1412,9 +1419,9 @@ def main():
         listed = list(extra)
         listed += region_floor_fill(rows + extra, unrated_pool, qmod, seen_ids)
         # STEP 6: famous mountains (D25). A famous seed that missed the score
-        # or photo gate and found no room under the floors still ships, as
-        # an editorial row: the famous coverage report found it missing, and
-        # a list of a country's mountains without it is wrong.
+        # or photo gate and found no room under the floors still ships, as a
+        # LISTED row (unrated coverage), not an editorial one: no person put
+        # it on the list, the famous coverage report did.
         for peak, _comps, _score in unrated_pool:
             if (peak.get("seed") or {}).get("why") != "famous":
                 continue
@@ -1424,7 +1431,7 @@ def main():
                     <= DUPLICATE_KM for r in rows + listed):
                 continue
             seen_ids.add(rid)
-            listed.append(wire_unrated(peak, "e"))
+            listed.append(wire_unrated(peak, "l"))
         if extra:
             filled[cc] = len(extra)
         if reason:

@@ -4,17 +4,6 @@
  "generated_by": "pipeline/famous/coverage.py --handoff",
  "rows": [
   {
-   "n": "Feldberg",
-   "cc": "AT",
-   "kind": "peak",
-   "lift": "",
-   "lat": 47.5924,
-   "lon": 12.3245,
-   "wd": "Q14269787",
-   "why": "famous",
-   "note": "famous coverage: 12 Wikipedia languages, missing from the wire"
-  },
-  {
    "n": "Grimming",
    "cc": "AT",
    "kind": "peak",
@@ -268,17 +257,6 @@
    "note": "famous coverage: 14 Wikipedia languages, missing from the wire"
   },
   {
-   "n": "Bennachie",
-   "cc": "GB",
-   "kind": "peak",
-   "lift": "",
-   "lat": 57.2927,
-   "lon": -2.5624,
-   "wd": "Q817811",
-   "why": "famous",
-   "note": "famous coverage: 10 Wikipedia languages, missing from the wire"
-  },
-  {
    "n": "Càrn Eige",
    "cc": "GB",
    "kind": "peak",
@@ -299,17 +277,6 @@
    "wd": "Q3777361",
    "why": "famous",
    "note": "famous coverage: 9 Wikipedia languages, missing from the wire"
-  },
-  {
-   "n": "Holy Island",
-   "cc": "GB",
-   "kind": "peak",
-   "lift": "",
-   "lat": 55.525,
-   "lon": -5.0722,
-   "wd": "Q3057897",
-   "why": "famous",
-   "note": "famous coverage: 14 Wikipedia languages, missing from the wire"
   },
   {
    "n": "Dirfi",
@@ -387,17 +354,6 @@
    "wd": "Q380419",
    "why": "famous",
    "note": "famous coverage: 12 Wikipedia languages, missing from the wire"
-  },
-  {
-   "n": "Ferdinandea",
-   "cc": "IT",
-   "kind": "peak",
-   "lift": "",
-   "lat": 37.1636,
-   "lon": 12.7186,
-   "wd": "Q833975",
-   "why": "famous",
-   "note": "famous coverage: 32 Wikipedia languages, missing from the wire"
   },
   {
    "n": "Hohe Gaisl",

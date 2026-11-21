@@ -1275,7 +1275,14 @@ def main():
                 if (lake.get("seed") or {}).get("why") == "famous":
                     famous_spare.append(row)
         rows = dedupe(rows)
-        rows = quota_ordered(rows, qmod)[:args.max_per_country]
+        kept = quota_ordered(rows, qmod)[:args.max_per_country]
+        # D25: a famous lake that passed every gate is not cut by the region
+        # quota or the country ceiling; it ships rated, beyond them.
+        famous = {li.lake_id(lk) for lk, _c, _s in scored
+                  if (lk.get("seed") or {}).get("why") == "famous"}
+        kept_ids = {r["id"] for r in kept}
+        rows = kept + [r for r in rows if r["id"] in famous
+                       and r["id"] not in kept_ids]
         rows.sort(key=lambda r: -r["score"])
 
         # The per country floor. Only ever ADDS, never replaces, and only from

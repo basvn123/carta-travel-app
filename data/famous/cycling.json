@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "cycling",
- "generated_at": "2026-11-20T21:14:27Z",
+ "generated_at": "2026-11-20T23:22:57Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -72,8 +72,8 @@
  ],
  "fell_back": [],
  "counts": {
-  "A": 237,
-  "B": 311
+  "A": 235,
+  "B": 313
  },
  "rows": [
   {
@@ -99,6 +99,7 @@
    ],
    "beach_word": false,
    "sources": [
+    "carta_canary",
     "wikidata"
    ],
    "tier": "A",
@@ -916,6 +917,7 @@
    "osm_rel": 181093,
    "beach_word": false,
    "sources": [
+    "carta_canary",
     "wikidata"
    ],
    "tier": "A",
@@ -1560,6 +1562,7 @@
    "name": "Vennbahn Cycle Route",
    "names": [
     "La piste cyclable de la Vennbahn",
+    "Vennbahn",
     "Vennbahn (Radweg)",
     "Vennbahn Cycle Route",
     "Vennbahn fietspad",
@@ -6410,33 +6413,6 @@
    "id": "wd:Q17066263"
   },
   {
-   "qid": "Q14514271",
-   "sitelinks": 2,
-   "lat": 50.662585,
-   "lon": 15.595784,
-   "countries": [
-    "CZ"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q353027"
-   ],
-   "name": "Elbe cycle route",
-   "names": [
-    "Elbe cycle route",
-    "Elbe-Radweg Tschechien",
-    "Labská stezka",
-    "Szlak rowerowy wzdłuż Łaby"
-   ],
-   "beach_word": false,
-   "sources": [
-    "carta_canary",
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q14514271"
-  },
-  {
    "qid": "Q3210116",
    "sitelinks": 2,
    "lat": null,
@@ -6460,33 +6436,6 @@
    ],
    "tier": "A",
    "id": "wd:Q3210116"
-  },
-  {
-   "qid": "Q23692095",
-   "sitelinks": 2,
-   "lat": null,
-   "lon": null,
-   "countries": [
-    "AT",
-    "DE",
-    "IT"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q353027"
-   ],
-   "name": "Via Claudia Augusta",
-   "names": [
-    "Via Claudia Augusta"
-   ],
-   "osm_rel": 3879552,
-   "beach_word": false,
-   "sources": [
-    "carta_canary",
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q23692095"
   },
   {
    "qid": "Q65241531",
@@ -7877,6 +7826,32 @@
    ],
    "tier": "B",
    "id": "wd:Q1302847"
+  },
+  {
+   "qid": "Q14514271",
+   "sitelinks": 2,
+   "lat": 50.662585,
+   "lon": 15.595784,
+   "countries": [
+    "CZ"
+   ],
+   "class_kind": "core",
+   "classes": [
+    "Q353027"
+   ],
+   "name": "Elbe cycle route",
+   "names": [
+    "Elbe cycle route",
+    "Elbe-Radweg Tschechien",
+    "Labská stezka",
+    "Szlak rowerowy wzdłuż Łaby"
+   ],
+   "beach_word": false,
+   "sources": [
+    "wikidata"
+   ],
+   "tier": "B",
+   "id": "wd:Q14514271"
   },
   {
    "qid": "Q1915750",
@@ -13482,6 +13457,32 @@
    ],
    "tier": "B",
    "id": "wd:Q1497770"
+  },
+  {
+   "qid": "Q23692095",
+   "sitelinks": 2,
+   "lat": null,
+   "lon": null,
+   "countries": [
+    "AT",
+    "DE",
+    "IT"
+   ],
+   "class_kind": "core",
+   "classes": [
+    "Q353027"
+   ],
+   "name": "Via Claudia Augusta",
+   "names": [
+    "Via Claudia Augusta"
+   ],
+   "osm_rel": 3879552,
+   "beach_word": false,
+   "sources": [
+    "wikidata"
+   ],
+   "tier": "B",
+   "id": "wd:Q23692095"
   },
   {
    "qid": "Q24929856",

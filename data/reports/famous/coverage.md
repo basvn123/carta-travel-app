@@ -1,25 +1,24 @@
 # Famous coverage
 
-Generated 2026-11-20T22:12:03Z. Headline: tier A rows that are in Carta (rated, listed, or as stages). Built by `pipeline/famous/coverage.py`; reference rule in `pipeline/famous/wikidata.py`.
+Generated 2026-11-20T23:56:01Z. Headline: tier A rows that are in Carta (rated, listed, or as stages). Built by `pipeline/famous/coverage.py`; reference rule in `pipeline/famous/wikidata.py`.
 
 | Kind | Famous (A) | In | Share | Rated | Listed | Stages | Piece only | Missing | Near (B) in |
 |---|---|---|---|---|---|---|---|---|---|
-| trails | 679 | 217 | 32% | 206 | 1 | 10 | 98 | 364 | 252 of 1242 |
-| cycling | 237 | 59 | 25% | 14 | 44 | 1 | 8 | 170 | 42 of 311 |
-| beaches | 193 | 141 | 73% | 117 | 24 | 0 | 0 | 52 | 497 of 1591 |
-| lakes | 251 | 165 | 66% | 147 | 18 | 0 | 0 | 86 | 190 of 364 |
-| mountains | 350 | 286 | 82% | 207 | 79 | 0 | 0 | 64 | 363 of 877 |
+| trails | 663 | 209 | 32% | 198 | 1 | 10 | 93 | 361 | 249 of 1226 |
+| cycling | 235 | 51 | 22% | 12 | 38 | 1 | 13 | 171 | 39 of 313 |
+| beaches | 193 | 141 | 73% | 117 | 24 | 0 | 0 | 52 | 496 of 1591 |
+| lakes | 249 | 165 | 66% | 147 | 18 | 0 | 0 | 84 | 190 of 364 |
+| mountains | 347 | 286 | 82% | 207 | 79 | 0 | 0 | 61 | 363 of 873 |
 
 ## trails
 
-Missing famous (A) by reason: osm_relation_not_published 172, no_osm_relation 156, out_of_scope:over_400km 31, unlocated 3, out_of_scope:under_2km 2
+Missing famous (A) by reason: osm_relation_not_published 170, no_osm_relation 155, out_of_scope:over_400km 31, unlocated 3, out_of_scope:under_2km 2
 
 | Name | Countries | Sitelinks | Status | Reason |
 |---|---|---|---|---|
 | Caminito del Rey | ES | 25 | in_as_piece |  |
 | Main Beskid Trail | PL | 24 | missing | out_of_scope:over_400km |
 | Główny Szlak Sudecki | PL | 23 | missing | out_of_scope:over_400km |
-| Sweden Solar System | SE | 23 | missing | osm_relation_not_published |
 | Via Regia | DE | 23 | in_as_piece |  |
 | Lycian Way | TR | 20 | missing | out_of_scope:over_400km |
 | Orla Perć | PL | 20 | missing | no_osm_relation |
@@ -33,7 +32,6 @@ Missing famous (A) by reason: osm_relation_not_published 172, no_osm_relation 15
 | E1 European long distance path | CH,DE,DK,IT,NO,SE | 16 | in_as_piece |  |
 | E3 European long distance path | BE,BG,CZ,DE,ES,FR,HU,LU,PL,RO,SK | 16 | in_as_piece |  |
 | E4 European long distance path | AT,BG,CH,CY,DE,ES,FR,GR,HU,PT,RO,RS | 15 | in_as_piece |  |
-| Via Alpina | AT,CH,DE,FR,IT,LI,MC,SI | 15 | in_as_piece |  |
 | Hærvejen | DE,DK | 14 | in_as_piece |  |
 | E5 European long distance path | AT,CH,DE,FR,IT | 13 | in_as_piece |  |
 | E7 European long distance path | ES,FR,HU,IT,PT,SI | 13 | missing | out_of_scope:over_400km |
@@ -378,8 +376,9 @@ Missing famous (A) by reason: osm_relation_not_published 172, no_osm_relation 15
 | Wildnis Trail | DE | 3 | in_as_piece |  |
 | Wittekindsweg | DE | 3 | missing | osm_relation_not_published |
 | Wye Valley Walk | GB | 3 | missing | osm_relation_not_published |
-| planet trail Lemvig | DK | 3 | missing | no_osm_relation |
 | Øhavsstien | DK | 3 | missing | osm_relation_not_published |
+| Alpenpanorama-Weg | CH | 2 | in_as_piece |  |
+| Alpine Passes Trail | CH | 2 | in_as_piece |  |
 | Cowal Way | GB | 2 | missing | osm_relation_not_published |
 | Cumbria Way | GB | 2 | missing | osm_relation_not_published |
 | Dales Way | GB | 2 | missing | osm_relation_not_published |
@@ -389,8 +388,6 @@ Missing famous (A) by reason: osm_relation_not_published 172, no_osm_relation 15
 | Three Lochs Way | GB | 2 | missing | osm_relation_not_published |
 | Westerwald-Steig | DE | 2 | missing | osm_relation_not_published |
 | Adolf Munkel Trail, Val di Funes | IT |  | missing | no_osm_relation |
-| Alpine Panorama Trail | CH |  | in_as_piece |  |
-| Alpine Passes Trail | CH |  | in_as_piece |  |
 | Aonach Eagach ridge | GB |  | missing | no_osm_relation |
 | Arthur's Seat | GB |  | missing | no_osm_relation |
 | Bachalpsee from First | CH |  | missing | no_osm_relation |
@@ -432,9 +429,7 @@ Missing famous (A) by reason: osm_relation_not_published 172, no_osm_relation 15
 | Masca Gorge | ES |  | missing | no_osm_relation |
 | Matka Canyon | MK |  | missing | no_osm_relation |
 | Morskie Oko | PL |  | missing | no_osm_relation |
-| Moselsteig | DE |  | missing | osm_relation_not_published |
 | Mount Olympus summit trail from Prionia | GR |  | missing | no_osm_relation |
-| Mullerthal Trail | LU |  | in_as_piece |  |
 | National Park Trail Hoge Kempen | BE |  | missing | unlocated |
 | Oeschinensee | CH |  | missing | no_osm_relation |
 | Ordesa Valley to Cola de Caballo | ES |  | missing | no_osm_relation |
@@ -464,14 +459,11 @@ Missing famous (A) by reason: osm_relation_not_published 172, no_osm_relation 15
 | Tour de l'Oisans et des Écrins | FR |  | in_as_piece |  |
 | Tour de la Vanoise | FR |  | missing | no_osm_relation |
 | Tour of Monte Rosa | CH,IT |  | in_as_piece |  |
-| Trans Swiss Trail | CH |  | in_as_piece |  |
 | Tre Cime di Lavaredo circuit | IT |  | missing | no_osm_relation |
 | Trolltunga | NO |  | in_as_piece |  |
 | Trælanípan and Bøsdalafossur | FO |  | missing | no_osm_relation |
 | Valbona to Theth pass | AL |  | missing | no_osm_relation |
-| Via Alpina (Swiss national route 1) | CH |  | in_as_piece |  |
 | ViaGottardo | CH |  | in_as_piece |  |
-| ViaJacobi | CH |  | in_as_piece |  |
 | Vihren | BG |  | missing | no_osm_relation |
 | Vintgar Gorge | SI |  | missing | no_osm_relation |
 | Viru Bog boardwalk | EE |  | missing | no_osm_relation |
@@ -481,7 +473,7 @@ Missing famous (A) by reason: osm_relation_not_published 172, no_osm_relation 15
 
 ## cycling
 
-Missing famous (A) by reason: not_in_wire 150, matcher_miss 20
+Missing famous (A) by reason: not_in_wire 152, matcher_miss 19
 
 | Name | Countries | Sitelinks | Status | Reason |
 |---|---|---|---|---|
@@ -491,6 +483,7 @@ Missing famous (A) by reason: not_in_wire 150, matcher_miss 20
 | EuroVelo 2 – Capitals Route | DE,GB,IE,NL,PL | 16 | in_as_piece |  |
 | EuroVelo 6 – The Rivers Route | AT,BG,CH,DE,FR,HR,HU,RO,RS,SK | 16 | missing | not_in_wire |
 | EuroVelo 9 – Baltic-Adriatic | AT,CZ,HR,IT,PL,SI | 16 | missing | not_in_wire |
+| Donauradweg | AT,DE | 15 | in_as_piece |  |
 | EuroVelo 1 – Atlantic Coast Route | ES,FR,GB,IE,NO,PT | 15 | in_as_piece |  |
 | EuroVelo 15 – Rhine Cycle Route | AT,CH,DE,FR,NL | 14 | missing | not_in_wire |
 | EuroVelo 3 – The Pilgrims Route | BE,DE,DK,ES,FR,NO,SE | 13 | missing | not_in_wire |
@@ -506,6 +499,7 @@ Missing famous (A) by reason: not_in_wire 150, matcher_miss 20
 | Green Velo – East of Poland Cycling Trail | PL | 10 | missing | not_in_wire |
 | Elbe Cycle Route | CZ,DE | 8 | in_as_piece |  |
 | EuroVelo 19 – Meuse Cycle Route | BE,FR | 8 | missing | not_in_wire |
+| Alpe Adria cycling route | AT,IT | 7 | in_as_piece |  |
 | Dão line | PT | 7 | missing | not_in_wire |
 | EuroVelo 14 – Waters of Central Europe | AT,HU | 7 | missing | not_in_wire |
 | Oder-Neiße-Radweg | CZ,DE | 7 | missing | not_in_wire |
@@ -516,6 +510,7 @@ Missing famous (A) by reason: not_in_wire 150, matcher_miss 20
 | West Coast Route | DK | 6 | missing | not_in_wire |
 | Berliner Mauerweg | DE | 5 | missing | not_in_wire |
 | Bodensee-Radweg | AT | 5 | missing | matcher_miss |
+| Ciclabile della Drava | AT,IT | 5 | in_as_piece |  |
 | Danish National Cycle Route 5 | DK | 5 | missing | not_in_wire |
 | Euroroute R1 | BE,DE,EE,FR,LT,LV,NL,PL | 5 | missing | not_in_wire |
 | Green Cycle Routes | DK | 5 | missing | not_in_wire |
@@ -547,6 +542,7 @@ Missing famous (A) by reason: not_in_wire 150, matcher_miss 20
 | Hessian long-distance cycle route R4 | DE | 4 | missing | matcher_miss |
 | Hessian long-distance cycle route R5 | DE | 4 | missing | not_in_wire |
 | Hessian long-distance cycle route R6 | DE | 4 | missing | matcher_miss |
+| Hessian long-distance cycle route R8 | DE | 4 | in_as_piece |  |
 | Hessischer Radfernweg | DE | 4 | missing | not_in_wire |
 | Kattegattleden | SE | 4 | missing | not_in_wire |
 | Klarälvsbanan | SE | 4 | missing | not_in_wire |
@@ -588,6 +584,7 @@ Missing famous (A) by reason: not_in_wire 150, matcher_miss 20
 | Den Grønne Sti | DK | 3 | missing | not_in_wire |
 | Deutsche Fußball Route NRW | DE | 3 | missing | not_in_wire |
 | Deutscher Limes-Radweg | DE | 3 | missing | not_in_wire |
+| Elster-Radweg | CZ,DE | 3 | missing | not_in_wire |
 | Emsradweg | DE | 3 | missing | not_in_wire |
 | Esbjerg - Copenhagen | DK | 3 | missing | not_in_wire |
 | EuroVelo 10 in Germany | DE | 3 | missing | not_in_wire |
@@ -595,6 +592,7 @@ Missing famous (A) by reason: not_in_wire 150, matcher_miss 20
 | Gaubahn-Radweg | DE | 3 | missing | not_in_wire |
 | German Unity Cycle Route | DE | 3 | missing | not_in_wire |
 | Glan-Blies Way | DE,FR | 3 | missing | not_in_wire |
+| Greenway Oder River Trail | PL | 3 | in_as_piece |  |
 | Greenways Praha-Wien | AT,CZ | 3 | missing | not_in_wire |
 | Harzrundweg | DE | 3 | missing | not_in_wire |
 | Heidelberg-Schwarzwald-Bodensee-Weg | DE | 3 | missing | not_in_wire |
@@ -609,6 +607,7 @@ Missing famous (A) by reason: not_in_wire 150, matcher_miss 20
 | Kulturringen | DK | 3 | missing | not_in_wire |
 | LF Kustroute | BE,NL | 3 | missing | not_in_wire |
 | La Régalante | FR | 3 | missing | not_in_wire |
+| La Seine à Vélo | FR | 3 | missing | not_in_wire |
 | Mittelland-Route | CH | 3 | in_as_piece |  |
 | Moldaufietsroute | CZ | 3 | missing | not_in_wire |
 | Mulderadweg | DE | 3 | missing | not_in_wire |
@@ -639,6 +638,7 @@ Missing famous (A) by reason: not_in_wire 150, matcher_miss 20
 | Queich Valley Cycleway | DE | 3 | missing | not_in_wire |
 | Radfernweg Hamburg-Bremen | DE | 3 | missing | not_in_wire |
 | Radrunde Allgäu | DE | 3 | missing | not_in_wire |
+| Radweg Berlin–Hameln | DE | 3 | missing | not_in_wire |
 | Ruhr-Sieg-Radweg | DE | 3 | missing | not_in_wire |
 | Saar-Mosel-Main (D5) | DE,FR | 3 | in_as_piece |  |
 | Sauertalradweg | DE,LU | 3 | missing | not_in_wire |
@@ -660,9 +660,7 @@ Missing famous (A) by reason: not_in_wire 150, matcher_miss 20
 | Westphalian Mill Route | DE | 3 | missing | matcher_miss |
 | cycleway of the Sun | IT | 3 | missing | not_in_wire |
 | cycling in Gdańsk | PL | 3 | missing | not_in_wire |
-| Elbe cycle route | CZ | 2 | missing | matcher_miss |
 | La Loire à vélo | FR | 2 | missing | not_in_wire |
-| Via Claudia Augusta | AT,DE,IT | 2 | missing | not_in_wire |
 
 ## beaches
 
@@ -725,7 +723,7 @@ Missing famous (A) by reason: not_in_wire 42, matcher_miss 10
 
 ## lakes
 
-Missing famous (A) by reason: not_in_wire 86
+Missing famous (A) by reason: not_in_wire 84
 
 | Name | Countries | Sitelinks | Status | Reason |
 |---|---|---|---|---|
@@ -763,7 +761,6 @@ Missing famous (A) by reason: not_in_wire 86
 | Mullutu-Suurlaht | EE | 27 | missing | not_in_wire |
 | Røssvatnet | NO | 27 | missing | not_in_wire |
 | Lagarfljót | IS | 26 | missing | not_in_wire |
-| Lake Copais | GR | 26 | missing | not_in_wire |
 | Lake Volvi | GR | 26 | missing | not_in_wire |
 | Loch Maree | GB | 26 | missing | not_in_wire |
 | Steinhuder Meer | DE | 26 | missing | not_in_wire |
@@ -788,7 +785,6 @@ Missing famous (A) by reason: not_in_wire 86
 | Faaker See | AT | 23 | missing | not_in_wire |
 | Langisjór | IS | 23 | missing | not_in_wire |
 | Tinnsjå | NO | 23 | missing | not_in_wire |
-| Fucine Lake | IT | 22 | missing | not_in_wire |
 | Kummerower See | DE | 22 | missing | not_in_wire |
 | Lake Burgas | BG | 22 | missing | not_in_wire |
 | Lake Ermistu | EE | 22 | missing | not_in_wire |
@@ -818,7 +814,7 @@ Missing famous (A) by reason: not_in_wire 86
 
 ## mountains
 
-Missing famous (A) by reason: not_in_wire 64
+Missing famous (A) by reason: not_in_wire 61
 
 | Name | Countries | Sitelinks | Status | Reason |
 |---|---|---|---|---|
@@ -834,7 +830,6 @@ Missing famous (A) by reason: not_in_wire 64
 | Corno Grande | IT | 38 | missing | not_in_wire |
 | Vogelsberg | DE | 38 | missing | not_in_wire |
 | Hochwanner | AT,DE | 33 | missing | not_in_wire |
-| Ferdinandea | IT | 32 | missing | not_in_wire |
 | Schreckhorn | CH | 32 | missing | not_in_wire |
 | Tre Cime di Lavaredo | IT | 32 | missing | not_in_wire |
 | Santorini caldera | GR | 31 | missing | not_in_wire |
@@ -850,13 +845,11 @@ Missing famous (A) by reason: not_in_wire 64
 | Grimming | AT | 15 | missing | not_in_wire |
 | Le Catogne | CH | 15 | missing | not_in_wire |
 | Monte Bondone | IT | 15 | missing | not_in_wire |
-| Holy Island | GB | 14 | missing | not_in_wire |
 | Mount Limbara | IT | 14 | missing | not_in_wire |
 | Pointe de Charbonnel | FR | 14 | missing | not_in_wire |
 | Stätzerhorn | CH | 14 | missing | not_in_wire |
 | Calanda | CH | 13 | missing | not_in_wire |
 | Dreischusterspitze | IT | 12 | missing | not_in_wire |
-| Feldberg | AT | 12 | missing | not_in_wire |
 | Hohe Gaisl | IT | 12 | missing | not_in_wire |
 | Pico da Vara | PT | 12 | missing | not_in_wire |
 | Berchtesgadener Hochthron | DE | 11 | missing | not_in_wire |

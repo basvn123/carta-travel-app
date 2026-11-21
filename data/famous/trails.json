@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "trails",
- "generated_at": "2026-11-20T21:08:20Z",
+ "generated_at": "2026-11-20T23:20:13Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -79,8 +79,8 @@
  ],
  "fell_back": [],
  "counts": {
-  "A": 679,
-  "B": 1242
+  "A": 663,
+  "B": 1226
  },
  "rows": [
   {
@@ -297,41 +297,6 @@
    ],
    "tier": "A",
    "id": "wd:Q5627668"
-  },
-  {
-   "qid": "Q2094828",
-   "sitelinks": 23,
-   "lat": null,
-   "lon": null,
-   "countries": [
-    "SE"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Sweden Solar System",
-   "names": [
-    "Sistema solar suec",
-    "Sistema solar sueco",
-    "Sistema solare svedese",
-    "Sweden Solar System",
-    "système solaire suédois",
-    "Švedski Sunčev sustav",
-    "Švédska slnečná sústava",
-    "Шведски Сончев Систем",
-    "Шведски соларни систем",
-    "Шведська Сонячна система"
-   ],
-   "osm_rel": 16842382,
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q2094828"
   },
   {
    "qid": "Q836028",
@@ -1190,7 +1155,9 @@
    "name": "Via Alpina",
    "names": [
     "Red trail",
+    "Route 1",
     "Via Alpina",
+    "Via Alpina (Swiss national route 1)",
     "Via Alpina Red"
    ],
    "osm_rel": 20014200,
@@ -1203,8 +1170,12 @@
     "wikidata"
    ],
    "legacy_id": "via-alpina",
-   "length_km": 2600,
+   "length_km": 390,
    "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 47.05,
+    "lon": 9.44
+   },
    "tier": "A",
    "id": "wd:Q460455"
   },
@@ -5910,6 +5881,7 @@
    ],
    "name": "Sentiero degli Dei",
    "names": [
+    "Path of the Gods (Amalfi Coast)",
     "Path of the gods",
     "Sentiero degli Dei"
    ],
@@ -5919,8 +5891,16 @@
    "walk_word": true,
    "sources": [
     "carta_canary",
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "sentiero-degli-dei",
+   "length_km": 8,
+   "trail_kind": "day",
+   "trailhead": {
+    "lat": 40.63,
+    "lon": 14.55
+   },
    "tier": "A",
    "id": "wd:Q3955426"
   },
@@ -7399,8 +7379,11 @@
    ],
    "name": "Jura ridgeway",
    "names": [
+    "Chemin des Crêtes du Jura",
+    "Jura Crest Trail",
     "Jura ridgeway",
     "Jura-Höhenweg",
+    "Route 5",
     "chemin des Crêtes du Jura"
    ],
    "length_km": 320.0,
@@ -7408,8 +7391,15 @@
    "weak_class": false,
    "walk_word": true,
    "sources": [
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "ch-5-jura-hoehenweg",
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 47.48,
+    "lon": 8.46
+   },
    "tier": "A",
    "id": "wd:Q1713802"
   },
@@ -7597,7 +7587,8 @@
    "name": "Malerweg",
    "names": [
     "Malerweg",
-    "Malířská cesta"
+    "Malířská cesta",
+    "Painters' Way"
    ],
    "length_km": 112.0,
    "osm_rel": 114289,
@@ -7606,8 +7597,15 @@
    "walk_word": true,
    "sources": [
     "carta_canary",
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "malerweg",
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 50.98,
+    "lon": 13.92
+   },
    "tier": "A",
    "id": "wd:Q1411459"
   },
@@ -7700,8 +7698,15 @@
    "weak_class": false,
    "walk_word": true,
    "sources": [
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "mullerthal-trail",
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 49.81,
+    "lon": 6.42
+   },
    "tier": "A",
    "id": "wd:Q16764255"
   },
@@ -8174,8 +8179,15 @@
    "weak_class": false,
    "walk_word": true,
    "sources": [
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "saar-hunsrueck-steig",
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 49.47,
+    "lon": 6.39
+   },
    "tier": "A",
    "id": "wd:Q2209071"
   },
@@ -8653,6 +8665,8 @@
    "name": "ViaJacobi",
    "names": [
     "Jakobova pot v Švici",
+    "Route 4",
+    "Swiss Way of St James",
     "Via Jacobi",
     "ViaJacobi",
     "Way of Saint James in Switzerland",
@@ -8664,8 +8678,11 @@
    "weak_class": true,
    "walk_word": true,
    "sources": [
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "ch-4-viajacobi",
+   "trail_kind": "multi-day",
    "tier": "A",
    "id": "wd:Q7924357"
   },
@@ -10252,6 +10269,7 @@
    "names": [
     "Escapardenne",
     "Escapardenne Eisleck Trail",
+    "Escapardenne Eislek Trail",
     "Éislek Trail"
    ],
    "length_km": 104.0,
@@ -10259,8 +10277,15 @@
    "weak_class": false,
    "walk_word": true,
    "sources": [
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "escapardenne-eislek-trail",
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 49.85,
+    "lon": 6.1
+   },
    "tier": "A",
    "id": "wd:Q3057851"
   },
@@ -12945,8 +12970,16 @@
    "weak_class": false,
    "walk_word": true,
    "sources": [
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "lechweg",
+   "length_km": 125,
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 47.21,
+    "lon": 10.1
+   },
    "tier": "A",
    "id": "wd:Q24451203"
   },
@@ -13411,8 +13444,15 @@
    "weak_class": false,
    "walk_word": true,
    "sources": [
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "moselsteig",
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 49.47,
+    "lon": 6.39
+   },
    "tier": "A",
    "id": "wd:Q15835696"
   },
@@ -14248,6 +14288,8 @@
    ],
    "name": "Schwäbische-Alb-Nordrand-Weg",
    "names": [
+    "Albsteig",
+    "HW1",
     "Schwäbische-Alb-Nordrand-Weg"
    ],
    "length_km": 350.0,
@@ -14258,8 +14300,15 @@
    "weak_class": false,
    "walk_word": true,
    "sources": [
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "albsteig",
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 48.72,
+    "lon": 10.78
+   },
    "tier": "A",
    "id": "wd:Q2257975"
   },
@@ -14481,33 +14530,6 @@
    ],
    "tier": "A",
    "id": "wd:Q104585723"
-  },
-  {
-   "qid": "Q7559907",
-   "sitelinks": 3,
-   "lat": null,
-   "lon": null,
-   "countries": [
-    "GB"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713",
-    "Q2293148"
-   ],
-   "name": "Somerset Space Walk",
-   "names": [
-    "Somerset Space Walk"
-   ],
-   "osm_rel": 13724511,
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q7559907"
   },
   {
    "qid": "Q7592918",
@@ -15077,6 +15099,7 @@
    ],
    "name": "Trans-Swiss Trail",
    "names": [
+    "Route 2",
     "Trans Swiss Trail",
     "Trans-Swiss Trail",
     "sentier transsuisse"
@@ -15087,8 +15110,15 @@
    "weak_class": false,
    "walk_word": true,
    "sources": [
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "ch-2-trans-swiss-trail",
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 47.42,
+    "lon": 7.08
+   },
    "tier": "A",
    "id": "wd:Q2448834"
   },
@@ -15832,34 +15862,6 @@
    "id": "wd:Q8039721"
   },
   {
-   "qid": "Q12331943",
-   "sitelinks": 3,
-   "lat": 56.5496,
-   "lon": 8.30038,
-   "countries": [
-    "DK"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "planet trail Lemvig",
-   "names": [
-    "Planetstien",
-    "planet trail Lemvig",
-    "sentier planétaire Lemvig"
-   ],
-   "length_km": 7.4,
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q12331943"
-  },
-  {
    "qid": "Q12341954",
    "sitelinks": 3,
    "lat": 55.0667,
@@ -15884,6 +15886,114 @@
    ],
    "tier": "A",
    "id": "wd:Q12341954"
+  },
+  {
+   "qid": "Q1546110",
+   "sitelinks": 2,
+   "lat": null,
+   "lon": null,
+   "countries": [
+    "CH"
+   ],
+   "class_kind": "core",
+   "classes": [
+    "Q2143825"
+   ],
+   "name": "Alpenpanorama-Weg",
+   "names": [
+    "Alpenpanorama-Weg",
+    "Alpine Panorama Trail",
+    "Route 3"
+   ],
+   "length_km": 510.0,
+   "beach_word": false,
+   "weak_class": false,
+   "walk_word": true,
+   "sources": [
+    "carta_trails_reference",
+    "wikidata"
+   ],
+   "legacy_id": "ch-3-alpenpanorama-weg",
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 47.48,
+    "lon": 9.49
+   },
+   "tier": "A",
+   "id": "wd:Q1546110"
+  },
+  {
+   "qid": "Q31840248",
+   "sitelinks": 2,
+   "lat": null,
+   "lon": null,
+   "countries": [
+    "CH"
+   ],
+   "class_kind": "core",
+   "classes": [
+    "Q13405588"
+   ],
+   "name": "Alpine Passes Trail",
+   "names": [
+    "Alpenpässe-Weg",
+    "Alpine Passes Trail",
+    "Route 6",
+    "Sentiero dei passi alpini",
+    "chemin des cols alpins"
+   ],
+   "length_km": 695.0,
+   "osm_rel": 18021781,
+   "beach_word": false,
+   "weak_class": false,
+   "walk_word": true,
+   "sources": [
+    "carta_trails_reference",
+    "wikidata"
+   ],
+   "legacy_id": "ch-6-alpenpaesse-weg",
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 46.85,
+    "lon": 9.53
+   },
+   "tier": "A",
+   "id": "wd:Q31840248"
+  },
+  {
+   "qid": "Q117224439",
+   "sitelinks": 2,
+   "lat": 35.059812,
+   "lon": 32.332041,
+   "countries": [
+    "CY"
+   ],
+   "class_kind": "core",
+   "classes": [
+    "Q2143825",
+    "Q47075851"
+   ],
+   "name": "Aphrodite Nature Trail",
+   "names": [
+    "Aphrodite Nature Trail",
+    "sentier naturel d'Aphrodite"
+   ],
+   "beach_word": false,
+   "weak_class": false,
+   "walk_word": true,
+   "sources": [
+    "carta_trails_reference",
+    "wikidata"
+   ],
+   "legacy_id": "aphrodite-trail",
+   "length_km": 8,
+   "trail_kind": "day",
+   "trailhead": {
+    "lat": 35.06,
+    "lon": 32.34
+   },
+   "tier": "A",
+   "id": "wd:Q117224439"
   },
   {
    "qid": "Q28966452",
@@ -16112,8 +16222,16 @@
    "walk_word": true,
    "sources": [
     "carta_canary",
+    "carta_trails_reference",
     "wikidata"
    ],
+   "legacy_id": "goldsteig",
+   "length_km": 660,
+   "trail_kind": "multi-day",
+   "trailhead": {
+    "lat": 50.0,
+    "lon": 12.08
+   },
    "tier": "A",
    "id": "wd:Q1536127"
   },
@@ -16364,33 +16482,6 @@
    "tier": "A"
   },
   {
-   "id": "ref:albsteig",
-   "qid": null,
-   "legacy_id": "albsteig",
-   "name": "Albsteig",
-   "names": [
-    "Albsteig",
-    "HW1",
-    "Schwäbische-Alb-Nordrand-Weg"
-   ],
-   "countries": [
-    "DE"
-   ],
-   "length_km": 365,
-   "trail_kind": "multi-day",
-   "lat": 48.72,
-   "lon": 10.78,
-   "trailhead": {
-    "lat": 48.72,
-    "lon": 10.78
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
    "id": "wd:Q204658",
    "qid": "Q204658",
    "legacy_id": "aletsch-panoramaweg",
@@ -16414,60 +16505,6 @@
    "tier": "A"
   },
   {
-   "id": "ref:ch-3-alpenpanorama-weg",
-   "qid": null,
-   "legacy_id": "ch-3-alpenpanorama-weg",
-   "name": "Alpine Panorama Trail",
-   "names": [
-    "Alpenpanorama-Weg",
-    "Alpine Panorama Trail",
-    "Route 3"
-   ],
-   "countries": [
-    "CH"
-   ],
-   "length_km": 510,
-   "trail_kind": "multi-day",
-   "lat": 47.48,
-   "lon": 9.49,
-   "trailhead": {
-    "lat": 47.48,
-    "lon": 9.49
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
-   "id": "ref:ch-6-alpenpaesse-weg",
-   "qid": null,
-   "legacy_id": "ch-6-alpenpaesse-weg",
-   "name": "Alpine Passes Trail",
-   "names": [
-    "Alpenpässe-Weg",
-    "Alpine Passes Trail",
-    "Route 6"
-   ],
-   "countries": [
-    "CH"
-   ],
-   "length_km": 600,
-   "trail_kind": "multi-day",
-   "lat": 46.85,
-   "lon": 9.53,
-   "trailhead": {
-    "lat": 46.85,
-    "lon": 9.53
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
    "id": "wd:Q2293087",
    "qid": "Q2293087",
    "legacy_id": "aonach-eagach",
@@ -16483,31 +16520,6 @@
    "lat": null,
    "lon": null,
    "trailhead": null,
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
-   "id": "ref:aphrodite-trail",
-   "qid": null,
-   "legacy_id": "aphrodite-trail",
-   "name": "Aphrodite Nature Trail",
-   "names": [
-    "Aphrodite Nature Trail"
-   ],
-   "countries": [
-    "CY"
-   ],
-   "length_km": 8,
-   "trail_kind": "day",
-   "lat": 35.06,
-   "lon": 32.34,
-   "trailhead": {
-    "lat": 35.06,
-    "lon": 32.34
-   },
    "sitelinks": null,
    "sources": [
     "carta_trails_reference"
@@ -17129,33 +17141,6 @@
    "tier": "A"
   },
   {
-   "id": "ref:escapardenne-eislek-trail",
-   "qid": null,
-   "legacy_id": "escapardenne-eislek-trail",
-   "name": "Escapardenne Eislek Trail",
-   "names": [
-    "Escapardenne",
-    "Escapardenne Eislek Trail"
-   ],
-   "countries": [
-    "BE",
-    "LU"
-   ],
-   "length_km": 106,
-   "trail_kind": "multi-day",
-   "lat": 49.85,
-   "lon": 6.1,
-   "trailhead": {
-    "lat": 49.85,
-    "lon": 6.1
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
    "id": "ref:escapardenne-lee-trail",
    "qid": null,
    "legacy_id": "escapardenne-lee-trail",
@@ -17504,31 +17489,6 @@
    "tier": "A"
   },
   {
-   "id": "ref:goldsteig",
-   "qid": null,
-   "legacy_id": "goldsteig",
-   "name": "Goldsteig",
-   "names": [
-    "Goldsteig"
-   ],
-   "countries": [
-    "DE"
-   ],
-   "length_km": 660,
-   "trail_kind": "multi-day",
-   "lat": 50.0,
-   "lon": 12.08,
-   "trailhead": {
-    "lat": 50.0,
-    "lon": 12.08
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
    "id": "wd:Q6671861",
    "qid": "Q6671861",
    "legacy_id": "grand-canal-way",
@@ -17748,34 +17708,6 @@
    "trailhead": {
     "lat": 35.24,
     "lon": 24.17
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
-   "id": "ref:ch-5-jura-hoehenweg",
-   "qid": null,
-   "legacy_id": "ch-5-jura-hoehenweg",
-   "name": "Jura Crest Trail",
-   "names": [
-    "Chemin des Crêtes du Jura",
-    "Jura Crest Trail",
-    "Jura-Höhenweg",
-    "Route 5"
-   ],
-   "countries": [
-    "CH"
-   ],
-   "length_km": 310,
-   "trail_kind": "multi-day",
-   "lat": 47.48,
-   "lon": 8.46,
-   "trailhead": {
-    "lat": 47.48,
-    "lon": 8.46
    },
    "sitelinks": null,
    "sources": [
@@ -18026,32 +17958,6 @@
    "tier": "A"
   },
   {
-   "id": "ref:lechweg",
-   "qid": null,
-   "legacy_id": "lechweg",
-   "name": "Lechweg",
-   "names": [
-    "Lechweg"
-   ],
-   "countries": [
-    "AT",
-    "DE"
-   ],
-   "length_km": 125,
-   "trail_kind": "multi-day",
-   "lat": 47.21,
-   "lon": 10.1,
-   "trailhead": {
-    "lat": 47.21,
-    "lon": 10.1
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
    "id": "wd:Q525366",
    "qid": "Q525366",
    "legacy_id": "levada-caldeirao-verde",
@@ -18092,32 +17998,6 @@
    "trailhead": {
     "lat": 50.62,
     "lon": -2.25
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
-   "id": "ref:malerweg",
-   "qid": null,
-   "legacy_id": "malerweg",
-   "name": "Malerweg",
-   "names": [
-    "Malerweg",
-    "Painters' Way"
-   ],
-   "countries": [
-    "DE"
-   ],
-   "length_km": 116,
-   "trail_kind": "multi-day",
-   "lat": 50.98,
-   "lon": 13.92,
-   "trailhead": {
-    "lat": 50.98,
-    "lon": 13.92
    },
    "sitelinks": null,
    "sources": [
@@ -18304,31 +18184,6 @@
    "tier": "A"
   },
   {
-   "id": "ref:moselsteig",
-   "qid": null,
-   "legacy_id": "moselsteig",
-   "name": "Moselsteig",
-   "names": [
-    "Moselsteig"
-   ],
-   "countries": [
-    "DE"
-   ],
-   "length_km": 365,
-   "trail_kind": "multi-day",
-   "lat": 49.47,
-   "lon": 6.39,
-   "trailhead": {
-    "lat": 49.47,
-    "lon": 6.39
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
    "id": "wd:Q80344",
    "qid": "Q80344",
    "legacy_id": "mount-olympus-prionia",
@@ -18345,32 +18200,6 @@
    "lat": null,
    "lon": null,
    "trailhead": null,
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
-   "id": "ref:mullerthal-trail",
-   "qid": null,
-   "legacy_id": "mullerthal-trail",
-   "name": "Mullerthal Trail",
-   "names": [
-    "Mullerthal Trail",
-    "Mëllerdall Trail"
-   ],
-   "countries": [
-    "LU"
-   ],
-   "length_km": 112,
-   "trail_kind": "multi-day",
-   "lat": 49.81,
-   "lon": 6.42,
-   "trailhead": {
-    "lat": 49.81,
-    "lon": 6.42
-   },
    "sitelinks": null,
    "sources": [
     "carta_trails_reference"
@@ -18519,32 +18348,6 @@
    "trailhead": {
     "lat": 47.47,
     "lon": 11.12
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
-   "id": "ref:sentiero-degli-dei",
-   "qid": null,
-   "legacy_id": "sentiero-degli-dei",
-   "name": "Path of the Gods (Amalfi Coast)",
-   "names": [
-    "Path of the Gods (Amalfi Coast)",
-    "Sentiero degli Dei"
-   ],
-   "countries": [
-    "IT"
-   ],
-   "length_km": 8,
-   "trail_kind": "day",
-   "lat": 40.63,
-   "lon": 14.55,
-   "trailhead": {
-    "lat": 40.63,
-    "lon": 14.55
    },
    "sitelinks": null,
    "sources": [
@@ -18940,31 +18743,6 @@
    "trailhead": {
     "lat": 69.05,
     "lon": 20.8
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
-   "id": "ref:saar-hunsrueck-steig",
-   "qid": null,
-   "legacy_id": "saar-hunsrueck-steig",
-   "name": "Saar-Hunsrück-Steig",
-   "names": [
-    "Saar-Hunsrück-Steig"
-   ],
-   "countries": [
-    "DE"
-   ],
-   "length_km": 410,
-   "trail_kind": "multi-day",
-   "lat": 49.47,
-   "lon": 6.39,
-   "trailhead": {
-    "lat": 49.47,
-    "lon": 6.39
    },
    "sitelinks": null,
    "sources": [
@@ -19476,32 +19254,6 @@
    "tier": "A"
   },
   {
-   "id": "ref:ch-2-trans-swiss-trail",
-   "qid": null,
-   "legacy_id": "ch-2-trans-swiss-trail",
-   "name": "Trans Swiss Trail",
-   "names": [
-    "Route 2",
-    "Trans Swiss Trail"
-   ],
-   "countries": [
-    "CH"
-   ],
-   "length_km": 490,
-   "trail_kind": "multi-day",
-   "lat": 47.42,
-   "lon": 7.08,
-   "trailhead": {
-    "lat": 47.42,
-    "lon": 7.08
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
    "id": "wd:Q1257207",
    "qid": "Q1257207",
    "legacy_id": "tre-cime-di-lavaredo-loop",
@@ -19653,33 +19405,6 @@
    "tier": "A"
   },
   {
-   "id": "ref:ch-1-via-alpina",
-   "qid": null,
-   "legacy_id": "ch-1-via-alpina",
-   "name": "Via Alpina (Swiss national route 1)",
-   "names": [
-    "Route 1",
-    "Via Alpina",
-    "Via Alpina (Swiss national route 1)"
-   ],
-   "countries": [
-    "CH"
-   ],
-   "length_km": 390,
-   "trail_kind": "multi-day",
-   "lat": 47.05,
-   "lon": 9.44,
-   "trailhead": {
-    "lat": 47.05,
-    "lon": 9.44
-   },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
    "id": "ref:ch-7-viagottardo",
    "qid": null,
    "legacy_id": "ch-7-viagottardo",
@@ -19699,30 +19424,6 @@
     "lat": 47.56,
     "lon": 7.59
    },
-   "sitelinks": null,
-   "sources": [
-    "carta_trails_reference"
-   ],
-   "tier": "A"
-  },
-  {
-   "id": "ref:ch-4-viajacobi",
-   "qid": null,
-   "legacy_id": "ch-4-viajacobi",
-   "name": "ViaJacobi",
-   "names": [
-    "Route 4",
-    "Swiss Way of St James",
-    "ViaJacobi"
-   ],
-   "countries": [
-    "CH"
-   ],
-   "length_km": 580,
-   "trail_kind": "multi-day",
-   "lat": null,
-   "lon": null,
-   "trailhead": null,
    "sitelinks": null,
    "sources": [
     "carta_trails_reference"
@@ -21351,62 +21052,6 @@
    "id": "wd:Q104093912"
   },
   {
-   "qid": "Q1546110",
-   "sitelinks": 2,
-   "lat": null,
-   "lon": null,
-   "countries": [
-    "CH"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q2143825"
-   ],
-   "name": "Alpenpanorama-Weg",
-   "names": [
-    "Alpenpanorama-Weg"
-   ],
-   "length_km": 510.0,
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q1546110"
-  },
-  {
-   "qid": "Q31840248",
-   "sitelinks": 2,
-   "lat": null,
-   "lon": null,
-   "countries": [
-    "CH"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q13405588"
-   ],
-   "name": "Alpine Passes Trail",
-   "names": [
-    "Alpenpässe-Weg",
-    "Alpine Passes Trail",
-    "Sentiero dei passi alpini",
-    "chemin des cols alpins"
-   ],
-   "length_km": 695.0,
-   "osm_rel": 18021781,
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q31840248"
-  },
-  {
    "qid": "Q3613101",
    "sitelinks": 2,
    "lat": 46.499284,
@@ -21675,33 +21320,6 @@
    ],
    "tier": "B",
    "id": "wd:Q22981975"
-  },
-  {
-   "qid": "Q117224439",
-   "sitelinks": 2,
-   "lat": 35.059812,
-   "lon": 32.332041,
-   "countries": [
-    "CY"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q2143825",
-    "Q47075851"
-   ],
-   "name": "Aphrodite Nature Trail",
-   "names": [
-    "Aphrodite Nature Trail",
-    "sentier naturel d'Aphrodite"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q117224439"
   },
   {
    "qid": "Q11912624",
@@ -26233,35 +25851,6 @@
    "id": "wd:Q126163341"
   },
   {
-   "qid": "Q112872455",
-   "sitelinks": 2,
-   "lat": 49.022573,
-   "lon": 17.644429,
-   "countries": [
-    "CZ"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Educational trail Planetární stezka, Uherský Brod",
-   "names": [
-    "Educational trail Planetární stezka, Uherský Brod",
-    "Náučný chdník Planetární stezka, Uherský Brod",
-    "Planetární stezka v Uherském Brodě",
-    "sentier pédagogique Planetární stezka, Uherský Brod",
-    "Ścieżka edukacyjna Planetární stezka, Uherský Brod"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q112872455"
-  },
-  {
    "qid": "Q30242322",
    "sitelinks": 2,
    "lat": 49.70157,
@@ -30453,32 +30042,6 @@
    ],
    "tier": "B",
    "id": "wd:Q12018818"
-  },
-  {
-   "qid": "Q2098159",
-   "sitelinks": 2,
-   "lat": null,
-   "lon": null,
-   "countries": [
-    "DE"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Hagen solar system model",
-   "names": [
-    "Hagen solar system model",
-    "Planetenmodell Hagen"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q2098159"
   },
   {
    "qid": "Q1519731",
@@ -37120,33 +36683,6 @@
    "id": "wd:Q1795890"
   },
   {
-   "qid": "Q111462389",
-   "sitelinks": 2,
-   "lat": null,
-   "lon": null,
-   "countries": [
-    "SE"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "La promenade spatiale",
-   "names": [
-    "La promenade spatiale",
-    "Rymdpromenaden"
-   ],
-   "osm_rel": 21162579,
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q111462389"
-  },
-  {
    "qid": "Q6469396",
    "sitelinks": 2,
    "lat": 63.456667,
@@ -41792,185 +41328,6 @@
    "id": "wd:Q2097921"
   },
   {
-   "qid": "Q135003916",
-   "sitelinks": 2,
-   "lat": 49.478129,
-   "lon": 8.490815,
-   "countries": [
-    "DE"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Planetenallee Mannheim",
-   "names": [
-    "Planetenallee Mannheim"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q135003916"
-  },
-  {
-   "qid": "Q18611240",
-   "sitelinks": 2,
-   "lat": 50.719089,
-   "lon": 7.128214,
-   "countries": [
-    "DE"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Planetenlehrpfad Bonn",
-   "names": [
-    "Planetenlehrpfad Bonn"
-   ],
-   "osm_rel": 5128939,
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q18611240"
-  },
-  {
-   "qid": "Q135004941",
-   "sitelinks": 2,
-   "lat": null,
-   "lon": null,
-   "countries": [
-    "DE"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Planetenwanderweg Bad Nauheim",
-   "names": [
-    "Planetenwanderweg Bad Nauheim"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q135004941"
-  },
-  {
-   "qid": "Q56298067",
-   "sitelinks": 2,
-   "lat": 51.753853,
-   "lon": 12.512422,
-   "countries": [
-    "DE"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Planetenweg",
-   "names": [
-    "Planetenweg"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q56298067"
-  },
-  {
-   "qid": "Q133824698",
-   "sitelinks": 2,
-   "lat": 46.802485,
-   "lon": 9.237761,
-   "countries": [
-    "CH"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Planetenweg Falera",
-   "names": [
-    "Planetenweg Falera"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q133824698"
-  },
-  {
-   "qid": "Q2098179",
-   "sitelinks": 2,
-   "lat": 52.2836,
-   "lon": 8.9092,
-   "countries": [
-    "DE"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Planetenweg Minden",
-   "names": [
-    "Planetenweg (Minden)",
-    "Planetenweg Minden"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q2098179"
-  },
-  {
-   "qid": "Q1474114",
-   "sitelinks": 2,
-   "lat": 47.3518,
-   "lon": 8.48871,
-   "countries": [
-    "CH"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Planetenweg Uetliberg-Felsenegg",
-   "names": [
-    "Planetenweg Uetliberg-Felsenegg",
-    "Planetenweg Uetliberg–Felsenegg",
-    "Sentier des planètes Uetliberg–Felsenegg"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q1474114"
-  },
-  {
    "qid": "Q106798364",
    "sitelinks": 2,
    "lat": 48.913333,
@@ -41995,32 +41352,6 @@
    ],
    "tier": "B",
    "id": "wd:Q106798364"
-  },
-  {
-   "qid": "Q113145798",
-   "sitelinks": 2,
-   "lat": 49.937953,
-   "lon": 17.899922,
-   "countries": [
-    "CZ"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Planetární stezka v Opavě",
-   "names": [
-    "Planetary trail in Opava",
-    "Planetární stezka v Opavě"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q113145798"
   },
   {
    "qid": "Q117353079",
@@ -46031,31 +45362,6 @@
    ],
    "tier": "B",
    "id": "wd:Q2298986"
-  },
-  {
-   "qid": "Q10673370",
-   "sitelinks": 2,
-   "lat": 59.268417,
-   "lon": 15.208611,
-   "countries": [
-    "SE"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "Solsystemet i Örebroformat",
-   "names": [
-    "Solsystemet i Örebroformat"
-   ],
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q10673370"
   },
   {
    "qid": "Q97650045",
@@ -52790,36 +52096,6 @@
    ],
    "tier": "B",
    "id": "wd:Q20058003"
-  },
-  {
-   "qid": "Q12331942",
-   "sitelinks": 2,
-   "lat": 57.088636,
-   "lon": 9.264136,
-   "countries": [
-    "DK"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q174713"
-   ],
-   "name": "planet trail Fjerritslev",
-   "names": [
-    "Planetenweg Fjerritslev",
-    "Planetstien Fjerritslev",
-    "planet trail Fjerritslev",
-    "sentier planétaire Fjerritslev"
-   ],
-   "length_km": 6.0,
-   "osm_rel": 11195378,
-   "beach_word": false,
-   "weak_class": false,
-   "walk_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q12331942"
   },
   {
    "qid": "Q106803059",

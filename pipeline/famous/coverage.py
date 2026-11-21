@@ -18,9 +18,12 @@ Reasons for a miss (fixed list, the next step follows from each):
 - no_osm_relation (trails): OSM has no route for it; closable by a routed
   seed (pipeline/trails/seed_routes.py) or a derived route;
 - osm_relation_not_published (trails): OSM has it, curation or a gate did
-  not ship it; `--db` on the box names the gate;
-- not_in_wire: the kind's pipeline never published it; the stage that
-  dropped it is a D7/D23 follow-up (export drop logs);
+  not ship it (curate's dry run names the gate);
+- not_in_catalogue / not_enriched / dropped_at_export (beaches, lakes,
+  mountains, where the kind's stored stages are on this machine, i.e. on the
+  box): never harvested; harvested and cut by the shortlist before
+  enrichment; enriched and then dropped by an export gate;
+- not_in_wire: the same, where the stages are not here to tell;
 - unlocated: no coordinate and no id to look it up by."""
 
 import argparse
@@ -124,6 +127,47 @@ def load_refs(kind, ref_dir=REF_DIR):
     return doc
 
 
+STAGE_DIR = ROOT / "cache"
+STAGE_KEY = {"lakes": "lakes", "mountains": "peaks", "beaches": "beaches"}
+_STAGES = {}
+
+
+def stage_ids(kind, stage, cc):
+    """QIDs in one of a kind's stored stages for a country (raw: harvested,
+    rich: enriched), or None when that file is not on this machine (the
+    stages live on the box)."""
+    key = (kind, stage, cc)
+    if key not in _STAGES:
+        path = STAGE_DIR / kind / f"{stage}_{cc}.json"
+        try:
+            d = json.loads(path.read_text(encoding="utf-8"))
+            _STAGES[key] = {r.get("wd") for r in d.get(STAGE_KEY[kind]) or []
+                            if isinstance(r, dict) and r.get("wd")}
+        except (OSError, ValueError):
+            _STAGES[key] = None
+    return _STAGES[key]
+
+
+def stage_reason(kind, ref):
+    """Where a missing beach, lake or mountain was lost, from the kind's own
+    stages: not_in_catalogue (never harvested), not_enriched (harvested, cut
+    before enrichment by the shortlist), dropped_at_export (enriched, then a
+    score, photo, dedupe or quota gate). None when no stage file is here."""
+    if kind not in STAGE_KEY or not ref.get("qid"):
+        return None
+    seen_any = False
+    for cc in ref.get("countries") or []:
+        raw, rich = stage_ids(kind, "raw", cc), stage_ids(kind, "rich", cc)
+        if raw is None and rich is None:
+            continue
+        seen_any = True
+        if rich and ref["qid"] in rich:
+            return "dropped_at_export"
+        if raw and ref["qid"] in raw:
+            return "not_enriched"
+    return "not_in_catalogue" if seen_any else None
+
+
 def reason_for(kind, ref, rows, rels):
     km = ref.get("length_km")
     if kind == "trails" and km:
@@ -143,7 +187,7 @@ def reason_for(kind, ref, rows, rels):
     if kind == "trails":
         return ("osm_relation_not_published" if ref.get("osm_rels")
                 else "no_osm_relation")
-    return "not_in_wire"
+    return stage_reason(kind, ref) or "not_in_wire"
 
 
 def trails_hits(refs, wire):
@@ -291,7 +335,22 @@ def run_kind(kind, ref_dir=REF_DIR, wire=WIRE, rels=None, sample=0,
     return res
 
 
-HANDOFF_REASONS = ("not_in_wire",)
+HANDOFF_REASONS = ("not_in_wire", "not_in_catalogue", "not_enriched",
+                   "dropped_at_export")
+
+
+def seed_sane(kind, ref):
+    """A famous item fit to seed: a mountain stands above the sea and its
+    prominence is not more than its height (Ferdinandea, a submarine
+    volcano at -8 m, came through the class query)."""
+    if kind != "mountains":
+        return True
+    ele, prom = ref.get("elev_m"), ref.get("prom_m")
+    if ele is not None and ele <= 0:
+        return False
+    if ele is not None and prom is not None and prom > ele:
+        return False
+    return True
 
 
 def handoff(kind, res, path=None):
@@ -299,14 +358,29 @@ def handoff(kind, res, path=None):
     A) items the wire lacks, as seed entries pipeline/mountains/seed_peaks.py
     and pipeline/lakes/seed_lakes.py read (keyed by Wikidata id, why
     "famous"). Only plain misses: a matcher_miss is reviewed first, and an
-    item outside the covered countries stays out."""
-    path = path or REF_DIR / f"seed_{kind}.json"
-    out = []
+    item outside the covered countries stays out.
+
+    Idempotent: an entry from the last file stays while its item is still a
+    famous (tier A) item, whether the wire has it now or not. Without that,
+    a seeded lake would be found "in" on the next run, leave the file, and
+    drop off the wire the run after."""
+    path = Path(path or REF_DIR / f"seed_{kind}.json")
+    try:
+        before = json.loads(path.read_text(encoding="utf-8")).get("rows", [])
+    except (OSError, ValueError):
+        before = []
+    tier_a = {r["qid"]: r for r in res["_refs"].values()
+              if r.get("tier") == "A" and r.get("qid")}
+    out = {r["wd"]: r for r in before if r.get("wd") in tier_a
+           and seed_sane(kind, tier_a[r["wd"]])}
     for row in res["rows"]:
-        if row["tier"] != "A" or row["status"] != "missing" or                 row.get("reason") not in HANDOFF_REASONS:
+        if (row["tier"] != "A" or row["status"] != "missing"
+                or row.get("reason") not in HANDOFF_REASONS):
             continue
         ref = res["_refs"][row["id"]]
-        if not ref.get("qid") or ref.get("lat") is None:
+        if not ref.get("qid") or ref.get("lat") is None or ref["qid"] in out:
+            continue
+        if not seed_sane(kind, ref):
             continue
         ccs = [c for c in ref.get("countries") or [] if c in res["_covered"]]
         if not ccs:
@@ -317,19 +391,19 @@ def handoff(kind, res, path=None):
                      "lift": ""}
         else:
             extra = {"kind": "lake"}
-        out.append({"n": ref["name"], "cc": ccs[0], **extra,
-                    "lat": round(ref["lat"], 4),
-                    "lon": round(ref["lon"], 4), "wd": ref["qid"],
-                    "why": "famous",
-                    "note": f"famous coverage: {ref.get('sitelinks')} "
-                            f"Wikipedia languages, missing from the wire"})
-    out.sort(key=lambda r: (r["cc"], r["n"]))
-    Path(path).write_text(json.dumps(
+        out[ref["qid"]] = {
+            "n": ref["name"], "cc": ccs[0], **extra,
+            "lat": round(ref["lat"], 4), "lon": round(ref["lon"], 4),
+            "wd": ref["qid"], "why": "famous",
+            "note": f"famous coverage: {ref.get('sitelinks')} "
+                    f"Wikipedia languages, missing from the wire"}
+    rows = sorted(out.values(), key=lambda r: (r["cc"], r["n"]))
+    path.write_text(json.dumps(
         {"schema": "carta-famous-seed/1", "kind": kind,
          "generated_by": "pipeline/famous/coverage.py --handoff",
-         "rows": out}, ensure_ascii=False, indent=1) + "\n",
+         "rows": rows}, ensure_ascii=False, indent=1) + "\n",
         encoding="utf-8")
-    return len(out)
+    return len(rows)
 
 
 def write_md(report, path):
@@ -373,16 +447,20 @@ def write_md(report, path):
 
 
 def main(argv=None):
+    global STAGE_DIR
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--kind", default="all", choices=["all", *KINDS])
     ap.add_argument("--refs", default=str(REF_DIR))
     ap.add_argument("--wire", default=str(WIRE))
     ap.add_argument("--out", default=str(OUT_DIR))
     ap.add_argument("--sample", type=int, default=0)
+    ap.add_argument("--stages", default=str(STAGE_DIR),
+                    help="folder of the beaches, lakes and mountains stages")
     ap.add_argument("--handoff", action="store_true",
                     help="write data/famous/seed_{mountains,lakes}.json")
     a = ap.parse_args(argv)
     kinds = KINDS if a.kind == "all" else [a.kind]
+    STAGE_DIR = Path(a.stages)
     rels = registry_rels()
     report = {"schema": "carta-famous-coverage/1",
               "generated_at": datetime.now(timezone.utc).strftime(

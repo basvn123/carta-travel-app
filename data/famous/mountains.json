@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "mountains",
- "generated_at": "2026-11-20T21:46:37Z",
+ "generated_at": "2026-11-20T23:38:24Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -78,8 +78,8 @@
  ],
  "fell_back": [],
  "counts": {
-  "A": 361,
-  "B": 891
+  "A": 358,
+  "B": 887
  },
  "rows": [
   {
@@ -310,6 +310,7 @@
    "prom_m": 2355.0,
    "beach_word": false,
    "sources": [
+    "carta_canary",
     "country_highpoint",
     "wikidata"
    ],
@@ -2163,7 +2164,6 @@
    "prom_m": 1952.0,
    "beach_word": false,
    "sources": [
-    "carta_canary",
     "country_highpoint",
     "wikidata"
    ],
@@ -2724,6 +2724,7 @@
    "prom_m": 934.0,
    "beach_word": false,
    "sources": [
+    "carta_canary",
     "wikidata"
    ],
    "tier": "A",
@@ -3919,36 +3920,6 @@
    ],
    "tier": "A",
    "id": "wd:Q15289"
-  },
-  {
-   "qid": "Q833975",
-   "sitelinks": 32,
-   "lat": 37.163611,
-   "lon": 12.718611,
-   "countries": [
-    "IT"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q674775"
-   ],
-   "name": "Ferdinandea",
-   "names": [
-    "Ferdinandea",
-    "Ferdinandea Adası",
-    "Ferdinandea-sziget",
-    "Isola Ferdinandea",
-    "Φερδινάνδεα",
-    "Фердинандеа",
-    "Фердинандея"
-   ],
-   "elev_m": -8.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q833975"
   },
   {
    "qid": "Q15126",
@@ -7944,36 +7915,6 @@
    "id": "wd:Q1813560"
   },
   {
-   "qid": "Q3057897",
-   "sitelinks": 14,
-   "lat": 55.525,
-   "lon": -5.072222,
-   "countries": [
-    "GB"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q8502"
-   ],
-   "name": "Holy Island",
-   "names": [
-    "Eilean MoLaise",
-    "Holy Island",
-    "Holy Island (Arran)",
-    "Holy Isle",
-    "Holy Isle i Firth of Clyde",
-    "Holy Isle, Firth of Clyde"
-   ],
-   "elev_m": 1030.0,
-   "prom_m": 1030.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q3057897"
-  },
-  {
    "qid": "Q367431",
    "sitelinks": 14,
    "lat": 45.528333,
@@ -8780,31 +8721,6 @@
    ],
    "tier": "A",
    "id": "wd:Q380419"
-  },
-  {
-   "qid": "Q14269787",
-   "sitelinks": 12,
-   "lat": 47.5924,
-   "lon": 12.3245,
-   "countries": [
-    "AT"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q8502"
-   ],
-   "name": "Feldberg",
-   "names": [
-    "Feldberg"
-   ],
-   "elev_m": 1813.0,
-   "beach_word": false,
-   "sources": [
-    "carta_canary",
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q14269787"
   },
   {
    "qid": "Q2223986",
@@ -13999,36 +13915,6 @@
    "id": "wd:Q1547402"
   },
   {
-   "qid": "Q1513696",
-   "sitelinks": 23,
-   "lat": 36.516667,
-   "lon": 25.491667,
-   "countries": [
-    "GR"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q1330974",
-    "Q503269",
-    "Q674775"
-   ],
-   "name": "Kolumbo",
-   "names": [
-    "Kolumbo",
-    "Kolumbos",
-    "Κολούμπο",
-    "Колумбо",
-    "Колумбо (вулкан)"
-   ],
-   "elev_m": -10.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q1513696"
-  },
-  {
    "qid": "Q1397501",
    "sitelinks": 23,
    "lat": 50.2075,
@@ -14617,32 +14503,6 @@
    ],
    "tier": "B",
    "id": "wd:Q602538"
-  },
-  {
-   "qid": "Q1715041",
-   "sitelinks": 22,
-   "lat": 63.292685,
-   "lon": -20.634071,
-   "countries": [
-    "IS"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q503269"
-   ],
-   "name": "Jólnir",
-   "names": [
-    "Jolnir",
-    "Jólnir",
-    "Јолнир"
-   ],
-   "elev_m": -41.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q1715041"
   },
   {
    "qid": "Q1569913",
@@ -16969,33 +16829,6 @@
    ],
    "tier": "B",
    "id": "wd:Q1573557"
-  },
-  {
-   "qid": "Q1572574",
-   "sitelinks": 20,
-   "lat": 39.284,
-   "lon": 14.399,
-   "countries": [
-    "IT"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q674775"
-   ],
-   "name": "Marsili",
-   "names": [
-    "Marsili",
-    "Marsili Seamount",
-    "Марсили",
-    "Марсилі"
-   ],
-   "elev_m": -779.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q1572574"
   },
   {
    "qid": "Q674459",
@@ -26988,40 +26821,6 @@
    ],
    "tier": "B",
    "id": "wd:Q30533"
-  },
-  {
-   "qid": "Q1339167",
-   "sitelinks": 15,
-   "lat": 37.163611,
-   "lon": 12.718611,
-   "countries": [
-    "IT"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q503269",
-    "Q8072"
-   ],
-   "name": "Empedocles",
-   "names": [
-    "Empedocle",
-    "Empedocles",
-    "Empedokles (Vulkan)",
-    "Empèdocles",
-    "Empédocle",
-    "Empédocles (vulcão)",
-    "Enpedokles",
-    "Volcán Empédocles",
-    "Vulkanen Empedokles",
-    "Εμπεδοκλής"
-   ],
-   "elev_m": -8.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q1339167"
   },
   {
    "qid": "Q1367704",

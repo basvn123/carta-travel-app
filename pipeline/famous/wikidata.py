@@ -104,7 +104,8 @@ KINDS = {
         # sculpture trail, calvary: under hiking trail and pilgrims' way in
         # Wikidata, but a sculpture park or the Stations of the Cross on a
         # town hill is not a walk a traveller looks for.
-        "exclude": ["Q2293148", "Q231685"],
+        # Q174713 (scale model) brought the Sweden Solar System in.
+        "exclude": ["Q2293148", "Q231685", "Q174713"],
         "extra_classes": [],
         "fetch": 2,
         "props": {"P2043": "length_km", "P1427": "start", "P1444": "end",
@@ -177,6 +178,9 @@ def tier_of(kind, row):
     if kind == "lakes":
         return "A" if sl >= 20 else "B" if sl >= 12 else None
     if kind == "mountains":
+        # Ferdinandea, a submarine volcano at -8 m, came in as a volcano.
+        if row.get("elev_m") is not None and row["elev_m"] <= 0:
+            return None
         prom = row.get("prom_m") or 0
         if row.get("highpoint") or sl >= 30 or (prom >= 1000 and sl >= 8):
             return "A"

@@ -1,47 +1,47 @@
 {
  "schema": "carta-famous-coverage/1",
- "generated_at": "2026-11-20T22:12:03Z",
+ "generated_at": "2026-11-20T23:56:01Z",
  "kinds": {
   "trails": {
    "kind": "trails",
-   "reference_at": "2026-11-20T21:08:20Z",
+   "reference_at": "2026-11-20T23:20:13Z",
    "wire_rows": 0,
    "summary": {
     "A": {
-     "n": 679,
-     "in": 217,
+     "n": 663,
+     "in": 209,
      "outside_countries": 0,
-     "share": 0.3196,
+     "share": 0.3152,
      "by_status": {
       "in_as_stages": 10,
-      "in_as_piece": 98,
-      "missing": 364,
-      "in": 206,
+      "in_as_piece": 93,
+      "missing": 361,
+      "in": 198,
       "in_listed": 1
      },
      "missing_by_reason": {
       "out_of_scope:over_400km": 31,
-      "osm_relation_not_published": 172,
-      "no_osm_relation": 156,
+      "no_osm_relation": 155,
+      "osm_relation_not_published": 170,
       "out_of_scope:under_2km": 2,
       "unlocated": 3
      }
     },
     "B": {
-     "n": 1242,
-     "in": 252,
+     "n": 1226,
+     "in": 249,
      "outside_countries": 0,
-     "share": 0.2029,
+     "share": 0.2031,
      "by_status": {
-      "missing": 947,
-      "in": 245,
-      "in_as_piece": 43,
+      "missing": 936,
+      "in": 242,
+      "in_as_piece": 41,
       "in_as_stages": 5,
       "in_listed": 2
      },
      "missing_by_reason": {
-      "osm_relation_not_published": 423,
-      "no_osm_relation": 481,
+      "osm_relation_not_published": 420,
+      "no_osm_relation": 473,
       "out_of_scope:under_2km": 19,
       "out_of_scope:over_400km": 24
      }
@@ -146,20 +146,6 @@
      "status": "missing",
      "reason": "out_of_scope:over_400km",
      "registry_reason": "failed_continuity"
-    },
-    {
-     "id": "wd:Q2094828",
-     "name": "Sweden Solar System",
-     "tier": "A",
-     "countries": [
-      "SE"
-     ],
-     "sitelinks": 23,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q836028",
@@ -623,7 +609,7 @@
       "carta_trails_reference",
       "wikidata"
      ],
-     "status": "in_as_piece",
+     "status": "in_as_stages",
      "by": "name exact",
      "km": 0.0,
      "carta": {
@@ -3422,6 +3408,7 @@
      "sitelinks": 5,
      "sources": [
       "carta_canary",
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "in",
@@ -4321,6 +4308,7 @@
      ],
      "sitelinks": 4,
      "sources": [
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "in",
@@ -4456,6 +4444,7 @@
      "sitelinks": 4,
      "sources": [
       "carta_canary",
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "in",
@@ -4515,6 +4504,7 @@
      ],
      "sitelinks": 4,
      "sources": [
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "in_as_piece",
@@ -4819,6 +4809,7 @@
      ],
      "sitelinks": 4,
      "sources": [
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "in",
@@ -5131,6 +5122,7 @@
      ],
      "sitelinks": 4,
      "sources": [
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "in_as_piece",
@@ -6116,6 +6108,7 @@
      ],
      "sitelinks": 3,
      "sources": [
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "in_as_stages",
@@ -7717,6 +7710,7 @@
      ],
      "sitelinks": 3,
      "sources": [
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "in",
@@ -8019,6 +8013,7 @@
      ],
      "sitelinks": 3,
      "sources": [
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "missing",
@@ -8513,6 +8508,7 @@
      ],
      "sitelinks": 3,
      "sources": [
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "in",
@@ -8665,27 +8661,6 @@
      "carta": {
       "id": 188513,
       "name": "Skye Trail - shortcut Camasunary to Kilmarie",
-      "cc": "GB",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q7559907",
-     "name": "Somerset Space Walk",
-     "tier": "A",
-     "countries": [
-      "GB"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "osm id",
-     "km": 0.0,
-     "carta": {
-      "id": 188219,
-      "name": "Somerset Space Walk",
       "cc": "GB",
       "tier": "rated"
      }
@@ -9068,6 +9043,7 @@
      ],
      "sitelinks": 3,
      "sources": [
+      "carta_trails_reference",
       "wikidata"
      ],
      "status": "in_as_piece",
@@ -9535,21 +9511,6 @@
      "registry_reason": "failed_continuity"
     },
     {
-     "id": "wd:Q12331943",
-     "name": "planet trail Lemvig",
-     "tier": "A",
-     "countries": [
-      "DK"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "no_osm_relation",
-     "registry_reason": "way_only_not_derived"
-    },
-    {
      "id": "wd:Q12341954",
      "name": "Øhavsstien",
      "tier": "A",
@@ -9563,6 +9524,72 @@
      "status": "missing",
      "reason": "osm_relation_not_published",
      "registry_reason": "failed_continuity"
+    },
+    {
+     "id": "wd:Q1546110",
+     "name": "Alpenpanorama-Weg",
+     "tier": "A",
+     "countries": [
+      "CH"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "carta_trails_reference",
+      "wikidata"
+     ],
+     "status": "in_as_piece",
+     "by": "name exact",
+     "km": 0.0,
+     "carta": {
+      "id": 6263,
+      "name": "Alpenpanorama-Weg",
+      "cc": "CH",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q31840248",
+     "name": "Alpine Passes Trail",
+     "tier": "A",
+     "countries": [
+      "CH"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "carta_trails_reference",
+      "wikidata"
+     ],
+     "status": "in_as_piece",
+     "by": "name exact",
+     "km": 0.0,
+     "carta": {
+      "id": 7789,
+      "name": "14a-Sentiero dei passi alpini",
+      "cc": "CH",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q117224439",
+     "name": "Aphrodite Nature Trail",
+     "tier": "A",
+     "countries": [
+      "CY"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "carta_trails_reference",
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "osm id",
+     "km": 0.0,
+     "carta": {
+      "id": 62630,
+      "name": "Aphrodite Natural Trail",
+      "cc": "CY",
+      "tier": "rated"
+     }
     },
     {
      "id": "wd:Q28966452",
@@ -9676,9 +9703,10 @@
      "sitelinks": 2,
      "sources": [
       "carta_canary",
+      "carta_trails_reference",
       "wikidata"
      ],
-     "status": "in",
+     "status": "in_as_stages",
      "by": "name exact",
      "km": 0.0,
      "carta": {
@@ -9843,27 +9871,6 @@
      }
     },
     {
-     "id": "ref:albsteig",
-     "name": "Albsteig",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "osm id",
-     "km": 0.0,
-     "carta": {
-      "id": 214601,
-      "name": "HW 1 - Schwäbische-Alb-Nordrand-Weg",
-      "cc": "DE",
-      "tier": "rated"
-     }
-    },
-    {
      "id": "wd:Q204658",
      "name": "Aletsch Panorama Trail",
      "tier": "A",
@@ -9885,48 +9892,6 @@
      }
     },
     {
-     "id": "ref:ch-3-alpenpanorama-weg",
-     "name": "Alpine Panorama Trail",
-     "tier": "A",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in_as_piece",
-     "by": "name exact",
-     "km": 0.0,
-     "carta": {
-      "id": 6263,
-      "name": "Alpenpanorama-Weg",
-      "cc": "CH",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "ref:ch-6-alpenpaesse-weg",
-     "name": "Alpine Passes Trail",
-     "tier": "A",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in_as_piece",
-     "by": "name exact",
-     "km": 0.0,
-     "carta": {
-      "id": 7789,
-      "name": "14a-Sentiero dei passi alpini",
-      "cc": "CH",
-      "tier": "rated"
-     }
-    },
-    {
      "id": "wd:Q2293087",
      "name": "Aonach Eagach ridge",
      "tier": "A",
@@ -9939,27 +9904,6 @@
      ],
      "status": "missing",
      "reason": "no_osm_relation"
-    },
-    {
-     "id": "ref:aphrodite-trail",
-     "name": "Aphrodite Nature Trail",
-     "tier": "A",
-     "countries": [
-      "CY"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "osm id",
-     "km": 0.0,
-     "carta": {
-      "id": 62630,
-      "name": "Aphrodite Natural Trail",
-      "cc": "CY",
-      "tier": "rated"
-     }
     },
     {
      "id": "wd:Q819979",
@@ -10392,28 +10336,6 @@
      }
     },
     {
-     "id": "ref:escapardenne-eislek-trail",
-     "name": "Escapardenne Eislek Trail",
-     "tier": "A",
-     "countries": [
-      "BE",
-      "LU"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in_as_stages",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 63165,
-      "name": "Escapardenne Lee Trail",
-      "cc": "LU",
-      "tier": "rated"
-     }
-    },
-    {
      "id": "ref:escapardenne-lee-trail",
      "name": "Escapardenne Lee Trail",
      "tier": "A",
@@ -10661,27 +10583,6 @@
      }
     },
     {
-     "id": "ref:goldsteig",
-     "name": "Goldsteig",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in_as_stages",
-     "by": "name exact",
-     "km": 0.0,
-     "carta": {
-      "id": 204825,
-      "name": "Goldsteig-Südroute",
-      "cc": "DE",
-      "tier": "rated"
-     }
-    },
-    {
      "id": "wd:Q6671861",
      "name": "Grand Canal Way",
      "tier": "A",
@@ -10822,27 +10723,6 @@
       "id": 74068,
       "name": "Imbros-Trikoukia",
       "cc": "GR",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "ref:ch-5-jura-hoehenweg",
-     "name": "Jura Crest Trail",
-     "tier": "A",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "osm id",
-     "km": 0.0,
-     "carta": {
-      "id": 26,
-      "name": "Chemin des Crêtes du Jura",
-      "cc": "CH",
       "tier": "rated"
      }
     },
@@ -11023,28 +10903,6 @@
      }
     },
     {
-     "id": "ref:lechweg",
-     "name": "Lechweg",
-     "tier": "A",
-     "countries": [
-      "AT",
-      "DE"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "osm id",
-     "km": 0.0,
-     "carta": {
-      "id": 13540,
-      "name": "Lechweg",
-      "cc": "AT",
-      "tier": "rated"
-     }
-    },
-    {
      "id": "wd:Q525366",
      "name": "Levada das 25 Fontes",
      "tier": "A",
@@ -11077,27 +10935,6 @@
       "id": 186725,
       "name": "King Charles III England Coast Path: Portland to Lulworth",
       "cc": "GB",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "ref:malerweg",
-     "name": "Malerweg",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "osm id",
-     "km": 0.0,
-     "carta": {
-      "id": 102744,
-      "name": "Malerweg",
-      "cc": "DE",
       "tier": "rated"
      }
     },
@@ -11216,21 +11053,6 @@
      "registry_reason": "no_osm_data"
     },
     {
-     "id": "ref:moselsteig",
-     "name": "Moselsteig",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "missing",
-     "reason": "osm_relation_not_published",
-     "registry_reason": "failed_continuity"
-    },
-    {
      "id": "wd:Q80344",
      "name": "Mount Olympus summit trail from Prionia",
      "tier": "A",
@@ -11243,27 +11065,6 @@
      ],
      "status": "missing",
      "reason": "no_osm_relation"
-    },
-    {
-     "id": "ref:mullerthal-trail",
-     "name": "Mullerthal Trail",
-     "tier": "A",
-     "countries": [
-      "LU"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in_as_piece",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 63095,
-      "name": "Mullerthal Trail Extra Tour B",
-      "cc": "LU",
-      "tier": "rated"
-     }
     },
     {
      "id": "wd:Q209341",
@@ -11363,27 +11164,6 @@
      "status": "missing",
      "reason": "no_osm_relation",
      "registry_reason": "unresolved_seed"
-    },
-    {
-     "id": "ref:sentiero-degli-dei",
-     "name": "Path of the Gods (Amalfi Coast)",
-     "tier": "A",
-     "countries": [
-      "IT"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "near start",
-     "km": 0.0,
-     "carta": {
-      "id": 192422,
-      "name": "Sentiero degli Dei",
-      "cc": "IT",
-      "tier": "rated"
-     }
     },
     {
      "id": "wd:Q615771",
@@ -11651,27 +11431,6 @@
      ],
      "status": "missing",
      "reason": "no_osm_relation"
-    },
-    {
-     "id": "ref:saar-hunsrueck-steig",
-     "name": "Saar-Hunsrück-Steig",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "osm id",
-     "km": 0.0,
-     "carta": {
-      "id": 24669,
-      "name": "Saar-Hunsrück-Steig",
-      "cc": "DE",
-      "tier": "rated"
-     }
     },
     {
      "id": "wd:Q1128366",
@@ -12000,27 +11759,6 @@
      }
     },
     {
-     "id": "ref:ch-2-trans-swiss-trail",
-     "name": "Trans Swiss Trail",
-     "tier": "A",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in_as_piece",
-     "by": "name exact",
-     "km": 0.0,
-     "carta": {
-      "id": 8009,
-      "name": "Trans Swiss Trail",
-      "cc": "CH",
-      "tier": "rated"
-     }
-    },
-    {
      "id": "wd:Q1257207",
      "name": "Tre Cime di Lavaredo circuit",
      "tier": "A",
@@ -12126,27 +11864,6 @@
      "reason": "no_osm_relation"
     },
     {
-     "id": "ref:ch-1-via-alpina",
-     "name": "Via Alpina (Swiss national route 1)",
-     "tier": "A",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in_as_piece",
-     "by": "name exact",
-     "km": 0.0,
-     "carta": {
-      "id": 7724,
-      "name": "Via Alpina",
-      "cc": "CH",
-      "tier": "rated"
-     }
-    },
-    {
      "id": "ref:ch-7-viagottardo",
      "name": "ViaGottardo",
      "tier": "A",
@@ -12163,27 +11880,6 @@
      "carta": {
       "id": 8556,
       "name": "ViaGottardo",
-      "cc": "CH",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "ref:ch-4-viajacobi",
-     "name": "ViaJacobi",
-     "tier": "A",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in_as_piece",
-     "by": "name exact",
-     "km": 0.0,
-     "carta": {
-      "id": 6352,
-      "name": "ViaJacobi - Fribourg (Villars-sur-Glâne)–Payerne",
       "cc": "CH",
       "tier": "rated"
      }
@@ -13149,48 +12845,6 @@
      }
     },
     {
-     "id": "wd:Q1546110",
-     "name": "Alpenpanorama-Weg",
-     "tier": "B",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_as_piece",
-     "by": "name exact",
-     "km": 0.0,
-     "carta": {
-      "id": 6263,
-      "name": "Alpenpanorama-Weg",
-      "cc": "CH",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q31840248",
-     "name": "Alpine Passes Trail",
-     "tier": "B",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_as_piece",
-     "by": "name exact",
-     "km": 0.0,
-     "carta": {
-      "id": 7789,
-      "name": "14a-Sentiero dei passi alpini",
-      "cc": "CH",
-      "tier": "rated"
-     }
-    },
-    {
      "id": "wd:Q3613101",
      "name": "Alta Via 5",
      "tier": "B",
@@ -13374,27 +13028,6 @@
      ],
      "status": "missing",
      "reason": "no_osm_relation"
-    },
-    {
-     "id": "wd:Q117224439",
-     "name": "Aphrodite Nature Trail",
-     "tier": "B",
-     "countries": [
-      "CY"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "osm id",
-     "km": 0.0,
-     "carta": {
-      "id": 62630,
-      "name": "Aphrodite Natural Trail",
-      "cc": "CY",
-      "tier": "rated"
-     }
     },
     {
      "id": "wd:Q11912624",
@@ -16133,20 +15766,6 @@
      "reason": "no_osm_relation"
     },
     {
-     "id": "wd:Q112872455",
-     "name": "Educational trail Planetární stezka, Uherský Brod",
-     "tier": "B",
-     "countries": [
-      "CZ"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "no_osm_relation"
-    },
-    {
      "id": "wd:Q30242322",
      "name": "Educational trail Romantický areál Nové Zámky",
      "tier": "B",
@@ -18631,20 +18250,6 @@
      "tier": "B",
      "countries": [
       "CZ"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "no_osm_relation"
-    },
-    {
-     "id": "wd:Q2098159",
-     "name": "Hagen solar system model",
-     "tier": "B",
-     "countries": [
-      "DE"
      ],
      "sitelinks": 2,
      "sources": [
@@ -22347,20 +21952,6 @@
      }
     },
     {
-     "id": "wd:Q111462389",
-     "name": "La promenade spatiale",
-     "tier": "B",
-     "countries": [
-      "SE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "osm_relation_not_published"
-    },
-    {
      "id": "wd:Q6469396",
      "name": "Ladestien",
      "tier": "B",
@@ -25227,137 +24818,11 @@
      "registry_reason": "failed_continuity"
     },
     {
-     "id": "wd:Q135003916",
-     "name": "Planetenallee Mannheim",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "no_osm_relation"
-    },
-    {
-     "id": "wd:Q18611240",
-     "name": "Planetenlehrpfad Bonn",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "osm_relation_not_published"
-    },
-    {
-     "id": "wd:Q135004941",
-     "name": "Planetenwanderweg Bad Nauheim",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "no_osm_relation"
-    },
-    {
-     "id": "wd:Q56298067",
-     "name": "Planetenweg",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name exact",
-     "km": 0.0,
-     "carta": {
-      "id": 215401,
-      "name": "Planetenweg",
-      "cc": "DE",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q133824698",
-     "name": "Planetenweg Falera",
-     "tier": "B",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "no_osm_relation"
-    },
-    {
-     "id": "wd:Q2098179",
-     "name": "Planetenweg Minden",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "no_osm_relation"
-    },
-    {
-     "id": "wd:Q1474114",
-     "name": "Planetenweg Uetliberg-Felsenegg",
-     "tier": "B",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "wikidata id",
-     "km": 0.0,
-     "carta": {
-      "id": 2058,
-      "name": "Planetenweg",
-      "cc": "CH",
-      "tier": "rated"
-     }
-    },
-    {
      "id": "wd:Q106798364",
      "name": "Planetenweg der grünen Nachbarschaft",
      "tier": "B",
      "countries": [
       "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "no_osm_relation"
-    },
-    {
-     "id": "wd:Q113145798",
-     "name": "Planetární stezka v Opavě",
-     "tier": "B",
-     "countries": [
-      "CZ"
      ],
      "sitelinks": 2,
      "sources": [
@@ -27673,20 +27138,6 @@
      "status": "missing",
      "reason": "osm_relation_not_published",
      "registry_reason": "failed_continuity"
-    },
-    {
-     "id": "wd:Q10673370",
-     "name": "Solsystemet i Örebroformat",
-     "tier": "B",
-     "countries": [
-      "SE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q97650045",
@@ -31692,20 +31143,6 @@
      "reason": "no_osm_relation"
     },
     {
-     "id": "wd:Q12331942",
-     "name": "planet trail Fjerritslev",
-     "tier": "B",
-     "countries": [
-      "DK"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "osm_relation_not_published"
-    },
-    {
      "id": "wd:Q106803059",
      "name": "pèlerinage de Notre-Dame-des-Vertus",
      "tier": "B",
@@ -32185,23 +31622,23 @@
    ],
    "sample": [
     {
-     "id": "wd:Q2144196",
-     "name": "Rennweg",
+     "id": "wd:Q85762423",
+     "name": "GR 56",
      "tier": "B",
      "countries": [
-      "DE"
+      "BE"
      ],
      "sitelinks": 2,
      "sources": [
       "wikidata"
      ],
-     "status": "in_as_piece",
+     "status": "in",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 217647,
-      "name": "Breitunger Rennsteig",
-      "cc": "DE",
+      "id": 98229,
+      "name": "GR 56 Variante Amblève (Amel)",
+      "cc": "BE",
       "tier": "rated"
      }
     },
@@ -32297,65 +31734,23 @@
      }
     },
     {
-     "id": "wd:Q7978381",
-     "name": "Weavers' Way",
-     "tier": "B",
+     "id": "wd:Q1024",
+     "name": "Triglav ascent",
+     "tier": "A",
      "countries": [
-      "GB"
+      "SI"
      ],
-     "sitelinks": 2,
+     "sitelinks": null,
      "sources": [
-      "wikidata"
-     ],
-     "status": "in_as_piece",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 185784,
-      "name": "Warpers Trail - Witton Weavers Way",
-      "cc": "GB",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q8028625",
-     "name": "Witton Weavers Way",
-     "tier": "B",
-     "countries": [
-      "GB"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
+      "carta_trails_reference"
      ],
      "status": "in",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 185784,
-      "name": "Warpers Trail - Witton Weavers Way",
-      "cc": "GB",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q105688259",
-     "name": "Via Czechia",
-     "tier": "A",
-     "countries": [
-      "CZ"
-     ],
-     "sitelinks": 5,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_as_piece",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 108020,
-      "name": "Via Czechia - Centrální (9. Brněnsko a Moravský kras)",
-      "cc": "CZ",
+      "id": 65997,
+      "name": "Aljažev dom - Kredarica - Triglav",
+      "cc": "SI",
       "tier": "rated"
      }
     },
@@ -32382,13 +31777,13 @@
      }
     },
     {
-     "id": "wd:Q4763379",
-     "name": "Angles Way",
-     "tier": "B",
+     "id": "wd:Q105688259",
+     "name": "Via Czechia",
+     "tier": "A",
      "countries": [
-      "GB"
+      "CZ"
      ],
-     "sitelinks": 2,
+     "sitelinks": 5,
      "sources": [
       "wikidata"
      ],
@@ -32396,9 +31791,52 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 187637,
-      "name": "A Taste of the Angles Way",
-      "cc": "GB",
+      "id": 108020,
+      "name": "Via Czechia - Centrální (9. Brněnsko a Moravský kras)",
+      "cc": "CZ",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q125217641",
+     "name": "Burgenweg",
+     "tier": "B",
+     "countries": [
+      "CH",
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 207086,
+      "name": "Leininger Burgenweg",
+      "cc": "DE",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q3538101",
+     "name": "tratturo",
+     "tier": "B",
+     "countries": [
+      "IT"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 191509,
+      "name": "Tratturo Celano-Foggia",
+      "cc": "IT",
       "tier": "rated"
      }
     },
@@ -32445,26 +31883,23 @@
      }
     },
     {
-     "id": "wd:Q1296653",
-     "name": "St. Martin's Way",
-     "tier": "A",
+     "id": "wd:Q7978381",
+     "name": "Weavers' Way",
+     "tier": "B",
      "countries": [
-      "FR",
-      "HU",
-      "IT",
-      "SI"
+      "GB"
      ],
-     "sitelinks": 3,
+     "sitelinks": 2,
      "sources": [
       "wikidata"
      ],
-     "status": "in",
+     "status": "in_as_piece",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 29719,
-      "name": "Chemin de Trèves, Lavannes - Bezannes",
-      "cc": "FR",
+      "id": 185784,
+      "name": "Warpers Trail - Witton Weavers Way",
+      "cc": "GB",
       "tier": "rated"
      }
     },
@@ -32490,8 +31925,29 @@
      }
     },
     {
-     "id": "wd:Q7051001",
-     "name": "Norfolk Coast Path",
+     "id": "wd:Q16765098",
+     "name": "Sentier pédestre national de l'Ösling",
+     "tier": "B",
+     "countries": [
+      "LU"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_as_stages",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 63387,
+      "name": "Éislek Pad Lellingen",
+      "cc": "LU",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q8028625",
+     "name": "Witton Weavers Way",
      "tier": "B",
      "countries": [
       "GB"
@@ -32499,98 +31955,59 @@
      "sitelinks": 2,
      "sources": [
       "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 185784,
+      "name": "Warpers Trail - Witton Weavers Way",
+      "cc": "GB",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q1296653",
+     "name": "St. Martin's Way",
+     "tier": "A",
+     "countries": [
+      "FR",
+      "HU",
+      "IT",
+      "SI"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 29719,
+      "name": "Chemin de Trèves, Lavannes - Bezannes",
+      "cc": "FR",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q6626687",
+     "name": "Tour de l'Oisans et des Écrins",
+     "tier": "A",
+     "countries": [
+      "FR"
+     ],
+     "sitelinks": null,
+     "sources": [
+      "carta_trails_reference"
      ],
      "status": "in_as_piece",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 189072,
-      "name": "Norfolk Coast Path, Sheringham Circular",
-      "cc": "GB",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q1024",
-     "name": "Triglav ascent",
-     "tier": "A",
-     "countries": [
-      "SI"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 65997,
-      "name": "Aljažev dom - Kredarica - Triglav",
-      "cc": "SI",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q852150",
-     "name": "Bewegte Steine",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 225292,
-      "name": "Bewegte Steine-Der Geo Erlebnispfad",
-      "cc": "DE",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q550163",
-     "name": "Slieve Donard",
-     "tier": "A",
-     "countries": [
-      "GB"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 81077,
-      "name": "Slieve Donard Trail, Mournes",
-      "cc": "GB",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q209341",
-     "name": "Musala",
-     "tier": "A",
-     "countries": [
-      "BG"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 75259,
-      "name": "Мусаленска Пътека",
-      "cc": "BG",
+      "id": 34002,
+      "name": "GR54 variante",
+      "cc": "FR",
       "tier": "rated"
      }
     },
@@ -32644,11 +32061,10 @@
      }
     },
     {
-     "id": "wd:Q125217641",
-     "name": "Burgenweg",
+     "id": "wd:Q852150",
+     "name": "Bewegte Steine",
      "tier": "B",
      "countries": [
-      "CH",
       "DE"
      ],
      "sitelinks": 2,
@@ -32659,9 +32075,51 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 207086,
-      "name": "Leininger Burgenweg",
+      "id": 225292,
+      "name": "Bewegte Steine-Der Geo Erlebnispfad",
       "cc": "DE",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q2144196",
+     "name": "Rennweg",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_as_piece",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 217647,
+      "name": "Breitunger Rennsteig",
+      "cc": "DE",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q550163",
+     "name": "Slieve Donard",
+     "tier": "A",
+     "countries": [
+      "GB"
+     ],
+     "sitelinks": null,
+     "sources": [
+      "carta_trails_reference"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 81077,
+      "name": "Slieve Donard Trail, Mournes",
+      "cc": "GB",
       "tier": "rated"
      }
     },
@@ -32687,29 +32145,8 @@
      }
     },
     {
-     "id": "wd:Q746223",
-     "name": "Preikestolen",
-     "tier": "A",
-     "countries": [
-      "NO"
-     ],
-     "sitelinks": null,
-     "sources": [
-      "carta_trails_reference"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 22086,
-      "name": "Preikestolen Roundtrip",
-      "cc": "NO",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q6549368",
-     "name": "Limestone Way",
+     "id": "wd:Q7993515",
+     "name": "Wherryman's Way",
      "tier": "B",
      "countries": [
       "GB"
@@ -32718,47 +32155,24 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in",
+     "status": "in_as_stages",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 186997,
-      "name": "The Limestone Way",
+      "id": 189086,
+      "name": "Langley with Hardley Circular",
       "cc": "GB",
       "tier": "rated"
      }
     },
     {
-     "id": "wd:Q116205601",
-     "name": "Baltic Coastal Hiking Route",
+     "id": "wd:Q48839373",
+     "name": "Cammino di Sant'Antonio",
      "tier": "B",
-     "countries": [
-      "EE",
-      "LT",
-      "LV"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_as_piece",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 63721,
-      "name": "E9 Section 30: Svētciems - Ainaži",
-      "cc": "LV",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q3613100",
-     "name": "Alta Via 4",
-     "tier": "A",
      "countries": [
       "IT"
      ],
-     "sitelinks": 3,
+     "sitelinks": 2,
      "sources": [
       "wikidata"
      ],
@@ -32766,8 +32180,8 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 190840,
-      "name": "Alta via n. 4 delle Dolomiti - Dolomiten-Höhenweg Nr. 4",
+      "id": 195841,
+      "name": "Il Cammino di Sant'Antonio - Antonio di Forlì",
       "cc": "IT",
       "tier": "rated"
      }
@@ -32794,33 +32208,32 @@
      }
     },
     {
-     "id": "ref:escapardenne-eislek-trail",
-     "name": "Escapardenne Eislek Trail",
+     "id": "wd:Q1851195",
+     "name": "Hetta to Pallas Trail",
      "tier": "A",
      "countries": [
-      "BE",
-      "LU"
+      "FI"
      ],
      "sitelinks": null,
      "sources": [
       "carta_trails_reference"
      ],
-     "status": "in_as_stages",
+     "status": "in",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 63165,
-      "name": "Escapardenne Lee Trail",
-      "cc": "LU",
+      "id": 112177,
+      "name": "Hetta-Pallas-vaellusreitti",
+      "cc": "FI",
       "tier": "rated"
      }
     },
     {
-     "id": "wd:Q48839373",
-     "name": "Cammino di Sant'Antonio",
+     "id": "wd:Q1805626",
+     "name": "Vogtland Panorama Weg",
      "tier": "B",
      "countries": [
-      "IT"
+      "DE"
      ],
      "sitelinks": 2,
      "sources": [
@@ -32830,8 +32243,29 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 195841,
-      "name": "Il Cammino di Sant'Antonio - Antonio di Forlì",
+      "id": 216849,
+      "name": "grün mit Vogtland-Panorama-Weg Morgenröte-Rautenkranze-Waldpark Grünheide-",
+      "cc": "DE",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q3613100",
+     "name": "Alta Via 4",
+     "tier": "A",
+     "countries": [
+      "IT"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 190840,
+      "name": "Alta via n. 4 delle Dolomiti - Dolomiten-Höhenweg Nr. 4",
       "cc": "IT",
       "tier": "rated"
      }
@@ -32840,40 +32274,40 @@
   },
   "cycling": {
    "kind": "cycling",
-   "reference_at": "2026-11-20T21:14:27Z",
+   "reference_at": "2026-11-20T23:22:57Z",
    "wire_rows": 16973,
    "summary": {
     "A": {
-     "n": 237,
-     "in": 59,
+     "n": 235,
+     "in": 51,
      "outside_countries": 0,
-     "share": 0.2489,
+     "share": 0.217,
      "by_status": {
-      "missing": 170,
-      "in_as_piece": 8,
-      "in_listed": 44,
-      "in": 14,
+      "missing": 171,
+      "in_as_piece": 13,
+      "in": 12,
+      "in_listed": 38,
       "in_as_stages": 1
      },
      "missing_by_reason": {
-      "not_in_wire": 150,
-      "matcher_miss": 20
+      "not_in_wire": 152,
+      "matcher_miss": 19
      }
     },
     "B": {
-     "n": 311,
-     "in": 42,
+     "n": 313,
+     "in": 39,
      "outside_countries": 0,
-     "share": 0.135,
+     "share": 0.1246,
      "by_status": {
-      "in_listed": 38,
-      "missing": 266,
-      "in": 4,
-      "in_as_piece": 3
+      "in_listed": 36,
+      "missing": 270,
+      "in": 3,
+      "in_as_piece": 4
      },
      "missing_by_reason": {
-      "not_in_wire": 239,
-      "matcher_miss": 27
+      "not_in_wire": 242,
+      "matcher_miss": 28
      }
     }
    },
@@ -32889,6 +32323,7 @@
      ],
      "sitelinks": 24,
      "sources": [
+      "carta_canary",
       "wikidata"
      ],
      "status": "missing",
@@ -33035,8 +32470,8 @@
       "carta_canary",
       "wikidata"
      ],
-     "status": "in_listed",
-     "by": "name",
+     "status": "in_as_piece",
+     "by": "section",
      "km": 0.0,
      "carta": {
       "id": 13835,
@@ -33314,6 +32749,7 @@
      ],
      "sitelinks": 8,
      "sources": [
+      "carta_canary",
       "wikidata"
      ],
      "status": "in_as_piece",
@@ -33354,8 +32790,8 @@
       "carta_canary",
       "wikidata"
      ],
-     "status": "in_listed",
-     "by": "name",
+     "status": "in_as_piece",
+     "by": "section",
      "km": 0.0,
      "carta": {
       "id": 58795,
@@ -33541,8 +32977,8 @@
       "carta_canary",
       "wikidata"
      ],
-     "status": "in_listed",
-     "by": "name",
+     "status": "in_as_piece",
+     "by": "section",
      "km": 0.0,
      "carta": {
       "id": 1483,
@@ -34183,8 +33619,8 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
-     "by": "name",
+     "status": "in_as_piece",
+     "by": "section",
      "km": 0.0,
      "carta": {
       "id": 35113,
@@ -35118,15 +34554,8 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 17676,
-      "name": "Elster-Radweg (Alternative Elstertrebnitz)",
-      "cc": "DE",
-      "tier": "listed"
-     }
+     "status": "missing",
+     "reason": "not_in_wire"
     },
     {
      "id": "wd:Q1339758",
@@ -35153,14 +34582,14 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in",
+     "status": "in_listed",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 1602,
-      "name": "Ennsradweg (Steiermark Abs. West)",
+      "id": 1531,
+      "name": "Ennsradweg (Salzburg)",
       "cc": "AT",
-      "tier": "rated"
+      "tier": "listed"
      }
     },
     {
@@ -35324,8 +34753,8 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in",
-     "by": "name",
+     "status": "in_as_piece",
+     "by": "section",
      "km": 0.0,
      "carta": {
       "id": 62166,
@@ -35719,15 +35148,8 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 9315,
-      "name": "La Seine à Vélo (autour de Nogent-sur-Seine)",
-      "cc": "FR",
-      "tier": "listed"
-     }
+     "status": "missing",
+     "reason": "not_in_wire"
     },
     {
      "id": "wd:Q1647053",
@@ -35786,8 +35208,8 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 54164,
-      "name": "Route Mittelland",
+      "id": 54160,
+      "name": "Mittelland-Route",
       "cc": "CH",
       "tier": "rated"
      }
@@ -35927,8 +35349,8 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 54194,
-      "name": "Nord-Süd-Route",
+      "id": 54179,
+      "name": "Percorso Nord-Sud",
       "cc": "CH",
       "tier": "listed"
      }
@@ -36296,15 +35718,8 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 15979,
-      "name": "Radweg Berlin-Hameln (Teilstrecke Brandenburg)",
-      "cc": "DE",
-      "tier": "listed"
-     }
+     "status": "missing",
+     "reason": "not_in_wire"
     },
     {
      "id": "wd:Q1253779",
@@ -36802,43 +36217,11 @@
      "reason": "not_in_wire"
     },
     {
-     "id": "wd:Q14514271",
-     "name": "Elbe cycle route",
-     "tier": "A",
-     "countries": [
-      "CZ"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "carta_canary",
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "matcher_miss"
-    },
-    {
      "id": "wd:Q3210116",
      "name": "La Loire à vélo",
      "tier": "A",
      "countries": [
       "FR"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "carta_canary",
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_wire"
-    },
-    {
-     "id": "wd:Q23692095",
-     "name": "Via Claudia Augusta",
-     "tier": "A",
-     "countries": [
-      "AT",
-      "DE",
-      "IT"
      ],
      "sitelinks": 2,
      "sources": [
@@ -37669,6 +37052,20 @@
      "countries": [
       "BE",
       "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "missing",
+     "reason": "matcher_miss"
+    },
+    {
+     "id": "wd:Q14514271",
+     "name": "Elbe cycle route",
+     "tier": "B",
+     "countries": [
+      "CZ"
      ],
      "sitelinks": 2,
      "sources": [
@@ -40878,15 +40275,8 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 18302,
-      "name": "Telegraphenradweg (Abschnitt Bördekreis)",
-      "cc": "DE",
-      "tier": "listed"
-     }
+     "status": "missing",
+     "reason": "not_in_wire"
     },
     {
      "id": "wd:Q7753151",
@@ -41069,15 +40459,24 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 819,
-      "name": "Via Bavarica Tyrolensis (Süd)",
-      "cc": "AT",
-      "tier": "rated"
-     }
+     "status": "missing",
+     "reason": "not_in_wire"
+    },
+    {
+     "id": "wd:Q23692095",
+     "name": "Via Claudia Augusta",
+     "tier": "B",
+     "countries": [
+      "AT",
+      "DE",
+      "IT"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "missing",
+     "reason": "not_in_wire"
     },
     {
      "id": "wd:Q24929856",
@@ -41259,8 +40658,8 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
-     "by": "name",
+     "status": "in_as_piece",
+     "by": "section",
      "km": 0.08,
      "carta": {
       "id": 22456,
@@ -41547,29 +40946,8 @@
    ],
    "sample": [
     {
-     "id": "wd:Q73002277",
-     "name": "Waldnaabtal-Radweg",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.01,
-     "carta": {
-      "id": 5635,
-      "name": "Waldnaabtal-Radweg",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q11773831",
-     "name": "Cyklostezka Varhany",
+     "id": "wd:Q11773827",
+     "name": "Přibyslav-Sázava bikeway",
      "tier": "B",
      "countries": [
       "CZ"
@@ -41578,251 +40956,13 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in",
+     "status": "in_listed",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 6365,
-      "name": "Cyklostezka Varhany",
+      "id": 6963,
+      "name": "Cyklostezka Přibyslav–Sázava",
       "cc": "CZ",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q11773825",
-     "name": "Cyklostezka Ohře",
-     "tier": "A",
-     "countries": [
-      "CZ",
-      "DE"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 5845,
-      "name": "Eger-Radweg",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q141570933",
-     "name": "Järva cykelled",
-     "tier": "B",
-     "countries": [
-      "SE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_as_piece",
-     "by": "name",
-     "km": 0.01,
-     "carta": {
-      "id": 59759,
-      "name": "Järva cykelled (36)",
-      "cc": "SE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1943846",
-     "name": "Mommelstein-Radweg",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 14135,
-      "name": "Mommelstein-Radweg",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q44444853",
-     "name": "Telegraphenradweg",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 18302,
-      "name": "Telegraphenradweg (Abschnitt Bördekreis)",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q19965240",
-     "name": "Röderradroute",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 16867,
-      "name": "Röderradroute",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1722353",
-     "name": "Kalkeifel-Radweg",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 13781,
-      "name": "Kalkeifel-Radweg",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q6972058",
-     "name": "National Cycle Route 4",
-     "tier": "B",
-     "countries": [
-      "GB"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 44881,
-      "name": "National Cycle Network Route 4",
-      "cc": "GB",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q3060531",
-     "name": "EuroVelo 1 – Atlantic Coast Route",
-     "tier": "A",
-     "countries": [
-      "ES",
-      "FR",
-      "GB",
-      "IE",
-      "NO",
-      "PT"
-     ],
-     "sitelinks": 15,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_as_piece",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 50731,
-      "name": "EuroVelo 1",
-      "cc": "IE",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q17151339",
-     "name": "Malokarpatská cyklomagistrála",
-     "tier": "B",
-     "countries": [
-      "SK"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 63687,
-      "name": "Malokarpatská cyklomagistrála",
-      "cc": "SK",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1568570",
-     "name": "Kosmosradweg",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 13926,
-      "name": "Kosmosradweg Kleine Kyll",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q140391713",
-     "name": "Saar-Mosel-Main (D5)",
-     "tier": "A",
-     "countries": [
-      "DE",
-      "FR"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_as_piece",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 11563,
-      "name": "Saar-Mosel-Main",
-      "cc": "DE",
       "tier": "listed"
      }
     },
@@ -41843,6 +40983,70 @@
      "carta": {
       "id": 21138,
       "name": "Gurkenradweg (Westring)",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q1869973",
+     "name": "Loreley-Aar-Radweg",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 15668,
+      "name": "Loreley-Aar-Radweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q47462567",
+     "name": "Bayerisch-Böhmischer Freundschaftsweg",
+     "tier": "A",
+     "countries": [
+      "CZ",
+      "DE"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 5263,
+      "name": "Bayerisch-Böhmischer Freundschaftsweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q14492611",
+     "name": "Warmetal-Radweg",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 15114,
+      "name": "Warmetal-Radweg",
       "cc": "DE",
       "tier": "listed"
      }
@@ -41869,153 +41073,24 @@
      }
     },
     {
-     "id": "wd:Q11773827",
-     "name": "Přibyslav-Sázava bikeway",
-     "tier": "B",
-     "countries": [
-      "CZ"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 6963,
-      "name": "Cyklostezka Přibyslav–Sázava",
-      "cc": "CZ",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1323268",
-     "name": "Mineralquellen-Route",
-     "tier": "B",
+     "id": "wd:Q1778090",
+     "name": "Kocher-Jagst-Radweg",
+     "tier": "A",
      "countries": [
       "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 13925,
-      "name": "Mineralquellen Route",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q3564127",
-     "name": "Voie Bleue",
-     "tier": "A",
-     "countries": [
-      "FR"
-     ],
-     "sitelinks": 4,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_as_piece",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 10267,
-      "name": "Voie Bleue",
-      "cc": "FR",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q61044207",
-     "name": "Iron Cycle Route",
-     "tier": "A",
-     "countries": [
-      "CZ",
-      "PL"
      ],
      "sitelinks": 3,
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
+     "status": "in",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 7314,
-      "name": "Żelazny szlak rowerowy / Železná cyklotrasa",
-      "cc": "PL",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1638033",
-     "name": "Hunsrück cycle path",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 14546,
-      "name": "Hunsrück-Radweg",
+      "id": 13369,
+      "name": "Kocher-Jagst-Radweg",
       "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1255895",
-     "name": "Ciclabile della Drava",
-     "tier": "A",
-     "countries": [
-      "AT",
-      "IT"
-     ],
-     "sitelinks": 5,
-     "sources": [
-      "carta_canary",
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 1483,
-      "name": "Drauradweg, Teil 2 (Möllbrücke, Villach)",
-      "cc": "AT",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1202515",
-     "name": "Deutsche Fehnroute",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 4,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 34921,
-      "name": "Deutsche Fehnroute",
-      "cc": "DE",
-      "tier": "listed"
+      "tier": "rated"
      }
     },
     {
@@ -42040,113 +41115,29 @@
      }
     },
     {
-     "id": "wd:Q1544866",
-     "name": "Wasserburgen-Route",
+     "id": "wd:Q12311508",
+     "name": "Fjordstien",
      "tier": "B",
      "countries": [
-      "DE"
+      "DK"
      ],
      "sitelinks": 2,
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
+     "status": "in_as_piece",
      "by": "name",
-     "km": 0.08,
+     "km": 1.55,
      "carta": {
-      "id": 22456,
-      "name": "Wasserburgen-Route Etappe 1b (nicht gemeinsamer Abschnitt)",
-      "cc": "DE",
+      "id": 8143,
+      "name": "Fjordstien",
+      "cc": "DK",
       "tier": "listed"
      }
     },
     {
-     "id": "wd:Q2650806",
-     "name": "Alpenpanorama-Route",
-     "tier": "A",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 54554,
-      "name": "Alpenpanorama-Route",
-      "cc": "CH",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q24929856",
-     "name": "Via Fluvia",
-     "tier": "B",
-     "countries": [
-      "FR"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 10393,
-      "name": "Via Fluvia",
-      "cc": "FR",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q15613808",
-     "name": "Štefánikova cyklomagistrála",
-     "tier": "B",
-     "countries": [
-      "SK"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 63680,
-      "name": "Štefánikova cyklomagistrála",
-      "cc": "SK",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q6165301",
-     "name": "Vía Verde de la Sierra de la Demanda",
-     "tier": "A",
-     "countries": [
-      "ES"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 55296,
-      "name": "Vía Verde de la Sierra de la Demanda",
-      "cc": "ES",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q1333876",
-     "name": "Elster-Radweg",
+     "id": "wd:Q11773825",
+     "name": "Cyklostezka Ohře",
      "tier": "A",
      "countries": [
       "CZ",
@@ -42160,15 +41151,272 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 17676,
-      "name": "Elster-Radweg (Alternative Elstertrebnitz)",
+      "id": 5845,
+      "name": "Eger-Radweg",
       "cc": "DE",
       "tier": "listed"
      }
     },
     {
-     "id": "wd:Q1567367",
-     "name": "Spreeradweg",
+     "id": "wd:Q1799976",
+     "name": "Vulkanradweg",
+     "tier": "A",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 13370,
+      "name": "Vulkanradweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q303155",
+     "name": "Aartal-Radweg (Taunus)",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 14023,
+      "name": "Aartal-Radweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q73002277",
+     "name": "Waldnaabtal-Radweg",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.01,
+     "carta": {
+      "id": 5635,
+      "name": "Waldnaabtal-Radweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q895575",
+     "name": "Boxenstopp-Route",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 14545,
+      "name": "Boxenstopp-Route",
+      "cc": "DE",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q1953814",
+     "name": "Murradweg",
+     "tier": "B",
+     "countries": [
+      "AT",
+      "SI"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 1515,
+      "name": "Murradweg Abs. 2 (Predlitz, Sankt Michael in Obersteiermark)",
+      "cc": "AT",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q17138376",
+     "name": "Okolo Považského Inovca",
+     "tier": "B",
+     "countries": [
+      "SK"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 64441,
+      "name": "Cyklomagistrála Okolo Považského Inovca",
+      "cc": "SK",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q116771371",
+     "name": "Lech cycle path",
+     "tier": "B",
+     "countries": [
+      "AT",
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 30549,
+      "name": "Lechradweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q1543697",
+     "name": "Graubünden-Route",
+     "tier": "A",
+     "countries": [
+      "CH"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 555,
+      "name": "Graubünden-Route",
+      "cc": "CH",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q14535978",
+     "name": "Vennbahn Cycle Route",
+     "tier": "A",
+     "countries": [
+      "BE",
+      "DE",
+      "LU"
+     ],
+     "sitelinks": 5,
+     "sources": [
+      "carta_canary",
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 25,
+      "name": "Vennbahn (Radweg)",
+      "cc": "BE",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q11773831",
+     "name": "Cyklostezka Varhany",
+     "tier": "B",
+     "countries": [
+      "CZ"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 6365,
+      "name": "Cyklostezka Varhany",
+      "cc": "CZ",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q3564127",
+     "name": "Voie Bleue",
+     "tier": "A",
+     "countries": [
+      "FR"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_as_piece",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 10267,
+      "name": "Voie Bleue",
+      "cc": "FR",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q115857128",
+     "name": "Ybbstal valley bike path",
+     "tier": "A",
+     "countries": [
+      "AT"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 648,
+      "name": "Ybbstalradweg",
+      "cc": "AT",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q889672",
+     "name": "Bodensee-Königssee-Radweg",
      "tier": "A",
      "countries": [
       "DE"
@@ -42181,9 +41429,157 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 14323,
-      "name": "Spreeradweg",
+      "id": 43553,
+      "name": "Bodensee-Königssee-Radweg: Alpenregion Tegernsee Schliersee",
       "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q1663848",
+     "name": "Innradweg",
+     "tier": "A",
+     "countries": [
+      "AT"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 562,
+      "name": "Inn-Radweg",
+      "cc": "AT",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q1569105",
+     "name": "Haidenaab-Radweg",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 15776,
+      "name": "Haidenaab-Radweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q14538071",
+     "name": "Werra-Obermain-Radweg",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 16078,
+      "name": "Werra-Obermain-Radweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q1935788",
+     "name": "Milseburgradweg",
+     "tier": "A",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 13679,
+      "name": "Milseburgradweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q15060320",
+     "name": "Ilm-Rennsteig-Radweg",
+     "tier": "A",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 16144,
+      "name": "Ilm-Rennsteig-Radweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q6972058",
+     "name": "National Cycle Route 4",
+     "tier": "B",
+     "countries": [
+      "GB"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 44881,
+      "name": "National Cycle Network Route 4",
+      "cc": "GB",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q61044207",
+     "name": "Iron Cycle Route",
+     "tier": "A",
+     "countries": [
+      "CZ",
+      "PL"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 7314,
+      "name": "Żelazny szlak rowerowy / Železná cyklotrasa",
+      "cc": "PL",
       "tier": "listed"
      }
     }
@@ -42191,7 +41587,7 @@
   },
   "beaches": {
    "kind": "beaches",
-   "reference_at": "2026-11-20T21:55:02Z",
+   "reference_at": "2026-11-20T23:28:45Z",
    "wire_rows": 6618,
    "summary": {
     "A": {
@@ -42211,13 +41607,14 @@
     },
     "B": {
      "n": 1591,
-     "in": 497,
+     "in": 496,
      "outside_countries": 73,
-     "share": 0.3124,
+     "share": 0.3118,
      "by_status": {
       "missing": 1094,
       "in_listed": 38,
-      "in": 459
+      "in": 458,
+      "in_as_piece": 1
      },
      "missing_by_reason": {
       "not_in_wire": 957,
@@ -57828,8 +57225,8 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in",
-     "by": "name",
+     "status": "in_as_piece",
+     "by": "section",
      "km": 0.14,
      "carta": {
       "id": "es-benitez-primer-tramo-Q28121319",
@@ -72940,48 +72337,6 @@
    ],
    "sample": [
     {
-     "id": "wd:Q41599",
-     "name": "Świnoujście",
-     "tier": "B",
-     "countries": [
-      "PL"
-     ],
-     "sitelinks": 90,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 1.43,
-     "carta": {
-      "id": "pl-kapielisko-morskie-swinoujscie-uznam-way688472141",
-      "name": "Kąpielisko Morskie Świnoujście Uznam",
-      "cc": "PL",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1733873",
-     "name": "Karljohansvern",
-     "tier": "B",
-     "countries": [
-      "NO"
-     ],
-     "sitelinks": 9,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.52,
-     "carta": {
-      "id": "no-karljohansvern-way565538834",
-      "name": "Karljohansvern",
-      "cc": "NO",
-      "tier": "rated"
-     }
-    },
-    {
      "id": "wd:Q545972",
      "name": "Cofete",
      "tier": "A",
@@ -72999,90 +72354,6 @@
       "id": "es-playa-de-cofete-Q23986978",
       "name": "Playa de Cofete",
       "cc": "ES",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q909059",
-     "name": "Ramla Bay",
-     "tier": "B",
-     "countries": [
-      "MT"
-     ],
-     "sitelinks": 14,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.11,
-     "carta": {
-      "id": "mt-ir-ramla-l-amra-way966816472",
-      "name": "Ir-Ramla l-Ħamra",
-      "cc": "MT",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q336509",
-     "name": "Ċirkewwa",
-     "tier": "B",
-     "countries": [
-      "MT"
-     ],
-     "sitelinks": 11,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.53,
-     "carta": {
-      "id": "mt-paradise-bay-way449678604",
-      "name": "Paradise Bay",
-      "cc": "MT",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q7237803",
-     "name": "Prainha",
-     "tier": "A",
-     "countries": [
-      "PT"
-     ],
-     "sitelinks": 5,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": "pt-prainha-Q10353185",
-      "name": "Prainha",
-      "cc": "PT",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q9060774",
-     "name": "Praia da Memória",
-     "tier": "B",
-     "countries": [
-      "PT"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": "pt-praia-da-memoria-way62405374",
-      "name": "Praia da Memória",
-      "cc": "PT",
       "tier": "rated"
      }
     },
@@ -73108,11 +72379,221 @@
      }
     },
     {
-     "id": "wd:Q2948420",
-     "name": "Plage de la Chambre d'Amour, Anglet",
+     "id": "wd:Q20104424",
+     "name": "Es Marques",
      "tier": "B",
      "countries": [
-      "FR"
+      "ES"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.35,
+     "carta": {
+      "id": "es-es-coto-Q17601510",
+      "name": "Es Coto",
+      "cc": "ES",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q41599",
+     "name": "Świnoujście",
+     "tier": "B",
+     "countries": [
+      "PL"
+     ],
+     "sitelinks": 90,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 1.43,
+     "carta": {
+      "id": "pl-kapielisko-morskie-swinoujscie-uznam-way688472141",
+      "name": "Kąpielisko Morskie Świnoujście Uznam",
+      "cc": "PL",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q909059",
+     "name": "Ramla Bay",
+     "tier": "B",
+     "countries": [
+      "MT"
+     ],
+     "sitelinks": 14,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.11,
+     "carta": {
+      "id": "mt-ir-ramla-l-amra-way966816472",
+      "name": "Ir-Ramla l-Ħamra",
+      "cc": "MT",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q6079076",
+     "name": "Playa de Vistahermosa",
+     "tier": "B",
+     "countries": [
+      "ES"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.33,
+     "carta": {
+      "id": "es-playa-de-santa-catalina-Q23979166",
+      "name": "Playa de Santa Catalina",
+      "cc": "ES",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q336509",
+     "name": "Ċirkewwa",
+     "tier": "B",
+     "countries": [
+      "MT"
+     ],
+     "sitelinks": 11,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.53,
+     "carta": {
+      "id": "mt-paradise-bay-way449678604",
+      "name": "Paradise Bay",
+      "cc": "MT",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q3966660",
+     "name": "Lecciona",
+     "tier": "B",
+     "countries": [
+      "IT"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.05,
+     "carta": {
+      "id": "it-lecciona-way1068726948",
+      "name": "Lecciona",
+      "cc": "IT",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q1733873",
+     "name": "Karljohansvern",
+     "tier": "B",
+     "countries": [
+      "NO"
+     ],
+     "sitelinks": 9,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.52,
+     "carta": {
+      "id": "no-karljohansvern-way565538834",
+      "name": "Karljohansvern",
+      "cc": "NO",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q3560574",
+     "name": "Paralia Skotinas",
+     "tier": "A",
+     "countries": [
+      "GR"
+     ],
+     "sitelinks": 8,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.23,
+     "carta": {
+      "id": "gr-skotina-Q53633411",
+      "name": "Skotina",
+      "cc": "GR",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q1854554",
+     "name": "Southwold",
+     "tier": "B",
+     "countries": [
+      "GB"
+     ],
+     "sitelinks": 26,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.2,
+     "carta": {
+      "id": "gb-southwold-way242872915",
+      "name": "Southwold",
+      "cc": "GB",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q18470459",
+     "name": "Arenella",
+     "tier": "A",
+     "countries": [
+      "IT"
+     ],
+     "sitelinks": 6,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.8,
+     "carta": {
+      "id": "it-spiaggia-arenella-Q33333614",
+      "name": "Spiaggia Arenella",
+      "cc": "IT",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q9060774",
+     "name": "Praia da Memória",
+     "tier": "B",
+     "countries": [
+      "PT"
      ],
      "sitelinks": 3,
      "sources": [
@@ -73120,11 +72601,74 @@
      ],
      "status": "in",
      "by": "name",
-     "km": 0.17,
+     "km": 0.0,
      "carta": {
-      "id": "fr-petite-chambre-d-amour-Q49322639",
-      "name": "petite Chambre d'Amour",
-      "cc": "FR",
+      "id": "pt-praia-da-memoria-way62405374",
+      "name": "Praia da Memória",
+      "cc": "PT",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q7237803",
+     "name": "Prainha",
+     "tier": "A",
+     "countries": [
+      "PT"
+     ],
+     "sitelinks": 5,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": "pt-prainha-Q10353185",
+      "name": "Prainha",
+      "cc": "PT",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q4179009",
+     "name": "Brittas Bay",
+     "tier": "B",
+     "countries": [
+      "IE"
+     ],
+     "sitelinks": 8,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.32,
+     "carta": {
+      "id": "ie-brittas-bay-way16313794",
+      "name": "Brittas Bay",
+      "cc": "IE",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q24910881",
+     "name": "Gialova Lagoon",
+     "tier": "B",
+     "countries": [
+      "GR"
+     ],
+     "sitelinks": 9,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 1.08,
+     "carta": {
+      "id": "gr-divari-way189192747",
+      "name": "Divari",
+      "cc": "GR",
       "tier": "rated"
      }
     },
@@ -73171,23 +72715,23 @@
      }
     },
     {
-     "id": "wd:Q3560574",
-     "name": "Paralia Skotinas",
-     "tier": "A",
+     "id": "wd:Q2948420",
+     "name": "Plage de la Chambre d'Amour, Anglet",
+     "tier": "B",
      "countries": [
-      "GR"
+      "FR"
      ],
-     "sitelinks": 8,
+     "sitelinks": 3,
      "sources": [
       "wikidata"
      ],
      "status": "in",
      "by": "name",
-     "km": 0.23,
+     "km": 0.17,
      "carta": {
-      "id": "gr-skotina-Q53633411",
-      "name": "Skotina",
-      "cc": "GR",
+      "id": "fr-petite-chambre-d-amour-Q49322639",
+      "name": "petite Chambre d'Amour",
+      "cc": "FR",
       "tier": "rated"
      }
     },
@@ -73213,260 +72757,29 @@
      }
     },
     {
-     "id": "wd:Q18470459",
-     "name": "Arenella",
-     "tier": "A",
-     "countries": [
-      "IT"
-     ],
-     "sitelinks": 6,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.8,
-     "carta": {
-      "id": "it-spiaggia-arenella-Q33333614",
-      "name": "Spiaggia Arenella",
-      "cc": "IT",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q4179009",
-     "name": "Brittas Bay",
+     "id": "wd:Q7237768",
+     "name": "Praia da Granja",
      "tier": "B",
      "countries": [
-      "IE"
-     ],
-     "sitelinks": 8,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.32,
-     "carta": {
-      "id": "ie-brittas-bay-way16313794",
-      "name": "Brittas Bay",
-      "cc": "IE",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q1854554",
-     "name": "Southwold",
-     "tier": "B",
-     "countries": [
-      "GB"
-     ],
-     "sitelinks": 26,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.2,
-     "carta": {
-      "id": "gb-southwold-way242872915",
-      "name": "Southwold",
-      "cc": "GB",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q24910881",
-     "name": "Gialova Lagoon",
-     "tier": "B",
-     "countries": [
-      "GR"
-     ],
-     "sitelinks": 9,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 1.08,
-     "carta": {
-      "id": "gr-divari-way189192747",
-      "name": "Divari",
-      "cc": "GR",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q4805864",
-     "name": "Playa Benítez",
-     "tier": "B",
-     "countries": [
-      "ES"
-     ],
-     "sitelinks": 5,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.14,
-     "carta": {
-      "id": "es-benitez-primer-tramo-Q28121319",
-      "name": "Benítez (primer tramo)",
-      "cc": "ES",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q6079076",
-     "name": "Playa de Vistahermosa",
-     "tier": "B",
-     "countries": [
-      "ES"
+      "PT"
      ],
      "sitelinks": 4,
      "sources": [
       "wikidata"
      ],
      "status": "in",
-     "by": "name",
-     "km": 0.33,
-     "carta": {
-      "id": "es-playa-de-santa-catalina-Q23979166",
-      "name": "Playa de Santa Catalina",
-      "cc": "ES",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q3966660",
-     "name": "Lecciona",
-     "tier": "B",
-     "countries": [
-      "IT"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.05,
-     "carta": {
-      "id": "it-lecciona-way1068726948",
-      "name": "Lecciona",
-      "cc": "IT",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q20104424",
-     "name": "Es Marques",
-     "tier": "B",
-     "countries": [
-      "ES"
-     ],
-     "sitelinks": 4,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "name",
-     "km": 0.35,
-     "carta": {
-      "id": "es-es-coto-Q17601510",
-      "name": "Es Coto",
-      "cc": "ES",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q6093114",
-     "name": "Punta del Moral",
-     "tier": "B",
-     "countries": [
-      "ES"
-     ],
-     "sitelinks": 5,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
      "by": "qid",
      "km": 0.0,
      "carta": {
-      "id": "es-punta-del-moral-Q6093114",
-      "name": "Punta del Moral",
-      "cc": "ES",
+      "id": "pt-praia-da-granja-Q7237768",
+      "name": "Praia da Granja",
+      "cc": "PT",
       "tier": "rated"
      }
     },
     {
-     "id": "wd:Q24021751",
-     "name": "Platja de la Vall",
-     "tier": "B",
-     "countries": [
-      "ES"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "qid",
-     "km": 0.0,
-     "carta": {
-      "id": "es-platja-de-la-vall-Q24021751",
-      "name": "Platja de la Vall",
-      "cc": "ES",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q6078863",
-     "name": "Playa de Levante de Los Toruños",
-     "tier": "B",
-     "countries": [
-      "ES"
-     ],
-     "sitelinks": 4,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "qid",
-     "km": 0.0,
-     "carta": {
-      "id": "es-playa-de-levante-de-los-torunos-Q6078863",
-      "name": "Playa de Levante de Los Toruños",
-      "cc": "ES",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q9060694",
-     "name": "Platja de la Marineta Cassiana",
-     "tier": "B",
-     "countries": [
-      "ES"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in",
-     "by": "qid",
-     "km": 0.0,
-     "carta": {
-      "id": "es-platja-de-la-marineta-cassiana-Q9060694",
-      "name": "Platja de la Marineta Cassiana",
-      "cc": "ES",
-      "tier": "rated"
-     }
-    },
-    {
-     "id": "wd:Q10353050",
-     "name": "Molhe Beach",
+     "id": "wd:Q10352479",
+     "name": "Praia Pequena",
      "tier": "B",
      "countries": [
       "PT"
@@ -73479,15 +72792,15 @@
      "by": "qid",
      "km": 0.0,
      "carta": {
-      "id": "pt-molhe-beach-Q10353050",
-      "name": "Molhe Beach",
+      "id": "pt-praia-pequena-Q10352479",
+      "name": "Praia Pequena",
       "cc": "PT",
       "tier": "rated"
      }
     },
     {
-     "id": "wd:Q28120546",
-     "name": "Barinatxe",
+     "id": "wd:Q6132059",
+     "name": "Arenal de Son Saura del Nord, Menorca",
      "tier": "B",
      "countries": [
       "ES"
@@ -73500,8 +72813,8 @@
      "by": "qid",
      "km": 0.0,
      "carta": {
-      "id": "es-barinatxe-Q28120546",
-      "name": "Barinatxe",
+      "id": "es-arenal-de-son-saura-del-nord-menorca-Q6132059",
+      "name": "Arenal de Son Saura del Nord, Menorca",
       "cc": "ES",
       "tier": "rated"
      }
@@ -73528,29 +72841,29 @@
      }
     },
     {
-     "id": "wd:Q1800335",
-     "name": "Pendine Sands",
+     "id": "wd:Q2029730",
+     "name": "Orford Ness",
      "tier": "A",
      "countries": [
       "GB"
      ],
-     "sitelinks": 7,
+     "sitelinks": 5,
      "sources": [
       "wikidata"
      ],
-     "status": "in",
+     "status": "in_listed",
      "by": "qid",
      "km": 0.0,
      "carta": {
-      "id": "gb-pendine-sands-Q1800335",
-      "name": "Pendine Sands",
+      "id": "gb-orford-ness-Q2029730",
+      "name": "Orford Ness",
       "cc": "GB",
-      "tier": "rated"
+      "tier": "listed"
      }
     },
     {
-     "id": "wd:Q8255023",
-     "name": "Cala Montjoi",
+     "id": "wd:Q6093114",
+     "name": "Punta del Moral",
      "tier": "B",
      "countries": [
       "ES"
@@ -73563,8 +72876,92 @@
      "by": "qid",
      "km": 0.0,
      "carta": {
-      "id": "es-cala-montjoi-Q8255023",
-      "name": "Cala Montjoi",
+      "id": "es-punta-del-moral-Q6093114",
+      "name": "Punta del Moral",
+      "cc": "ES",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q16111759",
+     "name": "Porporela",
+     "tier": "A",
+     "countries": [
+      "HR"
+     ],
+     "sitelinks": 5,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "qid",
+     "km": 0.0,
+     "carta": {
+      "id": "hr-porporela-Q16111759",
+      "name": "Porporela",
+      "cc": "HR",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q7237791",
+     "name": "Praia de Vale dos Homens",
+     "tier": "B",
+     "countries": [
+      "PT"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "qid",
+     "km": 0.0,
+     "carta": {
+      "id": "pt-praia-de-vale-dos-homens-Q7237791",
+      "name": "Praia de Vale dos Homens",
+      "cc": "PT",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q3332363",
+     "name": "Praia da Vieira",
+     "tier": "B",
+     "countries": [
+      "PT"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "qid",
+     "km": 0.0,
+     "carta": {
+      "id": "pt-praia-da-vieira-Q3332363",
+      "name": "Praia da Vieira",
+      "cc": "PT",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q5965192",
+     "name": "La Salvé",
+     "tier": "B",
+     "countries": [
+      "ES"
+     ],
+     "sitelinks": 5,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "qid",
+     "km": 0.0,
+     "carta": {
+      "id": "es-la-salve-Q5965192",
+      "name": "La Salvé",
       "cc": "ES",
       "tier": "rated"
      }
@@ -73573,21 +72970,21 @@
   },
   "lakes": {
    "kind": "lakes",
-   "reference_at": "2026-11-20T22:02:30Z",
+   "reference_at": "2026-11-20T23:31:52Z",
    "wire_rows": 2676,
    "summary": {
     "A": {
-     "n": 251,
+     "n": 249,
      "in": 165,
      "outside_countries": 27,
-     "share": 0.6574,
+     "share": 0.6627,
      "by_status": {
       "in_listed": 18,
       "in": 147,
-      "missing": 86
+      "missing": 84
      },
      "missing_by_reason": {
-      "not_in_wire": 86
+      "not_in_wire": 84
      }
     },
     "B": {
@@ -76387,20 +75784,6 @@
      "reason": "out_of_scope:country"
     },
     {
-     "id": "wd:Q1234240",
-     "name": "Lake Copais",
-     "tier": "A",
-     "countries": [
-      "GR"
-     ],
-     "sitelinks": 26,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_wire"
-    },
-    {
      "id": "wd:Q890537",
      "name": "Lake Keitele",
      "tier": "A",
@@ -77429,20 +76812,6 @@
       "cc": "IS",
       "tier": "rated"
      }
-    },
-    {
-     "id": "wd:Q914789",
-     "name": "Fucine Lake",
-     "tier": "A",
-     "countries": [
-      "IT"
-     ],
-     "sitelinks": 22,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_wire"
     },
     {
      "id": "wd:Q688154",
@@ -86123,35 +85492,35 @@
   },
   "mountains": {
    "kind": "mountains",
-   "reference_at": "2026-11-20T21:46:37Z",
+   "reference_at": "2026-11-20T23:38:24Z",
    "wire_rows": 2143,
    "summary": {
     "A": {
-     "n": 350,
+     "n": 347,
      "in": 286,
      "outside_countries": 11,
-     "share": 0.8171,
+     "share": 0.8242,
      "by_status": {
       "in": 207,
-      "missing": 64,
+      "missing": 61,
       "in_listed": 79
      },
      "missing_by_reason": {
-      "not_in_wire": 64
+      "not_in_wire": 61
      }
     },
     "B": {
-     "n": 877,
+     "n": 873,
      "in": 363,
      "outside_countries": 14,
-     "share": 0.4139,
+     "share": 0.4158,
      "by_status": {
       "in": 221,
-      "missing": 514,
+      "missing": 510,
       "in_listed": 142
      },
      "missing_by_reason": {
-      "not_in_wire": 495,
+      "not_in_wire": 491,
       "matcher_miss": 19
      }
     }
@@ -86249,6 +85618,7 @@
      ],
      "sitelinks": 110,
      "sources": [
+      "carta_canary",
       "country_highpoint",
       "wikidata"
      ],
@@ -87335,7 +86705,6 @@
      ],
      "sitelinks": 43,
      "sources": [
-      "carta_canary",
       "country_highpoint",
       "wikidata"
      ],
@@ -87661,6 +87030,7 @@
      ],
      "sitelinks": 39,
      "sources": [
+      "carta_canary",
       "wikidata"
      ],
      "status": "in",
@@ -88418,20 +87788,6 @@
       "cc": "CH",
       "tier": "rated"
      }
-    },
-    {
-     "id": "wd:Q833975",
-     "name": "Ferdinandea",
-     "tier": "A",
-     "countries": [
-      "IT"
-     ],
-     "sitelinks": 32,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_wire"
     },
     {
      "id": "wd:Q15126",
@@ -91191,20 +90547,6 @@
      }
     },
     {
-     "id": "wd:Q3057897",
-     "name": "Holy Island",
-     "tier": "A",
-     "countries": [
-      "GB"
-     ],
-     "sitelinks": 14,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_wire"
-    },
-    {
      "id": "wd:Q367431",
      "name": "Mont Pourri",
      "tier": "A",
@@ -91790,21 +91132,6 @@
      ],
      "sitelinks": 12,
      "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_wire"
-    },
-    {
-     "id": "wd:Q14269787",
-     "name": "Feldberg",
-     "tier": "A",
-     "countries": [
-      "AT"
-     ],
-     "sitelinks": 12,
-     "sources": [
-      "carta_canary",
       "wikidata"
      ],
      "status": "missing",
@@ -95180,20 +94507,6 @@
      }
     },
     {
-     "id": "wd:Q1513696",
-     "name": "Kolumbo",
-     "tier": "B",
-     "countries": [
-      "GR"
-     ],
-     "sitelinks": 23,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_wire"
-    },
-    {
      "id": "wd:Q1397501",
      "name": "Králický Sněžník",
      "tier": "B",
@@ -95540,20 +94853,6 @@
       "cc": "GR",
       "tier": "listed"
      }
-    },
-    {
-     "id": "wd:Q1715041",
-     "name": "Jólnir",
-     "tier": "B",
-     "countries": [
-      "IS"
-     ],
-     "sitelinks": 22,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_wire"
     },
     {
      "id": "wd:Q1569913",
@@ -97022,20 +96321,6 @@
       "cc": "CZ",
       "tier": "rated"
      }
-    },
-    {
-     "id": "wd:Q1572574",
-     "name": "Marsili",
-     "tier": "B",
-     "countries": [
-      "IT"
-     ],
-     "sitelinks": 20,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_wire"
     },
     {
      "id": "wd:Q674459",
@@ -103076,20 +102361,6 @@
      "tier": "B",
      "countries": [
       "FR",
-      "IT"
-     ],
-     "sitelinks": 15,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_wire"
-    },
-    {
-     "id": "wd:Q1339167",
-     "name": "Empedocles",
-     "tier": "B",
-     "countries": [
       "IT"
      ],
      "sitelinks": 15,

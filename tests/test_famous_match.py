@@ -149,3 +149,34 @@ def test_weak_trail_class_needs_a_walk_word():
     assert wd.tier_of("trails", street) == "B"
     assert wd.tier_of("trails", walk) == "A"
     assert wd.tier_of("trails", trail) == "A"
+
+
+def test_bracketed_side_trail_is_not_the_trail():
+    # judgement 1: brackets hid the side word from the guard
+    refs = [ref("Rheinsteig", rid="r", lat=50.3, lon=7.6, cc=("DE",))]
+    rows = [row("Rheinsteig (Zuweg Bad Hönningen)", "z", cc="DE",
+                kind="trails", bbox=[7.55, 50.25, 7.65, 50.35], km=4)]
+    assert m.match("trails", refs, rows) == {}
+    refs = [ref("Elster-Radweg", rid="e", lat=51.2, lon=12.2, cc=("DE",))]
+    rows = [row("Elster-Radweg (Alternative Elstertrebnitz)", "a", cc="DE",
+                kind="cycling", bbox=[12.1, 51.1, 12.3, 51.3], km=12)]
+    assert m.match("cycling", refs, rows) == {}
+
+
+def test_named_section_is_a_piece_without_a_length():
+    refs = [ref("Drauradweg", rid="d", lat=46.7, lon=13.6, cc=("AT",))]
+    rows = [row("Drauradweg, Teil 2", "t", cc="AT", kind="cycling",
+                bbox=[13.4, 46.6, 13.8, 46.8], km=40)]
+    got = m.match("cycling", refs, rows)
+    assert got["d"]["status"] == "in_as_piece"
+
+
+def test_spanish_del_is_not_a_section():
+    refs = [ref("Camino del Norte", rid="c", lat=43.3, lon=-3.0, cc=("ES",))]
+    rows = [row("Camino del Norte", "n", cc="ES", kind="trails",
+                bbox=[-3.1, 43.2, -2.9, 43.4], km=800)]
+    assert m.match("trails", refs, rows)["c"]["status"] == "in"
+
+
+def test_no_mountain_below_the_sea():
+    assert wd.tier_of("mountains", {"sitelinks": 32, "elev_m": -8}) is None

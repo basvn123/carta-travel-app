@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "lakes",
- "generated_at": "2026-11-20T22:02:30Z",
+ "generated_at": "2026-11-20T23:31:52Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -71,7 +71,7 @@
  ],
  "fell_back": [],
  "counts": {
-  "A": 278,
+  "A": 276,
   "B": 389
  },
  "rows": [
@@ -6031,47 +6031,6 @@
    "id": "wd:Q1010475"
   },
   {
-   "qid": "Q1234240",
-   "sitelinks": 26,
-   "lat": 38.45,
-   "lon": 23.05,
-   "countries": [
-    "GR"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q23397",
-    "Q3497768"
-   ],
-   "name": "Lake Copais",
-   "names": [
-    "Copaic lake",
-    "Copaide",
-    "Copaïs-meer",
-    "Kopaida",
-    "Kopais",
-    "Kopajsko jezero",
-    "Kopaídasjøen",
-    "Kopaïs",
-    "Lacul Copais",
-    "Lago Copaide",
-    "Lake Copais",
-    "Llyn Copais",
-    "lac Copaïs",
-    "llacuna Copaida",
-    "Κωπαΐδα",
-    "Копаида",
-    "Копаїда"
-   ],
-   "elev_m": 95.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q1234240"
-  },
-  {
    "qid": "Q890537",
    "sitelinks": 26,
    "lat": 62.882319,
@@ -8093,41 +8052,6 @@
    ],
    "tier": "A",
    "id": "wd:Q1332555"
-  },
-  {
-   "qid": "Q914789",
-   "sitelinks": 22,
-   "lat": 42.008222,
-   "lon": 13.480055,
-   "countries": [
-    "IT"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q47486890"
-   ],
-   "name": "Fucine Lake",
-   "names": [
-    "Fucin",
-    "Fucine Lake",
-    "Fuciner See",
-    "Fucino",
-    "Fucinosjøen",
-    "Fucinské jezero",
-    "Fuzino",
-    "Fùcino",
-    "Llac Fucin",
-    "Лаго Фучино",
-    "Фучино"
-   ],
-   "area_km2": 155.0,
-   "elev_m": 669.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q914789"
   },
   {
    "qid": "Q688154",

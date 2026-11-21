@@ -1,6 +1,6 @@
 {
  "schema": "carta-famous-canaries/1",
- "note": "Places any well-travelled European would call famous, by kind. tests/test_famous_reference.py checks each one is in data/famous/<kind>.json (by any of its names, folded). A canary the reference cannot catch is listed under known_misses with the reason, so a new miss fails the test and an old one stays visible. Added 2026-11-20 (famous coverage run, traveller critique). Names only: no facts are taken from this list. An entry may be {name, qid} when the place's Wikidata item is not the one its name finds first (Porthcurno the beach is Q31844953, the village is another item); ids checked with wbsearchentities on 2026-11-20.",
+ "note": "Places any well-travelled European would call famous, by kind. tests/test_famous_reference.py checks each one is in data/famous/<kind>.json (by any of its names, folded). A canary the reference cannot catch is listed under known_misses with the reason, so a new miss fails the test and an old one stays visible. Added 2026-11-20 (famous coverage run, traveller critique). Names only: no facts are taken from this list. An entry may be {name, qid} when the place's Wikidata item is not the one its name finds first (Porthcurno the beach is Q31844953, the village is another item); ids checked with wbsearchentities on 2026-11-20. not_famous lists items the hand check of the seeds took out, with the reason; the builder drops them.",
  "kinds": {
   "trails": [
    "West Highland Way",
@@ -37,8 +37,14 @@
   "cycling": [
    "Donauradweg",
    "EuroVelo 6",
-   "Elbe Cycle Route",
-   "Via Claudia Augusta",
+   {
+    "name": "Elbe Cycle Route",
+    "qid": "Q882270"
+   },
+   {
+    "name": "Via Claudia Augusta",
+    "qid": "Q685132"
+   },
    "Bodensee-Radweg",
    "Vennbahn",
    "Alpe Adria cycling route",
@@ -135,7 +141,10 @@
    "Zugspitze",
    "Triglav",
    "Ben Nevis",
-   "Mount Olympus",
+   {
+    "name": "Mount Olympus",
+    "qid": "Q80344"
+   },
    "Mount Etna",
    "Teide",
    "Kebnekaise",
@@ -162,7 +171,10 @@
    "Croagh Patrick",
    "Carrauntoohil",
    "Brocken",
-   "Feldberg",
+   {
+    "name": "Feldberg",
+    "qid": "Q316401"
+   },
    "Puy de Dôme",
    "Mont Ventoux",
    "Pic du Midi de Bigorre",
@@ -172,5 +184,14 @@
    "Mount Pico"
   ]
  },
- "known_misses": {}
+ "known_misses": {},
+ "not_famous": {
+  "mountains": {
+   "Q3057897": "Holy Island: an island typed as a mountain, not a summit a traveller climbs (hand check 2026-11-21)"
+  },
+  "lakes": {
+   "Q1234240": "Lake Copais: drained in the 1880s, farmland today (hand check 2026-11-21)",
+   "Q914789": "Fucine Lake: drained in the 1870s, farmland today (hand check 2026-11-21)"
+  }
+ }
 }
