@@ -55,6 +55,14 @@
 //              row right after the checked chips, whole in view at 360 to
 //              1440); the column names no basis; Tab reaches the column
 //              before the map's pins (in --e-only)
+//   round G    judgement-7's fixes: the search hint whole or absent on a
+//              phone (six languages at 360 and 390: Explore at rest and with
+//              filters on, the map at rest and with filters on); the
+//              Filters count disc 6 px or more from its word; Clear all on
+//              the map's top edge on paper, 8 px from its neighbours, its
+//              words 4.5:1 on that paper; a list row under the "Good in
+//              July" chip does not say it again (1440 list); the
+//              style disc clear of the list's cards from 769 to 1023 (--g-only)
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -110,7 +118,7 @@ const check = (label, ok, note = '') => checks.push({ label, ok: !!ok, note });
 // it in software, an upper bound on frame times, audit-map.md).
 const browser = await chromium.launch(flag('gpu') ? { args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist'] } : {});
 
-async function boot(width, height, url = '?tab=map&xw=map', lang = 'en', styleSeed = '') {
+async function boot(width, height, url = '?tab=map&xw=map', lang = 'en', styleSeed = '', waitFor = '') {
   const phone = width < 769;
   const ctx = await browser.newContext({
     viewport: { width, height }, deviceScaleFactor: phone ? 3 : 1, isMobile: phone, hasTouch: phone, serviceWorkers: 'block',
@@ -152,7 +160,9 @@ async function boot(width, height, url = '?tab=map&xw=map', lang = 'en', styleSe
     } catch { /* storage off */ }
   }, lang);
   await page.goto(BASE + url, { waitUntil: 'domcontentloaded', timeout: 120000 });
-  await page.waitForFunction(() => performance.getEntriesByName('carta:map-idle').length > 0, null, { timeout: 120000 });
+  // A list page (round G) draws no map: it waits for its rows instead.
+  if (waitFor) await page.waitForSelector(waitFor, { timeout: 120000 });
+  else await page.waitForFunction(() => performance.getEntriesByName('carta:map-idle').length > 0, null, { timeout: 120000 });
   await page.waitForTimeout(2500);
   return { ctx, page, errors, phone };
 }
@@ -1247,9 +1257,132 @@ async function roundEPass() {
   }
 }
 
+// Fix round G (judgement-7), --g-only runs just this pass.
+const hintJs = `(() => {
+  const inp = document.querySelector('.band-input');
+  if (!inp || !inp.getClientRects().length) return { hint: null };
+  const cs = getComputedStyle(inp);
+  const c = document.createElement('canvas').getContext('2d');
+  c.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+  const room = inp.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  return { hint: inp.placeholder, hintW: Math.round(c.measureText(inp.placeholder).width), room: Math.round(room) };
+})()`;
+// The Filters word's right edge (its text, not the button) to the count disc.
+const badgeJs = `(() => {
+  const btn = [...document.querySelectorAll('.xap-filters')].find((e) => e.getClientRects().length);
+  const n = btn?.querySelector('.xap-n');
+  if (!btn || !n) return { badge: false };
+  const walk = document.createTreeWalker(btn, NodeFilter.SHOW_TEXT);
+  let last = null;
+  for (let t = walk.nextNode(); t; t = walk.nextNode()) if (t.textContent.trim() && !n.contains(t)) last = t;
+  const r = document.createRange(); r.selectNodeContents(last);
+  const word = r.getBoundingClientRect(); const disc = n.getBoundingClientRect(); const b = btn.getBoundingClientRect();
+  return { badge: true, word: last.textContent.trim(), gap: Math.round((disc.left - word.right) * 10) / 10, inBtn: disc.right <= b.right + 0.5 };
+})()`;
+// sRGB of any CSS colour, through a canvas (tokens may be oklch).
+const clearJs = `(() => {
+  const btn = document.querySelector('.xmap-quick .xquick-clear');
+  if (!btn || !btn.getClientRects().length) return { btn: false };
+  const cs = getComputedStyle(btn);
+  const rgb = (col) => { const c = document.createElement('canvas').getContext('2d', { willReadFrequently: true }); c.fillStyle = '#fff'; c.fillRect(0, 0, 1, 1); c.fillStyle = col; c.fillRect(0, 0, 1, 1); return [...c.getImageData(0, 0, 1, 1).data].slice(0, 3); };
+  const lum = ([r, g, b]) => { const f = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b); };
+  const fg = lum(rgb(cs.color)); const bg = lum(rgb(cs.backgroundColor));
+  const ratio = (Math.max(fg, bg) + 0.05) / (Math.min(fg, bg) + 0.05);
+  const b = btn.getBoundingClientRect();
+  const prev = btn.previousElementSibling?.getBoundingClientRect(); const next = btn.nextElementSibling?.getBoundingClientRect();
+  return {
+    btn: true, ground: cs.backgroundColor, ratio: Math.round(ratio * 100) / 100,
+    before: prev ? Math.round(b.left - prev.right) : null, after: next ? Math.round(next.left - b.right) : null,
+  };
+})()`;
+const repeatJs = (sel) => `(() => {
+  const chips = [...document.querySelectorAll('.xap-chip')].filter((e) => e.getClientRects().length).map((e) => (e.querySelector('.xap-text') || e).textContent.trim());
+  const rows = [...document.querySelectorAll(${JSON.stringify(sel)})];
+  const whys = rows.map((r) => r.querySelector('.xrow-why')?.textContent.trim() || '');
+  const parts = whys.flatMap((w) => w.split(', '));
+  return { chips, rows: rows.length, withWhy: whys.filter(Boolean).length, repeats: parts.filter((p) => chips.includes(p)).length, sample: whys.slice(0, 4) };
+})()`;
+const discJs = `(() => {
+  const disc = document.querySelector('.corner-slot--left .corner-btn')?.getBoundingClientRect();
+  const tab = [...document.querySelectorAll('.explore-shell .explore-tab')].find((e) => e.getClientRects().length);
+  if (!disc || !tab) return { disc: false };
+  const tr = tab.getBoundingClientRect();
+  const hit = (r) => r.width > 0 && r.left < disc.right && r.right > disc.left && Math.max(r.top, tr.top) < disc.bottom && Math.min(r.bottom, tr.bottom) > disc.top;
+  const under = [...tab.querySelectorAll('.xrc, .xrow, .xrc-head, .xrow-name')].filter((e) => hit(e.getBoundingClientRect())).length;
+  return { disc: true, under, listBottom: Math.round(tr.bottom), discTop: Math.round(disc.top), left: Math.round(disc.left), fromFoot: Math.round(innerHeight - disc.bottom) };
+})()`;
+async function roundGPass() {
+  // 1. The search hint on a phone: whole, or none at all.
+  for (const lang of LANGS) {
+    for (const [w, h] of [[360, 780], [390, 844]]) {
+      await guard(`roundG hint ${w} ${lang}`, async () => {
+        for (const [state, url, sel] of [
+          ['Explore at rest', '?tab=explore', '.xrc, .xrow'],
+          ['Explore, filters on', '?tab=explore&xq=8&xm=7', '.xrow'],
+          ['map at rest', '?tab=map&xw=map', ''],
+          ['map, filters on', '?tab=map&xw=map&xq=8&xm=7', ''],
+        ]) {
+          const { ctx, page, errors } = await boot(w, h, url, lang, '', sel);
+          const s = await page.evaluate(hintJs);
+          check(`roundG ${w} ${lang} ${state}: the search hint is whole or absent`, s.hint != null && s.hintW <= s.room, `"${s.hint}" ${s.hintW} in ${s.room}`);
+          if (state === 'Explore, filters on') {
+            const b = await page.evaluate(badgeJs);
+            check(`roundG ${w} ${lang}: the Filters count stands 6 px or more from "${b.word}"`, b.badge && b.gap >= 6 && b.inBtn, JSON.stringify(b));
+            if (SHOTS && (lang === 'es' || lang === 'fr')) await page.screenshot({ path: path.join(SHOTS, `g-list-${w}-${lang}-f.png`) });
+          }
+          check(`roundG ${w} ${lang} ${state}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
+          await ctx.close();
+        }
+      });
+    }
+  }
+  // 2. Clear all on the map's top edge: on paper, 8 px apart, readable.
+  for (const [w, h] of [[769, 1000], [820, 1180], [1440, 900]]) {
+    await guard(`roundG clear ${w}`, async () => {
+      const { ctx, page } = await boot(w, h, '?tab=map&xw=map');
+      for (const id of ['score8', 'water']) {
+        await page.locator(`.xmap-quick [data-quick="${id}"]`).click();
+        await page.waitForTimeout(1500);
+      }
+      const c = await page.evaluate(clearJs);
+      check(`roundG ${w}: Clear all on the map stands on paper, 8 px from its neighbours, 4.5:1 or more`,
+        c.btn && !/rgba\(0, 0, 0, 0\)|transparent/.test(c.ground) && c.ratio >= 4.5 && Math.abs(c.before - 8) <= 1 && (c.after == null || Math.abs(c.after - 8) <= 1), JSON.stringify(c));
+      if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `g-clear-${w}.png`) });
+      await ctx.close();
+    });
+  }
+  // 3. A list row under the "Good in July" chip does not say it again (the
+  // map's rows draw no reason line).
+  for (const [tag, url, sel, wait] of [['list', '?tab=explore&xm=7', '.xrows .xrow', '.xrow']]) {
+    await guard(`roundG repeat 1440 ${tag}`, async () => {
+      const { ctx, page } = await boot(1440, 900, url, 'en', '', wait);
+      const r = await page.evaluate(repeatJs(sel));
+      check(`roundG 1440 ${tag}: no row repeats an applied chip's words`, r.chips.length > 0 && r.rows > 0 && r.repeats === 0, JSON.stringify(r));
+      if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `g-repeat-1440-${tag}.png`) });
+      await ctx.close();
+    });
+  }
+  // 4. The style disc clear of the list's cards from 769 to 1023.
+  for (const lang of ['en', 'fr']) {
+    for (const [w, h] of [[769, 1024], [820, 1180], [900, 1000], [1023, 768]]) {
+      await guard(`roundG disc ${w} ${lang}`, async () => {
+        const { ctx, page } = await boot(w, h, '?tab=explore', lang, '', '.xrc');
+        const rest = await page.evaluate(discJs);
+        await page.evaluate(() => { const t = [...document.querySelectorAll('.explore-shell .explore-tab')].find((e) => e.getClientRects().length); t.scrollTop = 420; });
+        await page.waitForTimeout(600);
+        const moved = await page.evaluate(discJs);
+        check(`roundG ${w} ${lang}: the style disc sits clear of every card, at rest and scrolled, 24 px from its corner`,
+          rest.disc && rest.under === 0 && moved.under === 0 && rest.listBottom <= rest.discTop && rest.left === 24 && rest.fromFoot === 24, JSON.stringify({ rest, moved }));
+        if (SHOTS && w === 769) await page.screenshot({ path: path.join(SHOTS, `g-disc-${w}-${lang}.png`) });
+        await ctx.close();
+      });
+    }
+  }
+}
+
 const perf = {};
 // --layout-only skips the speed runs (a quick rerun of the layout checks).
-if (!flag('layout-only') && !flag('round2-only') && !flag('why-only') && !flag('d-only') && !flag('e-only')) for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
+if (!flag('layout-only') && !flag('round2-only') && !flag('why-only') && !flag('d-only') && !flag('e-only') && !flag('g-only')) for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
 console.log('speed (CPU %dx, pan)', RATE, JSON.stringify(perf, null, 1));
 
 if (!PERF_ONLY) {
@@ -1259,6 +1392,7 @@ if (!PERF_ONLY) {
   }
   if (flag('d-only')) await roundDPass();
   else if (flag('e-only')) await roundEPass();
+  else if (flag('g-only')) await roundGPass();
   else {
     if (!flag('cards-only') && !flag('round2-only') && !flag('why-only')) for (const [w, h] of SIZES) await layoutChecks(w, h);
   if (!flag('round2-only') && !flag('why-only')) await cardPass();
@@ -1266,6 +1400,7 @@ if (!PERF_ONLY) {
   if (!flag('cards-only')) await whyPass();
   if (!flag('cards-only') && !flag('why-only')) await roundDPass();
   if (!flag('cards-only') && !flag('why-only')) await roundEPass();
+  if (!flag('cards-only') && !flag('why-only')) await roundGPass();
   }
 }
 

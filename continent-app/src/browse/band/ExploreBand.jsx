@@ -154,17 +154,21 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   }, [instant, kind]);
 
   const inputRef = React.useRef(null);
-  // The hint is whole or it is the short one (owner: no cut text): on a
-  // desktop the long hint shows only while it fits the field, which from
-  // 769 to 1023 px (and with Back and Share in it) it often does not.
-  // Judgement-6: with a filter on, the Filters count narrows the field
-  // again ("Chercher un li…" at 769), so a one-word hint is the last step.
+  // The hint is whole or it is not there (owner: no cut text): the long
+  // hint shows only while it fits the field, which from 769 to 1023 px
+  // (and with Back and Share in it) it often does not. Judgement-6: with a
+  // filter on, the Filters count narrows the field again ("Chercher un
+  // li…" at 769), so a one-word hint is the next step. Judgement-7: on a
+  // phone with a filter on, Back and Share sit in the field ("Busca …" at
+  // 360), so phones measure too, and where even the one word does not fit
+  // the field shows none (its name and the search button still say it).
   const longHint = t('band.searchPh');
   const shortHint = t('band.searchPhShort');
+  const tinyHint = t('band.searchPhTiny');
   const [hint, setHint] = React.useState('long');
   React.useLayoutEffect(() => {
     const el = inputRef.current;
-    if (!isDesktop || !el) return undefined;
+    if (!el) return undefined;
     let gone = false;
     const ctx = document.createElement('canvas').getContext('2d');
     const read = () => {
@@ -173,7 +177,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
       ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
       const room = el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
       const fits = (text) => ctx.measureText(text).width <= room - 1;
-      const next = fits(longHint) ? 'long' : fits(shortHint) ? 'short' : 'tiny';
+      const next = fits(longHint) ? 'long' : fits(shortHint) ? 'short' : fits(tinyHint) ? 'tiny' : 'none';
       setHint((h) => (h === next ? h : next));
     };
     read();
@@ -181,7 +185,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
     ro?.observe(el);
     return () => { gone = true; ro?.disconnect(); };
-  }, [isDesktop, longHint, shortHint]);
+  }, [longHint, shortHint, tinyHint]);
   const panelId = React.useId();
   const close = React.useCallback(() => {
     setOpen(false);
@@ -320,7 +324,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
                   </IconButton>
                 )}
                 <input ref={inputRef} type="search" className="band-input"
-                  value={value} placeholder={!isDesktop ? shortHint : hint === 'long' ? longHint : hint === 'short' ? shortHint : t('band.searchPhTiny')} aria-label={t('band.searchPh')}
+                  value={value} placeholder={{ long: longHint, short: shortHint, tiny: tinyHint }[hint] || ''} aria-label={t('band.searchPh')}
                   autoComplete="off" enterKeyHint="search" spellCheck={false}
                   role="combobox"
                   aria-expanded={open}

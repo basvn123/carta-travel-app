@@ -731,16 +731,14 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
 .xquick-chip.xquick-filters { border: var(--stroke-edge) solid var(--action); }
 .xquick-chip .band-count { position: static; }
 /* Clear all: quiet words, not a chip that reads as a filter (judgement-6),
-   right after the checked chips (after Filters on a phone). No box, so it
-   sits 4 px nearer its neighbours: a chip turned on at 360 px in fr stays
-   in view beside Filters and it. */
+   right after the checked chips (after Filters on a phone). */
 .xquick-clear {
   position: relative;
   display: inline-flex;
   flex: none;
   align-items: center;
   min-height: 36px;
-  margin: 0 calc(-1 * var(--space-1));
+  margin: 0;
   padding: 0;
   border: 0;
   border-radius: var(--radius-pill);
@@ -769,6 +767,19 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
   pointer-events: none;
 }
 .explore-shell .xmap-quick .xquick-chip { pointer-events: auto; margin: 0; }
+/* On the phone band's row no box, so it sits 4 px nearer its neighbours: a
+   chip turned on at 360 px in fr stays in view beside Filters and it. */
+.band-quick .xquick-clear { margin: 0 calc(-1 * var(--space-1)); }
+/* On the map it stands on the chips' paper, the row's 8 px gaps either side,
+   so it reads over sea and land alike and not jammed between two chips
+   (judgement-7); no edge and no shadow, so it is still not a chip. */
+.explore-shell .xmap-quick .xquick-clear {
+  align-self: center;
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  background: var(--surface);
+}
+.explore-shell .xmap-quick .xquick-clear::after { inset: -4px 0; }
 
 /* --- The phone map's band: row 2 the style (pinned) and the settings ----- */
 @media (max-width: 768px) {

@@ -90,7 +90,7 @@ function useRouteIn(ref, view) {
 export function ExploreContent({
   guidedRows, isActiveMap, lang, allRows, anyActive, cardLinkId, catalogueFull = true, chips, contentRef, costIndex, dxf, emptyLine, favSet,
   gridTotal, isActive, isDesktop, lastChip, listed, locationQuery, mapOpened, mapTop,
-  onMapNeedDetail, onMapViewport, onPick, onPinLink, onToggleFav, openPlace, overviewOf,
+  onMapNeedDetail, onMapViewport, onPick, onPinLink, onToggleFav, openPlace, overviewOf, rowOverviewOf = overviewOf,
   pageOver, pending, pickedId, pickedRow, pinLinkId, pins, railLead, railMonth, rails,
   railsIdle, reachMinutes, resetAll, roleFor, searchHits, selectedId, sentinelRef,
   setCardLinkId, setLocationQuery, setPickedId, setShowFavOnly, setView, showFavOnly,
@@ -288,7 +288,7 @@ export function ExploreContent({
               linked={view === 'map' && p.id === pinLinkId}
               onLink={view === 'map' ? setCardLinkId : null}
               month={dxf.month}
-              {...overviewOf(p)}
+              {...rowOverviewOf(p)}
             />
           ))}
         </div>

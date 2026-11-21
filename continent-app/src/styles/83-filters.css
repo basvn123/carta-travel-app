@@ -223,7 +223,10 @@
 .xap-clear.btn { flex: none; padding: 0 var(--space-2); font-weight: 700; }
 .xap-filters.btn { flex: none; border-radius: var(--radius-control); }
 .xap-filters.is-on { border-color: var(--select-border); }
+/* The disc keeps 8 px from the word, as on the quick row's Filters: the
+   button's label has no gap of its own, so it touched "Filtros" (judgement-7). */
 .xap-n {
+  margin-inline-start: var(--space-2);
   display: inline-grid;
   place-items: center;
   min-width: 20px;

@@ -15,12 +15,14 @@ const value = (lang, key) => {
 
 test('the band field names itself; Ask Carta stands outside it (round 2)', () => {
   const band = read('src/browse/band/ExploreBand.jsx');
-  // A phone shows the short placeholder so it is never cut at 360 (fixes r1 T3); the name stays full.
-  // The long hint on a desktop only while it fits the field, else the
-  // short one, never cut (judgement-5 follow-up); the name stays whole.
-  // Judgement-6: a one-word hint when even the short one would be cut.
-  assert.match(band, /placeholder=\{!isDesktop \? shortHint : hint === 'long' \? longHint : hint === 'short' \? shortHint : t\('band\.searchPhTiny'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
-  assert.match(band, /const next = fits\(longHint\) \? 'long' : fits\(shortHint\) \? 'short' : 'tiny';/);
+  // The long hint only while it fits the field, else the short one, never
+  // cut (judgement-5 follow-up); the name stays whole. Judgement-6: a
+  // one-word hint when even the short one would be cut. Judgement-7: a
+  // phone measures too (Back and Share narrow its field with a filter on),
+  // and no hint at all when even the one word would be cut.
+  assert.match(band, /placeholder=\{\{ long: longHint, short: shortHint, tiny: tinyHint \}\[hint\] \|\| ''\} aria-label=\{t\('band\.searchPh'\)\}/);
+  assert.match(band, /const next = fits\(longHint\) \? 'long' : fits\(shortHint\) \? 'short' : fits\(tinyHint\) \? 'tiny' : 'none';/);
+  assert.doesNotMatch(band, /if \(!isDesktop \|\| !el\) return undefined;/);
   // The search button closes the field at its right end; no magnifier on the left.
   assert.match(band, /<Pressable type="submit" className="band-go"/);
   assert.match(band, /type="search"[\s\S]*enterKeyHint="search"/);

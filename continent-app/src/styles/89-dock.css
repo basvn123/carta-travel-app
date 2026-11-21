@@ -280,6 +280,18 @@ body:has([aria-modal="true"]:not(.dock-card)) .corner-slot { opacity: 0; visibil
   padding-bottom: var(--corner-room);
   scroll-padding-bottom: var(--corner-room);
 }
+/* 769 to 1023 px the list starts 24 px in, where the disc stands, so a
+   card's name sat under it at rest ("La♡omo", judgement-7). There the
+   Explore list ends above the disc's own band (the disc 24 px from its
+   edges), a hairline over it; the map keeps its corner (has-map-corner). */
+@media (min-width: 769px) and (max-width: 1023px) {
+  html:not(.has-map-corner) .explore-shell .explore-tab {
+    margin-bottom: var(--corner-room);
+    border-bottom: var(--stroke-hair) solid var(--border-soft);
+    padding-bottom: var(--space-5);
+    scroll-padding-bottom: 0;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .dock-card,

@@ -236,7 +236,7 @@ export function ExploreTab({
 
   const {
     settingsLine, setCountryNot, oneCountry, request, allRows, rows,
-    nearRow, gLabels, overviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed,
+    nearRow, gLabels, overviewOf, rowOverviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed,
     home, keepFor, fitOf,
   } = useExploreRows({
     availableCountries, bbox, catAllRows, catRows, countryFilter, countryNot, data, dxf, guided,
@@ -799,7 +799,7 @@ export function ExploreTab({
           locationQuery={locationQuery} mapOpened={mapOpened} mapTop={mapTop}
           onMapNeedDetail={onMapNeedDetail} onMapViewport={onMapViewport} onPick={onPick}
           onPinLink={onPinLink} onToggleFav={onToggleFav} openPlace={openPlace}
-          overviewOf={overviewOf} pageOver={pageOver} pending={pending} pickedId={pickedId}
+          overviewOf={overviewOf} rowOverviewOf={rowOverviewOf} pageOver={pageOver} pending={pending} pickedId={pickedId}
           pickedRow={pickedRow} pinLinkId={pinLinkId} pins={pins} railLead={railLead}
           railMonth={railMonth} rails={shownRails} railsIdle={railsIdle} reachMinutes={reachMinutes}
           resetAll={resetAll} roleFor={roleFor} searchHits={searchHits} selectedId={selectedId}

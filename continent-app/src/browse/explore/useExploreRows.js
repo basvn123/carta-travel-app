@@ -5,7 +5,7 @@ import { partyOf } from '../../lib/party.js';
 import { homePoint } from '../../lib/travelWay.js';
 import { wayRowsFor, wayKey, flightFiles, waysReady, wayRowsPending, warmWays } from '../../lib/settings/ways.js';
 import { makeLabels, whyFacts, noCarOk, underOk, quietOk, matchGuided, guidedComparator } from '../../lib/guidedSearch.js';
-import { overviewRegion, overviewScore, reasonText, overviewReason } from '../../lib/placeOverview.js';
+import { overviewRegion, overviewScore, reasonText, overviewReason, rowReason } from '../../lib/placeOverview.js';
 import { fmtMonthRanges } from '../ClimateStrip.jsx';
 import { buildNearbyIndex, roleOf } from '../../lib/taxonomy.js';
 import { bandAtLeast, minVerdict } from '../../lib/rating.js';
@@ -122,6 +122,24 @@ export function useExploreRows({
       { monthName: gLabels.monthInline, monthRanges: (ms) => fmtMonthRanges(ms, t) },
     ),
   }), [guided, lang, ovMonth, whyOn, whyOf, t, gLabels]);
+  // The same for a row under the applied chips: it drops the words a chip
+  // already says (the month, a vibe, an area, No car, Not crowded) and
+  // keeps what differs by place (judgement-7: "Good in July" on every row
+  // at 1440). The list's rows use it; the map's rows draw no reason and
+  // the picked card stands alone, so they keep overviewOf.
+  const rowWhyOf = React.useCallback(
+    (p) => whyFacts(p, dxf, { ...gctx, t, lang, labels: gLabels, placeOnly: true }).join(', ') || null,
+    [dxf, gctx, t, lang, gLabels],
+  );
+  const rowOverviewOf = React.useCallback((p) => ({
+    region: overviewRegion(guided, p.id, lang),
+    rating: overviewScore(p, ovMonth),
+    reason: reasonText(
+      rowReason(overviewReason(p, { month: ovMonth, why: whyOn ? rowWhyOf(p) : null }), { month: dxf.month }),
+      t,
+      { monthName: gLabels.monthInline, monthRanges: (ms) => fmtMonthRanges(ms, t) },
+    ),
+  }), [guided, lang, ovMonth, whyOn, rowWhyOf, dxf.month, t, gLabels]);
 
   // C1's role needs the neighbour count; built once per catalogue.
   const nearby = React.useMemo(
@@ -221,5 +239,5 @@ export function useExploreRows({
     () => (view === 'map' ? shownRows : guidedRows).slice(0, visible),
     [guidedRows, shownRows, view, visible],
   );
-  return { settingsLine, setCountryNot, oneCountry, request, flightLimitAvailable, allRows, rows, nearRow, gLabels, overviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed, home, keepFor, fitOf };
+  return { settingsLine, setCountryNot, oneCountry, request, flightLimitAvailable, allRows, rows, nearRow, gLabels, overviewOf, rowOverviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed, home, keepFor, fitOf };
 }
