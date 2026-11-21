@@ -1,231 +1,150 @@
 import React, { useMemo, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, IconButton, ScorePlate } from '../../components/ui/index.js';
-import { HeroImage } from '../../components/HeroImage.jsx';
-import { CountryFlag, COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
-import {
-  PencilIcon, PlusIcon, CameraIcon, MountainIcon, TrainIcon, GlobeIcon, CalendarIcon, StarIcon, ArrowRightIcon,
-} from '../../components/Icons.jsx';
+import { Pressable } from '../../components/ui/Pressable.jsx';
+import { EyeIcon, PlusIcon } from '../../components/Icons.jsx';
 import { countryName } from '../../lib/countryName.js';
-import { formatMoney } from '../../lib/money.js';
-import { activeLocale } from '../../lib/localeState.js';
-import { CardMenu } from './parts.jsx';
-import { EuropeMap, CountryPick } from './atlas/AtlasPlate.jsx';
-import { useEuropeMap, NAME_OF, stateOf, landShare } from './atlas/plateData.js';
-import { Section } from './MyTripsTabs.jsx';
+import { extremes, nightsPerMonth, nightsPerYear, tripLogOrder, tripYear, yearCard } from '../../lib/atlasFacts.js';
+import { NAME_OF } from './atlas/plateData.js';
+import { ExampleBar, RateTrip } from './TripParts.jsx';
+import {
+  Badges, CostChart, Extremes, MonthsChart, PastRow, Sect, TripLog, YearBars, YearCardSection,
+} from './EuropeParts.jsx';
 
 // The plate moved to ./atlas/AtlasPlate.jsx (G12 Phase B), which takes
 // overlays; the plain map is re-exported here for its old importers.
 export { EuropeMap } from './atlas/AtlasPlate.jsx';
 
-/** A share as the reader's locale writes it: one decimal under 10, whole above. */
-const shareText = (n) => Number(n).toLocaleString(activeLocale(), { maximumFractionDigits: n < 10 ? 1 : 0 });
-
-/** A Score as the reader's locale writes it, one decimal. */
-const scoreText = (n) => Number(n).toLocaleString(activeLocale(), { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-
-const MILESTONE_ICON = { region: GlobeIcon, next: ArrowRightIcon, nightTrain: TrainIcon, longest: CalendarIcon, north: MountainIcon };
-
-/** One milestone as a sentence, from lib/myTrips.europeMilestones(). */
-function milestoneText(t, m, fmtMonth) {
-  if (m.key === 'region') return { title: t('mt.msRegion', { region: t(`mt.region.${m.region}`) }), sub: t('mt.msOfAll', { n: m.n }) };
+/** One milestone as a badge label and its fact line, from lib/myTrips.europeMilestones(). */
+function badgeOf(t, m, fmtMonth) {
+  if (m.key === 'region') return { label: t(`mt.region.${m.region}`), sub: t('mt.msRegion', { region: t(`mt.region.${m.region}`) }), earned: true };
   if (m.key === 'next') {
     return {
-      title: t('mt.msNext', { region: t(`mt.region.${m.region}`) }),
+      label: t(`mt.region.${m.region}`),
       sub: t('mt.msNextSub', { countries: m.cc.map((c) => countryName(c, NAME_OF[c] || c)).join(', ') }),
+      earned: false,
     };
   }
-  if (m.key === 'nightTrain') return { title: t('mt.msNightTrain'), sub: '' };
-  if (m.key === 'longest') return { title: t('mt.msLongest', { n: m.n }), sub: [m.title, m.when ? fmtMonth(m.when) : ''].filter(Boolean).join(', ') };
-  return { title: t('mt.msNorth', { city: m.city }), sub: t('mt.msNorthSub', { lat: Math.round(m.lat * 10) / 10 }) };
+  if (m.key === 'nightTrain') return { label: t('mt.badgeNightTrain'), sub: t('mt.msNightTrain'), earned: true };
+  if (m.key === 'longest') {
+    return { label: t('mt.badgeLongest'), sub: [t('mt.msLongest', { n: m.n }), m.title, m.when ? fmtMonth(m.when) : ''].filter(Boolean).join(', '), earned: true };
+  }
+  return { label: t('mt.badgeNorth'), sub: t('mt.msNorth', { city: m.city }), earned: true };
 }
 
 /**
- * Your Europe (T926), replacing Visited: the count and the share of
- * Europe's land over the map (T970), Mark a country, the year's recap card, the figures the record can back, up to five
- * factual milestones, then the past trips as a journal by year and Add a
- * past trip.
+ * Your Europe (T926; G12 Phase E, the "your atlas" reference). The plate,
+ * the count chip, the year legend and Countries as a list live in the map
+ * slot (AtlasSlot); this is the column under it.
  *
- *   map       { been: Set, next: Set, saved: Set, viaTrip: Set, nextName }
- *   onToggleCountry(iso)   marks or unmarks a country by hand (T972)
- *   figures   { countries, total, nights, trips, avgDay, vsEstimate, cheapestGreat }
- *   journal   [{ year, items: [{ id, title, img, photos, nights, cost, vs, rating, when, needs, onOpen,
- *               onPhotos, onHow, menuActions, onRemove, removeLabel, below }] }]
+ * Empty: Add a past trip and See an example. With a record, in the
+ * reference's order: Nights per year (a tap filters the map and the other
+ * charts), When you travel, What your trips cost, Your extremes, the trip
+ * log with the traveller's own grade, the milestone badges, the year card,
+ * and the past trips by year. A first record (under three trips) leads with
+ * the log, as the reference's "first" state does.
+ *
+ *   trips      past trips in lib/atlasFacts' plain shape (examples only in example mode)
+ *   year, onYear   the year filter, shared with the map
+ *   past       [{ id, year, title, img, iso2, flags, nights, grade, vs, onOpen, open, below, menuActions, onRemove, removeLabel }]
+ *   onGrade(id, n)  a grade given in place (memory.rating)
+ *   onFill(id) opens the memory form for a trip without spend
  */
 export function YourEurope({
-  map, figures, milestones = [], journal = [], recap = null, onRecap, onMark, markRef, onToggleCountry, onAddPast, pastForm, error,
-  fmtMonth, mapInSlot = false,
+  trips = [], year = null, onYear, ramp = {}, geo, milestones = [], countries = 0, past = [],
+  onGrade, onFill, onRecap, onShare, sharing = false, onAddPast, pastForm, error, fmtMonth,
+  example = false, onExample, onExampleClose,
 }) {
   const { t } = useI18n();
-  const hasAny = figures.countries > 0 || journal.length > 0;
-  const geo = useEuropeMap();
-  const [picked, setPicked] = useState('');
-  // The share of the catalogue's land: honest because the map's areas are
-  // equal-area (km2 per country from the build script).
-  const share = useMemo(() => landShare(geo, map.been), [geo, map.been]);
-  const pickedState = picked ? stateOf(picked, map.been, map.next, map.saved) : '';
+  const [per, setPer] = useState('day');
+  const [askId, setAskId] = useState('');
+  const has = trips.length > 0;
+  const tv = useMemo(() => (year == null ? trips : trips.filter((x) => tripYear(x) === year)), [trips, year]);
+  const bars = useMemo(() => nightsPerYear(trips), [trips]);
+  const months = useMemo(() => nightsPerMonth(trips, { year }), [trips, year]);
+  const ex = useMemo(() => (tv.length > 1 ? extremes(tv) : null), [tv]);
+  const log = useMemo(() => tripLogOrder(trips), [trips]);
+  const card = useMemo(() => yearCard(trips, year), [trips, year]);
+
+  if (!has && !pastForm && !error) {
+    return (
+      <div className="mt-europe atlas-eu is-empty">
+        <div className="atlas-empty-acts">
+          <Pressable className="atlas-btn" onClick={onAddPast}><PlusIcon size={18} />{t('saved.addPastTrip')}</Pressable>
+          {onExample && <Pressable className="atlas-btn is-soft" onClick={onExample}><EyeIcon size={18} />{t('mt.seeExample')}</Pressable>}
+        </div>
+      </div>
+    );
+  }
+
+  const spent = tv.filter((x) => Number.isFinite(x.spendPP) && x.spendPP > 0 && x.nights > 0)
+    .map((x) => ({ ...x, year: tripYear(x) }));
+  const missing = tv.length - spent.length;
+  const ask = log.unrated.find((x) => x.id === askId) || (trips.length < 3 ? log.unrated[0] : null);
+  const rate = ask ? (
+    <RateTrip title={ask.title} onRate={(n) => { onGrade?.(ask.id, n); setAskId(''); }} />
+  ) : null;
+  const rated = log.rated.map((x) => ({ ...x, year: tripYear(x) }));
+  const items = [
+    ...milestones.map((m, i) => ({ id: `${m.key}-${m.region || i}`, key: m.key, ...badgeOf(t, m, fmtMonth) })),
+    { id: 'ten', key: 'ten', label: t('mt.badge10'), earned: countries >= 10 },
+    ...(milestones.some((m) => m.key === 'nightTrain') ? [] : [{ id: 'train', key: 'nightTrain', label: t('mt.badgeNightTrain'), earned: false }]),
+  ];
+  const years = [...new Set(past.map((x) => x.year))].sort((a, b) => b - a)
+    .filter((y) => year == null || y === year);
+  const pastSect = (
+    <Sect
+      id="mt-past-h"
+      full
+      title={t('mt.pastTrips')}
+      action={!example && !pastForm ? <Pressable className="atlas-lnk" onClick={onAddPast}><PlusIcon size={14} />{t('mt.add')}</Pressable> : null}
+    >
+      {pastForm}
+      {error && <p className="mt-error" role="alert">{error}</p>}
+      {years.map((y) => (
+        <div className="atlas-pyear" key={y}>
+          <h4 className="atlas-pyear-h">{y}</h4>
+          {past.filter((x) => x.year === y).map((x) => <PastRow key={x.id} x={x} />)}
+        </div>
+      ))}
+    </Sect>
+  );
+  const first = trips.length < 3;
+  const yc = card.year != null ? (
+    <YearCardSection card={card} geo={geo} onEdit={onRecap} onShare={onShare} busy={sharing} />
+  ) : null;
+  const logSect = <TripLog rated={rated} unrated={log.unrated} ask={ask} onAsk={setAskId} rate={rate} />;
+  const cost = (
+    <CostChart
+      trips={spent}
+      per={per}
+      onPer={setPer}
+      missing={example ? 0 : missing}
+      onFill={() => onFill?.(tv.find((x) => !(x.spendPP > 0))?.id)}
+    />
+  );
   return (
-    <div className="mt-europe">
-      <div className="mt-europe-map">
-        {!mapInSlot && <div className="mt-atlas">
-          <p className="mt-atlas-head">
-            <b className="mt-atlas-n">{map.been.size}</b>
-            <span className="mt-atlas-of">
-              {t('mt.ofEurope', { n: figures.total })}
-              {share > 0 && <span className="mt-atlas-share">{t('mt.landShare', { n: shareText(share) })}</span>}
-            </span>
-            <IconButton ref={markRef} className="mt-atlas-mark" label={t('mt.markCountry')} onClick={onMark}>
-              <PencilIcon size={18} />
-            </IconButton>
-          </p>
-          <div className="mt-atlas-frame">
-            <EuropeMap
-              geo={geo}
-              been={map.been}
-              next={map.next}
-              saved={map.saved}
-              label={t('mt.mapLabel', { n: map.been.size })}
-              picked={picked}
-              onPick={setPicked}
-            />
-            <CountryPick
-              picked={picked}
-              state={pickedState}
-              canToggle={!!onToggleCountry && !map.viaTrip?.has(picked)}
-              onToggle={onToggleCountry}
-            />
-          </div>
-          <div className="mt-atlas-legend">
-            <span><i className="is-been" aria-hidden="true" />{t('mt.legendBeen', { n: map.been.size })}</span>
-            {map.next.size > 0 && <span><i className="is-next" aria-hidden="true" />{t('mt.legendNext', { name: map.nextName })}</span>}
-            {map.saved.size > 0 && <span><i className="is-saved" aria-hidden="true" />{t('mt.legendSaved', { n: map.saved.size })}</span>}
-          </div>
-        </div>}
-        {recap && (
-          <Button className="mt-recap-card" onClick={onRecap}>
-            {recap.img && <HeroImage url={recap.img} city={String(recap.year)} className="mt-recap-img" maxWidth={640} ratio={[16, 9]} sizes="(min-width: 1024px) 480px, 100vw" />}
-            <span className="mt-recap-text">
-              <span className="mt-recap-k">{t('mt.yearIn', { year: recap.year })}</span>
-              <span className="mt-recap-t">{recap.line}</span>
-              <span className="mt-recap-s">{t('mt.recapOpen')}</span>
-            </span>
-          </Button>
-        )}
-      </div>
-
-      <div className="mt-europe-side">
-        {hasAny && (
-          <dl className="mt-figs" aria-label={t('saved.recordFacts')}>
-            <div className="mt-fig">
-              <dt>{t('saved.factNights')}</dt>
-              <dd><b>{figures.nights}</b></dd>
-              <dd className="mt-fig-sub">{t(figures.trips === 1 ? 'mt.trips1' : 'mt.tripsN', { n: figures.trips })}</dd>
-            </div>
-            {Number.isFinite(figures.avgDay) && (
-              <div className="mt-fig">
-                <dt>{t('mt.figDay')}</dt>
-                <dd><b>{formatMoney(figures.avgDay)}</b></dd>
-                {Number.isFinite(figures.vsEstimate) && Math.round(figures.vsEstimate) !== 0 && (
-                  <dd className="mt-fig-sub">{t(figures.vsEstimate < 0 ? 'mt.underEstimate' : 'mt.overEstimate', { price: formatMoney(Math.abs(figures.vsEstimate)) })}</dd>
-                )}
-                {Number.isFinite(figures.vsEstimate) && Math.round(figures.vsEstimate) === 0 && (
-                  <dd className="mt-fig-sub">{t('mt.onEstimate')}</dd>
-                )}
-              </div>
-            )}
-            {figures.cheapestGreat && (
-              <div className="mt-fig">
-                <dt>{t('mt.figGreat')}</dt>
-                <dd><b>{formatMoney(figures.cheapestGreat.eur)}</b></dd>
-                {/* The place's Score on the house Score plate (the words stay for
-                    screen readers), then the month. */}
-                <dd className="mt-fig-sub">
-                  {figures.cheapestGreat.title}
-                  {Number.isFinite(Number(figures.cheapestGreat.score)) && (
-                    <>{' '}<ScorePlate value={Number(figures.cheapestGreat.score)} label={t('mt.scorePlace', { n: scoreText(figures.cheapestGreat.score) })} /></>
-                  )}
-                  {figures.cheapestGreat.when ? `, ${fmtMonth(figures.cheapestGreat.when)}` : ''}
-                </dd>
-              </div>
-            )}
-          </dl>
-        )}
-
-        {milestones.length > 0 && (
-          <Section id="mt-miles" title={t('mt.milestones')}>
-            <ul className="mt-miles">
-              {milestones.map((m) => {
-                const Icon = MILESTONE_ICON[m.key] || GlobeIcon;
-                const txt = milestoneText(t, m, fmtMonth);
-                return (
-                  <li key={`${m.key}-${m.region || m.n || m.city || ''}`} className={`mt-mile${m.key === 'next' ? ' is-next' : ''}`}>
-                    <span className="mt-mile-icon" aria-hidden="true"><Icon size={20} /></span>
-                    <span className="mt-mile-text"><b>{txt.title}</b>{txt.sub && <small>{txt.sub}</small>}</span>
-                  </li>
-                );
-              })}
-            </ul>
-          </Section>
-        )}
-
-        <Section
-          id="mt-journal"
-          title={t('saved.travelRecord')}
-          // T984: with no past trips the one way in is the add tile below,
-          // so the head carries no second copy of it.
-          action={!pastForm && journal.length > 0 && (
-            <Button size="sm" variant="quiet" iconStart={<PlusIcon size={16} />} onClick={onAddPast}>{t('saved.addPastTrip')}</Button>
-          )}
-        >
-          {pastForm}
-          {error ? (
-            <p className="mt-error" role="alert">{error}</p>
-          ) : journal.length === 0 && !pastForm ? (
-            <button type="button" className="mt-add-tile" onClick={onAddPast}>
-              <span className="mt-add-tile-icon" aria-hidden="true"><PlusIcon size={18} /></span>
-              {t('saved.addPastTrip')}
-            </button>
-          ) : (
-            journal.map((g) => (
-              <div className="mt-year" key={g.year}>
-                <h4 className="mt-year-title">{g.year}</h4>
-                <div className="mt-journal">
-                  {g.items.map((x) => (
-                    <div className="mt-jwrap" key={x.id}>
-                      <article className="mt-jcard">
-                        <div className="mt-jcard-media" onClick={x.onOpen} aria-hidden="true">
-                          <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="mt-jcard-img" maxWidth={640} ratio={[4, 3]} sizes="(min-width: 1024px) 280px, 50vw" />
-                          {x.photos > 0 && (
-                            <span className="mt-photo-pill is-small"><CameraIcon size={14} />{x.photos}</span>
-                          )}
-                        </div>
-                        <div className="mt-jcard-body">
-                          <div className="mt-jcard-top">
-                            <Button variant="quiet" className="mt-jcard-title" onClick={x.onOpen}>{x.title}</Button>
-                            <CardMenu actions={x.menuActions} onRemove={x.onRemove} removeLabel={x.removeLabel} />
-                          </div>
-                          <span className="mt-jcard-meta">{x.meta}</span>
-                          {x.cost && <span className="mt-jcard-meta is-cost">{x.cost}</span>}
-                          {x.rating != null && (
-                            <span className="mt-jcard-rate"><StarIcon size={14} />{t('saved.pastRatedN', { n: x.rating })}</span>
-                          )}
-                          {(x.onPhotos || x.onHow) && (
-                            <span className="mt-jcard-acts">
-                              {x.onPhotos && <Button size="sm" iconStart={<CameraIcon size={14} />} onClick={x.onPhotos}>{t('mt.addPhotos')}</Button>}
-                              {x.onHow && <Button size="sm" onClick={x.onHow}>{t('mt.howWasIt')}</Button>}
-                            </span>
-                          )}
-                        </div>
-                      </article>
-                      {x.below}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))
-          )}
-        </Section>
-      </div>
+    <div className="mt-europe atlas-eu">
+      {example && <ExampleBar onClose={onExampleClose} />}
+      {first ? (
+        <>{logSect}{cost}{yc}<Badges items={items} />{pastSect}</>
+      ) : (
+        <>
+          <Sect
+            id="mt-npy-h"
+            title={t('mt.nightsPerYear')}
+            action={year != null ? <Pressable className="atlas-lnk" onClick={() => onYear?.(null)}>{t('mt.allYears')}</Pressable> : null}
+          >
+            <YearBars data={bars} ramp={ramp} year={year} onYear={onYear} />
+          </Sect>
+          <Sect id="mt-months-h" title={t('mt.whenYouTravel')}><MonthsChart months={months} /></Sect>
+          {cost}
+          {ex && <Extremes ex={ex} />}
+          {logSect}
+          <Badges items={items} />
+          {yc}
+          {pastSect}
+        </>
+      )}
     </div>
   );
 }

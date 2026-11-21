@@ -24,7 +24,7 @@ import { landShare, plateColours, stateOf } from './plateData.js';
  *   onToggleCountry(iso)  a hand mark (T972, useVisitedCountries)
  *   onList, listRef       "Countries as a list" (VisitedCountriesSheet)
  */
-export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHost = null, year = null, onYear, onToggleCountry, onList, listRef, children }) {
+export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHost = null, year = null, onYear, onToggleCountry, onCountry, onList, listRef, children }) {
   const { t } = useI18n();
   const [picked, setPicked] = useState('');
   const first = useRef(tab);
@@ -69,7 +69,7 @@ export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHo
     // names the country first, with the mark in its pill (T972).
     const onPick = empty
       ? (cc) => { if (cc) onToggleCountry?.(cc); }
-      : setPicked;
+      : (onCountry ? (cc) => { if (cc) onCountry(cc); } : setPicked);
     const pickedState = picked ? stateOf(picked, E.been, E.next, new Set()) : '';
     plate = (
       <AtlasPlate
@@ -104,6 +104,9 @@ export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHo
           onToggle={onToggleCountry}
         />
         <div className="atlas-under">
+          {empty && E.nextLine ? (
+            <span className="atlas-nx"><i className="atlas-hatch" aria-hidden="true" />{E.nextLine}</span>
+          ) : (
           <div className="atlas-legend" role="group" aria-label={t('mt.yearFilter')}>
             {E.years.map((y) => (
               <Pressable
@@ -119,6 +122,7 @@ export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHo
             {E.hand.size > 0 && <span className="atlas-yr is-key"><i className="is-hand" aria-hidden="true" />{t('mt.legendHand')}</span>}
             {E.next.size > 0 && <span className="atlas-yr is-key"><i className="is-next" aria-hidden="true" />{t('mt.legendNextShort')}</span>}
           </div>
+          )}
           <Pressable ref={listRef} className="atlas-lnk" onClick={onList}>{t('mt.countriesList')}</Pressable>
         </div>
       </>

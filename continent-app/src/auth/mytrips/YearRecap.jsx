@@ -85,6 +85,54 @@ async function drawRecap({ title, cells, lines, photo, foot }) {
   return new Promise((resolve) => canvas.toBlob((b) => resolve(b), 'image/png'));
 }
 
+/** The title, the figure cells and the lines the image carries. */
+function recapParts(recap, on, t) {
+  const title = t('mt.recapTitle', { year: recap.year });
+  const cells = [
+    { key: 'trips', value: String(recap.trips), label: t(recap.trips === 1 ? 'mt.recapTrip1' : 'mt.recapTripN', { n: recap.trips }) },
+    on.countries && { key: 'countries', value: String(recap.countries), label: t(recap.countries === 1 ? 'mt.recapCountry1' : 'mt.recapCountryN', { n: recap.countries }) },
+    on.nights && { key: 'nights', value: String(recap.nights), label: t('saved.factNights') },
+    on.cost && { key: 'cost', value: formatMoney(recap.avgDay), label: t('mt.figDayShort') },
+  ].filter(Boolean);
+  const lines = [
+    on.great && t('mt.recapGreat', { place: recap.cheapestGreat.title, price: formatMoney(recap.cheapestGreat.eur) }),
+    on.best && t('mt.recapBest', { place: recap.best.title, n: recap.best.rating }),
+  ].filter(Boolean);
+
+  return { title, cells, lines };
+}
+
+/**
+ * Draws the recap PNG and shares it (or downloads it where the browser
+ * cannot share a file). `on` picks the parts; every offered part by default.
+ * Resolves to 'shared', 'saved', '' (the traveller cancelled) or 'failed'.
+ * Also used by the year card's Delen on the Your Europe tab (G12 Phase E).
+ */
+export async function shareRecap({ recap, t, on = null }) {
+  const all = on || { countries: true, nights: true, cost: Number.isFinite(recap.avgDay), great: !!recap.cheapestGreat, best: !!recap.best, photo: !!recap.photo };
+  const { title, cells, lines } = recapParts(recap, all, t);
+  try {
+    const blob = await drawRecap({ title, cells, lines, photo: all.photo ? recap.photo : null, foot: 'Carta' });
+    if (!blob) throw new Error('canvas');
+    const file = new File([blob], `carta-${recap.year}.png`, { type: 'image/png' });
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file], title });
+      return 'shared';
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file.name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    return 'saved';
+  } catch (e) {
+    return e?.name === 'AbortError' ? '' : 'failed';
+  }
+}
+
 /**
  * Your year in Europe (T926): a recap screen with a switch for each figure
  * and "Share as an image". Only the traveller's own trips, and only figures
@@ -107,41 +155,11 @@ export function YearRecap({ recap, onBack }) {
   const [on, setOn] = useState(() => Object.fromEntries(offer.map((k) => [k, true])));
   const [state, setState] = useState('');
 
-  const title = t('mt.recapTitle', { year: recap.year });
-  const cells = [
-    { key: 'trips', value: String(recap.trips), label: t(recap.trips === 1 ? 'mt.recapTrip1' : 'mt.recapTripN', { n: recap.trips }) },
-    on.countries && { key: 'countries', value: String(recap.countries), label: t(recap.countries === 1 ? 'mt.recapCountry1' : 'mt.recapCountryN', { n: recap.countries }) },
-    on.nights && { key: 'nights', value: String(recap.nights), label: t('saved.factNights') },
-    on.cost && { key: 'cost', value: formatMoney(recap.avgDay), label: t('mt.figDayShort') },
-  ].filter(Boolean);
-  const lines = [
-    on.great && t('mt.recapGreat', { place: recap.cheapestGreat.title, price: formatMoney(recap.cheapestGreat.eur) }),
-    on.best && t('mt.recapBest', { place: recap.best.title, n: recap.best.rating }),
-  ].filter(Boolean);
+  const { title, cells, lines } = recapParts(recap, on, t);
 
   const share = async () => {
     setState('busy');
-    try {
-      const blob = await drawRecap({ title, cells, lines, photo: on.photo ? recap.photo : null, foot: 'Carta' });
-      if (!blob) throw new Error('canvas');
-      const file = new File([blob], `carta-${recap.year}.png`, { type: 'image/png' });
-      if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title });
-        setState('shared');
-        return;
-      }
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = file.name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 4000);
-      setState('saved');
-    } catch (e) {
-      setState(e?.name === 'AbortError' ? '' : 'failed');
-    }
+    setState(await shareRecap({ recap, t, on }));
   };
 
   return (

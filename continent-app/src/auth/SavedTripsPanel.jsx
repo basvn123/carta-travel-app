@@ -7,13 +7,12 @@ import {
   loadTripExtras, persistTripExtras, hasTripExtras,
 } from '../planner/dayPlanStore.js';
 import { tripsStore } from '../planner/tripsStore.js';
-import { CalendarIcon, RouteIcon, LinkIcon, PencilIcon, ReceiptIcon } from '../components/Icons.jsx';
+import { CalendarIcon, CameraIcon, RouteIcon, LinkIcon, PencilIcon, ReceiptIcon } from '../components/Icons.jsx';
 import { shareReceiptOn } from '../lib/share/flag.js';
 // T1175: the receipt sheet loads on first use; it is behind a flag.
 const ShareReceiptSheet = lazy(() => import('../components/ShareReceiptSheet.jsx').then((m) => ({ default: m.ShareReceiptSheet })));
 // T1215 (T1152-g): the taste card, its profile code and the taxonomy map load
 // with the Your Europe tab, not with My trips.
-const TasteChips = lazy(() => import('./mytrips/TasteChips.jsx').then((m) => ({ default: m.TasteChips })));
 import { Button, Chip } from '../components/ui/index.js';
 import { loadDeviceTrip, clearDeviceTrip } from '../planner/deviceTripStore.js';
 import { PastTripForm } from './PastTripForm.jsx';
@@ -62,9 +61,12 @@ import { MyTripsHead, TripsTab, VisitedCountriesSheet, MT_TABS } from './mytrips
 import { BAND_CUTOFFS } from '../lib/rating.js';
 import { YourEurope } from './mytrips/YourEurope.jsx';
 import { AtlasSlot } from './mytrips/atlas/AtlasSlot.jsx';
-import { useEuropeMap } from './mytrips/atlas/plateData.js';
+import { useEuropeMap, NAME_OF } from './mytrips/atlas/plateData.js';
 import { tripsLayer, europeLayer } from './mytrips/atlas/layers.js';
-import { YearRecap } from './mytrips/YearRecap.jsx';
+import { YearRecap, shareRecap } from './mytrips/YearRecap.jsx';
+import { CountrySheet } from './mytrips/EuropeParts.jsx';
+import { tripYear } from '../lib/atlasFacts.js';
+import { publishTasteInputs } from './mytrips/tasteInputs.js';
 import { AddBookingSheet } from './mytrips/AddBookingSheet.jsx';
 import { SavedTab } from './mytrips/SavedTab.jsx';
 import { useSharedLists, MOCK_FRIENDS } from './sharedLists.js';
@@ -1071,9 +1073,6 @@ export function SavedTripsPanel({
   const nextPlan = ahead[0] || null;
   const nextIsoAll = nextPlan ? planCountries(nextPlan).map(isoOf).filter(Boolean) : [];
   const nextIso = new Set(nextIsoAll.filter((c) => !beenIso.has(c)));
-  const savedIso = new Set(shortRows.filter((r) => r.kind === 'dest')
-    .map((r) => r.cc || destinations[r.id]?.iso2 || isoOf(destinations[r.id]?.country))
-    .filter((c) => c && !beenIso.has(c) && !nextIso.has(c)));
   const catalogueCountries = useMemo(() => new Set(Object.values(destinations)
     .map((d) => d.iso2 || d.cc || COUNTRY_ISO2[d.country]).filter(Boolean)).size, [destinations]);
   const fmtMonth = (iso) => (iso ? new Date(`${iso}T00:00:00Z`).toLocaleDateString(activeLocale(), { month: 'short', year: 'numeric', timeZone: 'UTC' }) : '');
@@ -1189,8 +1188,9 @@ export function SavedTripsPanel({
       }}
     />
   ) : null;
-  const europeMap = useMemo(() => {
-    const trips = pastTrips.map((r) => {
+  // G12 Phase E: the past trips in lib/atlasFacts' plain shape, for the
+  // plate and every Your Europe graphic.
+  const atlasPast = useMemo(() => pastTrips.map((r) => {
       const mine = (r.mem?.places || []).filter((x) => Number.isFinite(x.lat) && Number.isFinite(x.lon));
       const stops = mine.length ? mine.map((x) => ({ id: x.id, city: x.city, lat: x.lat, lon: x.lon })) : atlasStopsOf(r.ids, () => '');
       const parts = r.kind === 'plan' ? journeyParts(r.item) : dayJourneyParts(r.item);
@@ -1198,13 +1198,40 @@ export function SavedTripsPanel({
         id: r.id,
         title: r.title,
         start: r.kind === 'plan' ? r.item.start_date : r.item.startDate,
+        end: r.end,
+        nights: r.nights,
         countries: parts.countries.map(isoOf).filter(Boolean),
         stops,
+        grade: Number.isFinite(r.mem?.rating) ? r.mem.rating : null,
+        spendPP: Number.isFinite(r.spendPP) ? r.spendPP : null,
       };
-    });
-    return europeLayer({ trips, been: beenIso });
-  }, [pastTrips, beenIso]); // eslint-disable-line react-hooks/exhaustive-deps -- the helpers follow destinations, which pastTrips already follows
-  const money = useMemo(() => europeMoney(pastTrips, { greatScore: BAND_CUTOFFS.excellent }), [pastTrips]);
+    }), [pastTrips]); // eslint-disable-line react-hooks/exhaustive-deps -- the helpers follow destinations, which pastTrips already follows
+  // Example mode on Your Europe: a record of real catalogue places, marked
+  // Voorbeeld, held only here (never saved, counted or shared as a record).
+  const [exGrades, setExGrades] = useState({});
+  const euExample = example && !pastTrips.length && tab === 'europe';
+  const exampleEurope = useMemo(() => (!euExample ? [] : YEARS_PLANS.map((p) => {
+    const mem = YEARS_MEMS[p.id] || {};
+    const places = mem.places || [];
+    return {
+      id: p.id,
+      title: p.label || places.map((x) => x.city).join(', '),
+      start: p.start_date,
+      end: p.end_date,
+      nights: places.reduce((n, x) => n + (x.nights || 0), 0),
+      countries: [...new Set(places.map((x) => isoOf(x.country)).filter(Boolean))],
+      stops: places.map((x) => ({ id: x.id, city: x.city, lat: x.lat, lon: x.lon })),
+      grade: exGrades[p.id] ?? (Number.isFinite(mem.rating) ? mem.rating : null),
+      spendPP: spendPerPerson(mem),
+      ids: places.map((x) => x.id),
+    };
+  })), [euExample, exGrades]);
+  const euTrips = euExample ? exampleEurope : atlasPast;
+  const euBeen = useMemo(() => (euExample ? new Set(exampleEurope.flatMap((x) => x.countries)) : beenIso), [euExample, exampleEurope, beenIso]);
+  const europeMap = useMemo(() => {
+    const trips = euTrips;
+    return europeLayer({ trips, been: euBeen });
+  }, [euTrips, euBeen]);
   const milestones = useMemo(() => {
     const points = [];
     pastTrips.forEach((x) => {
@@ -1275,11 +1302,91 @@ export function SavedTripsPanel({
       img: trips.map((x) => coverPhoto(x.mem)).find(Boolean) || resolveImage({ ids: trips[0]?.ids || [] }),
     };
   }, [journal, pastTrips, destinations, todayIso, resolveImage]);
-  const recapLine = recap ? [
-    t(recap.trips === 1 ? 'mt.trips1' : 'mt.tripsN', { n: recap.trips }),
-    recap.countries ? t(recap.countries === 1 ? 'mt.countries1' : 'mt.countriesN', { n: recap.countries }) : '',
-    recap.nights ? t(recap.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: recap.nights }) : '',
-  ].filter(Boolean).join(', ') : '';
+
+  // G12 Phase E: the example record's milestones, the past trips as rows,
+  // the country sheet and the year card's Delen.
+  const exMilestones = useMemo(() => (!euExample ? [] : europeMilestones({
+    beenIso: [...euBeen], nextIso: [], trips: exampleEurope,
+    points: exampleEurope.flatMap((x) => x.stops), legs: [],
+  })), [euExample, euBeen, exampleEurope]);
+  const pastRows = euExample
+    ? exampleEurope.map((x) => ({
+      id: x.id, year: tripYear(x), title: x.title, nights: x.nights, grade: x.grade, vs: null,
+      img: resolveImage({ ids: x.ids }), flags: x.countries, iso2: x.countries[0],
+    }))
+    : pastTrips.map((x) => {
+      const row = journalItem(x);
+      const plain = atlasPast.find((a) => a.id === x.id);
+      const day = Number.isFinite(x.spendPP) && x.nights > 0 ? x.spendPP / x.nights : null;
+      const open = openMemory === x.id;
+      const mem = x.mem;
+      const edit = () => openPastForm(x.kind === 'plan' ? editableFromPlan(x.item, mem) : editableFromDayPlan(x.item, mem));
+      return {
+        ...row,
+        year: tripYear(plain) ?? yearOf(x.end),
+        flags: plain?.countries || [],
+        nights: x.nights,
+        grade: Number.isFinite(mem?.rating) ? mem.rating : null,
+        vs: day != null && Number.isFinite(x.estDayPP) ? day - x.estDayPP : null,
+        open,
+        // A tap opens the trip's memory in place, or the form for one without.
+        onOpen: () => setOpenMemory(open ? '' : x.id),
+        below: open ? (
+          <div className="atlas-prow-open">
+            {mem ? row.below : (
+              <span className="mt-jcard-acts">
+                <Button size="sm" onClick={edit}>{t('mt.howWasIt')}</Button>
+                <Button size="sm" variant="quiet" onClick={() => (x.kind === 'plan' ? onLoadTripPlan?.(x.item.id) : onOpenDayPlan?.(x.item.id))}>{t('saved.openTripPlanner')}</Button>
+              </span>
+            )}
+            {mem && !mem.photos?.length && <Button size="sm" iconStart={<CameraIcon size={14} />} onClick={edit}>{t('mt.addPhotos')}</Button>}
+          </div>
+        ) : row.below && !mem ? row.below : null,
+      };
+    });
+  const gradeTrip = (id, n) => {
+    if (euExample) { setExGrades((g) => ({ ...g, [id]: n })); return; }
+    saveMemory(id, { ...(loadMemory(id) || emptyMemory()), rating: n }, spendLabels);
+    setMemTick((k) => k + 1);
+  };
+  const fillSpend = (id) => {
+    const x = pastTrips.find((v) => v.id === id) || pastTrips.find((v) => !(v.spendPP > 0));
+    if (!x) { openPastForm(null); return; }
+    openPastForm(x.kind === 'plan' ? editableFromPlan(x.item, x.mem) : editableFromDayPlan(x.item, x.mem));
+  };
+  const [sharing, setSharing] = useState(false);
+  const shareYear = recap && !euExample ? async () => {
+    setSharing(true);
+    await shareRecap({ recap, t });
+    setSharing(false);
+  } : null;
+  const [country, setCountry] = useState('');
+  const countryInfo = useMemo(() => {
+    if (!country) return null;
+    const there = euTrips.filter((x) => (x.countries || []).includes(country));
+    const spent = there.filter((x) => x.spendPP > 0 && x.nights > 0);
+    const nightsSpent = spent.reduce((n, x) => n + x.nights, 0);
+    const days = Object.values(destinations)
+      .filter((d) => (d.iso2 || COUNTRY_ISO2[d.country]) === country)
+      .map((d) => costs?.get?.(d.id)?.dayEur).filter(Number.isFinite).sort((a, b) => a - b);
+    return {
+      cc: country,
+      name: countryName(country, NAME_OF[country] || country),
+      years: [...new Set(there.map(tripYear).filter(Boolean))].sort(),
+      trips: there.length,
+      nights: there.reduce((n, x) => n + (x.nights || 0), 0),
+      hand: euBeen.has(country) && !there.length,
+      been: euBeen.has(country),
+      saved: shortRows.filter((r) => r.kind === 'dest' && (r.cc || destinations[r.id]?.iso2) === country).length,
+      dayYou: nightsSpent ? spent.reduce((n, x) => n + x.spendPP, 0) / nightsSpent : null,
+      dayNow: days.length ? days[Math.floor(days.length / 2)] : null,
+      canToggle: !euExample && !viaTripIso.has(country),
+    };
+  }, [country, euTrips, euBeen, destinations, costs, shortRows]); // eslint-disable-line react-hooks/exhaustive-deps -- viaTripIso follows the record
+  const nextLine = nextPlan && nextIso.size ? t('mt.nextAfter', {
+    country: countryName([...nextIso][0], NAME_OF[[...nextIso][0]] || [...nextIso][0]),
+    date: nextPlan.end_date ? new Date(`${nextPlan.end_date}T00:00:00Z`).toLocaleDateString(activeLocale(), { day: 'numeric', month: 'short', timeZone: 'UTC' }) : '',
+  }) : '';
 
   // The trips a booking can go to: every dated account trip ahead.
   const bookPlans = datedPlans.filter((p) => !p.device && !p.coplan).map((p) => ({
@@ -1301,6 +1408,9 @@ export function SavedTripsPanel({
     ...(devicePlan ? [{ id: `device:${devicePlan.id || 'trip'}`, name: devicePlan.label || '', at: devicePlan.updated_at || devicePlan.start_date, destIds: devicePlan.destination_ids || [] }] : []),
     ...keptAll.map((r) => ({ id: `kept:${r.id}`, name: r.name || '', at: r.keptAt, destIds: r.plan?.order || [] })),
   ], [tripPlans, devicePlan, keptAll]);
+
+  // Jouw smaak moved to the Style Studio (G12 decision 7); it reads these.
+  useEffect(() => { publishTasteInputs({ saves: tasteSaves, trips: tasteTrips, userId: user?.id || null }); }, [tasteSaves, tasteTrips, user?.id]);
 
   // Land on Trips once a trip ahead is known, unless a tab was picked this visit.
   useEffect(() => {
@@ -1356,7 +1466,11 @@ export function SavedTripsPanel({
             tab={tab}
             geo={atlasGeo}
             trips={tripsMap}
-            europe={{ ...europeMap, been: beenIso, next: nextIso, viaTrip: viaTripIso, total: catalogueCountries }}
+            europe={{
+              ...europeMap, been: euBeen, next: euExample ? new Set() : nextIso, viaTrip: viaTripIso, total: catalogueCountries,
+              nextLine: euExample ? '' : nextLine, example: euExample,
+            }}
+            onCountry={setCountry}
             year={atlasYear}
             onYear={setAtlasYear}
             onToggleCountry={toggleIso}
@@ -1433,38 +1547,46 @@ export function SavedTripsPanel({
           )}
           {tab === 'europe' && !(recapOpen && recap) && (
             <YourEurope
-              map={{
-                been: beenIso, next: nextIso, saved: savedIso, viaTrip: viaTripIso,
-                nextName: nextPlan ? journeyParts(nextPlan).title : '',
-              }}
-              onToggleCountry={toggleIso}
-              figures={{
-                countries: beenIso.size, total: catalogueCountries, nights: fullRecord.nights, trips: fullRecord.trips,
-                avgDay: money.avgDay, vsEstimate: money.vsEstimate, cheapestGreat: money.cheapestGreat,
-              }}
-              milestones={milestones}
-              journal={journal.map((g) => ({ year: g.year, items: g.items.map(journalItem) }))}
-              recap={recap ? { year: recap.year, line: recapLine, img: recap.img } : null}
-              onRecap={() => setRecapOpen(true)}
-              onMark={() => setCountriesOpen(true)}
-              markRef={countriesRef}
-              mapInSlot
+              trips={euTrips}
+              year={atlasYear}
+              onYear={setAtlasYear}
+              ramp={europeMap.ramp}
+              geo={atlasGeo}
+              milestones={euExample ? exMilestones : milestones}
+              countries={euBeen.size}
+              past={pastRows}
+              onGrade={gradeTrip}
+              onFill={fillSpend}
+              onRecap={recap && !euExample ? () => setRecapOpen(true) : null}
+              onShare={shareYear}
+              sharing={sharing}
               onAddPast={() => openPastForm(null)}
               pastForm={pastForm}
               error={tripPlansError}
               fmtMonth={fmtMonth}
+              example={euExample}
+              onExample={() => setExample(true)}
+              onExampleClose={() => setExample(false)}
             />
-          )}
-          {/* T1152 (F3): the taste profile with its evidence, yes and no per chip. */}
-          {tab === 'europe' && !(recapOpen && recap) && (
-            <Suspense fallback={null}>
-              <TasteChips saves={tasteSaves} trips={tasteTrips} destinations={destinations} userId={user?.id || null} />
-            </Suspense>
           )}
           </div></div>
           </div>
         </div>
 
+        {countryInfo && (
+          <CountrySheet
+            info={countryInfo}
+            onClose={() => setCountry('')}
+            onToggle={(cc) => { toggleIso(cc); setCountry(''); }}
+            onShowSaved={() => { setCountry(''); pickTab('saved'); }}
+            onPlan={() => {
+              const stops = shortRows.filter((r) => r.kind === 'dest' && (r.cc || destinations[r.id]?.iso2) === countryInfo.cc).map((r) => r.id);
+              setCountry('');
+              if (stops.length && onPlanStops) onPlanStops(stops);
+              else onGoToTab?.('planstart');
+            }}
+          />
+        )}
         {countriesOpen && (
           <VisitedCountriesSheet
             fromTrips={allRecord.fromTrips}

@@ -1280,3 +1280,147 @@
 }
 .trip-cluster:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .trip-pin.is-clustered { visibility: hidden; pointer-events: none; }
+
+
+/* ==== G12 Phase E: Your Europe (the reference's .under .legend .chart .cost
+   .extremes .log .badges .yc-wrap and the country sheet), tokens only ==== */
+.atlas-eu { display: grid; gap: var(--space-2); padding-top: var(--space-3); }
+.atlas-eu.is-empty { padding-bottom: var(--space-6); }
+.atlas-eu .atlas-sect { margin-bottom: var(--space-4); }
+.atlas-nx { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-label); font-weight: 700; color: var(--text-2); }
+.atlas-hatch {
+  flex: none;
+  width: 14px;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background: repeating-linear-gradient(-45deg, var(--umber-600) 0 2px, var(--atlas-land) 2px 5px);
+  outline: 1px solid var(--atlas-border);
+  outline-offset: -1px;
+}
+.atlas-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: 700 var(--text-body) / 1 var(--ui);
+  cursor: pointer;
+}
+.atlas-btn.is-soft { border-color: transparent; background: var(--umber-100); color: var(--umber-800); }
+.atlas-btn.is-primary { border-color: transparent; background: var(--action); color: var(--action-text); }
+.atlas-btn:focus-visible, .atlas-prow:focus-visible, .atlas-ycbtn:focus-visible, .atlas-bar:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.atlas-softbtn { justify-self: start; min-height: var(--tap); padding: 0 var(--space-4); border: 0; border-radius: var(--radius-pill); background: var(--umber-100); color: var(--umber-800); font: 700 var(--text-body) / 1 var(--ui); cursor: pointer; }
+.atlas-lnk.is-start { justify-self: start; text-align: start; }
+.atlas-sect-h .atlas-lnk { display: inline-flex; align-items: center; gap: var(--space-1); }
+
+/* charts: drawn at the column's measured width, 12 px text */
+.atlas-chartbox { width: 100%; min-width: 0; }
+.atlas-chart text { font-family: var(--ui); }
+.atlas-chart rect.is-off { fill: var(--umber-100); }
+.atlas-chart rect.is-on { fill: var(--umber-600); }
+.atlas-chart rect.is-r0 { fill: var(--umber-300); }
+.atlas-chart rect.is-r1 { fill: var(--umber-500); }
+.atlas-chart rect.is-r2 { fill: var(--umber-600); }
+.atlas-chart rect.is-r3 { fill: var(--umber-700); }
+.atlas-chart rect.is-r4 { fill: var(--umber-800); }
+.atlas-bars .atlas-bar { cursor: pointer; }
+.atlas-bars .atlas-bar-hit { fill: transparent; }
+.atlas-bars .atlas-bar.is-on .atlas-bar-y { fill: var(--text); font-weight: 800; }
+.atlas-bars rect:not(.atlas-bar-hit) { transition: fill var(--dur-2) var(--ease-out); }
+
+/* what the trips cost: logged spend per person, bars on the band */
+.atlas-costkey { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.atlas-costkey i { display: inline-block; width: 16px; height: 8px; margin-inline-end: 5px; border-radius: var(--radius-sm); background: var(--umber-600); }
+.atlas-costkey b { margin-inline-start: auto; color: var(--umber-800); font-weight: 800; }
+.atlas-cost { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.atlas-crow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px var(--space-2); align-items: baseline; }
+.atlas-cname { overflow: hidden; font-size: var(--text-body); font-weight: 700; white-space: nowrap; text-overflow: ellipsis; }
+.atlas-cname small, .atlas-lt b small { color: var(--text-3); font-size: inherit; font-weight: 600; }
+.atlas-cval { font-size: var(--text-body); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.atlas-ctrack { grid-column: 1 / -1; position: relative; height: 10px; border-radius: var(--radius-sm); background: var(--surface-sunken); }
+.atlas-cbar { position: absolute; inset: 0 auto 0 0; border-radius: var(--radius-sm); background: var(--umber-600); }
+
+/* the four extremes */
+.atlas-extremes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.atlas-ext { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; align-items: center; padding: 10px var(--space-3); border-radius: var(--radius-panel); background: var(--surface-sunken); }
+.atlas-ext i { grid-row: span 2; display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--radius-sm); background: var(--umber-800); color: var(--action-text); font-size: var(--text-body); font-style: normal; font-weight: 800; }
+.atlas-ext b { overflow: hidden; font-size: var(--text-body); white-space: nowrap; text-overflow: ellipsis; }
+.atlas-ext span { font-size: var(--text-caption); font-weight: 700; color: var(--text-3); }
+
+/* the trip log */
+.atlas-log { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.atlas-lrow { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.atlas-rk { font-size: var(--text-label); font-weight: 800; color: var(--text-3); text-align: end; font-variant-numeric: tabular-nums; }
+.atlas-lt { display: grid; gap: 5px; min-width: 0; }
+.atlas-lt b { overflow: hidden; font-size: var(--text-body); white-space: nowrap; text-overflow: ellipsis; }
+.atlas-lbar { position: relative; height: 8px; border-radius: var(--radius-sm); background: var(--surface-sunken); }
+.atlas-lbar i { position: absolute; inset: 0 auto 0 0; border-radius: var(--radius-sm); background: var(--umber-600); }
+.atlas-lrow .atlas-grade { justify-content: center; min-width: 52px; font-size: var(--text-figure); line-height: 1; }
+.atlas-badge-sub { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.atlas-badge { min-height: var(--tap); }
+.atlas-badge[aria-pressed="true"] { color: var(--text); }
+
+/* the year card preview: umber, the year's countries in sand */
+.atlas-yc-wrap { display: grid; justify-items: center; gap: var(--space-3); }
+.atlas-ycbtn { padding: 0; border: 0; border-radius: var(--radius-card); background: none; cursor: pointer; }
+.atlas-yc {
+  display: flex;
+  flex-direction: column;
+  width: 210px;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--umber-700);
+  color: var(--action-text);
+  text-align: start;
+  box-shadow: var(--elev-2);
+}
+.atlas-yc-h { display: grid; gap: 2px; padding: var(--space-3) var(--space-3) var(--space-2); }
+.atlas-yc-h small { font-size: var(--text-caption); font-weight: 800; opacity: 0.85; }
+.atlas-yc-h b { font-size: var(--text-title); line-height: 1.1; }
+.atlas-yc-map { flex: 1; min-height: 0; padding: 0 var(--space-2); }
+.atlas-yc-map .mt-eumap { width: 100%; height: 100%; }
+.atlas-yc-map .mt-eumap path { fill: var(--umber-600); stroke: var(--umber-700); }
+.atlas-yc-map .mt-eumap path.is-been { fill: var(--umber-100); }
+.atlas-yc-f { display: grid; gap: var(--space-2); padding: var(--space-2) var(--space-3) var(--space-3); }
+.atlas-yc-nums { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
+.atlas-yc-nums span { display: grid; font-size: var(--text-caption); font-weight: 700; }
+.atlas-yc-nums b { font-size: var(--text-figure); font-weight: 800; font-variant-numeric: tabular-nums; }
+.atlas-yc-mo { display: flex; align-items: flex-end; gap: 3px; height: 20px; }
+.atlas-yc-mo i { flex: 1; border-radius: var(--radius-sm); background: var(--umber-600); }
+.atlas-yc-mo i.is-on { background: var(--umber-100); }
+.atlas-yc-acts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); width: 100%; max-width: 300px; }
+
+/* past trips: rows on the ground */
+.atlas-pyear { display: grid; }
+.atlas-pyear-h { margin: 0; padding: 6px 0 2px; font-size: var(--text-label); font-weight: 800; color: var(--text-3); }
+.atlas-prow-wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; border-bottom: 1px solid var(--border-soft); }
+.atlas-prow-wrap > :nth-child(n + 3) { grid-column: 1 / -1; }
+.atlas-prow { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; min-height: 64px; padding: var(--space-2) 0; border: 0; background: none; color: var(--text); font: inherit; text-align: start; cursor: pointer; }
+.atlas-th { width: 52px; height: 52px; overflow: hidden; border-radius: var(--radius-control); background: var(--surface-sunken); }
+.atlas-th .atlas-th-img, .atlas-th img { width: 100%; height: 100%; object-fit: cover; }
+.atlas-prow-t { display: grid; gap: 3px; min-width: 0; }
+.atlas-prow-t b { display: inline-flex; align-items: center; gap: 5px; overflow: hidden; font-size: var(--text-body); white-space: nowrap; text-overflow: ellipsis; }
+.atlas-prow-m { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-size: var(--text-label); color: var(--text-2); }
+.atlas-prow > svg { color: var(--text-3); }
+.atlas-prow-open { display: grid; gap: var(--space-2); padding-bottom: var(--space-3); }
+
+/* the country sheet */
+.atlas-cty { display: grid; gap: var(--space-4); }
+.atlas-kv { display: grid; margin: 0; }
+.atlas-kv > div { display: flex; justify-content: space-between; gap: var(--space-3); padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
+.atlas-kv dt { color: var(--text-2); font-weight: 600; }
+.atlas-kv dd { margin: 0; font-weight: 800; font-variant-numeric: tabular-nums; text-align: end; }
+.atlas-two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+
+/* Jouw smaak in the Style Studio */
+.sst-taste { margin-top: var(--space-6); }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-bars rect:not(.atlas-bar-hit) { transition: none; }
+}
