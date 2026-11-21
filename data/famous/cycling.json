@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "cycling",
- "generated_at": "2026-11-20T23:22:57Z",
+ "generated_at": "2026-11-21T00:32:25Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -5530,7 +5530,7 @@
    "names": [
     "Pennine Cycleway"
    ],
-   "length_km": 327.0,
+   "length_km": 526.255,
    "osm_rel": 11237,
    "beach_word": false,
    "sources": [
@@ -7618,7 +7618,7 @@
     "National Cycle Network Route 27",
     "National Cycle Route 27"
    ],
-   "length_km": 99.0,
+   "length_km": 159.325,
    "osm_rel": 101440,
    "beach_word": false,
    "sources": [
@@ -8744,7 +8744,6 @@
     "Hunsrück cycle path",
     "Hunsrück-Radweg"
    ],
-   "length_km": 155.0,
    "osm_rel": 572448,
    "beach_word": false,
    "sources": [
@@ -10250,7 +10249,7 @@
     "NCR 1",
     "National Cycle Route 1"
    ],
-   "length_km": 1695.0,
+   "length_km": 2727.838,
    "osm_rel": 1992599,
    "beach_word": false,
    "sources": [
@@ -10625,7 +10624,7 @@
     "NCN 2",
     "National Cycle Route 2"
    ],
-   "length_km": 359.0,
+   "length_km": 577.754,
    "osm_rel": 1950688,
    "beach_word": false,
    "sources": [
@@ -10880,7 +10879,7 @@
     "NCR 61",
     "National Cycle Route 61"
    ],
-   "length_km": 36.0,
+   "length_km": 58.0,
    "osm_rel": 31640,
    "beach_word": false,
    "sources": [
@@ -13764,7 +13763,7 @@
    "names": [
     "Waterlink Way"
    ],
-   "length_km": 8.0,
+   "length_km": 12.875,
    "osm_rel": 9254467,
    "beach_word": false,
    "sources": [

@@ -69,6 +69,14 @@ def fold(s, keep_brackets=False):
     return " ".join(s.split())
 
 
+def bracket_tokens(name):
+    """Folded words inside brackets: "Tauernradweg (Stadt Salzburg)"."""
+    out = set()
+    for part in re.findall(r"\(([^)]*)\)", name or ""):
+        out |= set(fold(part).split())
+    return out
+
+
 def raw_tokens(names):
     out = set()
     for n in names:
@@ -159,6 +167,8 @@ class Index:
             names = {fold(row.get("name")), fold(row.get("nameLocal"))} - {""}
             row["_names"] = names
             row["_raw"] = raw_tokens([row.get("name"), row.get("nameLocal")])
+            row["_brk"] = (bracket_tokens(row.get("name")) |
+                           bracket_tokens(row.get("nameLocal")))
             for n in names:
                 self.exact.setdefault(n, []).append(row)
                 for t in set(n.split()):
@@ -225,6 +235,11 @@ def candidates(kind, ref, index):
         if extra & (SIDE_WORDS | COMPASS):
             continue
         if extra & SECTION_WORDS:
+            how = "section"
+        # A route named with its end points or region in brackets is a
+        # section of the famous one ("Sydostleden (Fridafors, Karlshamn)",
+        # judgement 2: 6 of 51 cycling rows counted in were such sections).
+        elif kind in ("trails", "cycling") and row.get("_brk", set()) - ref_raw:
             how = "section"
         d = km_to_row(ref, row)
         generic = generic_ref or bool(row["_names"] & GENERIC)

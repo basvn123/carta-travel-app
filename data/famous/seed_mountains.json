@@ -268,17 +268,6 @@
    "note": "famous coverage: 17 Wikipedia languages, missing from the wire"
   },
   {
-   "n": "Divis",
-   "cc": "GB",
-   "kind": "peak",
-   "lift": "",
-   "lat": 54.6075,
-   "lon": -6.0094,
-   "wd": "Q3777361",
-   "why": "famous",
-   "note": "famous coverage: 9 Wikipedia languages, missing from the wire"
-  },
-  {
    "n": "Dirfi",
    "cc": "GR",
    "kind": "peak",
@@ -563,17 +552,6 @@
    "wd": "Q3357104",
    "why": "famous",
    "note": "famous coverage: 9 Wikipedia languages, missing from the wire"
-  },
-  {
-   "n": "Soltindan",
-   "cc": "NO",
-   "kind": "peak",
-   "lift": "",
-   "lat": 69.8895,
-   "lon": 19.3336,
-   "wd": "Q7558934",
-   "why": "famous",
-   "note": "famous coverage: 8 Wikipedia languages, missing from the wire"
   },
   {
    "n": "Store Blåmann",

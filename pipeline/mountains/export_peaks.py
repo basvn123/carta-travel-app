@@ -1039,6 +1039,23 @@ def wire_unrated(peak, tier, images=None):
     return row
 
 
+def keep_famous(rows, kept, famous_ids):
+    """The rows the quota and the country ceiling kept, plus every famous
+    row (D25) they cut: a famous item that passed every gate ships rated,
+    beyond the cap. Order: the kept rows first, then the famous extras."""
+    have = {r["id"] for r in kept}
+    return kept + [r for r in rows if r["id"] in famous_ids
+                   and r["id"] not in have]
+
+
+def vouched(peak):
+    """An editorial row is one a person put on the list (the hand seed). A
+    famous seed (D25) came from the famous coverage report, so it ships as
+    listed coverage, never as an editorial pick."""
+    seed = peak.get("seed") or {}
+    return bool(seed) and seed.get("why") != "famous"
+
+
 def floor_fill(cc, have, pool, want, seen_ids):
     """Top a country up to `want` rows of any tier, best candidates first.
 
@@ -1073,8 +1090,7 @@ def floor_fill(cc, have, pool, want, seen_ids):
                <= DUPLICATE_KM for row in have + added):
             continue
         seen_ids.add(rid)
-        added.append(wire_unrated(
-            peak, "e" if peak.get("seed") else "l"))
+        added.append(wire_unrated(peak, "e" if vouched(peak) else "l"))
     if len(have) + len(added) >= want:
         return added, None
     return added, ("noCandidates" if not pool else "poolExhausted")
@@ -1135,7 +1151,7 @@ def region_floor_fill(rows, pool, qmod, seen_ids):
                    <= DUPLICATE_KM for row in rows + listed):
                 continue
             seen_ids.add(rid)
-            listed.append(wire_unrated(peak, "e" if peak.get("seed") else "l"))
+            listed.append(wire_unrated(peak, "e" if vouched(peak) else "l"))
             taken += 1
     return listed
 
@@ -1406,9 +1422,7 @@ def main():
         # region quota or the country ceiling; it ships rated, beyond them.
         famous = {peak_id(p) for p, _c, _s in scored
                   if (p.get("seed") or {}).get("why") == "famous"}
-        kept_ids = {r["id"] for r in kept}
-        rows = kept + [r for r in rows if r["id"] in famous
-                       and r["id"] not in kept_ids]
+        rows = keep_famous(rows, kept, famous)
         rows.sort(key=lambda r: -r["score"])
 
         # STEP 5: the floors. Country first, then every applicable region.

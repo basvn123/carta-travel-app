@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "lakes",
- "generated_at": "2026-11-20T23:31:52Z",
+ "generated_at": "2026-11-21T00:40:14Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -242,7 +242,7 @@
     "Боденське озеро"
    ],
    "area_km2": 536.0,
-   "elev_m": 395.23,
+   "elev_m": 397.0,
    "osm_rel": 1156846,
    "beach_word": false,
    "sources": [
@@ -696,7 +696,7 @@
    "sources": [
     "carta_canary"
    ],
-   "area_km2": 296.85,
+   "area_km2": 296.308,
    "osm_rel": 10047860,
    "tier": "A",
    "id": "wd:Q189849"
@@ -1111,7 +1111,7 @@
     "Инари"
    ],
    "area_km2": 1081.92,
-   "elev_m": 115.67,
+   "elev_m": 118.03,
    "osm_rel": 402543,
    "beach_word": false,
    "sources": [
@@ -1782,7 +1782,7 @@
     "Λίμνη Τουζ",
     "Туз"
    ],
-   "area_km2": 2075.0,
+   "area_km2": 2100.0,
    "elev_m": 899.0,
    "osm_rel": 2411676,
    "beach_word": false,
@@ -1912,7 +1912,7 @@
     "Юлемисте",
     "Юлемісте"
    ],
-   "area_km2": 944.4,
+   "area_km2": 9.444,
    "elev_m": 35.7,
    "beach_word": false,
    "sources": [
@@ -2030,7 +2030,7 @@
     "Мьоса",
     "Мјеса (езеро)"
    ],
-   "area_km2": 369.322128,
+   "area_km2": 369.453,
    "elev_m": 123.2,
    "osm_rel": 5301,
    "beach_word": false,
@@ -2239,8 +2239,8 @@
     "Λίμνη Πάγιαννε",
     "Пяйянне"
    ],
-   "area_km2": 1082.8851,
-   "elev_m": 78.3,
+   "area_km2": 1082.885,
+   "elev_m": 78.0,
    "osm_rel": 1239779,
    "beach_word": false,
    "sources": [
@@ -2727,7 +2727,7 @@
     "Цугско езеро",
     "Цугське озеро"
    ],
-   "area_km2": 2.44,
+   "area_km2": 11.71,
    "elev_m": 413.0,
    "osm_rel": 540344,
    "beach_word": false,
@@ -2757,7 +2757,7 @@
     "Горніндалсватнет",
     "Хорниндалсватнет"
    ],
-   "area_km2": 50.7558,
+   "area_km2": 50.756,
    "elev_m": 53.56,
    "osm_rel": 6387640,
    "beach_word": false,
@@ -2912,7 +2912,7 @@
     "Морско око",
     "Морське Око"
    ],
-   "area_km2": 0.3493,
+   "area_km2": 0.349,
    "elev_m": 1395.4,
    "beach_word": false,
    "sources": [
@@ -3293,7 +3293,7 @@
     "Λίμνη Εγκιρντίρ",
     "Егирдир"
    ],
-   "area_km2": 482.0,
+   "area_km2": 517.0,
    "elev_m": 917.0,
    "osm_rel": 1410914,
    "beach_word": false,
@@ -3325,7 +3325,7 @@
     "Стуршен",
     "Стуршьон"
    ],
-   "area_km2": 456.0,
+   "area_km2": 456.267,
    "elev_m": 292.0,
    "osm_rel": 1298025,
    "beach_word": false,
@@ -3683,7 +3683,7 @@
     "Торнетреск",
     "Турнетреск"
    ],
-   "area_km2": 329.852029806,
+   "area_km2": 329.852,
    "elev_m": 341.0,
    "osm_rel": 60173,
    "beach_word": false,
@@ -3853,8 +3853,8 @@
     "lac Pielinen",
     "Пиелинен"
    ],
-   "area_km2": 894.20703,
-   "elev_m": 93.7,
+   "area_km2": 894.207,
+   "elev_m": 94.0,
    "osm_rel": 451857,
    "beach_word": false,
    "sources": [
@@ -3952,7 +3952,7 @@
     "Хевиз",
     "озеро Гевіз"
    ],
-   "area_km2": 0.0475,
+   "area_km2": 0.048,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -4024,7 +4024,7 @@
     "Пихајарв",
     "Пюхаярв"
    ],
-   "area_km2": 293.3,
+   "area_km2": 2.933,
    "elev_m": 115.0,
    "beach_word": false,
    "sources": [
@@ -4161,7 +4161,7 @@
     "lac Synevir",
     "Синевир"
    ],
-   "area_km2": 29.0,
+   "area_km2": 0.29,
    "elev_m": 989.0,
    "beach_word": false,
    "sources": [
@@ -4250,7 +4250,7 @@
     "Fēmunnens",
     "Фемуннен"
    ],
-   "area_km2": 203.3964,
+   "area_km2": 203.396,
    "elev_m": 664.0,
    "osm_rel": 22884,
    "beach_word": false,
@@ -4342,7 +4342,7 @@
     "Језеро Бодом",
     "Бодом"
    ],
-   "area_km2": 4.1231,
+   "area_km2": 4.123,
    "elev_m": 23.0,
    "osm_rel": 298743,
    "beach_word": false,
@@ -4383,7 +4383,7 @@
     "Земпахське озеро",
     "Семпачерсе"
    ],
-   "area_km2": 14.4,
+   "area_km2": 14.5,
    "elev_m": 504.0,
    "osm_rel": 2625908,
    "beach_word": false,
@@ -4565,7 +4565,7 @@
     "Саад'ярв",
     "Садјарв"
    ],
-   "area_km2": 723.5,
+   "area_km2": 7.235,
    "elev_m": 53.4,
    "beach_word": false,
    "sources": [
@@ -4596,7 +4596,7 @@
     "Вейсярв",
     "Вејсјарв"
    ],
-   "area_km2": 480.7,
+   "area_km2": 4.807,
    "elev_m": 96.0,
    "beach_word": false,
    "sources": [
@@ -4626,7 +4626,7 @@
     "Štrbské pleso",
     "Штрбське плесо"
    ],
-   "area_km2": 0.1976,
+   "area_km2": 0.198,
    "elev_m": 1358.0,
    "beach_word": false,
    "sources": [
@@ -4831,7 +4831,7 @@
     "Вагула",
     "Ваґула"
    ],
-   "area_km2": 603.3,
+   "area_km2": 6.033,
    "elev_m": 69.2,
    "beach_word": false,
    "sources": [
@@ -5001,7 +5001,7 @@
     "Ransfjordenas",
     "Раннсфйорден"
    ],
-   "area_km2": 140.6867,
+   "area_km2": 140.687,
    "elev_m": 134.5,
    "osm_rel": 96565,
    "beach_word": false,
@@ -5086,7 +5086,7 @@
     "Валхенско Езеро",
     "Вальхензее"
    ],
-   "area_km2": 16.27,
+   "area_km2": 0.0,
    "elev_m": 800.8,
    "osm_rel": 168897,
    "beach_word": false,
@@ -5152,7 +5152,7 @@
     "Lago Bolmen",
     "Болмен"
    ],
-   "area_km2": 173.122726982,
+   "area_km2": 173.123,
    "elev_m": 141.0,
    "osm_rel": 7130,
    "beach_word": false,
@@ -5181,7 +5181,7 @@
     "Karujärv",
     "Каруярв"
    ],
-   "area_km2": 348.0,
+   "area_km2": 3.48,
    "elev_m": 32.2,
    "beach_word": false,
    "sources": [
@@ -5486,7 +5486,7 @@
     "lago di Hallwil",
     "Галльвільське озеро"
    ],
-   "area_km2": 1.52,
+   "area_km2": 10.2,
    "elev_m": 449.0,
    "beach_word": false,
    "sources": [
@@ -5662,7 +5662,7 @@
     "Ревхце",
     "Рессватне"
    ],
-   "area_km2": 218.048869,
+   "area_km2": 139.537,
    "elev_m": 383.0,
    "osm_rel": 33670,
    "beach_word": false,
@@ -5950,7 +5950,7 @@
     "Žū ezers",
     "Жу (озеро)"
    ],
-   "area_km2": 8.77,
+   "area_km2": 8.79,
    "elev_m": 1004.0,
    "osm_rel": 390321,
    "beach_word": false,
@@ -6092,7 +6092,7 @@
     "Λίμνη Όσιαχ",
     "Оссіахер-Зее"
    ],
-   "area_km2": 10.7875,
+   "area_km2": 10.787,
    "elev_m": 501.0,
    "beach_word": false,
    "sources": [
@@ -6313,7 +6313,7 @@
     "Агери (езеро)",
     "Егерізее"
    ],
-   "area_km2": 7.28,
+   "area_km2": 7.3,
    "elev_m": 723.0,
    "osm_rel": 1676873,
    "beach_word": false,
@@ -6343,7 +6343,7 @@
     "Černé jezero",
     "Чорне озеро"
    ],
-   "area_km2": 188053.865813,
+   "area_km2": 0.188,
    "elev_m": 1008.0,
    "beach_word": false,
    "sources": [
@@ -6729,8 +6729,8 @@
     "lake Müggelsee",
     "Мюгел"
    ],
-   "area_km2": 7.2,
-   "elev_m": 30.0,
+   "area_km2": 7.3,
+   "elev_m": 32.3,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -7124,7 +7124,7 @@
     "lac Harku",
     "Харку"
    ],
-   "area_km2": 162.9,
+   "area_km2": 1.629,
    "elev_m": 0.9,
    "beach_word": false,
    "sources": [
@@ -7241,7 +7241,7 @@
     "Зарнензе",
     "Сарнерсе"
    ],
-   "area_km2": 7.39,
+   "area_km2": 7.5,
    "elev_m": 469.0,
    "beach_word": false,
    "sources": [
@@ -7577,7 +7577,7 @@
     "lac Kuremaa",
     "Куремаа"
    ],
-   "area_km2": 398.4,
+   "area_km2": 3.984,
    "elev_m": 83.0,
    "beach_word": false,
    "sources": [
@@ -7651,7 +7651,7 @@
     "lago di Misurina",
     "Мізуріна"
    ],
-   "area_km2": 15.0,
+   "area_km2": 0.15,
    "elev_m": 1754.0,
    "beach_word": false,
    "sources": [
@@ -7687,7 +7687,7 @@
     "Viljandžio ežeras",
     "Вільянді"
    ],
-   "area_km2": 160.6,
+   "area_km2": 1.606,
    "elev_m": 42.35,
    "beach_word": false,
    "sources": [
@@ -7845,7 +7845,7 @@
     "Риуге Суур'ярв",
     "Рјуге Сурјарв"
    ],
-   "area_km2": 14.6,
+   "area_km2": 0.146,
    "elev_m": 115.0,
    "beach_word": false,
    "sources": [
@@ -7909,7 +7909,7 @@
     "Tinšio",
     "Тінншо"
    ],
-   "area_km2": 51.561448,
+   "area_km2": 15.461,
    "elev_m": 192.0,
    "osm_rel": 78070,
    "beach_word": false,
@@ -7975,7 +7975,7 @@
     "lac Bâlea",
     "Бъля"
    ],
-   "area_km2": 0.0465,
+   "area_km2": 0.046,
    "elev_m": 2034.0,
    "beach_word": false,
    "sources": [
@@ -8226,7 +8226,7 @@
     "lac Ermistu",
     "Ермісту (озеро)"
    ],
-   "area_km2": 449.5,
+   "area_km2": 4.495,
    "elev_m": 29.0,
    "beach_word": false,
    "sources": [
@@ -8374,7 +8374,7 @@
     "Паункила",
     "Паункюла"
    ],
-   "area_km2": 420.2,
+   "area_km2": 4.202,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -8438,7 +8438,7 @@
     "Rogen (jezero)",
     "Rugenas"
    ],
-   "area_km2": 35.606289,
+   "area_km2": 0.412,
    "elev_m": 757.0,
    "osm_rel": 33073,
    "beach_word": false,
@@ -9159,7 +9159,7 @@
     "loch Leven",
     "Лох-Левен"
    ],
-   "area_km2": 1371.0,
+   "area_km2": 13.71,
    "elev_m": 106.0,
    "beach_word": false,
    "sources": [
@@ -9277,7 +9277,7 @@
     "Møsvatnet",
     "Месватн"
    ],
-   "area_km2": 79.09716,
+   "area_km2": 5.538,
    "elev_m": 918.5,
    "osm_rel": 222788,
    "beach_word": false,
@@ -9880,7 +9880,7 @@
     "Биоградско језеро",
     "Біоградське озеро"
    ],
-   "area_km2": 0.2285,
+   "area_km2": 0.229,
    "elev_m": 1094.0,
    "beach_word": false,
    "sources": [
@@ -10053,7 +10053,7 @@
     "Лауверсмер",
     "Лауерсмер"
    ],
-   "area_km2": 5.754,
+   "area_km2": 0.058,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -10212,7 +10212,7 @@
     "Пулавеси",
     "Пуула"
    ],
-   "area_km2": 330.76398,
+   "area_km2": 330.764,
    "elev_m": 94.7,
    "osm_rel": 443977,
    "beach_word": false,
@@ -10298,7 +10298,7 @@
     "Vesijärvi (Päijänne Tavastia)"
    ],
    "area_km2": 107.514,
-   "elev_m": 81.4,
+   "elev_m": 81.0,
    "osm_rel": 443724,
    "beach_word": false,
    "sources": [
@@ -10590,7 +10590,7 @@
     "Keurusselkä Gölü",
     "Кеурусселкя"
    ],
-   "area_km2": 97.5558,
+   "area_km2": 97.556,
    "elev_m": 105.4,
    "osm_rel": 302897,
    "beach_word": false,
@@ -10618,7 +10618,7 @@
     "Krøderfjorden",
     "Кредерен"
    ],
-   "area_km2": 43.906009,
+   "area_km2": 30.934,
    "elev_m": 133.0,
    "osm_rel": 3440795,
    "beach_word": false,
@@ -10729,7 +10729,7 @@
     "Лауерзерсе",
     "Лауерцьке озеро"
    ],
-   "area_km2": 3.0664,
+   "area_km2": 3.066,
    "elev_m": 447.0,
    "beach_word": false,
    "sources": [
@@ -11069,7 +11069,7 @@
     "Орава"
    ],
    "area_km2": 35.0,
-   "elev_m": 596.0,
+   "elev_m": 601.0,
    "osm_rel": 1454833,
    "beach_word": false,
    "sources": [
@@ -11156,7 +11156,7 @@
     "Snåsavatnet",
     "Сносаватне"
    ],
-   "area_km2": 122.107516,
+   "area_km2": 57.594,
    "elev_m": 22.0,
    "osm_rel": 5223371,
    "beach_word": false,
@@ -11333,7 +11333,7 @@
     "Álddesjávri",
     "Алтеватне"
    ],
-   "area_km2": 79.653136,
+   "area_km2": 79.653,
    "elev_m": 489.0,
    "osm_rel": 5583015,
    "beach_word": false,
@@ -11360,7 +11360,7 @@
     "Bandak",
     "Баннак"
    ],
-   "area_km2": 26.769669,
+   "area_km2": 26.77,
    "elev_m": 72.0,
    "osm_rel": 10423522,
    "beach_word": false,
@@ -11446,7 +11446,7 @@
     "Lago Furesø",
     "lac Furesø"
    ],
-   "area_km2": 935.0,
+   "area_km2": 9.35,
    "elev_m": 19.0,
    "osm_rel": 12277493,
    "beach_word": false,
@@ -11543,7 +11543,7 @@
     "Kilpisjärvi aintzira",
     "Lake Kilpisjärvi"
    ],
-   "area_km2": 14.627897569,
+   "area_km2": 14.628,
    "elev_m": 473.0,
    "osm_rel": 300110,
    "beach_word": false,
@@ -11642,7 +11642,7 @@
     "lac de Lei",
     "Езеро Леи"
    ],
-   "area_km2": 0.1213,
+   "area_km2": 4.12,
    "elev_m": 1931.0,
    "beach_word": false,
    "sources": [
@@ -11674,7 +11674,7 @@
     "lac Aheru",
     "Ахеру"
    ],
-   "area_km2": 244.4,
+   "area_km2": 2.444,
    "elev_m": 69.3,
    "beach_word": false,
    "sources": [
@@ -11963,7 +11963,7 @@
     "lac de Banyoles",
     "lago di Banyoles"
    ],
-   "area_km2": 113.7,
+   "area_km2": 1.137,
    "elev_m": 172.0,
    "osm_rel": 4110560,
    "beach_word": false,
@@ -12116,7 +12116,7 @@
     "Sālsvatne",
     "Салватне"
    ],
-   "area_km2": 44.9618,
+   "area_km2": 44.962,
    "elev_m": 8.0,
    "osm_rel": 8267564,
    "beach_word": false,
@@ -12181,7 +12181,7 @@
     "Сперилен",
     "Сперіллен"
    ],
-   "area_km2": 37.323252,
+   "area_km2": 37.323,
    "elev_m": 150.0,
    "beach_word": false,
    "sources": [
@@ -12269,7 +12269,7 @@
     "Tomasee Gölü",
     "lac de Toma"
    ],
-   "area_km2": 2.5,
+   "area_km2": 0.025,
    "elev_m": 2345.0,
    "beach_word": false,
    "sources": [
@@ -12298,7 +12298,7 @@
     "lago Tunnsjøen",
     "Туннш'єен"
    ],
-   "area_km2": 100.45963,
+   "area_km2": 46.884,
    "elev_m": 358.0,
    "osm_rel": 60162,
    "beach_word": false,
@@ -12413,7 +12413,7 @@
     "Bygdin",
     "Бюгдін"
    ],
-   "area_km2": 40.033922,
+   "area_km2": 40.034,
    "elev_m": 1057.7,
    "osm_rel": 5140446,
    "beach_word": false,
@@ -12442,7 +12442,7 @@
     "Царска Бара",
     "Царска бара"
    ],
-   "area_km2": 4726.0,
+   "area_km2": 47.26,
    "osm_rel": 12630578,
    "beach_word": false,
    "sources": [
@@ -12632,7 +12632,7 @@
     "Λίμνη Χάουκαβεσα",
     "Хаукивеси"
    ],
-   "area_km2": 560.42898,
+   "area_km2": 560.429,
    "elev_m": 75.8,
    "osm_rel": 2665335,
    "beach_word": false,
@@ -12809,7 +12809,7 @@
     "Lake Acıgöl",
     "lac Acıgöl"
    ],
-   "elev_m": 836.0,
+   "elev_m": 837.0,
    "osm_rel": 1824183,
    "beach_word": false,
    "sources": [
@@ -12903,7 +12903,7 @@
     "lac Jõksi",
     "Йиксі"
    ],
-   "area_km2": 65.1,
+   "area_km2": 0.651,
    "elev_m": 116.1,
    "beach_word": false,
    "sources": [
@@ -13082,8 +13082,8 @@
     "Βελκέ Χιντσοβό",
     "Вельке Гінцово плесо"
    ],
-   "area_km2": 20.08,
-   "elev_m": 1946.0,
+   "area_km2": 0.201,
+   "elev_m": 1949.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -13115,7 +13115,7 @@
     "vodná nádrž Lipno",
     "vodní nádrž Lipno"
    ],
-   "area_km2": 49.0976,
+   "area_km2": 49.098,
    "elev_m": 725.6,
    "beach_word": false,
    "sources": [
@@ -13292,7 +13292,7 @@
     "lac Puruvesi",
     "Пурувеси"
    ],
-   "area_km2": 416.35398,
+   "area_km2": 416.354,
    "elev_m": 75.8,
    "osm_rel": 899111,
    "beach_word": false,
@@ -13512,7 +13512,7 @@
     "Øyeren",
     "Еєрен"
    ],
-   "area_km2": 73.092709,
+   "area_km2": 73.093,
    "elev_m": 101.0,
    "osm_rel": 16708560,
    "beach_word": false,
@@ -13569,7 +13569,7 @@
     "Aursunden",
     "Еурсунн"
    ],
-   "area_km2": 46.401785,
+   "area_km2": 46.402,
    "elev_m": 691.1,
    "osm_rel": 11867278,
    "beach_word": false,
@@ -13687,7 +13687,7 @@
     "Gjende",
     "Єнде"
    ],
-   "area_km2": 15.638177,
+   "area_km2": 15.594,
    "elev_m": 984.0,
    "beach_word": false,
    "sources": [
@@ -13714,7 +13714,7 @@
     "Höytiäinen Gölü"
    ],
    "area_km2": 282.64,
-   "elev_m": 87.0,
+   "elev_m": 87.3,
    "osm_rel": 445540,
    "beach_word": false,
    "sources": [
@@ -13740,7 +13740,7 @@
     "Iešjávri",
     "Ієш'явре"
    ],
-   "area_km2": 68.191474,
+   "area_km2": 30.949,
    "elev_m": 391.0,
    "osm_rel": 60174,
    "beach_word": false,
@@ -13769,7 +13769,7 @@
     "Ivösjön",
     "lago di Ivö"
    ],
-   "area_km2": 50.1587184353,
+   "area_km2": 50.159,
    "elev_m": 5.0,
    "osm_rel": 6709,
    "beach_word": false,
@@ -13925,7 +13925,7 @@
     "Βοάνη",
     "Сапанджа"
    ],
-   "area_km2": 14264.8,
+   "area_km2": 142.648,
    "osm_rel": 12914685,
    "beach_word": false,
    "sources": [
@@ -14091,7 +14091,7 @@
    "names": [
     "Lesjaskogsvatnet"
    ],
-   "area_km2": 4.336242,
+   "area_km2": 4.336,
    "elev_m": 611.0,
    "osm_rel": 3825227,
    "beach_word": false,
@@ -14126,7 +14126,7 @@
     "Лojташка Клисура",
     "Лойташ (пролом)"
    ],
-   "area_km2": 50000.0,
+   "area_km2": 0.05,
    "elev_m": 925.0,
    "beach_word": false,
    "sources": [
@@ -14155,7 +14155,7 @@
     "lago Limingen",
     "Лімінген"
    ],
-   "area_km2": 92.2144,
+   "area_km2": 92.214,
    "elev_m": 418.0,
    "osm_rel": 4142960,
    "beach_word": false,
@@ -14351,7 +14351,7 @@
     "Roxen",
     "Roxen (lago)"
    ],
-   "area_km2": 95.0027231955,
+   "area_km2": 95.003,
    "elev_m": 33.0,
    "osm_rel": 7919,
    "beach_word": false,
@@ -14634,7 +14634,7 @@
     "Lago Blausee",
     "Блаузее"
    ],
-   "area_km2": 0.0064,
+   "area_km2": 0.006,
    "elev_m": 887.0,
    "beach_word": false,
    "sources": [
@@ -14669,7 +14669,7 @@
     "Боговињско Езеро",
     "Боговињско језеро"
    ],
-   "area_km2": 0.06688,
+   "area_km2": 0.067,
    "elev_m": 1936.0,
    "beach_word": false,
    "sources": [
@@ -14697,7 +14697,7 @@
     "lago Boren",
     "Бурен"
    ],
-   "area_km2": 27.6425576403,
+   "area_km2": 27.643,
    "elev_m": 74.0,
    "osm_rel": 14733120,
    "beach_word": false,
@@ -14730,7 +14730,7 @@
     "Liqeni i bovilles",
     "Ġibjun ta' Bovilla"
    ],
-   "area_km2": 4.6,
+   "area_km2": 0.005,
    "osm_rel": 6968494,
    "beach_word": false,
    "sources": [
@@ -14819,7 +14819,7 @@
     "Lake Kemijärvi",
     "lago Kemijärvi"
    ],
-   "area_km2": 205.66699,
+   "area_km2": 230.91,
    "elev_m": 148.8,
    "osm_rel": 403320,
    "beach_word": false,
@@ -15007,7 +15007,7 @@
     "Llyn Hornborga",
     "Хурнборгашен"
    ],
-   "area_km2": 27.9429513545,
+   "area_km2": 27.943,
    "elev_m": 123.1,
    "osm_rel": 4583055,
    "beach_word": false,
@@ -15218,7 +15218,7 @@
     "Norsjø",
     "Норш'є"
    ],
-   "area_km2": 55.116159,
+   "area_km2": 18.675,
    "elev_m": 15.3,
    "osm_rel": 77008,
    "beach_word": false,
@@ -15347,7 +15347,7 @@
     "Llac Riffelsee",
     "Riffelsee"
    ],
-   "area_km2": 0.0045,
+   "area_km2": 0.004,
    "elev_m": 2757.0,
    "beach_word": false,
    "sources": [
@@ -15461,7 +15461,7 @@
     "Согнсван",
     "Согнсванн"
    ],
-   "area_km2": 0.3909,
+   "area_km2": 0.391,
    "elev_m": 183.0,
    "osm_rel": 448255,
    "beach_word": false,
@@ -15492,7 +15492,7 @@
     "Čuäʹlmmjäuʹrr",
     "Салмијарви"
    ],
-   "area_km2": 32.677581,
+   "area_km2": 7.962,
    "elev_m": 22.0,
    "beach_word": false,
    "sources": [
@@ -15519,7 +15519,7 @@
     "Totak",
     "Тутак"
    ],
-   "area_km2": 37.264218,
+   "area_km2": 37.264,
    "elev_m": 687.0,
    "osm_rel": 5708335,
    "beach_word": false,
@@ -15574,7 +15574,7 @@
     "Tåkern",
     "Tåkern aintzira"
    ],
-   "area_km2": 44.0602913504,
+   "area_km2": 44.06,
    "elev_m": 93.0,
    "osm_rel": 6240,
    "beach_word": false,
@@ -15600,7 +15600,7 @@
    "names": [
     "Viken"
    ],
-   "area_km2": 45.7119653,
+   "area_km2": 45.712,
    "elev_m": 92.0,
    "osm_rel": 2470911,
    "beach_word": false,
@@ -15744,7 +15744,7 @@
    "names": [
     "Bessvatnet"
    ],
-   "area_km2": 4.696689,
+   "area_km2": 4.697,
    "elev_m": 1373.0,
    "osm_rel": 5635663,
    "beach_word": false,
@@ -15797,7 +15797,7 @@
     "Byglandsfjorden",
     "Бюгланнсфйорден"
    ],
-   "area_km2": 33.662583,
+   "area_km2": 0.545,
    "elev_m": 203.0,
    "osm_rel": 10498202,
    "beach_word": false,
@@ -15915,7 +15915,7 @@
     "Iijärvi",
     "Ījervi"
    ],
-   "area_km2": 20.5372,
+   "area_km2": 20.537,
    "elev_m": 254.2,
    "osm_rel": 302399,
    "beach_word": false,
@@ -15973,7 +15973,7 @@
     "Klistervatnet",
     "Töllevinjärvi"
    ],
-   "area_km2": 10.2896,
+   "area_km2": 10.29,
    "elev_m": 21.0,
    "beach_word": false,
    "sources": [
@@ -16126,7 +16126,7 @@
     "Rata",
     "Лака"
    ],
-   "area_km2": 24135.3522986,
+   "area_km2": 0.024,
    "elev_m": 1096.0,
    "beach_word": false,
    "sources": [
@@ -16227,7 +16227,7 @@
     "lacul Brebenescul",
     "Бребенескул"
    ],
-   "area_km2": 0.68,
+   "area_km2": 0.007,
    "elev_m": 1801.0,
    "beach_word": false,
    "sources": [
@@ -16291,7 +16291,7 @@
     "lac Hino",
     "Хіно"
    ],
-   "area_km2": 206.8,
+   "area_km2": 2.068,
    "elev_m": 180.0,
    "beach_word": false,
    "sources": [
@@ -16324,7 +16324,7 @@
     "Кагул",
     "Кагул (езеро)"
    ],
-   "area_km2": 1411.0,
+   "area_km2": 14.11,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -16583,7 +16583,7 @@
     "Õisu Gölü",
     "Õisu järv"
    ],
-   "area_km2": 190.9,
+   "area_km2": 1.909,
    "elev_m": 45.5,
    "beach_word": false,
    "sources": [
@@ -16727,7 +16727,7 @@
     "Миен (језеро)",
     "Мієн"
    ],
-   "area_km2": 19.901777024,
+   "area_km2": 19.902,
    "elev_m": 94.8,
    "osm_rel": 1698013,
    "beach_word": false,
@@ -16819,7 +16819,7 @@
     "Nisser",
     "Ніссер"
    ],
-   "area_km2": 76.468828,
+   "area_km2": 76.469,
    "elev_m": 246.76,
    "osm_rel": 78785,
    "beach_word": false,
@@ -16918,7 +16918,7 @@
     "Údolní nádrž Orlík",
     "Орлік"
    ],
-   "area_km2": 25304194.1144,
+   "area_km2": 25.304,
    "elev_m": 330.0,
    "beach_word": false,
    "sources": [
@@ -17044,7 +17044,7 @@
     "Попрадске плесо",
     "Попрадський Став"
    ],
-   "area_km2": 0.0688,
+   "area_km2": 0.069,
    "elev_m": 1494.0,
    "beach_word": false,
    "sources": [
@@ -17204,7 +17204,7 @@
     "Тийн",
     "Тюін"
    ],
-   "area_km2": 33.208325,
+   "area_km2": 32.734,
    "elev_m": 1084.0,
    "osm_rel": 5136342,
    "beach_word": false,
@@ -17321,7 +17321,7 @@
     "Lago Bachalpsee",
     "lac de Bachalp"
    ],
-   "area_km2": 0.0803,
+   "area_km2": 0.08,
    "elev_m": 2265.0,
    "beach_word": false,
    "sources": [
@@ -17347,7 +17347,7 @@
     "Breimsvatnet",
     "Бреймсватне"
    ],
-   "area_km2": 22.662948,
+   "area_km2": 2.095,
    "elev_m": 61.0,
    "beach_word": false,
    "sources": [
@@ -17429,7 +17429,7 @@
     "Helin",
     "Гелін"
    ],
-   "area_km2": 9.470145,
+   "area_km2": 9.432,
    "elev_m": 868.0,
    "osm_rel": 4823329,
    "beach_word": false,
@@ -17613,7 +17613,7 @@
     "lac de Retournemer",
     "Ретурнемер (озеро)"
    ],
-   "area_km2": 5.0,
+   "area_km2": 0.05,
    "elev_m": 776.0,
    "beach_word": false,
    "sources": [
@@ -17674,7 +17674,7 @@
     "lago di Ledro",
     "Езеро Ледро"
    ],
-   "area_km2": 2177000.0,
+   "area_km2": 2.177,
    "elev_m": 655.0,
    "beach_word": false,
    "sources": [
@@ -17916,7 +17916,7 @@
     "Llyn Kaiavere",
     "lac Kaiavere"
    ],
-   "area_km2": 246.5,
+   "area_km2": 2.465,
    "elev_m": 51.0,
    "beach_word": false,
    "sources": [
@@ -18021,7 +18021,7 @@
     "Палатинуш",
     "Палатинуш (језеро)"
    ],
-   "area_km2": 32.0,
+   "area_km2": 0.32,
    "elev_m": 124.0,
    "beach_word": false,
    "sources": [
@@ -18050,7 +18050,7 @@
     "Porkunis",
     "lac Porkuni"
    ],
-   "area_km2": 48.2,
+   "area_km2": 0.482,
    "elev_m": 107.0,
    "beach_word": false,
    "sources": [
@@ -18179,7 +18179,7 @@
     "Loch Innis Mo Cholmaig",
     "Menteitheko aintzira"
    ],
-   "area_km2": 252.0,
+   "area_km2": 2.52,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -18237,7 +18237,7 @@
     "Lestijärvi (göl)",
     "lac Lestijärvi"
    ],
-   "area_km2": 64.7399,
+   "area_km2": 64.74,
    "elev_m": 140.7,
    "osm_rel": 36078,
    "beach_word": false,
@@ -18441,7 +18441,7 @@
     "Orsasjön",
     "Оршашьон"
    ],
-   "area_km2": 52.1719624492,
+   "area_km2": 52.172,
    "elev_m": 161.0,
    "osm_rel": 15073,
    "beach_word": false,
@@ -18525,7 +18525,7 @@
     "Pyhäselkä (lake)",
     "lac Pyhäselkä"
    ],
-   "area_km2": 361.10398,
+   "area_km2": 361.104,
    "elev_m": 75.9,
    "osm_rel": 2666075,
    "beach_word": false,
@@ -18935,7 +18935,7 @@
     "Innsjøen Ara",
     "Ара"
    ],
-   "area_km2": 7.4709,
+   "area_km2": 7.471,
    "elev_m": 106.0,
    "osm_rel": 5390869,
    "beach_word": false,
@@ -19097,7 +19097,7 @@
    "names": [
     "Båven"
    ],
-   "area_km2": 64.1870715203,
+   "area_km2": 64.187,
    "elev_m": 21.1,
    "osm_rel": 2568048,
    "beach_word": false,
@@ -19126,7 +19126,7 @@
     "Bøllingsø",
     "lac Bølling"
    ],
-   "area_km2": 848.9498,
+   "area_km2": 8.489,
    "elev_m": 65.0,
    "osm_rel": 14366010,
    "beach_word": false,
@@ -19434,7 +19434,7 @@
     "lac de Gérardmer",
     "Жерарме (озеро)"
    ],
-   "area_km2": 115.5,
+   "area_km2": 1.155,
    "elev_m": 660.0,
    "beach_word": false,
    "sources": [
@@ -19487,7 +19487,7 @@
     "Hurdalssøen",
     "Хурдалсш'єен"
    ],
-   "area_km2": 33.210074,
+   "area_km2": 9.083,
    "elev_m": 175.6,
    "beach_word": false,
    "sources": [
@@ -19542,7 +19542,7 @@
     "Jølstravatnet",
     "Єлстраватн"
    ],
-   "area_km2": 39.24401,
+   "area_km2": 39.244,
    "elev_m": 207.35,
    "beach_word": false,
    "sources": [
@@ -19983,7 +19983,7 @@
     "Λίμνη Φόντι",
     "Фонді (озеро)"
    ],
-   "area_km2": 1723.0,
+   "area_km2": 17.23,
    "osm_rel": 6064655,
    "beach_word": false,
    "sources": [
@@ -20164,7 +20164,7 @@
     "lac Bagsværd",
     "lago Bagsværd"
    ],
-   "area_km2": 116.3,
+   "area_km2": 1.163,
    "elev_m": 18.5,
    "osm_rel": 537089,
    "beach_word": false,
@@ -20284,7 +20284,7 @@
     "Llyn Endla",
     "lac Endla"
    ],
-   "area_km2": 282.1,
+   "area_km2": 2.821,
    "elev_m": 75.0,
    "beach_word": false,
    "sources": [
@@ -20314,7 +20314,7 @@
     "Llyn Erastvere",
     "Ераствере"
    ],
-   "area_km2": 15.7,
+   "area_km2": 0.157,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -20372,7 +20372,7 @@
     "Llyn Kalli",
     "lac Kalli"
    ],
-   "area_km2": 195.8,
+   "area_km2": 1.958,
    "elev_m": 30.0,
    "beach_word": false,
    "sources": [
@@ -20400,7 +20400,7 @@
     "Lake Kirikumäe",
     "Кірікумяе"
    ],
-   "area_km2": 62.0,
+   "area_km2": 0.62,
    "elev_m": 185.0,
    "beach_word": false,
    "sources": [
@@ -20559,7 +20559,7 @@
     "lac de Molveno",
     "Езеро Молвено"
    ],
-   "area_km2": 3410000.0,
+   "area_km2": 3.41,
    "elev_m": 845.0,
    "beach_word": false,
    "sources": [
@@ -20589,7 +20589,7 @@
     "Murati (jezioro)",
     "Murati järv"
    ],
-   "area_km2": 65.8,
+   "area_km2": 0.658,
    "elev_m": 171.9,
    "beach_word": false,
    "sources": [
@@ -20803,7 +20803,7 @@
     "lac Tõhela",
     "Тигела (озеро)"
    ],
-   "area_km2": 320.4,
+   "area_km2": 3.204,
    "elev_m": 17.0,
    "beach_word": false,
    "sources": [
@@ -21127,7 +21127,7 @@
     "Lundevatnet",
     "Лунневатн"
    ],
-   "area_km2": 27.4826,
+   "area_km2": 27.483,
    "elev_m": 48.0,
    "osm_rel": 12160945,
    "beach_word": false,
@@ -21153,7 +21153,7 @@
    "names": [
     "Mjörn"
    ],
-   "area_km2": 54.5331420598,
+   "area_km2": 54.533,
    "elev_m": 57.1,
    "osm_rel": 4686,
    "beach_word": false,
@@ -21319,7 +21319,7 @@
     "Опстрйнсватнет",
     "Уппстрюнсватн"
    ],
-   "area_km2": 22.922606,
+   "area_km2": 22.923,
    "elev_m": 29.0,
    "osm_rel": 5869276,
    "beach_word": false,
@@ -21352,7 +21352,7 @@
     "lac Palü",
     "lago Palü"
    ],
-   "area_km2": 0.0515,
+   "area_km2": 0.051,
    "elev_m": 1923.0,
    "beach_word": false,
    "sources": [
@@ -21384,7 +21384,7 @@
     "Пода",
     "Пода (Бургас)"
    ],
-   "area_km2": 307.0,
+   "area_km2": 3.07,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -21439,7 +21439,7 @@
     "Pyhäjärvi",
     "Пюгяярві"
    ],
-   "area_km2": 155.18932,
+   "area_km2": 155.189,
    "elev_m": 44.9,
    "osm_rel": 124564,
    "beach_word": false,
@@ -21558,7 +21558,7 @@
     "Ruovesi (lake)"
    ],
    "area_km2": 66.08,
-   "elev_m": 96.0,
+   "elev_m": 96.1,
    "osm_rel": 1701969,
    "beach_word": false,
    "sources": [
@@ -21638,8 +21638,8 @@
     "Simojervis",
     "Simojärvi"
    ],
-   "area_km2": 54.6493,
-   "elev_m": 176.0,
+   "area_km2": 54.649,
+   "elev_m": 176.3,
    "osm_rel": 302346,
    "beach_word": false,
    "sources": [
@@ -21721,7 +21721,7 @@
     "Storuman-sjøen",
     "Стуруман"
    ],
-   "area_km2": 170.70805589,
+   "area_km2": 170.708,
    "elev_m": 351.0,
    "osm_rel": 57379,
    "beach_word": false,
@@ -21749,7 +21749,7 @@
     "Storvindeln",
     "Сторвинделн"
    ],
-   "area_km2": 52.1563496,
+   "area_km2": 52.156,
    "elev_m": 342.0,
    "osm_rel": 2371978,
    "beach_word": false,
@@ -21836,7 +21836,7 @@
     "Otepää Valgjärv",
     "Valgjärv"
    ],
-   "area_km2": 66.2,
+   "area_km2": 0.662,
    "elev_m": 177.0,
    "beach_word": false,
    "sources": [
@@ -21919,7 +21919,7 @@
     "lago Wdzydze",
     "Вдзидзе"
    ],
-   "area_km2": 1455.0,
+   "area_km2": 14.55,
    "elev_m": 133.0,
    "osm_rel": 1159502,
    "beach_word": false,

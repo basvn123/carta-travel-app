@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "beaches",
- "generated_at": "2026-11-20T23:28:45Z",
+ "generated_at": "2026-11-21T00:37:43Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",

@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "trails",
- "generated_at": "2026-11-20T23:20:13Z",
+ "generated_at": "2026-11-21T00:30:11Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -3604,7 +3604,7 @@
     "Offaren harresiaren ibilbidea",
     "Offa’s Dyke Path"
    ],
-   "length_km": 177.0,
+   "length_km": 284.854,
    "osm_rel": 9649,
    "beach_word": false,
    "weak_class": false,
@@ -3795,7 +3795,7 @@
    "names": [
     "Speyside Way"
    ],
-   "length_km": 136.0,
+   "length_km": 140.0,
    "osm_rel": 1026251,
    "beach_word": false,
    "weak_class": false,
@@ -5235,7 +5235,7 @@
     "Glyndŵr’s Way",
     "Llwybr Glyndŵr"
    ],
-   "length_km": 135.0,
+   "length_km": 217.261,
    "osm_rel": 77256,
    "beach_word": false,
    "weak_class": false,
@@ -5385,7 +5385,7 @@
    "names": [
     "Ingegerdsleden"
    ],
-   "length_km": 110.0,
+   "length_km": 33.0,
    "osm_rel": 8436154,
    "beach_word": false,
    "weak_class": true,
@@ -5478,7 +5478,7 @@
    "names": [
     "Ostkustleden"
    ],
-   "length_km": 99.0,
+   "length_km": 159.325,
    "osm_rel": 3649216,
    "beach_word": false,
    "weak_class": false,
@@ -6106,7 +6106,7 @@
    "names": [
     "Yorkshire Wolds Way"
    ],
-   "length_km": 79.0,
+   "length_km": 127.138,
    "osm_rel": 16327216,
    "beach_word": false,
    "weak_class": false,
@@ -6396,7 +6396,7 @@
    "names": [
     "Borders Abbeys Way"
    ],
-   "length_km": 64.5,
+   "length_km": 103.8,
    "osm_rel": 1713853,
    "beach_word": false,
    "weak_class": false,
@@ -6480,7 +6480,7 @@
     "Cleveland Way",
     "chemin de Cleveland"
    ],
-   "length_km": 110.0,
+   "length_km": 177.028,
    "osm_rel": 4087652,
    "beach_word": false,
    "weak_class": false,
@@ -6921,7 +6921,7 @@
     "Wanderweg GR 57",
     "langeafstandswandelpad GR 57"
    ],
-   "length_km": 265.0,
+   "length_km": 279.0,
    "osm_rel": 157527,
    "beach_word": false,
    "weak_class": false,
@@ -7910,7 +7910,7 @@
    "names": [
     "Pennine Bridleway"
    ],
-   "length_km": 205.0,
+   "length_km": 329.916,
    "osm_rel": 50288,
    "beach_word": false,
    "weak_class": false,
@@ -9154,7 +9154,7 @@
    "names": [
     "Annandale Way"
    ],
-   "length_km": 53.0,
+   "length_km": 85.0,
    "osm_rel": 1756393,
    "beach_word": false,
    "weak_class": false,
@@ -9410,7 +9410,7 @@
    "names": [
     "Berwickshire Coastal Path"
    ],
-   "length_km": 28.0,
+   "length_km": 45.0,
    "osm_rel": 7016887,
    "beach_word": false,
    "weak_class": false,
@@ -9774,7 +9774,7 @@
     "Cateran Trail",
     "sentier Cateran"
    ],
-   "length_km": 64.0,
+   "length_km": 103.0,
    "osm_rel": 1756395,
    "beach_word": false,
    "weak_class": false,
@@ -9836,7 +9836,7 @@
     "Gritstone Trail",
     "sentier de grès du Cheshire"
    ],
-   "length_km": 35.0,
+   "length_km": 56.327,
    "osm_rel": 4077752,
    "beach_word": false,
    "weak_class": false,
@@ -10100,7 +10100,7 @@
    "names": [
     "Downs Link"
    ],
-   "length_km": 37.0,
+   "length_km": 59.546,
    "osm_rel": 1201604,
    "beach_word": false,
    "weak_class": false,
@@ -10418,7 +10418,7 @@
    "names": [
     "Forest Way"
    ],
-   "length_km": 10.0,
+   "length_km": 16.093,
    "osm_rel": 2960531,
    "beach_word": false,
    "weak_class": false,
@@ -10959,7 +10959,7 @@
     "GR 37 (Espagne)",
     "GR 37 La Serranía"
    ],
-   "length_km": 64.0,
+   "length_km": 68.7,
    "beach_word": false,
    "weak_class": false,
    "walk_word": true,
@@ -12083,7 +12083,7 @@
    "names": [
     "Hertfordshire Way"
    ],
-   "length_km": 194.0,
+   "length_km": 312.213,
    "osm_rel": 8842,
    "beach_word": false,
    "weak_class": false,
@@ -12388,7 +12388,7 @@
    "names": [
     "Jurassic Way"
    ],
-   "length_km": 88.0,
+   "length_km": 141.622,
    "osm_rel": 334253,
    "beach_word": false,
    "weak_class": false,
@@ -12913,7 +12913,7 @@
    "names": [
     "Lancashire Witches Walk"
    ],
-   "length_km": 51.0,
+   "length_km": 82.077,
    "beach_word": false,
    "weak_class": false,
    "walk_word": true,
@@ -13028,7 +13028,7 @@
     "London LOOP",
     "London Outer Orbital Path"
    ],
-   "length_km": 150.0,
+   "length_km": 241.402,
    "osm_rel": 4601,
    "beach_word": false,
    "weak_class": false,
@@ -13108,7 +13108,7 @@
    "names": [
     "Lyke Wake Walk"
    ],
-   "length_km": 40.0,
+   "length_km": 64.374,
    "osm_rel": 1996318,
    "beach_word": false,
    "weak_class": false,
@@ -13721,7 +13721,7 @@
    "names": [
     "Oxfordshire Way"
    ],
-   "length_km": 68.0,
+   "length_km": 109.435,
    "osm_rel": 68685,
    "beach_word": false,
    "weak_class": false,
@@ -14292,7 +14292,7 @@
     "HW1",
     "Schwäbische-Alb-Nordrand-Weg"
    ],
-   "length_km": 350.0,
+   "length_km": 360.0,
    "start": "Q53742",
    "end": "Q15987",
    "osm_rel": 2268844,
@@ -14494,7 +14494,7 @@
     "Llwybr Afon Hafren",
     "Severn Way"
    ],
-   "length_km": 210.0,
+   "length_km": 337.962,
    "osm_rel": 112738,
    "beach_word": false,
    "weak_class": false,
@@ -14548,7 +14548,7 @@
     "St Cuthbert's Way",
     "St Cuthbert’s Way"
    ],
-   "length_km": 62.0,
+   "length_km": 99.779,
    "osm_rel": 4515009,
    "beach_word": false,
    "weak_class": false,
@@ -14964,7 +14964,7 @@
     "Tennyson Trail",
     "sentier Tennyson"
    ],
-   "length_km": 15.0,
+   "length_km": 24.14,
    "osm_rel": 1152372,
    "beach_word": false,
    "weak_class": false,
@@ -15273,7 +15273,7 @@
    "names": [
     "Two Moors Way"
    ],
-   "length_km": 116.0,
+   "length_km": 165.762,
    "start": "Q2500455",
    "end": "Q1234805",
    "osm_rel": 228450,
@@ -15420,7 +15420,7 @@
     "The Vanguard Way",
     "Vanguard Way"
    ],
-   "length_km": 66.2,
+   "length_km": 106.5,
    "osm_rel": 86545,
    "beach_word": false,
    "weak_class": false,
@@ -15500,7 +15500,7 @@
    "names": [
     "Viking Way"
    ],
-   "length_km": 147.0,
+   "length_km": 236.574,
    "osm_rel": 4100294,
    "beach_word": false,
    "weak_class": false,
@@ -19777,7 +19777,7 @@
     "rue Cremieux",
     "rue Crémieux"
    ],
-   "length_km": 144.0,
+   "length_km": 0.144,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -19861,7 +19861,7 @@
     "rue des Pretres-Saint-Severin",
     "rue des Prêtres-Saint-Séverin"
    ],
-   "length_km": 79.0,
+   "length_km": 0.079,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -20088,7 +20088,7 @@
     "Sentier des Merisiers",
     "sentier des Merisiers"
    ],
-   "length_km": 100.0,
+   "length_km": 0.1,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -20275,7 +20275,7 @@
    "names": [
     "Monteliusvägen"
    ],
-   "length_km": 450.0,
+   "length_km": 0.45,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -20328,7 +20328,7 @@
     "Sentier de la Lieutenance",
     "sentier de la Lieutenance"
    ],
-   "length_km": 65.0,
+   "length_km": 0.065,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -21470,7 +21470,7 @@
    "names": [
     "Aspens naturstig"
    ],
-   "length_km": 7.0,
+   "length_km": 7.3,
    "osm_rel": 10832259,
    "beach_word": false,
    "weak_class": false,
@@ -21551,7 +21551,7 @@
    "names": [
     "Avon Valley Path"
    ],
-   "length_km": 34.0,
+   "length_km": 54.718,
    "osm_rel": 14073,
    "beach_word": false,
    "weak_class": false,
@@ -21578,7 +21578,7 @@
    "names": [
     "Baker Way"
    ],
-   "length_km": 13.0,
+   "length_km": 20.921,
    "osm_rel": 51353,
    "beach_word": false,
    "weak_class": false,
@@ -21801,7 +21801,7 @@
     "Bath Skyline",
     "Bath Skyline Walk"
    ],
-   "length_km": 6.0,
+   "length_km": 9.656,
    "osm_rel": 3174132,
    "beach_word": false,
    "weak_class": false,
@@ -22608,7 +22608,7 @@
    "names": [
     "Bornsjöns natur- och kulturstig"
    ],
-   "length_km": 4.5,
+   "length_km": 11.0,
    "osm_rel": 19809172,
    "beach_word": false,
    "weak_class": false,
@@ -23371,7 +23371,7 @@
    "names": [
     "Cape Wrath Trail"
    ],
-   "length_km": 205.0,
+   "length_km": 329.916,
    "osm_rel": 9327615,
    "beach_word": false,
    "weak_class": false,
@@ -23882,7 +23882,7 @@
    "names": [
     "Clarendon Way"
    ],
-   "length_km": 26.0,
+   "length_km": 41.843,
    "osm_rel": 164752,
    "beach_word": false,
    "weak_class": false,
@@ -23962,7 +23962,7 @@
    "names": [
     "Coleridge Way"
    ],
-   "length_km": 51.0,
+   "length_km": 82.077,
    "osm_rel": 2101311,
    "beach_word": false,
    "weak_class": false,
@@ -24067,7 +24067,7 @@
     "Crown Princess Victoria and Prince Daniel's Love Stage",
     "Kronprinsessan Victorias och Prins Daniels kärleksstig"
    ],
-   "length_km": 390.0,
+   "length_km": 0.39,
    "beach_word": false,
    "weak_class": false,
    "walk_word": false,
@@ -24602,7 +24602,7 @@
    "names": [
     "Dollis Valley Greenwalk"
    ],
-   "length_km": 10.0,
+   "length_km": 16.093,
    "osm_rel": 8047728,
    "beach_word": false,
    "weak_class": false,
@@ -24920,7 +24920,7 @@
    "names": [
     "East Devon Way"
    ],
-   "length_km": 38.0,
+   "length_km": 61.155,
    "osm_rel": 272293,
    "beach_word": false,
    "weak_class": false,
@@ -24947,7 +24947,7 @@
    "names": [
     "Ebor Way"
    ],
-   "length_km": 70.0,
+   "length_km": 112.654,
    "osm_rel": 370663,
    "beach_word": false,
    "weak_class": false,
@@ -26042,7 +26042,7 @@
     "Náučný chodník Štrbské pleso",
     "sentier pédagogique Štrbské pleso"
    ],
-   "length_km": 6.0,
+   "length_km": 5.0,
    "beach_word": false,
    "weak_class": false,
    "walk_word": true,
@@ -26200,7 +26200,7 @@
    "names": [
     "Ekoleden"
    ],
-   "length_km": 12.3,
+   "length_km": 13.0,
    "osm_rel": 21149689,
    "beach_word": false,
    "weak_class": false,
@@ -26598,7 +26598,7 @@
     "Escaliers du Marché et de la Cathédrale",
     "Stairs of the Market and the Cathedral"
    ],
-   "length_km": 21.57,
+   "length_km": 0.022,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -26649,7 +26649,7 @@
    "names": [
     "Esk Valley Walk"
    ],
-   "length_km": 35.0,
+   "length_km": 56.327,
    "osm_rel": 6361532,
    "beach_word": false,
    "weak_class": false,
@@ -26887,7 +26887,7 @@
     "Flaten runt",
     "Flaten runt 7,4 km"
    ],
-   "length_km": 6.0,
+   "length_km": 7.4,
    "beach_word": false,
    "weak_class": false,
    "walk_word": false,
@@ -29189,7 +29189,7 @@
    "names": [
     "Gloucestershire Way"
    ],
-   "length_km": 100.0,
+   "length_km": 160.934,
    "osm_rel": 9012,
    "beach_word": false,
    "weak_class": false,
@@ -29375,7 +29375,7 @@
    "names": [
     "Goyt Way"
    ],
-   "length_km": 10.0,
+   "length_km": 16.093,
    "osm_rel": 112694,
    "beach_word": false,
    "weak_class": false,
@@ -30191,7 +30191,7 @@
    "names": [
     "Hangers Way"
    ],
-   "length_km": 21.0,
+   "length_km": 33.796,
    "osm_rel": 1561888,
    "beach_word": false,
    "weak_class": false,
@@ -30536,7 +30536,7 @@
     "Herefordshire Trail",
     "sentier du Herefordshire"
    ],
-   "length_km": 154.0,
+   "length_km": 247.839,
    "osm_rel": 541128,
    "beach_word": false,
    "weak_class": false,
@@ -30778,7 +30778,7 @@
    "names": [
     "Hierzekrëpp"
    ],
-   "length_km": 343.0,
+   "length_km": 0.343,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -30886,7 +30886,7 @@
     "High Weald Landscape Trail",
     "sentier paysager du Haut Weald"
    ],
-   "length_km": 90.0,
+   "length_km": 144.841,
    "osm_rel": 1216650,
    "beach_word": false,
    "weak_class": false,
@@ -31038,7 +31038,7 @@
     "sentier de randonnée 0857",
     "znakowany szlak turystyczny nr 0857"
    ],
-   "length_km": 18.7,
+   "length_km": 19.1,
    "osm_rel": 1505758,
    "beach_word": false,
    "weak_class": false,
@@ -31069,7 +31069,7 @@
     "sentier de randonnée 0858",
     "znakowany szlak turystyczny nr 0858"
    ],
-   "length_km": 12.5,
+   "length_km": 13.1,
    "osm_rel": 1272090,
    "beach_word": false,
    "weak_class": false,
@@ -31100,7 +31100,7 @@
     "sentier de randonnée 0871",
     "znakowany szlak turystyczny nr 0871"
    ],
-   "length_km": 7.5,
+   "length_km": 8.0,
    "osm_rel": 2054444,
    "beach_word": false,
    "weak_class": false,
@@ -31567,7 +31567,7 @@
     "sentier de randonnée 2628",
     "znakowany szlak turystyczny nr 2628"
    ],
-   "length_km": 7.5,
+   "length_km": 7.3,
    "osm_rel": 1154309,
    "beach_word": false,
    "weak_class": false,
@@ -31660,7 +31660,7 @@
     "sentier de randonnée 2718",
     "znakowany szlak turystyczny nr 2718"
    ],
-   "length_km": 14.9,
+   "length_km": 15.1,
    "osm_rel": 1706925,
    "beach_word": false,
    "weak_class": false,
@@ -31784,7 +31784,7 @@
     "sentier de randonnée 2733",
     "znakowany szlak turystyczny nr 2733"
    ],
-   "length_km": 16.9,
+   "length_km": 17.53,
    "osm_rel": 1369650,
    "beach_word": false,
    "weak_class": false,
@@ -32342,7 +32342,7 @@
     "sentier de randonnée 5432",
     "znakowany szlak turystyczny nr 5432"
    ],
-   "length_km": 8.5,
+   "length_km": 9.7,
    "osm_rel": 1154308,
    "beach_word": false,
    "weak_class": false,
@@ -32373,7 +32373,7 @@
     "sentier de randonnée 5435",
     "znakowany szlak turystyczny nr 5435"
    ],
-   "length_km": 10.7,
+   "length_km": 11.0,
    "osm_rel": 1493895,
    "beach_word": false,
    "weak_class": false,
@@ -32435,7 +32435,7 @@
     "sentier de randonnée 5600",
     "znakowany szlak turystyczny nr 5600"
    ],
-   "length_km": 43.7,
+   "length_km": 44.11,
    "osm_rel": 1272894,
    "beach_word": false,
    "weak_class": false,
@@ -32466,7 +32466,7 @@
     "sentier de randonnée 5601",
     "znakowany szlak turystyczny nr 5601"
    ],
-   "length_km": 7.7,
+   "length_km": 8.0,
    "osm_rel": 1735589,
    "beach_word": false,
    "weak_class": false,
@@ -32497,7 +32497,7 @@
     "sentier de randonnée 5603",
     "znakowany szlak turystyczny nr 5603"
    ],
-   "length_km": 11.5,
+   "length_km": 14.0,
    "osm_rel": 1859218,
    "beach_word": false,
    "weak_class": false,
@@ -32528,7 +32528,7 @@
     "sentier de randonnée 5628",
     "znakowany szlak turystyczny nr 5628"
    ],
-   "length_km": 1.6,
+   "length_km": 1.68,
    "osm_rel": 6477570,
    "beach_word": false,
    "weak_class": false,
@@ -32621,7 +32621,7 @@
     "sentier de randonnée 5635",
     "znakowany szlak turystyczny nr 5635"
    ],
-   "length_km": 9.8,
+   "length_km": 10.27,
    "osm_rel": 2054450,
    "beach_word": false,
    "weak_class": false,
@@ -32652,7 +32652,7 @@
     "sentier de randonnée 5639",
     "znakowany szlak turystyczny nr 5639"
    ],
-   "length_km": 11.1,
+   "length_km": 11.5,
    "osm_rel": 1475234,
    "beach_word": false,
    "weak_class": false,
@@ -33613,7 +33613,7 @@
     "sentier de randonnée 8601",
     "znakowany szlak turystyczny nr 8601"
    ],
-   "length_km": 9.0,
+   "length_km": 9.5,
    "osm_rel": 1632840,
    "beach_word": false,
    "weak_class": false,
@@ -33644,7 +33644,7 @@
     "sentier de randonnée 8602",
     "znakowany szlak turystyczny nr 8602"
    ],
-   "length_km": 5.9,
+   "length_km": 6.3,
    "osm_rel": 3421018,
    "beach_word": false,
    "weak_class": false,
@@ -33675,7 +33675,7 @@
     "sentier de randonnée 8603",
     "znakowany szlak turystyczny nr 8603"
    ],
-   "length_km": 7.8,
+   "length_km": 7.9,
    "osm_rel": 1272136,
    "beach_word": false,
    "weak_class": false,
@@ -33737,7 +33737,7 @@
     "sentier de randonnée 8605",
     "znakowany szlak turystyczny nr 8605"
    ],
-   "length_km": 6.4,
+   "length_km": 6.7,
    "osm_rel": 1735590,
    "beach_word": false,
    "weak_class": false,
@@ -33799,7 +33799,7 @@
     "sentier de randonnée 8611",
     "znakowany szlak turystyczny nr 8611"
    ],
-   "length_km": 3.3,
+   "length_km": 8.33,
    "osm_rel": 3125018,
    "beach_word": false,
    "weak_class": false,
@@ -33892,7 +33892,7 @@
     "sentier de randonnée 8614",
     "znakowany szlak turystyczny nr 8614"
    ],
-   "length_km": 4.3,
+   "length_km": 5.0,
    "osm_rel": 1830687,
    "beach_word": false,
    "weak_class": false,
@@ -33923,7 +33923,7 @@
     "sentier de randonnée 8630",
     "znakowany szlak turystyczny nr 8630"
    ],
-   "length_km": 15.5,
+   "length_km": 15.9,
    "osm_rel": 610914,
    "beach_word": false,
    "weak_class": false,
@@ -33954,7 +33954,7 @@
     "sentier de randonnée 8631",
     "znakowany szlak turystyczny nr 8631"
    ],
-   "length_km": 1.1,
+   "length_km": 1.3,
    "osm_rel": 6477574,
    "beach_word": false,
    "weak_class": false,
@@ -33985,7 +33985,7 @@
     "sentier de randonnée 8633",
     "znakowany szlak turystyczny nr 8633"
    ],
-   "length_km": 2.6,
+   "length_km": 2.99,
    "osm_rel": 1830814,
    "beach_word": false,
    "weak_class": false,
@@ -34047,7 +34047,7 @@
     "sentier de randonnée 8638",
     "znakowany szlak turystyczny nr 8638"
    ],
-   "length_km": 6.4,
+   "length_km": 6.6,
    "osm_rel": 4164698,
    "beach_word": false,
    "weak_class": false,
@@ -34078,7 +34078,7 @@
     "sentier de randonnée 8639",
     "znakowany szlak turystyczny nr 8639"
    ],
-   "length_km": 3.6,
+   "length_km": 5.0,
    "osm_rel": 1360502,
    "beach_word": false,
    "weak_class": false,
@@ -34202,7 +34202,7 @@
     "sentier de randonnée 8646",
     "znakowany szlak turystyczny nr 8646"
    ],
-   "length_km": 5.7,
+   "length_km": 6.6,
    "osm_rel": 2054455,
    "beach_word": false,
    "weak_class": false,
@@ -34233,7 +34233,7 @@
     "sentier de randonnée 8647",
     "znakowany szlak turystyczny nr 8647"
    ],
-   "length_km": 8.1,
+   "length_km": 8.5,
    "osm_rel": 2213968,
    "beach_word": false,
    "weak_class": false,
@@ -35279,7 +35279,7 @@
    "names": [
     "Isle of Wight Coastal Path"
    ],
-   "length_km": 67.0,
+   "length_km": 107.826,
    "osm_rel": 1129666,
    "beach_word": false,
    "weak_class": false,
@@ -35570,7 +35570,7 @@
    "names": [
     "John Bauerleden"
    ],
-   "length_km": 57.7,
+   "length_km": 58.0,
    "osm_rel": 7825725,
    "beach_word": false,
    "weak_class": false,
@@ -36132,7 +36132,7 @@
    "names": [
     "King's Way"
    ],
-   "length_km": 45.0,
+   "length_km": 72.42,
    "osm_rel": 20434,
    "beach_word": false,
    "weak_class": false,
@@ -36185,7 +36185,7 @@
    "names": [
     "Kirklees Way"
    ],
-   "length_km": 72.0,
+   "length_km": 115.873,
    "osm_rel": 1624090,
    "beach_word": false,
    "weak_class": false,
@@ -36805,7 +36805,7 @@
    "names": [
     "Lancashire Coastal Way"
    ],
-   "length_km": 66.0,
+   "length_km": 106.217,
    "osm_rel": 38386,
    "beach_word": false,
    "weak_class": false,
@@ -36882,7 +36882,7 @@
    "names": [
     "Lea Valley Walk"
    ],
-   "length_km": 50.0,
+   "length_km": 80.467,
    "osm_rel": 14522347,
    "beach_word": false,
    "weak_class": false,
@@ -36934,7 +36934,7 @@
    "names": [
     "Leeds Country Way"
    ],
-   "length_km": 62.0,
+   "length_km": 99.779,
    "osm_rel": 5012105,
    "beach_word": false,
    "weak_class": false,
@@ -36962,7 +36962,7 @@
     "Leland Trail",
     "sentier Leland"
    ],
-   "length_km": 28.0,
+   "length_km": 45.062,
    "beach_word": false,
    "weak_class": false,
    "walk_word": true,
@@ -37101,7 +37101,7 @@
    "names": [
     "Limestone Link"
    ],
-   "length_km": 36.0,
+   "length_km": 57.936,
    "osm_rel": 5121808,
    "beach_word": false,
    "weak_class": false,
@@ -37544,7 +37544,7 @@
    "names": [
     "Macmillan Way"
    ],
-   "length_km": 290.0,
+   "length_km": 466.71,
    "osm_rel": 1149730,
    "beach_word": false,
    "weak_class": false,
@@ -37571,7 +37571,7 @@
    "names": [
     "Macmillan Way West"
    ],
-   "length_km": 102.0,
+   "length_km": 164.153,
    "osm_rel": 3131984,
    "beach_word": false,
    "weak_class": false,
@@ -37689,7 +37689,7 @@
    "names": [
     "Marches Way"
    ],
-   "length_km": 218.0,
+   "length_km": 350.837,
    "osm_rel": 53637,
    "beach_word": false,
    "weak_class": false,
@@ -37745,7 +37745,7 @@
     "Marijanski hodočasnički put",
     "Marijina romarska pot"
    ],
-   "length_km": 393.0,
+   "length_km": 409.0,
    "beach_word": false,
    "weak_class": true,
    "walk_word": true,
@@ -38166,7 +38166,7 @@
     "Miner's Way Trail",
     "sentier du Chemin des Mineurs"
    ],
-   "length_km": 27.0,
+   "length_km": 43.452,
    "osm_rel": 66380,
    "beach_word": false,
    "weak_class": false,
@@ -38222,7 +38222,7 @@
    "names": [
     "Minster Way"
    ],
-   "length_km": 50.0,
+   "length_km": 80.467,
    "osm_rel": 1903816,
    "beach_word": false,
    "weak_class": false,
@@ -38333,7 +38333,7 @@
     "Mols Bjerge-stien",
     "sentier Mols Bjerge"
    ],
-   "length_km": 19.9,
+   "length_km": 60.0,
    "osm_rel": 13305153,
    "beach_word": false,
    "weak_class": false,
@@ -39334,7 +39334,7 @@
    "names": [
     "New River Path"
    ],
-   "length_km": 28.0,
+   "length_km": 45.062,
    "osm_rel": 1970762,
    "beach_word": false,
    "weak_class": false,
@@ -39657,7 +39657,7 @@
    "names": [
     "North Cheshire Way"
    ],
-   "length_km": 71.0,
+   "length_km": 114.263,
    "osm_rel": 63113,
    "beach_word": false,
    "weak_class": false,
@@ -40732,7 +40732,7 @@
    "names": [
     "Paston Way"
    ],
-   "length_km": 20.0,
+   "length_km": 32.187,
    "osm_rel": 1537792,
    "beach_word": false,
    "weak_class": false,
@@ -40915,7 +40915,7 @@
    "names": [
     "Pendle Way"
    ],
-   "length_km": 45.0,
+   "length_km": 72.42,
    "osm_rel": 10523714,
    "beach_word": false,
    "weak_class": false,
@@ -41573,7 +41573,7 @@
    "names": [
     "Quantock Greenway"
    ],
-   "length_km": 37.0,
+   "length_km": 59.546,
    "osm_rel": 13703050,
    "beach_word": false,
    "weak_class": false,
@@ -42101,7 +42101,7 @@
     "River Parrett Trail",
     "sentier de la rivière Parrett"
    ],
-   "length_km": 47.0,
+   "length_km": 75.639,
    "osm_rel": 1464656,
    "beach_word": false,
    "weak_class": false,
@@ -42792,7 +42792,7 @@
    "names": [
     "Sabrina Way"
    ],
-   "length_km": 203.0,
+   "length_km": 326.697,
    "osm_rel": 537430,
    "beach_word": false,
    "weak_class": false,
@@ -42873,7 +42873,7 @@
     "Llwybr Sant Illtyd",
     "Saint Illtyd's Walk"
    ],
-   "length_km": 64.0,
+   "length_km": 102.998,
    "osm_rel": 1156074,
    "beach_word": false,
    "weak_class": false,
@@ -43189,7 +43189,7 @@
    "names": [
     "Saxon Shore Way"
    ],
-   "length_km": 163.0,
+   "length_km": 262.323,
    "osm_rel": 8864,
    "beach_word": false,
    "weak_class": false,
@@ -44850,7 +44850,7 @@
     "Serpent Trail",
     "sentier du Serpent"
    ],
-   "length_km": 64.0,
+   "length_km": 102.998,
    "osm_rel": 1970431,
    "beach_word": false,
    "weak_class": false,
@@ -44983,7 +44983,7 @@
    "names": [
     "Siegerland-Höhenring"
    ],
-   "length_km": 142.0,
+   "length_km": 143.6,
    "osm_rel": 60923,
    "beach_word": false,
    "weak_class": false,
@@ -45167,7 +45167,7 @@
    "names": [
     "Skolleden"
    ],
-   "length_km": 4.7,
+   "length_km": 7.5,
    "osm_rel": 5963054,
    "beach_word": false,
    "weak_class": false,
@@ -45328,7 +45328,7 @@
     "Basislinie Solitude-Allee",
     "Solitude-Allee"
    ],
-   "length_km": 13032.14,
+   "length_km": 13.032,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -45639,7 +45639,7 @@
    "names": [
     "Staffordshire Way"
    ],
-   "length_km": 92.0,
+   "length_km": 148.06,
    "osm_rel": 1956970,
    "beach_word": false,
    "weak_class": false,
@@ -46537,7 +46537,7 @@
     "Ouse Valley Way",
     "Sussex Ouse Valley Way"
    ],
-   "length_km": 42.0,
+   "length_km": 67.592,
    "osm_rel": 331403,
    "beach_word": false,
    "weak_class": false,
@@ -46966,7 +46966,7 @@
    "names": [
     "Test Way"
    ],
-   "length_km": 49.0,
+   "length_km": 78.858,
    "osm_rel": 9061,
    "beach_word": false,
    "weak_class": false,
@@ -47018,7 +47018,7 @@
    "names": [
     "Thames Down Link"
    ],
-   "length_km": 15.0,
+   "length_km": 24.14,
    "osm_rel": 115934,
    "beach_word": false,
    "weak_class": false,
@@ -47409,7 +47409,7 @@
    "names": [
     "Torrente Sallagoni"
    ],
-   "length_km": 2500.0,
+   "length_km": 2.5,
    "start": "Q286424",
    "end": "Q17993094",
    "beach_word": false,
@@ -49114,7 +49114,7 @@
     "Two Castles Trail",
     "sentier des Deux Châteaux"
    ],
-   "length_km": 24.0,
+   "length_km": 38.624,
    "osm_rel": 2374682,
    "beach_word": false,
    "weak_class": false,
@@ -49306,6 +49306,7 @@
    "names": [
     "Upplands-Broleden"
    ],
+   "length_km": 29.0,
    "osm_rel": 223937,
    "beach_word": false,
    "weak_class": false,
@@ -49837,7 +49838,7 @@
     "Via ferrata Burrone Giovanelli",
     "via ferrata del Burrone “Tullio Giovanelli”"
    ],
-   "length_km": 3990.0,
+   "length_km": 3.99,
    "end": "Q3861741",
    "beach_word": false,
    "weak_class": false,
@@ -49865,7 +49866,7 @@
     "Via ferrata Franco Galli",
     "via ferrata Franco Galli"
    ],
-   "length_km": 1530.0,
+   "length_km": 1.53,
    "beach_word": false,
    "weak_class": false,
    "walk_word": false,
@@ -50945,7 +50946,7 @@
    "names": [
     "Wayfarer's Walk"
    ],
-   "length_km": 70.0,
+   "length_km": 112.654,
    "osm_rel": 5289,
    "beach_word": false,
    "weak_class": false,
@@ -50998,7 +50999,7 @@
    "names": [
     "Weardale Way"
    ],
-   "length_km": 74.0,
+   "length_km": 119.091,
    "osm_rel": 86561,
    "beach_word": false,
    "weak_class": false,
@@ -51290,7 +51291,7 @@
    "names": [
     "West Deane Way"
    ],
-   "length_km": 45.0,
+   "length_km": 72.42,
    "osm_rel": 2133670,
    "beach_word": false,
    "weak_class": false,
@@ -51370,7 +51371,7 @@
    "names": [
     "West Somerset Coast Path"
    ],
-   "length_km": 25.0,
+   "length_km": 40.234,
    "beach_word": false,
    "weak_class": false,
    "walk_word": true,
@@ -51530,7 +51531,7 @@
    "names": [
     "Wilberforce Way"
    ],
-   "length_km": 60.0,
+   "length_km": 96.561,
    "osm_rel": 6701121,
    "beach_word": false,
    "weak_class": false,
@@ -51584,7 +51585,7 @@
     "Wildermuthweg",
     "Wildermuthweg (Hannover)"
    ],
-   "length_km": 255.0,
+   "length_km": 0.255,
    "beach_word": false,
    "weak_class": true,
    "walk_word": true,
@@ -51713,7 +51714,7 @@
    "names": [
     "Worcestershire Way"
    ],
-   "length_km": 31.0,
+   "length_km": 49.89,
    "osm_rel": 73871,
    "beach_word": false,
    "weak_class": false,
@@ -52168,7 +52169,7 @@
     "rue Interieure",
     "rue Intérieure"
    ],
-   "length_km": 95.0,
+   "length_km": 0.095,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -52196,7 +52197,7 @@
     "Saint-Rustique Sokağı",
     "rue Saint-Rustique"
    ],
-   "length_km": 110.0,
+   "length_km": 0.11,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -52275,7 +52276,7 @@
     "sente des Dorees",
     "sente des Dorées"
    ],
-   "length_km": 245.0,
+   "length_km": 0.245,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -52302,7 +52303,7 @@
     "sente a Bigot",
     "sente à Bigot"
    ],
-   "length_km": 65.0,
+   "length_km": 0.065,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -52328,7 +52329,7 @@
    "names": [
     "sentier Briens"
    ],
-   "length_km": 15.0,
+   "length_km": 0.015,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -52354,7 +52355,7 @@
    "names": [
     "sentier de Montempoivre"
    ],
-   "length_km": 120.0,
+   "length_km": 0.12,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -52406,7 +52407,7 @@
    "names": [
     "sentier de la Pointe"
    ],
-   "length_km": 31.0,
+   "length_km": 0.031,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -52432,7 +52433,7 @@
    "names": [
     "sentier de la Station"
    ],
-   "length_km": 55.0,
+   "length_km": 0.055,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -52459,7 +52460,7 @@
     "Le Rouvray Patikası",
     "sentier du Rouvray"
    ],
-   "length_km": 130.0,
+   "length_km": 0.13,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,

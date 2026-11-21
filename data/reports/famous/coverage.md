@@ -1,14 +1,14 @@
 # Famous coverage
 
-Generated 2026-11-20T23:56:01Z. Headline: tier A rows that are in Carta (rated, listed, or as stages). Built by `pipeline/famous/coverage.py`; reference rule in `pipeline/famous/wikidata.py`.
+Generated 2026-11-21T00:46:09Z. Headline: tier A rows that are in Carta (rated, listed, or as stages). Built by `pipeline/famous/coverage.py`; reference rule in `pipeline/famous/wikidata.py`.
 
 | Kind | Famous (A) | In | Share | Rated | Listed | Stages | Piece only | Missing | Near (B) in |
 |---|---|---|---|---|---|---|---|---|---|
-| trails | 663 | 209 | 32% | 198 | 1 | 10 | 93 | 361 | 249 of 1226 |
-| cycling | 235 | 51 | 22% | 12 | 38 | 1 | 13 | 171 | 39 of 313 |
+| trails | 663 | 210 | 32% | 199 | 1 | 10 | 92 | 361 | 249 of 1226 |
+| cycling | 235 | 45 | 19% | 11 | 34 | 0 | 12 | 178 | 37 of 313 |
 | beaches | 193 | 141 | 73% | 117 | 24 | 0 | 0 | 52 | 496 of 1591 |
 | lakes | 249 | 165 | 66% | 147 | 18 | 0 | 0 | 84 | 190 of 364 |
-| mountains | 347 | 286 | 82% | 207 | 79 | 0 | 0 | 61 | 363 of 873 |
+| mountains | 346 | 287 | 83% | 207 | 80 | 0 | 0 | 59 | 361 of 871 |
 
 ## trails
 
@@ -118,7 +118,6 @@ Missing famous (A) by reason: osm_relation_not_published 170, no_osm_relation 15
 | Glyndŵr's Way | GB | 5 | missing | osm_relation_not_published |
 | Great Western Greenway | IE | 5 | missing | no_osm_relation |
 | Hermannsweg | DE | 5 | in_as_piece |  |
-| Ingegerdsleden | SE | 5 | in_as_piece |  |
 | Peaks of the Balkans | AL,ME,XK | 5 | missing | osm_relation_not_published |
 | Perć Akademików | PL | 5 | missing | no_osm_relation |
 | Rheinburgenweg Trail | DE | 5 | in_as_piece |  |
@@ -473,13 +472,13 @@ Missing famous (A) by reason: osm_relation_not_published 170, no_osm_relation 15
 
 ## cycling
 
-Missing famous (A) by reason: not_in_wire 152, matcher_miss 19
+Missing famous (A) by reason: not_in_wire 159, matcher_miss 19
 
 | Name | Countries | Sitelinks | Status | Reason |
 |---|---|---|---|---|
 | Via Claudia Augusta | AT,DE,IT | 24 | missing | not_in_wire |
 | EuroVelo 10 – Baltic Sea Cycle Route | DE,DK,EE,FI,LT,LV,PL,SE | 16 | missing | not_in_wire |
-| EuroVelo 13 – Iron Curtain Trail | AT,BG,CZ,DE,EE,FI,GR,HR,HU,LT,LV,MK,NO,PL,RO,RS,SI,SK,TR | 16 | in_as_piece |  |
+| EuroVelo 13 – Iron Curtain Trail | AT,BG,CZ,DE,EE,FI,GR,HR,HU,LT,LV,MK,NO,PL,RO,RS,SI,SK,TR | 16 | missing | not_in_wire |
 | EuroVelo 2 – Capitals Route | DE,GB,IE,NL,PL | 16 | in_as_piece |  |
 | EuroVelo 6 – The Rivers Route | AT,BG,CH,DE,FR,HR,HU,RO,RS,SK | 16 | missing | not_in_wire |
 | EuroVelo 9 – Baltic-Adriatic | AT,CZ,HR,IT,PL,SI | 16 | missing | not_in_wire |
@@ -536,6 +535,7 @@ Missing famous (A) by reason: not_in_wire 152, matcher_miss 19
 | Flaeming-Skate | DE | 4 | missing | matcher_miss |
 | Garte Valley Railway | DE | 4 | missing | not_in_wire |
 | Gera-Radweg | DE | 4 | missing | not_in_wire |
+| Gurkenradweg | DE | 4 | missing | not_in_wire |
 | Hessian long-distance cycle route R1 | DE | 4 | missing | matcher_miss |
 | Hessian long-distance cycle route R2 | DE | 4 | missing | matcher_miss |
 | Hessian long-distance cycle route R3 | DE | 4 | missing | matcher_miss |
@@ -567,6 +567,7 @@ Missing famous (A) by reason: not_in_wire 152, matcher_miss 19
 | Saar-Radweg | DE,FR | 4 | missing | not_in_wire |
 | Sverigeleden | SE | 4 | in_as_piece |  |
 | Tauber Valley Cycleway | DE | 4 | missing | not_in_wire |
+| Tauern Cycle Path | AT,DE | 4 | missing | not_in_wire |
 | Voie Bleue | FR | 4 | in_as_piece |  |
 | Aischtal cycling route | DE | 3 | missing | not_in_wire |
 | Aller-Radweg | DE | 3 | missing | not_in_wire |
@@ -586,12 +587,14 @@ Missing famous (A) by reason: not_in_wire 152, matcher_miss 19
 | Deutscher Limes-Radweg | DE | 3 | missing | not_in_wire |
 | Elster-Radweg | CZ,DE | 3 | missing | not_in_wire |
 | Emsradweg | DE | 3 | missing | not_in_wire |
+| Ennsradweg | AT | 3 | missing | not_in_wire |
 | Esbjerg - Copenhagen | DK | 3 | missing | not_in_wire |
 | EuroVelo 10 in Germany | DE | 3 | missing | not_in_wire |
 | Fürst-Pückler-Weg | DE | 3 | missing | not_in_wire |
 | Gaubahn-Radweg | DE | 3 | missing | not_in_wire |
 | German Unity Cycle Route | DE | 3 | missing | not_in_wire |
 | Glan-Blies Way | DE,FR | 3 | missing | not_in_wire |
+| Greenway Krakow-Moravia-Vienna | AT,CZ,PL | 3 | missing | not_in_wire |
 | Greenway Oder River Trail | PL | 3 | in_as_piece |  |
 | Greenways Praha-Wien | AT,CZ | 3 | missing | not_in_wire |
 | Harzrundweg | DE | 3 | missing | not_in_wire |
@@ -604,6 +607,7 @@ Missing famous (A) by reason: not_in_wire 152, matcher_miss 19
 | Hofjagdweg | DE | 3 | missing | not_in_wire |
 | Information plaques on Following Švejk Hiking Trail | AT,CZ,HU,PL,SK,UA | 3 | missing | matcher_miss |
 | Kaiser-Route | DE | 3 | missing | matcher_miss |
+| Karlsroute | CZ,DE | 3 | missing | not_in_wire |
 | Kulturringen | DK | 3 | missing | not_in_wire |
 | LF Kustroute | BE,NL | 3 | missing | not_in_wire |
 | La Régalante | FR | 3 | missing | not_in_wire |
@@ -644,6 +648,7 @@ Missing famous (A) by reason: not_in_wire 152, matcher_miss 19
 | Sauertalradweg | DE,LU | 3 | missing | not_in_wire |
 | Schwarze-Elster-Radweg | DE | 3 | missing | not_in_wire |
 | Sea to Sea Cycle Route | GB | 3 | missing | not_in_wire |
+| Sydostleden | SE | 3 | missing | not_in_wire |
 | Szlak "Zielona Odra" | PL | 3 | missing | matcher_miss |
 | Søndervig - København | DK | 3 | missing | not_in_wire |
 | Südschwarzwald-Radweg | CH,DE | 3 | missing | not_in_wire |
@@ -664,218 +669,216 @@ Missing famous (A) by reason: not_in_wire 152, matcher_miss 19
 
 ## beaches
 
-Missing famous (A) by reason: not_in_wire 42, matcher_miss 10
+Missing famous (A) by reason: dropped_at_export 27, not_in_catalogue 15, matcher_miss 10
 
 | Name | Countries | Sitelinks | Status | Reason |
 |---|---|---|---|---|
-| Playa del Inglés | ES | 26 | missing | not_in_wire |
-| Calanques de Piana | FR | 24 | missing | not_in_wire |
+| Playa del Inglés | ES | 26 | missing | dropped_at_export |
+| Calanques de Piana | FR | 24 | missing | dropped_at_export |
 | Durdle Door | GB | 24 | missing | matcher_miss |
-| Leptokarya | GR | 20 | missing | not_in_wire |
-| Playa de Gulpiyuri | ES | 16 | missing | not_in_wire |
-| As Catedrais beach | ES | 15 | missing | not_in_wire |
-| Velika Plaža | ME | 13 | missing | not_in_wire |
-| Chesil Beach | GB | 12 | missing | not_in_wire |
+| Leptokarya | GR | 20 | missing | dropped_at_export |
+| Playa de Gulpiyuri | ES | 16 | missing | dropped_at_export |
+| As Catedrais beach | ES | 15 | missing | dropped_at_export |
+| Velika Plaža | ME | 13 | missing | dropped_at_export |
+| Chesil Beach | GB | 12 | missing | dropped_at_export |
 | Barceloneta Beach | ES | 11 | missing | matcher_miss |
-| Bolata | BG | 10 | missing | not_in_wire |
-| Bedruthan Steps | GB | 9 | missing | not_in_wire |
-| Bellevue Beach | DK | 9 | missing | not_in_wire |
-| Bjarnarfjörður | IS | 9 | missing | not_in_wire |
-| Dueodde | DK | 9 | missing | not_in_wire |
+| Bolata | BG | 10 | missing | dropped_at_export |
+| Bedruthan Steps | GB | 9 | missing | dropped_at_export |
+| Bellevue Beach | DK | 9 | missing | dropped_at_export |
+| Bjarnarfjörður | IS | 9 | missing | not_in_catalogue |
+| Dueodde | DK | 9 | missing | dropped_at_export |
 | Ensenada de los Galápagos Beach | ES | 9 | missing | matcher_miss |
-| Playa El Tarajal | ES | 9 | missing | not_in_wire |
-| Ftelia | GR | 8 | missing | not_in_wire |
+| Playa El Tarajal | ES | 9 | missing | dropped_at_export |
+| Ftelia | GR | 8 | missing | dropped_at_export |
 | Hietaniemi beach | FI | 8 | missing | matcher_miss |
-| Kollafjörður (Strandir) | IS | 8 | missing | not_in_wire |
-| Nugal Beach | HR | 8 | missing | not_in_wire |
+| Kollafjörður (Strandir) | IS | 8 | missing | not_in_catalogue |
+| Nugal Beach | HR | 8 | missing | dropped_at_export |
 | Platja de la Nova Mar Bella | ES | 8 | missing | matcher_miss |
-| Playa de la Caleta | ES | 8 | missing | not_in_wire |
-| San Lorenzo Beach | ES | 8 | missing | not_in_wire |
-| Štrand | RS | 8 | missing | not_in_wire |
-| Keem Bay | IE | 7 | missing | not_in_wire |
+| Playa de la Caleta | ES | 8 | missing | dropped_at_export |
+| San Lorenzo Beach | ES | 8 | missing | dropped_at_export |
+| Štrand | RS | 8 | missing | dropped_at_export |
+| Keem Bay | IE | 7 | missing | not_in_catalogue |
 | Praia do Burgau | PT | 7 | missing | matcher_miss |
-| Red Wharf Bay | GB | 7 | missing | not_in_wire |
-| Cala Burantino | IT | 6 | missing | not_in_wire |
-| Gurteen Beach | IE | 6 | missing | not_in_wire |
-| Lido | RS | 6 | missing | not_in_wire |
-| Moesgård Beach | DK | 6 | missing | not_in_wire |
-| Praia da Arrifana | PT | 6 | missing | not_in_wire |
-| Richtis Gorge | GR | 6 | missing | not_in_wire |
-| Sahara Beach | HR | 6 | missing | not_in_wire |
-| Strandbad Wannsee | DE | 6 | missing | not_in_wire |
-| Svanemølle Beach | DK | 6 | missing | not_in_wire |
-| Agios Ioannis Peristeron | GR | 5 | missing | not_in_wire |
-| Dunkerque LNG terminal | FR | 5 | missing | not_in_wire |
-| Kakome Bay | AL | 5 | missing | not_in_wire |
-| Nedstrandsfjorden | NO | 5 | missing | not_in_wire |
-| Porvarinlahti | FI | 5 | missing | not_in_wire |
+| Red Wharf Bay | GB | 7 | missing | not_in_catalogue |
+| Cala Burantino | IT | 6 | missing | not_in_catalogue |
+| Gurteen Beach | IE | 6 | missing | not_in_catalogue |
+| Lido | RS | 6 | missing | not_in_catalogue |
+| Moesgård Beach | DK | 6 | missing | dropped_at_export |
+| Praia da Arrifana | PT | 6 | missing | dropped_at_export |
+| Richtis Gorge | GR | 6 | missing | dropped_at_export |
+| Sahara Beach | HR | 6 | missing | dropped_at_export |
+| Strandbad Wannsee | DE | 6 | missing | dropped_at_export |
+| Svanemølle Beach | DK | 6 | missing | dropped_at_export |
+| Agios Ioannis Peristeron | GR | 5 | missing | dropped_at_export |
+| Dunkerque LNG terminal | FR | 5 | missing | not_in_catalogue |
+| Kakome Bay | AL | 5 | missing | not_in_catalogue |
+| Nedstrandsfjorden | NO | 5 | missing | not_in_catalogue |
+| Porvarinlahti | FI | 5 | missing | not_in_catalogue |
 | Praia Formosa | PT | 5 | missing | matcher_miss |
 | Praia da Adraga | PT | 5 | missing | matcher_miss |
-| Praia de Vale Figueira | PT | 5 | missing | not_in_wire |
-| Santo André Beach | PT | 5 | missing | not_in_wire |
-| Vallon des Auffes | FR | 5 | missing | not_in_wire |
-| Vault Beach | GB | 5 | missing | not_in_wire |
-| Rhossili Bay | GB | 3 | missing | not_in_wire |
+| Praia de Vale Figueira | PT | 5 | missing | dropped_at_export |
+| Santo André Beach | PT | 5 | missing | dropped_at_export |
+| Vallon des Auffes | FR | 5 | missing | not_in_catalogue |
+| Vault Beach | GB | 5 | missing | dropped_at_export |
+| Rhossili Bay | GB | 3 | missing | not_in_catalogue |
 | Cala Macarella | ES |  | missing | matcher_miss |
-| Dune of Pilat | FR |  | missing | not_in_wire |
-| Scala dei Turchi | IT |  | missing | not_in_wire |
+| Dune of Pilat | FR |  | missing | not_in_catalogue |
+| Scala dei Turchi | IT |  | missing | not_in_catalogue |
 | Ses Illetes | ES |  | missing | matcher_miss |
 
 ## lakes
 
-Missing famous (A) by reason: not_in_wire 84
+Missing famous (A) by reason: dropped_at_export 77, not_enriched 5, not_in_catalogue 2
 
 | Name | Countries | Sitelinks | Status | Reason |
 |---|---|---|---|---|
-| Lake Garda | IT | 88 | missing | not_in_wire |
-| Plitvice Lakes | HR | 71 | missing | not_in_wire |
-| Mälaren | SE | 64 | missing | not_in_wire |
-| Lake Zurich | CH | 63 | missing | not_in_wire |
-| Chiemsee | DE | 58 | missing | not_in_wire |
-| Lake Ülemiste | EE | 47 | missing | not_in_wire |
-| Mjøsa | NO | 45 | missing | not_in_wire |
-| Lake Thun | CH | 44 | missing | not_in_wire |
-| Hornindalsvatnet | NO | 39 | missing | not_in_wire |
-| Jökulsárlón | IS | 37 | missing | not_in_wire |
-| Lough Corrib | IE | 37 | missing | not_in_wire |
-| Walensee | CH | 35 | missing | not_in_wire |
-| Kaali crater | EE | 34 | missing | not_in_wire |
-| Millstätter See | AT | 34 | missing | not_in_wire |
-| Siljan | SE | 34 | missing | not_in_wire |
-| Tjörnin | IS | 33 | missing | not_in_wire |
-| Hornavan | SE | 32 | missing | not_in_wire |
-| Þórisvatn | IS | 32 | missing | not_in_wire |
-| Lake Bodom | FI | 30 | missing | not_in_wire |
-| Lough Derg | IE | 30 | missing | not_in_wire |
-| Narva Reservoir | EE | 30 | missing | not_in_wire |
-| Saadjärv | EE | 30 | missing | not_in_wire |
-| Veisjärv | EE | 30 | missing | not_in_wire |
-| Lake Vagula | EE | 29 | missing | not_in_wire |
-| Loch Morar | GB | 29 | missing | not_in_wire |
-| Randsfjorden | NO | 29 | missing | not_in_wire |
-| Bolmen | SE | 28 | missing | not_in_wire |
-| Karujärv | EE | 28 | missing | not_in_wire |
-| Lake Cerknica | SI | 27 | missing | not_in_wire |
-| Lake Pamvotida | GR | 27 | missing | not_in_wire |
-| Loch Awe | GB | 27 | missing | not_in_wire |
-| Mullutu-Suurlaht | EE | 27 | missing | not_in_wire |
-| Røssvatnet | NO | 27 | missing | not_in_wire |
-| Lagarfljót | IS | 26 | missing | not_in_wire |
-| Lake Volvi | GR | 26 | missing | not_in_wire |
-| Loch Maree | GB | 26 | missing | not_in_wire |
-| Steinhuder Meer | DE | 26 | missing | not_in_wire |
-| Uddjaure | SE | 26 | missing | not_in_wire |
-| Greifensee | CH | 25 | missing | not_in_wire |
-| Hóp | IS | 25 | missing | not_in_wire |
-| Kallavesi | FI | 25 | missing | not_in_wire |
-| Lake Koroneia | GR | 25 | missing | not_in_wire |
-| Müggelsee | DE | 25 | missing | not_in_wire |
-| Ancylus Lake | FI,SE | 24 | missing | not_in_wire |
-| Apavatn | IS | 24 | missing | not_in_wire |
-| Großer Wannsee | DE | 24 | missing | not_in_wire |
-| Kerið | IS | 24 | missing | not_in_wire |
-| Kleifarvatn | IS | 24 | missing | not_in_wire |
-| Lake Burtnieks | LV | 24 | missing | not_in_wire |
-| Lake Harku | EE | 24 | missing | not_in_wire |
-| Lake Toplitz | AT | 24 | missing | not_in_wire |
-| Loch Lochy | GB | 24 | missing | not_in_wire |
-| Lough Allen | IE | 24 | missing | not_in_wire |
-| Mavrovo Lake | MK | 24 | missing | not_in_wire |
-| Palić Lake | RS | 24 | missing | not_in_wire |
-| Faaker See | AT | 23 | missing | not_in_wire |
-| Langisjór | IS | 23 | missing | not_in_wire |
-| Tinnsjå | NO | 23 | missing | not_in_wire |
-| Kummerower See | DE | 22 | missing | not_in_wire |
-| Lake Burgas | BG | 22 | missing | not_in_wire |
-| Lake Ermistu | EE | 22 | missing | not_in_wire |
-| Lake Varna | BG | 22 | missing | not_in_wire |
-| Red Lake | HR | 22 | missing | not_in_wire |
-| Sultartangalón | IS | 22 | missing | not_in_wire |
-| Hvítárvatn | IS | 21 | missing | not_in_wire |
-| Laugarvatn | IS | 21 | missing | not_in_wire |
-| Loch Ericht | GB | 21 | missing | not_in_wire |
-| Loch Katrine | GB | 21 | missing | not_in_wire |
-| Loch Oich | GB | 21 | missing | not_in_wire |
-| Loch Shin | GB | 21 | missing | not_in_wire |
-| Titisee | DE | 21 | missing | not_in_wire |
-| Zemplínska šírava | SK | 21 | missing | not_in_wire |
-| Arresø | DK | 20 | missing | not_in_wire |
-| Blöndulón | IS | 20 | missing | not_in_wire |
-| Fjallavatn | FO | 20 | missing | not_in_wire |
-| Jablaničko Lake | BA | 20 | missing | not_in_wire |
-| Lake Esrum | DK | 20 | missing | not_in_wire |
-| Lauwersmeer | NL | 20 | missing | not_in_wire |
-| Lough Mask | IE | 20 | missing | not_in_wire |
-| Plauer See | DE | 20 | missing | not_in_wire |
-| Puula | FI | 20 | missing | not_in_wire |
-| Schaalsee | DE | 20 | missing | not_in_wire |
-| Sigöldulón | IS | 20 | missing | not_in_wire |
-| Vesijärvi | FI | 20 | missing | not_in_wire |
+| Lake Garda | IT | 88 | missing | dropped_at_export |
+| Plitvice Lakes | HR | 71 | missing | not_in_catalogue |
+| Mälaren | SE | 64 | missing | dropped_at_export |
+| Lake Zurich | CH | 63 | missing | dropped_at_export |
+| Chiemsee | DE | 58 | missing | dropped_at_export |
+| Lake Ülemiste | EE | 47 | missing | dropped_at_export |
+| Mjøsa | NO | 45 | missing | dropped_at_export |
+| Lake Thun | CH | 44 | missing | dropped_at_export |
+| Hornindalsvatnet | NO | 39 | missing | dropped_at_export |
+| Jökulsárlón | IS | 37 | missing | dropped_at_export |
+| Lough Corrib | IE | 37 | missing | dropped_at_export |
+| Walensee | CH | 35 | missing | dropped_at_export |
+| Kaali crater | EE | 34 | missing | dropped_at_export |
+| Millstätter See | AT | 34 | missing | dropped_at_export |
+| Siljan | SE | 34 | missing | dropped_at_export |
+| Tjörnin | IS | 33 | missing | dropped_at_export |
+| Hornavan | SE | 32 | missing | dropped_at_export |
+| Þórisvatn | IS | 32 | missing | dropped_at_export |
+| Lake Bodom | FI | 30 | missing | dropped_at_export |
+| Lough Derg | IE | 30 | missing | dropped_at_export |
+| Narva Reservoir | EE | 30 | missing | dropped_at_export |
+| Saadjärv | EE | 30 | missing | dropped_at_export |
+| Veisjärv | EE | 30 | missing | dropped_at_export |
+| Lake Vagula | EE | 29 | missing | dropped_at_export |
+| Loch Morar | GB | 29 | missing | dropped_at_export |
+| Randsfjorden | NO | 29 | missing | dropped_at_export |
+| Bolmen | SE | 28 | missing | dropped_at_export |
+| Karujärv | EE | 28 | missing | dropped_at_export |
+| Lake Cerknica | SI | 27 | missing | dropped_at_export |
+| Lake Pamvotida | GR | 27 | missing | dropped_at_export |
+| Loch Awe | GB | 27 | missing | dropped_at_export |
+| Mullutu-Suurlaht | EE | 27 | missing | dropped_at_export |
+| Røssvatnet | NO | 27 | missing | dropped_at_export |
+| Lagarfljót | IS | 26 | missing | dropped_at_export |
+| Lake Volvi | GR | 26 | missing | dropped_at_export |
+| Loch Maree | GB | 26 | missing | dropped_at_export |
+| Steinhuder Meer | DE | 26 | missing | dropped_at_export |
+| Uddjaure | SE | 26 | missing | dropped_at_export |
+| Greifensee | CH | 25 | missing | dropped_at_export |
+| Hóp | IS | 25 | missing | dropped_at_export |
+| Kallavesi | FI | 25 | missing | dropped_at_export |
+| Lake Koroneia | GR | 25 | missing | dropped_at_export |
+| Müggelsee | DE | 25 | missing | dropped_at_export |
+| Ancylus Lake | FI,SE | 24 | missing | not_in_catalogue |
+| Apavatn | IS | 24 | missing | dropped_at_export |
+| Großer Wannsee | DE | 24 | missing | dropped_at_export |
+| Kerið | IS | 24 | missing | dropped_at_export |
+| Kleifarvatn | IS | 24 | missing | dropped_at_export |
+| Lake Burtnieks | LV | 24 | missing | dropped_at_export |
+| Lake Harku | EE | 24 | missing | dropped_at_export |
+| Lake Toplitz | AT | 24 | missing | dropped_at_export |
+| Loch Lochy | GB | 24 | missing | not_enriched |
+| Lough Allen | IE | 24 | missing | dropped_at_export |
+| Mavrovo Lake | MK | 24 | missing | dropped_at_export |
+| Palić Lake | RS | 24 | missing | dropped_at_export |
+| Faaker See | AT | 23 | missing | dropped_at_export |
+| Langisjór | IS | 23 | missing | dropped_at_export |
+| Tinnsjå | NO | 23 | missing | dropped_at_export |
+| Kummerower See | DE | 22 | missing | not_enriched |
+| Lake Burgas | BG | 22 | missing | dropped_at_export |
+| Lake Ermistu | EE | 22 | missing | dropped_at_export |
+| Lake Varna | BG | 22 | missing | dropped_at_export |
+| Red Lake | HR | 22 | missing | dropped_at_export |
+| Sultartangalón | IS | 22 | missing | dropped_at_export |
+| Hvítárvatn | IS | 21 | missing | dropped_at_export |
+| Laugarvatn | IS | 21 | missing | dropped_at_export |
+| Loch Ericht | GB | 21 | missing | not_enriched |
+| Loch Katrine | GB | 21 | missing | dropped_at_export |
+| Loch Oich | GB | 21 | missing | not_enriched |
+| Loch Shin | GB | 21 | missing | not_enriched |
+| Titisee | DE | 21 | missing | dropped_at_export |
+| Zemplínska šírava | SK | 21 | missing | dropped_at_export |
+| Arresø | DK | 20 | missing | dropped_at_export |
+| Blöndulón | IS | 20 | missing | dropped_at_export |
+| Fjallavatn | FO | 20 | missing | dropped_at_export |
+| Jablaničko Lake | BA | 20 | missing | dropped_at_export |
+| Lake Esrum | DK | 20 | missing | dropped_at_export |
+| Lauwersmeer | NL | 20 | missing | dropped_at_export |
+| Lough Mask | IE | 20 | missing | dropped_at_export |
+| Plauer See | DE | 20 | missing | dropped_at_export |
+| Puula | FI | 20 | missing | dropped_at_export |
+| Schaalsee | DE | 20 | missing | dropped_at_export |
+| Sigöldulón | IS | 20 | missing | dropped_at_export |
+| Vesijärvi | FI | 20 | missing | dropped_at_export |
 
 ## mountains
 
-Missing famous (A) by reason: not_in_wire 61
+Missing famous (A) by reason: dropped_at_export 37, not_in_catalogue 18, not_enriched 4
 
 | Name | Countries | Sitelinks | Status | Reason |
 |---|---|---|---|---|
-| Stromboli | IT | 85 | missing | not_in_wire |
-| Laki | IS | 52 | missing | not_in_wire |
-| Katla | IS | 48 | missing | not_in_wire |
-| Monte San Giorgio | CH | 47 | missing | not_in_wire |
-| Durmitor | ME | 45 | missing | not_in_wire |
-| Monte Cassino | IT | 43 | missing | not_in_wire |
-| Mount Pico | PT | 42 | missing | not_in_wire |
-| Bárðarbunga | IS | 40 | missing | not_in_wire |
-| Weisshorn | CH | 40 | missing | not_in_wire |
-| Corno Grande | IT | 38 | missing | not_in_wire |
-| Vogelsberg | DE | 38 | missing | not_in_wire |
-| Hochwanner | AT,DE | 33 | missing | not_in_wire |
-| Schreckhorn | CH | 32 | missing | not_in_wire |
-| Tre Cime di Lavaredo | IT | 32 | missing | not_in_wire |
-| Santorini caldera | GR | 31 | missing | not_in_wire |
-| Solfatara | IT | 31 | missing | not_in_wire |
-| Rimpfischhorn | CH | 30 | missing | not_in_wire |
-| Dirfi | GR | 19 | missing | not_in_wire |
-| Parângu Mare | RO | 19 | missing | not_in_wire |
-| Patscherkofel | AT | 18 | missing | not_in_wire |
-| Velika Rudoka | MK,XK | 18 | missing | not_in_wire |
-| Càrn Eige | GB | 17 | missing | not_in_wire |
-| Grand Muveran | CH | 17 | missing | not_in_wire |
-| Piz Calderas | CH | 17 | missing | not_in_wire |
-| Grimming | AT | 15 | missing | not_in_wire |
-| Le Catogne | CH | 15 | missing | not_in_wire |
-| Monte Bondone | IT | 15 | missing | not_in_wire |
-| Mount Limbara | IT | 14 | missing | not_in_wire |
-| Pointe de Charbonnel | FR | 14 | missing | not_in_wire |
-| Stätzerhorn | CH | 14 | missing | not_in_wire |
-| Calanda | CH | 13 | missing | not_in_wire |
-| Dreischusterspitze | IT | 12 | missing | not_in_wire |
-| Hohe Gaisl | IT | 12 | missing | not_in_wire |
-| Pico da Vara | PT | 12 | missing | not_in_wire |
-| Berchtesgadener Hochthron | DE | 11 | missing | not_in_wire |
-| Großer Pyhrgas | AT | 11 | missing | not_in_wire |
-| Guffert | AT | 11 | missing | not_in_wire |
-| Pic de Rochebrune | FR | 11 | missing | not_in_wire |
-| Bennachie | GB | 10 | missing | not_in_wire |
-| Blyznytsya | UA | 10 | missing | not_in_wire |
-| Mont Colombier | FR | 10 | missing | not_in_wire |
-| Monte Cadria | IT | 10 | missing | not_in_wire |
-| Store Blåmann | NO | 10 | missing | not_in_wire |
-| Store Lenangstind | NO | 10 | missing | not_in_wire |
-| Zwiesel | DE | 10 | missing | not_in_wire |
-| Divis | GB | 9 | missing | not_in_wire |
-| Großer Traithen | DE | 9 | missing | not_in_wire |
-| Kellenspitze | AT | 9 | missing | not_in_wire |
-| Kreuzspitze | DE | 9 | missing | not_in_wire |
-| Kvitegga | NO | 9 | missing | not_in_wire |
-| Monte Caplone | IT | 9 | missing | not_in_wire |
-| Monte Sirente | IT | 9 | missing | not_in_wire |
-| Paganella | IT | 9 | missing | not_in_wire |
-| Skårasalen | NO | 9 | missing | not_in_wire |
-| Kolåstinden | NO | 8 | missing | not_in_wire |
-| Monte San Vicino | IT | 8 | missing | not_in_wire |
-| Njunis | NO | 8 | missing | not_in_wire |
-| Seilandstuva | NO | 8 | missing | not_in_wire |
-| Soltindan | NO | 8 | missing | not_in_wire |
-| Storsteinsfjellet | NO | 8 | missing | not_in_wire |
-| Trolla | NO | 8 | missing | not_in_wire |
+| Stromboli | IT | 85 | missing | not_in_catalogue |
+| Laki | IS | 52 | missing | dropped_at_export |
+| Katla | IS | 48 | missing | dropped_at_export |
+| Monte San Giorgio | CH | 47 | missing | not_in_catalogue |
+| Durmitor | ME | 45 | missing | not_in_catalogue |
+| Monte Cassino | IT | 43 | missing | not_in_catalogue |
+| Mount Pico | PT | 42 | missing | dropped_at_export |
+| Bárðarbunga | IS | 40 | missing | dropped_at_export |
+| Weisshorn | CH | 40 | missing | dropped_at_export |
+| Corno Grande | IT | 38 | missing | dropped_at_export |
+| Vogelsberg | DE | 38 | missing | not_in_catalogue |
+| Hochwanner | AT,DE | 33 | missing | not_in_catalogue |
+| Schreckhorn | CH | 32 | missing | dropped_at_export |
+| Tre Cime di Lavaredo | IT | 32 | missing | not_in_catalogue |
+| Santorini caldera | GR | 31 | missing | dropped_at_export |
+| Solfatara | IT | 31 | missing | dropped_at_export |
+| Rimpfischhorn | CH | 30 | missing | dropped_at_export |
+| Dirfi | GR | 19 | missing | dropped_at_export |
+| Parângu Mare | RO | 19 | missing | dropped_at_export |
+| Patscherkofel | AT | 18 | missing | not_in_catalogue |
+| Velika Rudoka | MK,XK | 18 | missing | dropped_at_export |
+| Càrn Eige | GB | 17 | missing | dropped_at_export |
+| Grand Muveran | CH | 17 | missing | not_in_catalogue |
+| Piz Calderas | CH | 17 | missing | dropped_at_export |
+| Grimming | AT | 15 | missing | not_in_catalogue |
+| Le Catogne | CH | 15 | missing | not_in_catalogue |
+| Monte Bondone | IT | 15 | missing | dropped_at_export |
+| Mount Limbara | IT | 14 | missing | dropped_at_export |
+| Pointe de Charbonnel | FR | 14 | missing | dropped_at_export |
+| Stätzerhorn | CH | 14 | missing | not_in_catalogue |
+| Calanda | CH | 13 | missing | not_in_catalogue |
+| Dreischusterspitze | IT | 12 | missing | dropped_at_export |
+| Hohe Gaisl | IT | 12 | missing | dropped_at_export |
+| Pico da Vara | PT | 12 | missing | dropped_at_export |
+| Berchtesgadener Hochthron | DE | 11 | missing | not_in_catalogue |
+| Großer Pyhrgas | AT | 11 | missing | dropped_at_export |
+| Guffert | AT | 11 | missing | not_in_catalogue |
+| Pic de Rochebrune | FR | 11 | missing | dropped_at_export |
+| Blyznytsya | UA | 10 | missing | dropped_at_export |
+| Mont Colombier | FR | 10 | missing | dropped_at_export |
+| Monte Cadria | IT | 10 | missing | dropped_at_export |
+| Store Blåmann | NO | 10 | missing | dropped_at_export |
+| Store Lenangstind | NO | 10 | missing | dropped_at_export |
+| Zwiesel | DE | 10 | missing | dropped_at_export |
+| Großer Traithen | DE | 9 | missing | not_in_catalogue |
+| Kellenspitze | AT | 9 | missing | dropped_at_export |
+| Kreuzspitze | DE | 9 | missing | not_in_catalogue |
+| Kvitegga | NO | 9 | missing | dropped_at_export |
+| Monte Caplone | IT | 9 | missing | not_enriched |
+| Monte Sirente | IT | 9 | missing | not_enriched |
+| Paganella | IT | 9 | missing | not_enriched |
+| Skårasalen | NO | 9 | missing | dropped_at_export |
+| Kolåstinden | NO | 8 | missing | dropped_at_export |
+| Monte San Vicino | IT | 8 | missing | not_enriched |
+| Njunis | NO | 8 | missing | dropped_at_export |
+| Seilandstuva | NO | 8 | missing | dropped_at_export |
+| Soltindan | NO | 8 | missing | dropped_at_export |
+| Storsteinsfjellet | NO | 8 | missing | not_in_catalogue |
+| Trolla | NO | 8 | missing | dropped_at_export |

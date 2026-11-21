@@ -180,3 +180,27 @@ def test_spanish_del_is_not_a_section():
 
 def test_no_mountain_below_the_sea():
     assert wd.tier_of("mountains", {"sitelinks": 32, "elev_m": -8}) is None
+
+
+def test_bracketed_end_points_are_a_section():
+    refs = [ref("Sydostleden", rid="s", lat=56.2, lon=15.0, cc=("SE",))]
+    rows = [row("Sydostleden (Fridafors, Karlshamn)", "f", cc="SE",
+                kind="cycling", bbox=[14.6, 56.1, 15.0, 56.5], km=60)]
+    assert m.match("cycling", refs, rows)["s"]["status"] == "in_as_piece"
+
+
+def test_quantities_are_read_normalised(monkeypatch):
+    # Divis (Belfast) is stored as 1,568 ft; the normalised value is metres.
+    seen = {}
+
+    def fake(query, verbose=False):
+        seen["q"] = query
+        return [{"item": {"value": "http://www.wikidata.org/entity/Q1"},
+                 "v": {"value": "477.9264"}}]
+    monkeypatch.setattr(wd, "sparql", fake)
+    assert wd.values_of(["Q1"], "P2044") == {"Q1": [477.926]}
+    assert "psn:P2044" in seen["q"]
+    monkeypatch.setattr(wd, "sparql", lambda q, verbose=False: [
+        {"item": {"value": "http://www.wikidata.org/entity/Q2"},
+         "v": {"value": "154000"}}])
+    assert wd.values_of(["Q2"], "P2043") == {"Q2": [154.0]}   # m -> km

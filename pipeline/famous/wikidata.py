@@ -27,6 +27,8 @@ HEADERS = {"User-Agent": "CartaTravelApp/1.0 (portfolio project)",
            "Accept": "application/sparql-results+json"}
 PREFIXES = ("PREFIX wd: <http://www.wikidata.org/entity/> "
             "PREFIX wdt: <http://www.wikidata.org/prop/direct/> "
+            "PREFIX p: <http://www.wikidata.org/prop/> "
+            "PREFIX psn: <http://www.wikidata.org/prop/statement/value-normalized/> "
             "PREFIX wikibase: <http://wikiba.se/ontology#> "
             "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> "
             "PREFIX skos: <http://www.w3.org/2004/02/skos/core#> ")
@@ -297,16 +299,33 @@ def labels(qids, verbose=False):
             for q, v in out.items()}
 
 
+# Quantities Wikidata stores in the editor's unit (Divis, Belfast: 1,568
+# "feet"; British trails in miles). Read through the normalised value, which
+# is in SI base units, and scaled here to the unit the key names.
+SI_SCALE = {"P2043": 1000.0,        # length, m -> km
+            "P2046": 1_000_000.0,   # area, m2 -> km2
+            "P2044": 1.0,           # elevation, m
+            "P2660": 1.0}           # prominence, m
+
+
 def values_of(qids, prop, verbose=False):
-    """{qid: [values]} for one direct property, in QID batches."""
+    """{qid: [values]} for one direct property, in QID batches. Quantities
+    in SI_SCALE come normalised and scaled, never in the stored unit."""
     out = {}
+    norm = prop in SI_SCALE
     for chunk in _batches(qids):
         values = " ".join("wd:" + q for q in chunk)
+        path = (f"p:{prop}/psn:{prop}/wikibase:quantityAmount" if norm
+                else f"wdt:{prop}")
         got = sparql(PREFIXES + f"SELECT ?item ?v WHERE {{ VALUES ?item "
-                     f"{{ {values} }} ?item wdt:{prop} ?v }}", verbose)
+                     f"{{ {values} }} ?item {path} ?v }}", verbose)
         for b in got or []:
-            out.setdefault(qid_of(b["item"]["value"]), []).append(
-                b["v"]["value"])
+            v = b["v"]["value"]
+            if norm:
+                n = number(v)
+                v = None if n is None else round(n / SI_SCALE[prop], 3)
+            if v is not None:
+                out.setdefault(qid_of(b["item"]["value"]), []).append(v)
     return out
 
 

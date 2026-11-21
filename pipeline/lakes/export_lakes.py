@@ -944,6 +944,15 @@ def wire_listed(lake):
     return row
 
 
+def keep_famous(rows, kept, famous_ids):
+    """The rows the quota and the country ceiling kept, plus every famous
+    row (D25) they cut: a famous item that passed every gate ships rated,
+    beyond the cap. Order: the kept rows first, then the famous extras."""
+    have = {r["id"] for r in kept}
+    return kept + [r for r in rows if r["id"] in famous_ids
+                   and r["id"] not in have]
+
+
 def region_floor_fill(rated, pool, qmod):
     """Step 4 of the gate, the REGION floors (the country floor below only
     ever adds scored rows and stays as it was).
@@ -1280,9 +1289,7 @@ def main():
         # quota or the country ceiling; it ships rated, beyond them.
         famous = {li.lake_id(lk) for lk, _c, _s in scored
                   if (lk.get("seed") or {}).get("why") == "famous"}
-        kept_ids = {r["id"] for r in kept}
-        rows = kept + [r for r in rows if r["id"] in famous
-                       and r["id"] not in kept_ids]
+        rows = keep_famous(rows, kept, famous)
         rows.sort(key=lambda r: -r["score"])
 
         # The per country floor. Only ever ADDS, never replaces, and only from

@@ -99,3 +99,28 @@ def test_stage_reason_from_stored_stages(tmp_path, monkeypatch):
     assert cov.stage_reason("lakes", ref("Q3", "c")) == "not_in_catalogue"
     assert cov.stage_reason("lakes", ref("Q4", "d", cc="AT")) is None
     cov._STAGES.clear()
+
+
+def test_country_cap_never_cuts_a_famous_row():
+    sys.path.insert(0, str(ROOT / "pipeline" / "mountains"))
+    sys.path.insert(0, str(ROOT / "pipeline" / "lakes"))
+    import export_lakes
+    import export_peaks
+    rows = [{"id": i, "score": s} for i, s in
+            (("a", 9.0), ("b", 8.0), ("famous", 5.6), ("c", 7.0))]
+    for mod in (export_peaks, export_lakes):
+        kept = rows[:1]                      # a cap of 1
+        out = mod.keep_famous(rows, kept, {"famous"})
+        assert [r["id"] for r in out] == ["a", "famous"]
+        # a famous row already kept is not added twice
+        assert [r["id"] for r in mod.keep_famous(rows, rows[2:3],
+                                                {"famous"})] == ["famous"]
+
+
+def test_famous_seed_is_not_an_editorial_pick():
+    sys.path.insert(0, str(ROOT / "pipeline" / "mountains"))
+    import export_peaks
+    assert export_peaks.vouched({"seed": {"why": "editorial"}})
+    assert export_peaks.vouched({"seed": {"why": "brief"}})
+    assert not export_peaks.vouched({"seed": {"why": "famous"}})
+    assert not export_peaks.vouched({})

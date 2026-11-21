@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "mountains",
- "generated_at": "2026-11-20T23:38:24Z",
+ "generated_at": "2026-11-21T00:46:09Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -78,8 +78,8 @@
  ],
  "fell_back": [],
  "counts": {
-  "A": 358,
-  "B": 887
+  "A": 357,
+  "B": 885
  },
  "rows": [
   {
@@ -125,7 +125,7 @@
     "Везувий",
     "Везувій"
    ],
-   "elev_m": 1281.0,
+   "elev_m": 1297.0,
    "prom_m": 1232.0,
    "beach_word": false,
    "sources": [
@@ -170,7 +170,7 @@
     "Мон Блан",
     "Монблан"
    ],
-   "elev_m": 4805.59,
+   "elev_m": 4807.81,
    "prom_m": 4692.0,
    "beach_word": false,
    "sources": [
@@ -210,7 +210,7 @@
     "Αίτνα",
     "Етна"
    ],
-   "elev_m": 3357.0,
+   "elev_m": 3345.0,
    "beach_word": false,
    "sources": [
     "carta_canary",
@@ -938,7 +938,7 @@
     "Герлаховски щит",
     "Герлаховський пік"
    ],
-   "elev_m": 2654.4,
+   "elev_m": 2655.0,
    "prom_m": 2349.0,
    "beach_word": false,
    "sources": [
@@ -969,7 +969,7 @@
     "Γιουνγκφράου",
     "Юнгфрау"
    ],
-   "elev_m": 4158.0,
+   "elev_m": 4167.0,
    "prom_m": 694.0,
    "beach_word": false,
    "sources": [
@@ -1114,7 +1114,7 @@
     "Ането"
    ],
    "elev_m": 3404.0,
-   "prom_m": 2811.0,
+   "prom_m": 2812.0,
    "beach_word": false,
    "sources": [
     "carta_canary",
@@ -1555,7 +1555,7 @@
     "Лорелеи (карпа)",
     "Лорелей"
    ],
-   "elev_m": 193.0,
+   "elev_m": 109.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -2658,7 +2658,7 @@
     "Вайсгорн",
     "Вайсхорн"
    ],
-   "elev_m": 4505.0,
+   "elev_m": 4512.0,
    "prom_m": 1234.0,
    "beach_word": false,
    "sources": [
@@ -2858,7 +2858,7 @@
     "carta_canary"
    ],
    "elev_m": 2713.0,
-   "prom_m": 939.0,
+   "prom_m": 953.0,
    "osm_rel": 2110290,
    "tier": "A",
    "id": "wd:Q163919"
@@ -2996,7 +2996,7 @@
     "Лйкабетус",
     "Лікавіт"
    ],
-   "elev_m": 263.0,
+   "elev_m": 277.0,
    "prom_m": 103.0,
    "beach_word": false,
    "sources": [
@@ -5677,7 +5677,7 @@
     "Posets"
    ],
    "elev_m": 3369.0,
-   "prom_m": 1130.1,
+   "prom_m": 1131.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -6848,7 +6848,7 @@
     "Càrn Èite"
    ],
    "elev_m": 1182.8,
-   "prom_m": 1147.0,
+   "prom_m": 1148.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -7567,7 +7567,7 @@
     "Catogne",
     "Le Catogne"
    ],
-   "elev_m": 2498.0,
+   "elev_m": 2598.0,
    "prom_m": 1108.0,
    "beach_word": false,
    "sources": [
@@ -8096,8 +8096,8 @@
    "names": [
     "Møysalen"
    ],
-   "elev_m": 1263.7,
-   "prom_m": 1263.7,
+   "elev_m": 1263.2,
+   "prom_m": 1263.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -9038,7 +9038,7 @@
     "Stadelhorn"
    ],
    "elev_m": 2286.0,
-   "prom_m": 1121.0,
+   "prom_m": 1133.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -9066,7 +9066,7 @@
     "monte Drago",
     "Вагански врх"
    ],
-   "elev_m": 1758.0,
+   "elev_m": 1757.5,
    "prom_m": 1058.0,
    "beach_word": false,
    "sources": [
@@ -9464,33 +9464,6 @@
    "id": "wd:Q2275702"
   },
   {
-   "qid": "Q817811",
-   "sitelinks": 10,
-   "lat": 57.29275,
-   "lon": -2.56244,
-   "countries": [
-    "GB"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q8502"
-   ],
-   "name": "Bennachie",
-   "names": [
-    "Beinn na Cíche",
-    "Bennachie",
-    "Беначие"
-   ],
-   "elev_m": 528.0,
-   "prom_m": 1037.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q817811"
-  },
-  {
    "qid": "Q4088161",
    "sitelinks": 10,
    "lat": 48.2225,
@@ -9778,8 +9751,8 @@
     "Breitinden",
     "Reaiddaidčohkka"
    ],
-   "elev_m": 1007.6,
-   "prom_m": 1007.6,
+   "elev_m": 1007.9,
+   "prom_m": 1001.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -9814,33 +9787,6 @@
    "id": "wd:Q11690640"
   },
   {
-   "qid": "Q3777361",
-   "sitelinks": 9,
-   "lat": 54.6075,
-   "lon": -6.009445,
-   "countries": [
-    "GB"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q8502"
-   ],
-   "name": "Divis",
-   "names": [
-    "Divis",
-    "Duibhis",
-    "Дивис"
-   ],
-   "elev_m": 1568.0,
-   "prom_m": 1250.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q3777361"
-  },
-  {
    "qid": "Q315546",
    "sitelinks": 9,
    "lat": 47.707853,
@@ -9864,6 +9810,32 @@
    ],
    "tier": "A",
    "id": "wd:Q315546"
+  },
+  {
+   "qid": "Q1548141",
+   "sitelinks": 9,
+   "lat": 47.3971,
+   "lon": 11.2225,
+   "countries": [
+    "AT",
+    "DE"
+   ],
+   "class_kind": "core",
+   "classes": [
+    "Q8502"
+   ],
+   "name": "Große Arnspitze",
+   "names": [
+    "Große Arnspitze"
+   ],
+   "elev_m": 2196.0,
+   "prom_m": 1003.0,
+   "beach_word": false,
+   "sources": [
+    "wikidata"
+   ],
+   "tier": "A",
+   "id": "wd:Q1548141"
   },
   {
    "qid": "Q320745",
@@ -10810,8 +10782,8 @@
     "Soltindan",
     "Солтиндан"
    ],
-   "elev_m": 1048.9,
-   "prom_m": 1048.9,
+   "elev_m": 1048.96,
+   "prom_m": 1049.29,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -15031,7 +15003,7 @@
     "Тара",
     "Тара (планина)"
    ],
-   "elev_m": 1008.0,
+   "elev_m": 1544.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -16136,7 +16108,7 @@
     "Зімілаун",
     "Симилаун"
    ],
-   "elev_m": 3597.0,
+   "elev_m": 3606.0,
    "prom_m": 250.0,
    "beach_word": false,
    "sources": [
@@ -16967,7 +16939,7 @@
     "Mussa Dagh",
     "Μούσα Νταγκ"
    ],
-   "elev_m": 997.0,
+   "elev_m": 1355.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -17635,6 +17607,7 @@
     "Фалькніс"
    ],
    "elev_m": 2562.0,
+   "prom_m": 40.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -18504,8 +18477,8 @@
     "Sgurr Alasdair",
     "Sgùrr Alasdair"
    ],
-   "elev_m": 992.0,
-   "prom_m": 992.0,
+   "elev_m": 993.0,
+   "prom_m": 993.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -20841,7 +20814,7 @@
     "Ben More ved Crianlarich"
    ],
    "elev_m": 1174.0,
-   "prom_m": 986.0,
+   "prom_m": 989.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -21083,8 +21056,8 @@
     "Cairn Gorm",
     "Cairngorm"
    ],
-   "elev_m": 1244.8,
-   "prom_m": 145.0,
+   "elev_m": 1245.0,
+   "prom_m": 145.8,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -21110,7 +21083,7 @@
     "Camoghè",
     "Monte Camoghè"
    ],
-   "elev_m": 2226.0,
+   "elev_m": 2227.9,
    "prom_m": 258.0,
    "beach_word": false,
    "sources": [
@@ -21621,7 +21594,7 @@
     "Високий Гелль"
    ],
    "elev_m": 2522.0,
-   "prom_m": 789.0,
+   "prom_m": 794.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -22009,7 +21982,7 @@
     "Mont Brûlé",
     "Monte Brulé"
    ],
-   "elev_m": 3571.0,
+   "elev_m": 3585.0,
    "prom_m": 372.0,
    "beach_word": false,
    "sources": [
@@ -24671,7 +24644,7 @@
     "Лудалскопа"
    ],
    "elev_m": 2082.5,
-   "prom_m": 794.9,
+   "prom_m": 799.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -25639,7 +25612,7 @@
     "Skardstinden",
     "Skarstind"
    ],
-   "elev_m": 2373.2,
+   "elev_m": 2373.3,
    "prom_m": 287.0,
    "beach_word": false,
    "sources": [
@@ -26210,7 +26183,7 @@
     "Augustenspitze",
     "Piz Blaisch Lunga"
    ],
-   "elev_m": 3228.0,
+   "elev_m": 3230.0,
    "prom_m": 432.0,
    "beach_word": false,
    "sources": [
@@ -26419,7 +26392,7 @@
     "Burkelkopf",
     "Bürkelkopf"
    ],
-   "elev_m": 3030.0,
+   "elev_m": 3033.0,
    "prom_m": 229.0,
    "beach_word": false,
    "sources": [
@@ -26890,7 +26863,7 @@
     "First",
     "First i Grindelwald"
    ],
-   "elev_m": 2184.0,
+   "elev_m": 2167.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -26967,7 +26940,7 @@
    "names": [
     "Glatthorn"
    ],
-   "elev_m": 2133.0,
+   "elev_m": 2134.0,
    "prom_m": 647.0,
    "beach_word": false,
    "sources": [
@@ -27154,7 +27127,7 @@
     "Gwachtenhorn",
     "Gwächtenhorn"
    ],
-   "elev_m": 3404.0,
+   "elev_m": 3420.0,
    "prom_m": 218.0,
    "beach_word": false,
    "sources": [
@@ -28234,7 +28207,7 @@
    "names": [
     "Parpaner Rothorn"
    ],
-   "elev_m": 2861.0,
+   "elev_m": 2899.0,
    "prom_m": 70.0,
    "beach_word": false,
    "sources": [
@@ -29320,7 +29293,7 @@
    "names": [
     "Tournelon Blanc"
    ],
-   "elev_m": 3700.0,
+   "elev_m": 3707.0,
    "prom_m": 159.0,
    "beach_word": false,
    "sources": [
@@ -30743,7 +30716,7 @@
     "Ben Vorlich ved Loch Earn"
    ],
    "elev_m": 985.0,
-   "prom_m": 830.0,
+   "prom_m": 834.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -31763,7 +31736,7 @@
     "Beinn Ìme"
    ],
    "elev_m": 1011.0,
-   "prom_m": 696.0,
+   "prom_m": 712.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -31926,7 +31899,7 @@
     "Creag Meagaidh",
     "Creag Mèagaidh"
    ],
-   "elev_m": 1128.0,
+   "elev_m": 1130.0,
    "prom_m": 867.0,
    "beach_word": false,
    "sources": [
@@ -32277,7 +32250,7 @@
     "Catinaccio d'Antermoia",
     "Kesselkogel"
    ],
-   "elev_m": 3002.0,
+   "elev_m": 3004.0,
    "prom_m": 814.0,
    "beach_word": false,
    "sources": [
@@ -32385,7 +32358,7 @@
     "Meall a' Bhùiridh",
     "Meall a’ Bhùiridh"
    ],
-   "elev_m": 1107.9,
+   "elev_m": 1108.0,
    "prom_m": 795.0,
    "beach_word": false,
    "sources": [
@@ -32517,7 +32490,7 @@
     "Puigpedros",
     "Puigpedrós"
    ],
-   "elev_m": 2915.0,
+   "elev_m": 2914.0,
    "prom_m": 644.0,
    "beach_word": false,
    "sources": [
@@ -32627,7 +32600,7 @@
     "Sgurr Fhuaran",
     "Sgùrr Fhuaran"
    ],
-   "elev_m": 1067.0,
+   "elev_m": 1068.7,
    "prom_m": 663.0,
    "beach_word": false,
    "sources": [
@@ -33198,31 +33171,6 @@
    ],
    "tier": "B",
    "id": "wd:Q5120057"
-  },
-  {
-   "qid": "Q4117384",
-   "sitelinks": 11,
-   "lat": 51.92,
-   "lon": -2.007,
-   "countries": [
-    "GB"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q8502"
-   ],
-   "name": "Cleeve Hill",
-   "names": [
-    "Cleeve Hill"
-   ],
-   "elev_m": 1083.0,
-   "prom_m": 794.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q4117384"
   },
   {
    "qid": "Q2984642",
@@ -34080,7 +34028,7 @@
     "Sgùrr a’ Mhaoraich"
    ],
    "elev_m": 1027.0,
-   "prom_m": 706.0,
+   "prom_m": 708.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -34186,8 +34134,8 @@
    "names": [
     "Spitzstein"
    ],
-   "elev_m": 1596.2,
-   "prom_m": 851.0,
+   "elev_m": 1598.0,
+   "prom_m": 853.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -34247,35 +34195,6 @@
    ],
    "tier": "B",
    "id": "wd:Q871673"
-  },
-  {
-   "qid": "Q2914585",
-   "sitelinks": 11,
-   "lat": 52.669167,
-   "lon": -2.551389,
-   "countries": [
-    "GB"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q8502"
-   ],
-   "name": "The Wrekin",
-   "names": [
-    "Din Gwrygon",
-    "Rekinas",
-    "The Wrekin",
-    "The Wrekin (kulle i Storbritannien, lat 52,67, long -2,55)",
-    "Wrekin"
-   ],
-   "elev_m": 1335.0,
-   "prom_m": 978.0,
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "B",
-   "id": "wd:Q2914585"
   },
   {
    "qid": "Q1770130",
@@ -34693,7 +34612,7 @@
    "names": [
     "Hochgrat"
    ],
-   "elev_m": 1834.0,
+   "elev_m": 1833.6,
    "prom_m": 714.0,
    "beach_word": false,
    "sources": [
@@ -34720,7 +34639,7 @@
     "Jálama",
     "Jálama/Xálima"
    ],
-   "elev_m": 1487.0,
+   "elev_m": 1492.0,
    "prom_m": 605.0,
    "beach_word": false,
    "sources": [
@@ -34773,7 +34692,7 @@
     "Kramerspitze"
    ],
    "elev_m": 1985.0,
-   "prom_m": 776.0,
+   "prom_m": 780.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -35150,8 +35069,8 @@
     "Storskrymten",
     "Сторскрймтен"
    ],
-   "elev_m": 1984.8,
-   "prom_m": 606.3,
+   "elev_m": 1984.9,
+   "prom_m": 608.5,
    "beach_word": false,
    "sources": [
     "wikidata"

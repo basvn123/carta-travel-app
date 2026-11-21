@@ -166,7 +166,7 @@ def fetch_wikidata(kind, countries, previous, verbose=False):
             elif key == "osm_rel":
                 r[key] = int(v[0]) if v[0].isdigit() else None
             else:
-                r[key] = wd.number(v[0])
+                r[key] = wd.number(v[0])   # already in the key's unit
         low = " ".join(r["names"]).lower()
         r["beach_word"] = any(w in low for w in wd.BEACH_WORDS)
         if kind == "trails":
