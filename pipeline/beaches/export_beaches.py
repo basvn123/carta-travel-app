@@ -27,7 +27,10 @@ A beach is published when all of these hold:
                             ground survey is a name on a photograph.
   it is not a duplicate     of a better scoring beach 150 m up the same bay.
 
-Then each country keeps its best PUBLISH_MAX. Countries whose whole list fails
+Then each country keeps its best PUBLISH_MAX. A famous seed (seed_beaches.py,
+D25 c) is the exception: past the gates it ships beyond the quota and the cap,
+and one that misses the score, photo or reasons gate ships as a listed row.
+Countries whose whole list fails
 the gate simply do not appear, which is exactly the behaviour the tab needs:
 Andorra has no beaches and should not be offered as though it had ten.
 
@@ -840,6 +843,57 @@ def floor_fill(rated, spare, qmod):
     return listed
 
 
+def famous_ids(beaches):
+    """The wire ids of the famous seeds (D25 c) among these cache rows."""
+    return {bi.unique_beach_id(b) for b in beaches
+            if (b.get("seed") or {}).get("why") == "famous"}
+
+
+def famous_first(rows, famous):
+    """The rows with the famous ones moved to the front, each group keeping
+    its order. dedupe() keeps the first of two rows on the same sand, so this
+    is what lets a famous beach win over a better scoring neighbour."""
+    return ([r for r in rows if r["id"] in famous]
+            + [r for r in rows if r["id"] not in famous])
+
+
+def keep_famous(rows, kept, famous):
+    """The rows the quota and the country cap kept, plus every famous row
+    (D25) they cut: a famous beach that passed every gate ships rated, beyond
+    the cap. Order: the kept rows first, then the famous extras."""
+    have = {r["id"] for r in kept}
+    return kept + [r for r in rows if r["id"] in famous
+                   and r["id"] not in have]
+
+
+def famous_listed(rated, spare, famous):
+    """A listed row for every famous seed that missed the score, the photo or
+    the reasons gate, so it is never left out. Listed means unrated coverage,
+    never an editorial pick: nobody vouched for it, a reference list did.
+    The name and the Europe window were applied before `spare` was built, so
+    those still hold."""
+    have = {r["id"] for r in rated}
+    out = []
+    for beach, _comps, _score in spare:
+        bid = bi.unique_beach_id(beach)
+        if bid in famous and bid not in have:
+            have.add(bid)
+            out.append(wire_listed(beach))
+    return out
+
+
+def clear_for_famous(rated, famous_rows, famous):
+    """The rated rows minus any non-famous one within DUPLICATE_KM of a
+    famous listed row. dedupe_across() lets a rated row shadow a listed one
+    on the same sand; for a famous beach the dedupe keeps the famous row
+    instead, so the place ships once, under the name people know."""
+    if not famous_rows:
+        return rated
+    return [r for r in rated if r["id"] in famous or not any(
+        haversine_km(r["lat"], r["lon"], f["lat"], f["lon"]) <= DUPLICATE_KM
+        for f in famous_rows)]
+
+
 def _best_evidence(beach):
     """1 when this beach has a strongly evidenced photograph, else 0."""
     images = usable_images(beach)
@@ -1189,10 +1243,17 @@ def main():
                 continue
             rows.append(wire_beach(beach, comps, score10,
                                    bi.tier_for(score10), reasons))
-        rows = dedupe(rows)
-        rows = quota_ordered(rows, qmod)[:args.max_per_country]
+        # D25 c: a famous seed (pipeline/famous/coverage.py --handoff) goes
+        # first into the dedupe, so it keeps its place over a neighbour, and
+        # is never cut by the region quota, the country cap or PUBLISH_MAX.
+        famous = famous_ids(b for b, _c, _s in scored)
+        rows = dedupe(famous_first(rows, famous))
+        kept = quota_ordered(rows, qmod)[:args.max_per_country]
+        rows = keep_famous(rows, kept, famous)
         rows.sort(key=lambda r: -r["score"])
-        listed = dedupe_across(rows, floor_fill(rows, spare, qmod))
+        extra = famous_listed(rows, spare, famous)
+        rows = clear_for_famous(rows, extra, famous)
+        listed = dedupe_across(rows, extra + floor_fill(rows, spare, qmod))
         if not rows and not listed:
             if args.verbose:
                 print(f"  {cc}: nothing clears the gate")
