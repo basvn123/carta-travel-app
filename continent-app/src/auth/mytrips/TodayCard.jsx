@@ -14,6 +14,9 @@ import { ideasOnDay } from '../../planner/trip/ownIdeas.js';
 import { useTripDayStore } from '../../planner/trip/useTripDayStore.js';
 import { loadMemory, saveMemory, emptyMemory, MAX_PHOTOS } from '../pastTripMemory.js';
 import { readPhoto } from '../PastTripForm.jsx';
+import { Pressable } from '../../components/ui/Pressable.jsx';
+import { CountryFlag } from '../../components/CountryFlag.jsx';
+import { ChevronRightIcon } from '../../components/Icons.jsx';
 
 const SKY = {
   sun: SunIcon, partsun: PartSunIcon, cloud: CloudIcon, fog: FogIcon,
@@ -131,6 +134,10 @@ export function TodayCard({
     if (fileRef.current) fileRef.current.value = '';
   };
 
+  // The memory row's counts: photos in the trip's memory, notes kept per day.
+  const memPhotos = (loadMemory(plan.id)?.photos || []).length;
+  const memNotes = Object.values(extras.dayNotes || {}).filter((x) => String(x || '').trim()).length;
+
   // The quick tiles hold only what the trip holds.
   const bookedCount = Object.values(extras.bookings || {}).filter((b) => b && (b.ref || (b.price != null && b.price !== '') || b.url)).length;
   const tmr = today.tomorrow;
@@ -148,7 +155,11 @@ export function TodayCard({
       <div className="mt-today-main">
         {/* House style: no eyebrow above the heading; the day count follows
             the title as its first fact. */}
-        <h3 className="mt-today-title" id="mt-today-h">{dayWords ? t('mt.todayPlaceWords', { place: city, words: dayWords }) : city}</h3>
+        {/* G12 Phase C: the title with the country's flag, the day count under it. */}
+        <div className="mt-today-h">
+          <h3 className="mt-today-title" id="mt-today-h">{dayWords ? t('mt.todayPlaceWords', { place: city, words: dayWords }) : city}</h3>
+          {dest?.country && <CountryFlag country={dest.country} size={18} />}
+        </div>
         <p className="mt-today-kicker">{t('mt.todayDay', { n: today.dayNum, of: today.of })}</p>
         <p className="mt-today-facts">
           {sky && Number.isFinite(sky.hi) && (
@@ -269,6 +280,15 @@ export function TodayCard({
           )}
         </div>
         <p className="mt-today-note" role="status">{photoNote}</p>
+        {/* The memory page so far: the photos and notes the trip holds. */}
+        <Pressable className="mt-disc-row" onClick={onOpenTrip}>
+          <span className="mt-disc-row-t">{t('mt.memPage')}</span>
+          <span className="mt-disc-row-s">{[
+            t(memPhotos === 1 ? 'mt.memPhotos1' : 'mt.memPhotosN', { n: memPhotos }),
+            t(memNotes === 1 ? 'mt.memNotes1' : 'mt.memNotesN', { n: memNotes }),
+          ].join(', ')}</span>
+          <ChevronRightIcon size={18} />
+        </Pressable>
       </div>
     </section>
   );

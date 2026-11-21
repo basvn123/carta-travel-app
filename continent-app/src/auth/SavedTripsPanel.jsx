@@ -72,6 +72,9 @@ import { sharedKeys } from '../lib/sharedListModel.js';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
+import { UnitSheet, UnitButton, RateTrip, tripInUnit, unitWords } from './mytrips/TripParts.jsx';
+import { shareRouteImage } from './mytrips/atlas/routeImage.js';
+import { project } from './mytrips/atlas/project.js';
 
 /**
  * My trips (T434, rebuilt as Concept A by T923 to T927). One header with
@@ -263,6 +266,9 @@ export function SavedTripsPanel({
   onOpenFriends = null, onOpenDeviceTrip = null, onPlanStops = null,
   // T659: Plan's "Add a past trip" opens My trips on the past-trip form.
   startWithPast = false, onPastStarted = null,
+  // G12 Phase C: the "Prijzen tonen" setting the trip plate and the rows
+  // follow, and its writer (App's setChoices, through lib/price/priceView).
+  choices = null, setChoices = null,
 }) {
   const { user, configured } = useAuth();
   const { t, lang } = useI18n();
@@ -344,6 +350,11 @@ export function SavedTripsPanel({
   const [memTick, setMemTick] = useState(0);
   const [openMemory, setOpenMemory] = useState('');
   const [openShare, setOpenShare] = useState('');
+  // G12 Phase C: the unit sheet, example mode (never saved, never counted)
+  // and the route a hovered or focused row lifts on the map.
+  const [unitOpen, setUnitOpen] = useState(false);
+  const [example, setExample] = useState(false);
+  const [lift, setLift] = useState('');
   const [friends, setFriends] = useState([]);
   const [friendTrips, setFriendTrips] = useState(SAVED_MOCK && !MOCK_BARE ? MOCK_FRIEND_TRIPS : []);
   const [visById, setVisById] = useState({});
@@ -754,14 +765,37 @@ export function SavedTripsPanel({
         // device trip opens in Plan, where its days begin.
         onPlanDays: device ? null : () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }),
         menuActions: planMenu(p, parts, device),
+        plateValue: tripInUnit(figure, choices),
+        plateLabel: figure ? t('mt.unitPlateAria', { unit: unitWords(t, choices, figure.party), price: formatMoney(tripInUnit(figure, choices) || 0) }) : '',
+        onUnit: () => setUnitOpen(true),
+        onStep: (key) => stepDoor(p, key, device),
+        onImage: () => shareRoute(p, figure),
+        onShare: device || p.coplan ? null : () => toggleShare(p.id),
+        onEurope: () => pickTab('europe'),
+        countryLabel: parts.countries.length === 1 ? countryName(isoFor(parts.countries), parts.countries[0]) : '',
       };
     }
     return {
       ...common,
       meta: [whenText(t, when), fmtRange(p.start_date, p.end_date)].filter(Boolean).join(', '),
-      figure: figure ? <TripPrice figure={figure} /> : <span className="mt-muted">{t('saved.factNoPrice')}</span>,
+      figure: figure ? <TripPrice figure={figure} unitValue={tripInUnit(figure, choices)} /> : <span className="mt-muted">{t('saved.factNoPrice')}</span>,
       menuActions: planMenu(p, parts, device),
     };
+  };
+
+  // A readiness tile opens its own step: dates edit the trip, the way there
+  // and the beds open the trip page (Ready to book), the days open Plan the days.
+  const stepDoor = (p, key, device) => {
+    if (device) { onOpenDeviceTrip?.(); return; }
+    if (key === 'dates') onLoadTripPlan?.({ id: p.id, edit: true });
+    else if (key === 'days') onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 });
+    else onLoadTripPlan?.(p.id);
+  };
+  // "Deel deze route": the route on the plate, its name and figure, no dates.
+  const shareRoute = (p, figure) => {
+    const pts = atlasTrip(p).stops.map((x) => project(x.lat, x.lon)).filter(Boolean);
+    const value = tripInUnit(figure, choices);
+    shareRouteImage(atlasGeo, { pts, name: journeyParts(p).title, figure: value != null ? formatMoney(value) : '' });
   };
 
   // A draft: no dates yet. It lives in Plan; My trips lists it and opens it there.
@@ -1080,12 +1114,71 @@ export function SavedTripsPanel({
       : atlasStopsOf(p.destination_ids || [], () => '');
     return { id: p.id, title: journeyParts(p).title, start: p.start_date, countries: planCountries(p).map(isoOf).filter(Boolean), stops };
   };
-  const tripsMap = tripsLayer({
+  // G12 Phase C, example mode: the Ready-made trip si-road-trip-julian-alps-passes
+  // (lib/journeys.js; its stops Bled, Kranjska Gora and the Soca valley from
+  // the catalogue, Bled's photo) as the next trip, and one real trip under
+  // Coming up. Built here, priced by the engine, never saved or counted.
+  const examplePlans = useMemo(() => [
+    {
+      id: 'example-julian-alps', label: t('mt.exTitle'), cities: [], countries: ['Slovenia'],
+      start_date: addDaysIso(64), end_date: addDaysIso(71), destination_ids: ['gem:bled', 'gem:kranjska-gora', 'gem:soca-valley'],
+      stops: mockStops([['gem:bled', 64, 66], ['gem:kranjska-gora', 66, 68], ['gem:soca-valley', 68, 71]]), choices: { groupSize: 2 },
+    },
+    {
+      id: 'example-lisbon-porto', label: null, cities: ['Lisbon', 'Porto'], countries: ['Portugal'],
+      start_date: addDaysIso(112), end_date: addDaysIso(120), destination_ids: ['LIS', 'OPO'],
+      stops: mockStops([['LIS', 112, 116], ['OPO', 116, 120]]), choices: { groupSize: 2 },
+    },
+  ], [lang]); // eslint-disable-line react-hooks/exhaustive-deps -- t follows lang
+  const exampleModel = (p, focal) => {
+    const fig = priceFor(p);
+    const parts = journeyParts(p);
+    const val = tripInUnit(fig, choices);
+    const toPlan = () => onGoToTab?.('planstart');
+    const base = {
+      id: p.id, title: parts.title, iso2: isoFor(parts.countries), onOpen: toPlan,
+      img: resolveImage({ ids: p.destination_ids, cities: planCities(p), countries: parts.countries }),
+    };
+    if (!focal) {
+      return {
+        ...base,
+        meta: [fmtRange(p.start_date, p.end_date), t('saved.nightsN', { n: nightsBetween(p.start_date, p.end_date) })].join(', '),
+        figure: fig ? <TripPrice figure={fig} unitValue={val} /> : null,
+      };
+    }
+    return {
+      ...base, example: true, countries: parts.countries,
+      countdown: { n: daysUntil(p.start_date, todayIso), place: firstTown(p) },
+      dates: fmtRange(p.start_date, p.end_date), nights: nightsBetween(p.start_date, p.end_date),
+      figure: fig, party: fig?.party || 2, readiness: readinessSteps(p, { assignments: {}, extras: {} }),
+      plateValue: val,
+      plateLabel: fig ? t('mt.unitPlateAria', { unit: unitWords(t, choices, fig.party), price: formatMoney(val || 0) }) : '',
+      onUnit: () => setUnitOpen(true), onStep: toPlan, onPlanDays: toPlan,
+      onEurope: () => pickTab('europe'), countryLabel: countryName('SI', 'Slovenia'),
+    };
+  };
+  // Example mode only stands in for an empty tab; real trips end it.
+  const showExample = example && !happening && !ahead.length;
+  const tripsMap = tripsLayer(showExample ? { ahead: [atlasTrip(examplePlans[0])] } : {
     today: happening && todayAt ? atlasTrip(happening) : null,
     todayAt,
     ahead: ahead.filter((p) => p.start_date).map(atlasTrip),
   });
-  tripsMap.nextIso = new Set(happening ? [] : nextIsoAll);
+  tripsMap.nextIso = new Set(showExample ? ['SI'] : happening ? [] : nextIsoAll);
+  tripsMap.lift = lift;
+
+  // "Hoe was {trip}?" (decision 8): the latest ended trip without a grade,
+  // until it is graded; the grade is memory.rating, Je cijfer.
+  const toRate = pastTrips.find((x) => x.kind === 'plan' && (x.mem?.rating ?? null) == null) || null;
+  const rateNode = toRate && !showExample ? (
+    <RateTrip
+      title={toRate.title}
+      onRate={(n) => {
+        saveMemory(toRate.id, { ...(loadMemory(toRate.id) || emptyMemory()), rating: n }, spendLabels);
+        setMemTick((k) => k + 1);
+      }}
+    />
+  ) : null;
   const europeMap = useMemo(() => {
     const trips = pastTrips.map((r) => {
       const mine = (r.mem?.places || []).filter((x) => Number.isFinite(x.lat) && Number.isFinite(x.lon));
@@ -1268,11 +1361,17 @@ export function SavedTripsPanel({
               loading={tripPlansLoading}
               error={tripPlansError}
               onRetry={loadTripPlans}
-              today={todayNode}
-              next={nextModel}
-              coming={comingModels}
-              planning={planningModels}
-              dayPlans={dayModels}
+              today={showExample ? null : todayNode}
+              next={showExample ? exampleModel(examplePlans[0], true) : nextModel}
+              coming={showExample ? [exampleModel(examplePlans[1], false)] : comingModels}
+              planning={showExample ? [] : planningModels}
+              dayPlans={showExample ? [] : dayModels}
+              example={showExample}
+              onExample={() => setExample(true)}
+              onExampleClose={() => setExample(false)}
+              rate={rateNode}
+              unit={<UnitButton choices={choices} onOpen={() => setUnitOpen(true)} />}
+              onLift={setLift}
               friendsShared={friendTrips.length}
               friendFaces={ownersOf(friendTrips)}
               onOpenFriends={onOpenFriends}
@@ -1282,6 +1381,7 @@ export function SavedTripsPanel({
               signInLine={!devicePlan}
             />
           )}
+          {unitOpen && <UnitSheet choices={choices} setChoices={setChoices} onClose={() => setUnitOpen(false)} />}
           {tab === 'saved' && (
             <SavedTab
               rows={shortRows}

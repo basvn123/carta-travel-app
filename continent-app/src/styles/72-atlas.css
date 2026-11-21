@@ -622,3 +622,523 @@
   .atlas-route,
   .atlas-stop { transition: none; }
 }
+
+/* ---- G12 Phase C: Reizen (the approved reference's Trips states) ----
+   Content sits on the stone ground (Revision 1): the trip, the ledgers and
+   Today carry no paper card; paper is only for what floats (the share
+   menu, sheets). */
+.mt-panel.is-trips .mt-next-card.mt-trip,
+.mt-panel.is-trips .mt-today {
+  display: grid;
+  gap: var(--space-4);
+  overflow: visible;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.mt-panel.is-trips .mt-next-card.mt-trip {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mt-trip .mt-next-media {
+  width: 100%;
+  min-width: 0;
+  max-height: none;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-card);
+}
+
+.mt-thead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.mt-thead-t {
+  flex: 1;
+  min-width: 0;
+}
+
+.mt-trip .mt-next-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  font-size: var(--text-headline);
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+.mt-trip .mt-next-dates {
+  margin: var(--space-1) 0 0;
+  color: var(--text-2);
+}
+
+/* The countdown beside the plate: one figure each, side by side. */
+.mt-duo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--space-3);
+}
+
+.mt-cd {
+  display: grid;
+  align-content: center;
+  margin: 0;
+  padding: 0 var(--space-4) 0 2px;
+  border-right: 1px solid var(--border);
+}
+
+.mt-cd b {
+  font-size: var(--text-display);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--umber-800);
+  font-variant-numeric: tabular-nums;
+}
+
+.mt-cd span {
+  max-width: 12ch;
+  margin-top: var(--space-1);
+  font-size: var(--text-label);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text-2);
+}
+
+.mt-cd.is-when span {
+  margin: 0;
+  font-size: var(--text-body);
+}
+
+/* The umber mark plate (Revision 2): "you chose this", the figure only. */
+.mt-mark-plate {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 72px;
+  padding: var(--space-2) 38px var(--space-2) var(--space-4);
+  border: 0;
+  background: none;
+  color: var(--action-text);
+  font-family: var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mt-mark-plate::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--radius-sm);
+  background: var(--umber-600);
+  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 50%, calc(100% - 24px) 100%, 0 100%);
+  transition: background-color var(--dur-2) var(--ease-out);
+}
+
+.mt-mark-plate:hover::before {
+  background: var(--umber-700);
+}
+
+.mt-mark-plate:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+
+.mt-mark-fig {
+  font-size: var(--text-headline);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.mt-mark-plate svg {
+  color: var(--umber-100);
+}
+
+/* Ready for the trip as four tiles: band tint, done is an umber 100 wash. */
+.mt-ready4 {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0;
+  border-top: 0;
+  background: none;
+  border: 0;
+}
+
+.mt-tiles4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.mt-tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-panel);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: 700 var(--text-body) / var(--leading-tight) var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mt-tile i {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--surface-page);
+  color: var(--text-2);
+}
+
+.mt-tile small {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.mt-tile.is-done {
+  background: var(--umber-100);
+  color: var(--umber-800);
+}
+
+.mt-tile.is-done i {
+  background: var(--umber-600);
+  color: var(--action-text);
+}
+
+.mt-tile:focus-visible,
+.mt-disc button:focus-visible,
+.mt-disc-row:focus-visible,
+.mt-rate button:focus-visible,
+.mt-unit-btn:focus-visible,
+.mt-share-pop button:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+
+.mt-add-booking {
+  justify-self: start;
+}
+
+.mt-trip .mt-next-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.mt-acts-two {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mt-trip .mt-next-actions .btn {
+  min-height: 50px;
+}
+
+/* "Na deze reis", collapsed to one row; open, four one-line rows. */
+.mt-disc {
+  display: grid;
+  overflow: hidden;
+  border-radius: var(--radius-panel);
+  background: var(--surface-sunken);
+}
+
+.mt-disc > button,
+.mt-disc-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 58px;
+  padding: var(--space-2) 14px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: 800 15px / var(--leading-tight) var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mt-disc-chev {
+  margin-left: auto;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.mt-disc.is-open .mt-disc-chev {
+  transform: rotate(90deg);
+}
+
+.mt-disc ul {
+  margin: 0;
+  padding: 0 14px 6px;
+  list-style: none;
+}
+
+.mt-disc li {
+  border-top: 1px solid var(--border);
+}
+
+.mt-disc li button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-1) 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: 700 var(--text-body) / var(--leading-tight) var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mt-disc li button > span {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-control);
+  background: var(--surface-page);
+  color: var(--umber-800);
+}
+
+.mt-disc-row {
+  width: 100%;
+  border-radius: var(--radius-panel);
+  background: var(--surface-sunken);
+}
+
+.mt-disc-row-s {
+  margin-left: auto;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+/* The share icon's two ways: the route image and the share panel. */
+.mt-share {
+  position: relative;
+}
+
+.mt-share-pop {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  right: 0;
+  z-index: var(--z-sticky);
+  display: grid;
+  min-width: 220px;
+  padding: var(--space-1);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+
+.mt-share-pop button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text);
+  font: 600 var(--text-body) / 1 var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mt-share-pop button:hover {
+  background: var(--surface-hover);
+}
+
+/* The unit, said once by the control (not under each row). */
+.mt-unit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  padding: 0 var(--space-1);
+  border: 0;
+  background: none;
+  color: var(--umber-800);
+  font: 700 var(--text-label) / 1 var(--ui);
+  cursor: pointer;
+}
+
+/* Ledgers on the ground: rows with hairlines, no white cards. */
+.mt-panel.is-trips .mt-rows {
+  gap: 0;
+}
+
+.mt-panel.is-trips .mt-rows .mt-row.card {
+  min-height: 72px;
+  padding: 10px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  transition: background-color var(--dur-2) var(--ease-out);
+}
+
+.mt-panel.is-trips .mt-rows .mt-row-wrap:first-child .mt-row.card {
+  border-top: 0;
+}
+
+.mt-panel.is-trips .mt-rows .mt-row-wrap:hover .mt-row.card,
+.mt-panel.is-trips .mt-rows .mt-row-wrap:focus-within .mt-row.card {
+  background: var(--umber-50);
+}
+
+.mt-panel.is-trips .mt-rows .mt-row .card-media {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-control);
+}
+
+.atlas-route.is-lift .atlas-route-line {
+  stroke: var(--umber-800);
+}
+
+/* "Hoe was {trip}?": ten taps on an umber 100 wash. */
+.mt-rate {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--radius-card);
+  background: var(--umber-100);
+}
+
+.mt-rate b {
+  font-size: var(--text-lead);
+  color: var(--umber-800);
+}
+
+.mt-rate-scale {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: var(--space-1);
+}
+
+.mt-rate-scale button {
+  min-height: var(--tap);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: 800 15px / 1 var(--ui);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.mt-rate-scale button:hover {
+  background: var(--umber-200);
+}
+
+/* The empty tab: one action plus "Bekijk een voorbeeld". */
+.mt-first {
+  display: grid;
+  gap: 18px;
+  padding-top: var(--space-1);
+}
+
+.mt-first-title {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+.mt-first-acts {
+  display: grid;
+  gap: 10px;
+}
+
+.mt-first-acts .btn {
+  min-height: 50px;
+}
+
+.mt-first-acts .btn.mt-soft {
+  border-color: transparent;
+  background: var(--surface-sunken);
+}
+
+@media (min-width: 768px) {
+  .mt-first-acts {
+    grid-template-columns: auto auto;
+    justify-content: start;
+  }
+}
+
+.mt-device-says {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--text-body);
+}
+
+.mt-exbar {
+  top: var(--space-2);
+  width: max-content;
+}
+
+/* Today on the ground: the title with the flag, the timeline as rows,
+   spend as a bar with its words, the quick tiles in a row of three. */
+.mt-today-h {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mt-panel.is-trips .mt-today .mt-today-title {
+  font-weight: 800;
+}
+
+.mt-panel.is-trips .mt-spend {
+  padding: 0;
+  border-top: 0;
+}
+
+.mt-panel.is-trips .mt-spend-bar {
+  height: 12px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+}
+
+.mt-panel.is-trips .mt-quick {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.mt-panel.is-trips .btn.mt-qk {
+  align-items: center;
+  min-height: 72px;
+  border: 0;
+  border-radius: var(--radius-panel);
+  background: var(--surface-sunken);
+  text-align: center;
+}
+
+.mt-panel.is-trips .mt-qk-s {
+  font-size: var(--text-caption);
+  color: var(--text-2);
+}

@@ -1994,7 +1994,7 @@ function TravelApp() {
       <AppOverlays
         accountEntry={accountEntry} accountOpen={accountOpen} accountView={accountView}
         adminOpen={adminOpen} authConfigured={authConfigured} authModalMode={authModalMode}
-        authModalOpen={authModalOpen} backToLabel={backToLabel} choices={choices}
+        authModalOpen={authModalOpen} backToLabel={backToLabel} choices={choices} setChoices={setChoices}
         closeOverlay={closeOverlay} countryPage={countryPage} data={data}
         exploreIndices={exploreIndices} favDests={favDests} favorites={favorites} goTo={goTo}
         goToTab={goToTab} guidesOpen={guidesOpen} handleLoadTrip={handleLoadTrip}

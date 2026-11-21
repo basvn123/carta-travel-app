@@ -178,7 +178,7 @@ export function AtlasPlate({
                   <mask id={`${pid}r${i}`} maskUnits="userSpaceOnUse" x={vb.x} y={vb.y} width={vb.w} height={vb.h}>
                     <path className="atlas-mk" d={d} pathLength="1" strokeWidth={16 * k} />
                   </mask>
-                  <g className={`atlas-route is-${past ? 'past' : 'next'}${dimmed(r.year) ? ' is-dim' : ''}`} mask={`url(#${pid}r${i})`}>
+                  <g className={`atlas-route is-${past ? 'past' : 'next'}${dimmed(r.year) || (L.lift && L.lift !== r.id) ? ' is-dim' : ''}${L.lift === r.id ? ' is-lift' : ''}`} mask={`url(#${pid}r${i})`}>
                     <path className="atlas-route-case" d={d} strokeWidth={lw + 2.6 * k} />
                     <path className="atlas-route-line" d={d} strokeWidth={lw} />
                   </g>

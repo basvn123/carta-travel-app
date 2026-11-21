@@ -144,12 +144,14 @@ export function RecordMapDialog({ title, onClose, children }) {
  * trip is opened: the estimate, the figure and the party. Whole euros on a list, the estimate
  * mark whenever Carta priced any of it.
  */
-export function TripPrice({ figure, className = '', showUnit = false }) {
+export function TripPrice({ figure, className = '', showUnit = false, unitValue = null }) {
   const { t } = useI18n();
   const ref = useRef(null);
   // One figure a trip card prints (owner 1.8, T503): a person a day in whole
   // euros, the same unit as Explore. The party's total is the receipt's.
-  const day = figure && Number.isFinite(figure.perPersonDay) ? figure.perPersonDay : null;
+  // G12: unitValue is the figure in the traveller's chosen unit (TripParts.tripInUnit).
+  const day = Number.isFinite(unitValue) ? unitValue
+    : figure && Number.isFinite(figure.perPersonDay) ? figure.perPersonDay : null;
   useSettledFigure(ref, day != null ? Math.round(day) : null);
   if (day == null) return null;
   return (
