@@ -20,8 +20,8 @@ import { cartaMapStyle } from '../lib/map/cartaMapStyle.js';
 import { registerPmtiles, basemapFallback } from '../lib/map/pmtilesProtocol.js';
 import { heroLadder } from '../lib/heroImage.js';
 import {
-  PIN_LAYERS, PILL_H, SEP, addPinImage, addPinLayers, evictPhotos, faceDims, hasPhoto, loadPhotos, oneImage,
-  photoFailed, pinAt, pinSize, pillWidth, setPinFilters,
+  BUBBLE_MAX, DOT_LAYERS, HALO_LAYERS, PIN_LAYERS, PILL_H, SEP, addPinImage, addPinLayers, evictPhotos, faceDims,
+  hasPhoto, loadPhotos, oneImage, photoFailed, pinAt, pinSize, pillWidth, setPinFilters,
 } from './explore/mapPins.js';
 
 /**
@@ -178,21 +178,21 @@ function addRouteLayers(map, fc, { open, hot }) {
   map.addLayer({
     id: 'route-casing', type: 'line', source: 'routes', layout: lineLayout,
     paint: { 'line-color': surface, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 3, 10, 6, 14, 8], 'line-opacity': 0.9 },
-  }, 'dest-dots');
+  }, DOT_LAYERS[0]);
   map.addLayer({
     id: 'route-line', type: 'line', source: 'routes', layout: lineLayout,
     paint: { 'line-color': line, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 1.5, 10, 3, 14, 4.5] },
-  }, 'dest-dots');
+  }, DOT_LAYERS[0]);
   map.addLayer({
     id: 'route-hot', type: 'line', source: 'routes', layout: lineLayout,
     filter: ['==', ['get', 'id'], ''],
     paint: { 'line-color': action, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 3, 10, 4.5, 14, 6] },
-  }, 'dest-dots');
+  }, DOT_LAYERS[0]);
   // A wide, unseen line under the pointer, so a 3 px route is easy to hover.
   map.addLayer({
     id: 'route-hit', type: 'line', source: 'routes', layout: lineLayout,
     paint: { 'line-color': line, 'line-width': 14, 'line-opacity': 0 },
-  }, 'dest-dots');
+  }, DOT_LAYERS[0]);
   const pill = (id, image, colour, filter, overlap) => map.addLayer({
     id, type: 'symbol', source: 'route-starts', ...(filter ? { filter } : {}),
     layout: {
@@ -222,7 +222,7 @@ function addRouteLayers(map, fc, { open, hot }) {
   });
   map.on('click', (e) => {
     // A dot under the tap is the map's own business (its card, its open).
-    if (map.queryRenderedFeatures(e.point, { layers: ['dest-dots'] }).length) return;
+    if (map.queryRenderedFeatures(e.point, { layers: DOT_LAYERS }).length) return;
     const f = at(e);
     if (f) open(f.properties.id);
   });
@@ -568,7 +568,7 @@ export function ExploreMap({
     };
     if (pinLayers.length) for (const f of map.queryRenderedFeatures({ layers: pinLayers })) add(f, true);
     if (out.length < KPIN_CAP) {
-      for (const f of map.queryRenderedFeatures({ layers: ['dest-dots'] })) {
+      for (const f of map.queryRenderedFeatures({ layers: DOT_LAYERS })) {
         if (out.length >= KPIN_CAP) break;
         add(f, false);
       }
@@ -706,6 +706,41 @@ export function ExploreMap({
       boxOf.set(pr.id, b);
       shown.push(pr.id);
     }
+    // At least the top photo pin carries its name when the tier names any
+    // (judgement-4: at Europe zoom on a phone none did, the named box of each
+    // reaching past the edge or into a pill placed before it): the first
+    // photo pin whose named box fits clear of the edge, the chrome, the
+    // picked or hovered pin, the other photo pins and the best value takes
+    // it, and the pills it meets step aside.
+    if (tier.named > 0 && named === 0) {
+      const photoIds = new Set(photos.map((x) => x.id));
+      const fixedNow = placed.filter((p) => ![...boxOf.values()].includes(p));
+      for (const ph of photos) {
+        const at = inView.find(([pr]) => pr.id === ph.id);
+        if (!at) continue;
+        const [pr, pt] = at;
+        const d = faceDims(pr.id === best?.id ? 'fnb' : 'fn', pr.score, figOf(pr), pr.city);
+        if (!d.nameFits) continue;
+        const nb = boxAt(pt, [d.w, d.h]);
+        const meets = (p) => nb.r + PIN_GAP > p.l && nb.l - PIN_GAP < p.r && nb.b + PIN_GAP > p.t && nb.t - PIN_GAP < p.b;
+        const others = [...boxOf].filter(([id]) => id !== pr.id);
+        if (covered(nb) || fixedNow.some(meets)
+          || others.some(([id, p]) => (photoIds.has(id) || id === best?.id) && meets(p))) continue;
+        const away = new Set(others.filter(([, p]) => meets(p)).map(([id]) => id));
+        for (const id of away) {
+          const i = placed.indexOf(boxOf.get(id));
+          if (i >= 0) placed.splice(i, 1);
+          boxOf.delete(id);
+        }
+        for (let i = shown.length - 1; i >= 0; i -= 1) if (away.has(shown[i])) shown.splice(i, 1);
+        const was = placed.indexOf(boxOf.get(pr.id));
+        if (was >= 0) placed.splice(was, 1, nb);
+        boxOf.set(pr.id, nb);
+        ph.kind = 'fn';
+        named = 1;
+        break;
+      }
+    }
     // The best value in view always shows, as the list's "Best value" row
     // says: when no photo or pill of its own was placed, its pill takes its
     // room and the pins it meets step aside (forced in unplaced, it lost
@@ -732,7 +767,7 @@ export function ExploreMap({
     // The ring is twice the view's area beyond it: twice the cap.
     for (const pr of outside.slice(0, cap * 2)) shown.push(pr.id);
     const hiddenClusters = [];
-    if (map.getSource('dests-c')) {
+    if (map.getSource('dests-c') && map.getZoom() < BUBBLE_MAX) {
       for (const f of map.querySourceFeatures('dests-c', { filter: ['has', 'point_count'] })) {
         const pt = map.project(f.geometry.coordinates);
         const b = { l: pt.x - 22, r: pt.x + 22, t: pt.y - 18, b: pt.y + 18 };
@@ -1002,9 +1037,12 @@ export function ExploreMap({
         });
       }
       if (!dotsOpacity.has(map)) dotsOpacity.set(map, map.getPaintProperty('dest-dots', 'circle-opacity') ?? 1);
-      map.setPaintProperty('dest-dots', 'circle-opacity', data ? 0 : dotsOpacity.get(map));
-      map.setPaintProperty('dest-dots', 'circle-stroke-opacity', data ? 0 : 1);
-      if (map.getLayer('dest-halo')) map.setLayoutProperty('dest-halo', 'visibility', data ? 'none' : 'visible');
+      for (const l of DOT_LAYERS) {
+        if (!map.getLayer(l)) continue;
+        map.setPaintProperty(l, 'circle-opacity', data ? 0 : dotsOpacity.get(map));
+        map.setPaintProperty(l, 'circle-stroke-opacity', data ? 0 : 1);
+      }
+      for (const l of HALO_LAYERS) if (map.getLayer(l)) map.setLayoutProperty(l, 'visibility', data ? 'none' : 'visible');
       for (const l of [...PIN_LAYERS, 'xcluster']) {
         if (map.getLayer(l)) map.setLayoutProperty(l, 'visibility', data ? 'none' : 'visible');
       }
@@ -1142,6 +1180,7 @@ export function ExploreMap({
     const map = mapRef.current;
     if (!readyRef.current || !map?.getSource('dests-c')) return;
     map.getSource('dests-c').setData(geojson);
+    map.getSource('dests-all')?.setData(geojson);
     refreshRef.current(map);
     map.once('idle', () => refreshRef.current(map));
   }, [geojson]);

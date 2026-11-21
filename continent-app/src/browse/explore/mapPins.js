@@ -5,15 +5,22 @@
  * and circles over GeoJSON sources, so panning moves no DOM.
  *
  *   dest-halo    a soft umber halo under every dot
- *   dest-dots    every place not in a bubble: an umber 600 dot, paper ring
- *   xcluster     a crowd at low zoom (to zoom 4): a count bubble, tap to zoom
+ *   dest-dots    every place not in a bubble: an umber 600 dot, paper ring.
+ *                Under zoom 4.5 from the clustered source (`-low` layers),
+ *                from 4.5 from `dests-all`, which never clusters: the
+ *                cluster index of tile zoom 4 serves zoom 4 to 4.99, so a
+ *                layer's zoom range is what ends the bubbles at 4.5
+ *                (proposal.md section 1, judgement-4)
+ *   xcluster     a crowd under zoom 4.5: a count bubble, tap to zoom
  *   xpin         a price pill (paper, ink figure, a 5 px point under it) for
  *                the best-ranked places that fit and have no photo pin.
  *                Its source `dests` holds only the pills chosen to show, set
  *                again once the camera has rested and only when the set
  *                changed: a new filter on the source of every place made
  *                MapLibre lay out all of its tiles again (fix round 3)
- *   xpin-best    the best value in view as a pill: a saffron dot in it
+ *   xpin-best    the best value in view as a pill: a saffron dot in it;
+ *                always drawn, and it takes its room, so a pill or a bubble
+ *                under it gives way (judgement-4: "€65" over "14")
  *   xpin-photo   a photo pin: the place's own photograph in a paper ring,
  *                the Score as an ink plate on its corner and a label with
  *                the figure (and the name when it fits); the best-ranked
@@ -48,10 +55,16 @@ const held = new WeakMap();
 // Top first: the order a hit test asks in.
 export const PIN_LAYERS = ['xpin-picked', 'xpin-hot', 'xpin-photo', 'xpin-best', 'xpin'];
 export const HIT_LAYERS = [...PIN_LAYERS, 'xcluster'];
-// Crowds are bubbles below zoom 5 only (proposal: photo pins take over from
-// the country zoom); how close counts as a crowd.
+// Crowds are bubbles below zoom 4.5 only (proposal.md section 1: photo pins
+// take over from the country zoom); how close counts as a crowd. The index
+// clusters to tile zoom 4; the layers end the bubbles at BUBBLE_MAX.
 const CLUSTER_MAX_ZOOM = 4;
+export const BUBBLE_MAX = 4.5;
 const CLUSTER_RADIUS = 46;
+// The dot layers, bottom first: the clustered source's under BUBBLE_MAX,
+// every place's from it.
+export const DOT_LAYERS = ['dest-dots-low', 'dest-dots'];
+export const HALO_LAYERS = ['dest-halo-low', 'dest-halo'];
 
 const KINDS = {
   // height, horizontal padding, figure size, edge width
@@ -499,25 +512,26 @@ export function addPinLayers(map, data) {
   map.addSource('dests-c', {
     type: 'geojson', data, cluster: true, clusterMaxZoom: CLUSTER_MAX_ZOOM, clusterRadius: CLUSTER_RADIUS,
   });
+  map.addSource('dests-all', { type: 'geojson', data });
   const dot = ['!', ['has', 'point_count']];
-  map.addLayer({
-    id: 'dest-halo', type: 'circle', source: 'dests-c', filter: dot,
-    paint: {
-      'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 5.5, 8, 7, 12, 8.5],
-      'circle-color': tokenColour('--umber-600'),
-      'circle-opacity': 0.16,
-      'circle-blur': 0.6,
-    },
-  });
-  map.addLayer({
-    id: 'dest-dots', type: 'circle', source: 'dests-c', filter: dot,
-    paint: {
-      'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 8, 4, 12, 5],
-      'circle-color': tokenColour('--umber-600'),
-      'circle-stroke-width': 2,
-      'circle-stroke-color': tokenColour('--surface'),
-    },
-  });
+  const low = { source: 'dests-c', filter: dot, maxzoom: BUBBLE_MAX };
+  const all = { source: 'dests-all', minzoom: BUBBLE_MAX };
+  const halo = {
+    'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 5.5, 8, 7, 12, 8.5],
+    'circle-color': tokenColour('--umber-600'),
+    'circle-opacity': 0.16,
+    'circle-blur': 0.6,
+  };
+  const dots = {
+    'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 8, 4, 12, 5],
+    'circle-color': tokenColour('--umber-600'),
+    'circle-stroke-width': 2,
+    'circle-stroke-color': tokenColour('--surface'),
+  };
+  map.addLayer({ id: 'dest-halo-low', type: 'circle', ...low, paint: halo });
+  map.addLayer({ id: 'dest-halo', type: 'circle', ...all, paint: halo });
+  map.addLayer({ id: 'dest-dots-low', type: 'circle', ...low, paint: dots });
+  map.addLayer({ id: 'dest-dots', type: 'circle', ...all, paint: dots });
   const symbol = (id, source, filter, image, extra = {}, paint = undefined) => map.addLayer({
     id, type: 'symbol', source, filter,
     layout: {
@@ -535,6 +549,7 @@ export function addPinLayers(map, data) {
   symbol('xcluster', 'dests-c', ['has', 'point_count'],
     ['concat', `xc${SEP}`, ['to-string', ['get', 'point_count']]], {},
     { 'icon-opacity': ['case', ['boolean', ['feature-state', 'under'], false], 0, 1] });
+  map.setLayerZoomRange('xcluster', 0, BUBBLE_MAX);
   // Fixed filters: which pins show is the sources' data, never a filter.
   symbol('xpin', 'dests', ['!=', ['get', 'best'], 1],
     ['concat', `xp${SEP}n${SEP}`, ['get', 'fig']],
@@ -542,9 +557,11 @@ export function addPinLayers(map, data) {
   // The best value draws past MapLibre's collision: the chooser
   // (ExploreMap.jsx refreshPins) gives it room and names it only then, and
   // MapLibre's boxes, shadow room included, hid it beside a photo pin that
-  // stood clear of it (integration check, 2026-11-21).
+  // stood clear of it (integration check, 2026-11-21). It still takes its
+  // room, so the layers under it (pills, bubbles) give way: ignoring
+  // placement drew it over a count bubble (judgement-4).
   symbol('xpin-best', 'dests', ['==', ['get', 'best'], 1],
-    ['concat', `xp${SEP}b${SEP}`, ['get', 'fig']], { 'icon-allow-overlap': true, 'icon-ignore-placement': true, ...stand });
+    ['concat', `xp${SEP}b${SEP}`, ['get', 'fig']], { 'icon-allow-overlap': true, 'icon-ignore-placement': false, ...stand });
   symbol('xpin-photo', 'dests-photo', ['has', 'img'], ['get', 'img'],
     { 'symbol-sort-key': ['get', 'rank'], ...stand });
   symbol('xpin-hot', 'dests-hot', ['has', 'img'], ['get', 'img'],

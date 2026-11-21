@@ -104,22 +104,29 @@ export function SummaryChips({ items, className = '', lead = null, pinStyle = fa
   };
   const pinned = pinStyle ? items.find((it) => it.key === 'style') : null;
   const rest = pinned ? items.filter((it) => it !== pinned) : items;
-  const pinText = pinned ? pinned.short || pinned.text : '';
+  // Every render: the chip can mount anew (the row's shape changes when
+  // the map view pins it), so an observer kept from an earlier one would
+  // watch a node no longer on the page.
   React.useLayoutEffect(() => {
     const el = pinRef.current;
     if (!el) return undefined;
-    const read = () => setPinCut(el.scrollWidth > el.clientWidth + 1);
+    let gone = false;
+    const read = () => { if (!gone) setPinCut(el.scrollWidth > el.clientWidth + 1); };
     read();
+    // The face arriving widens the words but not their capped box, which a
+    // ResizeObserver never sees: read again once the fonts are in.
+    document.fonts?.ready?.then(read);
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
     ro?.observe(el);
-    return () => ro?.disconnect();
-  }, [pinText]);
+    ro?.observe(el.parentElement);
+    return () => { gone = true; ro?.disconnect(); };
+  });
   const row = (
     <div ref={rowRef}
       className={`band-chips${edges.start ? ' has-start' : ''}${edges.end ? ' has-end' : ''} ${className}`.trim()}
       role={pinned ? undefined : 'group'} aria-label={pinned ? undefined : t('band.chipsAria')}>
       {lead}
-      {rest.map(chip)}
+      {rest.map((it) => chip(it))}
     </div>
   );
   if (!pinned) return row;

@@ -539,12 +539,12 @@
 .explore-shell .xmr-best .xmap-best-dot { margin-right: var(--space-1); }
 .explore-shell .xmr-l3,
 .explore-shell .xtc-l3 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-1) var(--space-2); }
-/* Judgement-4: the mark stays on the figure's line, level with it; when the
-   line is tight the short basis wraps inside the figure's button instead,
-   so a row with a mark is as tall as one without. */
-.explore-shell .xmr-l3 { flex-wrap: nowrap; align-items: flex-start; }
-.explore-shell .xmr-l3 .xmr-fig { flex: 0 1 auto; }
-.explore-shell .xmr-l3 .xmr-match { flex: none; margin-top: 2px; }
+/* Judgement-4: the figure over its short basis, the mark at the line's end
+   level with the figure; the basis has the whole width under it, so a row
+   with a mark is as tall as one without. */
+.explore-shell .xmr-l3 { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
+.explore-shell .xmr-l3 > .xmr-fig { grid-area: 1 / 1; justify-self: start; flex-direction: column; flex-wrap: nowrap; align-items: flex-start; gap: 0; }
+.explore-shell .xmr-l3 > .xmr-match { grid-area: 1 / 1; justify-self: end; margin-top: 2px; }
 .explore-shell .xmr-l3 > *,
 .explore-shell .xmr-save { position: relative; z-index: 1; }
 .explore-shell .xmr .xmr-fig,
@@ -664,6 +664,10 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
    then Sort and the basis on one line; from 769 px all three on one line.
    Filters and List | Map are the band's, said once on the page. */
 .explore-shell .xsheet-head .xsheet-row { flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
+/* The grab's 44 px target reaches into the first row: the row's controls
+   stand over it, the gaps stay the grab's. */
+.explore-shell .xsheet-head .xsheet-row,
+.explore-shell .xsheet-head .xsheet-row2 { position: relative; z-index: 1; }
 .explore-shell .xsheet-head .xsheet-row.is-one { justify-content: flex-start; column-gap: var(--space-4); }
 .explore-shell .xsheet-head .xsheet-row.is-one .xsheet-basis { margin-left: auto; }
 .explore-shell .xsheet-scope .xsheet-n,
